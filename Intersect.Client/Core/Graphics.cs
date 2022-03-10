@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Intersect.Client.Entities;
 using Intersect.Client.Entities.Events;
+using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
@@ -33,6 +34,8 @@ namespace Intersect.Client.Core
         public static GameShader DefaultShader;
 
         //Rendering Variables
+        private static GameTexture sMenuBackground;
+
         public static int DrawCalls;
 
         public static int EntitiesDrawn;
@@ -53,6 +56,10 @@ namespace Intersect.Client.Core
         public static List<Animation> LiveAnimations = new List<Animation>();
 
         public static int MapsDrawn;
+
+        private static int sMenuBackgroundIndex;
+
+        private static long sMenuBackgroundInterval;
 
         //Overlay Stuff
         public static Color OverlayColor = Color.Transparent;
@@ -142,15 +149,80 @@ namespace Intersect.Client.Core
             }
         }
 
-        public static void DrawMenu()
+        private static void DrawMenu()
         {
-            var imageTex = sContentManager.GetTexture(
-                Framework.Content.TextureType.Gui, ClientConfiguration.Instance.MenuBackground
-            );
-
-            if (imageTex != null)
+            // No background in the main menu.
+            if (ClientConfiguration.Instance.MenuBackground.Count == 0)
             {
-                DrawFullScreenTexture(imageTex);
+                return;
+            }
+
+            // Animated background in the main menu.
+            if (ClientConfiguration.Instance.MenuBackground.Count > 1)
+            {
+                sMenuBackground = sContentManager.GetTexture(
+                    TextureType.Gui, ClientConfiguration.Instance.MenuBackground[sMenuBackgroundIndex]
+                );
+
+                if (sMenuBackground == null)
+                {
+                    return;
+                }
+
+                var currentTimeMs = Timing.Global.Milliseconds;
+
+                if (sMenuBackgroundInterval < currentTimeMs)
+                {
+                    sMenuBackgroundIndex =
+                        (sMenuBackgroundIndex + 1) % ClientConfiguration.Instance.MenuBackground.Count;
+
+                    sMenuBackgroundInterval = currentTimeMs + ClientConfiguration.Instance.MenuBackgroundFrameInterval;
+                }
+            }
+
+            // Static background in the main menu.
+            else
+            {
+                sMenuBackground = sContentManager.GetTexture(
+                    TextureType.Gui, ClientConfiguration.Instance.MenuBackground[0]
+                );
+
+                if (sMenuBackground == null)
+                {
+                    return;
+                }
+            }
+
+            // Switch between the preferred display mode, then render the fullscreen texture.
+            switch (ClientConfiguration.Instance.MenuBackgroundDisplayMode)
+            {
+                case DisplayModes.Default:
+                    DrawFullScreenTexture(sMenuBackground);
+                    break;
+
+                case DisplayModes.Center:
+                    DrawFullScreenTextureCentered(sMenuBackground);
+                    break;
+
+                case DisplayModes.Stretch:
+                    DrawFullScreenTextureStretched(sMenuBackground);
+                    break;
+
+                case DisplayModes.FitHeight:
+                    DrawFullScreenTextureFitHeight(sMenuBackground);
+                    break;
+
+                case DisplayModes.FitWidth:
+                    DrawFullScreenTextureFitWidth(sMenuBackground);
+                    break;
+
+                case DisplayModes.Fit:
+                    DrawFullScreenTextureFitMaximum(sMenuBackground);
+                    break;
+
+                case DisplayModes.Cover:
+                    DrawFullScreenTextureFitMinimum(sMenuBackground);
+                    break;
             }
         }
 
@@ -700,6 +772,20 @@ namespace Intersect.Client.Core
                 bgy -= diff / 2;
                 bgh += diff;
             }
+
+            DrawGameTexture(
+                tex, GetSourceRect(tex),
+                new FloatRect(bgx + Renderer.GetView().X, bgy + Renderer.GetView().Y, bgw, bgh),
+                new Color((int) (alpha * 255f), 255, 255, 255)
+            );
+        }
+
+        public static void DrawFullScreenTextureCentered(GameTexture tex, float alpha = 1f)
+        {
+            var bgx = Renderer.GetScreenWidth() / 2 - tex.GetWidth() / 2;
+            var bgy = Renderer.GetScreenHeight() / 2 - tex.GetHeight() / 2;
+            var bgw = tex.GetWidth();
+            var bgh = tex.GetHeight();
 
             DrawGameTexture(
                 tex, GetSourceRect(tex),

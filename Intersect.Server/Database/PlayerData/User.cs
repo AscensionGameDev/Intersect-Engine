@@ -59,7 +59,7 @@ namespace Intersect.Server.Database.PlayerData
             user.LastIp = ip;
         }
 
-        public void TryLogout ()
+        public void TryLogout (bool softLogout = false)
         {
             //If we still have a character online (probably being held up in combat) then don't logout yet.
             foreach (var chr in Players)
@@ -70,7 +70,7 @@ namespace Intersect.Server.Database.PlayerData
                 }
             }
 
-            if (OnlineUsers.ContainsKey(this.Id))
+            if (!softLogout && OnlineUsers.ContainsKey(this.Id))
             {
                 OnlineUsers.TryRemove(this.Id, out User removed);
             }
@@ -209,7 +209,7 @@ namespace Intersect.Server.Database.PlayerData
 
                         this.Players.Add(newCharacter);
 
-                        Player.Load(newCharacter);
+                        Player.Validate(newCharacter);
 
                         context.ChangeTracker.DetectChanges();
 
@@ -380,7 +380,7 @@ namespace Intersect.Server.Database.PlayerData
             {
                 foreach (var player in user.Players)
                 {
-                    Player.Load(player);
+                    Player.Validate(player);
                 }
             }
             return user;
@@ -403,19 +403,19 @@ namespace Intersect.Server.Database.PlayerData
         public static User TryLogin(string username, string ptPassword)
         {
             var user = FindOnline(username);
-            try
+            if (user != null)
             {
-                using (var context = DbInterface.CreatePlayerContext())
+                var hashedPassword = SaltPasswordHash(ptPassword, user.Salt);
+                if (string.Equals(user.Password, hashedPassword, StringComparison.Ordinal))
                 {
-                    if (user != null)
-                    {
-                        var pass = SaltPasswordHash(ptPassword, user.Salt);
-                        if (pass == user.Password)
-                        {
-                            return PostLoad(user);
-                        }
-                    }
-                    else
+                    return PostLoad(user);
+                }
+            }
+            else
+            {
+                try
+                {
+                    using (var context = DbInterface.CreatePlayerContext())
                     {
                         var salt = GetUserSalt(username);
                         if (!string.IsNullOrWhiteSpace(salt))
@@ -425,12 +425,12 @@ namespace Intersect.Server.Database.PlayerData
                         }
                     }
                 }
+                catch (Exception exception)
+                {
+                    Log.Error(exception);
+                }
             }
-            catch (Exception ex)
-            {
-                Log.Error(ex);
-                return null;
-            }
+
             return null;
         }
 
@@ -672,7 +672,7 @@ namespace Intersect.Server.Database.PlayerData
             {
                 using (var context = DbInterface.CreatePlayerContext()) {
                     var compiledQuery = string.IsNullOrWhiteSpace(query) ? context.Users.Include(p => p.Ban).Include(p => p.Mute) : context.Users.Where(u => EF.Functions.Like(u.Name, $"%{query}%") || EF.Functions.Like(u.Email, $"%{query}%"));
-                    
+
                     total = compiledQuery.Count();
 
                     switch (sortBy?.ToLower() ?? "")
@@ -693,7 +693,7 @@ namespace Intersect.Server.Database.PlayerData
                     }
 
                     return compiledQuery.Skip(skip).Take(take).ToList();
-                }          
+                }
             }
             catch (Exception ex)
             {

@@ -302,10 +302,10 @@ namespace Intersect.Server.Entities
             base.Dispose();
         }
 
-        public void TryLogout(bool force = false)
+        public void TryLogout(bool force = false, bool softLogout = false)
         {
             LastOnline = DateTime.Now;
-            Client = null;
+            Client = default;
 
             if (LoginTime != null)
             {
@@ -315,11 +315,11 @@ namespace Intersect.Server.Entities
 
             if (CombatTimer < Timing.Global.Milliseconds || force)
             {
-                Logout();
+                Logout(softLogout);
             }
         }
 
-        private void Logout()
+        private void Logout(bool softLogout = false)
         {
             if (MapController.TryGetInstanceFromMap(MapId, MapInstanceId, out var instance))
             {
@@ -422,7 +422,7 @@ namespace Intersect.Server.Entities
             //If our client has disconnected or logged out but we have kept the user logged in due to being in combat then we should try to logout the user now
             if (Client == null)
             {
-                User?.TryLogout();
+                User?.TryLogout(softLogout);
             }
 
             DbInterface.Pool.QueueWorkItem(CompleteLogout);
@@ -1710,31 +1710,36 @@ namespace Intersect.Server.Entities
                 if (item.Descriptor.IsStackable)
                 {
                     // Does the user have this item already?
-                    var existingSlot = FindInventoryItemSlot(item.ItemId);
-                    if (existingSlot != null)
-                    {
-                        // Can we blindly add more to this stack?
-                        var untilFull = item.Descriptor.MaxInventoryStack - existingSlot.Quantity;
-                        if (untilFull >= item.Quantity)
-                        {
-                            return true;
-                        }
+                    var itemSlots = FindInventoryItemSlots(item.ItemId);
+                    var slotsRequired = Math.Ceiling((double)item.Quantity / item.Descriptor.MaxInventoryStack);
 
-                        // Check to see if we have the inventory spaces required to hand these items out AFTER filling up the existing slot!
-                        var toGive = item.Quantity - untilFull;
-                        if (Math.Ceiling((double) toGive / item.Descriptor.MaxInventoryStack) <= FindOpenInventorySlots().Count)
+                    // User doesn't have this item yet.
+                    if (itemSlots.Count == 0)
+                    {
+                        // Does the user have enough free space for these stacks?
+                        if (slotsRequired <= FindOpenInventorySlots().Count)
                         {
                             return true;
                         }
                     }
-                    // User doesn't have this item yet.
-                    else
+                    else // We need to check to see how much space we'd have if we first filled all possible stacks
                     {
-                        // Does the user have enough free space for these stacks?
-                        if (Math.Ceiling((double) item.Quantity / item.Descriptor.MaxInventoryStack) <= FindOpenInventorySlots().Count)
+                        // Keep track of how much we have given to each stack
+                        var giveRemainder = item.Quantity;
+
+                        // For each stack while we still have items to give
+                        for (var i = 0; i < itemSlots.Count && giveRemainder > 0; i++)
                         {
-                            return true;
+                            // Give as much as possible to this stack
+                            giveRemainder -= item.Descriptor.MaxInventoryStack - itemSlots[i].Quantity;
                         }
+
+                        // We don't have anymore stuff to give after filling up our available stacks - we good
+                        bool roomInStacks = giveRemainder <= 0;
+                        // We still have leftover even after maxing each of our current stacks. See if we have empty slots in the inventory.
+                        bool roomInInventory = giveRemainder > 0 && Math.Ceiling((double)giveRemainder / item.Descriptor.MaxInventoryStack) <= FindOpenInventorySlots().Count;
+
+                        return roomInStacks || roomInInventory;
                     }
                 }
                 // Not a stacking item, so can we contain the amount we want to give them?
@@ -1871,6 +1876,8 @@ namespace Intersect.Server.Entities
 
             // Get this information so we can use it later.
             var openSlots = FindOpenInventorySlots().Count;
+            var slotsRequired = (int)Math.Ceiling(item.Quantity / (double) item.Descriptor.MaxInventoryStack);
+
             int spawnAmount = 0;
 
             // How are we going to be handling this?
@@ -1891,7 +1898,7 @@ namespace Intersect.Server.Entities
                         GiveItem(item, sendUpdate);
                         return true;
                     }
-                    else if (item.Descriptor.Stackable && openSlots == 0) // Is stackable, but no inventory space.
+                    else if (item.Descriptor.Stackable && openSlots < slotsRequired) // Is stackable, but no inventory space.
                     {
                         spawnAmount = item.Quantity;
                     }
@@ -1919,7 +1926,7 @@ namespace Intersect.Server.Entities
                         GiveItem(item, sendUpdate);
                         return true;
                     }
-                    else if (!item.Descriptor.Stackable && openSlots > 0) // Is not stackable, has space for some.
+                    else if (!item.Descriptor.Stackable && openSlots >= slotsRequired) // Is not stackable, has space for some.
                     {
                         item.Quantity = openSlots;
                         GiveItem(item, sendUpdate);
@@ -1965,7 +1972,7 @@ namespace Intersect.Server.Entities
                         continue;
                     }
 
-                    var canAdd = item.Descriptor.MaxBankStack - slot.Quantity;
+                    var canAdd = item.Descriptor.MaxInventoryStack - slot.Quantity;
                     if (canAdd > toGive)
                     {
                         slot.Quantity += toGive;
@@ -3239,10 +3246,14 @@ namespace Intersect.Server.Entities
         }
 
         //Business
-        public bool IsBusy()
-        {
-            return InShop != null || InBank || CraftingTableId != Guid.Empty || Trading.Counterparty != null;
-        }
+        private bool IsBusy() =>
+            InShop != null ||
+            InBank ||
+            CraftingTableId != Guid.Empty ||
+            Trading.Counterparty != null ||
+            Trading.Requester != null ||
+            PartyRequester != null ||
+            FriendRequester != null;
 
         //Bank
         public bool OpenBank(bool guild = false)
@@ -3626,7 +3637,7 @@ namespace Intersect.Server.Entities
 
             if (!FriendRequests.ContainsKey(fromPlayer) || !(FriendRequests[fromPlayer] > Timing.Global.Milliseconds))
             {
-                if (Trading.Requester == null && PartyRequester == null && FriendRequester == null)
+                if (!IsBusy())
                 {
                     FriendRequester = fromPlayer;
                     PacketSender.SendFriendRequest(this, fromPlayer);
@@ -3680,7 +3691,7 @@ namespace Intersect.Server.Entities
             }
             else
             {
-                if (Trading.Requester == null && PartyRequester == null && FriendRequester == null)
+                if (!IsBusy())
                 {
                     Trading.Requester = fromPlayer;
                     PacketSender.SendTradeRequest(this, fromPlayer);
@@ -3967,7 +3978,7 @@ namespace Intersect.Server.Entities
             }
             else
             {
-                if (Trading.Requester == null && PartyRequester == null && FriendRequester == null)
+                if (!IsBusy())
                 {
                     PartyRequester = fromPlayer;
                     PacketSender.SendPartyInvite(this, fromPlayer);
@@ -5073,7 +5084,8 @@ namespace Intersect.Server.Entities
                         questProgress.TaskId = Guid.Empty;
                         questProgress.TaskProgress = -1;
                         PacketSender.SendChatMsg(
-                            this, Strings.Quests.abandoned.ToString(QuestBase.GetName(questId)), ChatMessageType.Quest, Color.Red
+                            this, Strings.Quests.abandoned.ToString(QuestBase.GetName(questId)), ChatMessageType.Quest,
+                            CustomColors.Quests.Abandoned
                         );
 
                         PacketSender.SendQuestsProgress(this);
@@ -5111,7 +5123,8 @@ namespace Intersect.Server.Entities
 
                                     StartCommonEvent(EventBase.Get(quest.EndEventId));
                                     PacketSender.SendChatMsg(
-                                        this, Strings.Quests.completed.ToString(quest.Name), ChatMessageType.Quest, Color.Green
+                                        this, Strings.Quests.completed.ToString(quest.Name), ChatMessageType.Quest,
+                                        CustomColors.Quests.Completed
                                     );
                                 }
                                 else
@@ -5159,7 +5172,10 @@ namespace Intersect.Server.Entities
                     if (!skipCompletionEvent)
                     {
                         StartCommonEvent(EventBase.Get(quest.EndEventId));
-                        PacketSender.SendChatMsg(this, Strings.Quests.completed.ToString(quest.Name), ChatMessageType.Quest, Color.Green);
+                        PacketSender.SendChatMsg(
+                            this, Strings.Quests.completed.ToString(quest.Name), ChatMessageType.Quest,
+                            CustomColors.Quests.Completed
+                        );
                     }
                     PacketSender.SendQuestsProgress(this);
                 }
@@ -6223,7 +6239,7 @@ namespace Intersect.Server.Entities
 
         [NotMapped, JsonIgnore] public Guid LastMapEntered = Guid.Empty;
 
-        [JsonIgnore, NotMapped] public Client Client;
+        [JsonIgnore, NotMapped] public Client Client { get; set; }
 
         [JsonIgnore, NotMapped]
         public UserRights Power => Client?.Power ?? UserRights.None;

@@ -617,9 +617,9 @@ namespace Intersect.Server.Entities
 
                         break;
                     case MoveRouteEnum.StepForward:
-                        if (CanMove(Dir) > -1)
+                        if (CanMove(Dir) == -1)
                         {
-                            Move((byte) Dir, forPlayer);
+                            Move((byte) Dir, forPlayer, false, true);
                             moved = true;
                         }
 
@@ -645,9 +645,9 @@ namespace Intersect.Server.Entities
                                 break;
                         }
 
-                        if (CanMove(moveDir) > -1)
+                        if (CanMove(moveDir) == -1)
                         {
-                            Move(moveDir, forPlayer);
+                            Move(moveDir, forPlayer, false, true);
                             moved = true;
                         }
 
@@ -1585,19 +1585,15 @@ namespace Intersect.Server.Entities
             //Handle DoT/HoT spells]
             if (spellBase.Combat.HoTDoT)
             {
-                var doTFound = false;
                 foreach (var dot in target.CachedDots)
                 {
-                    if (dot.SpellBase.Id == spellBase.Id && dot.Target == this)
+                    if (dot.SpellBase.Id == spellBase.Id && dot.Attacker == this)
                     {
-                        doTFound = true;
+                        dot.Expire();
                     }
                 }
 
-                if (doTFound == false) //no duplicate DoT/HoT spells.
-                {
-                    new DoT(this, spellBase.Id, target);
-                }
+                new DoT(this, spellBase.Id, target);
             }
         }
 

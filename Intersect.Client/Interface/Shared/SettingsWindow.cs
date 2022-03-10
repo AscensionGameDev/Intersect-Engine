@@ -602,7 +602,9 @@ namespace Intersect.Client.Interface.Shared
                     default:
                         throw new NotImplementedException();
                 }
-            }    
+
+                mReturnToMenu = false;
+            }
         }
 
         // Input Handlers

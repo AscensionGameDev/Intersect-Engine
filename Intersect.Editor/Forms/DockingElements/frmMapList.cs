@@ -42,7 +42,7 @@ namespace Intersect.Editor.Forms.DockingElements
                     SaveMap();
                 }
 
-                Globals.MainForm.EnterMap(((MapListMap) e.Node.Tag).MapId);
+                Globals.MainForm.EnterMap(((MapListMap) e.Node.Tag).MapId, true);
             }
         }
 

@@ -362,15 +362,15 @@ namespace Intersect.Server.Core
                             var timeAfterUpdate = Timing.Global.Milliseconds;
                             MetricsRoot.Instance.Game.MapUpdateProcessingTime.Record(timeAfterUpdate - timeBeforeUpdate);
                             MetricsRoot.Instance.Game.MapTotalUpdateTime.Record(timeAfterUpdate - desiredMapUpdateTime);
-
-                            if (ActiveMapInstances.Keys.Contains(mapInstance.Id))
-                            {
-                                MapInstanceUpdateQueue.Enqueue(mapInstance);
-                            }
                         }
                         else
                         {
                             mapInstance.Update(Timing.Global.Milliseconds);
+                        }
+
+                        if (ActiveMapInstances.Keys.Contains(mapInstance.Id))
+                        {
+                            MapInstanceUpdateQueue.Enqueue(mapInstance);
                         }
                     }
                 }

@@ -1704,23 +1704,24 @@ namespace Intersect.Client.Entities
                 return;
             }
 
-            var srcRectangle = new FloatRect();
-            var destRectangle = new FloatRect();
             var targetTex = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Misc, "target.png");
             if (targetTex != null)
             {
-                destRectangle.X = GetCenterPos().X - (int)targetTex.GetWidth() / 4;
-                destRectangle.Y = GetCenterPos().Y - (int)targetTex.GetHeight() / 2;
-
-                srcRectangle = new FloatRect(
-                    priority * (int)targetTex.GetWidth() / 2, 0, (int)targetTex.GetWidth() / 2,
-                    (int)targetTex.GetHeight()
+                var srcRectangle = new FloatRect(
+                    priority * targetTex.GetWidth() / 2f,
+                    0,
+                    targetTex.GetWidth() / 2f,
+                    targetTex.GetHeight()
                 );
 
-                destRectangle.Width = srcRectangle.Width;
-                destRectangle.Height = srcRectangle.Height;
+                var destRectangle = new FloatRect(
+                    (float) Math.Ceiling(GetCenterPos().X - targetTex.GetWidth() / 4f),
+                    (float) Math.Ceiling(GetCenterPos().Y - targetTex.GetHeight() / 2f),
+                    srcRectangle.Width,
+                    srcRectangle.Height
+                );
 
-                Graphics.DrawGameTexture(targetTex, srcRectangle, destRectangle, Intersect.Color.White);
+                Graphics.DrawGameTexture(targetTex, srcRectangle, destRectangle, Color.White);
             }
         }
 

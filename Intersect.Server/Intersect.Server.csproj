@@ -462,6 +462,7 @@
     <Compile Include="Database\Logging\ILoggingContext.cs" />
     <Compile Include="Database\Logging\LoggingContext.cs" />
     <Compile Include="Database\Logging\RequestLog.cs" />
+    <Compile Include="Database\Logging\Seed\SeedTrades.cs" />
     <Compile Include="Database\MigrationBuilderExtensions.cs" />
     <Compile Include="Database\PlayerData\Api\RefreshToken.cs" />
     <Compile Include="Database\PlayerData\Ban.cs" />
