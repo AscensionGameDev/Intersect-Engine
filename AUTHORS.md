@@ -14,3 +14,5 @@
 [Dog from the Kash Shop](#)
 
 [Jocelyn Cobb](https://github.com/Cheshire92)
+
+[char32](https://github.com/char32)
