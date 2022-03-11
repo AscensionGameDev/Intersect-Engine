@@ -344,10 +344,14 @@ namespace Intersect.Server.Entities.Events
 
             if (MapId != Guid.Empty)
             {
-                if (GlobalPageInstance != null)
+                if (Global && MapController.TryGetInstanceFromMap(MapId, MapInstanceId, out var mapInstance))
                 {
-                    prams.Add("evtX", GlobalPageInstance[PageIndex].X.ToString());
-                    prams.Add("evtY", GlobalPageInstance[PageIndex].Y.ToString());
+                    var globalEvent = mapInstance.GetGlobalEventInstance(BaseEvent);
+                    if (globalEvent.GlobalPageInstance != null)
+                    {
+                        prams.Add("evtX", globalEvent.GlobalPageInstance[globalEvent.PageIndex].X.ToString());
+                        prams.Add("evtY", globalEvent.GlobalPageInstance[globalEvent.PageIndex].Y.ToString());
+                    }
                 }
                 else if (PageInstance != null)
                 {
