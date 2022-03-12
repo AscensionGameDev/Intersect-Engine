@@ -1,366 +1,112 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\Microsoft.CodeAnalysis.FxCopAnalyzers.3.0.0\build\Microsoft.CodeAnalysis.FxCopAnalyzers.props" Condition="Exists('..\packages\Microsoft.CodeAnalysis.FxCopAnalyzers.3.0.0\build\Microsoft.CodeAnalysis.FxCopAnalyzers.props')" />
-  <Import Project="..\packages\Microsoft.NetFramework.Analyzers.3.0.0\build\Microsoft.NetFramework.Analyzers.props" Condition="Exists('..\packages\Microsoft.NetFramework.Analyzers.3.0.0\build\Microsoft.NetFramework.Analyzers.props')" />
-  <Import Project="..\packages\Microsoft.NetCore.Analyzers.3.0.0\build\Microsoft.NetCore.Analyzers.props" Condition="Exists('..\packages\Microsoft.NetCore.Analyzers.3.0.0\build\Microsoft.NetCore.Analyzers.props')" />
-  <Import Project="..\packages\Microsoft.CodeQuality.Analyzers.3.0.0\build\Microsoft.CodeQuality.Analyzers.props" Condition="Exists('..\packages\Microsoft.CodeQuality.Analyzers.3.0.0\build\Microsoft.CodeQuality.Analyzers.props')" />
-  <Import Project="..\packages\Microsoft.CodeAnalysis.VersionCheckAnalyzer.3.0.0\build\Microsoft.CodeAnalysis.VersionCheckAnalyzer.props" Condition="Exists('..\packages\Microsoft.CodeAnalysis.VersionCheckAnalyzer.3.0.0\build\Microsoft.CodeAnalysis.VersionCheckAnalyzer.props')" />
-  <Import Project="..\packages\Costura.Fody.3.3.3\build\Costura.Fody.props" Condition="Exists('..\packages\Costura.Fody.3.3.3\build\Costura.Fody.props')" />
-  <Import Project="$(MSBuildExtensionsPath)\MonoGame\v3.0\MonoGame.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\MonoGame\v3.0\MonoGame.Common.props')" />
-  <Import Project="..\targets\Intersect.targets" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{2240F3DD-3694-4606-B181-F204CBBCB971}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <TargetFramework>net462</TargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageId>AscensionGameDev.Intersect.Client</PackageId>
+    <Description>Game Client - Part of the Intersect 2D Game Creation Suite</Description>
+    <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
     <RootNamespace>Intersect.Client</RootNamespace>
     <AssemblyName>Intersect Client</AssemblyName>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
     <FileAlignment>512</FileAlignment>
-    <MonoGamePlatform>DesktopGL</MonoGamePlatform>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
-    <TargetFrameworkProfile />
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>..\build\debug\client\</OutputPath>
-    <DefineConstants>DEBUG;TRACE;LINUX</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <Prefer32Bit>false</Prefer32Bit>
-    <WarningLevel>4</WarningLevel>
-    <RunCodeAnalysis>false</RunCodeAnalysis>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
-    <OutputPath>..\build\release\client\</OutputPath>
-    <DefineConstants>TRACE;LINUX</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <Prefer32Bit>false</Prefer32Bit>
-    <WarningLevel>4</WarningLevel>
-    <RunCodeAnalysis>false</RunCodeAnalysis>
-  </PropertyGroup>
-  <PropertyGroup>
-    <ApplicationIcon>Icon.ico</ApplicationIcon>
-  </PropertyGroup>
-  <PropertyGroup>
-    <ApplicationManifest>app.manifest</ApplicationManifest>
-  </PropertyGroup>
-  <PropertyGroup>
-    <StartupObject>Intersect.Client.Program</StartupObject>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Tespia|AnyCPU'">
-    <OutputPath>..\build\tespia\client\</OutputPath>
-    <DefineConstants>DEBUG;TRACE;LINUX</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <RunCodeAnalysis>false</RunCodeAnalysis>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Diagnostic|AnyCPU'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>..\build\diagnostic\client\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;LINUX;INTERSECT_DIAGNOSTIC</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <RunCodeAnalysis>false</RunCodeAnalysis>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Compile Include="Core\Audio.cs" />
-    <Compile Include="Core\Bootstrapper.cs" />
-    <Compile Include="Core\ClientContext.cs" />
-    <Compile Include="Core\ClientCommandLineOptions.cs" />
-    <Compile Include="Core\Controls\ControlEnum.cs" />
-    <Compile Include="Core\Controls\ControlMap.cs" />
-    <Compile Include="Core\Controls\Controls.cs" />
-    <Compile Include="Core\Fade.cs" />
-    <Compile Include="Core\Graphics.cs" />
-    <Compile Include="Core\IClientContext.cs" />
-    <Compile Include="Core\Input.cs" />
-    <Compile Include="Core\IPlatformRunner.cs" />
-    <Compile Include="Core\Main.cs" />
-    <Compile Include="Core\Sounds\MapSound.cs" />
-    <Compile Include="Core\Sounds\Sound.cs" />
-    <Compile Include="Entities\Animation.cs" />
-    <Compile Include="Entities\ChatBubble.cs" />
-    <Compile Include="Entities\Critter.cs" />
-    <Compile Include="Entities\Dash.cs" />
-    <Compile Include="Entities\Entity.cs" />
-    <Compile Include="Entities\Events\Event.cs" />
-    <Compile Include="Entities\Events\Dialog.cs" />
-    <Compile Include="Entities\Events\Hold.cs" />
-    <Compile Include="Entities\FriendInstance.cs" />
-    <Compile Include="Entities\HotbarInstance.cs" />
-    <Compile Include="Entities\PartyMember.cs" />
-    <Compile Include="Entities\Player.cs" />
-    <Compile Include="Entities\Projectiles\Projectile.cs" />
-    <Compile Include="Entities\Projectiles\ProjectileSpawns.cs" />
-    <Compile Include="Entities\Resource.cs" />
-    <Compile Include="Entities\Status.cs" />
-    <Compile Include="General\Time.cs" />
-    <Compile Include="General\Globals.cs" />
-    <Compile Include="Interface\Game\AnnouncementWindow.cs" />
-    <Compile Include="Interface\Game\GuildWindow.cs" />
-    <Compile Include="Interface\Game\MapItem\MapItemIcon.cs" />
-    <Compile Include="Interface\Game\MapItem\MapItemWindow.cs" />
-    <Compile Include="Interface\MutableInterface.cs" />
-    <Compile Include="Interface\Shared\Errors\ErrorWindow.cs" />
-    <Compile Include="Interface\Shared\SettingsWindow.cs" />
-    <Compile Include="Items\Item.cs" />
-    <Compile Include="Items\MapItemInstance.cs" />
-    <Compile Include="Localization\Strings.cs" />
-    <Compile Include="Maps\ActionMessage.cs" />
-    <Compile Include="Maps\MapAnimation.cs" />
-    <Compile Include="Maps\MapGrid.cs" />
-    <Compile Include="Maps\MapInstance.cs" />
-    <Compile Include="Maps\WeatherParticle.cs" />
-    <Compile Include="MonoGame\Audio\MonoAudioInstance.cs" />
-    <Compile Include="MonoGame\Graphics\MonoTileBuffer.cs" />
-    <Compile Include="MonoGame\Input\MonoClipboard.cs" />
-    <Compile Include="MonoGame\Network\MonoSocket.cs" />
-    <Compile Include="Interface\Game\Bag\BagItem.cs" />
-    <Compile Include="Interface\Game\Bank\BankItem.cs" />
-    <Compile Include="Interface\Game\Character\EquipmentItem.cs" />
-    <Compile Include="Interface\Game\Crafting\RecipeItem.cs" />
-    <Compile Include="Interface\Game\EntityPanel\SpellStatus.cs" />
-    <Compile Include="Interface\Game\Hotbar\HotbarItem.cs" />
-    <Compile Include="Interface\Game\EscapeMenu.cs" />
-    <Compile Include="Interface\Game\Inventory\InventoryItem.cs" />
-    <Compile Include="Interface\Game\PictureWindow.cs" />
-    <Compile Include="Interface\Game\Shop\ShopItem.cs" />
-    <Compile Include="Interface\Game\Spells\SpellItem.cs" />
-    <Compile Include="Interface\Game\Trades\TradeItem.cs" />
-    <Compile Include="Interface\Game\Trades\TradeSegment.cs" />
-    <Compile Include="Interface\Menu\CreateCharacterWindow.cs" />
-    <Compile Include="Interface\Menu\CreditsParser.cs" />
-    <Compile Include="Interface\Menu\CreditsWindow.cs" />
-    <Compile Include="Interface\Menu\ResetPasswordWindow.cs" />
-    <Compile Include="Interface\Menu\ForgotPasswordWindow.cs" />
-    <Compile Include="Plugins\Audio\AudioManager.cs" />
-    <Compile Include="Plugins\Contexts\ClientPluginContext.cs" />
-    <Compile Include="Plugins\Helpers\ClientLifecycleHelper.cs" />
-    <Compile Include="Plugins\Helpers\ClientNetworkHelper.cs" />
-    <Compile Include="Plugins\Helpers\PluginPacketSender.cs" />
-    <Compile Include="Utilities\MathHelper.cs" />
-    <Compile Include="MonoGame\Audio\MonoMusicInstance.cs" />
-    <Compile Include="MonoGame\Audio\MonoMusicSource.cs" />
-    <Compile Include="MonoGame\Audio\MonoSoundInstance.cs" />
-    <Compile Include="MonoGame\Audio\MonoSoundSource.cs" />
-    <Compile Include="MonoGame\Database\MonoDatabase.cs" />
-    <Compile Include="MonoGame\File Management\MonoContentManager.cs" />
-    <Compile Include="MonoGame\Graphics\MonoFont.cs" />
-    <Compile Include="MonoGame\Graphics\MonoRenderer.cs" />
-    <Compile Include="MonoGame\Graphics\MonoRenderTexture.cs" />
-    <Compile Include="MonoGame\Graphics\MonoShader.cs" />
-    <Compile Include="MonoGame\Graphics\MonoTexture.cs" />
-    <Compile Include="MonoGame\Input\MonoInput.cs" />
-    <Compile Include="Networking\Network.cs" />
-    <Compile Include="Networking\PacketHandler.cs" />
-    <Compile Include="Networking\PacketSender.cs" />
-    <Compile Include="Spells\Spell.cs" />
-    <Compile Include="Interface\Shared\Errors\ErrorHandler.cs" />
-    <Compile Include="Interface\Game\AdminWindow.cs" />
-    <Compile Include="Interface\Game\Bag\BagWindow.cs" />
-    <Compile Include="Interface\Game\Bank\BankWindow.cs" />
-    <Compile Include="Interface\Game\BanMuteBox.cs" />
-    <Compile Include="Interface\Game\Character\CharacterWindow.cs" />
-    <Compile Include="Interface\Game\Chat\Chatbox.cs" />
-    <Compile Include="Interface\Game\Chat\ChatboxMsg.cs" />
-    <Compile Include="Interface\Game\Crafting\CraftingWindow.cs" />
-    <Compile Include="Interface\Game\DebugMenu.cs" />
-    <Compile Include="Interface\Game\Draggable.cs" />
-    <Compile Include="Interface\Game\EntityPanel\EntityBox.cs" />
-    <Compile Include="Interface\Game\EventWindow.cs" />
-    <Compile Include="Interface\Game\FriendsWindow.cs" />
-    <Compile Include="Interface\Game\GameInterface.cs" />
-    <Compile Include="Interface\Game\Menu.cs" />
-    <Compile Include="Interface\Game\Hotbar\HotBar.cs" />
-    <Compile Include="Interface\Game\InputBox.cs" />
-    <Compile Include="Interface\Game\Inventory\InventoryWindow.cs" />
-    <Compile Include="Interface\Game\ItemDescWindow.cs" />
-    <Compile Include="Interface\Game\PartyWindow.cs" />
-    <Compile Include="Interface\Game\QuestOfferWindow.cs" />
-    <Compile Include="Interface\Game\QuestsWindow.cs" />
-    <Compile Include="Interface\Game\Shop\ShopWindow.cs" />
-    <Compile Include="Interface\Game\SpellDescWindow.cs" />
-    <Compile Include="Interface\Game\Spells\SpellsWindow.cs" />
-    <Compile Include="Interface\Game\Trades\TradingWindow.cs" />
-    <Compile Include="Interface\Interface.cs" />
-    <Compile Include="Interface\Menu\SelectCharacterWindow.cs" />
-    <Compile Include="Interface\Menu\LoginWindow.cs" />
-    <Compile Include="Interface\Menu\MainMenu.cs" />
-    <Compile Include="Interface\Menu\MenuGuiBase.cs" />
-    <Compile Include="Interface\Menu\RegisterWindow.cs" />
-    <Compile Include="GlobalSuppressions.cs" />
-    <Compile Include="MonoGame\IntersectGame.cs" />
-    <Compile Include="Program.cs" />
-    <Compile Include="Networking\NetworkStatus.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+      <_Parameter1>Intersect.Tests.Client</_Parameter1>
+    </AssemblyAttribute>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Windows.Forms" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Intersect (Core)\Intersect.Core.csproj" />
+    <ProjectReference Include="..\Intersect.Client.Framework\Intersect.Client.Framework.csproj" />
+    <ProjectReference Include="..\Intersect.Network\Intersect.Network.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\Resources.Designer.cs">
       <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
   </ItemGroup>
+
   <ItemGroup>
-    <Reference Include="CommandLine, Version=2.7.82.0, Culture=neutral, PublicKeyToken=5a870481e358d379, processorArchitecture=MSIL">
-      <HintPath>..\packages\CommandLineParser.2.7.82\lib\net461\CommandLine.dll</HintPath>
-    </Reference>
-    <Reference Include="Costura, Version=3.3.3.0, Culture=neutral, PublicKeyToken=9919ef960d84173d, processorArchitecture=MSIL">
-      <HintPath>..\packages\Costura.Fody.3.3.3\lib\net40\Costura.dll</HintPath>
-    </Reference>
-    <Reference Include="Lidgren.Network, Version=1.7.7518.2930, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\AscensionGameDev.Lidgren.Network.1.7.7518.2930-debug\lib\net46\Lidgren.Network.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Microsoft.VisualStudio.Validation, Version=15.3.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.VisualStudio.Validation.15.5.31\lib\netstandard2.0\Microsoft.VisualStudio.Validation.dll</HintPath>
-    </Reference>
-    <Reference Include="MonoGame.Framework, Version=3.8.0.1641, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\MonoGame.Framework.DesktopGL.3.8.0.1641\lib\net452\MonoGame.Framework.dll</HintPath>
-    </Reference>
-    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.ComponentModel.DataAnnotations" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.IO.Compression.FileSystem" />
-    <Reference Include="System.Numerics" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
-  <ItemGroup>
+
+  <ItemGroup Label="Project Embedded Resources">
+    <EmbeddedResource Include="$(NetworkHandshakePublicKey)" />
     <EmbeddedResource Include="Icon.bmp">
       <LogicalName>Icon.bmp</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="Icon.ico" />
     <EmbeddedResource Include="Resources\MonoGame.Framework.dll.config" />
     <EmbeddedResource Include="Resources\openal32.dll" />
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="$(NetworkHandshakePublicKey)" />
+    <EmbeddedResource Include="Resources\Shaders\radialgradient.xnb" />
     <None Include="app.config" />
     <None Include="app.manifest" />
-    <None Include="packages.config" />
     <None Include="FodyWeavers.xml">
       <SubType>Designer</SubType>
     </None>
-    <EmbeddedResource Include="Resources\Shaders\radialgradient.xnb" />
   </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="..\packages\MonoGame.Framework.DesktopGL.3.8.0.1641\lib\net452\MonoGame.Framework.dll">
+
+  <ItemGroup Label="Package Embedded Resources">
+    <EmbeddedResource Include="$(PkgMonoGame_Framework_DesktopGL)\lib\net452\MonoGame.Framework.dll">
       <Link>Resources\MonoGame.Framework.dll</Link>
     </EmbeddedResource>
-    <EmbeddedResource Include="..\packages\MonoGame.Framework.DesktopGL.3.8.0.1641\runtimes\win-x86\native\SDL2.dll">
+    <EmbeddedResource Include="$(PkgMonoGame_Framework_DesktopGL)\runtimes\win-x86\native\SDL2.dll">
       <Link>Resources\x86\SDL2.dll</Link>
     </EmbeddedResource>
-    <EmbeddedResource Include="..\packages\MonoGame.Framework.DesktopGL.3.8.0.1641\runtimes\win-x64\native\SDL2.dll">
+    <EmbeddedResource Include="$(PkgMonoGame_Framework_DesktopGL)\runtimes\win-x64\native\SDL2.dll">
       <Link>Resources\x64\SDL2.dll</Link>
     </EmbeddedResource>
-    <EmbeddedResource Include="..\packages\MonoGame.Framework.DesktopGL.3.8.0.1641\runtimes\win-x86\native\soft_oal.dll">
+    <EmbeddedResource Include="$(PkgMonoGame_Framework_DesktopGL)\runtimes\win-x86\native\soft_oal.dll">
       <Link>Resources\x86\soft_oal.dll</Link>
     </EmbeddedResource>
-    <EmbeddedResource Include="..\packages\MonoGame.Framework.DesktopGL.3.8.0.1641\runtimes\win-x64\native\soft_oal.dll">
+    <EmbeddedResource Include="$(PkgMonoGame_Framework_DesktopGL)\runtimes\win-x64\native\soft_oal.dll">
       <Link>Resources\x64\soft_oal.dll</Link>
     </EmbeddedResource>
-    <EmbeddedResource Include="..\packages\MonoGame.Framework.DesktopGL.3.8.0.1641\runtimes\linux-x64\native\libopenal.so.1">
+    <EmbeddedResource Include="$(PkgMonoGame_Framework_DesktopGL)\runtimes\linux-x64\native\libopenal.so.1" WithCulture="false">
       <Link>Resources\libopenal.so.1</Link>
-      <!-- <LogicalName>libopenal</LogicalName> -->
     </EmbeddedResource>
-    <EmbeddedResource Include="..\packages\MonoGame.Framework.DesktopGL.3.8.0.1641\runtimes\linux-x64\native\libSDL2-2.0.so.0">
+    <EmbeddedResource Include="$(PkgMonoGame_Framework_DesktopGL)\runtimes\linux-x64\native\libSDL2-2.0.so.0" WithCulture="false">
       <Link>Resources\libSDL2-2.0.so.0</Link>
-      <!-- <LogicalName>libSDL2</LogicalName> -->
     </EmbeddedResource>
-    <EmbeddedResource Include="..\packages\MonoGame.Framework.DesktopGL.3.8.0.1641\runtimes\osx\native\libSDL2-2.0.0.dylib">
+    <EmbeddedResource Include="$(PkgMonoGame_Framework_DesktopGL)\runtimes\osx\native\libSDL2-2.0.0.dylib">
       <Link>Resources\libSDL2-2.0.0.dylib</Link>
     </EmbeddedResource>
-    <EmbeddedResource Include="..\packages\MonoGame.Framework.DesktopGL.3.8.0.1641\runtimes\osx\native\libopenal.1.dylib">
+    <EmbeddedResource Include="$(PkgMonoGame_Framework_DesktopGL)\runtimes\osx\native\libopenal.1.dylib">
       <Link>Resources\libopenal.1.dylib</Link>
     </EmbeddedResource>
   </ItemGroup>
+
   <ItemGroup>
-    <ProjectReference Include="..\Intersect %28Core%29\Intersect %28Core%29.csproj">
-      <Project>{bc304b43-1f2c-4454-9edc-48f47357ca94}</Project>
-      <Name>Intersect %28Core%29</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Intersect.Client.Framework\Intersect.Client.Framework.csproj">
-      <Project>{40973f13-3339-4548-9008-ff76a0c8cd79}</Project>
-      <Name>Intersect.Client.Framework</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Intersect.Network\Intersect.Network.csproj">
-      <Project>{e8f288cb-51df-4d9d-a3b3-a61bd4fd3f45}</Project>
-      <Name>Intersect.Network</Name>
-    </ProjectReference>
+    <PackageReference Include="CommandLineParser" Version="2.7.82" />
+    <PackageReference Include="Costura.Fody" Version="3.3.3" />
+    <PackageReference Include="Fody" Version="4.2.1" />
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.0.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.VersionCheckAnalyzer" Version="3.0.0" />
+    <PackageReference Include="Microsoft.CodeQuality.Analyzers" Version="3.0.0" />
+    <PackageReference Include="Microsoft.NetCore.Analyzers" Version="3.0.0" />
+    <PackageReference Include="Microsoft.NetFramework.Analyzers" Version="3.0.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Validation" Version="15.5.31" />
+    <PackageReference Include="MonoGame.Content.Builder" Version="3.7.0.9" />
+    <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.0.1641" GeneratePathProperty="True" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="System.Collections.Concurrent" Version="4.3.0" />
   </ItemGroup>
-  <ItemGroup>
-    <Analyzer Include="..\packages\Microsoft.CodeAnalysis.VersionCheckAnalyzer.3.0.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.VersionCheckAnalyzer.resources.dll" />
-    <Analyzer Include="..\packages\Microsoft.CodeAnalysis.VersionCheckAnalyzer.3.0.0\analyzers\dotnet\Microsoft.CodeAnalysis.VersionCheckAnalyzer.dll" />
-    <Analyzer Include="..\packages\Microsoft.CodeQuality.Analyzers.3.0.0\analyzers\dotnet\cs\Humanizer.dll" />
-    <Analyzer Include="..\packages\Microsoft.CodeQuality.Analyzers.3.0.0\analyzers\dotnet\cs\Microsoft.CodeQuality.Analyzers.dll" />
-    <Analyzer Include="..\packages\Microsoft.CodeQuality.Analyzers.3.0.0\analyzers\dotnet\cs\Microsoft.CodeQuality.CSharp.Analyzers.dll" />
-    <Analyzer Include="..\packages\Microsoft.NetCore.Analyzers.3.0.0\analyzers\dotnet\cs\Microsoft.NetCore.Analyzers.dll" />
-    <Analyzer Include="..\packages\Microsoft.NetCore.Analyzers.3.0.0\analyzers\dotnet\cs\Microsoft.NetCore.CSharp.Analyzers.dll" />
-    <Analyzer Include="..\packages\Microsoft.NetFramework.Analyzers.3.0.0\analyzers\dotnet\cs\Microsoft.NetFramework.Analyzers.dll" />
-    <Analyzer Include="..\packages\Microsoft.NetFramework.Analyzers.3.0.0\analyzers\dotnet\cs\Microsoft.NetFramework.CSharp.Analyzers.dll" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
-  </PropertyGroup>
-  <PropertyGroup>
-    <PreBuildEvent>
-    </PreBuildEvent>
-  </PropertyGroup>
-  <Target Name="WorkaroundMSBuild3064_LinuxLibs" BeforeTargets="SplitResourcesByCulture">
-    <!-- Workaround until https://github.com/dotnet/msbuild/issues/3064 gets merged into mono/msbuild -->
-    <!-- Based on https://github.com/dotnet/msbuild/issues/3064#issuecomment-418540984 -->
-    <ItemGroup>
-      <_ResourcesWithCultureFilename Include="@(EmbeddedResource)" Condition="$([System.String]::Copy('%(Filename)').Contains('.so'))" />
-      <_MixedResourceWithNoCulture Include="@(_ResourcesWithCultureFilename)">
-        <WithCulture>false</WithCulture>
-        <!-- Turns Resources\libopenal.so.1 to Intersect.Client.Resources.libopenal.so.1 -->
-        <LogicalName>$(RootNamespace).$([System.String]::Copy('%(Link)').Replace('\', '/').Replace('/', '.'))</LogicalName>
-      </_MixedResourceWithNoCulture>
-      <EmbeddedResource Remove="@(_ResourcesWithCultureFilename)" />
-    </ItemGroup>
-  </Target>
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\packages\MonoGame.Content.Builder.3.7.0.9\build\MonoGame.Content.Builder.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\MonoGame.Content.Builder.3.7.0.9\build\MonoGame.Content.Builder.targets'))" />
-    <Error Condition="!Exists('..\packages\Costura.Fody.3.3.3\build\Costura.Fody.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Costura.Fody.3.3.3\build\Costura.Fody.props'))" />
-    <Error Condition="!Exists('..\packages\Fody.4.2.1\build\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Fody.4.2.1\build\Fody.targets'))" />
-    <Error Condition="!Exists('..\packages\Microsoft.CodeAnalysis.VersionCheckAnalyzer.3.0.0\build\Microsoft.CodeAnalysis.VersionCheckAnalyzer.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeAnalysis.VersionCheckAnalyzer.3.0.0\build\Microsoft.CodeAnalysis.VersionCheckAnalyzer.props'))" />
-    <Error Condition="!Exists('..\packages\Microsoft.CodeQuality.Analyzers.3.0.0\build\Microsoft.CodeQuality.Analyzers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeQuality.Analyzers.3.0.0\build\Microsoft.CodeQuality.Analyzers.props'))" />
-    <Error Condition="!Exists('..\packages\Microsoft.NetCore.Analyzers.3.0.0\build\Microsoft.NetCore.Analyzers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.NetCore.Analyzers.3.0.0\build\Microsoft.NetCore.Analyzers.props'))" />
-    <Error Condition="!Exists('..\packages\Microsoft.NetFramework.Analyzers.3.0.0\build\Microsoft.NetFramework.Analyzers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.NetFramework.Analyzers.3.0.0\build\Microsoft.NetFramework.Analyzers.props'))" />
-    <Error Condition="!Exists('..\packages\Microsoft.CodeAnalysis.FxCopAnalyzers.3.0.0\build\Microsoft.CodeAnalysis.FxCopAnalyzers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeAnalysis.FxCopAnalyzers.3.0.0\build\Microsoft.CodeAnalysis.FxCopAnalyzers.props'))" />
-    <Error Condition="!Exists('..\packages\MonoGame.Framework.DesktopGL.3.8.0.1641\build\MonoGame.Framework.DesktopGL.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\MonoGame.Framework.DesktopGL.3.8.0.1641\build\MonoGame.Framework.DesktopGL.targets'))" />
-  </Target>
-  <Import Project="..\packages\MonoGame.Content.Builder.3.7.0.9\build\MonoGame.Content.Builder.targets" Condition="Exists('..\packages\MonoGame.Content.Builder.3.7.0.9\build\MonoGame.Content.Builder.targets')" />
-  <Import Project="..\packages\Fody.4.2.1\build\Fody.targets" Condition="Exists('..\packages\Fody.4.2.1\build\Fody.targets')" />
-  <Import Project="..\packages\MonoGame.Framework.DesktopGL.3.8.0.1641\build\MonoGame.Framework.DesktopGL.targets" Condition="Exists('..\packages\MonoGame.Framework.DesktopGL.3.8.0.1641\build\MonoGame.Framework.DesktopGL.targets')" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+
 </Project>

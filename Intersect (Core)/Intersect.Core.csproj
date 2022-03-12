@@ -1,29 +1,27 @@
 <Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
     <TargetFramework>net462</TargetFramework>
   </PropertyGroup>
+
   <PropertyGroup>
+    <PackageId>AscensionGameDev.Intersect.Core</PackageId>
+    <Description>Core Library - Part of the Intersect 2D Game Creation Suite</Description>
+    <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
     <RootNamespace>Intersect</RootNamespace>
     <AssemblyName>Intersect Core</AssemblyName>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <FileAlignment>512</FileAlignment>
-    <NeutralLanguage>en-US</NeutralLanguage>
-    <AssemblyVersion>0.7.0.0</AssemblyVersion>
-    <FileVersion>0.7.0.0</FileVersion>
-    <Copyright>Copyright © Ascension Game Dev 2020</Copyright>
-    <RepositoryType>git</RepositoryType>
-    <Description>Core Library - Part of the Intersect 2D Game Creation Suite</Description>
-    <Product>Intersect Game Engine</Product>
-    <Authors>Ascension Game Development</Authors>
-    <Version>$(Version)</Version>
-    <PackageId>AscensionGameDev.Intersect.Core</PackageId>
-    <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
   </PropertyGroup>
 
   <ItemGroup>
     <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
       <_Parameter1>Intersect.Tests</_Parameter1>
     </AssemblyAttribute>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
 
   <ItemGroup>
@@ -115,10 +113,6 @@
     <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.5.3" />
     <PackageReference Include="System.ValueTuple" Version="4.5.0" />
     <PackageReference Include="TaskParallelLibrary" Version="1.0.2856.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
 
 </Project>

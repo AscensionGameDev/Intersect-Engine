@@ -1,23 +1,18 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
     <TargetFramework>net462</TargetFramework>
   </PropertyGroup>
+
   <PropertyGroup>
+    <Description>Tests for the Core Library - Part of the Intersect 2D Game Creation Suite</Description>
     <RootNamespace>Intersect</RootNamespace>
     <AssemblyName>Intersect.Tests</AssemblyName>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <FileAlignment>512</FileAlignment>
-    <NeutralLanguage>en-US</NeutralLanguage>
-    <AssemblyVersion>0.7.0.0</AssemblyVersion>
-    <FileVersion>0.7.0.0</FileVersion>
-    <Copyright>Copyright © Ascension Game Dev 2020</Copyright>
-    <RepositoryType>git</RepositoryType>
-    <Description>Tests for the Core Library - Part of the Intersect 2D Game Creation Suite</Description>
-    <Product>Intersect Game Engine</Product>
-    <Authors>Ascension Game Development</Authors>
-    <Version>$(Version)</Version>
-    <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
   </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Intersect (Core)\Intersect.Core.csproj" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Castle.Core" Version="4.4.0" />
@@ -43,7 +38,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Intersect (Core)\Intersect (Core).csproj" />
+    <EmbeddedResource Include="Plugins\manifest.well-formed.json" />
+    <EmbeddedResource Include="Plugins\manifest.lowercase.json" />
   </ItemGroup>
 
 </Project>
