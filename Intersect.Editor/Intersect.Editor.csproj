@@ -59,7 +59,6 @@
     <None Include="Resources\layer_face_sel.png" />
     <None Include="Resources\layer_hidden.png" />
     <None Include="Resources\layer.png" />
-    <None Include="app.config" />
     <None Include="app.manifest" />
     <None Include="FodyWeavers.xml">
       <SubType>Designer</SubType>
