@@ -1,10 +1,8 @@
-﻿using System;
+using System;
 
 using Intersect.Extensions;
 
 using NUnit.Framework;
-
-using Assert = Microsoft.VisualStudio.TestTools.UnitTesting.Assert;
 
 namespace Intersect.Utilities
 {

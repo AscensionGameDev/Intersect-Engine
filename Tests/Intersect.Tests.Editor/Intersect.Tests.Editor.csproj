@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Description>Tests for the Editor - Part of the Intersect 2D Game Creation Suite</Description>
+    <RootNamespace>Intersect.Tests.Editor</RootNamespace>
+    <AssemblyName>Intersect.Tests.Editor</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Intersect.Editor\Intersect.Editor.csproj" />
+  </ItemGroup>
+
+</Project>

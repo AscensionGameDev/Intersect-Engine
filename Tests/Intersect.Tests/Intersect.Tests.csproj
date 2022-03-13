@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Description>Tests for the Core Library - Part of the Intersect 2D Game Creation Suite</Description>
+    <RootNamespace>Intersect</RootNamespace>
+    <AssemblyName>Intersect.Tests</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Intersect (Core)\Intersect.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Plugins\manifest.well-formed.json" />
+    <EmbeddedResource Include="Plugins\manifest.lowercase.json" />
+  </ItemGroup>
+
+</Project>
