@@ -1,813 +1,99 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\Microsoft.CodeAnalysis.FxCopAnalyzers.3.0.0\build\Microsoft.CodeAnalysis.FxCopAnalyzers.props" Condition="Exists('..\packages\Microsoft.CodeAnalysis.FxCopAnalyzers.3.0.0\build\Microsoft.CodeAnalysis.FxCopAnalyzers.props')" />
-  <Import Project="..\packages\Microsoft.NetFramework.Analyzers.3.0.0\build\Microsoft.NetFramework.Analyzers.props" Condition="Exists('..\packages\Microsoft.NetFramework.Analyzers.3.0.0\build\Microsoft.NetFramework.Analyzers.props')" />
-  <Import Project="..\packages\Microsoft.NetCore.Analyzers.3.0.0\build\Microsoft.NetCore.Analyzers.props" Condition="Exists('..\packages\Microsoft.NetCore.Analyzers.3.0.0\build\Microsoft.NetCore.Analyzers.props')" />
-  <Import Project="..\packages\Microsoft.CodeQuality.Analyzers.3.0.0\build\Microsoft.CodeQuality.Analyzers.props" Condition="Exists('..\packages\Microsoft.CodeQuality.Analyzers.3.0.0\build\Microsoft.CodeQuality.Analyzers.props')" />
-  <Import Project="..\packages\Microsoft.CodeAnalysis.VersionCheckAnalyzer.3.0.0\build\Microsoft.CodeAnalysis.VersionCheckAnalyzer.props" Condition="Exists('..\packages\Microsoft.CodeAnalysis.VersionCheckAnalyzer.3.0.0\build\Microsoft.CodeAnalysis.VersionCheckAnalyzer.props')" />
-  <Import Project="..\packages\Costura.Fody.3.3.3\build\Costura.Fody.props" Condition="Exists('..\packages\Costura.Fody.3.3.3\build\Costura.Fody.props')" />
-  <Import Project="$(MSBuildExtensionsPath)\MonoGame\v3.0\MonoGame.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\MonoGame\v3.0\MonoGame.Common.props')" />
-  <Import Project="..\targets\Intersect.targets" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{5AC53DF1-8152-466D-B7D0-238657F013F7}</ProjectGuid>
+    <TargetFramework>net462</TargetFramework>
     <OutputType>WinExe</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <UseWindowsForms>true</UseWindowsForms>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageId>AscensionGameDev.Intersect.Editor</PackageId>
+    <Description>Game Editor - Part of the Intersect 2D Game Creation Suite</Description>
+    <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
     <RootNamespace>Intersect.Editor</RootNamespace>
     <AssemblyName>Intersect Editor</AssemblyName>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
     <FileAlignment>512</FileAlignment>
-    <MonoGamePlatform>Windows</MonoGamePlatform>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
-    <TargetFrameworkProfile />
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>..\build\debug\editor\</OutputPath>
-    <DefineConstants>DEBUG;TRACE;WINDOWS</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <RunCodeAnalysis>false</RunCodeAnalysis>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-    <PlatformTarget>x86</PlatformTarget>
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>..\build\release\editor\</OutputPath>
-    <DefineConstants>TRACE;WINDOWS</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-  </PropertyGroup>
-  <PropertyGroup>
-    <ApplicationIcon>Icon.ico</ApplicationIcon>
-  </PropertyGroup>
-  <PropertyGroup />
-  <PropertyGroup>
-    <ApplicationManifest>app.manifest</ApplicationManifest>
-  </PropertyGroup>
-  <PropertyGroup>
-    <StartupObject>Intersect.Editor.Program</StartupObject>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Tespia|x86'">
-    <OutputPath>..\build\tespia\editor\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;WINDOWS</DefineConstants>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>true</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Diagnostic|x86'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>..\build\diagnostic\editor\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;WINDOWS;INTERSECT_DIAGNOSTIC</DefineConstants>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>true</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup>
-    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Compile Include="Content\ContentManager.cs" />
-    <Compile Include="Content\Texture.cs" />
-    <Compile Include="Content\TexturePacker.cs" />
-    <Compile Include="Core\Database.cs" />
-    <Compile Include="Core\Graphics.cs" />
-    <Compile Include="Core\Main.cs" />
-    <Compile Include="Core\Preferences.cs" />
-    <Compile Include="Core\Program.cs" />
-    <Compile Include="Entities\Animation.cs" />
-    <Compile Include="Forms\Controls\GameObjectList.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Forms\Controls\GameObjectList.Designer.cs">
-      <DependentUpon>GameObjectList.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_SetGuildBankSlots.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_SetGuildBankSlots.Designer.cs">
-      <DependentUpon>EventCommand_SetGuildBankSlots.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_ChangePlayerColor.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_ChangePlayerColor.Designer.cs">
-      <DependentUpon>EventCommand_ChangePlayerColor.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_ChangeName.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_ChangeName.Designer.cs">
-      <DependentUpon>EventCommand_ChangeName.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_CreateGuild.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_CreateGuild.Designer.cs">
-      <DependentUpon>EventCommand_CreateGuild.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\frmUpdate.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\frmUpdate.Designer.cs">
-      <DependentUpon>frmUpdate.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Helpers\GridHelper.cs" />
-    <Compile Include="Maps\MapGridItem.cs" />
-    <Compile Include="Maps\MapSaveState.cs" />
-    <Compile Include="Forms\Controls\SearchableDarkTreeView.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Forms\Controls\SearchableDarkTreeView.Designer.cs">
-      <DependentUpon>SearchableDarkTreeView.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Editors\Events\CommandPrinter.cs" />
-    <Compile Include="General\Enums.cs" />
-    <Compile Include="General\Globals.cs" />
-    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_ChangeVital.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_ChangeVital.Designer.cs">
-      <DependentUpon>EventCommand_ChangeVital.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_ChangePlayerLabel.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_ChangePlayerLabel.Designer.cs">
-      <DependentUpon>EventCommand_ChangePlayerLabel.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_ChangeNameColor.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_ChangeNameColor.Designer.cs">
-      <DependentUpon>EventCommand_ChangeNameColor.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_EquipItem.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_EquipItem.Designer.cs">
-      <DependentUpon>EventCommand_EquipItem.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_Input.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_Input.Designer.cs">
-      <DependentUpon>EventCommand_Input.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Localization\Strings.cs" />
-    <Compile Include="Maps\MapGrid.cs" />
-    <Compile Include="Maps\MapInstance.cs" />
-    <Compile Include="Maps\MapProperties.cs" />
-    <Compile Include="Networking\Network.cs" />
-    <Compile Include="Networking\PacketHandler.cs" />
-    <Compile Include="Networking\PacketSender.cs" />
-    <Compile Include="Forms\Controls\AutoDragPanel.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Forms\Controls\AutoDragPanel.Designer.cs">
-      <DependentUpon>AutoDragPanel.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Controls\LightEditorCtrl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Forms\Controls\LightEditorCtrl.Designer.cs">
-      <DependentUpon>LightEditorCtrl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Controls\MapTreeList.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Forms\Controls\MapTreeList.Designer.cs">
-      <DependentUpon>MapTreeList.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\DockingElements\frmMapEditor.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\DockingElements\frmMapEditor.Designer.cs">
-      <DependentUpon>frmMapEditor.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\DockingElements\frmMapGrid.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\DockingElements\frmMapGrid.Designer.cs">
-      <DependentUpon>frmMapGrid.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\DockingElements\frmMapLayers.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\DockingElements\frmMapLayers.Designer.cs">
-      <DependentUpon>frmMapLayers.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\DockingElements\frmMapList.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\DockingElements\frmMapList.Designer.cs">
-      <DependentUpon>frmMapList.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\DockingElements\frmMapProperties.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\DockingElements\frmMapProperties.Designer.cs">
-      <DependentUpon>frmMapProperties.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Editors\EditorForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_ChangeFace.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_ChangeFace.Designer.cs">
-      <DependentUpon>EventCommand_ChangeFace.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_ChangeGender.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_ChangeGender.Designer.cs">
-      <DependentUpon>EventCommand_ChangeGender.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_ChangeItems.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_ChangeItems.Designer.cs">
-      <DependentUpon>EventCommand_ChangeItems.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_ChangeLevel.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_ChangeLevel.Designer.cs">
-      <DependentUpon>EventCommand_ChangeLevel.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_ChangeSpells.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_ChangeSpells.Designer.cs">
-      <DependentUpon>EventCommand_ChangeSpells.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_ChangeSprite.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_ChangeSprite.Designer.cs">
-      <DependentUpon>EventCommand_ChangeSprite.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_ChatboxText.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_ChatboxText.Designer.cs">
-      <DependentUpon>EventCommand_ChatboxText.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_CompleteQuestTask.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_CompleteQuestTask.Designer.cs">
-      <DependentUpon>EventCommand_CompleteQuestTask.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_ConditionalBranch.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_ConditionalBranch.Designer.cs">
-      <DependentUpon>EventCommand_ConditionalBranch.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_EndQuest.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_EndQuest.Designer.cs">
-      <DependentUpon>EventCommand_EndQuest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_GiveExperience.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_GiveExperience.Designer.cs">
-      <DependentUpon>EventCommand_GiveExperience.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_GotoLabel.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_GotoLabel.Designer.cs">
-      <DependentUpon>EventCommand_GotoLabel.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_Label.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_Label.Designer.cs">
-      <DependentUpon>EventCommand_Label.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_OpenCrafting.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_OpenCrafting.Designer.cs">
-      <DependentUpon>EventCommand_OpenCrafting.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_OpenShop.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_OpenShop.Designer.cs">
-      <DependentUpon>EventCommand_OpenShop.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_Options.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_Options.Designer.cs">
-      <DependentUpon>EventCommand_Options.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_PlayAnimation.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_PlayAnimation.Designer.cs">
-      <DependentUpon>EventCommand_PlayAnimation.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_PlayBgm.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_PlayBgm.Designer.cs">
-      <DependentUpon>EventCommand_PlayBgm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_PlayBgs.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_PlayBgs.Designer.cs">
-      <DependentUpon>EventCommand_PlayBgs.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_SelfSwitch.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_SelfSwitch.Designer.cs">
-      <DependentUpon>EventCommand_SelfSwitch.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_SetAccess.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_SetAccess.Designer.cs">
-      <DependentUpon>EventCommand_SetAccess.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_SetClass.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_SetClass.Designer.cs">
-      <DependentUpon>EventCommand_SetClass.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_ShowPicture.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_ShowPicture.Designer.cs">
-      <DependentUpon>EventCommand_ShowPicture.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_SpawnNpc.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_SpawnNpc.Designer.cs">
-      <DependentUpon>EventCommand_SpawnNpc.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_StartCommonEvent.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_StartCommonEvent.Designer.cs">
-      <DependentUpon>EventCommand_StartCommonEvent.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_StartQuest.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_StartQuest.Designer.cs">
-      <DependentUpon>EventCommand_StartQuest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_Text.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_Text.Designer.cs">
-      <DependentUpon>EventCommand_Text.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_Variable.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_Variable.Designer.cs">
-      <DependentUpon>EventCommand_Variable.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_Wait.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_Wait.Designer.cs">
-      <DependentUpon>EventCommand_Wait.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_WaitForRouteCompletion.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_WaitForRouteCompletion.Designer.cs">
-      <DependentUpon>EventCommand_WaitForRouteCompletion.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_Warp.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_Warp.Designer.cs">
-      <DependentUpon>EventCommand_Warp.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Editors\Events\Event Commands\Event_GraphicSelector.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Forms\Editors\Events\Event Commands\Event_GraphicSelector.Designer.cs">
-      <DependentUpon>Event_GraphicSelector.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Editors\Events\Event Commands\Event_MoveRouteAnimationSelector.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Forms\Editors\Events\Event Commands\Event_MoveRouteAnimationSelector.Designer.cs">
-      <DependentUpon>Event_MoveRouteAnimationSelector.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Editors\Events\Event Commands\Event_MoveRouteDesigner.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Forms\Editors\Events\Event Commands\Event_MoveRouteDesigner.Designer.cs">
-      <DependentUpon>Event_MoveRouteDesigner.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Editors\frmAnimation.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\Editors\frmAnimation.Designer.cs">
-      <DependentUpon>frmAnimation.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Editors\frmClass.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\Editors\frmClass.Designer.cs">
-      <DependentUpon>frmClass.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Editors\frmCommonEvent.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\Editors\frmCommonEvent.Designer.cs">
-      <DependentUpon>frmCommonEvent.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Editors\frmCrafts.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\Editors\frmCrafts.Designer.cs">
-      <DependentUpon>frmCrafts.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Editors\frmCraftingTables.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\Editors\frmCraftingTables.Designer.cs">
-      <DependentUpon>frmCraftingTables.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Editors\frmDynamicRequirements.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\Editors\frmDynamicRequirements.Designer.cs">
-      <DependentUpon>frmDynamicRequirements.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Editors\Events\frmEvent.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\Editors\Events\frmEvent.Designer.cs">
-      <DependentUpon>frmEvent.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Editors\frmItem.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\Editors\frmItem.Designer.cs">
-      <DependentUpon>frmItem.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Editors\frmNpc.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\Editors\frmNpc.Designer.cs">
-      <DependentUpon>frmNpc.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Editors\frmProjectile.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\Editors\frmProjectile.Designer.cs">
-      <DependentUpon>frmProjectile.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Editors\frmResource.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\Editors\frmResource.Designer.cs">
-      <DependentUpon>frmResource.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Editors\frmShop.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\Editors\frmShop.Designer.cs">
-      <DependentUpon>frmShop.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Editors\frmSpell.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\Editors\frmSpell.Designer.cs">
-      <DependentUpon>frmSpell.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Editors\frmVariable.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\Editors\frmVariable.Designer.cs">
-      <DependentUpon>frmVariable.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Editors\frmTime.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\Editors\frmTime.Designer.cs">
-      <DependentUpon>frmTime.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Editors\Quest\frmQuest.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\Editors\Quest\frmQuest.Designer.cs">
-      <DependentUpon>frmQuest.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Editors\Quest\Quest_TaskEditor.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Forms\Editors\Quest\Quest_TaskEditor.Designer.cs">
-      <DependentUpon>Quest_TaskEditor.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\frmAbout.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\frmAbout.Designer.cs">
-      <DependentUpon>frmAbout.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\frmLogin.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\frmLogin.Designer.cs">
-      <DependentUpon>frmLogin.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\frmMain.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\frmMain.Designer.cs">
-      <DependentUpon>frmMain.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\frmOptions.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\frmOptions.Designer.cs">
-      <DependentUpon>frmOptions.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\frmProgress.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\frmProgress.Designer.cs">
-      <DependentUpon>frmProgress.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\frmWarpSelection.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\frmWarpSelection.Designer.cs">
-      <DependentUpon>frmWarpSelection.cs</DependentUpon>
-    </Compile>
-    <Compile Include="GlobalSuppressions.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+      <_Parameter1>Intersect.Tests.Editor</_Parameter1>
+    </AssemblyAttribute>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="DarkUI">
+      <HintPath>DarkUI.dll</HintPath>
+    </Reference>
+    <Reference Include="Pngcs">
+      <HintPath>Pngcs.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\Resources.Designer.cs">
       <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
   </ItemGroup>
+
   <ItemGroup>
-    <Reference Include="Costura, Version=3.3.3.0, Culture=neutral, PublicKeyToken=9919ef960d84173d, processorArchitecture=MSIL">
-      <HintPath>..\packages\Costura.Fody.3.3.3\lib\net40\Costura.dll</HintPath>
-    </Reference>
-    <Reference Include="DarkUI">
-      <HintPath>.\DarkUI.dll</HintPath>
-    </Reference>
-    <Reference Include="Lidgren.Network, Version=1.7.7518.2930, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\AscensionGameDev.Lidgren.Network.1.7.7518.2930-debug\lib\net46\Lidgren.Network.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Microsoft.VisualStudio.Validation, Version=15.3.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.VisualStudio.Validation.15.5.31\lib\netstandard2.0\Microsoft.VisualStudio.Validation.dll</HintPath>
-    </Reference>
-    <Reference Include="Mono.Data.Sqlite, Version=2.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
-      <HintPath>..\packages\Mono.Data.Sqlite.Portable.1.0.3.5\lib\net4\Mono.Data.Sqlite.dll</HintPath>
-    </Reference>
-    <Reference Include="MonoGame.Framework, Version=3.8.0.1641, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\MonoGame.Framework.WindowsDX.3.8.0.1641\lib\net452\MonoGame.Framework.dll</HintPath>
-    </Reference>
-    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="Pngcs">
-      <HintPath>.\Pngcs.dll</HintPath>
-    </Reference>
-    <Reference Include="SharpDX, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
-      <HintPath>..\packages\SharpDX.4.0.1\lib\net45\SharpDX.dll</HintPath>
-    </Reference>
-    <Reference Include="SharpDX.Direct2D1, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
-      <HintPath>..\packages\SharpDX.Direct2D1.4.0.1\lib\net45\SharpDX.Direct2D1.dll</HintPath>
-    </Reference>
-    <Reference Include="SharpDX.Direct3D11, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
-      <HintPath>..\packages\SharpDX.Direct3D11.4.0.1\lib\net45\SharpDX.Direct3D11.dll</HintPath>
-    </Reference>
-    <Reference Include="SharpDX.Direct3D9, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
-      <HintPath>..\packages\SharpDX.Direct3D9.4.0.1\lib\net45\SharpDX.Direct3D9.dll</HintPath>
-    </Reference>
-    <Reference Include="SharpDX.DXGI, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
-      <HintPath>..\packages\SharpDX.DXGI.4.0.1\lib\net45\SharpDX.DXGI.dll</HintPath>
-    </Reference>
-    <Reference Include="SharpDX.Mathematics, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
-      <HintPath>..\packages\SharpDX.Mathematics.4.0.1\lib\net45\SharpDX.Mathematics.dll</HintPath>
-    </Reference>
-    <Reference Include="SharpDX.MediaFoundation, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
-      <HintPath>..\packages\SharpDX.MediaFoundation.4.0.1\lib\net45\SharpDX.MediaFoundation.dll</HintPath>
-    </Reference>
-    <Reference Include="SharpDX.XAudio2, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
-      <HintPath>..\packages\SharpDX.XAudio2.4.0.1\lib\net45\SharpDX.XAudio2.dll</HintPath>
-    </Reference>
-    <Reference Include="SharpDX.XInput, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
-      <HintPath>..\packages\SharpDX.XInput.4.0.1\lib\net45\SharpDX.XInput.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Data.Portable, Version=4.0.0.0, Culture=neutral, PublicKeyToken=59e704a76bc4613a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Mono.Data.Sqlite.Portable.1.0.3.5\lib\net4\System.Data.Portable.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.IO.Compression.FileSystem" />
-    <Reference Include="System.Transactions" />
-    <Reference Include="System.Transactions.Portable, Version=4.0.0.0, Culture=neutral, PublicKeyToken=59e704a76bc4613a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Mono.Data.Sqlite.Portable.1.0.3.5\lib\net4\System.Transactions.Portable.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
-    <Reference Include="WeifenLuo.WinFormsUI.Docking, Version=3.0.4.0, Culture=neutral, PublicKeyToken=5cded1a1a0a7b481, processorArchitecture=MSIL">
-      <HintPath>..\packages\DockPanelSuite.3.0.4\lib\net40\WeifenLuo.WinFormsUI.Docking.dll</HintPath>
-    </Reference>
-    <Reference Include="WeifenLuo.WinFormsUI.Docking.ThemeVS2015, Version=3.0.4.0, Culture=neutral, PublicKeyToken=5cded1a1a0a7b481, processorArchitecture=MSIL">
-      <HintPath>..\packages\DockPanelSuite.ThemeVS2015.3.0.4\lib\net40\WeifenLuo.WinFormsUI.Docking.ThemeVS2015.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="app.config" />
-    <None Include="app.manifest">
-      <SubType>Designer</SubType>
-    </None>
-    <EmbeddedResource Include="Forms\Controls\GameObjectList.resx">
-      <DependentUpon>GameObjectList.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_ConditionalBranch.resx">
-      <DependentUpon>EventCommand_ConditionalBranch.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Resources\Shaders\radialgradient_editor.xnb" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Forms\Controls\MapTreeList.resx">
-      <DependentUpon>MapTreeList.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Controls\SearchableDarkTreeView.resx">
-      <DependentUpon>SearchableDarkTreeView.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\DockingElements\frmMapGrid.resx">
-      <DependentUpon>frmMapGrid.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\DockingElements\frmMapList.resx">
-      <DependentUpon>frmMapList.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\frmAnimation.resx">
-      <DependentUpon>frmAnimation.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\frmClass.resx">
-      <DependentUpon>frmClass.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\frmCommonEvent.resx">
-      <DependentUpon>frmCommonEvent.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\frmCrafts.resx">
-      <DependentUpon>frmCrafts.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\frmCraftingTables.resx">
-      <DependentUpon>frmCraftingTables.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\Events\frmEvent.resx">
-      <DependentUpon>frmEvent.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\frmItem.resx">
-      <DependentUpon>frmItem.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\frmNpc.resx">
-      <DependentUpon>frmNpc.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\frmProjectile.resx">
-      <DependentUpon>frmProjectile.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\frmResource.resx">
-      <DependentUpon>frmResource.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\frmShop.resx">
-      <DependentUpon>frmShop.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\frmSpell.resx">
-      <DependentUpon>frmSpell.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\frmVariable.resx">
-      <DependentUpon>frmVariable.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\frmTime.resx">
-      <DependentUpon>frmTime.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Editors\Quest\frmQuest.resx">
-      <DependentUpon>frmQuest.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\frmAbout.resx">
-      <DependentUpon>frmAbout.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\frmUpdate.resx">
-      <DependentUpon>frmUpdate.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\frmLogin.resx">
-      <DependentUpon>frmLogin.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\frmMain.resx">
-      <DependentUpon>frmMain.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\frmWarpSelection.resx">
-      <DependentUpon>frmWarpSelection.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Properties\Resources.resx">
+    <EmbeddedResource Update="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
+
   <ItemGroup>
+    <Content Include="Icon.ico" />
+    <EmbeddedResource Include="$(NetworkHandshakePublicKey)" />
+    <EmbeddedResource Include="Resources\sqlite3x64.dll" />
+    <EmbeddedResource Include="Resources\sqlite3x86.dll" />
+    <EmbeddedResource Include="Resources\Shaders\radialgradient_editor.xnb" />
     <None Include="Resources\layer_sel.png" />
     <None Include="Resources\layer_face.png" />
     <None Include="Resources\layer_face_sel.png" />
     <None Include="Resources\layer_hidden.png" />
     <None Include="Resources\layer.png" />
-    <None Include="FodyWeavers.xml" />
-    <Content Include="Icon.ico" />
-    <EmbeddedResource Include="$(NetworkHandshakePublicKey)" />
-    <None Include="packages.config" />
-    <EmbeddedResource Include="Resources\sqlite3x64.dll" />
-    <EmbeddedResource Include="Resources\sqlite3x86.dll" />
+    <None Include="app.manifest" />
+    <None Include="FodyWeavers.xml">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
+
   <ItemGroup>
-    <ProjectReference Include="..\Intersect %28Core%29\Intersect %28Core%29.csproj">
-      <Project>{bc304b43-1f2c-4454-9edc-48f47357ca94}</Project>
-      <Name>Intersect %28Core%29</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Intersect.Network\Intersect.Network.csproj">
-      <Project>{e8f288cb-51df-4d9d-a3b3-a61bd4fd3f45}</Project>
-      <Name>Intersect.Network</Name>
-    </ProjectReference>
+    <PackageReference Include="Costura.Fody" Version="3.3.3" />
+    <PackageReference Include="DockPanelSuite" Version="3.0.4" />
+    <PackageReference Include="DockPanelSuite.ThemeVS2015" Version="3.0.4" />
+    <PackageReference Include="Fody" Version="4.2.1" />
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.0.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.VersionCheckAnalyzer" Version="3.0.0" />
+    <PackageReference Include="Microsoft.CodeQuality.Analyzers" Version="3.0.0" />
+    <PackageReference Include="Microsoft.NetCore.Analyzers" Version="3.0.0" />
+    <PackageReference Include="Microsoft.NetFramework.Analyzers" Version="3.0.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Validation" Version="15.5.31" />
+    <PackageReference Include="Mono.Data.Sqlite.Portable" Version="1.0.3.5" />
+    <PackageReference Include="MonoGame.Framework.WindowsDX" Version="3.8.0.1641" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="SharpDX" Version="4.0.1" />
+    <PackageReference Include="SharpDX.Direct2D1" Version="4.0.1" />
+    <PackageReference Include="SharpDX.Direct3D11" Version="4.0.1" />
+    <PackageReference Include="SharpDX.Direct3D9" Version="4.0.1" />
+    <PackageReference Include="SharpDX.DXGI" Version="4.0.1" />
+    <PackageReference Include="SharpDX.Mathematics" Version="4.0.1" />
+    <PackageReference Include="SharpDX.MediaFoundation" Version="4.0.1" />
+    <PackageReference Include="SharpDX.XAudio2" Version="4.0.1" />
+    <PackageReference Include="SharpDX.XInput" Version="4.0.1" />
+    <PackageReference Include="System.Collections.Concurrent" Version="4.3.0" />
   </ItemGroup>
+
   <ItemGroup>
-    <Analyzer Include="..\packages\Microsoft.CodeAnalysis.VersionCheckAnalyzer.3.0.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.VersionCheckAnalyzer.resources.dll" />
-    <Analyzer Include="..\packages\Microsoft.CodeAnalysis.VersionCheckAnalyzer.3.0.0\analyzers\dotnet\Microsoft.CodeAnalysis.VersionCheckAnalyzer.dll" />
-    <Analyzer Include="..\packages\Microsoft.CodeQuality.Analyzers.3.0.0\analyzers\dotnet\cs\Humanizer.dll" />
-    <Analyzer Include="..\packages\Microsoft.CodeQuality.Analyzers.3.0.0\analyzers\dotnet\cs\Microsoft.CodeQuality.Analyzers.dll" />
-    <Analyzer Include="..\packages\Microsoft.CodeQuality.Analyzers.3.0.0\analyzers\dotnet\cs\Microsoft.CodeQuality.CSharp.Analyzers.dll" />
-    <Analyzer Include="..\packages\Microsoft.NetCore.Analyzers.3.0.0\analyzers\dotnet\cs\Microsoft.NetCore.Analyzers.dll" />
-    <Analyzer Include="..\packages\Microsoft.NetCore.Analyzers.3.0.0\analyzers\dotnet\cs\Microsoft.NetCore.CSharp.Analyzers.dll" />
-    <Analyzer Include="..\packages\Microsoft.NetFramework.Analyzers.3.0.0\analyzers\dotnet\cs\Microsoft.NetFramework.Analyzers.dll" />
-    <Analyzer Include="..\packages\Microsoft.NetFramework.Analyzers.3.0.0\analyzers\dotnet\cs\Microsoft.NetFramework.CSharp.Analyzers.dll" />
+    <ProjectReference Include="..\Intersect (Core)\Intersect.Core.csproj" />
+    <ProjectReference Include="..\Intersect.Network\Intersect.Network.csproj" />
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
-  </PropertyGroup>
-  <Import Project="..\packages\Mono.Data.Sqlite.Portable.1.0.3.5\tools\Mono.Data.Sqlite.Portable.targets" Condition="Exists('..\packages\Mono.Data.Sqlite.Portable.1.0.3.5\tools\Mono.Data.Sqlite.Portable.targets')" />
-  <Target Name="EnsureMonoDataSqlitePortableImported" BeforeTargets="BeforeBuild" Condition="'$(MonoDataSqlitePortableImported)' == ''">
-    <Error Condition="!Exists('..\packages\Mono.Data.Sqlite.Portable.1.0.3.5\tools\Mono.Data.Sqlite.Portable.targets')" Text="This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them." />
-    <Error Condition="Exists('..\packages\Mono.Data.Sqlite.Portable.1.0.3.5\tools\Mono.Data.Sqlite.Portable.targets')" Text="The build restored NuGet packages. Build the project again to include these packages in the build." />
-  </Target>
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\packages\Costura.Fody.3.3.3\build\Costura.Fody.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Costura.Fody.3.3.3\build\Costura.Fody.props'))" />
-    <Error Condition="!Exists('..\packages\Fody.4.2.1\build\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Fody.4.2.1\build\Fody.targets'))" />
-    <Error Condition="!Exists('..\packages\Microsoft.CodeAnalysis.VersionCheckAnalyzer.3.0.0\build\Microsoft.CodeAnalysis.VersionCheckAnalyzer.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeAnalysis.VersionCheckAnalyzer.3.0.0\build\Microsoft.CodeAnalysis.VersionCheckAnalyzer.props'))" />
-    <Error Condition="!Exists('..\packages\Microsoft.CodeQuality.Analyzers.3.0.0\build\Microsoft.CodeQuality.Analyzers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeQuality.Analyzers.3.0.0\build\Microsoft.CodeQuality.Analyzers.props'))" />
-    <Error Condition="!Exists('..\packages\Microsoft.NetCore.Analyzers.3.0.0\build\Microsoft.NetCore.Analyzers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.NetCore.Analyzers.3.0.0\build\Microsoft.NetCore.Analyzers.props'))" />
-    <Error Condition="!Exists('..\packages\Microsoft.NetFramework.Analyzers.3.0.0\build\Microsoft.NetFramework.Analyzers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.NetFramework.Analyzers.3.0.0\build\Microsoft.NetFramework.Analyzers.props'))" />
-    <Error Condition="!Exists('..\packages\Microsoft.CodeAnalysis.FxCopAnalyzers.3.0.0\build\Microsoft.CodeAnalysis.FxCopAnalyzers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeAnalysis.FxCopAnalyzers.3.0.0\build\Microsoft.CodeAnalysis.FxCopAnalyzers.props'))" />
-    <Error Condition="!Exists('..\packages\MonoGame.Framework.WindowsDX.3.8.0.1641\build\MonoGame.Framework.WindowsDX.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\MonoGame.Framework.WindowsDX.3.8.0.1641\build\MonoGame.Framework.WindowsDX.targets'))" />
-  </Target>
-  <Import Project="..\packages\Fody.4.2.1\build\Fody.targets" Condition="Exists('..\packages\Fody.4.2.1\build\Fody.targets')" />
-  <Import Project="..\packages\MonoGame.Framework.WindowsDX.3.8.0.1641\build\MonoGame.Framework.WindowsDX.targets" Condition="Exists('..\packages\MonoGame.Framework.WindowsDX.3.8.0.1641\build\MonoGame.Framework.WindowsDX.targets')" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+
 </Project>

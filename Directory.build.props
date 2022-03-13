@@ -1,0 +1,26 @@
+<Project>
+
+  <Import Project=".\Intersect.props" />
+
+  <PropertyGroup>
+    <IntersectRepoPath Condition="'$(IntersectRepoPath)' == ''">..</IntersectRepoPath>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <IntersectProjectName>$(MSBuildProjectName.Substring(10))</IntersectProjectName>
+    <BaseOutputPath>$(IntersectRepoPath)\bin\$(IntersectProjectName.ToLower())</BaseOutputPath>
+    <BaseIntermediateOutputPath>$(IntersectRepoPath)\obj\$(IntersectProjectName.ToLower())</BaseIntermediateOutputPath>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(IntersectProjectName)' == 'Network' AND '$(Configuration.ToLower())' != ''">
+    <GenerateEachBuild Condition="'$(INTERSECT_GENERATE_EACH_BUILD)' != ''">true</GenerateEachBuild>
+    <IntersectBuildingAssemblyFile>..\..\bin\building\Debug\net462\Intersect.Building.dll</IntersectBuildingAssemblyFile>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <NetworkKeyOutputDir>$(IntersectRepoPath)\bin\$(Configuration.ToLower())-keys</NetworkKeyOutputDir>
+    <NetworkHandshakePublicKey>$(NetworkKeyOutputDir)\network.handshake.bkey.pub</NetworkHandshakePublicKey>
+    <NetworkHandshakePrivateKey>$(NetworkKeyOutputDir)\network.handshake.bkey</NetworkHandshakePrivateKey>
+  </PropertyGroup>
+
+</Project>

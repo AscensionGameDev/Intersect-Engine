@@ -14,7 +14,7 @@ namespace Intersect.Building
     /// <summary>
     /// Task for generating network security keys automatically at build time.
     /// </summary>
-    public class KeyGenerationTask : AppDomainIsolatedTask
+    public class KeyGenerationTask : Task
     {
         /// <summary>
         /// Generate new keys each time the build is run.
