@@ -1,17 +1,14 @@
-﻿using Intersect.Compression;
+using Intersect.Compression;
 using Intersect.Enums;
 using Intersect.GameObjects.Maps;
 using Intersect.Network;
-using JetBrains.Annotations;
+
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
-using MySql.Data.MySqlClient;
+
+using MySqlConnector;
+
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Intersect.Server.Database.GameData.Migrations
 {
