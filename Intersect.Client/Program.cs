@@ -1,4 +1,4 @@
-﻿using Intersect.Logging;
+using Intersect.Logging;
 
 using System;
 using System.Diagnostics;
@@ -27,7 +27,7 @@ namespace Intersect.Client
         static void Main(string[] args)
         {
             CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("en-US");
-            CosturaUtility.Initialize();
+            //CosturaUtility.Initialize();
 
             ExportDependencies();
             Assembly.LoadFile(Path.Combine(Environment.CurrentDirectory, "MonoGame.Framework.Client.dll"));
