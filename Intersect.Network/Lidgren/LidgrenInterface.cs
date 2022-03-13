@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -289,7 +289,7 @@ namespace Intersect.Network.Lidgren
                 return SendPacket(packet, EmptyConnections, transmissionMode);
             }
 
-            if (!(connection is LidgrenConnection lidgrenConnection))
+            if (connection is not LidgrenConnection lidgrenConnection)
             {
                 Log.Diagnostic("Tried to send to a non-Lidgren connection.");
 
@@ -544,7 +544,7 @@ namespace Intersect.Network.Lidgren
                                     break;
                                 }
 
-                                if (!(mNetwork is ClientNetwork clientNetwork))
+                                if (mNetwork is not ClientNetwork clientNetwork)
                                 {
                                     throw new InvalidOperationException();
                                 }
