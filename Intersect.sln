@@ -59,6 +59,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "targets", "targets", "{BAD9
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{91D46B09-C92B-450B-AEC2-C7A6EE0F8E3B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Intersect.Network.Crypto", "Intersect.Network.Crypto\Intersect.Network.Crypto.csproj", "{C0BC9A0F-D682-45F1-88A2-29F9CDA54DF3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Intersect.Memory", "Intersect.Memory\Intersect.Memory.csproj", "{5D5DBFE5-B9BA-40BA-9F22-87DEBECE6F98}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

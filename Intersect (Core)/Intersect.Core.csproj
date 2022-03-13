@@ -102,4 +102,9 @@
     <PackageReference Include="System.ValueTuple" Version="4.5.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Intersect.Memory\Intersect.Memory.csproj" />
+    <ProjectReference Include="..\Intersect.Network.Crypto\Intersect.Network.Crypto.csproj" />
+  </ItemGroup>
+
 </Project>

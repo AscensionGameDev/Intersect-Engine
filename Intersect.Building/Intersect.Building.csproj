@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -18,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Intersect (Core)\Intersect.Core.csproj" />
+    <ProjectReference Include="..\Intersect.Network.Crypto\Intersect.Network.Crypto.csproj" />
   </ItemGroup>
 
   <ItemGroup>
