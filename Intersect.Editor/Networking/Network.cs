@@ -1,20 +1,17 @@
-﻿using System;
 using System.Diagnostics;
 using System.Reflection;
-using System.Windows.Forms;
 
 using Intersect.Configuration;
+using Intersect.Core;
+using Intersect.Crypto;
+using Intersect.Crypto.Formats;
 using Intersect.Editor.General;
 using Intersect.Logging;
 using Intersect.Network;
-using Intersect.Crypto;
-using Intersect.Crypto.Formats;
 using Intersect.Network.Events;
-using Intersect.Core;
-using System.Collections.Generic;
-using Intersect.Threading;
 using Intersect.Plugins.Helpers;
 using Intersect.Plugins.Interfaces;
+using Intersect.Threading;
 
 namespace Intersect.Editor.Networking
 {
@@ -26,9 +23,9 @@ namespace Intersect.Editor.Networking
 
         public static bool ConnectionDenied;
 
-        public static ClientNetwork EditorLidgrenNetwork;
+        public static ClientNetwork? EditorLidgrenNetwork;
 
-        internal static PacketHandler PacketHandler { get; private set; }
+        internal static PacketHandler? PacketHandler { get; private set; }
 
         public static bool Connected => EditorLidgrenNetwork?.IsConnected ?? false;
 
@@ -92,9 +89,9 @@ namespace Intersect.Editor.Networking
         {
             try
             {
-                EditorLidgrenNetwork.Close();
+                EditorLidgrenNetwork?.Close();
                 EditorLidgrenNetwork = null;
-                PacketHandler.Registry.Dispose();
+                PacketHandler?.Registry?.Dispose();
                 PacketHandler = null;
             }
             catch (Exception)

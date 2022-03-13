@@ -1,12 +1,10 @@
-﻿using System;
-using System.IO;
-
-using Intersect.Editor.Core;
 using Intersect.IO.Files;
 using Intersect.Logging;
 using Intersect.Utilities;
 
 using Microsoft.Xna.Framework.Graphics;
+
+using Graphics = Intersect.Editor.Core.Graphics;
 
 namespace Intersect.Editor.Content
 {
