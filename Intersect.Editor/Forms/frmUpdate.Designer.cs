@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using System.Windows.Forms;
 using DarkUI.Controls;
 
@@ -147,6 +147,6 @@ namespace Intersect.Editor.Forms
         private ProgressBar progressBar;
         private Label lblFiles;
         private Label lblSize;
-        private Timer tmrUpdate;
+        private System.Windows.Forms.Timer tmrUpdate;
     }
 }

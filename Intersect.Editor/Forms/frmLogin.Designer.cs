@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using System.Windows.Forms;
 using DarkUI.Controls;
 
@@ -190,7 +190,7 @@ namespace Intersect.Editor.Forms
         }
 
         #endregion
-        private Timer tmrSocket;
+        private System.Windows.Forms.Timer tmrSocket;
         private DarkTextBox txtUsername;
         private DarkTextBox txtPassword;
         private DarkButton btnLogin;

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Windows.Forms;
 
 namespace Intersect.Editor.Forms.Controls
@@ -7,14 +7,14 @@ namespace Intersect.Editor.Forms.Controls
     public partial class AutoDragPanel : Panel
     {
 
-        private Timer mDragTimer;
+        private System.Windows.Forms.Timer mDragTimer;
 
         private int mMaxDragChange = 2;
 
         public AutoDragPanel()
         {
             InitializeComponent();
-            mDragTimer = new Timer()
+            mDragTimer = new System.Windows.Forms.Timer()
             {
                 Interval = 1
             };
