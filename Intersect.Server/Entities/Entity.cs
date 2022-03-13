@@ -1,11 +1,6 @@
-using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Net.Http.Headers;
-using System.Threading;
-using System.Web.UI;
+
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
@@ -48,7 +43,7 @@ namespace Intersect.Server.Entities
         //Initialization
         public Entity(Guid instanceId, Guid mapInstanceId)
         {
-            if (!(this is EventPageInstance) && !(this is Projectile))
+            if (this is not EventPageInstance && this is not Projectile)
             {
                 for (var i = 0; i < (int)Stats.StatCount; i++)
                 {
@@ -550,7 +545,7 @@ namespace Intersect.Server.Entities
                 }
 
                 //If this is an npc or other event.. if any global page exists that isn't passable then don't walk here!
-                if (!(this is Player) && mapInstance != null)
+                if (this is not Player && mapInstance != default)
                 {
                     foreach (var evt in mapInstance.GlobalEventInstances)
                     {
@@ -1403,7 +1398,7 @@ namespace Intersect.Server.Entities
                 }
             }
 
-            if (targetPlayer == null && !(target is Npc) || target.IsDead())
+            if (targetPlayer == null && target is not Npc || target.IsDead())
             {
                 return;
             }
@@ -1740,7 +1735,7 @@ namespace Intersect.Server.Entities
         {
             var damagingAttack = baseDamage > 0;
             var secondaryDamagingAttack = secondaryDamage > 0;
-            
+
             if (enemy == null)
             {
                 return;
@@ -1760,7 +1755,7 @@ namespace Intersect.Server.Entities
             }
 
             //If the enemy is a resource, the original base damage value will be used on "Calculate Damages", if not, we need change...
-            if (!(enemy is Resource))
+            if (enemy is not Resource)
             {
                 baseDamage = Formulas.CalculateDamage(
                 baseDamage, damageType, scalingStat, scaling, critMultiplier, this, enemy
@@ -2210,13 +2205,13 @@ namespace Intersect.Server.Entities
                             {
                                 if (MapController.TryGetInstanceFromMap(MapId, MapInstanceId, out var mapInstance))
                                 {
-                                    
+
                                     mapInstance
                                     .SpawnMapProjectile(
                                         this, projectileBase, spellBase, null, MapId, (byte)X, (byte)Y, (byte)Z,
                                         (byte)Dir, CastTarget
                                     );
-                                }   
+                                }
                             }
 
                             break;
@@ -2236,7 +2231,7 @@ namespace Intersect.Server.Entities
 
                             break;
                         case SpellTargetTypes.Trap:
-                            if (MapController.TryGetInstanceFromMap(MapId, MapInstanceId, out var instance)) 
+                            if (MapController.TryGetInstanceFromMap(MapId, MapInstanceId, out var instance))
                             {
                                 instance.SpawnTrap(this, spellBase, (byte)X, (byte)Y, (byte)Z);
                             }
@@ -2433,7 +2428,7 @@ namespace Intersect.Server.Entities
                     return true;
                 }
 
-                myTile.Translate(2, 0); // Target Right 
+                myTile.Translate(2, 0); // Target Right
                 if (myTile.Matches(enemyTile))
                 {
                     return true;
@@ -2484,7 +2479,7 @@ namespace Intersect.Server.Entities
             {
                 return GetDistanceTo(target.Map, target.X, target.Y);
             }
-            //Something is null.. return a value that is out of range :) 
+            //Something is null.. return a value that is out of range :)
             return 9999;
         }
 
@@ -2509,7 +2504,7 @@ namespace Intersect.Server.Entities
                 return (int)Math.Sqrt(Math.Pow(x1 - x2, 2) + Math.Pow(y1 - y2, 2));
             }
 
-            //Something is null.. return a value that is out of range :) 
+            //Something is null.. return a value that is out of range :)
             return 9999;
         }
 
@@ -2665,7 +2660,7 @@ namespace Intersect.Server.Entities
                     DropItems(killer);
                 }
             }
-            
+
             foreach (var instance in MapController.GetSurroundingMapInstances(MapId, MapInstanceId, true))
             {
                 instance.ClearEntityTargetsOf(this);
@@ -2692,7 +2687,7 @@ namespace Intersect.Server.Entities
 
                 // Don't mess with the actual object.
                 var item = Items[n].Clone();
-                
+
                 var itemBase = ItemBase.Get(item.ItemId);
                 if (itemBase == null)
                 {
