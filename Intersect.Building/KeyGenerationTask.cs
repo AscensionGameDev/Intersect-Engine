@@ -1,5 +1,3 @@
-﻿using System;
-using System.IO;
 using System.Security.Cryptography;
 
 using Intersect.Building.Properties;
@@ -7,14 +5,13 @@ using Intersect.Crypto;
 using Intersect.Crypto.Formats;
 
 using Microsoft.Build.Framework;
-using Microsoft.Build.Utilities;
 
 namespace Intersect.Building
 {
     /// <summary>
     /// Task for generating network security keys automatically at build time.
     /// </summary>
-    public partial class KeyGenerationTask : Task
+    public partial class KeyGenerationTask : Microsoft.Build.Utilities.Task
     {
         /// <summary>
         /// Generate new keys each time the build is run.

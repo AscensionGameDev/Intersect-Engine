@@ -12,7 +12,7 @@
 
   <PropertyGroup Condition="'$(IntersectProjectName)' == 'Network' AND '$(Configuration.ToLower())' != ''">
     <GenerateEachBuild Condition="'$(INTERSECT_GENERATE_EACH_BUILD)' != ''">true</GenerateEachBuild>
-    <IntersectBuildingAssemblyFile>$(IntersectRepoPath)\Intersect.Building\bin\$(Configuration)\net462\Intersect.Building.dll</IntersectBuildingAssemblyFile>
+    <IntersectBuildingAssemblyFile>$(IntersectRepoPath)\Intersect.Building\bin\building\$(Configuration)\net6.0\Intersect.Building.dll</IntersectBuildingAssemblyFile>
   </PropertyGroup>
 
   <PropertyGroup>
