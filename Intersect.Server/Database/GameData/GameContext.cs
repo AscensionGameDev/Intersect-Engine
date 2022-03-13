@@ -99,17 +99,17 @@ namespace Intersect.Server.Database.GameData
 
         public override void MigrationsProcessed(string[] migrations)
         {
-            if (migrations.IndexOf("20190611170819_CombiningSwitchesVariables") > -1)
+            if (Array.IndexOf(migrations, "20190611170819_CombiningSwitchesVariables") > -1)
             {
                 Beta6Migration.Run(this);
             }
 
-            if (migrations.IndexOf("20201004032158_EnablingCerasVersionTolerance") > -1)
+            if (Array.IndexOf(migrations, "20201004032158_EnablingCerasVersionTolerance") > -1)
             {
                 CerasVersionToleranceMigration.Run(this);
             }
 
-            if (migrations.IndexOf("20210512071349_BoundItemExtension") > -1)
+            if (Array.IndexOf(migrations, "20210512071349_BoundItemExtension") > -1)
             {
                 BoundItemExtensionMigration.Run(this);
             }

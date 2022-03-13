@@ -1,15 +1,12 @@
-﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Data.Common;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
+
 using Amib.Threading;
+
 using Intersect.Collections;
 using Intersect.Config;
 using Intersect.Enums;
@@ -36,7 +33,7 @@ using Intersect.Server.Networking;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 
-using MySql.Data.MySqlClient;
+using MySqlConnector;
 
 namespace Intersect.Server.Database
 {

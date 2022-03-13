@@ -1,4 +1,4 @@
-﻿using System.Linq;
+using System.Linq;
 
 using Microsoft.EntityFrameworkCore;
 
@@ -17,7 +17,7 @@ namespace Intersect.Server.Database
                 return;
             }
 
-            if (dbSet.FirstOrDefault() != null)
+            if (dbSet.Any())
             {
                 return;
             }

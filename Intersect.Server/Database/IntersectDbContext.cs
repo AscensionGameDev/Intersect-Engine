@@ -1,4 +1,4 @@
-﻿using Intersect.Config;
+using Intersect.Config;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -177,13 +177,13 @@ namespace Intersect.Server.Database
                 throw new InvalidOperationException(@"Missing IntersectDbContext constructor.");
             }
 
-            if (!(constructorInfo.Invoke(
+            if (constructorInfo.Invoke(
                 new object[]
                 {
                     connectionStringBuilder ?? configuredConnectionStringBuilder,
                     databaseType ?? configuredDatabaseType
                 }
-            ) is T contextInstance))
+            ) is not T contextInstance)
             {
                 throw new InvalidOperationException();
             }
@@ -208,7 +208,7 @@ namespace Intersect.Server.Database
                     break;
 
                 case DatabaseOptions.DatabaseType.MySQL:
-                    optionsBuilder.UseLoggerFactory(loggerFactory).UseMySql(connectionString, options => options.EnableRetryOnFailure(5, TimeSpan.FromSeconds(12), null)).UseQueryTrackingBehavior(ReadOnly ? QueryTrackingBehavior.NoTracking : QueryTrackingBehavior.TrackAll);
+                    optionsBuilder.UseLoggerFactory(loggerFactory).UseMySql(connectionString, ServerVersion.AutoDetect(connectionString), options => options.EnableRetryOnFailure(5, TimeSpan.FromSeconds(12), null)).UseQueryTrackingBehavior(ReadOnly ? QueryTrackingBehavior.NoTracking : QueryTrackingBehavior.TrackAll);
 
                     break;
 
