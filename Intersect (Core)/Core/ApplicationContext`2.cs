@@ -162,13 +162,13 @@ namespace Intersect.Core
         /// </summary>
         protected virtual void DiscoverServices() =>
             GetAssemblies()
-                .SelectMany(AssemblyExtensions.FindDefinedSubtypesOf<IApplicationService>)
+                .SelectMany(Reflection.AssemblyExtensions.FindDefinedSubtypesOf<IApplicationService>)
                 .ToList()
                 .ForEach(
                     serviceType =>
                     {
                         Debug.Assert(serviceType != null, nameof(serviceType) + " != null");
-                        if (!(Activator.CreateInstance(serviceType) is IApplicationService service))
+                        if (Activator.CreateInstance(serviceType) is not IApplicationService service)
                         {
                             throw new InvalidOperationException(
                                 $@"Failed to create service of type {serviceType.FullName}."
@@ -392,7 +392,7 @@ namespace Intersect.Core
             UnhandledExceptionEventArgs unhandledExceptionEvent
         )
         {
-            if (!(unhandledExceptionEvent.ExceptionObject is Exception unhandledException))
+            if (unhandledExceptionEvent.ExceptionObject is not Exception unhandledException)
             {
                 throw new ArgumentNullException(nameof(unhandledExceptionEvent.ExceptionObject));
             }

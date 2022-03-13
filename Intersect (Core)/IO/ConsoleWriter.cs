@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Runtime.Remoting;
 using System.Text;
@@ -59,11 +59,6 @@ namespace Intersect.IO
         public override object InitializeLifetimeService()
         {
             return TextWriter.InitializeLifetimeService();
-        }
-
-        public override ObjRef CreateObjRef(Type requestedType)
-        {
-            return TextWriter.CreateObjRef(requestedType);
         }
 
         public override void Close()
