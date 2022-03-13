@@ -29,17 +29,17 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Intersect.Server", "..\Inte
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Intersect.Server.Framework", "..\Intersect.Server.Framework\Intersect.Server.Framework.csproj", "{4E38C9B0-DF8C-44E4-9704-D6B05E092733}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Intersect.Tests", "..\Intersect.Tests\Intersect.Tests.csproj", "{4030D4D5-9DC6-496D-9763-9A41DD1DECBE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Intersect.Tests", "..\Tests\Intersect.Tests\Intersect.Tests.csproj", "{4030D4D5-9DC6-496D-9763-9A41DD1DECBE}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Intersect.Tests.Client", "..\Intersect.Tests.Client\Intersect.Tests.Client.csproj", "{49599C25-3C71-4EE5-98C9-957EE20F7DE7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Intersect.Tests.Client", "..\Tests\Intersect.Tests.Client\Intersect.Tests.Client.csproj", "{49599C25-3C71-4EE5-98C9-957EE20F7DE7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Intersect.Tests.Client.Framework", "..\Intersect.Tests.Client.Framework\Intersect.Tests.Client.Framework.csproj", "{83033560-06F2-4155-9956-E4F0F06DC113}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Intersect.Tests.Client.Framework", "..\Tests\Intersect.Tests.Client.Framework\Intersect.Tests.Client.Framework.csproj", "{83033560-06F2-4155-9956-E4F0F06DC113}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Intersect.Tests.Editor", "..\Intersect.Tests.Editor\Intersect.Tests.Editor.csproj", "{3E8FC79E-D0B3-4554-9ABD-BD6DCBFBEE5D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Intersect.Tests.Editor", "..\Tests\Intersect.Tests.Editor\Intersect.Tests.Editor.csproj", "{3E8FC79E-D0B3-4554-9ABD-BD6DCBFBEE5D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Intersect.Tests.Network", "..\Intersect.Tests.Network\Intersect.Tests.Network.csproj", "{E66A4B60-E79C-4222-A702-94D3CC7A2377}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Intersect.Tests.Network", "..\Tests\Intersect.Tests.Network\Intersect.Tests.Network.csproj", "{E66A4B60-E79C-4222-A702-94D3CC7A2377}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Intersect.Tests.Server", "..\Intersect.Tests.Server\Intersect.Tests.Server.csproj", "{F55A208D-6E20-462F-A204-EF13BCCF67D8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Intersect.Tests.Server", "..\Tests\Intersect.Tests.Server\Intersect.Tests.Server.csproj", "{F55A208D-6E20-462F-A204-EF13BCCF67D8}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Files", "Solution Files", "{0C9FAC99-60FC-4063-A15F-7A200096F67C}"
 	ProjectSection(SolutionItems) = preProject

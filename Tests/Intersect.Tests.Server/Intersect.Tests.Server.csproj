@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Description>Tests for the Server - Part of the Intersect 2D Game Creation Suite</Description>
+    <RootNamespace>Intersect.Tests.Server</RootNamespace>
+    <AssemblyName>Intersect.Tests.Server</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Intersect.Server\Intersect.Server.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,6 +1,4 @@
-﻿using NUnit.Framework;
-
-using Assert = Microsoft.VisualStudio.TestTools.UnitTesting.Assert;
+using NUnit.Framework;
 
 namespace Intersect.Utilities
 {
