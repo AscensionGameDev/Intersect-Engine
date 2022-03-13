@@ -1,4 +1,10 @@
 <Project>
+  <PropertyGroup Label="Language Properties">
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>latestMajor</LangVersion>
+  </PropertyGroup>
+
   <PropertyGroup Label="Package Properties">
     <Authors>Ascension Game Development</Authors>
     <Copyright>Copyright © Ascension Game Dev 2022</Copyright>
