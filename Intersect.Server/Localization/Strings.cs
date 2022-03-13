@@ -30,6 +30,15 @@ namespace Intersect.Server.Localization
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString banned = @"{00} has been banned!";
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString UnbanSuccess = @"{00} has been unbanned!";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString UnbanFail = @"Failed to unban {00}. The user is not banned!";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString NotAllowed = @"You do not have the permission to do this.";
+
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString banstatus =
                 @"Your account has been banned since: {00} (UTC) by {01}. Ban expires: {02} (UTC). Reason for ban: {03}";
 
@@ -65,6 +74,12 @@ namespace Intersect.Server.Localization
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString muted = @"{00} has been muted!";
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString UnmuteSuccess = @"{00} has been unmuted!";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString UnmuteFail = @"Failed to unmute {00}. The user is not muted!";
+
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString mutestatus =
                 @"Your account has been muted since: {00} by {01}. Mute expires: {02}. Reason for mute: {03}";
 
@@ -72,10 +87,6 @@ namespace Intersect.Server.Localization
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString registrationsblocked =
                 @"Account registrations are currently blocked by the server.";
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString unbanned = @"Account {00} has been unbanned!";
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString unmuted = @"{00} has been unmuted!";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString emailfail = @"Failed to send your password reset email at this time. Please try again later.";
         }
@@ -1062,6 +1073,9 @@ namespace Intersect.Server.Localization
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString notarget = @"You need to select a valid target.";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString offline = @"User not online!";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString PlayerNotFound = @"The player '{00}' was not found!";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString powerchanged = @"Your power has been modified!";
 

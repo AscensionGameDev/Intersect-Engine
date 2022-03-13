@@ -1821,12 +1821,12 @@ namespace Intersect.Server.Networking
         public void HandlePacket(Client client, AdminActionPacket packet)
         {
             var player = client?.Entity;
-            if (!client.Power.Editor && !client.Power.IsModerator)
+            if (player == null || client.Power == UserRights.None)
             {
                 return;
             }
 
-            ActionProcessing.ProcessAction(client, player, (dynamic) packet.Action);
+            ActionProcessing.ProcessAction(player, (dynamic) packet.Action);
         }
 
         //BuyItemPacket
