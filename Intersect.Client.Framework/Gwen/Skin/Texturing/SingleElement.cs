@@ -1,4 +1,4 @@
-﻿using Intersect.Client.Framework.GenericClasses;
+using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 
 namespace Intersect.Client.Framework.Gwen.Skin.Texturing
@@ -7,7 +7,7 @@ namespace Intersect.Client.Framework.Gwen.Skin.Texturing
     /// <summary>
     ///     Single textured element.
     /// </summary>
-    public partial struct Single
+    public partial struct SingleElement
     {
 
         private readonly GameTexture mTexture;
@@ -18,7 +18,7 @@ namespace Intersect.Client.Framework.Gwen.Skin.Texturing
 
         private readonly int mHeight;
 
-        public Single(GameTexture texture, float x, float y, float w, float h)
+        public SingleElement(GameTexture texture, float x, float y, float w, float h)
         {
             mTexture = texture;
             float texw = 1;
