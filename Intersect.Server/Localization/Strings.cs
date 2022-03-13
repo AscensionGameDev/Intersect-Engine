@@ -302,6 +302,9 @@ namespace Intersect.Server.Localization
             public readonly LocalizedString sleep = @"You cannot cast this ability whilst asleep";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString Snared = @"You cannot cast this ability whilst snared";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString sleepattacking = @"You are asleep and can't attack.";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -370,6 +373,9 @@ namespace Intersect.Server.Localization
                 }
             );
 
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString InvalidTarget = @"Invalid target for this spell.";
         }
 
         public sealed class CommandoutputNamespace : LocaleNamespace
