@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -76,7 +76,7 @@ namespace Intersect.Editor.Networking
 
         public bool HandlePacket(IConnection connection, IPacket packet)
         {
-            if (!(packet is IntersectPacket))
+            if (packet is not IntersectPacket)
             {
                 return false;
             }
