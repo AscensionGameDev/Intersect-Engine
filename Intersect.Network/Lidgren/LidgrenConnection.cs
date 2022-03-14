@@ -86,7 +86,7 @@ namespace Intersect.Network.Lidgren
                 throw new ArgumentNullException();
             }
 
-            Encryption = new NetAESEncryption(NetConnection.Peer, mAesKey);
+            Encryption = new NetNoopEncryption(NetConnection.Peer, mAesKey);
         }
 
         public bool HandleApproval(ApprovalPacket approval)
