@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
@@ -333,8 +333,7 @@ namespace Intersect.Server.Database.PlayerData
         private static readonly Func<PlayerContext, string, IEnumerable<Mute>> ByIp =
             EF.CompileQuery<PlayerContext, string, Mute>(
                 (context, ip) => context.Mutes.Where(
-                    mute => string.Equals(mute.Ip, ip, StringComparison.OrdinalIgnoreCase) &&
-                            mute.EndTime > DateTime.UtcNow
+                    mute => mute.Ip == ip && mute.EndTime > DateTime.UtcNow
                 )
             ) ??
             throw new InvalidOperationException();

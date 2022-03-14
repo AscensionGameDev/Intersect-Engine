@@ -59,9 +59,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "targets", "targets", "{BAD9
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{91D46B09-C92B-450B-AEC2-C7A6EE0F8E3B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Intersect.Network.Crypto", "Intersect.Network.Crypto\Intersect.Network.Crypto.csproj", "{C0BC9A0F-D682-45F1-88A2-29F9CDA54DF3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Intersect.Network.Crypto", "Intersect.Network.Crypto\Intersect.Network.Crypto.csproj", "{C0BC9A0F-D682-45F1-88A2-29F9CDA54DF3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Intersect.Memory", "Intersect.Memory\Intersect.Memory.csproj", "{5D5DBFE5-B9BA-40BA-9F22-87DEBECE6F98}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Intersect.Memory", "Intersect.Memory\Intersect.Memory.csproj", "{5D5DBFE5-B9BA-40BA-9F22-87DEBECE6F98}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lidgren.Network", "..\Lidgren.Network\Lidgren.Network\Lidgren.Network.csproj", "{598E105D-0889-473E-BB50-30B25C0E73CD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
