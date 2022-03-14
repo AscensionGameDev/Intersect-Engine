@@ -1,33 +1,26 @@
-﻿using Intersect.Core;
-using Intersect.Logging;
-using Intersect.Network;
+using System.Diagnostics;
+using System.Reflection;
+
+using Intersect.Core;
 using Intersect.Crypto;
 using Intersect.Crypto.Formats;
+using Intersect.Factories;
+using Intersect.Logging;
+using Intersect.Network;
+using Intersect.Plugins;
+using Intersect.Plugins.Interfaces;
 using Intersect.Server.Core.Services;
 using Intersect.Server.Database;
+using Intersect.Server.General;
 using Intersect.Server.Localization;
 using Intersect.Server.Networking;
 using Intersect.Server.Networking.Helpers;
 using Intersect.Server.Networking.Lidgren;
+using Intersect.Server.Plugins;
 using Intersect.Server.Web.RestApi;
 
 using Open.Nat;
 
-using System;
-using System.Diagnostics;
-using System.Linq;
-using System.Reflection;
-using System.Threading;
-using System.Threading.Tasks;
-
-using Intersect.Factories;
-using Intersect.Plugins;
-using Intersect.Server.Plugins;
-using Intersect.Server.General;
-using Intersect.Logging.Output;
-using System.Collections.Immutable;
-using System.Collections.Generic;
-using Intersect.Plugins.Interfaces;
 using Intersect.Server.Database.PlayerData.Players;
 
 #if WEBSOCKETS

@@ -57,9 +57,9 @@
     <PackageReference Include="CommandLineParser" Version="2.8.0" />
     <PackageReference Include="K4os.Compression.LZ4" Version="1.1.10" />
     <PackageReference Include="MathNet.Numerics" Version="4.9.0" />
-    <PackageReference Include="MessagePack" Version="2.2.85" />
-    <PackageReference Include="MessagePack.Annotations" Version="2.2.85" />
-    <PackageReference Include="MessagePackAnalyzer" Version="2.2.85" />
+    <PackageReference Include="MessagePack" Version="2.3.85" />
+    <PackageReference Include="MessagePack.Annotations" Version="2.3.85" />
+    <PackageReference Include="MessagePackAnalyzer" Version="2.3.85" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" Version="6.0.3" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Analyzers" Version="6.0.3" />
     <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="6.0.0" />

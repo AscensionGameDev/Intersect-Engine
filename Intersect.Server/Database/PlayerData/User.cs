@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -421,7 +421,8 @@ namespace Intersect.Server.Database.PlayerData
                         if (!string.IsNullOrWhiteSpace(salt))
                         {
                             var pass = SaltPasswordHash(ptPassword, salt);
-                            return PostLoad(QueryUserByNameAndPassword(context, username, pass));
+                            var queriedUser = QueryUserByNameAndPasswordShallow(context, username, pass);
+                            return PostLoad(queriedUser);
                         }
                     }
                 }
@@ -753,6 +754,25 @@ namespace Intersect.Server.Database.PlayerData
                     .ThenInclude(c => c.Spells)
                     .Include(p => p.Players)
                     .ThenInclude(c => c.Bank)
+                    .FirstOrDefault()
+            ) ??
+            throw new InvalidOperationException();
+
+        private static readonly Func<PlayerContext, string, string, User> QueryUserByNameAndPasswordShallow =
+            EF.CompileQuery(
+                // ReSharper disable once SpecifyStringComparison
+                (PlayerContext context, string username, string password) => context.Users.Where(u => u.Name == username && u.Password == password)
+                    .Include(p => p.Ban)
+                    .Include(p => p.Mute)
+                    .Include(p => p.Players)
+                    .FirstOrDefault()
+            ) ??
+            throw new InvalidOperationException();
+
+        private static readonly Func<PlayerContext, string, string, User> QueryUserByNameAndPasswordNoLoad =
+            EF.CompileQuery(
+                // ReSharper disable once SpecifyStringComparison
+                (PlayerContext context, string username, string password) => context.Users.Where(u => u.Name == username && u.Password == password)
                     .FirstOrDefault()
             ) ??
             throw new InvalidOperationException();

@@ -248,14 +248,14 @@ namespace Intersect.Network.Lidgren
             if (connection != null)
             {
                 var lidgrenConnection = connection as LidgrenConnection;
-                if (lidgrenConnection?.Aes == null)
+                if (lidgrenConnection?.Encryption == null)
                 {
                     Log.Error("No provider to decrypt data with.");
 
                     return false;
                 }
 
-                if (!lidgrenConnection.Aes.Decrypt(message))
+                if (!lidgrenConnection.Encryption.Decrypt(message))
                 {
                     Log.Error($"Error decrypting inbound Lidgren message [Connection:{connection.Guid}].");
 
@@ -884,9 +884,9 @@ namespace Intersect.Network.Lidgren
                 throw new ArgumentNullException(nameof(connection.NetConnection));
             }
 
-            lock (connection.Aes)
+            lock (connection.Encryption)
             {
-                message.Encrypt(connection.Aes);
+                message.Encrypt(connection.Encryption);
             }
             connection.NetConnection.SendMessage(message, deliveryMethod, sequenceChannel);
         }
