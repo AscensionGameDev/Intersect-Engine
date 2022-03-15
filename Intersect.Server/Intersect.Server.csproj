@@ -163,16 +163,3 @@
   </ItemGroup>
 
 </Project>
-  <!-- <Target Name="WorkaroundMSBuild3064_LinuxLibs" BeforeTargets="SplitResourcesByCulture"> -->
-    <!-- Workaround until https://github.com/dotnet/msbuild/issues/3064 gets merged into mono/msbuild -->
-    <!-- Based on https://github.com/dotnet/msbuild/issues/3064#issuecomment-418540984 -->
-    <!-- <ItemGroup> -->
-      <!-- <_ResourcesWithCultureFilename Include="@(EmbeddedResource)" Condition="$([System.String]::Copy('%(Filename)').Contains('.so'))" /> -->
-      <!-- <_MixedResourceWithNoCulture Include="@(_ResourcesWithCultureFilename)"> -->
-        <!-- <WithCulture>false</WithCulture> -->
-        <!-- Turns Resources\libopenal.so.1 to Intersect.Client.Resources.libopenal.so.1 -->
-        <!-- <LogicalName>$(RootNamespace).$([System.String]::Copy('%(Link)').Replace('\', '/').Replace('/', '.'))</LogicalName> -->
-      <!-- </_MixedResourceWithNoCulture> -->
-      <!-- <EmbeddedResource Remove="@(_ResourcesWithCultureFilename)" /> -->
-    <!-- </ItemGroup> -->
-  <!-- </Target> -->
