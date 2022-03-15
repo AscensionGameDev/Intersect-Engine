@@ -11,13 +11,9 @@ namespace Intersect.Server.Database.PlayerData.Players
 
     public partial class PlayerVariable : Variable, IPlayerOwned
     {
+        public PlayerVariable() : base() { }
 
-        public PlayerVariable() : this(Guid.Empty) { }
-
-        public PlayerVariable(Guid id)
-        {
-            VariableId = id;
-        }
+        public PlayerVariable(Guid id) : base(id) { }
 
         [NotMapped]
         public string VariableName => PlayerVariableBase.GetName(VariableId);

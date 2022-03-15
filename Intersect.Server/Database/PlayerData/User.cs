@@ -76,9 +76,9 @@ namespace Intersect.Server.Database.PlayerData
             }
         }
 
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Column(Order = 0)]
-        public Guid Id { get; private set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public Guid Id { get; private set; } = Guid.NewGuid();
 
         [Column(Order = 1)]
         public string Name { get; set; }
@@ -422,7 +422,8 @@ namespace Intersect.Server.Database.PlayerData
                         {
                             var pass = SaltPasswordHash(ptPassword, salt);
                             var queriedUser = QueryUserByNameAndPasswordShallow(context, username, pass);
-                            return PostLoad(queriedUser);
+                            //return PostLoad(queriedUser);
+                            return queriedUser;
                         }
                     }
                 }

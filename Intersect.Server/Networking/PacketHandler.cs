@@ -2422,11 +2422,14 @@ namespace Intersect.Server.Networking
         public void HandlePacket(Client client, SelectCharacterPacket packet)
         {
             if (client.User == null)
+            {
                 return;
+            }
 
-            var character = DbInterface.GetUserCharacter(client.User, packet.CharacterId);
+            var character = DbInterface.GetUserCharacter(client.User, packet.CharacterId, true);
             if (character != null)
             {
+                
                 client.LoadCharacter(character);
 
                 UserActivityHistory.LogActivity(client.User?.Id ?? Guid.Empty, client?.Entity?.Id ?? Guid.Empty, client?.GetIp(), UserActivityHistory.PeerType.Client, UserActivityHistory.UserAction.SelectPlayer, $"{client?.Name},{client?.Entity?.Name}");

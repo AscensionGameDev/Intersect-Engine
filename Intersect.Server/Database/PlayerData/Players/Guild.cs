@@ -40,8 +40,8 @@ namespace Intersect.Server.Database.PlayerData.Players
         /// <summary>
         /// The database Id of the guild.
         /// </summary>
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public Guid Id { get; private set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public Guid Id { get; private set; } = Guid.NewGuid();
 
         /// <summary>
         /// The name of the guild.

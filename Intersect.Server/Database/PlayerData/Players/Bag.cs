@@ -32,8 +32,8 @@ namespace Intersect.Server.Database.PlayerData.Players
         [JsonIgnore, NotMapped]
         public bool IsEmpty => Slots?.All(slot => slot?.ItemId == default || ItemBase.Get(slot.ItemId) == default) ?? true;
 
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public Guid Id { get; private set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public Guid Id { get; private set; } = Guid.NewGuid();
 
         public int SlotCount { get; private set; }
 

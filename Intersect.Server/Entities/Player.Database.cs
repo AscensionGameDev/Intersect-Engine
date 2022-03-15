@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
@@ -443,6 +443,20 @@ namespace Intersect.Server.Entities
         private static readonly Func<PlayerContext, string, bool> AnyPlayerByName =
             EF.CompileQuery(
                 (PlayerContext context, string name) => context.Players.Where(p => p.Name == name).Any());
+
+        internal static readonly Func<PlayerContext, Guid, Player> QueryPlayerByGuidWithLoading =
+            EF.CompileQuery(
+                // ReSharper disable once SpecifyStringComparison
+                (PlayerContext context, Guid playerId) => context.Players.Where(p => p.Id == playerId)
+                    .Include(c => c.Bank)
+                    .Include(c => c.Hotbar)
+                    .Include(c => c.Items)
+                    .Include(c => c.Quests)
+                    .Include(c => c.Spells)
+                    .Include(c => c.Variables)
+                    .FirstOrDefault()
+            ) ??
+            throw new InvalidOperationException();
 
         #endregion
 

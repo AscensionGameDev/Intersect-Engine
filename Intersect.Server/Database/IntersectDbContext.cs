@@ -42,7 +42,9 @@ namespace Intersect.Server.Database
             DatabaseOptions.DatabaseType databaseType = DatabaseOptions.DatabaseType.SQLite,
             Intersect.Logging.Logger dbLogger = null,
             Intersect.Logging.LogLevel logLevel = Intersect.Logging.LogLevel.None,
-            bool asReadOnly = false, bool autoDetectChanges = true
+            bool asReadOnly = false,
+            bool explicitLoad = false,
+            bool autoDetectChanges = true
         )
         {
             ConnectionStringBuilder = connectionStringBuilder;
@@ -113,7 +115,10 @@ namespace Intersect.Server.Database
             if (ReadOnly)
             {
                 ChangeTracker.LazyLoadingEnabled = false;
-                ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
+                if (!explicitLoad)
+                {
+                    ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
+                }
             }
         }
 
@@ -203,7 +208,8 @@ namespace Intersect.Server.Database
             switch (DatabaseType)
             {
                 case DatabaseOptions.DatabaseType.SQLite:
-                    optionsBuilder.UseLoggerFactory(loggerFactory).UseSqlite(connectionString).UseQueryTrackingBehavior(ReadOnly ? QueryTrackingBehavior.NoTracking : QueryTrackingBehavior.TrackAll);
+                    //optionsBuilder.UseLoggerFactory(loggerFactory);
+                    optionsBuilder.UseSqlite(connectionString).UseQueryTrackingBehavior(ReadOnly ? QueryTrackingBehavior.NoTracking : QueryTrackingBehavior.TrackAll);
 
                     break;
 
@@ -214,6 +220,20 @@ namespace Intersect.Server.Database
 
                 default:
                     throw new ArgumentOutOfRangeException(nameof(DatabaseType));
+            }
+        }
+
+        protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
+        {
+            base.ConfigureConventions(configurationBuilder);
+
+            switch (DatabaseType)
+            {
+                case DatabaseOptions.DatabaseType.SQLite:
+                    configurationBuilder
+                        .Properties<Guid>()
+                        .HaveConversion<GuidBinaryConverter>();
+                    break;
             }
         }
 

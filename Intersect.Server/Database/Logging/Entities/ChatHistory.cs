@@ -8,8 +8,8 @@ namespace Intersect.Server.Database.Logging.Entities
 {
     public partial class ChatHistory
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public Guid Id { get; private set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public Guid Id { get; private set; } = Guid.NewGuid();
 
         public Guid UserId { get; set; }
 

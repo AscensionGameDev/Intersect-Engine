@@ -32,7 +32,7 @@ namespace Intersect.Server.Database.GameData
             bool readOnly = false,
             Intersect.Logging.Logger logger = null,
             Intersect.Logging.LogLevel logLevel = Intersect.Logging.LogLevel.None
-        ) : base(connectionStringBuilder, databaseType, logger, logLevel, readOnly, false)
+        ) : base(connectionStringBuilder, databaseType, logger, logLevel, readOnly, autoDetectChanges: false)
         {
 
         }
