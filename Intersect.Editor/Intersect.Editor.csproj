@@ -96,4 +96,550 @@
     <ProjectReference Include="..\Intersect.Network\Intersect.Network.csproj" />
   </ItemGroup>
 
+  <ItemGroup Label="Form Compile Updates">
+    <Compile Update="Forms\Controls\GameObjectList.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Forms\Controls\GameObjectList.Designer.cs">
+      <DependentUpon>GameObjectList.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Forms\Editors\Events\Event Commands\EventCommand_SetGuildBankSlots.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Forms\Editors\Events\Event Commands\EventCommand_SetGuildBankSlots.Designer.cs">
+      <DependentUpon>EventCommand_SetGuildBankSlots.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Forms\Editors\Events\Event Commands\EventCommand_ChangePlayerColor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Forms\Editors\Events\Event Commands\EventCommand_ChangePlayerColor.Designer.cs">
+      <DependentUpon>EventCommand_ChangePlayerColor.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Forms\Editors\Events\Event Commands\EventCommand_ChangeName.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Forms\Editors\Events\Event Commands\EventCommand_ChangeName.Designer.cs">
+      <DependentUpon>EventCommand_ChangeName.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Forms\Editors\Events\Event Commands\EventCommand_CreateGuild.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Forms\Editors\Events\Event Commands\EventCommand_CreateGuild.Designer.cs">
+      <DependentUpon>EventCommand_CreateGuild.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Forms\frmUpdate.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\frmUpdate.Designer.cs">
+      <DependentUpon>frmUpdate.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Forms\Helpers\GridHelper.cs" />
+    <Compile Update="Forms\Controls\SearchableDarkTreeView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Forms\Controls\SearchableDarkTreeView.Designer.cs">
+      <DependentUpon>SearchableDarkTreeView.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Forms\Editors\Events\CommandPrinter.cs" />
+    <Compile Update="Forms\Editors\Events\Event Commands\EventCommand_ChangeVital.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Forms\Editors\Events\Event Commands\EventCommand_ChangeVital.Designer.cs">
+      <DependentUpon>EventCommand_ChangeVital.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Forms\Editors\Events\Event Commands\EventCommand_ChangePlayerLabel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Forms\Editors\Events\Event Commands\EventCommand_ChangePlayerLabel.Designer.cs">
+      <DependentUpon>EventCommand_ChangePlayerLabel.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Forms\Editors\Events\Event Commands\EventCommand_ChangeNameColor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Forms\Editors\Events\Event Commands\EventCommand_ChangeNameColor.Designer.cs">
+      <DependentUpon>EventCommand_ChangeNameColor.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Forms\Editors\Events\Event Commands\EventCommand_EquipItem.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Forms\Editors\Events\Event Commands\EventCommand_EquipItem.Designer.cs">
+      <DependentUpon>EventCommand_EquipItem.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Forms\Editors\Events\Event Commands\EventCommand_Input.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Forms\Editors\Events\Event Commands\EventCommand_Input.Designer.cs">
+      <DependentUpon>EventCommand_Input.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Forms\Controls\AutoDragPanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Forms\Controls\AutoDragPanel.Designer.cs">
+      <DependentUpon>AutoDragPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Forms\Controls\LightEditorCtrl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Forms\Controls\LightEditorCtrl.Designer.cs">
+      <DependentUpon>LightEditorCtrl.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Forms\Controls\MapTreeList.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Forms\Controls\MapTreeList.Designer.cs">
+      <DependentUpon>MapTreeList.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Forms\DockingElements\frmMapEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\DockingElements\frmMapEditor.Designer.cs">
+      <DependentUpon>frmMapEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Forms\DockingElements\frmMapGrid.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\DockingElements\frmMapGrid.Designer.cs">
+      <DependentUpon>frmMapGrid.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Forms\DockingElements\frmMapLayers.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\DockingElements\frmMapLayers.Designer.cs">
+      <DependentUpon>frmMapLayers.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Forms\DockingElements\frmMapList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\DockingElements\frmMapList.Designer.cs">
+      <DependentUpon>frmMapList.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Forms\DockingElements\frmMapProperties.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\DockingElements\frmMapProperties.Designer.cs">
+      <DependentUpon>frmMapProperties.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Forms\Editors\EditorForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\Editors\Events\Event Commands\EventCommand_ChangeFace.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Forms\Editors\Events\Event Commands\EventCommand_ChangeFace.Designer.cs">
+      <DependentUpon>EventCommand_ChangeFace.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Forms\Editors\Events\Event Commands\EventCommand_ChangeGender.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Forms\Editors\Events\Event Commands\EventCommand_ChangeGender.Designer.cs">
+      <DependentUpon>EventCommand_ChangeGender.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Forms\Editors\Events\Event Commands\EventCommand_ChangeItems.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Forms\Editors\Events\Event Commands\EventCommand_ChangeItems.Designer.cs">
+      <DependentUpon>EventCommand_ChangeItems.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Forms\Editors\Events\Event Commands\EventCommand_ChangeLevel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Forms\Editors\Events\Event Commands\EventCommand_ChangeLevel.Designer.cs">
+      <DependentUpon>EventCommand_ChangeLevel.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Forms\Editors\Events\Event Commands\EventCommand_ChangeSpells.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Forms\Editors\Events\Event Commands\EventCommand_ChangeSpells.Designer.cs">
+      <DependentUpon>EventCommand_ChangeSpells.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Forms\Editors\Events\Event Commands\EventCommand_ChangeSprite.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Forms\Editors\Events\Event Commands\EventCommand_ChangeSprite.Designer.cs">
+      <DependentUpon>EventCommand_ChangeSprite.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Forms\Editors\Events\Event Commands\EventCommand_ChatboxText.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Forms\Editors\Events\Event Commands\EventCommand_ChatboxText.Designer.cs">
+      <DependentUpon>EventCommand_ChatboxText.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Forms\Editors\Events\Event Commands\EventCommand_CompleteQuestTask.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Forms\Editors\Events\Event Commands\EventCommand_CompleteQuestTask.Designer.cs">
+      <DependentUpon>EventCommand_CompleteQuestTask.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Forms\Editors\Events\Event Commands\EventCommand_ConditionalBranch.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Forms\Editors\Events\Event Commands\EventCommand_ConditionalBranch.Designer.cs">
+      <DependentUpon>EventCommand_ConditionalBranch.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Forms\Editors\Events\Event Commands\EventCommand_EndQuest.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Forms\Editors\Events\Event Commands\EventCommand_EndQuest.Designer.cs">
+      <DependentUpon>EventCommand_EndQuest.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Forms\Editors\Events\Event Commands\EventCommand_GiveExperience.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Forms\Editors\Events\Event Commands\EventCommand_GiveExperience.Designer.cs">
+      <DependentUpon>EventCommand_GiveExperience.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Forms\Editors\Events\Event Commands\EventCommand_GotoLabel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Forms\Editors\Events\Event Commands\EventCommand_GotoLabel.Designer.cs">
+      <DependentUpon>EventCommand_GotoLabel.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Forms\Editors\Events\Event Commands\EventCommand_Label.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Forms\Editors\Events\Event Commands\EventCommand_Label.Designer.cs">
+      <DependentUpon>EventCommand_Label.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Forms\Editors\Events\Event Commands\EventCommand_OpenCrafting.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Forms\Editors\Events\Event Commands\EventCommand_OpenCrafting.Designer.cs">
+      <DependentUpon>EventCommand_OpenCrafting.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Forms\Editors\Events\Event Commands\EventCommand_OpenShop.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Forms\Editors\Events\Event Commands\EventCommand_OpenShop.Designer.cs">
+      <DependentUpon>EventCommand_OpenShop.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Forms\Editors\Events\Event Commands\EventCommand_Options.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Forms\Editors\Events\Event Commands\EventCommand_Options.Designer.cs">
+      <DependentUpon>EventCommand_Options.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Forms\Editors\Events\Event Commands\EventCommand_PlayAnimation.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Forms\Editors\Events\Event Commands\EventCommand_PlayAnimation.Designer.cs">
+      <DependentUpon>EventCommand_PlayAnimation.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Forms\Editors\Events\Event Commands\EventCommand_PlayBgm.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Forms\Editors\Events\Event Commands\EventCommand_PlayBgm.Designer.cs">
+      <DependentUpon>EventCommand_PlayBgm.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Forms\Editors\Events\Event Commands\EventCommand_PlayBgs.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Forms\Editors\Events\Event Commands\EventCommand_PlayBgs.Designer.cs">
+      <DependentUpon>EventCommand_PlayBgs.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Forms\Editors\Events\Event Commands\EventCommand_SelfSwitch.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Forms\Editors\Events\Event Commands\EventCommand_SelfSwitch.Designer.cs">
+      <DependentUpon>EventCommand_SelfSwitch.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Forms\Editors\Events\Event Commands\EventCommand_SetAccess.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Forms\Editors\Events\Event Commands\EventCommand_SetAccess.Designer.cs">
+      <DependentUpon>EventCommand_SetAccess.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Forms\Editors\Events\Event Commands\EventCommand_SetClass.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Forms\Editors\Events\Event Commands\EventCommand_SetClass.Designer.cs">
+      <DependentUpon>EventCommand_SetClass.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Forms\Editors\Events\Event Commands\EventCommand_ShowPicture.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Forms\Editors\Events\Event Commands\EventCommand_ShowPicture.Designer.cs">
+      <DependentUpon>EventCommand_ShowPicture.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Forms\Editors\Events\Event Commands\EventCommand_SpawnNpc.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Forms\Editors\Events\Event Commands\EventCommand_SpawnNpc.Designer.cs">
+      <DependentUpon>EventCommand_SpawnNpc.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Forms\Editors\Events\Event Commands\EventCommand_StartCommonEvent.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Forms\Editors\Events\Event Commands\EventCommand_StartCommonEvent.Designer.cs">
+      <DependentUpon>EventCommand_StartCommonEvent.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Forms\Editors\Events\Event Commands\EventCommand_StartQuest.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Forms\Editors\Events\Event Commands\EventCommand_StartQuest.Designer.cs">
+      <DependentUpon>EventCommand_StartQuest.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Forms\Editors\Events\Event Commands\EventCommand_Text.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Forms\Editors\Events\Event Commands\EventCommand_Text.Designer.cs">
+      <DependentUpon>EventCommand_Text.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Forms\Editors\Events\Event Commands\EventCommand_Variable.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Forms\Editors\Events\Event Commands\EventCommand_Variable.Designer.cs">
+      <DependentUpon>EventCommand_Variable.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Forms\Editors\Events\Event Commands\EventCommand_Wait.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Forms\Editors\Events\Event Commands\EventCommand_Wait.Designer.cs">
+      <DependentUpon>EventCommand_Wait.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Forms\Editors\Events\Event Commands\EventCommand_WaitForRouteCompletion.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Forms\Editors\Events\Event Commands\EventCommand_WaitForRouteCompletion.Designer.cs">
+      <DependentUpon>EventCommand_WaitForRouteCompletion.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Forms\Editors\Events\Event Commands\EventCommand_Warp.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Forms\Editors\Events\Event Commands\EventCommand_Warp.Designer.cs">
+      <DependentUpon>EventCommand_Warp.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Forms\Editors\Events\Event Commands\Event_GraphicSelector.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Forms\Editors\Events\Event Commands\Event_GraphicSelector.Designer.cs">
+      <DependentUpon>Event_GraphicSelector.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Forms\Editors\Events\Event Commands\Event_MoveRouteAnimationSelector.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Forms\Editors\Events\Event Commands\Event_MoveRouteAnimationSelector.Designer.cs">
+      <DependentUpon>Event_MoveRouteAnimationSelector.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Forms\Editors\Events\Event Commands\Event_MoveRouteDesigner.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Forms\Editors\Events\Event Commands\Event_MoveRouteDesigner.Designer.cs">
+      <DependentUpon>Event_MoveRouteDesigner.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Forms\Editors\frmAnimation.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\Editors\frmAnimation.Designer.cs">
+      <DependentUpon>frmAnimation.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Forms\Editors\frmClass.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\Editors\frmClass.Designer.cs">
+      <DependentUpon>frmClass.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Forms\Editors\frmCommonEvent.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\Editors\frmCommonEvent.Designer.cs">
+      <DependentUpon>frmCommonEvent.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Forms\Editors\frmCrafts.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\Editors\frmCrafts.Designer.cs">
+      <DependentUpon>frmCrafts.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Forms\Editors\frmCraftingTables.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\Editors\frmCraftingTables.Designer.cs">
+      <DependentUpon>frmCraftingTables.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Forms\Editors\frmDynamicRequirements.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\Editors\frmDynamicRequirements.Designer.cs">
+      <DependentUpon>frmDynamicRequirements.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Forms\Editors\Events\frmEvent.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\Editors\Events\frmEvent.Designer.cs">
+      <DependentUpon>frmEvent.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Forms\Editors\frmItem.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\Editors\frmItem.Designer.cs">
+      <DependentUpon>frmItem.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Forms\Editors\frmNpc.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\Editors\frmNpc.Designer.cs">
+      <DependentUpon>frmNpc.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Forms\Editors\frmProjectile.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\Editors\frmProjectile.Designer.cs">
+      <DependentUpon>frmProjectile.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Forms\Editors\frmResource.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\Editors\frmResource.Designer.cs">
+      <DependentUpon>frmResource.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Forms\Editors\frmShop.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\Editors\frmShop.Designer.cs">
+      <DependentUpon>frmShop.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Forms\Editors\frmSpell.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\Editors\frmSpell.Designer.cs">
+      <DependentUpon>frmSpell.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Forms\Editors\frmVariable.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\Editors\frmVariable.Designer.cs">
+      <DependentUpon>frmVariable.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Forms\Editors\frmTime.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\Editors\frmTime.Designer.cs">
+      <DependentUpon>frmTime.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Forms\Editors\Quest\frmQuest.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\Editors\Quest\frmQuest.Designer.cs">
+      <DependentUpon>frmQuest.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Forms\Editors\Quest\Quest_TaskEditor.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Forms\Editors\Quest\Quest_TaskEditor.Designer.cs">
+      <DependentUpon>Quest_TaskEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Forms\frmAbout.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\frmAbout.Designer.cs">
+      <DependentUpon>frmAbout.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Forms\frmLogin.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\frmLogin.Designer.cs">
+      <DependentUpon>frmLogin.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Forms\frmMain.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\frmMain.Designer.cs">
+      <DependentUpon>frmMain.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Forms\frmOptions.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\frmOptions.Designer.cs">
+      <DependentUpon>frmOptions.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Forms\frmProgress.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\frmProgress.Designer.cs">
+      <DependentUpon>frmProgress.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Forms\frmWarpSelection.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\frmWarpSelection.Designer.cs">
+      <DependentUpon>frmWarpSelection.cs</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup Label="Form Embedded Resources">
+    <EmbeddedResource Update="Forms\Controls\MapTreeList.resx">
+      <DependentUpon>MapTreeList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Forms\Controls\SearchableDarkTreeView.resx">
+      <DependentUpon>SearchableDarkTreeView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Forms\DockingElements\frmMapGrid.resx">
+      <DependentUpon>frmMapGrid.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Forms\DockingElements\frmMapList.resx">
+      <DependentUpon>frmMapList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Forms\Editors\frmAnimation.resx">
+      <DependentUpon>frmAnimation.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Forms\Editors\frmClass.resx">
+      <DependentUpon>frmClass.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Forms\Editors\frmCommonEvent.resx">
+      <DependentUpon>frmCommonEvent.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Forms\Editors\frmCrafts.resx">
+      <DependentUpon>frmCrafts.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Forms\Editors\frmCraftingTables.resx">
+      <DependentUpon>frmCraftingTables.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Forms\Editors\Events\frmEvent.resx">
+      <DependentUpon>frmEvent.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Forms\Editors\frmItem.resx">
+      <DependentUpon>frmItem.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Forms\Editors\frmNpc.resx">
+      <DependentUpon>frmNpc.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Forms\Editors\frmProjectile.resx">
+      <DependentUpon>frmProjectile.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Forms\Editors\frmResource.resx">
+      <DependentUpon>frmResource.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Forms\Editors\frmShop.resx">
+      <DependentUpon>frmShop.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Forms\Editors\frmSpell.resx">
+      <DependentUpon>frmSpell.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Forms\Editors\frmVariable.resx">
+      <DependentUpon>frmVariable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Forms\Editors\frmTime.resx">
+      <DependentUpon>frmTime.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Forms\Editors\Quest\frmQuest.resx">
+      <DependentUpon>frmQuest.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Forms\frmAbout.resx">
+      <DependentUpon>frmAbout.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Forms\frmUpdate.resx">
+      <DependentUpon>frmUpdate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Forms\frmLogin.resx">
+      <DependentUpon>frmLogin.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Forms\frmMain.resx">
+      <DependentUpon>frmMain.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Forms\frmWarpSelection.resx">
+      <DependentUpon>frmWarpSelection.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+
 </Project>
