@@ -1,5 +1,3 @@
-using System;
-using System.Linq;
 using System.Security.Cryptography;
 
 using Intersect.Logging;
@@ -35,9 +33,9 @@ namespace Intersect.Network.Lidgren
 
         public LidgrenConnection(INetwork network, Guid guid, NetConnection netConnection, byte[] aesKey) : base(guid)
         {
-            Network = network;
-            NetConnection = netConnection ?? throw new ArgumentNullException();
-            mAesKey = aesKey ?? throw new ArgumentNullException();
+            Network = network ?? throw new ArgumentNullException(nameof(network));
+            NetConnection = netConnection ?? throw new ArgumentNullException(nameof(netConnection));
+            mAesKey = aesKey ?? throw new ArgumentNullException(nameof(aesKey));
 
             CreateAes();
         }
@@ -78,12 +76,12 @@ namespace Intersect.Network.Lidgren
         {
             if (NetConnection == null)
             {
-                throw new ArgumentNullException();
+                throw new InvalidOperationException();
             }
 
             if (mAesKey == null)
             {
-                throw new ArgumentNullException();
+                throw new InvalidOperationException();
             }
 
             Encryption = new NetNoopEncryption(NetConnection.Peer, mAesKey);
@@ -93,22 +91,22 @@ namespace Intersect.Network.Lidgren
         {
             if (approval == null)
             {
-                throw new ArgumentNullException();
+                throw new ArgumentNullException(nameof(approval));
             }
 
             if (approval.HandshakeSecret == null)
             {
-                throw new ArgumentNullException();
+                throw new ArgumentNullException(nameof(approval.HandshakeSecret));
             }
 
             if (approval.AesKey == null)
             {
-                throw new ArgumentNullException();
+                throw new ArgumentNullException(nameof(approval.AesKey));
             }
 
             if (mHandshakeSecret == null)
             {
-                throw new ArgumentNullException();
+                throw new InvalidOperationException();
             }
 
             if (!mHandshakeSecret.SequenceEqual(approval.HandshakeSecret))
