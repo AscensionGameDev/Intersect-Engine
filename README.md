@@ -9,7 +9,7 @@ Intersect provides a complete game development suite for creating 2d mmorpgs wit
 
  * [Build Status](#build-status)
  * [Supported Platforms](#supported-platforms)
- * [Intersect Assets](#interset-assets)
+ * [Intersect Assets](#intersect-assets)
  * [Support and Contributions](#support-and-contributions)
  * [Source Code](#source-code)
  * [Licensing](#licensing)
