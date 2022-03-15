@@ -46,8 +46,8 @@ namespace Intersect.Server.Database.PlayerData
             User = user;
         }
 
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public Guid Id { get; private set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public Guid Id { get; private set; } = Guid.NewGuid();
 
         [ForeignKey("Player"), Column("PlayerId")] // SOURCE TODO: Migrate column
         public Guid UserId { get; private set; }

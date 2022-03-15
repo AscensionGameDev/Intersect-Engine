@@ -11,8 +11,17 @@ namespace Intersect.Server.Database.PlayerData.Players
 {
     public partial class Variable
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity), JsonIgnore]
-        public Guid Id { get; protected set; }
+
+        public Variable() : this(Guid.Empty) { }
+
+        public Variable(Guid id)
+        {
+            VariableId = id;
+        }
+
+        [JsonIgnore]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public Guid Id { get; protected set; } = Guid.NewGuid();
 
         public Guid VariableId { get; protected set; }
 

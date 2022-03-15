@@ -13,11 +13,10 @@ namespace Intersect.Server.Database.PlayerData.Api
 
     public partial class RefreshToken
     {
-
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Column(Order = 0)]
         [Key]
-        public Guid Id { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public Guid Id { get; set; } = Guid.NewGuid();
 
         [Required, ForeignKey(nameof(User))]
         public Guid UserId { get; set; }
@@ -52,7 +51,7 @@ namespace Intersect.Server.Database.PlayerData.Api
                 {
                     return false;
                 }
-            
+
                 if (checkForDuplicates)
                 {
                     var duplicate = Find(token.Id);

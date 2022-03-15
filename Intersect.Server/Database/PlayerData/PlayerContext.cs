@@ -1,4 +1,4 @@
-﻿using System.Data.Common;
+using System.Data.Common;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,6 +13,8 @@ using Intersect.Server.Entities;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Debug;
 
 namespace Intersect.Server.Database.PlayerData
 {
@@ -28,9 +30,10 @@ namespace Intersect.Server.Database.PlayerData
             DbConnectionStringBuilder connectionStringBuilder,
             DatabaseOptions.DatabaseType databaseType,
             bool readOnly = false,
+            bool explicitLoad = false,
             Intersect.Logging.Logger logger = null,
             Intersect.Logging.LogLevel logLevel = Intersect.Logging.LogLevel.None
-        ) : base(connectionStringBuilder, databaseType, logger, logLevel, readOnly, false)
+        ) : base(connectionStringBuilder, databaseType, logger, logLevel, readOnly, explicitLoad, false)
         {
         }
 
@@ -86,6 +89,20 @@ namespace Intersect.Server.Database.PlayerData
             {
                 await task;
             }
+        }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseLoggerFactory(LoggerFactory.Create(builder => builder.AddConsole()));
+            base.OnConfiguring(optionsBuilder);
+
+            optionsBuilder.EnableSensitiveDataLogging();
+            //optionsBuilder.LogTo(Console.WriteLine);
+            //optionsBuilder.UseLoggerFactory(
+            //    new LoggerFactory(
+            //        new[] {new DebugLoggerProvider()}
+            //    )
+            //);
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -145,7 +162,7 @@ namespace Intersect.Server.Database.PlayerData
 
         public override void MigrationsProcessed(string[] migrations)
         {
-            if (migrations.IndexOf("20220331140427_GuildBankMaxSlotsMigration") > -1)
+            if (Array.IndexOf(migrations, "20220331140427_GuildBankMaxSlotsMigration") > -1)
             {
                 GuildBankMaxSlotMigration.Run(this);
             }

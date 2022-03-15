@@ -26,8 +26,6 @@ namespace Intersect.Server.Entities
     {
 
         //Instance Values
-        private Guid _id;
-
         public Guid MapInstanceId = Guid.Empty;
 
         [JsonProperty("MaxVitals"), NotMapped] private int[] _maxVital = new int[(int) Vitals.VitalCount];
@@ -154,9 +152,9 @@ namespace Intersect.Server.Entities
         [NotMapped]
         public Color NameColor { get; set; }
 
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Column(Order = 0)]
-        public Guid Id { get => _id; set => _id = value; }
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public Guid Id { get; set; } = Guid.NewGuid();
 
         [NotMapped]
         public Label HeaderLabel { get; set; }

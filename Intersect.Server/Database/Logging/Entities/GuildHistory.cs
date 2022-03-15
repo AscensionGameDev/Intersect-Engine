@@ -8,8 +8,8 @@ namespace Intersect.Server.Database.Logging.Entities
 {
     public partial class GuildHistory
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public Guid Id { get; private set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public Guid Id { get; private set; } = Guid.NewGuid();
 
         public Guid GuildId { get; private set; }
 

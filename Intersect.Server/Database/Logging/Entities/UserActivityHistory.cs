@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using System;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -6,7 +6,7 @@ namespace Intersect.Server.Database.Logging.Entities
 {
     public partial class UserActivityHistory
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)] public Guid Id { get; private set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.None)] public Guid Id { get; private set; } = Guid.NewGuid();
 
         public DateTime TimeStamp { get; set; }
 

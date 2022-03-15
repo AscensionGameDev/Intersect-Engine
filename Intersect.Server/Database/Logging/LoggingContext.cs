@@ -1,4 +1,4 @@
-﻿using Intersect.Config;
+using Intersect.Config;
 using Intersect.Server.Database.Logging.Entities;
 using Intersect.Server.Database.Logging.Seed;
 
@@ -26,7 +26,7 @@ namespace Intersect.Server.Database.Logging
             DbConnectionStringBuilder connectionStringBuilder,
             DatabaseOptions.DatabaseType databaseType,
             bool readOnly = false
-        ) : base(connectionStringBuilder, databaseType, null, Intersect.Logging.LogLevel.None, readOnly, true)
+        ) : base(connectionStringBuilder, databaseType, null, Intersect.Logging.LogLevel.None, readOnly, autoDetectChanges: true)
         {
         }
 
