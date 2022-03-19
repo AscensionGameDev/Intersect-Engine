@@ -20,7 +20,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="..\assets\Intersect.png" Pack="true" PackagePath="\" />
+    <None Include="$(IntersectRepoPath)\assets\Intersect.png" Pack="true" PackagePath="\" />
   </ItemGroup>
 </Project>
-
