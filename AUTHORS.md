@@ -6,11 +6,18 @@
 
 [Robbie Lodico](https://github.com/lodicolo)
 
+# Intersect Maintainers
+
+[Jocelyn Cobb](https://github.com/Cheshire92)
 
 # Intersect Contributors
 
+[Alex Vild](https://github.com/AlexVild)
+
 [A. I. Robin](https://github.com/alloin)
+
+[char32](https://github.com/char32)
 
 [Dog from the Kash Shop](#)
 
-[Jocelyn Cobb](https://github.com/Cheshire92)
+[Fernando Arzola Lagos](https://github.com/Arufonsu)

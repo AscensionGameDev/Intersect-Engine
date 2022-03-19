@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Intersect.Client": {
+      "commandName": "Project",
+      "workingDirectory": "..\\assets\\development\\client"
+    }
+  }
+}

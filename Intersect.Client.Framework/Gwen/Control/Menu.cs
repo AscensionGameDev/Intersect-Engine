@@ -99,7 +99,20 @@ namespace Intersect.Client.Framework.Gwen.Control
             IsHidden = false;
             BringToFront();
             var mouse = Input.InputHandler.MousePosition;
-            SetPosition(mouse.X, mouse.Y);
+
+            var x = mouse.X;
+            var y = mouse.Y;
+            if (x + Width > Canvas.Width)
+            {
+                x -= Width;
+            }
+
+            if (y + Height > Canvas.Height)
+            {
+                y -= Height;
+            }
+
+            SetPosition(x, y);
         }
 
         /// <summary>
@@ -290,7 +303,7 @@ namespace Intersect.Client.Framework.Gwen.Control
             base.SizeToChildren(width, height);
             if (width)
             {
-                var maxWidth = this.Width;
+                var maxWidth = 0;
                 foreach (var child in Children)
                 {
                     if (child.Width > maxWidth)

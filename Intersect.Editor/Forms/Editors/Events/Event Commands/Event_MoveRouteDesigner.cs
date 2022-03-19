@@ -35,7 +35,8 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             MapBase currentMap,
             EventBase currentEvent,
             EventMoveRoute editingRoute,
-            SetMoveRouteCommand editingCommand = null
+            SetMoveRouteCommand editingCommand = null,
+            bool disableRouteTarget = false
         )
         {
             InitializeComponent();
@@ -116,6 +117,11 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             if (cmbTarget.SelectedIndex == -1 && cmbTarget.Items.Count > 0)
             {
                 cmbTarget.SelectedIndex = 0;
+            }
+
+            if (disableRouteTarget)
+            {
+                cmbTarget.Enabled = false;
             }
 
             ListMoveRoute();

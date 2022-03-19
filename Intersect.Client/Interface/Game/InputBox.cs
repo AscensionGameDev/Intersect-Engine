@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 using Intersect.Client.Core;
 using Intersect.Client.Framework.File_Management;
@@ -57,7 +57,7 @@ namespace Intersect.Client.Interface.Game
 
         public object UserData;
 
-        public float Value;
+        public double Value;
 
         public new string Name = "InputBox";
 

@@ -172,6 +172,22 @@ namespace Intersect.Client.Entities
             }
         }
 
+        public bool IsFriend(IPlayer player)
+        {
+            // TODO: Friend List is updating only when opening it's GUI Window? It Should be updated upon login.
+            return Friends.Any(
+                friend => player != null &&
+                          string.Equals(player.Name, friend.Name, StringComparison.CurrentCultureIgnoreCase));
+        }
+
+        public bool IsGuildMate(IPlayer player)
+        {
+            return GuildMembers.Any(
+                guildMate =>
+                    player != null &&
+                    string.Equals(player.Name, guildMate.Name, StringComparison.CurrentCultureIgnoreCase));
+        }
+
         bool IPlayer.IsInParty => IsInParty();
 
         public bool IsInParty()
@@ -2001,6 +2017,126 @@ namespace Intersect.Client.Entities
             );
         }
 
+        // Draw Entities Overhead Information when hovering the cursor by them
+        // (when they are hidden by the game settings preferences).
+        public void DrawOverheadInfoOnHover()
+        {
+            var mousePos = Graphics.ConvertToWorldPoint(Globals.InputManager.GetMousePosition());
+            foreach (MapInstance map in Maps.MapInstance.Lookup.Values)
+            {
+                if (mousePos.X >= map.GetX() && mousePos.X <= map.GetX() + Options.MapWidth * Options.TileWidth)
+                {
+                    if (mousePos.Y >= map.GetY() && mousePos.Y <= map.GetY() + Options.MapHeight * Options.TileHeight)
+                    {
+                        var mapId = map.Id;
+                        foreach (var en in Globals.Entities)
+                        {
+                            if (en.Value == null)
+                            {
+                                continue;
+                            }
+
+                            if (en.Value.MapId == mapId &&
+                                !en.Value.HideName &&
+                                (!en.Value.IsStealthed ||
+                                 en.Value is Player player && Globals.Me.IsInMyParty(player)) &&
+                                en.Value.WorldPos.Contains(mousePos.X, mousePos.Y))
+                            {
+                                // We don't want to deal with these entities when hovering the cursor by them.
+                                var ignoreEntities = en.Value.GetType() != typeof(Projectile) &&
+                                                     en.Value.GetType() != typeof(Resource) &&
+                                                     en.Value.GetType() != typeof(Event);
+
+                                if (ignoreEntities)
+                                {
+                                    // Who's who.
+                                    var isMe = en.Value.GetType() == typeof(Player) && en.Value.Id == Globals.Me.Id;
+                                    var isNpc = en.Value.GetType() != typeof(Player);
+                                    var isPlayer = en.Value.GetType() == typeof(Player) && en.Value.Id != Globals.Me.Id;
+                                    var isFriend = en.Value is Player possiblyFriend &&
+                                                   Globals.Me.IsFriend(possiblyFriend) &&
+                                                   !isMe;
+                                    var isGuildMate = en.Value is Player possiblyGuildMate &&
+                                                      Globals.Me.IsGuildMate(possiblyGuildMate) &&
+                                                      !isMe;
+                                    var isPartyMate = en.Value is Player possiblyPartyMate &&
+                                                      Globals.Me.IsInMyParty(possiblyPartyMate) &&
+                                                      !isMe;
+
+                                    // If MyOverheadInfo is toggled off, draw the local Players
+                                    // overhead information only when hovered by the cursor.
+                                    if (!Globals.Database.MyOverheadInfo && isMe)
+                                    {
+                                        en.Value.DrawName(null);
+                                    }
+
+                                    // If NpcOverheadInfo is toggled off, draw NPCs
+                                    // overhead information only when hovered by the cursor.
+                                    if (!Globals.Database.NpcOverheadInfo && isNpc)
+                                    {
+                                        en.Value.DrawName(null);
+                                    }
+
+                                    // If PlayerOverheadInfo is toggled off, draw Players
+                                    // overhead information only when hovered by the cursor.
+                                    if (!Globals.Database.PlayerOverheadInfo && isPlayer &&
+                                        !isFriend && !isGuildMate && !isPartyMate)
+                                    {
+                                        en.Value.DrawName(null);
+                                    }
+
+                                    // If PartyMemberOverheadInfo is toggled off, draw Party Members
+                                    // overhead information only when hovered by the cursor.
+                                    if (!Globals.Database.PartyMemberOverheadInfo && isPartyMate)
+                                    {
+                                        en.Value.DrawName(null);
+                                    }
+
+                                    // If FriendOverheadInfo & GuildMemberOverheadInfo are off,
+                                    // let's prevent double draw / overlapping.
+                                    if (!Globals.Database.FriendOverheadInfo && isFriend &&
+                                        !Globals.Database.GuildMemberOverheadInfo && isGuildMate && !isPartyMate)
+                                    {
+                                        en.Value.DrawName(null);
+
+                                        continue;
+                                    }
+
+                                    // If FriendOverheadInfo is toggled off, draw Friends
+                                    // overhead information only when hovered by the cursor.
+                                    if (!Globals.Database.FriendOverheadInfo && isFriend && !isPartyMate)
+                                    {
+                                        // Skip if Friend is GuildMate.
+                                        if (Globals.Database.GuildMemberOverheadInfo && isGuildMate)
+                                        {
+                                            continue;
+                                        }
+
+                                        en.Value.DrawName(null);
+                                    }
+
+                                    // If GuildMemberOverheadInfo is toggled off, draw Guild Members
+                                    // overhead information only when hovered by the cursor.
+                                    if (!Globals.Database.GuildMemberOverheadInfo && isGuildMate && !isPartyMate)
+                                    {
+                                        // Skip if GuildMate is Friend.
+                                        if (Globals.Database.FriendOverheadInfo && isFriend)
+                                        {
+                                            continue;
+                                        }
+
+                                        en.Value.DrawName(null);
+                                    }
+                                }
+                            }
+                        }
+
+                        break;
+                    }
+                }
+            }
+        }
+        
         public void DrawTargets()
         {
             foreach (var en in Globals.Entities)
