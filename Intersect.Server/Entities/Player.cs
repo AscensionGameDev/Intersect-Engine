@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -1367,13 +1367,13 @@ namespace Intersect.Server.Entities
                 if (!friendly && (spell?.Combat?.TargetType != SpellTargetTypes.Self && spell?.Combat?.TargetType != SpellTargetTypes.AoE && spell?.SpellType == SpellTypes.CombatSpell))
                 {
                     // Check if either the attacker or the defender is in a "safe zone" (Only apply if combat is PVP)
-                    if (MapInstance.Get(MapId).ZoneType == MapZones.Safe || MapInstance.Get(player.MapId).ZoneType == MapZones.Safe)
+                    if (MapController.Get(MapId).ZoneType == MapZones.Safe || MapController.Get(player.MapId).ZoneType == MapZones.Safe)
                     {
                         return false;
                     }
 
                     // Also consider this an issue if either player is in a different map zone type.
-                    if (MapInstance.Get(MapId).ZoneType != MapInstance.Get(player.MapId).ZoneType)
+                    if (MapController.Get(MapId).ZoneType != MapController.Get(player.MapId).ZoneType)
                     {
                         return false;
                     }
