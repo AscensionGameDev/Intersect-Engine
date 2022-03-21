@@ -1,4 +1,4 @@
-﻿using Intersect.Logging;
+using Intersect.Logging;
 using Intersect.Server.Core.CommandParsing;
 using Intersect.Server.Core.CommandParsing.Commands;
 using Intersect.Server.Core.CommandParsing.Errors;
@@ -136,7 +136,16 @@ namespace Intersect.Server.Core
                             {
                                 if (!shouldHelp)
                                 {
-                                    result.Command?.Handle(ServerContext.Instance, result);
+#pragma warning disable CA1031 // Do not catch general exception types
+                                    try
+                                    {
+                                        result.Command?.Handle(ServerContext.Instance, result);
+                                    }
+                                    catch (Exception exception)
+                                    {
+                                        Log.Error(exception);
+                                    }
+#pragma warning restore CA1031 // Do not catch general exception types
 
                                     continue;
                                 }
