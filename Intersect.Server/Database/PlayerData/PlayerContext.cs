@@ -93,16 +93,10 @@ namespace Intersect.Server.Database.PlayerData
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseLoggerFactory(LoggerFactory.Create(builder => builder.AddConsole()));
             base.OnConfiguring(optionsBuilder);
 
             optionsBuilder.EnableSensitiveDataLogging();
-            //optionsBuilder.LogTo(Console.WriteLine);
-            //optionsBuilder.UseLoggerFactory(
-            //    new LoggerFactory(
-            //        new[] {new DebugLoggerProvider()}
-            //    )
-            //);
+            optionsBuilder.UseLoggerFactory(LoggerFactory.Create(builder => builder.AddConsole()));
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
