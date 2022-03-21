@@ -6,6 +6,8 @@ using Intersect.Enums;
 using System;
 using Intersect.Server.Database.GameData;
 using Intersect.Server.Entities;
+using System.Globalization;
+using Intersect.GameObjects;
 
 namespace Intersect.Server.Core.Commands
 {
@@ -24,28 +26,32 @@ namespace Intersect.Server.Core.Commands
 
         protected override void HandleValue(ServerContext context, ParserResult result)
         {
-            var serverVariable = result.Find(ServerVariableId);
-            var serverVariableValue = result.Find(ServerVariableValue);
+            var serverVariableNameOrId = result.Find(ServerVariableId);
+            var rawServerVariableValue = result.Find(ServerVariableValue);
 
-            if (string.IsNullOrEmpty(serverVariable))
+            if (string.IsNullOrEmpty(serverVariableNameOrId))
             {
-                throw new ArgumentNullException("No server variable specified.");
+                throw new ArgumentNullException(Strings.Commands.Arguments.VariableId.Name, "No server variable specified.");
             }
 
-            if (string.IsNullOrEmpty(serverVariableValue))
+            if (string.IsNullOrEmpty(rawServerVariableValue))
             {
-                throw new ArgumentNullException($"No value specified for server variable with id {ServerVariableId}");
+                throw new ArgumentNullException(Strings.Commands.Arguments.VariableValue.Name, $"No value specified for server variable with id {rawServerVariableId}");
             }
 
-            if (!Guid.TryParse(serverVariable, out Guid parsedServerVar))
+            ServerVariableBase variable;
+            if (Guid.TryParse(serverVariableNameOrId, out Guid serverVariableId))
             {
-                throw new ArgumentException($"{ServerVariableId.Name} is not a valid server variable id");
+                variable = GameContext.Queries.ServerVariableById(serverVariableId);
+            }
+            else
+            {
+                variable = GameContext.Queries.ServerVariableByName(serverVariableNameOrId);
             }
 
-            var variable = GameContext.Queries.ServerVariableById(parsedServerVar);
             if (variable == default)
             {
-                Console.WriteLine(Strings.Commandoutput.VariableNotFound.ToString(serverVariable));
+                Console.WriteLine(Strings.Commandoutput.VariableNotFound.ToString(serverVariableNameOrId));
                 return;
             }
 
@@ -54,20 +60,25 @@ namespace Intersect.Server.Core.Commands
             switch (variable.Value.Type)
             {
                 case VariableDataTypes.Boolean:
-                    variable.Value.Value = bool.Parse(serverVariableValue);
+                    variable.Value.Boolean = bool.Parse(rawServerVariableValue);
                     break;
+
                 case VariableDataTypes.Integer:
-                case VariableDataTypes.Number:
-                    variable.Value.Value = int.Parse(serverVariableValue);
+                    variable.Value.Integer = int.Parse(rawServerVariableValue, NumberStyles.Integer, CultureInfo.CurrentCulture);
                     break;
+
+                case VariableDataTypes.Number:
+                    variable.Value.Number = double.Parse(rawServerVariableValue, NumberStyles.Float, CultureInfo.CurrentCulture);
+                    break;
+
                 case VariableDataTypes.String:
-                    variable.Value.Value = serverVariableValue.ToString();
+                    variable.Value.String = rawServerVariableValue.ToString();
                     break;
             }
 
-            Player.StartCommonEventsWithTriggerForAll(CommonEventTrigger.ServerVariableChange, string.Empty, serverVariable);
+            Player.StartCommonEventsWithTriggerForAll(CommonEventTrigger.ServerVariableChange, string.Empty, variable.Id.ToString());
             DbInterface.UpdatedServerVariables.AddOrUpdate(variable.Id, variable, (key, oldValue) => variable);
-            Console.WriteLine(Strings.Commandoutput.VariableChanged.ToString(serverVariable, serverVariableValue, previousServerVariableValue));
+            Console.WriteLine(Strings.Commandoutput.VariableChanged.ToString(variable.Name, variable.Id, rawServerVariableValue, previousServerVariableValue));
         }
     }
 }
