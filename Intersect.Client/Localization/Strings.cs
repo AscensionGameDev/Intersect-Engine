@@ -1259,16 +1259,41 @@ namespace Intersect.Client.Localization
             public static LocalizedString Fps90 = @"90";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString FriendOverheadInfo = @"Friends";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString Fullscreen = @"Fullscreen";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString GameSettingsTab = @"Game";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString GuildMemberOverheadInfo = @"Guild";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString KeyBindingSettingsTab = @"Controls";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString MusicVolume = @"Music Volume: {00}%";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString MyOverheadInfo = @"Myself";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString NpcOverheadInfo = @"NPCs";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString OverheadInformationSettings = @"Overhead Information";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString OverheadInfoSettingsHelper =
+                @"Overhead information may still be viewed by positioning the cursor over the hidden cases.";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString PartyMemberOverheadInfo = @"Party";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString PlayerOverheadInfo = @"Players";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString Resolution = @"Resolution:";

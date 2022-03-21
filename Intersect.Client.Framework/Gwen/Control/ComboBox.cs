@@ -165,12 +165,6 @@ namespace Intersect.Client.Framework.Gwen.Control
                 mSelectItemSound = (string) obj["SelectItemSound"];
             }
 
-            mOpenMenuSound = "octave-tap-warm.wav";
-            mCloseMenuSound = "octave-beep-tapped.wav";
-            mHoverMenuSound = "octave-tap-resonant.wav";
-            mHoverItemSound = "octave-tap-resonant.wav";
-            mSelectItemSound = "octave-tap-warm.wav";
-
             foreach (var mnu in Children)
             {
                 if (mnu.GetType() == typeof(Menu))

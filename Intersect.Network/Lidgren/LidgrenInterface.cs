@@ -422,7 +422,6 @@ namespace Intersect.Network.Lidgren
             {
                 (connection as LidgrenConnection)?.NetConnection?.Disconnect(message);
                 (connection as LidgrenConnection)?.NetConnection?.Peer.FlushSendQueue();
-                (connection as LidgrenConnection)?.NetConnection?.Peer.Shutdown(message);
                 (connection as LidgrenConnection)?.Dispose();
             }
         }

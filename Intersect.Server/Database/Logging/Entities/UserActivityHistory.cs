@@ -75,8 +75,20 @@ namespace Intersect.Server.Database.Logging.Entities
             DisconnectTimeout,
 
             DisconnectBan,
+            
+            DisconnectBanFail,
 
             DisconnectKick,
+            
+            DisconnectKickFail,
+            
+            Kill,
+            
+            KillFail,
+            
+            Mute,
+            
+            MuteFail,
 
             CreatePlayer,
 
