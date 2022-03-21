@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace Intersect.Logging.Output
 {
@@ -53,7 +53,7 @@ namespace Intersect.Logging.Output
             }
 
             var writer = Console.Out;
-            if (LogLevel < LogLevel.Info)
+            if (logLevel < LogLevel.Info)
             {
                 writer = Console.Error;
             }
