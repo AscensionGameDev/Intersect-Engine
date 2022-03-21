@@ -1,7 +1,7 @@
 ---
 name: Feature request
 about: Suggest a new feature that we can add to Intersect
-title: ''
+title: 'feature: '
 labels: feature request
 assignees: ''
 
