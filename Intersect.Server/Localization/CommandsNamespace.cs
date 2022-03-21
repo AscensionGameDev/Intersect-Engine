@@ -1,4 +1,4 @@
-﻿using Intersect.Localization;
+using Intersect.Localization;
 using Intersect.Server.Core.CommandParsing;
 
 using Newtonsoft.Json;
@@ -110,12 +110,12 @@ namespace Intersect.Server.Localization
             };
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public readonly LocaleCommand SetVar = new LocaleCommand
+            public readonly LocaleCommand SetVariable = new LocaleCommand
             {
                 Name = @"setvar",
                 Description =
-                    @"Sets a server variable via GUID to a valid value",
-                Help = @"Sets a server variable value via GUID; ex: setvar <guid> true"
+                    @"sets a server variable by ID to a valid value",
+                Help = @"sets a variable by id; e.g. 'set var < id > true'"
             };
 
 
@@ -374,17 +374,17 @@ namespace Intersect.Server.Localization
                 };
 
                 [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-                public readonly LocaleArgument VarGUID = new LocaleArgument
+                public readonly LocaleArgument VariableId = new LocaleArgument
                 {
                     Name = @"GUID",
                     Description = @"The GUID of the server var to set"
                 };
 
                 [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-                public readonly LocaleArgument VarValue = new LocaleArgument
+                public readonly LocaleArgument VariableValue = new LocaleArgument
                 {
                     Name = @"Value",
-                    Description = @"The value to set the server var to"
+                    Description = @"The value to set the server variable to"
                 };
 
 
