@@ -1,8 +1,8 @@
 ---
 name: Enhancement idea
 about: Suggest a minor enhancement or quality of life change
-title: ''
-labels: ''
+title: 'enhancement: '
+labels: 'enhancement'
 assignees: ''
 
 ---
