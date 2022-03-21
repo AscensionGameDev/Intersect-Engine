@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -415,6 +415,10 @@ namespace Intersect.Server.Localization
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString cpslocked = @"CPS Locked";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString cpsunlocked = @"CPS Unlocked";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString VariableChanged = @"Variable {00} has been set to {01} from {02}";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString VariableNotFound = @"Variable {00} is not a valid server variable id";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString ExperimentalFeatureEnablement = @"{00} is {01}.";
 

@@ -51,6 +51,7 @@ namespace Intersect.Server.Core
                 Parser.Register<PowerCommand>();
                 Parser.Register<UnbanCommand>();
                 Parser.Register<UnmuteCommand>();
+                Parser.Register<SetVariableCommand>();
             }
 
             public CommandParser Parser { get; }

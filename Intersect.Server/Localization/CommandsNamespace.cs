@@ -1,4 +1,4 @@
-﻿using Intersect.Localization;
+using Intersect.Localization;
 using Intersect.Server.Core.CommandParsing;
 
 using Newtonsoft.Json;
@@ -108,6 +108,16 @@ namespace Intersect.Server.Localization
                 Description = @"Kicks a player from the server.",
                 Help = @"kicks a player from the server"
             };
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocaleCommand SetVariable = new LocaleCommand
+            {
+                Name = @"setvar",
+                Description =
+                    @"sets a server variable by ID to a valid value",
+                Help = @"sets a variable by id; e.g. 'set var < id > true'"
+            };
+
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocaleCommand Kill = new LocaleCommand
             {
@@ -362,6 +372,21 @@ namespace Intersect.Server.Localization
                     Name = @"player-name",
                     Description = @"the name of the player to unmute"
                 };
+
+                [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+                public readonly LocaleArgument VariableId = new LocaleArgument
+                {
+                    Name = @"GUID",
+                    Description = @"The GUID of the server var to set"
+                };
+
+                [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+                public readonly LocaleArgument VariableValue = new LocaleArgument
+                {
+                    Name = @"Value",
+                    Description = @"The value to set the server variable to"
+                };
+
 
             }
 
