@@ -27,6 +27,12 @@
     <ApplicationIcon>$(IntersectRepoPath)\assets\intersect-logo-qu.ico</ApplicationIcon>
   </PropertyGroup>
 
+  <ItemGroup Label="Testing">
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+      <_Parameter1>$(AssemblyName).Tests</_Parameter1>
+    </AssemblyAttribute>
+  </ItemGroup>
+
   <ItemGroup>
     <None Include="$(IntersectRepoPath)\assets\intersect-logo-qu.png" Pack="true" PackagePath="\" />
   </ItemGroup>
