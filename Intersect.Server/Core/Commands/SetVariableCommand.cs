@@ -24,57 +24,50 @@ namespace Intersect.Server.Core.Commands
 
         protected override void HandleValue(ServerContext context, ParserResult result)
         {
-            try
+            var serverVariable = result.Find(ServerVariableId);
+            var serverVariableValue = result.Find(ServerVariableValue);
+
+            if (string.IsNullOrEmpty(serverVariable))
             {
-                var serverVariable = result.Find(ServerVariableId);
-                var serverVariableValue = result.Find(ServerVariableValue);
-
-                if (string.IsNullOrEmpty(serverVariable))
-                {
-                    throw new ArgumentNullException("No server variable specified.");
-                }
-
-                if (string.IsNullOrEmpty(serverVariableValue))
-                {
-                    throw new ArgumentNullException($"No value specified for server variable with ID {ServerVariableId}");
-                }
-
-                if (!Guid.TryParse(serverVariable, out Guid parsedServerVar))
-                {
-                    throw new ArgumentException($"{ServerVariableId} is not a valid server variable ID");
-                }
-
-                var variable = GameContext.Queries.ServerVariableById(parsedServerVar);
-                if (variable == default)
-                {
-                    Console.WriteLine(Strings.Commandoutput.VariableNotFound.ToString(serverVariable));
-                    return;
-                }
-
-                var previousServerVariableValue = variable.Value?.Value;
-
-                switch (variable.Value.Type)
-                {
-                    case VariableDataTypes.Boolean:
-                        variable.Value.Value = bool.Parse(serverVariableValue);
-                        break;
-                    case VariableDataTypes.Integer:
-                    case VariableDataTypes.Number:
-                        variable.Value.Value = int.Parse(serverVariableValue);
-                        break;
-                    case VariableDataTypes.String:
-                        variable.Value.Value = serverVariableValue.ToString();
-                        break;
-                }
-
-                Player.StartCommonEventsWithTriggerForAll(CommonEventTrigger.ServerVariableChange, string.Empty, serverVariable);
-                DbInterface.UpdatedServerVariables.AddOrUpdate(variable.Id, variable, (key, oldValue) => variable);
-                Console.WriteLine(Strings.Commandoutput.VariableChanged.ToString(serverVariable, serverVariableValue, previousServerVariableValue));
+                throw new ArgumentNullException("No server variable specified.");
             }
-            catch (Exception ex)
+
+            if (string.IsNullOrEmpty(serverVariableValue))
             {
-                Logging.Log.Error(ex);
+                throw new ArgumentNullException($"No value specified for server variable with id {ServerVariableId}");
             }
+
+            if (!Guid.TryParse(serverVariable, out Guid parsedServerVar))
+            {
+                throw new ArgumentException($"{ServerVariableId} is not a valid server variable id");
+            }
+
+            var variable = GameContext.Queries.ServerVariableById(parsedServerVar);
+            if (variable == default)
+            {
+                Console.WriteLine(Strings.Commandoutput.VariableNotFound.ToString(serverVariable));
+                return;
+            }
+
+            var previousServerVariableValue = variable.Value?.Value;
+
+            switch (variable.Value.Type)
+            {
+                case VariableDataTypes.Boolean:
+                    variable.Value.Value = bool.Parse(serverVariableValue);
+                    break;
+                case VariableDataTypes.Integer:
+                case VariableDataTypes.Number:
+                    variable.Value.Value = int.Parse(serverVariableValue);
+                    break;
+                case VariableDataTypes.String:
+                    variable.Value.Value = serverVariableValue.ToString();
+                    break;
+            }
+
+            Player.StartCommonEventsWithTriggerForAll(CommonEventTrigger.ServerVariableChange, string.Empty, serverVariable);
+            DbInterface.UpdatedServerVariables.AddOrUpdate(variable.Id, variable, (key, oldValue) => variable);
+            Console.WriteLine(Strings.Commandoutput.VariableChanged.ToString(serverVariable, serverVariableValue, previousServerVariableValue));
         }
     }
 }

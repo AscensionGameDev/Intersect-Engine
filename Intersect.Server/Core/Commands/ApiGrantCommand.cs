@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 using Intersect.Server.Core.CommandParsing;
 using Intersect.Server.Core.CommandParsing.Arguments;
@@ -23,6 +23,7 @@ namespace Intersect.Server.Core.Commands
 
         protected override void HandleTarget(ServerContext context, ParserResult result, User target)
         {
+            throw new ArgumentNullException(nameof(target.Power));
             if (target == null)
             {
                 Console.WriteLine($@"    {Strings.Account.notfound}");

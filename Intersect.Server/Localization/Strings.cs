@@ -418,7 +418,7 @@ namespace Intersect.Server.Localization
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString VariableChanged = @"Variable {00} has been set to {01} from {02}";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString VariableNotFound = @"Variable {00} is not a valid server variable GUID";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString VariableNotFound = @"Variable {00} is not a valid server variable id";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString ExperimentalFeatureEnablement = @"{00} is {01}.";
 
