@@ -36,7 +36,7 @@ namespace Intersect.Server.Core.Commands
 
             if (string.IsNullOrEmpty(rawServerVariableValue))
             {
-                throw new ArgumentNullException(Strings.Commands.Arguments.VariableValue.Name, $"No value specified for server variable with id {rawServerVariableId}");
+                throw new ArgumentNullException(Strings.Commands.Arguments.VariableValue.Name, $"No value specified for server variable '{serverVariableNameOrId}'");
             }
 
             ServerVariableBase variable;
@@ -56,6 +56,8 @@ namespace Intersect.Server.Core.Commands
             }
 
             var previousServerVariableValue = variable.Value?.Value;
+            string formattedPreviousValue = previousServerVariableValue?.ToString() ?? string.Empty;
+            string formattedValue = default;
 
             switch (variable.Value.Type)
             {
@@ -73,12 +75,19 @@ namespace Intersect.Server.Core.Commands
 
                 case VariableDataTypes.String:
                     variable.Value.String = rawServerVariableValue.ToString();
+                    formattedPreviousValue = $"\"{formattedPreviousValue}\"";
+                    formattedValue = $"\"{variable.Value.String}\"";
                     break;
+            }
+
+            if (formattedValue == default)
+            {
+                formattedValue = variable.Value?.ToString();
             }
 
             Player.StartCommonEventsWithTriggerForAll(CommonEventTrigger.ServerVariableChange, string.Empty, variable.Id.ToString());
             DbInterface.UpdatedServerVariables.AddOrUpdate(variable.Id, variable, (key, oldValue) => variable);
-            Console.WriteLine(Strings.Commandoutput.VariableChanged.ToString(variable.Name, variable.Id, rawServerVariableValue, previousServerVariableValue));
+            Console.WriteLine(Strings.Commandoutput.VariableChanged.ToString(variable.Id, variable.Name, formattedValue, formattedPreviousValue));
         }
     }
 }

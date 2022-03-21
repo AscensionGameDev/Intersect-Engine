@@ -416,9 +416,9 @@ namespace Intersect.Server.Localization
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString cpsunlocked = @"CPS Unlocked";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString VariableChanged = @"Variable {00} ({01}) has been set to {02} from {03}";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString VariableChanged = @"'{01}' set to {02} from (was {03}) ({00})";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString VariableNotFound = @"Variable {00} is not a valid server variable id/name";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString VariableNotFound = @"Variable '{00}' not found";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString VariablePrint = @"{00} {01} = {02}";

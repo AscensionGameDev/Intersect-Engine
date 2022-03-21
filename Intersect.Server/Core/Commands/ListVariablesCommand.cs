@@ -40,7 +40,7 @@ namespace Intersect.Server.Core.Commands
 
             foreach (var variable in variables)
             {
-                string formattedValue = variable.Value.Value;
+                string formattedValue = variable.Value.Value?.ToString();
 
                 if (variable.Value.Type == VariableDataTypes.String)
                 {
