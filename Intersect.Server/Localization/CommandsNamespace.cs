@@ -127,8 +127,24 @@ namespace Intersect.Server.Localization
             {
                 Name = @"setvar",
                 Description =
-                    @"sets a server variable by ID to a valid value",
-                Help = @"sets a variable by id; e.g. 'set var < id > true'"
+                    @"sets a server variable by id to a value",
+                Help = @"sets a variable by id; e.g. 'setvar <id> true'"
+            };
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocaleCommand GetVariable = new LocaleCommand
+            {
+                Name = @"getvar",
+                Description = @"gets a server variable by id",
+                Help = @"gets a variable by id"
+            };
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocaleCommand ListVariables = new LocaleCommand
+            {
+                Name = @"listvars",
+                Description = @"queries for server variables by page/page size",
+                Help = @"queries for server variables by page/page size; e.g. 'listvars 1 10'"
             };
 
 
@@ -337,6 +353,20 @@ namespace Intersect.Server.Localization
 
                 [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
                 public readonly LocalizedString MetricsEnable = @"enable";
+
+                [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+                public readonly LocaleArgument Page = new LocaleArgument
+                {
+                    Name = @"page",
+                    Description = @"the page of items to query for"
+                };
+
+                [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+                public readonly LocaleArgument PageSize = new LocaleArgument
+                {
+                    Name = @"page-size",
+                    Description = @"the number of items to display per page"
+                };
 
                 [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
                 public readonly LocaleArgument Power = new LocaleArgument
