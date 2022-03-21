@@ -39,7 +39,7 @@ namespace Intersect.Server.Core.Commands
 
             if (!Guid.TryParse(serverVariable, out Guid parsedServerVar))
             {
-                throw new ArgumentException($"{ServerVariableId} is not a valid server variable id");
+                throw new ArgumentException($"{ServerVariableId.Name} is not a valid server variable id");
             }
 
             var variable = GameContext.Queries.ServerVariableById(parsedServerVar);
