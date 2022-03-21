@@ -1,0 +1,9 @@
+<Project>
+
+    <PropertyGroup>
+        <IntersectRepoPath Condition="'$(IntersectRepoPath)' == ''">..\..</IntersectRepoPath>
+    </PropertyGroup>
+
+    <Import Project="..\Directory.build.props" />
+
+</Project>

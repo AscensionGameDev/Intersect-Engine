@@ -1,31 +1,31 @@
 <Project>
 
-    <Import Project="..\Intersect.props" />
-
     <PropertyGroup Condition="'$(IntersectDeveloperTargetsImported)' == ''">
         <IntersectRepoPath>..\..</IntersectRepoPath>
     </PropertyGroup>
 
+    <Import Project="..\Intersect.props" />
+
     <PropertyGroup>
-      <IntersectProjectName>$(MSBuildProjectName.Substring(10))</IntersectProjectName>
-      <BaseOutputPath>$(IntersectRepoPath)\bin\$(IntersectProjectName.ToLower())</BaseOutputPath>
-      <BaseIntermediateOutputPath>$(IntersectRepoPath)\obj\$(IntersectProjectName.ToLower())</BaseIntermediateOutputPath>
+        <IntersectProjectName>$(MSBuildProjectName.Substring(10))</IntersectProjectName>
+        <BaseOutputPath>$(IntersectRepoPath)\bin\$(IntersectProjectName.ToLower())</BaseOutputPath>
+        <BaseIntermediateOutputPath>$(IntersectRepoPath)\obj\$(IntersectProjectName.ToLower())</BaseIntermediateOutputPath>
     </PropertyGroup>
 
     <PropertyGroup Label="Common Properties">
-      <IsPackable>false</IsPackable>
+        <IsPackable>false</IsPackable>
     </PropertyGroup>
 
     <ItemGroup Label="Common Package References">
-      <PackageReference Include="coverlet.collector" Version="3.1.2">
-        <PrivateAssets>all</PrivateAssets>
-        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      </PackageReference>
-      <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.1.0" />
-      <PackageReference Include="Moq" Version="4.17.2" />
-      <PackageReference Include="NUnit" Version="3.13.2" />
-      <PackageReference Include="NUnit3TestAdapter" Version="4.2.1" />
-      <PackageReference Include="System.IO.Abstractions.TestingHelpers" Version="16.1.22" />
+        <PackageReference Include="coverlet.collector" Version="3.1.2">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.1.0" />
+        <PackageReference Include="Moq" Version="4.17.2" />
+        <PackageReference Include="NUnit" Version="3.13.2" />
+        <PackageReference Include="NUnit3TestAdapter" Version="4.2.1" />
+        <PackageReference Include="System.IO.Abstractions.TestingHelpers" Version="16.1.23" />
     </ItemGroup>
 
-  </Project>
+</Project>
