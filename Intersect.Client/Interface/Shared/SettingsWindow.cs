@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 using Intersect.Client.Core;
@@ -14,6 +14,8 @@ using Intersect.Client.Interface.Game;
 using Intersect.Client.Interface.Menu;
 using Intersect.Client.Localization;
 using Intersect.Utilities;
+
+using static Intersect.Client.Framework.File_Management.GameContentManager;
 
 namespace Intersect.Client.Interface.Shared
 {
@@ -345,10 +347,7 @@ namespace Intersect.Client.Interface.Shared
 
             #endregion
 
-            mSettingsPanel.LoadJsonUi(
-                mainMenu == null ? GameContentManager.UI.InGame : GameContentManager.UI.Menu,
-                Graphics.Renderer.GetResolutionString()
-            );
+            mSettingsPanel.LoadJsonUi(UI.Shared, Graphics.Renderer.GetResolutionString());
         }
 
         private void GameSettingsTab_Clicked(Base sender, ClickedEventArgs arguments)
