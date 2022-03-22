@@ -1,5 +1,6 @@
 ﻿using Intersect.Config;
 using Intersect.Server.Database.Logging.Entities;
+using Intersect.Server.Database.Logging.Seed;
 
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
@@ -16,7 +17,16 @@ namespace Intersect.Server.Database.Logging
         public LoggingContext(
             DbConnectionStringBuilder connectionStringBuilder,
             DatabaseOptions.DatabaseType databaseType = DatabaseOptions.DatabaseType.SQLite
-        ) : base(connectionStringBuilder, databaseType, null, Intersect.Logging.LogLevel.None, false, true)
+        ) : this(connectionStringBuilder, databaseType, false)
+        {
+        }
+
+        /// <inheritdoc />
+        public LoggingContext(
+            DbConnectionStringBuilder connectionStringBuilder,
+            DatabaseOptions.DatabaseType databaseType,
+            bool readOnly = false
+        ) : base(connectionStringBuilder, databaseType, null, Intersect.Logging.LogLevel.None, readOnly, true)
         {
         }
 
@@ -30,7 +40,7 @@ namespace Intersect.Server.Database.Logging
         public DbSet<ChatHistory> ChatHistory { get; set; }
 
         public DbSet<TradeHistory> TradeHistory { get; set; }
-        
+
         public DbSet<GuildHistory> GuildHistory { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -38,6 +48,15 @@ namespace Intersect.Server.Database.Logging
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.ApplyConfiguration(new RequestLog.Mapper());
+        }
+
+        public void Seed()
+        {
+#if DEBUG
+            new SeedTrades().SeedIfEmpty(this);
+            ChangeTracker.DetectChanges();
+            SaveChanges();
+#endif
         }
     }
 
@@ -64,6 +83,9 @@ namespace Intersect.Server.Database.Logging
 
         /// <inheritdoc />
         public DbSet<GuildHistory> GuildHistory => Context.GuildHistory;
+
+        /// <inheritdoc />
+        public void Seed() => Context.Seed();
 
         #endregion
     }

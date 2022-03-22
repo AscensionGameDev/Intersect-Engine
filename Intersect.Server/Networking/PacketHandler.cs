@@ -108,7 +108,7 @@ namespace Intersect.Server.Networking
 
             var packetOptions = Options.Instance.SecurityOpts?.PacketOpts;
             var thresholds = client.PacketFloodingThreshholds;
-            
+
 
             if (pSize > thresholds.MaxPacketSize)
             {
@@ -419,7 +419,7 @@ namespace Intersect.Server.Networking
                 {
                     client.PacketHandlingQueued = true;
                     ServerNetwork.Pool.QueueWorkItem(client.HandlePackets);
-                } 
+                }
             }
 
             return true;
@@ -632,7 +632,7 @@ namespace Intersect.Server.Networking
 
                 if (Options.MaxCharacters > 1 && packet.ReturningToCharSelect)
                 {
-                    client.Entity?.TryLogout();
+                    client.Entity?.TryLogout(false, true);
                     client.Entity = null;
                     PacketSender.SendPlayerCharacters(client);
                 }
@@ -1106,7 +1106,7 @@ namespace Intersect.Server.Networking
                     {
                         PacketSender.SendChatMsg(player, Strings.Combat.stunattacking, ChatMessageType.Combat);
                     }
-                    
+
                     return;
                 }
 
@@ -1821,12 +1821,12 @@ namespace Intersect.Server.Networking
         public void HandlePacket(Client client, AdminActionPacket packet)
         {
             var player = client?.Entity;
-            if (!client.Power.Editor && !client.Power.IsModerator)
+            if (player == null || client.Power == UserRights.None)
             {
                 return;
             }
 
-            ActionProcessing.ProcessAction(client, player, (dynamic) packet.Action);
+            ActionProcessing.ProcessAction(player, (dynamic) packet.Action);
         }
 
         //BuyItemPacket
@@ -2416,10 +2416,10 @@ namespace Intersect.Server.Networking
                             );
                         }
                     }
-
-                    player.FriendRequester = null;
                 }
             }
+
+            player.FriendRequester = null;
         }
 
         //SelectCharacterPacket
@@ -2862,10 +2862,10 @@ namespace Intersect.Server.Networking
 
             // Send the newly updated player information to their surroundings.
             PacketSender.SendEntityDataToProximity(player);
- 
+
         }
-      
-      
+
+
         //PictureClosedPacket
         public void HandlePacket(Client client, PictureClosedPacket packet)
         {
@@ -3215,7 +3215,7 @@ namespace Intersect.Server.Networking
                         }
 
                         DbInterface.SaveGameObject(newMap);
-                            
+
                         DbInterface.GenerateMapGrids();
                         PacketSender.SendMap(client, newMapId, true);
                         PacketSender.SendMapGridToAll(MapInstance.Get(newMapId).MapGrid);

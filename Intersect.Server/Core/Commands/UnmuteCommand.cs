@@ -22,7 +22,7 @@ namespace Intersect.Server.Core.Commands
             }
 
             Mute.Remove(target);
-            Console.WriteLine($@"    {Strings.Account.unmuted.ToString(target.Name)}");
+            Console.WriteLine($@"    {Strings.Account.UnmuteSuccess.ToString(target.Name)}");
         }
 
     }

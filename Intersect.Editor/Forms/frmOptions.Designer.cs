@@ -184,7 +184,7 @@ namespace Intersect.Editor.Forms
             "2048",
             "4096",
             "8192"});
-            this.cmbTextureSize.Location = new System.Drawing.Point(104, 42);
+            this.cmbTextureSize.Location = new System.Drawing.Point(261, 14);
             this.cmbTextureSize.Name = "cmbTextureSize";
             this.cmbTextureSize.Size = new System.Drawing.Size(59, 21);
             this.cmbTextureSize.TabIndex = 52;
@@ -195,17 +195,17 @@ namespace Intersect.Editor.Forms
             // 
             this.lblTextureSize.AutoSize = true;
             this.lblTextureSize.ForeColor = System.Drawing.Color.White;
-            this.lblTextureSize.Location = new System.Drawing.Point(6, 48);
+            this.lblTextureSize.Location = new System.Drawing.Point(6, 20);
             this.lblTextureSize.Name = "lblTextureSize";
-            this.lblTextureSize.Size = new System.Drawing.Size(94, 13);
+            this.lblTextureSize.Size = new System.Drawing.Size(179, 13);
             this.lblTextureSize.TabIndex = 51;
-            this.lblTextureSize.Text = "Texture Pack Size";
+            this.lblTextureSize.Text = "Max Texture Pack Size (Resolution):";
             // 
             // nudMusicBatch
             // 
             this.nudMusicBatch.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.nudMusicBatch.ForeColor = System.Drawing.Color.Gainsboro;
-            this.nudMusicBatch.Location = new System.Drawing.Point(267, 16);
+            this.nudMusicBatch.Location = new System.Drawing.Point(261, 41);
             this.nudMusicBatch.Maximum = new decimal(new int[] {
             999999999,
             0,
@@ -220,7 +220,7 @@ namespace Intersect.Editor.Forms
             this.nudMusicBatch.Size = new System.Drawing.Size(59, 20);
             this.nudMusicBatch.TabIndex = 50;
             this.nudMusicBatch.Value = new decimal(new int[] {
-            20,
+            8,
             0,
             0,
             0});
@@ -229,7 +229,7 @@ namespace Intersect.Editor.Forms
             // 
             this.nudSoundBatch.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.nudSoundBatch.ForeColor = System.Drawing.Color.Gainsboro;
-            this.nudSoundBatch.Location = new System.Drawing.Point(104, 16);
+            this.nudSoundBatch.Location = new System.Drawing.Point(261, 67);
             this.nudSoundBatch.Maximum = new decimal(new int[] {
             999999999,
             0,
@@ -244,30 +244,31 @@ namespace Intersect.Editor.Forms
             this.nudSoundBatch.Size = new System.Drawing.Size(59, 20);
             this.nudSoundBatch.TabIndex = 49;
             this.nudSoundBatch.Value = new decimal(new int[] {
-            10,
+            8,
             0,
             0,
             0});
+            this.nudSoundBatch.ValueChanged += new System.EventHandler(this.nudSoundBatch_ValueChanged);
             // 
             // lblMusicBatch
             // 
             this.lblMusicBatch.AutoSize = true;
             this.lblMusicBatch.ForeColor = System.Drawing.Color.White;
-            this.lblMusicBatch.Location = new System.Drawing.Point(169, 20);
+            this.lblMusicBatch.Location = new System.Drawing.Point(6, 43);
             this.lblMusicBatch.Name = "lblMusicBatch";
-            this.lblMusicBatch.Size = new System.Drawing.Size(89, 13);
+            this.lblMusicBatch.Size = new System.Drawing.Size(137, 13);
             this.lblMusicBatch.TabIndex = 8;
-            this.lblMusicBatch.Text = "Music Batch Size";
+            this.lblMusicBatch.Text = "Max Music Pack Size (MB):";
             // 
             // lblSoundBatch
             // 
             this.lblSoundBatch.AutoSize = true;
             this.lblSoundBatch.ForeColor = System.Drawing.Color.White;
-            this.lblSoundBatch.Location = new System.Drawing.Point(6, 20);
+            this.lblSoundBatch.Location = new System.Drawing.Point(6, 69);
             this.lblSoundBatch.Name = "lblSoundBatch";
-            this.lblSoundBatch.Size = new System.Drawing.Size(92, 13);
+            this.lblSoundBatch.Size = new System.Drawing.Size(140, 13);
             this.lblSoundBatch.TabIndex = 7;
-            this.lblSoundBatch.Text = "Sound Batch Size";
+            this.lblSoundBatch.Text = "Max Sound Pack Size (MB):";
             // 
             // chkPackageAssets
             // 

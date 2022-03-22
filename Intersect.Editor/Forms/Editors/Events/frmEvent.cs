@@ -1717,7 +1717,7 @@ namespace Intersect.Editor.Forms.Editors.Events
 
         private void btnSetRoute_Click(object sender, EventArgs e)
         {
-            var moveRouteDesigner = new EventMoveRouteDesigner(this, mCurrentMap, MyEvent, CurrentPage.Movement.Route);
+            var moveRouteDesigner = new EventMoveRouteDesigner(this, mCurrentMap, MyEvent, CurrentPage.Movement.Route, null, true);
             Controls.Add(moveRouteDesigner);
             moveRouteDesigner.BringToFront();
             moveRouteDesigner.Size = ClientSize;

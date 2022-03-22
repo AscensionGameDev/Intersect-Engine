@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -17,67 +17,86 @@ namespace Intersect.Server.Localization
         public sealed class AccountNamespace : LocaleNamespace
         {
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString adminonly =
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString adminonly =
                 @"The server is currently allowing only admins to connect. Come back later!";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString alreadybanned = @"{00} has already been banned!";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString alreadybanned = @"{00} has already been banned!";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString alreadymuted = @"{00} has already been muted!";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString alreadymuted = @"{00} has already been muted!";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString badaccess = @"Access denied! Invalid power level!";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString badaccess = @"Access denied! Invalid power level!";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString badlogin = @"Username or password incorrect.";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString badlogin = @"Username or password incorrect.";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString banned = @"{00} has been banned!";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString banned = @"{00} has been banned!";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString banstatus =
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString UnbanSuccess = @"{00} has been unbanned!";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString UnbanFail = @"Failed to unban {00}. The user is not banned!";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString NotAllowed = @"You do not have the permission to do this.";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString banstatus =
                 @"Your account has been banned since: {00} (UTC) by {01}. Ban expires: {02} (UTC). Reason for ban: {03}";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString characterexists =
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString characterexists =
                 @"An account with this character name exists. Please choose another.";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString deletechar = @"The character has been deleted.";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString deletechar = @"The character has been deleted.";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString deleted = @"Delete Character";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString deleted = @"Delete Character";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString deletecharerror = @"This character cannot be deleted, they may be stuck online in combat.";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString deletecharerror = @"This character cannot be deleted, they may be stuck online in combat.";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString deletederror = @"Error Deleting Character";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString deletederror = @"Error Deleting Character";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString doesnotexist = @"Account does not exist.";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString doesnotexist = @"Account does not exist.";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString emailexists = @"An account with this email address already exists.";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString emailexists = @"An account with this email address already exists.";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString exists = @"Account already exists!";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString exists = @"Account already exists!";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString invalidclass = @"Invalid class selected. Try again.";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString invalidclass = @"Invalid class selected. Try again.";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString invalidemail =
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString invalidemail =
                 @"The chosen email does not meet requirements set by the server.";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString invalidname =
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString invalidname =
                 @"The chosen name does not meet requirements set by the server.";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString loadfail = @"Failed to load account. Please try logging in again.";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString loadfail = @"Failed to load account. Please try logging in again.";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString maxchars =
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString maxchars =
                 @"You have already created the maximum number of characters. Delete one before creating a new one.";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString muted = @"{00} has been muted!";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString muted = @"{00} has been muted!";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString mutestatus =
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString UnmuteSuccess = @"{00} has been unmuted!";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString UnmuteFail = @"Failed to unmute {00}. The user is not muted!";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString mutestatus =
                 @"Your account has been muted since: {00} by {01}. Mute expires: {02}. Reason for mute: {03}";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString notfound = @"Error: Account {00} was not found!";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString notfound = @"Error: Account {00} was not found!";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString registrationsblocked =
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString registrationsblocked =
                 @"Account registrations are currently blocked by the server.";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString unbanned = @"Account {00} has been unbanned!";
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString unmuted = @"{00} has been unmuted!";
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString emailfail = @"Failed to send your password reset email at this time. Please try again later.";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString emailfail = @"Failed to send your password reset email at this time. Please try again later.";
         }
 
         public sealed class BagsNamespace : LocaleNamespace
@@ -305,6 +324,9 @@ namespace Intersect.Server.Localization
             public readonly LocalizedString sleep = @"You cannot cast this ability whilst asleep";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString Snared = @"You cannot cast this ability whilst snared";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString sleepattacking = @"You are asleep and can't attack.";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -373,72 +395,92 @@ namespace Intersect.Server.Localization
                 }
             );
 
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString InvalidTarget = @"Invalid target for this spell.";
         }
 
         public sealed class CommandoutputNamespace : LocaleNamespace
         {
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString apigranted = @"{00} now has api access!";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString apigranted = @"{00} now has api access!";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString apirevoked = @"{00} has had their api access revoked!";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString apirevoked = @"{00} has had their api access revoked!";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString apirolegranted = @"{00} now has the {01} api role!";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString apirolegranted = @"{00} now has the {01} api role!";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString apirolenotfound = @"Api role {00} not found!";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString apirolenotfound = @"Api role {00} not found!";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString apirolenotgranted =
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString apirolenotgranted =
                 @"Failed to assign api role {00}, api access must be enabled for {01} first!";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString
                 apiroleprereq = @"Api role {00} could not be granted! Depends on {01} role.";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString apirolerevoked = @"{00} has had their {01} api role revoked!";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString apirolerevoked = @"{00} has had their {01} api role revoked!";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString apiroles = @"Api roles for {00}:";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString apiroles = @"Api roles for {00}:";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString cps = @"Current CPS: {00}";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString cps = @"Current CPS: {00}";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString cpslocked = @"CPS Locked";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString cpslocked = @"CPS Locked";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString cpsunlocked = @"CPS Unlocked";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString cpsunlocked = @"CPS Unlocked";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString ExperimentalFeatureEnablement = @"{00} is {01}.";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString VariableChanged = @"'{01}' set to {02} (was {03}) ({00})";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString gametime = @"Game time is now: {00}";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString VariableNotFound = @"Variable '{00}' not found";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString helpfooter =
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString VariablePrint = @"{00} {01} = {02}";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString VariableListEmpty = @"There are no variables to display.";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString ExperimentalFeatureEnablement = @"{00} is {01}.";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString gametime = @"Game time is now: {00}";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString helpfooter =
                 @"Type in any command followed by {00} for parameters and usage information.";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString helpheader = @"List of available commands:";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString helpheader = @"List of available commands:";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString invalidparameters =
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString invalidparameters =
                 @"Invalid parameters provided! Use {00} to get more info about a command.";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString killsuccess = @"{00} has been killed!";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString killsuccess = @"{00} has been killed!";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString listaccount = @"Account";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString listaccount = @"Account";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString listcharacter = @"Character";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString listcharacter = @"Character";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString listid = @"ID";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString listid = @"ID";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString metricsenabled = @"Metrics collection enabled";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString metricsenabled = @"Metrics collection enabled";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString metricsdisabled = @"Metrics collection disabled";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString metricsdisabled = @"Metrics collection disabled";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString notfound =
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString notfound =
                 @"Command not recoginized. Enter help for a list of commands. Remember console commands are case sensitive!";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString parseerror =
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString parseerror =
                 @"Parse Error: Parameter could not be read. Type {00} {01} for usage information.";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString playercount = @"Server has {00} registered players.";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString playercount = @"Server has {00} registered players.";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString powerchanged = @"{00} has had their power updated!";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString powerchanged = @"{00} has had their power updated!";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString powerlevel = @"{00}'s power has been set to {01}!";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString powerlevel = @"{00}'s power has been set to {01}!";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString syntaxerror =
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString syntaxerror =
                 @"Syntax Error: Expected parameter not found. Type {00} {01} for usage information.";
 
         }
@@ -498,32 +540,39 @@ namespace Intersect.Server.Localization
         public sealed class ErrorsNamespace : LocaleNamespace
         {
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString errorloadingconfig =
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString errorloadingconfig =
                 @"Failed to load server options! Press any key to shut down.";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString
                 ErrorLoadingStrings = @"Failed to load strings! Press any key to shut down.";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString errorlogged = @"An error was logged into errors.log";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString errorlogged = @"An error was logged into errors.log";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString errorservercrash =
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString errorservercrash =
                 @"The Intersect server has encountered an error and must close. Error information can be found in resources/logs/errors.log. Press enter to exit.";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString errorservercrashnohalt =
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString errorservercrashnohalt =
                 @"The Intersect server has encountered an error and must close. Error information can be found in resources/logs/errors.log.";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString errortimeout = @"Too many failed requests. Please wait and try again!";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString errortimeout = @"Too many failed requests. Please wait and try again!";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString floodaverage =
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString floodaverage =
                 @"[Flood]: 3+ Rapid Detections. Total Detections: {00} [User: {01} | Player: {02} | IP {03}]";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString floodburst =
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString floodburst =
                 @"[Flood]: {00} Burst Packets [User: {01} | Player: {02} | IP {03}]";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString floodsize =
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString floodsize =
                 @"[Flood]: Packet Size: {00} [User: {01} | Player: {02} | IP {03}]";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString warpfail = @"Failed to warp player to new map -- warping to spawn.";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString warpfail = @"Failed to warp player to new map -- warping to spawn.";
 
         }
 
@@ -641,15 +690,15 @@ namespace Intersect.Server.Localization
         public sealed class GeneralNamespace : LocaleNamespace
         {
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString Disabled = @"Disabled";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString Disabled = @"Disabled";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString DisabledLowerCase = @"disabled";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString DisabledLowerCase = @"disabled";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString Enabled = @"Enabled";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString Enabled = @"Enabled";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString EnabledLowerCase = @"enabled";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString EnabledLowerCase = @"enabled";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString none = @"None";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString none = @"None";
 
         }
 
@@ -749,29 +798,32 @@ namespace Intersect.Server.Localization
         public sealed class IntroNamespace : LocaleNamespace
         {
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString api = @"API listening on '{00}'.";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString api = @"API listening on '{00}'.";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString apifailed = @"Failed to start API.";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString apifailed = @"Failed to start API.";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString consoleactive =
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString consoleactive =
                 @"Type exit to shutdown the server, or help for a list of commands.";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString exit = @"Press enter to exit.";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString exit = @"Press enter to exit.";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString loading = @"Loading, please wait.";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString loading = @"Loading, please wait.";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString started = @"Server Started. Using UDP Port #{00}";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString started = @"Server Started. Using UDP Port #{00}";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString support =
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString support =
                 @"For help, support, and updates visit: https://www.ascensiongamedev.com";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString tagline = @"                          free 2d orpg engine";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString tagline = @"                          free 2d orpg engine";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString title = @"Intersect Server";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString title = @"Intersect Server";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString version = @"Version {00}";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString version = @"Version {00}";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString websocketstarted =
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString websocketstarted =
                 @"Websocket listener started for Unity WebGL Clients using Port #{00}";
 
         }
@@ -850,81 +902,87 @@ namespace Intersect.Server.Localization
         public sealed class MigrationNamespace : LocaleNamespace
         {
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString alreadyusingengine =
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString alreadyusingengine =
                 @"   Migration Error: {00} database is already using {01}!";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString cancel = @"   Press any other key to cancel migration.";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString cancel = @"   Press any other key to cancel migration.";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString currentlymysql = @"currently using MySql";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString currentlymysql = @"currently using MySql";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString currentlysqlite = @"currently using Sqlite";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString currentlysqlite = @"currently using Sqlite";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString entermysqlinfo = @"Please enter your Mysql connection parameters:";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString entermysqlinfo = @"Please enter your Mysql connection parameters:";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString gamedb = @"Game";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString gamedb = @"Game";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString migratetomysql = @"   [2] Mysql";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString migratetomysql = @"   [2] Mysql";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString migratetosqlite = @"   [1] Sqlite";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString migratetosqlite = @"   [1] Sqlite";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString migrationcancelled = @"Migration Cancelled";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString migrationcancelled = @"Migration Cancelled";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString migrationcomplete = @"Migration complete! Press enter to exit.";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString migrationcomplete = @"Migration complete! Press enter to exit.";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString mysql = @"Mysql";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString mysql = @"Mysql";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString mysqlconnecting = @"Please wait, attempting to connect to database...";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString mysqlconnecting = @"Please wait, attempting to connect to database...";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString mysqlconnectionerror = @"Error opening db connection! Error: {00}";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString mysqlconnectionerror = @"Error opening db connection! Error: {00}";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString mysqldatabase = @"Database: ";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString mysqldatabase = @"Database: ";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString mysqlhost = @"Host: ";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString mysqlhost = @"Host: ";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString mysqlnotempty =
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString mysqlnotempty =
                 @"Database must be empty before migration! Please delete any tables before proceeding! Migration Cancelled.";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString mysqlpass = @"Password: ";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString mysqlpass = @"Password: ";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString mysqlport = @"Port: ";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString mysqlport = @"Port: ";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString mysqltryagain =
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString mysqltryagain =
                 @"Would you like to try entering your connection info again? (y/n)  ";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString mysqluser = @"User: ";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString mysqluser = @"User: ";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString overwritecharacter = @"y";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString overwritecharacter = @"y";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString playerdb = @"Player";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString playerdb = @"Player";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString selectdb = @"Which database would you like to migrate:";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString selectdb = @"Which database would you like to migrate:";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString selectdbengine = @"Select which engine to migrate the {00} database to:";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString selectdbengine = @"Select which engine to migrate the {00} database to:";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString selectgamedb =
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString selectgamedb =
                 "   [1] Game Database ({00})  -  Sqlite Strongly Recommended!";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString selectgamedbkey = @"1";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString selectgamedbkey = @"1";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString selectmysqlkey = @"2";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString selectmysqlkey = @"2";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString selectplayerdb = "   [2] Player Database ({00})";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString selectplayerdb = "   [2] Player Database ({00})";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString selectplayerdbkey = @"2";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString selectplayerdbkey = @"2";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString selectsqlitekey = @"1";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString selectsqlitekey = @"1";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString sqlite = @"Sqlite";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString sqlite = @"Sqlite";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString sqlitealreadyexists = @"{00} already exists, overwrite? (y/n)  ";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString sqlitealreadyexists = @"{00} already exists, overwrite? (y/n)  ";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString startingmigration =
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString startingmigration =
                 @"Starting migration, please wait! (This could take several minutes depending on the size of your game)";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString stoppingserver =
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString stoppingserver =
                 @"Please wait, stopping server, and saving current database...";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString tryagaincharacter = @"y";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString tryagaincharacter = @"y";
 
         }
 
@@ -955,16 +1013,16 @@ namespace Intersect.Server.Localization
             public readonly LocalizedString disconnected = @"Client disconnected.";
 
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString ServerFull = @"The server is currently full, please try again later.";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString ServerFull = @"The server is currently full, please try again later.";
 
         }
 
         public sealed class NotificationsNamespace : LocaleNamespace
         {
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString copyright = "Copyright (C) 2020 Ascension Game Dev, All Rights Reserved";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString copyright = "Copyright (C) 2020 Ascension Game Dev, All Rights Reserved";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString product = @"Intersect Game Engine";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString product = @"Intersect Game Engine";
 
         }
 
@@ -1020,64 +1078,69 @@ namespace Intersect.Server.Localization
         public sealed class PasswordResetNotificationNamespace : LocaleNamespace
         {
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString subject = @"Intersect Game Engine - Password Reset Code";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString subject = @"Intersect Game Engine - Password Reset Code";
 
         }
 
         public sealed class PlayerNamespace : LocaleNamespace
         {
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString admin = @"{00} has been given administrative powers!";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString admin = @"{00} has been given administrative powers!";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString adminjoined =
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString adminjoined =
                 @"You are an administrator! Press Insert at any time to access the administration menu or F2 for debug information.";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString adminsetpower = @"Only admins can set power!";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString adminsetpower = @"Only admins can set power!";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString beenwarpedto = @"You have been warped to {00}.";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString beenwarpedto = @"You have been warped to {00}.";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString changeownpower = @"You cannot alter your own power!";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString changeownpower = @"You cannot alter your own power!";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString deadmin = @"{00} has had their administrative powers revoked!";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString deadmin = @"{00} has had their administrative powers revoked!";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString demod = @"{00} has had their moderation powers revoked!";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString demod = @"{00} has had their moderation powers revoked!";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString haswarpedto = @"{00} has been warped to you.";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString haswarpedto = @"{00} has been warped to you.";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString joined = @"{00} has joined {01}.";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString joined = @"{00} has joined {01}.";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString kicked = @"{00} has been kicked by {01}!";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString kicked = @"{00} has been kicked by {01}!";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString killed = @"{00} has been killed by {01}!";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString killed = @"{00} has been killed by {01}!";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString left = @"{00} has left {01}.";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString left = @"{00} has left {01}.";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString levelup = @"You have leveled up! You are now level {00}!";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString levelup = @"You have leveled up! You are now level {00}!";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString mod = @"{00} has been given moderation powers!";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString mod = @"{00} has been given moderation powers!";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString modjoined =
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString modjoined =
                 @"You are a moderator! Press Insert at any time to access the administration menu or F2 for debug information.";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString notarget = @"You need to select a valid target.";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString notarget = @"You need to select a valid target.";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString offline = @"User not online!";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString offline = @"User not online!";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString powerchanged = @"Your power has been modified!";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString PlayerNotFound = @"The player '{00}' was not found!";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString serverkicked = @"{00} has been kicked by the server!";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString powerchanged = @"Your power has been modified!";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString serverkilled = @"{00} has been killed by the server!";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString serverkicked = @"{00} has been kicked by the server!";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString spelltaughtlevelup = @"You've learned the {00} spell!";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString serverkilled = @"{00} has been killed by the server!";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString statpoints = @"You have {00} stat points available to be spent!";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString spelltaughtlevelup = @"You've learned the {00} spell!";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString targetoutsiderange = @"Target not in range.";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString statpoints = @"You have {00} stat points available to be spent!";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString warpedto = @"Warped to {00}.";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString targetoutsiderange = @"Target not in range.";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString warpedtoyou = @"{00} warped to you.";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString warpedto = @"Warped to {00}.";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString warpedtoyou = @"{00} warped to you.";
 
         }
 
@@ -1240,22 +1303,27 @@ namespace Intersect.Server.Localization
         public sealed class UpnpNamespace : LocaleNamespace
         {
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString failedforwardingtcp =
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString failedforwardingtcp =
                 @"Failed to automatically port forward tcp port {00} using UPnP. (UPnP possibly disabled in your router settings, or this port might already be forwarded!)";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString failedforwardingudp =
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString failedforwardingudp =
                 @"Failed to automatically port forward udp port {00} using UPnP. (UPnP possibly disabled in your router settings, or this port might already be forwarded!)";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString
                 forwardedtcp = @"Successfully auto port forwarded tcp port {00} using UPnP.";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString
                 forwardedudp = @"Successfully auto port forwarded udp port {00} using UPnP.";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString initializationfailed =
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString initializationfailed =
                 @"UPnP Service Initialization Failed. You might not have a router, or UPnP on your router might be disabled.";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]            public readonly LocalizedString initialized = @"UPnP Service Initialization Succeeded";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString initialized = @"UPnP Service Initialization Succeeded";
 
         }
 

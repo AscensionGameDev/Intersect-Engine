@@ -5,6 +5,7 @@ namespace Intersect.Client.Framework.Database
 
     public abstract class GameDatabase
     {
+        // Registry Database for Client Settings Preferences.
 
         public bool FullScreen { get; set; }
 
@@ -22,6 +23,20 @@ namespace Intersect.Client.Framework.Database
         public int TargetResolution { get; set; }
 
         public bool StickyTarget { get; set; }
+
+        public bool EnableLighting { get; set; }
+
+        public bool FriendOverheadInfo;
+
+        public bool GuildMemberOverheadInfo;
+
+        public bool MyOverheadInfo;
+
+        public bool NpcOverheadInfo;
+
+        public bool PartyMemberOverheadInfo;
+
+        public bool PlayerOverheadInfo;
 
         //Saving password, other stuff we don't want in the games directory
         public abstract void SavePreference(string key, object value);
@@ -47,9 +62,16 @@ namespace Intersect.Client.Framework.Database
             TargetResolution = LoadPreference("Resolution", 0);
             TargetFps = LoadPreference("Fps", 0);
             FullScreen = LoadPreference("Fullscreen", false);
+            EnableLighting = LoadPreference("EnableLighting", true);
             HideOthersOnWindowOpen = LoadPreference("HideOthersOnWindowOpen", true);
             TargetAccountDirection = LoadPreference("TargetAccountDirection", false);
             StickyTarget = LoadPreference("StickyTarget", true);
+            FriendOverheadInfo = LoadPreference("FriendOverheadInfo", true);
+            GuildMemberOverheadInfo = LoadPreference("GuildMemberOverheadInfo", true);
+            MyOverheadInfo = LoadPreference("MyOverheadInfo", true);
+            NpcOverheadInfo = LoadPreference("NpcOverheadInfo", true);
+            PartyMemberOverheadInfo = LoadPreference("PartyMemberOverheadInfo", true);
+            PlayerOverheadInfo = LoadPreference("PlayerOverheadInfo", true);
         }
 
         public virtual void SavePreferences()
@@ -59,9 +81,16 @@ namespace Intersect.Client.Framework.Database
             SavePreference("Fullscreen", FullScreen.ToString());
             SavePreference("Resolution", TargetResolution.ToString());
             SavePreference("Fps", TargetFps.ToString());
+            SavePreference("EnableLighting", EnableLighting.ToString());
             SavePreference("HideOthersOnWindowOpen", HideOthersOnWindowOpen.ToString());
             SavePreference("TargetAccountDirection", TargetAccountDirection.ToString());
             SavePreference("StickyTarget", StickyTarget.ToString());
+            SavePreference("FriendOverheadInfo", FriendOverheadInfo.ToString());
+            SavePreference("GuildMemberOverheadInfo", GuildMemberOverheadInfo.ToString());
+            SavePreference("MyOverheadInfo", MyOverheadInfo.ToString());
+            SavePreference("NpcOverheadInfo", NpcOverheadInfo.ToString());
+            SavePreference("PartyMemberOverheadInfo", PartyMemberOverheadInfo.ToString());
+            SavePreference("PlayerOverheadInfo", PlayerOverheadInfo.ToString());
         }
 
         public abstract bool LoadConfig();

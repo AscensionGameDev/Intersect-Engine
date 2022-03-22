@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 using Intersect.Client.Core;
 using Intersect.Client.Framework.File_Management;

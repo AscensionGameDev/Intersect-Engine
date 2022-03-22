@@ -313,10 +313,10 @@ namespace Intersect.Server.Entities
             base.Dispose();
         }
 
-        public void TryLogout(bool force = false)
+        public void TryLogout(bool force = false, bool softLogout = false)
         {
             LastOnline = DateTime.Now;
-            Client = null;
+            Client = default;
 
             if (LoginTime != null)
             {
@@ -326,11 +326,11 @@ namespace Intersect.Server.Entities
 
             if (CombatTimer < Timing.Global.Milliseconds || force)
             {
-                Logout();
+                Logout(softLogout);
             }
         }
 
-        private void Logout()
+        private void Logout(bool softLogout = false)
         {
             var map = MapInstance.Get(MapId);
             map?.RemoveEntity(this);
@@ -431,7 +431,7 @@ namespace Intersect.Server.Entities
             //If our client has disconnected or logged out but we have kept the user logged in due to being in combat then we should try to logout the user now
             if (Client == null)
             {
-                User?.TryLogout();
+                User?.TryLogout(softLogout);
             }
 
             DbInterface.Pool.QueueWorkItem(CompleteLogout);
@@ -1333,9 +1333,8 @@ namespace Intersect.Server.Entities
         public override bool CanAttack(Entity entity, SpellBase spell)
         {
             // If self-cast, AoE, Projectile or Dash.. always accept.
-            if (spell?.Combat.TargetType == SpellTargetTypes.Self ||
-                spell?.Combat.TargetType == SpellTargetTypes.AoE ||
-                spell?.Combat.TargetType == SpellTargetTypes.Projectile ||
+            if (spell?.Combat?.TargetType == SpellTargetTypes.Self ||
+                spell?.Combat?.TargetType == SpellTargetTypes.Projectile ||
                 spell?.SpellType == SpellTypes.Dash
                 )
             {
@@ -1351,13 +1350,31 @@ namespace Intersect.Server.Entities
             {
                 return false;
             }
-
+            
             var friendly = spell?.Combat != null && spell.Combat.Friendly;
             if (entity is Player player)
             {
                 if (player.InParty(this) || this == player || (!Options.Instance.Guild.AllowGuildMemberPvp && friendly != (player.Guild != null && player.Guild == this.Guild)))
                 {
                     return friendly;
+                }
+
+                // Only count safe zones and friendly fire if its a dangerous spell! (If one has been used)
+                // Projectiles are ignored here, because we can always fire those.. Whether they hit or not is a problem for later.
+                if (!friendly && (spell?.Combat?.TargetType != SpellTargetTypes.Self && spell?.Combat?.TargetType != SpellTargetTypes.AoE && spell?.SpellType == SpellTypes.CombatSpell))
+                {
+                    // Check if either the attacker or the defender is in a "safe zone" (Only apply if combat is PVP)
+                    if (MapInstance.Get(MapId).ZoneType == MapZones.Safe || MapInstance.Get(player.MapId).ZoneType == MapZones.Safe)
+                    {
+                        return false;
+                    }
+
+                    // Also consider this an issue if either player is in a different map zone type.
+                    if (MapInstance.Get(MapId).ZoneType != MapInstance.Get(player.MapId).ZoneType)
+                    {
+                        return false;
+                    }
+
                 }
             }
 
@@ -1674,31 +1691,36 @@ namespace Intersect.Server.Entities
                 if (item.Descriptor.IsStackable)
                 {
                     // Does the user have this item already?
-                    var existingSlot = FindInventoryItemSlot(item.ItemId);
-                    if (existingSlot != null)
-                    {
-                        // Can we blindly add more to this stack?
-                        var untilFull = item.Descriptor.MaxInventoryStack - existingSlot.Quantity;
-                        if (untilFull >= item.Quantity)
-                        {
-                            return true;
-                        }
+                    var itemSlots = FindInventoryItemSlots(item.ItemId);
+                    var slotsRequired = Math.Ceiling((double)item.Quantity / item.Descriptor.MaxInventoryStack);
 
-                        // Check to see if we have the inventory spaces required to hand these items out AFTER filling up the existing slot!
-                        var toGive = item.Quantity - untilFull;
-                        if (Math.Ceiling((double) toGive / item.Descriptor.MaxInventoryStack) <= FindOpenInventorySlots().Count)
+                    // User doesn't have this item yet.
+                    if (itemSlots.Count == 0)
+                    {
+                        // Does the user have enough free space for these stacks?
+                        if (slotsRequired <= FindOpenInventorySlots().Count)
                         {
                             return true;
                         }
                     }
-                    // User doesn't have this item yet.
-                    else
+                    else // We need to check to see how much space we'd have if we first filled all possible stacks
                     {
-                        // Does the user have enough free space for these stacks?
-                        if (Math.Ceiling((double) item.Quantity / item.Descriptor.MaxInventoryStack) <= FindOpenInventorySlots().Count)
+                        // Keep track of how much we have given to each stack
+                        var giveRemainder = item.Quantity;
+
+                        // For each stack while we still have items to give
+                        for (var i = 0; i < itemSlots.Count && giveRemainder > 0; i++)
                         {
-                            return true;
+                            // Give as much as possible to this stack
+                            giveRemainder -= item.Descriptor.MaxInventoryStack - itemSlots[i].Quantity;
                         }
+
+                        // We don't have anymore stuff to give after filling up our available stacks - we good
+                        bool roomInStacks = giveRemainder <= 0;
+                        // We still have leftover even after maxing each of our current stacks. See if we have empty slots in the inventory.
+                        bool roomInInventory = giveRemainder > 0 && Math.Ceiling((double)giveRemainder / item.Descriptor.MaxInventoryStack) <= FindOpenInventorySlots().Count;
+
+                        return roomInStacks || roomInInventory;
                     }
                 }
                 // Not a stacking item, so can we contain the amount we want to give them?
@@ -1838,6 +1860,8 @@ namespace Intersect.Server.Entities
 
             // Get this information so we can use it later.
             var openSlots = FindOpenInventorySlots().Count;
+            var slotsRequired = (int)Math.Ceiling(item.Quantity / (double) item.Descriptor.MaxInventoryStack);
+
             int spawnAmount = 0;
 
             // How are we going to be handling this?
@@ -1858,7 +1882,7 @@ namespace Intersect.Server.Entities
                         GiveItem(item, slot, sendUpdate);
                         return true;
                     }
-                    else if (item.Descriptor.Stackable && openSlots == 0) // Is stackable, but no inventory space.
+                    else if (item.Descriptor.Stackable && openSlots < slotsRequired) // Is stackable, but no inventory space.
                     {
                         spawnAmount = item.Quantity;
                     }
@@ -1886,7 +1910,7 @@ namespace Intersect.Server.Entities
                         GiveItem(item, slot, sendUpdate);
                         return true;
                     }
-                    else if (!item.Descriptor.Stackable && openSlots > 0) // Is not stackable, has space for some.
+                    else if (!item.Descriptor.Stackable && openSlots >= slotsRequired) // Is not stackable, has space for some.
                     {
                         item.Quantity = openSlots;
                         GiveItem(item, slot, sendUpdate);
@@ -2346,7 +2370,7 @@ namespace Intersect.Server.Entities
 
                         if (itemBase.QuickCast)
                         {
-                            if (!CanSpellCast(itemBase.Spell, target, false))
+                            if (!CanCastSpell(itemBase.Spell, target, false, out var _))
                             {
                                 return;
                             }
@@ -3242,10 +3266,14 @@ namespace Intersect.Server.Entities
         }
 
         //Business
-        public bool IsBusy()
-        {
-            return InShop != null || InBank || CraftingTableId != Guid.Empty || Trading.Counterparty != null;
-        }
+        private bool IsBusy() =>
+            InShop != null ||
+            InBank ||
+            CraftingTableId != Guid.Empty ||
+            Trading.Counterparty != null ||
+            Trading.Requester != null ||
+            PartyRequester != null ||
+            FriendRequester != null;
 
         //Bank
         public bool OpenBank(bool guild = false)
@@ -3629,7 +3657,7 @@ namespace Intersect.Server.Entities
 
             if (!FriendRequests.ContainsKey(fromPlayer) || !(FriendRequests[fromPlayer] > Timing.Global.Milliseconds))
             {
-                if (Trading.Requester == null && PartyRequester == null && FriendRequester == null)
+                if (!IsBusy())
                 {
                     FriendRequester = fromPlayer;
                     PacketSender.SendFriendRequest(this, fromPlayer);
@@ -3683,7 +3711,7 @@ namespace Intersect.Server.Entities
             }
             else
             {
-                if (Trading.Requester == null && PartyRequester == null && FriendRequester == null)
+                if (!IsBusy())
                 {
                     Trading.Requester = fromPlayer;
                     PacketSender.SendTradeRequest(this, fromPlayer);
@@ -3970,7 +3998,7 @@ namespace Intersect.Server.Entities
             }
             else
             {
-                if (Trading.Requester == null && PartyRequester == null && FriendRequester == null)
+                if (!IsBusy())
                 {
                     PartyRequester = fromPlayer;
                     PacketSender.SendPartyInvite(this, fromPlayer);
@@ -4281,8 +4309,49 @@ namespace Intersect.Server.Entities
             return this.InParty(otherPlayer) || this == otherPlayer;
         }
 
-        public bool CanSpellCast(SpellBase spell, Entity target, bool checkVitalReqs)
+        public override bool CanCastSpell(SpellBase spell, Entity target, bool checkVitalReqs, out SpellCastFailureReason reason)
         {
+            // Do we fail our base class check? If so cancel out with a reason!
+            if (!base.CanCastSpell(spell, target, checkVitalReqs, out reason))
+            {
+                // Let our user know the reason if configured.
+                if (Options.Combat.EnableCombatChatMessages)
+                {
+                    switch (reason)
+                    {
+                        case SpellCastFailureReason.InsufficientMP:
+                            PacketSender.SendChatMsg(this, Strings.Combat.lowmana, ChatMessageType.Combat);
+                            break;
+                        case SpellCastFailureReason.InsufficientHP:
+                            PacketSender.SendChatMsg(this, Strings.Combat.lowhealth, ChatMessageType.Combat);
+                            break;
+                        case SpellCastFailureReason.InvalidTarget:
+                            PacketSender.SendChatMsg(this, Strings.Combat.InvalidTarget, ChatMessageType.Combat);
+                            break;
+                        case SpellCastFailureReason.Silenced:
+                            PacketSender.SendChatMsg(this, Strings.Combat.silenced, ChatMessageType.Combat);
+                            break;
+                        case SpellCastFailureReason.Stunned:
+                            PacketSender.SendChatMsg(this, Strings.Combat.stunned, ChatMessageType.Combat);
+                            break;
+                        case SpellCastFailureReason.Asleep:
+                            PacketSender.SendChatMsg(this, Strings.Combat.sleep, ChatMessageType.Combat);
+                            break;
+                        case SpellCastFailureReason.Snared:
+                            PacketSender.SendChatMsg(this, Strings.Combat.Snared, ChatMessageType.Combat);
+                            break;
+                        case SpellCastFailureReason.OutOfRange:
+                            PacketSender.SendChatMsg(this, Strings.Combat.targetoutsiderange, ChatMessageType.Combat);
+                            break;
+                        case SpellCastFailureReason.OnCooldown:
+                            PacketSender.SendChatMsg(this, Strings.Combat.cooldown, ChatMessageType.Combat);
+                            break;
+                    }
+                }
+                return false;
+            }
+
+            // Check for dynamic conditions.
             if (!Conditions.MeetsConditionLists(spell.CastingRequirements, this, null))
             {
                 if (!string.IsNullOrWhiteSpace(spell.CannotCastMessage))
@@ -4294,79 +4363,11 @@ namespace Intersect.Server.Entities
                     PacketSender.SendChatMsg(this, Strings.Combat.dynamicreq, ChatMessageType.Spells);
                 }
 
+                reason = SpellCastFailureReason.ConditionsNotMet;
                 return false;
             }
 
-
-            if (!CanAttack(target, spell))
-            {
-                return false;
-            }
-
-            //Check if the caster is silenced or stunned. Clense casts break the rule.
-            if (spell.Combat.Effect != StatusTypes.Cleanse)
-            {
-                foreach (var status in CachedStatuses)
-                {
-                    if (status.Type == StatusTypes.Silence)
-                    {
-                        if (Options.Combat.EnableCombatChatMessages)
-                        {
-                            PacketSender.SendChatMsg(this, Strings.Combat.silenced, ChatMessageType.Combat);
-                        }
-
-                        return false;
-                    }
-
-                    if (status.Type == StatusTypes.Stun)
-                    {
-                        if (Options.Combat.EnableCombatChatMessages)
-                        {
-                            PacketSender.SendChatMsg(this, Strings.Combat.stunned, ChatMessageType.Combat);
-                        }
-
-                        return false;
-                    }
-
-                    if (status.Type == StatusTypes.Sleep)
-                    {
-                        if (Options.Combat.EnableCombatChatMessages)
-                        {
-                            PacketSender.SendChatMsg(this, Strings.Combat.sleep, ChatMessageType.Combat);
-                        }
-
-                        return false;
-                    }
-                }
-            }
-
-            if (target is Player)
-            {
-                //Only count safe zones and friendly fire if its a dangerous spell! (If one has been used)
-                if (!spell.Combat.Friendly &&
-                    (spell.Combat.TargetType != SpellTargetTypes.Self &&
-                    spell.Combat.TargetType != SpellTargetTypes.AoE &&
-                    (spell.Combat.TargetType == SpellTargetTypes.Projectile && spell.Combat.Projectile != null && target != this) &&
-                    spell.SpellType == SpellTypes.CombatSpell
-                    )
-                 )
-                {
-                    // Check if either the attacker or the defender is in a "safe zone" (Only apply if combat is PVP)
-                    if (MapInstance.Get(MapId).ZoneType == MapZones.Safe || MapInstance.Get(target.MapId).ZoneType == MapZones.Safe)
-                    {
-                        return false;
-                    }
-
-                    // Also consider this an issue if either player is in a different map zone type.
-                    if (MapInstance.Get(MapId).ZoneType != MapInstance.Get(target.MapId).ZoneType)
-                    {
-                        return false;
-                    }
-
-                }
-            }
-
-            //Check if the caster has the right ammunition if a projectile
+            // If this is a projectile, check if the user has the corresponding item.
             if (spell.SpellType == SpellTypes.CombatSpell &&
                 spell.Combat.TargetType == SpellTargetTypes.Projectile &&
                 spell.Combat.ProjectileId != Guid.Empty)
@@ -4374,6 +4375,7 @@ namespace Intersect.Server.Entities
                 var projectileBase = spell.Combat.Projectile;
                 if (projectileBase == null)
                 {
+                    reason = SpellCastFailureReason.InvalidProjectile;
                     return false;
                 }
 
@@ -4381,88 +4383,22 @@ namespace Intersect.Server.Entities
                 {
                     if (FindInventoryItemSlot(projectileBase.AmmoItemId, projectileBase.AmmoRequired) == null)
                     {
-                        PacketSender.SendChatMsg(
-                            this, Strings.Items.notenough.ToString(ItemBase.GetName(projectileBase.AmmoItemId)),
-                            ChatMessageType.Inventory,
-                            CustomColors.Alerts.Error
-                        );
-
+                        if (Options.Combat.EnableCombatChatMessages)
+                        {
+                            PacketSender.SendChatMsg(
+                                this, Strings.Items.notenough.ToString(ItemBase.GetName(projectileBase.AmmoItemId)),
+                                ChatMessageType.Inventory,
+                                CustomColors.Alerts.Error
+                            );
+                        }
+                            
+                        reason = SpellCastFailureReason.InsufficientItems;
                         return false;
                     }
                 }
             }
 
-            //Check if snared and spell is a dash or warp
-            if (spell.SpellType == SpellTypes.Dash || 
-                spell.SpellType == SpellTypes.Warp ||
-                spell.SpellType == SpellTypes.WarpTo)
-            {
-                // Don't cast if on snare status
-                foreach (var status in CachedStatuses)
-                {
-                    if (status.Type == StatusTypes.Snare)
-                    {
-                        return false;
-                    }
-                }
-            }
-
-            var singleTargetSpell = (spell.SpellType == SpellTypes.CombatSpell && spell.Combat.TargetType == SpellTargetTypes.Single) || spell.SpellType == SpellTypes.WarpTo;
-
-            if (target == null && singleTargetSpell)
-            {
-                return false;
-            }
-
-            if (target == this && spell.SpellType == SpellTypes.WarpTo)
-            {
-                return false;
-            }
-
-            if (target != null && singleTargetSpell)
-            {
-                if (spell.Combat.Friendly != IsAllyOf(target))
-                {
-                    return false;
-                }
-            }
-
-            //Check for range of a single target spell
-            if (singleTargetSpell && target != this)
-            {
-                if (!InRangeOf(target, spell.Combat.CastRange))
-                {
-                    if (Options.Combat.EnableCombatChatMessages)
-                    {
-                        PacketSender.SendChatMsg(this, Strings.Combat.targetoutsiderange, ChatMessageType.Combat);
-                    }
-                    return false;
-                }
-            }
-
-            if (checkVitalReqs)
-            {
-                if (spell.VitalCost[(int)Vitals.Mana] > GetVital(Vitals.Mana))
-                {
-                    if (Options.Combat.EnableCombatChatMessages)
-                    {
-                        PacketSender.SendChatMsg(this, Strings.Combat.lowmana, ChatMessageType.Combat);
-                    }
-
-                    return false;
-                }
-
-                if (spell.VitalCost[(int)Vitals.Health] > GetVital(Vitals.Health))
-                {
-                    if (Options.Combat.EnableCombatChatMessages)
-                    {
-                        PacketSender.SendChatMsg(this, Strings.Combat.lowhealth, ChatMessageType.Combat);
-                    }
-
-                    return false;
-                }
-            }
-
+            // We have no reason to stop this player from casting!
             return true;
         }
 
@@ -4476,76 +4412,66 @@ namespace Intersect.Server.Entities
                 return;
             }
 
-            if (!CanSpellCast(spell, target, true))
+            if (!CanCastSpell(spell, target, true, out var _))
             {
                 return;
             }
 
-            if (!SpellCooldowns.ContainsKey(Spells[spellSlot].SpellId) ||
-                SpellCooldowns[Spells[spellSlot].SpellId] < Timing.Global.MillisecondsUtc)
+            
+            if (CastTime == 0)
             {
-                if (CastTime == 0)
+                CastTime = Timing.Global.Milliseconds + spell.CastDuration;
+
+                //Remove stealth status.
+                foreach (var status in CachedStatuses)
                 {
-                    CastTime = Timing.Global.Milliseconds + spell.CastDuration;
-
-                    //Remove stealth status.
-                    foreach (var status in CachedStatuses)
+                    if (status.Type == StatusTypes.Stealth)
                     {
-                        if (status.Type == StatusTypes.Stealth)
-                        {
-                            status.RemoveStatus();
-                        }
+                        status.RemoveStatus();
                     }
+                }
 
-                    SpellCastSlot = spellSlot;
-                    CastTarget = Target;
+                SpellCastSlot = spellSlot;
+                CastTarget = Target;
 
-                    //Check if the caster has the right ammunition if a projectile
-                    if (spell.SpellType == SpellTypes.CombatSpell &&
-                        spell.Combat.TargetType == SpellTargetTypes.Projectile &&
-                        spell.Combat.ProjectileId != Guid.Empty)
+                //Check if the caster has the right ammunition if a projectile
+                if (spell.SpellType == SpellTypes.CombatSpell &&
+                    spell.Combat.TargetType == SpellTargetTypes.Projectile &&
+                    spell.Combat.ProjectileId != Guid.Empty)
+                {
+                    var projectileBase = spell.Combat.Projectile;
+                    if (projectileBase != null && projectileBase.AmmoItemId != Guid.Empty)
                     {
-                        var projectileBase = spell.Combat.Projectile;
-                        if (projectileBase != null && projectileBase.AmmoItemId != Guid.Empty)
-                        {
-                            TryTakeItem(projectileBase.AmmoItemId, projectileBase.AmmoRequired);
-                        }
+                        TryTakeItem(projectileBase.AmmoItemId, projectileBase.AmmoRequired);
                     }
+                }
 
-                    if (spell.CastAnimationId != Guid.Empty)
-                    {
-                        PacketSender.SendAnimationToProximity(
-                            spell.CastAnimationId, 1, base.Id, MapId, 0, 0, (sbyte) Dir
-                        ); //Target Type 1 will be global entity
-                    }
+                if (spell.CastAnimationId != Guid.Empty)
+                {
+                    PacketSender.SendAnimationToProximity(
+                        spell.CastAnimationId, 1, base.Id, MapId, 0, 0, (sbyte) Dir
+                    ); //Target Type 1 will be global entity
+                }
 
-                    //Check if cast should be instance
-                    if (Timing.Global.Milliseconds >= CastTime)
-                    {
-                        //Cast now!
-                        CastTime = 0;
-                        CastSpell(Spells[SpellCastSlot].SpellId, SpellCastSlot);
-                        CastTarget = null;
-                    }
-                    else
-                    {
-                        //Tell the client we are channeling the spell
-                        PacketSender.SendEntityCastTime(this, spellNum);
-                    }
+                //Check if cast should be instance
+                if (Timing.Global.Milliseconds >= CastTime)
+                {
+                    //Cast now!
+                    CastTime = 0;
+                    CastSpell(Spells[SpellCastSlot].SpellId, SpellCastSlot);
+                    CastTarget = null;
                 }
                 else
                 {
-                    if (Options.Combat.EnableCombatChatMessages)
-                    {
-                        PacketSender.SendChatMsg(this, Strings.Combat.channeling, ChatMessageType.Combat);
-                    }
+                    //Tell the client we are channeling the spell
+                    PacketSender.SendEntityCastTime(this, spellNum);
                 }
             }
             else
             {
                 if (Options.Combat.EnableCombatChatMessages)
                 {
-                    PacketSender.SendChatMsg(this, Strings.Combat.cooldown, ChatMessageType.Combat);
+                    PacketSender.SendChatMsg(this, Strings.Combat.channeling, ChatMessageType.Combat);
                 }
             }
         }
@@ -6234,7 +6160,7 @@ namespace Intersect.Server.Entities
 
         [NotMapped, JsonIgnore] public Guid LastMapEntered = Guid.Empty;
 
-        [JsonIgnore, NotMapped] public Client Client;
+        [JsonIgnore, NotMapped] public Client Client { get; set; }
 
         [JsonIgnore, NotMapped]
         public UserRights Power => Client?.Power ?? UserRights.None;
