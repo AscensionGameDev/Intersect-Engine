@@ -21,6 +21,8 @@ namespace Intersect.Client.Framework.Database
 
         public int TargetResolution;
 
+        public bool EnableLighting;
+
         public bool StickyTarget;
 
         public bool FriendOverheadInfo;
@@ -59,6 +61,7 @@ namespace Intersect.Client.Framework.Database
             TargetResolution = LoadPreference("Resolution", 0);
             TargetFps = LoadPreference("Fps", 0);
             FullScreen = LoadPreference("Fullscreen", false);
+            EnableLighting = LoadPreference("EnableLighting", true);
             HideOthersOnWindowOpen = LoadPreference("HideOthersOnWindowOpen", true);
             TargetAccountDirection = LoadPreference("TargetAccountDirection", false);
             StickyTarget = LoadPreference("StickyTarget", true);
@@ -77,6 +80,7 @@ namespace Intersect.Client.Framework.Database
             SavePreference("Fullscreen", FullScreen.ToString());
             SavePreference("Resolution", TargetResolution.ToString());
             SavePreference("Fps", TargetFps.ToString());
+            SavePreference("EnableLighting", EnableLighting.ToString());
             SavePreference("HideOthersOnWindowOpen", HideOthersOnWindowOpen.ToString());
             SavePreference("TargetAccountDirection", TargetAccountDirection.ToString());
             SavePreference("StickyTarget", StickyTarget.ToString());
