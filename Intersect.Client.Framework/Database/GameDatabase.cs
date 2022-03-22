@@ -22,9 +22,9 @@ namespace Intersect.Client.Framework.Database
 
         public int TargetResolution { get; set; }
 
-        public bool StickyTarget { get; set; }
-
         public bool EnableLighting { get; set; }
+
+        public bool StickyTarget { get; set; }
 
         public bool FriendOverheadInfo;
 
