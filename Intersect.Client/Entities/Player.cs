@@ -316,16 +316,16 @@ namespace Intersect.Client.Entities
                 if (Inventory[index].Quantity > 1)
                 {
                     var iBox = new InputBox(
-                        Strings.Inventory.dropitem,
-                        Strings.Inventory.dropitemprompt.ToString(ItemBase.Get(Inventory[index].ItemId).Name), true,
-                        InputBox.InputType.NumericInput, DropItemInputBoxOkay, null, index, Inventory[index].Quantity
+                        Strings.Inventory.DropItemTitle,
+                        Strings.Inventory.DropItemPrompt.ToString(ItemBase.Get(Inventory[index].ItemId).Name), true,
+                        InputBox.InputType.NumericSliderInput, DropItemInputBoxOkay, null, index, Inventory[index].Quantity, Inventory[index].Quantity
                     );
                 }
                 else
                 {
                     var iBox = new InputBox(
-                        Strings.Inventory.dropitem,
-                        Strings.Inventory.dropprompt.ToString(ItemBase.Get(Inventory[index].ItemId).Name), true,
+                        Strings.Inventory.DropItemTitle,
+                        Strings.Inventory.DropItemPrompt.ToString(ItemBase.Get(Inventory[index].ItemId).Name), true,
                         InputBox.InputType.YesNo, DropInputBoxOkay, null, index
                     );
                 }
@@ -359,9 +359,24 @@ namespace Intersect.Client.Entities
             return -1;
         }
 
+        public int GetItemQuantity(Guid itemId)
+        {
+            long count = 0;
+
+            for (var i = 0; i < Options.MaxInvItems; i++)
+            {
+                if (Inventory[i].ItemId == itemId)
+                {
+                    count += Inventory[i].Quantity;
+                }
+            }
+
+            return count > Int32.MaxValue ? Int32.MaxValue : (int)count;
+        }
+
         public void TryUseItem(int index)
         {
-            if (Globals.GameShop == null && Globals.InBank == false && Globals.InTrade == false && !IsItemOnCooldown(index) &&
+            if (!IsItemOnCooldown(index) &&
                 index >= 0 && index < Globals.Me.Inventory.Length && Globals.Me.Inventory[index]?.Quantity > 0)
             {
                 PacketSender.SendUseItem(index, TargetIndex);
@@ -561,7 +576,7 @@ namespace Intersect.Client.Entities
                         var iBox = new InputBox(
                             Strings.Shop.sellitem,
                             Strings.Shop.sellitemprompt.ToString(ItemBase.Get(Inventory[index].ItemId).Name), true,
-                            InputBox.InputType.NumericInput, SellItemInputBoxOkay, null, index, Inventory[index].Quantity
+                            InputBox.InputType.NumericSliderInput, SellItemInputBoxOkay, null, index, Inventory[index].Quantity
                         );
                     }
                     else
@@ -583,6 +598,41 @@ namespace Intersect.Client.Entities
             }
         }
 
+        public void TryBuyItem(int slot)
+        {
+            //Confirm the purchase
+            var item = ItemBase.Get(Globals.GameShop.SellingItems[slot].ItemId);
+            if (item != null)
+            {
+                // Determine how many items we can purchase.
+                var currencyCount = GetItemQuantity(Globals.GameShop.SellingItems[slot].CostItemId);
+                var maxBuyAmount = (int)Math.Floor(currencyCount / (float)Globals.GameShop.SellingItems[slot].CostItemQuantity);
+
+                // Is the item stackable, and can we make a purchase at all?
+                if (item.IsStackable && maxBuyAmount != 0)
+                {
+                    var iBox = new InputBox(
+                        Strings.Shop.buyitem, Strings.Shop.buyitemprompt.ToString(item.Name), true,
+                        InputBox.InputType.NumericSliderInput, BuyItemInputBoxOkay, null, slot, maxBuyAmount, maxBuyAmount
+                    );
+                }
+                // In any other case, attempt to purchase one and let the server handle the error and double checking.
+                else
+                {
+                    PacketSender.SendBuyItem(slot, 1);
+                }
+            }
+        }
+
+        private void BuyItemInputBoxOkay(object sender, EventArgs e)
+        {
+            var value = (int)((InputBox)sender).Value;
+            if (value > 0)
+            {
+                PacketSender.SendBuyItem((int)((InputBox)sender).UserData, value);
+            }
+        }
+
         private void SellItemInputBoxOkay(object sender, EventArgs e)
         {
             var value = (int)((InputBox)sender).Value;
@@ -598,7 +648,7 @@ namespace Intersect.Client.Entities
         }
 
         //bank
-        public void TryDepositItem(int index)
+        public void TryDepositItem(int index, int bankSlot = -1)
         {
             if (ItemBase.Get(Inventory[index].ItemId) != null)
             {
@@ -615,15 +665,17 @@ namespace Intersect.Client.Entities
 
                 if (Inventory[index].Quantity > 1)
                 {
+                    int[] userData = new int[2] { index, bankSlot };
+
                     var iBox = new InputBox(
                         Strings.Bank.deposititem,
                         Strings.Bank.deposititemprompt.ToString(ItemBase.Get(Inventory[index].ItemId).Name), true,
-                        InputBox.InputType.NumericInput, DepositItemInputBoxOkay, null, index, Inventory[index].Quantity
+                        InputBox.InputType.NumericSliderInput, DepositItemInputBoxOkay, null, userData, Inventory[index].Quantity
                     );
                 }
                 else
                 {
-                    PacketSender.SendDepositItem(index, 1);
+                    PacketSender.SendDepositItem(index, 1, bankSlot);
                 }
             }
         }
@@ -633,11 +685,13 @@ namespace Intersect.Client.Entities
             var value = (int)((InputBox)sender).Value;
             if (value > 0)
             {
-                PacketSender.SendDepositItem((int)((InputBox)sender).UserData, value);
+                int[] userData = (int[])((InputBox)sender).UserData;
+
+                PacketSender.SendDepositItem(userData[0], value, userData[1]);
             }
         }
 
-        public void TryWithdrawItem(int index)
+        public void TryWithdrawItem(int index, int invSlot = -1)
         {
             if (Globals.Bank[index] != null && ItemBase.Get(Globals.Bank[index].ItemId) != null)
             {
@@ -654,15 +708,17 @@ namespace Intersect.Client.Entities
 
                 if (Globals.Bank[index].Quantity > 1)
                 {
+                    int[] userData = new int[2] { index, invSlot };
+
                     var iBox = new InputBox(
                         Strings.Bank.withdrawitem,
                         Strings.Bank.withdrawitemprompt.ToString(ItemBase.Get(Globals.Bank[index].ItemId).Name), true,
-                        InputBox.InputType.NumericInput, WithdrawItemInputBoxOkay, null, index
+                        InputBox.InputType.NumericSliderInput, WithdrawItemInputBoxOkay, null, userData, Globals.Bank[index].Quantity
                     );
                 }
                 else
                 {
-                    PacketSender.SendWithdrawItem(index, 1);
+                    PacketSender.SendWithdrawItem(index, 1, invSlot);
                 }
             }
         }
@@ -672,7 +728,8 @@ namespace Intersect.Client.Entities
             var value = (int)((InputBox)sender).Value;
             if (value > 0)
             {
-                PacketSender.SendWithdrawItem((int)((InputBox)sender).UserData, value);
+                int[] userData = (int[])((InputBox)sender).UserData;
+                PacketSender.SendWithdrawItem(userData[0], value, userData[1]);
             }
         }
 
@@ -688,7 +745,7 @@ namespace Intersect.Client.Entities
                     var iBox = new InputBox(
                         Strings.Bags.storeitem,
                         Strings.Bags.storeitemprompt.ToString(ItemBase.Get(Inventory[invSlot].ItemId).Name), true,
-                        InputBox.InputType.NumericInput, StoreBagItemInputBoxOkay, null, userData, Inventory[invSlot].Quantity
+                        InputBox.InputType.NumericSliderInput, StoreBagItemInputBoxOkay, null, userData, Inventory[invSlot].Quantity
                     );
                 }
                 else
@@ -719,7 +776,7 @@ namespace Intersect.Client.Entities
                     var iBox = new InputBox(
                         Strings.Bags.retreiveitem,
                         Strings.Bags.retreiveitemprompt.ToString(ItemBase.Get(Globals.Bag[bagSlot].ItemId).Name), true,
-                        InputBox.InputType.NumericInput, RetreiveBagItemInputBoxOkay, null, userData
+                        InputBox.InputType.NumericSliderInput, RetreiveBagItemInputBoxOkay, null, userData, Globals.Bag[bagSlot].Quantity
                     );
                 }
                 else
@@ -749,7 +806,7 @@ namespace Intersect.Client.Entities
                     var iBox = new InputBox(
                         Strings.Trading.offeritem,
                         Strings.Trading.offeritemprompt.ToString(ItemBase.Get(Inventory[index].ItemId).Name), true,
-                        InputBox.InputType.NumericInput, TradeItemInputBoxOkay, null, index, Inventory[index].Quantity
+                        InputBox.InputType.NumericSliderInput, TradeItemInputBoxOkay, null, index, Inventory[index].Quantity
                     );
                 }
                 else
@@ -777,7 +834,7 @@ namespace Intersect.Client.Entities
                     var iBox = new InputBox(
                         Strings.Trading.revokeitem,
                         Strings.Trading.revokeitemprompt.ToString(ItemBase.Get(Globals.Trade[0, index].ItemId).Name),
-                        true, InputBox.InputType.NumericInput, RevokeItemInputBoxOkay, null, index
+                        true, InputBox.InputType.NumericSliderInput, RevokeItemInputBoxOkay, null, index
                     );
                 }
                 else

@@ -115,7 +115,9 @@ namespace Intersect
 
             public Color PlayerMsg = new Color(255, 220, 220, 220);
 
-            public Color PrivateChat = Color.Magenta;
+            public Color PrivateChatFrom = Color.Magenta;
+
+            public Color PrivateChatTo = new Color(190, 0, 190);
 
             public Color ProximityMsg = new Color(255, 220, 220, 220);
 

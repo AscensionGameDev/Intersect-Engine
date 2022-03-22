@@ -7,23 +7,24 @@ namespace Intersect.Client.Framework.Database
     {
         // Registry Database for Client Settings Preferences.
 
-        public bool FullScreen;
+        public bool FullScreen { get; set; }
 
-        public bool HideOthersOnWindowOpen;
+        public bool HideOthersOnWindowOpen { get; set; }
 
-        public bool TargetAccountDirection;
+        public bool TargetAccountDirection { get; set; }
 
-        public int MusicVolume;
+        //Preferences
+        public int MusicVolume { get; set; }
 
-        public int SoundVolume;
+        public int SoundVolume { get; set; }
 
-        public int TargetFps;
+        public int TargetFps { get; set; }
 
-        public int TargetResolution;
+        public int TargetResolution { get; set; }
 
-        public bool EnableLighting;
+        public bool EnableLighting { get; set; }
 
-        public bool StickyTarget;
+        public bool StickyTarget { get; set; }
 
         public bool FriendOverheadInfo;
 

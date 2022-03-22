@@ -151,6 +151,11 @@ namespace Intersect.Configuration
         /// </summary>
         public int MusicFadeTimer { get; set; } = 1500;
 
+        /// <summary>
+        /// Configures whether or not the context menus are enabled upon right-clicking certain elements.
+        /// </summary>
+        public bool EnableContextMenus { get; set; } = true;
+
         #endregion
 
         #region Serialization Hooks

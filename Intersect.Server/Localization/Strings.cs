@@ -195,8 +195,11 @@ namespace Intersect.Server.Localization
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString pmcmd = @"/pm";
 
-            [JsonProperty("private", NullValueHandling = NullValueHandling.Ignore)]
-            public readonly LocalizedString Private = @"[PM] {00}: {01}";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString PrivateTo = @"[PM] To {00}: {01}";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString PrivateFrom = @"[PM] From {00}: {01}";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString rcmd = @"/r";
@@ -678,6 +681,9 @@ namespace Intersect.Server.Localization
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString sent = @"Friend request sent.";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString LoggedIn = @"{00} has logged in.";
 
         }
 
