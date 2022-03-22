@@ -621,6 +621,12 @@ namespace Intersect.Server.Entities
                 Log.Warn($"Combat data missing for {spellBase.Id}.");
             }
 
+            // Check if we are even allowed to cast this spell.
+            if (!CanCastSpell(spellBase, target, true, out var _))
+            {
+                return;
+            }
+
             var range = spellBase.Combat?.CastRange ?? 0;
             var targetType = spellBase.Combat?.TargetType ?? SpellTargetTypes.Single;
             var projectileBase = spellBase.Combat?.Projectile;
@@ -647,57 +653,7 @@ namespace Intersect.Server.Entities
                 }
             }
 
-            if (spellBase.VitalCost == null)
-            {
-                return;
-            }
-
-            if (spellBase.VitalCost[(int) Vitals.Mana] > GetVital(Vitals.Mana))
-            {
-                return;
-            }
-
-            if (spellBase.VitalCost[(int) Vitals.Health] > GetVital(Vitals.Health))
-            {
-                return;
-            }
-
-            var spell = Spells[spellIndex];
-            if (spell == null)
-            {
-                return;
-            }
-
-            if (SpellCooldowns.ContainsKey(spell.SpellId) && SpellCooldowns[spell.SpellId] >= Timing.Global.MillisecondsUtc)
-            {
-                return;
-            }
-
-            if (!InRangeOf(target, range) && targetType == SpellTargetTypes.Single)
-            {
-                // ReSharper disable once SwitchStatementMissingSomeCases
-                return;
-            }
-
             CastTime = Timing.Global.Milliseconds + spellBase.CastDuration;
-
-            if (spellBase.VitalCost[(int) Vitals.Mana] > 0)
-            {
-                SubVital(Vitals.Mana, spellBase.VitalCost[(int) Vitals.Mana]);
-            }
-            else
-            {
-                AddVital(Vitals.Mana, -spellBase.VitalCost[(int) Vitals.Mana]);
-            }
-
-            if (spellBase.VitalCost[(int) Vitals.Health] > 0)
-            {
-                SubVital(Vitals.Health, spellBase.VitalCost[(int) Vitals.Health]);
-            }
-            else
-            {
-                AddVital(Vitals.Health, -spellBase.VitalCost[(int) Vitals.Health]);
-            }
 
             if ((spellBase.Combat?.Friendly ?? false) && spellBase.SpellType != SpellTypes.WarpTo)
             {
@@ -1188,7 +1144,7 @@ namespace Intersect.Server.Entities
         {
             // Check if we've moved out of our range we're allowed to move from after being "aggro'd" by something.
             // If so, remove target and move back to the origin point.
-            if (Options.Npc.AllowResetRadius && AggroCenterMap != null && (GetDistanceTo(AggroCenterMap, AggroCenterX, AggroCenterY) > Math.Max(Options.Npc.ResetRadius, Base.ResetRadius) || forceDistance))
+            if (Options.Npc.AllowResetRadius && AggroCenterMap != null && (GetDistanceTo(AggroCenterMap, AggroCenterX, AggroCenterY) > Math.Max(Options.Npc.ResetRadius, Math.Min(Base.ResetRadius, Math.Max(Options.MapWidth, Options.MapHeight))) || forceDistance))
             {
                 ResetNpc(Options.Npc.ResetVitalsAndStatusses);
 

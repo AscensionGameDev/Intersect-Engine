@@ -24,7 +24,7 @@ namespace Intersect.Server.Database.GameData.Migrations
             ObjectCreationHandling = ObjectCreationHandling.Replace
         };
 
-        private static Ceras mOldCeras;
+        private static Intersect.Network.Ceras mOldCeras;
 
         public static void Run(GameContext context)
         {

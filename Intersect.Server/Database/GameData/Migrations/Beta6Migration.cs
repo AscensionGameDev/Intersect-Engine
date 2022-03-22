@@ -23,13 +23,13 @@ namespace Intersect.Server.Database.GameData.Migrations
     public static class Beta6Migration
     {
 
-        private static Ceras mCeras;
+        private static Intersect.Network.Ceras mCeras;
 
         public static void Run(GameContext context)
         {
             var nameTypeDict = new Dictionary<string, Type>();
             nameTypeDict.Add("Intersect.GameObjects.Maps.TileArray[]", typeof(LegacyTileArray[]));
-            mCeras = new Ceras(nameTypeDict);
+            mCeras = new Intersect.Network.Ceras(nameTypeDict);
 
             RemoveByteBufferUsageFromMaps(context);
 
