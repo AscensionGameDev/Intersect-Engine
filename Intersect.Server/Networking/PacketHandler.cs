@@ -3834,8 +3834,6 @@ namespace Intersect.Server.Networking
 
                     obj.Load(packet.Data);
 
-                    DbInterface.SaveGameObject(obj);
-
                     if (type == GameObjectType.Quest)
                     {
                         var qst = (QuestBase)obj;
@@ -3877,6 +3875,7 @@ namespace Intersect.Server.Networking
                         DbInterface.CacheServerVariableEventTextLookups();
                     }
 
+                    DbInterface.SaveGameObject(obj);
                     // Only replace the modified object
                     PacketSender.CacheGameDataPacket();
 
