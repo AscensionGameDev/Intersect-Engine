@@ -8,7 +8,11 @@
 
         Local,
 
-        Global
+        Global,
+
+        Party,
+
+        Guild
 
     }
 
