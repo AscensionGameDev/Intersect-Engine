@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -16,6 +16,7 @@ using Intersect.Client.Framework.Audio;
 #endif
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Intersect.Logging;
 
 namespace Intersect.Client.Framework.Gwen.Control
 {
@@ -672,6 +673,8 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// <returns></returns>
         public virtual Canvas Canvas => mParent?.GetCanvas();
 
+        public bool SkipSerialization { get; set; } = false;
+
         /// <summary>
         ///     Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
         /// </summary>
@@ -826,35 +829,35 @@ namespace Intersect.Client.Framework.Gwen.Control
 
         public void LoadJsonUi(GameContentManager.UI stage, string resolution, bool saveOutput = true)
         {
-            try
+            if (string.IsNullOrWhiteSpace(Name))
             {
-                bool cacheUsed = false;
-                var obj = JsonConvert.DeserializeObject<JObject>(
-                    GameContentManager.Current?.GetUIJson(stage, Name, resolution, out cacheUsed)
-                );
+                Log.Warn($"Attempted to load layout for nameless {GetType().FullName}");
+                return;
+            }
 
-                if (obj != null)
+            _ = GameContentManager.Current?.GetLayout(stage, Name, resolution, false, (rawLayout, cacheHit) =>
+            {
+                try
                 {
-                    LoadJson(obj);
-                    ProcessAlignments();
+                    var obj = JsonConvert.DeserializeObject<JObject>(rawLayout);
+
+                    if (obj != null)
+                    {
+                        LoadJson(obj);
+                        ProcessAlignments();
+                    }
+                }
+                catch (Exception exception)
+                {
+                    //Log JSON UI Loading Error
+                    throw new Exception("Error loading json ui for " + CanonicalName, exception);
                 }
 
-                if (cacheUsed)
+                if (!cacheHit && saveOutput)
                 {
-                    saveOutput = false;
+                    GameContentManager.Current?.SaveUIJson(stage, Name, GetJsonUI(), resolution);
                 }
-
-            }
-            catch (Exception exception)
-            {
-                //Log JSON UI Loading Error
-                throw new Exception("Error loading json ui for " + CanonicalName, exception);
-            }
-
-            if (saveOutput)
-            {
-                GameContentManager.Current?.SaveUIJson(stage, Name, GetJsonUI(), resolution);
-            }
+            });
         }
 
         public virtual void LoadJson(JToken obj)
