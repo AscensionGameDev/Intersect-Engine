@@ -792,6 +792,9 @@ namespace Intersect.Client.Entities
                                     (float)Options.MaxStatValue)));
         }
 
+        /// <summary>
+        /// Returns whether this entity is Stealthed or not.
+        /// </summary>
         public virtual bool IsStealthed
         {
             get
@@ -812,6 +815,16 @@ namespace Intersect.Client.Entities
                 return false;
             }
         }
+
+        /// <summary>
+        /// Returns whether this entity should be drawn.
+        /// </summary>
+        public virtual bool ShouldDraw => !IsHidden && (!IsStealthed || this == Globals.Me || Globals.Me.IsInMyParty(Id));
+
+        /// <summary>
+        /// Returns whether the name of this entity should be drawn.
+        /// </summary>
+        public virtual bool ShouldDrawName => !HideName && ShouldDraw;
 
         public virtual HashSet<Entity> DetermineRenderOrder(HashSet<Entity> renderList, IMapInstance map)
         {
@@ -1090,15 +1103,9 @@ namespace Intersect.Client.Entities
             }
 
             //If unit is stealthed, don't render unless the entity is the player or party member.
-            if (this != Globals.Me && !(this is Player player && Globals.Me.IsInMyParty(player)))
+            if (!ShouldDraw)
             {
-                for (var n = 0; n < Status.Count; n++)
-                {
-                    if (Status[n].Type == StatusTypes.Stealth)
-                    {
-                        return;
-                    }
-                }
+                return;
             }
 
             var chatbubbles = mChatBubbles.ToArray();
@@ -1275,17 +1282,14 @@ namespace Intersect.Client.Entities
             Color backgroundColor = null
         )
         {
-            if (string.IsNullOrEmpty(label))
+            // Are we supposed to hide this Label?
+            if (!ShouldDrawName || string.IsNullOrWhiteSpace(label))
             {
                 return;
             }
 
-            if (label.Trim().Length == 0)
-            {
-                return;
-            }
-
-            if (HideName)
+            var map = MapInstance;
+            if (map == null)
             {
                 return;
             }
@@ -1304,25 +1308,6 @@ namespace Intersect.Client.Entities
             if (labelColor != null && labelColor.A != 0)
             {
                 textColor = labelColor;
-            }
-
-            //Check for stealth amoungst status effects.
-            for (var n = 0; n < Status.Count; n++)
-            {
-                //If unit is stealthed, don't render unless the entity is the player.
-                if (Status[n].Type == StatusTypes.Stealth)
-                {
-                    if (this != Globals.Me && !(this is Player player && Globals.Me.IsInMyParty(player)))
-                    {
-                        return;
-                    }
-                }
-            }
-
-            var map = MapInstance;
-            if (map == null)
-            {
-                return;
             }
 
             var textSize = Graphics.Renderer.MeasureText(label, Graphics.EntityNameFont, 1);
@@ -1346,7 +1331,8 @@ namespace Intersect.Client.Entities
 
         public virtual void DrawName(Color textColor, Color borderColor = null, Color backgroundColor = null)
         {
-            if (HideName || Name.Trim().Length == 0)
+            // Are we supposed to hide this name?
+            if (!ShouldDrawName || string.IsNullOrWhiteSpace(Name))
             {
                 return;
             }
@@ -1395,19 +1381,6 @@ namespace Intersect.Client.Entities
                     textColor = color?.Name;
                     backgroundColor = color?.Background;
                     borderColor = color?.Outline;
-                }
-            }
-
-            //Check for stealth amoungst status effects.
-            for (var n = 0; n < Status.Count; n++)
-            {
-                //If unit is stealthed, don't render unless the entity is the player.
-                if (Status[n].Type == StatusTypes.Stealth)
-                {
-                    if (this != Globals.Me && !(this is Player player && Globals.Me.IsInMyParty(player)))
-                    {
-                        return;
-                    }
                 }
             }
 
@@ -1527,7 +1500,8 @@ namespace Intersect.Client.Entities
 
         public void DrawHpBar()
         {
-            if (HideName && IsHidden)
+            // Are we supposed to hide this HP bar?
+            if (!ShouldDraw)
             {
                 return;
             }
@@ -1537,18 +1511,9 @@ namespace Intersect.Client.Entities
                 return;
             }
 
-            var maxVital = MaxVital[(int)Vitals.Health];
-            var shieldSize = 0;
-
             //Check for shields
-            foreach (var status in Status)
-            {
-                if (status.Type == StatusTypes.Shield)
-                {
-                    shieldSize += status.Shield[(int)Vitals.Health];
-                    maxVital += status.Shield[(int)Vitals.Health];
-                }
-            }
+            var maxVital = MaxVital[(int)Vitals.Health];
+            var shieldSize = GetShieldSize();
 
             if (shieldSize + Vital[(int)Vitals.Health] > maxVital)
             {
@@ -1558,19 +1523,6 @@ namespace Intersect.Client.Entities
             if (Vital[(int)Vitals.Health] == MaxVital[(int)Vitals.Health] && shieldSize <= 0)
             {
                 return;
-            }
-
-            //Check for stealth amoungst status effects.
-            for (var n = 0; n < Status.Count; n++)
-            {
-                //If unit is stealthed, don't render unless the entity is the player.
-                if (Status[n].Type == StatusTypes.Stealth)
-                {
-                    if (this != Globals.Me && !(this is Player player && Globals.Me.IsInMyParty(player)))
-                    {
-                        return;
-                    }
-                }
             }
 
             var map = Maps.MapInstance.Get(MapId);
@@ -1636,6 +1588,12 @@ namespace Intersect.Client.Entities
 
         public void DrawCastingBar()
         {
+            // Are we supposed to hide this cast bar?
+            if (!ShouldDraw)
+            {
+                return;
+            }
+
             if (CastTime < Timing.Global.Milliseconds)
             {
                 return;
