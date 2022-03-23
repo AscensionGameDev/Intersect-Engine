@@ -819,38 +819,12 @@ namespace Intersect.Client.Entities
         /// <summary>
         /// Returns whether this entity should be drawn.
         /// </summary>
-        public virtual bool ShouldDraw
-        {
-            get
-            {
-                if (IsHidden || (IsStealthed && this != Globals.Me && !Globals.Me.IsInMyParty(Id)))
-                {
-                    return false;
-                }
-                else
-                {
-                    return true;
-                }
-            }
-        }
+        public virtual bool ShouldDraw => !IsHidden && (!IsStealthed || this == Globals.Me || Globals.Me.IsInMyParty(Id));
 
         /// <summary>
         /// Returns whether the name of this entity should be drawn.
         /// </summary>
-        public virtual bool ShouldDrawName
-        {
-            get 
-            {
-                if (HideName || IsHidden || (IsStealthed && this != Globals.Me && !Globals.Me.IsInMyParty(Id)))
-                {
-                    return false;
-                }
-                else
-                {
-                    return true;
-                }
-            }
-        }
+        public virtual bool ShouldDrawName => !HideName && ShouldDraw;
 
         public virtual HashSet<Entity> DetermineRenderOrder(HashSet<Entity> renderList, IMapInstance map)
         {
