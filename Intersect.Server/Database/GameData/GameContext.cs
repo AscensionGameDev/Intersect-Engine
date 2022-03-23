@@ -111,7 +111,12 @@ namespace Intersect.Server.Database.GameData
             {
                 BoundItemExtensionMigration.Run(this);
             }
-            
+
+            if (migrations.IndexOf("20211031200145_FixQuestTaskCompletionEvents") > -1)
+            {
+                FixQuestTaskCompletionEventsMigration.Run(this);
+            }
+
         }
 
         internal static class Queries
