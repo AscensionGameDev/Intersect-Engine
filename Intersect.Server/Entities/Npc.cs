@@ -779,7 +779,7 @@ namespace Intersect.Server.Entities
                                 mResetting = false;
                             }
 
-                            ResetNpc(Options.Instance.NpcOpts.ContinuouslyResetVitalsAndStatuses);
+                            Reset(Options.Instance.NpcOpts.ContinuouslyResetVitalsAndStatuses);
                             tempTarget = Target;
 
                             if (distance != mResetDistance)
@@ -1146,7 +1146,7 @@ namespace Intersect.Server.Entities
             // If so, remove target and move back to the origin point.
             if (Options.Npc.AllowResetRadius && AggroCenterMap != null && (GetDistanceTo(AggroCenterMap, AggroCenterX, AggroCenterY) > Math.Max(Options.Npc.ResetRadius, Math.Min(Base.ResetRadius, Math.Max(Options.MapWidth, Options.MapHeight))) || forceDistance))
             {
-                ResetNpc(Options.Npc.ResetVitalsAndStatusses);
+                Reset(Options.Npc.ResetVitalsAndStatusses);
 
                 mResetCounter = 0;
                 mResetDistance = 0;
@@ -1159,7 +1159,7 @@ namespace Intersect.Server.Entities
             return false;
         }
 
-        private void ResetNpc(bool resetVitals = true, bool clearLocation = false)
+        private void Reset(bool resetVitals, bool clearLocation = false)
         {
             // Remove our target.
             RemoveTarget();
@@ -1189,6 +1189,17 @@ namespace Intersect.Server.Entities
                     RestoreVital((Vitals)v);
                 }
             }
+        }
+
+        // Completely resets an Npc to full health and its spawnpoint if it's current chasing something.
+        public override void Reset()
+        {
+            if (AggroCenterMap != null)
+            {
+                Warp(AggroCenterMap.Id, AggroCenterX, AggroCenterY);
+            }
+            
+            Reset(true, true);
         }
 
         public override void NotifySwarm(Entity attacker)
