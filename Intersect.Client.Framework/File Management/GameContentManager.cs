@@ -1,4 +1,4 @@
-﻿using Intersect.Client.Framework.Audio;
+using Intersect.Client.Framework.Audio;
 using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Logging;
@@ -21,11 +21,11 @@ namespace Intersect.Client.Framework.File_Management
 
         public enum UI
         {
-
             Menu,
 
-            InGame
+            InGame,
 
+            Shared,
         }
 
         public static GameContentManager Current;
@@ -356,7 +356,13 @@ namespace Intersect.Client.Framework.File_Management
                 Directory.CreateDirectory(layouts);
             }
 
-            var dir = Path.Combine(layouts, stage == UI.Menu ? "menu" : "game");
+            var stageName = stage.ToString().ToLowerInvariant();
+            if (stage == UI.InGame)
+            {
+                stageName = "game";
+            }
+
+            var dir = Path.Combine(layouts, stageName);
             if (!Directory.Exists(dir))
             {
                 Directory.CreateDirectory(dir);
@@ -408,7 +414,14 @@ namespace Intersect.Client.Framework.File_Management
                 Directory.CreateDirectory(layouts);
             }
 
-            var dir = Path.Combine(layouts, stage == UI.Menu ? "menu" : "game");
+
+            var stageName = stage.ToString().ToLowerInvariant();
+            if (stage == UI.InGame)
+            {
+                stageName = "game";
+            }
+
+            var dir = Path.Combine(layouts, stageName);
             if (!Directory.Exists(dir))
             {
                 Directory.CreateDirectory(dir);
