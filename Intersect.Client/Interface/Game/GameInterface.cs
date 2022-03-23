@@ -232,9 +232,14 @@ namespace Intersect.Client.Interface.Game
             Globals.InBag = true;
         }
 
-        public BagWindow GetBag()
+        public BagWindow GetBagWindow()
         {
             return mBagWindow;
+        }
+
+        public BankWindow GetBankWindow()
+        {
+            return mBankWindow;
         }
 
         //Crafting

@@ -10,10 +10,8 @@ using Newtonsoft.Json;
 
 namespace Intersect.Server.Database.PlayerData.Security
 {
-
-    public class UserRights
+    public sealed class UserRights : IComparable<UserRights>, IEquatable<UserRights>
     {
-
         private static readonly Type ApiRolesType = typeof(ApiRoles);
 
         private static readonly List<PropertyInfo> ApiRolesPermissions = ApiRolesType
@@ -85,12 +83,33 @@ namespace Intersect.Server.Database.PlayerData.Security
             return !(b1 == b2);
         }
 
+        protected int ComputePowerScore()
+        {
+            var score = 0;
+            score |= Convert.ToInt32(Editor) << 0;
+            score |= Convert.ToInt32(Mute) << 1;
+            score |= Convert.ToInt32(Kick) << 2;
+            score |= Convert.ToInt32(Ban) << 3;
+
+            return score;
+        }
+
+        public int CompareTo(UserRights other)
+        {
+            if (other == default)
+            {
+                return 1;
+            }
+
+            return ComputePowerScore() - other.ComputePowerScore();
+        }
+
         public override bool Equals(object obj)
         {
             return obj is UserRights userRights && Equals(userRights);
         }
 
-        protected bool Equals(UserRights other)
+        public bool Equals(UserRights other)
         {
             var permissions = EnumeratePermissions();
             var otherPermissions = other.EnumeratePermissions();
@@ -128,12 +147,10 @@ namespace Intersect.Server.Database.PlayerData.Security
 
             return userRights.ToImmutableList();
         }
-
     }
 
     public static class AccessExtensions
     {
-
         public static UserRights AsUserRights(this Access access)
         {
             switch (access)
@@ -151,16 +168,12 @@ namespace Intersect.Server.Database.PlayerData.Security
                     throw new ArgumentOutOfRangeException(nameof(access), access, null);
             }
         }
-
     }
 
     public class ApiRoles
     {
-
         public bool UserQuery { get; set; }
 
         public bool UserManage { get; set; }
-
     }
-
 }

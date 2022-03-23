@@ -49,13 +49,13 @@ namespace Intersect.Editor.Forms
                 chkPackageAssets.Checked = Convert.ToBoolean(packageUpdateAssets);
             }
 
-            var soundBatchSize = Preferences.LoadPreference("SoundBatchSize");
+            var soundBatchSize = Preferences.LoadPreference("SoundPackSize");
             if (soundBatchSize != "")
             {
                 nudSoundBatch.Value = Convert.ToInt32(soundBatchSize);
             }
 
-            var musicBatchSize = Preferences.LoadPreference("MusicBatchSize");
+            var musicBatchSize = Preferences.LoadPreference("MusicPackSize");
             if (musicBatchSize != "")
             {
                 nudMusicBatch.Value = Convert.ToInt32(musicBatchSize);
@@ -81,8 +81,8 @@ namespace Intersect.Editor.Forms
             btnBrowseClient.Text = Strings.Options.browsebtn;
             btnUpdateOptions.Text = Strings.Options.UpdateTab;
             grpAssetPackingOptions.Text = Strings.Options.PackageOptions;
-            lblMusicBatch.Text = Strings.Options.MusicBatch;
-            lblSoundBatch.Text = Strings.Options.SoundBatch;
+            lblMusicBatch.Text = Strings.Options.MusicPackSize;
+            lblSoundBatch.Text = Strings.Options.SoundPackSize;
             lblTextureSize.Text = Strings.Options.TextureSize;
 
         }
@@ -92,8 +92,8 @@ namespace Intersect.Editor.Forms
             Preferences.SavePreference("SuppressTextureWarning", chkSuppressTilesetWarning.Checked.ToString());
             Preferences.SavePreference("ClientPath", txtGamePath.Text);
             Preferences.SavePreference("PackageUpdateAssets", chkPackageAssets.Checked.ToString());
-            Preferences.SavePreference("SoundBatchSize", nudSoundBatch.Value.ToString());
-            Preferences.SavePreference("MusicBatchSize", nudMusicBatch.Value.ToString());
+            Preferences.SavePreference("SoundPackSize", nudSoundBatch.Value.ToString());
+            Preferences.SavePreference("MusicPackSize", nudMusicBatch.Value.ToString());
             Preferences.SavePreference("TexturePackSize", cmbTextureSize.GetItemText(cmbTextureSize.SelectedItem));
         }
 
@@ -137,6 +137,11 @@ namespace Intersect.Editor.Forms
             HidePanels();
 
             pnlUpdate.Visible = true;
+        }
+
+        private void nudSoundBatch_ValueChanged(object sender, EventArgs e)
+        {
+
         }
     }
 

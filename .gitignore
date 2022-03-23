@@ -216,3 +216,6 @@ packages/
 
 .vs/
 .idea
+
+
+/assets/**

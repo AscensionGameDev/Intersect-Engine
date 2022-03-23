@@ -16,8 +16,16 @@ namespace Intersect.Network.Packets.Client
             TargetId = targetId;
         }
 
+        public PartyInvitePacket(string target)
+        {
+            Target = target;
+        }
+
         [Key(0)]
         public Guid TargetId { get; set; }
+
+        [Key(1)]
+        public string Target { get; set; }
 
     }
 
