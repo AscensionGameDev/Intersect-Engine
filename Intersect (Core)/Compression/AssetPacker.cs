@@ -162,35 +162,74 @@ namespace Intersect.Compression
 		/// <param name="indexName">The filename for the index file.</param>
 		/// <param name="packPrefix">The file prefix for each asset pack.</param>
 		/// <param name="packExt">The file extension for each asset pack.</param>
-		/// <param name="batchSize">The maximum amount of files to pack up in each asset pack.</param>
+		/// <param name="batchSize">The maximum size in Megabytes of combined files to pack up in each asset pack.</param>
 		public static void PackageAssets(string inputDir, string inputFilter, string outputDir, string indexName, string packPrefix, string packExt, int batchSize)
 		{
-			// We can't do less than one file at a time.
+			// We can't do less than one MB at a time.
 			if (batchSize < 1)
 			{
 				batchSize = 1;
 			}
 
-			var fileBatches = Directory.GetFiles(inputDir, inputFilter).Split(batchSize).ToArray();
+			// Convert to Bytes.
+			batchSize = (batchSize * 1024) * 1024;
+
+			// Get our asset file layout so we can just loop through this to create our packs.
+			var packs = GeneratePackLayout(inputDir, inputFilter, packPrefix, packExt, batchSize);
+
 			var index = new List<PackageIndexEntry>();
-			for (var n = 0; n < fileBatches.Length; n++)
+			foreach (var pack in packs)
 			{
-				using (var stream = GzipCompression.CreateCompressedFileStream(Path.Combine(outputDir, string.Format("{00}{01}{02}", packPrefix, n, packExt))))
+				using (var stream = GzipCompression.CreateCompressedFileStream(Path.Combine(outputDir, pack.Key)))
 				{
 					int streamOffset = 0;
-					foreach (var item in fileBatches[n])
+					foreach (var item in pack.Value)
 					{
-						using (var file = File.OpenRead(item))
+						using (var file = File.OpenRead(item.FullPath))
 						{
 							file.CopyTo(stream);
-							index.Add(new PackageIndexEntry() { FileName = Path.GetFileName(item), PackName = string.Format("{00}{01}{02}", packPrefix, n, packExt), FileStartByte = streamOffset, FileEndByte = streamOffset + (int)file.Length });
+							index.Add(new PackageIndexEntry() { FileName = Path.GetFileName(item.Name), PackName = pack.Key, FileStartByte = streamOffset, FileEndByte = streamOffset + (int)file.Length });
 							streamOffset += (int)file.Length;
 						}
 					}
 				}
 			}
+
 			GzipCompression.WriteCompressedString(Path.Combine(outputDir, indexName), JsonConvert.SerializeObject(index));
 		}
+
+		private static Dictionary<string, List<PackFileEntry>> GeneratePackLayout(string inputDir, string inputFilter, string packPrefix, string packExt, long batchSize)
+        {
+			var cache = new Dictionary<string, List<PackFileEntry>>();
+			var currentPack = 0;
+			long currentSize = 0;
+
+			foreach (var file in new DirectoryInfo(inputDir).GetFiles(inputFilter).OrderByDescending(f => f.Length))
+            {
+				// Does this file make us go over our determined batch size, but is it not our first file?
+				if (currentSize + file.Length > batchSize && currentSize != 0)
+                {
+					// It's going over and is NOT our first file! Uh-Oh! Move on to the next pack!
+					currentSize = 0;
+					currentPack++;
+                }
+
+				// Get our pack name for simplicity.
+				var packname = $"{packPrefix}{currentPack}{packExt}";
+
+				// Check if we already have this pack name in our cache, if not add it!
+				if (!cache.ContainsKey(packname))
+                {
+					cache.Add(packname, new List<PackFileEntry>());
+                }
+
+				// Add the file to our cache here.
+				cache[packname].Add(new PackFileEntry() { Name = file.Name, FullPath = file.FullName });
+				currentSize += file.Length;
+            }
+
+			return cache;
+        }
 		#endregion
 
 		#region Internal classes
@@ -199,12 +238,19 @@ namespace Intersect.Compression
 			public long LastAccessTime { get; set; }
 			public MemoryStream StreamCache { get; set; }
 		}
+
 		private class PackageIndexEntry
 		{
 			public string FileName { get; set; }
 			public string PackName { get; set; }
 			public int FileStartByte { get; set; }
 			public int FileEndByte { get; set; }
+		}
+
+		private class PackFileEntry 
+		{ 
+			public string Name { get; set; }
+			public string FullPath { get; set; }
 		}
 		#endregion
 

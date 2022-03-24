@@ -1,0 +1,18 @@
+<Project>
+
+    <Import Project=".\Plugin.Common.props" />
+
+    <PropertyGroup Condition="'$(IntersectDeveloperTargetsImported)' == ''">
+        <IntersectRepoPath>..\..</IntersectRepoPath>
+        <IntersectProjectName>$(MSBuildProjectName.Substring(10))</IntersectProjectName>
+        <IntersectPluginTargetPath>$(IntersectRepoPath)\bin\$(IntersectProjectName.ToLower())</IntersectPluginTargetPath>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <IntersectRepoPath Condition="'$(IntersectRepoPath)' == ''">$(INTERSECT_REPO_PATH)</IntersectRepoPath>
+        <IntersectPath Condition="'$(IntersectPath)' == ''">$(INTERSECT_PATH)</IntersectPath>
+        <IntersectPath Condition="'$(IntersectPath)' == ''">$(IntersectRepoPath)</IntersectPath>
+        <BaseStartWorkingDirectory>$(IntersectRepoPath)\assets\development</BaseStartWorkingDirectory>
+    </PropertyGroup>
+
+</Project>
