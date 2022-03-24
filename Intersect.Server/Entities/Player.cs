@@ -2200,7 +2200,7 @@ namespace Intersect.Server.Entities
                 EquipmentProcessItemLoss(slotIndex);
             }
 
-            StartCommonEventsWithTrigger(CommonEventTrigger.InventoryChanged)
+            StartCommonEventsWithTrigger(CommonEventTrigger.InventoryChanged);
             UpdateGatherItemQuests(itemDescriptor.Id);
             PacketSender.SendInventoryItemUpdate(this, slotIndex);
 
