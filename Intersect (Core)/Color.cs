@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 
 using Intersect.Localization;
 using MessagePack;
@@ -210,6 +210,8 @@ namespace Intersect
             return (int) ((uint) R << 24) + (G << 16) + (B << 8) + A;
         }
 
+        public override string ToString() => $"{A},{R},{G},{B}";
+
         public static Color FromArgb(int argb)
         {
             return FromArgb((argb >> 24) & 0x0FF, (argb >> 16) & 0x0FF, (argb >> 8) & 0x0FF, argb & 0x0FF);
@@ -220,17 +222,7 @@ namespace Intersect
             return FromArgb((rgba >> 0) & 0x0FF, (rgba >> 24) & 0x0FF, (rgba >> 16) & 0x0FF, (rgba >> 8) & 0x0FF);
         }
 
-        public static string ToString(Color clr)
-        {
-            if (clr == null)
-            {
-                return "";
-            }
-            else
-            {
-                return clr.A + "," + clr.R + "," + clr.G + "," + clr.B;
-            }
-        }
+        public static string ToString(Color clr) => clr?.ToString() ?? string.Empty;
 
         public static Color FromString(string val, Color defaultColor = null)
         {
