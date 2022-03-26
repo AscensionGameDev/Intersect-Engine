@@ -666,7 +666,8 @@ namespace Intersect.Server.Networking
                     if (((GameObjectType)val == GameObjectType.Shop ||
                          (GameObjectType)val == GameObjectType.Event ||
                          (GameObjectType)val == GameObjectType.PlayerVariable ||
-                         (GameObjectType)val == GameObjectType.ServerVariable))
+                         (GameObjectType)val == GameObjectType.ServerVariable ||
+                         (GameObjectType)val == GameObjectType.GuildVariable))
                     {
                         SendGameObjects(client, (GameObjectType)val, null);
                     }
@@ -693,7 +694,8 @@ namespace Intersect.Server.Networking
                 if ((GameObjectType) val == GameObjectType.Shop ||
                     (GameObjectType) val == GameObjectType.Event ||
                     (GameObjectType) val == GameObjectType.PlayerVariable ||
-                    (GameObjectType) val == GameObjectType.ServerVariable)
+                    (GameObjectType) val == GameObjectType.ServerVariable ||
+                    (GameObjectType)val == GameObjectType.GuildVariable)
                 {
                     continue;
                 }
@@ -1677,6 +1679,13 @@ namespace Intersect.Server.Networking
 
                     break;
                 case GameObjectType.Time:
+                    break;
+                case GameObjectType.GuildVariable:
+                    foreach (var obj in GuildVariableBase.Lookup)
+                    {
+                        SendGameObject(client, obj.Value, false, false, packetList);
+                    }
+
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(type), type, null);

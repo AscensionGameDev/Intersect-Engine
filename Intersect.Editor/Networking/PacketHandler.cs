@@ -642,6 +642,20 @@ namespace Intersect.Editor.Networking
 
                     break;
 
+                case GameObjectType.GuildVariable:
+                    if (deleted)
+                    {
+                        var pvar = GuildVariableBase.Get(id);
+                        pvar.Delete();
+                    }
+                    else
+                    {
+                        var pvar = new GuildVariableBase(id);
+                        pvar.Load(json);
+                        GuildVariableBase.Lookup.Set(id, pvar);
+                    }
+
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }

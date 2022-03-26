@@ -1,4 +1,5 @@
-﻿using Intersect.Server.Database;
+﻿using Intersect.GameObjects;
+using Intersect.Server.Database;
 using Intersect.Server.Database.PlayerData.Players;
 using Intersect.Server.Entities;
 using Intersect.Server.Localization;
@@ -361,6 +362,110 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             guild.TransferOwnership(player);
 
             return player;
+        }
+
+        [Route("{guildId:guid}/variables")]
+        [HttpGet]
+        public object GuildVariablesGet(Guid guildId)
+        {
+            var guild = Guild.LoadGuild(guildId);
+
+            if (guild == null)
+            {
+                return Request.CreateErrorResponse(
+                    HttpStatusCode.BadRequest,
+                    $@"Guild does not exist."
+                );
+            }
+
+            return guild.Variables;
+        }
+
+        [Route("{guildId:guid}/variables/{variableId:guid}")]
+        [HttpGet]
+        public object GuildVariableGet(Guid guildId, Guid variableId)
+        {
+            var guild = Guild.LoadGuild(guildId);
+
+            if (guild == null)
+            {
+                return Request.CreateErrorResponse(
+                    HttpStatusCode.BadRequest,
+                    $@"Guild does not exist."
+                );
+            }
+
+            if (variableId == Guid.Empty || GuildVariableBase.Get(variableId) == null)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, $@"Invalid variable id ${variableId}.");
+            }
+
+            return guild.GetVariable(variableId, true);
+        }
+
+        [Route("{guildId:guid}/variables/{variableId:guid}/value")]
+        [HttpGet]
+        public object GuildVariableGetValue(Guid guildId, Guid variableId)
+        {
+            var guild = Guild.LoadGuild(guildId);
+
+            if (guild == null)
+            {
+                return Request.CreateErrorResponse(
+                    HttpStatusCode.BadRequest,
+                    $@"Guild does not exist."
+                );
+            }
+
+            if (variableId == Guid.Empty || GuildVariableBase.Get(variableId) == null)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, $@"Invalid variable id ${variableId}.");
+            }
+
+            return new
+            {
+                value = guild.GetVariable(variableId, true).Value.Value,
+            };
+        }
+
+        [Route("{guildId:guid}/variables/{variableId:guid}")]
+        [HttpPost]
+        public object GuildVariableSet(Guid guildId, Guid variableId, [FromBody] VariableValue value)
+        {
+            var guild = Guild.LoadGuild(guildId);
+
+            if (guild == null)
+            {
+                return Request.CreateErrorResponse(
+                    HttpStatusCode.BadRequest,
+                    $@"Guild does not exist."
+                );
+            }
+
+            if (variableId == Guid.Empty || GuildVariableBase.Get(variableId) == null)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, $@"Invalid variable id ${variableId}.");
+            }
+
+            var variable = guild.GetVariable(variableId, true);
+
+            var changed = true;
+            if (variable?.Value != null)
+            {
+                if (variable?.Value?.Value != value.Value)
+                {
+                    changed = false;
+                }
+                variable.Value.Value = value.Value;
+            }
+
+            if (changed)
+            {
+                guild.StartCommonEventsWithTriggerForAll(Enums.CommonEventTrigger.GuildVariableChange, "", variableId.ToString());
+                guild.UpdatedVariables.AddOrUpdate(variableId, GuildVariableBase.Get(variableId), (key, oldValue) => GuildVariableBase.Get(variableId));
+            }
+
+            return variable;
         }
     }
 }

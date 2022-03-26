@@ -141,7 +141,7 @@ namespace Intersect.Server.Entities
 
         //Variables
         [JsonIgnore]
-        public virtual List<Variable> Variables { get; set; } = new List<Variable>();
+        public virtual List<PlayerVariable> Variables { get; set; } = new List<PlayerVariable>();
 
         [JsonIgnore, NotMapped]
         public bool IsValidPlayer => !IsDisposed && Client?.Entity == this;
@@ -5260,7 +5260,7 @@ namespace Intersect.Server.Entities
         }
 
         //Switches and Variables
-        private Variable GetSwitch(Guid id)
+        private PlayerVariable GetSwitch(Guid id)
         {
             foreach (var s in Variables)
             {
@@ -5298,7 +5298,7 @@ namespace Intersect.Server.Entities
             }
             else
             {
-                s = new Variable(id);
+                s = new PlayerVariable(id);
                 s.Value.Boolean = value;
                 Variables.Add(s);
             }
@@ -5309,7 +5309,7 @@ namespace Intersect.Server.Entities
             }
         }
 
-        public Variable GetVariable(Guid id, bool createIfNull = false)
+        public PlayerVariable GetVariable(Guid id, bool createIfNull = false)
         {
             foreach (var v in Variables)
             {
@@ -5327,14 +5327,14 @@ namespace Intersect.Server.Entities
             return null;
         }
 
-        private Variable CreateVariable(Guid id)
+        private PlayerVariable CreateVariable(Guid id)
         {
             if (PlayerVariableBase.Get(id) == null)
             {
                 return null;
             }
 
-            var variable = new Variable(id);
+            var variable = new PlayerVariable(id);
             Variables.Add(variable);
 
             return variable;
@@ -5370,7 +5370,7 @@ namespace Intersect.Server.Entities
             }
             else
             {
-                v = new Variable(id);
+                v = new PlayerVariable(id);
                 v.Value.Integer = value;
                 Variables.Add(v);
             }
@@ -5395,7 +5395,7 @@ namespace Intersect.Server.Entities
             }
             else
             {
-                v = new Variable(id);
+                v = new PlayerVariable(id);
                 v.Value.String = value;
                 Variables.Add(v);
             }
@@ -5595,6 +5595,16 @@ namespace Intersect.Server.Entities
 
                                 value = ServerVariableBase.Get(cmd.VariableId)?.Value;
                             }
+                            else if (cmd.VariableType == VariableTypes.GuildVariable)
+                            {
+                                var variable = GuildVariableBase.Get(cmd.VariableId);
+                                if (variable != null)
+                                {
+                                    type = variable.Type;
+                                }
+
+                                value = Guild?.GetVariableValue(cmd.VariableId) ?? new VariableValue();
+                            }
 
                             if (value == null)
                             {
@@ -5675,6 +5685,19 @@ namespace Intersect.Server.Entities
                                     variable.Value = value;
                                     StartCommonEventsWithTriggerForAll(CommonEventTrigger.ServerVariableChange, "", cmd.VariableId.ToString());
                                     DbInterface.UpdatedServerVariables.AddOrUpdate(variable.Id, variable, (key, oldValue) => variable);
+                                }
+                            }
+                            else if (cmd.VariableType == VariableTypes.GuildVariable)
+                            {
+                                if (Guild != null)
+                                {
+                                    var variable = Guild.GetVariable(cmd.VariableId);
+                                    if (variable.Value?.Value != value.Value)
+                                    {
+                                        variable.Value = value;
+                                        Guild.StartCommonEventsWithTriggerForAll(Enums.CommonEventTrigger.GuildVariableChange, "", cmd.VariableId.ToString());
+                                        Guild.UpdatedVariables.AddOrUpdate(cmd.VariableId, GuildVariableBase.Get(cmd.VariableId), (key, oldValue) => GuildVariableBase.Get(cmd.VariableId));
+                                    }
                                 }
                             }
 

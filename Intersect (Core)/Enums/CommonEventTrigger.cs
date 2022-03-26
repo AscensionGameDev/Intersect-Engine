@@ -34,6 +34,8 @@
 
         GuildMemberKicked,
 
+        GuildVariableChange,
+
         InventoryChanged,
 
         MapChanged,

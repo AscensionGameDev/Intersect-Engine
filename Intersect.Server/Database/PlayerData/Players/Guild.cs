@@ -79,6 +79,17 @@ namespace Intersect.Server.Database.PlayerData.Players
         public long LastUpdateTime { get; set; } = -1;
 
         /// <summary>
+        /// Guild Variable Values
+        /// </summary>
+        [JsonIgnore]
+        public virtual List<GuildVariable> Variables { get; set; } = new List<GuildVariable>();
+
+        /// <summary>
+        /// Variables that have been updated for this guild which need to be saved to the db
+        /// </summary>
+        public ConcurrentDictionary<Guid, GuildVariableBase> UpdatedVariables = new ConcurrentDictionary<Guid, GuildVariableBase>();
+
+        /// <summary>
         /// Locking context to prevent saving this guild to the db twice at the same time, and to prevent bank items from being withdrawed/deposited into by 2 threads at the same time
         /// </summary>
         [NotMapped]
@@ -152,7 +163,7 @@ namespace Intersect.Server.Database.PlayerData.Players
             {
                 using (var context = DbInterface.CreatePlayerContext())
                 {
-                    var guild = context.Guilds.Where(g => g.Id == id).Include(g => g.Bank).FirstOrDefault();
+                    var guild = context.Guilds.Where(g => g.Id == id).Include(g => g.Bank).Include(g => g.Variables).FirstOrDefault();
                     if (guild != null)
                     {
                         //Load Members
@@ -288,6 +299,19 @@ namespace Intersect.Server.Database.PlayerData.Players
                 }
 
             }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public void Update()
+        {
+            if (UpdatedVariables.Count > 0)
+            {
+                Save();
+                UpdatedVariables.Clear();
+            }
+            UpdateMemberList();
         }
 
         /// <summary>
@@ -606,6 +630,11 @@ namespace Intersect.Server.Database.PlayerData.Players
             {
                 context.Entry(slot).State = EntityState.Detached;
             }
+
+            foreach (var variable in guild.Variables)
+            {
+                context.Entry(variable).State = EntityState.Detached;
+            }
         }
 
         /// <summary>
@@ -661,6 +690,85 @@ namespace Intersect.Server.Database.PlayerData.Players
             Save();
 
             return true;
+        }
+
+
+        /// <summary>
+        /// Returns a variable object given a guild variable id
+        /// </summary>
+        /// <param name="id">Variable id</param>
+        /// <param name="createIfNull">Creates this variable for the guild if it hasn't been set yet</param>
+        /// <returns></returns>
+        public Variable GetVariable(Guid id, bool createIfNull = false)
+        {
+            foreach (var v in Variables)
+            {
+                if (v.VariableId == id)
+                {
+                    return v;
+                }
+            }
+
+            if (createIfNull)
+            {
+                return CreateVariable(id);
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Creates a variable for this guild with a given id if it doesn't already exist
+        /// </summary>
+        /// <param name="id">Variablke id</param>
+        /// <returns></returns>
+        private Variable CreateVariable(Guid id)
+        {
+            if (GuildVariableBase.Get(id) == null)
+            {
+                return null;
+            }
+
+            var variable = new GuildVariable(id);
+            Variables.Add(variable);
+
+            return variable;
+        }
+
+        /// <summary>
+        /// Gets the value of a guild variable given a variable id
+        /// </summary>
+        /// <param name="id">Variable id</param>
+        /// <returns></returns>
+        public GameObjects.Switches_and_Variables.VariableValue GetVariableValue(Guid id)
+        {
+            var v = GetVariable(id);
+            if (v == null)
+            {
+                v = CreateVariable(id);
+            }
+
+            if (v == null)
+            {
+                return new GameObjects.Switches_and_Variables.VariableValue();
+            }
+
+            return v.Value;
+        }
+
+
+        /// <summary>
+        /// Starts all common events with a specified trigger for all online guild members
+        /// </summary>
+        /// <param name="trigger">The common event trigger to run</param>
+        /// <param name="command">The command which started this common event</param>
+        /// <param name="param">Common event parameter</param>
+        public void StartCommonEventsWithTriggerForAll(CommonEventTrigger trigger, string command, string param)
+        {
+            foreach (var plyr in FindOnlineMembers())
+            {
+                plyr.StartCommonEventsWithTrigger(trigger, command, param);
+            }
         }
 
 
