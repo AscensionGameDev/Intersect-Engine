@@ -246,15 +246,12 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                 cmbMapZoneType.Items.Add(Strings.MapProperties.zones[i]);
             }
 
-            chkBank.Text = Strings.EventConditional.CheckBank;
-
             btnSave.Text = Strings.EventConditional.okay;
             btnCancel.Text = Strings.EventConditional.cancel;
         }
 
         private void ConditionTypeChanged(ConditionTypes type)
         {
-            chkBank.Visible = false;
             switch (type)
             {
                 case ConditionTypes.VariableIs:
@@ -270,7 +267,6 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                     }
 
                     nudItemAmount.Value = 1;
-                    chkBank.Visible = true;
 
                     break;
                 case ConditionTypes.ClassIs:
@@ -1063,7 +1059,6 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             nudItemAmount.Value = condition.Quantity;
             rdoVariable.Checked = condition.UseVariable;
             rdoInvGlobalVariable.Checked = condition.VariableType == VariableTypes.ServerVariable;
-            chkBank.Checked = condition.CheckBank;
             SetupAmountInput();
         }
 
@@ -1222,7 +1217,6 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             condition.VariableType = rdoInvPlayerVariable.Checked ? VariableTypes.PlayerVariable : VariableTypes.ServerVariable;
             condition.UseVariable = !rdoManual.Checked;
             condition.VariableId = rdoInvPlayerVariable.Checked ? PlayerVariableBase.IdFromList(cmbInvVariable.SelectedIndex) : ServerVariableBase.IdFromList(cmbInvVariable.SelectedIndex);
-            condition.CheckBank = chkBank.Checked;
         }
 
         private void SaveFormValues(ClassIsCondition condition)

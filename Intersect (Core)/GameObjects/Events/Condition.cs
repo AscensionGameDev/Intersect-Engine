@@ -97,8 +97,6 @@ namespace Intersect.GameObjects.Events
         /// </summary>
         public Guid VariableId { get; set; }
 
-        public bool CheckBank { get; set; }
-
     }
 
     public class ClassIsCondition : Condition

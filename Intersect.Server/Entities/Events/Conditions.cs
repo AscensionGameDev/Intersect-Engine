@@ -150,7 +150,7 @@ namespace Intersect.Server.Entities.Events
                 }
             }
 
-            return player.CountItems(condition.ItemId, true, condition.CheckBank) >= quantity;
+            return player.CountItems(condition.ItemId) >= quantity;
         }
 
         public static bool MeetsCondition(
