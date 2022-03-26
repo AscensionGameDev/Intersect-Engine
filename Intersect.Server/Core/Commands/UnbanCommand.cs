@@ -22,7 +22,7 @@ namespace Intersect.Server.Core.Commands
             }
 
             Ban.Remove(target);
-            Console.WriteLine($@"    {Strings.Account.unbanned.ToString(target.Name)}");
+            Console.WriteLine($@"    {Strings.Account.UnbanSuccess.ToString(target.Name)}");
         }
 
     }

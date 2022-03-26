@@ -133,12 +133,25 @@ namespace Intersect.Server.Entities.Events
 
                     break;
                 case ChatboxChannel.Local:
-                    PacketSender.SendProximityMsg(txt, command.MessageType, player.MapId, color);
+                    PacketSender.SendProximityMsg(txt, ChatMessageType.Local, player.MapId, color);
 
                     break;
                 case ChatboxChannel.Global:
-                    PacketSender.SendGlobalMsg(txt, color, string.Empty, command.MessageType);
+                    PacketSender.SendGlobalMsg(txt, color, string.Empty, ChatMessageType.Global);
 
+                    break;
+                case ChatboxChannel.Party:
+                    if (player.Party?.Count > 0)
+                    {
+                        PacketSender.SendPartyMsg(player, txt, color, player.Name);
+                    }
+                    
+                    break;
+                case ChatboxChannel.Guild:
+                    if (player.Guild != null)
+                    {
+                        PacketSender.SendGuildMsg(player, txt, color, player.Name);
+                    }
                     break;
             }
         }

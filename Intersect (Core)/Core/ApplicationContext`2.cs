@@ -1,4 +1,4 @@
-﻿using Intersect.Logging;
+using Intersect.Logging;
 using Intersect.Reflection;
 using Intersect.Threading;
 

@@ -142,8 +142,8 @@ namespace Intersect.Client.Core.Sounds
             var pMap = MapInstance.Get(Globals.Me.MapId);
             if (map != null && pMap != null)
             {
-                playerx = pMap.GetX() + Globals.Me.X * Options.TileWidth + 16;
-                playery = pMap.GetY() + Globals.Me.Y * Options.TileHeight + 16;
+                playerx = pMap.GetX() + Globals.Me.X * Options.TileWidth + (Options.TileWidth / 2);
+                playery = pMap.GetY() + Globals.Me.Y * Options.TileHeight + (Options.TileHeight / 2);
                 if (mX == -1 || mY == -1 || mDistance == -1)
                 {
                     var player = new Point() {
@@ -156,13 +156,15 @@ namespace Intersect.Client.Core.Sounds
                         Options.MapHeight * Options.TileHeight
                     );
 
-                    distance = (float)DistancePointToRectangle(player, mapRect) / 32f;
+                    distance = DistancePointToRectangle(player, mapRect) /
+                               ((Options.TileHeight + Options.TileWidth) / 2f);
                 }
                 else
                 {
-                    soundx = map.GetX() + mX * Options.TileWidth + 16;
-                    soundy = map.GetY() + mY * Options.TileHeight + 16;
-                    distance = (float)Math.Sqrt(Math.Pow(playerx - soundx, 2) + Math.Pow(playery - soundy, 2)) / 32f;
+                    soundx = map.GetX() + mX * Options.TileWidth + (Options.TileWidth / 2);
+                    soundy = map.GetY() + mY * Options.TileHeight + (Options.TileHeight / 2);
+                    distance = (float) Math.Sqrt(Math.Pow(playerx - soundx, 2) + Math.Pow(playery - soundy, 2)) /
+                               ((Options.TileHeight + Options.TileWidth) / 2f);
                 }
             }
 

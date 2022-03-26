@@ -32,7 +32,11 @@
 
         GuildMemberLeft,
 
-        GuildMemberKicked
+        GuildMemberKicked,
+
+        InventoryChanged,
+
+        MapChanged,
 
     }
 

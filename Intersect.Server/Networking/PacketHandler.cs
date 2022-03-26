@@ -108,7 +108,7 @@ namespace Intersect.Server.Networking
 
             var packetOptions = Options.Instance.SecurityOpts?.PacketOpts;
             var thresholds = client.PacketFloodingThreshholds;
-            
+
 
             if (pSize > thresholds.MaxPacketSize)
             {
@@ -419,7 +419,7 @@ namespace Intersect.Server.Networking
                 {
                     client.PacketHandlingQueued = true;
                     ServerNetwork.Pool.QueueWorkItem(client.HandlePackets);
-                } 
+                }
             }
 
             return true;
@@ -632,7 +632,7 @@ namespace Intersect.Server.Networking
 
                 if (Options.MaxCharacters > 1 && packet.ReturningToCharSelect)
                 {
-                    client.Entity?.TryLogout();
+                    client.Entity?.TryLogout(false, true);
                     client.Entity = null;
                     PacketSender.SendPlayerCharacters(client);
                 }
@@ -950,13 +950,13 @@ namespace Intersect.Server.Networking
                 if (target != null)
                 {
                     PacketSender.SendChatMsg(
-                        player, Strings.Chat.Private.ToString(player.Name, msg), ChatMessageType.PM, CustomColors.Chat.PrivateChat,
+                        player, Strings.Chat.PrivateTo.ToString(target.Name, msg), ChatMessageType.PM, CustomColors.Chat.PrivateChatTo,
                         player.Name
                     );
 
                     PacketSender.SendChatMsg(
-                        target, Strings.Chat.Private.ToString(player.Name, msg), ChatMessageType.PM,
-                        CustomColors.Chat.PrivateChat, player.Name
+                        target, Strings.Chat.PrivateFrom.ToString(player.Name, msg), ChatMessageType.PM,
+                        CustomColors.Chat.PrivateChatFrom, player.Name
                     );
 
                     target.ChatTarget = player;
@@ -978,13 +978,13 @@ namespace Intersect.Server.Networking
                 if (player.ChatTarget != null && Player.FindOnline(player.ChatTarget.Id) != null)
                 {
                     PacketSender.SendChatMsg(
-                        player, Strings.Chat.Private.ToString(player.Name, msg), ChatMessageType.PM, CustomColors.Chat.PrivateChat,
+                        player, Strings.Chat.PrivateTo.ToString(player.ChatTarget.Name, msg), ChatMessageType.PM, CustomColors.Chat.PrivateChatTo,
                         player.Name
                     );
 
                     PacketSender.SendChatMsg(
-                        player.ChatTarget, Strings.Chat.Private.ToString(player.Name, msg), ChatMessageType.PM,
-                        CustomColors.Chat.PrivateChat, player.Name
+                        player.ChatTarget, Strings.Chat.PrivateFrom.ToString(player.Name, msg), ChatMessageType.PM,
+                        CustomColors.Chat.PrivateChatFrom, player.Name
                     );
 
                     player.ChatTarget.ChatTarget = player;
@@ -1106,7 +1106,7 @@ namespace Intersect.Server.Networking
                     {
                         PacketSender.SendChatMsg(player, Strings.Combat.stunattacking, ChatMessageType.Combat);
                     }
-                    
+
                     return;
                 }
 
@@ -1527,7 +1527,7 @@ namespace Intersect.Server.Networking
                 if (ItemBase.Get(item.Id) != null)
                 {
                     var tempItem = new Item(item.Id, item.Quantity);
-                    newChar.TryGiveItem(tempItem, ItemHandling.Normal, false, false);
+                    newChar.TryGiveItem(tempItem, ItemHandling.Normal, false, -1, false);
                 }
             }
 
@@ -1624,7 +1624,7 @@ namespace Intersect.Server.Networking
                         tempMap.RemoveItem(mapItem);
 
                         // Try to give the item to our player.
-                        if (player.TryGiveItem(mapItem, ItemHandling.Overflow, false, true, mapItem.X, mapItem.Y))
+                        if (player.TryGiveItem(mapItem, ItemHandling.Overflow, false, -1, true, mapItem.X, mapItem.Y))
                         {
                             var item = ItemBase.Get(mapItem.ItemId);
                             if (item != null)
@@ -1821,12 +1821,12 @@ namespace Intersect.Server.Networking
         public void HandlePacket(Client client, AdminActionPacket packet)
         {
             var player = client?.Entity;
-            if (!client.Power.Editor && !client.Power.IsModerator)
+            if (player == null || client.Power == UserRights.None)
             {
                 return;
             }
 
-            ActionProcessing.ProcessAction(client, player, (dynamic) packet.Action);
+            ActionProcessing.ProcessAction(player, (dynamic) packet.Action);
         }
 
         //BuyItemPacket
@@ -1911,7 +1911,7 @@ namespace Intersect.Server.Networking
                 return;
             }
 
-            player?.BankInterface?.TryDepositItem(packet.Slot, packet.Quantity);
+            player?.BankInterface?.TryDepositItem(packet.Slot, packet.Quantity, packet.BankSlot);
         }
 
         //WithdrawItemPacket
@@ -1923,7 +1923,7 @@ namespace Intersect.Server.Networking
                 return;
             }
 
-            player?.BankInterface?.WithdrawItem(packet.Slot, packet.Quantity);
+            player?.BankInterface?.WithdrawItem(packet.Slot, packet.Quantity, packet.InvSlot);
         }
 
         //MoveBankItemPacket
@@ -1947,9 +1947,11 @@ namespace Intersect.Server.Networking
                 return;
             }
 
-            var target = Player.FindOnline(packet.TargetId);
+            var target = packet.TargetId != Guid.Empty ? 
+                Player.FindOnline(packet.TargetId) : 
+                Player.FindOnline(packet.Target.Trim());
 
-            if (target != null && target.Id != player.Id && player.InRangeOf(target, Options.Party.InviteRange))
+            if (target != null && target.Id != player.Id)
             {
                 target.InviteToParty(player);
 
@@ -2414,10 +2416,10 @@ namespace Intersect.Server.Networking
                             );
                         }
                     }
-
-                    player.FriendRequester = null;
                 }
             }
+
+            player.FriendRequester = null;
         }
 
         //SelectCharacterPacket
@@ -2860,10 +2862,10 @@ namespace Intersect.Server.Networking
 
             // Send the newly updated player information to their surroundings.
             PacketSender.SendEntityDataToProximity(player);
- 
+
         }
-      
-      
+
+
         //PictureClosedPacket
         public void HandlePacket(Client client, PictureClosedPacket packet)
         {
@@ -3213,7 +3215,7 @@ namespace Intersect.Server.Networking
                         }
 
                         DbInterface.SaveGameObject(newMap);
-                            
+
                         DbInterface.GenerateMapGrids();
                         PacketSender.SendMap(client, newMapId, true);
                         PacketSender.SendMapGridToAll(MapInstance.Get(newMapId).MapGrid);
@@ -3834,8 +3836,6 @@ namespace Intersect.Server.Networking
 
                     obj.Load(packet.Data);
 
-                    DbInterface.SaveGameObject(obj);
-
                     if (type == GameObjectType.Quest)
                     {
                         var qst = (QuestBase)obj;
@@ -3851,7 +3851,8 @@ namespace Intersect.Server.Networking
                         foreach (var evt in qst.AddEvents)
                         {
                             var evtb = (EventBase)DbInterface.AddGameObject(GameObjectType.Event, evt.Key);
-                            evtb.CommonEvent = false;
+                            evtb.Load(evt.Value.JsonData);
+
                             foreach (var tsk in qst.Tasks)
                             {
                                 if (tsk.Id == evt.Key)
@@ -3860,7 +3861,6 @@ namespace Intersect.Server.Networking
                                 }
                             }
 
-                            evtb.Load(evt.Value.JsonData);
                             DbInterface.SaveGameObject(evtb);
                         }
 
@@ -3877,6 +3877,7 @@ namespace Intersect.Server.Networking
                         DbInterface.CacheServerVariableEventTextLookups();
                     }
 
+                    DbInterface.SaveGameObject(obj);
                     // Only replace the modified object
                     PacketSender.CacheGameDataPacket();
 

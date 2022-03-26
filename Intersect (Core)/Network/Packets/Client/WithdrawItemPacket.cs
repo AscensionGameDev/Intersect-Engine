@@ -10,9 +10,13 @@ namespace Intersect.Network.Packets.Client
         {
         }
 
-        public WithdrawItemPacket(int slot, int quantity) : base(slot, quantity)
+        public WithdrawItemPacket(int slot, int quantity, int invSlot = -1) : base(slot, quantity)
         {
+            InvSlot = invSlot;
         }
+
+        [Key(0)]
+        public int InvSlot { get; set; }
 
     }
 

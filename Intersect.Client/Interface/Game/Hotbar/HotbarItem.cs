@@ -54,7 +54,7 @@ namespace Intersect.Client.Interface.Game.Hotbar
         //Textures
         private Base mHotbarWindow;
 
-        private Keys mHotKey;
+        private ControlValue mHotKey;
 
         private Item mInventoryItem = null;
 
@@ -103,7 +103,7 @@ namespace Intersect.Client.Interface.Game.Hotbar
             EquipPanel.Texture = Graphics.Renderer.GetWhiteTexture();
             EquipLabel = new Label(Pnl, "HotbarEquippedLabel" + mYindex);
             EquipLabel.IsHidden = true;
-            EquipLabel.Text = Strings.Inventory.equippedicon;
+            EquipLabel.Text = Strings.Inventory.EquippedSymbol;
             EquipLabel.TextColor = new Color(0, 255, 255, 255);
             mCooldownLabel = new Label(Pnl, "HotbarCooldownLabel" + mYindex);
             mCooldownLabel.IsHidden = true;
@@ -220,17 +220,25 @@ namespace Intersect.Client.Interface.Game.Hotbar
             }
 
             //See if Label Should be changed
-            if (mHotKey != Controls.ActiveControls.ControlMapping[Control.Hotkey1 + mYindex].Key1)
+            var keybind = Controls.ActiveControls.ControlMapping[Control.Hotkey1 + mYindex].Key1;
+            if (mHotKey == null || mHotKey.Modifier != keybind.Modifier || mHotKey.Key != keybind.Key)
             {
-                KeyLabel.SetText(
-                    Strings.Keys.keydict[
-                        Enum.GetName(
-                                typeof(Keys), Controls.ActiveControls.ControlMapping[Control.Hotkey1 + mYindex].Key1
-                            )
-                            .ToLower()]
-                );
+                if (keybind.Modifier != Keys.None)
+                {
+                    KeyLabel.SetText(string.Format("{00} + {01}",
+                        Strings.Keys.keydict[Enum.GetName(typeof(Keys), keybind.Modifier).ToLower()],
+                        Strings.Keys.keydict[Enum.GetName(typeof(Keys), keybind.Key).ToLower()]
+                    ));
+                }
+                else
+                {
+                    KeyLabel.SetText(
+                        Strings.Keys.keydict[Enum.GetName(typeof(Keys), keybind.Key).ToLower()]
+                    );
+                }
+                
 
-                mHotKey = Controls.ActiveControls.ControlMapping[Control.Hotkey1 + mYindex].Key1;
+                mHotKey = keybind;
             }
 
             var slot = Globals.Me.Hotbar[mYindex];
@@ -352,11 +360,11 @@ namespace Intersect.Client.Interface.Game.Hotbar
                             if (secondsRemaining > 10f)
                             {
                                 mCooldownLabel.Text =
-                                    Strings.Inventory.cooldown.ToString(secondsRemaining.ToString("N0"));
+                                    Strings.Inventory.Cooldown.ToString(secondsRemaining.ToString("N0"));
                             }
                             else
                             {
-                                mCooldownLabel.Text = Strings.Inventory.cooldown.ToString(
+                                mCooldownLabel.Text = Strings.Inventory.Cooldown.ToString(
                                     secondsRemaining.ToString("N1").Replace(".", Strings.Numbers.dec)
                                 );
                             }
@@ -455,6 +463,7 @@ namespace Intersect.Client.Interface.Game.Hotbar
             {
                 if (!IsDragging)
                 {
+                    mContentPanel.IsHidden = false;
                     if (mMouseOver)
                     {
                         if (!Globals.InputManager.MouseButtonDown(MouseButtons.Left))
@@ -506,8 +515,6 @@ namespace Intersect.Client.Interface.Game.Hotbar
                 {
                     if (mDragIcon.Update())
                     {
-                        mContentPanel.IsHidden = false;
-
                         //Drug the item and now we stopped
                         IsDragging = false;
                         var dragRect = new FloatRect(

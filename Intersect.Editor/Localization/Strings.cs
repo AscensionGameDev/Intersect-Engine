@@ -1524,9 +1524,11 @@ Tick timer saved in server config.json.";
 
             public static Dictionary<int, LocalizedString> channels = new Dictionary<int, LocalizedString>
             {
-                {0, @"Player"},
+                {0, @"Player / System"},
                 {1, @"Local"},
                 {2, @"Global"},
+                {3, @"Party"},
+                {4, @"Guild"},
             };
 
             public static LocalizedString color = @"Color:";
@@ -2181,6 +2183,9 @@ Tick timer saved in server config.json.";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString MapZoneTypeLabel = @"Zone Type:";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString CheckBank = @"Check Bank?";
         }
 
         public struct EventConditionDesc
@@ -2357,6 +2362,8 @@ Tick timer saved in server config.json.";
                 {12, @"Guild Member Joined"},
                 {13, @"Guild Member Left"},
                 {14, @"Guild Member Kicked"},
+                {15, @"Inventory Changed"},
+                {16, @"Map Changed"},
             };
 
             public static LocalizedString conditions = @"Conditions";
@@ -3995,13 +4002,13 @@ Tick timer saved in server config.json.";
             public static LocalizedString PackageOptions = @"Asset Packing Options";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString MusicBatch = @"Music Batch Size";
+            public static LocalizedString MusicPackSize = @"Max Music Pack Size (MB):";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString SoundBatch = @"Sound Batch Size";
+            public static LocalizedString SoundPackSize = @"Max Sound Pack Size (MB):";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString TextureSize = @"Texture Pack Size";
+            public static LocalizedString TextureSize = @"Max Texture Pack Size (Resolution):";
         }
 
         public struct ProgressForm

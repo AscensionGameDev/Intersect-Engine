@@ -7,6 +7,7 @@ using Intersect.Client.Framework.Gwen.Input;
 using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
 using Intersect.Client.Networking;
+using Intersect.Configuration;
 using Intersect.GameObjects;
 using Intersect.Utilities;
 
@@ -61,9 +62,21 @@ namespace Intersect.Client.Interface.Game.Bag
             Pnl = new ImagePanel(Container, "BagItemIcon");
             Pnl.HoverEnter += pnl_HoverEnter;
             Pnl.HoverLeave += pnl_HoverLeave;
-            Pnl.RightClicked += Pnl_DoubleClicked; //Allow withdrawing via double click OR right click
+            Pnl.RightClicked += Pnl_RightClicked;
             Pnl.DoubleClicked += Pnl_DoubleClicked;
             Pnl.Clicked += pnl_Clicked;
+        }
+
+        private void Pnl_RightClicked(Base sender, ClickedEventArgs arguments)
+        {
+            if (ClientConfiguration.Instance.EnableContextMenus)
+            {
+                mBagWindow.OpenContextMenu(mMySlot);
+            }
+            else
+            {
+                Pnl_DoubleClicked(sender, arguments);
+            }    
         }
 
         private void Pnl_DoubleClicked(Base sender, ClickedEventArgs arguments)
@@ -177,7 +190,6 @@ namespace Intersect.Client.Interface.Game.Bag
                         mMouseY = -1;
                         if (Timing.Global.Milliseconds < mClickTime)
                         {
-                            //Globals.Me.TryUseItem(_mySlot);
                             mClickTime = 0;
                         }
                     }
