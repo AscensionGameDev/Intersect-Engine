@@ -1,4 +1,6 @@
-﻿using System;
+using System;
+using System.Globalization;
+using System.Linq;
 
 namespace Intersect.Client.Framework.Gwen
 {
@@ -81,26 +83,35 @@ namespace Intersect.Client.Framework.Gwen
             }
         }
 
-        public static string ToString(Padding pad)
-        {
-            return pad.Left + "," + pad.Top + "," + pad.Right + "," + pad.Bottom;
-        }
+        public override string ToString() => $"{Left},{Top},{Right},{Bottom}";
 
-        public static Padding FromString(string val)
+        public static string ToString(Padding pad) => pad.ToString();
+
+        public static Padding FromString(string str)
         {
-            if (string.IsNullOrEmpty(val))
+            if (string.IsNullOrEmpty(str))
             {
-                return Padding.Zero;
+                return Zero;
             }
 
-            var strs = val.Split(",".ToCharArray());
-            var parts = new int[strs.Length];
-            for (var i = 0; i < strs.Length; i++)
+            var parts = str.Split(',').Select(part => int.Parse(part, CultureInfo.InvariantCulture)).ToArray();
+            switch (parts.Length)
             {
-                parts[i] = int.Parse(strs[i]);
-            }
+                case 1:
+                    return new Padding(parts[0], parts[0], parts[0], parts[0]);
 
-            return new Padding(parts[0], parts[1], parts[2], parts[3]);
+                case 2:
+                    return new Padding(parts[0], parts[1], parts[0], parts[1]);
+
+                case 3:
+                    return new Padding(parts[0], parts[1], parts[0], parts[2]);
+
+                case 4:
+                    return new Padding(parts[0], parts[1], parts[2], parts[3]);
+
+                default:
+                    throw new ArgumentException($"Expected 1-4 comma-separated numbers, receive {parts.Length}.", nameof(str));
+            }
         }
 
     }
