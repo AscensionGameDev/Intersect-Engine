@@ -46,7 +46,8 @@ namespace Intersect.Server.Entities
                 Entity top = null;
                 foreach (var pair in DamageMap)
                 {
-                    if (pair.Value > damage)
+                    // Only include players on the current instance
+                    if (pair.Value > damage && pair.Key.MapInstanceId == MapInstanceId)
                     {
                         top = pair.Key;
                         damage = pair.Value;
@@ -85,7 +86,7 @@ namespace Intersect.Server.Entities
         /// <summary>
         /// The map on which this NPC was "aggro'd" and started chasing a target.
         /// </summary>
-        public MapInstance AggroCenterMap;
+        public MapController AggroCenterMap;
 
         /// <summary>
         /// The X value on which this NPC was "aggro'd" and started chasing a target.
@@ -168,7 +169,10 @@ namespace Intersect.Server.Entities
                 AggroCenterY = 0;
                 AggroCenterZ = 0;
 
-                MapInstance.Get(MapId).RemoveEntity(this);
+                if (MapController.TryGetInstanceFromMap(MapId, MapInstanceId, out var instance))
+                {
+                    instance.RemoveEntity(this);
+                }
                 PacketSender.SendEntityDie(this);
                 PacketSender.SendEntityLeave(this);
             }
@@ -390,7 +394,7 @@ namespace Intersect.Server.Entities
                 {
                     PacketSender.SendAnimationToProximity(
                         Base.AttackAnimationId, -1, Guid.Empty, target.MapId, (byte) target.X, (byte) target.Y,
-                        (sbyte) Dir
+                        (sbyte) Dir, target.MapInstanceId
                     );
                 }
 
@@ -696,7 +700,7 @@ namespace Intersect.Server.Entities
 
             if (spellBase.CastAnimationId != Guid.Empty)
             {
-                PacketSender.SendAnimationToProximity(spellBase.CastAnimationId, 1, Id, MapId, 0, 0, (sbyte) Dir);
+                PacketSender.SendAnimationToProximity(spellBase.CastAnimationId, 1, Id, MapId, 0, 0, (sbyte) Dir, MapInstanceId);
 
                 //Target Type 1 will be global entity
             }
@@ -842,7 +846,7 @@ namespace Intersect.Server.Entities
                             if (targetMap != MapId)
                             {
                                 var found = false;
-                                foreach (var map in MapInstance.Get(MapId).SurroundingMaps)
+                                foreach (var map in MapController.Get(MapId).SurroundingMaps)
                                 {
                                     if (map.Id == targetMap)
                                     {
@@ -1121,12 +1125,18 @@ namespace Intersect.Server.Entities
                     {
                         if (curMapLink == Guid.Empty)
                         {
-                            MapInstance.Get(curMapLink).RemoveEntity(this);
+                            if (MapController.TryGetInstanceFromMap(curMapLink, MapInstanceId, out var instance))
+                            {
+                                instance.RemoveEntity(this);
+                            }
                         }
 
                         if (MapId != Guid.Empty)
                         {
-                            MapInstance.Get(MapId).AddEntity(this);
+                            if (MapController.TryGetInstanceFromMap(MapId, MapInstanceId, out var instance))
+                            {
+                                instance.AddEntity(this);
+                            }
                         }
                     }
                 }
@@ -1204,17 +1214,19 @@ namespace Intersect.Server.Entities
 
         public override void NotifySwarm(Entity attacker)
         {
-            var mapEntities = MapInstance.Get(MapId).GetEntities(true);
-            foreach (var en in mapEntities)
+            if (MapController.TryGetInstanceFromMap(MapId, MapInstanceId, out var instance))
             {
-                if (en.GetType() == typeof(Npc))
+                foreach (var en in instance.GetEntities(true))
                 {
-                    var npc = (Npc) en;
-                    if (npc.Target == null & npc.Base.Swarm && npc.Base == Base)
+                    if (en.GetType() == typeof(Npc))
                     {
-                        if (npc.InRangeOf(attacker, npc.Base.SightRange))
+                        var npc = (Npc)en;
+                        if (npc.Target == null & npc.Base.Swarm && npc.Base == Base)
                         {
-                            npc.AssignTarget(attacker);
+                            if (npc.InRangeOf(attacker, npc.Base.SightRange))
+                            {
+                                npc.AssignTarget(attacker);
+                            }
                         }
                     }
                 }
@@ -1313,12 +1325,10 @@ namespace Intersect.Server.Entities
                 }
             }
 
-            var maps = MapInstance.Get(MapId).GetSurroundingMaps(true);
             var possibleTargets = new List<Entity>();
             var closestRange = Range + 1; //If the range is out of range we didn't find anything.
             var closestIndex = -1;
             var highestDmgIndex = -1;
-
            
             if (DamageMap.Count > 0)
             {
@@ -1338,6 +1348,12 @@ namespace Intersect.Server.Entities
                         continue;   
                     }
 
+                    // Is this entity on our instance anymore? If not skip it, but don't remove it in case they come back and need item drop determined
+                    if (en.Key.MapInstanceId != MapInstanceId)
+                    {
+                        continue;
+                    }
+
                     // Are we at a valid distance? (9999 means not on this map or somehow null!)
                     if (GetDistanceTo(en.Key) != 9999)
                     {
@@ -1354,11 +1370,10 @@ namespace Intersect.Server.Entities
                 }
             }
 
-
             // Scan for nearby targets
-            foreach (var map in maps)
+            foreach (var instance in MapController.GetSurroundingMapInstances(MapId, MapInstanceId, true))
             {
-                foreach (var entity in map.GetCachedEntities())
+                foreach (var entity in instance.GetCachedEntities())
                 {
                     if (entity != null && !entity.IsDead() && entity != this && entity.Id != avoidId)
                     {
@@ -1366,7 +1381,7 @@ namespace Intersect.Server.Entities
                         if (entity.GetType() == typeof(Player))
                         {
                             // Are we aggressive towards this player or have they hit us?
-                            if (ShouldAttackPlayerOnSight((Player)entity) || DamageMap.ContainsKey(entity))
+                            if (ShouldAttackPlayerOnSight((Player)entity) || (DamageMap.ContainsKey(entity) && entity.MapInstanceId == MapInstanceId))
                             {
                                 var dist = GetDistanceTo(entity);
                                 if (dist <= Range && dist < closestRange)
@@ -1489,8 +1504,7 @@ namespace Intersect.Server.Entities
             bool mapSave = false
         )
         {
-            var map = MapInstance.Get(newMapId);
-            if (map == null)
+            if (!MapController.TryGetInstanceFromMap(newMapId, MapInstanceId, out var map))
             {
                 return;
             }
@@ -1501,8 +1515,7 @@ namespace Intersect.Server.Entities
             Dir = newDir;
             if (newMapId != MapId)
             {
-                var oldMap = MapInstance.Get(MapId);
-                if (oldMap != null)
+                if (MapController.TryGetInstanceFromMap(MapId, MapInstanceId, out var oldMap))
                 {
                     oldMap.RemoveEntity(this);
                 }

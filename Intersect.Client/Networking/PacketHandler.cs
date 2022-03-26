@@ -381,6 +381,33 @@ namespace Intersect.Client.Networking
             }
         }
 
+        // MapInstanceChanged Packet
+        public void HandlePacket(IPacketSender packetSender, MapInstanceChangedPacket packet)
+        {
+            var disposingEntities = new List<Guid>();
+            foreach (var pkt in packet.EntitiesToDispose)
+            {
+                HandlePacket(pkt);
+                disposingEntities.Add(pkt.EntityId);
+            }
+
+            foreach (var entity in disposingEntities)
+            {
+                Globals.EntitiesToDispose.Add(entity);
+            }
+
+            foreach (var mapId in packet.MapIdsToRefresh)
+            {
+                var map = MapInstance.Get(mapId);
+                if (map != null)
+                {
+                    Globals.EntitiesToDispose.AddRange(map.LocalEntities.Values
+                        .ToList()
+                        .Select(en => en.Id));
+                }
+            }
+        }
+
         //EntityPositionPacket
         public void HandlePacket(IPacketSender packetSender, EntityPositionPacket packet)
         {

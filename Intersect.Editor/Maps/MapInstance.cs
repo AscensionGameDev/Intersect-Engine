@@ -19,7 +19,7 @@ namespace Intersect.Editor.Maps
     public class MapInstance : MapBase, IGameObject<Guid, MapInstance>
     {
 
-        private static MapInstances sLookup;
+        private static MapControllers sLookup;
 
         //Map Attributes
         private Dictionary<MapAttribute, Animation> mAttributeAnimInstances = new Dictionary<MapAttribute, Animation>();
@@ -49,7 +49,7 @@ namespace Intersect.Editor.Maps
             }
         }
 
-        public new static MapInstances Lookup => sLookup = sLookup ?? new MapInstances(MapBase.Lookup);
+        public new static MapControllers Lookup => sLookup = sLookup ?? new MapControllers(MapBase.Lookup);
 
         //World Position
         public int MapGridX { get; set; }
