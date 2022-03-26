@@ -509,23 +509,23 @@ namespace Intersect.Client.Interface.Game.Chat
         {
             var key1 = Controls.ActiveControls.ControlMapping[Control.Enter].Key1;
             var key2 = Controls.ActiveControls.ControlMapping[Control.Enter].Key2;
-            if (key1 == Keys.None && key2 != Keys.None)
+            if (key1.Key == Keys.None && key2.Key != Keys.None)
             {
                 return Strings.Chatbox.enterchat1.ToString(
-                    Strings.Keys.keydict[Enum.GetName(typeof(Keys), key2).ToLower()]
+                    Strings.Keys.keydict[Enum.GetName(typeof(Keys), key2.Key).ToLower()]
                 );
             }
-            else if (key1 != Keys.None && key2 == Keys.None)
+            else if (key1.Key != Keys.None && key2.Key == Keys.None)
             {
                 return Strings.Chatbox.enterchat1.ToString(
-                    Strings.Keys.keydict[Enum.GetName(typeof(Keys), key1).ToLower()]
+                    Strings.Keys.keydict[Enum.GetName(typeof(Keys), key1.Key).ToLower()]
                 );
             }
-            else if (key1 != Keys.None && key2 != Keys.None)
+            else if (key1.Key != Keys.None && key2.Key != Keys.None)
             {
                 return Strings.Chatbox.enterchat1.ToString(
-                    Strings.Keys.keydict[Enum.GetName(typeof(Keys), key1).ToLower()],
-                    Strings.Keys.keydict[Enum.GetName(typeof(Keys), key2).ToLower()]
+                    Strings.Keys.keydict[Enum.GetName(typeof(Keys), key1.Key).ToLower()],
+                    Strings.Keys.keydict[Enum.GetName(typeof(Keys), key2.Key).ToLower()]
                 );
             }
 
