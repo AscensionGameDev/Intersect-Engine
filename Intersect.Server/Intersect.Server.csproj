@@ -1,976 +1,121 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\Microsoft.CodeAnalysis.FxCopAnalyzers.3.0.0\build\Microsoft.CodeAnalysis.FxCopAnalyzers.props" Condition="Exists('..\packages\Microsoft.CodeAnalysis.FxCopAnalyzers.3.0.0\build\Microsoft.CodeAnalysis.FxCopAnalyzers.props')" />
-  <Import Project="..\packages\Microsoft.NetFramework.Analyzers.3.0.0\build\Microsoft.NetFramework.Analyzers.props" Condition="Exists('..\packages\Microsoft.NetFramework.Analyzers.3.0.0\build\Microsoft.NetFramework.Analyzers.props')" />
-  <Import Project="..\packages\Microsoft.NetCore.Analyzers.3.0.0\build\Microsoft.NetCore.Analyzers.props" Condition="Exists('..\packages\Microsoft.NetCore.Analyzers.3.0.0\build\Microsoft.NetCore.Analyzers.props')" />
-  <Import Project="..\packages\Microsoft.CodeQuality.Analyzers.3.0.0\build\Microsoft.CodeQuality.Analyzers.props" Condition="Exists('..\packages\Microsoft.CodeQuality.Analyzers.3.0.0\build\Microsoft.CodeQuality.Analyzers.props')" />
-  <Import Project="..\packages\Microsoft.CodeAnalysis.VersionCheckAnalyzer.3.0.0\build\Microsoft.CodeAnalysis.VersionCheckAnalyzer.props" Condition="Exists('..\packages\Microsoft.CodeAnalysis.VersionCheckAnalyzer.3.0.0\build\Microsoft.CodeAnalysis.VersionCheckAnalyzer.props')" />
-  <Import Project="..\packages\Costura.Fody.3.3.3\build\Costura.Fody.props" Condition="Exists('..\packages\Costura.Fody.3.3.3\build\Costura.Fody.props')" />
-  <Import Project="..\packages\Microsoft.EntityFrameworkCore.Design.2.1.3\build\net461\Microsoft.EntityFrameworkCore.Design.props" Condition="Exists('..\packages\Microsoft.EntityFrameworkCore.Design.2.1.3\build\net461\Microsoft.EntityFrameworkCore.Design.props')" />
-  <Import Project="..\targets\Intersect.targets" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{9FFC7331-87BE-403B-82A0-B86D3CCE7C53}</ProjectGuid>
     <OutputType>Exe</OutputType>
+    <TargetFramework>net462</TargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageId>AscensionGameDev.Intersect.Server</PackageId>
+    <Description>Library for the public Intersect Server API</Description>
+    <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
     <RootNamespace>Intersect.Server</RootNamespace>
     <AssemblyName>Intersect Server</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
-    <TargetFrameworkProfile />
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
-    <PublishUrl>publish\</PublishUrl>
-    <Install>true</Install>
-    <InstallFrom>Disk</InstallFrom>
-    <UpdateEnabled>false</UpdateEnabled>
-    <UpdateMode>Foreground</UpdateMode>
-    <UpdateInterval>7</UpdateInterval>
-    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
-    <UpdatePeriodically>false</UpdatePeriodically>
-    <UpdateRequired>false</UpdateRequired>
-    <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <UseApplicationTrust>false</UseApplicationTrust>
-    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <FileAlignment>512</FileAlignment>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-    <DebugSymbols>True</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>False</Optimize>
-    <OutputPath>..\build\debug\server\</OutputPath>
-    <DefineConstants>DEBUG;</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <PlatformTarget>x86</PlatformTarget>
-    <Externalconsole>True</Externalconsole>
-    <Prefer32Bit>false</Prefer32Bit>
-    <RunCodeAnalysis>false</RunCodeAnalysis>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>..\build\release\server\</OutputPath>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <PlatformTarget>x86</PlatformTarget>
-    <Externalconsole>True</Externalconsole>
-    <Prefer32Bit>false</Prefer32Bit>
-    <DebugSymbols>true</DebugSymbols>
-    <RunCodeAnalysis>false</RunCodeAnalysis>
-  </PropertyGroup>
-  <PropertyGroup>
-    <StartupObject>Intersect.Server.Core.Program</StartupObject>
-  </PropertyGroup>
-  <PropertyGroup>
-    <ApplicationIcon>Icon.ico</ApplicationIcon>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>..\build\debug\server\</OutputPath>
-    <DefineConstants>DEBUG;</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>false</Prefer32Bit>
-    <RunCodeAnalysis>false</RunCodeAnalysis>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <OutputPath>..\build\release\server\</OutputPath>
-    <PlatformTarget>x64</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>false</Prefer32Bit>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <DebugSymbols>true</DebugSymbols>
-    <RunCodeAnalysis>false</RunCodeAnalysis>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>..\build\debug\server\</OutputPath>
-    <DefineConstants>DEBUG</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>false</Prefer32Bit>
-    <Optimize>false</Optimize>
-    <DocumentationFile>..\build\debug\server\Intersect Server.xml</DocumentationFile>
-    <RunCodeAnalysis>false</RunCodeAnalysis>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'NoFody|AnyCPU'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>..\build\debug\server\</OutputPath>
-    <DefineConstants>DEBUG;</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>false</Prefer32Bit>
-    <Optimize>false</Optimize>
-    <DisableFody>true</DisableFody>
-    <RunCodeAnalysis>false</RunCodeAnalysis>
-    <NetworkKeyOutputDir>..\build\debug\keys</NetworkKeyOutputDir>
-    <NetworkHandshakePublicKey>$(NetworkKeyOutputDir)\network.handshake.bkey.pub</NetworkHandshakePublicKey>
-    <NetworkHandshakePrivateKey>$(NetworkKeyOutputDir)\network.handshake.bkey</NetworkHandshakePrivateKey>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
-    <OutputPath>..\build\release\server\</OutputPath>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>false</Prefer32Bit>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <DebugSymbols>true</DebugSymbols>
-    <RunCodeAnalysis>false</RunCodeAnalysis>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Tespia|x86'">
-    <OutputPath>..\build\tespia\server\</OutputPath>
-    <PlatformTarget>x86</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <DefineConstants>TRACE;DEBUG</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <DebugSymbols>true</DebugSymbols>
-    <RunCodeAnalysis>false</RunCodeAnalysis>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Tespia|x64'">
-    <OutputPath>..\build\tespia\server\</OutputPath>
-    <PlatformTarget>x64</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <DebugSymbols>true</DebugSymbols>
-    <RunCodeAnalysis>false</RunCodeAnalysis>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Tespia|AnyCPU'">
-    <OutputPath>..\build\tespia\server\</OutputPath>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <DebugSymbols>true</DebugSymbols>
-    <RunCodeAnalysis>false</RunCodeAnalysis>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Diagnostic|x86'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>..\build\diagnostic\server\</OutputPath>
-    <DefineConstants>DEBUG;INTERSECT_DIAGNOSTIC</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <RunCodeAnalysis>false</RunCodeAnalysis>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Diagnostic|x64'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>..\build\diagnostic\server\</OutputPath>
-    <DefineConstants>DEBUG;</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <RunCodeAnalysis>false</RunCodeAnalysis>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Diagnostic|AnyCPU'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>..\build\diagnostic\server\</OutputPath>
-    <DefineConstants>DEBUG;</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <RunCodeAnalysis>false</RunCodeAnalysis>
-  </PropertyGroup>
-  <PropertyGroup>
-    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'NoFody|x86'">
-    <OutputPath>..\build\debug\server\</OutputPath>
-    <DisableFody>true</DisableFody>
-    <RunCodeAnalysis>false</RunCodeAnalysis>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'NoFody|x64'">
-    <OutputPath>..\build\debug\server\</OutputPath>
-    <DisableFody>true</DisableFody>
-    <RunCodeAnalysis>false</RunCodeAnalysis>
-    <ExternalConsole>false</ExternalConsole>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="CommandLine, Version=2.7.82.0, Culture=neutral, PublicKeyToken=5a870481e358d379, processorArchitecture=MSIL">
-      <HintPath>..\packages\CommandLineParser.2.7.82\lib\net461\CommandLine.dll</HintPath>
-    </Reference>
-    <Reference Include="Costura, Version=3.3.3.0, Culture=neutral, PublicKeyToken=9919ef960d84173d, processorArchitecture=MSIL">
-      <HintPath>..\packages\Costura.Fody.3.3.3\lib\net40\Costura.dll</HintPath>
-    </Reference>
-    <Reference Include="Lidgren.Network, Version=1.7.7518.2930, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\AscensionGameDev.Lidgren.Network.1.7.7518.2930-debug\lib\net46\Lidgren.Network.dll</HintPath>
-    </Reference>
-    <Reference Include="Markdown, Version=2.0.0.0, Culture=neutral, PublicKeyToken=1b320cc08ad5aa89, processorArchitecture=MSIL">
-      <HintPath>..\packages\Markdown.2.2.1\lib\net451\Markdown.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=1.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Bcl.AsyncInterfaces.1.1.0\lib\net461\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Microsoft.Data.Sqlite, Version=2.1.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Data.Sqlite.Core.2.1.0\lib\netstandard2.0\Microsoft.Data.Sqlite.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Diagnostics.Runtime, Version=1.0.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Diagnostics.Runtime.1.0.3\lib\net45\Microsoft.Diagnostics.Runtime.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.EntityFrameworkCore, Version=2.1.3.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.EntityFrameworkCore.2.1.3\lib\netstandard2.0\Microsoft.EntityFrameworkCore.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.EntityFrameworkCore.Abstractions, Version=2.1.3.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.EntityFrameworkCore.Abstractions.2.1.3\lib\netstandard2.0\Microsoft.EntityFrameworkCore.Abstractions.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.EntityFrameworkCore.Design, Version=2.1.3.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.EntityFrameworkCore.Design.2.1.3\lib\net461\Microsoft.EntityFrameworkCore.Design.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.EntityFrameworkCore.Relational, Version=2.1.3.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.EntityFrameworkCore.Relational.2.1.3\lib\netstandard2.0\Microsoft.EntityFrameworkCore.Relational.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.EntityFrameworkCore.Sqlite, Version=2.1.3.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.EntityFrameworkCore.Sqlite.Core.2.1.3\lib\netstandard2.0\Microsoft.EntityFrameworkCore.Sqlite.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Extensions.Caching.Abstractions, Version=2.1.2.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Extensions.Caching.Abstractions.2.1.2\lib\netstandard2.0\Microsoft.Extensions.Caching.Abstractions.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Extensions.Caching.Memory, Version=2.1.2.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Extensions.Caching.Memory.2.1.2\lib\netstandard2.0\Microsoft.Extensions.Caching.Memory.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Extensions.Configuration, Version=3.1.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Extensions.Configuration.3.1.0\lib\netstandard2.0\Microsoft.Extensions.Configuration.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Extensions.Configuration.Abstractions, Version=3.1.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Extensions.Configuration.Abstractions.3.1.0\lib\netstandard2.0\Microsoft.Extensions.Configuration.Abstractions.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Extensions.Configuration.Binder, Version=3.1.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Extensions.Configuration.Binder.3.1.0\lib\netstandard2.0\Microsoft.Extensions.Configuration.Binder.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Extensions.DependencyInjection, Version=3.1.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Extensions.DependencyInjection.3.1.0\lib\net461\Microsoft.Extensions.DependencyInjection.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions, Version=3.1.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Extensions.DependencyInjection.Abstractions.3.1.0\lib\netstandard2.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Extensions.Logging, Version=3.1.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Extensions.Logging.3.1.0\lib\netstandard2.0\Microsoft.Extensions.Logging.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Extensions.Logging.Abstractions, Version=3.1.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Extensions.Logging.Abstractions.3.1.0\lib\netstandard2.0\Microsoft.Extensions.Logging.Abstractions.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Extensions.Logging.Configuration, Version=3.0.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Extensions.Logging.Configuration.3.0.1\lib\netstandard2.0\Microsoft.Extensions.Logging.Configuration.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Extensions.Logging.Console, Version=3.0.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Extensions.Logging.Console.3.0.1\lib\netstandard2.0\Microsoft.Extensions.Logging.Console.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Extensions.Options, Version=3.1.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Extensions.Options.3.1.0\lib\netstandard2.0\Microsoft.Extensions.Options.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Extensions.Options.ConfigurationExtensions, Version=3.0.1.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Extensions.Options.ConfigurationExtensions.3.0.1\lib\netstandard2.0\Microsoft.Extensions.Options.ConfigurationExtensions.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Extensions.Primitives, Version=3.1.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Extensions.Primitives.3.1.0\lib\netstandard2.0\Microsoft.Extensions.Primitives.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Owin, Version=4.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Owin.4.1.0\lib\net45\Microsoft.Owin.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Owin.Cors, Version=4.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Owin.Cors.4.1.0\lib\net45\Microsoft.Owin.Cors.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Owin.Host.HttpListener, Version=4.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Owin.Host.HttpListener.4.1.0\lib\net45\Microsoft.Owin.Host.HttpListener.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Owin.Hosting, Version=4.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Owin.Hosting.4.1.0\lib\net45\Microsoft.Owin.Hosting.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Owin.Security, Version=4.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Owin.Security.4.1.0\lib\net45\Microsoft.Owin.Security.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Owin.Security.OAuth, Version=4.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Owin.Security.OAuth.4.1.0\lib\net45\Microsoft.Owin.Security.OAuth.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.VisualStudio.Validation, Version=15.3.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.VisualStudio.Validation.15.5.31\lib\netstandard2.0\Microsoft.VisualStudio.Validation.dll</HintPath>
-    </Reference>
-    <Reference Include="Mono.Data.Sqlite, Version=2.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
-      <HintPath>..\packages\Mono.Data.Sqlite.Portable.1.0.3.5\lib\net4\Mono.Data.Sqlite.dll</HintPath>
-    </Reference>
-    <Reference Include="MySqlConnector, Version=0.45.1.0, Culture=neutral, PublicKeyToken=d33d3e53aa5f8c92, processorArchitecture=MSIL">
-      <HintPath>..\packages\MySqlConnector.0.45.1\lib\net461\MySqlConnector.dll</HintPath>
-    </Reference>
-    <Reference Include="NCalc, Version=1.3.8.0, Culture=neutral, PublicKeyToken=973cde3f1cafed03, processorArchitecture=MSIL">
-      <HintPath>..\packages\ncalc.1.3.8\lib\NCalc.dll</HintPath>
-    </Reference>
-    <Reference Include="netstandard, Version=2.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51" />
-    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="Open.Nat, Version=2.1.0.0, Culture=neutral, PublicKeyToken=f22a6a4582336c76, processorArchitecture=MSIL">
-      <HintPath>..\packages\AscensionGameDev.Open.NAT.2.1.1\lib\net45\Open.Nat.dll</HintPath>
-    </Reference>
-    <Reference Include="Owin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f0ebd12fd5e55cc5, processorArchitecture=MSIL">
-      <HintPath>..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
-    </Reference>
-    <Reference Include="Pomelo.EntityFrameworkCore.MySql, Version=2.1.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Pomelo.EntityFrameworkCore.MySql.2.1.2\lib\netstandard2.0\Pomelo.EntityFrameworkCore.MySql.dll</HintPath>
-    </Reference>
-    <Reference Include="Pomelo.JsonObject, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Pomelo.JsonObject.2.0.0\lib\netstandard2.0\Pomelo.JsonObject.dll</HintPath>
-    </Reference>
-    <Reference Include="Remotion.Linq, Version=2.2.0.0, Culture=neutral, PublicKeyToken=fee00910d6e5f53b, processorArchitecture=MSIL">
-      <HintPath>..\packages\Remotion.Linq.2.2.0\lib\net45\Remotion.Linq.dll</HintPath>
-    </Reference>
-    <Reference Include="SmartThreadPool, Version=2.2.6.0, Culture=neutral, PublicKeyToken=1126fe8b671e8a79, processorArchitecture=MSIL">
-      <HintPath>..\packages\SmartThreadPool.dll.2.2.6\lib\net46\SmartThreadPool.dll</HintPath>
-    </Reference>
-    <Reference Include="SQLitePCLRaw.batteries_green, Version=1.1.11.121, Culture=neutral, PublicKeyToken=a84b7dcfb1391f7f, processorArchitecture=MSIL">
-      <HintPath>..\packages\SQLitePCLRaw.bundle_green.1.1.11\lib\net45\SQLitePCLRaw.batteries_green.dll</HintPath>
-    </Reference>
-    <Reference Include="SQLitePCLRaw.batteries_v2, Version=1.1.11.121, Culture=neutral, PublicKeyToken=8226ea5df37bcae9, processorArchitecture=MSIL">
-      <HintPath>..\packages\SQLitePCLRaw.bundle_green.1.1.11\lib\net45\SQLitePCLRaw.batteries_v2.dll</HintPath>
-    </Reference>
-    <Reference Include="SQLitePCLRaw.core, Version=1.1.11.121, Culture=neutral, PublicKeyToken=1488e028ca7ab535, processorArchitecture=MSIL">
-      <HintPath>..\packages\SQLitePCLRaw.core.1.1.11\lib\net45\SQLitePCLRaw.core.dll</HintPath>
-    </Reference>
-    <Reference Include="SQLitePCLRaw.provider.e_sqlite3, Version=1.1.11.121, Culture=neutral, PublicKeyToken=9c301db686d0bd12, processorArchitecture=MSIL">
-      <HintPath>..\packages\SQLitePCLRaw.provider.e_sqlite3.net45.1.1.11\lib\net45\SQLitePCLRaw.provider.e_sqlite3.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Buffers.4.5.0\lib\netstandard2.0\System.Buffers.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Collections.Immutable, Version=1.2.5.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Collections.Immutable.1.7.0\lib\netstandard2.0\System.Collections.Immutable.dll</HintPath>
-    </Reference>
-    <Reference Include="System.ComponentModel.Annotations, Version=4.2.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.ComponentModel.Annotations.4.7.0\lib\net461\System.ComponentModel.Annotations.dll</HintPath>
-    </Reference>
-    <Reference Include="System.ComponentModel.Composition" />
-    <Reference Include="System.ComponentModel.DataAnnotations" />
-    <Reference Include="System.Configuration" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Data.Portable, Version=4.0.0.0, Culture=neutral, PublicKeyToken=59e704a76bc4613a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Mono.Data.Sqlite.Portable.1.0.3.5\lib\net4\System.Data.Portable.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Diagnostics.DiagnosticSource, Version=4.0.5.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Diagnostics.DiagnosticSource.4.7.0\lib\net46\System.Diagnostics.DiagnosticSource.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Interactive.Async, Version=3.2.0.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Interactive.Async.3.2.0\lib\net46\System.Interactive.Async.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Linq.Async, Version=4.0.0.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Linq.Async.4.0.0\lib\net461\System.Linq.Async.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Memory, Version=4.0.1.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Memory.4.5.3\lib\netstandard2.0\System.Memory.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Net.Http.Formatting, Version=5.2.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.7\lib\net45\System.Net.Http.Formatting.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Numerics" />
-    <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.6.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.7.0\lib\netstandard2.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.Text.Encodings.Web, Version=4.0.4.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Text.Encodings.Web.4.6.0\lib\netstandard2.0\System.Text.Encodings.Web.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Text.Json, Version=4.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Text.Json.4.6.0\lib\net461\System.Text.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Threading, Version=1.0.2856.102, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\TaskParallelLibrary.1.0.2856.0\lib\Net35\System.Threading.dll</HintPath>
-      <Private>True</Private>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Threading.Tasks.Extensions.4.5.3\lib\netstandard2.0\System.Threading.Tasks.Extensions.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Transactions" />
-    <Reference Include="System.Transactions.Portable, Version=4.0.0.0, Culture=neutral, PublicKeyToken=59e704a76bc4613a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Mono.Data.Sqlite.Portable.1.0.3.5\lib\net4\System.Transactions.Portable.dll</HintPath>
-    </Reference>
-    <Reference Include="System.ValueTuple">
-      <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net461\System.ValueTuple.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Web" />
-    <Reference Include="System.Web.Cors, Version=5.2.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.AspNet.Cors.5.2.7\lib\net45\System.Web.Cors.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Web.Extensions" />
-    <Reference Include="System.Web.Http, Version=5.2.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.AspNet.WebApi.Core.5.2.7\lib\net45\System.Web.Http.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Web.Http.Owin, Version=5.2.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.AspNet.WebApi.Owin.5.2.7\lib\net45\System.Web.Http.Owin.dll</HintPath>
-    </Reference>
-    <Reference Include="System.XML" />
-    <Reference Include="WebApiThrottle, Version=1.5.4.1, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\AscensionGameDev.WebApiThrottle.1.5.4.2\lib\net45\WebApiThrottle.dll</HintPath>
-    </Reference>
-    <Reference Include="websocket-sharp, Version=1.0.2.59611, Culture=neutral, PublicKeyToken=5660b08a1845a91e, processorArchitecture=MSIL">
-      <HintPath>..\packages\WebSocketSharp.1.0.3-rc11\lib\websocket-sharp.dll</HintPath>
-    </Reference>
-    <Reference Include="Owin.Security.AesDataProtectorProvider">
-      <HintPath>..\packages\Owin.Security.AesDataProtectorProvider.1.1.2\lib\net45\Owin.Security.AesDataProtectorProvider.dll</HintPath>
-    </Reference>
+    <Compile Remove="Networking\IntersectNetworkServer.cs" />
+    <Compile Remove="Networking\IntersectNetworkSocket.cs" />
   </ItemGroup>
+
   <ItemGroup>
-    <Compile Include="Admin\Actions\ActionProcessing.cs" />
-    <Compile Include="Core\Commands\MetricsCommand.cs" />
-    <Compile Include="Core\IServerContext.cs" />
-    <Compile Include="Core\LogicService.cs" />
-    <Compile Include="Core\LogicService.LogicThread.cs" />
-    <Compile Include="Core\Services\IConsoleService.cs" />
-    <Compile Include="Core\Services\ILogicService.cs" />
-    <Compile Include="Database\ContextProvider.cs" />
-    <Compile Include="Database\ContextProvider.Locking.cs" />
-    <Compile Include="Database\DbLogger.cs" />
-    <Compile Include="Database\DbLoggerProvider.cs" />
-    <Compile Include="Database\GameData\GameContext.cs" />
-    <Compile Include="Database\GameData\IGameContext.cs" />
-    <Compile Include="Database\GameData\Migrations\Beta6Migration.cs" />
-    <Compile Include="Database\GameData\Migrations\BoundItemExtensionMigration.cs" />
-    <Compile Include="Database\GameData\Migrations\CerasVersionToleranceMigration.cs" />
-    <Compile Include="Database\ContextInterface.cs" />
-    <Compile Include="Database\IDbContext.cs" />
-    <Compile Include="Database\IntersectDbContext.cs" />
-    <Compile Include="Database\Logging\Entities\ChatHistory.cs" />
-    <Compile Include="Database\Logging\Entities\TradeHistory.cs" />
-    <Compile Include="Database\Logging\Entities\GuildHistory.cs" />
-    <Compile Include="Database\Logging\Entities\UserActivityHistory.cs" />
-    <Compile Include="Database\Logging\ILoggingContext.cs" />
-    <Compile Include="Database\Logging\LoggingContext.cs" />
-    <Compile Include="Database\Logging\RequestLog.cs" />
-    <Compile Include="Database\MigrationBuilderExtensions.cs" />
-    <Compile Include="Database\PlayerData\Api\RefreshToken.cs" />
-    <Compile Include="Database\PlayerData\Ban.cs" />
-    <Compile Include="Database\PlayerData\IPlayerContext.cs" />
-    <Compile Include="Database\PlayerData\Players\Bag.cs" />
-    <Compile Include="Database\PlayerData\Players\BagSlot.cs" />
-    <Compile Include="Database\PlayerData\Players\GuildBankSlot.cs" />
-    <Compile Include="Database\PlayerData\Players\BankSlot.cs" />
-    <Compile Include="Database\PlayerData\Players\Friend.cs" />
-    <Compile Include="Database\PlayerData\Players\Guild.cs" />
-    <Compile Include="Database\PlayerData\Players\HotbarSlot.cs" />
-    <Compile Include="Database\PlayerData\Players\InventorySlot.cs" />
-    <Compile Include="Database\Item.cs" />
-    <Compile Include="Database\PlayerData\Players\IPlayerOwned.cs" />
-    <Compile Include="Database\PlayerData\Players\ISlot.cs" />
-    <Compile Include="Database\PlayerData\Players\Quest.cs" />
-    <Compile Include="Database\PlayerData\Players\SlotHelper.cs" />
-    <Compile Include="Database\PlayerData\Players\SpellSlot.cs" />
-    <Compile Include="Entities\BankInterface.cs" />
-    <Compile Include="Entities\Combat\Buff.cs" />
-    <Compile Include="Entities\Combat\Dash.cs" />
-    <Compile Include="Entities\Combat\DoT.cs" />
-    <Compile Include="Entities\Events\ConditionHandlerRegistry.cs" />
-    <Compile Include="Entities\Events\Conditions.cs" />
-    <Compile Include="Entities\Events\VariableCheckHandlerRegistry.cs" />
-    <Compile Include="Entities\Label.cs" />
-    <Compile Include="Entities\Player.Database.cs" />
-    <Compile Include="Database\Spell.cs" />
-    <Compile Include="Database\PlayerData\Players\Switch.cs" />
-    <Compile Include="Database\PlayerData\Players\Variable.cs" />
-    <Compile Include="Database\PlayerData\Mute.cs" />
-    <Compile Include="Database\PlayerData\User.cs" />
-    <Compile Include="Database\PlayerData\PlayerContext.cs" />
-    <Compile Include="Entities\Events\Event.cs" />
-    <Compile Include="Entities\Projectile.cs" />
-    <Compile Include="Entities\ProjectileSpawn.cs" />
-    <Compile Include="Entities\Resource.cs" />
-    <Compile Include="Entities\Events\EventPageInstance.cs" />
-    <Compile Include="Core\Program.cs" />
-    <Compile Include="Entities\Combat\Stat.cs" />
-    <Compile Include="Entities\Combat\Status.cs" />
-    <Compile Include="Entities\Trading.cs" />
-    <Compile Include="Entities\Events\CommandInstance.cs" />
-    <Compile Include="Entities\Events\CommandProcessing.cs" />
-    <Compile Include="General\Formulas.cs" />
-    <Compile Include="General\Time.cs" />
-    <Compile Include="Localization\CommandsNamespace.cs" />
-    <Compile Include="Localization\Strings.cs" />
-    <Compile Include="Maps\MapActionMessages.cs" />
-    <Compile Include="Maps\MapAnimations.cs" />
-    <Compile Include="Maps\MapEntityMovements.cs" />
-    <Compile Include="Maps\MapInstance.cs" />
-    <Compile Include="Maps\MapItemInstance.cs" />
-    <Compile Include="Maps\MapItemSpawn.cs" />
-    <Compile Include="Maps\MapNpcSpawn.cs" />
-    <Compile Include="Maps\MapResourceSpawn.cs" />
-    <Compile Include="Maps\MapTileLoc.cs" />
-    <Compile Include="Maps\MapTrapInstance.cs" />
-    <Compile Include="Maps\TileHelper.cs" />
-    <Compile Include="Entities\Pathfinding\Pathfinder.cs" />
-    <Compile Include="Entities\Pathfinding\SpatialAStar.cs" />
-    <Compile Include="Entities\Pathfinding\PathfinderTarget.cs" />
-    <Compile Include="Entities\Pathfinding\PriorityQueue.cs" />
-    <Compile Include="Migrations\20210414121435_TrackUserPlayerStats.cs" />
-    <Compile Include="Migrations\20210414121435_TrackUserPlayerStats.Designer.cs">
-      <DependentUpon>20210414121435_TrackUserPlayerStats.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Metrics\Controllers\ApplicationMetricsController.cs" />
-    <Compile Include="Metrics\Controllers\GameMetricsController.cs" />
-    <Compile Include="Metrics\Controllers\MetricsController.cs" />
-    <Compile Include="Metrics\Controllers\NetworkMetricsController.cs" />
-    <Compile Include="Metrics\Controllers\ThreadingMetricsController.cs" />
-    <Compile Include="Metrics\Histogram.cs" />
-    <Compile Include="Metrics\MetricsRoot.cs" />
-    <Compile Include="Migrations\20210503165540_AddingGuildsWithGuildBanks.cs" />
-    <Compile Include="Migrations\20210503165540_AddingGuildsWithGuildBanks.Designer.cs">
-      <DependentUpon>20210503165540_AddingGuildsWithGuildBanks.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\20210510223205_TrackPlaytimeAsULongsInSeconds.cs" />
-    <Compile Include="Migrations\20210510223205_TrackPlaytimeAsULongsInSeconds.Designer.cs">
-      <DependentUpon>20210510223205_TrackPlaytimeAsULongsInSeconds.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\Game\20201222164741_NpcResetRadius.cs" />
-    <Compile Include="Migrations\Game\20201222164741_NpcResetRadius.Designer.cs">
-      <DependentUpon>20201222164741_NpcResetRadius.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\Game\20201004032158_EnablingCerasVersionTolerance.cs" />
-    <Compile Include="Migrations\Game\20201004032158_EnablingCerasVersionTolerance.Designer.cs">
-      <DependentUpon>20201004032158_EnablingCerasVersionTolerance.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\Game\20201001163344_ItemAndSpellCooldownImprovements.cs" />
-    <Compile Include="Migrations\Game\20201001163344_ItemAndSpellCooldownImprovements.Designer.cs">
-      <DependentUpon>20201001163344_ItemAndSpellCooldownImprovements.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\20201017065035_AddColorToEntities.cs" />
-    <Compile Include="Migrations\20201017065035_AddColorToEntities.Designer.cs">
-      <DependentUpon>20201017065035_AddColorToEntities.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\Game\20201016122614_AddItemAndNpcColors.cs" />
-    <Compile Include="Migrations\Game\20201016122614_AddItemAndNpcColors.Designer.cs">
-      <DependentUpon>20201016122614_AddItemAndNpcColors.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\Game\20210423131813_AddItemSpellIgnoreCdrOptions.cs" />
-    <Compile Include="Migrations\Game\20210423131813_AddItemSpellIgnoreCdrOptions.Designer.cs">
-      <DependentUpon>20210423131813_AddItemSpellIgnoreCdrOptions.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\Game\20210423141451_AddIndividualizedLootOptionToNpcs.cs" />
-    <Compile Include="Migrations\Game\20210423141451_AddIndividualizedLootOptionToNpcs.Designer.cs">
-      <DependentUpon>20210423141451_AddIndividualizedLootOptionToNpcs.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\Game\20210509070229_AddingQuestCategoriesAndOrderValues.cs" />
-    <Compile Include="Migrations\Game\20210509070229_AddingQuestCategoriesAndOrderValues.Designer.cs">
-      <DependentUpon>20210509070229_AddingQuestCategoriesAndOrderValues.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\Game\20210512071349_BoundItemExtension.cs" />
-    <Compile Include="Migrations\Game\20210512071349_BoundItemExtension.Designer.cs">
-      <DependentUpon>20210512071349_BoundItemExtension.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\Game\20210513080440_AddItemStackCaps.cs" />
-    <Compile Include="Migrations\Game\20210513080440_AddItemStackCaps.Designer.cs">
-      <DependentUpon>20210513080440_AddItemStackCaps.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\Game\20210607115442_AddedCanGuildBankOptionToItems.cs" />
-    <Compile Include="Migrations\Game\20210607115442_AddedCanGuildBankOptionToItems.designer.cs">
-      <DependentUpon>20210607115442_AddedCanGuildBankOptionToItems.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\Game\20210630114724_CraftingCommonEvents.cs" />
-    <Compile Include="Migrations\Game\20210630114724_CraftingCommonEvents.designer.cs">
-      <DependentUpon>20210630114724_CraftingCommonEvents.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\Game\20210622051409_AddingRequirementNotMetMessages.cs" />
-    <Compile Include="Migrations\Game\20210622051409_AddingRequirementNotMetMessages.designer.cs">
-      <DependentUpon>20210622051409_AddingRequirementNotMetMessages.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\Game\20210703145618_AddingShopSoundEffects.cs" />
-    <Compile Include="Migrations\Game\20210703145618_AddingShopSoundEffects.designer.cs">
-      <DependentUpon>20210703145618_AddingShopSoundEffects.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\Logging\20201119230003_AddUserActivityHistory.cs" />
-    <Compile Include="Migrations\Logging\20201119230003_AddUserActivityHistory.Designer.cs">
-      <DependentUpon>20201119230003_AddUserActivityHistory.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\Logging\20210414222302_AddedChatLogging.cs" />
-    <Compile Include="Migrations\Logging\20210414222302_AddedChatLogging.Designer.cs">
-      <DependentUpon>20210414222302_AddedChatLogging.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\Logging\20210515114555_LogPlayerTrades.cs" />
-    <Compile Include="Migrations\Logging\20210515114555_LogPlayerTrades.Designer.cs">
-      <DependentUpon>20210515114555_LogPlayerTrades.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\Logging\20210519095613_AddGuildActivityLogging.cs" />
-    <Compile Include="Migrations\Logging\20210519095613_AddGuildActivityLogging.designer.cs">
-      <DependentUpon>20210519095613_AddGuildActivityLogging.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Networking\Client.cs" />
-    <Compile Include="Entities\Npc.cs" />
-    <Compile Include="Networking\Helpers\NetDebug.cs" />
-    <Compile Include="Networking\PacketHandler.cs" />
-    <Compile Include="General\Globals.cs" />
-    <Compile Include="Networking\PacketSender.cs" />
-    <Compile Include="Entities\Player.cs" />
-    <Compile Include="Entities\Entity.cs" />
-    <Compile Include="Database\DbInterface.cs" />
-    <Compile Include="Maps\MapGrid.cs" />
-    <Compile Include="Networking\Helpers\PortChecker.cs" />
-    <Compile Include="Networking\Helpers\UPnP.cs" />
-    <Compile Include="Notifications\Notification.cs" />
-    <Compile Include="Notifications\ResetPassword.cs" />
-    <Compile Include="Networking\Lidgren\ServerNetwork.cs" />
-    <Compile Include="Core\CommandParsing\Arguments\EnumArgument.cs" />
-    <Compile Include="Core\CommandParsing\Arguments\VariableArgument.cs" />
-    <Compile Include="Core\CommandParsing\CommandParserErrorsNamespace.cs" />
-    <Compile Include="Core\CommandParsing\CommandParserFormattingNamespace.cs" />
-    <Compile Include="Core\CommandParsing\CommandParsingNamespace.cs" />
-    <Compile Include="Core\CommandParsing\Commands\HelpableCommand.cs" />
-    <Compile Include="Core\CommandParsing\Arguments\PositionalArgument.cs" />
-    <Compile Include="Core\CommandParsing\Arguments\ArgumentValues.cs" />
-    <Compile Include="Core\CommandParsing\Arguments\ArgumentValuesMap.cs" />
-    <Compile Include="Core\Bootstrapper.cs" />
-    <Compile Include="Core\ServerCommandLineOptions.cs" />
-    <Compile Include="Core\CommandParsing\Commands\Command.cs" />
-    <Compile Include="Core\CommandParsing\CommandParser.cs" />
-    <Compile Include="Core\CommandParsing\Errors\MissingArgumentError.cs" />
-    <Compile Include="Core\CommandParsing\ParserResultExtensions.cs" />
-    <Compile Include="Core\CommandParsing\ParserSettings.cs" />
-    <Compile Include="Core\Commands\AnnouncementCommand.cs" />
-    <Compile Include="Core\Commands\ApiCommand.cs" />
-    <Compile Include="Core\Commands\ApiGrantCommand.cs" />
-    <Compile Include="Core\Commands\ApiRevokeCommand.cs" />
-    <Compile Include="Core\Commands\ApiRolesCommand.cs" />
-    <Compile Include="Core\Commands\CpsCommand.cs" />
-    <Compile Include="Core\Commands\ExperimentsCommand.cs" />
-    <Compile Include="Core\Commands\PowerAccountCommand.cs" />
-    <Compile Include="Core\Commands\PowerCommand.cs" />
-    <Compile Include="Core\Commands\ModeratorActionCommand.cs" />
-    <Compile Include="Core\Commands\MuteCommand.cs" />
-    <Compile Include="Core\Commands\ExitCommand.cs" />
-    <Compile Include="Core\CommandParsing\Errors\MissingCommandError.cs" />
-    <Compile Include="Core\CommandParsing\Errors\UnhandledArgumentError.cs" />
-    <Compile Include="Core\CommandParsing\ParserContext.cs" />
-    <Compile Include="Core\Commands\HelpCommand.cs" />
-    <Compile Include="Core\Commands\KickCommand.cs" />
-    <Compile Include="Core\Commands\BanCommand.cs" />
-    <Compile Include="Core\Commands\UnmuteCommand.cs" />
-    <Compile Include="Core\Commands\UnbanCommand.cs" />
-    <Compile Include="Core\Commands\MigrateCommand.cs" />
-    <Compile Include="Core\Commands\MakePublicCommand.cs" />
-    <Compile Include="Core\Commands\MakePrivateCommand.cs" />
-    <Compile Include="Core\Commands\TargetUserCommand.cs" />
-    <Compile Include="Core\Commands\TargettedCommand.cs" />
-    <Compile Include="Core\Commands\TargetClientCommand.cs" />
-    <Compile Include="Core\Commands\KillCommand.cs" />
-    <Compile Include="Core\Commands\NetDebugCommand.cs" />
-    <Compile Include="Core\Commands\OnlineListCommand.cs" />
-    <Compile Include="Core\ExperimentalFeatures\Experiments.cs" />
-    <Compile Include="Core\ConsoleService.cs" />
-    <Compile Include="Core\ServerContext.cs" />
-    <Compile Include="Core\CommandParsing\Tokenization\Tokenizer.cs" />
-    <Compile Include="Core\CommandParsing\Tokenization\TokenizerSettings.cs" />
-    <Compile Include="Extensions\EnumerableExtensions.cs" />
-    <Compile Include="Extensions\QueryableExtensions.cs" />
-    <Compile Include="Migrations\20180927161502_InitialPlayerDb.cs" />
-    <Compile Include="Migrations\20180927161502_InitialPlayerDb.Designer.cs">
-      <DependentUpon>20180927161502_InitialPlayerDb.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\20190310001204_AddRefreshTokens.cs" />
-    <Compile Include="Migrations\20190310001204_AddRefreshTokens.Designer.cs">
-      <DependentUpon>20190310001204_AddRefreshTokens.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\20190310013418_StandardizeVocabulary1.cs" />
-    <Compile Include="Migrations\20190310013418_StandardizeVocabulary1.Designer.cs">
-      <DependentUpon>20190310013418_StandardizeVocabulary1.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\20190611170927_CombiningSwitchesVariables.cs" />
-    <Compile Include="Migrations\20190611170927_CombiningSwitchesVariables.Designer.cs">
-      <DependentUpon>20190611170927_CombiningSwitchesVariables.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\20190804133420_Custom_Player_Name_Colors.cs" />
-    <Compile Include="Migrations\20190804133420_Custom_Player_Name_Colors.Designer.cs">
-      <DependentUpon>20190804133420_Custom_Player_Name_Colors.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\20200205112316_FixingPlayerDeleteFriendsForeignKeyContraintFail.cs" />
-    <Compile Include="Migrations\20200205112316_FixingPlayerDeleteFriendsForeignKeyContraintFail.Designer.cs">
-      <DependentUpon>20200205112316_FixingPlayerDeleteFriendsForeignKeyContraintFail.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\20191030214333_PlayerUpgrades_Labels.cs" />
-    <Compile Include="Migrations\20191030214333_PlayerUpgrades_Labels.Designer.cs">
-      <DependentUpon>20191030214333_PlayerUpgrades_Labels.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\20191126025000_RefactoringCooldowns.cs" />
-    <Compile Include="Migrations\20191126025000_RefactoringCooldowns.Designer.cs">
-      <DependentUpon>20191126025000_RefactoringCooldowns.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\20200301145105_SavingPlayerLabelsInDb.cs" />
-    <Compile Include="Migrations\20200301145105_SavingPlayerLabelsInDb.Designer.cs">
-      <DependentUpon>20200301145105_SavingPlayerLabelsInDb.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\Game\20190303234637_SpellUpgrades_OnHit_Shields.cs" />
-    <Compile Include="Migrations\Game\20190303234637_SpellUpgrades_OnHit_Shields.Designer.cs">
-      <DependentUpon>20190303234637_SpellUpgrades_OnHit_Shields.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\Game\20190306224847_BoundSpells.cs" />
-    <Compile Include="Migrations\Game\20190306224847_BoundSpells.Designer.cs">
-      <DependentUpon>20190306224847_BoundSpells.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\Game\20190320233655_ItemRarityAndSpellQuickCast.cs" />
-    <Compile Include="Migrations\Game\20190320233655_ItemRarityAndSpellQuickCast.Designer.cs">
-      <DependentUpon>20190320233655_ItemRarityAndSpellQuickCast.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\Game\20190530000628_AddingCraftingQuantities.cs" />
-    <Compile Include="Migrations\Game\20190530000628_AddingCraftingQuantities.Designer.cs">
-      <DependentUpon>20190530000628_AddingCraftingQuantities.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\Game\20190611170819_CombiningSwitchesVariables.cs" />
-    <Compile Include="Migrations\Game\20190611170819_CombiningSwitchesVariables.Designer.cs">
-      <DependentUpon>20190611170819_CombiningSwitchesVariables.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\Game\20190615010038_AddingExpOveridesToClasses.cs" />
-    <Compile Include="Migrations\Game\20190615010038_AddingExpOveridesToClasses.Designer.cs">
-      <DependentUpon>20190615010038_AddingExpOveridesToClasses.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\Game\20190618013705_AddingFoldersToGameObjects.cs" />
-    <Compile Include="Migrations\Game\20190618013705_AddingFoldersToGameObjects.Designer.cs">
-      <DependentUpon>20190618013705_AddingFoldersToGameObjects.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\Game\20190618014158_AddingFoldersToVaraibles.cs" />
-    <Compile Include="Migrations\Game\20190618014158_AddingFoldersToVaraibles.Designer.cs">
-      <DependentUpon>20190618014158_AddingFoldersToVaraibles.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\Game\20190712220904_AddingAnimationSoundCompletionOpt.cs" />
-    <Compile Include="Migrations\Game\20190712220904_AddingAnimationSoundCompletionOpt.Designer.cs">
-      <DependentUpon>20190712220904_AddingAnimationSoundCompletionOpt.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\Game\20190726203949_SpellUpgrades_Percentage_Buffs.cs" />
-    <Compile Include="Migrations\Game\20190726203949_SpellUpgrades_Percentage_Buffs.Designer.cs">
-      <DependentUpon>20190726203949_SpellUpgrades_Percentage_Buffs.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\Game\20190727120303_ItemUpgrades_Percentage_Based_Stats.cs" />
-    <Compile Include="Migrations\Game\20190727120303_ItemUpgrades_Percentage_Based_Stats.Designer.cs">
-      <DependentUpon>20190727120303_ItemUpgrades_Percentage_Based_Stats.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\Game\20200216143942_MoreGraularAttackSpeedOptions.cs" />
-    <Compile Include="Migrations\Game\20200216143942_MoreGraularAttackSpeedOptions.Designer.cs">
-      <DependentUpon>20200216143942_MoreGraularAttackSpeedOptions.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\Logging\20191118024649_RequestLogs.cs" />
-    <Compile Include="Migrations\Logging\20191118024649_RequestLogs.Designer.cs">
-      <DependentUpon>20191118024649_RequestLogs.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\Logging\LoggingContextModelSnapshot.cs" />
-    <Compile Include="Migrations\Game\20191030214236_Spell_Upgrades_Traps_Item_Upgrades_Effects_Event_Upgrades_Labels.cs" />
-    <Compile Include="Migrations\Game\20191030214236_Spell_Upgrades_Traps_Item_Upgrades_Effects_Event_Upgrades_Labels.Designer.cs">
-      <DependentUpon>20191030214236_Spell_Upgrades_Traps_Item_Upgrades_Effects_Event_Upgrades_Labels.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\PlayerContextModelSnapshot.cs" />
-    <Compile Include="Plugins\Helpers\ServerLifecycleHelper.cs" />
-    <Compile Include="Plugins\ServerPluginContext.cs" />
-    <Compile Include="Web\RestApi\Attributes\DebugAuthorizeAttribute.cs" />
-    <Compile Include="Web\RestApi\Attributes\ConfigurableAuthorizeAttribute.cs" />
-    <Compile Include="Web\RestApi\Authentication\AuthenticationProvider.cs" />
-    <Compile Include="Web\RestApi\Middleware\ContentTypeMappingMiddleware.cs" />
-    <Compile Include="Web\RestApi\Authentication\OAuth\IAppBuilderExtensions.cs" />
-    <Compile Include="Web\RestApi\Authentication\OAuth\IOwinContextExtensions.cs" />
-    <Compile Include="Web\RestApi\Authentication\OAuth\IOwinRequestExtensions.cs" />
-    <Compile Include="Web\RestApi\Authentication\OAuth\OAuthProvider.cs" />
-    <Compile Include="Web\RestApi\Authentication\OAuth\Providers\BearerAuthenticationProvider.cs" />
-    <Compile Include="Web\RestApi\Authentication\OAuth\Providers\GrantProvider.cs" />
-    <Compile Include="Web\RestApi\Authentication\OAuth\Providers\RefreshTokenProvider.cs" />
-    <Compile Include="Web\RestApi\Configuration\ApiConfiguration.cs" />
-    <Compile Include="Web\RestApi\Configuration\CorsConfiguration.cs" />
-    <Compile Include="Web\RestApi\Constraints\AdminActionsConstraint.cs" />
-    <Compile Include="Web\RestApi\Extensions\HttpRequestMessageExtensions.cs" />
-    <Compile Include="Web\RestApi\Extensions\HttpStatusCodeExtensions.cs" />
-    <Compile Include="Web\RestApi\IAppConfigurationProvider.cs" />
-    <Compile Include="Web\RestApi\IntersectApiController.cs" />
-    <Compile Include="Web\RestApi\IntersectThrottlingHandler.cs" />
-    <Compile Include="Web\RestApi\Logging\IntersectLogger.cs" />
-    <Compile Include="Web\RestApi\Logging\IntersectLoggerFactory.cs" />
-    <Compile Include="Web\RestApi\Logging\IntersectRequestLoggingHandler.cs" />
-    <Compile Include="Web\RestApi\MediaTypeFormatterExtensions.cs" />
-    <Compile Include="Web\RestApi\Middleware\IntersectRequestLoggingMiddleware.cs" />
-    <Compile Include="Web\RestApi\Middleware\IntersectThrottlingMiddleware.cs" />
-    <Compile Include="Web\RestApi\Payloads\AdminChange.cs" />
-    <Compile Include="Web\RestApi\Payloads\AuthorizedChange.cs" />
-    <Compile Include="Web\RestApi\Payloads\GuildRank.cs" />
-    <Compile Include="Web\RestApi\Payloads\IpAddress.cs" />
-    <Compile Include="Web\RestApi\Payloads\ItemInfo.cs" />
-    <Compile Include="Web\RestApi\Payloads\ClassChange.cs" />
-    <Compile Include="Web\RestApi\Payloads\LevelChange.cs" />
-    <Compile Include="Web\RestApi\Payloads\NameChange.cs" />
-    <Compile Include="Web\RestApi\Payloads\PagingInfo.cs" />
-    <Compile Include="Web\RestApi\Payloads\PasswordValidation.cs" />
-    <Compile Include="Web\RestApi\Payloads\Sort.cs" />
-    <Compile Include="Web\RestApi\Payloads\SortDirection.cs" />
-    <Compile Include="Web\RestApi\Payloads\SpellInfo.cs" />
-    <Compile Include="Web\RestApi\Payloads\UserInfo.cs" />
-    <Compile Include="Web\RestApi\Payloads\VariableValue.cs" />
-    <Compile Include="Web\RestApi\RestApi.cs" />
-    <Compile Include="Migrations\Game\20180905042857_Initial.cs" />
-    <Compile Include="Migrations\Game\20180905042857_Initial.Designer.cs">
-      <DependentUpon>20180905042857_Initial.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\Game\GameContextModelSnapshot.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+      <_Parameter1>Intersect.Tests.Server</_Parameter1>
+    </AssemblyAttribute>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Intersect (Core)\Intersect.Core.csproj" />
+    <ProjectReference Include="..\Intersect.Network\Intersect.Network.csproj" />
+    <ProjectReference Include="..\Intersect.Server.Framework\Intersect.Server.Framework.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\Resources.Designer.cs">
       <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Utilities\SortHelper.cs" />
-    <Compile Include="Core\CommandParsing\Arguments\HelpArgument.cs" />
-    <Compile Include="Core\CommandParsing\Errors\ParserError.cs" />
-    <Compile Include="Core\CommandParsing\Commands\ICommand.cs" />
-    <Compile Include="Core\CommandParsing\Arguments\ICommandArgument.cs" />
-    <Compile Include="Core\CommandParsing\ParserResult.cs" />
-    <Compile Include="Core\Commands\ServerCommand.cs" />
-    <Compile Include="Core\CommandParsing\Arguments\CommandArgument.cs" />
-    <Compile Include="Web\RestApi\RouteProviders\VersionedRouteProvider.cs" />
-    <Compile Include="Web\RestApi\Routes\OAuthController.cs" />
-    <Compile Include="Web\RestApi\Routes\RootInfoController.cs" />
-    <Compile Include="Web\RestApi\Routes\V1\DemoController.cs" />
-    <Compile Include="Web\RestApi\Routes\V1\DocController.cs" />
-    <Compile Include="Web\RestApi\Routes\V1\ChatController.cs" />
-    <Compile Include="Web\RestApi\Routes\V1\GameObjectController.cs" />
-    <Compile Include="Web\RestApi\Routes\V1\GuildController.cs" />
-    <Compile Include="Web\RestApi\Routes\V1\InfoController.cs" />
-    <Compile Include="Web\RestApi\Routes\V1\LogsController.cs" />
-    <Compile Include="Web\RestApi\Routes\V1\VariablesController.cs" />
-    <Compile Include="Web\RestApi\Serialization\ApiVisibilityContractResolver.cs" />
-    <Compile Include="Web\RestApi\Services\AuthorizedRoutesService.cs" />
-    <Compile Include="Web\RestApi\Services\IAuthorizedRoutesService.cs" />
-    <Compile Include="Web\RestApi\Services\IntersectServiceDependencyResolver.cs" />
-    <Compile Include="Web\RestApi\Routes\V1\UserController.cs" />
-    <Compile Include="Web\RestApi\Routes\V1\PlayerController.cs" />
-    <Compile Include="Database\PlayerData\Security\UserRights.cs" />
-    <Compile Include="Database\PlayerData\SeedData\SeedUsers.cs" />
-    <Compile Include="Database\SeedData.cs" />
-    <Compile Include="Database\ISeedableContext.cs" />
-    <Compile Include="Web\RestApi\Payloads\ChatMessage.cs" />
-    <Compile Include="Web\RestApi\Payloads\LookupKey.cs" />
-    <Compile Include="Web\RestApi\Types\DataPage.cs" />
-    <Compile Include="Web\Utilities\HeaderHelper.cs" />
   </ItemGroup>
+
   <ItemGroup>
-    <None Include="app.config" />
-    <Compile Include="Entities\Entity.Comparison.cs" />
-    <Compile Include="Core\ConsoleService.ConsoleThread.cs" />
-    <None Include="packages.config" />
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Icon.ico" />
+    <EmbeddedResource Include="$(NetworkHandshakePublicKey)" />
+    <EmbeddedResource Include="$(NetworkHandshakePrivateKey)" />
     <EmbeddedResource Include="Resources\libe_sqlite3_x64.so" />
     <EmbeddedResource Include="Resources\libe_sqlite3.dylib" />
     <EmbeddedResource Include="Resources\libe_sqlite3_x86.so" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Resources\notifications\PasswordReset.html" />
     <EmbeddedResource Include="Resources\e_sqlite3x64.dll" />
     <EmbeddedResource Include="Resources\e_sqlite3x86.dll" />
     <None Include="FodyWeavers.xml">
       <SubType>Designer</SubType>
     </None>
-    <Content Include="Icon.ico" />
-    <EmbeddedResource Include="$(NetworkHandshakePublicKey)" />
-    <EmbeddedResource Include="$(NetworkHandshakePrivateKey)" />
-    <None Include="packages.config">
-      <SubType>Designer</SubType>
-    </None>
   </ItemGroup>
+
   <ItemGroup>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
+    <PackageReference Include="AscensionGameDev.Open.NAT" Version="2.1.1" />
+    <PackageReference Include="AscensionGameDev.WebApiThrottle" Version="1.5.4.2" />
+    <PackageReference Include="Costura.Fody" Version="3.3.3" />
+    <PackageReference Include="Fody" Version="4.2.1" />
+    <PackageReference Include="Markdown" Version="2.2.1" />
+    <PackageReference Include="Microsoft.AspNet.Cors" Version="5.2.7" />
+    <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.7" />
+    <PackageReference Include="Microsoft.AspNet.WebApi.Core" Version="5.2.7" />
+    <PackageReference Include="Microsoft.AspNet.WebApi.Owin" Version="5.2.7" />
+    <PackageReference Include="Microsoft.AspNet.WebApi.OwinSelfHost" Version="5.2.7" />
+    <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="2.1.0" />
+    <PackageReference Include="Microsoft.Diagnostics.Runtime" Version="1.0.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.1.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="2.1.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="2.1.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="2.1.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite.Core" Version="2.1.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="2.1.3" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="3.1.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="3.1.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Configuration" Version="3.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="3.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="3.0.1" />
+    <PackageReference Include="Microsoft.Owin" Version="4.1.0" />
+    <PackageReference Include="Microsoft.Owin.Cors" Version="4.1.0" />
+    <PackageReference Include="Microsoft.Owin.Host.HttpListener" Version="4.1.0" />
+    <PackageReference Include="Microsoft.Owin.Hosting" Version="4.1.0" />
+    <PackageReference Include="Microsoft.Owin.Security" Version="4.1.0" />
+    <PackageReference Include="Microsoft.Owin.Security.OAuth" Version="4.1.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Validation" Version="15.5.31" />
+    <PackageReference Include="Mono.Data.Sqlite.Portable" Version="1.0.3.5" />
+    <PackageReference Include="MySqlConnector" Version="0.45.1" />
+    <PackageReference Include="NuGet.CommandLine" Version="4.9.3" />
+    <PackageReference Include="Owin" Version="1.0" />
+    <PackageReference Include="Owin.Security.AesDataProtectorProvider" Version="1.1.2" />
+    <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="2.1.2" />
+    <PackageReference Include="Pomelo.JsonObject" Version="2.0.0" />
+    <PackageReference Include="Remotion.Linq" Version="2.2.0" />
+    <PackageReference Include="SmartThreadPool.dll" Version="2.2.6" />
+    <PackageReference Include="SQLitePCLRaw.bundle_green" Version="1.1.11" />
+    <PackageReference Include="SQLitePCLRaw.core" Version="1.1.11" />
+    <PackageReference Include="SQLitePCLRaw.lib.e_sqlite3.linux" Version="1.1.11" />
+    <PackageReference Include="SQLitePCLRaw.lib.e_sqlite3.osx" Version="1.1.11" />
+    <PackageReference Include="SQLitePCLRaw.lib.e_sqlite3.v110_xp" Version="1.1.11" />
+    <PackageReference Include="SQLitePCLRaw.provider.e_sqlite3.net45" Version="1.1.11" />
+    <PackageReference Include="System.Text.Encodings.Web" Version="4.6.0" />
+    <PackageReference Include="System.Text.Json" Version="4.6.0" />
+    <PackageReference Include="TaskParallelLibrary" Version="1.0.2856.0" />
+    <PackageReference Include="WebSocketSharp" Version="1.0.3-rc11" />
   </ItemGroup>
-  <ItemGroup>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Intersect %28Core%29\Intersect %28Core%29.csproj">
-      <Project>{bc304b43-1f2c-4454-9edc-48f47357ca94}</Project>
-      <Name>Intersect %28Core%29</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Intersect.Network\Intersect.Network.csproj">
-      <Project>{e8f288cb-51df-4d9d-a3b3-a61bd4fd3f45}</Project>
-      <Name>Intersect.Network</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Intersect.Server.Framework\Intersect.Server.Framework.csproj">
-      <Project>{4e38c9b0-df8c-44e4-9704-d6b05e092733}</Project>
-      <Name>Intersect.Server.Framework</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Database\PlayerData\Migrations\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Analyzer Include="..\packages\Microsoft.CodeAnalysis.VersionCheckAnalyzer.3.0.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.VersionCheckAnalyzer.resources.dll" />
-    <Analyzer Include="..\packages\Microsoft.CodeAnalysis.VersionCheckAnalyzer.3.0.0\analyzers\dotnet\Microsoft.CodeAnalysis.VersionCheckAnalyzer.dll" />
-    <Analyzer Include="..\packages\Microsoft.CodeQuality.Analyzers.3.0.0\analyzers\dotnet\cs\Humanizer.dll" />
-    <Analyzer Include="..\packages\Microsoft.CodeQuality.Analyzers.3.0.0\analyzers\dotnet\cs\Microsoft.CodeQuality.Analyzers.dll" />
-    <Analyzer Include="..\packages\Microsoft.CodeQuality.Analyzers.3.0.0\analyzers\dotnet\cs\Microsoft.CodeQuality.CSharp.Analyzers.dll" />
-    <Analyzer Include="..\packages\Microsoft.NetCore.Analyzers.3.0.0\analyzers\dotnet\cs\Microsoft.NetCore.Analyzers.dll" />
-    <Analyzer Include="..\packages\Microsoft.NetCore.Analyzers.3.0.0\analyzers\dotnet\cs\Microsoft.NetCore.CSharp.Analyzers.dll" />
-    <Analyzer Include="..\packages\Microsoft.NetFramework.Analyzers.3.0.0\analyzers\dotnet\cs\Microsoft.NetFramework.Analyzers.dll" />
-    <Analyzer Include="..\packages\Microsoft.NetFramework.Analyzers.3.0.0\analyzers\dotnet\cs\Microsoft.NetFramework.CSharp.Analyzers.dll" />
-  </ItemGroup>
-  <ItemGroup>
-    <Analyzer Include="..\packages\Microsoft.CodeAnalysis.VersionCheckAnalyzer.3.0.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.VersionCheckAnalyzer.resources.dll" />
-    <Analyzer Include="..\packages\Microsoft.CodeAnalysis.VersionCheckAnalyzer.3.0.0\analyzers\dotnet\Microsoft.CodeAnalysis.VersionCheckAnalyzer.dll" />
-    <Analyzer Include="..\packages\Microsoft.CodeQuality.Analyzers.3.0.0\analyzers\dotnet\cs\Humanizer.dll" />
-    <Analyzer Include="..\packages\Microsoft.CodeQuality.Analyzers.3.0.0\analyzers\dotnet\cs\Microsoft.CodeQuality.Analyzers.dll" />
-    <Analyzer Include="..\packages\Microsoft.CodeQuality.Analyzers.3.0.0\analyzers\dotnet\cs\Microsoft.CodeQuality.CSharp.Analyzers.dll" />
-    <Analyzer Include="..\packages\Microsoft.NetCore.Analyzers.3.0.0\analyzers\dotnet\cs\Microsoft.NetCore.Analyzers.dll" />
-    <Analyzer Include="..\packages\Microsoft.NetCore.Analyzers.3.0.0\analyzers\dotnet\cs\Microsoft.NetCore.CSharp.Analyzers.dll" />
-    <Analyzer Include="..\packages\Microsoft.NetFramework.Analyzers.3.0.0\analyzers\dotnet\cs\Microsoft.NetFramework.Analyzers.dll" />
-    <Analyzer Include="..\packages\Microsoft.NetFramework.Analyzers.3.0.0\analyzers\dotnet\cs\Microsoft.NetFramework.CSharp.Analyzers.dll" />
-  </ItemGroup>
-  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
-  </PropertyGroup>
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\packages\SQLitePCLRaw.lib.e_sqlite3.linux.1.1.11\build\net35\SQLitePCLRaw.lib.e_sqlite3.linux.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\SQLitePCLRaw.lib.e_sqlite3.linux.1.1.11\build\net35\SQLitePCLRaw.lib.e_sqlite3.linux.targets'))" />
-    <Error Condition="!Exists('..\packages\SQLitePCLRaw.lib.e_sqlite3.osx.1.1.11\build\net35\SQLitePCLRaw.lib.e_sqlite3.osx.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\SQLitePCLRaw.lib.e_sqlite3.osx.1.1.11\build\net35\SQLitePCLRaw.lib.e_sqlite3.osx.targets'))" />
-    <Error Condition="!Exists('..\packages\Microsoft.EntityFrameworkCore.Design.2.1.3\build\net461\Microsoft.EntityFrameworkCore.Design.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.EntityFrameworkCore.Design.2.1.3\build\net461\Microsoft.EntityFrameworkCore.Design.props'))" />
-    <Error Condition="!Exists('..\packages\Costura.Fody.3.3.3\build\Costura.Fody.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Costura.Fody.3.3.3\build\Costura.Fody.props'))" />
-    <Error Condition="!Exists('..\packages\Fody.4.2.1\build\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Fody.4.2.1\build\Fody.targets'))" />
-    <Error Condition="!Exists('..\packages\Microsoft.CodeAnalysis.VersionCheckAnalyzer.3.0.0\build\Microsoft.CodeAnalysis.VersionCheckAnalyzer.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeAnalysis.VersionCheckAnalyzer.3.0.0\build\Microsoft.CodeAnalysis.VersionCheckAnalyzer.props'))" />
-    <Error Condition="!Exists('..\packages\Microsoft.CodeQuality.Analyzers.3.0.0\build\Microsoft.CodeQuality.Analyzers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeQuality.Analyzers.3.0.0\build\Microsoft.CodeQuality.Analyzers.props'))" />
-    <Error Condition="!Exists('..\packages\Microsoft.NetCore.Analyzers.3.0.0\build\Microsoft.NetCore.Analyzers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.NetCore.Analyzers.3.0.0\build\Microsoft.NetCore.Analyzers.props'))" />
-    <Error Condition="!Exists('..\packages\Microsoft.NetFramework.Analyzers.3.0.0\build\Microsoft.NetFramework.Analyzers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.NetFramework.Analyzers.3.0.0\build\Microsoft.NetFramework.Analyzers.props'))" />
-    <Error Condition="!Exists('..\packages\Microsoft.CodeAnalysis.FxCopAnalyzers.3.0.0\build\Microsoft.CodeAnalysis.FxCopAnalyzers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeAnalysis.FxCopAnalyzers.3.0.0\build\Microsoft.CodeAnalysis.FxCopAnalyzers.props'))" />
-  </Target>
-  <Import Project="..\packages\Mono.Data.Sqlite.Portable.1.0.3.5\tools\Mono.Data.Sqlite.Portable.targets" Condition="Exists('..\packages\Mono.Data.Sqlite.Portable.1.0.3.5\tools\Mono.Data.Sqlite.Portable.targets')" />
-  <Target Name="EnsureMonoDataSqlitePortableImported" BeforeTargets="BeforeBuild" Condition="'$(MonoDataSqlitePortableImported)' == ''">
-    <Error Condition="!Exists('..\packages\Mono.Data.Sqlite.Portable.1.0.3.5\tools\Mono.Data.Sqlite.Portable.targets')" Text="This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them." />
-    <Error Condition="Exists('..\packages\Mono.Data.Sqlite.Portable.1.0.3.5\tools\Mono.Data.Sqlite.Portable.targets')" Text="The build restored NuGet packages. Build the project again to include these packages in the build." />
-  </Target>
-  <Import Project="..\packages\SQLitePCLRaw.lib.e_sqlite3.linux.1.1.11\build\net35\SQLitePCLRaw.lib.e_sqlite3.linux.targets" Condition="Exists('..\packages\SQLitePCLRaw.lib.e_sqlite3.linux.1.1.11\build\net35\SQLitePCLRaw.lib.e_sqlite3.linux.targets')" />
-  <Import Project="..\packages\SQLitePCLRaw.lib.e_sqlite3.osx.1.1.11\build\net35\SQLitePCLRaw.lib.e_sqlite3.osx.targets" Condition="Exists('..\packages\SQLitePCLRaw.lib.e_sqlite3.osx.1.1.11\build\net35\SQLitePCLRaw.lib.e_sqlite3.osx.targets')" />
-  <Import Project="..\packages\Fody.4.2.1\build\Fody.targets" Condition="Exists('..\packages\Fody.4.2.1\build\Fody.targets')" />
-  <PropertyGroup>
-    <PreBuildEvent>del "$(TargetDir)*.dll" /q
-exit 0</PreBuildEvent>
-  </PropertyGroup>
+
 </Project>

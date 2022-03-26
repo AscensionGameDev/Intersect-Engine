@@ -908,8 +908,12 @@ namespace Intersect.Editor.Forms.Editors
 
         private void nudResetRadius_ValueChanged(object sender, EventArgs e)
         {
-            // Set to either default or higher.
-            nudResetRadius.Value = Math.Max(Options.Npc.ResetRadius, nudResetRadius.Value);
+            // So, the pathfinder on the server maintains a set max distance of whichever the largest value is, map height or width. Limit ourselves to this!
+            var maxPathFindingDistance = Math.Max(Options.MapWidth, Options.MapHeight);
+            var maxUserEnteredValue = Math.Max(Options.Npc.ResetRadius, nudResetRadius.Value);
+
+            // Use whatever is the lowest, either the maximum path find distance or the user entered value.
+            nudResetRadius.Value = Math.Min(maxPathFindingDistance, maxUserEnteredValue);
             mEditorItem.ResetRadius = (int)nudResetRadius.Value;
         }
 

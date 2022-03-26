@@ -150,6 +150,13 @@ namespace Intersect.Server.Core
                                 if (!processedMaps.Contains(map))
                                 {
                                     ActiveMaps.Remove(map);
+                                    
+                                    // Reset all Npcs so none of them get stuck at the entrance/exit to an area while we're not processing.
+                                    var mapInstance = MapInstance.Get(map);
+                                    if (mapInstance != null)
+                                    {
+                                        mapInstance.ResetNpcSpawns();
+                                    }
                                 }
                             }
 
@@ -355,15 +362,15 @@ namespace Intersect.Server.Core
                             var timeAfterUpdate = Timing.Global.Milliseconds;
                             MetricsRoot.Instance.Game.MapUpdateProcessingTime.Record(timeAfterUpdate - timeBeforeUpdate);
                             MetricsRoot.Instance.Game.MapTotalUpdateTime.Record(timeAfterUpdate - desiredMapUpdateTime);
-
-                            if (ActiveMaps.Contains(map.Id))
-                            {
-                                MapUpdateQueue.Enqueue(map);
-                            }
                         }
                         else
                         {
                             map.Update(Timing.Global.Milliseconds);
+                        }
+
+                        if (ActiveMaps.Contains(map.Id))
+                        {
+                            MapUpdateQueue.Enqueue(map);
                         }
                     }
                 }

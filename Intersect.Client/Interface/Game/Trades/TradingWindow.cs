@@ -34,6 +34,11 @@ namespace Intersect.Client.Interface.Game.Trades
 
         public List<TradeSegment> TradeSegment = new List<TradeSegment>();
 
+        // Context menu
+        private Framework.Gwen.Control.Menu mContextMenu;
+
+        private MenuItem mWithdrawContextItem;
+
         //Init
         public TradingWindow(Canvas gameCanvas, string traderName)
         {
@@ -69,6 +74,44 @@ namespace Intersect.Client.Interface.Game.Trades
             {
                 TradeSegment[i].InitItemContainer(i);
             }
+
+            // Generate our context menu with basic options.
+            mContextMenu = new Framework.Gwen.Control.Menu(gameCanvas, "TradeContextMenu");
+            mContextMenu.IsHidden = true;
+            mContextMenu.IconMarginDisabled = true;
+            //TODO: Is this a memory leak?
+            mContextMenu.Children.Clear();
+            mWithdrawContextItem = mContextMenu.AddItem(Strings.TradeContextMenu.Withdraw);
+            mWithdrawContextItem.Clicked += MWithdrawContextItem_Clicked;
+            mContextMenu.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+        }
+
+        private void MWithdrawContextItem_Clicked(Base sender, ClickedEventArgs arguments)
+        {
+            var slot = (int) sender.Parent.UserData;
+            Globals.Me.TryRevokeItem(slot);
+        }
+
+        public void OpenContextMenu(int side, int slot)
+        {
+            var item = ItemBase.Get(Globals.Trade[side, slot].ItemId);
+
+            // No point showing a menu for blank space.
+            if (item == null)
+            {
+                return;
+            }
+
+            mWithdrawContextItem.SetText(Strings.TradeContextMenu.Withdraw.ToString(item.Name));
+
+            // Set our spell slot as userdata for future reference.
+            mContextMenu.UserData = slot ;
+
+            mContextMenu.IsHidden = false;
+            mContextMenu.SetSize(mContextMenu.Width, mContextMenu.Height);
+            mContextMenu.SizeToChildren();
+            mContextMenu.Open(Framework.Gwen.Pos.None);
+            mContextMenu.MoveTo(mContextMenu.X, mContextMenu.Y);
         }
 
         //Location

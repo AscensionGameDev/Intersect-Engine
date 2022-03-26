@@ -101,6 +101,8 @@ namespace Intersect
 
             public Color ChatBubbleText = Color.Black;
 
+            public Color ChatBubbleTextOutline = Color.Transparent;
+
             public Color GlobalChat = new Color(255, 220, 220, 220);
 
             public Color GlobalMsg = new Color(255, 220, 220, 220);
@@ -115,7 +117,9 @@ namespace Intersect
 
             public Color PlayerMsg = new Color(255, 220, 220, 220);
 
-            public Color PrivateChat = Color.Magenta;
+            public Color PrivateChatFrom = Color.Magenta;
+
+            public Color PrivateChatTo = new Color(190, 0, 190);
 
             public Color ProximityMsg = new Color(255, 220, 220, 220);
 

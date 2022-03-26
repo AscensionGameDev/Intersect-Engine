@@ -12,6 +12,11 @@
         public bool AllowCombatMovement { get; set; } = true;
 
         /// <summary>
+        /// Enables or disables friend login notifications when a user joins the game.
+        /// </summary>
+        public bool EnableFriendLoginNotifications { get; set; } = true;
+
+        /// <summary>
         /// If true, it will remove the associated exp, otherwise you will lose the exp based on the exp required to level up.
         /// </summary>
         public bool ExpLossFromCurrentExp { get; set; } = true;
