@@ -760,24 +760,35 @@ namespace Intersect.Client.Localization
 
         public struct Friends
         {
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString AddFriend = @"Add Friend";
 
-            public static LocalizedString addfriend = @"Add Friend";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString AddFriendTitle = @"Add Friend";
 
-            public static LocalizedString addfriendtitle = @"Add Friend";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString AddFriendPrompt = @"Who would you like to add as a friend?";
 
-            public static LocalizedString addfriendprompt = @"Who would you like to add as a friend?";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString InFight = @"You are currently fighting!";
 
-            public static LocalizedString infight = @"You are currently fighting!";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString RemoveFriend = @"Remove Friend";
 
-            public static LocalizedString removefriend = @"Remove Friend";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString RemoveFriendPrompt = @"Do you wish to remove {00} from your friends list?";
 
-            public static LocalizedString removefriendprompt = @"Do you wish to remove {00} from your friends list?";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Request = @"Friend Request";
 
-            public static LocalizedString request = @"Friend Request";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString RequestPrompt = @"{00} has sent you a friend request. Do you accept?";
 
-            public static LocalizedString requestprompt = @"{00} has sent you a friend request. Do you accept?";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Title = @"Friends";
 
-            public static LocalizedString title = @"Friends";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Offline = @"Offline";
 
         }
 
