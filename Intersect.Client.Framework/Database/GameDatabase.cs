@@ -7,21 +7,24 @@ namespace Intersect.Client.Framework.Database
     {
         // Registry Database for Client Settings Preferences.
 
-        public bool FullScreen;
+        public bool FullScreen { get; set; }
 
-        public bool HideOthersOnWindowOpen;
+        public bool HideOthersOnWindowOpen { get; set; }
 
-        public bool TargetAccountDirection;
+        public bool TargetAccountDirection { get; set; }
 
-        public int MusicVolume;
+        //Preferences
+        public int MusicVolume { get; set; }
 
-        public int SoundVolume;
+        public int SoundVolume { get; set; }
 
-        public int TargetFps;
+        public int TargetFps { get; set; }
 
-        public int TargetResolution;
+        public int TargetResolution { get; set; }
 
-        public bool StickyTarget;
+        public bool EnableLighting { get; set; }
+
+        public bool StickyTarget { get; set; }
 
         public bool FriendOverheadInfo;
 
@@ -59,6 +62,7 @@ namespace Intersect.Client.Framework.Database
             TargetResolution = LoadPreference("Resolution", 0);
             TargetFps = LoadPreference("Fps", 0);
             FullScreen = LoadPreference("Fullscreen", false);
+            EnableLighting = LoadPreference("EnableLighting", true);
             HideOthersOnWindowOpen = LoadPreference("HideOthersOnWindowOpen", true);
             TargetAccountDirection = LoadPreference("TargetAccountDirection", false);
             StickyTarget = LoadPreference("StickyTarget", true);
@@ -77,6 +81,7 @@ namespace Intersect.Client.Framework.Database
             SavePreference("Fullscreen", FullScreen.ToString());
             SavePreference("Resolution", TargetResolution.ToString());
             SavePreference("Fps", TargetFps.ToString());
+            SavePreference("EnableLighting", EnableLighting.ToString());
             SavePreference("HideOthersOnWindowOpen", HideOthersOnWindowOpen.ToString());
             SavePreference("TargetAccountDirection", TargetAccountDirection.ToString());
             SavePreference("StickyTarget", StickyTarget.ToString());

@@ -298,10 +298,8 @@ namespace Intersect.Client.Interface.Game
                         mContextMenu.AddChild(mTransferOption);
                     }
 
-                    mContextMenu.IsHidden = false;
-                    mContextMenu.SetSize(mContextMenu.Width, mContextMenu.Height);
+                    mContextMenu.SizeToChildren();
                     mContextMenu.Open(Framework.Gwen.Pos.None);
-                    mContextMenu.MoveTo(mContextMenu.X, mContextMenu.Y);
                 }
             }
         }

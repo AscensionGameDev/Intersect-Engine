@@ -116,6 +116,9 @@ namespace Intersect.Server.Networking
 
                 //Search for login activated events and run them
                 player.StartCommonEventsWithTrigger(CommonEventTrigger.Login);
+
+                // Send our friend list over so the UI can adjust accordingly without having to open it client-side first.
+                PacketSender.SendFriends(player);
             }
         }
 

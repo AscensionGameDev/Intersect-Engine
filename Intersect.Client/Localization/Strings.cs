@@ -760,24 +760,35 @@ namespace Intersect.Client.Localization
 
         public struct Friends
         {
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString AddFriend = @"Add Friend";
 
-            public static LocalizedString addfriend = @"Add Friend";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString AddFriendTitle = @"Add Friend";
 
-            public static LocalizedString addfriendtitle = @"Add Friend";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString AddFriendPrompt = @"Who would you like to add as a friend?";
 
-            public static LocalizedString addfriendprompt = @"Who would you like to add as a friend?";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString InFight = @"You are currently fighting!";
 
-            public static LocalizedString infight = @"You are currently fighting!";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString RemoveFriend = @"Remove Friend";
 
-            public static LocalizedString removefriend = @"Remove Friend";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString RemoveFriendPrompt = @"Do you wish to remove {00} from your friends list?";
 
-            public static LocalizedString removefriendprompt = @"Do you wish to remove {00} from your friends list?";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Request = @"Friend Request";
 
-            public static LocalizedString request = @"Friend Request";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString RequestPrompt = @"{00} has sent you a friend request. Do you accept?";
 
-            public static LocalizedString requestprompt = @"{00} has sent you a friend request. Do you accept?";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Title = @"Friends";
 
-            public static LocalizedString title = @"Friends";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Offline = @"Offline";
 
         }
 
@@ -902,19 +913,105 @@ namespace Intersect.Client.Localization
 
         public struct Inventory
         {
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Cooldown = "{00}s";
 
-            public static LocalizedString cooldown = "{00}s";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString DropItemTitle = @"Drop Item";
 
-            public static LocalizedString dropitem = @"Drop Item";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString DropItemPrompt = @"How many/much {00} do you want to drop?";
 
-            public static LocalizedString dropitemprompt = @"How many/much {00} do you want to drop?";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString DropPrompt = @"Do you wish to drop the item: {00}?";
 
-            public static LocalizedString dropprompt = @"Do you wish to drop the item: {00}?";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString EquippedSymbol = "E";
 
-            public static LocalizedString equippedicon = "E";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Title = @"Inventory";
 
-            public static LocalizedString title = @"Inventory";
+        }
 
+        public struct ItemContextMenu
+        {
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Use = @"Use {00}";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Open = @"Open {00}";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Equip = @"Equip {00}";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Unequip = @"Unequip {00}";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Learn = @"Learn {00}";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Drop = @"Drop {00}";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Sell = @"Sell {00}";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Bank = @"Bank {00}";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Bag = @"Bag {00}";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Trade = @"Offer {00}";
+        }
+
+        public struct SpellContextMenu
+        {
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Cast = @"Cast {00}";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Forget = @"Forget {00}";
+        }
+
+        public struct BankContextMenu
+        {
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Withdraw = @"Withdraw {00}";
+        }
+
+        public struct BagContextMenu
+        {
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Withdraw = @"Withdraw {00}";
+        }
+
+        public struct TradeContextMenu
+        {
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Withdraw = @"Revoke {00}";
+        }
+
+        public struct ChatContextMenu
+        {
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString PM = @"PM {00}";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString FriendInvite = @"Friend Invite {00}";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString PartyInvite = @"Party Invite {00}";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString GuildInvite = @"Guild Invite {00}";
+        }
+
+        public struct ShopContextMenu
+        {
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Buy = @"Buy {00}";
         }
 
         public struct ItemDesc
@@ -1245,6 +1342,9 @@ namespace Intersect.Client.Localization
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString Cancel = @"Cancel";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString EnableLighting = @"Enable Light Effects";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString Fps120 = @"120";

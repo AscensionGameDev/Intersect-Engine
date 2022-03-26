@@ -950,13 +950,13 @@ namespace Intersect.Server.Networking
                 if (target != null)
                 {
                     PacketSender.SendChatMsg(
-                        player, Strings.Chat.Private.ToString(player.Name, msg), ChatMessageType.PM, CustomColors.Chat.PrivateChat,
+                        player, Strings.Chat.PrivateTo.ToString(target.Name, msg), ChatMessageType.PM, CustomColors.Chat.PrivateChatTo,
                         player.Name
                     );
 
                     PacketSender.SendChatMsg(
-                        target, Strings.Chat.Private.ToString(player.Name, msg), ChatMessageType.PM,
-                        CustomColors.Chat.PrivateChat, player.Name
+                        target, Strings.Chat.PrivateFrom.ToString(player.Name, msg), ChatMessageType.PM,
+                        CustomColors.Chat.PrivateChatFrom, player.Name
                     );
 
                     target.ChatTarget = player;
@@ -978,13 +978,13 @@ namespace Intersect.Server.Networking
                 if (player.ChatTarget != null && Player.FindOnline(player.ChatTarget.Id) != null)
                 {
                     PacketSender.SendChatMsg(
-                        player, Strings.Chat.Private.ToString(player.Name, msg), ChatMessageType.PM, CustomColors.Chat.PrivateChat,
+                        player, Strings.Chat.PrivateTo.ToString(player.ChatTarget.Name, msg), ChatMessageType.PM, CustomColors.Chat.PrivateChatTo,
                         player.Name
                     );
 
                     PacketSender.SendChatMsg(
-                        player.ChatTarget, Strings.Chat.Private.ToString(player.Name, msg), ChatMessageType.PM,
-                        CustomColors.Chat.PrivateChat, player.Name
+                        player.ChatTarget, Strings.Chat.PrivateFrom.ToString(player.Name, msg), ChatMessageType.PM,
+                        CustomColors.Chat.PrivateChatFrom, player.Name
                     );
 
                     player.ChatTarget.ChatTarget = player;
@@ -1530,7 +1530,7 @@ namespace Intersect.Server.Networking
                 if (ItemBase.Get(item.Id) != null)
                 {
                     var tempItem = new Item(item.Id, item.Quantity);
-                    newChar.TryGiveItem(tempItem, ItemHandling.Normal, false, false);
+                    newChar.TryGiveItem(tempItem, ItemHandling.Normal, false, -1, false);
                 }
             }
 
@@ -1623,7 +1623,7 @@ namespace Intersect.Server.Networking
                             mapInstance.RemoveItem(mapItem);
 
                             // Try to give the item to our player.
-                            if (player.TryGiveItem(mapItem, ItemHandling.Overflow, false, true, mapItem.X, mapItem.Y))
+                            if (player.TryGiveItem(mapItem, ItemHandling.Overflow, false, -1, true, mapItem.X, mapItem.Y))
                             {
                                 var item = ItemBase.Get(mapItem.ItemId);
                                 if (item != null)
@@ -1911,7 +1911,7 @@ namespace Intersect.Server.Networking
                 return;
             }
 
-            player?.BankInterface?.TryDepositItem(packet.Slot, packet.Quantity);
+            player?.BankInterface?.TryDepositItem(packet.Slot, packet.Quantity, packet.BankSlot);
         }
 
         //WithdrawItemPacket
@@ -1923,7 +1923,7 @@ namespace Intersect.Server.Networking
                 return;
             }
 
-            player?.BankInterface?.WithdrawItem(packet.Slot, packet.Quantity);
+            player?.BankInterface?.WithdrawItem(packet.Slot, packet.Quantity, packet.InvSlot);
         }
 
         //MoveBankItemPacket
@@ -1947,7 +1947,9 @@ namespace Intersect.Server.Networking
                 return;
             }
 
-            var target = Player.FindOnline(packet.TargetId);
+            var target = packet.TargetId != Guid.Empty ? 
+                Player.FindOnline(packet.TargetId) : 
+                Player.FindOnline(packet.Target.Trim());
 
             if (target != null && target.Id != player.Id)
             {
@@ -3834,8 +3836,6 @@ namespace Intersect.Server.Networking
 
                     obj.Load(packet.Data);
 
-                    DbInterface.SaveGameObject(obj);
-
                     if (type == GameObjectType.Quest)
                     {
                         var qst = (QuestBase)obj;
@@ -3851,7 +3851,8 @@ namespace Intersect.Server.Networking
                         foreach (var evt in qst.AddEvents)
                         {
                             var evtb = (EventBase)DbInterface.AddGameObject(GameObjectType.Event, evt.Key);
-                            evtb.CommonEvent = false;
+                            evtb.Load(evt.Value.JsonData);
+
                             foreach (var tsk in qst.Tasks)
                             {
                                 if (tsk.Id == evt.Key)
@@ -3860,7 +3861,6 @@ namespace Intersect.Server.Networking
                                 }
                             }
 
-                            evtb.Load(evt.Value.JsonData);
                             DbInterface.SaveGameObject(evtb);
                         }
 
@@ -3877,6 +3877,7 @@ namespace Intersect.Server.Networking
                         DbInterface.CacheServerVariableEventTextLookups();
                     }
 
+                    DbInterface.SaveGameObject(obj);
                     // Only replace the modified object
                     PacketSender.CacheGameDataPacket();
 

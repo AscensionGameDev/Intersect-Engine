@@ -188,7 +188,8 @@ namespace Intersect.Client.Entities
                         mText[i], Graphics.ChatBubbleFont,
                         (int) (x - mTextureBounds.Width / 2 + (mTextureBounds.Width - textSize.X) / 2f),
                         (int) (y - mTextureBounds.Height - yoffset + 8 + i * 16), 1,
-                        Color.FromArgb(CustomColors.Chat.ChatBubbleText.ToArgb()), true, null
+                        Color.FromArgb(CustomColors.Chat.ChatBubbleText.ToArgb()), true, null,
+                        Color.FromArgb(CustomColors.Chat.ChatBubbleTextOutline.ToArgb())
                     );
                 }
             }
