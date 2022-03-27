@@ -1,7 +1,4 @@
-using Intersect.Client.Framework.GenericClasses;
-using Intersect.Client.Framework.Graphics;
-using Intersect.Client.Framework.Gwen.Control;
-using Intersect.Client.Framework.Gwen.ControlInternal;
+using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Gwen.Skin.Texturing;
 
 namespace Intersect.Client.Framework.Gwen.Skin
@@ -12,20 +9,13 @@ namespace Intersect.Client.Framework.Gwen.Skin
     /// </summary>
     public class Intersect2021 : TexturedBase
     {
-
-        private readonly GameTexture mTexture;
-
         /// <summary>
         ///     Initializes a new instance of the <see cref="TexturedBase" /> class.
         /// </summary>
         /// <param name="renderer">Renderer to use.</param>
         /// <param name="textureName">Name of the skin texture map.</param>
-        public Intersect2021(Renderer.Base renderer, GameTexture texture) : base(renderer, texture)
+        public Intersect2021(Renderer.Base renderer, GameContentManager contentManager) : base(renderer, contentManager, "intersect-2021.png")
         {
-            mTexture = texture;
-
-            InitializeColors();
-            InitializeTextures();
         }
 
         /// <summary>
