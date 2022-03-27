@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
@@ -114,6 +114,14 @@ namespace Intersect.Editor.Forms.DockingElements
 
             rbZDimension.Visible = Options.ZDimensionVisible;
             grpZResource.Visible = Options.ZDimensionVisible;
+            grpInstanceSettings.Visible = chkChangeInstance.Checked;
+
+            cmbInstanceType.Items.Clear();
+            // We do not want to iterate over the "NoChange" enum - so we subtract 1 from the iterating maximum
+            for (var i = 0; i < Enum.GetNames(typeof(MapInstanceType)).Length - 1; i++)
+            {
+                cmbInstanceType.Items.Add(Enum.GetName(typeof(MapInstanceType), i));
+            }
         }
 
         //Tiles Tab
@@ -700,6 +708,8 @@ namespace Intersect.Editor.Forms.DockingElements
                     warpAttribute.X = (byte)nudWarpX.Value;
                     warpAttribute.Y = (byte)nudWarpY.Value;
                     warpAttribute.Direction = (WarpDirection)cmbDirection.SelectedIndex;
+                    warpAttribute.ChangeInstance = chkChangeInstance.Checked;
+                    warpAttribute.InstanceType = (MapInstanceType)cmbInstanceType.SelectedIndex;
                     break;
 
                 case MapAttributes.Sound:
@@ -1082,6 +1092,9 @@ namespace Intersect.Editor.Forms.DockingElements
             {
                 cmbDirection.Items.Add(Strings.Directions.dir[i]);
             }
+            lblInstance.Text = Strings.Warping.InstanceType;
+            chkChangeInstance.Text = Strings.Warping.ChangeInstance;
+            grpInstanceSettings.Text = Strings.Warping.MapInstancingGroup;
 
             btnVisualMapSelector.Text = Strings.Warping.visual;
 
@@ -1333,6 +1346,11 @@ namespace Intersect.Editor.Forms.DockingElements
             {
                 SetLayer(Options.Instance.MapOpts.Layers.All[cmbMapLayer.SelectedIndex]);
             }
+        }
+
+        private void chkChangeInstance_CheckedChanged(object sender, EventArgs e)
+        {
+            grpInstanceSettings.Visible = chkChangeInstance.Checked;
         }
     }
 
