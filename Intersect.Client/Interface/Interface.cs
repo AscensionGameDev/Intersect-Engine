@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 
 using Intersect.Client.Core;
@@ -44,6 +44,8 @@ namespace Intersect.Client.Interface
         public static GameInterface GameUi { get; private set; }
 
         public static MenuGuiBase MenuUi { get; private set; }
+
+        public static MutableInterface CurrentInterface => GameUi as MutableInterface ?? MenuUi?.MainMenu;
 
         public static TexturedBase Skin { get; set; }
 
@@ -304,6 +306,23 @@ namespace Intersect.Client.Interface
 
         #endregion
 
+        public static Framework.Gwen.Control.Base FindControlAtCursor()
+        {
+            var currentElement = CurrentInterface?.Root;
+            var cursor = new Point(InputHandler.MousePosition.X, InputHandler.MousePosition.Y);
+
+            while (default != currentElement)
+            {
+                var elementAt = currentElement.GetControlAt(cursor);
+                if (elementAt == currentElement || elementAt == default)
+                {
+                    break;
     }
 
+                currentElement = elementAt;
+            }
+
+            return currentElement;
+        }
+    }
 }

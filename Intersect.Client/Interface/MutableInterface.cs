@@ -1,4 +1,4 @@
-﻿using Intersect.Client.Framework.Gwen.Control;
+using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Reflection;
 
 using System;
@@ -35,9 +35,7 @@ namespace Intersect.Client.Interface
                 return constructor.Invoke(fullParameters) as TElement;
             }
 
-            throw new ArgumentNullException(
-                nameof(constructor), @"Failed to find constructor that matches parameters."
-            );
+            throw new NullReferenceException("Failed to find constructor that matches parameters.");
         }
 
         /// <inheritdoc />
