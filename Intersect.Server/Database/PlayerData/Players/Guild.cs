@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Collections.Generic;
 using System.Linq;
@@ -63,6 +63,13 @@ namespace Intersect.Server.Database.PlayerData.Players
         /// Sets the number of bank slots alotted to this guild. Banks lots can only expand.
         /// </summary>
         public int BankSlotsCount { get; set; } = Options.Instance.Guild.GuildBankSlots;
+
+        /// <summary>
+        /// The guild's instance id. This is a unique identifier generated at guild creation time that
+        /// we can use to reference this guild alone when requesting a warp to a "Guild" instance, ensuring
+        /// that players in the same guild will be warped to the same instance.
+        /// </summary>
+        public Guid GuildInstanceId { get; private set; } = Guid.NewGuid();
 
         /// <summary>
         /// Contains a record of all guild members

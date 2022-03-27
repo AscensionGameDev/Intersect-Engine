@@ -29,7 +29,7 @@ namespace Intersect.Enums
         /// <summary>
         /// The instance that is shared amongst members of a party
         /// </summary>
-        Party,
+        Shared,
 
         /// <summary>
         /// ALWAYS PLACE AT END OF ENUM. This value is used for logical reference and should never appear to the user in the editor.

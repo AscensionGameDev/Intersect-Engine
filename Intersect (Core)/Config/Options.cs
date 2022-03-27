@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.IO;
 
 using Intersect.Config;
@@ -77,6 +77,8 @@ namespace Intersect
         public GuildOptions Guild = new GuildOptions();
 
         public LoggingOptions Logging = new LoggingOptions();
+
+        public InstancingOptions Instancing = new InstancingOptions();
 
         public static Options Instance { get; private set; }
 

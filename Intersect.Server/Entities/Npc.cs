@@ -1501,7 +1501,11 @@ namespace Intersect.Server.Entities
             byte newDir,
             bool adminWarp = false,
             byte zOverride = 0,
-            bool mapSave = false
+            bool mapSave = false,
+            bool fromWarpEvent = false,
+            MapInstanceType mapInstanceType = MapInstanceType.NoChange,
+            bool fromLogin = false,
+            bool forceInstanceChange = false
         )
         {
             if (!MapController.TryGetInstanceFromMap(newMapId, MapInstanceId, out var map))
