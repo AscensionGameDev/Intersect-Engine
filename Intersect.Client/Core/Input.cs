@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 using Intersect.Admin.Actions;
 using Intersect.Client.Core.Controls;
@@ -151,6 +151,10 @@ namespace Intersect.Client.Core
                                 }
 
                                 break;
+
+                            case Control.OpenDebugger:
+                                Interface.Interface.CurrentInterface?.ToggleDebug();
+                                break;
                         }
 
                         switch (Globals.GameState)
@@ -247,11 +251,6 @@ namespace Intersect.Client.Core
 
                                     case Control.OpenSettings:
                                         Interface.Interface.GameUi?.EscapeMenu?.OpenSettingsWindow();
-
-                                        break;
-
-                                    case Control.OpenDebugger:
-                                        Interface.Interface.GameUi?.ShowHideDebug();
 
                                         break;
 

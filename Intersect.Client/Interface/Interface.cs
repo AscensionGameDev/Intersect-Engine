@@ -62,9 +62,9 @@ namespace Intersect.Client.Interface
             //TODO: Make it easier to modify skin.
             if (Skin == null)
             {
-                Skin = new TexturedBase(
+                Skin = new Intersect2021(
                     GwenRenderer,
-                    Globals.ContentManager.GetTexture(Framework.Content.TextureType.Gui, "defaultskin.png")
+                    Globals.ContentManager.GetTexture(Framework.Content.TextureType.Gui, "intersect-2021.png")
                 )
                 {
                     DefaultFont = Graphics.UIFont
@@ -147,7 +147,7 @@ namespace Intersect.Client.Interface
                 Globals.Me.TargetBox?.Dispose();
                 Globals.Me.TargetBox = null;
             }
-            
+
             GwenInitialized = false;
         }
 
