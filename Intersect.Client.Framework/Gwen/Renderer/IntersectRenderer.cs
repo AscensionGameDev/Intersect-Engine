@@ -1,8 +1,10 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
+using Intersect.Logging;
 
 namespace Intersect.Client.Framework.Gwen.Renderer
 {
@@ -334,6 +336,11 @@ namespace Intersect.Client.Framework.Gwen.Renderer
         {
             m_RealRT = mRenderTarget;
             m_Stack.Push(mRenderTarget); // save current RT
+            if (!m_RT.ContainsKey(control))
+            {
+                var keys = m_RT.Keys.Select(key => key.CanonicalName);
+                Log.Error($"{control.CanonicalName} not found in the list of render targets: {string.Join(", ", keys)}");
+            }
             mRenderTarget = m_RT[control]; // make cache current RT
             mRenderTarget.Begin();
             mRenderTarget.Clear(Color.Transparent);
