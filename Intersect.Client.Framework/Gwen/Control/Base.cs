@@ -135,10 +135,11 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// <summary>
         ///     Initializes a new instance of the <see cref="Base" /> class.
         /// </summary>
-        /// <param name="parent">Parent control.</param>
-        public Base(Base parent = null, string name = "")
+        /// <param name="parent">parent control</param>
+        /// <param name="name">name of this control</param>
+        public Base(Base parent = null, string name = default)
         {
-            mName = name;
+            mName = name ?? string.Empty;
             mChildren = new List<Base>();
             mAccelerators = new Dictionary<string, GwenEventHandler<EventArgs>>();
 
@@ -195,18 +196,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// <summary>
         ///     Logical list of children. If InnerPanel is not null, returns InnerPanel's children.
         /// </summary>
-        public List<Base> Children
-        {
-            get
-            {
-                if (mInnerPanel != null)
-                {
-                    return mInnerPanel.Children;
-                }
-
-                return mChildren;
-            }
-        }
+        public List<Base> Children => mInnerPanel?.Children ?? mChildren;
 
         /// <summary>
         ///     The logical parent. It's usually what you expect, the control you've parented it to.
@@ -233,6 +223,19 @@ namespace Intersect.Client.Framework.Gwen.Control
                 {
                     mParent.AddChild(this);
                 }
+            }
+        }
+
+        public Base Root
+        {
+            get
+            {
+                var root = this;
+                while (root.Parent != default)
+                {
+                    root = root.Parent;
+                }
+                return root;
             }
         }
 
@@ -493,6 +496,14 @@ namespace Intersect.Client.Framework.Gwen.Control
             set => mCursor = value;
         }
 
+        public int GlobalX => X + (Parent?.GlobalX ?? 0);
+
+        public int GlobalY => Y + (Parent?.GlobalY ?? 0);
+
+        public Point PositionGlobal => new Point(X, Y) + (Parent?.PositionGlobal ?? Point.Empty);
+
+        public Rectangle BoundsGlobal => new Rectangle(PositionGlobal, Width, Height);
+
         /// <summary>
         ///     Indicates whether the control is tabable (can be focused by pressing Tab).
         /// </summary>
@@ -648,11 +659,6 @@ namespace Intersect.Client.Framework.Gwen.Control
             get => mDrawDebugOutlines;
             set
             {
-                if (mDrawDebugOutlines == value)
-                {
-                    return;
-                }
-
                 mDrawDebugOutlines = value;
                 foreach (var child in Children)
                 {
@@ -1877,16 +1883,37 @@ namespace Intersect.Client.Framework.Gwen.Control
             if (render.Ctt != null && ShouldCacheToTexture)
             {
                 DoCacheRender(skin, this);
-
-                return;
+                if (DrawDebugOutlines)
+                {
+                    RenderDebugOutlinesRecursive(skin);
             }
-
+            }
+            else
+            {
             RenderRecursive(skin, Bounds);
-
             if (DrawDebugOutlines)
             {
                 skin.DrawDebugOutlines(this);
             }
+        }
+        }
+
+        internal virtual void RenderDebugOutlinesRecursive(Skin.Base skin)
+        {
+            var oldRenderOffset = skin.Renderer.RenderOffset;
+            skin.Renderer.AddRenderOffset(Bounds);
+            foreach (var child in mChildren)
+            {
+                if (child.IsHidden)
+                {
+                    continue;
+                }
+
+                child.RenderDebugOutlinesRecursive(skin);
+            }
+            skin.Renderer.RenderOffset = oldRenderOffset;
+
+            skin.DrawDebugOutlines(this);
         }
 
         /// <summary>
@@ -2308,6 +2335,8 @@ namespace Intersect.Client.Framework.Gwen.Control
             return this;
         }
 
+        public virtual Base GetControlAt(Point point) => GetControlAt(point.X, point.Y);
+
         /// <summary>
         ///     Lays out the control's interior according to alignment, padding, dock etc.
         /// </summary>
@@ -2359,12 +2388,12 @@ namespace Intersect.Client.Framework.Gwen.Control
 
                 var dock = mChildren[i].Dock;
 
-                if (0 != (dock & Pos.Fill))
+                if (dock.HasFlag(Pos.Fill))
                 {
                     continue;
                 }
 
-                if (0 != (dock & Pos.Top))
+                if (dock.HasFlag(Pos.Top))
                 {
                     var margin = mChildren[i].Margin;
 
@@ -2378,7 +2407,7 @@ namespace Intersect.Client.Framework.Gwen.Control
                     bounds.Height -= height;
                 }
 
-                if (0 != (dock & Pos.Left))
+                if (dock.HasFlag(Pos.Left))
                 {
                     var margin = mChildren[i].Margin;
 
@@ -2392,7 +2421,7 @@ namespace Intersect.Client.Framework.Gwen.Control
                     bounds.Width -= width;
                 }
 
-                if (0 != (dock & Pos.Right))
+                if (dock.HasFlag(Pos.Right))
                 {
                     // TODO: THIS MARGIN CODE MIGHT NOT BE FULLY FUNCTIONAL
                     var margin = mChildren[i].Margin;
@@ -2406,7 +2435,7 @@ namespace Intersect.Client.Framework.Gwen.Control
                     bounds.Width -= width;
                 }
 
-                if (0 != (dock & Pos.Bottom))
+                if (dock.HasFlag(Pos.Bottom))
                 {
                     // TODO: THIS MARGIN CODE MIGHT NOT BE FULLY FUNCTIONAL
                     var margin = mChildren[i].Margin;
@@ -2431,7 +2460,7 @@ namespace Intersect.Client.Framework.Gwen.Control
             {
                 var dock = mChildren[i].Dock;
 
-                if (0 == (dock & Pos.Fill))
+                if (!dock.HasFlag(Pos.Fill))
                 {
                     continue;
                 }
@@ -3160,6 +3189,55 @@ namespace Intersect.Client.Framework.Gwen.Control
             }
         }
 
+        protected bool SetIfChanged<T>(ref T field, T value)
+        {
+            if (EqualityComparer<T>.Default.Equals(field, value))
+            {
+                return false;
     }
 
+            field = value;
+            return true;
+        }
+
+        protected bool SetIfChanged<T>(ref T field, T value, out T oldValue)
+        {
+            oldValue = field;
+            return SetIfChanged(ref field, value);
+        }
+
+        protected bool SetAndDoIfChanged<T>(ref T field, T value, Action action)
+        {
+            if (default == action)
+            {
+                throw new ArgumentNullException(nameof(action));
+            }
+
+            if (SetIfChanged(ref field, value))
+            {
+                action();
+                return true;
+            }
+
+            return false;
+        }
+
+        protected bool SetAndDoIfChanged<T>(ref T field, T value, ValueChangedHandler<T> valueChangedHandle)
+        {
+            if (default == valueChangedHandle)
+            {
+                throw new ArgumentNullException(nameof(valueChangedHandle));
+            }
+
+            if (SetIfChanged(ref field, value, out var oldValue))
+            {
+                valueChangedHandle(oldValue, field);
+                return true;
+            }
+
+            return false;
+        }
+    }
+
+    public delegate void ValueChangedHandler<T>(T oldValue, T newValue);
 }
