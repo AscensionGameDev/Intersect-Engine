@@ -1868,7 +1868,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// <param name="skin">Skin to use.</param>
         internal virtual void DoRender(Skin.Base skin)
         {
-            // If this control has a different skin, 
+            // If this control has a different skin,
             // then so does its children.
             if (mSkin != null)
             {
@@ -1886,16 +1886,16 @@ namespace Intersect.Client.Framework.Gwen.Control
                 if (DrawDebugOutlines)
                 {
                     RenderDebugOutlinesRecursive(skin);
-            }
+                }
             }
             else
             {
-            RenderRecursive(skin, Bounds);
-            if (DrawDebugOutlines)
-            {
-                skin.DrawDebugOutlines(this);
+                RenderRecursive(skin, Bounds);
+                if (DrawDebugOutlines)
+                {
+                    skin.DrawDebugOutlines(this);
+                }
             }
-        }
         }
 
         internal virtual void RenderDebugOutlinesRecursive(Skin.Base skin)
@@ -3194,7 +3194,7 @@ namespace Intersect.Client.Framework.Gwen.Control
             if (EqualityComparer<T>.Default.Equals(field, value))
             {
                 return false;
-    }
+            }
 
             field = value;
             return true;
