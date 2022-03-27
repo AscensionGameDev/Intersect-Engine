@@ -1,8 +1,14 @@
+using System;
+using System.Linq;
+
+using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.ControlInternal;
 using Intersect.Client.Framework.Gwen.Skin.Texturing;
+
+using Single = Intersect.Client.Framework.Gwen.Skin.Texturing.Single;
 
 namespace Intersect.Client.Framework.Gwen.Skin
 {
@@ -433,9 +439,33 @@ namespace Intersect.Client.Framework.Gwen.Skin
     public class TexturedBase : Skin.Base
     {
 
-        private readonly GameTexture mTexture;
+        public static TexturedBase FindSkin(Renderer.Base renderer, GameContentManager contentManager, string skinName)
+        {
+            var skinMap = typeof(TexturedBase).Assembly.GetTypes()
+                .Where(type => !type.IsAbstract && typeof(TexturedBase).IsAssignableFrom(type))
+                .ToDictionary(type => type.Name.ToLowerInvariant(), type => type);
+
+            if (skinMap.TryGetValue(skinName.ToLowerInvariant(), out var skinType))
+            {
+                try
+                {
+                    var skin = Activator.CreateInstance(skinType, renderer, contentManager) as TexturedBase;
+                    return skin;
+                }
+                catch
+                {
+                    // ignore
+                }
+            }
+
+            return new TexturedBase(renderer, contentManager, skinName);
+        }
+
+        protected readonly GameTexture mTexture;
 
         protected SkinTextures mTextures;
+
+        public string TextureName { get; }
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="TexturedBase" /> class.
@@ -448,6 +478,16 @@ namespace Intersect.Client.Framework.Gwen.Skin
 
             InitializeColors();
             InitializeTextures();
+        }
+
+        public TexturedBase(Renderer.Base renderer, GameContentManager contentManager)
+            : this(renderer, contentManager, "defaultskin.png")
+        {
+        }
+
+        protected TexturedBase(Renderer.Base renderer, GameContentManager contentManager, string textureName)
+            : this(renderer, contentManager?.GetTexture(Framework.Content.TextureType.Gui, textureName))
+        {
         }
 
         /// <summary>
