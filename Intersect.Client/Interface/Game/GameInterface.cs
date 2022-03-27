@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 using Intersect.Client.Core;
 using Intersect.Client.Framework.Gwen.Control;
@@ -40,8 +40,6 @@ namespace Intersect.Client.Interface.Game
         private Chatbox mChatBox;
 
         private CraftingWindow mCraftingWindow;
-
-        private DebugMenu mDebugMenu;
 
         private EventWindow mEventWindow;
 
@@ -120,7 +118,6 @@ namespace Intersect.Client.Interface.Game
 
             mEventWindow = new EventWindow(GameCanvas);
             mQuestOfferWindow = new QuestOfferWindow(GameCanvas);
-            mDebugMenu = new DebugMenu(GameCanvas);
             mMapItemWindow = new MapItemWindow(GameCanvas);
             mBankWindow = new BankWindow(GameCanvas);
         }
@@ -232,9 +229,14 @@ namespace Intersect.Client.Interface.Game
             Globals.InBag = true;
         }
 
-        public BagWindow GetBag()
+        public BagWindow GetBagWindow()
         {
             return mBagWindow;
+        }
+
+        public BankWindow GetBankWindow()
+        {
+            return mBankWindow;
         }
 
         //Crafting
@@ -290,18 +292,6 @@ namespace Intersect.Client.Interface.Game
             Globals.InTrade = true;
         }
 
-        public void ShowHideDebug()
-        {
-            if (mDebugMenu.IsVisible())
-            {
-                mDebugMenu.Hide();
-            }
-            else
-            {
-                mDebugMenu.Show();
-            }
-        }
-
         public void ShowAdminWindow()
         {
             if (mAdminWindow == null)
@@ -338,7 +328,6 @@ namespace Intersect.Client.Interface.Game
             GameMenu?.Update(mShouldUpdateQuestLog);
             mShouldUpdateQuestLog = false;
             Hotbar?.Update();
-            mDebugMenu?.Update();
             EscapeMenu.Update();
             PlayerBox?.Update();
             mMapItemWindow.Update();

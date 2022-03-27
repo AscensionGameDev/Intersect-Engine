@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace Intersect.Client.Framework.GenericClasses
 {
@@ -47,6 +47,14 @@ namespace Intersect.Client.Framework.GenericClasses
         public int Right => X + Width;
 
         public static Rectangle Empty => new Rectangle();
+
+        public Rectangle(Point position, int width, int height)
+        {
+            mX = position.X;
+            mY = position.Y;
+            mWidth = width;
+            mHeight = height;
+        }
 
         public Rectangle(int x, int y, int w, int h)
         {
@@ -116,10 +124,9 @@ namespace Intersect.Client.Framework.GenericClasses
             return Contains(pt.X, pt.Y);
         }
 
-        public static string ToString(Rectangle rect)
-        {
-            return rect.X + "," + rect.Y + "," + rect.Width + "," + rect.Height;
-        }
+        public override string ToString() => $"{X},{Y},{Width},{Height}";
+
+        public static string ToString(Rectangle rect) => rect.ToString();
 
         public static Rectangle FromString(string rect)
         {

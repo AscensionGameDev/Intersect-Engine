@@ -75,6 +75,17 @@ namespace Intersect.Client.Interface.Game.Chat
             { ChatboxTab.System, 0 },
         };
 
+        // Context menu
+        private Framework.Gwen.Control.Menu mContextMenu;
+
+        private MenuItem mPMContextItem;
+
+        private MenuItem mFriendInviteContextItem;
+
+        private MenuItem mPartyInviteContextItem;
+
+        private MenuItem mGuildInviteContextItem;
+
         //Init
         public Chatbox(Canvas gameCanvas, GameInterface gameUi)
         {
@@ -153,6 +164,93 @@ namespace Intersect.Client.Interface.Game.Chat
             {
                 ChatboxMsg.AddMessage(new ChatboxMsg(Strings.Chatbox.UnableToCopy, CustomColors.Alerts.Error, ChatMessageType.Error));
             }
+
+            // Generate our context menu with basic options.
+            mContextMenu = new Framework.Gwen.Control.Menu(gameCanvas, "ChatContextMenu");
+            mContextMenu.IsHidden = true;
+            mContextMenu.IconMarginDisabled = true;
+            //TODO: Is this a memory leak?
+            mContextMenu.Children.Clear();
+            mPMContextItem = mContextMenu.AddItem(Strings.ChatContextMenu.PM);
+            mPMContextItem.Clicked += MPMContextItem_Clicked;
+            mFriendInviteContextItem = mContextMenu.AddItem(Strings.ChatContextMenu.FriendInvite);
+            mFriendInviteContextItem.Clicked += MFriendInviteContextItem_Clicked;
+            mPartyInviteContextItem = mContextMenu.AddItem(Strings.ChatContextMenu.PartyInvite);
+            mPartyInviteContextItem.Clicked += MPartyInviteContextItem_Clicked;
+            mGuildInviteContextItem = mContextMenu.AddItem(Strings.ChatContextMenu.GuildInvite);
+            mGuildInviteContextItem.Clicked += MGuildInviteContextItem_Clicked;
+            mContextMenu.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+        }
+
+        public void OpenContextMenu(string name)
+        {
+            // Clear out the old options.
+            mContextMenu.RemoveChild(mPMContextItem, false);
+            mContextMenu.RemoveChild(mFriendInviteContextItem, false);
+            mContextMenu.RemoveChild(mPartyInviteContextItem, false);
+            mContextMenu.RemoveChild(mGuildInviteContextItem, false);
+            mContextMenu.Children.Clear();
+
+            // No point showing a menu for blank space.
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                return;
+            }
+
+            // Add our PM option!
+            mContextMenu.AddChild(mPMContextItem);
+            mPMContextItem.SetText(Strings.ChatContextMenu.PM.ToString(name));
+
+            // If we do not already have this player on our friendlist, add a request button!
+            if (!Globals.Me.Friends.Any(f => f.Name == name))
+            {
+                mContextMenu.AddChild(mFriendInviteContextItem);
+                mFriendInviteContextItem.SetText(Strings.ChatContextMenu.FriendInvite.ToString(name));
+            }
+
+            // Are we in a party, the leader and is this player not yet in our party?
+            if ((Globals.Me.IsInParty() && Globals.Me.Party[0].Id == Globals.Me.Id && !Globals.Me.Party.Any(p => p.Name == name)) || !Globals.Me.IsInParty())
+            {
+                mContextMenu.AddChild(mPartyInviteContextItem);
+                mPartyInviteContextItem.SetText(Strings.ChatContextMenu.PartyInvite.ToString(name));
+            }
+
+            // Are we in a guild, able to invite players and are they not yet in our guild?
+            if (Globals.Me.IsInGuild && Globals.Me.GuildRank.Permissions.Invite && !Globals.Me.GuildMembers.Any(g => g.Name == name))
+            {
+                mContextMenu.AddChild(mGuildInviteContextItem);
+                mGuildInviteContextItem.SetText(Strings.ChatContextMenu.GuildInvite.ToString(name));
+            }
+
+            // Set our spell slot as userdata for future reference.
+            mContextMenu.UserData = name;
+
+            mContextMenu.SizeToChildren();
+            mContextMenu.Open(Framework.Gwen.Pos.None);
+        }
+
+        private void MGuildInviteContextItem_Clicked(Base sender, ClickedEventArgs arguments)
+        {
+            var name = (string) sender.Parent.UserData;
+            PacketSender.SendInviteGuild(name);
+        }
+
+        private void MPartyInviteContextItem_Clicked(Base sender, ClickedEventArgs arguments)
+        {
+            var name = (string)sender.Parent.UserData;
+            PacketSender.SendPartyInvite(name);
+        }
+
+        private void MFriendInviteContextItem_Clicked(Base sender, ClickedEventArgs arguments)
+        {
+            var name = (string)sender.Parent.UserData;
+            PacketSender.SendAddFriend(name);
+        }
+
+        private void MPMContextItem_Clicked(Base sender, ClickedEventArgs arguments)
+        {
+            var name = (string)sender.Parent.UserData;
+            SetChatboxText($"/pm {name} ");
         }
 
         /// <summary>
@@ -302,9 +400,18 @@ namespace Intersect.Client.Interface.Game.Chat
         {
             var rw = (ListBoxRow)sender;
             var target = (string)rw.UserData;
+
             if (!string.IsNullOrWhiteSpace(target) && target != Globals.Me.Name)
             {
-                SetChatboxText($"/pm {target} ");
+                if (ClientConfiguration.Instance.EnableContextMenus)
+                {
+                    OpenContextMenu(target);
+                } 
+                else
+                {
+                    SetChatboxText($"/pm {target} ");
+                }
+
             }
         }
 
@@ -402,23 +509,23 @@ namespace Intersect.Client.Interface.Game.Chat
         {
             var key1 = Controls.ActiveControls.ControlMapping[Control.Enter].Key1;
             var key2 = Controls.ActiveControls.ControlMapping[Control.Enter].Key2;
-            if (key1 == Keys.None && key2 != Keys.None)
+            if (key1.Key == Keys.None && key2.Key != Keys.None)
             {
                 return Strings.Chatbox.enterchat1.ToString(
-                    Strings.Keys.keydict[Enum.GetName(typeof(Keys), key2).ToLower()]
+                    Strings.Keys.keydict[Enum.GetName(typeof(Keys), key2.Key).ToLower()]
                 );
             }
-            else if (key1 != Keys.None && key2 == Keys.None)
+            else if (key1.Key != Keys.None && key2.Key == Keys.None)
             {
                 return Strings.Chatbox.enterchat1.ToString(
-                    Strings.Keys.keydict[Enum.GetName(typeof(Keys), key1).ToLower()]
+                    Strings.Keys.keydict[Enum.GetName(typeof(Keys), key1.Key).ToLower()]
                 );
             }
-            else if (key1 != Keys.None && key2 != Keys.None)
+            else if (key1.Key != Keys.None && key2.Key != Keys.None)
             {
                 return Strings.Chatbox.enterchat1.ToString(
-                    Strings.Keys.keydict[Enum.GetName(typeof(Keys), key1).ToLower()],
-                    Strings.Keys.keydict[Enum.GetName(typeof(Keys), key2).ToLower()]
+                    Strings.Keys.keydict[Enum.GetName(typeof(Keys), key1.Key).ToLower()],
+                    Strings.Keys.keydict[Enum.GetName(typeof(Keys), key2.Key).ToLower()]
                 );
             }
 

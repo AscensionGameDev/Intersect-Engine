@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 
+using Intersect.Enums;
+
 namespace Intersect.Configuration
 {
 
@@ -44,7 +46,9 @@ namespace Intersect.Configuration
 
         public const int DEFAULT_CHAT_LINES = 100;
 
-        public const string DEFAULT_MENU_BACKGROUND = "background.png";
+        public const DisplayModes DEFAULT_MENU_BACKGROUND_DISPLAY_MODE = DisplayModes.Default;
+
+        public const long DEFAULT_MENU_BACKGROUND_FRAME_INTERVAL = 50;
 
         public const string DEFAULT_MENU_MUSIC = "RPG-Theme_v001_Looping.ogg";
 
@@ -61,6 +65,7 @@ namespace Intersect.Configuration
             GameFont = string.IsNullOrWhiteSpace(GameFont) ? DEFAULT_FONT : GameFont.Trim();
             UIFont = string.IsNullOrWhiteSpace(UIFont) ? DEFAULT_UI_FONT : UIFont.Trim();
             ChatLines = Math.Min(Math.Max(ChatLines, 10), 500);
+            MenuBackground = new List<string>(MenuBackground?.Distinct() ?? new List<string> {"background.png"});
             IntroImages = new List<string>(IntroImages?.Distinct() ?? new List<string>());
         }
 
@@ -114,9 +119,22 @@ namespace Intersect.Configuration
         public string MenuMusic { get; set; } = DEFAULT_MENU_MUSIC;
 
         /// <summary>
-        /// Menu background art
+        /// Sets the main menu's background texture, if the the index of the list is bigger than 1,
+        /// the background will be animated by sequentially drawing the texture files from the list.
+        /// Static background Example: { "background.png" }, 
+        /// Animated background Example: { "background_0.png", "background_1.png", "background_2.png" },
         /// </summary>
-        public string MenuBackground { get; set; } = DEFAULT_MENU_BACKGROUND;
+        public List<string> MenuBackground { get; set; } = new List<string> {"background.png"};
+
+        /// <summary>
+        /// Sets the display mode of the main menu's background.
+        /// </summary>
+        public DisplayModes MenuBackgroundDisplayMode { get; set; } = DEFAULT_MENU_BACKGROUND_DISPLAY_MODE;
+
+        /// <summary>
+        /// Sets the frames interval (milliseconds) of the main menu's animated background.
+        /// </summary>
+        public long MenuBackgroundFrameInterval { get; set; } = DEFAULT_MENU_BACKGROUND_FRAME_INTERVAL;
 
         // TODO: What is this for?
         public List<string> IntroImages { get; set; } = new List<string>();
@@ -133,6 +151,11 @@ namespace Intersect.Configuration
         /// </summary>
         public int MusicFadeTimer { get; set; } = 1500;
 
+        /// <summary>
+        /// Configures whether or not the context menus are enabled upon right-clicking certain elements.
+        /// </summary>
+        public bool EnableContextMenus { get; set; } = true;
+
         #endregion
 
         #region Serialization Hooks
@@ -140,6 +163,7 @@ namespace Intersect.Configuration
         [OnDeserializing]
         internal void OnDeserializing(StreamingContext context)
         {
+            MenuBackground?.Clear();
             IntroImages?.Clear();
         }
 

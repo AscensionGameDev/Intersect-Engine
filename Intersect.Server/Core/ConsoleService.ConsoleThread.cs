@@ -1,4 +1,4 @@
-﻿using Intersect.Logging;
+using Intersect.Logging;
 using Intersect.Server.Core.CommandParsing;
 using Intersect.Server.Core.CommandParsing.Commands;
 using Intersect.Server.Core.CommandParsing.Errors;
@@ -37,9 +37,11 @@ namespace Intersect.Server.Core
                 Parser.Register<CpsCommand>();
                 Parser.Register<ExitCommand>();
                 Parser.Register<ExperimentsCommand>();
+                Parser.Register<GetVariableCommand>();
                 Parser.Register<HelpCommand>(Parser.Settings);
                 Parser.Register<KickCommand>();
                 Parser.Register<KillCommand>();
+                Parser.Register<ListVariablesCommand>();
                 Parser.Register<MetricsCommand>();
                 Parser.Register<MakePrivateCommand>();
                 Parser.Register<MakePublicCommand>();
@@ -49,6 +51,7 @@ namespace Intersect.Server.Core
                 Parser.Register<OnlineListCommand>();
                 Parser.Register<PowerAccountCommand>();
                 Parser.Register<PowerCommand>();
+                Parser.Register<SetVariableCommand>();
                 Parser.Register<UnbanCommand>();
                 Parser.Register<UnmuteCommand>();
             }
@@ -135,7 +138,16 @@ namespace Intersect.Server.Core
                             {
                                 if (!shouldHelp)
                                 {
-                                    result.Command?.Handle(ServerContext.Instance, result);
+#pragma warning disable CA1031 // Do not catch general exception types
+                                    try
+                                    {
+                                        result.Command?.Handle(ServerContext.Instance, result);
+                                    }
+                                    catch (Exception exception)
+                                    {
+                                        Log.Error(exception);
+                                    }
+#pragma warning restore CA1031 // Do not catch general exception types
 
                                     continue;
                                 }
