@@ -1,5 +1,11 @@
-﻿using System;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+
+using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.Graphics;
+using Intersect.Client.Framework.Gwen.Control.Data;
 
 using Newtonsoft.Json.Linq;
 
@@ -9,14 +15,18 @@ namespace Intersect.Client.Framework.Gwen.Control.Layout
     /// <summary>
     ///     Base class for multi-column tables.
     /// </summary>
-    public class Table : Base
+    public class Table : Base, IColorableText
     {
 
-        private readonly int[] mColumnWidth;
+        private readonly List<int> mColumnWidths;
+
+        private readonly List<Pos> mColumnAlignments;
 
         private int mColumnCount;
 
         private int mDefaultRowHeight;
+
+        private ITableDataProvider mDataProvider;
 
         private int mMaxWidth; // for autosizing, if nonzero - fills last cell up to this size
 
@@ -24,24 +34,33 @@ namespace Intersect.Client.Framework.Gwen.Control.Layout
 
         private bool mSizeToContents;
 
+        private GameFont mFont;
+
+        private Color mTextColor;
+
+        private Color mTextColorOverride;
+
         /// <summary>
         ///     Initializes a new instance of the <see cref="Table" /> class.
         /// </summary>
         /// <param name="parent">Parent control.</param>
-        public Table(Base parent) : base(parent)
+        public Table(Base parent, string name = default) : base(parent, name)
         {
             mColumnCount = 1;
+            mColumnAlignments = new List<Pos>(ColumnCount);
+            mColumnWidths = new List<int>(ColumnCount);
             mDefaultRowHeight = 22;
-
-            mColumnWidth = new int[TableRow.MAX_COLUMNS];
-
-            for (var i = 0; i < TableRow.MAX_COLUMNS; i++)
-            {
-                mColumnWidth[i] = 20;
-            }
-
             mSizeToContents = false;
+            mTextColor = Color.Black;
+            mTextColorOverride = Color.Transparent;
+
+            for (var i = 0; i < ColumnCount; i++)
+            {
+                mColumnWidths.Add(20);
+            }
         }
+
+        public IReadOnlyList<Pos> ColumnAlignments => mColumnAlignments.ToList();
 
         /// <summary>
         ///     Column count (default 1).
@@ -49,17 +68,69 @@ namespace Intersect.Client.Framework.Gwen.Control.Layout
         public int ColumnCount
         {
             get => mColumnCount;
-            set
+            set => SetAndDoIfChanged(ref mColumnCount, value, SetColumnCount);
+        }
+
+        public ITableDataProvider DataProvider
+        {
+            get => mDataProvider;
+            set => SetAndDoIfChanged(ref mDataProvider, value, (oldValue, newValue) =>
             {
-                SetColumnCount(value);
-                Invalidate();
-            }
+                if (oldValue != default)
+                {
+                    oldValue.DataChanged -= OnDataChanged;
+                }
+
+                if (newValue != default)
+                {
+                    newValue.DataChanged += OnDataChanged;
+                }
+            });
+        }
+
+        public GameFont Font
+        {
+            get => mFont;
+            set => SetAndDoIfChanged(ref mFont, value, () =>
+            {
+                foreach (TableRow child in Children.Where(child => child is TableRow))
+                {
+                    if (child != default)
+                    {
+                        child.Font = value;
+                    }
+                }
+            });
         }
 
         /// <summary>
         ///     Row count.
         /// </summary>
         public int RowCount => Children.Count;
+
+        public Color TextColor
+        {
+            get => mTextColor;
+            set => SetAndDoIfChanged(ref mTextColor, value, () =>
+            {
+                foreach (IColorableText colorableText in Children)
+                {
+                    colorableText.TextColor = value;
+                }
+            });
+        }
+
+        public Color TextColorOverride
+        {
+            get => mTextColorOverride;
+            set => SetAndDoIfChanged(ref mTextColorOverride, value, () =>
+            {
+                foreach (IColorableText colorableText in Children)
+                {
+                    colorableText.TextColorOverride = value;
+                }
+            });
+        }
 
         /// <summary>
         ///     Gets or sets default height for new table rows.
@@ -77,11 +148,26 @@ namespace Intersect.Client.Framework.Gwen.Control.Layout
         /// <returns>Row at the specified index.</returns>
         public TableRow this[int index] => Children[index] as TableRow;
 
+        protected virtual void OnDataChanged(object sender, TableDataChangedEventArgs args)
+        {
+            while (Children.Count - 1 < args.Row)
+            {
+                _ = AddRow();
+            }
+
+            var row = Children[args.Row] as TableRow;
+            row.SetCellText(args.Column, args.NewValue?.ToString());
+        }
+
         public override JObject GetJson()
         {
             var obj = base.GetJson();
             obj.Add("SizeToContents", mSizeToContents);
             obj.Add("DefaultRowHeight", mDefaultRowHeight);
+            obj.Add(nameof(ColumnAlignments), new JArray(ColumnAlignments.Select(alignment => alignment.ToString() as object).ToArray()));
+            obj.Add(nameof(Font), Font?.ToString());
+            obj.Add(nameof(TextColor), TextColor.ToString());
+            obj.Add(nameof(TextColorOverride), TextColorOverride.ToString());
 
             return base.FixJson(obj);
         }
@@ -89,14 +175,50 @@ namespace Intersect.Client.Framework.Gwen.Control.Layout
         public override void LoadJson(JToken obj)
         {
             base.LoadJson(obj);
-            if (obj["SizeToContents"] != null)
+            if (obj[nameof(SizeToContents)] != null)
             {
-                mSizeToContents = (bool) obj["SizeToContents"];
+                mSizeToContents = (bool)obj[nameof(SizeToContents)];
             }
 
-            if (obj["DefaultRowHeight"] != null)
+            if (obj[nameof(DefaultRowHeight)] != null)
             {
-                mDefaultRowHeight = (int) obj["DefaultRowHeight"];
+                mDefaultRowHeight = (int)obj[nameof(DefaultRowHeight)];
+            }
+
+            if (obj[nameof(ColumnAlignments)] != null)
+            {
+                var jColumnAlignments = (JArray)obj[nameof(ColumnAlignments)];
+                for (var columnIndex = 0; columnIndex < Math.Min(ColumnCount, jColumnAlignments.Count); columnIndex++)
+                {
+                    while (mColumnAlignments.Count <= columnIndex)
+                    {
+                        mColumnAlignments.Add(default);
+                    }
+
+                    mColumnAlignments[columnIndex] = (Pos)Enum.Parse(typeof(Pos), (string)jColumnAlignments[columnIndex]);
+                }
+            }
+
+            if (obj[nameof(Font)] != null)
+            {
+                var fontInfo = (string)obj[nameof(Font)];
+                if (!string.IsNullOrWhiteSpace(fontInfo))
+                {
+                    var parts = fontInfo.Split(',');
+                    var name = parts[0];
+                    var size = int.Parse(parts[1], CultureInfo.InvariantCulture);
+                    Font = GameContentManager.Current?.GetFont(name, size);
+                }
+            }
+
+            if (obj[nameof(TextColor)] != null)
+            {
+                TextColor = Color.FromString((string)obj[nameof(TextColor)]);
+            }
+
+            if (obj[nameof(TextColorOverride)] != null)
+            {
+                TextColorOverride = Color.FromString((string)obj[nameof(TextColorOverride)]);
             }
         }
 
@@ -104,19 +226,17 @@ namespace Intersect.Client.Framework.Gwen.Control.Layout
         ///     Sets the number of columns.
         /// </summary>
         /// <param name="count">Number of columns.</param>
-        public void SetColumnCount(int count)
+        protected virtual void SetColumnCount()
         {
-            if (mColumnCount == count)
+            while (mColumnWidths.Count < ColumnCount)
             {
-                return;
+                mColumnWidths.Add(20);
             }
 
             foreach (var row in Children.OfType<TableRow>())
             {
-                row.ColumnCount = count;
+                row.ColumnCount = Math.Min(row.ColumnCount, ColumnCount);
             }
-
-            mColumnCount = count;
         }
 
         /// <summary>
@@ -126,13 +246,18 @@ namespace Intersect.Client.Framework.Gwen.Control.Layout
         /// <param name="width">Column width.</param>
         public void SetColumnWidth(int column, int width)
         {
-            if (mColumnWidth[column] == width)
+            if (mColumnWidths[column] == width)
             {
                 return;
             }
 
-            mColumnWidth[column] = width;
+            mColumnWidths[column] = width;
             Invalidate();
+        }
+
+        protected virtual void SynchronizeColumnAlignments()
+        {
+            InvalidateChildren(false);
         }
 
         /// <summary>
@@ -142,19 +267,24 @@ namespace Intersect.Client.Framework.Gwen.Control.Layout
         /// <returns>Column width.</returns>
         public int GetColumnWidth(int column)
         {
-            return mColumnWidth[column];
+            return mColumnWidths[column];
         }
 
         /// <summary>
         ///     Adds a new empty row.
         /// </summary>
         /// <returns>Newly created row.</returns>
-        public TableRow AddRow()
+        public TableRow AddRow() => AddRow(ColumnCount);
+
+        public TableRow AddRow(int columnCount)
         {
-            var row = new TableRow(this);
-            row.ColumnCount = mColumnCount;
-            row.Height = mDefaultRowHeight;
-            row.Dock = Pos.Top;
+            var row = new TableRow(this)
+            {
+                ColumnCount = columnCount,
+                Dock = Pos.Top,
+                Font = Font,
+                Height = mDefaultRowHeight,
+            };
 
             return row;
         }
@@ -165,10 +295,19 @@ namespace Intersect.Client.Framework.Gwen.Control.Layout
         /// <param name="row">Row to add.</param>
         public void AddRow(TableRow row)
         {
+            if (row == default)
+            {
+                throw new ArgumentNullException(nameof(row));
+            }
+
             row.Parent = this;
-            row.ColumnCount = mColumnCount;
-            row.Height = mDefaultRowHeight;
+
+            row.ColumnCount = Math.Min(mColumnCount, row.ColumnCount);
             row.Dock = Pos.Top;
+            row.Font = row.Font ?? Font;
+            row.Height = mDefaultRowHeight;
+
+            row.SetColumnWidths(mColumnWidths);
         }
 
         /// <summary>
@@ -179,6 +318,14 @@ namespace Intersect.Client.Framework.Gwen.Control.Layout
         public TableRow AddRow(string text)
         {
             var row = AddRow();
+            row.SetCellText(0, text);
+
+            return row;
+        }
+
+        public TableRow AddRow(string text, int columnCount)
+        {
+            var row = AddRow(columnCount);
             row.SetCellText(0, text);
 
             return row;
@@ -233,26 +380,28 @@ namespace Intersect.Client.Framework.Gwen.Control.Layout
         {
             base.Layout(skin);
 
+            if (mSizeToContents)
+            {
+                DoSizeToContents();
+                mSizeToContents = false;
+            }
+            else
+            {
+                ComputeColumnWidths();
+            }
+
             var even = false;
             foreach (TableRow row in Children)
             {
                 row.EvenRow = even;
                 even = !even;
-                for (var i = 0; i < mColumnCount; i++)
-                {
-                    row.SetColumnWidth(i, mColumnWidth[i]);
-                }
+                row.SetColumnWidths(mColumnWidths);
             }
         }
 
         protected override void PostLayout(Skin.Base skin)
         {
             base.PostLayout(skin);
-            if (mSizeToContents)
-            {
-                DoSizeToContents();
-                mSizeToContents = false;
-            }
         }
 
         /// <summary>
@@ -265,7 +414,7 @@ namespace Intersect.Client.Framework.Gwen.Control.Layout
             Invalidate();
         }
 
-        public void DoSizeToContents()
+        protected virtual (int width, int height) ComputeColumnWidths()
         {
             var height = 0;
             var width = 0;
@@ -277,17 +426,17 @@ namespace Intersect.Client.Framework.Gwen.Control.Layout
                 for (var i = 0; i < ColumnCount; i++)
                 {
                     Base cell = row.GetColumn(i);
-                    if (null != cell)
+                    if (null != cell && row.ColumnCount == ColumnCount)
                     {
                         if (i < ColumnCount - 1 || mMaxWidth == 0)
                         {
-                            mColumnWidth[i] = Math.Max(
-                                mColumnWidth[i], cell.Width + cell.Margin.Left + cell.Margin.Right
+                            mColumnWidths[i] = Math.Max(
+                                mColumnWidths[i], cell.Width + cell.Margin.Left + cell.Margin.Right
                             );
                         }
                         else
                         {
-                            mColumnWidth[i] = mMaxWidth - width; // last cell - fill
+                            mColumnWidths[i] = mMaxWidth - width; // last cell - fill
                         }
                     }
                 }
@@ -296,14 +445,24 @@ namespace Intersect.Client.Framework.Gwen.Control.Layout
             }
 
             // sum all column widths 
-            for (var i = 0; i < ColumnCount; i++)
-            {
-                width += mColumnWidth[i];
-            }
+            width += mColumnWidths.Take(ColumnCount).Sum();
+
+            return (width, height);
+        }
+
+        public void DoSizeToContents()
+        {
+            var (width, height) = ComputeColumnWidths();
 
             SetSize(width, height);
 
             //InvalidateParent();
+        }
+
+        public override void Invalidate()
+        {
+            base.Invalidate();
+            InvalidateChildren(true);
         }
 
     }
