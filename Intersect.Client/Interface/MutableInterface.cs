@@ -1,4 +1,5 @@
-﻿using Intersect.Client.Framework.Gwen.Control;
+using Intersect.Client.Framework.Gwen.Control;
+using Intersect.Client.Interface.Debugging;
 using Intersect.Reflection;
 
 using System;
@@ -11,9 +12,13 @@ namespace Intersect.Client.Interface
     public abstract class MutableInterface : IMutableInterface
     {
 
+        private readonly DebugWindow _debugWindow;
+
         protected internal MutableInterface(Base root)
         {
             Root = root;
+
+            _debugWindow = new DebugWindow(root);
         }
 
         internal Base Root { get; }
@@ -35,9 +40,7 @@ namespace Intersect.Client.Interface
                 return constructor.Invoke(fullParameters) as TElement;
             }
 
-            throw new ArgumentNullException(
-                nameof(constructor), @"Failed to find constructor that matches parameters."
-            );
+            throw new NullReferenceException("Failed to find constructor that matches parameters.");
         }
 
         /// <inheritdoc />
@@ -59,6 +62,10 @@ namespace Intersect.Client.Interface
         public void Remove<TElement>(TElement element, bool dispose = false) where TElement : Base =>
             Root.RemoveChild(element, dispose);
 
+        public bool ToggleDebug()
+        {
+            _debugWindow.ToggleHidden();
+            return _debugWindow.IsVisible;
+        }
     }
-
 }

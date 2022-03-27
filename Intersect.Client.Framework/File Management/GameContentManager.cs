@@ -25,6 +25,8 @@ namespace Intersect.Client.Framework.File_Management
             InGame,
 
             Shared,
+
+            Debug,
         }
 
         public static GameContentManager Current;

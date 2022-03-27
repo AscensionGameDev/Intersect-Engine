@@ -1,4 +1,4 @@
-﻿using Intersect.Client.Framework.GenericClasses;
+using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.ControlInternal;
@@ -460,7 +460,7 @@ namespace Intersect.Client.Framework.Gwen.Skin
 
         #region Initialization
 
-        private void InitializeColors()
+        protected virtual void InitializeColors()
         {
             Colors.Window.TitleActive = Renderer.PixelColor(mTexture, 4 + 8 * 0, 508, Color.Red);
             Colors.Window.TitleInactive = Renderer.PixelColor(mTexture, 4 + 8 * 1, 508, Color.Yellow);
@@ -521,7 +521,7 @@ namespace Intersect.Client.Framework.Gwen.Skin
             Colors.Category.LineAlt.ButtonSelected = Renderer.PixelColor(mTexture, 4 + 8 * 25, 500, Color.Yellow);
         }
 
-        private void InitializeTextures()
+        protected virtual void InitializeTextures()
         {
             mTextures.Shadow = new Bordered(mTexture, 448, 0, 31, 31, Margin.Eight);
             mTextures.Tooltip = new Bordered(mTexture, 128, 320, 127, 31, Margin.Eight);

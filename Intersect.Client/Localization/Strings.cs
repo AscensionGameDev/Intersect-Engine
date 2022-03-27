@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -612,36 +612,53 @@ namespace Intersect.Client.Localization
 
         public struct Debug
         {
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString ControlUnderCursor = @"Control Under Cusor";
 
-            public static LocalizedString draws = @"Draws: {00}";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString DrawDebugOutlines = @"Draw Debug Outlines";
 
-            public static LocalizedString entitiesdrawn = @"Entities Drawn: {00}";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Draws = @"Draws";
 
-            public static LocalizedString fps = @"FPS: {00}";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString EntitiesDrawn = @"Entities Drawn";
 
-            public static LocalizedString knownentities = @"Known Entities: {00}";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Fps = @"FPS";
 
-            public static LocalizedString knownmaps = @"Known Maps: {00}";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString InterfaceObjects = @"Interface Objects";
 
-            public static LocalizedString lightsdrawn = @"Lights Drawn: {00}";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString KnownEntities = @"Known Entities";
 
-            public static LocalizedString map = @"Map: {00}";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString KnownMaps = @"Known Maps";
 
-            public static LocalizedString mapsdrawn = @"Maps Drawn: {00}";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString LightsDrawn = @"Lights Drawn";
 
-            public static LocalizedString ping = @"Ping: {00}";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Map = @"Map";
 
-            public static LocalizedString time = @"Time: {00}";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString MapsDrawn = @"Maps Drawn";
 
-            public static LocalizedString title = @"Debug";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Ping = @"Ping";
 
-            public static LocalizedString x = @"X: {00}";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString ShutdownServer = @"Shutdown Server";
 
-            public static LocalizedString y = @"Y: {00}";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString ShutdownServerAndExit = @"Shutdown Server and Exit";
 
-            public static LocalizedString z = @"Z: {00}";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Time = @"Time";
 
-            public static LocalizedString interfaceobjects = @"Interface Objects: {00}";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Title = @"Debug";
 
         }
 
@@ -909,6 +926,57 @@ namespace Intersect.Client.Localization
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString LootButton = @"Loot All";
 
+        }
+
+        public struct Internals
+        {
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Bounds = @"Bounds";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Color = @"Color";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString ColorOverride = @"Color Override";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString CoordinateX = @"X";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString CoordinateY = @"Y";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString CoordinateZ = @"Z";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString GlobalItem = @"Global {00}";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString LocalItem = @"Local {00}";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Map = @"Map";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString MapId = @"Map Id";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString MapName = @"Map Name";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString NotApplicable = @"N/A";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString SizeX = @"Width";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString SizeY = @"Height";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString SizeZ = @"Depth";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Type = @"Type";
         }
 
         public struct Inventory
