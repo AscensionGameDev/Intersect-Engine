@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -55,9 +55,11 @@ namespace Intersect.Client.Framework.Gwen.Control
             AutoHideBars = true;
             Margin = Margin.One;
 
-            mTable = new Table(this);
-            mTable.Dock = Pos.Fill;
-            mTable.ColumnCount = 1;
+            mTable = new Table(this)
+            {
+                Dock = Pos.Fill,
+                ColumnCount = 1
+            };
             mTable.BoundsChanged += TableResized;
 
             mMultiSelect = false;
@@ -380,18 +382,19 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// <returns>Newly created control.</returns>
         public ListBoxRow AddRow(string label, string name, Object userData)
         {
-            var row = new ListBoxRow(this);
+            var row = new ListBoxRow(this, ColumnCount)
+            {
+                ClickSound = mItemClickSound,
+                HoverSound = mItemHoverSound,
+                Name = name,
+                RightClickSound = mItemRightClickSound,
+                UserData = userData
+            };
             mTable.AddRow(row);
 
             row.SetCellText(0, label);
-            row.Name = name;
-            row.UserData = userData;
 
             row.Selected += OnRowSelected;
-
-            row.HoverSound = mItemHoverSound;
-            row.ClickSound = mItemClickSound;
-            row.RightClickSound = mItemRightClickSound;
 
             if (mFont != null)
             {

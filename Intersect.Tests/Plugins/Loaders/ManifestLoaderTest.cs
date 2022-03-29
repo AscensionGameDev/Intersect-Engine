@@ -239,7 +239,7 @@ namespace Intersect.Plugins.Loaders
             ManifestLoader.ManifestLoaderDelegates.Add(ManifestLoader.LoadVirtualManifestFrom);
             var mockAssembly = new MockAssembly
             {
-                MockTypes = new[] {typeof(VirtualTestManifest)}
+                MockTypes = new[] { typeof(VirtualTestManifest) }
             };
 
             var manifest = ManifestLoader.FindManifest(mockAssembly);
@@ -258,7 +258,7 @@ namespace Intersect.Plugins.Loaders
             ManifestLoader.ManifestLoaderDelegates.Add(ManifestLoader.LoadVirtualManifestFrom);
             var mockAssembly = new MockAssembly
             {
-                MockTypes = new[] {typeof(VirtualTestManifest)}
+                MockTypes = new[] { typeof(VirtualTestManifest) }
             };
 
             var manifest = ManifestLoader.FindManifest(mockAssembly);
@@ -277,7 +277,7 @@ namespace Intersect.Plugins.Loaders
             ManifestLoader.ManifestLoaderDelegates.Add(ManifestLoader.LoadVirtualManifestFrom);
             var mockAssembly = new MockAssembly
             {
-                MockTypes = new[] {typeof(VirtualTestManifest)},
+                MockTypes = new[] { typeof(VirtualTestManifest) },
                 MockManifestResourceInfo = new Dictionary<string, ManifestResourceInfo>
                 {
                     {
@@ -314,7 +314,7 @@ namespace Intersect.Plugins.Loaders
             ManifestLoader.ManifestLoaderDelegates.Add(ManifestLoader.LoadJsonManifestFrom);
             var mockAssembly = new MockAssembly
             {
-                MockTypes = new[] {typeof(VirtualTestManifest)},
+                MockTypes = new[] { typeof(VirtualTestManifest) },
                 MockManifestResourceInfo = new Dictionary<string, ManifestResourceInfo>
                 {
                     {
@@ -360,12 +360,11 @@ namespace Intersect.Plugins.Loaders
         }
 
         [Test]
-        public void LoadJsonManifestFrom_ReturnsNullIfExceptionThrownFromResourceInfo()
+        public void LoadJsonManifestFrom_ThrowsExceptionIfExceptionThrownFromResourceInfo()
         {
-            var mockLogger = new Mock<Logger>();
-            Log.Default = mockLogger.Object;
             var mockException = new Exception(nameof(MockAssembly.ExceptionGetManifestResourceInfo));
-            Assert.IsNull(
+
+            var thrownException = Assert.Catch<Exception>(() =>
                 ManifestLoader.LoadJsonManifestFrom(
                     new MockAssembly
                     {
@@ -374,16 +373,17 @@ namespace Intersect.Plugins.Loaders
                 )
             );
 
-            mockLogger.Verify(l => l.Warn(mockException, "Failed to load manifest.json from MockAssembly."));
+            Assert.AreEqual("Failed to load manifest.json from MockAssembly.", thrownException.Message);
+            Assert.AreSame(mockException.GetType(), thrownException.InnerException?.GetType());
+            Assert.AreEqual(mockException.Message, thrownException.InnerException?.Message);
         }
 
         [Test]
-        public void LoadJsonManifestFrom_ReturnsNullIfStreamIsNull()
+        public void LoadJsonManifestFrom_ThrowsExceptionIfStreamIsNull()
         {
-            var mockLogger = new Mock<Logger>();
-            Log.Default = mockLogger.Object;
             var mockException = new InvalidDataException("Manifest resource stream null when info exists.");
-            Assert.IsNull(
+
+            var thrownException = Assert.Catch<Exception>(() =>
                 ManifestLoader.LoadJsonManifestFrom(
                     new MockAssembly
                     {
@@ -400,21 +400,17 @@ namespace Intersect.Plugins.Loaders
                 )
             );
 
-            mockLogger.Verify(
-                l => l.Warn(
-                    It.Is<InvalidDataException>(e => e.Message == mockException.Message),
-                    "Failed to load manifest.json from MockAssembly."
-                )
-            );
+            Assert.AreEqual("Failed to load manifest.json from MockAssembly.", thrownException.Message);
+            Assert.AreSame(mockException.GetType(), thrownException.InnerException?.GetType());
+            Assert.AreEqual(mockException.Message, thrownException.InnerException?.Message);
         }
 
         [Test]
-        public void LoadJsonManifestFrom_ReturnsNullIfStreamIsEmpty()
+        public void LoadJsonManifestFrom_ThrowsExceptionIfStreamIsEmpty()
         {
-            var mockLogger = new Mock<Logger>();
-            Log.Default = mockLogger.Object;
             var mockException = new InvalidDataException("Manifest is empty or failed to load and is null.");
-            Assert.IsNull(
+
+            var thrownException = Assert.Catch<Exception>(() =>
                 ManifestLoader.LoadJsonManifestFrom(
                     new MockAssembly
                     {
@@ -435,21 +431,17 @@ namespace Intersect.Plugins.Loaders
                 )
             );
 
-            mockLogger.Verify(
-                l => l.Warn(
-                    It.Is<InvalidDataException>(e => e.Message == mockException.Message),
-                    "Failed to load manifest.json from MockAssembly."
-                )
-            );
+            Assert.AreEqual("Failed to load manifest.json from MockAssembly.", thrownException.Message);
+            Assert.AreSame(mockException.GetType(), thrownException.InnerException?.GetType());
+            Assert.AreEqual(mockException.Message, thrownException.InnerException?.Message);
         }
 
         [Test]
-        public void LoadJsonManifestFrom_ReturnsNullIfExceptionThrownFromResourceStream()
+        public void LoadJsonManifestFrom_ThrowsExceptionIfExceptionThrownFromResourceStream()
         {
-            var mockLogger = new Mock<Logger>();
-            Log.Default = mockLogger.Object;
             var mockException = new Exception(nameof(MockAssembly.ExceptionGetManifestResourceStream));
-            Assert.IsNull(
+
+            var thrownException = Assert.Catch<Exception>(() =>
                 ManifestLoader.LoadJsonManifestFrom(
                     new MockAssembly
                     {
@@ -467,7 +459,9 @@ namespace Intersect.Plugins.Loaders
                 )
             );
 
-            mockLogger.Verify(l => l.Warn(mockException, "Failed to load manifest.json from MockAssembly."));
+            Assert.AreEqual("Failed to load manifest.json from MockAssembly.", thrownException.Message);
+            Assert.AreSame(mockException.GetType(), thrownException.InnerException?.GetType());
+            Assert.AreEqual(mockException.Message, thrownException.InnerException?.Message);
         }
 
         [Test]
@@ -477,21 +471,16 @@ namespace Intersect.Plugins.Loaders
         }
 
         [Test]
-        public void LoadVirtualManifestFrom_ReturnsNullIfExceptionThrown()
+        public void LoadVirtualManifestFrom_ThrowsExceptionIfExceptionThrown()
         {
-            var mockLogger = new Mock<Logger>();
-            Log.Default = mockLogger.Object;
             var mockException = new Exception(nameof(MockAssembly.ExceptionGetTypes));
-            Assert.IsNull(
-                ManifestLoader.LoadVirtualManifestFrom(
-                    new MockAssembly
-                    {
-                        ExceptionGetTypes = mockException
-                    }
-                )
+
+            var thrownException = Assert.Catch<Exception>(
+                () => ManifestLoader.LoadVirtualManifestFrom(new MockAssembly { ExceptionGetTypes = mockException })
             );
 
-            mockLogger.Verify(l => l.Warn(mockException, "Failed to load virtual manifest from MockAssembly."));
+            Assert.AreEqual("Failed to load virtual manifest from MockAssembly.", thrownException.Message);
+            Assert.AreSame(mockException, thrownException.InnerException);
         }
     }
 }

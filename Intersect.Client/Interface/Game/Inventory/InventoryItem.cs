@@ -9,6 +9,7 @@ using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
 using Intersect.Client.Localization;
 using Intersect.Client.Networking;
+using Intersect.Configuration;
 using Intersect.GameObjects;
 using Intersect.Utilities;
 
@@ -75,23 +76,19 @@ namespace Intersect.Client.Interface.Game.Inventory
             Pnl.HoverLeave += pnl_HoverLeave;
             Pnl.RightClicked += pnl_RightClicked;
             Pnl.Clicked += pnl_Clicked;
+            Pnl.DoubleClicked += Pnl_DoubleClicked;
             EquipPanel = new ImagePanel(Pnl, "InventoryItemEquippedIcon");
             EquipPanel.Texture = Graphics.Renderer.GetWhiteTexture();
             EquipLabel = new Label(Pnl, "InventoryItemEquippedLabel");
             EquipLabel.IsHidden = true;
-            EquipLabel.Text = Strings.Inventory.equippedicon;
+            EquipLabel.Text = Strings.Inventory.EquippedSymbol;
             EquipLabel.TextColor = new Color(0, 255, 255, 255);
             mCooldownLabel = new Label(Pnl, "InventoryItemCooldownLabel");
             mCooldownLabel.IsHidden = true;
             mCooldownLabel.TextColor = new Color(0, 255, 255, 255);
         }
 
-        void pnl_Clicked(Base sender, ClickedEventArgs arguments)
-        {
-            mClickTime = Timing.Global.Milliseconds + 500;
-        }
-
-        void pnl_RightClicked(Base sender, ClickedEventArgs arguments)
+        private void Pnl_DoubleClicked(Base sender, ClickedEventArgs arguments)
         {
             if (Globals.GameShop != null)
             {
@@ -111,7 +108,43 @@ namespace Intersect.Client.Interface.Game.Inventory
             }
             else
             {
-                Globals.Me.TryDropItem(mMySlot);
+                Globals.Me.TryUseItem(mMySlot);
+            }
+        }
+
+        void pnl_Clicked(Base sender, ClickedEventArgs arguments)
+        {
+            mClickTime = Timing.Global.Milliseconds + 500;
+        }
+
+        void pnl_RightClicked(Base sender, ClickedEventArgs arguments)
+        {
+            if (ClientConfiguration.Instance.EnableContextMenus)
+            {
+                mInventoryWindow.OpenContextMenu(mMySlot);
+            }
+            else
+            {
+                if (Globals.GameShop != null)
+                {
+                    Globals.Me.TrySellItem(mMySlot);
+                }
+                else if (Globals.InBank)
+                {
+                    Globals.Me.TryDepositItem(mMySlot);
+                }
+                else if (Globals.InBag)
+                {
+                    Globals.Me.TryStoreBagItem(mMySlot, -1);
+                }
+                else if (Globals.InTrade)
+                {
+                    Globals.Me.TryTradeItem(mMySlot);
+                }
+                else
+                {
+                    Globals.Me.TryDropItem(mMySlot);
+                }
             }
         }
 
@@ -284,11 +317,11 @@ namespace Intersect.Client.Interface.Game.Inventory
                         var secondsRemaining = (float) Globals.Me.GetItemRemainingCooldown(mMySlot) / 1000f;
                         if (secondsRemaining > 10f)
                         {
-                            mCooldownLabel.Text = Strings.Inventory.cooldown.ToString(secondsRemaining.ToString("N0"));
+                            mCooldownLabel.Text = Strings.Inventory.Cooldown.ToString(secondsRemaining.ToString("N0"));
                         }
                         else
                         {
-                            mCooldownLabel.Text = Strings.Inventory.cooldown.ToString(
+                            mCooldownLabel.Text = Strings.Inventory.Cooldown.ToString(
                                 secondsRemaining.ToString("N1").Replace(".", Strings.Numbers.dec)
                             );
                         }
@@ -323,7 +356,6 @@ namespace Intersect.Client.Interface.Game.Inventory
                         mMouseY = -1;
                         if (Timing.Global.Milliseconds < mClickTime)
                         {
-                            Globals.Me.TryUseItem(mMySlot);
                             mClickTime = 0;
                         }
                     }
@@ -436,7 +468,7 @@ namespace Intersect.Client.Interface.Game.Inventory
                     }
                     else if (Globals.InBag)
                     {
-                        var bagWindow = Interface.GameUi.GetBag();
+                        var bagWindow = Interface.GameUi.GetBagWindow();
                         if (bagWindow.RenderBounds().IntersectsWith(dragRect))
                         {
                             for (var i = 0; i < Globals.Bag.Length; i++)
@@ -459,6 +491,34 @@ namespace Intersect.Client.Interface.Game.Inventory
                             if (bestIntersectIndex > -1)
                             {
                                 Globals.Me.TryStoreBagItem(mMySlot, bestIntersectIndex);
+                            }
+                        }
+                    }
+                    else if (Globals.InBank)
+                    {
+                        var bankWindow = Interface.GameUi.GetBankWindow();
+                        if (bankWindow.RenderBounds().IntersectsWith(dragRect))
+                        {
+                            for (var i = 0; i < Globals.Bank.Length; i++)
+                            {
+                                if (bankWindow.Items[i].RenderBounds().IntersectsWith(dragRect))
+                                {
+                                    if (FloatRect.Intersect(bankWindow.Items[i].RenderBounds(), dragRect).Width *
+                                        FloatRect.Intersect(bankWindow.Items[i].RenderBounds(), dragRect).Height >
+                                        bestIntersect)
+                                    {
+                                        bestIntersect =
+                                            FloatRect.Intersect(bankWindow.Items[i].RenderBounds(), dragRect).Width *
+                                            FloatRect.Intersect(bankWindow.Items[i].RenderBounds(), dragRect).Height;
+
+                                        bestIntersectIndex = i;
+                                    }
+                                }
+                            }
+
+                            if (bestIntersectIndex > -1)
+                            {
+                                Globals.Me.TryDepositItem(mMySlot, bestIntersectIndex);
                             }
                         }
                     }

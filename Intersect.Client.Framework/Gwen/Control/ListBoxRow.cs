@@ -1,4 +1,4 @@
-﻿using Intersect.Client.Framework.Gwen.Control.Layout;
+using Intersect.Client.Framework.Gwen.Control.Layout;
 
 namespace Intersect.Client.Framework.Gwen.Control
 {
@@ -15,7 +15,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         ///     Initializes a new instance of the <see cref="ListBoxRow" /> class.
         /// </summary>
         /// <param name="parent">Parent control.</param>
-        public ListBoxRow(Base parent) : base(parent)
+        public ListBoxRow(Base parent, int columns) : base(parent, columns)
         {
             MouseInputEnabled = true;
             IsSelected = false;

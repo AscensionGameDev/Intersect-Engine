@@ -119,6 +119,10 @@ namespace Intersect.Server.Entities.Events
             {
                 value = ServerVariableBase.Get(condition.VariableId)?.Value;
             }
+            else if (condition.VariableType == VariableTypes.GuildVariable)
+            {
+                value = player.Guild?.GetVariableValue(condition.VariableId);
+            }
 
             if (value == null)
             {
@@ -146,11 +150,16 @@ namespace Intersect.Server.Entities.Events
                         break;
                     case VariableTypes.ServerVariable:
                         quantity = (int)ServerVariableBase.Get(condition.VariableId)?.Value.Integer;
+
+                        break;
+                    case VariableTypes.GuildVariable:
+                        quantity = (int)player.Guild?.GetVariableValue(condition.VariableId).Integer;
+
                         break;
                 }
             }
 
-            return player.CountItems(condition.ItemId) >= quantity;
+            return player.CountItems(condition.ItemId, true, condition.CheckBank) >= quantity;
         }
 
         public static bool MeetsCondition(
@@ -263,9 +272,9 @@ namespace Intersect.Server.Entities.Events
         {
             if (eventInstance != null)
             {
-                if (eventInstance.Global)
+                if (eventInstance.Global && MapController.TryGetInstanceFromMap(eventInstance.MapId, player.MapInstanceId, out var instance))
                 {
-                    if (MapInstance.Get(eventInstance.MapId).GlobalEventInstances.TryGetValue(eventInstance.BaseEvent, out Event evt))
+                    if (instance.GlobalEventInstances.TryGetValue(eventInstance.BaseEvent, out Event evt))
                     {
                         if (evt != null)
                         {
@@ -369,15 +378,16 @@ namespace Intersect.Server.Entities.Events
             QuestBase questBase
         )
         {
-            var map = MapInstance.Get(eventInstance?.MapId ?? Guid.Empty);
+            var map = MapController.Get(eventInstance?.MapId ?? Guid.Empty);
             if (map == null)
             {
-                map = MapInstance.Get(player.MapId);
+                // If we couldn't get an entity's map, use the player's map
+                map = MapController.Get(player.MapId);
             }
 
-            if (map != null)
+            if (map != null && map.TryGetInstance(player.MapInstanceId, out var mapInstance))
             {
-                var entities = map.GetEntities();
+                var entities = mapInstance.GetEntities();
                 foreach (var en in entities)
                 {
                     if (en.GetType() == typeof(Npc))
@@ -452,6 +462,11 @@ namespace Intersect.Server.Entities.Events
                         break;
                     case VariableTypes.ServerVariable:
                         quantity = (int)ServerVariableBase.Get(condition.VariableId)?.Value.Integer;
+
+                        break;
+                    case VariableTypes.GuildVariable:
+                        quantity = (int)player.Guild?.GetVariableValue(condition.VariableId).Integer;
+
                         break;
                 }
             }
@@ -511,6 +526,10 @@ namespace Intersect.Server.Entities.Events
                 {
                     compValue = ServerVariableBase.Get(comparison.CompareVariableId)?.Value;
                 }
+                else if (comparison.CompareVariableType == VariableTypes.GuildVariable)
+                {
+                    compValue = player.Guild?.GetVariableValue(comparison.CompareVariableId);
+                }
             }
             else
             {
@@ -562,6 +581,10 @@ namespace Intersect.Server.Entities.Events
                 else if (comparison.CompareVariableType == VariableTypes.ServerVariable)
                 {
                     compValue = ServerVariableBase.Get(comparison.CompareVariableId)?.Value;
+                }
+                else if (comparison.CompareVariableType == VariableTypes.GuildVariable)
+                {
+                    compValue = player.Guild?.GetVariableValue(comparison.CompareVariableId);
                 }
             }
             else

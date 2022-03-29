@@ -33,9 +33,13 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             {
                 rdoPlayerVariables.Checked = true;
             }
-            else
+            else if (mMyCommand.VariableType == Enums.VariableTypes.ServerVariable)
             {
                 rdoGlobalVariables.Checked = true;
+            }
+            else if (mMyCommand.VariableType == Enums.VariableTypes.GuildVariable)
+            {
+                rdoGuildVariables.Checked = true;
             }
 
             LoadVariableList();
@@ -53,6 +57,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             btnCancel.Text = Strings.EventInput.cancel;
             rdoPlayerVariables.Text = Strings.EventInput.playervariable;
             rdoGlobalVariables.Text = Strings.EventInput.globalvariable;
+            rdoGuildVariables.Text = Strings.EventInput.guildvariable;
         }
 
         private void LoadVariableList()
@@ -70,7 +75,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                     );
                 }
             }
-            else
+            else if (rdoGlobalVariables.Checked)
             {
                 cmbVariable.Items.AddRange(ServerVariableBase.Names);
                 cmbVariable.SelectedIndex = ServerVariableBase.ListIndex(mMyCommand.VariableId);
@@ -79,6 +84,17 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                 {
                     UpdateMinMaxValues(
                         ServerVariableBase.Get(ServerVariableBase.IdFromList(cmbVariable.SelectedIndex)).Type
+                    );
+                }
+            }
+            else if (rdoGuildVariables.Checked)
+            {
+                cmbVariable.Items.AddRange(GuildVariableBase.Names);
+                cmbVariable.SelectedIndex = GuildVariableBase.ListIndex(mMyCommand.VariableId);
+                if (cmbVariable.SelectedIndex != -1)
+                {
+                    UpdateMinMaxValues(
+                        GuildVariableBase.Get(GuildVariableBase.IdFromList(cmbVariable.SelectedIndex)).Type
                     );
                 }
             }
@@ -126,10 +142,15 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                 mMyCommand.VariableType = Enums.VariableTypes.PlayerVariable;
                 mMyCommand.VariableId = PlayerVariableBase.IdFromList(cmbVariable.SelectedIndex);
             }
-            else
+            else if (rdoGlobalVariables.Checked)
             {
                 mMyCommand.VariableType = Enums.VariableTypes.ServerVariable;
                 mMyCommand.VariableId = ServerVariableBase.IdFromList(cmbVariable.SelectedIndex);
+            }
+            else if (rdoGuildVariables.Checked)
+            {
+                mMyCommand.VariableType = Enums.VariableTypes.GuildVariable;
+                mMyCommand.VariableId = GuildVariableBase.IdFromList(cmbVariable.SelectedIndex);
             }
 
             mEventEditor.FinishCommandEdit();
@@ -148,6 +169,15 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         }
 
         private void rdoGlobalVariables_CheckedChanged(object sender, EventArgs e)
+        {
+            LoadVariableList();
+            if (!mLoading && cmbVariable.Items.Count > 0)
+            {
+                cmbVariable.SelectedIndex = 0;
+            }
+        }
+
+        private void rdoGuildVariables_CheckedChanged(object sender, EventArgs e)
         {
             LoadVariableList();
             if (!mLoading && cmbVariable.Items.Count > 0)

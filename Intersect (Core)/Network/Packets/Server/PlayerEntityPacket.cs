@@ -29,7 +29,7 @@ namespace Intersect.Network.Packets.Server
         [Key(27)]
         public EquipmentPacket Equipment { get; set; }
 
-
+    
         [Key(28)]
         public long CombatTimeRemaining { get; set; }
 
