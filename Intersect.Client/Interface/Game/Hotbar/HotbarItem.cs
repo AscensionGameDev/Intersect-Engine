@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 using Intersect.Client.Core;
 using Intersect.Client.Core.Controls;
@@ -182,8 +182,8 @@ namespace Intersect.Client.Interface.Game.Hotbar
                 }
 
                 mItemDescWindow = new ItemDescriptionWindow(
-                    mCurrentItem, 1, mHotbarWindow.X + Pnl.X + 16, mHotbarWindow.Y + mHotbarWindow.Height + 2,
-                    mInventoryItem?.StatBuffs, mCurrentItem.Name, ""
+                    mCurrentItem, 1, mHotbarWindow.X + (mHotbarWindow.Width / 2), mHotbarWindow.Y + mHotbarWindow.Height + 2,
+                    mInventoryItem?.StatBuffs, mCurrentItem.Name, "", true
                 );
             }
             else if (mCurrentSpell != null)
@@ -195,7 +195,7 @@ namespace Intersect.Client.Interface.Game.Hotbar
                 }
 
                 mSpellDescWindow = new SpellDescriptionWindow(
-                    mCurrentSpell.Id, mHotbarWindow.X + Pnl.X + 16, mHotbarWindow.Y + mHotbarWindow.Height + 2
+                    mCurrentSpell.Id, mHotbarWindow.X + (mHotbarWindow.Width / 2), mHotbarWindow.Y + mHotbarWindow.Height + 2, true
                 );
             }
         }

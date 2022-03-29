@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Interface.Game.DescriptionWindows.Components;
@@ -13,10 +13,15 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
         // Our internal list of components.
         private List<ComponentBase> mComponents;
 
-        public DescriptionWindowBase(Base parent, string name) : base(parent, name)
+        private bool mCenterOnPosition;
+
+        public DescriptionWindowBase(Base parent, string name, bool centerOnPosition = false) : base(parent, name)
         {
             // Set up our internal component list we use for re-ordering.
             mComponents = new List<ComponentBase>();
+
+            // Set up whether we should center on our desired position.
+            mCenterOnPosition = centerOnPosition;
 
             GenerateComponents();
         }
@@ -132,10 +137,16 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
         /// <inheritdoc/>
         public override void SetPosition(int x, int y)
         {
-            // Do not allow it to render outside of the screen canvas.
             var newX = x - mContainer.Width - mContainer.Padding.Right;
             var newY = y + mContainer.Padding.Top;
 
+            // Center on the desired position if requested.
+            if (mCenterOnPosition)
+            {
+                newX += (mContainer.Width - mContainer.Padding.Right) / 2;
+            }
+            
+            // Do not allow it to render outside of the screen canvas.
             if (newX < 0)
             {
                 newX = 0;

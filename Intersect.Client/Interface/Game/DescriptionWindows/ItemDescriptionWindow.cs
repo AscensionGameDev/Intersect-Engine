@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 using Intersect.Enums;
@@ -29,8 +29,9 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
             int y,
             int[] statBuffs,
             string titleOverride = "",
-            string valueLabel = ""
-        ) : base(Interface.GameUi.GameCanvas, "DescriptionWindow")
+            string valueLabel = "",
+            bool centerOnPosition = false
+        ) : base(Interface.GameUi.GameCanvas, "DescriptionWindow", centerOnPosition)
         {
             mItem = item;
             mAmount = amount;

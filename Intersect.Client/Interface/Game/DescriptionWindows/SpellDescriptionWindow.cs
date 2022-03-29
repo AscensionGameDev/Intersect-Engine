@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 using Intersect.Enums;
 using Intersect.GameObjects;
@@ -11,7 +11,7 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
     {
         protected SpellBase mSpell;
 
-        public SpellDescriptionWindow(Guid spellId, int x, int y) : base(Interface.GameUi.GameCanvas, "DescriptionWindow")
+        public SpellDescriptionWindow(Guid spellId, int x, int y, bool centerOnPosition = false) : base(Interface.GameUi.GameCanvas, "DescriptionWindow", centerOnPosition)
         {
             mSpell = SpellBase.Get(spellId);
 
