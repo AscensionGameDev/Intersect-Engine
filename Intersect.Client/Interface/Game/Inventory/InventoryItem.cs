@@ -7,6 +7,7 @@ using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Framework.Gwen.Input;
 using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
+using Intersect.Client.Interface.Game.DescriptionWindows;
 using Intersect.Client.Localization;
 using Intersect.Client.Networking;
 using Intersect.Configuration;
@@ -38,7 +39,7 @@ namespace Intersect.Client.Interface.Game.Inventory
 
         private Guid mCurrentItemId;
 
-        private ItemDescWindow mDescWindow;
+        private ItemDescriptionWindow mDescWindow;
 
         private Draggable mDragIcon;
 
@@ -186,7 +187,7 @@ namespace Intersect.Client.Interface.Game.Inventory
             {
                 if (Globals.Me.Inventory[mMySlot]?.Base != null)
                 {
-                    mDescWindow = new ItemDescWindow(
+                    mDescWindow = new ItemDescriptionWindow(
                         Globals.Me.Inventory[mMySlot].Base, Globals.Me.Inventory[mMySlot].Quantity, mInventoryWindow.X,
                         mInventoryWindow.Y, Globals.Me.Inventory[mMySlot].StatBuffs
                     );
@@ -213,7 +214,7 @@ namespace Intersect.Client.Interface.Game.Inventory
                     var hoveredItem = ItemBase.Get(shopItem.CostItemId);
                     if (hoveredItem != null && Globals.Me.Inventory[mMySlot]?.Base != null)
                     {
-                        mDescWindow = new ItemDescWindow(
+                        mDescWindow = new ItemDescriptionWindow(
                             Globals.Me.Inventory[mMySlot].Base, Globals.Me.Inventory[mMySlot].Quantity,
                             mInventoryWindow.X, mInventoryWindow.Y, Globals.Me.Inventory[mMySlot].StatBuffs, "",
                             Strings.Shop.sellsfor.ToString(shopItem.CostItemQuantity, hoveredItem.Name)
@@ -225,7 +226,7 @@ namespace Intersect.Client.Interface.Game.Inventory
                     var costItem = Globals.GameShop.DefaultCurrency;
                     if (invItem.Base != null && costItem != null && Globals.Me.Inventory[mMySlot]?.Base != null)
                     {
-                        mDescWindow = new ItemDescWindow(
+                        mDescWindow = new ItemDescriptionWindow(
                             Globals.Me.Inventory[mMySlot].Base, Globals.Me.Inventory[mMySlot].Quantity,
                             mInventoryWindow.X, mInventoryWindow.Y, Globals.Me.Inventory[mMySlot].StatBuffs, "",
                             Strings.Shop.sellsfor.ToString(invItem.Base.Price.ToString(), costItem.Name)
@@ -236,7 +237,7 @@ namespace Intersect.Client.Interface.Game.Inventory
                 {
                     if (invItem?.Base != null)
                     {
-                        mDescWindow = new ItemDescWindow(
+                        mDescWindow = new ItemDescriptionWindow(
                             invItem.Base, invItem.Quantity, mInventoryWindow.X, mInventoryWindow.Y, invItem.StatBuffs,
                             "", Strings.Shop.wontbuy
                         );
