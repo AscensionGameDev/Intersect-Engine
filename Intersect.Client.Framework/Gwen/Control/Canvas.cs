@@ -5,6 +5,7 @@ using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Gwen.Anim;
 using Intersect.Client.Framework.Gwen.DragDrop;
 using Intersect.Client.Framework.Gwen.Input;
+using Intersect.Client.Framework.Audio;
 
 namespace Intersect.Client.Framework.Gwen.Control
 {
@@ -28,12 +29,15 @@ namespace Intersect.Client.Framework.Gwen.Control
 
         private float mScale;
 
+        private List<GameAudioInstance> mUISounds;
+
         /// <summary>
         ///     Initializes a new instance of the <see cref="Canvas" /> class.
         /// </summary>
         /// <param name="skin">Skin to use.</param>
         public Canvas(Skin.Base skin, string name) : base(null, name)
         {
+            mUISounds = new List<GameAudioInstance>();
             SetBounds(0, 0, 10000, 10000);
             SetSkin(skin);
             Scale = 1.0f;
@@ -173,6 +177,31 @@ namespace Intersect.Client.Framework.Gwen.Control
             InvalidateChildren(true);
         }
 
+        public void PlayAndAddSound(GameAudioInstance sound)
+        {
+            // Track the sound - we will check to see when it's done and dispose of it in DoThink()
+            mUISounds.Add(sound);
+            // And play the sound
+            sound.SetVolume(100, false);
+            sound.Play();
+        }
+
+        private void RemoveAndDisposeDeadSounds()
+        {
+            mUISounds.RemoveAll(item =>
+            {
+                if (item.State == GameAudioInstance.AudioInstanceState.Stopped || item.State == GameAudioInstance.AudioInstanceState.Disposed)
+                {
+                    item.Dispose();
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            });
+        }
+
         /// <summary>
         ///     Processes input and layout. Also purges delayed delete queue.
         /// </summary>
@@ -182,6 +211,8 @@ namespace Intersect.Client.Framework.Gwen.Control
             {
                 return;
             }
+
+            RemoveAndDisposeDeadSounds();
 
             Animation.GlobalThink();
 

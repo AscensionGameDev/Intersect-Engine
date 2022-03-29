@@ -171,6 +171,22 @@ namespace Intersect.Client.Entities
             }
         }
 
+        public bool IsFriend(IPlayer player)
+        {
+            // TODO: Friend List is updating only when opening it's GUI Window? It Should be updated upon login.
+            return Friends.Any(
+                friend => player != null &&
+                          string.Equals(player.Name, friend.Name, StringComparison.CurrentCultureIgnoreCase));
+        }
+
+        public bool IsGuildMate(IPlayer player)
+        {
+            return GuildMembers.Any(
+                guildMate =>
+                    player != null &&
+                    string.Equals(player.Name, guildMate.Name, StringComparison.CurrentCultureIgnoreCase));
+        }
+
         bool IPlayer.IsInParty => IsInParty();
 
         public bool IsInParty()
@@ -299,16 +315,16 @@ namespace Intersect.Client.Entities
                 if (Inventory[index].Quantity > 1)
                 {
                     var iBox = new InputBox(
-                        Strings.Inventory.dropitem,
-                        Strings.Inventory.dropitemprompt.ToString(ItemBase.Get(Inventory[index].ItemId).Name), true,
-                        InputBox.InputType.NumericInput, DropItemInputBoxOkay, null, index, Inventory[index].Quantity
+                        Strings.Inventory.DropItemTitle,
+                        Strings.Inventory.DropItemPrompt.ToString(ItemBase.Get(Inventory[index].ItemId).Name), true,
+                        InputBox.InputType.NumericSliderInput, DropItemInputBoxOkay, null, index, Inventory[index].Quantity, Inventory[index].Quantity
                     );
                 }
                 else
                 {
                     var iBox = new InputBox(
-                        Strings.Inventory.dropitem,
-                        Strings.Inventory.dropprompt.ToString(ItemBase.Get(Inventory[index].ItemId).Name), true,
+                        Strings.Inventory.DropItemTitle,
+                        Strings.Inventory.DropItemPrompt.ToString(ItemBase.Get(Inventory[index].ItemId).Name), true,
                         InputBox.InputType.YesNo, DropInputBoxOkay, null, index
                     );
                 }
@@ -342,9 +358,24 @@ namespace Intersect.Client.Entities
             return -1;
         }
 
+        public int GetItemQuantity(Guid itemId)
+        {
+            long count = 0;
+
+            for (var i = 0; i < Options.MaxInvItems; i++)
+            {
+                if (Inventory[i].ItemId == itemId)
+                {
+                    count += Inventory[i].Quantity;
+                }
+            }
+
+            return count > Int32.MaxValue ? Int32.MaxValue : (int)count;
+        }
+
         public void TryUseItem(int index)
         {
-            if (Globals.GameShop == null && Globals.InBank == false && Globals.InTrade == false && !IsItemOnCooldown(index) &&
+            if (!IsItemOnCooldown(index) &&
                 index >= 0 && index < Globals.Me.Inventory.Length && Globals.Me.Inventory[index]?.Quantity > 0)
             {
                 PacketSender.SendUseItem(index, TargetIndex);
@@ -544,7 +575,7 @@ namespace Intersect.Client.Entities
                         var iBox = new InputBox(
                             Strings.Shop.sellitem,
                             Strings.Shop.sellitemprompt.ToString(ItemBase.Get(Inventory[index].ItemId).Name), true,
-                            InputBox.InputType.NumericInput, SellItemInputBoxOkay, null, index, Inventory[index].Quantity
+                            InputBox.InputType.NumericSliderInput, SellItemInputBoxOkay, null, index, Inventory[index].Quantity
                         );
                     }
                     else
@@ -566,6 +597,41 @@ namespace Intersect.Client.Entities
             }
         }
 
+        public void TryBuyItem(int slot)
+        {
+            //Confirm the purchase
+            var item = ItemBase.Get(Globals.GameShop.SellingItems[slot].ItemId);
+            if (item != null)
+            {
+                // Determine how many items we can purchase.
+                var currencyCount = GetItemQuantity(Globals.GameShop.SellingItems[slot].CostItemId);
+                var maxBuyAmount = (int)Math.Floor(currencyCount / (float)Globals.GameShop.SellingItems[slot].CostItemQuantity);
+
+                // Is the item stackable, and can we make a purchase at all?
+                if (item.IsStackable && maxBuyAmount != 0)
+                {
+                    var iBox = new InputBox(
+                        Strings.Shop.buyitem, Strings.Shop.buyitemprompt.ToString(item.Name), true,
+                        InputBox.InputType.NumericSliderInput, BuyItemInputBoxOkay, null, slot, maxBuyAmount, maxBuyAmount
+                    );
+                }
+                // In any other case, attempt to purchase one and let the server handle the error and double checking.
+                else
+                {
+                    PacketSender.SendBuyItem(slot, 1);
+                }
+            }
+        }
+
+        private void BuyItemInputBoxOkay(object sender, EventArgs e)
+        {
+            var value = (int)((InputBox)sender).Value;
+            if (value > 0)
+            {
+                PacketSender.SendBuyItem((int)((InputBox)sender).UserData, value);
+            }
+        }
+
         private void SellItemInputBoxOkay(object sender, EventArgs e)
         {
             var value = (int)((InputBox)sender).Value;
@@ -581,7 +647,7 @@ namespace Intersect.Client.Entities
         }
 
         //bank
-        public void TryDepositItem(int index)
+        public void TryDepositItem(int index, int bankSlot = -1)
         {
             if (ItemBase.Get(Inventory[index].ItemId) != null)
             {
@@ -598,15 +664,17 @@ namespace Intersect.Client.Entities
 
                 if (Inventory[index].Quantity > 1)
                 {
+                    int[] userData = new int[2] { index, bankSlot };
+
                     var iBox = new InputBox(
                         Strings.Bank.deposititem,
                         Strings.Bank.deposititemprompt.ToString(ItemBase.Get(Inventory[index].ItemId).Name), true,
-                        InputBox.InputType.NumericInput, DepositItemInputBoxOkay, null, index, Inventory[index].Quantity
+                        InputBox.InputType.NumericSliderInput, DepositItemInputBoxOkay, null, userData, Inventory[index].Quantity
                     );
                 }
                 else
                 {
-                    PacketSender.SendDepositItem(index, 1);
+                    PacketSender.SendDepositItem(index, 1, bankSlot);
                 }
             }
         }
@@ -616,11 +684,13 @@ namespace Intersect.Client.Entities
             var value = (int)((InputBox)sender).Value;
             if (value > 0)
             {
-                PacketSender.SendDepositItem((int)((InputBox)sender).UserData, value);
+                int[] userData = (int[])((InputBox)sender).UserData;
+
+                PacketSender.SendDepositItem(userData[0], value, userData[1]);
             }
         }
 
-        public void TryWithdrawItem(int index)
+        public void TryWithdrawItem(int index, int invSlot = -1)
         {
             if (Globals.Bank[index] != null && ItemBase.Get(Globals.Bank[index].ItemId) != null)
             {
@@ -637,15 +707,17 @@ namespace Intersect.Client.Entities
 
                 if (Globals.Bank[index].Quantity > 1)
                 {
+                    int[] userData = new int[2] { index, invSlot };
+
                     var iBox = new InputBox(
                         Strings.Bank.withdrawitem,
                         Strings.Bank.withdrawitemprompt.ToString(ItemBase.Get(Globals.Bank[index].ItemId).Name), true,
-                        InputBox.InputType.NumericInput, WithdrawItemInputBoxOkay, null, index
+                        InputBox.InputType.NumericSliderInput, WithdrawItemInputBoxOkay, null, userData, Globals.Bank[index].Quantity
                     );
                 }
                 else
                 {
-                    PacketSender.SendWithdrawItem(index, 1);
+                    PacketSender.SendWithdrawItem(index, 1, invSlot);
                 }
             }
         }
@@ -655,7 +727,8 @@ namespace Intersect.Client.Entities
             var value = (int)((InputBox)sender).Value;
             if (value > 0)
             {
-                PacketSender.SendWithdrawItem((int)((InputBox)sender).UserData, value);
+                int[] userData = (int[])((InputBox)sender).UserData;
+                PacketSender.SendWithdrawItem(userData[0], value, userData[1]);
             }
         }
 
@@ -671,7 +744,7 @@ namespace Intersect.Client.Entities
                     var iBox = new InputBox(
                         Strings.Bags.storeitem,
                         Strings.Bags.storeitemprompt.ToString(ItemBase.Get(Inventory[invSlot].ItemId).Name), true,
-                        InputBox.InputType.NumericInput, StoreBagItemInputBoxOkay, null, userData, Inventory[invSlot].Quantity
+                        InputBox.InputType.NumericSliderInput, StoreBagItemInputBoxOkay, null, userData, Inventory[invSlot].Quantity
                     );
                 }
                 else
@@ -702,7 +775,7 @@ namespace Intersect.Client.Entities
                     var iBox = new InputBox(
                         Strings.Bags.retreiveitem,
                         Strings.Bags.retreiveitemprompt.ToString(ItemBase.Get(Globals.Bag[bagSlot].ItemId).Name), true,
-                        InputBox.InputType.NumericInput, RetreiveBagItemInputBoxOkay, null, userData
+                        InputBox.InputType.NumericSliderInput, RetreiveBagItemInputBoxOkay, null, userData, Globals.Bag[bagSlot].Quantity
                     );
                 }
                 else
@@ -732,7 +805,7 @@ namespace Intersect.Client.Entities
                     var iBox = new InputBox(
                         Strings.Trading.offeritem,
                         Strings.Trading.offeritemprompt.ToString(ItemBase.Get(Inventory[index].ItemId).Name), true,
-                        InputBox.InputType.NumericInput, TradeItemInputBoxOkay, null, index, Inventory[index].Quantity
+                        InputBox.InputType.NumericSliderInput, TradeItemInputBoxOkay, null, index, Inventory[index].Quantity
                     );
                 }
                 else
@@ -760,7 +833,7 @@ namespace Intersect.Client.Entities
                     var iBox = new InputBox(
                         Strings.Trading.revokeitem,
                         Strings.Trading.revokeitemprompt.ToString(ItemBase.Get(Globals.Trade[0, index].ItemId).Name),
-                        true, InputBox.InputType.NumericInput, RevokeItemInputBoxOkay, null, index
+                        true, InputBox.InputType.NumericSliderInput, RevokeItemInputBoxOkay, null, index
                     );
                 }
                 else
@@ -2008,6 +2081,126 @@ namespace Intersect.Client.Entities
             );
         }
 
+        // Draw Entities Overhead Information when hovering the cursor by them
+        // (when they are hidden by the game settings preferences).
+        public void DrawOverheadInfoOnHover()
+        {
+            var mousePos = Graphics.ConvertToWorldPoint(Globals.InputManager.GetMousePosition());
+            foreach (MapInstance map in Maps.MapInstance.Lookup.Values)
+            {
+                if (mousePos.X >= map.GetX() && mousePos.X <= map.GetX() + Options.MapWidth * Options.TileWidth)
+                {
+                    if (mousePos.Y >= map.GetY() && mousePos.Y <= map.GetY() + Options.MapHeight * Options.TileHeight)
+                    {
+                        var mapId = map.Id;
+                        foreach (var en in Globals.Entities)
+                        {
+                            if (en.Value == null)
+                            {
+                                continue;
+                            }
+
+                            if (en.Value.MapId == mapId &&
+                                !en.Value.HideName &&
+                                (!en.Value.IsStealthed ||
+                                 en.Value is Player player && Globals.Me.IsInMyParty(player)) &&
+                                en.Value.WorldPos.Contains(mousePos.X, mousePos.Y))
+                            {
+                                // We don't want to deal with these entities when hovering the cursor by them.
+                                var ignoreEntities = en.Value.GetType() != typeof(Projectile) &&
+                                                     en.Value.GetType() != typeof(Resource) &&
+                                                     en.Value.GetType() != typeof(Event);
+
+                                if (ignoreEntities)
+                                {
+                                    // Who's who.
+                                    var isMe = en.Value.GetType() == typeof(Player) && en.Value.Id == Globals.Me.Id;
+                                    var isNpc = en.Value.GetType() != typeof(Player);
+                                    var isPlayer = en.Value.GetType() == typeof(Player) && en.Value.Id != Globals.Me.Id;
+                                    var isFriend = en.Value is Player possiblyFriend &&
+                                                   Globals.Me.IsFriend(possiblyFriend) &&
+                                                   !isMe;
+                                    var isGuildMate = en.Value is Player possiblyGuildMate &&
+                                                      Globals.Me.IsGuildMate(possiblyGuildMate) &&
+                                                      !isMe;
+                                    var isPartyMate = en.Value is Player possiblyPartyMate &&
+                                                      Globals.Me.IsInMyParty(possiblyPartyMate) &&
+                                                      !isMe;
+
+                                    // If MyOverheadInfo is toggled off, draw the local Players
+                                    // overhead information only when hovered by the cursor.
+                                    if (!Globals.Database.MyOverheadInfo && isMe)
+                                    {
+                                        en.Value.DrawName(null);
+                                    }
+
+                                    // If NpcOverheadInfo is toggled off, draw NPCs
+                                    // overhead information only when hovered by the cursor.
+                                    if (!Globals.Database.NpcOverheadInfo && isNpc)
+                                    {
+                                        en.Value.DrawName(null);
+                                    }
+
+                                    // If PlayerOverheadInfo is toggled off, draw Players
+                                    // overhead information only when hovered by the cursor.
+                                    if (!Globals.Database.PlayerOverheadInfo && isPlayer &&
+                                        !isFriend && !isGuildMate && !isPartyMate)
+                                    {
+                                        en.Value.DrawName(null);
+                                    }
+
+                                    // If PartyMemberOverheadInfo is toggled off, draw Party Members
+                                    // overhead information only when hovered by the cursor.
+                                    if (!Globals.Database.PartyMemberOverheadInfo && isPartyMate)
+                                    {
+                                        en.Value.DrawName(null);
+                                    }
+
+                                    // If FriendOverheadInfo & GuildMemberOverheadInfo are off,
+                                    // let's prevent double draw / overlapping.
+                                    if (!Globals.Database.FriendOverheadInfo && isFriend &&
+                                        !Globals.Database.GuildMemberOverheadInfo && isGuildMate && !isPartyMate)
+                                    {
+                                        en.Value.DrawName(null);
+
+                                        continue;
+                                    }
+
+                                    // If FriendOverheadInfo is toggled off, draw Friends
+                                    // overhead information only when hovered by the cursor.
+                                    if (!Globals.Database.FriendOverheadInfo && isFriend && !isPartyMate)
+                                    {
+                                        // Skip if Friend is GuildMate.
+                                        if (Globals.Database.GuildMemberOverheadInfo && isGuildMate)
+                                        {
+                                            continue;
+                                        }
+
+                                        en.Value.DrawName(null);
+                                    }
+
+                                    // If GuildMemberOverheadInfo is toggled off, draw Guild Members
+                                    // overhead information only when hovered by the cursor.
+                                    if (!Globals.Database.GuildMemberOverheadInfo && isGuildMate && !isPartyMate)
+                                    {
+                                        // Skip if GuildMate is Friend.
+                                        if (Globals.Database.FriendOverheadInfo && isFriend)
+                                        {
+                                            continue;
+                                        }
+
+                                        en.Value.DrawName(null);
+                                    }
+                                }
+                            }
+                        }
+
+                        break;
+                    }
+                }
+            }
+        }
+        
         public void DrawTargets()
         {
             foreach (var en in Globals.Entities)

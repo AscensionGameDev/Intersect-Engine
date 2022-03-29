@@ -189,14 +189,14 @@ namespace Intersect.Client.Networking
             Network.SendPacket(new CloseShopPacket());
         }
 
-        public static void SendDepositItem(int slot, int amount)
+        public static void SendDepositItem(int slot, int amount, int bankSlot = -1)
         {
-            Network.SendPacket(new DepositItemPacket(slot, amount));
+            Network.SendPacket(new DepositItemPacket(slot, amount, bankSlot));
         }
 
-        public static void SendWithdrawItem(int slot, int amount)
+        public static void SendWithdrawItem(int slot, int amount, int invSlot = -1)
         {
-            Network.SendPacket(new WithdrawItemPacket(slot, amount));
+            Network.SendPacket(new WithdrawItemPacket(slot, amount, invSlot));
         }
 
         public static void SendCloseBank()
@@ -222,6 +222,11 @@ namespace Intersect.Client.Networking
         public static void SendPartyInvite(Guid targetId)
         {
             Network.SendPacket(new PartyInvitePacket(targetId));
+        }
+
+        public static void SendPartyInvite(string target)
+        {
+            Network.SendPacket(new PartyInvitePacket(target));
         }
 
         public static void SendPartyKick(Guid targetId)

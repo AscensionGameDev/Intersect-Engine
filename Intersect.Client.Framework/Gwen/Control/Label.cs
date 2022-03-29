@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Graphics;
@@ -13,7 +13,7 @@ namespace Intersect.Client.Framework.Gwen.Control
     /// <summary>
     ///     Static text label.
     /// </summary>
-    public class Label : Base
+    public class Label : Base, ILabel
     {
 
         public enum ControlState
@@ -76,11 +76,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         public Pos Alignment
         {
             get => mAlign;
-            set
-            {
-                mAlign = value;
-                Invalidate();
-            }
+            set => SetAndDoIfChanged(ref mAlign, value, Invalidate);
         }
 
         /// <summary>
@@ -240,53 +236,53 @@ namespace Intersect.Client.Framework.Gwen.Control
             {
                 SetBackgroundTemplate(
                     GameContentManager.Current.GetTexture(
-                        Framework.Content.TextureType.Gui, (string) obj["BackgroundTemplate"]
-                    ), (string) obj["BackgroundTemplate"]
+                        Framework.Content.TextureType.Gui, (string)obj["BackgroundTemplate"]
+                    ), (string)obj["BackgroundTemplate"]
                 );
             }
 
             if (obj["TextColor"] != null)
             {
-                TextColor = Color.FromString((string) obj["TextColor"]);
+                TextColor = Color.FromString((string)obj["TextColor"]);
             }
 
             mNormalTextColor = TextColor;
             if (obj["HoveredTextColor"] != null)
             {
-                mHoverTextColor = Color.FromString((string) obj["HoveredTextColor"]);
+                mHoverTextColor = Color.FromString((string)obj["HoveredTextColor"]);
             }
 
             if (obj["ClickedTextColor"] != null)
             {
-                mClickedTextColor = Color.FromString((string) obj["ClickedTextColor"]);
+                mClickedTextColor = Color.FromString((string)obj["ClickedTextColor"]);
             }
 
-            mDisabledTextColor = Color.FromString((string) obj["DisabledTextColor"], new Color(255, 90, 90, 90));
+            mDisabledTextColor = Color.FromString((string)obj["DisabledTextColor"], new Color(255, 90, 90, 90));
             if (obj["TextAlign"] != null)
             {
-                mAlign = (Pos) Enum.Parse(typeof(Pos), (string) obj["TextAlign"]);
+                mAlign = (Pos)Enum.Parse(typeof(Pos), (string)obj["TextAlign"]);
             }
 
             if (obj["TextPadding"] != null)
             {
-                TextPadding = Padding.FromString((string) obj["TextPadding"]);
+                TextPadding = Padding.FromString((string)obj["TextPadding"]);
             }
 
             if (obj["AutoSizeToContents"] != null)
             {
-                mAutoSizeToContents = (bool) obj["AutoSizeToContents"];
+                mAutoSizeToContents = (bool)obj["AutoSizeToContents"];
             }
 
             if (obj["Font"] != null && obj["Font"].Type != JTokenType.Null)
             {
-                var fontArr = ((string) obj["Font"]).Split(',');
-                fontInfo = (string) obj["Font"];
+                var fontArr = ((string)obj["Font"]).Split(',');
+                fontInfo = (string)obj["Font"];
                 Font = GameContentManager.Current.GetFont(fontArr[0], int.Parse(fontArr[1]));
             }
 
             if (obj["TextScale"] != null)
             {
-                mText.SetScale((float) obj["TextScale"]);
+                mText.SetScale((float)obj["TextScale"]);
             }
         }
 
@@ -435,7 +431,7 @@ namespace Intersect.Client.Framework.Gwen.Control
 
             if (0 != (align & Pos.CenterH))
             {
-                x = (int) (mTextPadding.Left +
+                x = (int)(mTextPadding.Left +
                            Padding.Left +
                            (Width -
                             mText.Width -
@@ -448,7 +444,7 @@ namespace Intersect.Client.Framework.Gwen.Control
 
             if (0 != (align & Pos.CenterV))
             {
-                y = (int) (mTextPadding.Top +
+                y = (int)(mTextPadding.Top +
                            Padding.Top +
                            (Height - mText.Height) * 0.5f -
                            mTextPadding.Bottom -

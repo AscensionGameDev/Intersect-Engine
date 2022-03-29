@@ -381,6 +381,33 @@ namespace Intersect.Client.Networking
             }
         }
 
+        // MapInstanceChanged Packet
+        public void HandlePacket(IPacketSender packetSender, MapInstanceChangedPacket packet)
+        {
+            var disposingEntities = new List<Guid>();
+            foreach (var pkt in packet.EntitiesToDispose)
+            {
+                HandlePacket(pkt);
+                disposingEntities.Add(pkt.EntityId);
+            }
+
+            foreach (var entity in disposingEntities)
+            {
+                Globals.EntitiesToDispose.Add(entity);
+            }
+
+            foreach (var mapId in packet.MapIdsToRefresh)
+            {
+                var map = MapInstance.Get(mapId);
+                if (map != null)
+                {
+                    Globals.EntitiesToDispose.AddRange(map.LocalEntities.Values
+                        .ToList()
+                        .Select(en => en.Id));
+                }
+            }
+        }
+
         //EntityPositionPacket
         public void HandlePacket(IPacketSender packetSender, EntityPositionPacket packet)
         {
@@ -1922,7 +1949,7 @@ namespace Intersect.Client.Networking
         //FriendsPacket
         public void HandlePacket(IPacketSender packetSender, FriendsPacket packet)
         {
-            Globals.Me.Friends.Clear();
+            Globals.Me?.Friends.Clear();
 
             foreach (var friend in packet.OnlineFriends)
             {
@@ -1933,7 +1960,7 @@ namespace Intersect.Client.Networking
                     Online = true
                 };
 
-                Globals.Me.Friends.Add(f);
+                Globals.Me?.Friends.Add(f);
             }
 
             foreach (var friend in packet.OfflineFriends)
@@ -1944,17 +1971,17 @@ namespace Intersect.Client.Networking
                     Online = false
                 };
 
-                Globals.Me.Friends.Add(f);
+                Globals.Me?.Friends.Add(f);
             }
 
-            Interface.Interface.GameUi.NotifyUpdateFriendsList();
+            Interface.Interface.GameUi?.NotifyUpdateFriendsList();
         }
 
         //FriendRequestPacket
         public void HandlePacket(IPacketSender packetSender, FriendRequestPacket packet)
         {
             var iBox = new InputBox(
-                Strings.Friends.request, Strings.Friends.requestprompt.ToString(packet.FriendName), true,
+                Strings.Friends.Request, Strings.Friends.RequestPrompt.ToString(packet.FriendName), true,
                 InputBox.InputType.YesNo, PacketSender.SendFriendRequestAccept, PacketSender.SendFriendRequestDecline,
                 packet.FriendId
             );

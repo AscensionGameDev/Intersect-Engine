@@ -1,0 +1,56 @@
+<Project>
+
+    <PropertyGroup Condition="'$(IntersectPluginType.ToLower())' == 'client'">
+        <IntersectExecutableName Condition="'$(IntersectExecutableName)' == '' AND '$(INTERSECT_CLIENT_EXECUTABLE_NAME)' == ''">$(INTERSECT_CLIENT_EXECUTABLE_NAME)</IntersectExecutableName>
+        <IntersectExecutableName Condition="'$(IntersectExecutableName)' == ''">Intersect Client</IntersectExecutableName>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(IntersectPluginType.ToLower())' == 'editor'">
+        <IntersectExecutableName Condition="'$(IntersectExecutableName)' == '' AND '$(INTERSECT_EDITOR_EXECUTABLE_NAME)' == ''">$(INTERSECT_EDITOR_EXECUTABLE_NAME)</IntersectExecutableName>
+        <IntersectExecutableName Condition="'$(IntersectExecutableName)' == ''">Intersect Editor</IntersectExecutableName>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(IntersectPluginType.ToLower())' == 'server'">
+        <IntersectExecutableName Condition="'$(IntersectExecutableName)' == '' AND '$(INTERSECT_SERVER_EXECUTABLE_NAME)' == ''">$(INTERSECT_SERVER_EXECUTABLE_NAME)</IntersectExecutableName>
+        <IntersectExecutableName Condition="'$(IntersectExecutableName)' == ''">Intersect Server</IntersectExecutableName>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(IntersectPluginType.ToLower())' != ''">
+        <IntersectExecutableDirectoryPath>$(IntersectPath)\bin\$(IntersectPluginType.ToLower())\$(Configuration)\net462</IntersectExecutableDirectoryPath>
+        <IntersectExecutablePath>$(IntersectExecutableDirectoryPath)\$(IntersectExecutableName).exe</IntersectExecutablePath>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(IntersectPluginType.ToLower())' != ''">
+        <!-- include PDB file by default to enable line numbers in stack traces -->
+        <DebugType>pdbonly</DebugType>
+        <DebugSymbols>true</DebugSymbols>
+
+        <!-- enable runtime debugging -->
+        <StartAction>Program</StartAction>
+        <StartProgram>.\$(IntersectExecutableName).exe</StartProgram>
+        <StartWorkingDirectory>$(IntersectExecutableDirectoryPath)</StartWorkingDirectory>
+        <StartArguments Condition="'$(IntersectPluginType.ToLower())' != 'server'">--plugin-directory ..\..\$(IntersectPluginTargetPath) --working-directory ..\..\$(BaseStartWorkingDirectory)\client</StartArguments>
+        <StartArguments Condition="'$(IntersectPluginType.ToLower())' == 'server'">--plugin-directory ..\..\$(IntersectPluginTargetPath) --working-directory ..\..\$(BaseStartWorkingDirectory)\server</StartArguments>
+    </PropertyGroup>
+
+    <Target Name="CheckIntersectOutputPath" BeforeTargets="BeforeBuild" Condition="'$(IntersectPluginType.ToLower())' != ''">
+        <Message Importance="High" Text="IntersectPluginType=$(IntersectPluginType) IntersectPluginType.ToLower()=$(IntersectPluginType.ToLower()) $(IntersectExecutableName)" />
+        <Error Condition="!Exists('$(IntersectExecutableDirectoryPath)')" Text="Unable to find working directory for the $(IntersectPluginType.ToLower()), '$(IntersectExecutableDirectoryPath)' does not exist." />
+        <Error Condition="!Exists('$(IntersectExecutablePath)')" Text="Unable to find the executable for the $(IntersectPluginType.ToLower()), '$(IntersectExecutablePath)' does not exist." />
+    </Target>
+
+    <Target Name="CopyBuiltPlugin" AfterTargets="AfterBuild" Condition="'$(IntersectPluginType.ToLower())' != ''">
+        <ItemGroup>
+            <CopiedBinaries Include="$(TargetDir)\*.*" Exclude="$(ExcludedIntersectDependencies)" />
+        </ItemGroup>
+
+        <Message Importance="High" Text="IntersectExecutableDirectoryPath=$(IntersectExecutableDirectoryPath)" />
+        <Message Importance="High" Text="IntersectPluginTargetPath=$(IntersectPluginTargetPath)" />
+        <Message Importance="High" Text="IntersectRepoPath=$(IntersectRepoPath)" />
+        <Message Importance="High" Text="TargetDir=$(TargetDir)" />
+        <Message Importance="High" Text="CopiedBinaries=@(CopiedBinaries)" />
+        <Message Importance="High" Text="Compile=@(Compile)" />
+        <Copy SourceFiles="@(CopiedBinaries)" DestinationFolder="$(IntersectPluginTargetPath)\$(AssemblyName)" />
+    </Target>
+
+</Project>

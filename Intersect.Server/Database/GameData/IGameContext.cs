@@ -22,7 +22,7 @@ namespace Intersect.Server.Database.GameData
 
         DbSet<ItemBase> Items { get; set; }
 
-        DbSet<MapInstance> Maps { get; set; }
+        DbSet<MapController> Maps { get; set; }
 
         DbSet<MapList> MapFolders { get; set; }
 

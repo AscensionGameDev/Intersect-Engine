@@ -56,14 +56,16 @@ namespace Intersect.Server.Entities.Events
             EventBase myEvent,
             EventPage myPage,
             Guid mapId,
+            Guid mapInstanceId,
             Event eventIndex,
             Player player
-        ) : base(Guid.NewGuid())
+        ) : base()
         {
             BaseEvent = myEvent;
             Id = BaseEvent.Id;
             MyPage = myPage;
             MapId = mapId;
+            MapInstanceId = mapInstanceId;
             X = eventIndex.X;
             Y = eventIndex.Y;
             Name = myEvent.Name;
@@ -128,16 +130,18 @@ namespace Intersect.Server.Entities.Events
             EventPage myPage,
             Guid instanceId,
             Guid mapId,
+            Guid mapInstanceId,
             Event eventIndex,
             Player player,
             EventPageInstance globalClone
-        ) : base(instanceId)
+        ) : base(instanceId, Guid.Empty)
         {
             BaseEvent = myEvent;
             Id = BaseEvent.Id;
             GlobalClone = globalClone;
             MyPage = myPage;
             MapId = mapId;
+            MapInstanceId = mapInstanceId;
             X = globalClone.X;
             Y = globalClone.Y;
             Name = myEvent.Name;
@@ -348,9 +352,9 @@ namespace Intersect.Server.Entities.Events
         {
             base.Move(moveDir, forPlayer, doNotUpdate, correction);
 
-            if (this.Trigger == EventTrigger.PlayerCollide && Passable)
+            if (Trigger == EventTrigger.PlayerCollide && Passable && MapController.TryGetInstanceFromMap(Map.Id, MapInstanceId, out var instance))
             {
-                var players = Map.GetPlayersOnMap();
+                var players = instance.GetPlayers();
                 foreach (var player in players)
                 {
                     if (player.X == X && player.Y == Y && player.Z == Z)
@@ -781,7 +785,7 @@ namespace Intersect.Server.Entities.Events
             }
         }
 
-        public bool ShouldDespawn(MapInstance map)
+        public bool ShouldDespawn(MapController map)
         {
             //Should despawn if conditions are not met OR an earlier page can spawn
             if (!Conditions.MeetsConditionLists(MyPage.ConditionLists, MyEventIndex.Player, MyEventIndex))
@@ -808,8 +812,14 @@ namespace Intersect.Server.Entities.Events
             if (GlobalClone != null)
             {
                 //Removing this line because the global clone MUST be on the same map and its hindering performance.
-                //var map = MapInstance.Get(GlobalClone.MapId);
-                if (map == null || !map.FindEvent(GlobalClone.BaseEvent, GlobalClone))
+                //var map = MapController.Get(GlobalClone.MapId);
+                if (MapController.TryGetInstanceFromMap(map.Id, MapInstanceId, out var mapInstance))
+                {
+                    if (!mapInstance.FindEvent(GlobalClone.BaseEvent, GlobalClone))
+                    {
+                        return true;
+                    }
+                } else // Couldn't get map or mapInstance
                 {
                     return true;
                 }

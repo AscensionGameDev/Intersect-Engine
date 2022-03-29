@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Globalization;
 
 namespace Intersect.Extensions
@@ -53,6 +53,25 @@ namespace Intersect.Extensions
             }
 
             return self + terminateWith;
+        }
+
+        public static string Slice(this string self, in int offset) => Slice(self, offset, -1);
+
+        public static string Slice(this string self, in int offset, in int length)
+        {
+            if (self == default)
+            {
+                throw new ArgumentNullException(nameof(self));
+            }
+
+            if (offset >= self.Length || offset <= -self.Length || length == 0)
+            {
+                return string.Empty;
+            }
+
+            var boundedOffset = (self.Length + offset) % self.Length;
+            var boundedLength = length < 0 ? self.Length - boundedOffset : length;
+            return self.Substring(boundedOffset, boundedLength);
         }
     }
 }
