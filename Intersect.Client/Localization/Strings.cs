@@ -106,14 +106,14 @@ namespace Intersect.Client.Localization
                     ))
                     {
                         var fieldValue = fieldInfo.GetValue(null);
-                        if (!dict.ContainsKey(fieldInfo.Name.ToLower()))
+                        if (!dict.ContainsKey(fieldInfo.Name))
                         {
                             continue;
                         }
 
                         if (fieldValue is LocalizedString)
                         {
-                            fieldInfo.SetValue(null, new LocalizedString((string) dict[fieldInfo.Name.ToLower()]));
+                            fieldInfo.SetValue(null, new LocalizedString((string) dict[fieldInfo.Name]));
                         }
                         else if (fieldValue is Dictionary<int, LocalizedString>)
                         {
@@ -141,7 +141,7 @@ namespace Intersect.Client.Localization
                                     continue;
                                 }
 
-                                existingDict[pair.Key.ToLower()] = pair.Value;
+                                existingDict[pair.Key] = pair.Value;
                             }
                         }
                     }
@@ -171,7 +171,7 @@ namespace Intersect.Client.Localization
                 {
                     if (p1.GetValue(null).GetType() == typeof(LocalizedString))
                     {
-                        dict.Add(p1.Name.ToLower(), ((LocalizedString) p1.GetValue(null)).ToString());
+                        dict.Add(p1.Name, ((LocalizedString) p1.GetValue(null)).ToString());
                     }
                     else if (p1.GetValue(null).GetType() == typeof(Dictionary<int, LocalizedString>))
                     {
@@ -188,7 +188,7 @@ namespace Intersect.Client.Localization
                         var dic = new Dictionary<string, string>();
                         foreach (var val in (Dictionary<string, LocalizedString>) p1.GetValue(null))
                         {
-                            dic.Add(val.Key.ToLower(), val.Value.ToString());
+                            dic.Add(val.Key, val.Value.ToString());
                         }
 
                         dict.Add(p1.Name, dic);
