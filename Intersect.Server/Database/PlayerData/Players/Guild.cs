@@ -629,7 +629,7 @@ namespace Intersect.Server.Database.PlayerData.Players
         /// <param name="count"></param>
         public void ExpandBankSlots(int count)
         {
-            if (count > BankSlotsCount)
+            if (count > BankSlotsCount && count <= Options.Instance.BankOpts.MaxBankSize)
             {
                 lock (mLock)
                 {
