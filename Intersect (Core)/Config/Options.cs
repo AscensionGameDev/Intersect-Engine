@@ -52,7 +52,7 @@ namespace Intersect
 
         public DatabaseOptions PlayerDatabase = new DatabaseOptions();
 
-        [JsonProperty("Player")] public PlayerOptions PlayerOpts = new PlayerOptions();
+        [JsonProperty("Player")] public PlayerOptions PlayerOpts = new  PlayerOptions ();
 
         [JsonProperty("Party")] public PartyOptions PartyOpts = new PartyOptions();
 
@@ -77,6 +77,8 @@ namespace Intersect
         public GuildOptions Guild = new GuildOptions();
 
         public LoggingOptions Logging = new LoggingOptions();
+        
+        public BankOptions BankOpts = new BankOptions();
 
         public static Options Instance { get; private set; }
 
@@ -104,7 +106,7 @@ namespace Intersect
 
         public static int MaxPlayerSkills => Instance.PlayerOpts.MaxSpells;
 
-        public static int MaxBankSlots => Instance.PlayerOpts.MaxBank;
+        public static int MaxBankSlots => Instance.PlayerOpts.DefaultBankSize;
 
         public static int MaxCharacters => Instance.PlayerOpts.MaxCharacters;
 

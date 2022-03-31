@@ -12,7 +12,7 @@
         /// <summary>
         /// Number of bank slots a player has.
         /// </summary>
-        public int MaxBank = 100;
+        public int DefaultBankSize = 100;
 
         /// <summary>
         /// Number of characters an account may create.

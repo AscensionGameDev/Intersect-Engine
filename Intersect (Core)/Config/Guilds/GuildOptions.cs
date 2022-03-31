@@ -32,7 +32,7 @@ namespace Intersect.Config.Guilds
         /// <summary>
         /// Default number of storage slots in guild banks
         /// </summary>
-        public int GuildBankSlots { get; set; } = 50;
+        public int DefaultGuildBankSlots { get; set; } = 50;
 
         /// <summary>
         /// Array of guild ranks that are available in this game

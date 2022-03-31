@@ -62,7 +62,7 @@ namespace Intersect.Server.Database.PlayerData.Players
         /// <summary>
         /// Sets the number of bank slots alotted to this guild. Banks lots can only expand.
         /// </summary>
-        public int BankSlotsCount { get; set; } = Options.Instance.Guild.GuildBankSlots;
+        public int BankSlotsCount { get; set; } = Options.Instance.Guild.DefaultGuildBankSlots;
 
         /// <summary>
         /// Contains a record of all guild members
@@ -105,7 +105,7 @@ namespace Intersect.Server.Database.PlayerData.Players
                         FoundingDate = DateTime.UtcNow
                     };
 
-                    SlotHelper.ValidateSlots(guild.Bank, Options.Instance.Guild.GuildBankSlots);
+                    SlotHelper.ValidateSlots(guild.Bank, Options.Instance.Guild.DefaultGuildBankSlots);
                     guild.Bank = guild.Bank.OrderBy(bankSlot => bankSlot?.Slot).ToList();
 
                     var player = context.Players.FirstOrDefault(p => p.Id == creator.Id);

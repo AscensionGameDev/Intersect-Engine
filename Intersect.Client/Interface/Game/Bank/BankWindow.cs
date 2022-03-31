@@ -81,8 +81,18 @@ namespace Intersect.Client.Interface.Game.Bank
 
             X = mBankWindow.X;
             Y = mBankWindow.Y;
-            for (var i = 0; i < Globals.BankSlots; i++)
+            for (var i = 0; i < Options.Instance.BankOpts.MaxBankSize; i++)
             {
+                if (i >= Globals.BankSlots)
+                {
+                    Items[i].Container.Hide();
+                    mValues[i].Hide();
+                    SetItemPosition(i);
+                    continue;
+                }
+
+                Items[i].Container.Show();
+                SetItemPosition(i);
                 if (Globals.Bank[i] != null && Globals.Bank[i].ItemId != Guid.Empty)
                 {
                     var item = ItemBase.Get(Globals.Bank[i].ItemId);
@@ -118,7 +128,7 @@ namespace Intersect.Client.Interface.Game.Bank
 
         private void InitItemContainer()
         {
-            for (var i = 0; i < Options.Player.MaxBank; i++)
+            for (var i = 0; i < Options.Instance.BankOpts.MaxBankSize; i++)
             {
                 Items.Add(new BankItem(this, i));
                 Items[i].Container = new ImagePanel(mItemContainer, "BankItem");
@@ -126,22 +136,43 @@ namespace Intersect.Client.Interface.Game.Bank
 
                 mValues.Add(new Label(Items[i].Container, "BankItemValue"));
                 mValues[i].Text = "";
+                mValues[i].Hide();
 
                 Items[i].Container.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
 
+                SetItemPosition(i);
+
+                Items[i].Pnl.Hide();
+                Items[i].Container.Hide();
+            }
+        }
+
+        /// <summary>
+        /// Sets the item's position based on whether it's hidden or not
+        /// </summary>
+        /// <param name="i">Index of the item slot</param>
+        private void SetItemPosition(int i)
+        {
+            // If the item is hidden, the player doesn't have that slot unlocked - move it to the top so that the scrollbar doesn't lie to the player
+            if (Items[i].Container.IsHidden)
+            {
+                Items[i].Container.SetPosition(0, 0);
+            }
+            else
+            {
                 var xPadding = Items[i].Container.Margin.Left + Items[i].Container.Margin.Right;
                 var yPadding = Items[i].Container.Margin.Top + Items[i].Container.Margin.Bottom;
-                Items[i]
-                    .Container.SetPosition(
-                        i %
-                        (mItemContainer.Width / (Items[i].Container.Width + xPadding)) *
-                        (Items[i].Container.Width + xPadding) +
-                        xPadding,
-                        i /
-                        (mItemContainer.Width / (Items[i].Container.Width + xPadding)) *
-                        (Items[i].Container.Height + yPadding) +
-                        yPadding
-                    );
+
+                Items[i].Container.SetPosition(
+                    i %
+                    (mItemContainer.Width / (Items[i].Container.Width + xPadding)) *
+                    (Items[i].Container.Width + xPadding) +
+                    xPadding,
+                    i /
+                    (mItemContainer.Width / (Items[i].Container.Width + xPadding)) *
+                    (Items[i].Container.Height + yPadding) +
+                    yPadding
+                );
             }
         }
 
