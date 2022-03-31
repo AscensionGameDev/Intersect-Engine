@@ -10,6 +10,11 @@ namespace Intersect.Config.Guilds
     public class GuildOptions
     {
         /// <summary>
+        /// The intersect default value for guild bank slots
+        /// </summary>
+        public const int DefaultBankSlots = 50;
+
+        /// <summary>
         /// Configures whether or not to allow guild members to attack eachother.
         /// </summary>
         public bool AllowGuildMemberPvp { get; set; } = false;
@@ -32,7 +37,7 @@ namespace Intersect.Config.Guilds
         /// <summary>
         /// Default number of storage slots in guild banks
         /// </summary>
-        public int DefaultGuildBankSlots { get; set; } = 50;
+        public int InitialBankSlots { get; set; } = DefaultBankSlots;
 
         /// <summary>
         /// Array of guild ranks that are available in this game

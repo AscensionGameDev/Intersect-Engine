@@ -3,6 +3,10 @@
 
     public class PlayerOptions
     {
+        /// <summary>
+        /// Intersect default for initial player bank slots
+        /// </summary>
+        public const int DefaultInitialBankSlots = 100;
 
         /// <summary>
         /// A percentage between 0 and 100 which determines the chance in which they will lose any given item in their inventory when killed.
@@ -12,7 +16,7 @@
         /// <summary>
         /// Number of bank slots a player has.
         /// </summary>
-        public int DefaultBankSize = 100;
+        public int InitialBankslots { get; set; } = DefaultInitialBankSlots;
 
         /// <summary>
         /// Number of characters an account may create.

@@ -16,10 +16,10 @@ namespace Intersect.Server.Database.PlayerData.Migrations
             // Go through each and every quest to check if all the tasks have valid events.
             foreach (var guild in context.Guilds)
             {
-                if (guild.BankSlotsCount > Options.Instance.BankOpts.MaxBankSize)
+                if (guild.BankSlotsCount > Options.Instance.Bank.MaxSlots)
                 {
-                    Log.Info($"Too many bank slots ({guild.BankSlotsCount}) for guild {guild.Name}. Setting to {Options.Instance.BankOpts.MaxBankSize}.");
-                    guild.BankSlotsCount = Options.Instance.BankOpts.MaxBankSize;
+                    Log.Info($"Too many bank slots ({guild.BankSlotsCount}) for guild {guild.Name}. Setting to {Options.Instance.Bank.MaxSlots}.");
+                    guild.BankSlotsCount = Options.Instance.Bank.MaxSlots;
                 }
             }
 
