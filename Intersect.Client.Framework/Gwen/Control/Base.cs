@@ -843,20 +843,23 @@ namespace Intersect.Client.Framework.Gwen.Control
 
             _ = GameContentManager.Current?.GetLayout(stage, Name, resolution, false, (rawLayout, cacheHit) =>
             {
-                try
+                if (!string.IsNullOrWhiteSpace(rawLayout))
                 {
-                    var obj = JsonConvert.DeserializeObject<JObject>(rawLayout);
-
-                    if (obj != null)
+                    try
                     {
-                        LoadJson(obj);
-                        ProcessAlignments();
+                        var obj = JsonConvert.DeserializeObject<JObject>(rawLayout);
+
+                        if (obj != null)
+                        {
+                            LoadJson(obj);
+                            ProcessAlignments();
+                        }
                     }
-                }
-                catch (Exception exception)
-                {
-                    //Log JSON UI Loading Error
-                    throw new Exception("Error loading json ui for " + CanonicalName, exception);
+                    catch (Exception exception)
+                    {
+                        //Log JSON UI Loading Error
+                        throw new Exception("Error loading json ui for " + CanonicalName, exception);
+                    }
                 }
 
                 if (!cacheHit && saveOutput)
@@ -1348,12 +1351,8 @@ namespace Intersect.Client.Framework.Gwen.Control
                 ((Modal) mParent).BringToFront();
             }
 
-            if (mActualParent == null)
-            {
-                return;
-            }
-
-            if (mActualParent.mChildren.Last() == this)
+            var last = mActualParent?.mChildren.LastOrDefault();
+            if (last == default || last == this)
             {
                 return;
             }
@@ -2232,6 +2231,10 @@ namespace Intersect.Client.Framework.Gwen.Control
             if (ToolTip != null)
             {
                 Gwen.ToolTip.Disable(this);
+            }
+            else if (Parent != null && Parent.ToolTip != null)
+            {
+                Gwen.ToolTip.Disable(Parent);
             }
 
             Redraw();
