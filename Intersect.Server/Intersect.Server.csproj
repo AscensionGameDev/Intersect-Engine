@@ -3,6 +3,7 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net462</TargetFramework>
+    <Configurations>Debug;Release;NoFody</Configurations>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -13,6 +14,11 @@
     <AssemblyName>Intersect Server</AssemblyName>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <FileAlignment>512</FileAlignment>
+    <GenerateRuntimeConfigurationFiles>True</GenerateRuntimeConfigurationFiles>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration.ToLower())' == 'nofody'">
+    <DisableFody>true</DisableFody>
   </PropertyGroup>
 
   <ItemGroup>
