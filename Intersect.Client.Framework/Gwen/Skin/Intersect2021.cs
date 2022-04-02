@@ -37,10 +37,10 @@ namespace Intersect.Client.Framework.Gwen.Skin
             mTextures.Window.Normal = new Bordered(mTexture, 0, 0, 16, 40, new Margin(4, 32, 4, 4));
             mTextures.Window.Inactive = new Bordered(mTexture, 16, 0, 16, 40, new Margin(4, 32, 4, 4));
 
-            mTextures.Window.Close = new Single(mTexture, 60, 0, 24, 24);
-            mTextures.Window.CloseDown = new Single(mTexture, 60, 24, 24, 24);
-            mTextures.Window.CloseDisabled = new Single(mTexture, 60, 48, 24, 24);
-            mTextures.Window.CloseHover = new Single(mTexture, 60, 72, 24, 24);
+            mTextures.Window.Close = new SingleElement(mTexture, 60, 0, 24, 24);
+            mTextures.Window.CloseDown = new SingleElement(mTexture, 60, 24, 24, 24);
+            mTextures.Window.CloseDisabled = new SingleElement(mTexture, 60, 48, 24, 24);
+            mTextures.Window.CloseHover = new SingleElement(mTexture, 60, 72, 24, 24);
 
             mTextures.Panel.Normal = new Bordered(mTexture, 32, 0, 16, 16, Margin.Four);
             mTextures.Panel.Highlight = new Bordered(mTexture, 32, 16, 16, 16, Margin.Four);
@@ -52,23 +52,23 @@ namespace Intersect.Client.Framework.Gwen.Skin
             mTextures.Input.Button.Hovered = new Bordered(mTexture, 48, 12, 12, 12, Margin.Four);
             mTextures.Input.Button.Pressed = new Bordered(mTexture, 48, 36, 12, 12, Margin.Four);
 
-            mTextures.CheckBox.Default.Box = new Single(mTexture, 84, 0, 22, 22);
-            mTextures.CheckBox.Default.Fill = new Single(mTexture, 106, 0, 22, 22);
-            mTextures.CheckBox.Active.Box = new Single(mTexture, 84, 22, 22, 22);
-            mTextures.CheckBox.Active.Fill = new Single(mTexture, 106, 22, 22, 22);
-            mTextures.CheckBox.Hovered.Box = new Single(mTexture, 84, 44, 22, 22);
-            mTextures.CheckBox.Hovered.Fill = new Single(mTexture, 106, 44, 22, 22);
-            mTextures.CheckBox.Disabled.Box = new Single(mTexture, 84, 66, 22, 22);
-            mTextures.CheckBox.Disabled.Fill = new Single(mTexture, 106, 66, 22, 22);
+            mTextures.CheckBox.Default.Box = new SingleElement(mTexture, 84, 0, 22, 22);
+            mTextures.CheckBox.Default.Fill = new SingleElement(mTexture, 106, 0, 22, 22);
+            mTextures.CheckBox.Active.Box = new SingleElement(mTexture, 84, 22, 22, 22);
+            mTextures.CheckBox.Active.Fill = new SingleElement(mTexture, 106, 22, 22, 22);
+            mTextures.CheckBox.Hovered.Box = new SingleElement(mTexture, 84, 44, 22, 22);
+            mTextures.CheckBox.Hovered.Fill = new SingleElement(mTexture, 106, 44, 22, 22);
+            mTextures.CheckBox.Disabled.Box = new SingleElement(mTexture, 84, 66, 22, 22);
+            mTextures.CheckBox.Disabled.Fill = new SingleElement(mTexture, 106, 66, 22, 22);
 
-            mTextures.RadioButton.Default.Box = new Single(mTexture, 128, 0, 22, 22);
-            mTextures.RadioButton.Default.Fill = new Single(mTexture, 150, 0, 22, 22);
-            mTextures.RadioButton.Active.Box = new Single(mTexture, 128, 22, 22, 22);
-            mTextures.RadioButton.Active.Fill = new Single(mTexture, 150, 22, 22, 22);
-            mTextures.RadioButton.Hovered.Box = new Single(mTexture, 128, 44, 22, 22);
-            mTextures.RadioButton.Hovered.Fill = new Single(mTexture, 150, 44, 22, 22);
-            mTextures.RadioButton.Disabled.Box = new Single(mTexture, 128, 66, 22, 22);
-            mTextures.RadioButton.Disabled.Fill = new Single(mTexture, 150, 66, 22, 22);
+            mTextures.RadioButton.Default.Box = new SingleElement(mTexture, 128, 0, 22, 22);
+            mTextures.RadioButton.Default.Fill = new SingleElement(mTexture, 150, 0, 22, 22);
+            mTextures.RadioButton.Active.Box = new SingleElement(mTexture, 128, 22, 22, 22);
+            mTextures.RadioButton.Active.Fill = new SingleElement(mTexture, 150, 22, 22, 22);
+            mTextures.RadioButton.Hovered.Box = new SingleElement(mTexture, 128, 44, 22, 22);
+            mTextures.RadioButton.Hovered.Fill = new SingleElement(mTexture, 150, 44, 22, 22);
+            mTextures.RadioButton.Disabled.Box = new SingleElement(mTexture, 128, 66, 22, 22);
+            mTextures.RadioButton.Disabled.Fill = new SingleElement(mTexture, 150, 66, 22, 22);
 
         }
 
@@ -78,7 +78,7 @@ namespace Intersect.Client.Framework.Gwen.Skin
 
         public override void DrawCheckBox(Control.Base control, bool selected, bool hovered, bool depressed)
         {
-            if (!(control is CheckBox checkBox))
+            if (control is not CheckBox checkBox)
             {
                 return;
             }
@@ -113,7 +113,7 @@ namespace Intersect.Client.Framework.Gwen.Skin
 
         public override void DrawRadioButton(Control.Base control, bool selected, bool hovered, bool depressed)
         {
-            if (!(control is RadioButton radioButton))
+            if (control is not RadioButton radioButton)
             {
                 return;
             }
