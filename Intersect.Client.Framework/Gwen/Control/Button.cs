@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Graphics;
@@ -65,7 +65,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         ///     Control constructor.
         /// </summary>
         /// <param name="parent">Parent control.</param>
-        public Button(Base parent, string name = "") : base(parent, name)
+        public Button(Base parent, string name = default, bool disableText = false) : base(parent, name, disableText)
         {
             AutoSizeToContents = false;
             SetSize(100, 20);
