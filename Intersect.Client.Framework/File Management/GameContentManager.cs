@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
+using Intersect.Async;
 using Intersect.Client.Framework.Audio;
 using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.Graphics;
@@ -367,7 +368,7 @@ namespace Intersect.Client.Framework.File_Management
                 onLayoutReady();
             }
 
-            void addCreateOrChangeListener(string targetPath)
+            void addCreateOrChangeListener(string targetPath, bool createIfMissing)
             {
                 var resourcePath = Path.Combine("resources", targetPath);
                 if (File.Exists(resourcePath))
@@ -376,6 +377,11 @@ namespace Intersect.Client.Framework.File_Management
                 }
                 else
                 {
+                    if (createIfMissing)
+                    {
+                        layoutHandler?.Invoke(string.Empty, false);
+                    }
+
                     ContentWatcher?.AddEventListener(ContentWatcher.Event.Create, targetPath, () => addChangeListener(targetPath));
                 }
             }
@@ -383,11 +389,11 @@ namespace Intersect.Client.Framework.File_Management
             if (!string.IsNullOrWhiteSpace(resolution))
             {
                 var resolutionPath = Path.Combine(resourcePartialDirectory, $"{name}.{resolution}.json");
-                addCreateOrChangeListener(resolutionPath);
+                addCreateOrChangeListener(resolutionPath, false);
             }
 
             var genericPath = Path.Combine(resourcePartialDirectory, $"{name}.json");
-            addCreateOrChangeListener(genericPath);
+            addCreateOrChangeListener(genericPath, true);
 
             return true;
         }
@@ -425,7 +431,7 @@ namespace Intersect.Client.Framework.File_Management
             var genericPath = Path.Combine(resourceDirectory, $"{name}.json");
             if (File.Exists(genericPath))
             {
-                rawLayout = File.ReadAllText(genericPath);
+                rawLayout = ExceptionRepeater.Run(() => File.ReadAllText(genericPath), 5);
                 mUiDict[key] = rawLayout;
                 return rawLayout;
             }

@@ -1,4 +1,4 @@
-﻿using Intersect.Client.Framework.GenericClasses;
+using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 
 using System;
@@ -101,9 +101,13 @@ namespace Intersect.Client.Framework.Gwen.Skin
         {
         }
 
+        public virtual void DrawRadioButton(Control.Base control, bool selected, bool hovered, bool depressed) => DrawRadioButton(control, selected, depressed);
+
         public virtual void DrawCheckBox(Control.Base control, bool selected, bool depressed)
         {
         }
+
+        public virtual void DrawCheckBox(Control.Base control, bool selected, bool hovered, bool depressed) => DrawCheckBox(control, selected, depressed);
 
         public virtual void DrawGroupBox(Control.Base control, int textStart, int textHeight, int textWidth)
         {
@@ -207,6 +211,11 @@ namespace Intersect.Client.Framework.Gwen.Skin
 
         public virtual void DrawDebugOutlines(Control.Base control)
         {
+            if (control.IsHidden)
+            {
+                return;
+            }
+
             mRenderer.DrawColor = control.PaddingOutlineColor;
             var inner = new Rectangle(
                 control.Bounds.Left + control.Padding.Left, control.Bounds.Top + control.Padding.Top,

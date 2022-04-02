@@ -21,6 +21,8 @@ namespace Intersect.Client.Interface.Debugging
     internal sealed class DebugWindow : WindowControl
     {
         private readonly List<IDisposable> _disposables;
+        private bool _wasParentDrawDebugOutlinesEnabled;
+        private bool _drawDebugOutlinesEnabled;
 
         public DebugWindow(Base parent) : base(parent, Strings.Debug.Title, false, nameof(DebugWindow))
         {
@@ -28,7 +30,8 @@ namespace Intersect.Client.Interface.Debugging
 
             DisableResizing();
 
-            CheckboxDrawDebugOutlines = CreateButtonDrawDebugOutlines();
+            CheckboxDrawDebugOutlines = CreateCheckboxDrawDebugOutlines();
+            CheckboxEnableLayoutHotReloading = CreateCheckboxEnableLayoutHotReloading();
             ButtonShutdownServer = CreateButtonShutdownServer();
             ButtonShutdownServerAndExit = CreateButtonShutdownServerAndExit();
             TableDebugStats = CreateTableDebugStats();
@@ -40,11 +43,37 @@ namespace Intersect.Client.Interface.Debugging
 
         private LabeledCheckBox CheckboxDrawDebugOutlines { get; }
 
+        private LabeledCheckBox CheckboxEnableLayoutHotReloading { get; }
+
         private Button ButtonShutdownServer { get; }
 
         private Button ButtonShutdownServerAndExit { get; }
 
         private Table TableDebugStats { get; }
+
+        protected override void OnAttached(Base parent)
+        {
+            base.OnAttached(parent);
+
+            Root.DrawDebugOutlines = _drawDebugOutlinesEnabled;
+        }
+
+        protected override void OnAttaching(Base newParent)
+        {
+            base.OnAttaching(newParent);
+            _wasParentDrawDebugOutlinesEnabled = newParent.DrawDebugOutlines;
+        }
+
+        protected override void OnDetached()
+        {
+            base.OnDetached();
+        }
+
+        protected override void OnDetaching(Base oldParent)
+        {
+            base.OnDetaching(oldParent);
+            oldParent.DrawDebugOutlines = _wasParentDrawDebugOutlinesEnabled;
+        }
 
         protected override void Render(Framework.Gwen.Skin.Base skin)
         {
@@ -61,18 +90,41 @@ namespace Intersect.Client.Interface.Debugging
             }
         }
 
-        private LabeledCheckBox CreateButtonDrawDebugOutlines()
+        private LabeledCheckBox CreateCheckboxDrawDebugOutlines()
         {
             var checkbox = new LabeledCheckBox(this, nameof(CheckboxDrawDebugOutlines))
             {
-                IsChecked = Root.DrawDebugOutlines,
+                IsChecked = Root?.DrawDebugOutlines ?? false,
                 Text = Strings.Debug.DrawDebugOutlines,
             };
 
             checkbox.CheckChanged += (sender, args) =>
             {
-                Root.DrawDebugOutlines = checkbox.IsChecked;
+                _drawDebugOutlinesEnabled = checkbox.IsChecked;
+                if (Root != default)
+                {
+                    Root.DrawDebugOutlines = _drawDebugOutlinesEnabled;
+                }
             };
+
+            return checkbox;
+        }
+
+        private LabeledCheckBox CreateCheckboxEnableLayoutHotReloading()
+        {
+            var checkbox = new LabeledCheckBox(this, nameof(CheckboxEnableLayoutHotReloading))
+            {
+                IsChecked = Globals.ContentManager.ContentWatcher.Enabled,
+                Text = Strings.Debug.EnableLayoutHotReloading,
+            };
+
+            checkbox.CheckChanged += (sender, args) =>
+            {
+                Globals.ContentManager.ContentWatcher.Enabled = checkbox.IsChecked;
+            };
+
+            checkbox.SetToolTipText(Strings.Internals.ExperimentalFeatureTooltip);
+            checkbox.ToolTipFont = Skin.DefaultFont;
 
             return checkbox;
         }
@@ -186,10 +238,11 @@ namespace Intersect.Client.Interface.Debugging
 
             var controlUnderCursorProvider = new ControlUnderCursorProvider();
             table.AddRow(Strings.Internals.Type).Listen(controlUnderCursorProvider, 0);
-            table.AddRow(Strings.Internals.LocalItem.ToString(Strings.Internals.Bounds)).Listen(controlUnderCursorProvider, 1);
-            table.AddRow(Strings.Internals.GlobalItem.ToString(Strings.Internals.Bounds)).Listen(controlUnderCursorProvider, 2);
-            table.AddRow(Strings.Internals.Color).Listen(controlUnderCursorProvider, 3);
-            table.AddRow(Strings.Internals.ColorOverride).Listen(controlUnderCursorProvider, 4);
+            table.AddRow(Strings.Internals.Name).Listen(controlUnderCursorProvider, 1);
+            table.AddRow(Strings.Internals.LocalItem.ToString(Strings.Internals.Bounds)).Listen(controlUnderCursorProvider, 2);
+            table.AddRow(Strings.Internals.GlobalItem.ToString(Strings.Internals.Bounds)).Listen(controlUnderCursorProvider, 3);
+            table.AddRow(Strings.Internals.Color).Listen(controlUnderCursorProvider, 4);
+            table.AddRow(Strings.Internals.ColorOverride).Listen(controlUnderCursorProvider, 5);
             _disposables.Add(controlUnderCursorProvider.Generator.Start());
 
             return table;
@@ -216,10 +269,11 @@ namespace Intersect.Client.Interface.Debugging
                 return new AsyncValueGenerator<Base>(() => Task.Delay(100).ContinueWith((completedTask) => Interface.FindControlAtCursor(), TaskScheduler.Current), (component) =>
                 {
                     DataChanged?.Invoke(this, new TableDataChangedEventArgs(0, 1, default, component?.GetType()?.Name ?? Strings.Internals.NotApplicable));
-                    DataChanged?.Invoke(this, new TableDataChangedEventArgs(1, 1, default, component?.Bounds.ToString() ?? string.Empty));
-                    DataChanged?.Invoke(this, new TableDataChangedEventArgs(2, 1, default, component?.BoundsGlobal.ToString() ?? string.Empty));
-                    DataChanged?.Invoke(this, new TableDataChangedEventArgs(3, 1, default, (component as IColorableText)?.TextColor ?? string.Empty));
-                    DataChanged?.Invoke(this, new TableDataChangedEventArgs(4, 1, default, (component as IColorableText)?.TextColorOverride ?? string.Empty));
+                    DataChanged?.Invoke(this, new TableDataChangedEventArgs(1, 1, default, component?.CanonicalName ?? string.Empty));
+                    DataChanged?.Invoke(this, new TableDataChangedEventArgs(2, 1, default, component?.Bounds.ToString() ?? string.Empty));
+                    DataChanged?.Invoke(this, new TableDataChangedEventArgs(3, 1, default, component?.BoundsGlobal.ToString() ?? string.Empty));
+                    DataChanged?.Invoke(this, new TableDataChangedEventArgs(4, 1, default, (component as IColorableText)?.TextColor ?? string.Empty));
+                    DataChanged?.Invoke(this, new TableDataChangedEventArgs(5, 1, default, (component as IColorableText)?.TextColorOverride ?? string.Empty));
 
                 }, cancellationToken);
             }

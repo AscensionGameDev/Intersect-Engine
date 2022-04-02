@@ -131,6 +131,9 @@ namespace Intersect.Client.Interface
 
         public static void DestroyGwen()
         {
+            // Preserve the debug window
+            MutableInterface.DetachDebugWindow();
+
             //The canvases dispose of all of their children.
             sMenuCanvas?.Dispose();
             sGameCanvas?.Dispose();

@@ -34,10 +34,7 @@ namespace Intersect.Client.MonoGame.File_Management
                 Environment.Exit(1);
             }
 
-            if (Debugger.IsAttached)
-            {
-                ContentWatcher = new ContentWatcher(rootPath);
-            }
+            ContentWatcher = new ContentWatcher(rootPath);
         }
 
         //Graphic Loading

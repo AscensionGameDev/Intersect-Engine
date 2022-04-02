@@ -211,17 +211,20 @@ namespace Intersect.Client.Framework.Gwen.Control
                     return;
                 }
 
-                if (mParent != null)
+                if (mParent != default)
                 {
-                    mParent.RemoveChild(this, false);
+                    OnDetaching(mParent);
                 }
 
-                mParent = value;
-                mActualParent = null;
+                mParent?.RemoveChild(this, false);
 
-                if (mParent != null)
+                mParent = value;
+                mActualParent = default;
+
+                mParent?.AddChild(this);
+                if (mParent != default)
                 {
-                    mParent.AddChild(this);
+                    OnAttaching(mParent);
                 }
             }
         }
@@ -843,20 +846,23 @@ namespace Intersect.Client.Framework.Gwen.Control
 
             _ = GameContentManager.Current?.GetLayout(stage, Name, resolution, false, (rawLayout, cacheHit) =>
             {
-                try
+                if (!string.IsNullOrWhiteSpace(rawLayout))
                 {
-                    var obj = JsonConvert.DeserializeObject<JObject>(rawLayout);
-
-                    if (obj != null)
+                    try
                     {
-                        LoadJson(obj);
-                        ProcessAlignments();
+                        var obj = JsonConvert.DeserializeObject<JObject>(rawLayout);
+
+                        if (obj != null)
+                        {
+                            LoadJson(obj);
+                            ProcessAlignments();
+                        }
                     }
-                }
-                catch (Exception exception)
-                {
-                    //Log JSON UI Loading Error
-                    throw new Exception("Error loading json ui for " + CanonicalName, exception);
+                    catch (Exception exception)
+                    {
+                        //Log JSON UI Loading Error
+                        throw new Exception("Error loading json ui for " + CanonicalName, exception);
+                    }
                 }
 
                 if (!cacheHit && saveOutput)
@@ -1348,12 +1354,8 @@ namespace Intersect.Client.Framework.Gwen.Control
                 ((Modal) mParent).BringToFront();
             }
 
-            if (mActualParent == null)
-            {
-                return;
-            }
-
-            if (mActualParent.mChildren.Last() == this)
+            var last = mActualParent?.mChildren.LastOrDefault();
+            if (last == default || last == this)
             {
                 return;
             }
@@ -1463,6 +1465,7 @@ namespace Intersect.Client.Framework.Gwen.Control
             {
                 mChildren.Add(child);
                 child.mActualParent = this;
+                child.DrawDebugOutlines = DrawDebugOutlines;
             }
 
             OnChildAdded(child);
@@ -1514,12 +1517,29 @@ namespace Intersect.Client.Framework.Gwen.Control
             }
         }
 
+        protected virtual void OnAttached(Base parent)
+        {
+        }
+
+        protected virtual void OnAttaching(Base newParent)
+        {
+        }
+
+        protected virtual void OnDetached()
+        {
+        }
+
+        protected virtual void OnDetaching(Base oldParent)
+        {
+        }
+
         /// <summary>
         ///     Handler invoked when a child is added.
         /// </summary>
         /// <param name="child">Child added.</param>
         protected virtual void OnChildAdded(Base child)
         {
+            child?.OnAttached(this);
             Invalidate();
         }
 
@@ -1529,6 +1549,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// <param name="child">Child removed.</param>
         protected virtual void OnChildRemoved(Base child)
         {
+            child?.OnDetached();
             Invalidate();
         }
 
@@ -2232,6 +2253,10 @@ namespace Intersect.Client.Framework.Gwen.Control
             if (ToolTip != null)
             {
                 Gwen.ToolTip.Disable(this);
+            }
+            else if (Parent != null && Parent.ToolTip != null)
+            {
+                Gwen.ToolTip.Disable(Parent);
             }
 
             Redraw();

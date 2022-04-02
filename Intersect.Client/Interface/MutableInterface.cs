@@ -12,13 +12,31 @@ namespace Intersect.Client.Interface
     public abstract class MutableInterface : IMutableInterface
     {
 
-        private readonly DebugWindow _debugWindow;
+        private static DebugWindow _debugWindow;
+
+        public static void DetachDebugWindow()
+        {
+            if (_debugWindow != null)
+            {
+                _debugWindow.Parent = default;
+            }
+        }
+
+        private static void EnsureDebugWindowInitialized(Base parent)
+        {
+            if (_debugWindow == default)
+            {
+                _debugWindow = new DebugWindow(parent);
+            }
+
+            _debugWindow.Parent = parent;
+        }
 
         protected internal MutableInterface(Base root)
         {
             Root = root;
 
-            _debugWindow = new DebugWindow(root);
+            EnsureDebugWindowInitialized(root);
         }
 
         internal Base Root { get; }
@@ -62,7 +80,7 @@ namespace Intersect.Client.Interface
         public void Remove<TElement>(TElement element, bool dispose = false) where TElement : Base =>
             Root.RemoveChild(element, dispose);
 
-        public bool ToggleDebug()
+        public static bool ToggleDebug()
         {
             _debugWindow.ToggleHidden();
             return _debugWindow.IsVisible;

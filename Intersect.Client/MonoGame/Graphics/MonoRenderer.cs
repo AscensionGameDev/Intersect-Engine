@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -101,7 +101,9 @@ namespace Intersect.Client.MonoGame.Graphics
                 ColorSourceBlend = Blend.SourceAlpha,
                 AlphaSourceBlend = Blend.One,
                 ColorDestinationBlend = Blend.InverseSourceAlpha,
-                AlphaDestinationBlend = Blend.InverseSourceAlpha
+                AlphaDestinationBlend = Blend.One,
+                ColorBlendFunction = BlendFunction.Add,
+                AlphaBlendFunction = BlendFunction.Add,
             };
 
             mMultiplyState = new BlendState()
