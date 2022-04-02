@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 using Intersect.Localization;
@@ -6,7 +7,7 @@ using MessagePack;
 namespace Intersect
 {
     [MessagePackObject]
-    public class Color
+    public class Color : IEquatable<Color>
     {
 
         public enum ChatColor
@@ -241,11 +242,16 @@ namespace Intersect
             return new Color(parts[0], parts[1], parts[2], parts[3]);
         }
 
-        public static implicit operator Color(string colorString)
-        {
-            return FromString(colorString);
-        }
+        public static implicit operator Color(string colorString) => FromString(colorString);
 
+        public static bool operator ==(Color left, Color right) =>
+            left?.ToArgb() == right?.ToArgb();
+
+        public static bool operator !=(Color left, Color right) =>
+            left?.ToArgb() != right?.ToArgb();
+
+        public override bool Equals(object obj) => obj is Color color && Equals(color);
+
+        public bool Equals(Color other) => ToArgb() == other?.ToArgb();
     }
-
 }
