@@ -622,6 +622,9 @@ namespace Intersect.Client.Localization
             public static LocalizedString Draws = @"Draws";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString EnableLayoutHotReloading = @"Enable Experimental Layout Hot Reloading";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString EntitiesDrawn = @"Entities Drawn";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -949,6 +952,9 @@ namespace Intersect.Client.Localization
             public static LocalizedString CoordinateZ = @"Z";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString ExperimentalFeatureTooltip = @"This feature is experimental and will cause issues when turned on.";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString GlobalItem = @"Global {00}";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -962,6 +968,9 @@ namespace Intersect.Client.Localization
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString MapName = @"Map Name";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Name = @"Name";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString NotApplicable = @"N/A";
