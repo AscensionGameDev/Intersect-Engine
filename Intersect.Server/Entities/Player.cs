@@ -3,11 +3,9 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
-using Amib.Threading;
+
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Crafting;
@@ -24,7 +22,6 @@ using Intersect.Server.Database.PlayerData.Players;
 using Intersect.Server.Database.PlayerData.Security;
 using Intersect.Server.Entities.Combat;
 using Intersect.Server.Entities.Events;
-using Intersect.Server.General;
 using Intersect.Server.Localization;
 using Intersect.Server.Maps;
 using Intersect.Server.Networking;
@@ -135,7 +132,7 @@ namespace Intersect.Server.Entities
         //HotBar
         [JsonIgnore]
         public virtual List<HotbarSlot> Hotbar { get; set; } = new List<HotbarSlot>();
-       
+
         //Quests
         [JsonIgnore]
         public virtual List<Quest> Quests { get; set; } = new List<Quest>();
@@ -248,7 +245,7 @@ namespace Intersect.Server.Entities
 
             changes |= SlotHelper.ValidateSlots(Spells, Options.MaxPlayerSkills);
             changes |= SlotHelper.ValidateSlots(Items, Options.MaxInvItems);
-            changes |= SlotHelper.ValidateSlots(Bank, Options.MaxBankSlots);
+            changes |= SlotHelper.ValidateSlots(Bank, Options.Instance.PlayerOpts.InitialBankslots);
 
             if (Hotbar.Count < Options.Instance.PlayerOpts.HotbarSlotCount)
             {
@@ -488,7 +485,7 @@ namespace Intersect.Server.Entities
         }
 
         public void CompleteLogout()
-        { 
+        {
             User?.Save();
 
             Dispose();
@@ -759,7 +756,7 @@ namespace Intersect.Server.Entities
         {
             Event outInstance;
             EventLookup.TryRemove(id, out outInstance);
-            if (outInstance != null) 
+            if (outInstance != null)
             {
                 EventBaseIdLookup.TryRemove(outInstance.BaseEvent.Id, out Event evt);
             }
@@ -882,7 +879,7 @@ namespace Intersect.Server.Entities
                     }
                 }
             }
-            
+
             lock (EntityLock)
             {
                 base.Die(dropItems, killer);
@@ -1113,7 +1110,7 @@ namespace Intersect.Server.Entities
 
             PacketSender.SendExperience(this);
         }
-        
+
         private bool CheckLevelUp()
         {
             var levelCount = 0;
@@ -1417,7 +1414,7 @@ namespace Intersect.Server.Entities
             {
                 return false;
             }
-            
+
             var friendly = spell?.Combat != null && spell.Combat.Friendly;
             if (entity is Player player)
             {
@@ -1454,7 +1451,7 @@ namespace Intersect.Server.Entities
             }
 
             if (entity is Npc npc)
-            {   
+            {
                 return !friendly && npc.CanPlayerAttack(this) || friendly && npc.IsAllyOf(this);
             }
 
@@ -1846,7 +1843,7 @@ namespace Intersect.Server.Entities
                     Warp(SharedInstanceRespawnId, SharedInstanceRespawnX, SharedInstanceRespawnY, (Byte)SharedInstanceRespawnDir);
                     return;
                 }
-                    
+
                 // Check if the player/party have enough lives to spawn in-instance
                 if (InstanceLives > 0)
                 {
@@ -2486,7 +2483,7 @@ namespace Intersect.Server.Entities
                 return true;
             }
 
-            var bankInterface = new BankInterface(this, ((IEnumerable<Item>)Bank).ToList(), new object(), null, Options.MaxBankSlots);
+            var bankInterface = new BankInterface(this, ((IEnumerable<Item>)Bank).ToList(), new object(), null, Options.Instance.Bank.MaxSlots);
             return bankOverflow && bankInterface.TryDepositItem(item, sendUpdate);
         }
 
@@ -3776,7 +3773,7 @@ namespace Intersect.Server.Entities
                 bankItems = ((IEnumerable<Item>)Guild.Bank).ToList();
             }
 
-            BankInterface = new BankInterface(this, bankItems, guild ? Guild.Lock : new object(), guild ? Guild : null, guild ? Guild.BankSlotsCount : Options.MaxBankSlots);
+            BankInterface = new BankInterface(this, bankItems, guild ? Guild.Lock : new object(), guild ? Guild : null, guild ? Guild.BankSlotsCount : Options.Instance.PlayerOpts.InitialBankslots);
 
             GuildBank = guild;
             BankInterface.SendOpenBank();
@@ -4049,7 +4046,7 @@ namespace Intersect.Server.Entities
                             }
                         }
                     }
-                    
+
 
                     /* If we don't have a slot send an error. */
                     if (inventorySlot < 0)
@@ -4872,7 +4869,7 @@ namespace Intersect.Server.Entities
                                 CustomColors.Alerts.Error
                             );
                         }
-                            
+
                         reason = SpellCastFailureReason.InsufficientItems;
                         return false;
                     }
@@ -4898,7 +4895,7 @@ namespace Intersect.Server.Entities
                 return;
             }
 
-            
+
             if (CastTime == 0)
             {
                 CastTime = Timing.Global.Milliseconds + spell.CastDuration;
@@ -5128,7 +5125,7 @@ namespace Intersect.Server.Entities
                 }
             }
 
-            
+
             if (changed)
             {
                 FixVitals();
@@ -5156,13 +5153,13 @@ namespace Intersect.Server.Entities
                 var item = Items[itemSlot];
                 var descriptor = item?.Descriptor;
 
-                if (descriptor == default || 
-                    descriptor.ItemType != ItemTypes.Equipment || 
+                if (descriptor == default ||
+                    descriptor.ItemType != ItemTypes.Equipment ||
                     !Conditions.MeetsConditionLists(descriptor.UsageRequirements, this, null))
                 {
                     Equipment[i] = -1;
                     updated = true;
-                }                
+                }
             }
             if (updated)
             {
@@ -5235,7 +5232,7 @@ namespace Intersect.Server.Entities
                     Hotbar[index].ItemOrSpellId = spell.SpellId;
                 }
             }
-        }  
+        }
 
         public void HotbarSwap(int index, int swapIndex)
         {
@@ -6535,7 +6532,7 @@ namespace Intersect.Server.Entities
             var matchingSpells = Array.Empty<SpellBase>();
             var itemsUpdated = false;
             var spellsUpdated = false;
-            
+
             if (type == GameObjectType.Item || Options.Combat.LinkSpellAndItemCooldowns)
             {
                 matchingItems = ItemBase.GetCooldownGroup(group);
@@ -6551,7 +6548,7 @@ namespace Intersect.Server.Entities
             {
                 // Get our highest cooldown value from all available options.
                 matchedCooldowntime = Math.Max(
-                    matchingItems.Length > 0 ? matchingItems.Max(i => i.Cooldown) : 0, 
+                    matchingItems.Length > 0 ? matchingItems.Max(i => i.Cooldown) : 0,
                     matchingSpells.Length > 0 ? matchingSpells.Max(i => i.CooldownDuration) : 0);
             }
 
@@ -6662,7 +6659,7 @@ namespace Intersect.Server.Entities
 
             // Send our data around!
             PacketSender.SendEntityDataToProximity(this);
-            
+
             return true;
 
         }

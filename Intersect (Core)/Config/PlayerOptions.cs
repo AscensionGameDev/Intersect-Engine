@@ -5,6 +5,10 @@
     /// </summary>
     public class PlayerOptions
     {
+        /// <summary>
+        /// Intersect default for initial player bank slots
+        /// </summary>
+        public const int DefaultInitialBankSlots = 100;
 
         /// <summary>
         /// Unlinks the timers for combat and movement to facilitate complex combat (e.g. kiting)
@@ -32,14 +36,14 @@
         public int HotbarSlotCount { get; set; } = 10;
 
         /// <summary>
+        /// Number of bank slots a player has.
+        /// </summary>
+        public int InitialBankslots { get; set; } = DefaultInitialBankSlots;
+
+        /// <summary>
         /// A percentage between 0 and 100 which determines the chance in which they will lose any given item in their inventory when killed.
         /// </summary>
         public int ItemDropChance { get; set; } = 0;
-
-        /// <summary>
-        /// Number of bank slots a player has.
-        /// </summary>
-        public int MaxBank { get; set; } = 100;
 
         /// <summary>
         /// Number of characters an account may create.

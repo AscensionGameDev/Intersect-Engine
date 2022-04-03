@@ -123,5 +123,4 @@
     <PackageReference Include="TaskParallelLibrary" Version="1.0.2856.0" />
     <PackageReference Include="WebSocketSharp" Version="1.0.3-rc11" />
   </ItemGroup>
-
 </Project>
