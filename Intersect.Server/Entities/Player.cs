@@ -200,7 +200,7 @@ namespace Intersect.Server.Entities
 
             changes |= SlotHelper.ValidateSlots(Spells, Options.MaxPlayerSkills);
             changes |= SlotHelper.ValidateSlots(Items, Options.MaxInvItems);
-            changes |= SlotHelper.ValidateSlots(Bank, Options.MaxBankSlots);
+            changes |= SlotHelper.ValidateSlots(Bank, Options.Instance.PlayerOpts.InitialBankslots);
 
             if (Hotbar.Count < Options.MaxHotbar)
             {
@@ -1854,7 +1854,7 @@ namespace Intersect.Server.Entities
                     throw new NotImplementedException();
             }
 
-            var bankInterface = new BankInterface(this, ((IEnumerable<Item>)Bank).ToList(), new object(), null, Options.MaxBankSlots);
+            var bankInterface = new BankInterface(this, ((IEnumerable<Item>)Bank).ToList(), new object(), null, Options.Instance.PlayerOpts.InitialBankslots);
             return bankOverflow && bankInterface.TryDepositItem(item, sendUpdate);
         }
 
@@ -3185,7 +3185,7 @@ namespace Intersect.Server.Entities
                 bankItems = ((IEnumerable<Item>)Guild.Bank).ToList();
             }
 
-            BankInterface = new BankInterface(this, bankItems, guild ? Guild.Lock : new object(), guild ? Guild : null, guild ? Guild.BankSlotsCount : Options.MaxBankSlots);
+            BankInterface = new BankInterface(this, bankItems, guild ? Guild.Lock : new object(), guild ? Guild : null, guild ? Guild.BankSlotsCount : Options.Instance.PlayerOpts.InitialBankslots);
 
             GuildBank = guild;
             BankInterface.SendOpenBank();

@@ -58,6 +58,21 @@ namespace Intersect.Client.Interface.Game.Bank
 
         public void Open()
         {
+            // Hide unavailable bank slots
+            var currentBankSlots = Math.Max(0, Globals.BankSlots);
+            // For any slot beyond the current bank's maximum slots
+            for (var i = currentBankSlots; i < Options.Instance.Bank.MaxSlots; i++)
+            {
+                var bankItem = Items[i];
+                var bankLabel = mValues[i];
+
+                bankItem.Container.Hide();
+                bankLabel.Hide();
+
+                // Position this invisible BankItem at 0,0 so the scrollbar doesn't think we have more slots than we do
+                SetItemPosition(i);
+            }
+
             mBankWindow.IsHidden = false;
             mOpen = true;
         }
@@ -81,68 +96,94 @@ namespace Intersect.Client.Interface.Game.Bank
 
             X = mBankWindow.X;
             Y = mBankWindow.Y;
-            for (var i = 0; i < Globals.BankSlots; i++)
+            for (var i = 0; i < Math.Min(Globals.BankSlots, Options.Instance.Bank.MaxSlots); i++)
             {
-                if (Globals.Bank[i] != null && Globals.Bank[i].ItemId != Guid.Empty)
+                var bankItem = Items[i];
+                var bankLabel = mValues[i];
+                var globalBankItem = Globals.Bank[i];
+
+                bankItem.Container.Show();
+                SetItemPosition(i);
+                if (globalBankItem != null && globalBankItem.ItemId != Guid.Empty)
                 {
-                    var item = ItemBase.Get(Globals.Bank[i].ItemId);
+                    var item = ItemBase.Get(globalBankItem.ItemId);
                     if (item != null)
                     {
-                        Items[i].Pnl.IsHidden = false;
+                        bankItem.Pnl.IsHidden = false;
                         if (item.IsStackable)
                         {
-                            mValues[i].IsHidden = Globals.Bank[i].Quantity <= 1;
-                            mValues[i].Text = Strings.FormatQuantityAbbreviated(Globals.Bank[i].Quantity);
+                            bankLabel.IsHidden = globalBankItem.Quantity <= 1;
+                            bankLabel.Text = Strings.FormatQuantityAbbreviated(globalBankItem.Quantity);
                         }
                         else
                         {
-                            mValues[i].IsHidden = true;
+                            bankLabel.IsHidden = true;
                         }
 
-                        if (Items[i].IsDragging)
+                        if (bankItem.IsDragging)
                         {
-                            Items[i].Pnl.IsHidden = true;
-                            mValues[i].IsHidden = true;
+                            bankItem.Pnl.IsHidden = true;
+                            bankLabel.IsHidden = true;
                         }
 
-                        Items[i].Update();
+                        bankItem.Update();
                     }
                 }
                 else
                 {
-                    Items[i].Pnl.IsHidden = true;
-                    mValues[i].IsHidden = true;
+                    bankItem.Pnl.IsHidden = true;
+                    bankLabel.IsHidden = true;
                 }
             }
         }
 
         private void InitItemContainer()
         {
-            for (var i = 0; i < Options.Player.MaxBank; i++)
+            for (var slotIndex = 0; slotIndex < Options.Instance.Bank.MaxSlots; slotIndex++)
             {
-                Items.Add(new BankItem(this, i));
-                Items[i].Container = new ImagePanel(mItemContainer, "BankItem");
-                Items[i].Setup();
+                var bankItem = new BankItem(this, slotIndex);
 
-                mValues.Add(new Label(Items[i].Container, "BankItemValue"));
-                mValues[i].Text = "";
+                bankItem.Container = new ImagePanel(mItemContainer, "BankItem");
+                bankItem.Setup();
 
-                Items[i].Container.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+                var bankLabel = new Label(bankItem.Container, "BankItemValue");
+                bankLabel.Text = "";
 
-                var xPadding = Items[i].Container.Margin.Left + Items[i].Container.Margin.Right;
-                var yPadding = Items[i].Container.Margin.Top + Items[i].Container.Margin.Bottom;
-                Items[i]
-                    .Container.SetPosition(
-                        i %
-                        (mItemContainer.Width / (Items[i].Container.Width + xPadding)) *
-                        (Items[i].Container.Width + xPadding) +
-                        xPadding,
-                        i /
-                        (mItemContainer.Width / (Items[i].Container.Width + xPadding)) *
-                        (Items[i].Container.Height + yPadding) +
-                        yPadding
-                    );
+                bankItem.Container.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+                
+                Items.Add(bankItem);
+                mValues.Add(bankLabel);
             }
+        }
+
+        /// <summary>
+        /// Sets the item's position based on whether it's hidden or not
+        /// </summary>
+        /// <param name="i">Index of the item slot</param>
+        private void SetItemPosition(int i)
+        {
+            var item = Items[i];
+
+            // If the item is hidden, the player doesn't have that slot unlocked - move it to the top so that the scrollbar doesn't lie to the player
+            if (item.Container.IsHidden)
+            {
+                item.Container.SetPosition(0, 0);
+                return;
+            }
+
+            var xPadding = item.Container.Margin.Left + item.Container.Margin.Right;
+            var yPadding = item.Container.Margin.Top + item.Container.Margin.Bottom;
+
+            item.Container.SetPosition(
+                i %
+                (mItemContainer.Width / (item.Container.Width + xPadding)) *
+                (item.Container.Width + xPadding) +
+                xPadding,
+                i /
+                (mItemContainer.Width / (item.Container.Width + xPadding)) *
+                (item.Container.Height + yPadding) +
+                yPadding
+            );
         }
 
         public FloatRect RenderBounds()
