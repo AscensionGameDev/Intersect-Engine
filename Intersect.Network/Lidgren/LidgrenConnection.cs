@@ -84,7 +84,7 @@ namespace Intersect.Network.Lidgren
                 throw new InvalidOperationException();
             }
 
-            Encryption = new NetNoopEncryption(NetConnection.Peer, mAesKey);
+            Encryption = new NetAesGcmEncryption(NetConnection.Peer, mAesKey);
         }
 
         public bool HandleApproval(ApprovalPacket approval)
