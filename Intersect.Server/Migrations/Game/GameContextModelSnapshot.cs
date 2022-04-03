@@ -124,6 +124,9 @@ namespace Intersect.Server.Migrations.Game
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<Guid>("EventId")
+                        .HasColumnName("Event");
+
                     b.Property<string>("Folder");
 
                     b.Property<string>("IngredientsJson")

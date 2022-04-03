@@ -68,6 +68,8 @@ namespace Intersect.Client.Interface.Game.Bank
 
                 bankItem.Container.Hide();
                 bankLabel.Hide();
+
+                // Position this invisible BankItem at 0,0 so the scrollbar doesn't think we have more slots than we do
                 SetItemPosition(i);
             }
 
