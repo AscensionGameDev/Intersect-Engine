@@ -279,6 +279,9 @@ namespace Intersect.Client.Localization
 
             public static LocalizedString warpme2 = @"Warp Me To";
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString OverworldReturn = @"Leave Instance";
+
         }
 
         public struct Bags

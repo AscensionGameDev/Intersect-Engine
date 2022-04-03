@@ -1,4 +1,4 @@
-﻿using Intersect.Server.Database;
+using Intersect.Server.Database;
 using Intersect.Server.General;
 using Intersect.Server.Maps;
 using Intersect.Threading;
@@ -371,11 +371,6 @@ namespace Intersect.Server.Core
                         if (ActiveMapInstances.Keys.Contains(mapInstance.Id))
                         {
                             MapInstanceUpdateQueue.Enqueue(mapInstance);
-                        }
-
-                        if (ActiveMaps.Contains(map.Id))
-                        {
-                            MapUpdateQueue.Enqueue(map);
                         }
                     }
                 }

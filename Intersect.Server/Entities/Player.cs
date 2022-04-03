@@ -844,7 +844,7 @@ namespace Intersect.Server.Entities
             var cls = ClassBase.Get(ClassId);
             if (cls != null)
             {
-                Warp(cls.SpawnMapId, (byte) cls.SpawnX, (byte) cls.SpawnY, (byte) cls.SpawnDir);
+                WarpToSpawn();
             }
             else
             {
@@ -888,17 +888,22 @@ namespace Intersect.Server.Entities
                 base.Die(dropItems, killer);
             }
 
-            if (Options.Instance.PlayerOpts.ExpLossOnDeathPercent > 0)
+
+            // EXP Loss - don't lose in shared instance, or in an Arena zone
+            if (InstanceType != MapInstanceType.Shared || Options.Instance.Instancing.LoseExpOnInstanceDeath)
             {
-                if (Options.Instance.PlayerOpts.ExpLossFromCurrentExp)
+                if (Options.Instance.PlayerOpts.ExpLossOnDeathPercent > 0)
                 {
-                    var ExpLoss = (this.Exp * (Options.Instance.PlayerOpts.ExpLossOnDeathPercent / 100.0));
-                    TakeExperience((long)ExpLoss);
-                }
-                else
-                {
-                    var ExpLoss = (GetExperienceToNextLevel(this.Level) * (Options.Instance.PlayerOpts.ExpLossOnDeathPercent / 100.0));
-                    TakeExperience((long)ExpLoss);
+                    if (Options.Instance.PlayerOpts.ExpLossFromCurrentExp)
+                    {
+                        var ExpLoss = (this.Exp * (Options.Instance.PlayerOpts.ExpLossOnDeathPercent / 100.0));
+                        TakeExperience((long)ExpLoss);
+                    }
+                    else
+                    {
+                        var ExpLoss = (GetExperienceToNextLevel(this.Level) * (Options.Instance.PlayerOpts.ExpLossOnDeathPercent / 100.0));
+                        TakeExperience((long)ExpLoss);
+                    }
                 }
             }
             PacketSender.SendEntityDie(this);
@@ -1822,75 +1827,75 @@ namespace Intersect.Server.Entities
         public void WarpToSpawn(bool forceClassRespawn = false)
         {
             var mapId = Guid.Empty;
-            byte x = 0, y = 0, dir = 0;
+            byte x = 0;
+            byte y = 0;
+            byte dir = 0;
 
             if (Options.Instance.Instancing.SharedInstanceRespawnInInstance && InstanceType == MapInstanceType.Shared && !forceClassRespawn)
             {
-                if (SharedInstanceRespawn != null)
-                {
-                    if (Options.Instance.Instancing.MaxSharedInstanceLives <= 0) // User has not configured shared instances to have lives
-                    {
-                        // Warp to the start of the shared instance - no concern for life total
-                        Warp(SharedInstanceRespawnId, SharedInstanceRespawnX, SharedInstanceRespawnY, (Byte)SharedInstanceRespawnDir);
-                    }
-                    else
-                    {
-                        // Check if the player/party have enough lives to spawn in-instance
-                        if (InstanceLives > 0)
-                        {
-                            // If they do, subtract from this player's life total...
-                            InstanceLives--;
-                            SendLivesRemainingMessage();
-                            // And the totals from any party members
-                            if (Party != null && Party.Count > 1)
-                            {
-                                foreach (Player member in Party)
-                                {
-                                    if (member.Id != Id)
-                                    {
-                                        // Keep party member instance lives in sync
-                                        member.InstanceLives--;
-                                        if (member.InstanceType == MapInstanceType.Shared)
-                                        {
-                                            member.SendLivesRemainingMessage();
-                                        }
-                                    }
-                                }
-                            }
-
-                            // And warp to the instance start
-                            Warp(SharedInstanceRespawnId, SharedInstanceRespawnX, SharedInstanceRespawnY, (Byte)SharedInstanceRespawnDir);
-                        }
-                        else
-                        {
-                            // The player has ran out of lives - too bad, back to instance entrance you go.
-                            if (!Options.Instance.Instancing.BootAllFromInstanceWhenOutOfLives || Party == null || Party.Count < 2)
-                            {
-                                WarpToLastOverworldLocation(false);
-                            }
-                            else
-                            {
-                                // Oh shit, hard mode enabled - boot ALL party members out of instance. No more lives.
-                                foreach (Player member in Party)
-                                {
-                                    // Only warp players in the instance
-                                    if (member.InstanceType == MapInstanceType.Shared)
-                                    {
-                                        lock (EntityLock)
-                                        {
-                                            member.WarpToLastOverworldLocation(false);
-                                            PacketSender.SendChatMsg(member, Strings.Parties.InstanceFailed, ChatMessageType.Party, CustomColors.Chat.PartyChat);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                else
+                if (SharedInstanceRespawn == null)
                 {
                     // invalid map - try overworld (which will throw to class spawn if itself is invalid)
                     WarpToLastOverworldLocation(false);
+                    return;
+                }
+
+                if (Options.Instance.Instancing.MaxSharedInstanceLives <= 0) // User has not configured shared instances to have lives
+                {
+                    // Warp to the start of the shared instance - no concern for life total
+                    Warp(SharedInstanceRespawnId, SharedInstanceRespawnX, SharedInstanceRespawnY, (Byte)SharedInstanceRespawnDir);
+                    return;
+                }
+                    
+                // Check if the player/party have enough lives to spawn in-instance
+                if (InstanceLives > 0)
+                {
+                    // If they do, subtract from this player's life total...
+                    InstanceLives--;
+                    SendLivesRemainingMessage();
+                    // And the totals from any party members
+                    if (Party != null && Party.Count > 1)
+                    {
+                        foreach (Player member in Party)
+                        {
+                            if (member.Id != Id)
+                            {
+                                // Keep party member instance lives in sync
+                                member.InstanceLives--;
+                                if (member.InstanceType == MapInstanceType.Shared)
+                                {
+                                    member.SendLivesRemainingMessage();
+                                }
+                            }
+                        }
+                    }
+
+                    // And warp to the instance start
+                    Warp(SharedInstanceRespawnId, SharedInstanceRespawnX, SharedInstanceRespawnY, (byte)SharedInstanceRespawnDir);
+                }
+                else
+                {
+                    // The player has ran out of lives - too bad, back to instance entrance you go.
+                    if (!Options.Instance.Instancing.BootAllFromInstanceWhenOutOfLives || Party == null || Party.Count < 2)
+                    {
+                        WarpToLastOverworldLocation(false);
+                    }
+                    else
+                    {
+                        // Oh shit, hard mode enabled - boot ALL party members out of instance. No more lives.
+                        foreach (Player member in Party)
+                        {
+                            // Only warp players in the instance
+                            if (member.InstanceType == MapInstanceType.Shared)
+                            {
+                                lock (EntityLock)
+                                {
+                                    member.WarpToLastOverworldLocation(false);
+                                    PacketSender.SendChatMsg(member, Strings.Parties.InstanceFailed, ChatMessageType.Party, CustomColors.Chat.PartyChat);
+                                }
+                            }
+                        }
+                    }
                 }
             }
             else
@@ -6296,14 +6301,19 @@ namespace Intersect.Server.Entities
                 if (attribute != null && attribute.Type == MapAttributes.Warp)
                 {
                     var warpAtt = (MapWarpAttribute)attribute;
-                    if (warpAtt.Direction == WarpDirection.Retain)
+                    var dir = (byte)Dir;
+                    if (warpAtt.Direction != WarpDirection.Retain)
                     {
-                        Warp(warpAtt.MapId, warpAtt.X, warpAtt.Y, (byte)Dir);
+                        dir = (byte)(warpAtt.Direction - 1);
                     }
-                    else
+
+                    var instanceType = MapInstanceType.NoChange;
+                    if (warpAtt.ChangeInstance)
                     {
-                        Warp(warpAtt.MapId, warpAtt.X, warpAtt.Y, (byte)(warpAtt.Direction - 1));
+                        instanceType = warpAtt.InstanceType;
                     }
+
+                    Warp(warpAtt.MapId, warpAtt.X, warpAtt.Y, dir, false, 0, false, false, instanceType);
                 }
 
                 foreach (var evt in EventLookup)
