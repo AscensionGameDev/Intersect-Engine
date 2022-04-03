@@ -408,7 +408,7 @@ namespace Intersect.Client.Interface.Game
 
         void _overworldReturn_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            if (TextboxName.Text.Trim().Length > 0)
+            if (!string.IsNullOrEmpty(TextboxName.Text))
             {
                 PacketSender.SendAdminAction(new ReturnToOverworldAction(TextboxName.Text));
             }

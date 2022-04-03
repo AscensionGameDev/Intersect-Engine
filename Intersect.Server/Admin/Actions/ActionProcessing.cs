@@ -452,19 +452,19 @@ namespace Intersect.Server.Admin.Actions
         public static void ProcessAction(Player player, ReturnToOverworldAction action)
         {
             var target = Player.FindOnline(action.PlayerName);
-            if (target != null)
-            {
-                target.WarpToLastOverworldLocation(false);
-                PacketSender.SendChatMsg(target, Strings.Player.OverworldReturned.ToString(target.Name), Enums.ChatMessageType.Notice, player.Name);
-
-                if (player == null || target.Name == player.Name) return;
-
-                PacketSender.SendChatMsg(player, Strings.Player.OverworldReturnAdmin.ToString(target.Name), Enums.ChatMessageType.Admin, player.Name);
-            }
-            else
+            if (target == null)
             {
                 PacketSender.SendChatMsg(player, Strings.Player.offline, Enums.ChatMessageType.Admin);
+
+                return;
             }
+
+            target.WarpToLastOverworldLocation(false);
+            PacketSender.SendChatMsg(target, Strings.Player.OverworldReturned.ToString(target.Name), Enums.ChatMessageType.Notice, player.Name);
+
+            if (player == null || target.Name == player.Name) return;
+
+            PacketSender.SendChatMsg(player, Strings.Player.OverworldReturnAdmin.ToString(target.Name), Enums.ChatMessageType.Admin, player.Name);
         }
     }
 }

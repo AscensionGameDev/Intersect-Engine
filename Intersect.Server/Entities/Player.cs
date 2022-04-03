@@ -1631,7 +1631,7 @@ namespace Intersect.Server.Entities
             {
                 PacketSender.SendChatMsg(this, Strings.Player.InstanceUpdate.ToString(PreviousMapInstanceId.ToString(), MapInstanceId.ToString()), ChatMessageType.Admin, CustomColors.Alerts.Info);
             }
-            Warp(newMapId, newX, newY, (byte)Directions.Up, adminWarp, 0, false, false, MapInstanceType.NoChange, false, true);
+            Warp(newMapId, newX, newY, (byte)Directions.Up, adminWarp, 0, false, false, null, false, true);
         }
 
         public override void Warp(
@@ -1643,7 +1643,7 @@ namespace Intersect.Server.Entities
             byte zOverride = 0,
             bool mapSave = false,
             bool fromWarpEvent = false,
-            MapInstanceType mapInstanceType = MapInstanceType.NoChange,
+            MapInstanceType? mapInstanceType = null,
             bool fromLogin = false,
             bool forceInstanceChange = false
         )
@@ -1657,7 +1657,7 @@ namespace Intersect.Server.Entities
             #endregion
 
             // If we are leaving the overworld to go to a new instance, save the overworld location
-            if (!fromLogin && InstanceType == MapInstanceType.Overworld && mapInstanceType != MapInstanceType.Overworld && mapInstanceType != MapInstanceType.NoChange)
+            if (!fromLogin && InstanceType == MapInstanceType.Overworld && mapInstanceType != MapInstanceType.Overworld && mapInstanceType != null)
             {
                 UpdateLastOverworldLocation(MapId, X, Y);
             }
@@ -1935,14 +1935,14 @@ namespace Intersect.Server.Entities
         /// <param name="fromLogin">Whether or not this is from the login flow</param>
         /// <param name="newMapId">The map ID we will be warping to</param>
         /// <returns></returns>
-        public bool CanChangeToInstanceType(MapInstanceType instanceType, bool fromLogin, Guid newMapId)
+        public bool CanChangeToInstanceType(MapInstanceType? instanceType, bool fromLogin, Guid newMapId)
         {
             bool isValid = true;
 
             switch (instanceType)
             {
                 case MapInstanceType.Guild:
-                    if (Guild == null)
+                    if (Guild == null || Guild.GuildInstanceId != MapInstanceId)
                     {
                         isValid = false;
 
@@ -2031,15 +2031,15 @@ namespace Intersect.Server.Entities
         /// <param name="mapInstanceType">The <see cref="MapInstanceType"/> the player is currently on</param>
         /// <param name="fromLogin">Whether or not we're coming to this method via a login warp.</param>
         /// <returns></returns>
-        public bool ProcessMapInstanceChange(MapInstanceType mapInstanceType, bool fromLogin)
+        public bool ProcessMapInstanceChange(MapInstanceType? mapInstanceType, bool fromLogin)
         {
             // Save values before change for reference/emergency recall
             PreviousMapInstanceId = MapInstanceId;
             PreviousMapInstanceType = InstanceType;
-            if (mapInstanceType != MapInstanceType.NoChange) // If we're requesting an instance type change
+            if (mapInstanceType != null) // If we're requesting an instance type change
             {
                 // Update our saved instance type - this helps us determine what to do on login, warps, etc
-                InstanceType = mapInstanceType;
+                InstanceType = (MapInstanceType) mapInstanceType;
                 // Requests a new instance id, using the type of instance to determine creation logic
                 MapInstanceId = CreateNewInstanceIdFromType(mapInstanceType, fromLogin);
             }
@@ -2056,7 +2056,7 @@ namespace Intersect.Server.Entities
         /// <param name="fromLogin">Whether or not we are coming to this method via player login. We may prefer to use saved values instead of generate new
         /// values if this is the case.</param>
         /// <returns></returns>
-        public Guid CreateNewInstanceIdFromType(MapInstanceType mapInstanceType, bool fromLogin)
+        public Guid CreateNewInstanceIdFromType(MapInstanceType? mapInstanceType, bool fromLogin)
         {
             Guid newMapLayerId = MapInstanceId;
             switch (mapInstanceType)
@@ -6307,7 +6307,7 @@ namespace Intersect.Server.Entities
                         dir = (byte)(warpAtt.Direction - 1);
                     }
 
-                    var instanceType = MapInstanceType.NoChange;
+                    MapInstanceType? instanceType = null;
                     if (warpAtt.ChangeInstance)
                     {
                         instanceType = warpAtt.InstanceType;

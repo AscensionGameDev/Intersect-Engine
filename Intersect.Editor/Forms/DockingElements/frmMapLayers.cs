@@ -117,10 +117,10 @@ namespace Intersect.Editor.Forms.DockingElements
             grpInstanceSettings.Visible = chkChangeInstance.Checked;
 
             cmbInstanceType.Items.Clear();
-            // We do not want to iterate over the "NoChange" enum - so we subtract 1 from the iterating maximum
-            for (var i = 0; i < Enum.GetNames(typeof(MapInstanceType)).Length - 1; i++)
+            // We do not want to iterate over the "NoChange" enum
+            foreach (MapInstanceType instanceType in Enum.GetValues(typeof(MapInstanceType)))
             {
-                cmbInstanceType.Items.Add(Enum.GetName(typeof(MapInstanceType), i));
+                cmbInstanceType.Items.Add(instanceType.ToString());
             }
         }
 

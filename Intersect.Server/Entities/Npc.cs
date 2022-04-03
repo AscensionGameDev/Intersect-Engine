@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -1503,7 +1503,7 @@ namespace Intersect.Server.Entities
             byte zOverride = 0,
             bool mapSave = false,
             bool fromWarpEvent = false,
-            MapInstanceType mapInstanceType = MapInstanceType.NoChange,
+            MapInstanceType? mapInstanceType = null,
             bool fromLogin = false,
             bool forceInstanceChange = false
         )

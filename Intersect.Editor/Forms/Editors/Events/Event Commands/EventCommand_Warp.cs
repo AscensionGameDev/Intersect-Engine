@@ -50,12 +50,12 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             chkChangeInstance.Checked = mMyCommand.ChangeInstance;
             grpInstanceSettings.Visible = chkChangeInstance.Checked;
 
-            // We do not want to iterate over the "NoChange" enum - so we subtract 1 from the iterating maximum
-            for (var i = 0; i < Enum.GetNames(typeof(MapInstanceType)).Length - 1; i++)
+            // We do not want to iterate over the "NoChange" enum
+            foreach (MapInstanceType instanceType in Enum.GetValues(typeof(MapInstanceType)))
             {
-                cmbInstanceType.Items.Add(Enum.GetName(typeof(MapInstanceType), i));
+                cmbInstanceType.Items.Add(instanceType.ToString());
             }
-            cmbInstanceType.SelectedIndex = (int)mMyCommand.InstanceType;
+            cmbInstanceType.SelectedIndex = (int) mMyCommand.InstanceType;
         }
 
         private void InitLocalization()

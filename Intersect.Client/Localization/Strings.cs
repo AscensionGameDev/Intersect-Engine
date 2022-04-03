@@ -252,6 +252,9 @@ namespace Intersect.Client.Localization
             public static LocalizedString nocliptip = @"Check to walk through obstacles.";
 
             public static LocalizedString none = @"None";
+            
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString OverworldReturn = @"Leave Instance";
 
             public static LocalizedString setface = @"Set Face";
 
@@ -278,9 +281,6 @@ namespace Intersect.Client.Localization
             public static LocalizedString warp2me = @"Warp To Me";
 
             public static LocalizedString warpme2 = @"Warp Me To";
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString OverworldReturn = @"Leave Instance";
 
         }
 

@@ -928,7 +928,7 @@ namespace Intersect.Editor.Forms.Editors.Events
             if (command.ChangeInstance)
             {
                 return Strings.EventCommandList.InstancedWarp.ToString(
-                    mapName, command.X, command.Y, Strings.Directions.dir[(int)command.Direction - 1], Enum.GetName(typeof(MapInstanceType), command.InstanceType)
+                    mapName, command.X, command.Y, Strings.Directions.dir[(int)command.Direction - 1], command.InstanceType.ToString()
                 );
             } else
             {
