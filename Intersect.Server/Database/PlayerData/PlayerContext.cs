@@ -96,7 +96,7 @@ namespace Intersect.Server.Database.PlayerData
             base.OnConfiguring(optionsBuilder);
 
             optionsBuilder.EnableSensitiveDataLogging();
-            optionsBuilder.UseLoggerFactory(LoggerFactory.Create(builder => builder.AddConsole()));
+            //optionsBuilder.UseLoggerFactory(LoggerFactory.Create(builder => builder.AddConsole()));
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
