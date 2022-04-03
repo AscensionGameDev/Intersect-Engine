@@ -100,7 +100,6 @@
     <PackageReference Include="Microsoft.Owin.Hosting" Version="4.2.0" />
     <PackageReference Include="Microsoft.Owin.Security" Version="4.2.0" />
     <PackageReference Include="Microsoft.Owin.Security.OAuth" Version="4.2.0" />
-    <PackageReference Include="Mono.Data.Sqlite.Portable" Version="1.0.3.5" />
     <PackageReference Include="MySqlConnector" Version="2.1.8" />
     <PackageReference Include="Owin" Version="1.0" />
     <PackageReference Include="Owin.Security.AesDataProtectorProvider" Version="1.2.2" />
