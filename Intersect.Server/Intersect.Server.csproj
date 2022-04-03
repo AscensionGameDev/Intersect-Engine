@@ -68,6 +68,7 @@
   <ItemGroup>
     <PackageReference Include="AscensionGameDev.Open.NAT" Version="3.0.0.7" />
     <PackageReference Include="AscensionGameDev.WebApiThrottle" Version="1.5.4.2" />
+    <PackageReference Include="AscensionGameDev.WebSocketSharp" Version="1.0.0.7-beta" />
     <PackageReference Include="Markdown" Version="2.2.1" />
     <PackageReference Include="Microsoft.AspNet.Cors" Version="5.2.7" />
     <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.7" />
@@ -115,6 +116,5 @@
     <PackageReference Include="SQLitePCLRaw.provider.e_sqlite3.net45" Version="1.1.14" />
     <PackageReference Include="System.Text.Encodings.Web" Version="6.0.0" />
     <PackageReference Include="System.Text.Json" Version="6.0.2" />
-    <PackageReference Include="WebSocketSharp" Version="1.0.3-rc11" />
   </ItemGroup>
 </Project>
