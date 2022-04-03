@@ -108,12 +108,7 @@
     <PackageReference Include="Pomelo.JsonObject" Version="2.2.1" />
     <PackageReference Include="Remotion.Linq" Version="2.2.0" />
     <PackageReference Include="SmartThreadPool.dll" Version="2.3.0" />
-    <PackageReference Include="SQLitePCLRaw.bundle_green" Version="2.0.7" />
-    <PackageReference Include="SQLitePCLRaw.core" Version="2.0.7" />
-    <PackageReference Include="SQLitePCLRaw.lib.e_sqlite3.linux" Version="1.1.14" />
-    <PackageReference Include="SQLitePCLRaw.lib.e_sqlite3.osx" Version="1.1.14" />
-    <PackageReference Include="SQLitePCLRaw.lib.e_sqlite3.v110_xp" Version="1.1.14" />
-    <PackageReference Include="SQLitePCLRaw.provider.e_sqlite3.net45" Version="1.1.14" />
+    <PackageReference Include="SQLitePCLRaw.bundle_green" Version="2.1.0-pre20220318192836" />
     <PackageReference Include="System.Text.Encodings.Web" Version="6.0.0" />
     <PackageReference Include="System.Text.Json" Version="6.0.2" />
   </ItemGroup>
