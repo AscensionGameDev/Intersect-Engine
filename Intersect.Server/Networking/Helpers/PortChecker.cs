@@ -1,29 +1,23 @@
-﻿using System;
-using System.Linq;
 using System.Net;
 
 using Intersect.Logging;
 
-using WebSocketSharp;
-
 namespace Intersect.Server.Networking.Helpers
 {
-
     public static partial class PortChecker
     {
-
         public static bool CanYouSeeMe(int port, out string externalIp)
         {
             externalIp = "";
             try
             {
                 var request = WebRequest.Create(
-                    "http://status.freemmorpgmaker.com:5400/?time=" + DateTime.Now.ToBinary().ToString()
+                    $"http://status.freemmorpgmaker.com:5400/?time={DateTime.Now.ToBinary()}"
                 );
 
                 request.Headers.Add("port", port.ToString());
                 request.Timeout = 4000;
-                var response = (HttpWebResponse) request.GetResponse();
+                var response = (HttpWebResponse)request.GetResponse();
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
                     if (response.Headers.HasKeys())
@@ -33,7 +27,7 @@ namespace Intersect.Server.Networking.Helpers
                             externalIp = response.Headers["ip"];
                         }
 
-                        if (response.Headers.Contains("players"))
+                        if (response.Headers.AllKeys.Contains("players"))
                         {
                             if (int.Parse(response.Headers["players"]) > -1)
                             {
@@ -50,7 +44,5 @@ namespace Intersect.Server.Networking.Helpers
 
             return false;
         }
-
     }
-
 }
