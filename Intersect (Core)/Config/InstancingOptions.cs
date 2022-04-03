@@ -1,25 +1,43 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Intersect.Config
 {
     public class InstancingOptions
     {
-        public bool SharedInstanceRespawnInInstance = true;
+        /// <summary>
+        ///  Intersect default for instance lives
+        /// </summary>
+        public const int DefaultInstanceLives = 3;
 
-        public bool RejoinableSharedInstances = false;
+        /// <summary>
+        /// Whether or not dieing in a shared instance "respawns" you at the instance entrance. Useful for dungeon implementations
+        /// </summary>
+        public bool SharedInstanceRespawnInInstance { get; }  = true;
 
-        public int MaxSharedInstanceLives = 3;
+        /// <summary>
+        /// Whether a player that leaves a shared instance can come back in to that instance after leaving.
+        /// </summary>
+        public bool RejoinableSharedInstances { get; } = false;
 
-        public bool BootAllFromInstanceWhenOutOfLives = true;
+        /// <summary>
+        /// How many lives a party has in a shared instance, if enabled
+        /// </summary>
+        public int MaxSharedInstanceLives { get; } = DefaultInstanceLives;
 
-        public bool LoseExpOnInstanceDeath = false;
+        /// <summary>
+        /// Whether or not all party members get booted out of an instance on lives reaching -1
+        /// </summary>
+        public bool BootAllFromInstanceWhenOutOfLives { get; } = true;
 
-        public bool RegenManaOnInstanceDeath = false;
+        /// <summary>
+        /// Whether or not you lose experience on death in a shared instance
+        /// </summary>
+        public bool LoseExpOnInstanceDeath { get; } = false;
+
+        /// <summary>
+        /// Whether or not you regenerate mana on instance death
+        /// </summary>
+        public bool RegenManaOnInstanceDeath { get; } = false;
 
         [OnDeserialized]
         internal void OnDeserializedMethod(StreamingContext context)

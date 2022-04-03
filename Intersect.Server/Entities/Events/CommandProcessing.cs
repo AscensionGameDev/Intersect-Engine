@@ -707,21 +707,17 @@ namespace Intersect.Server.Entities.Events
             Stack<CommandInstance> callStack
         )
         {
+            MapInstanceType? instanceType = null;
             if (command.ChangeInstance)
             {
-                player.Warp(
-                    command.MapId, command.X, command.Y,
-                    command.Direction == WarpDirection.Retain ? (byte)player.Dir : (byte)(command.Direction - 1),
-                    mapInstanceType: command.InstanceType
-                );
+                instanceType = command.InstanceType;
             }
-            else
-            {
-                player.Warp(
-                    command.MapId, command.X, command.Y,
-                    command.Direction == WarpDirection.Retain ? (byte)player.Dir : (byte)(command.Direction - 1)
-                );
-            }
+
+            player.Warp(
+                command.MapId, command.X, command.Y,
+                command.Direction == WarpDirection.Retain ? (byte)player.Dir : (byte)(command.Direction - 1),
+                mapInstanceType: instanceType
+            );
         }
 
         //Set Move Route Command

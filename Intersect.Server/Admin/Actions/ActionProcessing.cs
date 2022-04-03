@@ -462,7 +462,10 @@ namespace Intersect.Server.Admin.Actions
             target.WarpToLastOverworldLocation(false);
             PacketSender.SendChatMsg(target, Strings.Player.OverworldReturned.ToString(target.Name), Enums.ChatMessageType.Notice, player.Name);
 
-            if (player == null || target.Name == player.Name) return;
+            if (player == null || target.Name == player.Name)
+            {
+                return;
+            }
 
             PacketSender.SendChatMsg(player, Strings.Player.OverworldReturnAdmin.ToString(target.Name), Enums.ChatMessageType.Admin, player.Name);
         }

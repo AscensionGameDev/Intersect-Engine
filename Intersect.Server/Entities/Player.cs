@@ -1808,7 +1808,7 @@ namespace Intersect.Server.Entities
         public void WarpToLastOverworldLocation(bool fromLogin)
         {
             Warp(
-                LastOverworldMapId, (byte)LastOverworldX, (byte)LastOverworldY, (byte)Dir, false, (byte)Z, false, false, MapInstanceType.Overworld, fromLogin
+                LastOverworldMapId, (byte)LastOverworldX, (byte)LastOverworldY, (byte)Dir, zOverride: (byte)Z, mapInstanceType: MapInstanceType.Overworld, fromLogin: fromLogin
             );
         }
 
@@ -1820,7 +1820,7 @@ namespace Intersect.Server.Entities
             }
             else
             {
-                PacketSender.SendChatMsg(this, Strings.Parties.NoMoreLivesRemaining.ToString(InstanceLives), ChatMessageType.Party, CustomColors.Chat.PartyChat);
+                PacketSender.SendChatMsg(this, Strings.Parties.NoMoreLivesRemaining, ChatMessageType.Party, CustomColors.Chat.PartyChat);
             }
         }
 
