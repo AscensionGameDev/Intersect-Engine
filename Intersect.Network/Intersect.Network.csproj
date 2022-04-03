@@ -21,10 +21,10 @@
   <ItemGroup>
     <ProjectReference Include="..\Intersect.Building\Intersect.Building.csproj" />
     <ProjectReference Include="..\Intersect (Core)\Intersect.Core.csproj" />
-    <ProjectReference Include="..\..\Lidgren.Network\Lidgren.Network\Lidgren.Network.csproj" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="AscensionGameDev.Lidgren.Network" Version="2.0.0.30-beta" />
     <PackageReference Include="System.Collections.Concurrent" Version="4.3.0" />
   </ItemGroup>
 
