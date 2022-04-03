@@ -6,6 +6,7 @@ using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
+using Intersect.Client.Interface;
 using Intersect.Client.Interface.Game;
 using Intersect.Client.Maps;
 using Intersect.Client.Networking;
@@ -153,7 +154,7 @@ namespace Intersect.Client.Core
                                 break;
 
                             case Control.OpenDebugger:
-                                Interface.Interface.CurrentInterface?.ToggleDebug();
+                                MutableInterface.ToggleDebug();
                                 break;
                         }
 

@@ -746,11 +746,11 @@ namespace Intersect.Client.Interface.Shared
             {
                 mKeybindingBtns[control][0].Text =
                     Strings.Keys.keydict[
-                        Enum.GetName(typeof(Keys), mKeybindingEditControls.ControlMapping[control].Key1).ToLower()];
+                        Enum.GetName(typeof(Keys), mKeybindingEditControls.ControlMapping[control].Key1.Key).ToLower()];
 
                 mKeybindingBtns[control][1].Text =
                     Strings.Keys.keydict[
-                        Enum.GetName(typeof(Keys), mKeybindingEditControls.ControlMapping[control].Key2).ToLower()];
+                        Enum.GetName(typeof(Keys), mKeybindingEditControls.ControlMapping[control].Key2.Key).ToLower()];
             }
         }
 

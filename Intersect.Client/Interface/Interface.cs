@@ -12,6 +12,7 @@ using Intersect.Client.General;
 using Intersect.Client.Interface.Game;
 using Intersect.Client.Interface.Menu;
 using Intersect.Client.Interface.Shared.Errors;
+using Intersect.Configuration;
 
 using Base = Intersect.Client.Framework.Gwen.Renderer.Base;
 
@@ -62,13 +63,8 @@ namespace Intersect.Client.Interface
             //TODO: Make it easier to modify skin.
             if (Skin == null)
             {
-                Skin = new Intersect2021(
-                    GwenRenderer,
-                    Globals.ContentManager.GetTexture(Framework.Content.TextureType.Gui, "intersect-2021.png")
-                )
-                {
-                    DefaultFont = Graphics.UIFont
-                };
+                Skin = TexturedBase.FindSkin(GwenRenderer, Globals.ContentManager, ClientConfiguration.Instance.UiSkin);
+                Skin.DefaultFont = Graphics.UIFont;
             }
 
             MenuUi?.Dispose();
@@ -135,6 +131,9 @@ namespace Intersect.Client.Interface
 
         public static void DestroyGwen()
         {
+            // Preserve the debug window
+            MutableInterface.DetachDebugWindow();
+
             //The canvases dispose of all of their children.
             sMenuCanvas?.Dispose();
             sGameCanvas?.Dispose();

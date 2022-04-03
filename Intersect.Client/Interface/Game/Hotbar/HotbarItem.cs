@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 using Intersect.Client.Core;
 using Intersect.Client.Core.Controls;
@@ -8,6 +8,7 @@ using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Framework.Gwen.Input;
 using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
+using Intersect.Client.Interface.Game.DescriptionWindows;
 using Intersect.Client.Items;
 using Intersect.Client.Localization;
 using Intersect.Client.Spells;
@@ -64,7 +65,7 @@ namespace Intersect.Client.Interface.Game.Hotbar
 
         private bool mIsFaded;
 
-        private ItemDescWindow mItemDescWindow;
+        private ItemDescriptionWindow mItemDescWindow;
 
         //Mouse Event Variables
         private bool mMouseOver;
@@ -75,7 +76,7 @@ namespace Intersect.Client.Interface.Game.Hotbar
 
         private Spell mSpellBookItem = null;
 
-        private SpellDescWindow mSpellDescWindow;
+        private SpellDescriptionWindow mSpellDescWindow;
 
         private bool mTexLoaded;
 
@@ -180,8 +181,8 @@ namespace Intersect.Client.Interface.Game.Hotbar
                     mItemDescWindow = null;
                 }
 
-                mItemDescWindow = new ItemDescWindow(
-                    mCurrentItem, 1, mHotbarWindow.X + Pnl.X + 16, mHotbarWindow.Y + mHotbarWindow.Height + 2,
+                mItemDescWindow = new ItemDescriptionWindow(
+                    mCurrentItem, 1, mHotbarWindow.X + (mHotbarWindow.Width / 2), mHotbarWindow.Y + mHotbarWindow.Height + 2,
                     mInventoryItem?.StatBuffs, mCurrentItem.Name, "", true
                 );
             }
@@ -193,8 +194,8 @@ namespace Intersect.Client.Interface.Game.Hotbar
                     mSpellDescWindow = null;
                 }
 
-                mSpellDescWindow = new SpellDescWindow(
-                    mCurrentSpell.Id, mHotbarWindow.X + Pnl.X + 16, mHotbarWindow.Y + mHotbarWindow.Height + 2, true
+                mSpellDescWindow = new SpellDescriptionWindow(
+                    mCurrentSpell.Id, mHotbarWindow.X + (mHotbarWindow.Width / 2), mHotbarWindow.Y + mHotbarWindow.Height + 2, true
                 );
             }
         }

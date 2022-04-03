@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -155,6 +155,11 @@ namespace Intersect.Configuration
         /// Configures whether or not the context menus are enabled upon right-clicking certain elements.
         /// </summary>
         public bool EnableContextMenus { get; set; } = true;
+
+        /// <summary>
+        /// Configures the name of the skin or skin texture (must end in .png) to use.
+        /// </summary>
+        public string UiSkin { get; set; } = "Intersect2021";
 
         #endregion
 

@@ -28,7 +28,7 @@ namespace Intersect.Client.Framework.Content
             _root = !string.IsNullOrWhiteSpace(root) ? root : throw new ArgumentNullException(nameof(root));
             _watcher = new FileSystemWatcher(_root)
             {
-                EnableRaisingEvents = true,
+                EnableRaisingEvents = false,
                 IncludeSubdirectories = true,
                 NotifyFilter = NotifyFilters.Attributes
                                 | NotifyFilters.CreationTime
@@ -44,6 +44,12 @@ namespace Intersect.Client.Framework.Content
             _watcher.Created += HandleCreated;
             _watcher.Deleted += HandleDeleted;
             _watcher.Renamed += HandleRenamed;
+        }
+
+        public bool Enabled
+        {
+            get => _watcher.EnableRaisingEvents;
+            set => _watcher.EnableRaisingEvents = value;
         }
 
         public void AddEventListener(Event watcherEvent, string path, Action handler) =>

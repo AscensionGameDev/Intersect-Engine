@@ -55,15 +55,24 @@ namespace Intersect.Server.Entities.Combat
             Type = type;
             Data = data;
 
-            // Handle Player specific stuff such as retrieving their tenacity.
-            var tenacity = 0.0;
+            // Handle Player specific stuff, such as interrupting spellcasts 
+            var tenacity = 0f;
             if (en is Player player)
             {
                 // Get our player's Tenacity stat!
                 if (!TenacityExcluded.Contains(type))
                 {
-                    tenacity = player.GetTenacity();
-                } 
+                    tenacity = player.GetEquipmentBonusEffect(EffectType.Tenacity);
+                }
+
+                // Interrupt their spellcast if we are running a Silence, Sleep or Stun!
+                if (Status.InterruptStatusses.Contains(type))
+                {
+                    player.CastTime = 0;
+                    player.CastTarget = null;
+                    player.SpellCastSlot = -1;
+                    PacketSender.SendEntityCancelCast(player);
+                }
             }
 
             // Handle Npc specific stuff, such as loot tables!

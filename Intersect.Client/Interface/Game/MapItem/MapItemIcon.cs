@@ -7,6 +7,7 @@ using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Framework.Gwen.Input;
 using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
+using Intersect.Client.Interface.Game.DescriptionWindows;
 using Intersect.Client.Items;
 using Intersect.GameObjects;
 
@@ -28,7 +29,7 @@ namespace Intersect.Client.Interface.Game.Inventory
 
         private MapItemWindow mMapItemWindow;
 
-        private ItemDescWindow mDescWindow;
+        private ItemDescriptionWindow mDescWindow;
 
         public MapItemIcon(MapItemWindow window)
         {
@@ -84,7 +85,7 @@ namespace Intersect.Client.Interface.Game.Inventory
                 mDescWindow.Dispose();
                 mDescWindow = null;
             }
-            mDescWindow = new ItemDescWindow(
+            mDescWindow = new ItemDescriptionWindow(
                 ItemBase.Get(MyItem.ItemId), MyItem.Quantity, mMapItemWindow.X,
                 mMapItemWindow.Y, MyItem.StatBuffs
            );

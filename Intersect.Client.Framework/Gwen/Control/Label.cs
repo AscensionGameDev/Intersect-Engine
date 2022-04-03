@@ -55,9 +55,12 @@ namespace Intersect.Client.Framework.Gwen.Control
         ///     Initializes a new instance of the <see cref="Label" /> class.
         /// </summary>
         /// <param name="parent">Parent control.</param>
-        public Label(Base parent, string name = "") : base(parent, name)
+        public Label(Base parent, string name = default, bool disableText = false) : base(parent, name)
         {
-            mText = new Text(this);
+            mText = new Text(this)
+            {
+                IsHidden = disableText,
+            };
 
             //m_Text.Font = Skin.DefaultFont;
 

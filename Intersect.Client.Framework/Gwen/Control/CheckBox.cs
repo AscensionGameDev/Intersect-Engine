@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Graphics;
@@ -54,7 +54,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         ///     Initializes a new instance of the <see cref="CheckBox" /> class.
         /// </summary>
         /// <param name="parent">Parent control.</param>
-        public CheckBox(Base parent, string name = "") : base(parent, name)
+        public CheckBox(Base parent, string name = default, bool disableText = true) : base(parent, name, disableText)
         {
             SetSize(15, 15);
             IsToggle = true;
@@ -210,8 +210,8 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// <param name="skin">Skin to use.</param>
         protected override void Render(Skin.Base skin)
         {
-            base.Render(skin);
-            skin.DrawCheckBox(this, mChecked, IsDepressed);
+            //base.Render(skin);
+            skin.DrawCheckBox(this, mChecked, IsHovered, IsDepressed);
         }
 
         public void SetCheckSize(int w, int h)

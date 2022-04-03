@@ -17,6 +17,7 @@
 
   <PropertyGroup>
     <NetworkKeyOutputDir>$(IntersectRepoPath)\Intersect.Network\bin\$(Configuration)\keys</NetworkKeyOutputDir>
+    <NetworkKeyOutputDir Condition="'$(Configuration.ToLower())' == 'nofody'">$(IntersectRepoPath)\Intersect.Network\bin\Debug\keys</NetworkKeyOutputDir>
     <NetworkHandshakePublicKey>$(NetworkKeyOutputDir)\network.handshake.bkey.pub</NetworkHandshakePublicKey>
     <NetworkHandshakePrivateKey>$(NetworkKeyOutputDir)\network.handshake.bkey</NetworkHandshakePrivateKey>
   </PropertyGroup>
