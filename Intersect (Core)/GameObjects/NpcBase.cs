@@ -30,7 +30,7 @@ namespace Intersect.GameObjects
         [NotMapped] public int[] VitalRegen = new int[(int) Vitals.VitalCount];
 
         [NotMapped]
-        public Dictionary<StatusTypes, bool> Immunities = new Dictionary<StatusTypes, bool>();
+        public List<StatusTypes> Immunities = new List<StatusTypes>();
 
         [JsonIgnore]
         [Column("Immunities")]
@@ -39,10 +39,10 @@ namespace Intersect.GameObjects
             get => JsonConvert.SerializeObject(Immunities);
             set
             {
-                Immunities = JsonConvert.DeserializeObject<Dictionary<StatusTypes, bool>>(value ?? "");
+                Immunities = JsonConvert.DeserializeObject<List<StatusTypes>>(value ?? "");
                 if (Immunities == null)
                 {
-                    Immunities = new Dictionary<StatusTypes, bool>();
+                    Immunities = new List<StatusTypes>();
                 }
             }
         }
