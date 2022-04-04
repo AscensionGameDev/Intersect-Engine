@@ -97,11 +97,18 @@ namespace Intersect.Server.Entities.Combat
 
             var deadAnimations = new List<KeyValuePair<Guid, sbyte>>();
             var aliveAnimations = new List<KeyValuePair<Guid, sbyte>>();
-            if (SpellBase.HitAnimationId != Guid.Empty)
+            if (SpellBase.TickAnimationId != Guid.Empty)
             {
-                deadAnimations.Add(new KeyValuePair<Guid, sbyte>(SpellBase.HitAnimationId, (sbyte) Directions.Up));
-                aliveAnimations.Add(new KeyValuePair<Guid, sbyte>(SpellBase.HitAnimationId, (sbyte) Directions.Up));
+                var animation = new KeyValuePair<Guid, sbyte>(SpellBase.TickAnimationId, (sbyte)Directions.Up);
+                deadAnimations.Add(animation);
+                aliveAnimations.Add(animation);
+            } else if (SpellBase.HitAnimationId != Guid.Empty)
+            {
+                var animation = new KeyValuePair<Guid, sbyte>(SpellBase.HitAnimationId, (sbyte)Directions.Up);
+                deadAnimations.Add(animation);
+                aliveAnimations.Add(animation);
             }
+            
 
             var damageHealth = SpellBase.Combat.VitalDiff[(int)Vitals.Health];
             var damageMana = SpellBase.Combat.VitalDiff[(int)Vitals.Mana];

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -105,6 +105,9 @@ namespace Intersect.Editor.Forms.Editors
             cmbEvent.Items.Clear();
             cmbEvent.Items.Add(Strings.General.none);
             cmbEvent.Items.AddRange(EventBase.Names);
+            cmbTickAnimation.Items.Clear();
+            cmbTickAnimation.Items.Add(Strings.General.none);
+            cmbTickAnimation.Items.AddRange(AnimationBase.Names);
 
             cmbSprite.Items.Clear();
             cmbSprite.Items.Add(Strings.General.none);
@@ -213,6 +216,7 @@ namespace Intersect.Editor.Forms.Editors
             grpHotDot.Text = Strings.SpellEditor.hotdot;
             chkHOTDOT.Text = Strings.SpellEditor.ishotdot;
             lblTick.Text = Strings.SpellEditor.hotdottick;
+            lblTickAnimation.Text = Strings.SpellEditor.TickAnimation;
 
             grpStats.Text = Strings.SpellEditor.stats;
             lblStr.Text = Strings.SpellEditor.attack;
@@ -284,6 +288,7 @@ namespace Intersect.Editor.Forms.Editors
 
                 cmbCastAnimation.SelectedIndex = AnimationBase.ListIndex(mEditorItem.CastAnimationId) + 1;
                 cmbHitAnimation.SelectedIndex = AnimationBase.ListIndex(mEditorItem.HitAnimationId) + 1;
+                cmbTickAnimation.SelectedIndex = AnimationBase.ListIndex(mEditorItem.TickAnimationId) + 1;
 
                 chkBound.Checked = mEditorItem.Bound;
 
@@ -1072,6 +1077,12 @@ namespace Intersect.Editor.Forms.Editors
         }
 
         #endregion
+
+        private void cmbTickAnimation_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            Guid animationId = AnimationBase.IdFromList(cmbTickAnimation.SelectedIndex - 1);
+            mEditorItem.TickAnimation = AnimationBase.Get(animationId);
+        }
     }
 
 }

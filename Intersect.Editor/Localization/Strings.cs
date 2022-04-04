@@ -4661,6 +4661,9 @@ Tick timer saved in server config.json.";
             public static LocalizedString ignorezdimension = @"Z-Dimension Blocks";
 
             public static LocalizedString ishotdot = @"HOT/DOT?";
+            
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString TickAnimation = @"Tick Animation:";
 
             public static LocalizedString magicresist = @"Magic Resist:";
 

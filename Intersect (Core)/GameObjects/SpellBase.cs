@@ -51,12 +51,24 @@ namespace Intersect.GameObjects
         [Column("HitAnimation")]
         public Guid HitAnimationId { get; set; }
 
+
         [NotMapped]
         [JsonIgnore]
         public AnimationBase HitAnimation
         {
             get => AnimationBase.Get(HitAnimationId);
             set => HitAnimationId = value?.Id ?? Guid.Empty;
+        }
+
+        [Column("TickAnimation")]
+        public Guid TickAnimationId { get; set; }
+
+        [NotMapped]
+        [JsonIgnore]
+        public AnimationBase TickAnimation
+        {
+            get => AnimationBase.Get(TickAnimationId);
+            set => TickAnimationId = value?.Id ?? Guid.Empty;
         }
 
         //Spell Times
