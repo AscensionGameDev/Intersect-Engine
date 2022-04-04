@@ -6,6 +6,8 @@ using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Framework.Gwen.Input;
 using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
+using Intersect.Client.Interface.Game.DescriptionWindows;
+using Intersect.Configuration;
 using Intersect.GameObjects;
 using Intersect.Utilities;
 
@@ -30,7 +32,7 @@ namespace Intersect.Client.Interface.Game.Trades
 
         private Guid mCurrentItemId;
 
-        private ItemDescWindow mDescWindow;
+        private ItemDescriptionWindow mDescWindow;
 
         private Draggable mDragIcon;
 
@@ -63,13 +65,37 @@ namespace Intersect.Client.Interface.Game.Trades
             Pnl = new ImagePanel(Container, "TradeIcon");
             Pnl.HoverEnter += pnl_HoverEnter;
             Pnl.HoverLeave += pnl_HoverLeave;
-            Pnl.RightClicked += Pnl_DoubleClicked; //Revoke with right click or double click
+            Pnl.RightClicked += Pnl_RightClicked;
             Pnl.DoubleClicked += Pnl_DoubleClicked;
             Pnl.Clicked += pnl_Clicked;
         }
 
+        private void Pnl_RightClicked(Base sender, ClickedEventArgs arguments)
+        {
+            // Are we operating our own side? if not ignore it.
+            if (mMySide != 0)
+            {
+                return;
+            }
+
+            if (ClientConfiguration.Instance.EnableContextMenus)
+            {
+                mTradeWindow.OpenContextMenu(mMySide, mMySlot);
+            }
+            else
+            {
+                Pnl_DoubleClicked(sender, arguments);
+            }
+        }
+
         private void Pnl_DoubleClicked(Base sender, ClickedEventArgs arguments)
         {
+            // Are we operating our own side? if not ignore it.
+            if (mMySide != 0)
+            {
+                return;
+            }
+
             if (Globals.InTrade)
             {
                 Globals.Me.TryRevokeItem(mMySlot);
@@ -78,6 +104,12 @@ namespace Intersect.Client.Interface.Game.Trades
 
         void pnl_Clicked(Base sender, ClickedEventArgs arguments)
         {
+            // Are we operating our own side? if not ignore it.
+            if (mMySide != 0)
+            {
+                return;
+            }
+
             mClickTime = Timing.Global.Milliseconds + 500;
         }
 
@@ -117,7 +149,7 @@ namespace Intersect.Client.Interface.Game.Trades
 
             if (ItemBase.Get(Globals.Trade[mMySide, mMySlot].ItemId) != null)
             {
-                mDescWindow = new ItemDescWindow(
+                mDescWindow = new ItemDescriptionWindow(
                     Globals.Trade[mMySide, mMySlot].Base, Globals.Trade[mMySide, mMySlot].Quantity, mTradeWindow.X,
                     mTradeWindow.Y, Globals.Trade[mMySide, mMySlot].StatBuffs
                 );
@@ -150,6 +182,7 @@ namespace Intersect.Client.Interface.Game.Trades
                     if (itemTex != null)
                     {
                         Pnl.Texture = itemTex;
+                        Pnl.RenderColor = item.Color;
                     }
                     else
                     {
@@ -183,7 +216,6 @@ namespace Intersect.Client.Interface.Game.Trades
                         mMouseY = -1;
                         if (Timing.Global.Milliseconds < mClickTime)
                         {
-                            //Globals.Me.TryUseItem(_mySlot);
                             mClickTime = 0;
                         }
                     }

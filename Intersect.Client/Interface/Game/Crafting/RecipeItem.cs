@@ -5,6 +5,7 @@ using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Input;
 using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
+using Intersect.Client.Interface.Game.DescriptionWindows;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Crafting;
@@ -17,7 +18,7 @@ namespace Intersect.Client.Interface.Game.Crafting
 
         public ImagePanel Container;
 
-        public ItemDescWindow DescWindow;
+        public ItemDescriptionWindow DescWindow;
 
         public bool IsDragging;
 
@@ -119,7 +120,7 @@ namespace Intersect.Client.Interface.Game.Crafting
 
             if (mIngredient != null && ItemBase.Get(mIngredient.ItemId) != null)
             {
-                DescWindow = new ItemDescWindow(
+                DescWindow = new ItemDescriptionWindow(
                     ItemBase.Get(mIngredient.ItemId), mIngredient.Quantity, mCraftingWindow.X, mCraftingWindow.Y,
                     new int[(int) Stats.StatCount]
                 );

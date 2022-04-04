@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -11,10 +11,12 @@ using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Framework.Gwen.ControlInternal;
 using Intersect.Client.Framework.Gwen.DragDrop;
 using Intersect.Client.Framework.Gwen.Input;
+using Intersect.Client.Framework.Audio;
 #if DEBUG || DIAGNOSTIC
 #endif
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Intersect.Logging;
 
 namespace Intersect.Client.Framework.Gwen.Control
 {
@@ -133,10 +135,11 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// <summary>
         ///     Initializes a new instance of the <see cref="Base" /> class.
         /// </summary>
-        /// <param name="parent">Parent control.</param>
-        public Base(Base parent = null, string name = "")
+        /// <param name="parent">parent control</param>
+        /// <param name="name">name of this control</param>
+        public Base(Base parent = null, string name = default)
         {
-            mName = name;
+            mName = name ?? string.Empty;
             mChildren = new List<Base>();
             mAccelerators = new Dictionary<string, GwenEventHandler<EventArgs>>();
 
@@ -193,18 +196,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// <summary>
         ///     Logical list of children. If InnerPanel is not null, returns InnerPanel's children.
         /// </summary>
-        public List<Base> Children
-        {
-            get
-            {
-                if (mInnerPanel != null)
-                {
-                    return mInnerPanel.Children;
-                }
-
-                return mChildren;
-            }
-        }
+        public List<Base> Children => mInnerPanel?.Children ?? mChildren;
 
         /// <summary>
         ///     The logical parent. It's usually what you expect, the control you've parented it to.
@@ -219,18 +211,34 @@ namespace Intersect.Client.Framework.Gwen.Control
                     return;
                 }
 
-                if (mParent != null)
+                if (mParent != default)
                 {
-                    mParent.RemoveChild(this, false);
+                    OnDetaching(mParent);
                 }
+
+                mParent?.RemoveChild(this, false);
 
                 mParent = value;
-                mActualParent = null;
+                mActualParent = default;
 
-                if (mParent != null)
+                mParent?.AddChild(this);
+                if (mParent != default)
                 {
-                    mParent.AddChild(this);
+                    OnAttaching(mParent);
                 }
+            }
+        }
+
+        public Base Root
+        {
+            get
+            {
+                var root = this;
+                while (root.Parent != default)
+                {
+                    root = root.Parent;
+                }
+                return root;
             }
         }
 
@@ -491,6 +499,14 @@ namespace Intersect.Client.Framework.Gwen.Control
             set => mCursor = value;
         }
 
+        public int GlobalX => X + (Parent?.GlobalX ?? 0);
+
+        public int GlobalY => Y + (Parent?.GlobalY ?? 0);
+
+        public Point PositionGlobal => new Point(X, Y) + (Parent?.PositionGlobal ?? Point.Empty);
+
+        public Rectangle BoundsGlobal => new Rectangle(PositionGlobal, Width, Height);
+
         /// <summary>
         ///     Indicates whether the control is tabable (can be focused by pressing Tab).
         /// </summary>
@@ -646,11 +662,6 @@ namespace Intersect.Client.Framework.Gwen.Control
             get => mDrawDebugOutlines;
             set
             {
-                if (mDrawDebugOutlines == value)
-                {
-                    return;
-                }
-
                 mDrawDebugOutlines = value;
                 foreach (var child in Children)
                 {
@@ -670,6 +681,8 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// </summary>
         /// <returns></returns>
         public virtual Canvas Canvas => mParent?.GetCanvas();
+
+        public bool SkipSerialization { get; set; } = false;
 
         /// <summary>
         ///     Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
@@ -825,35 +838,38 @@ namespace Intersect.Client.Framework.Gwen.Control
 
         public void LoadJsonUi(GameContentManager.UI stage, string resolution, bool saveOutput = true)
         {
-            try
+            if (string.IsNullOrWhiteSpace(Name))
             {
-                bool cacheUsed = false;
-                var obj = JsonConvert.DeserializeObject<JObject>(
-                    GameContentManager.Current?.GetUIJson(stage, Name, resolution, out cacheUsed)
-                );
+                Log.Warn($"Attempted to load layout for nameless {GetType().FullName}");
+                return;
+            }
 
-                if (obj != null)
+            _ = GameContentManager.Current?.GetLayout(stage, Name, resolution, false, (rawLayout, cacheHit) =>
+            {
+                if (!string.IsNullOrWhiteSpace(rawLayout))
                 {
-                    LoadJson(obj);
-                    ProcessAlignments();
+                    try
+                    {
+                        var obj = JsonConvert.DeserializeObject<JObject>(rawLayout);
+
+                        if (obj != null)
+                        {
+                            LoadJson(obj);
+                            ProcessAlignments();
+                        }
+                    }
+                    catch (Exception exception)
+                    {
+                        //Log JSON UI Loading Error
+                        throw new Exception("Error loading json ui for " + CanonicalName, exception);
+                    }
                 }
 
-                if (obj == null || cacheUsed)
+                if (!cacheHit && saveOutput)
                 {
-                    saveOutput = false;
+                    GameContentManager.Current?.SaveUIJson(stage, Name, GetJsonUI(), resolution);
                 }
-
-            }
-            catch (Exception exception)
-            {
-                //Log JSON UI Loading Error
-                throw new Exception("Error loading json ui for " + CanonicalName, exception);
-            }
-
-            if (saveOutput)
-            {
-                GameContentManager.Current?.SaveUIJson(stage, Name, GetJsonUI(), resolution);
-            }
+            });
         }
 
         public virtual void LoadJson(JToken obj)
@@ -1338,12 +1354,8 @@ namespace Intersect.Client.Framework.Gwen.Control
                 ((Modal) mParent).BringToFront();
             }
 
-            if (mActualParent == null)
-            {
-                return;
-            }
-
-            if (mActualParent.mChildren.Last() == this)
+            var last = mActualParent?.mChildren.LastOrDefault();
+            if (last == default || last == this)
             {
                 return;
             }
@@ -1453,6 +1465,7 @@ namespace Intersect.Client.Framework.Gwen.Control
             {
                 mChildren.Add(child);
                 child.mActualParent = this;
+                child.DrawDebugOutlines = DrawDebugOutlines;
             }
 
             OnChildAdded(child);
@@ -1504,12 +1517,29 @@ namespace Intersect.Client.Framework.Gwen.Control
             }
         }
 
+        protected virtual void OnAttached(Base parent)
+        {
+        }
+
+        protected virtual void OnAttaching(Base newParent)
+        {
+        }
+
+        protected virtual void OnDetached()
+        {
+        }
+
+        protected virtual void OnDetaching(Base oldParent)
+        {
+        }
+
         /// <summary>
         ///     Handler invoked when a child is added.
         /// </summary>
         /// <param name="child">Child added.</param>
         protected virtual void OnChildAdded(Base child)
         {
+            child?.OnAttached(this);
             Invalidate();
         }
 
@@ -1519,6 +1549,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// <param name="child">Child removed.</param>
         protected virtual void OnChildRemoved(Base child)
         {
+            child?.OnDetached();
             Invalidate();
         }
 
@@ -1858,7 +1889,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// <param name="skin">Skin to use.</param>
         internal virtual void DoRender(Skin.Base skin)
         {
-            // If this control has a different skin, 
+            // If this control has a different skin,
             // then so does its children.
             if (mSkin != null)
             {
@@ -1873,16 +1904,37 @@ namespace Intersect.Client.Framework.Gwen.Control
             if (render.Ctt != null && ShouldCacheToTexture)
             {
                 DoCacheRender(skin, this);
-
-                return;
+                if (DrawDebugOutlines)
+                {
+                    RenderDebugOutlinesRecursive(skin);
+                }
             }
-
-            RenderRecursive(skin, Bounds);
-
-            if (DrawDebugOutlines)
+            else
             {
-                skin.DrawDebugOutlines(this);
+                RenderRecursive(skin, Bounds);
+                if (DrawDebugOutlines)
+                {
+                    skin.DrawDebugOutlines(this);
+                }
             }
+        }
+
+        internal virtual void RenderDebugOutlinesRecursive(Skin.Base skin)
+        {
+            var oldRenderOffset = skin.Renderer.RenderOffset;
+            skin.Renderer.AddRenderOffset(Bounds);
+            foreach (var child in mChildren)
+            {
+                if (child.IsHidden)
+                {
+                    continue;
+                }
+
+                child.RenderDebugOutlinesRecursive(skin);
+            }
+            skin.Renderer.RenderOffset = oldRenderOffset;
+
+            skin.DrawDebugOutlines(this);
         }
 
         /// <summary>
@@ -2175,8 +2227,7 @@ namespace Intersect.Client.Framework.Gwen.Control
                 var soundInstance = sound.CreateInstance();
                 if (soundInstance != null)
                 {
-                    soundInstance.SetVolume(100, false);
-                    soundInstance.Play();
+                    Canvas.PlayAndAddSound(soundInstance);
                 }
             }
         }
@@ -2202,6 +2253,10 @@ namespace Intersect.Client.Framework.Gwen.Control
             if (ToolTip != null)
             {
                 Gwen.ToolTip.Disable(this);
+            }
+            else if (Parent != null && Parent.ToolTip != null)
+            {
+                Gwen.ToolTip.Disable(Parent);
             }
 
             Redraw();
@@ -2305,6 +2360,8 @@ namespace Intersect.Client.Framework.Gwen.Control
             return this;
         }
 
+        public virtual Base GetControlAt(Point point) => GetControlAt(point.X, point.Y);
+
         /// <summary>
         ///     Lays out the control's interior according to alignment, padding, dock etc.
         /// </summary>
@@ -2356,12 +2413,12 @@ namespace Intersect.Client.Framework.Gwen.Control
 
                 var dock = mChildren[i].Dock;
 
-                if (0 != (dock & Pos.Fill))
+                if (dock.HasFlag(Pos.Fill))
                 {
                     continue;
                 }
 
-                if (0 != (dock & Pos.Top))
+                if (dock.HasFlag(Pos.Top))
                 {
                     var margin = mChildren[i].Margin;
 
@@ -2375,7 +2432,7 @@ namespace Intersect.Client.Framework.Gwen.Control
                     bounds.Height -= height;
                 }
 
-                if (0 != (dock & Pos.Left))
+                if (dock.HasFlag(Pos.Left))
                 {
                     var margin = mChildren[i].Margin;
 
@@ -2389,7 +2446,7 @@ namespace Intersect.Client.Framework.Gwen.Control
                     bounds.Width -= width;
                 }
 
-                if (0 != (dock & Pos.Right))
+                if (dock.HasFlag(Pos.Right))
                 {
                     // TODO: THIS MARGIN CODE MIGHT NOT BE FULLY FUNCTIONAL
                     var margin = mChildren[i].Margin;
@@ -2403,7 +2460,7 @@ namespace Intersect.Client.Framework.Gwen.Control
                     bounds.Width -= width;
                 }
 
-                if (0 != (dock & Pos.Bottom))
+                if (dock.HasFlag(Pos.Bottom))
                 {
                     // TODO: THIS MARGIN CODE MIGHT NOT BE FULLY FUNCTIONAL
                     var margin = mChildren[i].Margin;
@@ -2428,7 +2485,7 @@ namespace Intersect.Client.Framework.Gwen.Control
             {
                 var dock = mChildren[i].Dock;
 
-                if (0 == (dock & Pos.Fill))
+                if (!dock.HasFlag(Pos.Fill))
                 {
                     continue;
                 }
@@ -3157,6 +3214,55 @@ namespace Intersect.Client.Framework.Gwen.Control
             }
         }
 
+        protected bool SetIfChanged<T>(ref T field, T value)
+        {
+            if (EqualityComparer<T>.Default.Equals(field, value))
+            {
+                return false;
+            }
+
+            field = value;
+            return true;
+        }
+
+        protected bool SetIfChanged<T>(ref T field, T value, out T oldValue)
+        {
+            oldValue = field;
+            return SetIfChanged(ref field, value);
+        }
+
+        protected bool SetAndDoIfChanged<T>(ref T field, T value, Action action)
+        {
+            if (default == action)
+            {
+                throw new ArgumentNullException(nameof(action));
+            }
+
+            if (SetIfChanged(ref field, value))
+            {
+                action();
+                return true;
+            }
+
+            return false;
+        }
+
+        protected bool SetAndDoIfChanged<T>(ref T field, T value, ValueChangedHandler<T> valueChangedHandle)
+        {
+            if (default == valueChangedHandle)
+            {
+                throw new ArgumentNullException(nameof(valueChangedHandle));
+            }
+
+            if (SetIfChanged(ref field, value, out var oldValue))
+            {
+                valueChangedHandle(oldValue, field);
+                return true;
+            }
+
+            return false;
+        }
     }
 
+    public delegate void ValueChangedHandler<T>(T oldValue, T newValue);
 }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 using Intersect.Admin.Actions;
 using Intersect.Client.Core.Controls;
@@ -6,6 +6,7 @@ using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
+using Intersect.Client.Interface;
 using Intersect.Client.Interface.Game;
 using Intersect.Client.Maps;
 using Intersect.Client.Networking;
@@ -18,7 +19,7 @@ namespace Intersect.Client.Core
     public static class Input
     {
 
-        public delegate void HandleKeyEvent(Keys key);
+        public delegate void HandleKeyEvent(Keys modifier, Keys key);
 
         public static HandleKeyEvent KeyDown;
 
@@ -28,9 +29,14 @@ namespace Intersect.Client.Core
 
         public static HandleKeyEvent MouseUp;
 
-        public static void OnKeyPressed(Keys key)
+        public static void OnKeyPressed(Keys modifier, Keys key)
         {
             if (key == Keys.None)
+            {
+                return;
+            }
+
+            if (IsModifier(key))
             {
                 return;
             }
@@ -38,7 +44,7 @@ namespace Intersect.Client.Core
             var consumeKey = false;
             bool canFocusChat = true;
 
-            KeyDown?.Invoke(key);
+            KeyDown?.Invoke(modifier, key);
             switch (key)
             {
                 case Keys.Escape:
@@ -86,7 +92,7 @@ namespace Intersect.Client.Core
                     break;
             }
 
-            if (Controls.Controls.ControlHasKey(Control.OpenMenu, key))
+            if (Controls.Controls.ControlHasKey(Control.OpenMenu, modifier, key))
             {
                 if (Globals.GameState != GameStates.InGame)
                 {
@@ -118,11 +124,16 @@ namespace Intersect.Client.Core
                 return;
             }
 
-            Controls.Controls.GetControlsFor(key)
+            Controls.Controls.GetControlsFor(modifier, key)
                 ?.ForEach(
                     control =>
                     {
                         if (consumeKey)
+                        {
+                            return;
+                        }
+
+                        if (IsModifier(key))
                         {
                             return;
                         }
@@ -140,6 +151,10 @@ namespace Intersect.Client.Core
                                     Interface.Interface.HideUi = !Interface.Interface.HideUi;
                                 }
 
+                                break;
+
+                            case Control.OpenDebugger:
+                                MutableInterface.ToggleDebug();
                                 break;
                         }
 
@@ -240,11 +255,6 @@ namespace Intersect.Client.Core
 
                                         break;
 
-                                    case Control.OpenDebugger:
-                                        Interface.Interface.GameUi?.ShowHideDebug();
-
-                                        break;
-
                                     case Control.OpenAdminPanel:
                                         PacketSender.SendOpenAdminWindow();
 
@@ -273,9 +283,14 @@ namespace Intersect.Client.Core
                 );
         }
 
-        public static void OnKeyReleased(Keys key)
+        public static void OnKeyReleased(Keys modifier, Keys key)
         {
-            KeyUp?.Invoke(key);
+            if (IsModifier(key))
+            {
+                return;
+            }
+
+            KeyUp?.Invoke(modifier, key);
             if (Interface.Interface.HasInputFocus())
             {
                 return;
@@ -286,13 +301,13 @@ namespace Intersect.Client.Core
                 return;
             }
 
-            if (Controls.Controls.ControlHasKey(Control.Block, key))
+            if (Controls.Controls.ControlHasKey(Control.Block, modifier, key))
             {
                 Globals.Me.StopBlocking();
             }
         }
 
-        public static void OnMouseDown(MouseButtons btn)
+        public static void OnMouseDown(Keys modifier, MouseButtons btn)
         {
             var key = Keys.None;
             switch (btn)
@@ -313,7 +328,7 @@ namespace Intersect.Client.Core
                     break;
             }
 
-            MouseDown?.Invoke(key);
+            MouseDown?.Invoke(modifier, key);
             if (Interface.Interface.HasInputFocus())
             {
                 return;
@@ -339,7 +354,7 @@ namespace Intersect.Client.Core
                 return;
             }
 
-            if (Controls.Controls.ControlHasKey(Control.PickUp, key))
+            if (Controls.Controls.ControlHasKey(Control.PickUp, modifier, key))
             {
                 if (Globals.Me.TryPickupItem(Globals.Me.MapInstance.Id, Globals.Me.Y * Options.MapWidth + Globals.Me.X, Guid.Empty, true))
                 {
@@ -352,7 +367,7 @@ namespace Intersect.Client.Core
                 }
             }
 
-            if (Controls.Controls.ControlHasKey(Control.Block, key))
+            if (Controls.Controls.ControlHasKey(Control.Block, modifier, key))
             {
                 if (Globals.Me.TryBlock())
                 {
@@ -362,11 +377,11 @@ namespace Intersect.Client.Core
 
             if (key != Keys.None)
             {
-                OnKeyPressed(key);
+                OnKeyPressed(modifier, key);
             }
         }
 
-        public static void OnMouseUp(MouseButtons btn)
+        public static void OnMouseUp(Keys modifier, MouseButtons btn)
         {
             var key = Keys.LButton;
             switch (btn)
@@ -382,7 +397,7 @@ namespace Intersect.Client.Core
                     break;
             }
 
-            MouseUp?.Invoke(key);
+            MouseUp?.Invoke(modifier, key);
             if (Interface.Interface.HasInputFocus())
             {
                 return;
@@ -393,7 +408,7 @@ namespace Intersect.Client.Core
                 return;
             }
 
-            if (Controls.Controls.ControlHasKey(Control.Block, key))
+            if (Controls.Controls.ControlHasKey(Control.Block, modifier, key))
             {
                 Globals.Me.StopBlocking();
             }
@@ -441,6 +456,25 @@ namespace Intersect.Client.Core
             }
         }
 
+        public static bool IsModifier(Keys key)
+        {
+            switch (key)
+            {
+                case Keys.Control:
+                case Keys.ControlKey:
+                case Keys.LControlKey:
+                case Keys.RControlKey:
+                case Keys.LShiftKey:
+                case Keys.RShiftKey:
+                case Keys.Shift:
+                case Keys.ShiftKey:
+                case Keys.Alt:
+                    return true;
+
+                default:
+                    return false;
+            }
+        }
     }
 
 }

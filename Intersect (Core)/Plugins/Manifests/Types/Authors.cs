@@ -117,7 +117,20 @@ namespace Intersect.Plugins.Manifests.Types
         }
 
         /// <inheritdoc />
-        public bool Equals(object other, IEqualityComparer comparer) => comparer.Equals(this, other);
+        public bool Equals(object other, IEqualityComparer comparer)
+        {
+            switch (other)
+            {
+                case IEnumerable<Author> authors:
+                    return comparer.Equals(mAuthors, authors);
+
+                case IEnumerable<string> authorStrings:
+                    return comparer.Equals(this, authorStrings);
+
+                default:
+                    throw new NotSupportedException(ExceptionComparisonNotSupported);
+            }
+        }
 
         /// <inheritdoc />
         public bool Equals(IEnumerable<Author> other) => Equals(other, EqualsElement);

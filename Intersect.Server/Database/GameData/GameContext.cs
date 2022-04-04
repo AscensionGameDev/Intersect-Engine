@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
@@ -58,7 +58,7 @@ namespace Intersect.Server.Database.GameData
         public DbSet<ItemBase> Items { get; set; }
 
         //Maps
-        public DbSet<MapInstance> Maps { get; set; }
+        public DbSet<MapController> Maps { get; set; }
 
         public DbSet<MapList> MapFolders { get; set; }
 
@@ -84,6 +84,8 @@ namespace Intersect.Server.Database.GameData
         public DbSet<PlayerVariableBase> PlayerVariables { get; set; }
 
         public DbSet<ServerVariableBase> ServerVariables { get; set; }
+
+        public DbSet<GuildVariableBase> GuildVariables { get; set; }
 
         //Tilesets
         public DbSet<TilesetBase> Tilesets { get; set; }
@@ -111,21 +113,24 @@ namespace Intersect.Server.Database.GameData
             {
                 BoundItemExtensionMigration.Run(this);
             }
-            
+
+            if (migrations.IndexOf("20211031200145_FixQuestTaskCompletionEvents") > -1)
+            {
+                FixQuestTaskCompletionEventsMigration.Run(this);
+            }
+
         }
 
         internal static class Queries
         {
-
             internal static readonly Func<Guid, ServerVariableBase> ServerVariableById =
-                (Guid id) => ServerVariableBase.Lookup.Where(variable => variable.Key == id).Any() ? (ServerVariableBase)ServerVariableBase.Lookup.Where(variable => variable.Key == id).First().Value : null;
+                (Guid id) => (ServerVariableBase)ServerVariableBase.Lookup.FirstOrDefault(variable => variable.Key == id).Value;
 
+            internal static readonly Func<string, ServerVariableBase> ServerVariableByName =
+                (string name) => (ServerVariableBase)ServerVariableBase.Lookup.FirstOrDefault(variable => string.Equals(variable.Value.Name, name, StringComparison.OrdinalIgnoreCase)).Value;
 
             internal static readonly Func<int, int, IEnumerable<ServerVariableBase>> ServerVariables =
                 (int page, int count) => ServerVariableBase.Lookup.Select(v => (ServerVariableBase)v.Value).OrderBy(v => v.Id.ToString()).Skip(page * count).Take(count);
-
         }
-
     }
-
 }

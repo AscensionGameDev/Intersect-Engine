@@ -6,8 +6,10 @@ using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Framework.Gwen.Input;
 using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
+using Intersect.Client.Interface.Game.DescriptionWindows;
 using Intersect.Client.Localization;
 using Intersect.Client.Networking;
+using Intersect.Configuration;
 using Intersect.GameObjects;
 using Intersect.Utilities;
 
@@ -29,7 +31,7 @@ namespace Intersect.Client.Interface.Game.Spells
 
         private Guid mCurrentSpellId;
 
-        private SpellDescWindow mDescWindow;
+        private SpellDescriptionWindow mDescWindow;
 
         private Draggable mDragIcon;
 
@@ -63,9 +65,15 @@ namespace Intersect.Client.Interface.Game.Spells
             Pnl.HoverLeave += pnl_HoverLeave;
             Pnl.RightClicked += pnl_RightClicked;
             Pnl.Clicked += pnl_Clicked;
+            Pnl.DoubleClicked += Pnl_DoubleClicked;
             mCooldownLabel = new Label(Pnl, "SpellCooldownLabel");
             mCooldownLabel.IsHidden = true;
             mCooldownLabel.TextColor = new Color(0, 255, 255, 255);
+        }
+
+        private void Pnl_DoubleClicked(Base sender, ClickedEventArgs arguments)
+        {
+            Globals.Me.TryUseSpell(mYindex);
         }
 
         void pnl_Clicked(Base sender, ClickedEventArgs arguments)
@@ -75,7 +83,14 @@ namespace Intersect.Client.Interface.Game.Spells
 
         void pnl_RightClicked(Base sender, ClickedEventArgs arguments)
         {
-            Globals.Me.TryForgetSpell(mYindex);
+            if (ClientConfiguration.Instance.EnableContextMenus)
+            {
+                mSpellWindow.OpenContextMenu(mYindex);
+            }
+            else
+            {
+                Globals.Me.TryForgetSpell(mYindex);
+            }   
         }
 
         void pnl_HoverLeave(Base sender, EventArgs arguments)
@@ -112,7 +127,7 @@ namespace Intersect.Client.Interface.Game.Spells
                 mDescWindow = null;
             }
 
-            mDescWindow = new SpellDescWindow(Globals.Me.Spells[mYindex].Id, mSpellWindow.X, mSpellWindow.Y);
+            mDescWindow = new SpellDescriptionWindow(Globals.Me.Spells[mYindex].Id, mSpellWindow.X, mSpellWindow.Y);
         }
 
         public FloatRect RenderBounds()
@@ -211,7 +226,6 @@ namespace Intersect.Client.Interface.Game.Spells
                         mMouseY = -1;
                         if (Timing.Global.Milliseconds < mClickTime)
                         {
-                            Globals.Me.TryUseSpell(mYindex);
                             mClickTime = 0;
                         }
                     }

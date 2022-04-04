@@ -73,7 +73,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// <summary>
         ///     Numeric value of the control.
         /// </summary>
-        public override float Value
+        public override double Value
         {
             get => base.Value;
             set

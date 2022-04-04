@@ -1,6 +1,9 @@
-﻿using System;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 using Intersect.Client.Framework.Graphics;
+using Intersect.Client.Framework.Gwen.Control.Data;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 
 namespace Intersect.Client.Framework.Gwen.Control.Layout
@@ -9,19 +12,25 @@ namespace Intersect.Client.Framework.Gwen.Control.Layout
     /// <summary>
     ///     Single table row.
     /// </summary>
-    public class TableRow : Base
+    public class TableRow : Base, IColorableText
     {
+        private readonly List<Action> mDisposalActions;
 
-        // [omeg] todo: get rid of this
-        public const int MAX_COLUMNS = 5;
-
-        private readonly Label[] mColumns;
+        private readonly List<Label> mColumns;
 
         protected string mClickSound;
 
         private int mColumnCount;
 
         private bool mEvenRow;
+
+        private GameFont mFont;
+
+        private int mMaximumColumns;
+
+        private Color mTextColor;
+
+        private Color mTextColorOverride;
 
         //Sound Effects
         protected string mHoverSound;
@@ -31,15 +40,29 @@ namespace Intersect.Client.Framework.Gwen.Control.Layout
         /// <summary>
         ///     Initializes a new instance of the <see cref="TableRow" /> class.
         /// </summary>
-        /// <param name="parent">Parent control.</param>
-        public TableRow(Base parent) : base(parent)
+        /// <param name="parent">parent table</param>
+        public TableRow(Table parent) : this(parent, parent.ColumnCount)
         {
-            mColumns = new Label[MAX_COLUMNS];
-            mColumnCount = 0;
+        }
+
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="TableRow" /> class.
+        /// </summary>
+        /// <param name="parent">Parent control.</param>
+        /// <param name="columns">the number of columns this row has</param>
+        public TableRow(Base parent, int columns) : base(parent)
+        {
+            mDisposalActions = new List<Action>();
+            mColumns = new List<Label>(columns);
+            mTextColor = Color.Black;
+            mTextColorOverride = Color.Transparent;
+
+            ColumnCount = columns;
+            MaximumColumns = columns;
             KeyboardInputEnabled = true;
-            this.Clicked += TableRow_Clicked;
-            this.RightClicked += TableRow_RightClicked;
-            this.HoverEnter += TableRow_HoverEnter;
+            Clicked += TableRow_Clicked;
+            RightClicked += TableRow_RightClicked;
+            HoverEnter += TableRow_HoverEnter;
         }
 
         public string HoverSound
@@ -66,7 +89,7 @@ namespace Intersect.Client.Framework.Gwen.Control.Layout
         public int ColumnCount
         {
             get => mColumnCount;
-            set => SetColumnCount(value);
+            set => SetAndDoIfChanged(ref mColumnCount, value, ComputeColumns);
         }
 
         /// <summary>
@@ -78,6 +101,27 @@ namespace Intersect.Client.Framework.Gwen.Control.Layout
             set => mEvenRow = value;
         }
 
+        public GameFont Font
+        {
+            get => mFont;
+            set
+            {
+                if (mFont == value)
+                {
+                    return;
+                }
+
+                mFont = value;
+                SetTextFont(value);
+            }
+        }
+
+        public int MaximumColumns
+        {
+            get => mMaximumColumns;
+            set => SetAndDoIfChanged(ref mMaximumColumns, value, ComputeColumns);
+        }
+
         /// <summary>
         ///     Text of the first column.
         /// </summary>
@@ -85,6 +129,56 @@ namespace Intersect.Client.Framework.Gwen.Control.Layout
         {
             get => GetText(0);
             set => SetCellText(0, value);
+        }
+
+        public Color TextColor
+        {
+            get => mTextColor;
+            set => SetAndDoIfChanged(ref mTextColor, value, () =>
+            {
+                foreach (var column in mColumns)
+                {
+                    column.TextColor = mTextColor;
+                }
+            });
+        }
+
+        public Color TextColorOverride
+        {
+            get => mTextColorOverride;
+            set => SetAndDoIfChanged(ref mTextColorOverride, value, () =>
+            {
+                foreach (var column in mColumns)
+                {
+                    column.TextColorOverride = mTextColorOverride;
+                }
+            });
+        }
+
+        public IEnumerable<string> TextColumns
+        {
+            get => mColumns.Select(column => column.Text);
+            set
+            {
+                if (value == default)
+                {
+                    foreach (var column in mColumns)
+                    {
+                        column.Text = string.Empty;
+                    }
+                }
+
+                var columnIndex = 0;
+                foreach (var cellText in value)
+                {
+                    if (columnIndex >= ColumnCount)
+                    {
+                        ColumnCount = columnIndex + 1;
+                    }
+
+                    SetCellText(columnIndex++, cellText);
+                }
+            }
         }
 
         private void TableRow_HoverEnter(Base sender, EventArgs arguments)
@@ -102,9 +196,19 @@ namespace Intersect.Client.Framework.Gwen.Control.Layout
             PlaySound(mClickSound);
         }
 
-        internal Label GetColumn(int index)
+        internal Label GetColumn(int columnIndex)
         {
-            return mColumns[index];
+            if (columnIndex < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(columnIndex));
+            }
+
+            if (columnIndex >= mColumnCount)
+            {
+                return default;
+            }
+
+            return mColumns[columnIndex];
         }
 
         /// <summary>
@@ -112,50 +216,110 @@ namespace Intersect.Client.Framework.Gwen.Control.Layout
         /// </summary>
         public event GwenEventHandler<ItemSelectedEventArgs> Selected;
 
-        /// <summary>
-        ///     Sets the number of columns.
-        /// </summary>
-        /// <param name="columnCount">Number of columns.</param>
-        protected void SetColumnCount(int columnCount)
+        protected virtual void ComputeColumns()
         {
-            if (columnCount == mColumnCount)
+            while (mColumns.Count < ColumnCount)
             {
-                return;
+                mColumns.Add(new Label(this)
+                {
+                    Font = Font,
+                    MouseInputEnabled = true,
+                    Padding = Padding.Three,
+                    TextColor = TextColor,
+                    TextColorOverride = TextColorOverride,
+                });
             }
 
-            if (columnCount >= MAX_COLUMNS)
+            var lastColumnIndex = ColumnCount - 1;
+            for (var columnIndex = 0; columnIndex < ColumnCount; columnIndex++)
             {
-                throw new ArgumentException("Invalid column count", "columnCount");
+                var column = mColumns[columnIndex];
+                var isLastColumn = columnIndex == lastColumnIndex;
+
+                column.AutoSizeToContents = isLastColumn;
+                if (isLastColumn)
+                {
+                    column.Dock = Pos.Fill;
+                    column.Margin = Margin.Zero;
+                }
+                else
+                {
+                    column.Dock = Pos.Left;
+                    column.Margin = new Margin(0, 0, 2, 0);
+                }
             }
 
-            for (var i = 0; i < MAX_COLUMNS; i++)
+            while (mColumns.Count > MaximumColumns)
             {
-                if (i < columnCount)
-                {
-                    if (null == mColumns[i])
-                    {
-                        mColumns[i] = new Label(this);
-                        mColumns[i].Padding = Padding.Three;
-                        mColumns[i].Margin = new Margin(0, 0, 2, 0); // to separate them slightly
-                        if (i == columnCount - 1)
-                        {
-                            // last column fills remaining space
-                            mColumns[i].Dock = Pos.Fill;
-                            mColumns[i].AutoSizeToContents = false;
-                        }
-                        else
-                        {
-                            mColumns[i].Dock = Pos.Left;
-                        }
-                    }
-                }
-                else if (null != mColumns[i])
-                {
-                    RemoveChild(mColumns[i], true);
-                    mColumns[i] = null;
-                }
+                var column = mColumns[mColumns.Count - 1];
+                column.Parent = default;
+                mColumns.RemoveAt(mColumns.Count - 1);
+            }
+        }
 
-                mColumnCount = columnCount;
+        public void Listen(ITableDataProvider tableDataProvider, int row)
+        {
+            if (tableDataProvider == default)
+            {
+                throw new ArgumentNullException(nameof(tableDataProvider));
+            }
+
+            void dataChanged(object sender, TableDataChangedEventArgs args)
+            {
+                if (row == args.Row)
+                {
+                    SetCellText(args.Column, args.NewValue?.ToString());
+                }
+            }
+
+            tableDataProvider.DataChanged += dataChanged;
+            mDisposalActions.Add(() => tableDataProvider.DataChanged -= dataChanged);
+        }
+
+        public void Listen(ITableRowDataProvider tableRowDataProvider, int column)
+        {
+            if (tableRowDataProvider == default)
+            {
+                throw new ArgumentNullException(nameof(tableRowDataProvider));
+            }
+
+            void dataChanged(object sender, RowDataChangedEventArgs args)
+            {
+                if (args.Column == column)
+                {
+                    SetCellText(column, args.NewValue?.ToString());
+                }
+            }
+
+            tableRowDataProvider.DataChanged += dataChanged;
+            mDisposalActions.Add(() => tableRowDataProvider.DataChanged -= dataChanged);
+        }
+
+        public void Listen(ITableCellDataProvider tableCellDataProvider, int column)
+        {
+            if (tableCellDataProvider == default)
+            {
+                throw new ArgumentNullException(nameof(tableCellDataProvider));
+            }
+
+            void dataChanged(object sender, CellDataChangedEventArgs args)
+            {
+                SetCellText(column, args.NewValue?.ToString());
+            }
+
+            tableCellDataProvider.DataChanged += dataChanged;
+            mDisposalActions.Add(() => tableCellDataProvider.DataChanged -= dataChanged);
+        }
+
+        public override void Dispose()
+        {
+            base.Dispose();
+
+            while (mDisposalActions.Count > 0)
+            {
+                var lastIndex = mDisposalActions.Count - 1;
+                mDisposalActions[lastIndex]?.Invoke();
+                mDisposalActions.RemoveAt(lastIndex);
             }
         }
 
@@ -164,19 +328,23 @@ namespace Intersect.Client.Framework.Gwen.Control.Layout
         /// </summary>
         /// <param name="column">Column index.</param>
         /// <param name="width">Column width.</param>
-        public void SetColumnWidth(int column, int width)
+        public void SetColumnWidth(int columnIndex, int width)
         {
-            if (null == mColumns[column])
+            var column = GetColumn(columnIndex);
+
+            if (default == column)
             {
                 return;
             }
 
-            if (mColumns[column].Width == width)
+            if (column.Width == width)
             {
                 return;
             }
 
-            mColumns[column].Width = width;
+            column.Width = width;
+
+            Invalidate();
         }
 
         /// <summary>
@@ -211,15 +379,17 @@ namespace Intersect.Client.Framework.Gwen.Control.Layout
             mColumns[column].MouseInputEnabled = enableMouseInput;
         }
 
+        private Label GetCellLabel(int column)
+        {
+            return mColumns[column];
+        }
+
         /// <summary>
         ///     Gets the contents of a specified cell.
         /// </summary>
         /// <param name="column">Column number.</param>
         /// <returns>Control embedded in the cell.</returns>
-        public Base GetCellContents(int column)
-        {
-            return mColumns[column];
-        }
+        public Base GetCellContents(int column) => GetCellLabel(column);
 
         protected virtual void OnRowSelected()
         {
@@ -314,6 +484,37 @@ namespace Intersect.Client.Framework.Gwen.Control.Layout
             Platform.Neutral.SetClipboardText(Text);
         }
 
-    }
+        public virtual void SetColumnWidths(IEnumerable<int> columnWidths)
+        {
+            if (default == columnWidths)
+            {
+                return;
+            }
 
+            var columnIndex = 0;
+            foreach (var columnWidth in columnWidths)
+            {
+                var column = GetColumn(columnIndex++);
+                if (default != column)
+                {
+                    column.Width = columnWidth;
+                }
+            }
+
+            //Invalidate();
+        }
+
+        protected override void Layout(Skin.Base skin)
+        {
+            base.Layout(skin);
+
+            var columnAlignments = (Parent as Table)?.ColumnAlignments;
+            for (var columnIndex = 0; columnIndex < mColumnCount; columnIndex++)
+            {
+                var column = mColumns[columnIndex];
+                column.Dock = columnIndex == mColumnCount - 1 ? Pos.Fill : Pos.Left;
+                column.Alignment = (columnAlignments == default || columnAlignments.Count <= columnIndex) ? column.Alignment : columnAlignments[columnIndex];
+            }
+        }
+    }
 }

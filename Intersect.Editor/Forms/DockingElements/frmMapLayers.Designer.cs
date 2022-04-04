@@ -32,7 +32,6 @@ namespace Intersect.Editor.Forms.DockingElements
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmMapLayers));
             this.lblLayer = new System.Windows.Forms.Label();
             this.lblTileType = new System.Windows.Forms.Label();
             this.lblTileset = new System.Windows.Forms.Label();
@@ -60,6 +59,10 @@ namespace Intersect.Editor.Forms.DockingElements
             this.lblMaxItemAmount = new System.Windows.Forms.Label();
             this.lblMapItem = new System.Windows.Forms.Label();
             this.grpWarp = new DarkUI.Controls.DarkGroupBox();
+            this.grpInstanceSettings = new DarkUI.Controls.DarkGroupBox();
+            this.lblInstance = new System.Windows.Forms.Label();
+            this.cmbInstanceType = new DarkUI.Controls.DarkComboBox();
+            this.chkChangeInstance = new System.Windows.Forms.CheckBox();
             this.nudWarpY = new DarkUI.Controls.DarkNumericUpDown();
             this.nudWarpX = new DarkUI.Controls.DarkNumericUpDown();
             this.btnVisualMapSelector = new DarkUI.Controls.DarkButton();
@@ -89,9 +92,9 @@ namespace Intersect.Editor.Forms.DockingElements
             this.cmbSlideDir = new DarkUI.Controls.DarkComboBox();
             this.lblSlideDir = new System.Windows.Forms.Label();
             this.grpAnimation = new DarkUI.Controls.DarkGroupBox();
+            this.chkAnimationBlock = new DarkUI.Controls.DarkCheckBox();
             this.cmbAnimationAttribute = new DarkUI.Controls.DarkComboBox();
             this.lblAnimation = new System.Windows.Forms.Label();
-            this.chkAnimationBlock = new DarkUI.Controls.DarkCheckBox();
             this.lblLightInstructions = new System.Windows.Forms.Label();
             this.lblEventInstructions = new System.Windows.Forms.Label();
             this.grpNpcList = new DarkUI.Controls.DarkGroupBox();
@@ -112,6 +115,18 @@ namespace Intersect.Editor.Forms.DockingElements
             this.panel1 = new System.Windows.Forms.Panel();
             this.pnlAttributes = new System.Windows.Forms.Panel();
             this.grpCritter = new DarkUI.Controls.DarkGroupBox();
+            this.cmbCritterDirection = new DarkUI.Controls.DarkComboBox();
+            this.lblCritterDirection = new System.Windows.Forms.Label();
+            this.chkCritterBlockPlayers = new DarkUI.Controls.DarkCheckBox();
+            this.chkCritterIgnoreNpcAvoids = new DarkUI.Controls.DarkCheckBox();
+            this.cmbCritterLayer = new DarkUI.Controls.DarkComboBox();
+            this.lblCritterLayer = new System.Windows.Forms.Label();
+            this.lblCritterMoveFrequency = new System.Windows.Forms.Label();
+            this.lblCritterMoveSpeed = new System.Windows.Forms.Label();
+            this.nudCritterMoveFrequency = new DarkUI.Controls.DarkNumericUpDown();
+            this.nudCritterMoveSpeed = new DarkUI.Controls.DarkNumericUpDown();
+            this.cmbCritterMovement = new DarkUI.Controls.DarkComboBox();
+            this.lblCritterMovement = new System.Windows.Forms.Label();
             this.cmbCritterSprite = new DarkUI.Controls.DarkComboBox();
             this.lblCritterSprite = new System.Windows.Forms.Label();
             this.cmbCritterAnimation = new DarkUI.Controls.DarkComboBox();
@@ -130,23 +145,12 @@ namespace Intersect.Editor.Forms.DockingElements
             this.pnlEvents = new System.Windows.Forms.Panel();
             this.pnlLights = new System.Windows.Forms.Panel();
             this.lightEditor = new Intersect.Editor.Forms.Controls.LightEditorCtrl();
-            this.cmbCritterMovement = new DarkUI.Controls.DarkComboBox();
-            this.lblCritterMovement = new System.Windows.Forms.Label();
-            this.nudCritterMoveSpeed = new DarkUI.Controls.DarkNumericUpDown();
-            this.nudCritterMoveFrequency = new DarkUI.Controls.DarkNumericUpDown();
-            this.lblCritterMoveSpeed = new System.Windows.Forms.Label();
-            this.lblCritterMoveFrequency = new System.Windows.Forms.Label();
-            this.cmbCritterLayer = new DarkUI.Controls.DarkComboBox();
-            this.lblCritterLayer = new System.Windows.Forms.Label();
-            this.chkCritterIgnoreNpcAvoids = new DarkUI.Controls.DarkCheckBox();
-            this.chkCritterBlockPlayers = new DarkUI.Controls.DarkCheckBox();
-            this.cmbCritterDirection = new DarkUI.Controls.DarkComboBox();
-            this.lblCritterDirection = new System.Windows.Forms.Label();
             this.grpResource.SuspendLayout();
             this.grpZResource.SuspendLayout();
             this.grpItem.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudItemQuantity)).BeginInit();
             this.grpWarp.SuspendLayout();
+            this.grpInstanceSettings.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudWarpY)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudWarpX)).BeginInit();
             this.grpZDimension.SuspendLayout();
@@ -162,6 +166,8 @@ namespace Intersect.Editor.Forms.DockingElements
             this.panel1.SuspendLayout();
             this.pnlAttributes.SuspendLayout();
             this.grpCritter.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudCritterMoveFrequency)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudCritterMoveSpeed)).BeginInit();
             this.pnlNpcs.SuspendLayout();
             this.pnlTiles.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picLayer5)).BeginInit();
@@ -173,8 +179,6 @@ namespace Intersect.Editor.Forms.DockingElements
             ((System.ComponentModel.ISupportInitialize)(this.picTileset)).BeginInit();
             this.pnlEvents.SuspendLayout();
             this.pnlLights.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nudCritterMoveSpeed)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudCritterMoveFrequency)).BeginInit();
             this.SuspendLayout();
             // 
             // lblLayer
@@ -531,6 +535,8 @@ namespace Intersect.Editor.Forms.DockingElements
             // 
             this.grpWarp.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.grpWarp.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpWarp.Controls.Add(this.grpInstanceSettings);
+            this.grpWarp.Controls.Add(this.chkChangeInstance);
             this.grpWarp.Controls.Add(this.nudWarpY);
             this.grpWarp.Controls.Add(this.nudWarpX);
             this.grpWarp.Controls.Add(this.btnVisualMapSelector);
@@ -543,11 +549,71 @@ namespace Intersect.Editor.Forms.DockingElements
             this.grpWarp.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpWarp.Location = new System.Drawing.Point(6, 179);
             this.grpWarp.Name = "grpWarp";
-            this.grpWarp.Size = new System.Drawing.Size(255, 180);
+            this.grpWarp.Size = new System.Drawing.Size(255, 304);
             this.grpWarp.TabIndex = 26;
             this.grpWarp.TabStop = false;
             this.grpWarp.Text = "Warp";
             this.grpWarp.Visible = false;
+            // 
+            // grpInstanceSettings
+            // 
+            this.grpInstanceSettings.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.grpInstanceSettings.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpInstanceSettings.Controls.Add(this.lblInstance);
+            this.grpInstanceSettings.Controls.Add(this.cmbInstanceType);
+            this.grpInstanceSettings.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpInstanceSettings.Location = new System.Drawing.Point(10, 212);
+            this.grpInstanceSettings.Name = "grpInstanceSettings";
+            this.grpInstanceSettings.Size = new System.Drawing.Size(242, 84);
+            this.grpInstanceSettings.TabIndex = 32;
+            this.grpInstanceSettings.TabStop = false;
+            this.grpInstanceSettings.Text = "Instance Settings";
+            this.grpInstanceSettings.Visible = false;
+            // 
+            // lblInstance
+            // 
+            this.lblInstance.AutoSize = true;
+            this.lblInstance.Location = new System.Drawing.Point(11, 22);
+            this.lblInstance.Name = "lblInstance";
+            this.lblInstance.Size = new System.Drawing.Size(78, 13);
+            this.lblInstance.TabIndex = 30;
+            this.lblInstance.Text = "Instance Type:";
+            // 
+            // cmbInstanceType
+            // 
+            this.cmbInstanceType.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.cmbInstanceType.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbInstanceType.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbInstanceType.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbInstanceType.DrawDropdownHoverOutline = false;
+            this.cmbInstanceType.DrawFocusRectangle = false;
+            this.cmbInstanceType.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cmbInstanceType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbInstanceType.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbInstanceType.ForeColor = System.Drawing.Color.Gainsboro;
+            this.cmbInstanceType.FormattingEnabled = true;
+            this.cmbInstanceType.Items.AddRange(new object[] {
+            "Overworld",
+            "Personal",
+            "Guild",
+            "Party"});
+            this.cmbInstanceType.Location = new System.Drawing.Point(11, 39);
+            this.cmbInstanceType.Name = "cmbInstanceType";
+            this.cmbInstanceType.Size = new System.Drawing.Size(225, 21);
+            this.cmbInstanceType.TabIndex = 29;
+            this.cmbInstanceType.Text = "Overworld";
+            this.cmbInstanceType.TextPadding = new System.Windows.Forms.Padding(2);
+            // 
+            // chkChangeInstance
+            // 
+            this.chkChangeInstance.AutoSize = true;
+            this.chkChangeInstance.Location = new System.Drawing.Point(16, 188);
+            this.chkChangeInstance.Name = "chkChangeInstance";
+            this.chkChangeInstance.Size = new System.Drawing.Size(112, 17);
+            this.chkChangeInstance.TabIndex = 29;
+            this.chkChangeInstance.Text = "Change instance?";
+            this.chkChangeInstance.UseVisualStyleBackColor = true;
+            this.chkChangeInstance.CheckedChanged += new System.EventHandler(this.chkChangeInstance_CheckedChanged);
             // 
             // nudWarpY
             // 
@@ -938,6 +1004,15 @@ namespace Intersect.Editor.Forms.DockingElements
             this.grpAnimation.Text = "Animaton";
             this.grpAnimation.Visible = false;
             // 
+            // chkAnimationBlock
+            // 
+            this.chkAnimationBlock.AutoSize = true;
+            this.chkAnimationBlock.Location = new System.Drawing.Point(16, 66);
+            this.chkAnimationBlock.Name = "chkAnimationBlock";
+            this.chkAnimationBlock.Size = new System.Drawing.Size(73, 17);
+            this.chkAnimationBlock.TabIndex = 27;
+            this.chkAnimationBlock.Text = "Block Tile";
+            // 
             // cmbAnimationAttribute
             // 
             this.cmbAnimationAttribute.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
@@ -966,15 +1041,6 @@ namespace Intersect.Editor.Forms.DockingElements
             this.lblAnimation.Size = new System.Drawing.Size(56, 13);
             this.lblAnimation.TabIndex = 10;
             this.lblAnimation.Text = "Animation:";
-            // 
-            // chkAnimationBlock
-            // 
-            this.chkAnimationBlock.AutoSize = true;
-            this.chkAnimationBlock.Location = new System.Drawing.Point(16, 66);
-            this.chkAnimationBlock.Name = "chkAnimationBlock";
-            this.chkAnimationBlock.Size = new System.Drawing.Size(73, 17);
-            this.chkAnimationBlock.TabIndex = 27;
-            this.chkAnimationBlock.Text = "Block Tile";
             // 
             // lblLightInstructions
             // 
@@ -1201,11 +1267,12 @@ namespace Intersect.Editor.Forms.DockingElements
             this.panel1.Controls.Add(this.pnlLights);
             this.panel1.Location = new System.Drawing.Point(8, 34);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(278, 444);
+            this.panel1.Size = new System.Drawing.Size(278, 503);
             this.panel1.TabIndex = 23;
             // 
             // pnlAttributes
             // 
+            this.pnlAttributes.Controls.Add(this.grpWarp);
             this.pnlAttributes.Controls.Add(this.grpCritter);
             this.pnlAttributes.Controls.Add(this.rbCritter);
             this.pnlAttributes.Controls.Add(this.rbSlide);
@@ -1222,13 +1289,12 @@ namespace Intersect.Editor.Forms.DockingElements
             this.pnlAttributes.Controls.Add(this.grpSlide);
             this.pnlAttributes.Controls.Add(this.grpSound);
             this.pnlAttributes.Controls.Add(this.grpZDimension);
-            this.pnlAttributes.Controls.Add(this.grpWarp);
             this.pnlAttributes.Controls.Add(this.grpItem);
             this.pnlAttributes.Controls.Add(this.grpResource);
             this.pnlAttributes.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pnlAttributes.Location = new System.Drawing.Point(0, 0);
             this.pnlAttributes.Name = "pnlAttributes";
-            this.pnlAttributes.Size = new System.Drawing.Size(276, 442);
+            this.pnlAttributes.Size = new System.Drawing.Size(276, 501);
             this.pnlAttributes.TabIndex = 1;
             // 
             // grpCritter
@@ -1259,6 +1325,165 @@ namespace Intersect.Editor.Forms.DockingElements
             this.grpCritter.TabStop = false;
             this.grpCritter.Text = "Critter";
             this.grpCritter.Visible = false;
+            // 
+            // cmbCritterDirection
+            // 
+            this.cmbCritterDirection.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.cmbCritterDirection.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbCritterDirection.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbCritterDirection.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbCritterDirection.DrawDropdownHoverOutline = false;
+            this.cmbCritterDirection.DrawFocusRectangle = false;
+            this.cmbCritterDirection.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cmbCritterDirection.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbCritterDirection.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbCritterDirection.ForeColor = System.Drawing.Color.Gainsboro;
+            this.cmbCritterDirection.FormattingEnabled = true;
+            this.cmbCritterDirection.Location = new System.Drawing.Point(82, 132);
+            this.cmbCritterDirection.Name = "cmbCritterDirection";
+            this.cmbCritterDirection.Size = new System.Drawing.Size(161, 21);
+            this.cmbCritterDirection.TabIndex = 25;
+            this.cmbCritterDirection.Text = null;
+            this.cmbCritterDirection.TextPadding = new System.Windows.Forms.Padding(2);
+            // 
+            // lblCritterDirection
+            // 
+            this.lblCritterDirection.AutoSize = true;
+            this.lblCritterDirection.Location = new System.Drawing.Point(13, 135);
+            this.lblCritterDirection.Name = "lblCritterDirection";
+            this.lblCritterDirection.Size = new System.Drawing.Size(52, 13);
+            this.lblCritterDirection.TabIndex = 24;
+            this.lblCritterDirection.Text = "Direction:";
+            // 
+            // chkCritterBlockPlayers
+            // 
+            this.chkCritterBlockPlayers.Location = new System.Drawing.Point(82, 233);
+            this.chkCritterBlockPlayers.Name = "chkCritterBlockPlayers";
+            this.chkCritterBlockPlayers.Size = new System.Drawing.Size(162, 21);
+            this.chkCritterBlockPlayers.TabIndex = 23;
+            this.chkCritterBlockPlayers.Text = "Block Players";
+            // 
+            // chkCritterIgnoreNpcAvoids
+            // 
+            this.chkCritterIgnoreNpcAvoids.Location = new System.Drawing.Point(82, 212);
+            this.chkCritterIgnoreNpcAvoids.Name = "chkCritterIgnoreNpcAvoids";
+            this.chkCritterIgnoreNpcAvoids.Size = new System.Drawing.Size(162, 21);
+            this.chkCritterIgnoreNpcAvoids.TabIndex = 22;
+            this.chkCritterIgnoreNpcAvoids.Text = "Ignore Npc Avoids";
+            // 
+            // cmbCritterLayer
+            // 
+            this.cmbCritterLayer.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.cmbCritterLayer.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbCritterLayer.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbCritterLayer.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbCritterLayer.DrawDropdownHoverOutline = false;
+            this.cmbCritterLayer.DrawFocusRectangle = false;
+            this.cmbCritterLayer.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cmbCritterLayer.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbCritterLayer.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbCritterLayer.ForeColor = System.Drawing.Color.Gainsboro;
+            this.cmbCritterLayer.FormattingEnabled = true;
+            this.cmbCritterLayer.Location = new System.Drawing.Point(82, 105);
+            this.cmbCritterLayer.Name = "cmbCritterLayer";
+            this.cmbCritterLayer.Size = new System.Drawing.Size(161, 21);
+            this.cmbCritterLayer.TabIndex = 21;
+            this.cmbCritterLayer.Text = null;
+            this.cmbCritterLayer.TextPadding = new System.Windows.Forms.Padding(2);
+            // 
+            // lblCritterLayer
+            // 
+            this.lblCritterLayer.AutoSize = true;
+            this.lblCritterLayer.Location = new System.Drawing.Point(13, 108);
+            this.lblCritterLayer.Name = "lblCritterLayer";
+            this.lblCritterLayer.Size = new System.Drawing.Size(36, 13);
+            this.lblCritterLayer.TabIndex = 20;
+            this.lblCritterLayer.Text = "Layer:";
+            // 
+            // lblCritterMoveFrequency
+            // 
+            this.lblCritterMoveFrequency.AutoSize = true;
+            this.lblCritterMoveFrequency.Location = new System.Drawing.Point(13, 187);
+            this.lblCritterMoveFrequency.Name = "lblCritterMoveFrequency";
+            this.lblCritterMoveFrequency.Size = new System.Drawing.Size(53, 13);
+            this.lblCritterMoveFrequency.TabIndex = 19;
+            this.lblCritterMoveFrequency.Text = "Freq (ms):";
+            // 
+            // lblCritterMoveSpeed
+            // 
+            this.lblCritterMoveSpeed.AutoSize = true;
+            this.lblCritterMoveSpeed.Location = new System.Drawing.Point(13, 161);
+            this.lblCritterMoveSpeed.Name = "lblCritterMoveSpeed";
+            this.lblCritterMoveSpeed.Size = new System.Drawing.Size(63, 13);
+            this.lblCritterMoveSpeed.TabIndex = 18;
+            this.lblCritterMoveSpeed.Text = "Speed (ms):";
+            // 
+            // nudCritterMoveFrequency
+            // 
+            this.nudCritterMoveFrequency.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.nudCritterMoveFrequency.ForeColor = System.Drawing.Color.Gainsboro;
+            this.nudCritterMoveFrequency.Location = new System.Drawing.Point(82, 185);
+            this.nudCritterMoveFrequency.Maximum = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            0});
+            this.nudCritterMoveFrequency.Name = "nudCritterMoveFrequency";
+            this.nudCritterMoveFrequency.Size = new System.Drawing.Size(161, 20);
+            this.nudCritterMoveFrequency.TabIndex = 17;
+            this.nudCritterMoveFrequency.Value = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
+            // 
+            // nudCritterMoveSpeed
+            // 
+            this.nudCritterMoveSpeed.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.nudCritterMoveSpeed.ForeColor = System.Drawing.Color.Gainsboro;
+            this.nudCritterMoveSpeed.Location = new System.Drawing.Point(82, 159);
+            this.nudCritterMoveSpeed.Maximum = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            0});
+            this.nudCritterMoveSpeed.Name = "nudCritterMoveSpeed";
+            this.nudCritterMoveSpeed.Size = new System.Drawing.Size(161, 20);
+            this.nudCritterMoveSpeed.TabIndex = 16;
+            this.nudCritterMoveSpeed.Value = new decimal(new int[] {
+            400,
+            0,
+            0,
+            0});
+            // 
+            // cmbCritterMovement
+            // 
+            this.cmbCritterMovement.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.cmbCritterMovement.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbCritterMovement.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbCritterMovement.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbCritterMovement.DrawDropdownHoverOutline = false;
+            this.cmbCritterMovement.DrawFocusRectangle = false;
+            this.cmbCritterMovement.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cmbCritterMovement.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbCritterMovement.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbCritterMovement.ForeColor = System.Drawing.Color.Gainsboro;
+            this.cmbCritterMovement.FormattingEnabled = true;
+            this.cmbCritterMovement.Location = new System.Drawing.Point(82, 78);
+            this.cmbCritterMovement.Name = "cmbCritterMovement";
+            this.cmbCritterMovement.Size = new System.Drawing.Size(161, 21);
+            this.cmbCritterMovement.TabIndex = 15;
+            this.cmbCritterMovement.Text = null;
+            this.cmbCritterMovement.TextPadding = new System.Windows.Forms.Padding(2);
+            // 
+            // lblCritterMovement
+            // 
+            this.lblCritterMovement.AutoSize = true;
+            this.lblCritterMovement.Location = new System.Drawing.Point(13, 81);
+            this.lblCritterMovement.Name = "lblCritterMovement";
+            this.lblCritterMovement.Size = new System.Drawing.Size(60, 13);
+            this.lblCritterMovement.TabIndex = 14;
+            this.lblCritterMovement.Text = "Movement:";
             // 
             // cmbCritterSprite
             // 
@@ -1337,7 +1562,7 @@ namespace Intersect.Editor.Forms.DockingElements
             this.pnlNpcs.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pnlNpcs.Location = new System.Drawing.Point(0, 0);
             this.pnlNpcs.Name = "pnlNpcs";
-            this.pnlNpcs.Size = new System.Drawing.Size(276, 442);
+            this.pnlNpcs.Size = new System.Drawing.Size(276, 501);
             this.pnlNpcs.TabIndex = 1;
             // 
             // pnlTiles
@@ -1357,7 +1582,7 @@ namespace Intersect.Editor.Forms.DockingElements
             this.pnlTiles.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pnlTiles.Location = new System.Drawing.Point(0, 0);
             this.pnlTiles.Name = "pnlTiles";
-            this.pnlTiles.Size = new System.Drawing.Size(276, 442);
+            this.pnlTiles.Size = new System.Drawing.Size(276, 501);
             this.pnlTiles.TabIndex = 0;
             // 
             // cmbMapLayer
@@ -1441,7 +1666,7 @@ namespace Intersect.Editor.Forms.DockingElements
             this.pnlTilesetContainer.Controls.Add(this.picTileset);
             this.pnlTilesetContainer.Location = new System.Drawing.Point(9, 96);
             this.pnlTilesetContainer.Name = "pnlTilesetContainer";
-            this.pnlTilesetContainer.Size = new System.Drawing.Size(264, 338);
+            this.pnlTilesetContainer.Size = new System.Drawing.Size(264, 397);
             this.pnlTilesetContainer.TabIndex = 19;
             // 
             // picTileset
@@ -1461,7 +1686,7 @@ namespace Intersect.Editor.Forms.DockingElements
             this.pnlEvents.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pnlEvents.Location = new System.Drawing.Point(0, 0);
             this.pnlEvents.Name = "pnlEvents";
-            this.pnlEvents.Size = new System.Drawing.Size(276, 442);
+            this.pnlEvents.Size = new System.Drawing.Size(276, 501);
             this.pnlEvents.TabIndex = 1;
             // 
             // pnlLights
@@ -1471,7 +1696,7 @@ namespace Intersect.Editor.Forms.DockingElements
             this.pnlLights.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pnlLights.Location = new System.Drawing.Point(0, 0);
             this.pnlLights.Name = "pnlLights";
-            this.pnlLights.Size = new System.Drawing.Size(276, 442);
+            this.pnlLights.Size = new System.Drawing.Size(276, 501);
             this.pnlLights.TabIndex = 1;
             // 
             // lightEditor
@@ -1484,181 +1709,13 @@ namespace Intersect.Editor.Forms.DockingElements
             this.lightEditor.Visible = false;
             this.lightEditor.Load += new System.EventHandler(this.lightEditor_Load);
             // 
-            // cmbCritterMovement
-            // 
-            this.cmbCritterMovement.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.cmbCritterMovement.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.cmbCritterMovement.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
-            this.cmbCritterMovement.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbCritterMovement.DrawDropdownHoverOutline = false;
-            this.cmbCritterMovement.DrawFocusRectangle = false;
-            this.cmbCritterMovement.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.cmbCritterMovement.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbCritterMovement.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.cmbCritterMovement.ForeColor = System.Drawing.Color.Gainsboro;
-            this.cmbCritterMovement.FormattingEnabled = true;
-            this.cmbCritterMovement.Location = new System.Drawing.Point(82, 78);
-            this.cmbCritterMovement.Name = "cmbCritterMovement";
-            this.cmbCritterMovement.Size = new System.Drawing.Size(161, 21);
-            this.cmbCritterMovement.TabIndex = 15;
-            this.cmbCritterMovement.Text = null;
-            this.cmbCritterMovement.TextPadding = new System.Windows.Forms.Padding(2);
-            // 
-            // lblCritterMovement
-            // 
-            this.lblCritterMovement.AutoSize = true;
-            this.lblCritterMovement.Location = new System.Drawing.Point(13, 81);
-            this.lblCritterMovement.Name = "lblCritterMovement";
-            this.lblCritterMovement.Size = new System.Drawing.Size(60, 13);
-            this.lblCritterMovement.TabIndex = 14;
-            this.lblCritterMovement.Text = "Movement:";
-            // 
-            // nudCritterMoveSpeed
-            // 
-            this.nudCritterMoveSpeed.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.nudCritterMoveSpeed.ForeColor = System.Drawing.Color.Gainsboro;
-            this.nudCritterMoveSpeed.Location = new System.Drawing.Point(82, 159);
-            this.nudCritterMoveSpeed.Maximum = new decimal(new int[] {
-            10000,
-            0,
-            0,
-            0});
-            this.nudCritterMoveSpeed.Name = "nudCritterMoveSpeed";
-            this.nudCritterMoveSpeed.Size = new System.Drawing.Size(161, 20);
-            this.nudCritterMoveSpeed.TabIndex = 16;
-            this.nudCritterMoveSpeed.Value = new decimal(new int[] {
-            400,
-            0,
-            0,
-            0});
-            // 
-            // nudCritterMoveFrequency
-            // 
-            this.nudCritterMoveFrequency.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.nudCritterMoveFrequency.ForeColor = System.Drawing.Color.Gainsboro;
-            this.nudCritterMoveFrequency.Location = new System.Drawing.Point(82, 185);
-            this.nudCritterMoveFrequency.Maximum = new decimal(new int[] {
-            10000,
-            0,
-            0,
-            0});
-            this.nudCritterMoveFrequency.Name = "nudCritterMoveFrequency";
-            this.nudCritterMoveFrequency.Size = new System.Drawing.Size(161, 20);
-            this.nudCritterMoveFrequency.TabIndex = 17;
-            this.nudCritterMoveFrequency.Value = new decimal(new int[] {
-            1000,
-            0,
-            0,
-            0});
-            // 
-            // lblCritterMoveSpeed
-            // 
-            this.lblCritterMoveSpeed.AutoSize = true;
-            this.lblCritterMoveSpeed.Location = new System.Drawing.Point(13, 161);
-            this.lblCritterMoveSpeed.Name = "lblCritterMoveSpeed";
-            this.lblCritterMoveSpeed.Size = new System.Drawing.Size(63, 13);
-            this.lblCritterMoveSpeed.TabIndex = 18;
-            this.lblCritterMoveSpeed.Text = "Speed (ms):";
-            // 
-            // lblCritterMoveFrequency
-            // 
-            this.lblCritterMoveFrequency.AutoSize = true;
-            this.lblCritterMoveFrequency.Location = new System.Drawing.Point(13, 187);
-            this.lblCritterMoveFrequency.Name = "lblCritterMoveFrequency";
-            this.lblCritterMoveFrequency.Size = new System.Drawing.Size(53, 13);
-            this.lblCritterMoveFrequency.TabIndex = 19;
-            this.lblCritterMoveFrequency.Text = "Freq (ms):";
-            // 
-            // cmbCritterLayer
-            // 
-            this.cmbCritterLayer.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.cmbCritterLayer.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.cmbCritterLayer.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
-            this.cmbCritterLayer.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbCritterLayer.DrawDropdownHoverOutline = false;
-            this.cmbCritterLayer.DrawFocusRectangle = false;
-            this.cmbCritterLayer.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.cmbCritterLayer.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbCritterLayer.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.cmbCritterLayer.ForeColor = System.Drawing.Color.Gainsboro;
-            this.cmbCritterLayer.FormattingEnabled = true;
-            this.cmbCritterLayer.Location = new System.Drawing.Point(82, 105);
-            this.cmbCritterLayer.Name = "cmbCritterLayer";
-            this.cmbCritterLayer.Size = new System.Drawing.Size(161, 21);
-            this.cmbCritterLayer.TabIndex = 21;
-            this.cmbCritterLayer.Text = null;
-            this.cmbCritterLayer.TextPadding = new System.Windows.Forms.Padding(2);
-            // 
-            // lblCritterLayer
-            // 
-            this.lblCritterLayer.AutoSize = true;
-            this.lblCritterLayer.Location = new System.Drawing.Point(13, 108);
-            this.lblCritterLayer.Name = "lblCritterLayer";
-            this.lblCritterLayer.Size = new System.Drawing.Size(36, 13);
-            this.lblCritterLayer.TabIndex = 20;
-            this.lblCritterLayer.Text = "Layer:";
-            // 
-            // chkCritterIgnoreNpcAvoids
-            // 
-            this.chkCritterIgnoreNpcAvoids.Location = new System.Drawing.Point(82, 212);
-            this.chkCritterIgnoreNpcAvoids.Name = "chkCritterIgnoreNpcAvoids";
-            this.chkCritterIgnoreNpcAvoids.Size = new System.Drawing.Size(162, 21);
-            this.chkCritterIgnoreNpcAvoids.TabIndex = 22;
-            this.chkCritterIgnoreNpcAvoids.Text = "Ignore Npc Avoids";
-            // 
-            // chkCritterBlockPlayers
-            // 
-            this.chkCritterBlockPlayers.Location = new System.Drawing.Point(82, 233);
-            this.chkCritterBlockPlayers.Name = "chkCritterBlockPlayers";
-            this.chkCritterBlockPlayers.Size = new System.Drawing.Size(162, 21);
-            this.chkCritterBlockPlayers.TabIndex = 23;
-            this.chkCritterBlockPlayers.Text = "Block Players";
-            // 
-            // cmbCritterDirection
-            // 
-            this.cmbCritterDirection.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.cmbCritterDirection.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.cmbCritterDirection.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
-            this.cmbCritterDirection.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbCritterDirection.DrawDropdownHoverOutline = false;
-            this.cmbCritterDirection.DrawFocusRectangle = false;
-            this.cmbCritterDirection.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.cmbCritterDirection.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbCritterDirection.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.cmbCritterDirection.ForeColor = System.Drawing.Color.Gainsboro;
-            this.cmbCritterDirection.FormattingEnabled = true;
-            this.cmbCritterDirection.Location = new System.Drawing.Point(82, 132);
-            this.cmbCritterDirection.Name = "cmbCritterDirection";
-            this.cmbCritterDirection.Size = new System.Drawing.Size(161, 21);
-            this.cmbCritterDirection.TabIndex = 25;
-            this.cmbCritterDirection.Text = null;
-            this.cmbCritterDirection.TextPadding = new System.Windows.Forms.Padding(2);
-            // 
-            // lblCritterDirection
-            // 
-            this.lblCritterDirection.AutoSize = true;
-            this.lblCritterDirection.Location = new System.Drawing.Point(13, 135);
-            this.lblCritterDirection.Name = "lblCritterDirection";
-            this.lblCritterDirection.Size = new System.Drawing.Size(52, 13);
-            this.lblCritterDirection.TabIndex = 24;
-            this.lblCritterDirection.Text = "Direction:";
-            // 
-            // chkAnimationBlock
-            // 
-            this.chkAnimationBlock.AutoSize = true;
-            this.chkAnimationBlock.Location = new System.Drawing.Point(16, 66);
-            this.chkAnimationBlock.Name = "chkAnimationBlock";
-            this.chkAnimationBlock.Size = new System.Drawing.Size(73, 17);
-            this.chkAnimationBlock.TabIndex = 27;
-            this.chkAnimationBlock.Text = "Block Tile";
-            // 
             // FrmMapLayers
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            this.ClientSize = new System.Drawing.Size(312, 481);
+            this.ClientSize = new System.Drawing.Size(312, 540);
             this.CloseButton = false;
             this.CloseButtonVisible = false;
             this.ControlBox = false;
@@ -1686,6 +1743,8 @@ namespace Intersect.Editor.Forms.DockingElements
             ((System.ComponentModel.ISupportInitialize)(this.nudItemQuantity)).EndInit();
             this.grpWarp.ResumeLayout(false);
             this.grpWarp.PerformLayout();
+            this.grpInstanceSettings.ResumeLayout(false);
+            this.grpInstanceSettings.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudWarpY)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudWarpX)).EndInit();
             this.grpZDimension.ResumeLayout(false);
@@ -1709,6 +1768,8 @@ namespace Intersect.Editor.Forms.DockingElements
             this.pnlAttributes.PerformLayout();
             this.grpCritter.ResumeLayout(false);
             this.grpCritter.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudCritterMoveFrequency)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudCritterMoveSpeed)).EndInit();
             this.pnlNpcs.ResumeLayout(false);
             this.pnlTiles.ResumeLayout(false);
             this.pnlTiles.PerformLayout();
@@ -1722,8 +1783,6 @@ namespace Intersect.Editor.Forms.DockingElements
             this.pnlEvents.ResumeLayout(false);
             this.pnlEvents.PerformLayout();
             this.pnlLights.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.nudCritterMoveSpeed)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudCritterMoveFrequency)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -1838,5 +1897,9 @@ namespace Intersect.Editor.Forms.DockingElements
         private DarkCheckBox chkCritterIgnoreNpcAvoids;
         private DarkComboBox cmbCritterDirection;
         private Label lblCritterDirection;
+        private DarkGroupBox grpInstanceSettings;
+        private Label lblInstance;
+        private DarkComboBox cmbInstanceType;
+        private CheckBox chkChangeInstance;
     }
 }

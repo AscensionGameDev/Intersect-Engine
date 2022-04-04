@@ -385,7 +385,7 @@ namespace Intersect.Client.Interface.Menu
             var iBox = new InputBox(
                 Strings.CharacterSelection.deletetitle.ToString(Characters[mSelectedChar].Name),
                 Strings.CharacterSelection.deleteprompt.ToString(Characters[mSelectedChar].Name), true,
-                InputBox.InputType.YesNo, DeleteCharacter, null, Characters[mSelectedChar].Id, 0,
+                InputBox.InputType.YesNo, DeleteCharacter, null, Characters[mSelectedChar].Id, 0, 0,
                 mCharacterSelectionPanel.Parent, GameContentManager.UI.Menu
             );
         }

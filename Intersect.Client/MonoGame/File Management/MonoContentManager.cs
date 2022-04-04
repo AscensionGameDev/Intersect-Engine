@@ -1,14 +1,15 @@
-using Intersect.Client.Framework.Content;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+
+using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Localization;
 using Intersect.Client.MonoGame.Audio;
-using Intersect.Client.MonoGame.Graphics;
 using Intersect.Compression;
 using Intersect.Logging;
 
@@ -23,12 +24,17 @@ namespace Intersect.Client.MonoGame.File_Management
         public MonoContentManager()
         {
             Init(this);
-            if (!Directory.Exists("resources"))
+
+            var rootPath = Path.GetFullPath("resources");
+
+            if (!Directory.Exists(rootPath))
             {
                 Log.Error(Strings.Errors.resourcesnotfound);
 
                 Environment.Exit(1);
             }
+
+            ContentWatcher = new ContentWatcher(rootPath);
         }
 
         //Graphic Loading

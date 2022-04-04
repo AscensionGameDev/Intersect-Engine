@@ -70,7 +70,7 @@ namespace Intersect.Server.Maps
 
         private bool TransitionMaps(int direction)
         {
-            var map = MapInstance.Get(mMapId);
+            var map = MapController.Get(mMapId);
             if (map == null)
             {
                 return false;
@@ -133,12 +133,12 @@ namespace Intersect.Server.Maps
 
         private bool Fix()
         {
-            if (!MapInstance.Lookup.Keys.Contains(mMapId))
+            if (!MapController.Lookup.Keys.Contains(mMapId))
             {
                 return false;
             }
 
-            var curMap = MapInstance.Get(mMapId);
+            var curMap = MapController.Get(mMapId);
             while (mTileX < 0)
             {
                 if (!TransitionMaps((int) Directions.Left))
@@ -179,9 +179,9 @@ namespace Intersect.Server.Maps
             return mMapId;
         }
 
-        public MapInstance GetMap()
+        public MapController GetMap()
         {
-            return MapInstance.Get(mMapId);
+            return MapController.Get(mMapId);
         }
 
         public byte GetX()
@@ -196,7 +196,7 @@ namespace Intersect.Server.Maps
 
         public static bool IsTileValid(Guid mapId, int tileX, int tileY)
         {
-            if (!MapInstance.Lookup.Keys.Contains(mapId))
+            if (!MapController.Lookup.Keys.Contains(mapId))
             {
                 return false;
             }

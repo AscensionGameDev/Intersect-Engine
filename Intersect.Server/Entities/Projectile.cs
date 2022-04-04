@@ -103,7 +103,7 @@ namespace Intersect.Server.Entities
                             var s = new ProjectileSpawn(
                                 FindProjectileRotationDir(Dir, d),
                                 (byte) (X + FindProjectileRotationX(Dir, x - 2, y - 2)),
-                                (byte) (Y + FindProjectileRotationY(Dir, x - 2, y - 2)), (byte) Z, MapId, Base, this
+                                (byte) (Y + FindProjectileRotationY(Dir, x - 2, y - 2)), (byte) Z, MapId, MapInstanceId, Base, this
                             );
 
                             Spawns[mSpawnedAmount] = s;
@@ -339,7 +339,7 @@ namespace Intersect.Server.Entities
             var killSpawn = MoveFragment(spawn, false);
 
             //Check Map Entities For Hits
-            var map = MapInstance.Get(spawn.MapId);
+            var map = MapController.Get(spawn.MapId);
             if (!killSpawn && map != null)
             {
                 var attribute = map.Attributes[(int)spawn.X, (int)spawn.Y];
@@ -388,9 +388,9 @@ namespace Intersect.Server.Entities
                 }
             }
 
-            if (!killSpawn && map != null)
+            if (!killSpawn && MapController.TryGetInstanceFromMap(map.Id, MapInstanceId, out var mapInstance))
             {
-                var entities = map.GetEntities();
+                var entities = mapInstance.GetEntities();
                 for (var z = 0; z < entities.Count; z++)
                 {
                     if (entities[z] != null &&
@@ -435,13 +435,13 @@ namespace Intersect.Server.Entities
             }
 
             var killSpawn = false;
-            var map = MapInstance.Get(spawn.MapId);
+            var map = MapController.Get(spawn.MapId);
 
             if (Math.Round(newx) < 0)
             {
-                if (MapInstance.Get(map.Left) != null)
+                if (MapController.Get(map.Left) != null)
                 {
-                    newMapId = MapInstance.Get(spawn.MapId).Left;
+                    newMapId = MapController.Get(spawn.MapId).Left;
                     newx = Options.MapWidth - 1;
                 }
                 else
@@ -452,9 +452,9 @@ namespace Intersect.Server.Entities
 
             if (Math.Round(newx) > Options.MapWidth - 1)
             {
-                if (MapInstance.Get(map.Right) != null)
+                if (MapController.Get(map.Right) != null)
                 {
-                    newMapId = MapInstance.Get(spawn.MapId).Right;
+                    newMapId = MapController.Get(spawn.MapId).Right;
                     newx = 0;
                 }
                 else
@@ -465,9 +465,9 @@ namespace Intersect.Server.Entities
 
             if (Math.Round(newy) < 0)
             {
-                if (MapInstance.Get(map.Up) != null)
+                if (MapController.Get(map.Up) != null)
                 {
-                    newMapId = MapInstance.Get(spawn.MapId).Up;
+                    newMapId = MapController.Get(spawn.MapId).Up;
                     newy = Options.MapHeight - 1;
                 }
                 else
@@ -478,9 +478,9 @@ namespace Intersect.Server.Entities
 
             if (Math.Round(newy) > Options.MapHeight - 1)
             {
-                if (MapInstance.Get(map.Down) != null)
+                if (MapController.Get(map.Down) != null)
                 {
-                    newMapId = MapInstance.Get(spawn.MapId).Down;
+                    newMapId = MapController.Get(spawn.MapId).Down;
                     newy = 0;
                 }
                 else
@@ -503,7 +503,10 @@ namespace Intersect.Server.Entities
                 Spawns[i] = null;
             }
 
-            MapInstance.Get(MapId).RemoveProjectile(this);
+            if (MapController.TryGetInstanceFromMap(MapId, MapInstanceId, out var mapInstance))
+            {
+                mapInstance.RemoveProjectile(this);
+            }
         }
 
         public override EntityPacket EntityPacket(EntityPacket packet = null, Player forPlayer = null)

@@ -22,6 +22,10 @@ namespace Intersect.Network
 
         public virtual bool IsValid => true;
 
+        public abstract long ReceiveTime { get; set; }
+
+        public abstract long ProcessTime { get; set; }
+
         /// <inheritdoc />
         public virtual Dictionary<string, SanitizedValue<object>> Sanitize()
         {

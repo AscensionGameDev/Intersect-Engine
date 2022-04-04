@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -910,6 +910,9 @@ namespace Intersect.Editor.Core
 
                                     if (attributesTex != null)
                                     {
+                                        MapAttribute attr = tmpMap.Attributes[x, y];
+
+                                        var blue = (attr is MapWarpAttribute warp && warp.ChangeInstance) ? 0 : 255;
                                         DrawTexture(
                                             attributesTex,
                                             new RectangleF(
@@ -920,7 +923,7 @@ namespace Intersect.Editor.Core
                                                 CurrentView.Left + x * Options.TileWidth,
                                                 CurrentView.Top + y * Options.TileHeight, Options.TileWidth,
                                                 Options.TileHeight
-                                            ), System.Drawing.Color.FromArgb(150, 255, 255, 255), null
+                                            ), System.Drawing.Color.FromArgb(255, 255, 255, blue), null
                                         );
                                     }
                                 }

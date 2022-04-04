@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 using Intersect.Client.Core;
@@ -14,6 +14,8 @@ using Intersect.Client.Interface.Game;
 using Intersect.Client.Interface.Menu;
 using Intersect.Client.Localization;
 using Intersect.Utilities;
+
+using static Intersect.Client.Framework.File_Management.GameContentManager;
 
 namespace Intersect.Client.Interface.Shared
 {
@@ -52,7 +54,21 @@ namespace Intersect.Client.Interface.Shared
         private readonly Button mKeybindingSettingsTab;
 
         // Game Settings.
-        // TODO: Place our configurable gameplay related variables here!
+        private readonly Button mOverheadInformationSettings;
+
+        private readonly Button mOverheadInfoSettingsHelper;
+
+        private readonly LabeledCheckBox mFriendOverheadInfoCheckbox;
+
+        private readonly LabeledCheckBox mGuildMemberOverheadInfoCheckbox;
+
+        private readonly LabeledCheckBox mMyOverheadInfoCheckbox;
+
+        private readonly LabeledCheckBox mNpcOverheadInfoCheckbox;
+
+        private readonly LabeledCheckBox mPartyMemberOverheadInfoCheckbox;
+
+        private readonly LabeledCheckBox mPlayerOverheadInfoCheckbox;
 
         // Video Settings.
         private readonly ImagePanel mResolutionBackground;
@@ -72,6 +88,8 @@ namespace Intersect.Client.Interface.Shared
         private readonly LabeledCheckBox mAutoCloseWindowsCheckbox;
 
         private readonly LabeledCheckBox mFullscreenCheckbox;
+
+        private readonly LabeledCheckBox mLightingEnabledCheckbox;
 
         // Audio Settings.
         private readonly HorizontalSlider mMusicSlider;
@@ -101,11 +119,11 @@ namespace Intersect.Client.Interface.Shared
 
         private readonly Dictionary<Control, Button[]> mKeybindingBtns = new Dictionary<Control, Button[]>();
 
-        // Open settings
+        // Open Settings.
         private bool mReturnToMenu;
 
         // Initialize.
-        public SettingsWindow(Canvas parent, MainMenu mainMenu, EscapeMenu escapeMenu)
+        public SettingsWindow(Base parent, MainMenu mainMenu, EscapeMenu escapeMenu)
         {
             // Assign References.
             mMainMenu = mainMenu;
@@ -140,7 +158,35 @@ namespace Intersect.Client.Interface.Shared
             mGameSettingsContainer = new ScrollControl(mSettingsPanel, "GameSettingsContainer");
             mGameSettingsContainer.EnableScroll(false, true);
 
-            // TODO: Place our configurable gameplay related settings into their respective container for initialization here!
+            // Game Settings - Overhead Information.
+            mOverheadInformationSettings = new Button(mGameSettingsContainer, "OverheadInformationSettings");
+            mOverheadInformationSettings.Text = Strings.Settings.OverheadInformationSettings;
+            mOverheadInfoSettingsHelper = new Button(mGameSettingsContainer, "OverheadInfoSettingsHelper");
+            mOverheadInfoSettingsHelper.SetToolTipText(Strings.Settings.OverheadInfoSettingsHelper);
+
+            // Game Settings - Toggle for: Friends Overhead Information.
+            mFriendOverheadInfoCheckbox = new LabeledCheckBox(mGameSettingsContainer, "FriendOverheadInfoCheckbox");
+            mFriendOverheadInfoCheckbox.Text = Strings.Settings.FriendOverheadInfo;
+
+            // Game Settings - Toggle for: Guild Members Overhead Information.
+            mGuildMemberOverheadInfoCheckbox = new LabeledCheckBox(mGameSettingsContainer, "GuildMemberOverheadInfoCheckbox");
+            mGuildMemberOverheadInfoCheckbox.Text = Strings.Settings.GuildMemberOverheadInfo;
+
+            // Game Settings - Toggle for: My Overhead Information (Local Player).
+            mMyOverheadInfoCheckbox = new LabeledCheckBox(mGameSettingsContainer, "MyOverheadInfoCheckbox");
+            mMyOverheadInfoCheckbox.Text = Strings.Settings.MyOverheadInfo;
+
+            // Game Settings - Toggle for: NPCs Overhead Information.
+            mNpcOverheadInfoCheckbox = new LabeledCheckBox(mGameSettingsContainer, "NpcOverheadInfoCheckbox");
+            mNpcOverheadInfoCheckbox.Text = Strings.Settings.NpcOverheadInfo;
+
+            // Game Settings - Toggle for: Party Members Overhead Information.
+            mPartyMemberOverheadInfoCheckbox = new LabeledCheckBox(mGameSettingsContainer, "PartyMemberOverheadInfoCheckbox");
+            mPartyMemberOverheadInfoCheckbox.Text = Strings.Settings.PartyMemberOverheadInfo;
+
+            // Game Settings - Toggle for: Players Overhead Information.
+            mPlayerOverheadInfoCheckbox = new LabeledCheckBox(mGameSettingsContainer, "PlayerOverheadInfoCheckbox");
+            mPlayerOverheadInfoCheckbox.Text = Strings.Settings.PlayerOverheadInfo;
 
             #endregion
 
@@ -199,6 +245,12 @@ namespace Intersect.Client.Interface.Shared
             mAutoCloseWindowsCheckbox = new LabeledCheckBox(mVideoSettingsContainer, "AutoCloseWindowsCheckbox")
             {
                 Text = Strings.Settings.AutoCloseWindows
+            };
+
+            // Video Settinbgs - Enable Lighting Checkbox
+            mLightingEnabledCheckbox = new LabeledCheckBox(mVideoSettingsContainer, "EnableLightingCheckbox")
+            {
+                Text = Strings.Settings.EnableLighting
             };
 
             #endregion
@@ -295,10 +347,7 @@ namespace Intersect.Client.Interface.Shared
 
             #endregion
 
-            mSettingsPanel.LoadJsonUi(
-                mainMenu == null ? GameContentManager.UI.InGame : GameContentManager.UI.Menu,
-                Graphics.Renderer.GetResolutionString()
-            );
+            mSettingsPanel.LoadJsonUi(UI.Shared, Graphics.Renderer.GetResolutionString());
         }
 
         private void GameSettingsTab_Clicked(Base sender, ClickedEventArgs arguments)
@@ -390,13 +439,37 @@ namespace Intersect.Client.Interface.Shared
                 // KeybindingBtns.
                 foreach (Control control in Enum.GetValues(typeof(Control)))
                 {
-                    mKeybindingBtns[control][0].Text =
+                    if (mKeybindingEditControls.ControlMapping[control].Key1.Modifier != Keys.None)
+                    {
+                        mKeybindingBtns[control][0].Text = String.Format("{00} + {01}",
                         Strings.Keys.keydict[
-                            Enum.GetName(typeof(Keys), mKeybindingEditControls.ControlMapping[control].Key1).ToLower()];
+                            Enum.GetName(typeof(Keys), mKeybindingEditControls.ControlMapping[control].Key1.Modifier).ToLower()],
+                        Strings.Keys.keydict[
+                            Enum.GetName(typeof(Keys), mKeybindingEditControls.ControlMapping[control].Key1.Key).ToLower()]
+                        );
+                    }
+                    else
+                    {
+                        mKeybindingBtns[control][0].Text =
+                        Strings.Keys.keydict[
+                            Enum.GetName(typeof(Keys), mKeybindingEditControls.ControlMapping[control].Key1.Key).ToLower()];
+                    }
 
-                    mKeybindingBtns[control][1].Text =
+                    if (mKeybindingEditControls.ControlMapping[control].Key2.Modifier != Keys.None)
+                    {
+                        mKeybindingBtns[control][1].Text = String.Format("{00} + {01}",
                         Strings.Keys.keydict[
-                            Enum.GetName(typeof(Keys), mKeybindingEditControls.ControlMapping[control].Key2).ToLower()];
+                            Enum.GetName(typeof(Keys), mKeybindingEditControls.ControlMapping[control].Key2.Modifier).ToLower()],
+                        Strings.Keys.keydict[
+                            Enum.GetName(typeof(Keys), mKeybindingEditControls.ControlMapping[control].Key2.Key).ToLower()]
+                        );
+                    }
+                    else
+                    {
+                        mKeybindingBtns[control][1].Text =
+                        Strings.Keys.keydict[
+                            Enum.GetName(typeof(Keys), mKeybindingEditControls.ControlMapping[control].Key2.Key).ToLower()];
+                    }
                 }
             }
         }
@@ -430,20 +503,40 @@ namespace Intersect.Client.Interface.Shared
             mKeybindingRestoreBtn.Hide();
         }
 
-        private void OnKeyDown(Keys key)
+        private void OnKeyDown(Keys modifier, Keys key)
         {
             if (mKeybindingEditBtn != null)
             {
-                mKeybindingEditControls.UpdateControl(mKeybindingEditControl, mKeyEdit, key);
+                mKeybindingEditControls.UpdateControl(mKeybindingEditControl, mKeyEdit, modifier, key);
                 if (mKeyEdit == 1)
                 {
-                    mKeybindingEditBtn.Text =
-                        Strings.Keys.keydict[Enum.GetName(typeof(Keys), mKeybindingEditControls.ControlMapping[mKeybindingEditControl].Key1).ToLower()];
+                    if (modifier != Keys.None)
+                    {
+                        mKeybindingEditBtn.Text = String.Format("{00} + {01}",
+                            Strings.Keys.keydict[Enum.GetName(typeof(Keys), mKeybindingEditControls.ControlMapping[mKeybindingEditControl].Key1.Modifier).ToLower()],
+                            Strings.Keys.keydict[Enum.GetName(typeof(Keys), mKeybindingEditControls.ControlMapping[mKeybindingEditControl].Key1.Key).ToLower()]
+                        );
+                    }
+                    else
+                    {
+                        mKeybindingEditBtn.Text =
+                        Strings.Keys.keydict[Enum.GetName(typeof(Keys), mKeybindingEditControls.ControlMapping[mKeybindingEditControl].Key1.Key).ToLower()];
+                    }
                 }
                 else
                 {
-                    mKeybindingEditBtn.Text =
-                        Strings.Keys.keydict[Enum.GetName(typeof(Keys), mKeybindingEditControls.ControlMapping[mKeybindingEditControl].Key2).ToLower()];
+                    if (modifier != Keys.None)
+                    {
+                        mKeybindingEditBtn.Text = String.Format("{00} + {01}",
+                            Strings.Keys.keydict[Enum.GetName(typeof(Keys), mKeybindingEditControls.ControlMapping[mKeybindingEditControl].Key2.Modifier).ToLower()],
+                            Strings.Keys.keydict[Enum.GetName(typeof(Keys), mKeybindingEditControls.ControlMapping[mKeybindingEditControl].Key2.Key).ToLower()]
+                        );
+                    }
+                    else
+                    {
+                        mKeybindingEditBtn.Text =
+                        Strings.Keys.keydict[Enum.GetName(typeof(Keys), mKeybindingEditControls.ControlMapping[mKeybindingEditControl].Key2.Key).ToLower()];
+                    }
                 }
 
                 if (key != Keys.None)
@@ -452,19 +545,19 @@ namespace Intersect.Client.Interface.Shared
                     {
                         if (control.Key != mKeybindingEditControl)
                         {
-                            if (control.Value.Key1 == key)
+                            if (control.Value.Key1.Modifier == modifier && control.Value.Key1.Key == key)
                             {
                                 // Remove this mapping.
-                                mKeybindingEditControls.UpdateControl(control.Key, 1, Keys.None);
+                                mKeybindingEditControls.UpdateControl(control.Key, 1, Keys.None, Keys.None);
 
                                 // Update UI.
                                 mKeybindingBtns[control.Key][0].Text = Strings.Keys.keydict[Enum.GetName(typeof(Keys), Keys.None).ToLower()];
                             }
 
-                            if (control.Value.Key2 == key)
+                            if (control.Value.Key2.Modifier == modifier && control.Value.Key2.Key == key)
                             {
                                 // Remove this mapping.
-                                mKeybindingEditControls.UpdateControl(control.Key, 2, Keys.None);
+                                mKeybindingEditControls.UpdateControl(control.Key, 2, Keys.None, Keys.None);
 
                                 // Update UI.
                                 mKeybindingBtns[control.Key][1].Text = Strings.Keys.keydict[Enum.GetName(typeof(Keys), Keys.None).ToLower()];
@@ -486,7 +579,7 @@ namespace Intersect.Client.Interface.Shared
                 mKeybindingEditBtn != null &&
                 mKeybindingListeningTimer < Timing.Global.Milliseconds)
             {
-                OnKeyDown(Keys.None);
+                OnKeyDown(Keys.None, Keys.None);
             }
         }
 
@@ -554,11 +647,17 @@ namespace Intersect.Client.Interface.Shared
             }
 
             // Game Settings.
-            //
+            mFriendOverheadInfoCheckbox.IsChecked = Globals.Database.FriendOverheadInfo;
+            mGuildMemberOverheadInfoCheckbox.IsChecked = Globals.Database.GuildMemberOverheadInfo;
+            mMyOverheadInfoCheckbox.IsChecked = Globals.Database.MyOverheadInfo;
+            mNpcOverheadInfoCheckbox.IsChecked = Globals.Database.NpcOverheadInfo;
+            mPartyMemberOverheadInfoCheckbox.IsChecked = Globals.Database.PartyMemberOverheadInfo;
+            mPlayerOverheadInfoCheckbox.IsChecked = Globals.Database.PlayerOverheadInfo;
 
             // Video Settings.
             mAutoCloseWindowsCheckbox.IsChecked = Globals.Database.HideOthersOnWindowOpen;
             mFullscreenCheckbox.IsChecked = Globals.Database.FullScreen;
+            mLightingEnabledCheckbox.IsChecked = Globals.Database.EnableLighting;
 
             // Audio Settings.
             mPreviousMusicVolume = Globals.Database.MusicVolume;
@@ -602,7 +701,9 @@ namespace Intersect.Client.Interface.Shared
                     default:
                         throw new NotImplementedException();
                 }
-            }    
+
+                mReturnToMenu = false;
+            }
         }
 
         // Input Handlers
@@ -645,11 +746,11 @@ namespace Intersect.Client.Interface.Shared
             {
                 mKeybindingBtns[control][0].Text =
                     Strings.Keys.keydict[
-                        Enum.GetName(typeof(Keys), mKeybindingEditControls.ControlMapping[control].Key1).ToLower()];
+                        Enum.GetName(typeof(Keys), mKeybindingEditControls.ControlMapping[control].Key1.Key).ToLower()];
 
                 mKeybindingBtns[control][1].Text =
                     Strings.Keys.keydict[
-                        Enum.GetName(typeof(Keys), mKeybindingEditControls.ControlMapping[control].Key2).ToLower()];
+                        Enum.GetName(typeof(Keys), mKeybindingEditControls.ControlMapping[control].Key2.Key).ToLower()];
             }
         }
 
@@ -699,6 +800,38 @@ namespace Intersect.Client.Interface.Shared
             {
                 shouldReset = true;
                 Globals.Database.TargetFps = newFps;
+            }
+
+            Globals.Database.EnableLighting = mLightingEnabledCheckbox.IsChecked;
+          
+            if (Globals.Database.FriendOverheadInfo != mFriendOverheadInfoCheckbox.IsChecked)
+            {
+                Globals.Database.FriendOverheadInfo = mFriendOverheadInfoCheckbox.IsChecked;
+            }
+
+            if (Globals.Database.GuildMemberOverheadInfo != mGuildMemberOverheadInfoCheckbox.IsChecked)
+            {
+                Globals.Database.GuildMemberOverheadInfo = mGuildMemberOverheadInfoCheckbox.IsChecked;
+            }
+
+            if (Globals.Database.MyOverheadInfo != mMyOverheadInfoCheckbox.IsChecked)
+            {
+                Globals.Database.MyOverheadInfo = mMyOverheadInfoCheckbox.IsChecked;
+            }
+
+            if (Globals.Database.NpcOverheadInfo != mNpcOverheadInfoCheckbox.IsChecked)
+            {
+                Globals.Database.NpcOverheadInfo = mNpcOverheadInfoCheckbox.IsChecked;
+            }
+
+            if (Globals.Database.PartyMemberOverheadInfo != mPartyMemberOverheadInfoCheckbox.IsChecked)
+            {
+                Globals.Database.PartyMemberOverheadInfo = mPartyMemberOverheadInfoCheckbox.IsChecked;
+            }
+
+            if (Globals.Database.PlayerOverheadInfo != mPlayerOverheadInfoCheckbox.IsChecked)
+            {
+                Globals.Database.PlayerOverheadInfo = mPlayerOverheadInfoCheckbox.IsChecked;
             }
 
             // Save Settings.
