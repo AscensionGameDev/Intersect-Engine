@@ -309,16 +309,13 @@ namespace Intersect.Editor.Forms.DockingElements
                     }
                     else if (Globals.CurrentTool == (int) EditingTool.Erase)
                     {
-                        if (Options.Instance.MapOpts.Layers.All.Contains(Globals.CurrentLayer))
+                        if (Globals.CurrentLayer == LayerOptions.Attributes)
                         {
-                            if (Globals.CurrentLayer == LayerOptions.Attributes)
-                            {
-                                Globals.MapEditorWindow.SmartEraseAttributes(Globals.CurTileX, Globals.CurTileY);
-                            }
-                            else if (Options.Instance.MapOpts.Layers.All.Contains(Globals.CurrentLayer))
-                            {
-                                Globals.MapEditorWindow.SmartEraseLayer(Globals.CurTileX, Globals.CurTileY);
-                            }
+                            Globals.MapEditorWindow.SmartEraseAttributes(Globals.CurTileX, Globals.CurTileY);
+                        }
+                        else if (Options.Instance.MapOpts.Layers.All.Contains(Globals.CurrentLayer))
+                        {
+                            Globals.MapEditorWindow.SmartEraseLayer(Globals.CurTileX, Globals.CurTileY);
                         }
 
                         Globals.MouseButton = -1;
@@ -1056,7 +1053,7 @@ namespace Intersect.Editor.Forms.DockingElements
                                     SaveMap();
                                 }
 
-                                Globals.MainForm.EnterMap(Globals.MapGrid.Grid[x, y].MapId);
+                                Globals.MainForm.EnterMap(Globals.MapGrid.Grid[x, y].MapId, true);
                             }
                             else
                             {
@@ -1117,7 +1114,7 @@ namespace Intersect.Editor.Forms.DockingElements
                             SaveMap();
                         }
 
-                        Globals.MainForm.EnterMap(newMapId);
+                        Globals.MainForm.EnterMap(newMapId, true);
                     }
 
                     return;

@@ -8,6 +8,7 @@ using Intersect.Editor.Forms;
 using Intersect.Editor.General;
 using Intersect.Editor.Localization;
 using Intersect.Editor.Maps;
+using Intersect.Utilities;
 
 namespace Intersect.Editor.Core
 {
@@ -15,7 +16,7 @@ namespace Intersect.Editor.Core
     public static class Main
     {
 
-        private static long sAnimationTimer = Globals.System.GetTimeMs();
+        private static long sAnimationTimer = Timing.Global.Milliseconds;
 
         private static int sFps;
 
@@ -29,7 +30,7 @@ namespace Intersect.Editor.Core
 
         private static FrmProgress sProgressForm;
 
-        private static long sWaterfallTimer = Globals.System.GetTimeMs();
+        private static long sWaterfallTimer = Timing.Global.Milliseconds;
 
         public static void StartLoop()
         {
@@ -74,10 +75,10 @@ namespace Intersect.Editor.Core
         public static void RunFrame()
         {
             //Shooting for 30fps
-            var startTime = Globals.System.GetTimeMs();
+            var startTime = Timing.Global.Milliseconds;
             sMyForm.Update();
 
-            if (sWaterfallTimer < Globals.System.GetTimeMs())
+            if (sWaterfallTimer < Timing.Global.Milliseconds)
             {
                 Globals.WaterfallFrame++;
                 if (Globals.WaterfallFrame == 3)
@@ -85,10 +86,10 @@ namespace Intersect.Editor.Core
                     Globals.WaterfallFrame = 0;
                 }
 
-                sWaterfallTimer = Globals.System.GetTimeMs() + 500;
+                sWaterfallTimer = Timing.Global.Milliseconds + 500;
             }
 
-            if (sAnimationTimer < Globals.System.GetTimeMs())
+            if (sAnimationTimer < Timing.Global.Milliseconds)
             {
                 Globals.AutotileFrame++;
                 if (Globals.AutotileFrame == 3)
@@ -96,7 +97,7 @@ namespace Intersect.Editor.Core
                     Globals.AutotileFrame = 0;
                 }
 
-                sAnimationTimer = Globals.System.GetTimeMs() + 600;
+                sAnimationTimer = Timing.Global.Milliseconds + 600;
             }
 
             DrawFrame();
@@ -106,15 +107,15 @@ namespace Intersect.Editor.Core
             Application.DoEvents(); // handle form events
 
             sFpsCount++;
-            if (sFpsTime < Globals.System.GetTimeMs())
+            if (sFpsTime < Timing.Global.Milliseconds)
             {
                 sFps = sFpsCount;
                 sMyForm.toolStripLabelFPS.Text = Strings.MainForm.fps.ToString(sFps);
                 sFpsCount = 0;
-                sFpsTime = Globals.System.GetTimeMs() + 1000;
+                sFpsTime = Timing.Global.Milliseconds + 1000;
             }
 
-            Thread.Sleep(Math.Max(1, (int) (1000 / 60f - (Globals.System.GetTimeMs() - startTime))));
+            Thread.Sleep(Math.Max(1, (int) (1000 / 60f - (Timing.Global.Milliseconds - startTime))));
         }
 
         private static void UpdateMaps()

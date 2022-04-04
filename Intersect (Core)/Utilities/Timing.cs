@@ -8,16 +8,9 @@ namespace Intersect.Utilities
     /// </summary>
     public sealed class Timing
     {
-        private static int lastTicks = -1;
-        private static DateTime lastDateTime = DateTime.MinValue;
-        public static long Hits = 0;
-        public static long Misses = 0;
+        private DateTime mLastDateTime = DateTime.MinValue;
 
-        /// <summary>
-        /// The global <see cref="Timing"/> instance.
-        /// </summary>
-        public static Timing Global { get; } = new Timing();
-
+        private int mLastTicks = -1;
 
         /// <summary>
         /// Initializes a <see cref="Timing"/> instance.
@@ -28,15 +21,9 @@ namespace Intersect.Utilities
         }
 
         /// <summary>
-        /// Synchronizes this <see cref="Timing"/> instance with another based on the other's current time.
-        ///
-        /// Sets <see cref="TicksOffset"/>.
+        /// The global <see cref="Timing"/> instance.
         /// </summary>
-        /// <param name="remoteOffset">a point in time to synchronize to in ticks</param>
-        public void Synchronize(long remoteUtc, long remoteOffset)
-        {
-            TicksOffset = remoteOffset + (TicksUTC - remoteUtc);
-        }
+        public static Timing Global { get; } = new Timing();
 
         /// <summary>
         /// Ticks since the instance started adjusted by <see cref="TicksOffset"/>.
@@ -44,33 +31,33 @@ namespace Intersect.Utilities
         public long Ticks
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get => TicksUTC - TicksOffset;
+            get => TicksUtc - TicksOffset;
         }
 
         /// <summary>
         /// The offset from the master instance in ticks.
         /// </summary>
-        public long TicksOffset { get; set; }
+        public long TicksOffset { get; private set; }
 
         /// <summary>
         /// Real-world unix time in ticks.
         /// </summary>
-        public long TicksUTC
+        public long TicksUtc
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
             {
-                int tickCount = Environment.TickCount;
-                if (tickCount == lastTicks)
+                var tickCount = Environment.TickCount;
+                if (tickCount == mLastTicks)
                 {
-                    Hits++;
-                    return lastDateTime.Ticks;
+                    return mLastDateTime.Ticks;
                 }
-                Misses++;
-                DateTime dt = DateTime.UtcNow;
-                lastTicks = tickCount;
-                lastDateTime = dt;
-                return dt.Ticks;
+
+                var now = DateTime.UtcNow;
+                mLastTicks = tickCount;
+                mLastDateTime = now;
+
+                return now.Ticks;
             }
         }
 
@@ -79,7 +66,8 @@ namespace Intersect.Utilities
         /// </summary>
         public long Milliseconds
         {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)] get => Ticks / TimeSpan.TicksPerMillisecond;
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => Ticks / TimeSpan.TicksPerMillisecond;
         }
 
         /// <summary>
@@ -94,9 +82,22 @@ namespace Intersect.Utilities
         /// <summary>
         /// Gets the real-world unix time in milliseconds.
         /// </summary>
-        public long MillisecondsUTC
+        public long MillisecondsUtc
         {
-            [MethodImpl(MethodImplOptions.AggressiveInlining)] get => TicksUTC / TimeSpan.TicksPerMillisecond;
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => TicksUtc / TimeSpan.TicksPerMillisecond;
+        }
+
+        /// <summary>
+        /// Synchronizes this <see cref="Timing"/> instance with another based on the other's current time.
+        ///
+        /// Sets <see cref="TicksOffset"/>.
+        /// </summary>
+        /// <param name="remoteUtc">the current remote time</param>
+        /// <param name="remoteOffset">the offset from the remote</param>
+        public void Synchronize(long remoteUtc, long remoteOffset)
+        {
+            TicksOffset = remoteOffset + (TicksUtc - remoteUtc);
         }
     }
 }

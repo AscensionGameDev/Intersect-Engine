@@ -80,8 +80,6 @@ namespace Intersect.Editor.Forms.Editors
             this.nudCastRange = new DarkUI.Controls.DarkNumericUpDown();
             this.lblProjectile = new System.Windows.Forms.Label();
             this.cmbProjectile = new DarkUI.Controls.DarkComboBox();
-            this.grpEvent = new DarkUI.Controls.DarkGroupBox();
-            this.cmbEvent = new DarkUI.Controls.DarkComboBox();
             this.grpCombat = new DarkUI.Controls.DarkGroupBox();
             this.grpStats = new DarkUI.Controls.DarkGroupBox();
             this.lblPercentage5 = new System.Windows.Forms.Label();
@@ -140,6 +138,8 @@ namespace Intersect.Editor.Forms.Editors
             this.lblDamageType = new System.Windows.Forms.Label();
             this.lblHPDamage = new System.Windows.Forms.Label();
             this.lblManaDamage = new System.Windows.Forms.Label();
+            this.grpEvent = new DarkUI.Controls.DarkGroupBox();
+            this.cmbEvent = new DarkUI.Controls.DarkComboBox();
             this.grpDash = new DarkUI.Controls.DarkGroupBox();
             this.grpDashCollisions = new DarkUI.Controls.DarkGroupBox();
             this.chkIgnoreInactiveResources = new DarkUI.Controls.DarkCheckBox();
@@ -188,7 +188,6 @@ namespace Intersect.Editor.Forms.Editors
             ((System.ComponentModel.ISupportInitialize)(this.nudDuration)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudHitRadius)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudCastRange)).BeginInit();
-            this.grpEvent.SuspendLayout();
             this.grpCombat.SuspendLayout();
             this.grpStats.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudSpdPercentage)).BeginInit();
@@ -213,6 +212,7 @@ namespace Intersect.Editor.Forms.Editors
             ((System.ComponentModel.ISupportInitialize)(this.nudScaling)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudMPDamage)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudHPDamage)).BeginInit();
+            this.grpEvent.SuspendLayout();
             this.grpDash.SuspendLayout();
             this.grpDashCollisions.SuspendLayout();
             this.grpWarp.SuspendLayout();
@@ -229,8 +229,8 @@ namespace Intersect.Editor.Forms.Editors
             this.pnlContainer.Controls.Add(this.grpSpellCost);
             this.pnlContainer.Controls.Add(this.grpRequirements);
             this.pnlContainer.Controls.Add(this.grpTargetInfo);
-            this.pnlContainer.Controls.Add(this.grpEvent);
             this.pnlContainer.Controls.Add(this.grpCombat);
+            this.pnlContainer.Controls.Add(this.grpEvent);
             this.pnlContainer.Controls.Add(this.grpDash);
             this.pnlContainer.Controls.Add(this.grpWarp);
             this.pnlContainer.Location = new System.Drawing.Point(221, 40);
@@ -516,7 +516,7 @@ namespace Intersect.Editor.Forms.Editors
             this.grpSpellCost.Controls.Add(this.lblCastDuration);
             this.grpSpellCost.Controls.Add(this.lblCooldownDuration);
             this.grpSpellCost.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpSpellCost.Location = new System.Drawing.Point(3, 362);
+            this.grpSpellCost.Location = new System.Drawing.Point(3, 301);
             this.grpSpellCost.Name = "grpSpellCost";
             this.grpSpellCost.Size = new System.Drawing.Size(438, 143);
             this.grpSpellCost.TabIndex = 36;
@@ -927,41 +927,6 @@ namespace Intersect.Editor.Forms.Editors
             this.cmbProjectile.Visible = false;
             this.cmbProjectile.SelectedIndexChanged += new System.EventHandler(this.cmbProjectile_SelectedIndexChanged);
             // 
-            // grpEvent
-            // 
-            this.grpEvent.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            this.grpEvent.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.grpEvent.Controls.Add(this.cmbEvent);
-            this.grpEvent.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpEvent.Location = new System.Drawing.Point(0, 305);
-            this.grpEvent.Name = "grpEvent";
-            this.grpEvent.Size = new System.Drawing.Size(441, 48);
-            this.grpEvent.TabIndex = 40;
-            this.grpEvent.TabStop = false;
-            this.grpEvent.Text = "Event";
-            this.grpEvent.Visible = false;
-            // 
-            // cmbEvent
-            // 
-            this.cmbEvent.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.cmbEvent.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.cmbEvent.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
-            this.cmbEvent.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbEvent.DrawDropdownHoverOutline = false;
-            this.cmbEvent.DrawFocusRectangle = false;
-            this.cmbEvent.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.cmbEvent.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbEvent.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.cmbEvent.ForeColor = System.Drawing.Color.Gainsboro;
-            this.cmbEvent.FormattingEnabled = true;
-            this.cmbEvent.Location = new System.Drawing.Point(9, 17);
-            this.cmbEvent.Name = "cmbEvent";
-            this.cmbEvent.Size = new System.Drawing.Size(425, 21);
-            this.cmbEvent.TabIndex = 17;
-            this.cmbEvent.Text = null;
-            this.cmbEvent.TextPadding = new System.Windows.Forms.Padding(2);
-            this.cmbEvent.SelectedIndexChanged += new System.EventHandler(this.cmbEvent_SelectedIndexChanged);
-            // 
             // grpCombat
             // 
             this.grpCombat.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
@@ -972,7 +937,7 @@ namespace Intersect.Editor.Forms.Editors
             this.grpCombat.Controls.Add(this.grpEffectDuration);
             this.grpCombat.Controls.Add(this.grpDamage);
             this.grpCombat.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpCombat.Location = new System.Drawing.Point(3, 513);
+            this.grpCombat.Location = new System.Drawing.Point(3, 448);
             this.grpCombat.Name = "grpCombat";
             this.grpCombat.Size = new System.Drawing.Size(440, 500);
             this.grpCombat.TabIndex = 39;
@@ -1906,6 +1871,41 @@ namespace Intersect.Editor.Forms.Editors
             this.lblManaDamage.TabIndex = 47;
             this.lblManaDamage.Text = "Mana Damage:";
             // 
+            // grpEvent
+            // 
+            this.grpEvent.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.grpEvent.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpEvent.Controls.Add(this.cmbEvent);
+            this.grpEvent.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpEvent.Location = new System.Drawing.Point(3, 448);
+            this.grpEvent.Name = "grpEvent";
+            this.grpEvent.Size = new System.Drawing.Size(438, 48);
+            this.grpEvent.TabIndex = 40;
+            this.grpEvent.TabStop = false;
+            this.grpEvent.Text = "Event";
+            this.grpEvent.Visible = false;
+            // 
+            // cmbEvent
+            // 
+            this.cmbEvent.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.cmbEvent.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbEvent.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbEvent.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbEvent.DrawDropdownHoverOutline = false;
+            this.cmbEvent.DrawFocusRectangle = false;
+            this.cmbEvent.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cmbEvent.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbEvent.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbEvent.ForeColor = System.Drawing.Color.Gainsboro;
+            this.cmbEvent.FormattingEnabled = true;
+            this.cmbEvent.Location = new System.Drawing.Point(9, 17);
+            this.cmbEvent.Name = "cmbEvent";
+            this.cmbEvent.Size = new System.Drawing.Size(425, 21);
+            this.cmbEvent.TabIndex = 17;
+            this.cmbEvent.Text = null;
+            this.cmbEvent.TextPadding = new System.Windows.Forms.Padding(2);
+            this.cmbEvent.SelectedIndexChanged += new System.EventHandler(this.cmbEvent_SelectedIndexChanged);
+            // 
             // grpDash
             // 
             this.grpDash.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
@@ -1914,7 +1914,7 @@ namespace Intersect.Editor.Forms.Editors
             this.grpDash.Controls.Add(this.lblRange);
             this.grpDash.Controls.Add(this.scrlRange);
             this.grpDash.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpDash.Location = new System.Drawing.Point(3, 456);
+            this.grpDash.Location = new System.Drawing.Point(3, 448);
             this.grpDash.Name = "grpDash";
             this.grpDash.Size = new System.Drawing.Size(200, 181);
             this.grpDash.TabIndex = 38;
@@ -2011,7 +2011,7 @@ namespace Intersect.Editor.Forms.Editors
             this.grpWarp.Controls.Add(this.lblX);
             this.grpWarp.Controls.Add(this.lblMap);
             this.grpWarp.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpWarp.Location = new System.Drawing.Point(3, 456);
+            this.grpWarp.Location = new System.Drawing.Point(3, 448);
             this.grpWarp.Name = "grpWarp";
             this.grpWarp.Size = new System.Drawing.Size(247, 182);
             this.grpWarp.TabIndex = 35;
@@ -2379,7 +2379,6 @@ namespace Intersect.Editor.Forms.Editors
             ((System.ComponentModel.ISupportInitialize)(this.nudDuration)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudHitRadius)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudCastRange)).EndInit();
-            this.grpEvent.ResumeLayout(false);
             this.grpCombat.ResumeLayout(false);
             this.grpStats.ResumeLayout(false);
             this.grpStats.PerformLayout();
@@ -2409,6 +2408,7 @@ namespace Intersect.Editor.Forms.Editors
             ((System.ComponentModel.ISupportInitialize)(this.nudScaling)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudMPDamage)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudHPDamage)).EndInit();
+            this.grpEvent.ResumeLayout(false);
             this.grpDash.ResumeLayout(false);
             this.grpDash.PerformLayout();
             this.grpDashCollisions.ResumeLayout(false);
@@ -2456,20 +2456,11 @@ namespace Intersect.Editor.Forms.Editors
         private System.Windows.Forms.Label lblRange;
         private DarkScrollBar scrlRange;
         private System.Windows.Forms.Label lblProjectile;
-        private DarkGroupBox grpCombat;
-        private DarkComboBox cmbExtraEffect;
-        private System.Windows.Forms.Label lblEffect;
-        private System.Windows.Forms.Label lblBuffDuration;
-        private DarkCheckBox chkHOTDOT;
-        private System.Windows.Forms.Label lblTick;
         private DarkGroupBox grpDashCollisions;
         private DarkCheckBox chkIgnoreInactiveResources;
         private DarkCheckBox chkIgnoreZDimensionBlocks;
         private DarkCheckBox chkIgnoreMapBlocks;
         private DarkCheckBox chkIgnoreActiveResources;
-        private DarkComboBox cmbTransform;
-        private System.Windows.Forms.PictureBox picSprite;
-        private System.Windows.Forms.Label lblSprite;
         private DarkGroupBox grpEvent;
         private System.Windows.Forms.Panel pnlContainer;
         private DarkButton btnSave;
@@ -2483,20 +2474,6 @@ namespace Intersect.Editor.Forms.Editors
         public System.Windows.Forms.ToolStripButton toolStripItemPaste;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         public System.Windows.Forms.ToolStripButton toolStripItemUndo;
-        private DarkUI.Controls.DarkGroupBox grpStats;
-        private DarkUI.Controls.DarkGroupBox grpDamage;
-        private System.Windows.Forms.Label lblHPDamage;
-        private System.Windows.Forms.Label lblManaDamage;
-        private System.Windows.Forms.Label lblScaling;
-        private DarkComboBox cmbDamageType;
-        private System.Windows.Forms.Label lblDamageType;
-        private DarkUI.Controls.DarkGroupBox grpHotDot;
-        private DarkUI.Controls.DarkGroupBox grpEffect;
-        private DarkUI.Controls.DarkGroupBox grpEffectDuration;
-        private System.Windows.Forms.Label lblCritChance;
-        private DarkUI.Controls.DarkCheckBox chkFriendly;
-        private DarkComboBox cmbScalingStat;
-        private System.Windows.Forms.Label lblScalingStat;
         private DarkButton btnDynamicRequirements;
         private DarkComboBox cmbHitAnimation;
         private DarkComboBox cmbCastAnimation;
@@ -2516,25 +2493,7 @@ namespace Intersect.Editor.Forms.Editors
         private DarkNumericUpDown nudMpCost;
         private DarkNumericUpDown nudHPCost;
         private DarkNumericUpDown nudHitRadius;
-        private DarkNumericUpDown nudCritChance;
-        private DarkNumericUpDown nudScaling;
-        private DarkNumericUpDown nudMPDamage;
-        private DarkNumericUpDown nudHPDamage;
-        private DarkNumericUpDown nudTick;
-        private DarkNumericUpDown nudBuffDuration;
-        private DarkNumericUpDown nudSpd;
-        private DarkNumericUpDown nudMR;
-        private DarkNumericUpDown nudDef;
-        private DarkNumericUpDown nudMag;
-        private DarkNumericUpDown nudStr;
-        private System.Windows.Forms.Label lblSpd;
-        private System.Windows.Forms.Label lblMR;
-        private System.Windows.Forms.Label lblDef;
-        private System.Windows.Forms.Label lblMag;
-        private System.Windows.Forms.Label lblStr;
         private DarkNumericUpDown nudCastRange;
-        private DarkNumericUpDown nudCritMultiplier;
-        private System.Windows.Forms.Label lblCritMultiplier;
         private DarkNumericUpDown nudDuration;
         private System.Windows.Forms.Label lblDuration;
         private DarkCheckBox chkBound;
@@ -2545,6 +2504,16 @@ namespace Intersect.Editor.Forms.Editors
         private DarkComboBox cmbFolder;
         private System.Windows.Forms.ToolStripButton btnAlphabetical;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
+        private DarkButton btnAddCooldownGroup;
+        private DarkComboBox cmbCooldownGroup;
+        private System.Windows.Forms.Label lblCooldownGroup;
+        private DarkCheckBox chkIgnoreGlobalCooldown;
+        private DarkCheckBox chkIgnoreCdr;
+        private Controls.GameObjectList lstGameObjects;
+        private System.Windows.Forms.Label lblCannotCast;
+        private DarkTextBox txtCannotCast;
+        private DarkGroupBox grpCombat;
+        private DarkGroupBox grpStats;
         private System.Windows.Forms.Label lblPercentage5;
         private System.Windows.Forms.Label lblPercentage4;
         private System.Windows.Forms.Label lblPercentage3;
@@ -2560,6 +2529,45 @@ namespace Intersect.Editor.Forms.Editors
         private System.Windows.Forms.Label lblPlus3;
         private System.Windows.Forms.Label lblPlus2;
         private System.Windows.Forms.Label lblPlus1;
+        private DarkNumericUpDown nudSpd;
+        private DarkNumericUpDown nudMR;
+        private DarkNumericUpDown nudDef;
+        private DarkNumericUpDown nudMag;
+        private DarkNumericUpDown nudStr;
+        private System.Windows.Forms.Label lblSpd;
+        private System.Windows.Forms.Label lblMR;
+        private System.Windows.Forms.Label lblDef;
+        private System.Windows.Forms.Label lblMag;
+        private System.Windows.Forms.Label lblStr;
+        private DarkGroupBox grpHotDot;
+        private DarkNumericUpDown nudTick;
+        private DarkCheckBox chkHOTDOT;
+        private System.Windows.Forms.Label lblTick;
+        private DarkGroupBox grpEffect;
+        private System.Windows.Forms.Label lblEffect;
+        private DarkComboBox cmbExtraEffect;
+        private System.Windows.Forms.PictureBox picSprite;
+        private DarkComboBox cmbTransform;
+        private System.Windows.Forms.Label lblSprite;
+        private DarkGroupBox grpEffectDuration;
+        private DarkNumericUpDown nudBuffDuration;
+        private System.Windows.Forms.Label lblBuffDuration;
+        private DarkGroupBox grpDamage;
+        private DarkNumericUpDown nudCritMultiplier;
+        private System.Windows.Forms.Label lblCritMultiplier;
+        private DarkNumericUpDown nudCritChance;
+        private DarkNumericUpDown nudScaling;
+        private DarkNumericUpDown nudMPDamage;
+        private DarkNumericUpDown nudHPDamage;
+        private DarkComboBox cmbScalingStat;
+        private System.Windows.Forms.Label lblScalingStat;
+        private DarkCheckBox chkFriendly;
+        private System.Windows.Forms.Label lblCritChance;
+        private System.Windows.Forms.Label lblScaling;
+        private DarkComboBox cmbDamageType;
+        private System.Windows.Forms.Label lblDamageType;
+        private System.Windows.Forms.Label lblHPDamage;
+        private System.Windows.Forms.Label lblManaDamage;
         private DarkButton btnAddCooldownGroup;
         private DarkComboBox cmbCooldownGroup;
         private System.Windows.Forms.Label lblCooldownGroup;

@@ -350,7 +350,8 @@ namespace Intersect.Editor.Forms.Editors.Quest
         private void btnAddTask_Click(object sender, EventArgs e)
         {
             var questTask = new QuestBase.QuestTask(Guid.NewGuid());
-            questTask.EditingEvent = new EventBase(Guid.Empty, Guid.Empty, 0, 0, false);
+            questTask.EditingEvent = new EventBase(questTask.Id, Guid.Empty, 0, 0, false);
+            questTask.EditingEvent.CommonEvent = false;
             questTask.EditingEvent.Name = Strings.TaskEditor.completionevent.ToString(mEditorItem.Name);
             mEditorItem.AddEvents.Add(questTask.Id, questTask.EditingEvent);
             if (OpenTaskEditor(questTask))

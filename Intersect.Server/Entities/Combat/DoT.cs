@@ -5,6 +5,7 @@ using System.Linq;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Server.General;
+using Intersect.Utilities;
 
 namespace Intersect.Server.Entities.Combat
 {
@@ -46,7 +47,7 @@ namespace Intersect.Server.Entities.Combat
             }
             
 
-            mInterval = Globals.Timing.Milliseconds + SpellBase.Combat.HotDotInterval;
+            mInterval = Timing.Global.Milliseconds + SpellBase.Combat.HotDotInterval;
             Count = SpellBase.Combat.Duration / SpellBase.Combat.HotDotInterval - 1;
             target.DoT.TryAdd(Id, this);
             target.CachedDots = target.DoT.Values.ToArray();
@@ -89,7 +90,7 @@ namespace Intersect.Server.Entities.Combat
                 return;
             }
 
-            if (mInterval > Globals.Timing.Milliseconds)
+            if (mInterval > Timing.Global.Milliseconds)
             {
                 return;
             }
@@ -119,7 +120,7 @@ namespace Intersect.Server.Entities.Combat
                 aliveAnimations, false
             );
 
-            mInterval = Globals.Timing.Milliseconds + SpellBase.Combat.HotDotInterval;
+            mInterval = Timing.Global.Milliseconds + SpellBase.Combat.HotDotInterval;
             Count--;
         }
 

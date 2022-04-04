@@ -1,6 +1,6 @@
 ﻿using System;
-
-using Intersect.Client.Entities;
+using Intersect.Client.Framework.Core.Sounds;
+using Intersect.Client.Framework.Entities;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.General;
 using Intersect.Client.Maps;
@@ -8,12 +8,12 @@ using Intersect.Client.Maps;
 namespace Intersect.Client.Core.Sounds
 {
 
-    public class MapSound : Sound
+    public class MapSound : Sound, IMapSound
     {
 
         private int mDistance;
 
-        private Entity mEntity;
+        private IEntity mEntity;
 
         private Guid mMapId;
 
@@ -29,7 +29,7 @@ namespace Intersect.Client.Core.Sounds
             bool loop,
             int loopInterval,
             int distance,
-            Entity parent = null
+            IEntity parent = null
         ) : base(filename, loop, loopInterval)
         {
             if (string.IsNullOrEmpty(filename) || mSound == null)
@@ -81,12 +81,12 @@ namespace Intersect.Client.Core.Sounds
                 return;
             }
 
-            var sameMap = mMapId == Globals.Me.CurrentMap;
+            var sameMap = mMapId == Globals.Me.MapId;
             var inGrid = sameMap;
             if (!inGrid && Globals.Me.MapInstance != null)
             {
-                var gridX = Globals.Me.MapInstance.MapGridX;
-                var gridY = Globals.Me.MapInstance.MapGridY;
+                var gridX = Globals.Me.MapInstance.GridX;
+                var gridY = Globals.Me.MapInstance.GridY;
                 for (var x = gridX - 1; x <= gridX + 1; x++)
                 {
                     for (var y = gridY - 1; y <= gridY + 1; y++)
@@ -122,7 +122,7 @@ namespace Intersect.Client.Core.Sounds
                         volume = 0f;
                     }
 
-                    mSound.SetVolume((int) volume);
+                    mSound.SetVolume((int)volume);
                 }
                 else
                 {
@@ -139,31 +139,32 @@ namespace Intersect.Client.Core.Sounds
             float soundx = 0;
             float soundy = 0;
             var map = MapInstance.Get(mMapId);
-            var pMap = MapInstance.Get(Globals.Me.CurrentMap);
+            var pMap = MapInstance.Get(Globals.Me.MapId);
             if (map != null && pMap != null)
             {
-                playerx = pMap.GetX() + Globals.Me.X * Options.TileWidth + 16;
-                playery = pMap.GetY() + Globals.Me.Y * Options.TileHeight + 16;
+                playerx = pMap.GetX() + Globals.Me.X * Options.TileWidth + (Options.TileWidth / 2);
+                playery = pMap.GetY() + Globals.Me.Y * Options.TileHeight + (Options.TileHeight / 2);
                 if (mX == -1 || mY == -1 || mDistance == -1)
                 {
-                    var player = new Point()
-                    {
-                        X = (int) playerx,
-                        Y = (int) playery
+                    var player = new Point() {
+                        X = (int)playerx,
+                        Y = (int)playery
                     };
 
                     var mapRect = new Rectangle(
-                        (int) map.GetX(), (int) map.GetY(), Options.MapWidth * Options.TileWidth,
+                        (int)map.GetX(), (int)map.GetY(), Options.MapWidth * Options.TileWidth,
                         Options.MapHeight * Options.TileHeight
                     );
 
-                    distance = (float) DistancePointToRectangle(player, mapRect) / 32f;
+                    distance = DistancePointToRectangle(player, mapRect) /
+                               ((Options.TileHeight + Options.TileWidth) / 2f);
                 }
                 else
                 {
-                    soundx = map.GetX() + mX * Options.TileWidth + 16;
-                    soundy = map.GetY() + mY * Options.TileHeight + 16;
-                    distance = (float) Math.Sqrt(Math.Pow(playerx - soundx, 2) + Math.Pow(playery - soundy, 2)) / 32f;
+                    soundx = map.GetX() + mX * Options.TileWidth + (Options.TileWidth / 2);
+                    soundy = map.GetY() + mY * Options.TileHeight + (Options.TileHeight / 2);
+                    distance = (float) Math.Sqrt(Math.Pow(playerx - soundx, 2) + Math.Pow(playery - soundy, 2)) /
+                               ((Options.TileHeight + Options.TileWidth) / 2f);
                 }
             }
 
@@ -201,7 +202,7 @@ namespace Intersect.Client.Core.Sounds
                     point.X = point.X - rect.X;
                     point.Y = point.Y - rect.Y;
 
-                    return (float) Math.Sqrt(point.X * point.X + point.Y * point.Y);
+                    return (float)Math.Sqrt(point.X * point.X + point.Y * point.Y);
                 }
                 else if (point.Y > rect.Y + rect.Height)
                 {
@@ -209,7 +210,7 @@ namespace Intersect.Client.Core.Sounds
                     point.X = point.X - rect.X;
                     point.Y = point.Y - (rect.Y + rect.Height);
 
-                    return (float) Math.Sqrt(point.X * point.X + point.Y * point.Y);
+                    return (float)Math.Sqrt(point.X * point.X + point.Y * point.Y);
                 }
                 else
                 {
@@ -226,7 +227,7 @@ namespace Intersect.Client.Core.Sounds
                     point.X = point.X - (rect.X + rect.Width);
                     point.Y = point.Y - rect.Y;
 
-                    return (float) Math.Sqrt(point.X * point.X + point.Y * point.Y);
+                    return (float)Math.Sqrt(point.X * point.X + point.Y * point.Y);
                 }
                 else if (point.Y > rect.Y + rect.Height)
                 {
@@ -234,7 +235,7 @@ namespace Intersect.Client.Core.Sounds
                     point.X = point.X - (rect.X + rect.Width);
                     point.Y = point.Y - (rect.Y + rect.Height);
 
-                    return (float) Math.Sqrt(point.X * point.X + point.Y * point.Y);
+                    return (float)Math.Sqrt(point.X * point.X + point.Y * point.Y);
                 }
                 else
                 {

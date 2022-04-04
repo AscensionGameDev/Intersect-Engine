@@ -11,7 +11,6 @@ using Intersect.Client.MonoGame.File_Management;
 using Intersect.Client.MonoGame.Graphics;
 using Intersect.Client.MonoGame.Input;
 using Intersect.Client.MonoGame.Network;
-using Intersect.Client.MonoGame.System;
 using Intersect.Configuration;
 using Intersect.Updater;
 
@@ -23,6 +22,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+
+using Intersect.Utilities;
 
 using MainMenu = Intersect.Client.Interface.Menu.MainMenu;
 
@@ -103,7 +104,6 @@ namespace Intersect.Client.MonoGame
 
             Core.Graphics.Renderer = renderer;
 
-            Globals.System = new MonoSystem();
             Interface.Interface.GwenRenderer = new IntersectRenderer(null, Core.Graphics.Renderer);
             Interface.Interface.GwenInput = new IntersectInput();
             Controls.Init();
@@ -228,7 +228,7 @@ namespace Intersect.Client.MonoGame
                     {
                         lock (Globals.GameLock)
                         {
-                            Main.Update();
+                            Main.Update(gameTime.ElapsedGameTime);
                         }
 
                         ///mLastUpdateTime = gameTime.TotalGameTime.TotalMilliseconds + (1000/60f);
@@ -277,7 +277,7 @@ namespace Intersect.Client.MonoGame
                 {
                     lock (Globals.GameLock)
                     {
-                        Core.Graphics.Render();
+                        Core.Graphics.Render(gameTime.ElapsedGameTime);
                     }
                 }
             }
@@ -297,7 +297,7 @@ namespace Intersect.Client.MonoGame
 
         protected override void OnExiting(object sender, EventArgs args)
         {
-            if (Globals.Me != null && Globals.Me.CombatTimer > Globals.System?.GetTimeMs())
+            if (Globals.Me != null && Globals.Me.CombatTimer > Timing.Global?.Milliseconds)
             {
                 //Try to prevent SDL Window Close
                 var exception = false;

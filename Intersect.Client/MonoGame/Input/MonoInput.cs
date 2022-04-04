@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 
 using Intersect.Client.Framework.GenericClasses;
+using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Input;
 using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
@@ -138,7 +139,7 @@ namespace Intersect.Client.MonoGame.Input
             return new Pointf(mMouseX, mMouseY);
         }
 
-        private void CheckMouseButton(ButtonState bs, MouseButtons mb)
+        private void CheckMouseButton(Keys modifier, ButtonState bs, MouseButtons mb)
         {
             if (Globals.GameState == GameStates.Intro)
             {
@@ -151,7 +152,7 @@ namespace Intersect.Client.MonoGame.Input
                     new GwenInputMessage(IntersectInput.InputEvent.MouseDown, GetMousePosition(), (int) mb, Keys.Alt)
                 );
 
-                Core.Input.OnMouseDown(mb);
+                Core.Input.OnMouseDown(modifier, mb);
             }
             else if (bs == ButtonState.Released && MouseButtonDown(mb))
             {
@@ -159,7 +160,7 @@ namespace Intersect.Client.MonoGame.Input
                     new GwenInputMessage(IntersectInput.InputEvent.MouseUp, GetMousePosition(), (int) mb, Keys.Alt)
                 );
 
-                Core.Input.OnMouseUp(mb);
+                Core.Input.OnMouseUp(modifier, mb);
             }
         }
 
@@ -189,19 +190,22 @@ namespace Intersect.Client.MonoGame.Input
 
                 if (state.X != mMouseX || state.Y != mMouseY)
                 {
-                    mMouseX = (int) (state.X * ((MonoRenderer) Core.Graphics.Renderer).GetMouseOffset().X);
-                    mMouseY = (int) (state.Y * ((MonoRenderer) Core.Graphics.Renderer).GetMouseOffset().Y);
+                    mMouseX = (int)(state.X * ((MonoRenderer)Core.Graphics.Renderer).GetMouseOffset().X);
+                    mMouseY = (int)(state.Y * ((MonoRenderer)Core.Graphics.Renderer).GetMouseOffset().Y);
                     Interface.Interface.GwenInput.ProcessMessage(
                         new GwenInputMessage(
-                            IntersectInput.InputEvent.MouseMove, GetMousePosition(), (int) MouseButtons.None, Keys.Alt
+                            IntersectInput.InputEvent.MouseMove, GetMousePosition(), (int)MouseButtons.None, Keys.Alt
                         )
                     );
                 }
 
+                // Get what modifier key we're currently pressing.
+                var modifier = GetPressedModifier(kbState);
+
                 //Check for state changes in the left mouse button
-                CheckMouseButton(state.LeftButton, MouseButtons.Left);
-                CheckMouseButton(state.RightButton, MouseButtons.Right);
-                CheckMouseButton(state.MiddleButton, MouseButtons.Middle);
+                CheckMouseButton(modifier, state.LeftButton, MouseButtons.Left);
+                CheckMouseButton(modifier, state.RightButton, MouseButtons.Right);
+                CheckMouseButton(modifier, state.MiddleButton, MouseButtons.Middle);
 
                 CheckMouseScrollWheel(state.ScrollWheelValue, state.HorizontalScrollWheelValue);
 
@@ -216,7 +220,7 @@ namespace Intersect.Client.MonoGame.Input
                             )
                         );
 
-                        Core.Input.OnKeyPressed(key.Key);
+                        Core.Input.OnKeyPressed(modifier, key.Key);
                     }
                     else if (!kbState.IsKeyDown(key.Value) && mLastKeyboardState.IsKeyDown(key.Value))
                     {
@@ -226,7 +230,7 @@ namespace Intersect.Client.MonoGame.Input
                             )
                         );
 
-                        Core.Input.OnKeyReleased(key.Key);
+                        Core.Input.OnKeyReleased(modifier, key.Key);
                     }
                 }
 
@@ -235,6 +239,8 @@ namespace Intersect.Client.MonoGame.Input
             }
             else
             {
+                var modifier = GetPressedModifier(mLastKeyboardState);
+
                 foreach (var key in mKeyDictionary)
                 {
                     if (mLastKeyboardState.IsKeyDown(key.Value))
@@ -245,18 +251,39 @@ namespace Intersect.Client.MonoGame.Input
                             )
                         );
 
-                        Core.Input.OnKeyReleased(key.Key);
+                        Core.Input.OnKeyReleased(modifier, key.Key);
                     }
                 }
 
-                CheckMouseButton(ButtonState.Released, MouseButtons.Left);
-                CheckMouseButton(ButtonState.Released, MouseButtons.Right);
-                CheckMouseButton(ButtonState.Released, MouseButtons.Middle);
+                CheckMouseButton(modifier, ButtonState.Released, MouseButtons.Left);
+                CheckMouseButton(modifier, ButtonState.Released, MouseButtons.Right);
+                CheckMouseButton(modifier, ButtonState.Released, MouseButtons.Middle);
                 mLastKeyboardState = new KeyboardState();
                 mLastMouseState = new MouseState();
             }
         }
 
+        public Keys GetPressedModifier(KeyboardState state)
+        {
+            var modifier = Keys.None;
+            if (state.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.LeftControl) || state.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.RightControl))
+            {
+                modifier = Keys.Control;
+            }
+
+            if (state.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.LeftShift) || state.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.RightShift))
+            {
+                modifier = Keys.Shift;
+            }
+
+            // TODO: Make Alt function? For some reason MonoGame / XNA seems to just not capture the alt key properly. GWEN manages to capture it but the game does not?
+            //if (state.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.) || state.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.RightAlt))
+            //{
+            //    modifier = Keys.Alt;
+            //}
+
+            return modifier;
+        }
         public override void OpenKeyboard(
             KeyboardType type,
             string text,

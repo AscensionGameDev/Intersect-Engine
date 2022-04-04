@@ -1,9 +1,10 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 using Intersect.Client.Core;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
+using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.General;
 using Intersect.Client.Localization;
@@ -33,6 +34,13 @@ namespace Intersect.Client.Interface.Game.Bank
 
         public int Y;
 
+        private bool mOpen;
+
+        // Context menu
+        private Framework.Gwen.Control.Menu mContextMenu;
+
+        private MenuItem mWithdrawContextItem;
+
         //Init
         public BankWindow(Canvas gameCanvas)
         {
@@ -45,11 +53,54 @@ namespace Intersect.Client.Interface.Game.Bank
 
             mBankWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
             InitItemContainer();
+            Close();
+
+            // Generate our context menu with basic options.
+            mContextMenu = new Framework.Gwen.Control.Menu(gameCanvas, "BankContextMenu");
+            mContextMenu.IsHidden = true;
+            mContextMenu.IconMarginDisabled = true;
+            //TODO: Is this a memory leak?
+            mContextMenu.Children.Clear();
+            mWithdrawContextItem = mContextMenu.AddItem(Strings.BankContextMenu.Withdraw);
+            mWithdrawContextItem.Clicked += MWithdrawContextItem_Clicked;
+            mContextMenu.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+        }
+
+        public void OpenContextMenu(int slot)
+        {
+            var item = ItemBase.Get(Globals.Bank[slot].ItemId);
+
+            // No point showing a menu for blank space.
+            if (item == null)
+            {
+                return;
+            }
+
+            mWithdrawContextItem.SetText(Strings.BankContextMenu.Withdraw.ToString(item.Name));
+
+            // Set our spell slot as userdata for future reference.
+            mContextMenu.UserData = slot;
+
+            mContextMenu.SizeToChildren();
+            mContextMenu.Open(Framework.Gwen.Pos.None);
+        }
+
+        private void MWithdrawContextItem_Clicked(Base sender, Framework.Gwen.Control.EventArguments.ClickedEventArgs arguments)
+        {
+            var slot = (int)sender.Parent.UserData;
+            Globals.Me.TryWithdrawItem(slot);
         }
 
         public void Close()
         {
-            mBankWindow.Close();
+            mBankWindow.IsHidden = true;
+            mOpen = false;
+        }
+
+        public void Open()
+        {
+            mBankWindow.IsHidden = false;
+            mOpen = true;
         }
 
         public bool IsVisible()
@@ -57,15 +108,15 @@ namespace Intersect.Client.Interface.Game.Bank
             return !mBankWindow.IsHidden;
         }
 
-        public void Hide()
-        {
-            mBankWindow.IsHidden = true;
-        }
-
         public void Update()
         {
             if (mBankWindow.IsHidden == true)
             {
+                if (mOpen)
+                {
+                    Interface.GameUi.NotifyCloseBank();
+                }
+
                 return;
             }
 
@@ -108,7 +159,7 @@ namespace Intersect.Client.Interface.Game.Bank
 
         private void InitItemContainer()
         {
-            for (var i = 0; i < Globals.BankSlots; i++)
+            for (var i = 0; i < Options.Player.MaxBank; i++)
             {
                 Items.Add(new BankItem(this, i));
                 Items[i].Container = new ImagePanel(mItemContainer, "BankItem");

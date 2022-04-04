@@ -9,6 +9,7 @@ using Intersect.Server.General;
 using Intersect.Server.Localization;
 using Intersect.Server.Maps;
 using Intersect.Server.Networking;
+using Intersect.Utilities;
 
 namespace Intersect.Server.Entities.Events
 {
@@ -30,7 +31,9 @@ namespace Intersect.Server.Entities.Events
 
         public Guid MapId;
 
-        public MapInstance MapInstance;
+        public Guid MapInstanceId;
+
+        public MapController MapController;
 
         private Dictionary<string, string> mParams = new Dictionary<string, string>();
 
@@ -53,11 +56,12 @@ namespace Intersect.Server.Entities.Events
 
         public int Y;
 
-        public Event(Guid instanceId, MapInstance map, Player player, EventBase baseEvent)
+        public Event(Guid instanceId, MapController map, Player player, EventBase baseEvent)
         {
             Id = instanceId;
+            MapInstanceId = player.MapInstanceId;
             MapId = map?.Id ?? Guid.Empty;
-            MapInstance = map;
+            MapController = map;
             Player = player;
             SelfSwitch = new bool[4];
             BaseEvent = baseEvent;
@@ -65,12 +69,13 @@ namespace Intersect.Server.Entities.Events
             Y = baseEvent.SpawnY;
         }
 
-        public Event(Guid instanceId, EventBase baseEvent, MapInstance map) //Global constructor
+        public Event(Guid instanceId, EventBase baseEvent, MapController map, Guid mapInstanceId) //Global constructor
         {
             Id = instanceId;
+            MapInstanceId = mapInstanceId;
             Global = true;
             MapId = map?.Id ?? Guid.Empty;
-            MapInstance = map;
+            MapController = map;
             BaseEvent = baseEvent;
             SelfSwitch = new bool[4];
             GlobalPageInstance = new EventPageInstance[BaseEvent.Pages.Count];
@@ -78,13 +83,13 @@ namespace Intersect.Server.Entities.Events
             Y = baseEvent.SpawnY;
             for (var i = 0; i < BaseEvent.Pages.Count; i++)
             {
-                GlobalPageInstance[i] = new EventPageInstance(BaseEvent, BaseEvent.Pages[i], MapId, this, null);
+                GlobalPageInstance[i] = new EventPageInstance(BaseEvent, BaseEvent.Pages[i], MapId, mapInstanceId, this, null);
             }
         }
 
         public bool[] SelfSwitch { get; set; }
 
-        public void Update(long timeMs, MapInstance map)
+        public void Update(long timeMs, MapController map)
         {
             var sendLeave = false;
             var originalPageInstance = PageInstance;
@@ -154,7 +159,7 @@ namespace Intersect.Server.Entities.Events
                         }
 
                         if (curStack.WaitingForResponse == CommandInstance.EventResponse.Timer &&
-                            WaitTimer < Globals.Timing.Milliseconds)
+                            WaitTimer < Timing.Global.Milliseconds)
                         {
                             curStack.WaitingForResponse = CommandInstance.EventResponse.None;
                         }
@@ -169,7 +174,7 @@ namespace Intersect.Server.Entities.Events
                                 if (curStack.WaitingForRoute == Player.Id)
                                 {
                                     if (Player.MoveRoute == null ||
-                                        Player.MoveRoute.Complete && Player.MoveTimer < Globals.Timing.Milliseconds)
+                                        Player.MoveRoute.Complete && Player.MoveTimer < Timing.Global.Milliseconds)
                                     {
                                         curStack.WaitingForRoute = Guid.Empty;
                                         curStack.WaitingForRouteMap = Guid.Empty;
@@ -214,7 +219,7 @@ namespace Intersect.Server.Entities.Events
                                 }
                                 else
                                 {
-                                    if (WaitTimer < Globals.Timing.Milliseconds)
+                                    if (WaitTimer < Timing.Global.Milliseconds)
                                     {
                                         CommandProcessing.ProcessCommand(curStack.Command, Player, this);
                                         commandsExecuted++;
@@ -264,7 +269,7 @@ namespace Intersect.Server.Entities.Events
                     }
                     else
                     {
-                        if (PageInstance.Trigger == EventTrigger.Autorun && WaitTimer < Globals.Timing.Milliseconds)
+                        if (PageInstance.Trigger == EventTrigger.Autorun && WaitTimer < Timing.Global.Milliseconds)
                         {
                             var newStack = new CommandInstance(PageInstance.MyPage);
                             CallStack.Push(newStack);
@@ -282,26 +287,29 @@ namespace Intersect.Server.Entities.Events
                     {
                         if (Global)
                         {
-                            var globalEvent = MapInstance.Get(MapId).GetGlobalEventInstance(BaseEvent);
-                            if (globalEvent != null)
+                            if (MapController.TryGetInstanceFromMap(map.Id, Player.MapInstanceId, out var mapInstance))
                             {
-                                PageInstance = new EventPageInstance(
-                                    BaseEvent, BaseEvent.Pages[i], BaseEvent.Id, MapId, this, Player,
-                                    globalEvent.GlobalPageInstance[i]
-                                );
-
-                                if (PageInstance.GlobalClone != null)
+                                var globalEvent = mapInstance.GetGlobalEventInstance(BaseEvent);
+                                if (globalEvent != null)
                                 {
-                                    Player.GlobalPageInstanceLookup.AddOrUpdate(globalEvent.GlobalPageInstance[i], this, (key, oldValue) => this);
-                                }
+                                    PageInstance = new EventPageInstance(
+                                        BaseEvent, BaseEvent.Pages[i], BaseEvent.Id, MapId, Player.MapInstanceId, this, Player,
+                                        globalEvent.GlobalPageInstance[i]
+                                    );
 
-                                sendLeave = false;
-                                PageIndex = i;
+                                    if (PageInstance.GlobalClone != null)
+                                    {
+                                        Player.GlobalPageInstanceLookup.AddOrUpdate(globalEvent.GlobalPageInstance[i], this, (key, oldValue) => this);
+                                    }
+
+                                    sendLeave = false;
+                                    PageIndex = i;
+                                }
                             }
                         }
                         else
                         {
-                            PageInstance = new EventPageInstance(BaseEvent, BaseEvent.Pages[i], MapId, this, Player);
+                            PageInstance = new EventPageInstance(BaseEvent, BaseEvent.Pages[i], MapId, Player.MapInstanceId, this, Player);
                             sendLeave = false;
                             PageIndex = i;
                         }
@@ -328,7 +336,7 @@ namespace Intersect.Server.Entities.Events
 
             prams.Add("evtName", BaseEvent.Name);
 
-            var map = MapInstance.Get(BaseEvent.MapId);
+            var map = MapController.Get(BaseEvent.MapId);
             if (map != null)
             {
                 prams.Add("evtMap", map.Name);
@@ -336,10 +344,14 @@ namespace Intersect.Server.Entities.Events
 
             if (MapId != Guid.Empty)
             {
-                if (GlobalPageInstance != null)
+                if (Global && MapController.TryGetInstanceFromMap(MapId, MapInstanceId, out var mapInstance))
                 {
-                    prams.Add("evtX", GlobalPageInstance[PageIndex].X.ToString());
-                    prams.Add("evtY", GlobalPageInstance[PageIndex].Y.ToString());
+                    var globalEvent = mapInstance.GetGlobalEventInstance(BaseEvent);
+                    if (globalEvent.GlobalPageInstance != null)
+                    {
+                        prams.Add("evtX", globalEvent.GlobalPageInstance[globalEvent.PageIndex].X.ToString());
+                        prams.Add("evtY", globalEvent.GlobalPageInstance[globalEvent.PageIndex].Y.ToString());
+                    }
                 }
                 else if (PageInstance != null)
                 {

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -69,7 +69,7 @@ namespace Intersect.Editor.Core
 
         private static float sFogCurrentY;
 
-        private static long sFogUpdateTime = Globals.System.GetTimeMs();
+        private static long sFogUpdateTime = Timing.Global.Milliseconds;
 
         //MonoGame Setup/Device
         private static GraphicsDevice sGraphicsDevice;
@@ -910,6 +910,9 @@ namespace Intersect.Editor.Core
 
                                     if (attributesTex != null)
                                     {
+                                        MapAttribute attr = tmpMap.Attributes[x, y];
+
+                                        var blue = (attr is MapWarpAttribute warp && warp.ChangeInstance) ? 0 : 255;
                                         DrawTexture(
                                             attributesTex,
                                             new RectangleF(
@@ -920,7 +923,7 @@ namespace Intersect.Editor.Core
                                                 CurrentView.Left + x * Options.TileWidth,
                                                 CurrentView.Top + y * Options.TileHeight, Options.TileWidth,
                                                 Options.TileHeight
-                                            ), System.Drawing.Color.FromArgb(150, 255, 255, 255), null
+                                            ), System.Drawing.Color.FromArgb(255, 255, 255, blue), null
                                         );
                                     }
                                 }
@@ -1798,8 +1801,8 @@ namespace Intersect.Editor.Core
         //Fogs
         private static void DrawFog(RenderTarget2D target)
         {
-            float ecTime = Globals.System.GetTimeMs() - sFogUpdateTime;
-            sFogUpdateTime = Globals.System.GetTimeMs();
+            float ecTime = Timing.Global.Milliseconds - sFogUpdateTime;
+            sFogUpdateTime = Timing.Global.Milliseconds;
             if (string.IsNullOrWhiteSpace(Globals.CurrentMap.Fog))
             {
                 return;

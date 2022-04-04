@@ -22,6 +22,8 @@ namespace Intersect.Config
 
         public bool ZDimensionVisible;
 
+        public int TimeUntilMapCleanup = 30000; // It is recommended this is set to at least the time it takes to despawn a player's dropped items - or they can lose their items prematurely
+
         public LayerOptions Layers = new LayerOptions();
 
         [OnDeserialized]

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -9,6 +9,7 @@ using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.General;
 using Intersect.Client.Localization;
+using Intersect.Utilities;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -100,7 +101,9 @@ namespace Intersect.Client.MonoGame.Graphics
                 ColorSourceBlend = Blend.SourceAlpha,
                 AlphaSourceBlend = Blend.One,
                 ColorDestinationBlend = Blend.InverseSourceAlpha,
-                AlphaDestinationBlend = Blend.InverseSourceAlpha
+                AlphaDestinationBlend = Blend.One,
+                ColorBlendFunction = BlendFunction.Add,
+                AlphaBlendFunction = BlendFunction.Add,
             };
 
             mMultiplyState = new BlendState()
@@ -200,7 +203,7 @@ namespace Intersect.Client.MonoGame.Graphics
             mOldDisplayMode = currentDisplayMode;
             if (fsChanged)
             {
-                mFsChangedTimer = Globals.System.GetTimeMs() + 1000;
+                mFsChangedTimer = Timing.Global.Milliseconds + 1000;
             }
 
             if (fsChanged)
@@ -220,7 +223,7 @@ namespace Intersect.Client.MonoGame.Graphics
         public override bool Begin()
         {
             //mGraphicsDevice.SetRenderTarget(null);
-            if (mFsChangedTimer > -1 && mFsChangedTimer < Globals.System.GetTimeMs())
+            if (mFsChangedTimer > -1 && mFsChangedTimer < Timing.Global.Milliseconds)
             {
                 mGraphics.PreferredBackBufferWidth--;
                 mGraphics.ApplyChanges();
@@ -690,11 +693,11 @@ namespace Intersect.Client.MonoGame.Graphics
         {
             EndSpriteBatch();
             mFpsCount++;
-            if (mFpsTimer < Globals.System.GetTimeMs())
+            if (mFpsTimer < Timing.Global.Milliseconds)
             {
                 mFps = mFpsCount;
                 mFpsCount = 0;
-                mFpsTimer = Globals.System.GetTimeMs() + 1000;
+                mFpsTimer = Timing.Global.Milliseconds + 1000;
                 mGameWindow.Title = Strings.Main.gamename;
             }
 

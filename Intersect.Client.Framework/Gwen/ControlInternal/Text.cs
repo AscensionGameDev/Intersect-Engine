@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Control;
@@ -70,7 +70,6 @@ namespace Intersect.Client.Framework.Gwen.ControlInternal
         public Color TextColor
         {
             get => mTextColor;
-
             set => mTextColor = value;
         }
 
@@ -171,7 +170,7 @@ namespace Intersect.Client.Framework.Gwen.ControlInternal
         /// </summary>
         public void SizeToContents()
         {
-            if (String == null || Font == null)
+            if (String == null || Font == null || Root == null)
             {
                 return;
             }
@@ -204,7 +203,7 @@ namespace Intersect.Client.Framework.Gwen.ControlInternal
         /// <returns>Character position in local coordinates.</returns>
         public Point GetCharacterPosition(int index)
         {
-            if (Length == 0 || index == 0)
+            if (Length == 0 || index == 0 || index < 0 || index > (TextOverride ?? String).Length)
             {
                 return new Point(0, 0);
             }

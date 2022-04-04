@@ -405,11 +405,11 @@ namespace Intersect.Editor.Forms
             form.ShowDialog(this);
         }
 
-        public void EnterMap(Guid mapId)
+        public void EnterMap(Guid mapId, bool userEntered = false)
         {
             if (InvokeRequired)
             {
-                Invoke((MethodInvoker) delegate { EnterMap(mapId); });
+                Invoke((MethodInvoker) delegate { EnterMap(mapId, userEntered); });
 
                 return;
             }
@@ -433,6 +433,12 @@ namespace Intersect.Editor.Forms
             PacketSender.SendNeedMap(mapId);
             PacketSender.SendNeedGrid(mapId);
             Core.Graphics.TilePreviewUpdated = true;
+
+            // Save that we've opened this map last if this was a user triggered action. This way we can load it again should we restart the editor.
+            if (userEntered)
+            {
+                Preferences.SavePreference("LastMapOpened", mapId.ToString());
+            }
         }
 
         private void GrabMouseDownEvents()
@@ -516,8 +522,8 @@ namespace Intersect.Editor.Forms
                 redoToolStripMenuItem.Enabled = false;
             }
 
-            //Process the Fill/Erase Buttons
-            if (Options.Instance.MapOpts.Layers.All.Contains(Globals.CurrentLayer))
+            //Process the Fill/Erase Buttons, these should display for all valid map layers as well as Attributes.
+            if (Options.Instance.MapOpts.Layers.All.Contains(Globals.CurrentLayer) || Globals.CurrentLayer == LayerOptions.Attributes)
             {
                 toolStripBtnFill.Enabled = true;
                 fillToolStripMenuItem.Enabled = true;
@@ -1774,12 +1780,12 @@ namespace Intersect.Editor.Forms
             // Package up sounds!
             Globals.PackingProgressForm.SetProgress(Strings.AssetPacking.sounds, 80, false);
             Application.DoEvents();
-            AssetPacker.PackageAssets(Path.Combine("resources", "sounds"), "*.wav", packsPath, "sound.index", "sound", ".asset", Convert.ToInt32(Preferences.LoadPreference("SoundBatchSize")));
+            AssetPacker.PackageAssets(Path.Combine("resources", "sounds"), "*.wav", packsPath, "sound.index", "sound", ".asset", Convert.ToInt32(Preferences.LoadPreference("SoundPackSize")));
 
             // Package up music!
             Globals.PackingProgressForm.SetProgress(Strings.AssetPacking.music, 90, false);
             Application.DoEvents();
-            AssetPacker.PackageAssets(Path.Combine("resources", "music"), "*.ogg", packsPath, "music.index", "music", ".asset", Convert.ToInt32(Preferences.LoadPreference("MusicBatchSize")));
+            AssetPacker.PackageAssets(Path.Combine("resources", "music"), "*.ogg", packsPath, "music.index", "music", ".asset", Convert.ToInt32(Preferences.LoadPreference("MusicPackSize")));
 
             Globals.PackingProgressForm.SetProgress(Strings.AssetPacking.done, 100, false);
             Application.DoEvents();

@@ -1,18 +1,19 @@
-﻿using System;
+using System;
 
 using Intersect.Client.Core;
 using Intersect.Client.Core.Controls;
-using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Framework.Gwen.Input;
 using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
+using Intersect.Client.Interface.Game.DescriptionWindows;
 using Intersect.Client.Items;
 using Intersect.Client.Localization;
 using Intersect.Client.Spells;
 using Intersect.GameObjects;
+using Intersect.Utilities;
 
 namespace Intersect.Client.Interface.Game.Hotbar
 {
@@ -54,7 +55,7 @@ namespace Intersect.Client.Interface.Game.Hotbar
         //Textures
         private Base mHotbarWindow;
 
-        private Keys mHotKey;
+        private ControlValue mHotKey;
 
         private Item mInventoryItem = null;
 
@@ -64,7 +65,7 @@ namespace Intersect.Client.Interface.Game.Hotbar
 
         private bool mIsFaded;
 
-        private ItemDescWindow mItemDescWindow;
+        private ItemDescriptionWindow mItemDescWindow;
 
         //Mouse Event Variables
         private bool mMouseOver;
@@ -75,7 +76,7 @@ namespace Intersect.Client.Interface.Game.Hotbar
 
         private Spell mSpellBookItem = null;
 
-        private SpellDescWindow mSpellDescWindow;
+        private SpellDescriptionWindow mSpellDescWindow;
 
         private bool mTexLoaded;
 
@@ -103,7 +104,7 @@ namespace Intersect.Client.Interface.Game.Hotbar
             EquipPanel.Texture = Graphics.Renderer.GetWhiteTexture();
             EquipLabel = new Label(Pnl, "HotbarEquippedLabel" + mYindex);
             EquipLabel.IsHidden = true;
-            EquipLabel.Text = Strings.Inventory.equippedicon;
+            EquipLabel.Text = Strings.Inventory.EquippedSymbol;
             EquipLabel.TextColor = new Color(0, 255, 255, 255);
             mCooldownLabel = new Label(Pnl, "HotbarCooldownLabel" + mYindex);
             mCooldownLabel.IsHidden = true;
@@ -135,7 +136,7 @@ namespace Intersect.Client.Interface.Game.Hotbar
 
         void pnl_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            mClickTime = Globals.System.GetTimeMs() + 500;
+            mClickTime = Timing.Global.Milliseconds + 500;
         }
 
         void pnl_HoverLeave(Base sender, EventArgs arguments)
@@ -165,7 +166,7 @@ namespace Intersect.Client.Interface.Game.Hotbar
 
             mMouseOver = true;
             mCanDrag = true;
-            if (Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Left))
+            if (Globals.InputManager.MouseButtonDown(MouseButtons.Left))
             {
                 mCanDrag = false;
 
@@ -180,8 +181,8 @@ namespace Intersect.Client.Interface.Game.Hotbar
                     mItemDescWindow = null;
                 }
 
-                mItemDescWindow = new ItemDescWindow(
-                    mCurrentItem, 1, mHotbarWindow.X + Pnl.X + 16, mHotbarWindow.Y + mHotbarWindow.Height + 2,
+                mItemDescWindow = new ItemDescriptionWindow(
+                    mCurrentItem, 1, mHotbarWindow.X + (mHotbarWindow.Width / 2), mHotbarWindow.Y + mHotbarWindow.Height + 2,
                     mInventoryItem?.StatBuffs, mCurrentItem.Name, "", true
                 );
             }
@@ -193,8 +194,8 @@ namespace Intersect.Client.Interface.Game.Hotbar
                     mSpellDescWindow = null;
                 }
 
-                mSpellDescWindow = new SpellDescWindow(
-                    mCurrentSpell.Id, mHotbarWindow.X + Pnl.X + 16, mHotbarWindow.Y + mHotbarWindow.Height + 2, true
+                mSpellDescWindow = new SpellDescriptionWindow(
+                    mCurrentSpell.Id, mHotbarWindow.X + (mHotbarWindow.Width / 2), mHotbarWindow.Y + mHotbarWindow.Height + 2, true
                 );
             }
         }
@@ -220,17 +221,25 @@ namespace Intersect.Client.Interface.Game.Hotbar
             }
 
             //See if Label Should be changed
-            if (mHotKey != Controls.ActiveControls.ControlMapping[Control.Hotkey1 + mYindex].Key1)
+            var keybind = Controls.ActiveControls.ControlMapping[Control.Hotkey1 + mYindex].Key1;
+            if (mHotKey == null || mHotKey.Modifier != keybind.Modifier || mHotKey.Key != keybind.Key)
             {
-                KeyLabel.SetText(
-                    Strings.Keys.keydict[
-                        Enum.GetName(
-                                typeof(Keys), Controls.ActiveControls.ControlMapping[Control.Hotkey1 + mYindex].Key1
-                            )
-                            .ToLower()]
-                );
+                if (keybind.Modifier != Keys.None)
+                {
+                    KeyLabel.SetText(string.Format("{00} + {01}",
+                        Strings.Keys.keydict[Enum.GetName(typeof(Keys), keybind.Modifier).ToLower()],
+                        Strings.Keys.keydict[Enum.GetName(typeof(Keys), keybind.Key).ToLower()]
+                    ));
+                }
+                else
+                {
+                    KeyLabel.SetText(
+                        Strings.Keys.keydict[Enum.GetName(typeof(Keys), keybind.Key).ToLower()]
+                    );
+                }
+                
 
-                mHotKey = Controls.ActiveControls.ControlMapping[Control.Hotkey1 + mYindex].Key1;
+                mHotKey = keybind;
             }
 
             var slot = Globals.Me.Hotbar[mYindex];
@@ -268,7 +277,7 @@ namespace Intersect.Client.Interface.Game.Hotbar
                 if (itmIndex > -1)
                 {
                     mInventoryItemIndex = itmIndex;
-                    mInventoryItem = Globals.Me.Inventory[itmIndex];
+                    mInventoryItem = Globals.Me.Inventory[itmIndex] as Item;
                 }
             }
             else if (mCurrentSpell != null)
@@ -276,7 +285,7 @@ namespace Intersect.Client.Interface.Game.Hotbar
                 var splIndex = Globals.Me.FindHotbarSpell(slot);
                 if (splIndex > -1)
                 {
-                    mSpellBookItem = Globals.Me.Spells[splIndex];
+                    mSpellBookItem = Globals.Me.Spells[splIndex] as Spell;
                 }
             }
 
@@ -295,13 +304,13 @@ namespace Intersect.Client.Interface.Game.Hotbar
                 }
 
                 //We have it, and it's on cd
-                if (mInventoryItem != null && Globals.Me.ItemOnCd(mInventoryItemIndex))
+                if (mInventoryItem != null && Globals.Me.IsItemOnCooldown(mInventoryItemIndex))
                 {
                     updateDisplay = true;
                 }
 
                 //We have it, and it's on cd, and the fade is incorrect
-                if (mInventoryItem != null && Globals.Me.ItemOnCd(mInventoryItemIndex) != mIsFaded)
+                if (mInventoryItem != null && Globals.Me.IsItemOnCooldown(mInventoryItemIndex) != mIsFaded)
                 {
                     updateDisplay = true;
                 }
@@ -317,14 +326,14 @@ namespace Intersect.Client.Interface.Game.Hotbar
 
                 //Spell on cd
                 if (mSpellBookItem != null &&
-                    Globals.Me.GetSpellCooldown(mSpellBookItem.SpellId) > Globals.System.GetTimeMs())
+                    Globals.Me.GetSpellCooldown(mSpellBookItem.Id) > Timing.Global.Milliseconds)
                 {
                     updateDisplay = true;
                 }
 
                 //Spell on cd and the fade is incorrect
                 if (mSpellBookItem != null &&
-                    Globals.Me.GetSpellCooldown(mSpellBookItem.SpellId) > Globals.System.GetTimeMs() != mIsFaded)
+                    Globals.Me.GetSpellCooldown(mSpellBookItem.Id) > Timing.Global.Milliseconds != mIsFaded)
                 {
                     updateDisplay = true;
                 }
@@ -337,26 +346,26 @@ namespace Intersect.Client.Interface.Game.Hotbar
                     mCooldownLabel.IsHidden = true;
                     mContentPanel.Show();
                     mContentPanel.Texture = Globals.ContentManager.GetTexture(
-                        GameContentManager.TextureType.Item, mCurrentItem.Icon
+                        Framework.Content.TextureType.Item, mCurrentItem.Icon
                     );
 
                     if (mInventoryItemIndex > -1)
                     {
                         EquipPanel.IsHidden = !Globals.Me.IsEquipped(mInventoryItemIndex);
                         EquipLabel.IsHidden = !Globals.Me.IsEquipped(mInventoryItemIndex);
-                        mIsFaded = Globals.Me.ItemOnCd(mInventoryItemIndex);
+                        mIsFaded = Globals.Me.IsItemOnCooldown(mInventoryItemIndex);
                         if (mIsFaded)
                         {
                             mCooldownLabel.IsHidden = false;
-                            var secondsRemaining = (float) Globals.Me.ItemCdRemainder(mInventoryItemIndex) / 1000f;
+                            var secondsRemaining = (float) Globals.Me.GetItemRemainingCooldown(mInventoryItemIndex) / 1000f;
                             if (secondsRemaining > 10f)
                             {
                                 mCooldownLabel.Text =
-                                    Strings.Inventory.cooldown.ToString(secondsRemaining.ToString("N0"));
+                                    Strings.Inventory.Cooldown.ToString(secondsRemaining.ToString("N0"));
                             }
                             else
                             {
-                                mCooldownLabel.Text = Strings.Inventory.cooldown.ToString(
+                                mCooldownLabel.Text = Strings.Inventory.Cooldown.ToString(
                                     secondsRemaining.ToString("N1").Replace(".", Strings.Numbers.dec)
                                 );
                             }
@@ -378,7 +387,7 @@ namespace Intersect.Client.Interface.Game.Hotbar
                 {
                     mContentPanel.Show();
                     mContentPanel.Texture = Globals.ContentManager.GetTexture(
-                        GameContentManager.TextureType.Spell, mCurrentSpell.Icon
+                        Framework.Content.TextureType.Spell, mCurrentSpell.Icon
                     );
 
                     EquipPanel.IsHidden = true;
@@ -386,13 +395,13 @@ namespace Intersect.Client.Interface.Game.Hotbar
                     mCooldownLabel.IsHidden = true;
                     if (mSpellBookItem != null)
                     {
-                        mIsFaded = Globals.Me.GetSpellCooldown(mSpellBookItem.SpellId) > Globals.System.GetTimeMs();
+                        mIsFaded = Globals.Me.GetSpellCooldown(mSpellBookItem.Id) > Timing.Global.Milliseconds;
                         if (mIsFaded)
                         {
                             mCooldownLabel.IsHidden = false;
                             var secondsRemaining =
-                                (float) (Globals.Me.GetSpellCooldown(mSpellBookItem.SpellId) -
-                                         Globals.System.GetTimeMs()) /
+                                (float) (Globals.Me.GetSpellCooldown(mSpellBookItem.Id) -
+                                         Timing.Global.Milliseconds) /
                                 1000f;
 
                             if (secondsRemaining > 10f)
@@ -455,14 +464,15 @@ namespace Intersect.Client.Interface.Game.Hotbar
             {
                 if (!IsDragging)
                 {
+                    mContentPanel.IsHidden = false;
                     if (mMouseOver)
                     {
-                        if (!Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Left))
+                        if (!Globals.InputManager.MouseButtonDown(MouseButtons.Left))
                         {
                             mCanDrag = true;
                             mMouseX = -1;
                             mMouseY = -1;
-                            if (Globals.System.GetTimeMs() < mClickTime)
+                            if (Timing.Global.Milliseconds < mClickTime)
                             {
                                 Activate();
                                 mClickTime = 0;
@@ -506,8 +516,6 @@ namespace Intersect.Client.Interface.Game.Hotbar
                 {
                     if (mDragIcon.Update())
                     {
-                        mContentPanel.IsHidden = false;
-
                         //Drug the item and now we stopped
                         IsDragging = false;
                         var dragRect = new FloatRect(
@@ -520,7 +528,7 @@ namespace Intersect.Client.Interface.Game.Hotbar
 
                         if (Interface.GameUi.Hotbar.RenderBounds().IntersectsWith(dragRect))
                         {
-                            for (var i = 0; i < Options.MaxHotbar; i++)
+                            for (var i = 0; i < Options.Instance.PlayerOpts.HotbarSlotCount; i++)
                             {
                                 if (Interface.GameUi.Hotbar.Items[i].RenderBounds().IntersectsWith(dragRect))
                                 {

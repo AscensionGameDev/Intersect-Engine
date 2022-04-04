@@ -7,12 +7,11 @@ namespace Intersect.Client.Core.Controls
 
     public class ControlMap
     {
+        public ControlValue Key1;
 
-        public Keys Key1;
+        public ControlValue Key2;
 
-        public Keys Key2;
-
-        public ControlMap(Control control, Keys key1, Keys key2)
+        public ControlMap(Control control, ControlValue key1, ControlValue key2)
         {
             this.Key1 = key1;
             this.Key2 = key2;
@@ -20,69 +19,22 @@ namespace Intersect.Client.Core.Controls
 
         public bool KeyDown()
         {
-            if (Key1 != Keys.None && Globals.InputManager.KeyDown(Key1))
+            if (Key1.IsMouseKey || Key2.IsMouseKey)
+            {
+                if (Interface.Interface.MouseHitGui())
+                {
+                    return false;
+                }
+            }
+
+            if (Key1.IsDown())
             {
                 return true;
             }
 
-            if (Key2 != Keys.None && Globals.InputManager.KeyDown(Key2))
+            if (Key2.IsDown())
             {
                 return true;
-            }
-
-            if (Interface.Interface.MouseHitGui())
-            {
-                return false;
-            }
-
-            switch (Key1)
-            {
-                case Keys.LButton:
-                    if (Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Left))
-                    {
-                        return true;
-                    }
-
-                    break;
-                case Keys.RButton:
-                    if (Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Right))
-                    {
-                        return true;
-                    }
-
-                    break;
-                case Keys.MButton:
-                    if (Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Middle))
-                    {
-                        return true;
-                    }
-
-                    break;
-            }
-
-            switch (Key2)
-            {
-                case Keys.LButton:
-                    if (Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Left))
-                    {
-                        return true;
-                    }
-
-                    break;
-                case Keys.RButton:
-                    if (Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Right))
-                    {
-                        return true;
-                    }
-
-                    break;
-                case Keys.MButton:
-                    if (Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Middle))
-                    {
-                        return true;
-                    }
-
-                    break;
             }
 
             return false;

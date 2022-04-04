@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Intersect.Client.Entities;
 using Intersect.Client.Entities.Events;
+using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
@@ -11,6 +12,7 @@ using Intersect.Client.Maps;
 using Intersect.Configuration;
 using Intersect.Enums;
 using Intersect.GameObjects;
+using Intersect.Utilities;
 
 namespace Intersect.Client.Core
 {
@@ -32,6 +34,8 @@ namespace Intersect.Client.Core
         public static GameShader DefaultShader;
 
         //Rendering Variables
+        private static GameTexture sMenuBackground;
+
         public static int DrawCalls;
 
         public static int EntitiesDrawn;
@@ -52,6 +56,10 @@ namespace Intersect.Client.Core
         public static List<Animation> LiveAnimations = new List<Animation>();
 
         public static int MapsDrawn;
+
+        private static int sMenuBackgroundIndex;
+
+        private static long sMenuBackgroundInterval;
 
         //Overlay Stuff
         public static Color OverlayColor = Color.Transparent;
@@ -132,7 +140,7 @@ namespace Intersect.Client.Core
         public static void DrawIntro()
         {
             var imageTex = sContentManager.GetTexture(
-                GameContentManager.TextureType.Image, ClientConfiguration.Instance.IntroImages[Globals.IntroIndex]
+                Framework.Content.TextureType.Image, ClientConfiguration.Instance.IntroImages[Globals.IntroIndex]
             );
 
             if (imageTex != null)
@@ -141,21 +149,86 @@ namespace Intersect.Client.Core
             }
         }
 
-        public static void DrawMenu()
+        private static void DrawMenu()
         {
-            var imageTex = sContentManager.GetTexture(
-                GameContentManager.TextureType.Gui, ClientConfiguration.Instance.MenuBackground
-            );
-
-            if (imageTex != null)
+            // No background in the main menu.
+            if (ClientConfiguration.Instance.MenuBackground.Count == 0)
             {
-                DrawFullScreenTexture(imageTex);
+                return;
+            }
+
+            // Animated background in the main menu.
+            if (ClientConfiguration.Instance.MenuBackground.Count > 1)
+            {
+                sMenuBackground = sContentManager.GetTexture(
+                    TextureType.Gui, ClientConfiguration.Instance.MenuBackground[sMenuBackgroundIndex]
+                );
+
+                if (sMenuBackground == null)
+                {
+                    return;
+                }
+
+                var currentTimeMs = Timing.Global.Milliseconds;
+
+                if (sMenuBackgroundInterval < currentTimeMs)
+                {
+                    sMenuBackgroundIndex =
+                        (sMenuBackgroundIndex + 1) % ClientConfiguration.Instance.MenuBackground.Count;
+
+                    sMenuBackgroundInterval = currentTimeMs + ClientConfiguration.Instance.MenuBackgroundFrameInterval;
+                }
+            }
+
+            // Static background in the main menu.
+            else
+            {
+                sMenuBackground = sContentManager.GetTexture(
+                    TextureType.Gui, ClientConfiguration.Instance.MenuBackground[0]
+                );
+
+                if (sMenuBackground == null)
+                {
+                    return;
+                }
+            }
+
+            // Switch between the preferred display mode, then render the fullscreen texture.
+            switch (ClientConfiguration.Instance.MenuBackgroundDisplayMode)
+            {
+                case DisplayModes.Default:
+                    DrawFullScreenTexture(sMenuBackground);
+                    break;
+
+                case DisplayModes.Center:
+                    DrawFullScreenTextureCentered(sMenuBackground);
+                    break;
+
+                case DisplayModes.Stretch:
+                    DrawFullScreenTextureStretched(sMenuBackground);
+                    break;
+
+                case DisplayModes.FitHeight:
+                    DrawFullScreenTextureFitHeight(sMenuBackground);
+                    break;
+
+                case DisplayModes.FitWidth:
+                    DrawFullScreenTextureFitWidth(sMenuBackground);
+                    break;
+
+                case DisplayModes.Fit:
+                    DrawFullScreenTextureFitMaximum(sMenuBackground);
+                    break;
+
+                case DisplayModes.Cover:
+                    DrawFullScreenTextureFitMinimum(sMenuBackground);
+                    break;
             }
         }
 
-        public static void DrawInGame()
+        public static void DrawInGame(TimeSpan deltaTime)
         {
-            var currentMap = Globals.Me.MapInstance;
+            var currentMap = Globals.Me.MapInstance as MapInstance;
             if (currentMap == null)
             {
                 return;
@@ -198,10 +271,11 @@ namespace Intersect.Client.Core
                 }
             }
 
+            // Clear our previous darkness texture.
             ClearDarknessTexture();
-
-            var gridX = currentMap.MapGridX;
-            var gridY = currentMap.MapGridY;
+            
+            var gridX = currentMap.GridX;
+            var gridY = currentMap.GridY;
 
             //Draw Panoramas First...
             for (var x = gridX - 1; x <= gridX + 1; x++)
@@ -234,10 +308,16 @@ namespace Intersect.Client.Core
                 }
             }
 
+            // Handle our plugin drawing.
+            Globals.OnGameDraw(DrawStates.GroundLayers, deltaTime);
+
             foreach (var animInstance in animations)
             {
                 animInstance.Draw(false);
             }
+
+            // Handle our plugin drawing.
+            Globals.OnGameDraw(DrawStates.BelowPlayer, deltaTime);
 
             for (var y = 0; y < Options.MapHeight * 5; y++)
             {
@@ -245,7 +325,14 @@ namespace Intersect.Client.Core
                 {
                     foreach (var entity in RenderingEntities[x, y])
                     {
+                        // Handle our plugin drawing.
+                        Globals.OnGameDraw(DrawStates.BeforeEntity, entity, deltaTime);
+
                         entity.Draw();
+
+                        // Handle our plugin drawing.
+                        Globals.OnGameDraw(DrawStates.AfterEntity, entity, deltaTime);
+
                         EntitiesDrawn++;
                     }
 
@@ -298,11 +385,21 @@ namespace Intersect.Client.Core
                 {
                     foreach (var entity in RenderingEntities[x, y])
                     {
+                        // Handle our plugin drawing.
+                        Globals.OnGameDraw(DrawStates.BeforeEntity, entity, deltaTime);
+
                         entity.Draw();
+
+                        // Handle our plugin drawing.
+                        Globals.OnGameDraw(DrawStates.AfterEntity, entity, deltaTime);
+
                         EntitiesDrawn++;
                     }
                 }
             }
+
+            // Handle our plugin drawing.
+            Globals.OnGameDraw(DrawStates.AbovePlayer, deltaTime);
 
             for (var x = gridX - 1; x <= gridX + 1; x++)
             {
@@ -318,6 +415,8 @@ namespace Intersect.Client.Core
                     }
                 }
             }
+            // Handle our plugin drawing.
+            Globals.OnGameDraw(DrawStates.FringeLayers, deltaTime);
 
             foreach (var animInstance in animations)
             {
@@ -350,18 +449,22 @@ namespace Intersect.Client.Core
             //Draw the players targets
             Globals.Me.DrawTargets();
 
+            // Draw Overhead Information while hovering the cursor on specific entities when their info is set to be hidden.
+            Globals.Me.DrawOverheadInfoOnHover();
+
             DrawOverlay();
 
+            // Draw lighting effects.
             GenerateLightMap();
             DrawDarkness();
-
+            
             for (var y = 0; y < Options.MapHeight * 5; y++)
             {
                 for (var x = 0; x < 3; x++)
                 {
                     foreach (var entity in RenderingEntities[x, y])
                     {
-                        entity.DrawName(null);
+                        DrawOverheadInfo(entity);
                         if (entity.GetType() != typeof(Event))
                         {
                             entity.DrawHpBar();
@@ -379,7 +482,7 @@ namespace Intersect.Client.Core
                 {
                     foreach (var entity in RenderingEntities[x, y])
                     {
-                        entity.DrawName(null);
+                        DrawOverheadInfo(entity);
                         if (entity.GetType() != typeof(Event))
                         {
                             entity.DrawHpBar();
@@ -416,8 +519,90 @@ namespace Intersect.Client.Core
             }
         }
 
+        // Draw Entities Overhead Information.
+        private static void DrawOverheadInfo(Entity entity)
+        {
+            // Who's who.
+            var isEvent = entity is Event;
+            var isMe = entity.GetType() == typeof(Player) && entity.Id == Globals.Me.Id;
+            var isNpc = entity.GetType() != typeof(Player);
+            var isPlayer = entity.GetType() == typeof(Player) && entity.Id != Globals.Me.Id;
+            var isFriend = entity is Player possiblyFriend &&
+                           Globals.Me.IsFriend(possiblyFriend) &&
+                           !isMe;
+            var isGuildMate = entity is Player possiblyGuildMate &&
+                              Globals.Me.IsGuildMate(possiblyGuildMate) &&
+                              !isMe;
+            var isPartyMate = entity is Player possiblyPartyMate &&
+                              Globals.Me.IsInMyParty(possiblyPartyMate) &&
+                              !isMe;
+
+            // Events have their own handler for hiding names within the DrawName virtual void in the Entity class.
+            if (isEvent)
+            {
+                entity.DrawName(null);
+            }
+
+            // If MyOverheadInfo is toggled on always draw the local player's info.
+            if (Globals.Database.MyOverheadInfo && isMe)
+            {
+                entity.DrawName(null);
+            }
+
+            // If NpcOverheadInfo is toggled on, always draw npc names.
+            if (Globals.Database.NpcOverheadInfo && isNpc)
+            {
+                entity.DrawName(null);
+            }
+
+            // If PlayerOverheadInfo is toggled on, always draw other player's info.
+            if (Globals.Database.PlayerOverheadInfo && isPlayer &&
+                !isFriend && !isGuildMate && !isPartyMate)
+            {
+                entity.DrawName(null);
+            }
+
+            // If PartyMemberOverheadInfo is toggled on, always draw party members info.
+            if (Globals.Database.PartyMemberOverheadInfo && isPartyMate)
+            {
+                entity.DrawName(null);
+            }
+
+            // If FriendOverheadInfo & GuildMemberOverheadInfo are on, let's prevent double draw.
+            if (Globals.Database.FriendOverheadInfo && isFriend &&
+                Globals.Database.GuildMemberOverheadInfo && isGuildMate && !isPartyMate)
+            {
+                entity.DrawName(null);
+                return;
+            }
+
+            // If FriendOverheadInfo is toggled on, always draw friend's info.
+            if (Globals.Database.FriendOverheadInfo && isFriend && !isPartyMate)
+            {
+                // Skip if Friend is GuildMate in order to prevent double draw / overlapping.
+                if (Globals.Database.GuildMemberOverheadInfo && isGuildMate)
+                {
+                    return;
+                }
+
+                entity.DrawName(null);
+            }
+
+            // If GuildMemberOverheadInfo is toggled on, always draw guild members info.
+            if (Globals.Database.GuildMemberOverheadInfo && isGuildMate && !isPartyMate)
+            {
+                // Skip if GuildMate is Friend in order to prevent double draw.
+                if (Globals.Database.FriendOverheadInfo && isFriend)
+                {
+                    return;
+                }
+
+                entity.DrawName(null);
+            }
+        }
+
         //Game Rendering
-        public static void Render()
+        public static void Render(TimeSpan deltaTime)
         {
             var takingScreenshot = false;
             if (Renderer?.ScreenshotRequests.Count > 0)
@@ -462,7 +647,7 @@ namespace Intersect.Client.Core
                 case GameStates.Loading:
                     break;
                 case GameStates.InGame:
-                    DrawInGame();
+                    DrawInGame(deltaTime);
 
                     break;
                 case GameStates.Error:
@@ -483,10 +668,10 @@ namespace Intersect.Client.Core
             {
                 var renderLoc = ConvertToWorldPoint(Globals.InputManager.GetMousePosition());
                 DrawGameTexture(
-                    Globals.ContentManager.GetTexture(GameContentManager.TextureType.Misc, ClientConfiguration.Instance.MouseCursor), renderLoc.X, renderLoc.Y
+                    Globals.ContentManager.GetTexture(Framework.Content.TextureType.Misc, ClientConfiguration.Instance.MouseCursor), renderLoc.X, renderLoc.Y
                );
             }
-            
+
             Renderer.End();
 
             if (takingScreenshot)
@@ -535,10 +720,10 @@ namespace Intersect.Client.Core
 
         public static void DrawOverlay()
         {
-            var map = MapInstance.Get(Globals.Me.CurrentMap);
+            var map = MapInstance.Get(Globals.Me.MapId);
             if (map != null)
             {
-                float ecTime = Globals.System.GetTimeMs() - sOverlayUpdate;
+                float ecTime = Timing.Global.Milliseconds - sOverlayUpdate;
 
                 if (OverlayColor.A != map.AHue ||
                     OverlayColor.R != map.RHue ||
@@ -644,7 +829,7 @@ namespace Intersect.Client.Core
             }
 
             DrawGameTexture(Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1), CurrentView, OverlayColor, null);
-            sOverlayUpdate = Globals.System.GetTimeMs();
+            sOverlayUpdate = Timing.Global.Milliseconds;
         }
 
         public static FloatRect GetSourceRect(GameTexture gameTexture)
@@ -674,6 +859,20 @@ namespace Intersect.Client.Core
                 bgy -= diff / 2;
                 bgh += diff;
             }
+
+            DrawGameTexture(
+                tex, GetSourceRect(tex),
+                new FloatRect(bgx + Renderer.GetView().X, bgy + Renderer.GetView().Y, bgw, bgh),
+                new Color((int) (alpha * 255f), 255, 255, 255)
+            );
+        }
+
+        public static void DrawFullScreenTextureCentered(GameTexture tex, float alpha = 1f)
+        {
+            var bgx = Renderer.GetScreenWidth() / 2 - tex.GetWidth() / 2;
+            var bgy = Renderer.GetScreenHeight() / 2 - tex.GetHeight() / 2;
+            var bgw = tex.GetWidth();
+            var bgh = tex.GetHeight();
 
             DrawGameTexture(
                 tex, GetSourceRect(tex),
@@ -752,7 +951,7 @@ namespace Intersect.Client.Core
                 return;
             }
 
-            var map = MapInstance.Get(Globals.Me.CurrentMap);
+            var map = MapInstance.Get(Globals.Me.MapId);
             if (Globals.GameState == GameStates.InGame && map != null)
             {
                 var en = Globals.Me;
@@ -828,6 +1027,12 @@ namespace Intersect.Client.Core
         //Lighting
         private static void ClearDarknessTexture()
         {
+            // If we're not allowed to draw lighting, exit out.
+            if (!Globals.Database.EnableLighting)
+            {
+                return;
+            }
+
             if (sDarknessTexture == null)
             {
                 sDarknessTexture = Renderer.CreateRenderTexture(Renderer.GetScreenWidth(), Renderer.GetScreenHeight());
@@ -838,7 +1043,13 @@ namespace Intersect.Client.Core
 
         private static void GenerateLightMap()
         {
-            var map = MapInstance.Get(Globals.Me.CurrentMap);
+            // If we're not allowed to draw lighting, exit out.
+            if (!Globals.Database.EnableLighting)
+            {
+                return;
+            }
+
+            var map = MapInstance.Get(Globals.Me.MapId);
             if (map == null)
             {
                 return;
@@ -890,6 +1101,12 @@ namespace Intersect.Client.Core
 
         public static void DrawDarkness()
         {
+            // If we're not allowed to draw lighting, exit out.
+            if (!Globals.Database.EnableLighting)
+            {
+                return;
+            }
+
             var radialShader = Globals.ContentManager.GetShader("radialgradient");
             if (radialShader != null)
             {
@@ -899,6 +1116,12 @@ namespace Intersect.Client.Core
 
         public static void AddLight(int x, int y, int size, byte intensity, float expand, Color color)
         {
+            // If we're not allowed to draw lighting, exit out.
+            if (!Globals.Database.EnableLighting)
+            {
+                return;
+            }
+
             if (size == 0)
             {
                 return;
@@ -910,6 +1133,12 @@ namespace Intersect.Client.Core
 
         private static void DrawLights()
         {
+            // If we're not allowed to draw lighting, exit out.
+            if (!Globals.Database.EnableLighting)
+            {
+                return;
+            }
+
             var radialShader = Globals.ContentManager.GetShader("radialgradient");
             if (radialShader != null)
             {
@@ -937,11 +1166,17 @@ namespace Intersect.Client.Core
 
         public static void UpdatePlayerLight()
         {
+            // If we're not allowed to draw lighting, exit out.
+            if (!Globals.Database.EnableLighting)
+            {
+                return;
+            }
+
             //Draw Light Around Player
-            var map = MapInstance.Get(Globals.Me.CurrentMap);
+            var map = MapInstance.Get(Globals.Me.MapId);
             if (map != null)
             {
-                float ecTime = Globals.System.GetTimeMs() - sLightUpdate;
+                float ecTime = Timing.Global.Milliseconds - sLightUpdate;
                 var valChange = 255 * ecTime / 2000f;
                 var brightnessTarget = (byte) (map.Brightness / 100f * 255);
                 if (BrightnessLevel < brightnessTarget)
@@ -1120,7 +1355,9 @@ namespace Intersect.Client.Core
                     }
                 }
 
-                sLightUpdate = Globals.System.GetTimeMs();
+                // Cap instensity between 0 and 255 so as not to overflow (as it is an alpha value)
+                sPlayerLightIntensity = (float) MathHelper.Clamp(sPlayerLightIntensity, 0f, 255f);
+                sLightUpdate = Timing.Global.Milliseconds;
             }
         }
 

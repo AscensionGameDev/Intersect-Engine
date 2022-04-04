@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 using Intersect.Enums;
@@ -592,6 +592,16 @@ namespace Intersect.GameObjects.Events.Commands
         public byte Y { get; set; }
 
         public WarpDirection Direction { get; set; } = WarpDirection.Retain;
+
+        /// <summary>
+        /// Whether or not the warp event will change a player's map instance settings
+        /// </summary>
+        public bool ChangeInstance { get; set; } = false;
+
+        /// <summary>
+        /// The <see cref="MapInstanceType"/> we are going to be warping to
+        /// </summary>
+        public MapInstanceType InstanceType { get; set; } = MapInstanceType.Overworld;
 
     }
 

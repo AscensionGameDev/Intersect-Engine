@@ -1,4 +1,4 @@
-﻿using MessagePack;
+using MessagePack;
 
 namespace Intersect
 {
@@ -37,18 +37,6 @@ namespace Intersect
             return X.GetHashCode() ^ Y.GetHashCode();
         }
 
-        public static Point Empty => new Point();
-
-        public static bool operator !=(Point left, Point right)
-        {
-            return left.X != right.X || left.Y != right.Y;
-        }
-
-        public static bool operator ==(Point left, Point right)
-        {
-            return left.X == right.X && left.Y == right.Y;
-        }
-
         public static string ToString(Point pnt)
         {
             return pnt.X + "," + pnt.Y;
@@ -70,6 +58,26 @@ namespace Intersect
 
             return new Point(parts[0], parts[1]);
         }
+
+        public static Point Empty => new Point();
+
+        public static bool operator !=(Point left, Point right)
+        {
+            return left.X != right.X || left.Y != right.Y;
+        }
+
+        public static bool operator ==(Point left, Point right)
+        {
+            return left.X == right.X && left.Y == right.Y;
+        }
+
+        public static Point operator +(Point left, Point right) => new Point(left.X + right.X, left.Y + right.Y);
+
+        public static Point operator -(Point left, Point right) => new Point(left.X + right.X, left.Y + right.Y);
+
+        public static Point operator *(Point point, float scalar) => new Point((int)(point.X * scalar), (int)(point.Y * scalar));
+
+        public static Point operator /(Point point, float scalar) => new Point((int)(point.X / scalar), (int)(point.Y / scalar));
 
     }
 

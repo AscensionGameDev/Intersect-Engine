@@ -195,6 +195,26 @@ namespace Intersect.Server.Migrations.Game
                     b.ToTable("Events");
                 });
 
+            modelBuilder.Entity("Intersect.GameObjects.GuildVariableBase", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("Folder");
+
+                    b.Property<string>("Name");
+
+                    b.Property<string>("TextId");
+
+                    b.Property<long>("TimeCreated");
+
+                    b.Property<byte>("Type");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("GuildVariables");
+                });
+
             modelBuilder.Entity("Intersect.GameObjects.ItemBase", b =>
                 {
                     b.Property<Guid>("Id")

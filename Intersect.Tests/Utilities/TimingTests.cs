@@ -18,8 +18,8 @@ namespace Intersect.Tests.Server
             var stopwatch = new Stopwatch();
 
             stopwatch.Start();
-            var expected = (long) DateTime.UtcNow.AsUnixTimeSpan().TotalMilliseconds;
-            var actual = timing.MillisecondsUTC;
+            var expected = DateTime.UtcNow.Ticks / TimeSpan.TicksPerMillisecond;
+            var actual = timing.MillisecondsUtc;
             stopwatch.Stop();
 
             var errorDelta = (long) Math.Ceiling(stopwatch.Elapsed.TotalMilliseconds);

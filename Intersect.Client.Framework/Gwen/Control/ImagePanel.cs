@@ -106,7 +106,7 @@ namespace Intersect.Client.Framework.Gwen.Control
             if (obj["Texture"] != null)
             {
                 Texture = GameContentManager.Current.GetTexture(
-                    GameContentManager.TextureType.Gui, (string) obj["Texture"]
+                    Framework.Content.TextureType.Gui, (string) obj["Texture"]
                 );
 
                 TextureFilename = (string) obj["Texture"];

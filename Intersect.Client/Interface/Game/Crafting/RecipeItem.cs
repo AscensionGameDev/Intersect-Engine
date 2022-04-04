@@ -5,6 +5,7 @@ using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Input;
 using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
+using Intersect.Client.Interface.Game.DescriptionWindows;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Crafting;
@@ -17,7 +18,7 @@ namespace Intersect.Client.Interface.Game.Crafting
 
         public ImagePanel Container;
 
-        public ItemDescWindow DescWindow;
+        public ItemDescriptionWindow DescWindow;
 
         public bool IsDragging;
 
@@ -60,7 +61,7 @@ namespace Intersect.Client.Interface.Game.Crafting
 
             if (item != null)
             {
-                var itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item, item.Icon);
+                var itemTex = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Item, item.Icon);
                 if (itemTex != null)
                 {
                     Pnl.Texture = itemTex;
@@ -104,7 +105,7 @@ namespace Intersect.Client.Interface.Game.Crafting
 
             mMouseOver = true;
             mCanDrag = true;
-            if (Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Left))
+            if (Globals.InputManager.MouseButtonDown(MouseButtons.Left))
             {
                 mCanDrag = false;
 
@@ -119,7 +120,7 @@ namespace Intersect.Client.Interface.Game.Crafting
 
             if (mIngredient != null && ItemBase.Get(mIngredient.ItemId) != null)
             {
-                DescWindow = new ItemDescWindow(
+                DescWindow = new ItemDescriptionWindow(
                     ItemBase.Get(mIngredient.ItemId), mIngredient.Quantity, mCraftingWindow.X, mCraftingWindow.Y,
                     new int[(int) Stats.StatCount]
                 );

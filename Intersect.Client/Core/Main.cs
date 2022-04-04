@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 
-using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.General;
 using Intersect.Client.Localization;
@@ -12,6 +11,7 @@ using Intersect.Configuration;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps;
+using Intersect.Utilities;
 
 // ReSharper disable All
 
@@ -34,7 +34,7 @@ namespace Intersect.Client.Core
 
             //Load Sounds
             Audio.Init();
-            Audio.PlayMusic(ClientConfiguration.Instance.MenuMusic, 3, 3, true);
+            Audio.PlayMusic(ClientConfiguration.Instance.MenuMusic, ClientConfiguration.Instance.MusicFadeTimer, ClientConfiguration.Instance.MusicFadeTimer, true);
 
             //Init Network
             Networking.Network.InitNetwork(context);
@@ -64,12 +64,11 @@ namespace Intersect.Client.Core
             Graphics.Renderer.Close();
         }
 
-        public static void Update()
+        public static void Update(TimeSpan deltaTime)
         {
             lock (Globals.GameLock)
             {
                 Networking.Network.Update();
-                Globals.System.Update();
                 Fade.Update();
                 Interface.Interface.ToggleInput(Globals.GameState != GameStates.Intro);
 
@@ -107,7 +106,7 @@ namespace Intersect.Client.Core
                 Globals.InputManager.Update();
                 Audio.Update();
 
-                Globals.OnGameUpdate();
+                Globals.OnGameUpdate(deltaTime);
             }
         }
 
@@ -116,7 +115,7 @@ namespace Intersect.Client.Core
             if (ClientConfiguration.Instance.IntroImages.Count > 0)
             {
                 GameTexture imageTex = Globals.ContentManager.GetTexture(
-                    GameContentManager.TextureType.Image, ClientConfiguration.Instance.IntroImages[Globals.IntroIndex]
+                    Framework.Content.TextureType.Image, ClientConfiguration.Instance.IntroImages[Globals.IntroIndex]
                 );
 
                 if (imageTex != null)
@@ -127,7 +126,7 @@ namespace Intersect.Client.Core
                         {
                             if (Globals.IntroComing)
                             {
-                                Globals.IntroStartTime = Globals.System.GetTimeMs();
+                                Globals.IntroStartTime = Timing.Global.Milliseconds;
                             }
                             else
                             {
@@ -139,7 +138,7 @@ namespace Intersect.Client.Core
                     }
                     else
                     {
-                        if (Globals.System.GetTimeMs() > Globals.IntroStartTime + Globals.IntroDelay)
+                        if (Timing.Global.Milliseconds > Globals.IntroStartTime + Globals.IntroDelay)
                         {
                             //If we have shown an image long enough, fade to black -- keep track that the image is going
                             Fade.FadeOut();
@@ -186,7 +185,7 @@ namespace Intersect.Client.Core
                 _loadedTilesets = true;
             }
 
-            Audio.PlayMusic(MapInstance.Get(Globals.Me.CurrentMap).Music, 3, 3, true);
+            Audio.PlayMusic(MapInstance.Get(Globals.Me.MapId).Music, ClientConfiguration.Instance.MusicFadeTimer, ClientConfiguration.Instance.MusicFadeTimer, true);
             Globals.GameState = GameStates.InGame;
             Fade.FadeIn();
         }
@@ -209,10 +208,10 @@ namespace Intersect.Client.Core
             if (Globals.NeedsMaps)
             {
                 bool canShowWorld = true;
-                if (MapInstance.Get(Globals.Me.CurrentMap) != null)
+                if (MapInstance.TryGet(Globals.Me.MapId, out var mapInstance))
                 {
-                    var gridX = MapInstance.Get(Globals.Me.CurrentMap).MapGridX;
-                    var gridY = MapInstance.Get(Globals.Me.CurrentMap).MapGridY;
+                    var gridX = mapInstance.GridX;
+                    var gridY = mapInstance.GridY;
                     for (int x = gridX - 1; x <= gridX + 1; x++)
                     {
                         for (int y = gridY - 1; y <= gridY + 1; y++)
@@ -226,7 +225,7 @@ namespace Intersect.Client.Core
                                 var map = MapInstance.Get(Globals.MapGrid[x, y]);
                                 if (map != null)
                                 {
-                                    if (map.MapLoaded == false)
+                                    if (!map.IsLoaded)
                                     {
                                         canShowWorld = false;
                                     }
@@ -254,10 +253,10 @@ namespace Intersect.Client.Core
             }
             else
             {
-                if (MapInstance.Get(Globals.Me.CurrentMap) != null)
+                if (MapInstance.TryGet(Globals.Me.MapId, out var mapInstance))
                 {
-                    var gridX = MapInstance.Get(Globals.Me.CurrentMap).MapGridX;
-                    var gridY = MapInstance.Get(Globals.Me.CurrentMap).MapGridY;
+                    var gridX = mapInstance.GridX;
+                    var gridY = mapInstance.GridY;
                     for (int x = gridX - 1; x <= gridX + 1; x++)
                     {
                         for (int y = gridY - 1; y <= gridY + 1; y++)
@@ -268,10 +267,9 @@ namespace Intersect.Client.Core
                                 y < Globals.MapGridHeight &&
                                 Globals.MapGrid[x, y] != Guid.Empty)
                             {
-                                var map = MapInstance.Get(Globals.MapGrid[x, y]);
-                                if (map == null &&
+                                if (!MapInstance.TryGet(Globals.MapGrid[x, y], out var _) &&
                                     (!MapInstance.MapRequests.ContainsKey(Globals.MapGrid[x, y]) ||
-                                     MapInstance.MapRequests[Globals.MapGrid[x, y]] < Globals.System.GetTimeMs()))
+                                     MapInstance.MapRequests[Globals.MapGrid[x, y]] < Timing.Global.Milliseconds))
                                 {
                                     //Send for the map
                                     PacketSender.SendNeedMap(Globals.MapGrid[x, y]);
@@ -319,7 +317,7 @@ namespace Intersect.Client.Core
             }
 
             //Update Game Animations
-            if (_animTimer < Globals.System.GetTimeMs())
+            if (_animTimer < Timing.Global.Milliseconds)
             {
                 Globals.AnimFrame++;
                 if (Globals.AnimFrame == 3)
@@ -327,7 +325,7 @@ namespace Intersect.Client.Core
                     Globals.AnimFrame = 0;
                 }
 
-                _animTimer = Globals.System.GetTimeMs() + 500;
+                _animTimer = Timing.Global.Milliseconds + 500;
             }
 
             //Remove Event Holds If Invalid
@@ -353,12 +351,12 @@ namespace Intersect.Client.Core
         public static void JoinGame()
         {
             Globals.LoggedIn = true;
-            Audio.StopMusic(3f);
+            Audio.StopMusic(ClientConfiguration.Instance.MusicFadeTimer);
         }
 
         public static void Logout(bool characterSelect)
         {
-            Audio.PlayMusic(ClientConfiguration.Instance.MenuMusic, 3, 3, true);
+            Audio.PlayMusic(ClientConfiguration.Instance.MenuMusic, ClientConfiguration.Instance.MusicFadeTimer, ClientConfiguration.Instance.MusicFadeTimer, true);
             Fade.FadeOut();
             PacketSender.SendLogout(characterSelect);
             Globals.LoggedIn = false;

@@ -1,10 +1,11 @@
 ﻿using System;
 
 using Intersect.Client.Core;
-using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.Entities;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.General;
+using Intersect.Utilities;
 
 namespace Intersect.Client.Entities
 {
@@ -39,13 +40,13 @@ namespace Intersect.Client.Entities
 
             mOwner = owner;
             mSourceText = text;
-            mRenderTimer = Globals.System.GetTimeMs() + 5000;
-            mBubbleTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Misc, "chatbubble.png");
+            mRenderTimer = Timing.Global.Milliseconds + 5000;
+            mBubbleTex = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Misc, "chatbubble.png");
         }
 
         public bool Update()
         {
-            if (mRenderTimer < Globals.System.GetTimeMs())
+            if (mRenderTimer < Timing.Global.Milliseconds)
             {
                 return false;
             }
@@ -65,7 +66,7 @@ namespace Intersect.Client.Entities
                 return 0f;
             }
 
-            var y = (int) Math.Ceiling(mOwner.GetLabelLocation(Entity.LabelType.ChatBubble));
+            var y = (int) Math.Ceiling(mOwner.GetLabelLocation(LabelType.ChatBubble));
 
             var x = (int) Math.Ceiling(mOwner.GetCenterPos().X);
             if (mTextureBounds.Width == 0)
@@ -187,7 +188,8 @@ namespace Intersect.Client.Entities
                         mText[i], Graphics.ChatBubbleFont,
                         (int) (x - mTextureBounds.Width / 2 + (mTextureBounds.Width - textSize.X) / 2f),
                         (int) (y - mTextureBounds.Height - yoffset + 8 + i * 16), 1,
-                        Color.FromArgb(CustomColors.Chat.ChatBubbleText.ToArgb()), true, null
+                        Color.FromArgb(CustomColors.Chat.ChatBubbleText.ToArgb()), true, null,
+                        Color.FromArgb(CustomColors.Chat.ChatBubbleTextOutline.ToArgb())
                     );
                 }
             }

@@ -1,14 +1,16 @@
 ﻿using System;
 
-using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Framework.Gwen.Input;
 using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
+using Intersect.Client.Interface.Game.DescriptionWindows;
 using Intersect.Client.Networking;
+using Intersect.Configuration;
 using Intersect.GameObjects;
+using Intersect.Utilities;
 
 namespace Intersect.Client.Interface.Game.Bag
 {
@@ -34,7 +36,7 @@ namespace Intersect.Client.Interface.Game.Bag
 
         private Guid mCurrentItemId;
 
-        private ItemDescWindow mDescWindow;
+        private ItemDescriptionWindow mDescWindow;
 
         private Draggable mDragIcon;
 
@@ -61,9 +63,21 @@ namespace Intersect.Client.Interface.Game.Bag
             Pnl = new ImagePanel(Container, "BagItemIcon");
             Pnl.HoverEnter += pnl_HoverEnter;
             Pnl.HoverLeave += pnl_HoverLeave;
-            Pnl.RightClicked += Pnl_DoubleClicked; //Allow withdrawing via double click OR right click
+            Pnl.RightClicked += Pnl_RightClicked;
             Pnl.DoubleClicked += Pnl_DoubleClicked;
             Pnl.Clicked += pnl_Clicked;
+        }
+
+        private void Pnl_RightClicked(Base sender, ClickedEventArgs arguments)
+        {
+            if (ClientConfiguration.Instance.EnableContextMenus)
+            {
+                mBagWindow.OpenContextMenu(mMySlot);
+            }
+            else
+            {
+                Pnl_DoubleClicked(sender, arguments);
+            }    
         }
 
         private void Pnl_DoubleClicked(Base sender, ClickedEventArgs arguments)
@@ -76,7 +90,7 @@ namespace Intersect.Client.Interface.Game.Bag
 
         void pnl_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            mClickTime = Globals.System.GetTimeMs() + 500;
+            mClickTime = Timing.Global.Milliseconds + 500;
         }
 
         void pnl_HoverLeave(Base sender, EventArgs arguments)
@@ -100,7 +114,7 @@ namespace Intersect.Client.Interface.Game.Bag
 
             mMouseOver = true;
             mCanDrag = true;
-            if (Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Left))
+            if (Globals.InputManager.MouseButtonDown(MouseButtons.Left))
             {
                 mCanDrag = false;
 
@@ -115,7 +129,7 @@ namespace Intersect.Client.Interface.Game.Bag
 
             if (Globals.Bag[mMySlot]?.Base != null)
             {
-                mDescWindow = new ItemDescWindow(
+                mDescWindow = new ItemDescriptionWindow(
                     Globals.Bag[mMySlot].Base, Globals.Bag[mMySlot].Quantity, mBagWindow.X, mBagWindow.Y,
                     Globals.Bag[mMySlot].StatBuffs
                 );
@@ -143,7 +157,7 @@ namespace Intersect.Client.Interface.Game.Bag
                 var item = ItemBase.Get(Globals.Bag[mMySlot].ItemId);
                 if (item != null)
                 {
-                    var itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item, item.Icon);
+                    var itemTex = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Item, item.Icon);
                     if (itemTex != null)
                     {
                         Pnl.Texture = itemTex;
@@ -170,14 +184,13 @@ namespace Intersect.Client.Interface.Game.Bag
             {
                 if (mMouseOver)
                 {
-                    if (!Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Left))
+                    if (!Globals.InputManager.MouseButtonDown(MouseButtons.Left))
                     {
                         mCanDrag = true;
                         mMouseX = -1;
                         mMouseY = -1;
-                        if (Globals.System.GetTimeMs() < mClickTime)
+                        if (Timing.Global.Milliseconds < mClickTime)
                         {
-                            //Globals.Me.TryUseItem(_mySlot);
                             mClickTime = 0;
                         }
                     }

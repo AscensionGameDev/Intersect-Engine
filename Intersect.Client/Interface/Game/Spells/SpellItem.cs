@@ -1,15 +1,17 @@
 ﻿using System;
 
-using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Framework.Gwen.Input;
 using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
+using Intersect.Client.Interface.Game.DescriptionWindows;
 using Intersect.Client.Localization;
 using Intersect.Client.Networking;
+using Intersect.Configuration;
 using Intersect.GameObjects;
+using Intersect.Utilities;
 
 namespace Intersect.Client.Interface.Game.Spells
 {
@@ -29,7 +31,7 @@ namespace Intersect.Client.Interface.Game.Spells
 
         private Guid mCurrentSpellId;
 
-        private SpellDescWindow mDescWindow;
+        private SpellDescriptionWindow mDescWindow;
 
         private Draggable mDragIcon;
 
@@ -63,19 +65,32 @@ namespace Intersect.Client.Interface.Game.Spells
             Pnl.HoverLeave += pnl_HoverLeave;
             Pnl.RightClicked += pnl_RightClicked;
             Pnl.Clicked += pnl_Clicked;
+            Pnl.DoubleClicked += Pnl_DoubleClicked;
             mCooldownLabel = new Label(Pnl, "SpellCooldownLabel");
             mCooldownLabel.IsHidden = true;
             mCooldownLabel.TextColor = new Color(0, 255, 255, 255);
         }
 
+        private void Pnl_DoubleClicked(Base sender, ClickedEventArgs arguments)
+        {
+            Globals.Me.TryUseSpell(mYindex);
+        }
+
         void pnl_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            mClickTime = Globals.System.GetTimeMs() + 500;
+            mClickTime = Timing.Global.Milliseconds + 500;
         }
 
         void pnl_RightClicked(Base sender, ClickedEventArgs arguments)
         {
-            Globals.Me.TryForgetSpell(mYindex);
+            if (ClientConfiguration.Instance.EnableContextMenus)
+            {
+                mSpellWindow.OpenContextMenu(mYindex);
+            }
+            else
+            {
+                Globals.Me.TryForgetSpell(mYindex);
+            }   
         }
 
         void pnl_HoverLeave(Base sender, EventArgs arguments)
@@ -99,7 +114,7 @@ namespace Intersect.Client.Interface.Game.Spells
 
             mMouseOver = true;
             mCanDrag = true;
-            if (Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Left))
+            if (Globals.InputManager.MouseButtonDown(MouseButtons.Left))
             {
                 mCanDrag = false;
 
@@ -112,7 +127,7 @@ namespace Intersect.Client.Interface.Game.Spells
                 mDescWindow = null;
             }
 
-            mDescWindow = new SpellDescWindow(Globals.Me.Spells[mYindex].SpellId, mSpellWindow.X, mSpellWindow.Y);
+            mDescWindow = new SpellDescriptionWindow(Globals.Me.Spells[mYindex].Id, mSpellWindow.X, mSpellWindow.Y);
         }
 
         public FloatRect RenderBounds()
@@ -130,24 +145,24 @@ namespace Intersect.Client.Interface.Game.Spells
 
         public void Update()
         {
-            var spell = SpellBase.Get(Globals.Me.Spells[mYindex].SpellId);
+            var spell = SpellBase.Get(Globals.Me.Spells[mYindex].Id);
             if (!IsDragging &&
                 (mTexLoaded != "" && spell == null ||
                  spell != null && mTexLoaded != spell.Icon ||
-                 mCurrentSpellId != Globals.Me.Spells[mYindex].SpellId ||
+                 mCurrentSpellId != Globals.Me.Spells[mYindex].Id ||
                  mIconCd !=
-                 Globals.Me.GetSpellCooldown(Globals.Me.Spells[mYindex].SpellId) > Globals.System.GetTimeMs() ||
-                 Globals.Me.GetSpellCooldown(Globals.Me.Spells[mYindex].SpellId) > Globals.System.GetTimeMs()))
+                 Globals.Me.GetSpellCooldown(Globals.Me.Spells[mYindex].Id) > Timing.Global.Milliseconds ||
+                 Globals.Me.GetSpellCooldown(Globals.Me.Spells[mYindex].Id) > Timing.Global.Milliseconds))
             {
                 mCooldownLabel.IsHidden = true;
                 if (spell != null)
                 {
-                    var spellTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Spell, spell.Icon);
+                    var spellTex = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Spell, spell.Icon);
                     if (spellTex != null)
                     {
                         Pnl.Texture = spellTex;
-                        if (Globals.Me.GetSpellCooldown(Globals.Me.Spells[mYindex].SpellId) >
-                            Globals.System.GetTimeMs())
+                        if (Globals.Me.GetSpellCooldown(Globals.Me.Spells[mYindex].Id) >
+                            Timing.Global.Milliseconds)
                         {
                             Pnl.RenderColor = new Color(100, 255, 255, 255);
                         }
@@ -165,16 +180,16 @@ namespace Intersect.Client.Interface.Game.Spells
                     }
 
                     mTexLoaded = spell.Icon;
-                    mCurrentSpellId = Globals.Me.Spells[mYindex].SpellId;
-                    mIconCd = Globals.Me.GetSpellCooldown(Globals.Me.Spells[mYindex].SpellId) >
-                              Globals.System.GetTimeMs();
+                    mCurrentSpellId = Globals.Me.Spells[mYindex].Id;
+                    mIconCd = Globals.Me.GetSpellCooldown(Globals.Me.Spells[mYindex].Id) >
+                              Timing.Global.Milliseconds;
 
                     if (mIconCd)
                     {
                         mCooldownLabel.IsHidden = false;
                         var secondsRemaining =
-                            (float) (Globals.Me.GetSpellCooldown(Globals.Me.Spells[mYindex].SpellId) -
-                                     Globals.System.GetTimeMs()) /
+                            (float) (Globals.Me.GetSpellCooldown(Globals.Me.Spells[mYindex].Id) -
+                                     Timing.Global.Milliseconds) /
                             1000f;
 
                         if (secondsRemaining > 10f)
@@ -204,14 +219,13 @@ namespace Intersect.Client.Interface.Game.Spells
             {
                 if (mMouseOver)
                 {
-                    if (!Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Left))
+                    if (!Globals.InputManager.MouseButtonDown(MouseButtons.Left))
                     {
                         mCanDrag = true;
                         mMouseX = -1;
                         mMouseY = -1;
-                        if (Globals.System.GetTimeMs() < mClickTime)
+                        if (Timing.Global.Milliseconds < mClickTime)
                         {
-                            Globals.Me.TryUseSpell(mYindex);
                             mClickTime = 0;
                         }
                     }
@@ -297,7 +311,7 @@ namespace Intersect.Client.Interface.Game.Spells
                     }
                     else if (Interface.GameUi.Hotbar.RenderBounds().IntersectsWith(dragRect))
                     {
-                        for (var i = 0; i < Options.MaxHotbar; i++)
+                        for (var i = 0; i < Options.Instance.PlayerOpts.HotbarSlotCount; i++)
                         {
                             if (Interface.GameUi.Hotbar.Items[i].RenderBounds().IntersectsWith(dragRect))
                             {

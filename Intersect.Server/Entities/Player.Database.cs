@@ -10,6 +10,7 @@ using Intersect.Server.General;
 using Intersect.Server.Networking;
 using Intersect.Server.Web.RestApi.Payloads;
 using Intersect.Server.Database.PlayerData.Players;
+using Intersect.Utilities;
 
 using Microsoft.EntityFrameworkCore;
 
@@ -30,7 +31,7 @@ namespace Intersect.Server.Entities
         public virtual User User { get; private set; }
 
         [NotMapped, JsonIgnore]
-        public long SaveTimer { get; set; } = Globals.Timing.Milliseconds + Options.Instance.Processing.PlayerSaveInterval;
+        public long SaveTimer { get; set; } = Timing.Global.Milliseconds + Options.Instance.Processing.PlayerSaveInterval;
 
         #endregion
 
@@ -81,7 +82,7 @@ namespace Intersect.Server.Entities
             {
                 using (var context = DbInterface.CreatePlayerContext())
                 {
-                    return Load(QueryPlayerById(context, playerId));
+                    return Validate(QueryPlayerById(context, playerId));
                 }
             }
             catch (Exception ex)
@@ -108,7 +109,7 @@ namespace Intersect.Server.Entities
             {
                 using (var context = DbInterface.CreatePlayerContext())
                 {
-                    return Load(QueryPlayerByName(context, playerName));
+                    return Validate(QueryPlayerByName(context, playerName));
                 }
             }
             catch (Exception ex)
@@ -153,17 +154,17 @@ namespace Intersect.Server.Entities
         {
             var player = Find(playerId);
 
-            return Load(player);
+            return Validate(player);
         }
 
         public static Player Load(string playerName)
         {
             var player = Find(playerName);
 
-            return Load(player);
+            return Validate(player);
         }
 
-        public static Player Load(Player player)
+        public static Player Validate(Player player)
         {
             if (player == null)
             {

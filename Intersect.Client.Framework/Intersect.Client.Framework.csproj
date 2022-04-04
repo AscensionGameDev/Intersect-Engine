@@ -1,266 +1,31 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\Microsoft.CodeAnalysis.FxCopAnalyzers.3.0.0\build\Microsoft.CodeAnalysis.FxCopAnalyzers.props" Condition="Exists('..\packages\Microsoft.CodeAnalysis.FxCopAnalyzers.3.0.0\build\Microsoft.CodeAnalysis.FxCopAnalyzers.props')" />
-  <Import Project="..\packages\Microsoft.NetFramework.Analyzers.3.0.0\build\Microsoft.NetFramework.Analyzers.props" Condition="Exists('..\packages\Microsoft.NetFramework.Analyzers.3.0.0\build\Microsoft.NetFramework.Analyzers.props')" />
-  <Import Project="..\packages\Microsoft.NetCore.Analyzers.3.0.0\build\Microsoft.NetCore.Analyzers.props" Condition="Exists('..\packages\Microsoft.NetCore.Analyzers.3.0.0\build\Microsoft.NetCore.Analyzers.props')" />
-  <Import Project="..\packages\Microsoft.CodeQuality.Analyzers.3.0.0\build\Microsoft.CodeQuality.Analyzers.props" Condition="Exists('..\packages\Microsoft.CodeQuality.Analyzers.3.0.0\build\Microsoft.CodeQuality.Analyzers.props')" />
-  <Import Project="..\packages\Microsoft.CodeAnalysis.VersionCheckAnalyzer.3.0.0\build\Microsoft.CodeAnalysis.VersionCheckAnalyzer.props" Condition="Exists('..\packages\Microsoft.CodeAnalysis.VersionCheckAnalyzer.3.0.0\build\Microsoft.CodeAnalysis.VersionCheckAnalyzer.props')" />
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{40973F13-3339-4548-9008-FF76A0C8CD79}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <TargetFramework>net462</TargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageId>AscensionGameDev.Intersect.Client.Framework</PackageId>
+    <Description>Library for the public Intersect Client API</Description>
+    <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
     <RootNamespace>Intersect.Client.Framework</RootNamespace>
-    <AssemblyName>Intersect Client Framework</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <AssemblyName>Intersect.Client.Framework</AssemblyName>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
     <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>..\build\debug\clientextras\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
-    <RunCodeAnalysis>false</RunCodeAnalysis>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>..\build\release\clientextras\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
-    <RunCodeAnalysis>false</RunCodeAnalysis>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="Microsoft.VisualStudio.Validation, Version=15.3.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.VisualStudio.Validation.15.5.31\lib\netstandard2.0\Microsoft.VisualStudio.Validation.dll</HintPath>
-    </Reference>
-    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Runtime.InteropServices.RuntimeInformation, Version=4.0.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Runtime.InteropServices.RuntimeInformation.4.3.0\lib\net45\System.Runtime.InteropServices.RuntimeInformation.dll</HintPath>
-      <Private>True</Private>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+      <_Parameter1>Intersect.Tests.Client.Framework</_Parameter1>
+    </AssemblyAttribute>
   </ItemGroup>
+
   <ItemGroup>
-    <Compile Include="Audio\GameAudioInstance.cs" />
-    <Compile Include="Audio\GameAudioSource.cs" />
-    <Compile Include="Content\AssetTypeAttribute.cs" />
-    <Compile Include="Content\ContentTypes.cs" />
-    <Compile Include="Content\ContentTypesExtensions.cs" />
-    <Compile Include="Content\IAsset.cs" />
-    <Compile Include="Content\IContentManager.cs" />
-    <Compile Include="Database\GameDatabase.cs" />
-    <Compile Include="File Management\GameContentManager.cs" />
-    <Compile Include="General\GameStates.cs" />
-    <Compile Include="Graphics\GameBlendModes.cs" />
-    <Compile Include="Graphics\GameFont.cs" />
-    <Compile Include="Graphics\GameRenderer.cs" />
-    <Compile Include="Graphics\GameRenderTexture.cs" />
-    <Compile Include="Graphics\GameShader.cs" />
-    <Compile Include="Graphics\GameTexture.cs" />
-    <Compile Include="Graphics\GameTexturePack.cs" />
-    <Compile Include="Graphics\GameTileBuffer.cs" />
-    <Compile Include="Input\GameClipboard.cs" />
-    <Compile Include="Graphics\Resolution.cs" />
-    <Compile Include="Input\GameInput.cs" />
-    <Compile Include="Interface\IMutableInterface.cs" />
-    <Compile Include="Network\GameSocket.cs" />
-    <Compile Include="Plugins\ClientPluginEntry.cs" />
-    <Compile Include="Plugins\IClientPluginContext.cs" />
-    <Compile Include="Plugins\Interfaces\IClientLifecycleHelper.cs" />
-    <Compile Include="Plugins\Interfaces\IClientNetworkHelper.cs" />
-    <Compile Include="Sys\GameSystem.cs" />
-    <Compile Include="GenericClasses\Cursor.cs" />
-    <Compile Include="GenericClasses\FloatRect.cs" />
-    <Compile Include="GenericClasses\Keys.cs" />
-    <Compile Include="GenericClasses\OpenFileDialog.cs" />
-    <Compile Include="GenericClasses\Pointf.cs" />
-    <Compile Include="GenericClasses\Rectangle.cs" />
-    <Compile Include="GenericClasses\SaveFileDialog.cs" />
-    <Compile Include="Gwen\Align.cs" />
-    <Compile Include="Gwen\Anim\Animation.cs" />
-    <Compile Include="Gwen\Anim\Size\Height.cs" />
-    <Compile Include="Gwen\Anim\Size\Width.cs" />
-    <Compile Include="Gwen\Anim\TimedAnimation.cs" />
-    <Compile Include="Gwen\ControlInternal\CategoryButton.cs" />
-    <Compile Include="Gwen\ControlInternal\CategoryHeaderButton.cs" />
-    <Compile Include="Gwen\ControlInternal\CloseButton.cs" />
-    <Compile Include="Gwen\ControlInternal\ColorButton.cs" />
-    <Compile Include="Gwen\ControlInternal\ColorDisplay.cs" />
-    <Compile Include="Gwen\ControlInternal\DownArrow.cs" />
-    <Compile Include="Gwen\ControlInternal\Dragger.cs" />
-    <Compile Include="Gwen\ControlInternal\Highlight.cs" />
-    <Compile Include="Gwen\ControlInternal\MenuDivider.cs" />
-    <Compile Include="Gwen\ControlInternal\Modal.cs" />
-    <Compile Include="Gwen\ControlInternal\PropertyRowLabel.cs" />
-    <Compile Include="Gwen\ControlInternal\PropertyTreeNode.cs" />
-    <Compile Include="Gwen\ControlInternal\Resizer.cs" />
-    <Compile Include="Gwen\ControlInternal\RightArrow.cs" />
-    <Compile Include="Gwen\ControlInternal\ScrollBarBar.cs" />
-    <Compile Include="Gwen\ControlInternal\ScrollBarButton.cs" />
-    <Compile Include="Gwen\ControlInternal\SliderBar.cs" />
-    <Compile Include="Gwen\ControlInternal\SplitterBar.cs" />
-    <Compile Include="Gwen\ControlInternal\TabControlInner.cs" />
-    <Compile Include="Gwen\ControlInternal\Text.cs" />
-    <Compile Include="Gwen\ControlInternal\TreeNodeLabel.cs" />
-    <Compile Include="Gwen\ControlInternal\TreeToggleButton.cs" />
-    <Compile Include="Gwen\ControlInternal\UpDownButton_Down.cs" />
-    <Compile Include="Gwen\ControlInternal\UpDownButton_Up.cs" />
-    <Compile Include="Gwen\Control\Base.cs" />
-    <Compile Include="Gwen\Control\Button.cs" />
-    <Compile Include="Gwen\Control\Canvas.cs" />
-    <Compile Include="Gwen\Control\CheckBox.cs" />
-    <Compile Include="Gwen\Control\CollapsibleCategory.cs" />
-    <Compile Include="Gwen\Control\CollapsibleList.cs" />
-    <Compile Include="Gwen\Control\ColorLerpBox.cs" />
-    <Compile Include="Gwen\Control\ColorPicker.cs" />
-    <Compile Include="Gwen\Control\ColorSlider.cs" />
-    <Compile Include="Gwen\Control\ComboBox.cs" />
-    <Compile Include="Gwen\Control\CrossSplitter.cs" />
-    <Compile Include="Gwen\Control\DockBase.cs" />
-    <Compile Include="Gwen\Control\DockedTabControl.cs" />
-    <Compile Include="Gwen\Control\EnumRadioButtonGroup.cs" />
-    <Compile Include="Gwen\Control\EventArguments\ClickedEventArgs.cs" />
-    <Compile Include="Gwen\Control\EventArguments\ItemSelectedEventArgs.cs" />
-    <Compile Include="Gwen\Control\GroupBox.cs" />
-    <Compile Include="Gwen\Control\HorizontalScrollBar.cs" />
-    <Compile Include="Gwen\Control\HorizontalSlider.cs" />
-    <Compile Include="Gwen\Control\HorizontalSplitter.cs" />
-    <Compile Include="Gwen\Control\HSVColorPicker.cs" />
-    <Compile Include="Gwen\Control\IColorPicker.cs" />
-    <Compile Include="Gwen\Control\ImagePanel.cs" />
-    <Compile Include="Gwen\Control\Label.cs" />
-    <Compile Include="Gwen\Control\LabeledCheckBox.cs" />
-    <Compile Include="Gwen\Control\LabeledRadioButton.cs" />
-    <Compile Include="Gwen\Control\Layout\Positioner.cs" />
-    <Compile Include="Gwen\Control\Layout\Splitter.cs" />
-    <Compile Include="Gwen\Control\Layout\Table.cs" />
-    <Compile Include="Gwen\Control\Layout\TableRow.cs" />
-    <Compile Include="Gwen\Control\ListBox.cs" />
-    <Compile Include="Gwen\Control\ListBoxRow.cs" />
-    <Compile Include="Gwen\Control\Menu.cs" />
-    <Compile Include="Gwen\Control\MenuItem.cs" />
-    <Compile Include="Gwen\Control\MenuStrip.cs" />
-    <Compile Include="Gwen\Control\MessageBox.cs" />
-    <Compile Include="Gwen\Control\MultilineTextBox.cs" />
-    <Compile Include="Gwen\Control\NumericUpDown.cs" />
-    <Compile Include="Gwen\Control\ProgressBar.cs" />
-    <Compile Include="Gwen\Control\Properties.cs" />
-    <Compile Include="Gwen\Control\PropertyRow.cs" />
-    <Compile Include="Gwen\Control\PropertyTree.cs" />
-    <Compile Include="Gwen\Control\Property\Base.cs" />
-    <Compile Include="Gwen\Control\Property\Check.cs" />
-    <Compile Include="Gwen\Control\Property\Color.cs" />
-    <Compile Include="Gwen\Control\Property\Text.cs" />
-    <Compile Include="Gwen\Control\RadioButton.cs" />
-    <Compile Include="Gwen\Control\RadioButtonGroup.cs" />
-    <Compile Include="Gwen\Control\ResizableControl.cs" />
-    <Compile Include="Gwen\Control\RichLabel.cs" />
-    <Compile Include="Gwen\Control\ScrollBar.cs" />
-    <Compile Include="Gwen\Control\ScrollControl.cs" />
-    <Compile Include="Gwen\Control\Slider.cs" />
-    <Compile Include="Gwen\Control\StatusBar.cs" />
-    <Compile Include="Gwen\Control\TabButton.cs" />
-    <Compile Include="Gwen\Control\TabControl.cs" />
-    <Compile Include="Gwen\Control\TabStrip.cs" />
-    <Compile Include="Gwen\Control\TabTitleBar.cs" />
-    <Compile Include="Gwen\Control\TextBox.cs" />
-    <Compile Include="Gwen\Control\TextBoxNumeric.cs" />
-    <Compile Include="Gwen\Control\TextBoxPassword.cs" />
-    <Compile Include="Gwen\Control\TreeControl.cs" />
-    <Compile Include="Gwen\Control\TreeNode.cs" />
-    <Compile Include="Gwen\Control\VerticalScrollBar.cs" />
-    <Compile Include="Gwen\Control\VerticalSlider.cs" />
-    <Compile Include="Gwen\Control\VerticalSplitter.cs" />
-    <Compile Include="Gwen\Control\WindowControl.cs" />
-    <Compile Include="Gwen\DragDrop\DragAndDrop.cs" />
-    <Compile Include="Gwen\DragDrop\Package.cs" />
-    <Compile Include="Gwen\HSV.cs" />
-    <Compile Include="Gwen\Input\InputBase.cs" />
-    <Compile Include="Gwen\Input\InputHandler.cs" />
-    <Compile Include="Gwen\Input\KeyData.cs" />
-    <Compile Include="Gwen\Key.cs" />
-    <Compile Include="Gwen\Margin.cs" />
-    <Compile Include="Gwen\Padding.cs" />
-    <Compile Include="Gwen\Platform\Neutral.cs" />
-    <Compile Include="Gwen\Pos.cs" />
-    <Compile Include="Gwen\Renderer\Base.cs" />
-    <Compile Include="Gwen\Renderer\ICacheToTexture.cs" />
-    <Compile Include="Gwen\Skin\Base.cs" />
-    <Compile Include="Gwen\Skin\Simple.cs" />
-    <Compile Include="Gwen\Skin\SkinColors.cs" />
-    <Compile Include="Gwen\Skin\TexturedBase.cs" />
-    <Compile Include="Gwen\Skin\Texturing\Bordered.cs" />
-    <Compile Include="Gwen\Skin\Texturing\Single.cs" />
-    <Compile Include="Gwen\ToolTip.cs" />
-    <Compile Include="Gwen\Util.cs" />
-    <Compile Include="Gwen\Input\IntersectInput.cs" />
-    <Compile Include="Gwen\Renderer\IntersectRenderer.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="app.config" />
-    <None Include="packages.config" />
+
+  <ItemGroup Label="Project References">
+    <ProjectReference Include="..\Intersect (Core)\Intersect.Core.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Intersect %28Core%29\Intersect %28Core%29.csproj">
-      <Project>{bc304b43-1f2c-4454-9edc-48f47357ca94}</Project>
-      <Name>Intersect %28Core%29</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Analyzer Include="..\packages\Microsoft.CodeAnalysis.VersionCheckAnalyzer.3.0.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.VersionCheckAnalyzer.resources.dll" />
-    <Analyzer Include="..\packages\Microsoft.CodeAnalysis.VersionCheckAnalyzer.3.0.0\analyzers\dotnet\Microsoft.CodeAnalysis.VersionCheckAnalyzer.dll" />
-    <Analyzer Include="..\packages\Microsoft.CodeQuality.Analyzers.3.0.0\analyzers\dotnet\cs\Humanizer.dll" />
-    <Analyzer Include="..\packages\Microsoft.CodeQuality.Analyzers.3.0.0\analyzers\dotnet\cs\Microsoft.CodeQuality.Analyzers.dll" />
-    <Analyzer Include="..\packages\Microsoft.CodeQuality.Analyzers.3.0.0\analyzers\dotnet\cs\Microsoft.CodeQuality.CSharp.Analyzers.dll" />
-    <Analyzer Include="..\packages\Microsoft.NetCore.Analyzers.3.0.0\analyzers\dotnet\cs\Microsoft.NetCore.Analyzers.dll" />
-    <Analyzer Include="..\packages\Microsoft.NetCore.Analyzers.3.0.0\analyzers\dotnet\cs\Microsoft.NetCore.CSharp.Analyzers.dll" />
-    <Analyzer Include="..\packages\Microsoft.NetFramework.Analyzers.3.0.0\analyzers\dotnet\cs\Microsoft.NetFramework.Analyzers.dll" />
-    <Analyzer Include="..\packages\Microsoft.NetFramework.Analyzers.3.0.0\analyzers\dotnet\cs\Microsoft.NetFramework.CSharp.Analyzers.dll" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PreBuildEvent>
-    </PreBuildEvent>
-  </PropertyGroup>
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\packages\Microsoft.CodeAnalysis.VersionCheckAnalyzer.3.0.0\build\Microsoft.CodeAnalysis.VersionCheckAnalyzer.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeAnalysis.VersionCheckAnalyzer.3.0.0\build\Microsoft.CodeAnalysis.VersionCheckAnalyzer.props'))" />
-    <Error Condition="!Exists('..\packages\Microsoft.CodeQuality.Analyzers.3.0.0\build\Microsoft.CodeQuality.Analyzers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeQuality.Analyzers.3.0.0\build\Microsoft.CodeQuality.Analyzers.props'))" />
-    <Error Condition="!Exists('..\packages\Microsoft.NetCore.Analyzers.3.0.0\build\Microsoft.NetCore.Analyzers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.NetCore.Analyzers.3.0.0\build\Microsoft.NetCore.Analyzers.props'))" />
-    <Error Condition="!Exists('..\packages\Microsoft.NetFramework.Analyzers.3.0.0\build\Microsoft.NetFramework.Analyzers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.NetFramework.Analyzers.3.0.0\build\Microsoft.NetFramework.Analyzers.props'))" />
-    <Error Condition="!Exists('..\packages\Microsoft.CodeAnalysis.FxCopAnalyzers.3.0.0\build\Microsoft.CodeAnalysis.FxCopAnalyzers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeAnalysis.FxCopAnalyzers.3.0.0\build\Microsoft.CodeAnalysis.FxCopAnalyzers.props'))" />
-  </Target>
-  <Target Name="PrepareClientFrameworkPackage" AfterTargets="AfterBuild">
-    <PropertyGroup>
-      <PackageBuildDirectory>..\build\$(Configuration.ToLower())\nuget-client-framework\</PackageBuildDirectory>
-    </PropertyGroup>
-    <RemoveDir Directories="$(PackageBuildDirectory)" />
-  </Target>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild"></Target><Target Name="AfterBuild"></Target>
-  -->
+
 </Project>

@@ -1,41 +1,31 @@
-﻿namespace Intersect.Client.Framework.Graphics
+namespace Intersect.Client.Framework.Graphics
 {
-
     public abstract class GameFont
     {
+        public string Name { get; set; } = string.Empty;
 
-        private string mFontName = @"";
-
-        private int mFontSize = 12;
+        public int Size { get; set; } = 12;
 
         public GameFont(string fontName, int fontSize)
         {
-            mFontName = fontName;
-            mFontSize = fontSize;
+            Name = fontName;
+            Size = fontSize;
         }
 
         public string GetName()
         {
-            return mFontName;
+            return Name;
         }
 
         public int GetSize()
         {
-            return mFontSize;
+            return Size;
         }
 
         public abstract object GetFont();
 
-        public static string ToString(GameFont font)
-        {
-            if (font == null)
-            {
-                return "";
-            }
+        public override string ToString() => $"{Name},{Size}";
 
-            return font.GetName() + "," + font.GetSize();
-        }
-
+        public static string ToString(GameFont font) => font?.ToString();
     }
-
 }

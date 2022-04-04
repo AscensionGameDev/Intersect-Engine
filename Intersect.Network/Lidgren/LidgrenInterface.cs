@@ -422,7 +422,6 @@ namespace Intersect.Network.Lidgren
             {
                 (connection as LidgrenConnection)?.NetConnection?.Disconnect(message);
                 (connection as LidgrenConnection)?.NetConnection?.Peer.FlushSendQueue();
-                (connection as LidgrenConnection)?.NetConnection?.Peer.Shutdown(message);
                 (connection as LidgrenConnection)?.Dispose();
             }
         }
@@ -723,8 +722,8 @@ namespace Intersect.Network.Lidgren
                         }
                         
                         Log.Debug($"hail Time={hail.Adjusted / TimeSpan.TicksPerMillisecond} Offset={hail.Offset / TimeSpan.TicksPerMillisecond} Real={hail.UTC / TimeSpan.TicksPerMillisecond}");
-                        Log.Debug($"local Time={Timing.Global.Milliseconds} Offset={(long)Timing.Global.MillisecondsOffset} Real={Timing.Global.MillisecondsUTC}");
-                        Log.Debug($"real delta={(Timing.Global.TicksUTC - hail.UTC) / TimeSpan.TicksPerMillisecond}");
+                        Log.Debug($"local Time={Timing.Global.Milliseconds} Offset={(long)Timing.Global.MillisecondsOffset} Real={Timing.Global.MillisecondsUtc}");
+                        Log.Debug($"real delta={(Timing.Global.TicksUtc - hail.UTC) / TimeSpan.TicksPerMillisecond}");
                         Log.Debug($"NCPing={(long)Math.Ceiling(senderConnection.AverageRoundtripTime * 1000)}");
 
                         // Check if we've got more connections than we're allowed to handle!

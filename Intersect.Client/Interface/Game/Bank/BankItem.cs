@@ -1,6 +1,5 @@
 ﻿using System;
 
-using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
@@ -8,10 +7,13 @@ using Intersect.Client.Framework.Gwen.Input;
 using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
 using Intersect.Client.Interface.Game.Chat;
+using Intersect.Client.Interface.Game.DescriptionWindows;
 using Intersect.Client.Localization;
 using Intersect.Client.Networking;
+using Intersect.Configuration;
 using Intersect.Enums;
 using Intersect.GameObjects;
+using Intersect.Utilities;
 
 namespace Intersect.Client.Interface.Game.Bank
 {
@@ -37,7 +39,7 @@ namespace Intersect.Client.Interface.Game.Bank
 
         private Guid mCurrentItemId;
 
-        private ItemDescWindow mDescWindow;
+        private ItemDescriptionWindow mDescWindow;
 
         private Draggable mDragIcon;
 
@@ -64,9 +66,21 @@ namespace Intersect.Client.Interface.Game.Bank
             Pnl = new ImagePanel(Container, "BankItemIcon");
             Pnl.HoverEnter += pnl_HoverEnter;
             Pnl.HoverLeave += pnl_HoverLeave;
-            Pnl.RightClicked += Pnl_DoubleClicked; //Allow withdrawing via double click OR right click
+            Pnl.RightClicked += Pnl_RightClicked;
             Pnl.DoubleClicked += Pnl_DoubleClicked;
             Pnl.Clicked += pnl_Clicked;
+        }
+
+        private void Pnl_RightClicked(Base sender, ClickedEventArgs arguments)
+        {
+            if (ClientConfiguration.Instance.EnableContextMenus)
+            {
+                mBankWindow.OpenContextMenu(mMySlot);
+            }
+            else
+            {
+                Pnl_DoubleClicked(sender, arguments);
+            }
         }
 
         private void Pnl_DoubleClicked(Base sender, ClickedEventArgs arguments)
@@ -79,7 +93,7 @@ namespace Intersect.Client.Interface.Game.Bank
 
         void pnl_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            mClickTime = Globals.System.GetTimeMs() + 500;
+            mClickTime = Timing.Global.Milliseconds + 500;
         }
 
         void pnl_HoverLeave(Base sender, EventArgs arguments)
@@ -103,7 +117,7 @@ namespace Intersect.Client.Interface.Game.Bank
 
             mMouseOver = true;
             mCanDrag = true;
-            if (Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Left))
+            if (Globals.InputManager.MouseButtonDown(MouseButtons.Left))
             {
                 mCanDrag = false;
 
@@ -118,7 +132,7 @@ namespace Intersect.Client.Interface.Game.Bank
 
             if (Globals.Bank[mMySlot]?.Base != null)
             {
-                mDescWindow = new ItemDescWindow(
+                mDescWindow = new ItemDescriptionWindow(
                     Globals.Bank[mMySlot].Base, Globals.Bank[mMySlot].Quantity, mBankWindow.X, mBankWindow.Y,
                     Globals.Bank[mMySlot].StatBuffs
                 );
@@ -146,7 +160,7 @@ namespace Intersect.Client.Interface.Game.Bank
                 var item = ItemBase.Get(Globals.Bank[mMySlot].ItemId);
                 if (item != null)
                 {
-                    var itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item, item.Icon);
+                    var itemTex = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Item, item.Icon);
                     if (itemTex != null)
                     {
                         Pnl.Texture = itemTex;
@@ -173,12 +187,12 @@ namespace Intersect.Client.Interface.Game.Bank
             {
                 if (mMouseOver)
                 {
-                    if (!Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Left))
+                    if (!Globals.InputManager.MouseButtonDown(MouseButtons.Left))
                     {
                         mCanDrag = true;
                         mMouseX = -1;
                         mMouseY = -1;
-                        if (Globals.System.GetTimeMs() < mClickTime)
+                        if (Timing.Global.Milliseconds < mClickTime)
                         {
                             //Globals.Me.TryUseItem(_mySlot);
                             mClickTime = 0;
@@ -272,6 +286,34 @@ namespace Intersect.Client.Interface.Game.Bank
                                 }
 
                                 //Globals.Me.SwapItems(bestIntersectIndex, _mySlot);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        var invWindow = Interface.GameUi.GameMenu.GetInventoryWindow();
+                        if (invWindow.RenderBounds().IntersectsWith(dragRect))
+                        {
+                            for (var i = 0; i < Globals.Me.Inventory.Length; i++)
+                            {
+                                if (invWindow.Items[i].RenderBounds().IntersectsWith(dragRect))
+                                {
+                                    if (FloatRect.Intersect(invWindow.Items[i].RenderBounds(), dragRect).Width *
+                                        FloatRect.Intersect(invWindow.Items[i].RenderBounds(), dragRect).Height >
+                                        bestIntersect)
+                                    {
+                                        bestIntersect =
+                                            FloatRect.Intersect(invWindow.Items[i].RenderBounds(), dragRect).Width *
+                                            FloatRect.Intersect(invWindow.Items[i].RenderBounds(), dragRect).Height;
+
+                                        bestIntersectIndex = i;
+                                    }
+                                }
+                            }
+
+                            if (bestIntersectIndex > -1)
+                            {
+                                Globals.Me.TryWithdrawItem(mMySlot, bestIntersectIndex);
                             }
                         }
                     }

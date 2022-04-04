@@ -1,19 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
-
 using Intersect.Client.Core;
 using Intersect.Client.Entities;
 using Intersect.Client.Framework.GenericClasses;
+using Intersect.Client.Framework.Maps;
 using Intersect.Client.General;
 using Intersect.GameObjects;
+using Intersect.Utilities;
 
 namespace Intersect.Client.Maps
 {
 
-    public partial class WeatherParticle
+    public partial class WeatherParticle : IWeatherParticle
     {
 
-        private List<WeatherParticle> _RemoveParticle;
+        private List<IWeatherParticle> _RemoveParticle;
 
         private Animation animInstance;
 
@@ -31,24 +32,24 @@ namespace Intersect.Client.Maps
 
         private long TransmittionTimer;
 
-        public float X;
+        public float X { get; set; }
 
         private int xVelocity;
 
-        public float Y;
+        public float Y { get; set; }
 
         private int yVelocity;
 
-        public WeatherParticle(List<WeatherParticle> RemoveParticle, int xvelocity, int yvelocity, AnimationBase anim)
+        public WeatherParticle(List<IWeatherParticle> RemoveParticle, int xvelocity, int yvelocity, AnimationBase anim)
         {
-            TransmittionTimer = Globals.System.GetTimeMs();
+            TransmittionTimer = Timing.Global.Milliseconds;
             bounds = new Rectangle(0, 0, Graphics.Renderer.GetScreenWidth(), Graphics.Renderer.GetScreenHeight());
 
             xVelocity = xvelocity;
             yVelocity = yvelocity;
 
             animInstance = new Animation(anim, true, false);
-            var animSize = animInstance.AnimationSize();
+            var animSize = animInstance.CalculateAnimationSize();
             partSize = animSize;
 
             if (xVelocity > 0)
@@ -61,7 +62,7 @@ namespace Intersect.Client.Maps
             else if (xVelocity < 0)
             {
                 originalX = Globals.Random.Next(
-                    animSize.X, (int) (Graphics.Renderer.GetScreenWidth() * 1.25f) + animSize.X
+                    animSize.X, (int)(Graphics.Renderer.GetScreenWidth() * 1.25f) + animSize.X
                 );
             }
             else
@@ -128,18 +129,18 @@ namespace Intersect.Client.Maps
         {
             //Check if out of bounds
             var newBounds = new Rectangle(
-                bounds.X + ((int) Graphics.Renderer.GetView().Left - (int) cameraSpawnX),
-                bounds.Y + ((int) Graphics.Renderer.GetView().Top - (int) cameraSpawnY), bounds.Width, bounds.Height
+                bounds.X + ((int)Graphics.Renderer.GetView().Left - (int)cameraSpawnX),
+                bounds.Y + ((int)Graphics.Renderer.GetView().Top - (int)cameraSpawnY), bounds.Width, bounds.Height
             );
 
-            if (!newBounds.IntersectsWith(new Rectangle((int) X, (int) Y, partSize.X, partSize.Y)))
+            if (!newBounds.IntersectsWith(new Rectangle((int)X, (int)Y, partSize.X, partSize.Y)))
             {
                 _RemoveParticle.Add(this);
             }
             else
             {
-                X = originalX + xVelocity * (int) ((Globals.System.GetTimeMs() - TransmittionTimer) / 10f);
-                Y = originalY + yVelocity * (int) ((Globals.System.GetTimeMs() - TransmittionTimer) / 10f);
+                X = originalX + xVelocity * (int)((Timing.Global.Milliseconds - TransmittionTimer) / 10f);
+                Y = originalY + yVelocity * (int)((Timing.Global.Milliseconds - TransmittionTimer) / 10f);
                 animInstance.SetPosition(cameraSpawnX + X, cameraSpawnY + Y, -1, -1, Guid.Empty, -1, 0);
                 animInstance.Update();
             }

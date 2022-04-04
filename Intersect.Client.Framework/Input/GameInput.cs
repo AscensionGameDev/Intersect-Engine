@@ -3,40 +3,14 @@
 namespace Intersect.Client.Framework.Input
 {
 
-    public abstract class GameInput
+    public abstract class GameInput : IGameInput
     {
-
-        public enum KeyboardType
-        {
-
-            Normal,
-
-            Password,
-
-            Email,
-
-            Numberic,
-
-            Pin
-
-        }
-
-        public enum MouseButtons
-        {
-
-            None = -1,
-
-            Left = 0,
-
-            Right,
-
-            Middle
-
-        }
 
         public abstract bool MouseButtonDown(MouseButtons mb);
 
         public abstract bool KeyDown(Keys key);
+
+        public Pointf MousePosition => GetMousePosition();
 
         public abstract Pointf GetMousePosition();
 

@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-
+using System.Linq;
 using Intersect.Client.Core;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
@@ -27,15 +27,162 @@ namespace Intersect.Client.Interface.Game.Inventory
 
         private List<Label> mValues = new List<Label>();
 
+        // Context menu
+        private Framework.Gwen.Control.Menu mContextMenu;
+
+        private MenuItem mUseItemContextItem;
+
+        private MenuItem mActionItemContextItem;
+
+        private MenuItem mDropItemContextItem;
+
         //Init
         public InventoryWindow(Canvas gameCanvas)
         {
-            mInventoryWindow = new WindowControl(gameCanvas, Strings.Inventory.title, false, "InventoryWindow");
+            mInventoryWindow = new WindowControl(gameCanvas, Strings.Inventory.Title, false, "InventoryWindow");
             mInventoryWindow.DisableResizing();
 
             mItemContainer = new ScrollControl(mInventoryWindow, "ItemsContainer");
             mItemContainer.EnableScroll(false, true);
             mInventoryWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+
+            // Generate our context menu with basic options.
+            mContextMenu = new Framework.Gwen.Control.Menu(gameCanvas, "InventoryContextMenu");
+            mContextMenu.IsHidden = true;
+            mContextMenu.IconMarginDisabled = true;
+            //TODO: Is this a memory leak?
+            mContextMenu.Children.Clear();
+            mUseItemContextItem = mContextMenu.AddItem(Strings.ItemContextMenu.Use);
+            mUseItemContextItem.Clicked += MUseItemContextItem_Clicked;
+            mDropItemContextItem = mContextMenu.AddItem(Strings.ItemContextMenu.Drop);
+            mDropItemContextItem.Clicked += MDropItemContextItem_Clicked;
+            mActionItemContextItem = mContextMenu.AddItem(Strings.ItemContextMenu.Bank);
+            mActionItemContextItem.Clicked += MActionItemContextItem_Clicked;
+            mContextMenu.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+
+        }
+
+        public void OpenContextMenu(int slot)
+        {
+            // Clear out the old options.
+            mContextMenu.RemoveChild(mUseItemContextItem, false);
+            mContextMenu.RemoveChild(mActionItemContextItem, false);
+            mContextMenu.RemoveChild(mDropItemContextItem, false);
+            mContextMenu.Children.Clear();
+
+            var item = ItemBase.Get(Globals.Me.Inventory[slot].ItemId);
+
+            // No point showing a menu for blank space.
+            if (item == null)
+            {
+                return;
+            }
+
+            // Add our use Item prompt, assuming we have a valid usecase.
+            switch (item.ItemType)
+            {
+                case Enums.ItemTypes.Spell:
+                    mContextMenu.AddChild(mUseItemContextItem);
+                    mUseItemContextItem.SetText(Strings.ItemContextMenu.Learn.ToString(item.Name));
+                    break;
+
+                case Enums.ItemTypes.Event:
+                case Enums.ItemTypes.Consumable:
+                    mContextMenu.AddChild(mUseItemContextItem);
+                    mUseItemContextItem.SetText(Strings.ItemContextMenu.Use.ToString(item.Name));
+                    break;
+
+                case Enums.ItemTypes.Bag:
+                    mContextMenu.AddChild(mUseItemContextItem);
+                    mUseItemContextItem.SetText(Strings.ItemContextMenu.Open.ToString(item.Name));
+                    break;
+
+                case Enums.ItemTypes.Equipment:
+                    mContextMenu.AddChild(mUseItemContextItem);
+                    // Show the correct equip/unequip prompts.
+                    if (Globals.Me.MyEquipment.Contains(slot))
+                    {
+                        mUseItemContextItem.SetText(Strings.ItemContextMenu.Unequip.ToString(item.Name));
+                    }
+                    else
+                    {
+                        mUseItemContextItem.SetText(Strings.ItemContextMenu.Equip.ToString(item.Name));
+                    }
+                    
+                    break;
+            }
+
+            // Set up the correct contextual additional action.
+            if (Globals.InBag && item.CanBag)
+            {
+                mContextMenu.AddChild(mActionItemContextItem);
+                mActionItemContextItem.SetText(Strings.ItemContextMenu.Bag.ToString(item.Name));
+            }
+            else if (Globals.InBank && (item.CanBank || item.CanGuildBank))
+            {
+                mContextMenu.AddChild(mActionItemContextItem);
+                mActionItemContextItem.SetText(Strings.ItemContextMenu.Bank.ToString(item.Name));
+            }
+            else if (Globals.InTrade && item.CanTrade)
+            {
+                mContextMenu.AddChild(mActionItemContextItem);
+                mActionItemContextItem.SetText(Strings.ItemContextMenu.Trade.ToString(item.Name));
+            }
+            else if (Globals.GameShop != null && item.CanSell)
+            {
+                mContextMenu.AddChild(mActionItemContextItem);
+                mActionItemContextItem.SetText(Strings.ItemContextMenu.Sell.ToString(item.Name));
+            }
+
+            // Can we drop this item? if so show the user!
+            if (item.CanDrop)
+            {
+                mContextMenu.AddChild(mDropItemContextItem);
+                mDropItemContextItem.SetText(Strings.ItemContextMenu.Drop.ToString(item.Name));
+            }
+
+            // Set our Inventory slot as userdata for future reference.
+            mContextMenu.UserData = slot;
+
+            // Display our menu.. If we have anything to display.
+            if (mContextMenu.Children.Count > 0)
+            {
+                mContextMenu.SizeToChildren();
+                mContextMenu.Open(Framework.Gwen.Pos.None);
+            }
+        }
+
+        private void MUseItemContextItem_Clicked(Base sender, Framework.Gwen.Control.EventArguments.ClickedEventArgs arguments)
+        {
+            var slot = (int)sender.Parent.UserData;
+            Globals.Me.TryUseItem(slot);
+        }
+
+        private void MActionItemContextItem_Clicked(Base sender, Framework.Gwen.Control.EventArguments.ClickedEventArgs arguments)
+        {
+            var slot = (int)sender.Parent.UserData;
+            if (Globals.GameShop != null)
+            {
+                Globals.Me.TrySellItem(slot);
+            }
+            else if (Globals.InBank)
+            {
+                Globals.Me.TryDepositItem(slot);
+            }
+            else if (Globals.InBag)
+            {
+                Globals.Me.TryStoreBagItem(slot, -1);
+            }
+            else if (Globals.InTrade)
+            {
+                Globals.Me.TryTradeItem(slot);
+            }
+        }
+
+        private void MDropItemContextItem_Clicked(Base sender, Framework.Gwen.Control.EventArguments.ClickedEventArgs arguments)
+        {
+            var slot = (int) sender.Parent.UserData;
+            Globals.Me.TryDropItem(slot);
         }
 
         //Location

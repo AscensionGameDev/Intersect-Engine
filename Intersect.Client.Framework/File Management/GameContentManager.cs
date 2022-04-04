@@ -1,15 +1,15 @@
-﻿using Intersect.Client.Framework.Audio;
-using Intersect.Client.Framework.Content;
-using Intersect.Client.Framework.Graphics;
-using Intersect.Logging;
-
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-using Intersect.Plugins;
+using Intersect.Async;
+using Intersect.Client.Framework.Audio;
+using Intersect.Client.Framework.Content;
+using Intersect.Client.Framework.Graphics;
 using Intersect.Compression;
+using Intersect.Logging;
+using Intersect.Plugins;
 
 namespace Intersect.Client.Framework.File_Management
 {
@@ -17,42 +17,17 @@ namespace Intersect.Client.Framework.File_Management
     public abstract class GameContentManager : IContentManager
     {
 
-        public enum TextureType
-        {
 
-            Tileset = 0,
-
-            Item,
-
-            Entity,
-
-            Spell,
-
-            Animation,
-
-            Face,
-
-            Image,
-
-            Fog,
-
-            Resource,
-
-            Paperdoll,
-
-            Gui,
-
-            Misc,
-
-        }
 
         public enum UI
         {
-
             Menu,
 
-            InGame
+            InGame,
 
+            Shared,
+
+            Debug,
         }
 
         public static GameContentManager Current;
@@ -75,7 +50,7 @@ namespace Intersect.Client.Framework.File_Management
 
         protected Dictionary<string, IAsset> mMiscDict = new Dictionary<string, IAsset>();
 
-        protected Dictionary<string, GameAudioSource> mMusicDict = new Dictionary<string, GameAudioSource>();
+        protected Dictionary<string, IAsset> mMusicDict = new Dictionary<string, IAsset>();
 
         protected Dictionary<string, IAsset> mPaperdollDict = new Dictionary<string, IAsset>();
 
@@ -83,7 +58,7 @@ namespace Intersect.Client.Framework.File_Management
 
         protected Dictionary<string, GameShader> mShaderDict = new Dictionary<string, GameShader>();
 
-        protected Dictionary<string, GameAudioSource> mSoundDict = new Dictionary<string, GameAudioSource>();
+        protected Dictionary<string, IAsset> mSoundDict = new Dictionary<string, IAsset>();
 
         protected Dictionary<KeyValuePair<UI, string>, string> mUiDict = new Dictionary<KeyValuePair<UI, string>, string>();
 
@@ -105,6 +80,8 @@ namespace Intersect.Client.Framework.File_Management
         protected Dictionary<string, IAsset> mTilesetDict = new Dictionary<string, IAsset>();
 
         public bool TilesetsLoaded = false;
+
+        public ContentWatcher ContentWatcher { get; protected set; }
 
         public void Init(GameContentManager manager)
         {
@@ -348,7 +325,7 @@ namespace Intersect.Client.Framework.File_Management
                 return null;
             }
 
-            return mMusicDict.TryGetValue(name.ToLower(), out var music) ? music : null;
+            return mMusicDict.TryGetValue(name.ToLower(), out var music) ? music as GameAudioSource : default;
         }
 
         public virtual GameAudioSource GetSound(string name)
@@ -363,112 +340,155 @@ namespace Intersect.Client.Framework.File_Management
                 return null;
             }
 
-            return mSoundDict.TryGetValue(name.ToLower(), out var sound) ? sound : null;
+            return mSoundDict.TryGetValue(name.ToLower(), out var sound) ? sound as GameAudioSource : default;
         }
 
-        public virtual string GetUIJson(UI stage, string name, string resolution, out bool loadedCachedJson)
+        public virtual bool GetLayout(UI stage, string name, string resolution, bool skipCache, Action<string, bool> layoutHandler)
         {
+            var isReload = false;
+
+            var stageName = stage.ToString().ToLowerInvariant();
+            if (stage == UI.InGame)
+            {
+                stageName = "game";
+            }
+
+            var resourcePartialDirectory = Path.Combine("gui", "layouts", stageName);
+
+            void onLayoutReady()
+            {
+                var result = GetLayout(stage, name, resolution, skipCache || isReload, out var cacheHit);
+                layoutHandler(result, cacheHit);
+                isReload = true;
+            }
+
+            void addChangeListener(string targetPath)
+            {
+                ContentWatcher?.AddEventListener(ContentWatcher.Event.Change, targetPath, () => onLayoutReady());
+                onLayoutReady();
+            }
+
+            void addCreateOrChangeListener(string targetPath, bool createIfMissing)
+            {
+                var resourcePath = Path.Combine("resources", targetPath);
+                if (File.Exists(resourcePath))
+                {
+                    addChangeListener(targetPath);
+                }
+                else
+                {
+                    if (createIfMissing)
+                    {
+                        layoutHandler?.Invoke(string.Empty, false);
+                    }
+
+                    ContentWatcher?.AddEventListener(ContentWatcher.Event.Create, targetPath, () => addChangeListener(targetPath));
+                }
+            }
+
+            if (!string.IsNullOrWhiteSpace(resolution))
+            {
+                var resolutionPath = Path.Combine(resourcePartialDirectory, $"{name}.{resolution}.json");
+                addCreateOrChangeListener(resolutionPath, false);
+            }
+
+            var genericPath = Path.Combine(resourcePartialDirectory, $"{name}.json");
+            addCreateOrChangeListener(genericPath, true);
+
+            return true;
+        }
+
+        protected virtual string GetLayout(UI stage, string name, string resolution, bool skipCache, out bool cacheHit)
+        {
+            cacheHit = false;
             var key = new KeyValuePair<UI, string>(stage, $"{name}.{resolution}.json");
-            if (mUiDict.TryGetValue(key, out string uiJson))
+            if (!skipCache && mUiDict.TryGetValue(key, out var rawLayout))
             {
-                loadedCachedJson = true;
-                return uiJson;
+                cacheHit = true;
+                return rawLayout;
             }
 
-            loadedCachedJson = false;
-
-            var layouts = Path.Combine("resources", "gui", "layouts");
-            if (!Directory.Exists(layouts))
+            var stageName = stage.ToString().ToLowerInvariant();
+            if (stage == UI.InGame)
             {
-                Directory.CreateDirectory(layouts);
+                stageName = "game";
             }
 
-            var dir = Path.Combine(layouts, stage == UI.Menu ? "menu" : "game");
-            if (!Directory.Exists(dir))
+            var resourceDirectory = Path.Combine("resources", "gui", "layouts", stageName);
+
+            if (!Directory.Exists(resourceDirectory))
             {
-                Directory.CreateDirectory(dir);
+                Directory.CreateDirectory(resourceDirectory);
             }
 
-            var path = "";
-            if (resolution != null)
-            {
-                path = Path.Combine(dir, name + "." + resolution + ".json");
-                if (File.Exists(path))
-                {
-                    return File.ReadAllText(path);
-                }
+            var resolutionPath = Path.Combine(resourceDirectory, $"{name}.{resolution}.json");
+            if (!string.IsNullOrWhiteSpace(resolution) && File.Exists(resolutionPath)) {
+                rawLayout = File.ReadAllText(resolutionPath);
+                mUiDict[key] = rawLayout;
+                return rawLayout;
             }
 
-            path = Path.Combine(dir, name + ".json");
-            if (File.Exists(path))
+            var genericPath = Path.Combine(resourceDirectory, $"{name}.json");
+            if (File.Exists(genericPath))
             {
-                var i = 0;
-                while (true)
-                {
-                    try
-                    {
-                        var json = File.ReadAllText(path);
-                        mUiDict.Add(key, json);
-                        return json;
-                    }
-                    catch (Exception ex)
-                    {
-                        i++;
-                        if (i > 10)
-                        {
-                            throw;
-                        }
-
-                        System.Threading.Thread.Sleep(50);
-                    }
-                }
+                rawLayout = ExceptionRepeater.Run(() => File.ReadAllText(genericPath), 5);
+                mUiDict[key] = rawLayout;
+                return rawLayout;
             }
 
-            return "";
+            return string.Empty;
+        }
+
+        public virtual string GetUIJson(UI stage, string name, string resolution, out bool cacheHit)
+        {
+            return GetLayout(stage, name, resolution, false, out cacheHit);
         }
 
         public virtual void SaveUIJson(UI stage, string name, string json, string resolution)
         {
-            var layouts = Path.Combine("resources", "gui", "layouts");
-            if (!Directory.Exists(layouts))
+            var stageName = stage.ToString().ToLowerInvariant();
+            if (stage == UI.InGame)
             {
-                Directory.CreateDirectory(layouts);
+                stageName = "game";
             }
 
-            var dir = Path.Combine(layouts, stage == UI.Menu ? "menu" : "game");
-            if (!Directory.Exists(dir))
-            {
-                Directory.CreateDirectory(dir);
-            }
+            var stagePartialPath = Path.Combine("gui", "layouts", stageName);
 
-            var path = "";
+            string resourceName;
             if (resolution != null)
             {
-                path = Path.Combine(dir, name + "." + resolution + ".json");
-                if (File.Exists(path))
+                resourceName = Path.Combine(stagePartialPath, $"{name}.{resolution}.json");
+                var resourcePath = Path.Combine("resources", resourceName);
+                if (File.Exists(resourcePath))
                 {
-                    try
+                    ContentWatcher?.Modify(resourceName, () =>
                     {
-                        File.WriteAllText(path, json);
-                    }
-                    catch (Exception exception)
-                    {
-                        Log.Debug(exception);
-                    }
-
+                        try
+                        {
+                            File.WriteAllText(resourcePath, json);
+                        }
+                        catch (Exception exception)
+                        {
+                            Log.Debug(exception);
+                        }
+                    });
                     return;
                 }
             }
 
-            path = Path.Combine(dir, name + ".json");
-            try
+            resourceName = Path.Combine(stagePartialPath, $"{name}.json");
+            ContentWatcher?.Modify(resourceName, () =>
             {
-                File.WriteAllText(path, json);
-            }
-            catch (Exception exception)
-            {
-                Log.Debug(exception);
-            }
+                var resourcePath = Path.Combine("resources", resourceName);
+                try
+                {
+                    File.WriteAllText(resourcePath, json);
+                }
+                catch (Exception exception)
+                {
+                    Log.Debug(exception);
+                }
+            });
         }
 
         protected Dictionary<string, IAsset> GetAssetLookup(ContentTypes contentType)
@@ -521,8 +541,10 @@ namespace Intersect.Client.Framework.File_Management
                     throw new NotImplementedException();
 
                 case ContentTypes.Music:
+                    return mMusicDict;
+
                 case ContentTypes.Sound:
-                    throw new NotImplementedException();
+                    return mSoundDict;
 
                 default:
                     throw new ArgumentOutOfRangeException(nameof(contentType), contentType, null);
@@ -537,14 +559,27 @@ namespace Intersect.Client.Framework.File_Management
         ) where TAsset : class, IAsset;
 
         /// <inheritdoc />
-        public TAsset Load<TAsset>(ContentTypes contentType, string assetPath) where TAsset : class, IAsset
+        public TAsset Find<TAsset>(ContentTypes contentType, string assetName) where TAsset : class, IAsset
+        {
+            var assetLookup = GetAssetLookup(contentType);
+
+            if (assetLookup.TryGetValue(assetName, out var asset))
+            {
+                return asset as TAsset;
+            }
+
+            return null;
+        }
+
+        /// <inheritdoc />
+        public TAsset Load<TAsset>(ContentTypes contentType, string assetPath, string assetAlias) where TAsset : class, IAsset
         {
             if (!File.Exists(assetPath))
             {
                 throw new FileNotFoundException($@"Asset does not exist at '{assetPath}'.");
             }
 
-            return Load<TAsset>(contentType, assetPath, () => File.OpenRead(assetPath));
+            return Load<TAsset>(contentType, assetAlias.ToLower(), () => File.OpenRead(assetPath));
         }
 
         /// <inheritdoc />
@@ -567,6 +602,14 @@ namespace Intersect.Client.Framework.File_Management
         {
             var manifestResourceName = context.EmbeddedResources.Resolve(assetName);
             return Load<TAsset>(contentType, assetName, () => context.EmbeddedResources.Read(manifestResourceName));
+        }
+
+        /// <inheritdoc />
+        public TAsset LoadEmbedded<TAsset>(IPluginContext context, ContentTypes contentType, string assetName, string assetAlias)
+            where TAsset : class, IAsset
+        {
+            var manifestResourceName = context.EmbeddedResources.Resolve(assetName);
+            return Load<TAsset>(contentType, assetName, assetAlias);
         }
 
     }

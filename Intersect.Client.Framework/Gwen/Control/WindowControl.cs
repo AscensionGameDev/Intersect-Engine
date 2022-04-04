@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 
 using Intersect.Client.Framework.File_Management;
@@ -73,7 +73,7 @@ namespace Intersect.Client.Framework.Gwen.Control
 
             mCloseButton = new CloseButton(mTitleBar, this);
             mCloseButton.SetSize(24, 24);
-            mCloseButton.Dock = Pos.Right;
+            mCloseButton.Dock = Pos.Top | Pos.Right;
             mCloseButton.Clicked += CloseButtonPressed;
             mCloseButton.IsTabable = false;
 
@@ -169,7 +169,7 @@ namespace Intersect.Client.Framework.Gwen.Control
             {
                 SetImage(
                     GameContentManager.Current.GetTexture(
-                        GameContentManager.TextureType.Gui, (string) obj["ActiveImage"]
+                        Framework.Content.TextureType.Gui, (string) obj["ActiveImage"]
                     ), (string) obj["ActiveImage"], ControlState.Active
                 );
             }
@@ -178,7 +178,7 @@ namespace Intersect.Client.Framework.Gwen.Control
             {
                 SetImage(
                     GameContentManager.Current.GetTexture(
-                        GameContentManager.TextureType.Gui, (string) obj["InactiveImage"]
+                        Framework.Content.TextureType.Gui, (string) obj["InactiveImage"]
                     ), (string) obj["InactiveImage"], ControlState.Inactive
                 );
             }

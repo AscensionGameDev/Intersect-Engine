@@ -48,7 +48,7 @@ namespace Intersect.Server.General
         public static void Update()
         {
             var timeBase = TimeBase.GetTimeBase();
-            if (Globals.Timing.Milliseconds > sUpdateTime)
+            if (Timing.Global.Milliseconds > sUpdateTime)
             {
                 if (!timeBase.SyncTime)
                 {
@@ -79,7 +79,7 @@ namespace Intersect.Server.General
                 Minute = sGameTime.ToString("mm");
                 Second = sGameTime.ToString("ss");
 
-                sUpdateTime = Globals.Timing.Milliseconds + 1000;
+                sUpdateTime = Timing.Global.Milliseconds + 1000;
             }
         }
 

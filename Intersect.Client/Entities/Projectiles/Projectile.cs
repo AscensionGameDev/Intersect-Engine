@@ -1,11 +1,11 @@
 ﻿using System;
-
+using Intersect.Client.Framework.Entities;
 using Intersect.Client.General;
-using Intersect.Client.Maps;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps;
 using Intersect.Network.Packets.Server;
+using Intersect.Utilities;
 
 namespace Intersect.Client.Entities.Projectiles
 {
@@ -161,7 +161,7 @@ namespace Intersect.Client.Entities.Projectiles
                         {
                             var s = new ProjectileSpawns(
                                 FindProjectileRotationDir(Dir, d), X + FindProjectileRotationX(Dir, x - 2, y - 2),
-                                Y + FindProjectileRotationY(Dir, x - 2, y - 2), Z, CurrentMap, animBase,
+                                Y + FindProjectileRotationY(Dir, x - 2, y - 2), Z, MapId, animBase,
                                 mMyBase.Animations[spawn].AutoRotate, mMyBase, this
                             );
 
@@ -181,7 +181,7 @@ namespace Intersect.Client.Entities.Projectiles
             }
 
             mQuantity++;
-            mSpawnTime = Globals.System.GetTimeMs() + mMyBase.Delay;
+            mSpawnTime = Timing.Global.Milliseconds + mMyBase.Delay;
         }
 
         private int FindProjectileRotationX(int direction, int x, int y)
@@ -343,7 +343,7 @@ namespace Intersect.Client.Entities.Projectiles
         /// <returns>The displacement from the co-ordinates if placed on a Options.TileHeight grid.</returns>
         private float GetDisplacement(long spawnTime)
         {
-            var elapsedTime = Globals.System.GetTimeMs() - spawnTime;
+            var elapsedTime = Timing.Global.Milliseconds - spawnTime;
             var displacementPercent = elapsedTime / (float) mMyBase.Speed;
 
             return displacementPercent * Options.TileHeight * mMyBase.Range;
@@ -362,10 +362,10 @@ namespace Intersect.Client.Entities.Projectiles
             lock (mLock)
             {
                 var tmpI = -1;
-                var map = CurrentMap;
+                var map = MapId;
                 var y = Y;
 
-                if (!mDisposing && mQuantity < mMyBase.Quantity && mSpawnTime < Globals.System.GetTimeMs())
+                if (!mDisposing && mQuantity < mMyBase.Quantity && mSpawnTime < Timing.Global.Milliseconds)
                 {
                     AddProjectileSpawns();
                 }
@@ -374,20 +374,20 @@ namespace Intersect.Client.Entities.Projectiles
                 {
                     for (var s = 0; s < mSpawnedAmount; s++)
                     {
-                        if (Spawns[s] != null && MapInstance.Get(Spawns[s].SpawnMapId) != null)
+                        if (Spawns[s] != null && Maps.MapInstance.Get(Spawns[s].SpawnMapId) != null)
                         {
                             Spawns[s].OffsetX = GetRangeX(Spawns[s].Dir, GetDisplacement(Spawns[s].SpawnTime));
                             Spawns[s].OffsetY = GetRangeY(Spawns[s].Dir, GetDisplacement(Spawns[s].SpawnTime));
                             Spawns[s]
                                 .Anim.SetPosition(
-                                    MapInstance.Get(Spawns[s].SpawnMapId).GetX() +
+                                    Maps.MapInstance.Get(Spawns[s].SpawnMapId).GetX() +
                                     Spawns[s].SpawnX * Options.TileWidth +
                                     Spawns[s].OffsetX +
                                     Options.TileWidth / 2,
-                                    MapInstance.Get(Spawns[s].SpawnMapId).GetY() +
+                                    Maps.MapInstance.Get(Spawns[s].SpawnMapId).GetY() +
                                     Spawns[s].SpawnY * Options.TileHeight +
                                     Spawns[s].OffsetY +
-                                    Options.TileHeight / 2, X, Y, CurrentMap, Spawns[s].AutoRotate ? Spawns[s].Dir : 0,
+                                    Options.TileHeight / 2, X, Y, MapId, Spawns[s].AutoRotate ? Spawns[s].Dir : 0,
                                     Spawns[s].Z
                                 );
 
@@ -408,9 +408,9 @@ namespace Intersect.Client.Entities.Projectiles
             {
                 for (var i = 0; i < mSpawnedAmount; i++)
                 {
-                    if (Spawns[i] != null && Globals.System.GetTimeMs() > Spawns[i].TransmittionTimer)
+                    if (Spawns[i] != null && Timing.Global.Milliseconds > Spawns[i].TransmittionTimer)
                     {
-                        var spawnMap = MapInstance.Get(Spawns[i].MapId);
+                        var spawnMap = Maps.MapInstance.Get(Spawns[i].MapId);
                         if (spawnMap != null)
                         {
                             var newx = Spawns[i].X + (int) GetRangeX(Spawns[i].Dir, 1);
@@ -422,7 +422,7 @@ namespace Intersect.Client.Entities.Projectiles
 
                             if (newx < 0)
                             {
-                                if (MapInstance.Get(spawnMap.Left) != null)
+                                if (Maps.MapInstance.Get(spawnMap.Left) != null)
                                 {
                                     newMapId = spawnMap.Left;
                                     newx = Options.MapWidth - 1;
@@ -435,7 +435,7 @@ namespace Intersect.Client.Entities.Projectiles
 
                             if (newx > Options.MapWidth - 1)
                             {
-                                if (MapInstance.Get(spawnMap.Right) != null)
+                                if (Maps.MapInstance.Get(spawnMap.Right) != null)
                                 {
                                     newMapId = spawnMap.Right;
                                     newx = 0;
@@ -448,7 +448,7 @@ namespace Intersect.Client.Entities.Projectiles
 
                             if (newy < 0)
                             {
-                                if (MapInstance.Get(spawnMap.Up) != null)
+                                if (Maps.MapInstance.Get(spawnMap.Up) != null)
                                 {
                                     newMapId = spawnMap.Up;
                                     newy = Options.MapHeight - 1;
@@ -461,7 +461,7 @@ namespace Intersect.Client.Entities.Projectiles
 
                             if (newy > Options.MapHeight - 1)
                             {
-                                if (MapInstance.Get(spawnMap.Down) != null)
+                                if (Maps.MapInstance.Get(spawnMap.Down) != null)
                                 {
                                     newMapId = spawnMap.Down;
                                     newy = 0;
@@ -484,7 +484,7 @@ namespace Intersect.Client.Entities.Projectiles
                             Spawns[i].X = newx;
                             Spawns[i].Y = newy;
                             Spawns[i].MapId = newMapId;
-                            var newMap = MapInstance.Get(newMapId);
+                            var newMap = Maps.MapInstance.Get(newMapId);
 
                             //Check for Z-Dimension
                             if (newMap.Attributes[Spawns[i].X, Spawns[i].Y] != null)
@@ -508,7 +508,7 @@ namespace Intersect.Client.Entities.Projectiles
                                 killSpawn = Collided(i);
                             }
 
-                            Spawns[i].TransmittionTimer = Globals.System.GetTimeMs() +
+                            Spawns[i].TransmittionTimer = Timing.Global.Milliseconds +
                                                           (long) ((float) mMyBase.Speed / (float) mMyBase.Range);
 
                             if (Spawns[i].Distance >= mMyBase.Range)
@@ -535,7 +535,7 @@ namespace Intersect.Client.Entities.Projectiles
         private bool Collided(int i)
         {
             var killSpawn = false;
-            Entity blockedBy = null;
+            IEntity blockedBy = null;
             var tileBlocked = Globals.Me.IsTileBlocked(
                 Spawns[i].X, Spawns[i].Y, Z, Spawns[i].MapId, ref blockedBy,
                 Spawns[i].ProjectileBase.IgnoreActiveResources, Spawns[i].ProjectileBase.IgnoreExhaustedResources
@@ -584,7 +584,7 @@ namespace Intersect.Client.Entities.Projectiles
         /// </summary>
         public override void Draw()
         {
-            if (MapInstance.Get(CurrentMap) == null || !Globals.GridMaps.Contains(CurrentMap))
+            if (Maps.MapInstance.Get(MapId) == null || !Globals.GridMaps.Contains(MapId))
             {
                 return;
             }

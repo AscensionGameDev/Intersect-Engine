@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 
 using Intersect.Client.Core;
+using Intersect.Client.Framework.Entities;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
+using Intersect.Client.Framework.Maps;
 using Intersect.Client.General;
 using Intersect.Client.Maps;
 using Intersect.Enums;
@@ -13,14 +15,16 @@ using Intersect.Network.Packets.Server;
 namespace Intersect.Client.Entities
 {
 
-    public partial class Resource : Entity
+    public partial class Resource : Entity, IResource
     {
 
         private bool _waitingForTilesets;
 
-        public ResourceBase BaseResource;
+        public ResourceBase BaseResource { get; set; }
 
-        public bool IsDead;
+        bool IResource.IsDepleted => IsDead;
+
+        public bool IsDead { get; set; }
 
         FloatRect mDestRectangle = FloatRect.Empty;
 
@@ -33,7 +37,7 @@ namespace Intersect.Client.Entities
             mRenderPriority = 0;
         }
 
-        public override string MySprite
+        public override string Sprite
         {
             get => mMySprite;
             set
@@ -49,7 +53,7 @@ namespace Intersect.Client.Entities
                 {
                     if (GameContentManager.Current.TilesetsLoaded)
                     {
-                        Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Tileset, mMySprite);
+                        Texture = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Tileset, mMySprite);
                     }
                     else
                     {
@@ -58,16 +62,11 @@ namespace Intersect.Client.Entities
                 }
                 else
                 {
-                    Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Resource, mMySprite);
+                    Texture = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Resource, mMySprite);
                 }
 
                 mHasRenderBounds = false;
             }
-        }
-
-        public ResourceBase GetResourceBase()
-        {
-            return BaseResource;
         }
 
         public override void Load(EntityPacket packet)
@@ -80,11 +79,11 @@ namespace Intersect.Client.Entities
             HideName = true;
             if (IsDead)
             {
-                MySprite = BaseResource?.Exhausted.Graphic;
+                Sprite = BaseResource?.Exhausted.Graphic;
             }
             else
             {
-                MySprite = BaseResource?.Initial.Graphic;
+                Sprite = BaseResource?.Initial.Graphic;
             }
         }
 
@@ -115,7 +114,7 @@ namespace Intersect.Client.Entities
             }
             else
             {
-                var map = MapInstance.Get(CurrentMap);
+                var map = Maps.MapInstance.Get(MapId);
                 LatestMap = map;
                 if (map == null || !map.InView())
                 {
@@ -158,7 +157,7 @@ namespace Intersect.Client.Entities
             return !IsDead;
         }
 
-        public override HashSet<Entity> DetermineRenderOrder(HashSet<Entity> renderList, MapInstance map)
+        public override HashSet<Entity> DetermineRenderOrder(HashSet<Entity> renderList, IMapInstance map)
         {
             if (IsDead && !BaseResource.Exhausted.RenderBelowEntities)
             {
@@ -181,8 +180,8 @@ namespace Intersect.Client.Entities
                 return null;
             }
 
-            var gridX = Globals.Me.MapInstance.MapGridX;
-            var gridY = Globals.Me.MapInstance.MapGridY;
+            var gridX = Globals.Me.MapInstance.GridX;
+            var gridY = Globals.Me.MapInstance.GridY;
             for (var x = gridX - 1; x <= gridX + 1; x++)
             {
                 for (var y = gridY - 1; y <= gridY + 1; y++)
@@ -193,7 +192,7 @@ namespace Intersect.Client.Entities
                         y < Globals.MapGridHeight &&
                         Globals.MapGrid[x, y] != Guid.Empty)
                     {
-                        if (Globals.MapGrid[x, y] == CurrentMap)
+                        if (Globals.MapGrid[x, y] == MapId)
                         {
                             var priority = mRenderPriority;
                             if (Z != 0)
@@ -245,7 +244,7 @@ namespace Intersect.Client.Entities
             if (_waitingForTilesets && GameContentManager.Current.TilesetsLoaded)
             {
                 _waitingForTilesets = false;
-                MySprite = MySprite;
+                Sprite = Sprite;
             }
 
             if (Texture != null)
@@ -274,8 +273,8 @@ namespace Intersect.Client.Entities
 
                 mDestRectangle.Width = mSrcRectangle.Width;
                 mDestRectangle.Height = mSrcRectangle.Height;
-                mDestRectangle.Y = (int) (map.GetY() + Y * Options.TileHeight + OffsetY);
-                mDestRectangle.X = (int) (map.GetX() + X * Options.TileWidth + OffsetX);
+                mDestRectangle.Y = (int) (map.Y + Y * Options.TileHeight + OffsetY);
+                mDestRectangle.X = (int) (map.X + X * Options.TileWidth + OffsetX);
                 if (mSrcRectangle.Height > Options.TileHeight)
                 {
                     mDestRectangle.Y -= mSrcRectangle.Height - Options.TileHeight;

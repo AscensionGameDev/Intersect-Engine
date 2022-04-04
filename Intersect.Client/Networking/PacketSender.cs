@@ -6,6 +6,7 @@ using Intersect.Client.General;
 using Intersect.Client.Interface.Game;
 using Intersect.Client.Maps;
 using Intersect.Network.Packets.Client;
+using Intersect.Utilities;
 
 namespace Intersect.Client.Networking
 {
@@ -33,17 +34,17 @@ namespace Intersect.Client.Networking
             Network.SendPacket(new NeedMapPacket(mapId));
             if (MapInstance.MapRequests.ContainsKey(mapId))
             {
-                MapInstance.MapRequests[mapId] = Globals.System.GetTimeMs() + 3000;
+                MapInstance.MapRequests[mapId] = Timing.Global.Milliseconds + 3000;
             }
             else
             {
-                MapInstance.MapRequests.Add(mapId, Globals.System.GetTimeMs() + 3000);
+                MapInstance.MapRequests.Add(mapId, Timing.Global.Milliseconds + 3000);
             }
         }
 
         public static void SendMove()
         {
-            Network.SendPacket(new MovePacket(Globals.Me.CurrentMap, Globals.Me.X, Globals.Me.Y, Globals.Me.Dir));
+            Network.SendPacket(new MovePacket(Globals.Me.MapId, Globals.Me.X, Globals.Me.Y, Globals.Me.Dir));
         }
 
         public static void SendChatMsg(string msg, byte channel)
@@ -156,12 +157,12 @@ namespace Intersect.Client.Networking
             Network.SendPacket(new UpgradeStatPacket(stat));
         }
 
-        public static void SendHotbarUpdate(byte hotbarSlot, sbyte type, int itemIndex)
+        public static void SendHotbarUpdate(int hotbarSlot, sbyte type, int itemIndex)
         {
             Network.SendPacket(new HotbarUpdatePacket(hotbarSlot, type, itemIndex));
         }
 
-        public static void SendHotbarSwap(byte index, byte swapIndex)
+        public static void SendHotbarSwap(int index, int swapIndex)
         {
             Network.SendPacket(new HotbarSwapPacket(index, swapIndex));
         }
@@ -188,14 +189,14 @@ namespace Intersect.Client.Networking
             Network.SendPacket(new CloseShopPacket());
         }
 
-        public static void SendDepositItem(int slot, int amount)
+        public static void SendDepositItem(int slot, int amount, int bankSlot = -1)
         {
-            Network.SendPacket(new DepositItemPacket(slot, amount));
+            Network.SendPacket(new DepositItemPacket(slot, amount, bankSlot));
         }
 
-        public static void SendWithdrawItem(int slot, int amount)
+        public static void SendWithdrawItem(int slot, int amount, int invSlot = -1)
         {
-            Network.SendPacket(new WithdrawItemPacket(slot, amount));
+            Network.SendPacket(new WithdrawItemPacket(slot, amount, invSlot));
         }
 
         public static void SendCloseBank()
@@ -221,6 +222,11 @@ namespace Intersect.Client.Networking
         public static void SendPartyInvite(Guid targetId)
         {
             Network.SendPacket(new PartyInvitePacket(targetId));
+        }
+
+        public static void SendPartyInvite(string target)
+        {
+            Network.SendPacket(new PartyInvitePacket(target));
         }
 
         public static void SendPartyKick(Guid targetId)

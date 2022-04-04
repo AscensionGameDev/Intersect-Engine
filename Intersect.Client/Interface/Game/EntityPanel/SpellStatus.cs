@@ -5,6 +5,7 @@ using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.General;
+using Intersect.Client.Interface.Game.DescriptionWindows;
 using Intersect.Client.Localization;
 using Intersect.GameObjects;
 
@@ -18,7 +19,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
 
         private Guid mCurrentSpellId;
 
-        private SpellDescWindow mDescWindow;
+        private SpellDescriptionWindow mDescWindow;
 
         private Framework.Gwen.Control.Label mDurationLabel;
 
@@ -64,9 +65,9 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                 mDescWindow = null;
             }
 
-            mDescWindow = new SpellDescWindow(
+            mDescWindow = new SpellDescriptionWindow(
                 mStatus.SpellId, mEntityBox.EntityWindow.X + Pnl.X + 16,
-                mEntityBox.EntityWindow.Y + Container.Parent.Y + Container.Bottom + 2, true
+                mEntityBox.EntityWindow.Y + Container.Parent.Y + Container.Bottom + 2
             );
         }
 
@@ -92,7 +93,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
         {
             if (mStatus != null)
             {
-                var remaining = mStatus.RemainingMs();
+                var remaining = mStatus.RemainingMs;
                 var spell = SpellBase.Get(mStatus.SpellId);
                 var secondsRemaining = (float) remaining / 1000f;
                 if (secondsRemaining > 10f)
@@ -116,7 +117,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                     if (spell != null)
                     {
                         var spellTex = Globals.ContentManager.GetTexture(
-                            GameContentManager.TextureType.Spell, spell.Icon
+                            Framework.Content.TextureType.Spell, spell.Icon
                         );
 
                         if (spellTex != null)

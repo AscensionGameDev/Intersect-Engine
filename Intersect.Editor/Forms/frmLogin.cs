@@ -12,6 +12,7 @@ using Intersect.Editor.General;
 using Intersect.Editor.Localization;
 using Intersect.Editor.Networking;
 using Intersect.Network;
+using Intersect.Utilities;
 
 namespace Intersect.Editor.Forms
 {
@@ -91,7 +92,7 @@ namespace Intersect.Editor.Forms
             }
             else
             {
-                var seconds = (Globals.ReconnectTime - Globals.System.GetTimeMs()) / 1000;
+                var seconds = (Globals.ReconnectTime - Timing.Global.Milliseconds) / 1000;
                 statusString = Strings.Login.failedtoconnect.ToString(seconds.ToString("0"));
             }
 

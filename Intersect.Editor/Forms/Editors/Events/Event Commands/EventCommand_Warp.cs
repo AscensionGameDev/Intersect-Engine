@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Windows.Forms;
 
 using DarkUI.Controls;
@@ -25,6 +25,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             mEventEditor = editor;
             InitLocalization();
             cmbMap.Items.Clear();
+            cmbInstanceType.Items.Clear();
             for (var i = 0; i < MapList.OrderedMaps.Count; i++)
             {
                 cmbMap.Items.Add(MapList.OrderedMaps[i].Name);
@@ -46,6 +47,15 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             lblX.Text = Strings.Warping.x.ToString(scrlX.Value);
             lblY.Text = Strings.Warping.y.ToString(scrlY.Value);
             cmbDirection.SelectedIndex = (int) mMyCommand.Direction;
+            chkChangeInstance.Checked = mMyCommand.ChangeInstance;
+            grpInstanceSettings.Visible = chkChangeInstance.Checked;
+
+            // We do not want to iterate over the "NoChange" enum
+            foreach (MapInstanceType instanceType in Enum.GetValues(typeof(MapInstanceType)))
+            {
+                cmbInstanceType.Items.Add(instanceType.ToString());
+            }
+            cmbInstanceType.SelectedIndex = (int) mMyCommand.InstanceType;
         }
 
         private void InitLocalization()
@@ -62,6 +72,10 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                 cmbDirection.Items.Add(Strings.Directions.dir[i]);
             }
 
+            chkChangeInstance.Text = Strings.Warping.ChangeInstance;
+            grpInstanceSettings.Text = Strings.Warping.MapInstancingGroup;
+            lblInstanceType.Text = Strings.Warping.InstanceType;
+
             btnSave.Text = Strings.EventWarp.okay;
             btnCancel.Text = Strings.EventWarp.cancel;
         }
@@ -72,6 +86,8 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             mMyCommand.X = (byte) scrlX.Value;
             mMyCommand.Y = (byte) scrlY.Value;
             mMyCommand.Direction = (WarpDirection) cmbDirection.SelectedIndex;
+            mMyCommand.ChangeInstance = chkChangeInstance.Checked;
+            mMyCommand.InstanceType = (MapInstanceType)cmbInstanceType.SelectedIndex;
             mEventEditor.FinishCommandEdit();
         }
 
@@ -138,6 +154,10 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         {
         }
 
+        private void chkChangeInstance_CheckedChanged(object sender, EventArgs e)
+        {
+            grpInstanceSettings.Visible = chkChangeInstance.Checked;
+        }
     }
 
 }

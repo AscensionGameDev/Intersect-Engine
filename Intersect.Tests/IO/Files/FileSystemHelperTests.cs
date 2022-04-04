@@ -63,7 +63,7 @@ namespace Intersect.IO.Files
 
             yield return new[]
             {
-                @"/directory/that/exists", @"/directory/that/does/not/exist/",
+                @"/directory/that/exists/", @"/directory/that/does/not/exist/",
                 Path.Combine("..", "does", "not", "exist") + Path.DirectorySeparatorChar
             };
 
@@ -81,7 +81,7 @@ namespace Intersect.IO.Files
 
             yield return new[]
             {
-                @"/directory/that/exists", @"/directory/that/exists/with/a/file/that/exists",
+                @"/directory/that/exists/", @"/directory/that/exists/with/a/file/that/exists",
                 Path.Combine("with", "a", "file", "that", "exists")
             };
 
@@ -103,13 +103,13 @@ namespace Intersect.IO.Files
 
             yield return new[]
             {
-                @"C:/directory/that/exists", @"C:/directory/that/does/not/exist",
+                @"C:/directory/that/exists/", @"C:/directory/that/does/not/exist",
                 Path.Combine("..", "does", "not", "exist")
             };
 
             yield return new[]
             {
-                @"C:/directory/that/exists", @"C:/directory/that/does/not/exist/",
+                @"C:/directory/that/exists/", @"C:/directory/that/does/not/exist/",
                 Path.Combine("..", "does", "not", "exist") + Path.DirectorySeparatorChar
             };
 
@@ -127,7 +127,7 @@ namespace Intersect.IO.Files
 
             yield return new[]
             {
-                @"C:/directory/that/exists", @"C:/directory/that/exists/with/a/file/that/exists",
+                @"C:/directory/that/exists/", @"C:/directory/that/exists/with/a/file/that/exists",
                 Path.Combine("with", "a", "file", "that", "exists")
             };
 
@@ -149,13 +149,13 @@ namespace Intersect.IO.Files
 
             yield return new[]
             {
-                @"C:\directory\that\exists", @"C:\directory\that\does\not\exist",
+                @"C:\directory\that\exists\", @"C:\directory\that\does\not\exist",
                 Path.Combine("..", "does", "not", "exist")
             };
 
             yield return new[]
             {
-                @"C:\directory\that\exists", @"C:\directory\that\does\not\exist\",
+                @"C:\directory\that\exists\", @"C:\directory\that\does\not\exist\",
                 Path.Combine("..", "does", "not", "exist") + Path.DirectorySeparatorChar
             };
 
@@ -173,7 +173,7 @@ namespace Intersect.IO.Files
 
             yield return new[]
             {
-                @"C:\directory\that\exists", @"C:\directory\that\exists\with\a\file\that\exists",
+                @"C:\directory\that\exists\", @"C:\directory\that\exists\with\a\file\that\exists",
                 Path.Combine("with", "a", "file", "that", "exists")
             };
 

@@ -1,5 +1,6 @@
 ﻿using Intersect.Client.Core;
 using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.General;
@@ -197,7 +198,7 @@ namespace Intersect.Client.Interface.Game
 
         public bool ToggleFriendsWindow()
         {
-            if (mFriendsWindow.IsVisible())
+            if (mFriendsWindow.IsVisible)
             {
                 mFriendsWindow.Hide();
             }
@@ -209,7 +210,7 @@ namespace Intersect.Client.Interface.Game
                 mFriendsWindow.Show();
             }
 
-            return mFriendsWindow.IsVisible();
+            return mFriendsWindow.IsVisible;
         }
 
         public bool ToggleGuildWindow()
@@ -322,7 +323,7 @@ namespace Intersect.Client.Interface.Game
                 windowsOpen = true;
             }
 
-            if (mFriendsWindow.IsVisible())
+            if (mFriendsWindow.IsVisible)
             {
                 windowsOpen = true;
             }

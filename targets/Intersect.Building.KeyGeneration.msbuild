@@ -4,7 +4,7 @@
     <IntersectBuildingAssemblyFile></IntersectBuildingAssemblyFile>
     <KeySize>4096</KeySize>
     <GenerateEachBuild>true</GenerateEachBuild>
-    <OutputDirectory>..\build\$(Configuration.ToLower())\keys</OutputDirectory>
+    <OutputDirectory>..\bin\$(Configuration.ToLower())-keys</OutputDirectory>
   </PropertyGroup>
 
   <UsingTask TaskName="Intersect.Building.KeyGenerationTask" AssemblyFile="$(IntersectBuildingAssemblyFile)" />

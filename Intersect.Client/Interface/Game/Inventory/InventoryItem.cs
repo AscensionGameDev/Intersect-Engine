@@ -1,16 +1,18 @@
 ﻿using System;
 
 using Intersect.Client.Core;
-using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Framework.Gwen.Input;
 using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
+using Intersect.Client.Interface.Game.DescriptionWindows;
 using Intersect.Client.Localization;
 using Intersect.Client.Networking;
+using Intersect.Configuration;
 using Intersect.GameObjects;
+using Intersect.Utilities;
 
 namespace Intersect.Client.Interface.Game.Inventory
 {
@@ -37,7 +39,7 @@ namespace Intersect.Client.Interface.Game.Inventory
 
         private Guid mCurrentItemId;
 
-        private ItemDescWindow mDescWindow;
+        private ItemDescriptionWindow mDescWindow;
 
         private Draggable mDragIcon;
 
@@ -75,23 +77,19 @@ namespace Intersect.Client.Interface.Game.Inventory
             Pnl.HoverLeave += pnl_HoverLeave;
             Pnl.RightClicked += pnl_RightClicked;
             Pnl.Clicked += pnl_Clicked;
+            Pnl.DoubleClicked += Pnl_DoubleClicked;
             EquipPanel = new ImagePanel(Pnl, "InventoryItemEquippedIcon");
             EquipPanel.Texture = Graphics.Renderer.GetWhiteTexture();
             EquipLabel = new Label(Pnl, "InventoryItemEquippedLabel");
             EquipLabel.IsHidden = true;
-            EquipLabel.Text = Strings.Inventory.equippedicon;
+            EquipLabel.Text = Strings.Inventory.EquippedSymbol;
             EquipLabel.TextColor = new Color(0, 255, 255, 255);
             mCooldownLabel = new Label(Pnl, "InventoryItemCooldownLabel");
             mCooldownLabel.IsHidden = true;
             mCooldownLabel.TextColor = new Color(0, 255, 255, 255);
         }
 
-        void pnl_Clicked(Base sender, ClickedEventArgs arguments)
-        {
-            mClickTime = Globals.System.GetTimeMs() + 500;
-        }
-
-        void pnl_RightClicked(Base sender, ClickedEventArgs arguments)
+        private void Pnl_DoubleClicked(Base sender, ClickedEventArgs arguments)
         {
             if (Globals.GameShop != null)
             {
@@ -111,7 +109,43 @@ namespace Intersect.Client.Interface.Game.Inventory
             }
             else
             {
-                Globals.Me.TryDropItem(mMySlot);
+                Globals.Me.TryUseItem(mMySlot);
+            }
+        }
+
+        void pnl_Clicked(Base sender, ClickedEventArgs arguments)
+        {
+            mClickTime = Timing.Global.Milliseconds + 500;
+        }
+
+        void pnl_RightClicked(Base sender, ClickedEventArgs arguments)
+        {
+            if (ClientConfiguration.Instance.EnableContextMenus)
+            {
+                mInventoryWindow.OpenContextMenu(mMySlot);
+            }
+            else
+            {
+                if (Globals.GameShop != null)
+                {
+                    Globals.Me.TrySellItem(mMySlot);
+                }
+                else if (Globals.InBank)
+                {
+                    Globals.Me.TryDepositItem(mMySlot);
+                }
+                else if (Globals.InBag)
+                {
+                    Globals.Me.TryStoreBagItem(mMySlot, -1);
+                }
+                else if (Globals.InTrade)
+                {
+                    Globals.Me.TryTradeItem(mMySlot);
+                }
+                else
+                {
+                    Globals.Me.TryDropItem(mMySlot);
+                }
             }
         }
 
@@ -136,7 +170,7 @@ namespace Intersect.Client.Interface.Game.Inventory
 
             mMouseOver = true;
             mCanDrag = true;
-            if (Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Left))
+            if (Globals.InputManager.MouseButtonDown(MouseButtons.Left))
             {
                 mCanDrag = false;
 
@@ -153,7 +187,7 @@ namespace Intersect.Client.Interface.Game.Inventory
             {
                 if (Globals.Me.Inventory[mMySlot]?.Base != null)
                 {
-                    mDescWindow = new ItemDescWindow(
+                    mDescWindow = new ItemDescriptionWindow(
                         Globals.Me.Inventory[mMySlot].Base, Globals.Me.Inventory[mMySlot].Quantity, mInventoryWindow.X,
                         mInventoryWindow.Y, Globals.Me.Inventory[mMySlot].StatBuffs
                     );
@@ -180,7 +214,7 @@ namespace Intersect.Client.Interface.Game.Inventory
                     var hoveredItem = ItemBase.Get(shopItem.CostItemId);
                     if (hoveredItem != null && Globals.Me.Inventory[mMySlot]?.Base != null)
                     {
-                        mDescWindow = new ItemDescWindow(
+                        mDescWindow = new ItemDescriptionWindow(
                             Globals.Me.Inventory[mMySlot].Base, Globals.Me.Inventory[mMySlot].Quantity,
                             mInventoryWindow.X, mInventoryWindow.Y, Globals.Me.Inventory[mMySlot].StatBuffs, "",
                             Strings.Shop.sellsfor.ToString(shopItem.CostItemQuantity, hoveredItem.Name)
@@ -192,7 +226,7 @@ namespace Intersect.Client.Interface.Game.Inventory
                     var costItem = Globals.GameShop.DefaultCurrency;
                     if (invItem.Base != null && costItem != null && Globals.Me.Inventory[mMySlot]?.Base != null)
                     {
-                        mDescWindow = new ItemDescWindow(
+                        mDescWindow = new ItemDescriptionWindow(
                             Globals.Me.Inventory[mMySlot].Base, Globals.Me.Inventory[mMySlot].Quantity,
                             mInventoryWindow.X, mInventoryWindow.Y, Globals.Me.Inventory[mMySlot].StatBuffs, "",
                             Strings.Shop.sellsfor.ToString(invItem.Base.Price.ToString(), costItem.Name)
@@ -203,7 +237,7 @@ namespace Intersect.Client.Interface.Game.Inventory
                 {
                     if (invItem?.Base != null)
                     {
-                        mDescWindow = new ItemDescWindow(
+                        mDescWindow = new ItemDescriptionWindow(
                             invItem.Base, invItem.Quantity, mInventoryWindow.X, mInventoryWindow.Y, invItem.StatBuffs,
                             "", Strings.Shop.wontbuy
                         );
@@ -244,8 +278,8 @@ namespace Intersect.Client.Interface.Game.Inventory
                 equipped != mIsEquipped ||
                 item == null && mTexLoaded != "" ||
                 item != null && mTexLoaded != item.Icon ||
-                mIconCd != Globals.Me.ItemOnCd(mMySlot) ||
-                Globals.Me.ItemOnCd(mMySlot))
+                mIconCd != Globals.Me.IsItemOnCooldown(mMySlot) ||
+                Globals.Me.IsItemOnCooldown(mMySlot))
             {
                 mCurrentItemId = Globals.Me.Inventory[mMySlot].ItemId;
                 mCurrentAmt = Globals.Me.Inventory[mMySlot].Quantity;
@@ -255,11 +289,11 @@ namespace Intersect.Client.Interface.Game.Inventory
                 mCooldownLabel.IsHidden = true;
                 if (item != null)
                 {
-                    var itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item, item.Icon);
+                    var itemTex = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Item, item.Icon);
                     if (itemTex != null)
                     {
                         Pnl.Texture = itemTex;
-                        if (Globals.Me.ItemOnCd(mMySlot))
+                        if (Globals.Me.IsItemOnCooldown(mMySlot))
                         {
                             Pnl.RenderColor = new Color(100, item.Color.R, item.Color.G, item.Color.B);
                         }
@@ -277,18 +311,18 @@ namespace Intersect.Client.Interface.Game.Inventory
                     }
 
                     mTexLoaded = item.Icon;
-                    mIconCd = Globals.Me.ItemOnCd(mMySlot);
+                    mIconCd = Globals.Me.IsItemOnCooldown(mMySlot);
                     if (mIconCd)
                     {
                         mCooldownLabel.IsHidden = false;
-                        var secondsRemaining = (float) Globals.Me.ItemCdRemainder(mMySlot) / 1000f;
+                        var secondsRemaining = (float) Globals.Me.GetItemRemainingCooldown(mMySlot) / 1000f;
                         if (secondsRemaining > 10f)
                         {
-                            mCooldownLabel.Text = Strings.Inventory.cooldown.ToString(secondsRemaining.ToString("N0"));
+                            mCooldownLabel.Text = Strings.Inventory.Cooldown.ToString(secondsRemaining.ToString("N0"));
                         }
                         else
                         {
-                            mCooldownLabel.Text = Strings.Inventory.cooldown.ToString(
+                            mCooldownLabel.Text = Strings.Inventory.Cooldown.ToString(
                                 secondsRemaining.ToString("N1").Replace(".", Strings.Numbers.dec)
                             );
                         }
@@ -316,14 +350,13 @@ namespace Intersect.Client.Interface.Game.Inventory
             {
                 if (mMouseOver)
                 {
-                    if (!Globals.InputManager.MouseButtonDown(GameInput.MouseButtons.Left))
+                    if (!Globals.InputManager.MouseButtonDown(MouseButtons.Left))
                     {
                         mCanDrag = true;
                         mMouseX = -1;
                         mMouseY = -1;
-                        if (Globals.System.GetTimeMs() < mClickTime)
+                        if (Timing.Global.Milliseconds < mClickTime)
                         {
-                            Globals.Me.TryUseItem(mMySlot);
                             mClickTime = 0;
                         }
                     }
@@ -406,7 +439,7 @@ namespace Intersect.Client.Interface.Game.Inventory
                     }
                     else if (Interface.GameUi.Hotbar.RenderBounds().IntersectsWith(dragRect))
                     {
-                        for (var i = 0; i < Options.MaxHotbar; i++)
+                        for (var i = 0; i < Options.Instance.PlayerOpts.HotbarSlotCount; i++)
                         {
                             if (Interface.GameUi.Hotbar.Items[i].RenderBounds().IntersectsWith(dragRect))
                             {
@@ -436,7 +469,7 @@ namespace Intersect.Client.Interface.Game.Inventory
                     }
                     else if (Globals.InBag)
                     {
-                        var bagWindow = Interface.GameUi.GetBag();
+                        var bagWindow = Interface.GameUi.GetBagWindow();
                         if (bagWindow.RenderBounds().IntersectsWith(dragRect))
                         {
                             for (var i = 0; i < Globals.Bag.Length; i++)
@@ -459,6 +492,34 @@ namespace Intersect.Client.Interface.Game.Inventory
                             if (bestIntersectIndex > -1)
                             {
                                 Globals.Me.TryStoreBagItem(mMySlot, bestIntersectIndex);
+                            }
+                        }
+                    }
+                    else if (Globals.InBank)
+                    {
+                        var bankWindow = Interface.GameUi.GetBankWindow();
+                        if (bankWindow.RenderBounds().IntersectsWith(dragRect))
+                        {
+                            for (var i = 0; i < Globals.Bank.Length; i++)
+                            {
+                                if (bankWindow.Items[i].RenderBounds().IntersectsWith(dragRect))
+                                {
+                                    if (FloatRect.Intersect(bankWindow.Items[i].RenderBounds(), dragRect).Width *
+                                        FloatRect.Intersect(bankWindow.Items[i].RenderBounds(), dragRect).Height >
+                                        bestIntersect)
+                                    {
+                                        bestIntersect =
+                                            FloatRect.Intersect(bankWindow.Items[i].RenderBounds(), dragRect).Width *
+                                            FloatRect.Intersect(bankWindow.Items[i].RenderBounds(), dragRect).Height;
+
+                                        bestIntersectIndex = i;
+                                    }
+                                }
+                            }
+
+                            if (bestIntersectIndex > -1)
+                            {
+                                Globals.Me.TryDepositItem(mMySlot, bestIntersectIndex);
                             }
                         }
                     }

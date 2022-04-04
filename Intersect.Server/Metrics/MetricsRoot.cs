@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using System.Dynamic;
 using System.Threading.Tasks;
 
+using Intersect.Utilities;
+
 namespace Intersect.Server.Metrics
 {
     public class MetricsRoot
@@ -82,7 +84,7 @@ namespace Intersect.Server.Metrics
             }
             return new
             {
-                uptime = Globals.Timing.Milliseconds,
+                uptime = Timing.Global.Milliseconds,
                 datetime = DateTime.UtcNow,
                 metrics = result
             };

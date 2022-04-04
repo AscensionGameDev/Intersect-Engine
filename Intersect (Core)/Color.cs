@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+using System;
+using System.Collections.Generic;
 
 using Intersect.Localization;
 using MessagePack;
@@ -6,7 +7,7 @@ using MessagePack;
 namespace Intersect
 {
     [MessagePackObject]
-    public class Color
+    public class Color : IEquatable<Color>
     {
 
         public enum ChatColor
@@ -210,6 +211,8 @@ namespace Intersect
             return (int) ((uint) R << 24) + (G << 16) + (B << 8) + A;
         }
 
+        public override string ToString() => $"{A},{R},{G},{B}";
+
         public static Color FromArgb(int argb)
         {
             return FromArgb((argb >> 24) & 0x0FF, (argb >> 16) & 0x0FF, (argb >> 8) & 0x0FF, argb & 0x0FF);
@@ -220,17 +223,7 @@ namespace Intersect
             return FromArgb((rgba >> 0) & 0x0FF, (rgba >> 24) & 0x0FF, (rgba >> 16) & 0x0FF, (rgba >> 8) & 0x0FF);
         }
 
-        public static string ToString(Color clr)
-        {
-            if (clr == null)
-            {
-                return "";
-            }
-            else
-            {
-                return clr.A + "," + clr.R + "," + clr.G + "," + clr.B;
-            }
-        }
+        public static string ToString(Color clr) => clr?.ToString() ?? string.Empty;
 
         public static Color FromString(string val, Color defaultColor = null)
         {
@@ -249,11 +242,16 @@ namespace Intersect
             return new Color(parts[0], parts[1], parts[2], parts[3]);
         }
 
-        public static implicit operator Color(string colorString)
-        {
-            return FromString(colorString);
-        }
+        public static implicit operator Color(string colorString) => FromString(colorString);
 
+        public static bool operator ==(Color left, Color right) =>
+            left?.ToArgb() == right?.ToArgb();
+
+        public static bool operator !=(Color left, Color right) =>
+            left?.ToArgb() != right?.ToArgb();
+
+        public override bool Equals(object obj) => obj is Color color && Equals(color);
+
+        public bool Equals(Color other) => ToArgb() == other?.ToArgb();
     }
-
 }

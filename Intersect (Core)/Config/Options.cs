@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.IO;
 
 using Intersect.Config;
@@ -78,6 +78,8 @@ namespace Intersect
 
         public LoggingOptions Logging = new LoggingOptions();
 
+        public InstancingOptions Instancing = new InstancingOptions();
+
         public static Options Instance { get; private set; }
 
         [JsonIgnore]
@@ -127,7 +129,7 @@ namespace Intersect
         public static List<string> AnimatedSprites => Instance._animatedSprites;
 
         public static int RegenTime => Instance.CombatOpts.RegenTime;
-
+        
         public static int CombatTime => Instance.CombatOpts.CombatTime;
 
         public static int MinAttackRate => Instance.CombatOpts.MinAttackRate;
@@ -295,8 +297,6 @@ namespace Intersect
 
         // TODO: Clean these up
         //Values that cannot easily be changed:
-
-        public const int MaxHotbar = 10;
 
         public const string DEFAULT_GAME_NAME = "Intersect";
 

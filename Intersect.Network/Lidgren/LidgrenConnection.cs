@@ -123,8 +123,8 @@ namespace Intersect.Network.Lidgren
 
             Timing.Global.Synchronize(approval.UTC, approval.Offset);
             Log.Debug($"approval Time={approval.Adjusted / TimeSpan.TicksPerMillisecond} Offset={approval.Offset / TimeSpan.TicksPerMillisecond} Real={approval.UTC / TimeSpan.TicksPerMillisecond}");
-            Log.Debug($"local Time={Timing.Global.Milliseconds} Offset={Timing.Global.MillisecondsOffset} Real={Timing.Global.MillisecondsUTC}");
-            Log.Debug($"real delta={(Timing.Global.TicksUTC - approval.UTC) / TimeSpan.TicksPerMillisecond}");
+            Log.Debug($"local Time={Timing.Global.Milliseconds} Offset={Timing.Global.MillisecondsOffset} Real={Timing.Global.MillisecondsUtc}");
+            Log.Debug($"real delta={(Timing.Global.TicksUtc - approval.UTC) / TimeSpan.TicksPerMillisecond}");
             Log.Debug($"this.Statistics.Ping={this.Statistics.Ping} NCPing={(long)Math.Ceiling(NetConnection.AverageRoundtripTime * 1000)}");
 
             return true;

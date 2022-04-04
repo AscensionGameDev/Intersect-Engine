@@ -23,15 +23,15 @@ namespace Intersect.Client.Framework.Gwen.Control
 
         private string mBackgroundImageFilename;
 
-        protected float mMax;
+        protected double mMax;
 
-        protected float mMin;
+        protected double mMin;
 
         protected int mNotchCount;
 
         protected bool mSnapToNotches;
 
-        protected float mValue;
+        protected double mValue;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="Slider" /> class.
@@ -76,7 +76,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// <summary>
         ///     Minimum value.
         /// </summary>
-        public float Min
+        public double Min
         {
             get => mMin;
             set => SetRange(value, mMax);
@@ -85,7 +85,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// <summary>
         ///     Maximum value.
         /// </summary>
-        public float Max
+        public double Max
         {
             get => mMax;
             set => SetRange(mMin, value);
@@ -94,7 +94,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// <summary>
         ///     Current value.
         /// </summary>
-        public float Value
+        public double Value
         {
             get => mMin + mValue * (mMax - mMin);
             set
@@ -139,7 +139,7 @@ namespace Intersect.Client.Framework.Gwen.Control
             {
                 SetImage(
                     GameContentManager.Current.GetTexture(
-                        GameContentManager.TextureType.Gui, (string) obj["BackgroundImage"]
+                        Framework.Content.TextureType.Gui, (string) obj["BackgroundImage"]
                     ), (string) obj["BackgroundImage"]
                 );
             }
@@ -286,11 +286,11 @@ namespace Intersect.Client.Framework.Gwen.Control
         {
         }
 
-        protected virtual void SetValueInternal(float val)
+        protected virtual void SetValueInternal(double val)
         {
             if (mSnapToNotches)
             {
-                val = (float) Math.Floor(val * mNotchCount + 0.5f);
+                val = (double) Math.Floor(val * mNotchCount + 0.5f);
                 val /= mNotchCount;
             }
 
@@ -311,7 +311,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// </summary>
         /// <param name="min">Minimum value.</param>
         /// <param name="max">Maximum value.</param>
-        public void SetRange(float min, float max)
+        public void SetRange(double min, double max)
         {
             mMin = min;
             mMax = max;

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 using Intersect.Server.Core.CommandParsing;
 using Intersect.Server.Core.CommandParsing.Arguments;
