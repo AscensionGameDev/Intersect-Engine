@@ -45,7 +45,7 @@ namespace Intersect.Client.Entities
         //Combat Status
         public long CastTime { get; set; } = 0;
 
-        public bool IsCasting => CastTime > 0;
+        public bool IsCasting => CastTime > Timing.Global.Milliseconds;
 
         public bool IsDashing => Dashing != null;
 
@@ -1594,7 +1594,7 @@ namespace Intersect.Client.Entities
                 return;
             }
 
-            if (CastTime < Timing.Global.Milliseconds)
+            if (!IsCasting)
             {
                 return;
             }
@@ -1798,7 +1798,7 @@ namespace Intersect.Client.Entities
                     SpriteFrame = (int)Math.Floor((timeIn / (CalculateAttackTime() / (float)SpriteFrames)));
                 }
             }
-            else if (CastTime > Timing.Global.Milliseconds)
+            else if (IsCasting)
             {
                 var spell = SpellBase.Get(SpellCast);
                 if (spell != null)

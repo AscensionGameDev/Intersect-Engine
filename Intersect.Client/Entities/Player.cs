@@ -79,6 +79,8 @@ namespace Intersect.Client.Entities
 
         public long CombatTimer { get; set; } = 0;
 
+        public long IsCastingCheckTimer { get; set; }
+
         // Target data
         private long mlastTargetScanTime = 0;
 
@@ -224,7 +226,17 @@ namespace Intersect.Client.Entities
 
                 if (Controls.KeyDown(Control.AttackInteract))
                 {
-                    if (!Globals.Me.TryAttack())
+                    if (IsCasting)
+                    {
+                        if (IsCastingCheckTimer < Timing.Global.Milliseconds &&
+                            Options.Combat.EnableCombatChatMessages)
+                        {
+                            ChatboxMsg.AddMessage(new ChatboxMsg(Strings.Combat.AttackWhileCastingDeny,
+                                CustomColors.Alerts.Declined, ChatMessageType.Combat));
+                            IsCastingCheckTimer = Timing.Global.Milliseconds + 350;
+                        }
+                    }
+                    else if (!Globals.Me.TryAttack())
                     {
                         if (Globals.Me.AttackTimer < Timing.Global.Ticks / TimeSpan.TicksPerMillisecond)
                         {
@@ -1804,7 +1816,7 @@ namespace Intersect.Client.Entities
             if (MoveDir > -1 && Globals.EventDialogs.Count == 0)
             {
                 //Try to move if able and not casting spells.
-                if (!IsMoving && MoveTimer < Timing.Global.Ticks / TimeSpan.TicksPerMillisecond && (Options.Combat.MovementCancelsCast || CastTime < Timing.Global.Milliseconds))
+                if (!IsMoving && MoveTimer < Timing.Global.Ticks / TimeSpan.TicksPerMillisecond && (Options.Combat.MovementCancelsCast || !IsCasting))
                 {
                     if (Options.Combat.MovementCancelsCast)
                     {

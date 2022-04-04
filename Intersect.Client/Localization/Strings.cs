@@ -493,6 +493,7 @@ namespace Intersect.Client.Localization
 
         public struct Combat
         {
+            public static LocalizedString AttackWhileCastingDeny = @"You are currently casting a spell, you cannot attack.";
 
             public static LocalizedString exp = @"Experience";
 

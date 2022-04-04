@@ -590,7 +590,7 @@ namespace Intersect.Server.Entities
             }
 
             //Check if NPC is casting a spell
-            if (CastTime > Timing.Global.Milliseconds)
+            if (IsCasting)
             {
                 return; //can't move while casting
             }
@@ -1072,7 +1072,7 @@ namespace Intersect.Server.Entities
                             return;
                         }
 
-                        if (LastRandomMove >= Timing.Global.Milliseconds || CastTime > 0)
+                        if (LastRandomMove >= Timing.Global.Milliseconds || IsCasting)
                         {
                             return;
                         }

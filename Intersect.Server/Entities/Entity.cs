@@ -191,6 +191,9 @@ namespace Intersect.Server.Entities
         public long CastTime { get; set; }
 
         [NotMapped, JsonIgnore]
+        public bool IsCasting => CastTime > Timing.Global.Milliseconds;
+
+        [NotMapped, JsonIgnore]
         public long AttackTimer { get; set; }
 
         [NotMapped, JsonIgnore]
@@ -302,7 +305,7 @@ namespace Intersect.Server.Entities
                 if (lockObtained)
                 {
                     //Cast timers
-                    if (CastTime != 0 && CastTime < timeMs && SpellCastSlot < Spells.Count && SpellCastSlot >= 0)
+                    if (CastTime != 0 && !IsCasting && SpellCastSlot < Spells.Count && SpellCastSlot >= 0)
                     {
                         CastTime = 0;
                         CastSpell(Spells[SpellCastSlot].SpellId, SpellCastSlot);
@@ -819,14 +822,14 @@ namespace Intersect.Server.Entities
 
         public virtual void Move(int moveDir, Player forPlayer, bool doNotUpdate = false, bool correction = false)
         {
-            if (Timing.Global.Milliseconds < MoveTimer || (!Options.Combat.MovementCancelsCast && CastTime > 0))
+            if (Timing.Global.Milliseconds < MoveTimer || (!Options.Combat.MovementCancelsCast && IsCasting))
             {
                 return;
             }
 
             lock (EntityLock)
             {
-                if (this is Player && CastTime > 0 && Options.Combat.MovementCancelsCast)
+                if (this is Player && IsCasting && Options.Combat.MovementCancelsCast)
                 {
                     CastTime = 0;
                     CastTarget = null;
@@ -1150,10 +1153,7 @@ namespace Intersect.Server.Entities
             return 0;
         }
 
-        public virtual bool CanAttack(Entity entity, SpellBase spell)
-        {
-            return CastTime <= 0;
-        }
+        public virtual bool CanAttack(Entity entity, SpellBase spell) => !IsCasting;
 
         public virtual void ProcessRegen()
         {

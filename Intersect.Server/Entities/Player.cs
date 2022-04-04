@@ -1250,7 +1250,7 @@ namespace Intersect.Server.Entities
 
         public void TryAttack(Entity target)
         {
-            if (CastTime >= Timing.Global.Milliseconds)
+            if (IsCasting)
             {
                 if (Options.Combat.EnableCombatChatMessages)
                 {
@@ -4469,10 +4469,10 @@ namespace Intersect.Server.Entities
                         ); //Target Type 1 will be global entity
                     }
 
-                //Check if cast should be instance
-                if (Timing.Global.Milliseconds >= CastTime)
+                // Check if the player isn't casting a spell already.
+                if (!IsCasting)
                 {
-                    //Cast now!
+                    // Player is not casting a spell, cast now!
                     CastTime = 0;
                     CastSpell(Spells[SpellCastSlot].SpellId, SpellCastSlot);
                     CastTarget = null;
