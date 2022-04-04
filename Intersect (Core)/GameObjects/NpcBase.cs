@@ -39,11 +39,7 @@ namespace Intersect.GameObjects
             get => JsonConvert.SerializeObject(Immunities);
             set
             {
-                Immunities = JsonConvert.DeserializeObject<List<StatusTypes>>(value ?? "");
-                if (Immunities == null)
-                {
-                    Immunities = new List<StatusTypes>();
-                }
+                Immunities = JsonConvert.DeserializeObject<List<StatusTypes>>(value ?? "") ?? new List<StatusTypes>();
             }
         }
 
