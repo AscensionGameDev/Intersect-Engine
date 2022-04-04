@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -12,49 +12,6 @@ using Newtonsoft.Json;
 
 namespace Intersect.GameObjects
 {
-    /// <summary>
-    /// Enumeration of the different immunity options
-    /// </summary>
-    public enum Immunities
-    {
-        /// <summary>
-        /// Whether the NPC can be affected by knockback
-        /// </summary>
-        None = 0,
-        /// <summary>
-        /// Whether the NPC can be affected by knockback
-        /// </summary>
-        Knockback,
-        /// <summary>
-        /// Whether the NPC can be affected by silence
-        /// </summary>
-        Silence,
-        /// <summary>
-        /// Whether the NPC can be affected by stun
-        /// </summary>
-        Stun,
-        /// <summary>
-        /// Whether the NPC can be affected by snare
-        /// </summary>
-        Snare,
-        /// <summary>
-        /// Whether the NPC can be affected by blind
-        /// </summary>
-        Blind,
-        /// <summary>
-        /// Whether the NPC can be affected by transform
-        /// </summary>
-        Transform,
-        /// <summary>
-        /// Whether the NPC can be affected by sleep
-        /// </summary>
-        Sleep,
-        /// <summary>
-        /// Whether the NPC can be affected by taunt
-        /// </summary>
-        Taunt
-    }
-
     public class NpcBase : DatabaseObject<NpcBase>, IFolderable
     {
 
@@ -73,7 +30,7 @@ namespace Intersect.GameObjects
         [NotMapped] public int[] VitalRegen = new int[(int) Vitals.VitalCount];
 
         [NotMapped]
-        public Dictionary<Immunities, bool> Immunities = new Dictionary<Immunities, bool>();
+        public Dictionary<StatusTypes, bool> Immunities = new Dictionary<StatusTypes, bool>();
 
         [JsonIgnore]
         [Column("Immunities")]
@@ -82,10 +39,10 @@ namespace Intersect.GameObjects
             get => JsonConvert.SerializeObject(Immunities);
             set
             {
-                Immunities = JsonConvert.DeserializeObject<Dictionary<Immunities, bool>>(value ?? "");
+                Immunities = JsonConvert.DeserializeObject<Dictionary<StatusTypes, bool>>(value ?? "");
                 if (Immunities == null)
                 {
-                    Immunities = new Dictionary<Immunities, bool>();
+                    Immunities = new Dictionary<StatusTypes, bool>();
                 }
             }
         }

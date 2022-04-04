@@ -254,7 +254,7 @@ namespace Intersect.Server.Entities
         private Status[] mOldStatuses = new Status[0];
 
         [JsonIgnore, NotMapped]
-        public Dictionary<Immunities, bool> ImmuneTo = new Dictionary<Immunities, bool>();
+        public Dictionary<StatusTypes, bool> ImmuneTo = new Dictionary<StatusTypes, bool>();
 
         [NotMapped, JsonIgnore]
         public bool IsDisposed { get; protected set; }
@@ -1407,7 +1407,7 @@ namespace Intersect.Server.Entities
             }
 
             //If there is a knockback, knock them backwards and make sure its linear (diagonal player movement not coded).
-            if (projectile.Knockback > 0 && projectileDir < 4 && !target.IsImmuneTo(Immunities.Knockback))
+            if (projectile.Knockback > 0 && projectileDir < 4 && !target.IsImmuneTo(StatusTypes.Knockback))
             {
                 var dash = new Dash(target, projectile.Knockback, projectileDir, false, false, false, false);
             }
@@ -1560,7 +1560,7 @@ namespace Intersect.Server.Entities
                 if (!(onHitTrigger && spellBase.Combat.Effect == StatusTypes.OnHit))
                 {
                     // If the entity is immune to some status, then just inform the client of such
-                    if (target.IsImmuneTo(StatusToImmunity(spellBase.Combat.Effect))) {
+                    if (target.IsImmuneTo(spellBase.Combat.Effect)) {
                         PacketSender.SendActionMsg(
                             target, Strings.Combat.immunetoeffect, CustomColors.Combat.Status
                         );
@@ -1590,7 +1590,7 @@ namespace Intersect.Server.Entities
             {
                 if (statBuffTime > -1)
                 {
-                    if (!target.IsImmuneTo(StatusToImmunity(spellBase.Combat.Effect)))
+                    if (!target.IsImmuneTo(spellBase.Combat.Effect))
                     {
                         new Status(target, this, spellBase, spellBase.Combat.Effect, statBuffTime, "");
                     } else
@@ -2791,38 +2791,9 @@ namespace Intersect.Server.Entities
             return statusPackets;
         }
 
-        Immunities StatusToImmunity(StatusTypes status)
+        bool IsImmuneTo(StatusTypes effect)
         {
-            switch (status)
-            {
-                case StatusTypes.Stun:
-                    return Immunities.Stun;
-                case StatusTypes.Silence:
-                    return Immunities.Silence;
-                case StatusTypes.Sleep:
-                    return Immunities.Sleep;
-                case StatusTypes.Blind:
-                    return Immunities.Blind;
-                case StatusTypes.Snare:
-                    return Immunities.Snare;
-                case StatusTypes.Taunt:
-                    return Immunities.Taunt;
-                case StatusTypes.Transform:
-                    return Immunities.Transform;
-                default:
-                    return Immunities.None;
-            }
-        }
-
-        bool IsImmuneTo(Immunities effect)
-        {
-            if (effect == Immunities.None)
-            {
-                return false;
-            } else
-            {
-                return ImmuneTo.TryGetValue(effect, out var value) ? value : false;
-            }
+            return ImmuneTo.TryGetValue(effect, out var value) ? value : false;
         }
 
         #region Spell Cooldowns

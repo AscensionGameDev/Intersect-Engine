@@ -4020,25 +4020,24 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString undotitle = @"Undo Changes";
 
-            public static LocalizedString immunities = @"Immunities";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString ImmunitiesTitle = @"Immunities";
 
-            public static LocalizedString knockback = @"Knockback";
-            
-            public static LocalizedString silence = @"Silence";
-            
-            public static LocalizedString stun = @"Stun";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Tenacity = @"Tenacity (%):";
 
-            public static LocalizedString snare = @"Snare";
-
-            public static LocalizedString blind = @"Blind";
-
-            public static LocalizedString transform = @"Transform";
-
-            public static LocalizedString sleep = @"Sleep";
-
-            public static LocalizedString taunt = @"Taunt";
-
-            public static LocalizedString tenacity = @"Tenacity (%):";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static Dictionary<string, LocalizedString> Immunities = new Dictionary<string, LocalizedString>
+            {
+                {"knockback", @"Knockback"},
+                {"silence", @"Silence"},
+                {"stun", @"Stun"},
+                {"snare", @"Snare"},
+                {"blind", @"Blind"},
+                {"transform", @"Transform"},
+                {"sleep", @"Sleep"},
+                {"taunt", @"Taunt"},
+            };
 
         }
 

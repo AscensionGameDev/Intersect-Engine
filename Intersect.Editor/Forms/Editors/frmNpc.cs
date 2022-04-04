@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -238,16 +238,16 @@ namespace Intersect.Editor.Forms.Editors
             txtSearch.Text = Strings.NpcEditor.searchplaceholder;
             lblFolder.Text = Strings.NpcEditor.folderlabel;
 
-            grpImmunities.Text = Strings.NpcEditor.immunities;
-            chkKnockback.Text = Strings.NpcEditor.knockback;
-            chkSilence.Text = Strings.NpcEditor.silence;
-            chkStun.Text = Strings.NpcEditor.stun;
-            chkSnare.Text = Strings.NpcEditor.snare;
-            chkBlind.Text = Strings.NpcEditor.blind;
-            chkTransform.Text = Strings.NpcEditor.transform;
-            chkTaunt.Text = Strings.NpcEditor.taunt;
-            chkSleep.Text = Strings.NpcEditor.sleep;
-            lblTenacity.Text = Strings.NpcEditor.tenacity;
+            grpImmunities.Text = Strings.NpcEditor.ImmunitiesTitle;
+            chkKnockback.Text = Strings.NpcEditor.Immunities["knockback"];
+            chkSilence.Text = Strings.NpcEditor.Immunities["silence"];
+            chkStun.Text = Strings.NpcEditor.Immunities["stun"];
+            chkSnare.Text = Strings.NpcEditor.Immunities["snare"];
+            chkBlind.Text = Strings.NpcEditor.Immunities["blind"];
+            chkTransform.Text = Strings.NpcEditor.Immunities["transform"];
+            chkTaunt.Text = Strings.NpcEditor.Immunities["taunt"];
+            chkSleep.Text = Strings.NpcEditor.Immunities["sleep"];
+            lblTenacity.Text = Strings.NpcEditor.Tenacity;
 
             btnSave.Text = Strings.NpcEditor.save;
             btnCancel.Text = Strings.NpcEditor.cancel;
@@ -598,25 +598,19 @@ namespace Intersect.Editor.Forms.Editors
 
         private void UpdateImmunities()
         {
-            chkKnockback.Checked = GetImmunityValue(Immunities.Knockback);
-            chkSilence.Checked = GetImmunityValue(Immunities.Silence);
-            chkSnare.Checked = GetImmunityValue(Immunities.Snare);
-            chkStun.Checked = GetImmunityValue(Immunities.Stun);
-            chkSleep.Checked = GetImmunityValue(Immunities.Sleep);
-            chkTransform.Checked = GetImmunityValue(Immunities.Transform);
-            chkTaunt.Checked = GetImmunityValue(Immunities.Taunt);
-            chkBlind.Checked = GetImmunityValue(Immunities.Blind);
+            chkKnockback.Checked = GetImmunityValue(StatusTypes.Knockback);
+            chkSilence.Checked = GetImmunityValue(StatusTypes.Silence);
+            chkSnare.Checked = GetImmunityValue(StatusTypes.Snare);
+            chkStun.Checked = GetImmunityValue(StatusTypes.Stun);
+            chkSleep.Checked = GetImmunityValue(StatusTypes.Sleep);
+            chkTransform.Checked = GetImmunityValue(StatusTypes.Transform);
+            chkTaunt.Checked = GetImmunityValue(StatusTypes.Taunt);
+            chkBlind.Checked = GetImmunityValue(StatusTypes.Blind);
         }
 
-        private bool GetImmunityValue(Immunities immunity)
+        private bool GetImmunityValue(StatusTypes statusImmuneTo)
         {
-            // TODO debugging
-            if (immunity == Immunities.Knockback)
-            {
-                mEditorItem.Immunities.TryGetValue(immunity, out var y);
-                var x = y;
-            }
-            return mEditorItem.Immunities.TryGetValue(immunity, out var immunityVal) ? immunityVal : false;
+            return mEditorItem.Immunities.TryGetValue(statusImmuneTo, out var immunityVal) ? immunityVal : false;
         }
 
         private void form_KeyDown(object sender, KeyEventArgs e)
@@ -1058,42 +1052,42 @@ namespace Intersect.Editor.Forms.Editors
 
         private void chkKnockback_CheckedChanged(object sender, EventArgs e)
         {
-            mEditorItem.Immunities[Immunities.Knockback] = chkKnockback.Checked;
+            mEditorItem.Immunities[StatusTypes.Knockback] = chkKnockback.Checked;
         }
 
         private void chkSilence_CheckedChanged(object sender, EventArgs e)
         {
-            mEditorItem.Immunities[Immunities.Silence] = chkSilence.Checked;
+            mEditorItem.Immunities[StatusTypes.Silence] = chkSilence.Checked;
         }
 
         private void chkStun_CheckedChanged(object sender, EventArgs e)
         {
-            mEditorItem.Immunities[Immunities.Stun] = chkStun.Checked;
+            mEditorItem.Immunities[StatusTypes.Stun] = chkStun.Checked;
         }
 
         private void chkSnare_CheckedChanged(object sender, EventArgs e)
         {
-            mEditorItem.Immunities[Immunities.Snare] = chkSnare.Checked;
+            mEditorItem.Immunities[StatusTypes.Snare] = chkSnare.Checked;
         }
 
         private void chkBlind_CheckedChanged(object sender, EventArgs e)
         {
-            mEditorItem.Immunities[Immunities.Blind] = chkBlind.Checked;
+            mEditorItem.Immunities[StatusTypes.Blind] = chkBlind.Checked;
         }
 
         private void chkTransform_CheckedChanged(object sender, EventArgs e)
         {
-            mEditorItem.Immunities[Immunities.Transform] = chkTransform.Checked;
+            mEditorItem.Immunities[StatusTypes.Transform] = chkTransform.Checked;
         }
 
         private void chkSleep_CheckedChanged(object sender, EventArgs e)
         {
-            mEditorItem.Immunities[Immunities.Sleep] = chkSleep.Checked;
+            mEditorItem.Immunities[StatusTypes.Sleep] = chkSleep.Checked;
         }
 
         private void chkTaunt_CheckedChanged(object sender, EventArgs e)
         {
-            mEditorItem.Immunities[Immunities.Taunt] = chkTaunt.Checked;
+            mEditorItem.Immunities[StatusTypes.Taunt] = chkTaunt.Checked;
         }
 
         private void nudTenacity_ValueChanged(object sender, EventArgs e)
