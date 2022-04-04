@@ -1,4 +1,4 @@
-﻿using DarkUI.Controls;
+using DarkUI.Controls;
 
 namespace Intersect.Editor.Forms.Editors
 {
@@ -1451,7 +1451,7 @@ namespace Intersect.Editor.Forms.Editors
             // 
             // chkHOTDOT
             // 
-            this.chkHOTDOT.Location = new System.Drawing.Point(5, 19);
+            this.chkHOTDOT.Location = new System.Drawing.Point(7, 36);
             this.chkHOTDOT.Name = "chkHOTDOT";
             this.chkHOTDOT.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.chkHOTDOT.Size = new System.Drawing.Size(86, 24);
@@ -2568,14 +2568,6 @@ namespace Intersect.Editor.Forms.Editors
         private System.Windows.Forms.Label lblDamageType;
         private System.Windows.Forms.Label lblHPDamage;
         private System.Windows.Forms.Label lblManaDamage;
-        private DarkButton btnAddCooldownGroup;
-        private DarkComboBox cmbCooldownGroup;
-        private System.Windows.Forms.Label lblCooldownGroup;
-        private DarkCheckBox chkIgnoreGlobalCooldown;
-        private DarkCheckBox chkIgnoreCdr;
-        private Controls.GameObjectList lstGameObjects;
-        private System.Windows.Forms.Label lblCannotCast;
-        private DarkTextBox txtCannotCast;
         private System.Windows.Forms.Label lblTickAnimation;
         private DarkComboBox cmbTickAnimation;
     }
