@@ -1084,7 +1084,7 @@ namespace Intersect.Server.Networking
                 return;
             }
 
-            if (player.CastTime > Timing.Global.Milliseconds)
+            if (player.IsCasting)
             {
                 if (Options.Combat.EnableCombatChatMessages)
                 {
