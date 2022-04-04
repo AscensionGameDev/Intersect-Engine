@@ -1,8 +1,8 @@
 <Project>
 
-    <PropertyGroup>
-        <IntersectRepoPath Condition="'$(IntersectRepoPath)' == ''">..\..</IntersectRepoPath>
-    </PropertyGroup>
+  <PropertyGroup Condition="'$(IntersectDeveloperTargetsImported)' == ''">
+      <IntersectRepoPath>$(MSBuildProjectDirectory)\..\..</IntersectRepoPath>
+  </PropertyGroup>
 
     <Import Project="..\Directory.build.props" />
 

@@ -28,12 +28,17 @@
     <PackageReference Include="System.Collections.Concurrent" Version="4.3.0" />
   </ItemGroup>
 
-  <Target Name="GenerateNetworkKeys" AfterTargets="ResolveReferences">
-    <Message Text="Generating network keys..." Importance="high" Condition="'$(GenerateNetworkKeys)' == 'true' and '$(GenerateEachBuild)' == 'true'" />
-    <Message Text="Generating network keys if they do not exist..." Importance="high" Condition="'$(GenerateNetworkKeys)' == 'true' and '$(GenerateEachBuild)' != 'true'" />
-    <Message Text="Not generating network keys." Importance="high" Condition="'$(GenerateNetworkKeys)' != 'true'" />
-    <Exec Condition=" '$(OS)' == 'Windows_NT' " Command="&quot;$(MSBuildBinPath)\MSBuild.exe&quot; &quot;..\targets\Intersect.Building.KeyGeneration.msbuild&quot; /property:KeySize=4096 /property:GenerateEachBuild=$(GenerateEachBuild) /property:OutputDirectory=&quot;$(NetworkKeyOutputDir)&quot; /property:IntersectBuildingAssemblyFile=&quot;$(IntersectBuildingAssemblyFile)&quot;" />
-    <Exec Condition=" '$(OS)' != 'Windows_NT' " Command="msbuild &quot;..\targets\Intersect.Building.KeyGeneration.msbuild&quot; /property:KeySize=4096 /property:GenerateEachBuild=$(GenerateEachBuild) /property:OutputDirectory=&quot;$(NetworkKeyOutputDir)&quot; /property:IntersectBuildingAssemblyFile=&quot;$(IntersectBuildingAssemblyFile)&quot;" />
+  <PropertyGroup>
+    <IntersectNetworkKeysGenerateEachBuild>$(INTERSECT_GENERATE_EACH_BUILD)</IntersectNetworkKeysGenerateEachBuild>
+    <IntersectNetworkKeySize Condition="'$(IntersectNetworkKeySize)' != ''">4096</IntersectNetworkKeySize>
+    <IntersectNetworkKeysGenerateEachBuild Condition="'$(IntersectNetworkKeysGenerateEachBuild)' != ''">true</IntersectNetworkKeysGenerateEachBuild>
+    <IntersectNetworkKeysOutputDirectory Condition="'$(IntersectNetworkKeysOutputDirectory)' == ''">$(MSBuildProjectDirectory)\bin\$(Configuration)\keys</IntersectNetworkKeysOutputDirectory>
+  </PropertyGroup>
+
+  <UsingTask TaskName="Intersect.Building.KeyGenerationTask" AssemblyFile="$(IntersectBuildingAssemblyFile)" />
+
+  <Target Name="RunKeyGenerationTask" AfterTargets="ResolveReferences">
+    <KeyGenerationTask OutputDirectory="$(IntersectNetworkKeysOutputDirectory)" GenerateEachBuild="$(IntersectNetworkKeysGenerateEachBuild)" KeySize="$(IntersectNetworkKeySize)" />
   </Target>
 
 </Project>
