@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 using Intersect.Enums;
 
@@ -123,6 +123,10 @@ namespace Intersect.GameObjects.Maps
 
         public WarpDirection Direction { get; set; } = WarpDirection.Retain;
 
+        public bool ChangeInstance { get; set; } = false;
+
+        public MapInstanceType InstanceType { get; set; } = MapInstanceType.Overworld;
+
         public override MapAttribute Clone()
         {
             var att = (MapWarpAttribute) base.Clone();
@@ -130,6 +134,8 @@ namespace Intersect.GameObjects.Maps
             att.X = X;
             att.Y = Y;
             att.Direction = Direction;
+            att.ChangeInstance = ChangeInstance;
+            att.InstanceType = InstanceType;
 
             return att;
         }

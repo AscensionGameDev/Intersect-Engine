@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -1863,7 +1863,11 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString waitforroute = @"Wait for Move Route Completion of {00}";
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString warp = @"Warp Player [Map: {00} X: {01} Y: {02} Dir: {03}]";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString InstancedWarp = @"Warp Player to {04} instance [Map: {00} X: {01} Y: {02} Dir: {03}]";
 
             public static LocalizedString whenoption = @"When [{00}]";
 
@@ -4996,16 +5000,24 @@ Negative values for time to flow backwards.";
         public struct Warping
         {
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString ChangeInstance = @"Change instance?";
+
             public static LocalizedString direction = @"Dir: {00}";
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString InstanceType = @"Instance Type:";
+
             public static LocalizedString map = @"Map: {00}";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString MapInstancingGroup = @"Instance Settings";
 
             public static LocalizedString visual = @"Open Visual Interface";
 
             public static LocalizedString x = @"X: {00}";
 
             public static LocalizedString y = @"Y: {00}";
-
         }
 
         public struct WarpSelection

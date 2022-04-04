@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -101,16 +101,7 @@ namespace Intersect.Server.Networking
                     SendChatMsg(player, Strings.Player.modjoined, ChatMessageType.Notice, CustomColors.Alerts.ModJoined);
                 }
 
-                if (player.MapId == Guid.Empty)
-                {
-                    player.WarpToSpawn();
-                }
-                else
-                {
-                    player.Warp(
-                        player.MapId, (byte) player.X, (byte) player.Y, (byte) player.Dir, false, (byte) player.Z
-                    );
-                }
+                player.LoginWarp();
 
                 SendEntityDataTo(client.Entity, player);
 

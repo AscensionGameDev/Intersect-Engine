@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 
@@ -925,9 +925,17 @@ namespace Intersect.Editor.Forms.Editors.Events
                 }
             }
 
-            return Strings.EventCommandList.warp.ToString(
-                mapName, command.X, command.Y, Strings.Directions.dir[(int) command.Direction - 1]
-            );
+            if (command.ChangeInstance)
+            {
+                return Strings.EventCommandList.InstancedWarp.ToString(
+                    mapName, command.X, command.Y, Strings.Directions.dir[(int)command.Direction - 1], command.InstanceType.ToString()
+                );
+            } else
+            {
+                return Strings.EventCommandList.warp.ToString(
+                    mapName, command.X, command.Y, Strings.Directions.dir[(int)command.Direction - 1]
+                );
+            }
         }
 
         private static string GetCommandText(SetMoveRouteCommand command, MapInstance map)

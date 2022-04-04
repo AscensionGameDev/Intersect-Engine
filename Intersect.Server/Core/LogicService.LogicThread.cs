@@ -1,4 +1,4 @@
-﻿using Intersect.Server.Database;
+using Intersect.Server.Database;
 using Intersect.Server.General;
 using Intersect.Server.Maps;
 using Intersect.Threading;

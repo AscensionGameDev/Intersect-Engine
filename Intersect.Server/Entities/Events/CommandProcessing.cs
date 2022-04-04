@@ -707,9 +707,16 @@ namespace Intersect.Server.Entities.Events
             Stack<CommandInstance> callStack
         )
         {
+            MapInstanceType? instanceType = null;
+            if (command.ChangeInstance)
+            {
+                instanceType = command.InstanceType;
+            }
+
             player.Warp(
                 command.MapId, command.X, command.Y,
-                command.Direction == WarpDirection.Retain ? (byte) player.Dir : (byte) (command.Direction - 1)
+                command.Direction == WarpDirection.Retain ? (byte)player.Dir : (byte)(command.Direction - 1),
+                mapInstanceType: instanceType
             );
         }
 

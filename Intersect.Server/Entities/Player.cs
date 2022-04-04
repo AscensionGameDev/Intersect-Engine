@@ -37,6 +37,7 @@ namespace Intersect.Server.Entities
 
     public partial class Player : Entity
     {
+        [NotMapped, JsonIgnore]
         public Guid PreviousMapInstanceId = Guid.Empty;
 
         //Online Players List
@@ -185,6 +186,51 @@ namespace Intersect.Server.Entities
         /// Used to determine whether the player is operating in the guild bank vs player bank
         /// </summary>
         [NotMapped] public bool GuildBank;
+
+        // Instancing
+        public MapInstanceType InstanceType { get; set; } = MapInstanceType.Overworld;
+
+        [NotMapped, JsonIgnore] public MapInstanceType PreviousMapInstanceType { get; set; } = MapInstanceType.Overworld;
+
+        public Guid PersonalMapInstanceId { get; set; } = Guid.Empty;
+
+        /// <summary>
+        /// This instance Id is shared amongst members of a party. Party members will use the shared ID of the party leader.
+        /// </summary>
+        public Guid SharedMapInstanceId { get; set; } = Guid.Empty;
+
+        /* This bundle of columns exists so that we have a "non-instanced" location to reference in case we need
+         * to kick someone out of an instance for any reason */
+        [Column("LastOverworldMapId")]
+        [JsonProperty]
+        public Guid LastOverworldMapId { get; set; }
+        [NotMapped]
+        [JsonIgnore]
+        public MapBase LastOverworldMap
+        {
+            get => MapBase.Get(LastOverworldMapId);
+            set => LastOverworldMapId = value?.Id ?? Guid.Empty;
+        }
+        public int LastOverworldX { get; set; }
+        public int LastOverworldY { get; set; }
+
+        // For respawning in shared instances (configurable option)
+        [Column("SharedInstanceRespawnId")]
+        [JsonProperty]
+        public Guid SharedInstanceRespawnId { get; set; }
+        [NotMapped]
+        [JsonIgnore]
+        public MapBase SharedInstanceRespawn
+        {
+            get => MapBase.Get(SharedInstanceRespawnId);
+            set => SharedInstanceRespawnId = value?.Id ?? Guid.Empty;
+        }
+        public int SharedInstanceRespawnX { get; set; }
+        public int SharedInstanceRespawnY { get; set; }
+        public int SharedInstanceRespawnDir { get; set; }
+
+        [NotMapped, JsonIgnore]
+        public int InstanceLives { get; set; }
 
         public static Player FindOnline(Guid id)
         {
@@ -798,7 +844,7 @@ namespace Intersect.Server.Entities
             var cls = ClassBase.Get(ClassId);
             if (cls != null)
             {
-                Warp(cls.SpawnMapId, (byte) cls.SpawnX, (byte) cls.SpawnY, (byte) cls.SpawnDir);
+                WarpToSpawn();
             }
             else
             {
@@ -842,17 +888,22 @@ namespace Intersect.Server.Entities
                 base.Die(dropItems, killer);
             }
 
-            if (Options.Instance.PlayerOpts.ExpLossOnDeathPercent > 0)
+
+            // EXP Loss - don't lose in shared instance, or in an Arena zone
+            if (InstanceType != MapInstanceType.Shared || Options.Instance.Instancing.LoseExpOnInstanceDeath)
             {
-                if (Options.Instance.PlayerOpts.ExpLossFromCurrentExp)
+                if (Options.Instance.PlayerOpts.ExpLossOnDeathPercent > 0)
                 {
-                    var ExpLoss = (this.Exp * (Options.Instance.PlayerOpts.ExpLossOnDeathPercent / 100.0));
-                    TakeExperience((long)ExpLoss);
-                }
-                else
-                {
-                    var ExpLoss = (GetExperienceToNextLevel(this.Level) * (Options.Instance.PlayerOpts.ExpLossOnDeathPercent / 100.0));
-                    TakeExperience((long)ExpLoss);
+                    if (Options.Instance.PlayerOpts.ExpLossFromCurrentExp)
+                    {
+                        var ExpLoss = (this.Exp * (Options.Instance.PlayerOpts.ExpLossOnDeathPercent / 100.0));
+                        TakeExperience((long)ExpLoss);
+                    }
+                    else
+                    {
+                        var ExpLoss = (GetExperienceToNextLevel(this.Level) * (Options.Instance.PlayerOpts.ExpLossOnDeathPercent / 100.0));
+                        TakeExperience((long)ExpLoss);
+                    }
                 }
             }
             PacketSender.SendEntityDie(this);
@@ -1561,7 +1612,26 @@ namespace Intersect.Server.Entities
         //Warping
         public override void Warp(Guid newMapId, float newX, float newY, bool adminWarp = false)
         {
-            Warp(newMapId, newX, newY, (byte) Directions.Up, adminWarp, 0, false);
+            Warp(newMapId, newX, newY, (byte)Directions.Up, adminWarp, 0, false);
+        }
+
+        public void ForceInstanceChangeWarp(Guid newMapId, float newX, float newY, Guid newMapInstanceId, MapInstanceType instanceType, bool adminWarp = false)
+        {
+            PreviousMapInstanceId = MapInstanceId;
+            PreviousMapInstanceType = InstanceType;
+
+            MapInstanceId = newMapInstanceId;
+            InstanceType = instanceType;
+            // If we've warped the player out of their overworld, keep a reference to their overworld just in case.
+            if (PreviousMapInstanceType == MapInstanceType.Overworld)
+            {
+                UpdateLastOverworldLocation(MapId, X, Y);
+            }
+            if (PreviousMapInstanceId != MapInstanceId)
+            {
+                PacketSender.SendChatMsg(this, Strings.Player.InstanceUpdate.ToString(PreviousMapInstanceId.ToString(), MapInstanceId.ToString()), ChatMessageType.Admin, CustomColors.Alerts.Info);
+            }
+            Warp(newMapId, newX, newY, (byte)Directions.Up, adminWarp, 0, false, false, null, false, true);
         }
 
         public override void Warp(
@@ -1571,9 +1641,33 @@ namespace Intersect.Server.Entities
             byte newDir,
             bool adminWarp = false,
             byte zOverride = 0,
-            bool mapSave = false
+            bool mapSave = false,
+            bool fromWarpEvent = false,
+            MapInstanceType? mapInstanceType = null,
+            bool fromLogin = false,
+            bool forceInstanceChange = false
         )
         {
+            #region shortcircuit exits
+            // First, deny the warp entirely if we CAN'T, for some reason, warp to the requested instance type. ONly do this if we're not forcing a change
+            if (!forceInstanceChange && !CanChangeToInstanceType(mapInstanceType, fromLogin, newMapId))
+            {
+                return;
+            }
+            #endregion
+
+            // If we are leaving the overworld to go to a new instance, save the overworld location
+            if (!fromLogin && InstanceType == MapInstanceType.Overworld && mapInstanceType != MapInstanceType.Overworld && mapInstanceType != null)
+            {
+                UpdateLastOverworldLocation(MapId, X, Y);
+            }
+            // If we are moving TO a new shared instance, update the shared respawn point (if enabled)
+            if (!fromLogin && mapInstanceType == MapInstanceType.Shared && Options.Instance.Instancing.SharedInstanceRespawnInInstance && MapController.Get(newMapId) != null)
+            {
+                UpdateSharedInstanceRespawnLocation(newMapId, (int)newX, (int)newY, (int)newDir);
+            }
+
+            // Make sure we're heading to a map that exists - otherwise, to spawn you go
             var newMap = MapController.Get(newMapId);
             if (newMap == null)
             {
@@ -1587,13 +1681,14 @@ namespace Intersect.Server.Entities
             Z = zOverride;
             Dir = newDir;
 
-            PreviousMapInstanceId = MapInstanceId;
+            var newSurroundingMaps = newMap.GetSurroundingMapIds(true);
 
-            var newSurroundingMaps = newMap.GetSurroundingMapIds(false);
-            var onNewInstance = MapInstanceId != PreviousMapInstanceId;
+            #region Map instance traversal
+            // Set up player properties if we have changed instance types
+            bool onNewInstance = forceInstanceChange || ProcessMapInstanceChange(mapInstanceType, fromLogin);
 
+            // Ensure there exists a map instance with the Player's InstanceId. A player is the sole entity that can create new map instances
             MapInstance newMapInstance;
-            // Ensure there exists a map instance. A player is the sole entity that can create new map instances
             lock (EntityLock)
             {
                 if (!newMap.TryGetInstance(MapInstanceId, out newMapInstance))
@@ -1607,28 +1702,38 @@ namespace Intersect.Server.Entities
                 }
             }
 
+            // An instance of the map MUST exist. Otherwise, head to spawn.
             if (newMapInstance == null)
             {
-                Log.Error($"Player {Name} requested a new map instance with ID {MapInstanceId} and failed to get it.");
+                Log.Error($"Player {Name} requested a new map Instance with ID {MapInstanceId} and failed to get it.");
                 WarpToSpawn();
 
                 return;
             }
 
-            // If we've changed map instances
-            if (onNewInstance)
+            // If we've changed instances, send data to instance entities/entities to player
+            if (onNewInstance || forceInstanceChange)
             {
-                MapInstanceChanged(newMap);
-            }
-
-            foreach (var evt in EventLookup)
-            {
-                // Remove events that aren't relevant (on a surrounding map) anymore
-                if (evt.Value.MapId != Guid.Empty && (!newSurroundingMaps.Contains(evt.Value.MapId) || mapSave))
+                SendToNewMapInstance(newMap);
+                // Clear all events - get fresh ones from the new instance to re-fresh event locations
+                foreach (var evt in EventLookup)
                 {
                     RemoveEvent(evt.Value.Id, false);
                 }
             }
+            else
+            {
+                // Clear events that are no longer on a surrounding map.
+                foreach (var evt in EventLookup)
+                {
+                    // Remove events that aren't relevant (on a surrounding map) anymore
+                    if (evt.Value.MapId != Guid.Empty && (!newSurroundingMaps.Contains(evt.Value.MapId) || mapSave))
+                    {
+                        RemoveEvent(evt.Value.Id, false);
+                    }
+                }
+            }
+            #endregion
 
             if (newMapId != MapId || mSentMap == false) // Player warped to a new map?
             {
@@ -1645,14 +1750,13 @@ namespace Intersect.Server.Entities
                 PacketSender.SendEntityPositionToAll(this);
 
                 //If map grid changed then send the new map grid
-                if (!adminWarp && (oldMap == null || !oldMap.SurroundingMapIds.Contains(newMapId)))
+                if (!adminWarp && (oldMap == null || !oldMap.SurroundingMapIds.Contains(newMapId)) || fromLogin)
                 {
                     PacketSender.SendMapGrid(this.Client, newMap.MapGrid, true);
                 }
 
                 mSentMap = true;
 
-                // Start common events related to map changes.
                 StartCommonEventsWithTrigger(CommonEventTrigger.MapChanged);
             }
             else // Player moved on same map?
@@ -1670,7 +1774,235 @@ namespace Intersect.Server.Entities
             }
         }
 
-        private void MapInstanceChanged(MapController newMap)
+        /// <summary>
+        /// Warps the player on login, taking care of instance management depending on the instance type the player
+        /// is attempting to login to.
+        /// </summary>
+        public void LoginWarp()
+        {
+            if (MapId == null || MapId == Guid.Empty)
+            {
+                WarpToSpawn();
+            }
+            else
+            {
+                if (!CanChangeToInstanceType(InstanceType, true, MapId))
+                {
+                    WarpToLastOverworldLocation(true);
+                }
+                else
+                {
+                    // Will warp to spawn if we fail to create an instance for the relevant map
+                    Warp(
+                        MapId, (byte)X, (byte)Y, (byte)Dir, false, (byte)Z, false, false, InstanceType, true
+                    );
+                }
+            }
+        }
+
+        /// <summary>
+        /// Warps the player to the last location they were at on the "Overworld" (empty Guid) map instance. Useful for kicking out of
+        /// instances in a variety of situations.
+        /// </summary>
+        /// <param name="fromLogin">Whether or not we're coming to this method via the player login/join game flow</param>
+        public void WarpToLastOverworldLocation(bool fromLogin)
+        {
+            Warp(
+                LastOverworldMapId, (byte)LastOverworldX, (byte)LastOverworldY, (byte)Dir, zOverride: (byte)Z, mapInstanceType: MapInstanceType.Overworld, fromLogin: fromLogin
+            );
+        }
+
+        public void SendLivesRemainingMessage()
+        {
+            if (InstanceLives > 0)
+            {
+                PacketSender.SendChatMsg(this, Strings.Parties.InstanceLivesRemaining.ToString(InstanceLives), ChatMessageType.Party, CustomColors.Chat.PartyChat);
+            }
+            else
+            {
+                PacketSender.SendChatMsg(this, Strings.Parties.NoMoreLivesRemaining, ChatMessageType.Party, CustomColors.Chat.PartyChat);
+            }
+        }
+
+        public void WarpToSpawn(bool forceClassRespawn = false)
+        {
+            var mapId = Guid.Empty;
+            byte x = 0;
+            byte y = 0;
+            byte dir = 0;
+
+            if (Options.Instance.Instancing.SharedInstanceRespawnInInstance && InstanceType == MapInstanceType.Shared && !forceClassRespawn)
+            {
+                if (SharedInstanceRespawn == null)
+                {
+                    // invalid map - try overworld (which will throw to class spawn if itself is invalid)
+                    WarpToLastOverworldLocation(false);
+                    return;
+                }
+
+                if (Options.Instance.Instancing.MaxSharedInstanceLives <= 0) // User has not configured shared instances to have lives
+                {
+                    // Warp to the start of the shared instance - no concern for life total
+                    Warp(SharedInstanceRespawnId, SharedInstanceRespawnX, SharedInstanceRespawnY, (Byte)SharedInstanceRespawnDir);
+                    return;
+                }
+                    
+                // Check if the player/party have enough lives to spawn in-instance
+                if (InstanceLives > 0)
+                {
+                    // If they do, subtract from this player's life total...
+                    InstanceLives--;
+                    SendLivesRemainingMessage();
+                    // And the totals from any party members
+                    if (Party != null && Party.Count > 1)
+                    {
+                        foreach (Player member in Party)
+                        {
+                            if (member.Id != Id)
+                            {
+                                // Keep party member instance lives in sync
+                                member.InstanceLives--;
+                                if (member.InstanceType == MapInstanceType.Shared)
+                                {
+                                    member.SendLivesRemainingMessage();
+                                }
+                            }
+                        }
+                    }
+
+                    // And warp to the instance start
+                    Warp(SharedInstanceRespawnId, SharedInstanceRespawnX, SharedInstanceRespawnY, (byte)SharedInstanceRespawnDir);
+                }
+                else
+                {
+                    // The player has ran out of lives - too bad, back to instance entrance you go.
+                    if (!Options.Instance.Instancing.BootAllFromInstanceWhenOutOfLives || Party == null || Party.Count < 2)
+                    {
+                        WarpToLastOverworldLocation(false);
+                    }
+                    else
+                    {
+                        // Oh shit, hard mode enabled - boot ALL party members out of instance. No more lives.
+                        foreach (Player member in Party)
+                        {
+                            // Only warp players in the instance
+                            if (member.InstanceType == MapInstanceType.Shared)
+                            {
+                                lock (EntityLock)
+                                {
+                                    member.WarpToLastOverworldLocation(false);
+                                    PacketSender.SendChatMsg(member, Strings.Parties.InstanceFailed, ChatMessageType.Party, CustomColors.Chat.PartyChat);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                var cls = ClassBase.Get(ClassId);
+                if (cls != null)
+                {
+                    if (MapController.Lookup.Keys.Contains(cls.SpawnMapId))
+                    {
+                        mapId = cls.SpawnMapId;
+                    }
+
+                    x = (byte)cls.SpawnX;
+                    y = (byte)cls.SpawnY;
+                    dir = (byte)cls.SpawnDir;
+                }
+
+                if (mapId == Guid.Empty)
+                {
+                    using (var mapenum = MapController.Lookup.GetEnumerator())
+                    {
+                        mapenum.MoveNext();
+                        mapId = mapenum.Current.Value.Id;
+                    }
+                }
+
+                Warp(mapId, x, y, dir, false, 0, false, false, MapInstanceType.Overworld);
+            }
+        }
+
+        // Instancing
+
+        /// <summary>
+        /// Checks to see if we CAN go to the requested instance type
+        /// </summary>
+        /// <param name="instanceType">The instance type we're requesting a warp to</param>
+        /// <param name="fromLogin">Whether or not this is from the login flow</param>
+        /// <param name="newMapId">The map ID we will be warping to</param>
+        /// <returns></returns>
+        public bool CanChangeToInstanceType(MapInstanceType? instanceType, bool fromLogin, Guid newMapId)
+        {
+            bool isValid = true;
+
+            switch (instanceType)
+            {
+                case MapInstanceType.Guild:
+                    if (Guild == null || Guild.GuildInstanceId != MapInstanceId)
+                    {
+                        isValid = false;
+
+                        if (fromLogin)
+                        {
+                            PacketSender.SendChatMsg(this, Strings.Guilds.NoLongerAllowedInInstance, ChatMessageType.Guild, CustomColors.Alerts.Error);
+                        }
+                        else
+                        {
+                            PacketSender.SendChatMsg(this, Strings.Guilds.NotAllowedInInstance, ChatMessageType.Guild, CustomColors.Alerts.Error);
+                        }
+                    }
+                    break;
+                case MapInstanceType.Shared:
+                    if (fromLogin)
+                    {
+                        isValid = false;
+                    }
+                    if (Party != null && Party.Count > 0 && !Options.Instance.Instancing.RejoinableSharedInstances) // Always valid warp if solo/instances are rejoinable
+                    {
+                        if (Party[0].Id == Id) // if we are the party leader
+                        {
+                            // And other players are using our shared instance, deny creation of a new instance until they are finished.
+                            if (Party.FindAll((Player member) => member.Id != Id && member.InstanceType == MapInstanceType.Shared).Count > 0)
+                            {
+                                isValid = false;
+                                PacketSender.SendChatMsg(this, Strings.Parties.InstanceInUse, ChatMessageType.Party, CustomColors.Alerts.Error);
+                            }
+                        }
+                        else
+                        {
+                            // Otherwise, if the party leader hasn't yet created a shared instance, deny creation of a new one.
+                            if (Party[0].InstanceType != MapInstanceType.Shared)
+                            {
+                                isValid = false;
+                                PacketSender.SendChatMsg(this, Strings.Parties.CannotCreateInstance, ChatMessageType.Party, CustomColors.Alerts.Error);
+                            }
+                            else if (Party[0].SharedMapInstanceId != SharedMapInstanceId)
+                            {
+                                isValid = false;
+                                PacketSender.SendChatMsg(this, Strings.Parties.InstanceInProgress, ChatMessageType.Party, CustomColors.Alerts.Error);
+                            }
+                            else if (newMapId != Party[0].SharedInstanceRespawn.Id)
+                            {
+                                isValid = false;
+                                PacketSender.SendChatMsg(this, Strings.Parties.WrongInstance, ChatMessageType.Party, CustomColors.Alerts.Error);
+                            }
+                        }
+                    }
+                    break;
+            }
+
+            return isValid;
+        }
+
+        /// <summary>
+        /// In charge of sending the necessary packet information on an instance change
+        /// </summary>
+        /// <param name="newMap">The <see cref="MapController"/> we are warping to</param>
+        private void SendToNewMapInstance(MapController newMap)
         {
             // Refresh the client's entity list
             var oldMap = MapController.Get(MapId);
@@ -1686,39 +2018,172 @@ namespace Intersect.Server.Entities
             EventBaseIdLookup.Clear();
             Log.Debug($"Player {Name} has joined instance {MapInstanceId} of map: {newMap.Name}");
             Log.Info($"Previous instance was {PreviousMapInstanceId}");
-            // We changed maps AND instances - remove from the old map's old instance
+            // We changed maps AND instance layers - remove from the old instance
             PacketSender.SendEntityLeaveInstanceOfMap(this, oldMap.Id, PreviousMapInstanceId);
             // Remove any trace of our player from the old instance's processing
             newMap.RemoveEntityFromAllSurroundingMapsInInstance(this, PreviousMapInstanceId);
         }
 
-        public void WarpToSpawn(bool sendWarp = false)
+        /// <summary>
+        /// Checks to see if the <see cref="MapInstanceType"/> we're warping to is different than what type we are currently
+        /// on, and, if so, takes care of updating our instance settings.
+        /// </summary>
+        /// <param name="mapInstanceType">The <see cref="MapInstanceType"/> the player is currently on</param>
+        /// <param name="fromLogin">Whether or not we're coming to this method via a login warp.</param>
+        /// <returns></returns>
+        public bool ProcessMapInstanceChange(MapInstanceType? mapInstanceType, bool fromLogin)
         {
-            var mapId = Guid.Empty;
-            byte x = 0, y = 0, dir = 0;
-            var cls = ClassBase.Get(ClassId);
-            if (cls != null)
+            // Save values before change for reference/emergency recall
+            PreviousMapInstanceId = MapInstanceId;
+            PreviousMapInstanceType = InstanceType;
+            if (mapInstanceType != null) // If we're requesting an instance type change
             {
-                if (MapController.Lookup.Keys.Contains(cls.SpawnMapId))
-                {
-                    mapId = cls.SpawnMapId;
-                }
+                // Update our saved instance type - this helps us determine what to do on login, warps, etc
+                InstanceType = (MapInstanceType) mapInstanceType;
+                // Requests a new instance id, using the type of instance to determine creation logic
+                MapInstanceId = CreateNewInstanceIdFromType(mapInstanceType, fromLogin);
+            }
+            return MapInstanceId != PreviousMapInstanceId;
+        }
 
-                x = (byte) cls.SpawnX;
-                y = (byte) cls.SpawnY;
-                dir = (byte) cls.SpawnDir;
+        /// <summary>
+        /// Creates an instance id based on the type of instance we are heading to, and whether or not we should generate a fresh id or use a saved id.
+        /// </summary>
+        /// <remarks>
+        /// Note that if we are coming to this method, we have already checked to see whether or not we CAN go to the requested instance.
+        /// </remarks>
+        /// <param name="mapInstanceType">The <see cref="MapInstanceType"/> we are switching to</param>
+        /// <param name="fromLogin">Whether or not we are coming to this method via player login. We may prefer to use saved values instead of generate new
+        /// values if this is the case.</param>
+        /// <returns></returns>
+        public Guid CreateNewInstanceIdFromType(MapInstanceType? mapInstanceType, bool fromLogin)
+        {
+            Guid newMapLayerId = MapInstanceId;
+            switch (mapInstanceType)
+            {
+                case MapInstanceType.Overworld:
+                    ResetSavedInstanceIds();
+                    newMapLayerId = Guid.Empty;
+                    break;
+                case MapInstanceType.Personal:
+                    if (!fromLogin) // If we're logging into a personal instance, we want to login to the SAME instance.
+                    {
+                        PersonalMapInstanceId = Guid.NewGuid();
+                    }
+                    newMapLayerId = PersonalMapInstanceId;
+                    break;
+                case MapInstanceType.Guild:
+                    if (Guild != null)
+                    {
+                        newMapLayerId = Guild.GuildInstanceId;
+                    }
+                    else
+                    {
+                        Log.Error($"Player {Name} requested a guild warp with no guild, and proceeded to warp to map anyway");
+                        newMapLayerId = Guid.Empty;
+                    }
+                    break;
+                case MapInstanceType.Shared:
+                    bool isSolo = Party == null || Party.Count < 2;
+                    bool isPartyLeader = Party != null && Party.Count > 0 && Party[0].Id == Id;
+
+                    if (isSolo) // Solo instance initialization
+                    {
+                        if (Options.Instance.Instancing.MaxSharedInstanceLives > 0)
+                        {
+                            InstanceLives = Options.Instance.Instancing.MaxSharedInstanceLives;
+                        }
+                        SharedMapInstanceId = Guid.NewGuid();
+                        newMapLayerId = SharedMapInstanceId;
+                    }
+                    else if (!Options.Instance.Instancing.RejoinableSharedInstances && isPartyLeader) // Non-rejoinable instance initialization
+                    {
+                        // Generate a new instance
+                        SharedMapInstanceId = Guid.NewGuid();
+                        // If we are the leader, propogate your shared instance ID to all current members of the party.
+                        if (isPartyLeader && !Options.Instance.Instancing.RejoinableSharedInstances)
+                        {
+                            foreach (Player member in Party)
+                            {
+                                member.SharedMapInstanceId = SharedMapInstanceId;
+                                if (Options.Instance.Instancing.MaxSharedInstanceLives > 0)
+                                {
+                                    member.InstanceLives = Options.Instance.Instancing.MaxSharedInstanceLives;
+                                }
+                            }
+                        }
+                    }
+                    else if (Party != null && Party.Count > 0 && Options.Instance.Instancing.RejoinableSharedInstances) // Joinable instance initialization
+                    {
+                        // Scan party members for an active shared instance - if one is found, use it
+                        var memberInInstance = Party.Find((Player member) => member.SharedMapInstanceId != Guid.Empty);
+                        if (memberInInstance != null)
+                        {
+                            SharedMapInstanceId = memberInInstance.SharedMapInstanceId;
+                        }
+                        else
+                        {
+                            // Otherwise, if no one is on an instance, create a new instance
+                            SharedMapInstanceId = Guid.NewGuid();
+
+                            // And give your party members their instance lives - though this can be exploited when instances are rejoinable, so you'd really
+                            // have to be a freak to have both options on
+                            if (Options.Instance.Instancing.MaxSharedInstanceLives > 0)
+                            {
+                                foreach (Player member in Party)
+                                {
+                                    member.InstanceLives = Options.Instance.Instancing.MaxSharedInstanceLives;
+                                }
+                            }
+                        }
+                    }
+                    // Use whatever your shared instance id is for the warp
+                    newMapLayerId = SharedMapInstanceId;
+
+                    break;
+                default:
+                    Log.Error($"Player {Name} requested an instance type that is not supported. Their map instance settings will not change.");
+                    break;
             }
 
-            if (mapId == Guid.Empty)
-            {
-                using (var mapenum = MapController.Lookup.GetEnumerator())
-                {
-                    mapenum.MoveNext();
-                    mapId = mapenum.Current.Value.Id;
-                }
-            }
+            return newMapLayerId;
+        }
 
-            Warp(mapId, x, y, dir);
+        /// <summary>
+        /// /// Updates the player's last overworld location. Useful for warping out of instances if need be.
+        /// </summary>
+        /// <param name="overworldMapId">Which map we were on before the instance change</param>
+        /// <param name="overworldX">X before instance change</param>
+        /// <param name="overworldY">Y before instance change</param>
+        public void UpdateLastOverworldLocation(Guid overworldMapId, int overworldX, int overworldY)
+        {
+            LastOverworldMapId = overworldMapId;
+            LastOverworldX = overworldX;
+            LastOverworldY = overworldY;
+        }
+
+        /// <summary>
+        /// Updates the shared instance respawn location - for respawning on death in a shared instance (when this is enabled)
+        /// </summary>
+        /// <param name="respawnMapId"></param>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="dir"></param>
+        public void UpdateSharedInstanceRespawnLocation(Guid respawnMapId, int x, int y, int dir)
+        {
+            SharedInstanceRespawnId = respawnMapId;
+            SharedInstanceRespawnX = x;
+            SharedInstanceRespawnY = y;
+            SharedInstanceRespawnDir = dir;
+        }
+
+        /// <summary>
+        /// Resets instance ids we've saved on the player. Generally called when going back to the overworld.
+        /// </summary>
+        public void ResetSavedInstanceIds()
+        {
+            PersonalMapInstanceId = Guid.Empty;
+            SharedMapInstanceId = Guid.Empty;
         }
 
         /// <summary>
@@ -5836,14 +6301,19 @@ namespace Intersect.Server.Entities
                 if (attribute != null && attribute.Type == MapAttributes.Warp)
                 {
                     var warpAtt = (MapWarpAttribute)attribute;
-                    if (warpAtt.Direction == WarpDirection.Retain)
+                    var dir = (byte)Dir;
+                    if (warpAtt.Direction != WarpDirection.Retain)
                     {
-                        Warp(warpAtt.MapId, warpAtt.X, warpAtt.Y, (byte)Dir);
+                        dir = (byte)(warpAtt.Direction - 1);
                     }
-                    else
+
+                    MapInstanceType? instanceType = null;
+                    if (warpAtt.ChangeInstance)
                     {
-                        Warp(warpAtt.MapId, warpAtt.X, warpAtt.Y, (byte)(warpAtt.Direction - 1));
+                        instanceType = warpAtt.InstanceType;
                     }
+
+                    Warp(warpAtt.MapId, warpAtt.X, warpAtt.Y, dir, false, 0, false, false, instanceType);
                 }
 
                 foreach (var evt in EventLookup)

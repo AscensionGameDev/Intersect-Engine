@@ -796,6 +796,12 @@ namespace Intersect.Server.Localization
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString RankLimitResponse = @"This guild has already hit it's member limit for the rank of {00}. Promote or demote other members in order to make room for {01}.";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString NotAllowedInInstance = @"You must be in a guild to warp to a guild instance.";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString NoLongerAllowedInInstance = @"You are no longer in the guild who's instance you were logged into. You have been warped back to the overworld.";
         }
 
         public sealed class IntroNamespace : LocaleNamespace
@@ -1076,6 +1082,27 @@ namespace Intersect.Server.Localization
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString outofrange = @"Target is out of range or offline.";
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString InstanceInUse = @"Can not create new instance - party members are still in the old one.";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString CannotCreateInstance = @"Only the party leader can create a shared instance.";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString InstanceInProgress = @"The party has not yet completed their instance.";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString WrongInstance = @"Your party is currently doing a different instance.";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString InstanceLivesRemaining = @"Your party has {00} lives remaining on this instance!";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString NoMoreLivesRemaining = @"Your party has no more lives remaining! You will respawn out of the instance on your next death.";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString InstanceFailed = @"Your party has failed the instance...";
+
         }
 
         public sealed class PasswordResetNotificationNamespace : LocaleNamespace
@@ -1095,6 +1122,12 @@ namespace Intersect.Server.Localization
                 @"You are an administrator! Press Insert at any time to access the administration menu or F2 for debug information.";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString adminsetpower = @"Only admins can set power!";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString InstanceUpdate = @"Your instance ID has changed from {00} to {01}";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString OverworldReturnAdmin = @"You have returned {00} to the overworld.";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString OverworldReturned = @"You have been returned to the overworld.";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString beenwarpedto = @"You have been warped to {00}.";
 
