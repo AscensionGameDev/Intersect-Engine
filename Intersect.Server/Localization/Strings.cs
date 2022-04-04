@@ -290,6 +290,9 @@ namespace Intersect.Server.Localization
             public readonly LocalizedString exp = @"Experience";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString ImmuneToEffect = @"IMMUNE!";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString invulnerable = @"INVULNERABLE!";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]

@@ -77,6 +77,17 @@ namespace Intersect.Editor.Forms.Editors
             this.lblHP = new System.Windows.Forms.Label();
             this.lblExp = new System.Windows.Forms.Label();
             this.pnlContainer = new System.Windows.Forms.Panel();
+            this.grpImmunities = new DarkUI.Controls.DarkGroupBox();
+            this.nudTenacity = new DarkUI.Controls.DarkNumericUpDown();
+            this.lblTenacity = new System.Windows.Forms.Label();
+            this.chkTaunt = new DarkUI.Controls.DarkCheckBox();
+            this.chkSleep = new DarkUI.Controls.DarkCheckBox();
+            this.chkTransform = new DarkUI.Controls.DarkCheckBox();
+            this.chkBlind = new DarkUI.Controls.DarkCheckBox();
+            this.chkSnare = new DarkUI.Controls.DarkCheckBox();
+            this.chkStun = new DarkUI.Controls.DarkCheckBox();
+            this.chkSilence = new DarkUI.Controls.DarkCheckBox();
+            this.chkKnockback = new DarkUI.Controls.DarkCheckBox();
             this.grpCombat = new DarkUI.Controls.DarkGroupBox();
             this.grpAttackSpeed = new DarkUI.Controls.DarkGroupBox();
             this.nudAttackSpeedValue = new DarkUI.Controls.DarkNumericUpDown();
@@ -184,6 +195,8 @@ namespace Intersect.Editor.Forms.Editors
             ((System.ComponentModel.ISupportInitialize)(this.nudMag)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudStr)).BeginInit();
             this.pnlContainer.SuspendLayout();
+            this.grpImmunities.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudTenacity)).BeginInit();
             this.grpCombat.SuspendLayout();
             this.grpAttackSpeed.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudAttackSpeedValue)).BeginInit();
@@ -869,6 +882,7 @@ namespace Intersect.Editor.Forms.Editors
             // pnlContainer
             // 
             this.pnlContainer.AutoScroll = true;
+            this.pnlContainer.Controls.Add(this.grpImmunities);
             this.pnlContainer.Controls.Add(this.grpCombat);
             this.pnlContainer.Controls.Add(this.grpCommonEvents);
             this.pnlContainer.Controls.Add(this.grpBehavior);
@@ -882,6 +896,140 @@ namespace Intersect.Editor.Forms.Editors
             this.pnlContainer.Name = "pnlContainer";
             this.pnlContainer.Size = new System.Drawing.Size(464, 529);
             this.pnlContainer.TabIndex = 17;
+            // 
+            // grpImmunities
+            // 
+            this.grpImmunities.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.grpImmunities.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpImmunities.Controls.Add(this.nudTenacity);
+            this.grpImmunities.Controls.Add(this.lblTenacity);
+            this.grpImmunities.Controls.Add(this.chkTaunt);
+            this.grpImmunities.Controls.Add(this.chkSleep);
+            this.grpImmunities.Controls.Add(this.chkTransform);
+            this.grpImmunities.Controls.Add(this.chkBlind);
+            this.grpImmunities.Controls.Add(this.chkSnare);
+            this.grpImmunities.Controls.Add(this.chkStun);
+            this.grpImmunities.Controls.Add(this.chkSilence);
+            this.grpImmunities.Controls.Add(this.chkKnockback);
+            this.grpImmunities.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpImmunities.Location = new System.Drawing.Point(3, 1076);
+            this.grpImmunities.Margin = new System.Windows.Forms.Padding(2);
+            this.grpImmunities.Name = "grpImmunities";
+            this.grpImmunities.Padding = new System.Windows.Forms.Padding(2);
+            this.grpImmunities.Size = new System.Drawing.Size(208, 181);
+            this.grpImmunities.TabIndex = 33;
+            this.grpImmunities.TabStop = false;
+            this.grpImmunities.Text = "Immunities";
+            // 
+            // nudTenacity
+            // 
+            this.nudTenacity.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.nudTenacity.DecimalPlaces = 2;
+            this.nudTenacity.ForeColor = System.Drawing.Color.Gainsboro;
+            this.nudTenacity.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            131072});
+            this.nudTenacity.Location = new System.Drawing.Point(5, 138);
+            this.nudTenacity.Name = "nudTenacity";
+            this.nudTenacity.Size = new System.Drawing.Size(195, 20);
+            this.nudTenacity.TabIndex = 79;
+            this.nudTenacity.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.nudTenacity.ValueChanged += new System.EventHandler(this.nudTenacity_ValueChanged);
+            // 
+            // lblTenacity
+            // 
+            this.lblTenacity.AutoSize = true;
+            this.lblTenacity.Location = new System.Drawing.Point(5, 122);
+            this.lblTenacity.Name = "lblTenacity";
+            this.lblTenacity.Size = new System.Drawing.Size(68, 13);
+            this.lblTenacity.TabIndex = 79;
+            this.lblTenacity.Text = "Tenacity (%):";
+            // 
+            // chkTaunt
+            // 
+            this.chkTaunt.AutoSize = true;
+            this.chkTaunt.Location = new System.Drawing.Point(116, 95);
+            this.chkTaunt.Name = "chkTaunt";
+            this.chkTaunt.Size = new System.Drawing.Size(54, 17);
+            this.chkTaunt.TabIndex = 86;
+            this.chkTaunt.Text = "Taunt";
+            this.chkTaunt.CheckedChanged += new System.EventHandler(this.chkTaunt_CheckedChanged);
+            // 
+            // chkSleep
+            // 
+            this.chkSleep.AutoSize = true;
+            this.chkSleep.Location = new System.Drawing.Point(11, 95);
+            this.chkSleep.Name = "chkSleep";
+            this.chkSleep.Size = new System.Drawing.Size(53, 17);
+            this.chkSleep.TabIndex = 85;
+            this.chkSleep.Text = "Sleep";
+            this.chkSleep.CheckedChanged += new System.EventHandler(this.chkSleep_CheckedChanged);
+            // 
+            // chkTransform
+            // 
+            this.chkTransform.AutoSize = true;
+            this.chkTransform.Location = new System.Drawing.Point(116, 72);
+            this.chkTransform.Name = "chkTransform";
+            this.chkTransform.Size = new System.Drawing.Size(73, 17);
+            this.chkTransform.TabIndex = 84;
+            this.chkTransform.Text = "Transform";
+            this.chkTransform.CheckedChanged += new System.EventHandler(this.chkTransform_CheckedChanged);
+            // 
+            // chkBlind
+            // 
+            this.chkBlind.AutoSize = true;
+            this.chkBlind.Location = new System.Drawing.Point(11, 72);
+            this.chkBlind.Name = "chkBlind";
+            this.chkBlind.Size = new System.Drawing.Size(49, 17);
+            this.chkBlind.TabIndex = 83;
+            this.chkBlind.Text = "Blind";
+            this.chkBlind.CheckedChanged += new System.EventHandler(this.chkBlind_CheckedChanged);
+            // 
+            // chkSnare
+            // 
+            this.chkSnare.AutoSize = true;
+            this.chkSnare.Location = new System.Drawing.Point(116, 49);
+            this.chkSnare.Name = "chkSnare";
+            this.chkSnare.Size = new System.Drawing.Size(54, 17);
+            this.chkSnare.TabIndex = 82;
+            this.chkSnare.Text = "Snare";
+            this.chkSnare.CheckedChanged += new System.EventHandler(this.chkSnare_CheckedChanged);
+            // 
+            // chkStun
+            // 
+            this.chkStun.AutoSize = true;
+            this.chkStun.Location = new System.Drawing.Point(11, 49);
+            this.chkStun.Name = "chkStun";
+            this.chkStun.Size = new System.Drawing.Size(48, 17);
+            this.chkStun.TabIndex = 81;
+            this.chkStun.Text = "Stun";
+            this.chkStun.CheckedChanged += new System.EventHandler(this.chkStun_CheckedChanged);
+            // 
+            // chkSilence
+            // 
+            this.chkSilence.AutoSize = true;
+            this.chkSilence.Location = new System.Drawing.Point(116, 26);
+            this.chkSilence.Name = "chkSilence";
+            this.chkSilence.Size = new System.Drawing.Size(61, 17);
+            this.chkSilence.TabIndex = 80;
+            this.chkSilence.Text = "Silence";
+            this.chkSilence.CheckedChanged += new System.EventHandler(this.chkSilence_CheckedChanged);
+            // 
+            // chkKnockback
+            // 
+            this.chkKnockback.AutoSize = true;
+            this.chkKnockback.Location = new System.Drawing.Point(11, 26);
+            this.chkKnockback.Name = "chkKnockback";
+            this.chkKnockback.Size = new System.Drawing.Size(81, 17);
+            this.chkKnockback.TabIndex = 79;
+            this.chkKnockback.Text = "Knockback";
+            this.chkKnockback.CheckedChanged += new System.EventHandler(this.chkKnockback_CheckedChanged);
             // 
             // grpCombat
             // 
@@ -2125,6 +2273,9 @@ namespace Intersect.Editor.Forms.Editors
             ((System.ComponentModel.ISupportInitialize)(this.nudMag)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudStr)).EndInit();
             this.pnlContainer.ResumeLayout(false);
+            this.grpImmunities.ResumeLayout(false);
+            this.grpImmunities.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudTenacity)).EndInit();
             this.grpCombat.ResumeLayout(false);
             this.grpCombat.PerformLayout();
             this.grpAttackSpeed.ResumeLayout(false);
@@ -2292,5 +2443,16 @@ namespace Intersect.Editor.Forms.Editors
         private System.Windows.Forms.Label lblResetRadius;
         private DarkCheckBox chkIndividualLoot;
         private Controls.GameObjectList lstGameObjects;
+        private DarkGroupBox grpImmunities;
+        private DarkNumericUpDown nudTenacity;
+        private System.Windows.Forms.Label lblTenacity;
+        private DarkCheckBox chkTaunt;
+        private DarkCheckBox chkSleep;
+        private DarkCheckBox chkTransform;
+        private DarkCheckBox chkBlind;
+        private DarkCheckBox chkSnare;
+        private DarkCheckBox chkStun;
+        private DarkCheckBox chkSilence;
+        private DarkCheckBox chkKnockback;
     }
 }

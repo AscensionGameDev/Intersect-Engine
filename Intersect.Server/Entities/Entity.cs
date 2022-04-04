@@ -253,6 +253,9 @@ namespace Intersect.Server.Entities
         [JsonIgnore, NotMapped]
         private Status[] mOldStatuses = new Status[0];
 
+        [JsonIgnore, NotMapped]
+        public List<StatusTypes> Immunities = new List<StatusTypes>();
+
         [NotMapped, JsonIgnore]
         public bool IsDisposed { get; protected set; }
 
@@ -1404,7 +1407,7 @@ namespace Intersect.Server.Entities
             }
 
             //If there is a knockback, knock them backwards and make sure its linear (diagonal player movement not coded).
-            if (projectile.Knockback > 0 && projectileDir < 4)
+            if (projectile.Knockback > 0 && projectileDir < 4 && !target.Immunities.Contains(StatusTypes.Knockback))
             {
                 var dash = new Dash(target, projectile.Knockback, projectileDir, false, false, false, false);
             }
@@ -1556,21 +1559,30 @@ namespace Intersect.Server.Entities
                 //Check for onhit effect to avoid the onhit effect recycling.
                 if (!(onHitTrigger && spellBase.Combat.Effect == StatusTypes.OnHit))
                 {
-                    new Status(
-                        target, this, spellBase, spellBase.Combat.Effect, spellBase.Combat.Duration,
-                        spellBase.Combat.TransformSprite
-                    );
-
-                    PacketSender.SendActionMsg(
-                        target, Strings.Combat.status[(int) spellBase.Combat.Effect], CustomColors.Combat.Status
-                    );
-
-                    //If an onhit or shield status bail out as we don't want to do any damage.
-                    if (spellBase.Combat.Effect == StatusTypes.OnHit || spellBase.Combat.Effect == StatusTypes.Shield)
+                    // If the entity is immune to some status, then just inform the client of such
+                    if (target.Immunities.Contains(spellBase.Combat.Effect)) {
+                        PacketSender.SendActionMsg(
+                            target, Strings.Combat.ImmuneToEffect, CustomColors.Combat.Status
+                        );
+                    } else
                     {
-                        Animate(target, aliveAnimations);
+                        // Else, apply the status
+                        new Status(
+                            target, this, spellBase, spellBase.Combat.Effect, spellBase.Combat.Duration,
+                            spellBase.Combat.TransformSprite
+                        );
 
-                        return;
+                        PacketSender.SendActionMsg(
+                            target, Strings.Combat.status[(int)spellBase.Combat.Effect], CustomColors.Combat.Status
+                        );
+
+                        //If an onhit or shield status bail out as we don't want to do any damage.
+                        if (spellBase.Combat.Effect == StatusTypes.OnHit || spellBase.Combat.Effect == StatusTypes.Shield)
+                        {
+                            Animate(target, aliveAnimations);
+
+                            return;
+                        }
                     }
                 }
             }
@@ -1578,7 +1590,13 @@ namespace Intersect.Server.Entities
             {
                 if (statBuffTime > -1)
                 {
-                    new Status(target, this, spellBase, spellBase.Combat.Effect, statBuffTime, "");
+                    if (!target.Immunities.Contains(spellBase.Combat.Effect))
+                    {
+                        new Status(target, this, spellBase, spellBase.Combat.Effect, statBuffTime, "");
+                    } else
+                    {
+                        PacketSender.SendActionMsg(target, Strings.Combat.ImmuneToEffect, CustomColors.Combat.Status);
+                    }
                 }
             }
 

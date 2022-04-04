@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -74,6 +74,9 @@ namespace Intersect.Editor.Forms.Editors
             //Send Changed items
             foreach (var item in mChanged)
             {
+                // Sort immunities to keep change checker consistent
+                item.Immunities.Sort();
+
                 PacketSender.SendSaveObject(item);
                 item.DeleteBackup();
             }
@@ -238,6 +241,17 @@ namespace Intersect.Editor.Forms.Editors
             txtSearch.Text = Strings.NpcEditor.searchplaceholder;
             lblFolder.Text = Strings.NpcEditor.folderlabel;
 
+            grpImmunities.Text = Strings.NpcEditor.ImmunitiesTitle;
+            chkKnockback.Text = Strings.NpcEditor.Immunities[StatusTypes.Knockback];
+            chkSilence.Text = Strings.NpcEditor.Immunities[StatusTypes.Silence];
+            chkStun.Text = Strings.NpcEditor.Immunities[StatusTypes.Stun];
+            chkSnare.Text = Strings.NpcEditor.Immunities[StatusTypes.Snare];
+            chkBlind.Text = Strings.NpcEditor.Immunities[StatusTypes.Blind];
+            chkTransform.Text = Strings.NpcEditor.Immunities[StatusTypes.Transform];
+            chkTaunt.Text = Strings.NpcEditor.Immunities[StatusTypes.Taunt];
+            chkSleep.Text = Strings.NpcEditor.Immunities[StatusTypes.Sleep];
+            lblTenacity.Text = Strings.NpcEditor.Tenacity;
+
             btnSave.Text = Strings.NpcEditor.save;
             btnCancel.Text = Strings.NpcEditor.cancel;
         }
@@ -352,6 +366,11 @@ namespace Intersect.Editor.Forms.Editors
                     mChanged.Add(mEditorItem);
                     mEditorItem.MakeBackup();
                 }
+
+                // Tenacity and immunities
+                nudTenacity.Value = (decimal) mEditorItem.Tenacity;
+
+                UpdateImmunities();
             }
             else
             {
@@ -578,6 +597,18 @@ namespace Intersect.Editor.Forms.Editors
             toolStripItemPaste.Enabled = mEditorItem != null && mCopiedItem != null && lstGameObjects.Focused;
             toolStripItemDelete.Enabled = mEditorItem != null && lstGameObjects.Focused;
             toolStripItemUndo.Enabled = mEditorItem != null && lstGameObjects.Focused;
+        }
+
+        private void UpdateImmunities()
+        {
+            chkKnockback.Checked = mEditorItem.Immunities.Contains(StatusTypes.Knockback);
+            chkSilence.Checked = mEditorItem.Immunities.Contains(StatusTypes.Silence);
+            chkSnare.Checked = mEditorItem.Immunities.Contains(StatusTypes.Snare);
+            chkStun.Checked = mEditorItem.Immunities.Contains(StatusTypes.Stun);
+            chkSleep.Checked = mEditorItem.Immunities.Contains(StatusTypes.Sleep);
+            chkTransform.Checked = mEditorItem.Immunities.Contains(StatusTypes.Transform);
+            chkTaunt.Checked = mEditorItem.Immunities.Contains(StatusTypes.Taunt);
+            chkBlind.Checked = mEditorItem.Immunities.Contains(StatusTypes.Blind);
         }
 
         private void form_KeyDown(object sender, KeyEventArgs e)
@@ -1016,6 +1047,63 @@ namespace Intersect.Editor.Forms.Editors
         }
 
         #endregion
+
+        private void ChangeImmunity(StatusTypes status, bool isImmune)
+        {
+            if (isImmune && !mEditorItem.Immunities.Contains(status))
+            {
+                mEditorItem.Immunities.Add(status);
+            }
+            else if (!isImmune)
+            {
+                mEditorItem.Immunities.Remove(status);
+            }
+        }
+
+        private void chkKnockback_CheckedChanged(object sender, EventArgs e)
+        {
+            ChangeImmunity(StatusTypes.Knockback, chkKnockback.Checked);
+        }
+
+        private void chkSilence_CheckedChanged(object sender, EventArgs e)
+        {
+            ChangeImmunity(StatusTypes.Silence, chkSilence.Checked);
+        }
+
+        private void chkStun_CheckedChanged(object sender, EventArgs e)
+        {
+            ChangeImmunity(StatusTypes.Stun, chkStun.Checked);
+        }
+
+        private void chkSnare_CheckedChanged(object sender, EventArgs e)
+        {
+            ChangeImmunity(StatusTypes.Snare, chkSnare.Checked);
+        }
+
+        private void chkBlind_CheckedChanged(object sender, EventArgs e)
+        {
+            ChangeImmunity(StatusTypes.Blind, chkBlind.Checked);
+        }
+
+        private void chkTransform_CheckedChanged(object sender, EventArgs e)
+        {
+            ChangeImmunity(StatusTypes.Transform, chkTransform.Checked);
+        }
+
+        private void chkSleep_CheckedChanged(object sender, EventArgs e)
+        {
+            ChangeImmunity(StatusTypes.Sleep, chkSleep.Checked);
+        }
+
+        private void chkTaunt_CheckedChanged(object sender, EventArgs e)
+        {
+            ChangeImmunity(StatusTypes.Taunt, chkTaunt.Checked);
+        }
+
+        private void nudTenacity_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.Tenacity = (double)nudTenacity.Value;
+        }
     }
 
 }

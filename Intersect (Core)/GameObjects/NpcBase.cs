@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -12,7 +12,6 @@ using Newtonsoft.Json;
 
 namespace Intersect.GameObjects
 {
-
     public class NpcBase : DatabaseObject<NpcBase>, IFolderable
     {
 
@@ -29,6 +28,20 @@ namespace Intersect.GameObjects
         [NotMapped] public int[] Stats = new int[(int) Enums.Stats.StatCount];
 
         [NotMapped] public int[] VitalRegen = new int[(int) Vitals.VitalCount];
+
+        [NotMapped]
+        public List<StatusTypes> Immunities = new List<StatusTypes>();
+
+        [JsonIgnore]
+        [Column("Immunities")]
+        public string ImmunitiesJson
+        {
+            get => JsonConvert.SerializeObject(Immunities);
+            set
+            {
+                Immunities = JsonConvert.DeserializeObject<List<StatusTypes>>(value ?? "") ?? new List<StatusTypes>();
+            }
+        }
 
         [JsonConstructor]
         public NpcBase(Guid id) : base(id)
@@ -112,6 +125,8 @@ namespace Intersect.GameObjects
         public int CritChance { get; set; }
 
         public double CritMultiplier { get; set; } = 1.5;
+
+        public double Tenacity { get; set; } = 0.0;
 
         public int AttackSpeedModifier { get; set; }
 

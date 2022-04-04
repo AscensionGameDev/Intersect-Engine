@@ -4020,6 +4020,25 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString undotitle = @"Undo Changes";
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString ImmunitiesTitle = @"Immunities";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Tenacity = @"Tenacity (%):";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static Dictionary<StatusTypes, LocalizedString> Immunities = new Dictionary<StatusTypes, LocalizedString>
+            {
+                {StatusTypes.Knockback, @"Knockback"},
+                {StatusTypes.Silence, @"Silence"},
+                {StatusTypes.Stun, @"Stun"},
+                {StatusTypes.Snare, @"Snare"},
+                {StatusTypes.Blind, @"Blind"},
+                {StatusTypes.Transform, @"Transform"},
+                {StatusTypes.Sleep, @"Sleep"},
+                {StatusTypes.Taunt, @"Taunt"},
+            };
+
         }
 
         public struct NpcSpawns

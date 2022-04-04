@@ -109,6 +109,7 @@ namespace Intersect.Server.Entities
             Sprite = myBase.Sprite;
             Color = myBase.Color;
             Level = myBase.Level;
+            Immunities = myBase.Immunities;
             Base = myBase;
             Despawnable = despawnable;
 
