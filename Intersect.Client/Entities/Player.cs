@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Collections.Generic;
 
@@ -322,39 +322,37 @@ namespace Intersect.Client.Entities
 
         public void TryDropItem(int index)
         {
-            if (ItemBase.Get(Inventory[index].ItemId) != null)
+            var slot = Inventory[index];
+            var descriptor = ItemBase.Get(slot.ItemId);
+            if (descriptor == default)
             {
-                if (Inventory[index].Quantity > 1)
-                {
-                    var iBox = new InputBox(
-                        Strings.Inventory.DropItemTitle,
-                        Strings.Inventory.DropItemPrompt.ToString(ItemBase.Get(Inventory[index].ItemId).Name), true,
-                        InputBox.InputType.NumericSliderInput, DropItemInputBoxOkay, null, index, Inventory[index].Quantity, Inventory[index].Quantity
-                    );
-                }
-                else
-                {
-                    var iBox = new InputBox(
-                        Strings.Inventory.DropItemTitle,
-                        Strings.Inventory.DropItemPrompt.ToString(ItemBase.Get(Inventory[index].ItemId).Name), true,
-                        InputBox.InputType.YesNo, DropInputBoxOkay, null, index
-                    );
-                }
+                return;
             }
+
+            var quantity = slot.Quantity;
+            var canDropMultiple = quantity > 1;
+            var inputType = canDropMultiple ? InputBox.InputType.NumericSliderInput : InputBox.InputType.YesNo;
+            var prompt = canDropMultiple ? Strings.Inventory.DropItemPrompt : Strings.Inventory.DropPrompt;
+            InputBox.Open(
+                title: Strings.Inventory.DropItemTitle,
+                prompt: prompt.ToString(descriptor.Name),
+                modal: true,
+                inputType: inputType,
+                onSuccess: DropInputBoxOkay,
+                onCancel: default,
+                userData: index,
+                quantity: quantity,
+                maxQuantity: quantity
+            );
         }
 
-        private void DropItemInputBoxOkay(object sender, EventArgs e)
+        private void DropInputBoxOkay(object sender, EventArgs e)
         {
             var value = (int)((InputBox)sender).Value;
             if (value > 0)
             {
                 PacketSender.SendDropItem((int)((InputBox)sender).UserData, value);
             }
-        }
-
-        private void DropInputBoxOkay(object sender, EventArgs e)
-        {
-            PacketSender.SendDropItem((int)((InputBox)sender).UserData, 1);
         }
 
         public int FindItem(Guid itemId, int itemVal = 1)
