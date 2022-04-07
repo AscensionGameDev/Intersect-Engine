@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Gwen.Input;
@@ -216,7 +216,9 @@ namespace Intersect.Client.Framework.Gwen.Control
 
             if (HasSelection)
             {
-                EraseSelection(false);
+                ReplaceSelection(text);
+                RefreshCursorBounds();
+                return;
             }
 
             if (mCursorPos > TextLength)
@@ -592,23 +594,39 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// </summary>
         /// <param name="startPos">Starting cursor position.</param>
         /// <param name="length">Length in characters.</param>
-        public virtual void DeleteText(int startPos, int length, bool playSound = true)
+        public virtual void DeleteText(int startPos, int length, bool playSound = true) => ReplaceText(startPos, length, string.Empty, playSound);
+
+        public virtual void ReplaceText(int startPos, int length, string replacement, bool playSound = true)
         {
             var str = Text;
             str = str.Remove(startPos, length);
+            str = str.Insert(startPos, replacement ?? string.Empty);
             SetText(str);
 
             if (mCursorPos > startPos)
             {
-                CursorPos = mCursorPos - length;
+                CursorPos = mCursorPos + (replacement?.Length ?? 0) - length;
             }
 
             CursorEnd = mCursorPos;
 
             if (length > 0 && playSound)
             {
-                base.PlaySound(mRemoveTextSound);
+                PlaySound(mRemoveTextSound);
             }
+        }
+
+        public virtual void ReplaceSelection(string replacement, bool playSound = true)
+        {
+            var start = Math.Min(mCursorPos, mCursorEnd);
+            var end = Math.Max(mCursorPos, mCursorEnd);
+
+            ReplaceText(start, end - start, replacement, playSound);
+
+            // Move the cursor to the start of the selection, 
+            // since the end is probably outside of the string now.
+            mCursorPos = start;
+            mCursorEnd = start + (replacement?.Length ?? 0);
         }
 
         /// <summary>
