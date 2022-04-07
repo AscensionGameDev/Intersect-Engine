@@ -264,6 +264,8 @@ namespace Intersect.Client.Framework.Gwen.Control
             }
         }
 
+        protected bool HasSkin => mSkin != null || (mParent?.HasSkin ?? false);
+
         /// <summary>
         ///     Current skin.
         /// </summary>

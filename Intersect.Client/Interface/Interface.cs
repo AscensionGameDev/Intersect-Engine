@@ -60,6 +60,9 @@ namespace Intersect.Client.Interface
         //Gwen Low Level Functions
         public static void InitGwen()
         {
+            // Preserve the debug window
+            MutableInterface.DetachDebugWindow();
+
             //TODO: Make it easier to modify skin.
             if (Skin == null)
             {
@@ -129,7 +132,7 @@ namespace Intersect.Client.Interface
             GwenInitialized = true;
         }
 
-        public static void DestroyGwen()
+        public static void DestroyGwen(bool exiting = false)
         {
             // Preserve the debug window
             MutableInterface.DetachDebugWindow();
@@ -148,6 +151,11 @@ namespace Intersect.Client.Interface
             }
 
             GwenInitialized = false;
+
+            if (exiting)
+            {
+                MutableInterface.DisposeDebugWindow();
+            }
         }
 
         public static bool HasInputFocus()

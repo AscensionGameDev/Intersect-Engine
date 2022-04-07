@@ -82,12 +82,12 @@ namespace Intersect.Client.Interface.Debugging
 
         public override void Dispose()
         {
-            base.Dispose();
-
             foreach (var disposable in _disposables)
             {
                 disposable?.Dispose();
             }
+
+            base.Dispose();
         }
 
         private LabeledCheckBox CreateCheckboxDrawDebugOutlines()
@@ -230,7 +230,21 @@ namespace Intersect.Client.Interface.Debugging
             table.AddRow(Strings.Debug.Time).Listen(timeProvider, 1);
             _disposables.Add(timeProvider.Generator.Start());
 
-            var interfaceObjectsProvider = new ValueTableCellDataProvider<int>((cancellationToken) => Interface.CurrentInterface?.Children.ToArray().SelectManyRecursive(x => x.Children, cancellationToken).ToArray().Length ?? 0);
+            var interfaceObjectsProvider = new ValueTableCellDataProvider<int>((cancellationToken) =>
+            {
+                try
+                {
+                    return Interface.CurrentInterface?.Children.ToArray().SelectManyRecursive(x => x.Children, cancellationToken).ToArray().Length ?? 0;
+                }
+                catch (ObjectDisposedException)
+                {
+                    throw;
+                }
+                catch (InvalidOperationException)
+                {
+                    return 0;
+                }
+            });
             table.AddRow(Strings.Debug.InterfaceObjects).Listen(interfaceObjectsProvider, 1);
             _disposables.Add(interfaceObjectsProvider.Generator.Start());
 
