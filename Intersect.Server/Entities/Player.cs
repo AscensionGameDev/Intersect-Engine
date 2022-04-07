@@ -2730,31 +2730,29 @@ namespace Intersect.Server.Entities
                 return false;
             }
 
-            if (MapController.TryGetInstanceFromMap(MapId, MapInstanceId, out var mapInstance))
+            if (!MapController.TryGetInstanceFromMap(MapId, MapInstanceId, out var mapInstance))
             {
-                mapInstance.SpawnItem(X, Y, itemInSlot, itemDescriptor.IsStackable ? amount : 1, Id);
-
-                itemInSlot.Quantity = Math.Max(0, itemInSlot.Quantity - amount);
-
-                if (itemInSlot.Quantity == 0)
-                {
-                    itemInSlot.Set(Item.None);
-                    EquipmentProcessItemLoss(slotIndex);
-                }
-
-                UpdateGatherItemQuests(itemDescriptor.Id);
-                return true;
-            } else
-            {
-                if (Map != null)
-                {
-                    Log.Error($"Could not find map instance {MapInstanceId} for player '{Name}' on map {Map.Name}.");
-                } else
-                {
-                    Log.Error($"Could not find map {MapId} for player '{Name}'.");
-                }
+                Log.Error(
+                    Map == default
+                        ? $"Could not find map {MapId} for player '{Name}'."
+                        : $"Could not find map instance {MapInstanceId} for player '{Name}' on map {Map.Name}."
+                );
                 return false;
             }
+
+            mapInstance.SpawnItem(X, Y, itemInSlot, itemDescriptor.IsStackable ? amount : 1, Id);
+
+            itemInSlot.Quantity = Math.Max(0, itemInSlot.Quantity - amount);
+
+            if (itemInSlot.Quantity == 0)
+            {
+                itemInSlot.Set(Item.None);
+                EquipmentProcessItemLoss(slotIndex);
+            }
+
+            StartCommonEventsWithTrigger(CommonEventTrigger.InventoryChanged);
+            UpdateGatherItemQuests(itemDescriptor.Id);
+            PacketSender.SendInventoryItemUpdate(this, slotIndex);
             return true;
         }
 

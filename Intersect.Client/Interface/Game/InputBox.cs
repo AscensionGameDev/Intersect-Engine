@@ -13,6 +13,31 @@ namespace Intersect.Client.Interface.Game
 
     public class InputBox : Base
     {
+        public static void Open(
+            string title,
+            string prompt,
+            bool modal,
+            InputType inputType,
+            EventHandler onSuccess,
+            EventHandler onCancel,
+            object userData,
+            int quantity = 0,
+            int maxQuantity = int.MaxValue,
+            Base parent = null,
+            GameContentManager.UI stage = GameContentManager.UI.InGame
+        ) => new InputBox(
+            title: title,
+            prompt: prompt,
+            modal: modal,
+            inputType: inputType,
+            onSuccess: onSuccess,
+            onCancel: onCancel,
+            userData: userData,
+            quantity: quantity,
+            maxQuantity: maxQuantity,
+            parent: parent,
+            stage: stage
+        );
 
         public enum InputType
         {
@@ -61,21 +86,21 @@ namespace Intersect.Client.Interface.Game
 
         private Button mYesButton;
 
-        public string TextValue;
+        public string TextValue { get; set; }
 
-        public object UserData;
+        public object UserData { get; set; }
 
-        public double Value;
+        public double Value { get; set; }
 
-        public new string Name = "InputBox";
+        public new string Name { get; set; } = "InputBox";
 
         public InputBox(
             string title,
             string prompt,
             bool modal,
-            InputType inputtype,
-            EventHandler okayYesSubmitClicked,
-            EventHandler cancelClicked,
+            InputType inputType,
+            EventHandler onSuccess,
+            EventHandler onCancel,
             object userData,
             int quantity = 0,
             int maxQuantity = Int32.MaxValue,
@@ -88,10 +113,10 @@ namespace Intersect.Client.Interface.Game
                 parent = Interface.GameUi.GameCanvas;
             }
 
-            OkayEventHandler = okayYesSubmitClicked;
-            CancelEventHandler = cancelClicked;
-            this.UserData = userData;
-            mInputType = inputtype;
+            OkayEventHandler = onSuccess;
+            CancelEventHandler = onCancel;
+            UserData = userData;
+            mInputType = inputType;
             _uiStage = stage;
             mPrompt = prompt;
 
@@ -120,33 +145,33 @@ namespace Intersect.Client.Interface.Game
             mNumericSliderTextbox.TextChanged += MNumericSliderTextbox_TextChanged;
             mNumericSliderTextbox.SubmitPressed += MNumericSliderTextbox_SubmitPressed;
 
-            if (inputtype == InputType.NumericInput)
+            if (inputType == InputType.NumericInput)
             {
                 mNumericTextbox.Focus();
             }
 
-            if (inputtype == InputType.TextInput)
+            if (inputType == InputType.TextInput)
             {
                 mTextbox.Focus();
             }
 
-            if (inputtype != InputType.NumericInput)
+            if (inputType != InputType.NumericInput)
             {
                 mNumericTextboxBg.IsHidden = true;
             }
 
-            if (inputtype == InputType.NumericSliderInput)
+            if (inputType == InputType.NumericSliderInput)
             {
                 mNumericSliderTextbox.Focus();
             }
 
-            if (inputtype != InputType.NumericSliderInput)
+            if (inputType != InputType.NumericSliderInput)
             {
                 mNumericSliderboxBg.Hide();
             }
 
 
-            if (inputtype != InputType.TextInput)
+            if (inputType != InputType.TextInput)
             {
                 mTextboxBg.IsHidden = true;
             }
@@ -165,6 +190,8 @@ namespace Intersect.Client.Interface.Game
 
             mPromptLabel = new Label(mMyWindow, "PromptLabel");
             Interface.InputBlockingElements.Add(this);
+
+            Value = quantity;
         }
 
         private void MNumericSliderTextbox_TextChanged(Base sender, EventArgs arguments)
