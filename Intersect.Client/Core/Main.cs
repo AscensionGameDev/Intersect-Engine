@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -60,7 +60,7 @@ namespace Intersect.Client.Core
             //Destroy Game
             //TODO - Destroy Graphics and Networking peacefully
             //Network.Close();
-            Interface.Interface.DestroyGwen();
+            Interface.Interface.DestroyGwen(true);
             Graphics.Renderer.Close();
         }
 

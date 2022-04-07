@@ -22,6 +22,8 @@ namespace Intersect.Client.Interface
             }
         }
 
+        internal static void DisposeDebugWindow() => _debugWindow?.Dispose();
+
         private static void EnsureDebugWindowInitialized(Base parent)
         {
             if (_debugWindow == default)

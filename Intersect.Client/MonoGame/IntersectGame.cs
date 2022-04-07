@@ -1,4 +1,4 @@
-﻿using Intersect.Client.Core;
+using Intersect.Client.Core;
 using Intersect.Client.Core.Controls;
 using Intersect.Client.Framework.Gwen.Input;
 using Intersect.Client.Framework.Gwen.Renderer;
@@ -236,6 +236,7 @@ namespace Intersect.Client.MonoGame
                 }
                 else
                 {
+                    Main.DestroyGame();
                     Exit();
                 }
             }

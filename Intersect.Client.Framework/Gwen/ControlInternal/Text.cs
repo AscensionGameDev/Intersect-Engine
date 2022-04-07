@@ -170,7 +170,7 @@ namespace Intersect.Client.Framework.Gwen.ControlInternal
         /// </summary>
         public void SizeToContents()
         {
-            if (String == null || Font == null || Root == null)
+            if (String == null || Font == null || Root == null || !HasSkin)
             {
                 return;
             }
