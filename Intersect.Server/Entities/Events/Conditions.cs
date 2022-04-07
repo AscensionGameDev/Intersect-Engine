@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -437,6 +437,24 @@ namespace Intersect.Server.Entities.Events
                     {
                         return true;
                     }
+                }
+            }
+
+            return false;
+        }
+
+        public static bool MeetsCondition(
+            CheckEquippedSlot condition,
+            Player player,
+            Event eventInstance,
+            QuestBase questBase
+        )
+        {
+            for (var i = 0; i < Options.EquipmentSlots.Count; i++)
+            {
+                if (player.Equipment[condition.SlotIndex] >= 0)
+                {
+                    return true;
                 }
             }
 

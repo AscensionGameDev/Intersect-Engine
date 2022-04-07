@@ -301,6 +301,11 @@ namespace Intersect.Editor.Localization
             return Strings.EventConditionDesc.MapZoneTypeIs.ToString(Strings.MapProperties.zones[(int)condition.ZoneType]);
         }
 
+        public static string GetEventConditionalDesc(CheckEquippedSlot condition)
+        {
+            return Strings.EventConditionDesc.checkequippedslot.ToString(condition.SlotName);
+        }
+
         public static string GetVariableComparisonString(VariableCompaison comparison)
         {
             return "";
@@ -2042,6 +2047,10 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString canstartquest = @"Can Start Quest";
 
+            public static LocalizedString checkequippedslotlbl = @"Slot";
+
+            public static LocalizedString checkequippedslotgrp = @"Check Item Slot:";
+
             public static LocalizedString Class = @"Class:";
 
             public static LocalizedString classis = @"Class Is";
@@ -2085,7 +2094,8 @@ Tick timer saved in server config.json.";
                 {17, @"Item Equipped is..."},
                 {18, @"Has X free Inventory slots..." },
                 {19, @"In Guild With At Least Rank..." },
-                {20, @"Map Zone Type is..." }
+                {20, @"Map Zone Type is..." },
+                {21, @"Check Equipped Slot... " }
             };
 
             public static LocalizedString endrange = @"End Range:";
@@ -2247,6 +2257,8 @@ Tick timer saved in server config.json.";
             public static LocalizedString aftertask = @", After Task: {00}";
 
             public static LocalizedString beforetask = @", Before Task: {00}";
+
+            public static LocalizedString checkequippedslot = @"Player has slot {00} occupied";
 
             public static LocalizedString Class = @"Player's class is {00}";
 

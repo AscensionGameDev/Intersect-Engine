@@ -142,6 +142,9 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.grpEquippedItem = new DarkUI.Controls.DarkGroupBox();
             this.cmbEquippedItem = new DarkUI.Controls.DarkComboBox();
             this.lblEquippedItem = new System.Windows.Forms.Label();
+            this.grpCheckEquippedSlot = new DarkUI.Controls.DarkGroupBox();
+            this.cmbCheckEquippedSlot = new DarkUI.Controls.DarkComboBox();
+            this.lblCheckEquippedSlot = new System.Windows.Forms.Label();
             this.grpConditional.SuspendLayout();
             this.grpInventoryConditions.SuspendLayout();
             this.grpVariableAmount.SuspendLayout();
@@ -169,6 +172,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.grpMapIs.SuspendLayout();
             this.grpGender.SuspendLayout();
             this.grpEquippedItem.SuspendLayout();
+            this.grpCheckEquippedSlot.SuspendLayout();
             this.SuspendLayout();
             // 
             // grpConditional
@@ -197,6 +201,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.grpConditional.Controls.Add(this.grpMapIs);
             this.grpConditional.Controls.Add(this.grpGender);
             this.grpConditional.Controls.Add(this.grpEquippedItem);
+            this.grpConditional.Controls.Add(this.grpCheckEquippedSlot);
             this.grpConditional.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpConditional.Location = new System.Drawing.Point(3, 3);
             this.grpConditional.Name = "grpConditional";
@@ -1068,7 +1073,8 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             "Gender is...",
             "Item Equipped Is...",
             "Has X free Inventory slots...",
-            "In Guild With At Least Rank..."});
+            "In Guild With At Least Rank...",
+            "Check Equipped Slot..."});
             this.cmbConditionType.Location = new System.Drawing.Point(88, 13);
             this.cmbConditionType.Name = "cmbConditionType";
             this.cmbConditionType.Size = new System.Drawing.Size(183, 21);
@@ -1810,6 +1816,49 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.lblEquippedItem.TabIndex = 2;
             this.lblEquippedItem.Text = "Item:";
             // 
+            // grpCheckEquippedSlot
+            // 
+            this.grpCheckEquippedSlot.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
+            this.grpCheckEquippedSlot.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpCheckEquippedSlot.Controls.Add(this.cmbCheckEquippedSlot);
+            this.grpCheckEquippedSlot.Controls.Add(this.lblCheckEquippedSlot);
+            this.grpCheckEquippedSlot.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpCheckEquippedSlot.Location = new System.Drawing.Point(9, 40);
+            this.grpCheckEquippedSlot.Name = "grpCheckEquippedSlot";
+            this.grpCheckEquippedSlot.Size = new System.Drawing.Size(262, 58);
+            this.grpCheckEquippedSlot.TabIndex = 27;
+            this.grpCheckEquippedSlot.TabStop = false;
+            this.grpCheckEquippedSlot.Text = "Check Equipped Slot:";
+            // 
+            // cmbCheckEquippedSlot
+            // 
+            this.cmbCheckEquippedSlot.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.cmbCheckEquippedSlot.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbCheckEquippedSlot.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbCheckEquippedSlot.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbCheckEquippedSlot.DrawDropdownHoverOutline = false;
+            this.cmbCheckEquippedSlot.DrawFocusRectangle = false;
+            this.cmbCheckEquippedSlot.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cmbCheckEquippedSlot.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbCheckEquippedSlot.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbCheckEquippedSlot.ForeColor = System.Drawing.Color.Gainsboro;
+            this.cmbCheckEquippedSlot.FormattingEnabled = true;
+            this.cmbCheckEquippedSlot.Location = new System.Drawing.Point(105, 27);
+            this.cmbCheckEquippedSlot.Name = "cmbCheckEquippedSlot";
+            this.cmbCheckEquippedSlot.Size = new System.Drawing.Size(150, 21);
+            this.cmbCheckEquippedSlot.TabIndex = 3;
+            this.cmbCheckEquippedSlot.Text = null;
+            this.cmbCheckEquippedSlot.TextPadding = new System.Windows.Forms.Padding(2);
+            // 
+            // lblCheckEquippedSlot
+            // 
+            this.lblCheckEquippedSlot.AutoSize = true;
+            this.lblCheckEquippedSlot.Location = new System.Drawing.Point(6, 30);
+            this.lblCheckEquippedSlot.Name = "lblCheckEquippedSlot";
+            this.lblCheckEquippedSlot.Size = new System.Drawing.Size(28, 13);
+            this.lblCheckEquippedSlot.TabIndex = 2;
+            this.lblCheckEquippedSlot.Text = "Slot:";
+            // 
             // EventCommandConditionalBranch
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1868,6 +1917,8 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.grpGender.PerformLayout();
             this.grpEquippedItem.ResumeLayout(false);
             this.grpEquippedItem.PerformLayout();
+            this.grpCheckEquippedSlot.ResumeLayout(false);
+            this.grpCheckEquippedSlot.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -1986,5 +2037,8 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         private System.Windows.Forms.Label lblMapZoneType;
         private DarkComboBox cmbMapZoneType;
         private DarkCheckBox chkBank;
+        private DarkGroupBox grpCheckEquippedSlot;
+        private DarkComboBox cmbCheckEquippedSlot;
+        private System.Windows.Forms.Label lblCheckEquippedSlot;
     }
 }

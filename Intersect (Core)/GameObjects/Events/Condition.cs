@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 using Intersect.Enums;
 
@@ -43,6 +43,8 @@ namespace Intersect.GameObjects.Events
         InGuildWithRank,
 
         MapZoneTypeIs,
+
+        CheckEquippedSlot
 
     }
 
@@ -331,6 +333,17 @@ namespace Intersect.GameObjects.Events
         public StringVariableComparators Comparator { get; set; } = StringVariableComparators.Equal;
 
         public string Value { get; set; }
+
+    }
+
+    public class CheckEquippedSlot : Condition
+    {
+
+        public override ConditionTypes Type { get; } = ConditionTypes.CheckEquippedSlot;
+
+        public int SlotIndex { get; set; }
+
+        public string SlotName { get; set; }
 
     }
 
