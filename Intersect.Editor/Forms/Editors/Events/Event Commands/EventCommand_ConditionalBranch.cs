@@ -253,8 +253,8 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             chkBank.Text = Strings.EventConditional.CheckBank;
 
             //Check Equipped Slot
-            grpCheckEquippedSlot.Text = Strings.EventConditional.checkequippedslotgrp;
-            lblCheckEquippedSlot.Text = Strings.EventConditional.checkequippedslotlbl;
+            grpCheckEquippedSlot.Text = Strings.EventConditional.checkequipment;
+            lblCheckEquippedSlot.Text = Strings.EventConditional.equipmentslot;
 
             btnSave.Text = Strings.EventConditional.okay;
             btnCancel.Text = Strings.EventConditional.cancel;
@@ -388,7 +388,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                     }
 
                     break;
-                case ConditionTypes.CheckEquippedSlot:
+                case ConditionTypes.CheckEquipment:
                     Condition = new CheckEquippedSlot();
                     if (cmbCheckEquippedSlot.Items.Count > 0)
                     {
@@ -541,7 +541,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                     grpMapZoneType.Show();
 
                     break;
-                case ConditionTypes.CheckEquippedSlot:
+                case ConditionTypes.CheckEquipment:
                     grpCheckEquippedSlot.Show();
                     cmbCheckEquippedSlot.Items.Clear();
                     foreach (var slot in Options.EquipmentSlots)
@@ -1295,7 +1295,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 
         private void SetupFormValues(CheckEquippedSlot condition)
         {
-            cmbCheckEquippedSlot.SelectedIndex = condition.SlotIndex;
+            cmbCheckEquippedSlot.SelectedIndex = Options.EquipmentSlots.IndexOf(condition.Name);
         }
 
 
@@ -1487,8 +1487,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 
         private void SaveFormValues(CheckEquippedSlot condition)
         {
-            condition.SlotIndex = cmbCheckEquippedSlot.SelectedIndex;
-            condition.SlotName = Options.EquipmentSlots[cmbCheckEquippedSlot.SelectedIndex];
+            condition.Name = Options.EquipmentSlots[cmbCheckEquippedSlot.SelectedIndex];
         }
 
         #endregion

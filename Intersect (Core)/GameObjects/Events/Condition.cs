@@ -44,7 +44,7 @@ namespace Intersect.GameObjects.Events
 
         MapZoneTypeIs,
 
-        CheckEquippedSlot
+        CheckEquipment
 
     }
 
@@ -339,11 +339,9 @@ namespace Intersect.GameObjects.Events
     public class CheckEquippedSlot : Condition
     {
 
-        public override ConditionTypes Type { get; } = ConditionTypes.CheckEquippedSlot;
+        public override ConditionTypes Type { get; } = ConditionTypes.CheckEquipment;
 
-        public int SlotIndex { get; set; }
-
-        public string SlotName { get; set; }
+        public string Name { get; set; }
 
     }
 

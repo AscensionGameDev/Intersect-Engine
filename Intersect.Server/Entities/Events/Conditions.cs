@@ -450,15 +450,8 @@ namespace Intersect.Server.Entities.Events
             QuestBase questBase
         )
         {
-            for (var i = 0; i < Options.EquipmentSlots.Count; i++)
-            {
-                if (player.Equipment[condition.SlotIndex] >= 0)
-                {
-                    return true;
-                }
-            }
-
-            return false;
+            var equipmentIndex = Options.EquipmentSlots.IndexOf(condition.Name);
+            return player.Equipment[equipmentIndex] >= 0;
         }
 
         public static bool MeetsCondition(
