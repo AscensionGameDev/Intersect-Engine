@@ -253,8 +253,8 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             chkBank.Text = Strings.EventConditional.CheckBank;
 
             //Check Equipped Slot
-            grpCheckEquippedSlot.Text = Strings.EventConditional.checkequipment;
-            lblCheckEquippedSlot.Text = Strings.EventConditional.equipmentslot;
+            grpCheckEquippedSlot.Text = Strings.EventConditional.CheckEquipment;
+            lblCheckEquippedSlot.Text = Strings.EventConditional.EquipmentSlot;
 
             btnSave.Text = Strings.EventConditional.okay;
             btnCancel.Text = Strings.EventConditional.cancel;

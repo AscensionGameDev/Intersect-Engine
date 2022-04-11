@@ -44,7 +44,7 @@ namespace Intersect.GameObjects.Events
 
         MapZoneTypeIs,
 
-        CheckEquipment
+        CheckEquipment,
 
     }
 

@@ -2047,9 +2047,9 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString canstartquest = @"Can Start Quest";
 
-            public static LocalizedString equipmentslot = @"Slot";
+            public static LocalizedString EquipmentSlot = @"Slot";
 
-            public static LocalizedString checkequipment = @"Check Equipment";
+            public static LocalizedString CheckEquipment = @"Check Equipment";
 
             public static LocalizedString Class = @"Class:";
 
