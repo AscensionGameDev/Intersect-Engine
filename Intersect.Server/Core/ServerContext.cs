@@ -76,6 +76,7 @@ namespace Intersect.Server.Core
             catch (Exception exception)
             {
                 Log.Error(exception);
+                Environment.ExitCode = 1;
                 Dispose();
 
                 throw;
@@ -184,7 +185,7 @@ namespace Intersect.Server.Core
             base.Dispose(disposing);
             Log.Info("Finished disposing server context." + $" ({stopwatch.ElapsedMilliseconds}ms)");
             Console.WriteLine(Strings.Commands.exited);
-            System.Environment.Exit(-1);
+            Environment.Exit(Environment.ExitCode);
         }
 
         #endregion

@@ -57,6 +57,8 @@ namespace Intersect.Core
             PacketHelper = packetHelper;
 
             ConcurrentInstance.Set(This);
+
+            Environment.ExitCode = 0;
         }
 
         ICommandLineOptions IApplicationContext.StartupOptions => StartupOptions;
@@ -373,6 +375,10 @@ namespace Intersect.Core
         private void SafeAbort(bool hasErrors)
         {
             HasErrors |= hasErrors;
+            if (Environment.ExitCode == 0)
+            {
+                Environment.ExitCode = HasErrors ? 1 : 0;
+            }
 
             // Dispose before waiting, under no circumstances do we want the application to continue.
             if (!IsDisposed)
