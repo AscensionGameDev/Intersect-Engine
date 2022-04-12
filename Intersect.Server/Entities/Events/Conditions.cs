@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -441,6 +441,17 @@ namespace Intersect.Server.Entities.Events
             }
 
             return false;
+        }
+
+        public static bool MeetsCondition(
+            CheckEquippedSlot condition,
+            Player player,
+            Event eventInstance,
+            QuestBase questBase
+        )
+        {
+            var equipmentIndex = Options.EquipmentSlots.IndexOf(condition.Name);
+            return player.Equipment[equipmentIndex] >= 0;
         }
 
         public static bool MeetsCondition(
