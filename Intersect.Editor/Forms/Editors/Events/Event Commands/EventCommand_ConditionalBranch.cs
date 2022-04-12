@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -252,6 +252,10 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 
             chkBank.Text = Strings.EventConditional.CheckBank;
 
+            //Check Equipped Slot
+            grpCheckEquippedSlot.Text = Strings.EventConditional.CheckEquipment;
+            lblCheckEquippedSlot.Text = Strings.EventConditional.EquipmentSlot;
+
             btnSave.Text = Strings.EventConditional.okay;
             btnCancel.Text = Strings.EventConditional.cancel;
         }
@@ -384,6 +388,14 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                     }
 
                     break;
+                case ConditionTypes.CheckEquipment:
+                    Condition = new CheckEquippedSlot();
+                    if (cmbCheckEquippedSlot.Items.Count > 0)
+                    {
+                        cmbCheckEquippedSlot.SelectedIndex = 0;
+                    }
+
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -407,6 +419,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             grpEquippedItem.Hide();
             grpInGuild.Hide();
             grpMapZoneType.Hide();
+            grpCheckEquippedSlot.Hide();
             switch (type)
             {
                 case ConditionTypes.VariableIs:
@@ -526,6 +539,15 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                     break;
                 case ConditionTypes.MapZoneTypeIs:
                     grpMapZoneType.Show();
+
+                    break;
+                case ConditionTypes.CheckEquipment:
+                    grpCheckEquippedSlot.Show();
+                    cmbCheckEquippedSlot.Items.Clear();
+                    foreach (var slot in Options.EquipmentSlots)
+                    {
+                        cmbCheckEquippedSlot.Items.Add(slot);
+                    }
 
                     break;
                 default:
@@ -1271,6 +1293,11 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             }
         }
 
+        private void SetupFormValues(CheckEquippedSlot condition)
+        {
+            cmbCheckEquippedSlot.SelectedIndex = Options.EquipmentSlots.IndexOf(condition.Name);
+        }
+
 
         #endregion
 
@@ -1456,6 +1483,11 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             {
                 condition.ZoneType = (MapZones)cmbMapZoneType.SelectedIndex;
             }
+        }
+
+        private void SaveFormValues(CheckEquippedSlot condition)
+        {
+            condition.Name = Options.EquipmentSlots[cmbCheckEquippedSlot.SelectedIndex];
         }
 
         #endregion
