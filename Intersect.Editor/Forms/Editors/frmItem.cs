@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -269,6 +269,11 @@ namespace Intersect.Editor.Forms.Editors
                 cmbAttackSpeedModifier.Items.Add(val.ToString());
             }
 
+            grpShieldProperties.Text = Strings.ItemEditor.ShieldProperties;
+            lblBlockChance.Text = Strings.ItemEditor.BlockChance;
+            lblBlockAmount.Text = Strings.ItemEditor.BlockAmount;
+            lblBlockDmgAbs.Text = Strings.ItemEditor.BlockAbsorption;
+
             lblMalePaperdoll.Text = Strings.ItemEditor.malepaperdoll;
             lblFemalePaperdoll.Text = Strings.ItemEditor.femalepaperdoll;
 
@@ -364,6 +369,9 @@ namespace Intersect.Editor.Forms.Editors
                 nudDeathDropChance.Value = mEditorItem.DropChanceOnDeath;
                 cmbToolType.SelectedIndex = mEditorItem.Tool + 1;
                 cmbAttackAnimation.SelectedIndex = AnimationBase.ListIndex(mEditorItem.AttackAnimationId) + 1;
+                nudBlockChance.Value = mEditorItem.BlockChance;
+                nudBlockAmount.Value = mEditorItem.BlockAmount;
+                nudBlockDmgAbs.Value = mEditorItem.BlockAbsorption;
                 RefreshExtendedData();
                 if (mEditorItem.ItemType == ItemTypes.Equipment)
                 {
@@ -566,11 +574,18 @@ namespace Intersect.Editor.Forms.Editors
             mEditorItem.EquipmentSlot = cmbEquipmentSlot.SelectedIndex;
             if (cmbEquipmentSlot.SelectedIndex == Options.WeaponIndex)
             {
+                grpShieldProperties.Hide();
                 grpWeaponProperties.Show();
+            }
+            else if (cmbEquipmentSlot.SelectedIndex == Options.ShieldIndex)
+            {
+                grpWeaponProperties.Hide();
+                grpShieldProperties.Show();
             }
             else
             {
                 grpWeaponProperties.Hide();
+                grpShieldProperties.Hide();
 
                 mEditorItem.Projectile = null;
                 mEditorItem.Tool = -1;
@@ -1030,6 +1045,21 @@ namespace Intersect.Editor.Forms.Editors
             DrawItemPaperdoll(Gender.Female);
         }
 
+        private void nudBlockChance_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.BlockChance = (int)nudBlockChance.Value;
+        }
+
+        private void nudBlockAmount_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.BlockAmount = (int)nudBlockAmount.Value;
+        }
+
+        private void nudBlockDmgAbs_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.BlockAbsorption = (int)nudBlockDmgAbs.Value;
+        }
+
         /// <summary>
         /// Draw the item Icon to the form.
         /// </summary>
@@ -1261,6 +1291,7 @@ namespace Intersect.Editor.Forms.Editors
 
 
         #endregion
+
     }
 
 }

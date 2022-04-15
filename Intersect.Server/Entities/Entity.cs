@@ -1753,6 +1753,35 @@ namespace Intersect.Server.Entities
             );
             }
 
+            //Check on each attack if the enemy is a player AND if he is blocking.
+            if (enemy is Player player && player.Blocking)
+            {
+                //Getting the ID and Item the player is currently using.
+                var itemId = player.Items[player.Equipment[Options.ShieldIndex]].ItemId;
+                var item = ItemBase.Get(itemId);
+
+                if (item != null)
+                {
+                    int blockChance = item.BlockChance;
+                    double blockAmount = item.BlockAmount / 100.0;
+
+                    //Generate a new attempt to block
+                    if (Randomization.Next(1, 101) < blockChance)
+                    {
+                        if (blockAmount < 100)
+                        {
+                            baseDamage -= (int)Math.Round(baseDamage * blockAmount);
+                        }
+                        else
+                        {
+                            baseDamage = 0;
+                        }
+
+                        PacketSender.SendActionMsg(enemy, Strings.Combat.blocked, CustomColors.Combat.Blocked);
+                    }
+                }
+            }
+
             //Calculate Damages
             if (baseDamage != 0)
             {

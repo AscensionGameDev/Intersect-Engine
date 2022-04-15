@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 
@@ -235,6 +235,21 @@ namespace Intersect.GameObjects
         public int StatGrowth { get; set; }
 
         public int Tool { get; set; } = -1;
+
+        /// <summary>
+        /// Defines the player's chance of successfully defending a hit.
+        /// </summary>
+        public int BlockChance { get; set; }
+
+        /// <summary>
+        /// Sets the damage absorption percentage when successfully defending a hit.
+        /// </summary>
+        public int BlockAmount { get; set; }
+
+        /// <summary>
+        /// Sets the amount of damage absorption to increase the defender's health
+        /// </summary>
+        public int BlockAbsorption { get; set; }
 
         [Column("VitalsGiven")]
         [JsonIgnore]
