@@ -34,6 +34,7 @@ namespace Intersect.Editor.Forms.Editors
         {
             ApplyHooks();
             InitializeComponent();
+            Icon = System.Drawing.Icon.ExtractAssociatedIcon(System.Reflection.Assembly.GetExecutingAssembly().Location);
 
             cmbWarpMap.Items.Clear();
             for (var i = 0; i < MapList.OrderedMaps.Count; i++)
@@ -842,7 +843,7 @@ namespace Intersect.Editor.Forms.Editors
             {
                 if (DarkMessageBox.ShowWarning(
                         Strings.ClassEditor.deleteprompt, Strings.ClassEditor.deletetitle, DarkDialogButton.YesNo,
-                        Properties.Resources.Icon
+                        Icon
                     ) ==
                     DialogResult.Yes)
                 {
@@ -875,7 +876,7 @@ namespace Intersect.Editor.Forms.Editors
             {
                 if (DarkMessageBox.ShowWarning(
                         Strings.ClassEditor.undoprompt, Strings.ClassEditor.undotitle, DarkDialogButton.YesNo,
-                        Properties.Resources.Icon
+                        Icon
                     ) ==
                     DialogResult.Yes)
                 {
@@ -1348,7 +1349,7 @@ namespace Intersect.Editor.Forms.Editors
                                         iFail++;
                                     }
 
-                                    //only traps a fail if the data has changed 
+                                    //only traps a fail if the data has changed
                                     //and you are pasting into a read only cell
                                 }
                             }

@@ -31,6 +31,7 @@ namespace Intersect.Editor.Forms.Editors
         {
             ApplyHooks();
             InitializeComponent();
+            Icon = System.Drawing.Icon.ExtractAssociatedIcon(System.Reflection.Assembly.GetExecutingAssembly().Location);
 
             lstGameObjects.Init(UpdateToolStripItems, AssignEditorItem, toolStripItemNew_Click, toolStripItemCopy_Click, toolStripItemUndo_Click, toolStripItemPaste_Click, toolStripItemDelete_Click);
         }
@@ -123,7 +124,7 @@ namespace Intersect.Editor.Forms.Editors
             {
                 if (DarkMessageBox.ShowWarning(
                         Strings.CraftingTableEditor.deleteprompt, Strings.CraftingTableEditor.delete,
-                        DarkDialogButton.YesNo, Properties.Resources.Icon
+                        DarkDialogButton.YesNo, Icon
                     ) ==
                     DialogResult.Yes)
                 {
@@ -156,7 +157,7 @@ namespace Intersect.Editor.Forms.Editors
             {
                 if (DarkMessageBox.ShowWarning(
                         Strings.CraftingTableEditor.undoprompt, Strings.CraftingTableEditor.undotitle,
-                        DarkDialogButton.YesNo, Properties.Resources.Icon
+                        DarkDialogButton.YesNo, Icon
                     ) ==
                     DialogResult.Yes)
                 {

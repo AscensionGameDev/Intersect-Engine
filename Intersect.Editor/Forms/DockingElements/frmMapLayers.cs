@@ -56,13 +56,13 @@ namespace Intersect.Editor.Forms.DockingElements
         public FrmMapLayers()
         {
             InitializeComponent();
+            Icon = System.Drawing.Icon.ExtractAssociatedIcon(System.Reflection.Assembly.GetExecutingAssembly().Location);
+
             mMapLayers.Add(picLayer1);
             mMapLayers.Add(picLayer2);
             mMapLayers.Add(picLayer3);
             mMapLayers.Add(picLayer4);
             mMapLayers.Add(picLayer5);
-
-            this.Icon = Properties.Resources.Icon;
         }
 
         public void Init()
@@ -622,7 +622,7 @@ namespace Intersect.Editor.Forms.DockingElements
                 {
                     return MapAttributes.Blocked;
                 }
-                
+
                 if (rbItem.Checked)
                 {
                     return MapAttributes.Item;
@@ -1318,7 +1318,7 @@ namespace Intersect.Editor.Forms.DockingElements
                 LayerVisibility[Options.Instance.MapOpts.Layers.All[index]] = !LayerVisibility[Options.Instance.MapOpts.Layers.All[index]];
                 SetLayer(Globals.CurrentLayer);
             }
-            
+
         }
 
         private void picMapLayer_MouseHover(object sender, EventArgs e)

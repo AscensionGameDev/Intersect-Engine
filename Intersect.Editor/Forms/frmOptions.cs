@@ -12,10 +12,10 @@ namespace Intersect.Editor.Forms
         public FrmOptions()
         {
             InitializeComponent();
+            Icon = System.Drawing.Icon.ExtractAssociatedIcon(System.Reflection.Assembly.GetExecutingAssembly().Location);
+
             InitForm();
             InitLocalization();
-
-            this.Icon = Properties.Resources.Icon;
         }
 
         private void InitForm()

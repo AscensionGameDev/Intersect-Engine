@@ -509,7 +509,7 @@ namespace Intersect.Editor.Forms.Editors.Events
             {
                 DarkMessageBox.ShowWarning(
                     Strings.EventCommandList.notcommon, Strings.EventCommandList.notcommoncaption, DarkDialogButton.Ok,
-                    Properties.Resources.Icon
+                    Icon
                 );
 
                 EnableButtons();
@@ -789,9 +789,9 @@ namespace Intersect.Editor.Forms.Editors.Events
         public FrmEvent(MapBase currentMap)
         {
             InitializeComponent();
+            Icon = System.Drawing.Icon.ExtractAssociatedIcon(System.Reflection.Assembly.GetExecutingAssembly().Location);
+
             mCurrentMap = currentMap;
-			
-			this.Icon = Properties.Resources.Icon;
         }
 
         private void frmEvent_Load(object sender, EventArgs e)
@@ -821,7 +821,7 @@ namespace Intersect.Editor.Forms.Editors.Events
 
             if (DarkMessageBox.ShowWarning(
                     Strings.EventEditor.savedialogue, Strings.EventEditor.savecaption, DarkDialogButton.YesNo,
-                    Properties.Resources.Icon
+                    Icon
                 ) ==
                 DialogResult.Yes)
             {

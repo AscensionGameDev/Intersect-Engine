@@ -38,6 +38,8 @@ namespace Intersect.Editor.Forms.Editors
         {
             ApplyHooks();
             InitializeComponent();
+            Icon = System.Drawing.Icon.ExtractAssociatedIcon(System.Reflection.Assembly.GetExecutingAssembly().Location);
+
             InitLocalization();
             nudVariableValue.Minimum = long.MinValue;
             nudVariableValue.Maximum = long.MaxValue;
@@ -170,7 +172,7 @@ namespace Intersect.Editor.Forms.Editors
             {
                 if (DarkMessageBox.ShowWarning(
                         Strings.VariableEditor.deleteprompt, Strings.VariableEditor.deletecaption,
-                        DarkDialogButton.YesNo, Properties.Resources.Icon
+                        DarkDialogButton.YesNo, Icon
                     ) ==
                     DialogResult.Yes)
                 {
@@ -218,7 +220,7 @@ namespace Intersect.Editor.Forms.Editors
             mEditorItem = null;
             lstGameObjects.ClearExpandedFolders();
             InitEditor();
-            
+
         }
 
         private void rdoGuildVariables_CheckedChanged(object sender, EventArgs e)

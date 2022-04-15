@@ -19,9 +19,9 @@ namespace Intersect.Editor.Forms.DockingElements
         public FrmMapProperties()
         {
             InitializeComponent();
-            UpdatePropertiesDelegate = Update;
+            Icon = System.Drawing.Icon.ExtractAssociatedIcon(System.Reflection.Assembly.GetExecutingAssembly().Location);
 
-            this.Icon = Properties.Resources.Icon;
+            UpdatePropertiesDelegate = Update;
         }
 
         public void Init(MapInstance map)

@@ -33,6 +33,8 @@ namespace Intersect.Editor.Forms.Editors.Quest
         {
             ApplyHooks();
             InitializeComponent();
+            Icon = System.Drawing.Icon.ExtractAssociatedIcon(System.Reflection.Assembly.GetExecutingAssembly().Location);
+
             InitLocalization();
 
             lstGameObjects.Init(UpdateToolStripItems, AssignEditorItem, toolStripItemNew_Click, toolStripItemCopy_Click, toolStripItemUndo_Click, toolStripItemPaste_Click, toolStripItemDelete_Click);
@@ -483,7 +485,7 @@ namespace Intersect.Editor.Forms.Editors.Quest
             {
                 if (DarkMessageBox.ShowWarning(
                         Strings.QuestEditor.deleteprompt, Strings.QuestEditor.deletetitle, DarkDialogButton.YesNo,
-                        Properties.Resources.Icon
+                        Icon
                     ) ==
                     DialogResult.Yes)
                 {
@@ -548,7 +550,7 @@ namespace Intersect.Editor.Forms.Editors.Quest
             {
                 if (DarkMessageBox.ShowWarning(
                         Strings.QuestEditor.undoprompt, Strings.QuestEditor.undotitle, DarkDialogButton.YesNo,
-                        Properties.Resources.Icon
+                        Icon
                     ) ==
                     DialogResult.Yes)
                 {
@@ -716,7 +718,7 @@ namespace Intersect.Editor.Forms.Editors.Quest
 
         private void nudOrderValue_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.OrderValue = (int)nudOrderValue.Value; 
+            mEditorItem.OrderValue = (int)nudOrderValue.Value;
         }
     }
 

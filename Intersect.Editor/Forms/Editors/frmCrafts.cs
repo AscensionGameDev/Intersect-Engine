@@ -34,6 +34,8 @@ namespace Intersect.Editor.Forms.Editors
         {
             ApplyHooks();
             InitializeComponent();
+            Icon = System.Drawing.Icon.ExtractAssociatedIcon(System.Reflection.Assembly.GetExecutingAssembly().Location);
+
             lstGameObjects.LostFocus += itemList_FocusChanged;
             lstGameObjects.GotFocus += itemList_FocusChanged;
             cmbResult.Items.Clear();
@@ -228,7 +230,7 @@ namespace Intersect.Editor.Forms.Editors
             {
                 if (DarkMessageBox.ShowWarning(
                         Strings.CraftsEditor.deleteprompt, Strings.CraftsEditor.deletetitle, DarkDialogButton.YesNo,
-                        Properties.Resources.Icon
+                        Icon
                     ) ==
                     DialogResult.Yes)
                 {
@@ -261,7 +263,7 @@ namespace Intersect.Editor.Forms.Editors
             {
                 if (DarkMessageBox.ShowWarning(
                         Strings.CraftsEditor.undoprompt, Strings.CraftsEditor.undotitle, DarkDialogButton.YesNo,
-                        Properties.Resources.Icon
+                        Icon
                     ) ==
                     DialogResult.Yes)
                 {
@@ -453,7 +455,7 @@ namespace Intersect.Editor.Forms.Editors
             nudCraftQuantity.Value = Math.Max(1, nudCraftQuantity.Value);
             mEditorItem.Quantity = (int) nudCraftQuantity.Value;
         }
-        
+
         private void cmbEvent_SelectedIndexChanged(object sender, EventArgs e)
         {
             mEditorItem.Event = EventBase.Get(EventBase.IdFromList(cmbEvent.SelectedIndex - 1));

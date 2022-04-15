@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
@@ -85,7 +85,8 @@ namespace Intersect.Editor.Maps
             ToolStripMenuItem dropDownItem,
             ToolStripMenuItem dropDownUnlink,
             ToolStripMenuItem recacheItem,
-            ContextMenuStrip contextMenu
+            ContextMenuStrip contextMenu,
+            Icon icon
         )
         {
             mWorkerThread = new Thread(AsyncLoadingThread);
@@ -97,7 +98,11 @@ namespace Intersect.Editor.Maps
             mDropDownUnlinkItem.Click += UnlinkMapItem_Click;
             mRecacheMapItem = recacheItem;
             mRecacheMapItem.Click += _recacheMapItem_Click;
+
+            Icon = icon;
         }
+
+        public Icon Icon { get; set; }
 
         private void AsyncLoadingThread()
         {
@@ -220,7 +225,7 @@ namespace Intersect.Editor.Maps
                                 Globals.CurrentMap.Changed() &&
                                 DarkMessageBox.ShowInformation(
                                     Strings.Mapping.savemapdialogue, Strings.Mapping.savemap, DarkDialogButton.YesNo,
-                                    Properties.Resources.Icon
+                                    Icon
                                 ) ==
                                 DialogResult.Yes)
                             {
@@ -263,7 +268,7 @@ namespace Intersect.Editor.Maps
             {
                 if (DarkMessageBox.ShowWarning(
                         Strings.MapGrid.savescreenshotconfirm, Strings.MapGrid.savescreenshottitle,
-                        DarkDialogButton.YesNo, Properties.Resources.Icon
+                        DarkDialogButton.YesNo, Icon
                     ) ==
                     DialogResult.Yes)
                 {
@@ -407,7 +412,7 @@ namespace Intersect.Editor.Maps
             {
                 if (DarkMessageBox.ShowWarning(
                         Strings.MapGrid.clearandfetch, Strings.MapGrid.fetchcaption, DarkDialogButton.YesNo,
-                        Properties.Resources.Icon
+                        Icon
                     ) !=
                     DialogResult.Yes)
                 {
@@ -416,7 +421,7 @@ namespace Intersect.Editor.Maps
 
                 if (DarkMessageBox.ShowInformation(
                         Strings.MapGrid.keepmapcache, Strings.MapGrid.mapcachecaption, DarkDialogButton.YesNo,
-                        Properties.Resources.Icon
+                        Icon
                     ) ==
                     DialogResult.Yes)
                 {
@@ -475,7 +480,7 @@ namespace Intersect.Editor.Maps
                 if (clearAllFirst ||
                     DarkMessageBox.ShowWarning(
                         Strings.MapGrid.justfetch, Strings.MapGrid.fetchcaption, DarkDialogButton.YesNo,
-                        Properties.Resources.Icon
+                        Icon
                     ) ==
                     DialogResult.Yes)
                 {
@@ -599,7 +604,7 @@ namespace Intersect.Editor.Maps
             {
                 if (DarkMessageBox.ShowWarning(
                         Strings.MapGrid.unlinkprompt.ToString(mContextMap.Name), Strings.MapGrid.unlinkcaption,
-                        DarkDialogButton.YesNo, Properties.Resources.Icon
+                        DarkDialogButton.YesNo, Icon
                     ) ==
                     DialogResult.Yes)
                 {
@@ -686,7 +691,7 @@ namespace Intersect.Editor.Maps
                        ) /
                        2f;
 
-            //Gotta calculate 
+            //Gotta calculate
             if (Zoom < mMinZoom)
             {
                 Zoom = mMinZoom * 2;
@@ -907,7 +912,7 @@ namespace Intersect.Editor.Maps
                 -x2 + mouseX, -y2 + mouseY, TileWidth * (GridWidth + 2), TileHeight * (GridHeight + 2)
             );
 
-            //Lets go the extra mile to make sure our selected map is 
+            //Lets go the extra mile to make sure our selected map is
         }
 
     }
