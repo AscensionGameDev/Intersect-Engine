@@ -58,7 +58,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Icon.ico" />
     <EmbeddedResource Include="$(NetworkHandshakePublicKey)" />
     <EmbeddedResource Include="$(NetworkHandshakePrivateKey)" />
     <EmbeddedResource Include="Resources\libe_sqlite3_x64.so" />
