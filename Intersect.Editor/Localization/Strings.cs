@@ -3173,9 +3173,9 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString basedamage = @"Base Damage:";
 
-            public static LocalizedString BlockChance = @"Block Chance:";
-            public static LocalizedString BlockAmount = @"Block Amount:";
-            public static LocalizedString BlockAbsorption = @"Block Damage Absorption:";
+            public static LocalizedString BlockChance = @"Block Chance (%):";
+            public static LocalizedString BlockAmount = @"Block Amount (%):";
+            public static LocalizedString BlockAbsorption = @"Block Damage Absorption (%):";
 
             public static LocalizedString bonusamount = @"Effect Amount (%):";
 

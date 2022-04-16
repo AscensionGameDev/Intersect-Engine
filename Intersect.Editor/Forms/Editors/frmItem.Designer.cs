@@ -151,6 +151,13 @@ namespace Intersect.Editor.Forms.Editors
             this.cmbMalePaperdoll = new DarkUI.Controls.DarkComboBox();
             this.lblMalePaperdoll = new System.Windows.Forms.Label();
             this.picMalePaperdoll = new System.Windows.Forms.PictureBox();
+            this.grpShieldProperties = new DarkUI.Controls.DarkGroupBox();
+            this.nudBlockDmgAbs = new DarkUI.Controls.DarkNumericUpDown();
+            this.lblBlockDmgAbs = new System.Windows.Forms.Label();
+            this.nudBlockAmount = new DarkUI.Controls.DarkNumericUpDown();
+            this.lblBlockAmount = new System.Windows.Forms.Label();
+            this.nudBlockChance = new DarkUI.Controls.DarkNumericUpDown();
+            this.lblBlockChance = new System.Windows.Forms.Label();
             this.grpWeaponProperties = new DarkUI.Controls.DarkGroupBox();
             this.nudCritMultiplier = new DarkUI.Controls.DarkNumericUpDown();
             this.lblCritMultiplier = new System.Windows.Forms.Label();
@@ -176,13 +183,6 @@ namespace Intersect.Editor.Forms.Editors
             this.cmbToolType = new DarkUI.Controls.DarkComboBox();
             this.lblProjectile = new System.Windows.Forms.Label();
             this.lblDamage = new System.Windows.Forms.Label();
-            this.grpShieldProperties = new DarkUI.Controls.DarkGroupBox();
-            this.nudBlockDmgAbs = new DarkUI.Controls.DarkNumericUpDown();
-            this.lblBlockDmgAbs = new System.Windows.Forms.Label();
-            this.nudBlockAmount = new DarkUI.Controls.DarkNumericUpDown();
-            this.lblBlockAmount = new System.Windows.Forms.Label();
-            this.nudBlockChance = new DarkUI.Controls.DarkNumericUpDown();
-            this.lblBlockChance = new System.Windows.Forms.Label();
             this.grpEvent = new DarkUI.Controls.DarkGroupBox();
             this.chkSingleUseEvent = new DarkUI.Controls.DarkCheckBox();
             this.cmbEvent = new DarkUI.Controls.DarkComboBox();
@@ -251,6 +251,10 @@ namespace Intersect.Editor.Forms.Editors
             ((System.ComponentModel.ISupportInitialize)(this.nudStr)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picFemalePaperdoll)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picMalePaperdoll)).BeginInit();
+            this.grpShieldProperties.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudBlockDmgAbs)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudBlockAmount)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudBlockChance)).BeginInit();
             this.grpWeaponProperties.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudCritMultiplier)).BeginInit();
             this.grpAttackSpeed.SuspendLayout();
@@ -258,10 +262,6 @@ namespace Intersect.Editor.Forms.Editors
             ((System.ComponentModel.ISupportInitialize)(this.nudScaling)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudCritChance)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudDamage)).BeginInit();
-            this.grpShieldProperties.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nudBlockDmgAbs)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudBlockAmount)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudBlockChance)).BeginInit();
             this.grpEvent.SuspendLayout();
             this.grpConsumable.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudIntervalPercentage)).BeginInit();
@@ -1960,6 +1960,101 @@ namespace Intersect.Editor.Forms.Editors
             this.picMalePaperdoll.TabIndex = 16;
             this.picMalePaperdoll.TabStop = false;
             // 
+            // grpShieldProperties
+            // 
+            this.grpShieldProperties.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.grpShieldProperties.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpShieldProperties.Controls.Add(this.nudBlockDmgAbs);
+            this.grpShieldProperties.Controls.Add(this.lblBlockDmgAbs);
+            this.grpShieldProperties.Controls.Add(this.nudBlockAmount);
+            this.grpShieldProperties.Controls.Add(this.lblBlockAmount);
+            this.grpShieldProperties.Controls.Add(this.nudBlockChance);
+            this.grpShieldProperties.Controls.Add(this.lblBlockChance);
+            this.grpShieldProperties.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpShieldProperties.Location = new System.Drawing.Point(221, 14);
+            this.grpShieldProperties.Name = "grpShieldProperties";
+            this.grpShieldProperties.Size = new System.Drawing.Size(207, 146);
+            this.grpShieldProperties.TabIndex = 45;
+            this.grpShieldProperties.TabStop = false;
+            this.grpShieldProperties.Text = "Shield Properties";
+            // 
+            // nudBlockDmgAbs
+            // 
+            this.nudBlockDmgAbs.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.nudBlockDmgAbs.ForeColor = System.Drawing.Color.Gainsboro;
+            this.nudBlockDmgAbs.Location = new System.Drawing.Point(15, 111);
+            this.nudBlockDmgAbs.Maximum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
+            this.nudBlockDmgAbs.Name = "nudBlockDmgAbs";
+            this.nudBlockDmgAbs.Size = new System.Drawing.Size(180, 20);
+            this.nudBlockDmgAbs.TabIndex = 64;
+            this.nudBlockDmgAbs.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.nudBlockDmgAbs.ValueChanged += new System.EventHandler(this.nudBlockDmgAbs_ValueChanged);
+            // 
+            // lblBlockDmgAbs
+            // 
+            this.lblBlockDmgAbs.AutoSize = true;
+            this.lblBlockDmgAbs.Location = new System.Drawing.Point(12, 97);
+            this.lblBlockDmgAbs.Name = "lblBlockDmgAbs";
+            this.lblBlockDmgAbs.Size = new System.Drawing.Size(150, 13);
+            this.lblBlockDmgAbs.TabIndex = 63;
+            this.lblBlockDmgAbs.Text = "Block Damage Absorption (%):";
+            // 
+            // nudBlockAmount
+            // 
+            this.nudBlockAmount.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.nudBlockAmount.ForeColor = System.Drawing.Color.Gainsboro;
+            this.nudBlockAmount.Location = new System.Drawing.Point(15, 73);
+            this.nudBlockAmount.Name = "nudBlockAmount";
+            this.nudBlockAmount.Size = new System.Drawing.Size(180, 20);
+            this.nudBlockAmount.TabIndex = 62;
+            this.nudBlockAmount.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.nudBlockAmount.ValueChanged += new System.EventHandler(this.nudBlockAmount_ValueChanged);
+            // 
+            // lblBlockAmount
+            // 
+            this.lblBlockAmount.AutoSize = true;
+            this.lblBlockAmount.Location = new System.Drawing.Point(12, 59);
+            this.lblBlockAmount.Name = "lblBlockAmount";
+            this.lblBlockAmount.Size = new System.Drawing.Size(93, 13);
+            this.lblBlockAmount.TabIndex = 61;
+            this.lblBlockAmount.Text = "Block Amount (%):";
+            // 
+            // nudBlockChance
+            // 
+            this.nudBlockChance.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.nudBlockChance.ForeColor = System.Drawing.Color.Gainsboro;
+            this.nudBlockChance.Location = new System.Drawing.Point(15, 36);
+            this.nudBlockChance.Name = "nudBlockChance";
+            this.nudBlockChance.Size = new System.Drawing.Size(180, 20);
+            this.nudBlockChance.TabIndex = 60;
+            this.nudBlockChance.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.nudBlockChance.ValueChanged += new System.EventHandler(this.nudBlockChance_ValueChanged);
+            // 
+            // lblBlockChance
+            // 
+            this.lblBlockChance.AutoSize = true;
+            this.lblBlockChance.Location = new System.Drawing.Point(12, 19);
+            this.lblBlockChance.Name = "lblBlockChance";
+            this.lblBlockChance.Size = new System.Drawing.Size(94, 13);
+            this.lblBlockChance.TabIndex = 59;
+            this.lblBlockChance.Text = "Block Chance (%):";
+            // 
             // grpWeaponProperties
             // 
             this.grpWeaponProperties.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
@@ -2348,96 +2443,6 @@ namespace Intersect.Editor.Forms.Editors
             this.lblDamage.Size = new System.Drawing.Size(77, 13);
             this.lblDamage.TabIndex = 11;
             this.lblDamage.Text = "Base Damage:";
-            // 
-            // grpShieldProperties
-            // 
-            this.grpShieldProperties.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            this.grpShieldProperties.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.grpShieldProperties.Controls.Add(this.nudBlockDmgAbs);
-            this.grpShieldProperties.Controls.Add(this.lblBlockDmgAbs);
-            this.grpShieldProperties.Controls.Add(this.nudBlockAmount);
-            this.grpShieldProperties.Controls.Add(this.lblBlockAmount);
-            this.grpShieldProperties.Controls.Add(this.nudBlockChance);
-            this.grpShieldProperties.Controls.Add(this.lblBlockChance);
-            this.grpShieldProperties.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpShieldProperties.Location = new System.Drawing.Point(221, 14);
-            this.grpShieldProperties.Name = "grpShieldProperties";
-            this.grpShieldProperties.Size = new System.Drawing.Size(207, 146);
-            this.grpShieldProperties.TabIndex = 45;
-            this.grpShieldProperties.TabStop = false;
-            this.grpShieldProperties.Text = "Shield Properties";
-            // 
-            // nudBlockDmgAbs
-            // 
-            this.nudBlockDmgAbs.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.nudBlockDmgAbs.ForeColor = System.Drawing.Color.Gainsboro;
-            this.nudBlockDmgAbs.Location = new System.Drawing.Point(15, 111);
-            this.nudBlockDmgAbs.Name = "nudBlockDmgAbs";
-            this.nudBlockDmgAbs.Size = new System.Drawing.Size(180, 20);
-            this.nudBlockDmgAbs.TabIndex = 64;
-            this.nudBlockDmgAbs.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.nudBlockDmgAbs.ValueChanged += new System.EventHandler(this.nudBlockDmgAbs_ValueChanged);
-            // 
-            // lblBlockDmgAbs
-            // 
-            this.lblBlockDmgAbs.AutoSize = true;
-            this.lblBlockDmgAbs.Location = new System.Drawing.Point(12, 97);
-            this.lblBlockDmgAbs.Name = "lblBlockDmgAbs";
-            this.lblBlockDmgAbs.Size = new System.Drawing.Size(150, 13);
-            this.lblBlockDmgAbs.TabIndex = 63;
-            this.lblBlockDmgAbs.Text = "Block Damage Absorption (%):";
-            // 
-            // nudBlockAmount
-            // 
-            this.nudBlockAmount.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.nudBlockAmount.ForeColor = System.Drawing.Color.Gainsboro;
-            this.nudBlockAmount.Location = new System.Drawing.Point(15, 73);
-            this.nudBlockAmount.Name = "nudBlockAmount";
-            this.nudBlockAmount.Size = new System.Drawing.Size(180, 20);
-            this.nudBlockAmount.TabIndex = 62;
-            this.nudBlockAmount.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.nudBlockAmount.ValueChanged += new System.EventHandler(this.nudBlockAmount_ValueChanged);
-            // 
-            // lblBlockAmount
-            // 
-            this.lblBlockAmount.AutoSize = true;
-            this.lblBlockAmount.Location = new System.Drawing.Point(12, 59);
-            this.lblBlockAmount.Name = "lblBlockAmount";
-            this.lblBlockAmount.Size = new System.Drawing.Size(93, 13);
-            this.lblBlockAmount.TabIndex = 61;
-            this.lblBlockAmount.Text = "Block Amount (%):";
-            // 
-            // nudBlockChance
-            // 
-            this.nudBlockChance.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.nudBlockChance.ForeColor = System.Drawing.Color.Gainsboro;
-            this.nudBlockChance.Location = new System.Drawing.Point(15, 36);
-            this.nudBlockChance.Name = "nudBlockChance";
-            this.nudBlockChance.Size = new System.Drawing.Size(180, 20);
-            this.nudBlockChance.TabIndex = 60;
-            this.nudBlockChance.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.nudBlockChance.ValueChanged += new System.EventHandler(this.nudBlockChance_ValueChanged);
-            // 
-            // lblBlockChance
-            // 
-            this.lblBlockChance.AutoSize = true;
-            this.lblBlockChance.Location = new System.Drawing.Point(12, 19);
-            this.lblBlockChance.Name = "lblBlockChance";
-            this.lblBlockChance.Size = new System.Drawing.Size(94, 13);
-            this.lblBlockChance.TabIndex = 59;
-            this.lblBlockChance.Text = "Block Chance (%):";
             // 
             // grpEvent
             // 
@@ -2929,6 +2934,11 @@ namespace Intersect.Editor.Forms.Editors
             ((System.ComponentModel.ISupportInitialize)(this.nudStr)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.picFemalePaperdoll)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.picMalePaperdoll)).EndInit();
+            this.grpShieldProperties.ResumeLayout(false);
+            this.grpShieldProperties.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudBlockDmgAbs)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudBlockAmount)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudBlockChance)).EndInit();
             this.grpWeaponProperties.ResumeLayout(false);
             this.grpWeaponProperties.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudCritMultiplier)).EndInit();
@@ -2938,11 +2948,6 @@ namespace Intersect.Editor.Forms.Editors
             ((System.ComponentModel.ISupportInitialize)(this.nudScaling)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudCritChance)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudDamage)).EndInit();
-            this.grpShieldProperties.ResumeLayout(false);
-            this.grpShieldProperties.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nudBlockDmgAbs)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudBlockAmount)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudBlockChance)).EndInit();
             this.grpEvent.ResumeLayout(false);
             this.grpEvent.PerformLayout();
             this.grpConsumable.ResumeLayout(false);
