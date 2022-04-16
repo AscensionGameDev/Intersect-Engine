@@ -53,7 +53,7 @@ namespace Intersect.Client.Interface.Shared
 
         private readonly Button mKeybindingSettingsTab;
 
-        // Game Settings - OverheadInformation.
+        // Game Settings - Overhead Information.
         private readonly Button mOverheadInformationSettings;
 
         private readonly Button mOverheadInfoSettingsHelper;
@@ -70,10 +70,10 @@ namespace Intersect.Client.Interface.Shared
 
         private readonly LabeledCheckBox mPlayerOverheadInfoCheckbox;
 
-        // Game Settings - Graphical User Interface.
-        private readonly Button mGraphicalUserInterfaceSettings;
+        // Game Settings - Interface.
+        private readonly Button mInterfaceSettings;
 
-        private readonly Button mGraphicalUserInterfaceSettingsHelper;
+        private readonly Button mInterfaceSettingsHelper;
 
         private readonly LabeledCheckBox mAutoCloseWindowsCheckbox;
 
@@ -193,12 +193,12 @@ namespace Intersect.Client.Interface.Shared
             mPlayerOverheadInfoCheckbox = new LabeledCheckBox(mGameSettingsContainer, "PlayerOverheadInfoCheckbox");
             mPlayerOverheadInfoCheckbox.Text = Strings.Settings.PlayerOverheadInfo;
 
-            // Game Settings - Game User Interface (GUI)
-            mGraphicalUserInterfaceSettings = new Button(mGameSettingsContainer, "GraphicalUserInterfaceSettings");
-            mGraphicalUserInterfaceSettings.Text = Strings.Settings.GraphicalUserInterfaceSettings;
-            mGraphicalUserInterfaceSettingsHelper =
-                new Button(mGameSettingsContainer, "GraphicalUserInterfaceSettingsHelper");
-            mGraphicalUserInterfaceSettingsHelper.SetToolTipText(Strings.Settings.GraphicalUserInterfaceSettingsHelper);
+            // Game Settings - Interface.
+            mInterfaceSettings = new Button(mGameSettingsContainer, "InterfaceSettings");
+            mInterfaceSettings.Text = Strings.Settings.InterfaceSettings;
+            mInterfaceSettingsHelper =
+                new Button(mGameSettingsContainer, "InterfaceSettingsHelper");
+            mInterfaceSettingsHelper.SetToolTipText(Strings.Settings.InterfaceSettingsHelper);
 
             // Game Settings - Toggle for: Interface Auto-close Windows.
             mAutoCloseWindowsCheckbox = new LabeledCheckBox(mGameSettingsContainer, "AutoCloseWindowsCheckbox");
