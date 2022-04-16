@@ -1551,6 +1551,12 @@ namespace Intersect.Client.Localization
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString GameSettingsTab = @"Game";
+            
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString GraphicalUserInterfaceSettings = @"Interface";
+            
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString GraphicalUserInterfaceSettingsHelper = @"Graphical User Interface (GUI) related settings.";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString GuildMemberOverheadInfo = @"Guild";

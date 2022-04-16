@@ -53,7 +53,7 @@ namespace Intersect.Client.Interface.Shared
 
         private readonly Button mKeybindingSettingsTab;
 
-        // Game Settings.
+        // Game Settings - OverheadInformation.
         private readonly Button mOverheadInformationSettings;
 
         private readonly Button mOverheadInfoSettingsHelper;
@@ -70,6 +70,13 @@ namespace Intersect.Client.Interface.Shared
 
         private readonly LabeledCheckBox mPlayerOverheadInfoCheckbox;
 
+        // Game Settings - Graphical User Interface.
+        private readonly Button mGraphicalUserInterfaceSettings;
+
+        private readonly Button mGraphicalUserInterfaceSettingsHelper;
+
+        private readonly LabeledCheckBox mAutoCloseWindowsCheckbox;
+
         // Video Settings.
         private readonly ImagePanel mResolutionBackground;
 
@@ -84,8 +91,6 @@ namespace Intersect.Client.Interface.Shared
         private readonly Label mFpsLabel;
 
         private readonly ComboBox mFpsList;
-
-        private readonly LabeledCheckBox mAutoCloseWindowsCheckbox;
 
         private readonly LabeledCheckBox mFullscreenCheckbox;
 
@@ -188,6 +193,17 @@ namespace Intersect.Client.Interface.Shared
             mPlayerOverheadInfoCheckbox = new LabeledCheckBox(mGameSettingsContainer, "PlayerOverheadInfoCheckbox");
             mPlayerOverheadInfoCheckbox.Text = Strings.Settings.PlayerOverheadInfo;
 
+            // Game Settings - Game User Interface (GUI)
+            mGraphicalUserInterfaceSettings = new Button(mGameSettingsContainer, "GraphicalUserInterfaceSettings");
+            mGraphicalUserInterfaceSettings.Text = Strings.Settings.GraphicalUserInterfaceSettings;
+            mGraphicalUserInterfaceSettingsHelper =
+                new Button(mGameSettingsContainer, "GraphicalUserInterfaceSettingsHelper");
+            mGraphicalUserInterfaceSettingsHelper.SetToolTipText(Strings.Settings.GraphicalUserInterfaceSettingsHelper);
+
+            // Game Settings - Toggle for: Interface Auto-close Windows.
+            mAutoCloseWindowsCheckbox = new LabeledCheckBox(mGameSettingsContainer, "AutoCloseWindowsCheckbox");
+            mAutoCloseWindowsCheckbox.Text = Strings.Settings.AutoCloseWindows;
+
             #endregion
 
             #region InitVideoSettings
@@ -241,13 +257,7 @@ namespace Intersect.Client.Interface.Shared
                 Text = Strings.Settings.Fullscreen
             };
 
-            // Video Settings - AutoCloseWindows Checkbox.
-            mAutoCloseWindowsCheckbox = new LabeledCheckBox(mVideoSettingsContainer, "AutoCloseWindowsCheckbox")
-            {
-                Text = Strings.Settings.AutoCloseWindows
-            };
-
-            // Video Settinbgs - Enable Lighting Checkbox
+            // Video Settings - Enable Lighting Checkbox
             mLightingEnabledCheckbox = new LabeledCheckBox(mVideoSettingsContainer, "EnableLightingCheckbox")
             {
                 Text = Strings.Settings.EnableLighting
