@@ -1762,19 +1762,38 @@ namespace Intersect.Server.Entities
 
                 if (item != null)
                 {
+                    int originalBaseDamage = baseDamage;
                     int blockChance = item.BlockChance;
                     double blockAmount = item.BlockAmount / 100.0;
+                    double blockAbsorption = item.BlockAbsorption / 100.0;
 
                     //Generate a new attempt to block
                     if (Randomization.Next(1, 101) < blockChance)
                     {
-                        if (blockAmount < 100)
+                        if (item.BlockAmount < 100)
                         {
                             baseDamage -= (int)Math.Round(baseDamage * blockAmount);
                         }
                         else
                         {
                             baseDamage = 0;
+                        }
+
+                        int absorptionAmount = (int)Math.Round(baseDamage * blockAbsorption);
+
+                        if(absorptionAmount == 0)
+                        {
+                            absorptionAmount = (int)Math.Round(originalBaseDamage * blockAbsorption);
+                        }
+
+                        if (blockAbsorption > 0)
+                        {
+                            player.AddVital(Vitals.Health, absorptionAmount);
+
+                            PacketSender.SendActionMsg(
+                            enemy, Strings.Combat.addsymbol + (int)Math.Abs(absorptionAmount),
+                            CustomColors.Combat.Heal
+                            );
                         }
 
                         PacketSender.SendActionMsg(enemy, Strings.Combat.blocked, CustomColors.Combat.Blocked);
