@@ -35,6 +35,8 @@ namespace Intersect.Editor.Forms
         public FrmWarpSelection()
         {
             InitializeComponent();
+            Icon = System.Drawing.Icon.ExtractAssociatedIcon(System.Reflection.Assembly.GetExecutingAssembly().Location);
+
             InitLocalization();
             mapTreeList1.UpdateMapList(mCurrentMapId);
             pnlMap.Width = Options.TileWidth * Options.MapWidth;
@@ -46,8 +48,6 @@ namespace Intersect.Editor.Forms
                 "DoubleBuffered", BindingFlags.SetProperty | BindingFlags.Instance | BindingFlags.NonPublic, null,
                 pnlMap, new object[] {true}
             );
-
-            this.Icon = Properties.Resources.Icon;
         }
 
         public void InitForm(bool tileSelection = true, List<Guid> restrictMaps = null)

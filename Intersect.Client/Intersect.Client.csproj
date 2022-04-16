@@ -13,7 +13,6 @@
     <AssemblyName>Intersect Client</AssemblyName>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <FileAlignment>512</FileAlignment>
-    <ApplicationIcon>Icon.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
@@ -50,10 +49,9 @@
 
   <ItemGroup Label="Project Embedded Resources">
     <EmbeddedResource Include="$(NetworkHandshakePublicKey)" />
-    <EmbeddedResource Include="Icon.bmp">
+    <EmbeddedResource Include="$(IntersectRepoPath)\assets\intersect-logo-qu.bmp">
       <LogicalName>Icon.bmp</LogicalName>
     </EmbeddedResource>
-    <Content Include="Icon.ico" />
     <EmbeddedResource Include="Resources\MonoGame.Framework.dll.config" />
     <EmbeddedResource Include="Resources\openal32.dll" />
     <EmbeddedResource Include="Resources\Shaders\radialgradient.xnb" />

@@ -14,7 +14,7 @@
 
     <projectUrl>https://github.com/AscensionGameDev/Intersect-Engine</projectUrl>
     <repository type="git" url="https://github.com/AscensionGameDev/Intersect-Engine" />
-    <icon>assets\Intersect.png</icon>
+    <icon>assets\intersect-logo-qu.png</icon>
 
     <releaseNotes>Nuget release of Intersect.Client.Framework for client plugin development.</releaseNotes>
 
@@ -38,7 +38,7 @@
   </metadata>
   <files>
     <file src="LICENSE.md" target="" />
-    <file src="..\assets\Intersect.png" target="assets" />
+    <file src="..\assets\intersect-logo-qu.png" target="assets" />
     <file src="..\targets\FindIntersect.targets" target="build" />
     <file src="..\targets\AscensionGameDev.Intersect.CommonVariables.targets" target="build" />
     <file src="..\targets\AscensionGameDev.Intersect.Client.Framework.targets" target="build" />

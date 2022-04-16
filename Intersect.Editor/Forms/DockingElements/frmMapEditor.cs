@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -45,7 +45,7 @@ namespace Intersect.Editor.Forms.DockingElements
         public FrmMapEditor()
         {
             InitializeComponent();
-            this.Icon = Properties.Resources.Icon;
+            Icon = System.Drawing.Icon.ExtractAssociatedIcon(System.Reflection.Assembly.GetExecutingAssembly().Location);
         }
 
         private void InitLocalization()
@@ -1046,7 +1046,7 @@ namespace Intersect.Editor.Forms.DockingElements
                                 if (Globals.CurrentMap.Changed() &&
                                     DarkMessageBox.ShowInformation(
                                         Strings.Mapping.savemapdialogue, Strings.Mapping.savemap,
-                                        DarkDialogButton.YesNo, Properties.Resources.Icon
+                                        DarkDialogButton.YesNo, Icon
                                     ) ==
                                     DialogResult.Yes)
                                 {
@@ -1059,7 +1059,7 @@ namespace Intersect.Editor.Forms.DockingElements
                             {
                                 DarkMessageBox.ShowError(
                                     Strings.Mapping.diagonalwarning, Strings.Mapping.createmap, DarkDialogButton.Ok,
-                                    Properties.Resources.Icon
+                                    Icon
                                 );
 
                                 return;
@@ -1069,7 +1069,7 @@ namespace Intersect.Editor.Forms.DockingElements
                         {
                             DarkMessageBox.ShowError(
                                 Strings.Mapping.diagonalwarning, Strings.Mapping.createmap, DarkDialogButton.Ok,
-                                Properties.Resources.Icon
+                                Icon
                             );
 
                             return;
@@ -1083,7 +1083,7 @@ namespace Intersect.Editor.Forms.DockingElements
                     {
                         if (DarkMessageBox.ShowInformation(
                                 Strings.Mapping.createmapdialogue, Strings.Mapping.createmap, DarkDialogButton.YesNo,
-                                Properties.Resources.Icon
+                                Icon
                             ) !=
                             DialogResult.Yes)
                         {
@@ -1093,7 +1093,7 @@ namespace Intersect.Editor.Forms.DockingElements
                         if (Globals.CurrentMap.Changed() &&
                             DarkMessageBox.ShowWarning(
                                 Strings.Mapping.savemapdialogue, Strings.Mapping.savemap, DarkDialogButton.YesNo,
-                                Properties.Resources.Icon
+                                Icon
                             ) ==
                             DialogResult.Yes)
                         {
@@ -1107,7 +1107,7 @@ namespace Intersect.Editor.Forms.DockingElements
                         if (Globals.CurrentMap.Changed() &&
                             DarkMessageBox.ShowWarning(
                                 Strings.Mapping.savemapdialogue, Strings.Mapping.savemap, DarkDialogButton.YesNo,
-                                Properties.Resources.Icon
+                                Icon
                             ) ==
                             DialogResult.Yes)
                         {
@@ -1255,7 +1255,7 @@ namespace Intersect.Editor.Forms.DockingElements
 
             if (DarkMessageBox.ShowWarning(
                     Strings.Mapping.filllayerdialogue, Strings.Mapping.filllayer, DarkDialogButton.YesNo,
-                    Properties.Resources.Icon
+                    Icon
                 ) ==
                 DialogResult.Yes)
             {
@@ -1344,7 +1344,7 @@ namespace Intersect.Editor.Forms.DockingElements
 
             if (DarkMessageBox.ShowWarning(
                     Strings.Mapping.eraselayerdialogue, Strings.Mapping.eraselayer, DarkDialogButton.YesNo,
-                    Properties.Resources.Icon
+                    Icon
                 ) ==
                 DialogResult.Yes)
             {

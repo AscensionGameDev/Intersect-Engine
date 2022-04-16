@@ -36,6 +36,7 @@ namespace Intersect.Editor.Forms.Editors
         {
             ApplyHooks();
             InitializeComponent();
+            Icon = System.Drawing.Icon.ExtractAssociatedIcon(System.Reflection.Assembly.GetExecutingAssembly().Location);
 
             cmbEquipmentSlot.Items.Clear();
             cmbEquipmentSlot.Items.AddRange(Options.EquipmentSlots.ToArray());
@@ -620,7 +621,7 @@ namespace Intersect.Editor.Forms.Editors
             {
                 if (DarkMessageBox.ShowWarning(
                         Strings.ItemEditor.deleteprompt, Strings.ItemEditor.deletetitle, DarkDialogButton.YesNo,
-                        Properties.Resources.Icon
+                        Icon
                     ) ==
                     DialogResult.Yes)
                 {
@@ -653,7 +654,7 @@ namespace Intersect.Editor.Forms.Editors
             {
                 if (DarkMessageBox.ShowWarning(
                         Strings.ItemEditor.undoprompt, Strings.ItemEditor.undotitle, DarkDialogButton.YesNo,
-                        Properties.Resources.Icon
+                        Icon
                     ) ==
                     DialogResult.Yes)
                 {
@@ -1153,10 +1154,10 @@ namespace Intersect.Editor.Forms.Editors
                     }
                 }
 
-                if (!string.IsNullOrWhiteSpace(((ItemBase)itm.Value).CooldownGroup) && 
+                if (!string.IsNullOrWhiteSpace(((ItemBase)itm.Value).CooldownGroup) &&
                     !mKnownCooldownGroups.Contains(((ItemBase)itm.Value).CooldownGroup))
                 {
-                    mKnownCooldownGroups.Add(((ItemBase)itm.Value).CooldownGroup);    
+                    mKnownCooldownGroups.Add(((ItemBase)itm.Value).CooldownGroup);
                 }
             }
 

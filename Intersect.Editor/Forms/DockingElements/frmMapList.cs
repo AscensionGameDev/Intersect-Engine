@@ -19,12 +19,11 @@ namespace Intersect.Editor.Forms.DockingElements
         public FrmMapList()
         {
             InitializeComponent();
+            Icon = System.Drawing.Icon.ExtractAssociatedIcon(System.Reflection.Assembly.GetExecutingAssembly().Location);
 
             //Enable Editting of the list
             mapTreeList.EnableEditing(contextMenuStrip1);
             mapTreeList.SetDoubleClick(NodeDoubleClick);
-
-            this.Icon = Properties.Resources.Icon;
         }
 
         private void NodeDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
@@ -35,7 +34,7 @@ namespace Intersect.Editor.Forms.DockingElements
                     Globals.CurrentMap.Changed() &&
                     DarkMessageBox.ShowInformation(
                         Strings.Mapping.savemapdialogue, Strings.Mapping.savemap, DarkDialogButton.YesNo,
-                        Properties.Resources.Icon
+                        Icon
                     ) ==
                     DialogResult.Yes)
                 {
@@ -105,7 +104,7 @@ namespace Intersect.Editor.Forms.DockingElements
             {
                 DarkMessageBox.ShowError(
                     Strings.MapList.selecttorename, Strings.MapList.rename, DarkDialogButton.Ok,
-                    Properties.Resources.Icon
+                    Icon
                 );
             }
             else
@@ -120,14 +119,14 @@ namespace Intersect.Editor.Forms.DockingElements
             {
                 DarkMessageBox.ShowError(
                     Strings.MapList.selecttodelete, Strings.MapList.delete, DarkDialogButton.Ok,
-                    Properties.Resources.Icon
+                    Icon
                 );
             }
             else
             {
                 if (DarkMessageBox.ShowWarning(
                         Strings.MapList.deleteconfirm.ToString(((MapListItem) mapTreeList.list.SelectedNode.Tag).Name),
-                        Strings.MapList.delete, DarkDialogButton.YesNo, Properties.Resources.Icon
+                        Strings.MapList.delete, DarkDialogButton.YesNo, Icon
                     ) ==
                     DialogResult.Yes)
                 {
@@ -147,7 +146,7 @@ namespace Intersect.Editor.Forms.DockingElements
         {
             if (DarkMessageBox.ShowWarning(
                     Strings.Mapping.newmap, Strings.Mapping.newmapcaption, DarkDialogButton.YesNo,
-                    Properties.Resources.Icon
+                    Icon
                 ) !=
                 DialogResult.Yes)
             {
@@ -157,7 +156,7 @@ namespace Intersect.Editor.Forms.DockingElements
             if (Globals.CurrentMap.Changed() &&
                 DarkMessageBox.ShowInformation(
                     Strings.Mapping.savemapdialogue, Strings.Mapping.savemap, DarkDialogButton.YesNo,
-                    Properties.Resources.Icon
+                    Icon
                 ) ==
                 DialogResult.Yes)
             {

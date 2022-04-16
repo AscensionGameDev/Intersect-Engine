@@ -87,6 +87,8 @@ namespace Intersect.Editor.Forms
         public FrmMain()
         {
             InitializeComponent();
+            Icon = System.Drawing.Icon.ExtractAssociatedIcon(System.Reflection.Assembly.GetExecutingAssembly().Location);
+
             dockLeft.Theme = new VS2015DarkTheme();
             Globals.MapListWindow = new FrmMapList();
             Globals.MapListWindow.Show(dockLeft, DockState.DockRight);
@@ -98,8 +100,6 @@ namespace Intersect.Editor.Forms
 
             Globals.MapGridWindowNew = new FrmMapGrid();
             Globals.MapGridWindowNew.Show(dockLeft, DockState.Document);
-
-            this.Icon = Properties.Resources.Icon;
         }
 
         [System.Runtime.InteropServices.DllImport("user32.dll")]
@@ -919,7 +919,7 @@ namespace Intersect.Editor.Forms
                 {
                     if (DarkMessageBox.ShowError(
                             Strings.Errors.disconnectedsave, Strings.Errors.disconnectedsavecaption,
-                            DarkDialogButton.YesNo, Properties.Resources.Icon
+                            DarkDialogButton.YesNo, Icon
                         ) ==
                         DialogResult.Yes)
                     {
@@ -935,7 +935,7 @@ namespace Intersect.Editor.Forms
                 {
                     DarkMessageBox.ShowError(
                         Strings.Errors.disconnectedclosing, Strings.Errors.disconnected, DarkDialogButton.Ok,
-                        Properties.Resources.Icon
+                        Icon
                     );
 
                     Application.Exit();
@@ -949,7 +949,7 @@ namespace Intersect.Editor.Forms
             if (Globals.CurrentMap.Changed() &&
                 DarkMessageBox.ShowInformation(
                     Strings.Mapping.savemapdialoguesure, Strings.Mapping.savemap, DarkDialogButton.YesNo,
-                    Properties.Resources.Icon
+                    Icon
                 ) ==
                 DialogResult.Yes)
             {
@@ -976,7 +976,7 @@ namespace Intersect.Editor.Forms
         {
             if (DarkMessageBox.ShowWarning(
                     Strings.Mapping.newmap, Strings.Mapping.newmapcaption, DarkDialogButton.YesNo,
-                    Properties.Resources.Icon
+                    Icon
                 ) !=
                 DialogResult.Yes)
             {
@@ -986,7 +986,7 @@ namespace Intersect.Editor.Forms
             if (Globals.CurrentMap.Changed() &&
                 DarkMessageBox.ShowInformation(
                     Strings.Mapping.savemapdialogue, Strings.Mapping.savemap, DarkDialogButton.YesNo,
-                    Properties.Resources.Icon
+                    Icon
                 ) ==
                 DialogResult.Yes)
             {
@@ -1041,7 +1041,7 @@ namespace Intersect.Editor.Forms
             //    else
             //    {
             //        DarkMessageBox.ShowError(Strings.Errors.importfailed,
-            //            Strings.Errors.importfailedcaption, DarkDialogButton.Ok, Properties.Resources.Icon);
+            //            Strings.Errors.importfailedcaption, DarkDialogButton.Ok, Icon);
             //    }
             //}
         }
@@ -1651,7 +1651,7 @@ namespace Intersect.Editor.Forms
                 Globals.CurrentMap.Changed() &&
                 DarkMessageBox.ShowWarning(
                     Strings.Mapping.maphaschangesdialog, Strings.Mapping.mapnotsaved, DarkDialogButton.YesNo,
-                    Properties.Resources.Icon
+                    Icon
                 ) ==
                 DialogResult.No)
             {
@@ -1675,7 +1675,7 @@ namespace Intersect.Editor.Forms
 
         private void packClientTexturesToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            
+
         }
 
         private void packAssets()
@@ -1971,7 +1971,7 @@ namespace Intersect.Editor.Forms
                         existingFile = existingUpdate.Files.FirstOrDefault(f => f.Path == updateFile.Path);
                     }
 
-                    if (existingFile == null || existingFile.Size != updateFile.Size || existingFile.Hash != updateFile.Hash) { 
+                    if (existingFile == null || existingFile.Size != updateFile.Size || existingFile.Hash != updateFile.Hash) {
                         var relativeFolder = Uri.UnescapeDataString(workingDir.MakeRelativeUri(new Uri(path + "/")).ToString().Replace('\\','/'));
                         if (!string.IsNullOrEmpty(relativeFolder))
                         {

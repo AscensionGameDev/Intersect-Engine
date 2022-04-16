@@ -47,12 +47,12 @@ namespace Intersect.Editor.Forms.Editors
         public FrmDynamicRequirements(ConditionLists lists, RequirementType type)
         {
             InitializeComponent();
+            Icon = System.Drawing.Icon.ExtractAssociatedIcon(System.Reflection.Assembly.GetExecutingAssembly().Location);
+
             mSourceLists = lists;
             mEdittingLists = new ConditionLists(lists.Data());
             UpdateLists();
             InitLocalization(type);
-
-            this.Icon = Properties.Resources.Icon;
         }
 
         private void InitLocalization(RequirementType type)
