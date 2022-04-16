@@ -1556,6 +1556,12 @@ namespace Intersect.Client.Localization
             public static LocalizedString GuildMemberOverheadInfo = @"Guild";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString InterfaceSettings = @"Interface";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString InterfaceSettingsHelper = @"Game Interface related settings.";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString KeyBindingSettingsTab = @"Controls";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
