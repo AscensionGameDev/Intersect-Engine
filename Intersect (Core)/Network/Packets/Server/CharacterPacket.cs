@@ -1,8 +1,18 @@
-﻿using MessagePack;
+using MessagePack;
 using System;
 
 namespace Intersect.Network.Packets.Server
 {
+    [MessagePackObject]
+    public class EquipmentFragment
+    {
+        [Key(0)]
+        public string Name { get; set; }
+
+        [Key(1)]
+        public Color RenderColor { get; set; }
+    }
+
     [MessagePackObject]
     public class CharacterPacket : IntersectPacket
     {
@@ -18,7 +28,7 @@ namespace Intersect.Network.Packets.Server
             string face,
             int level,
             string className,
-            string[] equipment
+            EquipmentFragment[] equipment
         )
         {
             Id = id;
@@ -49,7 +59,7 @@ namespace Intersect.Network.Packets.Server
         public string ClassName { get; set; }
 
         [Key(6)]
-        public string[] Equipment { get; set; }
+        public EquipmentFragment[] Equipment { get; set; }
 
     }
 

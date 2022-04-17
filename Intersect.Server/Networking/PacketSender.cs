@@ -1253,7 +1253,7 @@ namespace Intersect.Server.Networking
                 foreach (var character in client.Characters.OrderByDescending(p => p.LastOnline))
                 {
                     var equipmentArray = character.Equipment;
-                    var equipment = new string[Options.EquipmentSlots.Count + 1];
+                    var equipment = new EquipmentFragment[Options.EquipmentSlots.Count + 1];
 
                     //Draw the equipment/paperdolls
                     for (var z = 0; z < Options.PaperdollOrder[1].Count; z++)
@@ -1271,14 +1271,11 @@ namespace Intersect.Server.Networking
                                 if (ItemBase.Get(itemId) != null)
                                 {
                                     var itemdata = ItemBase.Get(itemId);
-                                    if (character.Gender == 0)
+                                    equipment[z] = new EquipmentFragment
                                     {
-                                        equipment[z] = itemdata.MalePaperdoll;
-                                    }
-                                    else
-                                    {
-                                        equipment[z] = itemdata.FemalePaperdoll;
-                                    }
+                                        Name = character.Gender == 0 ? itemdata.MalePaperdoll : itemdata.FemalePaperdoll,
+                                        RenderColor = itemdata.Color,
+                                    };
                                 }
                             }
                         }
@@ -1286,7 +1283,7 @@ namespace Intersect.Server.Networking
                         {
                             if (Options.PaperdollOrder[1][z] == "Player")
                             {
-                                equipment[z] = "Player";
+                                equipment[z] = new EquipmentFragment { Name = "Player" };
                             }
                         }
                     }
