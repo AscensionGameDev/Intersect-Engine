@@ -24,12 +24,13 @@
         </rdf:RDF>
     </metadata>
     <defs>
-        <linearGradient id="linear" gradientTransform="rotate(90 0 0)">
-            <stop offset="0%" stop-color="#39669f" />
-            <stop offset="100%" stop-color="#1d3b6d" />
-        </linearGradient>
+        <style type="text/css">
+            path {
+                fill: #ffffff;
+            }
+        </style>
     </defs>
-    <path data-name="logo" fill="url(#linear)"
+    <path id="logo" data-name="logo"
         d="M388.4,332.8h0a875.94,875.94,0,0,0-265.8,0h0A877.741,877.741,0,0,0,255.5,102.4h0A877.717,877.717,0,0,0,388.4,332.8ZM104.052,373.247L34,384,255.5,512,477,384l-70.052-10.753A998.191,998.191,0,0,0,104.052,373.247ZM78.329,328.654L34,384V128L255.5,0,229.778,66.1A1000.23,1000.23,0,0,1,78.329,328.654ZM281.223,66.1L255.5,0,477,128V384l-44.33-55.346A1000.192,1000.192,0,0,1,281.223,66.1Z"
         transform="translate(0.5)" />
 </svg>

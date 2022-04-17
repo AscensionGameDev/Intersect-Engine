@@ -1,9 +1,7 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 using Intersect.Client.Core;
-using Intersect.Client.Framework.Entities;
-using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Maps;
@@ -308,8 +306,6 @@ namespace Intersect.Client.Entities.Events
                 return;
             }
 
-            var y = (int) Math.Ceiling(GetCenterPos().Y);
-            var x = (int) Math.Ceiling(GetCenterPos().X);
             var height = Options.TileHeight;
             switch (Graphic.Type)
             {
@@ -325,7 +321,7 @@ namespace Intersect.Client.Entities.Events
 
                     break;
                 case EventGraphicType.Tileset: //Tile
-                    if (mCachedTilesetName != Graphic.Filename)
+                    if (!string.Equals(mCachedTilesetName, Graphic.Filename, StringComparison.Ordinal))
                     {
                         mCachedTilesetName = Graphic.Filename;
                         mCachedTileset = Globals.ContentManager.GetTexture(
@@ -341,8 +337,8 @@ namespace Intersect.Client.Entities.Events
                     break;
             }
 
-            y = (int) GetTopPos(height) - 12;
-            x = (int) Math.Ceiling(GetCenterPos().X);
+            var y = (int) GetTopPos() - 12;
+            var x = (int) Math.Ceiling(GetCenterPos().X);
 
             if (Graphic.Type == EventGraphicType.Tileset)
             {
@@ -367,20 +363,11 @@ namespace Intersect.Client.Entities.Events
             );
         }
 
-        protected override void CalculateCenterPos()
+        protected override bool CalculateCenterPos()
         {
-            var map = Maps.MapInstance.Get(MapId);
-            if (map == null)
-            {
-                mCenterPos = Pointf.Empty;
-
-                return;
+            if (!base.CalculateCenterPos()) {
+                return false;
             }
-
-            var pos = new Pointf(
-                map.GetX() + X * Options.TileWidth + OffsetX + Options.TileWidth / 2,
-                map.GetY() + Y * Options.TileHeight + OffsetY + Options.TileHeight / 2
-            );
 
             switch (Graphic.Type)
             {
@@ -388,11 +375,11 @@ namespace Intersect.Client.Entities.Events
                     var entityTex = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Entity, Sprite);
                     if (entityTex != null)
                     {
-                        pos.Y += Options.TileHeight / 2;
-                        pos.Y -= entityTex.GetHeight() / Options.Instance.Sprites.Directions / 2;
+                        //mCenterPos.Y += Options.TileHeight / 2;
+                        //mCenterPos.Y -= entityTex.GetHeight() / Options.Instance.Sprites.Directions / 2;
                     }
-
                     break;
+
                 case EventGraphicType.Tileset: //Tile
                     if (mCachedTilesetName != Graphic.Filename)
                     {
@@ -404,14 +391,13 @@ namespace Intersect.Client.Entities.Events
 
                     if (mCachedTileset != null)
                     {
-                        pos.Y += Options.TileHeight / 2;
-                        pos.Y -= (Graphic.Height + 1) * Options.TileHeight / 2;
+                        mCenterPos.Y += Options.TileHeight / 2;
+                        mCenterPos.Y -= (Graphic.Height + 1) * Options.TileHeight / 2;
                     }
-
                     break;
             }
 
-            mCenterPos = pos;
+            return true;
         }
 
         ~Event()

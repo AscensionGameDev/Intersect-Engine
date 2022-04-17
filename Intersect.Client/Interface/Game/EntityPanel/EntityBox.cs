@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -864,7 +864,8 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                 var n = 0;
                 for (var z = 0; z < Options.PaperdollOrder[1].Count; z++)
                 {
-                    var paperdoll = "";
+                    var paperdollPanel = PaperdollPanels[n];
+                    var paperdoll = string.Empty;
                     if (Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z]) > -1 &&
                         equipment.Length == Options.EquipmentSlots.Count)
                     {
@@ -882,6 +883,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                                 {
                                     paperdoll = itemdata.FemalePaperdoll;
                                 }
+                                paperdollPanel.RenderColor = itemdata.Color;
                             }
                         }
                     }
@@ -892,41 +894,41 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                         continue;
                     }
 
-                    if (paperdoll == "" && PaperdollTextures[n] != "")
+                    if (string.IsNullOrWhiteSpace(paperdoll) && !string.IsNullOrWhiteSpace(PaperdollTextures[n]))
                     {
-                        PaperdollPanels[n].Texture = null;
-                        PaperdollPanels[n].Hide();
-                        PaperdollTextures[n] = "";
+                        paperdollPanel.Texture = null;
+                        paperdollPanel.Hide();
+                        PaperdollTextures[n] = string.Empty;
                     }
-                    else if (paperdoll != "" && paperdoll != PaperdollTextures[n])
+                    else if (!string.IsNullOrWhiteSpace(paperdoll) && paperdoll != PaperdollTextures[n])
                     {
                         var paperdollTex = Globals.ContentManager.GetTexture(
                             Framework.Content.TextureType.Paperdoll, paperdoll
                         );
 
-                        PaperdollPanels[n].Texture = paperdollTex;
+                        paperdollPanel.Texture = paperdollTex;
                         if (paperdollTex != null)
                         {
-                            PaperdollPanels[n]
+                            paperdollPanel
                                 .SetTextureRect(
-                                    0, 0, PaperdollPanels[n].Texture.GetWidth() / Options.Instance.Sprites.NormalFrames,
-                                    PaperdollPanels[n].Texture.GetHeight() / Options.Instance.Sprites.Directions
+                                    0, 0, paperdollPanel.Texture.GetWidth() / Options.Instance.Sprites.NormalFrames,
+                                    paperdollPanel.Texture.GetHeight() / Options.Instance.Sprites.Directions
                                 );
 
-                            PaperdollPanels[n]
+                            paperdollPanel
                                 .SetSize(
-                                    PaperdollPanels[n].Texture.GetWidth() / Options.Instance.Sprites.NormalFrames,
-                                    PaperdollPanels[n].Texture.GetHeight() / Options.Instance.Sprites.Directions
+                                    paperdollPanel.Texture.GetWidth() / Options.Instance.Sprites.NormalFrames,
+                                    paperdollPanel.Texture.GetHeight() / Options.Instance.Sprites.Directions
                                 );
 
-                            PaperdollPanels[n]
+                            paperdollPanel
                                 .SetPosition(
-                                    EntityFaceContainer.Width / 2 - PaperdollPanels[n].Width / 2,
-                                    EntityFaceContainer.Height / 2 - PaperdollPanels[n].Height / 2
+                                    EntityFaceContainer.Width / 2 - paperdollPanel.Width / 2,
+                                    EntityFace.Bounds.Bottom - paperdollPanel.Height
                                 );
                         }
 
-                        PaperdollPanels[n].Show();
+                        paperdollPanel.Show();
                         PaperdollTextures[n] = paperdoll;
                     }
 

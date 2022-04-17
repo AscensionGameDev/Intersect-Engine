@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -501,7 +501,6 @@ namespace Intersect.Client.Entities
         //Movement Processing
         public virtual bool Update()
         {
-            MapInstance map = null;
             if (mDisposed)
             {
                 LatestMap = null;
@@ -510,9 +509,12 @@ namespace Intersect.Client.Entities
             }
             else
             {
-                map = Maps.MapInstance.Get(MapId);
-                LatestMap = map;
-                if (map == null || !map.InView())
+                if (LatestMap?.Id != MapId)
+                {
+                    LatestMap = Maps.MapInstance.Get(MapId);
+                }
+
+                if (LatestMap == null || !LatestMap.InView())
                 {
                     Globals.EntitiesToDispose.Add(Id);
 
@@ -520,7 +522,7 @@ namespace Intersect.Client.Entities
                 }
             }
 
-            RenderList = DetermineRenderOrder(RenderList, map);
+            RenderList = DetermineRenderOrder(RenderList, LatestMap);
             if (mLastUpdate == 0)
             {
                 mLastUpdate = Timing.Global.Milliseconds;
@@ -900,10 +902,6 @@ namespace Intersect.Client.Entities
                 return;
             }
 
-            var srcRectangle = new FloatRect();
-            var destRectangle = new FloatRect();
-            var d = 0;
-
             var sprite = "";
             // Copy the actual render color, because we'll be editing it later and don't want to overwrite it.
             var renderColor = new Color(Color.A, Color.R, Color.G, Color.B);
@@ -945,145 +943,8 @@ namespace Intersect.Client.Entities
                 Sprite = sprite;
             }
 
-
-            var texture = AnimatedTextures[SpriteAnimation] ?? Texture;
-
-            if (texture != null)
-            {
-                if (texture.GetHeight() / Options.Instance.Sprites.Directions > Options.TileHeight)
-                {
-                    destRectangle.X = map.GetX() + X * Options.TileWidth + OffsetX + Options.TileWidth / 2;
-                    destRectangle.Y = GetCenterPos().Y - texture.GetHeight() / (Options.Instance.Sprites.Directions * 2);
-                }
-                else
-                {
-                    destRectangle.X = map.GetX() + X * Options.TileWidth + OffsetX + Options.TileWidth / 2;
-                    destRectangle.Y = map.GetY() + Y * Options.TileHeight + OffsetY;
-                }
-
-                destRectangle.X -= texture.GetWidth() / (SpriteFrames * 2);
-                switch (Dir)
-                {
-                    case 0:
-                        d = 3;
-
-                        break;
-                    case 1:
-                        d = 0;
-
-                        break;
-                    case 2:
-                        d = 1;
-
-                        break;
-                    case 3:
-                        d = 2;
-
-                        break;
-                    default:
-                        Dir = 0;
-                        d = 3;
-
-                        break;
-                }
-
-                destRectangle.X = (int)Math.Ceiling(destRectangle.X);
-                destRectangle.Y = (int)Math.Ceiling(destRectangle.Y);
-                if (Options.AnimatedSprites.Contains(sprite.ToLower()))
-                {
-                    srcRectangle = new FloatRect(
-                        AnimationFrame * (int)texture.GetWidth() / SpriteFrames, d * (int)texture.GetHeight() / Options.Instance.Sprites.Directions,
-                        (int)texture.GetWidth() / SpriteFrames, (int)texture.GetHeight() / Options.Instance.Sprites.Directions
-                    );
-                }
-                else
-                {
-                    if (SpriteAnimation == SpriteAnimations.Normal)
-                    {
-                        var attackTime = CalculateAttackTime();
-                        if (AttackTimer - CalculateAttackTime() / 2 > Timing.Global.Ticks / TimeSpan.TicksPerMillisecond || IsBlocking)
-                        {
-                            srcRectangle = new FloatRect(
-                                Options.Instance.Sprites.NormalSheetAttackFrame * (int)texture.GetWidth() / SpriteFrames, d * (int)texture.GetHeight() / Options.Instance.Sprites.Directions,
-                                (int)texture.GetWidth() / SpriteFrames, (int)texture.GetHeight() / Options.Instance.Sprites.Directions
-                            );
-                        }
-                        else
-                        {
-                            //Restore Original Attacking/Blocking Code
-                            srcRectangle = new FloatRect(
-                                WalkFrame * (int)texture.GetWidth() / SpriteFrames, d * (int)texture.GetHeight() / Options.Instance.Sprites.Directions,
-                                (int)texture.GetWidth() / SpriteFrames, (int)texture.GetHeight() / Options.Instance.Sprites.Directions
-                            );
-                        }
-                    }
-                    else
-                    {
-                        srcRectangle = new FloatRect(
-                            SpriteFrame * (int)texture.GetWidth() / SpriteFrames, d * (int)texture.GetHeight() / Options.Instance.Sprites.Directions,
-                            (int)texture.GetWidth() / SpriteFrames, (int)texture.GetHeight() / Options.Instance.Sprites.Directions
-                        );
-                    }
-                }
-
-                destRectangle.Width = srcRectangle.Width;
-                destRectangle.Height = srcRectangle.Height;
-
-                WorldPos = destRectangle;
-
-                //Order the layers of paperdolls and sprites
-                for (var z = 0; z < Options.PaperdollOrder[Dir].Count; z++)
-                {
-                    var paperdoll = Options.PaperdollOrder[Dir][z];
-                    var equipSlot = Options.EquipmentSlots.IndexOf(paperdoll);
-
-                    //Check for player
-                    if (paperdoll == "Player")
-                    {
-                        Graphics.DrawGameTexture(
-                            texture, srcRectangle, destRectangle, renderColor
-                        );
-                    }
-                    else if (equipSlot > -1)
-                    {
-                        //Don't render the paperdolls if they have transformed.
-                        if (sprite == Sprite && Equipment.Length == Options.EquipmentSlots.Count)
-                        {
-                            if (Equipment[equipSlot] != Guid.Empty && this != Globals.Me ||
-                                MyEquipment[equipSlot] < Options.MaxInvItems)
-                            {
-                                var itemId = Guid.Empty;
-                                if (this == Globals.Me)
-                                {
-                                    var slot = MyEquipment[equipSlot];
-                                    if (slot > -1)
-                                    {
-                                        itemId = Inventory[slot].ItemId;
-                                    }
-                                }
-                                else
-                                {
-                                    itemId = Equipment[equipSlot];
-                                }
-
-                                var item = ItemBase.Get(itemId);
-                                if (item != null)
-                                {
-                                    if (Gender == 0)
-                                    {
-                                        DrawEquipment(item.MalePaperdoll, renderColor.A);
-                                    }
-                                    else
-                                    {
-                                        DrawEquipment(item.FemalePaperdoll, renderColor.A);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            else
+            var texture = AnimatedTextures[SpriteAnimation] ?? Texture;            
+            if (texture == null)
             {
                 // We don't have a texture to render, but we still want this to be targetable.
                 WorldPos = new FloatRect(
@@ -1091,6 +952,78 @@ namespace Intersect.Client.Entities
                     map.GetY() + Y * Options.TileHeight + OffsetY,
                     Options.TileWidth,
                     Options.TileHeight);
+                return;
+            }
+
+            var d = (Dir + 3) % 4;
+
+            var frameWidth = texture.GetWidth() / SpriteFrames;
+            var frameHeight = texture.GetHeight() / Options.Instance.Sprites.Directions;
+
+            var frame = SpriteFrame;
+            if (Options.AnimatedSprites.Contains(sprite.ToLower()))
+            {
+                frame = AnimationFrame;
+            }
+            else if (SpriteAnimation == SpriteAnimations.Normal)
+            {
+                frame = AttackTimer - CalculateAttackTime() / 2 > Timing.Global.Ticks / TimeSpan.TicksPerMillisecond || IsBlocking
+                    ? Options.Instance.Sprites.NormalSheetAttackFrame
+                    : WalkFrame;
+            }
+
+            var srcRectangle = new FloatRect(frame * frameWidth, d * frameHeight, frameWidth, frameHeight);
+            var centerPos = GetCenterPos();
+            var destRectangle = new FloatRect(
+                (int)Math.Ceiling(centerPos.X - frameWidth / 2f),
+                (int)Math.Ceiling(centerPos.Y - frameHeight),
+                srcRectangle.Width,
+                srcRectangle.Height
+            );
+
+            WorldPos = destRectangle;
+
+            //Order the layers of paperdolls and sprites
+            for (var z = 0; z < Options.PaperdollOrder[Dir].Count; z++)
+            {
+                var paperdoll = Options.PaperdollOrder[Dir][z];
+                var equipSlot = Options.EquipmentSlots.IndexOf(paperdoll);
+
+                //Check for player
+                if (string.Equals("Player", paperdoll, StringComparison.Ordinal))
+                {
+                    Graphics.DrawGameTexture(texture, srcRectangle, destRectangle, renderColor);
+                }
+                else if (equipSlot > -1)
+                {
+                    //Don't render the paperdolls if they have transformed.
+                    if (sprite == Sprite && Equipment.Length == Options.EquipmentSlots.Count)
+                    {
+                        if (Equipment[equipSlot] != Guid.Empty && this != Globals.Me ||
+                            MyEquipment[equipSlot] < Options.MaxInvItems)
+                        {
+                            var itemId = Guid.Empty;
+                            if (this == Globals.Me)
+                            {
+                                var slot = MyEquipment[equipSlot];
+                                if (slot > -1)
+                                {
+                                    itemId = Inventory[slot].ItemId;
+                                }
+                            }
+                            else
+                            {
+                                itemId = Equipment[equipSlot];
+                            }
+
+                            var item = ItemBase.Get(itemId);
+                            if (item != null)
+                            {
+                                DrawEquipment(Gender == 0 ? item.MalePaperdoll : item.FemalePaperdoll, item.Color * renderColor, destRectangle);
+                            }
+                        }
+                    }
+                }
             }
         }
 
@@ -1116,7 +1049,7 @@ namespace Intersect.Client.Entities
             }
         }
 
-        public virtual void DrawEquipment(string filename, int alpha)
+        public virtual void DrawEquipment(string filename, Color renderColor, FloatRect entityRect)
         {
             var map = Maps.MapInstance.Get(MapId);
             if (map == null)
@@ -1124,14 +1057,9 @@ namespace Intersect.Client.Entities
                 return;
             }
 
-            var srcRectangle = new FloatRect();
-            var destRectangle = new FloatRect();
-            var d = 0;
-
-            GameTexture paperdollTex = null;
             var filenameNoExt = Path.GetFileNameWithoutExtension(filename);
-            paperdollTex = Globals.ContentManager.GetTexture(
-                Framework.Content.TextureType.Paperdoll, $"{filenameNoExt}_{SpriteAnimation.ToString()}.png"
+            var paperdollTex = Globals.ContentManager.GetTexture(
+                Framework.Content.TextureType.Paperdoll, $"{filenameNoExt}_{SpriteAnimation}.png"
             );
 
             var spriteFrames = SpriteFrames;
@@ -1142,93 +1070,48 @@ namespace Intersect.Client.Entities
                 spriteFrames = Options.Instance.Sprites.NormalFrames;
             }
 
-            if (paperdollTex != null)
+            if (paperdollTex == null)
             {
-                if (paperdollTex.GetHeight() / Options.Instance.Sprites.Directions > Options.TileHeight)
-                {
-                    destRectangle.X = map.GetX() + X * Options.TileWidth + OffsetX;
-                    destRectangle.Y = GetCenterPos().Y - paperdollTex.GetHeight() / (Options.Instance.Sprites.Directions * 2);
-                }
-                else
-                {
-                    destRectangle.X = map.GetX() + X * Options.TileWidth + OffsetX;
-                    destRectangle.Y = map.GetY() + Y * Options.TileHeight + OffsetY;
-                }
-
-                if (paperdollTex.GetWidth() / spriteFrames > Options.TileWidth)
-                {
-                    destRectangle.X -= (paperdollTex.GetWidth() / spriteFrames - Options.TileWidth) / 2;
-                }
-
-                switch (Dir)
-                {
-                    case 0:
-                        d = 3;
-
-                        break;
-                    case 1:
-                        d = 0;
-
-                        break;
-                    case 2:
-                        d = 1;
-
-                        break;
-                    case 3:
-                        d = 2;
-
-                        break;
-                }
-
-                destRectangle.X = (int)Math.Ceiling(destRectangle.X);
-                destRectangle.Y = (int)Math.Ceiling(destRectangle.Y);
-                if (SpriteAnimation == SpriteAnimations.Normal)
-                {
-                    if (AttackTimer - CalculateAttackTime() / 2 > Timing.Global.Ticks / TimeSpan.TicksPerMillisecond || IsBlocking)
-                    {
-                        srcRectangle = new FloatRect(
-                            3 * (int)paperdollTex.GetWidth() / spriteFrames, d * (int)paperdollTex.GetHeight() / Options.Instance.Sprites.Directions,
-                            (int)paperdollTex.GetWidth() / spriteFrames, (int)paperdollTex.GetHeight() / Options.Instance.Sprites.Directions
-                        );
-                    }
-                    else
-                    {
-                        srcRectangle = new FloatRect(
-                            WalkFrame * (int)paperdollTex.GetWidth() / spriteFrames, d * (int)paperdollTex.GetHeight() / Options.Instance.Sprites.Directions,
-                            (int)paperdollTex.GetWidth() / spriteFrames, (int)paperdollTex.GetHeight() / Options.Instance.Sprites.Directions
-                        );
-                    }
-                }
-                else
-                {
-                    srcRectangle = new FloatRect(
-                        SpriteFrame * (int)paperdollTex.GetWidth() / spriteFrames, d * (int)paperdollTex.GetHeight() / Options.Instance.Sprites.Directions,
-                        (int)paperdollTex.GetWidth() / spriteFrames, (int)paperdollTex.GetHeight() / Options.Instance.Sprites.Directions
-                    );
-                }
-
-                destRectangle.Width = srcRectangle.Width;
-                destRectangle.Height = srcRectangle.Height;
-                Graphics.DrawGameTexture(
-                    paperdollTex, srcRectangle, destRectangle, new Intersect.Color(alpha, 255, 255, 255)
-                );
+                return;
             }
-        }
 
-        protected virtual void CalculateCenterPos()
-        {
-            var pos = new Pointf(
-                LatestMap.X + X * Options.TileWidth + OffsetX + Options.TileWidth / 2,
-                LatestMap.Y + Y * Options.TileHeight + OffsetY + Options.TileHeight / 2
+            var d = (Dir + 3) % 4;
+
+            var frameWidth = paperdollTex.GetWidth() / spriteFrames;
+            var frameHeight = paperdollTex.GetHeight() / Options.Instance.Sprites.Directions;
+
+            var frame = SpriteFrame;
+            if (SpriteAnimation == SpriteAnimations.Normal)
+            {
+                frame = (AttackTimer - CalculateAttackTime() / 2 > Timing.Global.Ticks / TimeSpan.TicksPerMillisecond || IsBlocking) ? 3 : WalkFrame;
+            }
+
+            var srcRectangle = new FloatRect(frame * frameWidth, d * frameHeight, frameWidth, frameHeight);
+            var centerPos = GetCenterPos();
+            var destRectangle = new FloatRect(
+                (int)Math.Ceiling(centerPos.X - frameWidth / 2f),
+                (int)Math.Ceiling(centerPos.Y - frameHeight),
+                srcRectangle.Width,
+                srcRectangle.Height
             );
 
-            if (Texture != null)
+            Graphics.DrawGameTexture(paperdollTex, srcRectangle, destRectangle, renderColor);
+        }
+
+        protected virtual bool CalculateCenterPos()
+        {
+            if (LatestMap == default)
             {
-                pos.Y += Options.TileHeight / 2;
-                pos.Y -= Texture.GetHeight() / (Options.Instance.Sprites.Directions * 2);
+                mCenterPos = default;
+                return false;
             }
 
-            mCenterPos = pos;
+            mCenterPos = new Pointf(
+                LatestMap.X + X * Options.TileWidth + OffsetX + Options.TileWidth / 2,
+                LatestMap.Y + Y * Options.TileHeight + OffsetY + Options.TileHeight
+            );
+
+            return true;
         }
 
         //returns the point on the screen that is the center of the player sprite
@@ -1244,31 +1127,29 @@ namespace Intersect.Client.Entities
 
         public virtual float GetTopPos(int overrideHeight = 0)
         {
-            var map = LatestMap;
-            if (map == null)
+            if (LatestMap == default)
             {
                 return 0f;
             }
 
             var y = (int)Math.Ceiling(GetCenterPos().Y);
+
             if (overrideHeight != 0)
             {
-                y = y - (int)(overrideHeight / (Options.Instance.Sprites.Directions * 2));
+                y -= overrideHeight / Options.Instance.Sprites.Directions;
                 y -= 12;
             }
-            else
+            else if (Texture != null)
             {
-                if (Texture != null)
-                {
-                    y = y - (int)(Texture.GetHeight() / (Options.Instance.Sprites.Directions * 2));
-                    y -= 12;
-                }
+                y -= Texture.GetHeight() / Options.Instance.Sprites.Directions;
+                y -= 12;
             }
 
-            if (GetType() != typeof(Event))
+            //Need room for HP bar if not an event.
+            if (!(this is Event) && ShouldDrawHpBar)
             {
                 y -= 10;
-            } //Need room for HP bar if not an event.
+            }
 
             return y;
         }
@@ -1428,9 +1309,9 @@ namespace Intersect.Client.Entities
 
                     y = GetLabelLocation(LabelType.Name);
                     var headerSize = Graphics.Renderer.MeasureText(HeaderLabel.Text, Graphics.EntityNameFont, 1);
-                    y -= headerSize.Y;
-
+                    y -= headerSize.Y + 2;
                     break;
+
                 case LabelType.Footer:
                     if (string.IsNullOrWhiteSpace(FooterLabel.Text))
                     {
@@ -1438,26 +1319,19 @@ namespace Intersect.Client.Entities
                     }
 
                     var footerSize = Graphics.Renderer.MeasureText(FooterLabel.Text, Graphics.EntityNameFont, 1);
-                    y -= footerSize.Y - 8;
-
+                    y -= footerSize.Y - 6;
                     break;
+
                 case LabelType.Name:
                     y = GetLabelLocation(LabelType.Footer);
                     var nameSize = Graphics.Renderer.MeasureText(Name, Graphics.EntityNameFont, 1);
-                    if (string.IsNullOrEmpty(FooterLabel.Text))
-                    {
-                        y -= nameSize.Y - 8;
-                    }
-                    else
-                    {
-                        y -= nameSize.Y;
-                    }
-
+                    y -= nameSize.Y + (string.IsNullOrEmpty(FooterLabel.Text) ? -6 : 2);
                     break;
+
                 case LabelType.ChatBubble:
                     y = GetLabelLocation(LabelType.Header) - 4;
-
                     break;
+
                 case LabelType.Guild:
                     // ???? This should never NOT run on a player ????
                     if (this is Player player)
@@ -1485,6 +1359,7 @@ namespace Intersect.Client.Entities
 
             return y;
         }
+
         public int GetShieldSize()
         {
             var shieldSize = 0;
@@ -1496,6 +1371,32 @@ namespace Intersect.Client.Entities
                 }
             }
             return shieldSize;
+        }
+
+        public bool ShouldDrawHpBar
+        {
+            get
+            {
+                if (LatestMap == default)
+                {
+                    return false;
+                }
+
+                if (!ShouldDraw)
+                {
+                    return false;
+                }
+
+                var health = Vital[(int)Vitals.Health];
+                if (health < 1)
+                {
+                    return false;
+                }
+
+                var maxHealth = MaxVital[(int)Vitals.Health];
+                var shieldSize = GetShieldSize();
+                return shieldSize > 0 || health != maxHealth;
+            }
         }
 
         public void DrawHpBar()
@@ -1651,36 +1552,45 @@ namespace Intersect.Client.Entities
         //
         public void DrawTarget(int priority)
         {
-            if (GetType() == typeof(Projectile))
+            if (this is Projectile)
             {
                 return;
             }
 
-            var map = Maps.MapInstance.Get(MapId);
-            if (map == null)
+            if (LatestMap == default)
             {
                 return;
             }
 
-            var targetTex = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Misc, "target.png");
-            if (targetTex != null)
+            var targetTexture = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Misc, "target.png");
+            if (targetTexture == null)
             {
-                var srcRectangle = new FloatRect(
-                    priority * targetTex.GetWidth() / 2f,
-                    0,
-                    targetTex.GetWidth() / 2f,
-                    targetTex.GetHeight()
-                );
-
-                var destRectangle = new FloatRect(
-                    (float) Math.Ceiling(GetCenterPos().X - targetTex.GetWidth() / 4f),
-                    (float) Math.Ceiling(GetCenterPos().Y - targetTex.GetHeight() / 2f),
-                    srcRectangle.Width,
-                    srcRectangle.Height
-                );
-
-                Graphics.DrawGameTexture(targetTex, srcRectangle, destRectangle, Color.White);
+                return;
             }
+
+            var srcRectangle = new FloatRect(
+                priority * targetTexture.GetWidth() / 2f,
+                0,
+                targetTexture.GetWidth() / 2f,
+                targetTexture.GetHeight()
+            );
+
+            var destRectangle = new FloatRect(
+                (float)Math.Ceiling(WorldPos.X + (WorldPos.Width - targetTexture.GetWidth() / 2) / 2),
+                (float)Math.Ceiling(WorldPos.Y + (WorldPos.Height - targetTexture.GetHeight()) / 2),
+                srcRectangle.Width,
+                srcRectangle.Height
+            );
+
+            //var destRectangle = new FloatRect(
+            //    (float)Math.Ceiling(GetCenterPos().X - targetTexture.GetWidth() / 4f),
+            //    (float)Math.Ceiling(GetCenterPos().Y - targetTexture.GetHeight() / 4f),
+            //    srcRectangle.Width,
+            //    srcRectangle.Height
+            //);
+            //var destRectangle = WorldPos;
+
+            Graphics.DrawGameTexture(targetTexture, srcRectangle, destRectangle, Color.White);
         }
 
         public virtual bool CanBeAttacked()

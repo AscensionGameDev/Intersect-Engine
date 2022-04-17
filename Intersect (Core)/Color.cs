@@ -59,6 +59,16 @@ namespace Intersect
             B = (byte) b;
         }
 
+        public Color(in Color color) : this(color, color?.A ?? default) { }
+
+        public Color(in Color color, in int alpha)
+        {
+            A = (byte) alpha;
+            R = color?.R ?? default;
+            G = color?.G ?? default;
+            B = color?.B ?? default;
+        }
+
         [Key(0)]
         public byte A { get; set; }
 
@@ -243,6 +253,13 @@ namespace Intersect
         }
 
         public static implicit operator Color(string colorString) => FromString(colorString);
+
+        public static Color operator *(Color left, Color right) => new Color(
+            a: (int)(left.A * right.A / 255f),
+            r: (int)(left.R * right.R / 255f),
+            g: (int)(left.G * right.G / 255f),
+            b: (int)(left.B * right.B / 255f)
+        );
 
         public static bool operator ==(Color left, Color right) =>
             left?.ToArgb() == right?.ToArgb();
