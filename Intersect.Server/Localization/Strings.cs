@@ -497,6 +497,12 @@ namespace Intersect.Server.Localization
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString nospace = @"You do not have enough inventory space to craft {00}!";
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString CraftFailure = @"The attempt to create the item {00} failed!";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString LostItems = @"You lost the materials!";
+
         }
 
         public sealed class DatabaseNamespace : LocaleNamespace

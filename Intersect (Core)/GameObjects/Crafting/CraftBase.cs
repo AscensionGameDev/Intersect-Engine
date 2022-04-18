@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -34,6 +34,12 @@ namespace Intersect.GameObjects.Crafting
             get => JsonConvert.SerializeObject(Ingredients, Formatting.None);
             protected set => Ingredients = JsonConvert.DeserializeObject<List<CraftIngredient>>(value);
         }
+
+        [JsonProperty(Order = -6)]
+        public int ItemLossChance { get; set; } = 100;
+
+        [JsonProperty(Order = -5)]
+        public int FailureChance { get; set; } = 0;
 
         [JsonProperty(Order = -4)]
         public Guid ItemId { get; set; }
