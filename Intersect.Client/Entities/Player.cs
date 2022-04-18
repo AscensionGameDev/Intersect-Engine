@@ -1976,7 +1976,7 @@ namespace Intersect.Client.Entities
             }
         }
 
-        public override void DrawEquipment(string filename, int alpha)
+        public override void DrawEquipment(string filename, Color renderColor, FloatRect entityRect)
         {
             //check if player is stunned or snared, if so don't let them move.
             for (var n = 0; n < Status.Count; n++)
@@ -1987,7 +1987,7 @@ namespace Intersect.Client.Entities
                 }
             }
 
-            base.DrawEquipment(filename, alpha);
+            base.DrawEquipment(filename, renderColor, entityRect);
         }
 
         //Override of the original function, used for rendering the color of a player based on rank
