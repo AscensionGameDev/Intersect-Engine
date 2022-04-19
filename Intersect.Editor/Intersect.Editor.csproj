@@ -8,10 +8,10 @@
 
   <PropertyGroup>
     <PackageId>AscensionGameDev.Intersect.Editor</PackageId>
-    <Description>Game Editor - Part of the Intersect 2D Game Creation Suite</Description>
+    <Description>Intersect Demo Game Editor</Description>
     <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
     <RootNamespace>Intersect.Editor</RootNamespace>
-    <AssemblyName>Intersect Editor</AssemblyName>
+    <AssemblyName>Intersect Demo Editor</AssemblyName>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <FileAlignment>512</FileAlignment>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>

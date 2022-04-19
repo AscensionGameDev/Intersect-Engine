@@ -8,10 +8,10 @@
 
   <PropertyGroup>
     <PackageId>AscensionGameDev.Intersect.Server</PackageId>
-    <Description>Library for the public Intersect Server API</Description>
+    <Description>Intersect Demo Game Server</Description>
     <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
     <RootNamespace>Intersect.Server</RootNamespace>
-    <AssemblyName>Intersect Server</AssemblyName>
+    <AssemblyName>Intersect Demo Server</AssemblyName>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <FileAlignment>512</FileAlignment>
     <GenerateRuntimeConfigurationFiles>True</GenerateRuntimeConfigurationFiles>
