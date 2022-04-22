@@ -3599,40 +3599,46 @@ namespace Intersect.Server.Entities
         {
             if (CraftingTableId != Guid.Empty)
             {
-                var invbackup = new List<Item>();
-                foreach (var item in Items)
+                var backupItems = new List<Item>();
+                foreach (var backupItem in Items)
                 {
-                    invbackup.Add(item.Clone());
+                    backupItems.Add(backupItem.Clone());
                 }
 
-                var craftItem = CraftBase.Get(id);
-                var finalItem = ItemBase.Get(craftItem.ItemId);
+                var craft = CraftBase.Get(id);
+                var craftItem = ItemBase.Get(craft.ItemId);
+                if (craftItem == null)
+                {
+                    PacketSender.SendChatMsg(this, Strings.Errors.UnknownErrorTryAgain, ChatMessageType.Error, CustomColors.Alerts.Error);
+                    Log.Error($"Unable to find item descriptor {craftItem.Id} for craft {craft.Id}.");
+                    return;
+                }
 
                 //Quickly Look through the inventory and create a catalog of what items we have, and how many
-                var itemdict = new Dictionary<Guid, int>();
-                foreach (var item in Items)
+                var inventoryItems = new Dictionary<Guid, int>();
+                foreach (var inventoryItem in Items)
                 {
-                    if (item != null)
+                    if (inventoryItem != null)
                     {
-                        if (itemdict.ContainsKey(item.ItemId))
+                        if (inventoryItems.ContainsKey(inventoryItem.ItemId))
                         {
-                            itemdict[item.ItemId] += item.Quantity;
+                            inventoryItems[inventoryItem.ItemId] += inventoryItem.Quantity;
                         }
                         else
                         {
-                            itemdict.Add(item.ItemId, item.Quantity);
+                            inventoryItems.Add(inventoryItem.ItemId, inventoryItem.Quantity);
                         }
                     }
                 }
 
                 //Check the player actually has the items
-                foreach (var c in craftItem.Ingredients)
+                foreach (var c in craft.Ingredients)
                 {
-                    if (itemdict.ContainsKey(c.ItemId))
+                    if (inventoryItems.ContainsKey(c.ItemId))
                     {
-                        if (itemdict[c.ItemId] >= c.Quantity)
+                        if (inventoryItems[c.ItemId] >= c.Quantity)
                         {
-                            itemdict[c.ItemId] -= c.Quantity;
+                            inventoryItems[c.ItemId] -= c.Quantity;
                         }
                         else
                         {
@@ -3650,16 +3656,16 @@ namespace Intersect.Server.Entities
                 }
 
                 //Return true if the craft was a success
-                if (Randomization.Next(0, 101) > craftItem.FailureChance)
+                if (Randomization.Next(0, 101) > craft.FailureChance)
                 {
                     //Take the items
-                    foreach (var c in craftItem.Ingredients)
+                    foreach (var c in craft.Ingredients)
                     {
                         if (!TryTakeItem(c.ItemId, c.Quantity))
                         {
-                            for (var i = 0; i < invbackup.Count; i++)
+                            for (var i = 0; i < backupItems.Count; i++)
                             {
-                                Items[i].Set(invbackup[i]);
+                                Items[i].Set(backupItems[i]);
                             }
 
                             PacketSender.SendInventory(this);
@@ -3670,41 +3676,34 @@ namespace Intersect.Server.Entities
                     }
 
                     //Give them the craft
-                    var quantity = Math.Max(craftItem.Quantity, 1);
-                    if (finalItem == null)
-                    {
-                        PacketSender.SendChatMsg(this, Strings.Errors.UnknownErrorTryAgain, ChatMessageType.Error, CustomColors.Alerts.Error);
-                        Log.Error($"Unable to find item descriptor {finalItem.Id} for craft {craftItem.Id}.");
-                        return;
-                    }
-
-                    if (!finalItem.IsStackable)
+                    var quantity = Math.Max(craft.Quantity, 1);
+                    if (!craftItem.IsStackable)
                     {
                         quantity = 1;
                     }
 
-                    if (TryGiveItem(finalItem.Id, quantity))
+                    if (TryGiveItem(craftItem.Id, quantity))
                     {
                         PacketSender.SendChatMsg(
-                            this, Strings.Crafting.crafted.ToString(finalItem.Name), ChatMessageType.Crafting,
+                            this, Strings.Crafting.crafted.ToString(craftItem.Name), ChatMessageType.Crafting,
                             CustomColors.Alerts.Success
                         );
 
-                        if (craftItem.Event != null)
+                        if (craft.Event != null)
                         {
-                            StartCommonEvent(craftItem.Event);
+                            StartCommonEvent(craft.Event);
                         }
                     }
                     else
                     {
-                        for (var i = 0; i < invbackup.Count; i++)
+                        for (var i = 0; i < backupItems.Count; i++)
                         {
-                            Items[i].Set(invbackup[i]);
+                            Items[i].Set(backupItems[i]);
                         }
 
                         PacketSender.SendInventory(this);
                         PacketSender.SendChatMsg(
-                            this, Strings.Crafting.nospace.ToString(finalItem.Name), ChatMessageType.Crafting,
+                            this, Strings.Crafting.nospace.ToString(craftItem.Name), ChatMessageType.Crafting,
                             CustomColors.Alerts.Error
                         );
                     }
@@ -3714,16 +3713,16 @@ namespace Intersect.Server.Entities
                     var message = Strings.Crafting.CraftFailure;
                     
                     //Returns true if items should be taken from the player
-                    if (Randomization.Next(0, 101) < craftItem.ItemLossChance)
+                    if (Randomization.Next(0, 101) < craft.ItemLossChance)
                     {
                         //Take the items
-                        foreach (var c in craftItem.Ingredients)
+                        foreach (var c in craft.Ingredients)
                         {
                             if (!TryTakeItem(c.ItemId, c.Quantity))
                             {
-                                for (var i = 0; i < invbackup.Count; i++)
+                                for (var i = 0; i < backupItems.Count; i++)
                                 {
-                                    Items[i].Set(invbackup[i]);
+                                    Items[i].Set(backupItems[i]);
                                 }
 
                                 PacketSender.SendInventory(this);
@@ -3737,7 +3736,7 @@ namespace Intersect.Server.Entities
                     }
 
                     PacketSender.SendInventory(this);
-                    PacketSender.SendChatMsg(this, message.ToString(finalItem.Name), ChatMessageType.Crafting, CustomColors.Alerts.Error);
+                    PacketSender.SendChatMsg(this, message.ToString(craftItem.Name), ChatMessageType.Crafting, CustomColors.Alerts.Error);
                 }
 
                 CraftId = Guid.Empty;
