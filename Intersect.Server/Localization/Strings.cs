@@ -501,7 +501,7 @@ namespace Intersect.Server.Localization
             public readonly LocalizedString CraftFailure = @"The attempt to create the item {00} failed!";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public readonly LocalizedString LostItems = @"You lost the materials!";
+            public readonly LocalizedString CraftFailureLostItems = @"The attempt to create the item {00} failed and you lost the materials!";
 
         }
 
@@ -582,6 +582,9 @@ namespace Intersect.Server.Localization
                 @"[Flood]: Packet Size: {00} [User: {01} | Player: {02} | IP {03}]";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString warpfail = @"Failed to warp player to new map -- warping to spawn.";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString UnknownErrorTryAgain = @"An unknown error occurred, please try again.";
 
         }
 
