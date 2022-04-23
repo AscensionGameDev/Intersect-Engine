@@ -307,8 +307,8 @@ namespace Intersect.Client.Interface.Menu
 
                                 paperdollPortrait
                                     .SetPosition(
-                                        mCharacterContainer.Width / 2 - paperdollPortrait.Width / 2,
-                                        mCharacterPortrait.Bottom - paperdollPortrait.Height
+                                        (mCharacterContainer.Width - paperdollPortrait.Width) / 2,
+                                        (mCharacterContainer.Height - paperdollPortrait.Height) / 2
                                     );
 
                                 paperdollPortrait.RenderColor = equipment.RenderColor;

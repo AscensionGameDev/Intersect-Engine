@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Intersect.Client.Core;
 using Intersect.Client.Entities;
@@ -139,8 +139,9 @@ namespace Intersect.Client.Maps
             }
             else
             {
-                X = originalX + xVelocity * (int)((Timing.Global.Milliseconds - TransmittionTimer) / 10f);
-                Y = originalY + yVelocity * (int)((Timing.Global.Milliseconds - TransmittionTimer) / 10f);
+                var timeScale = (Timing.Global.Milliseconds - TransmittionTimer) / 10f;
+                X = originalX + xVelocity * timeScale;
+                Y = originalY + yVelocity * timeScale;
                 animInstance.SetPosition(cameraSpawnX + X, cameraSpawnY + Y, -1, -1, Guid.Empty, -1, 0);
                 animInstance.Update();
             }

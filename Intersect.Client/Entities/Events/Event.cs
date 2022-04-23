@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 
 using Intersect.Client.Core;
 using Intersect.Client.Framework.GenericClasses;
@@ -9,39 +10,34 @@ using Intersect.Client.General;
 using Intersect.Client.Maps;
 using Intersect.Enums;
 using Intersect.GameObjects.Events;
+using Intersect.Logging;
 using Intersect.Network.Packets.Server;
 
 namespace Intersect.Client.Entities.Events
 {
-
     public partial class Event : Entity
     {
+        public string Desc { get; set; } = string.Empty;
 
-        public string Desc = "";
+        public bool DirectionFix { get; set; }
 
-        public bool DirectionFix;
+        public bool DisablePreview { get; set; }
 
-        public bool DisablePreview;
+        public string FaceGraphic { get; set; } = string.Empty;
 
-        public string FaceGraphic = "";
+        public EventGraphic Graphic { get; set; } = new EventGraphic();
 
-        public EventGraphic Graphic = new EventGraphic();
+        public int Layer { get; set; }
 
-        public int Layer;
+        private int mOldRenderLevel { get; set; }
 
-        private GameTexture mCachedTileset;
+        private MapInstance mOldRenderMap { get; set; }
 
-        private string mCachedTilesetName;
+        private int mOldRenderY { get; set; }
 
-        private int mOldRenderLevel;
+        public int RenderLevel { get; set; } = 1;
 
-        private MapInstance mOldRenderMap;
-
-        private int mOldRenderY;
-
-        public int RenderLevel = 1;
-
-        public bool WalkingAnim = true;
+        public bool WalkingAnim { get; set; } = true;
 
         public Event(Guid id, EventEntityPacket packet) : base(id, packet, true)
         {
@@ -49,27 +45,23 @@ namespace Intersect.Client.Entities.Events
             Type = EntityTypes.Event;
         }
 
-        public override string ToString()
-        {
-            return Name;
-        }
-
         public override void Load(EntityPacket packet)
         {
+            if (!(packet is EventEntityPacket eventEntityPacket))
+            {
+                Log.Error($"Received invalid packet for {nameof(Event)}: {packet?.GetType()?.FullName}");
+                return;
+            }
+            DirectionFix = eventEntityPacket.DirectionFix;
+            WalkingAnim = eventEntityPacket.WalkingAnim;
+            DisablePreview = eventEntityPacket.DisablePreview;
+            Desc = eventEntityPacket.Description;
+            Graphic = eventEntityPacket.Graphic;
+            RenderLevel = eventEntityPacket.RenderLayer;
             base.Load(packet);
-            var pkt = (EventEntityPacket) packet;
-            DirectionFix = pkt.DirectionFix;
-            WalkingAnim = pkt.WalkingAnim;
-            DisablePreview = pkt.DisablePreview;
-            Desc = pkt.Description;
-            Graphic = pkt.Graphic;
-            RenderLevel = pkt.RenderLayer;
         }
 
-        public override EntityTypes GetEntityType()
-        {
-            return EntityTypes.Event;
-        }
+        public override EntityTypes GetEntityType() => EntityTypes.Event;
 
         public override bool Update()
         {
@@ -85,129 +77,80 @@ namespace Intersect.Client.Entities.Events
         public override void Draw()
         {
             WorldPos.Reset();
-            if (Maps.MapInstance.Get(MapId) == null || !Globals.GridMaps.Contains(MapId))
+            if (MapInstance == default || !Globals.GridMaps.Contains(MapId) || Texture == default)
             {
                 return;
             }
-            
 
-            var map = Maps.MapInstance.Get(MapId);
-            var srcRectangle = new FloatRect();
-            var destRectangle = new FloatRect();
-            GameTexture srcTexture = null;
-            var height = 0;
-            var width = 0;
-            var d = 0;
+            FloatRect srcRectangle;
             switch (Graphic.Type)
             {
                 case EventGraphicType.Sprite: //Sprite
-                    var entityTex = Globals.ContentManager.GetTexture(
-                        Framework.Content.TextureType.Entity, Graphic.Filename
-                    );
+                    base.Draw();
+                    return;
 
-                    if (entityTex != null)
-                    {
-                        srcTexture = entityTex;
-                        height = srcTexture.GetHeight() / Options.Instance.Sprites.Directions;
-                        width = srcTexture.GetWidth() / Options.Instance.Sprites.NormalFrames;
-                        d = Graphic.Y;
-                        if (!DirectionFix)
-                        {
-                            switch (Dir)
-                            {
-                                case 0:
-                                    d = 3;
-
-                                    break;
-                                case 1:
-                                    d = 0;
-
-                                    break;
-                                case 2:
-                                    d = 1;
-
-                                    break;
-                                case 3:
-                                    d = 2;
-
-                                    break;
-                            }
-                        }
-
-                        var frame = Graphic.X;
-                        if (WalkingAnim)
-                        {
-                            frame = WalkFrame;
-                        }
-
-                        if (Options.AnimatedSprites.Contains(Graphic.Filename.ToLower()))
-                        {
-                            srcRectangle = new FloatRect(
-                                AnimationFrame * (int) entityTex.GetWidth() / Options.Instance.Sprites.NormalFrames, d * (int) entityTex.GetHeight() / Options.Instance.Sprites.Directions,
-                                (int) entityTex.GetWidth() / Options.Instance.Sprites.NormalFrames, (int) entityTex.GetHeight() / Options.Instance.Sprites.Directions
-                            );
-                        }
-                        else
-                        {
-                            srcRectangle = new FloatRect(
-                                frame * (int) srcTexture.GetWidth() / Options.Instance.Sprites.NormalFrames, d * (int) srcTexture.GetHeight() / Options.Instance.Sprites.Directions,
-                                (int) srcTexture.GetWidth() / Options.Instance.Sprites.NormalFrames, (int) srcTexture.GetHeight() / Options.Instance.Sprites.Directions
-                            );
-                        }
-                    }
-
-                    break;
                 case EventGraphicType.Tileset: //Tile
-                    if (mCachedTilesetName != Graphic.Filename)
-                    {
-                        mCachedTilesetName = Graphic.Filename;
-                        mCachedTileset = Globals.ContentManager.GetTexture(
-                            Framework.Content.TextureType.Tileset, Graphic.Filename
-                        );
-                    }
-
-                    var tileset = mCachedTileset;
-                    if (tileset != null)
-                    {
-                        srcTexture = tileset;
-                        width = (Graphic.Width + 1) * Options.TileWidth;
-                        height = (Graphic.Height + 1) * Options.TileHeight;
-                        srcRectangle = new FloatRect(
-                            Graphic.X * Options.TileWidth, Graphic.Y * Options.TileHeight,
-                            (Graphic.Width + 1) * Options.TileWidth, (Graphic.Height + 1) * Options.TileHeight
-                        );
-                    }
-
+                    var width = (Graphic.Width + 1) * Options.TileWidth;
+                    var height = (Graphic.Height + 1) * Options.TileHeight;
+                    srcRectangle = new FloatRect(
+                        Graphic.X * Options.TileWidth,
+                        Graphic.Y * Options.TileHeight,
+                        width,
+                        height
+                    );
                     break;
+
+                default:
+                    return;
             }
 
-            destRectangle.X = map.GetX() + X * Options.TileWidth + OffsetX;
-            if (height > Options.TileHeight)
+            var map = Maps.MapInstance.Get(MapId);
+
+            var destRectangle = new FloatRect
             {
-                destRectangle.Y = map.GetY() + Y * Options.TileHeight + OffsetY - (height - Options.TileHeight);
-            }
-            else
+                X = map.GetX() + X * Options.TileWidth + OffsetX,
+                Y = map.GetY() + Y * Options.TileHeight + OffsetY,
+                Width = Math.Max(Options.TileWidth, srcRectangle.Width),
+                Height = Math.Max(Options.TileHeight, srcRectangle.Height),
+            };
+
+            if (srcRectangle.Width > Options.TileWidth)
             {
-                destRectangle.Y = map.GetY() + Y * Options.TileHeight + OffsetY;
+                destRectangle.X -= (srcRectangle.Width - Options.TileWidth) / 2;
             }
 
-            if (width > Options.TileWidth)
+            if (srcRectangle.Height > Options.TileHeight)
             {
-                destRectangle.X -= (width - Options.TileWidth) / 2;
+                destRectangle.Y -= srcRectangle.Height - Options.TileHeight;
             }
 
             destRectangle.X = (int) Math.Ceiling(destRectangle.X);
             destRectangle.Y = (int) Math.Ceiling(destRectangle.Y);
-            destRectangle.Width = Math.Max(Options.TileWidth, srcRectangle.Width);
-            destRectangle.Height = Math.Max(Options.TileHeight, srcRectangle.Height);
 
             // Set up our targetting rectangle.
             // If we're smaller than a tile, force the target size to a tile.
             WorldPos = destRectangle;
 
-            if (srcTexture != null)
+            if (Texture != null)
             {
-                Graphics.DrawGameTexture(srcTexture, srcRectangle, destRectangle, Intersect.Color.White);
+                Graphics.DrawGameTexture(Texture, srcRectangle, destRectangle, Color.White);
+            }
+        }
+
+        public override void LoadTextures(string textureName)
+        {
+            switch (Graphic.Type)
+            {
+                case EventGraphicType.Tileset:
+                    Texture = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Tileset, textureName);
+                    break;
+
+                case EventGraphicType.Sprite:
+                    base.LoadTextures(textureName);
+                    break;
+
+                default:
+                    break;
             }
         }
 
@@ -236,52 +179,56 @@ namespace Intersect.Client.Entities.Events
                         y < Globals.MapGridHeight &&
                         Globals.MapGrid[x, y] != Guid.Empty)
                     {
-                        if (Globals.MapGrid[x, y] == MapId)
+                        if (Globals.MapGrid[x, y] != MapId)
                         {
-                            if (RenderLevel == 0)
-                            {
-                                y--;
-                            }
-
-                            if (RenderLevel == 2)
-                            {
-                                y++;
-                            }
-
-                            var priority = mRenderPriority;
-                            if (Z != 0)
-                            {
-                                priority += 3;
-                            }
-
-                            HashSet<Entity> renderSet = null;
-
-                            if (y == gridY - 2)
-                            {
-                                renderSet = Graphics.RenderingEntities[priority, Y];
-                            }
-                            else if (y == gridY - 1)
-                            {
-                                renderSet = Graphics.RenderingEntities[priority, Options.MapHeight + Y];
-                            }
-                            else if (y == gridY)
-                            {
-                                renderSet = Graphics.RenderingEntities[priority, Options.MapHeight * 2 + Y];
-                            }
-                            else if (y == gridY + 1)
-                            {
-                                renderSet = Graphics.RenderingEntities[priority, Options.MapHeight * 3 + Y];
-                            }
-                            else if (y == gridY + 2)
-                            {
-                                renderSet = Graphics.RenderingEntities[priority, Options.MapHeight * 4 + Y];
-                            }
-
-                            renderSet?.Add(this);
-                            renderList = renderSet;
-
-                            return renderList;
+                            continue;
                         }
+
+                        if (RenderLevel == 0)
+                        {
+                            y--;
+                        }
+                        else if (RenderLevel == 2)
+                        {
+                            y++;
+                        }
+
+                        var priority = mRenderPriority;
+                        if (Z != 0)
+                        {
+                            priority += 3;
+                        }
+
+                        var maps = y - (gridY - 2);
+                        var renderSet = Graphics.RenderingEntities[priority, Options.MapHeight * maps + Y];
+
+                        // If bugs arise from switching to the above, remove and uncomment this
+                        //HashSet<Entity> renderSet = null;
+                        //if (y == gridY - 2)
+                        //{
+                        //    renderSet = Graphics.RenderingEntities[priority, Y];
+                        //}
+                        //else if (y == gridY - 1)
+                        //{
+                        //    renderSet = Graphics.RenderingEntities[priority, Options.MapHeight + Y];
+                        //}
+                        //else if (y == gridY)
+                        //{
+                        //    renderSet = Graphics.RenderingEntities[priority, Options.MapHeight * 2 + Y];
+                        //}
+                        //else if (y == gridY + 1)
+                        //{
+                        //    renderSet = Graphics.RenderingEntities[priority, Options.MapHeight * 3 + Y];
+                        //}
+                        //else if (y == gridY + 2)
+                        //{
+                        //    renderSet = Graphics.RenderingEntities[priority, Options.MapHeight * 4 + Y];
+                        //}
+
+                        renderSet?.Add(this);
+                        renderList = renderSet;
+
+                        return renderList;
                     }
                 }
             }
@@ -289,9 +236,21 @@ namespace Intersect.Client.Entities.Events
             return renderList;
         }
 
+        public override float GetTop(int overrideHeight = -1)
+        {
+            if (Graphic.Type == EventGraphicType.Tileset)
+            {
+                var topPosition = base.GetTop(0);
+                topPosition -= (Graphic.Height + 1) * Options.TileHeight;
+                return topPosition;
+            }
+
+            return base.GetTop(overrideHeight);
+        }
+
         public override void DrawName(Color textColor, Color borderColor, Color backgroundColor)
         {
-            if (HideName || Name.Trim().Length == 0)
+            if (HideName || string.IsNullOrWhiteSpace(Name))
             {
                 return;
             }
@@ -301,110 +260,41 @@ namespace Intersect.Client.Entities.Events
                 return;
             }
 
-            if (Maps.MapInstance.Get(MapId) == null || !Globals.GridMaps.Contains(MapId))
+            if (LatestMap == default || !Globals.GridMaps.Contains(MapId))
             {
                 return;
             }
 
-            var height = Options.TileHeight;
-            switch (Graphic.Type)
+            if (Graphic.Type == EventGraphicType.Sprite)
             {
-                case EventGraphicType.Sprite: //Sprite
-                    var entityTex = Globals.ContentManager.GetTexture(
-                        Framework.Content.TextureType.Entity, Graphic.Filename
-                    );
-
-                    if (entityTex != null)
-                    {
-                        height = entityTex.GetHeight();
-                    }
-
-                    break;
-                case EventGraphicType.Tileset: //Tile
-                    if (!string.Equals(mCachedTilesetName, Graphic.Filename, StringComparison.Ordinal))
-                    {
-                        mCachedTilesetName = Graphic.Filename;
-                        mCachedTileset = Globals.ContentManager.GetTexture(
-                            Framework.Content.TextureType.Tileset, Graphic.Filename
-                        );
-                    }
-
-                    if (mCachedTileset != null)
-                    {
-                        height = (Graphic.Height + 1) * Options.TileHeight;
-                    }
-
-                    break;
+                base.DrawName(textColor, borderColor, backgroundColor);
+                return;
             }
 
-            var y = (int) GetTopPos() - 12;
-            var x = (int) Math.Ceiling(GetCenterPos().X);
-
-            if (Graphic.Type == EventGraphicType.Tileset)
-            {
-                y -= 12;
-            }
+            var x = (int)Math.Ceiling(Origin.X);
+            var y = GetTop();
 
             var textSize = Graphics.Renderer.MeasureText(Name, Graphics.EntityNameFont, 1);
+
+            y -= textSize.Y + 2;
 
             if (CustomColors.Names.Events.Background != Color.Transparent)
             {
                 Graphics.DrawGameTexture(
-                    Graphics.Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1),
+                    Graphics.Renderer.GetWhiteTexture(),
+                    new FloatRect(0, 0, 1, 1),
                     new FloatRect(x - textSize.X / 2f - 4, y, textSize.X + 8, textSize.Y),
                     CustomColors.Names.Events.Background
                 );
             }
 
             Graphics.Renderer.DrawString(
-                Name, Graphics.EntityNameFont, (int) (x - (int) Math.Ceiling(textSize.X / 2f)), (int) y, 1,
+                Name, Graphics.EntityNameFont, x - (int)Math.Ceiling(textSize.X / 2f), (int) y, 1,
                 Color.FromArgb(CustomColors.Names.Events.Name.ToArgb()), true, null,
                 Color.FromArgb(CustomColors.Names.Events.Outline.ToArgb())
             );
         }
 
-        protected override bool CalculateCenterPos()
-        {
-            if (!base.CalculateCenterPos()) {
-                return false;
-            }
-
-            switch (Graphic.Type)
-            {
-                case EventGraphicType.Sprite: //Sprite
-                    var entityTex = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Entity, Sprite);
-                    if (entityTex != null)
-                    {
-                        //mCenterPos.Y += Options.TileHeight / 2;
-                        //mCenterPos.Y -= entityTex.GetHeight() / Options.Instance.Sprites.Directions / 2;
-                    }
-                    break;
-
-                case EventGraphicType.Tileset: //Tile
-                    if (mCachedTilesetName != Graphic.Filename)
-                    {
-                        mCachedTilesetName = Graphic.Filename;
-                        mCachedTileset = Globals.ContentManager.GetTexture(
-                            Framework.Content.TextureType.Tileset, Graphic.Filename
-                        );
-                    }
-
-                    if (mCachedTileset != null)
-                    {
-                        mCenterPos.Y += Options.TileHeight / 2;
-                        mCenterPos.Y -= (Graphic.Height + 1) * Options.TileHeight / 2;
-                    }
-                    break;
-            }
-
-            return true;
-        }
-
-        ~Event()
-        {
-            Dispose();
-        }
-
+        ~Event() => Dispose();
     }
-
 }

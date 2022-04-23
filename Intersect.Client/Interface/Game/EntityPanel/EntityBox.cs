@@ -923,8 +923,8 @@ namespace Intersect.Client.Interface.Game.EntityPanel
 
                             paperdollPanel
                                 .SetPosition(
-                                    EntityFaceContainer.Width / 2 - paperdollPanel.Width / 2,
-                                    EntityFace.Bounds.Bottom - paperdollPanel.Height
+                                    (EntityFaceContainer.Width - paperdollPanel.Width) / 2,
+                                    (EntityFaceContainer.Height - paperdollPanel.Height) / 2
                                 );
                         }
 

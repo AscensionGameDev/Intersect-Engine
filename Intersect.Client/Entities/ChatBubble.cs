@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 using Intersect.Client.Core;
 using Intersect.Client.Framework.Entities;
@@ -66,9 +66,9 @@ namespace Intersect.Client.Entities
                 return 0f;
             }
 
+            var x = (int)Math.Ceiling(mOwner.Origin.X);
             var y = (int) Math.Ceiling(mOwner.GetLabelLocation(LabelType.ChatBubble));
 
-            var x = (int) Math.Ceiling(mOwner.GetCenterPos().X);
             if (mTextureBounds.Width == 0)
             {
                 //Gotta Calculate Bounds
