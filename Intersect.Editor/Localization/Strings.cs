@@ -1156,6 +1156,8 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString duplicateingredient = @"Duplicate";
 
+            public static LocalizedString FailureChance = @"Failure (%):";
+
             public static LocalizedString folderlabel = @"Folder:";
 
             public static LocalizedString foldertitle = @"Add Folder";
@@ -1175,6 +1177,8 @@ Tick timer saved in server config.json.";
             public static LocalizedString ingredients = @"Ingredients";
 
             public static LocalizedString item = @"Item:";
+
+            public static LocalizedString ItemLossChance = @"Item Loss (%):";
 
             public static LocalizedString name = @"Name:";
 

@@ -497,6 +497,12 @@ namespace Intersect.Server.Localization
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString nospace = @"You do not have enough inventory space to craft {00}!";
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString CraftFailure = @"The attempt to create the item {00} failed!";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString CraftFailureLostItems = @"The attempt to create the item {00} failed and you lost the materials!";
+
         }
 
         public sealed class DatabaseNamespace : LocaleNamespace
@@ -576,6 +582,9 @@ namespace Intersect.Server.Localization
                 @"[Flood]: Packet Size: {00} [User: {01} | Player: {02} | IP {03}]";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString warpfail = @"Failed to warp player to new map -- warping to spawn.";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString UnknownErrorTryAgain = @"An unknown error occurred, please try again.";
 
         }
 
