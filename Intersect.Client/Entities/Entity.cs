@@ -6,6 +6,7 @@ using System.Linq;
 using Intersect.Client.Core;
 using Intersect.Client.Entities.Events;
 using Intersect.Client.Entities.Projectiles;
+using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.Entities;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
@@ -103,7 +104,7 @@ namespace Intersect.Client.Entities
 
         IReadOnlyList<int> IEntity.MaxVitals => MaxVital.ToList();
 
-        protected Pointf mCenterPos = Pointf.Empty;
+        protected Pointf mOrigin = Pointf.Empty;
 
         //Chat
         private List<ChatBubble> mChatBubbles = new List<ChatBubble>();
@@ -227,7 +228,16 @@ namespace Intersect.Client.Entities
 
         IReadOnlyList<IStatus> IEntity.Status => Status;
 
-        public Pointf CenterPosition => GetCenterPos();
+        public Pointf Origin => LatestMap == default ? Pointf.Empty : mOrigin;
+
+        public Pointf Center
+        {
+            get
+            {
+                var sprite = Globals.ContentManager.GetTexture(TextureType.Entity, Sprite);
+                return Origin - ((sprite == default) ? Pointf.Empty : (Pointf.UnitY * sprite.Center.Y / Options.Instance.Sprites.Directions));
+            }
+        }
 
         public byte Dir
         {
@@ -240,20 +250,15 @@ namespace Intersect.Client.Entities
             get => mTransformedSprite;
             set
             {
-                if (mTransformedSprite != value)
+                if (mTransformedSprite == value)
                 {
-                    mTransformedSprite = value;
-                    if (value == "")
-                    {
-                        Texture = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Entity, mMySprite);
-                        LoadAnimationTextures(mMySprite);
-                    }
-                    else
-                    {
-                        Texture = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Entity, mTransformedSprite);
-                        LoadAnimationTextures(mTransformedSprite);
-                    }
+                    return;
                 }
+
+                mTransformedSprite = value;
+
+                var textureName = string.IsNullOrEmpty(mTransformedSprite) ? mMySprite : mTransformedSprite;
+                LoadTextures(textureName);
             }
         }
 
@@ -262,12 +267,13 @@ namespace Intersect.Client.Entities
             get => mMySprite;
             set
             {
-                if (mMySprite != value)
+                if (mMySprite == value)
                 {
-                    mMySprite = value;
-                    Texture = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Entity, mMySprite);
-                    LoadAnimationTextures(mMySprite);
+                    return;
                 }
+
+                mMySprite = value;
+                LoadTextures(mMySprite);
             }
         }
 
@@ -498,6 +504,8 @@ namespace Intersect.Client.Entities
             return Math.Min(1000f, time);
         }
 
+        public override string ToString() => Name;
+
         //Movement Processing
         public virtual bool Update()
         {
@@ -719,7 +727,7 @@ namespace Intersect.Client.Entities
                 }
             }
 
-            CalculateCenterPos();
+            CalculateOrigin();
 
             List<Animation> animsToRemove = null;
             foreach (var animInstance in Animations)
@@ -748,20 +756,15 @@ namespace Intersect.Client.Entities
                     animInstance.Show();
                 }
 
-                if (animInstance.AutoRotate)
-                {
-                    animInstance.SetPosition(
-                        (int)Math.Ceiling(GetCenterPos().X), (int)Math.Ceiling(GetCenterPos().Y), X, Y, MapId,
-                        Dir, Z
-                    );
-                }
-                else
-                {
-                    animInstance.SetPosition(
-                        (int)Math.Ceiling(GetCenterPos().X), (int)Math.Ceiling(GetCenterPos().Y), X, Y, MapId,
-                        -1, Z
-                    );
-                }
+                var animationDirection = animInstance.AutoRotate ? Dir : -1;
+                animInstance.SetPosition(
+                    (int)Math.Ceiling(Center.X),
+                    (int)Math.Ceiling(Center.Y),
+                    X,
+                    Y,
+                    MapId,
+                    animationDirection, Z
+                );
             }
 
             if (animsToRemove != null)
@@ -943,7 +946,7 @@ namespace Intersect.Client.Entities
                 Sprite = sprite;
             }
 
-            var texture = AnimatedTextures[SpriteAnimation] ?? Texture;            
+            var texture = AnimatedTextures[SpriteAnimation] ?? Texture;
             if (texture == null)
             {
                 // We don't have a texture to render, but we still want this to be targetable.
@@ -973,10 +976,9 @@ namespace Intersect.Client.Entities
             }
 
             var srcRectangle = new FloatRect(frame * frameWidth, d * frameHeight, frameWidth, frameHeight);
-            var centerPos = GetCenterPos();
             var destRectangle = new FloatRect(
-                (int)Math.Ceiling(centerPos.X - frameWidth / 2f),
-                (int)Math.Ceiling(centerPos.Y - frameHeight),
+                (int)Math.Ceiling(Origin.X - frameWidth / 2f),
+                (int)Math.Ceiling(Origin.Y - frameHeight),
                 srcRectangle.Width,
                 srcRectangle.Height
             );
@@ -1059,14 +1061,14 @@ namespace Intersect.Client.Entities
 
             var filenameNoExt = Path.GetFileNameWithoutExtension(filename);
             var paperdollTex = Globals.ContentManager.GetTexture(
-                Framework.Content.TextureType.Paperdoll, $"{filenameNoExt}_{SpriteAnimation}.png"
+                TextureType.Paperdoll, $"{filenameNoExt}_{SpriteAnimation}.png"
             );
 
             var spriteFrames = SpriteFrames;
 
             if (paperdollTex == null)
             {
-                paperdollTex = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Paperdoll, filename);
+                paperdollTex = Globals.ContentManager.GetTexture(TextureType.Paperdoll, filename);
                 spriteFrames = Options.Instance.Sprites.NormalFrames;
             }
 
@@ -1087,10 +1089,9 @@ namespace Intersect.Client.Entities
             }
 
             var srcRectangle = new FloatRect(frame * frameWidth, d * frameHeight, frameWidth, frameHeight);
-            var centerPos = GetCenterPos();
             var destRectangle = new FloatRect(
-                (int)Math.Ceiling(centerPos.X - frameWidth / 2f),
-                (int)Math.Ceiling(centerPos.Y - frameHeight),
+                (int)Math.Ceiling(Center.X - frameWidth / 2f),
+                (int)Math.Ceiling(Center.Y - frameHeight / 2f),
                 srcRectangle.Width,
                 srcRectangle.Height
             );
@@ -1098,15 +1099,15 @@ namespace Intersect.Client.Entities
             Graphics.DrawGameTexture(paperdollTex, srcRectangle, destRectangle, renderColor);
         }
 
-        protected virtual bool CalculateCenterPos()
+        protected virtual bool CalculateOrigin()
         {
             if (LatestMap == default)
             {
-                mCenterPos = default;
+                mOrigin = default;
                 return false;
             }
 
-            mCenterPos = new Pointf(
+            mOrigin = new Pointf(
                 LatestMap.X + X * Options.TileWidth + OffsetX + Options.TileWidth / 2,
                 LatestMap.Y + Y * Options.TileHeight + OffsetY + Options.TileHeight
             );
@@ -1114,41 +1115,22 @@ namespace Intersect.Client.Entities
             return true;
         }
 
-        //returns the point on the screen that is the center of the player sprite
-        public Pointf GetCenterPos()
-        {
-            if (LatestMap == null)
-            {
-                return new Pointf(0, 0);
-            }
-
-            return mCenterPos;
-        }
-
-        public virtual float GetTopPos(int overrideHeight = 0)
+        public virtual float GetTop(int overrideHeight = -1)
         {
             if (LatestMap == default)
             {
                 return 0f;
             }
 
-            var y = (int)Math.Ceiling(GetCenterPos().Y);
+            var y = (int)Math.Ceiling(Origin.Y);
 
-            if (overrideHeight != 0)
+            if (overrideHeight > -1)
             {
                 y -= overrideHeight / Options.Instance.Sprites.Directions;
-                y -= 12;
             }
             else if (Texture != null)
             {
-                y -= Texture.GetHeight() / Options.Instance.Sprites.Directions;
-                y -= 12;
-            }
-
-            //Need room for HP bar if not an event.
-            if (!(this is Event) && ShouldDrawHpBar)
-            {
-                y -= 10;
+                y -= Texture.Height / Options.Instance.Sprites.Directions;
             }
 
             return y;
@@ -1193,7 +1175,7 @@ namespace Intersect.Client.Entities
 
             var textSize = Graphics.Renderer.MeasureText(label, Graphics.EntityNameFont, 1);
 
-            var x = (int)Math.Ceiling(GetCenterPos().X);
+            var x = (int)Math.Ceiling(Origin.X);
             var y = position == 0 ? GetLabelLocation(LabelType.Header) : GetLabelLocation(LabelType.Footer);
 
             if (backgroundColor != Color.Transparent)
@@ -1231,29 +1213,28 @@ namespace Intersect.Client.Entities
             //Check for npc colors
             if (textColor == null)
             {
-                LabelColor? color = null;
+                LabelColor? color;
                 switch (Aggression)
                 {
                     case -1: //When entity has a target (showing aggression)
                         color = CustomColors.Names.Npcs["Aggressive"];
-
                         break;
+
                     case 0: //Attack when attacked
                         color = CustomColors.Names.Npcs["AttackWhenAttacked"];
-
                         break;
+
                     case 1: //Attack on sight
                         color = CustomColors.Names.Npcs["AttackOnSight"];
-
                         break;
+
                     case 3: //Guard
                         color = CustomColors.Names.Npcs["Guard"];
-
                         break;
+
                     case 2: //Neutral
                     default:
                         color = CustomColors.Names.Npcs["Neutral"];
-
                         break;
                 }
 
@@ -1279,7 +1260,7 @@ namespace Intersect.Client.Entities
 
             var textSize = Graphics.Renderer.MeasureText(name, Graphics.EntityNameFont, 1);
 
-            var x = (int)Math.Ceiling(GetCenterPos().X);
+            var x = (int)Math.Ceiling(Origin.X);
             var y = GetLabelLocation(LabelType.Name);
 
             if (backgroundColor != Color.Transparent)
@@ -1298,16 +1279,24 @@ namespace Intersect.Client.Entities
 
         public float GetLabelLocation(LabelType type)
         {
-            var y = GetTopPos() - 4;
+            var y = GetTop() - 8;
+
+            //Need room for HP bar if not an event.
+            if (!(this is Event) && ShouldDrawHpBar)
+            {
+                y -= GetBoundingHpBarTexture().Height + 2;
+            }
+
             switch (type)
             {
                 case LabelType.Header:
+                    y = GetLabelLocation(LabelType.Name);
+
                     if (string.IsNullOrWhiteSpace(HeaderLabel.Text))
                     {
-                        return GetLabelLocation(LabelType.Name);
+                        break;
                     }
 
-                    y = GetLabelLocation(LabelType.Name);
                     var headerSize = Graphics.Renderer.MeasureText(HeaderLabel.Text, Graphics.EntityNameFont, 1);
                     y -= headerSize.Y + 2;
                     break;
@@ -1329,18 +1318,12 @@ namespace Intersect.Client.Entities
                     break;
 
                 case LabelType.ChatBubble:
-                    y = GetLabelLocation(LabelType.Header) - 4;
+                    y = GetLabelLocation(LabelType.Guild) - 2;
                     break;
 
                 case LabelType.Guild:
-                    // ???? This should never NOT run on a player ????
                     if (this is Player player)
                     {
-                        if (string.IsNullOrWhiteSpace(player.Guild))
-                        {
-                            return GetLabelLocation(LabelType.Name);
-                        }
-
                         // Do we have a header? If so, slightly change the position!
                         if (string.IsNullOrWhiteSpace(HeaderLabel.Text))
                         {
@@ -1351,8 +1334,13 @@ namespace Intersect.Client.Entities
                             y = GetLabelLocation(LabelType.Header);
                         }
 
+                        if (string.IsNullOrWhiteSpace(player.Guild))
+                        {
+                            break;
+                        }
+
                         var guildSize = Graphics.Renderer.MeasureText(player.Guild, Graphics.EntityNameFont, 1);
-                        y -= guildSize.Y;
+                        y -= 2 + guildSize.Y;
                     }
                     break;
             }
@@ -1387,6 +1375,8 @@ namespace Intersect.Client.Entities
                     return false;
                 }
 
+                //return true;
+
                 var health = Vital[(int)Vitals.Health];
                 if (health < 1)
                 {
@@ -1399,20 +1389,38 @@ namespace Intersect.Client.Entities
             }
         }
 
+        public GameTexture GetBoundingHpBarTexture()
+        {
+            return GameTexture.GetBoundingTexture(
+                BoundsComparison.Height,
+                Globals.ContentManager.GetTexture(TextureType.Misc, "hpbackground.png"),
+                Globals.ContentManager.GetTexture(TextureType.Misc, "hpbar.png"),
+                Globals.ContentManager.GetTexture(TextureType.Misc, "shieldbar.png")
+            );
+        }
+
         public void DrawHpBar()
         {
             // Are we supposed to hide this HP bar?
-            if (!ShouldDraw)
+            if (!ShouldDrawHpBar)
             {
                 return;
             }
 
-            if (Vital[(int)Vitals.Health] <= 0)
-            {
-                return;
-            }
+            var hpBackground = Globals.ContentManager.GetTexture(TextureType.Misc, "hpbackground.png");
+            var hpForeground = Globals.ContentManager.GetTexture(TextureType.Misc, "hpbar.png");
+            var shieldForeground = Globals.ContentManager.GetTexture(TextureType.Misc, "shieldbar.png");
 
-            //Check for shields
+            var boundingTeture = GameTexture.GetBoundingTexture(
+                BoundsComparison.Height,
+                hpBackground,
+                hpForeground,
+                shieldForeground
+            );
+
+            var foregroundBoundingTexture = hpForeground;
+
+            // Check for shields
             var maxVital = MaxVital[(int)Vitals.Health];
             var shieldSize = GetShieldSize();
 
@@ -1421,50 +1429,42 @@ namespace Intersect.Client.Entities
                 maxVital = shieldSize + Vital[(int)Vitals.Health];
             }
 
-            if (Vital[(int)Vitals.Health] == MaxVital[(int)Vitals.Health] && shieldSize <= 0)
-            {
-                return;
-            }
-
-            var map = Maps.MapInstance.Get(MapId);
-            if (map == null)
-            {
-                return;
-            }
-
-            var width = Options.TileWidth;
-
             var hpfillRatio = (float)Vital[(int)Vitals.Health] / maxVital;
             hpfillRatio = Math.Min(1, Math.Max(0, hpfillRatio));
-            var hpfillWidth = (float)Math.Ceiling(hpfillRatio * width);
 
-            var shieldfillRatio = (float)shieldSize / maxVital;
-            shieldfillRatio = Math.Min(1, Math.Max(0, shieldfillRatio));
-            var shieldfillWidth = (float)Math.Floor(shieldfillRatio * width);
+            var hpFillWidth = (int)Math.Round(hpfillRatio * foregroundBoundingTexture.Width);
+            var shieldPixelFillRatio = (foregroundBoundingTexture.Width - hpFillWidth) / ((float)foregroundBoundingTexture.Width);
+            var shieldFillWidth = (int)Math.Floor(foregroundBoundingTexture.Width * shieldPixelFillRatio);
 
-            var y = (int)Math.Ceiling(GetCenterPos().Y);
-            var x = (int)Math.Ceiling(GetCenterPos().X);
-            var entityTex = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Entity, Sprite);
-            if (entityTex != null)
+            if (foregroundBoundingTexture.Width < hpFillWidth + shieldFillWidth)
             {
-                y = y - (int)(entityTex.GetHeight() / (Options.Instance.Sprites.Directions * 2));
-                y -= 8;
+                hpFillWidth = Math.Max(1, foregroundBoundingTexture.Width - shieldFillWidth);
+                shieldFillWidth = Math.Max(1, foregroundBoundingTexture.Width - hpFillWidth);
             }
 
-            var hpBackground = Globals.ContentManager.GetTexture(
-                Framework.Content.TextureType.Misc, "hpbackground.png"
-            );
+            if (shieldSize > 0 && shieldFillWidth < 1)
+            {
+                hpFillWidth -= 1 - shieldFillWidth;
+                shieldFillWidth = 1;
+            }
 
-            var hpForeground = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Misc, "hpbar.png");
-            var shieldForeground = Globals.ContentManager.GetTexture(
-                Framework.Content.TextureType.Misc, "shieldbar.png"
-            );
+            var x = (int)Math.Ceiling(Origin.X);
+            var y = (int)Math.Ceiling(Origin.Y);
+
+            var sprite = Globals.ContentManager.GetTexture(TextureType.Entity, Sprite);
+            if (sprite != null)
+            {
+                y -= sprite.Height / Options.Instance.Sprites.Directions;
+                y -= boundingTeture.Height + 2;
+            }
+
+            y += boundingTeture.Height / 2;
 
             if (hpBackground != null)
             {
                 Graphics.DrawGameTexture(
-                    hpBackground, new FloatRect(0, 0, hpBackground.GetWidth(), hpBackground.GetHeight()),
-                    new FloatRect((int)(x - width / 2), (int)(y - 1), width, 6), Color.White
+                    hpBackground, new FloatRect(0, 0, hpBackground.Width, hpBackground.Height),
+                    new FloatRect(x - hpBackground.Width / 2, y - hpBackground.Height / 2, hpBackground.Width, hpBackground.Height), Color.White
                 );
             }
 
@@ -1472,97 +1472,79 @@ namespace Intersect.Client.Entities
             {
                 Graphics.DrawGameTexture(
                     hpForeground,
-                    new FloatRect(0, 0, hpForeground.GetWidth(), hpForeground.GetHeight()),
-                    new FloatRect((int)(x - width / 2), (int)(y - 1), hpfillWidth, 6), Color.White
+                    new FloatRect(0, 0, hpFillWidth, hpForeground.Height),
+                    new FloatRect(x - foregroundBoundingTexture.Width / 2, y - hpForeground.Height / 2, hpFillWidth, hpForeground.Height), Color.White
                 );
             }
 
             if (shieldSize > 0 && shieldForeground != null) //Check for a shield to render
             {
+                var shieldFillRatio = shieldFillWidth / (float)foregroundBoundingTexture.Width;
                 Graphics.DrawGameTexture(
                     shieldForeground,
-                    new FloatRect(0, 0, shieldfillWidth, shieldForeground.GetHeight()),
-                    new FloatRect((int)(x - width / 2) + hpfillWidth, (int)(y - 1), shieldfillWidth, 6), Color.White
+                    new FloatRect(shieldForeground.Width * (1 - shieldFillRatio), 0, shieldForeground.Width * shieldFillRatio, shieldForeground.Height),
+                    new FloatRect(x - foregroundBoundingTexture.Width / 2 + hpFillWidth, y - shieldForeground.Height / 2, shieldFillWidth, shieldForeground.Height), Color.White
                 );
             }
         }
+
+        public bool ShouldDrawCastingBar => ShouldDraw && IsCasting && LatestMap != default;
 
         public void DrawCastingBar()
         {
             // Are we supposed to hide this cast bar?
-            if (!ShouldDraw)
+            if (!ShouldDrawCastingBar)
             {
                 return;
             }
 
-            if (!IsCasting)
+            var castingSpell = SpellBase.Get(SpellCast);
+            if (castingSpell == null)
             {
                 return;
             }
 
-            if (Maps.MapInstance.Get(MapId) == null)
+            var castBackground = Globals.ContentManager.GetTexture(TextureType.Misc, "castbackground.png");
+            var castForeground = Globals.ContentManager.GetTexture(TextureType.Misc, "castbar.png");
+            var boundingTexture = GameTexture.GetBoundingTexture(BoundsComparison.Height, castBackground, castForeground);
+
+            float remainingTime = CastTime - Timing.Global.Milliseconds;
+            var fillRatio = 1 - remainingTime / castingSpell.CastDuration;
+
+            var x = (int)Math.Ceiling(Origin.X);
+            var y = (int)Math.Ceiling(Origin.Y);
+
+            y += 2 + boundingTexture.Height / 2;
+
+            if (castBackground != null)
             {
-                return;
-            }
-
-            var castSpell = SpellBase.Get(SpellCast);
-            if (castSpell != null)
-            {
-                var width = Options.TileWidth;
-                var fillratio = (castSpell.CastDuration - (CastTime - Timing.Global.Milliseconds)) /
-                                (float)castSpell.CastDuration;
-
-                var castFillWidth = fillratio * width;
-                var y = (int)Math.Ceiling(GetCenterPos().Y);
-                var x = (int)Math.Ceiling(GetCenterPos().X);
-                var entityTex = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Entity, Sprite);
-                if (entityTex != null)
-                {
-                    y = y + (int)(entityTex.GetHeight() / (Options.Instance.Sprites.Directions * 2));
-                    y += 3;
-                }
-
-                var castBackground = Globals.ContentManager.GetTexture(
-                    Framework.Content.TextureType.Misc, "castbackground.png"
+                Graphics.DrawGameTexture(
+                    castBackground, new FloatRect(0, 0, castBackground.Width, castBackground.Height),
+                    new FloatRect(x - castBackground.Width / 2, y - castBackground.Height / 2, castBackground.Width, castBackground.Height), Color.White
                 );
+            }
 
-                var castForeground = Globals.ContentManager.GetTexture(
-                    Framework.Content.TextureType.Misc, "castbar.png"
+            if (castForeground != null)
+            {
+                Graphics.DrawGameTexture(
+                    castForeground,
+                    new FloatRect(0, 0, castForeground.GetWidth() * fillRatio, castForeground.Height),
+                    new FloatRect(x - castForeground.Width / 2, y - castForeground.Height / 2, castForeground.Width * fillRatio, castForeground.Height), Color.White
                 );
-
-                if (castBackground != null)
-                {
-                    Graphics.DrawGameTexture(
-                        castBackground, new FloatRect(0, 0, castBackground.GetWidth(), castBackground.GetHeight()),
-                        new FloatRect((int)(x - width / 2), (int)(y - 1), width, 6), Color.White
-                    );
-                }
-
-                if (castForeground != null)
-                {
-                    Graphics.DrawGameTexture(
-                        castForeground,
-                        new FloatRect(0, 0, castForeground.GetWidth() * fillratio, castForeground.GetHeight()),
-                        new FloatRect((int)(x - width / 2), (int)(y - 1), castFillWidth, 6), Color.White
-                    );
-                }
             }
         }
 
-        //
+        public bool ShouldDrawTarget => !(this is Projectile) && LatestMap != default;
+
         public void DrawTarget(int priority)
         {
-            if (this is Projectile)
+            // Should we draw the target?
+            if (!ShouldDrawTarget)
             {
                 return;
             }
 
-            if (LatestMap == default)
-            {
-                return;
-            }
-
-            var targetTexture = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Misc, "target.png");
+            var targetTexture = Globals.ContentManager.GetTexture(TextureType.Misc, "target.png");
             if (targetTexture == null)
             {
                 return;
@@ -1581,14 +1563,6 @@ namespace Intersect.Client.Entities
                 srcRectangle.Width,
                 srcRectangle.Height
             );
-
-            //var destRectangle = new FloatRect(
-            //    (float)Math.Ceiling(GetCenterPos().X - targetTexture.GetWidth() / 4f),
-            //    (float)Math.Ceiling(GetCenterPos().Y - targetTexture.GetHeight() / 4f),
-            //    srcRectangle.Width,
-            //    srcRectangle.Height
-            //);
-            //var destRectangle = WorldPos;
 
             Graphics.DrawGameTexture(targetTexture, srcRectangle, destRectangle, Color.White);
         }
@@ -1756,15 +1730,27 @@ namespace Intersect.Client.Entities
             SpriteFrameTimer = Timing.Global.Milliseconds;
         }
 
-        public void LoadAnimationTextures(string tex)
+        public virtual void LoadTextures(string textureName)
         {
-            var file = Path.GetFileNameWithoutExtension(tex);
-            var ext = Path.GetExtension(tex);
+            Texture = Globals.ContentManager.GetTexture(TextureType.Entity, textureName);
+            LoadAnimationTextures(textureName);
+        }
+
+        public virtual void LoadAnimationTextures(string textureName)
+        {
+            var baseFilename = Path.GetFileNameWithoutExtension(textureName);
+            var extension = Path.GetExtension(textureName);
 
             AnimatedTextures.Clear();
-            foreach (var anim in Enum.GetValues(typeof(SpriteAnimations)))
+            foreach (var animationName in Enum.GetValues(typeof(SpriteAnimations)))
             {
-                AnimatedTextures.Add((SpriteAnimations)anim, Globals.ContentManager.GetTexture(Framework.Content.TextureType.Entity, $@"{file}_{anim}.png"));
+                AnimatedTextures.Add(
+                    (SpriteAnimations)animationName,
+                    Globals.ContentManager.GetTexture(
+                        TextureType.Entity,
+                        $@"{baseFilename}_{animationName}.{extension}"
+                    )
+                );
             }
         }
 

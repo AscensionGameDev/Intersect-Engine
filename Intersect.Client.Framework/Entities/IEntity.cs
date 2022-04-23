@@ -1,4 +1,4 @@
-﻿using Intersect.Client.Framework.GenericClasses;
+using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Items;
 using Intersect.Client.Framework.Maps;
@@ -26,7 +26,8 @@ namespace Intersect.Client.Framework.Entities
         FloatRect WorldPos { get; }
         float OffsetX { get; }
         float OffsetY { get; }
-        Pointf CenterPosition { get; }
+        Pointf Center { get; }
+        Pointf Origin { get; }
         bool IsMoving { get; }
         bool IsStealthed { get; }
         bool IsBlocking { get; }
@@ -52,6 +53,6 @@ namespace Intersect.Client.Framework.Entities
 
         void AddChatBubble(string text);
         float GetLabelLocation(LabelType type);
-        float GetTopPos(int overrideHeight = 0);
+        float GetTop(int overrideHeight = 0);
     }
 }

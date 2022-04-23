@@ -1,7 +1,8 @@
-﻿using System;
+using System;
 
 using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.GenericClasses;
+using Intersect.Logging;
 
 namespace Intersect.Client.Framework.Graphics
 {
@@ -14,6 +15,8 @@ namespace Intersect.Client.Framework.Graphics
         public int Width => GetWidth();
 
         public int Height => GetHeight();
+
+        public int Area => Width * Height;
 
         public Pointf Dimensions => new Pointf(Width, Height);
 
@@ -40,6 +43,54 @@ namespace Intersect.Client.Framework.Graphics
             return tex?.GetName() ?? "";
         }
 
-    }
+        public static GameTexture GetBoundingTexture(BoundsComparison boundsComparison, params GameTexture[] textures)
+        {
+            GameTexture boundingTexture = default;
 
+            foreach (var texture in textures)
+            {
+                if (texture == default)
+                {
+                    continue;
+                }
+                else if (boundingTexture == default)
+                {
+                    boundingTexture = texture;
+                }
+                else
+                {
+                    var select = false;
+                    switch (boundsComparison)
+                    {
+                        case BoundsComparison.Width:
+                            select = texture.Width > boundingTexture.Width;
+                            break;
+
+                        case BoundsComparison.Height:
+                            select = texture.Height > boundingTexture.Height;
+                            break;
+
+                        case BoundsComparison.Dimensions:
+                            select = texture.Width >= boundingTexture.Width && texture.Height >= boundingTexture.Height;
+                            break;
+
+                        case BoundsComparison.Area:
+                            select = texture.Area > boundingTexture.Area;
+                            break;
+
+                        default:
+                            Log.Error(new ArgumentOutOfRangeException(nameof(boundsComparison), boundsComparison.ToString()));
+                            break;
+                    }
+
+                    if (select)
+                    {
+                        boundingTexture = texture;
+                    }
+                }
+            }
+
+            return boundingTexture;
+        }
+    }
 }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Intersect.Client.Entities;
@@ -524,18 +524,22 @@ namespace Intersect.Client.Core
         {
             // Who's who.
             var isEvent = entity is Event;
-            var isMe = entity.GetType() == typeof(Player) && entity.Id == Globals.Me.Id;
-            var isNpc = entity.GetType() != typeof(Player);
-            var isPlayer = entity.GetType() == typeof(Player) && entity.Id != Globals.Me.Id;
-            var isFriend = entity is Player possiblyFriend &&
-                           Globals.Me.IsFriend(possiblyFriend) &&
-                           !isMe;
-            var isGuildMate = entity is Player possiblyGuildMate &&
-                              Globals.Me.IsGuildMate(possiblyGuildMate) &&
-                              !isMe;
-            var isPartyMate = entity is Player possiblyPartyMate &&
-                              Globals.Me.IsInMyParty(possiblyPartyMate) &&
-                              !isMe;
+            bool isNpc = true, isMe = false, isOtherPlayer = false, isFriend = false, isGuildMate = false, isPartyMate = false;
+            if (entity is Player player)
+            {
+                isNpc = false;
+                if (player.Id == Globals.Me.Id)
+                {
+                    isMe = true;
+                }
+                else
+                {
+                    isOtherPlayer = true;
+                    isFriend = Globals.Me.IsFriend(player);
+                    isGuildMate = Globals.Me.IsGuildMate(player);
+                    isPartyMate = Globals.Me.IsInMyParty(player);
+                }
+            }
 
             // Events have their own handler for hiding names within the DrawName virtual void in the Entity class.
             if (isEvent)
@@ -544,32 +548,32 @@ namespace Intersect.Client.Core
             }
 
             // If MyOverheadInfo is toggled on always draw the local player's info.
-            if (Globals.Database.MyOverheadInfo && isMe)
+            else if (Globals.Database.MyOverheadInfo && isMe)
             {
                 entity.DrawName(null);
             }
 
             // If NpcOverheadInfo is toggled on, always draw npc names.
-            if (Globals.Database.NpcOverheadInfo && isNpc)
+            else if (Globals.Database.NpcOverheadInfo && isNpc)
             {
                 entity.DrawName(null);
             }
 
             // If PlayerOverheadInfo is toggled on, always draw other player's info.
-            if (Globals.Database.PlayerOverheadInfo && isPlayer &&
+            else if (Globals.Database.PlayerOverheadInfo && isOtherPlayer &&
                 !isFriend && !isGuildMate && !isPartyMate)
             {
                 entity.DrawName(null);
             }
 
             // If PartyMemberOverheadInfo is toggled on, always draw party members info.
-            if (Globals.Database.PartyMemberOverheadInfo && isPartyMate)
+            else if (Globals.Database.PartyMemberOverheadInfo && isPartyMate)
             {
                 entity.DrawName(null);
             }
 
             // If FriendOverheadInfo & GuildMemberOverheadInfo are on, let's prevent double draw.
-            if (Globals.Database.FriendOverheadInfo && isFriend &&
+            else if (Globals.Database.FriendOverheadInfo && isFriend &&
                 Globals.Database.GuildMemberOverheadInfo && isGuildMate && !isPartyMate)
             {
                 entity.DrawName(null);
@@ -577,26 +581,14 @@ namespace Intersect.Client.Core
             }
 
             // If FriendOverheadInfo is toggled on, always draw friend's info.
-            if (Globals.Database.FriendOverheadInfo && isFriend && !isPartyMate)
+            else if (Globals.Database.FriendOverheadInfo && isFriend && !isPartyMate)
             {
-                // Skip if Friend is GuildMate in order to prevent double draw / overlapping.
-                if (Globals.Database.GuildMemberOverheadInfo && isGuildMate)
-                {
-                    return;
-                }
-
                 entity.DrawName(null);
             }
 
             // If GuildMemberOverheadInfo is toggled on, always draw guild members info.
-            if (Globals.Database.GuildMemberOverheadInfo && isGuildMate && !isPartyMate)
+            else if (Globals.Database.GuildMemberOverheadInfo && isGuildMate && !isPartyMate)
             {
-                // Skip if GuildMate is Friend in order to prevent double draw.
-                if (Globals.Database.FriendOverheadInfo && isFriend)
-                {
-                    return;
-                }
-
                 entity.DrawName(null);
             }
         }
@@ -983,9 +975,10 @@ namespace Intersect.Client.Core
                 var h = y1 - y;
                 var restrictView = new FloatRect(x, y, w, h);
                 CurrentView = new FloatRect(
-                    (int) Math.Ceiling(en.GetCenterPos().X - Renderer.GetScreenWidth() / 2f),
-                    (int) Math.Ceiling(en.GetCenterPos().Y - Renderer.GetScreenHeight() / 2f),
-                    Renderer.GetScreenWidth(), Renderer.GetScreenHeight()
+                    (int) Math.Ceiling(en.Center.X - Renderer.ScreenWidth / 2f),
+                    (int) Math.Ceiling(en.Center.Y - Renderer.ScreenHeight / 2f),
+                    Renderer.ScreenWidth,
+                    Renderer.ScreenHeight
                 );
 
                 if (restrictView.Width >= CurrentView.Width)
@@ -1087,7 +1080,7 @@ namespace Intersect.Client.Core
             }
 
             AddLight(
-                (int) Math.Ceiling(Globals.Me.GetCenterPos().X), (int) Math.Ceiling(Globals.Me.GetCenterPos().Y),
+                (int) Math.Ceiling(Globals.Me.Center.X), (int) Math.Ceiling(Globals.Me.Center.Y),
                 (int) sPlayerLightSize, (byte) sPlayerLightIntensity, sPlayerLightExpand,
                 Color.FromArgb(
                     (int) PlayerLightColor.A, (int) PlayerLightColor.R, (int) PlayerLightColor.G,

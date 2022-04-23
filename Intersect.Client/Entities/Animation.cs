@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 using Intersect.Client.Core;
 using Intersect.Client.Core.Sounds;
@@ -170,7 +170,7 @@ namespace Intersect.Client.Entities
                             ),
                             new FloatRect(
                                 mRenderX - frameWidth / 2, mRenderY - frameHeight / 2, frameWidth, frameHeight
-                            ), Intersect.Color.White, null, GameBlendModes.None, null, rotationDegrees
+                            ), Color.White, null, GameBlendModes.None, null, rotationDegrees
                         );
                     }
                 }
@@ -178,7 +178,7 @@ namespace Intersect.Client.Entities
                 var offsetX = MyBase.Lower.Lights[mLowerFrame].OffsetX;
                 var offsetY = MyBase.Lower.Lights[mLowerFrame].OffsetY;
                 var offset = RotatePoint(
-                    new Point((int)offsetX, (int)offsetY), new Point(0, 0), rotationDegrees + 180
+                    new Point(offsetX, offsetY), new Point(0, 0), rotationDegrees + 180
                 );
 
                 Graphics.AddLight(
@@ -211,7 +211,7 @@ namespace Intersect.Client.Entities
                             ),
                             new FloatRect(
                                 mRenderX - frameWidth / 2, mRenderY - frameHeight / 2, frameWidth, frameHeight
-                            ), Intersect.Color.White, null, GameBlendModes.None, null, rotationDegrees
+                            ), Color.White, null, GameBlendModes.None, null, rotationDegrees
                         );
                     }
                 }
@@ -219,7 +219,7 @@ namespace Intersect.Client.Entities
                 var offsetX = MyBase.Upper.Lights[mUpperFrame].OffsetX;
                 var offsetY = MyBase.Upper.Lights[mUpperFrame].OffsetY;
                 var offset = RotatePoint(
-                    new Point((int)offsetX, (int)offsetY), new Point(0, 0), rotationDegrees + 180
+                    new Point(offsetX, offsetY), new Point(0, 0), rotationDegrees + 180
                 );
 
                 Graphics.AddLight(

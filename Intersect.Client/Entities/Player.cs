@@ -1135,7 +1135,7 @@ namespace Intersect.Client.Entities
                 return;
             }
             var currentMap = Globals.Me.MapInstance as MapInstance;
-            var canTargetPlayers = currentMap.ZoneType == MapZones.Safe ? false : true;
+            var canTargetPlayers = currentMap.ZoneType != MapZones.Safe;
 
             // Build a list of Entities to select from with positions if our list is either old, we've moved or changed maps somehow.
             if (
@@ -2074,7 +2074,7 @@ namespace Intersect.Client.Entities
 
             var textSize = Graphics.Renderer.MeasureText(Guild, Graphics.EntityNameFont, 1);
 
-            var x = (int)Math.Ceiling(GetCenterPos().X);
+            var x = (int)Math.Ceiling(Origin.X);
             var y = GetLabelLocation(LabelType.Guild);
 
             if (backgroundColor != Color.Transparent)
