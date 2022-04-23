@@ -106,7 +106,11 @@ namespace Intersect.Client.Framework.Content
             modificationAction();
             _ = Task.Delay(1000).ContinueWith(completedTask =>
             {
-                _ = _ignore.RemoveAll(ignored => string.Equals(path, ignored, StringComparison.Ordinal));
+                string found;
+                while ((found = _ignore.Find(ignored => string.Equals(path, ignored, StringComparison.Ordinal))) != default)
+                {
+                    _ignore.Remove(found);
+                }
             }, TaskScheduler.Current);
         }
 
