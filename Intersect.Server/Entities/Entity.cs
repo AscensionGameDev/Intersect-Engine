@@ -1768,7 +1768,7 @@ namespace Intersect.Server.Entities
                     var blockAbsorption = item.BlockAbsorption / 100.0;
 
                     //Generate a new attempt to block
-                    if (Randomization.Next(1, 101) < blockChance)
+                    if (Randomization.Next(0, 101) < blockChance)
                     {
                         if (item.BlockAmount < 100)
                         {
