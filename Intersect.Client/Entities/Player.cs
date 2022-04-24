@@ -1,29 +1,27 @@
 using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 
 using Intersect.Client.Core;
 using Intersect.Client.Core.Controls;
 using Intersect.Client.Entities.Events;
 using Intersect.Client.Entities.Projectiles;
+using Intersect.Client.Framework.Entities;
+using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.General;
 using Intersect.Client.Interface.Game;
+using Intersect.Client.Interface.Game.Chat;
 using Intersect.Client.Interface.Game.EntityPanel;
 using Intersect.Client.Localization;
 using Intersect.Client.Maps;
 using Intersect.Client.Networking;
-using Intersect.Enums;
+using Intersect.Config.Guilds;
 using Intersect.Configuration;
+using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps;
 using Intersect.Network.Packets.Server;
-
-using Intersect.Client.Framework.GenericClasses;
 using Intersect.Utilities;
-using Intersect.Client.Interface.Game.Chat;
-using Intersect.Config.Guilds;
-using Intersect.Client.Framework.Entities;
-using Intersect.Client.Interface.Game.DescriptionWindows;
 
 namespace Intersect.Client.Entities
 {
@@ -246,22 +244,26 @@ namespace Intersect.Client.Entities
                 }
             }
 
-            if (TargetBox != null)
-            {
-                if (!Globals.Entities.TryGetValue(TargetIndex, out var en) || (en.IsHidden || en.IsStealthed))
-                {
-                    ClearTarget();
-                }
-
-                TargetBox.Update();
-            }
-            else if (this == Globals.Me && TargetBox == null && Interface.Interface.GameUi != null)
+            if (TargetBox == default && this == Globals.Me && Interface.Interface.GameUi != default)
             {
                 // If for WHATEVER reason the box hasn't been created, create it.
                 TargetBox = new EntityBox(Interface.Interface.GameUi.GameCanvas, EntityTypes.Player, null);
                 TargetBox.Hide();
             }
+            else if (TargetIndex != default)
+            {
+                if (!Globals.Entities.TryGetValue(TargetIndex, out var foundEntity))
+                {
+                    foundEntity = TargetBox.MyEntity.MapInstance.Entities.FirstOrDefault(entity => entity.Id == TargetIndex) as Entity;
+                }
 
+                if (foundEntity == default || foundEntity.IsHidden || foundEntity.IsStealthed)
+                {
+                    ClearTarget();
+                }
+            }
+
+            TargetBox?.Update();
 
             // Hide our Guild window if we're not in a guild!
             if (this == Globals.Me && string.IsNullOrEmpty(Guild) && Interface.Interface.GameUi != null)
@@ -1113,7 +1115,7 @@ namespace Intersect.Client.Entities
                 }
             }
 
-            //Something is null.. return a value that is out of range :) 
+            //Something is null.. return a value that is out of range :)
             return 9999;
         }
 
@@ -2210,7 +2212,7 @@ namespace Intersect.Client.Entities
                 }
             }
         }
-        
+
         public void DrawTargets()
         {
             foreach (var en in Globals.Entities)
