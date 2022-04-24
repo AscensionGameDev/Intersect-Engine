@@ -1753,7 +1753,7 @@ namespace Intersect.Server.Entities
             );
             }
 
-            //Check on each attack if the enemy is a player AND if he is blocking.
+            //Check on each attack if the enemy is a player AND if they are blocking.
             if (enemy is Player player && player.Blocking)
             {
                 //Getting the ID and Item the player is currently using.
@@ -1762,10 +1762,10 @@ namespace Intersect.Server.Entities
 
                 if (item != null)
                 {
-                    int originalBaseDamage = baseDamage;
-                    int blockChance = item.BlockChance;
-                    double blockAmount = item.BlockAmount / 100.0;
-                    double blockAbsorption = item.BlockAbsorption / 100.0;
+                    var originalBaseDamage = baseDamage;
+                    var blockChance = item.BlockChance;
+                    var blockAmount = item.BlockAmount / 100.0;
+                    var blockAbsorption = item.BlockAbsorption / 100.0;
 
                     //Generate a new attempt to block
                     if (Randomization.Next(1, 101) < blockChance)
@@ -1779,7 +1779,7 @@ namespace Intersect.Server.Entities
                             baseDamage = 0;
                         }
 
-                        int absorptionAmount = (int)Math.Round(baseDamage * blockAbsorption);
+                        var absorptionAmount = (int)Math.Round(baseDamage * blockAbsorption);
 
                         if(absorptionAmount == 0)
                         {

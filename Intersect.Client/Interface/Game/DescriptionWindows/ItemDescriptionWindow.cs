@@ -265,9 +265,7 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
                     // Percentage based.
                     rows.AddKeyValueRow(Strings.ItemDescription.AttackSpeed, Strings.ItemDescription.Percentage.ToString(mItem.AttackSpeedValue));
                 }
-
             }
-
 
             //Blocking options
             if (mItem.EquipmentSlot == Options.ShieldIndex)
