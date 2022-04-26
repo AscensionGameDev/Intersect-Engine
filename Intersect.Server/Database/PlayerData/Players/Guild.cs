@@ -69,7 +69,7 @@ namespace Intersect.Server.Database.PlayerData.Players
         /// we can use to reference this guild alone when requesting a warp to a "Guild" instance, ensuring
         /// that players in the same guild will be warped to the same instance.
         /// </summary>
-        public Guid GuildInstanceId { get; private set; } = Guid.NewGuid();
+        public Guid GuildInstanceId { get; private set; }
 
         /// <summary>
         /// Contains a record of all guild members
@@ -120,7 +120,8 @@ namespace Intersect.Server.Database.PlayerData.Players
                     var guild = new Guild()
                     {
                         Name = name,
-                        FoundingDate = DateTime.UtcNow
+                        FoundingDate = DateTime.UtcNow,
+                        GuildInstanceId = Guid.NewGuid()
                     };
 
                     SlotHelper.ValidateSlots(guild.Bank, Options.Instance.Guild.InitialBankSlots);
