@@ -93,6 +93,14 @@
         SetGraphic,
 
         SetAnimation,
+        
+        MoveUpLeft,
+
+        MoveUpRight,
+
+        MoveDownLeft,
+
+        MoveDownRight
 
     }
 

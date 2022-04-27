@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -1296,7 +1296,7 @@ namespace Intersect.Server.Entities
             base.TryAttack(target, projectile, parentSpell, parentItem, projectileDir);
         }
 
-        public void TryAttack(Entity target)
+        public override void TryAttack(Entity target, bool targetOnFocus)
         {
             if (IsCasting)
             {
@@ -1309,6 +1309,11 @@ namespace Intersect.Server.Entities
             }
 
             if (!IsOneBlockAway(target))
+            {
+                return;
+            }
+            
+            if (!targetOnFocus && !IsFacingTarget(target))
             {
                 return;
             }
