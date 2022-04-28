@@ -1253,7 +1253,10 @@ namespace Intersect.Client.Entities
             }
 
             var name = Name;
-            if ((this is Player && Options.Player.ShowLevelByName) || (typeof(Entity) == this.GetType() && Options.Npc.ShowLevelByName))
+
+            // the typeof(Entity) == GetType() is actually the only correct option here
+            // because we need an exact type check, and "is" and "as" permit subtypes
+            if ((this is Player && Options.Player.ShowLevelByName) || (typeof(Entity) == GetType() && Options.Npc.ShowLevelByName))
             {
                 name = Strings.GameWindow.EntityNameAndLevel.ToString(Name, Level);
             }
