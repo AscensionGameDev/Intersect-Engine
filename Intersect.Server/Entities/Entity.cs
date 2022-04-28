@@ -1753,6 +1753,54 @@ namespace Intersect.Server.Entities
             );
             }
 
+            //Check on each attack if the enemy is a player AND if they are blocking.
+            if (enemy is Player player && player.Blocking)
+            {
+                //Getting the ID and Item the player is currently using.
+                var itemId = player.Items[player.Equipment[Options.ShieldIndex]].ItemId;
+                var item = ItemBase.Get(itemId);
+
+                if (item != null)
+                {
+                    var originalBaseDamage = baseDamage;
+                    var blockChance = item.BlockChance;
+                    var blockAmount = item.BlockAmount / 100.0;
+                    var blockAbsorption = item.BlockAbsorption / 100.0;
+
+                    //Generate a new attempt to block
+                    if (Randomization.Next(0, 101) < blockChance)
+                    {
+                        if (item.BlockAmount < 100)
+                        {
+                            baseDamage -= (int)Math.Round(baseDamage * blockAmount);
+                        }
+                        else
+                        {
+                            baseDamage = 0;
+                        }
+
+                        var absorptionAmount = (int)Math.Round(baseDamage * blockAbsorption);
+
+                        if(absorptionAmount == 0)
+                        {
+                            absorptionAmount = (int)Math.Round(originalBaseDamage * blockAbsorption);
+                        }
+
+                        if (blockAbsorption > 0)
+                        {
+                            player.AddVital(Vitals.Health, absorptionAmount);
+
+                            PacketSender.SendActionMsg(
+                            enemy, Strings.Combat.addsymbol + (int)Math.Abs(absorptionAmount),
+                            CustomColors.Combat.Heal
+                            );
+                        }
+
+                        PacketSender.SendActionMsg(enemy, Strings.Combat.blocked, CustomColors.Combat.Blocked);
+                    }
+                }
+            }
+
             //Calculate Damages
             if (baseDamage != 0)
             {

@@ -267,6 +267,25 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
                 }
             }
 
+            //Blocking options
+            if (mItem.EquipmentSlot == Options.ShieldIndex)
+            {
+                if (mItem.BlockChance > 0)
+                {
+                    rows.AddKeyValueRow(Strings.ItemDescription.BlockChance, Strings.ItemDescription.Percentage.ToString(mItem.BlockChance));
+                }
+
+                if (mItem.BlockAmount > 0)
+                {
+                    rows.AddKeyValueRow(Strings.ItemDescription.BlockAmount, Strings.ItemDescription.Percentage.ToString(mItem.BlockAmount));
+                }
+
+                if (mItem.BlockAbsorption > 0)
+                {
+                    rows.AddKeyValueRow(Strings.ItemDescription.BlockAbsorption, Strings.ItemDescription.Percentage.ToString(mItem.BlockAbsorption));
+                }
+            }
+
             // Vitals
             for (var i = 0; i < (int)Vitals.VitalCount; i++)
             {

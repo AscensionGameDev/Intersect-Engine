@@ -1259,6 +1259,15 @@ namespace Intersect.Client.Localization
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString DropOnDeath = @"Drop chance on death:";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString BlockChance = @"Block Chance:";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString BlockAmount = @"Block Amount:";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString BlockAbsorption = @"Block Absorption:";
         }
 
         public struct Keys

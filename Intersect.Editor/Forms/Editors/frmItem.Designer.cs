@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using System.Windows.Forms;
 using DarkUI.Controls;
 
@@ -41,6 +41,10 @@ namespace Intersect.Editor.Forms.Editors
             this.btnCancel = new DarkUI.Controls.DarkButton();
             this.btnSave = new DarkUI.Controls.DarkButton();
             this.grpGeneral = new DarkUI.Controls.DarkGroupBox();
+            this.grpRequirements = new DarkUI.Controls.DarkGroupBox();
+            this.lblCannotUse = new System.Windows.Forms.Label();
+            this.txtCannotUse = new DarkUI.Controls.DarkTextBox();
+            this.btnEditRequirements = new DarkUI.Controls.DarkButton();
             this.chkCanGuildBank = new DarkUI.Controls.DarkCheckBox();
             this.nudBankStackLimit = new DarkUI.Controls.DarkNumericUpDown();
             this.nudInvStackLimit = new DarkUI.Controls.DarkNumericUpDown();
@@ -72,7 +76,6 @@ namespace Intersect.Editor.Forms.Editors
             this.lblRarity = new System.Windows.Forms.Label();
             this.nudCooldown = new DarkUI.Controls.DarkNumericUpDown();
             this.lblCooldown = new System.Windows.Forms.Label();
-            this.btnEditRequirements = new DarkUI.Controls.DarkButton();
             this.chkStackable = new DarkUI.Controls.DarkCheckBox();
             this.nudPrice = new DarkUI.Controls.DarkNumericUpDown();
             this.chkCanDrop = new DarkUI.Controls.DarkCheckBox();
@@ -148,6 +151,13 @@ namespace Intersect.Editor.Forms.Editors
             this.cmbMalePaperdoll = new DarkUI.Controls.DarkComboBox();
             this.lblMalePaperdoll = new System.Windows.Forms.Label();
             this.picMalePaperdoll = new System.Windows.Forms.PictureBox();
+            this.grpShieldProperties = new DarkUI.Controls.DarkGroupBox();
+            this.nudBlockDmgAbs = new DarkUI.Controls.DarkNumericUpDown();
+            this.lblBlockDmgAbs = new System.Windows.Forms.Label();
+            this.nudBlockAmount = new DarkUI.Controls.DarkNumericUpDown();
+            this.lblBlockAmount = new System.Windows.Forms.Label();
+            this.nudBlockChance = new DarkUI.Controls.DarkNumericUpDown();
+            this.lblBlockChance = new System.Windows.Forms.Label();
             this.grpWeaponProperties = new DarkUI.Controls.DarkGroupBox();
             this.nudCritMultiplier = new DarkUI.Controls.DarkNumericUpDown();
             this.lblCritMultiplier = new System.Windows.Forms.Label();
@@ -204,11 +214,9 @@ namespace Intersect.Editor.Forms.Editors
             this.toolStripItemPaste = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripItemUndo = new System.Windows.Forms.ToolStripButton();
-            this.grpRequirements = new DarkUI.Controls.DarkGroupBox();
-            this.lblCannotUse = new System.Windows.Forms.Label();
-            this.txtCannotUse = new DarkUI.Controls.DarkTextBox();
             this.grpItems.SuspendLayout();
             this.grpGeneral.SuspendLayout();
+            this.grpRequirements.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudBankStackLimit)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudInvStackLimit)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudDeathDropChance)).BeginInit();
@@ -243,6 +251,10 @@ namespace Intersect.Editor.Forms.Editors
             ((System.ComponentModel.ISupportInitialize)(this.nudStr)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picFemalePaperdoll)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picMalePaperdoll)).BeginInit();
+            this.grpShieldProperties.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudBlockDmgAbs)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudBlockAmount)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudBlockChance)).BeginInit();
             this.grpWeaponProperties.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudCritMultiplier)).BeginInit();
             this.grpAttackSpeed.SuspendLayout();
@@ -259,7 +271,6 @@ namespace Intersect.Editor.Forms.Editors
             this.grpBags.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudBag)).BeginInit();
             this.toolStrip.SuspendLayout();
-            this.grpRequirements.SuspendLayout();
             this.SuspendLayout();
             // 
             // grpItems
@@ -396,6 +407,53 @@ namespace Intersect.Editor.Forms.Editors
             this.grpGeneral.TabIndex = 2;
             this.grpGeneral.TabStop = false;
             this.grpGeneral.Text = "General";
+            // 
+            // grpRequirements
+            // 
+            this.grpRequirements.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.grpRequirements.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpRequirements.Controls.Add(this.lblCannotUse);
+            this.grpRequirements.Controls.Add(this.txtCannotUse);
+            this.grpRequirements.Controls.Add(this.btnEditRequirements);
+            this.grpRequirements.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpRequirements.Location = new System.Drawing.Point(12, 326);
+            this.grpRequirements.Margin = new System.Windows.Forms.Padding(2);
+            this.grpRequirements.Name = "grpRequirements";
+            this.grpRequirements.Padding = new System.Windows.Forms.Padding(2);
+            this.grpRequirements.Size = new System.Drawing.Size(229, 92);
+            this.grpRequirements.TabIndex = 100;
+            this.grpRequirements.TabStop = false;
+            this.grpRequirements.Text = "Requirements";
+            // 
+            // lblCannotUse
+            // 
+            this.lblCannotUse.AutoSize = true;
+            this.lblCannotUse.Location = new System.Drawing.Point(5, 47);
+            this.lblCannotUse.Name = "lblCannotUse";
+            this.lblCannotUse.Size = new System.Drawing.Size(112, 13);
+            this.lblCannotUse.TabIndex = 54;
+            this.lblCannotUse.Text = "Cannot Use Message:";
+            // 
+            // txtCannotUse
+            // 
+            this.txtCannotUse.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.txtCannotUse.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtCannotUse.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+            this.txtCannotUse.Location = new System.Drawing.Point(8, 63);
+            this.txtCannotUse.Name = "txtCannotUse";
+            this.txtCannotUse.Size = new System.Drawing.Size(207, 20);
+            this.txtCannotUse.TabIndex = 53;
+            this.txtCannotUse.TextChanged += new System.EventHandler(this.txtCannotUse_TextChanged);
+            // 
+            // btnEditRequirements
+            // 
+            this.btnEditRequirements.Location = new System.Drawing.Point(8, 18);
+            this.btnEditRequirements.Name = "btnEditRequirements";
+            this.btnEditRequirements.Padding = new System.Windows.Forms.Padding(5);
+            this.btnEditRequirements.Size = new System.Drawing.Size(207, 23);
+            this.btnEditRequirements.TabIndex = 0;
+            this.btnEditRequirements.Text = "Edit Usage Requirements";
+            this.btnEditRequirements.Click += new System.EventHandler(this.btnEditRequirements_Click);
             // 
             // chkCanGuildBank
             // 
@@ -811,16 +869,6 @@ namespace Intersect.Editor.Forms.Editors
             this.lblCooldown.TabIndex = 38;
             this.lblCooldown.Text = "Cooldown (ms):";
             // 
-            // btnEditRequirements
-            // 
-            this.btnEditRequirements.Location = new System.Drawing.Point(8, 18);
-            this.btnEditRequirements.Name = "btnEditRequirements";
-            this.btnEditRequirements.Padding = new System.Windows.Forms.Padding(5);
-            this.btnEditRequirements.Size = new System.Drawing.Size(207, 23);
-            this.btnEditRequirements.TabIndex = 0;
-            this.btnEditRequirements.Text = "Edit Usage Requirements";
-            this.btnEditRequirements.Click += new System.EventHandler(this.btnEditRequirements_Click);
-            // 
             // chkStackable
             // 
             this.chkStackable.AutoSize = true;
@@ -1041,6 +1089,7 @@ namespace Intersect.Editor.Forms.Editors
             this.grpEquipment.Controls.Add(this.cmbMalePaperdoll);
             this.grpEquipment.Controls.Add(this.lblMalePaperdoll);
             this.grpEquipment.Controls.Add(this.picMalePaperdoll);
+            this.grpEquipment.Controls.Add(this.grpShieldProperties);
             this.grpEquipment.Controls.Add(this.grpWeaponProperties);
             this.grpEquipment.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpEquipment.Location = new System.Drawing.Point(2, 435);
@@ -1911,6 +1960,101 @@ namespace Intersect.Editor.Forms.Editors
             this.picMalePaperdoll.TabIndex = 16;
             this.picMalePaperdoll.TabStop = false;
             // 
+            // grpShieldProperties
+            // 
+            this.grpShieldProperties.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.grpShieldProperties.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpShieldProperties.Controls.Add(this.nudBlockDmgAbs);
+            this.grpShieldProperties.Controls.Add(this.lblBlockDmgAbs);
+            this.grpShieldProperties.Controls.Add(this.nudBlockAmount);
+            this.grpShieldProperties.Controls.Add(this.lblBlockAmount);
+            this.grpShieldProperties.Controls.Add(this.nudBlockChance);
+            this.grpShieldProperties.Controls.Add(this.lblBlockChance);
+            this.grpShieldProperties.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpShieldProperties.Location = new System.Drawing.Point(221, 14);
+            this.grpShieldProperties.Name = "grpShieldProperties";
+            this.grpShieldProperties.Size = new System.Drawing.Size(207, 146);
+            this.grpShieldProperties.TabIndex = 45;
+            this.grpShieldProperties.TabStop = false;
+            this.grpShieldProperties.Text = "Shield Properties";
+            // 
+            // nudBlockDmgAbs
+            // 
+            this.nudBlockDmgAbs.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.nudBlockDmgAbs.ForeColor = System.Drawing.Color.Gainsboro;
+            this.nudBlockDmgAbs.Location = new System.Drawing.Point(15, 111);
+            this.nudBlockDmgAbs.Maximum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
+            this.nudBlockDmgAbs.Name = "nudBlockDmgAbs";
+            this.nudBlockDmgAbs.Size = new System.Drawing.Size(180, 20);
+            this.nudBlockDmgAbs.TabIndex = 64;
+            this.nudBlockDmgAbs.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.nudBlockDmgAbs.ValueChanged += new System.EventHandler(this.nudBlockDmgAbs_ValueChanged);
+            // 
+            // lblBlockDmgAbs
+            // 
+            this.lblBlockDmgAbs.AutoSize = true;
+            this.lblBlockDmgAbs.Location = new System.Drawing.Point(12, 97);
+            this.lblBlockDmgAbs.Name = "lblBlockDmgAbs";
+            this.lblBlockDmgAbs.Size = new System.Drawing.Size(150, 13);
+            this.lblBlockDmgAbs.TabIndex = 63;
+            this.lblBlockDmgAbs.Text = "Block Damage Absorption (%):";
+            // 
+            // nudBlockAmount
+            // 
+            this.nudBlockAmount.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.nudBlockAmount.ForeColor = System.Drawing.Color.Gainsboro;
+            this.nudBlockAmount.Location = new System.Drawing.Point(15, 73);
+            this.nudBlockAmount.Name = "nudBlockAmount";
+            this.nudBlockAmount.Size = new System.Drawing.Size(180, 20);
+            this.nudBlockAmount.TabIndex = 62;
+            this.nudBlockAmount.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.nudBlockAmount.ValueChanged += new System.EventHandler(this.nudBlockAmount_ValueChanged);
+            // 
+            // lblBlockAmount
+            // 
+            this.lblBlockAmount.AutoSize = true;
+            this.lblBlockAmount.Location = new System.Drawing.Point(12, 59);
+            this.lblBlockAmount.Name = "lblBlockAmount";
+            this.lblBlockAmount.Size = new System.Drawing.Size(93, 13);
+            this.lblBlockAmount.TabIndex = 61;
+            this.lblBlockAmount.Text = "Block Amount (%):";
+            // 
+            // nudBlockChance
+            // 
+            this.nudBlockChance.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.nudBlockChance.ForeColor = System.Drawing.Color.Gainsboro;
+            this.nudBlockChance.Location = new System.Drawing.Point(15, 36);
+            this.nudBlockChance.Name = "nudBlockChance";
+            this.nudBlockChance.Size = new System.Drawing.Size(180, 20);
+            this.nudBlockChance.TabIndex = 60;
+            this.nudBlockChance.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.nudBlockChance.ValueChanged += new System.EventHandler(this.nudBlockChance_ValueChanged);
+            // 
+            // lblBlockChance
+            // 
+            this.lblBlockChance.AutoSize = true;
+            this.lblBlockChance.Location = new System.Drawing.Point(12, 19);
+            this.lblBlockChance.Name = "lblBlockChance";
+            this.lblBlockChance.Size = new System.Drawing.Size(94, 13);
+            this.lblBlockChance.TabIndex = 59;
+            this.lblBlockChance.Text = "Block Chance (%):";
+            // 
             // grpWeaponProperties
             // 
             this.grpWeaponProperties.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
@@ -2725,43 +2869,6 @@ namespace Intersect.Editor.Forms.Editors
             this.toolStripItemUndo.Text = "Undo";
             this.toolStripItemUndo.Click += new System.EventHandler(this.toolStripItemUndo_Click);
             // 
-            // grpRequirements
-            // 
-            this.grpRequirements.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            this.grpRequirements.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.grpRequirements.Controls.Add(this.lblCannotUse);
-            this.grpRequirements.Controls.Add(this.txtCannotUse);
-            this.grpRequirements.Controls.Add(this.btnEditRequirements);
-            this.grpRequirements.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpRequirements.Location = new System.Drawing.Point(12, 326);
-            this.grpRequirements.Margin = new System.Windows.Forms.Padding(2);
-            this.grpRequirements.Name = "grpRequirements";
-            this.grpRequirements.Padding = new System.Windows.Forms.Padding(2);
-            this.grpRequirements.Size = new System.Drawing.Size(229, 92);
-            this.grpRequirements.TabIndex = 100;
-            this.grpRequirements.TabStop = false;
-            this.grpRequirements.Text = "Requirements";
-            // 
-            // lblCannotUse
-            // 
-            this.lblCannotUse.AutoSize = true;
-            this.lblCannotUse.Location = new System.Drawing.Point(5, 47);
-            this.lblCannotUse.Name = "lblCannotUse";
-            this.lblCannotUse.Size = new System.Drawing.Size(112, 13);
-            this.lblCannotUse.TabIndex = 54;
-            this.lblCannotUse.Text = "Cannot Use Message:";
-            // 
-            // txtCannotUse
-            // 
-            this.txtCannotUse.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.txtCannotUse.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.txtCannotUse.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.txtCannotUse.Location = new System.Drawing.Point(8, 63);
-            this.txtCannotUse.Name = "txtCannotUse";
-            this.txtCannotUse.Size = new System.Drawing.Size(207, 20);
-            this.txtCannotUse.TabIndex = 53;
-            this.txtCannotUse.TextChanged += new System.EventHandler(this.txtCannotUse_TextChanged);
-            // 
             // FrmItem
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2787,6 +2894,8 @@ namespace Intersect.Editor.Forms.Editors
             this.grpItems.PerformLayout();
             this.grpGeneral.ResumeLayout(false);
             this.grpGeneral.PerformLayout();
+            this.grpRequirements.ResumeLayout(false);
+            this.grpRequirements.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudBankStackLimit)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudInvStackLimit)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudDeathDropChance)).EndInit();
@@ -2825,6 +2934,11 @@ namespace Intersect.Editor.Forms.Editors
             ((System.ComponentModel.ISupportInitialize)(this.nudStr)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.picFemalePaperdoll)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.picMalePaperdoll)).EndInit();
+            this.grpShieldProperties.ResumeLayout(false);
+            this.grpShieldProperties.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudBlockDmgAbs)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudBlockAmount)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudBlockChance)).EndInit();
             this.grpWeaponProperties.ResumeLayout(false);
             this.grpWeaponProperties.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudCritMultiplier)).EndInit();
@@ -2848,8 +2962,6 @@ namespace Intersect.Editor.Forms.Editors
             ((System.ComponentModel.ISupportInitialize)(this.nudBag)).EndInit();
             this.toolStrip.ResumeLayout(false);
             this.toolStrip.PerformLayout();
-            this.grpRequirements.ResumeLayout(false);
-            this.grpRequirements.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -3028,5 +3140,12 @@ namespace Intersect.Editor.Forms.Editors
         private DarkGroupBox grpRequirements;
         private Label lblCannotUse;
         private DarkTextBox txtCannotUse;
+        private DarkGroupBox grpShieldProperties;
+        private DarkNumericUpDown nudBlockDmgAbs;
+        private Label lblBlockDmgAbs;
+        private DarkNumericUpDown nudBlockAmount;
+        private Label lblBlockAmount;
+        private DarkNumericUpDown nudBlockChance;
+        private Label lblBlockChance;
     }
 }
