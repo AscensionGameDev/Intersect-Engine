@@ -1292,6 +1292,10 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString disconnectedsavecaption = @"Disconnected -- Export Map?";
 
+            public static LocalizedString InvalidDirectory = @"You have selected an invalid directory, would you like to try again?";
+
+            public static LocalizedString InvalidDirectoryCaption = @"Invalid Directory";
+
             public static LocalizedString importfailed =
                 @"Cannot import map. Currently selected map is not an Intersect map file or was exported with a different version of the Intersect editor!";
 
@@ -3580,6 +3584,8 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString tools = @"Tools";
 
+            public static LocalizedString MenuToolsPackageUpdate = @"Package Update";
+
             public static LocalizedString toolsdir = @"tools";
 
             public static LocalizedString undo = @"Undo";
@@ -5014,6 +5020,9 @@ Negative values for time to flow backwards.";
 
         public struct UpdatePacking
         {
+            public static LocalizedString SourceDirectoryPromptDescription = @"Pick the directory from which to generate the update";
+
+            public static LocalizedString TargetDirectoryPromptDescription = @"Pick the directory in which to save the packaged update";
 
             public static LocalizedString Title = @"Packaging Updater Files, Please Wait!";
 

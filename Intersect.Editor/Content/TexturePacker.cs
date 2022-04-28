@@ -1,8 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+
 using Intersect.Compression;
 using Intersect.Editor.Content;
 
@@ -47,10 +48,13 @@ namespace Intersect.Editor.Classes.ContentManagement
 
         public List<Rectangle> usedRectangles = new List<Rectangle>();
 
-        public TexturePacker(int width, int height, bool rotations = true)
+        public TexturePacker(string resourcesDirectory, int width, int height, bool rotations = true)
         {
+            ResourcesDirectory = resourcesDirectory;
             Init(width, height, rotations);
         }
+
+        public string ResourcesDirectory { get; private set; }
 
         public void Init(int width, int height, bool rotations = true)
         {
@@ -91,23 +95,29 @@ namespace Intersect.Editor.Classes.ContentManagement
             var maxUsedHeight = 0;
             var g = Graphics.FromImage(img);
             var frames = new JArray();
+
             foreach (var tex in textures)
             {
-                var frame = new JObject();
-                frame.Add("filename", tex.Key.GetPath());
                 var t = Image.FromFile(tex.Key.GetPath());
 
-                var spriteSourceSize = new JObject();
-                spriteSourceSize["x"] = 0;
-                spriteSourceSize["y"] = 0;
-                spriteSourceSize["w"] = t.Width;
-                spriteSourceSize["h"] = t.Height;
-                frame["spriteSourceSize"] = spriteSourceSize;
+                var frame = new JObject
+                {
+                    { "filename", tex.Key.GetPath() }
+                };
 
-                var sourceSize = new JObject();
-                sourceSize["w"] = t.Width;
-                sourceSize["h"] = t.Height;
-                frame["sourceSize"] = sourceSize;
+                frame["spriteSourceSize"] = new JObject
+                {
+                    ["x"] = 0,
+                    ["y"] = 0,
+                    ["w"] = t.Width,
+                    ["h"] = t.Height
+                };
+
+                frame["sourceSize"] = new JObject
+                {
+                    ["w"] = t.Width,
+                    ["h"] = t.Height
+                };
 
                 if (tex.Value.Width == t.Height && tex.Value.Height == t.Width && t.Width != t.Height)
                 {
@@ -121,16 +131,19 @@ namespace Intersect.Editor.Classes.ContentManagement
                 }
 
                 g.DrawImage(
-                    t, new RectangleF(tex.Value.X, tex.Value.Y, tex.Value.Width, tex.Value.Height),
-                    new RectangleF(0, 0, t.Width, t.Height), GraphicsUnit.Pixel
+                    t,
+                    new RectangleF(tex.Value.X, tex.Value.Y, tex.Value.Width, tex.Value.Height),
+                    new RectangleF(0, 0, t.Width, t.Height),
+                    GraphicsUnit.Pixel
                 );
 
-                var frameRect = new JObject();
-                frameRect["x"] = tex.Value.X;
-                frameRect["y"] = tex.Value.Y;
-                frameRect["w"] = tex.Value.Width;
-                frameRect["h"] = tex.Value.Height;
-                frame["frame"] = frameRect;
+                frame["frame"] = new JObject
+                {
+                    ["x"] = tex.Value.X,
+                    ["y"] = tex.Value.Y,
+                    ["w"] = tex.Value.Width,
+                    ["h"] = tex.Value.Height
+                };
 
                 if (tex.Value.Right > maxUsedWidth)
                 {
@@ -148,6 +161,7 @@ namespace Intersect.Editor.Classes.ContentManagement
             }
 
             g.Dispose();
+
             if (maxUsedWidth > 0 && maxUsedHeight > 0)
             {
                 var croppedImg = new Bitmap(maxUsedWidth, maxUsedHeight);
@@ -158,11 +172,14 @@ namespace Intersect.Editor.Classes.ContentManagement
                 );
 
                 g1.Dispose();
-                var size = new JObject();
-                size["w"] = croppedImg.Width;
-                size["h"] = croppedImg.Height;
-                
-                using (var stream = GzipCompression.CreateCompressedFileStream(Path.Combine("resources", "packs", "graphics" + index + ".asset")))
+                var size = new JObject
+                {
+                    ["w"] = croppedImg.Width,
+                    ["h"] = croppedImg.Height
+                };
+
+                var assetPath = Path.Combine(ResourcesDirectory, "packs", "graphics" + index + ".asset");
+                using (var stream = GzipCompression.CreateCompressedFileStream(assetPath))
                 {
                     croppedImg.Save(stream, ImageFormat.Png);
                 }
@@ -178,8 +195,10 @@ namespace Intersect.Editor.Classes.ContentManagement
                 meta["size"] = size;
                 jobj.Add(new JProperty("meta", meta));
 
+                var metaPath = Path.Combine(ResourcesDirectory, "packs", "graphics" + index + ".meta");
+
                 //Save Metadata
-                GzipCompression.WriteCompressedString(Path.Combine("resources", "packs", "graphics" + index + ".meta"), jobj.ToString());
+                GzipCompression.WriteCompressedString(metaPath, jobj.ToString());
             }
 
             img.Dispose();
@@ -253,7 +272,7 @@ namespace Intersect.Editor.Classes.ContentManagement
                     var score1 = 0;
                     var score2 = 0;
                     var newNode = ScoreRect(
-                        (int) rects[i].Width, (int) rects[i].Height, method, ref score1, ref score2
+                        (int)rects[i].Width, (int)rects[i].Height, method, ref score1, ref score2
                     );
 
                     if (score1 < bestScore1 || score1 == bestScore1 && score2 < bestScore2)
@@ -339,10 +358,10 @@ namespace Intersect.Editor.Classes.ContentManagement
             ulong usedSurfaceArea = 0;
             for (var i = 0; i < usedRectangles.Count; ++i)
             {
-                usedSurfaceArea += (uint) usedRectangles[i].Width * (uint) usedRectangles[i].Height;
+                usedSurfaceArea += (uint)usedRectangles[i].Width * (uint)usedRectangles[i].Height;
             }
 
-            return (float) usedSurfaceArea / (binWidth * binHeight);
+            return (float)usedSurfaceArea / (binWidth * binHeight);
         }
 
         Rectangle FindPositionForNewNodeBottomLeft(int width, int height, ref int bestY, ref int bestX)
@@ -358,7 +377,7 @@ namespace Intersect.Editor.Classes.ContentManagement
                 // Try to place the rectangle in upright (non-flipped) orientation.
                 if (freeRectangles[i].Width >= width && freeRectangles[i].Height >= height)
                 {
-                    var topSideY = (int) freeRectangles[i].Y + height;
+                    var topSideY = (int)freeRectangles[i].Y + height;
                     if (topSideY < bestY || topSideY == bestY && freeRectangles[i].X < bestX)
                     {
                         bestNode.X = freeRectangles[i].X;
@@ -366,13 +385,13 @@ namespace Intersect.Editor.Classes.ContentManagement
                         bestNode.Width = width;
                         bestNode.Height = height;
                         bestY = topSideY;
-                        bestX = (int) freeRectangles[i].X;
+                        bestX = (int)freeRectangles[i].X;
                     }
                 }
 
                 if (allowRotations && freeRectangles[i].Width >= height && freeRectangles[i].Height >= width)
                 {
-                    var topSideY = (int) freeRectangles[i].Y + width;
+                    var topSideY = (int)freeRectangles[i].Y + width;
                     if (topSideY < bestY || topSideY == bestY && freeRectangles[i].X < bestX)
                     {
                         bestNode.X = freeRectangles[i].X;
@@ -380,7 +399,7 @@ namespace Intersect.Editor.Classes.ContentManagement
                         bestNode.Width = height;
                         bestNode.Height = width;
                         bestY = topSideY;
-                        bestX = (int) freeRectangles[i].X;
+                        bestX = (int)freeRectangles[i].X;
                     }
                 }
             }
@@ -406,8 +425,8 @@ namespace Intersect.Editor.Classes.ContentManagement
                 // Try to place the rectangle in upright (non-flipped) orientation.
                 if (freeRectangles[i].Width >= width && freeRectangles[i].Height >= height)
                 {
-                    var leftoverHoriz = Math.Abs((int) freeRectangles[i].Width - width);
-                    var leftoverVert = Math.Abs((int) freeRectangles[i].Height - height);
+                    var leftoverHoriz = Math.Abs((int)freeRectangles[i].Width - width);
+                    var leftoverVert = Math.Abs((int)freeRectangles[i].Height - height);
                     var shortSideFit = Math.Min(leftoverHoriz, leftoverVert);
                     var longSideFit = Math.Max(leftoverHoriz, leftoverVert);
 
@@ -425,8 +444,8 @@ namespace Intersect.Editor.Classes.ContentManagement
 
                 if (allowRotations && freeRectangles[i].Width >= height && freeRectangles[i].Height >= width)
                 {
-                    var flippedLeftoverHoriz = Math.Abs((int) freeRectangles[i].Width - height);
-                    var flippedLeftoverVert = Math.Abs((int) freeRectangles[i].Height - width);
+                    var flippedLeftoverHoriz = Math.Abs((int)freeRectangles[i].Width - height);
+                    var flippedLeftoverVert = Math.Abs((int)freeRectangles[i].Height - width);
                     var flippedShortSideFit = Math.Min(flippedLeftoverHoriz, flippedLeftoverVert);
                     var flippedLongSideFit = Math.Max(flippedLeftoverHoriz, flippedLeftoverVert);
 
@@ -464,8 +483,8 @@ namespace Intersect.Editor.Classes.ContentManagement
                 // Try to place the rectangle in upright (non-flipped) orientation.
                 if (freeRectangles[i].Width >= width && freeRectangles[i].Height >= height)
                 {
-                    var leftoverHoriz = Math.Abs((int) freeRectangles[i].Width - width);
-                    var leftoverVert = Math.Abs((int) freeRectangles[i].Height - height);
+                    var leftoverHoriz = Math.Abs((int)freeRectangles[i].Width - width);
+                    var leftoverVert = Math.Abs((int)freeRectangles[i].Height - height);
                     var shortSideFit = Math.Min(leftoverHoriz, leftoverVert);
                     var longSideFit = Math.Max(leftoverHoriz, leftoverVert);
 
@@ -483,8 +502,8 @@ namespace Intersect.Editor.Classes.ContentManagement
 
                 if (allowRotations && freeRectangles[i].Width >= height && freeRectangles[i].Height >= width)
                 {
-                    var leftoverHoriz = Math.Abs((int) freeRectangles[i].Width - height);
-                    var leftoverVert = Math.Abs((int) freeRectangles[i].Height - width);
+                    var leftoverHoriz = Math.Abs((int)freeRectangles[i].Width - height);
+                    var leftoverVert = Math.Abs((int)freeRectangles[i].Height - width);
                     var shortSideFit = Math.Min(leftoverHoriz, leftoverVert);
                     var longSideFit = Math.Max(leftoverHoriz, leftoverVert);
 
@@ -519,13 +538,13 @@ namespace Intersect.Editor.Classes.ContentManagement
 
             for (var i = 0; i < freeRectangles.Count; ++i)
             {
-                var areaFit = (int) freeRectangles[i].Width * (int) freeRectangles[i].Height - width * height;
+                var areaFit = (int)freeRectangles[i].Width * (int)freeRectangles[i].Height - width * height;
 
                 // Try to place the rectangle in upright (non-flipped) orientation.
                 if (freeRectangles[i].Width >= width && freeRectangles[i].Height >= height)
                 {
-                    var leftoverHoriz = Math.Abs((int) freeRectangles[i].Width - width);
-                    var leftoverVert = Math.Abs((int) freeRectangles[i].Height - height);
+                    var leftoverHoriz = Math.Abs((int)freeRectangles[i].Width - width);
+                    var leftoverVert = Math.Abs((int)freeRectangles[i].Height - height);
                     var shortSideFit = Math.Min(leftoverHoriz, leftoverVert);
 
                     if (areaFit < bestAreaFit || areaFit == bestAreaFit && shortSideFit < bestShortSideFit)
@@ -541,8 +560,8 @@ namespace Intersect.Editor.Classes.ContentManagement
 
                 if (allowRotations && freeRectangles[i].Width >= height && freeRectangles[i].Height >= width)
                 {
-                    var leftoverHoriz = Math.Abs((int) freeRectangles[i].Width - height);
-                    var leftoverVert = Math.Abs((int) freeRectangles[i].Height - width);
+                    var leftoverHoriz = Math.Abs((int)freeRectangles[i].Width - height);
+                    var leftoverVert = Math.Abs((int)freeRectangles[i].Height - width);
                     var shortSideFit = Math.Min(leftoverHoriz, leftoverVert);
 
                     if (areaFit < bestAreaFit || areaFit == bestAreaFit && shortSideFit < bestShortSideFit)
@@ -590,7 +609,7 @@ namespace Intersect.Editor.Classes.ContentManagement
                 if (usedRectangles[i].X == x + width || usedRectangles[i].X + usedRectangles[i].Width == x)
                 {
                     score += CommonIntervalLength(
-                        (int) usedRectangles[i].Y, (int) usedRectangles[i].Y + (int) usedRectangles[i].Height, y,
+                        (int)usedRectangles[i].Y, (int)usedRectangles[i].Y + (int)usedRectangles[i].Height, y,
                         y + height
                     );
                 }
@@ -598,7 +617,7 @@ namespace Intersect.Editor.Classes.ContentManagement
                 if (usedRectangles[i].Y == y + height || usedRectangles[i].Y + usedRectangles[i].Height == y)
                 {
                     score += CommonIntervalLength(
-                        (int) usedRectangles[i].X, (int) usedRectangles[i].X + (int) usedRectangles[i].Width, x,
+                        (int)usedRectangles[i].X, (int)usedRectangles[i].X + (int)usedRectangles[i].Width, x,
                         x + width
                     );
                 }
@@ -621,13 +640,13 @@ namespace Intersect.Editor.Classes.ContentManagement
                 if (freeRectangles[i].Width >= width && freeRectangles[i].Height >= height)
                 {
                     var score = ContactPointScoreNode(
-                        (int) freeRectangles[i].X, (int) freeRectangles[i].Y, width, height
+                        (int)freeRectangles[i].X, (int)freeRectangles[i].Y, width, height
                     );
 
                     if (score > bestContactScore)
                     {
-                        bestNode.X = (int) freeRectangles[i].X;
-                        bestNode.Y = (int) freeRectangles[i].Y;
+                        bestNode.X = (int)freeRectangles[i].X;
+                        bestNode.Y = (int)freeRectangles[i].Y;
                         bestNode.Width = width;
                         bestNode.Height = height;
                         bestContactScore = score;
@@ -637,13 +656,13 @@ namespace Intersect.Editor.Classes.ContentManagement
                 if (allowRotations && freeRectangles[i].Width >= height && freeRectangles[i].Height >= width)
                 {
                     var score = ContactPointScoreNode(
-                        (int) freeRectangles[i].X, (int) freeRectangles[i].Y, height, width
+                        (int)freeRectangles[i].X, (int)freeRectangles[i].Y, height, width
                     );
 
                     if (score > bestContactScore)
                     {
-                        bestNode.X = (int) freeRectangles[i].X;
-                        bestNode.Y = (int) freeRectangles[i].Y;
+                        bestNode.X = (int)freeRectangles[i].X;
+                        bestNode.Y = (int)freeRectangles[i].Y;
                         bestNode.Width = height;
                         bestNode.Height = width;
                         bestContactScore = score;
@@ -711,22 +730,22 @@ namespace Intersect.Editor.Classes.ContentManagement
         void PruneFreeList()
         {
             for (var i = 0; i < freeRectangles.Count; ++i)
-            for (var j = i + 1; j < freeRectangles.Count; ++j)
-            {
-                if (IsContainedIn(freeRectangles[i], freeRectangles[j]))
+                for (var j = i + 1; j < freeRectangles.Count; ++j)
                 {
-                    freeRectangles.RemoveAt(i);
-                    --i;
+                    if (IsContainedIn(freeRectangles[i], freeRectangles[j]))
+                    {
+                        freeRectangles.RemoveAt(i);
+                        --i;
 
-                    break;
-                }
+                        break;
+                    }
 
-                if (IsContainedIn(freeRectangles[j], freeRectangles[i]))
-                {
-                    freeRectangles.RemoveAt(j);
-                    --j;
+                    if (IsContainedIn(freeRectangles[j], freeRectangles[i]))
+                    {
+                        freeRectangles.RemoveAt(j);
+                        --j;
+                    }
                 }
-            }
         }
 
         bool IsContainedIn(Rectangle a, Rectangle b)
