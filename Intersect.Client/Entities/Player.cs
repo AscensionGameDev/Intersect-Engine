@@ -1936,40 +1936,39 @@ namespace Intersect.Client.Entities
                         // tmp the next position of the player
                         // DeplacementDir is used because I don't know how to set the sprite animation for the diagonal movement.
                         case 0: // Up
-                            Dir = 0; // Set the sprite direction
                             if (IsTileBlocked(X, Y - 1, Z, MapId, ref blockedBy) == -1)
                             {
                                 tmpY--;
                                 IsMoving = true;
+                                Dir = 0; // Set the sprite direction
                                 OffsetY = Options.TileHeight;
                                 OffsetX = 0;
                             }
 
                             break;
                         case 1: // Down
-                            Dir = 1;
                             if (IsTileBlocked(X, Y + 1, Z, MapId, ref blockedBy) == -1)
                             {
                                 tmpY++;
                                 IsMoving = true;
+                                Dir = 1;
                                 OffsetY = -Options.TileHeight;
                                 OffsetX = 0;
                             }
 
                             break;
                         case 2: // Left
-                            Dir = 2;
                             if (IsTileBlocked(X - 1, Y, Z, MapId, ref blockedBy) == -1)
                             {
                                 tmpX--;
                                 IsMoving = true;
+                                Dir = 2;
                                 OffsetY = 0;
                                 OffsetX = Options.TileWidth;
                             }
 
                             break;
                         case 3: // Right
-                            Dir = 3;
                             if (IsTileBlocked(X + 1, Y, Z, MapId, ref blockedBy) == -1)
                             {
                                 tmpX++;
@@ -1981,45 +1980,45 @@ namespace Intersect.Client.Entities
 
                             break;
                         case 4: // NW
-                            Dir = 4;
                             if (IsTileBlocked(X - 1, Y - 1, Z, MapId, ref blockedBy) == -1)
                             {
                                 tmpY--;
                                 tmpX--;
                                 IsMoving = true;
+                                Dir = 4;
                                 OffsetY = Options.TileHeight;
                                 OffsetX = Options.TileWidth;
                             }
                             break;
                         case 5: // NE
-                            Dir = 5;
                             if (IsTileBlocked(X + 1, Y - 1, Z, MapId, ref blockedBy) == -1)
                             {
                                 tmpY--;
                                 tmpX++;
-                                IsMoving = true;
+                                IsMoving = true;                            
+                                Dir = 5;
                                 OffsetY = Options.TileHeight;
                                 OffsetX = -Options.TileWidth;
                             }
                             break;
                         case 6: // SW
-                            Dir = 6;
                             if (IsTileBlocked(X - 1, Y + 1, Z, MapId, ref blockedBy) == -1)
                             {
                                 tmpY++;
                                 tmpX--;
                                 IsMoving = true;
+                                Dir = 6;
                                 OffsetY = -Options.TileHeight;
                                 OffsetX = Options.TileWidth;
                             }
                             break;
                         case 7: // SE
-                            Dir = 7;
                             if (IsTileBlocked(X + 1, Y + 1, Z, MapId, ref blockedBy) == -1)
                             {
                                 tmpY++;
                                 tmpX++;
                                 IsMoving = true;
+                                Dir = 7;
                                 OffsetY = -Options.TileHeight;
                                 OffsetX = -Options.TileWidth;
                             }
