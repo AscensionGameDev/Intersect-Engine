@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Intersect.Client.Framework.Entities;
 using Intersect.Client.General;
 using Intersect.Enums;
@@ -43,7 +43,7 @@ namespace Intersect.Client.Entities.Projectiles
         /// <summary>
         ///     The constructor for the inherated projectile class
         /// </summary>
-        public Projectile(Guid id, ProjectileEntityPacket packet) : base(id, packet)
+        public Projectile(Guid id, ProjectileEntityPacket packet) : base(id, packet, EntityTypes.Projectile)
         {
             Vital[(int) Vitals.Health] = 1;
             MaxVital[(int) Vitals.Health] = 1;
@@ -87,11 +87,6 @@ namespace Intersect.Client.Entities.Projectiles
 
             Spawns = new ProjectileSpawns[mTotalSpawns];
             mLoaded = true;
-        }
-
-        public override EntityTypes GetEntityType()
-        {
-            return EntityTypes.Projectile;
         }
 
         public override void Dispose()

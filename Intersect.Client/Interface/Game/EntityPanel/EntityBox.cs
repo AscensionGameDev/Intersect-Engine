@@ -431,7 +431,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                 UpdateXpBar(elapsedTime);
             }
 
-            if (MyEntity.GetEntityType() == EntityTypes.Player && MyEntity != Globals.Me)
+            if (MyEntity.Type == EntityTypes.Player && MyEntity != Globals.Me)
             {
                 if (MyEntity.Vital[(int)Vitals.Health] <= 0)
                 {

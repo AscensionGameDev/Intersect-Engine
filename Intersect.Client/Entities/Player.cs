@@ -120,7 +120,7 @@ namespace Intersect.Client.Entities
         /// </summary>
         public GuildMember[] GuildMembers = new GuildMember[0];
 
-        public Player(Guid id, PlayerEntityPacket packet) : base(id, packet)
+        public Player(Guid id, PlayerEntityPacket packet) : base(id, packet, EntityTypes.Player)
         {
             for (var i = 0; i < Options.Instance.PlayerOpts.HotbarSlotCount; i++)
             {
@@ -307,11 +307,6 @@ namespace Intersect.Client.Entities
                 TargetBox = new EntityBox(Interface.Interface.GameUi.GameCanvas, EntityTypes.Player, null);
                 TargetBox.Hide();
             }
-        }
-
-        public override EntityTypes GetEntityType()
-        {
-            return EntityTypes.Player;
         }
 
         //Item Processing
@@ -1169,11 +1164,11 @@ namespace Intersect.Client.Entities
 
                     // Check if we are allowed to target players here, if we're not and this is a player then skip!
                     // If we are, check to see if they're our party or nation member, then exclude them. We're friendly happy people here.
-                    if (!canTargetPlayers && en.Value.GetEntityType() == EntityTypes.Player)
+                    if (!canTargetPlayers && en.Value.Type == EntityTypes.Player)
                     {
                         continue;
                     }
-                    else if (canTargetPlayers && en.Value.GetEntityType() == EntityTypes.Player)
+                    else if (canTargetPlayers && en.Value.Type == EntityTypes.Player)
                     {
                         var player = en.Value as Player;
                         if (IsInMyParty(player))
@@ -1182,7 +1177,7 @@ namespace Intersect.Client.Entities
                         }
                     }
 
-                    if (en.Value.GetEntityType() == EntityTypes.GlobalEntity || en.Value.GetEntityType() == EntityTypes.Player)
+                    if (en.Value.Type == EntityTypes.GlobalEntity || en.Value.Type == EntityTypes.Player)
                     {
                         // Already in our list?
                         if (mlastTargetList.ContainsKey(en.Value))

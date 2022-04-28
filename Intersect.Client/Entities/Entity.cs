@@ -170,7 +170,7 @@ namespace Intersect.Client.Entities
         public long LastActionTime { get; set; } = -1;
         #endregion
 
-        public EntityTypes Type { get; set; }
+        public EntityTypes Type { get; }
 
         public int Aggression { get; set; }
 
@@ -189,11 +189,13 @@ namespace Intersect.Client.Entities
 
         public byte Z { get; set; }
 
-        public Entity(Guid id, EntityPacket packet, bool isEvent = false)
+        public Entity(Guid id, EntityPacket packet, EntityTypes entityType)
         {
             Id = id;
+            Type = entityType;
             MapId = Guid.Empty;
-            if (id != Guid.Empty && !isEvent)
+
+            if (Id != Guid.Empty && Type != EntityTypes.Event)
             {
                 for (var i = 0; i < Options.MaxInvItems; i++)
                 {
@@ -305,11 +307,6 @@ namespace Intersect.Client.Entities
         public IMapInstance MapInstance => Maps.MapInstance.Get(MapId);
 
         public virtual Guid MapId { get; set; }
-
-        public virtual EntityTypes GetEntityType()
-        {
-            return EntityTypes.GlobalEntity;
-        }
 
         //Deserializing
         public virtual void Load(EntityPacket packet)
@@ -1253,10 +1250,7 @@ namespace Intersect.Client.Entities
             }
 
             var name = Name;
-
-            // the typeof(Entity) == GetType() is actually the only correct option here
-            // because we need an exact type check, and "is" and "as" permit subtypes
-            if ((this is Player && Options.Player.ShowLevelByName) || (typeof(Entity) == GetType() && Options.Npc.ShowLevelByName))
+            if ((this is Player && Options.Player.ShowLevelByName) || (Type == EntityTypes.GlobalEntity && Options.Npc.ShowLevelByName))
             {
                 name = Strings.GameWindow.EntityNameAndLevel.ToString(Name, Level);
             }

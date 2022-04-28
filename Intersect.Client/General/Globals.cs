@@ -216,18 +216,20 @@ namespace Intersect.Client.General
         {
             if (Entities.ContainsKey(id))
             {
-                if (Entities[id].GetEntityType() == type)
-                {
-                    EntitiesToDispose.Remove(Entities[id].Id);
+                var entity = Entities[id];
 
-                    return Entities[id] as Entity;
+                if (!entity.IsDisposed() && entity.Type == type)
+                {
+                    EntitiesToDispose.Remove(entity.Id);
+
+                    return entity;
                 }
 
-                Entities[id].Dispose();
+                entity.Dispose();
                 Entities.Remove(id);
             }
 
-            return null;
+            return default;
         }
 
     }
