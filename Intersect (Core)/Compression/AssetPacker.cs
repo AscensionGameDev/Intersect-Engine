@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -107,7 +107,7 @@ namespace Intersect.Compression
 		/// </summary>
 		/// <param name="fileName">The file to look for.</param>
 		/// <returns>Returns whether or not the file was found in the loaded Asset Packs.</returns>
-		public bool Contains(string fileName) => findAsset(fileName) != null ? true : false;
+		public bool Contains(string fileName) => findAsset(fileName) != default;
 
 		/// <summary>
 		/// Updates our cache timers and disposes of items no longer within the caching time limit.
@@ -120,7 +120,7 @@ namespace Intersect.Compression
 				if (pack.Value.StreamCache != null && (DateTime.Now.Ticks - pack.Value.LastAccessTime) > cacheTimeOutTimer)
 				{
 					pack.Value.StreamCache.Dispose();
-					pack.Value.StreamCache = null;
+					pack.Value.StreamCache = default;
 				}
 			}
 		}

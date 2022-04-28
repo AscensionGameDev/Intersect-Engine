@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Windows.Forms;
 
 using Intersect.Editor.Localization;
@@ -92,8 +93,8 @@ namespace Intersect.Editor.Forms
             Preferences.SavePreference("SuppressTextureWarning", chkSuppressTilesetWarning.Checked.ToString());
             Preferences.SavePreference("ClientPath", txtGamePath.Text);
             Preferences.SavePreference("PackageUpdateAssets", chkPackageAssets.Checked.ToString());
-            Preferences.SavePreference("SoundPackSize", nudSoundBatch.Value.ToString());
-            Preferences.SavePreference("MusicPackSize", nudMusicBatch.Value.ToString());
+            Preferences.SavePreference("SoundPackSize", nudSoundBatch.Value.ToString(CultureInfo.InvariantCulture));
+            Preferences.SavePreference("MusicPackSize", nudMusicBatch.Value.ToString(CultureInfo.InvariantCulture));
             Preferences.SavePreference("TexturePackSize", cmbTextureSize.GetItemText(cmbTextureSize.SelectedItem));
         }
 
@@ -111,9 +112,12 @@ namespace Intersect.Editor.Forms
                 ShowReadOnly = true
             };
 
-            if (dialogue.ShowDialog() == DialogResult.OK)
+            using (dialogue)
             {
-                txtGamePath.Text = dialogue.FileName;
+                if (dialogue.ShowDialog() == DialogResult.OK)
+                {
+                    txtGamePath.Text = dialogue.FileName;
+                }
             }
         }
 

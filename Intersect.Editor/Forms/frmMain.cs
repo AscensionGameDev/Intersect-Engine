@@ -1,7 +1,8 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
@@ -132,37 +133,48 @@ namespace Intersect.Editor.Forms
 
         private void InitLocalization()
         {
+            InitLocalizationMenus();
+            InitLocalizationToolstrip();
+        }
+
+        private void InitLocalizationMenus()
+        {
+            InitLocalizationMenuFile();
+            InitLocalizationMenuEdit();
+            InitLocalizationMenuView();
+            InitLocalizationMenuGameEditors();
+            InitLocalizationMenuTools();
+            InitLocalizationMenuHelp();
+        }
+
+        private void InitLocalizationMenuFile()
+        {
             fileToolStripMenuItem.Text = Strings.MainForm.file;
             saveMapToolStripMenuItem.Text = Strings.MainForm.savemap;
-            toolStripBtnSaveMap.Text = Strings.MainForm.savemap;
             newMapToolStripMenuItem.Text = Strings.MainForm.newmap;
-            toolStripBtnNewMap.Text = Strings.MainForm.newmap;
             importMapToolStripMenuItem.Text = Strings.MainForm.importmap;
             exportMapToolStripMenuItem.Text = Strings.MainForm.exportmap;
             optionsToolStripMenuItem.Text = Strings.MainForm.options;
             exitToolStripMenuItem.Text = Strings.MainForm.exit;
+        }
 
+        private void InitLocalizationMenuEdit()
+        {
             editToolStripMenuItem.Text = Strings.MainForm.edit;
             undoToolStripMenuItem.Text = Strings.MainForm.undo;
             redoToolStripMenuItem.Text = Strings.MainForm.redo;
             cutToolStripMenuItem.Text = Strings.MainForm.cut;
             copyToolStripMenuItem.Text = Strings.MainForm.copy;
             pasteToolStripMenuItem.Text = Strings.MainForm.paste;
-            toolStripBtnUndo.Text = Strings.MainForm.undo;
-            toolStripBtnRedo.Text = Strings.MainForm.redo;
-            toolStripBtnCut.Text = Strings.MainForm.cut;
-            toolStripBtnCopy.Text = Strings.MainForm.copy;
-            toolStripBtnPaste.Text = Strings.MainForm.paste;
-
             fillToolStripMenuItem.Text = Strings.MainForm.fill;
-            toolStripBtnFill.Text = Strings.MainForm.fill;
             eraseLayerToolStripMenuItem.Text = Strings.MainForm.erase;
-            toolStripBtnErase.Text = Strings.MainForm.erase;
-
             selectToolStripMenuItem.Text = Strings.MainForm.selectlayers;
             allLayersToolStripMenuItem.Text = Strings.MainForm.alllayers;
             currentLayerOnlyToolStripMenuItem.Text = Strings.MainForm.currentonly;
+        }
 
+        private void InitLocalizationMenuView()
+        {
             viewToolStripMenuItem.Text = Strings.MainForm.view;
             hideDarknessToolStripMenuItem.Text = Strings.MainForm.darkness;
             hideFogToolStripMenuItem.Text = Strings.MainForm.fog;
@@ -171,7 +183,10 @@ namespace Intersect.Editor.Forms
             hideEventsToolStripMenuItem.Text = Strings.MainForm.Events;
             hideTilePreviewToolStripMenuItem.Text = Strings.MainForm.tilepreview;
             mapGridToolStripMenuItem.Text = Strings.MainForm.grid;
+        }
 
+        private void InitLocalizationMenuGameEditors()
+        {
             contentEditorsToolStripMenuItem.Text = Strings.MainForm.editors;
             animationEditorToolStripMenuItem.Text = Strings.MainForm.animationeditor;
             classEditorToolStripMenuItem.Text = Strings.MainForm.classeditor;
@@ -187,25 +202,52 @@ namespace Intersect.Editor.Forms
             spellEditorToolStripMenuItem.Text = Strings.MainForm.spelleditor;
             variableEditorToolStripMenuItem.Text = Strings.MainForm.variableeditor;
             timeEditorToolStripMenuItem.Text = Strings.MainForm.timeeditor;
+        }
 
+        private void InitLocalizationMenuTools()
+        {
             toolsToolStripMenuItem.Text = Strings.MainForm.tools;
+            packageUpdateToolStripMenuItem.Text = Strings.MainForm.MenuToolsPackageUpdate;
+        }
 
+        private void InitLocalizationMenuHelp()
+        {
             helpToolStripMenuItem.Text = Strings.MainForm.help;
             postQuestionToolStripMenuItem.Text = Strings.MainForm.postquestion;
             toolStripButtonQuestion.Text = Strings.MainForm.postquestion;
             reportBugToolStripMenuItem.Text = Strings.MainForm.reportbug;
             toolStripButtonBug.Text = Strings.MainForm.reportbug;
             aboutToolStripMenuItem.Text = Strings.MainForm.about;
+        }
+
+        private void InitLocalizationToolstrip()
+        {
+            toolStripBtnNewMap.Text = Strings.MainForm.newmap;
+            toolStripBtnSaveMap.Text = Strings.MainForm.savemap;
+
+            toolStripBtnCut.Text = Strings.MainForm.cut;
+            toolStripBtnCopy.Text = Strings.MainForm.copy;
+            toolStripBtnPaste.Text = Strings.MainForm.paste;
+
+            toolStripBtnUndo.Text = Strings.MainForm.undo;
+            toolStripBtnRedo.Text = Strings.MainForm.redo;
 
             toolStripBtnPen.Text = Strings.MainForm.pen;
             toolStripBtnSelect.Text = Strings.MainForm.selection;
             toolStripBtnRect.Text = Strings.MainForm.rectangle;
-            toolStripBtnEyeDrop.Text = Strings.MainForm.droppler;
-            toolStripTimeButton.Text = Strings.MainForm.lighting;
-            toolStripBtnScreenshot.Text = Strings.MainForm.screenshot;
-            toolStripBtnRun.Text = Strings.MainForm.run;
-            toolStripBtnFlipHorizontal.Text = Strings.MainForm.fliphorizontal;
+
             toolStripBtnFlipVertical.Text = Strings.MainForm.flipvertical;
+            toolStripBtnFlipHorizontal.Text = Strings.MainForm.fliphorizontal;
+
+            toolStripBtnFill.Text = Strings.MainForm.fill;
+            toolStripBtnErase.Text = Strings.MainForm.erase;
+            toolStripBtnEyeDrop.Text = Strings.MainForm.droppler;
+
+            toolStripTimeButton.Text = Strings.MainForm.lighting;
+
+            toolStripBtnScreenshot.Text = Strings.MainForm.screenshot;
+
+            toolStripBtnRun.Text = Strings.MainForm.run;
         }
 
         private void InitExternalTools()
@@ -1403,14 +1445,14 @@ namespace Intersect.Editor.Forms
         private void toolStripBtnRun_Click(object sender, EventArgs e)
         {
             var path = Preferences.LoadPreference("ClientPath");
-            if (path != "" && File.Exists(path))
+            if (!string.IsNullOrWhiteSpace(path) && File.Exists(path))
             {
                 var processStartInfo = new ProcessStartInfo(path)
                 {
                     WorkingDirectory = Directory.GetParent(path).FullName
                 };
 
-                var process = Process.Start(processStartInfo);
+                _ = Process.Start(processStartInfo);
             }
         }
 
@@ -1498,7 +1540,7 @@ namespace Intersect.Editor.Forms
         {
             toolStripBtnRun.Enabled = false;
             var path = Preferences.LoadPreference("ClientPath");
-            if (path != "" && File.Exists(path))
+            if (!string.IsNullOrWhiteSpace(path) && File.Exists(path))
             {
                 toolStripBtnRun.Enabled = true;
             }
@@ -1678,18 +1720,19 @@ namespace Intersect.Editor.Forms
 
         }
 
-        private void packAssets()
+        private void packAssets(string rootDirectory)
         {
             //TODO: Make packing heuristic that the texture packer class should use configurable.
             var maxPackSize = Convert.ToInt32(Preferences.LoadPreference("TexturePackSize"));
-            var packsPath = Path.Combine("resources", "packs");
+            var resourcesDirectory = Path.Combine(rootDirectory, "resources");
+            var packsDirectory = Path.Combine(resourcesDirectory, "packs");
 
             //Delete Old Packs
             Globals.PackingProgressForm.SetProgress(Strings.AssetPacking.deleting, 10, false);
             Application.DoEvents();
-            if (Directory.Exists(packsPath))
+            if (Directory.Exists(packsDirectory))
             {
-                var di = new DirectoryInfo(packsPath);
+                var di = new DirectoryInfo(packsDirectory);
 
                 foreach (var file in di.GetFiles())
                 {
@@ -1703,7 +1746,7 @@ namespace Intersect.Editor.Forms
             }
             else
             {
-                Directory.CreateDirectory(packsPath);
+                Directory.CreateDirectory(packsDirectory);
             }
 
             //Create two 'sets' of graphics we want to pack. Tilesets + Fogs in one set, everything else in the other.
@@ -1752,13 +1795,13 @@ namespace Intersect.Editor.Forms
                     if (tex.GetWidth() > maxPackSize || tex.GetHeight() > maxPackSize)
                     {
                         //Own texture
-                        var pack = new TexturePacker(tex.GetWidth(), tex.GetHeight(), false);
+                        var pack = new TexturePacker(resourcesDirectory, tex.GetWidth(), tex.GetHeight(), false);
                         packs.Add(pack);
                         pack.InsertTex(tex);
                     }
                     else
                     {
-                        var pack = new TexturePacker(maxPackSize, maxPackSize, true);
+                        var pack = new TexturePacker(resourcesDirectory, maxPackSize, maxPackSize, true);
                         packs.Add(pack);
                         if (!pack.InsertTex(tex))
                         {
@@ -1780,95 +1823,164 @@ namespace Intersect.Editor.Forms
             // Package up sounds!
             Globals.PackingProgressForm.SetProgress(Strings.AssetPacking.sounds, 80, false);
             Application.DoEvents();
-            AssetPacker.PackageAssets(Path.Combine("resources", "sounds"), "*.wav", packsPath, "sound.index", "sound", ".asset", Convert.ToInt32(Preferences.LoadPreference("SoundPackSize")));
+            AssetPacker.PackageAssets(Path.Combine(resourcesDirectory, "sounds"), "*.wav", packsDirectory, "sound.index", "sound", ".asset", Convert.ToInt32(Preferences.LoadPreference("SoundPackSize")));
 
             // Package up music!
             Globals.PackingProgressForm.SetProgress(Strings.AssetPacking.music, 90, false);
             Application.DoEvents();
-            AssetPacker.PackageAssets(Path.Combine("resources", "music"), "*.ogg", packsPath, "music.index", "music", ".asset", Convert.ToInt32(Preferences.LoadPreference("MusicPackSize")));
+            AssetPacker.PackageAssets(Path.Combine(resourcesDirectory, "music"), "*.ogg", packsDirectory, "music.index", "music", ".asset", Convert.ToInt32(Preferences.LoadPreference("MusicPackSize")));
 
             Globals.PackingProgressForm.SetProgress(Strings.AssetPacking.done, 100, false);
             Application.DoEvents();
-            System.Threading.Thread.Sleep(1000);
+            Thread.Sleep(1000);
 
             Globals.PackingProgressForm.NotifyClose();
         }
 
-        private void packageUpdateToolStripMenuItem_Click(object sender, EventArgs e)
+        private string SelectDirectoryWithRetry(string description, string initialPath, bool showNewFolderButton)
         {
-            using(var fbd = new FolderBrowserDialog())
+            var attempts = 0;
+            while (attempts < 2)
             {
-                DialogResult result = fbd.ShowDialog();
-
-                if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.SelectedPath))
+                using (var folderBrowserDialog = new FolderBrowserDialog()
                 {
-                    Uri baseDir = new Uri(Directory.GetCurrentDirectory() + "\\");
-                    Uri selectedDir = new Uri(fbd.SelectedPath + "\\");
-                    if (baseDir.IsBaseOf(selectedDir))
+                    Description = description,
+                    SelectedPath = initialPath,
+                    ShowNewFolderButton = showNewFolderButton,
+                })
+                {
+                    var selectionDialogResult = folderBrowserDialog.ShowDialog();
+                    switch (selectionDialogResult)
                     {
-                        //Error, cannot be put within editor folder else it would try to include itself?
-                        MessageBox.Show(
-                            Strings.UpdatePacking.InvalidBase, Strings.UpdatePacking.Error, MessageBoxButtons.OK
-                        );
-                        return;
-                    }
+                        case DialogResult.OK:
+                            var selectedPath = folderBrowserDialog.SelectedPath;
+                            if (string.IsNullOrWhiteSpace(selectedPath) || !Directory.Exists(selectedPath))
+                            {
+                                var retryDialogueResult = DarkMessageBox.ShowError(
+                                    Strings.Errors.InvalidDirectory,
+                                    Strings.Errors.InvalidDirectoryCaption,
+                                    DarkDialogButton.RetryCancel,
+                                    Icon
+                                );
 
-                    Update existingUpdate = null;
-                    if (Directory.Exists(fbd.SelectedPath) && File.Exists(Path.Combine(fbd.SelectedPath, "update.json")))
-                    {
-                        //Existing update! Offer to create a differential folder where the only files within will be those that have changed
-                        if (MessageBox.Show(
-                                Strings.UpdatePacking.Differential, Strings.UpdatePacking.DifferentialTitle,
-                                MessageBoxButtons.YesNo
-                            ) ==
-                            DialogResult.Yes)
-                        {
-                            existingUpdate = JsonConvert.DeserializeObject<Update>(File.ReadAllText(Path.Combine(fbd.SelectedPath, "update.json")));
-                        }
-                    }
-                    else
-                    {
-                        if (Directory.EnumerateFileSystemEntries(fbd.SelectedPath).Any())
-                        {
-                            //Folder must be empty!
-                            MessageBox.Show(
-                                Strings.UpdatePacking.Empty, Strings.UpdatePacking.Error, MessageBoxButtons.OK
-                            );
-                            return;
-                        }
-                    }
+                                switch (retryDialogueResult)
+                                {
+                                    case DialogResult.Retry:
+                                        break;
 
-                    // Are we configured to package up our assets for an update?
-                    var packageUpdateAssets = Preferences.LoadPreference("PackageUpdateAssets");
-                    if (packageUpdateAssets != "" && Convert.ToBoolean(packageUpdateAssets))
-                    {
-                        Globals.PackingProgressForm = new FrmProgress();
-                        Globals.PackingProgressForm.SetTitle(Strings.AssetPacking.title);
-                        var assetThread = new Thread(() => packAssets());
-                        assetThread.Start();
-                        Globals.PackingProgressForm.ShowDialog();
-                    }
+                                    case DialogResult.Cancel:
+                                        return default;
+                                }
+                                break;
+                            }
 
-                    Globals.UpdateCreationProgressForm = new FrmProgress();
-                    Globals.UpdateCreationProgressForm.SetTitle(Strings.UpdatePacking.Title);
-                    Globals.UpdateCreationProgressForm.SetProgress(Strings.UpdatePacking.Deleting,10,false);
-                    var packingthread = new Thread(() => createUpdate(fbd.SelectedPath, existingUpdate));
-                    packingthread.Start();
-                    Globals.UpdateCreationProgressForm.ShowDialog();
+                            return selectedPath;
+
+                        case DialogResult.Cancel:
+                            return default;
+
+                        case DialogResult.None:
+                        case DialogResult.Abort:
+                        case DialogResult.Retry:
+                        case DialogResult.Ignore:
+                        case DialogResult.Yes:
+                        case DialogResult.No:
+                            throw new NotImplementedException($"No handler defined for {selectionDialogResult}, should be {DialogResult.OK} or {DialogResult.Cancel}.");
+
+                        default:
+                            throw new IndexOutOfRangeException($"{selectionDialogResult} is not a valid {nameof(System.Windows.Forms.DialogResult)}.");
+                    }
                 }
             }
+
+            return default;
         }
 
-        private void createUpdate(string path, Update existingUpdate)
+        private void packageUpdateToolStripMenuItem_Click(object sender, EventArgs e) => PackageUpdate();
+
+        private void PackageUpdate()
         {
-            if (!Directory.Exists(path))
+            var lastSourceDirectory = Preferences.LoadPreference("update_sourceDirectory");
+            var lastTargetDirectory = Preferences.LoadPreference("update_targetDirectory");
+
+            var sourceDirectory = SelectDirectoryWithRetry(Strings.UpdatePacking.SourceDirectoryPromptDescription, string.IsNullOrWhiteSpace(lastSourceDirectory) ? Environment.CurrentDirectory : lastSourceDirectory, false);
+            var targetDirectory = SelectDirectoryWithRetry(Strings.UpdatePacking.TargetDirectoryPromptDescription, string.IsNullOrWhiteSpace(lastTargetDirectory) ? Environment.CurrentDirectory : lastTargetDirectory, true);
+
+            Preferences.SavePreference("update_sourceDirectory", sourceDirectory);
+            Preferences.SavePreference("update_targetDirectory", targetDirectory);
+
+            var baseDir = new Uri($@"{sourceDirectory}\");
+            var selectedDir = new Uri($@"{targetDirectory}\");
+
+            if (baseDir.IsBaseOf(selectedDir))
             {
-                Directory.CreateDirectory((path));
+                // Error, cannot be put within editor folder else it would try to include itself?
+                _ = DarkMessageBox.ShowError(
+                    Strings.UpdatePacking.InvalidBase,
+                    Strings.UpdatePacking.Error,
+                    DarkDialogButton.Ok,
+                    Icon
+                );
+                return;
             }
 
-            if (Directory.Exists(path))
+            Update existingUpdate = null;
+            var targetUpdateFile = Path.Combine(targetDirectory, "update.json");
+            if (File.Exists(targetUpdateFile))
             {
-                DirectoryInfo di = new DirectoryInfo(path);
+                //Existing update! Offer to create a differential folder where the only files within will be those that have changed
+                if (DarkMessageBox.ShowError(
+                        Strings.UpdatePacking.Differential,
+                        Strings.UpdatePacking.DifferentialTitle,
+                        DarkDialogButton.YesNo,
+                        Icon
+                    ) ==
+                    DialogResult.Yes)
+                {
+                    existingUpdate = JsonConvert.DeserializeObject<Update>(File.ReadAllText(targetUpdateFile));
+                }
+            }
+            else if (Directory.EnumerateFileSystemEntries(targetDirectory).Any())
+            {
+                //Folder must be empty!
+                _ = DarkMessageBox.ShowError(
+                    Strings.UpdatePacking.Empty,
+                    Strings.UpdatePacking.Error,
+                    DarkDialogButton.Ok,
+                    Icon
+                );
+                return;
+            }
+
+            // Are we configured to package up our assets for an update?
+            var packageUpdateAssets = Preferences.LoadPreference("PackageUpdateAssets");
+            if (!string.IsNullOrWhiteSpace(packageUpdateAssets) && Convert.ToBoolean(packageUpdateAssets, CultureInfo.InvariantCulture))
+            {
+                Globals.PackingProgressForm = new FrmProgress();
+                Globals.PackingProgressForm.SetTitle(Strings.AssetPacking.title);
+                var assetThread = new Thread(() => packAssets(sourceDirectory));
+                assetThread.Start();
+                _ = Globals.PackingProgressForm.ShowDialog();
+            }
+
+            Globals.UpdateCreationProgressForm = new FrmProgress();
+            Globals.UpdateCreationProgressForm.SetTitle(Strings.UpdatePacking.Title);
+            Globals.UpdateCreationProgressForm.SetProgress(Strings.UpdatePacking.Deleting, 10, false);
+            var packingthread = new Thread(() => createUpdate(sourceDirectory, targetDirectory, existingUpdate));
+            packingthread.Start();
+            _ = Globals.UpdateCreationProgressForm.ShowDialog();
+        }
+
+        private void createUpdate(string sourceDirectory, string targetDirectory, Update existingUpdate)
+        {
+            if (!Directory.Exists(targetDirectory))
+            {
+                Directory.CreateDirectory((targetDirectory));
+            }
+
+            if (Directory.Exists(targetDirectory))
+            {
+                DirectoryInfo di = new DirectoryInfo(targetDirectory);
 
                 foreach (FileInfo file in di.GetFiles())
                 {
@@ -1880,16 +1992,22 @@ namespace Intersect.Editor.Forms
                     dir.Delete(true);
                 }
 
-                //Intersect excluded files
-                var excludeFiles = new string[] {"resources/mapcache.db", "update.json", "version.json"};
-                var clientExcludeFiles = new List<string>(){"intersect editor.exe", "intersect editor.pdb"};
-                var excludeExtensions = new string[] {".dll", ".xml", ".config", ".php"};
-                var excludeDirectories = new string[] {"logs", "screenshots"};
+                // Intersect excluded files
+                var editorBaseName = Process.GetCurrentProcess()?.ProcessName.ToLowerInvariant() ?? "intersect editor";
+                var editorFileNameExe = $"{editorBaseName}.exe";
+                var editorFileNamePdb = $"{editorBaseName}.pdb";
+                var excludeFiles = new string[] { "resources/mapcache.db", "update.json", "version.json" };
+                var clientExcludeFiles = new List<string>(){ editorFileNameExe, editorFileNamePdb, "resources/editor_strings.json" };
+                var editorExcludeFiles = new List<string>() { "resources/client_strings.json" };
+                var excludeExtensions = new string[] { ".dll", ".xml", ".config", ".php" };
+                var excludeDirectories = new string[] { "logs", "screenshots" };
 
-
-                if (Directory.Exists(Path.Combine("resources", "packs")))
+                var resourcesDirectory = Path.Combine(sourceDirectory, "resources");
+                var packsDirectory = Path.Combine(resourcesDirectory, "packs");
+                if (Directory.Exists(packsDirectory))
                 {
-                    var packs = Directory.GetFiles(Path.Combine("resources", "packs"), "*.meta");
+                    var packs = Directory.GetFiles(packsDirectory, "*.meta");
+                    editorExcludeFiles.AddRange(packs);
                     foreach (var pack in packs)
                     {
                         var obj = JObject.Parse(GzipCompression.ReadDecompressedString(pack))["frames"];
@@ -1900,28 +2018,32 @@ namespace Intersect.Editor.Forms
                         }
                     }
 
-                    var soundIndex = Path.Combine("resources", "packs", "sound.index");
+                    var soundIndex = Path.Combine(packsDirectory, "sound.index");
                     if (File.Exists(soundIndex))
                     {
-                        using (var soundPacker = new AssetPacker(soundIndex, Path.Combine("resources", "packs")))
+                        editorExcludeFiles.Add(soundIndex);
+                        using (var soundPacker = new AssetPacker(soundIndex, packsDirectory))
                         {
+                            editorExcludeFiles.AddRange(soundPacker.CachedPackages.Select(cachedPackage => Path.Combine(soundPacker.PackageLocation, cachedPackage)));
                             foreach (var sound in soundPacker.FileList)
                             {
                                 // Add as lowercase as our update generator checks for lowercases!
-                                clientExcludeFiles.Add(Path.Combine("resources", "sounds", sound.ToLower()).Replace('\\', '/'));
+                                clientExcludeFiles.Add(Path.Combine(resourcesDirectory, "sounds", sound.ToLower(CultureInfo.CurrentCulture)).Replace('\\', '/'));
                             }
                         }
                     }
 
-                    var musicIndex = Path.Combine("resources", "packs", "music.index");
+                    var musicIndex = Path.Combine(packsDirectory, "music.index");
                     if (File.Exists(musicIndex))
                     {
-                        using (var musicPacker = new AssetPacker(musicIndex, Path.Combine("resources", "packs")))
+                        editorExcludeFiles.Add(musicIndex);
+                        using (var musicPacker = new AssetPacker(musicIndex, packsDirectory))
                         {
+                            editorExcludeFiles.AddRange(musicPacker.CachedPackages.Select(cachedPackage => Path.Combine(musicPacker.PackageLocation, cachedPackage)));
                             foreach (var music in musicPacker.FileList)
                             {
                                 // Add as lowercase as our update generator checks for lowercases!
-                                clientExcludeFiles.Add(Path.Combine("resources", "music", music.ToLower()).Replace('\\', '/'));
+                                clientExcludeFiles.Add(Path.Combine(resourcesDirectory, "music", music.ToLower(CultureInfo.CurrentCulture)).Replace('\\', '/'));
                             }
                         }
                     }
@@ -1931,36 +2053,34 @@ namespace Intersect.Editor.Forms
                 var fileCount = Directory.GetFiles(Directory.GetCurrentDirectory(), "*.*", SearchOption.AllDirectories).Length;
 
                 var update = new Update();
-                queryFilesForUpdate(update, excludeFiles, clientExcludeFiles.ToArray(), excludeExtensions, excludeDirectories, Directory.GetCurrentDirectory(), Directory.GetCurrentDirectory(), path, 0, fileCount, existingUpdate);
-
+                queryFilesForUpdate(update, excludeFiles, clientExcludeFiles, editorExcludeFiles, excludeExtensions, excludeDirectories, sourceDirectory, sourceDirectory, sourceDirectory, targetDirectory, 0, fileCount, existingUpdate);
             }
         }
 
-        private int queryFilesForUpdate(Update update, string[] excludeFiles, string[] clientExcludeFiles, string[] excludeExtensions, string[] excludeDirectories, string workingDirectory, string path, string updatePath, int filesProcessed, int fileCount, Update existingUpdate)
+        private int queryFilesForUpdate(Update update, string[] excludeFiles, IEnumerable<string> clientExcludeFiles, IEnumerable<string> editorExcludeFiles, string[] excludeExtensions, string[] excludeDirectories, string workingDirectory, string sourcePath, string currentSourcePath, string targetPath, int filesProcessed, int fileCount, Update existingUpdate)
         {
-            DirectoryInfo di = new DirectoryInfo(path);
-            Uri workingDir = new Uri(workingDirectory + "/");
+            var di = new DirectoryInfo(currentSourcePath);
+            var workingDir = new Uri(workingDirectory + "/");
 
-            foreach (FileInfo file in di.GetFiles())
+            foreach (var file in di.GetFiles())
             {
-                string relativePath = Uri.UnescapeDataString(workingDir.MakeRelativeUri(new Uri(Path.Combine(path, file.Name))).ToString().Replace('\\', '/'));
+                var relativePath = Uri.UnescapeDataString(workingDir.MakeRelativeUri(new Uri(Path.Combine(currentSourcePath, file.Name))).ToString().Replace('\\', '/'));
                 if (!excludeFiles.Contains(relativePath) && !excludeExtensions.Contains(file.Extension))
                 {
-                    var md5Hash = "";
+                    var md5Hash = string.Empty;
                     using (var md5 = MD5.Create())
                     {
                         using (var stream = new BufferedStream(File.OpenRead(file.FullName), 1200000))
                         {
-                            md5Hash = BitConverter.ToString(md5.ComputeHash(stream)).Replace("-", "").ToLowerInvariant();
+                            md5Hash = BitConverter.ToString(md5.ComputeHash(stream)).Replace("-", string.Empty).ToLower(CultureInfo.InvariantCulture);
                         }
                     }
 
-                    var updateFile = new UpdateFile(relativePath, md5Hash, file.Length);
-
-                    if (clientExcludeFiles.Contains(relativePath.ToLower()))
+                    var updateFile = new UpdateFile(relativePath, md5Hash, file.Length)
                     {
-                        updateFile.ClientIgnore = true;
-                    }
+                        ClientIgnore = clientExcludeFiles.Contains(relativePath.ToLower(CultureInfo.CurrentCulture)),
+                        EditorIgnore = editorExcludeFiles.Contains(relativePath.ToLower(CultureInfo.CurrentCulture)),
+                    };
 
                     update.Files.Add(updateFile);
 
@@ -1972,15 +2092,15 @@ namespace Intersect.Editor.Forms
                     }
 
                     if (existingFile == null || existingFile.Size != updateFile.Size || existingFile.Hash != updateFile.Hash) {
-                        var relativeFolder = Uri.UnescapeDataString(workingDir.MakeRelativeUri(new Uri(path + "/")).ToString().Replace('\\','/'));
+                        var relativeFolder = Uri.UnescapeDataString(workingDir.MakeRelativeUri(new Uri(currentSourcePath + "/")).ToString().Replace('\\', '/'));
                         if (!string.IsNullOrEmpty(relativeFolder))
                         {
-                            Directory.CreateDirectory(Path.Combine(updatePath, relativeFolder));
-                            File.Copy(file.FullName, Path.Combine(updatePath, relativeFolder, file.Name));
+                            _ = Directory.CreateDirectory(Path.Combine(targetPath, relativeFolder));
+                            File.Copy(file.FullName, Path.Combine(targetPath, relativeFolder, file.Name));
                         }
                         else
                         {
-                            File.Copy(file.FullName, Path.Combine(updatePath, file.Name));
+                            File.Copy(file.FullName, Path.Combine(targetPath, file.Name));
                         }
                     }
                 }
@@ -2003,10 +2123,10 @@ namespace Intersect.Editor.Forms
 
             foreach (var dir in di.GetDirectories())
             {
-                string relativePath = Uri.UnescapeDataString(workingDir.MakeRelativeUri(new Uri(Path.Combine(path, dir.Name))).ToString().Replace('\\', '/'));
+                var relativePath = Uri.UnescapeDataString(workingDir.MakeRelativeUri(new Uri(Path.Combine(currentSourcePath, dir.Name))).ToString().Replace('\\', '/'));
                 if (!excludeDirectories.Contains(relativePath))
                 {
-                    filesProcessed = queryFilesForUpdate(update,excludeFiles, clientExcludeFiles, excludeExtensions,excludeFiles,workingDirectory,Path.Combine(path,dir.Name), updatePath, filesProcessed, fileCount, existingUpdate);
+                    filesProcessed = queryFilesForUpdate(update, excludeFiles, clientExcludeFiles, editorExcludeFiles, excludeExtensions, excludeFiles, workingDirectory, sourcePath, Path.Combine(currentSourcePath, dir.Name), targetPath, filesProcessed, fileCount, existingUpdate);
                 }
                 else
                 {
@@ -2014,14 +2134,15 @@ namespace Intersect.Editor.Forms
                 }
             }
 
-            if (path == Directory.GetCurrentDirectory())
+            if (string.Equals(sourcePath, currentSourcePath, StringComparison.Ordinal))
             {
                 Globals.UpdateCreationProgressForm.SetProgress(Strings.UpdatePacking.Done, 100, false);
                 Application.DoEvents();
-                System.Threading.Thread.Sleep(1000);
+                Thread.Sleep(1000);
 
                 //TODO: Open folder with update files
-                File.WriteAllText(Path.Combine(updatePath, "update.json"), JsonConvert.SerializeObject(update, Formatting.Indented, new JsonSerializerSettings { DefaultValueHandling = DefaultValueHandling.Ignore }));
+                var targetJsonPath = Path.Combine(targetPath, "update.json");
+                File.WriteAllText(targetJsonPath, JsonConvert.SerializeObject(update, Formatting.Indented, new JsonSerializerSettings { DefaultValueHandling = DefaultValueHandling.Ignore }));
 
                 Globals.UpdateCreationProgressForm.NotifyClose();
             }

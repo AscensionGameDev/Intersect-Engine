@@ -61,6 +61,11 @@ namespace Intersect.Editor.Forms
 
         private void tmrUpdater_Tick(object sender, EventArgs e)
         {
+            if (!IsHandleCreated)
+            {
+                return;
+            }
+
             if (!InvokeRequired)
             {
                 lblStatus.Text = mStatusText;
@@ -72,7 +77,5 @@ namespace Intersect.Editor.Forms
                 }
             }
         }
-
     }
-
 }
