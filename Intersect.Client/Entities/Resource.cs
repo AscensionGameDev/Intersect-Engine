@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 using Intersect.Client.Core;
@@ -32,7 +32,7 @@ namespace Intersect.Client.Entities
 
         FloatRect mSrcRectangle = FloatRect.Empty;
 
-        public Resource(Guid id, ResourceEntityPacket packet) : base(id, packet)
+        public Resource(Guid id, ResourceEntityPacket packet) : base(id, packet, EntityTypes.Resource)
         {
             mRenderPriority = 0;
         }
@@ -85,11 +85,6 @@ namespace Intersect.Client.Entities
             {
                 Sprite = BaseResource?.Initial.Graphic;
             }
-        }
-
-        public override EntityTypes GetEntityType()
-        {
-            return EntityTypes.Resource;
         }
 
         public override void Dispose()

@@ -1,4 +1,4 @@
-﻿using Intersect.Client.Core;
+using Intersect.Client.Core;
 using Intersect.Client.Entities;
 using Intersect.Client.Entities.Events;
 using Intersect.Client.Entities.Projectiles;
@@ -253,7 +253,6 @@ namespace Intersect.Client.Networking
             if (en != null)
             {
                 en.Load(packet);
-                en.Type = EntityTypes.Player;
                 if (packet.IsSelf)
                 {
                     Globals.Me = (Player) Globals.Entities[packet.EntityId];
@@ -277,13 +276,14 @@ namespace Intersect.Client.Networking
             {
                 en.Load(packet);
                 en.Aggression = packet.Aggression;
-                en.Type = EntityTypes.GlobalEntity;
             }
             else
             {
-                Globals.Entities.Add(packet.EntityId, new Entity(packet.EntityId, packet));
-                Globals.Entities[packet.EntityId].Aggression = packet.Aggression;
-                Globals.Entities[packet.EntityId].Type = EntityTypes.GlobalEntity;
+                var entity = new Entity(packet.EntityId, packet, EntityTypes.GlobalEntity)
+                {
+                    Aggression = packet.Aggression,
+                };
+                Globals.Entities.Add(entity.Id, entity);
             }
         }
 
@@ -294,12 +294,11 @@ namespace Intersect.Client.Networking
             if (en != null)
             {
                 en.Load(packet);
-                en.Type = EntityTypes.Resource;
             }
             else
             {
-                Globals.Entities.Add(packet.EntityId, new Resource(packet.EntityId, packet));
-                Globals.Entities[packet.EntityId].Type = EntityTypes.Resource;
+                var entity = new Resource(packet.EntityId, packet);
+                Globals.Entities.Add(entity.Id, entity);
             }
         }
 
@@ -310,12 +309,11 @@ namespace Intersect.Client.Networking
             if (en != null)
             {
                 en.Load(packet);
-                en.Type = EntityTypes.Projectile;
             }
             else
             {
-                Globals.Entities.Add(packet.EntityId, new Projectile(packet.EntityId, packet));
-                Globals.Entities[packet.EntityId].Type = EntityTypes.Projectile;
+                var entity = new Projectile(packet.EntityId, packet);
+                Globals.Entities.Add(entity.Id, entity);
             }
         }
 

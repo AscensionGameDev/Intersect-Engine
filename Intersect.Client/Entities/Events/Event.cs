@@ -39,10 +39,9 @@ namespace Intersect.Client.Entities.Events
 
         public bool WalkingAnim { get; set; } = true;
 
-        public Event(Guid id, EventEntityPacket packet) : base(id, packet, true)
+        public Event(Guid id, EventEntityPacket packet) : base(id, packet, EntityTypes.Event)
         {
             mRenderPriority = 1;
-            Type = EntityTypes.Event;
         }
 
         public override void Load(EntityPacket packet)
@@ -60,8 +59,6 @@ namespace Intersect.Client.Entities.Events
             RenderLevel = eventEntityPacket.RenderLayer;
             base.Load(packet);
         }
-
-        public override EntityTypes GetEntityType() => EntityTypes.Event;
 
         public override bool Update()
         {

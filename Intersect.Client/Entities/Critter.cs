@@ -1,8 +1,9 @@
-﻿using Intersect.Client.Core;
+using Intersect.Client.Core;
 using Intersect.Client.Framework.Entities;
 using Intersect.Client.Framework.Maps;
 using Intersect.Client.General;
 using Intersect.Client.Maps;
+using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps;
 using Intersect.Utilities;
@@ -16,12 +17,12 @@ namespace Intersect.Client.Entities
         private MapCritterAttribute mAttribute;
         private long mLastMove = -1;
 
-        public Critter(MapInstance map, byte x, byte y, MapCritterAttribute att) : base(Guid.NewGuid(), null, false)
+        public Critter(MapInstance map, byte x, byte y, MapCritterAttribute att) : base(Guid.NewGuid(), null, EntityTypes.GlobalEntity)
         {
             mAttribute = att;
 
             //setup Sprite & Animation
-            Sprite = att.Sprite;
+            Sprite = att?.Sprite;
             var anim = AnimationBase.Get(att.AnimationId);
             if (anim != null)
             {
@@ -30,7 +31,7 @@ namespace Intersect.Client.Entities
             }
 
             //Define Location
-            MapId = map.Id;
+            MapId = map?.Id ?? default;
             X = x;
             Y = y;
 
