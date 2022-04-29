@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
@@ -15,7 +16,7 @@ namespace Intersect.Client.Framework.Content
             Rename,
         }
 
-        private readonly List<string> _ignore;
+        private readonly ConcurrentDictionary<string, bool> _ignore;
         private readonly Dictionary<Event, Dictionary<string, List<Action>>> _mappedHandlers;
         private readonly string _root;
         private readonly FileSystemWatcher _watcher;
@@ -23,7 +24,7 @@ namespace Intersect.Client.Framework.Content
         public ContentWatcher(string root)
         {
 
-            _ignore = new List<string>();
+            _ignore = new ConcurrentDictionary<string, bool>();
             _mappedHandlers = new Dictionary<Event, Dictionary<string, List<Action>>>();
             _root = !string.IsNullOrWhiteSpace(root) ? root : throw new ArgumentNullException(nameof(root));
             _watcher = new FileSystemWatcher(_root)
@@ -102,15 +103,11 @@ namespace Intersect.Client.Framework.Content
                 throw new ArgumentNullException(nameof(modificationAction));
             }
 
-            _ignore.Add(path);
+            _ = _ignore.TryAdd(path, true);
             modificationAction();
             _ = Task.Delay(1000).ContinueWith(completedTask =>
             {
-                string found;
-                while ((found = _ignore.Find(ignored => string.Equals(path, ignored, StringComparison.Ordinal))) != default)
-                {
-                    _ignore.Remove(found);
-                }
+                _ = _ignore.TryRemove(path, out _);
             }, TaskScheduler.Current);
         }
 
@@ -122,7 +119,7 @@ namespace Intersect.Client.Framework.Content
                 relativePath = relativePath.Substring(1);
             }
 
-            if (_ignore.Contains(relativePath))
+            if (_ignore.ContainsKey(relativePath))
             {
                 return;
             }
