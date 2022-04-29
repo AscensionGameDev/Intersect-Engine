@@ -26,6 +26,8 @@ using System.Reflection;
 using Intersect.Utilities;
 
 using MainMenu = Intersect.Editor.Interface.Menu.MainMenu;
+using ImGuiNET.SampleProgram.XNA;
+using ImGuiNET;
 
 namespace Intersect.Editor.MonoGame
 {
@@ -61,6 +63,11 @@ namespace Intersect.Editor.MonoGame
         private IClientContext Context { get; }
 
         private Action PostStartupAction { get; }
+
+        private ImGuiRenderer _imGuiRenderer;
+
+        private Texture2D _xnaTexture;
+        private IntPtr _imGuiTexture;
 
         private IntersectGame(IClientContext context, Action postStartupAction)
         {
@@ -133,6 +140,9 @@ namespace Intersect.Editor.MonoGame
         /// </summary>
         protected override void Initialize()
         {
+            _imGuiRenderer = new ImGuiRenderer(this);
+            _imGuiRenderer.RebuildFontAtlas();
+
             base.Initialize();
 
             if (mUpdater != null)
@@ -146,6 +156,85 @@ namespace Intersect.Editor.MonoGame
             }
 
             mGraphics.ApplyChanges();
+        }
+
+        protected override void LoadContent()
+        {
+            // Texture loading example
+
+            // First, load the texture as a Texture2D (can also be done using the XNA/FNA content pipeline)
+            _xnaTexture = CreateTexture(GraphicsDevice, 300, 150, pixel =>
+            {
+                var red = (pixel % 300) / 2;
+                return new Microsoft.Xna.Framework.Color(red, 1, 1);
+            });
+
+            // Then, bind it to an ImGui-friendly pointer, that we can use during regular ImGui.** calls (see below)
+            _imGuiTexture = _imGuiRenderer.BindTexture(_xnaTexture);
+
+            base.LoadContent();
+        }
+
+        public static Texture2D CreateTexture(GraphicsDevice device, int width, int height, Func<int, Microsoft.Xna.Framework.Color> paint)
+        {
+            //initialize a texture
+            var texture = new Texture2D(device, width, height);
+
+            //the array holds the color for each pixel in the texture
+            Microsoft.Xna.Framework.Color[] data = new Microsoft.Xna.Framework.Color[width * height];
+            for (var pixel = 0; pixel < data.Length; pixel++)
+            {
+                //the function applies the color according to the specified pixel
+                data[pixel] = paint(pixel);
+            }
+
+            //set the color
+            texture.SetData(data);
+
+            return texture;
+        }
+
+        // Direct port of the example at https://github.com/ocornut/imgui/blob/master/examples/sdl_opengl2_example/main.cpp
+        private float f = 0.0f;
+
+        private bool show_test_window = false;
+        private bool show_another_window = false;
+        private System.Numerics.Vector3 clear_color = new System.Numerics.Vector3(114f / 255f, 144f / 255f, 154f / 255f);
+        private byte[] _textBuffer = new byte[100];
+
+        protected virtual void ImGuiLayout()
+        {
+            // 1. Show a simple window
+            // Tip: if we don't call ImGui.Begin()/ImGui.End() the widgets appears in a window automatically called "Debug"
+            {
+                ImGui.Text("Hello, world!");
+                ImGui.SliderFloat("float", ref f, 0.0f, 1.0f, string.Empty);
+                ImGui.ColorEdit3("clear color", ref clear_color);
+                if (ImGui.Button("Test Window")) show_test_window = !show_test_window;
+                if (ImGui.Button("Another Window")) show_another_window = !show_another_window;
+                ImGui.Text(string.Format("Application average {0:F3} ms/frame ({1:F1} FPS)", 1000f / ImGui.GetIO().Framerate, ImGui.GetIO().Framerate));
+
+                ImGui.InputText("Text input", _textBuffer, 100);
+
+                ImGui.Text("Texture sample");
+                ImGui.Image(_imGuiTexture, new System.Numerics.Vector2(300, 150), System.Numerics.Vector2.Zero, System.Numerics.Vector2.One, System.Numerics.Vector4.One, System.Numerics.Vector4.One); // Here, the previously loaded texture is used
+            }
+
+            // 2. Show another simple window, this time using an explicit Begin/End pair
+            if (show_another_window)
+            {
+                ImGui.SetNextWindowSize(new System.Numerics.Vector2(200, 100), ImGuiCond.FirstUseEver);
+                ImGui.Begin("Another Window", ref show_another_window);
+                ImGui.Text("Hello");
+                ImGui.End();
+            }
+
+            // 3. Show the ImGui test window. Most of the sample code is in ImGui.ShowTestWindow()
+            if (show_test_window)
+            {
+                ImGui.SetNextWindowPos(new System.Numerics.Vector2(650, 20), ImGuiCond.FirstUseEver);
+                ImGui.ShowDemoWindow(ref show_test_window);
+            }
         }
 
         private void IntersectInit()
@@ -282,6 +371,15 @@ namespace Intersect.Editor.MonoGame
                     }
                 }
             }
+
+            // Call BeforeLayout first to set things up
+            _imGuiRenderer.BeforeLayout(gameTime);
+
+            // Draw our UI
+            ImGuiLayout();
+
+            // Call AfterLayout now to finish up and draw all the things
+            _imGuiRenderer.AfterLayout();
 
             base.Draw(gameTime);
         }
