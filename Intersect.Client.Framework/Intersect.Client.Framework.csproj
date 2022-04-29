@@ -19,6 +19,7 @@
   </ItemGroup>
 
   <ItemGroup Label="Project References">
+    <ProjectReference Include="..\..\ImGui.NET\src\ImGui.NET\ImGui.NET.csproj" />
     <ProjectReference Include="..\Intersect (Core)\Intersect.Core.csproj" />
   </ItemGroup>
 
