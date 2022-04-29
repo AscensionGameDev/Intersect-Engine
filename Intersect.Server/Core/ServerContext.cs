@@ -196,7 +196,7 @@ namespace Intersect.Server.Core
 
             #region Apply CLI Options
 
-            //Options.ServerPort = StartupOptions.ValidPort(Options.ServerPort);
+            Options.ServerPort = StartupOptions.GetValidPort(Options.ServerPort);
 
             #endregion
 
