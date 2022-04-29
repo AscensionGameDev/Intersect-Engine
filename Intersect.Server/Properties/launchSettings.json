@@ -2,6 +2,7 @@
   "profiles": {
     "Intersect.Server": {
       "commandName": "Project",
+      "commandLineArgs": "--port=5401",
       "workingDirectory": "..\\assets\\development\\server"
     }
   }
