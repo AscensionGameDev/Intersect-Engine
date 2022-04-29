@@ -3,6 +3,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <LangVersion>latestMajor</LangVersion>
+    <Deterministic>true</Deterministic>
   </PropertyGroup>
 
   <PropertyGroup Label="Package Properties">
