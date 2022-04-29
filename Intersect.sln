@@ -73,6 +73,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Intersect.Framework.Tests",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Intersect.Framework", "Framework\Intersect.Framework\Intersect.Framework.csproj", "{A006322F-ACE7-4B89-9659-F499C70AFF93}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Intersect.Editor", "Intersect.Editor\Intersect.Editor.csproj", "{F8C79622-EB05-4F57-B4E6-9AABC35456E2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -176,6 +178,12 @@ Global
 		{A006322F-ACE7-4B89-9659-F499C70AFF93}.NoFody|Any CPU.Build.0 = Debug|Any CPU
 		{A006322F-ACE7-4B89-9659-F499C70AFF93}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A006322F-ACE7-4B89-9659-F499C70AFF93}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F8C79622-EB05-4F57-B4E6-9AABC35456E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F8C79622-EB05-4F57-B4E6-9AABC35456E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F8C79622-EB05-4F57-B4E6-9AABC35456E2}.NoFody|Any CPU.ActiveCfg = Debug|Any CPU
+		{F8C79622-EB05-4F57-B4E6-9AABC35456E2}.NoFody|Any CPU.Build.0 = Debug|Any CPU
+		{F8C79622-EB05-4F57-B4E6-9AABC35456E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F8C79622-EB05-4F57-B4E6-9AABC35456E2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

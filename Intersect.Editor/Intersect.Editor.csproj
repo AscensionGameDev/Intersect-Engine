@@ -1,0 +1,68 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+      <_Parameter1>Intersect.Tests.Editor</_Parameter1>
+    </AssemblyAttribute>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Intersect (Core)\Intersect.Core.csproj" />
+    <ProjectReference Include="..\Intersect.Client.Framework\Intersect.Client.Framework.csproj" />
+    <ProjectReference Include="..\Intersect.Network\Intersect.Network.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Label="Project Embedded Resources">
+    <EmbeddedResource Include="$(NetworkHandshakePublicKey)" />
+    <EmbeddedResource Include="$(IntersectRepoPath)\assets\intersect-logo-qu.bmp">
+      <LogicalName>Icon.bmp</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\MonoGame.Framework.dll.config" />
+    <EmbeddedResource Include="Resources\openal32.dll" />
+    <EmbeddedResource Include="Resources\Shaders\radialgradient.xnb" />
+    <None Include="app.manifest" />
+  </ItemGroup>
+
+  <ItemGroup Label="Package Embedded Resources">
+    <EmbeddedResource Include="$(PkgMonoGame_Framework_DesktopGL)\lib\net452\MonoGame.Framework.dll">
+      <Link>Resources\MonoGame.Framework.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="$(PkgMonoGame_Framework_DesktopGL)\runtimes\win-x86\native\SDL2.dll">
+      <Link>Resources\x86\SDL2.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="$(PkgMonoGame_Framework_DesktopGL)\runtimes\win-x64\native\SDL2.dll">
+      <Link>Resources\x64\SDL2.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="$(PkgMonoGame_Framework_DesktopGL)\runtimes\win-x86\native\soft_oal.dll">
+      <Link>Resources\x86\soft_oal.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="$(PkgMonoGame_Framework_DesktopGL)\runtimes\win-x64\native\soft_oal.dll">
+      <Link>Resources\x64\soft_oal.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="$(PkgMonoGame_Framework_DesktopGL)\runtimes\linux-x64\native\libopenal.so.1" WithCulture="false">
+      <Link>Resources\libopenal.so.1</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="$(PkgMonoGame_Framework_DesktopGL)\runtimes\linux-x64\native\libSDL2-2.0.so.0" WithCulture="false">
+      <Link>Resources\libSDL2-2.0.so.0</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="$(PkgMonoGame_Framework_DesktopGL)\runtimes\osx\native\libSDL2-2.0.0.dylib">
+      <Link>Resources\libSDL2-2.0.0.dylib</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="$(PkgMonoGame_Framework_DesktopGL)\runtimes\osx\native\libopenal.1.dylib">
+      <Link>Resources\libopenal.1.dylib</Link>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MonoGame.Content.Builder" Version="3.7.0.9" />
+    <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.0.1641" GeneratePathProperty="True" />
+  </ItemGroup>
+
+</Project>
