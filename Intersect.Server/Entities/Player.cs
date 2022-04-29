@@ -521,7 +521,7 @@ namespace Intersect.Server.Entities
                             var user = User;
                             if (user != null)
                             {
-                                DbInterface.Pool.QueueWorkItem(user.Save, false);
+                                DbInterface.Pool.QueueWorkItem(user.Save, false, false);
                             }
                             SaveTimer = Timing.Global.Milliseconds + Options.Instance.Processing.PlayerSaveInterval;
                         }

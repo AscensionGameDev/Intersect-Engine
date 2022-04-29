@@ -468,7 +468,7 @@ namespace Intersect.Server.Database
                 user.Power = UserRights.Admin;
             }
 
-            user.Save();
+            user.Save(create: true);
 
             client?.SetUser(user);
         }
