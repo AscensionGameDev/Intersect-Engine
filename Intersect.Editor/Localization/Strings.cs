@@ -244,7 +244,9 @@ namespace Intersect.Editor.Localization
 
         public static string GetEventConditionalDesc(NoNpcsOnMapCondition condition)
         {
-            return Strings.EventConditionDesc.nonpcsonmap;
+            return condition.SpecificNpc ?
+                Strings.EventConditionDesc.NoNpcsOfTypeOnMap.ToString(NpcBase.GetName(condition.NpcId)) :
+                Strings.EventConditionDesc.NoNpcsOnMap.ToString();
         }
 
         public static string GetEventConditionalDesc(GenderIsCondition condition)
@@ -2089,14 +2091,14 @@ Tick timer saved in server config.json.";
                 {4, @"Has item..."},
                 {5, @"Class is..."},
                 {6, @"Knows spell..."},
-                {7, @"Level or Stat is...."},
-                {8, @"Self Switch is...."},
-                {9, @"Power level is...."},
-                {10, @"Time is between...."},
-                {11, @"Can Start Quest...."},
-                {12, @"Quest In Progress...."},
-                {13, @"Quest Completed...."},
-                {14, @"No NPCs on Map"},
+                {7, @"Level or Stat is..."},
+                {8, @"Self Switch is..."},
+                {9, @"Power level is..."},
+                {10, @"Time is between..."},
+                {11, @"Can Start Quest..."},
+                {12, @"Quest In Progress..."},
+                {13, @"Quest Completed..."},
+                {14, @"No NPCs on Map..."},
                 {15, @"Gender is..."},
                 {16, @"Map is..."},
                 {17, @"Item Equipped is..."},
@@ -2155,6 +2157,12 @@ Tick timer saved in server config.json.";
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString HasElse = @"Has Else";
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString NpcGroup = @"NPCs";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString NpcLabel = @"NPC:";
+
             public static LocalizedString numericvariable = @"Numeric Variable:";
 
             public static LocalizedString okay = @"Ok";
@@ -2204,6 +2212,9 @@ Tick timer saved in server config.json.";
             };
 
             public static LocalizedString selfswitchis = @"Self Switch Is";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString SpecificNpcCheck = @"Specify NPC?";
 
             public static LocalizedString spell = @"Spell:";
 
@@ -2318,7 +2329,9 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString negated = @"NOT [{00}]";
 
-            public static LocalizedString nonpcsonmap = @"No NPCs on the map";
+            public static LocalizedString NoNpcsOnMap = @"No NPCs on the map";
+
+            public static LocalizedString NoNpcsOfTypeOnMap = @"No NPCs of type {00} on the map";
 
             public static LocalizedString notequal = @"does not equal {00}";
 

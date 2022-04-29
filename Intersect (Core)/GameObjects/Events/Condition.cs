@@ -203,6 +203,10 @@ namespace Intersect.GameObjects.Events
 
         public override ConditionTypes Type { get; } = ConditionTypes.NoNpcsOnMap;
 
+        public bool SpecificNpc { get; set; }
+
+        public Guid NpcId { get; set; }
+
     }
 
     public class GenderIsCondition : Condition
