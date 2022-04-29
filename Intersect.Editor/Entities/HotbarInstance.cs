@@ -1,0 +1,23 @@
+﻿using Intersect.Client.Framework.Entities;
+using Intersect.Enums;
+using Newtonsoft.Json;
+using System;
+
+namespace Intersect.Editor.Entities
+{
+    public class HotbarInstance : IHotbarInstance
+    {
+
+        public Guid BagId { get; set; } = Guid.Empty;
+
+        public Guid ItemOrSpellId { get; set; } = Guid.Empty;
+
+        public int[] PreferredStatBuffs { get; set; } = new int[(int)Stats.StatCount];
+
+        public void Load(string data)
+        {
+            JsonConvert.PopulateObject(data, this);
+        }
+
+    }
+}

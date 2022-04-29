@@ -1,6 +1,6 @@
 {
   "profiles": {
-    "Intersect.Editor.Legacy": {
+    "Intersect.Editor": {
       "commandName": "Project",
       "workingDirectory": "..\\assets\\development\\client"
     }
