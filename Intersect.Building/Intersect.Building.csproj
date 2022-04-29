@@ -9,6 +9,9 @@
     <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
     <RootNamespace>Intersect.Building</RootNamespace>
     <AssemblyName>Intersect.Building</AssemblyName>
+    <DebugType>embedded</DebugType>
+    <PublishSingleFile>true</PublishSingleFile>
+    <SelfContained>true</SelfContained>
   </PropertyGroup>
 
   <ItemGroup>

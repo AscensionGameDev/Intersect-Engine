@@ -294,7 +294,7 @@ namespace Intersect.Server.Database.PlayerData
             }
         }
 
-        public void Save(bool force = false)
+        public void Save(bool force = false, bool create = false)
         {
             //No passing in custom contexts here.. they may already have this user in the change tracker and things just get weird.
             //The cost of making a new context is almost nil.
@@ -316,7 +316,14 @@ namespace Intersect.Server.Database.PlayerData
                 {
                     context = DbInterface.CreatePlayerContext(readOnly: false);
 
-                    context.Users.Update(this);
+                    if (create)
+                    {
+                        context.Users.Add(this);
+                    }
+                    else
+                    {
+                        context.Users.Update(this);
+                    }
 
                     context.ChangeTracker.DetectChanges();
 
