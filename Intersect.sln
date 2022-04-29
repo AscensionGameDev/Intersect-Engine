@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Intersect.Client", "Interse
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Intersect.Client.Framework", "Intersect.Client.Framework\Intersect.Client.Framework.csproj", "{40973F13-3339-4548-9008-FF76A0C8CD79}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Intersect.Editor", "Intersect.Editor\Intersect.Editor.csproj", "{5AC53DF1-8152-466D-B7D0-238657F013F7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Intersect.Editor.Legacy", "Intersect.Editor.Legacy\Intersect.Editor.Legacy.csproj", "{5AC53DF1-8152-466D-B7D0-238657F013F7}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Intersect.Network", "Intersect.Network\Intersect.Network.csproj", "{E8F288CB-51DF-4D9D-A3B3-A61BD4FD3F45}"
 EndProject
