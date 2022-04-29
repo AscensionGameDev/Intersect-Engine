@@ -9,7 +9,6 @@
     <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
     <RootNamespace>Intersect.Network</RootNamespace>
     <AssemblyName>Intersect.Network</AssemblyName>
-    <GenerateNetworkKeys>true</GenerateNetworkKeys>
   </PropertyGroup>
 
   <ItemGroup>
@@ -19,11 +18,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Intersect.Building\Intersect.Building.csproj" />
     <ProjectReference Include="..\Intersect (Core)\Intersect.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="AscensionGameDev.Intersect.Building" Version="0.8.0.13-beta" GeneratePathProperty="True" />
     <PackageReference Include="AscensionGameDev.Lidgren.Network" Version="2.0.0.30-beta" />
     <PackageReference Include="System.Collections.Concurrent" Version="4.3.0" />
   </ItemGroup>
@@ -35,7 +34,7 @@
     <IntersectNetworkKeysOutputDirectory Condition="'$(IntersectNetworkKeysOutputDirectory)' == ''">$(MSBuildProjectDirectory)\bin\$(Configuration)\keys</IntersectNetworkKeysOutputDirectory>
   </PropertyGroup>
 
-  <UsingTask TaskName="Intersect.Building.KeyGenerationTask" AssemblyFile="$(IntersectBuildingAssemblyFile)" />
+  <UsingTask TaskName="Intersect.Building.KeyGenerationTask" TaskFactory="TaskHostFactory" AssemblyFile="$(PkgAscensionGameDev_Intersect_Building)\lib\netstandard2.0\Intersect.Building.dll" />
 
   <Target Name="RunKeyGenerationTask" AfterTargets="ResolveReferences">
     <KeyGenerationTask OutputDirectory="$(IntersectNetworkKeysOutputDirectory)" GenerateEachBuild="$(IntersectNetworkKeysGenerateEachBuild)" KeySize="$(IntersectNetworkKeySize)" />
