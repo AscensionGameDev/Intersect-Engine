@@ -242,7 +242,7 @@ namespace Intersect.Editor.MonoGame.Graphics
                     mDisplayModeChanged = true;
                 }
 
-                UpdateGraphicsState(mScreenWidth, mScreenHeight);
+                UpdateGraphicsState(mGameWindow.ClientBounds.Width, mGameWindow.ClientBounds.Height);
             }
 
             StartSpritebatch(mCurrentView, GameBlendModes.None, null, null, true, null);

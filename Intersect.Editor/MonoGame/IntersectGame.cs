@@ -28,6 +28,9 @@ using Intersect.Utilities;
 using MainMenu = Intersect.Editor.Interface.Menu.MainMenu;
 using ImGuiNET.SampleProgram.XNA;
 using ImGuiNET;
+using Intersect.Editor.Platform;
+using Intersect.Editor.Fonts;
+using System.Text;
 
 namespace Intersect.Editor.MonoGame
 {
@@ -69,6 +72,9 @@ namespace Intersect.Editor.MonoGame
         private Texture2D _xnaTexture;
         private IntPtr _imGuiTexture;
 
+        private ImFontPtr _defaultFont;
+        private ImFontPtr _customFont;
+
         private IntersectGame(IClientContext context, Action postStartupAction)
         {
             Context = context;
@@ -100,6 +106,7 @@ namespace Intersect.Editor.MonoGame
             Globals.Database.LoadPreferences();
 
             Window.IsBorderless = Context.StartupOptions.BorderlessWindow;
+            Window.AllowUserResizing = true;
 
             var renderer = new MonoRenderer(mGraphics, Content, this)
             {
@@ -132,15 +139,121 @@ namespace Intersect.Editor.MonoGame
             }
         }
 
+        private static unsafe void BuildGlyphRanges(ImFontGlyphRangesBuilderPtr builder, params GlyphRange[] glyphRanges) => BuildGlyphRanges(builder, glyphRanges as IEnumerable<GlyphRange>);
+
+        private static unsafe void BuildGlyphRanges(ImFontGlyphRangesBuilderPtr builder, IEnumerable<GlyphRange> glyphRanges)
+        {
+            foreach (var glyphRange in glyphRanges)
+            {
+                for (ushort glyph = glyphRange.Start; glyph <= glyphRange.End; glyph++)
+                {
+                    builder.AddChar(glyph);
+                }
+            }
+        }
+
+        private static unsafe ImFontPtr BuildFont(float size)
+        {
+            var io = ImGui.GetIO();
+
+            var fontsDirectory = Path.Combine(Environment.CurrentDirectory, "resources", "fonts");
+
+            var latinRangeBuilder = new ImFontGlyphRangesBuilderPtr(ImGuiNative.ImFontGlyphRangesBuilder_ImFontGlyphRangesBuilder());
+
+            var ranges = GlyphRange.ComputeRanges("AaÆæÅåǺǻḀḁẚĂăẶặẮắẰằẲẳẴẵȂȃÂâẬậẤấẦầẪẫẨẩẢảǍǎȺⱥȦȧǠǡẠạÄäǞǟÀàȀȁÁáĀāĀ̀ā̀ÃãĄąĄ́ą́Ą̃ą̃A̲a̲ᶏ" +
+                "BbɃƀḂḃḄḅḆḇƁɓᵬᶀ" +
+                "CcĆćĈĉČčĊċḈḉƇƈC̈c̈ȻȼÇçꟄꞔꞒꞓ©" +
+                "DdĐđꟇꟈƊɗḊḋḌḍḐḑḒḓĎďḎḏᵭᶁᶑ" +
+                "EeĔĕḜḝȆȇÊêÊ̄ê̄Ê̌ê̌ỀềẾếỂểỄễỆệẺẻḘḙĚěɆɇĖėĖ́ė́Ė̃ė̃ẸẹËëÈèÈ̩è̩ȄȅÉéÉ̩ĒēḔḕḖḗẼẽḚḛĘęĘ́ę́Ę̃ę̃ȨȩE̩e̩ᶒ" +
+                "IiỊịĬĭÎîǏǐƗɨÏïḮḯÍíÌìȈȉĮįĮ́Į̃ĪīĪ̀ī̀ᶖỈỉȊȋĨĩḬḭᶤ" +
+                "LlĹĺŁłĽľḸḹL̃l̃ĻļĿŀḶḷḺḻḼḽȽƚⱠⱡ" +
+                "NnŃńÑñŇňǸǹṄṅṆṇŅņṈṉṊṋꞤꞥᵰᶇ" +
+                "OoŒœØøǾǿᶱÖöȪȫÓóÒòÔôỐốỒồỔổỖỗỘộǑǒŐőŎŏȎȏȮȯȰȱỌọƟɵƠơỚớỜờỠỡỢợỞởỎỏŌōṒṓṐṑÕõȬȭṌṍṎṏǪǫȌȍO̩o̩Ó̩ó̩Ò̩ò̩ǬǭO͍o͍" +
+                "SsßŚśṠṡẛṨṩṤṥṢṣS̩s̩ꞨꞩꟉꟊŜŝṦṧŠšŞşȘșS̈s̈ᶊⱾȿᵴᶳ" +
+                "UuŬŭɄʉᵾᶶꞸꞹỤụÜüǛǜǗǘǙǚǕǖṲṳÚúÙùÛûṶṷǓǔȖȗŰűŬŭƯưỨứỪừỬửỰựỮỮỦủŪūŪ̀ū̀Ū́ū́ṺṻŪ̃ū̃ŨũṸṹṴṵᶙŲųŲ́ų́Ų̃ų̃ȔȕŮů" +
+                "YyÝýỲỳŶŷŸÿỸỹẎẏỴỵẙỶỷȲȳɎɏƳƴ" +
+                "ZzŹźẐẑŽžŻżẒẓẔẕƵƶᵶꟆᶎⱫⱬ" +
+                "FfGgHhJjKkMmPpQqRrTtVvWwXx", new GlyphRange(0x20, 0x7f));
+
+            BuildGlyphRanges(latinRangeBuilder, ranges);
+
+            //latinRangeBuilder.AddText(
+            //    "AaÆæÅåǺǻḀḁẚĂăẶặẮắẰằẲẳẴẵȂȃÂâẬậẤấẦầẪẫẨẩẢảǍǎȺⱥȦȧǠǡẠạÄäǞǟÀàȀȁÁáĀāĀ̀ā̀ÃãĄąĄ́ą́Ą̃ą̃A̲a̲ᶏ" +
+            //    "BbɃƀḂḃḄḅḆḇƁɓᵬᶀ" +
+            //    "CcĆćĈĉČčĊċḈḉƇƈC̈c̈ȻȼÇçꟄꞔꞒꞓ©" +
+            //    "DdĐđꟇꟈƊɗḊḋḌḍḐḑḒḓĎďḎḏᵭᶁᶑ" +
+            //    "EeĔĕḜḝȆȇÊêÊ̄ê̄Ê̌ê̌ỀềẾếỂểỄễỆệẺẻḘḙĚěɆɇĖėĖ́ė́Ė̃ė̃ẸẹËëÈèÈ̩è̩ȄȅÉéÉ̩ĒēḔḕḖḗẼẽḚḛĘęĘ́ę́Ę̃ę̃ȨȩE̩e̩ᶒ" +
+            //    "IiỊịĬĭÎîǏǐƗɨÏïḮḯÍíÌìȈȉĮįĮ́Į̃ĪīĪ̀ī̀ᶖỈỉȊȋĨĩḬḭᶤ" +
+            //    "LlĹĺŁłĽľḸḹL̃l̃ĻļĿŀḶḷḺḻḼḽȽƚⱠⱡ" +
+            //    "NnŃńÑñŇňǸǹṄṅṆṇŅņṈṉṊṋꞤꞥᵰᶇ" +
+            //    "OoŒœØøǾǿᶱÖöȪȫÓóÒòÔôỐốỒồỔổỖỗỘộǑǒŐőŎŏȎȏȮȯȰȱỌọƟɵƠơỚớỜờỠỡỢợỞởỎỏŌōṒṓṐṑÕõȬȭṌṍṎṏǪǫȌȍO̩o̩Ó̩ó̩Ò̩ò̩ǬǭO͍o͍" +
+            //    "SsßŚśṠṡẛṨṩṤṥṢṣS̩s̩ꞨꞩꟉꟊŜŝṦṧŠšŞşȘșS̈s̈ᶊⱾȿᵴᶳ" +
+            //    "UuŬŭɄʉᵾᶶꞸꞹỤụÜüǛǜǗǘǙǚǕǖṲṳÚúÙùÛûṶṷǓǔȖȗŰűŬŭƯưỨứỪừỬửỰựỮỮỦủŪūŪ̀ū̀Ū́ū́ṺṻŪ̃ū̃ŨũṸṹṴṵᶙŲųŲ́ų́Ų̃ų̃ȔȕŮů" +
+            //    "YyÝýỲỳŶŷŸÿỸỹẎẏỴỵẙỶỷȲȳɎɏƳƴ" +
+            //    "ZzŹźẐẑŽžŻżẒẓẔẕƵƶᵶꟆᶎⱫⱬ" +
+            //    "FfGgHhJjKkMmPpQqRrTtVvWwXx"
+            //);
+
+            //latinRangeBuilder.AddRanges(io.Fonts.GetGlyphRangesDefault());
+
+            latinRangeBuilder.BuildRanges(out ImVector latin);
+
+            var font = io.Fonts.AddFontFromFileTTF(Path.Combine(fontsDirectory, "MesloLGS NF Regular.ttf"), size, default, latin.Data);
+
+            ImFontConfigPtr fontConfig = ImGuiNative.ImFontConfig_ImFontConfig();
+            fontConfig.MergeMode = true;
+            fontConfig.PixelSnapH = true;
+
+            var cyrillicRangeBuilder = new ImFontGlyphRangesBuilderPtr(ImGuiNative.ImFontGlyphRangesBuilder_ImFontGlyphRangesBuilder());
+
+            BuildGlyphRanges(
+                cyrillicRangeBuilder,
+                new GlyphRange(0x0400, 0x04ff)
+            );
+
+            cyrillicRangeBuilder.BuildRanges(out ImVector cyrillic);
+
+            _ = io.Fonts.AddFontFromFileTTF(Path.Combine(fontsDirectory, "Andika-Regular.ttf"), size, fontConfig, cyrillic.Data);
+
+            var nerdFontsBuilder = new ImFontGlyphRangesBuilderPtr(ImGuiNative.ImFontGlyphRangesBuilder_ImFontGlyphRangesBuilder());
+            nerdFontsBuilder.AddChar('');
+            nerdFontsBuilder.AddChar('');
+            nerdFontsBuilder.AddChar('');
+            nerdFontsBuilder.AddChar('');
+            nerdFontsBuilder.AddChar('');
+            nerdFontsBuilder.AddChar('');
+            nerdFontsBuilder.BuildRanges(out ImVector symbols);
+
+            _ = io.Fonts.AddFontFromFileTTF(Path.Combine(fontsDirectory, "MesloLGS NF Regular.ttf"), size, fontConfig, symbols.Data);
+
+            return font;
+        }
+
         /// <summary>
         ///     Allows the game to perform any initialization it needs to before starting to run.
         ///     This is where it can query for any required services and load any non-graphic
         ///     related content.  Calling base.Initialize will enumerate through any components
         ///     and initialize them as well.
         /// </summary>
-        protected override void Initialize()
+        protected unsafe override void Initialize()
         {
+            var libraryHandle = RuntimeHelper.LoadNativeLibrary("cimgui");
+
+            //var configPath = Path.Combine(Environment.CurrentDirectory, $"{Process.GetCurrentProcess()?.ProcessName}.ini");
+            ////ImGui.LoadIniSettingsFromDisk(configPath);
+            ////ImGui.SaveIniSettingsToDisk(configPath);
+
+            //var io = ImGui.GetIO();
+            //var pathBytes = Encoding.UTF8.GetBytes(configPath + '\0');
+            //fixed (byte* pathPtr = pathBytes)
+            //{
+            //    var actualIO = *io.NativePtr;
+            //    actualIO.IniFilename = pathPtr;
+            //}
+
             _imGuiRenderer = new ImGuiRenderer(this);
+            _customFont = BuildFont(20);
+            //_defaultFont = io.FontDefault;
             _imGuiRenderer.RebuildFontAtlas();
 
             base.Initialize();
@@ -204,6 +317,35 @@ namespace Intersect.Editor.MonoGame
 
         protected virtual void ImGuiLayout()
         {
+            {
+                ImGui.Begin("canvas", ImGuiWindowFlags.NoBackground | ImGuiWindowFlags.NoDecoration | ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoInputs);
+                ImGui.SetWindowPos(new System.Numerics.Vector2(GraphicsDevice.Viewport.X, GraphicsDevice.Viewport.Y));
+                ImGui.SetWindowSize(new System.Numerics.Vector2(GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height));
+                ImGui.PushFont(_customFont);
+                ImGui.SetCursorPos(new System.Numerics.Vector2(100, 10));
+                var canvasHovered = ImGui.IsItemHovered(ImGuiHoveredFlags.ChildWindows);
+                ImGui.Text("testing canvas: " + canvasHovered);
+                ImGui.Text("AaÆæÅåǺǻḀḁẚĂăẶặẮắẰằẲẳẴẵȂȃÂâẬậẤấẦầẪẫẨẩẢảǍǎȺⱥȦȧǠǡẠạÄäǞǟÀàȀȁÁáĀāĀ̀ā̀ÃãĄąĄ́ą́Ą̃ą̃A̲a̲ᶏ");
+                ImGui.Text("BbɃƀḂḃḄḅḆḇƁɓᵬᶀ");
+                ImGui.Text("CcĆćĈĉČčĊċḈḉƇƈC̈c̈ȻȼÇçꟄꞔꞒꞓ©");
+                ImGui.Text("DdĐđꟇꟈƊɗḊḋḌḍḐḑḒḓĎďḎḏᵭᶁᶑ");
+                ImGui.Text("EeĔĕḜḝȆȇÊêÊ̄ê̄Ê̌ê̌ỀềẾếỂểỄễỆệẺẻḘḙĚěɆɇĖėĖ́ė́Ė̃ė̃ẸẹËëÈèÈ̩è̩ȄȅÉéÉ̩ĒēḔḕḖḗẼẽḚḛĘęĘ́ę́Ę̃ę̃ȨȩE̩e̩ᶒ");
+                ImGui.Text("IiỊịĬĭÎîǏǐƗɨÏïḮḯÍíÌìȈȉĮįĮ́Į̃ĪīĪ̀ī̀ᶖỈỉȊȋĨĩḬḭᶤ");
+                ImGui.Text("LlĹĺŁłĽľḸḹL̃l̃ĻļĿŀḶḷḺḻḼḽȽƚⱠⱡ");
+                ImGui.Text("NnŃńÑñŇňǸǹṄṅṆṇŅņṈṉṊṋꞤꞥᵰᶇ");
+                ImGui.Text("OoŒœØøǾǿᶱÖöȪȫÓóÒòÔôỐốỒồỔổỖỗỘộǑǒŐőŎŏȎȏȮȯȰȱỌọƟɵƠơỚớỜờỠỡỢợỞởỎỏŌōṒṓṐṑÕõȬȭṌṍṎṏǪǫȌȍO̩o̩Ó̩ó̩Ò̩ò̩ǬǭO͍o͍");
+                ImGui.Text("SsßŚśṠṡẛṨṩṤṥṢṣS̩s̩ꞨꞩꟉꟊŜŝṦṧŠšŞşȘșS̈s̈ᶊⱾȿᵴᶳ");
+                ImGui.Text("UuŬŭɄʉᵾᶶꞸꞹỤụÜüǛǜǗǘǙǚǕǖṲṳÚúÙùÛûṶṷǓǔȖȗŰűŬŭƯưỨứỪừỬửỰựỮỮỦủŪūŪ̀ū̀Ū́ū́ṺṻŪ̃ū̃ŨũṸṹṴṵᶙŲųŲ́ų́Ų̃ų̃ȔȕŮů");
+                ImGui.Text("YyÝýỲỳŶŷŸÿỸỹẎẏỴỵẙỶỷȲȳɎɏƳƴ");
+                ImGui.Text("ZzŹźẐẑŽžŻżẒẓẔẕƵƶᵶꟆᶎⱫⱬ");
+                ImGui.Text("FfGgHhJjKkMmPpQqRrTtVvWwXx\n    /mnt/c/Users/Me/git/romkatv/nerd-fonts    \nЛорем ипсум долор сит амет\nΛορεμ ιπσθμ δολορ σιτ αμετ");
+                ImGui.PopFont();
+                ImGui.ShowMetricsWindow();
+                ImGui.End();
+            }
+
+            ImGui.PushFont(_customFont);
+
             // 1. Show a simple window
             // Tip: if we don't call ImGui.Begin()/ImGui.End() the widgets appears in a window automatically called "Debug"
             {
@@ -228,6 +370,8 @@ namespace Intersect.Editor.MonoGame
                 ImGui.Text("Hello");
                 ImGui.End();
             }
+
+            ImGui.PopFont();
 
             // 3. Show the ImGui test window. Most of the sample code is in ImGui.ShowTestWindow()
             if (show_test_window)
