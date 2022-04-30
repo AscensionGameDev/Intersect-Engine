@@ -1745,7 +1745,7 @@ namespace Intersect.Client.Entities
                     (SpriteAnimations)animationName,
                     Globals.ContentManager.GetTexture(
                         TextureType.Entity,
-                        $@"{baseFilename}_{animationName}.{extension}"
+                        $@"{baseFilename}_{animationName}{extension}"
                     )
                 );
             }
