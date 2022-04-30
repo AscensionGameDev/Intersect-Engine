@@ -390,16 +390,9 @@ namespace Intersect.Server.Entities.Events
                 var entities = mapInstance.GetEntities();
                 foreach (var en in entities)
                 {
-                    if (en is Npc npc)
+                    if (en is Npc npc && (!condition.SpecificNpc || npc.Base?.Id == condition.NpcId))
                     {
-                        if (!condition.SpecificNpc)
-                        {
-                            return false;
-                        }
-                        else if (npc.Base?.Id == condition.NpcId)
-                        {
-                            return false;
-                        }
+                        return false;
                     }
                 }
 

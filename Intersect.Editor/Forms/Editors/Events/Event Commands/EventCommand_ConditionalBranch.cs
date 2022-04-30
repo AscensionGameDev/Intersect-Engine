@@ -1462,14 +1462,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         private void SaveFormValues(NoNpcsOnMapCondition condition)
         {
             condition.SpecificNpc = chkNpc.Checked;
-            if (condition.SpecificNpc)
-            {
-                condition.NpcId = NpcBase.IdFromList(cmbNpcs.SelectedIndex);
-            }
-            else
-            {
-                condition.NpcId = default;
-            }
+            condition.NpcId = condition.SpecificNpc ? NpcBase.IdFromList(cmbNpcs.SelectedIndex) : default;
         }
 
         private void SaveFormValues(GenderIsCondition condition)
@@ -1529,19 +1522,19 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 
         private void chkNpc_CheckedChanged(object sender, EventArgs e)
         {
-            if (chkNpc.Checked)
-            {
-                lblNpc.Show();
-                cmbNpcs.Show();
-                if (cmbNpcs.Items.Count > 0)
-                {
-                    cmbNpcs.SelectedIndex = 0;
-                }
-            }
-            else
+            if (!chkNpc.Checked)
             {
                 lblNpc.Hide();
                 cmbNpcs.Hide();
+                
+                return;   
+            }
+
+            lblNpc.Show();
+            cmbNpcs.Show();
+            if (cmbNpcs.Items.Count > 0)
+            {
+                cmbNpcs.SelectedIndex = 0;
             }
         }
     }
