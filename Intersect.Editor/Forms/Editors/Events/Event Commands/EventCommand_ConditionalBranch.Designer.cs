@@ -145,6 +145,10 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.grpCheckEquippedSlot = new DarkUI.Controls.DarkGroupBox();
             this.cmbCheckEquippedSlot = new DarkUI.Controls.DarkComboBox();
             this.lblCheckEquippedSlot = new System.Windows.Forms.Label();
+            this.grpNpc = new DarkUI.Controls.DarkGroupBox();
+            this.cmbNpcs = new DarkUI.Controls.DarkComboBox();
+            this.lblNpc = new System.Windows.Forms.Label();
+            this.chkNpc = new DarkUI.Controls.DarkCheckBox();
             this.grpConditional.SuspendLayout();
             this.grpInventoryConditions.SuspendLayout();
             this.grpVariableAmount.SuspendLayout();
@@ -173,12 +177,14 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.grpGender.SuspendLayout();
             this.grpEquippedItem.SuspendLayout();
             this.grpCheckEquippedSlot.SuspendLayout();
+            this.grpNpc.SuspendLayout();
             this.SuspendLayout();
             // 
             // grpConditional
             // 
             this.grpConditional.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
             this.grpConditional.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpConditional.Controls.Add(this.grpNpc);
             this.grpConditional.Controls.Add(this.grpInventoryConditions);
             this.grpConditional.Controls.Add(this.grpVariable);
             this.grpConditional.Controls.Add(this.grpMapZoneType);
@@ -1859,6 +1865,60 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.lblCheckEquippedSlot.TabIndex = 2;
             this.lblCheckEquippedSlot.Text = "Slot:";
             // 
+            // grpNpc
+            // 
+            this.grpNpc.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
+            this.grpNpc.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpNpc.Controls.Add(this.chkNpc);
+            this.grpNpc.Controls.Add(this.cmbNpcs);
+            this.grpNpc.Controls.Add(this.lblNpc);
+            this.grpNpc.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpNpc.Location = new System.Drawing.Point(10, 48);
+            this.grpNpc.Name = "grpNpc";
+            this.grpNpc.Size = new System.Drawing.Size(260, 74);
+            this.grpNpc.TabIndex = 40;
+            this.grpNpc.TabStop = false;
+            this.grpNpc.Text = "NPCs";
+            this.grpNpc.Visible = false;
+            // 
+            // cmbNpcs
+            // 
+            this.cmbNpcs.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.cmbNpcs.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbNpcs.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbNpcs.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbNpcs.DrawDropdownHoverOutline = false;
+            this.cmbNpcs.DrawFocusRectangle = false;
+            this.cmbNpcs.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cmbNpcs.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbNpcs.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbNpcs.ForeColor = System.Drawing.Color.Gainsboro;
+            this.cmbNpcs.FormattingEnabled = true;
+            this.cmbNpcs.Location = new System.Drawing.Point(67, 45);
+            this.cmbNpcs.Name = "cmbNpcs";
+            this.cmbNpcs.Size = new System.Drawing.Size(177, 21);
+            this.cmbNpcs.TabIndex = 39;
+            this.cmbNpcs.Text = null;
+            this.cmbNpcs.TextPadding = new System.Windows.Forms.Padding(2);
+            // 
+            // lblNpc
+            // 
+            this.lblNpc.AutoSize = true;
+            this.lblNpc.Location = new System.Drawing.Point(6, 49);
+            this.lblNpc.Name = "lblNpc";
+            this.lblNpc.Size = new System.Drawing.Size(32, 13);
+            this.lblNpc.TabIndex = 38;
+            this.lblNpc.Text = "NPC:";
+            // 
+            // chkNpc
+            // 
+            this.chkNpc.Location = new System.Drawing.Point(7, 22);
+            this.chkNpc.Name = "chkNpc";
+            this.chkNpc.Size = new System.Drawing.Size(98, 17);
+            this.chkNpc.TabIndex = 60;
+            this.chkNpc.Text = "Specify NPC?";
+            this.chkNpc.CheckedChanged += new System.EventHandler(this.chkNpc_CheckedChanged);
+            // 
             // EventCommandConditionalBranch
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1919,6 +1979,8 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.grpEquippedItem.PerformLayout();
             this.grpCheckEquippedSlot.ResumeLayout(false);
             this.grpCheckEquippedSlot.PerformLayout();
+            this.grpNpc.ResumeLayout(false);
+            this.grpNpc.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -2040,5 +2102,9 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         private DarkGroupBox grpCheckEquippedSlot;
         private DarkComboBox cmbCheckEquippedSlot;
         private System.Windows.Forms.Label lblCheckEquippedSlot;
+        private DarkGroupBox grpNpc;
+        private DarkCheckBox chkNpc;
+        private DarkComboBox cmbNpcs;
+        private System.Windows.Forms.Label lblNpc;
     }
 }

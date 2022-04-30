@@ -256,6 +256,11 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             grpCheckEquippedSlot.Text = Strings.EventConditional.CheckEquipment;
             lblCheckEquippedSlot.Text = Strings.EventConditional.EquipmentSlot;
 
+            // NPC Group
+            grpNpc.Text = Strings.EventConditional.NpcGroup;
+            lblNpc.Text = Strings.EventConditional.NpcLabel;
+            chkNpc.Text = Strings.EventConditional.SpecificNpcCheck;
+
             btnSave.Text = Strings.EventConditional.okay;
             btnCancel.Text = Strings.EventConditional.cancel;
         }
@@ -350,6 +355,10 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                     break;
                 case ConditionTypes.NoNpcsOnMap:
                     Condition = new NoNpcsOnMapCondition();
+                    if (cmbNpcs.Items.Count > 0)
+                    {
+                        cmbNpcs.SelectedIndex = 0;
+                    }
 
                     break;
                 case ConditionTypes.GenderIs:
@@ -419,6 +428,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             grpEquippedItem.Hide();
             grpInGuild.Hide();
             grpMapZoneType.Hide();
+            grpNpc.Hide();
             grpCheckEquippedSlot.Hide();
             switch (type)
             {
@@ -508,6 +518,13 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 
                     break;
                 case ConditionTypes.NoNpcsOnMap:
+                    grpNpc.Show();
+                    cmbNpcs.Items.Clear();
+                    cmbNpcs.Items.AddRange(NpcBase.Names);
+
+                    chkNpc.Checked = false;
+                    cmbNpcs.Hide();
+                    lblNpc.Hide();
                     break;
                 case ConditionTypes.GenderIs:
                     grpGender.Show();
@@ -1248,7 +1265,18 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 
         private void SetupFormValues(NoNpcsOnMapCondition condition)
         {
-            //Nothing to do but we need this here so the dynamic will work :) 
+            chkNpc.Checked = condition.SpecificNpc;
+            if (condition.SpecificNpc)
+            {
+                lblNpc.Show();
+                cmbNpcs.Show();
+                cmbNpcs.SelectedIndex = NpcBase.ListIndex(condition.NpcId);
+            }
+            else
+            {
+                lblNpc.Hide();
+                cmbNpcs.Hide();
+            }
         }
 
         private void SetupFormValues(QuestCompletedCondition condition)
@@ -1433,7 +1461,8 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 
         private void SaveFormValues(NoNpcsOnMapCondition condition)
         {
-            //Nothing to do but we need this here so the dynamic will work :) 
+            condition.SpecificNpc = chkNpc.Checked;
+            condition.NpcId = condition.SpecificNpc ? NpcBase.IdFromList(cmbNpcs.SelectedIndex) : default;
         }
 
         private void SaveFormValues(GenderIsCondition condition)
@@ -1489,8 +1518,25 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         {
             condition.Name = Options.EquipmentSlots[cmbCheckEquippedSlot.SelectedIndex];
         }
-
         #endregion
+
+        private void chkNpc_CheckedChanged(object sender, EventArgs e)
+        {
+            if (!chkNpc.Checked)
+            {
+                lblNpc.Hide();
+                cmbNpcs.Hide();
+                
+                return;   
+            }
+
+            lblNpc.Show();
+            cmbNpcs.Show();
+            if (cmbNpcs.Items.Count > 0)
+            {
+                cmbNpcs.SelectedIndex = 0;
+            }
+        }
     }
 
 }
