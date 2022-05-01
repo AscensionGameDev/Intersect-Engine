@@ -5433,7 +5433,7 @@ namespace Intersect.Server.Entities
 
                 StartCommonEvent(EventBase.Get(quest.StartEventId));
                 PacketSender.SendChatMsg(
-                    this, Strings.Quests.started.ToString(quest.Name), ChatMessageType.Quest, CustomColors.Quests.Started
+                    this, Strings.Quests.started.ToString(quest.Name), ChatMessageType.Quest, CustomColors.QuestAlert.Started
                 );
 
                 PacketSender.SendQuestsProgress(this);
@@ -5484,7 +5484,7 @@ namespace Intersect.Server.Entities
                 {
                     QuestOffers.Remove(questId);
                     PacketSender.SendChatMsg(
-                        this, Strings.Quests.declined.ToString(QuestBase.GetName(questId)), ChatMessageType.Quest, CustomColors.Quests.Declined
+                        this, Strings.Quests.declined.ToString(QuestBase.GetName(questId)), ChatMessageType.Quest, CustomColors.QuestAlert.Declined
                     );
 
                     foreach (var evt in EventLookup)
@@ -5527,7 +5527,7 @@ namespace Intersect.Server.Entities
                         questProgress.TaskProgress = -1;
                         PacketSender.SendChatMsg(
                             this, Strings.Quests.abandoned.ToString(QuestBase.GetName(questId)), ChatMessageType.Quest,
-                            CustomColors.Quests.Abandoned
+                            CustomColors.QuestAlert.Abandoned
                         );
 
                         PacketSender.SendQuestsProgress(this);
@@ -5566,7 +5566,7 @@ namespace Intersect.Server.Entities
                                     StartCommonEvent(EventBase.Get(quest.EndEventId));
                                     PacketSender.SendChatMsg(
                                         this, Strings.Quests.completed.ToString(quest.Name), ChatMessageType.Quest,
-                                        CustomColors.Quests.Completed
+                                        CustomColors.QuestAlert.Completed
                                     );
                                 }
                                 else
@@ -5587,7 +5587,7 @@ namespace Intersect.Server.Entities
                                     PacketSender.SendChatMsg(
                                         this, Strings.Quests.updated.ToString(quest.Name),
                                         ChatMessageType.Quest,
-                                        CustomColors.Quests.TaskUpdated
+                                        CustomColors.QuestAlert.TaskUpdated
                                     );
                                 }
                             }
@@ -5616,7 +5616,7 @@ namespace Intersect.Server.Entities
                         StartCommonEvent(EventBase.Get(quest.EndEventId));
                         PacketSender.SendChatMsg(
                             this, Strings.Quests.completed.ToString(quest.Name), ChatMessageType.Quest,
-                            CustomColors.Quests.Completed
+                            CustomColors.QuestAlert.Completed
                         );
                     }
                     PacketSender.SendQuestsProgress(this);
