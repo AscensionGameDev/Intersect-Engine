@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Numerics;
 using System.Runtime.Serialization;
 
 namespace Intersect.Numerics;
@@ -28,6 +29,10 @@ public struct FloatRect : IEquatable<FloatRect>
 
     public float Bottom => Y + Height;
 
+    public Vector2 Position => new(X, Y);
+
+    public Vector2 Size => new(Width, Height);
+
     public FloatRect(float width, float height)
         : this(0, 0, width, height)
     {
@@ -41,17 +46,17 @@ public struct FloatRect : IEquatable<FloatRect>
         Height = height;
     }
 
-    public FloatRect(float x, float y, Pointf size)
+    public FloatRect(float x, float y, Vector2 size)
         : this(x, y, size.X, size.Y)
     {
     }
 
-    public FloatRect(Pointf position, float width, float height)
+    public FloatRect(Vector2 position, float width, float height)
         : this(position.X, position.Y, width, height)
     {
     }
 
-    public FloatRect(Pointf position, Pointf size)
+    public FloatRect(Vector2 position, Vector2 size)
         : this(position.X, position.Y, size.X, size.Y)
     {
     }
@@ -70,6 +75,13 @@ public struct FloatRect : IEquatable<FloatRect>
     /// <param name="point">a point to check if it is contained</param>
     /// <returns></returns>
     public bool Contains(Point point) => Contains(point.X, point.Y);
+
+    /// <summary>
+    /// Checks if the given <see cref="Point"/> lies within this <see cref="Rectangle"/>.
+    /// </summary>
+    /// <param name="point">a point to check if it is contained</param>
+    /// <returns></returns>
+    public bool Contains(Vector2 point) => Contains(point.X, point.Y);
 
     public override bool Equals([NotNullWhen(true)] object obj) => obj is FloatRect rectangle && Equals(rectangle);
 
