@@ -1525,7 +1525,7 @@ namespace Intersect.Server.Database
                         TimeBase.SetStaticTime(time);
                     }
                 }
-                Time.Init();
+                General.Time.Init();
             }
             catch (Exception ex)
             {

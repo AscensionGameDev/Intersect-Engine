@@ -44,7 +44,7 @@ namespace Intersect.Client.Interface.Game.Inventory
 
             mItemContainer = new ScrollControl(mInventoryWindow, "ItemsContainer");
             mItemContainer.EnableScroll(false, true);
-            mInventoryWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+            mInventoryWindow.LoadJsonUi(GameContentManager.UI.InGame, Core.Graphics.Renderer.GetResolutionString());
 
             // Generate our context menu with basic options.
             mContextMenu = new Framework.Gwen.Control.Menu(gameCanvas, "InventoryContextMenu");
@@ -58,7 +58,7 @@ namespace Intersect.Client.Interface.Game.Inventory
             mDropItemContextItem.Clicked += MDropItemContextItem_Clicked;
             mActionItemContextItem = mContextMenu.AddItem(Strings.ItemContextMenu.Bank);
             mActionItemContextItem.Clicked += MActionItemContextItem_Clicked;
-            mContextMenu.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+            mContextMenu.LoadJsonUi(GameContentManager.UI.InGame, Core.Graphics.Renderer.GetResolutionString());
 
         }
 
@@ -108,7 +108,7 @@ namespace Intersect.Client.Interface.Game.Inventory
                     {
                         mUseItemContextItem.SetText(Strings.ItemContextMenu.Equip.ToString(item.Name));
                     }
-                    
+
                     break;
             }
 
@@ -250,11 +250,11 @@ namespace Intersect.Client.Interface.Game.Inventory
                 mValues.Add(new Label(Items[i].Container, "InventoryItemValue"));
                 mValues[i].Text = "";
 
-                Items[i].Container.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+                Items[i].Container.LoadJsonUi(GameContentManager.UI.InGame, Core.Graphics.Renderer.GetResolutionString());
 
                 if (Items[i].EquipPanel.Texture == null)
                 {
-                    Items[i].EquipPanel.Texture = Graphics.Renderer.GetWhiteTexture();
+                    Items[i].EquipPanel.Texture = Core.Graphics.Renderer.GetWhiteTexture();
                 }
 
                 var xPadding = Items[i].Container.Margin.Left + Items[i].Container.Margin.Right;

@@ -21,7 +21,7 @@ using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps;
 using Intersect.Network.Packets.Server;
-using Intersect.Utilities;
+using Intersect.Time;
 
 namespace Intersect.Client.Entities
 {
@@ -1560,8 +1560,8 @@ namespace Intersect.Client.Entities
                 }
             }
 
-            var x = (int)Math.Floor(Globals.InputManager.GetMousePosition().X + Graphics.CurrentView.Left);
-            var y = (int)Math.Floor(Globals.InputManager.GetMousePosition().Y + Graphics.CurrentView.Top);
+            var x = (int)Math.Floor(Globals.InputManager.GetMousePosition().X + Core.Graphics.CurrentView.Left);
+            var y = (int)Math.Floor(Globals.InputManager.GetMousePosition().Y + Core.Graphics.CurrentView.Top);
             var targetRect = new FloatRect(x - 8, y - 8, 16, 16); //Adjust to allow more/less error
 
             IEntity bestMatch = null;
@@ -2113,21 +2113,21 @@ namespace Intersect.Client.Entities
                 return;
             }
 
-            var textSize = Graphics.Renderer.MeasureText(Guild, Graphics.EntityNameFont, 1);
+            var textSize = Core.Graphics.Renderer.MeasureText(Guild, Core.Graphics.EntityNameFont, 1);
 
             var x = (int)Math.Ceiling(Origin.X);
             var y = GetLabelLocation(LabelType.Guild);
 
             if (backgroundColor != Color.Transparent)
             {
-                Graphics.DrawGameTexture(
-                    Graphics.Renderer.GetWhiteTexture(), new Framework.GenericClasses.FloatRect(0, 0, 1, 1),
+                Core.Graphics.DrawGameTexture(
+                    Core.Graphics.Renderer.GetWhiteTexture(), new Framework.GenericClasses.FloatRect(0, 0, 1, 1),
                     new Framework.GenericClasses.FloatRect(x - textSize.X / 2f - 4, y, textSize.X + 8, textSize.Y), backgroundColor
                 );
             }
 
-            Graphics.Renderer.DrawString(
-                Guild, Graphics.EntityNameFont, (int)(x - (int)Math.Ceiling(textSize.X / 2f)), (int)y, 1,
+            Core.Graphics.Renderer.DrawString(
+                Guild, Core.Graphics.EntityNameFont, (int)(x - (int)Math.Ceiling(textSize.X / 2f)), (int)y, 1,
                 Color.FromArgb(textColor.ToArgb()), true, null, Color.FromArgb(borderColor.ToArgb())
             );
         }
@@ -2141,7 +2141,7 @@ namespace Intersect.Client.Entities
                 return;
             }
 
-            var mousePos = Graphics.ConvertToWorldPoint(Globals.InputManager.GetMousePosition());
+            var mousePos = Core.Graphics.ConvertToWorldPoint(Globals.InputManager.GetMousePosition());
             foreach (MapInstance map in Maps.MapInstance.Lookup.Values)
             {
                 if (mousePos.X >= map.GetX() && mousePos.X <= map.GetX() + Options.MapWidth * Options.TileWidth)
@@ -2296,7 +2296,7 @@ namespace Intersect.Client.Entities
 
             if (!Interface.Interface.MouseHitGui())
             {
-                var mousePos = Graphics.ConvertToWorldPoint(Globals.InputManager.GetMousePosition());
+                var mousePos = Core.Graphics.ConvertToWorldPoint(Globals.InputManager.GetMousePosition());
                 foreach (MapInstance map in Maps.MapInstance.Lookup.Values)
                 {
                     if (mousePos.X >= map.GetX() && mousePos.X <= map.GetX() + Options.MapWidth * Options.TileWidth)

@@ -168,7 +168,7 @@ namespace Intersect.Client.Entities.Events
             // If we're smaller than a tile, force the target size to a tile.
             WorldPos = destRectangle;
 
-            Graphics.DrawGameTexture(texture, srcRectangle, destRectangle, Color.White);
+            Core.Graphics.DrawGameTexture(texture, srcRectangle, destRectangle, Color.White);
         }
 
         public override void LoadTextures(string textureName)
@@ -234,29 +234,29 @@ namespace Intersect.Client.Entities.Events
                         }
 
                         var maps = y - (gridY - 2);
-                        var renderSet = Graphics.RenderingEntities[priority, Options.MapHeight * maps + Y];
+                        var renderSet = Core.Graphics.RenderingEntities[priority, Options.MapHeight * maps + Y];
 
                         // If bugs arise from switching to the above, remove and uncomment this
                         //HashSet<Entity> renderSet = null;
                         //if (y == gridY - 2)
                         //{
-                        //    renderSet = Graphics.RenderingEntities[priority, Y];
+                        //    renderSet = Core.Graphics.RenderingEntities[priority, Y];
                         //}
                         //else if (y == gridY - 1)
                         //{
-                        //    renderSet = Graphics.RenderingEntities[priority, Options.MapHeight + Y];
+                        //    renderSet = Core.Graphics.RenderingEntities[priority, Options.MapHeight + Y];
                         //}
                         //else if (y == gridY)
                         //{
-                        //    renderSet = Graphics.RenderingEntities[priority, Options.MapHeight * 2 + Y];
+                        //    renderSet = Core.Graphics.RenderingEntities[priority, Options.MapHeight * 2 + Y];
                         //}
                         //else if (y == gridY + 1)
                         //{
-                        //    renderSet = Graphics.RenderingEntities[priority, Options.MapHeight * 3 + Y];
+                        //    renderSet = Core.Graphics.RenderingEntities[priority, Options.MapHeight * 3 + Y];
                         //}
                         //else if (y == gridY + 2)
                         //{
-                        //    renderSet = Graphics.RenderingEntities[priority, Options.MapHeight * 4 + Y];
+                        //    renderSet = Core.Graphics.RenderingEntities[priority, Options.MapHeight * 4 + Y];
                         //}
 
                         renderSet?.Add(this);

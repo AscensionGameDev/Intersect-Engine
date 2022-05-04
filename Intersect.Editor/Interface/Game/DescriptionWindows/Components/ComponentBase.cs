@@ -91,7 +91,7 @@ namespace Intersect.Editor.Interface.Game.DescriptionWindows.Components
         /// <summary>
         /// Load the Json layout of the current component.
         /// </summary>
-        public void LoadLayout() => mContainer.LoadJsonUi(Client.Framework.File_Management.GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+        public void LoadLayout() => mContainer.LoadJsonUi(Client.Framework.File_Management.GameContentManager.UI.InGame, Core.Graphics.Renderer.GetResolutionString());
 
         /// <summary>
         /// Corrects the width of the component compared to the parent size.

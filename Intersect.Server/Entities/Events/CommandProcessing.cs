@@ -16,6 +16,7 @@ using Intersect.Server.General;
 using Intersect.Server.Localization;
 using Intersect.Server.Maps;
 using Intersect.Server.Networking;
+using Intersect.Time;
 using Intersect.Utilities;
 
 namespace Intersect.Server.Entities.Events
@@ -150,7 +151,7 @@ namespace Intersect.Server.Entities.Events
                     {
                         PacketSender.SendPartyMsg(player, txt, color, player.Name);
                     }
-                    
+
                     break;
                 case ChatboxChannel.Guild:
                     if (player.Guild != null)
@@ -1120,7 +1121,7 @@ namespace Intersect.Server.Entities.Events
                 id = instance.PageInstance.Id;
                 stackInfo.WaitingForResponse = CommandInstance.EventResponse.Picture;
             }
-            
+
             PacketSender.SendShowPicture(player, command.File, command.Size, command.Clickable, command.HideTime, id);
         }
 
@@ -1633,15 +1634,15 @@ namespace Intersect.Server.Entities.Events
             if (player != null && input.Contains("\\"))
             {
                 var sb = new StringBuilder(input);
-                var time = Time.GetTime();
+                var time = General.Time.GetTime();
                 var replacements = new Dictionary<string, string>()
                 {
                     { Strings.Events.playernamecommand, player.Name },
                     { Strings.Events.playerguildcommand, player.Guild?.Name ?? "" },
-                    { Strings.Events.timehour, Time.Hour },
-                    { Strings.Events.militaryhour, Time.MilitaryHour },
-                    { Strings.Events.timeminute, Time.Minute },
-                    { Strings.Events.timesecond, Time.Second },
+                    { Strings.Events.timehour, General.Time.Hour },
+                    { Strings.Events.militaryhour, General.Time.MilitaryHour },
+                    { Strings.Events.timeminute, General.Time.Minute },
+                    { Strings.Events.timesecond, General.Time.Second },
                     { Strings.Events.timeperiod, time.Hour >= 12 ? Strings.Events.periodevening : Strings.Events.periodmorning },
                     { Strings.Events.onlinecountcommand, Player.OnlineCount.ToString() },
                     { Strings.Events.onlinelistcommand, input.Contains(Strings.Events.onlinelistcommand) ? string.Join(", ", Player.OnlineList.Select(p => p.Name).ToList()) : "" },

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 using Intersect.Client.Framework.GenericClasses;
@@ -6,6 +6,12 @@ using Intersect.Client.Framework.Graphics;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+
+using BufferUsage = Microsoft.Xna.Framework.Graphics.BufferUsage;
+using GraphicsDevice = Microsoft.Xna.Framework.Graphics.GraphicsDevice;
+using IndexBuffer = Microsoft.Xna.Framework.Graphics.IndexBuffer;
+using PrimitiveType = Microsoft.Xna.Framework.Graphics.PrimitiveType;
+using VertexBuffer = Microsoft.Xna.Framework.Graphics.VertexBuffer;
 
 namespace Intersect.Client.Classes.MonoGame.Graphics
 {

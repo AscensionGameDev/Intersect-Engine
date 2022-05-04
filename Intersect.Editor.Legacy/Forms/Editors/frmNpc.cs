@@ -396,7 +396,7 @@ namespace Intersect.Editor.Forms.Editors
         private void DrawNpcSprite()
         {
             var picSpriteBmp = new Bitmap(picNpc.Width, picNpc.Height);
-            var gfx = Graphics.FromImage(picSpriteBmp);
+            var gfx = System.Drawing.Graphics.FromImage(picSpriteBmp);
             gfx.FillRectangle(Brushes.Black, new Rectangle(0, 0, picNpc.Width, picNpc.Height));
             if (cmbSprite.SelectedIndex > 0)
             {

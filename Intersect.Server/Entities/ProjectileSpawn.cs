@@ -6,7 +6,7 @@ using Intersect.Server.Entities.Combat;
 using Intersect.Server.Entities.Events;
 using Intersect.Server.General;
 using Intersect.Server.Networking;
-using Intersect.Utilities;
+using Intersect.Time;
 
 namespace Intersect.Server.Entities
 {

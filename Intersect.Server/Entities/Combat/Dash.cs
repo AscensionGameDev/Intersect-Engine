@@ -1,7 +1,7 @@
 ﻿using Intersect.Enums;
 using Intersect.Server.General;
 using Intersect.Server.Networking;
-using Intersect.Utilities;
+using Intersect.Time;
 
 namespace Intersect.Server.Entities.Combat
 {

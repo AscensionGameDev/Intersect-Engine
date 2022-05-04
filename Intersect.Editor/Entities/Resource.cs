@@ -124,7 +124,7 @@ namespace Intersect.Editor.Entities
                 CalculateRenderBounds();
             }
 
-            if (!Graphics.CurrentView.IntersectsWith(mDestRectangle))
+            if (!Core.Graphics.CurrentView.IntersectsWith(mDestRectangle))
             {
                 if (RenderList != null)
                 {
@@ -199,15 +199,15 @@ namespace Intersect.Editor.Entities
 
                             if (y == gridY - 1)
                             {
-                                renderSet = Graphics.RenderingEntities[priority, Y];
+                                renderSet = Core.Graphics.RenderingEntities[priority, Y];
                             }
                             else if (y == gridY)
                             {
-                                renderSet = Graphics.RenderingEntities[priority, Options.MapHeight + Y];
+                                renderSet = Core.Graphics.RenderingEntities[priority, Options.MapHeight + Y];
                             }
                             else
                             {
-                                renderSet = Graphics.RenderingEntities[priority, Options.MapHeight * 2 + Y];
+                                renderSet = Core.Graphics.RenderingEntities[priority, Options.MapHeight * 2 + Y];
                             }
 
                             renderSet.Add(this);
@@ -294,7 +294,7 @@ namespace Intersect.Editor.Entities
 
             if (Texture != null)
             {
-                Graphics.DrawGameTexture(Texture, mSrcRectangle, mDestRectangle, Intersect.Color.White);
+                Core.Graphics.DrawGameTexture(Texture, mSrcRectangle, mDestRectangle, Intersect.Color.White);
             }
         }
 

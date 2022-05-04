@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
@@ -43,7 +43,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         private void UpdatePreview()
         {
             var destBitmap = new Bitmap(pnlPreview.Width, pnlPreview.Height);
-            var g = Graphics.FromImage(destBitmap);
+            var g = System.Drawing.Graphics.FromImage(destBitmap);
             g.Clear(System.Drawing.Color.Black);
             if (File.Exists("resources/entities/" + cmbSprite.Text))
             {

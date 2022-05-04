@@ -19,7 +19,7 @@ namespace Intersect.Editor.Interface.Game
         public Draggable(int x, int y, GameTexture tex, Color color)
         {
             mPnl = new ImagePanel(Interface.GameUi.GameCanvas, "Draggable");
-            mPnl.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+            mPnl.LoadJsonUi(GameContentManager.UI.InGame, Core.Graphics.Renderer.GetResolutionString());
             mPnl.SetPosition(
                 InputHandler.MousePosition.X - mPnl.Width / 2, InputHandler.MousePosition.Y - mPnl.Height / 2
             );

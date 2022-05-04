@@ -12,7 +12,7 @@ using Intersect.Editor.General;
 using Intersect.Editor.Localization;
 using Intersect.Editor.Networking;
 using Intersect.Network;
-using Intersect.Utilities;
+using Intersect.Time;
 
 namespace Intersect.Editor.Forms
 {

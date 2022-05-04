@@ -6,9 +6,9 @@ using Intersect.Editor.Maps;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps;
-using Intersect.Utilities;
 using System;
 using System.Collections.Generic;
+using Intersect.Time;
 
 namespace Intersect.Editor.Entities
 {
@@ -218,23 +218,23 @@ namespace Intersect.Editor.Entities
 
                             if (y == gridY - 2)
                             {
-                                renderSet = Graphics.RenderingEntities[priority, Y];
+                                renderSet = Core.Graphics.RenderingEntities[priority, Y];
                             }
                             else if (y == gridY - 1)
                             {
-                                renderSet = Graphics.RenderingEntities[priority, Options.MapHeight + Y];
+                                renderSet = Core.Graphics.RenderingEntities[priority, Options.MapHeight + Y];
                             }
                             else if (y == gridY)
                             {
-                                renderSet = Graphics.RenderingEntities[priority, Options.MapHeight * 2 + Y];
+                                renderSet = Core.Graphics.RenderingEntities[priority, Options.MapHeight * 2 + Y];
                             }
                             else if (y == gridY + 1)
                             {
-                                renderSet = Graphics.RenderingEntities[priority, Options.MapHeight * 3 + Y];
+                                renderSet = Core.Graphics.RenderingEntities[priority, Options.MapHeight * 3 + Y];
                             }
                             else if (y == gridY + 2)
                             {
-                                renderSet = Graphics.RenderingEntities[priority, Options.MapHeight * 4 + Y];
+                                renderSet = Core.Graphics.RenderingEntities[priority, Options.MapHeight * 4 + Y];
                             }
 
                             renderSet?.Add(this);

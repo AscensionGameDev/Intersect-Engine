@@ -2,7 +2,7 @@ using System.Security.Cryptography;
 
 using Intersect.Logging;
 using Intersect.Network.Packets;
-using Intersect.Utilities;
+using Intersect.Time;
 
 using Lidgren.Network;
 using Lidgren.Network.Encryption;

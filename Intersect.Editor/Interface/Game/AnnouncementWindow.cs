@@ -2,8 +2,7 @@
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Control;
-
-using Intersect.Utilities;
+using Intersect.Time;
 
 namespace Intersect.Editor.Interface.Game
 {
@@ -43,7 +42,7 @@ namespace Intersect.Editor.Interface.Game
            mPicture = new ImagePanel(gameCanvas, "AnnouncementWindow");
            mLabel = new Label(mPicture, "AnnouncementLabel");
 
-           mPicture.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+           mPicture.LoadJsonUi(GameContentManager.UI.InGame, Core.Graphics.Renderer.GetResolutionString());
         }
 
         /// <summary>

@@ -7,7 +7,7 @@ using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Editor.General;
 using Intersect.Editor.Interface.Shared;
 using Intersect.Editor.Localization;
-using Intersect.Utilities;
+using Intersect.Time;
 
 namespace Intersect.Editor.Interface.Game
 {
@@ -82,7 +82,7 @@ namespace Intersect.Editor.Interface.Game
 
             mClose.Clicked += Close_Clicked;
 
-            mContainer.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+            mContainer.LoadJsonUi(GameContentManager.UI.InGame, Core.Graphics.Renderer.GetResolutionString());
 
             if (Options.Player.MaxCharacters <= 1)
             {

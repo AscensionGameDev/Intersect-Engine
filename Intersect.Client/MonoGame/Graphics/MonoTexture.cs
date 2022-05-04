@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 
 using Intersect.Client.Framework.Graphics;
@@ -7,10 +7,12 @@ using Intersect.Client.Localization;
 using Intersect.Compression;
 using Intersect.IO.Files;
 using Intersect.Logging;
-using Intersect.Utilities;
+using Intersect.Time;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+
+using GraphicsDevice = Microsoft.Xna.Framework.Graphics.GraphicsDevice;
 
 namespace Intersect.Client.MonoGame.Graphics
 {

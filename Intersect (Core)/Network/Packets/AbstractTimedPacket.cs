@@ -1,8 +1,10 @@
 ﻿
 using System;
+
 using Intersect.Network.Packets.Client;
 using Intersect.Network.Packets.Server;
-using Intersect.Utilities;
+using Intersect.Time;
+
 using MessagePack;
 
 namespace Intersect.Network.Packets

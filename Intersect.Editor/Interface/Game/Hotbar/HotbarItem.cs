@@ -13,7 +13,7 @@ using Intersect.Editor.Items;
 using Intersect.Editor.Localization;
 using Intersect.Editor.Spells;
 using Intersect.GameObjects;
-using Intersect.Utilities;
+using Intersect.Time;
 
 namespace Intersect.Editor.Interface.Game.Hotbar
 {
@@ -101,7 +101,7 @@ namespace Intersect.Editor.Interface.Game.Hotbar
             mContentPanel.Clicked += pnl_Clicked;
 
             EquipPanel = new ImagePanel(mContentPanel, "HotbarEquipedIcon" + mYindex);
-            EquipPanel.Texture = Graphics.Renderer.GetWhiteTexture();
+            EquipPanel.Texture = Core.Graphics.Renderer.GetWhiteTexture();
             EquipLabel = new Label(Pnl, "HotbarEquippedLabel" + mYindex);
             EquipLabel.IsHidden = true;
             EquipLabel.Text = Strings.Inventory.EquippedSymbol;

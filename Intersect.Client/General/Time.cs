@@ -1,6 +1,6 @@
 ﻿using System;
 
-using Intersect.Utilities;
+using Intersect.Time;
 
 namespace Intersect.Client.General
 {

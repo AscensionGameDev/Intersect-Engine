@@ -80,7 +80,7 @@ namespace Intersect.Editor.Interface.Menu
             mBackBtn.SetText(Strings.ForgotPass.back);
             mBackBtn.Clicked += BackBtn_Clicked;
 
-            mResetWindow.LoadJsonUi(GameContentManager.UI.Menu, Graphics.Renderer.GetResolutionString());
+            mResetWindow.LoadJsonUi(GameContentManager.UI.Menu, Core.Graphics.Renderer.GetResolutionString());
 
             mHintLabel = new RichLabel(mResetWindow);
             mHintLabel.SetBounds(mHintLabelTemplate.Bounds);

@@ -30,7 +30,7 @@ namespace Intersect.Editor.Interface.Debugging
             ButtonShutdownServerAndExit = CreateButtonShutdownServerAndExit();
             TableDebugStats = CreateTableDebugStats();
 
-            LoadJsonUi(UI.Debug, Graphics.Renderer.GetResolutionString());
+            LoadJsonUi(UI.Debug, Core.Graphics.Renderer.GetResolutionString());
 
             IsHidden = true;
         }
@@ -162,7 +162,7 @@ namespace Intersect.Editor.Interface.Debugging
                 ColumnCount = 2,
             };
 
-            var fpsProvider = new ValueTableCellDataProvider<int>(() => Graphics.Renderer.GetFps());
+            var fpsProvider = new ValueTableCellDataProvider<int>(() => Core.Graphics.Renderer.GetFps());
             table.AddRow(Strings.Debug.Fps).Listen(fpsProvider, 1);
             _disposables.Add(fpsProvider.Generator.Start());
 
@@ -170,7 +170,7 @@ namespace Intersect.Editor.Interface.Debugging
             table.AddRow(Strings.Debug.Ping).Listen(pingProvider, 1);
             _disposables.Add(pingProvider.Generator.Start());
 
-            var drawCallsProvider = new ValueTableCellDataProvider<int>(() => Graphics.DrawCalls);
+            var drawCallsProvider = new ValueTableCellDataProvider<int>(() => Core.Graphics.DrawCalls);
             table.AddRow(Strings.Debug.Draws).Listen(drawCallsProvider, 1);
             _disposables.Add(drawCallsProvider.Generator.Start());
 
@@ -200,7 +200,7 @@ namespace Intersect.Editor.Interface.Debugging
             table.AddRow(Strings.Internals.CoordinateZ).Listen(coordinateZProvider, 1);
             _disposables.Add(coordinateZProvider.Generator.Start());
 
-            var knownEntitiesProvider = new ValueTableCellDataProvider<int>(() => Graphics.DrawCalls);
+            var knownEntitiesProvider = new ValueTableCellDataProvider<int>(() => Core.Graphics.DrawCalls);
             table.AddRow(Strings.Debug.KnownEntities).Listen(knownEntitiesProvider, 1);
             _disposables.Add(knownEntitiesProvider.Generator.Start());
 
@@ -208,19 +208,19 @@ namespace Intersect.Editor.Interface.Debugging
             table.AddRow(Strings.Debug.KnownMaps).Listen(knownMapsProvider, 1);
             _disposables.Add(knownMapsProvider.Generator.Start());
 
-            var mapsDrawnProvider = new ValueTableCellDataProvider<int>(() => Graphics.MapsDrawn);
+            var mapsDrawnProvider = new ValueTableCellDataProvider<int>(() => Core.Graphics.MapsDrawn);
             table.AddRow(Strings.Debug.MapsDrawn).Listen(mapsDrawnProvider, 1);
             _disposables.Add(mapsDrawnProvider.Generator.Start());
 
-            var entitiesDrawnProvider = new ValueTableCellDataProvider<int>(() => Graphics.EntitiesDrawn);
+            var entitiesDrawnProvider = new ValueTableCellDataProvider<int>(() => Core.Graphics.EntitiesDrawn);
             table.AddRow(Strings.Debug.EntitiesDrawn).Listen(entitiesDrawnProvider, 1);
             _disposables.Add(entitiesDrawnProvider.Generator.Start());
 
-            var lightsDrawnProvider = new ValueTableCellDataProvider<int>(() => Graphics.LightsDrawn);
+            var lightsDrawnProvider = new ValueTableCellDataProvider<int>(() => Core.Graphics.LightsDrawn);
             table.AddRow(Strings.Debug.LightsDrawn).Listen(lightsDrawnProvider, 1);
             _disposables.Add(lightsDrawnProvider.Generator.Start());
 
-            var timeProvider = new ValueTableCellDataProvider<string>(() => Time.GetTime());
+            var timeProvider = new ValueTableCellDataProvider<string>(() => General.Time.GetTime());
             table.AddRow(Strings.Debug.Time).Listen(timeProvider, 1);
             _disposables.Add(timeProvider.Generator.Start());
 

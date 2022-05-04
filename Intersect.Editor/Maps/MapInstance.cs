@@ -24,6 +24,7 @@ using Intersect.Network.Packets.Server;
 using Intersect.Utilities;
 
 using Newtonsoft.Json;
+using Intersect.Time;
 
 namespace Intersect.Editor.Maps
 {
@@ -711,7 +712,7 @@ namespace Intersect.Editor.Maps
                 {
                     for (var i = 0; i < mTileBuffers[drawLayer][Globals.AnimFrame].Length; i++)
                     {
-                        Graphics.Renderer.DrawTileBuffer(mTileBuffers[drawLayer][Globals.AnimFrame][i]);
+                        Core.Graphics.Renderer.DrawTileBuffer(mTileBuffers[drawLayer][Globals.AnimFrame][i]);
                     }
                 }
             }
@@ -738,7 +739,7 @@ namespace Intersect.Editor.Maps
                     var itemTex = Globals.ContentManager.GetTexture(Client.Framework.Content.TextureType.Item, itemBase.Icon);
                     if (itemTex != null)
                     {
-                        Graphics.DrawGameTexture(
+                        Core.Graphics.DrawGameTexture(
                             itemTex, new FloatRect(0, 0, itemTex.GetWidth(), itemTex.GetHeight()),
                             new FloatRect(
                                 x, y,
@@ -755,7 +756,7 @@ namespace Intersect.Editor.Maps
                 double w = light.Size;
                 var x = GetX() + (light.TileX * Options.TileWidth + light.OffsetX) + Options.TileWidth / 2f;
                 var y = GetY() + (light.TileY * Options.TileHeight + light.OffsetY) + Options.TileHeight / 2f;
-                Graphics.AddLight((int)x, (int)y, (int)w, light.Intensity, light.Expand, light.Color);
+                Core.Graphics.AddLight((int)x, (int)y, (int)w, light.Intensity, light.Expand, light.Color);
             }
         }
 
@@ -765,7 +766,7 @@ namespace Intersect.Editor.Maps
         public void DrawItemNames()
         {
             // Get where our mouse is located and convert it to a tile based location.
-            var mousePos = Graphics.ConvertToWorldPoint(
+            var mousePos = Core.Graphics.ConvertToWorldPoint(
                     Globals.InputManager.GetMousePosition()
             );
             var x = (int)(mousePos.X - (int)GetX()) / Options.TileWidth;
@@ -795,7 +796,7 @@ namespace Intersect.Editor.Maps
                         var color = CustomColors.Items.MapRarities.ContainsKey(rarity)
                             ? CustomColors.Items.MapRarities[rarity]
                             : new LabelColor(Color.White, Color.Black, new Color(100, 0, 0, 0));
-                        var textSize = Graphics.Renderer.MeasureText(name, Graphics.EntityNameFont, 1);
+                        var textSize = Core.Graphics.Renderer.MeasureText(name, Core.Graphics.EntityNameFont, 1);
                         var offsetY = (baseOffset * textSize.Y);
                         var destX = GetX() + (int)Math.Ceiling(((x * Options.TileWidth) + (Options.TileWidth / 2)) - (textSize.X / 2));
                         var destY = GetY() + (int)Math.Ceiling(((y * Options.TileHeight) - ((Options.TileHeight / 3) + textSize.Y))) - offsetY;
@@ -803,14 +804,14 @@ namespace Intersect.Editor.Maps
                         // Do we need to draw a background?
                         if (color.Background != Color.Transparent)
                         {
-                            Graphics.DrawGameTexture(
-                                Graphics.Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1),
+                            Core.Graphics.DrawGameTexture(
+                                Core.Graphics.Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1),
                                 new FloatRect(destX - 4, destY, textSize.X + 8, textSize.Y), color.Background
                             );
                         }
 
                         // Finaly, draw the actual name!
-                        Graphics.Renderer.DrawString(name, Graphics.EntityNameFont, destX, destY, 1, color.Name, true, null, color.Outline);
+                        Core.Graphics.Renderer.DrawString(name, Core.Graphics.EntityNameFont, destX, destY, 1, color.Name, true, null, color.Outline);
 
                         baseOffset++;
                     }
@@ -927,7 +928,7 @@ namespace Intersect.Editor.Maps
                         buffers = new GameTileBuffer[3];
                         for (var i = 0; i < 3; i++)
                         {
-                            buffers[i] = Graphics.Renderer.CreateTileBuffer();
+                            buffers[i] = Core.Graphics.Renderer.CreateTileBuffer();
                         }
 
                         tileBuffers.Add(platformTex, buffers);
@@ -1090,7 +1091,7 @@ namespace Intersect.Editor.Maps
                         {
                             var fogW = fogTex.GetWidth();
                             var fogH = fogTex.GetHeight();
-                            Graphics.DrawGameTexture(
+                            Core.Graphics.DrawGameTexture(
                                 fogTex, new FloatRect(0, 0, fogW, fogH),
                                 new FloatRect(
                                     GetX() - Options.MapWidth * Options.TileWidth * 1f + x * fogW + drawX,
@@ -1129,7 +1130,7 @@ namespace Intersect.Editor.Maps
                     var spawnTime = 25 + (int)(475 * (float)(1f - (float)(WeatherIntensity / 100f)));
                     spawnTime = (int)(spawnTime *
                                        (480000f /
-                                        (Graphics.Renderer.GetScreenWidth() * Graphics.Renderer.GetScreenHeight())));
+                                        (Core.Graphics.Renderer.GetScreenWidth() * Core.Graphics.Renderer.GetScreenHeight())));
 
                     _weatherParticleSpawnTime = Timing.Global.Milliseconds + spawnTime;
                 }
@@ -1195,7 +1196,7 @@ namespace Intersect.Editor.Maps
             var imageTex = Globals.ContentManager.GetTexture(Client.Framework.Content.TextureType.Image, Panorama);
             if (imageTex != null)
             {
-                Graphics.DrawFullScreenTexture(imageTex, mPanoramaIntensity);
+                Core.Graphics.DrawFullScreenTexture(imageTex, mPanoramaIntensity);
             }
         }
 
@@ -1229,7 +1230,7 @@ namespace Intersect.Editor.Maps
             var imageTex = Globals.ContentManager.GetTexture(Client.Framework.Content.TextureType.Image, OverlayGraphic);
             if (imageTex != null)
             {
-                Graphics.DrawFullScreenTexture(imageTex, mOverlayIntensity);
+                Core.Graphics.DrawFullScreenTexture(imageTex, mOverlayIntensity);
             }
         }
 
@@ -1299,9 +1300,9 @@ namespace Intersect.Editor.Maps
                 );
 
                 var x = (int)Math.Ceiling(GetX() + ActionMessages[n].X * Options.TileWidth + ActionMessages[n].XOffset);
-                var textWidth = Graphics.Renderer.MeasureText(ActionMessages[n].Msg, Graphics.ActionMsgFont, 1).X;
-                Graphics.Renderer.DrawString(
-                    ActionMessages[n].Msg, Graphics.ActionMsgFont, (int)x - textWidth / 2f, (int)y, 1, ActionMessages[n].Color,
+                var textWidth = Core.Graphics.Renderer.MeasureText(ActionMessages[n].Msg, Core.Graphics.ActionMsgFont, 1).X;
+                Core.Graphics.Renderer.DrawString(
+                    ActionMessages[n].Msg, Core.Graphics.ActionMsgFont, (int)x - textWidth / 2f, (int)y, 1, ActionMessages[n].Color,
                     true, null, new Color(40, 40, 40)
                 );
 

@@ -132,7 +132,7 @@ namespace Intersect.Client.Interface.Game.Character
                 Items[i].Setup();
             }
 
-            mCharacterWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+            mCharacterWindow.LoadJsonUi(GameContentManager.UI.InGame, Core.Graphics.Renderer.GetResolutionString());
         }
 
         //Update Button Event Handlers

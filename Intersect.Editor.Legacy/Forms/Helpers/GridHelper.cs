@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Drawing;
 using System.Linq;
 
@@ -173,7 +173,7 @@ namespace Intersect.Editor.Forms.Helpers
             var gridHeight = bitmap.Height;
             var cellHeight = gridHeight / gridRows;
 
-            using (var graphics = Graphics.FromImage(bitmap))
+            using (var graphics = System.Drawing.Graphics.FromImage(bitmap))
             {
                 graphics.Clear(ColorBackground);
 

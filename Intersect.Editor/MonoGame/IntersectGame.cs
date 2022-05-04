@@ -1,8 +1,17 @@
-using Intersect.Editor.Core;
-using Intersect.Editor.Core.Controls;
+using System.Diagnostics;
+using System.Reflection;
+
+using ImGuiNET;
+
 using Intersect.Client.Framework.Gwen.Input;
 using Intersect.Client.Framework.Gwen.Renderer;
 using Intersect.Client.Framework.Input;
+using Intersect.Client.Framework.UserInterface;
+using Intersect.Client.Framework.UserInterface.Components;
+using Intersect.Configuration;
+using Intersect.Editor.Core;
+using Intersect.Editor.Core.Controls;
+using Intersect.Editor.Fonts;
 using Intersect.Editor.General;
 using Intersect.Editor.Interface.Game;
 using Intersect.Editor.Localization;
@@ -11,26 +20,18 @@ using Intersect.Editor.MonoGame.File_Management;
 using Intersect.Editor.MonoGame.Graphics;
 using Intersect.Editor.MonoGame.Input;
 using Intersect.Editor.MonoGame.Network;
-using Intersect.Configuration;
+using Intersect.Editor.MonoGame.UserInterface;
+using Intersect.Editor.Platform;
+using Intersect.Time;
 using Intersect.Updater;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-using System;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-
-using Intersect.Utilities;
+using Intersect.Client.Framework.Graphics;
 
 using MainMenu = Intersect.Editor.Interface.Menu.MainMenu;
-using ImGuiNET.SampleProgram.XNA;
-using ImGuiNET;
-using Intersect.Editor.Platform;
-using Intersect.Editor.Fonts;
-using System.Text;
+using Texture = Intersect.Client.Framework.Graphics.Texture;
 
 namespace Intersect.Editor.MonoGame
 {
@@ -69,11 +70,14 @@ namespace Intersect.Editor.MonoGame
 
         private ImGuiRenderer _imGuiRenderer;
 
-        private Texture2D _xnaTexture;
+        private Client.Framework.Graphics.Texture _xnaTexture;
         private IntPtr _imGuiTexture;
+        private IntPtr _guiTexture;
 
         private ImFontPtr _defaultFont;
         private ImFontPtr _customFont;
+
+        private Client.Framework.Graphics.GraphicsDevice _graphicsDevice;
 
         private IntersectGame(IClientContext context, Action postStartupAction)
         {
@@ -239,6 +243,8 @@ namespace Intersect.Editor.MonoGame
         {
             var libraryHandle = RuntimeHelper.LoadNativeLibrary("cimgui");
 
+            _graphicsDevice = new MonoGameGraphicsDevice(GraphicsDevice);
+
             //var configPath = Path.Combine(Environment.CurrentDirectory, $"{Process.GetCurrentProcess()?.ProcessName}.ini");
             ////ImGui.LoadIniSettingsFromDisk(configPath);
             ////ImGui.SaveIniSettingsToDisk(configPath);
@@ -251,7 +257,7 @@ namespace Intersect.Editor.MonoGame
             //    actualIO.IniFilename = pathPtr;
             //}
 
-            _imGuiRenderer = new ImGuiRenderer(this);
+            _imGuiRenderer = new MonoGameImGuiRenderer(this);
             _customFont = BuildFont(20);
             //_defaultFont = io.FontDefault;
             _imGuiRenderer.RebuildFontAtlas();
@@ -276,25 +282,27 @@ namespace Intersect.Editor.MonoGame
             // Texture loading example
 
             // First, load the texture as a Texture2D (can also be done using the XNA/FNA content pipeline)
-            _xnaTexture = CreateTexture(GraphicsDevice, 300, 150, pixel =>
+            _xnaTexture = CreateTexture(300, 150, pixel =>
             {
                 var red = (pixel % 300) / 2;
-                return new Microsoft.Xna.Framework.Color(red, 1, 1);
+                return new(red, 1, 1);
             });
 
             // Then, bind it to an ImGui-friendly pointer, that we can use during regular ImGui.** calls (see below)
             _imGuiTexture = _imGuiRenderer.BindTexture(_xnaTexture);
 
+            _canvas = new Canvas();
+
             base.LoadContent();
         }
 
-        public static Texture2D CreateTexture(GraphicsDevice device, int width, int height, Func<int, Microsoft.Xna.Framework.Color> paint)
+        public Texture CreateTexture(int width, int height, Func<int, Intersect.Graphics.Color> paint)
         {
             //initialize a texture
-            var texture = new Texture2D(device, width, height);
+            var texture = _graphicsDevice.CreateTexture(width, height, false);
 
             //the array holds the color for each pixel in the texture
-            Microsoft.Xna.Framework.Color[] data = new Microsoft.Xna.Framework.Color[width * height];
+            var data = new Intersect.Graphics.Color[width * height];
             for (var pixel = 0; pixel < data.Length; pixel++)
             {
                 //the function applies the color according to the specified pixel
@@ -314,6 +322,10 @@ namespace Intersect.Editor.MonoGame
         private bool show_another_window = false;
         private System.Numerics.Vector3 clear_color = new System.Numerics.Vector3(114f / 255f, 144f / 255f, 154f / 255f);
         private byte[] _textBuffer = new byte[100];
+
+        private int counter = 0;
+
+        private Canvas _canvas;
 
         protected virtual void ImGuiLayout()
         {
@@ -340,6 +352,15 @@ namespace Intersect.Editor.MonoGame
                 ImGui.Text("ZzŹźẐẑŽžŻżẒẓẔẕƵƶᵶꟆᶎⱫⱬ");
                 ImGui.Text("FfGgHhJjKkMmPpQqRrTtVvWwXx\n    /mnt/c/Users/Me/git/romkatv/nerd-fonts    \nЛорем ипсум долор сит амет\nΛορεμ ιπσθμ δολορ σιτ αμετ");
                 ImGui.PopFont();
+                ImGui.Begin("test");
+                ImGui.Button("test " + counter);
+                if (ImGui.IsItemHovered())
+                {
+                    ++counter;
+                }
+                //ImGui.SetWindowPos(new System.Numerics.Vector2(50, 400));
+                ImGui.Text("Test1234");
+                ImGui.End();
                 ImGui.ShowMetricsWindow();
                 ImGui.End();
             }
@@ -493,10 +514,13 @@ namespace Intersect.Editor.MonoGame
                 {
                     if (updaterGraphicsReset == false)
                     {
-                        (Core.Graphics.Renderer as MonoRenderer)?.Init(GraphicsDevice);
-                        (Core.Graphics.Renderer as MonoRenderer)?.Init();
-                        (Core.Graphics.Renderer as MonoRenderer)?.Begin();
-                        (Core.Graphics.Renderer as MonoRenderer)?.End();
+                        if (Core.Graphics.Renderer is MonoRenderer monoRenderer)
+                        {
+                            monoRenderer.Init(GraphicsDevice);
+                            monoRenderer.Init();
+                            _ = monoRenderer.Begin();
+                            monoRenderer.End();
+                        }
                         updaterGraphicsReset = true;
                     }
                 }
@@ -517,7 +541,7 @@ namespace Intersect.Editor.MonoGame
             }
 
             // Call BeforeLayout first to set things up
-            _imGuiRenderer.BeforeLayout(gameTime);
+            _imGuiRenderer.BeforeLayout(gameTime.FromMonoGame());
 
             // Draw our UI
             ImGuiLayout();

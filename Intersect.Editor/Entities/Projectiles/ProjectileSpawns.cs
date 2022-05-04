@@ -1,7 +1,7 @@
 ﻿using System;
 
 using Intersect.GameObjects;
-using Intersect.Utilities;
+using Intersect.Time;
 
 namespace Intersect.Editor.Entities.Projectiles
 {

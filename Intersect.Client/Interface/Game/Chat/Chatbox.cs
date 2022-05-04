@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+
 using Intersect.Client.Core;
 using Intersect.Client.Core.Controls;
 using Intersect.Client.Framework.File_Management;
@@ -15,7 +16,7 @@ using Intersect.Client.Networking;
 using Intersect.Configuration;
 using Intersect.Enums;
 using Intersect.Localization;
-using Intersect.Utilities;
+using Intersect.Time;
 
 namespace Intersect.Client.Interface.Game.Chat
 {
@@ -152,7 +153,7 @@ namespace Intersect.Client.Interface.Game.Chat
             mChatboxSendButton.Text = Strings.Chatbox.send;
             mChatboxSendButton.Clicked += ChatBoxSendBtn_Clicked;
 
-            mChatboxWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+            mChatboxWindow.LoadJsonUi(GameContentManager.UI.InGame, Core.Graphics.Renderer.GetResolutionString());
 
             mChatboxText.IsHidden = true;
 
@@ -179,7 +180,7 @@ namespace Intersect.Client.Interface.Game.Chat
             mPartyInviteContextItem.Clicked += MPartyInviteContextItem_Clicked;
             mGuildInviteContextItem = mContextMenu.AddItem(Strings.ChatContextMenu.GuildInvite);
             mGuildInviteContextItem.Clicked += MGuildInviteContextItem_Clicked;
-            mContextMenu.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+            mContextMenu.LoadJsonUi(GameContentManager.UI.InGame, Core.Graphics.Renderer.GetResolutionString());
         }
 
         public void OpenContextMenu(string name)
@@ -406,7 +407,7 @@ namespace Intersect.Client.Interface.Game.Chat
                 if (ClientConfiguration.Instance.EnableContextMenus)
                 {
                     OpenContextMenu(target);
-                } 
+                }
                 else
                 {
                     SetChatboxText($"/pm {target} ");
@@ -487,7 +488,7 @@ namespace Intersect.Client.Interface.Game.Chat
 
                 return;
             }
-            
+
             if (mLastChatTime > Timing.Global.MillisecondsUtc)
             {
                 ChatboxMsg.AddMessage(new ChatboxMsg(Strings.Chatbox.toofast, Color.Red, ChatMessageType.Error));

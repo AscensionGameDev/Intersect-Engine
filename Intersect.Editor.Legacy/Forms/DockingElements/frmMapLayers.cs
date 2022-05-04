@@ -384,7 +384,7 @@ namespace Intersect.Editor.Forms.DockingElements
             var img = new Bitmap(32, 32);
             img.MakeTransparent(img.GetPixel(0, 0));
 
-            var g = Graphics.FromImage(img);
+            var g = System.Drawing.Graphics.FromImage(img);
 
             var layer = (Bitmap)Properties.Resources.ResourceManager.GetObject("layer");
             var layerSel = (Bitmap)Properties.Resources.ResourceManager.GetObject("layer_sel");

@@ -130,7 +130,7 @@ namespace Intersect.Editor.Entities.Events
 
             if (Texture != null)
             {
-                Graphics.DrawGameTexture(Texture, srcRectangle, destRectangle, Color.White);
+                Core.Graphics.DrawGameTexture(Texture, srcRectangle, destRectangle, Color.White);
             }
         }
 
@@ -197,29 +197,29 @@ namespace Intersect.Editor.Entities.Events
                         }
 
                         var maps = y - (gridY - 2);
-                        var renderSet = Graphics.RenderingEntities[priority, Options.MapHeight * maps + Y];
+                        var renderSet = Core.Graphics.RenderingEntities[priority, Options.MapHeight * maps + Y];
 
                         // If bugs arise from switching to the above, remove and uncomment this
                         //HashSet<Entity> renderSet = null;
                         //if (y == gridY - 2)
                         //{
-                        //    renderSet = Graphics.RenderingEntities[priority, Y];
+                        //    renderSet = Core.Graphics.RenderingEntities[priority, Y];
                         //}
                         //else if (y == gridY - 1)
                         //{
-                        //    renderSet = Graphics.RenderingEntities[priority, Options.MapHeight + Y];
+                        //    renderSet = Core.Graphics.RenderingEntities[priority, Options.MapHeight + Y];
                         //}
                         //else if (y == gridY)
                         //{
-                        //    renderSet = Graphics.RenderingEntities[priority, Options.MapHeight * 2 + Y];
+                        //    renderSet = Core.Graphics.RenderingEntities[priority, Options.MapHeight * 2 + Y];
                         //}
                         //else if (y == gridY + 1)
                         //{
-                        //    renderSet = Graphics.RenderingEntities[priority, Options.MapHeight * 3 + Y];
+                        //    renderSet = Core.Graphics.RenderingEntities[priority, Options.MapHeight * 3 + Y];
                         //}
                         //else if (y == gridY + 2)
                         //{
-                        //    renderSet = Graphics.RenderingEntities[priority, Options.MapHeight * 4 + Y];
+                        //    renderSet = Core.Graphics.RenderingEntities[priority, Options.MapHeight * 4 + Y];
                         //}
 
                         renderSet?.Add(this);
@@ -252,7 +252,7 @@ namespace Intersect.Editor.Entities.Events
                 return;
             }
 
-            if (!WorldPos.IntersectsWith(Graphics.Renderer.GetView()))
+            if (!WorldPos.IntersectsWith(Core.Graphics.Renderer.GetView()))
             {
                 return;
             }
@@ -271,22 +271,22 @@ namespace Intersect.Editor.Entities.Events
             var x = (int)Math.Ceiling(Origin.X);
             var y = GetTop();
 
-            var textSize = Graphics.Renderer.MeasureText(Name, Graphics.EntityNameFont, 1);
+            var textSize = Core.Graphics.Renderer.MeasureText(Name, Core.Graphics.EntityNameFont, 1);
 
             y -= textSize.Y + 2;
 
             if (CustomColors.Names.Events.Background != Color.Transparent)
             {
-                Graphics.DrawGameTexture(
-                    Graphics.Renderer.GetWhiteTexture(),
+                Core.Graphics.DrawGameTexture(
+                    Core.Graphics.Renderer.GetWhiteTexture(),
                     new FloatRect(0, 0, 1, 1),
                     new FloatRect(x - textSize.X / 2f - 4, y, textSize.X + 8, textSize.Y),
                     CustomColors.Names.Events.Background
                 );
             }
 
-            Graphics.Renderer.DrawString(
-                Name, Graphics.EntityNameFont, x - (int)Math.Ceiling(textSize.X / 2f), (int) y, 1,
+            Core.Graphics.Renderer.DrawString(
+                Name, Core.Graphics.EntityNameFont, x - (int)Math.Ceiling(textSize.X / 2f), (int) y, 1,
                 Color.FromArgb(CustomColors.Names.Events.Name.ToArgb()), true, null,
                 Color.FromArgb(CustomColors.Names.Events.Outline.ToArgb())
             );

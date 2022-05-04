@@ -10,7 +10,7 @@ using Intersect.Client.General;
 using Intersect.Client.Items;
 using Intersect.Client.Localization;
 using Intersect.Client.Maps;
-using Intersect.Utilities;
+using Intersect.Time;
 
 namespace Intersect.Client.Interface.Game.Inventory
 {
@@ -50,7 +50,7 @@ namespace Intersect.Client.Interface.Game.Inventory
             mBtnLootAll.Text = Strings.MapItemWindow.LootButton;
             mBtnLootAll.Clicked += MBtnLootAll_Clicked;
 
-            mMapItemWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+            mMapItemWindow.LoadJsonUi(GameContentManager.UI.InGame, Core.Graphics.Renderer.GetResolutionString());
 
             CreateItemContainer();
         }
@@ -172,7 +172,7 @@ namespace Intersect.Client.Interface.Game.Inventory
                 mValues.Add(new Label(Items[i].Container, "MapItemValue"));
                 mValues[i].Text = "";
 
-                Items[i].Container.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+                Items[i].Container.LoadJsonUi(GameContentManager.UI.InGame, Core.Graphics.Renderer.GetResolutionString());
 
                 var xPadding = Items[i].Container.Margin.Left + Items[i].Container.Margin.Right;
                 var yPadding = Items[i].Container.Margin.Top + Items[i].Container.Margin.Bottom;
@@ -200,7 +200,7 @@ namespace Intersect.Client.Interface.Game.Inventory
             // Try and pick up everything on our location.
             var currentMap = Globals.Me.MapInstance as MapInstance;
             Globals.Me.TryPickupItem(currentMap.Id, Globals.Me.Y * Options.MapWidth + Globals.Me.X);
-            
+
         }
 
         private Dictionary<MapInstance, List<int>> FindSurroundingTiles(int myX, int myY, int distance)

@@ -178,7 +178,7 @@ namespace Intersect.Editor.Interface.Menu
             mBackButton.SetText(Strings.CharacterCreation.back);
             mBackButton.Clicked += BackButton_Clicked;
 
-            mCharCreationPanel.LoadJsonUi(GameContentManager.UI.Menu, Graphics.Renderer.GetResolutionString());
+            mCharCreationPanel.LoadJsonUi(GameContentManager.UI.Menu, Core.Graphics.Renderer.GetResolutionString());
         }
 
         public bool IsHidden => mCharCreationPanel.IsHidden;

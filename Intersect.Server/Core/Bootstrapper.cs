@@ -289,9 +289,9 @@ namespace Intersect.Server.Core
             Console.WriteLine();
 
             Console.WriteLine(Strings.Commandoutput.playercount.ToString(Player.Count()));
-            Console.WriteLine(Strings.Commandoutput.gametime.ToString(Time.GetTime().ToString("F")));
+            Console.WriteLine(Strings.Commandoutput.gametime.ToString(General.Time.GetTime().ToString("F")));
 
-            Time.Update();
+            Intersect.Server.General.Time.Update();
 
             PacketSender.CacheGameDataPacket();
 

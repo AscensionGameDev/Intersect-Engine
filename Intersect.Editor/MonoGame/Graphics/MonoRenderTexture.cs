@@ -1,7 +1,9 @@
-﻿using Intersect.Client.Framework.Graphics;
+using Intersect.Client.Framework.Graphics;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+
+using GraphicsDevice = Microsoft.Xna.Framework.Graphics.GraphicsDevice;
 
 namespace Intersect.Editor.MonoGame.Graphics
 {

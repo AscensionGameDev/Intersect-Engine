@@ -21,11 +21,11 @@ using Intersect.Logging;
 using Intersect.Network;
 using Intersect.Network.Packets;
 using Intersect.Network.Packets.Server;
-using Intersect.Utilities;
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Intersect.Time;
 
 namespace Intersect.Editor.Networking
 {
@@ -160,7 +160,7 @@ namespace Intersect.Editor.Networking
         public void HandlePacket(IPacketSender packetSender, ConfigPacket packet)
         {
             Options.LoadFromServer(packet.Config);
-            Graphics.InitInGame();
+            Core.Graphics.InitInGame();
         }
 
         //JoinGamePacket
@@ -1692,13 +1692,13 @@ namespace Intersect.Editor.Networking
                 Globals.Me.FetchNewMaps();
             }
 
-            Graphics.GridSwitched = true;
+            Core.Graphics.GridSwitched = true;
         }
 
         //TimePacket
         public void HandlePacket(IPacketSender packetSender, TimePacket packet)
         {
-            Time.LoadTime(
+            General.Time.LoadTime(
                 packet.Time, Color.FromArgb(packet.Color.A, packet.Color.R, packet.Color.G, packet.Color.B), packet.Rate
             );
         }

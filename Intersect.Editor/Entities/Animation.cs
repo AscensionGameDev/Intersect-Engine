@@ -7,7 +7,7 @@ using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Editor.General;
 using Intersect.GameObjects;
-using Intersect.Utilities;
+using Intersect.Time;
 
 namespace Intersect.Editor.Entities
 {
@@ -79,9 +79,9 @@ namespace Intersect.Editor.Entities
                 AutoRotate = autoRotate;
                 mZDimension = zDimension;
                 mSound = Audio.AddMapSound(MyBase.Sound, 0, 0, Guid.Empty, loopForever, 0, 12, parent);
-                lock (Graphics.AnimationLock)
+                lock (Core.Graphics.AnimationLock)
                 {
-                    Graphics.LiveAnimations.Add(this);
+                    Core.Graphics.LiveAnimations.Add(this);
                 }
             }
             else
@@ -161,7 +161,7 @@ namespace Intersect.Editor.Entities
                     {
                         var frameWidth = tex.GetWidth() / MyBase.Lower.XFrames;
                         var frameHeight = tex.GetHeight() / MyBase.Lower.YFrames;
-                        Graphics.DrawGameTexture(
+                        Core.Graphics.DrawGameTexture(
                             tex,
                             new FloatRect(
                                 mLowerFrame % MyBase.Lower.XFrames * frameWidth,
@@ -181,7 +181,7 @@ namespace Intersect.Editor.Entities
                     new Point(offsetX, offsetY), new Point(0, 0), rotationDegrees + 180
                 );
 
-                Graphics.AddLight(
+                Core.Graphics.AddLight(
                     (int)mRenderX - offset.X, (int)mRenderY - offset.Y, MyBase.Lower.Lights[mLowerFrame].Size,
                     MyBase.Lower.Lights[mLowerFrame].Intensity, MyBase.Lower.Lights[mLowerFrame].Expand,
                     MyBase.Lower.Lights[mLowerFrame].Color
@@ -202,7 +202,7 @@ namespace Intersect.Editor.Entities
                         var frameWidth = tex.GetWidth() / MyBase.Upper.XFrames;
                         var frameHeight = tex.GetHeight() / MyBase.Upper.YFrames;
 
-                        Graphics.DrawGameTexture(
+                        Core.Graphics.DrawGameTexture(
                             tex,
                             new FloatRect(
                                 mUpperFrame % MyBase.Upper.XFrames * frameWidth,
@@ -222,7 +222,7 @@ namespace Intersect.Editor.Entities
                     new Point(offsetX, offsetY), new Point(0, 0), rotationDegrees + 180
                 );
 
-                Graphics.AddLight(
+                Core.Graphics.AddLight(
                     (int)mRenderX - offset.X, (int)mRenderY - offset.Y, MyBase.Upper.Lights[mUpperFrame].Size,
                     MyBase.Upper.Lights[mUpperFrame].Intensity, MyBase.Upper.Lights[mUpperFrame].Expand,
                     MyBase.Upper.Lights[mUpperFrame].Color
@@ -281,7 +281,7 @@ namespace Intersect.Editor.Entities
                 return;
             }
 
-            lock (Graphics.AnimationLock)
+            lock (Core.Graphics.AnimationLock)
             {
                 if (mSound != null)
                 {
@@ -294,7 +294,7 @@ namespace Intersect.Editor.Entities
                     mSound = null;
                 }
 
-                Graphics.LiveAnimations.Remove(this);
+                Core.Graphics.LiveAnimations.Remove(this);
                 disposed = true;
             }
         }

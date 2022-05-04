@@ -537,7 +537,7 @@ namespace Intersect.Editor.Forms.Editors
                 if (cmbTransform.SelectedIndex > 0)
                 {
                     var bmp = new Bitmap(picSprite.Width, picSprite.Height);
-                    var g = Graphics.FromImage(bmp);
+                    var g = System.Drawing.Graphics.FromImage(bmp);
                     var src = Image.FromFile("resources/entities/" + cmbTransform.Text);
                     g.DrawImage(
                         src,
@@ -595,7 +595,7 @@ namespace Intersect.Editor.Forms.Editors
             if (cmbTransform.SelectedIndex > 0)
             {
                 var bmp = new Bitmap(picSprite.Width, picSprite.Height);
-                var g = Graphics.FromImage(bmp);
+                var g = System.Drawing.Graphics.FromImage(bmp);
                 var src = Image.FromFile("resources/entities/" + cmbTransform.Text);
                 g.DrawImage(
                     src,

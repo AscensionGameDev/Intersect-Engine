@@ -6,8 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Threading.Tasks;
-
-using Intersect.Utilities;
+using Intersect.Time;
 
 namespace Intersect.Server.Metrics
 {

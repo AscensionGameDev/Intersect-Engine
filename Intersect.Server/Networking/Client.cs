@@ -15,7 +15,7 @@ using Intersect.Server.Entities;
 using Intersect.Server.General;
 using Intersect.Server.Networking.Lidgren;
 using Intersect.Server.Metrics;
-using Intersect.Utilities;
+using Intersect.Time;
 
 namespace Intersect.Server.Networking
 {

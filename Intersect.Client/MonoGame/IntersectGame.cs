@@ -23,9 +23,8 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 
-using Intersect.Utilities;
-
 using MainMenu = Intersect.Client.Interface.Menu.MainMenu;
+using Intersect.Time;
 
 namespace Intersect.Client.MonoGame
 {

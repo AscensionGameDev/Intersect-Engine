@@ -3,7 +3,7 @@ using System.Drawing;
 
 using Intersect.Editor.Content;
 using Intersect.GameObjects;
-using Intersect.Utilities;
+using Intersect.Time;
 
 using Microsoft.Xna.Framework.Graphics;
 

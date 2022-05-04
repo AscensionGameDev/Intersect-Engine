@@ -11,7 +11,7 @@ using Intersect.Configuration;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps;
-using Intersect.Utilities;
+using Intersect.Time;
 
 // ReSharper disable All
 
@@ -30,7 +30,7 @@ namespace Intersect.Client.Core
         internal static void Start(IClientContext context)
         {
             //Load Graphics
-            Graphics.InitGraphics();
+            Core.Graphics.InitGraphics();
 
             //Load Sounds
             Audio.Init();
@@ -61,7 +61,7 @@ namespace Intersect.Client.Core
             //TODO - Destroy Graphics and Networking peacefully
             //Network.Close();
             Interface.Interface.DestroyGwen(true);
-            Graphics.Renderer.Close();
+            Core.Graphics.Renderer.Close();
         }
 
         public static void Update(TimeSpan deltaTime)
@@ -339,7 +339,7 @@ namespace Intersect.Client.Core
             }
 
             Graphics.UpdatePlayerLight();
-            Time.Update();
+            General.Time.Update();
         }
 
         public static void JoinGame()

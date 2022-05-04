@@ -88,7 +88,7 @@ namespace Intersect.Editor.Forms.Controls
                 }
             }
 
-            Graphics.TilePreviewUpdated = true;
+            Core.Graphics.TilePreviewUpdated = true;
             if (CanClose)
             {
                 Visible = false;
@@ -104,7 +104,7 @@ namespace Intersect.Editor.Forms.Controls
                 colorDialog.Color.A, colorDialog.Color.R, colorDialog.Color.G, colorDialog.Color.B
             );
 
-            Graphics.TilePreviewUpdated = true;
+            Core.Graphics.TilePreviewUpdated = true;
         }
 
         public void Cancel()
@@ -120,7 +120,7 @@ namespace Intersect.Editor.Forms.Controls
             }
 
             mEditingLight.OffsetX = (int) nudOffsetX.Value;
-            Graphics.TilePreviewUpdated = true;
+            Core.Graphics.TilePreviewUpdated = true;
         }
 
         private void nudOffsetY_ValueChanged(object sender, EventArgs e)
@@ -131,7 +131,7 @@ namespace Intersect.Editor.Forms.Controls
             }
 
             mEditingLight.OffsetY = (int) nudOffsetY.Value;
-            Graphics.TilePreviewUpdated = true;
+            Core.Graphics.TilePreviewUpdated = true;
         }
 
         private void nudSize_ValueChanged(object sender, EventArgs e)
@@ -142,7 +142,7 @@ namespace Intersect.Editor.Forms.Controls
             }
 
             mEditingLight.Size = (int) nudSize.Value;
-            Graphics.TilePreviewUpdated = true;
+            Core.Graphics.TilePreviewUpdated = true;
         }
 
         private void nudIntensity_ValueChanged(object sender, EventArgs e)
@@ -153,7 +153,7 @@ namespace Intersect.Editor.Forms.Controls
             }
 
             mEditingLight.Intensity = (byte) nudIntensity.Value;
-            Graphics.TilePreviewUpdated = true;
+            Core.Graphics.TilePreviewUpdated = true;
         }
 
         private void nudExpand_ValueChanged(object sender, EventArgs e)
@@ -164,7 +164,7 @@ namespace Intersect.Editor.Forms.Controls
             }
 
             mEditingLight.Expand = (int) nudExpand.Value;
-            Graphics.TilePreviewUpdated = true;
+            Core.Graphics.TilePreviewUpdated = true;
         }
 
     }

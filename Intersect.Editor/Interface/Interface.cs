@@ -64,7 +64,7 @@ namespace Intersect.Editor.Interface
             if (Skin == null)
             {
                 Skin = TexturedBase.FindSkin(GwenRenderer, Globals.ContentManager, ClientConfiguration.Instance.UiSkin);
-                Skin.DefaultFont = Graphics.UIFont;
+                Skin.DefaultFont = Core.Graphics.UIFont;
             }
 
             MenuUi?.Dispose();
@@ -74,12 +74,12 @@ namespace Intersect.Editor.Interface
             // Create a Canvas (it's root, on which all other GWEN controls are created)
             sMenuCanvas = new Canvas(Skin, "MainMenu")
             {
-                Scale = 1f //(GameGraphics.Renderer.GetScreenWidth()/1920f);
+                Scale = 1f //(GameCore.Graphics.Renderer.GetScreenWidth()/1920f);
             };
 
             sMenuCanvas.SetSize(
-                (int) (Graphics.Renderer.GetScreenWidth() / sMenuCanvas.Scale),
-                (int) (Graphics.Renderer.GetScreenHeight() / sMenuCanvas.Scale)
+                (int) (Core.Graphics.Renderer.GetScreenWidth() / sMenuCanvas.Scale),
+                (int) (Core.Graphics.Renderer.GetScreenHeight() / sMenuCanvas.Scale)
             );
 
             sMenuCanvas.ShouldDrawBackground = false;
@@ -89,10 +89,10 @@ namespace Intersect.Editor.Interface
             // Create the game Canvas (it's root, on which all other GWEN controls are created)
             sGameCanvas = new Canvas(Skin, "InGame");
 
-            //_gameCanvas.Scale = (GameGraphics.Renderer.GetScreenWidth() / 1920f);
+            //_gameCanvas.Scale = (GameCore.Graphics.Renderer.GetScreenWidth() / 1920f);
             sGameCanvas.SetSize(
-                (int) (Graphics.Renderer.GetScreenWidth() / sGameCanvas.Scale),
-                (int) (Graphics.Renderer.GetScreenHeight() / sGameCanvas.Scale)
+                (int) (Core.Graphics.Renderer.GetScreenWidth() / sGameCanvas.Scale),
+                (int) (Core.Graphics.Renderer.GetScreenHeight() / sGameCanvas.Scale)
             );
 
             sGameCanvas.ShouldDrawBackground = false;
@@ -263,7 +263,7 @@ namespace Intersect.Editor.Interface
                 while (curPos + curLen < input.Length)
                 {
                     line = input.Substring(curPos, curLen);
-                    measured = Graphics.Renderer.MeasureText(line, font, 1).X;
+                    measured = Core.Graphics.Renderer.MeasureText(line, font, 1).X;
                     if (measured < width)
                     {
                         lastOk = lastSpace;

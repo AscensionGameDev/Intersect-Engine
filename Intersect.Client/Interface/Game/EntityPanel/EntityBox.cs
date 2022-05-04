@@ -15,7 +15,7 @@ using Intersect.Client.Networking;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Logging;
-using Intersect.Utilities;
+using Intersect.Time;
 
 namespace Intersect.Client.Interface.Game.EntityPanel
 {
@@ -199,7 +199,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
 
             SetEntity(myEntity);
 
-            EntityWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+            EntityWindow.LoadJsonUi(GameContentManager.UI.InGame, Core.Graphics.Renderer.GetResolutionString());
 
             UpdateSpellStatus();
 
@@ -509,7 +509,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
 
                     itm.Setup();
 
-                    itm.Container.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+                    itm.Container.LoadJsonUi(GameContentManager.UI.InGame, Core.Graphics.Renderer.GetResolutionString());
                     itm.Container.Name = "";
                     mActiveStatuses.Add(id, itm);
                 }

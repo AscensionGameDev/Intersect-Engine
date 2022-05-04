@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
@@ -400,7 +400,7 @@ namespace Intersect.Editor.Forms.Editors
             }
 
             // Initial Sprite
-            var gfx = Graphics.FromImage(mInitialBitmap);
+            var gfx = System.Drawing.Graphics.FromImage(mInitialBitmap);
             gfx.FillRectangle(Brushes.Black, new Rectangle(0, 0, picInitialResource.Width, picInitialResource.Height));
             if (cmbInitialSprite.SelectedIndex > 0 && mInitialGraphic != null)
             {
@@ -444,7 +444,7 @@ namespace Intersect.Editor.Forms.Editors
             gfx.Dispose();
 
             // End Sprite
-            gfx = Graphics.FromImage(mEndBitmap);
+            gfx = System.Drawing.Graphics.FromImage(mEndBitmap);
             gfx.FillRectangle(Brushes.Black, new Rectangle(0, 0, picEndResource.Width, picEndResource.Height));
             if (cmbEndSprite.SelectedIndex > 0 && mEndGraphic != null)
             {

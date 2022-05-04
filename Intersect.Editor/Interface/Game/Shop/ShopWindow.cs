@@ -40,7 +40,7 @@ namespace Intersect.Editor.Interface.Game.Shop
             mItemContainer = new ScrollControl(mShopWindow, "ItemContainer");
             mItemContainer.EnableScroll(false, true);
 
-            mShopWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+            mShopWindow.LoadJsonUi(GameContentManager.UI.InGame, Core.Graphics.Renderer.GetResolutionString());
 
             InitItemContainer();
 
@@ -52,7 +52,7 @@ namespace Intersect.Editor.Interface.Game.Shop
             mContextMenu.Children.Clear();
             mBuyContextItem = mContextMenu.AddItem(Strings.ShopContextMenu.Buy);
             mBuyContextItem.Clicked += MBuyContextItem_Clicked;
-            mContextMenu.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+            mContextMenu.LoadJsonUi(GameContentManager.UI.InGame, Core.Graphics.Renderer.GetResolutionString());
         }
 
         public void OpenContextMenu(int slot)
@@ -108,7 +108,7 @@ namespace Intersect.Editor.Interface.Game.Shop
                 Items[i].Container = new ImagePanel(mItemContainer, "ShopItem");
                 Items[i].Setup();
 
-                Items[i].Container.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+                Items[i].Container.LoadJsonUi(GameContentManager.UI.InGame, Core.Graphics.Renderer.GetResolutionString());
 
                 Items[i].LoadItem();
 

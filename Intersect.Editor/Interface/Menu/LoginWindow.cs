@@ -110,7 +110,7 @@ namespace Intersect.Editor.Interface.Menu
 
             LoadCredentials();
 
-            mLoginWindow.LoadJsonUi(GameContentManager.UI.Menu, Graphics.Renderer.GetResolutionString());
+            mLoginWindow.LoadJsonUi(GameContentManager.UI.Menu, Core.Graphics.Renderer.GetResolutionString());
 
         }
 

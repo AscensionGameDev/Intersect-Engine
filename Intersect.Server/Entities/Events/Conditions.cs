@@ -86,7 +86,7 @@ namespace Intersect.Server.Entities.Events
             return true;
         }
 
-        
+
 
         public static bool MeetsCondition(
             Condition condition,
@@ -323,7 +323,7 @@ namespace Intersect.Server.Entities.Events
                 condition.Ranges[0] < 1440 / TimeBase.GetTimeBase().RangeInterval &&
                 condition.Ranges[1] < 1440 / TimeBase.GetTimeBase().RangeInterval)
             {
-                return Time.GetTimeRange() >= condition.Ranges[0] && Time.GetTimeRange() <= condition.Ranges[1];
+                return General.Time.GetTimeRange() >= condition.Ranges[0] && General.Time.GetTimeRange() <= condition.Ranges[1];
             }
 
             return true;

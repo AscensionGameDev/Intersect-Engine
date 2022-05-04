@@ -318,7 +318,7 @@ namespace Intersect.Editor.Forms.Editors
                 img = (Bitmap) picSpawns.BackgroundImage;
             }
 
-            var gfx = Graphics.FromImage(img);
+            var gfx = System.Drawing.Graphics.FromImage(img);
             gfx.FillRectangle(Brushes.White, new Rectangle(0, 0, picSpawns.Width, picSpawns.Height));
 
             for (var x = 0; x < ProjectileBase.SPAWN_LOCATIONS_WIDTH; x++)

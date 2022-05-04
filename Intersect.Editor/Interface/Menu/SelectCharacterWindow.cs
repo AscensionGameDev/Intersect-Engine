@@ -112,7 +112,7 @@ namespace Intersect.Editor.Interface.Menu
             mLogoutButton.IsHidden = true;
             mLogoutButton.Clicked += mLogoutButton_Clicked;
 
-            mCharacterSelectionPanel.LoadJsonUi(GameContentManager.UI.Menu, Graphics.Renderer.GetResolutionString());
+            mCharacterSelectionPanel.LoadJsonUi(GameContentManager.UI.Menu, Core.Graphics.Renderer.GetResolutionString());
         }
 
         public bool IsHidden => mCharacterSelectionPanel.IsHidden;

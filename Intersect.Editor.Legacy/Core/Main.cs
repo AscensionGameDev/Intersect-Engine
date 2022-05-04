@@ -8,7 +8,7 @@ using Intersect.Editor.Forms;
 using Intersect.Editor.General;
 using Intersect.Editor.Localization;
 using Intersect.Editor.Maps;
-using Intersect.Utilities;
+using Intersect.Time;
 
 namespace Intersect.Editor.Core
 {

@@ -9,7 +9,6 @@ using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.General;
 using Intersect.Client.Localization;
-using Intersect.Utilities;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -17,6 +16,9 @@ using Microsoft.Xna.Framework.Graphics;
 
 using XNARectangle = Microsoft.Xna.Framework.Rectangle;
 using XNAColor = Microsoft.Xna.Framework.Color;
+using Intersect.Time;
+using GraphicsDevice = Microsoft.Xna.Framework.Graphics.GraphicsDevice;
+using Effect = Microsoft.Xna.Framework.Graphics.Effect;
 
 namespace Intersect.Client.MonoGame.Graphics
 {

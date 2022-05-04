@@ -68,7 +68,7 @@ namespace Intersect.Client.Interface.Game.Trades
                 TradeSegment.Add(new TradeSegment(this, mTradeWindow, i));
             }
 
-            mTradeWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+            mTradeWindow.LoadJsonUi(GameContentManager.UI.InGame, Core.Graphics.Renderer.GetResolutionString());
 
             for (var i = 0; i < 2; i++)
             {
@@ -83,7 +83,7 @@ namespace Intersect.Client.Interface.Game.Trades
             mContextMenu.Children.Clear();
             mWithdrawContextItem = mContextMenu.AddItem(Strings.TradeContextMenu.Withdraw);
             mWithdrawContextItem.Clicked += MWithdrawContextItem_Clicked;
-            mContextMenu.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+            mContextMenu.LoadJsonUi(GameContentManager.UI.InGame, Core.Graphics.Renderer.GetResolutionString());
         }
 
         private void MWithdrawContextItem_Clicked(Base sender, ClickedEventArgs arguments)
