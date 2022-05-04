@@ -8,7 +8,7 @@ using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Editor.General;
 using Intersect.Editor.Localization;
 using Intersect.Editor.Networking;
-using Intersect.Utilities;
+using Intersect.Time;
 
 namespace Intersect.Editor.Interface.Game
 {
@@ -34,7 +34,7 @@ namespace Intersect.Editor.Interface.Game
 
             // Generate our layout controls and load the layout from our json files.
             GenerateControls();
-            mWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+            mWindow.LoadJsonUi(GameContentManager.UI.InGame, Core.Graphics.Renderer.GetResolutionString());
 
             // Update our display.
             UpdateList();

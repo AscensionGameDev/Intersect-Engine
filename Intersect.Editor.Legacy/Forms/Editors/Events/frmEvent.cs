@@ -1,10 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Windows.Forms;
-
 using DarkUI.Controls;
 using DarkUI.Forms;
 
@@ -186,11 +179,11 @@ namespace Intersect.Editor.Forms.Editors.Events
 
         private void UpdateEventPreview()
         {
-            Graphics graphics;
+            System.Drawing.Graphics graphics;
             Bitmap sourceBitmap = null;
             Bitmap destBitmap = null;
             destBitmap = new Bitmap(pnlPreview.Width, pnlPreview.Height);
-            graphics = Graphics.FromImage(destBitmap);
+            graphics = System.Drawing.Graphics.FromImage(destBitmap);
             graphics.Clear(System.Drawing.Color.FromArgb(60, 63, 65));
 
             if (CurrentPage.Graphic.Type == EventGraphicType.Sprite)

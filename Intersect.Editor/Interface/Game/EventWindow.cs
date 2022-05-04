@@ -158,7 +158,7 @@ namespace Intersect.Editor.Interface.Game
                     }
 
                     mEventDialogWindow.LoadJsonUi(
-                        GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString()
+                        GameContentManager.UI.InGame, Core.Graphics.Renderer.GetResolutionString()
                     );
 
                     if (faceTex != null)

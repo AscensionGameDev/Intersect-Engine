@@ -79,6 +79,8 @@ namespace Intersect
 
         public static Point operator /(Point point, float scalar) => new Point((int)(point.X / scalar), (int)(point.Y / scalar));
 
+        public static implicit operator Numerics.Point(Point point) => new(point.X, point.Y);
+
     }
 
 }

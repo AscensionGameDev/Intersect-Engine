@@ -5,7 +5,7 @@ using Intersect.Client.Framework.Entities;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Editor.General;
-using Intersect.Utilities;
+using Intersect.Time;
 
 namespace Intersect.Editor.Entities
 {
@@ -58,7 +58,7 @@ namespace Intersect.Editor.Entities
         {
             if (mText == null && mSourceText.Trim().Length > 0)
             {
-                mText = Interface.Interface.WrapText(mSourceText, 200, Graphics.ChatBubbleFont);
+                mText = Interface.Interface.WrapText(mSourceText, 200, Core.Graphics.ChatBubbleFont);
             }
 
             if (mText == null)
@@ -74,7 +74,7 @@ namespace Intersect.Editor.Entities
                 //Gotta Calculate Bounds
                 for (var i = (mText?.Length ?? 0) - 1; i > -1; i--)
                 {
-                    var textSize = Graphics.Renderer.MeasureText(mText[i], Graphics.ChatBubbleFont, 1);
+                    var textSize = Core.Graphics.Renderer.MeasureText(mText[i], Core.Graphics.ChatBubbleFont, 1);
                     if (textSize.X > mTextureBounds.Width)
                     {
                         mTextureBounds.Width = (int) textSize.X + 16;
@@ -173,7 +173,7 @@ namespace Intersect.Editor.Entities
                 {
                     for (var y1 = 0; y1 < mTextureBounds.Height / 8; y1++)
                     {
-                        Graphics.Renderer.DrawTexture(
+                        Core.Graphics.Renderer.DrawTexture(
                             mBubbleTex, mTexSections[x1, y1].X * 8, mTexSections[x1, y1].Y * 8, 8, 8,
                             x - mTextureBounds.Width / 2 + x1 * 8, y - mTextureBounds.Height - yoffset + y1 * 8, 8, 8,
                             Color.White
@@ -183,9 +183,9 @@ namespace Intersect.Editor.Entities
 
                 for (var i = mText.Length - 1; i > -1; i--)
                 {
-                    var textSize = Graphics.Renderer.MeasureText(mText[i], Graphics.ChatBubbleFont, 1);
-                    Graphics.Renderer.DrawString(
-                        mText[i], Graphics.ChatBubbleFont,
+                    var textSize = Core.Graphics.Renderer.MeasureText(mText[i], Core.Graphics.ChatBubbleFont, 1);
+                    Core.Graphics.Renderer.DrawString(
+                        mText[i], Core.Graphics.ChatBubbleFont,
                         (int) (x - mTextureBounds.Width / 2 + (mTextureBounds.Width - textSize.X) / 2f),
                         (int) (y - mTextureBounds.Height - yoffset + 8 + i * 16), 1,
                         Color.FromArgb(CustomColors.Chat.ChatBubbleText.ToArgb()), true, null,

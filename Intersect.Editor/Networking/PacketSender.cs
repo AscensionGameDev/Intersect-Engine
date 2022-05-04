@@ -6,7 +6,7 @@ using Intersect.Editor.General;
 using Intersect.Editor.Interface.Game;
 using Intersect.Editor.Maps;
 using Intersect.Network.Packets.Client;
-using Intersect.Utilities;
+using Intersect.Time;
 
 namespace Intersect.Editor.Networking
 {

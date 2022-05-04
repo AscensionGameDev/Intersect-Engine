@@ -4,8 +4,7 @@ using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.General;
 using Intersect.Client.Networking;
 using System;
-
-using Intersect.Utilities;
+using Intersect.Time;
 
 namespace Intersect.Client.Interface.Game
 {

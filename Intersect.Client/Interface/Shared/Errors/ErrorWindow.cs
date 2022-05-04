@@ -46,8 +46,8 @@ namespace Intersect.Client.Interface.Shared.Errors
         protected virtual void ErrorBox_Resized(Base sender, EventArgs arguments)
         {
             sender.SetPosition(
-                Graphics.Renderer.GetScreenWidth() / 2 - sender.Width / 2,
-                Graphics.Renderer.GetScreenHeight() / 2 - sender.Height / 2
+                Core.Graphics.Renderer.GetScreenWidth() / 2 - sender.Width / 2,
+                Core.Graphics.Renderer.GetScreenHeight() / 2 - sender.Height / 2
             );
         }
 

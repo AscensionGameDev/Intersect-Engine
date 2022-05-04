@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Security.Cryptography;
+
 using Intersect.Network.Packets;
-using Intersect.Utilities;
+using Intersect.Time;
 
 using MessagePack;
 

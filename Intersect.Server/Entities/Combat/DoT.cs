@@ -5,7 +5,7 @@ using System.Linq;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Server.General;
-using Intersect.Utilities;
+using Intersect.Time;
 
 namespace Intersect.Server.Entities.Combat
 {

@@ -1,11 +1,12 @@
 using System;
+
 using Intersect.Client.Framework.Entities;
 using Intersect.Client.General;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps;
 using Intersect.Network.Packets.Server;
-using Intersect.Utilities;
+using Intersect.Time;
 
 namespace Intersect.Client.Entities.Projectiles
 {

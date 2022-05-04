@@ -4,7 +4,7 @@ using Intersect.Client.Framework.Audio;
 using Intersect.Client.Framework.Core.Sounds;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Editor.General;
-using Intersect.Utilities;
+using Intersect.Time;
 
 namespace Intersect.Editor.Core.Sounds
 {

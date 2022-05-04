@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+
 using Intersect.Client.Entities;
 using Intersect.Client.Entities.Events;
 using Intersect.Client.Framework.Content;
@@ -12,6 +13,7 @@ using Intersect.Client.Maps;
 using Intersect.Configuration;
 using Intersect.Enums;
 using Intersect.GameObjects;
+using Intersect.Time;
 using Intersect.Utilities;
 
 namespace Intersect.Client.Core
@@ -273,7 +275,7 @@ namespace Intersect.Client.Core
 
             // Clear our previous darkness texture.
             ClearDarknessTexture();
-            
+
             var gridX = currentMap.GridX;
             var gridY = currentMap.GridY;
 
@@ -422,7 +424,7 @@ namespace Intersect.Client.Core
             {
                 animInstance.Draw(true);
             }
-            
+
 
             for (var x = gridX - 1; x <= gridX + 1; x++)
             {
@@ -457,7 +459,7 @@ namespace Intersect.Client.Core
             // Draw lighting effects.
             GenerateLightMap();
             DrawDarkness();
-            
+
             for (var y = 0; y < Options.MapHeight * 5; y++)
             {
                 for (var x = 0; x < 3; x++)
@@ -1073,8 +1075,8 @@ namespace Intersect.Client.Core
                     Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1),
                     new FloatRect(0, 0, sDarknessTexture.GetWidth(), sDarknessTexture.GetHeight()),
                     new Color(
-                        (int) Time.GetTintColor().A, (int) Time.GetTintColor().R, (int) Time.GetTintColor().G,
-                        (int) Time.GetTintColor().B
+                        (int) General.Time.GetTintColor().A, (int) General.Time.GetTintColor().R, (int) General.Time.GetTintColor().G,
+                        (int) General.Time.GetTintColor().B
                     ), sDarknessTexture, GameBlendModes.None
                 );
             }

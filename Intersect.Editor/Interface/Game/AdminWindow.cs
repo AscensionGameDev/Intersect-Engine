@@ -88,8 +88,8 @@ namespace Intersect.Editor.Interface.Game
             mAdminWindow = new WindowControl(gameCanvas, Strings.Admin.title, false, nameof(AdminWindow));
             mAdminWindow.SetSize(200, 540);
             mAdminWindow.SetPosition(
-                Graphics.Renderer.GetScreenWidth() / 2 - mAdminWindow.Width / 2,
-                Graphics.Renderer.GetScreenHeight() / 2 - mAdminWindow.Height / 2
+                Core.Graphics.Renderer.GetScreenWidth() / 2 - mAdminWindow.Width / 2,
+                Core.Graphics.Renderer.GetScreenHeight() / 2 - mAdminWindow.Height / 2
             );
 
             mAdminWindow.DisableResizing();
@@ -272,7 +272,7 @@ namespace Intersect.Editor.Interface.Game
 
             LabelChronological.SetPosition(CheckboxChronological.X - 30, 294);
 
-            mAdminWindow.LoadJsonUi(UI.InGame, Graphics.Renderer.GetResolutionString(), true);
+            mAdminWindow.LoadJsonUi(UI.InGame, Core.Graphics.Renderer.GetResolutionString(), true);
 
             UpdateMapList();
         }

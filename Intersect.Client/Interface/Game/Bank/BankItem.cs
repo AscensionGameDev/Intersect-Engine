@@ -13,7 +13,7 @@ using Intersect.Client.Networking;
 using Intersect.Configuration;
 using Intersect.Enums;
 using Intersect.GameObjects;
-using Intersect.Utilities;
+using Intersect.Time;
 
 namespace Intersect.Client.Interface.Game.Bank
 {

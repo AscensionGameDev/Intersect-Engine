@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
@@ -643,7 +643,7 @@ namespace Intersect.Editor.Forms.Editors
         private void DrawSprite()
         {
             var picSpriteBmp = new Bitmap(picSprite.Width, picSprite.Height);
-            var gfx = Graphics.FromImage(picSpriteBmp);
+            var gfx = System.Drawing.Graphics.FromImage(picSpriteBmp);
             gfx.FillRectangle(Brushes.Black, new Rectangle(0, 0, picSprite.Width, picSprite.Height));
             if (cmbSprite.SelectedIndex > 0)
             {
@@ -663,7 +663,7 @@ namespace Intersect.Editor.Forms.Editors
             picSprite.BackgroundImage = picSpriteBmp;
 
             var picFaceBmp = new Bitmap(picFace.Width, picFace.Height);
-            gfx = Graphics.FromImage(picFaceBmp);
+            gfx = System.Drawing.Graphics.FromImage(picFaceBmp);
             gfx.FillRectangle(Brushes.Black, new Rectangle(0, 0, picSprite.Width, picSprite.Height));
             if (cmbFace.SelectedIndex > 0)
             {

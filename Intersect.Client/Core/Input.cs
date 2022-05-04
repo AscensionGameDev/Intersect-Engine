@@ -11,7 +11,7 @@ using Intersect.Client.Interface.Game;
 using Intersect.Client.Maps;
 using Intersect.Client.Networking;
 using Intersect.Logging;
-using Intersect.Utilities;
+using Intersect.Time;
 
 namespace Intersect.Client.Core
 {
@@ -141,7 +141,7 @@ namespace Intersect.Client.Core
                         switch (control)
                         {
                             case Control.Screenshot:
-                                Graphics.Renderer?.RequestScreenshot();
+                                Core.Graphics.Renderer?.RequestScreenshot();
 
                                 break;
 
@@ -413,8 +413,8 @@ namespace Intersect.Client.Core
                 return;
             }
 
-            var x = (int) Math.Floor(Globals.InputManager.GetMousePosition().X + Graphics.CurrentView.Left);
-            var y = (int) Math.Floor(Globals.InputManager.GetMousePosition().Y + Graphics.CurrentView.Top);
+            var x = (int) Math.Floor(Globals.InputManager.GetMousePosition().X + Core.Graphics.CurrentView.Left);
+            var y = (int) Math.Floor(Globals.InputManager.GetMousePosition().Y + Core.Graphics.CurrentView.Top);
 
             foreach (MapInstance map in MapInstance.Lookup.Values)
             {

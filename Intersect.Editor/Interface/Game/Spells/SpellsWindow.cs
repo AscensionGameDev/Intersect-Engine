@@ -44,7 +44,7 @@ namespace Intersect.Editor.Interface.Game.Spells
 
             mItemContainer = new ScrollControl(mSpellWindow, "SpellsContainer");
             mItemContainer.EnableScroll(false, true);
-            mSpellWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+            mSpellWindow.LoadJsonUi(GameContentManager.UI.InGame, Core.Graphics.Renderer.GetResolutionString());
 
             // Generate our context menu with basic options.
             mContextMenu = new Client.Framework.Gwen.Control.Menu(gameCanvas, "SpellContextMenu");
@@ -56,7 +56,7 @@ namespace Intersect.Editor.Interface.Game.Spells
             mUseSpellContextItem.Clicked += MUseSpellContextItem_Clicked;
             mForgetSpellContextItem = mContextMenu.AddItem(Strings.SpellContextMenu.Forget);
             mForgetSpellContextItem.Clicked += MForgetSpellContextItem_Clicked;
-            mContextMenu.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+            mContextMenu.LoadJsonUi(GameContentManager.UI.InGame, Core.Graphics.Renderer.GetResolutionString());
         }
 
         public void OpenContextMenu(int slot)
@@ -139,7 +139,7 @@ namespace Intersect.Editor.Interface.Game.Spells
                 Items[i].Container = new ImagePanel(mItemContainer, "Spell");
                 Items[i].Setup();
 
-                Items[i].Container.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+                Items[i].Container.LoadJsonUi(GameContentManager.UI.InGame, Core.Graphics.Renderer.GetResolutionString());
 
                 var xPadding = Items[i].Container.Margin.Left + Items[i].Container.Margin.Right;
                 var yPadding = Items[i].Container.Margin.Top + Items[i].Container.Margin.Bottom;

@@ -71,7 +71,7 @@ namespace Intersect.Editor.Interface.Menu
             mMenuCanvas = menuCanvas;
 
             var logo = new ImagePanel(menuCanvas, "Logo");
-            logo.LoadJsonUi(GameContentManager.UI.Menu, Graphics.Renderer.GetResolutionString());
+            logo.LoadJsonUi(GameContentManager.UI.Menu, Core.Graphics.Renderer.GetResolutionString());
 
             //Main Menu Window
             mMenuWindow = new ImagePanel(menuCanvas, "MenuWindow");
@@ -123,7 +123,7 @@ namespace Intersect.Editor.Interface.Menu
                 mSettingsButton.SetToolTipText(Strings.MainMenu.SettingsTooltip);
             }
 
-            mMenuWindow.LoadJsonUi(GameContentManager.UI.Menu, Graphics.Renderer.GetResolutionString());
+            mMenuWindow.LoadJsonUi(GameContentManager.UI.Menu, Core.Graphics.Renderer.GetResolutionString());
 
             //Settings Controls
             mSettingsWindow = new SettingsWindow(menuCanvas, this, null);

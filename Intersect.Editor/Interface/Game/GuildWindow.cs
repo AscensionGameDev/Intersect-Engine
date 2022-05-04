@@ -112,8 +112,8 @@ namespace Intersect.Editor.Interface.Game
 
             UpdateList();
 
-            mContextMenu.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
-            mGuildWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+            mContextMenu.LoadJsonUi(GameContentManager.UI.InGame, Core.Graphics.Renderer.GetResolutionString());
+            mGuildWindow.LoadJsonUi(GameContentManager.UI.InGame, Core.Graphics.Renderer.GetResolutionString());
 
             mAddButtonUsed = !mAddButton.IsHidden;
             mAddPopupButtonUsed = !mAddPopupButton.IsHidden;
@@ -204,7 +204,7 @@ namespace Intersect.Editor.Interface.Game
                 var str = f.Online ? Strings.Guilds.OnlineListEntry : Strings.Guilds.OfflineListEntry;
                 var row = mGuildMembers.AddRow(str.ToString(Options.Instance.Guild.Ranks[f.Rank].Title, f.Name, f.Map));
                 row.Name = "GuildMemberRow";
-                row.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+                row.LoadJsonUi(GameContentManager.UI.InGame, Core.Graphics.Renderer.GetResolutionString());
                 row.SetToolTipText(Strings.Guilds.Tooltip.ToString(f.Level, f.Class));
                 row.UserData = f;
                 row.Clicked += member_Clicked;

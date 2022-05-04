@@ -15,7 +15,7 @@ using Intersect.Editor.Networking;
 using Intersect.Configuration;
 using Intersect.Enums;
 using Intersect.Localization;
-using Intersect.Utilities;
+using Intersect.Time;
 
 namespace Intersect.Editor.Interface.Game.Chat
 {
@@ -152,7 +152,7 @@ namespace Intersect.Editor.Interface.Game.Chat
             mChatboxSendButton.Text = Strings.Chatbox.send;
             mChatboxSendButton.Clicked += ChatBoxSendBtn_Clicked;
 
-            mChatboxWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+            mChatboxWindow.LoadJsonUi(GameContentManager.UI.InGame, Core.Graphics.Renderer.GetResolutionString());
 
             mChatboxText.IsHidden = true;
 
@@ -179,7 +179,7 @@ namespace Intersect.Editor.Interface.Game.Chat
             mPartyInviteContextItem.Clicked += MPartyInviteContextItem_Clicked;
             mGuildInviteContextItem = mContextMenu.AddItem(Strings.ChatContextMenu.GuildInvite);
             mGuildInviteContextItem.Clicked += MGuildInviteContextItem_Clicked;
-            mContextMenu.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+            mContextMenu.LoadJsonUi(GameContentManager.UI.InGame, Core.Graphics.Renderer.GetResolutionString());
         }
 
         public void OpenContextMenu(string name)

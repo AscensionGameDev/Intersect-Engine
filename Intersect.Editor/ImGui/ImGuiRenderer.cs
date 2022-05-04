@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
@@ -357,16 +357,12 @@ namespace ImGuiNET.SampleProgram.XNA
                     {
                         pass.Apply();
 
-#pragma warning disable CS0618 // // FNA does not expose an alternative method.
                         _graphicsDevice.DrawIndexedPrimitives(
                             primitiveType: PrimitiveType.TriangleList,
                             baseVertex: vtxOffset,
-                            minVertexIndex: 0,
-                            numVertices: cmdList.VtxBuffer.Size,
                             startIndex: idxOffset,
                             primitiveCount: (int)drawCmd.ElemCount / 3
                         );
-#pragma warning restore CS0618
                     }
 
                     idxOffset += (int)drawCmd.ElemCount;

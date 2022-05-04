@@ -1,6 +1,6 @@
 ﻿using Intersect.Client.Framework.Maps;
 using Intersect.Client.General;
-using Intersect.Utilities;
+using Intersect.Time;
 
 namespace Intersect.Client.Maps
 {

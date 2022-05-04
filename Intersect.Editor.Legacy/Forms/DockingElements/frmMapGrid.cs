@@ -79,19 +79,19 @@ namespace Intersect.Editor.Forms.DockingElements
                     mChain.Dispose();
                 }
 
-                if (Graphics.GetGraphicsDevice() != null)
+                if (Core.Graphics.GetGraphicsDevice() != null)
                 {
                     if (pnlMapGrid.Width > 0 && pnlMapGrid.Height > 0)
                     {
                         if (pnlMapGrid.Width > 0 && pnlMapGrid.Height > 0)
                         {
                             mChain = new SwapChainRenderTarget(
-                                Graphics.GetGraphicsDevice(), pnlMapGrid.Handle, pnlMapGrid.Width, pnlMapGrid.Height,
+                                Core.Graphics.GetGraphicsDevice(), pnlMapGrid.Handle, pnlMapGrid.Width, pnlMapGrid.Height,
                                 false, SurfaceFormat.Color, DepthFormat.Depth24, 0, RenderTargetUsage.DiscardContents,
                                 PresentInterval.Immediate
                             );
 
-                            Graphics.SetMapGridChain(mChain);
+                            Core.Graphics.SetMapGridChain(mChain);
                         }
                     }
                 }

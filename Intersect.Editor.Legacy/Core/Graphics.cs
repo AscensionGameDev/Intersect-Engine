@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Windows.Forms;
+
 using Intersect.Config;
 using Intersect.Editor.Content;
 using Intersect.Editor.Entities;
@@ -13,6 +14,7 @@ using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps;
 using Intersect.Logging;
+using Intersect.Time;
 using Intersect.Utilities;
 
 using Microsoft.Xna.Framework;

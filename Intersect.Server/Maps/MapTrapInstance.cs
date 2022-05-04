@@ -5,7 +5,7 @@ using Intersect.Server.Entities;
 using Intersect.Server.Entities.Events;
 using Intersect.Server.General;
 using Intersect.Server.Maps;
-using Intersect.Utilities;
+using Intersect.Time;
 
 namespace Intersect.Server.Classes.Maps
 {

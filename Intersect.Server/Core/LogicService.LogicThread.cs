@@ -18,7 +18,7 @@ using Newtonsoft.Json;
 using Intersect.Server.Networking;
 using Intersect.Server.Networking.Lidgren;
 using Intersect.Server.Database.PlayerData.Players;
-using Intersect.Utilities;
+using Intersect.Time;
 
 namespace Intersect.Server.Core
 {
@@ -204,7 +204,7 @@ namespace Intersect.Server.Core
                             }                            
                         }
 
-                        Time.Update();
+                        General.Time.Update();
                         swCps++;
 
                         var endTime = Timing.Global.Milliseconds;

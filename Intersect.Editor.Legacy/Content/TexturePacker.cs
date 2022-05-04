@@ -93,7 +93,7 @@ namespace Intersect.Editor.Classes.ContentManagement
             var img = new Bitmap(binWidth, binHeight);
             var maxUsedWidth = 0;
             var maxUsedHeight = 0;
-            var g = Graphics.FromImage(img);
+            var g = System.Drawing.Graphics.FromImage(img);
             var frames = new JArray();
 
             foreach (var tex in textures)
@@ -165,7 +165,7 @@ namespace Intersect.Editor.Classes.ContentManagement
             if (maxUsedWidth > 0 && maxUsedHeight > 0)
             {
                 var croppedImg = new Bitmap(maxUsedWidth, maxUsedHeight);
-                var g1 = Graphics.FromImage(croppedImg);
+                var g1 = System.Drawing.Graphics.FromImage(croppedImg);
                 g1.DrawImage(
                     img, new RectangleF(0, 0, maxUsedWidth, maxUsedHeight),
                     new RectangleF(0, 0, maxUsedWidth, maxUsedHeight), GraphicsUnit.Pixel

@@ -1066,7 +1066,7 @@ namespace Intersect.Editor.Forms.Editors
         private void DrawItemIcon()
         {
             var picItemBmp = new Bitmap(picItem.Width, picItem.Height);
-            var gfx = Graphics.FromImage(picItemBmp);
+            var gfx = System.Drawing.Graphics.FromImage(picItemBmp);
             gfx.FillRectangle(Brushes.Black, new Rectangle(0, 0, picItem.Width, picItem.Height));
             if (cmbPic.SelectedIndex > 0)
             {
@@ -1126,7 +1126,7 @@ namespace Intersect.Editor.Forms.Editors
             }
 
             var picItemBmp = new Bitmap(picPaperdoll.Width, picPaperdoll.Height);
-            var gfx = Graphics.FromImage(picItemBmp);
+            var gfx = System.Drawing.Graphics.FromImage(picItemBmp);
             gfx.FillRectangle(Brushes.Black, new Rectangle(0, 0, picPaperdoll.Width, picPaperdoll.Height));
             if (cmbPaperdoll.SelectedIndex > 0)
             {

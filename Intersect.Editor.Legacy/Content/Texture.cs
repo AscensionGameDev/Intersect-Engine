@@ -1,6 +1,6 @@
 using Intersect.IO.Files;
 using Intersect.Logging;
-using Intersect.Utilities;
+using Intersect.Time;
 
 using Microsoft.Xna.Framework.Graphics;
 
@@ -51,7 +51,7 @@ namespace Intersect.Editor.Content
             {
                 try
                 {
-                    mTexture = Texture2D.FromStream(Graphics.GetGraphicsDevice(), fileStream);
+                    mTexture = Texture2D.FromStream(Core.Graphics.GetGraphicsDevice(), fileStream);
                     if (mTexture == null)
                     {
                         Log.Error($"Failed to load texture due to unknown error: {relativePath}");

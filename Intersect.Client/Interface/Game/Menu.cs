@@ -131,7 +131,7 @@ namespace Intersect.Client.Interface.Game
             mMenuButton.SetToolTipText(Strings.GameMenu.Menu);
             mMenuButton.Clicked += MenuButtonClicked;
 
-            mMenuContainer.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+            mMenuContainer.LoadJsonUi(GameContentManager.UI.InGame, Core.Graphics.Renderer.GetResolutionString());
 
             //Assign Window References
             mPartyWindow = new PartyWindow(gameCanvas);

@@ -14,6 +14,7 @@ using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Utilities;
 using Intersect.Client.General;
+using Intersect.Time;
 
 namespace Intersect.Editor.Core
 {
@@ -1074,8 +1075,8 @@ namespace Intersect.Editor.Core
                     Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1),
                     new FloatRect(0, 0, sDarknessTexture.GetWidth(), sDarknessTexture.GetHeight()),
                     new Color(
-                        (int) Time.GetTintColor().A, (int) Time.GetTintColor().R, (int) Time.GetTintColor().G,
-                        (int) Time.GetTintColor().B
+                        (int) General.Time.GetTintColor().A, (int) General.Time.GetTintColor().R, (int) General.Time.GetTintColor().G,
+                        (int) General.Time.GetTintColor().B
                     ), sDarknessTexture, GameBlendModes.None
                 );
             }

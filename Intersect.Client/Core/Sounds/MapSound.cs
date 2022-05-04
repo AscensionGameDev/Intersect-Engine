@@ -1,4 +1,5 @@
-﻿using System;
+using System;
+
 using Intersect.Client.Framework.Core.Sounds;
 using Intersect.Client.Framework.Entities;
 using Intersect.Client.Framework.GenericClasses;

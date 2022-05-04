@@ -106,7 +106,7 @@ namespace Intersect.Client.Interface.Menu
             mBackBtn.SetText(Strings.ResetPass.back);
             mBackBtn.Clicked += BackBtn_Clicked;
 
-            mResetWindow.LoadJsonUi(GameContentManager.UI.Menu, Graphics.Renderer.GetResolutionString());
+            mResetWindow.LoadJsonUi(GameContentManager.UI.Menu, Core.Graphics.Renderer.GetResolutionString());
         }
 
         public bool IsHidden => mResetWindow.IsHidden;

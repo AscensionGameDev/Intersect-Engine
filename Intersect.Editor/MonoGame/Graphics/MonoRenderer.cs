@@ -9,7 +9,6 @@ using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Editor.General;
 using Intersect.Editor.Localization;
-using Intersect.Utilities;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -17,6 +16,8 @@ using Microsoft.Xna.Framework.Graphics;
 
 using XNARectangle = Microsoft.Xna.Framework.Rectangle;
 using XNAColor = Microsoft.Xna.Framework.Color;
+using Intersect.Time;
+using Effect = Microsoft.Xna.Framework.Graphics.Effect;
 
 namespace Intersect.Editor.MonoGame.Graphics
 {
@@ -62,7 +63,7 @@ namespace Intersect.Editor.MonoGame.Graphics
 
         private GraphicsDeviceManager mGraphics;
 
-        private GraphicsDevice mGraphicsDevice;
+        private Microsoft.Xna.Framework.Graphics.GraphicsDevice mGraphicsDevice;
 
         private bool mInitialized;
 
@@ -818,7 +819,7 @@ namespace Intersect.Editor.MonoGame.Graphics
             mInitializing = false;
         }
 
-        public void Init(GraphicsDevice graphicsDevice)
+        public void Init(Microsoft.Xna.Framework.Graphics.GraphicsDevice graphicsDevice)
         {
             mGraphicsDevice = graphicsDevice;
             mBasicEffect = new BasicEffect(mGraphicsDevice);

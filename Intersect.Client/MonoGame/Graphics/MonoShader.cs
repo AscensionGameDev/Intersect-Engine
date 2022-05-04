@@ -1,12 +1,14 @@
-﻿using Intersect.Client.Framework.GenericClasses;
+using System.Collections.Generic;
+using System.IO;
+
+using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 using Intersect.IO.Files;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.Graphics;
-using System.Collections.Generic;
-using System.IO;
+
+using Effect = Microsoft.Xna.Framework.Graphics.Effect;
 
 namespace Intersect.Client.MonoGame.Graphics
 {

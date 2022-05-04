@@ -8,10 +8,10 @@ using Intersect.Configuration;
 using Intersect.Logging;
 using Intersect.Network;
 using Intersect.Network.Packets;
-using Intersect.Utilities;
 using Intersect.Client.Networking;
 using Intersect.Client.Core;
 using Intersect.Rsa;
+using Intersect.Time;
 
 namespace Intersect.Client.MonoGame.Network
 {

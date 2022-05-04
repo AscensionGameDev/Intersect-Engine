@@ -10,6 +10,7 @@
     <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
     <RootNamespace>Intersect.Client.Framework</RootNamespace>
     <AssemblyName>Intersect.Client.Framework</AssemblyName>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <ItemGroup>

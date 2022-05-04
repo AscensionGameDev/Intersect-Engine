@@ -9,7 +9,7 @@ using Intersect.Client.General;
 using Intersect.Client.Interface.Game.DescriptionWindows;
 using Intersect.Configuration;
 using Intersect.GameObjects;
-using Intersect.Utilities;
+using Intersect.Time;
 
 namespace Intersect.Client.Interface.Game.Trades
 {

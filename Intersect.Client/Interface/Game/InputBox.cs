@@ -228,7 +228,7 @@ namespace Intersect.Client.Interface.Game
         {
             if (!mInitialized)
             {
-                mMyWindow.LoadJsonUi(_uiStage, Graphics.Renderer.GetResolutionString(), true);
+                mMyWindow.LoadJsonUi(_uiStage, Core.Graphics.Renderer.GetResolutionString(), true);
                 var text = Interface.WrapText(mPrompt, mPromptLabel.Width, mPromptLabel.Font);
                 var y = mPromptLabel.Y;
                 foreach (var s in text)

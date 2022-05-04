@@ -13,7 +13,7 @@ using Intersect.Client.General;
 using Intersect.Client.Interface.Game;
 using Intersect.Client.Interface.Menu;
 using Intersect.Client.Localization;
-using Intersect.Utilities;
+using Intersect.Time;
 
 using static Intersect.Client.Framework.File_Management.GameContentManager;
 
@@ -226,7 +226,7 @@ namespace Intersect.Client.Interface.Shared
 
             // Video Settings - Resolution List.
             mResolutionList = new ComboBox(mResolutionBackground, "ResolutionCombobox");
-            var myModes = Graphics.Renderer.GetValidVideoModes();
+            var myModes = Core.Graphics.Renderer.GetValidVideoModes();
             myModes?.ForEach(
                 t =>
                 {
@@ -314,7 +314,7 @@ namespace Intersect.Client.Interface.Shared
             mKeybindingRestoreBtn.Text = Strings.Settings.Restore;
             mKeybindingRestoreBtn.Clicked += KeybindingsRestoreBtn_Clicked;
 
-            // Keybinding Settings - Controls 
+            // Keybinding Settings - Controls
             var row = 0;
             var defaultFont = GameContentManager.Current?.GetFont("sourcesansproblack", 16);
             foreach (Control control in Enum.GetValues(typeof(Control)))
@@ -357,7 +357,7 @@ namespace Intersect.Client.Interface.Shared
 
             #endregion
 
-            mSettingsPanel.LoadJsonUi(UI.Shared, Graphics.Renderer.GetResolutionString());
+            mSettingsPanel.LoadJsonUi(UI.Shared, Core.Graphics.Renderer.GetResolutionString());
         }
 
         private void GameSettingsTab_Clicked(Base sender, ClickedEventArgs arguments)
@@ -547,10 +547,10 @@ namespace Intersect.Client.Interface.Shared
             }
 
             mKeybindingEditControls = new Controls(Controls.ActiveControls);
-            if (Graphics.Renderer.GetValidVideoModes().Count > 0)
+            if (Core.Graphics.Renderer.GetValidVideoModes().Count > 0)
             {
                 string resolutionLabel;
-                if (Graphics.Renderer.HasOverrideResolution)
+                if (Core.Graphics.Renderer.HasOverrideResolution)
                 {
                     resolutionLabel = Strings.Settings.ResolutionCustom;
 
@@ -563,7 +563,7 @@ namespace Intersect.Client.Interface.Shared
                 }
                 else
                 {
-                    resolutionLabel = Graphics.Renderer.GetValidVideoModes()[Globals.Database.TargetResolution];
+                    resolutionLabel = Core.Graphics.Renderer.GetValidVideoModes()[Globals.Database.TargetResolution];
                 }
 
                 mResolutionList.SelectByText(resolutionLabel);
@@ -712,12 +712,12 @@ namespace Intersect.Client.Interface.Shared
         {
             var shouldReset = false;
             var resolution = mResolutionList.SelectedItem;
-            var validVideoModes = Graphics.Renderer.GetValidVideoModes();
+            var validVideoModes = Core.Graphics.Renderer.GetValidVideoModes();
             var targetResolution = validVideoModes?.FindIndex(videoMode => string.Equals(videoMode, resolution.Text)) ?? -1;
 
             if (targetResolution > -1)
             {
-                shouldReset = Globals.Database.TargetResolution != targetResolution || Graphics.Renderer.HasOverrideResolution;
+                shouldReset = Globals.Database.TargetResolution != targetResolution || Core.Graphics.Renderer.HasOverrideResolution;
                 Globals.Database.TargetResolution = targetResolution;
             }
 
@@ -799,8 +799,8 @@ namespace Intersect.Client.Interface.Shared
             if (shouldReset)
             {
                 mCustomResolutionMenuItem?.Hide();
-                Graphics.Renderer.OverrideResolution = Resolution.Empty;
-                Graphics.Renderer.Init();
+                Core.Graphics.Renderer.OverrideResolution = Resolution.Empty;
+                Core.Graphics.Renderer.Init();
             }
 
             // Hide our current window.

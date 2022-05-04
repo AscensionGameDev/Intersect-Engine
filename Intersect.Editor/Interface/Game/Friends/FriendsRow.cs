@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 using Intersect.Editor.Core;
 using Intersect.Editor.Networking;
@@ -44,7 +44,7 @@ namespace Intersect.Editor.Interface.Game
 
             // Generate our layout controls and load the layout from our json files.
             GenerateControls();
-            mRowContainer.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+            mRowContainer.LoadJsonUi(GameContentManager.UI.InGame, Core.Graphics.Renderer.GetResolutionString());
 
             // Update our display.
             UpdateControls();

@@ -57,7 +57,7 @@ namespace Intersect.Client.Interface.Game
             mDeclineButton.SetText(Strings.QuestOffer.decline);
             mDeclineButton.Clicked += _declineButton_Clicked;
 
-            mQuestOfferWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+            mQuestOfferWindow.LoadJsonUi(GameContentManager.UI.InGame, Core.Graphics.Renderer.GetResolutionString());
             Interface.InputBlockingElements.Add(mQuestOfferWindow);
         }
 

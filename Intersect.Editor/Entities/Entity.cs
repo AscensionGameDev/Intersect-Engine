@@ -22,7 +22,7 @@ using Intersect.GameObjects;
 using Intersect.GameObjects.Maps;
 using Intersect.Logging;
 using Intersect.Network.Packets.Server;
-using Intersect.Utilities;
+using Intersect.Time;
 
 namespace Intersect.Editor.Entities
 {
@@ -864,15 +864,15 @@ namespace Intersect.Editor.Entities
 
                             if (y == gridY - 1)
                             {
-                                renderSet = Graphics.RenderingEntities[priority, Options.MapHeight + Y];
+                                renderSet = Core.Graphics.RenderingEntities[priority, Options.MapHeight + Y];
                             }
                             else if (y == gridY)
                             {
-                                renderSet = Graphics.RenderingEntities[priority, Options.MapHeight * 2 + Y];
+                                renderSet = Core.Graphics.RenderingEntities[priority, Options.MapHeight * 2 + Y];
                             }
                             else
                             {
-                                renderSet = Graphics.RenderingEntities[priority, Options.MapHeight * 3 + Y];
+                                renderSet = Core.Graphics.RenderingEntities[priority, Options.MapHeight * 3 + Y];
                             }
 
                             renderSet.Add(this);
@@ -991,7 +991,7 @@ namespace Intersect.Editor.Entities
                 //Check for player
                 if (string.Equals("Player", paperdoll, StringComparison.Ordinal))
                 {
-                    Graphics.DrawGameTexture(texture, srcRectangle, destRectangle, renderColor);
+                    Core.Graphics.DrawGameTexture(texture, srcRectangle, destRectangle, renderColor);
                 }
                 else if (equipSlot > -1)
                 {
@@ -1093,7 +1093,7 @@ namespace Intersect.Editor.Entities
                 srcRectangle.Height
             );
 
-            Graphics.DrawGameTexture(paperdollTex, srcRectangle, destRectangle, renderColor);
+            Core.Graphics.DrawGameTexture(paperdollTex, srcRectangle, destRectangle, renderColor);
         }
 
         protected virtual bool CalculateOrigin()
@@ -1170,21 +1170,21 @@ namespace Intersect.Editor.Entities
                 textColor = labelColor;
             }
 
-            var textSize = Graphics.Renderer.MeasureText(label, Graphics.EntityNameFont, 1);
+            var textSize = Core.Graphics.Renderer.MeasureText(label, Core.Graphics.EntityNameFont, 1);
 
             var x = (int)Math.Ceiling(Origin.X);
             var y = position == 0 ? GetLabelLocation(LabelType.Header) : GetLabelLocation(LabelType.Footer);
 
             if (backgroundColor != Color.Transparent)
             {
-                Graphics.DrawGameTexture(
-                    Graphics.Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1),
+                Core.Graphics.DrawGameTexture(
+                    Core.Graphics.Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1),
                     new FloatRect(x - textSize.X / 2f - 4, y, textSize.X + 8, textSize.Y), backgroundColor
                 );
             }
 
-            Graphics.Renderer.DrawString(
-                label, Graphics.EntityNameFont, (int)(x - (int)Math.Ceiling(textSize.X / 2f)), (int)y, 1,
+            Core.Graphics.Renderer.DrawString(
+                label, Core.Graphics.EntityNameFont, (int)(x - (int)Math.Ceiling(textSize.X / 2f)), (int)y, 1,
                 Color.FromArgb(textColor.ToArgb()), true, null, Color.FromArgb(borderColor.ToArgb())
             );
         }
@@ -1255,21 +1255,21 @@ namespace Intersect.Editor.Entities
                 name = Strings.GameWindow.EntityNameAndLevel.ToString(Name, Level);
             }
 
-            var textSize = Graphics.Renderer.MeasureText(name, Graphics.EntityNameFont, 1);
+            var textSize = Core.Graphics.Renderer.MeasureText(name, Core.Graphics.EntityNameFont, 1);
 
             var x = (int)Math.Ceiling(Origin.X);
             var y = GetLabelLocation(LabelType.Name);
 
             if (backgroundColor != Color.Transparent)
             {
-                Graphics.DrawGameTexture(
-                    Graphics.Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1),
+                Core.Graphics.DrawGameTexture(
+                    Core.Graphics.Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1),
                     new FloatRect(x - textSize.X / 2f - 4, y, textSize.X + 8, textSize.Y), backgroundColor
                 );
             }
 
-            Graphics.Renderer.DrawString(
-                name, Graphics.EntityNameFont, (int)(x - (int)Math.Ceiling(textSize.X / 2f)), (int)y, 1,
+            Core.Graphics.Renderer.DrawString(
+                name, Core.Graphics.EntityNameFont, (int)(x - (int)Math.Ceiling(textSize.X / 2f)), (int)y, 1,
                 Color.FromArgb(textColor.ToArgb()), true, null, Color.FromArgb(borderColor.ToArgb())
             );
         }
@@ -1294,7 +1294,7 @@ namespace Intersect.Editor.Entities
                         break;
                     }
 
-                    var headerSize = Graphics.Renderer.MeasureText(HeaderLabel.Text, Graphics.EntityNameFont, 1);
+                    var headerSize = Core.Graphics.Renderer.MeasureText(HeaderLabel.Text, Core.Graphics.EntityNameFont, 1);
                     y -= headerSize.Y + 2;
                     break;
 
@@ -1304,13 +1304,13 @@ namespace Intersect.Editor.Entities
                         break;
                     }
 
-                    var footerSize = Graphics.Renderer.MeasureText(FooterLabel.Text, Graphics.EntityNameFont, 1);
+                    var footerSize = Core.Graphics.Renderer.MeasureText(FooterLabel.Text, Core.Graphics.EntityNameFont, 1);
                     y -= footerSize.Y - 6;
                     break;
 
                 case LabelType.Name:
                     y = GetLabelLocation(LabelType.Footer);
-                    var nameSize = Graphics.Renderer.MeasureText(Name, Graphics.EntityNameFont, 1);
+                    var nameSize = Core.Graphics.Renderer.MeasureText(Name, Core.Graphics.EntityNameFont, 1);
                     y -= nameSize.Y + (string.IsNullOrEmpty(FooterLabel.Text) ? -6 : 2);
                     break;
 
@@ -1336,7 +1336,7 @@ namespace Intersect.Editor.Entities
                             break;
                         }
 
-                        var guildSize = Graphics.Renderer.MeasureText(player.Guild, Graphics.EntityNameFont, 1);
+                        var guildSize = Core.Graphics.Renderer.MeasureText(player.Guild, Core.Graphics.EntityNameFont, 1);
                         y -= 2 + guildSize.Y;
                     }
                     break;
@@ -1459,7 +1459,7 @@ namespace Intersect.Editor.Entities
 
             if (hpBackground != null)
             {
-                Graphics.DrawGameTexture(
+                Core.Graphics.DrawGameTexture(
                     hpBackground, new FloatRect(0, 0, hpBackground.Width, hpBackground.Height),
                     new FloatRect(x - hpBackground.Width / 2, y - hpBackground.Height / 2, hpBackground.Width, hpBackground.Height), Color.White
                 );
@@ -1467,7 +1467,7 @@ namespace Intersect.Editor.Entities
 
             if (hpForeground != null)
             {
-                Graphics.DrawGameTexture(
+                Core.Graphics.DrawGameTexture(
                     hpForeground,
                     new FloatRect(0, 0, hpFillWidth, hpForeground.Height),
                     new FloatRect(x - foregroundBoundingTexture.Width / 2, y - hpForeground.Height / 2, hpFillWidth, hpForeground.Height), Color.White
@@ -1477,7 +1477,7 @@ namespace Intersect.Editor.Entities
             if (shieldSize > 0 && shieldForeground != null) //Check for a shield to render
             {
                 var shieldFillRatio = shieldFillWidth / (float)foregroundBoundingTexture.Width;
-                Graphics.DrawGameTexture(
+                Core.Graphics.DrawGameTexture(
                     shieldForeground,
                     new FloatRect(shieldForeground.Width * (1 - shieldFillRatio), 0, shieldForeground.Width * shieldFillRatio, shieldForeground.Height),
                     new FloatRect(x - foregroundBoundingTexture.Width / 2 + hpFillWidth, y - shieldForeground.Height / 2, shieldFillWidth, shieldForeground.Height), Color.White
@@ -1515,7 +1515,7 @@ namespace Intersect.Editor.Entities
 
             if (castBackground != null)
             {
-                Graphics.DrawGameTexture(
+                Core.Graphics.DrawGameTexture(
                     castBackground, new FloatRect(0, 0, castBackground.Width, castBackground.Height),
                     new FloatRect(x - castBackground.Width / 2, y - castBackground.Height / 2, castBackground.Width, castBackground.Height), Color.White
                 );
@@ -1523,7 +1523,7 @@ namespace Intersect.Editor.Entities
 
             if (castForeground != null)
             {
-                Graphics.DrawGameTexture(
+                Core.Graphics.DrawGameTexture(
                     castForeground,
                     new FloatRect(0, 0, castForeground.GetWidth() * fillRatio, castForeground.Height),
                     new FloatRect(x - castForeground.Width / 2, y - castForeground.Height / 2, castForeground.Width * fillRatio, castForeground.Height), Color.White
@@ -1561,7 +1561,7 @@ namespace Intersect.Editor.Entities
                 srcRectangle.Height
             );
 
-            Graphics.DrawGameTexture(targetTexture, srcRectangle, destRectangle, Color.White);
+            Core.Graphics.DrawGameTexture(targetTexture, srcRectangle, destRectangle, Color.White);
         }
 
         public virtual bool CanBeAttacked()

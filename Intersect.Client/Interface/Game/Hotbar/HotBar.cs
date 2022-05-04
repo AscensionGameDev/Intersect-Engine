@@ -28,13 +28,13 @@ namespace Intersect.Client.Interface.Game.Hotbar
             HotbarWindow = new ImagePanel(gameCanvas, "HotbarWindow");
             HotbarWindow.ShouldCacheToTexture = true;
             InitHotbarItems();
-            HotbarWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+            HotbarWindow.LoadJsonUi(GameContentManager.UI.InGame, Core.Graphics.Renderer.GetResolutionString());
 
             for (var i = 0; i < Items.Count; i++)
             {
                 if (Items[i].EquipPanel.Texture == null)
                 {
-                    Items[i].EquipPanel.Texture = Graphics.Renderer.GetWhiteTexture();
+                    Items[i].EquipPanel.Texture = Core.Graphics.Renderer.GetWhiteTexture();
                 }
             }
         }

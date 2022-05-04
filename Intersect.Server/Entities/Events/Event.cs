@@ -9,7 +9,7 @@ using Intersect.Server.General;
 using Intersect.Server.Localization;
 using Intersect.Server.Maps;
 using Intersect.Server.Networking;
-using Intersect.Utilities;
+using Intersect.Time;
 
 namespace Intersect.Server.Entities.Events
 {

@@ -158,7 +158,7 @@ namespace Intersect.Client.Interface.Game
             mLeaveButton.SetToolTipText(Strings.Parties.leavetip);
             mLeaveButton.Clicked += leave_Clicked;
 
-            mPartyWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+            mPartyWindow.LoadJsonUi(GameContentManager.UI.InGame, Core.Graphics.Renderer.GetResolutionString());
         }
 
         //Methods

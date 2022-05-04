@@ -14,7 +14,7 @@ using Intersect.Client.Items;
 using Intersect.Client.Localization;
 using Intersect.Client.Spells;
 using Intersect.GameObjects;
-using Intersect.Utilities;
+using Intersect.Time;
 
 namespace Intersect.Client.Interface.Game.Hotbar
 {
@@ -102,7 +102,7 @@ namespace Intersect.Client.Interface.Game.Hotbar
             mContentPanel.Clicked += pnl_Clicked;
 
             EquipPanel = new ImagePanel(mContentPanel, "HotbarEquipedIcon" + mYindex);
-            EquipPanel.Texture = Graphics.Renderer.GetWhiteTexture();
+            EquipPanel.Texture = Core.Graphics.Renderer.GetWhiteTexture();
             EquipLabel = new Label(Pnl, "HotbarEquippedLabel" + mYindex);
             EquipLabel.IsHidden = true;
             EquipLabel.Text = Strings.Inventory.EquippedSymbol;
@@ -238,7 +238,7 @@ namespace Intersect.Client.Interface.Game.Hotbar
                         Strings.Keys.keydict[Enum.GetName(typeof(Keys), keybind.Key).ToLower()]
                     );
                 }
-                
+
 
                 mHotKey = keybind;
             }
@@ -441,11 +441,11 @@ namespace Intersect.Client.Interface.Game.Hotbar
                     {
                         mContentPanel.RenderColor = new Color(100, 255, 255, 255);
                     }
-                    
+
                     if (mCurrentItem != null)
                     {
                         mContentPanel.RenderColor = new Color(100, mCurrentItem.Color.R, mCurrentItem.Color.G, mCurrentItem.Color.B);
-                    } 
+                    }
                 }
                 else
                 {
@@ -453,7 +453,7 @@ namespace Intersect.Client.Interface.Game.Hotbar
                     {
                         mContentPanel.RenderColor = Color.White;
                     }
-                    
+
                     if (mCurrentItem != null)
                     {
                         mContentPanel.RenderColor = mCurrentItem.Color;

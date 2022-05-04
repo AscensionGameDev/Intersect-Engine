@@ -5,7 +5,7 @@ using System.Web.Http;
 using Intersect.Server.General;
 using Intersect.Server.Metrics;
 using Intersect.Server.Web.RestApi.Attributes;
-using Intersect.Utilities;
+using Intersect.Time;
 
 namespace Intersect.Server.Web.RestApi.Routes.V1
 {

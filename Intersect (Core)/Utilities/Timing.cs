@@ -1,7 +1,7 @@
-﻿using System;
+using System;
 using System.Runtime.CompilerServices;
 
-namespace Intersect.Utilities
+namespace Intersect.Time
 {
     /// <summary>
     /// Utility class for timing.

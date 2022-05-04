@@ -1,7 +1,8 @@
 ﻿using System;
+
 using Intersect.Client.Framework.Entities;
 using Intersect.Editor.Maps;
-using Intersect.Utilities;
+using Intersect.Time;
 
 namespace Intersect.Editor.Entities
 {

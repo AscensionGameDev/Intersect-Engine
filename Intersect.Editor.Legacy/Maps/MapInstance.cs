@@ -202,9 +202,9 @@ namespace Intersect.Editor.Maps
                     Globals.CurrentMap = this;
                     using (var ms = new MemoryStream())
                     {
-                        lock (Graphics.GraphicsLock)
+                        lock (Core.Graphics.GraphicsLock)
                         {
-                            var screenshotTexture = Graphics.ScreenShotMap();
+                            var screenshotTexture = Core.Graphics.ScreenShotMap();
                             screenshotTexture.Save(ms, ImageFormat.Png);
                             ms.Close();
                         }

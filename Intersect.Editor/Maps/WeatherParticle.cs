@@ -6,7 +6,7 @@ using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Maps;
 using Intersect.Editor.General;
 using Intersect.GameObjects;
-using Intersect.Utilities;
+using Intersect.Time;
 
 namespace Intersect.Editor.Maps
 {
@@ -43,7 +43,7 @@ namespace Intersect.Editor.Maps
         public WeatherParticle(List<IWeatherParticle> RemoveParticle, int xvelocity, int yvelocity, AnimationBase anim)
         {
             TransmittionTimer = Timing.Global.Milliseconds;
-            bounds = new Rectangle(0, 0, Graphics.Renderer.GetScreenWidth(), Graphics.Renderer.GetScreenHeight());
+            bounds = new Rectangle(0, 0, Core.Graphics.Renderer.GetScreenWidth(), Core.Graphics.Renderer.GetScreenHeight());
 
             xVelocity = xvelocity;
             yVelocity = yvelocity;
@@ -55,19 +55,19 @@ namespace Intersect.Editor.Maps
             if (xVelocity > 0)
             {
                 originalX = Globals.Random.Next(
-                    -Graphics.Renderer.GetScreenWidth() / 4 - animSize.X,
-                    Graphics.Renderer.GetScreenWidth() + animSize.X
+                    -Core.Graphics.Renderer.GetScreenWidth() / 4 - animSize.X,
+                    Core.Graphics.Renderer.GetScreenWidth() + animSize.X
                 );
             }
             else if (xVelocity < 0)
             {
                 originalX = Globals.Random.Next(
-                    animSize.X, (int)(Graphics.Renderer.GetScreenWidth() * 1.25f) + animSize.X
+                    animSize.X, (int)(Core.Graphics.Renderer.GetScreenWidth() * 1.25f) + animSize.X
                 );
             }
             else
             {
-                originalX = Globals.Random.Next(-animSize.X, Graphics.Renderer.GetScreenWidth() + animSize.X);
+                originalX = Globals.Random.Next(-animSize.X, Core.Graphics.Renderer.GetScreenWidth() + animSize.X);
             }
 
             if (yVelocity > 0)
@@ -76,18 +76,18 @@ namespace Intersect.Editor.Maps
             }
             else if (yVelocity < 0)
             {
-                originalY = Graphics.Renderer.GetScreenHeight() + animSize.Y;
+                originalY = Core.Graphics.Renderer.GetScreenHeight() + animSize.Y;
             }
             else
             {
-                originalY = Globals.Random.Next(-animSize.Y, Graphics.Renderer.GetScreenHeight() + animSize.Y);
+                originalY = Globals.Random.Next(-animSize.Y, Core.Graphics.Renderer.GetScreenHeight() + animSize.Y);
                 if (xVelocity > 0)
                 {
                     originalX = -animSize.X;
                 }
                 else if (xVelocity < 0)
                 {
-                    originalX = Graphics.Renderer.GetScreenWidth();
+                    originalX = Core.Graphics.Renderer.GetScreenWidth();
                 }
             }
 
@@ -103,12 +103,12 @@ namespace Intersect.Editor.Maps
                 bounds.Height += Math.Abs(originalY);
             }
 
-            if (originalY > Graphics.Renderer.GetScreenHeight())
+            if (originalY > Core.Graphics.Renderer.GetScreenHeight())
             {
                 bounds.Height = originalY;
             }
 
-            if (originalX > Graphics.Renderer.GetScreenWidth())
+            if (originalX > Core.Graphics.Renderer.GetScreenWidth())
             {
                 bounds.Width = originalX;
             }
@@ -120,8 +120,8 @@ namespace Intersect.Editor.Maps
 
             X = originalX;
             Y = originalY;
-            cameraSpawnX = Graphics.Renderer.GetView().Left;
-            cameraSpawnY = Graphics.Renderer.GetView().Top;
+            cameraSpawnX = Core.Graphics.Renderer.GetView().Left;
+            cameraSpawnY = Core.Graphics.Renderer.GetView().Top;
             _RemoveParticle = RemoveParticle;
         }
 
@@ -129,8 +129,8 @@ namespace Intersect.Editor.Maps
         {
             //Check if out of bounds
             var newBounds = new Rectangle(
-                bounds.X + ((int)Graphics.Renderer.GetView().Left - (int)cameraSpawnX),
-                bounds.Y + ((int)Graphics.Renderer.GetView().Top - (int)cameraSpawnY), bounds.Width, bounds.Height
+                bounds.X + ((int)Core.Graphics.Renderer.GetView().Left - (int)cameraSpawnX),
+                bounds.Y + ((int)Core.Graphics.Renderer.GetView().Top - (int)cameraSpawnY), bounds.Width, bounds.Height
             );
 
             if (!newBounds.IntersectsWith(new Rectangle((int)X, (int)Y, partSize.X, partSize.Y)))

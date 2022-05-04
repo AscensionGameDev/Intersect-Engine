@@ -51,7 +51,7 @@ namespace Intersect.Client.Interface.Game.Bank
             mItemContainer = new ScrollControl(mBankWindow, "ItemContainer");
             mItemContainer.EnableScroll(false, true);
 
-            mBankWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+            mBankWindow.LoadJsonUi(GameContentManager.UI.InGame, Core.Graphics.Renderer.GetResolutionString());
             InitItemContainer();
             Close();
 
@@ -63,7 +63,7 @@ namespace Intersect.Client.Interface.Game.Bank
             mContextMenu.Children.Clear();
             mWithdrawContextItem = mContextMenu.AddItem(Strings.BankContextMenu.Withdraw);
             mWithdrawContextItem.Clicked += MWithdrawContextItem_Clicked;
-            mContextMenu.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+            mContextMenu.LoadJsonUi(GameContentManager.UI.InGame, Core.Graphics.Renderer.GetResolutionString());
         }
 
         public void OpenContextMenu(int slot)
@@ -190,8 +190,8 @@ namespace Intersect.Client.Interface.Game.Bank
                 var bankLabel = new Label(bankItem.Container, "BankItemValue");
                 bankLabel.Text = "";
 
-                bankItem.Container.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
-                
+                bankItem.Container.LoadJsonUi(GameContentManager.UI.InGame, Core.Graphics.Renderer.GetResolutionString());
+
                 Items.Add(bankItem);
                 mValues.Add(bankLabel);
             }
