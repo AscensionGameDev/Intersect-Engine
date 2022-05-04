@@ -1,10 +1,11 @@
+using Intersect.Client.Framework.UserInterface.Styling;
 using Intersect.Time;
 
 namespace Intersect.Client.Framework.UserInterface;
 
 public partial class Component
 {
-    public virtual void Draw(FrameTime frameTime)
+    public void Draw(FrameTime frameTime)
     {
         if (_dirty)
         {
@@ -15,16 +16,20 @@ public partial class Component
             _dirty = false;
         }
 
-        if (DrawBegin())
+        if (DisplayMode != DisplayMode.None)
         {
-            DrawBehindChildren(frameTime);
 
-            DrawChildren(frameTime);
+            if (DrawBegin())
+            {
+                DrawBehindChildren(frameTime);
 
-            DrawAboveChildren(frameTime);
+                DrawChildren(frameTime);
+
+                DrawAboveChildren(frameTime);
+            }
+
+            DrawEnd();
         }
-
-        DrawEnd();
     }
 
     protected virtual void DrawAboveChildren(FrameTime frameTime)

@@ -28,6 +28,10 @@ public struct Rectangle : IEquatable<Rectangle>
 
     public int Bottom => Y + Height;
 
+    public Point Position => new(X, Y);
+
+    public Point Size => new(Width, Height);
+
     public Rectangle(int width, int height)
         : this(0, 0, width, height)
     {

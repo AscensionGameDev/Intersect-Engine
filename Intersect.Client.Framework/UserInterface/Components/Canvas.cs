@@ -1,28 +1,20 @@
+using Intersect.Client.Framework.UserInterface.Styling;
 using ImGuiNET;
 
 namespace Intersect.Client.Framework.UserInterface.Components;
 
-public class Canvas : Component
+public class Canvas : Window
 {
     protected const ImGuiWindowFlags CanvasFlags = ImGuiWindowFlags.NoBackground | ImGuiWindowFlags.NoDecoration | ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoInputs;
 
-    public Canvas(string? name = default) : base(name)
+    public Canvas(string name) : base(name)
     {
-
-    }
-
-    protected override bool DrawBegin()
-    {
-        if (!ImGui.Begin(Name, CanvasFlags))
+        if (name == default)
         {
-            return false;
+            throw new ArgumentNullException(nameof(name));
         }
 
-        return true;
-    }
-
-    protected override void DrawEnd()
-    {
-        ImGui.End();
+        DisplayMode = DisplayMode.Block;
+        Flags = CanvasFlags;
     }
 }

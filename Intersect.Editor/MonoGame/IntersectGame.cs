@@ -32,6 +32,8 @@ using Intersect.Client.Framework.Graphics;
 
 using MainMenu = Intersect.Editor.Interface.Menu.MainMenu;
 using Texture = Intersect.Client.Framework.Graphics.Texture;
+using Window = Intersect.Client.Framework.UserInterface.Components.Window;
+using Menu = Intersect.Client.Framework.UserInterface.Components.Menu;
 
 namespace Intersect.Editor.MonoGame
 {
@@ -291,7 +293,26 @@ namespace Intersect.Editor.MonoGame
             // Then, bind it to an ImGui-friendly pointer, that we can use during regular ImGui.** calls (see below)
             _imGuiTexture = _imGuiRenderer.BindTexture(_xnaTexture);
 
-            _canvas = new Canvas();
+            _canvas = new Canvas("root");
+
+            var exitMenuItem = new MenuItem
+            {
+                Name = "Exit",
+                Shortcut = "x"
+            };
+            exitMenuItem.Selected += (s, e) => Exit();
+
+            _canvas.MenuBar.Menus.Add(new Menu("File")
+            {
+                Items = new()
+                {
+                    exitMenuItem
+                }
+            });
+            //_canvas.Children.Add(new ManualComponent(_customFont));
+
+            //var mainMenuWindow = new Window("main_menu");
+            //_canvas.Children.Add(mainMenuWindow);
 
             base.LoadContent();
         }
@@ -327,12 +348,24 @@ namespace Intersect.Editor.MonoGame
 
         private Canvas _canvas;
 
-        protected virtual void ImGuiLayout()
+        private class ManualComponent : Component
         {
+            private readonly ImFontPtr _customFont;
+
+            private int counter = 0;
+
+            public ManualComponent(ImFontPtr customFont)
             {
-                ImGui.Begin("canvas", ImGuiWindowFlags.NoBackground | ImGuiWindowFlags.NoDecoration | ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoInputs);
-                ImGui.SetWindowPos(new System.Numerics.Vector2(GraphicsDevice.Viewport.X, GraphicsDevice.Viewport.Y));
-                ImGui.SetWindowSize(new System.Numerics.Vector2(GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height));
+                _customFont = customFont;
+            }
+
+            protected override bool DrawBegin()
+            {
+                return true;
+            }
+
+            protected override void DrawBehindChildren(FrameTime frameTime)
+            {
                 ImGui.PushFont(_customFont);
                 ImGui.SetCursorPos(new System.Numerics.Vector2(100, 10));
                 var canvasHovered = ImGui.IsItemHovered(ImGuiHoveredFlags.ChildWindows);
@@ -353,7 +386,7 @@ namespace Intersect.Editor.MonoGame
                 ImGui.Text("FfGgHhJjKkMmPpQqRrTtVvWwXx\n    /mnt/c/Users/Me/git/romkatv/nerd-fonts    \nЛорем ипсум долор сит амет\nΛορεμ ιπσθμ δολορ σιτ αμετ");
                 ImGui.PopFont();
                 ImGui.Begin("test");
-                ImGui.Button("test " + counter);
+                ImGui.Button($"test {counter}");
                 if (ImGui.IsItemHovered())
                 {
                     ++counter;
@@ -362,8 +395,51 @@ namespace Intersect.Editor.MonoGame
                 ImGui.Text("Test1234");
                 ImGui.End();
                 ImGui.ShowMetricsWindow();
-                ImGui.End();
             }
+
+            protected override void DrawEnd()
+            {
+            }
+        }
+
+        protected virtual void ImGuiLayout()
+        {
+
+            //{
+            //    ImGui.Begin("canvas", ImGuiWindowFlags.NoBackground | ImGuiWindowFlags.NoDecoration | ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoInputs);
+            //    ImGui.SetWindowPos(new System.Numerics.Vector2(GraphicsDevice.Viewport.X, GraphicsDevice.Viewport.Y));
+            //    ImGui.SetWindowSize(new System.Numerics.Vector2(GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height));
+            //    ImGui.PushFont(_customFont);
+            //    ImGui.SetCursorPos(new System.Numerics.Vector2(100, 10));
+            //    var canvasHovered = ImGui.IsItemHovered(ImGuiHoveredFlags.ChildWindows);
+            //    ImGui.Text("testing canvas: " + canvasHovered);
+            //    ImGui.Text("AaÆæÅåǺǻḀḁẚĂăẶặẮắẰằẲẳẴẵȂȃÂâẬậẤấẦầẪẫẨẩẢảǍǎȺⱥȦȧǠǡẠạÄäǞǟÀàȀȁÁáĀāĀ̀ā̀ÃãĄąĄ́ą́Ą̃ą̃A̲a̲ᶏ");
+            //    ImGui.Text("BbɃƀḂḃḄḅḆḇƁɓᵬᶀ");
+            //    ImGui.Text("CcĆćĈĉČčĊċḈḉƇƈC̈c̈ȻȼÇçꟄꞔꞒꞓ©");
+            //    ImGui.Text("DdĐđꟇꟈƊɗḊḋḌḍḐḑḒḓĎďḎḏᵭᶁᶑ");
+            //    ImGui.Text("EeĔĕḜḝȆȇÊêÊ̄ê̄Ê̌ê̌ỀềẾếỂểỄễỆệẺẻḘḙĚěɆɇĖėĖ́ė́Ė̃ė̃ẸẹËëÈèÈ̩è̩ȄȅÉéÉ̩ĒēḔḕḖḗẼẽḚḛĘęĘ́ę́Ę̃ę̃ȨȩE̩e̩ᶒ");
+            //    ImGui.Text("IiỊịĬĭÎîǏǐƗɨÏïḮḯÍíÌìȈȉĮįĮ́Į̃ĪīĪ̀ī̀ᶖỈỉȊȋĨĩḬḭᶤ");
+            //    ImGui.Text("LlĹĺŁłĽľḸḹL̃l̃ĻļĿŀḶḷḺḻḼḽȽƚⱠⱡ");
+            //    ImGui.Text("NnŃńÑñŇňǸǹṄṅṆṇŅņṈṉṊṋꞤꞥᵰᶇ");
+            //    ImGui.Text("OoŒœØøǾǿᶱÖöȪȫÓóÒòÔôỐốỒồỔổỖỗỘộǑǒŐőŎŏȎȏȮȯȰȱỌọƟɵƠơỚớỜờỠỡỢợỞởỎỏŌōṒṓṐṑÕõȬȭṌṍṎṏǪǫȌȍO̩o̩Ó̩ó̩Ò̩ò̩ǬǭO͍o͍");
+            //    ImGui.Text("SsßŚśṠṡẛṨṩṤṥṢṣS̩s̩ꞨꞩꟉꟊŜŝṦṧŠšŞşȘșS̈s̈ᶊⱾȿᵴᶳ");
+            //    ImGui.Text("UuŬŭɄʉᵾᶶꞸꞹỤụÜüǛǜǗǘǙǚǕǖṲṳÚúÙùÛûṶṷǓǔȖȗŰűŬŭƯưỨứỪừỬửỰựỮỮỦủŪūŪ̀ū̀Ū́ū́ṺṻŪ̃ū̃ŨũṸṹṴṵᶙŲųŲ́ų́Ų̃ų̃ȔȕŮů");
+            //    ImGui.Text("YyÝýỲỳŶŷŸÿỸỹẎẏỴỵẙỶỷȲȳɎɏƳƴ");
+            //    ImGui.Text("ZzŹźẐẑŽžŻżẒẓẔẕƵƶᵶꟆᶎⱫⱬ");
+            //    ImGui.Text("FfGgHhJjKkMmPpQqRrTtVvWwXx\n    /mnt/c/Users/Me/git/romkatv/nerd-fonts    \nЛорем ипсум долор сит амет\nΛορεμ ιπσθμ δολορ σιτ αμετ");
+            //    ImGui.PopFont();
+            //    ImGui.Begin("test");
+            //    ImGui.Button("test " + counter);
+            //    if (ImGui.IsItemHovered())
+            //    {
+            //        ++counter;
+            //    }
+            //    //ImGui.SetWindowPos(new System.Numerics.Vector2(50, 400));
+            //    ImGui.Text("Test1234");
+            //    ImGui.End();
+            //    ImGui.ShowMetricsWindow();
+            //    ImGui.End();
+            //}
 
             ImGui.PushFont(_customFont);
 
@@ -540,8 +616,13 @@ namespace Intersect.Editor.MonoGame
                 }
             }
 
+            var frameTime = gameTime.FromMonoGame();
+
             // Call BeforeLayout first to set things up
-            _imGuiRenderer.BeforeLayout(gameTime.FromMonoGame());
+            _imGuiRenderer.BeforeLayout(frameTime);
+
+            _canvas.Bounds = new(0, 0, GraphicsDevice.PresentationParameters.BackBufferWidth, GraphicsDevice.PresentationParameters.BackBufferHeight);
+            _canvas.Draw(frameTime);
 
             // Draw our UI
             ImGuiLayout();
