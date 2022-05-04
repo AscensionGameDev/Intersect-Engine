@@ -42,6 +42,10 @@ namespace Intersect.Client.Framework.Gwen.Control
 
         private bool mSizeToContents;
 
+        private Color mTextColor;
+
+        private Color mTextColorOverride;
+
         /// <summary>
         ///     Initializes a new instance of the <see cref="ListBox" /> class.
         /// </summary>
@@ -54,6 +58,9 @@ namespace Intersect.Client.Framework.Gwen.Control
             EnableScroll(false, true);
             AutoHideBars = true;
             Margin = Margin.One;
+
+            mTextColor = Color.White;
+            mTextColorOverride = Color.Transparent;
 
             mTable = new Table(this)
             {
@@ -191,6 +198,30 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// </summary>
         public event GwenEventHandler<ItemSelectedEventArgs> RowUnselected;
 
+        public Color TextColor
+        {
+            get => mTextColor;
+            set => SetAndDoIfChanged(ref mTextColor, value, () =>
+            {
+                foreach (IColorableText colorableText in Children)
+                {
+                    colorableText.TextColor = value;
+                }
+            });
+        }
+
+        public Color TextColorOverride
+        {
+            get => mTextColorOverride;
+            set => SetAndDoIfChanged(ref mTextColorOverride, value, () =>
+            {
+                foreach (IColorableText colorableText in Children)
+                {
+                    colorableText.TextColorOverride = value;
+                }
+            });
+        }
+
         public override JObject GetJson()
         {
             var obj = base.GetJson();
@@ -201,6 +232,8 @@ namespace Intersect.Client.Framework.Gwen.Control
             obj.Add("ItemHoverSound", mItemHoverSound);
             obj.Add("ItemClickSound", mItemClickSound);
             obj.Add("ItemRightClickSound", mItemRightClickSound);
+            obj.Add(nameof(TextColor), TextColor.ToString());
+            obj.Add(nameof(TextColorOverride), TextColorOverride.ToString());
 
             return base.FixJson(obj);
         }
@@ -243,6 +276,16 @@ namespace Intersect.Client.Framework.Gwen.Control
                 var fontArr = ((string) obj["Font"]).Split(',');
                 mFontInfo = (string) obj["Font"];
                 mFont = GameContentManager.Current.GetFont(fontArr[0], int.Parse(fontArr[1]));
+            }
+
+            if (obj[nameof(TextColor)] != null)
+            {
+                TextColor = Color.FromString((string)obj[nameof(TextColor)]);
+            }
+
+            if (obj[nameof(TextColorOverride)] != null)
+            {
+                TextColorOverride = Color.FromString((string)obj[nameof(TextColorOverride)]);
             }
 
             foreach (var itm in mTable.Children)
@@ -388,6 +431,8 @@ namespace Intersect.Client.Framework.Gwen.Control
                 HoverSound = mItemHoverSound,
                 Name = name,
                 RightClickSound = mItemRightClickSound,
+                TextColor = TextColor,
+                TextColorOverride = TextColorOverride,
                 UserData = userData
             };
             mTable.AddRow(row);

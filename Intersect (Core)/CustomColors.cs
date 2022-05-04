@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -127,7 +127,7 @@ namespace Intersect
 
         }
 
-        public sealed class QuestsNamespace
+        public sealed class QuestAlertNamespace
         {
 
             public Color Abandoned = Color.Red;
@@ -139,6 +139,19 @@ namespace Intersect
             public Color Started = Color.Cyan;
 
             public Color TaskUpdated = Color.Cyan;
+
+        }
+
+        public sealed class QuestWindowNamespace
+        {
+
+            public Color Completed = Color.Green;
+
+            public Color InProgress = Color.Yellow;
+
+            public Color NotStarted = Color.Red;
+
+            public Color QuestDesc = Color.White;
 
         }
 
@@ -307,7 +320,9 @@ namespace Intersect
 
             public readonly NamesNamespace Names = new NamesNamespace();
 
-            public readonly QuestsNamespace Quests = new QuestsNamespace();
+            public readonly QuestAlertNamespace QuestAlert = new QuestAlertNamespace();
+
+            public readonly QuestWindowNamespace QuestWindow = new QuestWindowNamespace();
 
         }
 
@@ -321,7 +336,9 @@ namespace Intersect
 
         public static ChatNamespace Chat => Root.Chat;
 
-        public static QuestsNamespace Quests => Root.Quests;
+        public static QuestAlertNamespace QuestAlert => Root.QuestAlert;
+
+        public static QuestWindowNamespace QuestWindow => Root.QuestWindow;
 
         public static AlertsNamespace Alerts => Root.Alerts;
 
