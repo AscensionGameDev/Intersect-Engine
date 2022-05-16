@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 
 using Intersect.Client.Core;
 using Intersect.Client.Framework.GenericClasses;
@@ -17,6 +16,8 @@ namespace Intersect.Client.Entities.Events
 {
     public partial class Event : Entity
     {
+        private bool _drawnCompletedWithoutTexture = false;
+
         public string Desc { get; set; } = string.Empty;
 
         public bool DirectionFix { get; set; }
@@ -57,6 +58,9 @@ namespace Intersect.Client.Entities.Events
             Desc = eventEntityPacket.Description;
             Graphic = eventEntityPacket.Graphic;
             RenderLevel = eventEntityPacket.RenderLayer;
+
+            _drawnCompletedWithoutTexture = Graphic.Type != EventGraphicType.Tileset;
+
             base.Load(packet);
         }
 
@@ -71,10 +75,24 @@ namespace Intersect.Client.Entities.Events
             return success;
         }
 
+        protected bool TryEnsureTexture(out GameTexture texture)
+        {
+            if (_drawnCompletedWithoutTexture)
+            {
+                texture = Texture;
+                return texture != default;
+            }
+
+            LoadTextures(Sprite);
+            texture = Texture;
+            _drawnCompletedWithoutTexture = (texture == default);
+            return !_drawnCompletedWithoutTexture;
+        }
+
         public override void Draw()
         {
             WorldPos.Reset();
-            if (MapInstance == default || !Globals.GridMaps.Contains(MapId) || Texture == default)
+            if (MapInstance == default || !Globals.GridMaps.Contains(MapId) || !TryEnsureTexture(out var texture))
             {
                 return;
             }
@@ -121,17 +139,14 @@ namespace Intersect.Client.Entities.Events
                 destRectangle.Y -= srcRectangle.Height - Options.TileHeight;
             }
 
-            destRectangle.X = (int) Math.Ceiling(destRectangle.X);
-            destRectangle.Y = (int) Math.Ceiling(destRectangle.Y);
+            destRectangle.X = (int)Math.Ceiling(destRectangle.X);
+            destRectangle.Y = (int)Math.Ceiling(destRectangle.Y);
 
             // Set up our targetting rectangle.
             // If we're smaller than a tile, force the target size to a tile.
             WorldPos = destRectangle;
 
-            if (Texture != null)
-            {
-                Graphics.DrawGameTexture(Texture, srcRectangle, destRectangle, Color.White);
-            }
+            Graphics.DrawGameTexture(texture, srcRectangle, destRectangle, Color.White);
         }
 
         public override void LoadTextures(string textureName)
@@ -286,7 +301,7 @@ namespace Intersect.Client.Entities.Events
             }
 
             Graphics.Renderer.DrawString(
-                Name, Graphics.EntityNameFont, x - (int)Math.Ceiling(textSize.X / 2f), (int) y, 1,
+                Name, Graphics.EntityNameFont, x - (int)Math.Ceiling(textSize.X / 2f), (int)y, 1,
                 Color.FromArgb(CustomColors.Names.Events.Name.ToArgb()), true, null,
                 Color.FromArgb(CustomColors.Names.Events.Outline.ToArgb())
             );
