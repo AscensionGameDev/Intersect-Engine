@@ -254,7 +254,7 @@ namespace Intersect.Client.Entities
             {
                 if (!Globals.Entities.TryGetValue(TargetIndex, out var foundEntity))
                 {
-                    foundEntity = TargetBox.MyEntity.MapInstance.Entities.FirstOrDefault(entity => entity.Id == TargetIndex) as Entity;
+                    foundEntity = TargetBox.MyEntity?.MapInstance?.Entities.FirstOrDefault(entity => entity.Id == TargetIndex) as Entity;
                 }
 
                 if (foundEntity == default || foundEntity.IsHidden || foundEntity.IsStealthed)
