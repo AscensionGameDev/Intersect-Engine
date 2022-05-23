@@ -5084,6 +5084,9 @@ Negative values for time to flow backwards.";
             public static LocalizedString x = @"X: {00}";
 
             public static LocalizedString y = @"Y: {00}";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString WarpSound = @"Sound:";
         }
 
         public struct WarpSelection
