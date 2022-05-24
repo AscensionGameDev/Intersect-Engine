@@ -6353,6 +6353,11 @@ namespace Intersect.Server.Entities
                         instanceType = warpAtt.InstanceType;
                     }
 
+                    if (warpAtt.WarpSound != null)
+                    {
+                        PacketSender.SendPlaySound(this, warpAtt.WarpSound);
+                    }
+
                     Warp(warpAtt.MapId, warpAtt.X, warpAtt.Y, dir, false, 0, false, false, instanceType);
                 }
 

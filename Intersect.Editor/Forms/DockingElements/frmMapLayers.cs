@@ -122,6 +122,9 @@ namespace Intersect.Editor.Forms.DockingElements
             {
                 cmbInstanceType.Items.Add(instanceType.ToString());
             }
+
+            cmbWarpSound.Items.Clear();
+            RefreshMapWarpSounds();
         }
 
         //Tiles Tab
@@ -504,6 +507,7 @@ namespace Intersect.Editor.Forms.DockingElements
             }
 
             HideAttributeMenus();
+            RefreshMapWarpSounds();
             grpWarp.Visible = true;
         }
 
@@ -710,6 +714,7 @@ namespace Intersect.Editor.Forms.DockingElements
                     warpAttribute.Direction = (WarpDirection)cmbDirection.SelectedIndex;
                     warpAttribute.ChangeInstance = chkChangeInstance.Checked;
                     warpAttribute.InstanceType = (MapInstanceType)cmbInstanceType.SelectedIndex;
+                    warpAttribute.WarpSound = TextUtils.SanitizeNone(cmbWarpSound.Text);
                     break;
 
                 case MapAttributes.Sound:
@@ -1095,6 +1100,7 @@ namespace Intersect.Editor.Forms.DockingElements
             lblInstance.Text = Strings.Warping.InstanceType;
             chkChangeInstance.Text = Strings.Warping.ChangeInstance;
             grpInstanceSettings.Text = Strings.Warping.MapInstancingGroup;
+            lblWarpSound.Text = Strings.Warping.WarpSound;
 
             btnVisualMapSelector.Text = Strings.Warping.visual;
 
@@ -1225,6 +1231,13 @@ namespace Intersect.Editor.Forms.DockingElements
             {
                 Globals.MapLayersWindow.lightEditor.Cancel();
             }
+        }
+
+        private void RefreshMapWarpSounds()
+        {
+            cmbWarpSound.Items.Add(Strings.General.none);
+            cmbWarpSound.Items.AddRange(GameContentManager.SmartSortedSoundNames);
+            cmbWarpSound.SelectedIndex = 0;
         }
 
         private void btnTileHeader_Click(object sender, EventArgs e)

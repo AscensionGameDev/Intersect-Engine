@@ -127,6 +127,8 @@ namespace Intersect.GameObjects.Maps
 
         public MapInstanceType InstanceType { get; set; } = MapInstanceType.Overworld;
 
+        public string WarpSound { get; set; }
+
         public override MapAttribute Clone()
         {
             var att = (MapWarpAttribute) base.Clone();
@@ -136,7 +138,7 @@ namespace Intersect.GameObjects.Maps
             att.Direction = Direction;
             att.ChangeInstance = ChangeInstance;
             att.InstanceType = InstanceType;
-
+            att.WarpSound = WarpSound;
             return att;
         }
 
