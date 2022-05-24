@@ -267,19 +267,13 @@ namespace Intersect.Client.Entities.Events
                 return;
             }
 
-            if (!WorldPos.IntersectsWith(Graphics.Renderer.GetView()))
+            if (!WorldPos.IntersectsWith(Graphics.Renderer.GetView()) && Graphic.Type != EventGraphicType.None)
             {
-                return;
+                return; 
             }
 
             if (LatestMap == default || !Globals.GridMaps.Contains(MapId))
             {
-                return;
-            }
-
-            if (Graphic.Type == EventGraphicType.Sprite)
-            {
-                base.DrawName(textColor, borderColor, backgroundColor);
                 return;
             }
 
