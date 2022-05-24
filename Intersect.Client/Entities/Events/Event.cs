@@ -250,60 +250,35 @@ namespace Intersect.Client.Entities.Events
 
         public override float GetTop(int overrideHeight = -1)
         {
-            if (Graphic.Type == EventGraphicType.Tileset)
+            float heightScale;
+            switch (Graphic.Type)
             {
-                var topPosition = base.GetTop(0);
-                topPosition -= (Graphic.Height + 1) * Options.TileHeight;
-                return topPosition;
+                case EventGraphicType.Sprite:
+                    return base.GetTop(overrideHeight);
+
+                case EventGraphicType.Tileset:
+                    heightScale = Graphic.Height + 1;
+                    break;
+
+                case EventGraphicType.None:
+                    heightScale = 0.5f;
+                    break;
+
+                default:
+                    throw new IndexOutOfRangeException($"Unsupported {nameof(EventGraphicType)} '{Graphic.Type}'");
             }
 
-            return base.GetTop(overrideHeight);
+            var top = base.GetTop(0);
+            var offset = heightScale * Options.TileHeight;
+            return top - offset;
         }
 
         public override void DrawName(Color textColor, Color borderColor, Color backgroundColor)
         {
-            if (HideName || string.IsNullOrWhiteSpace(Name))
-            {
-                return;
-            }
-
-            if (!WorldPos.IntersectsWith(Graphics.Renderer.GetView()))
-            {
-                return;
-            }
-
-            if (LatestMap == default || !Globals.GridMaps.Contains(MapId))
-            {
-                return;
-            }
-
-            if (Graphic.Type == EventGraphicType.Sprite)
-            {
-                base.DrawName(textColor, borderColor, backgroundColor);
-                return;
-            }
-
-            var x = (int)Math.Ceiling(Origin.X);
-            var y = GetTop();
-
-            var textSize = Graphics.Renderer.MeasureText(Name, Graphics.EntityNameFont, 1);
-
-            y -= textSize.Y + 2;
-
-            if (CustomColors.Names.Events.Background != Color.Transparent)
-            {
-                Graphics.DrawGameTexture(
-                    Graphics.Renderer.GetWhiteTexture(),
-                    new FloatRect(0, 0, 1, 1),
-                    new FloatRect(x - textSize.X / 2f - 4, y, textSize.X + 8, textSize.Y),
-                    CustomColors.Names.Events.Background
-                );
-            }
-
-            Graphics.Renderer.DrawString(
-                Name, Graphics.EntityNameFont, x - (int)Math.Ceiling(textSize.X / 2f), (int)y, 1,
-                Color.FromArgb(CustomColors.Names.Events.Name.ToArgb()), true, null,
-                Color.FromArgb(CustomColors.Names.Events.Outline.ToArgb())
+            base.DrawName(
+                textColor: textColor ?? new Color(CustomColors.Names.Events.Name),
+                borderColor: borderColor ?? new Color(CustomColors.Names.Events.Outline),
+                backgroundColor: backgroundColor ?? new Color(CustomColors.Names.Events.Background)
             );
         }
 
