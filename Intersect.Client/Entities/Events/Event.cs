@@ -289,13 +289,13 @@ namespace Intersect.Client.Entities.Events
                 Graphics.DrawGameTexture(
                     Graphics.Renderer.GetWhiteTexture(),
                     new FloatRect(0, 0, 1, 1),
-                    new FloatRect(x - textSize.X / 2f - 4, y, textSize.X + 8, textSize.Y),
+                    new FloatRect(x - textSize.X / 2f - 4, y - 10, textSize.X + 8, textSize.Y),
                     CustomColors.Names.Events.Background
                 );
             }
 
             Graphics.Renderer.DrawString(
-                Name, Graphics.EntityNameFont, x - (int)Math.Ceiling(textSize.X / 2f), (int)y, 1,
+                Name, Graphics.EntityNameFont, x - (int)Math.Ceiling(textSize.X / 2f), (int)y - 10, 1,
                 Color.FromArgb(CustomColors.Names.Events.Name.ToArgb()), true, null,
                 Color.FromArgb(CustomColors.Names.Events.Outline.ToArgb())
             );
