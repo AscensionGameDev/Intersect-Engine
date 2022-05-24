@@ -16,7 +16,7 @@ namespace Intersect.Client.Entities.Events
 {
     public partial class Event : Entity
     {
-        private bool _drawnCompletedWithoutTexture = false;
+        private bool _drawCompletedWithoutTexture = false;
 
         public string Desc { get; set; } = string.Empty;
 
@@ -59,7 +59,7 @@ namespace Intersect.Client.Entities.Events
             Graphic = eventEntityPacket.Graphic;
             RenderLevel = eventEntityPacket.RenderLayer;
 
-            _drawnCompletedWithoutTexture = Graphic.Type != EventGraphicType.Tileset;
+            _drawCompletedWithoutTexture = Graphic.Type != EventGraphicType.Tileset;
 
             base.Load(packet);
         }
@@ -77,7 +77,7 @@ namespace Intersect.Client.Entities.Events
 
         protected bool TryEnsureTexture(out GameTexture texture)
         {
-            if (_drawnCompletedWithoutTexture)
+            if (_drawCompletedWithoutTexture)
             {
                 texture = Texture;
                 return texture != default;
@@ -85,8 +85,8 @@ namespace Intersect.Client.Entities.Events
 
             LoadTextures(Sprite);
             texture = Texture;
-            _drawnCompletedWithoutTexture = (texture == default);
-            return !_drawnCompletedWithoutTexture;
+            _drawCompletedWithoutTexture = (texture == default);
+            return !_drawCompletedWithoutTexture;
         }
 
         public override void Draw()
