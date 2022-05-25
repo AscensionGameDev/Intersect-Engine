@@ -1113,7 +1113,7 @@ namespace Intersect.Client.Networking
             Fade.FadeIn();
             Globals.WaitingOnServer = false;
             Interface.Interface.MsgboxErrors.Add(new KeyValuePair<string, string>(packet.Header, packet.Error));
-            Interface.Interface.MenuUi.Reset();
+            Interface.Interface.MenuUi?.Reset();
         }
 
         //MapItemsPacket
