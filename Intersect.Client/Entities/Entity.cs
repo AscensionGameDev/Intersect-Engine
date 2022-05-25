@@ -1197,16 +1197,6 @@ namespace Intersect.Client.Entities
                 return;
             }
 
-            if (borderColor == null)
-            {
-                borderColor = Color.Transparent;
-            }
-
-            if (backgroundColor == null)
-            {
-                backgroundColor = Color.Transparent;
-            }
-
             //Check for npc colors
             if (textColor == null)
             {
@@ -1238,9 +1228,19 @@ namespace Intersect.Client.Entities
                 if (color != null)
                 {
                     textColor = color?.Name;
-                    backgroundColor = color?.Background;
-                    borderColor = color?.Outline;
+                    backgroundColor = backgroundColor ?? color?.Background;
+                    borderColor = borderColor ?? color?.Outline;
                 }
+            }
+
+            if (borderColor == null)
+            {
+                borderColor = Color.Transparent;
+            }
+
+            if (backgroundColor == null)
+            {
+                backgroundColor = Color.Transparent;
             }
 
             var map = MapInstance;
