@@ -25,35 +25,20 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                 GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Image)
             );
 
-            if (cmbPicture.Items.IndexOf(mMyCommand.File) > -1)
-            {
-                cmbPicture.SelectedIndex = cmbPicture.Items.IndexOf(mMyCommand.File);
-            }
-            else
-            {
-                if (cmbPicture.Items.Count > 0)
-                {
-                    cmbPicture.SelectedIndex = 0;
-                }
-            }
-
             cmbSize.Items.Clear();
             cmbSize.Items.Add(Strings.EventShowPicture.original);
             cmbSize.Items.Add(Strings.EventShowPicture.fullscreen);
             cmbSize.Items.Add(Strings.EventShowPicture.halfscreen);
             cmbSize.Items.Add(Strings.EventShowPicture.stretchtofit);
-            if (mMyCommand.Size > -1)
-            {
-                cmbSize.SelectedIndex = mMyCommand.Size;
-            }
-            else
-            {
-                cmbSize.SelectedIndex = 0;
-            }
 
-            chkClick.Checked = mMyCommand.Clickable;
-            nudHideTime.Value = mMyCommand.HideTime;
-            chkWaitUntilClosed.Checked = mMyCommand.WaitUntilClosed;
+            if (mMyCommand != null)
+            {
+                cmbPicture.SelectedIndex = Math.Max(0, cmbPicture.Items.IndexOf(mMyCommand.File));
+                cmbSize.SelectedIndex = Math.Max(0, mMyCommand.Size);
+                chkClick.Checked = mMyCommand.Clickable;
+                nudHideTime.Value = mMyCommand.HideTime;
+                chkWaitUntilClosed.Checked = mMyCommand.WaitUntilClosed;
+            }
 
             InitLocalization();
         }

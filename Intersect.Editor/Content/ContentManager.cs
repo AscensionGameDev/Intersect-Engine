@@ -524,7 +524,8 @@ namespace Intersect.Editor.Content
 
         public static string[] GetSmartSortedTextureNames(TextureType type)
         {
-            return SmartSort(GetTextureNames(type));
+            var textureNames = GetTextureNames(type);
+            return textureNames.Length > 0 ? SmartSort(textureNames) : new[] {string.Empty};
         }
 
         //Getting Filenames
