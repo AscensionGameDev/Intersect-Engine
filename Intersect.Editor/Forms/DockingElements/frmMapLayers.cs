@@ -863,6 +863,8 @@ namespace Intersect.Editor.Forms.DockingElements
                 {
                     lstMapNpcs.SelectedIndex = 0;
                 }
+
+                Core.Graphics.TilePreviewUpdated = true;
             }
         }
 
