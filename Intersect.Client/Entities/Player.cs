@@ -673,10 +673,16 @@ namespace Intersect.Client.Entities
                 {
                     int[] userData = new int[2] { index, bankSlot };
 
-                    var iBox = new InputBox(
-                        Strings.Bank.deposititem,
-                        Strings.Bank.deposititemprompt.ToString(ItemBase.Get(Inventory[index].ItemId).Name), true,
-                        InputBox.InputType.NumericSliderInput, DepositItemInputBoxOkay, null, userData, Inventory[index].Quantity, Inventory[index].Quantity
+                    InputBox.Open(
+                        title: Strings.Bank.deposititem,
+                        prompt: Strings.Bank.deposititemprompt.ToString(ItemBase.Get(Inventory[index].ItemId).Name),
+                        modal: true,
+                        inputType: InputBox.InputType.NumericSliderInput,
+                        onSuccess: DepositItemInputBoxOkay,
+                        onCancel: null,
+                        userData: userData,
+                        quantity: Inventory[index].Quantity,
+                        maxQuantity: Inventory[index].Quantity
                     );
                 }
                 else
@@ -716,10 +722,16 @@ namespace Intersect.Client.Entities
                 {
                     int[] userData = new int[2] { index, invSlot };
 
-                    var iBox = new InputBox(
-                        Strings.Bank.withdrawitem,
-                        Strings.Bank.withdrawitemprompt.ToString(ItemBase.Get(Globals.Bank[index].ItemId).Name), true,
-                        InputBox.InputType.NumericSliderInput, WithdrawItemInputBoxOkay, null, userData, Globals.Bank[index].Quantity, Globals.Bank[index].Quantity
+                    InputBox.Open(
+                        title: Strings.Bank.withdrawitem,
+                        prompt: Strings.Bank.withdrawitemprompt.ToString(ItemBase.Get(Globals.Bank[index].ItemId).Name),
+                        modal: true,
+                        inputType: InputBox.InputType.NumericSliderInput,
+                        onSuccess: WithdrawItemInputBoxOkay,
+                        onCancel: null,
+                        userData: userData,
+                        quantity: Globals.Bank[index].Quantity,
+                        maxQuantity: Globals.Bank[index].Quantity
                     );
                 }
                 else
