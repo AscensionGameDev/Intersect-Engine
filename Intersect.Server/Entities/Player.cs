@@ -3916,7 +3916,7 @@ namespace Intersect.Server.Entities
         /// <param name="inventorySlots">A list of inventory slots that are valid locations for the withdrawal</param>
         /// <param name="itemDescriptor">The <see cref="ItemBase"/> of the item that is getting moved around.</param>
         /// <param name="amountToGive">How many of the item that we're moving, if stackable.</param>
-        /// <returns></returns>
+        /// <returns>A <see cref="bool"/> saying whether or not we successfully deposited ALL the items</returns>
         private bool TryFillInventoryStacksOfItemFromBagSlot(Bag bag, int bagSlotIdx, List<InventorySlot> inventorySlots, ItemBase itemDescriptor, int amountToGive = 1)
         {
             int amountRemainder = amountToGive;
@@ -3924,7 +3924,7 @@ namespace Intersect.Server.Entities
             foreach (var inventorySlotsWithItem in inventorySlots)
             {
                 // If we've fulfilled our stacking desires, we're done
-                if (amountRemainder < 0 || FindOpenInventorySlots().Count <= 0)
+                if (amountRemainder <= 0 || FindOpenInventorySlots().Count <= 0)
                 {
                     return amountRemainder <= 0;
                 }
@@ -3956,9 +3956,12 @@ namespace Intersect.Server.Entities
                     bagSlots[bagSlotIdx].Quantity -= amountToGive;
                 }
 
-                // Aaaand tell the client.
-                PacketSender.SendInventoryItemUpdate(this, currSlot);
-                PacketSender.SendBagUpdate(this, bagSlotIdx, bagSlots[bagSlotIdx]);
+                // Aaaand tell the client (if we actually dumped any amount of the item)
+                if (amountToGive > 0)
+                {
+                    PacketSender.SendInventoryItemUpdate(this, currSlot);
+                    PacketSender.SendBagUpdate(this, bagSlotIdx, bagSlots[bagSlotIdx]);
+                }
             } // repeat until we've either filled the bag or fulfilled our stack requirements
 
             return amountRemainder <= 0;
@@ -3972,13 +3975,13 @@ namespace Intersect.Server.Entities
         /// <param name="bagSlots">A list of valid bag slots that could ccontain the item</param>
         /// <param name="itemDescriptor">The <see cref="ItemBase"/> of the item that is getting moved around.</param>
         /// <param name="amountToGive">How many of the item that we're moving, if stackable.</param>
-        /// <returns></returns>
+        /// <returns>A <see cref="bool"/> saying whether or not we successfully deposited ALL the items</returns>
         private bool TryFillBagStacksOfItemFromInventorySlot(Bag bag, int inventorySlotIdx, List<BagSlot> bagSlots, ItemBase itemDescriptor, int amountToGive = 1)
         {
             int amountRemainder = amountToGive;
             foreach (var bagSlotWithItem in bagSlots)
             {
-                if (amountRemainder < 0 || bag.FindOpenBagSlots().Count <= 0)
+                if (amountRemainder <= 0 || bag.FindOpenBagSlots().Count <= 0)
                 {
                     return amountRemainder <= 0;
                 }
@@ -4006,8 +4009,11 @@ namespace Intersect.Server.Entities
                     Items[inventorySlotIdx].Quantity -= amountToGive;
                 }
 
-                PacketSender.SendInventoryItemUpdate(this, inventorySlotIdx);
-                PacketSender.SendBagUpdate(this, currSlot, bagSlotWithItem);
+                if (amountToGive > 0)
+                {
+                    PacketSender.SendInventoryItemUpdate(this, inventorySlotIdx);
+                    PacketSender.SendBagUpdate(this, currSlot, bagSlotWithItem);
+                }
             }
 
             return amountRemainder <= 0;

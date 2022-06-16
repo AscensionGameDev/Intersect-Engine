@@ -26,6 +26,7 @@ namespace Intersect.Server.Database.PlayerData.Players
         {
             SlotCount = slots;
             ValidateSlots();
+            Save();
         }
 
         [JsonIgnore, NotMapped]
