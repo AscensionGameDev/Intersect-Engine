@@ -808,27 +808,28 @@ namespace Intersect.Client.Entities
             var slot = Inventory[index];
             var quantity = slot.Quantity;
             var tradingItem = ItemBase.Get(slot.ItemId);
-            if (tradingItem != null)
+            if (tradingItem == null)
             {
-                if (quantity > 1)
-                {
-                    InputBox.Open(
-                        title: Strings.Trading.offeritem,
-                        prompt: Strings.Trading.offeritemprompt.ToString(tradingItem.Name),
-                        modal: true,
-                        inputType: InputBox.InputType.NumericSliderInput,
-                        onSuccess: TradeItemInputBoxOkay,
-                        onCancel: null,
-                        userData: index,
-                        quantity: quantity,
-                        maxQuantity: quantity
-                    );
-                }
-                else
-                {
-                    PacketSender.SendOfferTradeItem(index, 1);
-                }
+                return;
             }
+
+            if (quantity == 1)
+            {
+                PacketSender.SendOfferTradeItem(index, 1);
+                return;
+            }
+
+            InputBox.Open(
+                title: Strings.Trading.offeritem,
+                prompt: Strings.Trading.offeritemprompt.ToString(tradingItem.Name),
+                modal: true,
+                inputType: InputBox.InputType.NumericSliderInput,
+                onSuccess: TradeItemInputBoxOkay,
+                onCancel: null,
+                userData: index,
+                quantity: quantity,
+                maxQuantity: quantity
+            );
         }
 
         private void TradeItemInputBoxOkay(object sender, EventArgs e)
@@ -845,27 +846,28 @@ namespace Intersect.Client.Entities
             var slot = Globals.Trade[0, index];
             var quantity = slot.Quantity;
             var revokedItem = ItemBase.Get(slot.ItemId);
-            if (revokedItem != null)
+            if (revokedItem == null)
             {
-                if (quantity > 1)
-                {
-                    InputBox.Open(
-                        title: Strings.Trading.revokeitem,
-                        prompt: Strings.Trading.revokeitemprompt.ToString(revokedItem.Name),
-                        modal: true,
-                        inputType: InputBox.InputType.NumericSliderInput,
-                        onSuccess: RevokeItemInputBoxOkay,
-                        onCancel: null,
-                        userData: index,
-                        quantity: quantity,
-                        maxQuantity: quantity
-                    );
-                }
-                else
-                {
-                    PacketSender.SendRevokeTradeItem(index, 1);
-                }
+                return;
             }
+
+            if (quantity == 1)
+            {
+                PacketSender.SendRevokeTradeItem(index, 1);
+                return;
+            }
+
+            InputBox.Open(
+                title: Strings.Trading.revokeitem,
+                prompt: Strings.Trading.revokeitemprompt.ToString(revokedItem.Name),
+                modal: true,
+                inputType: InputBox.InputType.NumericSliderInput,
+                onSuccess: RevokeItemInputBoxOkay,
+                onCancel: null,
+                userData: index,
+                quantity: quantity,
+                maxQuantity: quantity
+            );
         }
 
         private void RevokeItemInputBoxOkay(object sender, EventArgs e)
