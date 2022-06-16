@@ -579,26 +579,41 @@ namespace Intersect.Client.Entities
                 {
                     if (Inventory[index].Quantity > 1)
                     {
-                        var iBox = new InputBox(
-                            Strings.Shop.sellitem,
-                            Strings.Shop.sellitemprompt.ToString(ItemBase.Get(Inventory[index].ItemId).Name), true,
-                            InputBox.InputType.NumericSliderInput, SellItemInputBoxOkay, null, index, Inventory[index].Quantity
+                        InputBox.Open(
+                            title: Strings.Shop.sellitem,
+                            prompt: Strings.Shop.sellitemprompt.ToString(ItemBase.Get(Inventory[index].ItemId).Name),
+                            modal: true,
+                            inputType: InputBox.InputType.NumericSliderInput,
+                            onSuccess: SellItemInputBoxOkay,
+                            onCancel: null,
+                            userData: index,
+                            quantity: Inventory[index].Quantity,
+                            maxQuantity: Inventory[index].Quantity
                         );
                     }
                     else
                     {
-                        var iBox = new InputBox(
-                            Strings.Shop.sellitem,
-                            Strings.Shop.sellprompt.ToString(ItemBase.Get(Inventory[index].ItemId).Name), true,
-                            InputBox.InputType.YesNo, SellInputBoxOkay, null, index
+                        InputBox.Open(
+                            title: Strings.Shop.sellitem,
+                            prompt: Strings.Shop.sellprompt.ToString(ItemBase.Get(Inventory[index].ItemId).Name),
+                            modal: true,
+                            inputType: InputBox.InputType.YesNo,
+                            onSuccess: SellInputBoxOkay,
+                            onCancel: null,
+                            userData: index
                         );
                     }
                 }
                 else
                 {
-                    var iBox = new InputBox(
-                        Strings.Shop.sellitem, Strings.Shop.cannotsell, true, InputBox.InputType.OkayOnly, null, null,
-                        -1
+                    InputBox.Open(
+                        title: Strings.Shop.sellitem,
+                        prompt: Strings.Shop.cannotsell,
+                        modal: true,
+                        inputType: InputBox.InputType.OkayOnly,
+                        onSuccess: null,
+                        onCancel: null,
+                        userData: -1
                     );
                 }
             }
