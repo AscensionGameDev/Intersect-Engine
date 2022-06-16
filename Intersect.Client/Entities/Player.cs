@@ -676,7 +676,7 @@ namespace Intersect.Client.Entities
                     var iBox = new InputBox(
                         Strings.Bank.deposititem,
                         Strings.Bank.deposititemprompt.ToString(ItemBase.Get(Inventory[index].ItemId).Name), true,
-                        InputBox.InputType.NumericSliderInput, DepositItemInputBoxOkay, null, userData, Inventory[index].Quantity
+                        InputBox.InputType.NumericSliderInput, DepositItemInputBoxOkay, null, userData, Inventory[index].Quantity, Inventory[index].Quantity
                     );
                 }
                 else
@@ -719,7 +719,7 @@ namespace Intersect.Client.Entities
                     var iBox = new InputBox(
                         Strings.Bank.withdrawitem,
                         Strings.Bank.withdrawitemprompt.ToString(ItemBase.Get(Globals.Bank[index].ItemId).Name), true,
-                        InputBox.InputType.NumericSliderInput, WithdrawItemInputBoxOkay, null, userData, Globals.Bank[index].Quantity
+                        InputBox.InputType.NumericSliderInput, WithdrawItemInputBoxOkay, null, userData, Globals.Bank[index].Quantity, Globals.Bank[index].Quantity
                     );
                 }
                 else
