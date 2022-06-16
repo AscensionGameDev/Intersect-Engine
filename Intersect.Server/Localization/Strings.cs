@@ -128,6 +128,9 @@ namespace Intersect.Server.Localization
             public readonly LocalizedString onlytradeempty = @"Cannot trade bag unless it's empty!";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString SlotOccupied = @"That slot is occupied by another item!";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString tradebound = @"Cannot trade bound items!";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]

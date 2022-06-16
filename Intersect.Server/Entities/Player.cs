@@ -3226,6 +3226,16 @@ namespace Intersect.Server.Entities
         public InventorySlot FindInventoryItemSlot(Guid itemId, int quantity = 1) => FindInventoryItemSlots(itemId, quantity).FirstOrDefault();
 
         /// <summary>
+        /// Finds the index of a given inventory slot
+        /// </summary>
+        /// <param name="slot">The <see cref="InventorySlot"/> to find</param>
+        /// <returns>An <see cref="int"/>containing the relevant index, or -1 if not found</returns>
+        public int FindInventoryItemSlotIndex(InventorySlot slot) 
+        {
+            return Items.FindIndex(sl => sl.Id == slot.Id);
+        } 
+
+        /// <summary>
         /// Finds all inventory slots matching the desired item and quantity.
         /// </summary>
         /// <param name="itemId">The item Id to look for.</param>
@@ -3898,6 +3908,111 @@ namespace Intersect.Server.Entities
             }
         }
 
+        /// <summary>
+        /// Fills an inventory with items from a <see cref="BagSlot"/>, mostly making sure stacks play along correctly
+        /// </summary>
+        /// <param name="bag">The <see cref="Bag"/> we're pulling from</param>
+        /// <param name="bagSlotIdx">The index of the bag that we're choosing to withrdaw</param>
+        /// <param name="inventorySlots">A list of inventory slots that are valid locations for the withdrawal</param>
+        /// <param name="itemDescriptor">The <see cref="ItemBase"/> of the item that is getting moved around.</param>
+        /// <param name="amountToGive">How many of the item that we're moving, if stackable.</param>
+        /// <returns></returns>
+        private bool TryFillInventoryStacksOfItemFromBagSlot(Bag bag, int bagSlotIdx, List<InventorySlot> inventorySlots, ItemBase itemDescriptor, int amountToGive = 1)
+        {
+            int amountRemainder = amountToGive;
+            var bagSlots = bag.Slots;
+            foreach (var inventorySlotsWithItem in inventorySlots)
+            {
+                // If we've fulfilled our stacking desires, we're done
+                if (amountRemainder < 0 || FindOpenInventorySlots().Count <= 0)
+                {
+                    return amountRemainder <= 0;
+                }
+                var currSlot = FindInventoryItemSlotIndex(inventorySlotsWithItem);
+
+                // Otherwise, first update how many of our item we still need to put in this current slot
+                amountToGive = amountRemainder;
+                var maxDiff = itemDescriptor.MaxInventoryStack - inventorySlotsWithItem.Quantity;
+                amountRemainder = amountToGive - maxDiff;
+                amountToGive = MathHelper.Clamp(amountToGive, 0, maxDiff);
+
+                // Then, determine what the slots _new_ quantity should be
+                var newQuantity = MathHelper.Clamp(inventorySlotsWithItem.Quantity + amountToGive, 0, itemDescriptor.MaxInventoryStack);
+                // If the slot we're going to fill is empty, give it the item from the inventory
+                if (inventorySlotsWithItem.ItemId == default)
+                {
+                    inventorySlotsWithItem.Set(bagSlots[bagSlotIdx]);
+                }
+                inventorySlotsWithItem.Quantity = newQuantity;
+
+                // If we drained the inventory item's stack with that transaction, remove the inventory item from the inventory
+                if (amountToGive >= bagSlots[bagSlotIdx].Quantity)
+                {
+                    bagSlots[bagSlotIdx].Set(Item.None);
+                }
+                // Otherwise, just reduce its quantity
+                else
+                {
+                    bagSlots[bagSlotIdx].Quantity -= amountToGive;
+                }
+
+                // Aaaand tell the client.
+                PacketSender.SendInventoryItemUpdate(this, currSlot);
+                PacketSender.SendBagUpdate(this, bagSlotIdx, bagSlots[bagSlotIdx]);
+            } // repeat until we've either filled the bag or fulfilled our stack requirements
+
+            return amountRemainder <= 0;
+        }
+
+        /// <summary>
+        /// Fills a bag with items from a <see cref="InventorySlot"/>, mostly making sure stacks play along correctly
+        /// </summary>
+        /// <param name="bag">The <see cref="Bag"/> we're putting items into from</param>
+        /// <param name="inventorySlotIdx">The index of the players inventory that we're withrdawing from</param>
+        /// <param name="bagSlots">A list of valid bag slots that could ccontain the item</param>
+        /// <param name="itemDescriptor">The <see cref="ItemBase"/> of the item that is getting moved around.</param>
+        /// <param name="amountToGive">How many of the item that we're moving, if stackable.</param>
+        /// <returns></returns>
+        private bool TryFillBagStacksOfItemFromInventorySlot(Bag bag, int inventorySlotIdx, List<BagSlot> bagSlots, ItemBase itemDescriptor, int amountToGive = 1)
+        {
+            int amountRemainder = amountToGive;
+            foreach (var bagSlotWithItem in bagSlots)
+            {
+                if (amountRemainder < 0 || bag.FindOpenBagSlots().Count <= 0)
+                {
+                    return amountRemainder <= 0;
+                }
+                var currSlot = bag.FindSlotIndex(bagSlotWithItem);
+
+                amountToGive = amountRemainder;
+                var maxDiff = itemDescriptor.MaxInventoryStack - bagSlotWithItem.Quantity;
+                amountRemainder = amountToGive - maxDiff;
+                amountToGive = MathHelper.Clamp(amountToGive, 0, maxDiff);
+
+                var newQuantity = MathHelper.Clamp(bagSlotWithItem.Quantity + amountToGive, 0, itemDescriptor.MaxInventoryStack);
+                if (bagSlotWithItem.ItemId == default)
+                {
+                    bagSlotWithItem.Set(Items[inventorySlotIdx]);
+                }
+                bagSlotWithItem.Quantity = newQuantity;
+
+                if (amountToGive >= Items[inventorySlotIdx].Quantity)
+                {
+                    Items[inventorySlotIdx].Set(Item.None);
+                    EquipmentProcessItemLoss(inventorySlotIdx);
+                }
+                else
+                {
+                    Items[inventorySlotIdx].Quantity -= amountToGive;
+                }
+
+                PacketSender.SendInventoryItemUpdate(this, inventorySlotIdx);
+                PacketSender.SendBagUpdate(this, currSlot, bagSlotWithItem);
+            }
+
+            return amountRemainder <= 0;
+        }
+
         public void StoreBagItem(int slot, int amount, int bagSlot)
         {
             if (InBag == null || !HasBag(InBag))
@@ -3905,117 +4020,81 @@ namespace Intersect.Server.Entities
                 return;
             }
 
-            var itemBase = Items[slot].Descriptor;
+            var inventoryItem = Items[slot];
+            var itemBase = inventoryItem.Descriptor;
             var bag = GetBag();
-            if (itemBase != null && bag != null)
+
+            if (itemBase == null || bag == null || inventoryItem.ItemId == default)
             {
-                if (Items[slot].ItemId != Guid.Empty)
+                return;
+            }
+
+            if (!itemBase.CanBag)
+            {
+                PacketSender.SendChatMsg(this, Strings.Items.nobag, ChatMessageType.Inventory, CustomColors.Items.Bound);
+                return;
+            }
+
+            //Make Sure we are not Storing a Bag inside of itself
+            if (inventoryItem.Bag == InBag)
+            {
+                PacketSender.SendChatMsg(this, Strings.Bags.baginself, ChatMessageType.Inventory, CustomColors.Alerts.Error);
+
+                return;
+            }
+            if (itemBase.ItemType == ItemTypes.Bag)
+            {
+                PacketSender.SendChatMsg(this, Strings.Bags.baginbag, ChatMessageType.Inventory, CustomColors.Alerts.Error);
+
+                return;
+            }
+
+            bool specificSlot = bagSlot != -1;
+            // Sanitize amount
+            if (itemBase.IsStackable)
+            {
+                if (amount >= inventoryItem.Quantity)
                 {
-                    if (!itemBase.CanBag)
-                    {
-                        PacketSender.SendChatMsg(this, Strings.Items.nobag, ChatMessageType.Inventory, CustomColors.Items.Bound);
-                        return;
-                    }
-
-                    if (itemBase.IsStackable)
-                    {
-                        if (amount >= Items[slot].Quantity)
-                        {
-                            amount = Items[slot].Quantity;
-                        }
-                    }
-                    else
-                    {
-                        amount = 1;
-                    }
-
-                    //Make Sure we are not Storing a Bag inside of itself
-                    if (Items[slot].Bag == InBag)
-                    {
-                        PacketSender.SendChatMsg(this, Strings.Bags.baginself, ChatMessageType.Inventory, CustomColors.Alerts.Error);
-
-                        return;
-                    }
-
-                    if (itemBase.ItemType == ItemTypes.Bag)
-                    {
-                        PacketSender.SendChatMsg(this, Strings.Bags.baginbag, ChatMessageType.Inventory, CustomColors.Alerts.Error);
-
-                        return;
-                    }
-
-                    int currSlot = 0;
-                    int count = bag.SlotCount;
-
-                    if (bagSlot != -1)
-                    {
-                        currSlot = bagSlot;
-                        count = bagSlot + 1;
-                    }
-
-                    //Find a spot in the bag for it!
-                    if (itemBase.IsStackable)
-                    {
-                        for (var i = currSlot; i < count; i++)
-                        {
-                            if (bag.Slots[i] != null && bag.Slots[i].ItemId == Items[slot].ItemId)
-                            {
-                                amount = Math.Min(amount, int.MaxValue - bag.Slots[i].Quantity);
-                                bag.Slots[i].Quantity += amount;
-
-                                //Remove Items from inventory send updates
-                                if (amount >= Items[slot].Quantity)
-                                {
-                                    Items[slot].Set(Item.None);
-                                    EquipmentProcessItemLoss(slot);
-                                }
-                                else
-                                {
-                                    Items[slot].Quantity -= amount;
-                                }
-
-                                //LegacyDatabase.SaveBagItem(InBag, i, bag.Items[i]);
-                                PacketSender.SendInventoryItemUpdate(this, slot);
-                                PacketSender.SendBagUpdate(this, i, bag.Slots[i]);
-
-                                return;
-                            }
-                        }
-                    }
-
-                    //Either a non stacking item, or we couldn't find the item already existing in the players inventory
-                    for (var i = currSlot; i < count; i++)
-                    {
-                        if (bag.Slots[i] == null || bag.Slots[i].ItemId == Guid.Empty)
-                        {
-                            bag.Slots[i].Set(Items[slot]);
-                            bag.Slots[i].Quantity = amount;
-
-                            //Remove Items from inventory send updates
-                            if (amount >= Items[slot].Quantity)
-                            {
-                                Items[slot].Set(Item.None);
-                                EquipmentProcessItemLoss(slot);
-                            }
-                            else
-                            {
-                                Items[slot].Quantity -= amount;
-                            }
-
-                            //LegacyDatabase.SaveBagItem(InBag, i, bag.Items[i]);
-                            PacketSender.SendInventoryItemUpdate(this, slot);
-                            PacketSender.SendBagUpdate(this, i, bag.Slots[i]);
-
-                            return;
-                        }
-                    }
-
-                    PacketSender.SendChatMsg(this, Strings.Bags.bagnospace, ChatMessageType.Inventory, CustomColors.Alerts.Error);
+                    amount = Math.Min(inventoryItem.Quantity, inventoryItem.Descriptor.MaxInventoryStack);
                 }
-                else
+            }
+            else
+            {
+                amount = 1;
+            }
+
+            // Sanitize currSlot - this is the slot we want to fill
+            int currSlot = 0;
+            // First, we'll get our slots in the order we wish to fill them - prioritizing the user's requested slot, otherwise going from the first instance of the item found
+            var relevantSlots = new List<BagSlot>();
+            if (specificSlot)
+            {
+                currSlot = bagSlot;
+                var requestedSlot = bag.Slots[currSlot];
+                // If the slot we're trying to fill is occupied...
+                if (requestedSlot.ItemId != default && (!itemBase.IsStackable || requestedSlot.ItemId != itemBase.Id))
                 {
-                    PacketSender.SendChatMsg(this, Strings.Bags.depositinvalid, ChatMessageType.Inventory, CustomColors.Alerts.Error);
+                    // Alert the user
+                    PacketSender.SendChatMsg(this, Strings.Bags.SlotOccupied, ChatMessageType.Inventory, CustomColors.Alerts.Error);
+                    return;
                 }
+
+                relevantSlots.Add(requestedSlot);
+            }
+            // If the item is stackable, add slots that contain that item into the mix
+            if (itemBase.IsStackable)
+            {
+                relevantSlots.AddRange(bag.FindBagItemSlots(itemBase.Id));
+            }
+            // And last, add any and all open slots as valid locations for this item, if need be
+            relevantSlots.AddRange(bag.FindOpenBagSlots());
+            relevantSlots.Select(sl => sl).Distinct();
+
+            // Otherwise, fill in the empty slots as much as possible
+            if (!TryFillBagStacksOfItemFromInventorySlot(bag, slot, relevantSlots, itemBase, amount))
+            {
+                // If we're STILL not done, alert the user that we didn't have enough slots
+                PacketSender.SendChatMsg(this, Strings.Bags.bagnospace, ChatMessageType.Inventory, CustomColors.Alerts.Error);
             }
         }
 
@@ -4034,101 +4113,57 @@ namespace Intersect.Server.Entities
 
             var itemBase = bag.Slots[slot].Descriptor;
             var inventorySlot = -1;
-            if (itemBase != null)
+            if (itemBase == null || bag.Slots[slot] == null || bag.Slots[slot].ItemId == Guid.Empty)
             {
-                if (bag.Slots[slot] != null && bag.Slots[slot].ItemId != Guid.Empty)
+                return;
+            }
+
+            // Sanitize amounts
+            if (itemBase.IsStackable)
+            {
+                if (amount >= bag.Slots[slot].Quantity)
                 {
-                    if (itemBase.IsStackable)
-                    {
-                        if (amount >= bag.Slots[slot].Quantity)
-                        {
-                            amount = bag.Slots[slot].Quantity;
-                        }
-                    }
-                    else
-                    {
-                        amount = 1;
-                    }
-
-                    if (invSlot != -1)
-                    {
-                        if (itemBase.IsStackable && Items[invSlot] != null && Items[invSlot].ItemId == bag.Slots[slot].ItemId ||
-                            Items[invSlot] == null || Items[invSlot].ItemId == Guid.Empty)
-                        {
-                            inventorySlot = invSlot;
-                        }
-                    }
-                    else
-                    {
-                        //Find a spot in the inventory for it!
-                        if (itemBase.IsStackable)
-                        {
-                            /* Find an existing stack */
-                            for (var i = 0; i < Options.MaxInvItems; i++)
-                            {
-                                if (Items[i] != null && Items[i].ItemId == bag.Slots[slot].ItemId)
-                                {
-                                    inventorySlot = i;
-
-                                    break;
-                                }
-                            }
-                        }
-
-                        if (inventorySlot < 0)
-                        {
-                            /* Find a free slot if we don't have one already */
-                            for (var j = 0; j < Options.MaxInvItems; j++)
-                            {
-                                if (Items[j] == null || Items[j].ItemId == Guid.Empty)
-                                {
-                                    inventorySlot = j;
-
-                                    break;
-                                }
-                            }
-                        }
-                    }
-
-
-                    /* If we don't have a slot send an error. */
-                    if (inventorySlot < 0)
-                    {
-                        PacketSender.SendChatMsg(this, Strings.Bags.inventorynospace, ChatMessageType.Inventory, CustomColors.Alerts.Error);
-
-                        return; //Panda forgot this :P
-                    }
-
-                    /* Move the items to the inventory */
-                    amount = Math.Min(amount, int.MaxValue - Items[inventorySlot].Quantity);
-
-                    if (Items[inventorySlot] == null ||
-                        Items[inventorySlot].ItemId == Guid.Empty ||
-                        Items[inventorySlot].Quantity < 0)
-                    {
-                        Items[inventorySlot].Set(bag.Slots[slot]);
-                        Items[inventorySlot].Quantity = 0;
-                    }
-
-                    Items[inventorySlot].Quantity += amount;
-                    if (amount >= bag.Slots[slot].Quantity)
-                    {
-                        bag.Slots[slot].Set(Item.None);
-                    }
-                    else
-                    {
-                        bag.Slots[slot].Quantity -= amount;
-                    }
-
-                    //LegacyDatabase.SaveBagItem(InBag, slot, bag.Items[slot]);
-
-                    PacketSender.SendInventoryItemUpdate(this, inventorySlot);
-                    PacketSender.SendBagUpdate(this, slot, bag.Slots[slot]);
+                    amount = bag.Slots[slot].Quantity;
                 }
-                else
+            }
+            else
+            {
+                amount = 1;
+            }
+
+            // Sanitize currSlot - this is the slot we want to fill
+            int currSlot = 0;
+            // First, we'll get our slots in the order we wish to fill them - prioritizing the user's requested slot, otherwise going from the first instance of the item found
+            var relevantSlots = new List<InventorySlot>();
+            bool specificSlot = invSlot != -1;
+            if (specificSlot)
+            {
+                currSlot = invSlot;
+                var requestedSlot = Items[currSlot];
+                // If the slot we're trying to fill is occupied...
+                if (requestedSlot.ItemId != default && (!itemBase.IsStackable || requestedSlot.ItemId != itemBase.Id))
                 {
-                    PacketSender.SendChatMsg(this, Strings.Bags.withdrawinvalid, ChatMessageType.Inventory, CustomColors.Alerts.Error);
+                    // Alert the user
+                    PacketSender.SendChatMsg(this, Strings.Bags.SlotOccupied, ChatMessageType.Inventory, CustomColors.Alerts.Error);
+                    return;
                 }
+
+                relevantSlots.Add(requestedSlot);
+            }
+            // If the item is stackable, add slots that contain that item into the mix
+            if (itemBase.IsStackable)
+            {
+                relevantSlots.AddRange(FindInventoryItemSlots(itemBase.Id));
+            }
+            // And last, add any and all open slots as valid locations for this item, if need be
+            relevantSlots.AddRange(FindOpenInventorySlots());
+            relevantSlots.Select(sl => sl).Distinct();
+
+            // Otherwise, fill in the empty slots as much as possible
+            if (!TryFillInventoryStacksOfItemFromBagSlot(bag, slot, relevantSlots, itemBase, amount))
+            {
+                // If we're STILL not done, alert the user that we didn't have enough slots
+                PacketSender.SendChatMsg(this, Strings.Bags.withdrawinvalid, ChatMessageType.Inventory, CustomColors.Alerts.Error);
             }
         }
 

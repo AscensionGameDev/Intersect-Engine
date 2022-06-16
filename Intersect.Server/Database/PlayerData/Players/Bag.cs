@@ -127,6 +127,63 @@ namespace Intersect.Server.Database.PlayerData.Players
             }
         }
 
+        /// <summary>
+        /// Finds all bag slots matching the desired item and quantity.
+        /// </summary>
+        /// <param name="itemId">The item Id to look for.</param>
+        /// <param name="quantity">The quantity of the item to look for.</param>
+        /// <returns>A list of <see cref="InventorySlot"/> containing the requested item.</returns>
+        public List<BagSlot> FindBagItemSlots(Guid itemId, int quantity = 1)
+        {
+            var slots = new List<BagSlot>();
+
+            for (var i = 0; i < SlotCount; i++)
+            {
+                var item = Slots[i];
+                if (item?.ItemId != itemId)
+                {
+                    continue;
+                }
+
+                if (item.Quantity >= quantity)
+                {
+                    slots.Add(item);
+                }
+            }
+
+            return slots;
+        }
+
+        /// <summary>
+        /// Retrieves a list of open bag slots for this bag.
+        /// </summary>
+        /// <returns>A list of <see cref="BagSlot"/></returns>
+        public List<BagSlot> FindOpenBagSlots()
+        {
+            var slots = new List<BagSlot>();
+
+            for (var i = 0; i < SlotCount; i++)
+            {
+                var inventorySlot = Slots[i];
+
+                if (inventorySlot != null && inventorySlot.ItemId == Guid.Empty)
+                {
+                    slots.Add(inventorySlot);
+                }
+            }
+            return slots;
+        }
+
+        /// <summary>
+        /// Finds the index of a given <see cref="BagSlot"/> within this bag's Slots.
+        /// </summary>
+        /// <param name="slot">The <see cref="BagSlot"/>to search for</param>
+        /// <returns>The index if found, otherwise -1</returns>
+        public int FindSlotIndex(BagSlot slot)
+        {
+            return Slots.FindIndex(sl => sl.Id == slot.Id);
+        }
+
     }
 
 }
