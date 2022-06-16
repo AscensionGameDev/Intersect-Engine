@@ -52,6 +52,8 @@ public abstract class ImGuiRenderer
     private int _textureId;
     private IntPtr? _fontTextureId;
 
+    private ImDrawDataPtr _drawDataPtr;
+
     // Input
     private int _scrollWheelValue;
 
@@ -150,7 +152,15 @@ public abstract class ImGuiRenderer
     {
         ImGui.Render();
 
-        unsafe { RenderDrawData(ImGui.GetDrawData()); }
+        _drawDataPtr = ImGui.GetDrawData();
+    }
+
+    public unsafe void Draw()
+    {
+        if (_drawDataPtr.NativePtr != default)
+        {
+            RenderDrawData(_drawDataPtr);
+        }
     }
 
     #endregion ImGuiRenderer

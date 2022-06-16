@@ -14,7 +14,7 @@ public class Canvas : Window
             throw new ArgumentNullException(nameof(name));
         }
 
-        DisplayMode = DisplayMode.Block;
+        Display = DisplayMode.Block;
         Flags = CanvasFlags;
     }
 }

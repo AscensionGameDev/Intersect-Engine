@@ -27,6 +27,8 @@ public partial class Component
         }
     }
 
+    public Component Root => _parent?.Root ?? this;
+
     private void Attach(Component parent)
     {
         if (_parent != default)

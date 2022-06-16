@@ -35,7 +35,7 @@ public abstract partial class Component
         }
     }
 
-    public DisplayMode DisplayMode
+    public DisplayMode Display
     {
         get => _displayMode;
         set
@@ -80,5 +80,10 @@ public abstract partial class Component
             _bounds = new(Position, value);
             Invalidate();
         }
+    }
+
+    protected void SynchronizeBounds(FloatRect bounds)
+    {
+        _bounds = bounds;
     }
 }

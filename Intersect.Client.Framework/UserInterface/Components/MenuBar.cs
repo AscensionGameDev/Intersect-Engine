@@ -56,7 +56,7 @@ public class MenuBar : Component
 {
     public MenuBar()
     {
-        DisplayMode = DisplayMode.Block;
+        Display = DisplayMode.Block;
         Menus = new();
     }
 
