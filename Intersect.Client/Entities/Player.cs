@@ -561,12 +561,16 @@ namespace Intersect.Client.Entities
 
         public void TrySellItem(int index)
         {
-            if (ItemBase.Get(Inventory[index].ItemId) != null)
+            var slot = Inventory[index];
+            var quantity = slot.Quantity;
+            var sellingItem = ItemBase.Get(slot.ItemId);
+
+            if (sellingItem != null)
             {
                 var foundItem = -1;
                 for (var i = 0; i < Globals.GameShop.BuyingItems.Count; i++)
                 {
-                    if (Globals.GameShop.BuyingItems[i].ItemId == Inventory[index].ItemId)
+                    if (Globals.GameShop.BuyingItems[i].ItemId == slot.ItemId)
                     {
                         foundItem = i;
 
@@ -577,25 +581,25 @@ namespace Intersect.Client.Entities
                 if (foundItem > -1 && Globals.GameShop.BuyingWhitelist ||
                     foundItem == -1 && !Globals.GameShop.BuyingWhitelist)
                 {
-                    if (Inventory[index].Quantity > 1)
+                    if (quantity > 1)
                     {
                         InputBox.Open(
                             title: Strings.Shop.sellitem,
-                            prompt: Strings.Shop.sellitemprompt.ToString(ItemBase.Get(Inventory[index].ItemId).Name),
+                            prompt: Strings.Shop.sellitemprompt.ToString(sellingItem.Name),
                             modal: true,
                             inputType: InputBox.InputType.NumericSliderInput,
                             onSuccess: SellItemInputBoxOkay,
                             onCancel: null,
                             userData: index,
-                            quantity: Inventory[index].Quantity,
-                            maxQuantity: Inventory[index].Quantity
+                            quantity: quantity,
+                            maxQuantity: quantity
                         );
                     }
                     else
                     {
                         InputBox.Open(
                             title: Strings.Shop.sellitem,
-                            prompt: Strings.Shop.sellprompt.ToString(ItemBase.Get(Inventory[index].ItemId).Name),
+                            prompt: Strings.Shop.sellprompt.ToString(sellingItem.Name),
                             modal: true,
                             inputType: InputBox.InputType.YesNo,
                             onSuccess: SellInputBoxOkay,
