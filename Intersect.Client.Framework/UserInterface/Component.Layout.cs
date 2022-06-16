@@ -1,9 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+using Intersect.Client.Framework.UserInterface.Styling;
+using Intersect.Time;
 
 namespace Intersect.Client.Framework.UserInterface;
 
@@ -25,19 +21,38 @@ public partial class Component
 
         _parent?.Invalidate();
     }
-
-    protected virtual void Layout()
+    public void Layout(FrameTime frameTime)
     {
+        if (Display == DisplayMode.None)
+        {
+            return;
+        }
 
+        if (LayoutBegin())
+        {
+            if (_dirty)
+            {
+
+                _dirty = false;
+            }
+
+            LayoutChildren(frameTime);
+        }
+
+        LayoutEnd();
     }
 
-    protected virtual void LayoutBegin()
+    private void LayoutChildren(FrameTime frameTime)
     {
-
+        foreach (var child in Children)
+        {
+            child.Layout(frameTime);
+        }
     }
 
-    protected virtual void LayoutEnd()
-    {
+    protected abstract bool LayoutBegin();
 
-    }
+    protected abstract void LayoutEnd();
+
+    protected virtual void Relayout();
 }

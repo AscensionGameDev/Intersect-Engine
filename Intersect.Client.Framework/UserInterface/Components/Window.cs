@@ -16,7 +16,6 @@ public class Window : Component
     {
         _open = true;
 
-        DisplayMode = DisplayMode.Block;
         MenuBar = new();
     }
 
@@ -29,21 +28,6 @@ public class Window : Component
     public ImGuiWindowFlags Flags { get; set; } = DefaultFlags;
 
     public MenuBar MenuBar { get; }
-
-    public bool Open
-    {
-        get => _open;
-        set
-        {
-            if (_open == value)
-            {
-                return;
-            }
-
-            _open = value;
-            Invalidate();
-        }
-    }
 
     public string Title
     {
@@ -60,15 +44,16 @@ public class Window : Component
         }
     }
 
-    protected override bool DrawBegin()
+    protected override bool LayoutBegin()
     {
         if (!ImGui.Begin(Name, ref _open, Flags))
         {
             return false;
         }
 
-        ImGui.SetWindowPos(Position);
-        ImGui.SetWindowSize(Size);
+        var position = ImGui.GetWindowPos();
+        var size = ImGui.GetWindowSize();
+        SynchronizeBounds(new(position, size));
 
         return true;
     }
@@ -78,8 +63,16 @@ public class Window : Component
         MenuBar.Draw(frameTime);
     }
 
-    protected override void DrawEnd()
+    protected override void LayoutEnd()
     {
+
         ImGui.End();
+    }
+
+    protected override void Layout()
+    {
+        base.Layout();
+        ImGui.SetWindowPos(Position);
+        ImGui.SetWindowSize(Size);
     }
 }

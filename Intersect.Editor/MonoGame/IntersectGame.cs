@@ -311,8 +311,8 @@ namespace Intersect.Editor.MonoGame
             });
             //_canvas.Children.Add(new ManualComponent(_customFont));
 
-            //var mainMenuWindow = new Window("main_menu");
-            //_canvas.Children.Add(mainMenuWindow);
+            var mainMenuWindow = new Window("main_menu");
+            _canvas.Children.Add(mainMenuWindow);
 
             base.LoadContent();
         }
@@ -571,6 +571,20 @@ namespace Intersect.Editor.MonoGame
                 }
             }
 
+            var frameTime = gameTime.FromMonoGame();
+
+            // Call BeforeLayout first to set things up
+            _imGuiRenderer.BeforeLayout(frameTime);
+
+            _canvas.Bounds = new(0, 0, GraphicsDevice.PresentationParameters.BackBufferWidth, GraphicsDevice.PresentationParameters.BackBufferHeight);
+            _canvas.Draw(frameTime);
+
+            // Draw our UI
+            ImGuiLayout();
+
+            // Call AfterLayout now to finish up and draw all the things
+            _imGuiRenderer.AfterLayout();
+
             base.Update(gameTime);
         }
 
@@ -616,19 +630,7 @@ namespace Intersect.Editor.MonoGame
                 }
             }
 
-            var frameTime = gameTime.FromMonoGame();
-
-            // Call BeforeLayout first to set things up
-            _imGuiRenderer.BeforeLayout(frameTime);
-
-            _canvas.Bounds = new(0, 0, GraphicsDevice.PresentationParameters.BackBufferWidth, GraphicsDevice.PresentationParameters.BackBufferHeight);
-            _canvas.Draw(frameTime);
-
-            // Draw our UI
-            ImGuiLayout();
-
-            // Call AfterLayout now to finish up and draw all the things
-            _imGuiRenderer.AfterLayout();
+            _imGuiRenderer.Draw();
 
             base.Draw(gameTime);
         }
