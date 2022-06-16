@@ -812,7 +812,7 @@ namespace Intersect.Client.Entities
                     var iBox = new InputBox(
                         Strings.Trading.offeritem,
                         Strings.Trading.offeritemprompt.ToString(ItemBase.Get(Inventory[index].ItemId).Name), true,
-                        InputBox.InputType.NumericSliderInput, TradeItemInputBoxOkay, null, index, Inventory[index].Quantity
+                        InputBox.InputType.NumericSliderInput, TradeItemInputBoxOkay, null, index, Inventory[index].Quantity, Inventory[index].Quantity
                     );
                 }
                 else
@@ -840,7 +840,7 @@ namespace Intersect.Client.Entities
                     var iBox = new InputBox(
                         Strings.Trading.revokeitem,
                         Strings.Trading.revokeitemprompt.ToString(ItemBase.Get(Globals.Trade[0, index].ItemId).Name),
-                        true, InputBox.InputType.NumericSliderInput, RevokeItemInputBoxOkay, null, index
+                        true, InputBox.InputType.NumericSliderInput, RevokeItemInputBoxOkay, null, index, Globals.Trade[0, index].Quantity, Globals.Trade[0, index].Quantity
                     );
                 }
                 else
