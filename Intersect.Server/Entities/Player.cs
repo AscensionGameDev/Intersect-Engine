@@ -3924,9 +3924,9 @@ namespace Intersect.Server.Entities
             foreach (var inventorySlotsWithItem in inventorySlots)
             {
                 // If we've fulfilled our stacking desires, we're done
-                if (amountRemainder <= 0 || FindOpenInventorySlots().Count <= 0)
+                if (amountRemainder < 1 || FindOpenInventorySlots().Count < 1)
                 {
-                    return amountRemainder <= 0;
+                    return amountRemainder < 1;
                 }
                 var currSlot = FindInventoryItemSlotIndex(inventorySlotsWithItem);
 
@@ -3964,7 +3964,7 @@ namespace Intersect.Server.Entities
                 }
             } // repeat until we've either filled the bag or fulfilled our stack requirements
 
-            return amountRemainder <= 0;
+            return amountRemainder < 1;
         }
 
         /// <summary>
@@ -3981,9 +3981,9 @@ namespace Intersect.Server.Entities
             int amountRemainder = amountToGive;
             foreach (var bagSlotWithItem in bagSlots)
             {
-                if (amountRemainder <= 0 || bag.FindOpenBagSlots().Count <= 0)
+                if (amountRemainder < 1 || bag.FindOpenBagSlots().Count < 1)
                 {
-                    return amountRemainder <= 0;
+                    return amountRemainder < 1;
                 }
                 var currSlot = bag.FindSlotIndex(bagSlotWithItem);
 
@@ -4016,7 +4016,7 @@ namespace Intersect.Server.Entities
                 }
             }
 
-            return amountRemainder <= 0;
+            return amountRemainder < 1;
         }
 
         public void StoreBagItem(int slot, int amount, int bagSlot)
