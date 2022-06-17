@@ -562,65 +562,60 @@ namespace Intersect.Client.Entities
         public void TrySellItem(int index)
         {
             var slot = Inventory[index];
-            var quantity = slot.Quantity;
             var sellingItem = ItemBase.Get(slot.ItemId);
-
-            if (sellingItem != null)
+            if (sellingItem == null)
             {
-                var foundItem = -1;
-                for (var i = 0; i < Globals.GameShop.BuyingItems.Count; i++)
-                {
-                    if (Globals.GameShop.BuyingItems[i].ItemId == slot.ItemId)
-                    {
-                        foundItem = i;
-
-                        break;
-                    }
-                }
-
-                if (foundItem > -1 && Globals.GameShop.BuyingWhitelist ||
-                    foundItem == -1 && !Globals.GameShop.BuyingWhitelist)
-                {
-                    if (quantity > 1)
-                    {
-                        InputBox.Open(
-                            title: Strings.Shop.sellitem,
-                            prompt: Strings.Shop.sellitemprompt.ToString(sellingItem.Name),
-                            modal: true,
-                            inputType: InputBox.InputType.NumericSliderInput,
-                            onSuccess: SellItemInputBoxOkay,
-                            onCancel: null,
-                            userData: index,
-                            quantity: quantity,
-                            maxQuantity: quantity
-                        );
-                    }
-                    else
-                    {
-                        InputBox.Open(
-                            title: Strings.Shop.sellitem,
-                            prompt: Strings.Shop.sellprompt.ToString(sellingItem.Name),
-                            modal: true,
-                            inputType: InputBox.InputType.YesNo,
-                            onSuccess: SellInputBoxOkay,
-                            onCancel: null,
-                            userData: index
-                        );
-                    }
-                }
-                else
-                {
-                    InputBox.Open(
-                        title: Strings.Shop.sellitem,
-                        prompt: Strings.Shop.cannotsell,
-                        modal: true,
-                        inputType: InputBox.InputType.OkayOnly,
-                        onSuccess: null,
-                        onCancel: null,
-                        userData: -1
-                    );
-                }
+                return;
             }
+
+            var foundItem = -1;
+            for (var i = 0; i < Globals.GameShop.BuyingItems.Count; i++)
+            {
+                if (Globals.GameShop.BuyingItems[i].ItemId != slot.ItemId)
+                {
+                    continue;
+                }
+
+                foundItem = i;
+
+                break;
+            }
+
+            var hasFoundItem = foundItem > -1 && Globals.GameShop.BuyingWhitelist ||
+                               foundItem == -1 && !Globals.GameShop.BuyingWhitelist;
+            var prompt = Strings.Shop.sellprompt;
+            var inputType = InputBox.InputType.YesNo;
+            EventHandler onSuccess = SellInputBoxOkay;
+            var userData = index;
+            var quantity = slot.Quantity;
+
+            if (quantity > 1)
+            {
+                prompt = Strings.Shop.sellitemprompt;
+                inputType = InputBox.InputType.NumericSliderInput;
+                onSuccess = SellItemInputBoxOkay;
+                userData = index;
+            }
+
+            if (!hasFoundItem)
+            {
+                prompt = Strings.Shop.cannotsell;
+                inputType = InputBox.InputType.OkayOnly;
+                onSuccess = null;
+                userData = -1;
+            }
+
+            InputBox.Open(
+                title: Strings.Shop.sellitem,
+                prompt: prompt.ToString(sellingItem.Name),
+                modal: true,
+                inputType: inputType,
+                onSuccess: onSuccess,
+                onCancel: null,
+                userData: userData,
+                quantity: quantity,
+                maxQuantity: quantity
+            );
         }
 
         public void TryBuyItem(int slot)
