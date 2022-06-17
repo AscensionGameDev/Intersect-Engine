@@ -763,7 +763,8 @@ namespace Intersect.Client.Entities
                     var iBox = new InputBox(
                         Strings.Bags.storeitem,
                         Strings.Bags.storeitemprompt.ToString(ItemBase.Get(Inventory[invSlot].ItemId).Name), true,
-                        InputBox.InputType.NumericSliderInput, StoreBagItemInputBoxOkay, null, userData, Inventory[invSlot].Quantity
+                        InputBox.InputType.NumericSliderInput, StoreBagItemInputBoxOkay, null, userData, Inventory[invSlot].Quantity,
+                        Inventory[invSlot].Quantity
                     );
                 }
                 else
@@ -794,7 +795,8 @@ namespace Intersect.Client.Entities
                     var iBox = new InputBox(
                         Strings.Bags.retreiveitem,
                         Strings.Bags.retreiveitemprompt.ToString(ItemBase.Get(Globals.Bag[bagSlot].ItemId).Name), true,
-                        InputBox.InputType.NumericSliderInput, RetreiveBagItemInputBoxOkay, null, userData, Globals.Bag[bagSlot].Quantity
+                        InputBox.InputType.NumericSliderInput, RetreiveBagItemInputBoxOkay, null, userData, Globals.Bag[bagSlot].Quantity,
+                        Globals.Bag[bagSlot].Quantity
                     );
                 }
                 else
