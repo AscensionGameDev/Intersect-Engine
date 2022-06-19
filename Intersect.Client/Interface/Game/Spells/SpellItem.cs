@@ -301,7 +301,7 @@ namespace Intersect.Client.Interface.Game.Spells
 
                         if (bestIntersectIndex > -1)
                         {
-                            if (mYindex != bestIntersectIndex)
+                            if (mYindex != bestIntersectIndex && !Globals.Me.IsCasting)
                             {
                                 //Try to swap....
                                 PacketSender.SendSwapSpells(bestIntersectIndex, mYindex);
