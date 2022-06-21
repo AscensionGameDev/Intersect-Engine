@@ -1612,7 +1612,7 @@ namespace Intersect.Server.Entities
             Warp(newMapId, newX, newY, (byte)Directions.Up, adminWarp, 0, false);
         }
 
-        public void ForceInstanceChangeWarp(Guid newMapId, float newX, float newY, Guid newMapInstanceId, MapInstanceType instanceType, bool adminWarp = false)
+        public void AdminWarp(Guid newMapId, float newX, float newY, Guid newMapInstanceId, MapInstanceType instanceType, bool force)
         {
             PreviousMapInstanceId = MapInstanceId;
             PreviousMapInstanceType = InstanceType;
@@ -1628,7 +1628,7 @@ namespace Intersect.Server.Entities
             {
                 PacketSender.SendChatMsg(this, Strings.Player.InstanceUpdate.ToString(PreviousMapInstanceId.ToString(), MapInstanceId.ToString()), ChatMessageType.Admin, CustomColors.Alerts.Info);
             }
-            Warp(newMapId, newX, newY, (byte)Directions.Up, adminWarp, 0, false, false, null, false, true);
+            Warp(newMapId, newX, newY, (byte)Directions.Up, forceInstanceChange: force);
         }
 
         public override void Warp(
