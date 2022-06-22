@@ -44,6 +44,15 @@
         /// </summary>
         public bool ShowLevelByName = false;
 
+        /// <summary>
+        /// If true, NPCs that are resetting will walkthrough players
+        /// </summary>
+        public bool IntangibleDuringReset = true;
+
+        /// <summary>
+        /// If true, NPCs will go to reset state if their combat timer is exceeded
+        /// </summary>
+        public bool ResetIfCombatTimerExceeded = true;
     }
 
 }
