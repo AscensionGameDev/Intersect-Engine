@@ -384,8 +384,8 @@ namespace Intersect.Client.MonoGame
                     status = Strings.Update.Updating;
                     progressPercent = mUpdater.Progress / 100f;
                     progress = Strings.Update.Percent.ToString((int) mUpdater.Progress);
-                    filesRemaining = mUpdater.FilesRemaining + " Files Remaining";
-                    sizeRemaining = mUpdater.GetHumanReadableFileSize(mUpdater.SizeRemaining) + " Left";
+                    filesRemaining = Strings.Update.Files.ToString(mUpdater.FilesRemaining);
+                    sizeRemaining = Strings.Update.Size.ToString(mUpdater.GetHumanReadableFileSize(mUpdater.SizeRemaining));
                     break;
 
                 case UpdateStatus.Restart:
