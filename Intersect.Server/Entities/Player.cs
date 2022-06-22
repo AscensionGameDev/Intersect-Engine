@@ -2006,7 +2006,7 @@ namespace Intersect.Server.Entities
             // Get the entities from the old map - we need to clear them off the player's global entities on their client
             if (oldMap != null && oldMap.TryGetInstance(PreviousMapInstanceId, out var oldMapInstance))
             {
-                PacketSender.SendMapLayerChangedPacketTo(this, oldMap, PreviousMapInstanceId);
+                PacketSender.SendMapInstanceChangedPacket(this, oldMap, PreviousMapInstanceId);
                 oldMapInstance.ClearEntityTargetsOf(this); // Remove targets of this entity
             }
             // Clear events - we'll get them again from the map instance's event cache
