@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 using Intersect.Config.Guilds;
@@ -55,7 +55,6 @@ namespace Intersect.Client.Framework.Entities
         bool IsEquipped(int slot);
         bool IsInMyParty(Guid id);
         bool IsInMyParty(IPlayer player);
-        void StopBlocking();
         bool TryAttack();
         bool TryBlock();
 

@@ -346,6 +346,13 @@ namespace Intersect.Server.Entities
                     {
                         status.TryRemoveStatus();
                     }
+
+                    //Blocking timers
+                    if(AttackTimer < Timing.Global.Milliseconds && Blocking)
+                    {
+                        Blocking = false;
+                        PacketSender.SendEntityAttack(this, -1, true);
+                    }
                 }
             }
             finally
@@ -812,7 +819,7 @@ namespace Intersect.Server.Entities
             var time = 1000f / (float) (1 + Math.Log(Stat[(int) Stats.Speed].Value()));
             if (Blocking)
             {
-                time += time * Options.BlockingSlow;
+                time += time * (float)Options.BlockingSlow;
             }
 
             return Math.Min(1000f, time);
@@ -1137,16 +1144,11 @@ namespace Intersect.Server.Entities
         {
             if (AttackTimer < Timing.Global.Milliseconds)
             {
-                if (blocking && !Blocking && AttackTimer < Timing.Global.Milliseconds)
+                if (blocking && !Blocking)
                 {
                     Blocking = true;
-                    PacketSender.SendEntityAttack(this, -1);
-                }
-                else if (!blocking && Blocking)
-                {
-                    Blocking = false;
                     AttackTimer = Timing.Global.Milliseconds + CalculateAttackTime();
-                    PacketSender.SendEntityAttack(this, 0);
+                    PacketSender.SendEntityAttack(this, CalculateAttackTime(), true);
                 }
             }
         }

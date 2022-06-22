@@ -1014,10 +1014,30 @@ namespace Intersect.Client.Networking
                 return;
             }
 
-            if (attackTimer > -1 && en != Globals.Me)
+            if (!packet.IsBlocking)
             {
-                en.AttackTimer = Timing.Global.Ticks / TimeSpan.TicksPerMillisecond + attackTimer;
-                en.AttackTime = attackTimer;
+                //attack handler
+                if (attackTimer > -1 && en != Globals.Me)
+                {
+                    en.AttackTimer = Timing.Global.Ticks / TimeSpan.TicksPerMillisecond + attackTimer;
+                    en.AttackTime = attackTimer;
+                }
+            }
+            else
+            {
+                //blocking handler
+                if(en == Globals.Me)
+                {                    
+                    if (attackTimer > -1)
+                    {
+                        en.AttackTimer = Timing.Global.Ticks / TimeSpan.TicksPerMillisecond + attackTimer;
+                        en.IsBlocking = true;
+                    }
+                    else
+                    {
+                        en.IsBlocking = false;
+                    }
+                }
             }
         }
 

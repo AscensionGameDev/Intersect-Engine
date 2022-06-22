@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 using Intersect.Enums;
 using MessagePack;
@@ -13,12 +13,13 @@ namespace Intersect.Network.Packets.Server
         {
         }
 
-        public EntityAttackPacket(Guid id, EntityTypes type, Guid mapId, int attackTimer)
+        public EntityAttackPacket(Guid id, EntityTypes type, Guid mapId, int attackTimer, bool isBlocking)
         {
             Id = id;
             Type = type;
             MapId = mapId;
             AttackTimer = attackTimer;
+            IsBlocking = isBlocking;
         }
 
         [Key(3)]
@@ -32,6 +33,9 @@ namespace Intersect.Network.Packets.Server
 
         [Key(6)]
         public int AttackTimer { get; set; }
+
+        [Key(7)]
+        public bool IsBlocking { get; set; }
 
     }
 
