@@ -20,10 +20,19 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             InitializeComponent();
             mMyCommand = refCommand;
             mEventEditor = editor;
+            InitLocalization();
             cmbPicture.Items.Clear();
-            cmbPicture.Items.AddRange(
-                GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Image)
-            );
+
+            var sortedTextures = GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Image);
+
+            if (sortedTextures.Length > 0)
+            {
+                cmbPicture.Items.AddRange(sortedTextures);
+            }
+            else
+            {
+                cmbPicture.Items.Add(Strings.General.none);
+            }
 
             cmbSize.Items.Clear();
             cmbSize.Items.Add(Strings.EventShowPicture.original);
@@ -39,8 +48,6 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                 nudHideTime.Value = mMyCommand.HideTime;
                 chkWaitUntilClosed.Checked = mMyCommand.WaitUntilClosed;
             }
-
-            InitLocalization();
         }
 
         private void InitLocalization()
