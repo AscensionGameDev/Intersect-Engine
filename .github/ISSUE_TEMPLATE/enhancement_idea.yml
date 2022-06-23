@@ -1,0 +1,36 @@
+name: Enhancement idea
+description: Suggest a minor enhancement or quality of life change
+labels: ["enhancement"]
+title: 'enhancement: '
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for your interest Intersect! We welcome any and all ideas for features or improvements that you might have. All we ask is to fill in this template with some detail. A detailed description, perhaps supported with some screenshots, mockups, and reasoning would be very much appreciated and will help get your proposal reviewed sooner.
+        
+        Keep in mind that Intersect is intended to be a base 2d orpg engine. Consider if your idea fits the overall goals of this project.
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Please give us a detailed description of the enhancement or quality of life change you have in mind. Focus on _what_ this change does, over the _why_ you want it. What would be the end-result when implemented? Feel free to add any diagrams, (mocked up) screenshots, or other materials that support your vision.
+      placeholder: E.g. By adding an option to...
+    validations:
+      required: true
+  - type: textarea
+    id: use-case
+    attributes:
+      label: Intended Use-Case
+      description: Describe the problem that this change would solve. Provide an example of what you are trying to achieve and how this change would help.
+      placeholder: E.g. This would allow more rapid development because...
+    validations:
+      required: true
+  - type: checkboxes
+    id: dup-check
+    attributes:
+      label: Duplicate Check
+      description: In order to keep our issue tracker free from clutter please take just a moment to check and see if this enhancement idea has already been requested. If you see that this idea has already been posted and you can add more information or context please do so as a comment within the existing thread.
+      options:
+        - label: This enhancement idea is not a duplicate to the best of my knowledge.
+          required: true
