@@ -614,7 +614,7 @@ namespace Intersect.Server.Entities
 
                         break;
                     case MoveRouteEnum.MoveRandomly:
-                        var dir = (byte)Randomization.Next(0, 4);
+                        var dir = (byte)Randomization.Next(0, Options.Instance.Sprites.Directions);
                         if (CanMove(dir) == -1)
                         {
                             Move(dir, forPlayer);
@@ -754,7 +754,7 @@ namespace Intersect.Server.Entities
 
                         break;
                     case MoveRouteEnum.TurnRandomly:
-                        ChangeDir((byte)Randomization.Next(0, 4));
+                        ChangeDir((byte)Randomization.Next(0, Options.Instance.Sprites.Directions));
                         moved = true;
 
                         break;

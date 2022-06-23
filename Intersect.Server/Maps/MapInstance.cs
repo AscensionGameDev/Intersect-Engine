@@ -452,7 +452,7 @@ namespace Intersect.Server.Maps
             }
             else
             {
-                dir = (byte)Randomization.Next(0, 4);
+                dir = (byte)Randomization.Next(0, Options.Instance.Sprites.Directions);
             }
 
             if (spawn.X >= 0 && spawn.Y >= 0)
