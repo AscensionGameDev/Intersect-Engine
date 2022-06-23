@@ -2061,7 +2061,7 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString CheckEquipment = @"Check Equipment";
 
-            public static LocalizedString partial class = @"Class:";
+            public static LocalizedString Class = @"Class:";
 
             public static LocalizedString classis = @"Class Is";
 

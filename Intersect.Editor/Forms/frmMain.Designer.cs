@@ -6,7 +6,7 @@ using WeifenLuo.WinFormsUI.Docking;
 
 namespace Intersect.Editor.Forms
 {
-	partial partial class FrmMain
+	partial class FrmMain
 	{
 		/// <summary>
 		/// Required designer variable.
