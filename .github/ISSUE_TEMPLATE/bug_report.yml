@@ -1,0 +1,85 @@
+name: Bug Report
+description: Report a bug for us to look into
+labels: ["bug", "needs verification"]
+title: 'bug: '
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report! Please make sure to add as much detail as you can, preferably with video or imagery. This will help us diagnose the issue faster and thus resolve it quicker.
+        
+        If this bug presents itself in a project with custom source code modifications/edits please make sure the bug also exists in the vanilla engine builds before sharing. 
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Please give us a detailed description of the issue that you're seeing. You can add screenshots and videos as well.
+      placeholder: Tell us what you see!
+    validations:
+      required: true
+  - type: textarea
+    id: repro-steps
+    attributes:
+      label: Steps to Reproduce
+      description: "Describe all the steps we need to take to show the behavior that you have observed. Also, include what you expected to happen and what did actually happen. If this bug the result of undesirable actions with configured game objects (ie: resources, spells, npcs, items, events, etc) please also include image of the related configurations for those game objects."
+      placeholder: | 
+        1. Step 1...
+        2. Step 2...
+        3. ???
+        4. 🐞
+        
+        Expected outcome: the game crashed
+        Actual outcome: all was fine
+    validations:
+      required: true
+  - type: input
+    id: version-with-bug
+    attributes:
+      label: Version with bug
+      description: Please provide the version number of Intersect that you are seeing this bug with.
+      placeholder: E.g. v7.1.22
+    validations:
+      required: true
+      email: true
+  - type: input
+    id: version-that-worked
+    attributes:
+      label: Last version that worked well
+      description: Is there a version of Intersect on which this _did_ work? If yes, please provide the version number, otherwise enter 'Unknown'.
+      placeholder: E.g. v0.7.18 or Unknown
+    validations:
+      required: true
+      email: true
+  - type: dropdown
+    id: platforms-affected
+    attributes:
+      label: Affected platforms
+      description: Select all or any platform that you see this issue on. This helps us determine if it's something platform-specific or in the core. If you were only able to test on 1 platform, please check the last option to inform us about that.
+      multiple: true
+      options:
+        - Windows
+        - macOS
+        - Linux
+        - I was *not* able test on other platforms
+    validations:
+      required: true
+  - type: textarea
+    id: workaround
+    attributes:
+      label: Did you find any workaround?
+      description: Did you find any workaround for this issue? This can unblock other people while waiting for this issue to be resolved or even give us a hint on how to fix this.
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant log output
+      description: Please copy and paste any relevant log output. This will be automatically formatted properly. Logs can be found in your Server/logs or Client and Editor/logs directories.
+      render: shell
+  - type: checkboxes
+    id: dup-check
+    attributes:
+      label: Duplicate Bug Check
+      description: In order to keep our issue tracker free from clutter please take just a moment to check and see if this bug report has already been posted. If you see this bug has already been posted and you can add more information or context please do so as a comment within the existing report.
+      options:
+        - label: This bug report is not a duplicate to the best of my knowledge.
+          required: true
