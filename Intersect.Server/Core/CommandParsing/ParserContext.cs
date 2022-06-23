@@ -7,7 +7,7 @@ using Intersect.Server.Core.CommandParsing.Errors;
 namespace Intersect.Server.Core.CommandParsing
 {
 
-    public struct ParserContext
+    public partial struct ParserContext
     {
 
         public ICommand Command { get; set; }

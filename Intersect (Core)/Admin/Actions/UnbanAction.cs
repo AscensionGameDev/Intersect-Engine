@@ -4,7 +4,7 @@ using MessagePack;
 namespace Intersect.Admin.Actions
 {
     [MessagePackObject]
-    public class UnbanAction : AdminAction
+    public partial class UnbanAction : AdminAction
     {
         //Parameterless Constructor for MessagePack
         public UnbanAction()

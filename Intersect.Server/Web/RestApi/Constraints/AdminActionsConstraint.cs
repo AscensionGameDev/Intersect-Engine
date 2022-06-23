@@ -8,7 +8,7 @@ using Intersect.Enums;
 namespace Intersect.Server.Web.RestApi.Constraints
 {
 
-    internal sealed class AdminActionsConstraint : IHttpRouteConstraint
+    internal sealed partial class AdminActionsConstraint : IHttpRouteConstraint
     {
 
         /// <inheritdoc />

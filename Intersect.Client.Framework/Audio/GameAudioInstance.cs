@@ -1,7 +1,7 @@
 ﻿namespace Intersect.Client.Framework.Audio
 {
 
-    public abstract class GameAudioInstance
+    public abstract partial class GameAudioInstance
     {
 
         public enum AudioInstanceState

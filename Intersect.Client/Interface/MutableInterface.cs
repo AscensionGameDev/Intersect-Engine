@@ -9,7 +9,7 @@ using System.Linq;
 namespace Intersect.Client.Interface
 {
 
-    public abstract class MutableInterface : IMutableInterface
+    public abstract partial class MutableInterface : IMutableInterface
     {
 
         private static DebugWindow _debugWindow;

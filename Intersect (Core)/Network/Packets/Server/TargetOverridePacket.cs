@@ -4,7 +4,7 @@ using System;
 namespace Intersect.Network.Packets.Server
 {
     [MessagePackObject]
-    public class TargetOverridePacket : IntersectPacket
+    public partial class TargetOverridePacket : IntersectPacket
     {
         //Parameterless Constructor for MessagePack
         public TargetOverridePacket()

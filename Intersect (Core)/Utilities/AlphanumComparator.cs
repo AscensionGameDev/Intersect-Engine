@@ -45,7 +45,7 @@ using System.Text;
 namespace Intersect.Utilities
 {
 
-    public class AlphanumComparator : IComparer
+    public partial class AlphanumComparator : IComparer
     {
 
         public int Compare(object x, object y)

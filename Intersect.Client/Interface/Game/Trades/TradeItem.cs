@@ -14,7 +14,7 @@ using Intersect.Utilities;
 namespace Intersect.Client.Interface.Game.Trades
 {
 
-    public class TradeItem
+    public partial class TradeItem
     {
 
         private static int sItemXPadding = 4;

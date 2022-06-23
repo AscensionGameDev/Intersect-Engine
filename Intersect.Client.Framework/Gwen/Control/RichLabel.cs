@@ -13,7 +13,7 @@ namespace Intersect.Client.Framework.Gwen.Control
     /// <summary>
     ///     Multiline label with text chunks having different color/font.
     /// </summary>
-    public class RichLabel : Base
+    public partial class RichLabel : Base
     {
 
         private readonly string[] mNewline;
@@ -313,7 +313,7 @@ namespace Intersect.Client.Framework.Gwen.Control
             }
         }
 
-        protected struct TextBlock
+        protected partial struct TextBlock
         {
 
             public BlockType Type;

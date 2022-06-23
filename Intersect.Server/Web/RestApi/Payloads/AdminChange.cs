@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 namespace Intersect.Server.Web.RestApi.Payloads
 {
 
-    public struct AdminChange
+    public partial struct AdminChange
     {
 
         [JsonIgnore, NotMapped]

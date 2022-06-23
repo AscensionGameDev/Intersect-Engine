@@ -17,7 +17,7 @@ namespace Intersect.Server.Networking.Lidgren
 {
 
     // TODO: Migrate to a proper service
-    internal class ServerNetwork : AbstractNetwork, IServer
+    internal partial class ServerNetwork : AbstractNetwork, IServer
     {
         /// <summary>
         /// This is our smart thread pool which we use to handle packet processing and packet sending. Min/Max Number of Threads & Idle Timeouts are set via server config.

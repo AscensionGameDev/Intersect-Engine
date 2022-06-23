@@ -16,7 +16,7 @@ using Intersect.GameObjects;
 namespace Intersect.Client.Interface.Game.Character
 {
 
-    public class CharacterWindow
+    public partial class CharacterWindow
     {
 
         //Equipment List

@@ -6,7 +6,7 @@ namespace Intersect.Client.Framework.Gwen.Input
     /// <summary>
     ///     Keyboard state.
     /// </summary>
-    public class KeyData
+    public partial class KeyData
     {
 
         public readonly bool[] KeyState;

@@ -4,7 +4,7 @@
     /// <summary>
     ///     Menu strip.
     /// </summary>
-    public class MenuStrip : Menu
+    public partial class MenuStrip : Menu
     {
 
         /// <summary>

@@ -10,7 +10,7 @@ namespace Intersect.Extensions
 {
 
     [TestFixture]
-    public class RandomExtensionsTests
+    public partial class RandomExtensionsTests
     {
 
         [Test]
@@ -191,7 +191,7 @@ namespace Intersect.Extensions
 
     }
 
-    internal class MockRandom : Random
+    internal partial class MockRandom : Random
     {
 
         internal byte[] MockNextBytes { private get; set; }

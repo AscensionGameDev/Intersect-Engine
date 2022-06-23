@@ -3,7 +3,7 @@
 namespace Intersect.Network.Packets.Client
 {
     [MessagePackObject]
-    public class BuyItemPacket : SlotQuantityPacket
+    public partial class BuyItemPacket : SlotQuantityPacket
     {
         //Parameterless Constructor for MessagePack
         public BuyItemPacket() : base(0, 0)

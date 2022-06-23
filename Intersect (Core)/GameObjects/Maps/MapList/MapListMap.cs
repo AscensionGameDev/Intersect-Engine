@@ -5,7 +5,7 @@ using Intersect.Collections;
 namespace Intersect.GameObjects.Maps.MapList
 {
 
-    public class MapListMap : MapListItem, IComparable<MapListMap>
+    public partial class MapListMap : MapListItem, IComparable<MapListMap>
     {
 
         public Guid MapId;

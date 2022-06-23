@@ -1,6 +1,6 @@
 namespace Intersect.Client.Framework.Graphics
 {
-    public abstract class GameFont
+    public abstract partial class GameFont
     {
         public string Name { get; set; } = string.Empty;
 

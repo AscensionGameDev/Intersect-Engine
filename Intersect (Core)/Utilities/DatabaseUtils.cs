@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 namespace Intersect.Utilities
 {
 
-    public static class DatabaseUtils
+    public static partial class DatabaseUtils
     {
 
         public static int[] LoadIntArray(string json, int arrayLen)

@@ -5,7 +5,7 @@ namespace Intersect.Plugins
     /// <summary>
     /// The basic plugin configuration class.
     /// </summary>
-    public class PluginConfiguration
+    public partial class PluginConfiguration
     {
         /// <summary>
         /// If this plugin is enabled or not.

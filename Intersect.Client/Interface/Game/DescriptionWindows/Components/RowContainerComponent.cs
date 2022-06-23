@@ -6,7 +6,7 @@ using Intersect.Client.Framework.Gwen.Control;
 
 namespace Intersect.Client.Interface.Game.DescriptionWindows.Components
 {
-    public class RowContainerComponent : ComponentBase
+    public partial class RowContainerComponent : ComponentBase
     {
         protected KeyValueRowComponent mKeyValueRow;
 
@@ -80,7 +80,7 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows.Components
         }
     }
 
-    public class KeyValueRowComponent : ComponentBase
+    public partial class KeyValueRowComponent : ComponentBase
     {
         protected Label mKeyLabel;
 

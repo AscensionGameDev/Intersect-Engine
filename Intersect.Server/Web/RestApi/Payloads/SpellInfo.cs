@@ -3,7 +3,7 @@
 namespace Intersect.Server.Web.RestApi.Payloads
 {
 
-    public struct SpellInfo
+    public partial struct SpellInfo
     {
 
         public Guid SpellId { get; set; }

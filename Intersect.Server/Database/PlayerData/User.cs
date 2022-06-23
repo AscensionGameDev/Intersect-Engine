@@ -28,7 +28,7 @@ namespace Intersect.Server.Database.PlayerData
 {
 
     [ApiVisibility(ApiVisibility.Restricted | ApiVisibility.Private)]
-    public class User
+    public partial class User
     {
         private static readonly ConcurrentDictionary<Guid, User> OnlineUsers = new ConcurrentDictionary<Guid, User>();
 

@@ -6,7 +6,7 @@ using System.Text;
 namespace Intersect.Memory
 {
 
-    public class StreamWrapper : Stream, IBuffer
+    public partial class StreamWrapper : Stream, IBuffer
     {
 
         public StreamWrapper(Stream stream)

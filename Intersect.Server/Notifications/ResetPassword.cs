@@ -8,7 +8,7 @@ using Intersect.Utilities;
 namespace Intersect.Server.Notifications
 {
 
-    public class PasswordResetEmail : Notification
+    public partial class PasswordResetEmail : Notification
     {
 
         public PasswordResetEmail(User user) : base(user.Email)

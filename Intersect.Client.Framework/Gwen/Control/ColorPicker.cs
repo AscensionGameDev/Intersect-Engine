@@ -8,7 +8,7 @@ namespace Intersect.Client.Framework.Gwen.Control
     /// <summary>
     ///     RGBA color picker.
     /// </summary>
-    public class ColorPicker : Base, IColorPicker
+    public partial class ColorPicker : Base, IColorPicker
     {
 
         private Color mColor;

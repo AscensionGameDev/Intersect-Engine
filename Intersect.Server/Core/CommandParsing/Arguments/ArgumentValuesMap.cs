@@ -9,7 +9,7 @@ using Intersect.Server.Core.CommandParsing.Commands;
 namespace Intersect.Server.Core.CommandParsing.Arguments
 {
 
-    public sealed class ArgumentValuesMap : IEnumerable<KeyValuePair<ICommandArgument, ArgumentValues>>
+    public sealed partial class ArgumentValuesMap : IEnumerable<KeyValuePair<ICommandArgument, ArgumentValues>>
     {
 
         private readonly IDictionary<ICommandArgument, ArgumentValues> mValuesMap;

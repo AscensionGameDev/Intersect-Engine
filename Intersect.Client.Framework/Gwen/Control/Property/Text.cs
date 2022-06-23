@@ -4,7 +4,7 @@
     /// <summary>
     ///     Text property.
     /// </summary>
-    public class Text : Base
+    public partial class Text : Base
     {
 
         protected readonly TextBox mTextBox;

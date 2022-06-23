@@ -3,7 +3,7 @@ using System;
 namespace Intersect.Logging.Output
 {
     // TODO: Figure out what doesn't need to be duplicated between this and ConsoleOutput
-    public class ConciseConsoleOutput : ILogOutput
+    public partial class ConciseConsoleOutput : ILogOutput
     {
 
         public ConciseConsoleOutput(LogLevel logLevel = LogLevel.All)

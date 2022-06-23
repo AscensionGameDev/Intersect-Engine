@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 namespace Intersect.Core.ExperimentalFeatures
 {
 
-    public class ExperimentalFlagConverter : JsonConverter<ExperimentalFlag>
+    public partial class ExperimentalFlagConverter : JsonConverter<ExperimentalFlag>
     {
 
         public override bool CanRead => true;

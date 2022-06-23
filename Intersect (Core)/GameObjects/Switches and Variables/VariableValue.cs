@@ -10,7 +10,7 @@ using Newtonsoft.Json.Linq;
 namespace Intersect.GameObjects.Switches_and_Variables
 {
 
-    public class VariableValue
+    public partial class VariableValue
     {
 
         private dynamic mValue;

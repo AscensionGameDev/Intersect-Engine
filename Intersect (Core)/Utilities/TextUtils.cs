@@ -3,7 +3,7 @@
 namespace Intersect.Utilities
 {
 
-    public static class TextUtils
+    public static partial class TextUtils
     {
 
         static TextUtils()

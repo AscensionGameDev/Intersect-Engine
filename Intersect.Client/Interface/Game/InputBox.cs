@@ -11,7 +11,7 @@ using Intersect.Client.Localization;
 namespace Intersect.Client.Interface.Game
 {
 
-    public class InputBox : Base
+    public partial class InputBox : Base
     {
         public static void Open(
             string title,

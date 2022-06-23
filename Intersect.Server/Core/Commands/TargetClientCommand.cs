@@ -9,7 +9,7 @@ using Intersect.Server.Networking;
 namespace Intersect.Server.Core.Commands
 {
 
-    internal abstract class TargetClientCommand : TargettedCommand<Client>
+    internal abstract partial class TargetClientCommand : TargettedCommand<Client>
     {
 
         protected TargetClientCommand(

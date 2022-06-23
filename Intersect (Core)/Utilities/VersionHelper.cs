@@ -4,7 +4,7 @@ using System.Reflection;
 namespace Intersect.Utilities
 {
 
-    public static class VersionHelper
+    public static partial class VersionHelper
     {
 
         public static Version LibraryVersion => Assembly.GetAssembly(typeof(VersionHelper))?.GetName().Version;

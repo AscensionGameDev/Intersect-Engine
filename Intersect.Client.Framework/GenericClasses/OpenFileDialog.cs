@@ -8,7 +8,7 @@
 
     }
 
-    public class OpenFileDialog
+    public partial class OpenFileDialog
     {
         public string Title { get; set; }
 

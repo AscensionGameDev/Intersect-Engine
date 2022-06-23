@@ -3,7 +3,7 @@
 namespace Intersect.Network.Packets.Client
 {
     [MessagePackObject]
-    public class GuildLeavePacket : IntersectPacket
+    public partial class GuildLeavePacket : IntersectPacket
     {
         /// <summary>
         /// Parameterless Constructor for MessagePack

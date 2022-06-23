@@ -10,7 +10,7 @@ using System.IO;
 namespace Intersect.Plugins.Helpers
 {
     /// <inheritdoc />
-    internal sealed class LoggingHelper : ILoggingHelper
+    internal sealed partial class LoggingHelper : ILoggingHelper
     {
         private static readonly string BasePluginLogPath = Path.Combine(
             "plugins", $"{Log.Initial:yyyy_MM_dd-HH_mm_ss_fff}"

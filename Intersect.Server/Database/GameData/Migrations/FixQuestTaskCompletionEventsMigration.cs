@@ -6,7 +6,7 @@ using Intersect.GameObjects.Events;
 
 namespace Intersect.Server.Database.GameData.Migrations
 {
-    public class FixQuestTaskCompletionEventsMigration
+    public partial class FixQuestTaskCompletionEventsMigration
     {
 
         public static void Run(GameContext context)

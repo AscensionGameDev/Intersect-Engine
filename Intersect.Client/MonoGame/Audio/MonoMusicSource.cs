@@ -18,7 +18,7 @@ using NVorbis;
 namespace Intersect.Client.MonoGame.Audio
 {
 
-    public class MonoMusicSource : GameAudioSource
+    public partial class MonoMusicSource : GameAudioSource
     {
         private readonly string mPath;
         private readonly string mRealPath;

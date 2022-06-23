@@ -15,7 +15,7 @@ using Newtonsoft.Json;
 namespace Intersect.GameObjects
 {
 
-    public class ItemBase : DatabaseObject<ItemBase>, IFolderable
+    public partial class ItemBase : DatabaseObject<ItemBase>, IFolderable
     {
 
         [NotMapped] public ConditionLists UsageRequirements = new ConditionLists();
@@ -357,7 +357,7 @@ namespace Intersect.GameObjects
     }
 
     [Owned]
-    public class ConsumableData
+    public partial class ConsumableData
     {
 
         public ConsumableType Type { get; set; }
@@ -369,7 +369,7 @@ namespace Intersect.GameObjects
     }
 
     [Owned]
-    public class EffectData
+    public partial class EffectData
     {
 
         public EffectType Type { get; set; }

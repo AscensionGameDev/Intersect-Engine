@@ -1,7 +1,7 @@
 ﻿namespace Intersect.Network
 {
 
-    public static class PortHelper
+    public static partial class PortHelper
     {
 
         public static bool IsValidPort(ulong port)

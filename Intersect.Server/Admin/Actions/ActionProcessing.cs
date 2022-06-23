@@ -9,7 +9,7 @@ using Intersect.Server.Networking;
 
 namespace Intersect.Server.Admin.Actions
 {
-    public static class ActionProcessing
+    public static partial class ActionProcessing
     {
         //BanAction
         public static void ProcessAction(Player player, BanAction action)

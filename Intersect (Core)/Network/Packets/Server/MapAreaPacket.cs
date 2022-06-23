@@ -3,7 +3,7 @@
 namespace Intersect.Network.Packets.Server
 {
     [MessagePackObject]
-    public class MapAreaPacket : IntersectPacket
+    public partial class MapAreaPacket : IntersectPacket
     {
         //Parameterless Constructor for MessagePack
         public MapAreaPacket()

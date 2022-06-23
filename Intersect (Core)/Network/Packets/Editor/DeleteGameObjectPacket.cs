@@ -6,7 +6,7 @@ using MessagePack;
 namespace Intersect.Network.Packets.Editor
 {
     [MessagePackObject]
-    public class DeleteGameObjectPacket : EditorPacket
+    public partial class DeleteGameObjectPacket : EditorPacket
     {
         //Parameterless Constructor for MessagePack
         public DeleteGameObjectPacket()

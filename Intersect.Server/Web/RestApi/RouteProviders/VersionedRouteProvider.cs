@@ -10,7 +10,7 @@ using Intersect.Server.Web.RestApi.Routes;
 namespace Intersect.Server.Web.RestApi.RouteProviders
 {
 
-    internal sealed class VersionedRouteProvider : DefaultDirectRouteProvider
+    internal sealed partial class VersionedRouteProvider : DefaultDirectRouteProvider
     {
 
         public VersionedRouteProvider() : this(DefaultRootNamespace)

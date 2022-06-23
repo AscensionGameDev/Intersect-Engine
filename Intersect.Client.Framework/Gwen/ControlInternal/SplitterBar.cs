@@ -6,7 +6,7 @@ namespace Intersect.Client.Framework.Gwen.ControlInternal
     /// <summary>
     ///     Splitter bar.
     /// </summary>
-    public class SplitterBar : Dragger
+    public partial class SplitterBar : Dragger
     {
 
         /// <summary>

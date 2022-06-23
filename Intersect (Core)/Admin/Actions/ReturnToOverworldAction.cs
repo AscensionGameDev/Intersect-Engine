@@ -4,7 +4,7 @@ using MessagePack;
 namespace Intersect.Admin.Actions
 {
     [MessagePackObject]
-    public class ReturnToOverworldAction : AdminAction
+    public partial class ReturnToOverworldAction : AdminAction
     {
         //Parameterless Constructor for MessagePack
         public ReturnToOverworldAction()

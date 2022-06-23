@@ -17,7 +17,7 @@ using Intersect.Utilities;
 namespace Intersect.Client.Interface.Game.Inventory
 {
 
-    public class InventoryItem
+    public partial class InventoryItem
     {
 
         public ImagePanel Container;

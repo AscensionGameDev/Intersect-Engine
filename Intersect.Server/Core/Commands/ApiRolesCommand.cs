@@ -7,7 +7,7 @@ using Intersect.Server.Localization;
 namespace Intersect.Server.Core.Commands
 {
 
-    internal class ApiRolesCommand : TargetUserCommand
+    internal partial class ApiRolesCommand : TargetUserCommand
     {
 
         public ApiRolesCommand() : base(Strings.Commands.ApiRoles, Strings.Commands.Arguments.TargetApi)

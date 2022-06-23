@@ -11,7 +11,7 @@ namespace Intersect.Plugins.Manifests
 {
 
     [TestFixture]
-    public class JsonManifestTests
+    public partial class JsonManifestTests
     {
 
         private static TResourceType LoadResource<TResourceType>(

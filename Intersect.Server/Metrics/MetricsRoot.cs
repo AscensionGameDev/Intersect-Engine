@@ -11,7 +11,7 @@ using Intersect.Utilities;
 
 namespace Intersect.Server.Metrics
 {
-    public class MetricsRoot
+    public partial class MetricsRoot
     {
 
         private List<MetricsController> MetricsControllers = new List<MetricsController>();

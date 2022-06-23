@@ -8,7 +8,7 @@ namespace Intersect.Plugins
     /// <summary>
     /// Representation of an instance of a <see cref="Plugin"/>.
     /// </summary>
-    public class PluginInstance
+    public partial class PluginInstance
     {
         /// <summary>
         /// Create a <see cref="PluginInstance"/> for the given <see cref="Plugin"/>.

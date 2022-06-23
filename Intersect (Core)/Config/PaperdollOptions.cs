@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 namespace Intersect.Config
 {
 
-    public class PaperdollOptions
+    public partial class PaperdollOptions
     {
 
         [JsonIgnore] public List<string>[] Directions;

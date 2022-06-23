@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace Intersect.Network.Packets.Server
 {
     [MessagePackObject]
-    public class SpellCooldownPacket : IntersectPacket
+    public partial class SpellCooldownPacket : IntersectPacket
     {
         //Parameterless Constructor for MessagePack
         public SpellCooldownPacket()

@@ -18,7 +18,7 @@ using static Intersect.Client.Framework.File_Management.GameContentManager;
 
 namespace Intersect.Client.Interface.Debugging
 {
-    internal sealed class DebugWindow : WindowControl
+    internal sealed partial class DebugWindow : WindowControl
     {
         private readonly List<IDisposable> _disposables;
         private bool _wasParentDrawDebugOutlinesEnabled;
@@ -262,7 +262,7 @@ namespace Intersect.Client.Interface.Debugging
             return table;
         }
 
-        private class ControlUnderCursorProvider : ITableDataProvider
+        private partial class ControlUnderCursorProvider : ITableDataProvider
         {
             public ControlUnderCursorProvider()
             {

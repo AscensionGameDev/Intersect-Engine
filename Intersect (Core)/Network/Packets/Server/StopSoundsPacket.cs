@@ -3,7 +3,7 @@
 namespace Intersect.Network.Packets.Server
 {
     [MessagePackObject]
-    public class StopSoundsPacket : IntersectPacket
+    public partial class StopSoundsPacket : IntersectPacket
     {
 
     }

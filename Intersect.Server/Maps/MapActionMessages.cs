@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Intersect.Server.Maps
 {
-    public class MapActionMessages
+    public partial class MapActionMessages
     {
         public List<ActionMsgPacket> mActionMessages = new List<ActionMsgPacket>();
 

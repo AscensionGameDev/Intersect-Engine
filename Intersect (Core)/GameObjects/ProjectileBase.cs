@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 namespace Intersect.GameObjects
 {
 
-    public class ProjectileBase : DatabaseObject<ProjectileBase>, IFolderable
+    public partial class ProjectileBase : DatabaseObject<ProjectileBase>, IFolderable
     {
 
         public const int MAX_PROJECTILE_DIRECTIONS = 8;
@@ -116,14 +116,14 @@ namespace Intersect.GameObjects
 
     }
 
-    public class Location
+    public partial class Location
     {
 
         public bool[] Directions = new bool[ProjectileBase.MAX_PROJECTILE_DIRECTIONS];
 
     }
 
-    public class ProjectileAnimation
+    public partial class ProjectileAnimation
     {
 
         public Guid AnimationId;

@@ -4,7 +4,7 @@
     /// Partial implementation class for helpers that require a known <see cref="IPluginContext"/>.
     /// </summary>
     /// <typeparam name="TContext">the type of <see cref="IPluginContext"/> needed</typeparam>
-    public abstract class ContextHelper<TContext> where TContext : IPluginContext
+    public abstract partial class ContextHelper<TContext> where TContext : IPluginContext
     {
         /// <summary>
         /// Reference to the current <see cref="IPluginContext"/>.

@@ -21,7 +21,7 @@ using Microsoft.Xna.Framework.Graphics;
 namespace Intersect.Editor.Core
 {
 
-    public static class Graphics
+    public static partial class Graphics
     {
 
         //Light Stuff

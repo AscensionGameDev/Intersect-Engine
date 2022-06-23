@@ -17,7 +17,7 @@ namespace Intersect.Server.Web.RestApi.Authentication.OAuth
     /// <summary>
     /// 
     /// </summary>
-    public static class IOwinRequestExtensions
+    public static partial class IOwinRequestExtensions
     {
 
         /// <summary>

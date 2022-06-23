@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 namespace Intersect.GameObjects.Events
 {
 
-    public class EventMoveRoute
+    public partial class EventMoveRoute
     {
         public List<MoveRouteAction> Actions { get; set; } = new List<MoveRouteAction>();
 

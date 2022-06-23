@@ -11,7 +11,7 @@ using Intersect.Utilities;
 namespace Intersect.Server.General
 {
 
-    public static class Globals
+    public static partial class Globals
     {
 
         public static readonly object ClientLock = new object();

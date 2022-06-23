@@ -3,7 +3,7 @@
 namespace Intersect.Server.Core.CommandParsing.Errors
 {
 
-    public class MissingArgumentError : ParserError
+    public partial class MissingArgumentError : ParserError
     {
 
         protected MissingArgumentError(string argumentName, string message) : base(message)

@@ -18,7 +18,7 @@ using Microsoft.EntityFrameworkCore.Internal;
 namespace Intersect.Server.Database.GameData
 {
 
-    public class GameContext : IntersectDbContext<GameContext>, IGameContext
+    public partial class GameContext : IntersectDbContext<GameContext>, IGameContext
     {
 
         public GameContext() : base(DefaultConnectionStringBuilder)
@@ -121,7 +121,7 @@ namespace Intersect.Server.Database.GameData
 
         }
 
-        internal static class Queries
+        internal static partial class Queries
         {
             internal static readonly Func<Guid, ServerVariableBase> ServerVariableById =
                 (Guid id) => (ServerVariableBase)ServerVariableBase.Lookup.FirstOrDefault(variable => variable.Key == id).Value;

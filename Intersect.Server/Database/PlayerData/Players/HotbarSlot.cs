@@ -13,7 +13,7 @@ using Newtonsoft.Json;
 namespace Intersect.Server.Database.PlayerData.Players
 {
 
-    public class HotbarSlot : ISlot, IPlayerOwned
+    public partial class HotbarSlot : ISlot, IPlayerOwned
     {
 
         public HotbarSlot()

@@ -3,7 +3,7 @@
 namespace Intersect.Extensions
 {
 
-    public static class LogLevelExtensions
+    public static partial class LogLevelExtensions
     {
 
         public static Logging.LogLevel AsIntersectLogLevel(this Microsoft.Extensions.Logging.LogLevel logLevel)

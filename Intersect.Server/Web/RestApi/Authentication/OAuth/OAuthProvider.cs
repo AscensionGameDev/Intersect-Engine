@@ -17,7 +17,7 @@ namespace Intersect.Server.Web.RestApi.Authentication.OAuth
 
     using RequestMap = Dictionary<(PathString, string, string), RequestMapFunc>;
 
-    internal class OAuthProvider : AuthenticationProvider
+    internal partial class OAuthProvider : AuthenticationProvider
     {
 
         public const string TokenEndpoint = "/api/oauth/token";

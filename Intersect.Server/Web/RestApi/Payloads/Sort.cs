@@ -5,7 +5,7 @@ using System.Linq;
 namespace Intersect.Server.Web.RestApi.Payloads
 {
 
-    public struct Sort
+    public partial struct Sort
     {
 
         public string By { get; set; }

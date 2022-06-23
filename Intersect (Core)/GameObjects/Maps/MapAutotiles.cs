@@ -5,7 +5,7 @@ using Intersect.Logging;
 namespace Intersect.GameObjects.Maps
 {
 
-    public class MapAutotiles
+    public partial class MapAutotiles
     {
 
         public const byte AUTO_TILE_FILL = 5;
@@ -2640,7 +2640,7 @@ namespace Intersect.GameObjects.Maps
 
     }
 
-    public struct PointStruct
+    public partial struct PointStruct
     {
 
         public Int16 X;
@@ -2649,7 +2649,7 @@ namespace Intersect.GameObjects.Maps
 
     }
 
-    public class QuarterTileCls
+    public partial class QuarterTileCls
     {
 
         public PointStruct[] QuarterTile = new PointStruct[5];

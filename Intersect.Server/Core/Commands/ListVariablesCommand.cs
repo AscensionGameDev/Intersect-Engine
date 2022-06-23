@@ -10,7 +10,7 @@ using Intersect.Server.Localization;
 
 namespace Intersect.Server.Core.Commands
 {
-    internal sealed class ListVariablesCommand : ServerCommand
+    internal sealed partial class ListVariablesCommand : ServerCommand
     {
         public ListVariablesCommand() : base(
             Strings.Commands.ListVariables,

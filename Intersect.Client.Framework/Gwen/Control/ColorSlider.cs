@@ -10,7 +10,7 @@ namespace Intersect.Client.Framework.Gwen.Control
     /// <summary>
     ///     HSV hue selector.
     /// </summary>
-    public class ColorSlider : Base
+    public partial class ColorSlider : Base
     {
 
         private bool mDepressed;

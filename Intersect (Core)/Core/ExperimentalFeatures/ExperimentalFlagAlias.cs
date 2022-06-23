@@ -3,7 +3,7 @@
 namespace Intersect.Core.ExperimentalFeatures
 {
 
-    public struct ExperimentalFlagAlias : IExperimentalFlag
+    public partial struct ExperimentalFlagAlias : IExperimentalFlag
     {
 
         private readonly IFlagProvider mFlagProvider;

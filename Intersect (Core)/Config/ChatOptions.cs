@@ -1,7 +1,7 @@
 ﻿namespace Intersect.Config
 {
 
-    public class ChatOptions
+    public partial class ChatOptions
     {
 
         //Chat

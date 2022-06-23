@@ -3,7 +3,7 @@
 namespace Intersect.Editor.Classes.Maps
 {
 
-    public class MapSaveState
+    public partial class MapSaveState
     {
 
         public MapSaveState(string metadata, byte[] tiles, byte[] attributes, string eventData)

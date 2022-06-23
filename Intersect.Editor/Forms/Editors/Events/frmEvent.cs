@@ -1885,7 +1885,7 @@ namespace Intersect.Editor.Forms.Editors.Events
         #endregion
     }
 
-    public class CommandListProperties
+    public partial class CommandListProperties
     {
 
         public EventCommand Cmd;

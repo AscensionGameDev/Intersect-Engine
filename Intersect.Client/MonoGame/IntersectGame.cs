@@ -32,7 +32,7 @@ namespace Intersect.Client.MonoGame
     /// <summary>
     ///     This is the main type for your game.
     /// </summary>
-    internal class IntersectGame : Game
+    internal partial class IntersectGame : Game
     {
         private bool mInitialized;
 
@@ -505,7 +505,7 @@ namespace Intersect.Client.MonoGame
         /// <summary>
         /// Implements <see cref="IPlatformRunner"/> for MonoGame.
         /// </summary>
-        internal class MonoGameRunner : IPlatformRunner
+        internal partial class MonoGameRunner : IPlatformRunner
         {
             /// <inheritdoc />
             public void Start(IClientContext context, Action postStartupAction)

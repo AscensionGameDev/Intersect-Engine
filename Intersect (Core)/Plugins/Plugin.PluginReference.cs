@@ -8,7 +8,7 @@ namespace Intersect.Plugins
     /// <summary>
     /// Reference container type of type, method handles, and other information gathered via reflection.
     /// </summary>
-    internal sealed class PluginReference
+    internal sealed partial class PluginReference
     {
         /// <summary>
         /// Initializes a <see cref="PluginReference"/>.

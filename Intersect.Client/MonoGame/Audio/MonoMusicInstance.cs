@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework.Audio;
 namespace Intersect.Client.MonoGame.Audio
 {
 
-    public class MonoMusicInstance : MonoAudioInstance<MonoMusicSource>
+    public partial class MonoMusicInstance : MonoAudioInstance<MonoMusicSource>
     {
 
         public static MonoMusicInstance Instance = null;

@@ -3,7 +3,7 @@
 namespace Intersect.Network.Packets.Server
 {
     [MessagePackObject]
-    public class PlayMusicPacket : IntersectPacket
+    public partial class PlayMusicPacket : IntersectPacket
     {
         //Parameterless Constructor for MessagePack
         public PlayMusicPacket()

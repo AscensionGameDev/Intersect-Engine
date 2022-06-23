@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Intersect.Config
 {
-    public class LayerOptions
+    public partial class LayerOptions
     {
         public const string Attributes = nameof(Attributes);
         public const string Npcs = nameof(Npcs);

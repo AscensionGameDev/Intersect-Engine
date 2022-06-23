@@ -15,7 +15,7 @@ using static Intersect.Client.Framework.File_Management.GameContentManager;
 namespace Intersect.Client.Interface.Game
 {
 
-    class AdminWindow
+    partial class AdminWindow
     {
 
         //Graphics

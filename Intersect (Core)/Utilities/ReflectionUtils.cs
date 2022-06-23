@@ -9,7 +9,7 @@ using Intersect.Logging;
 namespace Intersect.Utilities
 {
 
-    public static class ReflectionUtils
+    public static partial class ReflectionUtils
     {
 
         public static string StringifyParameter(ParameterInfo parameter)

@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 namespace Intersect.GameObjects
 {
 
-    public class TilesetBase : DatabaseObject<TilesetBase>
+    public partial class TilesetBase : DatabaseObject<TilesetBase>
     {
 
         [JsonConstructor]

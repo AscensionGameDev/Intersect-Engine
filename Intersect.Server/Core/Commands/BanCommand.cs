@@ -5,7 +5,7 @@ using Intersect.Server.Networking;
 namespace Intersect.Server.Core.Commands
 {
 
-    internal sealed class BanCommand : ModeratorActionCommand
+    internal sealed partial class BanCommand : ModeratorActionCommand
     {
 
         public BanCommand() : base(

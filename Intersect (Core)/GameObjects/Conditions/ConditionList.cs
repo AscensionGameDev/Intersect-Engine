@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 namespace Intersect.GameObjects.Conditions
 {
 
-    public class ConditionList
+    public partial class ConditionList
     {
 
         public List<Condition> Conditions = new List<Condition>(); //Long story.. just go with it.. okay?

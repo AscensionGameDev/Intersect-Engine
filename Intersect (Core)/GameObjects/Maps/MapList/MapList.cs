@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 namespace Intersect.GameObjects.Maps.MapList
 {
 
-    public class MapList
+    public partial class MapList
     {
 
         //So EF will save this :P

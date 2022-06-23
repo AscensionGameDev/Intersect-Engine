@@ -20,7 +20,7 @@ using Newtonsoft.Json;
 namespace Intersect.Server.Networking.Helpers
 {
 
-    public static class NetDebug
+    public static partial class NetDebug
     {
 
         public static void GenerateDebugFile()
@@ -227,7 +227,7 @@ namespace Intersect.Server.Networking.Helpers
 
     }
 
-    public class HasteBinClient
+    public partial class HasteBinClient
     {
 
         private static HttpClient _httpClient;
@@ -284,7 +284,7 @@ namespace Intersect.Server.Networking.Helpers
     }
 
     // Define other methods and classes here
-    public class HasteBinResult
+    public partial class HasteBinResult
     {
 
         public string Key { get; set; }

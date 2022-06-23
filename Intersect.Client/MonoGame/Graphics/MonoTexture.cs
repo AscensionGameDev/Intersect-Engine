@@ -14,7 +14,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Intersect.Client.MonoGame.Graphics
 {
-    public class MonoTexture : GameTexture
+    public partial class MonoTexture : GameTexture
     {
         private GraphicsDevice mGraphicsDevice;
 

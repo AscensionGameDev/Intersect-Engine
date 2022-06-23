@@ -6,7 +6,7 @@ using Intersect.Extensions;
 namespace Intersect.Collections
 {
 
-    public struct Sanitizer
+    public partial struct Sanitizer
     {
 
         private Dictionary<string, SanitizedValue<object>> mSanitizedValues;

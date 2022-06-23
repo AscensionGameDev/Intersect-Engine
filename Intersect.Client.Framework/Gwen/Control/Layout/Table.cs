@@ -15,7 +15,7 @@ namespace Intersect.Client.Framework.Gwen.Control.Layout
     /// <summary>
     ///     Base class for multi-column tables.
     /// </summary>
-    public class Table : Base, IColorableText
+    public partial class Table : Base, IColorableText
     {
 
         private readonly List<int> mColumnWidths;

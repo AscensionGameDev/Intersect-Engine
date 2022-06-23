@@ -5,7 +5,7 @@ using Intersect.Server.Networking;
 namespace Intersect.Server.Core.Commands
 {
 
-    internal sealed class KickCommand : TargetClientCommand
+    internal sealed partial class KickCommand : TargetClientCommand
     {
 
         public KickCommand() : base(Strings.Commands.Kick, Strings.Commands.Arguments.TargetKick)

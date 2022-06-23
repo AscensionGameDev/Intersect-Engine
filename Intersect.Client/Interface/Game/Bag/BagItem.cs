@@ -15,7 +15,7 @@ using Intersect.Utilities;
 namespace Intersect.Client.Interface.Game.Bag
 {
 
-    public class BagItem
+    public partial class BagItem
     {
 
         private static int sItemXPadding = 4;

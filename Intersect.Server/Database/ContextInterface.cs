@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Intersect.Server.Database
 {
-    public abstract class ContextInterface<TContext> : IDisposable where TContext : IDbContext
+    public abstract partial class ContextInterface<TContext> : IDisposable where TContext : IDbContext
     {
         private static readonly object Lock = new object();
 

@@ -12,7 +12,7 @@ using Newtonsoft.Json;
 
 namespace Intersect.GameObjects
 {
-    public class NpcBase : DatabaseObject<NpcBase>, IFolderable
+    public partial class NpcBase : DatabaseObject<NpcBase>, IFolderable
     {
 
         [NotMapped] public ConditionLists AttackOnSightConditions = new ConditionLists();
@@ -262,7 +262,7 @@ namespace Intersect.GameObjects
 
     }
 
-    public class NpcDrop
+    public partial class NpcDrop
     {
 
         public double Chance;

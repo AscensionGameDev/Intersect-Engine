@@ -1,6 +1,6 @@
 ﻿namespace Intersect.Network
 {
-    public class ConnectionStatistics
+    public partial class ConnectionStatistics
     {
         public long Ping { get; set; }
 

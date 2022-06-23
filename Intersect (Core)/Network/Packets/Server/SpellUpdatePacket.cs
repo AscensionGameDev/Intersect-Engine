@@ -4,7 +4,7 @@ using System;
 namespace Intersect.Network.Packets.Server
 {
     [MessagePackObject]
-    public class SpellUpdatePacket : IntersectPacket
+    public partial class SpellUpdatePacket : IntersectPacket
     {
         //Parameterless Constructor for MessagePack
         public SpellUpdatePacket()

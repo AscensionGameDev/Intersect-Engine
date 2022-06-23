@@ -11,7 +11,7 @@ namespace Intersect.GameObjects
 {
 
     [Owned]
-    public class AnimationLayer
+    public partial class AnimationLayer
     {
 
         public AnimationLayer()
@@ -52,7 +52,7 @@ namespace Intersect.GameObjects
 
     }
 
-    public class AnimationBase : DatabaseObject<AnimationBase>, IFolderable
+    public partial class AnimationBase : DatabaseObject<AnimationBase>, IFolderable
     {
 
         [JsonConstructor]

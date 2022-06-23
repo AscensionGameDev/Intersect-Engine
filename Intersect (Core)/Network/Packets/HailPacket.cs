@@ -13,7 +13,7 @@ using Intersect.Logging;
 namespace Intersect.Network.Packets
 {
     [MessagePackObject]
-    public class HailPacket : ConnectionPacket
+    public partial class HailPacket : ConnectionPacket
     {
         [IgnoreMember]
         private byte[] mVersionData;

@@ -17,7 +17,7 @@ using Intersect.Utilities;
 namespace Intersect.Client.Interface.Game
 {
 
-    public class QuestsWindow
+    public partial class QuestsWindow
     {
 
         private Button mBackButton;

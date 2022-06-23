@@ -6,7 +6,7 @@ using MessagePack;
 namespace Intersect.Network.Packets.Server
 {
     [MessagePackObject]
-    public class ChatBubblePacket : IntersectPacket
+    public partial class ChatBubblePacket : IntersectPacket
     {
         //Parameterless Constructor for MessagePack
         public ChatBubblePacket()

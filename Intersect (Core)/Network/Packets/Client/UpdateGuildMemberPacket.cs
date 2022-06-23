@@ -5,7 +5,7 @@ using System;
 namespace Intersect.Network.Packets.Client
 {
     [MessagePackObject]
-    public class UpdateGuildMemberPacket : IntersectPacket
+    public partial class UpdateGuildMemberPacket : IntersectPacket
     {
         /// <summary>
         /// Parameterless Constructor for MessagePack

@@ -4,7 +4,7 @@ using Intersect.Core;
 
 namespace Intersect.Utilities
 {
-    public static class Randomization
+    public static partial class Randomization
     {
         private static Random mRandom;
 

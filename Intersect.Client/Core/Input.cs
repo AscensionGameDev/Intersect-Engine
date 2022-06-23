@@ -16,7 +16,7 @@ using Intersect.Utilities;
 namespace Intersect.Client.Core
 {
 
-    public static class Input
+    public static partial class Input
     {
 
         public delegate void HandleKeyEvent(Keys modifier, Keys key);

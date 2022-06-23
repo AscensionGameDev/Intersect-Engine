@@ -3,7 +3,7 @@
 namespace Intersect.Client.Framework.Gwen.Control
 {
 
-    public class EnumRadioButtonGroup<T> : RadioButtonGroup where T : struct, IConvertible
+    public partial class EnumRadioButtonGroup<T> : RadioButtonGroup where T : struct, IConvertible
     {
 
         public EnumRadioButtonGroup(Base parent) : base(parent)

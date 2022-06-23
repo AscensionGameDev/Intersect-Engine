@@ -4,7 +4,7 @@ using MessagePack;
 namespace Intersect.Network.Packets.Editor
 {
     [MessagePackObject]
-    public class RequestOpenEditorPacket : EditorPacket
+    public partial class RequestOpenEditorPacket : EditorPacket
     {
         //Parameterless Constructor for MessagePack
         public RequestOpenEditorPacket()

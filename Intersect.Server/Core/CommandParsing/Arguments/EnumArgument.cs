@@ -5,7 +5,7 @@ using System.Collections.Immutable;
 
 namespace Intersect.Server.Core.CommandParsing.Arguments
 {
-    public class EnumArgument<TValue> : CommandArgument<TValue>
+    public partial class EnumArgument<TValue> : CommandArgument<TValue>
     {
         public EnumArgument(
             LocaleArgument localization,

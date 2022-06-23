@@ -5,7 +5,7 @@ using Microsoft.Win32;
 namespace Intersect.Editor
 {
 
-    public static class Preferences
+    public static partial class Preferences
     {
 
         public static void SavePreference(string key, string value)

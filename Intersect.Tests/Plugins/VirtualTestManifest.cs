@@ -5,7 +5,7 @@ using Semver;
 
 namespace Intersect.Plugins
 {
-    internal class VirtualTestManifest : IManifestHelper
+    internal partial class VirtualTestManifest : IManifestHelper
     {
         internal static readonly string Namespace = typeof(VirtualTestManifest).Namespace ?? "Intersect.Plugins";
 

@@ -4,7 +4,7 @@ using System.Threading;
 namespace Intersect.Threading
 {
 
-    public abstract class Threaded : IDisposable
+    public abstract partial class Threaded : IDisposable
     {
 
         private readonly Thread mThread;

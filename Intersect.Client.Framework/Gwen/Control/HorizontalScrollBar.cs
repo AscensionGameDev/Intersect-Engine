@@ -8,7 +8,7 @@ namespace Intersect.Client.Framework.Gwen.Control
     /// <summary>
     ///     Horizontal scrollbar.
     /// </summary>
-    public class HorizontalScrollBar : ScrollBar
+    public partial class HorizontalScrollBar : ScrollBar
     {
 
         /// <summary>

@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 namespace Intersect.Editor.Maps
 {
 
-    public class MapGridItem
+    public partial class MapGridItem
     {
 
         public MapGridItem(Guid id, string name = "", int revision = 0)

@@ -6,7 +6,7 @@ namespace Intersect.Client.Framework.Gwen.ControlInternal
     /// <summary>
     ///     Inner panel of tab control.
     /// </summary>
-    public class TabControlInner : Base
+    public partial class TabControlInner : Base
     {
 
         /// <summary>

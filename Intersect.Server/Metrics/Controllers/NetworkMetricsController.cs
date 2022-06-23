@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Intersect.Server.Metrics.Controllers
 {
-    public class NetworkMetricsController : MetricsController
+    public partial class NetworkMetricsController : MetricsController
     {
         private const string CONTEXT = "Network";
 

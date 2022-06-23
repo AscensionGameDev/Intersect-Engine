@@ -13,9 +13,9 @@ using Assert = NUnit.Framework.Assert;
 namespace Intersect.Factories
 {
     [TestFixture]
-    public class FactoryRegistryTests
+    public partial class FactoryRegistryTests
     {
-        private class IntFactory : IFactory<int>
+        private partial class IntFactory : IFactory<int>
         {
             /// <inheritdoc />
             public int Create(params object[] args) =>

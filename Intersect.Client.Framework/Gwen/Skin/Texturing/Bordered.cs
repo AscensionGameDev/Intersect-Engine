@@ -4,7 +4,7 @@ using Intersect.Client.Framework.Graphics;
 namespace Intersect.Client.Framework.Gwen.Skin.Texturing
 {
 
-    public struct SubRect
+    public partial struct SubRect
     {
 
         public float[] Uv;
@@ -14,7 +14,7 @@ namespace Intersect.Client.Framework.Gwen.Skin.Texturing
     /// <summary>
     ///     3x3 texture grid.
     /// </summary>
-    public struct Bordered
+    public partial struct Bordered
     {
 
         private GameTexture mTexture;

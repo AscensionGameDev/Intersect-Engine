@@ -6,7 +6,7 @@ using System.Linq;
 namespace Intersect.Collections
 {
 
-    public struct SingleOrList<TValue> : IList<TValue>
+    public partial struct SingleOrList<TValue> : IList<TValue>
     {
 
         private readonly IList<TValue> mValues;

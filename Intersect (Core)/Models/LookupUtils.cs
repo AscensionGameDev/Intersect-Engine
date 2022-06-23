@@ -9,7 +9,7 @@ using Intersect.Logging;
 namespace Intersect.Models
 {
 
-    public static class LookupUtils
+    public static partial class LookupUtils
     {
 
         private static readonly object Lock = new object();

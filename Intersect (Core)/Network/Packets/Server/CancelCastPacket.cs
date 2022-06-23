@@ -4,7 +4,7 @@ using System;
 namespace Intersect.Network.Packets.Server
 {
     [MessagePackObject]
-    public class CancelCastPacket : IntersectPacket
+    public partial class CancelCastPacket : IntersectPacket
     {
         //Parameterless Constructor for MessagePack
         public CancelCastPacket()

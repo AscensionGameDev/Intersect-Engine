@@ -11,7 +11,7 @@ namespace Intersect.Client.Framework.Gwen.Control
     /// <summary>
     ///     Image container.
     /// </summary>
-    public class ImagePanel : Base
+    public partial class ImagePanel : Base
     {
 
         private readonly float[] mUv;

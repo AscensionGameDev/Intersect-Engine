@@ -6,7 +6,7 @@ using Intersect.Logging;
 namespace Intersect.Network
 {
 
-    public abstract class AbstractConnection : IConnection
+    public abstract partial class AbstractConnection : IConnection
     {
         private readonly object mDisposeLock;
 

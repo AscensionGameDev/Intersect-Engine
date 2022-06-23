@@ -3,7 +3,7 @@
 namespace Intersect.Client.Framework.Database
 {
 
-    public abstract class GameDatabase
+    public abstract partial class GameDatabase
     {
         // Registry Database for Client Settings Preferences.
 

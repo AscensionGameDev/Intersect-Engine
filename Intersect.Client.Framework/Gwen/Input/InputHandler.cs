@@ -10,7 +10,7 @@ namespace Intersect.Client.Framework.Gwen.Input
     /// <summary>
     ///     Input handling.
     /// </summary>
-    public static class InputHandler
+    public static partial class InputHandler
     {
 
         private static readonly KeyData KeyData = new KeyData();

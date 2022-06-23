@@ -16,7 +16,7 @@ using Newtonsoft.Json;
 namespace Intersect.Server.Database.PlayerData
 {
 
-    public class Mute
+    public partial class Mute
     {
 
         public Mute()

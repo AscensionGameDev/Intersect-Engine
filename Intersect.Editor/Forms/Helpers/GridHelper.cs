@@ -6,7 +6,7 @@ namespace Intersect.Editor.Forms.Helpers
 {
     using Color = System.Drawing.Color;
 
-    public struct GridCell
+    public partial struct GridCell
     {
         public int X { get; private set; }
 
@@ -74,7 +74,7 @@ namespace Intersect.Editor.Forms.Helpers
     /// <summary>
     /// Helper class for drawing grids on <see cref="Bitmap"/>s.
     /// </summary>
-    public static class GridHelper
+    public static partial class GridHelper
     {
         /// <summary>
         /// Mutable background color for all grids, default <see cref="Color.White"/>.

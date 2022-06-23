@@ -4,7 +4,7 @@ using MessagePack;
 namespace Intersect.Admin.Actions
 {
     [MessagePackObject]
-    public class KillAction : AdminAction
+    public partial class KillAction : AdminAction
     {
         //Parameterless Constructor for MessagePack
         public KillAction()

@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Intersect.Server.Database
 {
 
-    public abstract class SeedData<TType> where TType : class
+    public abstract partial class SeedData<TType> where TType : class
     {
 
         public void SeedIfEmpty(ISeedableContext context)

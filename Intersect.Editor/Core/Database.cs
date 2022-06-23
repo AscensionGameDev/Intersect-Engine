@@ -9,7 +9,7 @@ using Mono.Data.Sqlite;
 namespace Intersect.Editor
 {
 
-    public static class Database
+    public static partial class Database
     {
 
         private const string DB_FILENAME = "resources/mapcache.db";

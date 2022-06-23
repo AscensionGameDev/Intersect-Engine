@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Intersect.Network
 {
-    public sealed class PacketLifecycle
+    public sealed partial class PacketLifecycle
     {
         public Type PacketType { get; }
 

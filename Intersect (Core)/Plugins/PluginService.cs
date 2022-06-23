@@ -15,7 +15,7 @@ namespace Intersect.Plugins
     /// <summary>
     /// Implementation of <see cref="IPluginService"/>.
     /// </summary>
-    internal sealed class PluginService : ApplicationService<IPluginService, PluginService>, IPluginService
+    internal sealed partial class PluginService : ApplicationService<IPluginService, PluginService>, IPluginService
     {
         private static readonly string BuiltInPluginDirectory = Path.Combine("resources", "plugins");
 

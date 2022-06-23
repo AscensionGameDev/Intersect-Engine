@@ -13,7 +13,7 @@ namespace Intersect.Server.Core
 {
     internal sealed partial class ConsoleService
     {
-        internal sealed class ConsoleThread : Threaded<ServerContext>
+        internal sealed partial class ConsoleThread : Threaded<ServerContext>
         {
 
             private readonly object mInputLock;

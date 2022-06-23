@@ -4,7 +4,7 @@ namespace Intersect.Client.Framework.Gwen.Anim
 {
 
     // Timed animation. Provides a useful base for animations.
-    public class TimedAnimation : Animation
+    public partial class TimedAnimation : Animation
     {
 
         private float mEase;

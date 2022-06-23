@@ -11,7 +11,7 @@ namespace Intersect.Client.Framework.Gwen.Control
     /// <summary>
     ///     Base for controls whose interior can be scrolled.
     /// </summary>
-    public class ScrollControl : Base
+    public partial class ScrollControl : Base
     {
 
         protected readonly ScrollBar mHorizontalScrollBar;

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Intersect.Network
 {
-    public class MessagePacker
+    public partial class MessagePacker
     {
         public static readonly MessagePacker Instance = new MessagePacker();
 

@@ -6,7 +6,7 @@ namespace Intersect.Utilities
     /// <summary>
     /// Utility class for timing.
     /// </summary>
-    public sealed class Timing
+    public sealed partial class Timing
     {
         private DateTime mLastDateTime = DateTime.MinValue;
 

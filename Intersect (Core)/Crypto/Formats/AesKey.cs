@@ -4,7 +4,7 @@ using Intersect.Memory;
 
 namespace Intersect.Crypto.Formats
 {
-    public class AesKey : EncryptionKey
+    public partial class AesKey : EncryptionKey
     {
         private byte[] mData;
 

@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 namespace Intersect.Server.Core.CommandParsing
 {
 
-    public sealed class CommandParsingNamespace : LocaleNamespace
+    public sealed partial class CommandParsingNamespace : LocaleNamespace
     {
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]        public readonly CommandParserErrorsNamespace Errors = new CommandParserErrorsNamespace();

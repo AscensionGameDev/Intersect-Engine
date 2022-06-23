@@ -6,7 +6,7 @@ namespace Intersect.Localization
 {
 
     [Serializable]
-    public class LocaleCommand : LocaleDescribableToken
+    public partial class LocaleCommand : LocaleDescribableToken
     {
 
         [JsonProperty(nameof(Help), NullValueHandling = NullValueHandling.Ignore)]        private LocalizedString mHelp;

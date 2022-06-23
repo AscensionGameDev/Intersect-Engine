@@ -6,7 +6,7 @@ using Intersect.Client.Framework.GenericClasses;
 namespace Intersect.Client.Framework.Graphics
 {
 
-    public class GameTexturePacks
+    public partial class GameTexturePacks
     {
 
         private static List<GameTexturePackFrame> mFrames = new List<GameTexturePackFrame>();
@@ -50,7 +50,7 @@ namespace Intersect.Client.Framework.Graphics
 
     }
 
-    public class GameTexturePackFrame
+    public partial class GameTexturePackFrame
     {
 
         public GameTexturePackFrame(

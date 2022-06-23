@@ -9,7 +9,7 @@ namespace Intersect.Client.Framework.Gwen.Skin
     ///     Simple skin (non-textured). Deprecated and incomplete, do not use.
     /// </summary>
     [Obsolete]
-    public class Simple : Skin.Base
+    public partial class Simple : Skin.Base
     {
 
         private readonly Color mColBgDark;

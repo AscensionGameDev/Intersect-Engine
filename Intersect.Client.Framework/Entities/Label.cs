@@ -3,7 +3,7 @@
 namespace Intersect.Client.Framework.Entities
 {
 
-    public class Label
+    public partial class Label
     {
 
         [JsonProperty("Label")] public string Text { get; set; }

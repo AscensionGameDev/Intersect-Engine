@@ -4,7 +4,7 @@ namespace Intersect.Network.Packets.Editor
 {
 
     [MessagePackObject]
-    public class PingPacket : IntersectPacket
+    public partial class PingPacket : IntersectPacket
     {
 
     }

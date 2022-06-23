@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace Intersect.Network.Packets.Server
 {
     [MessagePackObject]
-    public class MapItemsPacket : IntersectPacket
+    public partial class MapItemsPacket : IntersectPacket
     {
         //Parameterless Constructor for MessagePack
         public MapItemsPacket()

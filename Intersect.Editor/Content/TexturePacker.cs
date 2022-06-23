@@ -14,7 +14,7 @@ using Rectangle = Microsoft.Xna.Framework.Rectangle;
 namespace Intersect.Editor.Classes.ContentManagement
 {
 
-    public class TexturePacker
+    public partial class TexturePacker
     {
 
         public enum FreeRectChoiceHeuristic

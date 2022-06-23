@@ -14,7 +14,7 @@ using Intersect.Enums;
 namespace Intersect.Client.Interface.Game
 {
 
-    public class PartyWindow
+    public partial class PartyWindow
     {
 
         private List<ImagePanel> mHpBar = new List<ImagePanel>();

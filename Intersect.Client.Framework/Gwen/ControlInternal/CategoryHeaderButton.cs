@@ -6,7 +6,7 @@ namespace Intersect.Client.Framework.Gwen.ControlInternal
     /// <summary>
     ///     Header of CollapsibleCategory.
     /// </summary>
-    public class CategoryHeaderButton : Button
+    public partial class CategoryHeaderButton : Button
     {
 
         /// <summary>

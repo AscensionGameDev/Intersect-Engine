@@ -4,7 +4,7 @@ using System;
 namespace Intersect.Network.Packets.Client
 {
     [MessagePackObject]
-    public class QuestResponsePacket : IntersectPacket
+    public partial class QuestResponsePacket : IntersectPacket
     {
         //Parameterless Constructor for MessagePack
         public QuestResponsePacket()

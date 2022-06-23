@@ -8,7 +8,7 @@ using MessagePack;
 namespace Intersect.Network.Packets.Client
 {
     [MessagePackObject]
-    public class DirectionPacket : IntersectPacket
+    public partial class DirectionPacket : IntersectPacket
     {
         //Parameterless Constructor for MessagePack
         public DirectionPacket()

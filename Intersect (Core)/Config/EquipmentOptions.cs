@@ -6,7 +6,7 @@ using System.Runtime.Serialization;
 namespace Intersect.Config
 {
 
-    public class EquipmentOptions
+    public partial class EquipmentOptions
     {
 
         public PaperdollOptions Paperdoll = new PaperdollOptions();

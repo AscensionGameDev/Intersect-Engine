@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Intersect.Server.Database.PlayerData.Players
 {
-    public class GuildVariable : Variable
+    public partial class GuildVariable : Variable
     {
         public GuildVariable() : this(Guid.Empty) { }
 

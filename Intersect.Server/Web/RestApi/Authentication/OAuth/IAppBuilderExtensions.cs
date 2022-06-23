@@ -13,7 +13,7 @@ namespace Intersect.Server.Web.RestApi.Authentication.OAuth
     /// <summary>
     /// 
     /// </summary>
-    public static class IAppBuilderExtensions
+    public static partial class IAppBuilderExtensions
     {
 
         /// <summary>

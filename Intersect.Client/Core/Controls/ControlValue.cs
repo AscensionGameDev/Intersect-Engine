@@ -4,7 +4,7 @@ using Intersect.Client.Framework.Input;
 
 namespace Intersect.Client.Core.Controls
 {
-    public class ControlValue
+    public partial class ControlValue
     {
         public Keys Modifier { get; set; }
 

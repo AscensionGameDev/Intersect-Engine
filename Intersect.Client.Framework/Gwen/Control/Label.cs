@@ -13,7 +13,7 @@ namespace Intersect.Client.Framework.Gwen.Control
     /// <summary>
     ///     Static text label.
     /// </summary>
-    public class Label : Base, ILabel
+    public partial class Label : Base, ILabel
     {
 
         public enum ControlState

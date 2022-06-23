@@ -7,7 +7,7 @@ using Intersect.Client.Localization;
 
 namespace Intersect.Client.Interface.Game.DescriptionWindows
 {
-    public class SpellDescriptionWindow : DescriptionWindowBase
+    public partial class SpellDescriptionWindow : DescriptionWindowBase
     {
         protected SpellBase mSpell;
 

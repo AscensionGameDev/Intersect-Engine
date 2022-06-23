@@ -19,7 +19,7 @@ using Intersect.GameObjects;
 namespace Intersect.Client.Interface.Game
 {
 
-    public class GameInterface : MutableInterface
+    public partial class GameInterface : MutableInterface
     {
 
         public bool FocusChat;

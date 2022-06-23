@@ -11,7 +11,7 @@ using Lidgren.Network;
 namespace Intersect.Network.Lidgren
 {
 
-    public sealed class LidgrenConnection : AbstractConnection
+    public sealed partial class LidgrenConnection : AbstractConnection
     {
 
         private byte[] mAesKey;

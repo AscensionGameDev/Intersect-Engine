@@ -4,7 +4,7 @@ namespace Intersect.Localization
 {
 
     [Serializable]
-    public abstract class LocaleNamespace : Localized
+    public abstract partial class LocaleNamespace : Localized
     {
 
     }

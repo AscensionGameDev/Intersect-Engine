@@ -21,13 +21,13 @@ namespace Intersect.Client.Plugins.Contexts
     /// <summary>
     /// Implementation of <see cref="IClientPluginContext"/>.
     /// </summary>
-    internal sealed class ClientPluginContext : PluginContext<ClientPluginContext, IClientLifecycleHelper>,
+    internal sealed partial class ClientPluginContext : PluginContext<ClientPluginContext, IClientLifecycleHelper>,
         IClientPluginContext
     {
         /// <summary>
         /// <see cref="IPluginContext"/> factory that creates instances of <see cref="IClientPluginContext"/>.
         /// </summary>
-        internal sealed class Factory : IFactory<IPluginContext>
+        internal sealed partial class Factory : IFactory<IPluginContext>
         {
             /// <inheritdoc />
             public IPluginContext Create(params object[] args)

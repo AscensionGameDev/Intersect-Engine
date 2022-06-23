@@ -14,7 +14,7 @@ namespace Intersect.Plugins.Contexts
     /// <summary>
     /// Common <see cref="IPluginBootstrapContext"/> implementation.
     /// </summary>
-    public sealed class PluginBootstrapContext : IPluginBootstrapContext
+    public sealed partial class PluginBootstrapContext : IPluginBootstrapContext
     {
         /// <summary>
         /// Creates a <see cref="IFactory{TValue}"/> for <see cref="IPluginBootstrapContext"/>.
@@ -29,7 +29,7 @@ namespace Intersect.Plugins.Contexts
         /// <summary>
         /// Factory implementation for <see cref="IPluginBootstrapContext"/>.
         /// </summary>
-        private sealed class Factory : IFactory<IPluginBootstrapContext>
+        private sealed partial class Factory : IFactory<IPluginBootstrapContext>
         {
             private readonly string[] mArgs;
 

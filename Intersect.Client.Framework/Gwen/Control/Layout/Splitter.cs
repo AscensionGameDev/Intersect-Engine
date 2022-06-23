@@ -6,7 +6,7 @@ namespace Intersect.Client.Framework.Gwen.Control.Layout
     /// <summary>
     ///     Base splitter class.
     /// </summary>
-    public class Splitter : Base
+    public partial class Splitter : Base
     {
 
         private readonly Base[] mPanel;

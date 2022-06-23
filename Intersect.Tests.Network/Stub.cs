@@ -4,7 +4,7 @@ namespace Intersect.Tests.Network
 {
 
     [TestFixture]
-    public class Stub
+    public partial class Stub
     {
 
         [Test]

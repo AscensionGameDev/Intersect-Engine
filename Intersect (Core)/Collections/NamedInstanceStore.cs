@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace Intersect.Collections
 {
 
-    public sealed class NamedInstanceStore<TInstance>
+    public sealed partial class NamedInstanceStore<TInstance>
     {
 
         private Func<TInstance> mFactory;

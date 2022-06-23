@@ -12,7 +12,7 @@ using Intersect.Logging;
 namespace Intersect.Network.Packets
 {
     [MessagePackObject]
-    public class ApprovalPacket : ConnectionPacket
+    public partial class ApprovalPacket : ConnectionPacket
     {
         [IgnoreMember]
         private const int SIZE_AES_KEY = 32;

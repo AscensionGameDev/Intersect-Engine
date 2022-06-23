@@ -4,7 +4,7 @@ namespace Intersect.Tests.Editor
 {
 
     [TestFixture]
-    public class Stub
+    public partial class Stub
     {
 
         [Test]

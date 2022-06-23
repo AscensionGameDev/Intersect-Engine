@@ -1,7 +1,7 @@
 ﻿namespace Intersect.Server.Web.RestApi.Payloads
 {
 
-    public struct UserInfo
+    public partial struct UserInfo
     {
 
         public string Username { get; set; }

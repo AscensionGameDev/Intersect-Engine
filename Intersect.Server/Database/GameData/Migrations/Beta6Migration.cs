@@ -20,7 +20,7 @@ using Newtonsoft.Json.Linq;
 namespace Intersect.Server.Database.GameData.Migrations
 {
 
-    public static class Beta6Migration
+    public static partial class Beta6Migration
     {
 
         private static Intersect.Network.Ceras mCeras;
@@ -725,14 +725,14 @@ namespace Intersect.Server.Database.GameData.Migrations
             return null;
         }
 
-        private struct LegacyTileArray
+        private partial struct LegacyTileArray
         {
 
             public LegacyTile[,] Tiles;
 
         }
 
-        private struct LegacyTile
+        private partial struct LegacyTile
         {
 
             public Guid TilesetId;

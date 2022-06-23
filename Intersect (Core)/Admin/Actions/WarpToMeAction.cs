@@ -4,7 +4,7 @@ using MessagePack;
 namespace Intersect.Admin.Actions
 {
     [MessagePackObject]
-    public class WarpToMeAction : AdminAction
+    public partial class WarpToMeAction : AdminAction
     {
         //Parameterless Constructor for MessagePack
         public WarpToMeAction()

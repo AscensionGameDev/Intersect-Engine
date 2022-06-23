@@ -11,7 +11,7 @@ namespace Intersect.Client.Plugins.Helpers
     /// <summary>
     /// Implementation if <see cref="IClientNetworkHelper"/>.
     /// </summary>
-    public sealed class ClientNetworkHelper : IClientNetworkHelper
+    public sealed partial class ClientNetworkHelper : IClientNetworkHelper
     {
         private static IClient Client => MonoSocket.ClientLidgrenNetwork;
 

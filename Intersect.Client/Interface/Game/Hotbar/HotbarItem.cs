@@ -18,7 +18,7 @@ using Intersect.Utilities;
 namespace Intersect.Client.Interface.Game.Hotbar
 {
 
-    public class HotbarItem
+    public partial class HotbarItem
     {
 
         private static int sItemXPadding = 4;

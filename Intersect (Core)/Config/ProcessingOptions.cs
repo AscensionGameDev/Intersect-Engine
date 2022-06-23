@@ -10,7 +10,7 @@ namespace Intersect.Config
     /// <summary>
     /// Thread count and timing options for game processing.
     /// </summary>
-    public class ProcessingOptions
+    public partial class ProcessingOptions
     {
         /// <summary>
         /// Determined whether or not the server logic thread sleeps after each sloop by default

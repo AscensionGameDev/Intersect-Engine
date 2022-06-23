@@ -1,6 +1,6 @@
 ﻿namespace Intersect.Server.Metrics.Controllers
 {
-    public class ApplicationMetricsController : MetricsController
+    public partial class ApplicationMetricsController : MetricsController
     {
         private const string CONTEXT = "Application";
 

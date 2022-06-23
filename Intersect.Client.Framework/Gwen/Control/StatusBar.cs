@@ -4,7 +4,7 @@
     /// <summary>
     ///     Status bar.
     /// </summary>
-    public class StatusBar : Label
+    public partial class StatusBar : Label
     {
 
         /// <summary>

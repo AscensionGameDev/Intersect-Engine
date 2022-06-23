@@ -14,7 +14,7 @@ using Newtonsoft.Json;
 namespace Intersect.GameObjects
 {
 
-    public class SpellBase : DatabaseObject<SpellBase>, IFolderable
+    public partial class SpellBase : DatabaseObject<SpellBase>, IFolderable
     {
 
         [NotMapped] public int[] VitalCost = new int[(int) Vitals.VitalCount];
@@ -161,7 +161,7 @@ namespace Intersect.GameObjects
     }
 
     [Owned]
-    public class SpellCombatData
+    public partial class SpellCombatData
     {
 
         [NotMapped] public int[] VitalDiff = new int[(int) Vitals.VitalCount];
@@ -248,7 +248,7 @@ namespace Intersect.GameObjects
     }
 
     [Owned]
-    public class SpellWarpData
+    public partial class SpellWarpData
     {
 
         public Guid MapId { get; set; }
@@ -262,7 +262,7 @@ namespace Intersect.GameObjects
     }
 
     [Owned]
-    public class SpellDashOpts
+    public partial class SpellDashOpts
     {
 
         public bool IgnoreMapBlocks { get; set; }

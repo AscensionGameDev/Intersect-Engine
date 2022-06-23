@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Intersect.Collections
 {
-    public class ReadOnlyList<T> : IReadOnlyList<T>
+    public partial class ReadOnlyList<T> : IReadOnlyList<T>
     {
         private IList<T> backingList;
 
@@ -18,7 +18,7 @@ namespace Intersect.Collections
             this.backingList = backingList;
     }
 
-    public static class ListExtensions
+    public static partial class ListExtensions
     {
         public static IReadOnlyList<T> WrapReadOnly<T>(this IList<T> list) =>
             new ReadOnlyList<T>(list);

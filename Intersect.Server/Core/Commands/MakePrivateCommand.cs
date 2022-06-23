@@ -4,7 +4,7 @@ using Intersect.Server.Localization;
 namespace Intersect.Server.Core.Commands
 {
 
-    internal sealed class MakePrivateCommand : ServerCommand
+    internal sealed partial class MakePrivateCommand : ServerCommand
     {
 
         public MakePrivateCommand() : base(Strings.Commands.MakePrivate)

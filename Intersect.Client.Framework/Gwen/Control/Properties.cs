@@ -9,7 +9,7 @@ namespace Intersect.Client.Framework.Gwen.Control
     /// <summary>
     ///     Properties table.
     /// </summary>
-    public class Properties : Base
+    public partial class Properties : Base
     {
 
         private readonly SplitterBar mSplitterBar;

@@ -9,7 +9,7 @@ using Microsoft;
 
 namespace Intersect.Reflection
 {
-    public static class TypeExtensions
+    public static partial class TypeExtensions
     {
         public static string QualifiedGenericName([ValidatedNotNull] this Type type) =>
             $"{type.Name}<{string.Join(", ", type.GenericTypeArguments.Select(parameterType => parameterType.Name))}>";

@@ -12,7 +12,7 @@ namespace Intersect.Logging
     /// <summary>
     /// Configuration class for <see cref="Logger"/>.
     /// </summary>
-    public sealed class LogConfiguration
+    public sealed partial class LogConfiguration
     {
         private static readonly ILogFormatter DefaultFormatter = new DefaultFormatter();
 

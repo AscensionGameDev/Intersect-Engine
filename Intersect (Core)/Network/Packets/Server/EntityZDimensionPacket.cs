@@ -4,7 +4,7 @@ using System;
 namespace Intersect.Network.Packets.Server
 {
     [MessagePackObject]
-    public class EntityZDimensionPacket : IntersectPacket
+    public partial class EntityZDimensionPacket : IntersectPacket
     {
         //Parameterless Constructor for MessagePack
         public EntityZDimensionPacket()

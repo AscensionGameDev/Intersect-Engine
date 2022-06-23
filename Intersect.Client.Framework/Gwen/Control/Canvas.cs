@@ -13,7 +13,7 @@ namespace Intersect.Client.Framework.Gwen.Control
     /// <summary>
     ///     Canvas control. It should be the root parent for all other controls.
     /// </summary>
-    public class Canvas : Base
+    public partial class Canvas : Base
     {
 
         private readonly List<IDisposable> mDisposeQueue; // dictionary for faster access?

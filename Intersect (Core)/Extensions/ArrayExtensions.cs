@@ -4,7 +4,7 @@ using System.Linq;
 namespace Intersect.Extensions
 {
 
-    public static class ArrayExtensions
+    public static partial class ArrayExtensions
     {
 
         public static TType[] Prepend<TType>(this TType[] values, params TType[] prependedValues)

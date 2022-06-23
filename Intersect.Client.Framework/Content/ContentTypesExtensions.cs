@@ -5,7 +5,7 @@ using System.Linq;
 namespace Intersect.Client.Framework.Content
 {
 
-    public static class ContentTypesExtensions
+    public static partial class ContentTypesExtensions
     {
 
         public static Type GetAssetType(this ContentTypes contentType)

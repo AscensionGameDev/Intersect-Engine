@@ -7,7 +7,7 @@ using Newtonsoft.Json.Converters;
 namespace Intersect.Config
 {
 
-    public class DatabaseOptions
+    public partial class DatabaseOptions
     {
 
         [SuppressMessage("ReSharper", "InconsistentNaming")]

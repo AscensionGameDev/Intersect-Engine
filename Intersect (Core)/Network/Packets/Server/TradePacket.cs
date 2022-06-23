@@ -3,7 +3,7 @@
 namespace Intersect.Network.Packets.Server
 {
     [MessagePackObject]
-    public class TradePacket : IntersectPacket
+    public partial class TradePacket : IntersectPacket
     {
         //Parameterless Constructor for MessagePack
         public TradePacket()

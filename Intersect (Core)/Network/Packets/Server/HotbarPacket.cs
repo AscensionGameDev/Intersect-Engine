@@ -3,7 +3,7 @@
 namespace Intersect.Network.Packets.Server
 {
     [MessagePackObject]
-    public class HotbarPacket : IntersectPacket
+    public partial class HotbarPacket : IntersectPacket
     {
         //Parameterless Constructor for MessagePack
         public HotbarPacket()

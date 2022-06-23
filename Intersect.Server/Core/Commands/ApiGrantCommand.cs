@@ -9,7 +9,7 @@ using Intersect.Server.Localization;
 namespace Intersect.Server.Core.Commands
 {
 
-    internal class ApiGrantCommand : TargetUserCommand
+    internal partial class ApiGrantCommand : TargetUserCommand
     {
 
         public ApiGrantCommand() : base(

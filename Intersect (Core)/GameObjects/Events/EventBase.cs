@@ -10,7 +10,7 @@ using Newtonsoft.Json;
 namespace Intersect.GameObjects.Events
 {
 
-    public class EventBase : DatabaseObject<EventBase>, IFolderable
+    public partial class EventBase : DatabaseObject<EventBase>, IFolderable
     {
 
         //Cached Pages Data

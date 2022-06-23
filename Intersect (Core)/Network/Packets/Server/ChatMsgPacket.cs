@@ -4,7 +4,7 @@ using MessagePack;
 namespace Intersect.Network.Packets.Server
 {
     [MessagePackObject]
-    public class ChatMsgPacket : IntersectPacket
+    public partial class ChatMsgPacket : IntersectPacket
     {
 
         public ChatMsgPacket(string message, ChatMessageType type, Color color, string target)

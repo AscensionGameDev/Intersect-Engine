@@ -13,7 +13,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
     [RoutePrefix("chat")]
     [ConfigurableAuthorize]
-    public sealed class ChatController : ApiController
+    public sealed partial class ChatController : ApiController
     {
 
         [Route]

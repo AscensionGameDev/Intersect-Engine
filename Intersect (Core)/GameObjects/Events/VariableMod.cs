@@ -7,12 +7,12 @@ using Newtonsoft.Json;
 namespace Intersect.GameObjects.Events
 {
 
-    public class VariableMod
+    public partial class VariableMod
     {
 
     }
 
-    public class IntegerVariableMod : VariableMod
+    public partial class IntegerVariableMod : VariableMod
     {
 
         public VariableMods ModType { get; set; } = VariableMods.Set;
@@ -26,7 +26,7 @@ namespace Intersect.GameObjects.Events
 
     }
 
-    public class BooleanVariableMod : VariableMod
+    public partial class BooleanVariableMod : VariableMod
     {
 
         public bool Value { get; set; }
@@ -38,7 +38,7 @@ namespace Intersect.GameObjects.Events
 
     }
 
-    public class StringVariableMod : VariableMod
+    public partial class StringVariableMod : VariableMod
     {
 
         public VariableMods ModType { get; set; } = VariableMods.Set;

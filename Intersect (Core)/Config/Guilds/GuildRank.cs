@@ -3,7 +3,7 @@
     /// <summary>
     /// Name and options for individual guild ranks
     /// </summary>
-    public class GuildRank
+    public partial class GuildRank
     {
         /// <summary>
         /// Name of this rank

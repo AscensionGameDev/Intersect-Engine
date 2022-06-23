@@ -9,7 +9,7 @@ using Intersect.Logging.Output;
 
 namespace Intersect.Logging
 {
-    public static class Log
+    public static partial class Log
     {
         internal static readonly DateTime Initial = DateTime.Now;
 

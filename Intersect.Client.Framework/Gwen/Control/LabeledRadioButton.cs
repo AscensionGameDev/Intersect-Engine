@@ -7,7 +7,7 @@ namespace Intersect.Client.Framework.Gwen.Control
     /// <summary>
     ///     RadioButton with label.
     /// </summary>
-    public class LabeledRadioButton : Base
+    public partial class LabeledRadioButton : Base
     {
 
         private readonly Label mLabel;

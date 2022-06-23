@@ -3,7 +3,7 @@
 namespace Intersect.Client.Entities.Events
 {
 
-    public class Dialog
+    public partial class Dialog
     {
 
         public Guid EventId;

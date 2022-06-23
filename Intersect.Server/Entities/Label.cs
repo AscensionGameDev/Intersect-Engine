@@ -3,7 +3,7 @@
 namespace Intersect.Server.Entities
 {
 
-    public struct Label
+    public partial struct Label
     {
 
         [JsonProperty("Label")] public string Text;

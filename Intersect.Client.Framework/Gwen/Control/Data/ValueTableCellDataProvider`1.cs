@@ -6,7 +6,7 @@ using Intersect.Async;
 
 namespace Intersect.Client.Framework.Gwen.Control.Data
 {
-    public class ValueTableCellDataProvider<TValue> : ITableCellDataProvider
+    public partial class ValueTableCellDataProvider<TValue> : ITableCellDataProvider
     {
         public ValueTableCellDataProvider(Func<TValue> provideValue, int delay = 100)
         {

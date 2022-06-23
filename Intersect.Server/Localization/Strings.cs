@@ -14,7 +14,7 @@ namespace Intersect.Server.Localization
     public static partial class Strings
     {
 
-        public sealed class AccountNamespace : LocaleNamespace
+        public sealed partial class AccountNamespace : LocaleNamespace
         {
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -99,7 +99,7 @@ namespace Intersect.Server.Localization
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString emailfail = @"Failed to send your password reset email at this time. Please try again later.";
         }
 
-        public sealed class BagsNamespace : LocaleNamespace
+        public sealed partial class BagsNamespace : LocaleNamespace
         {
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -138,7 +138,7 @@ namespace Intersect.Server.Localization
 
         }
 
-        public sealed class BanksNamespace : LocaleNamespace
+        public sealed partial class BanksNamespace : LocaleNamespace
         {
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -156,7 +156,7 @@ namespace Intersect.Server.Localization
 
         }
 
-        public sealed class ChatNamespace : LocaleNamespace
+        public sealed partial class ChatNamespace : LocaleNamespace
         {
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -215,7 +215,7 @@ namespace Intersect.Server.Localization
 
         }
 
-        public sealed class ClassesNamespace : LocaleNamespace
+        public sealed partial class ClassesNamespace : LocaleNamespace
         {
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -227,7 +227,7 @@ namespace Intersect.Server.Localization
 
         }
 
-        public sealed class ColorsNamespace : LocaleNamespace
+        public sealed partial class ColorsNamespace : LocaleNamespace
         {
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -250,7 +250,7 @@ namespace Intersect.Server.Localization
 
         }
 
-        public sealed class CombatNamespace : LocaleNamespace
+        public sealed partial class CombatNamespace : LocaleNamespace
         {
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -406,7 +406,7 @@ namespace Intersect.Server.Localization
             public readonly LocalizedString InvalidTarget = @"Invalid target for this spell.";
         }
 
-        public sealed class CommandoutputNamespace : LocaleNamespace
+        public sealed partial class CommandoutputNamespace : LocaleNamespace
         {
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString apigranted = @"{00} now has api access!";
@@ -491,7 +491,7 @@ namespace Intersect.Server.Localization
 
         }
 
-        public sealed class CraftingNamespace : LocaleNamespace
+        public sealed partial class CraftingNamespace : LocaleNamespace
         {
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -508,7 +508,7 @@ namespace Intersect.Server.Localization
 
         }
 
-        public sealed class DatabaseNamespace : LocaleNamespace
+        public sealed partial class DatabaseNamespace : LocaleNamespace
         {
 
             [JsonProperty("default", NullValueHandling = NullValueHandling.Ignore)]
@@ -549,7 +549,7 @@ namespace Intersect.Server.Localization
 
         }
 
-        public sealed class ErrorsNamespace : LocaleNamespace
+        public sealed partial class ErrorsNamespace : LocaleNamespace
         {
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -591,7 +591,7 @@ namespace Intersect.Server.Localization
 
         }
 
-        public sealed class EventsNamespace : LocaleNamespace
+        public sealed partial class EventsNamespace : LocaleNamespace
         {
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -664,7 +664,7 @@ namespace Intersect.Server.Localization
 
         }
 
-        public sealed class FormulasNamespace : LocaleNamespace
+        public sealed partial class FormulasNamespace : LocaleNamespace
         {
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -679,7 +679,7 @@ namespace Intersect.Server.Localization
 
         }
 
-        public sealed class FriendsNamespace : LocaleNamespace
+        public sealed partial class FriendsNamespace : LocaleNamespace
         {
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -705,7 +705,7 @@ namespace Intersect.Server.Localization
 
         }
 
-        public sealed class GeneralNamespace : LocaleNamespace
+        public sealed partial class GeneralNamespace : LocaleNamespace
         {
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString Disabled = @"Disabled";
@@ -720,7 +720,7 @@ namespace Intersect.Server.Localization
 
         }
 
-        public sealed class GuildsNamespace : LocaleNamespace
+        public sealed partial class GuildsNamespace : LocaleNamespace
         {
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString VariableNotString = @"The given guild name does not contain any text.";
@@ -819,7 +819,7 @@ namespace Intersect.Server.Localization
             public readonly LocalizedString NoLongerAllowedInInstance = @"You are no longer in the guild who's instance you were logged into. You have been warped back to the overworld.";
         }
 
-        public sealed class IntroNamespace : LocaleNamespace
+        public sealed partial class IntroNamespace : LocaleNamespace
         {
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString api = @"API listening on '{00}'.";
@@ -852,7 +852,7 @@ namespace Intersect.Server.Localization
 
         }
 
-        public sealed class ItemsNamespace : LocaleNamespace
+        public sealed partial class ItemsNamespace : LocaleNamespace
         {
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -901,7 +901,7 @@ namespace Intersect.Server.Localization
 
         }
 
-        public sealed class MappingNamespace : LocaleNamespace
+        public sealed partial class MappingNamespace : LocaleNamespace
         {
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -923,7 +923,7 @@ namespace Intersect.Server.Localization
 
         }
 
-        public sealed class MigrationNamespace : LocaleNamespace
+        public sealed partial class MigrationNamespace : LocaleNamespace
         {
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -1010,7 +1010,7 @@ namespace Intersect.Server.Localization
 
         }
 
-        public sealed class NetDebugNamespace : LocaleNamespace
+        public sealed partial class NetDebugNamespace : LocaleNamespace
         {
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -1026,7 +1026,7 @@ namespace Intersect.Server.Localization
 
         }
 
-        public sealed class NetworkingNamespace : LocaleNamespace
+        public sealed partial class NetworkingNamespace : LocaleNamespace
         {
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -1041,7 +1041,7 @@ namespace Intersect.Server.Localization
 
         }
 
-        public sealed class NotificationsNamespace : LocaleNamespace
+        public sealed partial class NotificationsNamespace : LocaleNamespace
         {
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString copyright = "Copyright (C) 2020 Ascension Game Dev, All Rights Reserved";
@@ -1050,7 +1050,7 @@ namespace Intersect.Server.Localization
 
         }
 
-        public sealed class PartiesNamespace : LocaleNamespace
+        public sealed partial class PartiesNamespace : LocaleNamespace
         {
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -1120,14 +1120,14 @@ namespace Intersect.Server.Localization
 
         }
 
-        public sealed class PasswordResetNotificationNamespace : LocaleNamespace
+        public sealed partial class PasswordResetNotificationNamespace : LocaleNamespace
         {
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString subject = @"Intersect Game Engine - Password Reset Code";
 
         }
 
-        public sealed class PlayerNamespace : LocaleNamespace
+        public sealed partial class PlayerNamespace : LocaleNamespace
         {
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString admin = @"{00} has been given administrative powers!";
@@ -1195,7 +1195,7 @@ namespace Intersect.Server.Localization
 
         }
 
-        public sealed class PortcheckingNamespace : LocaleNamespace
+        public sealed partial class PortcheckingNamespace : LocaleNamespace
         {
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -1243,7 +1243,7 @@ namespace Intersect.Server.Localization
 
         }
 
-        public sealed class QuestsNamespace : LocaleNamespace
+        public sealed partial class QuestsNamespace : LocaleNamespace
         {
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -1272,7 +1272,7 @@ namespace Intersect.Server.Localization
 
         }
 
-        public sealed class RegexNamespace : LocaleNamespace
+        public sealed partial class RegexNamespace : LocaleNamespace
         {
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -1291,7 +1291,7 @@ namespace Intersect.Server.Localization
 
         }
 
-        public sealed class ShopsNamespace : LocaleNamespace
+        public sealed partial class ShopsNamespace : LocaleNamespace
         {
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -1308,7 +1308,7 @@ namespace Intersect.Server.Localization
 
         }
 
-        public sealed class TradingNamespace : LocaleNamespace
+        public sealed partial class TradingNamespace : LocaleNamespace
         {
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -1351,7 +1351,7 @@ namespace Intersect.Server.Localization
 
         }
 
-        public sealed class UpnpNamespace : LocaleNamespace
+        public sealed partial class UpnpNamespace : LocaleNamespace
         {
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -1442,7 +1442,7 @@ namespace Intersect.Server.Localization
         private static RootNamespace Root { get; set; }
 
         // ReSharper disable MemberHidesStaticFromOuterClass
-        private sealed class RootNamespace : LocaleNamespace
+        private sealed partial class RootNamespace : LocaleNamespace
         {
 
             public readonly AccountNamespace Account = new AccountNamespace();

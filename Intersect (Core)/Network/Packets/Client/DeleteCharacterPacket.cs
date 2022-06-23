@@ -4,7 +4,7 @@ using System;
 namespace Intersect.Network.Packets.Client
 {
     [MessagePackObject]
-    public class DeleteCharacterPacket : IntersectPacket
+    public partial class DeleteCharacterPacket : IntersectPacket
     {
         //Parameterless Constructor for MessagePack
         public DeleteCharacterPacket()

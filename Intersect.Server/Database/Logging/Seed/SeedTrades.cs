@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace Intersect.Server.Database.Logging.Seed
 {
-    internal class SeedTrades : SeedData<TradeHistory>
+    internal partial class SeedTrades : SeedData<TradeHistory>
     {
         public override void Seed(DbSet<TradeHistory> dbSet)
         {

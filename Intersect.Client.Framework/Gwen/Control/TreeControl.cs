@@ -8,7 +8,7 @@ namespace Intersect.Client.Framework.Gwen.Control
     /// <summary>
     ///     Tree control.
     /// </summary>
-    public class TreeControl : TreeNode
+    public partial class TreeControl : TreeNode
     {
 
         private readonly ScrollControl mScrollControl;

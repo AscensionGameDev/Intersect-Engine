@@ -13,7 +13,7 @@ using Microsoft.Xna.Framework.Audio;
 namespace Intersect.Client.MonoGame.Audio
 {
 
-    public class MonoSoundSource : GameAudioSource
+    public partial class MonoSoundSource : GameAudioSource
     {
         private readonly string mPath;
         private readonly string mRealPath;

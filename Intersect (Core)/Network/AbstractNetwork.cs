@@ -10,7 +10,7 @@ using Intersect.Plugins.Interfaces;
 
 namespace Intersect.Network
 {
-    public abstract class AbstractNetwork : INetwork
+    public abstract partial class AbstractNetwork : INetwork
     {
         private bool mDisposed;
 

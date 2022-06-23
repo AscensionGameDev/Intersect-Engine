@@ -3,7 +3,7 @@
 namespace Intersect.Server.Entities.Pathfinding
 {
 
-    internal class PriorityQueue<T> where T : IIndexedObject
+    internal partial class PriorityQueue<T> where T : IIndexedObject
     {
 
         protected IComparer<T> mComparer;

@@ -3,7 +3,7 @@
 namespace Intersect.Network.Packets.Editor
 {
     [MessagePackObject]
-    public class SaveTimeDataPacket : EditorPacket
+    public partial class SaveTimeDataPacket : EditorPacket
     {
         //Parameterless Constructor for MessagePack
         public SaveTimeDataPacket()

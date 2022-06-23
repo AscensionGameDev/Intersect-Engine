@@ -6,7 +6,7 @@ namespace Intersect.Client.Framework.Gwen.ControlInternal
     /// <summary>
     ///     Slider bar.
     /// </summary>
-    public class SliderBar : Dragger
+    public partial class SliderBar : Dragger
     {
 
         private bool mBHorizontal;

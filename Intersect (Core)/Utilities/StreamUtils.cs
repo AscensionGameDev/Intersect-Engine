@@ -4,7 +4,7 @@ using System.IO;
 namespace Intersect.Utilities
 {
 
-    public static class StreamUtils
+    public static partial class StreamUtils
     {
 
         public static void Pipe(Stream input, Stream output)

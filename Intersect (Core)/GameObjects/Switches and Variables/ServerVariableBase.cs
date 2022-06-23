@@ -11,7 +11,7 @@ using Newtonsoft.Json;
 namespace Intersect.GameObjects
 {
 
-    public class ServerVariableBase : DatabaseObject<ServerVariableBase>, IFolderable
+    public partial class ServerVariableBase : DatabaseObject<ServerVariableBase>, IFolderable
     {
 
         [JsonConstructor]

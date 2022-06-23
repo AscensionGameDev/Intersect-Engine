@@ -7,7 +7,7 @@ using Newtonsoft.Json.Linq;
 namespace Intersect.Serialization.Json
 {
 
-    public class SingleOrArrayConverter<T> : JsonConverter
+    public partial class SingleOrArrayConverter<T> : JsonConverter
     {
 
         public override bool CanWrite => false;

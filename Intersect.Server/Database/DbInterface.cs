@@ -41,7 +41,7 @@ using MySql.Data.MySqlClient;
 namespace Intersect.Server.Database
 {
 
-    public static class DbInterface
+    public static partial class DbInterface
     {
 
         /// <summary>

@@ -18,7 +18,7 @@ using Intersect.Utilities;
 namespace Intersect.Client.Core
 {
 
-    internal static class Main
+    internal static partial class Main
     {
 
         private static long _animTimer;

@@ -18,7 +18,7 @@ namespace Intersect.Server.Web.RestApi.Middleware
     public delegate Task RequestMapFunc(IOwinContext owinContext);
 
     /// <inheritdoc />
-    public sealed class ContentTypeMappingMiddleware : OwinMiddleware
+    public sealed partial class ContentTypeMappingMiddleware : OwinMiddleware
     {
 
         private readonly RequestMap mRequestMap;

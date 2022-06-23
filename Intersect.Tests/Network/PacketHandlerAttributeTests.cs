@@ -9,7 +9,7 @@ using System.Reflection;
 namespace Intersect.Network
 {
     [TestFixture]
-    public class PacketHandlerAttributeTests
+    public partial class PacketHandlerAttributeTests
     {
         [Test]
         public void TestGetPacketType_MethodInfo_null() =>
@@ -237,7 +237,7 @@ namespace Intersect.Network
         }
     }
 
-    internal static class TestPacketHandlerMethods
+    internal static partial class TestPacketHandlerMethods
     {
         public static bool HandleInvalidParameterCount(IPacketSender packetSender) =>
             throw new NotImplementedException();
@@ -264,7 +264,7 @@ namespace Intersect.Network
             throw new NotImplementedException();
     }
 
-    internal sealed class TestClassPacketHandlerNoAttribute : IPacketHandler<TestPacket>
+    internal sealed partial class TestClassPacketHandlerNoAttribute : IPacketHandler<TestPacket>
     {
         #region Implementation of IPacketHandler
 
@@ -278,7 +278,7 @@ namespace Intersect.Network
     }
 
     [PacketHandler(typeof(TestPacket))]
-    internal sealed class TestClassPacketHandlerWithAttribute : IPacketHandler<TestPacket>
+    internal sealed partial class TestClassPacketHandlerWithAttribute : IPacketHandler<TestPacket>
     {
         #region Implementation of IPacketHandler
 
@@ -292,7 +292,7 @@ namespace Intersect.Network
     }
 
     [PacketHandler(typeof(TestPacket2))]
-    internal sealed class TestClassPacketHandlerWithAttribute2 : IPacketHandler<TestPacket2>
+    internal sealed partial class TestClassPacketHandlerWithAttribute2 : IPacketHandler<TestPacket2>
     {
         #region Implementation of IPacketHandler
 
@@ -306,7 +306,7 @@ namespace Intersect.Network
     }
 
     [PacketHandler(typeof(TestPacket2))]
-    internal sealed class TestClassPacketHandlerWithMismatchedAttribute : IPacketHandler<TestPacket>
+    internal sealed partial class TestClassPacketHandlerWithMismatchedAttribute : IPacketHandler<TestPacket>
     {
         #region Implementation of IPacketHandler
 
@@ -319,11 +319,11 @@ namespace Intersect.Network
         #endregion
     }
 
-    internal sealed class TestClassNotPacketHandler
+    internal sealed partial class TestClassNotPacketHandler
     {
     }
 
-    internal sealed class TestClassPacketHandlerInvalidPacketType : IPacketHandler<IPacket>
+    internal sealed partial class TestClassPacketHandlerInvalidPacketType : IPacketHandler<IPacket>
     {
         #region Implementation of IPacketHandler
 
@@ -336,7 +336,7 @@ namespace Intersect.Network
         #endregion
     }
 
-    internal sealed class TestPacket : IPacket
+    internal sealed partial class TestPacket : IPacket
     {
         #region Implementation of IDisposable
 
@@ -365,7 +365,7 @@ namespace Intersect.Network
         #endregion
     }
 
-    internal sealed class TestPacket2 : IPacket
+    internal sealed partial class TestPacket2 : IPacket
     {
         #region Implementation of IDisposable
 

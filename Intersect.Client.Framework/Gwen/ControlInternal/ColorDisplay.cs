@@ -6,7 +6,7 @@ namespace Intersect.Client.Framework.Gwen.ControlInternal
     /// <summary>
     ///     Color square.
     /// </summary>
-    public class ColorDisplay : Base
+    public partial class ColorDisplay : Base
     {
 
         private Color mColor;

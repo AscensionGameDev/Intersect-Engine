@@ -1,7 +1,7 @@
 ﻿namespace Intersect.Config
 {
 
-    public class CombatOptions
+    public partial class CombatOptions
     {
 
         public int BlockingSlow = 30; //Slow when moving with a shield. Default 30%

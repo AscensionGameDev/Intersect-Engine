@@ -12,7 +12,7 @@ using Intersect.GameObjects;
 namespace Intersect.Client.Interface.Game.EntityPanel
 {
 
-    public class SpellStatus
+    public partial class SpellStatus
     {
 
         public ImagePanel Container;

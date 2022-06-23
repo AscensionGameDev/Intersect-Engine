@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace Intersect.Server.Database.PlayerData.Players
 {
 
-    public static class SlotHelper
+    public static partial class SlotHelper
     {
 
         public static List<TSlot> Sort<TSlot>(List<TSlot> slots) where TSlot : ISlot

@@ -9,7 +9,7 @@ using Intersect.Server.Localization;
 namespace Intersect.Server.Core.Commands
 {
 
-    internal class ApiCommand : TargetUserCommand
+    internal partial class ApiCommand : TargetUserCommand
     {
 
         public ApiCommand() : base(

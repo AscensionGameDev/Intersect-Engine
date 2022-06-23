@@ -5,7 +5,7 @@ using System.Text;
 namespace Intersect.Memory
 {
 
-    public class MemoryBuffer : MemoryStream, IBuffer
+    public partial class MemoryBuffer : MemoryStream, IBuffer
     {
 
         public MemoryBuffer() : this(0)

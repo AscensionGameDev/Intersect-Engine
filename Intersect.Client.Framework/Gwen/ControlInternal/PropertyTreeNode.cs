@@ -6,7 +6,7 @@ namespace Intersect.Client.Framework.Gwen.ControlInternal
     /// <summary>
     ///     Properties node.
     /// </summary>
-    public class PropertyTreeNode : TreeNode
+    public partial class PropertyTreeNode : TreeNode
     {
 
         /// <summary>

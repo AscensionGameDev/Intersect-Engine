@@ -11,7 +11,7 @@ using Newtonsoft.Json;
 namespace Intersect.Server.Database.PlayerData.Players
 {
 
-    public class Switch : IPlayerOwned
+    public partial class Switch : IPlayerOwned
     {
 
         public Switch()

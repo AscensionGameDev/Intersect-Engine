@@ -5,7 +5,7 @@ using System.Text;
 namespace Intersect.Logging
 {
 
-    public static class MemoryDump
+    public static partial class MemoryDump
     {
 
         private static string sDumpDirectory;

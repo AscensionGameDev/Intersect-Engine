@@ -3,7 +3,7 @@
 namespace Intersect.Server.Core.CommandParsing.Arguments
 {
 
-    public class HelpArgument : CommandArgument<bool>
+    public partial class HelpArgument : CommandArgument<bool>
     {
 
         public HelpArgument() : base(Strings.Commands.Arguments.Help)

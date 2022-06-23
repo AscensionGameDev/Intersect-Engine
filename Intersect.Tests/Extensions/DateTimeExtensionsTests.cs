@@ -8,7 +8,7 @@ using Assert = Microsoft.VisualStudio.TestTools.UnitTesting.Assert;
 namespace Intersect.Extensions
 {
     [TestFixture]
-    public class DateTimeExtensionsTests
+    public partial class DateTimeExtensionsTests
     {
         private static IEnumerable<object[]> Data
         {

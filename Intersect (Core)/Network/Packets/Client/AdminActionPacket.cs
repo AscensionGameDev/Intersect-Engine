@@ -4,7 +4,7 @@ using MessagePack;
 namespace Intersect.Network.Packets.Client
 {
     [MessagePackObject]
-    public class AdminActionPacket : IntersectPacket
+    public partial class AdminActionPacket : IntersectPacket
     {
         //Parameterless Constructor for MessagePack
         public AdminActionPacket()

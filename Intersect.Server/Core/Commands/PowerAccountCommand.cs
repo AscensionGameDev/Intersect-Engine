@@ -9,7 +9,7 @@ using Intersect.Server.Localization;
 namespace Intersect.Server.Core.Commands
 {
 
-    internal sealed class PowerAccountCommand : TargetUserCommand
+    internal sealed partial class PowerAccountCommand : TargetUserCommand
     {
 
         public PowerAccountCommand() : base(

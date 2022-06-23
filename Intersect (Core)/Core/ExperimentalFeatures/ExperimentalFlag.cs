@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 namespace Intersect.Core.ExperimentalFeatures
 {
 
-    public struct ExperimentalFlag : IExperimentalFlag
+    public partial struct ExperimentalFlag : IExperimentalFlag
     {
 
         private readonly IExperimentalFlag mParentFlag;

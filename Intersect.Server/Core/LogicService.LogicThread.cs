@@ -25,7 +25,7 @@ namespace Intersect.Server.Core
     internal sealed partial class LogicService
     {
 
-        internal sealed class LogicThread : Threaded<ServerContext>
+        internal sealed partial class LogicThread : Threaded<ServerContext>
         {
             /// <summary>
             /// We lock on this in order to stop maps from entering the update queue. This is only done when the editor is saving/modifying game maps or the map grids are being rebuilt.

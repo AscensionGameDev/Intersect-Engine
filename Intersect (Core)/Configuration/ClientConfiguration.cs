@@ -12,7 +12,7 @@ namespace Intersect.Configuration
     /// <summary>
     /// Client configuration options
     /// </summary>
-    public sealed class ClientConfiguration : IConfiguration<ClientConfiguration>
+    public sealed partial class ClientConfiguration : IConfiguration<ClientConfiguration>
     {
 
         public const string DefaultPath = @"resources/config.json";

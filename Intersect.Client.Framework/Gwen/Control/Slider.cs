@@ -14,7 +14,7 @@ namespace Intersect.Client.Framework.Gwen.Control
     /// <summary>
     ///     Base slider.
     /// </summary>
-    public class Slider : Base
+    public partial class Slider : Base
     {
 
         protected readonly SliderBar mSliderBar;

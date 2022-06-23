@@ -4,7 +4,7 @@ using System;
 namespace Intersect.Network.Packets.Server
 {
     [MessagePackObject]
-    public class InputVariablePacket : IntersectPacket
+    public partial class InputVariablePacket : IntersectPacket
     {
         //Parameterless Constructor for MessagePack
         public InputVariablePacket()

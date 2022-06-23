@@ -3,7 +3,7 @@
 namespace Intersect.Network.Packets.Client
 {
     [MessagePackObject]
-    public class OpenAdminWindowPacket : IntersectPacket
+    public partial class OpenAdminWindowPacket : IntersectPacket
     {
 
     }

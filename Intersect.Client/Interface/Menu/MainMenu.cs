@@ -14,7 +14,7 @@ using Intersect.Network;
 namespace Intersect.Client.Interface.Menu
 {
 
-    public class MainMenu : MutableInterface
+    public partial class MainMenu : MutableInterface
     {
 
         public delegate void NetworkStatusHandler();

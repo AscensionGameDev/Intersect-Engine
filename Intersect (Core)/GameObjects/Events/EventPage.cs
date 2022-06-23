@@ -10,7 +10,7 @@ using Newtonsoft.Json;
 namespace Intersect.GameObjects.Events
 {
 
-    public class EventPage
+    public partial class EventPage
     {
 
         public EventPage()

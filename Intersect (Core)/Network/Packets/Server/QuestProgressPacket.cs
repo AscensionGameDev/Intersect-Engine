@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace Intersect.Network.Packets.Server
 {
     [MessagePackObject]
-    public class QuestProgressPacket : IntersectPacket
+    public partial class QuestProgressPacket : IntersectPacket
     {
         //Parameterless Constructor for MessagePack
         public QuestProgressPacket()

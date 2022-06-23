@@ -3,7 +3,7 @@
 namespace Intersect.Client.Framework.GenericClasses
 {
 
-    public struct FloatRect
+    public partial struct FloatRect
     {
 
         private float mX;

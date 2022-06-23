@@ -6,7 +6,7 @@ using Intersect.Server.Web.RestApi.Serialization;
 namespace Intersect.Server.Web.RestApi
 {
 
-    public abstract class IntersectApiController : ApiController
+    public abstract partial class IntersectApiController : ApiController
     {
 
         public const int PAGE_SIZE_MAX = 100;

@@ -8,7 +8,7 @@ namespace Intersect.Client.Framework.Gwen.Control
     /// <summary>
     ///     Tab header.
     /// </summary>
-    public class TabButton : Button
+    public partial class TabButton : Button
     {
 
         private TabControl mControl;

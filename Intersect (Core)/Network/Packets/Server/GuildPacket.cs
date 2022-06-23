@@ -12,7 +12,7 @@ namespace Intersect.Network.Packets.Server
     /// The definition of the GuildPacket sent to a player containing the online and offline members of their guilds.
     /// </summary>
     [MessagePackObject]
-    public class GuildPacket : IntersectPacket
+    public partial class GuildPacket : IntersectPacket
     {
         /// <summary>
         /// Parameterless Constructor for MessagePack
@@ -36,7 +36,7 @@ namespace Intersect.Network.Packets.Server
     }
 
     [MessagePackObject]
-    public class GuildMember
+    public partial class GuildMember
     {
         [Key(0)]
         public Guid Id;

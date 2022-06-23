@@ -26,7 +26,7 @@ namespace Intersect.GameObjects
 
     }
 
-    public class QuestProgress
+    public partial class QuestProgress
     {
 
         public bool Completed;
@@ -42,7 +42,7 @@ namespace Intersect.GameObjects
 
     }
 
-    public class QuestBase : DatabaseObject<QuestBase>, IFolderable
+    public partial class QuestBase : DatabaseObject<QuestBase>, IFolderable
     {
 
         [NotMapped] [JsonIgnore]
@@ -207,7 +207,7 @@ namespace Intersect.GameObjects
             return null;
         }
 
-        public class QuestTask
+        public partial class QuestTask
         {
 
             [NotMapped] [JsonIgnore] public EventBase EditingEvent;

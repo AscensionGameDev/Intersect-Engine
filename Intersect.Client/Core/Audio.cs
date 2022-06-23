@@ -14,7 +14,7 @@ using Intersect.Utilities;
 namespace Intersect.Client.Core
 {
 
-    public static class Audio
+    public static partial class Audio
     {
 
         private static string sCurrentSong = "";

@@ -7,7 +7,7 @@ namespace Intersect.Logging.Formatting
     /// <summary>
     /// Basic formatter for text logs, includes details and timestamps.
     /// </summary>
-    public class DefaultFormatter : ILogFormatter
+    public partial class DefaultFormatter : ILogFormatter
     {
 
         public const string DefaultTimestampFormat = "yyyy-MM-dd HH:mm:ss.fff";

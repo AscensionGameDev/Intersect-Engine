@@ -5,7 +5,7 @@ using System;
 
 namespace Intersect.Client.Entities
 {
-    public class HotbarInstance : IHotbarInstance
+    public partial class HotbarInstance : IHotbarInstance
     {
 
         public Guid BagId { get; set; } = Guid.Empty;

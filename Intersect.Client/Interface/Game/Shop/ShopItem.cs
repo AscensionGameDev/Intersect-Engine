@@ -17,7 +17,7 @@ using Intersect.GameObjects;
 namespace Intersect.Client.Interface.Game.Shop
 {
 
-    public class ShopItem
+    public partial class ShopItem
     {
 
         public ImagePanel Container;

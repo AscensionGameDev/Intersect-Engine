@@ -18,7 +18,7 @@ using Intersect.Utilities;
 namespace Intersect.Client.Interface.Game.Bank
 {
 
-    public class BankItem
+    public partial class BankItem
     {
 
         private static int sItemXPadding = 4;

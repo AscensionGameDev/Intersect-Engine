@@ -11,7 +11,7 @@ using Newtonsoft.Json;
 namespace Intersect.Server.Database.PlayerData.Players
 {
 
-    public class Friend
+    public partial class Friend
     {
 
         public Friend()

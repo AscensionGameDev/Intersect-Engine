@@ -17,7 +17,7 @@ namespace Intersect.Server.Web.RestApi.Serialization
     /// <inheritdoc />
     /// <summary>
     /// </summary>
-    public class ApiVisibilityContractResolver : DefaultContractResolver
+    public partial class ApiVisibilityContractResolver : DefaultContractResolver
     {
 
         public ApiVisibilityContractResolver(HttpRequestContext requestContext)

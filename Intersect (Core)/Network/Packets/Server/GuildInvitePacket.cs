@@ -4,7 +4,7 @@ using MessagePack;
 namespace Intersect.Network.Packets.Server
 {
     [MessagePackObject]
-    public class GuildInvitePacket : IntersectPacket
+    public partial class GuildInvitePacket : IntersectPacket
     {
         /// <summary>
         /// Parameterless Constructor for MessagePack

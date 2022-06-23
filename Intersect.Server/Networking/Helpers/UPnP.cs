@@ -11,7 +11,7 @@ using Open.Nat;
 namespace Intersect.Server.Networking.Helpers
 {
 
-    public static class UpnP
+    public static partial class UpnP
     {
 
         private static NatDevice sDevice;

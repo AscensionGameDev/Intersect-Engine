@@ -13,7 +13,7 @@ namespace Intersect.Client.Framework.Gwen.ControlInternal
     /// <summary>
     ///     Base for controls that can be dragged by mouse.
     /// </summary>
-    public class Dragger : Base
+    public partial class Dragger : Base
     {
 
         public enum ControlState

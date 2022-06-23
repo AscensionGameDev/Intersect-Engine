@@ -16,7 +16,7 @@ using Intersect.Utilities;
 namespace Intersect.Client.Interface.Game.Crafting
 {
 
-    public class CraftingWindow
+    public partial class CraftingWindow
     {
 
         private static int sItemXPadding = 4;

@@ -10,7 +10,7 @@ namespace Intersect.Client.Framework.Gwen.DragDrop
     /// <summary>
     ///     Drag and drop handling.
     /// </summary>
-    public static class DragAndDrop
+    public static partial class DragAndDrop
     {
 
         public static Package CurrentPackage;

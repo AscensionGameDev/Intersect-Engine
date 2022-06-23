@@ -1,7 +1,7 @@
 ﻿namespace Intersect.Client.Framework.Gwen
 {
 
-    public struct Hsv
+    public partial struct Hsv
     {
 
         public float H;

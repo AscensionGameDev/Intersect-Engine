@@ -14,7 +14,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
     [RoutePrefix("doc")]
     [ConfigurableAuthorize]
-    public sealed class DocController : ApiController
+    public sealed partial class DocController : ApiController
     {
 
         private Collection<ApiDescription> mDescriptions;
@@ -174,7 +174,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
     }
 
-    internal static class ApiExtensions
+    internal static partial class ApiExtensions
     {
 
         public static dynamic ToJson(this HttpParameterDescriptor descriptor)

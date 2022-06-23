@@ -3,7 +3,7 @@
 namespace Intersect.Network.Packets.Server
 {
     [MessagePackObject]
-    public class EnteringGamePacket : IntersectPacket
+    public partial class EnteringGamePacket : IntersectPacket
     {
 
     }

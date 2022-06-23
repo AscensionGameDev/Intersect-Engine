@@ -3,7 +3,7 @@
 namespace Intersect.Server.Web.RestApi.Payloads
 {
 
-    public struct ItemInfo
+    public partial struct ItemInfo
     {
 
         public Guid ItemId { get; set; }

@@ -6,7 +6,7 @@ namespace Intersect.Client.Framework.Gwen.Control
     /// <summary>
     ///     Numeric text box - accepts only float numbers.
     /// </summary>
-    public class TextBoxNumeric : TextBox
+    public partial class TextBoxNumeric : TextBox
     {
 
         /// <summary>

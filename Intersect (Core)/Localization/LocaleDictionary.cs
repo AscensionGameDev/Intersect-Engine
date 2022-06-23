@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Intersect.Localization
 {
-    public class LocaleDictionary<TKey, TValue> : Localized, IDictionary<TKey, TValue> where TValue : Localized
+    public partial class LocaleDictionary<TKey, TValue> : Localized, IDictionary<TKey, TValue> where TValue : Localized
     {
 
         private readonly IDictionary<TKey, TValue> mDefaults;

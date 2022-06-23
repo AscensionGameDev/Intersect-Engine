@@ -16,7 +16,7 @@ using Lidgren.Network;
 namespace Intersect.Network.Lidgren
 {
 
-    public sealed class LidgrenInterface : INetworkLayerInterface
+    public sealed partial class LidgrenInterface : INetworkLayerInterface
     {
 
         public delegate void HandleUnconnectedMessage(NetPeer peer, NetIncomingMessage message);

@@ -12,7 +12,7 @@ namespace Intersect.Utilities
 
     public delegate void FormulaParameter(ParameterArgs args);
 
-    public class Formula
+    public partial class Formula
     {
 
         public static readonly List<string> SYSTEM_MATH_FUNCTIONS = new List<string>

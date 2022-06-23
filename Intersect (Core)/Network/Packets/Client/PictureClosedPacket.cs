@@ -4,7 +4,7 @@ using System;
 namespace Intersect.Network.Packets.Client
 {
     [MessagePackObject]
-    public class PictureClosedPacket : IntersectPacket
+    public partial class PictureClosedPacket : IntersectPacket
     {
         //Parameterless Constructor for MessagePack
         public PictureClosedPacket()

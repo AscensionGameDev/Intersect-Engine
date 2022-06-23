@@ -6,7 +6,7 @@ using Intersect.Logging;
 namespace Intersect.Server.Web.RestApi.Extensions
 {
 
-    public static class HttpStatusCodeExtensions
+    public static partial class HttpStatusCodeExtensions
     {
 
         public static LogLevel ToIntersectLogLevel(this HttpStatusCode httpStatusCode, HttpMethod httpMethod = null)

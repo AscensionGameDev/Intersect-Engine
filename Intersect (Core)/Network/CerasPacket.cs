@@ -6,7 +6,7 @@ using Intersect.Collections;
 namespace Intersect.Network
 {
 
-    public abstract class CerasPacket : IPacket
+    public abstract partial class CerasPacket : IPacket
     {
         private static Ceras sCerasInstance { get; set; }
 

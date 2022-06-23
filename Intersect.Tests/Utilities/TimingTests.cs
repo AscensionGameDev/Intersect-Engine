@@ -9,7 +9,7 @@ using System.Diagnostics;
 namespace Intersect.Tests.Server
 {
     [TestFixture]
-    public class TimingTests
+    public partial class TimingTests
     {
         [Test]
         public void TestRealTimeMs()

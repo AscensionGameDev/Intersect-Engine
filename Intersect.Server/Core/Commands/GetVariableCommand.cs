@@ -9,7 +9,7 @@ using Intersect.Server.Localization;
 
 namespace Intersect.Server.Core.Commands
 {
-    internal sealed class GetVariableCommand : ServerCommand
+    internal sealed partial class GetVariableCommand : ServerCommand
     {
         public GetVariableCommand() : base(
             Strings.Commands.GetVariable,

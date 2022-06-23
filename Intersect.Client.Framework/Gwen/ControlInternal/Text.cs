@@ -9,7 +9,7 @@ namespace Intersect.Client.Framework.Gwen.ControlInternal
     /// <summary>
     ///     Displays text. Always sized to contents.
     /// </summary>
-    public class Text : Base
+    public partial class Text : Base
     {
 
         private GameFont mFont;

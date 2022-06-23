@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 namespace Intersect.Client.Core.Controls
 {
 
-    public class Controls
+    public partial class Controls
     {
 
         public readonly IDictionary<Control, ControlMap> ControlMapping;

@@ -10,7 +10,7 @@ using Intersect.Plugins.Interfaces;
 namespace Intersect.Plugins.Helpers
 {
     /// <inheritdoc cref="ICommandLineHelper" />
-    internal sealed class CommandLineHelper : PluginHelper, ICommandLineHelper
+    internal sealed partial class CommandLineHelper : PluginHelper, ICommandLineHelper
     {
         private readonly Parser mParser;
 

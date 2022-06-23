@@ -4,7 +4,7 @@ using System.Threading;
 namespace Intersect.Utilities
 {
 
-    public static class CSharpFeatures
+    public static partial class CSharpFeatures
     {
 
         public delegate IDictionary<TKey, TValue> CreateConcurrentDictionaryAction<TKey, TValue>(int capacity = 0);

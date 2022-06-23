@@ -13,7 +13,7 @@ namespace Intersect.Client
     /// <summary>
     ///     The main class.
     /// </summary>
-    static class Program
+    static partial class Program
     {
 
         public static string OpenALLink = "";

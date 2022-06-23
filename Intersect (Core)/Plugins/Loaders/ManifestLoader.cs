@@ -17,7 +17,7 @@ namespace Intersect.Plugins.Loaders
     /// <summary>
     /// Utility class for loading manifests from <see cref="Assembly"/>s.
     /// </summary>
-    public static class ManifestLoader
+    public static partial class ManifestLoader
     {
         private static readonly Type ManifestType = typeof(IManifestHelper);
 

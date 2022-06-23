@@ -1,7 +1,7 @@
 ﻿namespace Intersect
 {
 
-    public struct BytePoint
+    public partial struct BytePoint
     {
 
         public byte X;

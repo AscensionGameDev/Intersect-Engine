@@ -3,7 +3,7 @@
 namespace Intersect.Client.Framework.Graphics
 {
 
-    public struct Resolution
+    public partial struct Resolution
     {
 
         public static readonly Resolution Empty = default;

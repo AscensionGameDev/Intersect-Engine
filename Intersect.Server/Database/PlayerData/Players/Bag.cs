@@ -15,7 +15,7 @@ using Newtonsoft.Json;
 namespace Intersect.Server.Database.PlayerData.Players
 {
 
-    public class Bag
+    public partial class Bag
     {
 
         public Bag()

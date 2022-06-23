@@ -2345,7 +2345,7 @@ namespace Intersect.Client.Entities
             }
         }
 
-        private class TargetInfo
+        private partial class TargetInfo
         {
             public long LastTimeSelected;
 

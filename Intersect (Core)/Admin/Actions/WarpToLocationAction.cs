@@ -6,7 +6,7 @@ using MessagePack;
 namespace Intersect.Admin.Actions
 {
     [MessagePackObject]
-    public class WarpToLocationAction : AdminAction
+    public partial class WarpToLocationAction : AdminAction
     {
         //Parameterless Constructor for MessagePack
         public WarpToLocationAction()

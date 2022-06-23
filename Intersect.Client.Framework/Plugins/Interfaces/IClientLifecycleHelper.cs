@@ -8,7 +8,7 @@ using Intersect.Plugins.Interfaces;
 
 namespace Intersect.Client.Plugins.Interfaces
 {
-    public class LifecycleChangeStateArgs : EventArgs
+    public partial class LifecycleChangeStateArgs : EventArgs
     {
         public GameStates State { get; }
 
@@ -23,7 +23,7 @@ namespace Intersect.Client.Plugins.Interfaces
         LifecycleChangeStateArgs lifecycleChangeStateArgs
     );
 
-    public class GameUpdateArgs : TimedArgs
+    public partial class GameUpdateArgs : TimedArgs
     {
         public GameStates State { get; }
 
@@ -39,7 +39,7 @@ namespace Intersect.Client.Plugins.Interfaces
         }
     }
 
-    public class GameDrawArgs : TimedArgs
+    public partial class GameDrawArgs : TimedArgs
     {
         public DrawStates State { get; }
 
@@ -57,7 +57,7 @@ namespace Intersect.Client.Plugins.Interfaces
         }
     }
 
-    public class TimedArgs : EventArgs
+    public partial class TimedArgs : EventArgs
     {
         /// <summary>
         /// Time since the last update.

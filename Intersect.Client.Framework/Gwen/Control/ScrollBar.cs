@@ -12,7 +12,7 @@ namespace Intersect.Client.Framework.Gwen.Control
     /// <summary>
     ///     Base class for scrollbars.
     /// </summary>
-    public class ScrollBar : Base
+    public partial class ScrollBar : Base
     {
 
         protected readonly ScrollBarBar mBar;

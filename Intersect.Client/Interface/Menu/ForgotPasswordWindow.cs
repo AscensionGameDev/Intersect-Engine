@@ -16,7 +16,7 @@ using Intersect.Utilities;
 namespace Intersect.Client.Interface.Menu
 {
 
-    public class ForgotPasswordWindow
+    public partial class ForgotPasswordWindow
     {
 
         private Button mBackBtn;

@@ -7,7 +7,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
     [ConfigurableAuthorize]
     [RoutePrefix("demo")]
-    public sealed class DemoController : ApiController
+    public sealed partial class DemoController : ApiController
     {
 
         [Route]

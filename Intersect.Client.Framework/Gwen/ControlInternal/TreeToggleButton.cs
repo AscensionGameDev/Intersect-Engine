@@ -6,7 +6,7 @@ namespace Intersect.Client.Framework.Gwen.ControlInternal
     /// <summary>
     ///     Tree node toggle button (the little plus sign).
     /// </summary>
-    public class TreeToggleButton : Button
+    public partial class TreeToggleButton : Button
     {
 
         /// <summary>

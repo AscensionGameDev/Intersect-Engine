@@ -14,7 +14,7 @@ using Intersect.GameObjects;
 namespace Intersect.Client.Interface.Game.Inventory
 {
 
-    public class MapItemIcon
+    public partial class MapItemIcon
     {
 
         public ImagePanel Container;

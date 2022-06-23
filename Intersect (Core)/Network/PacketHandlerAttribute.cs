@@ -10,7 +10,7 @@ namespace Intersect.Network
         AttributeTargets.Class | AttributeTargets.Method | AttributeTargets.Delegate | AttributeTargets.Struct,
         AllowMultiple = false
     )]
-    public class PacketHandlerAttribute : Attribute
+    public partial class PacketHandlerAttribute : Attribute
     {
         internal static Type TypeIPacketHandlerInterface_1 = typeof(IPacketHandler<>);
 

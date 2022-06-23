@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Intersect.Server.Maps
 {
-    public class MapAnimations
+    public partial class MapAnimations
     {
         public List<PlayAnimationPacket> mAnimations = new List<PlayAnimationPacket>();
 

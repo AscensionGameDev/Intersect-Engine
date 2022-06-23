@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 namespace Intersect.Server.Core.ExperimentalFeatures
 {
 
-    public sealed class Experiments : CommonExperiments<Experiments>
+    public sealed partial class Experiments : CommonExperiments<Experiments>
     {
 
         private static readonly Guid NamespaceId = Guid.Parse("4a6db511-7d5c-4a23-a096-5d61baa58cd7");

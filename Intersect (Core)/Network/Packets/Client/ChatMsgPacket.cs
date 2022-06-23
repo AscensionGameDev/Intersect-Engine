@@ -3,7 +3,7 @@
 namespace Intersect.Network.Packets.Client
 {
     [MessagePackObject]
-    public class ChatMsgPacket : IntersectPacket
+    public partial class ChatMsgPacket : IntersectPacket
     {
         //Parameterless Constructor for MessagePack
         public ChatMsgPacket()

@@ -3,7 +3,7 @@
     /// <summary>
     /// Contains configurable options pertaining to the way loot (item) drops are handled by the engine.
     /// </summary>
-    public class LootOptions
+    public partial class LootOptions
     {
 
         /// <summary>

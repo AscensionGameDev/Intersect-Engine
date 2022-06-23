@@ -13,7 +13,7 @@ using Intersect.Client.Localization;
 namespace Intersect.Client.Interface.Game.Hotbar
 {
 
-    public class HotBarWindow
+    public partial class HotBarWindow
     {
 
         //Controls

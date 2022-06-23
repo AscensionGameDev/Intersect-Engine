@@ -6,7 +6,7 @@ namespace Intersect.Client.Framework.Gwen.Control
     /// <summary>
     ///     Simple message box.
     /// </summary>
-    public class MessageBox : WindowControl
+    public partial class MessageBox : WindowControl
     {
 
         private readonly Button mButton;

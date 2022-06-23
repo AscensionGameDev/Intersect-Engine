@@ -5,7 +5,7 @@ using MathNet.Numerics.Random;
 namespace Intersect.Extensions
 {
 
-    public static class RandomExtensions
+    public static partial class RandomExtensions
     {
 
         public static long NextLong(this Random random)

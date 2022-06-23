@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Intersect.Compression
 {
-    public static class LZ4
+    public static partial class LZ4
     {
         public static byte[] Pickle(byte[] data)
         {

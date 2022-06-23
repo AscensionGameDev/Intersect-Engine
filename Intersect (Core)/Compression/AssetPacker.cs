@@ -12,7 +12,7 @@ namespace Intersect.Compression
 	/// <summary>
 	/// Allows for packaging up assets and extracting them from packaged files.
 	/// </summary>
-	public sealed class AssetPacker : IDisposable
+	public sealed partial class AssetPacker : IDisposable
 	{
 
 		/// <summary>
@@ -233,13 +233,13 @@ namespace Intersect.Compression
 		#endregion
 
 		#region Internal classes
-		private class PackageCacheEntry
+		private partial class PackageCacheEntry
 		{
 			public long LastAccessTime { get; set; }
 			public MemoryStream StreamCache { get; set; }
 		}
 
-		private class PackageIndexEntry
+		private partial class PackageIndexEntry
 		{
 			public string FileName { get; set; }
 			public string PackName { get; set; }
@@ -247,7 +247,7 @@ namespace Intersect.Compression
 			public int FileEndByte { get; set; }
 		}
 
-		private class PackFileEntry 
+		private partial class PackFileEntry 
 		{ 
 			public string Name { get; set; }
 			public string FullPath { get; set; }

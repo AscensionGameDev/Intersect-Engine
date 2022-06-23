@@ -10,7 +10,7 @@ using Intersect.Server.Web.RestApi.Configuration;
 namespace Intersect.Server.Web.RestApi.Services
 {
 
-    internal sealed class IntersectServiceDependencyResolver : IDependencyResolver
+    internal sealed partial class IntersectServiceDependencyResolver : IDependencyResolver
     {
 
         public IntersectServiceDependencyResolver(

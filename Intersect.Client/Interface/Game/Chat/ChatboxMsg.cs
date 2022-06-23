@@ -6,7 +6,7 @@ using System.Net;
 namespace Intersect.Client.Interface.Game.Chat
 {
 
-    public class ChatboxMsg
+    public partial class ChatboxMsg
     {
 
         private static List<ChatboxMsg> sGameMessages = new List<ChatboxMsg>();

@@ -8,7 +8,7 @@ using Microsoft.Win32;
 namespace Intersect.Client.MonoGame.Database
 {
 
-    public class MonoDatabase : GameDatabase
+    public partial class MonoDatabase : GameDatabase
     {
 
         public override void SavePreference(string key, object value)

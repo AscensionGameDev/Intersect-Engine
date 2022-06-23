@@ -27,7 +27,7 @@ namespace Intersect.Server.Database.PlayerData.Players
     /// <summary>
     /// A class containing the definition of each guild, alongside the methods to use them.
     /// </summary>
-    public class Guild
+    public partial class Guild
     {
 
         public static ConcurrentDictionary<Guid, Guild> Guilds = new ConcurrentDictionary<Guid, Guild>();

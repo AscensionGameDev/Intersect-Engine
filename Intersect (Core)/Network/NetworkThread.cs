@@ -7,7 +7,7 @@ using Intersect.Logging;
 namespace Intersect.Network
 {
 
-    public sealed class NetworkThread
+    public sealed partial class NetworkThread
     {
         private readonly object mLifecycleLock;
 

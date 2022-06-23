@@ -9,7 +9,7 @@ namespace Intersect.Network.Packets.Server
     [Union(2, typeof(NpcEntityPacket))]
     [Union(3, typeof(ProjectileEntityPacket))]
     [Union(4, typeof(ResourceEntityPacket))]
-    public abstract class EntityPacket : IntersectPacket
+    public abstract partial class EntityPacket : IntersectPacket
     {
 
         [Key(1)]

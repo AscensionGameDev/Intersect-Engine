@@ -11,7 +11,7 @@ using Newtonsoft.Json;
 namespace Intersect.Server.Database.PlayerData.Api
 {
 
-    public class RefreshToken
+    public partial class RefreshToken
     {
 
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

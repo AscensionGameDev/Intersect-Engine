@@ -13,7 +13,7 @@ namespace Intersect.Client.Framework.Gwen.Control
     /// <summary>
     ///     ComboBox control.
     /// </summary>
-    public class ComboBox : Button
+    public partial class ComboBox : Button
     {
 
         private readonly Base mButton;

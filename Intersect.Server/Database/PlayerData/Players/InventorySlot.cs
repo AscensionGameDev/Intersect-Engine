@@ -11,7 +11,7 @@ using Newtonsoft.Json;
 namespace Intersect.Server.Database.PlayerData.Players
 {
 
-    public class InventorySlot : Item, ISlot, IPlayerOwned
+    public partial class InventorySlot : Item, ISlot, IPlayerOwned
     {
 
         public InventorySlot()

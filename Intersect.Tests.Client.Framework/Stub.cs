@@ -4,7 +4,7 @@ namespace Intersect.Tests.Client.Framework
 {
 
     [TestFixture]
-    public class Stub
+    public partial class Stub
     {
 
         [Test]

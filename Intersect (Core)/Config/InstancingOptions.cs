@@ -2,7 +2,7 @@ using System.Runtime.Serialization;
 
 namespace Intersect.Config
 {
-    public class InstancingOptions
+    public partial class InstancingOptions
     {
         /// <summary>
         ///  Intersect default for instance lives

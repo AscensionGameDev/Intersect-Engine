@@ -3,7 +3,7 @@
 namespace Intersect.Network.Packets.Server
 {
     [MessagePackObject]
-    public class SpellPacket : IntersectPacket
+    public partial class SpellPacket : IntersectPacket
     {
 
     }

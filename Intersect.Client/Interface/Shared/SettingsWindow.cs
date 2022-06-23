@@ -19,7 +19,7 @@ using static Intersect.Client.Framework.File_Management.GameContentManager;
 
 namespace Intersect.Client.Interface.Shared
 {
-    public class SettingsWindow
+    public partial class SettingsWindow
     {
         // Parent Window.
         private readonly MainMenu mMainMenu;

@@ -1,7 +1,7 @@
 ﻿namespace Intersect.GameObjects
 {
 
-    public class LightBase
+    public partial class LightBase
     {
 
         public LightBase() : this(-1, -1) { }

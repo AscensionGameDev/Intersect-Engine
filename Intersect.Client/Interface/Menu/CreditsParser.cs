@@ -5,12 +5,12 @@ using Intersect.Client.Framework.Gwen;
 namespace Intersect.Client.Interface.Menu
 {
 
-    class Credits
+    partial class Credits
     {
 
         public List<CreditsLine> Lines = new List<CreditsLine>();
 
-        public struct CreditsLine
+        public partial struct CreditsLine
         {
 
             public string Text;

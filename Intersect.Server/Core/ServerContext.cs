@@ -39,7 +39,7 @@ namespace Intersect.Server.Core
     /// <summary>
     /// Implements <see cref="IServerContext"/>.
     /// </summary>
-    internal sealed class ServerContext : ApplicationContext<ServerContext, ServerCommandLineOptions>, IServerContext
+    internal sealed partial class ServerContext : ApplicationContext<ServerContext, ServerCommandLineOptions>, IServerContext
     {
         internal ServerContext(ServerCommandLineOptions startupOptions, Logger logger, IPacketHelper packetHelper) : base(
             startupOptions, logger, packetHelper

@@ -11,7 +11,7 @@ using Microsoft.Xna.Framework.Graphics;
 namespace Intersect.Client.MonoGame.Graphics
 {
 
-    public class MonoFont : GameFont
+    public partial class MonoFont : GameFont
     {
 
         private SpriteFont mFont;

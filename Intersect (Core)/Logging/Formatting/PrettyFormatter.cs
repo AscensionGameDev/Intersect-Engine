@@ -7,7 +7,7 @@ namespace Intersect.Logging.Formatting
     /// Pretty log formatter that does not include timestamps or extended details.
     /// </summary>
     /// <inheritdoc />
-    public class PrettyFormatter : DefaultFormatter
+    public partial class PrettyFormatter : DefaultFormatter
     {
 
         /// <inheritdoc />

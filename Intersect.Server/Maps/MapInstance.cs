@@ -49,7 +49,7 @@ namespace Intersect.Server.Maps
     /// </para>
     /// </remarks>
     /// </summary>
-    public class MapInstance : IDisposable
+    public partial class MapInstance : IDisposable
     {
         private MapController mMapController;
 

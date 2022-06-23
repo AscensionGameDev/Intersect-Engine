@@ -4,7 +4,7 @@
     /// <summary>
     ///     Progress bar.
     /// </summary>
-    public class ProgressBar : Label
+    public partial class ProgressBar : Label
     {
 
         private bool mAutoLabel;

@@ -12,7 +12,7 @@ namespace Intersect.Core
     /// Represents the container exception that occurs when services fail during a lifecycle method.
     /// </summary>
     [Serializable]
-    public class ServiceLifecycleFailureException : Exception
+    public partial class ServiceLifecycleFailureException : Exception
     {
         #region Constants
 

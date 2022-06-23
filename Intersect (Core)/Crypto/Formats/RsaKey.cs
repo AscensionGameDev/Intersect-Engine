@@ -6,7 +6,7 @@ using Intersect.Memory;
 
 namespace Intersect.Crypto.Formats
 {
-    public class RsaKey : EncryptionKey
+    public partial class RsaKey : EncryptionKey
     {
         private RSAParameters mParameters;
 

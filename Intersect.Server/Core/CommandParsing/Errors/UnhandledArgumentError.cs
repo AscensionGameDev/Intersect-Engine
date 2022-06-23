@@ -3,7 +3,7 @@
 namespace Intersect.Server.Core.CommandParsing.Errors
 {
 
-    public class UnhandledArgumentError : ParserError
+    public partial class UnhandledArgumentError : ParserError
     {
 
         protected UnhandledArgumentError(

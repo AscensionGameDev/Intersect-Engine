@@ -6,7 +6,7 @@ using Intersect.Server.Core.CommandParsing.Tokenization;
 namespace Intersect.Server.Core.CommandParsing
 {
 
-    public sealed class ParserSettings
+    public sealed partial class ParserSettings
     {
 
         public static readonly CommandParsingNamespace DefaultLocalization = new CommandParsingNamespace();

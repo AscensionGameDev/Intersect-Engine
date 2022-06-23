@@ -5,7 +5,7 @@
     ///     Group box (container).
     /// </summary>
     /// <remarks>Don't use autosize with docking.</remarks>
-    public class GroupBox : Label
+    public partial class GroupBox : Label
     {
 
         /// <summary>

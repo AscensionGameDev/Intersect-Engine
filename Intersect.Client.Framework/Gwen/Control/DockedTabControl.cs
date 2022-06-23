@@ -4,7 +4,7 @@
     /// <summary>
     ///     Docked tab control.
     /// </summary>
-    public class DockedTabControl : TabControl
+    public partial class DockedTabControl : TabControl
     {
 
         private readonly TabTitleBar mTitleBar;

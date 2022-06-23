@@ -13,7 +13,7 @@ using Intersect.Plugins.Interfaces;
 namespace Intersect.Client.Networking
 {
 
-    internal static class Network
+    internal static partial class Network
     {
 
         public static bool Connecting;

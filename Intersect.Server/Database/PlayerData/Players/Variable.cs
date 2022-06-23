@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Intersect.Server.Database.PlayerData.Players
 {
-    public class Variable
+    public partial class Variable
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity), JsonIgnore]
         public Guid Id { get; protected set; }

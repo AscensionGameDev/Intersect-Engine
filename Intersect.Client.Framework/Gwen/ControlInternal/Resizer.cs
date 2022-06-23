@@ -9,7 +9,7 @@ namespace Intersect.Client.Framework.Gwen.ControlInternal
     /// <summary>
     ///     Grab point for resizing.
     /// </summary>
-    public class Resizer : Dragger
+    public partial class Resizer : Dragger
     {
 
         private Pos mResizeDir;

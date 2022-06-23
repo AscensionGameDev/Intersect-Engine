@@ -8,7 +8,7 @@ using System.Reflection;
 namespace Intersect.Plugins.Helpers
 {
     /// <inheritdoc />
-    internal sealed class EmbeddedResourceHelper : IEmbeddedResourceHelper
+    internal sealed partial class EmbeddedResourceHelper : IEmbeddedResourceHelper
     {
         private Assembly Assembly { get; }
 

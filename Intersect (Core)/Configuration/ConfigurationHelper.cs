@@ -10,7 +10,7 @@ using Newtonsoft.Json;
 namespace Intersect.Configuration
 {
 
-    public static class ConfigurationHelper
+    public static partial class ConfigurationHelper
     {
 
         public static T Load<T>(T configuration, string filePath, bool failQuietly = false)

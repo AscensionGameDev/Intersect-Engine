@@ -9,7 +9,7 @@ namespace Intersect.Client.Framework.Gwen
     /// <summary>
     ///     Misc utility functions.
     /// </summary>
-    public static class Util
+    public static partial class Util
     {
 
         public static int Round(float x)

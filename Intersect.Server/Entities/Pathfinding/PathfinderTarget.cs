@@ -3,7 +3,7 @@
 namespace Intersect.Server.Entities.Pathfinding
 {
 
-    public class PathfinderTarget
+    public partial class PathfinderTarget
     {
 
         public Guid TargetMapId;

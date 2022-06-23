@@ -10,7 +10,7 @@ namespace Intersect
     using SystemConsole = System.Console;
 
     // TODO: Make this instanceable
-    public static class Console
+    public static partial class Console
     {
 
         //#region Instance Management

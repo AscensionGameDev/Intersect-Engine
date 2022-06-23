@@ -4,7 +4,7 @@ namespace Intersect.Threading
 {
 
     /// <inheritdoc />
-    public abstract class Threaded<TArgument> : Threaded
+    public abstract partial class Threaded<TArgument> : Threaded
     {
 
         /// <inheritdoc />

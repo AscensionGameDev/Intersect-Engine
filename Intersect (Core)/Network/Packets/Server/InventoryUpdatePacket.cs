@@ -4,7 +4,7 @@ using System;
 namespace Intersect.Network.Packets.Server
 {
     [MessagePackObject]
-    public class InventoryUpdatePacket : IntersectPacket
+    public partial class InventoryUpdatePacket : IntersectPacket
     {
         //Parameterless Constructor for MessagePack
         public InventoryUpdatePacket()

@@ -1,7 +1,7 @@
 ﻿namespace Intersect.Config
 {
 
-    public class SmtpSettings
+    public partial class SmtpSettings
     {
 
         public string FromAddress { get; set; } = "";

@@ -13,7 +13,7 @@ namespace Intersect.Plugins.Manifests.Types
     /// <summary>
     /// Immutable container structure for multiple <see cref="Author"/>s.
     /// </summary>
-    public struct Authors : IComparable<IEnumerable<Author>>,
+    public partial struct Authors : IComparable<IEnumerable<Author>>,
         IComparable<IEnumerable<string>>,
         IEquatable<IEnumerable<Author>>,
         IEquatable<IEnumerable<string>>,

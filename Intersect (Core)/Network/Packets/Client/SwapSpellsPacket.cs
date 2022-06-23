@@ -3,7 +3,7 @@
 namespace Intersect.Network.Packets.Client
 {
     [MessagePackObject]
-    public class SwapSpellsPacket : SlotSwapPacket
+    public partial class SwapSpellsPacket : SlotSwapPacket
     {
         //Parameterless Constructor for MessagePack
         public SwapSpellsPacket() : base(0, 0)

@@ -8,7 +8,7 @@ using Intersect.Logging.Output;
 namespace Intersect.Server.Web.RestApi.Logging
 {
 
-    internal sealed class IntersectLogger : Microsoft.Owin.Logging.ILogger
+    internal sealed partial class IntersectLogger : Microsoft.Owin.Logging.ILogger
     {
 
         internal IntersectLogger(string name)

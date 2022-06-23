@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Intersect.Server.Metrics
 {
-    public class Histogram
+    public partial class Histogram
     {
         [JsonIgnore]
         public string Name { get; private set; }

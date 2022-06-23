@@ -5,7 +5,7 @@ using Owin;
 namespace Intersect.Server.Web.RestApi.Authentication
 {
 
-    internal abstract class AuthenticationProvider : IAppConfigurationProvider
+    internal abstract partial class AuthenticationProvider : IAppConfigurationProvider
     {
 
         protected AuthenticationProvider(ApiConfiguration configuration)

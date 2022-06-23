@@ -18,7 +18,7 @@ using Intersect.Utilities;
 namespace Intersect.Client.Interface.Menu
 {
 
-    public class LoginWindow
+    public partial class LoginWindow
     {
 
         private Button mBackBtn;

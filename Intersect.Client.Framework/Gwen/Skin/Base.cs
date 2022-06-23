@@ -12,7 +12,7 @@ namespace Intersect.Client.Framework.Gwen.Skin
     /// <summary>
     ///     Base skin.
     /// </summary>
-    public class Base : IDisposable
+    public partial class Base : IDisposable
     {
 
         protected readonly Renderer.Base mRenderer;

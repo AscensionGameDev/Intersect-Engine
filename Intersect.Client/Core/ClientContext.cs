@@ -17,7 +17,7 @@ namespace Intersect.Client.Core
     /// <summary>
     /// Implements <see cref="IClientContext"/>.
     /// </summary>
-    internal sealed class ClientContext : ApplicationContext<ClientContext, ClientCommandLineOptions>, IClientContext
+    internal sealed partial class ClientContext : ApplicationContext<ClientContext, ClientCommandLineOptions>, IClientContext
     {
         private IPlatformRunner mPlatformRunner;
 

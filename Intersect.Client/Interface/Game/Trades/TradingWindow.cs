@@ -15,7 +15,7 @@ using Intersect.GameObjects;
 namespace Intersect.Client.Interface.Game.Trades
 {
 
-    public class TradingWindow
+    public partial class TradingWindow
     {
 
         private static int sItemXPadding = 4;

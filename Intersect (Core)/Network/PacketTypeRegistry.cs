@@ -8,7 +8,7 @@ using System.Reflection;
 
 namespace Intersect.Network
 {
-    public sealed class PacketTypeRegistry
+    public sealed partial class PacketTypeRegistry
     {
         private static readonly Assembly BuiltInAssembly = typeof(PacketTypeRegistry).Assembly;
 

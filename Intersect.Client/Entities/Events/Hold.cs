@@ -3,7 +3,7 @@
 namespace Intersect.Client.Entities.Events
 {
 
-    public class Hold
+    public partial class Hold
     {
 
         public Guid EventId;

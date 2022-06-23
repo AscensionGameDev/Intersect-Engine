@@ -5,7 +5,7 @@ using Intersect.Client.Interface.Game.DescriptionWindows.Components;
 
 namespace Intersect.Client.Interface.Game.DescriptionWindows
 {
-    public class DescriptionWindowBase : ComponentBase
+    public partial class DescriptionWindowBase : ComponentBase
     {
         // Track current Y height for placing components.
         private int mComponentY = 0;

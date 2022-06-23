@@ -15,7 +15,7 @@ using Intersect.GameObjects;
 namespace Intersect.Client.Interface.Game.Character
 {
 
-    public class EquipmentItem
+    public partial class EquipmentItem
     {
 
         public ImagePanel ContentPanel;

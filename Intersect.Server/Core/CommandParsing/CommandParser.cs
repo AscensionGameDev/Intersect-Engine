@@ -14,7 +14,7 @@ using Newtonsoft.Json;
 namespace Intersect.Server.Core.CommandParsing
 {
 
-    public sealed class CommandParser
+    public sealed partial class CommandParser
     {
 
         public CommandParser() : this(ParserSettings.Default)

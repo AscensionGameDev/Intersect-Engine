@@ -4,7 +4,7 @@ using Intersect.Client.Framework.Gwen.Control;
 
 namespace Intersect.Client.Interface.Game.DescriptionWindows.Components
 {
-    public class HeaderComponent : ComponentBase
+    public partial class HeaderComponent : ComponentBase
     {
         protected ImagePanel mIconContainer;
 

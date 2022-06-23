@@ -25,7 +25,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
     [RoutePrefix("users")]
     [ConfigurableAuthorize(Roles = nameof(ApiRoles.UserQuery))]
-    public sealed class UserController : IntersectApiController
+    public sealed partial class UserController : IntersectApiController
     {
 
         [Route]

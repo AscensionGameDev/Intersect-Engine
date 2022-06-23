@@ -13,7 +13,7 @@ using Newtonsoft.Json;
 namespace Intersect.GameObjects.Maps
 {
 
-    public class MapBase : DatabaseObject<MapBase>
+    public partial class MapBase : DatabaseObject<MapBase>
     {
         [NotMapped]
         [JsonIgnore]
@@ -343,7 +343,7 @@ namespace Intersect.GameObjects.Maps
             return mCachedAttributeData;
         }
 
-        public class MapControllers : DatabaseObjectLookup
+        public partial class MapControllers : DatabaseObjectLookup
         {
 
             private readonly DatabaseObjectLookup mBaseLookup;

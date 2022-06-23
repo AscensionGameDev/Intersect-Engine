@@ -19,7 +19,7 @@ using Intersect.Plugins.Interfaces;
 namespace Intersect.Editor.Networking
 {
 
-    internal static class Network
+    internal static partial class Network
     {
 
         public static bool Connecting;
@@ -139,7 +139,7 @@ namespace Intersect.Editor.Networking
 
     }
 
-    internal sealed class VirtualEditorContext : IApplicationContext
+    internal sealed partial class VirtualEditorContext : IApplicationContext
     {
         internal VirtualEditorContext(PacketHelper packetHelper, Logger logger)
         {

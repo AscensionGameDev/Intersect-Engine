@@ -13,7 +13,7 @@ using Intersect.Utilities;
 namespace Intersect.Client.Interface.Game
 {
 
-    class FriendsWindow
+    partial class FriendsWindow
     {
         private Base mParent;
 

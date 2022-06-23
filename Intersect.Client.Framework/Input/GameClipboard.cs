@@ -1,7 +1,7 @@
 ﻿
 namespace Intersect.Client.Framework.Input
 {
-    public abstract class GameClipboard
+    public abstract partial class GameClipboard
     {
         /// <summary>
         /// The current working instance of our clipboard.

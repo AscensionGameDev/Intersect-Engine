@@ -1,7 +1,7 @@
 ﻿namespace Intersect.Client.Framework.Graphics
 {
 
-    public abstract class GameTileBuffer
+    public abstract partial class GameTileBuffer
     {
 
         public static int TileBufferCount { get; set; } = 0;

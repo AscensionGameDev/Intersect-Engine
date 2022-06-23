@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace Intersect
 {
 
-    public class AlphanumComparatorFast : IComparer, IComparer<string>
+    public partial class AlphanumComparatorFast : IComparer, IComparer<string>
     {
 
         public int Compare(object x, object y)

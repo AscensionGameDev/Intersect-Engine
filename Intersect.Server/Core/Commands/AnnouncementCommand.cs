@@ -6,7 +6,7 @@ using Intersect.Server.Networking;
 namespace Intersect.Server.Core.Commands
 {
 
-    internal sealed class AnnouncementCommand : ServerCommand
+    internal sealed partial class AnnouncementCommand : ServerCommand
     {
 
         public AnnouncementCommand() : base(

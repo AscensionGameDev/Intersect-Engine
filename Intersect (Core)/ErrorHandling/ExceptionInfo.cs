@@ -7,7 +7,7 @@ namespace Intersect.ErrorHandling
 {
 
     [Serializable]
-    public struct ExceptionInfo
+    public partial struct ExceptionInfo
     {
 
         public int DataKeys { get; }

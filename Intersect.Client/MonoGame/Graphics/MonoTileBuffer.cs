@@ -10,7 +10,7 @@ using Microsoft.Xna.Framework.Graphics;
 namespace Intersect.Client.Classes.MonoGame.Graphics
 {
 
-    public class MonoTileBuffer : GameTileBuffer
+    public partial class MonoTileBuffer : GameTileBuffer
     {
 
         private bool disposed;

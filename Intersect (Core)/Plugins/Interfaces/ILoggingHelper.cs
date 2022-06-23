@@ -31,7 +31,7 @@ namespace Intersect.Plugins.Interfaces
     /// <summary>
     /// Configuration options for creating <see cref="Logger"/>s.
     /// </summary>
-    public struct CreateLoggerOptions
+    public partial struct CreateLoggerOptions
     {
         /// <summary>
         /// The minimum <see cref="LogLevel"/> for console output, set to <see cref="LogLevel.None"/> to disable.

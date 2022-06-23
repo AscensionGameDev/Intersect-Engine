@@ -10,7 +10,7 @@ namespace Intersect.Config
     /// <summary>
     /// Contains configurable options pertaining quests and the layout of the quest log
     /// </summary>
-    public class QuestOptions
+    public partial class QuestOptions
     {
         /// <summary>
         /// Quest categories in which to separate quests into on the quest log

@@ -9,7 +9,7 @@ using Intersect.Server.Web.RestApi.Configuration;
 namespace Intersect.Server.Web.RestApi.Services
 {
 
-    internal sealed class AuthorizedRoutesService : IAuthorizedRoutesService
+    internal sealed partial class AuthorizedRoutesService : IAuthorizedRoutesService
     {
 
         public AuthorizedRoutesService(

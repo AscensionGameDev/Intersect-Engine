@@ -6,7 +6,7 @@ namespace Intersect.Extensions
     /// <summary>
     /// Extensions for <see cref="string"/>.
     /// </summary>
-    public static class StringExtensions
+    public static partial class StringExtensions
     {
         /// <summary>
         /// Formats the string in the current culture with the provided arguments.

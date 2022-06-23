@@ -9,7 +9,7 @@ using Intersect.Server.Networking;
 namespace Intersect.Server.Core.Commands
 {
 
-    internal sealed class PowerCommand : TargetClientCommand
+    internal sealed partial class PowerCommand : TargetClientCommand
     {
 
         public PowerCommand() : base(

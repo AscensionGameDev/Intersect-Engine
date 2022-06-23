@@ -9,7 +9,7 @@ namespace Intersect.Client.Framework.Gwen.Control
     /// <summary>
     ///     Menu item.
     /// </summary>
-    public class MenuItem : Button
+    public partial class MenuItem : Button
     {
 
         private Label mAccelerator;

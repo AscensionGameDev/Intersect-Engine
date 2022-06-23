@@ -9,7 +9,7 @@ using Intersect.Logging;
 namespace Intersect.Client.Framework.Gwen.Renderer
 {
 
-    public class IntersectRenderer : Base, ICacheToTexture
+    public partial class IntersectRenderer : Base, ICacheToTexture
     {
 
         private bool mClipping = false;

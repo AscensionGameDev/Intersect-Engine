@@ -5,7 +5,7 @@ using Intersect.Collections;
 namespace Intersect.GameObjects.Maps.MapList
 {
 
-    public class MapListFolder : MapListItem
+    public partial class MapListFolder : MapListItem
     {
 
         public MapList Children = new MapList();

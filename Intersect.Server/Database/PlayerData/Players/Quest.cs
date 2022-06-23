@@ -11,7 +11,7 @@ using Newtonsoft.Json;
 namespace Intersect.Server.Database.PlayerData.Players
 {
 
-    public class Quest : IPlayerOwned
+    public partial class Quest : IPlayerOwned
     {
 
         public Quest()

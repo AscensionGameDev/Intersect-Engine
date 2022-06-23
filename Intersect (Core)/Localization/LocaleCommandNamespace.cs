@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 namespace Intersect.Localization
 {
 
-    public abstract class LocaleCommandNamespace : LocaleNamespace
+    public abstract partial class LocaleCommandNamespace : LocaleNamespace
     {
 
         protected LocaleCommandNamespace()

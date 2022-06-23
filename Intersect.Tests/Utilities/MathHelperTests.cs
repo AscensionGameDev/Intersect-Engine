@@ -10,7 +10,7 @@ namespace Intersect.Utilities
 {
 
     [TestFixture]
-    public class MathHelperTests
+    public partial class MathHelperTests
     {
 
         [Test]

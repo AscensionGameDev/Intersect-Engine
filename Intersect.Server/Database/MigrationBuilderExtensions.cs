@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Migrations.Operations.Builders;
 namespace Intersect.Server.Database
 {
 
-    public static class MigrationBuilderExtensions
+    public static partial class MigrationBuilderExtensions
     {
 
         public static DatabaseOptions.DatabaseType GetDatabaseType(this MigrationBuilder migrationBuilder)

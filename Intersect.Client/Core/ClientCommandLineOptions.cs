@@ -9,7 +9,7 @@ using Intersect.Core;
 
 namespace Intersect.Client.Core
 {
-    internal struct ClientCommandLineOptions : ICommandLineOptions
+    internal partial struct ClientCommandLineOptions : ICommandLineOptions
     {
         public ClientCommandLineOptions(
             bool borderlessWindow,

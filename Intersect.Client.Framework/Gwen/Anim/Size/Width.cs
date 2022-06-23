@@ -3,7 +3,7 @@
 namespace Intersect.Client.Framework.Gwen.Anim.Size
 {
 
-    class Width : TimedAnimation
+    partial class Width : TimedAnimation
     {
 
         private int mDelta;

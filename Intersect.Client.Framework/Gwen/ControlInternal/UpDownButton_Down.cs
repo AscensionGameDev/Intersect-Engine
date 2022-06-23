@@ -6,7 +6,7 @@ namespace Intersect.Client.Framework.Gwen.ControlInternal
     /// <summary>
     ///     Numeric down arrow.
     /// </summary>
-    internal class UpDownButtonDown : Button
+    internal partial class UpDownButtonDown : Button
     {
 
         /// <summary>

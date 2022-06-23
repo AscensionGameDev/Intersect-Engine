@@ -7,7 +7,7 @@ using Intersect.Logging;
 namespace Intersect.Threading
 {
 
-    public class ConcurrentInstance<TInstance> where TInstance : class
+    public partial class ConcurrentInstance<TInstance> where TInstance : class
     {
 
         private readonly object mLock;

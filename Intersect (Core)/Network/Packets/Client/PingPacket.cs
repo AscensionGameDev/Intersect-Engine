@@ -3,7 +3,7 @@
 namespace Intersect.Network.Packets.Client
 {
     [MessagePackObject]
-    public class PingPacket : AbstractTimedPacket
+    public partial class PingPacket : AbstractTimedPacket
     {
         [Key(3)]
         public bool Responding { get; set; }

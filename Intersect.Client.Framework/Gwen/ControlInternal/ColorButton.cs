@@ -8,7 +8,7 @@ namespace Intersect.Client.Framework.Gwen.ControlInternal
     /// <summary>
     ///     Property button.
     /// </summary>
-    public class ColorButton : Button
+    public partial class ColorButton : Button
     {
 
         private Color mColor;

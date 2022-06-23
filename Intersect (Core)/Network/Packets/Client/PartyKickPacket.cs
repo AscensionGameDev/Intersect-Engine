@@ -4,7 +4,7 @@ using System;
 namespace Intersect.Network.Packets.Client
 {
     [MessagePackObject]
-    public class PartyKickPacket : IntersectPacket
+    public partial class PartyKickPacket : IntersectPacket
     {
         //Parameterless Constructor for MessagePack
         public PartyKickPacket()

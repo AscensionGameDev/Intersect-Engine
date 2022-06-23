@@ -19,7 +19,7 @@ using Microsoft.Xna.Framework.Graphics;
 namespace Intersect.Editor.Content
 {
 
-    public static class GameContentManager
+    public static partial class GameContentManager
     {
 
         public enum TextureType
@@ -605,7 +605,7 @@ namespace Intersect.Editor.Content
 
     }
 
-    internal class DummyGraphicsDeviceManager : IGraphicsDeviceService
+    internal partial class DummyGraphicsDeviceManager : IGraphicsDeviceService
     {
 
         public DummyGraphicsDeviceManager(GraphicsDevice graphicsDevice)
