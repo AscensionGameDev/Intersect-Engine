@@ -13,7 +13,7 @@ using Microsoft.Owin.Security.Infrastructure;
 namespace Intersect.Server.Web.RestApi.Authentication.OAuth.Providers
 {
 
-    internal class RefreshTokenProvider : AuthenticationTokenProvider
+    internal partial class RefreshTokenProvider : AuthenticationTokenProvider
     {
 
         public RefreshTokenProvider(ApiConfiguration configuration)

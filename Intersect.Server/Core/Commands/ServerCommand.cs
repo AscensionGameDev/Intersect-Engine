@@ -5,7 +5,7 @@ using Intersect.Server.Core.CommandParsing.Commands;
 namespace Intersect.Server.Core.Commands
 {
 
-    internal abstract class ServerCommand : HelpableCommand<ServerContext>
+    internal abstract partial class ServerCommand : HelpableCommand<ServerContext>
     {
 
         protected ServerCommand(

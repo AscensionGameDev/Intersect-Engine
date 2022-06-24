@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace Intersect.Server.Entities
 {
-    public class BankInterface
+    public partial class BankInterface
     {
         private Player mPlayer;
 

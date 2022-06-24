@@ -14,7 +14,7 @@ using Microsoft.Owin;
 namespace Intersect.Server.Web.RestApi.Middleware
 {
 
-    public class IntersectRequestLoggingMiddleware : OwinMiddleware
+    public partial class IntersectRequestLoggingMiddleware : OwinMiddleware
     {
 
         /// <inheritdoc />

@@ -6,7 +6,7 @@ namespace Intersect.Utilities
 {
 
     [TestFixture]
-    public class ValueUtilsTests
+    public partial class ValueUtilsTests
     {
 
         [Test]

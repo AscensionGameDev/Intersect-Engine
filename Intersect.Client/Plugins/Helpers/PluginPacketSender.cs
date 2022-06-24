@@ -7,7 +7,7 @@ using Intersect.Plugins.Interfaces;
 
 namespace Intersect.Client.Plugins.Helpers
 {
-    public sealed class PluginPacketSender : IPacketSender
+    public sealed partial class PluginPacketSender : IPacketSender
     {
         private static IPacketSender VirtualSender => Networking.Network.PacketHandler?.VirtualSender;
         

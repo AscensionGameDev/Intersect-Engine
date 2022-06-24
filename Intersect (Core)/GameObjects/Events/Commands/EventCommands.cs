@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 namespace Intersect.GameObjects.Events.Commands
 {
 
-    public abstract class EventCommand
+    public abstract partial class EventCommand
     {
 
         public abstract EventCommandType Type { get; }
@@ -35,7 +35,7 @@ namespace Intersect.GameObjects.Events.Commands
 
     }
 
-    public class ShowTextCommand : EventCommand
+    public partial class ShowTextCommand : EventCommand
     {
 
         public override EventCommandType Type { get; } = EventCommandType.ShowText;
@@ -46,7 +46,7 @@ namespace Intersect.GameObjects.Events.Commands
 
     }
 
-    public class ShowOptionsCommand : EventCommand
+    public partial class ShowOptionsCommand : EventCommand
     {
 
         //For Json Deserialization
@@ -107,7 +107,7 @@ namespace Intersect.GameObjects.Events.Commands
 
     }
 
-    public class InputVariableCommand : EventCommand
+    public partial class InputVariableCommand : EventCommand
     {
 
         //For Json Deserialization
@@ -174,7 +174,7 @@ namespace Intersect.GameObjects.Events.Commands
 
     }
 
-    public class AddChatboxTextCommand : EventCommand
+    public partial class AddChatboxTextCommand : EventCommand
     {
 
         public override EventCommandType Type { get; } = EventCommandType.AddChatboxText;
@@ -190,7 +190,7 @@ namespace Intersect.GameObjects.Events.Commands
 
     }
 
-    public class SetVariableCommand : EventCommand
+    public partial class SetVariableCommand : EventCommand
     {
 
         public override EventCommandType Type { get; } = EventCommandType.SetVariable;
@@ -205,7 +205,7 @@ namespace Intersect.GameObjects.Events.Commands
 
     }
 
-    public class SetSelfSwitchCommand : EventCommand
+    public partial class SetSelfSwitchCommand : EventCommand
     {
 
         public override EventCommandType Type { get; } = EventCommandType.SetSelfSwitch;
@@ -216,7 +216,7 @@ namespace Intersect.GameObjects.Events.Commands
 
     }
 
-    public class ConditionalBranchCommand : EventCommand
+    public partial class ConditionalBranchCommand : EventCommand
     {
 
         //For Json Deserialization
@@ -273,14 +273,14 @@ namespace Intersect.GameObjects.Events.Commands
 
     }
 
-    public class ExitEventProcessingCommand : EventCommand
+    public partial class ExitEventProcessingCommand : EventCommand
     {
 
         public override EventCommandType Type { get; } = EventCommandType.ExitEventProcess;
 
     }
 
-    public class LabelCommand : EventCommand
+    public partial class LabelCommand : EventCommand
     {
 
         public override EventCommandType Type { get; } = EventCommandType.Label;
@@ -289,7 +289,7 @@ namespace Intersect.GameObjects.Events.Commands
 
     }
 
-    public class GoToLabelCommand : EventCommand
+    public partial class GoToLabelCommand : EventCommand
     {
 
         public override EventCommandType Type { get; } = EventCommandType.GoToLabel;
@@ -298,7 +298,7 @@ namespace Intersect.GameObjects.Events.Commands
 
     }
 
-    public class StartCommmonEventCommand : EventCommand
+    public partial class StartCommmonEventCommand : EventCommand
     {
 
         public override EventCommandType Type { get; } = EventCommandType.StartCommonEvent;
@@ -307,7 +307,7 @@ namespace Intersect.GameObjects.Events.Commands
 
     }
 
-    public class RestoreHpCommand : EventCommand
+    public partial class RestoreHpCommand : EventCommand
     {
 
         public override EventCommandType Type { get; } = EventCommandType.RestoreHp;
@@ -316,7 +316,7 @@ namespace Intersect.GameObjects.Events.Commands
 
     }
 
-    public class RestoreMpCommand : EventCommand
+    public partial class RestoreMpCommand : EventCommand
     {
 
         public override EventCommandType Type { get; } = EventCommandType.RestoreMp;
@@ -325,14 +325,14 @@ namespace Intersect.GameObjects.Events.Commands
 
     }
 
-    public class LevelUpCommand : EventCommand
+    public partial class LevelUpCommand : EventCommand
     {
 
         public override EventCommandType Type { get; } = EventCommandType.LevelUp;
 
     }
 
-    public class GiveExperienceCommand : EventCommand
+    public partial class GiveExperienceCommand : EventCommand
     {
 
         public override EventCommandType Type { get; } = EventCommandType.GiveExperience;
@@ -356,7 +356,7 @@ namespace Intersect.GameObjects.Events.Commands
 
     }
 
-    public class ChangeLevelCommand : EventCommand
+    public partial class ChangeLevelCommand : EventCommand
     {
 
         public override EventCommandType Type { get; } = EventCommandType.ChangeLevel;
@@ -365,7 +365,7 @@ namespace Intersect.GameObjects.Events.Commands
 
     }
 
-    public class ChangeSpellsCommand : EventCommand
+    public partial class ChangeSpellsCommand : EventCommand
     {
 
         //For Json Deserialization
@@ -424,7 +424,7 @@ namespace Intersect.GameObjects.Events.Commands
 
     }
 
-    public class ChangeItemsCommand : EventCommand
+    public partial class ChangeItemsCommand : EventCommand
     {
 
         //For Json Deserialization
@@ -505,7 +505,7 @@ namespace Intersect.GameObjects.Events.Commands
 
     }
 
-    public class EquipItemCommand : EventCommand
+    public partial class EquipItemCommand : EventCommand
     {
 
         public override EventCommandType Type { get; } = EventCommandType.EquipItem;
@@ -516,7 +516,7 @@ namespace Intersect.GameObjects.Events.Commands
 
     }
 
-    public class ChangeSpriteCommand : EventCommand
+    public partial class ChangeSpriteCommand : EventCommand
     {
 
         public override EventCommandType Type { get; } = EventCommandType.ChangeSprite;
@@ -525,7 +525,7 @@ namespace Intersect.GameObjects.Events.Commands
 
     }
 
-    public class ChangeNameColorCommand : EventCommand
+    public partial class ChangeNameColorCommand : EventCommand
     {
 
         public override EventCommandType Type { get; } = EventCommandType.ChangeNameColor;
@@ -538,7 +538,7 @@ namespace Intersect.GameObjects.Events.Commands
 
     }
 
-    public class ChangePlayerLabelCommand : EventCommand
+    public partial class ChangePlayerLabelCommand : EventCommand
     {
 
         public override EventCommandType Type { get; } = EventCommandType.PlayerLabel;
@@ -553,7 +553,7 @@ namespace Intersect.GameObjects.Events.Commands
 
     }
 
-    public class ChangeFaceCommand : EventCommand
+    public partial class ChangeFaceCommand : EventCommand
     {
 
         public override EventCommandType Type { get; } = EventCommandType.ChangeFace;
@@ -562,7 +562,7 @@ namespace Intersect.GameObjects.Events.Commands
 
     }
 
-    public class ChangeGenderCommand : EventCommand
+    public partial class ChangeGenderCommand : EventCommand
     {
 
         public override EventCommandType Type { get; } = EventCommandType.ChangeGender;
@@ -571,7 +571,7 @@ namespace Intersect.GameObjects.Events.Commands
 
     }
 
-    public class SetAccessCommand : EventCommand
+    public partial class SetAccessCommand : EventCommand
     {
 
         public override EventCommandType Type { get; } = EventCommandType.SetAccess;
@@ -580,7 +580,7 @@ namespace Intersect.GameObjects.Events.Commands
 
     }
 
-    public class WarpCommand : EventCommand
+    public partial class WarpCommand : EventCommand
     {
 
         public override EventCommandType Type { get; } = EventCommandType.WarpPlayer;
@@ -605,7 +605,7 @@ namespace Intersect.GameObjects.Events.Commands
 
     }
 
-    public class SetMoveRouteCommand : EventCommand
+    public partial class SetMoveRouteCommand : EventCommand
     {
 
         public override EventCommandType Type { get; } = EventCommandType.SetMoveRoute;
@@ -614,7 +614,7 @@ namespace Intersect.GameObjects.Events.Commands
 
     }
 
-    public class WaitForRouteCommand : EventCommand
+    public partial class WaitForRouteCommand : EventCommand
     {
 
         public override EventCommandType Type { get; } = EventCommandType.WaitForRouteCompletion;
@@ -623,7 +623,7 @@ namespace Intersect.GameObjects.Events.Commands
 
     }
 
-    public class SpawnNpcCommand : EventCommand
+    public partial class SpawnNpcCommand : EventCommand
     {
 
         public override EventCommandType Type { get; } = EventCommandType.SpawnNpc;
@@ -645,7 +645,7 @@ namespace Intersect.GameObjects.Events.Commands
 
     }
 
-    public class DespawnNpcCommand : EventCommand
+    public partial class DespawnNpcCommand : EventCommand
     {
 
         public override EventCommandType Type { get; } = EventCommandType.DespawnNpc;
@@ -654,7 +654,7 @@ namespace Intersect.GameObjects.Events.Commands
 
     }
 
-    public class PlayAnimationCommand : EventCommand
+    public partial class PlayAnimationCommand : EventCommand
     {
 
         public override EventCommandType Type { get; } = EventCommandType.PlayAnimation;
@@ -676,35 +676,35 @@ namespace Intersect.GameObjects.Events.Commands
 
     }
 
-    public class HoldPlayerCommand : EventCommand
+    public partial class HoldPlayerCommand : EventCommand
     {
 
         public override EventCommandType Type { get; } = EventCommandType.HoldPlayer;
 
     }
 
-    public class ReleasePlayerCommand : EventCommand
+    public partial class ReleasePlayerCommand : EventCommand
     {
 
         public override EventCommandType Type { get; } = EventCommandType.ReleasePlayer;
 
     }
 
-    public class HidePlayerCommand : EventCommand
+    public partial class HidePlayerCommand : EventCommand
     {
 
         public override EventCommandType Type { get; } = EventCommandType.HidePlayer;
 
     }
 
-    public class ShowPlayerCommand : EventCommand
+    public partial class ShowPlayerCommand : EventCommand
     {
 
         public override EventCommandType Type { get; } = EventCommandType.ShowPlayer;
 
     }
 
-    public class PlayBgmCommand : EventCommand
+    public partial class PlayBgmCommand : EventCommand
     {
 
         public override EventCommandType Type { get; } = EventCommandType.PlayBgm;
@@ -713,14 +713,14 @@ namespace Intersect.GameObjects.Events.Commands
 
     }
 
-    public class FadeoutBgmCommand : EventCommand
+    public partial class FadeoutBgmCommand : EventCommand
     {
 
         public override EventCommandType Type { get; } = EventCommandType.FadeoutBgm;
 
     }
 
-    public class PlaySoundCommand : EventCommand
+    public partial class PlaySoundCommand : EventCommand
     {
 
         public override EventCommandType Type { get; } = EventCommandType.PlaySound;
@@ -729,14 +729,14 @@ namespace Intersect.GameObjects.Events.Commands
 
     }
 
-    public class StopSoundsCommand : EventCommand
+    public partial class StopSoundsCommand : EventCommand
     {
 
         public override EventCommandType Type { get; } = EventCommandType.StopSounds;
 
     }
 
-    public class ShowPictureCommand : EventCommand
+    public partial class ShowPictureCommand : EventCommand
     {
 
         public override EventCommandType Type { get; } = EventCommandType.ShowPicture;
@@ -768,14 +768,14 @@ namespace Intersect.GameObjects.Events.Commands
 
     }
 
-    public class HidePictureCommmand : EventCommand
+    public partial class HidePictureCommmand : EventCommand
     {
 
         public override EventCommandType Type { get; } = EventCommandType.HidePicture;
 
     }
 
-    public class WaitCommand : EventCommand
+    public partial class WaitCommand : EventCommand
     {
 
         public override EventCommandType Type { get; } = EventCommandType.Wait;
@@ -784,14 +784,14 @@ namespace Intersect.GameObjects.Events.Commands
 
     }
 
-    public class OpenBankCommand : EventCommand
+    public partial class OpenBankCommand : EventCommand
     {
 
         public override EventCommandType Type { get; } = EventCommandType.OpenBank;
 
     }
 
-    public class OpenShopCommand : EventCommand
+    public partial class OpenShopCommand : EventCommand
     {
 
         public override EventCommandType Type { get; } = EventCommandType.OpenShop;
@@ -800,7 +800,7 @@ namespace Intersect.GameObjects.Events.Commands
 
     }
 
-    public class OpenCraftingTableCommand : EventCommand
+    public partial class OpenCraftingTableCommand : EventCommand
     {
 
         public override EventCommandType Type { get; } = EventCommandType.OpenCraftingTable;
@@ -809,7 +809,7 @@ namespace Intersect.GameObjects.Events.Commands
 
     }
 
-    public class SetClassCommand : EventCommand
+    public partial class SetClassCommand : EventCommand
     {
 
         public override EventCommandType Type { get; } = EventCommandType.SetClass;
@@ -818,7 +818,7 @@ namespace Intersect.GameObjects.Events.Commands
 
     }
 
-    public class StartQuestCommand : EventCommand
+    public partial class StartQuestCommand : EventCommand
     {
 
         //For Json Deserialization
@@ -877,7 +877,7 @@ namespace Intersect.GameObjects.Events.Commands
 
     }
 
-    public class CompleteQuestTaskCommand : EventCommand
+    public partial class CompleteQuestTaskCommand : EventCommand
     {
 
         public override EventCommandType Type { get; } = EventCommandType.CompleteQuestTask;
@@ -888,7 +888,7 @@ namespace Intersect.GameObjects.Events.Commands
 
     }
 
-    public class EndQuestCommand : EventCommand
+    public partial class EndQuestCommand : EventCommand
     {
 
         public override EventCommandType Type { get; } = EventCommandType.EndQuest;
@@ -900,9 +900,9 @@ namespace Intersect.GameObjects.Events.Commands
     }
 
     /// <summary>
-    /// Defines the Event command class for the Change Player Color command.
+    /// Defines the Event command partial class for the Change Player Color command.
     /// </summary>
-    public class ChangePlayerColorCommand : EventCommand
+    public partial class ChangePlayerColorCommand : EventCommand
     {
 
         /// <summary>
@@ -917,7 +917,7 @@ namespace Intersect.GameObjects.Events.Commands
 
     }
 
-    public class ChangeNameCommand : EventCommand
+    public partial class ChangeNameCommand : EventCommand
     {
         //For Json Deserialization
         public ChangeNameCommand()
@@ -973,7 +973,7 @@ namespace Intersect.GameObjects.Events.Commands
         }
     }
 
-    public class CreateGuildCommand : EventCommand
+    public partial class CreateGuildCommand : EventCommand
     {
 
         //For Json Deserialization
@@ -1018,7 +1018,7 @@ namespace Intersect.GameObjects.Events.Commands
         }
     }
 
-    public class DisbandGuildCommand : EventCommand
+    public partial class DisbandGuildCommand : EventCommand
     {
 
         //For Json Deserialization
@@ -1073,14 +1073,14 @@ namespace Intersect.GameObjects.Events.Commands
 
     }
 
-    public class OpenGuildBankCommand : EventCommand
+    public partial class OpenGuildBankCommand : EventCommand
     {
 
         public override EventCommandType Type { get; } = EventCommandType.OpenGuildBank;
 
     }
 
-    public class SetGuildBankSlotsCommand : EventCommand
+    public partial class SetGuildBankSlotsCommand : EventCommand
     {
 
         public override EventCommandType Type { get; } = EventCommandType.SetGuildBankSlots;
@@ -1091,7 +1091,7 @@ namespace Intersect.GameObjects.Events.Commands
 
     }
 
-    public class ResetStatPointAllocationsCommand : EventCommand
+    public partial class ResetStatPointAllocationsCommand : EventCommand
     {
 
         public override EventCommandType Type { get; } = EventCommandType.ResetStatPointAllocations;

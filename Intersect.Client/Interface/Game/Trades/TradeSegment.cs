@@ -9,7 +9,7 @@ using Intersect.Client.Localization;
 namespace Intersect.Client.Interface.Game.Trades
 {
 
-    public class TradeSegment
+    public partial class TradeSegment
     {
 
         private static int sItemXPadding = 4;

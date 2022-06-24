@@ -13,7 +13,7 @@ using Intersect.GameObjects;
 namespace Intersect.Editor.General
 {
 
-    public static class Globals
+    public static partial class Globals
     {
 
         public static int AutotileFrame = 0;

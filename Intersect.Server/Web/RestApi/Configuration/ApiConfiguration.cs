@@ -22,7 +22,7 @@ namespace Intersect.Server.Web.RestApi.Configuration
     /// <summary>
     /// Configuration options for <see cref="T:Intersect.Server.Web.RestApi.RestApi" />.
     /// </summary>
-    public sealed class ApiConfiguration : IConfiguration<ApiConfiguration>
+    public sealed partial class ApiConfiguration : IConfiguration<ApiConfiguration>
     {
 
         #region Constants

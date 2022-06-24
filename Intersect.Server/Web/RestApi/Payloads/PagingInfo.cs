@@ -1,7 +1,7 @@
 ﻿namespace Intersect.Server.Web.RestApi.Payloads
 {
 
-    public struct PagingInfo
+    public partial struct PagingInfo
     {
 
         public int Page { get; set; }

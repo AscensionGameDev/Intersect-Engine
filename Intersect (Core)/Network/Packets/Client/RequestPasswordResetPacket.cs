@@ -3,7 +3,7 @@
 namespace Intersect.Network.Packets.Client
 {
     [MessagePackObject]
-    public class RequestPasswordResetPacket : IntersectPacket
+    public partial class RequestPasswordResetPacket : IntersectPacket
     {
         //Parameterless Constructor for MessagePack
         public RequestPasswordResetPacket()

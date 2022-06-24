@@ -6,7 +6,7 @@ using System.Threading;
 namespace Intersect.Extensions
 {
 
-    public static class EnumerableExtensions
+    public static partial class EnumerableExtensions
     {
 
         public static Dictionary<TKey, TValue> ToDictionary<TKey, TValue>(

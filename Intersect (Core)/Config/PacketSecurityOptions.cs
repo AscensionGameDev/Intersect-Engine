@@ -3,7 +3,7 @@
 namespace Intersect.Config
 {
 
-    public class PacketSecurityOptions
+    public partial class PacketSecurityOptions
     {
 
         #region "Packet Sanitization and Hacking Detection Options"
@@ -80,7 +80,7 @@ namespace Intersect.Config
         #endregion
     }
 
-    public class FloodThreshholds
+    public partial class FloodThreshholds
     {
         /// <summary>
         /// The largest a single packet should be before it's considered flooding.

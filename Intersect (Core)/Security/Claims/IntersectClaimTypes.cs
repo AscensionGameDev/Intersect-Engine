@@ -1,7 +1,7 @@
 ﻿namespace Intersect.Security.Claims
 {
 
-    public static class IntersectClaimTypes
+    public static partial class IntersectClaimTypes
     {
 
         public const string AccessRead = "intersect:security:claims:access:read";

@@ -9,7 +9,7 @@ namespace Intersect.Client.Framework.Gwen.Control
     /// <summary>
     ///     Linear-interpolated HSV color box.
     /// </summary>
-    public class ColorLerpBox : Base
+    public partial class ColorLerpBox : Base
     {
 
         private Point mCursorPos;

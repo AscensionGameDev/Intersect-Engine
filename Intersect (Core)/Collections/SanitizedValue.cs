@@ -1,7 +1,7 @@
 ﻿namespace Intersect.Collections
 {
 
-    public struct SanitizedValue<T>
+    public partial struct SanitizedValue<T>
     {
 
         public T Before { get; }

@@ -11,7 +11,7 @@ using System.IO;
 namespace Intersect.Client.MonoGame.Graphics
 {
 
-    public class MonoShader : GameShader
+    public partial class MonoShader : GameShader
     {
 
         private Effect mShader;

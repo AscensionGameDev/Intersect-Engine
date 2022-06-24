@@ -11,7 +11,7 @@ namespace Intersect.Server.Web.RestApi.Payloads
 {
 
     //[TypeConverter(typeof(Converter))]
-    public struct ChatMessage
+    public partial struct ChatMessage
     {
 
         public string Message { get; set; }
@@ -20,7 +20,7 @@ namespace Intersect.Server.Web.RestApi.Payloads
 
         public string Target { get; set; }
 
-        public class Converter : TypeConverter
+        public partial class Converter : TypeConverter
         {
 
             public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
@@ -45,7 +45,7 @@ namespace Intersect.Server.Web.RestApi.Payloads
 
         }
 
-        internal sealed class Constraint : IHttpRouteConstraint
+        internal sealed partial class Constraint : IHttpRouteConstraint
         {
 
             /// <inheritdoc />

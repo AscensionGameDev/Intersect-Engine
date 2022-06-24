@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 namespace Intersect.Server.Database.PlayerData.Players
 {
 
-    public class PlayerVariable : Variable, IPlayerOwned
+    public partial class PlayerVariable : Variable, IPlayerOwned
     {
 
         public PlayerVariable() : this(Guid.Empty) { }

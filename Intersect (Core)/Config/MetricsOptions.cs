@@ -3,7 +3,7 @@
     /// <summary>
     /// Contains configurable options pertaining to stat/metrics collecting
     /// </summary>
-    public class MetricsOptions
+    public partial class MetricsOptions
     {
         /// <summary>
         /// Track game performance metrics

@@ -4,7 +4,7 @@ using System;
 namespace Intersect.Network.Packets.Editor
 {
     [MessagePackObject]
-    public class UnlinkMapPacket : EditorPacket
+    public partial class UnlinkMapPacket : EditorPacket
     {
         //Parameterless Constructor for MessagePack
         public UnlinkMapPacket()

@@ -4,7 +4,7 @@
     /// <summary>
     ///     Checkable property.
     /// </summary>
-    public class Check : Base
+    public partial class Check : Base
     {
 
         protected readonly Control.CheckBox mCheckBox;

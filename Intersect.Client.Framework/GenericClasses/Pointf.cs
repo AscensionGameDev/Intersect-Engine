@@ -3,7 +3,7 @@
 namespace Intersect.Client.Framework.GenericClasses
 {
 
-    public struct Pointf
+    public partial struct Pointf
     {
         public static Pointf Empty => new Pointf();
 

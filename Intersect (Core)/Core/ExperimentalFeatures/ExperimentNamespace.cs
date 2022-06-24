@@ -4,7 +4,7 @@ namespace Intersect.Core.ExperimentalFeatures
 {
 
     [Serializable]
-    public abstract class ExperimentNamespace
+    public abstract partial class ExperimentNamespace
     {
 
     }

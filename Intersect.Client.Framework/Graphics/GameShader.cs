@@ -3,7 +3,7 @@
 namespace Intersect.Client.Framework.Graphics
 {
 
-    public abstract class GameShader
+    public abstract partial class GameShader
     {
 
         public GameShader(string shaderName)

@@ -15,7 +15,7 @@ using static Intersect.Client.Entities.Player;
 namespace Intersect.Client.Interface.Game
 {
 
-    class GuildWindow
+    partial class GuildWindow
     {
 
         private Button mAddButton;

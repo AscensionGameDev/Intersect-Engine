@@ -3,7 +3,7 @@
 namespace Intersect.Client.Core
 {
 
-    public static class Fade
+    public static partial class Fade
     {
 
         public enum FadeType

@@ -10,7 +10,7 @@ using Intersect.Client.Localization;
 namespace Intersect.Client.Interface.Game
 {
 
-    public class BanMuteBox
+    public partial class BanMuteBox
     {
 
         private ComboBox mDurationBox;

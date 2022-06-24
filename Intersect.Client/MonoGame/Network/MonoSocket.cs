@@ -17,7 +17,7 @@ using Intersect.Client.Core;
 namespace Intersect.Client.MonoGame.Network
 {
 
-    internal class MonoSocket : GameSocket
+    internal partial class MonoSocket : GameSocket
     {
 
         public static ClientNetwork ClientLidgrenNetwork;

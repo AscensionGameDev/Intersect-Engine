@@ -3,7 +3,7 @@
 namespace Intersect.Network.Packets.Client
 {
     [MessagePackObject]
-    public class RequestGuildPacket : IntersectPacket
+    public partial class RequestGuildPacket : IntersectPacket
     {
         /// <summary>
         /// Parameterless Constructor for MessagePack

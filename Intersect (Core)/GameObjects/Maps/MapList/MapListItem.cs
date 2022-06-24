@@ -1,7 +1,7 @@
 ﻿namespace Intersect.GameObjects.Maps.MapList
 {
 
-    public class MapListItem
+    public partial class MapListItem
     {
 
         public string Name = "";

@@ -22,7 +22,7 @@ using Newtonsoft.Json.Linq;
 namespace Intersect.Editor.Maps
 {
 
-    public class MapGrid
+    public partial class MapGrid
     {
 
         public Rectangle ContentRect;

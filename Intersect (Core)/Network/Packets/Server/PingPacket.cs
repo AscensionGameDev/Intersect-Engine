@@ -3,7 +3,7 @@
 namespace Intersect.Network.Packets.Server
 {
     [MessagePackObject]
-    public class PingPacket : AbstractTimedPacket
+    public partial class PingPacket : AbstractTimedPacket
     {
         //Parameterless Constructor for MessagePack
         public PingPacket()

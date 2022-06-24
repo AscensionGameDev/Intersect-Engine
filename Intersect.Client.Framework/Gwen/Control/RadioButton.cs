@@ -4,7 +4,7 @@ namespace Intersect.Client.Framework.Gwen.Control
     /// <summary>
     ///     Radio button.
     /// </summary>
-    public class RadioButton : CheckBox
+    public partial class RadioButton : CheckBox
     {
 
         /// <summary>

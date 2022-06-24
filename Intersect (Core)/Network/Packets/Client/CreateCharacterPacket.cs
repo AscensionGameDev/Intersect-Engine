@@ -8,7 +8,7 @@ using MessagePack;
 namespace Intersect.Network.Packets.Client
 {
     [MessagePackObject]
-    public class CreateCharacterPacket : IntersectPacket
+    public partial class CreateCharacterPacket : IntersectPacket
     {
         //Parameterless Constructor for MessagePack
         public CreateCharacterPacket()

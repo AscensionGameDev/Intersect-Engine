@@ -3,7 +3,7 @@
 namespace Intersect.Client.Framework.Gwen.DragDrop
 {
 
-    public class Package
+    public partial class Package
     {
 
         public Base DrawControl;

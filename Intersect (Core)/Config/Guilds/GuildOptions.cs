@@ -7,7 +7,7 @@ namespace Intersect.Config.Guilds
     /// <summary>
     /// Contains all options pertaining to guilds
     /// </summary>
-    public class GuildOptions
+    public partial class GuildOptions
     {
         /// <summary>
         /// The intersect default value for guild bank slots

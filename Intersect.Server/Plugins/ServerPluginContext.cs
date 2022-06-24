@@ -11,13 +11,13 @@ namespace Intersect.Server.Plugins
     /// <summary>
     /// Implementation of <see cref="IServerPluginContext"/>.
     /// </summary>
-    internal sealed class ServerPluginContext : PluginContext<ServerPluginContext, IServerLifecycleHelper>,
+    internal sealed partial class ServerPluginContext : PluginContext<ServerPluginContext, IServerLifecycleHelper>,
         IServerPluginContext
     {
         /// <summary>
         /// <see cref="IPluginContext"/> factory that creates instances of <see cref="IServerPluginContext"/>.
         /// </summary>
-        internal sealed class Factory : IFactory<IPluginContext>
+        internal sealed partial class Factory : IFactory<IPluginContext>
         {
             /// <inheritdoc />
             public IPluginContext Create(params object[] args)

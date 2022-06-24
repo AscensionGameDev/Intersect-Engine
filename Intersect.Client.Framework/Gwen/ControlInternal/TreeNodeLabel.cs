@@ -6,7 +6,7 @@ namespace Intersect.Client.Framework.Gwen.ControlInternal
     /// <summary>
     ///     Tree node label.
     /// </summary>
-    public class TreeNodeLabel : Button
+    public partial class TreeNodeLabel : Button
     {
 
         /// <summary>

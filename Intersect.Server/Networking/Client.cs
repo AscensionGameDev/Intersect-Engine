@@ -20,7 +20,7 @@ using Intersect.Utilities;
 namespace Intersect.Server.Networking
 {
 
-    public class Client : IPacketSender
+    public partial class Client : IPacketSender
     {
 
         public Guid EditorMap = Guid.Empty;

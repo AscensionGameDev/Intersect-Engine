@@ -10,7 +10,7 @@ using WebApiThrottle;
 namespace Intersect.Server.Web.RestApi.Middleware
 {
 
-    public class IntersectThrottlingMiddleware : ThrottlingMiddleware
+    public partial class IntersectThrottlingMiddleware : ThrottlingMiddleware
     {
 
         private const string DefaultAuthorizedFallbackClientKey = "authorized";

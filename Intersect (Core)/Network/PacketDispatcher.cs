@@ -5,7 +5,7 @@ using System.Linq;
 namespace Intersect.Network
 {
 
-    public sealed class PacketDispatcher
+    public sealed partial class PacketDispatcher
     {
 
         private readonly IDictionary<Type, IList<HandlePacket>> mHandlers;

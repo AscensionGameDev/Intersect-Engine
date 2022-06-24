@@ -13,7 +13,7 @@ using Newtonsoft.Json;
 namespace Intersect.Server.General
 {
 
-    public class Formulas
+    public partial class Formulas
     {
 
         private const string FORMULAS_FILE = "resources/formulas.json";

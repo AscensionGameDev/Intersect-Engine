@@ -4,7 +4,7 @@ namespace Intersect.Core.ExperimentalFeatures
 {
 
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
-    public class ExperimentalFlagAliasAttribute : Attribute
+    public partial class ExperimentalFlagAliasAttribute : Attribute
     {
 
         public ExperimentalFlagAliasAttribute(string of)

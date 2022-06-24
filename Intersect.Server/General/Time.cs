@@ -7,7 +7,7 @@ using Intersect.Utilities;
 namespace Intersect.Server.General
 {
 
-    public static class Time
+    public static partial class Time
     {
 
         private static DateTime sGameTime;

@@ -10,7 +10,7 @@ using Intersect.Client.Networking;
 namespace Intersect.Client.Interface.Menu
 {
 
-    public class MenuGuiBase : IMutableInterface
+    public partial class MenuGuiBase : IMutableInterface
     {
 
         private static MainMenu.NetworkStatusHandler sNetworkStatusChanged;

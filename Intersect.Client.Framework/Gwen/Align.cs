@@ -25,7 +25,7 @@ namespace Intersect.Client.Framework.Gwen
     /// <summary>
     ///     Utility class for manipulating control's position according to its parent. Rarely needed, use control.Dock.
     /// </summary>
-    public static class Align
+    public static partial class Align
     {
 
         /// <summary>

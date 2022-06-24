@@ -6,7 +6,7 @@ using Intersect.Network;
 namespace Intersect.Client.Networking
 {
 
-    public static class NetworkStatusExtensions
+    public static partial class NetworkStatusExtensions
     {
 
         public static string ToLocalizedString(this NetworkStatus networkStatus)

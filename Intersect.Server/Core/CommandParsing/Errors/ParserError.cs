@@ -6,7 +6,7 @@ using Intersect.Server.Core.CommandParsing.Commands;
 namespace Intersect.Server.Core.CommandParsing.Errors
 {
 
-    public class ParserError
+    public partial class ParserError
     {
 
         public ParserError(string message = null, bool fatal = true)

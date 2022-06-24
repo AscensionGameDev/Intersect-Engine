@@ -9,7 +9,7 @@ using Intersect.Client.General;
 namespace Intersect.Client.Interface.Game
 {
 
-    class Draggable
+    partial class Draggable
     {
 
         public static Draggable Active = null;

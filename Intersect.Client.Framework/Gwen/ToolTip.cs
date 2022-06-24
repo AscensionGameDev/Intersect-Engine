@@ -6,7 +6,7 @@ namespace Intersect.Client.Framework.Gwen
     /// <summary>
     ///     Tooltip handling.
     /// </summary>
-    public static class ToolTip
+    public static partial class ToolTip
     {
 
         private static Base sG_toolTip;

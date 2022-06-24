@@ -14,7 +14,7 @@ namespace Intersect.GameObjects
 {
 
     [Owned]
-    public class ResourceState
+    public partial class ResourceState
     {
 
         public string Graphic { get; set; } = null;
@@ -33,7 +33,7 @@ namespace Intersect.GameObjects
 
     }
 
-    public class ResourceBase : DatabaseObject<ResourceBase>, IFolderable
+    public partial class ResourceBase : DatabaseObject<ResourceBase>, IFolderable
     {
 
         [NotMapped] public List<ResourceDrop> Drops = new List<ResourceDrop>();
@@ -122,7 +122,7 @@ namespace Intersect.GameObjects
         /// <inheritdoc />
         public string Folder { get; set; } = "";
 
-        public class ResourceDrop
+        public partial class ResourceDrop
         {
 
             public double Chance;

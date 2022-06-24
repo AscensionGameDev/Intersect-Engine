@@ -10,7 +10,7 @@ using Newtonsoft.Json;
 
 namespace Intersect.Server.Database.PlayerData.Security
 {
-    public sealed class UserRights : IComparable<UserRights>, IEquatable<UserRights>
+    public sealed partial class UserRights : IComparable<UserRights>, IEquatable<UserRights>
     {
         private static readonly Type ApiRolesType = typeof(ApiRoles);
 
@@ -149,7 +149,7 @@ namespace Intersect.Server.Database.PlayerData.Security
         }
     }
 
-    public static class AccessExtensions
+    public static partial class AccessExtensions
     {
         public static UserRights AsUserRights(this Access access)
         {
@@ -170,7 +170,7 @@ namespace Intersect.Server.Database.PlayerData.Security
         }
     }
 
-    public class ApiRoles
+    public partial class ApiRoles
     {
         public bool UserQuery { get; set; }
 

@@ -6,7 +6,7 @@ using Intersect.Server.Database;
 namespace Intersect.Server.Maps
 {
 
-    public class TileHelper
+    public partial class TileHelper
     {
 
         private Guid mMapId;

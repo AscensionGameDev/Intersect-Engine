@@ -9,7 +9,7 @@ using Intersect.Models;
 namespace Intersect.Enums
 {
 
-    public static class GameObjectTypeExtensions
+    public static partial class GameObjectTypeExtensions
     {
 
         static GameObjectTypeExtensions()

@@ -3,7 +3,7 @@
 namespace Intersect.Network.Packets.Server
 {
     [MessagePackObject]
-    public class HidePicturePacket : IntersectPacket
+    public partial class HidePicturePacket : IntersectPacket
     {
 
     }

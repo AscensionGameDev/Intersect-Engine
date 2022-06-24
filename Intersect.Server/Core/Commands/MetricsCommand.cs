@@ -5,7 +5,7 @@ using Intersect.Server.Localization;
 using JetBrains.Annotations;
 namespace Intersect.Server.Core.Commands
 {
-    internal sealed class MetricsCommand : ServerCommand
+    internal sealed partial class MetricsCommand : ServerCommand
     {
         public MetricsCommand() : base(
             Strings.Commands.Metrics,

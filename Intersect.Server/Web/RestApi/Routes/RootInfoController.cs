@@ -7,7 +7,7 @@ namespace Intersect.Server.Web.RestApi.Routes
 {
 
     [RoutePrefix("info")]
-    public class RootInfoController : ApiController
+    public partial class RootInfoController : ApiController
     {
 
         static RootInfoController()

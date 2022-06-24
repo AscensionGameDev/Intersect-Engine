@@ -7,7 +7,7 @@ using Intersect.Enums;
 namespace Intersect.Utilities
 {
 
-    public class GameObjectTypeException : Exception
+    public partial class GameObjectTypeException : Exception
     {
 
         public GameObjectTypeException() : base()
@@ -20,7 +20,7 @@ namespace Intersect.Utilities
 
     }
 
-    public static class GameObjectTypeUtils
+    public static partial class GameObjectTypeUtils
     {
 
         private static readonly IDictionary<string, GameObjectType> mNameToTypeCache;

@@ -4,7 +4,7 @@ using System;
 namespace Intersect.Network.Packets.Client
 {
     [MessagePackObject]
-    public class MovePacket : AbstractTimedPacket
+    public partial class MovePacket : AbstractTimedPacket
     {
         //Parameterless Constructor for MessagePack
         public MovePacket()

@@ -9,7 +9,7 @@ namespace Intersect.Client.Framework.Gwen.Control
     /// <summary>
     ///     Radio button group.
     /// </summary>
-    public class RadioButtonGroup : GroupBox
+    public partial class RadioButtonGroup : GroupBox
     {
 
         private LabeledRadioButton mSelected;

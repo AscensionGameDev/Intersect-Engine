@@ -6,7 +6,7 @@ using Intersect.Client.Framework.Gwen.Control;
 namespace Intersect.Client.Framework.Gwen.Input
 {
 
-    public class IntersectInput : InputBase
+    public partial class IntersectInput : InputBase
     {
 
         public enum InputEvent
@@ -143,7 +143,7 @@ namespace Intersect.Client.Framework.Gwen.Input
 
     }
 
-    public class GwenInputMessage
+    public partial class GwenInputMessage
     {
 
         public bool Alt;

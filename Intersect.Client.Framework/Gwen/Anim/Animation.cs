@@ -6,7 +6,7 @@ using Intersect.Client.Framework.Gwen.Control;
 namespace Intersect.Client.Framework.Gwen.Anim
 {
 
-    public class Animation
+    public partial class Animation
     {
 
         //private static List<Animation> g_AnimationsListed = new List<Animation>(); // unused

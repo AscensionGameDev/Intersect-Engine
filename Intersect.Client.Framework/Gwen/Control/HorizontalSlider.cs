@@ -6,7 +6,7 @@ namespace Intersect.Client.Framework.Gwen.Control
     /// <summary>
     ///     Horizontal slider.
     /// </summary>
-    public class HorizontalSlider : Slider
+    public partial class HorizontalSlider : Slider
     {
 
         /// <summary>

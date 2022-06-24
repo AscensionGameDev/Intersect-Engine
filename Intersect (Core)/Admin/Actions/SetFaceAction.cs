@@ -4,7 +4,7 @@ using MessagePack;
 namespace Intersect.Admin.Actions
 {
     [MessagePackObject]
-    public class SetFaceAction : AdminAction
+    public partial class SetFaceAction : AdminAction
     {
         //Parameterless Constructor for MessagePack
         public SetFaceAction()

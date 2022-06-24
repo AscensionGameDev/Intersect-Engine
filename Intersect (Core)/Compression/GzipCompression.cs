@@ -9,7 +9,7 @@ namespace Intersect.Compression
     /// <summary>
     /// Contains several wrapper methods used to generalize code in areas of the engine related to compressing and decompressing files and data.
     /// </summary>
-    public static class GzipCompression
+    public static partial class GzipCompression
     {
 
         // Our cryptographic provider, and the key to be used to encrypt. Note, it NEEDS to be 16 characters or more!

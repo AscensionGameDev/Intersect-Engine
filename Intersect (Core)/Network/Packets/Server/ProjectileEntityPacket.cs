@@ -4,7 +4,7 @@ using System;
 namespace Intersect.Network.Packets.Server
 {
     [MessagePackObject]
-    public class ProjectileEntityPacket : EntityPacket
+    public partial class ProjectileEntityPacket : EntityPacket
     {
         //Parameterless Constructor for MessagePack
         public ProjectileEntityPacket()

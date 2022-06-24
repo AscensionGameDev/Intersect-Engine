@@ -13,7 +13,7 @@ namespace Intersect.Plugins.Loaders
     /// Exception class used for when a <see cref="IPluginEntry"/> cannot be found in a plugin <see cref="Assembly"/>.
     /// </summary>
     [Serializable]
-    public class MissingPluginEntryException : Exception, ISerializable
+    public partial class MissingPluginEntryException : Exception, ISerializable
     {
         /// <summary>
         /// The name of the <see cref="Assembly"/> that is missing the plugin entry type.

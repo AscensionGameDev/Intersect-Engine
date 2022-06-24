@@ -11,7 +11,7 @@ using Intersect.Server.Core.CommandParsing.Arguments;
 namespace Intersect.Server.Core.CommandParsing.Commands
 {
 
-    public abstract class Command<TContext> : ICommand where TContext : IApplicationContext
+    public abstract partial class Command<TContext> : ICommand where TContext : IApplicationContext
     {
 
         protected Command(LocaleCommand localization, params ICommandArgument[] arguments)

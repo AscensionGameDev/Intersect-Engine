@@ -3,7 +3,7 @@
 namespace Intersect.Utilities
 {
 
-    public static class MathHelper
+    public static partial class MathHelper
     {
         public static decimal Clamp(decimal value, decimal minimum, decimal maximum)
         {

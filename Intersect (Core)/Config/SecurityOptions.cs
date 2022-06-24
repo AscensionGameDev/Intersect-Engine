@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 namespace Intersect.Config
 {
 
-    public class SecurityOptions
+    public partial class SecurityOptions
     {
 
         public List<string> IpBlacklist = new List<string>();

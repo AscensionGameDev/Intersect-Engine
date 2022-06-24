@@ -3,7 +3,7 @@
 namespace Intersect.Server.Web.RestApi.Payloads
 {
 
-    public struct LevelChange
+    public partial struct LevelChange
     {
 
         public int Level { get; set; }

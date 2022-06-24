@@ -8,7 +8,7 @@ namespace Intersect.Client.Framework.Gwen.Control
     /// <summary>
     ///     CollapsibleList control. Groups CollapsibleCategory controls.
     /// </summary>
-    public class CollapsibleList : ScrollControl
+    public partial class CollapsibleList : ScrollControl
     {
 
         /// <summary>

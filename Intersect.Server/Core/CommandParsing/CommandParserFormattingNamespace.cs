@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 namespace Intersect.Server.Core.CommandParsing
 {
 
-    public sealed class CommandParserFormattingNamespace : LocaleNamespace
+    public sealed partial class CommandParserFormattingNamespace : LocaleNamespace
     {
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]        public readonly LocalizedString Optional = @"[{00}]";

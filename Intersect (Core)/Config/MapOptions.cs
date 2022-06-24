@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 namespace Intersect.Config
 {
 
-    public class MapOptions
+    public partial class MapOptions
     {
 
         //Maps

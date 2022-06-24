@@ -6,7 +6,7 @@ namespace Intersect.Client.Framework.Gwen.Control
     /// <summary>
     ///     Property table/tree.
     /// </summary>
-    public class PropertyTree : TreeControl
+    public partial class PropertyTree : TreeControl
     {
 
         /// <summary>

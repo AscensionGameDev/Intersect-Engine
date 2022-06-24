@@ -17,7 +17,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
     [RoutePrefix("logs")]
     [ConfigurableAuthorize]
-    public sealed class LogsController : IntersectApiController
+    public sealed partial class LogsController : IntersectApiController
     {
 
         [Route("chat")]

@@ -5,7 +5,7 @@ namespace Intersect.Config
     /// <summary>
     /// Contains configurable options pertaining to the way sprites are rendered within the engine
     /// </summary>
-    public class SpriteOptions
+    public partial class SpriteOptions
     {
         /// <summary>
         /// Defines the number of frames there will be in idling sprite sheets

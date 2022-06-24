@@ -6,7 +6,7 @@ using MessagePack;
 namespace Intersect.Network.Packets.Server
 {
     [MessagePackObject]
-    public class EntityAttackPacket : AbstractTimedPacket
+    public partial class EntityAttackPacket : AbstractTimedPacket
     {
         //Parameterless Constructor for MessagePack
         public EntityAttackPacket()

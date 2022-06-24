@@ -15,7 +15,7 @@ using Intersect.Utilities;
 namespace Intersect.Client.Interface.Game.Inventory
 {
 
-    public class MapItemWindow
+    public partial class MapItemWindow
     {
         //Item List
         public List<MapItemIcon> Items = new List<MapItemIcon>();

@@ -8,7 +8,7 @@ using Intersect.Logging;
 namespace Intersect.Editor.Forms.Editors
 {
 
-    public class EditorForm : Form
+    public partial class EditorForm : Form
     {
 
         private bool mClosing = false;

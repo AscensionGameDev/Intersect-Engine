@@ -1,7 +1,7 @@
 ﻿namespace Intersect.Client.Framework.Sys
 {
 
-    public abstract class GameSystem
+    public abstract partial class GameSystem
     {
 
         public abstract void Log(string msg);

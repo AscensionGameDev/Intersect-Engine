@@ -32,7 +32,7 @@ namespace Intersect.Client.Networking
 
     internal sealed partial class PacketHandler
     {
-        private sealed class VirtualPacketSender : IPacketSender
+        private sealed partial class VirtualPacketSender : IPacketSender
         {
             public IApplicationContext ApplicationContext { get; }
 

@@ -9,7 +9,7 @@ using Intersect.Server.Localization;
 namespace Intersect.Server.Core.Commands
 {
 
-    internal class ExperimentsCommand : TargettedCommand<IExperimentalFlag>
+    internal partial class ExperimentsCommand : TargettedCommand<IExperimentalFlag>
     {
 
         public ExperimentsCommand() : base(

@@ -9,7 +9,7 @@ namespace Intersect.Client.Framework.Gwen.Control
     /// <summary>
     ///     CollapsibleCategory control. Used in CollapsibleList.
     /// </summary>
-    public class CollapsibleCategory : Base
+    public partial class CollapsibleCategory : Base
     {
 
         private readonly Button mHeaderButton;

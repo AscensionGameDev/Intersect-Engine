@@ -5,7 +5,7 @@ namespace Intersect.Network.Packets.Editor
 {
 
     [MessagePackObject]
-    public class LinkMapPacket : EditorPacket
+    public partial class LinkMapPacket : EditorPacket
     {
         //Parameterless Constructor for MessagePack
         public LinkMapPacket()

@@ -13,7 +13,7 @@ using Intersect.GameObjects.Crafting;
 namespace Intersect.Client.Interface.Game.Crafting
 {
 
-    public class RecipeItem
+    public partial class RecipeItem
     {
 
         public ImagePanel Container;

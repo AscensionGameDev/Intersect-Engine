@@ -10,7 +10,7 @@ namespace Intersect.Client.Framework.Gwen.Control
     /// <summary>
     ///     Numeric up/down.
     /// </summary>
-    public class NumericUpDown : TextBoxNumeric
+    public partial class NumericUpDown : TextBoxNumeric
     {
 
         private readonly UpDownButtonDown mDown;

@@ -13,7 +13,7 @@ namespace Intersect.Client.Framework.Gwen.Control
     /// <summary>
     ///     Movable window with title bar.
     /// </summary>
-    public class WindowControl : ResizableControl
+    public partial class WindowControl : ResizableControl
     {
 
         public enum ControlState

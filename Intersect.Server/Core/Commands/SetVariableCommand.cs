@@ -11,7 +11,7 @@ using Intersect.GameObjects;
 
 namespace Intersect.Server.Core.Commands
 {
-    internal sealed class SetVariableCommand : ServerCommand
+    internal sealed partial class SetVariableCommand : ServerCommand
     {
         public SetVariableCommand() : base(
             Strings.Commands.SetVariable,

@@ -1,6 +1,6 @@
 namespace Intersect.Client.Framework.Gwen.Control.Data
 {
-    public class RowDataChangedEventArgs : CellDataChangedEventArgs
+    public partial class RowDataChangedEventArgs : CellDataChangedEventArgs
     {
         public RowDataChangedEventArgs(int column, object oldValue, object newValue)
             : base(oldValue, newValue)

@@ -20,7 +20,7 @@ using Intersect.Utilities;
 namespace Intersect.Client.Interface.Game.EntityPanel
 {
 
-    public class EntityBox
+    public partial class EntityBox
     {
 
         private static int sStatusXPadding = 2;

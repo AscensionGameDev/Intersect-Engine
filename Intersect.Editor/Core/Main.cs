@@ -13,7 +13,7 @@ using Intersect.Utilities;
 namespace Intersect.Editor.Core
 {
 
-    public static class Main
+    public static partial class Main
     {
 
         private static long sAnimationTimer = Timing.Global.Milliseconds;

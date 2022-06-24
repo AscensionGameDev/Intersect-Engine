@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 namespace Intersect.GameObjects.Maps
 {
 
-    public abstract class MapAttribute
+    public abstract partial class MapAttribute
     {
         public abstract MapAttributes Type { get; }
 
@@ -56,14 +56,14 @@ namespace Intersect.GameObjects.Maps
 
     }
 
-    public class MapBlockedAttribute : MapAttribute
+    public partial class MapBlockedAttribute : MapAttribute
     {
 
         public override MapAttributes Type { get; } = MapAttributes.Blocked;
 
     }
 
-    public class MapItemAttribute : MapAttribute
+    public partial class MapItemAttribute : MapAttribute
     {
 
         public override MapAttributes Type { get; } = MapAttributes.Item;
@@ -83,7 +83,7 @@ namespace Intersect.GameObjects.Maps
 
     }
 
-    public class MapZDimensionAttribute : MapAttribute
+    public partial class MapZDimensionAttribute : MapAttribute
     {
 
         public override MapAttributes Type { get; } = MapAttributes.ZDimension;
@@ -103,14 +103,14 @@ namespace Intersect.GameObjects.Maps
 
     }
 
-    public class MapNpcAvoidAttribute : MapAttribute
+    public partial class MapNpcAvoidAttribute : MapAttribute
     {
 
         public override MapAttributes Type { get; } = MapAttributes.NpcAvoid;
 
     }
 
-    public class MapWarpAttribute : MapAttribute
+    public partial class MapWarpAttribute : MapAttribute
     {
 
         public override MapAttributes Type { get; } = MapAttributes.Warp;
@@ -144,7 +144,7 @@ namespace Intersect.GameObjects.Maps
 
     }
 
-    public class MapSoundAttribute : MapAttribute
+    public partial class MapSoundAttribute : MapAttribute
     {
 
         public override MapAttributes Type { get; } = MapAttributes.Sound;
@@ -167,7 +167,7 @@ namespace Intersect.GameObjects.Maps
 
     }
 
-    public class MapResourceAttribute : MapAttribute
+    public partial class MapResourceAttribute : MapAttribute
     {
 
         public override MapAttributes Type { get; } = MapAttributes.Resource;
@@ -187,7 +187,7 @@ namespace Intersect.GameObjects.Maps
 
     }
 
-    public class MapAnimationAttribute : MapAttribute
+    public partial class MapAnimationAttribute : MapAttribute
     {
 
         public override MapAttributes Type { get; } = MapAttributes.Animation;
@@ -207,14 +207,14 @@ namespace Intersect.GameObjects.Maps
 
     }
 
-    public class MapGrappleStoneAttribute : MapAttribute
+    public partial class MapGrappleStoneAttribute : MapAttribute
     {
 
         public override MapAttributes Type { get; } = MapAttributes.GrappleStone;
 
     }
 
-    public class MapSlideAttribute : MapAttribute
+    public partial class MapSlideAttribute : MapAttribute
     {
 
         public override MapAttributes Type { get; } = MapAttributes.Slide;
@@ -231,7 +231,7 @@ namespace Intersect.GameObjects.Maps
 
     }
 
-    public class MapCritterAttribute : MapAttribute
+    public partial class MapCritterAttribute : MapAttribute
     {
         public override MapAttributes Type { get; } = MapAttributes.Critter;
 

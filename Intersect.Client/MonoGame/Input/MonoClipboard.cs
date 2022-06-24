@@ -5,7 +5,7 @@ using System.Diagnostics;
 
 namespace Intersect.Client.MonoGame.Input
 {
-    public class MonoClipboard : GameClipboard
+    public partial class MonoClipboard : GameClipboard
     {
 
         private PlatformID? mPlatform = null;

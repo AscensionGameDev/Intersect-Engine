@@ -7,7 +7,7 @@ namespace Intersect.Plugins
     /// <summary>
     /// Representation of a loaded plugin descriptor.
     /// </summary>
-    public sealed class Plugin
+    public sealed partial class Plugin
     {
         /// <summary>
         /// Create a <see cref="Plugin"/> instance for the given context, manifest and reference.

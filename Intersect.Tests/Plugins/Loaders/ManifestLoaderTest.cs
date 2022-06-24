@@ -17,7 +17,7 @@ using Intersect.Plugins.Manifests.Types;
 
 namespace Intersect.Plugins.Loaders
 {
-    internal class MockAssembly : Assembly
+    internal partial class MockAssembly : Assembly
     {
         public override string FullName => nameof(MockAssembly);
 
@@ -52,19 +52,19 @@ namespace Intersect.Plugins.Loaders
     {
     }
 
-    internal abstract class IllegalVirtualManifestAbstractClass
+    internal abstract partial class IllegalVirtualManifestAbstractClass
     {
     }
 
-    internal class IllegalVirtualManifestGenericClass<T>
+    internal partial class IllegalVirtualManifestGenericClass<T>
     {
     }
 
-    internal class IllegalVirtualManifestDefinedClass
+    internal partial class IllegalVirtualManifestDefinedClass
     {
     }
 
-    internal class IllegalVirtualManifestNoSupportedConstructorsClass : IManifestHelper
+    internal partial class IllegalVirtualManifestNoSupportedConstructorsClass : IManifestHelper
     {
         public IllegalVirtualManifestNoSupportedConstructorsClass(string name)
         {
@@ -87,7 +87,7 @@ namespace Intersect.Plugins.Loaders
         public string Homepage { get; }
     }
 
-    internal struct VirtualManifestValueType : IManifestHelper
+    internal partial struct VirtualManifestValueType : IManifestHelper
     {
         /// <inheritdoc />
         public string Name { get; }
@@ -106,7 +106,7 @@ namespace Intersect.Plugins.Loaders
     }
 
     [TestFixture]
-    public class ManifestLoaderTest
+    public partial class ManifestLoaderTest
     {
         [SetUp]
         public void SetUp()

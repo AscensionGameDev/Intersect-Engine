@@ -7,7 +7,7 @@ namespace Intersect.Client.Framework.Gwen.ControlInternal
     /// <summary>
     ///     Modal control for windows.
     /// </summary>
-    public class Modal : Base
+    public partial class Modal : Base
     {
 
         /// <summary>

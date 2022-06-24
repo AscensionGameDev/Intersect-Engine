@@ -7,7 +7,7 @@ using Intersect.Server.Database.PlayerData;
 namespace Intersect.Server.Core.Commands
 {
 
-    internal abstract class TargetUserCommand : TargettedCommand<User>
+    internal abstract partial class TargetUserCommand : TargettedCommand<User>
     {
 
         protected TargetUserCommand(

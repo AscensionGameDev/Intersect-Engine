@@ -10,7 +10,7 @@ namespace Intersect.Client.Framework.Gwen.Platform
     /// <summary>
     ///     Platform-agnostic utility functions.
     /// </summary>
-    public static class Neutral
+    public static partial class Neutral
     {
 
         private static DateTime sFirstTime = DateTime.Now;

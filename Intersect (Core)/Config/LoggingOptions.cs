@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Intersect.Config
 {
-    public class LoggingOptions
+    public partial class LoggingOptions
     {
         /// <summary>
         /// Determines whether chat logs should be written into the logging database

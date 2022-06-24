@@ -9,7 +9,7 @@ namespace Intersect.Client.Framework.Gwen.Control.Property
     /// <summary>
     ///     Color property.
     /// </summary>
-    public class Color : Text
+    public partial class Color : Text
     {
 
         protected readonly ColorButton mButton;

@@ -24,7 +24,7 @@ using Intersect.Utilities;
 namespace Intersect.Server.Web.RestApi.Routes.V1
 {
 
-    public struct AdminActionParameters
+    public partial struct AdminActionParameters
     {
 
         public string Moderator { get; set; }
@@ -45,7 +45,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
     [RoutePrefix("players")]
     [ConfigurableAuthorize]
-    public sealed class PlayerController : IntersectApiController
+    public sealed partial class PlayerController : IntersectApiController
     {
 
         [Route]

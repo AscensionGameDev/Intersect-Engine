@@ -12,7 +12,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
     [RoutePrefix("info")]
     [ConfigurableAuthorize]
-    public sealed class InfoController : ApiController
+    public sealed partial class InfoController : ApiController
     {
 
         [Route("authorized")]

@@ -2,7 +2,7 @@
 
 namespace Intersect.Client.Entities
 {
-    public class FriendInstance : IFriendInstance
+    public partial class FriendInstance : IFriendInstance
     {
 
         public string Map { get; set; }

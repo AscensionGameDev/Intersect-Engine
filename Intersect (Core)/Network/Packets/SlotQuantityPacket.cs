@@ -16,7 +16,7 @@ namespace Intersect.Network.Packets
     [Union(6, typeof(SellItemPacket))]
     [Union(7, typeof(StoreBagItemPacket))]
     [Union(8, typeof(WithdrawItemPacket))]
-    public abstract class SlotQuantityPacket : IntersectPacket
+    public abstract partial class SlotQuantityPacket : IntersectPacket
     {
         //Parameterless Constructor for MessagePack
         public SlotQuantityPacket()

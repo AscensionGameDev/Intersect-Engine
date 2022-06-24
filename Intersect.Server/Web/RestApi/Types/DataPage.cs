@@ -5,7 +5,7 @@ using Intersect.Server.Web.RestApi.Payloads;
 namespace Intersect.Server.Web.RestApi.Types
 {
 
-    public struct DataPage<TValue>
+    public partial struct DataPage<TValue>
     {
 
         public int Total { get; set; }

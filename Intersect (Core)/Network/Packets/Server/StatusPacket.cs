@@ -6,7 +6,7 @@ using MessagePack;
 namespace Intersect.Network.Packets.Server
 {
     [MessagePackObject]
-    public class StatusPacket : IntersectPacket
+    public partial class StatusPacket : IntersectPacket
     {
         //Parameterless Constructor for MessagePack
         public StatusPacket()

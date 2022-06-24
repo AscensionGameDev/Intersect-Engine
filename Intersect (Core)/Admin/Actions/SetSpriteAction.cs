@@ -4,7 +4,7 @@ using MessagePack;
 namespace Intersect.Admin.Actions
 {
     [MessagePackObject]
-    public class SetSpriteAction : AdminAction
+    public partial class SetSpriteAction : AdminAction
     {
         //Parameterless Constructor for MessagePack
         public SetSpriteAction()

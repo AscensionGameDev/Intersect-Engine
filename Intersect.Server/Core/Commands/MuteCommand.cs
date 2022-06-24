@@ -5,7 +5,7 @@ using Intersect.Server.Networking;
 namespace Intersect.Server.Core.Commands
 {
 
-    internal sealed class MuteCommand : ModeratorActionCommand
+    internal sealed partial class MuteCommand : ModeratorActionCommand
     {
 
         public MuteCommand() : base(

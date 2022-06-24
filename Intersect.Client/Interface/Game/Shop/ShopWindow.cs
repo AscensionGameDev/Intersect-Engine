@@ -11,7 +11,7 @@ using Intersect.GameObjects;
 namespace Intersect.Client.Interface.Game.Shop
 {
 
-    public class ShopWindow
+    public partial class ShopWindow
     {
 
         private static int sItemXPadding = 4;

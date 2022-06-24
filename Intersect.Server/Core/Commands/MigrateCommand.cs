@@ -9,7 +9,7 @@ using Intersect.Server.Localization;
 namespace Intersect.Server.Core.Commands
 {
 
-    internal sealed class MigrateCommand : ServerCommand
+    internal sealed partial class MigrateCommand : ServerCommand
     {
 
         public MigrateCommand() : base(Strings.Commands.Migrate)

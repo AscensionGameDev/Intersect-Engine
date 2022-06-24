@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 namespace Intersect.Utilities
 {
 
-    public static class FieldChecking
+    public static partial class FieldChecking
     {
 
         //Field Checking

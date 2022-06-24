@@ -8,7 +8,7 @@ namespace Intersect.Client.Framework.Gwen
     /// <summary>
     ///     Represents inner spacing.
     /// </summary>
-    public struct Padding : IEquatable<Padding>
+    public partial struct Padding : IEquatable<Padding>
     {
 
         public readonly int Top;

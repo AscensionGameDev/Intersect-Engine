@@ -10,7 +10,7 @@ using System.Collections.Generic;
 namespace Intersect.Client.Plugins.Helpers
 {
     /// <inheritdoc cref="IClientLifecycleHelper"/>
-    internal sealed class ClientLifecycleHelper : ContextHelper<IClientPluginContext>, IClientLifecycleHelper
+    internal sealed partial class ClientLifecycleHelper : ContextHelper<IClientPluginContext>, IClientLifecycleHelper
     {
         /// <inheritdoc />
         public event LifecycleChangeStateHandler LifecycleChangeState;

@@ -8,7 +8,7 @@ namespace Intersect.Client.Framework.Gwen.Control
     /// <summary>
     ///     Single property row.
     /// </summary>
-    public class PropertyRow : Base
+    public partial class PropertyRow : Base
     {
 
         private readonly Label mLabel;

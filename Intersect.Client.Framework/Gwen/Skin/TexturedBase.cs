@@ -15,7 +15,7 @@ namespace Intersect.Client.Framework.Gwen.Skin
 
     #region UI element textures
 
-    public struct SkinTextures
+    public partial struct SkinTextures
     {
 
         public Bordered StatusBar;
@@ -26,7 +26,7 @@ namespace Intersect.Client.Framework.Gwen.Skin
 
         public Bordered Tooltip;
 
-        public struct _Panel
+        public partial struct _Panel
         {
 
             public Bordered Normal;
@@ -39,7 +39,7 @@ namespace Intersect.Client.Framework.Gwen.Skin
 
         }
 
-        public struct _Window
+        public partial struct _Window
         {
 
             public Bordered Normal;
@@ -55,17 +55,17 @@ namespace Intersect.Client.Framework.Gwen.Skin
             public Single CloseDisabled;
 
         }
-        public struct _FillableButton
+        public partial struct _FillableButton
         {
             public Single Box;
 
             public Single Fill;
         }
 
-        public struct _CheckBox
+        public partial struct _CheckBox
         {
 
-            public struct _Baked
+            public partial struct _Baked
             {
                 public Single Normal;
 
@@ -85,9 +85,9 @@ namespace Intersect.Client.Framework.Gwen.Skin
             public _FillableButton Disabled;
         }
 
-        public struct _RadioButton
+        public partial struct _RadioButton
         {
-            public struct _Baked
+            public partial struct _Baked
             {
                 public Single Normal;
 
@@ -107,7 +107,7 @@ namespace Intersect.Client.Framework.Gwen.Skin
             public _FillableButton Disabled;
         }
 
-        public struct _TextBox
+        public partial struct _TextBox
         {
 
             public Bordered Normal;
@@ -118,7 +118,7 @@ namespace Intersect.Client.Framework.Gwen.Skin
 
         }
 
-        public struct _Tree
+        public partial struct _Tree
         {
 
             public Bordered Background;
@@ -129,7 +129,7 @@ namespace Intersect.Client.Framework.Gwen.Skin
 
         }
 
-        public struct _ProgressBar
+        public partial struct _ProgressBar
         {
 
             public Bordered Back;
@@ -138,7 +138,7 @@ namespace Intersect.Client.Framework.Gwen.Skin
 
         }
 
-        public struct _Scroller
+        public partial struct _Scroller
         {
 
             public Bordered TrackV;
@@ -161,7 +161,7 @@ namespace Intersect.Client.Framework.Gwen.Skin
 
             public Bordered ButtonHDisabled;
 
-            public struct _Button
+            public partial struct _Button
             {
 
                 public Bordered[] Normal;
@@ -178,7 +178,7 @@ namespace Intersect.Client.Framework.Gwen.Skin
 
         }
 
-        public struct _Menu
+        public partial struct _Menu
         {
 
             public Single RightArrow;
@@ -195,10 +195,10 @@ namespace Intersect.Client.Framework.Gwen.Skin
 
         }
 
-        public struct _Input
+        public partial struct _Input
         {
 
-            public struct _Button
+            public partial struct _Button
             {
 
                 public Bordered Normal;
@@ -211,7 +211,7 @@ namespace Intersect.Client.Framework.Gwen.Skin
 
             }
 
-            public struct _ComboBox
+            public partial struct _ComboBox
             {
 
                 public Bordered Normal;
@@ -222,7 +222,7 @@ namespace Intersect.Client.Framework.Gwen.Skin
 
                 public Bordered Disabled;
 
-                public struct _Button
+                public partial struct _Button
                 {
 
                     public Single Normal;
@@ -239,10 +239,10 @@ namespace Intersect.Client.Framework.Gwen.Skin
 
             }
 
-            public struct _Slider
+            public partial struct _Slider
             {
 
-                public struct _H
+                public partial struct _H
                 {
 
                     public Single Normal;
@@ -255,7 +255,7 @@ namespace Intersect.Client.Framework.Gwen.Skin
 
                 }
 
-                public struct _V
+                public partial struct _V
                 {
 
                     public Single Normal;
@@ -274,7 +274,7 @@ namespace Intersect.Client.Framework.Gwen.Skin
 
             }
 
-            public struct _ListBox
+            public partial struct _ListBox
             {
 
                 public Bordered Background;
@@ -291,10 +291,10 @@ namespace Intersect.Client.Framework.Gwen.Skin
 
             }
 
-            public struct _UpDown
+            public partial struct _UpDown
             {
 
-                public struct _Up
+                public partial struct _Up
                 {
 
                     public Single Normal;
@@ -307,7 +307,7 @@ namespace Intersect.Client.Framework.Gwen.Skin
 
                 }
 
-                public struct _Down
+                public partial struct _Down
                 {
 
                     public Single Normal;
@@ -338,10 +338,10 @@ namespace Intersect.Client.Framework.Gwen.Skin
 
         }
 
-        public struct _Tab
+        public partial struct _Tab
         {
 
-            public struct _Bottom
+            public partial struct _Bottom
             {
 
                 public Bordered Inactive;
@@ -350,7 +350,7 @@ namespace Intersect.Client.Framework.Gwen.Skin
 
             }
 
-            public struct _Top
+            public partial struct _Top
             {
 
                 public Bordered Inactive;
@@ -359,7 +359,7 @@ namespace Intersect.Client.Framework.Gwen.Skin
 
             }
 
-            public struct _Left
+            public partial struct _Left
             {
 
                 public Bordered Inactive;
@@ -368,7 +368,7 @@ namespace Intersect.Client.Framework.Gwen.Skin
 
             }
 
-            public struct _Right
+            public partial struct _Right
             {
 
                 public Bordered Inactive;
@@ -391,7 +391,7 @@ namespace Intersect.Client.Framework.Gwen.Skin
 
         }
 
-        public struct _CategoryList
+        public partial struct _CategoryList
         {
 
             public Bordered Outer;
@@ -433,7 +433,7 @@ namespace Intersect.Client.Framework.Gwen.Skin
     /// <summary>
     ///     Base textured skin.
     /// </summary>
-    public class TexturedBase : Skin.Base
+    public partial class TexturedBase : Skin.Base
     {
 
         public static TexturedBase FindSkin(Renderer.Base renderer, GameContentManager contentManager, string skinName)

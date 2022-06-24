@@ -7,7 +7,7 @@ using Intersect.IO.Files;
 namespace Intersect.Logging.Output
 {
 
-    public class FileOutput : ILogOutput
+    public partial class FileOutput : ILogOutput
     {
 
         private static readonly string Spacer = Environment.NewLine + new string('-', 80) + Environment.NewLine;

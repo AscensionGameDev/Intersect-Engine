@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 namespace Intersect.Server.Database
 {
 
-    public class Spell
+    public partial class Spell
     {
 
         public Spell()

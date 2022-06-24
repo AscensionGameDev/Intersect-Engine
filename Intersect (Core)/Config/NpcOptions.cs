@@ -4,7 +4,7 @@
     /// <summary>
     /// Contains configurable options pertaining to the way Npcs are handled by the engine.
     /// </summary>
-    public class NpcOptions
+    public partial class NpcOptions
     {
 
         /// <summary>

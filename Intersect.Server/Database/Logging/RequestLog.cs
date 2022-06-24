@@ -16,7 +16,7 @@ namespace Intersect.Server.Database.Logging
 {
 
     [Serializable]
-    public class RequestLog
+    public partial class RequestLog
     {
 
         private string mMethod;
@@ -61,7 +61,7 @@ namespace Intersect.Server.Database.Logging
         [NotMapped]
         public IDictionary<string, List<string>> ResponseHeaders { get; set; }
 
-        public class Mapper : IEntityTypeConfiguration<RequestLog>
+        public partial class Mapper : IEntityTypeConfiguration<RequestLog>
         {
 
             /// <inheritdoc />

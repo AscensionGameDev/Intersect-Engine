@@ -4,7 +4,7 @@ using Intersect.Network.Events;
 namespace Intersect.Client.Framework.Network
 {
 
-    public abstract class GameSocket
+    public abstract partial class GameSocket
     {
 
         public abstract void Connect(string host, int port);

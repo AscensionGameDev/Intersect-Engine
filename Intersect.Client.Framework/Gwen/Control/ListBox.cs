@@ -16,7 +16,7 @@ namespace Intersect.Client.Framework.Gwen.Control
     /// <summary>
     ///     ListBox control.
     /// </summary>
-    public class ListBox : ScrollControl
+    public partial class ListBox : ScrollControl
     {
 
         private readonly List<ListBoxRow> mSelectedRows;

@@ -5,7 +5,7 @@ using System.Linq;
 namespace Intersect.Utilities
 {
 
-    public static class ValueUtils
+    public static partial class ValueUtils
     {
 
         public static void Swap<T>(ref T a, ref T b)

@@ -6,7 +6,7 @@ using Intersect.Server.Localization;
 namespace Intersect.Server.Core.Commands
 {
 
-    internal sealed class CpsCommand : ServerCommand
+    internal sealed partial class CpsCommand : ServerCommand
     {
 
         public CpsCommand() : base(

@@ -7,7 +7,7 @@ using Intersect.Server.Core.CommandParsing.Arguments;
 namespace Intersect.Server.Core.CommandParsing
 {
 
-    public static class ParserResultExtensions
+    public static partial class ParserResultExtensions
     {
 
         public static TValue Find<TValue>(

@@ -8,7 +8,7 @@ namespace Intersect.Reflection
     /// <summary>
     /// Extension methods for <see cref="Assembly"/>.
     /// </summary>
-    public static class AssemblyExtensions
+    public static partial class AssemblyExtensions
     {
         /// <inheritdoc cref="CreateInstanceOf{TParentType}(Assembly, Func{Type, bool}, object[])"/>
         public static TParentType CreateInstanceOf<TParentType>(this Assembly assembly, params object[] args) =>

@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 namespace Intersect.Server.Database.PlayerData.Players
 {
 
-    public class BagSlot : Item, ISlot
+    public partial class BagSlot : Item, ISlot
     {
 
         public BagSlot()

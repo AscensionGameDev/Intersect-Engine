@@ -13,7 +13,7 @@ namespace Intersect.Server.Core.CommandParsing.Commands
 
     }
 
-    public abstract class HelpableCommand<TContext> : Command<TContext>, IHelpableCommand
+    public abstract partial class HelpableCommand<TContext> : Command<TContext>, IHelpableCommand
         where TContext : IApplicationContext
     {
 

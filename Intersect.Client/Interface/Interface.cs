@@ -19,7 +19,7 @@ using Base = Intersect.Client.Framework.Gwen.Renderer.Base;
 namespace Intersect.Client.Interface
 {
 
-    public static class Interface
+    public static partial class Interface
     {
 
         public static readonly List<KeyValuePair<string, string>> MsgboxErrors =

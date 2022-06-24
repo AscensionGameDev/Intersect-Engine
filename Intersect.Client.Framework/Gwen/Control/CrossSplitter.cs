@@ -9,7 +9,7 @@ namespace Intersect.Client.Framework.Gwen.Control
     /// <summary>
     ///     Splitter control.
     /// </summary>
-    public class CrossSplitter : Base
+    public partial class CrossSplitter : Base
     {
 
         private readonly SplitterBar mCSplitter;

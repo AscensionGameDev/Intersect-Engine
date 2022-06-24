@@ -3,7 +3,7 @@
 namespace Intersect.Network.Packets.Client
 {
     [MessagePackObject]
-    public class RequestFriendsPacket : IntersectPacket
+    public partial class RequestFriendsPacket : IntersectPacket
     {
 
     }

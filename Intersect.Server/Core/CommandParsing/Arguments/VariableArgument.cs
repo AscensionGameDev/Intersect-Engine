@@ -3,7 +3,7 @@
 namespace Intersect.Server.Core.CommandParsing.Arguments
 {
 
-    public class VariableArgument<TValue> : CommandArgument<TValue>
+    public partial class VariableArgument<TValue> : CommandArgument<TValue>
     {
 
         public VariableArgument(

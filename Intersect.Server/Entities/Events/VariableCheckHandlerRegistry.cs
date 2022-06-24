@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Intersect.Server.Entities.Events
 {
-    public static class VariableCheckHandlerRegistry
+    public static partial class VariableCheckHandlerRegistry
     {
         private static Dictionary<Type, HandleVariableComparison> CheckVariableComparisonFunctions = new Dictionary<Type, HandleVariableComparison>();
         private delegate bool HandleVariableComparison(VariableValue currentValue, VariableCompaison comparison, Player player, Event eventInstance);

@@ -7,7 +7,7 @@ namespace Intersect.Server.Core.CommandParsing.Arguments
 
     public delegate bool ArgumentRequiredPredicate(ParserContext parserContext);
 
-    public abstract class CommandArgument<TValue> : ICommandArgument
+    public abstract partial class CommandArgument<TValue> : ICommandArgument
     {
 
         private readonly ArgumentRequiredPredicate mRequiredPredicate;
@@ -95,7 +95,7 @@ namespace Intersect.Server.Core.CommandParsing.Arguments
 
     }
 
-    public abstract class ArrayCommandArgument<TValue> : CommandArgument<TValue>
+    public abstract partial class ArrayCommandArgument<TValue> : CommandArgument<TValue>
     {
 
         protected ArrayCommandArgument(
@@ -121,7 +121,7 @@ namespace Intersect.Server.Core.CommandParsing.Arguments
 
     }
 
-    public abstract class CommandArgument : CommandArgument<object>
+    public abstract partial class CommandArgument : CommandArgument<object>
     {
 
         protected CommandArgument(LocaleArgument localization) : base(localization)

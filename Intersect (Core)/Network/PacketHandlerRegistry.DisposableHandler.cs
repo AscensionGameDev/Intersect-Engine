@@ -6,7 +6,7 @@ namespace Intersect.Network
     {
         #region DisposableHandler
 
-        private struct DisposableHandler : IDisposable
+        private partial struct DisposableHandler : IDisposable
         {
             public Type PacketType { get; }
 

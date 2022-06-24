@@ -1,7 +1,7 @@
 ﻿namespace Intersect.Server.Web.RestApi.Payloads
 {
 
-    public struct PasswordValidation
+    public partial struct PasswordValidation
     {
 
         public string Password { get; set; }

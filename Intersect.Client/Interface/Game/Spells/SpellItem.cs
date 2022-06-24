@@ -16,7 +16,7 @@ using Intersect.Utilities;
 namespace Intersect.Client.Interface.Game.Spells
 {
 
-    public class SpellItem
+    public partial class SpellItem
     {
 
         public ImagePanel Container;

@@ -3,7 +3,7 @@
 namespace Intersect.Network.Packets.Client
 {
     [MessagePackObject]
-    public class UpgradeStatPacket : IntersectPacket
+    public partial class UpgradeStatPacket : IntersectPacket
     {
         //Parameterless Constructor for MessagePack
         public UpgradeStatPacket()

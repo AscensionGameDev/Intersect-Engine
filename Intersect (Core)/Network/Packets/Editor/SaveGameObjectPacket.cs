@@ -6,7 +6,7 @@ using MessagePack;
 namespace Intersect.Network.Packets.Editor
 {
     [MessagePackObject]
-    public class SaveGameObjectPacket : EditorPacket
+    public partial class SaveGameObjectPacket : EditorPacket
     {
         //Parameterless Constructor for MessagePack
         public SaveGameObjectPacket()

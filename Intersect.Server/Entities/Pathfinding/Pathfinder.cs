@@ -25,7 +25,7 @@ namespace Intersect.Server.Entities.Pathfinding
 
     }
 
-    class Pathfinder
+    partial class Pathfinder
     {
 
         private int mConsecutiveFails;
@@ -489,7 +489,7 @@ namespace Intersect.Server.Entities.Pathfinding
 
     }
 
-    public class AStarSolver : SpatialAStar
+    public partial class AStarSolver : SpatialAStar
     {
 
         public AStarSolver(PathNode[,] inGrid) : base(inGrid)

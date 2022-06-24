@@ -3,7 +3,7 @@
 namespace Intersect.Client.Framework.Audio
 {
 
-    public abstract class GameAudioSource : IAsset
+    public abstract partial class GameAudioSource : IAsset
     {
         public string Name { get; set; }
 

@@ -10,7 +10,7 @@ using Intersect.Network;
 namespace Intersect.Server.Core
 {
 
-    internal struct ServerCommandLineOptions : ICommandLineOptions
+    internal partial struct ServerCommandLineOptions : ICommandLineOptions
     {
 
         public ServerCommandLineOptions(

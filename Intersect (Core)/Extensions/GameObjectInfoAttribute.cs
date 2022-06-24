@@ -4,7 +4,7 @@ namespace Intersect.Extensions
 {
 
     [AttributeUsage(AttributeTargets.Field, Inherited = false)]
-    public sealed class GameObjectInfoAttribute : Attribute
+    public sealed partial class GameObjectInfoAttribute : Attribute
     {
 
         public GameObjectInfoAttribute(Type type, string table)

@@ -3,7 +3,7 @@
 namespace Intersect.Network.Packets.Server
 {
     [MessagePackObject]
-    public class CharacterCreationPacket : IntersectPacket
+    public partial class CharacterCreationPacket : IntersectPacket
     {
 
     }

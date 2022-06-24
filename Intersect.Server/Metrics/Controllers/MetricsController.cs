@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Intersect.Server.Metrics.Controllers
 {
-    public class MetricsController
+    public partial class MetricsController
     {
         public virtual string Context { get; set; }
 

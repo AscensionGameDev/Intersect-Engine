@@ -10,7 +10,7 @@ namespace Intersect.Plugins.Helpers
     /// <summary>
     /// Implementation for <see cref="IPacketHelper"/>.
     /// </summary>
-    public sealed class PacketHelper : IPacketHelper
+    public sealed partial class PacketHelper : IPacketHelper
     {
         private PacketHelper Parent { get; }
 

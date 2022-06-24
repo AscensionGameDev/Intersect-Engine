@@ -7,7 +7,7 @@ using Intersect.Server.Networking;
 namespace Intersect.Server.Core.Commands
 {
 
-    internal abstract class ModeratorActionCommand : TargetClientCommand
+    internal abstract partial class ModeratorActionCommand : TargetClientCommand
     {
 
         protected ModeratorActionCommand(

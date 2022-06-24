@@ -1,6 +1,6 @@
 ﻿namespace Intersect.Config
 {
-    public class PartyOptions
+    public partial class PartyOptions
     {
         
         /// <summary>

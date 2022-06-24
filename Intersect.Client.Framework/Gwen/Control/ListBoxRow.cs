@@ -6,7 +6,7 @@ namespace Intersect.Client.Framework.Gwen.Control
     /// <summary>
     ///     List box row (selectable).
     /// </summary>
-    public class ListBoxRow : TableRow
+    public partial class ListBoxRow : TableRow
     {
 
         private bool mSelected;

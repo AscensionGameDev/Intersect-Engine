@@ -5,7 +5,7 @@ using Intersect.Client.General;
 namespace Intersect.Client.Core.Controls
 {
 
-    public class ControlMap
+    public partial class ControlMap
     {
         public ControlValue Key1;
 

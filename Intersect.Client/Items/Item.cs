@@ -6,7 +6,7 @@ using Intersect.GameObjects;
 namespace Intersect.Client.Items
 {
 
-    public class Item : IItem
+    public partial class Item : IItem
     {
 
         public Guid? BagId { get; set; }

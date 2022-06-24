@@ -3,7 +3,7 @@
 namespace Intersect.Server.Core.CommandParsing.Arguments
 {
 
-    public abstract class PositionalArgument<TValue> : CommandArgument<TValue>
+    public abstract partial class PositionalArgument<TValue> : CommandArgument<TValue>
     {
 
         protected PositionalArgument(LocaleArgument localization, bool required = false) : base(
@@ -18,7 +18,7 @@ namespace Intersect.Server.Core.CommandParsing.Arguments
 
     }
 
-    public abstract class PositionalArgument : PositionalArgument<object>
+    public abstract partial class PositionalArgument : PositionalArgument<object>
     {
 
         protected PositionalArgument(LocaleArgument localization) : base(localization)

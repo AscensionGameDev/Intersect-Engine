@@ -12,7 +12,7 @@ using Intersect.GameObjects;
 namespace Intersect.Client.Interface.Game
 {
 
-    public class QuestOfferWindow
+    public partial class QuestOfferWindow
     {
 
         private Button mAcceptButton;

@@ -9,7 +9,7 @@ namespace Intersect.Server.Localization
     public static partial class Strings
     {
 
-        public sealed class CommandsNamespace : LocaleCommandNamespace
+        public sealed partial class CommandsNamespace : LocaleCommandNamespace
         {
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -258,7 +258,7 @@ namespace Intersect.Server.Localization
                 Help = @"unmutes a player allowing them to talk"
             };
 
-            public sealed class ArgumentsNamespace : LocaleNamespace
+            public sealed partial class ArgumentsNamespace : LocaleNamespace
             {
 
                 [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]

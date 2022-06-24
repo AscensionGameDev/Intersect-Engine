@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 namespace Intersect.IO
 {
 
-    public sealed class ConsoleContext
+    public sealed partial class ConsoleContext
     {
 
         public static readonly int DefaultInputHistoryLength = 100;

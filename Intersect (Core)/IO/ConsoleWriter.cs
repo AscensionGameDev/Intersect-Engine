@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Intersect.IO
 {
 
-    public class ConsoleWriter : TextWriter
+    public partial class ConsoleWriter : TextWriter
     {
 
         public ConsoleWriter(ConsoleContext context, TextWriter textWriter)

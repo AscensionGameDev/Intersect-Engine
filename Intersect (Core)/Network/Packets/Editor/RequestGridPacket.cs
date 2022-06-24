@@ -4,7 +4,7 @@ using System;
 namespace Intersect.Network.Packets.Editor
 {
     [MessagePackObject]
-    public class RequestGridPacket : EditorPacket
+    public partial class RequestGridPacket : EditorPacket
     {
         //Parameterless Constructor for MessagePack
         public RequestGridPacket()

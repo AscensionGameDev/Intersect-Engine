@@ -6,7 +6,7 @@ using Intersect.Client.Framework.Gwen.ControlInternal;
 namespace Intersect.Client.Framework.Gwen.Control
 {
 
-    public class VerticalSplitter : Base
+    public partial class VerticalSplitter : Base
     {
 
         private readonly SplitterBar mHSplitter;

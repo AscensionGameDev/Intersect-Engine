@@ -7,7 +7,7 @@ using Intersect.Logging;
 namespace Intersect.Utilities
 {
 
-    public static class Retry
+    public static partial class Retry
     {
 
         public delegate bool TryParameterlessAction<TResult>(out TResult result);

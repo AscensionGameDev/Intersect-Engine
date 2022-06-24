@@ -14,7 +14,7 @@ namespace Intersect.Server.Web.RestApi.Attributes
 {
 
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, Inherited = false)]
-    internal class ConfigurableAuthorizeAttribute : AuthorizeAttribute
+    internal partial class ConfigurableAuthorizeAttribute : AuthorizeAttribute
     {
         protected IEnumerable<string> InternalRoles =>
             Roles?.Split(',').Where(role => !string.IsNullOrWhiteSpace(role)).Select(role => role.Trim()) ??

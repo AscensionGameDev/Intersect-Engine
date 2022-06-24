@@ -5,7 +5,7 @@ using Intersect.Client.Framework.Gwen.Control;
 
 namespace Intersect.Client.Interface.Game.DescriptionWindows.Components
 {
-    public class ComponentBase : IDisposable
+    public partial class ComponentBase : IDisposable
     {
         protected Base mParent;
 

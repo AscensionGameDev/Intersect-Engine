@@ -10,7 +10,7 @@ namespace Intersect.Client.Framework.Gwen.Control
     /// <summary>
     ///     Base resizable control.
     /// </summary>
-    public class ResizableControl : Base
+    public partial class ResizableControl : Base
     {
 
         private readonly Resizer[] mResizer;

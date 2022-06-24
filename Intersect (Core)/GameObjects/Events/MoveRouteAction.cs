@@ -3,7 +3,7 @@
 namespace Intersect.GameObjects.Events
 {
 
-    public class MoveRouteAction
+    public partial class MoveRouteAction
     {
 
         public Guid AnimationId { get; set; }

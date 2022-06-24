@@ -13,7 +13,7 @@ using Newtonsoft.Json;
 namespace Intersect.GameObjects
 {
 
-    public class ClassBase : DatabaseObject<ClassBase>, IFolderable
+    public partial class ClassBase : DatabaseObject<ClassBase>, IFolderable
     {
 
         public const long DEFAULT_BASE_EXPERIENCE = 100;
@@ -118,7 +118,7 @@ namespace Intersect.GameObjects
         [NotMapped]
         public ExperienceCurve ExperienceCurve { get; }
 
-        //Locked - Can the class be chosen from character select?
+        //Locked - Can the partial class be chosen from character select?
         public bool Locked { get; set; }
 
         public int PointIncrease { get; set; }
@@ -248,7 +248,7 @@ namespace Intersect.GameObjects
 
     }
 
-    public class ClassItem
+    public partial class ClassItem
     {
 
         [JsonProperty]
@@ -263,7 +263,7 @@ namespace Intersect.GameObjects
 
     }
 
-    public class ClassSpell
+    public partial class ClassSpell
     {
 
         [JsonProperty]
@@ -278,7 +278,7 @@ namespace Intersect.GameObjects
 
     }
 
-    public class ClassSprite
+    public partial class ClassSprite
     {
 
         public string Face = "";

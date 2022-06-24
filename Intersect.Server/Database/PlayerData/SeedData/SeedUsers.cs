@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Intersect.Server.Database.PlayerData.SeedData
 {
 
-    public class SeedUsers : SeedData<User>
+    public partial class SeedUsers : SeedData<User>
     {
 
         private static string GenerateSalt(RandomNumberGenerator rng)
@@ -134,7 +134,7 @@ namespace Intersect.Server.Database.PlayerData.SeedData
 
     }
 
-    public static class RandomNumberGeneratorExtensions
+    public static partial class RandomNumberGeneratorExtensions
     {
 
         public static int NextInt(

@@ -6,7 +6,7 @@ namespace Intersect.Extensions
 {
 
     [TestFixture]
-    public class GameObjectInfoAttributeTests
+    public partial class GameObjectInfoAttributeTests
     {
 
         [Test]

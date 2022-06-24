@@ -10,7 +10,7 @@ namespace Intersect.Server.Web.RestApi.Attributes
 {
 
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, Inherited = false)]
-    internal class DebugAuthorizeAttribute : AuthorizeAttribute
+    internal partial class DebugAuthorizeAttribute : AuthorizeAttribute
     {
 
         protected override bool IsAuthorized(HttpActionContext actionContext)

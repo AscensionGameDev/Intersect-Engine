@@ -16,7 +16,7 @@ using Microsoft.Owin.Security.OAuth;
 namespace Intersect.Server.Web.RestApi.Authentication.OAuth.Providers
 {
 
-    internal class GrantProvider : OAuthAuthorizationServerProvider
+    internal partial class GrantProvider : OAuthAuthorizationServerProvider
     {
 
         public GrantProvider(ApiConfiguration configuration)

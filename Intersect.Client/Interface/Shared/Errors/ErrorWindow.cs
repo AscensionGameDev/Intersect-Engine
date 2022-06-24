@@ -10,7 +10,7 @@ using Intersect.Client.Interface.Game;
 namespace Intersect.Client.Interface.Shared.Errors
 {
 
-    class ErrorWindow
+    partial class ErrorWindow
     {
 
         List<InputBox> mErrorWindows = new List<InputBox>();

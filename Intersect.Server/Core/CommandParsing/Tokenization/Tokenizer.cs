@@ -3,7 +3,7 @@
 namespace Intersect.Server.Core.CommandParsing.Tokenization
 {
 
-    public class Tokenizer
+    public partial class Tokenizer
     {
 
         public Tokenizer() : this(TokenizerSettings.Default)

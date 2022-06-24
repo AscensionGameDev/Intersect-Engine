@@ -3,7 +3,7 @@
 namespace Intersect.Network.Packets.Editor
 {
     [MessagePackObject]
-    public class AddTilesetsPacket : EditorPacket
+    public partial class AddTilesetsPacket : EditorPacket
     {
         //Parameterless Constructor for MessagePack
         public AddTilesetsPacket()

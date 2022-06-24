@@ -3,7 +3,7 @@
 namespace Intersect.Logging.Output
 {
 
-    public class ConsoleOutput : ILogOutput
+    public partial class ConsoleOutput : ILogOutput
     {
 
         public ConsoleOutput(LogLevel logLevel = LogLevel.All)

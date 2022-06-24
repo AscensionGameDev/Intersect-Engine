@@ -5,7 +5,7 @@ namespace Intersect.Client.Framework.Content
 {
 
     [AttributeUsage(AttributeTargets.Field)]
-    public class AssetTypeAttribute : Attribute
+    public partial class AssetTypeAttribute : Attribute
     {
 
         public AssetTypeAttribute(Type type)

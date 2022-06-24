@@ -14,7 +14,7 @@ using Intersect.Logging;
 namespace Intersect.Editor.Forms.Editors.Events
 {
 
-    public static class CommandPrinter
+    public static partial class CommandPrinter
     {
 
         /// <summary>

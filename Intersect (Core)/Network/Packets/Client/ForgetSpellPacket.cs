@@ -6,7 +6,7 @@ using MessagePack;
 namespace Intersect.Network.Packets.Client
 {
     [MessagePackObject]
-    public class ForgetSpellPacket : IntersectPacket
+    public partial class ForgetSpellPacket : IntersectPacket
     {
         //Parameterless Constructor for MessagePack
         public ForgetSpellPacket()

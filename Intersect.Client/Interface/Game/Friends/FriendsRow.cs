@@ -10,7 +10,7 @@ using Intersect.Client.Framework.GenericClasses;
 
 namespace Intersect.Client.Interface.Game
 {
-    public class FriendsRow
+    public partial class FriendsRow
     {
         private Base mParent;
 

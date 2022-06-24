@@ -6,7 +6,7 @@ namespace Intersect.Client.Framework.Gwen.ControlInternal
     /// <summary>
     ///     Submenu indicator.
     /// </summary>
-    public class RightArrow : Base
+    public partial class RightArrow : Base
     {
 
         /// <summary>

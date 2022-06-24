@@ -3,7 +3,7 @@
 namespace Intersect
 {
 
-    public static class SharedConstants
+    public static partial class SharedConstants
     {
 
         public static readonly string VersionName = "Beta Eridani (201802251101-05)";

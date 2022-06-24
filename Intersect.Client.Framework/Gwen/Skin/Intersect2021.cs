@@ -9,7 +9,7 @@ namespace Intersect.Client.Framework.Gwen.Skin
     /// <summary>
     ///     Base textured skin.
     /// </summary>
-    public class Intersect2021 : TexturedBase
+    public partial class Intersect2021 : TexturedBase
     {
         /// <summary>
         ///     Initializes a new instance of the <see cref="TexturedBase" /> class.

@@ -6,7 +6,7 @@ using Intersect.Client.Localization;
 namespace Intersect.Client.Interface.Shared.Errors
 {
 
-    public class ErrorHandler
+    public partial class ErrorHandler
     {
 
         //Controls

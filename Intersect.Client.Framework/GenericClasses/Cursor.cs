@@ -1,7 +1,7 @@
 ﻿namespace Intersect.Client.Framework.GenericClasses
 {
 
-    public class Cursor
+    public partial class Cursor
     {
 
         private int mType = 0;
@@ -19,7 +19,7 @@
 
     }
 
-    public static class Cursors
+    public static partial class Cursors
     {
 
         public enum CursorTypes

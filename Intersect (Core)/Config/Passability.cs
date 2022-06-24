@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 namespace Intersect.Config
 {
 
-    public class Passability
+    public partial class Passability
     {
 
         public bool Arena = false;

@@ -4,7 +4,7 @@ namespace Intersect.Network.Packets.Client
 {
 
     [MessagePackObject]
-    public class CloseBagPacket : IntersectPacket
+    public partial class CloseBagPacket : IntersectPacket
     {
 
     }

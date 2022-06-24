@@ -2,7 +2,7 @@ using System;
 
 namespace Intersect.Client.Framework.Gwen.Control.Data
 {
-    public class CellDataChangedEventArgs : EventArgs
+    public partial class CellDataChangedEventArgs : EventArgs
     {
         public CellDataChangedEventArgs(object oldValue, object newValue)
         {

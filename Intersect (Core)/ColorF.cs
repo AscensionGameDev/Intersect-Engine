@@ -1,7 +1,7 @@
 ﻿namespace Intersect
 {
 
-    public class ColorF
+    public partial class ColorF
     {
 
         public ColorF()

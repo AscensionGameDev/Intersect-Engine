@@ -9,7 +9,7 @@ using Intersect.Utilities;
 namespace Intersect.Client.Core.Sounds
 {
 
-    public class Sound : ISound
+    public partial class Sound : ISound
     {
 
         public bool Loaded { get; set; }

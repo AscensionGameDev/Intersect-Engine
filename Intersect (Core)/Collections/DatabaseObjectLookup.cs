@@ -11,7 +11,7 @@ using Intersect.Utilities;
 namespace Intersect.Collections
 {
 
-    public class DatabaseObjectLookup : IGameObjectLookup<IDatabaseObject>
+    public partial class DatabaseObjectLookup : IGameObjectLookup<IDatabaseObject>
     {
 
         private readonly SortedDictionary<Guid, IDatabaseObject> mIdMap;

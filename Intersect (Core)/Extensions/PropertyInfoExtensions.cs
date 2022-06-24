@@ -4,7 +4,7 @@ using System.Reflection;
 namespace Intersect.Extensions
 {
 
-    public static class PropertyInfoExtensions
+    public static partial class PropertyInfoExtensions
     {
 
         public static bool TryGetValue<TValue>(

@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace Intersect.Network.Packets.Server
 {
     [MessagePackObject]
-    public class MapEntityVitalsPacket : IntersectPacket
+    public partial class MapEntityVitalsPacket : IntersectPacket
     {
         [Key(0)]
         public Guid MapId { get; set; }
@@ -26,7 +26,7 @@ namespace Intersect.Network.Packets.Server
     }
 
     [MessagePackObject]
-    public class EntityVitalData
+    public partial class EntityVitalData
     {
         [Key(0)]
         public Guid Id { get; set; }

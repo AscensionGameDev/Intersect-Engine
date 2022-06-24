@@ -8,7 +8,7 @@ using Intersect.Client.Localization;
 
 namespace Intersect.Client.Interface.Game.DescriptionWindows
 {
-    public class ItemDescriptionWindow : DescriptionWindowBase
+    public partial class ItemDescriptionWindow : DescriptionWindowBase
     {
         protected ItemBase mItem;
 

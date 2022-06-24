@@ -10,7 +10,7 @@ using Intersect.Logging;
 
 namespace Intersect.IO.Files
 {
-    public static class FileSystemHelper
+    public static partial class FileSystemHelper
     {
         private static readonly string[] SizePrefixes = {"", "K", "M", "G", "T", "P", "E"};
 

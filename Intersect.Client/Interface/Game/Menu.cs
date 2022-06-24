@@ -16,7 +16,7 @@ using Intersect.GameObjects;
 namespace Intersect.Client.Interface.Game
 {
 
-    public class Menu
+    public partial class Menu
     {
 
         private readonly ImagePanel mCharacterBackground;

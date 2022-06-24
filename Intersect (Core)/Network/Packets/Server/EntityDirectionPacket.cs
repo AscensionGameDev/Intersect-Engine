@@ -6,7 +6,7 @@ using MessagePack;
 namespace Intersect.Network.Packets.Server
 {
     [MessagePackObject]
-    public class EntityDirectionPacket : IntersectPacket
+    public partial class EntityDirectionPacket : IntersectPacket
     {
         //Parameterless Constructor for MessagePack
         public EntityDirectionPacket()

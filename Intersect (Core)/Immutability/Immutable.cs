@@ -3,7 +3,7 @@
 namespace Intersect.Immutability
 {
 
-    public struct Immutable<TValue>
+    public partial struct Immutable<TValue>
     {
 
         private bool mInitialized;

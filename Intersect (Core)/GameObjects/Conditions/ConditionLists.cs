@@ -9,7 +9,7 @@ namespace Intersect.GameObjects.Conditions
 {
 
     [JsonConverter(typeof(ConditionListsSerializer))]
-    public class ConditionLists
+    public partial class ConditionLists
     {
 
         public List<ConditionList> Lists = new List<ConditionList>();
@@ -53,7 +53,7 @@ namespace Intersect.GameObjects.Conditions
 
     }
 
-    public class ConditionListsSerializer : JsonConverter
+    public partial class ConditionListsSerializer : JsonConverter
     {
 
         public override bool CanConvert(Type objectType)

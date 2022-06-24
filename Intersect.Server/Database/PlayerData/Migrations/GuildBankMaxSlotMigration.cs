@@ -2,7 +2,7 @@
 
 namespace Intersect.Server.Database.PlayerData.Migrations
 {
-    public class GuildBankMaxSlotMigration
+    public partial class GuildBankMaxSlotMigration
     {
         public static void Run(PlayerContext context)
         {

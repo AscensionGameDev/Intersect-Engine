@@ -4,7 +4,7 @@ using Intersect.Server.Localization;
 namespace Intersect.Server.Core.CommandParsing.Errors
 {
 
-    public class MissingCommandError : ParserError
+    public partial class MissingCommandError : ParserError
     {
 
         protected MissingCommandError(string commandName, string message) : base(message)

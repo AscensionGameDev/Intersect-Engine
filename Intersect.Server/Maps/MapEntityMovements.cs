@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Intersect.Server.Maps
 {
-    public class MapEntityMovements
+    public partial class MapEntityMovements
     {
         private Dictionary<Guid, List<EntityMovePacket>> mMovements = new Dictionary<Guid, List<EntityMovePacket>>();
 

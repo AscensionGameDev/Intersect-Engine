@@ -208,7 +208,7 @@ namespace Intersect.Client.Localization
             }
         }
 
-        public struct Admin
+        public partial struct Admin
         {
 
             public static LocalizedString access = @"Access:";
@@ -284,7 +284,7 @@ namespace Intersect.Client.Localization
 
         }
 
-        public struct Bags
+        public partial struct Bags
         {
 
             public static LocalizedString retreiveitem = @"Retreive Item";
@@ -299,7 +299,7 @@ namespace Intersect.Client.Localization
 
         }
 
-        public struct Bank
+        public partial struct Bank
         {
 
             public static LocalizedString deposititem = @"Deposit Item";
@@ -314,7 +314,7 @@ namespace Intersect.Client.Localization
 
         }
 
-        public struct BanMute
+        public partial struct BanMute
         {
 
             public static LocalizedString oneday = @"1 day";
@@ -353,7 +353,7 @@ namespace Intersect.Client.Localization
 
         }
 
-        public struct Character
+        public partial struct Character
         {
 
             public static LocalizedString equipment = @"Equipment:";
@@ -380,7 +380,7 @@ namespace Intersect.Client.Localization
 
         }
 
-        public struct CharacterCreation
+        public partial struct CharacterCreation
         {
 
             public static LocalizedString back = @"Back";
@@ -408,7 +408,7 @@ namespace Intersect.Client.Localization
 
         }
 
-        public struct CharacterSelection
+        public partial struct CharacterSelection
         {
 
             public static LocalizedString delete = @"Delete";
@@ -434,7 +434,7 @@ namespace Intersect.Client.Localization
 
         }
 
-        public struct Chatbox
+        public partial struct Chatbox
         {
 
             public static LocalizedString channel = @"Channel:";
@@ -474,7 +474,7 @@ namespace Intersect.Client.Localization
 
         }
 
-        public struct Colors
+        public partial struct Colors
         {
 
             public static Dictionary<int, LocalizedString> presets = new Dictionary<int, LocalizedString>
@@ -494,7 +494,7 @@ namespace Intersect.Client.Localization
 
         }
 
-        public struct Combat
+        public partial struct Combat
         {
             public static LocalizedString AttackWhileCastingDeny = @"You are currently casting a spell, you cannot attack.";
 
@@ -532,7 +532,7 @@ namespace Intersect.Client.Localization
 
         }
 
-        public struct Controls
+        public partial struct Controls
         {
 
             public static Dictionary<string, LocalizedString> controldict = new Dictionary<string, LocalizedString>
@@ -575,7 +575,7 @@ namespace Intersect.Client.Localization
 
         }
 
-        public struct Crafting
+        public partial struct Crafting
         {
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -605,7 +605,7 @@ namespace Intersect.Client.Localization
 
         }
 
-        public struct Credits
+        public partial struct Credits
         {
 
             public static LocalizedString back = @"Main Menu";
@@ -614,7 +614,7 @@ namespace Intersect.Client.Localization
 
         }
 
-        public struct Debug
+        public partial struct Debug
         {
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString ControlUnderCursor = @"Control Under Cusor";
@@ -669,7 +669,7 @@ namespace Intersect.Client.Localization
 
         }
 
-        public struct EntityBox
+        public partial struct EntityBox
         {
 
             public static LocalizedString NameAndLevel = @"{00}    {01}";
@@ -708,7 +708,7 @@ namespace Intersect.Client.Localization
 
         }
 
-        public struct Errors
+        public partial struct Errors
         {
 
             public static LocalizedString displaynotsupported = @"Invalid Display Configuration!";
@@ -746,7 +746,7 @@ namespace Intersect.Client.Localization
 
         }
 
-        public struct Words
+        public partial struct Words
         {
 
             public static LocalizedString lcase_sound = @"sound";
@@ -759,14 +759,14 @@ namespace Intersect.Client.Localization
 
         }
 
-        public struct EventWindow
+        public partial struct EventWindow
         {
 
             public static LocalizedString Continue = @"Continue";
 
         }
 
-        public struct ForgotPass
+        public partial struct ForgotPass
         {
 
             public static LocalizedString back = @"Back";
@@ -782,7 +782,7 @@ namespace Intersect.Client.Localization
 
         }
 
-        public struct Friends
+        public partial struct Friends
         {
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString AddFriend = @"Add Friend";
@@ -816,7 +816,7 @@ namespace Intersect.Client.Localization
 
         }
 
-        public struct GameMenu
+        public partial struct GameMenu
         {
 
             public static LocalizedString character = @"Character Info";
@@ -835,7 +835,7 @@ namespace Intersect.Client.Localization
 
         }
 
-        public struct General
+        public partial struct General
         {
 
             public static LocalizedString none = @"None";
@@ -845,7 +845,7 @@ namespace Intersect.Client.Localization
 
         }
 
-        public struct Guilds
+        public partial struct Guilds
         {
             public static LocalizedString Guild = @"Guild";
 
@@ -912,7 +912,7 @@ namespace Intersect.Client.Localization
             public static LocalizedString InviteAlreadyInGuild = @"The player you're trying to invite is already in a guild or has a pending invite.";
         }
 
-        public struct InputBox
+        public partial struct InputBox
         {
 
             public static LocalizedString cancel = @"Cancel";
@@ -925,7 +925,7 @@ namespace Intersect.Client.Localization
 
         }
 
-        public struct MapItemWindow
+        public partial struct MapItemWindow
         {
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString Title = @"Loot";
@@ -935,7 +935,7 @@ namespace Intersect.Client.Localization
 
         }
 
-        public struct Internals
+        public partial struct Internals
         {
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString Bounds = @"Bounds";
@@ -992,7 +992,7 @@ namespace Intersect.Client.Localization
             public static LocalizedString Type = @"Type";
         }
 
-        public struct Inventory
+        public partial struct Inventory
         {
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString Cooldown = "{00}s";
@@ -1014,7 +1014,7 @@ namespace Intersect.Client.Localization
 
         }
 
-        public struct ItemContextMenu
+        public partial struct ItemContextMenu
         {
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString Use = @"Use {00}";
@@ -1047,7 +1047,7 @@ namespace Intersect.Client.Localization
             public static LocalizedString Trade = @"Offer {00}";
         }
 
-        public struct SpellContextMenu
+        public partial struct SpellContextMenu
         {
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString Cast = @"Cast {00}";
@@ -1056,25 +1056,25 @@ namespace Intersect.Client.Localization
             public static LocalizedString Forget = @"Forget {00}";
         }
 
-        public struct BankContextMenu
+        public partial struct BankContextMenu
         {
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString Withdraw = @"Withdraw {00}";
         }
 
-        public struct BagContextMenu
+        public partial struct BagContextMenu
         {
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString Withdraw = @"Withdraw {00}";
         }
 
-        public struct TradeContextMenu
+        public partial struct TradeContextMenu
         {
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString Withdraw = @"Revoke {00}";
         }
 
-        public struct ChatContextMenu
+        public partial struct ChatContextMenu
         {
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString PM = @"PM {00}";
@@ -1089,13 +1089,13 @@ namespace Intersect.Client.Localization
             public static LocalizedString GuildInvite = @"Guild Invite {00}";
         }
 
-        public struct ShopContextMenu
+        public partial struct ShopContextMenu
         {
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString Buy = @"Buy {00}";
         }
 
-        public struct ItemDescription
+        public partial struct ItemDescription
         {
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString BaseDamageType = @"Damage Type:";
@@ -1270,7 +1270,7 @@ namespace Intersect.Client.Localization
             public static LocalizedString BlockAbsorption = @"Block Absorption:";
         }
 
-        public struct Keys
+        public partial struct Keys
         {
 
             public static Dictionary<string, LocalizedString> keydict = new Dictionary<string, LocalizedString>()
@@ -1473,7 +1473,7 @@ namespace Intersect.Client.Localization
 
         }
 
-        public struct Login
+        public partial struct Login
         {
 
             public static LocalizedString back = @"Back";
@@ -1492,14 +1492,14 @@ namespace Intersect.Client.Localization
 
         }
 
-        public struct Main
+        public partial struct Main
         {
 
             public static LocalizedString gamename = @"Intersect Client";
 
         }
 
-        public struct MainMenu
+        public partial struct MainMenu
         {
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString Credits = @"Credits";
@@ -1523,7 +1523,7 @@ namespace Intersect.Client.Localization
             public static LocalizedString Title = @"Main Menu";
         }
 
-        public struct Settings
+        public partial struct Settings
         {
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString Apply = @"Apply";
@@ -1623,7 +1623,7 @@ namespace Intersect.Client.Localization
             public static LocalizedString Vsync = @"V-Sync";
         }
 
-        public struct Parties
+        public partial struct Parties
         {
             public static LocalizedString infight = @"You are currently fighting!";
 
@@ -1657,7 +1657,7 @@ namespace Intersect.Client.Localization
 
         }
 
-        public struct QuestLog
+        public partial struct QuestLog
         {
 
             public static LocalizedString abandon = @"Abandon";
@@ -1684,7 +1684,7 @@ namespace Intersect.Client.Localization
 
         }
 
-        public struct QuestOffer
+        public partial struct QuestOffer
         {
 
             public static LocalizedString accept = @"Accept";
@@ -1695,7 +1695,7 @@ namespace Intersect.Client.Localization
 
         }
 
-        public struct Regex
+        public partial struct Regex
         {
 
             public static LocalizedString email =
@@ -1707,7 +1707,7 @@ namespace Intersect.Client.Localization
 
         }
 
-        public struct Registration
+        public partial struct Registration
         {
 
             public static LocalizedString back = @"Back";
@@ -1730,7 +1730,7 @@ namespace Intersect.Client.Localization
 
         }
 
-        public struct ResetPass
+        public partial struct ResetPass
         {
 
             public static LocalizedString back = @"Cancel";
@@ -1758,7 +1758,7 @@ namespace Intersect.Client.Localization
 
         }
 
-        public struct Resources
+        public partial struct Resources
         {
 
             public static LocalizedString cancelled = @"Download was Cancelled!";
@@ -1773,7 +1773,7 @@ namespace Intersect.Client.Localization
 
         }
 
-        public struct Server
+        public partial struct Server
         {
 
             public static LocalizedString StatusLabel = @"Server Status: {00}";
@@ -1796,7 +1796,7 @@ namespace Intersect.Client.Localization
 
         }
 
-        public struct Shop
+        public partial struct Shop
         {
 
             public static LocalizedString buyitem = @"Buy Item";
@@ -1819,7 +1819,7 @@ namespace Intersect.Client.Localization
 
         }
 
-        public struct SpellDescription
+        public partial struct SpellDescription
         {
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static Dictionary<int, LocalizedString> SpellTypes = new Dictionary<int, LocalizedString>
@@ -2029,7 +2029,7 @@ namespace Intersect.Client.Localization
 
         }
 
-        public struct Spells
+        public partial struct Spells
         {
 
             public static LocalizedString cooldown = "{00}s";
@@ -2042,7 +2042,7 @@ namespace Intersect.Client.Localization
 
         }
 
-        public struct Trading
+        public partial struct Trading
         {
 
             public static LocalizedString accept = @"Accept";
@@ -2074,7 +2074,7 @@ namespace Intersect.Client.Localization
 
         }
 
-        public struct EscapeMenu
+        public partial struct EscapeMenu
         {
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString CharacterSelect = @"Characters";
@@ -2095,7 +2095,7 @@ namespace Intersect.Client.Localization
             public static LocalizedString Title = @"Menu";
         }
 
-        public struct Numbers
+        public partial struct Numbers
         {
 
             public static LocalizedString thousands = "k";
@@ -2110,7 +2110,7 @@ namespace Intersect.Client.Localization
 
         }
 
-        public struct Update
+        public partial struct Update
         {
 
             public static LocalizedString Checking = @"Checking for updates, please wait!";
@@ -2131,7 +2131,7 @@ namespace Intersect.Client.Localization
 
         }
 
-        public struct GameWindow
+        public partial struct GameWindow
         {
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString EntityNameAndLevel = @"{00} [Lv. {01}]";

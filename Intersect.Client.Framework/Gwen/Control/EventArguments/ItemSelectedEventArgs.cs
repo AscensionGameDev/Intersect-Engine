@@ -3,7 +3,7 @@
 namespace Intersect.Client.Framework.Gwen.Control.EventArguments
 {
 
-    public class ItemSelectedEventArgs : EventArgs
+    public partial class ItemSelectedEventArgs : EventArgs
     {
 
         internal ItemSelectedEventArgs(Base selecteditem, bool automated = false)

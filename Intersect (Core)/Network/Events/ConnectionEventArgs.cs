@@ -2,7 +2,7 @@
 
 namespace Intersect.Network.Events
 {
-    public class ConnectionEventArgs : EventArgs
+    public partial class ConnectionEventArgs : EventArgs
     {
         public NetworkStatus NetworkStatus { get; set; }
 

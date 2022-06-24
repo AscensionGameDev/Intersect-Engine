@@ -3,7 +3,7 @@
     /// <summary>
     /// Contains configurable options pertaining to the way Players are handled by the engine.
     /// </summary>
-    public class PlayerOptions
+    public partial class PlayerOptions
     {
         /// <summary>
         /// Intersect default for initial player bank slots

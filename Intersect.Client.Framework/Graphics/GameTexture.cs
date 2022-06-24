@@ -7,7 +7,7 @@ using Intersect.Logging;
 namespace Intersect.Client.Framework.Graphics
 {
 
-    public abstract class GameTexture : IAsset
+    public abstract partial class GameTexture : IAsset
     {
 
         public string Name => GetName() ?? throw new ArgumentNullException(nameof(GetName));

@@ -6,7 +6,7 @@ namespace Intersect.Client.Framework.Gwen.ControlInternal
     /// <summary>
     ///     Divider menu item.
     /// </summary>
-    public class MenuDivider : Base
+    public partial class MenuDivider : Base
     {
 
         /// <summary>

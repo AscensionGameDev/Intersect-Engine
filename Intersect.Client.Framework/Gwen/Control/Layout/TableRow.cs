@@ -12,7 +12,7 @@ namespace Intersect.Client.Framework.Gwen.Control.Layout
     /// <summary>
     ///     Single table row.
     /// </summary>
-    public class TableRow : Base, IColorableText
+    public partial class TableRow : Base, IColorableText
     {
         private readonly List<Action> mDisposalActions;
 

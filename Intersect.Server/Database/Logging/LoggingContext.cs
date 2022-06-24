@@ -9,7 +9,7 @@ using System.Data.Common;
 
 namespace Intersect.Server.Database.Logging
 {
-    internal sealed class LoggingContext : IntersectDbContext<LoggingContext>, ILoggingContext
+    internal sealed partial class LoggingContext : IntersectDbContext<LoggingContext>, ILoggingContext
     {
         public LoggingContext() : this(DefaultConnectionStringBuilder) { }
 
@@ -60,7 +60,7 @@ namespace Intersect.Server.Database.Logging
         }
     }
 
-    internal sealed class LoggingContextInterface : ContextInterface<ILoggingContext>, ILoggingContext
+    internal sealed partial class LoggingContextInterface : ContextInterface<ILoggingContext>, ILoggingContext
     {
         /// <inheritdoc />
         public LoggingContextInterface(ILoggingContext context) : base(context)

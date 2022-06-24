@@ -1,7 +1,7 @@
 ﻿namespace Intersect.Client.Framework.GenericClasses
 {
 
-    public class SaveFileDialog
+    public partial class SaveFileDialog
     {
         public string Title { get; set; }
 

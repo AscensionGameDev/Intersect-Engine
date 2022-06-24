@@ -3,7 +3,7 @@ using System.Threading;
 
 namespace Intersect.Async
 {
-    public class CancellableGenerator<TValue> : IDisposable
+    public partial class CancellableGenerator<TValue> : IDisposable
     {
         private readonly CancellationTokenSource _cancellationTokenSource;
 

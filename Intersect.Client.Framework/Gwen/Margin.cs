@@ -6,7 +6,7 @@ namespace Intersect.Client.Framework.Gwen
     /// <summary>
     ///     Represents outer spacing.
     /// </summary>
-    public struct Margin : IEquatable<Margin>
+    public partial struct Margin : IEquatable<Margin>
     {
 
         public int Top;

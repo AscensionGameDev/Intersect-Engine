@@ -7,7 +7,7 @@ using MessagePack;
 namespace Intersect.Network
 {
     [MessagePackObject]
-    public abstract class IntersectPacket : IPacket
+    public abstract partial class IntersectPacket : IPacket
     {
         [IgnoreMember]
         private byte[] mCachedData = null;

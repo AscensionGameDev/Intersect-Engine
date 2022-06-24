@@ -1,6 +1,6 @@
 ﻿namespace Intersect.Config
 {
-    public class PacketOptions
+    public partial class PacketOptions
     {
         #region "Packet Batching"
         /// <summary>

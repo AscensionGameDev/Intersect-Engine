@@ -6,7 +6,7 @@ namespace Intersect.Network
 {
 
     // TODO : Auto-stale packet deletion
-    public sealed class PacketQueue : IDisposable
+    public sealed partial class PacketQueue : IDisposable
     {
 
         private readonly object mDequeLock;

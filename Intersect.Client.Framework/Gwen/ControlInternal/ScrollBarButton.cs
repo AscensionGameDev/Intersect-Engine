@@ -6,7 +6,7 @@ namespace Intersect.Client.Framework.Gwen.ControlInternal
     /// <summary>
     ///     Scrollbar button.
     /// </summary>
-    public class ScrollBarButton : Button
+    public partial class ScrollBarButton : Button
     {
 
         private Pos mDirection;

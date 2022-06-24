@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Intersect.Server.Extensions
 {
 
-    public static class QueryableExtensions
+    public static partial class QueryableExtensions
     {
 
         public static IQueryable<TValue> Sort<TValue>(

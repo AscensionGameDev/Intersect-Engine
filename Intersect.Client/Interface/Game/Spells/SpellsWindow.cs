@@ -13,7 +13,7 @@ using Intersect.GameObjects;
 namespace Intersect.Client.Interface.Game.Spells
 {
 
-    public class SpellsWindow
+    public partial class SpellsWindow
     {
 
         //Spell List

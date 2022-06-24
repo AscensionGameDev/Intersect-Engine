@@ -7,7 +7,7 @@ using System.Linq;
 namespace Intersect.Server.Core.CommandParsing.Arguments
 {
 
-    public sealed class ArgumentValues : IEnumerable<object>
+    public sealed partial class ArgumentValues : IEnumerable<object>
     {
 
         private readonly IList<object> mValues;

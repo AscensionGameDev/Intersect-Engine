@@ -10,7 +10,7 @@ namespace Intersect.Server.Web.RestApi.Services
 
     }
 
-    internal static class ServiceCollectionExtensions
+    internal static partial class ServiceCollectionExtensions
     {
 
         public static IAuthorizedRoutesService GetAuthorizedRoutes(

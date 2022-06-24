@@ -11,7 +11,7 @@ using Newtonsoft.Json;
 namespace Intersect.Server.Database.PlayerData.Players
 {
 
-    public class SpellSlot : Spell, ISlot, IPlayerOwned
+    public partial class SpellSlot : Spell, ISlot, IPlayerOwned
     {
 
         public SpellSlot()

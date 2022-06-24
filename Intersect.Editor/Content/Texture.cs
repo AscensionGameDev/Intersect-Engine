@@ -10,7 +10,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Intersect.Editor.Content
 {
-    public class Texture
+    public partial class Texture
     {
         private readonly string mPath;
 

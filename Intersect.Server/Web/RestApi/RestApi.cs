@@ -25,7 +25,7 @@ using Owin;
 namespace Intersect.Server.Web.RestApi
 {
     // TODO: Migrate to a proper service
-    internal sealed class RestApi : IAppConfigurationProvider, IConfigurable<ApiConfiguration>, IDisposable
+    internal sealed partial class RestApi : IAppConfigurationProvider, IConfigurable<ApiConfiguration>, IDisposable
     {
         private readonly object mDisposeLock;
 

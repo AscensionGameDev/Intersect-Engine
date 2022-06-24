@@ -13,7 +13,7 @@ namespace Intersect.Client.Framework.Gwen.Control
     /// <summary>
     ///     Popup menu.
     /// </summary>
-    public class Menu : ScrollControl
+    public partial class Menu : ScrollControl
     {
 
         private string mBackgroundTemplateFilename;

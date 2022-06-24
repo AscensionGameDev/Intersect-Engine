@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 namespace Intersect.Server.Database
 {
 
-    public class DbLogger : ILogger
+    public partial class DbLogger : ILogger
     {
 
         private Intersect.Logging.Logger _intersectLogger;

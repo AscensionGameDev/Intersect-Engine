@@ -3,7 +3,7 @@
 namespace Intersect.Client.Framework.Gwen.Input
 {
 
-    public abstract class InputBase
+    public abstract partial class InputBase
     {
 
         public bool HandleInput = true;

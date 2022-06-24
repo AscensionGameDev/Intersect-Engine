@@ -14,7 +14,7 @@ using Intersect.Logging;
 namespace Intersect.Editor
 {
 
-    public static class Program
+    public static partial class Program
     {
 
         /// <summary>

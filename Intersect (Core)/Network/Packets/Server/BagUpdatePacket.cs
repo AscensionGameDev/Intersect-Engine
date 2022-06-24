@@ -4,7 +4,7 @@ using System;
 namespace Intersect.Network.Packets.Server
 {
     [MessagePackObject]
-    public class BagUpdatePacket : InventoryUpdatePacket
+    public partial class BagUpdatePacket : InventoryUpdatePacket
     {
         //Parameterless Constructor for MessagePack
         public BagUpdatePacket() : base(0, Guid.Empty, 0, null, new int[(int)Enums.Stats.StatCount])

@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Intersect.Server.Extensions
 {
 
-    public static class EnumerableExtensions
+    public static partial class EnumerableExtensions
     {
 
         public static IEnumerable<TValue> Sort<TValue>(

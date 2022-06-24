@@ -3,7 +3,7 @@
 namespace Intersect.GameObjects.Events
 {
 
-    public class EventMovement
+    public partial class EventMovement
     {
 
         public EventMovementType Type { get; set; } = EventMovementType.None;

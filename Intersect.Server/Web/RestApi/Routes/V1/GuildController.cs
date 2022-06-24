@@ -21,7 +21,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 {
     [RoutePrefix("guilds")]
     [ConfigurableAuthorize]
-    public sealed class GuildController : IntersectApiController
+    public sealed partial class GuildController : IntersectApiController
     {
 
         [Route]

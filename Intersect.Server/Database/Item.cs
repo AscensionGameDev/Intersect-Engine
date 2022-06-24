@@ -11,7 +11,7 @@ using Newtonsoft.Json;
 namespace Intersect.Server.Database
 {
 
-    public class Item
+    public partial class Item
     {
 
         [JsonIgnore] [NotMapped] public double DropChance = 100;

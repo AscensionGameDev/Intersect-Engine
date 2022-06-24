@@ -1,6 +1,6 @@
 ﻿namespace Intersect.Config.Guilds
 {
-    public class GuildPermissions
+    public partial class GuildPermissions
     {
         /// <summary>
         /// Defines whether or not this guild member can invite new members

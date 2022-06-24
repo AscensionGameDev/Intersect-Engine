@@ -3,7 +3,7 @@
 namespace Intersect.Server.Web.Utilities
 {
 
-    public static class HeaderHelper
+    public static partial class HeaderHelper
     {
 
         public static readonly Regex PatternAuthorizationBearer = new Regex(

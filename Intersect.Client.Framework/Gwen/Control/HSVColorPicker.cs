@@ -8,7 +8,7 @@ namespace Intersect.Client.Framework.Gwen.Control
     /// <summary>
     ///     HSV color picker with "before" and "after" color boxes.
     /// </summary>
-    public class HsvColorPicker : Base, IColorPicker
+    public partial class HsvColorPicker : Base, IColorPicker
     {
 
         private readonly ColorDisplay mAfter;

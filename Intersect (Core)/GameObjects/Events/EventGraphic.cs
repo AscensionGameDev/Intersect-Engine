@@ -4,7 +4,7 @@ using MessagePack;
 namespace Intersect.GameObjects.Events
 {
     [MessagePackObject]
-    public class EventGraphic
+    public partial class EventGraphic
     {
         [Key(0)]
         public string Filename;

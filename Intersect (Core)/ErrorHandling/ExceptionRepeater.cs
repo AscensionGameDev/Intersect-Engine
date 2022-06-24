@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace Intersect.Async
 {
-    public sealed class ExceptionRepeater
+    public sealed partial class ExceptionRepeater
     {
         private readonly int _delay;
         private readonly List<Exception> _exceptions;

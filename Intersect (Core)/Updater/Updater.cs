@@ -18,7 +18,7 @@ using Newtonsoft.Json;
 
 namespace Intersect.Updater
 {
-    public class Updater
+    public partial class Updater
     {
         private readonly Thread mUpdateThread;
         private Update mUpdate;

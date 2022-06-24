@@ -3,7 +3,7 @@ using System;
 namespace Intersect.Client.Framework.GenericClasses
 {
 
-    public struct Rectangle
+    public partial struct Rectangle
     {
 
         private int mX;

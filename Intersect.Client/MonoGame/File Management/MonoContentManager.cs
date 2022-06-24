@@ -18,7 +18,7 @@ using Newtonsoft.Json.Linq;
 namespace Intersect.Client.MonoGame.File_Management
 {
 
-    public class MonoContentManager : GameContentManager
+    public partial class MonoContentManager : GameContentManager
     {
 
         public MonoContentManager()

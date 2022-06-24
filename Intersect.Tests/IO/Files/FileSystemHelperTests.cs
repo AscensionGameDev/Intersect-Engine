@@ -7,7 +7,7 @@ using NUnit.Framework;
 namespace Intersect.IO.Files
 {
     [TestFixture]
-    public class FileSystemHelperTests
+    public partial class FileSystemHelperTests
     {
         [OneTimeSetUp]
         public void BeforeAll()

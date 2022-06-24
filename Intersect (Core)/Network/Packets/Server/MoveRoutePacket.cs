@@ -3,7 +3,7 @@
 namespace Intersect.Network.Packets.Server
 {
     [MessagePackObject]
-    public class MoveRoutePacket : IntersectPacket
+    public partial class MoveRoutePacket : IntersectPacket
     {
         //Parameterless Constructor for MessagePack
         public MoveRoutePacket()

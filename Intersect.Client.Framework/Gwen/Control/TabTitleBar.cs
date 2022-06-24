@@ -6,7 +6,7 @@ namespace Intersect.Client.Framework.Gwen.Control
     /// <summary>
     ///     Titlebar for DockedTabControl.
     /// </summary>
-    public class TabTitleBar : Label
+    public partial class TabTitleBar : Label
     {
 
         public TabTitleBar(Base parent) : base(parent)

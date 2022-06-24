@@ -11,7 +11,7 @@ using Intersect.Client.Networking;
 namespace Intersect.Client.Interface.Game
 {
 
-    public class EventWindow : Base
+    public partial class EventWindow : Base
     {
 
         private ScrollControl mEventDialogArea;

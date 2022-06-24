@@ -5,7 +5,7 @@ using Intersect.Utilities;
 namespace Intersect.Client.General
 {
 
-    public static class Time
+    public static partial class Time
     {
 
         private static long sColorUpdate;

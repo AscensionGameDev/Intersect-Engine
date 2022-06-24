@@ -2,7 +2,7 @@
 
 namespace Intersect.Server.Plugins
 {
-    public abstract class ServerPluginEntry : PluginEntry<IServerPluginContext>
+    public abstract partial class ServerPluginEntry : PluginEntry<IServerPluginContext>
     {
 
     }

@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Intersect.Updater
 {
-    public class Update
+    public partial class Update
     {
         public List<UpdateFile> Files { get; set; } = new List<UpdateFile>();
         

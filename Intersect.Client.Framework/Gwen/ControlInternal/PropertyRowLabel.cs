@@ -6,7 +6,7 @@ namespace Intersect.Client.Framework.Gwen.ControlInternal
     /// <summary>
     ///     Label for PropertyRow.
     /// </summary>
-    public class PropertyRowLabel : Label
+    public partial class PropertyRowLabel : Label
     {
 
         private readonly PropertyRow mPropertyRow;

@@ -16,7 +16,7 @@ using Newtonsoft.Json;
 namespace Intersect.Editor.Maps
 {
 
-    public class MapInstance : MapBase, IGameObject<Guid, MapInstance>
+    public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>
     {
 
         private static MapControllers sLookup;

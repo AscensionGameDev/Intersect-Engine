@@ -9,7 +9,7 @@ namespace Intersect.Client.Framework.Gwen.Control
     /// <remarks>
     ///     This class doesn't prevent programatic access to the text in any way.
     /// </remarks>
-    public class TextBoxPassword : TextBox
+    public partial class TextBoxPassword : TextBox
     {
 
         private string mMask;

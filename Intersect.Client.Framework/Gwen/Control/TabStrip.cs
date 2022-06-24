@@ -10,7 +10,7 @@ namespace Intersect.Client.Framework.Gwen.Control
     /// <summary>
     ///     Tab strip - groups TabButtons and allows reordering.
     /// </summary>
-    public class TabStrip : Base
+    public partial class TabStrip : Base
     {
 
         private bool mAllowReorder;

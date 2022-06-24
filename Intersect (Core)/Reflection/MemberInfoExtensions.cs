@@ -5,7 +5,7 @@ using System.Reflection;
 
 namespace Intersect.Reflection
 {
-    public static class MemberInfoExtensions
+    public static partial class MemberInfoExtensions
     {
         public static string GetFullName(this MemberInfo memberInfo)
         {

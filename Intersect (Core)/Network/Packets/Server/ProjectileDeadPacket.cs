@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace Intersect.Network.Packets.Server
 {
     [MessagePackObject]
-    public class ProjectileDeadPacket : IntersectPacket
+    public partial class ProjectileDeadPacket : IntersectPacket
     {
         //Parameterless Constructor for MessagePack
         public ProjectileDeadPacket()

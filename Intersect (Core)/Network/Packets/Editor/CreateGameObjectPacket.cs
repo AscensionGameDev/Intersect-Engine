@@ -4,7 +4,7 @@ using MessagePack;
 namespace Intersect.Network.Packets.Editor
 {
     [MessagePackObject]
-    public class CreateGameObjectPacket : EditorPacket
+    public partial class CreateGameObjectPacket : EditorPacket
     {
         //Parameterless Constructor for MessagePack
         public CreateGameObjectPacket()

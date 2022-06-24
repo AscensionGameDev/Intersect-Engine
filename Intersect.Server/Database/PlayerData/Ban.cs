@@ -15,7 +15,7 @@ using Newtonsoft.Json;
 
 namespace Intersect.Server.Database.PlayerData
 {
-    public class Ban
+    public partial class Ban
     {
         public Ban() { }
 

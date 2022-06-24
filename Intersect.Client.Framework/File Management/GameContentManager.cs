@@ -14,7 +14,7 @@ using Intersect.Plugins;
 namespace Intersect.Client.Framework.File_Management
 {
 
-    public abstract class GameContentManager : IContentManager
+    public abstract partial class GameContentManager : IContentManager
     {
 
 

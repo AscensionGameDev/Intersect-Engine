@@ -6,7 +6,7 @@ using Intersect.Server.Core.CommandParsing.Arguments;
 namespace Intersect.Server.Core.Commands
 {
 
-    internal abstract class TargettedCommand<TTarget> : ServerCommand
+    internal abstract partial class TargettedCommand<TTarget> : ServerCommand
     {
 
         protected TargettedCommand(

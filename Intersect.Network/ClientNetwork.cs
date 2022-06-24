@@ -14,7 +14,7 @@ using Lidgren.Network;
 namespace Intersect.Network
 {
 
-    public class ClientNetwork : AbstractNetwork, IClient
+    public partial class ClientNetwork : AbstractNetwork, IClient
     {
 
         private readonly LidgrenInterface mLidgrenInterface;

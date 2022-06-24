@@ -8,7 +8,7 @@ using Lidgren.Network;
 namespace Intersect.Network.Lidgren
 {
 
-    public class LidgrenBuffer : IBuffer
+    public partial class LidgrenBuffer : IBuffer
     {
 
         public LidgrenBuffer(NetBuffer buffer)

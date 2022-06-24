@@ -13,7 +13,7 @@ namespace Intersect.Server.Web.RestApi.Logging
 {
 
     // TODO: Probably a good idea to remove this since it was replaced with middleware
-    public class IntersectRequestLoggingHandler : DelegatingHandler
+    public partial class IntersectRequestLoggingHandler : DelegatingHandler
     {
 
         public LogLevel LogLevel { get; set; }

@@ -6,7 +6,7 @@ namespace Intersect.Localization
 {
 
     [Serializable]
-    public class LocaleDescribableToken : LocaleToken
+    public partial class LocaleDescribableToken : LocaleToken
     {
 
         [JsonProperty(nameof(Description), NullValueHandling = NullValueHandling.Ignore)]

@@ -9,14 +9,14 @@ using Intersect.Reflection;
 namespace Intersect.Factories
 {
     /// <summary>
-    /// Utility class that stores instances of <see cref="IFactory{TValue}"/>.
+    /// Utility partial class that stores instances of <see cref="IFactory{TValue}"/>.
     /// </summary>
     /// <typeparam name="TValue">the type of created instances</typeparam>
     [SuppressMessage(
         "Design", "CA1000:Do not declare static members on generic types",
         Justification = "Static members on this type are actually desirable."
     )]
-    public static class FactoryRegistry<TValue>
+    public static partial class FactoryRegistry<TValue>
     {
         /// <summary>
         /// The current <see cref="IFactory{TValue}"/> instance, null if one hasn't been registered.

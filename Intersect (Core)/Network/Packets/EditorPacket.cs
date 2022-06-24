@@ -21,7 +21,7 @@ namespace Intersect.Network.Packets
     [Union(12, typeof(SaveTimeDataPacket))]
     [Union(13, typeof(UnlinkMapPacket))]
 
-    public abstract class EditorPacket : IntersectPacket
+    public abstract partial class EditorPacket : IntersectPacket
     {
 
     }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Intersect.Server.Web.RestApi.Payloads
 {
-    public class IpAddress
+    public partial class IpAddress
     {
         public string Ip { get; set; }
 

@@ -5,7 +5,7 @@ using Intersect.Server.Networking;
 namespace Intersect.Server.Core.Commands
 {
 
-    internal sealed class KillCommand : TargetClientCommand
+    internal sealed partial class KillCommand : TargetClientCommand
     {
 
         public KillCommand() : base(Strings.Commands.Kill, Strings.Commands.Arguments.TargetKill)

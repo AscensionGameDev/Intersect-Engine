@@ -3,7 +3,7 @@
 namespace Intersect.Network
 {
 
-    public class NetworkConfiguration
+    public partial class NetworkConfiguration
     {
 
         public NetworkConfiguration() : this("localhost", 5400)

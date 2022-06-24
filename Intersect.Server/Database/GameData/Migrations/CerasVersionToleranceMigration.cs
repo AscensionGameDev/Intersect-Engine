@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace Intersect.Server.Database.GameData.Migrations
 {
-    public class CerasVersionToleranceMigration
+    public partial class CerasVersionToleranceMigration
     {
         private static JsonSerializerSettings mJsonSerializerSettings = new JsonSerializerSettings()
         {
@@ -173,14 +173,14 @@ namespace Intersect.Server.Database.GameData.Migrations
             connection.Close();
         }
 
-        private struct LegacyTileArray
+        private partial struct LegacyTileArray
         {
 
             public LegacyTile[,] Tiles;
 
         }
 
-        private struct LegacyTile
+        private partial struct LegacyTile
         {
 
             public Guid TilesetId;
@@ -195,7 +195,7 @@ namespace Intersect.Server.Database.GameData.Migrations
 
         }
 
-        private abstract class LegacyMapAttribute
+        private abstract partial class LegacyMapAttribute
         {
             public abstract MapAttributes Type { get; }
 
@@ -231,14 +231,14 @@ namespace Intersect.Server.Database.GameData.Migrations
             }
         }
 
-        private class LegacyMapBlockedAttribute : LegacyMapAttribute
+        private partial class LegacyMapBlockedAttribute : LegacyMapAttribute
         {
 
             public override MapAttributes Type { get; } = MapAttributes.Blocked;
 
         }
 
-        private class LegacyMapItemAttribute : LegacyMapAttribute
+        private partial class LegacyMapItemAttribute : LegacyMapAttribute
         {
 
             public override MapAttributes Type { get; } = MapAttributes.Item;
@@ -249,7 +249,7 @@ namespace Intersect.Server.Database.GameData.Migrations
 
         }
 
-        private class LegacyMapZDimensionAttribute : LegacyMapAttribute
+        private partial class LegacyMapZDimensionAttribute : LegacyMapAttribute
         {
 
             public override MapAttributes Type { get; } = MapAttributes.ZDimension;
@@ -260,14 +260,14 @@ namespace Intersect.Server.Database.GameData.Migrations
 
         }
 
-        private class LegacyMapNpcAvoidAttribute : LegacyMapAttribute
+        private partial class LegacyMapNpcAvoidAttribute : LegacyMapAttribute
         {
 
             public override MapAttributes Type { get; } = MapAttributes.NpcAvoid;
 
         }
 
-        private class LegacyMapWarpAttribute : LegacyMapAttribute
+        private partial class LegacyMapWarpAttribute : LegacyMapAttribute
         {
 
             public override MapAttributes Type { get; } = MapAttributes.Warp;
@@ -282,7 +282,7 @@ namespace Intersect.Server.Database.GameData.Migrations
 
         }
 
-        private class LegacyMapSoundAttribute : LegacyMapAttribute
+        private partial class LegacyMapSoundAttribute : LegacyMapAttribute
         {
 
             public override MapAttributes Type { get; } = MapAttributes.Sound;
@@ -293,7 +293,7 @@ namespace Intersect.Server.Database.GameData.Migrations
 
         }
 
-        private class LegacyMapResourceAttribute : LegacyMapAttribute
+        private partial class LegacyMapResourceAttribute : LegacyMapAttribute
         {
 
             public override MapAttributes Type { get; } = MapAttributes.Resource;
@@ -304,7 +304,7 @@ namespace Intersect.Server.Database.GameData.Migrations
 
         }
 
-        private class LegacyMapAnimationAttribute : LegacyMapAttribute
+        private partial class LegacyMapAnimationAttribute : LegacyMapAttribute
         {
 
             public override MapAttributes Type { get; } = MapAttributes.Animation;
@@ -313,14 +313,14 @@ namespace Intersect.Server.Database.GameData.Migrations
 
         }
 
-        private class LegacyMapGrappleStoneAttribute : LegacyMapAttribute
+        private partial class LegacyMapGrappleStoneAttribute : LegacyMapAttribute
         {
 
             public override MapAttributes Type { get; } = MapAttributes.GrappleStone;
 
         }
 
-        private class LegacyMapSlideAttribute : LegacyMapAttribute
+        private partial class LegacyMapSlideAttribute : LegacyMapAttribute
         {
 
             public override MapAttributes Type { get; } = MapAttributes.Slide;

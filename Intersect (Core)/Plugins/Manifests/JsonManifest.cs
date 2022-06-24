@@ -11,7 +11,7 @@ namespace Intersect.Plugins.Manifests
     /// <summary>
     /// Represents the structure of an embedded JSON manifest.
     /// </summary>
-    public class JsonManifest : IManifestHelper
+    public partial class JsonManifest : IManifestHelper
     {
 
         /// <inheritdoc />

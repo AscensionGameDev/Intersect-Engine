@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 namespace Intersect.GameObjects
 {
 
-    public class TimeBase
+    public partial class TimeBase
     {
 
         private static TimeBase sTimeBase = new TimeBase();

@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 
 namespace Intersect.GameObjects
 {
-    public class GuildVariableBase : DatabaseObject<GuildVariableBase>, IFolderable
+    public partial class GuildVariableBase : DatabaseObject<GuildVariableBase>, IFolderable
     {
 
         [JsonConstructor]

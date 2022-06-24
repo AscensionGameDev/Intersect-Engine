@@ -3,7 +3,7 @@
 namespace Intersect.Network.Packets.Client
 {
     [MessagePackObject]
-    public class DropItemPacket : SlotQuantityPacket
+    public partial class DropItemPacket : SlotQuantityPacket
     {
         //Parameterless Constructor for MessagePack
         public DropItemPacket() : base(0, 0)

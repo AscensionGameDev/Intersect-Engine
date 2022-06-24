@@ -8,7 +8,7 @@ using Intersect.Client.Framework.Gwen.Input;
 namespace Intersect.Client.Framework.Gwen.Control
 {
 
-    public class MultilineTextBox : Label
+    public partial class MultilineTextBox : Label
     {
 
         private readonly ScrollControl mScrollControl;

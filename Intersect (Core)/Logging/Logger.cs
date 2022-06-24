@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 namespace Intersect.Logging
 {
 
-    public class Logger : ILogger
+    public partial class Logger : ILogger
     {
 
         public Logger() : this(LogConfiguration.Default) { }

@@ -29,7 +29,7 @@ namespace Intersect.Models
 
     }
 
-    public class DbList<T> : List<Guid>
+    public partial class DbList<T> : List<Guid>
     {
 
         public List<T> GetAll()

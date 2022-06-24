@@ -1,6 +1,6 @@
 ﻿namespace Intersect.Server.Database.GameData.Migrations
 {
-    public class BoundItemExtensionMigration
+    public partial class BoundItemExtensionMigration
     {
 
         public static void Run(GameContext context)

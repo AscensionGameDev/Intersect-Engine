@@ -9,7 +9,7 @@ using Microsoft.Owin.Security.OAuth;
 namespace Intersect.Server.Web.RestApi.Authentication.OAuth.Providers
 {
 
-    public class BearerAuthenticationProvider : OAuthBearerAuthenticationProvider
+    public partial class BearerAuthenticationProvider : OAuthBearerAuthenticationProvider
     {
 
         public override async Task ValidateIdentity(OAuthValidateIdentityContext context)

@@ -21,7 +21,7 @@ using XNAColor = Microsoft.Xna.Framework.Color;
 namespace Intersect.Client.MonoGame.Graphics
 {
 
-    public class MonoRenderer : GameRenderer
+    public partial class MonoRenderer : GameRenderer
     {
 
         private readonly List<MonoTexture> mAllTextures = new List<MonoTexture>();

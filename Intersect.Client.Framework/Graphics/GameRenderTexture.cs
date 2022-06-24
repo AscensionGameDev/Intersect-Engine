@@ -1,7 +1,7 @@
 ﻿namespace Intersect.Client.Framework.Graphics
 {
 
-    public abstract class GameRenderTexture : GameTexture
+    public abstract partial class GameRenderTexture : GameTexture
     {
 
         public GameRenderTexture(int width, int height)

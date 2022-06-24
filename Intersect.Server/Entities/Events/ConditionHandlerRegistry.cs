@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Intersect.Server.Entities.Events
 {
-    public static class ConditionHandlerRegistry
+    public static partial class ConditionHandlerRegistry
     {
         private delegate bool HandleCondition(Condition condition, Player player, Event eventInstance, QuestBase questBase);
         private delegate bool HandleConditionBool<TCondition>(TCondition condition, Player player, Event eventInstance, QuestBase questBase) where TCondition : Condition;

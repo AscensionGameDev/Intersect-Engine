@@ -5,7 +5,7 @@ using System.Net.Sockets;
 namespace Intersect.Network
 {
 
-    public static class DnsUtils
+    public static partial class DnsUtils
     {
 
         public static IPAddress Resolve(string hostname)

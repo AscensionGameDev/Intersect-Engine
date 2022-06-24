@@ -9,7 +9,7 @@ using WebSocketSharp;
 namespace Intersect.Server.Networking.Helpers
 {
 
-    public static class PortChecker
+    public static partial class PortChecker
     {
 
         public static bool CanYouSeeMe(int port, out string externalIp)

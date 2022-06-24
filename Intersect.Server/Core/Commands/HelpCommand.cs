@@ -4,7 +4,7 @@ using Intersect.Server.Localization;
 namespace Intersect.Server.Core.Commands
 {
 
-    internal sealed class HelpCommand : ServerCommand
+    internal sealed partial class HelpCommand : ServerCommand
     {
 
         public HelpCommand(ParserSettings parserSettings) : base(Strings.Commands.Help)

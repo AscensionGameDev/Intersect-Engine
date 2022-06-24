@@ -8,7 +8,7 @@ using Intersect.Client.Maps;
 namespace Intersect.Client.Core.Sounds
 {
 
-    public class MapSound : Sound, IMapSound
+    public partial class MapSound : Sound, IMapSound
     {
 
         private int mDistance;

@@ -3,7 +3,7 @@ using MessagePack;
 namespace Intersect
 {
     [MessagePackObject]
-    public struct Point
+    public partial struct Point
     {
         [Key(0)]
         public int X { get; set; }

@@ -9,7 +9,7 @@ using Intersect.Server.Localization;
 namespace Intersect.Server.Core.Commands
 {
 
-    internal class ApiRevokeCommand : TargetUserCommand
+    internal partial class ApiRevokeCommand : TargetUserCommand
     {
 
         public ApiRevokeCommand() : base(

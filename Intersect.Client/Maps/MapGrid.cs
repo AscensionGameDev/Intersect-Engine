@@ -5,7 +5,7 @@ using Intersect.Client.Framework.Maps;
 
 namespace Intersect.Client.Maps
 {
-    public class MapGrid : IMapGrid
+    public partial class MapGrid : IMapGrid
     {
         /// <inheritdoc>
         public Guid[,] Content => Globals.MapGrid;

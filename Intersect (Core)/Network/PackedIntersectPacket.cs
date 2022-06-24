@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace Intersect.Network
 {
     [MessagePackObject]
-    public class PackedIntersectPacket
+    public partial class PackedIntersectPacket
     {
         private static readonly string[] BuiltInPacketNamespaces = new[]
         {

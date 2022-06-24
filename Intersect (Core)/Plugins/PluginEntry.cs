@@ -5,7 +5,7 @@ namespace Intersect.Plugins
     /// <summary>
     /// Abstract class that virtually defines all of the methods declared by <see cref="IPluginEntry"/>.
     /// </summary>
-    public abstract class PluginEntry : IPluginEntry
+    public abstract partial class PluginEntry : IPluginEntry
     {
         private bool mDisposed;
 

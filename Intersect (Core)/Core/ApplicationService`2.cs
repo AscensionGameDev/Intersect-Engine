@@ -10,7 +10,7 @@ namespace Intersect.Core
     /// </summary>
     /// <typeparam name="TServiceInterface">the service interface type</typeparam>
     /// <typeparam name="TServiceImplementation">the service implementation type</typeparam>
-    public abstract class ApplicationService<TServiceInterface, TServiceImplementation> : IApplicationService
+    public abstract partial class ApplicationService<TServiceInterface, TServiceImplementation> : IApplicationService
         where TServiceImplementation : ApplicationService<TServiceInterface, TServiceImplementation>, TServiceInterface
     {
         #region Fields

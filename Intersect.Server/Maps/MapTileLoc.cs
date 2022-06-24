@@ -2,7 +2,7 @@
 
 namespace Intersect.Server.Maps
 {
-    public struct MapTileLoc
+    public partial struct MapTileLoc
     {
         public readonly Guid MapId;
         public readonly int X;

@@ -7,7 +7,7 @@ namespace Intersect.Client.Framework.Gwen.Skin.Texturing
     /// <summary>
     ///     Single textured element.
     /// </summary>
-    public struct Single
+    public partial struct Single
     {
 
         private readonly GameTexture mTexture;

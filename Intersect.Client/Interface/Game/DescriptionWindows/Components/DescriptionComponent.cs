@@ -2,7 +2,7 @@
 
 namespace Intersect.Client.Interface.Game.DescriptionWindows.Components
 {
-    public class DescriptionComponent : ComponentBase
+    public partial class DescriptionComponent : ComponentBase
     {
         protected RichLabel mDescription;
 

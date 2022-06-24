@@ -11,7 +11,7 @@ namespace Intersect.Server.Entities.Pathfinding
 
     }
 
-    public class PathNode : IComparer<PathNode>, IIndexedObject
+    public partial class PathNode : IComparer<PathNode>, IIndexedObject
     {
 
         public static readonly PathNode Comparer = new PathNode(0, 0, false);
@@ -64,7 +64,7 @@ namespace Intersect.Server.Entities.Pathfinding
     /// <summary>
     ///     Uses about 50 MB for a 1024x1024 grid.
     /// </summary>
-    public class SpatialAStar
+    public partial class SpatialAStar
     {
 
         private static readonly double Sqrt2 = Math.Sqrt(2);
@@ -348,7 +348,7 @@ namespace Intersect.Server.Entities.Pathfinding
             inNeighbors[7] = null;
         }
 
-        private class OpenCloseMap
+        private partial class OpenCloseMap
         {
 
             private PathNode[,] mMap;

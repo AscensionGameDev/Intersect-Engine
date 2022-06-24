@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 namespace Intersect
 {
 
-    public class Options
+    public partial class Options
     {
 
         //Caching Json

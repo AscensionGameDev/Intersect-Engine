@@ -559,7 +559,7 @@ namespace Intersect.Editor.Localization
             }
         }
 
-        public struct About
+        public partial struct About
         {
 
             public static LocalizedString site =
@@ -571,7 +571,7 @@ namespace Intersect.Editor.Localization
 
         }
 
-        public struct AnimationEditor
+        public partial struct AnimationEditor
         {
 
             public static LocalizedString animations = @"Animations";
@@ -687,7 +687,7 @@ namespace Intersect.Editor.Localization
 
         }
 
-        public struct Attributes
+        public partial struct Attributes
         {
 
             public static LocalizedString animation = @"Animation:";
@@ -772,7 +772,7 @@ namespace Intersect.Editor.Localization
 
         }
 
-        public struct ClassEditor
+        public partial struct ClassEditor
         {
 
             public static LocalizedString abilitypowerboost = @"Ability Pwr (+{00}):";
@@ -972,7 +972,7 @@ Tick timer saved in server config.json.";
 
         }
 
-        public struct Colors
+        public partial struct Colors
         {
 
             public static Dictionary<int, LocalizedString> presets = new Dictionary<int, LocalizedString>
@@ -992,7 +992,7 @@ Tick timer saved in server config.json.";
 
         }
 
-        public struct Combat
+        public partial struct Combat
         {
 
             public static Dictionary<int, LocalizedString> damagetypes = new Dictionary<int, LocalizedString>
@@ -1021,7 +1021,7 @@ Tick timer saved in server config.json.";
 
         }
 
-        public struct CommonEventEditor
+        public partial struct CommonEventEditor
         {
 
             public static LocalizedString copy = @"Copy Event";
@@ -1057,7 +1057,7 @@ Tick timer saved in server config.json.";
 
         }
 
-        public struct CraftingTableEditor
+        public partial struct CraftingTableEditor
         {
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -1132,7 +1132,7 @@ Tick timer saved in server config.json.";
             public static LocalizedString remove = @"Remove Selected";
         }
 
-        public struct CraftsEditor
+        public partial struct CraftsEditor
         {
 
             public static LocalizedString cancel = @"Cancel";
@@ -1213,7 +1213,7 @@ Tick timer saved in server config.json.";
 
         }
 
-        public struct Directions
+        public partial struct Directions
         {
 
             public static Dictionary<int, LocalizedString> dir = new Dictionary<int, LocalizedString>()
@@ -1227,7 +1227,7 @@ Tick timer saved in server config.json.";
 
         }
 
-        public struct DynamicRequirements
+        public partial struct DynamicRequirements
         {
 
             public static LocalizedString addcondition = @"Add Condition";
@@ -1281,7 +1281,7 @@ Tick timer saved in server config.json.";
 
         }
 
-        public struct Errors
+        public partial struct Errors
         {
 
             public static LocalizedString disconnected = @"Disconnected!";
@@ -1310,7 +1310,7 @@ Tick timer saved in server config.json.";
 
         }
 
-        public struct EventChangeFace
+        public partial struct EventChangeFace
         {
 
             public static LocalizedString cancel = @"Cancel";
@@ -1323,7 +1323,7 @@ Tick timer saved in server config.json.";
 
         }
 
-        public struct EventShowPicture
+        public partial struct EventShowPicture
         {
 
             public static LocalizedString cancel = @"Cancel";
@@ -1352,7 +1352,7 @@ Tick timer saved in server config.json.";
 
         }
 
-        public struct EventChangeGender
+        public partial struct EventChangeGender
         {
 
             public static LocalizedString cancel = @"Cancel";
@@ -1371,7 +1371,7 @@ Tick timer saved in server config.json.";
 
         }
 
-        public struct EventChangeItems
+        public partial struct EventChangeItems
         {
 
             public static LocalizedString action = @"Action:";
@@ -1423,7 +1423,7 @@ Tick timer saved in server config.json.";
 
         }
 
-        public struct EventEquipItems
+        public partial struct EventEquipItems
         {
 
             public static LocalizedString cancel = @"Cancel";
@@ -1438,7 +1438,7 @@ Tick timer saved in server config.json.";
 
         }
 
-        public struct EventChangeVital
+        public partial struct EventChangeVital
         {
 
             public static LocalizedString cancel = @"Cancel";
@@ -1453,7 +1453,7 @@ Tick timer saved in server config.json.";
 
         }
 
-        public struct EventChangeLevel
+        public partial struct EventChangeLevel
         {
 
             public static LocalizedString cancel = @"Cancel";
@@ -1466,7 +1466,7 @@ Tick timer saved in server config.json.";
 
         }
 
-        public struct EventChangeNameColor
+        public partial struct EventChangeNameColor
         {
 
             public static LocalizedString cancel = @"Cancel";
@@ -1483,7 +1483,7 @@ Tick timer saved in server config.json.";
 
         }
 
-        public struct EventChangeName
+        public partial struct EventChangeName
         {
 
             public static LocalizedString cancel = @"Cancel";
@@ -1496,7 +1496,7 @@ Tick timer saved in server config.json.";
 
         }
 
-        public struct EventChangeSpells
+        public partial struct EventChangeSpells
         {
 
             public static LocalizedString action = @"Action: ";
@@ -1517,7 +1517,7 @@ Tick timer saved in server config.json.";
 
         }
 
-        public struct EventChangeSprite
+        public partial struct EventChangeSprite
         {
 
             public static LocalizedString cancel = @"Cancel";
@@ -1530,7 +1530,7 @@ Tick timer saved in server config.json.";
 
         }
 
-        public struct EventChangePlayerLabel
+        public partial struct EventChangePlayerLabel
         {
 
             public static LocalizedString cancel = @"Cancel";
@@ -1557,7 +1557,7 @@ Tick timer saved in server config.json.";
 
         }
 
-        public struct EventChatboxText
+        public partial struct EventChatboxText
         {
 
             public static LocalizedString cancel = @"Cancel";
@@ -1585,7 +1585,7 @@ Tick timer saved in server config.json.";
 
         }
 
-        public struct EventCommandList
+        public partial struct EventCommandList
         {
 
             public static LocalizedString addvariable = @"Add {00}";
@@ -1923,7 +1923,7 @@ Tick timer saved in server config.json.";
             public static LocalizedString resetstatpointallocations = @"Reset Player Stat Point Allocations";
         }
 
-        public struct EventChangePlayerColor
+        public partial struct EventChangePlayerColor
         {
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString Cancel = @"Cancel";
@@ -1948,7 +1948,7 @@ Tick timer saved in server config.json.";
 
         }
 
-        public struct EventCommands
+        public partial struct EventCommands
         {
 
             public static Dictionary<string, LocalizedString> commands = new Dictionary<string, LocalizedString>()
@@ -2023,7 +2023,7 @@ Tick timer saved in server config.json.";
 
         }
 
-        public struct EventCompleteQuestTask
+        public partial struct EventCompleteQuestTask
         {
 
             public static LocalizedString cancel = @"Cancel";
@@ -2038,7 +2038,7 @@ Tick timer saved in server config.json.";
 
         }
 
-        public struct EventConditional
+        public partial struct EventConditional
         {
 
             public static LocalizedString and = @"And";
@@ -2268,7 +2268,7 @@ Tick timer saved in server config.json.";
             public static LocalizedString CheckBank = @"Check Bank?";
         }
 
-        public struct EventConditionDesc
+        public partial struct EventConditionDesc
         {
 
             public static LocalizedString admin = @"Admin";
@@ -2379,7 +2379,7 @@ Tick timer saved in server config.json.";
 
         }
 
-        public struct EventCreateGuild
+        public partial struct EventCreateGuild
         {
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -2396,7 +2396,7 @@ Tick timer saved in server config.json.";
 
         }
 
-        public struct EventGuildSetBankSlotsCount
+        public partial struct EventGuildSetBankSlotsCount
         {
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -2421,7 +2421,7 @@ Tick timer saved in server config.json.";
             public static LocalizedString title = @"Set Guild Bank Slots Count";
         }
 
-        public struct EventEditor
+        public partial struct EventEditor
         {
 
             public static LocalizedString addcommand = @"Add Commands";
@@ -2580,7 +2580,7 @@ Tick timer saved in server config.json.";
 
         }
 
-        public struct EventEndQuest
+        public partial struct EventEndQuest
         {
 
             public static LocalizedString cancel = @"Cancel";
@@ -2595,7 +2595,7 @@ Tick timer saved in server config.json.";
 
         }
 
-        public struct EventGiveExperience
+        public partial struct EventGiveExperience
         {
 
             public static LocalizedString cancel = @"Cancel";
@@ -2626,7 +2626,7 @@ Tick timer saved in server config.json.";
 
         }
 
-        public struct EventGotoLabel
+        public partial struct EventGotoLabel
         {
 
             public static LocalizedString cancel = @"Cancel";
@@ -2639,7 +2639,7 @@ Tick timer saved in server config.json.";
 
         }
 
-        public struct EventGraphic
+        public partial struct EventGraphic
         {
 
             public static LocalizedString cancel = @"Cancel";
@@ -2662,7 +2662,7 @@ Tick timer saved in server config.json.";
 
         }
 
-        public struct EventLabel
+        public partial struct EventLabel
         {
 
             public static LocalizedString cancel = @"Cancel";
@@ -2675,7 +2675,7 @@ Tick timer saved in server config.json.";
 
         }
 
-        public struct EventMoveRoute
+        public partial struct EventMoveRoute
         {
 
             public static LocalizedString cancel = @"Cancel";
@@ -2751,7 +2751,7 @@ Tick timer saved in server config.json.";
 
         }
 
-        public struct EventOpenCrafting
+        public partial struct EventOpenCrafting
         {
 
             public static LocalizedString cancel = @"Cancel";
@@ -2764,7 +2764,7 @@ Tick timer saved in server config.json.";
 
         }
 
-        public struct EventOpenShop
+        public partial struct EventOpenShop
         {
 
             public static LocalizedString cancel = @"Cancel";
@@ -2777,7 +2777,7 @@ Tick timer saved in server config.json.";
 
         }
 
-        public struct EventPlayAnimation
+        public partial struct EventPlayAnimation
         {
 
             public static LocalizedString animation = @"Animation:";
@@ -2808,7 +2808,7 @@ Tick timer saved in server config.json.";
 
         }
 
-        public struct EventPlayBgm
+        public partial struct EventPlayBgm
         {
 
             public static LocalizedString cancel = @"Cancel";
@@ -2821,7 +2821,7 @@ Tick timer saved in server config.json.";
 
         }
 
-        public struct EventPlayBgs
+        public partial struct EventPlayBgs
         {
 
             public static LocalizedString cancel = @"Cancel";
@@ -2834,7 +2834,7 @@ Tick timer saved in server config.json.";
 
         }
 
-        public struct EventSelfSwitch
+        public partial struct EventSelfSwitch
         {
 
             public static LocalizedString cancel = @"Cancel";
@@ -2859,7 +2859,7 @@ Tick timer saved in server config.json.";
 
         }
 
-        public struct EventSetAccess
+        public partial struct EventSetAccess
         {
 
             public static LocalizedString access0 = @"Regular User";
@@ -2878,7 +2878,7 @@ Tick timer saved in server config.json.";
 
         }
 
-        public struct EventSetAnimation
+        public partial struct EventSetAnimation
         {
 
             public static LocalizedString cancel = @"Cancel";
@@ -2891,7 +2891,7 @@ Tick timer saved in server config.json.";
 
         }
 
-        public struct EventSetClass
+        public partial struct EventSetClass
         {
 
             public static LocalizedString cancel = @"Cancel";
@@ -2904,7 +2904,7 @@ Tick timer saved in server config.json.";
 
         }
 
-        public struct EventSetVariable
+        public partial struct EventSetVariable
         {
 
             public static LocalizedString cancel = @"Cancel";
@@ -2983,7 +2983,7 @@ Tick timer saved in server config.json.";
 
         }
 
-        public struct EventShowOptions
+        public partial struct EventShowOptions
         {
 
             public static LocalizedString cancel = @"Cancel";
@@ -3008,7 +3008,7 @@ Tick timer saved in server config.json.";
 
         }
 
-        public struct EventShowText
+        public partial struct EventShowText
         {
 
             public static LocalizedString cancel = @"Cancel";
@@ -3025,7 +3025,7 @@ Tick timer saved in server config.json.";
 
         }
 
-        public struct EventInput
+        public partial struct EventInput
         {
 
             public static LocalizedString cancel = @"Cancel";
@@ -3056,7 +3056,7 @@ Tick timer saved in server config.json.";
 
         }
 
-        public struct EventSpawnNpc
+        public partial struct EventSpawnNpc
         {
 
             public static LocalizedString cancel = @"Cancel";
@@ -3085,7 +3085,7 @@ Tick timer saved in server config.json.";
 
         }
 
-        public struct EventStartCommonEvent
+        public partial struct EventStartCommonEvent
         {
 
             public static LocalizedString cancel = @"Cancel";
@@ -3098,7 +3098,7 @@ Tick timer saved in server config.json.";
 
         }
 
-        public struct EventStartQuest
+        public partial struct EventStartQuest
         {
 
             public static LocalizedString cancel = @"Cancel";
@@ -3113,7 +3113,7 @@ Tick timer saved in server config.json.";
 
         }
 
-        public struct EventWait
+        public partial struct EventWait
         {
 
             public static LocalizedString cancel = @"Cancel";
@@ -3126,7 +3126,7 @@ Tick timer saved in server config.json.";
 
         }
 
-        public struct EventWaitForRouteCompletion
+        public partial struct EventWaitForRouteCompletion
         {
 
             public static LocalizedString cancel = @"Cancel";
@@ -3143,7 +3143,7 @@ Tick timer saved in server config.json.";
 
         }
 
-        public struct EventWarp
+        public partial struct EventWarp
         {
 
             public static LocalizedString cancel = @"Cancel";
@@ -3154,7 +3154,7 @@ Tick timer saved in server config.json.";
 
         }
 
-        public struct General
+        public partial struct General
         {
 
             public static LocalizedString none = @"None";
@@ -3164,7 +3164,7 @@ Tick timer saved in server config.json.";
 
         }
 
-        public struct ItemEditor
+        public partial struct ItemEditor
         {
 
             public static LocalizedString abilitypowerbonus = @"Ability Pwr:";
@@ -3425,7 +3425,7 @@ Tick timer saved in server config.json.";
 
         }
 
-        public struct LightEditor
+        public partial struct LightEditor
         {
 
             public static LocalizedString color = @"Color:";
@@ -3450,7 +3450,7 @@ Tick timer saved in server config.json.";
 
         }
 
-        public struct Login
+        public partial struct Login
         {
 
             public static LocalizedString connected = @"Connected to server. Ready to login!";
@@ -3483,7 +3483,7 @@ Tick timer saved in server config.json.";
 
         }
 
-        public struct MainForm
+        public partial struct MainForm
         {
 
             public static LocalizedString about = @"About";
@@ -3613,7 +3613,7 @@ Tick timer saved in server config.json.";
 
         }
 
-        public struct MapCacheProgress
+        public partial struct MapCacheProgress
         {
 
             public static LocalizedString title = @"Saving Map Cache";
@@ -3622,7 +3622,7 @@ Tick timer saved in server config.json.";
 
         }
 
-        public struct MapGrid
+        public partial struct MapGrid
         {
 
             public static LocalizedString clearandfetch =
@@ -3677,7 +3677,7 @@ Tick timer saved in server config.json.";
 
         }
 
-        public struct MapLayers
+        public partial struct MapLayers
         {
 
             public static LocalizedString attributes = @"Attributes";
@@ -3699,7 +3699,7 @@ Tick timer saved in server config.json.";
 
         }
 
-        public struct MapList
+        public partial struct MapList
         {
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -3727,7 +3727,7 @@ Tick timer saved in server config.json.";
 
         }
 
-        public struct Mapping
+        public partial struct Mapping
         {
 
             public static LocalizedString createmap = @"Create new map.";
@@ -3763,7 +3763,7 @@ Tick timer saved in server config.json.";
 
         }
 
-        public struct MapProperties
+        public partial struct MapProperties
         {
 
             public static Dictionary<string, string> categories = new Dictionary<string, string>()
@@ -3856,7 +3856,7 @@ Tick timer saved in server config.json.";
 
         }
 
-        public struct NpcEditor
+        public partial struct NpcEditor
         {
 
             public static LocalizedString abilitypower = @"Ability Pwr:";
@@ -4082,7 +4082,7 @@ Tick timer saved in server config.json.";
 
         }
 
-        public struct NpcSpawns
+        public partial struct NpcSpawns
         {
 
             public static LocalizedString add = @"Add";
@@ -4105,7 +4105,7 @@ Tick timer saved in server config.json.";
 
         }
 
-        public struct Options
+        public partial struct Options
         {
 
             public static LocalizedString browsebtn = @"Browse";
@@ -4141,14 +4141,14 @@ Tick timer saved in server config.json.";
             public static LocalizedString TextureSize = @"Max Texture Pack Size (Resolution):";
         }
 
-        public struct ProgressForm
+        public partial struct ProgressForm
         {
 
             public static LocalizedString cancel = @"Cancel";
 
         }
 
-        public struct ProjectileEditor
+        public partial struct ProjectileEditor
         {
 
             public static LocalizedString addanimation = @"Add";
@@ -4244,7 +4244,7 @@ Tick timer saved in server config.json.";
 
         }
 
-        public struct QuestEditor
+        public partial struct QuestEditor
         {
 
             public static LocalizedString actions = @"Quest Actions:";
@@ -4345,7 +4345,7 @@ Tick timer saved in server config.json.";
             public static LocalizedString order = @"Quest Log Sort Order:";
         }
 
-        public struct ResourceEditor
+        public partial struct ResourceEditor
         {
 
             public static LocalizedString animation = @"Animation:";
@@ -4449,7 +4449,7 @@ Tick timer saved in server config.json.";
 
         }
 
-        public struct ShopEditor
+        public partial struct ShopEditor
         {
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -4575,7 +4575,7 @@ Tick timer saved in server config.json.";
             public static LocalizedString sellsound = @"Sell Sound:";
         }
 
-        public struct SpellEditor
+        public partial struct SpellEditor
         {
 
             public static LocalizedString abilitypower = @"Ability Pwr:";
@@ -4783,7 +4783,7 @@ Tick timer saved in server config.json.";
 
         }
 
-        public struct VariableEditor
+        public partial struct VariableEditor
         {
 
             public static LocalizedString cancel = @"Cancel";
@@ -4855,7 +4855,7 @@ Tick timer saved in server config.json.";
 
         }
 
-        public struct TaskEditor
+        public partial struct TaskEditor
         {
 
             public static LocalizedString cancel = @"Cancel";
@@ -4905,7 +4905,7 @@ Tick timer saved in server config.json.";
 
         }
 
-        public struct AssetPacking
+        public partial struct AssetPacking
         {
 
             public static LocalizedString title = "Packing assets, please wait!";
@@ -4926,7 +4926,7 @@ Tick timer saved in server config.json.";
 
         }
 
-        public struct Tiles
+        public partial struct Tiles
         {
 
             public static LocalizedString animated = @"Animated  [VX Format]";
@@ -4962,7 +4962,7 @@ Tick timer saved in server config.json.";
 
         }
 
-        public struct TimeEditor
+        public partial struct TimeEditor
         {
 
             public static LocalizedString brightness = @"Brightness: {00}%";
@@ -5014,7 +5014,7 @@ Negative values for time to flow backwards.";
 
         }
         
-        public struct Update
+        public partial struct Update
         {
 
             public static LocalizedString Title = @"Intersect Editor - Updating";
@@ -5037,7 +5037,7 @@ Negative values for time to flow backwards.";
 
         }
 
-        public struct UpdatePacking
+        public partial struct UpdatePacking
         {
             public static LocalizedString SourceDirectoryPromptDescription = @"Pick the directory from which to generate the update";
 
@@ -5063,7 +5063,7 @@ Negative values for time to flow backwards.";
 
         }
 
-        public struct Warping
+        public partial struct Warping
         {
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -5089,7 +5089,7 @@ Negative values for time to flow backwards.";
             public static LocalizedString WarpSound = @"Sound:";
         }
 
-        public struct WarpSelection
+        public partial struct WarpSelection
         {
 
             public static LocalizedString cancel = @"Cancel";

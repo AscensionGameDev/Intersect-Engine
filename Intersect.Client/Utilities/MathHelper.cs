@@ -1,7 +1,7 @@
 ﻿namespace Intersect.Client.Utilities
 {
 
-    public static class MathHelper
+    public static partial class MathHelper
     {
 
         public static double Lerp(double value1, double value2, double amount)

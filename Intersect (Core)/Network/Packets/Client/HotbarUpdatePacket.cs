@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace Intersect.Network.Packets.Client
 {
     [MessagePackObject]
-    public class HotbarUpdatePacket : IntersectPacket
+    public partial class HotbarUpdatePacket : IntersectPacket
     {
         //Parameterless Constructor for MessagePack
         public HotbarUpdatePacket()

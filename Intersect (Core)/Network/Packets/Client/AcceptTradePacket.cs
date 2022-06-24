@@ -3,7 +3,7 @@
 namespace Intersect.Network.Packets.Client
 {
     [MessagePackObject]
-    public class AcceptTradePacket : IntersectPacket
+    public partial class AcceptTradePacket : IntersectPacket
     {
 
     }

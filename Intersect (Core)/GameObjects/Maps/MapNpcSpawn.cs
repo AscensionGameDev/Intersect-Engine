@@ -5,7 +5,7 @@ using Intersect.Enums;
 namespace Intersect.GameObjects.Maps
 {
 
-    public class NpcSpawn
+    public partial class NpcSpawn
     {
 
         public NpcSpawnDirection Direction;

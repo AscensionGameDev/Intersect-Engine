@@ -10,7 +10,7 @@ namespace Intersect.Security
         AttributeTargets.Field |
         AttributeTargets.Property
     )]
-    public class ApiVisibilityAttribute : Attribute
+    public partial class ApiVisibilityAttribute : Attribute
     {
 
         public ApiVisibilityAttribute(ApiVisibility visibility)

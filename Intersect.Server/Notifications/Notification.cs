@@ -9,7 +9,7 @@ using Intersect.Server.Localization;
 namespace Intersect.Server.Notifications
 {
 
-    public class Notification
+    public partial class Notification
     {
 
         public Notification(string to, string subject = "", bool html = false)

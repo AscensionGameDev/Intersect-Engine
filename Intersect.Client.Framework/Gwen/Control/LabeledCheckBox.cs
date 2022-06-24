@@ -11,7 +11,7 @@ namespace Intersect.Client.Framework.Gwen.Control
     /// <summary>
     ///     CheckBox with label.
     /// </summary>
-    public class LabeledCheckBox : Base
+    public partial class LabeledCheckBox : Base
     {
 
         private readonly CheckBox mCheckBox;

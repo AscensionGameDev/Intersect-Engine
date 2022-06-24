@@ -4,7 +4,7 @@ using System.Threading;
 namespace Intersect.Threading
 {
 
-    public class LockingActionQueue
+    public partial class LockingActionQueue
     {
 
         private readonly object mLockObject;

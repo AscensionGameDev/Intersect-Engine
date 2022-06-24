@@ -3,7 +3,7 @@
 namespace Intersect.Server.Database
 {
 
-    public class DbLoggerProvider : ILoggerProvider
+    public partial class DbLoggerProvider : ILoggerProvider
     {
 
         private Intersect.Logging.Logger _intersectLogger;

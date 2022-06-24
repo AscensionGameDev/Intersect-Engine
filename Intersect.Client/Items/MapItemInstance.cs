@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 namespace Intersect.Client.Items
 {
 
-    public class MapItemInstance : Item, IMapItemInstance
+    public partial class MapItemInstance : Item, IMapItemInstance
     {
         /// <summary>
         /// The Unique Id of this particular MapItemInstance so we can refer to it elsewhere.

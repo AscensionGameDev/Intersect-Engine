@@ -24,7 +24,7 @@ namespace Intersect.Client.Framework.Gwen.Control
     /// <summary>
     ///     Base control class.
     /// </summary>
-    public class Base : IDisposable
+    public partial class Base : IDisposable
     {
 
         /// <summary>

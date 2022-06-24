@@ -1,6 +1,6 @@
 ﻿namespace Intersect.Updater
 {
-    public class UpdateFile
+    public partial class UpdateFile
     {
         public string Path { get; set; }
         public string Hash { get; set; }

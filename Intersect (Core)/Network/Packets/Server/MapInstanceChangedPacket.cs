@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace Intersect.Network.Packets.Server
 {
     [MessagePackObject]
-    public class MapInstanceChangedPacket : IntersectPacket
+    public partial class MapInstanceChangedPacket : IntersectPacket
     {
         // Empty for EF
         public MapInstanceChangedPacket() { }

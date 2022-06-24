@@ -6,7 +6,7 @@ using System.Net.Http.Headers;
 namespace Intersect.Server.Web.RestApi
 {
 
-    internal static class MediaTypeFormatterExtensions
+    internal static partial class MediaTypeFormatterExtensions
     {
 
         public static MediaTypeFormatter AddSupportedMediaType(

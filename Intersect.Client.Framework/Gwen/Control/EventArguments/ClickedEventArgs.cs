@@ -3,7 +3,7 @@
 namespace Intersect.Client.Framework.Gwen.Control.EventArguments
 {
 
-    public class ClickedEventArgs : EventArgs
+    public partial class ClickedEventArgs : EventArgs
     {
 
         internal ClickedEventArgs(int x, int y, bool down)

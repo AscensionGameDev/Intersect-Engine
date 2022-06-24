@@ -3,7 +3,7 @@
 namespace Intersect.Client.Spells
 {
 
-    public class Spell
+    public partial class Spell
     {
 
         public Guid Id { get; set; }

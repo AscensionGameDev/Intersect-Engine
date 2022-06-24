@@ -7,7 +7,7 @@ using NCalc;
 namespace Intersect.Server.Utilities
 {
 
-    public class ExperienceCurve
+    public partial class ExperienceCurve
     {
 
         public const string DEFAULT_EXPERIENCE_FORMULA = "Floor(BaseExp * Pow(Gain, Level - 1))";

@@ -4,7 +4,7 @@ using MessagePack;
 namespace Intersect.Admin.Actions
 {
     [MessagePackObject]
-    public class SetAccessAction : AdminAction
+    public partial class SetAccessAction : AdminAction
     {
         //Parameterless Constructor for MessagePack
         public SetAccessAction()

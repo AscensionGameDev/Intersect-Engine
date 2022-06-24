@@ -6,7 +6,7 @@ namespace Intersect.Client.Framework.Gwen.ControlInternal
     /// <summary>
     ///     ComboBox arrow.
     /// </summary>
-    public class DownArrow : Base
+    public partial class DownArrow : Base
     {
 
         private readonly ComboBox mComboBox;

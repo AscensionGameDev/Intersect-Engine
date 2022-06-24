@@ -5,7 +5,7 @@ using System.Text;
 namespace Intersect.Utilities
 {
 
-    public static class GuidUtils
+    public static partial class GuidUtils
     {
 
         /// <inheritdoc cref="CreateNamed(Guid, byte[])" />

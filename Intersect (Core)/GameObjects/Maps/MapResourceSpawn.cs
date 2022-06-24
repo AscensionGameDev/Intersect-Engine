@@ -3,7 +3,7 @@
 namespace Intersect.GameObjects.Maps
 {
 
-    public class ResourceSpawn
+    public partial class ResourceSpawn
     {
         public Guid Id { get; set; } = Guid.NewGuid();
 

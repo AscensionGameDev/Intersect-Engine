@@ -10,7 +10,7 @@ using Microsoft.Xna.Framework.Graphics;
 namespace Intersect.Editor.Entities
 {
 
-    public class Animation
+    public partial class Animation
     {
 
         private bool mInfiniteLoop;

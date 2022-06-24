@@ -18,7 +18,7 @@ using Keys = Intersect.Client.Framework.GenericClasses.Keys;
 namespace Intersect.Client.MonoGame.Input
 {
 
-    public class MonoInput : GameInput
+    public partial class MonoInput : GameInput
     {
 
         private Dictionary<Keys, Microsoft.Xna.Framework.Input.Keys> mKeyDictionary;

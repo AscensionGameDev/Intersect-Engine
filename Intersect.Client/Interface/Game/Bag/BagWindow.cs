@@ -13,7 +13,7 @@ using Intersect.GameObjects;
 namespace Intersect.Client.Interface.Game.Bag
 {
 
-    public class BagWindow
+    public partial class BagWindow
     {
 
         private static int sItemXPadding = 4;

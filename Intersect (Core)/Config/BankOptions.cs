@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Intersect.Config
 {
-    public class BankOptions
+    public partial class BankOptions
     {
         /// <summary>
         /// The intersect default maximum bank slot value a guild OR player could ever have

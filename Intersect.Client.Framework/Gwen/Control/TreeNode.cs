@@ -12,7 +12,7 @@ namespace Intersect.Client.Framework.Gwen.Control
     /// <summary>
     ///     Tree control node.
     /// </summary>
-    public class TreeNode : Base
+    public partial class TreeNode : Base
     {
 
         public const int TREE_INDENTATION = 14;

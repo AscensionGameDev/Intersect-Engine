@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace Intersect.Network.Packets.Server
 {
     [MessagePackObject]
-    public class FriendsPacket : IntersectPacket
+    public partial class FriendsPacket : IntersectPacket
     {
         //Parameterless Constructor for MessagePack
         public FriendsPacket()

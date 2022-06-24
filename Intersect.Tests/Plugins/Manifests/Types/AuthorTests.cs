@@ -8,7 +8,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace Intersect.Plugins.Manifests.Types
 {
     [TestFixture]
-    public class AuthorTests
+    public partial class AuthorTests
     {
         #region Test Constants
 

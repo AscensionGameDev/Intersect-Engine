@@ -4,7 +4,7 @@ using System;
 namespace Intersect.Network.Packets.Server
 {
     [MessagePackObject]
-    public class EquipmentFragment
+    public partial class EquipmentFragment
     {
         [Key(0)]
         public string Name { get; set; }
@@ -14,7 +14,7 @@ namespace Intersect.Network.Packets.Server
     }
 
     [MessagePackObject]
-    public class CharacterPacket : IntersectPacket
+    public partial class CharacterPacket : IntersectPacket
     {
         //Parameterless Constructor for MessagePack
         public CharacterPacket()

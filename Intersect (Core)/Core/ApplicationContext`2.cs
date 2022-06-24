@@ -24,7 +24,7 @@ namespace Intersect.Core
     /// </summary>
     /// <typeparam name="TContext">the context subtype</typeparam>
     /// <typeparam name="TStartupOptions">the specialized startup options type</typeparam>
-    public abstract class ApplicationContext<TContext, TStartupOptions> : IApplicationContext<TStartupOptions>
+    public abstract partial class ApplicationContext<TContext, TStartupOptions> : IApplicationContext<TStartupOptions>
         where TContext : ApplicationContext<TContext, TStartupOptions> where TStartupOptions : ICommandLineOptions
     {
         #region Lifecycle Fields

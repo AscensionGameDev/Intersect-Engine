@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 namespace Intersect.Localization
 {
 
-    public class LocalizedStringConverter : JsonConverter<LocalizedString>
+    public partial class LocalizedStringConverter : JsonConverter<LocalizedString>
     {
 
         public override void WriteJson(JsonWriter writer, LocalizedString value, JsonSerializer serializer)
@@ -27,7 +27,7 @@ namespace Intersect.Localization
     }
 
     [Serializable]
-    public class LocalizedString : Localized
+    public partial class LocalizedString : Localized
     {
 
         private readonly string mValue;

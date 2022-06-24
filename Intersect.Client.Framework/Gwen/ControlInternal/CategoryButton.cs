@@ -6,7 +6,7 @@ namespace Intersect.Client.Framework.Gwen.ControlInternal
     /// <summary>
     ///     Item in CollapsibleCategory.
     /// </summary>
-    public class CategoryButton : Button
+    public partial class CategoryButton : Button
     {
 
         internal bool mAlt; // for alternate coloring

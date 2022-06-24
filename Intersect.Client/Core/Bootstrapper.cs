@@ -15,7 +15,7 @@ using System.Linq;
 namespace Intersect.Client.Core
 {
 
-    internal static class Bootstrapper
+    internal static partial class Bootstrapper
     {
         public static ClientContext Context { get; private set; }
 

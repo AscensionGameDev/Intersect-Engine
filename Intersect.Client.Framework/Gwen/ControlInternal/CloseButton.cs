@@ -6,7 +6,7 @@ namespace Intersect.Client.Framework.Gwen.ControlInternal
     /// <summary>
     ///     Window close button.
     /// </summary>
-    public class CloseButton : Button
+    public partial class CloseButton : Button
     {
 
         private readonly WindowControl mWindow;

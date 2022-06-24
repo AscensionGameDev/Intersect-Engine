@@ -11,7 +11,7 @@ using Intersect.GameObjects;
 namespace Intersect.Client.Interface.Game.Inventory
 {
 
-    public class InventoryWindow
+    public partial class InventoryWindow
     {
 
         //Item List

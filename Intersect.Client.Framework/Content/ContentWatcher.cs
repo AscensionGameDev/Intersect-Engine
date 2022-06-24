@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Intersect.Client.Framework.Content
 {
-    public sealed class ContentWatcher
+    public sealed partial class ContentWatcher
     {
         public enum Event
         {

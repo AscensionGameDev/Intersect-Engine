@@ -11,7 +11,7 @@ namespace Intersect.Client.Framework.Gwen.Control
     /// <summary>
     ///     CheckBox control.
     /// </summary>
-    public class CheckBox : Button
+    public partial class CheckBox : Button
     {
 
         public enum ControlState

@@ -4,7 +4,7 @@
     /// <summary>
     ///     Helper control that positions its children in a specific way.
     /// </summary>
-    public class Positioner : Base
+    public partial class Positioner : Base
     {
 
         private Pos mPos;
@@ -44,7 +44,7 @@
     /// <summary>
     ///     Helper class that centers all its children.
     /// </summary>
-    public class Center : Positioner
+    public partial class Center : Positioner
     {
 
         /// <summary>

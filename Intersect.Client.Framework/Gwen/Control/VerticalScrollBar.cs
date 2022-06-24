@@ -8,7 +8,7 @@ namespace Intersect.Client.Framework.Gwen.Control
     /// <summary>
     ///     Vertical scrollbar.
     /// </summary>
-    public class VerticalScrollBar : ScrollBar
+    public partial class VerticalScrollBar : ScrollBar
     {
 
         /// <summary>

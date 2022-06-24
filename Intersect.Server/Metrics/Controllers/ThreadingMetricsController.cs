@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Intersect.Server.Metrics.Controllers
 {
-    public class ThreadingMetricsController : MetricsController
+    public partial class ThreadingMetricsController : MetricsController
     {
         private const string CONTEXT = "Threading";
 

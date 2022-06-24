@@ -10,7 +10,7 @@ using Intersect.Utilities;
 namespace Intersect.Client.Interface.Game
 {
 
-    class PictureWindow
+    partial class PictureWindow
     {
 
         //Controls

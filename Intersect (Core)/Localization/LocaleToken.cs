@@ -6,7 +6,7 @@ namespace Intersect.Localization
 {
 
     [Serializable]
-    public class LocaleToken : LocaleNamespace
+    public partial class LocaleToken : LocaleNamespace
     {
 
         [JsonIgnore] private LocalizedString mName;

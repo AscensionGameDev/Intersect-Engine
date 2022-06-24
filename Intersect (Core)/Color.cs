@@ -7,7 +7,7 @@ using MessagePack;
 namespace Intersect
 {
     [MessagePackObject]
-    public class Color : IEquatable<Color>
+    public partial class Color : IEquatable<Color>
     {
 
         public enum ChatColor

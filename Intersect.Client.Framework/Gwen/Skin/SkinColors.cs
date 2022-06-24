@@ -4,10 +4,10 @@
     /// <summary>
     ///     UI colors used by skins.
     /// </summary>
-    public struct SkinColors
+    public partial struct SkinColors
     {
 
-        public struct _Window
+        public partial struct _Window
         {
 
             public Color TitleActive;
@@ -16,7 +16,7 @@
 
         }
 
-        public struct _Button
+        public partial struct _Button
         {
 
             public Color Normal;
@@ -29,10 +29,10 @@
 
         }
 
-        public struct _Tab
+        public partial struct _Tab
         {
 
-            public struct _Inactive
+            public partial struct _Inactive
             {
 
                 public Color Normal;
@@ -45,7 +45,7 @@
 
             }
 
-            public struct _Active
+            public partial struct _Active
             {
 
                 public Color Normal;
@@ -64,7 +64,7 @@
 
         }
 
-        public struct _Label
+        public partial struct _Label
         {
 
             public Color Default;
@@ -77,7 +77,7 @@
 
         }
 
-        public struct _Tree
+        public partial struct _Tree
         {
 
             public Color Lines;
@@ -90,7 +90,7 @@
 
         }
 
-        public struct _Properties
+        public partial struct _Properties
         {
 
             public Color LineNormal;
@@ -117,14 +117,14 @@
 
         }
 
-        public struct _Category
+        public partial struct _Category
         {
 
             public Color Header;
 
             public Color HeaderClosed;
 
-            public struct _Line
+            public partial struct _Line
             {
 
                 public Color Text;
@@ -141,7 +141,7 @@
 
             }
 
-            public struct _LineAlt
+            public partial struct _LineAlt
             {
 
                 public Color Text;

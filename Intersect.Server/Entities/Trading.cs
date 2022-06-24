@@ -6,7 +6,7 @@ using Intersect.Server.Database;
 namespace Intersect.Server.Entities
 {
 
-    public struct Trading : IDisposable
+    public partial struct Trading : IDisposable
     {
 
         private readonly Player mPlayer;

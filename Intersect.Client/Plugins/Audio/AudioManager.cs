@@ -5,7 +5,7 @@ using System;
 
 namespace Intersect.Client.Plugins.Audio
 {
-    public class AudioManager : IAudioManager
+    public partial class AudioManager : IAudioManager
     {
         /// <inheritdoc />
         public IMapSound PlayMapSound(string filename, int x, int y, Guid mapId, bool loop, int loopInterval, int distance, IEntity parent = null) => Core.Audio.AddMapSound(filename, x, y, mapId, loop, loopInterval, distance, parent);

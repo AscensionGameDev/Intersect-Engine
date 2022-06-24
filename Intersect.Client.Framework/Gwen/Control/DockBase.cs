@@ -10,7 +10,7 @@ namespace Intersect.Client.Framework.Gwen.Control
     /// <summary>
     ///     Base for dockable containers.
     /// </summary>
-    public class DockBase : Base
+    public partial class DockBase : Base
     {
 
         private DockBase mBottom;

@@ -10,7 +10,7 @@ using Newtonsoft.Json;
 namespace Intersect
 {
 
-    public class ColorConverter : JsonConverter<Color>
+    public partial class ColorConverter : JsonConverter<Color>
     {
 
         public override void WriteJson(JsonWriter writer, Color value, JsonSerializer serializer)
@@ -31,7 +31,7 @@ namespace Intersect
 
     }
 
-    public struct LabelColor
+    public partial struct LabelColor
     {
 
         public Color Name;
@@ -62,7 +62,7 @@ namespace Intersect
             Root = JsonConvert.DeserializeObject<RootNamespace>(json, new ColorConverter()) ?? Root;
         }
 
-        public sealed class NamesNamespace
+        public sealed partial class NamesNamespace
         {
 
             public LabelColor Events = new LabelColor(Color.White, Color.Black, new Color(180, 0, 0, 0));
@@ -88,7 +88,7 @@ namespace Intersect
 
         }
 
-        public sealed class ChatNamespace
+        public sealed partial class ChatNamespace
         {
 
             public Color AdminChat = Color.Cyan;
@@ -127,7 +127,7 @@ namespace Intersect
 
         }
 
-        public sealed class QuestAlertNamespace
+        public sealed partial class QuestAlertNamespace
         {
 
             public Color Abandoned = Color.Red;
@@ -142,7 +142,7 @@ namespace Intersect
 
         }
 
-        public sealed class QuestWindowNamespace
+        public sealed partial class QuestWindowNamespace
         {
 
             public Color Completed = Color.Green;
@@ -155,7 +155,7 @@ namespace Intersect
 
         }
 
-        public sealed class AlertsNamespace
+        public sealed partial class AlertsNamespace
         {
 
             public Color Accepted = Color.Green;
@@ -176,7 +176,7 @@ namespace Intersect
 
         }
 
-        public sealed class CombatNamespace
+        public sealed partial class CombatNamespace
         {
 
             public Color AddMana = new Color(255, 0, 0, 255);
@@ -215,7 +215,7 @@ namespace Intersect
 
         }
 
-        public sealed class ItemsNamespace
+        public sealed partial class ItemsNamespace
         {
 
             public Color Bound = Color.Red;
@@ -307,7 +307,7 @@ namespace Intersect
         private static RootNamespace Root { get; set; }
 
         // ReSharper disable MemberHidesStaticFromOuterClass
-        private sealed class RootNamespace
+        private sealed partial class RootNamespace
         {
 
             public readonly AlertsNamespace Alerts = new AlertsNamespace();

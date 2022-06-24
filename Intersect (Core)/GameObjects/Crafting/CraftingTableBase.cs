@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 namespace Intersect.GameObjects
 {
 
-    public class CraftingTableBase : DatabaseObject<CraftingTableBase>, IFolderable
+    public partial class CraftingTableBase : DatabaseObject<CraftingTableBase>, IFolderable
     {
 
         [NotMapped] public DbList<CraftBase> Crafts = new DbList<CraftBase>();

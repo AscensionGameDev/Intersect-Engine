@@ -9,7 +9,7 @@ namespace Intersect.Network.Packets
     [Union(2, typeof(SwapBankItemsPacket))]
     [Union(3, typeof(SwapInvItemsPacket))]
     [Union(4, typeof(SwapSpellsPacket))]
-    public abstract class SlotSwapPacket : IntersectPacket
+    public abstract partial class SlotSwapPacket : IntersectPacket
     {
 
         protected SlotSwapPacket(int slot1, int slot2)

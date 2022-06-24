@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace Intersect.Async
 {
-    public class AsyncValueGenerator<TValue> : IDisposable
+    public partial class AsyncValueGenerator<TValue> : IDisposable
     {
         private readonly CancellationToken _cancellationToken;
         private readonly Task _task;

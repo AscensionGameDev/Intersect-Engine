@@ -10,7 +10,7 @@ using Newtonsoft.Json;
 namespace Intersect.GameObjects.Crafting
 {
 
-    public class CraftBase : DatabaseObject<CraftBase>, IFolderable
+    public partial class CraftBase : DatabaseObject<CraftBase>, IFolderable
     {
 
         [NotMapped] public List<CraftIngredient> Ingredients = new List<CraftIngredient>();
@@ -67,7 +67,7 @@ namespace Intersect.GameObjects.Crafting
 
     }
 
-    public class CraftIngredient
+    public partial class CraftIngredient
     {
 
         public Guid ItemId;

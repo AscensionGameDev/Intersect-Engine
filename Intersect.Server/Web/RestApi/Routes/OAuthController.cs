@@ -13,7 +13,7 @@ namespace Intersect.Server.Web.RestApi.Routes
 
     [RoutePrefix("oauth")]
     [ConfigurableAuthorize]
-    public sealed class OAuthController : ApiController
+    public sealed partial class OAuthController : ApiController
     {
 
         [Authorize]

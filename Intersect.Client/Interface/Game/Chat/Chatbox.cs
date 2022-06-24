@@ -20,7 +20,7 @@ using Intersect.Utilities;
 namespace Intersect.Client.Interface.Game.Chat
 {
 
-    public class Chatbox
+    public partial class Chatbox
     {
 
         private ComboBox mChannelCombobox;

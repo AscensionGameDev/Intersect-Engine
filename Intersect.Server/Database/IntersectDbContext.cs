@@ -20,7 +20,7 @@ namespace Intersect.Server.Database
     /// </summary>
     /// <inheritdoc cref="DbContext" />
     /// <inheritdoc cref="ISeedableContext" />
-    public abstract class IntersectDbContext<T> : DbContext, ISeedableContext where T : IntersectDbContext<T>
+    public abstract partial class IntersectDbContext<T> : DbContext, ISeedableContext where T : IntersectDbContext<T>
     {
         private static readonly IDictionary<Type, ConstructorInfo> constructorCache =
             new ConcurrentDictionary<Type, ConstructorInfo>();

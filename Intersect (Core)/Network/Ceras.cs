@@ -12,7 +12,7 @@ using K4os.Compression.LZ4;
 namespace Intersect.Network
 {
 
-    public sealed class CerasDefaultBufferPool : ICerasBufferPool
+    public sealed partial class CerasDefaultBufferPool : ICerasBufferPool
     {
         public byte[] RentBuffer(int minimumSize)
         {
@@ -25,7 +25,7 @@ namespace Intersect.Network
         }
     }
 
-    public class Ceras
+    public partial class Ceras
     {
         private static readonly string[] BuiltInPacketNamespaces = new[]
         {
@@ -157,7 +157,7 @@ namespace Intersect.Network
 
     }
 
-    public class LegacyCeras : Ceras
+    public partial class LegacyCeras : Ceras
     {
         /// <summary>
         /// Creates a Ceras instance with legacy config (no version tolerance) in order for the server to use for database upgrades to the new serialized formats.
@@ -196,7 +196,7 @@ namespace Intersect.Network
         }
     }
 
-    class CerasTypeBinder : ITypeBinder
+    partial class CerasTypeBinder : ITypeBinder
     {
         Dictionary<string, Type> _nameToType = new Dictionary<string, Type>();
 

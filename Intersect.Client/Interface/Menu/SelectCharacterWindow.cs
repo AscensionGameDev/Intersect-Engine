@@ -16,7 +16,7 @@ using Intersect.Network.Packets.Server;
 namespace Intersect.Client.Interface.Menu
 {
 
-    public class SelectCharacterWindow
+    public partial class SelectCharacterWindow
     {
 
         public List<Character> Characters = new List<Character>();
@@ -428,7 +428,7 @@ namespace Intersect.Client.Interface.Menu
 
     }
 
-    public class Character
+    public partial class Character
     {
 
         public string Class = "";

@@ -11,7 +11,7 @@ namespace Intersect.Client.Framework.Gwen.Renderer
     /// <summary>
     ///     Base renderer.
     /// </summary>
-    public class Base : IDisposable
+    public partial class Base : IDisposable
     {
 
         private Rectangle mClipRegion;

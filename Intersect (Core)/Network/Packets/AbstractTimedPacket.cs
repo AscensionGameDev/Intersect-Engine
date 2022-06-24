@@ -15,7 +15,7 @@ namespace Intersect.Network.Packets
     [Union(4, typeof(EntityPositionPacket))]
     [Union(5, typeof(JoinGamePacket))]
     [Union(6, typeof(Server.PingPacket))]
-    public abstract class AbstractTimedPacket : IntersectPacket
+    public abstract partial class AbstractTimedPacket : IntersectPacket
     {
         protected AbstractTimedPacket()
         {

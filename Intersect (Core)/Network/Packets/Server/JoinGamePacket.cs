@@ -3,7 +3,7 @@
 namespace Intersect.Network.Packets.Server
 {
     [MessagePackObject]
-    public class JoinGamePacket : AbstractTimedPacket
+    public partial class JoinGamePacket : AbstractTimedPacket
     {
 
     }

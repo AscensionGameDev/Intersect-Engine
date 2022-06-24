@@ -3,7 +3,7 @@
 namespace Intersect.Client.Framework.Input
 {
 
-    public abstract class GameInput : IGameInput
+    public abstract partial class GameInput : IGameInput
     {
 
         public abstract bool MouseButtonDown(MouseButtons mb);

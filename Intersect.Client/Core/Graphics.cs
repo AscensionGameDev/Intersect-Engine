@@ -17,7 +17,7 @@ using Intersect.Utilities;
 namespace Intersect.Client.Core
 {
 
-    public static class Graphics
+    public static partial class Graphics
     {
 
         public static GameFont ActionMsgFont;

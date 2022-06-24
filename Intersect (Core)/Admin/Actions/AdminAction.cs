@@ -18,7 +18,7 @@ namespace Intersect.Admin.Actions
     [Union(11, typeof(WarpToMapAction))]
     [Union(12, typeof(WarpToMeAction))]
     [Union(13, typeof(ReturnToOverworldAction))]
-    public abstract class AdminAction
+    public abstract partial class AdminAction
     {
         [Key(0)]
         public abstract AdminActions Action { get; }

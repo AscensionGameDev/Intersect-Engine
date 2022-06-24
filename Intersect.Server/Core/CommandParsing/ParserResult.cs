@@ -10,7 +10,7 @@ using Intersect.Server.Core.CommandParsing.Errors;
 namespace Intersect.Server.Core.CommandParsing
 {
 
-    public class ParserResult<TCommand> where TCommand : ICommand
+    public partial class ParserResult<TCommand> where TCommand : ICommand
     {
 
         public ParserResult(
@@ -64,7 +64,7 @@ namespace Intersect.Server.Core.CommandParsing
 
     }
 
-    public class ParserResult : ParserResult<ICommand>
+    public partial class ParserResult : ParserResult<ICommand>
     {
 
         public ParserResult(

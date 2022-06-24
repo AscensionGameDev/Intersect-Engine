@@ -15,7 +15,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
     [RoutePrefix("gameobjects")]
     [ConfigurableAuthorize]
-    public sealed class GameObjectController : ApiController
+    public sealed partial class GameObjectController : ApiController
     {
 
         [Route("{objType}")]

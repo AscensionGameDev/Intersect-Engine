@@ -8,7 +8,7 @@ namespace Intersect.Client.Framework.Gwen.Control
     /// <summary>
     ///     Control with multiple tabs that can be reordered and dragged.
     /// </summary>
-    public class TabControl : Base
+    public partial class TabControl : Base
     {
 
         private readonly ScrollBarButton[] mScroll;

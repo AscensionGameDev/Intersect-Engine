@@ -13,7 +13,7 @@ using Intersect.GameObjects;
 namespace Intersect.Client.Interface.Game.Bank
 {
 
-    public class BankWindow
+    public partial class BankWindow
     {
 
         private static int sItemXPadding = 4;

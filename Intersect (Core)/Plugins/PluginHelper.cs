@@ -5,7 +5,7 @@ namespace Intersect.Plugins
     /// <summary>
     /// Convenience abstract class that defines commonly used properties for certain plugin helpers.
     /// </summary>
-    public abstract class PluginHelper
+    public abstract partial class PluginHelper
     {
         /// <summary>
         /// The <see cref="Logger"/> for this helper to use.

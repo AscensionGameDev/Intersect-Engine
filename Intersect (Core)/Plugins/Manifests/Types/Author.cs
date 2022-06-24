@@ -13,7 +13,7 @@ namespace Intersect.Plugins.Manifests.Types
     /// Structure that defines an <see cref="Author"/> that can be represented as an <see cref="Author"/> <see cref="string"/>.
     /// </summary>
     [JsonConverter(typeof(AuthorStringConverter))]
-    public struct Author : IComparable<Author>, IEquatable<Author>, IEquatable<string>, ICloneable, IComparable
+    public partial struct Author : IComparable<Author>, IEquatable<Author>, IEquatable<string>, ICloneable, IComparable
     {
         #region Constants
 
@@ -186,7 +186,7 @@ namespace Intersect.Plugins.Manifests.Types
 
         #region Classes
 
-        private class AuthorStringConverter : JsonConverter<Author>
+        private partial class AuthorStringConverter : JsonConverter<Author>
         {
             #region Properties
 

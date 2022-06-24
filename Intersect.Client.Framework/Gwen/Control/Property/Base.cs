@@ -6,7 +6,7 @@ namespace Intersect.Client.Framework.Gwen.Control.Property
     /// <summary>
     ///     Base control for property entry.
     /// </summary>
-    public class Base : Control.Base
+    public partial class Base : Control.Base
     {
 
         /// <summary>

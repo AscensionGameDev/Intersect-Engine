@@ -11,7 +11,7 @@ using NUnit.Framework;
 namespace Intersect.Plugins.Manifests.Types
 {
     [TestFixture]
-    public class AuthorsTests
+    public partial class AuthorsTests
     {
         #region Test Constants
 

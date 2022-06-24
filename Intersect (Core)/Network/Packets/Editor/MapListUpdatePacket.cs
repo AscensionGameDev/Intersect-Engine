@@ -6,7 +6,7 @@ using MessagePack;
 namespace Intersect.Network.Packets.Editor
 {
     [MessagePackObject]
-    public class MapListUpdatePacket : EditorPacket
+    public partial class MapListUpdatePacket : EditorPacket
     {
         //Parameterless Constructor for MessagePack
         public MapListUpdatePacket()

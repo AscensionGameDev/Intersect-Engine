@@ -3,7 +3,7 @@
 namespace Intersect.Network.Packets.Server
 {
     [MessagePackObject]
-    public class AdminPanelPacket : IntersectPacket
+    public partial class AdminPanelPacket : IntersectPacket
     {
 
     }

@@ -12,7 +12,7 @@ using Intersect.Utilities;
 namespace Intersect.Client.Interface.Game
 {
 
-    public class EscapeMenu : ImagePanel
+    public partial class EscapeMenu : ImagePanel
     {
 
         private readonly Button mClose;

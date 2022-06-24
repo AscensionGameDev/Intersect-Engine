@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 namespace Intersect.Client.MonoGame.Graphics
 {
 
-    public class MonoRenderTexture : GameRenderTexture
+    public partial class MonoRenderTexture : GameRenderTexture
     {
 
         private GraphicsDevice mGraphicsDevice;

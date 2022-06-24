@@ -6,7 +6,7 @@ using MessagePack;
 namespace Intersect.Network.Packets.Server
 {
     [MessagePackObject]
-    public class GameObjectPacket : IntersectPacket
+    public partial class GameObjectPacket : IntersectPacket
     {
         //Parameterless Constructor for MessagePack
         public GameObjectPacket()

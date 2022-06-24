@@ -11,7 +11,7 @@ namespace Intersect.Client.Framework.Gwen.Control
     /// <summary>
     ///     Text box (editable).
     /// </summary>
-    public class TextBox : Label
+    public partial class TextBox : Label
     {
 
         //Sound Effects

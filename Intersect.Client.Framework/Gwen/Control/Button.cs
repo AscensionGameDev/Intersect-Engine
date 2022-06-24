@@ -12,7 +12,7 @@ namespace Intersect.Client.Framework.Gwen.Control
     /// <summary>
     ///     Button control.
     /// </summary>
-    public class Button : Label
+    public partial class Button : Label
     {
 
         public enum ControlState

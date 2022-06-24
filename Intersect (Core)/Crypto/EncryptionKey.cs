@@ -7,7 +7,7 @@ using Intersect.Memory;
 
 namespace Intersect.Crypto
 {
-    public abstract class EncryptionKey
+    public abstract partial class EncryptionKey
     {
         protected EncryptionKey(KeyFormat format)
         {
