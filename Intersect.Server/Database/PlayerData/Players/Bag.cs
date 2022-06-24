@@ -99,6 +99,15 @@ namespace Intersect.Server.Database.PlayerData.Players
                     {
                         bag.Slots = bag.Slots.OrderBy(p => p.Slot).ToList();
                         bag.ValidateSlots();
+
+                        //Remove any items from this bag that have been removed from the game
+                        foreach (var itm in bag.Slots)
+                        {
+                            if (itm.ItemId != Guid.Empty && ItemBase.Get(itm.ItemId) == null)
+                            {
+                                itm.Set(new Item());
+                            }
+                        }
                     }
 
                     return bag;

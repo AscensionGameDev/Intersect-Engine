@@ -122,6 +122,18 @@ namespace Intersect.Server.Database
         {
             bag = Bag;
 
+            if (bag != null)
+            {
+                //Remove any items from this bag that have been removed from the game
+                foreach (var itm in bag.Slots)
+                {
+                    if (itm.ItemId != Guid.Empty && ItemBase.Get(itm.ItemId) == null)
+                    {
+                        itm.Set(new Item());
+                    }
+                }
+            }
+
             // ReSharper disable once InvertIf Justification: Do not introduce two different return points that assert a value state
             if (bag == null)
             {
