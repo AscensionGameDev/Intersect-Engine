@@ -561,47 +561,61 @@ namespace Intersect.Client.Entities
 
         public void TrySellItem(int index)
         {
-            if (ItemBase.Get(Inventory[index].ItemId) != null)
+            var slot = Inventory[index];
+            var sellingItem = ItemBase.Get(slot.ItemId);
+            if (sellingItem == null)
             {
-                var foundItem = -1;
-                for (var i = 0; i < Globals.GameShop.BuyingItems.Count; i++)
-                {
-                    if (Globals.GameShop.BuyingItems[i].ItemId == Inventory[index].ItemId)
-                    {
-                        foundItem = i;
-
-                        break;
-                    }
-                }
-
-                if (foundItem > -1 && Globals.GameShop.BuyingWhitelist ||
-                    foundItem == -1 && !Globals.GameShop.BuyingWhitelist)
-                {
-                    if (Inventory[index].Quantity > 1)
-                    {
-                        var iBox = new InputBox(
-                            Strings.Shop.sellitem,
-                            Strings.Shop.sellitemprompt.ToString(ItemBase.Get(Inventory[index].ItemId).Name), true,
-                            InputBox.InputType.NumericSliderInput, SellItemInputBoxOkay, null, index, Inventory[index].Quantity
-                        );
-                    }
-                    else
-                    {
-                        var iBox = new InputBox(
-                            Strings.Shop.sellitem,
-                            Strings.Shop.sellprompt.ToString(ItemBase.Get(Inventory[index].ItemId).Name), true,
-                            InputBox.InputType.YesNo, SellInputBoxOkay, null, index
-                        );
-                    }
-                }
-                else
-                {
-                    var iBox = new InputBox(
-                        Strings.Shop.sellitem, Strings.Shop.cannotsell, true, InputBox.InputType.OkayOnly, null, null,
-                        -1
-                    );
-                }
+                return;
             }
+
+            var foundItem = -1;
+            for (var i = 0; i < Globals.GameShop.BuyingItems.Count; i++)
+            {
+                if (Globals.GameShop.BuyingItems[i].ItemId != slot.ItemId)
+                {
+                    continue;
+                }
+
+                foundItem = i;
+
+                break;
+            }
+
+            var hasFoundItem = foundItem > -1 && Globals.GameShop.BuyingWhitelist ||
+                               foundItem == -1 && !Globals.GameShop.BuyingWhitelist;
+            var prompt = Strings.Shop.sellprompt;
+            var inputType = InputBox.InputType.YesNo;
+            EventHandler onSuccess = SellInputBoxOkay;
+            var userData = index;
+            var quantity = slot.Quantity;
+
+            if (quantity > 1)
+            {
+                prompt = Strings.Shop.sellitemprompt;
+                inputType = InputBox.InputType.NumericSliderInput;
+                onSuccess = SellItemInputBoxOkay;
+                userData = index;
+            }
+
+            if (!hasFoundItem)
+            {
+                prompt = Strings.Shop.cannotsell;
+                inputType = InputBox.InputType.OkayOnly;
+                onSuccess = null;
+                userData = -1;
+            }
+
+            InputBox.Open(
+                title: Strings.Shop.sellitem,
+                prompt: prompt.ToString(sellingItem.Name),
+                modal: true,
+                inputType: inputType,
+                onSuccess: onSuccess,
+                onCancel: null,
+                userData: userData,
+                quantity: quantity,
+                maxQuantity: quantity
+            );
         }
 
         public void TryBuyItem(int slot)
