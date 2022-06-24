@@ -51,7 +51,7 @@ namespace Intersect.Client.Interface.Menu
                 Strings.Server.StatusLabel.ToString(MainMenu.ActiveNetworkStatus.ToLocalizedString());
         }
 
-        public void Draw()
+        public void Update()
         {
             if (mShouldReset)
             {
@@ -60,6 +60,10 @@ namespace Intersect.Client.Interface.Menu
             }
 
             MainMenu.Update();
+        }
+
+        public void Draw()
+        {
             mMenuCanvas.RenderCanvas();
         }
 

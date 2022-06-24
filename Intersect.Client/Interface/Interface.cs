@@ -180,16 +180,41 @@ namespace Intersect.Client.Interface
                 InitGwen();
             }
 
+            if (Globals.GameState == GameStates.Menu)
+            {
+                MenuUi.Update();
+            }
+            else if (Globals.GameState == GameStates.InGame)
+            {
+                GameUi.Update();
+            }
+
+            //Do not allow hiding of UI under several conditions
+            var forceShowUi = Globals.InCraft || Globals.InBank || Globals.InShop || Globals.InTrade || Globals.InBag || Globals.EventDialogs?.Count > 0 || HasInputFocus() || (!Interface.GameUi?.EscapeMenu?.IsHidden ?? true);
+
             ErrorMsgHandler.Update();
             sGameCanvas.RestrictToParent = false;
             if (Globals.GameState == GameStates.Menu)
             {
                 MenuUi.Draw();
             }
-            else if (Globals.GameState == GameStates.InGame &&
-                     ((!Interface.GameUi?.EscapeMenu?.IsHidden ?? true) || !HideUi))
+            else if (Globals.GameState == GameStates.InGame)
             {
-                GameUi.Draw();
+                if (HideUi && !forceShowUi)
+                {
+                    if (sGameCanvas.IsVisible)
+                    {
+                        sGameCanvas.Hide();
+                    }
+                }
+                else
+                {
+                    if (!sGameCanvas.IsVisible)
+                    {
+                        sGameCanvas.Show();
+                    }
+                    GameUi.Draw();
+                }
             }
         }
 
