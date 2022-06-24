@@ -3774,7 +3774,8 @@ Tick timer saved in server config.json.";
                 {"overlay", @"Overlay"},
                 {"fog", @"Fog"},
                 {"audio", @"Audio"},
-                {"weather", @"Weather"}
+                {"weather", @"Weather"},
+                {"player", @"Player"},
             };
 
             public static Dictionary<string, string> displaynames = new Dictionary<string, string>()
@@ -3803,6 +3804,7 @@ Tick timer saved in server config.json.";
                 {"weatherxspeed", @"Weather X Speed"},
                 {"weatheryspeed", @"Weather Y Speed"},
                 {"weatherintensity", @"Weather Intensity"},
+                {"hideequipment", @"Hide Equipment"},
             };
 
             public static Dictionary<string, string> descriptions = new Dictionary<string, string>()
@@ -3843,6 +3845,7 @@ Tick timer saved in server config.json.";
                 },
                 {"weatheryspeeddesc", @"How fast vertically weather particles move across the screen. (Range -5 to 5)"},
                 {"weatherintensitydesc", @"How intence the weather is (number of particles). (Range 0 to 100)"},
+                {"hideequipmentdesc", @"Toggling this on will stop rendering of item paperdolls while on this map."},
             };
 
             public static LocalizedString title = @"Map Properties";

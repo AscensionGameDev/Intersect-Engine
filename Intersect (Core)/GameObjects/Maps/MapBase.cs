@@ -329,6 +329,8 @@ namespace Intersect.GameObjects.Maps
 
         public int WeatherIntensity { get; set; }
 
+        public bool HideEquipment { get; set; }
+
         [NotMapped]
         [JsonIgnore]
         public object MapLock => mMapLock;

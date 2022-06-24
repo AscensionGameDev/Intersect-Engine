@@ -554,6 +554,23 @@ namespace Intersect.Editor.Maps
             }
         }
 
+        [CustomCategory("player"), CustomDescription("hideequipmentdesc"), CustomDisplayName("hideequipment"),
+         DefaultValue(false)]
+        public bool HideEquipment
+        {
+            get => mMyMap.HideEquipment;
+            set
+            {
+                if (mMyMap.HideEquipment != value)
+                {
+                    Globals.MapEditorWindow.PrepUndoState();
+                    mMyMap.HideEquipment = value;
+                    Graphics.TilePreviewUpdated = true;
+                    Globals.MapEditorWindow.AddUndoState();
+                }
+            }
+        }
+
     }
 
     public class MapMusicProperty : StringConverter
