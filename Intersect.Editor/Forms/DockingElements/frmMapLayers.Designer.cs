@@ -1753,7 +1753,7 @@ namespace Intersect.Editor.Forms.DockingElements
             this.nudItemRespawnTime.ForeColor = System.Drawing.Color.Gainsboro;
             this.nudItemRespawnTime.Location = new System.Drawing.Point(16, 116);
             this.nudItemRespawnTime.Maximum = new decimal(new int[] {
-            10000000,
+            2147483647,
             0,
             0,
             0});

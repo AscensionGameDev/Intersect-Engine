@@ -253,6 +253,12 @@ namespace Intersect.GameObjects
         /// </summary>
         public int BlockAbsorption { get; set; }
 
+        /// <summary>
+        /// Time in which this item will remain on a map before despawning. Set to 0 to use server configured default value.
+        /// </summary>
+        public long DespawnTime { get; set; }
+
+
         [Column("VitalsGiven")]
         [JsonIgnore]
         public string VitalsJson

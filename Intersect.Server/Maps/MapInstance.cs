@@ -772,7 +772,7 @@ namespace Intersect.Server.Maps
 
                 var mapItem = new MapItem(item.ItemId, amount + existingCount, x, y, item.BagId, item.Bag)
                 {
-                    DespawnTime = Timing.Global.Milliseconds + Options.Loot.ItemDespawnTime,
+                    DespawnTime = Timing.Global.Milliseconds + (itemDescriptor.DespawnTime <= 0 ? Options.Loot.ItemDespawnTime : itemDescriptor.DespawnTime),
                     Owner = owner,
                     OwnershipTime = Timing.Global.Milliseconds + Options.Loot.ItemOwnershipTime,
                     VisibleToAll = Options.Loot.ShowUnownedItems || owner == Guid.Empty
