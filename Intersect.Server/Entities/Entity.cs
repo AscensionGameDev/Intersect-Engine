@@ -440,7 +440,7 @@ namespace Intersect.Server.Entities
                         return -2;
                     }
 
-                    if (tileAttribute.Type == MapAttributes.NpcAvoid && this is Npc)
+                    if (tileAttribute.Type == MapAttributes.NpcAvoid && (this is Npc || (this is EventPageInstance evtPage && !evtPage.MyPage.IgnoreNpcAvoids)))
                     {
                         return -2;
                     }

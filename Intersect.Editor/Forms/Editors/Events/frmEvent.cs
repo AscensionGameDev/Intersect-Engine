@@ -902,6 +902,7 @@ namespace Intersect.Editor.Forms.Editors.Events
             chkDirectionFix.Text = Strings.EventEditor.directionfix;
             chkWalkingAnimation.Text = Strings.EventEditor.walkinganim;
             chkInteractionFreeze.Text = Strings.EventEditor.interactionfreeze;
+            chkIgnoreNpcAvoids.Text = Strings.EventEditor.ignorenpcavoids;
             grpTriggers.Text = Strings.EventEditor.trigger;
             grpNewCommands.Text = Strings.EventEditor.addcommand;
             grpEventCommands.Text = Strings.EventEditor.commandlist;
@@ -1053,6 +1054,7 @@ namespace Intersect.Editor.Forms.Editors.Events
             chkDirectionFix.Checked = Convert.ToBoolean(CurrentPage.DirectionFix);
             chkWalkingAnimation.Checked = Convert.ToBoolean(CurrentPage.WalkingAnimation);
             chkInteractionFreeze.Checked = Convert.ToBoolean(CurrentPage.InteractionFreeze);
+            chkIgnoreNpcAvoids.Checked = Convert.ToBoolean(CurrentPage.IgnoreNpcAvoids);
             txtDesc.Text = CurrentPage.Description;
             ListPageCommands();
             UpdateEventPreview();
@@ -1833,6 +1835,11 @@ namespace Intersect.Editor.Forms.Editors.Events
         private void chkInteractionFreeze_CheckedChanged(object sender, EventArgs e)
         {
             CurrentPage.InteractionFreeze = chkInteractionFreeze.Checked;
+        }
+
+        private void chkIgnoreNpcAvoids_CheckedChanged(object sender, EventArgs e)
+        {
+            CurrentPage.IgnoreNpcAvoids = chkIgnoreNpcAvoids.Checked;
         }
 
         #endregion

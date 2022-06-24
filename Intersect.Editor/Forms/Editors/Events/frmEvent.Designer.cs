@@ -158,6 +158,7 @@ namespace Intersect.Editor.Forms.Editors.Events
             this.txtEventname = new DarkUI.Controls.DarkTextBox();
             this.grpEntityOptions = new DarkUI.Controls.DarkGroupBox();
             this.grpExtra = new DarkUI.Controls.DarkGroupBox();
+            this.chkIgnoreNpcAvoids = new DarkUI.Controls.DarkCheckBox();
             this.chkInteractionFreeze = new DarkUI.Controls.DarkCheckBox();
             this.chkWalkingAnimation = new DarkUI.Controls.DarkCheckBox();
             this.chkDirectionFix = new DarkUI.Controls.DarkCheckBox();
@@ -277,6 +278,7 @@ namespace Intersect.Editor.Forms.Editors.Events
             // 
             this.grpExtra.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.grpExtra.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpExtra.Controls.Add(this.chkIgnoreNpcAvoids);
             this.grpExtra.Controls.Add(this.chkInteractionFreeze);
             this.grpExtra.Controls.Add(this.chkWalkingAnimation);
             this.grpExtra.Controls.Add(this.chkDirectionFix);
@@ -289,6 +291,16 @@ namespace Intersect.Editor.Forms.Editors.Events
             this.grpExtra.TabIndex = 9;
             this.grpExtra.TabStop = false;
             this.grpExtra.Text = "Extra";
+            // 
+            // chkIgnoreNpcAvoids
+            // 
+            this.chkIgnoreNpcAvoids.AutoSize = true;
+            this.chkIgnoreNpcAvoids.Location = new System.Drawing.Point(123, 41);
+            this.chkIgnoreNpcAvoids.Name = "chkIgnoreNpcAvoids";
+            this.chkIgnoreNpcAvoids.Size = new System.Drawing.Size(114, 17);
+            this.chkIgnoreNpcAvoids.TabIndex = 7;
+            this.chkIgnoreNpcAvoids.Text = "Ignroe Npc Avoids";
+            this.chkIgnoreNpcAvoids.CheckedChanged += new System.EventHandler(this.chkIgnoreNpcAvoids_CheckedChanged);
             // 
             // chkInteractionFreeze
             // 
@@ -1432,5 +1444,6 @@ namespace Intersect.Editor.Forms.Editors.Events
         private ToolStripMenuItem btnPaste;
         private DarkComboBox cmbVariable;
         private Label lblVariableTrigger;
+        private DarkCheckBox chkIgnoreNpcAvoids;
     }
 }
