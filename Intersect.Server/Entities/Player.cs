@@ -3609,6 +3609,25 @@ namespace Intersect.Server.Entities
         {
             if (CraftingTableId != Guid.Empty)
             {
+                var table = CraftingTableBase.Get(CraftingTableId);
+                if (table == null)
+                    return;
+
+                var craftToCheck = CraftBase.Get(id);
+
+                if (craftToCheck == null)
+                    return;
+
+                if (!table.Crafts.Contains(craftToCheck.Id))
+                    return;
+
+                if (!Conditions.MeetsConditionLists(craftToCheck.CraftingRequirements, this, null))
+                {
+                    PacketSender.SendChatMsg(this, Strings.Crafting.RequirementsNotMet.ToString(), ChatMessageType.Error);
+
+                    return;
+                }
+
                 var backupItems = new List<Item>();
                 foreach (var backupItem in Items)
                 {

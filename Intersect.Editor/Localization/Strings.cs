@@ -1182,6 +1182,8 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString ItemLossChance = @"Item Loss (%):";
 
+            public static LocalizedString Requirements = @"Craft Requirements";
+
             public static LocalizedString name = @"Name:";
 
             public static LocalizedString New = @"New Craft";
@@ -1241,6 +1243,9 @@ Tick timer saved in server config.json.";
             public static LocalizedString conditionlist = @"Conditiond";
 
             public static LocalizedString conditionlists = @"Condition Lists";
+
+            public static LocalizedString instructionscraft =
+                @"Below are condition lists. If conditions are met on any of the lists then the player can craft this item.";
 
             public static LocalizedString instructionsevent =
                 @"Below are condition lists. If conditions are met on any of the lists then the event can spawn/run.";

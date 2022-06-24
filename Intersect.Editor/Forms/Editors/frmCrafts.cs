@@ -445,6 +445,7 @@ namespace Intersect.Editor.Forms.Editors
             lblSpeed.Text = Strings.CraftsEditor.time;
             lblFailureChance.Text = Strings.CraftsEditor.FailureChance;
             lblItemLossChance.Text = Strings.CraftsEditor.ItemLossChance;
+            btnCraftRequirements.Text = Strings.CraftsEditor.Requirements;
 
             grpIngredients.Text = Strings.CraftsEditor.ingredients;
             lblIngredient.Text = Strings.CraftsEditor.ingredientitem;
@@ -473,6 +474,12 @@ namespace Intersect.Editor.Forms.Editors
         private void cmbEvent_SelectedIndexChanged(object sender, EventArgs e)
         {
             mEditorItem.Event = EventBase.Get(EventBase.IdFromList(cmbEvent.SelectedIndex - 1));
+        }
+
+        private void btnCraftRequirements_Click(object sender, EventArgs e)
+        {
+            var frm = new FrmDynamicRequirements(mEditorItem.CraftingRequirements, RequirementType.Craft);
+            frm.ShowDialog();
         }
 
         #region "Item List - Folders, Searching, Sorting, Etc"
