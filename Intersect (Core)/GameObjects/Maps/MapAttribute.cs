@@ -75,11 +75,14 @@ namespace Intersect.GameObjects.Maps
         [EditorDisplay]
         public int Quantity { get; set; }
 
+        public long RespawnTime { get; set; }
+
         public override MapAttribute Clone()
         {
             var att = (MapItemAttribute) base.Clone();
             att.ItemId = ItemId;
             att.Quantity = Quantity;
+            att.RespawnTime = RespawnTime;
 
             return att;
         }

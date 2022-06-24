@@ -876,7 +876,7 @@ namespace Intersect.Server.Maps
                         {
                             AttributeSpawnX = item.X,
                             AttributeSpawnY = item.Y,
-                            RespawnTime = Timing.Global.Milliseconds + Options.Map.ItemAttributeRespawnTime
+                            RespawnTime = Timing.Global.Milliseconds + (item.AttributeRespawnTime <= 0 ? Options.Map.ItemAttributeRespawnTime : item.AttributeRespawnTime)
                         };
                         ItemRespawns.TryAdd(spawn.Id, spawn);
                     }
@@ -918,7 +918,7 @@ namespace Intersect.Server.Maps
             var item = ItemBase.Get(((MapItemAttribute)mMapController.Attributes[x, y]).ItemId);
             if (item != null)
             {
-                var mapItem = new MapItem(item.Id, ((MapItemAttribute)mMapController.Attributes[x, y]).Quantity, x, y);
+                var mapItem = new MapItem(item.Id, ((MapItemAttribute)mMapController.Attributes[x, y]).Quantity, x, y, ((MapItemAttribute)mMapController.Attributes[x, y]).RespawnTime);
                 mapItem.DespawnTime = -1;
                 mapItem.AttributeSpawnX = x;
                 mapItem.AttributeSpawnY = y;

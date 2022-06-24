@@ -15,6 +15,8 @@ namespace Intersect.Server.Maps
 
         [JsonIgnore] public int AttributeSpawnY = -1;
 
+        [JsonIgnore] public long AttributeRespawnTime = Options.Instance.MapOpts.ItemAttributeRespawnTime;
+
         [JsonIgnore] public long DespawnTime;
 
         public int X { get; private set; }
@@ -35,11 +37,16 @@ namespace Intersect.Server.Maps
         // We need this mostly for the client-side.. They can't keep track of our timer after all!
         public bool VisibleToAll = true;
 
-        public MapItem(Guid itemId, int quantity, int x, int y) : base(itemId, quantity, null, null)
+        public MapItem(Guid itemId, int quantity, int x, int y, long respawnTime = 0) : base(itemId, quantity, null, null)
         {
             UniqueId = Guid.NewGuid();
             X = x;
             Y = y;
+
+            if (respawnTime > 0)
+            {
+                AttributeRespawnTime = respawnTime;
+            }
         }
 
         public MapItem(Guid itemId, int quantity, int x, int y, Guid? bagId, Bag bag) : base(itemId, quantity, bagId, bag)
