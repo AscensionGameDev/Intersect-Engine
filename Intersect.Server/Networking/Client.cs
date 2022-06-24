@@ -223,7 +223,7 @@ namespace Intersect.Server.Networking
                 User.LoginTime = null;
             }
 
-            if (!force)
+            if (!force && !IsEditor)
             {
                 User?.Save();
             }
