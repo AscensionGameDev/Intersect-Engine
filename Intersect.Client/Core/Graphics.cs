@@ -98,6 +98,9 @@ namespace Intersect.Client.Core
 
         public static GameFont UIFont;
 
+        //Camera Shake
+        public static Point CameraShakePoint = new Point();
+
         //Init Functions
         public static void InitGraphics()
         {
@@ -1012,6 +1015,12 @@ namespace Intersect.Client.Core
             else
             {
                 CurrentView = new FloatRect(0, 0, Renderer.GetScreenWidth(), Renderer.GetScreenHeight());
+            }
+
+            if (Globals.Database.CameraShakeIntensity > 0 && Globals.CameraShake > Timing.Global.Milliseconds)
+            {
+                CurrentView.X += CameraShakePoint.X;
+                CurrentView.Y += CameraShakePoint.Y;
             }
 
             Renderer.SetView(CurrentView);

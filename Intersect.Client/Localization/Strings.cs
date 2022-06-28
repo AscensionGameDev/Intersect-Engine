@@ -1621,6 +1621,24 @@ namespace Intersect.Client.Localization
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString Vsync = @"V-Sync";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString CameraShakeIntensity = @"Camera Shake Intensity:";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString CameraShakeIntensityNone = @"None";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString CameraShakeIntensityLight = @"Light";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString CameraShakeIntensityNormal = @"Normal";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString CameraShakeIntensityStrong = @"Strong";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString CameraShakeIntensityVeryStrong = @"Very Strong";
         }
 
         public partial struct Parties

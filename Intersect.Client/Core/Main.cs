@@ -23,6 +23,8 @@ namespace Intersect.Client.Core
 
         private static long _animTimer;
 
+        private static long _cameraShakeTimer;
+
         private static bool _createdMapTextures;
 
         private static bool _loadedTilesets;
@@ -326,6 +328,21 @@ namespace Intersect.Client.Core
                 }
 
                 _animTimer = Timing.Global.Milliseconds + 500;
+            }
+
+            //Update Game Animations
+            if (_cameraShakeTimer < Timing.Global.Milliseconds)
+            {
+                var intensity = Globals.Database.CameraShakeIntensity;
+
+                if (Globals.CameraShake > Timing.Global.Milliseconds)
+                {
+                    var rnd = new Random();
+                    Graphics.CameraShakePoint.X = rnd.Next(-intensity, intensity);
+                    Graphics.CameraShakePoint.Y = rnd.Next(-intensity, intensity);
+                }
+
+                _cameraShakeTimer = Timing.Global.Milliseconds + 50;
             }
 
             //Remove Event Holds If Invalid

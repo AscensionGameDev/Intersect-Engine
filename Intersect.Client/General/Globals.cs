@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 using Intersect.Client.Entities;
@@ -211,6 +211,9 @@ namespace Intersect.Client.General
 
         //Scene management
         public static bool WaitingOnServer = false;
+
+        //Camera effects
+        public static long CameraShake;
 
         public static Entity GetEntity(Guid id, EntityTypes type)
         {

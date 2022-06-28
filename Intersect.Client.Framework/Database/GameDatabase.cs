@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace Intersect.Client.Framework.Database
 {
@@ -38,6 +38,8 @@ namespace Intersect.Client.Framework.Database
 
         public bool PlayerOverheadInfo;
 
+        public int CameraShakeIntensity;
+
         //Saving password, other stuff we don't want in the games directory
         public abstract void SavePreference(string key, object value);
 
@@ -72,6 +74,7 @@ namespace Intersect.Client.Framework.Database
             NpcOverheadInfo = LoadPreference("NpcOverheadInfo", true);
             PartyMemberOverheadInfo = LoadPreference("PartyMemberOverheadInfo", true);
             PlayerOverheadInfo = LoadPreference("PlayerOverheadInfo", true);
+            CameraShakeIntensity = LoadPreference("CameraShakeIntensity", 2);
         }
 
         public virtual void SavePreferences()
@@ -91,6 +94,7 @@ namespace Intersect.Client.Framework.Database
             SavePreference("NpcOverheadInfo", NpcOverheadInfo.ToString());
             SavePreference("PartyMemberOverheadInfo", PartyMemberOverheadInfo.ToString());
             SavePreference("PlayerOverheadInfo", PlayerOverheadInfo.ToString());
+            SavePreference("CameraShakeIntensity", CameraShakeIntensity.ToString());
         }
 
         public abstract bool LoadConfig();
