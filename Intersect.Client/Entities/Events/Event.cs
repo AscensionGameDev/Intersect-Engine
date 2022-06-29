@@ -77,6 +77,11 @@ namespace Intersect.Client.Entities.Events
 
         protected bool TryEnsureTexture(out GameTexture texture)
         {
+            if (Graphic != null && !string.IsNullOrEmpty(Graphic.Filename) && Sprite != Graphic.Filename)
+            {
+                Sprite = Graphic.Filename;
+            }
+
             if (_drawCompletedWithoutTexture)
             {
                 texture = Texture;
