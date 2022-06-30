@@ -1531,6 +1531,7 @@ namespace Intersect.Server.Entities.Events
                 player.StatPointAllocations[i] = 0;
             }
             player.RecalculateStatsAndPoints();
+            player.UnequipInvalidItems();
             PacketSender.SendEntityDataToProximity(player);
         }
 
