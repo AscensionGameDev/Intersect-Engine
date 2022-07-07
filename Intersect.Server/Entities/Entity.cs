@@ -1564,13 +1564,19 @@ namespace Intersect.Server.Entities
                         PacketSender.SendActionMsg(
                             target, Strings.Combat.ImmuneToEffect, CustomColors.Combat.Status
                         );
-                    } else
+                    }
+                    else
                     {
                         // Else, apply the status
                         new Status(
                             target, this, spellBase, spellBase.Combat.Effect, spellBase.Combat.Duration,
                             spellBase.Combat.TransformSprite
                         );
+
+                        if (target is Npc npc)
+                        {
+                            npc.AssignTarget(this);
+                        }
 
                         PacketSender.SendActionMsg(
                             target, Strings.Combat.status[(int)spellBase.Combat.Effect], CustomColors.Combat.Status
@@ -1593,7 +1599,13 @@ namespace Intersect.Server.Entities
                     if (!target.Immunities.Contains(spellBase.Combat.Effect))
                     {
                         new Status(target, this, spellBase, spellBase.Combat.Effect, statBuffTime, "");
-                    } else
+
+                        if (target is Npc npc)
+                        {
+                            npc.AssignTarget(this);
+                        }
+                    }
+                    else
                     {
                         PacketSender.SendActionMsg(target, Strings.Combat.ImmuneToEffect, CustomColors.Combat.Status);
                     }
