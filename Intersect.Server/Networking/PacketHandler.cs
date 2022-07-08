@@ -1628,7 +1628,7 @@ namespace Intersect.Server.Networking
                                 tmpInstance.RemoveItem(mapItem);
 
                                 // Try to give the item to our player.
-                                if (player.TryGiveItem(mapItem, ItemHandling.Overflow, false, true, mapItem.X, mapItem.Y))
+                                if (player.TryGiveItem(mapItem, ItemHandling.Overflow, false, -1, true, mapItem.X, mapItem.Y))
                                 {
                                     var item = ItemBase.Get(mapItem.ItemId);
                                     if (item != null)
