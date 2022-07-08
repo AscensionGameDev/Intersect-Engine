@@ -1753,21 +1753,21 @@ namespace Intersect.Client.Entities
 
         //Movement
         /// <summary>
-        ///     Returns -6 if the tile is blocked by a global (non-event) entity
-        ///     Returns -5 if the tile is completely out of bounds.
-        ///     Returns -4 if a tile is blocked because of a local event.
-        ///     Returns -3 if a tile is blocked because of a Z dimension tile
-        ///     Returns -2 if a tile does not exist or is blocked by a map attribute.
-        ///     Returns -1 is a tile is passable.
-        ///     Returns any value zero or greater matching the entity index that is in the way.
+        ///     Returns GlobalEntity if the tile is blocked by a global (non-event) entity
+        ///     Returns OutOfBonds if the tile is completely out of bounds.
+        ///     Returns Event if a tile is blocked because of a local event.
+        ///     Returns ZDimension if a tile is blocked because of a Z dimension tile
+        ///     Returns MapIssue if a tile does not exist or is blocked by a map attribute.
+        ///     Returns Passable is a tile is passable.
         /// </summary>
-        /// <returns></returns>
-        public int IsTileBlocked(
+        /// <returns>Returns the TileBlockedReasons enum corresponding to why the entity is in the path.</returns>
+        public TileBlockedReasons IsTileBlocked(
             int x,
             int y,
             int z,
             Guid mapId,
             ref IEntity blockedBy,
+            EntityTypes entityTriggerType,
             bool ignoreAliveResources = true,
             bool ignoreDeadResources = true,
             bool ignoreNpcAvoids = true
@@ -1776,7 +1776,7 @@ namespace Intersect.Client.Entities
             var mapInstance = Maps.MapInstance.Get(mapId);
             if (mapInstance == null)
             {
-                return -2;
+                return TileBlockedReasons.MapIssue;
             }
 
             var gridX = mapInstance.GridX;
@@ -1812,7 +1812,7 @@ namespace Intersect.Client.Entities
 
                 if (gridX < 0 || gridY < 0 || gridX >= Globals.MapGridWidth || gridY >= Globals.MapGridHeight)
                 {
-                    return -2;
+                    return TileBlockedReasons.MapIssue;
                 }
 
                 tmpMapId = Globals.MapGrid[gridX, gridY];
@@ -1839,28 +1839,27 @@ namespace Intersect.Client.Entities
                             {
                                 if (en.Value.GetType() == typeof(Resource))
                                 {
-                                    var resourceBase = ((Resource)en.Value).BaseResource;
+                                    var resourceBase = ((Resource) en.Value).BaseResource;
                                     if (resourceBase != null)
                                     {
-                                        if (!ignoreAliveResources && !((Resource)en.Value).IsDead)
-                                        {
-                                            blockedBy = en.Value;
+                                        bool isDead = ((Resource)en.Value).IsDead;
 
-                                            return -6;
-                                        }
-
-                                        if (!ignoreDeadResources && ((Resource)en.Value).IsDead)
-                                        {
-                                            blockedBy = en.Value;
-
-                                            return -6;
-                                        }
-
-                                        if (resourceBase.WalkableAfter && ((Resource)en.Value).IsDead ||
-                                            resourceBase.WalkableBefore && !((Resource)en.Value).IsDead)
+                                        if (entityTriggerType == EntityTypes.Projectile &&
+                                            (!isDead && ignoreAliveResources || isDead && ignoreDeadResources))
                                         {
                                             continue;
                                         }
+
+                                        if (entityTriggerType == EntityTypes.Player &&
+                                            (!isDead && resourceBase.WalkableBefore || isDead && resourceBase.WalkableAfter))
+                                        {
+                                            continue;
+                                        }
+
+                                        //blocked for events, critters and npcs
+                                        blockedBy = en.Value;
+
+                                        return TileBlockedReasons.GlobalEntity;
                                     }
                                 }
                                 else if (en.Value.GetType() == typeof(Player))
@@ -1871,11 +1870,11 @@ namespace Intersect.Client.Entities
                                     {
                                         continue;
                                     }
+
+                                    blockedBy = en.Value;
+
+                                    return TileBlockedReasons.GlobalEntity;
                                 }
-
-                                blockedBy = en.Value;
-
-                                return -6;
                             }
                         }
                     }
@@ -1898,7 +1897,7 @@ namespace Intersect.Client.Entities
                         {
                             blockedBy = en.Value;
 
-                            return -4;
+                            return TileBlockedReasons.Event;
                         }
                     }
 
@@ -1915,9 +1914,9 @@ namespace Intersect.Client.Entities
                             en.Value.Z == Z &&
                             !en.Value.Passable)
                         {
-                            blockedBy = en.Value as Critter;
+                            blockedBy = en.Value;
 
-                            return -4;
+                            return TileBlockedReasons.Event;
                         }
                     }
                 }
@@ -1929,34 +1928,34 @@ namespace Intersect.Client.Entities
                     {
                         if (gameMap.Attributes[tmpX, tmpY].Type == MapAttributes.Blocked || (gameMap.Attributes[tmpX, tmpY].Type == MapAttributes.Animation && ((MapAnimationAttribute)gameMap.Attributes[tmpX, tmpY]).IsBlock))
                         {
-                            return -2;
+                            return TileBlockedReasons.MapIssue;
                         }
                         else if (gameMap.Attributes[tmpX, tmpY].Type == MapAttributes.ZDimension)
                         {
                             if (((MapZDimensionAttribute)gameMap.Attributes[tmpX, tmpY]).BlockedLevel - 1 == z)
                             {
-                                return -3;
+                                return TileBlockedReasons.ZDimension;
                             }
                         }
                         else if (gameMap.Attributes[tmpX, tmpY].Type == MapAttributes.NpcAvoid)
                         {
                             if (!ignoreNpcAvoids)
                             {
-                                return -2;
+                                return TileBlockedReasons.MapIssue;
                             }
                         }
                     }
                 }
                 else
                 {
-                    return -5;
+                    return TileBlockedReasons.OutOfBounds;
                 }
 
-                return -1;
+                return TileBlockedReasons.Passable;
             }
             catch
             {
-                return -2;
+                return TileBlockedReasons.MapIssue;
             }
         }
 

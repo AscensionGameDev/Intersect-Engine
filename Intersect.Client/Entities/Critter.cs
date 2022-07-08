@@ -85,7 +85,8 @@ namespace Intersect.Client.Entities
                 switch (MoveDir)
                 {
                     case 0: // Up
-                        if (IsTileBlocked(X, Y - 1, Z, MapId, ref blockedBy, true, true, mAttribute.IgnoreNpcAvoids) == -1 && Y > 0 && (!mAttribute.BlockPlayers || !PlayerOnTile(MapId, X, Y - 1)))
+                        if (IsTileBlocked(X, Y - 1, Z, MapId, ref blockedBy, EntityTypes.Event, true, true, mAttribute.IgnoreNpcAvoids) == TileBlockedReasons.Passable
+                            && Y > 0 && (!mAttribute.BlockPlayers || !PlayerOnTile(MapId, X, Y - 1)))
                         {
                             tmpY--;
                             IsMoving = true;
@@ -96,7 +97,8 @@ namespace Intersect.Client.Entities
 
                         break;
                     case 1: // Down
-                        if (IsTileBlocked(X, Y + 1, Z, MapId, ref blockedBy, true, true, mAttribute.IgnoreNpcAvoids) == -1 && Y < Options.MapHeight - 1 && (!mAttribute.BlockPlayers || !PlayerOnTile(MapId, X, Y + 1)))
+                        if (IsTileBlocked(X, Y + 1, Z, MapId, ref blockedBy, EntityTypes.Event, true, true, mAttribute.IgnoreNpcAvoids) == TileBlockedReasons.Passable
+                            && Y < Options.MapHeight - 1 && (!mAttribute.BlockPlayers || !PlayerOnTile(MapId, X, Y + 1)))
                         {
                             tmpY++;
                             IsMoving = true;
@@ -107,7 +109,8 @@ namespace Intersect.Client.Entities
 
                         break;
                     case 2: // Left
-                        if (IsTileBlocked(X - 1, Y, Z, MapId, ref blockedBy, true, true, mAttribute.IgnoreNpcAvoids) == -1 && X > 0 && (!mAttribute.BlockPlayers || !PlayerOnTile(MapId, X - 1, Y)))
+                        if (IsTileBlocked(X - 1, Y, Z, MapId, ref blockedBy, EntityTypes.Event, true, true, mAttribute.IgnoreNpcAvoids) == TileBlockedReasons.Passable
+                            && X > 0 && (!mAttribute.BlockPlayers || !PlayerOnTile(MapId, X - 1, Y)))
                         {
                             tmpX--;
                             IsMoving = true;
@@ -118,7 +121,8 @@ namespace Intersect.Client.Entities
 
                         break;
                     case 3: // Right
-                        if (IsTileBlocked(X + 1, Y, Z, MapId, ref blockedBy, true, true, mAttribute.IgnoreNpcAvoids) == -1 && X < Options.MapWidth - 1 && (!mAttribute.BlockPlayers || !PlayerOnTile(MapId, X + 1, Y)))
+                        if (IsTileBlocked(X + 1, Y, Z, MapId, ref blockedBy, EntityTypes.Event, true, true, mAttribute.IgnoreNpcAvoids) == TileBlockedReasons.Passable
+                            && X < Options.MapWidth - 1 && (!mAttribute.BlockPlayers || !PlayerOnTile(MapId, X + 1, Y)))
                         {
                             //If BlockPlayers then make sure there is no player here
                             tmpX++;

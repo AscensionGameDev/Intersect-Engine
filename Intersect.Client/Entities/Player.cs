@@ -1869,7 +1869,7 @@ namespace Intersect.Client.Entities
                     switch (MoveDir)
                     {
                         case 0: // Up
-                            if (IsTileBlocked(X, Y - 1, Z, MapId, ref blockedBy) == -1)
+                            if (IsTileBlocked(X, Y - 1, Z, MapId, ref blockedBy, EntityTypes.Player) == TileBlockedReasons.Passable)
                             {
                                 tmpY--;
                                 IsMoving = true;
@@ -1880,7 +1880,7 @@ namespace Intersect.Client.Entities
 
                             break;
                         case 1: // Down
-                            if (IsTileBlocked(X, Y + 1, Z, MapId, ref blockedBy) == -1)
+                            if (IsTileBlocked(X, Y + 1, Z, MapId, ref blockedBy, EntityTypes.Player) == TileBlockedReasons.Passable)
                             {
                                 tmpY++;
                                 IsMoving = true;
@@ -1891,7 +1891,7 @@ namespace Intersect.Client.Entities
 
                             break;
                         case 2: // Left
-                            if (IsTileBlocked(X - 1, Y, Z, MapId, ref blockedBy) == -1)
+                            if (IsTileBlocked(X - 1, Y, Z, MapId, ref blockedBy, EntityTypes.Player) == TileBlockedReasons.Passable)
                             {
                                 tmpX--;
                                 IsMoving = true;
@@ -1902,7 +1902,7 @@ namespace Intersect.Client.Entities
 
                             break;
                         case 3: // Right
-                            if (IsTileBlocked(X + 1, Y, Z, MapId, ref blockedBy) == -1)
+                            if (IsTileBlocked(X + 1, Y, Z, MapId, ref blockedBy, EntityTypes.Player) == TileBlockedReasons.Passable)
                             {
                                 tmpX++;
                                 IsMoving = true;

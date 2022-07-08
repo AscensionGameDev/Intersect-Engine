@@ -532,13 +532,13 @@ namespace Intersect.Client.Entities.Projectiles
             var killSpawn = false;
             IEntity blockedBy = null;
             var tileBlocked = Globals.Me.IsTileBlocked(
-                Spawns[i].X, Spawns[i].Y, Z, Spawns[i].MapId, ref blockedBy,
+                Spawns[i].X, Spawns[i].Y, Z, Spawns[i].MapId, ref blockedBy, EntityTypes.Projectile,
                 Spawns[i].ProjectileBase.IgnoreActiveResources, Spawns[i].ProjectileBase.IgnoreExhaustedResources
             );
 
-            if (tileBlocked != -1)
+            if (tileBlocked != TileBlockedReasons.Passable)
             {
-                if (tileBlocked == -6 &&
+                if (tileBlocked == TileBlockedReasons.GlobalEntity &&
                     blockedBy != null &&
                     blockedBy.Id != mOwner &&
                     Globals.Entities.ContainsKey(blockedBy.Id))
@@ -550,21 +550,21 @@ namespace Intersect.Client.Entities.Projectiles
                 }
                 else
                 {
-                    if (tileBlocked == -2)
+                    if (tileBlocked == TileBlockedReasons.MapIssue)
                     {
                         if (!Spawns[i].ProjectileBase.IgnoreMapBlocks)
                         {
                             killSpawn = true;
                         }
                     }
-                    else if (tileBlocked == -3)
+                    else if (tileBlocked == TileBlockedReasons.ZDimension)
                     {
                         if (!Spawns[i].ProjectileBase.IgnoreZDimension)
                         {
                             killSpawn = true;
                         }
                     }
-                    else if (tileBlocked == -5)
+                    else if (tileBlocked == TileBlockedReasons.OutOfBounds)
                     {
                         killSpawn = true;
                     }

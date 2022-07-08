@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 using Intersect.GameObjects;
@@ -66,30 +66,30 @@ namespace Intersect.Server.Entities
             return MapId == mapId && X == x && Y == y && Z == z;
         }
 
-        public bool HitEntity(Entity en)
+        public bool HitEntity(Entity targetEntity)
         {
-            var targetEntity = en;
-            if (targetEntity is EventPageInstance) return false;
-
-            var scalingStat = Enums.Stats.StatCount;
-
-            if (Parent.Spell != null && Parent.Spell.Combat != null)
+            Player targetPlayer = null;
+            if (targetEntity is Player)
             {
-                scalingStat = (Enums.Stats) Parent.Spell.Combat.ScalingStat;
-            }
-            if (Parent.Item != null)
-            {
-                scalingStat = (Enums.Stats) Parent.Item.ScalingStat;
+                targetPlayer = (Player) targetEntity;
             }
 
             if (targetEntity != null && targetEntity != Parent.Owner)
             {
-
                 // Have we collided with this entity before? If so, cancel out.
-                if (mEntitiesCollided.Contains(en.Id))
+                if (mEntitiesCollided.Contains(targetEntity.Id))
                 {
                     if (!Parent.Base.PierceTarget)
                     {
+                        if(targetPlayer != null)
+                        {
+                            if(targetPlayer.Map.ZoneType == Enums.MapZones.Safe ||
+                                Parent.Owner is Player plyr && plyr.InParty(targetPlayer))
+                            {
+                                return false;
+                            }
+                        }
+
                         return true;
                     }
                     else
@@ -97,49 +97,43 @@ namespace Intersect.Server.Entities
                         return false;
                     }
                 }
-                mEntitiesCollided.Add(en.Id);
+                mEntitiesCollided.Add(targetEntity.Id);
 
-                if (targetEntity.GetType() == typeof(Player)) //Player
+                if (targetPlayer != null)
                 {
                     if (Parent.Owner != Parent.Target)
                     {
                         Parent.Owner.TryAttack(targetEntity, Parent.Base, Parent.Spell, Parent.Item, Dir);
-                        if (Dir <= 3 && Parent.Base.GrappleHook && !Parent.HasGrappled
-                        ) //Don't handle directional projectile grapplehooks
+
+                        if (Dir <= 3 && ShouldHook(targetEntity) && !Parent.HasGrappled)
                         {
-                            Parent.HasGrappled = true;
-                            Parent.Owner.Dir = Dir;
-                            new Dash(
-                                Parent.Owner, Distance, (byte) Parent.Owner.Dir, Parent.Base.IgnoreMapBlocks,
-                                Parent.Base.IgnoreActiveResources, Parent.Base.IgnoreExhaustedResources,
-                                Parent.Base.IgnoreZDimension
-                            );
+                            HookEntity();
                         }
 
                         if (!Parent.Base.PierceTarget)
                         {
+                            if (targetPlayer.Map.ZoneType == Enums.MapZones.Safe ||
+                                Parent.Owner is Player plyr && plyr.InParty(targetPlayer))
+                            {
+                                return false;
+                            }
+
                             return true;
                         }
                     }
                 }
-                else if (targetEntity.GetType() == typeof(Resource))
+                else if (targetEntity is Resource)
                 {
                     if (((Resource) targetEntity).IsDead() && !ProjectileBase.IgnoreExhaustedResources ||
                         !((Resource) targetEntity).IsDead() && !ProjectileBase.IgnoreActiveResources)
                     {
-                        if (Parent.Owner.GetType() == typeof(Player) && !((Resource) targetEntity).IsDead())
+                        if (Parent.Owner is Player && !((Resource) targetEntity).IsDead())
                         {
                             Parent.Owner.TryAttack(targetEntity, Parent.Base, Parent.Spell, Parent.Item, Dir);
-                            if (Dir <= 3 && Parent.Base.GrappleHook && !Parent.HasGrappled
-                            ) //Don't handle directional projectile grapplehooks
+
+                            if (Dir <= 3 && ShouldHook(targetEntity) && !Parent.HasGrappled)
                             {
-                                Parent.HasGrappled = true;
-                                Parent.Owner.Dir = Dir;
-                                new Dash(
-                                    Parent.Owner, Distance, (byte) Parent.Owner.Dir, Parent.Base.IgnoreMapBlocks,
-                                    Parent.Base.IgnoreActiveResources, Parent.Base.IgnoreExhaustedResources,
-                                    Parent.Base.IgnoreZDimension
-                                );
+                                HookEntity();
                             }
                         }
 
@@ -153,16 +147,10 @@ namespace Intersect.Server.Entities
                         ownerNpc.CanNpcCombat(targetEntity, Parent.Spell != null && Parent.Spell.Combat.Friendly))
                     {
                         Parent.Owner.TryAttack(targetEntity, Parent.Base, Parent.Spell, Parent.Item, Dir);
-                        if (Dir <= 3 && Parent.Base.GrappleHook && !Parent.HasGrappled
-                        ) //Don't handle directional projectile grapplehooks
+
+                        if (Dir <= 3 && ShouldHook(targetEntity) && !Parent.HasGrappled) 
                         {
-                            Parent.HasGrappled = true;
-                            Parent.Owner.Dir = Dir;
-                            new Dash(
-                                Parent.Owner, Distance, (byte) Parent.Owner.Dir, Parent.Base.IgnoreMapBlocks,
-                                Parent.Base.IgnoreActiveResources, Parent.Base.IgnoreExhaustedResources,
-                                Parent.Base.IgnoreZDimension
-                            );
+                            HookEntity();
                         }
 
                         if (!Parent.Base.PierceTarget)
@@ -174,6 +162,55 @@ namespace Intersect.Server.Entities
             }
 
             return false;
+        }
+
+        /// <summary>
+        /// Returns whether or not to hook the player to the target
+        /// </summary>
+        /// <param name="en"></param>
+        /// <returns></returns>
+        public bool ShouldHook(Entity en)
+        {
+            if(en == null)
+            {
+                return false;
+            }
+
+            var entityType = en.GetType();
+
+            if (entityType == typeof(Player))
+            {
+                return ProjectileBase.GrappleHookOptions.Contains(Enums.GrappleOptions.Player);
+            }
+            else if(entityType == typeof(Npc))
+            {
+                return ProjectileBase.GrappleHookOptions.Contains(Enums.GrappleOptions.NPC);
+            }
+            else if(entityType == typeof(Resource))
+            {
+                return ProjectileBase.GrappleHookOptions.Contains(Enums.GrappleOptions.Resource);
+            }
+            else if(entityType == typeof(Event))
+            {
+                return ProjectileBase.GrappleHookOptions.Contains(Enums.GrappleOptions.Event);
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Hook the player to the target
+        /// </summary>
+        public void HookEntity()
+        {
+            //Don't handle directional projectile grapplehooks
+            Parent.HasGrappled = true;
+            Parent.Owner.Dir = Dir;
+            var _ = new Dash(
+                Parent.Owner, Distance, (byte)Parent.Owner.Dir, Parent.Base.IgnoreMapBlocks,
+                Parent.Base.IgnoreActiveResources, Parent.Base.IgnoreExhaustedResources,
+                Parent.Base.IgnoreZDimension
+            );
         }
 
     }
