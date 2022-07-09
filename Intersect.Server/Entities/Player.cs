@@ -1612,7 +1612,7 @@ namespace Intersect.Server.Entities
             Warp(newMapId, newX, newY, (byte)Directions.Up, adminWarp, 0, false);
         }
 
-        public void ForceInstanceChangeWarp(Guid newMapId, float newX, float newY, Guid newMapInstanceId, MapInstanceType instanceType, bool adminWarp = false)
+        public void AdminWarp(Guid newMapId, float newX, float newY, Guid newMapInstanceId, MapInstanceType instanceType, bool force)
         {
             PreviousMapInstanceId = MapInstanceId;
             PreviousMapInstanceType = InstanceType;
@@ -1628,7 +1628,7 @@ namespace Intersect.Server.Entities
             {
                 PacketSender.SendChatMsg(this, Strings.Player.InstanceUpdate.ToString(PreviousMapInstanceId.ToString(), MapInstanceId.ToString()), ChatMessageType.Admin, CustomColors.Alerts.Info);
             }
-            Warp(newMapId, newX, newY, (byte)Directions.Up, adminWarp, 0, false, false, null, false, true);
+            Warp(newMapId, newX, newY, (byte)Directions.Up, forceInstanceChange: force);
         }
 
         public override void Warp(
@@ -2006,7 +2006,7 @@ namespace Intersect.Server.Entities
             // Get the entities from the old map - we need to clear them off the player's global entities on their client
             if (oldMap != null && oldMap.TryGetInstance(PreviousMapInstanceId, out var oldMapInstance))
             {
-                PacketSender.SendMapLayerChangedPacketTo(this, oldMap, PreviousMapInstanceId);
+                PacketSender.SendMapInstanceChangedPacket(this, oldMap, PreviousMapInstanceId);
                 oldMapInstance.ClearEntityTargetsOf(this); // Remove targets of this entity
             }
             // Clear events - we'll get them again from the map instance's event cache

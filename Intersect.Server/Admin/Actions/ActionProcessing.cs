@@ -392,7 +392,8 @@ namespace Intersect.Server.Admin.Actions
             var target = Player.FindOnline(action.Name);
             if (target != null)
             {
-                player.ForceInstanceChangeWarp(target.MapId, (byte)target.X, (byte)target.Y, target.MapInstanceId, target.InstanceType);
+                var forceInstanceChange = target.InstanceType != player.InstanceType;
+                player.AdminWarp(target.MapId, (byte)target.X, (byte)target.Y, target.MapInstanceId, target.InstanceType, forceInstanceChange);
                 PacketSender.SendChatMsg(player, Strings.Player.warpedto.ToString(target.Name), ChatMessageType.Admin);
                 PacketSender.SendChatMsg(
                     target, Strings.Player.warpedtoyou.ToString(player.Name), ChatMessageType.Notice
@@ -437,7 +438,9 @@ namespace Intersect.Server.Admin.Actions
             }
             else
             {
-                target.ForceInstanceChangeWarp(player.MapId, (byte)player.X, (byte)player.Y, player.MapInstanceId, player.InstanceType);
+                var forceInstanceChange = target.InstanceType != player.InstanceType;
+
+                target.AdminWarp(player.MapId, (byte)player.X, (byte)player.Y, player.MapInstanceId, player.InstanceType, forceInstanceChange);
                 PacketSender.SendChatMsg(
                     player, Strings.Player.haswarpedto.ToString(target.Name), ChatMessageType.Admin, player.Name
                 );

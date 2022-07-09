@@ -401,7 +401,7 @@ namespace Intersect.Server.Networking
             }
         }
 
-        public static void SendMapLayerChangedPacketTo(Player player, MapController oldMap, Guid oldLayer)
+        public static void SendMapInstanceChangedPacket(Player player, MapController oldMap, Guid oldLayer)
         {
             // Sends a packet to the client telling it that the player has been warped to a new instance and that it should
             // clear its local entities
