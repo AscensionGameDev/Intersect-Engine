@@ -285,10 +285,16 @@ namespace Intersect.Client.Interface.Menu
                         var equipment = Characters[mSelectedChar].Equipment[i];
                         var paperdollPortrait = mPaperdollPortraits[i];
 
-                        if (paperdollPortrait != mCharacterPortrait && equipment != default)
+                        if (paperdollPortrait != mCharacterPortrait)
                         {
+                            if (equipment == null)
+                            {
+                                paperdollPortrait.Texture = null;
+                                continue;
+                            }
+
                             paperdollPortrait.Texture = Globals.ContentManager.GetTexture(
-                                Framework.Content.TextureType.Paperdoll, equipment?.Name
+                                Framework.Content.TextureType.Paperdoll, equipment.Name
                             );
 
                             if (paperdollPortrait.Texture != null)
