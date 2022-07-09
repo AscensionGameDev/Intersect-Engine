@@ -533,7 +533,7 @@ namespace Intersect.Client.Entities.Projectiles
             IEntity blockedBy = null;
             var tileBlocked = Globals.Me.IsTileBlocked(
                 Spawns[i].X, Spawns[i].Y, Z, Spawns[i].MapId, ref blockedBy,
-                Spawns[i].ProjectileBase.IgnoreActiveResources, Spawns[i].ProjectileBase.IgnoreExhaustedResources
+                Spawns[i].ProjectileBase.IgnoreActiveResources, Spawns[i].ProjectileBase.IgnoreExhaustedResources, true, true
             );
 
             if (tileBlocked != -1)
