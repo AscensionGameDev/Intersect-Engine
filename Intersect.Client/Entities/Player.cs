@@ -1122,7 +1122,7 @@ namespace Intersect.Client.Entities
                     mLastHotbarUseTime.Add(barSlot, 0);
                 }
 
-                if (Controls.KeyDown((Control)barSlot + 9))
+                if (Controls.KeyDown((Control)barSlot + (int)Control.Hotkey1))
                 {
                     castInput = barSlot;
                 }
