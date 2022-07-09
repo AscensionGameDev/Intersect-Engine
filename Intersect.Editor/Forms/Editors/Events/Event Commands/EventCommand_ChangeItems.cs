@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Windows.Forms;
 
 using Intersect.Enums;
@@ -85,7 +85,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             }
             else if (rdoGlobalVariable.Checked)
             {
-                mMyCommand.VariableType = VariableTypes.PlayerVariable;
+                mMyCommand.VariableType = VariableTypes.ServerVariable;
                 mMyCommand.VariableId = ServerVariableBase.IdFromList(cmbVariable.SelectedIndex, VariableDataTypes.Integer);
             }
             else if (rdoGuildVariable.Checked)
