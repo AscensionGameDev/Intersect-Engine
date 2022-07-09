@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using Intersect.Enums;
@@ -223,7 +223,7 @@ namespace Intersect.GameObjects
         [NotMapped]
         public int[] PercentageStatDiff { get; set; } = new int[(int) Stats.StatCount];
 
-        public int Scaling { get; set; } = 100;
+        public int Scaling { get; set; } = 0;
 
         public int ScalingStat { get; set; }
 
