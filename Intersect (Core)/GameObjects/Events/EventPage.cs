@@ -62,6 +62,8 @@ namespace Intersect.GameObjects.Events
 
         public bool WalkingAnimation { get; set; } = true;
 
+        public bool IgnoreNpcAvoids { get; set; }
+
     }
 
 }
