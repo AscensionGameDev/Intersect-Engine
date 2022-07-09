@@ -71,7 +71,7 @@
       <HintPath>..\packages\Microsoft.VisualStudio.Validation.15.5.31\lib\netstandard2.0\Microsoft.VisualStudio.Validation.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework, Version=3.12.0.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
       <HintPath>..\packages\NUnit.3.12.0\lib\net45\nunit.framework.dll</HintPath>
@@ -145,7 +145,7 @@
   </Target>
   <Import Project="..\packages\AscensionGameDev.Intersect.Client.Framework.0.7.0.127-beta\build\AscensionGameDev.Intersect.Client.Framework.targets" Condition="Exists('..\packages\AscensionGameDev.Intersect.Client.Framework.0.7.0.127-beta\build\AscensionGameDev.Intersect.Client.Framework.targets')" />
   <Import Project="..\packages\AscensionGameDev.Intersect.Server.Framework.0.7.0.127-beta\build\AscensionGameDev.Intersect.Server.Framework.targets" Condition="Exists('..\packages\AscensionGameDev.Intersect.Server.Framework.0.7.0.127-beta\build\AscensionGameDev.Intersect.Server.Framework.targets')" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>
