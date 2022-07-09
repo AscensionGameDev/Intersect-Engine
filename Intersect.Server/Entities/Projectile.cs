@@ -359,7 +359,7 @@ namespace Intersect.Server.Entities
                 //Check for grapplehooks.
                 if (attribute != null &&
                     attribute.Type == MapAttributes.GrappleStone &&
-                    Base.GrappleHook == true &&
+                    Base.GrappleHookOptions.Contains(GrappleOptions.MapAttribute) == true &&
                     !spawn.Parent.HasGrappled)
                 {
                     if (spawn.Dir <= 3) //Don't handle directional projectile grapplehooks

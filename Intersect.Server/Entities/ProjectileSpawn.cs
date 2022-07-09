@@ -105,7 +105,7 @@ namespace Intersect.Server.Entities
                     {
                         Parent.Owner.TryAttack(targetEntity, Parent.Base, Parent.Spell, Parent.Item, Dir);
 
-                        if (Dir <= 3 && Parent.Base.GrappleHook && !Parent.HasGrappled)
+                        if (Dir <= 3 && ShouldHook(targetEntity) && !Parent.HasGrappled)
                         {
                             HookEntity();
                         }
@@ -131,7 +131,7 @@ namespace Intersect.Server.Entities
                         {
                             Parent.Owner.TryAttack(targetEntity, Parent.Base, Parent.Spell, Parent.Item, Dir);
 
-                            if (Dir <= 3 && Parent.Base.GrappleHook && !Parent.HasGrappled)
+                            if (Dir <= 3 && ShouldHook(targetEntity) && !Parent.HasGrappled)
                             {
                                 HookEntity();
                             }
@@ -148,7 +148,7 @@ namespace Intersect.Server.Entities
                     {
                         Parent.Owner.TryAttack(targetEntity, Parent.Base, Parent.Spell, Parent.Item, Dir);
 
-                        if (Dir <= 3 && Parent.Base.GrappleHook && !Parent.HasGrappled) 
+                        if (Dir <= 3 && ShouldHook(targetEntity) && !Parent.HasGrappled) 
                         {
                             HookEntity();
                         }
@@ -159,6 +159,40 @@ namespace Intersect.Server.Entities
                         }
                     }
                 }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Returns whether or not to hook the player to the target
+        /// </summary>
+        /// <param name="en"></param>
+        /// <returns></returns>
+        public bool ShouldHook(Entity en)
+        {
+            if(en == null)
+            {
+                return false;
+            }
+
+            var entityType = en.GetType();
+
+            if (entityType == typeof(Player))
+            {
+                return ProjectileBase.GrappleHookOptions.Contains(Enums.GrappleOptions.Player);
+            }
+            else if(entityType == typeof(Npc))
+            {
+                return ProjectileBase.GrappleHookOptions.Contains(Enums.GrappleOptions.NPC);
+            }
+            else if(entityType == typeof(Resource))
+            {
+                return ProjectileBase.GrappleHookOptions.Contains(Enums.GrappleOptions.Resource);
+            }
+            else if(entityType == typeof(Event))
+            {
+                return ProjectileBase.GrappleHookOptions.Contains(Enums.GrappleOptions.Event);
             }
 
             return false;
