@@ -244,7 +244,7 @@ namespace Intersect.Client.Entities
         public byte Dir
         {
             get => mDir;
-            set => mDir = (byte)((value + 4) % 4);
+            set => mDir = (byte)((value + Options.Instance.Sprites.Directions) % Options.Instance.Sprites.Directions);
         }
 
         public virtual string TransformedSprite
@@ -955,7 +955,7 @@ namespace Intersect.Client.Entities
                 return;
             }
 
-            var d = (Dir + 3) % 4;
+            var d = (Dir + (Options.Instance.Sprites.Directions - 1)) % Options.Instance.Sprites.Directions;
 
             var frameWidth = texture.GetWidth() / SpriteFrames;
             var frameHeight = texture.GetHeight() / Options.Instance.Sprites.Directions;
@@ -1074,7 +1074,7 @@ namespace Intersect.Client.Entities
                 return;
             }
 
-            var d = (Dir + 3) % 4;
+            var d = (Dir + (Options.Instance.Sprites.Directions -1)) % Options.Instance.Sprites.Directions;
 
             var frameWidth = paperdollTex.GetWidth() / spriteFrames;
             var frameHeight = paperdollTex.GetHeight() / Options.Instance.Sprites.Directions;
