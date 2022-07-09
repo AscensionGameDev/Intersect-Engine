@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using Intersect.Editor.Content;
 using Intersect.Editor.Localization;
 using Intersect.GameObjects.Events.Commands;
+using Intersect.Utilities;
 
 namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 {
@@ -24,19 +25,10 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             mEventEditor = editor;
             InitLocalization();
             cmbSprite.Items.Clear();
+            cmbSprite.Items.Add(Strings.General.none);
             cmbSprite.Items.AddRange(
-                GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Entity)
-            );
-
-            if (cmbSprite.Items.IndexOf(mMyCommand.Sprite) > -1)
-            {
-                cmbSprite.SelectedIndex = cmbSprite.Items.IndexOf(mMyCommand.Sprite);
-            }
-            else
-            {
-                cmbSprite.SelectedIndex = 0;
-            }
-
+                GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Entity));
+            cmbSprite.SelectedIndex = Math.Max(0, cmbSprite.Items.IndexOf(TextUtils.NullToNone(mMyCommand.Sprite)));
             UpdatePreview();
         }
 
