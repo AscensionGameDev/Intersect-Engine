@@ -1051,7 +1051,7 @@ namespace Intersect.Client.Entities
         public virtual void DrawEquipment(string filename, Color renderColor, FloatRect entityRect)
         {
             var map = Maps.MapInstance.Get(MapId);
-            if (map == null)
+            if (map == null || map.HideEquipment)
             {
                 return;
             }
