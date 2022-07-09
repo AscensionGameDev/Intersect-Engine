@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -396,7 +396,8 @@ namespace Intersect.Server.Entities
                     if (entities[z] != null &&
                         (entities[z].X == Math.Round(spawn.X) || entities[z].X == Math.Ceiling(spawn.X) || entities[z].X == Math.Floor(spawn.X)) &&
                         (entities[z].Y == Math.Round(spawn.Y) || entities[z].Y == Math.Ceiling(spawn.Y) || entities[z].Y == Math.Floor(spawn.Y)) &&
-                        entities[z].Z == spawn.Z)
+                        entities[z].Z == spawn.Z &&
+                        entities[z] != spawn.Parent.Owner)
                     {
                         killSpawn = spawn.HitEntity(entities[z]);
                         if (killSpawn && !spawn.ProjectileBase.PierceTarget)
@@ -407,7 +408,7 @@ namespace Intersect.Server.Entities
                     else
                     {
                         if (z == entities.Count - 1)
-                        {       
+                        {
                             if (spawn.Distance >= Base.Range)
                             {
                                 killSpawn = true;
