@@ -1705,7 +1705,7 @@ namespace Intersect.Server.Networking
         public void HandlePacket(Client client, SwapSpellsPacket packet)
         {
             var player = client?.Entity;
-            if (player == null)
+            if (player == null || player.IsCasting)
             {
                 return;
             }
