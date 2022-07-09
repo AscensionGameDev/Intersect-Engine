@@ -1058,6 +1058,7 @@ namespace Intersect.Editor.Forms.Editors.Events
             // 
             this.lstEventCommands.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
             this.lstEventCommands.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.lstEventCommands.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.lstEventCommands.ForeColor = System.Drawing.Color.Gainsboro;
             this.lstEventCommands.FormattingEnabled = true;
             this.lstEventCommands.HorizontalScrollbar = true;
@@ -1067,6 +1068,7 @@ namespace Intersect.Editor.Forms.Editors.Events
             this.lstEventCommands.Name = "lstEventCommands";
             this.lstEventCommands.Size = new System.Drawing.Size(445, 457);
             this.lstEventCommands.TabIndex = 0;
+            this.lstEventCommands.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.lstEventCommands_DrawItem);
             this.lstEventCommands.SelectedIndexChanged += new System.EventHandler(this.lstEventCommands_SelectedIndexChanged);
             this.lstEventCommands.DoubleClick += new System.EventHandler(this.lstEventCommands_DoubleClick);
             this.lstEventCommands.KeyDown += new System.Windows.Forms.KeyEventHandler(this.lstEventCommands_KeyDown);

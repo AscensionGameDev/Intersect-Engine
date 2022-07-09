@@ -1688,6 +1688,30 @@ namespace Intersect.Editor.Forms.Editors.Events
             }
         }
 
+        /// <summary>
+        /// Custom renderer for event commands to draw labels in green for easier visibility.
+        /// </summary>
+        private void lstEventCommands_DrawItem(object sender, DrawItemEventArgs e)
+        {
+            e.DrawBackground();
+            Graphics g = e.Graphics;
+
+            if (e.Index > -1 && e.Index < lstEventCommands.Items.Count && e.Index < mCommandProperties.Count)
+            {
+                if (mCommandProperties[e.Index].Type == EventCommandType.Label)
+                {
+                    g.DrawString(lstEventCommands.Items[e.Index].ToString(), e.Font, Brushes.SpringGreen, new PointF(e.Bounds.X, e.Bounds.Y));
+                }
+                else
+                {
+                    g.DrawString(lstEventCommands.Items[e.Index].ToString(), e.Font, new SolidBrush(e.ForeColor), new PointF(e.Bounds.X, e.Bounds.Y));
+                }
+            }
+
+
+            e.DrawFocusRectangle();
+        }
+
         #endregion
 
         #region "Movement Options"
