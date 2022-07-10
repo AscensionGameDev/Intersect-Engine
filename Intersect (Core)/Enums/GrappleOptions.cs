@@ -12,8 +12,6 @@ namespace Intersect.Enums
 
         Resource,
 
-        Event,
-
     }
 
 }

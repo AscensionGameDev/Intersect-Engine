@@ -4201,7 +4201,6 @@ Tick timer saved in server config.json.";
                 {GrappleOptions.Player, @"On Player"},
                 {GrappleOptions.NPC, @"On NPC"},
                 {GrappleOptions.Resource, @"On Resource"},
-                {GrappleOptions.Event, @"On Event"},
             };
 
             public static LocalizedString ignoreactiveresources = @"Active Resources";

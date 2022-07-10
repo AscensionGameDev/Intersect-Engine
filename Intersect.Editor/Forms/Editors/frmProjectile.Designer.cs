@@ -73,7 +73,6 @@ namespace Intersect.Editor.Forms.Editors
             this.chkIgnoreActiveResources = new DarkUI.Controls.DarkCheckBox();
             this.pnlContainer = new System.Windows.Forms.Panel();
             this.grpGrappleOptions = new DarkUI.Controls.DarkGroupBox();
-            this.chkGrappleOnEvent = new DarkUI.Controls.DarkCheckBox();
             this.chkGrappleOnNpc = new DarkUI.Controls.DarkCheckBox();
             this.chkGrappleOnResource = new DarkUI.Controls.DarkCheckBox();
             this.chkGrappleOnMap = new DarkUI.Controls.DarkCheckBox();
@@ -662,7 +661,6 @@ namespace Intersect.Editor.Forms.Editors
             // 
             this.grpGrappleOptions.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.grpGrappleOptions.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.grpGrappleOptions.Controls.Add(this.chkGrappleOnEvent);
             this.grpGrappleOptions.Controls.Add(this.chkGrappleOnNpc);
             this.grpGrappleOptions.Controls.Add(this.chkGrappleOnResource);
             this.grpGrappleOptions.Controls.Add(this.chkGrappleOnMap);
@@ -674,17 +672,6 @@ namespace Intersect.Editor.Forms.Editors
             this.grpGrappleOptions.TabIndex = 40;
             this.grpGrappleOptions.TabStop = false;
             this.grpGrappleOptions.Text = "Grapple Options:";
-            // 
-            // chkGrappleOnEvent
-            // 
-            this.chkGrappleOnEvent.AutoSize = true;
-            this.chkGrappleOnEvent.Location = new System.Drawing.Point(6, 108);
-            this.chkGrappleOnEvent.Name = "chkGrappleOnEvent";
-            this.chkGrappleOnEvent.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.chkGrappleOnEvent.Size = new System.Drawing.Size(71, 17);
-            this.chkGrappleOnEvent.TabIndex = 39;
-            this.chkGrappleOnEvent.Text = "On Event";
-            this.chkGrappleOnEvent.CheckedChanged += new System.EventHandler(this.chkGrappleOnEvent_CheckedChanged);
             // 
             // chkGrappleOnNpc
             // 
@@ -1051,7 +1038,6 @@ namespace Intersect.Editor.Forms.Editors
         private DarkCheckBox chkPierce;
         private Controls.GameObjectList lstGameObjects;
         private DarkGroupBox grpGrappleOptions;
-        private DarkCheckBox chkGrappleOnEvent;
         private DarkCheckBox chkGrappleOnNpc;
         private DarkCheckBox chkGrappleOnResource;
         private DarkCheckBox chkGrappleOnMap;

@@ -190,10 +190,6 @@ namespace Intersect.Server.Entities
             {
                 return ProjectileBase.GrappleHookOptions.Contains(Enums.GrappleOptions.Resource);
             }
-            else if(entityType == typeof(Event))
-            {
-                return ProjectileBase.GrappleHookOptions.Contains(Enums.GrappleOptions.Event);
-            }
 
             return false;
         }
