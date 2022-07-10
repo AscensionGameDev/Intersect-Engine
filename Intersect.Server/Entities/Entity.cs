@@ -2059,8 +2059,8 @@ namespace Intersect.Server.Entities
 
                     if (status.Type == StatusTypes.Snare)
                     {
-                        // If this spell is NOT a Dash or Warp type ability, we can not use it while snared.
-                        if (spell.SpellType != SpellTypes.Dash && spell.SpellType != SpellTypes.Warp && spell.SpellType != SpellTypes.WarpTo)
+                        // If this spell is a Dash or Warp type ability, we can not use it while snared.
+                        if (spell.SpellType == SpellTypes.Dash || spell.SpellType == SpellTypes.Warp || spell.SpellType == SpellTypes.WarpTo)
                         {
                             reason = SpellCastFailureReason.Snared;
                             return false;
