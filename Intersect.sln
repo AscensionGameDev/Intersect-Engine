@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.1.32228.430
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.32602.291
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Intersect.Core", "Intersect (Core)\Intersect.Core.csproj", "{BC304B43-1F2C-4454-9EDC-48F47357CA94}"
 EndProject
@@ -117,21 +117,27 @@ Global
 		{4030D4D5-9DC6-496D-9763-9A41DD1DECBE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{4030D4D5-9DC6-496D-9763-9A41DD1DECBE}.NoFody|Any CPU.ActiveCfg = Debug|Any CPU
 		{4030D4D5-9DC6-496D-9763-9A41DD1DECBE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4030D4D5-9DC6-496D-9763-9A41DD1DECBE}.Release|Any CPU.Build.0 = Release|Any CPU
 		{49599C25-3C71-4EE5-98C9-957EE20F7DE7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{49599C25-3C71-4EE5-98C9-957EE20F7DE7}.NoFody|Any CPU.ActiveCfg = Release|Any CPU
 		{49599C25-3C71-4EE5-98C9-957EE20F7DE7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{49599C25-3C71-4EE5-98C9-957EE20F7DE7}.Release|Any CPU.Build.0 = Release|Any CPU
 		{83033560-06F2-4155-9956-E4F0F06DC113}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{83033560-06F2-4155-9956-E4F0F06DC113}.NoFody|Any CPU.ActiveCfg = Release|Any CPU
 		{83033560-06F2-4155-9956-E4F0F06DC113}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{83033560-06F2-4155-9956-E4F0F06DC113}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3E8FC79E-D0B3-4554-9ABD-BD6DCBFBEE5D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{3E8FC79E-D0B3-4554-9ABD-BD6DCBFBEE5D}.NoFody|Any CPU.ActiveCfg = Release|Any CPU
 		{3E8FC79E-D0B3-4554-9ABD-BD6DCBFBEE5D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3E8FC79E-D0B3-4554-9ABD-BD6DCBFBEE5D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E66A4B60-E79C-4222-A702-94D3CC7A2377}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E66A4B60-E79C-4222-A702-94D3CC7A2377}.NoFody|Any CPU.ActiveCfg = Release|Any CPU
 		{E66A4B60-E79C-4222-A702-94D3CC7A2377}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E66A4B60-E79C-4222-A702-94D3CC7A2377}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F55A208D-6E20-462F-A204-EF13BCCF67D8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F55A208D-6E20-462F-A204-EF13BCCF67D8}.NoFody|Any CPU.ActiveCfg = Release|Any CPU
 		{F55A208D-6E20-462F-A204-EF13BCCF67D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F55A208D-6E20-462F-A204-EF13BCCF67D8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
