@@ -317,7 +317,7 @@ namespace Intersect.Client.Interface.Game
             mAdminWindow.SetName(name);
         }
 
-        public void Draw()
+        public void Update()
         {
             if (Globals.Me != null && PlayerBox?.MyEntity != Globals.Me)
             {
@@ -394,11 +394,11 @@ namespace Intersect.Client.Interface.Game
                 CloseBank();
             }
             else
-            { 
+            {
                 mBankWindow.Update();
             }
 
-            
+
 
             //Bag Update
             if (mShouldOpenBag)
@@ -499,7 +499,10 @@ namespace Intersect.Client.Interface.Game
                 mChatBox.UnFocus();
                 UnfocusChat = false;
             }
+        }
 
+        public void Draw()
+        {
             GameCanvas.RenderCanvas();
         }
 

@@ -365,6 +365,14 @@ namespace Intersect.Client.Core
             Globals.JoiningGame = false;
             Globals.NeedsMaps = true;
             Globals.Picture = null;
+
+            Globals.InBag = false;
+            Globals.InBank = false;
+            Globals.GameShop = null;
+            Globals.InTrade = false;
+            Globals.EventDialogs?.Clear();
+            Globals.InCraft = false;
+
             Interface.Interface.HideUi = false;
 
             //Dump Game Objects
