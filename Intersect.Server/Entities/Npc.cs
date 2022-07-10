@@ -517,6 +517,12 @@ namespace Intersect.Server.Entities
         public override int CanMove(int moveDir)
         {
             var canMove = base.CanMove(moveDir);
+
+            // If configured & blocked by an entity, ignore the entity and proceed to move
+            if (Options.Instance.NpcOpts.IntangibleDuringReset && canMove > -1 )
+            {
+                canMove = mResetting ? -1 : canMove;
+            }
             if ((canMove == -1 || canMove == -4) && IsFleeing() && Options.Instance.NpcOpts.AllowResetRadius)
             {
                 var yOffset = 0;
@@ -754,7 +760,7 @@ namespace Intersect.Server.Entities
                         var targetZ = 0;
 
                         //TODO Clear Damage Map if out of combat (target is null and combat timer is to the point that regen has started)
-                        if (tempTarget != null && Timing.Global.Milliseconds > CombatTimer)
+                        if (tempTarget != null && (Options.Instance.NpcOpts.ResetIfCombatTimerExceeded && Timing.Global.Milliseconds > CombatTimer))
                         {
                             if (CheckForResetLocation(true))
                             {
@@ -773,15 +779,7 @@ namespace Intersect.Server.Entities
                             // Have we reached our destination? If so, clear it.
                             if (distance < 1)
                             {
-                                targetMap = Guid.Empty;
-
-                                // Reset our aggro center so we can get "pulled" again.
-                                AggroCenterMap = null;
-                                AggroCenterX = 0;
-                                AggroCenterY = 0;
-                                AggroCenterZ = 0;
-                                mPathFinder?.SetTarget(null);
-                                mResetting = false;
+                                ResetAggroCenter(out targetMap);
                             }
 
                             Reset(Options.Instance.NpcOpts.ContinuouslyResetVitalsAndStatuses);
@@ -794,12 +792,11 @@ namespace Intersect.Server.Entities
                             else 
                             {
                                 // Something is fishy here.. We appear to be stuck in a reset loop?
-                                // Give it a few more attempts and kill the Npc is it keeps going!
+                                // Give it a few more attempts and reset the NPC's center if we're stuck!
                                 mResetCounter++;
                                 if (mResetCounter > mResetMax)
                                 {
-                                    // Kill the Npc, and simply do not drop any loot or give any credit.
-                                    Die(false, null);
+                                    ResetAggroCenter(out targetMap);
                                     mResetCounter = 0;
                                     mResetDistance = 0;
                                 }
@@ -1149,6 +1146,23 @@ namespace Intersect.Server.Entities
                     Monitor.Exit(EntityLock);
                 }
             }
+        }
+
+        /// <summary>
+        /// Resets the NPCs position to be "pulled" from
+        /// </summary>
+        /// <param name="targetMap">For referencing the map that the enemy's target WAS on before a reset.</param>
+        private void ResetAggroCenter(out Guid targetMap)
+        {
+            targetMap = Guid.Empty;
+
+            // Reset our aggro center so we can get "pulled" again.
+            AggroCenterMap = null;
+            AggroCenterX = 0;
+            AggroCenterY = 0;
+            AggroCenterZ = 0;
+            mPathFinder?.SetTarget(null);
+            mResetting = false;
         }
 
         private bool CheckForResetLocation(bool forceDistance = false)
