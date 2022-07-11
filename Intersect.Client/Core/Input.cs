@@ -185,10 +185,7 @@ namespace Intersect.Client.Core
                                         break;
 
                                     case Control.Block:
-                                        if(Globals.Me.IsBlocking == false)
-                                        {
-                                            Globals.Me?.TryBlock();
-                                        }
+                                        Globals.Me?.TryBlock();
 
                                         break;
 

@@ -246,10 +246,7 @@ namespace Intersect.Client.Entities
                 //Holding block button for "auto blocking"
                 if(Controls.KeyDown(Control.Block))
                 {
-                    if(!IsBlocking)
-                    {
-                        TryBlock();
-                    }
+                    TryBlock();
                 }
             }
 
@@ -1379,6 +1376,11 @@ namespace Intersect.Client.Entities
 
         public bool TryBlock()
         {
+            if (IsBlocking)
+            {
+                return false;
+            }
+
             if (AttackTimer > Timing.Global.Ticks / TimeSpan.TicksPerMillisecond)
             {
                 return false;

@@ -348,10 +348,10 @@ namespace Intersect.Server.Entities
                     }
 
                     //Blocking timers
-                    if(AttackTimer < Timing.Global.Milliseconds && Blocking)
+                    if(Blocking && AttackTimer < Timing.Global.Milliseconds)
                     {
                         Blocking = false;
-                        PacketSender.SendEntityAttack(this, -1, true);
+                        PacketSender.SendEntityAttack(this, -1);
                     }
                 }
             }
