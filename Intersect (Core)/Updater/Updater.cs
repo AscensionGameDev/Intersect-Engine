@@ -669,7 +669,7 @@ namespace Intersect.Updater
                 order++;
                 len /= 1024;
             }
-            return $"{len:0.##} {sizes[order]} Left";
+            return $"{len:0.##} {sizes[order]}";
         }
 
         public bool CheckUpdaterContentLoaded()
