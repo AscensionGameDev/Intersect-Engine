@@ -363,7 +363,7 @@ namespace Intersect.Server.Entities
 
                 //Check for grapplehooks.
                 if (attribute.Type == MapAttributes.GrappleStone &&
-                    Base.GrappleHookOptions.Contains(GrappleOptions.MapAttribute) == true &&
+                    Base.GrappleHookOptions.Contains(GrappleOptions.MapAttribute) &&
                     !spawn.Parent.HasGrappled &&
                     (spawn.X != Owner.X || spawn.Y != Owner.Y))
                 {

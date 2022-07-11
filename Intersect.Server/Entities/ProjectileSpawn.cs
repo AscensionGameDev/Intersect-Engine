@@ -68,11 +68,7 @@ namespace Intersect.Server.Entities
 
         public bool HitEntity(Entity targetEntity)
         {
-            Player targetPlayer = null;
-            if (targetEntity is Player)
-            {
-                targetPlayer = (Player) targetEntity;
-            }
+            Player targetPlayer = targetEntity as Player;
 
             if (targetEntity != null && targetEntity != Parent.Owner)
             {
@@ -122,16 +118,16 @@ namespace Intersect.Server.Entities
                         }
                     }
                 }
-                else if (targetEntity is Resource)
+                else if (targetEntity is Resource targetResource)
                 {
-                    if (((Resource) targetEntity).IsDead() && !ProjectileBase.IgnoreExhaustedResources ||
-                        !((Resource) targetEntity).IsDead() && !ProjectileBase.IgnoreActiveResources)
+                    if (targetResource.IsDead() && !ProjectileBase.IgnoreExhaustedResources ||
+                        !targetResource.IsDead() && !ProjectileBase.IgnoreActiveResources)
                     {
-                        if (Parent.Owner is Player && !((Resource) targetEntity).IsDead())
+                        if (Parent.Owner is Player && !targetResource.IsDead())
                         {
-                            Parent.Owner.TryAttack(targetEntity, Parent.Base, Parent.Spell, Parent.Item, Dir);
+                            Parent.Owner.TryAttack(targetResource, Parent.Base, Parent.Spell, Parent.Item, Dir);
 
-                            if (Dir <= 3 && ShouldHook(targetEntity) && !Parent.HasGrappled)
+                            if (Dir <= 3 && ShouldHook(targetResource) && !Parent.HasGrappled)
                             {
                                 HookEntity();
                             }
@@ -176,22 +172,20 @@ namespace Intersect.Server.Entities
                 return false;
             }
 
-            var entityType = en.GetType();
+            switch(en)
+            {
+                case Player _:
+                    return ProjectileBase.GrappleHookOptions.Contains(Enums.GrappleOptions.Player);
 
-            if (entityType == typeof(Player))
-            {
-                return ProjectileBase.GrappleHookOptions.Contains(Enums.GrappleOptions.Player);
-            }
-            else if(entityType == typeof(Npc))
-            {
-                return ProjectileBase.GrappleHookOptions.Contains(Enums.GrappleOptions.NPC);
-            }
-            else if(entityType == typeof(Resource))
-            {
-                return ProjectileBase.GrappleHookOptions.Contains(Enums.GrappleOptions.Resource);
-            }
+                case Npc _:
+                    return ProjectileBase.GrappleHookOptions.Contains(Enums.GrappleOptions.NPC);
 
-            return false;
+                case Resource _:
+                    return ProjectileBase.GrappleHookOptions.Contains(Enums.GrappleOptions.Resource);
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(en));
+            }
         }
 
         /// <summary>
