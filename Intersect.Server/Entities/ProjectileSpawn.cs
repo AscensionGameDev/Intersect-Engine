@@ -120,17 +120,20 @@ namespace Intersect.Server.Entities
                 }
                 else if (targetEntity is Resource targetResource)
                 {
-                    if (targetResource.IsDead() && !ProjectileBase.IgnoreExhaustedResources ||
-                        !targetResource.IsDead() && !ProjectileBase.IgnoreActiveResources)
+                    if(targetResource.IsDead())
                     {
-                        if (Parent.Owner is Player && !targetResource.IsDead())
+                        if(!ProjectileBase.IgnoreExhaustedResources)
                         {
-                            Parent.Owner.TryAttack(targetResource, Parent.Base, Parent.Spell, Parent.Item, Dir);
+                            return true;
+                        }
+                    }
+                    else if (!ProjectileBase.IgnoreActiveResources)
+                    {
+                        Parent.Owner.TryAttack(targetResource, Parent.Base, Parent.Spell, Parent.Item, Dir);
 
-                            if (Dir <= 3 && ShouldHook(targetResource) && !Parent.HasGrappled)
-                            {
-                                HookEntity();
-                            }
+                        if (Dir <= 3 && ShouldHook(targetResource) && !Parent.HasGrappled)
+                        {
+                            HookEntity();
                         }
 
                         return true;
@@ -184,7 +187,7 @@ namespace Intersect.Server.Entities
                     return ProjectileBase.GrappleHookOptions.Contains(Enums.GrappleOptions.Resource);
 
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(en));
+                    throw new ArgumentException($"Unsupported entity type {en.GetType().FullName}", nameof(en));
             }
         }
 
