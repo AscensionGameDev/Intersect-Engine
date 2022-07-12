@@ -268,14 +268,7 @@ namespace Intersect.Client.Core
                                 y < Globals.MapGridHeight &&
                                 Globals.MapGrid[x, y] != Guid.Empty)
                             {
-                                var map = MapInstance.Get(Globals.MapGrid[x, y]);
-                                if (map == null &&
-                                    (!MapInstance.MapRequests.ContainsKey(Globals.MapGrid[x, y]) ||
-                                     MapInstance.MapRequests[Globals.MapGrid[x, y]] < Globals.System.GetTimeMs()))
-                                {
-                                    //Send for the map
-                                    PacketSender.SendNeedMap(Globals.MapGrid[x, y]);
-                                }
+                                PacketSender.SendNeedMap(Globals.MapGrid[x, y]);
                             }
                         }
                     }

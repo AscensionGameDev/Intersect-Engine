@@ -1641,14 +1641,7 @@ namespace Intersect.Client.Networking
                     if (Globals.MapGrid[x, y] != Guid.Empty)
                     {
                         Globals.GridMaps.Add(Globals.MapGrid[x, y]);
-                        if (MapInstance.MapRequests.ContainsKey(Globals.MapGrid[x, y]))
-                        {
-                            MapInstance.MapRequests[Globals.MapGrid[x, y]] = Globals.System.GetTimeMs() + 2000;
-                        }
-                        else
-                        {
-                            MapInstance.MapRequests.Add(Globals.MapGrid[x, y], Globals.System.GetTimeMs() + 2000);
-                        }
+                        MapInstance.UpdateMapRequestTime(Globals.MapGrid[x, y]);
                     }
                 }
             }

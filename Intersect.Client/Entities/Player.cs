@@ -1822,10 +1822,7 @@ namespace Intersect.Client.Entities
                             y < Globals.MapGridHeight &&
                             Globals.MapGrid[x, y] != Guid.Empty)
                         {
-                            if (MapInstance.Get(Globals.MapGrid[x, y]) == null)
-                            {
-                                PacketSender.SendNeedMap(Globals.MapGrid[x, y]);
-                            }
+                            PacketSender.SendNeedMap(Globals.MapGrid[x, y]);
                         }
                     }
                 }

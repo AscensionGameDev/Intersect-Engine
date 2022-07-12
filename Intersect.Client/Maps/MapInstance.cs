@@ -137,10 +137,7 @@ namespace Intersect.Client.Maps
             Autotiles = new MapAutotiles(this);
             OnMapLoaded -= HandleMapLoaded;
             OnMapLoaded += HandleMapLoaded;
-            if (MapRequests.ContainsKey(Id))
-            {
-                MapRequests.Remove(Id);
-            }
+            MapRequests.Remove(Id);
         }
 
         public void LoadTileData(byte[] packet)
@@ -1358,6 +1355,12 @@ namespace Intersect.Client.Maps
             Delete();
         }
 
+        public static bool MapNotRequested(Guid mapId) => !MapRequests.ContainsKey(mapId) || MapRequests[mapId] < Timing.Global.Milliseconds;
+
+        public static void UpdateMapRequestTime(Guid mapId)
+        {
+            MapRequests[mapId] = Timing.Global.Milliseconds + 2000;
+        }
     }
 
 }
