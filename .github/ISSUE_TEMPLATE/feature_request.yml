@@ -1,0 +1,36 @@
+name: Feature Request
+description: Suggest a new feature to be added to the engine
+labels: ["feature request"]
+title: 'feature: '
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for your interest Intersect! We welcome any and all ideas for features or improvements that you might have. All we ask is to fill in this template with some detail. A detailed description, perhaps supported with some screenshots, mockups, and reasoning would be very much appreciated and will help get your proposal reviewed sooner.
+        
+        Keep in mind that Intersect is intended to be a base 2d orpg engine. Consider if your feature request fits the overall goals of this project. As we are volunteers with limited time we are very picky about the features we add knowing we have to support them long term.
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Please give us a detailed description of the feature you have in mind. Focus on _what_ this feature, over the _why_ you want this feature. What would be the end-result when implemented? Feel free to add any diagrams, (mocked up) screenshots, or other materials that support your vision.
+      placeholder: E.g. Intersect could really use a feature for....
+    validations:
+      required: true
+  - type: textarea
+    id: use-case
+    attributes:
+      label: Intended Use-Case
+      description: Describe the missing functionality from the engine this feature would solve. Provide an example of what you are trying to achieve and how this change would help.
+      placeholder: E.g. With this feature we would then be able to create...
+    validations:
+      required: true
+  - type: checkboxes
+    id: dup-check
+    attributes:
+      label: Duplicate Check
+      description: In order to keep our issue tracker free from clutter please take just a moment to check and see if this feature has already been requested. If you see that this feature has already been posted and you can add more information or context please do so as a comment within the existing thread.
+      options:
+        - label: This feature request is not a duplicate to the best of my knowledge.
+          required: true
