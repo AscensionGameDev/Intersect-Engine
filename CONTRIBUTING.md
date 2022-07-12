@@ -8,7 +8,6 @@
 - [Contributing to Intersect](#contributing-to-intersect)
   - [Links](#links)
   - [Table of Contents](#table-of-contents)
-  - [- Additional Resources](#--additional-resources)
   - [Code of Conduct](#code-of-conduct)
   - [Git, GitHub, and GPG](#git-github-and-gpg)
     - [Git and GitHub](#git-and-github)
@@ -37,7 +36,7 @@
 
 We expect everyone to adhere to the [Code of Conduct](CODE_OF_CONDUCT.md), and maintainers to uphold the aforementioned Code of Conduct.
 
-If we fail to do so, please let us know [on our Discord](https://discord.gg/CvvsVpPMuF) in our [#feedback channel](https://discord.com/channels/363106200243535872/951191802977849354) (requires accepting the rules when you join).
+If we fail to do so, please let us know [on our Discord](https://discord.gg/CvvsVpPMuF) in our [#code-of-conduct channel](https://discord.com/channels/363106200243535872/951191802977849354) (requires accepting the rules when you join).
 
 If you see possible violations of the Code of Conduct please report them per the instructions in our [#reporting channel on Discord](https://discord.com/channels/363106200243535872/951209899134709780).
 
@@ -101,7 +100,6 @@ Do:
   - `chore: separated class declaration into separate file`
 - commit immediately after running automating tools that alter or generate code, making sure it compiles first
   - `chore: formatting`
--
 
 Do not:
 - commit a bug fix for already committed code in the same commit as new feature code
