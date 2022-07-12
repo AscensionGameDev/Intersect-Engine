@@ -31,15 +31,12 @@ namespace Intersect.Client.Networking
 
         public static void SendNeedMap(Guid mapId)
         {
+            if (mapId == default || MapInstance.Get(mapId) != null || !MapInstance.MapNotRequested(mapId))
+            {
+                return;
+            }
             Network.SendPacket(new NeedMapPacket(mapId));
-            if (MapInstance.MapRequests.ContainsKey(mapId))
-            {
-                MapInstance.MapRequests[mapId] = Timing.Global.Milliseconds + 3000;
-            }
-            else
-            {
-                MapInstance.MapRequests.Add(mapId, Timing.Global.Milliseconds + 3000);
-            }
+            MapInstance.UpdateMapRequestTime(mapId);
         }
 
         public static void SendMove()
