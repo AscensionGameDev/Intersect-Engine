@@ -290,41 +290,31 @@ namespace Intersect.Editor.Forms
 
         private void FrmMain_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyData == (Keys.Control | Keys.Z))
+            switch (e.KeyData)
             {
-                toolStripBtnUndo_Click(null, null);
+                case Keys.Control | Keys.Z:
+                    toolStripBtnUndo_Click(null, null);
+                    return;
 
-                return;
-            }
-            else if (e.KeyData == (Keys.Control | Keys.Y))
-            {
-                toolStripBtnRedo_Click(null, null);
+                case Keys.Control | Keys.Y:
+                    toolStripBtnRedo_Click(null, null);
+                    return;
 
-                return;
-            }
-            else if (e.KeyData == (Keys.Control | Keys.X))
-            {
-                toolStripBtnCut_Click(null, null);
+                case Keys.Control | Keys.X:
+                    toolStripBtnCut_Click(null, null);
+                    return;
 
-                return;
-            }
-            else if (e.KeyData == (Keys.Control | Keys.C))
-            {
-                toolStripBtnCopy_Click(null, null);
+                case Keys.Control | Keys.C:
+                    toolStripBtnCopy_Click(null, null);
+                    return;
 
-                return;
-            }
-            else if (e.KeyData == (Keys.Control | Keys.V))
-            {
-                toolStripBtnPaste_Click(null, null);
+                case Keys.Control | Keys.V:
+                    toolStripBtnPaste_Click(null, null);
+                    return;
 
-                return;
-            }
-            else if (e.KeyData == (Keys.Control | Keys.S))
-            {
-                toolStripBtnSaveMap_Click(null, null);
-
-                return;
+                case Keys.Control | Keys.S:
+                    toolStripBtnSaveMap_Click(null, null);
+                    return;
             }
 
             var xDiff = 0;
@@ -333,32 +323,73 @@ namespace Intersect.Editor.Forms
                 dockLeft.ActiveContent == null &&
                 Globals.MapEditorWindow.DockPanel.ActiveDocument == Globals.MapEditorWindow)
             {
-                if (e.KeyCode == Keys.W || e.KeyCode == Keys.Up)
+                switch (e.KeyCode)
                 {
-                    yDiff -= 20;
-                }
+                    // Shortcuts: Map grid scrolling.
+                    case Keys.W:
+                    case Keys.Up:
+                        yDiff -= 20;
+                        break;
 
-                if (e.KeyCode == Keys.S || e.KeyCode == Keys.Down)
-                {
-                    yDiff += 20;
-                }
+                    case Keys.S:
+                    case Keys.Down:
+                        yDiff += 20;
+                        break;
 
-                if (e.KeyCode == Keys.A || e.KeyCode == Keys.Left)
-                {
-                    xDiff -= 20;
-                }
+                    case Keys.A:
+                    case Keys.Left:
+                        xDiff -= 20;
+                        break;
 
-                if (e.KeyCode == Keys.D || e.KeyCode == Keys.Right)
-                {
-                    xDiff += 20;
+                    case Keys.D:
+                    case Keys.Right:
+                        xDiff += 20;
+                        break;
+
+                    // Shortcuts: Map grid Tools.
+                    case Keys.P: // Pen Tool.
+                        toolStripBtnPen_Click(null, null);
+                        break;
+
+                    case Keys.M: // Marquee Selection Tool.
+                        toolStripBtnSelect_Click(null, null);
+                        break;
+
+                    case Keys.R: // Rectangle Tool.
+                        toolStripBtnRect_Click(null, null);
+                        break;
+
+                    case Keys.PageUp: // Vertical Flip Selection Tool.
+                        toolStripBtnFlipVertical_Click(null, null);
+                        break;
+
+                    case Keys.PageDown: // Horizontal Flip Selection Tool.
+                        toolStripBtnFlipHorizontal_Click(null, null);
+                        break;
+
+                    case Keys.F: // Fill Tool.
+                        toolStripBtnFill_Click(null, null);
+                        break;
+
+                    case Keys.E: // Erase Tool.
+                        toolStripBtnErase_Click(null, null);
+                        break;
+
+                    case Keys.I: // Eyedropper Tool.
+                        toolStripBtnEyeDrop_Click(null, null);
+                        break;
+
+                    case Keys.Delete: // Delete Selection.
+                        ToolKeyDelete();
+                        break;
                 }
 
                 if (xDiff != 0 || yDiff != 0)
                 {
-                    var hWnd = WindowFromPoint((System.Drawing.Point) MousePosition);
+                    var hWnd = WindowFromPoint(MousePosition);
                     if (hWnd != IntPtr.Zero)
                     {
-                        var ctl = Control.FromHandle(hWnd);
+                        var ctl = FromHandle(hWnd);
                         if (ctl != null)
                         {
                             if (ctl.GetType() == typeof(ComboBox) || ctl.GetType() == typeof(DarkComboBox))
@@ -1436,6 +1467,16 @@ namespace Intersect.Editor.Forms
             }
 
             Globals.MapEditorWindow.Cut();
+        }
+
+        private static void ToolKeyDelete()
+        {
+            if (Globals.CurrentTool != (int)EditingTool.Selection)
+            {
+                return;
+            }
+
+            Globals.MapEditorWindow.Delete();
         }
 
         private void toolStripTimeButton_Click(object sender, EventArgs e)
