@@ -3908,6 +3908,56 @@ namespace Intersect.Server.Entities
             }
         }
 
+        private bool TryFillInventoryStacksOfItemFroTradeOffer(Item tradeItem, int offerIdx, List<InventorySlot> inventorySlots, ItemBase itemDescriptor, int amountToGive = 1)
+        {
+            int amountRemainder = amountToGive;
+            foreach (var invItem in inventorySlots)
+            {
+                // If we've fulfilled our stacking desires, we're done
+                if (amountRemainder <= 0 || FindOpenInventorySlots().Count <= 0)
+                {
+                    return amountRemainder <= 0;
+                }
+                var currSlot = FindInventoryItemSlotIndex(invItem);
+
+                // Otherwise, first update how many of our item we still need to put in this current slot
+                amountToGive = amountRemainder;
+                var maxDiff = itemDescriptor.MaxInventoryStack - invItem.Quantity;
+                amountRemainder = amountToGive - maxDiff;
+                amountToGive = MathHelper.Clamp(amountToGive, 0, maxDiff);
+
+                // Then, determine what the slots _new_ quantity should be
+                var newQuantity = MathHelper.Clamp(invItem.Quantity + amountToGive, 0, itemDescriptor.MaxInventoryStack);
+                // If the slot we're going to fill is empty, give it the item from the inventory
+                if (invItem.ItemId == default)
+                {
+                    invItem.Set(tradeItem);
+                }
+                invItem.Quantity = newQuantity;
+
+                // If we drained the inventory item's stack with that transaction, remove the inventory item from the inventory
+                if (amountToGive >= tradeItem.Quantity)
+                {
+                    tradeItem.Set(Item.None);
+                }
+                // Otherwise, just reduce its quantity
+                else
+                {
+                    tradeItem.Quantity -= amountToGive;
+                }
+
+                // Aaaand tell the client, provided any amount got given
+                if (amountToGive > 0)
+                {
+                    PacketSender.SendInventoryItemUpdate(this, invItem.Slot);
+                    PacketSender.SendTradeUpdate(this, this, offerIdx);
+                    PacketSender.SendTradeUpdate(Trading.Counterparty, this, offerIdx);
+                }
+            } // repeat until we've either filled the bag or fulfilled our stack requirements
+
+            return amountRemainder <= 0;
+        }
+
         /// <summary>
         /// Fills an inventory with items from a <see cref="BagSlot"/>, mostly making sure stacks play along correctly
         /// </summary>
@@ -4424,74 +4474,48 @@ namespace Intersect.Server.Entities
                 return;
             }
 
+            // Sanitize amounts
             var inventorySlot = -1;
             var stackable = itemBase.IsStackable;
+            var tradeItem = Trading.Offer[slot];
             if (stackable)
             {
-                /* Find an existing stack */
-                for (var i = 0; i < Options.MaxInvItems; i++)
+                if (amount >= tradeItem.Quantity)
                 {
-                    if (Items[i] != null && Items[i].ItemId == Trading.Offer[slot].ItemId)
-                    {
-                        inventorySlot = i;
-
-                        break;
-                    }
+                    amount = tradeItem.Quantity;
                 }
-            }
-
-            if (inventorySlot < 0)
-            {
-                /* Find a free slot if we don't have one already */
-                for (var j = 0; j < Options.MaxInvItems; j++)
-                {
-                    if (Items[j] == null || Items[j].ItemId == Guid.Empty)
-                    {
-                        inventorySlot = j;
-
-                        break;
-                    }
-                }
-            }
-
-            /* If we don't have a slot send an error. */
-            if (inventorySlot < 0)
-            {
-                PacketSender.SendChatMsg(this, Strings.Trading.inventorynospace, ChatMessageType.Trading, CustomColors.Alerts.Error);
-            }
-
-            if (amount > Trading.Offer[slot].Quantity)
-            {
-                amount = Trading.Offer[slot].Quantity;
-            }
-
-            /* Move the items to the inventory */
-            amount = Math.Min(amount, int.MaxValue - Items[inventorySlot].Quantity);
-
-            if (Items[inventorySlot] == null ||
-                Items[inventorySlot].ItemId == Guid.Empty ||
-                Items[inventorySlot].Quantity < 0)
-            {
-                Items[inventorySlot].Set(Trading.Offer[slot]);
-                Items[inventorySlot].Quantity = amount;
             }
             else
             {
-                Items[inventorySlot].Quantity += amount;
+                amount = 1;
             }
 
-            if (amount >= Trading.Offer[slot].Quantity)
+            if (Trading.Counterparty.Trading.Accepted || Trading.Accepted)
             {
-                Trading.Offer[slot] = null;
-            }
-            else
-            {
-                Trading.Offer[slot].Quantity -= amount;
+                PacketSender.SendChatMsg(this, Strings.Trading.RevokeNotAllowed, ChatMessageType.Trading, CustomColors.Alerts.Error);
+
+                return;
             }
 
-            PacketSender.SendInventoryItemUpdate(this, inventorySlot);
-            PacketSender.SendTradeUpdate(this, this, slot);
-            PacketSender.SendTradeUpdate(Trading.Counterparty, this, slot);
+            // Sanitize currSlot - this is the slot we want to fill
+            int currSlot = 0;
+            // First, we'll get our slots in the order we wish to fill them - prioritizing the user's requested slot, otherwise going from the first instance of the item found
+            var relevantSlots = new List<InventorySlot>();
+            // If the item is stackable, add slots that contain that item into the mix
+            if (itemBase.IsStackable)
+            {
+                relevantSlots.AddRange(FindInventoryItemSlots(itemBase.Id));
+            }
+            // And last, add any and all open slots as valid locations for this item, if need be
+            relevantSlots.AddRange(FindOpenInventorySlots());
+            relevantSlots.Select(sl => sl).Distinct();
+
+            // Otherwise, fill in the empty slots as much as possible
+            if (!TryFillInventoryStacksOfItemFroTradeOffer(tradeItem, slot, relevantSlots, itemBase, amount))
+            {
+                // If we're STILL not done, alert the user that we didn't have enough slots
+                PacketSender.SendChatMsg(this, Strings.Bags.withdrawinvalid, ChatMessageType.Inventory, CustomColors.Alerts.Error);
+            }
         }
 
         public void ReturnTradeItems()
