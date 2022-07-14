@@ -231,7 +231,7 @@ namespace Intersect.Editor.Forms.DockingElements
 
                                 Globals.CurSelX = tmpMap.Layers[layer][Globals.CurTileX, Globals.CurTileY].X;
                                 Globals.CurSelY = tmpMap.Layers[layer][Globals.CurTileX, Globals.CurTileY].Y;
-                                Globals.CurrentTool = (int)EditingTool.Pen;
+                                Globals.CurrentTool = (int)EditingTool.Brush;
                                 Globals.MapLayersWindow.SetLayer(layer);
 
                                 break;
@@ -416,7 +416,7 @@ namespace Intersect.Editor.Forms.DockingElements
                     }
                     else if (Globals.CurrentLayer == LayerOptions.Attributes)
                     {
-                        if (Globals.CurrentTool == (int) EditingTool.Pen)
+                        if (Globals.CurrentTool == (int) EditingTool.Brush)
                         {
                             if (Globals.MapLayersWindow.RemoveAttribute(
                                 Globals.CurrentMap, Globals.CurTileX, Globals.CurTileY
@@ -458,7 +458,7 @@ namespace Intersect.Editor.Forms.DockingElements
                     }
                     else
                     {
-                        if (Globals.CurrentTool == (int) EditingTool.Pen)
+                        if (Globals.CurrentTool == (int) EditingTool.Brush)
                         {
                             tmpMap.Layers[Globals.CurrentLayer][Globals.CurTileX, Globals.CurTileY].TilesetId = Guid.Empty;
                             tmpMap.Layers[Globals.CurrentLayer][Globals.CurTileX, Globals.CurTileY].Autotile = 0;
@@ -721,7 +721,7 @@ namespace Intersect.Editor.Forms.DockingElements
                         Globals.CurMapSelW = Globals.CurTileX - Globals.CurMapSelX;
                         Globals.CurMapSelH = Globals.CurTileY - Globals.CurMapSelY;
                     }
-                    else if (Globals.CurrentTool == (int) EditingTool.Pen)
+                    else if (Globals.CurrentTool == (int) EditingTool.Brush)
                     {
                         if (Globals.CurrentLayer == LayerOptions.Attributes)
                         {
@@ -729,7 +729,7 @@ namespace Intersect.Editor.Forms.DockingElements
                         }
                         else if (Options.Instance.MapOpts.Layers.All.Contains(Globals.CurrentLayer))
                         {
-                            if (Globals.CurrentTool == (int) EditingTool.Pen)
+                            if (Globals.CurrentTool == (int) EditingTool.Brush)
                             {
                                 tmpMap.Layers[Globals.CurrentLayer][Globals.CurTileX, Globals.CurTileY].TilesetId = Guid.Empty;
 

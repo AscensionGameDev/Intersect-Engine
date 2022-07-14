@@ -3498,7 +3498,8 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString commoneventeditor = @"Common Event Editor";
 
-            public static LocalizedString copy = @"Copy";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Copy = @"Copy (Ctrl + C)";
 
             public static LocalizedString craftingtableeditor = @"Crafting Table Editor";
 
@@ -3506,27 +3507,29 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString currentonly = @"Current Layer Only";
 
-            public static LocalizedString cut = @"Cut";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Cut = @"Cut (Ctrl + X)";
 
             public static LocalizedString darkness = @"Darkness";
 
-            public static LocalizedString droppler = @"Droppler Tool";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString EyeDroppler = @"Eyedropper Tool (I)";
 
             public static LocalizedString edit = @"Edit";
 
             public static LocalizedString editors = @"Game Editors";
 
-            public static LocalizedString erase = @"Erase";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Erase = @"Erase Tool (E)";
 
             public static LocalizedString exit = @"Exit";
 
             public static LocalizedString exportmap = @"Export Map";
 
-            public static LocalizedString externaltools = @"External Tools";
-
             public static LocalizedString file = @"File";
 
-            public static LocalizedString fill = @"Fill";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Fill = @"Fill Layer Tool (F)";
 
             public static LocalizedString fog = @"Fog";
 
@@ -3552,9 +3555,11 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString overlay = @"Overlay";
 
-            public static LocalizedString paste = @"Paste";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Paste = @"Paste (Ctrl + V)";
 
-            public static LocalizedString pen = @"Pen Tool";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Brush = @"Brush Tool (B)";
 
             public static LocalizedString postquestion = @"Post Question";
 
@@ -3562,13 +3567,17 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString questeditor = @"Quest Editor";
 
-            public static LocalizedString rectangle = @"Rectangle Tool";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Rectangle = @"Rectangle Fill Tool (R)";
 
-            public static LocalizedString redo = @"Redo";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Redo = @"Redo (Ctrl + Y)";
 
-            public static LocalizedString fliphorizontal = @"Flip Horizontal";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString FlipHorizontal = @"Horizontal Flip Selection Tool (PageDown)";
 
-            public static LocalizedString flipvertical = @"Flip Vertical";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString FlipVertical = @"Vertical Flip Selection Tool (PageUp)";
 
             public static LocalizedString reportbug = @"Report Bug";
 
@@ -3583,11 +3592,13 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString run = @"Run Client";
 
-            public static LocalizedString savemap = @"Save Map";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString SaveMap = @"Save Map (Ctrl + S)";
 
             public static LocalizedString screenshot = @"Screenshot Map";
 
-            public static LocalizedString selection = @"Selection Tool";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Selection = @"Marquee Selection Tool (M)";
 
             public static LocalizedString selectlayers = @"Select...";
 
@@ -3609,7 +3620,8 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString toolsdir = @"tools";
 
-            public static LocalizedString undo = @"Undo";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Undo = @"Undo (Ctrl + Z)";
 
             public static LocalizedString view = @"View";
 
