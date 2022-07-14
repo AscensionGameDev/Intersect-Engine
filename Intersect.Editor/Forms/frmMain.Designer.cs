@@ -54,7 +54,7 @@ namespace Intersect.Editor.Forms
             this.toolStripBtnUndo = new System.Windows.Forms.ToolStripButton();
             this.toolStripBtnRedo = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripBtnPen = new System.Windows.Forms.ToolStripButton();
+            this.toolStripBtnBrush = new System.Windows.Forms.ToolStripButton();
             this.toolStripBtnSelect = new System.Windows.Forms.ToolStripButton();
             this.toolStripBtnRect = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
@@ -306,18 +306,18 @@ namespace Intersect.Editor.Forms
             this.toolStripSeparator3.Name = "toolStripSeparator3";
             this.toolStripSeparator3.Size = new System.Drawing.Size(6, 25);
             // 
-            // toolStripBtnPen
+            // toolStripBtnBrush
             // 
-            this.toolStripBtnPen.Checked = true;
-            this.toolStripBtnPen.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.toolStripBtnPen.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripBtnPen.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.toolStripBtnPen.Image = ((System.Drawing.Image)(resources.GetObject("toolStripBtnPen.Image")));
-            this.toolStripBtnPen.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripBtnPen.Name = "toolStripBtnPen";
-            this.toolStripBtnPen.Size = new System.Drawing.Size(23, 22);
-            this.toolStripBtnPen.Text = "Single Tile";
-            this.toolStripBtnPen.Click += new System.EventHandler(this.toolStripBtnPen_Click);
+            this.toolStripBtnBrush.Checked = true;
+            this.toolStripBtnBrush.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.toolStripBtnBrush.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripBtnBrush.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+            this.toolStripBtnBrush.Image = global::Intersect.Editor.Properties.Resources.paintbrush;
+            this.toolStripBtnBrush.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripBtnBrush.Name = "toolStripBtnBrush";
+            this.toolStripBtnBrush.Size = new System.Drawing.Size(23, 22);
+            this.toolStripBtnBrush.Text = "Brush Tool";
+            this.toolStripBtnBrush.Click += new System.EventHandler(this.toolStripBtnBrush_Click);
             // 
             // toolStripBtnSelect
             // 
@@ -466,7 +466,6 @@ namespace Intersect.Editor.Forms
             this.toolStripBtnFlipVertical.Name = "toolStripBtnFlipVertical";
             this.toolStripBtnFlipVertical.Size = new System.Drawing.Size(23, 22);
             this.toolStripBtnFlipVertical.Text = "toolStripBtnFlipVertical";
-            this.toolStripBtnFlipVertical.ToolTipText = "Flip Vertical";
             this.toolStripBtnFlipVertical.Click += new System.EventHandler(this.toolStripBtnFlipVertical_Click);
             // 
             // toolStripBtnFlipHorizontal
@@ -478,7 +477,6 @@ namespace Intersect.Editor.Forms
             this.toolStripBtnFlipHorizontal.Name = "toolStripBtnFlipHorizontal";
             this.toolStripBtnFlipHorizontal.Size = new System.Drawing.Size(23, 22);
             this.toolStripBtnFlipHorizontal.Text = "toolStripBtnFlipHorizontal";
-            this.toolStripBtnFlipHorizontal.ToolTipText = "Flip Horizontal";
             this.toolStripBtnFlipHorizontal.Click += new System.EventHandler(this.toolStripBtnFlipHorizontal_Click);
             // 
             // toolStripSeparator13
@@ -517,7 +515,7 @@ namespace Intersect.Editor.Forms
             this.toolStripBtnUndo,
             this.toolStripBtnRedo,
             this.toolStripSeparator3,
-            this.toolStripBtnPen,
+            this.toolStripBtnBrush,
             this.toolStripBtnSelect,
             this.toolStripBtnRect,
             this.toolStripSeparator4,
@@ -1057,7 +1055,7 @@ namespace Intersect.Editor.Forms
 		public ToolStripButton toolStripBtnUndo;
 		public ToolStripButton toolStripBtnRedo;
 		private ToolStripSeparator toolStripSeparator3;
-		public ToolStripButton toolStripBtnPen;
+		public System.Windows.Forms.ToolStripButton toolStripBtnBrush;
 		public ToolStripButton toolStripBtnSelect;
 		public ToolStripButton toolStripBtnRect;
 		private ToolStripSeparator toolStripSeparator4;

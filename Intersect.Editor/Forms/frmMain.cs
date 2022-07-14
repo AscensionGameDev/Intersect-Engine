@@ -150,7 +150,7 @@ namespace Intersect.Editor.Forms
         private void InitLocalizationMenuFile()
         {
             fileToolStripMenuItem.Text = Strings.MainForm.file;
-            saveMapToolStripMenuItem.Text = Strings.MainForm.savemap;
+            saveMapToolStripMenuItem.Text = Strings.MainForm.SaveMap;
             newMapToolStripMenuItem.Text = Strings.MainForm.newmap;
             importMapToolStripMenuItem.Text = Strings.MainForm.importmap;
             exportMapToolStripMenuItem.Text = Strings.MainForm.exportmap;
@@ -161,13 +161,13 @@ namespace Intersect.Editor.Forms
         private void InitLocalizationMenuEdit()
         {
             editToolStripMenuItem.Text = Strings.MainForm.edit;
-            undoToolStripMenuItem.Text = Strings.MainForm.undo;
-            redoToolStripMenuItem.Text = Strings.MainForm.redo;
-            cutToolStripMenuItem.Text = Strings.MainForm.cut;
-            copyToolStripMenuItem.Text = Strings.MainForm.copy;
-            pasteToolStripMenuItem.Text = Strings.MainForm.paste;
-            fillToolStripMenuItem.Text = Strings.MainForm.fill;
-            eraseLayerToolStripMenuItem.Text = Strings.MainForm.erase;
+            undoToolStripMenuItem.Text = Strings.MainForm.Undo;
+            redoToolStripMenuItem.Text = Strings.MainForm.Redo;
+            cutToolStripMenuItem.Text = Strings.MainForm.Cut;
+            copyToolStripMenuItem.Text = Strings.MainForm.Copy;
+            pasteToolStripMenuItem.Text = Strings.MainForm.Paste;
+            fillToolStripMenuItem.Text = Strings.MainForm.Fill;
+            eraseLayerToolStripMenuItem.Text = Strings.MainForm.Erase;
             selectToolStripMenuItem.Text = Strings.MainForm.selectlayers;
             allLayersToolStripMenuItem.Text = Strings.MainForm.alllayers;
             currentLayerOnlyToolStripMenuItem.Text = Strings.MainForm.currentonly;
@@ -223,25 +223,25 @@ namespace Intersect.Editor.Forms
         private void InitLocalizationToolstrip()
         {
             toolStripBtnNewMap.Text = Strings.MainForm.newmap;
-            toolStripBtnSaveMap.Text = Strings.MainForm.savemap;
+            toolStripBtnSaveMap.Text = Strings.MainForm.SaveMap;
 
-            toolStripBtnCut.Text = Strings.MainForm.cut;
-            toolStripBtnCopy.Text = Strings.MainForm.copy;
-            toolStripBtnPaste.Text = Strings.MainForm.paste;
+            toolStripBtnCut.Text = Strings.MainForm.Cut;
+            toolStripBtnCopy.Text = Strings.MainForm.Copy;
+            toolStripBtnPaste.Text = Strings.MainForm.Paste;
 
-            toolStripBtnUndo.Text = Strings.MainForm.undo;
-            toolStripBtnRedo.Text = Strings.MainForm.redo;
+            toolStripBtnUndo.Text = Strings.MainForm.Undo;
+            toolStripBtnRedo.Text = Strings.MainForm.Redo;
 
-            toolStripBtnPen.Text = Strings.MainForm.pen;
-            toolStripBtnSelect.Text = Strings.MainForm.selection;
-            toolStripBtnRect.Text = Strings.MainForm.rectangle;
+            toolStripBtnBrush.Text = Strings.MainForm.Brush;
+            toolStripBtnSelect.Text = Strings.MainForm.Selection;
+            toolStripBtnRect.Text = Strings.MainForm.Rectangle;
 
-            toolStripBtnFlipVertical.Text = Strings.MainForm.flipvertical;
-            toolStripBtnFlipHorizontal.Text = Strings.MainForm.fliphorizontal;
+            toolStripBtnFlipVertical.Text = Strings.MainForm.FlipVertical;
+            toolStripBtnFlipHorizontal.Text = Strings.MainForm.FlipHorizontal;
 
-            toolStripBtnFill.Text = Strings.MainForm.fill;
-            toolStripBtnErase.Text = Strings.MainForm.erase;
-            toolStripBtnEyeDrop.Text = Strings.MainForm.droppler;
+            toolStripBtnFill.Text = Strings.MainForm.Fill;
+            toolStripBtnErase.Text = Strings.MainForm.Erase;
+            toolStripBtnEyeDrop.Text = Strings.MainForm.EyeDroppler;
 
             toolStripTimeButton.Text = Strings.MainForm.lighting;
 
@@ -347,15 +347,15 @@ namespace Intersect.Editor.Forms
                         break;
 
                     // Shortcuts: Map grid Tools.
-                    case Keys.P: // Pen Tool.
-                        toolStripBtnPen_Click(null, null);
+                    case Keys.B: // Brush Tool.
+                        toolStripBtnBrush_Click(null, null);
                         break;
 
                     case Keys.M: // Marquee Selection Tool.
                         toolStripBtnSelect_Click(null, null);
                         break;
 
-                    case Keys.R: // Rectangle Tool.
+                    case Keys.R: // Rectangle Fill Tool.
                         toolStripBtnRect_Click(null, null);
                         break;
 
@@ -367,7 +367,7 @@ namespace Intersect.Editor.Forms
                         toolStripBtnFlipHorizontal_Click(null, null);
                         break;
 
-                    case Keys.F: // Fill Tool.
+                    case Keys.F: // Fill Layer Tool.
                         toolStripBtnFill_Click(null, null);
                         break;
 
@@ -612,13 +612,13 @@ namespace Intersect.Editor.Forms
             }
 
             //Process the Tool Buttons
-            toolStripBtnPen.Enabled = false;
+            toolStripBtnBrush.Enabled = false;
             toolStripBtnSelect.Enabled = true;
             toolStripBtnRect.Enabled = false;
             toolStripBtnEyeDrop.Enabled = false;
             if (Globals.CurrentLayer == LayerOptions.Attributes)
             {
-                toolStripBtnPen.Enabled = true;
+                toolStripBtnBrush.Enabled = true;
                 toolStripBtnRect.Enabled = true;
             }
             else if (Globals.CurrentLayer == LayerOptions.Lights)
@@ -635,17 +635,17 @@ namespace Intersect.Editor.Forms
             }
             else
             {
-                toolStripBtnPen.Enabled = true;
+                toolStripBtnBrush.Enabled = true;
                 toolStripBtnRect.Enabled = true;
                 toolStripBtnEyeDrop.Enabled = true;
             }
 
             switch (Globals.CurrentTool)
             {
-                case (int) EditingTool.Pen:
-                    if (!toolStripBtnPen.Checked)
+                case (int) EditingTool.Brush:
+                    if (!toolStripBtnBrush.Checked)
                     {
-                        toolStripBtnPen.Checked = true;
+                        toolStripBtnBrush.Checked = true;
                     }
 
                     if (toolStripBtnSelect.Checked)
@@ -695,9 +695,9 @@ namespace Intersect.Editor.Forms
 
                     break;
                 case (int) EditingTool.Selection:
-                    if (toolStripBtnPen.Checked)
+                    if (toolStripBtnBrush.Checked)
                     {
-                        toolStripBtnPen.Checked = false;
+                        toolStripBtnBrush.Checked = false;
                     }
 
                     if (!toolStripBtnSelect.Checked)
@@ -747,9 +747,9 @@ namespace Intersect.Editor.Forms
 
                     break;
                 case (int) EditingTool.Rectangle:
-                    if (toolStripBtnPen.Checked)
+                    if (toolStripBtnBrush.Checked)
                     {
-                        toolStripBtnPen.Checked = false;
+                        toolStripBtnBrush.Checked = false;
                     }
 
                     if (toolStripBtnSelect.Checked)
@@ -799,9 +799,9 @@ namespace Intersect.Editor.Forms
 
                     break;
                 case (int) EditingTool.Fill:
-                    if (toolStripBtnPen.Checked)
+                    if (toolStripBtnBrush.Checked)
                     {
-                        toolStripBtnPen.Checked = false;
+                        toolStripBtnBrush.Checked = false;
                     }
 
                     if (toolStripBtnSelect.Checked)
@@ -851,9 +851,9 @@ namespace Intersect.Editor.Forms
 
                     break;
                 case (int) EditingTool.Erase:
-                    if (toolStripBtnPen.Checked)
+                    if (toolStripBtnBrush.Checked)
                     {
-                        toolStripBtnPen.Checked = false;
+                        toolStripBtnBrush.Checked = false;
                     }
 
                     if (toolStripBtnSelect.Checked)
@@ -903,9 +903,9 @@ namespace Intersect.Editor.Forms
 
                     break;
                 case (int) EditingTool.Droppler:
-                    if (toolStripBtnPen.Checked)
+                    if (toolStripBtnBrush.Checked)
                     {
-                        toolStripBtnPen.Checked = false;
+                        toolStripBtnBrush.Checked = false;
                     }
 
                     if (toolStripBtnSelect.Checked)
@@ -1415,9 +1415,9 @@ namespace Intersect.Editor.Forms
             }
         }
 
-        private void toolStripBtnPen_Click(object sender, EventArgs e)
+        private void toolStripBtnBrush_Click(object sender, EventArgs e)
         {
-            Globals.CurrentTool = (int) EditingTool.Pen;
+            Globals.CurrentTool = (int) EditingTool.Brush;
         }
 
         private void toolStripBtnSelect_Click(object sender, EventArgs e)

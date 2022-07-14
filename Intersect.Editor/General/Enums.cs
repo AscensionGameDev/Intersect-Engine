@@ -46,7 +46,7 @@
     public enum EditingTool
     {
 
-        Pen = 0,
+        Brush = 0,
 
         Selection = 1,
 

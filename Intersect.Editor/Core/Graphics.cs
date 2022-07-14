@@ -592,7 +592,7 @@ namespace Intersect.Editor.Core
                         {
                             if (Globals.CurrentLayer == LayerOptions.Attributes)
                             {
-                                if (Globals.CurrentTool == (int) EditingTool.Pen)
+                                if (Globals.CurrentTool == (int) EditingTool.Brush)
                                 {
                                     Globals.MapLayersWindow.PlaceAttribute(tmpMap, Globals.CurTileX, Globals.CurTileY);
                                 }
@@ -625,7 +625,7 @@ namespace Intersect.Editor.Core
                             }
                             else if (Globals.CurrentTileset != null)
                             {
-                                if (Globals.CurrentTool == (int) EditingTool.Pen)
+                                if (Globals.CurrentTool == (int) EditingTool.Brush)
                                 {
                                     if (Globals.Autotilemode == 0)
                                     {
