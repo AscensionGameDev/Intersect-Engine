@@ -2144,7 +2144,7 @@ namespace Intersect.Editor.Forms.DockingElements
             }
         }
 
-        //Cut Copy Paste Functions
+        // Cut, Copy, Delete and Paste Functions.
         public void Cut()
         {
             Copy();
@@ -2171,6 +2171,20 @@ namespace Intersect.Editor.Forms.DockingElements
                 Globals.CopyMapSelY = Globals.CurMapSelY;
                 Globals.HasCopy = true;
             }
+        }
+        
+        public void Delete()
+        {
+            WipeCurrentSelection(Globals.CurrentMap);
+            Core.Graphics.TilePreviewUpdated = true;
+            if (CurrentMapState != null)
+            {
+                MapUndoStates.Add(CurrentMapState);
+            }
+
+            MapRedoStates.Clear();
+            CurrentMapState = Globals.CurrentMap.SaveInternal();
+            mMapChanged = false;
         }
 
         public void Paste()
