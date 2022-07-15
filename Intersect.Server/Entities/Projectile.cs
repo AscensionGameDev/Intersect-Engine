@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -336,18 +336,23 @@ namespace Intersect.Server.Entities
 
         public bool CheckForCollision(ProjectileSpawn spawn)
         {
+            if(spawn == null)
+            {
+                return false;
+            }
+
             var killSpawn = MoveFragment(spawn, false);
 
             //Check Map Entities For Hits
             var map = MapController.Get(spawn.MapId);
-            if (!killSpawn && map != null)
-            {
-                var attribute = map.Attributes[(int)spawn.X, (int)spawn.Y];
+            var attribute = map.Attributes[(int)spawn.X, (int)spawn.Y];
 
+            if (!killSpawn && attribute != null)
+            {
                 //Check for Z-Dimension
                 if (!spawn.ProjectileBase.IgnoreZDimension)
                 {
-                    if (attribute != null && attribute.Type == MapAttributes.ZDimension)
+                    if (attribute.Type == MapAttributes.ZDimension)
                     {
                         if (((MapZDimensionAttribute) attribute).GatewayTo > 0)
                         {
@@ -357,10 +362,10 @@ namespace Intersect.Server.Entities
                 }
 
                 //Check for grapplehooks.
-                if (attribute != null &&
-                    attribute.Type == MapAttributes.GrappleStone &&
-                    Base.GrappleHook == true &&
-                    !spawn.Parent.HasGrappled)
+                if (attribute.Type == MapAttributes.GrappleStone &&
+                    Base.GrappleHookOptions.Contains(GrappleOptions.MapAttribute) &&
+                    !spawn.Parent.HasGrappled &&
+                    (spawn.X != Owner.X || spawn.Y != Owner.Y))
                 {
                     if (spawn.Dir <= 3) //Don't handle directional projectile grapplehooks
                     {
@@ -380,9 +385,8 @@ namespace Intersect.Server.Entities
                     }
                 }
 
-                if (attribute != null &&
-                    (attribute.Type == MapAttributes.Blocked || attribute.Type == MapAttributes.Animation && ((MapAnimationAttribute)attribute).IsBlock) &&
-                    !spawn.ProjectileBase.IgnoreMapBlocks)
+                if (!spawn.ProjectileBase.IgnoreMapBlocks &&
+                    (attribute.Type == MapAttributes.Blocked || attribute.Type == MapAttributes.Animation && ((MapAnimationAttribute)attribute).IsBlock))
                 {
                     killSpawn = true;
                 }
@@ -393,10 +397,10 @@ namespace Intersect.Server.Entities
                 var entities = mapInstance.GetEntities();
                 for (var z = 0; z < entities.Count; z++)
                 {
-                    if (entities[z] != null &&
+                    if (entities[z] != null && entities[z] != spawn.Parent.Owner && entities[z].Z == spawn.Z &&
                         (entities[z].X == Math.Round(spawn.X) || entities[z].X == Math.Ceiling(spawn.X) || entities[z].X == Math.Floor(spawn.X)) &&
                         (entities[z].Y == Math.Round(spawn.Y) || entities[z].Y == Math.Ceiling(spawn.Y) || entities[z].Y == Math.Floor(spawn.Y)) &&
-                        entities[z].Z == spawn.Z)
+                        (spawn.X != Owner.X || spawn.Y != Owner.Y))
                     {
                         killSpawn = spawn.HitEntity(entities[z]);
                         if (killSpawn && !spawn.ProjectileBase.PierceTarget)
@@ -407,7 +411,7 @@ namespace Intersect.Server.Entities
                     else
                     {
                         if (z == entities.Count - 1)
-                        {       
+                        {
                             if (spawn.Distance >= Base.Range)
                             {
                                 killSpawn = true;

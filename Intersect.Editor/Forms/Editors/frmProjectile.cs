@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -60,6 +60,7 @@ namespace Intersect.Editor.Forms.Editors
         {
             foreach (var item in mChanged)
             {
+                item.GrappleHookOptions.Sort();
                 item.RestoreBackup();
                 item.DeleteBackup();
             }
@@ -74,6 +75,7 @@ namespace Intersect.Editor.Forms.Editors
             //Send Changed items
             foreach (var item in mChanged)
             {
+                item.GrappleHookOptions.Sort();
                 PacketSender.SendSaveObject(item);
                 item.DeleteBackup();
             }
@@ -121,7 +123,12 @@ namespace Intersect.Editor.Forms.Editors
             lblRange.Text = Strings.ProjectileEditor.range;
             lblKnockback.Text = Strings.ProjectileEditor.knockback;
             lblSpell.Text = Strings.ProjectileEditor.spell;
-            chkGrapple.Text = Strings.ProjectileEditor.grapple;
+
+            grpGrappleOptions.Text = Strings.ProjectileEditor.GrappleOptionsTitle;
+            chkGrappleOnMap.Text = Strings.ProjectileEditor.GrappleOpts[GrappleOptions.MapAttribute];
+            chkGrappleOnPlayer.Text = Strings.ProjectileEditor.GrappleOpts[GrappleOptions.Player];
+            chkGrappleOnNpc.Text = Strings.ProjectileEditor.GrappleOpts[GrappleOptions.NPC];
+            chkGrappleOnResource.Text = Strings.ProjectileEditor.GrappleOpts[GrappleOptions.Resource];
 
             grpSpawns.Text = Strings.ProjectileEditor.spawns;
 
@@ -169,7 +176,6 @@ namespace Intersect.Editor.Forms.Editors
                 chkIgnoreActiveResources.Checked = mEditorItem.IgnoreActiveResources;
                 chkIgnoreInactiveResources.Checked = mEditorItem.IgnoreExhaustedResources;
                 chkIgnoreZDimensionBlocks.Checked = mEditorItem.IgnoreZDimension;
-                chkGrapple.Checked = mEditorItem.GrappleHook;
                 chkPierce.Checked = mEditorItem.PierceTarget;
                 cmbItem.SelectedIndex = ItemBase.ListIndex(mEditorItem.AmmoItemId) + 1;
                 nudConsume.Value = mEditorItem.AmmoRequired;
@@ -188,6 +194,8 @@ namespace Intersect.Editor.Forms.Editors
                     mChanged.Add(mEditorItem);
                     mEditorItem.MakeBackup();
                 }
+
+                UpdateGrappleOptions();
             }
             else
             {
@@ -274,6 +282,26 @@ namespace Intersect.Editor.Forms.Editors
                 lblSpawnRange.Text = Strings.ProjectileEditor.spawnrange.ToString(
                     1, mEditorItem.Animations[lstAnimations.SelectedIndex].SpawnRange
                 );
+            }
+        }
+
+        private void UpdateGrappleOptions()
+        {
+            chkGrappleOnMap.Checked = mEditorItem.GrappleHookOptions.Contains(GrappleOptions.MapAttribute);
+            chkGrappleOnPlayer.Checked = mEditorItem.GrappleHookOptions.Contains(GrappleOptions.Player);
+            chkGrappleOnNpc.Checked = mEditorItem.GrappleHookOptions.Contains(GrappleOptions.NPC);
+            chkGrappleOnResource.Checked = mEditorItem.GrappleHookOptions.Contains(GrappleOptions.Resource);
+        }
+
+        private void ChangeGrappleOptions(GrappleOptions option, bool chkValue)
+        {
+            if(chkValue && !mEditorItem.GrappleHookOptions.Contains(option))
+            {
+                mEditorItem.GrappleHookOptions.Add(option);
+            }
+            else if(!chkValue)
+            {
+                mEditorItem.GrappleHookOptions.Remove(option);
             }
         }
 
@@ -488,11 +516,6 @@ namespace Intersect.Editor.Forms.Editors
             mEditorItem.PierceTarget = chkPierce.Checked;
         }
 
-        private void chkGrapple_CheckedChanged(object sender, EventArgs e)
-        {
-            mEditorItem.GrappleHook = chkGrapple.Checked;
-        }
-
         private void btnAdd_Click(object sender, EventArgs e)
         {
             //Clone the previous animation to save time, set the end point to always be the quantity of spawns.
@@ -657,6 +680,25 @@ namespace Intersect.Editor.Forms.Editors
             {
                 mEditorItem.Spell = null;
             }
+        }
+        private void chkGrappleOnMap_CheckedChanged(object sender, EventArgs e)
+        {
+            ChangeGrappleOptions(GrappleOptions.MapAttribute, chkGrappleOnMap.Checked);
+        }
+
+        private void chkGrappleOnPlayer_CheckedChanged(object sender, EventArgs e)
+        {
+            ChangeGrappleOptions(GrappleOptions.Player, chkGrappleOnPlayer.Checked);
+        }
+
+        private void chkGrappleOnNpc_CheckedChanged(object sender, EventArgs e)
+        {
+            ChangeGrappleOptions(GrappleOptions.NPC, chkGrappleOnNpc.Checked);
+        }
+
+        private void chkGrappleOnResource_CheckedChanged(object sender, EventArgs e)
+        {
+            ChangeGrappleOptions(GrappleOptions.Resource, chkGrappleOnResource.Checked);
         }
 
         #region "Item List - Folders, Searching, Sorting, Etc"

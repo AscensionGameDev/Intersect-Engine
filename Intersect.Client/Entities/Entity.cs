@@ -1770,7 +1770,8 @@ namespace Intersect.Client.Entities
             ref IEntity blockedBy,
             bool ignoreAliveResources = true,
             bool ignoreDeadResources = true,
-            bool ignoreNpcAvoids = true
+            bool ignoreNpcAvoids = true,
+            bool projectileTrigger = false
         )
         {
             var mapInstance = Maps.MapInstance.Get(mapId);
@@ -1842,18 +1843,17 @@ namespace Intersect.Client.Entities
                                     var resourceBase = ((Resource)en.Value).BaseResource;
                                     if (resourceBase != null)
                                     {
-                                        if (!ignoreAliveResources && !((Resource)en.Value).IsDead)
+                                        if(projectileTrigger)
                                         {
-                                            blockedBy = en.Value;
+                                            bool isDead = ((Resource) en.Value).IsDead;
+                                            if (!ignoreAliveResources && !isDead || !ignoreDeadResources && isDead)
+                                            {
+                                                blockedBy = en.Value;
 
-                                            return -6;
-                                        }
+                                                return -6;
+                                            }
 
-                                        if (!ignoreDeadResources && ((Resource)en.Value).IsDead)
-                                        {
-                                            blockedBy = en.Value;
-
-                                            return -6;
+                                            return -1;
                                         }
 
                                         if (resourceBase.WalkableAfter && ((Resource)en.Value).IsDead ||

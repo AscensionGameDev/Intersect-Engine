@@ -4203,7 +4203,17 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString folderprompt = @"Enter a name for the folder you'd like to add:";
 
-            public static LocalizedString grapple = @"Grapple hook?";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString GrappleOptionsTitle = @"Grapple Options";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static Dictionary<GrappleOptions, LocalizedString> GrappleOpts = new Dictionary<GrappleOptions, LocalizedString>
+            {
+                {GrappleOptions.MapAttribute, @"On Map Attribute"},
+                {GrappleOptions.Player, @"On Player"},
+                {GrappleOptions.NPC, @"On NPC"},
+                {GrappleOptions.Resource, @"On Resource"},
+            };
 
             public static LocalizedString ignoreactiveresources = @"Active Resources";
 

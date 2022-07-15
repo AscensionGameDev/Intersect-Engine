@@ -50,7 +50,6 @@ namespace Intersect.Editor.Forms.Editors
             this.nudSpeed = new DarkUI.Controls.DarkNumericUpDown();
             this.lblKnockback = new System.Windows.Forms.Label();
             this.lblAmount = new System.Windows.Forms.Label();
-            this.chkGrapple = new DarkUI.Controls.DarkCheckBox();
             this.lblSpell = new System.Windows.Forms.Label();
             this.lblName = new System.Windows.Forms.Label();
             this.txtName = new DarkUI.Controls.DarkTextBox();
@@ -73,6 +72,11 @@ namespace Intersect.Editor.Forms.Editors
             this.chkIgnoreMapBlocks = new DarkUI.Controls.DarkCheckBox();
             this.chkIgnoreActiveResources = new DarkUI.Controls.DarkCheckBox();
             this.pnlContainer = new System.Windows.Forms.Panel();
+            this.grpGrappleOptions = new DarkUI.Controls.DarkGroupBox();
+            this.chkGrappleOnNpc = new DarkUI.Controls.DarkCheckBox();
+            this.chkGrappleOnResource = new DarkUI.Controls.DarkCheckBox();
+            this.chkGrappleOnMap = new DarkUI.Controls.DarkCheckBox();
+            this.chkGrappleOnPlayer = new DarkUI.Controls.DarkCheckBox();
             this.grpAmmo = new DarkUI.Controls.DarkGroupBox();
             this.nudConsume = new DarkUI.Controls.DarkNumericUpDown();
             this.cmbItem = new DarkUI.Controls.DarkComboBox();
@@ -103,6 +107,7 @@ namespace Intersect.Editor.Forms.Editors
             this.grpAnimations.SuspendLayout();
             this.grpCollisions.SuspendLayout();
             this.pnlContainer.SuspendLayout();
+            this.grpGrappleOptions.SuspendLayout();
             this.grpAmmo.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudConsume)).BeginInit();
             this.toolStrip.SuspendLayout();
@@ -201,7 +206,6 @@ namespace Intersect.Editor.Forms.Editors
             this.grpProperties.Controls.Add(this.nudSpeed);
             this.grpProperties.Controls.Add(this.lblKnockback);
             this.grpProperties.Controls.Add(this.lblAmount);
-            this.grpProperties.Controls.Add(this.chkGrapple);
             this.grpProperties.Controls.Add(this.lblSpell);
             this.grpProperties.Controls.Add(this.lblName);
             this.grpProperties.Controls.Add(this.txtName);
@@ -400,16 +404,6 @@ namespace Intersect.Editor.Forms.Editors
             this.lblAmount.TabIndex = 38;
             this.lblAmount.Text = "Quantity:";
             // 
-            // chkGrapple
-            // 
-            this.chkGrapple.AutoSize = true;
-            this.chkGrapple.Location = new System.Drawing.Point(90, 202);
-            this.chkGrapple.Name = "chkGrapple";
-            this.chkGrapple.Size = new System.Drawing.Size(90, 17);
-            this.chkGrapple.TabIndex = 36;
-            this.chkGrapple.Text = "Graple hook?";
-            this.chkGrapple.CheckedChanged += new System.EventHandler(this.chkGrapple_CheckedChanged);
-            // 
             // lblSpell
             // 
             this.lblSpell.AutoSize = true;
@@ -590,9 +584,9 @@ namespace Intersect.Editor.Forms.Editors
             this.grpCollisions.Controls.Add(this.chkIgnoreMapBlocks);
             this.grpCollisions.Controls.Add(this.chkIgnoreActiveResources);
             this.grpCollisions.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpCollisions.Location = new System.Drawing.Point(192, 259);
+            this.grpCollisions.Location = new System.Drawing.Point(331, 259);
             this.grpCollisions.Name = "grpCollisions";
-            this.grpCollisions.Size = new System.Drawing.Size(273, 107);
+            this.grpCollisions.Size = new System.Drawing.Size(135, 132);
             this.grpCollisions.TabIndex = 29;
             this.grpCollisions.TabStop = false;
             this.grpCollisions.Text = "Ignore Collision:";
@@ -600,7 +594,7 @@ namespace Intersect.Editor.Forms.Editors
             // chkPierce
             // 
             this.chkPierce.AutoSize = true;
-            this.chkPierce.Location = new System.Drawing.Point(168, 16);
+            this.chkPierce.Location = new System.Drawing.Point(6, 108);
             this.chkPierce.Name = "chkPierce";
             this.chkPierce.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.chkPierce.Size = new System.Drawing.Size(96, 17);
@@ -650,6 +644,8 @@ namespace Intersect.Editor.Forms.Editors
             // 
             // pnlContainer
             // 
+            this.pnlContainer.AutoScroll = true;
+            this.pnlContainer.Controls.Add(this.grpGrappleOptions);
             this.pnlContainer.Controls.Add(this.grpAmmo);
             this.pnlContainer.Controls.Add(this.grpCollisions);
             this.pnlContainer.Controls.Add(this.grpProperties);
@@ -657,9 +653,65 @@ namespace Intersect.Editor.Forms.Editors
             this.pnlContainer.Controls.Add(this.grpSpawns);
             this.pnlContainer.Location = new System.Drawing.Point(221, 36);
             this.pnlContainer.Name = "pnlContainer";
-            this.pnlContainer.Size = new System.Drawing.Size(473, 454);
+            this.pnlContainer.Size = new System.Drawing.Size(474, 480);
             this.pnlContainer.TabIndex = 30;
             this.pnlContainer.Visible = false;
+            // 
+            // grpGrappleOptions
+            // 
+            this.grpGrappleOptions.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.grpGrappleOptions.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpGrappleOptions.Controls.Add(this.chkGrappleOnNpc);
+            this.grpGrappleOptions.Controls.Add(this.chkGrappleOnResource);
+            this.grpGrappleOptions.Controls.Add(this.chkGrappleOnMap);
+            this.grpGrappleOptions.Controls.Add(this.chkGrappleOnPlayer);
+            this.grpGrappleOptions.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpGrappleOptions.Location = new System.Drawing.Point(193, 259);
+            this.grpGrappleOptions.Name = "grpGrappleOptions";
+            this.grpGrappleOptions.Size = new System.Drawing.Size(130, 132);
+            this.grpGrappleOptions.TabIndex = 40;
+            this.grpGrappleOptions.TabStop = false;
+            this.grpGrappleOptions.Text = "Grapple Options:";
+            // 
+            // chkGrappleOnNpc
+            // 
+            this.chkGrappleOnNpc.AutoSize = true;
+            this.chkGrappleOnNpc.Location = new System.Drawing.Point(6, 62);
+            this.chkGrappleOnNpc.Name = "chkGrappleOnNpc";
+            this.chkGrappleOnNpc.Size = new System.Drawing.Size(65, 17);
+            this.chkGrappleOnNpc.TabIndex = 38;
+            this.chkGrappleOnNpc.Text = "On NPC";
+            this.chkGrappleOnNpc.CheckedChanged += new System.EventHandler(this.chkGrappleOnNpc_CheckedChanged);
+            // 
+            // chkGrappleOnResource
+            // 
+            this.chkGrappleOnResource.AutoSize = true;
+            this.chkGrappleOnResource.Location = new System.Drawing.Point(6, 85);
+            this.chkGrappleOnResource.Name = "chkGrappleOnResource";
+            this.chkGrappleOnResource.Size = new System.Drawing.Size(89, 17);
+            this.chkGrappleOnResource.TabIndex = 37;
+            this.chkGrappleOnResource.Text = "On Resource";
+            this.chkGrappleOnResource.CheckedChanged += new System.EventHandler(this.chkGrappleOnResource_CheckedChanged);
+            // 
+            // chkGrappleOnMap
+            // 
+            this.chkGrappleOnMap.AutoSize = true;
+            this.chkGrappleOnMap.Location = new System.Drawing.Point(6, 16);
+            this.chkGrappleOnMap.Name = "chkGrappleOnMap";
+            this.chkGrappleOnMap.Size = new System.Drawing.Size(106, 17);
+            this.chkGrappleOnMap.TabIndex = 33;
+            this.chkGrappleOnMap.Text = "On Map Attribute";
+            this.chkGrappleOnMap.CheckedChanged += new System.EventHandler(this.chkGrappleOnMap_CheckedChanged);
+            // 
+            // chkGrappleOnPlayer
+            // 
+            this.chkGrappleOnPlayer.AutoSize = true;
+            this.chkGrappleOnPlayer.Location = new System.Drawing.Point(6, 39);
+            this.chkGrappleOnPlayer.Name = "chkGrappleOnPlayer";
+            this.chkGrappleOnPlayer.Size = new System.Drawing.Size(72, 17);
+            this.chkGrappleOnPlayer.TabIndex = 36;
+            this.chkGrappleOnPlayer.Text = "On Player";
+            this.chkGrappleOnPlayer.CheckedChanged += new System.EventHandler(this.chkGrappleOnPlayer_CheckedChanged);
             // 
             // grpAmmo
             // 
@@ -670,7 +722,7 @@ namespace Intersect.Editor.Forms.Editors
             this.grpAmmo.Controls.Add(this.lblAmmoItem);
             this.grpAmmo.Controls.Add(this.lblAmmoAmount);
             this.grpAmmo.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpAmmo.Location = new System.Drawing.Point(193, 372);
+            this.grpAmmo.Location = new System.Drawing.Point(193, 397);
             this.grpAmmo.Name = "grpAmmo";
             this.grpAmmo.Size = new System.Drawing.Size(272, 79);
             this.grpAmmo.TabIndex = 30;
@@ -739,7 +791,7 @@ namespace Intersect.Editor.Forms.Editors
             // btnCancel
             // 
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnCancel.Location = new System.Drawing.Point(497, 496);
+            this.btnCancel.Location = new System.Drawing.Point(497, 522);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Padding = new System.Windows.Forms.Padding(5);
             this.btnCancel.Size = new System.Drawing.Size(190, 27);
@@ -749,7 +801,7 @@ namespace Intersect.Editor.Forms.Editors
             // 
             // btnSave
             // 
-            this.btnSave.Location = new System.Drawing.Point(301, 496);
+            this.btnSave.Location = new System.Drawing.Point(301, 522);
             this.btnSave.Name = "btnSave";
             this.btnSave.Padding = new System.Windows.Forms.Padding(5);
             this.btnSave.Size = new System.Drawing.Size(190, 27);
@@ -776,7 +828,7 @@ namespace Intersect.Editor.Forms.Editors
             this.toolStrip.Location = new System.Drawing.Point(0, 0);
             this.toolStrip.Name = "toolStrip";
             this.toolStrip.Padding = new System.Windows.Forms.Padding(5, 0, 1, 0);
-            this.toolStrip.Size = new System.Drawing.Size(698, 25);
+            this.toolStrip.Size = new System.Drawing.Size(701, 25);
             this.toolStrip.TabIndex = 46;
             this.toolStrip.Text = "toolStrip1";
             // 
@@ -884,7 +936,7 @@ namespace Intersect.Editor.Forms.Editors
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            this.ClientSize = new System.Drawing.Size(698, 527);
+            this.ClientSize = new System.Drawing.Size(701, 561);
             this.ControlBox = false;
             this.Controls.Add(this.toolStrip);
             this.Controls.Add(this.btnCancel);
@@ -914,6 +966,8 @@ namespace Intersect.Editor.Forms.Editors
             this.grpCollisions.ResumeLayout(false);
             this.grpCollisions.PerformLayout();
             this.pnlContainer.ResumeLayout(false);
+            this.grpGrappleOptions.ResumeLayout(false);
+            this.grpGrappleOptions.PerformLayout();
             this.grpAmmo.ResumeLayout(false);
             this.grpAmmo.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudConsume)).EndInit();
@@ -935,7 +989,6 @@ namespace Intersect.Editor.Forms.Editors
         private System.Windows.Forms.Label lblName;
         private DarkTextBox txtName;
         private System.Windows.Forms.Label lblSpell;
-        private DarkCheckBox chkGrapple;
         private DarkGroupBox grpAnimations;
         private DarkCheckBox chkRotation;
         private System.Windows.Forms.Label lblAnimation;
@@ -984,5 +1037,10 @@ namespace Intersect.Editor.Forms.Editors
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
         private DarkCheckBox chkPierce;
         private Controls.GameObjectList lstGameObjects;
-  }
+        private DarkGroupBox grpGrappleOptions;
+        private DarkCheckBox chkGrappleOnNpc;
+        private DarkCheckBox chkGrappleOnResource;
+        private DarkCheckBox chkGrappleOnMap;
+        private DarkCheckBox chkGrappleOnPlayer;
+    }
 }

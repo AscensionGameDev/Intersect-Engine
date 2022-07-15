@@ -1,7 +1,7 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using Intersect.Enums;
 using Intersect.Models;
 
 using Newtonsoft.Json;
@@ -72,6 +72,7 @@ namespace Intersect.GameObjects
 
         public int Delay { get; set; } = 1;
 
+        //this one is not used anymore
         public bool GrappleHook { get; set; }
 
         public bool IgnoreActiveResources { get; set; }
@@ -96,6 +97,20 @@ namespace Intersect.GameObjects
         {
             get => JsonConvert.SerializeObject(SpawnLocations);
             set => SpawnLocations = JsonConvert.DeserializeObject<Location[,]>(value);
+        }
+
+        [NotMapped]
+        public List<GrappleOptions> GrappleHookOptions = new List<GrappleOptions>();
+
+        [JsonIgnore]
+        [Column("GrappleHookOptions")]
+        public string GrappleHookOptionsJson
+        {
+            get => JsonConvert.SerializeObject(GrappleHookOptions);
+            set
+            {
+                GrappleHookOptions = JsonConvert.DeserializeObject<List<GrappleOptions>>(value ?? "") ?? new List<GrappleOptions>();
+            }
         }
 
         public int Speed { get; set; } = 1;
