@@ -1569,6 +1569,12 @@ namespace Intersect.Server.Networking
                     foreach (var itemMap in map.FindSurroundingTiles(new Point(player.X, player.Y), Options.Loot.MaximumLootWindowDistance))
                     {
                         var tempMap = itemMap.Key;
+
+                        if (!tempMap.TryGetInstance(player.MapInstanceId, out var tempMapInstance))
+                        {
+                            continue;
+                        }
+                        
                         if (!giveItems.ContainsKey(itemMap.Key))
                         {
                             giveItems.Add(tempMap, new List<MapItem>());
@@ -1576,7 +1582,7 @@ namespace Intersect.Server.Networking
 
                         foreach (var itemLoc in itemMap.Value)
                         {
-                            giveItems[tempMap].AddRange(mapInstance.FindItemsAt(itemLoc));
+                            giveItems[tempMap].AddRange(tempMapInstance.FindItemsAt(itemLoc));
                         }
                     }
                 }
@@ -1590,6 +1596,11 @@ namespace Intersect.Server.Networking
                 foreach (var itemMap in giveItems)
                 {
                     var tempMap = itemMap.Key;
+                    if (!tempMap.TryGetInstance(player.MapInstanceId, out var tmpInstance))
+                    {
+                        continue;
+                    }
+
                     var toRemove = new List<MapItem>();
                     foreach (var mapItem in itemMap.Value)
                     {
@@ -1598,21 +1609,21 @@ namespace Intersect.Server.Networking
                             continue;
                         }
 
-                    var canTake = false;
-                    // Can we actually take this item?
-                    if (mapItem.Owner == Guid.Empty || Timing.Global.Milliseconds > mapItem.OwnershipTime)
-                    {
-                        // The ownership time has run out, or there's no owner!
-                        canTake = true;
-                    }
-                    else if (mapItem.Owner == player.Id)
-                    {
-                        // The current player is the owner.
-                        canTake = true;
-                    }
+                        var canTake = false;
+                        // Can we actually take this item?
+                        if (mapItem.Owner == Guid.Empty || Timing.Global.Milliseconds > mapItem.OwnershipTime)
+                        {
+                            // The ownership time has run out, or there's no owner!
+                            canTake = true;
+                        }
+                        else if (mapItem.Owner == player.Id)
+                        {
+                            // The current player is the owner.
+                            canTake = true;
+                        }
 
                         // Does this item still exist, or did it somehow get picked up before we got there?
-                        if (mapInstance.FindItem(mapItem.UniqueId) == null)
+                        if (tmpInstance.FindItem(mapItem.UniqueId) == null)
                         {
                             continue;
                         }
@@ -1620,7 +1631,7 @@ namespace Intersect.Server.Networking
                         if (canTake)
                         {
                             //Remove the item from the map now, because otherwise the overflow would just add to the existing quantity
-                            mapInstance.RemoveItem(mapItem);
+                            tmpInstance.RemoveItem(mapItem);
 
                             // Try to give the item to our player.
                             if (player.TryGiveItem(mapItem, ItemHandling.Overflow, false, -1, true, mapItem.X, mapItem.Y))
@@ -1642,7 +1653,7 @@ namespace Intersect.Server.Networking
                     // Remove all items that were picked up.
                     foreach (var item in toRemove)
                     {
-                        mapInstance.RemoveItem(item);
+                        tmpInstance.RemoveItem(item);
                     }
                 }
             }
