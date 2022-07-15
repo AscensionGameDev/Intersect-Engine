@@ -1602,51 +1602,36 @@ namespace Intersect.Server.Networking
                     }
 
                     var toRemove = new List<MapItem>();
-                    foreach (var mapItem in itemMap.Value)
+
+                    // Remove null or missing map items from the list
+                    var validMapItems = itemMap.Value.Where(mapItem => mapItem != default && tmpInstance.FindItem(mapItem.UniqueId) != default);
+                    foreach (var mapItem in validMapItems)
                     {
-                        if (mapItem == null)
-                        {
-                            continue;
-                        }
-
-                        var canTake = false;
                         // Can we actually take this item?
-                        if (mapItem.Owner == Guid.Empty || Timing.Global.Milliseconds > mapItem.OwnershipTime)
-                        {
-                            // The ownership time has run out, or there's no owner!
-                            canTake = true;
-                        }
-                        else if (mapItem.Owner == player.Id)
-                        {
-                            // The current player is the owner.
-                            canTake = true;
-                        }
+                        // The player or nobody must be the owner, or the ownership time limit needs to have run out
+                        var canTake = mapItem.Owner == Guid.Empty || mapItem.Owner == player.Id || Timing.Global.Milliseconds > mapItem.OwnershipTime;
 
-                        // Does this item still exist, or did it somehow get picked up before we got there?
-                        if (tmpInstance.FindItem(mapItem.UniqueId) == null)
+                        if (!canTake)
                         {
+                            // Skip to the next item if the player can't take this one
                             continue;
                         }
 
-                        if (canTake)
-                        {
-                            //Remove the item from the map now, because otherwise the overflow would just add to the existing quantity
-                            tmpInstance.RemoveItem(mapItem);
+                        // Remove the item from the map now, because otherwise the overflow would just add to the existing quantity
+                        tmpInstance.RemoveItem(mapItem);
 
-                            // Try to give the item to our player.
-                            if (player.TryGiveItem(mapItem, ItemHandling.Overflow, false, -1, true, mapItem.X, mapItem.Y))
+                        // Try to give the item to our player.
+                        if (player.TryGiveItem(mapItem, ItemHandling.Overflow, false, -1, true, mapItem.X, mapItem.Y))
+                        {
+                            if (ItemBase.TryGet(mapItem.ItemId, out var item))
                             {
-                                var item = ItemBase.Get(mapItem.ItemId);
-                                if (item != null)
-                                {
-                                    PacketSender.SendActionMsg(player, item.Name, CustomColors.Items.Rarities[item.Rarity]);
-                                }
+                                PacketSender.SendActionMsg(player, item.Name, CustomColors.Items.Rarities[item.Rarity]);
                             }
-                            else
-                            {
-                                // We couldn't give the player their item, notify them.
-                                PacketSender.SendChatMsg(player, Strings.Items.InventoryNoSpace, ChatMessageType.Inventory, CustomColors.Alerts.Error);
-                            }
+                        }
+                        else
+                        {
+                            // We couldn't give the player their item, notify them.
+                            PacketSender.SendChatMsg(player, Strings.Items.InventoryNoSpace, ChatMessageType.Inventory, CustomColors.Alerts.Error);
                         }
                     }
 

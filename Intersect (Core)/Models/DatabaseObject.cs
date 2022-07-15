@@ -150,6 +150,12 @@ namespace Intersect.Models
             return Lookup.Select(pair => pair.Value?.Name ?? Deleted).ToArray();
         }
 
+        public static bool TryGet(Guid id, out TObject databaseObject)
+        {
+            databaseObject = Get(id);
+            return databaseObject != default;
+        }
+
     }
 
 }
