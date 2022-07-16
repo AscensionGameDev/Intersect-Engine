@@ -1172,6 +1172,10 @@ namespace Intersect.Server.Localization
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString notarget = @"You need to select a valid target.";
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString CannotWarpToYourself =
+                @"You cannot warp to yourself.";
+
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString offline = @"User not online!";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]

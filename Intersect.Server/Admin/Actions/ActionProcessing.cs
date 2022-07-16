@@ -390,6 +390,13 @@ namespace Intersect.Server.Admin.Actions
         public static void ProcessAction(Player player, WarpMeToAction action)
         {
             var target = Player.FindOnline(action.Name);
+            if (target == player) // Disallows to target this action on whoever performs it.
+            {
+                PacketSender.SendChatMsg(player, Strings.Player.CannotWarpToYourself, ChatMessageType.Admin, Color.Red);
+
+                return;
+            }
+
             if (target != null)
             {
                 var forceInstanceChange = target.InstanceType != player.InstanceType;
@@ -424,6 +431,13 @@ namespace Intersect.Server.Admin.Actions
             if (target == null)
             {
                 PacketSender.SendChatMsg(player, Strings.Player.offline, ChatMessageType.Admin, Color.Red);
+
+                return;
+            }
+
+            if (target == player) // Disallows to target this action on whoever performs it.
+            {
+                PacketSender.SendChatMsg(player, Strings.Player.CannotWarpToYourself, ChatMessageType.Admin, Color.Red);
 
                 return;
             }
