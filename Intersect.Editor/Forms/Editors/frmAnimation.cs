@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -161,6 +161,7 @@ namespace Intersect.Editor.Forms.Editors
             lblSound.Text = Strings.AnimationEditor.sound;
             chkCompleteSoundPlayback.Text = Strings.AnimationEditor.soundcomplete;
             labelDarkness.Text = Strings.AnimationEditor.simulatedarkness.ToString(scrlDarkness.Value);
+            lblCameraShakeInterval.Text = Strings.AnimationEditor.camerashake.ToString(scrlCameraShakeInterval.Value);
             btnSwap.Text = Strings.AnimationEditor.swap;
 
             grpLower.Text = Strings.AnimationEditor.lowergroup;
@@ -213,6 +214,7 @@ namespace Intersect.Editor.Forms.Editors
                 txtName.Text = mEditorItem.Name;
                 cmbSound.SelectedIndex = cmbSound.FindString(TextUtils.NullToNone(mEditorItem.Sound));
                 chkCompleteSoundPlayback.Checked = mEditorItem.CompleteSound;
+                scrlCameraShakeInterval.Value = mEditorItem.CameraShakeInterval;
 
                 cmbLowerGraphic.SelectedIndex =
                     cmbLowerGraphic.FindString(TextUtils.NullToNone(mEditorItem.Lower.Sprite));
@@ -874,6 +876,11 @@ namespace Intersect.Editor.Forms.Editors
 
         #endregion
 
+        private void scrlCameraShakeInterval_Scroll(object sender, ScrollValueEventArgs e)
+        {
+            lblCameraShakeInterval.Text = Strings.AnimationEditor.camerashake.ToString(scrlCameraShakeInterval.Value);
+            mEditorItem.CameraShakeInterval = scrlCameraShakeInterval.Value;
+        }
     }
 
 }

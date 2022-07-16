@@ -96,6 +96,12 @@ namespace Intersect.Client.Interface.Shared
 
         private readonly LabeledCheckBox mLightingEnabledCheckbox;
 
+        private readonly ImagePanel mCameraShakeBackground;
+
+        private readonly Label mCameraShakeLabel;
+
+        private readonly ComboBox mCameraShakeList;
+
         // Audio Settings.
         private readonly HorizontalSlider mMusicSlider;
 
@@ -250,6 +256,21 @@ namespace Intersect.Client.Interface.Shared
             mFpsList.AddItem(Strings.Settings.Fps90);
             mFpsList.AddItem(Strings.Settings.Fps120);
             mFpsList.AddItem(Strings.Settings.UnlimitedFps);
+
+            // Video Settings - Camera Shake Background.
+            mCameraShakeBackground = new ImagePanel(mVideoSettingsContainer, "CameraShakePanel");
+
+            // Video Settings - Camera Shake Label.
+            mCameraShakeLabel = new Label(mCameraShakeBackground, "CameraShakeLabel");
+            mCameraShakeLabel.SetText(Strings.Settings.CameraShakeIntensity);
+
+            // Video Settings - Camera Shake List.
+            mCameraShakeList = new ComboBox(mCameraShakeBackground, "CameraShakeCombobox");
+            mCameraShakeList.AddItem(Strings.Settings.CameraShakeIntensityNone);
+            mCameraShakeList.AddItem(Strings.Settings.CameraShakeIntensityLight);
+            mCameraShakeList.AddItem(Strings.Settings.CameraShakeIntensityNormal);
+            mCameraShakeList.AddItem(Strings.Settings.CameraShakeIntensityStrong);
+            mCameraShakeList.AddItem(Strings.Settings.CameraShakeIntensityVeryStrong);
 
             // Video Settings - Fullscreen Checkbox.
             mFullscreenCheckbox = new LabeledCheckBox(mVideoSettingsContainer, "FullscreenCheckbox")
@@ -656,6 +677,34 @@ namespace Intersect.Client.Interface.Shared
                     break;
             }
 
+            switch (Globals.Database.CameraShakeIntensity)
+            {
+                case 0: // No shake
+                    mCameraShakeList.SelectByText(Strings.Settings.CameraShakeIntensityNone);
+
+                    break;
+                case 1: // Light intensity
+                    mCameraShakeList.SelectByText(Strings.Settings.CameraShakeIntensityLight);
+
+                    break;
+                case 2: // Normal intensity (default)
+                    mCameraShakeList.SelectByText(Strings.Settings.CameraShakeIntensityNormal);
+
+                    break;
+                case 3: // Strong intensity
+                    mCameraShakeList.SelectByText(Strings.Settings.CameraShakeIntensityStrong);
+
+                    break;
+                case 4: // Very strong intensity
+                    mCameraShakeList.SelectByText(Strings.Settings.CameraShakeIntensityVeryStrong);
+
+                    break;
+                default:
+                    mCameraShakeList.SelectByText(Strings.Settings.CameraShakeIntensityNormal);
+
+                    break;
+            }
+
             // Game Settings.
             mFriendOverheadInfoCheckbox.IsChecked = Globals.Database.FriendOverheadInfo;
             mGuildMemberOverheadInfoCheckbox.IsChecked = Globals.Database.GuildMemberOverheadInfo;
@@ -810,6 +859,33 @@ namespace Intersect.Client.Interface.Shared
             {
                 shouldReset = true;
                 Globals.Database.TargetFps = newFps;
+            }
+
+            var newCameraShakeIntensity = 0;
+            if (mCameraShakeList.SelectedItem.Text == Strings.Settings.CameraShakeIntensityNone)
+            {
+                newCameraShakeIntensity = 0;
+            }
+            else if (mCameraShakeList.SelectedItem.Text == Strings.Settings.CameraShakeIntensityLight)
+            {
+                newCameraShakeIntensity = 1;
+            }
+            else if (mCameraShakeList.SelectedItem.Text == Strings.Settings.CameraShakeIntensityNormal)
+            {
+                newCameraShakeIntensity = 2;
+            }
+            else if (mCameraShakeList.SelectedItem.Text == Strings.Settings.CameraShakeIntensityStrong)
+            {
+                newCameraShakeIntensity = 3;
+            }
+            else if (mCameraShakeList.SelectedItem.Text == Strings.Settings.CameraShakeIntensityVeryStrong)
+            {
+                newCameraShakeIntensity = 4;
+            }
+
+            if (newCameraShakeIntensity != Globals.Database.CameraShakeIntensity)
+            {
+                Globals.Database.CameraShakeIntensity = newCameraShakeIntensity;
             }
 
             Globals.Database.EnableLighting = mLightingEnabledCheckbox.IsChecked;

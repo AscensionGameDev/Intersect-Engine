@@ -642,6 +642,8 @@ namespace Intersect.Editor.Localization
 
             public static LocalizedString simulatedarkness = @"Simulate Darkness: {00}";
 
+            public static LocalizedString camerashake = @"Camera Shake (ms): {00}";
+
             public static LocalizedString sound = @"Sound:";
 
             public static LocalizedString soundcomplete = @"Complete Sound Playback After Anim Dies";

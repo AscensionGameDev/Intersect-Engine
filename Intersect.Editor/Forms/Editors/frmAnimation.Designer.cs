@@ -1,4 +1,4 @@
-﻿using DarkUI.Controls;
+using DarkUI.Controls;
 
 namespace Intersect.Editor.Forms.Editors
 {
@@ -37,6 +37,8 @@ namespace Intersect.Editor.Forms.Editors
             this.txtSearch = new DarkUI.Controls.DarkTextBox();
             this.lstGameObjects = new Intersect.Editor.Forms.Controls.GameObjectList();
             this.grpGeneral = new DarkUI.Controls.DarkGroupBox();
+            this.scrlCameraShakeInterval = new DarkUI.Controls.DarkScrollBar();
+            this.lblCameraShakeInterval = new System.Windows.Forms.Label();
             this.chkCompleteSoundPlayback = new DarkUI.Controls.DarkCheckBox();
             this.btnAddFolder = new DarkUI.Controls.DarkButton();
             this.lblFolder = new System.Windows.Forms.Label();
@@ -194,6 +196,8 @@ namespace Intersect.Editor.Forms.Editors
             // 
             this.grpGeneral.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.grpGeneral.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpGeneral.Controls.Add(this.scrlCameraShakeInterval);
+            this.grpGeneral.Controls.Add(this.lblCameraShakeInterval);
             this.grpGeneral.Controls.Add(this.chkCompleteSoundPlayback);
             this.grpGeneral.Controls.Add(this.btnAddFolder);
             this.grpGeneral.Controls.Add(this.lblFolder);
@@ -212,6 +216,25 @@ namespace Intersect.Editor.Forms.Editors
             this.grpGeneral.TabIndex = 18;
             this.grpGeneral.TabStop = false;
             this.grpGeneral.Text = "General";
+            // 
+            // scrlCameraShakeInterval
+            // 
+            this.scrlCameraShakeInterval.Location = new System.Drawing.Point(599, 45);
+            this.scrlCameraShakeInterval.Maximum = 5000;
+            this.scrlCameraShakeInterval.Name = "scrlCameraShakeInterval";
+            this.scrlCameraShakeInterval.ScrollOrientation = DarkUI.Controls.DarkScrollOrientation.Horizontal;
+            this.scrlCameraShakeInterval.Size = new System.Drawing.Size(218, 17);
+            this.scrlCameraShakeInterval.TabIndex = 31;
+            this.scrlCameraShakeInterval.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlCameraShakeInterval_Scroll);
+            // 
+            // lblCameraShakeInterval
+            // 
+            this.lblCameraShakeInterval.AutoSize = true;
+            this.lblCameraShakeInterval.Location = new System.Drawing.Point(470, 46);
+            this.lblCameraShakeInterval.Name = "lblCameraShakeInterval";
+            this.lblCameraShakeInterval.Size = new System.Drawing.Size(111, 13);
+            this.lblCameraShakeInterval.TabIndex = 30;
+            this.lblCameraShakeInterval.Text = "Camera Shake (ms): 0";
             // 
             // chkCompleteSoundPlayback
             // 
@@ -264,7 +287,7 @@ namespace Intersect.Editor.Forms.Editors
             // 
             // btnSwap
             // 
-            this.btnSwap.Location = new System.Drawing.Point(473, 43);
+            this.btnSwap.Location = new System.Drawing.Point(823, 41);
             this.btnSwap.Name = "btnSwap";
             this.btnSwap.Padding = new System.Windows.Forms.Padding(5);
             this.btnSwap.Size = new System.Drawing.Size(158, 23);
@@ -274,7 +297,7 @@ namespace Intersect.Editor.Forms.Editors
             // 
             // scrlDarkness
             // 
-            this.scrlDarkness.Location = new System.Drawing.Point(584, 19);
+            this.scrlDarkness.Location = new System.Drawing.Point(599, 19);
             this.scrlDarkness.Name = "scrlDarkness";
             this.scrlDarkness.ScrollOrientation = DarkUI.Controls.DarkScrollOrientation.Horizontal;
             this.scrlDarkness.Size = new System.Drawing.Size(218, 17);
@@ -1311,5 +1334,7 @@ namespace Intersect.Editor.Forms.Editors
         private DarkTextBox txtSearch;
         private DarkCheckBox chkCompleteSoundPlayback;
         private Controls.GameObjectList lstGameObjects;
+        private DarkScrollBar scrlCameraShakeInterval;
+        private System.Windows.Forms.Label lblCameraShakeInterval;
     }
 }

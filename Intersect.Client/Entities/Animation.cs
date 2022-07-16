@@ -83,6 +83,16 @@ namespace Intersect.Client.Entities
                 {
                     Graphics.LiveAnimations.Add(this);
                 }
+
+                if (MyBase.CameraShakeInterval > 0)
+                {
+                    var cameraShakeInterval = Timing.Global.Milliseconds + MyBase.CameraShakeInterval;
+
+                    if (cameraShakeInterval > Globals.CameraShake)
+                    {
+                        Globals.CameraShake = cameraShakeInterval;
+                    }
+                }
             }
             else
             {

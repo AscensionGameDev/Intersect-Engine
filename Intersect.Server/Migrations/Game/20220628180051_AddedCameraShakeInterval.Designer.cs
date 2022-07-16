@@ -3,14 +3,16 @@ using System;
 using Intersect.Server.Database.GameData;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Intersect.Server.Migrations.Game
 {
     [DbContext(typeof(GameContext))]
-    partial class GameContextModelSnapshot : ModelSnapshot
+    [Migration("20220628180051_AddedCameraShakeInterval")]
+    partial class AddedCameraShakeInterval
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -470,8 +472,6 @@ namespace Intersect.Server.Migrations.Game
 
                     b.Property<bool>("Swarm");
 
-                    b.Property<double>("Tenacity");
-
                     b.Property<long>("TimeCreated");
 
                     b.HasKey("Id");
@@ -517,9 +517,6 @@ namespace Intersect.Server.Migrations.Game
                     b.Property<string>("Folder");
 
                     b.Property<bool>("GrappleHook");
-
-                    b.Property<string>("GrappleHookOptionsJson")
-                        .HasColumnName("GrappleHookOptions");
 
                     b.Property<bool>("IgnoreActiveResources");
 
@@ -821,8 +818,6 @@ namespace Intersect.Server.Migrations.Game
                     b.Property<int>("FogYSpeed");
 
                     b.Property<int>("GHue");
-
-                    b.Property<bool>("HideEquipment");
 
                     b.Property<bool>("IsIndoors");
 
