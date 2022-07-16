@@ -2140,6 +2140,10 @@ namespace Intersect.Client.Entities
             var mousePos = Graphics.ConvertToWorldPoint(Globals.InputManager.GetMousePosition());
             foreach (MapInstance map in Maps.MapInstance.Lookup.Values)
             {
+                if (Interface.Interface.MouseHitGui())
+                {
+                    return;
+                }
                 if (mousePos.X >= map.GetX() && mousePos.X <= map.GetX() + Options.MapWidth * Options.TileWidth)
                 {
                     if (mousePos.Y >= map.GetY() && mousePos.Y <= map.GetY() + Options.MapHeight * Options.TileHeight)
@@ -2299,6 +2303,10 @@ namespace Intersect.Client.Entities
             var mousePos = Graphics.ConvertToWorldPoint(Globals.InputManager.GetMousePosition());
             foreach (MapInstance map in Maps.MapInstance.Lookup.Values)
             {
+                if (Interface.Interface.MouseHitGui())
+                {
+                    return;
+                }
                 if (mousePos.X >= map.GetX() && mousePos.X <= map.GetX() + Options.MapWidth * Options.TileWidth)
                 {
                     if (mousePos.Y >= map.GetY() && mousePos.Y <= map.GetY() + Options.MapHeight * Options.TileHeight)
