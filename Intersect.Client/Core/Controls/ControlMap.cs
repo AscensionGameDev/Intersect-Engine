@@ -1,5 +1,4 @@
-﻿using Intersect.Client.Framework.GenericClasses;
-using Intersect.Client.Framework.Input;
+﻿using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
 
 namespace Intersect.Client.Core.Controls
@@ -11,7 +10,7 @@ namespace Intersect.Client.Core.Controls
 
         public ControlValue Key2;
 
-        public ControlMap(Control control, ControlValue key1, ControlValue key2)
+        public ControlMap(ControlValue key1, ControlValue key2)
         {
             this.Key1 = key1;
             this.Key2 = key2;
@@ -19,25 +18,13 @@ namespace Intersect.Client.Core.Controls
 
         public bool KeyDown()
         {
-            if (Key1.IsMouseKey || Key2.IsMouseKey)
+            if (Interface.Interface.MouseHitGui() && (Globals.InputManager.MouseButtonDown(MouseButtons.Right) ||
+                                                      Globals.InputManager.MouseButtonDown(MouseButtons.Left)))
             {
-                if (Interface.Interface.MouseHitGui())
-                {
-                    return false;
-                }
+                return false;
             }
 
-            if (Key1.IsDown())
-            {
-                return true;
-            }
-
-            if (Key2.IsDown())
-            {
-                return true;
-            }
-
-            return false;
+            return Key1.IsDown() || Key2.IsDown();
         }
 
     }

@@ -163,11 +163,11 @@ namespace Intersect.Client.Core.Controls
         {
             if (ControlMapping.ContainsKey(control))
             {
-                ControlMapping[control] = new ControlMap(control, key1, key2);
+                ControlMapping[control] = new ControlMap(key1, key2);
             }
             else
             {
-                ControlMapping.Add(control, new ControlMap(control, key1, key2));
+                ControlMapping.Add(control, new ControlMap(key1, key2));
             }
         }
 
