@@ -40,6 +40,28 @@ namespace Intersect.Client.Entities.Events
 
         public bool WalkingAnim { get; set; } = true;
 
+        protected override Pointf CenterOffset
+        {
+            get
+            {
+                switch (Graphic.Type)
+                {
+                    case EventGraphicType.None:
+                        return Animations.Count == 0 ? Pointf.Empty : Pointf.UnitY * Options.TileHeight / 2f;
+
+                    case EventGraphicType.Sprite:
+                        return base.CenterOffset;
+
+                    case EventGraphicType.Tileset:
+                        return Pointf.UnitY * Options.TileHeight * (Graphic.Height + 1) / 2f;
+
+                    default:
+                        Log.Error($"Unimplemented graphic type: {Graphic.Type}");
+                        return Pointf.Empty;
+                }
+            }
+        }
+
         public Event(Guid id, EventEntityPacket packet) : base(id, packet, EntityTypes.Event)
         {
             mRenderPriority = 1;
@@ -261,7 +283,7 @@ namespace Intersect.Client.Entities.Events
                     break;
 
                 case EventGraphicType.None:
-                    heightScale = 0.5f;
+                    heightScale = Animations.Count > 0 ? 1 : 0.5f;
                     break;
 
                 default:
