@@ -232,14 +232,9 @@ namespace Intersect.Client.Entities
 
         public Pointf Origin => LatestMap == default ? Pointf.Empty : mOrigin;
 
-        public Pointf Center
-        {
-            get
-            {
-                var sprite = Globals.ContentManager.GetTexture(TextureType.Entity, Sprite);
-                return Origin - ((sprite == default) ? Pointf.Empty : (Pointf.UnitY * sprite.Center.Y / Options.Instance.Sprites.Directions));
-            }
-        }
+        protected virtual Pointf CenterOffset => (Texture == default) ? Pointf.Empty : (Pointf.UnitY * Texture.Center.Y / Options.Instance.Sprites.Directions);
+
+        public Pointf Center => Origin - CenterOffset;
 
         public byte Dir
         {
