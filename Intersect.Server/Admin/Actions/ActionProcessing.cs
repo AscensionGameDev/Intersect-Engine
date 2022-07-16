@@ -392,7 +392,7 @@ namespace Intersect.Server.Admin.Actions
             var target = Player.FindOnline(action.Name);
             if (target == player) // Disallows to target this action on whoever performs it.
             {
-                PacketSender.SendChatMsg(player, Strings.Player.NotOnYourself, ChatMessageType.Admin, Color.Red);
+                PacketSender.SendChatMsg(player, Strings.Player.CannotWarpToYourself, ChatMessageType.Admin, Color.Red);
 
                 return;
             }
@@ -437,7 +437,7 @@ namespace Intersect.Server.Admin.Actions
 
             if (target == player) // Disallows to target this action on whoever performs it.
             {
-                PacketSender.SendChatMsg(player, Strings.Player.NotOnYourself, ChatMessageType.Admin, Color.Red);
+                PacketSender.SendChatMsg(player, Strings.Player.CannotWarpToYourself, ChatMessageType.Admin, Color.Red);
 
                 return;
             }
