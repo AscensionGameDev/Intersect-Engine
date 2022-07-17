@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace Intersect.Client.Framework.Database
 {
@@ -37,6 +37,10 @@ namespace Intersect.Client.Framework.Database
         public bool PartyMemberOverheadInfo;
 
         public bool PlayerOverheadInfo;
+
+        public abstract void DeletePreference(string key);
+
+        public abstract bool HasPreference(string key);
 
         //Saving password, other stuff we don't want in the games directory
         public abstract void SavePreference(string key, object value);

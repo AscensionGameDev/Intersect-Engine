@@ -1272,6 +1272,21 @@ namespace Intersect.Client.Localization
 
         public partial struct Keys
         {
+            public static string FormatKeyName(Framework.GenericClasses.Keys modifier, Framework.GenericClasses.Keys key)
+            {
+                var formatted = keydict[Enum.GetName(typeof(Framework.GenericClasses.Keys), key).ToLower()];
+
+                if (modifier != Framework.GenericClasses.Keys.None)
+                {
+                    var modifierName = keydict[Enum.GetName(typeof(Framework.GenericClasses.Keys), modifier).ToLower()];
+                    formatted = KeyNameWithModifier.ToString(modifierName, formatted);
+                }
+
+                return formatted;
+            }
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString KeyNameWithModifier = @"{00} + {01}";
 
             public static Dictionary<string, LocalizedString> keydict = new Dictionary<string, LocalizedString>()
             {
