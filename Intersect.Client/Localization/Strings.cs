@@ -1276,7 +1276,7 @@ namespace Intersect.Client.Localization
             {
                 var formatted = keydict[Enum.GetName(typeof(Framework.GenericClasses.Keys), key).ToLower()];
 
-                if (modifier == Framework.GenericClasses.Keys.None)
+                if (modifier != Framework.GenericClasses.Keys.None)
                 {
                     var modifierName = keydict[Enum.GetName(typeof(Framework.GenericClasses.Keys), modifier).ToLower()];
                     formatted = KeyNameWithModifier.ToString(modifierName, formatted);
