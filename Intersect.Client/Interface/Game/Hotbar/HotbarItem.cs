@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 
 using Intersect.Client.Core;
 using Intersect.Client.Core.Controls;
@@ -221,7 +222,7 @@ namespace Intersect.Client.Interface.Game.Hotbar
             }
 
             //See if Label Should be changed
-            var keybind = Controls.ActiveControls.ControlMapping[Control.Hotkey1 + mYindex].Key1;
+            var keybind = Controls.ActiveControls.ControlMapping[Control.Hotkey1 + mYindex].Bindings[0];
             if (mHotKey == null || mHotKey.Modifier != keybind.Modifier || mHotKey.Key != keybind.Key)
             {
                 if (keybind.Modifier != Keys.None)

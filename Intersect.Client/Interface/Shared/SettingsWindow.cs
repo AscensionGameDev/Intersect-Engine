@@ -135,7 +135,7 @@ namespace Intersect.Client.Interface.Shared
             mEscapeMenu = escapeMenu;
 
             // Main Menu Window.
-            mSettingsPanel = new ImagePanel(parent, "SettingsWindow") {IsHidden = true};
+            mSettingsPanel = new ImagePanel(parent, "SettingsWindow") { IsHidden = true };
             Interface.InputBlockingElements.Add(mSettingsPanel);
 
             // Menu Header.
@@ -299,12 +299,12 @@ namespace Intersect.Client.Interface.Shared
             #endregion
 
             #region InitKeybindingSettings
-            
+
             // Init KeybindingsSettings Tab.
             mKeybindingSettingsTab = new Button(mSettingsPanel, "KeybindingSettingsTab");
             mKeybindingSettingsTab.Text = Strings.Settings.KeyBindingSettingsTab;
             mKeybindingSettingsTab.Clicked += KeybindingSettingsTab_Clicked;
-            
+
             // KeybindingSettings Get Stored in the KeybindingSettings Scroll Control
             mKeybindingSettingsContainer = new ScrollControl(mSettingsPanel, "KeybindingSettingsContainer");
             mKeybindingSettingsContainer.EnableScroll(false, true);
@@ -321,18 +321,18 @@ namespace Intersect.Client.Interface.Shared
             {
                 var offset = row * 32;
                 var name = Enum.GetName(typeof(Control), control)?.ToLower();
-                
+
                 var label = new Label(mKeybindingSettingsContainer, $"Control{Enum.GetName(typeof(Control), control)}Label");
                 label.Text = Strings.Controls.controldict[name];
                 label.AutoSizeToContents = true;
                 label.Font = defaultFont;
                 label.SetBounds(8, 8 + offset, 0, 24);
                 label.SetTextColor(new Color(255, 255, 255, 255), Label.ControlState.Normal);
-                
+
                 var key1 = new Button(mKeybindingSettingsContainer, $"Control{Enum.GetName(typeof(Control), control)}Button1");
                 key1.Text = "";
                 key1.AutoSizeToContents = false;
-                key1.UserData = new KeyValuePair<Control, int>(control, 1);
+                key1.UserData = new KeyValuePair<Control, int>(control, 0);
                 key1.Font = defaultFont;
 
                 key1.Clicked += Key_Clicked;
@@ -341,13 +341,13 @@ namespace Intersect.Client.Interface.Shared
                 {
                     Text = "",
                     AutoSizeToContents = false,
-                    UserData = new KeyValuePair<Control, int>(control, 2),
+                    UserData = new KeyValuePair<Control, int>(control, 1),
                     Font = defaultFont
                 };
 
                 key2.Clicked += Key_Clicked;
 
-                mKeybindingBtns.Add(control, new[] {key1, key2});
+                mKeybindingBtns.Add(control, new[] { key1, key2 });
 
                 row++;
             }
@@ -376,7 +376,7 @@ namespace Intersect.Client.Interface.Shared
                 mVideoSettingsContainer.Hide();
                 mAudioSettingsContainer.Hide();
                 mKeybindingSettingsContainer.Hide();
-                
+
                 // Restore Default KeybindingSettings Button.
                 mKeybindingRestoreBtn.Hide();
             }
@@ -398,7 +398,7 @@ namespace Intersect.Client.Interface.Shared
                 mVideoSettingsContainer.Show();
                 mAudioSettingsContainer.Hide();
                 mKeybindingSettingsContainer.Hide();
-                
+
                 // Restore Default KeybindingSettings Button.
                 mKeybindingRestoreBtn.Hide();
             }
@@ -420,12 +420,12 @@ namespace Intersect.Client.Interface.Shared
                 mVideoSettingsContainer.Hide();
                 mAudioSettingsContainer.Show();
                 mKeybindingSettingsContainer.Hide();
-                
+
                 // Restore Default KeybindingSettings Button.
                 mKeybindingRestoreBtn.Hide();
             }
         }
-        
+
         private void KeybindingSettingsTab_Clicked(Base sender, ClickedEventArgs arguments)
         {
             // Determine if controls are currently being shown or not.
@@ -445,40 +445,15 @@ namespace Intersect.Client.Interface.Shared
 
                 // Restore Default KeybindingSettings Button.
                 mKeybindingRestoreBtn.Show();
-                
+
                 // KeybindingBtns.
                 foreach (Control control in Enum.GetValues(typeof(Control)))
                 {
-                    if (mKeybindingEditControls.ControlMapping[control].Key1.Modifier != Keys.None)
+                    var controlMapping = mKeybindingEditControls.ControlMapping[control];
+                    for (var bindingIndex = 0; bindingIndex < controlMapping.Bindings.Count; bindingIndex++)
                     {
-                        mKeybindingBtns[control][0].Text = String.Format("{00} + {01}",
-                        Strings.Keys.keydict[
-                            Enum.GetName(typeof(Keys), mKeybindingEditControls.ControlMapping[control].Key1.Modifier).ToLower()],
-                        Strings.Keys.keydict[
-                            Enum.GetName(typeof(Keys), mKeybindingEditControls.ControlMapping[control].Key1.Key).ToLower()]
-                        );
-                    }
-                    else
-                    {
-                        mKeybindingBtns[control][0].Text =
-                        Strings.Keys.keydict[
-                            Enum.GetName(typeof(Keys), mKeybindingEditControls.ControlMapping[control].Key1.Key).ToLower()];
-                    }
-
-                    if (mKeybindingEditControls.ControlMapping[control].Key2.Modifier != Keys.None)
-                    {
-                        mKeybindingBtns[control][1].Text = String.Format("{00} + {01}",
-                        Strings.Keys.keydict[
-                            Enum.GetName(typeof(Keys), mKeybindingEditControls.ControlMapping[control].Key2.Modifier).ToLower()],
-                        Strings.Keys.keydict[
-                            Enum.GetName(typeof(Keys), mKeybindingEditControls.ControlMapping[control].Key2.Key).ToLower()]
-                        );
-                    }
-                    else
-                    {
-                        mKeybindingBtns[control][1].Text =
-                        Strings.Keys.keydict[
-                            Enum.GetName(typeof(Keys), mKeybindingEditControls.ControlMapping[control].Key2.Key).ToLower()];
+                        var binding = controlMapping.Bindings[bindingIndex];
+                        mKeybindingBtns[control][bindingIndex].Text = Strings.Keys.FormatKeyName(binding.Modifier, binding.Key);
                     }
                 }
             }
@@ -518,59 +493,29 @@ namespace Intersect.Client.Interface.Shared
             if (mKeybindingEditBtn != null)
             {
                 mKeybindingEditControls.UpdateControl(mKeybindingEditControl, mKeyEdit, modifier, key);
-                if (mKeyEdit == 1)
-                {
-                    if (modifier != Keys.None)
-                    {
-                        mKeybindingEditBtn.Text = String.Format("{00} + {01}",
-                            Strings.Keys.keydict[Enum.GetName(typeof(Keys), mKeybindingEditControls.ControlMapping[mKeybindingEditControl].Key1.Modifier).ToLower()],
-                            Strings.Keys.keydict[Enum.GetName(typeof(Keys), mKeybindingEditControls.ControlMapping[mKeybindingEditControl].Key1.Key).ToLower()]
-                        );
-                    }
-                    else
-                    {
-                        mKeybindingEditBtn.Text =
-                        Strings.Keys.keydict[Enum.GetName(typeof(Keys), mKeybindingEditControls.ControlMapping[mKeybindingEditControl].Key1.Key).ToLower()];
-                    }
-                }
-                else
-                {
-                    if (modifier != Keys.None)
-                    {
-                        mKeybindingEditBtn.Text = String.Format("{00} + {01}",
-                            Strings.Keys.keydict[Enum.GetName(typeof(Keys), mKeybindingEditControls.ControlMapping[mKeybindingEditControl].Key2.Modifier).ToLower()],
-                            Strings.Keys.keydict[Enum.GetName(typeof(Keys), mKeybindingEditControls.ControlMapping[mKeybindingEditControl].Key2.Key).ToLower()]
-                        );
-                    }
-                    else
-                    {
-                        mKeybindingEditBtn.Text =
-                        Strings.Keys.keydict[Enum.GetName(typeof(Keys), mKeybindingEditControls.ControlMapping[mKeybindingEditControl].Key2.Key).ToLower()];
-                    }
-                }
+                mKeybindingEditBtn.Text = Strings.Keys.FormatKeyName(modifier, key);
 
                 if (key != Keys.None)
                 {
                     foreach (var control in mKeybindingEditControls.ControlMapping)
                     {
-                        if (control.Key != mKeybindingEditControl)
+                        if (control.Key == mKeybindingEditControl)
                         {
-                            if (control.Value.Key1.Modifier == modifier && control.Value.Key1.Key == key)
+                            continue;
+                        }
+
+                        var bindings = control.Value.Bindings;
+                        for (var bindingIndex = 0; bindingIndex < bindings.Count; bindingIndex++)
+                        {
+                            var binding = bindings[bindingIndex];
+
+                            if (binding.Modifier == modifier && binding.Key == key)
                             {
                                 // Remove this mapping.
-                                mKeybindingEditControls.UpdateControl(control.Key, 1, Keys.None, Keys.None);
+                                mKeybindingEditControls.UpdateControl(control.Key, bindingIndex, Keys.None, Keys.None);
 
                                 // Update UI.
-                                mKeybindingBtns[control.Key][0].Text = Strings.Keys.keydict[Enum.GetName(typeof(Keys), Keys.None).ToLower()];
-                            }
-
-                            if (control.Value.Key2.Modifier == modifier && control.Value.Key2.Key == key)
-                            {
-                                // Remove this mapping.
-                                mKeybindingEditControls.UpdateControl(control.Key, 2, Keys.None, Keys.None);
-
-                                // Update UI.
-                                mKeybindingBtns[control.Key][1].Text = Strings.Keys.keydict[Enum.GetName(typeof(Keys), Keys.None).ToLower()];
+                                mKeybindingBtns[control.Key][bindingIndex].Text = Strings.Keys.keydict[Enum.GetName(typeof(Keys), Keys.None).ToLower()];
                             }
                         }
                     }
@@ -674,12 +619,12 @@ namespace Intersect.Client.Interface.Shared
             mPreviousSoundVolume = Globals.Database.SoundVolume;
             mMusicSlider.Value = Globals.Database.MusicVolume;
             mSoundSlider.Value = Globals.Database.SoundVolume;
-            mMusicLabel.Text = Strings.Settings.MusicVolume.ToString((int) mMusicSlider.Value);
-            mSoundLabel.Text = Strings.Settings.SoundVolume.ToString((int) mSoundSlider.Value);
+            mMusicLabel.Text = Strings.Settings.MusicVolume.ToString((int)mMusicSlider.Value);
+            mSoundLabel.Text = Strings.Settings.SoundVolume.ToString((int)mSoundSlider.Value);
 
             // Settings Window is not hidden anymore.
             mSettingsPanel.Show();
-            
+
             // Load every GUI element to their default state when showing up the settings window (pressed tabs, containers, etc.)
             LoadSettingsWindow();
 
@@ -719,21 +664,21 @@ namespace Intersect.Client.Interface.Shared
         // Input Handlers
         private void MusicSlider_ValueChanged(Base sender, EventArgs arguments)
         {
-            mMusicLabel.Text = Strings.Settings.MusicVolume.ToString((int) mMusicSlider.Value);
-            Globals.Database.MusicVolume = (int) mMusicSlider.Value;
+            mMusicLabel.Text = Strings.Settings.MusicVolume.ToString((int)mMusicSlider.Value);
+            Globals.Database.MusicVolume = (int)mMusicSlider.Value;
             Audio.UpdateGlobalVolume();
         }
 
         private void SoundSlider_ValueChanged(Base sender, EventArgs arguments)
         {
-            mSoundLabel.Text = Strings.Settings.SoundVolume.ToString((int) mSoundSlider.Value);
-            Globals.Database.SoundVolume = (int) mSoundSlider.Value;
+            mSoundLabel.Text = Strings.Settings.SoundVolume.ToString((int)mSoundSlider.Value);
+            Globals.Database.SoundVolume = (int)mSoundSlider.Value;
             Audio.UpdateGlobalVolume();
         }
 
         private void Key_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            EditKeyPressed((Button) sender);
+            EditKeyPressed((Button)sender);
         }
 
         private void EditKeyPressed(Button sender)
@@ -741,8 +686,8 @@ namespace Intersect.Client.Interface.Shared
             if (mKeybindingEditBtn == null)
             {
                 sender.Text = Strings.Controls.listening;
-                mKeyEdit = ((KeyValuePair<Control, int>) sender.UserData).Value;
-                mKeybindingEditControl = ((KeyValuePair<Control, int>) sender.UserData).Key;
+                mKeyEdit = ((KeyValuePair<Control, int>)sender.UserData).Value;
+                mKeybindingEditControl = ((KeyValuePair<Control, int>)sender.UserData).Key;
                 mKeybindingEditBtn = sender;
                 Interface.GwenInput.HandleInput = false;
                 mKeybindingListeningTimer = Timing.Global.Milliseconds + 3000;
@@ -754,13 +699,12 @@ namespace Intersect.Client.Interface.Shared
             mKeybindingEditControls.ResetDefaults();
             foreach (Control control in Enum.GetValues(typeof(Control)))
             {
-                mKeybindingBtns[control][0].Text =
-                    Strings.Keys.keydict[
-                        Enum.GetName(typeof(Keys), mKeybindingEditControls.ControlMapping[control].Key1.Key).ToLower()];
-
-                mKeybindingBtns[control][1].Text =
-                    Strings.Keys.keydict[
-                        Enum.GetName(typeof(Keys), mKeybindingEditControls.ControlMapping[control].Key2.Key).ToLower()];
+                var controlMapping = mKeybindingEditControls.ControlMapping[control];
+                for (var bindingIndex = 0; bindingIndex < controlMapping.Bindings.Count; bindingIndex++)
+                {
+                    var binding = controlMapping.Bindings[bindingIndex];
+                    mKeybindingBtns[control][bindingIndex].Text = Strings.Keys.FormatKeyName(binding.Modifier, binding.Key);
+                }
             }
         }
 
@@ -813,7 +757,7 @@ namespace Intersect.Client.Interface.Shared
             }
 
             Globals.Database.EnableLighting = mLightingEnabledCheckbox.IsChecked;
-          
+
             if (Globals.Database.FriendOverheadInfo != mFriendOverheadInfoCheckbox.IsChecked)
             {
                 Globals.Database.FriendOverheadInfo = mFriendOverheadInfoCheckbox.IsChecked;
@@ -845,8 +789,8 @@ namespace Intersect.Client.Interface.Shared
             }
 
             // Save Settings.
-            Globals.Database.MusicVolume = (int) mMusicSlider.Value;
-            Globals.Database.SoundVolume = (int) mSoundSlider.Value;
+            Globals.Database.MusicVolume = (int)mMusicSlider.Value;
+            Globals.Database.SoundVolume = (int)mSoundSlider.Value;
             Audio.UpdateGlobalVolume();
             Controls.ActiveControls = mKeybindingEditControls;
             Controls.ActiveControls.Save();

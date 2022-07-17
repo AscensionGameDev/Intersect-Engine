@@ -1,4 +1,4 @@
-﻿using Intersect.Client.General;
+using Intersect.Client.General;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Input;
 
@@ -6,6 +6,8 @@ namespace Intersect.Client.Core.Controls
 {
     public partial class ControlValue
     {
+        public static ControlValue Default => new ControlValue(Keys.None, Keys.None);
+
         public Keys Modifier { get; set; }
 
         public Keys Key { get; set; }

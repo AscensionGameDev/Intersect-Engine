@@ -1,45 +1,40 @@
-﻿using Intersect.Client.Framework.GenericClasses;
-using Intersect.Client.Framework.Input;
-using Intersect.Client.General;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Intersect.Client.Core.Controls
 {
-
     public partial class ControlMap
     {
-        public ControlValue Key1;
+        public List<ControlValue> Bindings { get; }
 
-        public ControlValue Key2;
-
-        public ControlMap(Control control, ControlValue key1, ControlValue key2)
+        public ControlMap(ControlValue binding, params ControlValue[] alternateBindings)
         {
-            this.Key1 = key1;
-            this.Key2 = key2;
+            Bindings = new List<ControlValue>(1 + (alternateBindings?.Length ?? 0)) { binding };
+            Bindings.AddRange(alternateBindings ?? Array.Empty<ControlValue>());
+
+            if (Bindings.Count < 2)
+            {
+                Bindings.Add(ControlValue.Default);
+            }
         }
 
-        public bool KeyDown()
+        public ControlMap(ControlMap controlMap)
         {
-            if (Key1.IsMouseKey || Key2.IsMouseKey)
+            if (controlMap == default)
             {
-                if (Interface.Interface.MouseHitGui())
-                {
-                    return false;
-                }
+                throw new ArgumentNullException(nameof(controlMap));
             }
 
-            if (Key1.IsDown())
+            var bindings = controlMap.Bindings.ToList();
+            if (bindings.Count < 1)
             {
-                return true;
+                throw new ArgumentException("The control map does not have at least one binding.", nameof(controlMap));
             }
 
-            if (Key2.IsDown())
-            {
-                return true;
-            }
-
-            return false;
+            Bindings = new List<ControlValue>(bindings);
         }
 
+        public bool KeyDown() => Bindings.Any(button => button.IsDown() && (!button.IsMouseKey || !Interface.Interface.MouseHitGui()));
     }
-
 }

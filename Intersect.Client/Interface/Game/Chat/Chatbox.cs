@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Intersect.Client.Core;
@@ -507,8 +507,8 @@ namespace Intersect.Client.Interface.Game.Chat
 
         string GetDefaultInputText()
         {
-            var key1 = Controls.ActiveControls.ControlMapping[Control.Enter].Key1;
-            var key2 = Controls.ActiveControls.ControlMapping[Control.Enter].Key2;
+            var key1 = Controls.ActiveControls.ControlMapping[Control.Enter].Bindings[0];
+            var key2 = Controls.ActiveControls.ControlMapping[Control.Enter].Bindings[1];
             if (key1.Key == Keys.None && key2.Key != Keys.None)
             {
                 return Strings.Chatbox.enterchat1.ToString(
