@@ -2137,13 +2137,14 @@ namespace Intersect.Client.Entities
         // (when they are hidden by the game settings preferences).
         public void DrawOverheadInfoOnHover()
         {
+            if (Interface.Interface.MouseHitGui())
+            {
+                return;
+            }
+
             var mousePos = Graphics.ConvertToWorldPoint(Globals.InputManager.GetMousePosition());
             foreach (MapInstance map in Maps.MapInstance.Lookup.Values)
             {
-                if (Interface.Interface.MouseHitGui())
-                {
-                    return;
-                }
                 if (mousePos.X >= map.GetX() && mousePos.X <= map.GetX() + Options.MapWidth * Options.TileWidth)
                 {
                     if (mousePos.Y >= map.GetY() && mousePos.Y <= map.GetY() + Options.MapHeight * Options.TileHeight)
@@ -2300,44 +2301,19 @@ namespace Intersect.Client.Entities
                 }
             }
 
-            var mousePos = Graphics.ConvertToWorldPoint(Globals.InputManager.GetMousePosition());
-            foreach (MapInstance map in Maps.MapInstance.Lookup.Values)
+            if (!Interface.Interface.MouseHitGui())
             {
-                if (Interface.Interface.MouseHitGui())
+                var mousePos = Graphics.ConvertToWorldPoint(Globals.InputManager.GetMousePosition());
+                foreach (MapInstance map in Maps.MapInstance.Lookup.Values)
                 {
-                    return;
-                }
-                if (mousePos.X >= map.GetX() && mousePos.X <= map.GetX() + Options.MapWidth * Options.TileWidth)
-                {
-                    if (mousePos.Y >= map.GetY() && mousePos.Y <= map.GetY() + Options.MapHeight * Options.TileHeight)
+                    if (mousePos.X >= map.GetX() && mousePos.X <= map.GetX() + Options.MapWidth * Options.TileWidth)
                     {
-                        var mapId = map.Id;
-
-                        foreach (var en in Globals.Entities)
+                        if (mousePos.Y >= map.GetY() &&
+                            mousePos.Y <= map.GetY() + Options.MapHeight * Options.TileHeight)
                         {
-                            if (en.Value == null)
-                            {
-                                continue;
-                            }
+                            var mapId = map.Id;
 
-                            if (en.Value.MapId == mapId &&
-                                !en.Value.HideName &&
-                                (!en.Value.IsStealthed || en.Value is Player player && Globals.Me.IsInMyParty(player)) &&
-                                en.Value.WorldPos.Contains(mousePos.X, mousePos.Y))
-                            {
-                                if (en.Value.GetType() != typeof(Projectile) && en.Value.GetType() != typeof(Resource))
-                                {
-                                    if (TargetType != 0 || TargetIndex != en.Value.Id)
-                                    {
-                                        en.Value.DrawTarget((int)TargetTypes.Hover);
-                                    }
-                                }
-                            }
-                        }
-
-                        foreach (MapInstance eventMap in Maps.MapInstance.Lookup.Values)
-                        {
-                            foreach (var en in eventMap.LocalEntities)
+                            foreach (var en in Globals.Entities)
                             {
                                 if (en.Value == null)
                                 {
@@ -2345,20 +2321,48 @@ namespace Intersect.Client.Entities
                                 }
 
                                 if (en.Value.MapId == mapId &&
-                                    !((Event)en.Value).DisablePreview &&
-                                    !en.Value.IsHidden &&
-                                    (!en.Value.IsStealthed || en.Value is Player player && Globals.Me.IsInMyParty(player)) &&
+                                    !en.Value.HideName &&
+                                    (!en.Value.IsStealthed ||
+                                     en.Value is Player player && Globals.Me.IsInMyParty(player)) &&
                                     en.Value.WorldPos.Contains(mousePos.X, mousePos.Y))
                                 {
-                                    if (TargetType != 1 || TargetIndex != en.Value.Id)
+                                    if (en.Value.GetType() != typeof(Projectile) &&
+                                        en.Value.GetType() != typeof(Resource))
                                     {
-                                        en.Value.DrawTarget((int)TargetTypes.Hover);
+                                        if (TargetType != 0 || TargetIndex != en.Value.Id)
+                                        {
+                                            en.Value.DrawTarget((int)TargetTypes.Hover);
+                                        }
                                     }
                                 }
                             }
-                        }
 
-                        break;
+                            foreach (MapInstance eventMap in Maps.MapInstance.Lookup.Values)
+                            {
+                                foreach (var en in eventMap.LocalEntities)
+                                {
+                                    if (en.Value == null)
+                                    {
+                                        continue;
+                                    }
+
+                                    if (en.Value.MapId == mapId &&
+                                        !((Event)en.Value).DisablePreview &&
+                                        !en.Value.IsHidden &&
+                                        (!en.Value.IsStealthed ||
+                                         en.Value is Player player && Globals.Me.IsInMyParty(player)) &&
+                                        en.Value.WorldPos.Contains(mousePos.X, mousePos.Y))
+                                    {
+                                        if (TargetType != 1 || TargetIndex != en.Value.Id)
+                                        {
+                                            en.Value.DrawTarget((int)TargetTypes.Hover);
+                                        }
+                                    }
+                                }
+                            }
+
+                            break;
+                        }
                     }
                 }
             }
