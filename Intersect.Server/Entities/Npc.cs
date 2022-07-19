@@ -224,7 +224,7 @@ namespace Intersect.Server.Entities
 
                 if (en is Projectile projectile)
                 {
-                    if (projectile.Owner != this && !TargetHasStealth(projectile)
+                    if (projectile.Owner != this && !TargetHasStealth(projectile))
                     {
                         Target = projectile.Owner;
                     }

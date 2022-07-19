@@ -112,7 +112,7 @@ namespace Intersect.Editor.Networking
 
         public static void SendDelete(MapListItem target)
         {
-            switch (parent)
+            switch (target)
             {
                 case MapListMap map:
                     Network.SendPacket(
