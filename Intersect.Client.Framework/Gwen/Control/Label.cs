@@ -214,7 +214,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         public override JObject GetJson()
         {
             var obj = base.GetJson();
-            if (this.GetType() == typeof(Label))
+            if (typeof(Label) == GetType())
             {
                 obj.Add("BackgroundTemplate", mBackgroundTemplateFilename);
             }
@@ -235,7 +235,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         public override void LoadJson(JToken obj)
         {
             base.LoadJson(obj);
-            if (this.GetType() == typeof(Label) && obj["BackgroundTemplate"] != null)
+            if (typeof(Label) == GetType() && obj["BackgroundTemplate"] != null)
             {
                 SetBackgroundTemplate(
                     GameContentManager.Current.GetTexture(

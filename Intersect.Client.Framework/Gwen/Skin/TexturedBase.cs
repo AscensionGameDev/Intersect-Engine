@@ -1718,9 +1718,8 @@ namespace Intersect.Client.Framework.Gwen.Skin
 
         public override void DrawToolTip(Control.Base control)
         {
-            if (control.GetType() == typeof(Label))
+            if (control is Label tooltip)
             {
-                var tooltip = (Label) control;
                 if (tooltip.ToolTipBackground != null)
                 {
                     var renderImg = tooltip.ToolTipBackground;
@@ -1818,6 +1817,11 @@ namespace Intersect.Client.Framework.Gwen.Skin
             bool disabled
         )
         {
+            if (!(control is Button button))
+            {
+                return;
+            }
+
             var i = 0;
             if (direction == Pos.Top)
             {
@@ -1836,53 +1840,53 @@ namespace Intersect.Client.Framework.Gwen.Skin
 
             GameTexture renderImg = null;
 
-            if (disabled && ((Button) control).GetImage(Control.Button.ControlState.Disabled) != null)
+            if (disabled && button.GetImage(Button.ControlState.Disabled) != null)
             {
-                renderImg = ((Button) control).GetImage(Control.Button.ControlState.Disabled);
+                renderImg = button.GetImage(Button.ControlState.Disabled);
             }
-            else if (depressed && ((Button) control).GetImage(Control.Button.ControlState.Clicked) != null)
+            else if (depressed && button.GetImage(Button.ControlState.Clicked) != null)
             {
-                renderImg = ((Button) control).GetImage(Control.Button.ControlState.Clicked);
+                renderImg = button.GetImage(Button.ControlState.Clicked);
             }
-            else if (hovered && ((Button) control).GetImage(Control.Button.ControlState.Hovered) != null)
+            else if (hovered && button.GetImage(Button.ControlState.Hovered) != null)
             {
-                renderImg = ((Button) control).GetImage(Control.Button.ControlState.Hovered);
+                renderImg = button.GetImage(Button.ControlState.Hovered);
             }
-            else if (((Button) control).GetImage(Control.Button.ControlState.Normal) != null)
+            else if (button.GetImage(Button.ControlState.Normal) != null)
             {
-                renderImg = ((Button) control).GetImage(Control.Button.ControlState.Normal);
+                renderImg = button.GetImage(Button.ControlState.Normal);
             }
 
             if (renderImg != null)
             {
-                Renderer.DrawColor = control.RenderColor;
-                Renderer.DrawTexturedRect(renderImg, control.RenderBounds, control.RenderColor);
+                Renderer.DrawColor = button.RenderColor;
+                Renderer.DrawTexturedRect(renderImg, button.RenderBounds, button.RenderColor);
 
                 return;
             }
 
             if (disabled)
             {
-                mTextures.Scroller.Button.Disabled[i].Draw(Renderer, control.RenderBounds, control.RenderColor);
+                mTextures.Scroller.Button.Disabled[i].Draw(Renderer, button.RenderBounds, button.RenderColor);
 
                 return;
             }
 
             if (depressed)
             {
-                mTextures.Scroller.Button.Down[i].Draw(Renderer, control.RenderBounds, control.RenderColor);
+                mTextures.Scroller.Button.Down[i].Draw(Renderer, button.RenderBounds, button.RenderColor);
 
                 return;
             }
 
             if (hovered)
             {
-                mTextures.Scroller.Button.Hover[i].Draw(Renderer, control.RenderBounds, control.RenderColor);
+                mTextures.Scroller.Button.Hover[i].Draw(Renderer, button.RenderBounds, button.RenderColor);
 
                 return;
             }
 
-            mTextures.Scroller.Button.Normal[i].Draw(Renderer, control.RenderBounds, control.RenderColor);
+            mTextures.Scroller.Button.Normal[i].Draw(Renderer, button.RenderBounds, button.RenderColor);
         }
 
         public override void DrawComboBoxArrow(Control.Base control, bool hovered, bool down, bool open, bool disabled)
@@ -2055,54 +2059,59 @@ namespace Intersect.Client.Framework.Gwen.Skin
 
         public override void DrawWindowCloseButton(Control.Base control, bool depressed, bool hovered, bool disabled)
         {
+            if (!(control is Button button))
+            {
+                return;
+            }
+
             GameTexture renderImg = null;
-            if (disabled && ((Button) control).GetImage(Control.Button.ControlState.Disabled) != null)
+            if (disabled && button.GetImage(Button.ControlState.Disabled) != null)
             {
-                renderImg = ((Button) control).GetImage(Control.Button.ControlState.Disabled);
+                renderImg = button.GetImage(Button.ControlState.Disabled);
             }
-            else if (depressed && ((Button) control).GetImage(Control.Button.ControlState.Clicked) != null)
+            else if (depressed && button.GetImage(Button.ControlState.Clicked) != null)
             {
-                renderImg = ((Button) control).GetImage(Control.Button.ControlState.Clicked);
+                renderImg = button.GetImage(Button.ControlState.Clicked);
             }
-            else if (hovered && ((Button) control).GetImage(Control.Button.ControlState.Hovered) != null)
+            else if (hovered && button.GetImage(Button.ControlState.Hovered) != null)
             {
-                renderImg = ((Button) control).GetImage(Control.Button.ControlState.Hovered);
+                renderImg = button.GetImage(Button.ControlState.Hovered);
             }
-            else if (((Button) control).GetImage(Control.Button.ControlState.Normal) != null)
+            else if (button.GetImage(Button.ControlState.Normal) != null)
             {
-                renderImg = ((Button) control).GetImage(Control.Button.ControlState.Normal);
+                renderImg = button.GetImage(Button.ControlState.Normal);
             }
 
             if (renderImg != null)
             {
-                Renderer.DrawColor = control.RenderColor;
-                Renderer.DrawTexturedRect(renderImg, control.RenderBounds, control.RenderColor);
+                Renderer.DrawColor = button.RenderColor;
+                Renderer.DrawTexturedRect(renderImg, button.RenderBounds, button.RenderColor);
 
                 return;
             }
 
             if (disabled)
             {
-                mTextures.Window.CloseDisabled.Draw(Renderer, control.RenderBounds);
+                mTextures.Window.CloseDisabled.Draw(Renderer, button.RenderBounds);
 
                 return;
             }
 
             if (depressed)
             {
-                mTextures.Window.CloseDown.Draw(Renderer, control.RenderBounds);
+                mTextures.Window.CloseDown.Draw(Renderer, button.RenderBounds);
 
                 return;
             }
 
             if (hovered)
             {
-                mTextures.Window.CloseHover.Draw(Renderer, control.RenderBounds);
+                mTextures.Window.CloseHover.Draw(Renderer, button.RenderBounds);
 
                 return;
             }
 
-            mTextures.Window.Close.Draw(Renderer, control.RenderBounds);
+            mTextures.Window.Close.Draw(Renderer, button.RenderBounds);
         }
 
         public override void DrawSliderButton(Control.Base control, bool depressed, bool horizontal)

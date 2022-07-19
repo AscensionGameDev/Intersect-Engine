@@ -520,29 +520,19 @@ namespace Intersect.Editor.Localization
                     System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public
                 ))
                 {
-                    if (p1.GetValue(null).GetType() == typeof(LocalizedString))
+                    switch (p1.GetValue(null))
                     {
-                        dict.Add(p1.Name.ToLower(), ((LocalizedString) p1.GetValue(null)).ToString());
-                    }
-                    else if (p1.GetValue(null).GetType() == typeof(Dictionary<int, LocalizedString>))
-                    {
-                        var dic = new Dictionary<int, string>();
-                        foreach (var val in (Dictionary<int, LocalizedString>) p1.GetValue(null))
-                        {
-                            dic.Add(val.Key, val.Value.ToString());
-                        }
+                        case LocalizedString localizedString:
+                            dict.Add(p1.Name, localizedString.ToString());
+                            break;
 
-                        dict.Add(p1.Name, dic);
-                    }
-                    else if (p1.GetValue(null).GetType() == typeof(Dictionary<string, LocalizedString>))
-                    {
-                        var dic = new Dictionary<string, string>();
-                        foreach (var val in (Dictionary<string, LocalizedString>) p1.GetValue(null))
-                        {
-                            dic.Add(val.Key.ToLower(), val.Value.ToString());
-                        }
+                        case Dictionary<int, LocalizedString> localizedIntKeyDictionary:
+                            dict.Add(p1.Name, localizedIntKeyDictionary.ToDictionary(pair => pair.Key, pair => pair.Value.ToString()));
+                            break;
 
-                        dict.Add(p1.Name, dic);
+                        case Dictionary<string, LocalizedString> localizedStringKeyDictionary:
+                            dict.Add(p1.Name, localizedStringKeyDictionary.ToDictionary(pair => pair.Key, pair => pair.Value.ToString()));
+                            break;
                     }
                 }
 

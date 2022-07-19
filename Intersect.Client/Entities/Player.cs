@@ -1481,7 +1481,7 @@ namespace Intersect.Client.Entities
 
                     if (en.Value.MapId == map && en.Value.X == x && en.Value.Y == y)
                     {
-                        if (en.Value.GetType() == typeof(Event))
+                        if (en.Value is Event)
                         {
                             //Talk to Event
                             PacketSender.SendActivateEvent(en.Key);
@@ -1680,7 +1680,7 @@ namespace Intersect.Client.Entities
 
             var targetType = entity is Event ? 1 : 0;
 
-            if (entity.GetType() == typeof(Player))
+            if (entity is Player)
             {
                 //Select in admin window if open
                 if (Interface.Interface.GameUi.AdminWindowOpen())
@@ -1980,7 +1980,7 @@ namespace Intersect.Client.Entities
                             PacketSender.SendDirection(Dir);
                         }
 
-                        if (blockedBy != null && mLastBumpedEvent != blockedBy && blockedBy.GetType() == typeof(Event))
+                        if (blockedBy != null && mLastBumpedEvent != blockedBy && blockedBy is Event)
                         {
                             PacketSender.SendBumpEvent(blockedBy.MapId, blockedBy.Id);
                             mLastBumpedEvent = blockedBy as Entity;
@@ -2157,32 +2157,26 @@ namespace Intersect.Client.Entities
                                 continue;
                             }
 
+                            var isPlayer = en.Value is Player;
+                            var isNpc = !isPlayer;
+                            var player = en.Value as Player;
+
                             if (en.Value.MapId == mapId &&
                                 !en.Value.HideName &&
-                                (!en.Value.IsStealthed ||
-                                 en.Value is Player player && Globals.Me.IsInMyParty(player)) &&
+                                (!en.Value.IsStealthed || isPlayer && Globals.Me.IsInMyParty(player)) &&
                                 en.Value.WorldPos.Contains(mousePos.X, mousePos.Y))
                             {
                                 // We don't want to deal with these entities when hovering the cursor by them.
-                                var ignoreEntities = en.Value.GetType() != typeof(Projectile) &&
-                                                     en.Value.GetType() != typeof(Resource) &&
-                                                     en.Value.GetType() != typeof(Event);
+                                var ignoreEntities = !(en.Value is Projectile || en.Value is Resource || en.Value is Event);
 
                                 if (ignoreEntities)
                                 {
                                     // Who's who.
-                                    var isMe = en.Value.GetType() == typeof(Player) && en.Value.Id == Globals.Me.Id;
-                                    var isNpc = en.Value.GetType() != typeof(Player);
-                                    var isPlayer = en.Value.GetType() == typeof(Player) && en.Value.Id != Globals.Me.Id;
-                                    var isFriend = en.Value is Player possiblyFriend &&
-                                                   Globals.Me.IsFriend(possiblyFriend) &&
-                                                   !isMe;
-                                    var isGuildMate = en.Value is Player possiblyGuildMate &&
-                                                      Globals.Me.IsGuildMate(possiblyGuildMate) &&
-                                                      !isMe;
-                                    var isPartyMate = en.Value is Player possiblyPartyMate &&
-                                                      Globals.Me.IsInMyParty(possiblyPartyMate) &&
-                                                      !isMe;
+                                    var isMe = isPlayer && player.Id == Globals.Me.Id;
+                                    var isOtherPlayer = isPlayer && !isMe;
+                                    var isFriend = isOtherPlayer && Globals.Me.IsFriend(player);
+                                    var isGuildMate = isOtherPlayer && Globals.Me.IsGuildMate(player);
+                                    var isPartyMate = isOtherPlayer && Globals.Me.IsInMyParty(player);
 
                                     // If MyOverheadInfo is toggled off, draw the local Players
                                     // overhead information only when hovered by the cursor.
@@ -2200,7 +2194,7 @@ namespace Intersect.Client.Entities
 
                                     // If PlayerOverheadInfo is toggled off, draw Players
                                     // overhead information only when hovered by the cursor.
-                                    if (!Globals.Database.PlayerOverheadInfo && isPlayer &&
+                                    if (!Globals.Database.PlayerOverheadInfo && isOtherPlayer &&
                                         !isFriend && !isGuildMate && !isPartyMate)
                                     {
                                         en.Value.DrawName(null);
@@ -2269,7 +2263,7 @@ namespace Intersect.Client.Entities
 
                 if (!en.Value.IsHidden && (!en.Value.IsStealthed || en.Value is Player player && Globals.Me.IsInMyParty(player)))
                 {
-                    if (en.Value.GetType() != typeof(Projectile) && en.Value.GetType() != typeof(Resource))
+                    if (!(en.Value is Projectile || en.Value is Resource))
                     {
                         if (TargetType == 0 && TargetIndex == en.Value.Id)
                         {
@@ -2326,8 +2320,7 @@ namespace Intersect.Client.Entities
                                      en.Value is Player player && Globals.Me.IsInMyParty(player)) &&
                                     en.Value.WorldPos.Contains(mousePos.X, mousePos.Y))
                                 {
-                                    if (en.Value.GetType() != typeof(Projectile) &&
-                                        en.Value.GetType() != typeof(Resource))
+                                    if (!(en.Value is Projectile || en.Value is Resource))
                                     {
                                         if (TargetType != 0 || TargetIndex != en.Value.Id)
                                         {
@@ -2347,7 +2340,7 @@ namespace Intersect.Client.Entities
                                     }
 
                                     if (en.Value.MapId == mapId &&
-                                        !((Event)en.Value).DisablePreview &&
+                                        !(en.Value as Event).DisablePreview &&
                                         !en.Value.IsHidden &&
                                         (!en.Value.IsStealthed ||
                                          en.Value is Player player && Globals.Me.IsInMyParty(player)) &&

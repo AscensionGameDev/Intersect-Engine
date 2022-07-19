@@ -1267,9 +1267,8 @@ namespace Intersect.Client.Framework.Gwen.Control
 
         protected virtual void UpdateToolTipProperties()
         {
-            if (ToolTip != null && ToolTip.GetType() == typeof(Label))
+            if (ToolTip != null && ToolTip is Label tooltip)
             {
-                var tooltip = (Label) ToolTip;
                 tooltip.TextColorOverride = mToolTipFontColor ?? Skin.Colors.TooltipText;
                 if (mToolTipFont != null)
                 {
@@ -1351,9 +1350,9 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// </summary>
         public virtual void BringToFront()
         {
-            if (mParent != null && mParent.GetType() == typeof(Modal))
+            if (mParent != null && mParent is Modal modal)
             {
-                ((Modal) mParent).BringToFront();
+                modal.BringToFront();
             }
 
             var last = mActualParent?.mChildren.LastOrDefault();

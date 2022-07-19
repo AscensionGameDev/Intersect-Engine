@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 using Intersect.Enums;
@@ -183,9 +183,7 @@ namespace Intersect.Server.Entities.Pathfinding
                                             {
                                                 //Copy the cached array of tile blocks
 
-                                                var blocks = instance.GetCachedBlocks(
-                                                    mEntity.GetType() == typeof(Player)
-                                                );
+                                                var blocks = instance.GetCachedBlocks(mEntity is Player);
 
                                                 foreach (var block in blocks)
                                                 {
@@ -225,14 +223,12 @@ namespace Intersect.Server.Entities.Pathfinding
                                                 }
 
                                                 //If this is a local event then we gotta loop through all other local events for the player
-                                                if (mEntity.GetType() == typeof(EventPageInstance))
+                                                if (mEntity is EventPageInstance eventPage)
                                                 {
-                                                    var ev = (EventPageInstance)mEntity;
-                                                    if (!ev.Passable && ev.Player != null)
-
                                                     //Make sure this is a local event
+                                                    if (!eventPage.Passable && eventPage.Player != null)
                                                     {
-                                                        var player = ev.Player;
+                                                        var player = eventPage.Player;
                                                         if (player != null)
                                                         {
                                                             if (player.EventLookup.Values.Count >
@@ -246,7 +242,7 @@ namespace Intersect.Server.Entities.Pathfinding
                                                                         mapY++)
                                                                     {
                                                                         var evt = player.EventExists(new MapTileLoc(
-                                                                            ev.MapId, mapX, mapY
+                                                                            eventPage.MapId, mapX, mapY
                                                                         ));
 
                                                                         if (evt != null)

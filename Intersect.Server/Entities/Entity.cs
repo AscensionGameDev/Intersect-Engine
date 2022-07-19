@@ -1926,10 +1926,12 @@ namespace Intersect.Server.Entities
             enemy.CombatTimer = Timing.Global.Milliseconds + Options.CombatTime;
             CombatTimer = Timing.Global.Milliseconds + Options.CombatTime;
 
+            var thisPlayer = this as Player;
+
             //Check for lifesteal
-            if (GetType() == typeof(Player) && enemy.GetType() != typeof(Resource))
+            if (this is Player && !(enemy is Resource))
             {
-                var lifesteal = ((Player) this).GetEquipmentBonusEffect(EffectType.Lifesteal) / 100f;
+                var lifesteal = thisPlayer.GetEquipmentBonusEffect(EffectType.Lifesteal) / 100f;
                 var healthRecovered = lifesteal * baseDamage;
                 if (healthRecovered > 0) //Don't send any +0 msg's.
                 {
@@ -1943,7 +1945,7 @@ namespace Intersect.Server.Entities
             //Dead entity check
             if (enemy.GetVital(Vitals.Health) <= 0)
             {
-                if (enemy.GetType() == typeof(Npc) || enemy.GetType() == typeof(Resource))
+                if (enemy is Npc || enemy is Resource)
                 {
                     lock (enemy.EntityLock)
                     {
@@ -1953,10 +1955,10 @@ namespace Intersect.Server.Entities
                 else
                 {
                     //PVP Kill common events
-                    if (!enemy.Dead && enemy is Player && this is Player)
+                    if (!enemy.Dead && enemy is Player enemyPlayer && this is Player)
                     {
-                        ((Player)this).StartCommonEventsWithTrigger(CommonEventTrigger.PVPKill, "", enemy.Name);
-                        ((Player)enemy).StartCommonEventsWithTrigger(CommonEventTrigger.PVPDeath, "", this.Name);
+                        thisPlayer.StartCommonEventsWithTrigger(CommonEventTrigger.PVPKill, "", enemy.Name);
+                        enemyPlayer.StartCommonEventsWithTrigger(CommonEventTrigger.PVPDeath, "", this.Name);
                     }
 
                     lock (enemy.EntityLock)
@@ -1988,9 +1990,9 @@ namespace Intersect.Server.Entities
             }
 
             // Add a timer before able to make the next move.
-            if (GetType() == typeof(Npc))
+            if (this is Npc thisNpc)
             {
-                ((Npc) this).MoveTimer = Timing.Global.Milliseconds + (long) GetMovementTime();
+                thisNpc.MoveTimer = Timing.Global.Milliseconds + (long) GetMovementTime();
             }
         }
 
@@ -2696,7 +2698,7 @@ namespace Intersect.Server.Entities
                 }
 
                 //Don't lose bound items on death for players.
-                if (this.GetType() == typeof(Player))
+                if (this is Player)
                 {
                     if (itemBase.DropChanceOnDeath == 0)
                     {
@@ -2731,7 +2733,7 @@ namespace Intersect.Server.Entities
                     }
 
                     // Set owner to player that killed this, if there is any.
-                    if (playerKiller != null && this is Npc thisNpc)
+                    if (playerKiller != null && this is Npc)
                     {
                         // Yes, so set the owner to the player that killed it.
                         lootOwner = playerKiller.Id;

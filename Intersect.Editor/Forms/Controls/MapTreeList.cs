@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
@@ -77,18 +77,22 @@ namespace Intersect.Editor.Forms.Controls
 
             // Retrieve the node that was dragged.
             var draggedNode = (TreeNode) e.Data.GetData(typeof(TreeNode));
-            var srcType = -1;
-            var srcId = Guid.Empty;
+            int srcType;
+            Guid srcId;
+            switch (draggedNode.Tag)
+            {
+                case MapListMap draggedMap:
+                    srcType = 1;
+                    srcId = draggedMap.MapId;
+                    break;
 
-            if (draggedNode.Tag.GetType() == typeof(MapListMap))
-            {
-                srcType = 1;
-                srcId = ((MapListMap) draggedNode.Tag).MapId;
-            }
-            else
-            {
-                srcType = 0;
-                srcId = ((MapListFolder) draggedNode.Tag).FolderId;
+                case MapListFolder draggedFolder:
+                    srcType = 0;
+                    srcId = draggedFolder.FolderId;
+                    break;
+
+                default:
+                    throw new InvalidOperationException($"Unknown type {draggedNode.Tag?.GetType()} is not supported.");
             }
 
             var parent = targetNode;
@@ -107,43 +111,41 @@ namespace Intersect.Editor.Forms.Controls
             // (for example if you drag outside the control)
             if (!draggedNode.Equals(targetNode) && targetNode != null)
             {
-                if (targetNode.Tag.GetType() == typeof(MapListMap))
+                switch (targetNode.Tag)
                 {
-                    var destType = 1;
-                    var destId = ((MapListMap) targetNode.Tag).MapId;
-                    PacketSender.SendMapListMove(srcType, srcId, destType, destId);
+                    case MapListMap targetMap:
+                        PacketSender.SendMapListMove(srcType, srcId, 1, targetMap.MapId);
 
-                    // Remove the node from its current 
-                    // location and add it to the node at the drop location.
-                    draggedNode.Remove();
+                        // Remove the node from its current 
+                        // location and add it to the node at the drop location.
+                        draggedNode.Remove();
 
-                    if (targetNode.Parent == null)
-                    {
-                        list.Nodes.Insert(targetNode.Index, draggedNode);
-                    }
-                    else
-                    {
-                        targetNode.Parent.Nodes.Insert(targetNode.Index, draggedNode);
-                    }
+                        if (targetNode.Parent == null)
+                        {
+                            list.Nodes.Insert(targetNode.Index, draggedNode);
+                        }
+                        else
+                        {
+                            targetNode.Parent.Nodes.Insert(targetNode.Index, draggedNode);
+                        }
 
-                    // Expand the node at the location 
-                    // to show the dropped node.
-                    targetNode.Expand();
-                }
-                else
-                {
-                    var destType = 0;
-                    var destId = ((MapListFolder) targetNode.Tag).FolderId;
-                    PacketSender.SendMapListMove(srcType, srcId, destType, destId);
+                        // Expand the node at the location 
+                        // to show the dropped node.
+                        targetNode.Expand();
+                        break;
 
-                    // Remove the node from its current 
-                    // location and add it to the node at the drop location.
-                    draggedNode.Remove();
-                    targetNode.Nodes.Add(draggedNode);
+                    case MapListFolder targetFolder:
+                        PacketSender.SendMapListMove(srcType, srcId, 0, targetFolder.FolderId);
 
-                    // Expand the node at the location 
-                    // to show the dropped node.
-                    targetNode.Expand();
+                        // Remove the node from its current 
+                        // location and add it to the node at the drop location.
+                        draggedNode.Remove();
+                        targetNode.Nodes.Add(draggedNode);
+
+                        // Expand the node at the location 
+                        // to show the dropped node.
+                        targetNode.Expand();
+                        break;
                 }
             }
             else if (list.ClientRectangle.Contains(targetPoint))
@@ -168,34 +170,29 @@ namespace Intersect.Editor.Forms.Controls
 
             if (e.Node != null)
             {
-                if (!string.IsNullOrEmpty(e.Label))
+                if (string.IsNullOrEmpty(e.Label))
                 {
-                    if (e.Node.Tag.GetType() == typeof(MapListMap))
-                    {
-                        ((MapListMap) e.Node.Tag).Name = e.Label;
-
-                        //Send Rename Map
-                        PacketSender.SendRename((MapListItem) e.Node.Tag, e.Label);
-                        e.Node.Text = ((MapListMap) e.Node.Tag).Name;
-                    }
-                    else
-                    {
-                        ((MapListFolder) e.Node.Tag).Name = e.Label;
-
-                        //Send Rename Folder
-                        PacketSender.SendRename((MapListItem) e.Node.Tag, e.Label);
-                        e.Node.Text = e.Label;
-                    }
+                    e.Node.Text = e.Node.Tag is MapListMap mapListMap ? mapListMap.Name : e.Label;
                 }
                 else
                 {
-                    if (e.Node.Tag.GetType() == typeof(MapListMap))
+                    switch (e.Node.Tag)
                     {
-                        e.Node.Text = ((MapListMap) e.Node.Tag).Name;
-                    }
-                    else
-                    {
-                        e.Node.Text = e.Label;
+                        case MapListMap mapListMap:
+                            mapListMap.Name = e.Label;
+
+                            //Send Rename Map
+                            PacketSender.SendRename(mapListMap, e.Label);
+                            e.Node.Text = mapListMap.Name;
+                            break;
+
+                        case MapListFolder mapListFolder:
+                            mapListFolder.Name = e.Label;
+
+                            //Send Rename Folder
+                            PacketSender.SendRename(mapListFolder, e.Label);
+                            e.Node.Text = e.Label;
+                            break;
                     }
                 }
             }
@@ -212,11 +209,11 @@ namespace Intersect.Editor.Forms.Controls
 
             if (e.Node != null)
             {
-                if (e.Node.Tag.GetType() == typeof(MapListMap))
+                if (e.Node.Tag is MapListMap mapListMap)
                 {
-                    if (e.Node.Text == ((MapListMap) e.Node.Tag).Name && Chronological)
+                    if (e.Node.Text == mapListMap.Name && Chronological)
                     {
-                        e.Node.Text = ((MapListMap) e.Node.Tag).Name;
+                        e.Node.Text = mapListMap.Name;
                     }
                 }
             }
@@ -224,20 +221,22 @@ namespace Intersect.Editor.Forms.Controls
 
         private void treeMapList_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            if (e.Node.Tag.GetType() == typeof(MapListMap))
+            switch (e.Node.Tag)
             {
-                mSelectionType = 0;
-                mSelectedMap = ((MapListMap) e.Node.Tag).MapId;
-            }
-            else if (e.Node.Tag.GetType() == typeof(MapListFolder))
-            {
-                mSelectionType = 1;
-                mSelectedMap = ((MapListFolder) e.Node.Tag).FolderId;
-            }
-            else
-            {
-                mSelectionType = -1;
-                mSelectedMap = Guid.Empty;
+                case MapListMap mapListMap:
+                    mSelectionType = 0;
+                    mSelectedMap = mapListMap.MapId;
+                    break;
+
+                case MapListFolder mapListFolder:
+                    mSelectionType = 1;
+                    mSelectedMap = mapListFolder.FolderId;
+                    break;
+
+                default:
+                    mSelectionType = -1;
+                    mSelectedMap = Guid.Empty;
+                    break;
             }
         }
 
@@ -304,76 +303,70 @@ namespace Intersect.Editor.Forms.Controls
             }
             else
             {
-                for (var i = 0; i < mapList.Items.Count; i++)
+                foreach (var item in mapList.Items)
                 {
-                    if (mapList.Items[i].GetType() == typeof(MapListFolder))
+                    switch (item)
                     {
-                        if (parent == null)
-                        {
-                            tmpNode = list.Nodes.Add(mapList.Items[i].Name);
-                            tmpNode.Tag = (MapListFolder) mapList.Items[i];
-                            AddMapListToTree(
-                                ((MapListFolder) mapList.Items[i]).Children, tmpNode, selectMapId, restrictMaps
-                            );
-                        }
-                        else
-                        {
-                            tmpNode = parent.Nodes.Add(mapList.Items[i].Name);
-                            tmpNode.Tag = (MapListFolder) mapList.Items[i];
-                            AddMapListToTree(
-                                ((MapListFolder) mapList.Items[i]).Children, tmpNode, selectMapId, restrictMaps
-                            );
-                        }
-
-                        if (mOpenFolders.Contains(((MapListFolder) mapList.Items[i]).FolderId))
-                        {
-                            tmpNode.Expand();
-                        }
-
-                        if (mSelectionType == 1 && mSelectedMap == ((MapListFolder) mapList.Items[i]).FolderId)
-                        {
-                            list.SelectedNode = tmpNode;
-                            list.Focus();
-                        }
-
-                        tmpNode.ImageIndex = 0;
-                        tmpNode.SelectedImageIndex = 0;
-                    }
-                    else
-                    {
-                        if (restrictMaps == null || restrictMaps.Contains(((MapListMap) mapList.Items[i]).MapId))
-                        {
+                        case MapListFolder folder:
                             if (parent == null)
                             {
-                                tmpNode = list.Nodes.Add(mapList.Items[i].Name);
-                                tmpNode.Tag = (MapListMap) mapList.Items[i];
+                                tmpNode = list.Nodes.Add(item.Name);
+                                tmpNode.Tag = (MapListFolder)item;
+                                AddMapListToTree(
+                                    ((MapListFolder)item).Children, tmpNode, selectMapId, restrictMaps
+                                );
                             }
                             else
                             {
-                                tmpNode = parent.Nodes.Add(mapList.Items[i].Name);
-                                tmpNode.Tag = (MapListMap) mapList.Items[i];
+                                tmpNode = parent.Nodes.Add(item.Name);
+                                tmpNode.Tag = (MapListFolder)item;
+                                AddMapListToTree(
+                                    ((MapListFolder)item).Children, tmpNode, selectMapId, restrictMaps
+                                );
                             }
 
-                            if (selectMapId != Guid.Empty)
+                            if (mOpenFolders.Contains(((MapListFolder)item).FolderId))
                             {
-                                if (((MapListMap) mapList.Items[i]).MapId == selectMapId)
-                                {
-                                    list.SelectedNode = tmpNode;
-                                    list.Focus();
-                                }
-                            }
-                            else
-                            {
-                                if (mSelectionType == 0 && mSelectedMap == ((MapListMap) mapList.Items[i]).MapId)
-                                {
-                                    list.SelectedNode = tmpNode;
-                                    list.Focus();
-                                }
+                                tmpNode.Expand();
                             }
 
-                            tmpNode.ImageIndex = 1;
-                            tmpNode.SelectedImageIndex = 1;
-                        }
+                            if (mSelectionType == 1 && mSelectedMap == ((MapListFolder)item).FolderId)
+                            {
+                                list.SelectedNode = tmpNode;
+                                list.Focus();
+                            }
+
+                            tmpNode.ImageIndex = 0;
+                            tmpNode.SelectedImageIndex = 0;
+                            break;
+
+                        case MapListMap map:
+                            if (restrictMaps == null || restrictMaps.Contains(map.MapId))
+                            {
+                                tmpNode = (parent?.Nodes ?? list.Nodes).Add(item.Name);
+                                tmpNode.Tag = map;
+
+                                if (selectMapId != Guid.Empty)
+                                {
+                                    if (map.MapId == selectMapId)
+                                    {
+                                        list.SelectedNode = tmpNode;
+                                        list.Focus();
+                                    }
+                                }
+                                else
+                                {
+                                    if (mSelectionType == 0 && mSelectedMap == map.MapId)
+                                    {
+                                        list.SelectedNode = tmpNode;
+                                        list.Focus();
+                                    }
+                                }
+
+                                tmpNode.ImageIndex = 1;
+                                tmpNode.SelectedImageIndex = 1;
+                            }
+                            break;
                     }
                 }
             }
@@ -402,23 +395,20 @@ namespace Intersect.Editor.Forms.Controls
 
         private void list_AfterExpand(object sender, TreeViewEventArgs e)
         {
-            if (e.Node.Tag.GetType() == typeof(MapListFolder))
+            if (e.Node.Tag is MapListFolder folder)
             {
-                if (!mOpenFolders.Contains(((MapListFolder) e.Node.Tag).FolderId))
+                if (!mOpenFolders.Contains(folder.FolderId))
                 {
-                    mOpenFolders.Add(((MapListFolder) e.Node.Tag).FolderId);
+                    mOpenFolders.Add(folder.FolderId);
                 }
             }
         }
 
         private void list_AfterCollapse(object sender, TreeViewEventArgs e)
         {
-            if (e.Node.Tag.GetType() == typeof(MapListFolder))
+            if (e.Node.Tag is MapListFolder folder)
             {
-                if (mOpenFolders.Contains(((MapListFolder) e.Node.Tag).FolderId))
-                {
-                    mOpenFolders.Remove(((MapListFolder) e.Node.Tag).FolderId);
-                }
+                mOpenFolders.Remove(folder.FolderId);
             }
         }
 

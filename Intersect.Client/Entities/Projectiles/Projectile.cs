@@ -543,7 +543,7 @@ namespace Intersect.Client.Entities.Projectiles
                     blockedBy.Id != mOwner &&
                     Globals.Entities.ContainsKey(blockedBy.Id))
                 {
-                    if (blockedBy.GetType() == typeof(Resource))
+                    if (blockedBy is Resource)
                     {
                         killSpawn = true;
                     }

@@ -884,17 +884,13 @@ namespace Intersect.Server.Entities.Events
             Stack<CommandInstance> callStack
         )
         {
-            var entities = player.SpawnedNpcs.ToArray();
-            for (var i = 0; i < entities.Length; i++)
+            foreach (var entity in player.SpawnedNpcs.ToArray())
             {
-                if (entities[i] != null && entities[i].GetType() == typeof(Npc))
+                if (entity is Npc npc && npc.Despawnable == true)
                 {
-                    if (((Npc) entities[i]).Despawnable == true)
+                    lock (player.EntityLock)
                     {
-                        lock (player.EntityLock)
-                        {
-                            ((Npc)entities[i]).Die();
-                        }
+                        npc.Die();
                     }
                 }
             }

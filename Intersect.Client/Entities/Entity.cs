@@ -1831,41 +1831,43 @@ namespace Intersect.Client.Entities
                             en.Value.Y == tmpY &&
                             en.Value.Z == Z)
                         {
-                            if (en.Value.GetType() != typeof(Projectile))
+                            if (!(en.Value is Projectile))
                             {
-                                if (en.Value.GetType() == typeof(Resource))
+                                switch (en.Value)
                                 {
-                                    var resourceBase = ((Resource)en.Value).BaseResource;
-                                    if (resourceBase != null)
-                                    {
-                                        if(projectileTrigger)
+                                    case Resource resource:
+                                        var resourceBase = resource.BaseResource;
+                                        if (resourceBase != null)
                                         {
-                                            bool isDead = ((Resource) en.Value).IsDead;
-                                            if (!ignoreAliveResources && !isDead || !ignoreDeadResources && isDead)
+                                            if (projectileTrigger)
                                             {
-                                                blockedBy = en.Value;
+                                                bool isDead = resource.IsDead;
+                                                if (!ignoreAliveResources && !isDead || !ignoreDeadResources && isDead)
+                                                {
+                                                    blockedBy = en.Value;
 
-                                                return -6;
+                                                    return -6;
+                                                }
+
+                                                return -1;
                                             }
 
-                                            return -1;
+                                            if (resourceBase.WalkableAfter && resource.IsDead ||
+                                                resourceBase.WalkableBefore && !resource.IsDead)
+                                            {
+                                                continue;
+                                            }
                                         }
+                                        break;
 
-                                        if (resourceBase.WalkableAfter && ((Resource)en.Value).IsDead ||
-                                            resourceBase.WalkableBefore && !((Resource)en.Value).IsDead)
+                                    case Player player:
+                                        //Return the entity key as this should block the player.  Only exception is if the MapZone this entity is on is passable.
+                                        var entityMap = Maps.MapInstance.Get(player.MapId);
+                                        if (Options.Instance.Passability.Passable[(int)entityMap.ZoneType])
                                         {
                                             continue;
                                         }
-                                    }
-                                }
-                                else if (en.Value.GetType() == typeof(Player))
-                                {
-                                    //Return the entity key as this should block the player.  Only exception is if the MapZone this entity is on is passable.
-                                    var entityMap = Maps.MapInstance.Get(en.Value.MapId);
-                                    if (Options.Instance.Passability.Passable[(int)entityMap.ZoneType])
-                                    {
-                                        continue;
-                                    }
+                                        break;
                                 }
 
                                 blockedBy = en.Value;

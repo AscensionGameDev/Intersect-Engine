@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 using Intersect.Editor.General;
 using Intersect.Editor.Maps;
@@ -40,24 +40,22 @@ namespace Intersect.Editor.Networking
             if (location > -1)
             {
                 Network.SendPacket(new CreateMapPacket(currentMapId, (byte) location));
+                return;
             }
-            else
+
+            switch (parent)
             {
-                if (parent == null)
-                {
+                case null:
                     Network.SendPacket(new CreateMapPacket(0, Guid.Empty));
-                }
-                else
-                {
-                    if (parent.GetType() == typeof(MapListMap))
-                    {
-                        Network.SendPacket(new CreateMapPacket(1, ((MapListMap) parent).MapId));
-                    }
-                    else
-                    {
-                        Network.SendPacket(new CreateMapPacket(0, ((MapListFolder) parent).FolderId));
-                    }
-                }
+                    break;
+
+                case MapListMap map:
+                    Network.SendPacket(new CreateMapPacket(1, map.MapId));
+                    break;
+
+                case MapListFolder folder:
+                    Network.SendPacket(new CreateMapPacket(0, folder.FolderId));
+                    break;
             }
         }
 
@@ -68,64 +66,67 @@ namespace Intersect.Editor.Networking
 
         public static void SendAddFolder(MapListItem parent)
         {
-            if (parent == null)
+            switch (parent)
             {
-                Network.SendPacket(new MapListUpdatePacket(MapListUpdates.AddFolder, 0, Guid.Empty, 0, Guid.Empty, ""));
-            }
-            else
-            {
-                if (parent.GetType() == typeof(MapListMap))
-                {
+                case null:
+                    Network.SendPacket(new MapListUpdatePacket(MapListUpdates.AddFolder, 0, Guid.Empty, 0, Guid.Empty, string.Empty));
+                    break;
+
+                case MapListMap map:
                     Network.SendPacket(
                         new MapListUpdatePacket(
-                            MapListUpdates.AddFolder, 0, Guid.Empty, 1, ((MapListMap) parent).MapId, ""
+                            MapListUpdates.AddFolder, 0, Guid.Empty, 1, map.MapId, string.Empty
                         )
                     );
-                }
-                else
-                {
+                    break;
+
+                case MapListFolder folder:
                     Network.SendPacket(
                         new MapListUpdatePacket(
-                            MapListUpdates.AddFolder, 0, Guid.Empty, 0, ((MapListFolder) parent).FolderId, ""
+                            MapListUpdates.AddFolder, 0, Guid.Empty, 0, folder.FolderId, string.Empty
                         )
                     );
-                }
+                    break;
             }
         }
 
         public static void SendRename(MapListItem parent, string name)
         {
-            if (parent.GetType() == typeof(MapListMap))
+            switch (parent)
             {
-                Network.SendPacket(
-                    new MapListUpdatePacket(MapListUpdates.Rename, 1, ((MapListMap) parent).MapId, 0, Guid.Empty, name)
-                );
-            }
-            else
-            {
-                Network.SendPacket(
-                    new MapListUpdatePacket(
-                        MapListUpdates.Rename, 0, ((MapListFolder) parent).FolderId, 0, Guid.Empty, name
-                    )
-                );
+                case MapListMap map:
+                    Network.SendPacket(
+                        new MapListUpdatePacket(MapListUpdates.Rename, 1, map.MapId, 0, Guid.Empty, name)
+                    );
+                    break;
+
+                case MapListFolder folder:
+                    Network.SendPacket(
+                        new MapListUpdatePacket(
+                            MapListUpdates.Rename, 0, folder.FolderId, 0, Guid.Empty, name
+                        )
+                    );
+                    break;
             }
         }
 
         public static void SendDelete(MapListItem target)
         {
-            if (target.GetType() == typeof(MapListMap))
+            switch (target)
             {
-                Network.SendPacket(
-                    new MapListUpdatePacket(MapListUpdates.Delete, 1, ((MapListMap) target).MapId, 0, Guid.Empty, "")
-                );
-            }
-            else
-            {
-                Network.SendPacket(
-                    new MapListUpdatePacket(
-                        MapListUpdates.Delete, 0, ((MapListFolder) target).FolderId, 0, Guid.Empty, ""
-                    )
-                );
+                case MapListMap map:
+                    Network.SendPacket(
+                        new MapListUpdatePacket(MapListUpdates.Delete, 1, map.MapId, 0, Guid.Empty, string.Empty)
+                    );
+                    break;
+
+                case MapListFolder folder:
+                    Network.SendPacket(
+                        new MapListUpdatePacket(
+                            MapListUpdates.Delete, 0, folder.FolderId, 0, Guid.Empty, string.Empty
+                        )
+                    );
+                    break;
             }
         }
 
