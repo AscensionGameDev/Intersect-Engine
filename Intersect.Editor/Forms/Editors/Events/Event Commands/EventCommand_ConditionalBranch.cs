@@ -766,99 +766,99 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             }
         }
 
-        private void TryLoadVariableBooleanComparison(VariableCompaison comp)
+        private void TryLoadVariableBooleanComparison(VariableCompaison comparison)
         {
-            if (comp.GetType() == typeof(BooleanVariableComparison))
+            if (!(comparison is BooleanVariableComparison booleanComparison))
             {
-                var com = (BooleanVariableComparison) comp;
+                return;
+            }
 
-                cmbBooleanComparator.SelectedIndex = Convert.ToInt32(!com.ComparingEqual);
+            cmbBooleanComparator.SelectedIndex = Convert.ToInt32(!booleanComparison.ComparingEqual);
 
-                if (cmbBooleanComparator.SelectedIndex < 0)
+            if (cmbBooleanComparator.SelectedIndex < 0)
+            {
+                cmbBooleanComparator.SelectedIndex = 0;
+            }
+
+            optBooleanTrue.Checked = booleanComparison.Value;
+            optBooleanFalse.Checked = !booleanComparison.Value;
+
+            if (booleanComparison.CompareVariableId != Guid.Empty)
+            {
+                if (booleanComparison.CompareVariableType == VariableTypes.PlayerVariable)
                 {
-                    cmbBooleanComparator.SelectedIndex = 0;
+                    optBooleanPlayerVariable.Checked = true;
+                    cmbBooleanPlayerVariable.SelectedIndex = PlayerVariableBase.ListIndex(booleanComparison.CompareVariableId);
                 }
-
-                optBooleanTrue.Checked = com.Value;
-                optBooleanFalse.Checked = !com.Value;
-
-                if (com.CompareVariableId != Guid.Empty)
+                else if (booleanComparison.CompareVariableType == VariableTypes.ServerVariable)
                 {
-                    if (com.CompareVariableType == VariableTypes.PlayerVariable)
-                    {
-                        optBooleanPlayerVariable.Checked = true;
-                        cmbBooleanPlayerVariable.SelectedIndex = PlayerVariableBase.ListIndex(com.CompareVariableId);
-                    }
-                    else if (com.CompareVariableType == VariableTypes.ServerVariable)
-                    {
-                        optBooleanGlobalVariable.Checked = true;
-                        cmbBooleanGlobalVariable.SelectedIndex = ServerVariableBase.ListIndex(com.CompareVariableId);
-                    }
-                    else if (com.CompareVariableType == VariableTypes.GuildVariable)
-                    {
-                        optBooleanGuildVariable.Checked = true;
-                        cmbBooleanGuildVariable.SelectedIndex = GuildVariableBase.ListIndex(com.CompareVariableId);
-                    }
+                    optBooleanGlobalVariable.Checked = true;
+                    cmbBooleanGlobalVariable.SelectedIndex = ServerVariableBase.ListIndex(booleanComparison.CompareVariableId);
+                }
+                else if (booleanComparison.CompareVariableType == VariableTypes.GuildVariable)
+                {
+                    optBooleanGuildVariable.Checked = true;
+                    cmbBooleanGuildVariable.SelectedIndex = GuildVariableBase.ListIndex(booleanComparison.CompareVariableId);
                 }
             }
         }
 
-        private void TryLoadVariableIntegerComparison(VariableCompaison comp)
+        private void TryLoadVariableIntegerComparison(VariableCompaison comparison)
         {
-            if (comp.GetType() == typeof(IntegerVariableComparison))
+            if (!(comparison is IntegerVariableComparison integerComparison))
             {
-                var com = (IntegerVariableComparison) comp;
-
-                cmbNumericComparitor.SelectedIndex = (int) com.Comparator;
-
-                if (cmbNumericComparitor.SelectedIndex < 0)
-                {
-                    cmbNumericComparitor.SelectedIndex = 0;
-                }
-
-                if (com.CompareVariableId != Guid.Empty)
-                {
-                    if (com.CompareVariableType == VariableTypes.PlayerVariable)
-                    {
-                        rdoVarComparePlayerVar.Checked = true;
-                        cmbComparePlayerVar.SelectedIndex = PlayerVariableBase.ListIndex(com.CompareVariableId);
-                    }
-                    else if (com.CompareVariableType == VariableTypes.ServerVariable)
-                    {
-                        rdoVarCompareGlobalVar.Checked = true;
-                        cmbCompareGlobalVar.SelectedIndex = ServerVariableBase.ListIndex(com.CompareVariableId);
-                    }
-                    else if (com.CompareVariableType == VariableTypes.GuildVariable)
-                    {
-                        rdoVarCompareGuildVar.Checked = true;
-                        cmbCompareGuildVar.SelectedIndex = GuildVariableBase.ListIndex(com.CompareVariableId);
-                    }
-                }
-                else
-                {
-                    rdoVarCompareStaticValue.Checked = true;
-                    nudVariableValue.Value = com.Value;
-                }
-
-                UpdateNumericVariableElements();
+                return;
             }
+
+            cmbNumericComparitor.SelectedIndex = (int)integerComparison.Comparator;
+
+            if (cmbNumericComparitor.SelectedIndex < 0)
+            {
+                cmbNumericComparitor.SelectedIndex = 0;
+            }
+
+            if (integerComparison.CompareVariableId != Guid.Empty)
+            {
+                if (integerComparison.CompareVariableType == VariableTypes.PlayerVariable)
+                {
+                    rdoVarComparePlayerVar.Checked = true;
+                    cmbComparePlayerVar.SelectedIndex = PlayerVariableBase.ListIndex(integerComparison.CompareVariableId);
+                }
+                else if (integerComparison.CompareVariableType == VariableTypes.ServerVariable)
+                {
+                    rdoVarCompareGlobalVar.Checked = true;
+                    cmbCompareGlobalVar.SelectedIndex = ServerVariableBase.ListIndex(integerComparison.CompareVariableId);
+                }
+                else if (integerComparison.CompareVariableType == VariableTypes.GuildVariable)
+                {
+                    rdoVarCompareGuildVar.Checked = true;
+                    cmbCompareGuildVar.SelectedIndex = GuildVariableBase.ListIndex(integerComparison.CompareVariableId);
+                }
+            }
+            else
+            {
+                rdoVarCompareStaticValue.Checked = true;
+                nudVariableValue.Value = integerComparison.Value;
+            }
+
+            UpdateNumericVariableElements();
         }
 
-        private void TryLoadVariableStringComparison(VariableCompaison comp)
+        private void TryLoadVariableStringComparison(VariableCompaison comparison)
         {
-            if (comp.GetType() == typeof(StringVariableComparison))
+            if (!(comparison is StringVariableComparison stringComparison))
             {
-                var com = (StringVariableComparison) comp;
-
-                cmbStringComparitor.SelectedIndex = Convert.ToInt32(com.Comparator);
-
-                if (cmbStringComparitor.SelectedIndex < 0)
-                {
-                    cmbStringComparitor.SelectedIndex = 0;
-                }
-
-                txtStringValue.Text = com.Value;
+                return;
             }
+
+            cmbStringComparitor.SelectedIndex = Convert.ToInt32(stringComparison.Comparator);
+
+            if (cmbStringComparitor.SelectedIndex < 0)
+            {
+                cmbStringComparitor.SelectedIndex = 0;
+            }
+
+            txtStringValue.Text = stringComparison.Value;
         }
 
         private void InitVariableElements(Guid variableId)
@@ -886,86 +886,87 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 
         private BooleanVariableComparison GetBooleanVariableComparison()
         {
-            var comp = new BooleanVariableComparison();
-
             if (cmbBooleanComparator.SelectedIndex < 0)
             {
                 cmbBooleanComparator.SelectedIndex = 0;
             }
 
-            comp.ComparingEqual = !Convert.ToBoolean(cmbBooleanComparator.SelectedIndex);
-
-            comp.Value = optBooleanTrue.Checked;
+            var comparison = new BooleanVariableComparison
+            {
+                ComparingEqual = !Convert.ToBoolean(cmbBooleanComparator.SelectedIndex),
+                Value = optBooleanTrue.Checked,
+            };
 
             if (optBooleanGlobalVariable.Checked)
             {
-                comp.CompareVariableType = VariableTypes.ServerVariable;
-                comp.CompareVariableId = ServerVariableBase.IdFromList(cmbBooleanGlobalVariable.SelectedIndex);
+                comparison.CompareVariableType = VariableTypes.ServerVariable;
+                comparison.CompareVariableId = ServerVariableBase.IdFromList(cmbBooleanGlobalVariable.SelectedIndex);
             }
             else if (optBooleanPlayerVariable.Checked)
             {
-                comp.CompareVariableType = VariableTypes.PlayerVariable;
-                comp.CompareVariableId = PlayerVariableBase.IdFromList(cmbBooleanPlayerVariable.SelectedIndex);
+                comparison.CompareVariableType = VariableTypes.PlayerVariable;
+                comparison.CompareVariableId = PlayerVariableBase.IdFromList(cmbBooleanPlayerVariable.SelectedIndex);
             }
             else if (optBooleanGuildVariable.Checked)
             {
-                comp.CompareVariableType = VariableTypes.GuildVariable;
-                comp.CompareVariableId = GuildVariableBase.IdFromList(cmbBooleanGuildVariable.SelectedIndex);
+                comparison.CompareVariableType = VariableTypes.GuildVariable;
+                comparison.CompareVariableId = GuildVariableBase.IdFromList(cmbBooleanGuildVariable.SelectedIndex);
             }
 
-            return comp;
+            return comparison;
         }
 
         private IntegerVariableComparison GetNumericVariableComparison()
         {
-            var comp = new IntegerVariableComparison();
-
             if (cmbNumericComparitor.SelectedIndex < 0)
             {
                 cmbNumericComparitor.SelectedIndex = 0;
             }
 
-            comp.Comparator = (VariableComparators) cmbNumericComparitor.SelectedIndex;
 
-            comp.CompareVariableId = Guid.Empty;
+            var comparison = new IntegerVariableComparison
+            {
+                Comparator = (VariableComparators)cmbNumericComparitor.SelectedIndex,
+                CompareVariableId = Guid.Empty,
+            };
 
             if (rdoVarCompareStaticValue.Checked)
             {
-                comp.Value = (long) nudVariableValue.Value;
+                comparison.Value = (long) nudVariableValue.Value;
             }
             else if (rdoVarCompareGlobalVar.Checked)
             {
-                comp.CompareVariableType = VariableTypes.ServerVariable;
-                comp.CompareVariableId = ServerVariableBase.IdFromList(cmbCompareGlobalVar.SelectedIndex);
+                comparison.CompareVariableType = VariableTypes.ServerVariable;
+                comparison.CompareVariableId = ServerVariableBase.IdFromList(cmbCompareGlobalVar.SelectedIndex);
             }
             else if (rdoVarComparePlayerVar.Checked)
             {
-                comp.CompareVariableType = VariableTypes.PlayerVariable;
-                comp.CompareVariableId = PlayerVariableBase.IdFromList(cmbComparePlayerVar.SelectedIndex);
+                comparison.CompareVariableType = VariableTypes.PlayerVariable;
+                comparison.CompareVariableId = PlayerVariableBase.IdFromList(cmbComparePlayerVar.SelectedIndex);
             }
             else if (rdoVarCompareGuildVar.Checked)
             {
-                comp.CompareVariableType = VariableTypes.GuildVariable;
-                comp.CompareVariableId = GuildVariableBase.IdFromList(cmbCompareGuildVar.SelectedIndex);
+                comparison.CompareVariableType = VariableTypes.GuildVariable;
+                comparison.CompareVariableId = GuildVariableBase.IdFromList(cmbCompareGuildVar.SelectedIndex);
             }
 
-            return comp;
+            return comparison;
         }
 
         private StringVariableComparison GetStringVariableComparison()
         {
-            var comp = new StringVariableComparison();
-
             if (cmbStringComparitor.SelectedIndex < 0)
             {
                 cmbStringComparitor.SelectedIndex = 0;
             }
 
-            comp.Comparator = (StringVariableComparators) cmbStringComparitor.SelectedIndex;
+            var comparison = new StringVariableComparison
+            {
+                Comparator = (StringVariableComparators)cmbStringComparitor.SelectedIndex,
+                Value = txtStringValue.Text,
+            };
 
-            comp.Value = txtStringValue.Text;
-
-            return comp;
+            return comparison;
         }
 
         private void rdoPlayerVariable_CheckedChanged(object sender, EventArgs e)

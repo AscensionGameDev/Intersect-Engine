@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Windows.Forms;
 
 using DarkUI.Forms;
@@ -28,7 +28,7 @@ namespace Intersect.Editor.Forms.DockingElements
 
         private void NodeDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
         {
-            if (e.Node.Tag.GetType() == typeof(MapListMap))
+            if (e.Node.Tag is MapListMap map)
             {
                 if (Globals.CurrentMap != null &&
                     Globals.CurrentMap.Changed() &&
@@ -41,7 +41,7 @@ namespace Intersect.Editor.Forms.DockingElements
                     SaveMap();
                 }
 
-                Globals.MainForm.EnterMap(((MapListMap) e.Node.Tag).MapId, true);
+                Globals.MainForm.EnterMap(map.MapId, true);
             }
         }
 
@@ -88,14 +88,7 @@ namespace Intersect.Editor.Forms.DockingElements
 
         private void btnNewFolder_Click(object sender, EventArgs e)
         {
-            if (mapTreeList.list.SelectedNode == null)
-            {
-                PacketSender.SendAddFolder(null);
-            }
-            else
-            {
-                PacketSender.SendAddFolder((MapListItem) mapTreeList.list.SelectedNode.Tag);
-            }
+            PacketSender.SendAddFolder(mapTreeList.list.SelectedNode?.Tag as MapListItem);
         }
 
         private void btnRename_Click(object sender, EventArgs e)
@@ -181,15 +174,15 @@ namespace Intersect.Editor.Forms.DockingElements
         private void contextMenuStrip1_Opening(object sender, System.ComponentModel.CancelEventArgs e)
         {
             var node = mapTreeList.list.SelectedNode;
-            copyIdToolStripMenuItem.Visible = node != null && node.Tag.GetType() == typeof(MapListMap);
+            copyIdToolStripMenuItem.Visible = node != null && node.Tag is MapListMap;
         }
 
         private void copyIdToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var node = mapTreeList.list.SelectedNode;
-            if (node != null && node.Tag.GetType() == typeof(MapListMap))
+            if (node != null && node.Tag is MapListMap map)
             {
-                var id = ((MapListMap) node.Tag).MapId;
+                var id = map.MapId;
                 Clipboard.SetText(id.ToString());
             }
         }

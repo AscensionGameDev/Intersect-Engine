@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 
 using Intersect.Client.Framework.GenericClasses;
@@ -30,27 +30,34 @@ namespace Intersect.Client.Framework.Gwen.Control
         ///     Initializes a new instance of the <see cref="ScrollControl" /> class.
         /// </summary>
         /// <param name="parent">Parent control.</param>
-        public ScrollControl(Base parent, string name = "") : base(parent, name)
+        public ScrollControl(Base parent, string name = default) : base(parent, name)
         {
             MouseInputEnabled = false;
 
-            mVerticalScrollBar = new VerticalScrollBar(this);
-            mVerticalScrollBar.Dock = Pos.Right;
+            mVerticalScrollBar = new VerticalScrollBar(this)
+            {
+                Dock = Pos.Right,
+                NudgeAmount = 30,
+            };
             mVerticalScrollBar.BarMoved += VBarMoved;
             mCanScrollV = true;
-            mVerticalScrollBar.NudgeAmount = 30;
 
-            mHorizontalScrollBar = new HorizontalScrollBar(this);
-            mHorizontalScrollBar.Dock = Pos.Bottom;
+            mHorizontalScrollBar = new HorizontalScrollBar(this)
+            {
+                Dock = Pos.Bottom,
+                NudgeAmount = 30,
+            };
             mHorizontalScrollBar.BarMoved += HBarMoved;
             mCanScrollH = true;
-            mHorizontalScrollBar.NudgeAmount = 30;
 
-            mInnerPanel = new Base(this);
-            mInnerPanel.SetPosition(0, 0);
-            mInnerPanel.Margin = Margin.Five;
+            mInnerPanel = new Base(this)
+            {
+                X = 0,
+                Y = 0,
+                Margin = Margin.Five,
+                MouseInputEnabled = false,
+            };
             mInnerPanel.SendToBack();
-            mInnerPanel.MouseInputEnabled = false;
 
             mAutoHideBars = false;
         }

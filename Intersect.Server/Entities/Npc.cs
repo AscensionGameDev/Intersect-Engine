@@ -222,18 +222,18 @@ namespace Intersect.Server.Entities
                     }
                 }
 
-                if (en.GetType() == typeof(Projectile))
+                if (en is Projectile projectile)
                 {
-                    if (((Projectile)en).Owner != this && !TargetHasStealth((Projectile)en))
+                    if (projectile.Owner != this && !TargetHasStealth(projectile)
                     {
-                        Target = ((Projectile)en).Owner;
+                        Target = projectile.Owner;
                     }
                 }
                 else
                 {
-                    if (en.GetType() == typeof(Npc))
+                    if (en is Npc npc)
                     {
-                        if (((Npc)en).Base == Base)
+                        if (npc.Base == Base)
                         {
                             if (Base.AttackAllies == false)
                             {
@@ -242,7 +242,7 @@ namespace Intersect.Server.Entities
                         }
                     }
 
-                    if (en.GetType() == typeof(Player))
+                    if (en is Player)
                     {
                         //TODO Make sure that the npc can target the player
                         if (this != en && !TargetHasStealth(en))
@@ -312,7 +312,7 @@ namespace Intersect.Server.Entities
                 return false;
             }
 
-            if (entity.GetType() == typeof(EventPageInstance))
+            if (entity is EventPageInstance)
             {
                 return false;
             }
@@ -331,20 +331,19 @@ namespace Intersect.Server.Entities
                 return false;
             }
 
-            if (entity.GetType() == typeof(Resource))
+            if (entity is Resource)
             {
                 if (!entity.Passable)
                 {
                     return false;
                 }
             }
-            else if (entity.GetType() == typeof(Npc))
+            else if (entity is Npc)
             {
                 return CanNpcCombat(entity, spell != null && spell.Combat.Friendly) || entity == this;
             }
-            else if (entity.GetType() == typeof(Player))
+            else if (entity is Player player)
             {
-                var player = (Player) entity;
                 var friendly = spell != null && spell.Combat.Friendly;
                 if (friendly && IsAllyOf(player))
                 {
@@ -413,21 +412,21 @@ namespace Intersect.Server.Entities
             //Check for NpcVsNpc Combat, both must be enabled and the attacker must have it as an enemy or attack all types of npc.
             if (!friendly)
             {
-                if (enemy != null && enemy.GetType() == typeof(Npc) && Base != null)
+                if (enemy != null && enemy is Npc enemyNpc && Base != null)
                 {
-                    if (((Npc) enemy).Base.NpcVsNpcEnabled == false)
+                    if (enemyNpc.Base.NpcVsNpcEnabled == false)
                     {
                         return false;
                     }
 
-                    if (Base.AttackAllies && ((Npc) enemy).Base == Base)
+                    if (Base.AttackAllies && enemyNpc.Base == Base)
                     {
                         return true;
                     }
 
                     for (var i = 0; i < Base.AggroList.Count; i++)
                     {
-                        if (NpcBase.Get(Base.AggroList[i]) == ((Npc) enemy).Base)
+                        if (NpcBase.Get(Base.AggroList[i]) == enemyNpc.Base)
                         {
                             return true;
                         }
@@ -436,25 +435,18 @@ namespace Intersect.Server.Entities
                     return false;
                 }
 
-                if (enemy != null && enemy.GetType() == typeof(Player))
+                if (enemy is Player)
                 {
                     return true;
                 }
             }
-            else
+            else if (enemy is Npc enemyNpc && Base != null && enemyNpc.Base == Base && Base.AttackAllies == false)
             {
-                if (enemy != null &&
-                    enemy.GetType() == typeof(Npc) &&
-                    Base != null &&
-                    ((Npc) enemy).Base == Base &&
-                    Base.AttackAllies == false)
-                {
-                    return true;
-                }
-                else if (enemy != null && enemy.GetType() == typeof(Player))
-                {
-                    return false;
-                }
+                return true;
+            }
+            else if (enemy is Player)
+            {
+                return false;
             }
 
             return false;
@@ -1233,9 +1225,8 @@ namespace Intersect.Server.Entities
             {
                 foreach (var en in instance.GetEntities(true))
                 {
-                    if (en.GetType() == typeof(Npc))
+                    if (en is Npc npc)
                     {
-                        var npc = (Npc)en;
                         if (npc.Target == null & npc.Base.Swarm && npc.Base == Base)
                         {
                             if (npc.InRangeOf(attacker, npc.Base.SightRange))
@@ -1393,10 +1384,10 @@ namespace Intersect.Server.Entities
                     if (entity != null && !entity.IsDead() && entity != this && entity.Id != avoidId)
                     {
                         //TODO Check if NPC is allowed to attack player with new conditions
-                        if (entity.GetType() == typeof(Player))
+                        if (entity is Player player)
                         {
                             // Are we aggressive towards this player or have they hit us?
-                            if (ShouldAttackPlayerOnSight((Player)entity) || (DamageMap.ContainsKey(entity) && entity.MapInstanceId == MapInstanceId))
+                            if (ShouldAttackPlayerOnSight(player) || (DamageMap.ContainsKey(entity) && entity.MapInstanceId == MapInstanceId))
                             {
                                 var dist = GetDistanceTo(entity);
                                 if (dist <= Range && dist < closestRange)
@@ -1407,9 +1398,9 @@ namespace Intersect.Server.Entities
                                 }
                             }
                         }
-                        else if (entity.GetType() == typeof(Npc))
+                        else if (entity is Npc npc)
                         {
-                            if (Base.Aggressive && Base.AggroList.Contains(((Npc)entity).Base.Id))
+                            if (Base.Aggressive && Base.AggroList.Contains(npc.Base.Id))
                             {
                                 var dist = GetDistanceTo(entity);
                                 if (dist <= Range && dist < closestRange)

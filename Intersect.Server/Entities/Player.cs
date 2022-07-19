@@ -810,10 +810,10 @@ namespace Intersect.Server.Entities
                 pkt.CombatTimeRemaining = CombatTimer - Timing.Global.Milliseconds;
             }
 
-            if (forPlayer != null && GetType() == typeof(Player))
+            if (forPlayer != null && this is Player thisPlayer)
             {
                 ((PlayerEntityPacket) packet).Equipment =
-                    PacketSender.GenerateEquipmentPacket(forPlayer, (Player) this);
+                    PacketSender.GenerateEquipmentPacket(forPlayer, thisPlayer);
             }
 
             pkt.Guild = Guild?.Name;

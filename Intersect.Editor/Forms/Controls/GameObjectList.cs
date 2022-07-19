@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -81,7 +81,7 @@ namespace Intersect.Editor.Forms.Controls
             {
                 if (e.Button == MouseButtons.Right)
                 {
-                    if (e.Node.Tag != null && e.Node.Tag.GetType() == typeof(Guid))
+                    if (e.Node.Tag != null && e.Node.Tag is Guid)
                     {
                         Clipboard.SetText(e.Node.Tag.ToString());
                     }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel.DataAnnotations.Schema;
 
 using Intersect.Enums;
@@ -31,6 +31,8 @@ namespace Intersect.GameObjects.Switches_and_Variables
 
             set
             {
+                // I'm not sure what to do in null case here but we should handle it
+
                 if (!value.TryGetValue(nameof(Type), out var typeToken))
                 {
                     return;
@@ -55,28 +57,23 @@ namespace Intersect.GameObjects.Switches_and_Variables
 
         public void SetValue(object value)
         {
-            //Doing these also updates the variable data types appropriately.
-            if (value != null)
+            switch (value)
             {
-                if (value.GetType() == typeof(bool))
-                {
-                    Boolean = (bool) value;
-                }
+                case bool booleanValue:
+                    Boolean = booleanValue;
+                    break;
 
-                if (value.GetType() == typeof(long))
-                {
-                    Integer = (long) value;
-                }
+                case long longValue:
+                    Integer = longValue;
+                    break;
 
-                if (value.GetType() == typeof(double))
-                {
-                    Number = (double) value;
-                }
+                case double doubleValue:
+                    Number = doubleValue;
+                    break;
 
-                if (value.GetType() == typeof(string))
-                {
-                    String = (string) value;
-                }
+                case string stringValue:
+                    String = stringValue;
+                    break;
             }
 
             mValue = value;
@@ -98,7 +95,7 @@ namespace Intersect.GameObjects.Switches_and_Variables
 
                         break;
                     case VariableDataTypes.Integer:
-                        Integer = (long) 0;
+                        Integer = 0L;
 
                         break;
                     case VariableDataTypes.Number:
@@ -106,7 +103,7 @@ namespace Intersect.GameObjects.Switches_and_Variables
 
                         break;
                     case VariableDataTypes.String:
-                        String = "";
+                        String = string.Empty;
 
                         break;
                 }

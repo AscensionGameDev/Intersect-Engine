@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Windows.Forms;
 
 using Intersect.Editor.Localization;
@@ -240,20 +240,19 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             }
             else
             {
-                if (mMyCommand.Modification == null)
+                switch (mMyCommand.Modification)
                 {
-                    mMyCommand.Modification = new BooleanVariableMod();
-                }
-                else
-                {
-                    if (mMyCommand.Modification.GetType() == typeof(BooleanVariableMod))
-                    {
+                    case BooleanVariableMod _:
                         mMyCommand.Modification = GetBooleanVariableMod();
-                    }
-                    else if (mMyCommand.Modification.GetType() == typeof(IntegerVariableMod))
-                    {
+                        break;
+
+                    case IntegerVariableMod _:
                         mMyCommand.Modification = GetNumericVariableMod();
-                    }
+                        break;
+
+                    case null:
+                        mMyCommand.Modification = new BooleanVariableMod();
+                        break;
                 }
             }
 
@@ -331,46 +330,49 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 
         #region "Boolean Variable"
 
-        private void TryLoadBooleanMod(VariableMod varMod)
+        private void TryLoadBooleanMod(VariableMod variableMod)
         {
-            if (varMod == null)
+            if (variableMod == null)
             {
-                varMod = new BooleanVariableMod();
+                variableMod = new BooleanVariableMod();
             }
 
-            if (varMod.GetType() == typeof(BooleanVariableMod))
+            if (!(variableMod is BooleanVariableMod booleanMod))
             {
-                var mod = (BooleanVariableMod) varMod;
+                return;
+            }
 
-                optBooleanTrue.Checked = mod.Value;
-                optBooleanFalse.Checked = !mod.Value;
+            optBooleanTrue.Checked = booleanMod.Value;
+            optBooleanFalse.Checked = !booleanMod.Value;
 
-                if (mod.DuplicateVariableId != Guid.Empty)
-                {
-                    if (mod.DupVariableType == VariableTypes.PlayerVariable)
-                    {
-                        optBooleanClonePlayerVar.Checked = true;
-                        cmbBooleanClonePlayerVar.SelectedIndex = PlayerVariableBase.ListIndex(mod.DuplicateVariableId);
-                    }
-                    else if (mod.DupVariableType == VariableTypes.ServerVariable)
-                    {
-                        optBooleanCloneGlobalVar.Checked = true;
-                        cmbBooleanCloneGlobalVar.SelectedIndex = ServerVariableBase.ListIndex(mod.DuplicateVariableId);
-                    }
-                    else if (mod.DupVariableType == VariableTypes.GuildVariable)
-                    {
-                        optBooleanCloneGuildVar.Checked = true;
-                        cmbBooleanCloneGuildVar.SelectedIndex = GuildVariableBase.ListIndex(mod.DuplicateVariableId);
-                    }
-                }
+            if (booleanMod.DuplicateVariableId == Guid.Empty)
+            {
+                return;
+            }
+
+            if (booleanMod.DupVariableType == VariableTypes.PlayerVariable)
+            {
+                optBooleanClonePlayerVar.Checked = true;
+                cmbBooleanClonePlayerVar.SelectedIndex = PlayerVariableBase.ListIndex(booleanMod.DuplicateVariableId);
+            }
+            else if (booleanMod.DupVariableType == VariableTypes.ServerVariable)
+            {
+                optBooleanCloneGlobalVar.Checked = true;
+                cmbBooleanCloneGlobalVar.SelectedIndex = ServerVariableBase.ListIndex(booleanMod.DuplicateVariableId);
+            }
+            else if (booleanMod.DupVariableType == VariableTypes.GuildVariable)
+            {
+                optBooleanCloneGuildVar.Checked = true;
+                cmbBooleanCloneGuildVar.SelectedIndex = GuildVariableBase.ListIndex(booleanMod.DuplicateVariableId);
             }
         }
 
         private BooleanVariableMod GetBooleanVariableMod()
         {
-            var mod = new BooleanVariableMod();
-
-            mod.Value = optBooleanTrue.Checked;
+            var mod = new BooleanVariableMod
+            {
+                Value = optBooleanTrue.Checked,
+            };
 
             if (optBooleanClonePlayerVar.Checked)
             {
@@ -395,229 +397,229 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 
         #region "Numeric Variable"
 
-        private void TryLoadNumericMod(VariableMod varMod)
+        private void TryLoadNumericMod(VariableMod variableMod)
         {
-            if (varMod == null)
+            if (variableMod == null)
             {
-                varMod = new IntegerVariableMod();
+                variableMod = new IntegerVariableMod();
             }
 
-            if (varMod.GetType() == typeof(IntegerVariableMod))
+            if (!(variableMod is IntegerVariableMod integerMod))
             {
-                var mod = (IntegerVariableMod) varMod;
+                return;
+            }
 
-                //Should properly seperate static value, player & global vars into a seperate enum.
-                //But technical debt :/
-                switch (mod.ModType)
-                {
-                    case VariableMods.Set:
-                        optNumericSet.Checked = true;
-                        optNumericStaticVal.Checked = true;
-                        nudNumericValue.Value = mod.Value;
+            //Should properly seperate static value, player & global vars into a seperate enum.
+            //But technical debt :/
+            switch (integerMod.ModType)
+            {
+                case VariableMods.Set:
+                    optNumericSet.Checked = true;
+                    optNumericStaticVal.Checked = true;
+                    nudNumericValue.Value = integerMod.Value;
 
-                        break;
+                    break;
 
-                    case VariableMods.Add:
-                        optNumericAdd.Checked = true;
-                        optNumericStaticVal.Checked = true;
-                        nudNumericValue.Value = mod.Value;
+                case VariableMods.Add:
+                    optNumericAdd.Checked = true;
+                    optNumericStaticVal.Checked = true;
+                    nudNumericValue.Value = integerMod.Value;
 
-                        break;
+                    break;
 
-                    case VariableMods.Subtract:
-                        optNumericSubtract.Checked = true;
-                        optNumericStaticVal.Checked = true;
-                        nudNumericValue.Value = mod.Value;
+                case VariableMods.Subtract:
+                    optNumericSubtract.Checked = true;
+                    optNumericStaticVal.Checked = true;
+                    nudNumericValue.Value = integerMod.Value;
 
-                        break;
+                    break;
 
-                    case VariableMods.Multiply:
-                        optNumericMultiply.Checked = true;
-                        optNumericStaticVal.Checked = true;
-                        nudNumericValue.Value = mod.Value;
+                case VariableMods.Multiply:
+                    optNumericMultiply.Checked = true;
+                    optNumericStaticVal.Checked = true;
+                    nudNumericValue.Value = integerMod.Value;
 
-                        break;
+                    break;
 
-                    case VariableMods.Divide:
-                        optNumericDivide.Checked = true;
-                        optNumericStaticVal.Checked = true;
-                        nudNumericValue.Value = mod.Value;
+                case VariableMods.Divide:
+                    optNumericDivide.Checked = true;
+                    optNumericStaticVal.Checked = true;
+                    nudNumericValue.Value = integerMod.Value;
 
-                        break;
+                    break;
 
-                    case VariableMods.LeftShift:
-                        optNumericLeftShift.Checked = true;
-                        optNumericStaticVal.Checked = true;
-                        nudNumericValue.Value = mod.Value;
+                case VariableMods.LeftShift:
+                    optNumericLeftShift.Checked = true;
+                    optNumericStaticVal.Checked = true;
+                    nudNumericValue.Value = integerMod.Value;
 
-                        break;
+                    break;
 
-                    case VariableMods.RightShift:
-                        optNumericRightShift.Checked = true;
-                        optNumericStaticVal.Checked = true;
-                        nudNumericValue.Value = mod.Value;
+                case VariableMods.RightShift:
+                    optNumericRightShift.Checked = true;
+                    optNumericStaticVal.Checked = true;
+                    nudNumericValue.Value = integerMod.Value;
 
-                        break;
+                    break;
 
-                    case VariableMods.Random:
-                        optNumericRandom.Checked = true;
-                        nudLow.Value = mod.Value;
-                        nudHigh.Value = mod.HighValue;
+                case VariableMods.Random:
+                    optNumericRandom.Checked = true;
+                    nudLow.Value = integerMod.Value;
+                    nudHigh.Value = integerMod.HighValue;
 
-                        break;
+                    break;
 
-                    case VariableMods.SystemTime:
-                        optNumericSystemTime.Checked = true;
+                case VariableMods.SystemTime:
+                    optNumericSystemTime.Checked = true;
 
-                        break;
+                    break;
 
-                    case VariableMods.DupPlayerVar:
-                        optNumericSet.Checked = true;
-                        optNumericClonePlayerVar.Checked = true;
-                        cmbNumericClonePlayerVar.SelectedIndex = PlayerVariableBase.ListIndex(mod.DuplicateVariableId);
+                case VariableMods.DupPlayerVar:
+                    optNumericSet.Checked = true;
+                    optNumericClonePlayerVar.Checked = true;
+                    cmbNumericClonePlayerVar.SelectedIndex = PlayerVariableBase.ListIndex(integerMod.DuplicateVariableId);
 
-                        break;
+                    break;
 
-                    case VariableMods.DupGlobalVar:
-                        optNumericSet.Checked = true;
-                        optNumericCloneGlobalVar.Checked = true;
-                        cmbNumericCloneGlobalVar.SelectedIndex = ServerVariableBase.ListIndex(mod.DuplicateVariableId);
+                case VariableMods.DupGlobalVar:
+                    optNumericSet.Checked = true;
+                    optNumericCloneGlobalVar.Checked = true;
+                    cmbNumericCloneGlobalVar.SelectedIndex = ServerVariableBase.ListIndex(integerMod.DuplicateVariableId);
 
-                        break;
+                    break;
 
-                    case VariableMods.AddPlayerVar:
-                        optNumericAdd.Checked = true;
-                        optNumericClonePlayerVar.Checked = true;
-                        cmbNumericClonePlayerVar.SelectedIndex = PlayerVariableBase.ListIndex(mod.DuplicateVariableId);
+                case VariableMods.AddPlayerVar:
+                    optNumericAdd.Checked = true;
+                    optNumericClonePlayerVar.Checked = true;
+                    cmbNumericClonePlayerVar.SelectedIndex = PlayerVariableBase.ListIndex(integerMod.DuplicateVariableId);
 
-                        break;
+                    break;
 
-                    case VariableMods.AddGlobalVar:
-                        optNumericAdd.Checked = true;
-                        optNumericCloneGlobalVar.Checked = true;
-                        cmbNumericCloneGlobalVar.SelectedIndex = ServerVariableBase.ListIndex(mod.DuplicateVariableId);
+                case VariableMods.AddGlobalVar:
+                    optNumericAdd.Checked = true;
+                    optNumericCloneGlobalVar.Checked = true;
+                    cmbNumericCloneGlobalVar.SelectedIndex = ServerVariableBase.ListIndex(integerMod.DuplicateVariableId);
 
-                        break;
+                    break;
 
-                    case VariableMods.SubtractPlayerVar:
-                        optNumericSubtract.Checked = true;
-                        optNumericClonePlayerVar.Checked = true;
-                        cmbNumericClonePlayerVar.SelectedIndex = PlayerVariableBase.ListIndex(mod.DuplicateVariableId);
+                case VariableMods.SubtractPlayerVar:
+                    optNumericSubtract.Checked = true;
+                    optNumericClonePlayerVar.Checked = true;
+                    cmbNumericClonePlayerVar.SelectedIndex = PlayerVariableBase.ListIndex(integerMod.DuplicateVariableId);
 
-                        break;
+                    break;
 
-                    case VariableMods.SubtractGlobalVar:
-                        optNumericSubtract.Checked = true;
-                        optNumericCloneGlobalVar.Checked = true;
-                        cmbNumericCloneGlobalVar.SelectedIndex = ServerVariableBase.ListIndex(mod.DuplicateVariableId);
+                case VariableMods.SubtractGlobalVar:
+                    optNumericSubtract.Checked = true;
+                    optNumericCloneGlobalVar.Checked = true;
+                    cmbNumericCloneGlobalVar.SelectedIndex = ServerVariableBase.ListIndex(integerMod.DuplicateVariableId);
 
-                        break;
+                    break;
 
-                    case VariableMods.MultiplyPlayerVar:
-                        optNumericMultiply.Checked = true;
-                        optNumericClonePlayerVar.Checked = true;
-                        cmbNumericClonePlayerVar.SelectedIndex = PlayerVariableBase.ListIndex(mod.DuplicateVariableId);
+                case VariableMods.MultiplyPlayerVar:
+                    optNumericMultiply.Checked = true;
+                    optNumericClonePlayerVar.Checked = true;
+                    cmbNumericClonePlayerVar.SelectedIndex = PlayerVariableBase.ListIndex(integerMod.DuplicateVariableId);
 
-                        break;
+                    break;
 
-                    case VariableMods.MultiplyGlobalVar:
-                        optNumericMultiply.Checked = true;
-                        optNumericCloneGlobalVar.Checked = true;
-                        cmbNumericCloneGlobalVar.SelectedIndex = ServerVariableBase.ListIndex(mod.DuplicateVariableId);
+                case VariableMods.MultiplyGlobalVar:
+                    optNumericMultiply.Checked = true;
+                    optNumericCloneGlobalVar.Checked = true;
+                    cmbNumericCloneGlobalVar.SelectedIndex = ServerVariableBase.ListIndex(integerMod.DuplicateVariableId);
 
-                        break;
+                    break;
 
-                    case VariableMods.DividePlayerVar:
-                        optNumericDivide.Checked = true;
-                        optNumericClonePlayerVar.Checked = true;
-                        cmbNumericClonePlayerVar.SelectedIndex = PlayerVariableBase.ListIndex(mod.DuplicateVariableId);
+                case VariableMods.DividePlayerVar:
+                    optNumericDivide.Checked = true;
+                    optNumericClonePlayerVar.Checked = true;
+                    cmbNumericClonePlayerVar.SelectedIndex = PlayerVariableBase.ListIndex(integerMod.DuplicateVariableId);
 
-                        break;
+                    break;
 
-                    case VariableMods.DivideGlobalVar:
-                        optNumericDivide.Checked = true;
-                        optNumericCloneGlobalVar.Checked = true;
-                        cmbNumericCloneGlobalVar.SelectedIndex = ServerVariableBase.ListIndex(mod.DuplicateVariableId);
+                case VariableMods.DivideGlobalVar:
+                    optNumericDivide.Checked = true;
+                    optNumericCloneGlobalVar.Checked = true;
+                    cmbNumericCloneGlobalVar.SelectedIndex = ServerVariableBase.ListIndex(integerMod.DuplicateVariableId);
 
-                        break;
+                    break;
 
-                    case VariableMods.LeftShiftPlayerVar:
-                        optNumericLeftShift.Checked = true;
-                        optNumericClonePlayerVar.Checked = true;
-                        cmbNumericClonePlayerVar.SelectedIndex = PlayerVariableBase.ListIndex(mod.DuplicateVariableId);
+                case VariableMods.LeftShiftPlayerVar:
+                    optNumericLeftShift.Checked = true;
+                    optNumericClonePlayerVar.Checked = true;
+                    cmbNumericClonePlayerVar.SelectedIndex = PlayerVariableBase.ListIndex(integerMod.DuplicateVariableId);
 
-                        break;
+                    break;
 
-                    case VariableMods.LeftShiftGlobalVar:
-                        optNumericLeftShift.Checked = true;
-                        optNumericCloneGlobalVar.Checked = true;
-                        cmbNumericCloneGlobalVar.SelectedIndex = ServerVariableBase.ListIndex(mod.DuplicateVariableId);
+                case VariableMods.LeftShiftGlobalVar:
+                    optNumericLeftShift.Checked = true;
+                    optNumericCloneGlobalVar.Checked = true;
+                    cmbNumericCloneGlobalVar.SelectedIndex = ServerVariableBase.ListIndex(integerMod.DuplicateVariableId);
 
-                        break;
+                    break;
 
-                    case VariableMods.RightShiftPlayerVar:
-                        optNumericRightShift.Checked = true;
-                        optNumericClonePlayerVar.Checked = true;
-                        cmbNumericClonePlayerVar.SelectedIndex = PlayerVariableBase.ListIndex(mod.DuplicateVariableId);
+                case VariableMods.RightShiftPlayerVar:
+                    optNumericRightShift.Checked = true;
+                    optNumericClonePlayerVar.Checked = true;
+                    cmbNumericClonePlayerVar.SelectedIndex = PlayerVariableBase.ListIndex(integerMod.DuplicateVariableId);
 
-                        break;
+                    break;
 
-                    case VariableMods.RightShiftGlobalVar:
-                        optNumericRightShift.Checked = true;
-                        optNumericCloneGlobalVar.Checked = true;
-                        cmbNumericCloneGlobalVar.SelectedIndex = ServerVariableBase.ListIndex(mod.DuplicateVariableId);
+                case VariableMods.RightShiftGlobalVar:
+                    optNumericRightShift.Checked = true;
+                    optNumericCloneGlobalVar.Checked = true;
+                    cmbNumericCloneGlobalVar.SelectedIndex = ServerVariableBase.ListIndex(integerMod.DuplicateVariableId);
 
-                        break;
+                    break;
 
-                    case VariableMods.DupGuildVar:
-                        optNumericSet.Checked = true;
-                        optNumericCloneGuildVar.Checked = true;
-                        cmbNumericCloneGuildVar.SelectedIndex = GuildVariableBase.ListIndex(mod.DuplicateVariableId);
+                case VariableMods.DupGuildVar:
+                    optNumericSet.Checked = true;
+                    optNumericCloneGuildVar.Checked = true;
+                    cmbNumericCloneGuildVar.SelectedIndex = GuildVariableBase.ListIndex(integerMod.DuplicateVariableId);
 
-                        break;
+                    break;
 
-                    case VariableMods.AddGuildVar:
-                        optNumericAdd.Checked = true;
-                        optNumericCloneGuildVar.Checked = true;
-                        cmbNumericCloneGuildVar.SelectedIndex = GuildVariableBase.ListIndex(mod.DuplicateVariableId);
+                case VariableMods.AddGuildVar:
+                    optNumericAdd.Checked = true;
+                    optNumericCloneGuildVar.Checked = true;
+                    cmbNumericCloneGuildVar.SelectedIndex = GuildVariableBase.ListIndex(integerMod.DuplicateVariableId);
 
-                        break;
+                    break;
 
-                    case VariableMods.SubtractGuildVar:
-                        optNumericSubtract.Checked = true;
-                        optNumericCloneGuildVar.Checked = true;
-                        cmbNumericCloneGuildVar.SelectedIndex = GuildVariableBase.ListIndex(mod.DuplicateVariableId);
+                case VariableMods.SubtractGuildVar:
+                    optNumericSubtract.Checked = true;
+                    optNumericCloneGuildVar.Checked = true;
+                    cmbNumericCloneGuildVar.SelectedIndex = GuildVariableBase.ListIndex(integerMod.DuplicateVariableId);
 
-                        break;
+                    break;
 
-                    case VariableMods.MultiplyGuildVar:
-                        optNumericMultiply.Checked = true;
-                        optNumericCloneGuildVar.Checked = true;
-                        cmbNumericCloneGuildVar.SelectedIndex = GuildVariableBase.ListIndex(mod.DuplicateVariableId);
+                case VariableMods.MultiplyGuildVar:
+                    optNumericMultiply.Checked = true;
+                    optNumericCloneGuildVar.Checked = true;
+                    cmbNumericCloneGuildVar.SelectedIndex = GuildVariableBase.ListIndex(integerMod.DuplicateVariableId);
 
-                        break;
+                    break;
 
-                    case VariableMods.DivideGuildVar:
-                        optNumericDivide.Checked = true;
-                        optNumericCloneGuildVar.Checked = true;
-                        cmbNumericCloneGuildVar.SelectedIndex = GuildVariableBase.ListIndex(mod.DuplicateVariableId);
+                case VariableMods.DivideGuildVar:
+                    optNumericDivide.Checked = true;
+                    optNumericCloneGuildVar.Checked = true;
+                    cmbNumericCloneGuildVar.SelectedIndex = GuildVariableBase.ListIndex(integerMod.DuplicateVariableId);
 
-                        break;
+                    break;
 
-                    case VariableMods.LeftShiftGuildVar:
-                        optNumericLeftShift.Checked = true;
-                        optNumericCloneGuildVar.Checked = true;
-                        cmbNumericCloneGuildVar.SelectedIndex = GuildVariableBase.ListIndex(mod.DuplicateVariableId);
+                case VariableMods.LeftShiftGuildVar:
+                    optNumericLeftShift.Checked = true;
+                    optNumericCloneGuildVar.Checked = true;
+                    cmbNumericCloneGuildVar.SelectedIndex = GuildVariableBase.ListIndex(integerMod.DuplicateVariableId);
 
-                        break;
+                    break;
 
-                    case VariableMods.RightShiftGuildVar:
-                        optNumericRightShift.Checked = true;
-                        optNumericCloneGuildVar.Checked = true;
-                        cmbNumericCloneGuildVar.SelectedIndex = GuildVariableBase.ListIndex(mod.DuplicateVariableId);
+                case VariableMods.RightShiftGuildVar:
+                    optNumericRightShift.Checked = true;
+                    optNumericCloneGuildVar.Checked = true;
+                    cmbNumericCloneGuildVar.SelectedIndex = GuildVariableBase.ListIndex(integerMod.DuplicateVariableId);
 
-                        break;
-                }
+                    break;
             }
         }
 
@@ -849,28 +851,26 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 
         #region "String Variable"
 
-        private void TryLoadStringMod(VariableMod varMod)
+        private void TryLoadStringMod(VariableMod variableMod)
         {
-            if (varMod == null)
+            if (variableMod == null)
             {
-                varMod = new StringVariableMod();
+                variableMod = new StringVariableMod();
             }
 
-            if (varMod.GetType() == typeof(StringVariableMod))
+            if (variableMod is StringVariableMod stringMod)
             {
-                var mod = (StringVariableMod) varMod;
-
-                switch (mod.ModType)
+                switch (stringMod.ModType)
                 {
                     case VariableMods.Set:
                         optStaticString.Checked = true;
-                        txtStringValue.Text = mod.Value;
+                        txtStringValue.Text = stringMod.Value;
 
                         break;
                     case VariableMods.Replace:
                         optReplaceString.Checked = true;
-                        txtStringFind.Text = mod.Value;
-                        txtStringReplace.Text = mod.Replace;
+                        txtStringFind.Text = stringMod.Value;
+                        txtStringReplace.Text = stringMod.Replace;
 
                         break;
                 }

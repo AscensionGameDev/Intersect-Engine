@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
@@ -1356,7 +1356,7 @@ namespace Intersect.Editor.Forms.Editors.Events
 
             if (cmdWindow != null)
             {
-                if (cmdWindow.GetType() == typeof(EventMoveRouteDesigner))
+                if (cmdWindow is EventMoveRouteDesigner)
                 {
                     Controls.Add(cmdWindow);
                     cmdWindow.Width = ClientSize.Width;

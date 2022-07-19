@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 
 using Intersect.Client.Framework.File_Management;
@@ -37,7 +37,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         ///     Initializes a new instance of the <see cref="Menu" /> class.
         /// </summary>
         /// <param name="parent">Parent control.</param>
-        public Menu(Base parent, string name = "") : base(parent, name)
+        public Menu(Base parent, string name = default) : base(parent, name)
         {
             SetBounds(0, 0, 10, 10);
             Padding = Padding.Two;
@@ -321,7 +321,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         public override JObject GetJson()
         {
             var obj = base.GetJson();
-            if (this.GetType() != typeof(CheckBox))
+            if (!(this is CheckBox))
             {
                 obj.Add("BackgroundTemplate", mBackgroundTemplateFilename);
                 obj.Add("ItemTextColor", Color.ToString(mItemNormalTextColor));
@@ -366,7 +366,7 @@ namespace Intersect.Client.Framework.Gwen.Control
 
         private void UpdateItemStyles()
         {
-            var menuItems = Children.Where(x => x.GetType() == typeof(MenuItem)).ToArray();
+            var menuItems = Children.Where(x => x is MenuItem).ToArray();
             foreach (var item in menuItems)
             {
                 var itm = (MenuItem) item;

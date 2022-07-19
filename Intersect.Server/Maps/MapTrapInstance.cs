@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 using Intersect.GameObjects;
 using Intersect.Server.Entities;
@@ -50,10 +50,10 @@ namespace Intersect.Server.Classes.Maps
             {
                 if (entity.MapId == MapId && entity.X == X && entity.Y == Y && entity.Z == Z)
                 {
-                    if (entity.GetType() == typeof(Player) && Owner.GetType() == typeof(Player))
+                    if (entity is Player entityPlayer && Owner is Player ownerPlayer)
                     {
                         //Don't detonate on yourself and party members on non-friendly spells!
-                        if (Owner == entity || ((Player) Owner).InParty((Player) entity))
+                        if (Owner == entity || ownerPlayer.InParty(entityPlayer))
                         {
                             if (!ParentSpell.Combat.Friendly)
                             {

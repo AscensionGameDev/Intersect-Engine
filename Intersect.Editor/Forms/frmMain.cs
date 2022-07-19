@@ -392,7 +392,7 @@ namespace Intersect.Editor.Forms
                         var ctl = FromHandle(hWnd);
                         if (ctl != null)
                         {
-                            if (ctl.GetType() == typeof(ComboBox) || ctl.GetType() == typeof(DarkComboBox))
+                            if (ctl is ComboBox || ctl is DarkComboBox)
                             {
                                 return;
                             }
@@ -523,16 +523,16 @@ namespace Intersect.Editor.Forms
         {
             foreach (Control t in e.Controls)
             {
-                if (t.GetType() == typeof(MenuStrip))
+                if (t is MenuStrip menuStrip)
                 {
-                    foreach (ToolStripMenuItem t1 in ((MenuStrip) t).Items)
+                    foreach (ToolStripMenuItem t1 in menuStrip.Items)
                     {
                         t1.MouseDown += MouseDownHandler;
                     }
 
                     t.MouseDown += MouseDownHandler;
                 }
-                else if (t.GetType() == typeof(PropertyGrid))
+                else if (t is PropertyGrid)
                 {
                 }
                 else
@@ -969,9 +969,9 @@ namespace Intersect.Editor.Forms
 
             if (Globals.Dragging)
             {
-                if (Globals.MainForm.ActiveControl.GetType() == typeof(DockPane))
+                if (Globals.MainForm.ActiveControl is DockPane dockPane)
                 {
-                    var ctrl = ((DockPane) Globals.MainForm.ActiveControl).ActiveControl;
+                    var ctrl = dockPane.ActiveControl;
                     if (ctrl != Globals.MapEditorWindow)
                     {
                         Globals.MapEditorWindow.PlaceSelection();

@@ -3256,7 +3256,7 @@ namespace Intersect.Server.Networking
                     }
                     else if (packet.ParentType == 0)
                     {
-                        parent = MapList.List.FindDir(packet.ParentId);
+                        parent = MapList.List.FindFolder(packet.ParentId);
                         if (parent == null)
                         {
                             MapList.List.AddFolder(Strings.Mapping.newfolder);
@@ -3285,7 +3285,7 @@ namespace Intersect.Server.Networking
                 case MapListUpdates.Rename:
                     if (packet.TargetType == 0)
                     {
-                        parent = MapList.List.FindDir(packet.TargetId);
+                        parent = MapList.List.FindFolder(packet.TargetId);
                         parent.Name = packet.Name;
                         PacketSender.SendMapListToAll();
                     }

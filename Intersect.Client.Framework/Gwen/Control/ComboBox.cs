@@ -1,4 +1,5 @@
-﻿using System;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 
 using Intersect.Client.Framework.GenericClasses;
@@ -39,19 +40,22 @@ namespace Intersect.Client.Framework.Gwen.Control
         ///     Initializes a new instance of the <see cref="ComboBox" /> class.
         /// </summary>
         /// <param name="parent">Parent control.</param>
-        public ComboBox(Base parent, string name = "") : base(parent, name)
+        /// <param name="name"></param>
+        public ComboBox(Base parent, string name = default) : base(parent, name)
         {
             SetSize(100, 20);
-            mMenu = new Menu(this);
-            mMenu.IsHidden = true;
-            mMenu.IconMarginDisabled = true;
-            mMenu.IsTabable = false;
+            mMenu = new Menu(this)
+            {
+                IsHidden = true,
+                IconMarginDisabled = true,
+                IsTabable = false
+            };
 
             var arrow = new DownArrow(this);
             mButton = arrow;
 
             Alignment = Pos.Left | Pos.CenterV;
-            Text = String.Empty;
+            Text = string.Empty;
             Margin = new Margin(3, 0, 0, 0);
 
             IsTabable = true;
@@ -165,15 +169,15 @@ namespace Intersect.Client.Framework.Gwen.Control
                 mSelectItemSound = (string) obj["SelectItemSound"];
             }
 
-            foreach (var mnu in Children)
+            foreach (var child in Children)
             {
-                if (mnu.GetType() == typeof(Menu))
+                if (child is Menu menu)
                 {
-                    foreach (var itm in mnu.Children)
+                    foreach (var menuChild in menu.Children)
                     {
-                        if (itm.GetType() == typeof(MenuItem))
+                        if (menuChild is MenuItem menuItem)
                         {
-                            ((MenuItem) itm).SetHoverSound(mHoverItemSound);
+                            menuItem.SetHoverSound(mHoverItemSound);
                         }
                     }
                 }

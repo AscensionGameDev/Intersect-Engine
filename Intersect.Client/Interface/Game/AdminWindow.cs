@@ -336,39 +336,21 @@ namespace Intersect.Client.Interface.Game
             }
             else
             {
-                for (var i = 0; i < mapList.Items.Count; i++)
+                foreach (var item in mapList.Items)
                 {
-                    if (mapList.Items[i].GetType() == typeof(MapListFolder))
+                    switch (item)
                     {
-                        if (parent == null)
-                        {
-                            tmpNode = mMapList.AddNode(mapList.Items[i].Name);
-                            tmpNode.UserData = (MapListFolder) mapList.Items[i];
-                            AddMapListToTree(((MapListFolder) mapList.Items[i]).Children, tmpNode);
-                        }
-                        else
-                        {
-                            tmpNode = parent.AddNode(mapList.Items[i].Name);
-                            tmpNode.UserData = (MapListFolder) mapList.Items[i];
-                            AddMapListToTree(((MapListFolder) mapList.Items[i]).Children, tmpNode);
-                        }
-                    }
-                    else
-                    {
-                        if (parent == null)
-                        {
-                            tmpNode = mMapList.AddNode(mapList.Items[i].Name);
-                            tmpNode.UserData = ((MapListMap) mapList.Items[i]).MapId;
+                        case MapListFolder folder:
+                            tmpNode = parent?.AddNode(item.Name) ?? mMapList.AddNode(item.Name);
+                            tmpNode.UserData = folder;
+                            AddMapListToTree(folder.Children, tmpNode);
+                            break;
+                        case MapListMap map:
+                            tmpNode = parent?.AddNode(item.Name) ?? mMapList.AddNode(item.Name);
+                            tmpNode.UserData = map.MapId;
                             tmpNode.DoubleClicked += tmpNode_DoubleClicked;
                             tmpNode.Clicked += tmpNode_DoubleClicked;
-                        }
-                        else
-                        {
-                            tmpNode = parent.AddNode(mapList.Items[i].Name);
-                            tmpNode.UserData = ((MapListMap) mapList.Items[i]).MapId;
-                            tmpNode.DoubleClicked += tmpNode_DoubleClicked;
-                            tmpNode.Clicked += tmpNode_DoubleClicked;
-                        }
+                            break;
                     }
                 }
             }
