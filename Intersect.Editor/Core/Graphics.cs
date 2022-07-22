@@ -926,23 +926,22 @@ namespace Intersect.Editor.Core
                                     Options.TileHeight
                                 );
 
-                                    if (attributesTex != null)
-                                    {
-                                        MapAttribute attr = tmpMap.Attributes[x, y];
-
-                                var blue = (attr is MapWarpAttribute warp && warp.ChangeInstance) ? 0 : 255;
-                                DrawTexture(
-                                   attributesTex,
-                                   new RectangleF(
-                                       0,
-                                       ((int)tmpMap.Attributes[x, y].Type - 1) * attributesTex.Width,
-                                       attributesTex.Width,
-                                       attributesTex.Width
-                                   ),
-                                   tileBounds,
-                                   System.Drawing.Color.FromArgb(255, 255, 255, blue),
-                                   null
-                                );
+                                if (attributesTex != null)
+                                {
+                                    var blue = (attr is MapWarpAttribute warp && warp.ChangeInstance) ? 0 : 255;
+                                    DrawTexture(
+                                       attributesTex,
+                                       new RectangleF(
+                                           0,
+                                           ((int)tmpMap.Attributes[x, y].Type - 1) * attributesTex.Width,
+                                           attributesTex.Width,
+                                           attributesTex.Width
+                                       ),
+                                       tileBounds,
+                                       System.Drawing.Color.FromArgb(255, 255, 255, blue),
+                                       null
+                                    );
+                                }
                             }
                         }
                     }
