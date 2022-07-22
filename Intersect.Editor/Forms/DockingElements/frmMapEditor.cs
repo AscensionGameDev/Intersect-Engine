@@ -578,6 +578,33 @@ namespace Intersect.Editor.Forms.DockingElements
                 Globals.CurTileY = Options.MapHeight - 1;
             }
 
+            if (Globals.CurrentLayer == LayerOptions.Attributes)
+            {
+                var hoveredAttribute = Globals.CurrentMap?.Attributes[Globals.CurTileX, Globals.CurTileY];
+                tooltipMapAttribute.MapAttribute = hoveredAttribute;
+
+                if (tooltipMapAttribute.Visible)
+                {
+                    tooltipMapAttribute.PerformLayout();
+
+                    var currentView = Core.Graphics.CurrentView;
+                    var left = currentView.Left + Options.TileWidth * (Globals.CurTileX + 1);
+                    var top = currentView.Top + Options.TileHeight * Globals.CurTileY;
+
+                    if (currentView.Width < left + tooltipMapAttribute.Width)
+                    {
+                        left -= tooltipMapAttribute.Width + Options.TileWidth;
+                    }
+
+                    if (currentView.Height < top + tooltipMapAttribute.Height)
+                    {
+                        top -= tooltipMapAttribute.Height - Options.TileHeight;
+                    }
+
+                    tooltipMapAttribute.Location = new System.Drawing.Point(left, top);
+                }
+            }
+
             if (e.Button == MouseButtons.Middle)
             {
                 return;

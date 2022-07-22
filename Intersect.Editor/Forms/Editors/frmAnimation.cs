@@ -111,19 +111,19 @@ namespace Intersect.Editor.Forms.Editors
         {
             //Animation Sound
             cmbSound.Items.Clear();
-            cmbSound.Items.Add(Strings.General.none);
+            cmbSound.Items.Add(Strings.General.None);
             cmbSound.Items.AddRange(GameContentManager.SmartSortedSoundNames);
 
             //Lower Animation Graphic
             cmbLowerGraphic.Items.Clear();
-            cmbLowerGraphic.Items.Add(Strings.General.none);
+            cmbLowerGraphic.Items.Add(Strings.General.None);
             cmbLowerGraphic.Items.AddRange(
                 GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Animation)
             );
 
             //Upper Animation Graphic
             cmbUpperGraphic.Items.Clear();
-            cmbUpperGraphic.Items.Add(Strings.General.none);
+            cmbUpperGraphic.Items.Add(Strings.General.None);
             cmbUpperGraphic.Items.AddRange(
                 GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Animation)
             );

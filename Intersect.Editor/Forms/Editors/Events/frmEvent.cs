@@ -950,13 +950,13 @@ namespace Intersect.Editor.Forms.Editors.Events
             }
 
             cmbPreviewFace.Items.Clear();
-            cmbPreviewFace.Items.Add(Strings.General.none);
+            cmbPreviewFace.Items.Add(Strings.General.None);
             cmbPreviewFace.Items.AddRange(
                 GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Face)
             );
 
             cmbAnimation.Items.Clear();
-            cmbAnimation.Items.Add(Strings.General.none);
+            cmbAnimation.Items.Add(Strings.General.None);
             cmbAnimation.Items.AddRange(AnimationBase.Names);
             if (MyEvent.CommonEvent || questEvent)
             {
@@ -976,7 +976,7 @@ namespace Intersect.Editor.Forms.Editors.Events
                 }
 
                 cmbTriggerVal.Items.Clear();
-                cmbTriggerVal.Items.Add(Strings.General.none);
+                cmbTriggerVal.Items.Add(Strings.General.None);
                 cmbTriggerVal.Items.AddRange(ProjectileBase.Names);
             }
 
@@ -1801,21 +1801,21 @@ namespace Intersect.Editor.Forms.Editors.Events
                 else if (cmbTrigger.SelectedIndex == (int)CommonEventTrigger.PlayerVariableChange)
                 {
                     cmbVariable.Show();
-                    cmbVariable.Items.Add(Strings.General.none);
+                    cmbVariable.Items.Add(Strings.General.None);
                     cmbVariable.Items.AddRange(PlayerVariableBase.Names);
                     cmbVariable.SelectedIndex = PlayerVariableBase.ListIndex(CurrentPage.TriggerId) + 1;
                 }
                 else if (cmbTrigger.SelectedIndex == (int)CommonEventTrigger.ServerVariableChange)
                 {
                     cmbVariable.Show();
-                    cmbVariable.Items.Add(Strings.General.none);
+                    cmbVariable.Items.Add(Strings.General.None);
                     cmbVariable.Items.AddRange(ServerVariableBase.Names);
                     cmbVariable.SelectedIndex = ServerVariableBase.ListIndex(CurrentPage.TriggerId) + 1;
                 }
                 else if (cmbTrigger.SelectedIndex == (int)CommonEventTrigger.GuildVariableChange)
                 {
                     cmbVariable.Show();
-                    cmbVariable.Items.Add(Strings.General.none);
+                    cmbVariable.Items.Add(Strings.General.None);
                     cmbVariable.Items.AddRange(GuildVariableBase.Names);
                     cmbVariable.SelectedIndex = GuildVariableBase.ListIndex(CurrentPage.TriggerId) + 1;
                 }

@@ -25,7 +25,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             mEventEditor = editor;
             InitLocalization();
             cmbSprite.Items.Clear();
-            cmbSprite.Items.Add(Strings.General.none);
+            cmbSprite.Items.Add(Strings.General.None);
             cmbSprite.Items.AddRange(
                 GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Entity));
             cmbSprite.SelectedIndex = Math.Max(0, cmbSprite.Items.IndexOf(TextUtils.NullToNone(mMyCommand.Sprite)));

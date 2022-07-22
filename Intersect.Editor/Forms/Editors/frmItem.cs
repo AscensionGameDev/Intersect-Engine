@@ -41,7 +41,7 @@ namespace Intersect.Editor.Forms.Editors
             cmbEquipmentSlot.Items.Clear();
             cmbEquipmentSlot.Items.AddRange(Options.EquipmentSlots.ToArray());
             cmbToolType.Items.Clear();
-            cmbToolType.Items.Add(Strings.General.none);
+            cmbToolType.Items.Add(Strings.General.None);
             cmbToolType.Items.AddRange(Options.ToolTypes.ToArray());
             cmbEquipmentBonus.Items.Clear();
             for (var i = 0; i < Strings.ItemEditor.bonuseffects.Count; i++)
@@ -50,7 +50,7 @@ namespace Intersect.Editor.Forms.Editors
             }
 
             cmbProjectile.Items.Clear();
-            cmbProjectile.Items.Add(Strings.General.none);
+            cmbProjectile.Items.Add(Strings.General.None);
             cmbProjectile.Items.AddRange(ProjectileBase.Names);
 
             lstGameObjects.Init(UpdateToolStripItems, AssignEditorItem, toolStripItemNew_Click, toolStripItemCopy_Click, toolStripItemUndo_Click, toolStripItemPaste_Click, toolStripItemDelete_Click);
@@ -111,13 +111,13 @@ namespace Intersect.Editor.Forms.Editors
         private void frmItem_Load(object sender, EventArgs e)
         {
             cmbPic.Items.Clear();
-            cmbPic.Items.Add(Strings.General.none);
+            cmbPic.Items.Add(Strings.General.None);
 
             var itemnames = GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Item);
             cmbPic.Items.AddRange(itemnames);
 
             cmbAttackAnimation.Items.Clear();
-            cmbAttackAnimation.Items.Add(Strings.General.none);
+            cmbAttackAnimation.Items.Add(Strings.General.None);
             cmbAttackAnimation.Items.AddRange(AnimationBase.Names);
             cmbScalingStat.Items.Clear();
             for (var x = 0; x < (int)Stats.StatCount; x++)
@@ -126,21 +126,21 @@ namespace Intersect.Editor.Forms.Editors
             }
 
             cmbAnimation.Items.Clear();
-            cmbAnimation.Items.Add(Strings.General.none);
+            cmbAnimation.Items.Add(Strings.General.None);
             cmbAnimation.Items.AddRange(AnimationBase.Names);
             cmbEquipmentAnimation.Items.Clear();
-            cmbEquipmentAnimation.Items.Add(Strings.General.none);
+            cmbEquipmentAnimation.Items.Add(Strings.General.None);
             cmbEquipmentAnimation.Items.AddRange(AnimationBase.Names);
             cmbTeachSpell.Items.Clear();
-            cmbTeachSpell.Items.Add(Strings.General.none);
+            cmbTeachSpell.Items.Add(Strings.General.None);
             cmbTeachSpell.Items.AddRange(SpellBase.Names);
             cmbEvent.Items.Clear();
-            cmbEvent.Items.Add(Strings.General.none);
+            cmbEvent.Items.Add(Strings.General.None);
             cmbEvent.Items.AddRange(EventBase.Names);
             cmbMalePaperdoll.Items.Clear();
-            cmbMalePaperdoll.Items.Add(Strings.General.none);
+            cmbMalePaperdoll.Items.Add(Strings.General.None);
             cmbFemalePaperdoll.Items.Clear();
-            cmbFemalePaperdoll.Items.Add(Strings.General.none);
+            cmbFemalePaperdoll.Items.Add(Strings.General.None);
             var paperdollnames =
                 GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Paperdoll);
 

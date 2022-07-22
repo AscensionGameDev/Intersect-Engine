@@ -113,11 +113,11 @@ namespace Intersect.Editor.Forms.Editors
             }
 
             cmbBuySound.Items.Clear();
-            cmbBuySound.Items.Add(Strings.General.none);
+            cmbBuySound.Items.Add(Strings.General.None);
             cmbBuySound.Items.AddRange(GameContentManager.SmartSortedSoundNames);
 
             cmbSellSound.Items.Clear();
-            cmbSellSound.Items.Add(Strings.General.none);
+            cmbSellSound.Items.Add(Strings.General.None);
             cmbSellSound.Items.AddRange(GameContentManager.SmartSortedSoundNames);
 
             InitLocalization();

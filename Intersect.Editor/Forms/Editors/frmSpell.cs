@@ -98,25 +98,25 @@ namespace Intersect.Editor.Forms.Editors
             cmbProjectile.Items.Clear();
             cmbProjectile.Items.AddRange(ProjectileBase.Names);
             cmbCastAnimation.Items.Clear();
-            cmbCastAnimation.Items.Add(Strings.General.none);
+            cmbCastAnimation.Items.Add(Strings.General.None);
             cmbCastAnimation.Items.AddRange(AnimationBase.Names);
             cmbHitAnimation.Items.Clear();
-            cmbHitAnimation.Items.Add(Strings.General.none);
+            cmbHitAnimation.Items.Add(Strings.General.None);
             cmbHitAnimation.Items.AddRange(AnimationBase.Names);
             cmbEvent.Items.Clear();
-            cmbEvent.Items.Add(Strings.General.none);
+            cmbEvent.Items.Add(Strings.General.None);
             cmbEvent.Items.AddRange(EventBase.Names);
             cmbTickAnimation.Items.Clear();
-            cmbTickAnimation.Items.Add(Strings.General.none);
+            cmbTickAnimation.Items.Add(Strings.General.None);
             cmbTickAnimation.Items.AddRange(AnimationBase.Names);
 
             cmbSprite.Items.Clear();
-            cmbSprite.Items.Add(Strings.General.none);
+            cmbSprite.Items.Add(Strings.General.None);
             var spellNames = GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Spell);
             cmbSprite.Items.AddRange(spellNames);
 
             cmbTransform.Items.Clear();
-            cmbTransform.Items.Add(Strings.General.none);
+            cmbTransform.Items.Add(Strings.General.None);
             var spriteNames = GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Entity);
             cmbTransform.Items.AddRange(spriteNames);
 

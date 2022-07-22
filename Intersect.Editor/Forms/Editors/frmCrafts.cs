@@ -39,13 +39,13 @@ namespace Intersect.Editor.Forms.Editors
             lstGameObjects.LostFocus += itemList_FocusChanged;
             lstGameObjects.GotFocus += itemList_FocusChanged;
             cmbResult.Items.Clear();
-            cmbResult.Items.Add(Strings.General.none);
+            cmbResult.Items.Add(Strings.General.None);
             cmbResult.Items.AddRange(ItemBase.Names);
             cmbIngredient.Items.Clear();
-            cmbIngredient.Items.Add(Strings.General.none);
+            cmbIngredient.Items.Add(Strings.General.None);
             cmbIngredient.Items.AddRange(ItemBase.Names);
             cmbEvent.Items.Clear();
-            cmbEvent.Items.Add(Strings.General.none);
+            cmbEvent.Items.Add(Strings.General.None);
             cmbEvent.Items.AddRange(EventBase.Names);
 
             lstGameObjects.Init(UpdateToolStripItems, AssignEditorItem, toolStripItemNew_Click, toolStripItemCopy_Click, toolStripItemUndo_Click, toolStripItemPaste_Click, toolStripItemDelete_Click);
@@ -190,7 +190,7 @@ namespace Intersect.Editor.Forms.Editors
         private void btnAdd_Click(object sender, EventArgs e)
         {
             mEditorItem.Ingredients.Add(new CraftIngredient(Guid.Empty, 1));
-            lstIngredients.Items.Add(Strings.General.none);
+            lstIngredients.Items.Add(Strings.General.None);
             lstIngredients.SelectedIndex = lstIngredients.Items.Count - 1;
             cmbIngredient_SelectedIndexChanged(null, null);
         }

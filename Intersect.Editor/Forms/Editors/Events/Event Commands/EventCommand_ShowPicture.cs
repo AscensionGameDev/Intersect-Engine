@@ -31,7 +31,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             }
             else
             {
-                cmbPicture.Items.Add(Strings.General.none);
+                cmbPicture.Items.Add(Strings.General.None);
             }
 
             cmbSize.Items.Clear();

@@ -176,6 +176,12 @@
     <Compile Update="Forms\Controls\AutoDragPanel.Designer.cs">
       <DependentUpon>AutoDragPanel.cs</DependentUpon>
     </Compile>
+    <Compile Update="Forms\Controls\MapAttributeTooltip.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Update="Forms\Controls\MapAttributeTooltip.Designer.cs">
+      <DependentUpon>MapAttributeTooltip.cs</DependentUpon>
+    </Compile>
     <Compile Update="Forms\Controls\LightEditorCtrl.cs">
       <SubType>UserControl</SubType>
     </Compile>

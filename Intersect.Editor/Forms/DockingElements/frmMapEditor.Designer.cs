@@ -1,4 +1,6 @@
-﻿namespace Intersect.Editor.Forms.DockingElements
+using Intersect.Editor.Forms.Controls;
+
+namespace Intersect.Editor.Forms.DockingElements
 {
     partial class FrmMapEditor
     {
@@ -30,6 +32,7 @@
         {
             this.pnlMapContainer = new System.Windows.Forms.Panel();
             this.picMap = new System.Windows.Forms.PictureBox();
+            this.tooltipMapAttribute = new MapAttributeTooltip();
             this.pnlMapContainer.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picMap)).BeginInit();
             this.SuspendLayout();
@@ -66,6 +69,11 @@
             this.picMap.MouseMove += new System.Windows.Forms.MouseEventHandler(this.picMap_MouseMove);
             this.picMap.MouseUp += new System.Windows.Forms.MouseEventHandler(this.picMap_MouseUp);
             this.picMap.Resize += new System.EventHandler(this.picMap_Resize);
+            //
+            // tooltipMapAttribute
+            //
+            this.tooltipMapAttribute.Name = "tooltipMapAttribute";
+            this.tooltipMapAttribute.Visible = false;
             // 
             // FrmMapEditor
             // 
@@ -86,6 +94,7 @@
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.frmMapEditor_KeyDown);
             this.pnlMapContainer.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.picMap)).EndInit();
+            this.picMap.Controls.Add(this.tooltipMapAttribute);
             this.ResumeLayout(false);
 
         }
@@ -94,5 +103,6 @@
 
         public System.Windows.Forms.PictureBox picMap;
         public System.Windows.Forms.Panel pnlMapContainer;
+        public MapAttributeTooltip tooltipMapAttribute;
     }
 }

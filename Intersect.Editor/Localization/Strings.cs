@@ -13,9 +13,58 @@ using Newtonsoft.Json.Linq;
 
 namespace Intersect.Editor.Localization
 {
+    public enum BooleanStyle
+    {
+        TrueFalse,
+        YesNo,
+    }
 
     public static partial class Strings
     {
+        public static string FormatBoolean(bool value, BooleanStyle booleanStyle)
+        {
+            switch (booleanStyle)
+            {
+                case BooleanStyle.TrueFalse: return value ? General.True : General.False;
+                case BooleanStyle.YesNo: return value ? General.Yes : General.No;
+                default: throw new ArgumentOutOfRangeException(nameof(booleanStyle));
+            }
+        }
+
+        public static string FormatTimeMilliseconds(long milliseconds, int? splitMagnitude = default)
+        {
+            if (milliseconds < 1000 * Math.Pow(10, splitMagnitude ?? 1))
+            {
+                return Time.SuffixMilliseconds.ToString(milliseconds);
+            }
+
+            var seconds = milliseconds / 1000.0;
+            if (seconds < 60 * Math.Pow(10, splitMagnitude ?? 0))
+            {
+                return Time.SuffixSeconds.ToString(seconds);
+            }
+
+            var minutes = seconds / 60;
+            if (minutes < 60 * Math.Pow(10, splitMagnitude ?? 0))
+            {
+                return Time.SuffixMinutes.ToString(minutes);
+            }
+
+            var hours = minutes / 60;
+            if (hours < 24 * (splitMagnitude ?? 1))
+            {
+                return Time.SuffixHours.ToString(hours);
+            }
+
+            var days = hours / 24;
+            if (days < 7 * (splitMagnitude ?? 1))
+            {
+                return Time.SuffixDays.ToString(days);
+            }
+
+            var weeks = days / 7;
+            return Time.SuffixWeeks.ToString(weeks);
+        }
 
         public static string GetEventConditionalDesc(VariableIsCondition condition)
         {
@@ -679,87 +728,109 @@ namespace Intersect.Editor.Localization
 
         public partial struct Attributes
         {
+            public static string FormatZLevel(int level)
+            {
+                switch (level)
+                {
+                    case 1: return ZLevel1;
+                    case 2: return ZLevel2;
+                    default: return ZNone;
+                }
+            }
 
-            public static LocalizedString animation = @"Animation:";
+            public static LocalizedString Animation = @"Animation";
 
-            public static LocalizedString blocked = @"Blocked";
+            public static LocalizedString AttributeType = @"Attribute Type";
 
-            public static LocalizedString critter = @"Critter";
+            public static LocalizedString Blocked = @"Blocked";
 
-            public static Dictionary<int, LocalizedString> crittermovements = new Dictionary<int, LocalizedString>
+            public static LocalizedString Critter = @"Critter";
+
+            public static Dictionary<int, LocalizedString> CritterMovements = new Dictionary<int, LocalizedString>
             {
                 {0, @"Move Randomly"},
                 {1, @"Turn Randomly"},
                 {2, @"Stand Still"},
             };
 
-            public static Dictionary<int, LocalizedString> critterlayers = new Dictionary<int, LocalizedString>
+            public static Dictionary<int, LocalizedString> CritterLayers = new Dictionary<int, LocalizedString>
             {
                 {0, @"Below Player"},
                 {1, @"Same as Player"},
                 {2, @"Above Player"},
             };
 
-            public static LocalizedString crittersprite = @"Sprite:";
+            public static LocalizedString CritterSprite = @"Sprite";
 
-            public static LocalizedString critteranimation = @"Animation:";
+            public static LocalizedString CritterAnimation = @"Animation";
 
-            public static LocalizedString crittermovement = @"Movement:";
+            public static LocalizedString CritterMovement = @"Movement";
 
-            public static LocalizedString critterlayer = @"Layer:";
+            public static LocalizedString CritterLayer = @"Layer";
 
-            public static LocalizedString critterspeed = @"Speed (ms):";
+            public static LocalizedString CritterSpeed = @"Speed (ms)";
 
-            public static LocalizedString critterfrequency = @"Freq (ms):";
+            public static LocalizedString CritterFrequency = @"Frequency (ms)";
 
-            public static LocalizedString critterignorenpcavoids = @"Ignore Npc Avoids";
+            public static LocalizedString CritterIgnoreNpcAvoids = @"Ignore Npc Avoids";
 
-            public static LocalizedString critterblockplayers = @"Block Players";
+            public static LocalizedString CritterBlockPlayers = @"Block Players";
 
-            public static LocalizedString critterdirection = @"Direction:";
+            public static LocalizedString CritterDirection = @"Direction";
 
-            public static LocalizedString dir = @"Dir:";
+            public static LocalizedString Direction = @"Direction";
 
-            public static LocalizedString distance = @"Distance (In Tiles):";
+            public static LocalizedString Distance = @"Distance (In Tiles)";
 
-            public static LocalizedString grapple = @"Grapple Stone";
+            public static LocalizedString Grapple = @"Grapple Stone";
 
-            public static LocalizedString item = @"Item:";
+            public static LocalizedString Item = @"Item";
 
-            public static LocalizedString itemspawn = @"Item Spawn";
+            public static LocalizedString ItemSpawn = @"Item Spawn";
 
-            public static LocalizedString mapanimation = @"Animation";
+            public static LocalizedString Map = @"Map";
 
-            public static LocalizedString mapanimationblock = @"Block Tile";
+            public static LocalizedString MapAnimation = @"Animation";
 
-            public static LocalizedString mapsound = @"Map Sound";
+            public static LocalizedString MapAnimationBlock = @"Block Tile";
 
-            public static LocalizedString npcavoid = @"NPC Avoid";
+            public static LocalizedString MapSound = @"Map Sound";
 
-            public static LocalizedString quantity = @"Quantity:";
+            public static LocalizedString NpcAvoid = @"NPC Avoid";
 
-            public static LocalizedString resource = @"Resource:";
+            public static LocalizedString Quantity = @"Quantity";
 
-            public static LocalizedString resourcespawn = @"Resource";
+            public static LocalizedString Resource = @"Resource";
 
-            public static LocalizedString slide = @"Slide";
+            public static LocalizedString ResourceSpawn = @"Resource";
 
-            public static LocalizedString sound = @"Sound:";
+            public static LocalizedString Slide = @"Slide";
 
-            public static LocalizedString warp = @"Warp";
+            public static LocalizedString Sound = @"Sound";
 
-            public static LocalizedString zblock = @"Block";
+            public static LocalizedString SoundInterval = @"Loop Interval (ms)";
 
-            public static LocalizedString zdimension = @"Z-Dimension";
+            public static LocalizedString Warp = @"Warp";
 
-            public static LocalizedString zgateway = @"Gateway";
+            public static LocalizedString WarpX = @"X";
 
-            public static LocalizedString zlevel1 = @"Level 1";
+            public static LocalizedString WarpY = @"Y";
 
-            public static LocalizedString zlevel2 = @"Level 2";
+            public static LocalizedString WarpDirection = @"Direction";
 
-            public static LocalizedString znone = @"None";
+            public static LocalizedString WarpSound = @"Sound";
 
+            public static LocalizedString ZBlock = @"Block";
+
+            public static LocalizedString ZDimension = @"Z-Dimension";
+
+            public static LocalizedString ZGateway = @"Gateway";
+
+            public static LocalizedString ZLevel1 = @"Level 1";
+
+            public static LocalizedString ZLevel2 = @"Level 2";
+
+            public static LocalizedString ZNone = @"None";
         }
 
         public partial struct ClassEditor
@@ -3149,11 +3220,44 @@ Tick timer saved in server config.json.";
         public partial struct General
         {
 
-            public static LocalizedString none = @"None";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString False = @"False";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString Missing = @"Missing Translation";
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString No = @"No";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString None = @"None";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString True = @"True";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Yes = @"Yes";
+        }
+
+        public partial struct Time
+        {
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString SuffixDays = @"{00}d";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString SuffixHours = @"{00}h";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString SuffixMilliseconds = @"{00}ms";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString SuffixMinutes = @"{00}m";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString SuffixSeconds = @"{00}s";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString SuffixWeeks = @"{00}w";
         }
 
         public partial struct ItemEditor
@@ -3733,6 +3837,13 @@ Tick timer saved in server config.json.";
 
         public partial struct Mapping
         {
+            public static Dictionary<int, string> InstanceTypes = new Dictionary<int, string>()
+            {
+                {(int)MapInstanceType.Overworld, @"Overworld"},
+                {(int)MapInstanceType.Personal, @"Personal"},
+                {(int)MapInstanceType.Guild, @"Guild"},
+                {(int)MapInstanceType.Shared, @"Shared"},
+            };
 
             public static LocalizedString createmap = @"Create new map.";
 
@@ -5089,7 +5200,7 @@ Negative values for time to flow backwards.";
             public static LocalizedString direction = @"Dir: {00}";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString InstanceType = @"Instance Type:";
+            public static LocalizedString InstanceType = @"Instance Type";
 
             public static LocalizedString map = @"Map: {00}";
 
