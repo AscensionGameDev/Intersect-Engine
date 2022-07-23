@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 
 using Intersect.Enums;
 using Intersect.GameObjects;
@@ -23,19 +24,19 @@ namespace Intersect.Editor.Localization
 
             if (condition.VariableType == VariableTypes.PlayerVariable)
             {
-                return Strings.EventConditionDesc.playervariable.ToString(
+                return EventConditionDesc.playervariable.ToString(
                     PlayerVariableBase.GetName(condition.VariableId), pVar
                 );
             }
             else if (condition.VariableType == VariableTypes.ServerVariable)
             {
-                return Strings.EventConditionDesc.globalvariable.ToString(
+                return EventConditionDesc.globalvariable.ToString(
                     ServerVariableBase.GetName(condition.VariableId), pVar
                 );
             }
             else if (condition.VariableType == VariableTypes.GuildVariable)
             {
-                return Strings.EventConditionDesc.guildvariable.ToString(
+                return EventConditionDesc.guildvariable.ToString(
                     GuildVariableBase.GetName(condition.VariableId), pVar
                 );
             }
@@ -51,37 +52,37 @@ namespace Intersect.Editor.Localization
                 switch (condition.VariableType)
                 {
                     case VariableTypes.PlayerVariable:
-                        amount = string.Format(@"({0}: {1})", Strings.EventConditional.playervariable, PlayerVariableBase.GetName(condition.VariableId));
+                        amount = string.Format(@"({0}: {1})", EventConditional.playervariable, PlayerVariableBase.GetName(condition.VariableId));
                         break;
                     case VariableTypes.ServerVariable:
-                        amount = string.Format(@"({0}: {1})", Strings.EventConditional.globalvariable, ServerVariableBase.GetName(condition.VariableId));
+                        amount = string.Format(@"({0}: {1})", EventConditional.globalvariable, ServerVariableBase.GetName(condition.VariableId));
                         break;
                     case VariableTypes.GuildVariable:
-                        amount = string.Format(@"({0}: {1})", Strings.EventConditional.guildvariable, GuildVariableBase.GetName(condition.VariableId));
+                        amount = string.Format(@"({0}: {1})", EventConditional.guildvariable, GuildVariableBase.GetName(condition.VariableId));
                         break;
                 }
 
-                return Strings.EventConditionDesc.hasitem.ToString(amount, ItemBase.GetName(condition.ItemId));
+                return EventConditionDesc.hasitem.ToString(amount, ItemBase.GetName(condition.ItemId));
             }
             else
             {
-                return Strings.EventConditionDesc.hasitem.ToString(condition.Quantity, ItemBase.GetName(condition.ItemId));
+                return EventConditionDesc.hasitem.ToString(condition.Quantity, ItemBase.GetName(condition.ItemId));
             }
         }
 
         public static string GetEventConditionalDesc(IsItemEquippedCondition condition)
         {
-            return Strings.EventConditionDesc.hasitemequipped.ToString(ItemBase.GetName(condition.ItemId));
+            return EventConditionDesc.hasitemequipped.ToString(ItemBase.GetName(condition.ItemId));
         }
 
         public static string GetEventConditionalDesc(ClassIsCondition condition)
         {
-            return Strings.EventConditionDesc.Class.ToString(ClassBase.GetName(condition.ClassId));
+            return EventConditionDesc.Class.ToString(ClassBase.GetName(condition.ClassId));
         }
 
         public static string GetEventConditionalDesc(KnowsSpellCondition condition)
         {
-            return Strings.EventConditionDesc.knowsspell.ToString(SpellBase.GetName(condition.SpellId));
+            return EventConditionDesc.knowsspell.ToString(SpellBase.GetName(condition.SpellId));
         }
 
         public static string GetEventConditionalDesc(LevelOrStatCondition condition)
@@ -90,27 +91,27 @@ namespace Intersect.Editor.Localization
             switch (condition.Comparator)
             {
                 case VariableComparators.Equal:
-                    pLvl = Strings.EventConditionDesc.equal.ToString(condition.Value);
+                    pLvl = EventConditionDesc.equal.ToString(condition.Value);
 
                     break;
                 case VariableComparators.GreaterOrEqual:
-                    pLvl = Strings.EventConditionDesc.greaterequal.ToString(condition.Value);
+                    pLvl = EventConditionDesc.greaterequal.ToString(condition.Value);
 
                     break;
                 case VariableComparators.LesserOrEqual:
-                    pLvl = Strings.EventConditionDesc.lessthanequal.ToString(condition.Value);
+                    pLvl = EventConditionDesc.lessthanequal.ToString(condition.Value);
 
                     break;
                 case VariableComparators.Greater:
-                    pLvl = Strings.EventConditionDesc.greater.ToString(condition.Value);
+                    pLvl = EventConditionDesc.greater.ToString(condition.Value);
 
                     break;
                 case VariableComparators.Less:
-                    pLvl = Strings.EventConditionDesc.lessthan.ToString(condition.Value);
+                    pLvl = EventConditionDesc.lessthan.ToString(condition.Value);
 
                     break;
                 case VariableComparators.NotEqual:
-                    pLvl = Strings.EventConditionDesc.notequal.ToString(condition.Value);
+                    pLvl = EventConditionDesc.notequal.ToString(condition.Value);
 
                     break;
             }
@@ -118,26 +119,26 @@ namespace Intersect.Editor.Localization
             var lvlorstat = "";
             if (condition.ComparingLevel)
             {
-                lvlorstat = Strings.EventConditionDesc.level;
+                lvlorstat = EventConditionDesc.level;
             }
             else
             {
-                lvlorstat = Strings.Combat.stats[(int) condition.Stat];
+                lvlorstat = Combat.stats[(int) condition.Stat];
             }
 
-            return Strings.EventConditionDesc.levelorstat.ToString(lvlorstat, pLvl);
+            return EventConditionDesc.levelorstat.ToString(lvlorstat, pLvl);
         }
 
         public static string GetEventConditionalDesc(SelfSwitchCondition condition)
         {
-            var sValue = Strings.EventConditionDesc.False;
+            var sValue = EventConditionDesc.False;
             if (condition.Value)
             {
-                sValue = Strings.EventConditionDesc.True;
+                sValue = EventConditionDesc.True;
             }
 
-            return Strings.EventConditionDesc.selfswitch.ToString(
-                Strings.EventConditionDesc.selfswitches[condition.SwitchIndex], sValue
+            return EventConditionDesc.selfswitch.ToString(
+                EventConditionDesc.selfswitches[condition.SwitchIndex], sValue
             );
         }
 
@@ -145,11 +146,11 @@ namespace Intersect.Editor.Localization
         {
             if (condition.Access == Access.None)
             {
-                return Strings.EventConditionDesc.power.ToString(Strings.EventConditionDesc.modadmin);
+                return EventConditionDesc.power.ToString(EventConditionDesc.modadmin);
             }
             else
             {
-                return Strings.EventConditionDesc.power.ToString(Strings.EventConditionDesc.admin);
+                return EventConditionDesc.power.ToString(EventConditionDesc.admin);
             }
         }
 
@@ -173,7 +174,7 @@ namespace Intersect.Editor.Localization
             }
             else
             {
-                time1 = Strings.EventConditionDesc.timeinvalid;
+                time1 = EventConditionDesc.timeinvalid;
             }
 
             if (condition.Ranges[1] > -1 && condition.Ranges[1] < timeRanges.Count)
@@ -182,15 +183,15 @@ namespace Intersect.Editor.Localization
             }
             else
             {
-                time2 = Strings.EventConditionDesc.timeinvalid;
+                time2 = EventConditionDesc.timeinvalid;
             }
 
-            return Strings.EventConditionDesc.time.ToString(time1, time2);
+            return EventConditionDesc.time.ToString(time1, time2);
         }
 
         public static string GetEventConditionalDesc(CanStartQuestCondition condition)
         {
-            return Strings.EventConditionDesc.startquest.ToString(QuestBase.GetName(condition.QuestId));
+            return EventConditionDesc.startquest.ToString(QuestBase.GetName(condition.QuestId));
         }
 
         public static string GetEventConditionalDesc(QuestInProgressCondition condition)
@@ -208,68 +209,68 @@ namespace Intersect.Editor.Localization
                 }
 
                 var taskName = task != null
-                    ? task.GetTaskString(Strings.TaskEditor.descriptions)
-                    : Strings.EventConditionDesc.tasknotfound.ToString();
+                    ? task.GetTaskString(TaskEditor.descriptions)
+                    : EventConditionDesc.tasknotfound.ToString();
 
                 switch (condition.Progress)
                 {
                     case QuestProgressState.BeforeTask:
-                        return Strings.EventConditionDesc.questinprogress.ToString(
+                        return EventConditionDesc.questinprogress.ToString(
                             QuestBase.GetName(condition.QuestId),
-                            Strings.EventConditionDesc.beforetask.ToString(taskName)
+                            EventConditionDesc.beforetask.ToString(taskName)
                         );
                     case QuestProgressState.AfterTask:
-                        return Strings.EventConditionDesc.questinprogress.ToString(
+                        return EventConditionDesc.questinprogress.ToString(
                             QuestBase.GetName(condition.QuestId),
-                            Strings.EventConditionDesc.aftertask.ToString(taskName)
+                            EventConditionDesc.aftertask.ToString(taskName)
                         );
                     case QuestProgressState.OnTask:
-                        return Strings.EventConditionDesc.questinprogress.ToString(
-                            QuestBase.GetName(condition.QuestId), Strings.EventConditionDesc.ontask.ToString(taskName)
+                        return EventConditionDesc.questinprogress.ToString(
+                            QuestBase.GetName(condition.QuestId), EventConditionDesc.ontask.ToString(taskName)
                         );
                     default: //On Any task
-                        return Strings.EventConditionDesc.questinprogress.ToString(
-                            QuestBase.GetName(condition.QuestId), Strings.EventConditionDesc.onanytask
+                        return EventConditionDesc.questinprogress.ToString(
+                            QuestBase.GetName(condition.QuestId), EventConditionDesc.onanytask
                         );
                 }
             }
 
-            return Strings.EventConditionDesc.questinprogress.ToString(QuestBase.GetName(condition.QuestId));
+            return EventConditionDesc.questinprogress.ToString(QuestBase.GetName(condition.QuestId));
         }
 
         public static string GetEventConditionalDesc(QuestCompletedCondition condition)
         {
-            return Strings.EventConditionDesc.questcompleted.ToString(QuestBase.GetName(condition.QuestId));
+            return EventConditionDesc.questcompleted.ToString(QuestBase.GetName(condition.QuestId));
         }
 
         public static string GetEventConditionalDesc(NoNpcsOnMapCondition condition)
         {
             return condition.SpecificNpc ?
-                Strings.EventConditionDesc.NoNpcsOfTypeOnMap.ToString(NpcBase.GetName(condition.NpcId)) :
-                Strings.EventConditionDesc.NoNpcsOnMap.ToString();
+                EventConditionDesc.NoNpcsOfTypeOnMap.ToString(NpcBase.GetName(condition.NpcId)) :
+                EventConditionDesc.NoNpcsOnMap.ToString();
         }
 
         public static string GetEventConditionalDesc(GenderIsCondition condition)
         {
-            return Strings.EventConditionDesc.gender.ToString(
-                condition.Gender == 0 ? Strings.EventConditionDesc.male : Strings.EventConditionDesc.female
+            return EventConditionDesc.gender.ToString(
+                condition.Gender == 0 ? EventConditionDesc.male : EventConditionDesc.female
             );
         }
 
         public static string GetEventConditionalDesc(MapIsCondition condition)
         {
-            var map = Intersect.GameObjects.Maps.MapList.MapList.List.FindMap(condition.MapId);
+            var map = GameObjects.Maps.MapList.MapList.List.FindMap(condition.MapId);
             if (map != null)
             {
-                return Strings.EventConditionDesc.map.ToString(map.Name);
+                return EventConditionDesc.map.ToString(map.Name);
             }
 
-            return Strings.EventConditionDesc.map.ToString(EventConditionDesc.mapnotfound);
+            return EventConditionDesc.map.ToString(EventConditionDesc.mapnotfound);
         }
 
         public static string GetEventConditionalDesc(InGuildWithRank condition)
         {
-            return Strings.EventConditionDesc.guild.ToString(Intersect.Options.Instance.Guild.Ranks[Math.Max(0, Math.Min(Intersect.Options.Instance.Guild.Ranks.Length - 1, condition.Rank))].Title);
+            return EventConditionDesc.guild.ToString(Intersect.Options.Instance.Guild.Ranks[Math.Max(0, Math.Min(Intersect.Options.Instance.Guild.Ranks.Length - 1, condition.Rank))].Title);
         }
 
         public static string GetEventConditionalDesc(HasFreeInventorySlots condition)
@@ -280,32 +281,32 @@ namespace Intersect.Editor.Localization
                 switch (condition.VariableType)
                 {
                     case VariableTypes.PlayerVariable:
-                        amount = string.Format(@"({0}: {1})", Strings.EventConditional.playervariable, PlayerVariableBase.GetName(condition.VariableId));
+                        amount = string.Format(@"({0}: {1})", EventConditional.playervariable, PlayerVariableBase.GetName(condition.VariableId));
                         break;
                     case VariableTypes.ServerVariable:
-                        amount = string.Format(@"({0}: {1})", Strings.EventConditional.globalvariable, ServerVariableBase.GetName(condition.VariableId));
+                        amount = string.Format(@"({0}: {1})", EventConditional.globalvariable, ServerVariableBase.GetName(condition.VariableId));
                         break;
                     case VariableTypes.GuildVariable:
-                        amount = string.Format(@"({0}: {1})", Strings.EventConditional.guildvariable, GuildVariableBase.GetName(condition.VariableId));
+                        amount = string.Format(@"({0}: {1})", EventConditional.guildvariable, GuildVariableBase.GetName(condition.VariableId));
                         break;
                 }
 
-                return Strings.EventConditionDesc.HasFreeInventorySlots.ToString(amount);
+                return EventConditionDesc.HasFreeInventorySlots.ToString(amount);
             }
             else
             {
-                return Strings.EventConditionDesc.HasFreeInventorySlots.ToString(condition.Quantity);
+                return EventConditionDesc.HasFreeInventorySlots.ToString(condition.Quantity);
             }
         }
 
         public static string GetEventConditionalDesc(MapZoneTypeIs condition)
         {
-            return Strings.EventConditionDesc.MapZoneTypeIs.ToString(Strings.MapProperties.zones[(int)condition.ZoneType]);
+            return EventConditionDesc.MapZoneTypeIs.ToString(MapProperties.zones[(int)condition.ZoneType]);
         }
 
         public static string GetEventConditionalDesc(CheckEquippedSlot condition)
         {
-            return Strings.EventConditionDesc.checkequippedslot.ToString(condition.Name);
+            return EventConditionDesc.checkequippedslot.ToString(condition.Name);
         }
 
         public static string GetVariableComparisonString(VariableCompaison comparison)
@@ -326,19 +327,19 @@ namespace Intersect.Editor.Localization
             {
                 if (comparison.CompareVariableType == VariableTypes.PlayerVariable)
                 {
-                    value = Strings.EventConditionDesc.playervariablevalue.ToString(
+                    value = EventConditionDesc.playervariablevalue.ToString(
                         PlayerVariableBase.GetName(comparison.CompareVariableId)
                     );
                 }
                 else if (comparison.CompareVariableType == VariableTypes.ServerVariable)
                 {
-                    value = Strings.EventConditionDesc.globalvariablevalue.ToString(
+                    value = EventConditionDesc.globalvariablevalue.ToString(
                         ServerVariableBase.GetName(comparison.CompareVariableId)
                     );
                 }
                 else if (comparison.CompareVariableType == VariableTypes.GuildVariable)
                 {
-                    value = Strings.EventConditionDesc.guildvariablevalue.ToString(
+                    value = EventConditionDesc.guildvariablevalue.ToString(
                         GuildVariableBase.GetName(comparison.CompareVariableId)
                     );
                 }
@@ -346,11 +347,11 @@ namespace Intersect.Editor.Localization
 
             if (comparison.ComparingEqual)
             {
-                pVar = Strings.EventConditionDesc.equal.ToString(value);
+                pVar = EventConditionDesc.equal.ToString(value);
             }
             else
             {
-                pVar = Strings.EventConditionDesc.notequal.ToString(value);
+                pVar = EventConditionDesc.notequal.ToString(value);
             }
 
             return pVar;
@@ -369,19 +370,19 @@ namespace Intersect.Editor.Localization
             {
                 if (comparison.CompareVariableType == VariableTypes.PlayerVariable)
                 {
-                    value = Strings.EventConditionDesc.playervariablevalue.ToString(
+                    value = EventConditionDesc.playervariablevalue.ToString(
                         PlayerVariableBase.GetName(comparison.CompareVariableId)
                     );
                 }
                 else if (comparison.CompareVariableType == VariableTypes.ServerVariable)
                 {
-                    value = Strings.EventConditionDesc.globalvariablevalue.ToString(
+                    value = EventConditionDesc.globalvariablevalue.ToString(
                         ServerVariableBase.GetName(comparison.CompareVariableId)
                     );
                 }
                 else if (comparison.CompareVariableType == VariableTypes.GuildVariable)
                 {
-                    value = Strings.EventConditionDesc.guildvariablevalue.ToString(
+                    value = EventConditionDesc.guildvariablevalue.ToString(
                         GuildVariableBase.GetName(comparison.CompareVariableId)
                     );
                 }
@@ -390,27 +391,27 @@ namespace Intersect.Editor.Localization
             switch (comparison.Comparator)
             {
                 case VariableComparators.Equal:
-                    pVar = Strings.EventConditionDesc.equal.ToString(value);
+                    pVar = EventConditionDesc.equal.ToString(value);
 
                     break;
                 case VariableComparators.GreaterOrEqual:
-                    pVar = Strings.EventConditionDesc.greaterequal.ToString(value);
+                    pVar = EventConditionDesc.greaterequal.ToString(value);
 
                     break;
                 case VariableComparators.LesserOrEqual:
-                    pVar = Strings.EventConditionDesc.lessthanequal.ToString(value);
+                    pVar = EventConditionDesc.lessthanequal.ToString(value);
 
                     break;
                 case VariableComparators.Greater:
-                    pVar = Strings.EventConditionDesc.greater.ToString(value);
+                    pVar = EventConditionDesc.greater.ToString(value);
 
                     break;
                 case VariableComparators.Less:
-                    pVar = Strings.EventConditionDesc.lessthan.ToString(value);
+                    pVar = EventConditionDesc.lessthan.ToString(value);
 
                     break;
                 case VariableComparators.NotEqual:
-                    pVar = Strings.EventConditionDesc.notequal.ToString(value);
+                    pVar = EventConditionDesc.notequal.ToString(value);
 
                     break;
             }
@@ -423,9 +424,9 @@ namespace Intersect.Editor.Localization
             switch (comparison.Comparator)
             {
                 case StringVariableComparators.Equal:
-                    return Strings.EventConditionDesc.equal.ToString(comparison.Value);
+                    return EventConditionDesc.equal.ToString(comparison.Value);
                 case StringVariableComparators.Contains:
-                    return Strings.EventConditionDesc.contains.ToString(comparison.Value);
+                    return EventConditionDesc.contains.ToString(comparison.Value);
             }
 
             return "";
@@ -444,7 +445,7 @@ namespace Intersect.Editor.Localization
 
                 var fields = new List<Type>();
                 fields.AddRange(
-                    type.GetNestedTypes(System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public)
+                    type.GetNestedTypes(BindingFlags.Static | BindingFlags.Public)
                 );
 
                 foreach (var p in fields)
@@ -455,48 +456,64 @@ namespace Intersect.Editor.Localization
                     }
 
                     var dict = strings[p.Name];
-                    foreach (var fieldInfo in p.GetFields(
-                        System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public
-                    ))
+                    foreach (var fieldInfo in p.GetFields(BindingFlags.Public | BindingFlags.Static))
                     {
+                        if (!dict.TryGetValue(fieldInfo.Name, out var jsonValue))
+                        {
+                            var foundKey = dict.Keys.FirstOrDefault(key => string.Equals(fieldInfo.Name, key, StringComparison.OrdinalIgnoreCase));
+                            if (foundKey == default || !dict.TryGetValue(foundKey, out jsonValue))
+                            {
+                                continue;
+                            }
+                        }
+
                         var fieldValue = fieldInfo.GetValue(null);
-                        if (!dict.ContainsKey(fieldInfo.Name.ToLower()))
+                        switch (fieldValue)
                         {
-                            continue;
-                        }
-
-                        if (fieldValue is LocalizedString)
-                        {
-                            fieldInfo.SetValue(null, new LocalizedString((string) dict[fieldInfo.Name.ToLower()]));
-                        }
-                        else if (fieldValue is Dictionary<int, LocalizedString>)
-                        {
-                            var existingDict = (Dictionary<int, LocalizedString>) fieldInfo.GetValue(null);
-                            var values = ((JObject) dict[fieldInfo.Name]).ToObject<Dictionary<int, string>>();
-                            var dic = values.ToDictionary<KeyValuePair<int, string>, int, LocalizedString>(
-                                val => val.Key, val => val.Value
-                            );
-
-                            foreach (var val in dic)
-                            {
-                                existingDict[val.Key] = val.Value;
-                            }
-                        }
-                        else if (fieldValue is Dictionary<string, LocalizedString>)
-                        {
-                            var existingDict = (Dictionary<string, LocalizedString>) fieldInfo.GetValue(null);
-                            var pairs = ((JObject) dict[fieldInfo.Name])?.ToObject<Dictionary<string, string>>() ??
-                                        new Dictionary<string, string>();
-
-                            foreach (var pair in pairs)
-                            {
-                                if (pair.Key == null)
+                            case LocalizedString localizedString:
+                                var jsonString = (string)jsonValue;
+                                if (jsonString != default)
                                 {
-                                    continue;
+                                    fieldInfo.SetValue(null, new LocalizedString(jsonString));
                                 }
+                                break;
 
-                                existingDict[pair.Key.ToLower()] = pair.Value;
-                            }
+                            case Dictionary<int, LocalizedString> intDictionary:
+                                var jsonIntDictionary = (jsonValue as JObject).ToObject<Dictionary<int, string>>();
+                                if (jsonIntDictionary != default)
+                                {
+                                    var keys = intDictionary.Keys.ToList();
+                                    foreach (var key in keys)
+                                    {
+                                        if (!jsonIntDictionary.TryGetValue(key, out var jsonStringValue) || jsonStringValue == default)
+                                        {
+                                            continue;
+                                        }
+
+                                        intDictionary[key] = new LocalizedString(jsonStringValue);
+                                    }
+                                }
+                                break;
+
+                            case Dictionary<string, LocalizedString> stringDictionary:
+                                var jsonStringDictionary = (jsonValue as JObject).ToObject<Dictionary<string, string>>();
+                                if (jsonStringDictionary != default)
+                                {
+                                    var keys = stringDictionary.Keys.ToList();
+                                    foreach (var key in keys)
+                                    {
+                                        if (!jsonStringDictionary.TryGetValue(key, out var jsonStringValue) || jsonStringValue == default)
+                                        {
+                                            continue;
+                                        }
+
+                                        stringDictionary[key] = new LocalizedString(jsonStringValue);
+                                    }
+                                }
+                                break;
+
+                            default:
+                                throw new NotSupportedException($"Unsupported localization type {fieldInfo.FieldType.FullName}.");
                         }
                     }
                 }
@@ -510,14 +527,14 @@ namespace Intersect.Editor.Localization
             var strings = new Dictionary<string, Dictionary<string, object>>();
             var type = typeof(Strings);
             var fields = type.GetNestedTypes(
-                System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public
+                BindingFlags.Static | BindingFlags.Public
             );
 
             foreach (var p in fields)
             {
                 var dict = new Dictionary<string, object>();
                 foreach (var p1 in p.GetFields(
-                    System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public
+                    BindingFlags.Static | BindingFlags.Public
                 ))
                 {
                     switch (p1.GetValue(null))
