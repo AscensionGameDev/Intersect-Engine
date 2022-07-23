@@ -3,6 +3,8 @@ using System.Linq;
 using System.Reflection;
 
 using Intersect.Collections;
+using Intersect.GameObjects.Maps;
+using Intersect.GameObjects.Maps.MapList;
 using Intersect.Models;
 
 namespace Intersect.GameObjects.Annotations
@@ -40,18 +42,30 @@ namespace Intersect.GameObjects.Annotations
                 throw new ArgumentException($"Invalid value type {value?.GetType().FullName}", nameof(value));
             }
 
-            var lookup = DescriptorType.GetProperties()
+            if (DescriptorType == typeof(MapBase))
+            {
+                var mapName = MapList.OrderedMaps.FirstOrDefault(map => map.MapId == guid)?.Name;
+                if (mapName != default)
+                {
+                    return mapName;
+                }
+            }
+            else
+            {
+                var lookup = DescriptorType
+                .GetProperties(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy)
                 .FirstOrDefault(propertyInfo => propertyInfo.PropertyType == typeof(DatabaseObjectLookup))?
                 .GetValue(null) as DatabaseObjectLookup;
 
-            if (lookup == default)
-            {
-                throw new InvalidOperationException();
-            }
+                if (lookup == default)
+                {
+                    throw new InvalidOperationException();
+                }
 
-            if (lookup.TryGetValue(guid, out IDatabaseObject databaseObject))
-            {
-                return databaseObject.Name;
+                if (lookup.TryGetValue(guid, out IDatabaseObject databaseObject))
+                {
+                    return databaseObject.Name;
+                }
             }
 
             if (stringsType == default)
@@ -59,13 +73,13 @@ namespace Intersect.GameObjects.Annotations
                 throw new ArgumentNullException(nameof(stringsType));
             }
 
-            var nonePropertyInfo = stringsType.GetNestedType("General")?.GetProperty("None");
-            if (nonePropertyInfo == default)
+            var noneFieldInfo = stringsType.GetNestedType("General")?.GetField("None");
+            if (noneFieldInfo == default)
             {
                 throw new InvalidOperationException();
             }
 
-            return nonePropertyInfo?.GetValue(null)?.ToString();
+            return noneFieldInfo?.GetValue(null)?.ToString();
         }
     }
 }

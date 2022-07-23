@@ -129,7 +129,7 @@ namespace Intersect.GameObjects.Maps
         public byte Y { get; set; }
 
         [EditorLabel("Attributes", "WarpDirection")]
-        [EditorDictionary("Directions", "dir")]
+        [EditorDictionary("Directions", "WarpDirections")]
         public WarpDirection Direction { get; set; } = WarpDirection.Retain;
 
         [EditorLabel("Warping", "ChangeInstance")]
@@ -239,7 +239,7 @@ namespace Intersect.GameObjects.Maps
         public override MapAttributes Type => MapAttributes.Slide;
 
         [EditorLabel("Attributes", "Direction")]
-        [EditorDictionary("Directions", "dir")]
+        [EditorDictionary("Directions", "WarpDirections")]
         public byte Direction { get; set; }
 
         public override MapAttribute Clone()
@@ -287,7 +287,7 @@ namespace Intersect.GameObjects.Maps
         public byte Layer { get; set; }
 
         [EditorLabel("Attributes", "CritterDirection")]
-        [EditorDictionary("Directions", "dir")]
+        [EditorDictionary("Directions", "CritterDirections")]
         public byte Direction { get; set; }
 
         [EditorLabel("Attributes", "CritterIgnoreNpcAvoids")]

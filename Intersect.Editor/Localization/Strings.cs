@@ -1301,6 +1301,14 @@ Tick timer saved in server config.json.";
 
         public partial struct Directions
         {
+            public static Dictionary<int, LocalizedString> CritterDirections = new Dictionary<int, LocalizedString>()
+            {
+                {0, @"Random"},
+                {1, @"Up"},
+                {2, @"Down"},
+                {3, @"Left"},
+                {4, @"Right"}
+            };
 
             public static Dictionary<int, LocalizedString> dir = new Dictionary<int, LocalizedString>()
             {
@@ -1311,6 +1319,14 @@ Tick timer saved in server config.json.";
                 {3, @"Right"}
             };
 
+            public static Dictionary<int, LocalizedString> WarpDirections = new Dictionary<int, LocalizedString>()
+            {
+                {(int)WarpDirection.Retain, @"Retain Direction"},
+                {(int)WarpDirection.Up, @"Up"},
+                {(int)WarpDirection.Down, @"Down"},
+                {(int)WarpDirection.Left, @"Left"},
+                {(int)WarpDirection.Right, @"Right"}
+            };
         }
 
         public partial struct DynamicRequirements
@@ -3862,7 +3878,7 @@ Tick timer saved in server config.json.";
 
         public partial struct Mapping
         {
-            public static Dictionary<int, string> InstanceTypes = new Dictionary<int, string>()
+            public static Dictionary<int, LocalizedString> InstanceTypes = new Dictionary<int, LocalizedString>()
             {
                 {(int)MapInstanceType.Overworld, @"Overworld"},
                 {(int)MapInstanceType.Personal, @"Personal"},
