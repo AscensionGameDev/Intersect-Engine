@@ -84,7 +84,7 @@ namespace Intersect.Editor.Forms.Controls
                 if (rowIndex >= pnlContents.RowCount)
                 {
                     pnlContents.Controls.Add(CreateLabel(AnchorStyles.Right, FontStyle.Bold), 0, rowIndex);
-                    pnlContents.Controls.Add(CreateLabel(AnchorStyles.Right, FontStyle.Bold), 1, rowIndex);
+                    pnlContents.Controls.Add(CreateLabel(AnchorStyles.Left, rowIndex == 0 ? FontStyle.Bold : FontStyle.Regular), 1, rowIndex);
                 }
 
                 var labelControl = pnlContents.GetControlFromPosition(0, rowIndex) as Label ?? throw new InvalidOperationException();
