@@ -46,6 +46,7 @@ namespace Intersect.Editor.Forms.DockingElements
         {
             InitializeComponent();
             Icon = System.Drawing.Icon.ExtractAssociatedIcon(System.Reflection.Assembly.GetExecutingAssembly().Location);
+            picMap.MouseLeave += (_sender, _args) => tooltipMapAttribute?.Hide();
         }
 
         private void InitLocalization()
@@ -551,6 +552,7 @@ namespace Intersect.Editor.Forms.DockingElements
                 e.X > Core.Graphics.CurrentView.Left + Options.MapWidth * Options.TileWidth ||
                 e.Y > Core.Graphics.CurrentView.Top + Options.MapHeight * Options.TileHeight)
             {
+                tooltipMapAttribute.Hide();
                 return;
             }
 
@@ -576,6 +578,34 @@ namespace Intersect.Editor.Forms.DockingElements
             if (Globals.CurTileY >= Options.MapHeight)
             {
                 Globals.CurTileY = Options.MapHeight - 1;
+            }
+
+            if (Globals.CurrentLayer == LayerOptions.Attributes)
+            {
+                var hoveredAttribute = Globals.CurrentMap?.Attributes[Globals.CurTileX, Globals.CurTileY];
+                tooltipMapAttribute.MapAttribute = hoveredAttribute;
+
+                if (hoveredAttribute != null)
+                {
+                    tooltipMapAttribute.PerformLayout();
+
+                    var currentView = Core.Graphics.CurrentView;
+                    var left = currentView.Left + Options.TileWidth * (Globals.CurTileX + 1);
+                    var top = currentView.Top + Options.TileHeight * Globals.CurTileY;
+
+                    if (currentView.Width < left + tooltipMapAttribute.Width)
+                    {
+                        left -= tooltipMapAttribute.Width + Options.TileWidth;
+                    }
+
+                    if (currentView.Height < top + tooltipMapAttribute.Height)
+                    {
+                        top -= tooltipMapAttribute.Height - Options.TileHeight;
+                    }
+
+                    tooltipMapAttribute.Location = new System.Drawing.Point(left, top);
+                    tooltipMapAttribute.Show();
+                }
             }
 
             if (e.Button == MouseButtons.Middle)

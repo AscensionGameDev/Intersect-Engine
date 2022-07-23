@@ -617,7 +617,7 @@ namespace Intersect.Editor.Core
                             else if (Globals.CurrentLayer == LayerOptions.Lights)
                             {
                             }
-                            else if (Globals.CurrentLayer == LayerOptions.Events) 
+                            else if (Globals.CurrentLayer == LayerOptions.Events)
                             {
                             }
                             else if (Globals.CurrentLayer == LayerOptions.Npcs)
@@ -895,37 +895,52 @@ namespace Intersect.Editor.Core
                 tmpMap = TilePreviewStruct;
                 if (Globals.CurrentLayer == LayerOptions.Attributes) //Attributes
                 {
-                    //Draw attributes
-                    for (var x = 0; x < Options.MapWidth; x++)
+                    var attributesTex = GameContentManager.GetTexture(
+                        GameContentManager.TextureType.Misc, "attributes.png"
+                    );
+
+                    if (attributesTex != null)
                     {
-                        for (var y = 0; y < Options.MapHeight; y++)
+                        var whiteTextureBounds = new RectangleF(
+                            sWhiteTex.Bounds.X,
+                            sWhiteTex.Bounds.Y,
+                            sWhiteTex.Bounds.Width,
+                            sWhiteTex.Bounds.Height
+                        );
+
+                        //Draw attributes
+                        for (var x = 0; x < Options.MapWidth; x++)
                         {
-                            if (tmpMap.Attributes[x, y] != null)
+                            for (var y = 0; y < Options.MapHeight; y++)
                             {
-                                if (tmpMap.Attributes[x, y].Type > 0)
+                                var attr = tmpMap.Attributes[x, y];
+                                if ((attr?.Type ?? MapAttributes.Walkable) == MapAttributes.Walkable)
                                 {
-                                    var attributesTex = GameContentManager.GetTexture(
-                                        GameContentManager.TextureType.Misc, "attributes.png"
+                                    continue;
+                                }
+
+                                var tileBounds = new RectangleF(
+                                    CurrentView.Left + x * Options.TileWidth,
+                                    CurrentView.Top + y * Options.TileHeight,
+                                    Options.TileWidth,
+                                    Options.TileHeight
+                                );
+
+                                if (attributesTex != null)
+                                {
+                                    var blue = (attr is MapWarpAttribute warp && warp.ChangeInstance) ? 0 : 255;
+                                    DrawTexture(
+                                       attributesTex,
+                                       new RectangleF(
+                                           0,
+                                           ((int)tmpMap.Attributes[x, y].Type - 1) * attributesTex.Width,
+                                           attributesTex.Width,
+                                           attributesTex.Width
+                                       ),
+                                       tileBounds,
+                                       System.Drawing.Color.FromArgb(255, 255, 255, blue),
+                                       null
                                     );
-
-                                    if (attributesTex != null)
-                                    {
-                                        MapAttribute attr = tmpMap.Attributes[x, y];
-
-                                        var blue = (attr is MapWarpAttribute warp && warp.ChangeInstance) ? 0 : 255;
-                                        DrawTexture(
-                                            attributesTex,
-                                            new RectangleF(
-                                                0, ((int) tmpMap.Attributes[x, y].Type - 1) * attributesTex.Width,
-                                                attributesTex.Width, attributesTex.Width
-                                            ),
-                                            new RectangleF(
-                                                CurrentView.Left + x * Options.TileWidth,
-                                                CurrentView.Top + y * Options.TileHeight, Options.TileWidth,
-                                                Options.TileHeight
-                                            ), System.Drawing.Color.FromArgb(255, 255, 255, blue), null
-                                        );
-                                    }
                                 }
                             }
                         }
@@ -1299,18 +1314,12 @@ namespace Intersect.Editor.Core
                 return;
             }
 
-            int x1 = 0, y1 = 0, x2 = 0, y2 = 0, xoffset = 0, yoffset = 0;
-
-            x1 = 0;
-            x2 = Options.MapWidth;
-            y1 = 0;
-            y2 = Options.MapHeight;
-            xoffset = CurrentView.Left + gridX * Options.TileWidth * Options.MapWidth;
-            yoffset = CurrentView.Top + gridY * Options.TileHeight * Options.MapHeight;
-            if (gridX != 0 || gridY != 0)
-            {
-                tmpMap = map;
-            }
+            var x1 = 0;
+            var x2 = Options.MapWidth;
+            var y1 = 0;
+            var y2 = Options.MapHeight;
+            var xoffset = CurrentView.Left + gridX * Options.TileWidth * Options.MapWidth;
+            var yoffset = CurrentView.Top + gridY * Options.TileHeight * Options.MapHeight;
 
             if (screenShotting)
             {
@@ -1318,12 +1327,13 @@ namespace Intersect.Editor.Core
                 yoffset -= CurrentView.Top;
             }
 
-            if (gridX == 0 && gridY == 0)
+            if (gridX != 0 || gridY != 0)
             {
-                if ((!HideTilePreview || Globals.Dragging) && !screenShotting)
-                {
-                    tmpMap = TilePreviewStruct;
-                }
+                tmpMap = map;
+            }
+            else if ((!HideTilePreview || Globals.Dragging) && !screenShotting)
+            {
+                tmpMap = TilePreviewStruct;
             }
 
             if (tmpMap == null)
@@ -1368,7 +1378,7 @@ namespace Intersect.Editor.Core
                             float ypos = y * Options.TileHeight + yoffset;
                             if ((resource.Initial.Height + 1) * Options.TileHeight > Options.TileHeight)
                             {
-                                ypos -= (int) (resource.Initial.Height + 1) * Options.TileHeight - Options.TileHeight;
+                                ypos -= (resource.Initial.Height + 1) * Options.TileHeight - Options.TileHeight;
                             }
 
                             if ((resource.Initial.Width + 1) * Options.TileWidth > Options.TileWidth)
@@ -1379,8 +1389,8 @@ namespace Intersect.Editor.Core
                             DrawTexture(
                                 res, xpos, ypos, resource.Initial.X * Options.TileWidth,
                                 resource.Initial.Y * Options.TileHeight,
-                                (int) (resource.Initial.Width + 1) * Options.TileWidth,
-                                (int) (resource.Initial.Height + 1) * Options.TileHeight, renderTarget
+                                (resource.Initial.Width + 1) * Options.TileWidth,
+                                (resource.Initial.Height + 1) * Options.TileHeight, renderTarget
                             );
                         }
                         else
@@ -1398,7 +1408,7 @@ namespace Intersect.Editor.Core
                             float ypos = y * Options.TileHeight + yoffset;
                             if (res.Height > Options.TileHeight)
                             {
-                                ypos -= (int) res.Height - Options.TileHeight;
+                                ypos -= res.Height - Options.TileHeight;
                             }
 
                             if (res.Width > Options.TileWidth)
@@ -1406,7 +1416,7 @@ namespace Intersect.Editor.Core
                                 xpos -= (res.Width - Options.TileWidth) / 2;
                             }
 
-                            DrawTexture(res, xpos, ypos, 0, 0, (int) res.Width, (int) res.Height, renderTarget);
+                            DrawTexture(res, xpos, ypos, 0, 0, res.Width, res.Height, renderTarget);
                         }
                     }
                     else if (tmpMap.Attributes[x, y].Type == MapAttributes.Animation)
@@ -2097,8 +2107,8 @@ namespace Intersect.Editor.Core
             BlendState blendMode
         )
         {
-            var destRectangle = new RectangleF(x, y, (int) tex.Width, (int) tex.Height);
-            var srcRectangle = new RectangleF(0, 0, (int) tex.Width, (int) tex.Height);
+            var destRectangle = new RectangleF(x, y, (int)tex.Width, (int)tex.Height);
+            var srcRectangle = new RectangleF(0, 0, (int)tex.Width, (int)tex.Height);
             DrawTexture(tex, srcRectangle, destRectangle, System.Drawing.Color.White, renderTarget2D, blendMode);
         }
 
@@ -2129,6 +2139,46 @@ namespace Intersect.Editor.Core
                 tex, srcRectangle, targetRect, System.Drawing.Color.White, renderTarget2D, BlendState.NonPremultiplied
             );
         }
+
+        public static void DrawTexture(
+            Texture2D texture,
+            Microsoft.Xna.Framework.Rectangle source,
+            Microsoft.Xna.Framework.Rectangle destination,
+            Color renderColor,
+            RenderTarget2D renderTarget = null,
+            BlendState blendMode = null,
+            Effect shader = null,
+            float rotationDegrees = 0
+        ) => DrawTexture(
+            texture,
+            new RectangleF(source.X, source.Y, source.Width, source.Height),
+            new RectangleF(destination.X, destination.Y, destination.Width, destination.Height),
+            System.Drawing.Color.FromArgb(renderColor.ToArgb()),
+            renderTarget,
+            blendMode,
+            shader,
+            rotationDegrees
+        );
+
+        public static void DrawTexture(
+            Texture2D texture,
+            RectangleF source,
+            RectangleF destination,
+            Color renderColor,
+            RenderTarget2D renderTarget = null,
+            BlendState blendMode = null,
+            Effect shader = null,
+            float rotationDegrees = 0
+        ) => DrawTexture(
+            texture,
+            source,
+            destination,
+            System.Drawing.Color.FromArgb(renderColor.ToArgb()),
+            renderTarget,
+            blendMode,
+            shader,
+            rotationDegrees
+        );
 
         public static void DrawTexture(
             Texture2D tex,

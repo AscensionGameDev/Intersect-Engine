@@ -122,6 +122,7 @@ namespace Intersect.Editor.Forms.DockingElements
             {
                 cmbInstanceType.Items.Add(instanceType.ToString());
             }
+            cmbInstanceType.SelectedIndex = 0;
 
             cmbWarpSound.Items.Clear();
             RefreshMapWarpSounds();
@@ -516,7 +517,7 @@ namespace Intersect.Editor.Forms.DockingElements
             HideAttributeMenus();
             grpSound.Visible = true;
             cmbMapAttributeSound.Items.Clear();
-            cmbMapAttributeSound.Items.Add(Strings.General.none);
+            cmbMapAttributeSound.Items.Add(Strings.General.None);
             cmbMapAttributeSound.Items.AddRange(GameContentManager.SmartSortedSoundNames);
             cmbMapAttributeSound.SelectedIndex = 0;
         }
@@ -980,12 +981,12 @@ namespace Intersect.Editor.Forms.DockingElements
         private void rbCritter_CheckedChanged(object sender, EventArgs e)
         {
             cmbCritterAnimation.Items.Clear();
-            cmbCritterAnimation.Items.Add(Strings.General.none);
+            cmbCritterAnimation.Items.Add(Strings.General.None);
             cmbCritterAnimation.Items.AddRange(AnimationBase.Names);
             cmbCritterAnimation.SelectedIndex = 0;
 
             cmbCritterSprite.Items.Clear();
-            cmbCritterSprite.Items.Add(Strings.General.none);
+            cmbCritterSprite.Items.Add(Strings.General.None);
             cmbCritterSprite.Items.AddRange(GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Entity));
             cmbCritterSprite.SelectedIndex = 0;
 
@@ -1041,26 +1042,26 @@ namespace Intersect.Editor.Forms.DockingElements
             cmbAutotile.Items.Add(Strings.Tiles.animatedxp);
 
             //Attributes Panel
-            rbBlocked.Text = Strings.Attributes.blocked;
-            rbZDimension.Text = Strings.Attributes.zdimension;
-            rbNPCAvoid.Text = Strings.Attributes.npcavoid;
-            rbWarp.Text = Strings.Attributes.warp;
-            rbItem.Text = Strings.Attributes.itemspawn;
-            rbSound.Text = Strings.Attributes.mapsound;
-            rbResource.Text = Strings.Attributes.resourcespawn;
-            rbAnimation.Text = Strings.Attributes.mapanimation;
-            rbGrappleStone.Text = Strings.Attributes.grapple;
-            rbSlide.Text = Strings.Attributes.slide;
-            rbCritter.Text = Strings.Attributes.critter;
+            rbBlocked.Text = Strings.Attributes.Blocked;
+            rbZDimension.Text = Strings.Attributes.ZDimension;
+            rbNPCAvoid.Text = Strings.Attributes.NpcAvoid;
+            rbWarp.Text = Strings.Attributes.Warp;
+            rbItem.Text = Strings.Attributes.ItemSpawn;
+            rbSound.Text = Strings.Attributes.MapSound;
+            rbResource.Text = Strings.Attributes.ResourceSpawn;
+            rbAnimation.Text = Strings.Attributes.MapAnimation;
+            rbGrappleStone.Text = Strings.Attributes.Grapple;
+            rbSlide.Text = Strings.Attributes.Slide;
+            rbCritter.Text = Strings.Attributes.Critter;
 
             //Map Animation Groupbox
-            grpAnimation.Text = Strings.Attributes.mapanimation;
-            lblAnimation.Text = Strings.Attributes.mapanimation;
-            chkAnimationBlock.Text = Strings.Attributes.mapanimationblock;
+            grpAnimation.Text = Strings.Attributes.MapAnimation;
+            lblAnimation.Text = Strings.Attributes.MapAnimation;
+            chkAnimationBlock.Text = Strings.Attributes.MapAnimationBlock;
 
             //Slide Groupbox
-            grpSlide.Text = Strings.Attributes.slide;
-            lblSlideDir.Text = Strings.Attributes.dir;
+            grpSlide.Text = Strings.Attributes.Slide;
+            lblSlideDir.Text = Strings.Attributes.Direction;
             cmbSlideDir.Items.Clear();
             for (var i = -1; i < 4; i++)
             {
@@ -1068,29 +1069,30 @@ namespace Intersect.Editor.Forms.DockingElements
             }
 
             //Map Sound
-            grpSound.Text = Strings.Attributes.mapsound;
-            lblMapSound.Text = Strings.Attributes.sound;
-            lblSoundDistance.Text = Strings.Attributes.distance;
+            grpSound.Text = Strings.Attributes.MapSound;
+            lblMapSound.Text = Strings.Attributes.Sound;
+            lblSoundDistance.Text = Strings.Attributes.Distance;
+            lblSoundInterval.Text = Strings.Attributes.SoundInterval;
 
             //Map Item
-            grpItem.Text = Strings.Attributes.itemspawn;
-            lblMapItem.Text = Strings.Attributes.item;
-            lblMaxItemAmount.Text = Strings.Attributes.quantity;
+            grpItem.Text = Strings.Attributes.ItemSpawn;
+            lblMapItem.Text = Strings.Attributes.Item;
+            lblMaxItemAmount.Text = Strings.Attributes.Quantity;
 
             //Z-Dimension
-            grpZDimension.Text = Strings.Attributes.zdimension;
-            grpGateway.Text = Strings.Attributes.zgateway;
-            grpDimBlock.Text = Strings.Attributes.zblock;
-            rbGatewayNone.Text = Strings.Attributes.znone;
-            rbGateway1.Text = Strings.Attributes.zlevel1;
-            rbGateway2.Text = Strings.Attributes.zlevel2;
-            rbBlockNone.Text = Strings.Attributes.znone;
-            rbBlock1.Text = Strings.Attributes.zlevel1;
-            rbBlock2.Text = Strings.Attributes.zlevel2;
+            grpZDimension.Text = Strings.Attributes.ZDimension;
+            grpGateway.Text = Strings.Attributes.ZGateway;
+            grpDimBlock.Text = Strings.Attributes.ZBlock;
+            rbGatewayNone.Text = Strings.Attributes.ZNone;
+            rbGateway1.Text = Strings.Attributes.ZLevel1;
+            rbGateway2.Text = Strings.Attributes.ZLevel2;
+            rbBlockNone.Text = Strings.Attributes.ZNone;
+            rbBlock1.Text = Strings.Attributes.ZLevel1;
+            rbBlock2.Text = Strings.Attributes.ZLevel2;
 
             //Warp
-            grpWarp.Text = Strings.Attributes.warp;
-            lblMap.Text = Strings.Warping.map.ToString("");
+            grpWarp.Text = Strings.Attributes.Warp;
+            lblMap.Text = Strings.Attributes.Map;
             lblX.Text = Strings.Warping.x.ToString("");
             lblY.Text = Strings.Warping.y.ToString("");
             lblWarpDir.Text = Strings.Warping.direction.ToString("");
@@ -1107,23 +1109,23 @@ namespace Intersect.Editor.Forms.DockingElements
             btnVisualMapSelector.Text = Strings.Warping.visual;
 
             //Resource
-            grpResource.Text = Strings.Attributes.resourcespawn;
-            lblResource.Text = Strings.Attributes.resource;
-            grpZResource.Text = Strings.Attributes.zdimension;
-            rbLevel1.Text = Strings.Attributes.zlevel1;
-            rbLevel2.Text = Strings.Attributes.zlevel2;
+            grpResource.Text = Strings.Attributes.ResourceSpawn;
+            lblResource.Text = Strings.Attributes.Resource;
+            grpZResource.Text = Strings.Attributes.ZDimension;
+            rbLevel1.Text = Strings.Attributes.ZLevel1;
+            rbLevel2.Text = Strings.Attributes.ZLevel2;
 
             //Critter
-            grpCritter.Text = Strings.Attributes.critter;
-            lblCritterSprite.Text = Strings.Attributes.crittersprite;
-            lblCritterAnimation.Text = Strings.Attributes.critteranimation;
-            lblCritterMovement.Text = Strings.Attributes.crittermovement;
-            lblCritterLayer.Text = Strings.Attributes.critterlayer;
-            lblCritterMoveSpeed.Text = Strings.Attributes.critterspeed;
-            lblCritterMoveFrequency.Text = Strings.Attributes.critterfrequency;
-            chkCritterIgnoreNpcAvoids.Text = Strings.Attributes.critterignorenpcavoids;
-            chkCritterBlockPlayers.Text = Strings.Attributes.critterblockplayers;
-            lblCritterDirection.Text = Strings.Attributes.critterdirection;
+            grpCritter.Text = Strings.Attributes.Critter;
+            lblCritterSprite.Text = Strings.Attributes.CritterSprite;
+            lblCritterAnimation.Text = Strings.Attributes.CritterAnimation;
+            lblCritterMovement.Text = Strings.Attributes.CritterMovement;
+            lblCritterLayer.Text = Strings.Attributes.CritterLayer;
+            lblCritterMoveSpeed.Text = Strings.Attributes.CritterSpeed;
+            lblCritterMoveFrequency.Text = Strings.Attributes.CritterFrequency;
+            chkCritterIgnoreNpcAvoids.Text = Strings.Attributes.CritterIgnoreNpcAvoids;
+            chkCritterBlockPlayers.Text = Strings.Attributes.CritterBlockPlayers;
+            lblCritterDirection.Text = Strings.Attributes.CritterDirection;
 
             cmbCritterDirection.Items.Clear();
             cmbCritterDirection.Items.Add(Strings.NpcSpawns.randomdirection);
@@ -1134,16 +1136,16 @@ namespace Intersect.Editor.Forms.DockingElements
             cmbCritterDirection.SelectedIndex = 0;
 
             cmbCritterMovement.Items.Clear();
-            for (var i = 0; i < Strings.Attributes.crittermovements.Count; i++)
+            for (var i = 0; i < Strings.Attributes.CritterMovements.Count; i++)
             {
-                cmbCritterMovement.Items.Add(Strings.Attributes.crittermovements[i]);
+                cmbCritterMovement.Items.Add(Strings.Attributes.CritterMovements[i]);
             }
             cmbCritterMovement.SelectedIndex = 0;
 
             cmbCritterLayer.Items.Clear();
-            for (var i = 0; i < Strings.Attributes.critterlayers.Count; i++)
+            for (var i = 0; i < Strings.Attributes.CritterLayers.Count; i++)
             {
-                cmbCritterLayer.Items.Add(Strings.Attributes.critterlayers[i]);
+                cmbCritterLayer.Items.Add(Strings.Attributes.CritterLayers[i]);
             }
             cmbCritterLayer.SelectedIndex = 1;
 
@@ -1237,7 +1239,7 @@ namespace Intersect.Editor.Forms.DockingElements
 
         private void RefreshMapWarpSounds()
         {
-            cmbWarpSound.Items.Add(Strings.General.none);
+            cmbWarpSound.Items.Add(Strings.General.None);
             cmbWarpSound.Items.AddRange(GameContentManager.SmartSortedSoundNames);
             cmbWarpSound.SelectedIndex = 0;
         }

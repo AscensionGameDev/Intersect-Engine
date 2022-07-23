@@ -50,10 +50,10 @@ namespace Intersect.Editor.Forms.Editors
             Icon = System.Drawing.Icon.ExtractAssociatedIcon(System.Reflection.Assembly.GetExecutingAssembly().Location);
 
             cmbToolType.Items.Clear();
-            cmbToolType.Items.Add(Strings.General.none);
+            cmbToolType.Items.Add(Strings.General.None);
             cmbToolType.Items.AddRange(Options.ToolTypes.ToArray());
             cmbEvent.Items.Clear();
-            cmbEvent.Items.Add(Strings.General.none);
+            cmbEvent.Items.Add(Strings.General.None);
             cmbEvent.Items.AddRange(EventBase.Names);
 
             lstGameObjects.Init(UpdateToolStripItems, AssignEditorItem, toolStripItemNew_Click, toolStripItemCopy_Click, toolStripItemUndo_Click, toolStripItemPaste_Click, toolStripItemDelete_Click);
@@ -110,10 +110,10 @@ namespace Intersect.Editor.Forms.Editors
             mEndBitmap = new Bitmap(picInitialResource.Width, picInitialResource.Height);
 
             cmbAnimation.Items.Clear();
-            cmbAnimation.Items.Add(Strings.General.none);
+            cmbAnimation.Items.Add(Strings.General.None);
             cmbAnimation.Items.AddRange(AnimationBase.Names);
             cmbDropItem.Items.Clear();
-            cmbDropItem.Items.Add(Strings.General.none);
+            cmbDropItem.Items.Add(Strings.General.None);
             cmbDropItem.Items.AddRange(ItemBase.Names);
             InitLocalization();
             UpdateEditor();
@@ -122,7 +122,7 @@ namespace Intersect.Editor.Forms.Editors
         private void PopulateInitialGraphicList()
         {
             cmbInitialSprite.Items.Clear();
-            cmbInitialSprite.Items.Add(Strings.General.none);
+            cmbInitialSprite.Items.Add(Strings.General.None);
             var resources = GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Resource);
             if (mEditorItem.Initial.GraphicFromTileset)
             {
@@ -152,7 +152,7 @@ namespace Intersect.Editor.Forms.Editors
         private void PopulateExhaustedGraphicList()
         {
             cmbEndSprite.Items.Clear();
-            cmbEndSprite.Items.Add(Strings.General.none);
+            cmbEndSprite.Items.Add(Strings.General.None);
             var resources = GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Resource);
             if (mEditorItem.Exhausted.GraphicFromTileset)
             {

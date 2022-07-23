@@ -104,7 +104,7 @@ namespace Intersect.Editor.Maps
         {
             get
             {
-                var musicList = new List<string> {Strings.General.none};
+                var musicList = new List<string> {Strings.General.None};
                 musicList.AddRange(GameContentManager.SmartSortedMusicNames);
                 mMyMap.Music = musicList.Find(
                     item => string.Equals(item, mMyMap.Music, StringComparison.InvariantCultureIgnoreCase)
@@ -129,7 +129,7 @@ namespace Intersect.Editor.Maps
         {
             get
             {
-                var soundList = new List<string> {Strings.General.none};
+                var soundList = new List<string> {Strings.General.None};
                 soundList.AddRange(GameContentManager.SmartSortedSoundNames);
                 mMyMap.Sound = soundList.Find(
                     item => string.Equals(item, mMyMap.Sound, StringComparison.InvariantCultureIgnoreCase)
@@ -333,7 +333,7 @@ namespace Intersect.Editor.Maps
             {
                 var fogList = new List<string>
                 {
-                    Strings.General.none
+                    Strings.General.None
                 };
 
                 fogList.AddRange(GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Fog));
@@ -412,7 +412,7 @@ namespace Intersect.Editor.Maps
             {
                 var WeatherList = new List<string>
                 {
-                    Strings.General.none
+                    Strings.General.None
                 };
 
                 WeatherList.AddRange(AnimationBase.Names);
@@ -502,7 +502,7 @@ namespace Intersect.Editor.Maps
             {
                 var imageList = new List<string>
                 {
-                    Strings.General.none
+                    Strings.General.None
                 };
 
                 imageList.AddRange(GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Image));
@@ -532,7 +532,7 @@ namespace Intersect.Editor.Maps
             {
                 var imageList = new List<string>
                 {
-                    Strings.General.none
+                    Strings.General.None
                 };
 
                 imageList.AddRange(GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Image));
@@ -593,7 +593,7 @@ namespace Intersect.Editor.Maps
         {
             var musicList = new List<string>
             {
-                Strings.General.none
+                Strings.General.None
             };
 
             musicList.AddRange(GameContentManager.SmartSortedMusicNames);
@@ -623,7 +623,7 @@ namespace Intersect.Editor.Maps
         {
             var soundList = new List<string>
             {
-                Strings.General.none
+                Strings.General.None
             };
 
             soundList.AddRange(GameContentManager.SmartSortedSoundNames);
@@ -653,7 +653,7 @@ namespace Intersect.Editor.Maps
         {
             var fogList = new List<string>
             {
-                Strings.General.none
+                Strings.General.None
             };
 
             fogList.AddRange(GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Fog));
@@ -683,7 +683,7 @@ namespace Intersect.Editor.Maps
         {
             var imageList = new List<string>
             {
-                Strings.General.none
+                Strings.General.None
             };
 
             imageList.AddRange(GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Image));
@@ -742,7 +742,7 @@ namespace Intersect.Editor.Maps
         {
             var WeatherList = new List<string>
             {
-                Strings.General.none
+                Strings.General.None
             };
 
             WeatherList.AddRange(AnimationBase.Names);

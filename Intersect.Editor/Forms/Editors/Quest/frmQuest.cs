@@ -96,9 +96,9 @@ namespace Intersect.Editor.Forms.Editors.Quest
             lblUnstartedCategory.Text = Strings.QuestEditor.unstartedcategory;
             lblInProgressCategory.Text = Strings.QuestEditor.inprogressgategory;
             lblCompletedCategory.Text = Strings.QuestEditor.completedcategory;
-            cmbUnstartedCategory.Items.Add(Strings.General.none);
-            cmbInProgressCategory.Items.Add(Strings.General.none);
-            cmbCompletedCategory.Items.Add(Strings.General.none);
+            cmbUnstartedCategory.Items.Add(Strings.General.None);
+            cmbInProgressCategory.Items.Add(Strings.General.None);
+            cmbCompletedCategory.Items.Add(Strings.General.None);
 
             foreach (var questCategory in Options.Instance.Quest.Categories)
             {

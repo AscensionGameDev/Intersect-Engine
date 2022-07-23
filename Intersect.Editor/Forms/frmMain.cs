@@ -1518,7 +1518,7 @@ namespace Intersect.Editor.Forms
             toolStripTimeButton.DropDownItems.Clear();
             var time = new DateTime(2000, 1, 1, 0, 0, 0);
             var x = 0;
-            var btn = new ToolStripDropDownButton(Strings.General.none)
+            var btn = new ToolStripDropDownButton(Strings.General.None)
             {
                 Tag = null
             };

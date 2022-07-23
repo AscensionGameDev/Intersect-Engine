@@ -23,7 +23,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             mEventEditor = editor;
             InitLocalization();
             cmbSound.Items.Clear();
-            cmbSound.Items.Add(Strings.General.none);
+            cmbSound.Items.Add(Strings.General.None);
             cmbSound.Items.AddRange(GameContentManager.SmartSortedSoundNames);
             if (cmbSound.Items.IndexOf(TextUtils.NullToNone(mMyCommand.File)) > -1)
             {

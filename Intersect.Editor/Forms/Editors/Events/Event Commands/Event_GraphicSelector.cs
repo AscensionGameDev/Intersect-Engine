@@ -103,7 +103,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                 }
                 else
                 {
-                    cmbGraphic.Items.Add(Strings.General.none);
+                    cmbGraphic.Items.Add(Strings.General.None);
                 }
 
                 cmbGraphic.SelectedIndex = 0;
@@ -126,7 +126,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                 }
                 else
                 {
-                    cmbGraphic.Items.Add(Strings.General.none);
+                    cmbGraphic.Items.Add(Strings.General.None);
                 }
 
                 cmbGraphic.SelectedIndex = 0;
@@ -155,7 +155,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                 }
                 else
                 {
-                    cmbGraphic.Items.Add(Strings.General.none);
+                    cmbGraphic.Items.Add(Strings.General.None);
                 }
 
                 cmbGraphic.SelectedIndex = 0;
@@ -174,7 +174,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                 }
                 else
                 {
-                    cmbGraphic.Items.Add(Strings.General.none);
+                    cmbGraphic.Items.Add(Strings.General.None);
                 }
 
                 cmbGraphic.SelectedIndex = 0;

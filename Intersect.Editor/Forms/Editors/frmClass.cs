@@ -282,22 +282,22 @@ namespace Intersect.Editor.Forms.Editors
         private void frmClass_Load(object sender, EventArgs e)
         {
             cmbSprite.Items.Clear();
-            cmbSprite.Items.Add(Strings.General.none);
+            cmbSprite.Items.Add(Strings.General.None);
             cmbSprite.Items.AddRange(
                 GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Entity)
             );
 
             cmbFace.Items.Clear();
-            cmbFace.Items.Add(Strings.General.none);
+            cmbFace.Items.Add(Strings.General.None);
             cmbFace.Items.AddRange(GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Face));
             cmbSpawnItem.Items.Clear();
-            cmbSpawnItem.Items.Add(Strings.General.none);
+            cmbSpawnItem.Items.Add(Strings.General.None);
             cmbSpawnItem.Items.AddRange(ItemBase.Names);
             cmbSpell.Items.Clear();
             cmbSpell.Items.AddRange(SpellBase.Names);
             nudLevel.Maximum = Options.MaxLevel;
             cmbAttackAnimation.Items.Clear();
-            cmbAttackAnimation.Items.Add(Strings.General.none);
+            cmbAttackAnimation.Items.Add(Strings.General.None);
             cmbAttackAnimation.Items.AddRange(AnimationBase.Names);
             cmbScalingStat.Items.Clear();
             for (var x = 0; x < ((int)Stats.Speed) + 1; x++)

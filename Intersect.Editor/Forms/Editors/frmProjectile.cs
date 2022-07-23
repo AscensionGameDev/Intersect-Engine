@@ -89,15 +89,15 @@ namespace Intersect.Editor.Forms.Editors
         {
             mDirectionGrid = new Bitmap("resources/misc/directions.png");
             cmbAnimation.Items.Clear();
-            cmbAnimation.Items.Add(Strings.General.none);
+            cmbAnimation.Items.Add(Strings.General.None);
             cmbAnimation.Items.AddRange(AnimationBase.Names);
 
             cmbItem.Items.Clear();
-            cmbItem.Items.Add(Strings.General.none);
+            cmbItem.Items.Add(Strings.General.None);
             cmbItem.Items.AddRange(ItemBase.Names);
 
             cmbSpell.Items.Clear();
-            cmbSpell.Items.Add(Strings.General.none);
+            cmbSpell.Items.Add(Strings.General.None);
             cmbSpell.Items.AddRange(SpellBase.Names);
 
             InitLocalization();
@@ -256,7 +256,7 @@ namespace Intersect.Editor.Forms.Editors
                 {
                     lstAnimations.Items.Add(
                         Strings.ProjectileEditor.animationline.ToString(
-                            n, mEditorItem.Animations[i].SpawnRange, Strings.General.none
+                            n, mEditorItem.Animations[i].SpawnRange, Strings.General.None
                         )
                     );
                 }
