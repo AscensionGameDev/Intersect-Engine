@@ -1,12 +1,9 @@
 using System;
 using System.Drawing;
-using System.Globalization;
 using System.Windows.Forms;
 
 using Intersect.Editor.Localization;
-using Intersect.GameObjects;
 using Intersect.GameObjects.Maps;
-using Intersect.Localization;
 
 namespace Intersect.Editor.Forms.Controls
 {

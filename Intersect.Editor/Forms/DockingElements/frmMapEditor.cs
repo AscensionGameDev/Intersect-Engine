@@ -46,6 +46,7 @@ namespace Intersect.Editor.Forms.DockingElements
         {
             InitializeComponent();
             Icon = System.Drawing.Icon.ExtractAssociatedIcon(System.Reflection.Assembly.GetExecutingAssembly().Location);
+            picMap.MouseLeave += (_sender, _args) => tooltipMapAttribute?.Hide();
         }
 
         private void InitLocalization()
@@ -551,6 +552,7 @@ namespace Intersect.Editor.Forms.DockingElements
                 e.X > Core.Graphics.CurrentView.Left + Options.MapWidth * Options.TileWidth ||
                 e.Y > Core.Graphics.CurrentView.Top + Options.MapHeight * Options.TileHeight)
             {
+                tooltipMapAttribute.Hide();
                 return;
             }
 
