@@ -13,12 +13,6 @@ using Newtonsoft.Json.Linq;
 
 namespace Intersect.Editor.Localization
 {
-    public enum BooleanStyle
-    {
-        TrueFalse,
-        YesNo,
-    }
-
     public static partial class Strings
     {
         public static string FormatBoolean(bool value, BooleanStyle booleanStyle)
@@ -598,6 +592,8 @@ namespace Intersect.Editor.Localization
             }
         }
 
+        public static Localizer Localizer { get; } = new Localizer();
+
         public partial struct About
         {
 
@@ -728,13 +724,40 @@ namespace Intersect.Editor.Localization
 
         public partial struct Attributes
         {
+            public static Dictionary<int, LocalizedString> AttributeTypes = new Dictionary<int, LocalizedString>
+            {
+                {(int) MapAttributes.Animation, @"Map Animation" },
+                {(int) MapAttributes.Blocked, @"Blocked" },
+                {(int) MapAttributes.Critter, @"Critter" },
+                {(int) MapAttributes.GrappleStone, @"Grapple Stone" },
+                {(int) MapAttributes.Item, @"Item Spawn" },
+                {(int) MapAttributes.NpcAvoid, @"Npc Avoid" },
+                {(int) MapAttributes.Resource, @"Resource Spawn" },
+                {(int) MapAttributes.Slide, @"Slide" },
+                {(int) MapAttributes.Sound, @"Map Sound" },
+                {(int) MapAttributes.Walkable, @"Walkable" },
+                {(int) MapAttributes.Warp, @"Warp" },
+                {(int) MapAttributes.ZDimension, @"Z-Dimension" },
+            };
+
+            public static string FormatSpawnLevel(int level)
+            {
+                switch (level)
+                {
+                    case 0: return ZLevel1;
+                    case 1: return ZLevel2;
+                    default: throw new ArgumentOutOfRangeException(nameof(level));
+                }
+            }
+
             public static string FormatZLevel(int level)
             {
                 switch (level)
                 {
+                    case 0: return ZNone;
                     case 1: return ZLevel1;
                     case 2: return ZLevel2;
-                    default: return ZNone;
+                    default: throw new ArgumentOutOfRangeException(nameof(level));
                 }
             }
 
@@ -808,7 +831,9 @@ namespace Intersect.Editor.Localization
 
             public static LocalizedString Sound = @"Sound";
 
-            public static LocalizedString SoundInterval = @"Loop Interval (ms)";
+            public static LocalizedString SoundDistance = @"Distance";
+
+            public static LocalizedString SoundInterval = @"Loop Interval";
 
             public static LocalizedString Warp = @"Warp";
 

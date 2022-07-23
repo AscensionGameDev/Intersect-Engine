@@ -583,7 +583,7 @@ namespace Intersect.Editor.Forms.DockingElements
                 var hoveredAttribute = Globals.CurrentMap?.Attributes[Globals.CurTileX, Globals.CurTileY];
                 tooltipMapAttribute.MapAttribute = hoveredAttribute;
 
-                if (tooltipMapAttribute.Visible)
+                if (hoveredAttribute != null)
                 {
                     tooltipMapAttribute.PerformLayout();
 
@@ -602,6 +602,7 @@ namespace Intersect.Editor.Forms.DockingElements
                     }
 
                     tooltipMapAttribute.Location = new System.Drawing.Point(left, top);
+                    tooltipMapAttribute.Show();
                 }
             }
 
