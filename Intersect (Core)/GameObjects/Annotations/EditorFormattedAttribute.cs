@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
+using Intersect.Localization;
+
 #if !DEBUG
 using Intersect.Logging;
 #endif
@@ -57,8 +59,12 @@ namespace Intersect.GameObjects.Annotations
                 case MethodInfo _:
                     return InvokeFormatterMethod(members.Cast<MethodInfo>(), value)?.ToString();
 
-                case PropertyInfo propertyInfo:
-                    return propertyInfo.GetValue(null)?.ToString();
+                case FieldInfo fieldInfo:
+                    if (fieldInfo.FieldType != typeof(LocalizedString))
+                    {
+                        throw new InvalidOperationException($"Expected {typeof(LocalizedString).FullName} but the field is {fieldInfo.FieldType.FullName}");
+                    }
+                    return (fieldInfo.GetValue(null) as LocalizedString ?? throw new InvalidOperationException()).ToString(value);
 
                 default:
                     throw new InvalidOperationException($"Unsupported member type {firstMember.MemberType}: {firstMember.DeclaringType.FullName}.{firstMember.Name}");
