@@ -122,6 +122,7 @@ namespace Intersect.Editor.Forms.DockingElements
             {
                 cmbInstanceType.Items.Add(instanceType.ToString());
             }
+            cmbInstanceType.SelectedIndex = 0;
 
             cmbWarpSound.Items.Clear();
             RefreshMapWarpSounds();
