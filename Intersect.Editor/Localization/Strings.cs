@@ -805,6 +805,8 @@ namespace Intersect.Editor.Localization
 
             public static LocalizedString Distance = @"Distance (In Tiles)";
 
+            public static LocalizedString DistanceFormat = @"{00} tiles";
+
             public static LocalizedString Grapple = @"Grapple Stone";
 
             public static LocalizedString Item = @"Item";

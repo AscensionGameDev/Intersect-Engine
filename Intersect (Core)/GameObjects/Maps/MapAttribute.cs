@@ -141,7 +141,7 @@ namespace Intersect.GameObjects.Maps
         public MapInstanceType InstanceType { get; set; } = MapInstanceType.Overworld;
 
         [EditorLabel("Attributes", "WarpSound")]
-        [EditorDisplay]
+        [EditorDisplay(EmptyBehavior = EmptyBehavior.ShowNoneOnNullOrEmpty, StringBehavior = StringBehavior.Trim)]
         public string WarpSound { get; set; }
 
         public override MapAttribute Clone()
@@ -163,11 +163,11 @@ namespace Intersect.GameObjects.Maps
         public override MapAttributes Type => MapAttributes.Sound;
 
         [EditorLabel("Attributes", "Sound")]
-        [EditorDisplay]
+        [EditorDisplay(EmptyBehavior = EmptyBehavior.ShowNoneOnNullOrEmpty, StringBehavior = StringBehavior.Trim)]
         public string File { get; set; }
 
         [EditorLabel("Attributes", "SoundDistance")]
-        [EditorDisplay]
+        [EditorFormatted("Attributes", "DistanceFormat")]
         public byte Distance { get; set; }
 
         [EditorLabel("Attributes", "SoundInterval")]
@@ -256,7 +256,7 @@ namespace Intersect.GameObjects.Maps
         public override MapAttributes Type => MapAttributes.Critter;
 
         [EditorLabel("Attributes", "CritterSprite")]
-        [EditorDisplay]
+        [EditorDisplay(EmptyBehavior = EmptyBehavior.ShowNoneOnNullOrEmpty, StringBehavior = StringBehavior.Trim)]
         public string Sprite { get; set; }
 
         [EditorLabel("Attributes", "CritterAnimation")]
