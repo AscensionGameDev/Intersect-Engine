@@ -1992,7 +1992,7 @@ namespace Intersect.Server.Entities.Events
                         if (partyMember != player)
                         {
                             partyMember.SetVariableValue(command.VariableId, value.Integer);
-                            partyMember.StartCommonEventsWithTrigger(CommonEventTrigger.PlayerVariableChange, "", command.VariableId.ToString());
+                            partyMember.StartCommonEventsWithTrigger(CommonEventTrigger.PlayerVariableChange, string.Empty, command.VariableId.ToString());
                         }
                     }
                 }
