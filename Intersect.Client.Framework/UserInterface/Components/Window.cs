@@ -16,7 +16,10 @@ public class Window : Component
     {
         _open = true;
 
-        MenuBar = new();
+        MenuBar = new()
+        {
+            Parent = this,
+        };
     }
 
     public bool DockingEnabled
@@ -44,7 +47,7 @@ public class Window : Component
         }
     }
 
-    protected override bool LayoutBegin()
+    protected override bool LayoutBegin(FrameTime frameTime)
     {
         if (!ImGui.Begin(Name, ref _open, Flags))
         {
@@ -55,24 +58,15 @@ public class Window : Component
         var size = ImGui.GetWindowSize();
         SynchronizeBounds(new(position, size));
 
+        ImGui.SetWindowPos(Position);
+        ImGui.SetWindowSize(Size);
+
         return true;
     }
 
-    protected override void DrawBehindChildren(FrameTime frameTime)
-    {
-        MenuBar.Draw(frameTime);
-    }
-
-    protected override void LayoutEnd()
+    protected override void LayoutEnd(FrameTime frameTime)
     {
 
         ImGui.End();
-    }
-
-    protected override void Layout()
-    {
-        base.Layout();
-        ImGui.SetWindowPos(Position);
-        ImGui.SetWindowSize(Size);
     }
 }

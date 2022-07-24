@@ -62,18 +62,13 @@ public class MenuBar : Component
 
     public List<Menu> Menus { get; }
 
-    protected override bool DrawBegin()
+    protected override bool LayoutBegin(FrameTime frameTime)
     {
-        return ImGui.BeginMainMenuBar();
-    }
+        if (!ImGui.BeginMainMenuBar())
+        {
+            return false;
+        }
 
-    protected override void DrawEnd()
-    {
-        ImGui.EndMainMenuBar();
-    }
-
-    protected override void DrawBehindChildren(FrameTime frameTime)
-    {
         foreach (var menu in Menus)
         {
             if (ImGui.BeginMenu(menu.Name, menu.Enabled))
@@ -89,5 +84,12 @@ public class MenuBar : Component
 
             ImGui.EndMenu();
         }
+
+        return true;
+    }
+
+    protected override void LayoutEnd(FrameTime frameTime)
+    {
+        ImGui.EndMainMenuBar();
     }
 }

@@ -28,7 +28,7 @@ public partial class Component
             return;
         }
 
-        if (LayoutBegin())
+        if (LayoutBegin(frameTime))
         {
             if (_dirty)
             {
@@ -39,7 +39,7 @@ public partial class Component
             LayoutChildren(frameTime);
         }
 
-        LayoutEnd();
+        LayoutEnd(frameTime);
     }
 
     private void LayoutChildren(FrameTime frameTime)
@@ -50,9 +50,7 @@ public partial class Component
         }
     }
 
-    protected abstract bool LayoutBegin();
+    protected abstract bool LayoutBegin(FrameTime frameTime);
 
-    protected abstract void LayoutEnd();
-
-    protected virtual void Relayout();
+    protected abstract void LayoutEnd(FrameTime frameTime);
 }
