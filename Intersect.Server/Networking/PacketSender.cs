@@ -959,9 +959,9 @@ namespace Intersect.Server.Networking
         }
 
         //EntityAttackPacket
-        public static void SendEntityAttack(Entity en, int attackTime)
+        public static void SendEntityAttack(Entity en, int attackTime, bool isBlocking = false)
         {
-            SendDataToProximityOnMapInstance(en.MapId, en.MapInstanceId, new EntityAttackPacket(en.Id, en.GetEntityType(), en.MapId, attackTime), null, TransmissionMode.Any);
+            SendDataToProximityOnMapInstance(en.MapId, en.MapInstanceId, new EntityAttackPacket(en.Id, en.GetEntityType(), en.MapId, attackTime, isBlocking), null, TransmissionMode.Any);
         }
 
         //EntityDiePacket

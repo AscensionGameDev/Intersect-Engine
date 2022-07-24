@@ -300,11 +300,6 @@ namespace Intersect.Client.Core
             {
                 return;
             }
-
-            if (Controls.Controls.ControlHasKey(Control.Block, modifier, key))
-            {
-                Globals.Me.StopBlocking();
-            }
         }
 
         public static void OnMouseDown(Keys modifier, MouseButtons btn)
@@ -406,11 +401,6 @@ namespace Intersect.Client.Core
             if (Globals.Me == null)
             {
                 return;
-            }
-
-            if (Controls.Controls.ControlHasKey(Control.Block, modifier, key))
-            {
-                Globals.Me.StopBlocking();
             }
 
             if (btn != MouseButtons.Right)

@@ -242,6 +242,12 @@ namespace Intersect.Client.Entities
                         }
                     }
                 }
+
+                //Holding block button for "auto blocking"
+                if(Controls.KeyDown(Control.Block))
+                {
+                    TryBlock();
+                }
             }
 
             if (TargetBox == default && this == Globals.Me && Interface.Interface.GameUi != default)
@@ -1384,6 +1390,11 @@ namespace Intersect.Client.Entities
 
         public bool TryBlock()
         {
+            if (IsBlocking)
+            {
+                return false;
+            }
+
             if (AttackTimer > Timing.Global.Ticks / TimeSpan.TicksPerMillisecond)
             {
                 return false;
@@ -1395,23 +1406,11 @@ namespace Intersect.Client.Entities
                 if (item != null)
                 {
                     PacketSender.SendBlock(true);
-                    IsBlocking = true;
-
                     return true;
                 }
             }
 
             return false;
-        }
-
-        public void StopBlocking()
-        {
-            if (IsBlocking)
-            {
-                IsBlocking = false;
-                PacketSender.SendBlock(false);
-                AttackTimer = Timing.Global.Ticks / TimeSpan.TicksPerMillisecond + CalculateAttackTime();
-            }
         }
 
         public bool TryAttack()

@@ -1014,10 +1014,16 @@ namespace Intersect.Client.Networking
                 return;
             }
 
-            if (attackTimer > -1 && en != Globals.Me)
+            var isSelf = en == Globals.Me;
+            en.IsBlocking = packet.IsBlocking;
+
+            if (attackTimer > -1)
             {
                 en.AttackTimer = Timing.Global.Ticks / TimeSpan.TicksPerMillisecond + attackTimer;
-                en.AttackTime = attackTimer;
+                if (!isSelf)
+                {
+                    en.AttackTime = attackTimer;
+                }
             }
         }
 

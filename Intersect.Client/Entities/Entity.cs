@@ -487,7 +487,7 @@ namespace Intersect.Client.Entities
         //Returns the amount of time required to traverse 1 tile
         public virtual float GetMovementTime()
         {
-            var time = 1000f / (float)(1 + Math.Log(Stat[(int)Stats.Speed]));
+            var time = 1000f / (float) (1 + Math.Log(Stat[(int) Stats.Speed]));
             if (IsBlocking)
             {
                 time += time * (float)Options.BlockingSlow;
@@ -1624,7 +1624,7 @@ namespace Intersect.Client.Entities
                 SpriteAnimation = SpriteAnimations.Normal;
                 LastActionTime = Timing.Global.Milliseconds;
             }
-            else if (AttackTimer > Timing.Global.Ticks / TimeSpan.TicksPerMillisecond) //Attacking
+            else if (AttackTimer > Timing.Global.Ticks / TimeSpan.TicksPerMillisecond && !IsBlocking) //Attacking
             {
                 var timeIn = CalculateAttackTime() - (AttackTimer - Timing.Global.Ticks / TimeSpan.TicksPerMillisecond);
                 LastActionTime = Timing.Global.Milliseconds;
