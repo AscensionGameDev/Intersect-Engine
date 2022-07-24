@@ -359,12 +359,7 @@ namespace Intersect.Editor.MonoGame
                 _customFont = customFont;
             }
 
-            protected override bool DrawBegin()
-            {
-                return true;
-            }
-
-            protected override void DrawBehindChildren(FrameTime frameTime)
+            protected override bool LayoutBegin(FrameTime frameTime)
             {
                 ImGui.PushFont(_customFont);
                 ImGui.SetCursorPos(new System.Numerics.Vector2(100, 10));
@@ -395,9 +390,10 @@ namespace Intersect.Editor.MonoGame
                 ImGui.Text("Test1234");
                 ImGui.End();
                 ImGui.ShowMetricsWindow();
+                return true;
             }
 
-            protected override void DrawEnd()
+            protected override void LayoutEnd(FrameTime frameTime)
             {
             }
         }
@@ -577,7 +573,7 @@ namespace Intersect.Editor.MonoGame
             _imGuiRenderer.BeforeLayout(frameTime);
 
             _canvas.Bounds = new(0, 0, GraphicsDevice.PresentationParameters.BackBufferWidth, GraphicsDevice.PresentationParameters.BackBufferHeight);
-            _canvas.Draw(frameTime);
+            _canvas.Layout(frameTime);
 
             // Draw our UI
             ImGuiLayout();
