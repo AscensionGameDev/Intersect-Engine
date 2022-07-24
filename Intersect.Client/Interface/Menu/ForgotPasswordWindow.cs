@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 using Intersect.Client.Core;
@@ -85,11 +85,7 @@ namespace Intersect.Client.Interface.Menu
             mHintLabel = new RichLabel(mResetWindow);
             mHintLabel.SetBounds(mHintLabelTemplate.Bounds);
             mHintLabelTemplate.IsHidden = false;
-            mHintLabel.AddText(
-                Strings.ForgotPass.hint, mHintLabelTemplate.TextColor,
-                mHintLabelTemplate.CurAlignments.Count > 0 ? mHintLabelTemplate.CurAlignments[0] : Alignments.Left,
-                mHintLabelTemplate.Font
-            );
+            mHintLabel.AddText(Strings.ForgotPass.hint, mHintLabelTemplate);
         }
 
         public bool IsHidden => mResetWindow.IsHidden;

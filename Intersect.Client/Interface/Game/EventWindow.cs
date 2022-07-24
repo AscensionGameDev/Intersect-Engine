@@ -1,4 +1,4 @@
-﻿using Intersect.Client.Core;
+using Intersect.Client.Core;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen;
@@ -236,12 +236,7 @@ namespace Intersect.Client.Interface.Game
                         mEventDialogLabel.Width = mEventDialogArea.Width -
                                                   mEventDialogArea.GetVerticalScrollBar().Width;
 
-                        mEventDialogLabel.AddText(
-                            Globals.EventDialogs[0].Prompt, mEventDialogLabelTemplate.TextColor,
-                            mEventDialogLabelTemplate.CurAlignments.Count > 0
-                                ? mEventDialogLabelTemplate.CurAlignments[0]
-                                : Alignments.Left, mEventDialogLabelTemplate.Font
-                        );
+                        mEventDialogLabel.AddText(Globals.EventDialogs[0].Prompt, mEventDialogLabelTemplate);
 
                         mEventDialogLabel.SizeToChildren(false, true);
                         mEventDialogArea.ScrollToTop();
@@ -252,12 +247,7 @@ namespace Intersect.Client.Interface.Game
                         mEventDialogLabelNoFace.Width = mEventDialogAreaNoFace.Width -
                                                         mEventDialogAreaNoFace.GetVerticalScrollBar().Width;
 
-                        mEventDialogLabelNoFace.AddText(
-                            Globals.EventDialogs[0].Prompt, mEventDialogLabelNoFaceTemplate.TextColor,
-                            mEventDialogLabelNoFaceTemplate.CurAlignments.Count > 0
-                                ? mEventDialogLabelNoFaceTemplate.CurAlignments[0]
-                                : Alignments.Left, mEventDialogLabelNoFaceTemplate.Font
-                        );
+                        mEventDialogLabelNoFace.AddText(Globals.EventDialogs[0].Prompt, mEventDialogLabelNoFaceTemplate);
 
                         mEventDialogLabelNoFace.SizeToChildren(false, true);
                         mEventDialogAreaNoFace.ScrollToTop();
