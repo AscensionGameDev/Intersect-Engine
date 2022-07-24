@@ -564,7 +564,7 @@ namespace Intersect.Editor.Maps
                 {
                     Globals.MapEditorWindow.PrepUndoState();
                     mMyMap.HideEquipment = value;
-                    Graphics.TilePreviewUpdated = true;
+                    Core.Graphics.TilePreviewUpdated = true;
                     Globals.MapEditorWindow.AddUndoState();
                 }
             }

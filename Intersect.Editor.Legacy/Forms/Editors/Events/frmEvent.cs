@@ -1689,7 +1689,7 @@ namespace Intersect.Editor.Forms.Editors.Events
         private void lstEventCommands_DrawItem(object sender, DrawItemEventArgs e)
         {
             e.DrawBackground();
-            Graphics g = e.Graphics;
+            System.Drawing.Graphics g = e.Graphics;
 
             if (e.Index > -1 && e.Index < lstEventCommands.Items.Count && e.Index < mCommandProperties.Count)
             {
