@@ -1,4 +1,4 @@
-﻿using Intersect.Client.Core;
+using Intersect.Client.Core;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen;
@@ -93,12 +93,7 @@ namespace Intersect.Client.Interface.Game
                 {
                     mQuestPromptLabel.ClearText();
                     mQuestPromptLabel.Width = mQuestPromptArea.Width - mQuestPromptArea.GetVerticalScrollBar().Width;
-                    mQuestPromptLabel.AddText(
-                        quest.StartDescription, mQuestPromptTemplate.TextColor,
-                        mQuestPromptTemplate.CurAlignments.Count > 0
-                            ? mQuestPromptTemplate.CurAlignments[0]
-                            : Alignments.Left, mQuestPromptTemplate.Font
-                    );
+                    mQuestPromptLabel.AddText(quest.StartDescription, mQuestPromptTemplate);
 
                     mQuestPromptLabel.SizeToChildren(false, true);
                     mQuestOfferText = quest.StartDescription;
