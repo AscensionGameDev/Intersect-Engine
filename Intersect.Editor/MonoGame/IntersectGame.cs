@@ -3,9 +3,11 @@ using System.Reflection;
 
 using ImGuiNET;
 
+using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Input;
 using Intersect.Client.Framework.Gwen.Renderer;
 using Intersect.Client.Framework.Input;
+using Intersect.Client.Framework.Platform;
 using Intersect.Client.Framework.UserInterface;
 using Intersect.Client.Framework.UserInterface.Components;
 using Intersect.Configuration;
@@ -13,7 +15,7 @@ using Intersect.Editor.Core;
 using Intersect.Editor.Core.Controls;
 using Intersect.Editor.Fonts;
 using Intersect.Editor.General;
-using Intersect.Editor.Interface.Game;
+using Intersect.Editor.Interface;
 using Intersect.Editor.Localization;
 using Intersect.Editor.MonoGame.Database;
 using Intersect.Editor.MonoGame.File_Management;
@@ -22,18 +24,21 @@ using Intersect.Editor.MonoGame.Input;
 using Intersect.Editor.MonoGame.Network;
 using Intersect.Editor.MonoGame.UserInterface;
 using Intersect.Editor.Platform;
+using Intersect.Enums;
+using Intersect.GameObjects.Annotations;
+using Intersect.Localization;
+using Intersect.Localization.Common.Descriptors.Maps;
 using Intersect.Time;
 using Intersect.Updater;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
-using Intersect.Client.Framework.Graphics;
+using Newtonsoft.Json;
 
-using MainMenu = Intersect.Editor.Interface.Menu.MainMenu;
+using Menu = Intersect.Client.Framework.UserInterface.Components.Menu;
 using Texture = Intersect.Client.Framework.Graphics.Texture;
 using Window = Intersect.Client.Framework.UserInterface.Components.Window;
-using Menu = Intersect.Client.Framework.UserInterface.Components.Menu;
 
 namespace Intersect.Editor.MonoGame
 {
@@ -80,6 +85,9 @@ namespace Intersect.Editor.MonoGame
         private ImFontPtr _customFont;
 
         private Client.Framework.Graphics.GraphicsDevice _graphicsDevice;
+        private PlatformWindow _systemWindow;
+
+        private readonly List<EditorWindow> _windows = new();
 
         private IntersectGame(IClientContext context, Action postStartupAction)
         {
@@ -111,7 +119,6 @@ namespace Intersect.Editor.MonoGame
 
             Globals.Database.LoadPreferences();
 
-            Window.IsBorderless = Context.StartupOptions.BorderlessWindow;
             Window.AllowUserResizing = true;
 
             var renderer = new MonoRenderer(mGraphics, Content, this)
@@ -127,9 +134,6 @@ namespace Intersect.Editor.MonoGame
             Interface.Interface.GwenRenderer = new IntersectRenderer(null, Core.Graphics.Renderer);
             Interface.Interface.GwenInput = new IntersectInput();
             Controls.Init();
-
-            Window.Position = new Microsoft.Xna.Framework.Point(-20, -2000);
-            Window.AllowAltF4 = false;
 
             // If we're going to be rendering a custom mouse cursor, hide the default one!
             if (!string.IsNullOrWhiteSpace(ClientConfiguration.Instance.MouseCursor))
@@ -246,6 +250,9 @@ namespace Intersect.Editor.MonoGame
             var libraryHandle = RuntimeHelper.LoadNativeLibrary("cimgui");
 
             _graphicsDevice = new MonoGameGraphicsDevice(GraphicsDevice);
+            _systemWindow = new EndUser.Runtime.MonoGame.Platform.MonoGamePlatformWindow(_graphicsDevice, Window);
+
+            _windows.Add(new EditorMainWindow(_systemWindow));
 
             //var configPath = Path.Combine(Environment.CurrentDirectory, $"{Process.GetCurrentProcess()?.ProcessName}.ini");
             ////ImGui.LoadIniSettingsFromDisk(configPath);
@@ -279,6 +286,48 @@ namespace Intersect.Editor.MonoGame
             mGraphics.ApplyChanges();
         }
 
+        private Menu FileMenu()
+        {
+            var itemPreferences = new MenuItem
+            {
+                Name = Strings.MenuBar.File.Preferences,
+            };
+
+            var itemPackageGame = new MenuItem
+            {
+                Name = Strings.MenuBar.File.PackageGame,
+            };
+
+            var itemExit = new MenuItem
+            {
+                Name = Strings.MenuBar.File.Exit,
+            };
+            itemExit.Selected += (s, e) => Exit();
+
+            var menuFile = new Menu(Strings.MenuBar.File)
+            {
+                Items = new()
+                {
+                    itemPreferences,
+                    itemPackageGame,
+                    itemExit
+                }
+            };
+
+            itemPreferences.Selected += (s, e) =>
+            {
+                JsonConvert.PopulateObject(@"{ ""Name"": ""<<File>>"", ""Preferences"": ""<<Preferences>>"", ""PackageGame"": ""<<PackageGame>>"", ""Exit"": ""<<Exit>>"" }", Strings.MenuBar.File, new JsonSerializerSettings
+                {
+                    Converters = new List<JsonConverter>(new[] { new LocalizedString.Converter() })
+                });
+            };
+
+            var attributeTypesDictionaryAttribute = new EditorDictionaryAttribute(typeof(MapDescriptorNamespace), nameof(MapDescriptorNamespace.AttributeTypes));
+            var zDimension = attributeTypesDictionaryAttribute.Format(Strings.Root, MapAttributes.ZDimension);
+
+            return menuFile;
+        }
+
         protected override void LoadContent()
         {
             // Texture loading example
@@ -293,26 +342,13 @@ namespace Intersect.Editor.MonoGame
             // Then, bind it to an ImGui-friendly pointer, that we can use during regular ImGui.** calls (see below)
             _imGuiTexture = _imGuiRenderer.BindTexture(_xnaTexture);
 
-            _canvas = new Canvas("root");
-
-            var exitMenuItem = new MenuItem
-            {
-                Name = "Exit",
-                Shortcut = "x"
-            };
-            exitMenuItem.Selected += (s, e) => Exit();
-
-            _canvas.MenuBar.Menus.Add(new Menu("File")
-            {
-                Items = new()
-                {
-                    exitMenuItem
-                }
-            });
+            //_canvas.MenuBar.Add(FileMenu());
             //_canvas.Children.Add(new ManualComponent(_customFont));
 
-            var mainMenuWindow = new Window("main_menu");
-            _canvas.Children.Add(mainMenuWindow);
+            //var dt = typeof(CommonMapDescriptorNamespace).GetField(nameof(CommonMapDescriptorNamespace.AttributeTypes));
+
+            //var mainMenuWindow = new Window("main_menu");
+            //_canvas.Children.Add(mainMenuWindow);
 
             base.LoadContent();
         }
@@ -346,7 +382,7 @@ namespace Intersect.Editor.MonoGame
 
         private int counter = 0;
 
-        private Canvas _canvas;
+        //private Canvas _canvas;
 
         private class ManualComponent : Component
         {
@@ -480,14 +516,14 @@ namespace Intersect.Editor.MonoGame
 
             // TODO: Remove old netcode
             Networking.Network.Socket = new MonoSocket(Context);
-            Networking.Network.Socket.Connected += (sender, connectionEventArgs) =>
-                MainMenu.SetNetworkStatus(connectionEventArgs.NetworkStatus);
+            //Networking.Network.Socket.Connected += (sender, connectionEventArgs) =>
+            //    MainMenu.SetNetworkStatus(connectionEventArgs.NetworkStatus);
 
-            Networking.Network.Socket.ConnectionFailed += (sender, connectionEventArgs, denied) =>
-                MainMenu.SetNetworkStatus(connectionEventArgs.NetworkStatus);
+            //Networking.Network.Socket.ConnectionFailed += (sender, connectionEventArgs, denied) =>
+            //    MainMenu.SetNetworkStatus(connectionEventArgs.NetworkStatus);
 
-            Networking.Network.Socket.Disconnected += (sender, connectionEventArgs) =>
-                MainMenu.SetNetworkStatus(connectionEventArgs.NetworkStatus);
+            //Networking.Network.Socket.Disconnected += (sender, connectionEventArgs) =>
+            //    MainMenu.SetNetworkStatus(connectionEventArgs.NetworkStatus);
 
             Main.Start(Context);
 
@@ -572,8 +608,10 @@ namespace Intersect.Editor.MonoGame
             // Call BeforeLayout first to set things up
             _imGuiRenderer.BeforeLayout(frameTime);
 
-            _canvas.Bounds = new(0, 0, GraphicsDevice.PresentationParameters.BackBufferWidth, GraphicsDevice.PresentationParameters.BackBufferHeight);
-            _canvas.Layout(frameTime);
+            foreach (var window in _windows)
+            {
+                window.Update(frameTime);
+            }
 
             // Draw our UI
             ImGuiLayout();
@@ -667,10 +705,10 @@ namespace Intersect.Editor.MonoGame
                 if (!exception)
                 {
                     //Show Message Getting Exit Confirmation From Player to Leave in Combat
-                    var box = new InputBox(
-                        Strings.Combat.warningtitle, Strings.Combat.warningcharacterselect, true,
-                        InputBox.InputType.YesNo, ExitToDesktop, null, null
-                    );
+                    //var box = new InputBox(
+                    //    Strings.Combat.warningtitle, Strings.Combat.warningcharacterselect, true,
+                    //    InputBox.InputType.YesNo, ExitToDesktop, null, null
+                    //);
 
                     //Restart the MonoGame RunLoop
                     Run();
@@ -728,7 +766,7 @@ namespace Intersect.Editor.MonoGame
                 case UpdateStatus.Updating:
                     status = Strings.Update.Updating;
                     progressPercent = mUpdater.Progress / 100f;
-                    progress = Strings.Update.Percent.ToString((int) mUpdater.Progress);
+                    progress = Strings.Update.Percent.ToString((int)mUpdater.Progress);
                     filesRemaining = mUpdater.FilesRemaining + " Files Remaining";
                     sizeRemaining = mUpdater.GetHumanReadableFileSize(mUpdater.SizeRemaining) + " Left";
                     break;
@@ -771,10 +809,10 @@ namespace Intersect.Editor.MonoGame
             if (updaterProgressBar != null)
             {
                 updateBatch.Draw(
-                    updaterProgressBar, new Rectangle(100, 400, (int) (600 * progressPercent), 32),
+                    updaterProgressBar, new Rectangle(100, 400, (int)(600 * progressPercent), 32),
                     new Rectangle?(
                         new Rectangle(
-                            0, 0, (int) (updaterProgressBar.Width * progressPercent), updaterProgressBar.Height
+                            0, 0, (int)(updaterProgressBar.Width * progressPercent), updaterProgressBar.Height
                         )
                     ), Microsoft.Xna.Framework.Color.White
                 );

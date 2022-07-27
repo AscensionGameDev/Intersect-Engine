@@ -309,144 +309,7 @@ namespace Intersect.Editor.Entities
         public virtual Guid MapId { get; set; }
 
         //Deserializing
-        public virtual void Load(EntityPacket packet)
-        {
-            if (packet == null)
-            {
-                return;
-            }
-
-            MapId = packet.MapId;
-            Name = packet.Name;
-            Sprite = packet.Sprite;
-            Color = packet.Color;
-            Face = packet.Face;
-            Level = packet.Level;
-            X = packet.X;
-            Y = packet.Y;
-            Z = packet.Z;
-            Dir = packet.Dir;
-            Passable = packet.Passable;
-            HideName = packet.HideName;
-            IsHidden = packet.HideEntity;
-            NameColor = packet.NameColor;
-            HeaderLabel = new Label(packet.HeaderLabel.Label, packet.HeaderLabel.Color);
-            FooterLabel = new Label(packet.FooterLabel.Label, packet.FooterLabel.Color);
-
-            var animsToClear = new List<Animation>();
-            var animsToAdd = new List<AnimationBase>();
-            for (var i = 0; i < packet.Animations.Length; i++)
-            {
-                var anim = AnimationBase.Get(packet.Animations[i]);
-                if (anim != null)
-                {
-                    animsToAdd.Add(anim);
-                }
-            }
-
-            foreach (var anim in Animations)
-            {
-                animsToClear.Add(anim);
-                if (!anim.InfiniteLoop)
-                {
-                    animsToClear.Remove(anim);
-                }
-                else
-                {
-                    foreach (var addedAnim in animsToAdd)
-                    {
-                        if (addedAnim.Id == anim.MyBase.Id)
-                        {
-                            animsToClear.Remove(anim);
-                            animsToAdd.Remove(addedAnim);
-
-                            break;
-                        }
-                    }
-
-                    foreach (var equipAnim in EquipmentAnimations)
-                    {
-                        if (equipAnim == anim)
-                        {
-                            animsToClear.Remove(anim);
-                        }
-                    }
-                }
-            }
-
-            ClearAnimations(animsToClear);
-            AddAnimations(animsToAdd);
-
-            Vital = packet.Vital;
-            MaxVital = packet.MaxVital;
-
-            //Update status effects
-            Status.Clear();
-
-            if (packet.StatusEffects == null)
-            {
-                Log.Warn($"'{nameof(packet)}.{nameof(packet.StatusEffects)}' is null.");
-            }
-            else
-            {
-                foreach (var status in packet.StatusEffects)
-                {
-                    var instance = new Status(
-                        status.SpellId, status.Type, status.TransformSprite, status.TimeRemaining, status.TotalDuration
-                    );
-
-                    Status?.Add(instance);
-
-                    if (instance.Type == StatusTypes.Shield)
-                    {
-                        instance.Shield = status.VitalShields;
-                    }
-                }
-            }
-
-            SortStatuses();
-            Stat = packet.Stats;
-
-            mDisposed = false;
-
-            //Status effects box update
-            if (Globals.Me == null)
-            {
-                Log.Warn($"'{nameof(Globals.Me)}' is null.");
-            }
-            else
-            {
-                if (Id == Globals.Me.Id)
-                {
-                    if (Interface.Interface.GameUi == null)
-                    {
-                        Log.Warn($"'{nameof(Interface.Interface.GameUi)}' is null.");
-                    }
-                    else
-                    {
-                        if (Interface.Interface.GameUi.PlayerBox == null)
-                        {
-                            Log.Warn($"'{nameof(Interface.Interface.GameUi.PlayerBox)}' is null.");
-                        }
-                        else
-                        {
-                            Interface.Interface.GameUi.PlayerBox.UpdateStatuses = true;
-                        }
-                    }
-                }
-                else if (Id != Guid.Empty && Id == Globals.Me.TargetIndex)
-                {
-                    if (Globals.Me.TargetBox == null)
-                    {
-                        Log.Warn($"'{nameof(Globals.Me.TargetBox)}' is null.");
-                    }
-                    else
-                    {
-                        Globals.Me.TargetBox.UpdateStatuses = true;
-                    }
-                }
-            }
-        }
+        public virtual void Load(EntityPacket packet) { }
 
         public void AddAnimations(List<AnimationBase> anims)
         {
@@ -1274,76 +1137,7 @@ namespace Intersect.Editor.Entities
             );
         }
 
-        public float GetLabelLocation(LabelType type)
-        {
-            var y = GetTop() - 8;
-
-            //Need room for HP bar if not an event.
-            if (!(this is Event) && ShouldDrawHpBar)
-            {
-                y -= GetBoundingHpBarTexture().Height + 2;
-            }
-
-            switch (type)
-            {
-                case LabelType.Header:
-                    y = GetLabelLocation(LabelType.Name);
-
-                    if (string.IsNullOrWhiteSpace(HeaderLabel.Text))
-                    {
-                        break;
-                    }
-
-                    var headerSize = Core.Graphics.Renderer.MeasureText(HeaderLabel.Text, Core.Graphics.EntityNameFont, 1);
-                    y -= headerSize.Y + 2;
-                    break;
-
-                case LabelType.Footer:
-                    if (string.IsNullOrWhiteSpace(FooterLabel.Text))
-                    {
-                        break;
-                    }
-
-                    var footerSize = Core.Graphics.Renderer.MeasureText(FooterLabel.Text, Core.Graphics.EntityNameFont, 1);
-                    y -= footerSize.Y - 6;
-                    break;
-
-                case LabelType.Name:
-                    y = GetLabelLocation(LabelType.Footer);
-                    var nameSize = Core.Graphics.Renderer.MeasureText(Name, Core.Graphics.EntityNameFont, 1);
-                    y -= nameSize.Y + (string.IsNullOrEmpty(FooterLabel.Text) ? -6 : 2);
-                    break;
-
-                case LabelType.ChatBubble:
-                    y = GetLabelLocation(LabelType.Guild) - 2;
-                    break;
-
-                case LabelType.Guild:
-                    if (this is Player player)
-                    {
-                        // Do we have a header? If so, slightly change the position!
-                        if (string.IsNullOrWhiteSpace(HeaderLabel.Text))
-                        {
-                            y = GetLabelLocation(LabelType.Name);
-                        }
-                        else
-                        {
-                            y = GetLabelLocation(LabelType.Header);
-                        }
-
-                        if (string.IsNullOrWhiteSpace(player.Guild))
-                        {
-                            break;
-                        }
-
-                        var guildSize = Core.Graphics.Renderer.MeasureText(player.Guild, Core.Graphics.EntityNameFont, 1);
-                        y -= 2 + guildSize.Y;
-                    }
-                    break;
-            }
-
-            return y;
-        }
+        public float GetLabelLocation(LabelType type) => default;
 
         public int GetShieldSize()
         {
@@ -1531,7 +1325,7 @@ namespace Intersect.Editor.Entities
             }
         }
 
-        public bool ShouldDrawTarget => !(this is Projectile) && LatestMap != default;
+        public bool ShouldDrawTarget => false;
 
         public void DrawTarget(int priority)
         {

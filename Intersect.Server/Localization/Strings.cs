@@ -1421,7 +1421,7 @@ namespace Intersect.Server.Localization
             {
                 var filepath = Path.Combine("resources", "server_strings.json");
                 Directory.CreateDirectory("resources");
-                var json = JsonConvert.SerializeObject(Root, Formatting.Indented, new LocalizedStringConverter());
+                var json = JsonConvert.SerializeObject(Root, Formatting.Indented, new LocalizedString.Converter());
                 File.WriteAllText(filepath, json, Encoding.UTF8);
 
                 return true;

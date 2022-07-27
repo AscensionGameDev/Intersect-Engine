@@ -1,168 +1,126 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 
-namespace Intersect.Localization
+namespace Intersect.Localization;
+
+public partial class LocaleDictionary<TKey, TValue> : Localized, IDictionary<TKey, TValue> where TValue : Localized
 {
-    public partial class LocaleDictionary<TKey, TValue> : Localized, IDictionary<TKey, TValue> where TValue : Localized
+    private readonly IDictionary<TKey, TValue> _defaults;
+
+    private readonly IDictionary<TKey, TValue> _overrides;
+
+    private bool _frozen;
+
+    public LocaleDictionary(
+        IEnumerable<KeyValuePair<TKey, TValue>> defaults = null,
+        IEnumerable<KeyValuePair<TKey, TValue>> overrides = null
+    )
     {
+        _defaults = defaults == null
+            ? new SortedDictionary<TKey, TValue>()
+            : new SortedDictionary<TKey, TValue>(
+                defaults is IDictionary<TKey, TValue> dictionaryDefaults
+                    ? dictionaryDefaults
+                    : defaults.ToDictionary(pair => pair.Key, pair => pair.Value)
+            );
 
-        private readonly IDictionary<TKey, TValue> mDefaults;
+        _overrides = overrides == null
+            ? new SortedDictionary<TKey, TValue>()
+            : new SortedDictionary<TKey, TValue>(
+                overrides is IDictionary<TKey, TValue> dictionaryValues
+                    ? dictionaryValues
+                    : overrides.ToDictionary(pair => pair.Key, pair => pair.Value)
+            );
+    }
 
-        private readonly IDictionary<TKey, TValue> mValues;
+    private ICollection<KeyValuePair<TKey, TValue>> Pairs => Keys
+        .Select(key =>
+            {
+                if (key == null)
+                {
+                    throw new ArgumentNullException(nameof(key));
+                }
 
-        private bool mDefaultsFrozen;
+                if (_overrides.TryGetValue(key, out var value) || _defaults.TryGetValue(key, out value))
+                {
+                    return new KeyValuePair<TKey, TValue>(key, value);
+                }
 
-        public LocaleDictionary(
-            IEnumerable<KeyValuePair<TKey, TValue>> defaults = null,
-            IEnumerable<KeyValuePair<TKey, TValue>> values = null
+                throw new InvalidOperationException();
+            }
         )
+        .ToList();
+
+    public TValue this[TKey key]
+    {
+        get => _overrides.TryGetValue(key, out var backingValue) ? backingValue : _defaults[key];
+
+        set
         {
-            mDefaults = defaults == null
-                ? new SortedDictionary<TKey, TValue>()
-                : new SortedDictionary<TKey, TValue>(
-                    defaults is IDictionary<TKey, TValue> dictionaryDefaults
-                        ? dictionaryDefaults
-                        : defaults.ToDictionary(pair => pair.Key, pair => pair.Value)
-                );
-
-            mValues = values == null
-                ? new SortedDictionary<TKey, TValue>()
-                : new SortedDictionary<TKey, TValue>(
-                    values is IDictionary<TKey, TValue> dictionaryValues
-                        ? dictionaryValues
-                        : values.ToDictionary(pair => pair.Key, pair => pair.Value)
-                );
-        }
-
-        private ICollection<KeyValuePair<TKey, TValue>> Pairs =>
-            Keys.Select(
-                    key =>
-                    {
-                        if (key == null)
-                        {
-                            throw new ArgumentNullException(nameof(key));
-                        }
-
-                        if (mValues.TryGetValue(key, out var value) || mDefaults.TryGetValue(key, out value))
-                        {
-                            return new KeyValuePair<TKey, TValue>(key, value);
-                        }
-
-                        throw new InvalidOperationException();
-                    }
-                )
-                .ToList();
-
-        public TValue this[TKey key]
-        {
-            get => mValues.TryGetValue(key, out var backingValue) ? backingValue : mDefaults[key];
-
-            set
-            {
-                if (mDefaultsFrozen || mDefaults.ContainsKey(key))
-                {
-                    mValues[key] = value;
-                }
-                else
-                {
-                    mDefaults[key] = value;
-                }
-            }
-        }
-
-        public int Count => mDefaults.Count;
-
-        public bool IsReadOnly => true;
-
-        public ICollection<TKey> Keys => mDefaults.Keys;
-
-        public ICollection<TValue> Values => Keys.Select(
-                key =>
-                {
-                    if (key == null)
-                    {
-                        throw new InvalidOperationException();
-                    }
-
-                    return this[key];
-                }
-            )
-            .ToList();
-
-        public void Add(TKey key, TValue value)
-        {
-            if (mDefaultsFrozen || mDefaults.ContainsKey(key))
-            {
-                mValues.Add(key, value);
-            }
-            else
-            {
-                mDefaults.Add(key, value);
-            }
-        }
-
-        public bool ContainsKey(TKey key)
-        {
-            return mDefaults.ContainsKey(key);
-        }
-
-        public void FreezeDefaults()
-        {
-            mDefaultsFrozen = true;
-        }
-
-        public bool Remove(TKey key)
-        {
-            return mValues.Remove(key);
-        }
-
-        public bool TryGetValue(TKey key, out TValue value)
-        {
-            return mValues.TryGetValue(key, out value) || mDefaults.TryGetValue(key, out value);
-        }
-
-        public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
-        {
-            return Pairs.GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
-
-        public void Add(KeyValuePair<TKey, TValue> item)
-        {
-            if (mDefaultsFrozen || mDefaults.ContainsKey(item.Key))
-            {
-                mValues.Add(item);
-            }
-            else
-            {
-                mDefaults.Add(item);
-            }
-        }
-
-        public void Clear()
-        {
-            mValues.Clear();
-        }
-
-        public bool Contains(KeyValuePair<TKey, TValue> item)
-        {
-            return mValues.Contains(item);
-        }
-
-        public void CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex)
-        {
-            Pairs.CopyTo(array, arrayIndex);
-        }
-
-        public bool Remove(KeyValuePair<TKey, TValue> item)
-        {
-            return mValues.Remove(item);
+            var target = (_frozen || _defaults.ContainsKey(key)) ? _overrides : _defaults;
+            target[key] = value;
         }
     }
+
+    public int Count => _defaults.Count;
+
+    public bool IsReadOnly => true;
+
+    public ICollection<TKey> Keys => _defaults.Keys;
+
+    public ICollection<TValue> Values => Keys
+        .Select(key => this[key ?? throw new InvalidOperationException()])
+        .ToList();
+
+    public void Add(TKey key, TValue value)
+    {
+        var source = (_frozen || ContainsKey(key)) ? _overrides : _defaults;
+        source.Add(key, value);
+    }
+
+    public bool ContainsKey(TKey key) => _defaults.ContainsKey(key);
+
+    public LocaleDictionary<TKey, TValue> Freeze()
+    {
+        _frozen = true;
+        return this;
+    }
+
+    public bool Remove(TKey key) =>
+        (_frozen || _defaults.Remove(key)) && _overrides.Remove(key);
+
+    public bool TryGetValue(TKey key, out TValue value) =>
+        _overrides.TryGetValue(key, out value) || _defaults.TryGetValue(key, out value);
+
+    public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator() => Pairs.GetEnumerator();
+
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+    public void Add(KeyValuePair<TKey, TValue> item) =>
+        Add(item.Key, item.Value);
+
+    public void Clear()
+    {
+        _overrides.Clear();
+
+        if (!_frozen)
+        {
+            _defaults.Clear();
+        }
+    }
+
+    public bool Contains(KeyValuePair<TKey, TValue> item)
+    {
+        if (_overrides.Contains(item))
+        {
+            return true;
+        }
+
+        return !_overrides.ContainsKey(item.Key) && _defaults.Contains(item);
+    }
+
+    public void CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex) =>
+        Pairs.CopyTo(array, arrayIndex);
+
+    public bool Remove(KeyValuePair<TKey, TValue> item) =>
+        (_frozen || _defaults.Remove(item)) && _overrides.Remove(item);
 }

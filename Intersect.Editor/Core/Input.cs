@@ -1,17 +1,11 @@
-using System;
-
 using Intersect.Admin.Actions;
-using Intersect.Editor.Core.Controls;
 using Intersect.Client.Framework.GenericClasses;
-using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Input;
+using Intersect.Client.General;
+using Intersect.Editor.Core.Controls;
 using Intersect.Editor.General;
-using Intersect.Editor.Interface;
-using Intersect.Editor.Interface.Game;
 using Intersect.Editor.Maps;
 using Intersect.Editor.Networking;
-using Intersect.Logging;
-using Intersect.Client.General;
 using Intersect.Time;
 
 namespace Intersect.Editor.Core
@@ -65,27 +59,27 @@ namespace Intersect.Editor.Core
                     {
                         try
                         {
-                            var iBox = (InputBox)Interface.Interface.InputBlockingElements[i];
-                            if (iBox != null && !iBox.IsHidden)
-                            {
-                                iBox.okayBtn_Clicked(null, null);
-                                canFocusChat = false;
+                            //var iBox = (InputBox)Interface.Interface.InputBlockingElements[i];
+                            //if (iBox != null && !iBox.IsHidden)
+                            //{
+                            //    iBox.okayBtn_Clicked(null, null);
+                            //    canFocusChat = false;
 
-                                break;
-                            }
+                            //    break;
+                            //}
                         }
                         catch { }
 
                         try
                         {
-                            var eventWindow = (EventWindow)Interface.Interface.InputBlockingElements[i];
-                            if (eventWindow != null && !eventWindow.IsHidden && Globals.EventDialogs.Count > 0)
-                            {
-                                eventWindow.EventResponse1_Clicked(null, null);
-                                canFocusChat = false;
+                            //var eventWindow = (EventWindow)Interface.Interface.InputBlockingElements[i];
+                            //if (eventWindow != null && !eventWindow.IsHidden && Globals.EventDialogs.Count > 0)
+                            //{
+                            //    eventWindow.EventResponse1_Clicked(null, null);
+                            //    canFocusChat = false;
 
-                                break;
-                            }
+                            //    break;
+                            //}
                         }
                         catch { }
                     }
@@ -102,22 +96,22 @@ namespace Intersect.Editor.Core
 
                 // First try and unfocus chat then close all UI elements, then untarget our target.. and THEN open the escape menu.
                 // Most games do this, why not this?
-                if (Interface.Interface.GameUi != null && Interface.Interface.GameUi.ChatFocussed)
-                {
-                    Interface.Interface.GameUi.UnfocusChat = true;
-                }
-                else if (Interface.Interface.GameUi != null && Interface.Interface.GameUi.CloseAllWindows())
-                {
-                    // We've closed our windows, don't do anything else. :)
-                }
-                else if (Globals.Me != null && Globals.Me.TargetIndex != Guid.Empty)
-                {
-                    Globals.Me.ClearTarget();
-                }
-                else
-                {
-                    Interface.Interface.GameUi?.EscapeMenu?.ToggleHidden();
-                }
+                //if (Interface.Interface.GameUi != null && Interface.Interface.GameUi.ChatFocussed)
+                //{
+                //    Interface.Interface.GameUi.UnfocusChat = true;
+                //}
+                //else if (Interface.Interface.GameUi != null && Interface.Interface.GameUi.CloseAllWindows())
+                //{
+                //    // We've closed our windows, don't do anything else. :)
+                //}
+                //else if (Globals.Me != null && Globals.Me.TargetIndex != Guid.Empty)
+                //{
+                //    Globals.Me.ClearTarget();
+                //}
+                //else
+                //{
+                //    Interface.Interface.GameUi?.EscapeMenu?.ToggleHidden();
+                //}
             }
 
             if (Interface.Interface.HasInputFocus())
@@ -155,7 +149,7 @@ namespace Intersect.Editor.Core
                                 break;
 
                             case Control.OpenDebugger:
-                                MutableInterface.ToggleDebug();
+                                //MutableInterface.ToggleDebug();
                                 break;
                         }
 
@@ -203,7 +197,7 @@ namespace Intersect.Editor.Core
                                     case Control.Enter:
                                         if (canFocusChat)
                                         {
-                                            Interface.Interface.GameUi.FocusChat = true;
+                                            //Interface.Interface.GameUi.FocusChat = true;
                                             consumeKey = true;
                                         }
 
@@ -219,51 +213,6 @@ namespace Intersect.Editor.Core
                                     case Control.Hotkey8:
                                     case Control.Hotkey9:
                                     case Control.Hotkey0:
-                                        break;
-
-                                    case Control.OpenInventory:
-                                        Interface.Interface.GameUi?.GameMenu?.ToggleInventoryWindow();
-
-                                        break;
-
-                                    case Control.OpenQuests:
-                                        Interface.Interface.GameUi?.GameMenu?.ToggleQuestsWindow();
-
-                                        break;
-
-                                    case Control.OpenCharacterInfo:
-                                        Interface.Interface.GameUi?.GameMenu?.ToggleCharacterWindow();
-
-                                        break;
-
-                                    case Control.OpenParties:
-                                        Interface.Interface.GameUi?.GameMenu?.TogglePartyWindow();
-
-                                        break;
-
-                                    case Control.OpenSpells:
-                                        Interface.Interface.GameUi?.GameMenu?.ToggleSpellsWindow();
-
-                                        break;
-
-                                    case Control.OpenFriends:
-                                        Interface.Interface.GameUi?.GameMenu?.ToggleFriendsWindow();
-
-                                        break;
-
-                                    case Control.OpenSettings:
-                                        Interface.Interface.GameUi?.EscapeMenu?.OpenSettingsWindow();
-
-                                        break;
-
-                                    case Control.OpenAdminPanel:
-                                        PacketSender.SendOpenAdminWindow();
-
-                                        break;
-
-                                    case Control.OpenGuild:
-                                        Interface.Interface.GameUi?.GameMenu.ToggleGuildWindow();
-
                                         break;
                                 }
 

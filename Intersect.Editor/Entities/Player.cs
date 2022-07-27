@@ -1,22 +1,15 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
+using Intersect.Client.Framework.Entities;
+using Intersect.Client.Framework.GenericClasses;
+using Intersect.Config.Guilds;
+using Intersect.Configuration;
 using Intersect.Editor.Core;
 using Intersect.Editor.Core.Controls;
 using Intersect.Editor.Entities.Events;
 using Intersect.Editor.Entities.Projectiles;
-using Intersect.Client.Framework.Entities;
-using Intersect.Client.Framework.GenericClasses;
 using Intersect.Editor.General;
-using Intersect.Editor.Interface.Game;
-using Intersect.Editor.Interface.Game.Chat;
-using Intersect.Editor.Interface.Game.EntityPanel;
 using Intersect.Editor.Localization;
 using Intersect.Editor.Maps;
 using Intersect.Editor.Networking;
-using Intersect.Config.Guilds;
-using Intersect.Configuration;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps;
@@ -67,11 +60,9 @@ namespace Intersect.Editor.Entities
 
         public int StatPoints { get; set; } = 0;
 
-        public EntityBox TargetBox { get; set; }
-
         public Guid TargetIndex { get; set; }
 
-        TargetTypes IPlayer.TargetType => (TargetTypes) TargetType;
+        TargetTypes IPlayer.TargetType => (TargetTypes)TargetType;
 
         public int TargetType { get; set; }
 
@@ -229,8 +220,6 @@ namespace Intersect.Editor.Entities
                         if (IsCastingCheckTimer < Timing.Global.Milliseconds &&
                             Options.Combat.EnableCombatChatMessages)
                         {
-                            ChatboxMsg.AddMessage(new ChatboxMsg(Strings.Combat.AttackWhileCastingDeny,
-                                CustomColors.Alerts.Declined, ChatMessageType.Combat));
                             IsCastingCheckTimer = Timing.Global.Milliseconds + 350;
                         }
                     }
@@ -244,32 +233,32 @@ namespace Intersect.Editor.Entities
                 }
             }
 
-            if (TargetBox == default && this == Globals.Me && Interface.Interface.GameUi != default)
-            {
-                // If for WHATEVER reason the box hasn't been created, create it.
-                TargetBox = new EntityBox(Interface.Interface.GameUi.GameCanvas, EntityTypes.Player, null);
-                TargetBox.Hide();
-            }
-            else if (TargetIndex != default)
-            {
-                if (!Globals.Entities.TryGetValue(TargetIndex, out var foundEntity))
-                {
-                    foundEntity = TargetBox.MyEntity.MapInstance.Entities.FirstOrDefault(entity => entity.Id == TargetIndex) as Entity;
-                }
+            //if (TargetBox == default && this == Globals.Me && Interface.Interface.GameUi != default)
+            //{
+            //    // If for WHATEVER reason the box hasn't been created, create it.
+            //    TargetBox = new EntityBox(Interface.Interface.GameUi.GameCanvas, EntityTypes.Player, null);
+            //    TargetBox.Hide();
+            //}
+            //else if (TargetIndex != default)
+            //{
+            //    if (!Globals.Entities.TryGetValue(TargetIndex, out var foundEntity))
+            //    {
+            //        foundEntity = TargetBox.MyEntity.MapInstance.Entities.FirstOrDefault(entity => entity.Id == TargetIndex) as Entity;
+            //    }
 
-                if (foundEntity == default || foundEntity.IsHidden || foundEntity.IsStealthed)
-                {
-                    ClearTarget();
-                }
-            }
+            //    if (foundEntity == default || foundEntity.IsHidden || foundEntity.IsStealthed)
+            //    {
+            //        ClearTarget();
+            //    }
+            //}
 
-            TargetBox?.Update();
+            //TargetBox?.Update();
 
             // Hide our Guild window if we're not in a guild!
-            if (this == Globals.Me && string.IsNullOrEmpty(Guild) && Interface.Interface.GameUi != null)
-            {
-                Interface.Interface.GameUi.HideGuildWindow();
-            }
+            //if (this == Globals.Me && string.IsNullOrEmpty(Guild) && Interface.Interface.GameUi != null)
+            //{
+            //    Interface.Interface.GameUi.HideGuildWindow();
+            //}
 
             var returnval = base.Update();
 
@@ -302,11 +291,11 @@ namespace Intersect.Editor.Entities
                 }
             }
 
-            if (this == Globals.Me && TargetBox == null && Interface.Interface.GameUi != null)
-            {
-                TargetBox = new EntityBox(Interface.Interface.GameUi.GameCanvas, EntityTypes.Player, null);
-                TargetBox.Hide();
-            }
+            //if (this == Globals.Me && TargetBox == null && Interface.Interface.GameUi != null)
+            //{
+            //    TargetBox = new EntityBox(Interface.Interface.GameUi.GameCanvas, EntityTypes.Player, null);
+            //    TargetBox.Hide();
+            //}
         }
 
         //Item Processing
@@ -317,40 +306,9 @@ namespace Intersect.Editor.Entities
             Inventory[item1] = tmpInstance.Clone();
         }
 
-        public void TryDropItem(int index)
-        {
-            var slot = Inventory[index];
-            var descriptor = ItemBase.Get(slot.ItemId);
-            if (descriptor == default)
-            {
-                return;
-            }
+        public void TryDropItem(int index) { }
 
-            var quantity = slot.Quantity;
-            var canDropMultiple = quantity > 1;
-            var inputType = canDropMultiple ? InputBox.InputType.NumericSliderInput : InputBox.InputType.YesNo;
-            var prompt = canDropMultiple ? Strings.Inventory.DropItemPrompt : Strings.Inventory.DropPrompt;
-            InputBox.Open(
-                title: Strings.Inventory.DropItemTitle,
-                prompt: prompt.ToString(descriptor.Name),
-                modal: true,
-                inputType: inputType,
-                onSuccess: DropInputBoxOkay,
-                onCancel: default,
-                userData: index,
-                quantity: quantity,
-                maxQuantity: quantity
-            );
-        }
-
-        private void DropInputBoxOkay(object sender, EventArgs e)
-        {
-            var value = (int)((InputBox)sender).Value;
-            if (value > 0)
-            {
-                PacketSender.SendDropItem((int)((InputBox)sender).UserData, value);
-            }
-        }
+        private void DropInputBoxOkay(object sender, EventArgs e) { }
 
         public int FindItem(Guid itemId, int itemVal = 1)
         {
@@ -559,305 +517,42 @@ namespace Intersect.Editor.Entities
             return cooldown;
         }
 
-        public void TrySellItem(int index)
-        {
-            if (ItemBase.Get(Inventory[index].ItemId) != null)
-            {
-                var foundItem = -1;
-                for (var i = 0; i < Globals.GameShop.BuyingItems.Count; i++)
-                {
-                    if (Globals.GameShop.BuyingItems[i].ItemId == Inventory[index].ItemId)
-                    {
-                        foundItem = i;
+        public void TrySellItem(int index) { }
 
-                        break;
-                    }
-                }
+        public void TryBuyItem(int slot) { }
 
-                if (foundItem > -1 && Globals.GameShop.BuyingWhitelist ||
-                    foundItem == -1 && !Globals.GameShop.BuyingWhitelist)
-                {
-                    if (Inventory[index].Quantity > 1)
-                    {
-                        var iBox = new InputBox(
-                            Strings.Shop.sellitem,
-                            Strings.Shop.sellitemprompt.ToString(ItemBase.Get(Inventory[index].ItemId).Name), true,
-                            InputBox.InputType.NumericSliderInput, SellItemInputBoxOkay, null, index, Inventory[index].Quantity
-                        );
-                    }
-                    else
-                    {
-                        var iBox = new InputBox(
-                            Strings.Shop.sellitem,
-                            Strings.Shop.sellprompt.ToString(ItemBase.Get(Inventory[index].ItemId).Name), true,
-                            InputBox.InputType.YesNo, SellInputBoxOkay, null, index
-                        );
-                    }
-                }
-                else
-                {
-                    var iBox = new InputBox(
-                        Strings.Shop.sellitem, Strings.Shop.cannotsell, true, InputBox.InputType.OkayOnly, null, null,
-                        -1
-                    );
-                }
-            }
-        }
+        private void BuyItemInputBoxOkay(object sender, EventArgs e) { }
 
-        public void TryBuyItem(int slot)
-        {
-            //Confirm the purchase
-            var item = ItemBase.Get(Globals.GameShop.SellingItems[slot].ItemId);
-            if (item != null)
-            {
-                // Determine how many items we can purchase.
-                var currencyCount = GetItemQuantity(Globals.GameShop.SellingItems[slot].CostItemId);
-                var maxBuyAmount = (int)Math.Floor(currencyCount / (float)Globals.GameShop.SellingItems[slot].CostItemQuantity);
+        private void SellItemInputBoxOkay(object sender, EventArgs e) { }
 
-                // Is the item stackable, and can we make a purchase at all?
-                if (item.IsStackable && maxBuyAmount != 0)
-                {
-                    var iBox = new InputBox(
-                        Strings.Shop.buyitem, Strings.Shop.buyitemprompt.ToString(item.Name), true,
-                        InputBox.InputType.NumericSliderInput, BuyItemInputBoxOkay, null, slot, maxBuyAmount, maxBuyAmount
-                    );
-                }
-                // In any other case, attempt to purchase one and let the server handle the error and double checking.
-                else
-                {
-                    PacketSender.SendBuyItem(slot, 1);
-                }
-            }
-        }
-
-        private void BuyItemInputBoxOkay(object sender, EventArgs e)
-        {
-            var value = (int)((InputBox)sender).Value;
-            if (value > 0)
-            {
-                PacketSender.SendBuyItem((int)((InputBox)sender).UserData, value);
-            }
-        }
-
-        private void SellItemInputBoxOkay(object sender, EventArgs e)
-        {
-            var value = (int)((InputBox)sender).Value;
-            if (value > 0)
-            {
-                PacketSender.SendSellItem((int)((InputBox)sender).UserData, value);
-            }
-        }
-
-        private void SellInputBoxOkay(object sender, EventArgs e)
-        {
-            PacketSender.SendSellItem((int)((InputBox)sender).UserData, 1);
-        }
+        private void SellInputBoxOkay(object sender, EventArgs e) { }
 
         //bank
-        public void TryDepositItem(int index, int bankSlot = -1)
-        {
-            if (ItemBase.Get(Inventory[index].ItemId) != null)
-            {
-                //Permission Check
-                if (Globals.GuildBank)
-                {
-                    var rank = Globals.Me.GuildRank;
-                    if (string.IsNullOrWhiteSpace(Globals.Me.Guild) || (!rank.Permissions.BankDeposit && Globals.Me.Rank != 0))
-                    {
-                        ChatboxMsg.AddMessage(new ChatboxMsg(Strings.Guilds.NotAllowedDeposit.ToString(Globals.Me.Guild), CustomColors.Alerts.Error, ChatMessageType.Bank));
-                        return;
-                    }
-                }
+        public void TryDepositItem(int index, int bankSlot = -1) { }
 
-                if (Inventory[index].Quantity > 1)
-                {
-                    int[] userData = new int[2] { index, bankSlot };
+        private void DepositItemInputBoxOkay(object sender, EventArgs e) { }
 
-                    var iBox = new InputBox(
-                        Strings.Bank.deposititem,
-                        Strings.Bank.deposititemprompt.ToString(ItemBase.Get(Inventory[index].ItemId).Name), true,
-                        InputBox.InputType.NumericSliderInput, DepositItemInputBoxOkay, null, userData, Inventory[index].Quantity
-                    );
-                }
-                else
-                {
-                    PacketSender.SendDepositItem(index, 1, bankSlot);
-                }
-            }
-        }
+        public void TryWithdrawItem(int index, int invSlot = -1) { }
 
-        private void DepositItemInputBoxOkay(object sender, EventArgs e)
-        {
-            var value = (int)((InputBox)sender).Value;
-            if (value > 0)
-            {
-                int[] userData = (int[])((InputBox)sender).UserData;
-
-                PacketSender.SendDepositItem(userData[0], value, userData[1]);
-            }
-        }
-
-        public void TryWithdrawItem(int index, int invSlot = -1)
-        {
-            if (Globals.Bank[index] != null && ItemBase.Get(Globals.Bank[index].ItemId) != null)
-            {
-                //Permission Check
-                if (Globals.GuildBank)
-                {
-                    var rank = Globals.Me.GuildRank;
-                    if (string.IsNullOrWhiteSpace(Globals.Me.Guild) || (!rank.Permissions.BankRetrieve && Globals.Me.Rank != 0))
-                    {
-                        ChatboxMsg.AddMessage(new ChatboxMsg(Strings.Guilds.NotAllowedWithdraw.ToString(Globals.Me.Guild), CustomColors.Alerts.Error, ChatMessageType.Bank));
-                        return;
-                    }
-                }
-
-                if (Globals.Bank[index].Quantity > 1)
-                {
-                    int[] userData = new int[2] { index, invSlot };
-
-                    var iBox = new InputBox(
-                        Strings.Bank.withdrawitem,
-                        Strings.Bank.withdrawitemprompt.ToString(ItemBase.Get(Globals.Bank[index].ItemId).Name), true,
-                        InputBox.InputType.NumericSliderInput, WithdrawItemInputBoxOkay, null, userData, Globals.Bank[index].Quantity
-                    );
-                }
-                else
-                {
-                    PacketSender.SendWithdrawItem(index, 1, invSlot);
-                }
-            }
-        }
-
-        private void WithdrawItemInputBoxOkay(object sender, EventArgs e)
-        {
-            var value = (int)((InputBox)sender).Value;
-            if (value > 0)
-            {
-                int[] userData = (int[])((InputBox)sender).UserData;
-                PacketSender.SendWithdrawItem(userData[0], value, userData[1]);
-            }
-        }
+        private void WithdrawItemInputBoxOkay(object sender, EventArgs e) { }
 
         //Bag
-        public void TryStoreBagItem(int invSlot, int bagSlot)
-        {
-            if (ItemBase.Get(Inventory[invSlot].ItemId) != null)
-            {
-                if (Inventory[invSlot].Quantity > 1)
-                {
-                    int[] userData = new int[2] { invSlot, bagSlot };
+        public void TryStoreBagItem(int invSlot, int bagSlot) { }
 
-                    var iBox = new InputBox(
-                        Strings.Bags.storeitem,
-                        Strings.Bags.storeitemprompt.ToString(ItemBase.Get(Inventory[invSlot].ItemId).Name), true,
-                        InputBox.InputType.NumericSliderInput, StoreBagItemInputBoxOkay, null, userData, Inventory[invSlot].Quantity
-                    );
-                }
-                else
-                {
-                    PacketSender.SendStoreBagItem(invSlot, 1, bagSlot);
-                }
-            }
-        }
+        private void StoreBagItemInputBoxOkay(object sender, EventArgs e) { }
 
-        private void StoreBagItemInputBoxOkay(object sender, EventArgs e)
-        {
-            var value = (int)((InputBox)sender).Value;
-            if (value > 0)
-            {
-                int[] userData = (int[])((InputBox)sender).UserData;
-                PacketSender.SendStoreBagItem(userData[0], value, userData[1]);
-            }
-        }
+        public void TryRetreiveBagItem(int bagSlot, int invSlot) { }
 
-        public void TryRetreiveBagItem(int bagSlot, int invSlot)
-        {
-            if (Globals.Bag[bagSlot] != null && ItemBase.Get(Globals.Bag[bagSlot].ItemId) != null)
-            {
-                int[] userData = new int[2] { bagSlot, invSlot };
-
-                if (Globals.Bag[bagSlot].Quantity > 1)
-                {
-                    var iBox = new InputBox(
-                        Strings.Bags.retreiveitem,
-                        Strings.Bags.retreiveitemprompt.ToString(ItemBase.Get(Globals.Bag[bagSlot].ItemId).Name), true,
-                        InputBox.InputType.NumericSliderInput, RetreiveBagItemInputBoxOkay, null, userData, Globals.Bag[bagSlot].Quantity
-                    );
-                }
-                else
-                {
-                    PacketSender.SendRetrieveBagItem(bagSlot, 1, invSlot);
-                }
-            }
-        }
-
-        private void RetreiveBagItemInputBoxOkay(object sender, EventArgs e)
-        {
-            var value = (int)((InputBox)sender).Value;
-            if (value > 0)
-            {
-                int[] userData = (int[])((InputBox)sender).UserData;
-                PacketSender.SendRetrieveBagItem(userData[0], value, userData[1]);
-            }
-        }
+        private void RetreiveBagItemInputBoxOkay(object sender, EventArgs e) { }
 
         //Trade
-        public void TryTradeItem(int index)
-        {
-            if (ItemBase.Get(Inventory[index].ItemId) != null)
-            {
-                if (Inventory[index].Quantity > 1)
-                {
-                    var iBox = new InputBox(
-                        Strings.Trading.offeritem,
-                        Strings.Trading.offeritemprompt.ToString(ItemBase.Get(Inventory[index].ItemId).Name), true,
-                        InputBox.InputType.NumericSliderInput, TradeItemInputBoxOkay, null, index, Inventory[index].Quantity
-                    );
-                }
-                else
-                {
-                    PacketSender.SendOfferTradeItem(index, 1);
-                }
-            }
-        }
+        public void TryTradeItem(int index) { }
 
-        private void TradeItemInputBoxOkay(object sender, EventArgs e)
-        {
-            var value = (int)((InputBox)sender).Value;
-            if (value > 0)
-            {
-                PacketSender.SendOfferTradeItem((int)((InputBox)sender).UserData, value);
-            }
-        }
+        private void TradeItemInputBoxOkay(object sender, EventArgs e) { }
 
-        public void TryRevokeItem(int index)
-        {
-            if (Globals.Trade[0, index] != null && ItemBase.Get(Globals.Trade[0, index].ItemId) != null)
-            {
-                if (Globals.Trade[0, index].Quantity > 1)
-                {
-                    var iBox = new InputBox(
-                        Strings.Trading.revokeitem,
-                        Strings.Trading.revokeitemprompt.ToString(ItemBase.Get(Globals.Trade[0, index].ItemId).Name),
-                        true, InputBox.InputType.NumericSliderInput, RevokeItemInputBoxOkay, null, index
-                    );
-                }
-                else
-                {
-                    PacketSender.SendRevokeTradeItem(index, 1);
-                }
-            }
-        }
+        public void TryRevokeItem(int index) { }
 
-        private void RevokeItemInputBoxOkay(object sender, EventArgs e)
-        {
-            var value = (int)((InputBox)sender).Value;
-            if (value > 0)
-            {
-                PacketSender.SendRevokeTradeItem((int)((InputBox)sender).UserData, value);
-            }
-        }
+        private void RevokeItemInputBoxOkay(object sender, EventArgs e) { }
 
         //Spell Processing
         public void SwapSpells(int spell1, int spell2)
@@ -867,22 +562,9 @@ namespace Intersect.Editor.Entities
             Spells[spell1] = tmpInstance.Clone();
         }
 
-        public void TryForgetSpell(int index)
-        {
-            if (SpellBase.Get(Spells[index].Id) != null)
-            {
-                var iBox = new InputBox(
-                    Strings.Spells.forgetspell,
-                    Strings.Spells.forgetspellprompt.ToString(SpellBase.Get(Spells[index].Id).Name), true,
-                    InputBox.InputType.YesNo, ForgetSpellInputBoxOkay, null, index
-                );
-            }
-        }
+        public void TryForgetSpell(int index) { }
 
-        private void ForgetSpellInputBoxOkay(object sender, EventArgs e)
-        {
-            PacketSender.SendForgetSpell((int)((InputBox)sender).UserData);
-        }
+        private void ForgetSpellInputBoxOkay(object sender, EventArgs e) { }
 
         public void TryUseSpell(int index)
         {
@@ -1012,83 +694,7 @@ namespace Intersect.Editor.Entities
         }
 
         //Input Handling
-        private void HandleInput()
-        {
-            var movex = 0f;
-            var movey = 0f;
-            if (Interface.Interface.HasInputFocus())
-            {
-                return;
-            }
-
-            if (Controls.KeyDown(Control.MoveUp))
-            {
-                movey = 1;
-            }
-
-            if (Controls.KeyDown(Control.MoveDown))
-            {
-                movey = -1;
-            }
-
-            if (Controls.KeyDown(Control.MoveLeft))
-            {
-                movex = -1;
-            }
-
-            if (Controls.KeyDown(Control.MoveRight))
-            {
-                movex = 1;
-            }
-
-
-            Globals.Me.MoveDir = -1;
-            if (movex != 0f || movey != 0f)
-            {
-                if (movey < 0)
-                {
-                    Globals.Me.MoveDir = 1;
-                }
-
-                if (movey > 0)
-                {
-                    Globals.Me.MoveDir = 0;
-                }
-
-                if (movex < 0)
-                {
-                    Globals.Me.MoveDir = 2;
-                }
-
-                if (movex > 0)
-                {
-                    Globals.Me.MoveDir = 3;
-                }
-            }
-
-            var castInput = -1;
-            for (var barSlot = 0; barSlot < Options.Instance.PlayerOpts.HotbarSlotCount; barSlot++)
-            {
-                if (!mLastHotbarUseTime.ContainsKey(barSlot))
-                {
-                    mLastHotbarUseTime.Add(barSlot, 0);
-                }
-
-                if (Controls.KeyDown((Control)barSlot + 9))
-                {
-                    castInput = barSlot;
-                }
-            }
-
-            if (castInput != -1)
-            {
-                if (0 <= castInput && castInput < Interface.Interface.GameUi?.Hotbar?.Items?.Count && mLastHotbarUseTime[castInput] < Timing.Global.Milliseconds)
-                {
-                    Interface.Interface.GameUi?.Hotbar?.Items?[castInput]?.Activate();
-                    mLastHotbarUseTime[castInput] = Timing.Global.Milliseconds + mHotbarUseDelay;
-                }
-            }
-        }
+        private void HandleInput() { }
 
         protected int GetDistanceTo(IEntity target)
         {
@@ -1309,30 +915,7 @@ namespace Intersect.Editor.Entities
             }
         }
 
-        private void SetTargetBox(Entity en)
-        {
-            if (en == null)
-            {
-                TargetBox?.SetEntity(null);
-                TargetBox?.Hide();
-                return;
-            }
-
-            if (en is Player)
-            {
-                TargetBox?.SetEntity(en, EntityTypes.Player);
-            }
-            else if (en is Event)
-            {
-                TargetBox?.SetEntity(en, EntityTypes.Event);
-            }
-            else
-            {
-                TargetBox?.SetEntity(en, EntityTypes.GlobalEntity);
-            }
-
-            TargetBox?.Show();
-        }
+        private void SetTargetBox(Entity en) { }
 
         public bool TryBlock()
         {
@@ -1502,155 +1085,9 @@ namespace Intersect.Editor.Entities
             return false;
         }
 
-        public bool TryTarget()
-        {
-            //Check for taunt status if so don't allow to change target
-            for (var i = 0; i < Status.Count; i++)
-            {
-                if (Status[i].Type == StatusTypes.Taunt)
-                {
-                    return false;
-                }
-            }
+        public bool TryTarget() => false;
 
-            var x = (int)Math.Floor(Globals.InputManager.GetMousePosition().X + Core.Graphics.CurrentView.Left);
-            var y = (int)Math.Floor(Globals.InputManager.GetMousePosition().Y + Core.Graphics.CurrentView.Top);
-            var targetRect = new FloatRect(x - 8, y - 8, 16, 16); //Adjust to allow more/less error
-
-            IEntity bestMatch = null;
-            var bestAreaMatch = 0f;
-
-
-            foreach (MapInstance map in Maps.MapInstance.Lookup.Values)
-            {
-                if (x >= map.GetX() && x <= map.GetX() + Options.MapWidth * Options.TileWidth)
-                {
-                    if (y >= map.GetY() && y <= map.GetY() + Options.MapHeight * Options.TileHeight)
-                    {
-                        //Remove the offsets to just be dealing with pixels within the map selected
-                        x -= (int)map.GetX();
-                        y -= (int)map.GetY();
-
-                        //transform pixel format to tile format
-                        x /= Options.TileWidth;
-                        y /= Options.TileHeight;
-                        var mapId = map.Id;
-
-                        if (TryGetRealLocation(ref x, ref y, ref mapId))
-                        {
-                            foreach (var en in Globals.Entities)
-                            {
-                                if (en.Value == null || en.Value.MapId != mapId || en.Value is Projectile || en.Value is Resource || (en.Value.IsStealthed && !Globals.Me.IsInMyParty(en.Value.Id)))
-                                {
-                                    continue;
-                                }
-
-                                var intersectRect = FloatRect.Intersect(en.Value.WorldPos, targetRect);
-                                if (intersectRect.Width * intersectRect.Height > bestAreaMatch)
-                                {
-                                    bestAreaMatch = intersectRect.Width * intersectRect.Height;
-                                    bestMatch = en.Value;
-                                }
-                            }
-
-                            foreach (MapInstance eventMap in Maps.MapInstance.Lookup.Values)
-                            {
-                                foreach (var en in eventMap.LocalEntities)
-                                {
-                                    if (en.Value == null || en.Value.MapId != mapId || ((Event)en.Value).DisablePreview)
-                                    {
-                                        continue;
-                                    }
-
-                                    var intersectRect = FloatRect.Intersect(en.Value.WorldPos, targetRect);
-                                    if (intersectRect.Width * intersectRect.Height > bestAreaMatch)
-                                    {
-                                        bestAreaMatch = intersectRect.Width * intersectRect.Height;
-                                        bestMatch = en.Value;
-                                    }
-                                }
-                            }
-
-                            if (bestMatch != null && bestMatch.Id != TargetIndex)
-                            {
-                                var targetType = bestMatch is Event ? 1 : 0;
-
-
-                                SetTargetBox(bestMatch as Entity);
-
-                                if (bestMatch is Player)
-                                {
-                                    //Select in admin window if open
-                                    if (Interface.Interface.GameUi.AdminWindowOpen())
-                                    {
-                                        Interface.Interface.GameUi.AdminWindowSelectName(bestMatch.Name);
-                                    }
-                                }
-
-                                TargetType = targetType;
-                                TargetIndex = bestMatch.Id;
-
-                                return true;
-                            }
-                            else if (!Globals.Database.StickyTarget)
-                            {
-                                // We've clicked off of our target and are allowed to clear it!
-                                ClearTarget();
-                                return true;
-                            }
-                        }
-
-                        return false;
-                    }
-                }
-            }
-
-            return false;
-        }
-
-        public bool TryTarget(IEntity entity, bool force = false)
-        {
-            //Check for taunt status if so don't allow to change target
-            for (var i = 0; i < Status.Count; i++)
-            {
-                if (Status[i].Type == StatusTypes.Taunt && !force)
-                {
-                    return false;
-                }
-            }
-
-            if (entity == null)
-            {
-                return false;
-            }
-
-            // Are we already targetting this?
-            if (TargetBox != null && TargetBox.MyEntity == entity)
-            {
-                return true;
-            }
-
-            var targetType = entity is Event ? 1 : 0;
-
-            if (entity.GetType() == typeof(Player))
-            {
-                //Select in admin window if open
-                if (Interface.Interface.GameUi.AdminWindowOpen())
-                {
-                    Interface.Interface.GameUi.AdminWindowSelectName(entity.Name);
-                }
-            }
-
-            if (TargetIndex != entity.Id)
-            {
-                SetTargetBox(entity as Entity);
-                TargetType = targetType;
-                TargetIndex = entity.Id;
-            }
-
-            return true;
-
-        }
+        public bool TryTarget(IEntity entity, bool force = false) => false;
 
         public void ClearTarget()
         {

@@ -1,43 +1,106 @@
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using System.Reflection;
 
+using Intersect.Generic;
 using Intersect.Localization;
+using Intersect.Localization.Common;
+using Intersect.Reflection;
 
-namespace Intersect.GameObjects.Annotations
+namespace Intersect.GameObjects.Annotations;
+
+[AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
+public class EditorDictionaryAttribute : EditorDisplayAttribute
 {
-    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
-    public class EditorDictionaryAttribute : EditorDisplayAttribute
+    private string _legacyGroupName;
+    private FieldInfo _targetFieldInfo;
+    private Type _targetKeyType;
+
+    public EditorDictionaryAttribute(string name)
     {
-        public EditorDictionaryAttribute(string name)
+        Group = default;
+        Name = !string.IsNullOrEmpty(name) ? name : throw new ArgumentNullException(nameof(name));
+    }
+
+    public EditorDictionaryAttribute(string group, string name) : this(name)
+    {
+        Group = !string.IsNullOrEmpty(group) ? group : throw new ArgumentNullException(nameof(group));
+    }
+
+    public EditorDictionaryAttribute(Type namespaceType, string dictionaryName)
+    {
+        Namespace = namespaceType ?? throw new ArgumentNullException(nameof(namespaceType));
+
+        if (string.IsNullOrWhiteSpace(dictionaryName))
         {
-            Group = default;
-            Name = !string.IsNullOrEmpty(name) ? name : throw new ArgumentNullException(nameof(name));
+            throw new ArgumentNullException(nameof(dictionaryName));
         }
 
-        public EditorDictionaryAttribute(string group, string name) : this(name)
+        Name = dictionaryName;
+
+        _targetFieldInfo = Namespace.GetField(Name, BindingFlags.Public | BindingFlags.Instance);
+
+        if (_targetFieldInfo == default)
         {
-            Group = !string.IsNullOrEmpty(group) ? group : throw new ArgumentNullException(nameof(group));
+            throw new ArgumentException(
+                $"Unable to find {Name} on {Namespace.FullName}.",
+                nameof(dictionaryName)
+            );
         }
 
-        public string Group { get; }
-
-        public string Name { get; }
-
-        public override string Format(Type stringsType, object value)
+        var localeDictionaryTypes = _targetFieldInfo.FieldType.GetLocaleDictionaryTypes();
+        if (!localeDictionaryTypes.Value.Extends<LocalizedString>())
         {
-            if (stringsType == default)
-            {
-                throw new ArgumentNullException(nameof(stringsType));
-            }
+            throw new ArgumentException(
+                $"{_targetFieldInfo.FieldType.FullName} must extend {typeof(LocaleDictionary<,>).FullName} where the second parameter is {typeof(LocalizedString).FullName} or a subclass.",
+                nameof(dictionaryName)
+            );
+        }
 
+        _targetKeyType = localeDictionaryTypes.Key;
+    }
+
+    public string Group
+    {
+        get => Namespace?.FullName ?? _legacyGroupName ?? throw new NullReferenceException("Attribute initialized incorrectly.");
+        private set => _legacyGroupName = value;
+    }
+
+    public string Name { get; }
+
+    public Type Namespace { get; }
+
+    public override string Format(RootNamespace rootNamespace, object value)
+    {
+        if (_targetFieldInfo == default)
+        {
+            throw new InvalidOperationException();
+        }
+
+        if (value?.GetType() != _targetKeyType)
+        {
+            throw new ArgumentException($"Passed value must be a {_targetKeyType}.", nameof(value));
+        }
+
+        var dictionary = rootNamespace.Localized[_targetFieldInfo];
+        var localizedString = GenericDictionaryAccessor.Get<LocalizedString>(dictionary, value);
+        return localizedString;
+    }
+
+    public override string Format(Type stringsType, object value)
+    {
+        if (stringsType == default)
+        {
+            throw new ArgumentNullException(nameof(stringsType));
+        }
+
+        var fieldInfo = _targetFieldInfo;
+        if (fieldInfo == default)
+        {
             var groupType = Group == default ? default : stringsType
                 .GetNestedTypes(BindingFlags.Static | BindingFlags.Public)
                 .FirstOrDefault(type => type.Name == Group);
             var parentType = groupType ?? stringsType;
-            var fieldInfo = parentType.GetMember(Name).FirstOrDefault(member => member.MemberType == MemberTypes.Field) as FieldInfo;
+            fieldInfo = parentType.GetMember(Name).FirstOrDefault(member => member.MemberType == MemberTypes.Field) as FieldInfo;
 
             if (fieldInfo == default)
             {
@@ -49,45 +112,54 @@ namespace Intersect.GameObjects.Annotations
                 return base.Format(stringsType, value);
 #endif
             }
+        }
 
-            var fieldValue = fieldInfo.GetValue(value);
-            switch (fieldValue)
-            {
-                case Dictionary<int, LocalizedString> intKeyDictionary:
-                    try
+        var fieldValue = fieldInfo.GetValue(value);
+        switch (fieldValue)
+        {
+            case Dictionary<int, LocalizedString> intKeyDictionary:
+                try
+                {
+                    var key = Convert.ToInt32(value, CultureInfo.InvariantCulture);
+
+                    if (!intKeyDictionary.TryGetValue(key, out var localizedString))
                     {
-                        var key = Convert.ToInt32(value, CultureInfo.InvariantCulture);
-
-                        if (!intKeyDictionary.TryGetValue(key, out var localizedString))
-                        {
-                            throw new ArgumentOutOfRangeException($"Key missing: {key}");
-                        }
-
-                        return localizedString;
-                    }
-                    catch (Exception exception)
-                    {
-                        throw new ArgumentException($"Expected an int or int-like but received a {value?.GetType()?.FullName}", nameof(value), exception);
+                        throw new ArgumentOutOfRangeException($"Key missing: {key}");
                     }
 
-                case Dictionary<string, LocalizedString> stringKeyDictionary:
+                    return localizedString;
+                }
+                catch (Exception exception)
+                {
+                    throw new ArgumentException($"Expected an int or int-like but received a {value?.GetType()?.FullName}", nameof(value), exception);
+                }
+
+            case Dictionary<string, LocalizedString> stringKeyDictionary:
+                {
+                    if (value is not string key)
                     {
-                        if (!(value is string key))
-                        {
-                            throw new ArgumentException($"Expected an int but received a {value?.GetType()?.FullName}", nameof(value));
-                        }
-
-                        if (!stringKeyDictionary.TryGetValue(key, out var localizedString))
-                        {
-                            throw new ArgumentOutOfRangeException($"Key missing: '{key}'");
-                        }
-
-                        return localizedString;
+                        throw new ArgumentException($"Expected an int but received a {value?.GetType()?.FullName}", nameof(value));
                     }
 
-                default:
+                    if (!stringKeyDictionary.TryGetValue(key, out var localizedString))
+                    {
+                        throw new ArgumentOutOfRangeException($"Key missing: '{key}'");
+                    }
+
+                    return localizedString;
+                }
+
+            default:
+                {
+                    var fieldType = fieldInfo.FieldType;
+
+                    if (fieldType.BaseType == typeof(Dictionary<,>))
+                    {
+
+                    }
+
                     throw new InvalidOperationException($"Unsupported type: {fieldInfo.FieldType.FullName}");
-            }
+                }
         }
     }
 }

@@ -1,11 +1,10 @@
-using System;
-using System.Linq;
 using System.Reflection;
 
 using Intersect.Collections;
 using Intersect.GameObjects.Maps;
 using Intersect.GameObjects.Maps.MapList;
 using Intersect.Models;
+using Intersect.Reflection;
 
 namespace Intersect.GameObjects.Annotations
 {
@@ -19,15 +18,22 @@ namespace Intersect.GameObjects.Annotations
             DescriptorType = descriptorType ?? throw new ArgumentNullException(nameof(descriptorType));
             ReferenceName = !string.IsNullOrEmpty(referenceName) ? referenceName : throw new ArgumentNullException(nameof(referenceName));
 
-            if (DescriptorType.BaseType.GetGenericTypeDefinition() != typeof(DatabaseObject<>))
+            if (!DescriptorType.Extends(typeof(DatabaseObject<>)))
             {
-                throw new ArgumentException($"Invalid descriptor type '{DescriptorType.FullName}'.", nameof(descriptorType));
+                throw new ArgumentException(
+                    $"Invalid descriptor type '{DescriptorType.FullName}'.",
+                    nameof(descriptorType)
+                );
             }
 
             _referenceProperty = DescriptorType.GetProperty(ReferenceName);
             if (_referenceProperty == default)
             {
-                throw new ArgumentException($"'{referenceName}' does not exist on {descriptorType.FullName}.", nameof(referenceName));
+                throw new ArgumentException(
+                    $"{descriptorType.FullName}.{referenceName} is missing.",
+                    nameof(referenceName),
+                    new MissingMemberException(descriptorType.FullName, referenceName)
+                );
             }
         }
 
@@ -37,7 +43,7 @@ namespace Intersect.GameObjects.Annotations
 
         public override string Format(Type stringsType, object value)
         {
-            if (!(value is Guid guid))
+            if (value is not Guid guid)
             {
                 throw new ArgumentException($"Invalid value type {value?.GetType().FullName}", nameof(value));
             }

@@ -3,7 +3,6 @@ using System;
 using Intersect.Editor.Core;
 using Intersect.Client.Framework.Network;
 using Intersect.Editor.General;
-using Intersect.Editor.Interface.Menu;
 using Intersect.Configuration;
 using Intersect.Logging;
 using Intersect.Network;
@@ -52,7 +51,7 @@ namespace Intersect.Editor.Networking
         private static void TryConnect()
         {
             sConnected = false;
-            MainMenu.OnNetworkConnecting();
+            // TODO: MainMenu.OnNetworkConnecting();
             Socket?.Connect(ClientConfiguration.Instance.Host, ClientConfiguration.Instance.Port);
         }
 
