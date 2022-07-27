@@ -1,12 +1,5 @@
-using System;
-using System.IO;
-using System.Linq;
-using System.Threading;
-
 using Intersect.Client.Framework.Audio;
-using Intersect.Client.Framework.Content;
 using Intersect.Editor.General;
-using Intersect.Editor.Interface.Game.Chat;
 using Intersect.Editor.Localization;
 using Intersect.Editor.Utilities;
 using Intersect.Logging;
@@ -114,11 +107,6 @@ namespace Intersect.Editor.MonoGame.Audio
                 catch (Exception exception)
                 {
                     Log.Error($"Error loading '{mPath}'.", exception);
-                    ChatboxMsg.AddMessage(
-                        new ChatboxMsg(
-                            $"{Strings.Errors.LoadFile.ToString(Strings.Words.lcase_sound)} [{mPath}]", new Color(0xBF, 0x0, 0x0), Enums.ChatMessageType.Error
-                        )
-                    );
                 }
             }
             mActiveSource = this;

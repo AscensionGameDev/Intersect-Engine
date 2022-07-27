@@ -1,9 +1,6 @@
-﻿using System;
-
 using Intersect.Admin.Actions;
 using Intersect.Editor.Entities.Events;
 using Intersect.Editor.General;
-using Intersect.Editor.Interface.Game;
 using Intersect.Editor.Maps;
 using Intersect.Network.Packets.Client;
 using Intersect.Time;
@@ -83,24 +80,9 @@ namespace Intersect.Editor.Networking
             Network.SendPacket(new EventResponsePacket(ed.EventId, response));
         }
 
-        public static void SendEventInputVariable(object sender, EventArgs e)
-        {
-            Network.SendPacket(
-                new EventInputVariablePacket(
-                    (Guid) ((InputBox) sender).UserData, (int) ((InputBox) sender).Value, ((InputBox) sender).TextValue
-                )
-            );
-        }
+        public static void SendEventInputVariable(object sender, EventArgs e) { }
 
-        public static void SendEventInputVariableCancel(object sender, EventArgs e)
-        {
-            Network.SendPacket(
-                new EventInputVariablePacket(
-                    (Guid) ((InputBox) sender).UserData, (int) ((InputBox) sender).Value, ((InputBox) sender).TextValue,
-                    true
-                )
-            );
-        }
+        public static void SendEventInputVariableCancel(object sender, EventArgs e) { }
 
         public static void SendCreateAccount(string username, string password, string email)
         {
@@ -239,15 +221,9 @@ namespace Intersect.Editor.Networking
             Network.SendPacket(new PartyLeavePacket());
         }
 
-        public static void SendPartyAccept(object sender, EventArgs e)
-        {
-            Network.SendPacket(new PartyInviteResponsePacket((Guid) ((InputBox) sender).UserData, true));
-        }
+        public static void SendPartyAccept(object sender, EventArgs e) { }
 
-        public static void SendPartyDecline(object sender, EventArgs e)
-        {
-            Network.SendPacket(new PartyInviteResponsePacket((Guid) ((InputBox) sender).UserData, false));
-        }
+        public static void SendPartyDecline(object sender, EventArgs e) { }
 
         public static void SendAcceptQuest(Guid questId)
         {
@@ -289,15 +265,9 @@ namespace Intersect.Editor.Networking
             Network.SendPacket(new DeclineTradePacket());
         }
 
-        public static void SendTradeRequestAccept(object sender, EventArgs e)
-        {
-            Network.SendPacket(new TradeRequestResponsePacket((Guid) ((InputBox) sender).UserData, true));
-        }
+        public static void SendTradeRequestAccept(object sender, EventArgs e) { }
 
-        public static void SendTradeRequestDecline(object sender, EventArgs e)
-        {
-            Network.SendPacket(new TradeRequestResponsePacket((Guid) ((InputBox) sender).UserData, false));
-        }
+        public static void SendTradeRequestDecline(object sender, EventArgs e) { }
 
         public static void SendStoreBagItem(int invSlot, int amount, int bagSlot)
         {
@@ -334,15 +304,9 @@ namespace Intersect.Editor.Networking
             Network.SendPacket(new UpdateFriendsPacket(name, false));
         }
 
-        public static void SendFriendRequestAccept(Object sender, EventArgs e)
-        {
-            Network.SendPacket(new FriendRequestResponsePacket((Guid) ((InputBox) sender).UserData, true));
-        }
+        public static void SendFriendRequestAccept(Object sender, EventArgs e) { }
 
-        public static void SendFriendRequestDecline(Object sender, EventArgs e)
-        {
-            Network.SendPacket(new FriendRequestResponsePacket((Guid) ((InputBox) sender).UserData, false));
-        }
+        public static void SendFriendRequestDecline(Object sender, EventArgs e) { }
 
         public static void SendSelectCharacter(Guid charId)
         {

@@ -1,8 +1,4 @@
-﻿
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Reflection;
 
 using Microsoft;
@@ -30,7 +26,7 @@ namespace Intersect.Reflection
                     for (var index = 0; index < constructorParameters.Length; ++index)
                     {
                         var constructorParameter = constructorParameters[index];
-                        Debug.Assert(constructorParameter != null, nameof(constructorParameter) + " != null");
+                        Debug.Assert(constructorParameter != null, $"{nameof(constructorParameter)} != null");
 
                         if (index >= parameters.Length)
                         {
@@ -59,5 +55,168 @@ namespace Intersect.Reflection
                     return true;
                 }
             );
+
+        public static bool Extends(this Type childType, Type baseType)
+        {
+            if (!baseType.IsGenericTypeDefinition)
+            {
+                return baseType.IsAssignableFrom(childType);
+            }
+
+            var currentType = childType;
+            while (currentType != default)
+            {
+                if (currentType.IsGenericType)
+                {
+                    if (currentType.GetGenericTypeDefinition() == baseType)
+                    {
+                        return true;
+                    }
+                }
+
+                currentType = currentType.BaseType;
+            }
+
+            return false;
+        }
+
+        public static bool Extends<TBaseType>(this Type type) => Extends(type, typeof(TBaseType));
+
+        public static bool ExtendedBy<TChildType>(this Type type) => Extends(typeof(TChildType), type);
+
+        public static Type FindGenericType(this Type type) =>
+            type.FindGenericType(true);
+
+        public static Type? FindGenericType(this Type type, bool throwOnNonGeneric) =>
+            type.FindGenericType(default, throwOnNonGeneric);
+
+        public static Type? FindGenericType(this Type type, Type genericTypeDefinition, bool throwOnNonGeneric)
+        {
+            if (genericTypeDefinition != null && !genericTypeDefinition.IsGenericTypeDefinition)
+            {
+                throw new ArgumentException(
+                    $"Not a valid generic type definition: {genericTypeDefinition.FullName}",
+                    nameof(genericTypeDefinition)
+                );
+            }
+
+            var currentType = type;
+            while (currentType != default)
+            {
+                if (genericTypeDefinition != default)
+                {
+                    if (genericTypeDefinition.IsInterface)
+                    {
+                        var genericInterfaceType = currentType
+                            .GetInterfaces()
+                            .FirstOrDefault(interfaceType => interfaceType.IsGenericType && interfaceType.GetGenericTypeDefinition() == genericTypeDefinition);
+
+                        if (genericInterfaceType != null)
+                        {
+                            return genericInterfaceType;
+                        }
+                    }
+                    else if (currentType.IsGenericType && currentType.GetGenericTypeDefinition() == genericTypeDefinition)
+                    {
+                        return currentType;
+                    }
+                }
+                else if (currentType.IsGenericType)
+                {
+                    return currentType;
+                }
+
+                currentType = currentType.BaseType;
+            }
+
+            if (!throwOnNonGeneric)
+            {
+                return default;
+            }
+
+            throw new ArgumentException($"{type.FullName} is not a generic type and does not extend from a generic type.", nameof(type));
+        }
+
+        public static Type FindGenericTypeDefinition(this Type type) =>
+            type.FindGenericTypeDefinition(true);
+
+        public static Type? FindGenericTypeDefinition(this Type type, bool throwOnNonGeneric)
+        {
+            if (type.IsGenericTypeDefinition)
+            {
+                return type;
+            }
+
+            var currentType = type;
+            while (currentType != default)
+            {
+                if (currentType.IsGenericType)
+                {
+                    return currentType.GetGenericTypeDefinition();
+                }
+
+                currentType = currentType.BaseType;
+            }
+
+            if (!throwOnNonGeneric)
+            {
+                return default;
+            }
+
+            throw new ArgumentException($"{type.FullName} is not a generic type and does not extend from a generic type.", nameof(type));
+        }
+
+        public static Type[] FindGenericTypeParameters(this Type type) =>
+            type.FindGenericTypeParameters(true);
+
+        public static Type[] FindGenericTypeParameters(this Type type, bool throwOnNonGeneric) =>
+            type.FindGenericTypeParameters(default, throwOnNonGeneric);
+
+        public static Type[] FindGenericTypeParameters(this Type type, Type genericTypeDefinition, bool throwOnNonGeneric = true)
+        {
+            if (genericTypeDefinition != null && !genericTypeDefinition.IsGenericTypeDefinition)
+            {
+                throw new ArgumentException(
+                    $"Not a valid generic type definition: {genericTypeDefinition.FullName}",
+                    nameof(genericTypeDefinition)
+                );
+            }
+
+            var currentType = type;
+            while (currentType != default)
+            {
+                if (genericTypeDefinition != default)
+                {
+                    if (genericTypeDefinition.IsInterface)
+                    {
+                        var genericInterfaceType = currentType
+                            .GetInterfaces()
+                            .FirstOrDefault(interfaceType => interfaceType.IsGenericType && interfaceType.GetGenericTypeDefinition() == genericTypeDefinition);
+
+                        if (genericInterfaceType != null)
+                        {
+                            return genericInterfaceType.GetGenericArguments();
+                        }
+                    }
+                    else if (currentType.IsGenericType && currentType.GetGenericTypeDefinition() == genericTypeDefinition)
+                    {
+                        return currentType.GetGenericArguments();
+                    }
+                }
+                else if (currentType.IsGenericType)
+                {
+                    return currentType.GetGenericArguments();
+                }
+
+                currentType = currentType.BaseType;
+            }
+
+            if (!throwOnNonGeneric)
+            {
+                return Array.Empty<Type>();
+            }
+
+            throw new ArgumentException($"{type.FullName} is not a generic type and does not extend from a generic type.", nameof(type));
+        }
     }
 }

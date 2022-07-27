@@ -1,16 +1,13 @@
-using System;
-using System.IO;
-
 using Intersect.Client.Framework.Graphics;
-using Intersect.Editor.Interface.Game.Chat;
-using Intersect.Editor.Localization;
 using Intersect.Compression;
+using Intersect.Editor.Localization;
 using Intersect.IO.Files;
 using Intersect.Logging;
+using Intersect.Time;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Intersect.Time;
+
 using GraphicsDevice = Microsoft.Xna.Framework.Graphics.GraphicsDevice;
 
 namespace Intersect.Editor.MonoGame.Graphics
@@ -139,13 +136,6 @@ namespace Intersect.Editor.MonoGame.Graphics
                     Log.Error(
                         exception,
                         $"Failed to load texture ({FileSystemHelper.FormatSize(fileStream.Length)}): {relativePath}"
-                    );
-
-                    ChatboxMsg.AddMessage(
-                        new ChatboxMsg(
-                            Strings.Errors.LoadFile.ToString(Strings.Words.lcase_sprite) + " [" + mName + "]",
-                            new Color(0xBF, 0x0, 0x0), Enums.ChatMessageType.Error
-                        )
                     );
                 }
             }

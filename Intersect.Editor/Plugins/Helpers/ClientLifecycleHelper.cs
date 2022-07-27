@@ -32,8 +32,7 @@ namespace Intersect.Editor.Plugins.Helpers
         }
 
         /// <inheritdoc />
-        public IMutableInterface Interface =>
-            Editor.Interface.Interface.MenuUi ?? Editor.Interface.Interface.GameUi as IMutableInterface;
+        public IMutableInterface Interface => default;
 
         /// <inheritdoc />
         public void OnLifecycleChangeState(GameStates state)
