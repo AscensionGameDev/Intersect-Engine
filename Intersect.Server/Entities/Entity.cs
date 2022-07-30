@@ -307,6 +307,11 @@ namespace Intersect.Server.Entities
                 Monitor.TryEnter(EntityLock, ref lockObtained);
                 if (lockObtained)
                 {
+                    if (Target?.IsDisposed ?? false)
+                    {
+                        Target = default;
+                    }
+
                     //Cast timers
                     if (CastTime != 0 && !IsCasting && SpellCastSlot < Spells.Count && SpellCastSlot >= 0)
                     {
