@@ -8,7 +8,7 @@ internal sealed class MonoGameTexture : Texture
 {
     internal readonly Texture2D _texture;
 
-    internal MonoGameTexture(Texture2D texture) : base(default, default, default, default, default)
+    internal MonoGameTexture(Texture2D texture) : base(default, default, texture.Width, texture.Height, default)
     {
         _texture = texture;
     }

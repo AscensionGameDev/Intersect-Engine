@@ -449,7 +449,7 @@ namespace Intersect.Network.Lidgren
 
                 case NetPeerStatus.Running:
                 case NetPeerStatus.Starting:
-                    mPeer.Shutdown(@"Terminating.");
+                    mPeer.Shutdown(NetworkStatus.Quitting.ToString());
 
                     break;
 

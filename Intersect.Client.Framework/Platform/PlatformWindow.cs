@@ -19,6 +19,8 @@ public abstract class PlatformWindow
 
     public abstract Viewport Viewport { get; set; }
 
+    public abstract void Close();
+
     protected void OnTextInput(TextInputEventArgs textInputEventArgs)
     {
         TextInput?.Invoke(this, textInputEventArgs);

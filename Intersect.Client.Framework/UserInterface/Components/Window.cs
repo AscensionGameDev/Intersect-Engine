@@ -1,6 +1,8 @@
+using System.Numerics;
+
 using ImGuiNET;
 
-using Intersect.Client.Framework.UserInterface.Styling;
+using Intersect.Localization;
 using Intersect.Time;
 
 namespace Intersect.Client.Framework.UserInterface.Components;
@@ -9,17 +11,19 @@ public class Window : Component
 {
     public const ImGuiWindowFlags DefaultFlags = ImGuiWindowFlags.NoDocking;
 
+    private ReactiveString _cacheTitleWithId;
+
+    private MenuBar? _menuBar;
     private bool _open;
-    private string _title;
+    private StatusBar? _statusBar;
+    private LocalizedString? _title;
+    private CustomFormatter? _titleFormatter;
 
-    public Window(string name) : base(name)
+    public Window(string? name = default) : base(name)
     {
-        _open = true;
+        IsOpen = true;
 
-        MenuBar = new()
-        {
-            Parent = this,
-        };
+        _cacheTitleWithId = CreateLabelWithId(string.Empty);
     }
 
     public bool DockingEnabled
@@ -30,43 +34,128 @@ public class Window : Component
 
     public ImGuiWindowFlags Flags { get; set; } = DefaultFlags;
 
-    public MenuBar MenuBar { get; }
+    public bool HasMenuBar
+    {
+        get => Flags.HasFlag(ImGuiWindowFlags.MenuBar);
+        set => Flags = (Flags & ~ImGuiWindowFlags.MenuBar) | (value ? ImGuiWindowFlags.MenuBar : ImGuiWindowFlags.None);
+    }
 
-    public string Title
+    public MenuBar? MenuBar
+    {
+        get => _menuBar;
+        set
+        {
+            if (_menuBar == value)
+            {
+                return;
+            }
+
+            _menuBar = value;
+            HasMenuBar = _menuBar == default;
+        }
+    }
+
+    public bool IsOpen
+    {
+        get => _open;
+        set => _open = value;
+    }
+
+    public StatusBar? StatusBar
+    {
+        get => _statusBar;
+        set
+        {
+            if (_statusBar == value)
+            {
+                return;
+            }
+
+            _statusBar = value;
+        }
+    }
+
+    #region Title
+
+    public LocalizedString? Title
     {
         get => _title;
         set
         {
-            if (string.Equals(value, _title, StringComparison.Ordinal))
+            if (value == _title)
             {
                 return;
             }
 
             _title = value;
-            Invalidate();
+            _cacheTitleWithId = CreateLabelWithId(_title, _titleFormatter);
         }
     }
 
+    protected CustomFormatter? TitleFormatter
+    {
+        get => _titleFormatter;
+        set
+        {
+            if (value == _titleFormatter)
+            {
+                return;
+            }
+
+            _titleFormatter = value;
+            _cacheTitleWithId = CreateLabelWithId(_title, _titleFormatter);
+        }
+    }
+
+    #endregion Title
+
     protected override bool LayoutBegin(FrameTime frameTime)
     {
-        if (!ImGui.Begin(Name, ref _open, Flags))
+        StyleBegin(frameTime);
+
+        var shouldLayoutChildren = ImGui.Begin(_cacheTitleWithId, ref _open, Flags);
+
+        StyleEnd(frameTime);
+
+        if (!IsOpen)
+        {
+            Parent = default;
+            return false;
+        }
+
+        if (!shouldLayoutChildren)
         {
             return false;
         }
 
         var position = ImGui.GetWindowPos();
         var size = ImGui.GetWindowSize();
-        SynchronizeBounds(new(position, size));
+        if (SynchronizeBounds(new(position, size)))
+        {
+            ImGui.SetWindowPos(Position);
+            ImGui.SetWindowSize(Size);
+        }
 
-        ImGui.SetWindowPos(Position);
-        ImGui.SetWindowSize(Size);
+        if (_menuBar?.Any() ?? false)
+        {
+            _menuBar.Layout(frameTime);
+        }
+
+        _statusBar?.Layout(frameTime);
 
         return true;
     }
 
     protected override void LayoutEnd(FrameTime frameTime)
     {
-
         ImGui.End();
+    }
+
+    protected virtual void StyleBegin(FrameTime frameTime)
+    {
+    }
+
+    protected virtual void StyleEnd(FrameTime frameTime)
+    {
     }
 }

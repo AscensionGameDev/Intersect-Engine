@@ -21,6 +21,8 @@ public class MenuItem
     internal void OnSelected() => Selected?.Invoke(this, EventArgs.Empty);
 }
 
+public class MenuItemSeparator : MenuItem { }
+
 public class Menu
 {
     private readonly List<MenuItem> _items;
@@ -64,7 +66,10 @@ public class MenuBar : Component, IList<Menu>
         _menus = new();
 
         Display = DisplayMode.Block;
+        SkipLayoutEnd = true;
     }
+
+    public MenuBar(IEnumerable<Menu> menus) : this() => AddRange(menus);
 
     public Menu this[int index] {
         get => _menus[index];
@@ -73,13 +78,25 @@ public class MenuBar : Component, IList<Menu>
 
     public int Count => _menus.Count;
 
+    public bool IsMainMenuBar { get; set; } = false;
+
     public bool IsReadOnly => (_menus as IList<Menu>).IsReadOnly;
 
     protected override bool LayoutBegin(FrameTime frameTime)
     {
-        if (!ImGui.BeginMainMenuBar())
+        if (IsMainMenuBar)
         {
-            return false;
+            if (!ImGui.BeginMainMenuBar())
+            {
+                return false;
+            }
+        }
+        else
+        {
+            if (!ImGui.BeginMenuBar())
+            {
+                return false;
+            }
         }
 
         foreach (var menu in _menus)
@@ -88,22 +105,39 @@ public class MenuBar : Component, IList<Menu>
             {
                 foreach (var menuItem in menu.Items)
                 {
-                    if (ImGui.MenuItem(menuItem.Name, menuItem.Shortcut, false, menuItem.Enabled))
+                    switch (menuItem)
                     {
-                        menuItem.OnSelected();
+                        case MenuItemSeparator _:
+                            ImGui.Separator();
+                            break;
+
+                        default:
+                            if (ImGui.MenuItem(menuItem.Name, menuItem.Shortcut, false, menuItem.Enabled))
+                            {
+                                menuItem.OnSelected();
+                            }
+                            break;
                     }
                 }
+                ImGui.EndMenu();
             }
-
-            ImGui.EndMenu();
         }
+
+        LayoutEnd(frameTime);
 
         return true;
     }
 
     protected override void LayoutEnd(FrameTime frameTime)
     {
-        ImGui.EndMainMenuBar();
+        if (IsMainMenuBar)
+        {
+            ImGui.EndMainMenuBar();
+        }
+        else
+        {
+            ImGui.EndMenuBar();
+        }
     }
 
     public void Add(Menu item) => _menus.Add(item);
