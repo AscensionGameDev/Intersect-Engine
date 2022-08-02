@@ -9,9 +9,9 @@ namespace Intersect.Localization
 
         public LocalizedString(string value) => _value = value;
 
-        public static implicit operator LocalizedString(string value) => new LocalizedString(value);
+        internal event EventHandler Repopulated;
 
-        public static implicit operator string(LocalizedString str) => str?._value;
+        private void OnRepopulated() => Repopulated?.Invoke(this, EventArgs.Empty);
 
         public override string ToString() => _value;
 
@@ -26,6 +26,10 @@ namespace Intersect.Localization
                 return "Format Exception!";
             }
         }
+
+        public static implicit operator LocalizedString(string value) => new(value);
+
+        public static implicit operator string(LocalizedString str) => str?._value;
 
         public partial class Converter : JsonConverter<LocalizedString>
         {
@@ -49,6 +53,7 @@ namespace Intersect.Localization
                 }
 
                 existingValue._value = reader.Value as string;
+                existingValue.OnRepopulated();
                 return existingValue;
             }
         }

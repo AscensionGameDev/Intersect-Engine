@@ -1,4 +1,4 @@
-﻿using Intersect.Localization;
+using Intersect.Localization;
 
 using Newtonsoft.Json;
 
@@ -9,17 +9,17 @@ internal partial class EditMenuNamespace : MenuNamespace
     public EditMenuNamespace() : base(@"Edit") { }
 
     [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-    public readonly LocalizedString Undo = @"Undo";
-
-    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-    public readonly LocalizedString Redo = @"Redo";
+    public readonly LocalizedString Copy = @"Copy";
 
     [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
     public readonly LocalizedString Cut = @"Cut";
 
     [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-    public readonly LocalizedString Copy = @"Copy";
+    public readonly LocalizedString Paste = @"Paste";
 
     [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-    public readonly LocalizedString Paste = @"Paste";
+    public readonly LocalizedString Redo = @"Redo";
+
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+    public readonly LocalizedString Undo = @"Undo";
 }

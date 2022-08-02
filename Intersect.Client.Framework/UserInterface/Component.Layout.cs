@@ -1,3 +1,4 @@
+using Intersect.Client.Framework.UserInterface.Components;
 using Intersect.Client.Framework.UserInterface.Styling;
 using Intersect.Time;
 
@@ -6,6 +7,8 @@ namespace Intersect.Client.Framework.UserInterface;
 public partial class Component
 {
     private bool _dirty;
+
+    protected bool SkipLayoutEnd { get; set; }
 
     public virtual void Invalidate(bool invalidateChildren = false)
     {
@@ -39,12 +42,16 @@ public partial class Component
             LayoutChildren(frameTime);
         }
 
-        LayoutEnd(frameTime);
+        if (!SkipLayoutEnd)
+        {
+            LayoutEnd(frameTime);
+        }
     }
 
     private void LayoutChildren(FrameTime frameTime)
     {
-        foreach (var child in Children)
+        var childrenSnapshot = Children.ToArray();
+        foreach (var child in childrenSnapshot)
         {
             child.Layout(frameTime);
         }

@@ -1,5 +1,6 @@
 using System.Numerics;
 
+using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.UserInterface.Styling;
 using Intersect.Collections;
 using Intersect.Numerics;
@@ -8,11 +9,16 @@ namespace Intersect.Client.Framework.UserInterface;
 
 public abstract partial class Component
 {
+    private readonly ComponentMetadata _metadata;
+
     private FloatRect _bounds;
     private DisplayMode _displayMode;
+    private FloatRect _imguiBounds;
 
     protected Component(string? name = default)
     {
+        _metadata = new ComponentMetadata(this);
+
         Name = name;
 
         _childrenNotifier = new ChildrenNotifier(this);
@@ -34,6 +40,8 @@ public abstract partial class Component
             Invalidate();
         }
     }
+
+    protected virtual IContentManager? ContentManager => Parent?.ContentManager;
 
     public DisplayMode Display
     {
@@ -82,8 +90,22 @@ public abstract partial class Component
         }
     }
 
-    protected void SynchronizeBounds(FloatRect bounds)
+    protected bool SynchronizeBounds(FloatRect bounds)
     {
+        if (_imguiBounds == bounds)
+        {
+            var shouldSynchronize = _bounds != bounds;
+            if (shouldSynchronize)
+            {
+                _imguiBounds = _bounds;
+            }
+            return true;
+        }
+
+        _imguiBounds = bounds;
         _bounds = bounds;
+        return false;
     }
+
+    protected bool SynchronizeBounds(Vector2 position, Vector2 size) => SynchronizeBounds(new(position, size));
 }

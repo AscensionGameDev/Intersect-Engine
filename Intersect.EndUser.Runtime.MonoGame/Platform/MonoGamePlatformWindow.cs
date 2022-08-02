@@ -2,21 +2,26 @@ using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Platform;
 using Intersect.Numerics;
 
+using Game = Microsoft.Xna.Framework.Game;
 using GameWindow = Microsoft.Xna.Framework.GameWindow;
 
 namespace Intersect.EndUser.Runtime.MonoGame.Platform;
 
 public sealed class MonoGamePlatformWindow : PlatformWindow
 {
+    private readonly Game _game;
     private readonly GameWindow _gameWindow;
 
     public MonoGamePlatformWindow(
+        Game game,
         GraphicsDevice graphicsDevice,
         GameWindow window
     )
     {
-        GraphicsDevice = graphicsDevice;
+        _game = game;
         _gameWindow = window;
+
+        GraphicsDevice = graphicsDevice;
     }
 
     public override Rectangle Bounds
@@ -54,4 +59,6 @@ public sealed class MonoGamePlatformWindow : PlatformWindow
         get => GraphicsDevice.Viewport;
         set => GraphicsDevice.Viewport = value;
     }
+
+    public override void Close() => _game.Exit();
 }

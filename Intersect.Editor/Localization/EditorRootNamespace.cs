@@ -1,4 +1,5 @@
 using Intersect.Editor.Localization.MenuBar;
+using Intersect.Editor.Localization.Windows;
 using Intersect.Localization.Common;
 
 using Newtonsoft.Json;
@@ -12,4 +13,7 @@ internal partial class EditorRootNamespace : RootNamespace
 
     [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
     public readonly MenuBarNamespace MenuBar = new();
+
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+    public readonly WindowsNamespace Windows = new();
 }
