@@ -11,4 +11,10 @@ public partial class Component
             localizedString,
             (text) => $"{customFormatter?.Invoke(text) ?? text}###{_metadata.Id}"
         );
+
+    protected static ReactiveString CreateLabelWithId(LocalizedString? localizedString, string id) =>
+        new(
+            localizedString,
+            (text) => $"{text}###{id}"
+        );
 }

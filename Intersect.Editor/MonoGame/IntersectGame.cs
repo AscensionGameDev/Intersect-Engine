@@ -270,7 +270,7 @@ namespace Intersect.Editor.MonoGame
             //}
 
             ImGui.GetIO().ConfigFlags |= ImGuiConfigFlags.DockingEnable;
-            _customFont = BuildFont(20);
+            _customFont = BuildFont(16);
             //_defaultFont = io.FontDefault;
             _imGuiRenderer.RebuildFontAtlas();
             _windows.Add(new EditorMainWindow(_contentManager, _platformWindow, _imGuiRenderer, _customFont));
@@ -402,10 +402,14 @@ namespace Intersect.Editor.MonoGame
             // Call BeforeLayout first to set things up
             _imGuiRenderer.BeforeLayout(frameTime);
 
+            ImGui.PushFont(_customFont);
+
             foreach (var window in _windows)
             {
                 window.Update(frameTime);
             }
+
+            ImGui.PopFont();
 
             // Call AfterLayout now to finish up and draw all the things
             _imGuiRenderer.AfterLayout();

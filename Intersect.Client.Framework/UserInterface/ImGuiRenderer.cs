@@ -253,9 +253,9 @@ public abstract class ImGuiRenderer
         io.MouseDown[1] = mouseState.Secondary == ButtonState.Pressed;
         io.MouseDown[2] = mouseState.Middle == ButtonState.Pressed;
 
-        var scrollDelta = mouseState.ScrollX - _scrollWheelValue;
+        var scrollDelta = mouseState.ScrollY - _scrollWheelValue;
         io.MouseWheel = Math.Sign(scrollDelta);
-        _scrollWheelValue = mouseState.ScrollX;
+        _scrollWheelValue = mouseState.ScrollY;
     }
 
     #endregion Setup & Update
