@@ -1,4 +1,4 @@
-# Intersect Authors
+# Authors
 
 [JC Snider](https://github.com/jcsnider)
 
@@ -6,20 +6,38 @@
 
 [Robbie Lodico](https://github.com/lodicolo)
 
-# Intersect Maintainers
+# Maintainers
 
 [Jocelyn Cobb](https://github.com/Cheshire92)
 
-# Intersect Contributors
+# Developers
 
 [Alex Vild](https://github.com/AlexVild)
 
+[Fernando Arzola Lagos](https://github.com/Arufonsu)
+
+[Weylon Felinto Oliveira](https://github.com/WeylonSantana)
+
+# Contributors
+
 [A. I. Robin](https://github.com/alloin)
+
+[AisenGaming](https://github.com/AisenGaming)
+
+[Blinkuz](https://github.com/blinkuz)
+
+[celojevic](https://github.com/celojevic)
 
 [char32](https://github.com/char32)
 
-[Dog from the Kash Shop](#)
+Dog from the Kash Shop
 
-[Fernando Arzola Lagos](https://github.com/Arufonsu)
+[dudevelopment](https://github.com/dudevelopement)
+
+[jburditt](https://github.com/jburditt)
+
+[lucas-tardivo](https://github.com/lucas-tardivo)
+
+[Magehernan](https://github.com/Magehernan)
 
 [Shenmue](https://github.com/RedBandana)
