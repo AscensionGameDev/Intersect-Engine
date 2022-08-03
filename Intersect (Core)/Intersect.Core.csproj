@@ -38,6 +38,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="$(IntersectRepoPath)\AUTHORS.md">
+      <LogicalName>AUTHORS.md</LogicalName>
+    </EmbeddedResource>
     <EmbeddedResource Update="Properties\DeveloperStrings.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>DeveloperStrings.Designer.cs</LastGenOutput>

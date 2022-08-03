@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -76,5 +76,13 @@ namespace Intersect.Reflection
 
         public static IEnumerable<Type> FindValueSubtypesOf<TParentType>(this Assembly assembly) =>
             FindValueSubtypesOf(assembly, typeof(Type));
+
+        public static bool TryFindResource(this Assembly asssembly, string resourceName, out string? manifestResourceName)
+        {
+            manifestResourceName = asssembly
+                .GetManifestResourceNames()
+                .FirstOrDefault(name => name?.Contains(resourceName, StringComparison.CurrentCulture) ?? false);
+            return manifestResourceName != default;
+        }
     }
 }
