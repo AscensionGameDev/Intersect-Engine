@@ -367,11 +367,11 @@ namespace Intersect.Editor.Forms
                         toolStripBtnFlipHorizontal_Click(null, null);
                         break;
 
-                    case Keys.F: // Fill Layer Tool.
+                    case Keys.F: // Layer Fill Tool.
                         toolStripBtnFill_Click(null, null);
                         break;
 
-                    case Keys.E: // Erase Tool.
+                    case Keys.E: // Eraser Tool.
                         toolStripBtnErase_Click(null, null);
                         break;
 
@@ -623,15 +623,15 @@ namespace Intersect.Editor.Forms
             }
             else if (Globals.CurrentLayer == LayerOptions.Lights)
             {
-                Globals.CurrentTool = (int) EditingTool.Selection;
+                Globals.CurrentTool = (int) EditingTool.MarqueeSelection;
             }
             else if (Globals.CurrentLayer == LayerOptions.Events)
             {
-                Globals.CurrentTool = (int) EditingTool.Selection;
+                Globals.CurrentTool = (int) EditingTool.MarqueeSelection;
             }
             else if (Globals.CurrentLayer == LayerOptions.Npcs)
             {
-                Globals.CurrentTool = (int) EditingTool.Selection;
+                Globals.CurrentTool = (int) EditingTool.MarqueeSelection;
             }
             else
             {
@@ -694,7 +694,7 @@ namespace Intersect.Editor.Forms
                     }
 
                     break;
-                case (int) EditingTool.Selection:
+                case (int) EditingTool.MarqueeSelection:
                     if (toolStripBtnBrush.Checked)
                     {
                         toolStripBtnBrush.Checked = false;
@@ -746,7 +746,7 @@ namespace Intersect.Editor.Forms
                     }
 
                     break;
-                case (int) EditingTool.Rectangle:
+                case (int) EditingTool.RectangleFill:
                     if (toolStripBtnBrush.Checked)
                     {
                         toolStripBtnBrush.Checked = false;
@@ -798,7 +798,7 @@ namespace Intersect.Editor.Forms
                     }
 
                     break;
-                case (int) EditingTool.Fill:
+                case (int) EditingTool.LayerFill:
                     if (toolStripBtnBrush.Checked)
                     {
                         toolStripBtnBrush.Checked = false;
@@ -850,7 +850,7 @@ namespace Intersect.Editor.Forms
                     }
 
                     break;
-                case (int) EditingTool.Erase:
+                case (int) EditingTool.Eraser:
                     if (toolStripBtnBrush.Checked)
                     {
                         toolStripBtnBrush.Checked = false;
@@ -902,7 +902,7 @@ namespace Intersect.Editor.Forms
                     }
 
                     break;
-                case (int) EditingTool.Droppler:
+                case (int) EditingTool.Eyedropper:
                     if (toolStripBtnBrush.Checked)
                     {
                         toolStripBtnBrush.Checked = false;
@@ -1032,7 +1032,7 @@ namespace Intersect.Editor.Forms
 
         private static void SaveMap()
         {
-            if (Globals.CurrentTool == (int) EditingTool.Selection)
+            if (Globals.CurrentTool == (int) EditingTool.MarqueeSelection)
             {
                 if (Globals.Dragging)
                 {
@@ -1387,12 +1387,12 @@ namespace Intersect.Editor.Forms
 
         private void toolStripBtnFill_Click(object sender, EventArgs e)
         {
-            Globals.CurrentTool = (int) EditingTool.Fill;
+            Globals.CurrentTool = (int) EditingTool.LayerFill;
         }
 
         private void toolStripBtnErase_Click(object sender, EventArgs e)
         {
-            Globals.CurrentTool = (int) EditingTool.Erase;
+            Globals.CurrentTool = (int) EditingTool.Eraser;
         }
 
         private void toolStripBtnScreenshot_Click(object sender, EventArgs e)
@@ -1422,26 +1422,32 @@ namespace Intersect.Editor.Forms
 
         private void toolStripBtnSelect_Click(object sender, EventArgs e)
         {
-            Globals.CurrentTool = (int) EditingTool.Selection;
+            Globals.CurrentTool = (int) EditingTool.MarqueeSelection;
+            Globals.CurMapSelX = 0;
+            Globals.CurMapSelY = 0;
+            Globals.CurMapSelW = 0;
+            Globals.CurMapSelH = 0;
         }
 
         private void toolStripBtnRect_Click(object sender, EventArgs e)
         {
-            Globals.CurrentTool = (int) EditingTool.Rectangle;
+            Globals.CurrentTool = (int) EditingTool.RectangleFill;
             Globals.CurMapSelX = 0;
             Globals.CurMapSelY = 0;
+            Globals.CurMapSelW = 0;
+            Globals.CurMapSelH = 0;
         }
 
         private void toolStripBtnEyeDrop_Click(object sender, EventArgs e)
         {
-            Globals.CurrentTool = (int) EditingTool.Droppler;
+            Globals.CurrentTool = (int) EditingTool.Eyedropper;
             Globals.CurMapSelX = 0;
             Globals.CurMapSelY = 0;
         }
 
         private void toolStripBtnCopy_Click(object sender, EventArgs e)
         {
-            if (Globals.CurrentTool != (int) EditingTool.Selection)
+            if (Globals.CurrentTool != (int) EditingTool.MarqueeSelection)
             {
                 return;
             }
@@ -1461,7 +1467,7 @@ namespace Intersect.Editor.Forms
 
         private void toolStripBtnCut_Click(object sender, EventArgs e)
         {
-            if (Globals.CurrentTool != (int) EditingTool.Selection)
+            if (Globals.CurrentTool != (int) EditingTool.MarqueeSelection)
             {
                 return;
             }
@@ -1471,7 +1477,7 @@ namespace Intersect.Editor.Forms
 
         private static void ToolKeyDelete()
         {
-            if (Globals.CurrentTool != (int)EditingTool.Selection)
+            if (Globals.CurrentTool != (int)EditingTool.MarqueeSelection)
             {
                 return;
             }

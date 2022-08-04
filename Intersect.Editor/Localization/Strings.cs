@@ -3674,7 +3674,7 @@ Tick timer saved in server config.json.";
             public static LocalizedString editors = @"Game Editors";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString Erase = @"Erase Tool (E)";
+            public static LocalizedString Erase = @"Eraser Tool (E)";
 
             public static LocalizedString exit = @"Exit";
 
@@ -3683,7 +3683,7 @@ Tick timer saved in server config.json.";
             public static LocalizedString file = @"File";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString Fill = @"Fill Layer Tool (F)";
+            public static LocalizedString Fill = @"Layer Fill Tool (F)";
 
             public static LocalizedString fog = @"Fog";
 
@@ -3917,7 +3917,7 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString eraselayerdialogue = @"Are you sure you want to erase this layer?";
 
-            public static LocalizedString filllayer = @"Fill Layer";
+            public static LocalizedString filllayer = @"Layer Fill";
 
             public static LocalizedString filllayerdialogue = @"Are you sure you want to fill this layer?";
 

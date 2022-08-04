@@ -48,15 +48,15 @@
 
         Brush = 0,
 
-        Selection = 1,
+        MarqueeSelection = 1,
 
-        Rectangle = 2,
+        RectangleFill = 2,
 
-        Fill = 3,
+        LayerFill = 3,
 
-        Erase = 4,
+        Eraser = 4,
 
-        Droppler = 5,
+        Eyedropper = 5,
 
     }
 
