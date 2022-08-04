@@ -265,30 +265,34 @@ internal partial class AboutWindow : Window
 
                 foreach (var (name, group) in _licenseCollection)
                 {
-                    if (ImGui.TreeNode($"{IdPrefixLicenseGroup}{name}", name))
+                    if (!ImGui.TreeNode($"{IdPrefixLicenseGroup}{name}", name))
                     {
-                        foreach (var component in group.Components)
-                        {
-                            ImGui.TreePush($"{IdPrefixLicenseComponent}{component.Name}");
-
-                            var currentlySelected = component == _selectedLicenseComponent;
-                            var selected = currentlySelected;
-                            ImGui.Selectable($"{component.Name}###selectable_{IdPrefixLicenseComponent}{component.Name}", ref selected);
-
-                            if (selected)
-                            {
-                                _selectedLicenseComponent = component;
-                                _selectedLicenseComponentGroup = group;
-                            }
-                            else if (currentlySelected)
-                            {
-                                _selectedLicenseComponent = default;
-                                _selectedLicenseComponentGroup = default;
-                            }
-
-                            ImGui.TreePop();
-                        }
+                        continue;
                     }
+
+                    foreach (var component in group.Components)
+                    {
+                        ImGui.TreePush($"{IdPrefixLicenseComponent}{component.Name}");
+
+                        var currentlySelected = component == _selectedLicenseComponent;
+                        var selected = currentlySelected;
+                        ImGui.Selectable($"{component.Name}###selectable_{IdPrefixLicenseComponent}{component.Name}", ref selected);
+
+                        if (selected)
+                        {
+                            _selectedLicenseComponent = component;
+                            _selectedLicenseComponentGroup = group;
+                        }
+                        else if (currentlySelected)
+                        {
+                            _selectedLicenseComponent = default;
+                            _selectedLicenseComponentGroup = default;
+                        }
+
+                        ImGui.TreePop();
+                    }
+
+                    ImGui.TreePop();
                 }
 
                 ImGui.EndChild();
