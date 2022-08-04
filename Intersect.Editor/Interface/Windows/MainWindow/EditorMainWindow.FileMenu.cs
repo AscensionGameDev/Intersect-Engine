@@ -2,6 +2,7 @@ using System.Diagnostics;
 
 using Intersect.Client.Framework.UserInterface.Components;
 using Intersect.Editor.Localization;
+using Intersect.Enums;
 using Intersect.Localization;
 using Intersect.Platform;
 
@@ -130,7 +131,12 @@ internal partial class EditorMainWindow
     {
         var menu = new Menu(Strings.MenuBar.ContentEditors)
         {
-
+            Items = Enum.GetValues<GameObjectType>()
+                .Select(type => new MenuItem
+                {
+                    Name = Strings.Descriptors.Names[type].Plural,
+                })
+                .ToList()
         };
 
         return menu;
