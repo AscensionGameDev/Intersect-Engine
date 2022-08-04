@@ -8,6 +8,7 @@ using Intersect.Client.Framework.UserInterface.Components;
 using Intersect.Editor.Localization;
 using Intersect.Editor.MonoGame.Content;
 using Intersect.Localization;
+using Intersect.Metadata.Licensing;
 using Intersect.Platform;
 using Intersect.Properties;
 using Intersect.Time;
@@ -16,29 +17,28 @@ namespace Intersect.Editor.Interface.Windows;
 
 internal partial class AboutWindow : Window
 {
-    private const string TabIdAuthors = "about_tabbar_item_authors";
-    private const string TabIdLicenses = "about_tabbar_item_licenses";
-    private const string LicenseComponentIdIntersectEditor = "about_licenses_component_intersect_editor";
+    private const string IdPrefixLicenseComponent = "about_licenses_component_";
+    private const string IdPrefixLicenseGroup = "about_licenses_group_";
+    private const string IdTabAuthors = "about_tabbar_item_authors";
+    private const string IdTabLicenses = "about_tabbar_item_licenses";
 
     private static readonly AuthorsMd _authorsMd = Markdown.ParseAuthorsMd();
 
+    private readonly ReactiveString _labelTabAuthors;
+    private readonly ReactiveString _labelTabLicenses;
+
+    private readonly LicenseCollection _licenseCollection;
+
+    private LicensedComponent? _selectedLicenseComponent;
+    private LicensedComponentGroup? _selectedLicenseComponentGroup;
     private ImGuiTexture? _textureGitHubIcon;
     private ImGuiTexture? _textureLogo;
 
-    private readonly ReactiveString _labelTabAuthors;
-    private readonly ReactiveString _labelTabLicenses;
-    private readonly ReactiveString _labelLicenseComponentIntersectEditor;
-
-    private bool _intersectEditorSelected;
-
     public AboutWindow() : base()
     {
-        _labelTabAuthors = CreateLabelWithId(Strings.Windows.About.LabelAuthors, TabIdAuthors);
-        _labelTabLicenses = CreateLabelWithId(Strings.Windows.About.LabelLicenses, TabIdLicenses);
-        _labelLicenseComponentIntersectEditor = CreateLabelWithId(
-            Strings.Windows.About.LabelLicenseComponentIntersectEditor,
-            LicenseComponentIdIntersectEditor
-        );
+        _labelTabAuthors = CreateLabelWithId(Strings.Windows.About.LabelAuthors, IdTabAuthors);
+        _labelTabLicenses = CreateLabelWithId(Strings.Windows.About.LabelLicenses, IdTabLicenses);
+        _licenseCollection = LicenseCollection.FromLoadedAssemblies();
 
         Flags = ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoDocking | ImGuiWindowFlags.AlwaysAutoResize;
         Title = Strings.Windows.About.Title;
@@ -201,11 +201,11 @@ internal partial class AboutWindow : Window
 
             if (ImGui.BeginTabItem(_labelTabAuthors))
             {
-                _ = ImGui.BeginChild($"{TabIdAuthors}_child", default, true, ImGuiWindowFlags.AlwaysAutoResize);
+                _ = ImGui.BeginChild($"{IdTabAuthors}_child", default, true, ImGuiWindowFlags.AlwaysAutoResize);
 
                 var tableFlags = ImGuiTableFlags.BordersOuter | ImGuiTableFlags.BordersInner | ImGuiTableFlags.SizingStretchSame;
 
-                if (ImGui.BeginTable($"{TabIdAuthors}_table_authors", 1, tableFlags))
+                if (ImGui.BeginTable($"{IdTabAuthors}_table_authors", 1, tableFlags))
                 {
                     ImGui.TableSetupColumn(Strings.Windows.About.LabelAuthors);
                     ImGui.TableHeadersRow();
@@ -215,7 +215,7 @@ internal partial class AboutWindow : Window
                     ImGui.EndTable();
                 }
 
-                if (ImGui.BeginTable($"{TabIdAuthors}_table_maintainers", 1, tableFlags))
+                if (ImGui.BeginTable($"{IdTabAuthors}_table_maintainers", 1, tableFlags))
                 {
                     ImGui.TableSetupColumn(Strings.Windows.About.LabelMaintainers);
                     ImGui.TableHeadersRow();
@@ -225,7 +225,7 @@ internal partial class AboutWindow : Window
                     ImGui.EndTable();
                 }
 
-                if (ImGui.BeginTable($"{TabIdAuthors}_table_developers", 1, tableFlags))
+                if (ImGui.BeginTable($"{IdTabAuthors}_table_developers", 1, tableFlags))
                 {
                     ImGui.TableSetupColumn(Strings.Windows.About.LabelDevelopers);
                     ImGui.TableHeadersRow();
@@ -235,10 +235,10 @@ internal partial class AboutWindow : Window
                     ImGui.EndTable();
                 }
 
-                if (ImGui.BeginTable($"{TabIdAuthors}_table_contributors", 2, tableFlags))
+                if (ImGui.BeginTable($"{IdTabAuthors}_table_contributors", 2, tableFlags))
                 {
-                    ImGui.TableSetupColumn($"{TabIdAuthors}_table_contributors_col0", ImGuiTableColumnFlags.WidthStretch | ImGuiTableColumnFlags.NoHeaderLabel, 0.5f);
-                    ImGui.TableSetupColumn($"{TabIdAuthors}_table_contributors_col1", ImGuiTableColumnFlags.WidthStretch | ImGuiTableColumnFlags.NoHeaderLabel, 0.5f);
+                    ImGui.TableSetupColumn($"{IdTabAuthors}_table_contributors_col0", ImGuiTableColumnFlags.WidthStretch | ImGuiTableColumnFlags.NoHeaderLabel, 0.5f);
+                    ImGui.TableSetupColumn($"{IdTabAuthors}_table_contributors_col1", ImGuiTableColumnFlags.WidthStretch | ImGuiTableColumnFlags.NoHeaderLabel, 0.5f);
 
                     ImGui.TableHeadersRow();
 
@@ -257,17 +257,40 @@ internal partial class AboutWindow : Window
 
             if (ImGui.BeginTabItem(_labelTabLicenses))
             {
-                _ = ImGui.BeginChild($"{TabIdLicenses}_child", default, true, ImGuiWindowFlags.AlwaysAutoResize);
+                _ = ImGui.BeginChild($"{IdTabLicenses}_child", default, true, ImGuiWindowFlags.AlwaysAutoResize);
 
                 _ = ImGui.BeginChild("about_licenses_selector", new Vector2(200, ImGui.GetWindowSize().Y - 8), true);
 
                 ImGui.PushStyleVar(ImGuiStyleVar.IndentSpacing, ImGui.GetStyle().IndentSpacing / 2);
-                if (ImGui.TreeNode("about_licenses_intersect", Strings.Windows.About.LabelLicenseGroupIntersect))
+
+                foreach (var (name, group) in _licenseCollection)
                 {
-                    ImGui.TreePush(LicenseComponentIdIntersectEditor);
-                    ImGui.Selectable(_labelLicenseComponentIntersectEditor, ref _intersectEditorSelected, ImGuiSelectableFlags.DontClosePopups);
-                    ImGui.TreePop();
+                    if (ImGui.TreeNode($"{IdPrefixLicenseGroup}{name}", name))
+                    {
+                        foreach (var component in group.Components)
+                        {
+                            ImGui.TreePush($"{IdPrefixLicenseComponent}{component.Name}");
+
+                            var currentlySelected = component == _selectedLicenseComponent;
+                            var selected = currentlySelected;
+                            ImGui.Selectable($"{component.Name}###selectable_{IdPrefixLicenseComponent}{component.Name}", ref selected);
+
+                            if (selected)
+                            {
+                                _selectedLicenseComponent = component;
+                                _selectedLicenseComponentGroup = group;
+                            }
+                            else if (currentlySelected)
+                            {
+                                _selectedLicenseComponent = default;
+                                _selectedLicenseComponentGroup = default;
+                            }
+
+                            ImGui.TreePop();
+                        }
+                    }
                 }
+
                 ImGui.EndChild();
                 ImGui.PopStyleVar(1);
 
@@ -276,10 +299,15 @@ internal partial class AboutWindow : Window
                 ImGui.SetCursorPosX(ImGui.GetCursorPosX() - 4);
 
                 _ = ImGui.BeginChild("about_licenses_display", default, true, ImGuiWindowFlags.AlwaysAutoResize);
-                
-                if (_intersectEditorSelected)
+
+                var licenseText = _selectedLicenseComponent?.License.GetLongNotice(Strings.Licensing)?.ToString(
+                    _selectedLicenseComponent?.CopyrightHolder ?? _selectedLicenseComponentGroup?.CopyrightHolder,
+                    _selectedLicenseComponent?.CopyrightYear ?? _selectedLicenseComponentGroup?.CopyrightYear
+                );
+
+                if (!string.IsNullOrWhiteSpace(licenseText))
                 {
-                    ImGui.TextWrapped(Strings.Licensing.GplV3LongNotice.ToString(Strings.Licensing.CopyrightYear, Strings.Licensing.CopyrightAuthor));
+                    ImGui.TextWrapped(licenseText);
                 }
 
                 ImGui.EndChild();

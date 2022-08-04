@@ -77,9 +77,15 @@ namespace Intersect.Reflection
         public static IEnumerable<Type> FindValueSubtypesOf<TParentType>(this Assembly assembly) =>
             FindValueSubtypesOf(assembly, typeof(Type));
 
-        public static bool TryFindResource(this Assembly asssembly, string resourceName, out string? manifestResourceName)
+        public static bool TryFindResource(this Assembly assembly, string resourceName, out string? manifestResourceName)
         {
-            manifestResourceName = asssembly
+            if (assembly.IsDynamic)
+            {
+                manifestResourceName = default;
+                return false;
+            }
+
+            manifestResourceName = assembly
                 .GetManifestResourceNames()
                 .FirstOrDefault(name => name?.Contains(resourceName, StringComparison.CurrentCulture) ?? false);
             return manifestResourceName != default;

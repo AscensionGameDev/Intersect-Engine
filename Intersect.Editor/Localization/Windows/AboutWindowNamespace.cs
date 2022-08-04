@@ -26,10 +26,4 @@ internal partial class AboutWindowNamespace : LocaleNamespace
 
     [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
     public readonly LocalizedString LabelLicenses = @"Licenses";
-
-    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-    public readonly LocalizedString LabelLicenseComponentIntersectEditor = @"Intersect Editor";
-
-    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-    public readonly LocalizedString LabelLicenseGroupIntersect = @"Intersect Engine";
 }

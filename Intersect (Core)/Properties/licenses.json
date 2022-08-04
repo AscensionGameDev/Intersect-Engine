@@ -1,0 +1,16 @@
+{
+  "Intersect": {
+    "CopyrightHolder": "Ascension Game Dev",
+    "CopyrightYear": "2019-2022",
+    "Components": [
+      {
+        "Name": "Intersect.Core",
+        "License": "MIT"
+      },
+      {
+        "Name": "Intersect.Memory",
+        "License": "MIT"
+      }
+    ]
+  }
+}

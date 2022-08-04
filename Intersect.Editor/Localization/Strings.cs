@@ -1,6 +1,7 @@
 using Intersect.Editor.Localization.MenuBar;
 using Intersect.Editor.Localization.Windows;
 using Intersect.Localization.Common;
+using Intersect.Localization.Common.Descriptors;
 
 namespace Intersect.Editor.Localization;
 
@@ -10,7 +11,9 @@ internal partial class Strings
 
     public static EditorApplicationNamespace Application => Root.Application;
 
-    public static CommonLicensingNamespace Licensing => Root.Licensing;
+    public static DescriptorsNamespace Descriptors => Root.Descriptors;
+
+    public static LicensingNamespace Licensing => Root.Licensing;
 
     public static MenuBarNamespace MenuBar => Root.MenuBar;
 

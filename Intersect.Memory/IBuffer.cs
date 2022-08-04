@@ -23,7 +23,7 @@ namespace Intersect.Memory
 
         bool Read(out byte value);
 
-        bool Read(out byte[] value);
+        bool Read(out byte[]? value);
 
         bool Read(out byte[] value, long count);
 
@@ -45,9 +45,9 @@ namespace Intersect.Memory
 
         bool Read(out short value);
 
-        bool Read(out string value);
+        bool Read(out string? value);
 
-        bool Read(out string value, Encoding encoding, bool nullTerminated = false);
+        bool Read(out string? value, Encoding encoding, bool nullTerminated = false);
 
         bool Read(out uint value);
 
@@ -103,9 +103,9 @@ namespace Intersect.Memory
 
         short ReadShort();
 
-        string ReadString();
+        string? ReadString();
 
-        string ReadString(Encoding encoding, bool nullTerminated = false);
+        string? ReadString(Encoding encoding, bool nullTerminated = false);
 
         uint ReadUInt();
 
