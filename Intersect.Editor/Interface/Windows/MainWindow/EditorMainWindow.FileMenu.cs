@@ -129,14 +129,23 @@ internal partial class EditorMainWindow
     [EditorMenu(Order = 5)]
     private Menu CreateMenuContentEditors()
     {
+        var items = new List<MenuItem>();
+
+        foreach (var descriptorType in Enum.GetValues<GameObjectType>())
+        {
+            var menuItem = new MenuItem
+            {
+                Name = Strings.Descriptors.Names[descriptorType].Plural,
+            };
+
+            menuItem.Selected += (_, _) => Components.Add(new DescriptorWindow(descriptorType));
+
+            items.Add(menuItem);
+        }
+
         var menu = new Menu(Strings.MenuBar.ContentEditors)
         {
-            Items = Enum.GetValues<GameObjectType>()
-                .Select(type => new MenuItem
-                {
-                    Name = Strings.Descriptors.Names[type].Plural,
-                })
-                .ToList()
+            Items = items,
         };
 
         return menu;
