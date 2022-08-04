@@ -2,6 +2,7 @@ using Intersect.Admin.Actions;
 using Intersect.Editor.Entities.Events;
 using Intersect.Editor.General;
 using Intersect.Editor.Maps;
+using Intersect.Enums;
 using Intersect.Network.Packets.Client;
 using Intersect.Time;
 
@@ -10,6 +11,11 @@ namespace Intersect.Editor.Networking
 
     public static partial class PacketSender
     {
+
+        public static void SendOpenEditor(GameObjectType type)
+        {
+            Network.SendPacket(new Intersect.Network.Packets.Editor.RequestOpenEditorPacket(type));
+        }
 
         public static void SendPing()
         {

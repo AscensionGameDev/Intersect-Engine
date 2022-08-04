@@ -256,6 +256,7 @@ namespace Intersect.Editor.MonoGame
             _imGuiRenderer = new MonoGameImGuiRenderer(this);
             _contentManager = new ImGuiContentManager(Globals.ContentManager, _imGuiRenderer);
 
+            Networking.Network.Socket = new MonoSocket(Context);
 
             //var configPath = Path.Combine(Environment.CurrentDirectory, $"{Process.GetCurrentProcess()?.ProcessName}.ini");
             ////ImGui.LoadIniSettingsFromDisk(configPath);
@@ -309,7 +310,6 @@ namespace Intersect.Editor.MonoGame
             (Core.Graphics.Renderer as MonoRenderer)?.Init(GraphicsDevice);
 
             // TODO: Remove old netcode
-            Networking.Network.Socket = new MonoSocket(Context);
             //Networking.Network.Socket.Connected += (sender, connectionEventArgs) =>
             //    MainMenu.SetNetworkStatus(connectionEventArgs.NetworkStatus);
 

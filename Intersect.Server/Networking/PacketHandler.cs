@@ -218,8 +218,8 @@ namespace Intersect.Server.Networking
 
             switch (packet)
             {
-                case Network.Packets.EditorPacket _ when !client.IsEditor:
-                    return false;
+                //case Network.Packets.EditorPacket _ when !client.IsEditor:
+                //    return false;
 
                 case null:
                     Log.Error($@"Received null packet from {client.Id} ({client.Name}).");
@@ -3582,11 +3582,6 @@ namespace Intersect.Server.Networking
         //RequestOpenEditorPacket
         public void HandlePacket(Client client, Network.Packets.Editor.RequestOpenEditorPacket packet)
         {
-            if (!client.IsEditor)
-            {
-                return;
-            }
-
             var type = packet.Type;
             PacketSender.SendGameObjects(client, type);
             PacketSender.SendOpenEditor(client, type);

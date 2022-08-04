@@ -1492,6 +1492,293 @@ namespace Intersect.Editor.Networking
             }
         }
 
+        ////GameObjectPacket
+        //public void HandlePacket(IPacketSender packetSender, GameObjectPacket packet)
+        //{
+        //    var id = packet.Id;
+        //    var deleted = packet.Deleted;
+        //    var json = "";
+        //    if (!packet.Deleted)
+        //    {
+        //        json = packet.Data;
+        //    }
+
+        //    switch (packet.Type)
+        //    {
+        //        case GameObjectType.Animation:
+        //            if (deleted)
+        //            {
+        //                var anim = AnimationBase.Get(id);
+        //                anim.Delete();
+        //            }
+        //            else
+        //            {
+        //                var anim = new AnimationBase(id);
+        //                anim.Load(json);
+        //                try
+        //                {
+        //                    AnimationBase.Lookup.Set(id, anim);
+        //                }
+        //                catch (Exception exception)
+        //                {
+        //                    Log.Error($"Another mystery NPE. [Lookup={AnimationBase.Lookup}]");
+        //                    if (exception.InnerException != null)
+        //                    {
+        //                        Log.Error(exception.InnerException);
+        //                    }
+
+        //                    Log.Error(exception);
+        //                    Log.Error($"{nameof(id)}={id},{nameof(anim)}={anim}");
+
+        //                    throw;
+        //                }
+        //            }
+
+        //            break;
+
+        //        case GameObjectType.Class:
+        //            if (deleted)
+        //            {
+        //                var cls = ClassBase.Get(id);
+        //                cls.Delete();
+        //            }
+        //            else
+        //            {
+        //                var cls = new ClassBase(id);
+        //                cls.Load(json);
+        //                ClassBase.Lookup.Set(id, cls);
+        //            }
+
+        //            break;
+
+        //        case GameObjectType.Item:
+        //            if (deleted)
+        //            {
+        //                var itm = ItemBase.Get(id);
+        //                itm.Delete();
+        //            }
+        //            else
+        //            {
+        //                var itm = new ItemBase(id);
+        //                itm.Load(json);
+        //                ItemBase.Lookup.Set(id, itm);
+        //            }
+
+        //            break;
+        //        case GameObjectType.Npc:
+        //            if (deleted)
+        //            {
+        //                var npc = NpcBase.Get(id);
+        //                npc.Delete();
+        //            }
+        //            else
+        //            {
+        //                var npc = new NpcBase(id);
+        //                npc.Load(json);
+        //                NpcBase.Lookup.Set(id, npc);
+        //            }
+
+        //            break;
+
+        //        case GameObjectType.Projectile:
+        //            if (deleted)
+        //            {
+        //                var proj = ProjectileBase.Get(id);
+        //                proj.Delete();
+        //            }
+        //            else
+        //            {
+        //                var proj = new ProjectileBase(id);
+        //                proj.Load(json);
+        //                ProjectileBase.Lookup.Set(id, proj);
+        //            }
+
+        //            break;
+
+        //        case GameObjectType.Quest:
+        //            if (deleted)
+        //            {
+        //                var qst = QuestBase.Get(id);
+        //                qst.Delete();
+        //            }
+        //            else
+        //            {
+        //                var qst = new QuestBase(id);
+        //                qst.Load(json);
+        //                foreach (var tsk in qst.Tasks)
+        //                {
+        //                    qst.OriginalTaskEventIds.Add(tsk.Id, tsk.CompletionEventId);
+        //                }
+
+        //                QuestBase.Lookup.Set(id, qst);
+        //            }
+
+        //            break;
+
+        //        case GameObjectType.Resource:
+        //            if (deleted)
+        //            {
+        //                var res = ResourceBase.Get(id);
+        //                res.Delete();
+        //            }
+        //            else
+        //            {
+        //                var res = new ResourceBase(id);
+        //                res.Load(json);
+        //                ResourceBase.Lookup.Set(id, res);
+        //            }
+
+        //            break;
+
+        //        case GameObjectType.Shop:
+        //            if (deleted)
+        //            {
+        //                var shp = ShopBase.Get(id);
+        //                shp.Delete();
+        //            }
+        //            else
+        //            {
+        //                var shp = new ShopBase(id);
+        //                shp.Load(json);
+        //                ShopBase.Lookup.Set(id, shp);
+        //            }
+
+        //            break;
+
+        //        case GameObjectType.Spell:
+        //            if (deleted)
+        //            {
+        //                var spl = SpellBase.Get(id);
+        //                spl.Delete();
+        //            }
+        //            else
+        //            {
+        //                var spl = new SpellBase(id);
+        //                spl.Load(json);
+        //                SpellBase.Lookup.Set(id, spl);
+        //            }
+
+        //            break;
+
+        //        case GameObjectType.CraftTables:
+        //            if (deleted)
+        //            {
+        //                var cft = CraftingTableBase.Get(id);
+        //                cft.Delete();
+        //            }
+        //            else
+        //            {
+        //                var cft = new CraftingTableBase(id);
+        //                cft.Load(json);
+        //                CraftingTableBase.Lookup.Set(id, cft);
+        //            }
+
+        //            break;
+
+        //        case GameObjectType.Crafts:
+        //            if (deleted)
+        //            {
+        //                var cft = CraftBase.Get(id);
+        //                cft.Delete();
+        //            }
+        //            else
+        //            {
+        //                var cft = new CraftBase(id);
+        //                cft.Load(json);
+        //                CraftBase.Lookup.Set(id, cft);
+        //            }
+
+        //            break;
+
+        //        case GameObjectType.Map:
+        //            //Handled in a different packet
+        //            break;
+
+        //        case GameObjectType.Event:
+        //            var wasCommon = false;
+        //            if (deleted)
+        //            {
+        //                var evt = EventBase.Get(id);
+        //                wasCommon = evt.CommonEvent;
+        //                evt.Delete();
+        //            }
+        //            else
+        //            {
+        //                var evt = new EventBase(id);
+        //                evt.Load(json);
+        //                wasCommon = evt.CommonEvent;
+        //                EventBase.Lookup.Set(id, evt);
+        //            }
+
+        //            if (!wasCommon)
+        //            {
+        //                return;
+        //            }
+
+        //            break;
+
+        //        case GameObjectType.PlayerVariable:
+        //            if (deleted)
+        //            {
+        //                var pvar = PlayerVariableBase.Get(id);
+        //                pvar.Delete();
+        //            }
+        //            else
+        //            {
+        //                var pvar = new PlayerVariableBase(id);
+        //                pvar.Load(json);
+        //                PlayerVariableBase.Lookup.Set(id, pvar);
+        //            }
+
+        //            break;
+
+        //        case GameObjectType.ServerVariable:
+        //            if (deleted)
+        //            {
+        //                var svar = ServerVariableBase.Get(id);
+        //                svar.Delete();
+        //            }
+        //            else
+        //            {
+        //                var svar = new ServerVariableBase(id);
+        //                svar.Load(json);
+        //                ServerVariableBase.Lookup.Set(id, svar);
+        //            }
+
+        //            break;
+
+        //        case GameObjectType.Tileset:
+        //            var obj = new TilesetBase(id);
+        //            obj.Load(json);
+        //            TilesetBase.Lookup.Set(id, obj);
+        //            if (Globals.HasGameData && !packet.AnotherFollowing)
+        //            {
+        //                GameContentManager.LoadTilesets();
+        //            }
+
+        //            break;
+
+        //        case GameObjectType.GuildVariable:
+        //            if (deleted)
+        //            {
+        //                var pvar = GuildVariableBase.Get(id);
+        //                pvar.Delete();
+        //            }
+        //            else
+        //            {
+        //                var pvar = new GuildVariableBase(id);
+        //                pvar.Load(json);
+        //                GuildVariableBase.Lookup.Set(id, pvar);
+        //            }
+
+        //            break;
+        //        default:
+        //            throw new ArgumentOutOfRangeException();
+        //    }
+
+        //    GameObjectUpdatedDelegate?.Invoke(packet.Type);
+        //}
+
         //GameObjectPacket
         public void HandlePacket(IPacketSender packetSender, GameObjectPacket packet)
         {
