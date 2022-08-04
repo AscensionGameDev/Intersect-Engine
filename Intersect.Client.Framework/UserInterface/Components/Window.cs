@@ -23,7 +23,7 @@ public class Window : Component
     {
         IsOpen = true;
 
-        _cacheTitleWithId = CreateLabelWithId(string.Empty);
+        _cacheTitleWithId = CreateLabelWithId(name ?? string.Empty);
     }
 
     public bool DockingEnabled

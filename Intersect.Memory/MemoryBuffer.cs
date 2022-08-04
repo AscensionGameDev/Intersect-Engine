@@ -70,11 +70,11 @@ namespace Intersect.Memory
             return true;
         }
 
-        public bool Read(out byte[] value)
+        public bool Read(out byte[]? value)
         {
             if (!Read(out int count))
             {
-                value = default(byte[]);
+                value = default;
 
                 return false;
             }
@@ -236,12 +236,12 @@ namespace Intersect.Memory
             return true;
         }
 
-        public bool Read(out string value)
+        public bool Read(out string? value)
         {
             return Read(out value, Encoding.UTF8);
         }
 
-        public bool Read(out string value, Encoding encoding, bool nullTerminated = false)
+        public bool Read(out string? value, Encoding encoding, bool nullTerminated = false)
         {
             if (encoding == null)
             {
@@ -274,7 +274,7 @@ namespace Intersect.Memory
             }
             else if (!Read(out length))
             {
-                value = default(string);
+                value = default;
 
                 return false;
             }
@@ -282,17 +282,17 @@ namespace Intersect.Memory
             switch (length)
             {
                 case 0:
-                    value = "";
+                    value = string.Empty;
 
                     break;
 
                 case -1:
-                    value = null;
+                    value = default;
 
                     break;
 
                 default:
-                    value = Read(out var bytes, length) ? encoding.GetString(bytes, 0, length) : null;
+                    value = Read(out var bytes, length) ? encoding.GetString(bytes, 0, length) : default;
 
                     break;
             }

@@ -16,5 +16,5 @@ public abstract partial class RootNamespace : AbstractRootNamespace
     public readonly CommonGeneralNamespace General = new();
     
     [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-    public readonly CommonLicensingNamespace Licensing = new();
+    public readonly LicensingNamespace Licensing = new();
 }
