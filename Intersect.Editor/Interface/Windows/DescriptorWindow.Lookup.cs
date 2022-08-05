@@ -1,6 +1,7 @@
 using ImGuiNET;
 
 using Intersect.Comparison;
+using Intersect.Editor.Localization;
 using Intersect.Enums;
 using Intersect.Models;
 using Intersect.Time;
@@ -21,7 +22,7 @@ internal partial class DescriptorWindow
 
     public virtual bool LayoutLookup(FrameTime frameTime)
     {
-        _ = ImGui.InputText("###descriptor_lookup_searchQuery", ref _searchQuery, 100, ImGuiInputTextFlags.AutoSelectAll);
+        _ = ImGui.InputTextWithHint("###descriptor_lookup_searchQuery", Strings.Windows.Descriptor.SearchQueryHint.ToString(DescriptorName), ref _searchQuery, 100, ImGuiInputTextFlags.AutoSelectAll);
         var inputSize = ImGui.GetItemRectSize();
 
         _ = ImGui.BeginChild(string.Empty, new(inputSize.X, 500), true);

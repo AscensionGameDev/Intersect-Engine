@@ -4,6 +4,7 @@ using Intersect.Client.Framework.UserInterface.Components;
 using Intersect.Editor.Localization;
 using Intersect.Editor.Networking;
 using Intersect.Enums;
+using Intersect.Localization;
 using Intersect.Time;
 
 namespace Intersect.Editor.Interface.Windows;
@@ -18,7 +19,7 @@ internal partial class DescriptorWindow : Window
         _descriptorType = descriptorType;
 
         Flags = ImGuiWindowFlags.AlwaysAutoResize;
-        Title = Strings.Windows.Descriptor.Title.ToString(Strings.Descriptors.Names[_descriptorType].Singular);
+        Title = Strings.Windows.Descriptor.Title.ToString(DescriptorName);
 
         try
         {
@@ -29,6 +30,8 @@ internal partial class DescriptorWindow : Window
             throw;
         }
     }
+
+    private LocalizedPluralString DescriptorName => Strings.Descriptors.Names[_descriptorType];
 
     public bool HasPendingChanges
     {
