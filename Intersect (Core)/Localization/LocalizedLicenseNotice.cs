@@ -1,0 +1,63 @@
+using System.Runtime.Serialization;
+
+namespace Intersect.Localization;
+
+public partial class LocalizedLicenseNotice : Localized
+{
+    [DataMember(Name = nameof(LongNotice))]
+    private readonly LocalizedString _longNotice;
+
+    [DataMember(Name = nameof(Notice))]
+    private readonly LocalizedString _notice;
+
+    [DataMember(Name = nameof(ShortNotice))]
+    private readonly LocalizedString _shortNotice;
+
+    [IgnoreDataMember]
+    public LocalizedString LongNotice => _longNotice.IsNull ? _notice : _longNotice;
+
+    [IgnoreDataMember]
+    public LocalizedString Notice => _notice;
+
+    [IgnoreDataMember]
+    public LocalizedString ShortNotice => _shortNotice.IsNull ? _notice : _shortNotice;
+
+    private LocalizedLicenseNotice(
+        LocalizedString? notice,
+        LocalizedString? longNotice,
+        LocalizedString? shortNotice
+    )
+    {
+        _longNotice = longNotice ?? new(default!);
+        _notice = LocalizedString.PickNonNull(notice, longNotice, shortNotice) ?? throw new ArgumentNullException(nameof(notice));
+        _shortNotice = shortNotice ?? new(default!);
+    }
+
+    public LocalizedLicenseNotice(LocalizedString notice)
+        : this(notice, default, default) { }
+
+    public LocalizedLicenseNotice(LocalizedString longNotice, LocalizedString shortNotice)
+        : this(default, longNotice, shortNotice) { }
+
+    public override string ToString() => ToString(LicenseNoticeType.Normal);
+
+    public string ToString(LicenseNoticeType licenseNoticeType = LicenseNoticeType.Normal, params object[] args) =>
+        (licenseNoticeType switch
+        {
+            LicenseNoticeType.Long => LongNotice,
+            LicenseNoticeType.Normal => Notice,
+            LicenseNoticeType.Short => ShortNotice,
+            _ => throw new ArgumentOutOfRangeException(nameof(licenseNoticeType)),
+        }).ToString(args);
+
+    public static implicit operator LocalizedLicenseNotice(string value) => new(value);
+}
+
+public enum LicenseNoticeType
+{
+    Long,
+
+    Normal,
+
+    Short,
+}

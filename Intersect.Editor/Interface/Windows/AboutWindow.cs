@@ -304,10 +304,15 @@ internal partial class AboutWindow : Window
 
                 _ = ImGui.BeginChild("about_licenses_display", default, true, ImGuiWindowFlags.AlwaysAutoResize);
 
-                var licenseText = _selectedLicenseComponent?.License.GetLongNotice(Strings.Licensing)?.ToString(
-                    _selectedLicenseComponent?.CopyrightHolder ?? _selectedLicenseComponentGroup?.CopyrightHolder,
-                    _selectedLicenseComponent?.CopyrightYear ?? _selectedLicenseComponentGroup?.CopyrightYear
-                );
+                var licenseText = _selectedLicenseComponent != default
+                    && Strings.Licensing.Notices.TryGetValue(_selectedLicenseComponent.License, out var notice)
+                        ? notice.LongNotice.ToString(
+                            _selectedLicenseComponent.CopyrightHolder
+                                ?? _selectedLicenseComponentGroup?.CopyrightHolder,
+                            _selectedLicenseComponent.CopyrightYear
+                                ?? _selectedLicenseComponentGroup?.CopyrightYear
+                        )
+                        : string.Empty;
 
                 if (!string.IsNullOrWhiteSpace(licenseText))
                 {

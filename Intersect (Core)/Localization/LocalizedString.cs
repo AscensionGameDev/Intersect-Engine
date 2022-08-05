@@ -11,6 +11,8 @@ namespace Intersect.Localization
 
         internal event EventHandler Repopulated;
 
+        public bool IsNull => _value == default;
+
         private void OnRepopulated() => Repopulated?.Invoke(this, EventArgs.Empty);
 
         public override string ToString() => _value;
@@ -26,6 +28,9 @@ namespace Intersect.Localization
                 return "Format Exception!";
             }
         }
+
+        public static LocalizedString? PickNonNull(params LocalizedString?[] localizedStrings) =>
+            localizedStrings.FirstOrDefault(localizedString => localizedString?._value != default);
 
         public static implicit operator LocalizedString(string value) => new(value);
 
