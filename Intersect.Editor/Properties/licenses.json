@@ -1,8 +1,13 @@
 ﻿{
   "Intersect": {
     "CopyrightHolder": "Ascension Game Dev",
-    "CopyrightYear": "2019-2022",
+    "CopyrightYear": "2015-2022",
     "Components": [
+      {
+        "Name": "Intersect.EndUser.Runtime.MonoGame",
+        "CopyrightYear": "2022",
+        "License": "MIT"
+      },
       {
         "Name": "Intersect.Editor",
         "License": "GPLv3"

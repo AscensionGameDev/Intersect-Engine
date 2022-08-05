@@ -1,15 +1,84 @@
 {
   "Intersect": {
     "CopyrightHolder": "Ascension Game Dev",
-    "CopyrightYear": "2019-2022",
+    "CopyrightYear": "2015-2022",
     "Components": [
       {
+        "Name": "Intersect.Client",
+        "License": "MIT"
+      },
+      {
+        "Name": "Intersect.Client.Framework",
+        "CopyrightYear": "2016-2022",
+        "License": "MIT"
+      },
+      {
         "Name": "Intersect.Core",
+        "CopyrightYear": "2016-2022",
+        "License": "MIT"
+      },
+      {
+        "Name": "Intersect.Editor",
+        "License": "GPLv3"
+      },
+      {
+        "Name": "Intersect.EndUser.Runtime.MonoGame",
+        "CopyrightYear": "2022",
+        "License": "MIT"
+      },
+      {
+        "Name": "Intersect.Examples.Plugin",
+        "CopyrightYear": "2021-2022",
+        "License": "MIT"
+      },
+      {
+        "Name": "Intersect.Examples.Plugin.Client",
+        "CopyrightYear": "2020-2022",
+        "License": "MIT"
+      },
+      {
+        "Name": "Intersect.Examples.Plugin.ClientVB",
+        "CopyrightYear": "2020-2022",
+        "License": "MIT"
+      },
+      {
+        "Name": "Intersect.Examples.Plugin.Server",
+        "CopyrightYear": "2021-2022",
+        "License": "MIT"
+      },
+      {
+        "Name": "Intersect.Framework",
+        "CopyrightYear": "2022",
+        "License": "MIT"
+      },
+      {
+        "Name": "Intersect.Framework.Memory",
+        "CopyrightYear": "2022",
+        "License": "MIT"
+      },
+      {
+        "Name": "Intersect.Framework.Networking",
+        "CopyrightYear": "2022",
         "License": "MIT"
       },
       {
         "Name": "Intersect.Memory",
+        "CopyrightYear": "2022",
         "License": "MIT"
+      },
+      {
+        "Name": "Intersect.Network",
+        "CopyrightYear": "2017-2022",
+        "License": "MIT"
+      },
+      {
+        "Name": "Intersect.Server",
+        "License": "GPLv3"
+      },
+      {
+        "Name": "Intersect.Server.Framework",
+        "CopyrightYear": "2021-2022",
+        "License": "GPLv3"
       }
     ]
   }

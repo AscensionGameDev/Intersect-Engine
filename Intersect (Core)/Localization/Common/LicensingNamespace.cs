@@ -1,3 +1,5 @@
+using Intersect.Metadata.Licensing;
+
 using Newtonsoft.Json;
 
 namespace Intersect.Localization.Common;
@@ -5,22 +7,27 @@ namespace Intersect.Localization.Common;
 public partial class LicensingNamespace : LocaleNamespace
 {
     [JsonProperty(NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling = DefaultValueHandling.Ignore)]
-    public readonly LocalizedString GPLv3LongNotice = @"Copyright (C) {00}  {01}
+    public readonly LocaleDictionary<LicenseType, LocalizedLicenseNotice> Notices = new()
+    {
+        {
+            LicenseType.GPLv3,
+            new(
+                @"Copyright (C) {00}  {01}
 
-This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+    This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+    This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.";
-
-    [JsonProperty(NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling = DefaultValueHandling.Ignore)]
-    public readonly LocalizedString GPLv3ShortNotice = @"{02}  Copyright (C) {00}  {01}
-This program comes with ABSOLUTELY NO WARRANTY; for details type `show w'.
-This is free software, and you are welcome to redistribute it
-under certain conditions; type `show c' for details.";
-
-    [JsonProperty(NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling = DefaultValueHandling.Ignore)]
-    public readonly LocalizedString MITNotice = @"MIT License
+    You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.",
+                @"{02}  Copyright (C) {00}  {01}
+    This program comes with ABSOLUTELY NO WARRANTY; for details type `show w'.
+    This is free software, and you are welcome to redistribute it
+    under certain conditions; type `show c' for details."
+            )
+        },
+        {
+            LicenseType.MIT,
+            @"MIT License
 
 Copyright (c) 2020 Ascension Game Dev
 
@@ -40,5 +47,7 @@ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL THE
 AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.";
+SOFTWARE."
+        },
+    };
 }
