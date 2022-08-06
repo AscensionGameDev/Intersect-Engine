@@ -113,6 +113,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Framework\Intersect.Framework\Intersect.Framework.csproj" />
     <ProjectReference Include="..\Intersect.Memory\Intersect.Memory.csproj" />
   </ItemGroup>
 

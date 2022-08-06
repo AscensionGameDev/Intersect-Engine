@@ -1,10 +1,10 @@
 using System.Globalization;
 using System.Reflection;
 
+using Intersect.Framework.Reflection;
 using Intersect.Generic;
 using Intersect.Localization;
 using Intersect.Localization.Common;
-using Intersect.Reflection;
 
 namespace Intersect.GameObjects.Annotations;
 

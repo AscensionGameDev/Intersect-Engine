@@ -1,10 +1,10 @@
 using System.Reflection;
 
 using Intersect.Collections;
+using Intersect.Framework.Reflection;
 using Intersect.GameObjects.Maps;
 using Intersect.GameObjects.Maps.MapList;
 using Intersect.Models;
-using Intersect.Reflection;
 
 namespace Intersect.GameObjects.Annotations
 {

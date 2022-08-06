@@ -1,6 +1,6 @@
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Interface.Debugging;
-using Intersect.Reflection;
+using Intersect.Framework.Reflection;
 
 using System;
 using System.Collections.Generic;

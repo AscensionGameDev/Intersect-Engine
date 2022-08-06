@@ -1,17 +1,14 @@
+using System.Collections.Concurrent;
+using System.Data;
+using System.Data.Common;
+using System.Reflection;
+
 using Intersect.Config;
+using Intersect.Framework;
+using Intersect.Server.Database.Converters;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.Common;
-using System.Linq;
-using System.Reflection;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Intersect.Server.Database
 {
@@ -227,13 +224,24 @@ namespace Intersect.Server.Database
         {
             base.ConfigureConventions(configurationBuilder);
 
+            var idConverterGenericType = typeof(IdGuidConverter<>);
+
             switch (DatabaseType)
             {
                 case DatabaseOptions.DatabaseType.SQLite:
                     configurationBuilder
                         .Properties<Guid>()
                         .HaveConversion<GuidBinaryConverter>();
+                    idConverterGenericType = typeof(IdBinaryConverter<>);
                     break;
+            }
+
+            var idTypes = Id<object>.FindDerivedTypes();
+            foreach (var idType in idTypes)
+            {
+                configurationBuilder
+                    .Properties(idType)
+                    .HaveConversion(idConverterGenericType.MakeGenericType(idType.GenericTypeArguments));
             }
         }
 
