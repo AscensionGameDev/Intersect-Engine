@@ -6,11 +6,11 @@ using Intersect.Logging;
 using Intersect.Network;
 using Intersect.Plugins;
 using Intersect.Plugins.Interfaces;
-using Intersect.Reflection;
 
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Intersect.Framework.Reflection;
 
 namespace Intersect.Editor.Core
 {

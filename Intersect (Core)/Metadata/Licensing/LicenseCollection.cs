@@ -1,7 +1,7 @@
 using System.Reflection;
 using System.Text;
 
-using Intersect.Reflection;
+using Intersect.Framework.Reflection;
 
 using Newtonsoft.Json;
 

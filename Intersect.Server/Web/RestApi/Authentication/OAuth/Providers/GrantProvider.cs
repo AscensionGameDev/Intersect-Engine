@@ -3,8 +3,8 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
+using Intersect.Framework.Reflection;
 using Intersect.Logging;
-using Intersect.Reflection;
 using Intersect.Security.Claims;
 using Intersect.Server.Database;
 using Intersect.Server.Database.PlayerData;

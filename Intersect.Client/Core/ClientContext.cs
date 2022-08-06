@@ -2,11 +2,11 @@
 using Intersect.Client.Plugins.Contexts;
 using Intersect.Core;
 using Intersect.Factories;
+using Intersect.Framework.Reflection;
 using Intersect.Logging;
 using Intersect.Network;
 using Intersect.Plugins;
 using Intersect.Plugins.Interfaces;
-using Intersect.Reflection;
 
 using System;
 using System.Threading;

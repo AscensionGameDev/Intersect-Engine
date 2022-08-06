@@ -1,6 +1,6 @@
 using System.Reflection;
 
-using Intersect.Reflection;
+using Intersect.Framework.Reflection;
 
 namespace Intersect.Generic;
 

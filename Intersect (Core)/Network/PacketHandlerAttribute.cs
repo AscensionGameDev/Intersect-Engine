@@ -1,4 +1,4 @@
-using Intersect.Reflection;
+using Intersect.Framework.Reflection;
 
 using System;
 using System.Linq;

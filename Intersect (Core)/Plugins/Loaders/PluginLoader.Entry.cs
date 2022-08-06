@@ -1,5 +1,5 @@
-﻿using Intersect.Properties;
-using Intersect.Reflection;
+﻿using Intersect.Framework.Reflection;
+using Intersect.Properties;
 
 using System;
 using System.Linq;

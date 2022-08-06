@@ -1,5 +1,4 @@
 using Intersect.Logging;
-using Intersect.Reflection;
 using Intersect.Threading;
 
 using System;
@@ -162,7 +161,7 @@ namespace Intersect.Core
         /// </summary>
         protected virtual void DiscoverServices() =>
             GetAssemblies()
-                .SelectMany(Reflection.AssemblyExtensions.FindDefinedSubtypesOf<IApplicationService>)
+                .SelectMany(Framework.Reflection.AssemblyExtensions.FindDefinedSubtypesOf<IApplicationService>)
                 .ToList()
                 .ForEach(
                     serviceType =>

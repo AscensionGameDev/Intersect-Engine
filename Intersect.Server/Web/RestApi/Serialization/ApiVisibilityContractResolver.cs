@@ -5,7 +5,7 @@ using System.Reflection;
 using System.Security.Claims;
 using System.Web.Http.Controllers;
 
-using Intersect.Reflection;
+using Intersect.Framework.Reflection;
 using Intersect.Security;
 using Intersect.Security.Claims;
 

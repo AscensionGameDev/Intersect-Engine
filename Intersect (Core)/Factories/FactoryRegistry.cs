@@ -2,9 +2,9 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 
+using Intersect.Framework.Reflection;
 using Intersect.Logging;
 using Intersect.Properties;
-using Intersect.Reflection;
 
 namespace Intersect.Factories
 {

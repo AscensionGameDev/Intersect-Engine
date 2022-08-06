@@ -1,6 +1,6 @@
 ﻿using Intersect.Collections;
+using Intersect.Framework.Reflection;
 using Intersect.Logging;
-using Intersect.Reflection;
 
 using System;
 using System.Collections.Generic;
