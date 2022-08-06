@@ -10,7 +10,7 @@ using Newtonsoft.Json;
 namespace Intersect.GameObjects.Events
 {
 
-    public partial class EventBase : DatabaseObject<EventBase>, IFolderable
+    public partial class EventBase : DatabaseObject<EventBase>
     {
 
         //Cached Pages Data
@@ -129,9 +129,6 @@ namespace Intersect.GameObjects.Events
             DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
             ObjectCreationHandling = ObjectCreationHandling.Replace
         };
-
-        /// <inheritdoc />
-        public string Folder { get; set; } = "";
 
         public new static Guid IdFromList(int listIndex)
         {

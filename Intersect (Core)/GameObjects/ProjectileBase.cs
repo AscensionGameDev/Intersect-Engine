@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 namespace Intersect.GameObjects
 {
 
-    public partial class ProjectileBase : DatabaseObject<ProjectileBase>, IFolderable
+    public partial class ProjectileBase : DatabaseObject<ProjectileBase>
     {
 
         public const int MAX_PROJECTILE_DIRECTIONS = 8;
@@ -125,9 +125,6 @@ namespace Intersect.GameObjects
             get => SpellBase.Get(SpellId);
             set => SpellId = value?.Id ?? Guid.Empty;
         }
-
-        /// <inheritdoc />
-        public string Folder { get; set; } = "";
 
     }
 

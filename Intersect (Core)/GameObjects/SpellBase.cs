@@ -14,7 +14,7 @@ using Newtonsoft.Json;
 namespace Intersect.GameObjects
 {
 
-    public partial class SpellBase : DatabaseObject<SpellBase>, IFolderable
+    public partial class SpellBase : DatabaseObject<SpellBase>
     {
 
         [NotMapped] public int[] VitalCost = new int[(int) Vitals.VitalCount];
@@ -137,9 +137,6 @@ namespace Intersect.GameObjects
             get => DatabaseUtils.SaveIntArray(VitalCost, (int) Vitals.VitalCount);
             set => VitalCost = DatabaseUtils.LoadIntArray(value, (int) Vitals.VitalCount);
         }
-
-        /// <inheritdoc />
-        public string Folder { get; set; } = "";
 
         /// <summary>
         /// Gets an array of all items sharing the provided cooldown group.

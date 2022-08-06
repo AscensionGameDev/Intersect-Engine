@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel.DataAnnotations.Schema;
 
 using Intersect.Models;
@@ -52,7 +52,7 @@ namespace Intersect.GameObjects
 
     }
 
-    public partial class AnimationBase : DatabaseObject<AnimationBase>, IFolderable
+    public partial class AnimationBase : DatabaseObject<AnimationBase>
     {
 
         [JsonConstructor]
@@ -81,9 +81,6 @@ namespace Intersect.GameObjects
         public string Sound { get; set; }
 
         public bool CompleteSound { get; set; }
-
-        /// <inheritdoc />
-        public string Folder { get; set; } = "";
 
     }
 

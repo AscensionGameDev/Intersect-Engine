@@ -5,8 +5,7 @@ using Newtonsoft.Json;
 
 namespace Intersect.Models;
 
-public abstract partial class DatabaseObject<TObject>
-    : Descriptor, IDatabaseObject
+public abstract partial class DatabaseObject<TObject> : Descriptor
     where TObject : DatabaseObject<TObject>
 {
     public const string Deleted = "ERR_DELETED";

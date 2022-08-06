@@ -20,6 +20,11 @@ namespace Intersect.Framework;
 public record struct Id<T>(Guid Guid)
 {
     /// <summary>
+    /// Empty ID with zeroed internal <see cref="System.Guid"/>.
+    /// </summary>
+    public static readonly Id<T> None = default;
+
+    /// <summary>
     /// Initializes a new <see cref="Id{T}"/> value.
     /// </summary>
     /// <returns>a new unique <see cref="Id{T}"/> for <typeparamref name="T"/></returns>

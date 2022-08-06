@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 namespace Intersect.GameObjects
 {
 
-    public partial class ShopBase : DatabaseObject<ShopBase>, IFolderable
+    public partial class ShopBase : DatabaseObject<ShopBase>
     {
 
         [NotMapped] public List<ShopItem> BuyingItems = new List<ShopItem>();
@@ -62,9 +62,6 @@ namespace Intersect.GameObjects
         public string BuySound { get; set; } = null;
 
         public string SellSound { get; set; } = null;
-
-        /// <inheritdoc />
-        public string Folder { get; set; } = "";
 
     }
 

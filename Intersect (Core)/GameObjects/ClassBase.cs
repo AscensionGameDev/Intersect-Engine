@@ -1,5 +1,3 @@
-﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 
 using Intersect.Enums;
@@ -13,7 +11,7 @@ using Newtonsoft.Json;
 namespace Intersect.GameObjects
 {
 
-    public partial class ClassBase : DatabaseObject<ClassBase>, IFolderable
+    public partial class ClassBase : DatabaseObject<ClassBase>
     {
 
         public const long DEFAULT_BASE_EXPERIENCE = 100;
@@ -232,9 +230,6 @@ namespace Intersect.GameObjects
                 }
             }
         }
-
-        /// <inheritdoc />
-        public string Folder { get; set; } = "";
 
         public long ExperienceToNextLevel(int level)
         {

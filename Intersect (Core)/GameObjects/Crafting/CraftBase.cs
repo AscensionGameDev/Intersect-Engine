@@ -10,7 +10,7 @@ using Newtonsoft.Json;
 namespace Intersect.GameObjects.Crafting
 {
 
-    public partial class CraftBase : DatabaseObject<CraftBase>, IFolderable
+    public partial class CraftBase : DatabaseObject<CraftBase>
     {
 
         [NotMapped] public List<CraftIngredient> Ingredients = new List<CraftIngredient>();
@@ -49,9 +49,6 @@ namespace Intersect.GameObjects.Crafting
 
         [JsonProperty(Order = -2)]
         public int Time { get; set; }
-
-        /// <inheritdoc />
-        public string Folder { get; set; } = "";
 
         [Column("Event")]
         [JsonProperty]

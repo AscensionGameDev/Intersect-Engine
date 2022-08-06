@@ -1,10 +1,13 @@
 using System.Data.Common;
+using System.Reflection;
 
 using Intersect.Config;
+using Intersect.Enums;
+using Intersect.Framework.Reflection;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Crafting;
 using Intersect.GameObjects.Events;
-using Intersect.GameObjects.Maps.MapList;
+using Intersect.GameObjects.Maps;
 using Intersect.Models;
 using Intersect.Server.Database.GameData.Migrations;
 using Intersect.Server.Database.GameData.Seeds;
@@ -18,6 +21,14 @@ namespace Intersect.Server.Database.GameData
 
     public partial class GameContext : IntersectDbContext<GameContext>, IGameContext
     {
+        private readonly MethodInfo _descriptorOnModelCreating = typeof(GameContext).GetMethod(
+            nameof(OnModelCreating),
+            1,
+            BindingFlags.NonPublic | BindingFlags.Instance,
+            default,
+            new[] { typeof(ModelBuilder) },
+            default
+        ) ?? throw new InvalidOperationException();
 
         public GameContext() : base(DefaultConnectionStringBuilder)
         {
@@ -28,9 +39,23 @@ namespace Intersect.Server.Database.GameData
             DbConnectionStringBuilder connectionStringBuilder,
             DatabaseOptions.DatabaseType databaseType,
             bool readOnly = false,
+            bool explicitLoad = false,
+            bool autoDetectChanges = false,
+            bool lazyLoading = false,
+            QueryTrackingBehavior? queryTrackingBehavior = default,
             Intersect.Logging.Logger logger = null,
             Intersect.Logging.LogLevel logLevel = Intersect.Logging.LogLevel.None
-        ) : base(connectionStringBuilder, databaseType, logger, logLevel, readOnly, autoDetectChanges: false)
+        ) : base(
+            connectionStringBuilder: connectionStringBuilder,
+            databaseType: databaseType,
+            logger: logger,
+            logLevel: logLevel,
+            readOnly: readOnly,
+            autoDetectChanges: autoDetectChanges,
+            explicitLoad: explicitLoad,
+            lazyLoading: lazyLoading,
+            queryTrackingBehavior: queryTrackingBehavior
+        )
         {
 
         }
@@ -53,6 +78,8 @@ namespace Intersect.Server.Database.GameData
 
         //Events
         public DbSet<EventBase> Events { get; set; }
+
+        public DbSet<Folder> Folders { get; set; }
 
         //Items
         public DbSet<ItemBase> Items { get; set; }
@@ -95,14 +122,71 @@ namespace Intersect.Server.Database.GameData
         //Time
         public DbSet<TimeBase> Time { get; set; }
 
+        private void OnModelCreating<TDescriptor>(ModelBuilder modelBuilder)
+            where TDescriptor : Descriptor
+        {
+            modelBuilder.Entity<TDescriptor>()
+                .HasOne(descriptor => descriptor.Parent)
+                .WithMany(folder => (ICollection<TDescriptor>)folder.Children);
+
+            modelBuilder.Entity<TDescriptor>()
+                .Navigation(descriptor => descriptor.Parent)
+                .AutoInclude();
+        }
+
+        private static Type CorrectDescriptorType(Type descriptorType)
+        {
+            if (descriptorType == typeof(MapBase))
+            {
+                return typeof(MapController);
+            }
+
+            return descriptorType;
+        }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<ContentString>()
                 .HasMany(contentString => contentString.Localizations)
                 .WithOne(localeContentString => localeContentString.ContentString);
 
+            modelBuilder.Entity<ContentString>()
+                .Navigation(contentString => contentString.Localizations)
+                .AutoInclude();
+
             modelBuilder.Entity<LocaleContentString>()
                 .HasKey(lcs => new { lcs.Id, lcs.Locale });
+
+            modelBuilder.Entity<LocaleContentString>()
+                .Navigation(lcs => lcs.ContentString)
+                .AutoInclude();
+
+            modelBuilder.Entity<Folder>()
+                .HasOne(folder => folder.Name);
+
+            modelBuilder.Entity<Folder>()
+                .Navigation(folder => folder.Name)
+                .AutoInclude();
+
+            modelBuilder.Entity<Folder>()
+                .HasMany(folder => (ICollection<Folder>)folder.Children)
+                .WithOne(child => child.Parent);
+
+            modelBuilder.Entity<Folder>()
+                .Navigation(folder => folder.Parent)
+                .AutoInclude();
+
+            var descriptorTypes = Enum
+                .GetValues<GameObjectType>()
+                .Select(descriptorType => descriptorType.GetObjectType())
+                .Where(descriptorType => descriptorType.Extends<Descriptor>())
+                .OrderBy(descriptorType => descriptorType.Name);
+            foreach (var descriptorType in descriptorTypes)
+            {
+                var correctedDescriptorType = CorrectDescriptorType(descriptorType);
+                var methodInfoOnModelCreatingDesriptorType = _descriptorOnModelCreating.MakeGenericMethod(correctedDescriptorType);
+                _ = methodInfoOnModelCreatingDesriptorType.Invoke(this, new[] { modelBuilder });
+            }
         }
 
         public override void MigrationsProcessed(string[] migrations)

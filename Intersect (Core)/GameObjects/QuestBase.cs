@@ -42,7 +42,7 @@ namespace Intersect.GameObjects
 
     }
 
-    public partial class QuestBase : DatabaseObject<QuestBase>, IFolderable
+    public partial class QuestBase : DatabaseObject<QuestBase>
     {
 
         [NotMapped] [JsonIgnore]
@@ -151,9 +151,6 @@ namespace Intersect.GameObjects
         [NotMapped]
         [JsonIgnore]
         public Dictionary<Guid, Guid> OriginalTaskEventIds { get; set; } = new Dictionary<Guid, Guid>();
-
-        /// <inheritdoc />
-        public string Folder { get; set; } = "";
 
         /// <summary>
         /// Hides this quest from the quest log if it has not been started and cannot be started due to the requiremetns/conditions

@@ -2,6 +2,7 @@ using System.Collections.Concurrent;
 using System.Collections.Immutable;
 using System.Data.Common;
 using System.Diagnostics;
+using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -10,7 +11,7 @@ using Amib.Threading;
 using Intersect.Collections;
 using Intersect.Config;
 using Intersect.Enums;
-using Intersect.Framework.Reflection;
+using Intersect.Framework.Collections;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Crafting;
 using Intersect.GameObjects.Events;
@@ -21,7 +22,6 @@ using Intersect.Logging.Output;
 using Intersect.Models;
 using Intersect.Server.Core;
 using Intersect.Server.Database.GameData;
-using Intersect.Server.Database.GameData.Migrations;
 using Intersect.Server.Database.Logging;
 using Intersect.Server.Database.PlayerData;
 using Intersect.Server.Database.PlayerData.Players;
@@ -35,7 +35,6 @@ using Intersect.Server.Networking;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Migrations;
 
 using MySqlConnector;
 
@@ -93,11 +92,24 @@ namespace Intersect.Server.Database
         /// </summary>
         /// <param name="readOnly">Defines whether or not the context should initialize with change tracking. If readonly is true then SaveChanges will not work.</param>
         /// <returns></returns>
-        public static GameContext CreateGameContext(bool readOnly = true)
+        public static GameContext CreateGameContext(
+            bool readOnly = true,
+            bool explicitLoad = false,
+            bool lazyLoading = false,
+            bool autoDetectChanges = false,
+            QueryTrackingBehavior? queryTrackingBehavior = default
+        )
         {
             return new GameContext(
-                CreateConnectionStringBuilder(Options.GameDb ?? throw new InvalidOperationException(), GameDbFilename),
-                Options.GameDb.Type, readOnly, gameDbLogger, Options.GameDb.LogLevel
+                connectionStringBuilder: CreateConnectionStringBuilder(Options.GameDb ?? throw new InvalidOperationException(), GameDbFilename),
+                databaseType: Options.GameDb.Type,
+                readOnly: readOnly,
+                explicitLoad: explicitLoad,
+                lazyLoading: lazyLoading,
+                autoDetectChanges: autoDetectChanges,
+                queryTrackingBehavior: queryTrackingBehavior,
+                logger: gameDbLogger,
+                logLevel: Options.GameDb.LogLevel
             );
         }
 
@@ -207,7 +219,7 @@ namespace Intersect.Server.Database
             using (var gameContext = CreateGameContext(readOnly: false))
             {
 
-                using (var playerContext = CreatePlayerContext(readOnly:false))
+                using (var playerContext = CreatePlayerContext(readOnly: false))
                 {
 
                     Logging.LoggingContext.Configure(
@@ -522,240 +534,100 @@ namespace Intersect.Server.Database
         //Game Object Saving/Loading
         private static void LoadAllGameObjects()
         {
-            foreach (var value in Enum.GetValues(typeof(GameObjectType)))
-            {
-                Debug.Assert(value != null, "value != null");
-                var type = (GameObjectType) value;
-                if (type == GameObjectType.Time)
-                {
-                    continue;
-                }
-
-                LoadGameObjects(type);
-            }
-        }
-
-        private static void ClearGameObjects(GameObjectType type)
-        {
-            switch (type)
-            {
-                case GameObjectType.Animation:
-                    AnimationBase.Lookup.Clear();
-
-                    break;
-                case GameObjectType.Class:
-                    ClassBase.Lookup.Clear();
-
-                    break;
-                case GameObjectType.Item:
-                    ItemBase.Lookup.Clear();
-
-                    break;
-                case GameObjectType.Npc:
-                    NpcBase.Lookup.Clear();
-
-                    break;
-                case GameObjectType.Projectile:
-                    ProjectileBase.Lookup.Clear();
-
-                    break;
-                case GameObjectType.Quest:
-                    QuestBase.Lookup.Clear();
-
-                    break;
-                case GameObjectType.Resource:
-                    ResourceBase.Lookup.Clear();
-
-                    break;
-                case GameObjectType.Shop:
-                    ShopBase.Lookup.Clear();
-
-                    break;
-                case GameObjectType.Spell:
-                    SpellBase.Lookup.Clear();
-
-                    break;
-                case GameObjectType.CraftTables:
-                    CraftingTableBase.Lookup.Clear();
-
-                    break;
-                case GameObjectType.Crafts:
-                    CraftBase.Lookup.Clear();
-
-                    break;
-                case GameObjectType.Map:
-                    MapBase.Lookup.Clear();
-
-                    break;
-                case GameObjectType.Event:
-                    EventBase.Lookup.Clear();
-
-                    break;
-                case GameObjectType.PlayerVariable:
-                    PlayerVariableBase.Lookup.Clear();
-
-                    break;
-                case GameObjectType.ServerVariable:
-                    ServerVariableBase.Lookup.Clear();
-
-                    break;
-                case GameObjectType.Tileset:
-                    TilesetBase.Lookup.Clear();
-
-                    break;
-                case GameObjectType.Time:
-                    break;
-                case GameObjectType.GuildVariable:
-                    GuildVariableBase.Lookup.Clear();
-
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(type), type, null);
-            }
-        }
-
-        private static void LoadGameObjects(GameObjectType gameObjectType)
-        {
-            ClearGameObjects(gameObjectType);
             try
             {
-                using (var context = CreateGameContext(readOnly: true))
+                foreach (var descriptorType in Enum.GetValues<GameObjectType>())
                 {
-                    switch (gameObjectType)
-                    {
-                        case GameObjectType.Animation:
-                            foreach (var anim in context.Animations)
-                            {
-                                AnimationBase.Lookup.Set(anim.Id, anim);
-                            }
-
-                            break;
-                        case GameObjectType.Class:
-                            foreach (var cls in context.Classes)
-                            {
-                                ClassBase.Lookup.Set(cls.Id, cls);
-                            }
-
-                            break;
-                        case GameObjectType.Item:
-                            foreach (var itm in context.Items)
-                            {
-                                ItemBase.Lookup.Set(itm.Id, itm);
-                            }
-
-                            break;
-                        case GameObjectType.Npc:
-                            foreach (var npc in context.Npcs)
-                            {
-                                NpcBase.Lookup.Set(npc.Id, npc);
-                            }
-
-                            break;
-                        case GameObjectType.Projectile:
-                            foreach (var proj in context.Projectiles)
-                            {
-                                ProjectileBase.Lookup.Set(proj.Id, proj);
-                            }
-
-                            break;
-                        case GameObjectType.Quest:
-                            foreach (var qst in context.Quests)
-                            {
-                                QuestBase.Lookup.Set(qst.Id, qst);
-                            }
-
-                            break;
-                        case GameObjectType.Resource:
-                            foreach (var res in context.Resources)
-                            {
-                                ResourceBase.Lookup.Set(res.Id, res);
-                            }
-
-                            break;
-                        case GameObjectType.Shop:
-                            foreach (var shp in context.Shops)
-                            {
-                                ShopBase.Lookup.Set(shp.Id, shp);
-                            }
-
-                            break;
-                        case GameObjectType.Spell:
-                            foreach (var spl in context.Spells)
-                            {
-                                SpellBase.Lookup.Set(spl.Id, spl);
-                            }
-
-                            break;
-                        case GameObjectType.CraftTables:
-                            foreach (var craft in context.CraftingTables)
-                            {
-                                CraftingTableBase.Lookup.Set(craft.Id, craft);
-                            }
-
-                            break;
-                        case GameObjectType.Crafts:
-                            foreach (var craft in context.Crafts)
-                            {
-                                CraftBase.Lookup.Set(craft.Id, craft);
-                            }
-
-                            break;
-                        case GameObjectType.Map:
-                            foreach (var map in context.Maps)
-                            {
-                                MapController.Lookup.Set(map.Id, map);
-                                if (Options.Instance.MapOpts.Layers.DestroyOrphanedLayers)
-                                {
-                                    map.DestroyOrphanedLayers();
-                                }
-                            }
-
-                            break;
-                        case GameObjectType.Event:
-                            foreach (var evt in context.Events)
-                            {
-                                EventBase.Lookup.Set(evt.Id, evt);
-                            }
-
-                            break;
-                        case GameObjectType.PlayerVariable:
-                            foreach (var psw in context.PlayerVariables)
-                            {
-                                PlayerVariableBase.Lookup.Set(psw.Id, psw);
-                            }
-
-                            break;
-                        case GameObjectType.ServerVariable:
-                            foreach (var psw in context.ServerVariables)
-                            {
-                                ServerVariableBase.Lookup.Set(psw.Id, psw);
-                            }
-
-                            break;
-                        case GameObjectType.Tileset:
-                            foreach (var psw in context.Tilesets)
-                            {
-                                TilesetBase.Lookup.Set(psw.Id, psw);
-                            }
-
-                            break;
-                        case GameObjectType.Time:
-                            break;
-                        case GameObjectType.GuildVariable:
-                            foreach (var psw in context.GuildVariables)
-                            {
-                                GuildVariableBase.Lookup.Set(psw.Id, psw);
-                            }
-
-                            break;
-                        default:
-                            throw new ArgumentOutOfRangeException(nameof(gameObjectType), gameObjectType, null);
-                    }
+                    LoadGameObjects(descriptorType);
                 }
             }
-            catch (Exception ex)
+            catch (Exception exception)
             {
-                Log.Error(ex);
+                Log.Error(exception);
+                throw;
+            }
+        }
+
+        private static readonly MethodInfo _descriptorLoadGameObjects = typeof(DbInterface).GetMethod(
+            nameof(LoadGameObjects),
+            1,
+            BindingFlags.NonPublic | BindingFlags.Static,
+            default,
+            new[] { typeof(GameObjectType) },
+            default
+        ) ?? throw new InvalidOperationException();
+
+        private static void LoadGameObjects<TDescriptor>(
+            GameObjectType descriptorType
+        ) where TDescriptor : Descriptor
+        {
+            var databaseObjectLookup = descriptorType.GetLookup();
+            databaseObjectLookup.Clear();
+
+            using var gameContext = CreateGameContext(
+                readOnly: true,
+                explicitLoad: true,
+                lazyLoading: true,
+                autoDetectChanges: true,
+                queryTrackingBehavior: QueryTrackingBehavior.TrackAll
+            );
+
+            var dbSet = gameContext.GetDbSet<TDescriptor>();
+
+            var folders = gameContext.Folders
+                .Where(folder => folder.DescriptorType == descriptorType)
+                .Include(folder => folder.Name)
+                .ThenInclude(name => name.Localizations)
+                .ToList();
+
+            var descriptors = dbSet
+                .Include(descriptor => descriptor.Parent)
+                .ToList();
+
+            foreach (var folder in folders)
+            {
+                folder.LinkChildren(folders.Cast<IFolderable>().Concat(descriptors.Cast<IFolderable>()));
+            }
+
+            foreach (var descriptor in descriptors)
+            {
+                _ = databaseObjectLookup.Set(descriptor.Id, descriptor);
+
+                switch (descriptor)
+                {
+                    case MapController mapController:
+                        if (Options.Instance.MapOpts.Layers.DestroyOrphanedLayers)
+                        {
+                            mapController.DestroyOrphanedLayers();
+                        }
+                        break;
+                }
+            }
+        }
+
+        private static void LoadGameObjects(GameObjectType descriptorType)
+        {
+            if (descriptorType == GameObjectType.Time)
+            {
+                return;
+            }
+
+            try
+            {
+                var descriptorClrType = descriptorType.GetObjectType();
+                switch (descriptorType)
+                {
+                    case GameObjectType.Map:
+                        descriptorClrType = typeof(MapController);
+                        break;
+                }
+
+                var loaderMethod = _descriptorLoadGameObjects.MakeGenericMethod(descriptorClrType);
+                _ = loaderMethod.Invoke(default, new object[] { descriptorType });
+            }
+            catch (Exception exception)
+            {
+                Log.Error(exception);
                 throw;
             }
         }
@@ -840,10 +712,10 @@ namespace Intersect.Server.Database
 
                 case GameObjectType.Quest:
                     dbObj = new QuestBase(predefinedid);
-                    ((QuestBase) dbObj).StartEvent = (EventBase) AddGameObject(GameObjectType.Event);
-                    ((QuestBase) dbObj).EndEvent = (EventBase) AddGameObject(GameObjectType.Event);
-                    ((QuestBase) dbObj).StartEvent.CommonEvent = false;
-                    ((QuestBase) dbObj).EndEvent.CommonEvent = false;
+                    ((QuestBase)dbObj).StartEvent = (EventBase)AddGameObject(GameObjectType.Event);
+                    ((QuestBase)dbObj).EndEvent = (EventBase)AddGameObject(GameObjectType.Event);
+                    ((QuestBase)dbObj).StartEvent.CommonEvent = false;
+                    ((QuestBase)dbObj).EndEvent.CommonEvent = false;
 
                     break;
 
@@ -1241,7 +1113,7 @@ namespace Intersect.Server.Database
 
             foreach (var map in MapController.Lookup)
             {
-                ((MapController) map.Value).Initialize();
+                ((MapController)map.Value).Initialize();
             }
         }
 
@@ -1250,7 +1122,7 @@ namespace Intersect.Server.Database
             if (ClassBase.Lookup.Count == 0)
             {
                 Console.WriteLine(Strings.Database.noclasses);
-                var cls = (ClassBase) AddGameObject(GameObjectType.Class);
+                var cls = (ClassBase)AddGameObject(GameObjectType.Class);
                 cls.Name = Strings.Database.Default;
                 var defaultMale = new ClassSprite()
                 {
@@ -1266,12 +1138,12 @@ namespace Intersect.Server.Database
 
                 cls.Sprites.Add(defaultMale);
                 cls.Sprites.Add(defaultFemale);
-                for (var i = 0; i < (int) Vitals.VitalCount; i++)
+                for (var i = 0; i < (int)Vitals.VitalCount; i++)
                 {
                     cls.BaseVital[i] = 20;
                 }
 
-                for (var i = 0; i < (int) Stats.StatCount; i++)
+                for (var i = 0; i < (int)Stats.StatCount; i++)
                 {
                     cls.BaseStat[i] = 20;
                 }
@@ -1468,33 +1340,63 @@ namespace Intersect.Server.Database
         {
             try
             {
-                using (var context = CreateGameContext(readOnly: false))
+                using (var context = CreateGameContext(readOnly: true))
                 {
-                    var mapFolders = context.MapFolders.FirstOrDefault();
-                    if (mapFolders == null)
+                    var rootMapList = new MapList();
+
+                    var folders = context.Folders
+                        .Where(folder => folder.DescriptorType == GameObjectType.Map)
+                        .Include(folder => folder.Name)
+                        .ThenInclude(name => name.Localizations)
+                        .AsNoTrackingWithIdentityResolution()
+                        .ToList();
+
+                    var rootFolders = folders
+                        .Where(folder => folder.Parent == default);
+
+                    MapListMap LoadMap(MapList mapList, MapBase mapDescriptor)
                     {
-                        context.MapFolders.Add(MapList.List);
-                        context.ChangeTracker.DetectChanges();
-                        context.SaveChanges();
+                        return mapList.AddMap(mapDescriptor, MapBase.Lookup);
                     }
-                    else
+
+                    MapListFolder LoadFolder(MapList mapList, Folder folder)
                     {
-                        MapList.List = mapFolders;
+                        var parentId = folder.Id;
+                        var mapListFolder = mapList.AddFolder(folder);
+
+                        foreach (var subfolder in folders.Where(folder => folder.ParentId == parentId))
+                        {
+                            _ = LoadFolder(mapListFolder.Children, subfolder);
+                        }
+
+                        foreach (var map in context.Maps.Where(map => map.ParentId == parentId))
+                        {
+                            _ = LoadMap(mapListFolder.Children, map);
+                        }
+
+                        return mapListFolder;
                     }
+
+                    foreach (var folder in rootFolders)
+                    {
+                        _ = LoadFolder(rootMapList, folder);
+                    }
+
+                    var folderlessMaps = context.Maps
+                        .Where(map => map.Parent == default);
+
+                    foreach (var map in folderlessMaps)
+                    {
+                        _ = LoadMap(rootMapList, map);
+                    }
+
+                    MapList.List = rootMapList;
                 }
             }
             catch (Exception ex)
             {
                 Log.Error(ex);
                 throw;
-            }
-
-            foreach (var map in MapBase.Lookup)
-            {
-                if (MapList.List.FindMap(map.Value.Id) == null)
-                {
-                    MapList.List.AddMap(map.Value.Id, map.Value.TimeCreated, MapBase.Lookup);
-                }
             }
 
             MapList.List.PostLoad(MapBase.Lookup, true, true);
@@ -1505,12 +1407,12 @@ namespace Intersect.Server.Database
         {
             try
             {
-                using (var context = CreateGameContext(readOnly: false))
-                {
-                    context.MapFolders.Update(MapList.List);
-                    context.ChangeTracker.DetectChanges();
-                    context.SaveChanges();
-                }
+                //using (var context = CreateGameContext(readOnly: false))
+                //{
+                //    context.MapFolders.Update(MapList.List);
+                //    context.ChangeTracker.DetectChanges();
+                //    context.SaveChanges();
+                //}
             }
             catch (Exception ex)
             {
@@ -1784,7 +1686,7 @@ namespace Intersect.Server.Database
                     MigrateDbSet(context.Crafts, newGameContext.Crafts);
                     MigrateDbSet(context.Events, newGameContext.Events);
                     MigrateDbSet(context.Items, newGameContext.Items);
-                    MigrateDbSet(context.MapFolders, newGameContext.MapFolders);
+                    //MigrateDbSet(context.MapFolders, newGameContext.MapFolders);
                     MigrateDbSet(context.Maps, newGameContext.Maps);
                     MigrateDbSet(context.Npcs, newGameContext.Npcs);
                     MigrateDbSet(context.Projectiles, newGameContext.Projectiles);

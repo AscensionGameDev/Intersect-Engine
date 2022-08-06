@@ -2,12 +2,13 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.Serialization;
 
 using Intersect.Enums;
+using Intersect.Framework;
 
 using Newtonsoft.Json;
 
 namespace Intersect.Models;
 
-public abstract partial class Descriptor : IDatabaseObject
+public abstract partial class Descriptor : IDatabaseObject, IFolderable
 {
     private string? _backup;
 
@@ -22,6 +23,8 @@ public abstract partial class Descriptor : IDatabaseObject
 
     [IgnoreDataMember, NotMapped]
     public string DatabaseTable => Type.GetTable();
+
+    public string? Folder { get; set; }
 
     [IgnoreDataMember, NotMapped]
     public virtual string JsonData => JsonConvert.SerializeObject(
@@ -43,6 +46,13 @@ public abstract partial class Descriptor : IDatabaseObject
     [JsonProperty(Order = -4)]
     [Column(Order = 0)]
     public virtual string Name { get; set; }
+
+    [Column(Order = 1)]
+    public Id<Folder>? ParentId { get; set; }
+
+    [ForeignKey(nameof(ParentId))]
+    [IgnoreDataMember, NotMapped]
+    public Folder? Parent { get; set; }
 
     public long TimeCreated { get; set; }
 
