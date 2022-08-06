@@ -697,11 +697,19 @@ namespace Intersect.Client.Framework.Gwen.Control
                 return;
             }
 
-            var cache = Skin.Renderer.Ctt;
-
-            if (ShouldCacheToTexture && cache != null)
+            try
             {
-                cache.DisposeCachedTexture(this);
+                var cache = Skin.Renderer.Ctt;
+
+                if (ShouldCacheToTexture && cache != null)
+                {
+                    cache.DisposeCachedTexture(this);
+                }
+            }
+            catch
+            {
+                // Ignore errors, which is probably because we are
+                // unable to get the skin because we're disposing
             }
 
             if (InputHandler.HoveredControl == this)
