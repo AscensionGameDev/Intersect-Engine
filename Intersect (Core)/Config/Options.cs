@@ -76,6 +76,8 @@ namespace Intersect
 
         public GuildOptions Guild = new GuildOptions();
 
+        public readonly LocalizationOptions Localization = new();
+
         public LoggingOptions Logging = new LoggingOptions();
         
         public BankOptions Bank = new BankOptions();
