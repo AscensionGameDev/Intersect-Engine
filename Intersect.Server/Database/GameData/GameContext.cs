@@ -1,6 +1,7 @@
 using System.Data.Common;
 
 using Intersect.Config;
+using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Crafting;
 using Intersect.GameObjects.Events;
@@ -54,6 +55,8 @@ namespace Intersect.Server.Database.GameData
         //Events
         public DbSet<EventBase> Events { get; set; }
 
+        public DbSet<Folder> Folders { get; set; }
+
         //Items
         public DbSet<ItemBase> Items { get; set; }
 
@@ -103,6 +106,18 @@ namespace Intersect.Server.Database.GameData
 
             modelBuilder.Entity<LocaleContentString>()
                 .HasKey(lcs => new { lcs.Id, lcs.Locale });
+
+            var descriptorTypes = Enum.GetValues<GameObjectType>().Select(descriptorType => descriptorType.GetObjectType());
+            foreach (var descriptorType in descriptorTypes)
+            {
+                modelBuilder.Entity<Folder>()
+                    .HasMany(typeof(ICollection<>).MakeGenericType(descriptorType), nameof(Folder.Children))
+                    .WithOne(nameof(IFolderable.Parent));
+            }
+
+            modelBuilder.Entity<Folder>()
+                .HasMany(folder => (ICollection<Folder>)folder.Children)
+                .WithOne(child => child.Parent);
         }
 
         public override void MigrationsProcessed(string[] migrations)
