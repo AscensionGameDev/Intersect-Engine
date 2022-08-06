@@ -1256,7 +1256,16 @@ namespace Intersect.Server.Networking
 
             if (client.Characters.Count > 0)
             {
-                foreach (var character in client.Characters.OrderByDescending(p => p.LastOnline))
+                IEnumerable<Player> loadedCharacters;
+                using (var context = DbInterface.CreatePlayerContext(explicitLoad: true, readOnly: true))
+                {
+                    loadedCharacters = client.Characters
+                        .OrderByDescending(p => p.LastOnline)
+                        .Select(character => character.Populate(context))
+                        .ToList();
+                }
+
+                foreach (var character in loadedCharacters)
                 {
                     var equipmentArray = character.Equipment;
                     var equipment = new EquipmentFragment[Options.EquipmentSlots.Count + 1];

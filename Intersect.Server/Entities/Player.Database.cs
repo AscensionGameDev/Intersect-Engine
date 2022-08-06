@@ -1,20 +1,17 @@
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
+
 using Intersect.Logging;
-using Intersect.Server.Core;
 using Intersect.Server.Database;
 using Intersect.Server.Database.PlayerData;
+using Intersect.Server.Database.PlayerData.Players;
 using Intersect.Server.General;
 using Intersect.Server.Networking;
 using Intersect.Server.Web.RestApi.Payloads;
-using Intersect.Server.Database.PlayerData.Players;
+using Intersect.Time;
 
 using Microsoft.EntityFrameworkCore;
 
 using Newtonsoft.Json;
-using Intersect.Time;
 
 namespace Intersect.Server.Entities
 {
@@ -149,6 +146,18 @@ namespace Intersect.Server.Entities
         #endregion
 
         #region Loading
+
+        public Player Populate(PlayerContext playerContext)
+        {
+            playerContext.Attach(this);
+            playerContext.Entry(this).Collection(p => p.Bank).Load();
+            playerContext.Entry(this).Collection(p => p.Hotbar).Load();
+            playerContext.Entry(this).Collection(p => p.Items).Load();
+            playerContext.Entry(this).Collection(p => p.Quests).Load();
+            playerContext.Entry(this).Collection(p => p.Spells).Load();
+            playerContext.Entry(this).Collection(p => p.Variables).Load();
+            return this;
+        }
 
         public static Player Load(Guid playerId)
         {
