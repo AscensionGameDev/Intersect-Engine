@@ -288,6 +288,13 @@ namespace Intersect.Server.Database
 
                     gameContext.MigrationsProcessed(processedGameMigrations.ToArray());
 
+#if DEBUG
+                    if (ServerContext.Instance.RestApi.Configuration.SeedMode)
+                    {
+                        gameContext.Seed();
+                    }
+#endif
+
                     playerContext.Database.Migrate();
                     var remainingPlayerMigrations = playerContext.PendingMigrations;
                     var processedPlayerMigrations = new List<string>(playerMigrations);
