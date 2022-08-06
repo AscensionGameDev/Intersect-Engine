@@ -129,9 +129,27 @@ internal partial class EditorMainWindow
     [EditorMenu(Order = 5)]
     private Menu CreateMenuContentEditors()
     {
-        var items = new List<MenuItem>();
+        var menuItemLocalization = new MenuItem
+        {
+            Name = Strings.Windows.Localization.Title,
+        };
 
-        foreach (var descriptorType in Enum.GetValues<GameObjectType>())
+        menuItemLocalization.Selected += (_, _) =>
+        {
+            var isAlreadyOpen = FindWindows<LocalizationWindow>().Any();
+            if (!isAlreadyOpen)
+            {
+                Components.Add(new LocalizationWindow());
+            }
+        };
+
+        var items = new List<MenuItem>
+        {
+            menuItemLocalization,
+            new MenuItemSeparator(),
+        };
+
+        foreach (var descriptorType in Enum.GetValues<GameObjectType>().OrderBy(value => value.ToString()))
         {
             var menuItem = new MenuItem
             {
