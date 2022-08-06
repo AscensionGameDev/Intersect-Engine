@@ -180,12 +180,12 @@ namespace Intersect.Editor.Forms.DockingElements
         //PicMap Functions
         public void picMap_MouseDown(object sender, MouseEventArgs e)
         {
-            if (!Globals.MapEditorWindow.DockPanel.Focused)
-            {
-                Globals.MapEditorWindow.DockPanel.Focus();
+            //if (!Globals.MapEditorWindow.DockPanel.Focused)
+            //{
+            //    Globals.MapEditorWindow.DockPanel.Focus();
 
-                return;
-            }
+            //    return;
+            //}
 
             if (Globals.EditingLight != null)
             {
