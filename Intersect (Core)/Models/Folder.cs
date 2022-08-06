@@ -32,7 +32,7 @@ public partial class Folder : IFolderable
     public ContentString Name { get; set; }
 
     [Column(Order = 3)]
-    public Id<Folder> ParentId { get; set; }
+    public Id<Folder> ParentId { get; set; } = Id<Folder>.None;
 
     [ForeignKey(nameof(ParentId))]
     [IgnoreDataMember, NotMapped]

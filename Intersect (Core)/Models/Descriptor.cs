@@ -48,7 +48,7 @@ public abstract partial class Descriptor : IDatabaseObject
     public virtual string Name { get; set; }
 
     [Column(Order = 0)]
-    public Id<Folder> ParentId { get; set; }
+    public Id<Folder> ParentId { get; set; } = Id<Folder>.None;
 
     [ForeignKey(nameof(ParentId))]
     [IgnoreDataMember, NotMapped]
