@@ -49,8 +49,7 @@ internal partial class EditorMenuAttribute : Attribute
             .Where(method => method.Attribute != default)
             .OrderBy(method => method.Attribute?._order, new EditorMenuAttributeOrderComparer())
             .Select(method => method.Info.Invoke(editorWindow, Array.Empty<object>()) as Menu)
-            .Where(menu => menu != default)
-            .Cast<Menu>()
+            .OfType<Menu>()
             .ToList();
     }
 }
