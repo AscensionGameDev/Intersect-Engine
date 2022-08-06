@@ -40,6 +40,8 @@ namespace Intersect.Server.Database.GameData
         //Animations
         public DbSet<AnimationBase> Animations { get; set; }
 
+        public DbSet<ContentString> ContentStrings { get; set; }
+
         //Crafting
         public DbSet<CraftBase> Crafts { get; set; }
 
@@ -53,6 +55,8 @@ namespace Intersect.Server.Database.GameData
 
         //Items
         public DbSet<ItemBase> Items { get; set; }
+
+        public DbSet<LocaleContentString> LocaleContentStrings { get; set; }
 
         //Maps
         public DbSet<MapController> Maps { get; set; }
@@ -92,6 +96,12 @@ namespace Intersect.Server.Database.GameData
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<ContentString>()
+                .HasMany<LocaleContentString>("LocalizationsBinder")
+                .WithOne(lcs => lcs.ContentString);
+
+            modelBuilder.Entity<LocaleContentString>()
+                .HasKey(lcs => new { lcs.Id, lcs.Locale });
         }
 
         public override void MigrationsProcessed(string[] migrations)
