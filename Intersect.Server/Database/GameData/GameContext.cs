@@ -118,6 +118,9 @@ namespace Intersect.Server.Database.GameData
             modelBuilder.Entity<Folder>()
                 .HasMany(folder => (ICollection<Folder>)folder.Children)
                 .WithOne(child => child.Parent);
+
+            modelBuilder.Entity<Folder>()
+                .HasOne(folder => folder.Name);
         }
 
         public override void MigrationsProcessed(string[] migrations)
