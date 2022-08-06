@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 
 namespace Intersect.Models;
 
-public abstract partial class Descriptor : IDatabaseObject
+public abstract partial class Descriptor : IDatabaseObject, IFolderable
 {
     private string? _backup;
 
