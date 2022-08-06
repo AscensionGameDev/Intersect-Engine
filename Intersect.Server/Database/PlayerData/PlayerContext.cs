@@ -145,7 +145,7 @@ namespace Intersect.Server.Database.PlayerData
             modelBuilder.Entity<GuildVariable>().HasIndex(p => new { p.VariableId, GuildId = p.GuildId }).IsUnique();
         }
 
-        public void Seed()
+        public override void Seed()
         {
 #if DEBUG
             new SeedUsers().SeedIfEmpty(this);

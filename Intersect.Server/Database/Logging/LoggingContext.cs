@@ -50,7 +50,7 @@ namespace Intersect.Server.Database.Logging
             modelBuilder.ApplyConfiguration(new RequestLog.Mapper());
         }
 
-        public void Seed()
+        public override void Seed()
         {
 #if DEBUG
             new SeedTrades().SeedIfEmpty(this);

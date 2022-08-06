@@ -288,6 +288,8 @@ namespace Intersect.Server.Database
 
         public virtual void MigrationsProcessed(string[] migrations) { }
 
+        public virtual void Seed() { }
+
         public override int SaveChanges()
         {
             if (ReadOnly)
