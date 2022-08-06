@@ -7,6 +7,7 @@ using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps.MapList;
 using Intersect.Models;
 using Intersect.Server.Database.GameData.Migrations;
+using Intersect.Server.Database.GameData.Seeds;
 using Intersect.Server.Maps;
 
 using Microsoft.Data.Sqlite;
@@ -125,7 +126,15 @@ namespace Intersect.Server.Database.GameData
             {
                 FixQuestTaskCompletionEventsMigration.Run(this);
             }
+        }
 
+        public override void Seed()
+        {
+#if DEBUG
+            new SeedContentStrings().SeedIfEmpty(this);
+            ChangeTracker.DetectChanges();
+            SaveChanges();
+#endif
         }
 
         internal static partial class Queries
