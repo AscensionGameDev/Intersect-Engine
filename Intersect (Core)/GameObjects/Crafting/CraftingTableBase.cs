@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 namespace Intersect.GameObjects
 {
 
-    public partial class CraftingTableBase : DatabaseObject<CraftingTableBase>, IFolderable
+    public partial class CraftingTableBase : DatabaseObject<CraftingTableBase>
     {
 
         [NotMapped] public DbList<CraftBase> Crafts = new DbList<CraftBase>();
@@ -33,9 +33,6 @@ namespace Intersect.GameObjects
             get => JsonConvert.SerializeObject(Crafts, Formatting.None);
             protected set => Crafts = JsonConvert.DeserializeObject<DbList<CraftBase>>(value);
         }
-
-        /// <inheritdoc />
-        public string Folder { get; set; } = "";
 
     }
 

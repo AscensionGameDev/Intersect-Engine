@@ -11,7 +11,7 @@ using Newtonsoft.Json;
 namespace Intersect.GameObjects
 {
 
-    public partial class ServerVariableBase : DatabaseObject<ServerVariableBase>, IFolderable
+    public partial class ServerVariableBase : DatabaseObject<ServerVariableBase>
     {
 
         [JsonConstructor]
@@ -52,9 +52,6 @@ namespace Intersect.GameObjects
                 }
             }
         }
-
-        /// <inheritdoc />
-        public string Folder { get; set; } = "";
 
         /// <summary>
         /// Retrieve an array of variable names of the supplied data type.

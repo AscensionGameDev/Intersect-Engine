@@ -8,7 +8,7 @@ namespace Intersect.Models;
 
 public partial class Folder : IFolderable
 {
-    public ICollection<IFolderable> Children { get; private set; }
+    public virtual ICollection<IFolderable> Children { get; private set; }
 
     [Column(Order = 1)]
     public GameObjectType DescriptorType { get; set; }

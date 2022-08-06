@@ -15,7 +15,7 @@ using Newtonsoft.Json;
 namespace Intersect.GameObjects
 {
 
-    public partial class ItemBase : DatabaseObject<ItemBase>, IFolderable
+    public partial class ItemBase : DatabaseObject<ItemBase>
     {
 
         [NotMapped] public ConditionLists UsageRequirements = new ConditionLists();
@@ -318,9 +318,6 @@ namespace Intersect.GameObjects
         public bool IsStackable => (ItemType == ItemTypes.Currency || Stackable) &&
                                    ItemType != ItemTypes.Equipment &&
                                    ItemType != ItemTypes.Bag;
-
-        /// <inheritdoc />
-        public string Folder { get; set; } = "";
 
         /// <summary>
         /// Gets an array of all items sharing the provided cooldown group.

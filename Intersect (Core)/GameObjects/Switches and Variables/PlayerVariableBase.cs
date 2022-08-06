@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 namespace Intersect.GameObjects
 {
 
-    public partial class PlayerVariableBase : DatabaseObject<PlayerVariableBase>, IFolderable
+    public partial class PlayerVariableBase : DatabaseObject<PlayerVariableBase>
     {
 
         [JsonConstructor]
@@ -27,9 +27,6 @@ namespace Intersect.GameObjects
         public string TextId { get; set; }
 
         public VariableDataTypes Type { get; set; } = VariableDataTypes.Boolean;
-
-        /// <inheritdoc />
-        public string Folder { get; set; } = "";
 
         /// <summary>
         /// Retrieve an array of variable names of the supplied data type.

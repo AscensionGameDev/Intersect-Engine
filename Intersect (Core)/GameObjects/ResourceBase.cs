@@ -33,7 +33,7 @@ namespace Intersect.GameObjects
 
     }
 
-    public partial class ResourceBase : DatabaseObject<ResourceBase>, IFolderable
+    public partial class ResourceBase : DatabaseObject<ResourceBase>
     {
 
         [NotMapped] public List<ResourceDrop> Drops = new List<ResourceDrop>();
@@ -118,9 +118,6 @@ namespace Intersect.GameObjects
         public bool WalkableAfter { get; set; }
 
         public bool WalkableBefore { get; set; }
-
-        /// <inheritdoc />
-        public string Folder { get; set; } = "";
 
         public partial class ResourceDrop
         {

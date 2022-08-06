@@ -12,7 +12,7 @@ using Newtonsoft.Json;
 
 namespace Intersect.GameObjects
 {
-    public partial class NpcBase : DatabaseObject<NpcBase>, IFolderable
+    public partial class NpcBase : DatabaseObject<NpcBase>
     {
 
         [NotMapped] public ConditionLists AttackOnSightConditions = new ConditionLists();
@@ -243,9 +243,6 @@ namespace Intersect.GameObjects
             get => DatabaseUtils.SaveIntArray(VitalRegen, (int) Vitals.VitalCount);
             set => VitalRegen = DatabaseUtils.LoadIntArray(value, (int) Vitals.VitalCount);
         }
-
-        /// <inheritdoc />
-        public string Folder { get; set; } = "";
 
         public SpellBase GetRandomSpell(Random random)
         {
