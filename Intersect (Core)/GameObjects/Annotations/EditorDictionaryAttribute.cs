@@ -114,7 +114,7 @@ public class EditorDictionaryAttribute : EditorDisplayAttribute
             }
         }
 
-        var fieldValue = fieldInfo.GetValue(value);
+        var fieldValue = fieldInfo.GetValue(null);
         switch (fieldValue)
         {
             case Dictionary<int, LocalizedString> intKeyDictionary:
@@ -151,13 +151,6 @@ public class EditorDictionaryAttribute : EditorDisplayAttribute
 
             default:
                 {
-                    var fieldType = fieldInfo.FieldType;
-
-                    if (fieldType.BaseType == typeof(Dictionary<,>))
-                    {
-
-                    }
-
                     throw new InvalidOperationException($"Unsupported type: {fieldInfo.FieldType.FullName}");
                 }
         }
