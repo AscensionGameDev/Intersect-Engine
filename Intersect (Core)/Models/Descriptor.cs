@@ -44,10 +44,10 @@ public abstract partial class Descriptor : IDatabaseObject
     public Guid Id { get; protected set; } = Guid.NewGuid();
 
     [JsonProperty(Order = -4)]
-    [Column(Order = 1)]
+    [Column(Order = 0)]
     public virtual string Name { get; set; }
 
-    [Column(Order = 0)]
+    [Column(Order = 1)]
     public Id<Folder> ParentId { get; set; } = Id<Folder>.None;
 
     [ForeignKey(nameof(ParentId))]
