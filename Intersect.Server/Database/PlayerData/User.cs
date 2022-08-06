@@ -752,16 +752,13 @@ namespace Intersect.Server.Database.PlayerData
                     .Include(p => p.Players)
                     .ThenInclude(c => c.Hotbar)
                     .Include(p => p.Players)
+                    .ThenInclude(c => c.Items)
                     .Include(p => p.Players)
                     .ThenInclude(c => c.Quests)
                     .Include(p => p.Players)
-                    .ThenInclude(c => c.Variables)
-                    .Include(p => p.Players)
-                    .ThenInclude(c => c.Items)
-                    .Include(p => p.Players)
                     .ThenInclude(c => c.Spells)
                     .Include(p => p.Players)
-                    .ThenInclude(c => c.Bank)
+                    .ThenInclude(c => c.Variables)
                     .FirstOrDefault()
             ) ??
             throw new InvalidOperationException();
