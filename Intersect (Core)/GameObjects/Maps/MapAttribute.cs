@@ -1,5 +1,3 @@
-using System;
-
 using Intersect.Enums;
 using Intersect.GameObjects.Annotations;
 using Intersect.Localization;
@@ -12,7 +10,7 @@ namespace Intersect.GameObjects.Maps
     public abstract partial class MapAttribute
     {
         [EditorLabel("Attributes", "AttributeType")]
-        [EditorDictionary(typeof(MapDescriptorNamespace), nameof(MapDescriptorNamespace.AttributeTypes), FieldType = EditorFieldType.Pivot)]
+        [EditorDictionary("Attributes", nameof(MapDescriptorNamespace.AttributeTypes), FieldType = EditorFieldType.Pivot)]
         public abstract MapAttributes Type { get; }
 
         public static MapAttribute CreateAttribute(MapAttributes type)
