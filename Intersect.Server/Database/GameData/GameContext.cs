@@ -7,6 +7,7 @@ using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps.MapList;
 using Intersect.Models;
 using Intersect.Server.Database.GameData.Migrations;
+using Intersect.Server.Database.GameData.Seeds;
 using Intersect.Server.Maps;
 
 using Microsoft.Data.Sqlite;
@@ -40,6 +41,8 @@ namespace Intersect.Server.Database.GameData
         //Animations
         public DbSet<AnimationBase> Animations { get; set; }
 
+        public DbSet<ContentString> ContentStrings { get; set; }
+
         //Crafting
         public DbSet<CraftBase> Crafts { get; set; }
 
@@ -53,6 +56,8 @@ namespace Intersect.Server.Database.GameData
 
         //Items
         public DbSet<ItemBase> Items { get; set; }
+
+        public DbSet<LocaleContentString> LocaleContentStrings { get; set; }
 
         //Maps
         public DbSet<MapController> Maps { get; set; }
@@ -92,6 +97,12 @@ namespace Intersect.Server.Database.GameData
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<ContentString>()
+                .HasMany(contentString => contentString.Localizations)
+                .WithOne(localeContentString => localeContentString.ContentString);
+
+            modelBuilder.Entity<LocaleContentString>()
+                .HasKey(lcs => new { lcs.Id, lcs.Locale });
         }
 
         public override void MigrationsProcessed(string[] migrations)
@@ -115,7 +126,15 @@ namespace Intersect.Server.Database.GameData
             {
                 FixQuestTaskCompletionEventsMigration.Run(this);
             }
+        }
 
+        public override void Seed()
+        {
+#if DEBUG
+            new SeedContentStrings().SeedIfEmpty(this);
+            ChangeTracker.DetectChanges();
+            SaveChanges();
+#endif
         }
 
         internal static partial class Queries
