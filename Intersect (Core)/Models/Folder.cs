@@ -22,7 +22,7 @@ public partial class Folder : IFolderable
 
     [Column(Order = 0)]
     [DatabaseGenerated(DatabaseGeneratedOption.None)]
-    public Guid Id { get; protected set; } = Guid.NewGuid();
+    public Id<Folder> Id { get; protected set; } = Id<Folder>.New();
 
     [Column(Order = 2)]
     protected Id<ContentString> NameId { get; set; }
