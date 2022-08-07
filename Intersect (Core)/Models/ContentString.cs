@@ -48,6 +48,12 @@ public sealed class ContentString
         Id = new(Guid.NewGuid());
     }
 
+    public ContentString(string value) : this()
+    {
+        var localeContentString = new LocaleContentString(this, CultureInfo.DefaultThreadCurrentCulture, value);
+        Localizations[localeContentString.Locale] = localeContentString;
+    }
+
     [DatabaseGenerated(DatabaseGeneratedOption.None)]
     public Id<ContentString> Id { get; private set; }
 
