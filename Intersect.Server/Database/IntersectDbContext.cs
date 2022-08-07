@@ -137,8 +137,17 @@ namespace Intersect.Server.Database
         /// </summary>
         public DbConnectionStringBuilder ConnectionStringBuilder { get; }
 
-        public ICollection<string> PendingMigrations =>
-            Database?.GetPendingMigrations()?.ToList() ?? new List<string>();
+        public IReadOnlyCollection<string> AllMigrations =>
+            (Database?.GetMigrations()?.ToList() ?? new())
+            .AsReadOnly();
+
+        public IReadOnlyCollection<string> AppliedMigrations =>
+            (Database?.GetAppliedMigrations()?.ToList() ?? new())
+            .AsReadOnly();
+
+        public IReadOnlyCollection<string> PendingMigrations =>
+            (Database?.GetPendingMigrations()?.ToList() ?? new())
+            .AsReadOnly();
 
         public DbSet<TType> GetDbSet<TType>() where TType : class
         {
