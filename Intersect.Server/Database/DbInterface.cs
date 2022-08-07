@@ -10,6 +10,7 @@ using Amib.Threading;
 using Intersect.Collections;
 using Intersect.Config;
 using Intersect.Enums;
+using Intersect.Framework.Reflection;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Crafting;
 using Intersect.GameObjects.Events;
@@ -20,6 +21,7 @@ using Intersect.Logging.Output;
 using Intersect.Models;
 using Intersect.Server.Core;
 using Intersect.Server.Database.GameData;
+using Intersect.Server.Database.GameData.Migrations;
 using Intersect.Server.Database.Logging;
 using Intersect.Server.Database.PlayerData;
 using Intersect.Server.Database.PlayerData.Players;
@@ -32,6 +34,8 @@ using Intersect.Server.Networking;
 
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 using MySqlConnector;
 
@@ -272,7 +276,9 @@ namespace Intersect.Server.Database
                         );
                     }
 
-                    gameContext.Database.Migrate();
+                    var gameContextMigrationScheduler = new MigrationScheduler<GameContext>(gameContext);
+                    gameContextMigrationScheduler.SchedulePendingMigrations();
+                    gameContextMigrationScheduler.ApplyScheduledMigrations();
                     var remainingGameMigrations = gameContext.PendingMigrations;
                     var processedGameMigrations = new List<string>(gameMigrations);
                     foreach (var itm in remainingGameMigrations)
