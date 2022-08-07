@@ -10,7 +10,7 @@ public sealed class MigrationScheduler<TContext>
     where TContext : IntersectDbContext<TContext>
 {
     private readonly TContext _context;
-    private List<DataMigrationMetadata>? _scheduledMigrations;
+    private List<MigrationMetadata>? _scheduledMigrations;
 
     public MigrationScheduler(TContext context)
     {
@@ -39,19 +39,19 @@ public sealed class MigrationScheduler<TContext>
 
         foreach (var scheduledMigration in _scheduledMigrations)
         {
-            if (scheduledMigration.IsDataMigration)
+            if (scheduledMigration is DataMigrationMetadata scheduledDataMigration)
             {
-                var dataMigration = Activator.CreateInstance(scheduledMigration.MigrationType) as IDataMigration<TContext>;
+                var dataMigration = Activator.CreateInstance(scheduledDataMigration.MigratorType) as IDataMigration<TContext>;
                 if (dataMigration == default)
                 {
-                    throw new InvalidOperationException($"Failed to create instance of data migration: {scheduledMigration.MigrationType.FullName}");
+                    throw new InvalidOperationException($"Failed to create instance of data migration: {scheduledDataMigration.MigratorType.FullName}");
                 }
 
                 dataMigration.Up(_context);
                 _context.ChangeTracker.DetectChanges();
                 var changes = _context.SaveChanges();
 
-                Log.Info($"{scheduledMigration.MigrationType.FullName}: {changes} changes applied.");
+                Log.Info($"{scheduledDataMigration.MigratorType.FullName}: {changes} changes applied.");
             }
             else
             {
@@ -63,26 +63,28 @@ public sealed class MigrationScheduler<TContext>
     public MigrationScheduler<TContext> SchedulePendingMigrations()
     {
         var dataMigrations = FindValidDataMigrations(_context);
-        List<DataMigrationMetadata> scheduledMigrations = new();
+        List<MigrationMetadata> scheduledMigrations = new();
 
         var pendingMigrations = _context.PendingMigrations.ToList();
         var pendingMigrationMetadata = pendingMigrations
-            .Select(pendingMigration => DataMigrationMetadata.Create(pendingMigration, typeof(TContext)))
+            .Select(pendingMigration => MigrationMetadata.CreateSchemaMigrationMetadata(pendingMigration, typeof(TContext)))
             .ToList();
 
         foreach (var pendingMigration in pendingMigrationMetadata)
         {
             scheduledMigrations.Add(pendingMigration);
             scheduledMigrations.AddRange(
-                dataMigrations.Where(dataMigration =>
-                    string.Equals(
-                        pendingMigration.Name,
-                        dataMigration.SchemaMigrations
-                            .OrderBy(name => pendingMigrations.IndexOf(name))
-                            .Last(),
-                        StringComparison.Ordinal
+                dataMigrations
+                    .OfType<DataMigrationMetadata>()
+                    .Where(dataMigration =>
+                        string.Equals(
+                            pendingMigration.Name,
+                            dataMigration.SchemaMigrations
+                                .OrderBy(name => pendingMigrations.IndexOf(name))
+                                .Last(),
+                            StringComparison.Ordinal
+                        )
                     )
-                )
             );
         }
 
@@ -102,9 +104,10 @@ public sealed class MigrationScheduler<TContext>
         return this;
     }
 
-    public static List<DataMigrationMetadata> FindValidDataMigrations(TContext context) =>
+    public static List<MigrationMetadata> FindValidDataMigrations(TContext context) =>
         FindDataMigrationsForContextType()
-            .Select(DataMigrationMetadata.Create)
+            .Select(MigrationMetadata.CreateDataMigrationMetadata)
+            .Cast<DataMigrationMetadata>()
             .Where(index => index.CanBeAppliedTo(context))
             .OrderBy(
                 index => index.SchemaMigrations.Aggregate(
@@ -115,6 +118,7 @@ public sealed class MigrationScheduler<TContext>
                     )
                 )
             )
+            .Cast<MigrationMetadata>()
             .ToList();
 
     public static ICollection<Type> FindDataMigrationsForContextType()
