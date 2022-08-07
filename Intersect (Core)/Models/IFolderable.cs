@@ -1,6 +1,3 @@
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Runtime.Serialization;
-
 using Intersect.Framework;
 
 namespace Intersect.Models
@@ -12,7 +9,7 @@ namespace Intersect.Models
         /// </summary>
         string? Folder { get; set; }
 
-        Id<Folder> ParentId { get; set; }
+        Id<Folder>? ParentId { get; set; }
 
         Folder? Parent { get; set; }
     }
