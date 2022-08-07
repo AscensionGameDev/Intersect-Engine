@@ -8,20 +8,24 @@ namespace Intersect.Network.Packets.Server;
 [MessagePackObject]
 public partial class LocalesPacket : IntersectPacket
 {
-    public LocalesPacket()
+    public LocalesPacket() : this(CultureInfo.CurrentCulture) { }
+
+    public LocalesPacket(
+        CultureInfo defaultCultureInfo,
+        IEnumerable<CultureInfo>? supportedCultureInfos = default
+    )
     {
-        DefaultCultureInfo = CultureInfo.CurrentCulture;
-        SupportedCultureInfos = new() { DefaultCultureInfo };
+        DefaultCultureInfo = defaultCultureInfo;
+        SupportedCultureInfos = supportedCultureInfos?.ToList() ?? new() { DefaultCultureInfo };
     }
 
-    public LocalesPacket(IEnumerable<CultureInfo> supportedCultureInfos)
+    public LocalesPacket(
+        string defaultLocale,
+        IEnumerable<string>? supportedLocales = default
+    )
     {
-
-    }
-
-    public LocalesPacket(IEnumerable<string> supportedLocales)
-    {
-
+        DefaultLocale = defaultLocale;
+        SupportedLocales = supportedLocales?.ToList() ?? new() { DefaultLocale };
     }
 
     [IgnoreDataMember]
