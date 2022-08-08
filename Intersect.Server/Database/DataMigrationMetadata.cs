@@ -2,13 +2,9 @@ namespace Intersect.Server.Database;
 
 public class DataMigrationMetadata : MigrationMetadata
 {
-    public Type ContextType { get; init; }
-
     public override MigrationType MigrationType => MigrationType.Data;
 
     public Type? MigratorType { get; init; }
-
-    public string Name { get; init; }
 
     public IReadOnlyCollection<string> SchemaMigrations =>
         SchemaMigrationAttributes
