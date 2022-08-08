@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
+using System.ComponentModel;
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -9,8 +8,6 @@ namespace Intersect.Config
 
     public partial class DatabaseOptions
     {
-
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
         public enum DatabaseType
         {
 
