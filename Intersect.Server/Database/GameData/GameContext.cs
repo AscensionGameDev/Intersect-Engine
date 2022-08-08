@@ -101,8 +101,8 @@ namespace Intersect.Server.Database.GameData
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<ContentString>()
-                .HasMany<LocaleContentString>("LocalizationsBinder")
-                .WithOne(lcs => lcs.ContentString);
+                .HasMany(contentString => contentString.Localizations)
+                .WithOne(localeContentString => localeContentString.ContentString);
 
             modelBuilder.Entity<LocaleContentString>()
                 .HasKey(lcs => new { lcs.Id, lcs.Locale });

@@ -70,7 +70,7 @@ internal partial class SeedContentStrings : SeedData<ContentString, LocaleConten
 
                     foreach (var localeContentString in localeContentStrings)
                     {
-                        contentString.Localizations[localeContentString.Locale] = localeContentString;
+                        contentString[localeContentString.Locale] = localeContentString;
                     }
 
                     return contentString;
@@ -79,7 +79,7 @@ internal partial class SeedContentStrings : SeedData<ContentString, LocaleConten
 
             dbSetContentString.AddRange(contentStrings);
 
-            dbSetLocaleContentString.AddRange(contentStrings.SelectMany(contentString => contentString.Localizations.Values));
+            dbSetLocaleContentString.AddRange(contentStrings.SelectMany(contentString => contentString.Values));
         }
     }
 }

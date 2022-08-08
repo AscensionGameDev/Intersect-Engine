@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -33,7 +33,7 @@ namespace Intersect.Models
 
             if (LookupMap == null)
             {
-                throw new ArgumentNullException(nameof(LookupMap));
+                throw new InvalidOperationException();
             }
 
             lock (Lock)
