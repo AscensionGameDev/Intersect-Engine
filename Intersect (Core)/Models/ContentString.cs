@@ -10,7 +10,11 @@ namespace Intersect.Models;
 
 public class ContentString : IDictionary<string, LocaleContentString>
 {
-    public ContentString() => Id = new(Guid.NewGuid());
+    public ContentString()
+    {
+        Id = new(Guid.NewGuid());
+        Localizations = new List<LocaleContentString>();
+    }
 
     public ContentString(string value) : this()
     {
