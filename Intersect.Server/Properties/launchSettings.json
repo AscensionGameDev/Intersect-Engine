@@ -2,7 +2,7 @@
   "profiles": {
     "Intersect.Server": {
       "commandName": "Project",
-      "workingDirectory": "..\\assets\\development\\server"
+      "workingDirectory": "$(ProjectDir)../assets/development/server"
     }
   }
 }
