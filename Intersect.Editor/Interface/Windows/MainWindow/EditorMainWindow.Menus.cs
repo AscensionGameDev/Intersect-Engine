@@ -138,7 +138,18 @@ internal partial class EditorMainWindow
                 Name = Strings.Descriptors.Names[descriptorType].Plural,
             };
 
-            menuItem.Selected += (_, _) => Components.Add(new DescriptorWindow(descriptorType));
+            menuItem.Selected += (_, _) =>
+            {
+                var isNotAlreadyOpen = Components.All(
+                    component =>
+                        component is not DescriptorWindow descriptorWindow
+                        || descriptorWindow.DescriptorType != descriptorType
+                );
+                if (isNotAlreadyOpen)
+                {
+                    Components.Add(new DescriptorWindow(descriptorType));
+                }
+            };
 
             items.Add(menuItem);
         }
