@@ -37,18 +37,20 @@ namespace Intersect.Server.Database
         protected IntersectDbContext(
             DbConnectionStringBuilder connectionStringBuilder,
             DatabaseOptions.DatabaseType databaseType = DatabaseOptions.DatabaseType.SQLite,
-            Intersect.Logging.Logger dbLogger = null,
+            Intersect.Logging.Logger logger = null,
             Intersect.Logging.LogLevel logLevel = Intersect.Logging.LogLevel.None,
-            bool asReadOnly = false,
+            bool readOnly = false,
             bool explicitLoad = false,
-            bool autoDetectChanges = true
+            bool autoDetectChanges = true,
+            bool lazyLoading = false,
+            QueryTrackingBehavior? queryTrackingBehavior = default
         )
         {
             ConnectionStringBuilder = connectionStringBuilder;
             DatabaseType = databaseType;
 
             //Translate Intersect.Logging.LogLevel into LoggerFactory Log Level
-            if (loggerFactory == null && dbLogger != null && logLevel > Intersect.Logging.LogLevel.None)
+            if (loggerFactory == null && logger != null && logLevel > Intersect.Logging.LogLevel.None)
             {
                 var efLogLevel = LogLevel.None;
                 switch (logLevel)
@@ -100,23 +102,26 @@ namespace Intersect.Server.Database
                 loggerFactory = LoggerFactory.Create(
                     builder =>
                     {
-                        builder.AddFilter((level) => level >= efLogLevel).AddProvider(new DbLoggerProvider(dbLogger));
+                        builder.AddFilter((level) => level >= efLogLevel).AddProvider(new DbLoggerProvider(logger));
                     }
                 );
             }
 
-            ReadOnly = asReadOnly;
+            ReadOnly = readOnly;
+
+            if (queryTrackingBehavior != default)
+            {
+                ChangeTracker.QueryTrackingBehavior = queryTrackingBehavior.Value;
+            }
 
             ChangeTracker.AutoDetectChangesEnabled = autoDetectChanges || ReadOnly;
 
-            if (ReadOnly)
+            if (ReadOnly && !explicitLoad)
             {
-                ChangeTracker.LazyLoadingEnabled = false;
-                if (!explicitLoad)
-                {
-                    ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
-                }
+                ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
             }
+
+            ChangeTracker.LazyLoadingEnabled = lazyLoading || !ReadOnly;
         }
 
         private static ILoggerFactory MsExtLoggerFactory { get; } =
