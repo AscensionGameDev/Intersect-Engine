@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
@@ -62,7 +62,7 @@ namespace Intersect.Editor.Forms.Editors
 
                 txtName.Text = mEditorItem.Name;
 
-                cmbFolder.Text = mEditorItem.Folder;
+                cmbFolder.Text = mEditorItem.Parent?.Name;
 
                 UpdateList();
 
@@ -290,13 +290,13 @@ namespace Intersect.Editor.Forms.Editors
             var mFolders = new List<string>();
             foreach (var itm in CraftingTableBase.Lookup)
             {
-                if (!string.IsNullOrEmpty(((CraftingTableBase) itm.Value).Folder) &&
-                    !mFolders.Contains(((CraftingTableBase) itm.Value).Folder))
+                if (!string.IsNullOrEmpty(((CraftingTableBase) itm.Value).Parent?.Name) &&
+                    !mFolders.Contains(((CraftingTableBase) itm.Value).Parent?.Name))
                 {
-                    mFolders.Add(((CraftingTableBase) itm.Value).Folder);
-                    if (!mKnownFolders.Contains(((CraftingTableBase) itm.Value).Folder))
+                    mFolders.Add(((CraftingTableBase) itm.Value).Parent?.Name);
+                    if (!mKnownFolders.Contains(((CraftingTableBase) itm.Value).Parent?.Name))
                     {
-                        mKnownFolders.Add(((CraftingTableBase) itm.Value).Folder);
+                        mKnownFolders.Add(((CraftingTableBase) itm.Value).Parent?.Name);
                     }
                 }
             }
@@ -308,7 +308,7 @@ namespace Intersect.Editor.Forms.Editors
             cmbFolder.Items.AddRange(mKnownFolders.ToArray());
 
             var items = CraftingTableBase.Lookup.OrderBy(p => p.Value?.Name).Select(pair => new KeyValuePair<Guid, KeyValuePair<string, string>>(pair.Key,
-                new KeyValuePair<string, string>(((CraftingTableBase)pair.Value)?.Name ?? Models.DatabaseObject<CraftingTableBase>.Deleted, ((CraftingTableBase)pair.Value)?.Folder ?? ""))).ToArray();
+                new KeyValuePair<string, string>(((CraftingTableBase)pair.Value)?.Name ?? Models.DatabaseObject<CraftingTableBase>.Deleted, ((CraftingTableBase)pair.Value)?.Parent?.Name ?? ""))).ToArray();
             lstGameObjects.Repopulate(items, mFolders, btnAlphabetical.Checked, CustomSearch(), txtSearch.Text);
         }
 
@@ -324,7 +324,8 @@ namespace Intersect.Editor.Forms.Editors
             {
                 if (!cmbFolder.Items.Contains(folderName))
                 {
-                    mEditorItem.Folder = folderName;
+                    // TODO: Editable Parents
+                    //mEditorItem.Folder = folderName;
                     lstGameObjects.ExpandFolder(folderName);
                     InitEditor();
                     cmbFolder.Text = folderName;
@@ -334,7 +335,8 @@ namespace Intersect.Editor.Forms.Editors
 
         private void cmbFolder_SelectedIndexChanged(object sender, EventArgs e)
         {
-            mEditorItem.Folder = cmbFolder.Text;
+            // TODO: Editable Parents
+            //mEditorItem.Folder = cmbFolder.Text;
             InitEditor();
         }
 

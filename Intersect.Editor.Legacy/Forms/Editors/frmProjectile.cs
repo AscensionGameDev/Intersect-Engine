@@ -165,7 +165,7 @@ namespace Intersect.Editor.Forms.Editors
                 pnlContainer.Show();
 
                 txtName.Text = mEditorItem.Name;
-                cmbFolder.Text = mEditorItem.Folder;
+                cmbFolder.Text = mEditorItem.Parent?.Name;
                 nudSpeed.Value = mEditorItem.Speed;
                 nudSpawn.Value = mEditorItem.Delay;
                 nudAmount.Value = mEditorItem.Quantity;
@@ -709,13 +709,13 @@ namespace Intersect.Editor.Forms.Editors
             var mFolders = new List<string>();
             foreach (var itm in ProjectileBase.Lookup)
             {
-                if (!string.IsNullOrEmpty(((ProjectileBase) itm.Value).Folder) &&
-                    !mFolders.Contains(((ProjectileBase) itm.Value).Folder))
+                if (!string.IsNullOrEmpty(((ProjectileBase) itm.Value).Parent?.Name) &&
+                    !mFolders.Contains(((ProjectileBase) itm.Value).Parent?.Name))
                 {
-                    mFolders.Add(((ProjectileBase) itm.Value).Folder);
-                    if (!mKnownFolders.Contains(((ProjectileBase) itm.Value).Folder))
+                    mFolders.Add(((ProjectileBase) itm.Value).Parent?.Name);
+                    if (!mKnownFolders.Contains(((ProjectileBase) itm.Value).Parent?.Name))
                     {
-                        mKnownFolders.Add(((ProjectileBase) itm.Value).Folder);
+                        mKnownFolders.Add(((ProjectileBase) itm.Value).Parent?.Name);
                     }
                 }
             }
@@ -727,7 +727,7 @@ namespace Intersect.Editor.Forms.Editors
             cmbFolder.Items.AddRange(mKnownFolders.ToArray());
 
             var items = ProjectileBase.Lookup.OrderBy(p => p.Value?.Name).Select(pair => new KeyValuePair<Guid, KeyValuePair<string, string>>(pair.Key,
-                new KeyValuePair<string, string>(((ProjectileBase)pair.Value)?.Name ?? Models.DatabaseObject<ProjectileBase>.Deleted, ((ProjectileBase)pair.Value)?.Folder ?? ""))).ToArray();
+                new KeyValuePair<string, string>(((ProjectileBase)pair.Value)?.Name ?? Models.DatabaseObject<ProjectileBase>.Deleted, ((ProjectileBase)pair.Value)?.Parent?.Name ?? ""))).ToArray();
             lstGameObjects.Repopulate(items, mFolders, btnAlphabetical.Checked, CustomSearch(), txtSearch.Text);
         }
 
@@ -743,7 +743,8 @@ namespace Intersect.Editor.Forms.Editors
             {
                 if (!cmbFolder.Items.Contains(folderName))
                 {
-                    mEditorItem.Folder = folderName;
+                    // TODO: Editable Parents
+                    //mEditorItem.Folder = folderName;
                     lstGameObjects.ExpandFolder(folderName);
                     InitEditor();
                     cmbFolder.Text = folderName;
@@ -753,7 +754,8 @@ namespace Intersect.Editor.Forms.Editors
 
         private void cmbFolder_SelectedIndexChanged(object sender, EventArgs e)
         {
-            mEditorItem.Folder = cmbFolder.Text;
+            // TODO: Editable Parents
+            //mEditorItem.Folder = cmbFolder.Text;
             InitEditor();
         }
 

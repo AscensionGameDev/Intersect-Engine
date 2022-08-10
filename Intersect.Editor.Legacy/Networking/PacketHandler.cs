@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Windows.Forms;
 
+using Intersect.Collections;
 using Intersect.Core;
 using Intersect.Editor.Content;
 using Intersect.Editor.General;
@@ -13,7 +14,9 @@ using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps;
 using Intersect.GameObjects.Maps.MapList;
 using Intersect.Logging;
+using Intersect.Models;
 using Intersect.Network;
+using Intersect.Network.Packets.Common;
 using Intersect.Network.Packets.Server;
 
 namespace Intersect.Editor.Networking
@@ -74,7 +77,10 @@ namespace Intersect.Editor.Networking
             VirtualSender = new VirtualPacketSender(context);
         }
 
-        public bool HandlePacket(IConnection connection, IPacket packet)
+        public bool HandlePacket(IConnection connection, IPacket packet) =>
+            HandlePacket(VirtualSender, packet);
+
+        public bool HandlePacket(IPacketSender packetSender, IPacket packet)
         {
             if (packet is not IntersectPacket)
             {
@@ -90,7 +96,7 @@ namespace Intersect.Editor.Networking
 
             if (Registry.TryGetPreprocessors(packet, out var preprocessors))
             {
-                if (!preprocessors.All(preprocessor => preprocessor.Handle(VirtualSender, packet)))
+                if (!preprocessors.All(preprocessor => preprocessor.Handle(packetSender, packet)))
                 {
                     // Preprocessors are intended to be silent filter functions
                     return false;
@@ -99,7 +105,7 @@ namespace Intersect.Editor.Networking
 
             if (Registry.TryGetPreHooks(packet, out var preHooks))
             {
-                if (!preHooks.All(hook => hook.Handle(VirtualSender, packet)))
+                if (!preHooks.All(hook => hook.Handle(packetSender, packet)))
                 {
                     // Hooks should not fail, if they do that's an error
                     Logger.Error($"PreHook handler failed for {packet.GetType().FullName}.");
@@ -107,14 +113,14 @@ namespace Intersect.Editor.Networking
                 }
             }
 
-            if (!handler(VirtualSender, packet))
+            if (!handler(packetSender, packet))
             {
                 return false;
             }
 
             if (Registry.TryGetPostHooks(packet, out var postHooks))
             {
-                if (!postHooks.All(hook => hook.Handle(VirtualSender, packet)))
+                if (!postHooks.All(hook => hook.Handle(packetSender, packet)))
                 {
                     // Hooks should not fail, if they do that's an error
                     Logger.Error($"PostHook handler failed for {packet.GetType().FullName}.");
@@ -123,6 +129,108 @@ namespace Intersect.Editor.Networking
             }
 
             return true;
+        }
+
+        public void HandlePacket(IPacketSender packetSender, BatchPacket batchPacket)
+        {
+            foreach (var packet in batchPacket.Packets)
+            {
+                _ = HandlePacket(packetSender, packet);
+            }
+        }
+
+        public void HandlePacket(IPacketSender packetSender, ContentStringPacket contentStringPacket)
+        {
+            ContentString? contentString = contentStringPacket;
+            if (contentString == default)
+            {
+                throw new ArgumentException("Invalid ContentStringPacket.", nameof(contentStringPacket));
+            }
+
+            var store = ObjectStore<ContentString>.Instance;
+            if (store.TryGetValue(contentString.Id.Guid, out var existingContentString))
+            {
+                existingContentString.Comment = contentString.Comment;
+            }
+            else
+            {
+                _ = store.Add(contentString);
+            }
+
+            foreach (var localization in contentStringPacket.Localizations)
+            {
+                HandlePacket(packetSender, localization, existingContentString ?? contentString);
+            }
+        }
+
+        public void HandlePacket(IPacketSender packetSender, LocaleContentStringPacket localeContentStringPacket)
+        {
+            var store = ObjectStore<ContentString>.Instance;
+            if (store.TryGetValue(localeContentStringPacket.Id.Guid, out var existingContentString))
+            {
+                HandlePacket(packetSender, localeContentStringPacket, existingContentString);
+            }
+            else
+            {
+                throw new InvalidOperationException($"Missing content string: {localeContentStringPacket.Id}");
+            }
+        }
+
+        private void HandlePacket(IPacketSender _packetSender, LocaleContentStringPacket localeContentStringPacket, ContentString contentString)
+        {
+            LocaleContentString? localeContentString = localeContentStringPacket;
+            if (localeContentString == default)
+            {
+                throw new ArgumentException("Invalid LocaleContentStringPacket.", nameof(localeContentStringPacket));
+            }
+
+            if (contentString.TryGetValue(localeContentString.Locale, out var existing))
+            {
+                existing.Value = localeContentString.Value;
+            }
+            else
+            {
+                contentString[localeContentString.Locale] = localeContentString;
+                localeContentString.ContentString = contentString;
+            }
+        }
+
+        public void HandlePacket(IPacketSender packetSender, FolderPacket folderPacket)
+        {
+            var store = ObjectStore<Folder>.Instance;
+            if (!store.TryGetValue(folderPacket.Id.Guid, out var existingFolder))
+            {
+                existingFolder = new Folder(folderPacket.Id)
+                {
+                    DescriptorType = folderPacket.DescriptorType,
+                    NameId = folderPacket.NameId,
+                    ParentId = folderPacket.ParentId,
+                };
+                store[folderPacket.Id.Guid] = existingFolder;
+            }
+
+            if (existingFolder.Name?.Id != existingFolder.NameId)
+            {
+                var storeContentString = ObjectStore<ContentString>.Instance;
+                if (existingFolder.Name != default)
+                {
+                    _ = storeContentString.Delete(existingFolder.Name);
+                }
+                existingFolder.Name = storeContentString[existingFolder.NameId.Guid];
+            }
+
+            existingFolder.LinkChildren(
+                store.ValueList
+                .Where(folderable => folderable.ParentId == existingFolder.Id)
+            );
+
+            existingFolder.LinkChildren(
+                existingFolder.DescriptorType
+                    .GetLookup()
+                    .ValueList
+                    .OfType<IFolderable>()
+                    .Where(folderable => folderable.ParentId == existingFolder.Id)
+            );
         }
 
         //PingPacket

@@ -16,221 +16,217 @@ using Intersect.Server.Maps;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 
-namespace Intersect.Server.Database.GameData
+namespace Intersect.Server.Database.GameData;
+
+public partial class GameContext : IntersectDbContext<GameContext>, IGameContext
 {
+    private readonly MethodInfo _descriptorOnModelCreating = typeof(GameContext).GetMethod(
+        nameof(OnModelCreating),
+        1,
+        BindingFlags.NonPublic | BindingFlags.Instance,
+        default,
+        new[] { typeof(ModelBuilder) },
+        default
+    ) ?? throw new InvalidOperationException();
 
-    public partial class GameContext : IntersectDbContext<GameContext>, IGameContext
+    public GameContext() : base(DefaultConnectionStringBuilder)
     {
-        private readonly MethodInfo _descriptorOnModelCreating = typeof(GameContext).GetMethod(
-            nameof(OnModelCreating),
-            1,
-            BindingFlags.NonPublic | BindingFlags.Instance,
-            default,
-            new[] { typeof(ModelBuilder) },
-            default
-        ) ?? throw new InvalidOperationException();
 
-        public GameContext() : base(DefaultConnectionStringBuilder)
+    }
+
+    public GameContext(
+        DbConnectionStringBuilder connectionStringBuilder,
+        DatabaseOptions.DatabaseType databaseType,
+        bool readOnly = false,
+        bool explicitLoad = false,
+        bool autoDetectChanges = false,
+        bool lazyLoading = false,
+        QueryTrackingBehavior? queryTrackingBehavior = default,
+        Intersect.Logging.Logger logger = null,
+        Intersect.Logging.LogLevel logLevel = Intersect.Logging.LogLevel.None
+    ) : base(
+        connectionStringBuilder: connectionStringBuilder,
+        databaseType: databaseType,
+        logger: logger,
+        logLevel: logLevel,
+        readOnly: readOnly,
+        autoDetectChanges: autoDetectChanges,
+        explicitLoad: explicitLoad,
+        lazyLoading: lazyLoading,
+        queryTrackingBehavior: queryTrackingBehavior
+    )
+    {
+
+    }
+
+    public static DbConnectionStringBuilder DefaultConnectionStringBuilder =>
+        new SqliteConnectionStringBuilder(@"Data Source=resources/gamedata.db");
+
+    //Animations
+    public DbSet<AnimationBase> Animations { get; set; }
+
+    public DbSet<ContentString> ContentStrings { get; set; }
+
+    //Crafting
+    public DbSet<CraftBase> Crafts { get; set; }
+
+    public DbSet<CraftingTableBase> CraftingTables { get; set; }
+
+    //Classes
+    public DbSet<ClassBase> Classes { get; set; }
+
+    //Events
+    public DbSet<EventBase> Events { get; set; }
+
+    public DbSet<Folder> Folders { get; set; }
+
+    //Items
+    public DbSet<ItemBase> Items { get; set; }
+
+    public DbSet<LocaleContentString> LocaleContentStrings { get; set; }
+
+    //Maps
+    public DbSet<MapController> Maps { get; set; }
+
+    //NPCs
+    public DbSet<NpcBase> Npcs { get; set; }
+
+    //Projectiles
+    public DbSet<ProjectileBase> Projectiles { get; set; }
+
+    //Quests
+    public DbSet<QuestBase> Quests { get; set; }
+
+    //Resources
+    public DbSet<ResourceBase> Resources { get; set; }
+
+    //Shops
+    public DbSet<ShopBase> Shops { get; set; }
+
+    //Spells
+    public DbSet<SpellBase> Spells { get; set; }
+
+    //Variables
+    public DbSet<PlayerVariableBase> PlayerVariables { get; set; }
+
+    public DbSet<ServerVariableBase> ServerVariables { get; set; }
+
+    public DbSet<GuildVariableBase> GuildVariables { get; set; }
+
+    //Tilesets
+    public DbSet<TilesetBase> Tilesets { get; set; }
+
+    //Time
+    public DbSet<TimeBase> Time { get; set; }
+
+    private void OnModelCreating<TDescriptor>(ModelBuilder modelBuilder)
+        where TDescriptor : Descriptor
+    {
+        modelBuilder.Entity<TDescriptor>()
+            .HasOne(descriptor => descriptor.Parent)
+            .WithMany(folder => (ICollection<TDescriptor>)folder.Children);
+
+        modelBuilder.Entity<TDescriptor>()
+            .Navigation(descriptor => descriptor.Parent)
+            .AutoInclude();
+    }
+
+    private static Type CorrectDescriptorType(Type descriptorType)
+    {
+        if (descriptorType == typeof(MapBase))
         {
-
+            return typeof(MapController);
         }
 
-        public GameContext(
-            DbConnectionStringBuilder connectionStringBuilder,
-            DatabaseOptions.DatabaseType databaseType,
-            bool readOnly = false,
-            bool explicitLoad = false,
-            bool autoDetectChanges = false,
-            bool lazyLoading = false,
-            QueryTrackingBehavior? queryTrackingBehavior = default,
-            Intersect.Logging.Logger logger = null,
-            Intersect.Logging.LogLevel logLevel = Intersect.Logging.LogLevel.None
-        ) : base(
-            connectionStringBuilder: connectionStringBuilder,
-            databaseType: databaseType,
-            logger: logger,
-            logLevel: logLevel,
-            readOnly: readOnly,
-            autoDetectChanges: autoDetectChanges,
-            explicitLoad: explicitLoad,
-            lazyLoading: lazyLoading,
-            queryTrackingBehavior: queryTrackingBehavior
-        )
-        {
+        return descriptorType;
+    }
 
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<ContentString>()
+            .HasMany(contentString => contentString.Localizations)
+            .WithOne(localeContentString => localeContentString.ContentString);
+
+        modelBuilder.Entity<ContentString>()
+            .Navigation(contentString => contentString.Localizations)
+            .AutoInclude();
+
+        modelBuilder.Entity<LocaleContentString>()
+            .HasKey(lcs => new { lcs.Id, lcs.Locale });
+
+        modelBuilder.Entity<LocaleContentString>()
+            .Navigation(lcs => lcs.ContentString)
+            .AutoInclude();
+
+        modelBuilder.Entity<Folder>()
+            .HasOne(folder => folder.Name);
+
+        modelBuilder.Entity<Folder>()
+            .Navigation(folder => folder.Name)
+            .AutoInclude();
+
+        modelBuilder.Entity<Folder>()
+            .HasMany(folder => (ICollection<Folder>)folder.Children)
+            .WithOne(child => child.Parent);
+
+        modelBuilder.Entity<Folder>()
+            .Navigation(folder => folder.Parent)
+            .AutoInclude();
+
+        var descriptorTypes = Enum
+            .GetValues<GameObjectType>()
+            .Select(descriptorType => descriptorType.GetObjectType())
+            .Where(descriptorType => descriptorType.Extends<Descriptor>())
+            .OrderBy(descriptorType => descriptorType.Name);
+        foreach (var descriptorType in descriptorTypes)
+        {
+            var correctedDescriptorType = CorrectDescriptorType(descriptorType);
+            var methodInfoOnModelCreatingDesriptorType = _descriptorOnModelCreating.MakeGenericMethod(correctedDescriptorType);
+            _ = methodInfoOnModelCreatingDesriptorType.Invoke(this, new[] { modelBuilder });
+        }
+    }
+
+    public override void MigrationsProcessed(string[] migrations)
+    {
+        if (Array.IndexOf(migrations, "20190611170819_CombiningSwitchesVariables") > -1)
+        {
+            Beta6Migration.Run(this);
         }
 
-        public static DbConnectionStringBuilder DefaultConnectionStringBuilder =>
-            new SqliteConnectionStringBuilder(@"Data Source=resources/gamedata.db");
-
-        //Animations
-        public DbSet<AnimationBase> Animations { get; set; }
-
-        public DbSet<ContentString> ContentStrings { get; set; }
-
-        //Crafting
-        public DbSet<CraftBase> Crafts { get; set; }
-
-        public DbSet<CraftingTableBase> CraftingTables { get; set; }
-
-        //Classes
-        public DbSet<ClassBase> Classes { get; set; }
-
-        //Events
-        public DbSet<EventBase> Events { get; set; }
-
-        public DbSet<Folder> Folders { get; set; }
-
-        //Items
-        public DbSet<ItemBase> Items { get; set; }
-
-        public DbSet<LocaleContentString> LocaleContentStrings { get; set; }
-
-        //Maps
-        public DbSet<MapController> Maps { get; set; }
-
-        public DbSet<MapList> MapFolders { get; set; }
-
-        //NPCs
-        public DbSet<NpcBase> Npcs { get; set; }
-
-        //Projectiles
-        public DbSet<ProjectileBase> Projectiles { get; set; }
-
-        //Quests
-        public DbSet<QuestBase> Quests { get; set; }
-
-        //Resources
-        public DbSet<ResourceBase> Resources { get; set; }
-
-        //Shops
-        public DbSet<ShopBase> Shops { get; set; }
-
-        //Spells
-        public DbSet<SpellBase> Spells { get; set; }
-
-        //Variables
-        public DbSet<PlayerVariableBase> PlayerVariables { get; set; }
-
-        public DbSet<ServerVariableBase> ServerVariables { get; set; }
-
-        public DbSet<GuildVariableBase> GuildVariables { get; set; }
-
-        //Tilesets
-        public DbSet<TilesetBase> Tilesets { get; set; }
-
-        //Time
-        public DbSet<TimeBase> Time { get; set; }
-
-        private void OnModelCreating<TDescriptor>(ModelBuilder modelBuilder)
-            where TDescriptor : Descriptor
+        if (Array.IndexOf(migrations, "20201004032158_EnablingCerasVersionTolerance") > -1)
         {
-            modelBuilder.Entity<TDescriptor>()
-                .HasOne(descriptor => descriptor.Parent)
-                .WithMany(folder => (ICollection<TDescriptor>)folder.Children);
-
-            modelBuilder.Entity<TDescriptor>()
-                .Navigation(descriptor => descriptor.Parent)
-                .AutoInclude();
+            CerasVersionToleranceMigration.Run(this);
         }
 
-        private static Type CorrectDescriptorType(Type descriptorType)
+        if (Array.IndexOf(migrations, "20210512071349_BoundItemExtension") > -1)
         {
-            if (descriptorType == typeof(MapBase))
-            {
-                return typeof(MapController);
-            }
-
-            return descriptorType;
+            BoundItemExtensionMigration.Run(this);
         }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        if (Array.IndexOf(migrations, "20211031200145_FixQuestTaskCompletionEvents") > -1)
         {
-            modelBuilder.Entity<ContentString>()
-                .HasMany(contentString => contentString.Localizations)
-                .WithOne(localeContentString => localeContentString.ContentString);
-
-            modelBuilder.Entity<ContentString>()
-                .Navigation(contentString => contentString.Localizations)
-                .AutoInclude();
-
-            modelBuilder.Entity<LocaleContentString>()
-                .HasKey(lcs => new { lcs.Id, lcs.Locale });
-
-            modelBuilder.Entity<LocaleContentString>()
-                .Navigation(lcs => lcs.ContentString)
-                .AutoInclude();
-
-            modelBuilder.Entity<Folder>()
-                .HasOne(folder => folder.Name);
-
-            modelBuilder.Entity<Folder>()
-                .Navigation(folder => folder.Name)
-                .AutoInclude();
-
-            modelBuilder.Entity<Folder>()
-                .HasMany(folder => (ICollection<Folder>)folder.Children)
-                .WithOne(child => child.Parent);
-
-            modelBuilder.Entity<Folder>()
-                .Navigation(folder => folder.Parent)
-                .AutoInclude();
-
-            var descriptorTypes = Enum
-                .GetValues<GameObjectType>()
-                .Select(descriptorType => descriptorType.GetObjectType())
-                .Where(descriptorType => descriptorType.Extends<Descriptor>())
-                .OrderBy(descriptorType => descriptorType.Name);
-            foreach (var descriptorType in descriptorTypes)
-            {
-                var correctedDescriptorType = CorrectDescriptorType(descriptorType);
-                var methodInfoOnModelCreatingDesriptorType = _descriptorOnModelCreating.MakeGenericMethod(correctedDescriptorType);
-                _ = methodInfoOnModelCreatingDesriptorType.Invoke(this, new[] { modelBuilder });
-            }
+            FixQuestTaskCompletionEventsMigration.Run(this);
         }
+    }
 
-        public override void MigrationsProcessed(string[] migrations)
-        {
-            if (Array.IndexOf(migrations, "20190611170819_CombiningSwitchesVariables") > -1)
-            {
-                Beta6Migration.Run(this);
-            }
-
-            if (Array.IndexOf(migrations, "20201004032158_EnablingCerasVersionTolerance") > -1)
-            {
-                CerasVersionToleranceMigration.Run(this);
-            }
-
-            if (Array.IndexOf(migrations, "20210512071349_BoundItemExtension") > -1)
-            {
-                BoundItemExtensionMigration.Run(this);
-            }
-
-            if (Array.IndexOf(migrations, "20211031200145_FixQuestTaskCompletionEvents") > -1)
-            {
-                FixQuestTaskCompletionEventsMigration.Run(this);
-            }
-        }
-
-        public override void Seed()
-        {
+    public override void Seed()
+    {
 #if DEBUG
-            new SeedContentStrings().SeedIfEmpty(this);
-            ChangeTracker.DetectChanges();
-            SaveChanges();
+        new SeedContentStrings().SeedIfEmpty(this);
+        ChangeTracker.DetectChanges();
+        SaveChanges();
 #endif
-        }
+    }
 
-        internal static partial class Queries
-        {
-            internal static readonly Func<Guid, ServerVariableBase> ServerVariableById =
-                (Guid id) => (ServerVariableBase)ServerVariableBase.Lookup.FirstOrDefault(variable => variable.Key == id).Value;
+    internal static partial class Queries
+    {
+        internal static readonly Func<Guid, ServerVariableBase> ServerVariableById =
+            (Guid id) => (ServerVariableBase)ServerVariableBase.Lookup.FirstOrDefault(variable => variable.Key == id).Value;
 
-            internal static readonly Func<string, ServerVariableBase> ServerVariableByName =
-                (string name) => (ServerVariableBase)ServerVariableBase.Lookup.FirstOrDefault(variable => string.Equals(variable.Value.Name, name, StringComparison.OrdinalIgnoreCase)).Value;
+        internal static readonly Func<string, ServerVariableBase> ServerVariableByName =
+            (string name) => (ServerVariableBase)ServerVariableBase.Lookup.FirstOrDefault(variable => string.Equals(variable.Value.Name, name, StringComparison.OrdinalIgnoreCase)).Value;
 
-            internal static readonly Func<int, int, IEnumerable<ServerVariableBase>> ServerVariables =
-                (int page, int count) => ServerVariableBase.Lookup.Select(v => (ServerVariableBase)v.Value).OrderBy(v => v.Id.ToString()).Skip(page * count).Take(count);
-        }
+        internal static readonly Func<int, int, IEnumerable<ServerVariableBase>> ServerVariables =
+            (int page, int count) => ServerVariableBase.Lookup.Select(v => (ServerVariableBase)v.Value).OrderBy(v => v.Id.ToString()).Skip(page * count).Take(count);
     }
 }

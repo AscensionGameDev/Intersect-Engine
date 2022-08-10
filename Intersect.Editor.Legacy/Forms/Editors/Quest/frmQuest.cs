@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -228,7 +228,7 @@ namespace Intersect.Editor.Forms.Editors.Quest
                 pnlContainer.Show();
 
                 txtName.Text = mEditorItem.Name;
-                cmbFolder.Text = mEditorItem.Folder;
+                cmbFolder.Text = mEditorItem.Parent?.Name;
                 txtBeforeDesc.Text = mEditorItem.BeforeDescription;
                 txtStartDesc.Text = mEditorItem.StartDescription;
                 txtInProgressDesc.Text = mEditorItem.InProgressDescription;
@@ -593,13 +593,13 @@ namespace Intersect.Editor.Forms.Editors.Quest
             var mFolders = new List<string>();
             foreach (var itm in QuestBase.Lookup)
             {
-                if (!string.IsNullOrEmpty(((QuestBase) itm.Value).Folder) &&
-                    !mFolders.Contains(((QuestBase) itm.Value).Folder))
+                if (!string.IsNullOrEmpty(((QuestBase) itm.Value).Parent?.Name) &&
+                    !mFolders.Contains(((QuestBase) itm.Value).Parent?.Name))
                 {
-                    mFolders.Add(((QuestBase) itm.Value).Folder);
-                    if (!mKnownFolders.Contains(((QuestBase) itm.Value).Folder))
+                    mFolders.Add(((QuestBase) itm.Value).Parent?.Name);
+                    if (!mKnownFolders.Contains(((QuestBase) itm.Value).Parent?.Name))
                     {
-                        mKnownFolders.Add(((QuestBase) itm.Value).Folder);
+                        mKnownFolders.Add(((QuestBase) itm.Value).Parent?.Name);
                     }
                 }
             }
@@ -611,7 +611,7 @@ namespace Intersect.Editor.Forms.Editors.Quest
             cmbFolder.Items.AddRange(mKnownFolders.ToArray());
 
             var items = QuestBase.Lookup.OrderBy(p => p.Value?.Name).Select(pair => new KeyValuePair<Guid, KeyValuePair<string, string>>(pair.Key,
-                new KeyValuePair<string, string>(((QuestBase)pair.Value)?.Name ?? Models.DatabaseObject<QuestBase>.Deleted, ((QuestBase)pair.Value)?.Folder ?? ""))).ToArray();
+                new KeyValuePair<string, string>(((QuestBase)pair.Value)?.Name ?? Models.DatabaseObject<QuestBase>.Deleted, ((QuestBase)pair.Value)?.Parent?.Name ?? ""))).ToArray();
             lstGameObjects.Repopulate(items, mFolders, btnAlphabetical.Checked, CustomSearch(), txtSearch.Text);
         }
 
@@ -627,7 +627,8 @@ namespace Intersect.Editor.Forms.Editors.Quest
             {
                 if (!cmbFolder.Items.Contains(folderName))
                 {
-                    mEditorItem.Folder = folderName;
+                    // TODO: Editable Parents
+                    //mEditorItem.Folder = folderName;
                     lstGameObjects.ExpandFolder(folderName);
                     InitEditor();
                     cmbFolder.Text = folderName;
@@ -637,7 +638,8 @@ namespace Intersect.Editor.Forms.Editors.Quest
 
         private void cmbFolder_SelectedIndexChanged(object sender, EventArgs e)
         {
-            mEditorItem.Folder = cmbFolder.Text;
+            // TODO: Editable Parents
+            //mEditorItem.Folder = cmbFolder.Text;
             InitEditor();
         }
 

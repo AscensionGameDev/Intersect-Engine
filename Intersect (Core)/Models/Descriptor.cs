@@ -24,8 +24,6 @@ public abstract partial class Descriptor : IDatabaseObject, IFolderable
     [IgnoreDataMember, NotMapped]
     public string DatabaseTable => Type.GetTable();
 
-    public string? Folder { get; set; }
-
     [IgnoreDataMember, NotMapped]
     public virtual string JsonData => JsonConvert.SerializeObject(
         this,

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
@@ -86,13 +86,13 @@ namespace Intersect.Editor.Forms.Editors
             {
                 if (((EventBase)itm.Value).CommonEvent)
                 {
-                    if (!string.IsNullOrEmpty(((EventBase)itm.Value).Folder) &&
-                        !mFolders.Contains(((EventBase)itm.Value).Folder))
+                    if (!string.IsNullOrEmpty(((EventBase)itm.Value).Parent?.Name) &&
+                        !mFolders.Contains(((EventBase)itm.Value).Parent?.Name))
                     {
-                        mFolders.Add(((EventBase)itm.Value).Folder);
-                        if (!mKnownFolders.Contains(((EventBase)itm.Value).Folder))
+                        mFolders.Add(((EventBase)itm.Value).Parent?.Name);
+                        if (!mKnownFolders.Contains(((EventBase)itm.Value).Parent?.Name))
                         {
-                            mKnownFolders.Add(((EventBase)itm.Value).Folder);
+                            mKnownFolders.Add(((EventBase)itm.Value).Parent?.Name);
                         }
                     }
                 }
@@ -105,7 +105,7 @@ namespace Intersect.Editor.Forms.Editors
             cmbFolder.Items.AddRange(mKnownFolders.ToArray());
 
             var items = EventBase.Lookup.Where(pair => ((EventBase)pair.Value)?.CommonEvent ?? false).OrderBy(p => p.Value?.Name).Select(pair => new KeyValuePair<Guid, KeyValuePair<string, string>>(pair.Key,
-                new KeyValuePair<string, string>(((EventBase)pair.Value)?.Name ?? Models.DatabaseObject<EventBase>.Deleted, ((EventBase)pair.Value)?.Folder ?? ""))).ToArray();
+                new KeyValuePair<string, string>(((EventBase)pair.Value)?.Name ?? Models.DatabaseObject<EventBase>.Deleted, ((EventBase)pair.Value)?.Parent?.Name ?? ""))).ToArray();
             lstGameObjects.Repopulate(items, mFolders, btnAlphabetical.Checked, CustomSearch(), txtSearch.Text);
         }
 
@@ -169,7 +169,8 @@ namespace Intersect.Editor.Forms.Editors
                     var evt = GetSelectedEvent();
                     if (evt != null)
                     {
-                        evt.Folder = folderName;
+                        // TODO: Editable Parents
+                        //evt.Folder = folderName;
                         PacketSender.SendSaveObject(evt);
                     }
 
@@ -204,7 +205,8 @@ namespace Intersect.Editor.Forms.Editors
             var evt = GetSelectedEvent();
             if (evt != null)
             {
-                evt.Folder = cmbFolder.Text;
+                // TODO: Editable Parents
+                //evt.Folder = cmbFolder.Text;
                 PacketSender.SendSaveObject(evt);
             }
 
@@ -266,7 +268,7 @@ namespace Intersect.Editor.Forms.Editors
             lblFolder.Hide();
             if (evt != null)
             {
-                cmbFolder.Text = evt.Folder;
+                cmbFolder.Text = evt.Parent?.Name;
                 toolStripItemDelete.Enabled = true;
                 toolStripItemCopy.Enabled = true;
                 toolStripItemPaste.Enabled = mCopiedItem != null;

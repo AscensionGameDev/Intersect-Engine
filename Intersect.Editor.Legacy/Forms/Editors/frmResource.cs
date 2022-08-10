@@ -243,7 +243,7 @@ namespace Intersect.Editor.Forms.Editors
                 pnlContainer.Show();
 
                 txtName.Text = mEditorItem.Name;
-                cmbFolder.Text = mEditorItem.Folder;
+                cmbFolder.Text = mEditorItem.Parent?.Name;
                 cmbToolType.SelectedIndex = mEditorItem.Tool + 1;
                 nudSpawnDuration.Value = mEditorItem.SpawnDuration;
                 cmbAnimation.SelectedIndex = AnimationBase.ListIndex(mEditorItem.AnimationId) + 1;
@@ -887,13 +887,13 @@ namespace Intersect.Editor.Forms.Editors
             var mFolders = new List<string>();
             foreach (var itm in ResourceBase.Lookup)
             {
-                if (!string.IsNullOrEmpty(((ResourceBase) itm.Value).Folder) &&
-                    !mFolders.Contains(((ResourceBase) itm.Value).Folder))
+                if (!string.IsNullOrEmpty(((ResourceBase) itm.Value).Parent?.Name) &&
+                    !mFolders.Contains(((ResourceBase) itm.Value).Parent?.Name))
                 {
-                    mFolders.Add(((ResourceBase) itm.Value).Folder);
-                    if (!mKnownFolders.Contains(((ResourceBase) itm.Value).Folder))
+                    mFolders.Add(((ResourceBase) itm.Value).Parent?.Name);
+                    if (!mKnownFolders.Contains(((ResourceBase) itm.Value).Parent?.Name))
                     {
-                        mKnownFolders.Add(((ResourceBase) itm.Value).Folder);
+                        mKnownFolders.Add(((ResourceBase) itm.Value).Parent?.Name);
                     }
                 }
             }
@@ -905,7 +905,7 @@ namespace Intersect.Editor.Forms.Editors
             cmbFolder.Items.AddRange(mKnownFolders.ToArray());
 
             var items = ResourceBase.Lookup.OrderBy(p => p.Value?.Name).Select(pair => new KeyValuePair<Guid, KeyValuePair<string, string>>(pair.Key,
-                new KeyValuePair<string, string>(((ResourceBase)pair.Value)?.Name ?? Models.DatabaseObject<ResourceBase>.Deleted, ((ResourceBase)pair.Value)?.Folder ?? ""))).ToArray();
+                new KeyValuePair<string, string>(((ResourceBase)pair.Value)?.Name ?? Models.DatabaseObject<ResourceBase>.Deleted, ((ResourceBase)pair.Value)?.Parent?.Name ?? ""))).ToArray();
             lstGameObjects.Repopulate(items, mFolders, btnAlphabetical.Checked, CustomSearch(), txtSearch.Text);
         }
 
@@ -921,7 +921,8 @@ namespace Intersect.Editor.Forms.Editors
             {
                 if (!cmbFolder.Items.Contains(folderName))
                 {
-                    mEditorItem.Folder = folderName;
+                    // TODO: Editable Parents
+                    //mEditorItem.Folder = folderName;
                     lstGameObjects.ExpandFolder(folderName);
                     InitEditor();
                     cmbFolder.Text = folderName;
@@ -931,7 +932,8 @@ namespace Intersect.Editor.Forms.Editors
 
         private void cmbFolder_SelectedIndexChanged(object sender, EventArgs e)
         {
-            mEditorItem.Folder = cmbFolder.Text;
+            // TODO: Editable Parents
+            //mEditorItem.Folder = cmbFolder.Text;
             InitEditor();
         }
 

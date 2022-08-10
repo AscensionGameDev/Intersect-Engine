@@ -277,7 +277,6 @@ namespace Intersect.Editor.Forms.Editors
                 pnlContainer.Show();
 
                 txtName.Text = mEditorItem.Name;
-                cmbFolder.Text = mEditorItem.Folder;
                 txtDesc.Text = mEditorItem.Description;
                 cmbType.SelectedIndex = (int) mEditorItem.SpellType;
 
@@ -961,16 +960,6 @@ namespace Intersect.Editor.Forms.Editors
             var mFolders = new List<string>();
             foreach (var itm in SpellBase.Lookup)
             {
-                if (!string.IsNullOrEmpty(((SpellBase) itm.Value).Folder) &&
-                    !mFolders.Contains(((SpellBase) itm.Value).Folder))
-                {
-                    mFolders.Add(((SpellBase) itm.Value).Folder);
-                    if (!mKnownFolders.Contains(((SpellBase) itm.Value).Folder))
-                    {
-                        mKnownFolders.Add(((SpellBase) itm.Value).Folder);
-                    }
-                }
-
                 if (!string.IsNullOrWhiteSpace(((SpellBase)itm.Value).CooldownGroup) &&
                     !mKnownCooldownGroups.Contains(((SpellBase)itm.Value).CooldownGroup))
                 {
@@ -1002,14 +991,23 @@ namespace Intersect.Editor.Forms.Editors
             cmbCooldownGroup.Items.Add(string.Empty);
             cmbCooldownGroup.Items.AddRange(mKnownCooldownGroups.ToArray());
 
-            var items = SpellBase.Lookup.OrderBy(p => p.Value?.Name).Select(pair => new KeyValuePair<Guid, KeyValuePair<string, string>>(pair.Key,
-                new KeyValuePair<string, string>(((SpellBase)pair.Value)?.Name ?? Models.DatabaseObject<SpellBase>.Deleted, ((SpellBase)pair.Value)?.Folder ?? ""))).ToArray();
+            var items = SpellBase.Lookup
+                .OrderBy(p => p.Value?.Name)
+                .Select(
+                    pair =>
+                        new KeyValuePair<Guid, KeyValuePair<string, string>>(
+                            pair.Key,
+                            new KeyValuePair<string, string>(
+                                ((SpellBase)pair.Value)?.Name ?? Models.DatabaseObject<SpellBase>.Deleted,
+                                ((SpellBase)pair.Value)?.Parent?.Name ?? string.Empty)
+                            )
+                        ).ToArray();
             lstGameObjects.Repopulate(items, mFolders, btnAlphabetical.Checked, CustomSearch(), txtSearch.Text);
         }
 
         private void btnAddFolder_Click(object sender, EventArgs e)
         {
-            var folderName = "";
+            var folderName = string.Empty;
             var result = DarkInputBox.ShowInformation(
                 Strings.SpellEditor.folderprompt, Strings.SpellEditor.foldertitle, ref folderName,
                 DarkDialogButton.OkCancel
@@ -1019,7 +1017,8 @@ namespace Intersect.Editor.Forms.Editors
             {
                 if (!cmbFolder.Items.Contains(folderName))
                 {
-                    mEditorItem.Folder = folderName;
+                    // TODO: Editable Parents
+                    //mEditorItem.Folder = folderName;
                     lstGameObjects.ExpandFolder(folderName);
                     InitEditor();
                     cmbFolder.Text = folderName;
@@ -1029,7 +1028,8 @@ namespace Intersect.Editor.Forms.Editors
 
         private void cmbFolder_SelectedIndexChanged(object sender, EventArgs e)
         {
-            mEditorItem.Folder = cmbFolder.Text;
+            // TODO: Editable Parents
+            //mEditorItem.Folder = cmbFolder.Text;
             InitEditor();
         }
 
