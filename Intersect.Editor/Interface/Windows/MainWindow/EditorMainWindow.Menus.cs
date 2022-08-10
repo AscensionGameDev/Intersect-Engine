@@ -3,6 +3,7 @@ using System.Diagnostics;
 using Intersect.Client.Framework.UserInterface.Components;
 using Intersect.Editor.Localization;
 using Intersect.Enums;
+using Intersect.GameObjects;
 using Intersect.Localization;
 using Intersect.Platform;
 
@@ -147,6 +148,8 @@ internal partial class EditorMainWindow
         {
             Items = items,
         };
+        
+        menu.Items[16].Selected += (_, _) => Components.Add(new TimeEditor(TimeBase.GetTimeBase()));
 
         return menu;
     }

@@ -11,4 +11,7 @@ internal partial class WindowsNamespace : LocaleNamespace
     
     [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
     public readonly DescriptorWindowNamespace Descriptor = new();
+    
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+    public readonly TimeEditorWindowNamespace TimeEditor = new();
 }
