@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Globalization;
 using System.Runtime.Serialization;
 
@@ -35,6 +35,9 @@ public sealed class LocaleContentString
     public string Locale { get; set; }
 
     public string Value { get; set; }
+
+    public bool MatchesCulture(CultureInfo cultureInfo) =>
+        string.Equals(Locale, cultureInfo.IetfLanguageTag, StringComparison.OrdinalIgnoreCase);
 
     public override string ToString() => Value;
 

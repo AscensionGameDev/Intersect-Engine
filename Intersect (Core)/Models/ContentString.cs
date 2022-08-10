@@ -49,7 +49,7 @@ public class ContentString : IDictionary<string, LocaleContentString>
     }
 
     [DatabaseGenerated(DatabaseGeneratedOption.None)]
-    public Id<ContentString> Id { get; private set; }
+    public Id<ContentString> Id { get; init; }
 
     public string? Comment { get; set; }
 
