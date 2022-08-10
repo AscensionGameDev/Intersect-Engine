@@ -33,12 +33,6 @@ internal partial class DescriptorWindow : Window
 
     public GameObjectType DescriptorType { get; }
 
-    public bool HasPendingChanges
-    {
-        get => Flags.HasFlag(ImGuiWindowFlags.UnsavedDocument);
-        set => Flags = (Flags & ~ImGuiWindowFlags.UnsavedDocument) | (value ? ImGuiWindowFlags.UnsavedDocument : ImGuiWindowFlags.None);
-    }
-
     protected override bool LayoutBegin(FrameTime frameTime)
     {
         if (!base.LayoutBegin(frameTime))

@@ -1,5 +1,3 @@
-using System.Numerics;
-
 using ImGuiNET;
 
 using Intersect.Localization;
@@ -38,6 +36,12 @@ public class Window : Component
     {
         get => Flags.HasFlag(ImGuiWindowFlags.MenuBar);
         set => Flags = (Flags & ~ImGuiWindowFlags.MenuBar) | (value ? ImGuiWindowFlags.MenuBar : ImGuiWindowFlags.None);
+    }
+
+    public bool HasPendingChanges
+    {
+        get => Flags.HasFlag(ImGuiWindowFlags.UnsavedDocument);
+        set => Flags = (Flags & ~ImGuiWindowFlags.UnsavedDocument) | (value ? ImGuiWindowFlags.UnsavedDocument : ImGuiWindowFlags.None);
     }
 
     public MenuBar? MenuBar
