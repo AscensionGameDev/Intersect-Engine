@@ -1,5 +1,6 @@
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
 
 using Intersect.Framework.Converters.Json;
@@ -12,8 +13,10 @@ namespace Intersect.Framework;
 /// </summary>
 /// <typeparam name="T">the type this Id is for</typeparam>
 /// <param name="Guid">the generic unique identifier value</param>
-[Serializable]
+[DataContract]
 [JsonConverter(typeof(IdJsonConverterFactory))]
+[Newtonsoft.Json.JsonConverter(typeof(IdNewtonsoftJsonConverter))]
+[Serializable]
 public record struct Id<T>(Guid Guid)
 {
     /// <summary>
@@ -34,6 +37,7 @@ public record struct Id<T>(Guid Guid)
     /// <param name="id">the <see cref="Id{T}"/> to convert</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static explicit operator Guid(Id<T> id) => id.Guid;
+
     public static IEnumerable<Type> FindDerivedTypes(params Assembly[] assemblies)
     {
         var targetAssemblies = assemblies;
