@@ -12,8 +12,8 @@ public abstract partial class Component
     private readonly ComponentMetadata _metadata;
 
     private FloatRect _bounds;
+    private FloatRect? _boundsDirty;
     private DisplayMode _displayMode;
-    private FloatRect _imguiBounds;
 
     protected Component(string? name = default)
     {
@@ -28,15 +28,15 @@ public abstract partial class Component
 
     public FloatRect Bounds
     {
-        get => new(Position, Size);
+        get => _boundsDirty ?? _bounds;
         set
         {
-            if (_bounds == value)
+            if (Bounds == value)
             {
                 return;
             }
 
-            _bounds = value;
+            _boundsDirty = value;
             Invalidate();
         }
     }
@@ -54,13 +54,12 @@ public abstract partial class Component
             }
 
             _displayMode = value;
-            Invalidate(true);
         }
     }
 
     public Vector2 Position
     {
-        get => _bounds.Position;
+        get => Bounds.Position;
         set
         {
             if (Position == value)
@@ -68,7 +67,7 @@ public abstract partial class Component
                 return;
             }
 
-            _bounds = new(value, Size);
+            _boundsDirty = new(value, Size);
             Invalidate();
         }
     }
@@ -77,7 +76,7 @@ public abstract partial class Component
 
     public Vector2 Size
     {
-        get => _bounds.Size;
+        get => Bounds.Size;
         set
         {
             if (Size == value)
@@ -85,27 +84,8 @@ public abstract partial class Component
                 return;
             }
 
-            _bounds = new(Position, value);
+            _boundsDirty = new(Position, value);
             Invalidate();
         }
     }
-
-    protected bool SynchronizeBounds(FloatRect bounds)
-    {
-        if (_imguiBounds == bounds)
-        {
-            var shouldSynchronize = _bounds != bounds;
-            if (shouldSynchronize)
-            {
-                _imguiBounds = _bounds;
-            }
-            return true;
-        }
-
-        _imguiBounds = bounds;
-        _bounds = bounds;
-        return false;
-    }
-
-    protected bool SynchronizeBounds(Vector2 position, Vector2 size) => SynchronizeBounds(new(position, size));
 }

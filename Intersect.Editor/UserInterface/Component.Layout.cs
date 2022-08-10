@@ -31,14 +31,16 @@ public partial class Component
             return;
         }
 
+        if (_dirty)
+        {
+            LayoutDirty(frameTime);
+            _bounds = Bounds;
+            _boundsDirty = null;
+            _dirty = false;
+        }
+
         if (LayoutBegin(frameTime))
         {
-            if (_dirty)
-            {
-
-                _dirty = false;
-            }
-
             LayoutChildren(frameTime);
         }
 
@@ -58,6 +60,11 @@ public partial class Component
     }
 
     protected abstract bool LayoutBegin(FrameTime frameTime);
+
+    protected virtual void LayoutDirty(FrameTime frameTime)
+    {
+
+    }
 
     protected abstract void LayoutEnd(FrameTime frameTime);
 }

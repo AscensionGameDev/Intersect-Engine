@@ -140,12 +140,10 @@ internal partial class EditorMainWindow
 
             menuItem.Selected += (_, _) =>
             {
-                var isNotAlreadyOpen = Components.All(
-                    component =>
-                        component is not DescriptorWindow descriptorWindow
-                        || descriptorWindow.DescriptorType != descriptorType
+                var isAlreadyOpen = FindWindows<DescriptorWindow>().Any(
+                    descriptorWindow => descriptorWindow.DescriptorType == descriptorType
                 );
-                if (isNotAlreadyOpen)
+                if (!isAlreadyOpen)
                 {
                     Components.Add(new DescriptorWindow(descriptorType));
                 }

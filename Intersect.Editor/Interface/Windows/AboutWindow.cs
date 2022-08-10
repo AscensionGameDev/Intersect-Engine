@@ -34,7 +34,7 @@ internal partial class AboutWindow : Window
     private ImGuiTexture? _textureGitHubIcon;
     private ImGuiTexture? _textureLogo;
 
-    public AboutWindow() : base()
+    public AboutWindow() : base(nameof(AboutWindow))
     {
         _labelTabAuthors = CreateLabelWithId(Strings.Windows.About.LabelAuthors, IdTabAuthors);
         _labelTabLicenses = CreateLabelWithId(Strings.Windows.About.LabelLicenses, IdTabLicenses);

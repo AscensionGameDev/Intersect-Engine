@@ -14,7 +14,7 @@ internal partial class DescriptorWindow : Window
     private readonly GameObjectType _descriptorType;
 
     public DescriptorWindow(GameObjectType descriptorType)
-        : base(descriptorType.ToString())
+        : base($"{nameof(DescriptorWindow)}+{descriptorType}")
     {
         _descriptorType = descriptorType;
 
@@ -32,12 +32,6 @@ internal partial class DescriptorWindow : Window
     }
 
     private LocalizedPluralString DescriptorName => Strings.Descriptors.Names[_descriptorType];
-
-    public bool HasPendingChanges
-    {
-        get => Flags.HasFlag(ImGuiWindowFlags.UnsavedDocument);
-        set => Flags = (Flags & ~ImGuiWindowFlags.UnsavedDocument) | (value ? ImGuiWindowFlags.UnsavedDocument : ImGuiWindowFlags.None);
-    }
 
     protected override bool LayoutBegin(FrameTime frameTime)
     {

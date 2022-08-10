@@ -3,7 +3,10 @@ using System.Numerics;
 using ImGuiNET;
 
 using Intersect.Localization;
+using Intersect.Logging;
+using Intersect.Numerics;
 using Intersect.Time;
+using Intersect.Utilities;
 
 namespace Intersect.Client.Framework.UserInterface.Components;
 
@@ -40,6 +43,12 @@ public class Window : Component
         set => Flags = (Flags & ~ImGuiWindowFlags.MenuBar) | (value ? ImGuiWindowFlags.MenuBar : ImGuiWindowFlags.None);
     }
 
+    public bool HasPendingChanges
+    {
+        get => Flags.HasFlag(ImGuiWindowFlags.UnsavedDocument);
+        set => Flags = (Flags & ~ImGuiWindowFlags.UnsavedDocument) | (value ? ImGuiWindowFlags.UnsavedDocument : ImGuiWindowFlags.None);
+    }
+
     public MenuBar? MenuBar
     {
         get => _menuBar;
@@ -54,6 +63,9 @@ public class Window : Component
             HasMenuBar = _menuBar == default;
         }
     }
+
+    // TODO: Uncomment when viewport locking can be implemented
+    //public bool IsLockedToViewport { get; set; } = true;
 
     public bool IsOpen
     {
@@ -123,17 +135,46 @@ public class Window : Component
             return false;
         }
 
+        // TODO: Get viewport locking to work
+        // if it's possible without bugs we need access to the ImGuiContext,
+        // which currently does not get exposed even by ImGuiInternal
+        //if (IsLockedToViewport)
+        //{
+        //    var viewport = ImGui.GetWindowViewport();
+        //    FloatRect workspaceBounds = new(
+        //        viewport.WorkPos,
+        //        viewport.WorkSize
+        //    );
+
+        //    var position = ImGui.GetWindowPos();
+        //    var size = ImGui.GetWindowSize();
+
+        //    Vector2 clampedSize = new(
+        //        Math.Min(size.X, workspaceBounds.Width),
+        //        Math.Min(size.Y, workspaceBounds.Height)
+        //    );
+
+        //    Vector2 clampedPosition = new(
+        //        MathHelper.Clamp(position.X, workspaceBounds.X, workspaceBounds.Right - size.X),
+        //        MathHelper.Clamp(position.Y, workspaceBounds.Y, workspaceBounds.Bottom - size.Y)
+        //    );
+
+        //    if (clampedSize != size)
+        //    {
+        //        ImGui.SetWindowSize(clampedSize);
+        //        Size = clampedSize;
+        //    }
+
+        //    if (clampedPosition != position)
+        //    {
+        //        ImGui.SetWindowPos(clampedPosition);
+        //        Position = clampedPosition;
+        //    }
+        //}
+
         if (!shouldLayoutChildren)
         {
             return false;
-        }
-
-        var position = ImGui.GetWindowPos();
-        var size = ImGui.GetWindowSize();
-        if (SynchronizeBounds(new(position, size)))
-        {
-            ImGui.SetWindowPos(Position);
-            ImGui.SetWindowSize(Size);
         }
 
         if (_menuBar?.Any() ?? false)
@@ -146,8 +187,38 @@ public class Window : Component
         return true;
     }
 
+    protected static bool LayoutChild(FrameTime frameTime, string childId, Vector2 size, Func<FrameTime, bool> doLayout)
+    {
+        bool result;
+        if (result = ImGui.BeginChild(childId, size, true, ImGuiWindowFlags.None))
+        {
+            try
+            {
+                result |= doLayout(frameTime);
+            }
+            catch (Exception exception)
+            {
+                Log.Error(exception);
+                result = false;
+            }
+        }
+
+        ImGui.EndChild();
+
+        return result;
+    }
+
+    protected override void LayoutDirty(FrameTime frameTime)
+    {
+        ImGui.SetNextWindowPos(Position);
+        ImGui.SetNextWindowSize(Size);
+    }
+
     protected override void LayoutEnd(FrameTime frameTime)
     {
+        var position = ImGui.GetWindowPos();
+        var size = ImGui.GetWindowSize();
+        Bounds = new(position, size);
         ImGui.End();
     }
 
