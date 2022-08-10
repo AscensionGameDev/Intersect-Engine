@@ -6,7 +6,7 @@ using System.Runtime.Serialization;
 namespace Intersect.Numerics;
 
 [DataContract]
-[DebuggerDisplay("{DebugDisplayString,nq}")]
+[DebuggerDisplay("{ToString(),nq}")]
 public struct FloatRect : IEquatable<FloatRect>
 {
     [DataMember]
