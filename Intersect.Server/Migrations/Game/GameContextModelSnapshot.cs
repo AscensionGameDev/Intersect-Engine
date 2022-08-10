@@ -1892,7 +1892,7 @@ namespace Intersect.Server.Migrations.Game
             modelBuilder.Entity("Intersect.Models.LocaleContentString", b =>
                 {
                     b.HasOne("Intersect.Models.ContentString", "ContentString")
-                        .WithMany("LocalizationsBinder")
+                        .WithMany("Localizations")
                         .HasForeignKey("Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1911,7 +1911,7 @@ namespace Intersect.Server.Migrations.Game
 
             modelBuilder.Entity("Intersect.Models.ContentString", b =>
                 {
-                    b.Navigation("LocalizationsBinder");
+                    b.Navigation("Localizations");
                 });
 
             modelBuilder.Entity("Intersect.Models.Folder", b =>
