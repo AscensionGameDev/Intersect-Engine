@@ -212,7 +212,10 @@ namespace Intersect.Core
             {
                 BootstrapServices();
 
+                _ = PacketHelper.TypeRegistry.TryRegisterLoadedAssemblies();
+
                 PackedIntersectPacket.AddKnownTypes(PacketHelper.AvailablePacketTypes);
+                IntersectPacketFormatter.AddTypes(PacketHelper.AvailablePacketTypes);
 
                 try
                 {

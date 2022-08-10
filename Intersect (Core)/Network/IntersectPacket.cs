@@ -1,56 +1,39 @@
-﻿using System;
-using System.Collections.Generic;
-
 using Intersect.Collections;
+
 using MessagePack;
 
-namespace Intersect.Network
+namespace Intersect.Network;
+
+[MessagePackObject]
+public abstract partial class IntersectPacket : IPacket
 {
-    [MessagePackObject]
-    public abstract partial class IntersectPacket : IPacket
-    {
-        [IgnoreMember]
-        private byte[] mCachedData = null;
+    [IgnoreMember]
+    private byte[]? mCachedData = default;
 
-        [IgnoreMember]
-        private byte[] mCachedCompresedData = null;
+    [IgnoreMember]
+    private byte[]? mCachedCompresedData = default;
 
-        /// <inheritdoc />
-        public virtual void Dispose()
-        {
-        }
+    /// <inheritdoc />
+    public virtual void Dispose() { }
 
-        /// <inheritdoc />
-        [IgnoreMember]
-        public virtual byte[] Data
-        {
-            get
-            {
-                if (mCachedData == null)
-                    mCachedData = MessagePacker.Instance.Serialize(this) ?? throw new Exception("Failed to serialize packet.");
+    /// <inheritdoc />
+    [IgnoreMember]
+    public virtual byte[] Data =>
+        mCachedData
+            ??= MessagePacker.Instance.Serialize(this)
+            ?? throw new InvalidOperationException("Failed to serialize packet.");
 
-                return mCachedData;
-            }
-        }
+    [IgnoreMember]
+    public virtual bool IsValid => true;
 
-        public virtual void ClearCachedData()
-        {
-            mCachedData = null;
-        }
+    [IgnoreMember]
+    public virtual long ReceiveTime { get; set; }
 
-        [IgnoreMember]
-        public virtual bool IsValid => true;
-        [IgnoreMember]
-        public virtual long ReceiveTime { get; set; }
-        [IgnoreMember]
-        public virtual long ProcessTime { get; set; }
+    [IgnoreMember]
+    public virtual long ProcessTime { get; set; }
 
-        /// <inheritdoc />
-        public virtual Dictionary<string, SanitizedValue<object>> Sanitize()
-        {
-            return null;
-        }
+    public virtual void ClearCachedData() => mCachedData = default;
 
-    }
-
+    /// <inheritdoc />
+    public virtual Dictionary<string, SanitizedValue<object>>? Sanitize() => default;
 }

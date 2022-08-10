@@ -735,12 +735,12 @@ namespace Intersect.Server.Networking
 
             var msg = packet.Message;
             var channel = packet.Channel;
-            
+
             if (string.IsNullOrWhiteSpace(msg))
             {
                 return;
             }
-            
+
             if (client?.User.IsMuted ?? false) //Don't let the tongueless toxic kids speak.
             {
                 PacketSender.SendChatMsg(player, client?.User?.Mute?.Reason, ChatMessageType.Notice);
@@ -1575,7 +1575,7 @@ namespace Intersect.Server.Networking
                         {
                             continue;
                         }
-                        
+
                         if (!giveItems.ContainsKey(itemMap.Key))
                         {
                             giveItems.Add(tempMap, new List<MapItem>());
@@ -1944,8 +1944,8 @@ namespace Intersect.Server.Networking
                 return;
             }
 
-            var target = packet.TargetId != Guid.Empty ? 
-                Player.FindOnline(packet.TargetId) : 
+            var target = packet.TargetId != Guid.Empty ?
+                Player.FindOnline(packet.TargetId) :
                 Player.FindOnline(packet.Target.Trim());
 
             if (target != null && target.Id != player.Id)
@@ -2430,7 +2430,7 @@ namespace Intersect.Server.Networking
             var character = DbInterface.GetUserCharacter(client.User, packet.CharacterId, true);
             if (character != null)
             {
-                
+
                 client.LoadCharacter(character);
 
                 UserActivityHistory.LogActivity(client.User?.Id ?? Guid.Empty, client?.Entity?.Id ?? Guid.Empty, client?.GetIp(), UserActivityHistory.PeerType.Client, UserActivityHistory.UserAction.SelectPlayer, $"{client?.Name},{client?.Entity?.Name}");
@@ -3552,31 +3552,37 @@ namespace Intersect.Server.Networking
             }
 
             var type = packet.Type;
-            var obj = DbInterface.AddGameObject(type);
+            var databaseObject = DbInterface.AddGameObject(type);
 
-            var changed = false;
-            switch(type)
+            if (databaseObject is not Descriptor descriptor)
             {
-                case GameObjectType.Event:
-                    ((EventBase)obj).CommonEvent = true;
-                    changed = true;
+                throw new InvalidOperationException();
+            }
 
+            var changed = true;
+            switch (descriptor)
+            {
+                case EventBase eventDescriptor:
+                    eventDescriptor.CommonEvent = true;
                     break;
-                case GameObjectType.Item:
-                    ((ItemBase)obj).DropChanceOnDeath = Options.ItemDropChance;
-                    changed = true;
 
+                case ItemBase itemDescriptor:
+                    itemDescriptor.DropChanceOnDeath = Options.ItemDropChance;
+                    break;
+
+                default:
+                    changed = false;
                     break;
             }
 
             if (changed)
             {
-                DbInterface.SaveGameObject(obj);
+                DbInterface.SaveGameObject(descriptor);
             }
 
             PacketSender.CacheGameDataPacket();
 
-            PacketSender.SendGameObjectToAll(obj);
+            PacketSender.SendGameObjectToAll(descriptor);
         }
 
         //RequestOpenEditorPacket
@@ -3596,128 +3602,69 @@ namespace Intersect.Server.Networking
             }
 
             var type = packet.Type;
-            var id = packet.Id;
-
-            // TODO: YO COME DO THIS
-            IDatabaseObject obj = null;
             switch (type)
             {
-                case GameObjectType.Animation:
-                    obj = AnimationBase.Get(id);
-
-                    break;
-
-                case GameObjectType.Class:
-                    if (ClassBase.Lookup.Count == 1)
-                    {
-                        PacketSender.SendError(client, Strings.Classes.lastclasserror, Strings.Classes.lastclass);
-
-                        return;
-                    }
-
-                    obj = DatabaseObject<ClassBase>.Lookup.Get(id);
-
-                    break;
-
-                case GameObjectType.Item:
-                    obj = ItemBase.Get(id);
-
-                    break;
-                case GameObjectType.Npc:
-                    obj = NpcBase.Get(id);
-
-                    break;
-
-                case GameObjectType.Projectile:
-                    obj = ProjectileBase.Get(id);
-
-                    break;
-
-                case GameObjectType.Quest:
-                    obj = QuestBase.Get(id);
-
-                    break;
-
-                case GameObjectType.Resource:
-                    obj = ResourceBase.Get(id);
-
-                    break;
-
-                case GameObjectType.Shop:
-                    obj = ShopBase.Get(id);
-
-                    break;
-
-                case GameObjectType.Spell:
-                    obj = SpellBase.Get(id);
-
-                    break;
-
-                case GameObjectType.CraftTables:
-                    obj = DatabaseObject<CraftingTableBase>.Lookup.Get(id);
-
-                    break;
-
-                case GameObjectType.Crafts:
-                    obj = DatabaseObject<CraftBase>.Lookup.Get(id);
-
-                    break;
-
+                /* Special cases */
                 case GameObjectType.Map:
-                    break;
-
-                case GameObjectType.Event:
-                    obj = EventBase.Get(id);
-
-                    break;
-
-                case GameObjectType.PlayerVariable:
-                    obj = PlayerVariableBase.Get(id);
-
-                    break;
-
-                case GameObjectType.ServerVariable:
-                    obj = ServerVariableBase.Get(id);
-
-                    break;
-
                 case GameObjectType.Tileset:
-                    break;
-
                 case GameObjectType.Time:
-                    break;
+                    return;
 
+                /* Standard descriptor types */
+                case GameObjectType.Animation:
+                case GameObjectType.Class:
+                case GameObjectType.Crafts:
+                case GameObjectType.CraftTables:
+                case GameObjectType.Event:
                 case GameObjectType.GuildVariable:
-                    obj = GuildVariableBase.Get(id);
-
+                case GameObjectType.Item:
+                case GameObjectType.Npc:
+                case GameObjectType.PlayerVariable:
+                case GameObjectType.Projectile:
+                case GameObjectType.Quest:
+                case GameObjectType.Resource:
+                case GameObjectType.ServerVariable:
+                case GameObjectType.Shop:
+                case GameObjectType.Spell:
                     break;
 
-                default:
-                    throw new ArgumentOutOfRangeException();
+                default: throw new IndexOutOfRangeException($"{type} is not a valid descriptor type.");
             }
 
-            if (obj != null)
+            var databaseObjectLookup = type.GetLookup();
+            if (type == GameObjectType.Class)
             {
-                //if Item or Resource, kill all global entities of that kind
-                if (type == GameObjectType.Item)
+                if (databaseObjectLookup.Count <= 1)
                 {
-                    Globals.KillItemsOf((ItemBase) obj);
+                    PacketSender.SendError(client, Strings.Classes.lastclasserror, Strings.Classes.lastclass);
+                    return;
                 }
-                else if (type == GameObjectType.Resource)
-                {
-                    Globals.KillResourcesOf((ResourceBase) obj);
-                }
-                else if (type == GameObjectType.Npc)
-                {
-                    Globals.KillNpcsOf((NpcBase) obj);
-                }
-
-                DbInterface.DeleteGameObject(obj);
-
-                PacketSender.CacheGameDataPacket();
-
-                PacketSender.SendGameObjectToAll(obj, true);
             }
+
+            var id = packet.Id;
+            if (!databaseObjectLookup.TryGetValue(id, out var databaseObject))
+            {
+                return;
+            }
+
+            switch (databaseObject)
+            {
+                case ItemBase itemDescriptor:
+                    Globals.KillItemsOf(itemDescriptor);
+                    break;
+                case NpcBase npcDescriptor:
+                    Globals.KillNpcsOf(npcDescriptor);
+                    break;
+                case ResourceBase resourceDescriptor:
+                    Globals.KillResourcesOf(resourceDescriptor);
+                    break;
+            }
+
+            DbInterface.DeleteGameObject(databaseObject);
+
+            PacketSender.CacheGameDataPacket();
+
+            PacketSender.SendGameObjectToAll(databaseObject as Descriptor, true);
         }
 
         //SaveGameObjectPacket
@@ -3820,78 +3767,80 @@ namespace Intersect.Server.Networking
                     throw new ArgumentOutOfRangeException();
             }
 
-            if (obj != null)
+            if (obj == null)
             {
-                lock (ServerContext.Instance.LogicService.LogicLock)
+                return;
+            }
+
+            lock (ServerContext.Instance.LogicService.LogicLock)
+            {
+                ServerContext.Instance.LogicService.LogicPool.WaitForIdle();
+                //if Item or Resource, kill all global entities of that kind
+                if (type == GameObjectType.Item)
                 {
-                    ServerContext.Instance.LogicService.LogicPool.WaitForIdle();
-                    //if Item or Resource, kill all global entities of that kind
-                    if (type == GameObjectType.Item)
-                    {
-                        Globals.KillItemsOf((ItemBase) obj);
-                    }
-                    else if (type == GameObjectType.Npc)
-                    {
-                        Globals.KillNpcsOf((NpcBase) obj);
-                    }
-                    else if (type == GameObjectType.Projectile)
-                    {
-                        Globals.KillProjectilesOf((ProjectileBase) obj);
-                    }
-
-                    obj.Load(packet.Data);
-
-                    if (type == GameObjectType.Quest)
-                    {
-                        var qst = (QuestBase)obj;
-                        foreach (var evt in qst.RemoveEvents)
-                        {
-                            var evtb = EventBase.Get(evt);
-                            if (evtb != null)
-                            {
-                                DbInterface.DeleteGameObject(evtb);
-                            }
-                        }
-
-                        foreach (var evt in qst.AddEvents)
-                        {
-                            var evtb = (EventBase)DbInterface.AddGameObject(GameObjectType.Event, evt.Key);
-                            evtb.Load(evt.Value.JsonData);
-
-                            foreach (var tsk in qst.Tasks)
-                            {
-                                if (tsk.Id == evt.Key)
-                                {
-                                    tsk.CompletionEvent = evtb;
-                                }
-                            }
-
-                            DbInterface.SaveGameObject(evtb);
-                        }
-
-                        qst.AddEvents.Clear();
-                        qst.RemoveEvents.Clear();
-                    }
-                    else if (type == GameObjectType.PlayerVariable)
-                    {
-                        DbInterface.CachePlayerVariableEventTextLookups();
-                    }
-                    else if (type == GameObjectType.ServerVariable)
-                    {
-                        Player.StartCommonEventsWithTriggerForAll(CommonEventTrigger.ServerVariableChange, "", obj.Id.ToString());
-                        DbInterface.CacheServerVariableEventTextLookups();
-                    }
-                    else if (type == GameObjectType.GuildVariable)
-                    {
-                        DbInterface.CacheGuildVariableEventTextLookups();
-                    }
-
-                    DbInterface.SaveGameObject(obj);
-                    // Only replace the modified object
-                    PacketSender.CacheGameDataPacket();
-
-                    PacketSender.SendGameObjectToAll(obj, false);
+                    Globals.KillItemsOf((ItemBase)obj);
                 }
+                else if (type == GameObjectType.Npc)
+                {
+                    Globals.KillNpcsOf((NpcBase)obj);
+                }
+                else if (type == GameObjectType.Projectile)
+                {
+                    Globals.KillProjectilesOf((ProjectileBase)obj);
+                }
+
+                obj.Load(packet.Data);
+
+                if (type == GameObjectType.Quest)
+                {
+                    var qst = (QuestBase)obj;
+                    foreach (var evt in qst.RemoveEvents)
+                    {
+                        var evtb = EventBase.Get(evt);
+                        if (evtb != null)
+                        {
+                            DbInterface.DeleteGameObject(evtb);
+                        }
+                    }
+
+                    foreach (var evt in qst.AddEvents)
+                    {
+                        var evtb = (EventBase)DbInterface.AddGameObject(GameObjectType.Event, evt.Key);
+                        evtb.Load(evt.Value.JsonData);
+
+                        foreach (var tsk in qst.Tasks)
+                        {
+                            if (tsk.Id == evt.Key)
+                            {
+                                tsk.CompletionEvent = evtb;
+                            }
+                        }
+
+                        DbInterface.SaveGameObject(evtb);
+                    }
+
+                    qst.AddEvents.Clear();
+                    qst.RemoveEvents.Clear();
+                }
+                else if (type == GameObjectType.PlayerVariable)
+                {
+                    DbInterface.CachePlayerVariableEventTextLookups();
+                }
+                else if (type == GameObjectType.ServerVariable)
+                {
+                    Player.StartCommonEventsWithTriggerForAll(CommonEventTrigger.ServerVariableChange, "", obj.Id.ToString());
+                    DbInterface.CacheServerVariableEventTextLookups();
+                }
+                else if (type == GameObjectType.GuildVariable)
+                {
+                    DbInterface.CacheGuildVariableEventTextLookups();
+                }
+
+                DbInterface.SaveGameObject(obj);
+                // Only replace the modified object
+                PacketSender.CacheGameDataPacket();
+
+                PacketSender.SendGameObjectToAll(obj as Descriptor, false);
             }
         }
 
@@ -3920,22 +3869,15 @@ namespace Intersect.Server.Networking
             foreach (var tileset in packet.Tilesets)
             {
                 var value = tileset.Trim().ToLower();
-                var found = false;
-                foreach (var tset in TilesetBase.Lookup)
-                {
-                    if (tset.Value.Name.Trim().ToLower() == value)
-                    {
-                        found = true;
-                    }
-                }
+                var found = TilesetBase.Lookup.Any(tileset => string.Equals(value, tileset.Value.Name.Trim(), StringComparison.OrdinalIgnoreCase));
 
                 if (!found)
                 {
-                    var obj = DbInterface.AddGameObject(GameObjectType.Tileset);
-                    ((TilesetBase)obj).Name = value;
-                    DbInterface.SaveGameObject(obj);
+                    var tilesetDescriptor = DbInterface.AddGameObject(GameObjectType.Tileset) as TilesetBase;
+                    tilesetDescriptor.Name = value;
+                    DbInterface.SaveGameObject(tilesetDescriptor);
                     PacketSender.CacheGameDataPacket();
-                    PacketSender.SendGameObjectToAll(obj);
+                    PacketSender.SendGameObjectToAll(tilesetDescriptor);
                 }
             }
         }

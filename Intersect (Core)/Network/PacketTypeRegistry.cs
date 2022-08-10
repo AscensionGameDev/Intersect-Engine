@@ -1,10 +1,7 @@
-﻿using Intersect.Collections;
-using Intersect.Logging;
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
+
+using Intersect.Collections;
+using Intersect.Logging;
 
 namespace Intersect.Network
 {
@@ -36,13 +33,52 @@ namespace Intersect.Network
         public bool IsRegistered(Type type) =>
             default == type ? throw new ArgumentNullException(nameof(type)) : TypesInternal.Contains(type);
 
-        public bool TryRegisterBuiltIn()
+        public bool TryRegisterBuiltIn() =>
+            TryRegisterFromAssembly(BuiltInAssembly, builtIn: true);
+
+        public bool TryRegisterFromAssembly(Assembly assembly) =>
+            TryRegisterFromAssembly(assembly, builtIn: false);
+
+        private bool TryRegisterFromAssembly(Assembly assembly, bool builtIn)
         {
-            var types = BuiltInAssembly.GetExportedTypes();
-            var packetTypes = types.Where(type => type.GetInterfaces().Any(interfaceType => interfaceType == typeof(IPacket)));
-            var definedPacketTypes = packetTypes.Where(type => !type.IsInterface && !type.IsValueType && !type.IsAbstract);
-            BuiltInTypesInternal.AddRange(definedPacketTypes);
-            return BuiltInTypesInternal.All(type => TryRegister(type)) && BuiltInTypesInternal.Count > 0;
+            if (assembly.IsDynamic)
+            {
+                return false;
+            }
+
+            IEnumerable<Type> exportedTypes;
+            try
+            {
+                exportedTypes = assembly.ExportedTypes;
+            }
+            catch
+            {
+                exportedTypes = Array.Empty<Type>();
+            }
+
+            var definedPacketTypes = exportedTypes.Where(
+                type =>
+                    !type.IsInterface
+                    && !type.IsValueType
+                    && !type.IsAbstract
+                    && type.GetInterfaces().Any(interfaceType => interfaceType == typeof(IPacket))
+            );
+
+            if (builtIn)
+            {
+                BuiltInTypesInternal.AddRange(definedPacketTypes);
+                return BuiltInTypesInternal.All(TryRegister) && BuiltInTypesInternal.Count > 0;
+            }
+
+            return definedPacketTypes.All(TryRegister);
+        }
+
+        public bool TryRegisterLoadedAssemblies()
+        {
+            var currentDomainAssemblies = AppDomain.CurrentDomain.GetAssemblies();
+            return currentDomainAssemblies
+                .Where(assembly => !assembly.IsDynamic)
+                .All(TryRegisterFromAssembly);
         }
 
         public bool TryRegister<TPacket>() where TPacket : IPacket =>
@@ -104,7 +140,7 @@ namespace Intersect.Network
 
             if (TypesInternal.Contains(packetType))
             {
-                throw new InvalidOperationException($"The packet registry already contains '{packetType.FullName}'.");
+                return;
             }
 
             TypesInternal.Add(packetType);

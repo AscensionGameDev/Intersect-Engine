@@ -1,11 +1,6 @@
-﻿namespace Intersect.Models
+namespace Intersect.Models;
+
+public interface INamedObject : IWeaklyIdentifiedObject
 {
-
-    public interface INamedObject : IObject
-    {
-
-        string Name { get; set; }
-
-    }
-
+    string Name { get; set; }
 }

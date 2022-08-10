@@ -1,9 +1,4 @@
 ﻿using MessagePack;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Intersect.Network
 {
@@ -19,9 +14,9 @@ namespace Intersect.Network
             "Intersect.Admin.Actions"
         };
 
-        public static Dictionary<Type, short> KnownTypes { get; set; } = new Dictionary<Type, short>();
+        public static readonly Dictionary<Type, short> KnownTypes = new();
 
-        public static Dictionary<short, Type> KnownKeys { get; set; } = new Dictionary<short, Type>();
+        public static readonly Dictionary<short, Type> KnownKeys = new();
 
         private static IEnumerable<Type> FindTypes(IEnumerable<string> nameSpaces) => nameSpaces.SelectMany(FindTypes);
 
@@ -36,7 +31,7 @@ namespace Intersect.Network
                 {
                     continue;
                 }
-                
+
                 KnownKeys.Add(key, type);
                 KnownTypes.Add(type, key);
 

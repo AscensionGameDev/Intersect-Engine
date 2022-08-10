@@ -1,13 +1,9 @@
-﻿using System;
-
 using Intersect.Models;
 
-namespace Intersect.Collections
+namespace Intersect.Collections;
+
+public interface IGameObjectLookup<TValue> : ILookup<Guid, TValue> where TValue : INamedObject
 {
 
-    public interface IGameObjectLookup<TValue> : ILookup<Guid, TValue> where TValue : INamedObject
-    {
-
-    }
-
 }
+

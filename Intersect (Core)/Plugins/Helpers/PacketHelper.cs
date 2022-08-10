@@ -1,9 +1,6 @@
-﻿using Intersect.Collections;
+using Intersect.Collections;
 using Intersect.Network;
 using Intersect.Plugins.Interfaces;
-
-using System;
-using System.Collections.Generic;
 
 namespace Intersect.Plugins.Helpers
 {
@@ -33,7 +30,7 @@ namespace Intersect.Plugins.Helpers
                 throw new ArgumentNullException(nameof(parentPacketHelper));
             }
 
-            if (!(parentPacketHelper is PacketHelper parentNetworkHelper))
+            if (parentPacketHelper is not PacketHelper parentNetworkHelper)
             {
                 throw new ArgumentException(
                     $"This constructor can only be used if {nameof(parentPacketHelper)} is a {typeof(PacketHelper).FullName}.",
