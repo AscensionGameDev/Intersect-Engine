@@ -2,6 +2,7 @@ using System.Numerics;
 
 using ImGuiNET;
 
+using Intersect.Collections;
 using Intersect.Comparison;
 using Intersect.Editor.Localization;
 using Intersect.Enums;
@@ -11,6 +12,38 @@ using Intersect.Time;
 
 namespace Intersect.Editor.Interface.Windows;
 
+internal class FolderableComparer : IComparer<IFolderable>
+{
+    public static readonly FolderableComparer Instance = new();
+
+    public bool FoldersFirst { get; set; }
+
+    public int Compare(IFolderable? x, IFolderable? y)
+    {
+        if (x is Folder xFolder && y is Folder yFolder)
+        {
+            return xFolder.CompareTo(yFolder);
+        }
+
+        if (x is Descriptor xDescriptor && y is Descriptor yDescriptor)
+        {
+            return xDescriptor.Name.CompareTo(yDescriptor.Name);
+        }
+
+        if (x is Folder && y is Descriptor)
+        {
+            return FoldersFirst ? -1 : 1;
+        }
+
+        if (x is Descriptor && y is Folder)
+        {
+            return FoldersFirst ? 1 : -1;
+        }
+
+        throw new InvalidOperationException($"Unsupported folderable subtype: {x?.GetType()} / {y?.GetType()}");
+    }
+}
+
 internal partial class DescriptorWindow
 {
     private readonly NullHandlingStringComparer _lookupComparer = new()
@@ -19,41 +52,27 @@ internal partial class DescriptorWindow
         NullComparison = NullComparison.NullLast,
     };
 
+    private readonly FolderableComparer _folderableComparer = new()
+    {
+        FoldersFirst = true,
+    };
+
     private bool _groupByFolder = true;
     private string _searchQuery = string.Empty;
     private Guid _selectedObjectId;
 
-    private static void LayoutLookupGroup(ref Guid selectedObjectId, IGrouping<string?, IDatabaseObject> descriptorGroup)
+    private void LayoutLookupNode(FrameTime frameTime, ref Guid selectedObjectId, IFolderable folderable)
+        => LayoutLookupNode(frameTime, ref selectedObjectId, folderable, new(), out _);
+
+    private void LayoutLookupNode(FrameTime frameTime, ref Guid selectedObjectId, IFolderable folderable, FloatRect groupRect, out FloatRect itemRect)
     {
-        var isNamedGroup = !string.IsNullOrEmpty(descriptorGroup.Key);
+        itemRect = new();
+
         var drawList = ImGui.GetWindowDrawList();
-        var groupNodeRect = new FloatRect();
         var treeIndent = ImGui.GetStyle().IndentSpacing;
-        var offsetVertical = 0f;
         var treeLineColor = ImGui.GetColorU32(ImGuiCol.Text);
 
-        if (isNamedGroup)
-        {
-            var searchId = selectedObjectId;
-            var groupSelected = searchId != default && descriptorGroup.Any(descriptor => descriptor.Id == searchId);
-            var nodeFlags = groupSelected ? ImGuiTreeNodeFlags.Selected : ImGuiTreeNodeFlags.None;
-
-            // TODO: When the descriptor groups have true folders, descriptorGroup.Key will be replaced with a Guid
-            if (!ImGui.TreeNodeEx($"{descriptorGroup.Key?.Trim() ?? string.Empty}###descriptor_group_{descriptorGroup.Key}", nodeFlags))
-            {
-                return;
-            }
-
-            groupNodeRect = new(ImGui.GetItemRectMin(), ImGui.GetItemRectMax());
-            offsetVertical = ImGui.GetItemRectSize().Y;
-        }
-
-        var verticalStart = groupNodeRect.Position + Vector2.UnitX * treeIndent + Vector2.UnitY * offsetVertical / 2; //ImGui.GetCursorScreenPos() - Vector2.UnitY * 8;
-        verticalStart.X += 1 - treeIndent / 2;
-
-        var verticalEnd = verticalStart;
-
-        foreach (var descriptor in descriptorGroup)
+        if (folderable is Descriptor descriptor)
         {
             ImGui.TreePush(descriptor.Id.ToString());
 
@@ -67,20 +86,46 @@ internal partial class DescriptorWindow
                 selectedObjectId = default;
             }
 
-            var itemRect = new FloatRect(ImGui.GetItemRectMin(), ImGui.GetItemRectMax());
-            var midpoint = (ImGui.GetItemRectMax().Y + ImGui.GetItemRectMin().Y) / 2;
-            verticalEnd.Y = midpoint;
+            var max = ImGui.GetItemRectMax();
+            var min = ImGui.GetItemRectMin();
+            itemRect = new FloatRect(min, max - min);
 
-            if (isNamedGroup)
+            if (_groupByFolder && descriptor.ParentId != default)
             {
-                drawList.AddLine(verticalEnd, verticalEnd + Vector2.UnitX * treeIndent, treeLineColor);
+                var horizontalLineStart = itemRect.Position + Vector2.UnitX * (float)Math.Ceiling(treeIndent / 2) + Vector2.UnitY * itemRect.Height / 2;
+                drawList.AddLine(horizontalLineStart, horizontalLineStart + Vector2.UnitX * treeIndent, treeLineColor);
             }
 
             ImGui.TreePop();
         }
-
-        if (isNamedGroup)
+        else if (folderable is Folder folder)
         {
+            var searchId = selectedObjectId;
+            var groupSelected = searchId != default && folder.Matches(searchId, matchParent: false, matchChildren: true);
+            var nodeFlags = groupSelected ? ImGuiTreeNodeFlags.Selected : ImGuiTreeNodeFlags.None;
+
+            if (!ImGui.TreeNodeEx($"{folder.Name ?? string.Empty}###descriptor_folder_{folder.Id}", nodeFlags))
+            {
+                return;
+            }
+
+            var max = ImGui.GetItemRectMax();
+            var min = ImGui.GetItemRectMin();
+            itemRect = new FloatRect(min, max - min);
+
+            var offsetVertical = itemRect.Height;
+
+            var verticalStart = itemRect.Position + Vector2.UnitX * treeIndent + Vector2.UnitY * offsetVertical / 2;
+            verticalStart.X += 1 - treeIndent / 2;
+
+            var verticalEnd = verticalStart;
+
+            foreach (var child in folder.Children)
+            {
+                LayoutLookupNode(frameTime, ref selectedObjectId, child, itemRect, out var childRect);
+                verticalEnd.Y = (childRect.Top + childRect.Bottom) / 2;
+            }
+
             drawList.AddLine(verticalStart, verticalEnd, treeLineColor);
             ImGui.TreePop();
         }
@@ -93,25 +138,37 @@ internal partial class DescriptorWindow
 
         _ = ImGui.BeginChild(string.Empty, new(inputSize.X, 500), true);
 
-        var descriptorLookup = _descriptorType.GetLookup();
-        IEnumerable<IDatabaseObject> descriptorValues = descriptorLookup.Values;
+        var storeFolders = ObjectStore<Folder>.Instance
+            .Where(kvp => kvp.Value.DescriptorType == DescriptorType)
+            .Select(kvp => kvp.Value);
+
+        var descriptorLookup = DescriptorType.GetLookup();
+        var parentlessDescriptors = descriptorLookup.Values
+            .OfType<Descriptor>()
+            .Where(descriptor => descriptor.ParentId == default);
+
+        IEnumerable<IFolderable> rootNodes = storeFolders
+            .OfType<IFolderable>()
+            .Concat(parentlessDescriptors);
+
         if (!string.IsNullOrEmpty(_searchQuery))
         {
-            descriptorValues = descriptorValues.Where(
-                descriptor =>
-                    (descriptor.Name?.Contains(_searchQuery, StringComparison.CurrentCultureIgnoreCase) ?? false)
-                    || ((descriptor as IFolderable)?.Folder?.Contains(_searchQuery, StringComparison.CurrentCultureIgnoreCase) ?? false)
+            rootNodes = rootNodes.Where(
+                folderable => folderable.Matches(
+                    _searchQuery,
+                    StringComparison.CurrentCultureIgnoreCase,
+                    matchParent: false,
+                    matchChildren: true
+                )
             );
         }
 
-        var groupedDescriptors = descriptorValues
-                .OrderBy(descriptor => descriptor.Name, _lookupComparer)
-                .GroupBy(descriptor => _groupByFolder ? (descriptor as IFolderable)?.Folder : default)
-                .OrderBy(group => group.Key, _lookupComparer);
+        rootNodes = rootNodes
+            .OrderBy(node => node, _folderableComparer);
 
-        foreach (var descriptorGroup in groupedDescriptors)
+        foreach (var rootNode in rootNodes)
         {
-            LayoutLookupGroup(ref _selectedObjectId, descriptorGroup);
+            LayoutLookupNode(frameTime, ref _selectedObjectId, rootNode);
         }
 
         ImGui.EndChild();

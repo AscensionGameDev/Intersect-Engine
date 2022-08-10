@@ -8,12 +8,16 @@ using Intersect.Framework;
 
 namespace Intersect.Models;
 
-public class ContentString : IDictionary<string, LocaleContentString>
+public class ContentString :
+    IComparable<ContentString>,
+    IDictionary<string, LocaleContentString>,
+    IStronglyIdentifiedObject<ContentString>,
+    IWeaklyIdentifiedObject
 {
     public ContentString()
     {
         Id = new(Guid.NewGuid());
-        Localizations = new List<LocaleContentString>();
+        Localizations = new HashSet<LocaleContentString>();
     }
 
     public ContentString(string value) : this()
@@ -39,14 +43,15 @@ public class ContentString : IDictionary<string, LocaleContentString>
             );
         set
         {
-            var existingLocalization = this[key];
-            if (existingLocalization != default)
+            if (TryGetValue(key, out var existingLocalization))
             {
                 _ = Localizations.Remove(existingLocalization);
             }
             Localizations.Add(value);
         }
     }
+
+    Guid IWeaklyIdentifiedObject.Id => Id.Guid;
 
     [DatabaseGenerated(DatabaseGeneratedOption.None)]
     public Id<ContentString> Id { get; init; }
@@ -81,6 +86,9 @@ public class ContentString : IDictionary<string, LocaleContentString>
 
     public void Clear() => Localizations.Clear();
 
+    public virtual int CompareTo(ContentString? other) =>
+        other == default ? -1 : ((string)this).CompareTo((string)other);
+
     public bool Contains(KeyValuePair<string, LocaleContentString> item)
     {
         ValidateKeyValuePair(item);
@@ -102,6 +110,10 @@ public class ContentString : IDictionary<string, LocaleContentString>
 
     public IEnumerator<KeyValuePair<string, LocaleContentString>> GetEnumerator() =>
         AsKeyValuePairs().GetEnumerator();
+
+    public bool Matches(string @string, StringComparison stringComparison) =>
+        string.Equals(Comment, @string, stringComparison)
+        || Localizations.Any(lcs => string.Equals(lcs, @string, stringComparison));
 
     public bool Remove(string key) => TryGetValue(key, out var existing) && Localizations.Remove(existing);
 

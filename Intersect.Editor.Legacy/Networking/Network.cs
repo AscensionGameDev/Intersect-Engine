@@ -41,7 +41,9 @@ namespace Intersect.Editor.Networking
 
                 var packetHandlerRegistry = new PacketHandlerRegistry(packetTypeRegistry, logger);
                 var packetHelper = new PacketHelper(packetTypeRegistry, packetHandlerRegistry);
+                _ = packetHelper.TypeRegistry.TryRegisterLoadedAssemblies();
                 PackedIntersectPacket.AddKnownTypes(packetHelper.AvailablePacketTypes);
+                IntersectPacketFormatter.AddTypes(packetHelper.AvailablePacketTypes);
                 var virtualEditorContext = new VirtualEditorContext(packetHelper, logger);
                 PacketHandler = new PacketHandler(virtualEditorContext, packetHandlerRegistry);
 

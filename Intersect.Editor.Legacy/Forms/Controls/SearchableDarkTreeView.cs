@@ -29,7 +29,7 @@ namespace Intersect.Editor.Forms.Controls
 
         public DarkTreeNode SelectedNode => treeViewItems?.SelectedNodes?.FirstOrDefault();
 
-        public IObject SelectedObject => SelectedNode?.Tag as IObject;
+        public IWeaklyIdentifiedObject SelectedObject => SelectedNode?.Tag as IWeaklyIdentifiedObject;
 
         public Guid SelectedId
         {

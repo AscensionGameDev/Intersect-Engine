@@ -1,6 +1,7 @@
-﻿using System;
-
 using Intersect.Enums;
+using Intersect.Framework;
+using Intersect.Models;
+
 using MessagePack;
 
 namespace Intersect.Network.Packets.Server
@@ -9,18 +10,16 @@ namespace Intersect.Network.Packets.Server
     public partial class GameObjectPacket : IntersectPacket
     {
         //Parameterless Constructor for MessagePack
-        public GameObjectPacket()
-        {
+        public GameObjectPacket() { }
 
-        }
-
-        public GameObjectPacket(Guid id, GameObjectType type, string data, bool deleted, bool another)
+        public GameObjectPacket(Descriptor descriptor, bool deleted, bool another)
         {
-            Id = id;
-            Type = type;
-            Data = data;
+            Id = descriptor.Id;
+            Type = descriptor.Type;
+            Data = deleted ? default : descriptor.JsonData;
             Deleted = deleted;
             AnotherFollowing = another;
+            ParentId = descriptor.Parent?.Id;
         }
 
         [Key(0)]
@@ -38,6 +37,15 @@ namespace Intersect.Network.Packets.Server
         [Key(4)]
         public string Data { get; set; }
 
+        [IgnoreMember]
+        public Id<Folder>? ParentId { get; set; }
+
+        [Key(5)]
+        private Guid? ParentIdGuid
+        {
+            get => ParentId?.Guid;
+            set => ParentId = value.HasValue ? new(value.Value) : default;
+        }
     }
 
 }

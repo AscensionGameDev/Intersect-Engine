@@ -16,6 +16,8 @@ using Intersect.Server.General;
 using Intersect.Server.Networking.Lidgren;
 using Intersect.Server.Metrics;
 using Intersect.Time;
+using Intersect.Network.Packets.Server;
+using System.Globalization;
 
 namespace Intersect.Server.Networking
 {
@@ -51,14 +53,18 @@ namespace Intersect.Server.Networking
 
         private bool mBanChecked;
 
+        public CultureInfo CurrentCulture { get; set; }
+
         //Sent Maps
         public Dictionary<Guid, Tuple<long, int>> SentMaps = new Dictionary<Guid, Tuple<long, int>>();
 
         public Client(IApplicationContext applicationContext, IConnection connection = null)
         {
-            this.mConnection = connection;
+            mConnection = connection;
             mConnectTime = Timing.Global.Milliseconds;
             mConnectionTimeout = Timing.Global.Milliseconds + mTimeout;
+
+            CurrentCulture = Options.Instance.Localization.DefaultCultureInfo;
 
             PacketSender.SendServerConfig(this);
             PacketSender.SendPing(this);
@@ -163,7 +169,7 @@ namespace Intersect.Server.Networking
             }
         }
 
-        public void Disconnect(string reason = "", bool shutdown = false)
+        public void Disconnect(string? reason = default, bool shutdown = false)
         {
             lock (Globals.ClientLock)
             {
@@ -192,10 +198,10 @@ namespace Intersect.Server.Networking
         {
             if (!IsConnected())
             {
-                return "";
+                return string.Empty;
             }
 
-            return mConnection?.Ip ?? "";
+            return mConnection?.Ip ?? string.Empty;
         }
 
         public static Client CreateBeta4Client(IApplicationContext context, IConnection connection)

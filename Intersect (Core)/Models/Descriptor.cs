@@ -89,5 +89,13 @@ public abstract partial class Descriptor : IDatabaseObject, IFolderable
     public virtual void MakeBackup() => _backup = JsonData;
 
     public virtual void RestoreBackup() => Load(_backup);
+
+    public bool Matches(Guid guid, bool matchParent = false, bool matchChildren = false) =>
+        Id == guid ||
+        (matchParent && (Parent?.Matches(guid, matchParent: true, matchChildren: false) ?? false));
+
+    public bool Matches(string @string, StringComparison stringComparison, bool matchParent = false, bool matchChildren = false) =>
+        string.Equals(Name, @string, stringComparison) ||
+        (matchParent && (Parent?.Matches(@string, stringComparison, matchParent: true, matchChildren: false) ?? false));
 }
 

@@ -12,6 +12,7 @@ using Intersect.GameObjects.Maps.MapList;
 using Intersect.Logging;
 using Intersect.Models;
 using Intersect.Network;
+using Intersect.Network.Packets.Common;
 using Intersect.Network.Packets.Server;
 using Intersect.Server.Core;
 using Intersect.Server.Database;
@@ -1571,140 +1572,65 @@ namespace Intersect.Server.Networking
         {
             switch (type)
             {
+                /* Special cases */
+                case GameObjectType.Map: throw new InvalidOperationException("Maps are not sent as batches, use the proper send map functions");
+                case GameObjectType.Time: return;
+
+                /* Standard descriptor types */
                 case GameObjectType.Animation:
-                    foreach (var obj in AnimationBase.Lookup)
-                    {
-                        SendGameObject(client, obj.Value, false, false, packetList);
-                    }
-
-                    break;
                 case GameObjectType.Class:
-                    foreach (var obj in ClassBase.Lookup)
-                    {
-                        SendGameObject(client, obj.Value, false, false, packetList);
-                    }
-
-                    break;
-                case GameObjectType.Item:
-                    foreach (var obj in ItemBase.Lookup)
-                    {
-                        SendGameObject(client, obj.Value, false, false, packetList);
-                    }
-
-                    break;
-                case GameObjectType.Npc:
-                    foreach (var obj in NpcBase.Lookup)
-                    {
-                        SendGameObject(client, obj.Value, false, false, packetList);
-                    }
-
-                    break;
-                case GameObjectType.Projectile:
-                    foreach (var obj in ProjectileBase.Lookup)
-                    {
-                        SendGameObject(client, obj.Value, false, false, packetList);
-                    }
-
-                    break;
-                case GameObjectType.Quest:
-                    foreach (var obj in QuestBase.Lookup)
-                    {
-                        SendGameObject(client, obj.Value, false, false, packetList);
-                    }
-
-                    break;
-                case GameObjectType.Resource:
-                    foreach (var obj in ResourceBase.Lookup)
-                    {
-                        SendGameObject(client, obj.Value, false, false, packetList);
-                    }
-
-                    break;
-                case GameObjectType.Shop:
-                    foreach (var obj in ShopBase.Lookup)
-                    {
-                        SendGameObject(client, obj.Value, false, false, packetList);
-                    }
-
-                    break;
-                case GameObjectType.Spell:
-                    foreach (var obj in SpellBase.Lookup)
-                    {
-                        SendGameObject(client, obj.Value, false, false, packetList);
-                    }
-
-                    break;
-                case GameObjectType.CraftTables:
-                    foreach (var obj in CraftingTableBase.Lookup)
-                    {
-                        SendGameObject(client, obj.Value, false, false, packetList);
-                    }
-
-                    break;
                 case GameObjectType.Crafts:
-                    foreach (var obj in CraftBase.Lookup)
-                    {
-                        SendGameObject(client, obj.Value, false, false, packetList);
-                    }
-
-                    break;
-                case GameObjectType.Map:
-                    throw new Exception("Maps are not sent as batches, use the proper send map functions");
+                case GameObjectType.CraftTables:
                 case GameObjectType.Event:
-                    foreach (var obj in EventBase.Lookup)
-                    {
-                        if (((EventBase) obj.Value).CommonEvent)
-                        {
-                            SendGameObject(client, obj.Value, false, false, packetList);
-                        }
-                    }
-
-                    break;
-                case GameObjectType.PlayerVariable:
-                    foreach (var obj in PlayerVariableBase.Lookup)
-                    {
-                        SendGameObject(client, obj.Value, false, false, packetList);
-                    }
-
-                    break;
-                case GameObjectType.ServerVariable:
-                    foreach (var obj in ServerVariableBase.Lookup)
-                    {
-                        SendGameObject(client, obj.Value, false, false, packetList);
-                    }
-
-                    break;
-                case GameObjectType.Tileset:
-                    foreach (var obj in TilesetBase.Lookup)
-                    {
-                        SendGameObject(client, obj.Value, false, false, packetList);
-                    }
-
-                    break;
-                case GameObjectType.Time:
-                    break;
                 case GameObjectType.GuildVariable:
-                    foreach (var obj in GuildVariableBase.Lookup)
-                    {
-                        SendGameObject(client, obj.Value, false, false, packetList);
-                    }
-
+                case GameObjectType.Item:
+                case GameObjectType.Npc:
+                case GameObjectType.PlayerVariable:
+                case GameObjectType.Projectile:
+                case GameObjectType.Quest:
+                case GameObjectType.Resource:
+                case GameObjectType.ServerVariable:
+                case GameObjectType.Shop:
+                case GameObjectType.Spell:
+                case GameObjectType.Tileset:
                     break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(type), type, null);
+
+                default: throw new ArgumentOutOfRangeException(nameof(type));
+            }
+
+            var databaseObjectLookup = type.GetLookup();
+
+            foreach (var kvp in databaseObjectLookup)
+            {
+                if (kvp.Value is not Descriptor descriptor)
+                {
+                    continue;
+                }
+
+                switch (descriptor)
+                {
+                    case EventBase eventDescriptor:
+                        if (!eventDescriptor.CommonEvent)
+                        {
+                            continue;
+                        }
+                        break;
+                }
+
+                SendGameObject(client, descriptor, false, false, packetList);
             }
         }
 
         //GameObjectPacket
         public static void SendGameObject(
             Client client,
-            IDatabaseObject obj,
+            Descriptor descriptor,
             bool deleted = false,
             bool another = false,
             List<GameObjectPacket> packetList = null
         )
         {
-            if (client == null && packetList == null || obj == null)
+            if (client == null && packetList == null || descriptor == null)
             {
                 return;
             }
@@ -1712,21 +1638,29 @@ namespace Intersect.Server.Networking
             if (client != null && client.IsEditor)
             {
                 //If editor send quest events and map events
-                if (obj.Type == GameObjectType.Quest)
+                if (descriptor.Type == GameObjectType.Quest)
                 {
-                    SendQuestEventsTo(client, (QuestBase) obj);
+                    SendQuestEventsTo(client, (QuestBase) descriptor);
                 }
             }
 
-            if (packetList == null)
+            var gameObjectPacket = new GameObjectPacket(descriptor, deleted, another);
+            if (packetList == default)
             {
-                client.Send(
-                    new GameObjectPacket(obj.Id, obj.Type, deleted ? null : obj.JsonData, deleted, another)
-                );
+                IntersectPacket intersectPacket = gameObjectPacket;
+                if (descriptor.Parent != default)
+                {
+                    intersectPacket = new BatchPacket(
+                        new ContentStringPacket(descriptor.Parent.Name, client.CurrentCulture),
+                        new FolderPacket(descriptor.Parent),
+                        gameObjectPacket
+                    );
+                }
+                _ = client.Send(intersectPacket);
             }
             else
             {
-                packetList.Add(new GameObjectPacket(obj.Id, obj.Type, deleted ? null : obj.JsonData, deleted, another));
+                packetList.Add(gameObjectPacket);
             }
         }
 
@@ -1751,11 +1685,11 @@ namespace Intersect.Server.Networking
         }
 
         //GameObjectPacket
-        public static void SendGameObjectToAll(IDatabaseObject obj, bool deleted = false, bool another = false)
+        public static void SendGameObjectToAll(Descriptor descriptor, bool deleted = false, bool another = false)
         {
             foreach (var client in Globals.Clients)
             {
-                SendGameObject(client, obj, deleted, another);
+                SendGameObject(client, descriptor, deleted, another);
             }
         }
 

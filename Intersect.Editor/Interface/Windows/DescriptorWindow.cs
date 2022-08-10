@@ -11,19 +11,17 @@ namespace Intersect.Editor.Interface.Windows;
 
 internal partial class DescriptorWindow : Window
 {
-    private readonly GameObjectType _descriptorType;
-
     public DescriptorWindow(GameObjectType descriptorType)
         : base(descriptorType.ToString())
     {
-        _descriptorType = descriptorType;
+        DescriptorType = descriptorType;
 
         Flags = ImGuiWindowFlags.AlwaysAutoResize;
         Title = Strings.Windows.Descriptor.Title.ToString(DescriptorName);
 
         try
         {
-            PacketSender.SendOpenEditor(_descriptorType);
+            PacketSender.SendOpenEditor(DescriptorType);
         }
         catch
         {
@@ -31,7 +29,9 @@ internal partial class DescriptorWindow : Window
         }
     }
 
-    private LocalizedPluralString DescriptorName => Strings.Descriptors.Names[_descriptorType];
+    private LocalizedPluralString DescriptorName => Strings.Descriptors.Names[DescriptorType];
+
+    public GameObjectType DescriptorType { get; }
 
     public bool HasPendingChanges
     {
