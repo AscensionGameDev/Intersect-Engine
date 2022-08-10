@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
@@ -120,16 +120,13 @@ namespace Intersect.GameObjects.Events
             .Select(pair => new KeyValuePair<Guid, string>(pair.Key, pair.Value?.Name ?? Deleted))
             .ToArray();
 
-        [JsonIgnore]
-        [NotMapped]
-        public override string JsonData => JsonConvert.SerializeObject(
-            this, Formatting.Indented,
-            new JsonSerializerSettings()
-            {
-                TypeNameHandling = TypeNameHandling.Auto, DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
-                ObjectCreationHandling = ObjectCreationHandling.Replace
-            }
-        );
+        [JsonIgnore, NotMapped]
+        protected override JsonSerializerSettings JsonSerializerSettings => new()
+        {
+            TypeNameHandling = TypeNameHandling.Auto,
+            DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
+            ObjectCreationHandling = ObjectCreationHandling.Replace
+        };
 
         public new static Guid IdFromList(int listIndex)
         {
