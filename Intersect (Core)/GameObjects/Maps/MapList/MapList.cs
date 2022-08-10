@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using Intersect.Collections;
+using Intersect.Models;
 
 using Newtonsoft.Json;
 
@@ -67,9 +68,9 @@ namespace Intersect.GameObjects.Maps.MapList
                     var removed = false;
                     if (isServer)
                     {
-                        if (gameMaps.Get<MapBase>(mapItm.MapId) == null)
+                        if (gameMaps.Get<MapBase>(mapItm.MapId) == default)
                         {
-                            Items.Remove(itm);
+                            _ = Items.Remove(itm);
                             removed = true;
                         }
                     }
@@ -88,32 +89,68 @@ namespace Intersect.GameObjects.Maps.MapList
             }
         }
 
-        public void AddMap(Guid mapId, long timeCreated, DatabaseObjectLookup gameMaps)
+        public MapListMap? AddMap(Guid mapId, long timeCreated, DatabaseObjectLookup gameMaps)
         {
             if (!gameMaps.Keys.Contains(mapId))
             {
-                return;
+                return default;
             }
 
-            var tmp = new MapListMap()
+            var mapListMap = new MapListMap()
             {
                 Name = gameMaps[mapId].Name,
                 MapId = mapId,
                 TimeCreated = timeCreated
             };
 
-            Items.Add(tmp);
+            Items.Add(mapListMap);
+
+            return mapListMap;
         }
 
-        public void AddFolder(string folderName)
+        public MapListMap? AddMap(MapBase mapDescriptor, DatabaseObjectLookup gameMaps)
         {
-            var tmp = new MapListFolder()
+            if (!gameMaps.Keys.Contains(mapDescriptor.Id))
+            {
+                return default;
+            }
+
+            var mapListMap = new MapListMap()
+            {
+                MapId = mapDescriptor.Id,
+                Name = mapDescriptor.Name,
+                TimeCreated = mapDescriptor.TimeCreated,
+            };
+
+            Items.Add(mapListMap);
+
+            return mapListMap;
+        }
+
+        public MapListFolder AddFolder(string folderName)
+        {
+            var mapListFolder = new MapListFolder()
             {
                 Name = folderName,
                 FolderId = Guid.NewGuid()
             };
 
-            Items.Add(tmp);
+            Items.Add(mapListFolder);
+
+            return mapListFolder;
+        }
+
+        public MapListFolder AddFolder(Folder folder)
+        {
+            var mapListFolder = new MapListFolder()
+            {
+                FolderId = folder.Id.Guid,
+                Name = folder.Name,
+            };
+
+            Items.Add(mapListFolder);
+
+            return mapListFolder;
         }
 
         public MapListFolder FindFolder(Guid folderId)
