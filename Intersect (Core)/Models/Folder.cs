@@ -28,13 +28,6 @@ public partial class Folder :
     [DataMember(Order = 1)]
     public GameObjectType DescriptorType { get; set; }
 
-    [IgnoreDataMember, NotMapped]
-    string? IFolderable.Folder
-    {
-        get => Parent?.Name;
-        set => throw new NotImplementedException();
-    }
-
     Guid IWeaklyIdentifiedObject.Id => Id.Guid;
 
     [Column(Order = 0)]
