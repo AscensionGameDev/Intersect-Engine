@@ -114,14 +114,17 @@ namespace Intersect.Configuration
         public int ChatLines { get; set; } = DEFAULT_CHAT_LINES;
 
         /// <summary>
-        /// Menu music file name
+        /// Configures whether or not the context menus are enabled upon right-clicking certain elements.
         /// </summary>
-        public string MenuMusic { get; set; } = DEFAULT_MENU_MUSIC;
+        public bool EnableContextMenus { get; set; } = true;
+
+        // TODO: What is this for?
+        public List<string> IntroImages { get; set; } = new List<string>();
 
         /// <summary>
         /// Sets the main menu's background texture, if the the index of the list is bigger than 1,
         /// the background will be animated by sequentially drawing the texture files from the list.
-        /// Static background Example: { "background.png" }, 
+        /// Static background Example: { "background.png" },
         /// Animated background Example: { "background_0.png", "background_1.png", "background_2.png" },
         /// </summary>
         public List<string> MenuBackground { get; set; } = new List<string> {"background.png"};
@@ -136,10 +139,10 @@ namespace Intersect.Configuration
         /// </summary>
         public long MenuBackgroundFrameInterval { get; set; } = DEFAULT_MENU_BACKGROUND_FRAME_INTERVAL;
 
-        // TODO: What is this for?
-        public List<string> IntroImages { get; set; } = new List<string>();
-
-        public string UpdateUrl { get; set; } = "";
+        /// <summary>
+        /// Menu music file name
+        /// </summary>
+        public string MenuMusic { get; set; } = DEFAULT_MENU_MUSIC;
 
         /// <summary>
         /// Sets a custom mouse cursor.
@@ -152,14 +155,11 @@ namespace Intersect.Configuration
         public int MusicFadeTimer { get; set; } = 1500;
 
         /// <summary>
-        /// Configures whether or not the context menus are enabled upon right-clicking certain elements.
-        /// </summary>
-        public bool EnableContextMenus { get; set; } = true;
-
-        /// <summary>
         /// Configures the name of the skin or skin texture (must end in .png) to use.
         /// </summary>
         public string UiSkin { get; set; } = "Intersect2021";
+
+        public string UpdateUrl { get; set; } = string.Empty;
 
         #endregion
 
