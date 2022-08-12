@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Diagnostics;
 using System.Collections.Concurrent;
@@ -791,7 +791,7 @@ namespace Intersect.Editor.Maps
                         var rarity = itemBase.Rarity;
                         if (tileItems[index].Quantity > 1)
                         {
-                            name = Localization.Strings.General.MapItemStackable.ToString(name, Strings.FormatQuantityAbbreviated(quantity));
+                            //name = Localization.Strings.General.MapItemStackable.ToString(name, Strings.FormatQuantityAbbreviated(quantity));
                         }
                         var color = CustomColors.Items.MapRarities.ContainsKey(rarity)
                             ? CustomColors.Items.MapRarities[rarity]

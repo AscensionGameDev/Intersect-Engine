@@ -96,7 +96,7 @@ namespace Intersect.Editor.MonoGame
             Context = context;
             PostStartupAction = postStartupAction;
 
-            Strings.Load();
+            _ = Strings.Load();
 
             mGraphics = new GraphicsDeviceManager(this)
             {

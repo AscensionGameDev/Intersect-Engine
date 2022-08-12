@@ -20,8 +20,12 @@ public abstract partial class AbstractRootNamespace : LocaleNamespace
         Namespaces = new ReadOnlyDictionary<FieldInfo, LocaleNamespace>(_namespaces);
     }
 
+    [Newtonsoft.Json.JsonIgnore]
+    [System.Text.Json.Serialization.JsonIgnore]
     public IReadOnlyDictionary<FieldInfo, Localized> Localized { get; }
 
+    [Newtonsoft.Json.JsonIgnore]
+    [System.Text.Json.Serialization.JsonIgnore]
     public IReadOnlyDictionary<FieldInfo, LocaleNamespace> Namespaces { get; }
 
     private static void CrawlNamespace(AbstractRootNamespace rootNamespace, LocaleNamespace currentNamespace)

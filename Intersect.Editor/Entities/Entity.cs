@@ -1115,7 +1115,7 @@ namespace Intersect.Editor.Entities
             var name = Name;
             if ((this is Player && Options.Player.ShowLevelByName) || (Type == EntityTypes.GlobalEntity && Options.Npc.ShowLevelByName))
             {
-                name = Strings.GameWindow.EntityNameAndLevel.ToString(Name, Level);
+                //name = Strings.GameWindow.EntityNameAndLevel.ToString(Name, Level);
             }
 
             var textSize = Core.Graphics.Renderer.MeasureText(name, Core.Graphics.EntityNameFont, 1);

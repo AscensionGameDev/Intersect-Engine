@@ -2266,22 +2266,22 @@ namespace Intersect.Editor.Networking
         //PasswordResetResultPacket
         public void HandlePacket(IPacketSender packetSender, PasswordResetResultPacket packet)
         {
-            if (packet.Succeeded)
-            {
-                //Show Success Message and Open Login Screen
-                Interface.Interface.MsgboxErrors.Add(
-                    new KeyValuePair<string, string>(Strings.ResetPass.success, Strings.ResetPass.successmsg)
-                );
+            //if (packet.Succeeded)
+            //{
+            //    //Show Success Message and Open Login Screen
+            //    Interface.Interface.MsgboxErrors.Add(
+            //        new KeyValuePair<string, string>(Strings.ResetPass.success, Strings.ResetPass.successmsg)
+            //    );
 
-                //Interface.Interface.MenuUi.MainMenu.NotifyOpenLogin();
-            }
-            else
-            {
-                //Show Error Message
-                Interface.Interface.MsgboxErrors.Add(
-                    new KeyValuePair<string, string>(Strings.ResetPass.fail, Strings.ResetPass.failmsg)
-                );
-            }
+            //    //Interface.Interface.MenuUi.MainMenu.NotifyOpenLogin();
+            //}
+            //else
+            //{
+            //    //Show Error Message
+            //    Interface.Interface.MsgboxErrors.Add(
+            //        new KeyValuePair<string, string>(Strings.ResetPass.fail, Strings.ResetPass.failmsg)
+            //    );
+            //}
 
             Globals.WaitingOnServer = false;
         }
