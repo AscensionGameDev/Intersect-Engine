@@ -97,26 +97,25 @@ namespace Intersect.Localization
 
         public partial class Converter : JsonConverter<LocalizedString>
         {
-
-            public override void WriteJson(JsonWriter writer, LocalizedString value, JsonSerializer serializer)
-            {
-                writer.WriteValue(value?.ToString());
-            }
+            public override void WriteJson(JsonWriter writer, LocalizedString? value, JsonSerializer serializer) =>
+                serializer.Serialize(writer, value?.ToString());
 
             public override LocalizedString ReadJson(
                 JsonReader reader,
                 Type objectType,
-                LocalizedString existingValue,
+                LocalizedString? existingValue,
                 bool hasExistingValue,
                 JsonSerializer serializer
             )
             {
+                var value = serializer.Deserialize<string?>(reader);
+
                 if (existingValue == default)
                 {
-                    return new LocalizedString(reader.Value as string);
+                    return new LocalizedString(value);
                 }
 
-                existingValue._value = reader.Value as string;
+                existingValue._value = value;
                 existingValue.OnRepopulated();
                 return existingValue;
             }

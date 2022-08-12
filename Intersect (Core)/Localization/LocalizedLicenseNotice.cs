@@ -1,16 +1,21 @@
 using System.Runtime.Serialization;
 
+using Newtonsoft.Json;
+
 namespace Intersect.Localization;
 
 public partial class LocalizedLicenseNotice : Localized
 {
     [DataMember(Name = nameof(LongNotice))]
+    [JsonProperty(nameof(LongNotice), DefaultValueHandling = DefaultValueHandling.Ignore)]
     private readonly LocalizedString _longNotice;
 
     [DataMember(Name = nameof(Notice))]
+    [JsonProperty(nameof(Notice), DefaultValueHandling = DefaultValueHandling.Ignore)]
     private readonly LocalizedString _notice;
 
     [DataMember(Name = nameof(ShortNotice))]
+    [JsonProperty(nameof(ShortNotice), DefaultValueHandling = DefaultValueHandling.Ignore)]
     private readonly LocalizedString _shortNotice;
 
     [IgnoreDataMember]
@@ -21,6 +26,9 @@ public partial class LocalizedLicenseNotice : Localized
 
     [IgnoreDataMember]
     public LocalizedString ShortNotice => _shortNotice.IsNull ? _notice : _shortNotice;
+
+    [JsonConstructor]
+    private LocalizedLicenseNotice() { }
 
     private LocalizedLicenseNotice(
         LocalizedString? notice,
