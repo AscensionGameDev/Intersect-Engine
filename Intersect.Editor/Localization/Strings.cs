@@ -13,6 +13,8 @@ internal partial class Strings
 
     public static DescriptorsNamespace Descriptors => Root.Descriptors;
 
+    public static CommonGeneralNamespace General => Root.General;
+
     public static LicensingNamespace Licensing => Root.Licensing;
 
     public static MenuBarNamespace MenuBar => Root.MenuBar;

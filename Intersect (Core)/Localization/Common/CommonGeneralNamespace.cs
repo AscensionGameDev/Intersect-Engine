@@ -8,6 +8,12 @@ public partial class CommonGeneralNamespace : LocaleNamespace
     public readonly LocalizedString Cancel = @"Cancel";
 
     [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+    public readonly LocalizedString Close = @"Close";
+
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+    public readonly LocalizedString Exit = @"Exit";
+
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
     public readonly LocalizedString False = @"False";
 
     [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]

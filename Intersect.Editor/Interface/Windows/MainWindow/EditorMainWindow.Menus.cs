@@ -1,12 +1,7 @@
-using System.Diagnostics;
-
 using Intersect.Client.Framework.UserInterface.Components;
 using Intersect.Editor.Localization;
 using Intersect.Enums;
-using Intersect.Localization;
 using Intersect.Platform;
-
-using Newtonsoft.Json;
 
 namespace Intersect.Editor.Interface.Windows.MainWindow;
 
@@ -17,10 +12,17 @@ internal partial class EditorMainWindow
     {
         var itemPreferences = new MenuItem
         {
-            Name = Strings.MenuBar.File.Preferences,
+            Name = Strings.Windows.Preferences.Title,
         };
 
-        itemPreferences.Selected += (_, _) => { };
+        itemPreferences.Selected += (_, _) =>
+        {
+            var isAlreadyOpen = FindWindows<PreferencesWindow>().Any();
+            if (!isAlreadyOpen)
+            {
+                Components.Add(new PreferencesWindow());
+            }
+        };
 
         var itemPackageGame = new MenuItem
         {
@@ -29,7 +31,7 @@ internal partial class EditorMainWindow
 
         var itemExit = new MenuItem
         {
-            Name = Strings.MenuBar.File.Exit,
+            Name = Strings.General.Exit,
         };
 
         itemExit.Selected += (_, _) =>
@@ -183,7 +185,7 @@ internal partial class EditorMainWindow
     {
         var itemAbout = new MenuItem
         {
-            Name = Strings.MenuBar.Help.About,
+            Name = Strings.Windows.About.Title,
         };
 
         itemAbout.Selected += (_, _) => Components.Add(new AboutWindow());

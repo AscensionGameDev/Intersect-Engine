@@ -19,7 +19,7 @@ internal partial class MenuBarNamespace : LocaleNamespace
     public readonly SelectionMenuNamespace Selection = new();
 
     [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-    public readonly ContentEditorsMenuNamespace ContentEditors = new();
+    public readonly EditorsMenuNamespace ContentEditors = new();
 
     [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
     public readonly HelpMenuNamespace Help = new();

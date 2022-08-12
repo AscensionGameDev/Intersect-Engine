@@ -14,4 +14,7 @@ internal partial class WindowsNamespace : LocaleNamespace
 
     [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
     public readonly LocalizationWindowNamespace Localization = new();
+
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+    public readonly PreferencesWindowNamespace Preferences = new();
 }
