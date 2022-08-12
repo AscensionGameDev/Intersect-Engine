@@ -270,7 +270,10 @@ namespace Intersect.Editor.MonoGame
             //    actualIO.IniFilename = pathPtr;
             //}
 
-            ImGui.GetIO().ConfigFlags |= ImGuiConfigFlags.DockingEnable;
+            var io = ImGui.GetIO();
+            io.BackendFlags |= ImGuiBackendFlags.HasMouseCursors;
+            io.ConfigFlags |= ImGuiConfigFlags.DockingEnable;
+            io.ConfigWindowsResizeFromEdges = true;
             _customFont = BuildFont(16);
             //_defaultFont = io.FontDefault;
             _imGuiRenderer.RebuildFontAtlas();
