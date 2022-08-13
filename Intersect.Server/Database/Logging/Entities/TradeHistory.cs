@@ -1,4 +1,4 @@
-﻿using Intersect.Enums;
+using Intersect.Enums;
 using Intersect.Server.Entities;
 using Newtonsoft.Json;
 using System;
@@ -101,7 +101,7 @@ namespace Intersect.Server.Database.Logging.Entities
 
         private static void Log(TradeHistory tradeHistory)
         {
-            using (var logging = DbInterface.LoggingContext)
+            using (var logging = LoggingContext.Create())
             {
                 logging.TradeHistory.Add(tradeHistory);
             }

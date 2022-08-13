@@ -1,5 +1,6 @@
-﻿using Intersect.Enums;
+using Intersect.Enums;
 using Intersect.Server.Database;
+using Intersect.Server.Database.Logging;
 using Intersect.Server.Database.Logging.Entities;
 using Intersect.Server.Web.RestApi.Attributes;
 using Intersect.Server.Web.RestApi.Payloads;
@@ -38,7 +39,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             pageSize = Math.Max(Math.Min(pageSize, 100), 5);
             limit = Math.Max(Math.Min(limit, pageSize), 1);
 
-            using (var context = DbInterface.LoggingContext)
+            using (var context = LoggingContext.Create())
             {
                 var messages = context.ChatHistory.AsQueryable();
 
@@ -119,7 +120,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             pageSize = Math.Max(Math.Min(pageSize, 100), 5);
             limit = Math.Max(Math.Min(limit, pageSize), 1);
 
-            using (var context = DbInterface.LoggingContext)
+            using (var context = LoggingContext.Create())
             {
                 var messages = context.ChatHistory.AsQueryable();
 
@@ -209,7 +210,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             pageSize = Math.Max(Math.Min(pageSize, 100), 5);
             limit = Math.Max(Math.Min(limit, pageSize), 1);
 
-            using (var context = DbInterface.LoggingContext)
+            using (var context = LoggingContext.Create())
             {
                 var history = context.UserActivityHistory.AsQueryable();
                 var ipAddresses = history.Where(m => m.UserId == userId && m.UserId != Guid.Empty && !string.IsNullOrWhiteSpace(m.Ip)).OrderByDescending(m => m.TimeStamp).GroupBy(m => m.Ip).Select(m => new IpAddress { Ip = m.First().Ip, LastUsed = m.First().TimeStamp });
@@ -259,7 +260,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             pageSize = Math.Max(Math.Min(pageSize, 100), 5);
             limit = Math.Max(Math.Min(limit, pageSize), 1);
 
-            using (var context = DbInterface.LoggingContext)
+            using (var context = LoggingContext.Create())
             {
                 var activity = context.UserActivityHistory.Where(m => m.UserId == userId);
 
@@ -301,7 +302,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             pageSize = Math.Max(Math.Min(pageSize, 100), 5);
             limit = Math.Max(Math.Min(limit, pageSize), 1);
 
-            using (var context = DbInterface.LoggingContext)
+            using (var context = LoggingContext.Create())
             {
                 var activity = context.UserActivityHistory.Where(m => m.PlayerId == playerId);
 
@@ -452,7 +453,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             pageSize = Math.Max(Math.Min(pageSize, 100), 5);
             limit = Math.Max(Math.Min(limit, pageSize), 1);
 
-            using (var context = DbInterface.LoggingContext)
+            using (var context = LoggingContext.Create())
             {
                 var guildActivity = context.GuildHistory.AsQueryable();
 

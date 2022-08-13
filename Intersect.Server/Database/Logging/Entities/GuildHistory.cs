@@ -1,4 +1,4 @@
-﻿using Intersect.Enums;
+using Intersect.Enums;
 using Intersect.Server.Entities;
 using Newtonsoft.Json;
 using System;
@@ -89,7 +89,7 @@ namespace Intersect.Server.Database.Logging.Entities
 
         private static void Log(GuildHistory guildActivity)
         {
-            using (var logging = DbInterface.LoggingContext)
+            using (var logging = LoggingContext.Create())
             {
                 logging.GuildHistory.Add(guildActivity);
             }

@@ -226,8 +226,6 @@ namespace Intersect.Server.Database
                         DatabaseOptions.DatabaseType.SQLite, Logging.LoggingContext.DefaultConnectionStringBuilder
                     );
 
-                    ContextProvider.Add(Logging.LoggingContext.Create());
-
                     // We don't want anyone running the old migration tool accidentally
                     try
                     {
@@ -325,7 +323,7 @@ namespace Intersect.Server.Database
 
                     try
                     {
-                        using (var loggingContext = LoggingContext)
+                        using (var loggingContext = LoggingContext.Create())
                         {
                             loggingContext.Database?.Migrate();
 
@@ -1777,10 +1775,6 @@ namespace Intersect.Server.Database
 
             return pwd;
         }
-
-        private static readonly ContextProvider ContextProvider = new ContextProvider();
-
-        public static ILoggingContext LoggingContext => ContextProvider.Access<ILoggingContext, LoggingContextInterface>();
 
     }
 
