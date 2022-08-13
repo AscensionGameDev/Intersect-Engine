@@ -11,7 +11,6 @@ using Amib.Threading;
 using Intersect.Collections;
 using Intersect.Config;
 using Intersect.Enums;
-using Intersect.Framework.Collections;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Crafting;
 using Intersect.GameObjects.Events;
@@ -35,8 +34,11 @@ using Intersect.Server.Networking;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.Extensions.Logging;
 
 using MySqlConnector;
+
+using LogLevel = Intersect.Logging.LogLevel;
 
 namespace Intersect.Server.Database
 {
@@ -87,6 +89,83 @@ namespace Intersect.Server.Database
             }
         }
 
+        private static ILoggerFactory CreateLoggerFactory(
+            Logger logger,
+            Intersect.Logging.LogLevel logLevel
+        )
+        {
+            var efLogLevel = logLevel switch
+            {
+                Intersect.Logging.LogLevel.None => Microsoft.Extensions.Logging.LogLevel.None,
+                Intersect.Logging.LogLevel.Error => Microsoft.Extensions.Logging.LogLevel.Error,
+                Intersect.Logging.LogLevel.Warn => Microsoft.Extensions.Logging.LogLevel.Warning,
+                Intersect.Logging.LogLevel.Info => Microsoft.Extensions.Logging.LogLevel.Information,
+                Intersect.Logging.LogLevel.Trace => Microsoft.Extensions.Logging.LogLevel.Trace,
+                Intersect.Logging.LogLevel.Verbose => Microsoft.Extensions.Logging.LogLevel.Trace,
+                Intersect.Logging.LogLevel.Debug => Microsoft.Extensions.Logging.LogLevel.Debug,
+                Intersect.Logging.LogLevel.Diagnostic => Microsoft.Extensions.Logging.LogLevel.Trace,
+                Intersect.Logging.LogLevel.All => Microsoft.Extensions.Logging.LogLevel.Trace,
+                _ => throw new NotImplementedException(),
+            };
+
+            return LoggerFactory.Create(
+                builder => builder
+                    .AddFilter(level => level >= efLogLevel)
+                    .AddProvider(new DbLoggerProvider(logger))
+            );
+        }
+
+        public static TContext CreateContext<TContext>(
+            bool readOnly = true,
+            bool explicitLoad = false,
+            bool lazyLoading = false,
+            bool autoDetectChanges = false,
+            QueryTrackingBehavior? queryTrackingBehavior = default
+        ) where TContext : IntersectDbContext<TContext>, new()
+        {
+            DbConnectionStringBuilder connectionStringBuilder;
+            DatabaseOptions.DatabaseType databaseType;
+            ILoggerFactory loggerFactory;
+            if (typeof(TContext) == typeof(GameContext))
+            {
+                connectionStringBuilder = CreateConnectionStringBuilder(
+                    Options.GameDb ?? throw new InvalidOperationException(),
+                    GameDbFilename
+                );
+                databaseType = Options.GameDb.Type;
+                loggerFactory = CreateLoggerFactory(gameDbLogger, Options.GameDb.LogLevel);
+            }
+            else if (typeof(TContext) == typeof(PlayerContext))
+            {
+                connectionStringBuilder = CreateConnectionStringBuilder(
+                    Options.PlayerDb ?? throw new InvalidOperationException(),
+                    PlayersDbFilename
+                );
+                databaseType = Options.PlayerDb.Type;
+                loggerFactory = CreateLoggerFactory(playerDbLogger, Options.PlayerDb.LogLevel);
+            }
+            else if (typeof(TContext) == typeof(LoggingContext))
+            {
+                connectionStringBuilder = Logging.LoggingContext.DefaultConnectionStringBuilder;
+                databaseType = DatabaseOptions.DatabaseType.SQLite;
+                loggerFactory = default;
+            }
+            else
+            {
+                throw new NotSupportedException();
+            }
+            return IntersectDbContext<TContext>.Create(
+                autoDetectChanges: autoDetectChanges,
+                connectionStringBuilder: connectionStringBuilder,
+                databaseType: databaseType,
+                explicitLoad: explicitLoad,
+                lazyLoading: lazyLoading,
+                loggerFactory: loggerFactory,
+                readOnly: readOnly,
+                queryTrackingBehavior: queryTrackingBehavior
+            );
+        }
+
         /// <summary>
         /// Creates a game context to query. Best practice is to scope this within a using statement.
         /// </summary>
@@ -98,47 +177,32 @@ namespace Intersect.Server.Database
             bool lazyLoading = false,
             bool autoDetectChanges = false,
             QueryTrackingBehavior? queryTrackingBehavior = default
-        )
-        {
-            return new GameContext(
-                connectionStringBuilder: CreateConnectionStringBuilder(Options.GameDb ?? throw new InvalidOperationException(), GameDbFilename),
-                databaseType: Options.GameDb.Type,
-                readOnly: readOnly,
-                explicitLoad: explicitLoad,
-                lazyLoading: lazyLoading,
-                autoDetectChanges: autoDetectChanges,
-                queryTrackingBehavior: queryTrackingBehavior,
-                logger: gameDbLogger,
-                logLevel: Options.GameDb.LogLevel
-            );
-        }
+        ) => CreateContext<GameContext>(
+            autoDetectChanges: autoDetectChanges,
+            explicitLoad: explicitLoad,
+            lazyLoading: lazyLoading,
+            readOnly: readOnly,
+            queryTrackingBehavior: queryTrackingBehavior
+        );
 
         /// <summary>
         /// Creates a game context to query. Best practice is to scope this within a using statement.
         /// </summary>
         /// <param name="readOnly">Defines whether or not the context should initialize with change tracking. If readonly is true then SaveChanges will not work.</param>
         /// <returns></returns>
-        public static PlayerContext CreatePlayerContext(bool readOnly = true, bool explicitLoad = false)
-        {
-            return new PlayerContext(
-                    CreateConnectionStringBuilder(
-                        Options.PlayerDb ?? throw new InvalidOperationException(), PlayersDbFilename
-                    ), Options.PlayerDb.Type,
-                    logger: playerDbLogger,
-                    logLevel: Options.PlayerDb.LogLevel,
-                    readOnly: readOnly,
-                    explicitLoad: explicitLoad
-                );
-        }
+        public static PlayerContext CreatePlayerContext(
+            bool readOnly = true,
+            bool explicitLoad = false
+        ) => CreateContext<PlayerContext>(
+            explicitLoad: explicitLoad,
+            readOnly: readOnly
+        );
 
-        internal static LoggingContext CreateLoggingContext(bool readOnly = true)
-        {
-            return new LoggingContext(
-                Logging.LoggingContext.DefaultConnectionStringBuilder,
-                DatabaseOptions.DatabaseType.SQLite,
-                readOnly: readOnly
-            );
-        }
+        internal static LoggingContext CreateLoggingContext(
+            bool readOnly = true
+        ) => CreateContext<LoggingContext>(
+            readOnly: readOnly
+        );
 
         public static void InitializeDbLoggers()
         {
@@ -216,139 +280,134 @@ namespace Intersect.Server.Database
         // Database setup, version checking
         internal static bool InitDatabase(IServerContext serverContext)
         {
-            using (var gameContext = CreateGameContext(readOnly: false))
+            using var gameContext = CreateGameContext(readOnly: false);
+
+            using var playerContext = CreatePlayerContext(readOnly: false);
+
+            Logging.LoggingContext.Configure(
+                Logging.LoggingContext.DefaultConnectionStringBuilder,
+                DatabaseOptions.DatabaseType.SQLite
+            );
+
+            // We don't want anyone running the old migration tool accidentally
+            try
             {
-
-                using (var playerContext = CreatePlayerContext(readOnly: false))
+                if (File.Exists("Intersect Migration Tool.exe"))
                 {
+                    File.Delete("Intersect Migration Tool.exe");
+                }
 
-                    Logging.LoggingContext.Configure(
-                        DatabaseOptions.DatabaseType.SQLite, Logging.LoggingContext.DefaultConnectionStringBuilder
-                    );
+                if (File.Exists("Intersect Migration Tool.pdb"))
+                {
+                    File.Delete("Intersect Migration Tool.pdb");
+                }
 
-                    // We don't want anyone running the old migration tool accidentally
-                    try
-                    {
-                        if (File.Exists("Intersect Migration Tool.exe"))
-                        {
-                            File.Delete("Intersect Migration Tool.exe");
-                        }
-
-                        if (File.Exists("Intersect Migration Tool.pdb"))
-                        {
-                            File.Delete("Intersect Migration Tool.pdb");
-                        }
-
-                        if (File.Exists("Intersect Migration Tool.mdb"))
-                        {
-                            File.Delete("Intersect Migration Tool.mdb");
-                        }
-                    }
-                    catch
-                    {
-                        // ignored
-                    }
-
-                    var gameMigrations = gameContext.PendingMigrations;
-                    var showGameMigrationWarning = gameMigrations.Any() && !gameMigrations.Contains("20180905042857_Initial");
-                    var playerMigrations = playerContext.PendingMigrations;
-                    var showPlayerMigrationWarning =
-                        playerMigrations.Any() && !playerMigrations.Contains("20180927161502_InitialPlayerDb");
-
-                    if (showGameMigrationWarning || showPlayerMigrationWarning)
-                    {
-                        Console.WriteLine();
-                        Console.WriteLine(Strings.Database.upgraderequired);
-                        Console.WriteLine(
-                            Strings.Database.upgradebackup.ToString(Strings.Database.upgradeready, Strings.Database.upgradeexit)
-                        );
-
-                        Console.WriteLine();
-                        while (true)
-                        {
-                            Console.Write("> ");
-                            var input = Console.ReadLine().Trim();
-                            if (input == Strings.Database.upgradeready.ToString().Trim())
-                            {
-                                break;
-                            }
-                            else if (input.ToLower() == Strings.Database.upgradeexit.ToString().Trim().ToLower())
-                            {
-                                Environment.Exit(1);
-
-                                return false;
-                            }
-                        }
-
-                        Console.WriteLine();
-                        Console.WriteLine(
-                            "Please wait! Migrations can take several minutes, and even longer if you are using MySQL databases!"
-                        );
-                    }
-
-                    var gameContextMigrationScheduler = new MigrationScheduler<GameContext>(gameContext);
-                    gameContextMigrationScheduler.SchedulePendingMigrations();
-                    gameContextMigrationScheduler.ApplyScheduledMigrations();
-                    var remainingGameMigrations = gameContext.PendingMigrations;
-                    var processedGameMigrations = new List<string>(gameMigrations);
-                    foreach (var itm in remainingGameMigrations)
-                    {
-                        processedGameMigrations.Remove(itm);
-                    }
-
-                    gameContext.MigrationsProcessed(processedGameMigrations.ToArray());
-
-#if DEBUG
-                    if (ServerContext.Instance.RestApi.Configuration.SeedMode)
-                    {
-                        gameContext.Seed();
-                    }
-#endif
-
-                    playerContext.Database.Migrate();
-                    var remainingPlayerMigrations = playerContext.PendingMigrations;
-                    var processedPlayerMigrations = new List<string>(playerMigrations);
-                    foreach (var itm in remainingPlayerMigrations)
-                    {
-                        processedPlayerMigrations.Remove(itm);
-                    }
-
-                    playerContext.MigrationsProcessed(processedPlayerMigrations.ToArray());
-#if DEBUG
-                    if (ServerContext.Instance.RestApi.Configuration.SeedMode)
-                    {
-                        playerContext.Seed();
-                    }
-#endif
-
-                    try
-                    {
-                        using (var loggingContext = LoggingContext.Create())
-                        {
-                            loggingContext.Database?.Migrate();
-
-#if DEBUG
-                            if (ServerContext.Instance.RestApi.Configuration.SeedMode)
-                            {
-                                loggingContext.Seed();
-                            }
-#endif
-                        }
-                    }
-                    catch (Exception exception)
-                    {
-                        throw;
-                    }
-
-                    LoadAllGameObjects();
-                    LoadTime();
-                    OnClassesLoaded();
-                    OnMapsLoaded();
-                    CacheServerVariableEventTextLookups();
-                    CachePlayerVariableEventTextLookups();
-                    CacheGuildVariableEventTextLookups();
+                if (File.Exists("Intersect Migration Tool.mdb"))
+                {
+                    File.Delete("Intersect Migration Tool.mdb");
                 }
             }
+            catch
+            {
+                // ignored
+            }
+
+            var gameMigrations = gameContext.PendingMigrations;
+            var showGameMigrationWarning = gameMigrations.Any() && !gameMigrations.Contains("20180905042857_Initial");
+            var playerMigrations = playerContext.PendingMigrations;
+            var showPlayerMigrationWarning =
+                playerMigrations.Any() && !playerMigrations.Contains("20180927161502_InitialPlayerDb");
+
+            if (showGameMigrationWarning || showPlayerMigrationWarning)
+            {
+                Console.WriteLine();
+                Console.WriteLine(Strings.Database.upgraderequired);
+                Console.WriteLine(
+                    Strings.Database.upgradebackup.ToString(Strings.Database.upgradeready, Strings.Database.upgradeexit)
+                );
+
+                Console.WriteLine();
+                while (true)
+                {
+                    Console.Write("> ");
+                    var input = Console.ReadLine().Trim();
+                    if (input == Strings.Database.upgradeready.ToString().Trim())
+                    {
+                        break;
+                    }
+                    else if (input.ToLower() == Strings.Database.upgradeexit.ToString().Trim().ToLower())
+                    {
+                        Environment.Exit(1);
+
+                        return false;
+                    }
+                }
+
+                Console.WriteLine();
+                Console.WriteLine(
+                    "Please wait! Migrations can take several minutes, and even longer if you are using MySQL databases!"
+                );
+            }
+
+            var gameContextMigrationScheduler = new MigrationScheduler<GameContext>(gameContext);
+            gameContextMigrationScheduler.SchedulePendingMigrations();
+            gameContextMigrationScheduler.ApplyScheduledMigrations();
+            var remainingGameMigrations = gameContext.PendingMigrations;
+            var processedGameMigrations = new List<string>(gameMigrations);
+            foreach (var itm in remainingGameMigrations)
+            {
+                processedGameMigrations.Remove(itm);
+            }
+
+            gameContext.MigrationsProcessed(processedGameMigrations.ToArray());
+
+#if DEBUG
+            if (ServerContext.Instance.RestApi.Configuration.SeedMode)
+            {
+                gameContext.Seed();
+            }
+#endif
+
+            playerContext.Database.Migrate();
+            var remainingPlayerMigrations = playerContext.PendingMigrations;
+            var processedPlayerMigrations = new List<string>(playerMigrations);
+            foreach (var itm in remainingPlayerMigrations)
+            {
+                processedPlayerMigrations.Remove(itm);
+            }
+
+            playerContext.MigrationsProcessed(processedPlayerMigrations.ToArray());
+#if DEBUG
+            if (ServerContext.Instance.RestApi.Configuration.SeedMode)
+            {
+                playerContext.Seed();
+            }
+#endif
+
+            try
+            {
+                using var loggingContext = LoggingContext.Create(readOnly: false);
+                loggingContext.Database?.Migrate();
+
+#if DEBUG
+                if (ServerContext.Instance.RestApi.Configuration.SeedMode)
+                {
+                    loggingContext.Seed();
+                }
+#endif
+            }
+            catch (Exception exception)
+            {
+                throw;
+            }
+
+            LoadAllGameObjects();
+            LoadTime();
+            OnClassesLoaded();
+            OnMapsLoaded();
+            CacheServerVariableEventTextLookups();
+            CachePlayerVariableEventTextLookups();
+            CacheGuildVariableEventTextLookups();
 
             return true;
         }

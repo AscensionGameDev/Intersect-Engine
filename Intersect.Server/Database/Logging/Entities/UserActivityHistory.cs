@@ -129,10 +129,8 @@ namespace Intersect.Server.Database.Logging.Entities
 
         private static void Log(UserActivityHistory activity)
         {
-            using (var logging = LoggingContext.Create())
-            {
-                logging.UserActivityHistory.Add(activity);
-            }
+            using var loggingContext = LoggingContext.Create(readOnly: false);
+            _ = loggingContext.UserActivityHistory.Add(activity);
         }
     }
 }

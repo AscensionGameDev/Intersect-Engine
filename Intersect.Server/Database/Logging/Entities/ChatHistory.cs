@@ -69,10 +69,8 @@ namespace Intersect.Server.Database.Logging.Entities
 
         private static void Log(ChatHistory chatHistory)
         {
-            using (var logging = LoggingContext.Create())
-            {
-                logging.ChatHistory.Add(chatHistory);
-            }
+            using var loggingContext = LoggingContext.Create(readOnly: false);
+            _ = loggingContext.ChatHistory.Add(chatHistory);
         }
     }
 }

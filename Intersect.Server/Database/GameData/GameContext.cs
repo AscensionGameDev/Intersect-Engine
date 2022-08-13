@@ -15,6 +15,7 @@ using Intersect.Server.Maps;
 
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace Intersect.Server.Database.GameData;
 
@@ -29,35 +30,30 @@ public partial class GameContext : IntersectDbContext<GameContext>, IGameContext
         default
     ) ?? throw new InvalidOperationException();
 
-    public GameContext() : base(DefaultConnectionStringBuilder)
-    {
-
-    }
+    public GameContext() : this(
+        DefaultConnectionStringBuilder,
+        DatabaseOptions.DatabaseType.SQLite
+    ) { }
 
     public GameContext(
         DbConnectionStringBuilder connectionStringBuilder,
-        DatabaseOptions.DatabaseType databaseType,
-        bool readOnly = false,
-        bool explicitLoad = false,
+        DatabaseOptions.DatabaseType? databaseType,
         bool autoDetectChanges = false,
+        bool explicitLoad = false,
         bool lazyLoading = false,
-        QueryTrackingBehavior? queryTrackingBehavior = default,
-        Intersect.Logging.Logger logger = null,
-        Intersect.Logging.LogLevel logLevel = Intersect.Logging.LogLevel.None
+        bool readOnly = false,
+        ILoggerFactory? loggerFactory = default,
+        QueryTrackingBehavior? queryTrackingBehavior = default
     ) : base(
-        connectionStringBuilder: connectionStringBuilder,
-        databaseType: databaseType,
-        logger: logger,
-        logLevel: logLevel,
-        readOnly: readOnly,
         autoDetectChanges: autoDetectChanges,
+        connectionStringBuilder: connectionStringBuilder ?? DefaultConnectionStringBuilder,
+        databaseType: databaseType ?? DatabaseOptions.DatabaseType.SQLite,
         explicitLoad: explicitLoad,
         lazyLoading: lazyLoading,
+        loggerFactory: loggerFactory,
+        readOnly: readOnly,
         queryTrackingBehavior: queryTrackingBehavior
-    )
-    {
-
-    }
+    ) { }
 
     public static DbConnectionStringBuilder DefaultConnectionStringBuilder =>
         new SqliteConnectionStringBuilder(@"Data Source=resources/gamedata.db");

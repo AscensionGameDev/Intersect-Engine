@@ -101,10 +101,8 @@ namespace Intersect.Server.Database.Logging.Entities
 
         private static void Log(TradeHistory tradeHistory)
         {
-            using (var logging = LoggingContext.Create())
-            {
-                logging.TradeHistory.Add(tradeHistory);
-            }
+            using var loggingContext = LoggingContext.Create(readOnly: false);
+            _ = loggingContext.TradeHistory.Add(tradeHistory);
         }
     }
 }

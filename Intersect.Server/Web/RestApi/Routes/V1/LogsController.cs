@@ -39,69 +39,67 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             pageSize = Math.Max(Math.Min(pageSize, 100), 5);
             limit = Math.Max(Math.Min(limit, pageSize), 1);
 
-            using (var context = LoggingContext.Create())
+            using var loggingContext = LoggingContext.Create(readOnly: true);
+            var messages = loggingContext.ChatHistory.AsQueryable();
+
+            if (messageType > -1)
             {
-                var messages = context.ChatHistory.AsQueryable();
+                messages = messages.Where(m => m.MessageType == (ChatMessageType)messageType);
+            }
 
-                if (messageType > -1)
-                {
-                    messages = messages.Where(m => m.MessageType == (ChatMessageType)messageType);
-                }
+            if (userId != Guid.Empty)
+            {
+                messages = messages.Where(m => m.UserId == userId);
+            }
 
-                if (userId != Guid.Empty)
+            if (playerId != Guid.Empty)
+            {
+                if (messageType == (int)ChatMessageType.PM)
                 {
-                    messages = messages.Where(m => m.UserId == userId);
-                }
-
-                if (playerId != Guid.Empty)
-                {
-                    if (messageType == (int)ChatMessageType.PM)
-                    {
-                        messages = messages.Where(m => m.PlayerId == playerId || m.TargetId == playerId);
-                    }
-                    else
-                    {
-                        messages = messages.Where(m => m.PlayerId == playerId);
-                    }
-                }
-
-                if (guildId != Guid.Empty)
-                {
-                    messages = messages.Where(m => m.MessageType == ChatMessageType.Guild && m.TargetId == guildId);
-                }
-
-                if (!string.IsNullOrWhiteSpace(search))
-                {
-                    messages = messages.Where(m => EF.Functions.Like(m.MessageText, $"%{search}%"));
-                }
-
-                if (sortDirection == SortDirection.Ascending)
-                {
-                    messages = messages.OrderBy(m => m.TimeStamp);
+                    messages = messages.Where(m => m.PlayerId == playerId || m.TargetId == playerId);
                 }
                 else
                 {
-                    messages = messages.OrderByDescending(m => m.TimeStamp);
+                    messages = messages.Where(m => m.PlayerId == playerId);
                 }
-
-                var values = messages.Skip(page * pageSize).Take(pageSize).ToList();
-
-                PopulateMessageNames(values);
-
-                if (limit != pageSize)
-                {
-                    values = values.Take(limit).ToList();
-                }
-
-                return new DataPage<ChatHistory>
-                {
-                    Total = messages.Count(),
-                    Page = page,
-                    PageSize = pageSize,
-                    Count = values.Count,
-                    Values = values
-                };
             }
+
+            if (guildId != Guid.Empty)
+            {
+                messages = messages.Where(m => m.MessageType == ChatMessageType.Guild && m.TargetId == guildId);
+            }
+
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                messages = messages.Where(m => EF.Functions.Like(m.MessageText, $"%{search}%"));
+            }
+
+            if (sortDirection == SortDirection.Ascending)
+            {
+                messages = messages.OrderBy(m => m.TimeStamp);
+            }
+            else
+            {
+                messages = messages.OrderByDescending(m => m.TimeStamp);
+            }
+
+            var values = messages.Skip(page * pageSize).Take(pageSize).ToList();
+
+            PopulateMessageNames(values);
+
+            if (limit != pageSize)
+            {
+                values = values.Take(limit).ToList();
+            }
+
+            return new DataPage<ChatHistory>
+            {
+                Total = messages.Count(),
+                Page = page,
+                PageSize = pageSize,
+                Count = values.Count,
+                Values = values
+            };
         }
 
         [Route("pm")]
@@ -120,46 +118,44 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             pageSize = Math.Max(Math.Min(pageSize, 100), 5);
             limit = Math.Max(Math.Min(limit, pageSize), 1);
 
-            using (var context = LoggingContext.Create())
+            using var loggingContext = LoggingContext.Create(readOnly: true);
+            var messages = loggingContext.ChatHistory.AsQueryable();
+
+            messages = messages.Where(m => m.MessageType == ChatMessageType.PM);
+
+            messages = messages.Where(m => (m.PlayerId == player1Id && m.TargetId == player2Id) || (m.PlayerId == player2Id && m.TargetId == player1Id));
+
+            if (!string.IsNullOrWhiteSpace(search))
             {
-                var messages = context.ChatHistory.AsQueryable();
-
-                messages = messages.Where(m => m.MessageType == ChatMessageType.PM);
-
-                messages = messages.Where(m => (m.PlayerId == player1Id && m.TargetId == player2Id) || (m.PlayerId == player2Id && m.TargetId == player1Id));
-
-                if (!string.IsNullOrWhiteSpace(search))
-                {
-                    messages = messages.Where(m => EF.Functions.Like(m.MessageText, $"%{search}%"));
-                }
-
-                if (sortDirection == SortDirection.Ascending)
-                {
-                    messages = messages.OrderBy(m => m.TimeStamp);
-                }
-                else
-                {
-                    messages = messages.OrderByDescending(m => m.TimeStamp);
-                }
-
-                var values = messages.Skip(page * pageSize).Take(pageSize).ToList();
-
-                PopulateMessageNames(values);
-
-                if (limit != pageSize)
-                {
-                    values = values.Take(limit).ToList();
-                }
-
-                return new DataPage<ChatHistory>
-                {
-                    Total = messages.Count(),
-                    Page = page,
-                    PageSize = pageSize,
-                    Count = values.Count,
-                    Values = values
-                };
+                messages = messages.Where(m => EF.Functions.Like(m.MessageText, $"%{search}%"));
             }
+
+            if (sortDirection == SortDirection.Ascending)
+            {
+                messages = messages.OrderBy(m => m.TimeStamp);
+            }
+            else
+            {
+                messages = messages.OrderByDescending(m => m.TimeStamp);
+            }
+
+            var values = messages.Skip(page * pageSize).Take(pageSize).ToList();
+
+            PopulateMessageNames(values);
+
+            if (limit != pageSize)
+            {
+                values = values.Take(limit).ToList();
+            }
+
+            return new DataPage<ChatHistory>
+            {
+                Total = messages.Count(),
+                Page = page,
+                PageSize = pageSize,
+                Count = values.Count,
+                Values = values
+            };
         }
 
         private void PopulateMessageNames(List<ChatHistory> messages)
@@ -210,39 +206,36 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             pageSize = Math.Max(Math.Min(pageSize, 100), 5);
             limit = Math.Max(Math.Min(limit, pageSize), 1);
 
-            using (var context = LoggingContext.Create())
-            {
-                var history = context.UserActivityHistory.AsQueryable();
-                var ipAddresses = history.Where(m => m.UserId == userId && m.UserId != Guid.Empty && !string.IsNullOrWhiteSpace(m.Ip)).OrderByDescending(m => m.TimeStamp).GroupBy(m => m.Ip).Select(m => new IpAddress { Ip = m.First().Ip, LastUsed = m.First().TimeStamp });
-                var addresses = ipAddresses.Skip(page * pageSize).Take(pageSize).ToList();
+            using var loggingContext = LoggingContext.Create(readOnly: true);
+            var history = loggingContext.UserActivityHistory.AsQueryable();
+            var ipAddresses = history.Where(m => m.UserId == userId && m.UserId != Guid.Empty && !string.IsNullOrWhiteSpace(m.Ip)).OrderByDescending(m => m.TimeStamp).GroupBy(m => m.Ip).Select(m => new IpAddress { Ip = m.First().Ip, LastUsed = m.First().TimeStamp });
+            var addresses = ipAddresses.Skip(page * pageSize).Take(pageSize).ToList();
 
-                //Foreach IP Address Find Other Users
-                using (var ctx = DbInterface.CreatePlayerContext(true))
+            //Foreach IP Address Find Other Users
+            using (var playerContext = DbInterface.CreatePlayerContext(readOnly: true))
+            {
+                foreach (var addr in addresses)
                 {
-                    foreach (var addr in addresses)
+                    var otherUsers = loggingContext.UserActivityHistory.Where(m => m.Ip == addr.Ip && m.UserId != userId && !string.IsNullOrWhiteSpace(m.Ip)).GroupBy(m => m.UserId).Select(m => m.First().UserId).ToList();
+                    foreach (var usr in otherUsers)
                     {
-                        var otherUsers = context.UserActivityHistory.Where(m => m.Ip == addr.Ip && m.UserId != userId && !string.IsNullOrWhiteSpace(m.Ip)).GroupBy(m => m.UserId).Select(m => m.First().UserId).ToList();
-                        foreach (var usr in otherUsers)
+                        var name = playerContext.Users.Where(u => u.Id == usr).Select(u => u.Name).FirstOrDefault();
+                        if (!string.IsNullOrWhiteSpace(name))
                         {
-                            var name = ctx.Users.Where(u => u.Id == usr).Select(u => u.Name).FirstOrDefault();
-                            if (!string.IsNullOrWhiteSpace(name))
-                            {
-                                addr.OtherUsers.Add(usr, name);
-                            }
+                            addr.OtherUsers.Add(usr, name);
                         }
                     }
                 }
-
-                return new DataPage<IpAddress>()
-                {
-                    Total = ipAddresses.Count(),
-                    Page = page,
-                    PageSize = pageSize,
-                    Count = addresses.Count,
-                    Values = addresses
-                };
-
             }
+
+            return new DataPage<IpAddress>()
+            {
+                Total = ipAddresses.Count(),
+                Page = page,
+                PageSize = pageSize,
+                Count = addresses.Count,
+                Values = addresses
+            };
         }
 
 
@@ -260,31 +253,28 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             pageSize = Math.Max(Math.Min(pageSize, 100), 5);
             limit = Math.Max(Math.Min(limit, pageSize), 1);
 
-            using (var context = LoggingContext.Create())
+            using var loggingContext = LoggingContext.Create(readOnly: true);
+            var activity = loggingContext.UserActivityHistory.Where(m => m.UserId == userId);
+
+            if (sortDirection == SortDirection.Ascending)
             {
-                var activity = context.UserActivityHistory.Where(m => m.UserId == userId);
-
-                if (sortDirection == SortDirection.Ascending)
-                {
-                    activity = activity.OrderBy(m => m.TimeStamp);
-                }
-                else
-                {
-                    activity = activity.OrderByDescending(m => m.TimeStamp);
-                }
-
-                var values = activity.Skip(page * pageSize).Take(pageSize).ToList();
-
-                return new DataPage<UserActivityHistory>()
-                {
-                    Total = activity.Count(),
-                    Page = page,
-                    PageSize = pageSize,
-                    Count = values.Count,
-                    Values = values
-                };
-
+                activity = activity.OrderBy(m => m.TimeStamp);
             }
+            else
+            {
+                activity = activity.OrderByDescending(m => m.TimeStamp);
+            }
+
+            var values = activity.Skip(page * pageSize).Take(pageSize).ToList();
+
+            return new DataPage<UserActivityHistory>()
+            {
+                Total = activity.Count(),
+                Page = page,
+                PageSize = pageSize,
+                Count = values.Count,
+                Values = values
+            };
 
         }
 
@@ -302,31 +292,28 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             pageSize = Math.Max(Math.Min(pageSize, 100), 5);
             limit = Math.Max(Math.Min(limit, pageSize), 1);
 
-            using (var context = LoggingContext.Create())
+            using var loggingContext = LoggingContext.Create(readOnly: true);
+            var activity = loggingContext.UserActivityHistory.Where(m => m.PlayerId == playerId);
+
+            if (sortDirection == SortDirection.Ascending)
             {
-                var activity = context.UserActivityHistory.Where(m => m.PlayerId == playerId);
-
-                if (sortDirection == SortDirection.Ascending)
-                {
-                    activity = activity.OrderBy(m => m.TimeStamp);
-                }
-                else
-                {
-                    activity = activity.OrderByDescending(m => m.TimeStamp);
-                }
-
-                var values = activity.Skip(page * pageSize).Take(pageSize).ToList();
-
-                return new DataPage<UserActivityHistory>()
-                {
-                    Total = activity.Count(),
-                    Page = page,
-                    PageSize = pageSize,
-                    Count = values.Count,
-                    Values = values
-                };
-
+                activity = activity.OrderBy(m => m.TimeStamp);
             }
+            else
+            {
+                activity = activity.OrderByDescending(m => m.TimeStamp);
+            }
+
+            var values = activity.Skip(page * pageSize).Take(pageSize).ToList();
+
+            return new DataPage<UserActivityHistory>()
+            {
+                Total = activity.Count(),
+                Page = page,
+                PageSize = pageSize,
+                Count = values.Count,
+                Values = values
+            };
 
         }
 
@@ -453,42 +440,41 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             pageSize = Math.Max(Math.Min(pageSize, 100), 5);
             limit = Math.Max(Math.Min(limit, pageSize), 1);
 
-            using (var context = LoggingContext.Create())
+            using var loggingContext = LoggingContext.Create(readOnly: true);
+
+            var guildActivity = loggingContext.GuildHistory.AsQueryable();
+
+            if (guildId != Guid.Empty)
             {
-                var guildActivity = context.GuildHistory.AsQueryable();
-
-                if (guildId != Guid.Empty)
-                {
-                    guildActivity = guildActivity.Where(m => m.GuildId == guildId);
-                }
-
-                if (sortDirection == SortDirection.Ascending)
-                {
-                    guildActivity = guildActivity.OrderBy(m => m.TimeStamp);
-                }
-                else
-                {
-                    guildActivity = guildActivity.OrderByDescending(m => m.TimeStamp);
-                }
-
-                var values = guildActivity.Skip(page * pageSize).Take(pageSize).ToList();
-
-                PopulateGuildActivityNames(values);
-
-                if (limit != pageSize)
-                {
-                    values = values.Take(limit).ToList();
-                }
-
-                return new DataPage<GuildHistory>
-                {
-                    Total = guildActivity.Count(),
-                    Page = page,
-                    PageSize = pageSize,
-                    Count = values.Count,
-                    Values = values
-                };
+                guildActivity = guildActivity.Where(m => m.GuildId == guildId);
             }
+
+            if (sortDirection == SortDirection.Ascending)
+            {
+                guildActivity = guildActivity.OrderBy(m => m.TimeStamp);
+            }
+            else
+            {
+                guildActivity = guildActivity.OrderByDescending(m => m.TimeStamp);
+            }
+
+            var values = guildActivity.Skip(page * pageSize).Take(pageSize).ToList();
+
+            PopulateGuildActivityNames(values);
+
+            if (limit != pageSize)
+            {
+                values = values.Take(limit).ToList();
+            }
+
+            return new DataPage<GuildHistory>
+            {
+                Total = guildActivity.Count(),
+                Page = page,
+                PageSize = pageSize,
+                Count = values.Count,
+                Values = values
+            };
         }
 
         private void PopulateGuildActivityNames(List<GuildHistory> guildActivity)
