@@ -18,6 +18,13 @@ namespace Intersect.Server.Database.GameData.Migrations;
 [SchemaMigration(typeof(AddGenericFolders))]
 public sealed partial class AddGenericFoldersDataMigration : IDataMigration<GameContext>
 {
+    private class IdFolder
+    {
+        public Guid Id { get; set; }
+
+        public string Folder { get; set; }
+    }
+
     public void Down(GameContext context)
     {
         throw new NotImplementedException();
@@ -51,10 +58,25 @@ public sealed partial class AddGenericFoldersDataMigration : IDataMigration<Game
     public void AggregateFolders<TDescriptor>(GameContext context)
         where TDescriptor : Descriptor
     {
-        var descriptors = context.GetDbSet<TDescriptor>();
+        var dbConnection = context.Database.GetDbConnection();
+        var descriptorTable = context.Model
+            .FindEntityType(typeof(TDescriptor))
+            .GetTableName() ?? throw new InvalidOperationException($"Missing table for {typeof(TDescriptor).FullName}.");
+        var queryCompiler = context.DatabaseType.CreateQueryCompiler();
+        var queryFactory = new QueryFactory(dbConnection, queryCompiler);
+        var legacyFolders = queryFactory
+            .Query(descriptorTable)
+            .Select("Id", "Folder")
+            .Get<(byte[] Id, string? Folder)>()
+            .Select(row => new IdFolder
+            {
+                Id = new Guid(row.Id),
+                Folder = row.Folder,
+            })
+            .ToList();
+        var descriptors = context.GetDbSet<TDescriptor>().ToList();
         var groupedByFolder = descriptors
-            .ToList()
-            .GroupBy(descriptor => context.Entry(descriptor).Property<string?>("Folder").CurrentValue);
+            .GroupBy(descriptor => legacyFolders.FirstOrDefault(idf => idf.Id == descriptor.Id)?.Folder);
         foreach (var group in groupedByFolder)
         {
             Folder? folder = default;
@@ -80,10 +102,10 @@ public sealed partial class AddGenericFoldersDataMigration : IDataMigration<Game
         }
     }
 
-    private IEnumerable<JObject> QueryMapLists(GameContext gameContext)
+    private IEnumerable<JObject> QueryMapLists(GameContext context)
     {
-        var dbConnection = gameContext.Database.GetDbConnection();
-        var queryCompiler = gameContext.DatabaseType.CreateQueryCompiler();
+        var dbConnection = context.Database.GetDbConnection();
+        var queryCompiler = context.DatabaseType.CreateQueryCompiler();
         var queryFactory = new QueryFactory(dbConnection, queryCompiler);
         return queryFactory
             .Query("MapFolders")
