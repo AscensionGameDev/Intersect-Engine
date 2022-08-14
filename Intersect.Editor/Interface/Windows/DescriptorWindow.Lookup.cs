@@ -173,6 +173,8 @@ internal partial class DescriptorWindow
 
         ImGui.EndChild();
 
+        SizeConstraintMinimum = ImGui.GetCursorPos();
+
         return true;
     }
 }
