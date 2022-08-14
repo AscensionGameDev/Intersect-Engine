@@ -4,9 +4,7 @@ using ImGuiNET;
 
 using Intersect.Localization;
 using Intersect.Logging;
-using Intersect.Numerics;
 using Intersect.Time;
-using Intersect.Utilities;
 
 namespace Intersect.Client.Framework.UserInterface.Components;
 
@@ -72,6 +70,10 @@ public class Window : Component
         get => _open;
         set => _open = value;
     }
+
+    protected Vector2? SizeConstraintMinimum { get; set; }
+
+    protected Vector2? SizeConstraintMaximum { get; set; }
 
     public StatusBar? StatusBar
     {
@@ -220,14 +222,6 @@ public class Window : Component
             );
         }
 
-        if (!workspaceBounds.Contains(Size - workspaceBounds.Position))
-        {
-            Size = new(
-                Math.Min(Size.X, workspaceBounds.Size.X),
-                Math.Min(Size.Y, workspaceBounds.Size.Y)
-            );
-        }
-
         ImGui.SetNextWindowPos(Position);
         ImGui.SetNextWindowSize(Size);
     }
@@ -242,6 +236,10 @@ public class Window : Component
 
     protected virtual void StyleBegin(FrameTime frameTime)
     {
+        ImGui.SetNextWindowSizeConstraints(
+            SizeConstraintMinimum ?? new(200),
+            SizeConstraintMaximum ?? WorkspaceSize
+        );
     }
 
     protected virtual void StyleEnd(FrameTime frameTime)
