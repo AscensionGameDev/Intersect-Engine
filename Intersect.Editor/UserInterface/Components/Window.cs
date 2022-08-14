@@ -210,6 +210,24 @@ public class Window : Component
 
     protected override void LayoutDirty(FrameTime frameTime)
     {
+        var workspaceBounds = WorkspaceBounds;
+
+        if (!workspaceBounds.Contains(Position))
+        {
+            Position = new(
+                Math.Max(Position.X, workspaceBounds.Position.X),
+                Math.Max(Position.Y, workspaceBounds.Position.Y)
+            );
+        }
+
+        if (!workspaceBounds.Contains(Size - workspaceBounds.Position))
+        {
+            Size = new(
+                Math.Min(Size.X, workspaceBounds.Size.X),
+                Math.Min(Size.Y, workspaceBounds.Size.Y)
+            );
+        }
+
         ImGui.SetNextWindowPos(Position);
         ImGui.SetNextWindowSize(Size);
     }

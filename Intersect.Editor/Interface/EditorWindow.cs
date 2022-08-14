@@ -103,7 +103,6 @@ public abstract class EditorWindow
             ImGuiInternal.DockBuilderFinish(_dockNodeId);
         }
 
-        _canvas.Bounds = new(0, 0, _platformWindow.Viewport.Width, _platformWindow.Viewport.Height);
         _canvas.Layout(frameTime);
     }
 }

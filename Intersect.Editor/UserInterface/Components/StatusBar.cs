@@ -10,14 +10,13 @@ namespace Intersect.Client.Framework.UserInterface.Components;
 public class StatusBar : Component
 {
     protected const ImGuiWindowFlags StatusBarFlags =
-        ImGuiWindowFlags.NoCollapse
-        //| ImGuiWindowFlags.NoBringToFrontOnFocus
-        //| ImGuiWindowFlags.NoMove
-        | ImGuiWindowFlags.NoNavFocus
-        | ImGuiWindowFlags.NoResize
-        | ImGuiWindowFlags.NoSavedSettings
-        | ImGuiWindowFlags.NoTitleBar
-        ;
+        ImGuiWindowFlags.NoCollapse |
+        ImGuiWindowFlags.NoDocking |
+        ImGuiWindowFlags.NoMove |
+        ImGuiWindowFlags.NoNavFocus |
+        ImGuiWindowFlags.NoResize |
+        ImGuiWindowFlags.NoSavedSettings |
+        ImGuiWindowFlags.NoTitleBar;
 
     private bool _connectionDenied;
     private NetworkStatus _networkStatus;
@@ -39,6 +38,8 @@ public class StatusBar : Component
 
     public ImGuiWindowFlags Flags { get; set; }
 
+    public Vector2 CalculatedSize { get; private set; }
+
     protected override bool LayoutBegin(FrameTime frameTime)
     {
         var viewport = ImGui.GetMainViewport();
@@ -46,15 +47,15 @@ public class StatusBar : Component
         ImGui.PushStyleColor(ImGuiCol.Border, Vector4.One * 0.5f);
         ImGui.PushStyleVar(ImGuiStyleVar.WindowBorderSize, 1);
         ImGui.PushStyleVar(ImGuiStyleVar.WindowRounding, 0);
-        //ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, Vector2.Zero);
 
         var windowPadding = ImGui.GetStyle().WindowPadding;
         var textHeight = ImGui.GetTextLineHeightWithSpacing();
-        var windowSize = new Vector2(2 + viewport.WorkSize.X, textHeight + windowPadding.Y * 2);
-        var windowPosition = new Vector2(-1, 1 + viewport.WorkPos.Y + viewport.WorkSize.Y - windowSize.Y);
 
-        ImGui.SetNextWindowPos(windowPosition);
-        ImGui.SetNextWindowSize(windowSize);
+        CalculatedSize = new Vector2(viewport.WorkSize.X, textHeight + windowPadding.Y * 2);
+        var statusBarPosition = new Vector2(-1, 1 + viewport.WorkPos.Y + viewport.WorkSize.Y - CalculatedSize.Y);
+
+        ImGui.SetNextWindowPos(statusBarPosition);
+        ImGui.SetNextWindowSize(CalculatedSize + Vector2.UnitX * 2);
 
         if (!ImGui.Begin(Name, Flags))
         {
@@ -64,7 +65,9 @@ public class StatusBar : Component
         ImGui.PopStyleVar(2);
         ImGui.PopStyleColor();
 
-        ImGui.Text($"Viewport: {viewport.WorkPos} {viewport.WorkSize} | Network Status: {_networkStatus} {(_connectionDenied ? "(Connection Denied)" : string.Empty)}");
+        Vector2 workspaceSize = new(WorkspaceSize.X, WorkspaceSize.Y);
+        workspaceSize -= Vector2.UnitY * CalculatedSize.Y;
+        ImGui.Text($"Viewport: {WorkspacePosition} {workspaceSize} | Network Status: {_networkStatus} {(_connectionDenied ? "(Connection Denied)" : string.Empty)}");
 
         return true;
     }

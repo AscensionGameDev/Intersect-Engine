@@ -3,14 +3,16 @@ using ImGuiNET;
 using Intersect.Time;
 using System.Numerics;
 using Intersect.Client.Framework.Content;
+using Intersect.Numerics;
 
 namespace Intersect.Client.Framework.UserInterface.Components;
 
 public class Canvas : Window
 {
     protected const ImGuiWindowFlags CanvasFlags =
-        ImGuiWindowFlags.NoCollapse |
+        ImGuiWindowFlags.MenuBar |
         ImGuiWindowFlags.NoBringToFrontOnFocus |
+        ImGuiWindowFlags.NoCollapse |
         ImGuiWindowFlags.NoMove |
         ImGuiWindowFlags.NoNavFocus |
         ImGuiWindowFlags.NoResize |
@@ -29,11 +31,29 @@ public class Canvas : Window
 
     protected override IContentManager? ContentManager => _contentManager;
 
+    public override FloatRect WorkspaceBounds
+    {
+        get
+        {
+            var imguiViewport = ImGui.GetWindowViewport();
+            var size = imguiViewport.WorkSize;
+            size -= Vector2.UnitY * (StatusBar?.CalculatedSize.Y ?? 0);
+            return new(
+                imguiViewport.WorkPos,
+                size
+            );
+        }
+    }
+
     protected override void StyleBegin(FrameTime frameTime)
     {
-        ImGui.PushStyleVar(ImGuiStyleVar.WindowRounding, 0);
-        ImGui.PushStyleVar(ImGuiStyleVar.WindowBorderSize, 0);
-        ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, Vector2.Zero);
+        var viewport = ImGui.GetMainViewport();
+        ImGui.SetNextWindowPos(WorkspacePosition);
+        ImGui.SetNextWindowSize(WorkspaceSize);
+        ImGui.SetNextWindowViewport(viewport.ID);
+        ImGui.PushStyleVar(ImGuiStyleVar.WindowRounding, 0.0f);
+        ImGui.PushStyleVar(ImGuiStyleVar.WindowBorderSize, 0.0f);
+        ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, new Vector2());
     }
 
     protected override void StyleEnd(FrameTime frameTime)
