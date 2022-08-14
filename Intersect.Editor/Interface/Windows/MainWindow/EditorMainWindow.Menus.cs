@@ -1,5 +1,6 @@
 using Intersect.Client.Framework.UserInterface.Components;
 using Intersect.Editor.Localization;
+using Intersect.Editor.UserInterface.Components;
 using Intersect.Enums;
 using Intersect.Platform;
 
@@ -29,6 +30,8 @@ internal partial class EditorMainWindow
             Name = Strings.MenuBar.File.PackageGame,
         };
 
+        ImGuiDebugger.Create(Canvas, out var itemImGuiDebugger);
+
         var itemExit = new MenuItem
         {
             Name = Strings.General.Exit,
@@ -45,6 +48,7 @@ internal partial class EditorMainWindow
             {
                 itemPreferences,
                 itemPackageGame,
+                itemImGuiDebugger,
                 itemExit
             }
         };
@@ -145,7 +149,7 @@ internal partial class EditorMainWindow
             }
         };
 
-        var items = new List<MenuItem>
+        var items = new List<IMenuItem>
         {
             menuItemLocalization,
             new MenuItemSeparator(),

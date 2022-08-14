@@ -8,11 +8,39 @@ using Intersect.Time;
 
 namespace Intersect.Client.Framework.UserInterface.Components;
 
-public class MenuItem
+public interface IHasMenuItems
 {
+    List<IMenuItem> Items { get; set; }
+}
+
+public interface IMenuItem { }
+
+public class MenuItem : IHasMenuItems, IMenuItem
+{
+    private readonly List<IMenuItem> _items = new();
+
     public event EventHandler Selected;
 
     public bool Enabled { get; set; } = true;
+
+    public List<IMenuItem> Items
+    {
+        get => _items;
+        set
+        {
+            if (value == _items)
+            {
+                return;
+            }
+
+            _items.Clear();
+
+            if (value != default)
+            {
+                _items.AddRange(value);
+            }
+        }
+    }
 
     public LocalizedString Name { get; set; }
 
@@ -21,21 +49,25 @@ public class MenuItem
     internal void OnSelected() => Selected?.Invoke(this, EventArgs.Empty);
 }
 
-public class MenuItemSeparator : MenuItem { }
-
-public class Menu
+public class MenuItemOption : MenuItem
 {
-    private readonly List<MenuItem> _items;
+    public bool Checked { get; set; }
+}
+
+public class MenuItemSeparator : IMenuItem { }
+
+public class Menu : IHasMenuItems
+{
+    private readonly List<IMenuItem> _items = new();
 
     public Menu(LocalizedString name)
     {
-        _items = new List<MenuItem>();
         Name = name ?? throw new ArgumentNullException(nameof(name));
     }
 
     public bool Enabled { get; set; } = true;
 
-    public List<MenuItem> Items
+    public List<IMenuItem> Items
     {
         get => _items;
         set
@@ -103,22 +135,7 @@ public class MenuBar : Component, IList<Menu>
         {
             if (ImGui.BeginMenu(menu.Name, menu.Enabled))
             {
-                foreach (var menuItem in menu.Items)
-                {
-                    switch (menuItem)
-                    {
-                        case MenuItemSeparator _:
-                            ImGui.Separator();
-                            break;
-
-                        default:
-                            if (ImGui.MenuItem(menuItem.Name, menuItem.Shortcut, false, menuItem.Enabled))
-                            {
-                                menuItem.OnSelected();
-                            }
-                            break;
-                    }
-                }
+                LayoutItems(frameTime, menu);
                 ImGui.EndMenu();
             }
         }
@@ -137,6 +154,47 @@ public class MenuBar : Component, IList<Menu>
         else
         {
             ImGui.EndMenuBar();
+        }
+    }
+
+    protected virtual void LayoutItems(FrameTime frameTime, IHasMenuItems hasMenuItems)
+    {
+        foreach (var item in hasMenuItems.Items)
+        {
+            switch (item)
+            {
+                case MenuItemSeparator _:
+                    ImGui.Separator();
+                    break;
+
+                case MenuItemOption menuItemOption:
+                    var selected = menuItemOption.Checked;
+                    var result = ImGui.MenuItem(menuItemOption.Name, menuItemOption.Shortcut, ref selected, menuItemOption.Enabled);
+                    menuItemOption.Checked = selected;
+                    if (result)
+                    {
+                        menuItemOption.OnSelected();
+                    }
+                    break;
+
+                case MenuItem menuItem:
+                    if (menuItem.Items.Count > 0)
+                    {
+                        if (ImGui.BeginMenu(menuItem.Name, menuItem.Enabled))
+                        {
+                            LayoutItems(frameTime, menuItem);
+                            ImGui.EndMenu();
+                        }
+                    }
+                    else if (ImGui.MenuItem(menuItem.Name, menuItem.Shortcut, false, menuItem.Enabled))
+                    {
+                        menuItem.OnSelected();
+                    }
+                    break;
+
+                default:
+                    throw new NotImplementedException(item?.GetType().FullName);
+            }
         }
     }
 

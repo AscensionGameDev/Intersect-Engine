@@ -29,6 +29,12 @@ public partial class CommonGeneralNamespace : LocaleNamespace
     public readonly LocalizedString Ok = @"Ok";
 
     [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+    public readonly LocalizedString Open = @"Open";
+
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+    public readonly LocalizedString OpenX = @"Open {00}";
+
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
     public readonly LocalizedString Save = @"Save";
 
     [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]

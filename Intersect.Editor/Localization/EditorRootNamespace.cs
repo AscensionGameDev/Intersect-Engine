@@ -12,6 +12,9 @@ internal partial class EditorRootNamespace : RootNamespace
     public new readonly EditorApplicationNamespace Application = new();
 
     [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+    public readonly ImGuiNamespace ImGui = new();
+
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
     public readonly MenuBarNamespace MenuBar = new();
 
     [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]

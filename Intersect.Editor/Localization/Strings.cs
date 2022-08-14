@@ -15,6 +15,8 @@ internal partial class Strings
 
     public static CommonGeneralNamespace General => Root.General;
 
+    public static ImGuiNamespace ImGui => Root.ImGui;
+
     public static LicensingNamespace Licensing => Root.Licensing;
 
     public static MenuBarNamespace MenuBar => Root.MenuBar;
