@@ -137,6 +137,11 @@ public sealed class LocalizationLoader
 
         try
         {
+            if (!Directory.Exists(StringsDirectoryPath))
+            {
+                _ = Directory.CreateDirectory(StringsDirectoryPath);
+            }
+
             var json = Serialize(rootNamespace, Formatting.Indented);
             using var fileStream = File.OpenWrite(fileName);
             using var fileWriter = new StreamWriter(fileStream);
