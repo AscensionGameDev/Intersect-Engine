@@ -1,3 +1,5 @@
+using System.Numerics;
+
 using ImGuiNET;
 
 using Intersect.Client.Framework.Content;
@@ -13,15 +15,11 @@ namespace Intersect.Editor.Interface;
 
 public abstract class EditorWindow
 {
-    private const string NAME_CONTAINER_CANVAS = "container_canvas";
+    internal const string NAME_CONTAINER_CANVAS = "container_canvas";
     private const string NAME_CONTAINER_STATUS_BAR = "container_status_bar";
-    private const string NAME_CONTAINER_WORKSPACE = "container_workspace";
 
     private readonly Canvas _canvas;
     private readonly IContentManager _contentManager;
-    //private readonly MenuBar _menuBar;
-    //private readonly StatusBar _statusBar;
-    private uint _dockNodeId;
     private readonly PlatformWindow _platformWindow;
 
     protected EditorWindow(
@@ -35,13 +33,16 @@ public abstract class EditorWindow
 
         _canvas = new Canvas(NAME_CONTAINER_CANVAS, _contentManager)
         {
-            MenuBar = new MenuBar(EditorMenuAttribute.FindMenus(this))
-            {
-                IsMainMenuBar = true,
-            },
             StatusBar = new StatusBar(NAME_CONTAINER_STATUS_BAR),
         };
+
+        _canvas.MenuBar = new MenuBar(EditorMenuAttribute.FindMenus(this))
+        {
+            IsMainMenuBar = true,
+        };
     }
+
+    protected Canvas Canvas => _canvas;
 
     public IList<Component> Components => _canvas.Children;
 
@@ -65,7 +66,7 @@ public abstract class EditorWindow
 
     public void Close() => IsClosing = true;
 
-    public unsafe void Update(FrameTime frameTime)
+    public void Update(FrameTime frameTime)
     {
         if (IsClosing)
         {
@@ -76,31 +77,6 @@ public abstract class EditorWindow
         if (!string.Equals(_platformWindow.Title, Title, StringComparison.Ordinal))
         {
             _platformWindow.Title = Title;
-        }
-
-        if (_dockNodeId == default)
-        {
-            _dockNodeId = ImGui.GetID(NAME_CONTAINER_CANVAS);
-            if (ImGuiInternal.DockBuilderGetNode(_dockNodeId).NativePtr != default)
-            {
-                ImGuiInternal.DockBuilderRemoveNode(_dockNodeId);
-            }
-        }
-
-        if (ImGuiInternal.DockBuilderGetNode(_dockNodeId).NativePtr == default)
-        {
-            _ = ImGuiInternal.DockBuilderAddNode(_dockNodeId, ImGuiDockNodeFlags.None);
-
-            var viewport = ImGui.GetMainViewport();
-            ImGuiInternal.DockBuilderSetNodePos(_dockNodeId, default);
-            ImGuiInternal.DockBuilderSetNodeSize(_dockNodeId, viewport.WorkSize);
-
-            _ = ImGuiInternal.DockBuilderSplitNode(_dockNodeId, ImGuiDir.Up, 2, out var workspaceDockId, out var statusBarDockId);
-
-            ImGuiInternal.DockBuilderDockWindow(NAME_CONTAINER_WORKSPACE, workspaceDockId);
-            ImGuiInternal.DockBuilderDockWindow(NAME_CONTAINER_STATUS_BAR, statusBarDockId);
-
-            ImGuiInternal.DockBuilderFinish(_dockNodeId);
         }
 
         _canvas.Layout(frameTime);

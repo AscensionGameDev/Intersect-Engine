@@ -10,7 +10,6 @@ internal partial class LocalizationWindow : Window
 {
     public LocalizationWindow() : base(nameof(LocalizationWindow))
     {
-        Flags = ImGuiWindowFlags.AlwaysAutoResize;
         Title = Strings.Windows.Localization.Title;
     }
 

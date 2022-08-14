@@ -13,6 +13,7 @@ public class Canvas : Window
         ImGuiWindowFlags.MenuBar |
         ImGuiWindowFlags.NoBringToFrontOnFocus |
         ImGuiWindowFlags.NoCollapse |
+        ImGuiWindowFlags.NoDocking |
         ImGuiWindowFlags.NoMove |
         ImGuiWindowFlags.NoNavFocus |
         ImGuiWindowFlags.NoResize |
@@ -59,5 +60,8 @@ public class Canvas : Window
     protected override void StyleEnd(FrameTime frameTime)
     {
         ImGui.PopStyleVar(3);
+
+        var dockspaceId = ImGui.GetID("dockspace_main");
+        _ = ImGui.DockSpace(dockspaceId, default, ImGuiDockNodeFlags.PassthruCentralNode);
     }
 }

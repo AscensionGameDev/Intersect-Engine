@@ -16,7 +16,6 @@ internal partial class DescriptorWindow : Window
     {
         DescriptorType = descriptorType;
 
-        Flags = ImGuiWindowFlags.AlwaysAutoResize;
         Title = Strings.Windows.Descriptor.Title.ToString(DescriptorName);
 
         try

@@ -10,10 +10,11 @@ namespace Intersect.Client.Framework.UserInterface.Components;
 
 public class Window : Component
 {
-    public const ImGuiWindowFlags DefaultFlags = ImGuiWindowFlags.NoDocking;
+    public const ImGuiWindowFlags DefaultFlags = ImGuiWindowFlags.None;
 
     private ReactiveString _cacheTitleWithId;
 
+    private uint _dockId;
     private MenuBar? _menuBar;
     private bool _open;
     private StatusBar? _statusBar;
@@ -212,6 +213,11 @@ public class Window : Component
 
     protected override void LayoutDirty(FrameTime frameTime)
     {
+        if (_dockId != default)
+        {
+            return;
+        }
+
         var workspaceBounds = WorkspaceBounds;
 
         if (!workspaceBounds.Contains(Position))
@@ -228,6 +234,7 @@ public class Window : Component
 
     protected override void LayoutEnd(FrameTime frameTime)
     {
+        _dockId = ImGui.GetWindowDockID();
         var position = ImGui.GetWindowPos();
         var size = ImGui.GetWindowSize();
         Bounds = new(position, size);
