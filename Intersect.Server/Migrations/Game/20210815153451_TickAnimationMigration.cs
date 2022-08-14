@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+using Microsoft.EntityFrameworkCore.Migrations;
 using System;
 
 namespace Intersect.Server.Migrations.Game
@@ -10,7 +10,7 @@ namespace Intersect.Server.Migrations.Game
             migrationBuilder.AddColumn<Guid>(
                name: "TickAnimation",
                table: "Spells",
-               defaultValue: new Guid("00000000-0000-0000-0000-000000000000"),
+               defaultValue: migrationBuilder.IsSqlite() ? Guid.Empty.ToByteArray(): Guid.Empty,
                nullable: false);
         }
     }
