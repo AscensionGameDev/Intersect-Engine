@@ -20,6 +20,7 @@ public sealed class MonoGamePlatformWindow : PlatformWindow
     {
         _game = game;
         _gameWindow = window;
+        _gameWindow.ClientSizeChanged += (_, e) => OnResize(e);
 
         GraphicsDevice = graphicsDevice;
     }

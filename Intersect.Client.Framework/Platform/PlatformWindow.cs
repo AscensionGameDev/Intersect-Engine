@@ -5,6 +5,8 @@ namespace Intersect.Client.Framework.Platform;
 
 public abstract class PlatformWindow
 {
+    public event EventHandler Resized;
+
     public event EventHandler<TextInputEventArgs> TextInput;
 
     public abstract Rectangle Bounds { get; set; }
@@ -21,8 +23,9 @@ public abstract class PlatformWindow
 
     public abstract void Close();
 
-    protected void OnTextInput(TextInputEventArgs textInputEventArgs)
-    {
+    protected void OnResize(EventArgs eventArgs) =>
+        Resized?.Invoke(this, eventArgs);
+
+    protected void OnTextInput(TextInputEventArgs textInputEventArgs) =>
         TextInput?.Invoke(this, textInputEventArgs);
-    }
 }

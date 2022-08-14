@@ -31,6 +31,7 @@ public abstract class EditorWindow
     {
         _contentManager = contentManager;
         _platformWindow = platformWindow;
+        _platformWindow.Resized += (_, _) => _canvas?.Invalidate(true);
 
         _canvas = new Canvas(NAME_CONTAINER_CANVAS, _contentManager)
         {
