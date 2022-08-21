@@ -386,6 +386,24 @@ namespace Intersect.Client.Localization
 
             public static LocalizedString title = @"Character";
 
+            public static LocalizedString ExtraBuffs = @"Extra buffs:";
+
+            public static LocalizedString HpRegen = @"HP Regen: {00}%";
+
+            public static LocalizedString ManaRegen = @"Mana Regen: {00}%";
+
+            public static LocalizedString Lifesteal = @"Lifesteal: {00}%";
+
+            public static LocalizedString AttackSpeed = @"Attack Speed: {00}s";
+
+            public static LocalizedString ExtraExp = @"Extra Exp: {00}%";
+
+            public static LocalizedString Luck = @"Luck: {00}%";
+
+            public static LocalizedString Tenacity = @"Tenacity: {00}%";
+
+            public static LocalizedString CooldownReduction = @"Cooldown Reduction: {00}%";
+
         }
 
         public partial struct CharacterCreation
