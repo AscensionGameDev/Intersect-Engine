@@ -401,7 +401,7 @@ namespace Intersect.Client.Interface.Game.Character
             if (mPlayer != null)
             {
                 HpRegenAmount = mPlayer.VitalRegen[0];
-                mHpRegen.SetText(Strings.Character.HpRegen.ToString(HpRegenAmount));
+                mHpRegen.SetText(Strings.Character.HealthRegen.ToString(HpRegenAmount));
                 ManaRegenAmount = mPlayer.VitalRegen[1];
                 mManaRegen.SetText(Strings.Character.ManaRegen.ToString(ManaRegenAmount));
             }
@@ -424,69 +424,59 @@ namespace Intersect.Client.Interface.Game.Character
         /// <summary>
         /// Update Extra Buffs Effects like hp/mana regen and items effect types
         /// </summary>
-        /// <param name="itemId">Id of item to update extra buff</param>
+        /// <param name="itemId">Id of item to update extra buffs</param>
         public void UpdateExtraBuffs(Guid itemId)
         {
-            if (mHpRegen == null ||
-                mManaRegen == null ||
-                mLifeSteal == null ||
-                mAttackSpeed == null ||
-                mExtraExp == null ||
-                mLuck == null ||
-                mTenacity == null ||
-                mCooldownReduction == null
-            )
+            var item = ItemBase.Get(itemId);
+
+            if (item == null)
             {
                 return;
             }
 
-            var item = ItemBase.Get(itemId);
-            if (item != null)
+            //Getting HP and Mana Regen
+            if (item.VitalsRegen[0] != 0)
             {
-                //Getting HP and Mana Regen
-                if (item.VitalsRegen[0] != 0)
+                HpRegenAmount += item.VitalsRegen[0];
+                mHpRegen?.SetText(Strings.Character.HealthRegen.ToString(HpRegenAmount));
+            }
+
+            if (item.VitalsRegen[1] != 0)
+            {
+                ManaRegenAmount += item.VitalsRegen[1];
+                mManaRegen?.SetText(Strings.Character.ManaRegen.ToString(ManaRegenAmount));
+            }
+
+            //Getting extra buffs
+            if (item.Effect.Type != EffectType.None && item.Effect.Percentage > 0)
+            {
+                switch (item.Effect.Type)
                 {
-                    HpRegenAmount += item.VitalsRegen[0];
-                    mHpRegen.SetText(Strings.Character.HpRegen.ToString(HpRegenAmount));
-                }
+                    case EffectType.CooldownReduction:
+                        CooldownAmount += item.Effect.Percentage;
+                        mCooldownReduction?.SetText(Strings.Character.CooldownReduction.ToString(CooldownAmount));
 
-                if (item.VitalsRegen[1] != 0)
-                {
-                    ManaRegenAmount += item.VitalsRegen[1];
-                    mManaRegen.SetText(Strings.Character.ManaRegen.ToString(ManaRegenAmount));
-                }
+                        break;
+                    case EffectType.Lifesteal:
+                        LifeStealAmount += item.Effect.Percentage;
+                        mLifeSteal?.SetText(Strings.Character.Lifesteal.ToString(LifeStealAmount));
 
-                //Getting extra buffs
-                if (item.Effect.Type != EffectType.None && item.Effect.Percentage > 0)
-                {
-                    switch (item.Effect.Type)
-                    {
-                        case EffectType.CooldownReduction:
-                            CooldownAmount += item.Effect.Percentage;
-                            mCooldownReduction.SetText(Strings.Character.CooldownReduction.ToString(CooldownAmount));
+                        break;
+                    case EffectType.Tenacity:
+                        TenacityAmount += item.Effect.Percentage;
+                        mTenacity?.SetText(Strings.Character.Tenacity.ToString(TenacityAmount));
 
-                            break;
-                        case EffectType.Lifesteal:
-                            LifeStealAmount += item.Effect.Percentage;
-                            mLifeSteal.SetText(Strings.Character.Lifesteal.ToString(LifeStealAmount));
+                        break;
+                    case EffectType.Luck:
+                        LuckAmount += item.Effect.Percentage;
+                        mLuck?.SetText(Strings.Character.Luck.ToString(LuckAmount));
 
-                            break;
-                        case EffectType.Tenacity:
-                            TenacityAmount += item.Effect.Percentage;
-                            mTenacity.SetText(Strings.Character.Tenacity.ToString(TenacityAmount));
+                        break;
+                    case EffectType.EXP:
+                        ExtraExpAmount += item.Effect.Percentage;
+                        mExtraExp?.SetText(Strings.Character.ExtraExp.ToString(ExtraExpAmount));
 
-                            break;
-                        case EffectType.Luck:
-                            LuckAmount += item.Effect.Percentage;
-                            mLuck.SetText(Strings.Character.Luck.ToString(LuckAmount));
-
-                            break;
-                        case EffectType.EXP:
-                            ExtraExpAmount += item.Effect.Percentage;
-                            mExtraExp.SetText(Strings.Character.ExtraExp.ToString(ExtraExpAmount));
-
-                            break;
-                    }
+                        break;
                 }
             }
         }
