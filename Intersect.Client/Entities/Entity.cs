@@ -1710,7 +1710,9 @@ namespace Intersect.Client.Entities
                                 SpriteAnimation = SpriteAnimations.Weapon;
                             }
 
-                            if (AnimatedTextures.TryGetValue(SpriteAnimations.Shoot, out _) && item.ProjectileId != Guid.Empty)
+                            if (AnimatedTextures.TryGetValue(SpriteAnimations.Shoot, out _) &&
+                                item.ProjectileId != Guid.Empty &&
+                                item.WeaponSpriteOverride == null)
                             {
                                 SpriteAnimation = SpriteAnimations.Shoot;
                             }
@@ -1736,7 +1738,9 @@ namespace Intersect.Client.Entities
                         SpriteAnimation = SpriteAnimations.Cast;
                     }
 
-                    if (spell.SpellType == SpellTypes.CombatSpell && spell.Combat.TargetType == SpellTargetTypes.Projectile)
+                    if (spell.SpellType == SpellTypes.CombatSpell &&
+                        spell.Combat.TargetType == SpellTargetTypes.Projectile &&
+                        spell.CastSpriteOverride == null)
                     {
                         if (AnimatedTextures.TryGetValue(SpriteAnimations.Shoot, out _))
                         {
