@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -90,6 +90,8 @@ namespace Intersect.GameObjects
         public int AttackSpeedModifier { get; set; }
 
         public int AttackSpeedValue { get; set; }
+
+        public string AttackSpriteOverride { get; set; }
 
         public long BaseExp
         {

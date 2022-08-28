@@ -34,6 +34,7 @@ namespace Intersect.Editor.Forms.Editors
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmSpell));
             this.pnlContainer = new System.Windows.Forms.Panel();
             this.grpGeneral = new DarkUI.Controls.DarkGroupBox();
+            this.lblSpriteCastAnimation = new System.Windows.Forms.Label();
             this.btnAddFolder = new DarkUI.Controls.DarkButton();
             this.lblFolder = new System.Windows.Forms.Label();
             this.cmbFolder = new DarkUI.Controls.DarkComboBox();
@@ -175,6 +176,7 @@ namespace Intersect.Editor.Forms.Editors
             this.btnClearSearch = new DarkUI.Controls.DarkButton();
             this.txtSearch = new DarkUI.Controls.DarkTextBox();
             this.lstGameObjects = new Intersect.Editor.Forms.Controls.GameObjectList();
+            this.cmbCastSprite = new DarkUI.Controls.DarkComboBox();
             this.pnlContainer.SuspendLayout();
             this.grpGeneral.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picSpell)).BeginInit();
@@ -243,6 +245,8 @@ namespace Intersect.Editor.Forms.Editors
             // 
             this.grpGeneral.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.grpGeneral.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpGeneral.Controls.Add(this.cmbCastSprite);
+            this.grpGeneral.Controls.Add(this.lblSpriteCastAnimation);
             this.grpGeneral.Controls.Add(this.btnAddFolder);
             this.grpGeneral.Controls.Add(this.lblFolder);
             this.grpGeneral.Controls.Add(this.cmbFolder);
@@ -263,10 +267,19 @@ namespace Intersect.Editor.Forms.Editors
             this.grpGeneral.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpGeneral.Location = new System.Drawing.Point(2, 0);
             this.grpGeneral.Name = "grpGeneral";
-            this.grpGeneral.Size = new System.Drawing.Size(207, 299);
+            this.grpGeneral.Size = new System.Drawing.Size(207, 327);
             this.grpGeneral.TabIndex = 17;
             this.grpGeneral.TabStop = false;
             this.grpGeneral.Text = "General";
+            // 
+            // lblSpriteCastAnimation
+            // 
+            this.lblSpriteCastAnimation.AutoSize = true;
+            this.lblSpriteCastAnimation.Location = new System.Drawing.Point(6, 222);
+            this.lblSpriteCastAnimation.Name = "lblSpriteCastAnimation";
+            this.lblSpriteCastAnimation.Size = new System.Drawing.Size(90, 13);
+            this.lblSpriteCastAnimation.TabIndex = 60;
+            this.lblSpriteCastAnimation.Text = "Sprite Cast Anim.:";
             // 
             // btnAddFolder
             // 
@@ -312,7 +325,7 @@ namespace Intersect.Editor.Forms.Editors
             // 
             this.chkBound.AutoSize = true;
             this.chkBound.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.chkBound.Location = new System.Drawing.Point(9, 270);
+            this.chkBound.Location = new System.Drawing.Point(9, 301);
             this.chkBound.Name = "chkBound";
             this.chkBound.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.chkBound.Size = new System.Drawing.Size(63, 17);
@@ -333,9 +346,9 @@ namespace Intersect.Editor.Forms.Editors
             this.cmbHitAnimation.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cmbHitAnimation.ForeColor = System.Drawing.Color.Gainsboro;
             this.cmbHitAnimation.FormattingEnabled = true;
-            this.cmbHitAnimation.Location = new System.Drawing.Point(90, 241);
+            this.cmbHitAnimation.Location = new System.Drawing.Point(96, 273);
             this.cmbHitAnimation.Name = "cmbHitAnimation";
-            this.cmbHitAnimation.Size = new System.Drawing.Size(111, 21);
+            this.cmbHitAnimation.Size = new System.Drawing.Size(105, 21);
             this.cmbHitAnimation.TabIndex = 21;
             this.cmbHitAnimation.Text = null;
             this.cmbHitAnimation.TextPadding = new System.Windows.Forms.Padding(2);
@@ -354,9 +367,9 @@ namespace Intersect.Editor.Forms.Editors
             this.cmbCastAnimation.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cmbCastAnimation.ForeColor = System.Drawing.Color.Gainsboro;
             this.cmbCastAnimation.FormattingEnabled = true;
-            this.cmbCastAnimation.Location = new System.Drawing.Point(90, 214);
+            this.cmbCastAnimation.Location = new System.Drawing.Point(96, 246);
             this.cmbCastAnimation.Name = "cmbCastAnimation";
-            this.cmbCastAnimation.Size = new System.Drawing.Size(111, 21);
+            this.cmbCastAnimation.Size = new System.Drawing.Size(105, 21);
             this.cmbCastAnimation.TabIndex = 20;
             this.cmbCastAnimation.Text = null;
             this.cmbCastAnimation.TextPadding = new System.Windows.Forms.Padding(2);
@@ -386,7 +399,7 @@ namespace Intersect.Editor.Forms.Editors
             // lblHitAnimation
             // 
             this.lblHitAnimation.AutoSize = true;
-            this.lblHitAnimation.Location = new System.Drawing.Point(6, 244);
+            this.lblHitAnimation.Location = new System.Drawing.Point(6, 276);
             this.lblHitAnimation.Name = "lblHitAnimation";
             this.lblHitAnimation.Size = new System.Drawing.Size(72, 13);
             this.lblHitAnimation.TabIndex = 16;
@@ -395,11 +408,11 @@ namespace Intersect.Editor.Forms.Editors
             // lblCastAnimation
             // 
             this.lblCastAnimation.AutoSize = true;
-            this.lblCastAnimation.Location = new System.Drawing.Point(6, 217);
+            this.lblCastAnimation.Location = new System.Drawing.Point(6, 249);
             this.lblCastAnimation.Name = "lblCastAnimation";
-            this.lblCastAnimation.Size = new System.Drawing.Size(80, 13);
+            this.lblCastAnimation.Size = new System.Drawing.Size(87, 13);
             this.lblCastAnimation.TabIndex = 14;
-            this.lblCastAnimation.Text = "Cast Animation:";
+            this.lblCastAnimation.Text = "Extra Cast Anim.:";
             // 
             // cmbSprite
             // 
@@ -516,7 +529,7 @@ namespace Intersect.Editor.Forms.Editors
             this.grpSpellCost.Controls.Add(this.lblCastDuration);
             this.grpSpellCost.Controls.Add(this.lblCooldownDuration);
             this.grpSpellCost.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpSpellCost.Location = new System.Drawing.Point(3, 301);
+            this.grpSpellCost.Location = new System.Drawing.Point(3, 335);
             this.grpSpellCost.Name = "grpSpellCost";
             this.grpSpellCost.Size = new System.Drawing.Size(438, 143);
             this.grpSpellCost.TabIndex = 36;
@@ -771,7 +784,7 @@ namespace Intersect.Editor.Forms.Editors
             this.grpTargetInfo.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpTargetInfo.Location = new System.Drawing.Point(215, 105);
             this.grpTargetInfo.Name = "grpTargetInfo";
-            this.grpTargetInfo.Size = new System.Drawing.Size(225, 192);
+            this.grpTargetInfo.Size = new System.Drawing.Size(225, 222);
             this.grpTargetInfo.TabIndex = 19;
             this.grpTargetInfo.TabStop = false;
             this.grpTargetInfo.Text = "Targetting Info";
@@ -937,7 +950,7 @@ namespace Intersect.Editor.Forms.Editors
             this.grpCombat.Controls.Add(this.grpEffectDuration);
             this.grpCombat.Controls.Add(this.grpDamage);
             this.grpCombat.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpCombat.Location = new System.Drawing.Point(3, 448);
+            this.grpCombat.Location = new System.Drawing.Point(3, 485);
             this.grpCombat.Name = "grpCombat";
             this.grpCombat.Size = new System.Drawing.Size(440, 500);
             this.grpCombat.TabIndex = 39;
@@ -1877,7 +1890,7 @@ namespace Intersect.Editor.Forms.Editors
             this.grpEvent.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.grpEvent.Controls.Add(this.cmbEvent);
             this.grpEvent.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpEvent.Location = new System.Drawing.Point(3, 448);
+            this.grpEvent.Location = new System.Drawing.Point(3, 485);
             this.grpEvent.Name = "grpEvent";
             this.grpEvent.Size = new System.Drawing.Size(438, 48);
             this.grpEvent.TabIndex = 40;
@@ -1914,7 +1927,7 @@ namespace Intersect.Editor.Forms.Editors
             this.grpDash.Controls.Add(this.lblRange);
             this.grpDash.Controls.Add(this.scrlRange);
             this.grpDash.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpDash.Location = new System.Drawing.Point(3, 448);
+            this.grpDash.Location = new System.Drawing.Point(3, 485);
             this.grpDash.Name = "grpDash";
             this.grpDash.Size = new System.Drawing.Size(200, 181);
             this.grpDash.TabIndex = 38;
@@ -2011,7 +2024,7 @@ namespace Intersect.Editor.Forms.Editors
             this.grpWarp.Controls.Add(this.lblX);
             this.grpWarp.Controls.Add(this.lblMap);
             this.grpWarp.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpWarp.Location = new System.Drawing.Point(3, 448);
+            this.grpWarp.Location = new System.Drawing.Point(3, 485);
             this.grpWarp.Name = "grpWarp";
             this.grpWarp.Size = new System.Drawing.Size(247, 182);
             this.grpWarp.TabIndex = 35;
@@ -2340,6 +2353,27 @@ namespace Intersect.Editor.Forms.Editors
             this.lstGameObjects.Size = new System.Drawing.Size(191, 422);
             this.lstGameObjects.TabIndex = 32;
             // 
+            // cmbCastSprite
+            // 
+            this.cmbCastSprite.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.cmbCastSprite.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbCastSprite.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbCastSprite.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbCastSprite.DrawDropdownHoverOutline = false;
+            this.cmbCastSprite.DrawFocusRectangle = false;
+            this.cmbCastSprite.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cmbCastSprite.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbCastSprite.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbCastSprite.ForeColor = System.Drawing.Color.Gainsboro;
+            this.cmbCastSprite.FormattingEnabled = true;
+            this.cmbCastSprite.Location = new System.Drawing.Point(96, 219);
+            this.cmbCastSprite.Name = "cmbCastSprite";
+            this.cmbCastSprite.Size = new System.Drawing.Size(105, 21);
+            this.cmbCastSprite.TabIndex = 61;
+            this.cmbCastSprite.Text = null;
+            this.cmbCastSprite.TextPadding = new System.Windows.Forms.Padding(2);
+            this.cmbCastSprite.SelectedIndexChanged += new System.EventHandler(this.cmbCastSprite_SelectedIndexChanged);
+            // 
             // FrmSpell
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2570,5 +2604,7 @@ namespace Intersect.Editor.Forms.Editors
         private System.Windows.Forms.Label lblManaDamage;
         private System.Windows.Forms.Label lblTickAnimation;
         private DarkComboBox cmbTickAnimation;
+        private System.Windows.Forms.Label lblSpriteCastAnimation;
+        private DarkComboBox cmbCastSprite;
     }
 }

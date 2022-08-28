@@ -120,6 +120,12 @@ namespace Intersect.Editor.Forms.Editors
             var spriteNames = GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Entity);
             cmbTransform.Items.AddRange(spriteNames);
 
+            cmbCastSprite.Items.Clear();
+            cmbCastSprite.Items.Add(Strings.General.None);
+            cmbCastSprite.Items.AddRange(
+                GameContentManager.GetOverridesFor(GameContentManager.TextureType.Entity, "cast").ToArray()
+            );
+
             nudWarpX.Maximum = (int) Options.MapWidth;
             nudWarpY.Maximum = (int) Options.MapHeight;
 
@@ -168,6 +174,7 @@ namespace Intersect.Editor.Forms.Editors
             lblIcon.Text = Strings.SpellEditor.icon;
             lblDesc.Text = Strings.SpellEditor.description;
             lblCastAnimation.Text = Strings.SpellEditor.castanimation;
+            lblSpriteCastAnimation.Text = Strings.SpellEditor.CastSpriteOverride;
             lblHitAnimation.Text = Strings.SpellEditor.hitanimation;
             chkBound.Text = Strings.SpellEditor.bound;
 
@@ -290,6 +297,9 @@ namespace Intersect.Editor.Forms.Editors
                 cmbCastAnimation.SelectedIndex = AnimationBase.ListIndex(mEditorItem.CastAnimationId) + 1;
                 cmbHitAnimation.SelectedIndex = AnimationBase.ListIndex(mEditorItem.HitAnimationId) + 1;
                 cmbTickAnimation.SelectedIndex = AnimationBase.ListIndex(mEditorItem.TickAnimationId) + 1;
+                cmbCastSprite.SelectedIndex = cmbCastSprite.FindString(
+                        TextUtils.NullToNone(mEditorItem.CastSpriteOverride)
+                );
 
                 chkBound.Checked = mEditorItem.Bound;
 
@@ -707,6 +717,11 @@ namespace Intersect.Editor.Forms.Editors
         {
             var frm = new FrmDynamicRequirements(mEditorItem.CastingRequirements, RequirementType.Spell);
             frm.ShowDialog();
+        }
+
+        private void cmbCastSprite_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            mEditorItem.CastSpriteOverride = TextUtils.SanitizeNone(cmbCastSprite?.Text);
         }
 
         private void cmbCastAnimation_SelectedIndexChanged(object sender, EventArgs e)

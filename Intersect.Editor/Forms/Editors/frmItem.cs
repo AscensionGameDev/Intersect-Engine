@@ -116,6 +116,11 @@ namespace Intersect.Editor.Forms.Editors
             var itemnames = GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Item);
             cmbPic.Items.AddRange(itemnames);
 
+            cmbWeaponSprite.Items.Clear();
+            cmbWeaponSprite.Items.Add(Strings.General.None);
+            cmbWeaponSprite.Items.AddRange(
+                GameContentManager.GetOverridesFor(GameContentManager.TextureType.Entity, "weapon").ToArray()
+            );
             cmbAttackAnimation.Items.Clear();
             cmbAttackAnimation.Items.Add(Strings.General.None);
             cmbAttackAnimation.Items.AddRange(AnimationBase.Names);
@@ -243,6 +248,7 @@ namespace Intersect.Editor.Forms.Editors
             lblScalingStat.Text = Strings.ItemEditor.scalingstat;
             lblScalingAmount.Text = Strings.ItemEditor.scalingamount;
             lblAttackAnimation.Text = Strings.ItemEditor.attackanimation;
+            lblSpriteAttack.Text = Strings.ItemEditor.AttackSpriteOverride;
             lblProjectile.Text = Strings.ItemEditor.projectile;
             lblToolType.Text = Strings.ItemEditor.tooltype;
 
@@ -369,6 +375,9 @@ namespace Intersect.Editor.Forms.Editors
                 nudDeathDropChance.Value = mEditorItem.DropChanceOnDeath;
                 cmbToolType.SelectedIndex = mEditorItem.Tool + 1;
                 cmbAttackAnimation.SelectedIndex = AnimationBase.ListIndex(mEditorItem.AttackAnimationId) + 1;
+                cmbWeaponSprite.SelectedIndex = cmbWeaponSprite.FindString(
+                        TextUtils.NullToNone(mEditorItem.WeaponSpriteOverride)
+                );
                 nudBlockChance.Value = mEditorItem.BlockChance;
                 nudBlockAmount.Value = mEditorItem.BlockAmount;
                 nudBlockDmgAbs.Value = mEditorItem.BlockAbsorption;
@@ -696,6 +705,11 @@ namespace Intersect.Editor.Forms.Editors
                     toolStripItemNew_Click(null, null);
                 }
             }
+        }
+
+        private void cmbWeaponSprite_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            mEditorItem.WeaponSpriteOverride = TextUtils.SanitizeNone(cmbWeaponSprite?.Text);
         }
 
         private void cmbAttackAnimation_SelectedIndexChanged(object sender, EventArgs e)
