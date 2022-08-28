@@ -31,7 +31,22 @@ namespace Intersect.Client.Entities
 
         public delegate void InventoryUpdated();
 
-        public Guid Class { get; set; }
+        private Guid _class;
+
+        public Guid Class
+        {
+            get => _class;
+            set
+            {
+                if (_class == value)
+                {
+                    return;
+                }
+
+                _class = value;
+                LoadAnimationTexture(Sprite ?? TransformedSprite, SpriteAnimations.Attack);
+            }
+        }
 
         public long Experience { get; set; } = 0;
 
@@ -113,7 +128,7 @@ namespace Intersect.Client.Entities
         /// <summary>
         /// Obtains our rank and permissions from the game config
         /// </summary>
-        public GuildRank GuildRank => IsInGuild ? Options.Instance.Guild.Ranks[Math.Max(0, Math.Min(this.Rank, Options.Instance.Guild.Ranks.Length - 1))] : null;
+        public GuildRank GuildRank => IsInGuild ? Options.Instance.Guild.Ranks[Math.Max(0, Math.Min(Rank, Options.Instance.Guild.Ranks.Length - 1))] : null;
 
         /// <summary>
         /// Contains a record of all members of this player's guild.
@@ -300,11 +315,11 @@ namespace Intersect.Client.Entities
             {
                 if (this == Globals.Me && playerPacket.Equipment.InventorySlots != null)
                 {
-                    this.MyEquipment = playerPacket.Equipment.InventorySlots;
+                    MyEquipment = playerPacket.Equipment.InventorySlots;
                 }
                 else if (playerPacket.Equipment.ItemIds != null)
                 {
-                    this.Equipment = playerPacket.Equipment.ItemIds;
+                    Equipment = playerPacket.Equipment.ItemIds;
                 }
             }
 
