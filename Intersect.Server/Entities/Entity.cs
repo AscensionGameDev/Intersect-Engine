@@ -27,7 +27,7 @@ using Newtonsoft.Json;
 namespace Intersect.Server.Entities
 {
 
-    public partial class Entity : IDisposable
+    public abstract partial class Entity : IDisposable
     {
 
         //Instance Values
@@ -2685,83 +2685,59 @@ namespace Intersect.Server.Entities
             Dead = true;
         }
 
-        private void DropItems(Entity killer, bool sendUpdate = true)
+        protected virtual bool ShouldDropItem(Entity killer, ItemBase itemDescriptor, Item item, float dropRateModifier, out Guid lootOwner)
+        {
+            lootOwner = default;
+
+            var dropRate = item.DropChance * 1000 * dropRateModifier;
+            var dropResult = Randomization.Next(1, 100001);
+            if (dropResult >= dropRate)
+            {
+                return false;
+            }
+
+            // Set the attributes for this item.
+            item.Set(new Item(item.ItemId, item.Quantity, true));
+            return true;
+        }
+
+        protected virtual void OnDropItem(InventorySlot slot, Item drop) { }
+
+        protected virtual void DropItems(Entity killer, bool sendUpdate = true)
         {
             // Drop items
-            for (var n = 0; n < Items.Count; n++)
+            foreach (var slot in Items)
             {
-                if (Items[n] == null)
+                if (slot == default)
                 {
                     continue;
                 }
 
                 // Don't mess with the actual object.
-                var item = Items[n].Clone();
+                var drop = slot.Clone();
                 
-                var itemBase = ItemBase.Get(item.ItemId);
-                if (itemBase == null)
+                var itemDescriptor = ItemBase.Get(drop.ItemId);
+                if (itemDescriptor == default)
                 {
                     continue;
                 }
 
-                //Don't lose bound items on death for players.
-                if (this is Player)
-                {
-                    if (itemBase.DropChanceOnDeath == 0)
-                    {
-                        continue;
-                    }
-                }
-
-                //Calculate the killers luck (If they are a player)
                 var playerKiller = killer as Player;
-                var luck = 1 + playerKiller?.GetEquipmentBonusEffect(EffectType.Luck) / 100f;
-
-                Guid lootOwner = Guid.Empty;
-                if (this is Player)
+                var dropRateModifier = 1 + (playerKiller?.GetEquipmentBonusEffect(EffectType.Luck) / 100f ?? 0);
+                if (!ShouldDropItem(killer, itemDescriptor, drop, dropRateModifier, out Guid lootOwner))
                 {
-                    //Player drop rates
-                    if (Randomization.Next(1, 101) >= itemBase.DropChanceOnDeath * luck)
-                    {
-                        continue;
-                    }
-
-                    // It's a player, try and set ownership to the player that killed them.. If it was a player.
-                    // Otherwise set to self, so they can come and reclaim their items.
-                    lootOwner = playerKiller?.Id ?? Id;
-                }
-                else
-                {
-                    //Npc drop rates
-                    var randomChance = Randomization.Next(1, 100001);
-                    if (randomChance >= (item.DropChance * 1000) * luck)
-                    {
-                        continue;
-                    }
-
-                    // Set owner to player that killed this, if there is any.
-                    if (playerKiller != null && this is Npc)
-                    {
-                        // Yes, so set the owner to the player that killed it.
-                        lootOwner = playerKiller.Id;
-                    }
-
-                    // Set the attributes for this item.
-                    item.Set(new Item(item.ItemId, item.Quantity, true));
+                    continue;
                 }
 
                 // Spawn the actual item!
                 if (MapController.TryGetInstanceFromMap(MapId, MapInstanceId, out var instance))
                 {
-                    instance.SpawnItem(X, Y, item, item.Quantity, lootOwner, sendUpdate);
+                    instance.SpawnItem(X, Y, drop, drop.Quantity, lootOwner, sendUpdate);
                 }
 
-                // Remove the item from inventory if a player.
-                var player = this as Player;
-                player?.TryTakeItem(Items[n], item.Quantity);
+                // Process the drop (for players this would remove it from their inventory)
+                OnDropItem(slot, drop);
             }
-
-
         }
 
         public virtual bool IsDead()
