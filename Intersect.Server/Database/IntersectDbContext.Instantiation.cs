@@ -22,17 +22,14 @@ public partial class IntersectDbContext<TDbContext>
 
     protected IntersectDbContext(DatabaseContextOptions databaseContextOptions)
     {
-        DatabaseContextOptions = databaseContextOptions with
+        ContextOptions = databaseContextOptions with
         {
             ConnectionStringBuilder = databaseContextOptions.ConnectionStringBuilder ??
                                       _fallbackContextOptions.ConnectionStringBuilder
         };
 
-        Console.Error.WriteLine(databaseContextOptions);
-        Console.Error.WriteLine(DatabaseContextOptions);
-
-        base.ChangeTracker.AutoDetectChangesEnabled = databaseContextOptions.AutoDetectChanges || ReadOnly;
-        base.ChangeTracker.LazyLoadingEnabled = databaseContextOptions.LazyLoading || !ReadOnly;
+        base.ChangeTracker.AutoDetectChangesEnabled = databaseContextOptions.AutoDetectChanges || IsReadOnly;
+        base.ChangeTracker.LazyLoadingEnabled = databaseContextOptions.LazyLoading || !IsReadOnly;
     }
 
     private static DbContextConstructor CreateConstructorDelegate<TContextType>(

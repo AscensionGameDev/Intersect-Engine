@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using Intersect.Config;
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using SqlKata.Execution;
@@ -42,8 +43,19 @@ public sealed class SqliteNet6GuidPatch
     public static void ApplyTo<TContext>(TContext context)
         where TContext : IntersectDbContext<TContext>
     {
-        var queryCompiler = context.DatabaseType.CreateQueryCompiler();
-        var dbConnection = context.Database.GetDbConnection();
+        var originalConnectionStringBuilder = context.ContextOptions.ConnectionStringBuilder;
+        if (originalConnectionStringBuilder is not SqliteConnectionStringBuilder sqliteConnectionStringBuilder)
+        {
+            throw new InvalidOperationException();
+        }
+
+        sqliteConnectionStringBuilder.ForeignKeys = false;
+        var recreatedContext = IntersectDbContext<TContext>.Create(
+            context.ContextOptions with { ConnectionStringBuilder = sqliteConnectionStringBuilder }
+        );
+
+        var queryCompiler = recreatedContext.DatabaseType.CreateQueryCompiler();
+        var dbConnection = recreatedContext.Database.GetDbConnection();
         var queryFactory = new QueryFactory(dbConnection, queryCompiler);
         var tablesInDatabase =
             queryFactory

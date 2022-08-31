@@ -1,3 +1,4 @@
+using Intersect.Config;
 using Intersect.Server.Database.Logging.Entities;
 using Intersect.Server.Database.Logging.Seed;
 using Microsoft.Data.Sqlite;
@@ -13,19 +14,25 @@ public sealed class MySqlLoggingContext : LoggingContext, IMySqlDbContext
     /// <inheritdoc />
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        Console.WriteLine("OnConfiguring");
         base.OnConfiguring(optionsBuilder);
     }
 }
 
 public sealed class SqliteLoggingContext : LoggingContext, ISqliteDbContext
 {
+    public static readonly DatabaseContextOptions DefaultContextOptions = new()
+    {
+        ConnectionStringBuilder = new SqliteConnectionStringBuilder($@"Data Source={DbInterface.LoggingDbFilename}"),
+        DatabaseType = DatabaseType.Sqlite
+    };
+
+    public SqliteLoggingContext() : base(DefaultContextOptions) { }
+
     public SqliteLoggingContext(DatabaseContextOptions databaseContextOptions) : base(databaseContextOptions) { }
 
     /// <inheritdoc />
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        Console.WriteLine("OnConfiguring");
         base.OnConfiguring(optionsBuilder);
     }
 }

@@ -20,13 +20,13 @@ public abstract partial class IntersectDbContext<TDbContext> : DbContext, ISeeda
 
     internal Type ContextType => typeof(TDbContext);
 
-    public DatabaseContextOptions DatabaseContextOptions { get; }
+    public DatabaseContextOptions ContextOptions { get; }
 
-    public DbConnectionStringBuilder ConnectionStringBuilder => DatabaseContextOptions.ConnectionStringBuilder;
+    public DbConnectionStringBuilder ConnectionStringBuilder => ContextOptions.ConnectionStringBuilder;
 
-    public DatabaseType DatabaseType => DatabaseContextOptions.DatabaseType;
+    public DatabaseType DatabaseType => ContextOptions.DatabaseType;
 
-    public bool ReadOnly => DatabaseContextOptions.ReadOnly;
+    public bool IsReadOnly => ContextOptions.ReadOnly;
 
     public IReadOnlyCollection<string> AllMigrations =>
         (Database?.GetMigrations()?.ToList() ?? new())
@@ -68,17 +68,17 @@ public abstract partial class IntersectDbContext<TDbContext> : DbContext, ISeeda
     {
         base.OnConfiguring(optionsBuilder);
 
-        var queryTrackingBehavior = DatabaseContextOptions.QueryTrackingBehavior ??
-                                    (DatabaseContextOptions.ReadOnly && !DatabaseContextOptions.ExplicitLoad
+        var queryTrackingBehavior = ContextOptions.QueryTrackingBehavior ??
+                                    (ContextOptions.ReadOnly && !ContextOptions.ExplicitLoad
                                         ? QueryTrackingBehavior.NoTracking
                                         : QueryTrackingBehavior.TrackAll);
         _ = optionsBuilder
-            .EnableDetailedErrors(DatabaseContextOptions.EnableDetailedErrors)
-            .EnableSensitiveDataLogging(DatabaseContextOptions.EnableSensitiveDataLogging)
-            .UseLoggerFactory(DatabaseContextOptions.LoggerFactory)
+            .EnableDetailedErrors(ContextOptions.EnableDetailedErrors)
+            .EnableSensitiveDataLogging(ContextOptions.EnableSensitiveDataLogging)
+            .UseLoggerFactory(ContextOptions.LoggerFactory)
             .UseQueryTrackingBehavior(queryTrackingBehavior);
 
-        var connectionString = ConnectionStringBuilder.ToString();
+        var connectionString = ConnectionStringBuilder.ConnectionString;
         switch (DatabaseType)
         {
             case DatabaseType.SQLite:
@@ -108,16 +108,6 @@ public abstract partial class IntersectDbContext<TDbContext> : DbContext, ISeeda
         base.ConfigureConventions(configurationBuilder);
 
         var idConverterGenericType = typeof(IdGuidConverter<>);
-
-        // switch (DatabaseType)
-        // {
-        //     case DatabaseType.SQLite:
-        //         configurationBuilder
-        //             .Properties<Guid>()
-        //             .HaveConversion<GuidBinaryConverter>();
-        //         idConverterGenericType = typeof(IdBinaryConverter<>);
-        //         break;
-        // }
 
         var idTypes = Id<object>.FindDerivedTypes();
         foreach (var idType in idTypes)
@@ -175,7 +165,7 @@ public abstract partial class IntersectDbContext<TDbContext> : DbContext, ISeeda
 
     public override int SaveChanges()
     {
-        if (ReadOnly)
+        if (IsReadOnly)
             throw new InvalidOperationException("Cannot save changes on a read only context!");
 
         return base.SaveChanges();
@@ -183,7 +173,7 @@ public abstract partial class IntersectDbContext<TDbContext> : DbContext, ISeeda
 
     public override int SaveChanges(bool acceptAllChangesOnSuccess)
     {
-        if (ReadOnly)
+        if (IsReadOnly)
             throw new InvalidOperationException("Cannot save changes on a read only context!");
 
         return base.SaveChanges(acceptAllChangesOnSuccess);
@@ -192,14 +182,14 @@ public abstract partial class IntersectDbContext<TDbContext> : DbContext, ISeeda
     public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess,
         CancellationToken cancellationToken = default)
     {
-        if (ReadOnly)
+        if (IsReadOnly)
             throw new InvalidOperationException("Cannot save changes on a read only context!");
         return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
     }
 
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
-        if (ReadOnly)
+        if (IsReadOnly)
             throw new InvalidOperationException("Cannot save changes on a read only context!");
 
         return base.SaveChangesAsync(cancellationToken);

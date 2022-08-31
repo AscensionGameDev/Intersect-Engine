@@ -13,8 +13,6 @@ using Intersect.Server.Database.GameData.Seeds;
 using Intersect.Server.Maps;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using MySqlConnector;
 
 namespace Intersect.Server.Database.GameData;
 
@@ -47,10 +45,6 @@ public sealed class SqliteGameContext : GameContext, ISqliteDbContext
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         base.OnConfiguring(optionsBuilder);
-
-        optionsBuilder.UseSqlite(
-            DatabaseContextOptions.ConnectionStringBuilder.ConnectionString
-        );
     }
 }
 

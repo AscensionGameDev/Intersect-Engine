@@ -76,7 +76,7 @@ public sealed class MigrationScheduler<TContext>
                 throw new InvalidOperationException($"Failed to create instance of data migration: {scheduledDataMigration.MigratorType.FullName}");
             }
 
-            dataMigration.Up(_context.DatabaseContextOptions);
+            dataMigration.Up(_context.ContextOptions);
 
             scheduleSegment = scheduleSegment
                 .Skip(1)

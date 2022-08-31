@@ -1,5 +1,6 @@
 using System.Data.Common;
 
+using Intersect.Config;
 using Intersect.Server.Database.PlayerData.Api;
 using Intersect.Server.Database.PlayerData.Migrations;
 using Intersect.Server.Database.PlayerData.Players;
@@ -19,19 +20,25 @@ public sealed class MySqlPlayerContext : PlayerContext, IMySqlDbContext
     /// <inheritdoc />
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        Console.WriteLine("OnConfiguring");
         base.OnConfiguring(optionsBuilder);
     }
 }
 
 public sealed class SqlitePlayerContext : PlayerContext, ISqliteDbContext
 {
+    public static readonly DatabaseContextOptions DefaultContextOptions = new()
+    {
+        ConnectionStringBuilder = new SqliteConnectionStringBuilder($@"Data Source={DbInterface.PlayersDbFilename}"),
+        DatabaseType = DatabaseType.Sqlite
+    };
+
+    public SqlitePlayerContext() : base(DefaultContextOptions) { }
+
     public SqlitePlayerContext(DatabaseContextOptions databaseContextOptions) : base(databaseContextOptions) { }
 
     /// <inheritdoc />
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        Console.WriteLine("OnConfiguring");
         base.OnConfiguring(optionsBuilder);
     }
 }
