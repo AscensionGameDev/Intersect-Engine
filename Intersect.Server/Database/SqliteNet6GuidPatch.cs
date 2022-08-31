@@ -112,36 +112,30 @@ public sealed class SqliteNet6GuidPatch
                                 column => column.Key,
                                 column =>
                                 {
-                                    if (column.Value is string @string && Guid.TryParse(@string, out _))
+                                    switch (column.Value)
                                     {
-                                        return @string.ToUpperInvariant();
+                                        case string @string
+                                            when Guid.TryParse(@string, out _): return @string.ToUpperInvariant();
+                                        case null: return column.Value;
+                                        case byte[] data:
+                                            switch (data.Length)
+                                            {
+                                                case 0: return null;
+                                                case 16:
+                                                {
+                                                    var guid = new Guid(data);
+                                                    return Guid.Empty != guid ||
+                                                           notNullLookup.TryGetValue(column.Key, out var notNull) && notNull
+                                                        ? guid.ToString().ToUpperInvariant()
+                                                        : null;
+                                                }
+                                                default: return column.Value;
+                                            }
+
+                                        default:
+                                            throw new InvalidOperationException(
+                                                $"Expected byte[], received: '{column.Value}'");
                                     }
-
-                                    if (column.Value is not byte[] data)
-                                    {
-                                        throw new InvalidOperationException(
-                                            $"Expected byte[], received: '{column.Value}'");
-                                    }
-
-                                    var value = data.Length switch
-                                    {
-                                        0 => null,
-                                        16 => new Guid(data),
-                                        36 => column.Value,
-                                        _ => throw new InvalidOperationException(
-                                            $"Expected blob of 0/16/36 bytes, received {data.Length}"
-                                        )
-                                    };
-
-                                    if (value is not Guid guid)
-                                    {
-                                        return value;
-                                    }
-
-                                    return Guid.Empty != guid ||
-                                           notNullLookup.TryGetValue(column.Key, out var notNull) && notNull
-                                        ? guid.ToString().ToUpperInvariant()
-                                        : null;
                                 }
                             );
                             return (convertedRow, row["Id"]);
