@@ -6777,6 +6777,56 @@ namespace Intersect.Server.Entities
 
         }
 
+        public override void DropItems(Entity killer, bool sendUpdate = true)
+        {
+            // Drop items
+            for (var n = 0; n < Items.Count; n++)
+            {
+                if (Items[n] == null)
+                {
+                    continue;
+                }
+
+                // Don't mess with the actual object.
+                var item = Items[n].Clone();
+
+                var itemBase = ItemBase.Get(item.ItemId);
+                if (itemBase == null)
+                {
+                    continue;
+                }
+
+                //Don't lose bound items on death for players.
+                if (itemBase.DropChanceOnDeath == 0)
+                {
+                    continue;
+                }
+
+                //Calculate the killers luck (If they are a player)
+                var playerKiller = killer as Player;
+                var luck = 1 + playerKiller?.GetEquipmentBonusEffect(EffectType.Luck) / 100f;
+
+                //Player drop rates
+                if (Randomization.Next(1, 101) >= itemBase.DropChanceOnDeath * luck)
+                {
+                    continue;
+                }
+
+                // It's a player, try and set ownership to the player that killed them.. If it was a player.
+                // Otherwise set to self, so they can come and reclaim their items.
+                Guid lootOwner = playerKiller?.Id ?? Id;
+
+                // Spawn the actual item!
+                if (MapController.TryGetInstanceFromMap(MapId, MapInstanceId, out var instance))
+                {
+                    instance.SpawnItem(X, Y, item, item.Quantity, lootOwner, sendUpdate);
+                }
+
+                // Remove the item from inventory if a player.
+                TryTakeItem(Items[n], item.Quantity);
+            }
+        }
+
         //TODO: Clean all of this stuff up
 
         #region Temporary Values
