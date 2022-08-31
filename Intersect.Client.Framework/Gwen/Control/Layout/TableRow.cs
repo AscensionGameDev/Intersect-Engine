@@ -352,7 +352,8 @@ namespace Intersect.Client.Framework.Gwen.Control.Layout
         /// </summary>
         /// <param name="column">Column number.</param>
         /// <param name="text">Text to set.</param>
-        public void SetCellText(int column, string text)
+        /// <param name="enableMouseInput">Determines whether mouse input should be enabled for the cell.</param>
+        public void SetCellText(int column, string text, bool enableMouseInput = false)
         {
             if (null == mColumns[column])
             {
@@ -360,6 +361,7 @@ namespace Intersect.Client.Framework.Gwen.Control.Layout
             }
 
             mColumns[column].Text = text;
+            mColumns[column].MouseInputEnabled = enableMouseInput;
         }
 
         /// <summary>
