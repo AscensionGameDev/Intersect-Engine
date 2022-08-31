@@ -62,6 +62,11 @@ namespace Intersect.Client.Entities.Events
             _drawCompletedWithoutTexture = Graphic.Type != EventGraphicType.Tileset;
 
             base.Load(packet);
+
+            if (!string.IsNullOrEmpty(Graphic?.Filename))
+            {
+                Sprite = Graphic.Filename;
+            }
         }
 
         public override bool Update()
@@ -77,11 +82,6 @@ namespace Intersect.Client.Entities.Events
 
         protected bool TryEnsureTexture(out GameTexture texture)
         {
-            if (Graphic != null && !string.IsNullOrEmpty(Graphic.Filename) && Sprite != Graphic.Filename)
-            {
-                Sprite = Graphic.Filename;
-            }
-
             if (_drawCompletedWithoutTexture)
             {
                 texture = Texture;
