@@ -15,17 +15,16 @@ namespace Intersect.Server.Migrations.MySql.Player
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "6.0.7");
+            modelBuilder.HasAnnotation("ProductVersion", "2.1.3-rtm-32065");
 
             modelBuilder.Entity("Intersect.Server.Database.PlayerData.Api.RefreshToken", b =>
                 {
-                    b.Property<byte[]>("Id")
-                        .HasColumnType("BLOB")
-                        .HasColumnOrder(0);
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
 
-                    b.Property<byte[]>("ClientId")
-                        .IsRequired()
-                        .HasColumnType("BLOB");
+                    b.Property<Guid>("ClientId")
+                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("Expires")
                         .HasColumnType("TEXT");
@@ -41,25 +40,24 @@ namespace Intersect.Server.Migrations.MySql.Player
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<byte[]>("TicketId")
-                        .IsRequired()
-                        .HasColumnType("BLOB");
+                    b.Property<Guid>("TicketId")
+                        .HasColumnType("TEXT");
 
-                    b.Property<byte[]>("UserId")
-                        .IsRequired()
-                        .HasColumnType("BLOB");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("RefreshTokens");
+                    b.ToTable("RefreshTokens", (string)null);
                 });
 
             modelBuilder.Entity("Intersect.Server.Database.PlayerData.Ban", b =>
                 {
-                    b.Property<byte[]>("Id")
-                        .HasColumnType("BLOB");
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Banner")
                         .HasColumnType("TEXT");
@@ -76,9 +74,8 @@ namespace Intersect.Server.Migrations.MySql.Player
                     b.Property<DateTime>("StartTime")
                         .HasColumnType("TEXT");
 
-                    b.Property<byte[]>("UserId")
-                        .IsRequired()
-                        .HasColumnType("BLOB")
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("TEXT")
                         .HasColumnName("PlayerId");
 
                     b.HasKey("Id");
@@ -86,13 +83,14 @@ namespace Intersect.Server.Migrations.MySql.Player
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("Bans");
+                    b.ToTable("Bans", (string)null);
                 });
 
             modelBuilder.Entity("Intersect.Server.Database.PlayerData.Mute", b =>
                 {
-                    b.Property<byte[]>("Id")
-                        .HasColumnType("BLOB");
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("EndTime")
                         .HasColumnType("TEXT");
@@ -109,9 +107,8 @@ namespace Intersect.Server.Migrations.MySql.Player
                     b.Property<DateTime>("StartTime")
                         .HasColumnType("TEXT");
 
-                    b.Property<byte[]>("UserId")
-                        .IsRequired()
-                        .HasColumnType("BLOB")
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("TEXT")
                         .HasColumnName("PlayerId");
 
                     b.HasKey("Id");
@@ -119,37 +116,37 @@ namespace Intersect.Server.Migrations.MySql.Player
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("Mutes");
+                    b.ToTable("Mutes", (string)null);
                 });
 
             modelBuilder.Entity("Intersect.Server.Database.PlayerData.Players.Bag", b =>
                 {
-                    b.Property<byte[]>("Id")
-                        .HasColumnType("BLOB");
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("SlotCount")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Bags");
+                    b.ToTable("Bags", (string)null);
                 });
 
             modelBuilder.Entity("Intersect.Server.Database.PlayerData.Players.BagSlot", b =>
                 {
-                    b.Property<byte[]>("Id")
-                        .HasColumnType("BLOB");
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
 
-                    b.Property<byte[]>("BagId")
-                        .HasColumnType("BLOB");
+                    b.Property<Guid?>("BagId")
+                        .HasColumnType("TEXT");
 
-                    b.Property<byte[]>("ItemId")
-                        .IsRequired()
-                        .HasColumnType("BLOB");
+                    b.Property<Guid>("ItemId")
+                        .HasColumnType("TEXT");
 
-                    b.Property<byte[]>("ParentBagId")
-                        .IsRequired()
-                        .HasColumnType("BLOB");
+                    b.Property<Guid>("ParentBagId")
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("INTEGER");
@@ -167,24 +164,23 @@ namespace Intersect.Server.Migrations.MySql.Player
 
                     b.HasIndex("ParentBagId");
 
-                    b.ToTable("Bag_Items");
+                    b.ToTable("Bag_Items", (string)null);
                 });
 
             modelBuilder.Entity("Intersect.Server.Database.PlayerData.Players.BankSlot", b =>
                 {
-                    b.Property<byte[]>("Id")
-                        .HasColumnType("BLOB");
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
 
-                    b.Property<byte[]>("BagId")
-                        .HasColumnType("BLOB");
+                    b.Property<Guid?>("BagId")
+                        .HasColumnType("TEXT");
 
-                    b.Property<byte[]>("ItemId")
-                        .IsRequired()
-                        .HasColumnType("BLOB");
+                    b.Property<Guid>("ItemId")
+                        .HasColumnType("TEXT");
 
-                    b.Property<byte[]>("PlayerId")
-                        .IsRequired()
-                        .HasColumnType("BLOB");
+                    b.Property<Guid>("PlayerId")
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("INTEGER");
@@ -202,19 +198,20 @@ namespace Intersect.Server.Migrations.MySql.Player
 
                     b.HasIndex("PlayerId");
 
-                    b.ToTable("Player_Bank");
+                    b.ToTable("Player_Bank", (string)null);
                 });
 
             modelBuilder.Entity("Intersect.Server.Database.PlayerData.Players.Friend", b =>
                 {
-                    b.Property<byte[]>("Id")
-                        .HasColumnType("BLOB");
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
 
-                    b.Property<byte[]>("OwnerId")
-                        .HasColumnType("BLOB");
+                    b.Property<Guid?>("OwnerId")
+                        .HasColumnType("TEXT");
 
-                    b.Property<byte[]>("TargetId")
-                        .HasColumnType("BLOB");
+                    b.Property<Guid?>("TargetId")
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
@@ -222,13 +219,14 @@ namespace Intersect.Server.Migrations.MySql.Player
 
                     b.HasIndex("TargetId");
 
-                    b.ToTable("Player_Friends");
+                    b.ToTable("Player_Friends", (string)null);
                 });
 
             modelBuilder.Entity("Intersect.Server.Database.PlayerData.Players.Guild", b =>
                 {
-                    b.Property<byte[]>("Id")
-                        .HasColumnType("BLOB");
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("BankSlotsCount")
                         .HasColumnType("INTEGER");
@@ -236,33 +234,31 @@ namespace Intersect.Server.Migrations.MySql.Player
                     b.Property<DateTime>("FoundingDate")
                         .HasColumnType("TEXT");
 
-                    b.Property<byte[]>("GuildInstanceId")
-                        .IsRequired()
-                        .HasColumnType("BLOB");
+                    b.Property<Guid>("GuildInstanceId")
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Guilds");
+                    b.ToTable("Guilds", (string)null);
                 });
 
             modelBuilder.Entity("Intersect.Server.Database.PlayerData.Players.GuildBankSlot", b =>
                 {
-                    b.Property<byte[]>("Id")
-                        .HasColumnType("BLOB");
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
 
-                    b.Property<byte[]>("BagId")
-                        .HasColumnType("BLOB");
+                    b.Property<Guid?>("BagId")
+                        .HasColumnType("TEXT");
 
-                    b.Property<byte[]>("GuildId")
-                        .IsRequired()
-                        .HasColumnType("BLOB");
+                    b.Property<Guid>("GuildId")
+                        .HasColumnType("TEXT");
 
-                    b.Property<byte[]>("ItemId")
-                        .IsRequired()
-                        .HasColumnType("BLOB");
+                    b.Property<Guid>("ItemId")
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("INTEGER");
@@ -280,25 +276,24 @@ namespace Intersect.Server.Migrations.MySql.Player
 
                     b.HasIndex("GuildId");
 
-                    b.ToTable("Guild_Bank");
+                    b.ToTable("Guild_Bank", (string)null);
                 });
 
             modelBuilder.Entity("Intersect.Server.Database.PlayerData.Players.GuildVariable", b =>
                 {
-                    b.Property<byte[]>("Id")
-                        .HasColumnType("BLOB");
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
 
-                    b.Property<byte[]>("GuildId")
-                        .IsRequired()
-                        .HasColumnType("BLOB");
+                    b.Property<Guid>("GuildId")
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Json")
                         .HasColumnType("TEXT")
                         .HasColumnName("Value");
 
-                    b.Property<byte[]>("VariableId")
-                        .IsRequired()
-                        .HasColumnType("BLOB");
+                    b.Property<Guid>("VariableId")
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
@@ -307,25 +302,23 @@ namespace Intersect.Server.Migrations.MySql.Player
                     b.HasIndex("VariableId", "GuildId")
                         .IsUnique();
 
-                    b.ToTable("Guild_Variables");
+                    b.ToTable("Guild_Variables", (string)null);
                 });
 
             modelBuilder.Entity("Intersect.Server.Database.PlayerData.Players.HotbarSlot", b =>
                 {
-                    b.Property<byte[]>("Id")
-                        .HasColumnType("BLOB");
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
 
-                    b.Property<byte[]>("BagId")
-                        .IsRequired()
-                        .HasColumnType("BLOB");
+                    b.Property<Guid>("BagId")
+                        .HasColumnType("TEXT");
 
-                    b.Property<byte[]>("ItemOrSpellId")
-                        .IsRequired()
-                        .HasColumnType("BLOB");
+                    b.Property<Guid>("ItemOrSpellId")
+                        .HasColumnType("TEXT");
 
-                    b.Property<byte[]>("PlayerId")
-                        .IsRequired()
-                        .HasColumnType("BLOB");
+                    b.Property<Guid>("PlayerId")
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("Slot")
                         .HasColumnType("INTEGER");
@@ -338,24 +331,23 @@ namespace Intersect.Server.Migrations.MySql.Player
 
                     b.HasIndex("PlayerId");
 
-                    b.ToTable("Player_Hotbar");
+                    b.ToTable("Player_Hotbar", (string)null);
                 });
 
             modelBuilder.Entity("Intersect.Server.Database.PlayerData.Players.InventorySlot", b =>
                 {
-                    b.Property<byte[]>("Id")
-                        .HasColumnType("BLOB");
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
 
-                    b.Property<byte[]>("BagId")
-                        .HasColumnType("BLOB");
+                    b.Property<Guid?>("BagId")
+                        .HasColumnType("TEXT");
 
-                    b.Property<byte[]>("ItemId")
-                        .IsRequired()
-                        .HasColumnType("BLOB");
+                    b.Property<Guid>("ItemId")
+                        .HasColumnType("TEXT");
 
-                    b.Property<byte[]>("PlayerId")
-                        .IsRequired()
-                        .HasColumnType("BLOB");
+                    b.Property<Guid>("PlayerId")
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("INTEGER");
@@ -373,25 +365,24 @@ namespace Intersect.Server.Migrations.MySql.Player
 
                     b.HasIndex("PlayerId");
 
-                    b.ToTable("Player_Items");
+                    b.ToTable("Player_Items", (string)null);
                 });
 
             modelBuilder.Entity("Intersect.Server.Database.PlayerData.Players.PlayerVariable", b =>
                 {
-                    b.Property<byte[]>("Id")
-                        .HasColumnType("BLOB");
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Json")
                         .HasColumnType("TEXT")
                         .HasColumnName("Value");
 
-                    b.Property<byte[]>("PlayerId")
-                        .IsRequired()
-                        .HasColumnType("BLOB");
+                    b.Property<Guid>("PlayerId")
+                        .HasColumnType("TEXT");
 
-                    b.Property<byte[]>("VariableId")
-                        .IsRequired()
-                        .HasColumnType("BLOB");
+                    b.Property<Guid>("VariableId")
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
@@ -400,28 +391,26 @@ namespace Intersect.Server.Migrations.MySql.Player
                     b.HasIndex("VariableId", "PlayerId")
                         .IsUnique();
 
-                    b.ToTable("Player_Variables");
+                    b.ToTable("Player_Variables", (string)null);
                 });
 
             modelBuilder.Entity("Intersect.Server.Database.PlayerData.Players.Quest", b =>
                 {
-                    b.Property<byte[]>("Id")
-                        .HasColumnType("BLOB");
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
 
                     b.Property<bool>("Completed")
                         .HasColumnType("INTEGER");
 
-                    b.Property<byte[]>("PlayerId")
-                        .IsRequired()
-                        .HasColumnType("BLOB");
+                    b.Property<Guid>("PlayerId")
+                        .HasColumnType("TEXT");
 
-                    b.Property<byte[]>("QuestId")
-                        .IsRequired()
-                        .HasColumnType("BLOB");
+                    b.Property<Guid>("QuestId")
+                        .HasColumnType("TEXT");
 
-                    b.Property<byte[]>("TaskId")
-                        .IsRequired()
-                        .HasColumnType("BLOB");
+                    b.Property<Guid>("TaskId")
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("TaskProgress")
                         .HasColumnType("INTEGER");
@@ -433,17 +422,17 @@ namespace Intersect.Server.Migrations.MySql.Player
                     b.HasIndex("QuestId", "PlayerId")
                         .IsUnique();
 
-                    b.ToTable("Player_Quests");
+                    b.ToTable("Player_Quests", (string)null);
                 });
 
             modelBuilder.Entity("Intersect.Server.Database.PlayerData.Players.SpellSlot", b =>
                 {
-                    b.Property<byte[]>("Id")
-                        .HasColumnType("BLOB");
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
 
-                    b.Property<byte[]>("PlayerId")
-                        .IsRequired()
-                        .HasColumnType("BLOB");
+                    b.Property<Guid>("PlayerId")
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("Slot")
                         .HasColumnType("INTEGER");
@@ -451,33 +440,30 @@ namespace Intersect.Server.Migrations.MySql.Player
                     b.Property<long>("SpellCd")
                         .HasColumnType("INTEGER");
 
-                    b.Property<byte[]>("SpellId")
-                        .IsRequired()
-                        .HasColumnType("BLOB");
+                    b.Property<Guid>("SpellId")
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
                     b.HasIndex("PlayerId");
 
-                    b.ToTable("Player_Spells");
+                    b.ToTable("Player_Spells", (string)null);
                 });
 
             modelBuilder.Entity("Intersect.Server.Database.PlayerData.User", b =>
                 {
-                    b.Property<byte[]>("Id")
-                        .HasColumnType("BLOB")
-                        .HasColumnOrder(0);
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Email")
-                        .HasColumnType("TEXT")
-                        .HasColumnOrder(2);
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("LastIp")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
-                        .HasColumnType("TEXT")
-                        .HasColumnOrder(1);
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Password")
                         .HasColumnType("TEXT");
@@ -503,24 +489,23 @@ namespace Intersect.Server.Migrations.MySql.Player
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("Intersect.Server.Entities.Player", b =>
                 {
-                    b.Property<byte[]>("Id")
-                        .HasColumnType("BLOB")
-                        .HasColumnOrder(0);
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
 
-                    b.Property<byte[]>("ClassId")
-                        .IsRequired()
-                        .HasColumnType("BLOB");
+                    b.Property<Guid>("ClassId")
+                        .HasColumnType("TEXT");
 
                     b.Property<DateTime?>("CreationDate")
                         .HasColumnType("TEXT");
 
-                    b.Property<byte[]>("DbGuildId")
-                        .HasColumnType("BLOB");
+                    b.Property<Guid?>("DbGuildId")
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("Dir")
                         .HasColumnType("INTEGER");
@@ -566,9 +551,8 @@ namespace Intersect.Server.Migrations.MySql.Player
                     b.Property<DateTime?>("LastOnline")
                         .HasColumnType("TEXT");
 
-                    b.Property<byte[]>("LastOverworldMapId")
-                        .IsRequired()
-                        .HasColumnType("BLOB")
+                    b.Property<Guid>("LastOverworldMapId")
+                        .HasColumnType("TEXT")
                         .HasColumnName("LastOverworldMapId");
 
                     b.Property<int>("LastOverworldX")
@@ -580,21 +564,18 @@ namespace Intersect.Server.Migrations.MySql.Player
                     b.Property<int>("Level")
                         .HasColumnType("INTEGER");
 
-                    b.Property<byte[]>("MapId")
-                        .IsRequired()
-                        .HasColumnType("BLOB");
+                    b.Property<Guid>("MapId")
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
-                        .HasColumnType("TEXT")
-                        .HasColumnOrder(1);
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("NameColorJson")
                         .HasColumnType("TEXT")
                         .HasColumnName("NameColor");
 
-                    b.Property<byte[]>("PersonalMapInstanceId")
-                        .IsRequired()
-                        .HasColumnType("BLOB");
+                    b.Property<Guid>("PersonalMapInstanceId")
+                        .HasColumnType("TEXT");
 
                     b.Property<ulong>("PlayTimeSeconds")
                         .HasColumnType("INTEGER");
@@ -602,9 +583,8 @@ namespace Intersect.Server.Migrations.MySql.Player
                     b.Property<int>("SharedInstanceRespawnDir")
                         .HasColumnType("INTEGER");
 
-                    b.Property<byte[]>("SharedInstanceRespawnId")
-                        .IsRequired()
-                        .HasColumnType("BLOB")
+                    b.Property<Guid>("SharedInstanceRespawnId")
+                        .HasColumnType("TEXT")
                         .HasColumnName("SharedInstanceRespawnId");
 
                     b.Property<int>("SharedInstanceRespawnX")
@@ -613,9 +593,8 @@ namespace Intersect.Server.Migrations.MySql.Player
                     b.Property<int>("SharedInstanceRespawnY")
                         .HasColumnType("INTEGER");
 
-                    b.Property<byte[]>("SharedMapInstanceId")
-                        .IsRequired()
-                        .HasColumnType("BLOB");
+                    b.Property<Guid>("SharedMapInstanceId")
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("SpellCooldownsJson")
                         .HasColumnType("TEXT")
@@ -635,9 +614,8 @@ namespace Intersect.Server.Migrations.MySql.Player
                         .HasColumnType("TEXT")
                         .HasColumnName("BaseStats");
 
-                    b.Property<byte[]>("UserId")
-                        .IsRequired()
-                        .HasColumnType("BLOB");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("VitalsJson")
                         .HasColumnType("TEXT")
@@ -658,7 +636,7 @@ namespace Intersect.Server.Migrations.MySql.Player
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Players");
+                    b.ToTable("Players", (string)null);
                 });
 
             modelBuilder.Entity("Intersect.Server.Database.PlayerData.Api.RefreshToken", b =>
@@ -666,8 +644,7 @@ namespace Intersect.Server.Migrations.MySql.Player
                     b.HasOne("Intersect.Server.Database.PlayerData.User", "User")
                         .WithMany("RefreshTokens")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("User");
                 });
@@ -677,8 +654,7 @@ namespace Intersect.Server.Migrations.MySql.Player
                     b.HasOne("Intersect.Server.Database.PlayerData.User", "User")
                         .WithOne("Ban")
                         .HasForeignKey("Intersect.Server.Database.PlayerData.Ban", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("User");
                 });
@@ -688,8 +664,7 @@ namespace Intersect.Server.Migrations.MySql.Player
                     b.HasOne("Intersect.Server.Database.PlayerData.User", "User")
                         .WithOne("Mute")
                         .HasForeignKey("Intersect.Server.Database.PlayerData.Mute", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("User");
                 });
@@ -703,8 +678,7 @@ namespace Intersect.Server.Migrations.MySql.Player
                     b.HasOne("Intersect.Server.Database.PlayerData.Players.Bag", "ParentBag")
                         .WithMany("Slots")
                         .HasForeignKey("ParentBagId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Bag");
 
@@ -720,8 +694,7 @@ namespace Intersect.Server.Migrations.MySql.Player
                     b.HasOne("Intersect.Server.Entities.Player", "Player")
                         .WithMany("Bank")
                         .HasForeignKey("PlayerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Bag");
 
@@ -754,8 +727,7 @@ namespace Intersect.Server.Migrations.MySql.Player
                     b.HasOne("Intersect.Server.Database.PlayerData.Players.Guild", "Guild")
                         .WithMany("Bank")
                         .HasForeignKey("GuildId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Bag");
 
@@ -767,8 +739,7 @@ namespace Intersect.Server.Migrations.MySql.Player
                     b.HasOne("Intersect.Server.Database.PlayerData.Players.Guild", "Guild")
                         .WithMany("Variables")
                         .HasForeignKey("GuildId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Guild");
                 });
@@ -778,8 +749,7 @@ namespace Intersect.Server.Migrations.MySql.Player
                     b.HasOne("Intersect.Server.Entities.Player", "Player")
                         .WithMany("Hotbar")
                         .HasForeignKey("PlayerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Player");
                 });
@@ -793,8 +763,7 @@ namespace Intersect.Server.Migrations.MySql.Player
                     b.HasOne("Intersect.Server.Entities.Player", "Player")
                         .WithMany("Items")
                         .HasForeignKey("PlayerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Bag");
 
@@ -806,8 +775,7 @@ namespace Intersect.Server.Migrations.MySql.Player
                     b.HasOne("Intersect.Server.Entities.Player", "Player")
                         .WithMany("Variables")
                         .HasForeignKey("PlayerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Player");
                 });
@@ -817,8 +785,7 @@ namespace Intersect.Server.Migrations.MySql.Player
                     b.HasOne("Intersect.Server.Entities.Player", "Player")
                         .WithMany("Quests")
                         .HasForeignKey("PlayerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Player");
                 });
@@ -828,8 +795,7 @@ namespace Intersect.Server.Migrations.MySql.Player
                     b.HasOne("Intersect.Server.Entities.Player", "Player")
                         .WithMany("Spells")
                         .HasForeignKey("PlayerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Player");
                 });
@@ -843,8 +809,7 @@ namespace Intersect.Server.Migrations.MySql.Player
                     b.HasOne("Intersect.Server.Database.PlayerData.User", "User")
                         .WithMany("Players")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("DbGuild");
 
