@@ -15,12 +15,13 @@ namespace Intersect.Server.Migrations.MySql.Logging
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "6.0.7");
+            modelBuilder.HasAnnotation("ProductVersion", "2.1.3-rtm-32065");
 
             modelBuilder.Entity("Intersect.Server.Database.Logging.Entities.ChatHistory", b =>
                 {
-                    b.Property<byte[]>("Id")
-                        .HasColumnType("BLOB");
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Ip")
                         .HasColumnType("TEXT");
@@ -31,38 +32,34 @@ namespace Intersect.Server.Migrations.MySql.Logging
                     b.Property<int>("MessageType")
                         .HasColumnType("INTEGER");
 
-                    b.Property<byte[]>("PlayerId")
-                        .IsRequired()
-                        .HasColumnType("BLOB");
+                    b.Property<Guid>("PlayerId")
+                        .HasColumnType("TEXT");
 
-                    b.Property<byte[]>("TargetId")
-                        .IsRequired()
-                        .HasColumnType("BLOB");
+                    b.Property<Guid>("TargetId")
+                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("TimeStamp")
                         .HasColumnType("TEXT");
 
-                    b.Property<byte[]>("UserId")
-                        .IsRequired()
-                        .HasColumnType("BLOB");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
-                    b.ToTable("ChatHistory");
+                    b.ToTable("ChatHistory", (string)null);
                 });
 
             modelBuilder.Entity("Intersect.Server.Database.Logging.Entities.GuildHistory", b =>
                 {
-                    b.Property<byte[]>("Id")
-                        .HasColumnType("BLOB");
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
 
-                    b.Property<byte[]>("GuildId")
-                        .IsRequired()
-                        .HasColumnType("BLOB");
+                    b.Property<Guid>("GuildId")
+                        .HasColumnType("TEXT");
 
-                    b.Property<byte[]>("InitiatorId")
-                        .IsRequired()
-                        .HasColumnType("BLOB");
+                    b.Property<Guid>("InitiatorId")
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Ip")
                         .HasColumnType("TEXT");
@@ -70,9 +67,8 @@ namespace Intersect.Server.Migrations.MySql.Logging
                     b.Property<string>("Meta")
                         .HasColumnType("TEXT");
 
-                    b.Property<byte[]>("PlayerId")
-                        .IsRequired()
-                        .HasColumnType("BLOB");
+                    b.Property<Guid>("PlayerId")
+                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("TimeStamp")
                         .HasColumnType("TEXT");
@@ -80,19 +76,19 @@ namespace Intersect.Server.Migrations.MySql.Logging
                     b.Property<int>("Type")
                         .HasColumnType("INTEGER");
 
-                    b.Property<byte[]>("UserId")
-                        .IsRequired()
-                        .HasColumnType("BLOB");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
-                    b.ToTable("GuildHistory");
+                    b.ToTable("GuildHistory", (string)null);
                 });
 
             modelBuilder.Entity("Intersect.Server.Database.Logging.Entities.TradeHistory", b =>
                 {
-                    b.Property<byte[]>("Id")
-                        .HasColumnType("BLOB");
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Ip")
                         .HasColumnType("TEXT");
@@ -101,13 +97,11 @@ namespace Intersect.Server.Migrations.MySql.Logging
                         .HasColumnType("TEXT")
                         .HasColumnName("Items");
 
-                    b.Property<byte[]>("PlayerId")
-                        .IsRequired()
-                        .HasColumnType("BLOB");
+                    b.Property<Guid>("PlayerId")
+                        .HasColumnType("TEXT");
 
-                    b.Property<byte[]>("TargetId")
-                        .IsRequired()
-                        .HasColumnType("BLOB");
+                    b.Property<Guid>("TargetId")
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("TargetItemsJson")
                         .HasColumnType("TEXT")
@@ -116,23 +110,22 @@ namespace Intersect.Server.Migrations.MySql.Logging
                     b.Property<DateTime>("TimeStamp")
                         .HasColumnType("TEXT");
 
-                    b.Property<byte[]>("TradeId")
-                        .IsRequired()
-                        .HasColumnType("BLOB");
+                    b.Property<Guid>("TradeId")
+                        .HasColumnType("TEXT");
 
-                    b.Property<byte[]>("UserId")
-                        .IsRequired()
-                        .HasColumnType("BLOB");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
-                    b.ToTable("TradeHistory");
+                    b.ToTable("TradeHistory", (string)null);
                 });
 
             modelBuilder.Entity("Intersect.Server.Database.Logging.Entities.UserActivityHistory", b =>
                 {
-                    b.Property<byte[]>("Id")
-                        .HasColumnType("BLOB");
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("Action")
                         .HasColumnType("INTEGER");
@@ -146,26 +139,25 @@ namespace Intersect.Server.Migrations.MySql.Logging
                     b.Property<int>("Peer")
                         .HasColumnType("INTEGER");
 
-                    b.Property<byte[]>("PlayerId")
-                        .HasColumnType("BLOB");
+                    b.Property<Guid?>("PlayerId")
+                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("TimeStamp")
                         .HasColumnType("TEXT");
 
-                    b.Property<byte[]>("UserId")
-                        .IsRequired()
-                        .HasColumnType("BLOB");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
-                    b.ToTable("UserActivityHistory");
+                    b.ToTable("UserActivityHistory", (string)null);
                 });
 
             modelBuilder.Entity("Intersect.Server.Database.Logging.RequestLog", b =>
                 {
-                    b.Property<byte[]>("Id")
-                        .HasColumnType("BLOB")
-                        .HasColumnOrder(0);
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
 
                     b.Property<byte>("Level")
                         .HasColumnType("INTEGER");
@@ -195,7 +187,7 @@ namespace Intersect.Server.Migrations.MySql.Logging
 
                     b.HasKey("Id");
 
-                    b.ToTable("RequestLogs");
+                    b.ToTable("RequestLogs", (string)null);
                 });
 #pragma warning restore 612, 618
         }
