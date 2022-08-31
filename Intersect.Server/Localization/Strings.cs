@@ -506,6 +506,9 @@ namespace Intersect.Server.Localization
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString CraftFailureLostItems = @"The attempt to create the item {00} failed and you lost the materials!";
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString RequirementsNotMet = @"You do not meet the requirements in order to craft this item!";
+
         }
 
         public sealed partial class DatabaseNamespace : LocaleNamespace

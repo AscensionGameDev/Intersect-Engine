@@ -1545,7 +1545,22 @@ namespace Intersect.Server.Networking
         {
             if (table != null)
             {
-                player.SendPacket(new CraftingTablePacket(table.JsonData, false));
+                //Use Json To Cheaply Clone The Table
+                var playerTable = JsonConvert.DeserializeObject<CraftingTableBase>(table.JsonData);
+
+                //Strip our the items the player can't craft
+                foreach (var craft in table.Crafts)
+                {
+                    var craftBase = CraftBase.Get(craft);
+                    if (!(craftBase != null && Conditions.MeetsConditionLists(craftBase.CraftingRequirements, player, null)))
+                    {
+                        playerTable.Crafts.Remove(craft);
+                    }
+                }
+
+                //Send the modfied table
+                player.SendPacket(new CraftingTablePacket(playerTable.JsonData, false));
+
             }
         }
 
