@@ -47,9 +47,6 @@ public abstract partial class PlayerContext : IntersectDbContext<PlayerContext>,
 {
     public PlayerContext(DatabaseContextOptions databaseContextOptions) : base(databaseContextOptions) { }
 
-    public static DbConnectionStringBuilder DefaultConnectionStringBuilder =>
-        new SqliteConnectionStringBuilder(@"Data Source=resources/playerdata.db");
-
     public DbSet<User> Users { get; set; }
 
     public DbSet<Mute> Mutes { get; set; }

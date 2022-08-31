@@ -61,15 +61,6 @@ public abstract partial class GameContext : IntersectDbContext<GameContext>, IGa
 
     protected GameContext(DatabaseContextOptions databaseContextOptions) : base(databaseContextOptions) { }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        Console.WriteLine("OnConfiguring");
-        base.OnConfiguring(optionsBuilder);
-    }
-
-    public static DbConnectionStringBuilder DefaultConnectionStringBuilder =>
-        new SqliteConnectionStringBuilder($@"Data Source={DbInterface.GameDbFilename}");
-
     //Animations
     public DbSet<AnimationBase> Animations { get; set; }
 

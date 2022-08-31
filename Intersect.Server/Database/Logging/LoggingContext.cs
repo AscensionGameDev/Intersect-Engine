@@ -42,9 +42,6 @@ public abstract partial class LoggingContext : IntersectDbContext<LoggingContext
     /// <inheritdoc />
     protected LoggingContext(DatabaseContextOptions databaseContextOptions) : base(databaseContextOptions) { }
 
-    public static DbConnectionStringBuilder DefaultConnectionStringBuilder =>
-        new SqliteConnectionStringBuilder(@"Data Source=resources/logging.db");
-
     public DbSet<RequestLog> RequestLogs { get; set; }
 
     public DbSet<UserActivityHistory> UserActivityHistory { get; set; }
