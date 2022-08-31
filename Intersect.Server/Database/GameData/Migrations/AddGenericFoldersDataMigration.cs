@@ -24,39 +24,45 @@ public sealed partial class AddGenericFoldersDataMigration : IDataMigration<Game
         public string Folder { get; set; }
     }
 
-    public void Down(GameContext context)
+    public void Down(DatabaseContextOptions databaseContextOptions)
     {
         throw new NotImplementedException();
     }
 
-    public void Up(GameContext context)
+    public void Up(DatabaseContextOptions databaseContextOptions)
     {
+        using var context = GameContext.Create(databaseContextOptions);
         var mapLists = QueryMapLists(context);
         foreach (var mapList in mapLists)
         {
             ConvertMapList(context, mapList, default);
         }
 
-        AggregateFolders<AnimationBase>(context);
-        AggregateFolders<CraftBase>(context);
-        AggregateFolders<CraftingTableBase>(context);
-        AggregateFolders<ClassBase>(context);
-        AggregateFolders<EventBase>(context);
-        AggregateFolders<GuildVariableBase>(context);
-        AggregateFolders<ItemBase>(context);
-        AggregateFolders<NpcBase>(context);
-        AggregateFolders<PlayerVariableBase>(context);
-        AggregateFolders<ProjectileBase>(context);
-        AggregateFolders<QuestBase>(context);
-        AggregateFolders<ResourceBase>(context);
-        AggregateFolders<ServerVariableBase>(context);
-        AggregateFolders<ShopBase>(context);
-        AggregateFolders<SpellBase>(context);
+        var changes = context.SaveChanges();
+        Log.Info($"Saved {changes} to maps.");
+
+        AggregateFolders<AnimationBase>(databaseContextOptions);
+        AggregateFolders<CraftBase>(databaseContextOptions);
+        AggregateFolders<CraftingTableBase>(databaseContextOptions);
+        AggregateFolders<ClassBase>(databaseContextOptions);
+        AggregateFolders<EventBase>(databaseContextOptions);
+        AggregateFolders<GuildVariableBase>(databaseContextOptions);
+        AggregateFolders<ItemBase>(databaseContextOptions);
+        AggregateFolders<NpcBase>(databaseContextOptions);
+        AggregateFolders<PlayerVariableBase>(databaseContextOptions);
+        AggregateFolders<ProjectileBase>(databaseContextOptions);
+        AggregateFolders<QuestBase>(databaseContextOptions);
+        AggregateFolders<ResourceBase>(databaseContextOptions);
+        AggregateFolders<ServerVariableBase>(databaseContextOptions);
+        AggregateFolders<ShopBase>(databaseContextOptions);
+        AggregateFolders<SpellBase>(databaseContextOptions);
     }
 
-    public void AggregateFolders<TDescriptor>(GameContext context)
+    public void AggregateFolders<TDescriptor>(DatabaseContextOptions databaseContextOptions)
         where TDescriptor : Descriptor
     {
+        using var context = GameContext.Create(databaseContextOptions);
+
         var dbConnection = context.Database.GetDbConnection();
         var descriptorTable = context.Model
             .FindEntityType(typeof(TDescriptor))?
@@ -66,10 +72,10 @@ public sealed partial class AddGenericFoldersDataMigration : IDataMigration<Game
         var legacyFolders = queryFactory
             .Query(descriptorTable)
             .Select("Id", "Folder")
-            .Get<(byte[] Id, string? Folder)>()
+            .Get<(string Id, string? Folder)>()
             .Select(row => new IdFolder
             {
-                Id = new Guid(row.Id),
+                Id = Guid.Parse(row.Id),
                 Folder = row.Folder,
             })
             .ToList();
@@ -82,10 +88,10 @@ public sealed partial class AddGenericFoldersDataMigration : IDataMigration<Game
 
             if (!string.IsNullOrWhiteSpace(group.Key))
             {
-                folder = new Folder
+                folder = new()
                 {
                     DescriptorType = group.First().Type,
-                    Name = new ContentString(group.Key.Trim())
+                    Name = new(group.Key.Trim())
                     {
                         Comment = group.Key.Trim(),
                     },
@@ -99,6 +105,10 @@ public sealed partial class AddGenericFoldersDataMigration : IDataMigration<Game
                 descriptor.Parent = folder;
             }
         }
+
+        context.ChangeTracker.DetectChanges();
+        var changes = context.SaveChanges();
+        Log.Info($"{changes} updates applied.");
     }
 
     private IEnumerable<JObject> QueryMapLists(GameContext context)

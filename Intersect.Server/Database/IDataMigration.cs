@@ -3,7 +3,7 @@ namespace Intersect.Server.Database;
 internal partial interface IDataMigration<TContext>
     where TContext : IntersectDbContext<TContext>
 {
-    void Down(TContext context);
+    void Down(DatabaseContextOptions databaseContextOptions);
 
-    void Up(TContext context);
+    void Up(DatabaseContextOptions databaseContextOptions);
 }

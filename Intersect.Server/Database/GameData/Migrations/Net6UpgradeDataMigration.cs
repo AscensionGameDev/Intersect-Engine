@@ -10,12 +10,12 @@ namespace Intersect.Server.Database.GameData.Migrations;
 // [SchemaMigration(typeof(Net6Upgrade))]
 public sealed partial class Net6UpgradeDataMigration : IDataMigration<GameContext>
 {
-    public void Down(GameContext context)
+    public void Down(DatabaseContextOptions databaseContextOptions)
     {
         throw new NotImplementedException();
     }
 
-    public void Up(GameContext context)
+    public void Up(DatabaseContextOptions databaseContextOptions)
     {
         //foreach (var entityType in context.Model.GetEntityTypes())
         //{

@@ -35,33 +35,82 @@ public sealed class MigrationScheduler<TContext>
             return;
         }
 
+        if (SqliteNet6GuidPatch.ShouldBeAppliedTo(_context))
+        {
+            SqliteNet6GuidPatch.ApplyTo(_context);
+        }
+
         var migrator = _context.Database.GetService<IMigrator>();
 
-        foreach (var scheduledMigration in _scheduledMigrations)
+        var scheduleSegment = _scheduledMigrations;
+        while (scheduleSegment.Any())
         {
-            if (scheduledMigration is DataMigrationMetadata scheduledDataMigration)
+            var targetMigration = scheduleSegment
+                .TakeWhile(metadata => metadata is SchemaMigrationMetadata)
+                .LastOrDefault();
+
+            if (targetMigration is SchemaMigrationMetadata)
             {
-                if (scheduledDataMigration.MigratorType == default)
-                {
-                    throw new InvalidOperationException($"Missing MigratorType for {scheduledDataMigration.Name}");
-                }
+                migrator.Migrate(targetMigration.Name);
 
-                if (Activator.CreateInstance(scheduledDataMigration.MigratorType) is not IDataMigration<TContext> dataMigration)
-                {
-                    throw new InvalidOperationException($"Failed to create instance of data migration: {scheduledDataMigration.MigratorType.FullName}");
-                }
-
-                dataMigration.Up(_context);
-                _context.ChangeTracker.DetectChanges();
-                var changes = _context.SaveChanges();
-
-                Log.Info($"{scheduledDataMigration.MigratorType.FullName}: {changes} changes applied.");
+                scheduleSegment = scheduleSegment
+                    .SkipWhile(metadata => metadata is SchemaMigrationMetadata)
+                    .ToList();
+                continue;
             }
-            else
+
+            targetMigration = scheduleSegment.FirstOrDefault();
+
+            if (targetMigration is not DataMigrationMetadata scheduledDataMigration)
             {
-                migrator.Migrate(scheduledMigration.Name);
+                continue;
             }
+
+            if (scheduledDataMigration.MigratorType == default)
+            {
+                throw new InvalidOperationException($"Missing MigratorType for {scheduledDataMigration.Name}");
+            }
+
+            if (Activator.CreateInstance(scheduledDataMigration.MigratorType) is not IDataMigration<TContext> dataMigration)
+            {
+                throw new InvalidOperationException($"Failed to create instance of data migration: {scheduledDataMigration.MigratorType.FullName}");
+            }
+
+            dataMigration.Up(_context.DatabaseContextOptions);
+
+            scheduleSegment = scheduleSegment
+                .Skip(1)
+                .ToList();;
         }
+
+        "".ToString();
+
+
+        // foreach (var scheduledMigration in _scheduledMigrations)
+        // {
+        //     if (scheduledMigration is DataMigrationMetadata scheduledDataMigration)
+        //     {
+        //         if (scheduledDataMigration.MigratorType == default)
+        //         {
+        //             throw new InvalidOperationException($"Missing MigratorType for {scheduledDataMigration.Name}");
+        //         }
+        //
+        //         if (Activator.CreateInstance(scheduledDataMigration.MigratorType) is not IDataMigration<TContext> dataMigration)
+        //         {
+        //             throw new InvalidOperationException($"Failed to create instance of data migration: {scheduledDataMigration.MigratorType.FullName}");
+        //         }
+        //
+        //         dataMigration.Up(_context);
+        //         _context.ChangeTracker.DetectChanges();
+        //         var changes = _context.SaveChanges();
+        //
+        //         Log.Info($"{scheduledDataMigration.MigratorType.FullName}: {changes} changes applied.");
+        //     }
+        //     else
+        //     {
+        //         migrator.Migrate(scheduledMigration.Name);
+        //     }
+        // }
     }
 
     public MigrationScheduler<TContext> SchedulePendingMigrations()

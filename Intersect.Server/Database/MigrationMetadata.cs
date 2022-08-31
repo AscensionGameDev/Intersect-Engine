@@ -27,7 +27,7 @@ public abstract class MigrationMetadata
         var schemaMigrationAttributes = dataMigrationType
             .GetCustomAttributes(typeof(SchemaMigrationAttribute), true)
             .OfType<SchemaMigrationAttribute>()
-            .Where(attribute => attribute.DbContextType == contextType)
+            .Where(attribute => attribute.DbContextType.Extends(contextType))
             .ToList()
             .AsReadOnly();
 
