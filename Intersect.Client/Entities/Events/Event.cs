@@ -84,6 +84,11 @@ namespace Intersect.Client.Entities.Events
             _drawCompletedWithoutTexture = Graphic.Type != EventGraphicType.Tileset;
 
             base.Load(packet);
+
+            if (!string.IsNullOrEmpty(Graphic?.Filename))
+            {
+                Sprite = Graphic.Filename;
+            }
         }
 
         public override bool Update()
