@@ -82,6 +82,33 @@ public static partial class TypeExtensions
 
     public static bool ExtendedBy<TChildType>(this Type type) => typeof(TChildType).Extends(type);
 
+    public static Type? FindConcreteType(this Type abstractType, Func<Type, bool> predicate, bool allLoadedAssemblies = false)
+    {
+        if (!abstractType.IsAbstract && !abstractType.IsInterface)
+        {
+            throw new ArgumentException($"Expected abstract/interface type, received {abstractType.FullName}", nameof(abstractType));
+        }
+
+        var assembliesToCheck = allLoadedAssemblies ? AppDomain.CurrentDomain.GetAssemblies() : new[] { abstractType.Assembly };
+        var validAssembliesToCheck = assembliesToCheck.Where(assembly => !assembly.IsDynamic);
+        var allTypes = validAssembliesToCheck.SelectMany(assembly =>
+        {
+            try
+            {
+                return assembly.ExportedTypes;
+            }
+            catch
+            {
+                return Enumerable.Empty<Type>();
+            }
+        });
+
+        var allConcreteTypes = allTypes.Where(type => !type.IsAbstract && !type.IsInterface && !type.IsGenericType);
+        var allDescendantTypes = allConcreteTypes.Where(type => type.Extends(abstractType));
+        var firstPredicateMatch = allDescendantTypes.FirstOrDefault(predicate);
+        return firstPredicateMatch;
+    }
+
     public static Type FindGenericType(this Type type) =>
         type.FindGenericType(true);
 
@@ -107,7 +134,9 @@ public static partial class TypeExtensions
                 {
                     var genericInterfaceType = currentType
                         .GetInterfaces()
-                        .FirstOrDefault(interfaceType => interfaceType.IsGenericType && interfaceType.GetGenericTypeDefinition() == genericTypeDefinition);
+                        .FirstOrDefault(interfaceType =>
+                            interfaceType.IsGenericType &&
+                            interfaceType.GetGenericTypeDefinition() == genericTypeDefinition);
 
                     if (genericInterfaceType != null)
                     {
@@ -132,7 +161,8 @@ public static partial class TypeExtensions
             return default;
         }
 
-        throw new ArgumentException($"{type.FullName} is not a generic type and does not extend from a generic type.", nameof(type));
+        throw new ArgumentException($"{type.FullName} is not a generic type and does not extend from a generic type.",
+            nameof(type));
     }
 
     public static Type FindGenericTypeDefinition(this Type type) =>
@@ -161,7 +191,8 @@ public static partial class TypeExtensions
             return default;
         }
 
-        throw new ArgumentException($"{type.FullName} is not a generic type and does not extend from a generic type.", nameof(type));
+        throw new ArgumentException($"{type.FullName} is not a generic type and does not extend from a generic type.",
+            nameof(type));
     }
 
     public static Type[] FindGenericTypeParameters(this Type type) =>
@@ -170,7 +201,8 @@ public static partial class TypeExtensions
     public static Type[] FindGenericTypeParameters(this Type type, bool throwOnNonGeneric) =>
         type.FindGenericTypeParameters(default, throwOnNonGeneric);
 
-    public static Type[] FindGenericTypeParameters(this Type type, Type genericTypeDefinition, bool throwOnNonGeneric = true)
+    public static Type[] FindGenericTypeParameters(this Type type, Type genericTypeDefinition,
+        bool throwOnNonGeneric = true)
     {
         if (genericTypeDefinition != null && !genericTypeDefinition.IsGenericTypeDefinition)
         {
@@ -189,7 +221,9 @@ public static partial class TypeExtensions
                 {
                     var genericInterfaceType = currentType
                         .GetInterfaces()
-                        .FirstOrDefault(interfaceType => interfaceType.IsGenericType && interfaceType.GetGenericTypeDefinition() == genericTypeDefinition);
+                        .FirstOrDefault(interfaceType =>
+                            interfaceType.IsGenericType &&
+                            interfaceType.GetGenericTypeDefinition() == genericTypeDefinition);
 
                     if (genericInterfaceType != null)
                     {
@@ -214,6 +248,7 @@ public static partial class TypeExtensions
             return Array.Empty<Type>();
         }
 
-        throw new ArgumentException($"{type.FullName} is not a generic type and does not extend from a generic type.", nameof(type));
+        throw new ArgumentException($"{type.FullName} is not a generic type and does not extend from a generic type.",
+            nameof(type));
     }
 }

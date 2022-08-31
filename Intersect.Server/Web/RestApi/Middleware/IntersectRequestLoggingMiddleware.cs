@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 
 using Intersect.Logging;
+using Intersect.Server.Database;
 using Intersect.Server.Database.Logging;
 using Intersect.Server.Web.RestApi.Extensions;
 
@@ -122,7 +123,7 @@ namespace Intersect.Server.Web.RestApi.Middleware
                         ResponseHeaders = responseHeaders
                     };
 
-                    using (var context = LoggingContext.Create())
+                    using (var context = DbInterface.CreateLoggingContext(readOnly: false))
                     {
                         context.Add(log);
                         await (context.SaveChangesAsync() ?? throw new InvalidOperationException());

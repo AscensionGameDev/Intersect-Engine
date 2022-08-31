@@ -89,7 +89,7 @@ namespace Intersect.Server.Database.Logging.Entities
 
         private static void Log(GuildHistory guildActivity)
         {
-            using var loggingContext = LoggingContext.Create(readOnly: false);
+            using var loggingContext = DbInterface.CreateLoggingContext(readOnly: false);
             _ = loggingContext.GuildHistory.Add(guildActivity);
         }
     }

@@ -940,6 +940,8 @@ namespace Intersect.Server.Localization
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString gamedb = @"Game";
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString LoggingDatabaseName = @"Logging";
+
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString migratetomysql = @"   [2] Mysql";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString migratetosqlite = @"   [1] Sqlite";
@@ -979,6 +981,15 @@ namespace Intersect.Server.Localization
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString selectdb = @"Which database would you like to migrate:";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString selectdbengine = @"Select which engine to migrate the {00} database to:";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString SqliteRecommended = "Sqlite strongly recommended!";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString SelectDatabase = @"    [{00}] {01} (currently using {02}) {03}";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString SelectDatabaseType = @"    [{00}] {01}";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString selectgamedb =

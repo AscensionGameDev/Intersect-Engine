@@ -11,6 +11,7 @@ using Amib.Threading;
 using Intersect.Collections;
 using Intersect.Config;
 using Intersect.Enums;
+using Intersect.Framework.Reflection;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Crafting;
 using Intersect.GameObjects.Events;
@@ -60,9 +61,11 @@ namespace Intersect.Server.Database
                 }
             );
 
-        private const string GameDbFilename = "resources/gamedata.db";
+        internal const string GameDbFilename = "resources/gamedata.db";
 
-        private const string PlayersDbFilename = "resources/playerdata.db";
+        internal const string LoggingDbFilename = "resources/logging.db";
+
+        internal const string PlayersDbFilename = "resources/playerdata.db";
 
         private static Logger gameDbLogger { get; set; }
 
@@ -96,15 +99,15 @@ namespace Intersect.Server.Database
         {
             var efLogLevel = logLevel switch
             {
-                Intersect.Logging.LogLevel.None => Microsoft.Extensions.Logging.LogLevel.None,
-                Intersect.Logging.LogLevel.Error => Microsoft.Extensions.Logging.LogLevel.Error,
-                Intersect.Logging.LogLevel.Warn => Microsoft.Extensions.Logging.LogLevel.Warning,
-                Intersect.Logging.LogLevel.Info => Microsoft.Extensions.Logging.LogLevel.Information,
-                Intersect.Logging.LogLevel.Trace => Microsoft.Extensions.Logging.LogLevel.Trace,
-                Intersect.Logging.LogLevel.Verbose => Microsoft.Extensions.Logging.LogLevel.Trace,
-                Intersect.Logging.LogLevel.Debug => Microsoft.Extensions.Logging.LogLevel.Debug,
-                Intersect.Logging.LogLevel.Diagnostic => Microsoft.Extensions.Logging.LogLevel.Trace,
-                Intersect.Logging.LogLevel.All => Microsoft.Extensions.Logging.LogLevel.Trace,
+                LogLevel.None => Microsoft.Extensions.Logging.LogLevel.None,
+                LogLevel.Error => Microsoft.Extensions.Logging.LogLevel.Error,
+                LogLevel.Warn => Microsoft.Extensions.Logging.LogLevel.Warning,
+                LogLevel.Info => Microsoft.Extensions.Logging.LogLevel.Information,
+                LogLevel.Trace => Microsoft.Extensions.Logging.LogLevel.Trace,
+                LogLevel.Verbose => Microsoft.Extensions.Logging.LogLevel.Trace,
+                LogLevel.Debug => Microsoft.Extensions.Logging.LogLevel.Debug,
+                LogLevel.Diagnostic => Microsoft.Extensions.Logging.LogLevel.Trace,
+                LogLevel.All => Microsoft.Extensions.Logging.LogLevel.Trace,
                 _ => throw new NotImplementedException(),
             };
 
@@ -112,57 +115,6 @@ namespace Intersect.Server.Database
                 builder => builder
                     .AddFilter(level => level >= efLogLevel)
                     .AddProvider(new DbLoggerProvider(logger))
-            );
-        }
-
-        public static TContext CreateContext<TContext>(
-            bool readOnly = true,
-            bool explicitLoad = false,
-            bool lazyLoading = false,
-            bool autoDetectChanges = false,
-            QueryTrackingBehavior? queryTrackingBehavior = default
-        ) where TContext : IntersectDbContext<TContext>, new()
-        {
-            DbConnectionStringBuilder connectionStringBuilder;
-            DatabaseOptions.DatabaseType databaseType;
-            ILoggerFactory loggerFactory;
-            if (typeof(TContext) == typeof(GameContext))
-            {
-                connectionStringBuilder = CreateConnectionStringBuilder(
-                    Options.GameDb ?? throw new InvalidOperationException(),
-                    GameDbFilename
-                );
-                databaseType = Options.GameDb.Type;
-                loggerFactory = CreateLoggerFactory(gameDbLogger, Options.GameDb.LogLevel);
-            }
-            else if (typeof(TContext) == typeof(PlayerContext))
-            {
-                connectionStringBuilder = CreateConnectionStringBuilder(
-                    Options.PlayerDb ?? throw new InvalidOperationException(),
-                    PlayersDbFilename
-                );
-                databaseType = Options.PlayerDb.Type;
-                loggerFactory = CreateLoggerFactory(playerDbLogger, Options.PlayerDb.LogLevel);
-            }
-            else if (typeof(TContext) == typeof(LoggingContext))
-            {
-                connectionStringBuilder = Logging.LoggingContext.DefaultConnectionStringBuilder;
-                databaseType = DatabaseOptions.DatabaseType.SQLite;
-                loggerFactory = default;
-            }
-            else
-            {
-                throw new NotSupportedException();
-            }
-            return IntersectDbContext<TContext>.Create(
-                autoDetectChanges: autoDetectChanges,
-                connectionStringBuilder: connectionStringBuilder,
-                databaseType: databaseType,
-                explicitLoad: explicitLoad,
-                lazyLoading: lazyLoading,
-                loggerFactory: loggerFactory,
-                readOnly: readOnly,
-                queryTrackingBehavior: queryTrackingBehavior
             );
         }
 
@@ -177,12 +129,20 @@ namespace Intersect.Server.Database
             bool lazyLoading = false,
             bool autoDetectChanges = false,
             QueryTrackingBehavior? queryTrackingBehavior = default
-        ) => CreateContext<GameContext>(
-            autoDetectChanges: autoDetectChanges,
-            explicitLoad: explicitLoad,
-            lazyLoading: lazyLoading,
-            readOnly: readOnly,
-            queryTrackingBehavior: queryTrackingBehavior
+        ) => GameContext.Create(
+            new ()
+            {
+                AutoDetectChanges = autoDetectChanges,
+                ConnectionStringBuilder = Options.GameDb.Type.CreateConnectionStringBuilder(
+                    Options.GameDb,
+                    GameDbFilename
+                ),
+                DatabaseType = Options.GameDb.Type,
+                ExplicitLoad = explicitLoad,
+                LazyLoading = lazyLoading,
+                QueryTrackingBehavior = queryTrackingBehavior,
+                ReadOnly = readOnly
+            }
         );
 
         /// <summary>
@@ -192,16 +152,46 @@ namespace Intersect.Server.Database
         /// <returns></returns>
         public static PlayerContext CreatePlayerContext(
             bool readOnly = true,
-            bool explicitLoad = false
-        ) => CreateContext<PlayerContext>(
-            explicitLoad: explicitLoad,
-            readOnly: readOnly
+            bool explicitLoad = false,
+            bool lazyLoading = false,
+            bool autoDetectChanges = false,
+            QueryTrackingBehavior? queryTrackingBehavior = default
+        ) => PlayerContext.Create(
+            new ()
+            {
+                AutoDetectChanges = autoDetectChanges,
+                ConnectionStringBuilder = Options.PlayerDb.Type.CreateConnectionStringBuilder(
+                    Options.PlayerDb,
+                    PlayersDbFilename
+                ),
+                DatabaseType = Options.PlayerDb.Type,
+                ExplicitLoad = explicitLoad,
+                LazyLoading = lazyLoading,
+                QueryTrackingBehavior = queryTrackingBehavior,
+                ReadOnly = readOnly
+            }
         );
 
         internal static LoggingContext CreateLoggingContext(
-            bool readOnly = true
-        ) => CreateContext<LoggingContext>(
-            readOnly: readOnly
+            bool readOnly = true,
+            bool explicitLoad = false,
+            bool lazyLoading = false,
+            bool autoDetectChanges = false,
+            QueryTrackingBehavior? queryTrackingBehavior = default
+        ) => LoggingContext.Create(
+            new ()
+            {
+                AutoDetectChanges = autoDetectChanges,
+                ConnectionStringBuilder = Options.LoggingDb.Type.CreateConnectionStringBuilder(
+                    Options.LoggingDb,
+                    LoggingDbFilename
+                ),
+                DatabaseType = Options.LoggingDb.Type,
+                ExplicitLoad = explicitLoad,
+                LazyLoading = lazyLoading,
+                QueryTrackingBehavior = queryTrackingBehavior,
+                ReadOnly = readOnly
+            }
         );
 
         public static void InitializeDbLoggers()
@@ -252,42 +242,67 @@ namespace Intersect.Server.Database
         {
         }
 
-        public static DbConnectionStringBuilder CreateConnectionStringBuilder(
-            DatabaseOptions databaseOptions,
-            string filename
-        )
+        private static readonly MethodInfo _methodInfoProcessMigrations =
+            typeof(DbInterface)
+                .GetMethod(nameof(ProcessMigrations), BindingFlags.NonPublic | BindingFlags.Static);
+
+        private static void ProcessMigrations<TContext>(TContext context)
+            where TContext : IntersectDbContext<TContext>
         {
-            switch (databaseOptions.Type)
+            var pendingMigrations = context.PendingMigrations;
+            var migrationScheduler = new MigrationScheduler<TContext>(context);
+            migrationScheduler.SchedulePendingMigrations();
+            migrationScheduler.ApplyScheduledMigrations();
+
+            var remainingPendingMigrations = context.PendingMigrations.ToList();
+            var processedMigrations = pendingMigrations
+                .Where(migration => !remainingPendingMigrations.Contains(migration));
+
+            context.MigrationsProcessed(processedMigrations.ToArray());
+
+#if DEBUG
+            if (ServerContext.Instance.RestApi.Configuration.SeedMode)
             {
-                case DatabaseOptions.DatabaseType.SQLite:
-                    return new SqliteConnectionStringBuilder($"Data Source={filename}");
-
-                case DatabaseOptions.DatabaseType.MySQL:
-                    return new MySqlConnectionStringBuilder
-                    {
-                        Server = databaseOptions.Server,
-                        Port = databaseOptions.Port,
-                        Database = databaseOptions.Database,
-                        UserID = databaseOptions.Username,
-                        Password = databaseOptions.Password
-                    };
-
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(databaseOptions.Type));
+                context.Seed();
             }
+#endif
         }
 
         // Database setup, version checking
         internal static bool InitDatabase(IServerContext serverContext)
         {
-            using var gameContext = CreateGameContext(readOnly: false);
+            using var gameContext = GameContext.Create(new()
+            {
+                ConnectionStringBuilder = Options.GameDb.Type.CreateConnectionStringBuilder(
+                    Options.GameDb,
+                    GameDbFilename
+                ),
+                DatabaseType = Options.GameDb.Type,
+                EnableDetailedErrors = true,
+                EnableSensitiveDataLogging = true
+            });
 
-            using var playerContext = CreatePlayerContext(readOnly: false);
+            using var playerContext = PlayerContext.Create(new()
+            {
+                ConnectionStringBuilder = Options.PlayerDb.Type.CreateConnectionStringBuilder(
+                    Options.PlayerDb,
+                    PlayersDbFilename
+                ),
+                DatabaseType = Options.PlayerDb.Type,
+                EnableDetailedErrors = true,
+                EnableSensitiveDataLogging = true
+            });
 
-            Logging.LoggingContext.Configure(
-                Logging.LoggingContext.DefaultConnectionStringBuilder,
-                DatabaseOptions.DatabaseType.SQLite
-            );
+            using var loggingContext = LoggingContext.Create(new()
+            {
+                ConnectionStringBuilder = Options.LoggingDb.Type.CreateConnectionStringBuilder(
+                    Options.LoggingDb,
+                    LoggingDbFilename
+                ),
+                DatabaseType = Options.LoggingDb.Type,
+                EnableDetailedErrors = true,
+                EnableSensitiveDataLogging = true
+            });
 
             // We don't want anyone running the old migration tool accidentally
             try
@@ -312,13 +327,19 @@ namespace Intersect.Server.Database
                 // ignored
             }
 
-            var gameMigrations = gameContext.PendingMigrations;
-            var showGameMigrationWarning = gameMigrations.Any() && !gameMigrations.Contains("20180905042857_Initial");
-            var playerMigrations = playerContext.PendingMigrations;
-            var showPlayerMigrationWarning =
-                playerMigrations.Any() && !playerMigrations.Contains("20180927161502_InitialPlayerDb");
+            var gameContextPendingMigrations = gameContext.PendingMigrations;
+            var playerContextPendingMigrations = playerContext.PendingMigrations;
+            var loggingContextPendingMigrations = loggingContext.PendingMigrations;
 
-            if (showGameMigrationWarning || showPlayerMigrationWarning)
+            var showMigrationWarning = (
+                gameContextPendingMigrations.Any() && !gameContextPendingMigrations.Contains("20180905042857_Initial")
+            ) || (
+                playerContextPendingMigrations.Any() && !playerContextPendingMigrations.Contains("20180927161502_InitialPlayerDb")
+            ) || (
+                loggingContextPendingMigrations.Any() && !loggingContextPendingMigrations.Contains("20191118024649_RequestLogs")
+            );
+
+            if (showMigrationWarning)
             {
                 Console.WriteLine();
                 Console.WriteLine(Strings.Database.upgraderequired);
@@ -335,12 +356,21 @@ namespace Intersect.Server.Database
                     {
                         break;
                     }
-                    else if (input.ToLower() == Strings.Database.upgradeexit.ToString().Trim().ToLower())
-                    {
-                        Environment.Exit(1);
 
-                        return false;
+                    if (
+                        !string.Equals(
+                            input,
+                            Strings.Database.upgradeexit.ToString().Trim(),
+                            StringComparison.CurrentCultureIgnoreCase
+                        )
+                    )
+                    {
+                        continue;
                     }
+
+                    Environment.Exit(1);
+
+                    return false;
                 }
 
                 Console.WriteLine();
@@ -349,56 +379,11 @@ namespace Intersect.Server.Database
                 );
             }
 
-            var gameContextMigrationScheduler = new MigrationScheduler<GameContext>(gameContext);
-            gameContextMigrationScheduler.SchedulePendingMigrations();
-            gameContextMigrationScheduler.ApplyScheduledMigrations();
-            var remainingGameMigrations = gameContext.PendingMigrations;
-            var processedGameMigrations = new List<string>(gameMigrations);
-            foreach (var itm in remainingGameMigrations)
+            var contexts = new List<DbContext> { gameContext, playerContext, loggingContext };
+            foreach (var context in contexts)
             {
-                processedGameMigrations.Remove(itm);
-            }
-
-            gameContext.MigrationsProcessed(processedGameMigrations.ToArray());
-
-#if DEBUG
-            if (ServerContext.Instance.RestApi.Configuration.SeedMode)
-            {
-                gameContext.Seed();
-            }
-#endif
-
-            playerContext.Database.Migrate();
-            var remainingPlayerMigrations = playerContext.PendingMigrations;
-            var processedPlayerMigrations = new List<string>(playerMigrations);
-            foreach (var itm in remainingPlayerMigrations)
-            {
-                processedPlayerMigrations.Remove(itm);
-            }
-
-            playerContext.MigrationsProcessed(processedPlayerMigrations.ToArray());
-#if DEBUG
-            if (ServerContext.Instance.RestApi.Configuration.SeedMode)
-            {
-                playerContext.Seed();
-            }
-#endif
-
-            try
-            {
-                using var loggingContext = LoggingContext.Create(readOnly: false);
-                loggingContext.Database?.Migrate();
-
-#if DEBUG
-                if (ServerContext.Instance.RestApi.Configuration.SeedMode)
-                {
-                    loggingContext.Seed();
-                }
-#endif
-            }
-            catch (Exception exception)
-            {
-                throw;
+                var contextType = context.GetType().FindGenericTypeParameters(typeof(IntersectDbContext<>)).First();
+                _methodInfoProcessMigrations.MakeGenericMethod(contextType).Invoke(null, new object[]{context});
             }
 
             LoadAllGameObjects();
@@ -1545,179 +1530,155 @@ namespace Intersect.Server.Database
         }
 
         //Migration Code
-        public static void Migrate(DatabaseOptions orig, DatabaseOptions.DatabaseType convType)
+        public static async Task Migrate<TContext>(DatabaseOptions fromDatabaseOptions, DatabaseType toDatabaseType)
+            where TContext : IntersectDbContext<TContext>
         {
-            var gameDb = orig == Options.GameDb;
-            PlayerContext newPlayerContext = null;
-            GameContext newGameContext = null;
-            var newOpts = new DatabaseOptions
+            var fromContextOptions = new DatabaseContextOptions
             {
-                Type = DatabaseOptions.DatabaseType.SQLite
+                AutoDetectChanges = false,
+                ConnectionStringBuilder = fromDatabaseOptions.Type.CreateConnectionStringBuilder(fromDatabaseOptions, default),
+                ExplicitLoad = false,
+                LazyLoading = false,
+                LoggerFactory = default,
+                QueryTrackingBehavior = default,
+                ReadOnly = false
             };
 
-            //MySql Creds
-            string host, user, pass, database;
-            ushort port;
-            var dbConnected = false;
-
-            switch (convType)
+            DatabaseOptions toDatabaseOptions;
+            DatabaseContextOptions toContextOptions;
+            switch (toDatabaseType)
             {
-                case DatabaseOptions.DatabaseType.MySQL:
+                case DatabaseType.MySql:
+                {
+                    var dbConnected = false;
                     while (!dbConnected)
                     {
                         Console.WriteLine(Strings.Migration.entermysqlinfo);
                         Console.Write(Strings.Migration.mysqlhost);
-                        host = Console.ReadLine()?.Trim() ?? "localhost";
-                        Console.Write(Strings.Migration.mysqlport);
-                        var portinput = Console.ReadLine()?.Trim();
-                        if (string.IsNullOrWhiteSpace(portinput))
-                        {
-                            portinput = "3306";
-                        }
+                        var host = Console.ReadLine()?.Trim() ?? "localhost";
 
-                        port = ushort.Parse(portinput);
+                        Console.Write(Strings.Migration.mysqlport);
+                        var portString = Console.ReadLine()?.Trim();
+                        if (string.IsNullOrWhiteSpace(portString))
+                        {
+                            portString = "3306";
+                        }
+                        var port = ushort.Parse(portString);
+
                         Console.Write(Strings.Migration.mysqldatabase);
-                        database = Console.ReadLine()?.Trim();
+                        var database = Console.ReadLine()?.Trim();
+
                         Console.Write(Strings.Migration.mysqluser);
-                        user = Console.ReadLine().Trim();
+                        var username = Console.ReadLine().Trim();
+
                         Console.Write(Strings.Migration.mysqlpass);
-                        pass = GetPassword();
+                        var password = GetPassword();
 
                         Console.WriteLine();
                         Console.WriteLine(Strings.Migration.mysqlconnecting);
-                        var connectionStringBuilder = CreateConnectionStringBuilder(
-                            new DatabaseOptions
-                            {
-                                Type = DatabaseOptions.DatabaseType.MySQL,
-                                Server = host,
-                                Port = port,
-                                Database = database,
-                                Username = user,
-                                Password = pass
-                            }, null
-                        );
+
+                        toDatabaseOptions = new()
+                        {
+                            Type = toDatabaseType,
+                            Server = host,
+                            Port = port,
+                            Database = database,
+                            Username = username,
+                            Password = password
+                        };
+                        toContextOptions = new DatabaseContextOptions
+                        {
+                            ConnectionStringBuilder = toDatabaseType.CreateConnectionStringBuilder(
+                                toDatabaseOptions,
+                                default
+                            ),
+                            DatabaseType = toDatabaseType
+                        };
 
                         try
                         {
-                            if (gameDb)
-                            {
-                                newGameContext = new GameContext(
-                                    connectionStringBuilder, DatabaseOptions.DatabaseType.MySQL
-                                );
-
-                                if (newGameContext.IsEmpty())
-                                {
-                                    newGameContext.Database.EnsureDeleted();
-                                    newGameContext.Database.Migrate();
-                                }
-                                else
-                                {
-                                    Console.WriteLine(Strings.Migration.mysqlnotempty);
-
-                                    return;
-                                }
-                            }
-                            else
-                            {
-                                newPlayerContext = new PlayerContext(
-                                    connectionStringBuilder, DatabaseOptions.DatabaseType.MySQL
-                                );
-
-                                if (newPlayerContext.IsEmpty())
-                                {
-                                    newPlayerContext.Database.EnsureDeleted();
-                                    newPlayerContext.Database.Migrate();
-                                }
-                                else
-                                {
-                                    Console.WriteLine(Strings.Migration.mysqlnotempty);
-
-                                    return;
-                                }
-                            }
-
-                            newOpts.Type = DatabaseOptions.DatabaseType.mysql;
-                            newOpts.Server = host;
-                            newOpts.Port = port;
-                            newOpts.Database = database;
-                            newOpts.Username = user;
-                            newOpts.Password = pass;
-
-                            dbConnected = true;
+                            await using var testContext = IntersectDbContext<TContext>.Create(toContextOptions);
+                            break;
                         }
-                        catch (Exception ex)
+                        catch (Exception exception)
                         {
-                            Console.WriteLine(Strings.Migration.mysqlconnectionerror.ToString(ex));
+                            Console.WriteLine(Strings.Migration.mysqlconnectionerror.ToString(exception));
                             Console.WriteLine();
                             Console.WriteLine(Strings.Migration.mysqltryagain);
                             var input = Console.ReadLine();
                             var key = input.Length > 0 ? input[0] : ' ';
                             Console.WriteLine();
-                            if (!string.Equals(
-                                Strings.Migration.tryagaincharacter, key.ToString(), StringComparison.Ordinal
-                            ))
-                            {
-                                Console.WriteLine(Strings.Migration.migrationcancelled);
 
-                                return;
+                            var shouldTryAgain = string.Equals(
+                                Strings.Migration.tryagaincharacter,
+                                key.ToString(),
+                                StringComparison.Ordinal
+                            );
+
+                            if (shouldTryAgain)
+                            {
+                                continue;
                             }
+
+                            Console.WriteLine(Strings.Migration.migrationcancelled);
+                            return;
                         }
                     }
 
-                    break;
+                    throw new InvalidOperationException();
+                }
 
-                case DatabaseOptions.DatabaseType.SQLite:
-                    //If the file exists make sure it is safe to delete
-                    var dbExists = gameDb && File.Exists(GameDbFilename) || !gameDb && File.Exists(PlayersDbFilename);
-                    if (dbExists)
+                case DatabaseType.Sqlite:
+                {
+                    string dbFileName;
+                    if (typeof(TContext).Extends<GameContext>())
                     {
+                        dbFileName = GameDbFilename;
+                    }
+                    else if (typeof(TContext).Extends<PlayerContext>())
+                    {
+                        dbFileName = PlayersDbFilename;
+                    }
+                    else if (typeof(TContext).Extends<LoggingContext>())
+                    {
+                        dbFileName = LoggingDbFilename;
+                    }
+                    else
+                    {
+                        throw new InvalidOperationException($"Unsupported context type: {typeof(TContext).FullName}");
+                    }
+
+                    // Check if target SQLite file exists
+                    if (File.Exists(dbFileName))
+                    {
+                        // If it does, check if it is OK to overwrite
                         Console.WriteLine();
-                        var filename = gameDb ? GameDbFilename : PlayersDbFilename;
-                        Console.WriteLine(Strings.Migration.sqlitealreadyexists.ToString(filename));
+                        Console.WriteLine(Strings.Migration.sqlitealreadyexists.ToString(dbFileName));
                         var input = Console.ReadLine();
                         var key = input.Length > 0 ? input[0] : ' ';
                         Console.WriteLine();
                         if (key.ToString() != Strings.Migration.overwritecharacter)
                         {
                             Console.WriteLine(Strings.Migration.migrationcancelled);
-
                             return;
                         }
                     }
 
-                    if (gameDb)
+                    toDatabaseOptions = new() { Type = toDatabaseType };
+                    toContextOptions = new()
                     {
-                        newGameContext = new GameContext(
-                            CreateConnectionStringBuilder(
-                                new DatabaseOptions
-                                {
-                                    Type = DatabaseOptions.DatabaseType.SQLite
-                                }, GameDbFilename
-                            ), DatabaseOptions.DatabaseType.SQLite
-                        );
-
-                        newGameContext.Database.EnsureDeleted();
-                        newGameContext.Database.Migrate();
-                    }
-                    else
-                    {
-                        newPlayerContext = new PlayerContext(
-                            CreateConnectionStringBuilder(
-                                new DatabaseOptions
-                                {
-                                    Type = DatabaseOptions.DatabaseType.SQLite
-                                }, PlayersDbFilename
-                            ), DatabaseOptions.DatabaseType.SQLite
-                        );
-
-                        newPlayerContext.Database.EnsureDeleted();
-                        newPlayerContext.Database.Migrate();
-                    }
+                        ConnectionStringBuilder = toDatabaseType.CreateConnectionStringBuilder(
+                            toDatabaseOptions,
+                            dbFileName
+                        ),
+                        DatabaseType = toDatabaseType
+                    };
 
                     break;
+                }
 
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(convType));
+                    throw new ArgumentOutOfRangeException(nameof(toDatabaseType), toDatabaseType, null);
             }
 
             //Shut down server, start migration.
@@ -1728,71 +1689,43 @@ namespace Intersect.Server.Database
 
             while (ServerContext.Instance.IsRunning)
             {
-                System.Threading.Thread.Sleep(100);
+                Thread.Sleep(100);
             }
 
 
             Console.WriteLine(Strings.Migration.startingmigration);
-            if (gameDb && newGameContext != null)
+            var migrationService = new DatabaseTypeMigrationService();
+            await migrationService.TryMigrate<TContext>(fromContextOptions, toContextOptions);
+            if (await migrationService.TryMigrate<TContext>(fromContextOptions, toContextOptions))
             {
-                using (var context = CreateGameContext(readOnly: false))
+                if (typeof(TContext).Extends<GameContext>())
                 {
-                    MigrateDbSet(context.Animations, newGameContext.Animations);
-                    MigrateDbSet(context.Classes, newGameContext.Classes);
-                    MigrateDbSet(context.CraftingTables, newGameContext.CraftingTables);
-                    MigrateDbSet(context.Crafts, newGameContext.Crafts);
-                    MigrateDbSet(context.Events, newGameContext.Events);
-                    MigrateDbSet(context.Items, newGameContext.Items);
-                    //MigrateDbSet(context.MapFolders, newGameContext.MapFolders);
-                    MigrateDbSet(context.Maps, newGameContext.Maps);
-                    MigrateDbSet(context.Npcs, newGameContext.Npcs);
-                    MigrateDbSet(context.Projectiles, newGameContext.Projectiles);
-                    MigrateDbSet(context.Quests, newGameContext.Quests);
-                    MigrateDbSet(context.Resources, newGameContext.Resources);
-                    MigrateDbSet(context.Shops, newGameContext.Shops);
-                    MigrateDbSet(context.Spells, newGameContext.Spells);
-                    MigrateDbSet(context.ServerVariables, newGameContext.ServerVariables);
-                    MigrateDbSet(context.PlayerVariables, newGameContext.PlayerVariables);
-                    MigrateDbSet(context.Tilesets, newGameContext.Tilesets);
-                    MigrateDbSet(context.Time, newGameContext.Time);
-                    newGameContext.ChangeTracker.DetectChanges();
-                    newGameContext.SaveChanges();
-                    newGameContext.Dispose();
-                    newGameContext = null;
+                    Options.GameDb = toDatabaseOptions;
                 }
-                Options.GameDb = newOpts;
-                Options.SaveToDisk();
-            }
-            else if (!gameDb && newPlayerContext != null)
-            {
-                using (var context = CreatePlayerContext(readOnly: false))
+                else if (typeof(TContext).Extends<PlayerContext>())
                 {
-                    MigrateDbSet(context.Users, newPlayerContext.Users);
-                    MigrateDbSet(context.Players, newPlayerContext.Players);
-                    MigrateDbSet(context.Player_Friends, newPlayerContext.Player_Friends);
-                    MigrateDbSet(context.Player_Spells, newPlayerContext.Player_Spells);
-                    MigrateDbSet(context.Player_Variables, newPlayerContext.Player_Variables);
-                    MigrateDbSet(context.Player_Hotbar, newPlayerContext.Player_Hotbar);
-                    MigrateDbSet(context.Player_Quests, newPlayerContext.Player_Quests);
-                    MigrateDbSet(context.Bags, newPlayerContext.Bags);
-                    MigrateDbSet(context.Player_Items, newPlayerContext.Player_Items);
-                    MigrateDbSet(context.Player_Bank, newPlayerContext.Player_Bank);
-                    MigrateDbSet(context.Bag_Items, newPlayerContext.Bag_Items);
-                    MigrateDbSet(context.Mutes, newPlayerContext.Mutes);
-                    MigrateDbSet(context.Bans, newPlayerContext.Bans);
-                    newPlayerContext.ChangeTracker.DetectChanges();
-                    newPlayerContext.SaveChanges();
-                    newPlayerContext.Dispose();
-                    newPlayerContext = null;
+                    Options.PlayerDb = toDatabaseOptions;
                 }
-                Options.PlayerDb = newOpts;
+                else if (typeof(TContext).Extends<LoggingContext>())
+                {
+                    Options.LoggingDb = toDatabaseOptions;
+                }
+                else
+                {
+                    throw new InvalidOperationException($"Unsupported context type: {typeof(TContext).FullName}");
+                }
+
                 Options.SaveToDisk();
 
+                Console.WriteLine(Strings.Migration.migrationcomplete);
+                Bootstrapper.Context.ConsoleService.Wait(true);
+                Environment.Exit(0);
             }
-
-            Console.WriteLine(Strings.Migration.migrationcomplete);
-            Bootstrapper.Context.ConsoleService.Wait(true);
-            Environment.Exit(0);
+            else
+            {
+                Console.WriteLine($"Error migrating context type: {typeof(TContext).FullName}");
+                Environment.Exit(1);
+            }
         }
 
         private static void MigrateDbSet<T>(DbSet<T> oldDbSet, DbSet<T> newDbSet) where T : class

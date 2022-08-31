@@ -41,8 +41,12 @@ public sealed class MigrationScheduler<TContext>
         {
             if (scheduledMigration is DataMigrationMetadata scheduledDataMigration)
             {
-                var dataMigration = Activator.CreateInstance(scheduledDataMigration.MigratorType) as IDataMigration<TContext>;
-                if (dataMigration == default)
+                if (scheduledDataMigration.MigratorType == default)
+                {
+                    throw new InvalidOperationException($"Missing MigratorType for {scheduledDataMigration.Name}");
+                }
+
+                if (Activator.CreateInstance(scheduledDataMigration.MigratorType) is not IDataMigration<TContext> dataMigration)
                 {
                     throw new InvalidOperationException($"Failed to create instance of data migration: {scheduledDataMigration.MigratorType.FullName}");
                 }

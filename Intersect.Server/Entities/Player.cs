@@ -1911,8 +1911,10 @@ namespace Intersect.Server.Entities
                 {
                     using (var mapenum = MapController.Lookup.GetEnumerator())
                     {
-                        mapenum.MoveNext();
-                        mapId = mapenum.Current.Value.Id;
+                        if (mapenum.MoveNext())
+                        {
+                            mapId = mapenum.Current.Value.Id;
+                        }
                     }
                 }
 

@@ -2,10 +2,8 @@ using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Crafting;
 using Intersect.GameObjects.Events;
-using Intersect.GameObjects.Maps.MapList;
 using Intersect.Logging;
 using Intersect.Models;
-using Intersect.Server.Migrations.Game;
 
 using Microsoft.EntityFrameworkCore;
 
@@ -15,7 +13,8 @@ using SqlKata.Execution;
 
 namespace Intersect.Server.Database.GameData.Migrations;
 
-[SchemaMigration(typeof(AddGenericFolders))]
+[SchemaMigration(typeof(Intersect.Server.Migrations.MySql.Game.AddGenericFolders))]
+[SchemaMigration(typeof(Intersect.Server.Migrations.Sqlite.Game.AddGenericFolders))]
 public sealed partial class AddGenericFoldersDataMigration : IDataMigration<GameContext>
 {
     private class IdFolder
@@ -60,7 +59,7 @@ public sealed partial class AddGenericFoldersDataMigration : IDataMigration<Game
     {
         var dbConnection = context.Database.GetDbConnection();
         var descriptorTable = context.Model
-            .FindEntityType(typeof(TDescriptor))
+            .FindEntityType(typeof(TDescriptor))?
             .GetTableName() ?? throw new InvalidOperationException($"Missing table for {typeof(TDescriptor).FullName}.");
         var queryCompiler = context.DatabaseType.CreateQueryCompiler();
         var queryFactory = new QueryFactory(dbConnection, queryCompiler);

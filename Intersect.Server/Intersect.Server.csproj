@@ -75,20 +75,22 @@
     <PackageReference Include="Microsoft.AspNet.WebApi.Core" Version="5.2.7" />
     <PackageReference Include="Microsoft.AspNet.WebApi.Owin" Version="5.2.7" />
     <PackageReference Include="Microsoft.AspNet.WebApi.OwinSelfHost" Version="5.2.7" />
-    <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="6.0.3" />
-    <PackageReference Include="Microsoft.Diagnostics.Runtime" Version="2.0.226801" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.3" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.3">
+    <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="6.0.8" />
+    <PackageReference Include="Microsoft.Diagnostics.Runtime" Version="2.2.332302" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.8" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.8">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="6.0.3" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.3" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite.Core" Version="6.0.3" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.3">
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="6.0.8" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.8" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite.Core" Version="6.0.8" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.8">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Configuration" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="6.0.0" />
@@ -100,17 +102,17 @@
     <PackageReference Include="Microsoft.Owin.Hosting" Version="4.2.0" />
     <PackageReference Include="Microsoft.Owin.Security" Version="4.2.0" />
     <PackageReference Include="Microsoft.Owin.Security.OAuth" Version="4.2.0" />
-    <PackageReference Include="MySqlConnector" Version="2.1.8" />
+    <PackageReference Include="MySqlConnector" Version="2.1.12" />
     <PackageReference Include="Owin" Version="1.0" />
     <PackageReference Include="Owin.Security.AesDataProtectorProvider" Version="1.2.2" />
-    <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="6.0.1" />
+    <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="6.0.2" />
     <PackageReference Include="Pomelo.JsonObject" Version="2.2.1" />
     <PackageReference Include="Remotion.Linq" Version="2.2.0" />
     <PackageReference Include="SmartThreadPool.dll" Version="2.3.0" />
-    <PackageReference Include="SQLitePCLRaw.bundle_green" Version="2.1.0-pre20220318192836" />
+    <PackageReference Include="SQLitePCLRaw.bundle_green" Version="2.1.0" />
     <PackageReference Include="SqlKata" Version="2.3.7" />
     <PackageReference Include="SqlKata.Execution" Version="2.3.7" />
     <PackageReference Include="System.Text.Encodings.Web" Version="6.0.0" />
-    <PackageReference Include="System.Text.Json" Version="6.0.2" />
+    <PackageReference Include="System.Text.Json" Version="6.0.5" />
   </ItemGroup>
 </Project>

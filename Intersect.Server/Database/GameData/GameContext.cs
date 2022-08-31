@@ -1,6 +1,5 @@
 using System.Data.Common;
 using System.Reflection;
-
 using Intersect.Config;
 using Intersect.Enums;
 using Intersect.Framework.Reflection;
@@ -12,14 +11,50 @@ using Intersect.Models;
 using Intersect.Server.Database.GameData.Migrations;
 using Intersect.Server.Database.GameData.Seeds;
 using Intersect.Server.Maps;
-
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using MySqlConnector;
 
 namespace Intersect.Server.Database.GameData;
 
-public partial class GameContext : IntersectDbContext<GameContext>, IGameContext
+public sealed class MySqlGameContext : GameContext, IMySqlDbContext
+{
+    private MySqlGameContext() : base(new()) { }
+
+    public MySqlGameContext(DatabaseContextOptions databaseContextOptions) : base(databaseContextOptions) { }
+
+    /// <inheritdoc />
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        base.OnConfiguring(optionsBuilder);
+    }
+}
+
+public sealed class SqliteGameContext : GameContext, ISqliteDbContext
+{
+    public static readonly DatabaseContextOptions DefaultContextOptions = new()
+    {
+        ConnectionStringBuilder = new SqliteConnectionStringBuilder($@"Data Source={DbInterface.GameDbFilename}"),
+        DatabaseType = DatabaseType.Sqlite
+    };
+
+    public SqliteGameContext() : base(DefaultContextOptions) { }
+
+    public SqliteGameContext(DatabaseContextOptions databaseContextOptions) : base(databaseContextOptions) { }
+
+    /// <inheritdoc />
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        base.OnConfiguring(optionsBuilder);
+
+        optionsBuilder.UseSqlite(
+            DatabaseContextOptions.ConnectionStringBuilder.ConnectionString
+        );
+    }
+}
+
+public abstract partial class GameContext : IntersectDbContext<GameContext>, IGameContext
 {
     private readonly MethodInfo _descriptorOnModelCreating = typeof(GameContext).GetMethod(
         nameof(OnModelCreating),
@@ -30,33 +65,16 @@ public partial class GameContext : IntersectDbContext<GameContext>, IGameContext
         default
     ) ?? throw new InvalidOperationException();
 
-    public GameContext() : this(
-        DefaultConnectionStringBuilder,
-        DatabaseOptions.DatabaseType.SQLite
-    ) { }
+    protected GameContext(DatabaseContextOptions databaseContextOptions) : base(databaseContextOptions) { }
 
-    public GameContext(
-        DbConnectionStringBuilder connectionStringBuilder,
-        DatabaseOptions.DatabaseType? databaseType,
-        bool autoDetectChanges = false,
-        bool explicitLoad = false,
-        bool lazyLoading = false,
-        bool readOnly = false,
-        ILoggerFactory? loggerFactory = default,
-        QueryTrackingBehavior? queryTrackingBehavior = default
-    ) : base(
-        autoDetectChanges: autoDetectChanges,
-        connectionStringBuilder: connectionStringBuilder ?? DefaultConnectionStringBuilder,
-        databaseType: databaseType ?? DatabaseOptions.DatabaseType.SQLite,
-        explicitLoad: explicitLoad,
-        lazyLoading: lazyLoading,
-        loggerFactory: loggerFactory,
-        readOnly: readOnly,
-        queryTrackingBehavior: queryTrackingBehavior
-    ) { }
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        Console.WriteLine("OnConfiguring");
+        base.OnConfiguring(optionsBuilder);
+    }
 
     public static DbConnectionStringBuilder DefaultConnectionStringBuilder =>
-        new SqliteConnectionStringBuilder(@"Data Source=resources/gamedata.db");
+        new SqliteConnectionStringBuilder($@"Data Source={DbInterface.GameDbFilename}");
 
     //Animations
     public DbSet<AnimationBase> Animations { get; set; }
@@ -177,7 +195,8 @@ public partial class GameContext : IntersectDbContext<GameContext>, IGameContext
         foreach (var descriptorType in descriptorTypes)
         {
             var correctedDescriptorType = CorrectDescriptorType(descriptorType);
-            var methodInfoOnModelCreatingDesriptorType = _descriptorOnModelCreating.MakeGenericMethod(correctedDescriptorType);
+            var methodInfoOnModelCreatingDesriptorType =
+                _descriptorOnModelCreating.MakeGenericMethod(correctedDescriptorType);
             _ = methodInfoOnModelCreatingDesriptorType.Invoke(this, new[] { modelBuilder });
         }
     }
@@ -217,12 +236,15 @@ public partial class GameContext : IntersectDbContext<GameContext>, IGameContext
     internal static partial class Queries
     {
         internal static readonly Func<Guid, ServerVariableBase> ServerVariableById =
-            (Guid id) => (ServerVariableBase)ServerVariableBase.Lookup.FirstOrDefault(variable => variable.Key == id).Value;
+            (Guid id) =>
+                (ServerVariableBase)ServerVariableBase.Lookup.FirstOrDefault(variable => variable.Key == id).Value;
 
         internal static readonly Func<string, ServerVariableBase> ServerVariableByName =
-            (string name) => (ServerVariableBase)ServerVariableBase.Lookup.FirstOrDefault(variable => string.Equals(variable.Value.Name, name, StringComparison.OrdinalIgnoreCase)).Value;
+            (string name) => (ServerVariableBase)ServerVariableBase.Lookup.FirstOrDefault(variable =>
+                string.Equals(variable.Value.Name, name, StringComparison.OrdinalIgnoreCase)).Value;
 
         internal static readonly Func<int, int, IEnumerable<ServerVariableBase>> ServerVariables =
-            (int page, int count) => ServerVariableBase.Lookup.Select(v => (ServerVariableBase)v.Value).OrderBy(v => v.Id.ToString()).Skip(page * count).Take(count);
+            (int page, int count) => ServerVariableBase.Lookup.Select(v => (ServerVariableBase)v.Value)
+                .OrderBy(v => v.Id.ToString()).Skip(page * count).Take(count);
     }
 }

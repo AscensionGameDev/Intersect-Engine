@@ -17,9 +17,6 @@ namespace Intersect.Editor.Maps
 
     public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>
     {
-
-        private static MapControllers sLookup;
-
         //Map Attributes
         private Dictionary<MapAttribute, Animation> mAttributeAnimInstances = new Dictionary<MapAttribute, Animation>();
 
@@ -47,8 +44,6 @@ namespace Intersect.Editor.Maps
                 InitAutotiles();
             }
         }
-
-        public new static MapControllers Lookup => sLookup = sLookup ?? new MapControllers(MapBase.Lookup);
 
         //World Position
         public int MapGridX { get; set; }

@@ -345,43 +345,6 @@ namespace Intersect.GameObjects.Maps
             return mCachedAttributeData;
         }
 
-        public partial class MapControllers : DatabaseObjectLookup
-        {
-
-            private readonly DatabaseObjectLookup mBaseLookup;
-
-            public MapControllers(DatabaseObjectLookup baseLookup) : base(baseLookup.StoredType)
-            {
-                if (baseLookup == null)
-                {
-                    throw new ArgumentNullException();
-                }
-
-                mBaseLookup = baseLookup;
-            }
-
-            internal override bool InternalSet(IDatabaseObject value, bool overwrite)
-            {
-                mBaseLookup?.InternalSet(value, overwrite);
-
-                return base.InternalSet(value, overwrite);
-            }
-
-            public override bool Delete(IDatabaseObject value)
-            {
-                mBaseLookup?.Delete(value);
-
-                return base.Delete(value);
-            }
-
-            public override void Clear()
-            {
-                mBaseLookup?.Clear();
-                base.Clear();
-            }
-
-        }
-
     }
 
 }

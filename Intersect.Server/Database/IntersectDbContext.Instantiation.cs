@@ -1,29 +1,18 @@
-using System.Data;
-using System.Data.Common;
 using System.Linq.Expressions;
 using System.Reflection;
-
 using Intersect.Config;
-
+using Intersect.Framework.Reflection;
+using Intersect.Logging;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 
 namespace Intersect.Server.Database;
 
-public delegate DbContext DbContextConstructor(
-    DbConnectionStringBuilder connectionStringBuilder,
-    DatabaseOptions.DatabaseType? databaseType,
-    bool autoDetectChanges = false,
-    bool explicitLoad = false,
-    bool lazyLoading = false,
-    bool readOnly = false,
-    ILoggerFactory? loggerFactory = default,
-    QueryTrackingBehavior? queryTrackingBehavior = default
-);
+public delegate DbContext DbContextConstructor(DatabaseContextOptions databaseContextOptions);
 
 public partial class IntersectDbContext<TDbContext>
 {
-    private static readonly Dictionary<Type, DbContextConstructor> _constructorCache = new();
+    private static readonly Dictionary<(Type, DatabaseType), DbContextConstructor> _constructorCache = new();
+
     private static readonly ParameterInfo[] _createContextParameters =
         typeof(IntersectDbContext<>)
             .GetConstructors(BindingFlags.NonPublic | BindingFlags.Instance)
@@ -31,127 +20,146 @@ public partial class IntersectDbContext<TDbContext>
             .GetParameters()
             .ToArray();
 
-    protected IntersectDbContext(
-        DbConnectionStringBuilder connectionStringBuilder,
-        DatabaseOptions.DatabaseType? databaseType = default,
-        bool autoDetectChanges = false,
-        bool explicitLoad = false,
-        bool lazyLoading = false,
-        bool readOnly = false,
-        ILoggerFactory? loggerFactory = default,
-        QueryTrackingBehavior? queryTrackingBehavior = default
-    )
+    protected IntersectDbContext(DatabaseContextOptions databaseContextOptions)
     {
-        ConnectionStringBuilder = connectionStringBuilder;
-        DatabaseType = databaseType ?? DatabaseOptions.DatabaseType.SQLite;
-
-        _loggerFactory = loggerFactory;
-
-        ReadOnly = readOnly;
-
-        if (queryTrackingBehavior != default)
+        DatabaseContextOptions = databaseContextOptions with
         {
-            ChangeTracker.QueryTrackingBehavior = queryTrackingBehavior.Value;
-        }
+            ConnectionStringBuilder = databaseContextOptions.ConnectionStringBuilder ??
+                                      _fallbackContextOptions.ConnectionStringBuilder
+        };
 
-        ChangeTracker.AutoDetectChangesEnabled = autoDetectChanges || ReadOnly;
+        Console.Error.WriteLine(databaseContextOptions);
+        Console.Error.WriteLine(DatabaseContextOptions);
 
-        if (ReadOnly && !explicitLoad)
-        {
-            ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
-        }
-
-        ChangeTracker.LazyLoadingEnabled = lazyLoading || !ReadOnly;
+        base.ChangeTracker.AutoDetectChangesEnabled = databaseContextOptions.AutoDetectChanges || ReadOnly;
+        base.ChangeTracker.LazyLoadingEnabled = databaseContextOptions.LazyLoading || !ReadOnly;
     }
 
-    public static TDbContext Create(
-        DbConnectionStringBuilder connectionStringBuilder = default,
-        DatabaseOptions.DatabaseType? databaseType = default,
-        bool autoDetectChanges = false,
-        bool explicitLoad = false,
-        bool lazyLoading = false,
-        bool readOnly = false,
-        ILoggerFactory? loggerFactory = default,
-        QueryTrackingBehavior? queryTrackingBehavior = default
-    )
+    private static DbContextConstructor CreateConstructorDelegate<TContextType>(
+        DatabaseType databaseType
+    ) where TContextType : IntersectDbContext<TContextType>
     {
-        var dbContextType = typeof(TDbContext);
-        if (!_constructorCache.TryGetValue(dbContextType, out var constructorDelegate))
+        var dbContextAbstractType = typeof(TContextType);
+        if (dbContextAbstractType.FindGenericTypeParameters(typeof(IntersectDbContext<>)).First() != dbContextAbstractType)
         {
-            var constructor = dbContextType.GetConstructor(
-                BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance,
-                _createContextParameters
-                    .Select(parameterInfo => parameterInfo.ParameterType)
-                    .ToArray()
+            throw new ArgumentException(
+                $"Invalid generic type, it must directly extend IntersectDbContext<>: {dbContextAbstractType.FullName}"
             );
-
-            if (constructor == default)
-            {
-                var parametersString = string.Join(
-                    ", ",
-                    _createContextParameters.Select(
-                        parameterInfo => parameterInfo.ParameterType.FullName
-                    )
-                );
-                throw new MissingMethodException(
-                    dbContextType.Name,
-                    $"Missing constructor with the following parameters: {parametersString}"
-                );
-            }
-
-            var parameterExpressions = _createContextParameters.Select(
-                parameterInfo => Expression.Parameter(
-                    parameterInfo.ParameterType,
-                    parameterInfo.Name
-                )
-            ).ToArray();
-
-            var newExpression = Expression.New(
-                constructor,
-                parameterExpressions
-            );
-            var stronglyTypedLambdaExpression = Expression.Lambda(
-                newExpression,
-                parameterExpressions
-            );
-            var stronglyTypedInvocationExpression = Expression.Invoke(
-                stronglyTypedLambdaExpression,
-                parameterExpressions
-            );
-            var asDbContextExpression = Expression.TypeAs(
-                stronglyTypedInvocationExpression,
-                typeof(DbContext)
-            );
-            var weaklyTypedLambdaExpression = Expression.Lambda(
-                asDbContextExpression,
-                parameterExpressions
-            );
-
-            var compiledDelegate = weaklyTypedLambdaExpression.Compile();
-            var castedDelegate = compiledDelegate as Func<
-                DbConnectionStringBuilder,
-                DatabaseOptions.DatabaseType?,
-                bool,
-                bool,
-                bool,
-                bool,
-                ILoggerFactory?,
-                QueryTrackingBehavior?,
-                DbContext
-            >;
-            constructorDelegate = new DbContextConstructor(castedDelegate);
-            _constructorCache[dbContextType] = constructorDelegate;
         }
 
-        return constructorDelegate(
-            autoDetectChanges: autoDetectChanges,
-            connectionStringBuilder: connectionStringBuilder ?? _fallbackConnectionStringBuilder,
-            databaseType: databaseType ?? _fallbackDatabaseType,
-            explicitLoad: explicitLoad,
-            lazyLoading: lazyLoading,
-            loggerFactory: loggerFactory,
-            readOnly: readOnly,
-            queryTrackingBehavior: queryTrackingBehavior
-        ) as TDbContext ?? throw new InvalidOperationException();
+        var dbContextConcreteType = databaseType switch
+        {
+            DatabaseType.MySql => dbContextAbstractType.FindConcreteType(type => type.Extends<IMySqlDbContext>()),
+            DatabaseType.Sqlite => dbContextAbstractType.FindConcreteType(type => type.Extends<ISqliteDbContext>()),
+            _ => throw new ArgumentOutOfRangeException(nameof(databaseType), databaseType, null)
+        };
+
+        if (dbContextConcreteType == default)
+        {
+            throw new ArgumentException(
+                $"Failed to find concrete implementation of {dbContextAbstractType.FullName} for {databaseType}.",
+                nameof(databaseType)
+            );
+        }
+
+        var constructor = dbContextConcreteType.GetConstructor(
+            BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance,
+            _createContextParameters
+                .Select(parameterInfo => parameterInfo.ParameterType)
+                .ToArray()
+        );
+
+        if (constructor == default)
+        {
+            throw new MissingMethodException(
+                $"Unable to find usable constructor with parameter types: {string.Join(", ", _createContextParameters.Select(parameterInfo => parameterInfo.ParameterType.FullName))}",
+                dbContextConcreteType.Name
+            );
+        }
+
+        var parameterExpressions = _createContextParameters.Select(
+            parameterInfo => Expression.Parameter(
+                parameterInfo.ParameterType,
+                parameterInfo.Name
+            )
+        ).ToArray();
+
+        var newExpression = Expression.New(
+            constructor,
+            parameterExpressions.OfType<Expression>()
+        );
+        var stronglyTypedLambdaExpression = Expression.Lambda(
+            newExpression,
+            parameterExpressions
+        );
+        var stronglyTypedInvocationExpression = Expression.Invoke(
+            stronglyTypedLambdaExpression,
+            parameterExpressions.OfType<Expression>()
+        );
+        var asDbContextExpression = Expression.TypeAs(
+            stronglyTypedInvocationExpression,
+            typeof(DbContext)
+        );
+        var weaklyTypedLambdaExpression = Expression.Lambda(
+            asDbContextExpression,
+            parameterExpressions
+        );
+
+        var compiledDelegate = weaklyTypedLambdaExpression.Compile();
+        if (compiledDelegate is Func<DatabaseContextOptions, DbContext> castedDelegate)
+        {
+            return new(castedDelegate);
+        }
+
+        throw new InvalidOperationException();
+    }
+
+    private static KeyValuePair<DatabaseType, Type>[] DiscoverContextTypes(Assembly assembly)
+    {
+        try
+        {
+            return assembly.GetTypes()
+                .Where(type => type.Extends<TDbContext>())
+                .Select(type =>
+                {
+                    var providerAttribute = type.GetCustomAttribute<DbContextProviderAttribute>();
+                    if (providerAttribute == default)
+                    {
+                        throw new ArgumentException(
+                            $"Type does not have a [DbContextProvider] attribute: {type.FullName}",
+                            nameof(type)
+                        );
+                    }
+
+                    return new KeyValuePair<DatabaseType, Type>(
+                        providerAttribute.DatabaseType,
+                        type
+                    );
+                })
+                .ToArray();
+        }
+        catch (Exception exception)
+        {
+            Log.Error(exception);
+            return Array.Empty<KeyValuePair<DatabaseType, Type>>();
+        }
+    }
+
+    public static void Register<TProviderContext>()
+        where TProviderContext : TDbContext
+    {
+    }
+
+    public static TDbContext Create(DatabaseContextOptions databaseContextOptions)
+    {
+        var dbContextType = typeof(TDbContext);
+        if (!_constructorCache.TryGetValue((dbContextType, databaseContextOptions.DatabaseType),
+                out var constructorDelegate))
+        {
+            constructorDelegate = CreateConstructorDelegate<TDbContext>(databaseContextOptions.DatabaseType);
+            _constructorCache[(dbContextType, databaseContextOptions.DatabaseType)] = constructorDelegate;
+        }
+
+        return constructorDelegate(databaseContextOptions) as TDbContext ?? throw new InvalidOperationException();
     }
 }

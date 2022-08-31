@@ -35,9 +35,7 @@ namespace Intersect.Server.Maps
     /// </summary>
     public partial class MapController : MapBase
     {
-        private ConcurrentDictionary<Guid, MapInstance> mInstances = new ConcurrentDictionary<Guid, MapInstance>();
-
-        private static MapControllers sLookup;
+        private ConcurrentDictionary<Guid, MapInstance> mInstances = new();
 
         //Location of Map in the current grid
         [JsonIgnore] [NotMapped] public int MapGrid;
@@ -118,11 +116,6 @@ namespace Intersect.Server.Maps
 
             Layers = null;
         }
-
-        /// <summary>
-        /// Quick reference for DB lookup of the relevant <see cref="MapBase"/>
-        /// </summary>
-        public new static MapControllers Lookup => sLookup = sLookup ?? new MapControllers(MapBase.Lookup);
 
         /// <summary>
         /// Quick reference to get a Map Controller from its <see cref="MapBase"/> ID

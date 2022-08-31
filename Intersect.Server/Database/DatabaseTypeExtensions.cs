@@ -1,17 +1,44 @@
-
+using System.Data.Common;
 using Intersect.Config;
-
+using Intersect.Server.Localization;
+using Microsoft.Data.Sqlite;
+using MySqlConnector;
 using SqlKata.Compilers;
 
 namespace Intersect.Server.Database;
 
 internal static class DatabaseTypeExtensions
 {
-    public static Compiler CreateQueryCompiler(this DatabaseOptions.DatabaseType databaseType) =>
+    public static DbConnectionStringBuilder CreateConnectionStringBuilder(
+        this DatabaseType databaseType,
+        DatabaseOptions databaseOptions,
+        string filename
+    ) => databaseType switch
+    {
+        DatabaseType.SQLite => new SqliteConnectionStringBuilder($"Data Source={filename}"),
+        DatabaseType.MySQL => new MySqlConnectionStringBuilder
+        {
+            Server = databaseOptions.Server,
+            Port = databaseOptions.Port,
+            Database = databaseOptions.Database,
+            UserID = databaseOptions.Username,
+            Password = databaseOptions.Password
+        },
+        _ => throw new ArgumentOutOfRangeException(nameof(databaseType)),
+    };
+
+    public static Compiler CreateQueryCompiler(this DatabaseType databaseType) =>
         databaseType switch
         {
-            DatabaseOptions.DatabaseType.SQLite => new SqliteCompiler(),
-            DatabaseOptions.DatabaseType.MySQL => new MySqlCompiler(),
+            DatabaseType.SQLite => new SqliteCompiler(),
+            DatabaseType.MySQL => new MySqlCompiler(),
             _ => throw new NotImplementedException(),
         };
+
+    public static string GetName(this DatabaseType databaseType) => databaseType switch
+    {
+        DatabaseType.MySql => Strings.Migration.mysql,
+        DatabaseType.Sqlite => Strings.Migration.sqlite,
+        _ => throw new ArgumentOutOfRangeException(nameof(databaseType), databaseType, null)
+    };
 }

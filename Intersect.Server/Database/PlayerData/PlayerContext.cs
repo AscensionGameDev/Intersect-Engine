@@ -1,6 +1,5 @@
 using System.Data.Common;
 
-using Intersect.Config;
 using Intersect.Server.Database.PlayerData.Api;
 using Intersect.Server.Database.PlayerData.Migrations;
 using Intersect.Server.Database.PlayerData.Players;
@@ -13,33 +12,33 @@ using Microsoft.Extensions.Logging;
 
 namespace Intersect.Server.Database.PlayerData;
 
-public partial class PlayerContext : IntersectDbContext<PlayerContext>, IPlayerContext
+public sealed class MySqlPlayerContext : PlayerContext, IMySqlDbContext
 {
+    public MySqlPlayerContext(DatabaseContextOptions databaseContextOptions) : base(databaseContextOptions) { }
 
-    public PlayerContext() : this(
-        DefaultConnectionStringBuilder,
-        DatabaseOptions.DatabaseType.SQLite
-    ) { }
+    /// <inheritdoc />
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        Console.WriteLine("OnConfiguring");
+        base.OnConfiguring(optionsBuilder);
+    }
+}
 
-    public PlayerContext(
-        DbConnectionStringBuilder connectionStringBuilder,
-        DatabaseOptions.DatabaseType? databaseType,
-        bool autoDetectChanges = false,
-        bool explicitLoad = false,
-        bool lazyLoading = false,
-        bool readOnly = false,
-        ILoggerFactory? loggerFactory = default,
-        QueryTrackingBehavior? queryTrackingBehavior = default
-    ) : base(
-        autoDetectChanges: autoDetectChanges,
-        connectionStringBuilder: connectionStringBuilder ?? DefaultConnectionStringBuilder,
-        databaseType: databaseType ?? DatabaseOptions.DatabaseType.SQLite,
-        explicitLoad: explicitLoad,
-        lazyLoading: lazyLoading,
-        loggerFactory: loggerFactory,
-        readOnly: readOnly,
-        queryTrackingBehavior: queryTrackingBehavior
-    ) { }
+public sealed class SqlitePlayerContext : PlayerContext, ISqliteDbContext
+{
+    public SqlitePlayerContext(DatabaseContextOptions databaseContextOptions) : base(databaseContextOptions) { }
+
+    /// <inheritdoc />
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        Console.WriteLine("OnConfiguring");
+        base.OnConfiguring(optionsBuilder);
+    }
+}
+
+public abstract partial class PlayerContext : IntersectDbContext<PlayerContext>, IPlayerContext
+{
+    public PlayerContext(DatabaseContextOptions databaseContextOptions) : base(databaseContextOptions) { }
 
     public static DbConnectionStringBuilder DefaultConnectionStringBuilder =>
         new SqliteConnectionStringBuilder(@"Data Source=resources/playerdata.db");

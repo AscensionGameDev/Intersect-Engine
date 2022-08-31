@@ -1,10 +1,9 @@
-using Newtonsoft.Json;
-using System;
 using System.ComponentModel.DataAnnotations.Schema;
+using Newtonsoft.Json;
 
 namespace Intersect.Server.Database.Logging.Entities
 {
-    public partial class UserActivityHistory
+    public class UserActivityHistory
     {
         [DatabaseGenerated(DatabaseGeneratedOption.None)] public Guid Id { get; private set; } = Guid.NewGuid();
 
@@ -114,12 +113,12 @@ namespace Intersect.Server.Database.Logging.Entities
         {
             if (Options.Instance.Logging.UserActivity)
             {
-                DbInterface.Pool.QueueWorkItem(new Action<UserActivityHistory>(Log), new UserActivityHistory
+                DbInterface.Pool.QueueWorkItem(Log, new UserActivityHistory
                 {
                     TimeStamp = DateTime.UtcNow,
                     UserId = userId,
                     PlayerId = playerId,
-                    Ip = ip ?? "",
+                    Ip = ip ?? string.Empty,
                     Peer = peer,
                     Action = action,
                     Meta = meta,
@@ -129,7 +128,7 @@ namespace Intersect.Server.Database.Logging.Entities
 
         private static void Log(UserActivityHistory activity)
         {
-            using var loggingContext = LoggingContext.Create(readOnly: false);
+            using var loggingContext = DbInterface.CreateLoggingContext(readOnly: false);
             _ = loggingContext.UserActivityHistory.Add(activity);
         }
     }

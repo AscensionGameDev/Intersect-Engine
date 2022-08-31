@@ -48,6 +48,8 @@ namespace Intersect
 
         public DatabaseOptions GameDatabase = new DatabaseOptions();
 
+        public DatabaseOptions LoggingDatabase = new();
+
         [JsonProperty("Map")] public MapOptions MapOpts = new MapOptions();
 
         public DatabaseOptions PlayerDatabase = new DatabaseOptions();
@@ -188,6 +190,12 @@ namespace Intersect
         {
             get => Instance.PlayerDatabase;
             set => Instance.PlayerDatabase = value;
+        }
+
+        public static DatabaseOptions LoggingDb
+        {
+            get => Instance.LoggingDatabase;
+            set => Instance.LoggingDatabase = value;
         }
 
         public static DatabaseOptions GameDb

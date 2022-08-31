@@ -6,6 +6,7 @@ using System.Linq;
 using Intersect.Async;
 using Intersect.Client.Framework.Audio;
 using Intersect.Client.Framework.Content;
+using Intersect.Client.Framework.Entities;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Compression;
 using Intersect.Logging;
@@ -201,6 +202,52 @@ namespace Intersect.Client.Framework.File_Management
             }
 
             return null;
+        }
+
+        public virtual IEnumerable<string> GetOverridesFor(TextureType textureType, SpriteAnimations spriteAnimation, string filterBase = default) =>
+            GetOverridesFor(textureType, spriteAnimation.ToString(), filterBase);
+
+        public virtual IEnumerable<string> GetOverridesFor(TextureType textureType, string filterState, string filterBase = default)
+        {
+            return GetTextureNames(textureType)
+                /* By using SelectMany() instead of Select() we do not have to then filter out null */
+                .SelectMany(sprite =>
+                {
+                    // Trim .png
+                    var baseName = Path.GetFileNameWithoutExtension(sprite);
+
+                    // Split the baseName on _ but only until there is a maximum of 3 segments
+                    // So base_attack_custom_3 would be split to "base", "attack", "custom_3"
+                    // [if Split("_") or Split("_", 4) was used it would become "base", "attack", "custom", "3"]
+                    var parts = baseName.Split('_', 3);
+
+                    // If there are less than 3 parts (base.png, base_attack.png would both have less than 3) mark invalid
+                    var invalid = parts.Length < 3;
+
+                    // If if the first part is not equal to our base filter, mark invalid
+                    invalid |= !string.IsNullOrWhiteSpace(filterBase) && !string.Equals(parts[0], filterBase, StringComparison.OrdinalIgnoreCase);
+
+                    // If the second part is not equal to our state filter, mark invalid
+                    invalid |= !string.Equals(filterState, parts[1], StringComparison.OrdinalIgnoreCase);
+
+                    // If invalid, return no matches
+                    if (invalid)
+                    {
+                        // By returning an empty enumerable instead of null, SelectMany() just reduces it
+                        // into an single-dimensional array without us doing an additional != null filter
+                        return Enumerable.Empty<string>();
+                    }
+
+                    // Return the 3rd segment
+                    // We do Skip(2) instead of Last() because Skip(2) returns an IEnumerable<string>
+                    // which will automatically be consumed correctly by SelectMany(), while Last()
+                    // or LastOrDefault() would return a string/string? which then would need to be
+                    // wrapped in a new []{ <last> } to turn it back into an IEnumerable<string>
+                    // to be consumed by SelectMany()
+                    return parts.Skip(2);
+                })
+                /* Find only distinct values, don't show duplicates */
+                .Distinct();
         }
 
         //Content Getters

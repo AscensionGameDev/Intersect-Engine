@@ -1,42 +1,39 @@
-using Intersect.Config;
 using Intersect.Server.Database.Logging.Entities;
 using Intersect.Server.Database.Logging.Seed;
-
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-
 using System.Data.Common;
 
 namespace Intersect.Server.Database.Logging;
 
-internal sealed partial class LoggingContext : IntersectDbContext<LoggingContext>, ILoggingContext
+public sealed class MySqlLoggingContext : LoggingContext, IMySqlDbContext
 {
-    public LoggingContext() : this(
-        DefaultConnectionStringBuilder,
-        DatabaseOptions.DatabaseType.SQLite
-    ) { }
+    public MySqlLoggingContext(DatabaseContextOptions databaseContextOptions) : base(databaseContextOptions) { }
 
     /// <inheritdoc />
-    public LoggingContext(
-        DbConnectionStringBuilder connectionStringBuilder,
-        DatabaseOptions.DatabaseType? databaseType,
-        bool autoDetectChanges = false,
-        bool explicitLoad = false,
-        bool lazyLoading = false,
-        bool readOnly = false,
-        ILoggerFactory? loggerFactory = default,
-        QueryTrackingBehavior? queryTrackingBehavior = default
-    ) : base(
-        autoDetectChanges: autoDetectChanges,
-        connectionStringBuilder: connectionStringBuilder ?? DefaultConnectionStringBuilder,
-        databaseType: databaseType ?? DatabaseOptions.DatabaseType.SQLite,
-        explicitLoad: explicitLoad,
-        lazyLoading: lazyLoading,
-        loggerFactory: loggerFactory,
-        readOnly: readOnly,
-        queryTrackingBehavior: queryTrackingBehavior
-    ) { }
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        Console.WriteLine("OnConfiguring");
+        base.OnConfiguring(optionsBuilder);
+    }
+}
+
+public sealed class SqliteLoggingContext : LoggingContext, ISqliteDbContext
+{
+    public SqliteLoggingContext(DatabaseContextOptions databaseContextOptions) : base(databaseContextOptions) { }
+
+    /// <inheritdoc />
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        Console.WriteLine("OnConfiguring");
+        base.OnConfiguring(optionsBuilder);
+    }
+}
+
+public abstract partial class LoggingContext : IntersectDbContext<LoggingContext>, ILoggingContext
+{
+    /// <inheritdoc />
+    protected LoggingContext(DatabaseContextOptions databaseContextOptions) : base(databaseContextOptions) { }
 
     public static DbConnectionStringBuilder DefaultConnectionStringBuilder =>
         new SqliteConnectionStringBuilder(@"Data Source=resources/logging.db");
