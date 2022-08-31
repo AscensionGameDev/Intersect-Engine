@@ -82,35 +82,6 @@ public sealed class MigrationScheduler<TContext>
                 .Skip(1)
                 .ToList();;
         }
-
-        "".ToString();
-
-
-        // foreach (var scheduledMigration in _scheduledMigrations)
-        // {
-        //     if (scheduledMigration is DataMigrationMetadata scheduledDataMigration)
-        //     {
-        //         if (scheduledDataMigration.MigratorType == default)
-        //         {
-        //             throw new InvalidOperationException($"Missing MigratorType for {scheduledDataMigration.Name}");
-        //         }
-        //
-        //         if (Activator.CreateInstance(scheduledDataMigration.MigratorType) is not IDataMigration<TContext> dataMigration)
-        //         {
-        //             throw new InvalidOperationException($"Failed to create instance of data migration: {scheduledDataMigration.MigratorType.FullName}");
-        //         }
-        //
-        //         dataMigration.Up(_context);
-        //         _context.ChangeTracker.DetectChanges();
-        //         var changes = _context.SaveChanges();
-        //
-        //         Log.Info($"{scheduledDataMigration.MigratorType.FullName}: {changes} changes applied.");
-        //     }
-        //     else
-        //     {
-        //         migrator.Migrate(scheduledMigration.Name);
-        //     }
-        // }
     }
 
     public MigrationScheduler<TContext> SchedulePendingMigrations()
