@@ -50,7 +50,7 @@ public sealed class SqliteNet6GuidPatch
         }
 
         sqliteConnectionStringBuilder.ForeignKeys = false;
-        var recreatedContext = IntersectDbContext<TContext>.Create(
+        using var recreatedContext = IntersectDbContext<TContext>.Create(
             context.ContextOptions with { ConnectionStringBuilder = sqliteConnectionStringBuilder }
         );
 
