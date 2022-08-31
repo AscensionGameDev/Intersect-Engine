@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel.DataAnnotations.Schema;
 
 using Intersect.Enums;
@@ -122,16 +122,25 @@ namespace Intersect.Server.Database
         {
             bag = Bag;
 
-            // ReSharper disable once InvertIf Justification: Do not introduce two different return points that assert a value state
             if (bag == null)
             {
                 var descriptor = Descriptor;
-                // ReSharper disable once InvertIf Justification: Do not introduce two different return points that assert a value state
                 if (descriptor?.ItemType == ItemTypes.Bag)
                 {
                     bag = Bag.GetBag(BagId ?? Guid.Empty);
                     bag?.ValidateSlots();
                     Bag = bag;
+                }
+            }
+            else
+            {
+                // Remove any items from this bag that have been removed from the game
+                foreach (var slot in bag.Slots)
+                {
+                    if (ItemBase.Get(slot.ItemId) == default)
+                    {
+                        slot.Set(None);
+                    }
                 }
             }
 
