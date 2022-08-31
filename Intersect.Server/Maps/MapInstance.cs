@@ -44,13 +44,18 @@ namespace Intersect.Server.Maps
     /// </list>
     /// </para>
     /// <para>
-    /// A <see cref="MapInstance"/> needs to know when it is ready to be cleaned up. A MapController can be marked for cleanup if there are no players on itself
+    /// A <see cref="MapInstance"/> needs to know when it is ready to be cleaned up, if its instance ID is not that of the overworld. A MapController can be marked for cleanup if there are no players on itself
     /// or any of its surrounding layers, and at least <see cref="Options.TimeUntilMapCleanup"/> ms have passed since the last player was on the map/its neighbors.
     /// </para>
     /// </remarks>
     /// </summary>
     public partial class MapInstance : IDisposable
     {
+        /// <summary>
+        /// Reference to stay consistent/easy-to-read with overworld behavior
+        /// </summary>
+        public static readonly Guid OverworldInstanceId = Guid.Empty;
+
         private MapController mMapController;
 
         /// <summary>
@@ -166,7 +171,7 @@ namespace Intersect.Server.Maps
 
         public bool ShouldBeCleaned()
         {
-            return (!mIsProcessing && LastRequestedUpdateTime > mLastUpdateTime + Options.Map.TimeUntilMapCleanup);
+            return (MapInstanceId != OverworldInstanceId && !mIsProcessing && LastRequestedUpdateTime > mLastUpdateTime + Options.Map.TimeUntilMapCleanup);
         }
 
         public void RemoveLayerFromController()
