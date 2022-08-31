@@ -2765,6 +2765,25 @@ namespace Intersect.Server.Entities
         [Obsolete("Use TryDropItemFrom(int, int).")]
         public void DropItemFrom(int slotIndex, int amount) => TryDropItemFrom(slotIndex, amount);
 
+        protected override bool ShouldDropItem(Entity killer, ItemBase itemDescriptor, Item item, float dropRateModifier, out Guid lootOwner)
+        {
+            lootOwner = (killer as Player)?.Id ?? Id;
+
+            if (itemDescriptor.DropChanceOnDeath == 0)
+            {
+                return false;
+            }
+
+            var dropRate = itemDescriptor.DropChanceOnDeath * dropRateModifier;
+            var dropResult = Randomization.Next(1, 101);
+            return dropResult < dropRate;
+        }
+
+        protected override void OnDropItem(InventorySlot slot, Item drop)
+        {
+            _ = TryTakeItem(slot, drop.Quantity);
+        }
+
         public void UseItem(int slot, Entity target = null)
         {
             var equipped = false;
