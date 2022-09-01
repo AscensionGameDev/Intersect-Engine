@@ -13,72 +13,78 @@ using Microsoft.Extensions.Logging;
 
 namespace Intersect.Server.Database.PlayerData;
 
+/// <summary>
+/// MySQL/MariaDB-specific implementation of <see cref="PlayerContext"/>
+/// </summary>
 public sealed class MySqlPlayerContext : PlayerContext, IMySqlDbContext
 {
-    public MySqlPlayerContext(DatabaseContextOptions databaseContextOptions) : base(databaseContextOptions) { }
-
     /// <inheritdoc />
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        base.OnConfiguring(optionsBuilder);
-    }
+    public MySqlPlayerContext(DatabaseContextOptions databaseContextOptions) : base(databaseContextOptions) { }
 }
 
+/// <summary>
+/// SQLite-specific implementation of <see cref="PlayerContext"/>
+/// </summary>
 public sealed class SqlitePlayerContext : PlayerContext, ISqliteDbContext
 {
-    public static readonly DatabaseContextOptions DefaultContextOptions = new()
-    {
-        ConnectionStringBuilder = new SqliteConnectionStringBuilder($@"Data Source={DbInterface.PlayersDbFilename}"),
-        DatabaseType = DatabaseType.Sqlite
-    };
-
-    public SqlitePlayerContext() : base(DefaultContextOptions) { }
-
-    public SqlitePlayerContext(DatabaseContextOptions databaseContextOptions) : base(databaseContextOptions) { }
-
     /// <inheritdoc />
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        base.OnConfiguring(optionsBuilder);
-    }
+    public SqlitePlayerContext(DatabaseContextOptions databaseContextOptions) : base(databaseContextOptions) { }
 }
 
 public abstract partial class PlayerContext : IntersectDbContext<PlayerContext>, IPlayerContext
 {
-    public PlayerContext(DatabaseContextOptions databaseContextOptions) : base(databaseContextOptions) { }
+    /// <inheritdoc />
+    protected PlayerContext(DatabaseContextOptions? databaseContextOptions) : base(databaseContextOptions) { }
 
+    /// <inheritdoc />
     public DbSet<User> Users { get; set; }
 
+    /// <inheritdoc />
     public DbSet<Mute> Mutes { get; set; }
 
+    /// <inheritdoc />
     public DbSet<Ban> Bans { get; set; }
 
+    /// <inheritdoc />
     public DbSet<RefreshToken> RefreshTokens { get; set; }
 
+    /// <inheritdoc />
     public DbSet<Player> Players { get; set; }
 
+    /// <inheritdoc />
     public DbSet<BankSlot> Player_Bank { get; set; }
 
+    /// <inheritdoc />
     public DbSet<Friend> Player_Friends { get; set; }
 
+    /// <inheritdoc />
     public DbSet<HotbarSlot> Player_Hotbar { get; set; }
 
+    /// <inheritdoc />
     public DbSet<InventorySlot> Player_Items { get; set; }
 
+    /// <inheritdoc />
     public DbSet<Quest> Player_Quests { get; set; }
 
+    /// <inheritdoc />
     public DbSet<SpellSlot> Player_Spells { get; set; }
 
+    /// <inheritdoc />
     public DbSet<PlayerVariable> Player_Variables { get; set; }
 
+    /// <inheritdoc />
     public DbSet<Bag> Bags { get; set; }
 
+    /// <inheritdoc />
     public DbSet<BagSlot> Bag_Items { get; set; }
 
+    /// <inheritdoc />
     public DbSet<Guild> Guilds { get; set; }
 
+    /// <inheritdoc />
     public DbSet<GuildBankSlot> Guild_Bank { get; set; }
 
+    /// <inheritdoc />
     public DbSet<GuildVariable> Guild_Variables { get; set; }
 
     internal async ValueTask Commit(
@@ -152,6 +158,7 @@ public abstract partial class PlayerContext : IntersectDbContext<PlayerContext>,
         modelBuilder.Entity<GuildVariable>().HasIndex(p => new { p.VariableId, GuildId = p.GuildId }).IsUnique();
     }
 
+    /// <inheritdoc />
     public override void Seed()
     {
 #if DEBUG

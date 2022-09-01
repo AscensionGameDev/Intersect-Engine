@@ -7,51 +7,45 @@ using System.Data.Common;
 
 namespace Intersect.Server.Database.Logging;
 
+/// <summary>
+/// MySQL/MariaDB-specific implementation of <see cref="LoggingContext"/>
+/// </summary>
 public sealed class MySqlLoggingContext : LoggingContext, IMySqlDbContext
 {
-    public MySqlLoggingContext(DatabaseContextOptions databaseContextOptions) : base(databaseContextOptions) { }
-
     /// <inheritdoc />
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        base.OnConfiguring(optionsBuilder);
-    }
+    public MySqlLoggingContext(DatabaseContextOptions databaseContextOptions) : base(databaseContextOptions) { }
 }
 
+/// <summary>
+/// SQLite-specific implementation of <see cref="LoggingContext"/>
+/// </summary>
 public sealed class SqliteLoggingContext : LoggingContext, ISqliteDbContext
 {
-    public static readonly DatabaseContextOptions DefaultContextOptions = new()
-    {
-        ConnectionStringBuilder = new SqliteConnectionStringBuilder($@"Data Source={DbInterface.LoggingDbFilename}"),
-        DatabaseType = DatabaseType.Sqlite
-    };
-
-    public SqliteLoggingContext() : base(DefaultContextOptions) { }
-
-    public SqliteLoggingContext(DatabaseContextOptions databaseContextOptions) : base(databaseContextOptions) { }
-
     /// <inheritdoc />
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        base.OnConfiguring(optionsBuilder);
-    }
+    public SqliteLoggingContext(DatabaseContextOptions databaseContextOptions) : base(databaseContextOptions) { }
 }
 
 public abstract partial class LoggingContext : IntersectDbContext<LoggingContext>, ILoggingContext
 {
     /// <inheritdoc />
-    protected LoggingContext(DatabaseContextOptions databaseContextOptions) : base(databaseContextOptions) { }
+    protected LoggingContext(DatabaseContextOptions? databaseContextOptions) : base(databaseContextOptions) { }
 
+    /// <inheritdoc />
     public DbSet<RequestLog> RequestLogs { get; set; }
 
+    /// <inheritdoc />
     public DbSet<UserActivityHistory> UserActivityHistory { get; set; }
 
+    /// <inheritdoc />
     public DbSet<ChatHistory> ChatHistory { get; set; }
 
+    /// <inheritdoc />
     public DbSet<TradeHistory> TradeHistory { get; set; }
 
+    /// <inheritdoc />
     public DbSet<GuildHistory> GuildHistory { get; set; }
 
+    /// <inheritdoc />
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -59,6 +53,7 @@ public abstract partial class LoggingContext : IntersectDbContext<LoggingContext
         modelBuilder.ApplyConfiguration(new RequestLog.Mapper());
     }
 
+    /// <inheritdoc />
     public override void Seed()
     {
 #if DEBUG
@@ -67,34 +62,4 @@ public abstract partial class LoggingContext : IntersectDbContext<LoggingContext
         SaveChanges();
 #endif
     }
-}
-
-internal sealed partial class LoggingContextInterface : ContextInterface<ILoggingContext>, ILoggingContext
-{
-    /// <inheritdoc />
-    public LoggingContextInterface(ILoggingContext context) : base(context)
-    {
-    }
-
-    #region Implementation of ILoggingContext
-
-    /// <inheritdoc />
-    public DbSet<RequestLog> RequestLogs => Context.RequestLogs;
-
-    /// <inheritdoc />
-    public DbSet<UserActivityHistory> UserActivityHistory => Context.UserActivityHistory;
-
-    /// <inheritdoc />
-    public DbSet<ChatHistory> ChatHistory => Context.ChatHistory;
-
-    /// <inheritdoc />
-    public DbSet<TradeHistory> TradeHistory => Context.TradeHistory;
-
-    /// <inheritdoc />
-    public DbSet<GuildHistory> GuildHistory => Context.GuildHistory;
-
-    /// <inheritdoc />
-    public void Seed() => Context.Seed();
-
-    #endregion
 }

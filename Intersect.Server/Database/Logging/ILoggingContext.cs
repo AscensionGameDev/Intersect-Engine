@@ -17,7 +17,5 @@ namespace Intersect.Server.Database.Logging
         DbSet<TradeHistory> TradeHistory { get; }
         
         DbSet<GuildHistory> GuildHistory { get; }
-
-        void Seed();
     }
 }

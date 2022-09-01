@@ -1,6 +1,7 @@
 using Intersect.GameObjects;
 using Intersect.GameObjects.Crafting;
 using Intersect.GameObjects.Events;
+using Intersect.Models;
 using Intersect.Server.Maps;
 
 using Microsoft.EntityFrameworkCore;
@@ -9,35 +10,45 @@ namespace Intersect.Server.Database.GameData;
 
 public interface IGameContext : IDbContext
 {
-    DbSet<AnimationBase> Animations { get; set; }
+    DbSet<AnimationBase> Animations { get; }
 
-    DbSet<CraftBase> Crafts { get; set; }
+    DbSet<ContentString> ContentStrings { get; }
 
-    DbSet<CraftingTableBase> CraftingTables { get; set; }
+    DbSet<CraftBase> Crafts { get; }
 
-    DbSet<ClassBase> Classes { get; set; }
+    DbSet<CraftingTableBase> CraftingTables { get; }
 
-    DbSet<EventBase> Events { get; set; }
+    DbSet<ClassBase> Classes { get; }
 
-    DbSet<ItemBase> Items { get; set; }
+    DbSet<EventBase> Events { get; }
 
-    DbSet<MapController> Maps { get; set; }
+    DbSet<Folder> Folders { get; }
 
-    DbSet<NpcBase> Npcs { get; set; }
+    DbSet<ItemBase> Items { get; }
 
-    DbSet<ProjectileBase> Projectiles { get; set; }
+    DbSet<LocaleContentString> LocaleContentStrings { get; }
 
-    DbSet<QuestBase> Quests { get; set; }
+    DbSet<MapController> Maps { get; }
 
-    DbSet<ResourceBase> Resources { get; set; }
+    DbSet<NpcBase> Npcs { get; }
 
-    DbSet<ShopBase> Shops { get; set; }
+    DbSet<ProjectileBase> Projectiles { get; }
 
-    DbSet<SpellBase> Spells { get; set; }
+    DbSet<QuestBase> Quests { get; }
 
-    DbSet<ServerVariableBase> ServerVariables { get; set; }
+    DbSet<ResourceBase> Resources { get; }
 
-    DbSet<TilesetBase> Tilesets { get; set; }
+    DbSet<ShopBase> Shops { get; }
 
-    DbSet<TimeBase> Time { get; set; }
+    DbSet<SpellBase> Spells { get; }
+
+    DbSet<PlayerVariableBase> PlayerVariables { get; }
+
+    DbSet<ServerVariableBase> ServerVariables { get; }
+
+    DbSet<GuildVariableBase> GuildVariables { get; }
+
+    DbSet<TilesetBase> Tilesets { get; }
+
+    DbSet<TimeBase> Time { get; }
 }

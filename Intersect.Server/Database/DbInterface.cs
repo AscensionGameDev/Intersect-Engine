@@ -5,9 +5,7 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
-
 using Amib.Threading;
-
 using Intersect.Collections;
 using Intersect.Config;
 using Intersect.Enums;
@@ -31,35 +29,30 @@ using Intersect.Server.General;
 using Intersect.Server.Localization;
 using Intersect.Server.Maps;
 using Intersect.Server.Networking;
-
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Logging;
-
 using MySqlConnector;
-
 using LogLevel = Intersect.Logging.LogLevel;
 
 namespace Intersect.Server.Database
 {
-
     public static partial class DbInterface
     {
-
         /// <summary>
         /// This is our thread pool for handling game-loop database interactions.
         /// Min/Max Number of Threads & Idle Timeouts are set via server config.
         /// </summary>
         public static SmartThreadPool Pool = new SmartThreadPool(
-                new STPStartInfo()
-                {
-                    ThreadPoolName = "DatabasePool",
-                    IdleTimeout = Options.Instance.Processing.DatabaseThreadIdleTimeout,
-                    MinWorkerThreads = Options.Instance.Processing.MinDatabaseThreads,
-                    MaxWorkerThreads = Options.Instance.Processing.MaxDatabaseThreads
-                }
-            );
+            new STPStartInfo()
+            {
+                ThreadPoolName = "DatabasePool",
+                IdleTimeout = Options.Instance.Processing.DatabaseThreadIdleTimeout,
+                MinWorkerThreads = Options.Instance.Processing.MinDatabaseThreads,
+                MaxWorkerThreads = Options.Instance.Processing.MaxDatabaseThreads
+            }
+        );
 
         internal const string GameDbFilename = "resources/gamedata.db";
 
@@ -71,13 +64,17 @@ namespace Intersect.Server.Database
 
         private static Logger playerDbLogger { get; set; }
 
-        public static Dictionary<string, ServerVariableBase> ServerVariableEventTextLookup = new Dictionary<string, ServerVariableBase>();
+        public static Dictionary<string, ServerVariableBase> ServerVariableEventTextLookup =
+            new Dictionary<string, ServerVariableBase>();
 
-        public static Dictionary<string, PlayerVariableBase> PlayerVariableEventTextLookup = new Dictionary<string, PlayerVariableBase>();
+        public static Dictionary<string, PlayerVariableBase> PlayerVariableEventTextLookup =
+            new Dictionary<string, PlayerVariableBase>();
 
-        public static Dictionary<string, GuildVariableBase> GuildVariableEventTextLookup = new Dictionary<string, GuildVariableBase>();
+        public static Dictionary<string, GuildVariableBase> GuildVariableEventTextLookup =
+            new Dictionary<string, GuildVariableBase>();
 
-        public static ConcurrentDictionary<Guid, ServerVariableBase> UpdatedServerVariables = new ConcurrentDictionary<Guid, ServerVariableBase>();
+        public static ConcurrentDictionary<Guid, ServerVariableBase> UpdatedServerVariables =
+            new ConcurrentDictionary<Guid, ServerVariableBase>();
 
         private static List<MapGrid> mapGrids = new List<MapGrid>();
 
@@ -130,7 +127,7 @@ namespace Intersect.Server.Database
             bool autoDetectChanges = false,
             QueryTrackingBehavior? queryTrackingBehavior = default
         ) => GameContext.Create(
-            new ()
+            new()
             {
                 AutoDetectChanges = autoDetectChanges,
                 ConnectionStringBuilder = Options.GameDb.Type.CreateConnectionStringBuilder(
@@ -157,7 +154,7 @@ namespace Intersect.Server.Database
             bool autoDetectChanges = false,
             QueryTrackingBehavior? queryTrackingBehavior = default
         ) => PlayerContext.Create(
-            new ()
+            new()
             {
                 AutoDetectChanges = autoDetectChanges,
                 ConnectionStringBuilder = Options.PlayerDb.Type.CreateConnectionStringBuilder(
@@ -179,7 +176,7 @@ namespace Intersect.Server.Database
             bool autoDetectChanges = false,
             QueryTrackingBehavior? queryTrackingBehavior = default
         ) => LoggingContext.Create(
-            new ()
+            new()
             {
                 AutoDetectChanges = autoDetectChanges,
                 ConnectionStringBuilder = Options.LoggingDb.Type.CreateConnectionStringBuilder(
@@ -334,9 +331,11 @@ namespace Intersect.Server.Database
             var showMigrationWarning = (
                 gameContextPendingMigrations.Any() && !gameContextPendingMigrations.Contains("20180905042857_Initial")
             ) || (
-                playerContextPendingMigrations.Any() && !playerContextPendingMigrations.Contains("20180927161502_InitialPlayerDb")
+                playerContextPendingMigrations.Any() &&
+                !playerContextPendingMigrations.Contains("20180927161502_InitialPlayerDb")
             ) || (
-                loggingContextPendingMigrations.Any() && !loggingContextPendingMigrations.Contains("20191118024649_RequestLogs")
+                loggingContextPendingMigrations.Any() &&
+                !loggingContextPendingMigrations.Contains("20191118024649_RequestLogs")
             );
 
             if (showMigrationWarning)
@@ -383,7 +382,7 @@ namespace Intersect.Server.Database
             foreach (var context in contexts)
             {
                 var contextType = context.GetType().FindGenericTypeParameters(typeof(IntersectDbContext<>)).First();
-                _methodInfoProcessMigrations.MakeGenericMethod(contextType).Invoke(null, new object[]{context});
+                _methodInfoProcessMigrations.MakeGenericMethod(contextType).Invoke(null, new object[] { context });
             }
 
             LoadAllGameObjects();
@@ -459,6 +458,7 @@ namespace Intersect.Server.Database
             {
                 return user.Name;
             }
+
             return null;
         }
 
@@ -495,7 +495,9 @@ namespace Intersect.Server.Database
                     {
                         Debugger.Break();
                         Log.Error(exception);
-                        throw new Exception($"Error during explicit load of player {BitConverter.ToString(playerId.ToByteArray()).Replace("-", string.Empty)}", exception);
+                        throw new Exception(
+                            $"Error during explicit load of player {BitConverter.ToString(playerId.ToByteArray()).Replace("-", string.Empty)}",
+                            exception);
                     }
                 }
 
@@ -642,6 +644,7 @@ namespace Intersect.Server.Database
                         {
                             mapController.DestroyOrphanedLayers();
                         }
+
                         break;
                 }
             }
@@ -778,7 +781,6 @@ namespace Intersect.Server.Database
             {
                 using (var context = CreateGameContext(readOnly: false))
                 {
-
                     switch (gameObjectType)
                     {
                         case GameObjectType.Animation:
@@ -1035,7 +1037,6 @@ namespace Intersect.Server.Database
             {
                 using (var context = CreateGameContext(readOnly: false))
                 {
-
                     switch (gameObject.Type)
                     {
                         case GameObjectType.Animation:
@@ -1166,17 +1167,9 @@ namespace Intersect.Server.Database
                 Console.WriteLine(Strings.Database.noclasses);
                 var cls = (ClassBase)AddGameObject(GameObjectType.Class);
                 cls.Name = Strings.Database.Default;
-                var defaultMale = new ClassSprite()
-                {
-                    Sprite = "Base_Male.png",
-                    Gender = Gender.Male
-                };
+                var defaultMale = new ClassSprite() { Sprite = "Base_Male.png", Gender = Gender.Male };
 
-                var defaultFemale = new ClassSprite()
-                {
-                    Sprite = "Base_Female.png",
-                    Gender = Gender.Female
-                };
+                var defaultFemale = new ClassSprite() { Sprite = "Base_Female.png", Gender = Gender.Female };
 
                 cls.Sprites.Add(defaultMale);
                 cls.Sprites.Add(defaultFemale);
@@ -1189,6 +1182,7 @@ namespace Intersect.Server.Database
                 {
                     cls.BaseStat[i] = 20;
                 }
+
                 SaveGameObject(cls);
             }
         }
@@ -1206,6 +1200,7 @@ namespace Intersect.Server.Database
                     addedIds.Add(variable.TextId);
                 }
             }
+
             PlayerVariableEventTextLookup = lookup;
         }
 
@@ -1222,6 +1217,7 @@ namespace Intersect.Server.Database
                     addedIds.Add(variable.TextId);
                 }
             }
+
             ServerVariableEventTextLookup = lookup;
         }
 
@@ -1237,6 +1233,7 @@ namespace Intersect.Server.Database
                     addedIds.Add(variable.TextId);
                 }
             }
+
             GuildVariableEventTextLookup = lookup;
         }
 
@@ -1343,12 +1340,12 @@ namespace Intersect.Server.Database
                                     y < mapGrids[myGrid].YMax &&
                                     mapGrids[myGrid].MyGrid[x, y] != Guid.Empty)
                                 {
-
                                     surroundingMapIds.Add(mapGrids[myGrid].MyGrid[x, y]);
                                     surroundingMaps.Add(MapController.Get(mapGrids[myGrid].MyGrid[x, y]));
                                 }
                             }
                         }
+
                         map.SurroundingMapIds = surroundingMapIds.ToArray();
                         map.SurroundingMaps = surroundingMaps.ToArray();
                     }
@@ -1482,6 +1479,7 @@ namespace Intersect.Server.Database
                         TimeBase.SetStaticTime(time);
                     }
                 }
+
                 General.Time.Init();
             }
             catch (Exception ex)
@@ -1522,21 +1520,162 @@ namespace Intersect.Server.Database
                         {
                             context.ServerVariables.Update(variable.Value);
                         }
+
                         UpdatedServerVariables.TryRemove(variable.Key, out ServerVariableBase obj);
                     }
+
                     context.SaveChanges();
                 }
             }
         }
 
         //Migration Code
+        public static void HandleMigrationCommand()
+        {
+            var databases = new List<(Type, DatabaseOptions, string)>
+            {
+                (typeof(GameContext), Options.GameDb, Strings.Migration.gamedb),
+                (typeof(PlayerContext), Options.PlayerDb, Strings.Migration.playerdb),
+                (typeof(LoggingContext), Options.LoggingDb, Strings.Migration.LoggingDatabaseName)
+            };
+
+            Console.WriteLine();
+            Console.WriteLine(Strings.Migration.selectdb);
+            Console.WriteLine();
+
+            for (var databaseIndex = 0; databaseIndex < databases.Count; databaseIndex++)
+            {
+                var (contextType, options, databaseName) = databases[databaseIndex];
+                var selectionNumber = databaseIndex + 1;
+                var databaseTypeName = options.Type.GetName();
+                Console.WriteLine(Strings.Migration.SelectDatabase.ToString(
+                    selectionNumber,
+                    databaseName,
+                    databaseTypeName,
+                    contextType == typeof(GameContext) ? Strings.Migration.SqliteRecommended : string.Empty
+                ));
+            }
+
+            Console.WriteLine();
+            Console.WriteLine(Strings.Migration.cancel);
+
+            // TODO: Remove > when moving to ReadKeyWait when console magic is ready
+            Console.Write("> ");
+            var input = Console.ReadLine();
+            Console.WriteLine();
+
+            if (!int.TryParse(input, out var selectedDatabaseIndex))
+            {
+                Console.WriteLine(Strings.Migration.migrationcancelled);
+                return;
+            }
+
+            if (selectedDatabaseIndex < 1 || selectedDatabaseIndex > databases.Count)
+            {
+                Console.WriteLine(Strings.Migration.migrationcancelled);
+                return;
+            }
+
+            var (selectedContextType, selectedOptions, selectedDatabaseName) = databases[selectedDatabaseIndex - 1];
+
+            var databaseTypes = new List<DatabaseType> { DatabaseType.Sqlite, DatabaseType.MySql };
+
+            Console.WriteLine();
+            Console.WriteLine(Strings.Migration.selectdbengine.ToString(selectedDatabaseName));
+            var databaseTypeIndex = 1;
+            foreach (var databaseType in databaseTypes)
+            {
+                Console.WriteLine(
+                    Strings.Migration.SelectDatabaseType.ToString(databaseTypeIndex, databaseType.GetName()));
+                ++databaseTypeIndex;
+            }
+
+            Console.WriteLine();
+            Console.WriteLine(Strings.Migration.cancel);
+
+            // TODO: Remove > when moving to ReadKeyWait when console magic is ready
+            Console.Write("> ");
+            input = Console.ReadLine();
+            Console.WriteLine();
+
+            if (!int.TryParse(input, out var selectedDatabaseTypeIndex))
+            {
+                Console.WriteLine(Strings.Migration.migrationcancelled);
+                return;
+            }
+
+            if (selectedDatabaseTypeIndex < 1 || selectedDatabaseTypeIndex > databaseTypes.Count)
+            {
+                Console.WriteLine(Strings.Migration.migrationcancelled);
+                return;
+            }
+
+            var selectedDatabaseType = databaseTypes[selectedDatabaseTypeIndex - 1];
+            if (selectedDatabaseType == selectedOptions.Type)
+            {
+                Console.WriteLine();
+                Console.WriteLine(
+                    Strings.Migration.alreadyusingengine.ToString(selectedDatabaseName,
+                        selectedDatabaseType.GetName()));
+                Console.WriteLine(Strings.Migration.migrationcancelled);
+                return;
+            }
+
+            try
+            {
+                Task task;
+                if (selectedContextType == typeof(GameContext))
+                {
+                    task = Migrate<GameContext>(selectedOptions, selectedDatabaseType);
+                }
+                else if (selectedContextType == typeof(PlayerContext))
+                {
+                    task = Migrate<PlayerContext>(selectedOptions, selectedDatabaseType);
+                }
+                else if (selectedContextType == typeof(LoggingContext))
+                {
+                    task = Migrate<LoggingContext>(selectedOptions, selectedDatabaseType);
+                }
+                else
+                {
+                    throw new InvalidOperationException();
+                }
+
+                task.Wait();
+            }
+            catch (Exception exception)
+            {
+                Log.Error(exception);
+            }
+        }
+
         public static async Task Migrate<TContext>(DatabaseOptions fromDatabaseOptions, DatabaseType toDatabaseType)
             where TContext : IntersectDbContext<TContext>
         {
+            string sqliteFileName;
+            if (typeof(TContext) == typeof(GameContext))
+            {
+                sqliteFileName = GameDbFilename;
+            }
+            else if (typeof(TContext) == typeof(LoggingContext))
+            {
+                sqliteFileName = LoggingDbFilename;
+            }
+            else if (typeof(TContext) == typeof(PlayerContext))
+            {
+                sqliteFileName = PlayersDbFilename;
+            }
+            else
+            {
+                throw new InvalidOperationException();
+            }
+
             var fromContextOptions = new DatabaseContextOptions
             {
                 AutoDetectChanges = false,
-                ConnectionStringBuilder = fromDatabaseOptions.Type.CreateConnectionStringBuilder(fromDatabaseOptions, default),
+                ConnectionStringBuilder =
+                    fromDatabaseOptions.Type.CreateConnectionStringBuilder(fromDatabaseOptions, sqliteFileName),
+                DatabaseType = fromDatabaseOptions.Type,
                 ExplicitLoad = false,
                 LazyLoading = false,
                 LoggerFactory = default,
@@ -1550,8 +1689,7 @@ namespace Intersect.Server.Database
             {
                 case DatabaseType.MySql:
                 {
-                    var dbConnected = false;
-                    while (!dbConnected)
+                    while (true)
                     {
                         Console.WriteLine(Strings.Migration.entermysqlinfo);
                         Console.Write(Strings.Migration.mysqlhost);
@@ -1563,6 +1701,7 @@ namespace Intersect.Server.Database
                         {
                             portString = "3306";
                         }
+
                         var port = ushort.Parse(portString);
 
                         Console.Write(Strings.Migration.mysqldatabase);
@@ -1586,7 +1725,7 @@ namespace Intersect.Server.Database
                             Username = username,
                             Password = password
                         };
-                        toContextOptions = new DatabaseContextOptions
+                        toContextOptions = new()
                         {
                             ConnectionStringBuilder = toDatabaseType.CreateConnectionStringBuilder(
                                 toDatabaseOptions,
@@ -1625,7 +1764,7 @@ namespace Intersect.Server.Database
                         }
                     }
 
-                    throw new InvalidOperationException();
+                    break;
                 }
 
                 case DatabaseType.Sqlite:
@@ -1685,6 +1824,7 @@ namespace Intersect.Server.Database
             Console.WriteLine(Strings.Migration.stoppingserver);
 
             //This variable will end the server loop and save any pending changes
+            ServerContext.Instance.DisposeWithoutExiting = true;
             ServerContext.Instance.RequestShutdown();
 
             while (ServerContext.Instance.IsRunning)
@@ -1692,10 +1832,8 @@ namespace Intersect.Server.Database
                 Thread.Sleep(100);
             }
 
-
             Console.WriteLine(Strings.Migration.startingmigration);
             var migrationService = new DatabaseTypeMigrationService();
-            await migrationService.TryMigrate<TContext>(fromContextOptions, toContextOptions);
             if (await migrationService.TryMigrate<TContext>(fromContextOptions, toContextOptions))
             {
                 if (typeof(TContext).Extends<GameContext>())
@@ -1719,12 +1857,12 @@ namespace Intersect.Server.Database
 
                 Console.WriteLine(Strings.Migration.migrationcomplete);
                 Bootstrapper.Context.ConsoleService.Wait(true);
-                Environment.Exit(0);
+                ServerContext.Instance.Exit();
             }
             else
             {
                 Console.WriteLine($"Error migrating context type: {typeof(TContext).FullName}");
-                Environment.Exit(1);
+                ServerContext.Instance.Exit(1);
             }
         }
 
@@ -1758,7 +1896,7 @@ namespace Intersect.Server.Database
                     }
                 }
                 else if (i.KeyChar != '\u0000'
-                ) // KeyChar == '\u0000' if the key pressed does not correspond to a printable character, e.g. F1, Pause-Break, etc
+                        ) // KeyChar == '\u0000' if the key pressed does not correspond to a printable character, e.g. F1, Pause-Break, etc
                 {
                     pwd = pwd + i.KeyChar;
                     Console.Write("*");
@@ -1767,7 +1905,5 @@ namespace Intersect.Server.Database
 
             return pwd;
         }
-
     }
-
 }

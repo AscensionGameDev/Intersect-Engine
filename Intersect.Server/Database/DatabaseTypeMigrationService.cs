@@ -11,20 +11,26 @@ public class DatabaseTypeMigrationService
         .GetMethod(nameof(MigrateDbSet), BindingFlags.NonPublic | BindingFlags.Static)
         ?? throw new InvalidOperationException();
 
+    private async Task<bool> CheckIfNotEmpty<TContext>(TContext context)
+        where TContext : IntersectDbContext<TContext>
+    {
+        if (context.IsEmpty())
+        {
+            _ = await context.Database.EnsureDeletedAsync();
+            await context.Database.MigrateAsync();
+            return false;
+        }
+
+        Console.WriteLine(Strings.Migration.mysqlnotempty);
+        return true;
+    }
+
     public async Task<bool> TryMigrate<TContext>(DatabaseContextOptions fromOptions, DatabaseContextOptions toOptions)
         where TContext : IntersectDbContext<TContext>
     {
-        await using var fromContext = IntersectDbContext<TContext>.Create(fromOptions);
-        await using var toContext = IntersectDbContext<TContext>.Create(toOptions);
-
-        if (toContext.IsEmpty())
+        await using var testToContext = IntersectDbContext<TContext>.Create(toOptions);
+        if (await CheckIfNotEmpty(testToContext))
         {
-            _ = await toContext.Database.EnsureDeletedAsync();
-            await toContext.Database.MigrateAsync();
-        }
-        else
-        {
-            Console.WriteLine(Strings.Migration.mysqlnotempty);
             return false;
         }
 
@@ -34,6 +40,9 @@ public class DatabaseTypeMigrationService
 
         foreach (var dbSetInfo in dbSetInfos)
         {
+            await using var fromContext = IntersectDbContext<TContext>.Create(fromOptions);
+            await using var toContext = IntersectDbContext<TContext>.Create(toOptions);
+
             var fromDbSet = dbSetInfo.GetValue(fromContext);
             if (fromDbSet == default)
             {
@@ -49,10 +58,10 @@ public class DatabaseTypeMigrationService
             var migrateDbSetMethod = _methodInfoMigrateDbSet.MakeGenericMethod(dbSetInfo.PropertyType);
             var migrateTask = migrateDbSetMethod.Invoke(null, new[] { fromDbSet, toDbSet }) as Task;
             await (migrateTask ?? throw new InvalidOperationException());
+            toContext.ChangeTracker.DetectChanges();
+            await toContext.SaveChangesAsync();
         }
 
-        toContext.ChangeTracker.DetectChanges();
-        await toContext.SaveChangesAsync();
         return true;
     }
 

@@ -16,38 +16,27 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Intersect.Server.Database.GameData;
 
+/// <summary>
+/// MySQL/MariaDB-specific implementation of <see cref="GameContext"/>
+/// </summary>
 public sealed class MySqlGameContext : GameContext, IMySqlDbContext
 {
-    private MySqlGameContext() : base(new()) { }
-
-    public MySqlGameContext(DatabaseContextOptions databaseContextOptions) : base(databaseContextOptions) { }
-
     /// <inheritdoc />
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        base.OnConfiguring(optionsBuilder);
-    }
+    public MySqlGameContext(DatabaseContextOptions databaseContextOptions) : base(databaseContextOptions) { }
 }
 
+/// <summary>
+/// SQLite-specific implementation of <see cref="GameContext"/>
+/// </summary>
 public sealed class SqliteGameContext : GameContext, ISqliteDbContext
 {
-    public static readonly DatabaseContextOptions DefaultContextOptions = new()
-    {
-        ConnectionStringBuilder = new SqliteConnectionStringBuilder($@"Data Source={DbInterface.GameDbFilename}"),
-        DatabaseType = DatabaseType.Sqlite
-    };
-
-    public SqliteGameContext() : base(DefaultContextOptions) { }
-
-    public SqliteGameContext(DatabaseContextOptions databaseContextOptions) : base(databaseContextOptions) { }
-
     /// <inheritdoc />
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        base.OnConfiguring(optionsBuilder);
-    }
+    public SqliteGameContext(DatabaseContextOptions databaseContextOptions) : base(databaseContextOptions) { }
 }
 
+/// <summary>
+/// <see cref="DbContext"/> implementation that contains static game content descriptors.
+/// </summary>
 public abstract partial class GameContext : IntersectDbContext<GameContext>, IGameContext
 {
     private readonly MethodInfo _descriptorOnModelCreating = typeof(GameContext).GetMethod(
@@ -59,63 +48,70 @@ public abstract partial class GameContext : IntersectDbContext<GameContext>, IGa
         default
     ) ?? throw new InvalidOperationException();
 
-    protected GameContext(DatabaseContextOptions databaseContextOptions) : base(databaseContextOptions) { }
+    /// <inheritdoc />
+    protected GameContext(DatabaseContextOptions? databaseContextOptions) : base(databaseContextOptions) { }
 
-    //Animations
+    /// <inheritdoc />
     public DbSet<AnimationBase> Animations { get; set; }
 
+    /// <inheritdoc />
     public DbSet<ContentString> ContentStrings { get; set; }
 
-    //Crafting
+    /// <inheritdoc />
     public DbSet<CraftBase> Crafts { get; set; }
 
+    /// <inheritdoc />
     public DbSet<CraftingTableBase> CraftingTables { get; set; }
 
-    //Classes
+    /// <inheritdoc />
     public DbSet<ClassBase> Classes { get; set; }
 
-    //Events
+    /// <inheritdoc />
     public DbSet<EventBase> Events { get; set; }
 
+    /// <inheritdoc />
     public DbSet<Folder> Folders { get; set; }
 
-    //Items
+    /// <inheritdoc />
     public DbSet<ItemBase> Items { get; set; }
 
+    /// <inheritdoc />
     public DbSet<LocaleContentString> LocaleContentStrings { get; set; }
 
-    //Maps
+    /// <inheritdoc />
     public DbSet<MapController> Maps { get; set; }
 
-    //NPCs
+    /// <inheritdoc />
     public DbSet<NpcBase> Npcs { get; set; }
 
-    //Projectiles
+    /// <inheritdoc />
     public DbSet<ProjectileBase> Projectiles { get; set; }
 
-    //Quests
+    /// <inheritdoc />
     public DbSet<QuestBase> Quests { get; set; }
 
-    //Resources
+    /// <inheritdoc />
     public DbSet<ResourceBase> Resources { get; set; }
 
-    //Shops
+    /// <inheritdoc />
     public DbSet<ShopBase> Shops { get; set; }
 
-    //Spells
+    /// <inheritdoc />
     public DbSet<SpellBase> Spells { get; set; }
 
-    //Variables
+    /// <inheritdoc />
     public DbSet<PlayerVariableBase> PlayerVariables { get; set; }
 
+    /// <inheritdoc />
     public DbSet<ServerVariableBase> ServerVariables { get; set; }
 
+    /// <inheritdoc />
     public DbSet<GuildVariableBase> GuildVariables { get; set; }
 
-    //Tilesets
+    /// <inheritdoc />
     public DbSet<TilesetBase> Tilesets { get; set; }
 
-    //Time
+    /// <inheritdoc />
     public DbSet<TimeBase> Time { get; set; }
 
     private void OnModelCreating<TDescriptor>(ModelBuilder modelBuilder)
@@ -209,6 +205,7 @@ public abstract partial class GameContext : IntersectDbContext<GameContext>, IGa
         }
     }
 
+    /// <inheritdoc />
     public override void Seed()
     {
 #if DEBUG

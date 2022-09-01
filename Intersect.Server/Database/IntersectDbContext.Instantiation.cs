@@ -20,16 +20,17 @@ public partial class IntersectDbContext<TDbContext>
             .GetParameters()
             .ToArray();
 
-    protected IntersectDbContext(DatabaseContextOptions databaseContextOptions)
+    protected IntersectDbContext(DatabaseContextOptions? databaseContextOptions)
     {
-        ContextOptions = databaseContextOptions with
+        var safeDatabaseContextOptions = databaseContextOptions ?? _fallbackContextOptions;
+        ContextOptions = safeDatabaseContextOptions with
         {
-            ConnectionStringBuilder = databaseContextOptions.ConnectionStringBuilder ??
+            ConnectionStringBuilder = safeDatabaseContextOptions.ConnectionStringBuilder ??
                                       _fallbackContextOptions.ConnectionStringBuilder
         };
 
-        base.ChangeTracker.AutoDetectChangesEnabled = databaseContextOptions.AutoDetectChanges || IsReadOnly;
-        base.ChangeTracker.LazyLoadingEnabled = databaseContextOptions.LazyLoading || !IsReadOnly;
+        base.ChangeTracker.AutoDetectChangesEnabled = safeDatabaseContextOptions.AutoDetectChanges || IsReadOnly;
+        base.ChangeTracker.LazyLoadingEnabled = safeDatabaseContextOptions.LazyLoading || !IsReadOnly;
     }
 
     private static DbContextConstructor CreateConstructorDelegate<TContextType>(
