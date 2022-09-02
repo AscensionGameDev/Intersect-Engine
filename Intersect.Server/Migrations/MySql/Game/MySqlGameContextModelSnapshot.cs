@@ -15,29 +15,31 @@ namespace Intersect.Server.Migrations.MySql.Game
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "6.0.3");
+            modelBuilder
+                .HasAnnotation("ProductVersion", "6.0.8")
+                .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             modelBuilder.Entity("Intersect.GameObjects.AnimationBase", b =>
                 {
-                    b.Property<byte[]>("Id")
-                        .HasColumnType("BLOB");
+                    b.Property<Guid>("Id")
+                        .HasColumnType("char(36)");
 
                     b.Property<bool>("CompleteSound")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<string>("Name")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("longtext")
                         .HasColumnOrder(0);
 
-                    b.Property<byte[]>("ParentId")
-                        .HasColumnType("BLOB")
+                    b.Property<Guid?>("ParentId")
+                        .HasColumnType("char(36)")
                         .HasColumnOrder(1);
 
                     b.Property<string>("Sound")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("longtext");
 
                     b.Property<long>("TimeCreated")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
@@ -48,115 +50,113 @@ namespace Intersect.Server.Migrations.MySql.Game
 
             modelBuilder.Entity("Intersect.GameObjects.ClassBase", b =>
                 {
-                    b.Property<byte[]>("Id")
-                        .HasColumnType("BLOB");
+                    b.Property<Guid>("Id")
+                        .HasColumnType("char(36)");
 
-                    b.Property<byte[]>("AttackAnimationId")
-                        .IsRequired()
-                        .HasColumnType("BLOB")
+                    b.Property<Guid>("AttackAnimationId")
+                        .HasColumnType("char(36)")
                         .HasColumnName("AttackAnimation");
 
                     b.Property<int>("AttackSpeedModifier")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<int>("AttackSpeedValue")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<long>("BaseExp")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("bigint");
 
                     b.Property<int>("BasePoints")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<int>("CritChance")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<double>("CritMultiplier")
-                        .HasColumnType("REAL");
+                        .HasColumnType("double");
 
                     b.Property<int>("Damage")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<int>("DamageType")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<long>("ExpIncrease")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("bigint");
 
                     b.Property<string>("ExpOverridesJson")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("longtext")
                         .HasColumnName("ExperienceOverrides");
 
                     b.Property<bool>("IncreasePercentage")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<string>("JsonBaseStats")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("longtext")
                         .HasColumnName("BaseStats");
 
                     b.Property<string>("JsonBaseVitals")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("longtext")
                         .HasColumnName("BaseVitals");
 
                     b.Property<string>("JsonItems")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("longtext")
                         .HasColumnName("Items");
 
                     b.Property<string>("JsonSpells")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("longtext")
                         .HasColumnName("Spells");
 
                     b.Property<string>("JsonSprites")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("longtext")
                         .HasColumnName("Sprites");
 
                     b.Property<bool>("Locked")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<string>("Name")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("longtext")
                         .HasColumnOrder(0);
 
-                    b.Property<byte[]>("ParentId")
-                        .HasColumnType("BLOB")
+                    b.Property<Guid?>("ParentId")
+                        .HasColumnType("char(36)")
                         .HasColumnOrder(1);
 
                     b.Property<int>("PointIncrease")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<string>("RegenJson")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("longtext")
                         .HasColumnName("VitalRegen");
 
                     b.Property<int>("Scaling")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<int>("ScalingStat")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<int>("SpawnDir")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
-                    b.Property<byte[]>("SpawnMapId")
-                        .IsRequired()
-                        .HasColumnType("BLOB")
+                    b.Property<Guid>("SpawnMapId")
+                        .HasColumnType("char(36)")
                         .HasColumnName("SpawnMap");
 
                     b.Property<int>("SpawnX")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<int>("SpawnY")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<string>("StatIncreaseJson")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("longtext")
                         .HasColumnName("StatIncreases");
 
                     b.Property<long>("TimeCreated")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("bigint");
 
                     b.Property<string>("VitalIncreaseJson")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("longtext")
                         .HasColumnName("VitalIncreases");
 
                     b.HasKey("Id");
@@ -168,44 +168,42 @@ namespace Intersect.Server.Migrations.MySql.Game
 
             modelBuilder.Entity("Intersect.GameObjects.Crafting.CraftBase", b =>
                 {
-                    b.Property<byte[]>("Id")
-                        .HasColumnType("BLOB");
+                    b.Property<Guid>("Id")
+                        .HasColumnType("char(36)");
 
-                    b.Property<byte[]>("EventId")
-                        .IsRequired()
-                        .HasColumnType("BLOB")
+                    b.Property<Guid>("EventId")
+                        .HasColumnType("char(36)")
                         .HasColumnName("Event");
 
                     b.Property<int>("FailureChance")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<string>("IngredientsJson")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("longtext")
                         .HasColumnName("Ingredients");
 
-                    b.Property<byte[]>("ItemId")
-                        .IsRequired()
-                        .HasColumnType("BLOB");
+                    b.Property<Guid>("ItemId")
+                        .HasColumnType("char(36)");
 
                     b.Property<int>("ItemLossChance")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("longtext")
                         .HasColumnOrder(0);
 
-                    b.Property<byte[]>("ParentId")
-                        .HasColumnType("BLOB")
+                    b.Property<Guid?>("ParentId")
+                        .HasColumnType("char(36)")
                         .HasColumnOrder(1);
 
                     b.Property<int>("Quantity")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<int>("Time")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<long>("TimeCreated")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
@@ -216,23 +214,23 @@ namespace Intersect.Server.Migrations.MySql.Game
 
             modelBuilder.Entity("Intersect.GameObjects.CraftingTableBase", b =>
                 {
-                    b.Property<byte[]>("Id")
-                        .HasColumnType("BLOB");
+                    b.Property<Guid>("Id")
+                        .HasColumnType("char(36)");
 
                     b.Property<string>("CraftsJson")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("longtext")
                         .HasColumnName("Crafts");
 
                     b.Property<string>("Name")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("longtext")
                         .HasColumnOrder(0);
 
-                    b.Property<byte[]>("ParentId")
-                        .HasColumnType("BLOB")
+                    b.Property<Guid?>("ParentId")
+                        .HasColumnType("char(36)")
                         .HasColumnOrder(1);
 
                     b.Property<long>("TimeCreated")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
@@ -243,39 +241,38 @@ namespace Intersect.Server.Migrations.MySql.Game
 
             modelBuilder.Entity("Intersect.GameObjects.Events.EventBase", b =>
                 {
-                    b.Property<byte[]>("Id")
-                        .HasColumnType("BLOB");
+                    b.Property<Guid>("Id")
+                        .HasColumnType("char(36)");
 
                     b.Property<bool>("CommonEvent")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<bool>("Global")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("tinyint(1)");
 
-                    b.Property<byte[]>("MapId")
-                        .IsRequired()
-                        .HasColumnType("BLOB");
+                    b.Property<Guid>("MapId")
+                        .HasColumnType("char(36)");
 
                     b.Property<string>("Name")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("longtext")
                         .HasColumnOrder(0);
 
                     b.Property<string>("PagesJson")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("longtext")
                         .HasColumnName("Pages");
 
-                    b.Property<byte[]>("ParentId")
-                        .HasColumnType("BLOB")
+                    b.Property<Guid?>("ParentId")
+                        .HasColumnType("char(36)")
                         .HasColumnOrder(1);
 
                     b.Property<int>("SpawnX")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<int>("SpawnY")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<long>("TimeCreated")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
@@ -286,25 +283,25 @@ namespace Intersect.Server.Migrations.MySql.Game
 
             modelBuilder.Entity("Intersect.GameObjects.GuildVariableBase", b =>
                 {
-                    b.Property<byte[]>("Id")
-                        .HasColumnType("BLOB");
+                    b.Property<Guid>("Id")
+                        .HasColumnType("char(36)");
 
                     b.Property<string>("Name")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("longtext")
                         .HasColumnOrder(0);
 
-                    b.Property<byte[]>("ParentId")
-                        .HasColumnType("BLOB")
+                    b.Property<Guid?>("ParentId")
+                        .HasColumnType("char(36)")
                         .HasColumnOrder(1);
 
                     b.Property<string>("TextId")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("longtext");
 
                     b.Property<long>("TimeCreated")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("bigint");
 
                     b.Property<byte>("Type")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("tinyint unsigned");
 
                     b.HasKey("Id");
 
@@ -315,201 +312,195 @@ namespace Intersect.Server.Migrations.MySql.Game
 
             modelBuilder.Entity("Intersect.GameObjects.ItemBase", b =>
                 {
-                    b.Property<byte[]>("Id")
-                        .HasColumnType("BLOB");
+                    b.Property<Guid>("Id")
+                        .HasColumnType("char(36)");
 
-                    b.Property<byte[]>("AnimationId")
-                        .IsRequired()
-                        .HasColumnType("BLOB")
+                    b.Property<Guid>("AnimationId")
+                        .HasColumnType("char(36)")
                         .HasColumnName("Animation");
 
-                    b.Property<byte[]>("AttackAnimationId")
-                        .IsRequired()
-                        .HasColumnType("BLOB")
+                    b.Property<Guid>("AttackAnimationId")
+                        .HasColumnType("char(36)")
                         .HasColumnName("AttackAnimation");
 
                     b.Property<int>("AttackSpeedModifier")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<int>("AttackSpeedValue")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<int>("BlockAbsorption")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<int>("BlockAmount")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<int>("BlockChance")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<bool>("CanBag")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<bool>("CanBank")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<bool>("CanDrop")
-                        .HasColumnType("INTEGER")
+                        .HasColumnType("tinyint(1)")
                         .HasColumnName("Bound");
 
                     b.Property<bool>("CanGuildBank")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<bool>("CanSell")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<bool>("CanTrade")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<string>("CannotUseMessage")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("longtext");
 
                     b.Property<int>("Cooldown")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<string>("CooldownGroup")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("longtext");
 
                     b.Property<int>("CritChance")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<double>("CritMultiplier")
-                        .HasColumnType("REAL");
+                        .HasColumnType("double");
 
                     b.Property<int>("Damage")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<int>("DamageType")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<string>("Description")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("longtext");
 
                     b.Property<int>("DropChanceOnDeath")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
-                    b.Property<byte[]>("EquipmentAnimationId")
-                        .IsRequired()
-                        .HasColumnType("BLOB")
+                    b.Property<Guid>("EquipmentAnimationId")
+                        .HasColumnType("char(36)")
                         .HasColumnName("EquipmentAnimation");
 
                     b.Property<int>("EquipmentSlot")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
-                    b.Property<byte[]>("EventId")
-                        .IsRequired()
-                        .HasColumnType("BLOB")
+                    b.Property<Guid>("EventId")
+                        .HasColumnType("char(36)")
                         .HasColumnName("Event");
 
                     b.Property<string>("FemalePaperdoll")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("Icon")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("longtext");
 
                     b.Property<bool>("IgnoreCooldownReduction")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<bool>("IgnoreGlobalCooldown")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<int>("ItemType")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<string>("JsonColor")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("longtext")
                         .HasColumnName("Color");
 
                     b.Property<string>("JsonUsageRequirements")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("longtext")
                         .HasColumnName("UsageRequirements");
 
                     b.Property<string>("MalePaperdoll")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("longtext");
 
                     b.Property<int>("MaxBankStack")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<int>("MaxInventoryStack")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("longtext")
                         .HasColumnOrder(0);
 
-                    b.Property<byte[]>("ParentId")
-                        .HasColumnType("BLOB")
+                    b.Property<Guid?>("ParentId")
+                        .HasColumnType("char(36)")
                         .HasColumnOrder(1);
 
                     b.Property<string>("PercentageStatsJson")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("longtext")
                         .HasColumnName("PercentageStatsGiven");
 
                     b.Property<string>("PercentageVitalsJson")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("longtext")
                         .HasColumnName("PercentageVitalsGiven");
 
                     b.Property<int>("Price")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
-                    b.Property<byte[]>("ProjectileId")
-                        .IsRequired()
-                        .HasColumnType("BLOB")
+                    b.Property<Guid>("ProjectileId")
+                        .HasColumnType("char(36)")
                         .HasColumnName("Projectile");
 
                     b.Property<bool>("QuickCast")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<int>("Rarity")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<int>("Scaling")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<int>("ScalingStat")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<bool>("SingleUse")
-                        .HasColumnType("INTEGER")
+                        .HasColumnType("tinyint(1)")
                         .HasColumnName("DestroySpell");
 
                     b.Property<int>("SlotCount")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<int>("Speed")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
-                    b.Property<byte[]>("SpellId")
-                        .IsRequired()
-                        .HasColumnType("BLOB")
+                    b.Property<Guid>("SpellId")
+                        .HasColumnType("char(36)")
                         .HasColumnName("Spell");
 
                     b.Property<bool>("Stackable")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<int>("StatGrowth")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<string>("StatsJson")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("longtext")
                         .HasColumnName("StatsGiven");
 
                     b.Property<long>("TimeCreated")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("bigint");
 
                     b.Property<int>("Tool")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<bool>("TwoHanded")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<string>("VitalsJson")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("longtext")
                         .HasColumnName("VitalsGiven");
 
                     b.Property<string>("VitalsRegenJson")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("longtext")
                         .HasColumnName("VitalsRegen");
 
                     b.HasKey("Id");
@@ -521,150 +512,147 @@ namespace Intersect.Server.Migrations.MySql.Game
 
             modelBuilder.Entity("Intersect.GameObjects.NpcBase", b =>
                 {
-                    b.Property<byte[]>("Id")
-                        .HasColumnType("BLOB");
+                    b.Property<Guid>("Id")
+                        .HasColumnType("char(36)");
 
                     b.Property<bool>("Aggressive")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<bool>("AttackAllies")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("tinyint(1)");
 
-                    b.Property<byte[]>("AttackAnimationId")
-                        .IsRequired()
-                        .HasColumnType("BLOB")
+                    b.Property<Guid>("AttackAnimationId")
+                        .HasColumnType("char(36)")
                         .HasColumnName("AttackAnimation");
 
                     b.Property<string>("AttackOnSightConditionsJson")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("longtext")
                         .HasColumnName("AttackOnSightConditions");
 
                     b.Property<int>("AttackSpeedModifier")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<int>("AttackSpeedValue")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<string>("CraftsJson")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("longtext")
                         .HasColumnName("Spells");
 
                     b.Property<int>("CritChance")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<double>("CritMultiplier")
-                        .HasColumnType("REAL");
+                        .HasColumnType("double");
 
                     b.Property<int>("Damage")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<int>("DamageType")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<long>("Experience")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("bigint");
 
                     b.Property<byte>("FleeHealthPercentage")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("tinyint unsigned");
 
                     b.Property<bool>("FocusHighestDamageDealer")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<string>("ImmunitiesJson")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("longtext")
                         .HasColumnName("Immunities");
 
                     b.Property<bool>("IndividualizedLoot")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<string>("JsonAggroList")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("longtext")
                         .HasColumnName("AggroList");
 
                     b.Property<string>("JsonColor")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("longtext")
                         .HasColumnName("Color");
 
                     b.Property<string>("JsonDrops")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("longtext")
                         .HasColumnName("Drops");
 
                     b.Property<string>("JsonMaxVital")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("longtext")
                         .HasColumnName("MaxVital");
 
                     b.Property<string>("JsonStat")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("longtext")
                         .HasColumnName("Stats");
 
                     b.Property<int>("Level")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<byte>("Movement")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("tinyint unsigned");
 
                     b.Property<string>("Name")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("longtext")
                         .HasColumnOrder(0);
 
                     b.Property<bool>("NpcVsNpcEnabled")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("tinyint(1)");
 
-                    b.Property<byte[]>("OnDeathEventId")
-                        .IsRequired()
-                        .HasColumnType("BLOB")
+                    b.Property<Guid>("OnDeathEventId")
+                        .HasColumnType("char(36)")
                         .HasColumnName("OnDeathEvent");
 
-                    b.Property<byte[]>("OnDeathPartyEventId")
-                        .IsRequired()
-                        .HasColumnType("BLOB")
+                    b.Property<Guid>("OnDeathPartyEventId")
+                        .HasColumnType("char(36)")
                         .HasColumnName("OnDeathPartyEvent");
 
-                    b.Property<byte[]>("ParentId")
-                        .HasColumnType("BLOB")
+                    b.Property<Guid?>("ParentId")
+                        .HasColumnType("char(36)")
                         .HasColumnOrder(1);
 
                     b.Property<string>("PlayerCanAttackConditionsJson")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("longtext")
                         .HasColumnName("PlayerCanAttackConditions");
 
                     b.Property<string>("PlayerFriendConditionsJson")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("longtext")
                         .HasColumnName("PlayerFriendConditions");
 
                     b.Property<string>("RegenJson")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("longtext")
                         .HasColumnName("VitalRegen");
 
                     b.Property<int>("ResetRadius")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<int>("Scaling")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<int>("ScalingStat")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<int>("SightRange")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<int>("SpawnDuration")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<int>("SpellFrequency")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<string>("Sprite")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("longtext");
 
                     b.Property<bool>("Swarm")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<double>("Tenacity")
-                        .HasColumnType("REAL");
+                        .HasColumnType("double");
 
                     b.Property<long>("TimeCreated")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
@@ -675,25 +663,25 @@ namespace Intersect.Server.Migrations.MySql.Game
 
             modelBuilder.Entity("Intersect.GameObjects.PlayerVariableBase", b =>
                 {
-                    b.Property<byte[]>("Id")
-                        .HasColumnType("BLOB");
+                    b.Property<Guid>("Id")
+                        .HasColumnType("char(36)");
 
                     b.Property<string>("Name")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("longtext")
                         .HasColumnOrder(0);
 
-                    b.Property<byte[]>("ParentId")
-                        .HasColumnType("BLOB")
+                    b.Property<Guid?>("ParentId")
+                        .HasColumnType("char(36)")
                         .HasColumnOrder(1);
 
                     b.Property<string>("TextId")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("longtext");
 
                     b.Property<long>("TimeCreated")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("bigint");
 
                     b.Property<byte>("Type")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("tinyint unsigned");
 
                     b.HasKey("Id");
 
@@ -704,77 +692,75 @@ namespace Intersect.Server.Migrations.MySql.Game
 
             modelBuilder.Entity("Intersect.GameObjects.ProjectileBase", b =>
                 {
-                    b.Property<byte[]>("Id")
-                        .HasColumnType("BLOB");
+                    b.Property<Guid>("Id")
+                        .HasColumnType("char(36)");
 
-                    b.Property<byte[]>("AmmoItemId")
-                        .IsRequired()
-                        .HasColumnType("BLOB")
+                    b.Property<Guid>("AmmoItemId")
+                        .HasColumnType("char(36)")
                         .HasColumnName("Ammo");
 
                     b.Property<int>("AmmoRequired")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<string>("AnimationsJson")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("longtext")
                         .HasColumnName("Animations");
 
                     b.Property<int>("Delay")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<bool>("GrappleHook")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<string>("GrappleHookOptionsJson")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("longtext")
                         .HasColumnName("GrappleHookOptions");
 
                     b.Property<bool>("IgnoreActiveResources")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<bool>("IgnoreExhaustedResources")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<bool>("IgnoreMapBlocks")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<bool>("IgnoreZDimension")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<int>("Knockback")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("longtext")
                         .HasColumnOrder(0);
 
-                    b.Property<byte[]>("ParentId")
-                        .HasColumnType("BLOB")
+                    b.Property<Guid?>("ParentId")
+                        .HasColumnType("char(36)")
                         .HasColumnOrder(1);
 
                     b.Property<bool>("PierceTarget")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<int>("Quantity")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<int>("Range")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<string>("SpawnsJson")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("longtext")
                         .HasColumnName("SpawnLocations");
 
                     b.Property<int>("Speed")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
-                    b.Property<byte[]>("SpellId")
-                        .IsRequired()
-                        .HasColumnType("BLOB")
+                    b.Property<Guid>("SpellId")
+                        .HasColumnType("char(36)")
                         .HasColumnName("Spell");
 
                     b.Property<long>("TimeCreated")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
@@ -785,76 +771,74 @@ namespace Intersect.Server.Migrations.MySql.Game
 
             modelBuilder.Entity("Intersect.GameObjects.QuestBase", b =>
                 {
-                    b.Property<byte[]>("Id")
-                        .HasColumnType("BLOB");
+                    b.Property<Guid>("Id")
+                        .HasColumnType("char(36)");
 
                     b.Property<string>("BeforeDescription")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("CompletedCategory")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("longtext");
 
                     b.Property<bool>("DoNotShowUnlessRequirementsMet")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<string>("EndDescription")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("longtext");
 
-                    b.Property<byte[]>("EndEventId")
-                        .IsRequired()
-                        .HasColumnType("BLOB")
+                    b.Property<Guid>("EndEventId")
+                        .HasColumnType("char(36)")
                         .HasColumnName("EndEvent");
 
                     b.Property<string>("InProgressCategory")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("InProgressDescription")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("JsonRequirements")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("longtext")
                         .HasColumnName("Requirements");
 
                     b.Property<bool>("LogAfterComplete")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<bool>("LogBeforeOffer")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<string>("Name")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("longtext")
                         .HasColumnOrder(0);
 
                     b.Property<int>("OrderValue")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
-                    b.Property<byte[]>("ParentId")
-                        .HasColumnType("BLOB")
+                    b.Property<Guid?>("ParentId")
+                        .HasColumnType("char(36)")
                         .HasColumnOrder(1);
 
                     b.Property<bool>("Quitable")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<bool>("Repeatable")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<string>("StartDescription")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("longtext");
 
-                    b.Property<byte[]>("StartEventId")
-                        .IsRequired()
-                        .HasColumnType("BLOB")
+                    b.Property<Guid>("StartEventId")
+                        .HasColumnType("char(36)")
                         .HasColumnName("StartEvent");
 
                     b.Property<string>("TasksJson")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("longtext")
                         .HasColumnName("Tasks");
 
                     b.Property<long>("TimeCreated")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("bigint");
 
                     b.Property<string>("UnstartedCategory")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("longtext");
 
                     b.HasKey("Id");
 
@@ -865,61 +849,59 @@ namespace Intersect.Server.Migrations.MySql.Game
 
             modelBuilder.Entity("Intersect.GameObjects.ResourceBase", b =>
                 {
-                    b.Property<byte[]>("Id")
-                        .HasColumnType("BLOB");
+                    b.Property<Guid>("Id")
+                        .HasColumnType("char(36)");
 
-                    b.Property<byte[]>("AnimationId")
-                        .IsRequired()
-                        .HasColumnType("BLOB")
+                    b.Property<Guid>("AnimationId")
+                        .HasColumnType("char(36)")
                         .HasColumnName("Animation");
 
                     b.Property<string>("CannotHarvestMessage")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("longtext");
 
-                    b.Property<byte[]>("EventId")
-                        .IsRequired()
-                        .HasColumnType("BLOB")
+                    b.Property<Guid>("EventId")
+                        .HasColumnType("char(36)")
                         .HasColumnName("Event");
 
                     b.Property<string>("JsonDrops")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("longtext")
                         .HasColumnName("Drops");
 
                     b.Property<string>("JsonHarvestingRequirements")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("longtext")
                         .HasColumnName("HarvestingRequirements");
 
                     b.Property<int>("MaxHp")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<int>("MinHp")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("longtext")
                         .HasColumnOrder(0);
 
-                    b.Property<byte[]>("ParentId")
-                        .HasColumnType("BLOB")
+                    b.Property<Guid?>("ParentId")
+                        .HasColumnType("char(36)")
                         .HasColumnOrder(1);
 
                     b.Property<int>("SpawnDuration")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<long>("TimeCreated")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("bigint");
 
                     b.Property<int>("Tool")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<int>("VitalRegen")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<bool>("WalkableAfter")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<bool>("WalkableBefore")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("tinyint(1)");
 
                     b.HasKey("Id");
 
@@ -930,29 +912,29 @@ namespace Intersect.Server.Migrations.MySql.Game
 
             modelBuilder.Entity("Intersect.GameObjects.ServerVariableBase", b =>
                 {
-                    b.Property<byte[]>("Id")
-                        .HasColumnType("BLOB");
+                    b.Property<Guid>("Id")
+                        .HasColumnType("char(36)");
 
                     b.Property<string>("Json")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("longtext")
                         .HasColumnName("Value");
 
                     b.Property<string>("Name")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("longtext")
                         .HasColumnOrder(0);
 
-                    b.Property<byte[]>("ParentId")
-                        .HasColumnType("BLOB")
+                    b.Property<Guid?>("ParentId")
+                        .HasColumnType("char(36)")
                         .HasColumnOrder(1);
 
                     b.Property<string>("TextId")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("longtext");
 
                     b.Property<long>("TimeCreated")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("bigint");
 
                     b.Property<byte>("Type")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("tinyint unsigned");
 
                     b.HasKey("Id");
 
@@ -963,41 +945,40 @@ namespace Intersect.Server.Migrations.MySql.Game
 
             modelBuilder.Entity("Intersect.GameObjects.ShopBase", b =>
                 {
-                    b.Property<byte[]>("Id")
-                        .HasColumnType("BLOB");
+                    b.Property<Guid>("Id")
+                        .HasColumnType("char(36)");
 
                     b.Property<string>("BuySound")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("longtext");
 
                     b.Property<bool>("BuyingWhitelist")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("tinyint(1)");
 
-                    b.Property<byte[]>("DefaultCurrencyId")
-                        .IsRequired()
-                        .HasColumnType("BLOB")
+                    b.Property<Guid>("DefaultCurrencyId")
+                        .HasColumnType("char(36)")
                         .HasColumnName("DefaultCurrency");
 
                     b.Property<string>("JsonBuyingItems")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("longtext")
                         .HasColumnName("BuyingItems");
 
                     b.Property<string>("JsonSellingItems")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("longtext")
                         .HasColumnName("SellingItems");
 
                     b.Property<string>("Name")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("longtext")
                         .HasColumnOrder(0);
 
-                    b.Property<byte[]>("ParentId")
-                        .HasColumnType("BLOB")
+                    b.Property<Guid?>("ParentId")
+                        .HasColumnType("char(36)")
                         .HasColumnOrder(1);
 
                     b.Property<string>("SellSound")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("longtext");
 
                     b.Property<long>("TimeCreated")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
@@ -1008,76 +989,72 @@ namespace Intersect.Server.Migrations.MySql.Game
 
             modelBuilder.Entity("Intersect.GameObjects.SpellBase", b =>
                 {
-                    b.Property<byte[]>("Id")
-                        .HasColumnType("BLOB");
+                    b.Property<Guid>("Id")
+                        .HasColumnType("char(36)");
 
                     b.Property<bool>("Bound")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<string>("CannotCastMessage")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("longtext");
 
-                    b.Property<byte[]>("CastAnimationId")
-                        .IsRequired()
-                        .HasColumnType("BLOB")
+                    b.Property<Guid>("CastAnimationId")
+                        .HasColumnType("char(36)")
                         .HasColumnName("CastAnimation");
 
                     b.Property<int>("CastDuration")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<int>("CooldownDuration")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<string>("CooldownGroup")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("Description")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("longtext");
 
-                    b.Property<byte[]>("EventId")
-                        .IsRequired()
-                        .HasColumnType("BLOB")
+                    b.Property<Guid>("EventId")
+                        .HasColumnType("char(36)")
                         .HasColumnName("Event");
 
-                    b.Property<byte[]>("HitAnimationId")
-                        .IsRequired()
-                        .HasColumnType("BLOB")
+                    b.Property<Guid>("HitAnimationId")
+                        .HasColumnType("char(36)")
                         .HasColumnName("HitAnimation");
 
                     b.Property<string>("Icon")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("longtext");
 
                     b.Property<bool>("IgnoreCooldownReduction")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<bool>("IgnoreGlobalCooldown")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<string>("JsonCastRequirements")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("longtext")
                         .HasColumnName("CastRequirements");
 
                     b.Property<string>("Name")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("longtext")
                         .HasColumnOrder(0);
 
-                    b.Property<byte[]>("ParentId")
-                        .HasColumnType("BLOB")
+                    b.Property<Guid?>("ParentId")
+                        .HasColumnType("char(36)")
                         .HasColumnOrder(1);
 
                     b.Property<int>("SpellType")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
-                    b.Property<byte[]>("TickAnimationId")
-                        .IsRequired()
-                        .HasColumnType("BLOB")
+                    b.Property<Guid>("TickAnimationId")
+                        .HasColumnType("char(36)")
                         .HasColumnName("TickAnimation");
 
                     b.Property<long>("TimeCreated")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("bigint");
 
                     b.Property<string>("VitalCostJson")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("longtext")
                         .HasColumnName("VitalCost");
 
                     b.HasKey("Id");
@@ -1089,18 +1066,18 @@ namespace Intersect.Server.Migrations.MySql.Game
 
             modelBuilder.Entity("Intersect.GameObjects.TilesetBase", b =>
                 {
-                    b.Property<byte[]>("Id")
-                        .HasColumnType("BLOB");
+                    b.Property<Guid>("Id")
+                        .HasColumnType("char(36)");
 
                     b.Property<string>("Name")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("longtext");
 
-                    b.Property<byte[]>("ParentId")
-                        .HasColumnType("BLOB")
+                    b.Property<Guid?>("ParentId")
+                        .HasColumnType("char(36)")
                         .HasColumnOrder(1);
 
                     b.Property<long>("TimeCreated")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
@@ -1111,21 +1088,21 @@ namespace Intersect.Server.Migrations.MySql.Game
 
             modelBuilder.Entity("Intersect.GameObjects.TimeBase", b =>
                 {
-                    b.Property<byte[]>("Id")
-                        .HasColumnType("BLOB");
+                    b.Property<Guid>("Id")
+                        .HasColumnType("char(36)");
 
                     b.Property<string>("DaylightHuesJson")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("longtext")
                         .HasColumnName("DaylightHues");
 
                     b.Property<int>("RangeInterval")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<float>("Rate")
-                        .HasColumnType("REAL");
+                        .HasColumnType("float");
 
                     b.Property<bool>("SyncTime")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("tinyint(1)");
 
                     b.HasKey("Id");
 
@@ -1134,11 +1111,11 @@ namespace Intersect.Server.Migrations.MySql.Game
 
             modelBuilder.Entity("Intersect.Models.ContentString", b =>
                 {
-                    b.Property<byte[]>("Id")
-                        .HasColumnType("BLOB");
+                    b.Property<Guid>("Id")
+                        .HasColumnType("char(36)");
 
                     b.Property<string>("Comment")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("longtext");
 
                     b.HasKey("Id");
 
@@ -1147,21 +1124,20 @@ namespace Intersect.Server.Migrations.MySql.Game
 
             modelBuilder.Entity("Intersect.Models.Folder", b =>
                 {
-                    b.Property<byte[]>("Id")
-                        .HasColumnType("BLOB")
+                    b.Property<Guid>("Id")
+                        .HasColumnType("char(36)")
                         .HasColumnOrder(0);
 
                     b.Property<int>("DescriptorType")
-                        .HasColumnType("INTEGER")
+                        .HasColumnType("int")
                         .HasColumnOrder(1);
 
-                    b.Property<byte[]>("NameId")
-                        .IsRequired()
-                        .HasColumnType("BLOB")
+                    b.Property<Guid>("NameId")
+                        .HasColumnType("char(36)")
                         .HasColumnOrder(2);
 
-                    b.Property<byte[]>("ParentId")
-                        .HasColumnType("BLOB")
+                    b.Property<Guid?>("ParentId")
+                        .HasColumnType("char(36)")
                         .HasColumnOrder(3);
 
                     b.HasKey("Id");
@@ -1175,14 +1151,14 @@ namespace Intersect.Server.Migrations.MySql.Game
 
             modelBuilder.Entity("Intersect.Models.LocaleContentString", b =>
                 {
-                    b.Property<byte[]>("Id")
-                        .HasColumnType("BLOB");
+                    b.Property<Guid>("Id")
+                        .HasColumnType("char(36)");
 
                     b.Property<string>("Locale")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("varchar(255)");
 
                     b.Property<string>("Value")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("longtext");
 
                     b.HasKey("Id", "Locale");
 
@@ -1191,132 +1167,127 @@ namespace Intersect.Server.Migrations.MySql.Game
 
             modelBuilder.Entity("Intersect.Server.Maps.MapController", b =>
                 {
-                    b.Property<byte[]>("Id")
-                        .HasColumnType("BLOB");
+                    b.Property<Guid>("Id")
+                        .HasColumnType("char(36)");
 
                     b.Property<int>("AHue")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<byte[]>("AttributeData")
-                        .HasColumnType("BLOB")
+                        .HasColumnType("longblob")
                         .HasColumnName("Attributes");
 
                     b.Property<int>("BHue")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<int>("Brightness")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
-                    b.Property<byte[]>("Down")
-                        .IsRequired()
-                        .HasColumnType("BLOB");
+                    b.Property<Guid>("Down")
+                        .HasColumnType("char(36)");
 
                     b.Property<string>("EventIdsJson")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("longtext")
                         .HasColumnName("Events");
 
                     b.Property<string>("Fog")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("longtext");
 
                     b.Property<int>("FogTransparency")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<int>("FogXSpeed")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<int>("FogYSpeed")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<int>("GHue")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<bool>("HideEquipment")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<bool>("IsIndoors")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("tinyint(1)");
 
-                    b.Property<byte[]>("Left")
-                        .IsRequired()
-                        .HasColumnType("BLOB");
+                    b.Property<Guid>("Left")
+                        .HasColumnType("char(36)");
 
                     b.Property<string>("LightsJson")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("longtext")
                         .HasColumnName("Lights");
 
                     b.Property<string>("Music")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("Name")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("longtext")
                         .HasColumnOrder(0);
 
                     b.Property<string>("NpcSpawnsJson")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("longtext")
                         .HasColumnName("NpcSpawns");
 
                     b.Property<string>("OverlayGraphic")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("longtext");
 
                     b.Property<string>("Panorama")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("longtext");
 
-                    b.Property<byte[]>("ParentId")
-                        .HasColumnType("BLOB")
+                    b.Property<Guid?>("ParentId")
+                        .HasColumnType("char(36)")
                         .HasColumnOrder(1);
 
                     b.Property<string>("PlayerLightColorJson")
-                        .HasColumnType("TEXT")
+                        .HasColumnType("longtext")
                         .HasColumnName("PlayerLightColor");
 
                     b.Property<float>("PlayerLightExpand")
-                        .HasColumnType("REAL");
+                        .HasColumnType("float");
 
                     b.Property<byte>("PlayerLightIntensity")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("tinyint unsigned");
 
                     b.Property<int>("PlayerLightSize")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<int>("RHue")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<int>("Revision")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
-                    b.Property<byte[]>("Right")
-                        .IsRequired()
-                        .HasColumnType("BLOB");
+                    b.Property<Guid>("Right")
+                        .HasColumnType("char(36)");
 
                     b.Property<string>("Sound")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("longtext");
 
                     b.Property<byte[]>("TileData")
-                        .HasColumnType("BLOB");
+                        .HasColumnType("longblob");
 
                     b.Property<long>("TimeCreated")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("bigint");
 
-                    b.Property<byte[]>("Up")
-                        .IsRequired()
-                        .HasColumnType("BLOB");
+                    b.Property<Guid>("Up")
+                        .HasColumnType("char(36)");
 
-                    b.Property<byte[]>("WeatherAnimationId")
-                        .IsRequired()
-                        .HasColumnType("BLOB")
+                    b.Property<Guid>("WeatherAnimationId")
+                        .HasColumnType("char(36)")
                         .HasColumnName("WeatherAnimation");
 
                     b.Property<int>("WeatherIntensity")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<int>("WeatherXSpeed")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<int>("WeatherYSpeed")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<int>("ZoneType")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -1333,35 +1304,35 @@ namespace Intersect.Server.Migrations.MySql.Game
 
                     b.OwnsOne("Intersect.GameObjects.AnimationLayer", "Lower", b1 =>
                         {
-                            b1.Property<byte[]>("AnimationBaseId")
-                                .HasColumnType("BLOB");
+                            b1.Property<Guid>("AnimationBaseId")
+                                .HasColumnType("char(36)");
 
                             b1.Property<bool>("AlternateRenderLayer")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("tinyint(1)");
 
                             b1.Property<bool>("DisableRotations")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("tinyint(1)");
 
                             b1.Property<int>("FrameCount")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("int");
 
                             b1.Property<int>("FrameSpeed")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("int");
 
                             b1.Property<string>("Light")
-                                .HasColumnType("TEXT");
+                                .HasColumnType("longtext");
 
                             b1.Property<int>("LoopCount")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("int");
 
                             b1.Property<string>("Sprite")
-                                .HasColumnType("TEXT");
+                                .HasColumnType("longtext");
 
                             b1.Property<int>("XFrames")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("int");
 
                             b1.Property<int>("YFrames")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("int");
 
                             b1.HasKey("AnimationBaseId");
 
@@ -1373,35 +1344,35 @@ namespace Intersect.Server.Migrations.MySql.Game
 
                     b.OwnsOne("Intersect.GameObjects.AnimationLayer", "Upper", b1 =>
                         {
-                            b1.Property<byte[]>("AnimationBaseId")
-                                .HasColumnType("BLOB");
+                            b1.Property<Guid>("AnimationBaseId")
+                                .HasColumnType("char(36)");
 
                             b1.Property<bool>("AlternateRenderLayer")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("tinyint(1)");
 
                             b1.Property<bool>("DisableRotations")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("tinyint(1)");
 
                             b1.Property<int>("FrameCount")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("int");
 
                             b1.Property<int>("FrameSpeed")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("int");
 
                             b1.Property<string>("Light")
-                                .HasColumnType("TEXT");
+                                .HasColumnType("longtext");
 
                             b1.Property<int>("LoopCount")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("int");
 
                             b1.Property<string>("Sprite")
-                                .HasColumnType("TEXT");
+                                .HasColumnType("longtext");
 
                             b1.Property<int>("XFrames")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("int");
 
                             b1.Property<int>("YFrames")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("int");
 
                             b1.HasKey("AnimationBaseId");
 
@@ -1471,17 +1442,17 @@ namespace Intersect.Server.Migrations.MySql.Game
 
                     b.OwnsOne("Intersect.GameObjects.ConsumableData", "Consumable", b1 =>
                         {
-                            b1.Property<byte[]>("ItemBaseId")
-                                .HasColumnType("BLOB");
+                            b1.Property<Guid>("ItemBaseId")
+                                .HasColumnType("char(36)");
 
                             b1.Property<int>("Percentage")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("int");
 
                             b1.Property<byte>("Type")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("tinyint unsigned");
 
                             b1.Property<int>("Value")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("int");
 
                             b1.HasKey("ItemBaseId");
 
@@ -1493,14 +1464,14 @@ namespace Intersect.Server.Migrations.MySql.Game
 
                     b.OwnsOne("Intersect.GameObjects.EffectData", "Effect", b1 =>
                         {
-                            b1.Property<byte[]>("ItemBaseId")
-                                .HasColumnType("BLOB");
+                            b1.Property<Guid>("ItemBaseId")
+                                .HasColumnType("char(36)");
 
                             b1.Property<int>("Percentage")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("int");
 
                             b1.Property<byte>("Type")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("tinyint unsigned");
 
                             b1.HasKey("ItemBaseId");
 
@@ -1561,29 +1532,29 @@ namespace Intersect.Server.Migrations.MySql.Game
 
                     b.OwnsOne("Intersect.GameObjects.ResourceState", "Exhausted", b1 =>
                         {
-                            b1.Property<byte[]>("ResourceBaseId")
-                                .HasColumnType("BLOB");
+                            b1.Property<Guid>("ResourceBaseId")
+                                .HasColumnType("char(36)");
 
                             b1.Property<string>("Graphic")
-                                .HasColumnType("TEXT");
+                                .HasColumnType("longtext");
 
                             b1.Property<bool>("GraphicFromTileset")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("tinyint(1)");
 
                             b1.Property<int>("Height")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("int");
 
                             b1.Property<bool>("RenderBelowEntities")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("tinyint(1)");
 
                             b1.Property<int>("Width")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("int");
 
                             b1.Property<int>("X")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("int");
 
                             b1.Property<int>("Y")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("int");
 
                             b1.HasKey("ResourceBaseId");
 
@@ -1595,29 +1566,29 @@ namespace Intersect.Server.Migrations.MySql.Game
 
                     b.OwnsOne("Intersect.GameObjects.ResourceState", "Initial", b1 =>
                         {
-                            b1.Property<byte[]>("ResourceBaseId")
-                                .HasColumnType("BLOB");
+                            b1.Property<Guid>("ResourceBaseId")
+                                .HasColumnType("char(36)");
 
                             b1.Property<string>("Graphic")
-                                .HasColumnType("TEXT");
+                                .HasColumnType("longtext");
 
                             b1.Property<bool>("GraphicFromTileset")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("tinyint(1)");
 
                             b1.Property<int>("Height")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("int");
 
                             b1.Property<bool>("RenderBelowEntities")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("tinyint(1)");
 
                             b1.Property<int>("Width")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("int");
 
                             b1.Property<int>("X")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("int");
 
                             b1.Property<int>("Y")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("int");
 
                             b1.HasKey("ResourceBaseId");
 
@@ -1660,74 +1631,73 @@ namespace Intersect.Server.Migrations.MySql.Game
 
                     b.OwnsOne("Intersect.GameObjects.SpellCombatData", "Combat", b1 =>
                         {
-                            b1.Property<byte[]>("SpellBaseId")
-                                .HasColumnType("BLOB");
+                            b1.Property<Guid>("SpellBaseId")
+                                .HasColumnType("char(36)");
 
                             b1.Property<int>("CastRange")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("int");
 
                             b1.Property<int>("CritChance")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("int");
 
                             b1.Property<double>("CritMultiplier")
-                                .HasColumnType("REAL");
+                                .HasColumnType("double");
 
                             b1.Property<int>("DamageType")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("int");
 
                             b1.Property<int>("Duration")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("int");
 
                             b1.Property<int>("Effect")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("int");
 
                             b1.Property<bool>("Friendly")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("tinyint(1)");
 
                             b1.Property<int>("HitRadius")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("int");
 
                             b1.Property<bool>("HoTDoT")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("tinyint(1)");
 
                             b1.Property<int>("HotDotInterval")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("int");
 
                             b1.Property<int>("OnHitDuration")
-                                .HasColumnType("INTEGER")
+                                .HasColumnType("int")
                                 .HasColumnName("OnHit");
 
                             b1.Property<string>("PercentageStatDiffJson")
-                                .HasColumnType("TEXT")
+                                .HasColumnType("longtext")
                                 .HasColumnName("PercentageStatDiff");
 
-                            b1.Property<byte[]>("ProjectileId")
-                                .IsRequired()
-                                .HasColumnType("BLOB")
+                            b1.Property<Guid>("ProjectileId")
+                                .HasColumnType("char(36)")
                                 .HasColumnName("Projectile");
 
                             b1.Property<int>("Scaling")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("int");
 
                             b1.Property<int>("ScalingStat")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("int");
 
                             b1.Property<string>("StatDiffJson")
-                                .HasColumnType("TEXT")
+                                .HasColumnType("longtext")
                                 .HasColumnName("StatDiff");
 
                             b1.Property<int>("TargetType")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("int");
 
                             b1.Property<string>("TransformSprite")
-                                .HasColumnType("TEXT");
+                                .HasColumnType("longtext");
 
                             b1.Property<int>("TrapDuration")
-                                .HasColumnType("INTEGER")
+                                .HasColumnType("int")
                                 .HasColumnName("Trap");
 
                             b1.Property<string>("VitalDiffJson")
-                                .HasColumnType("TEXT")
+                                .HasColumnType("longtext")
                                 .HasColumnName("VitalDiff");
 
                             b1.HasKey("SpellBaseId");
@@ -1740,20 +1710,20 @@ namespace Intersect.Server.Migrations.MySql.Game
 
                     b.OwnsOne("Intersect.GameObjects.SpellDashOpts", "Dash", b1 =>
                         {
-                            b1.Property<byte[]>("SpellBaseId")
-                                .HasColumnType("BLOB");
+                            b1.Property<Guid>("SpellBaseId")
+                                .HasColumnType("char(36)");
 
                             b1.Property<bool>("IgnoreActiveResources")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("tinyint(1)");
 
                             b1.Property<bool>("IgnoreInactiveResources")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("tinyint(1)");
 
                             b1.Property<bool>("IgnoreMapBlocks")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("tinyint(1)");
 
                             b1.Property<bool>("IgnoreZDimensionAttributes")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("tinyint(1)");
 
                             b1.HasKey("SpellBaseId");
 
@@ -1765,21 +1735,20 @@ namespace Intersect.Server.Migrations.MySql.Game
 
                     b.OwnsOne("Intersect.GameObjects.SpellWarpData", "Warp", b1 =>
                         {
-                            b1.Property<byte[]>("SpellBaseId")
-                                .HasColumnType("BLOB");
+                            b1.Property<Guid>("SpellBaseId")
+                                .HasColumnType("char(36)");
 
                             b1.Property<int>("Dir")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("int");
 
-                            b1.Property<byte[]>("MapId")
-                                .IsRequired()
-                                .HasColumnType("BLOB");
+                            b1.Property<Guid>("MapId")
+                                .HasColumnType("char(36)");
 
                             b1.Property<int>("X")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("int");
 
                             b1.Property<int>("Y")
-                                .HasColumnType("INTEGER");
+                                .HasColumnType("int");
 
                             b1.HasKey("SpellBaseId");
 

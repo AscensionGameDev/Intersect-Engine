@@ -13,8 +13,8 @@ namespace Intersect.Server.Migrations.MySql.Game
                 name: "ContentStrings",
                 columns: table => new
                 {
-                    Id = table.Column<byte[]>(type: "BLOB", nullable: false),
-                    Comment = table.Column<string>(type: "TEXT", nullable: true)
+                    Id = table.Column<Guid>(type: "char(36)", nullable: false),
+                    Comment = table.Column<string>(type: "longtext", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -25,9 +25,9 @@ namespace Intersect.Server.Migrations.MySql.Game
                 name: "LocaleContentStrings",
                 columns: table => new
                 {
-                    Id = table.Column<byte[]>(type: "BLOB", nullable: false),
-                    Locale = table.Column<string>(type: "TEXT", nullable: false),
-                    Value = table.Column<string>(type: "TEXT", nullable: true)
+                    Id = table.Column<Guid>(type: "char(36)", nullable: false),
+                    Locale = table.Column<string>(type: "varchar(255)", nullable: false),
+                    Value = table.Column<string>(type: "longtext", nullable: true)
                 },
                 constraints: table =>
                 {

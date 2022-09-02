@@ -86,111 +86,111 @@ namespace Intersect.Server.Migrations.MySql.Game
             migrationBuilder.AddColumn<string>(
                 name: "Folder",
                 table: "Tilesets",
-                type: "TEXT",
+                type: "longtext",
                 nullable: true);
 
             migrationBuilder.AddColumn<string>(
                 name: "Folder",
                 table: "Spells",
-                type: "TEXT",
+                type: "longtext",
                 nullable: true);
 
             migrationBuilder.AddColumn<string>(
                 name: "Folder",
                 table: "Shops",
-                type: "TEXT",
+                type: "longtext",
                 nullable: true);
 
             migrationBuilder.AddColumn<string>(
                 name: "Folder",
                 table: "ServerVariables",
-                type: "TEXT",
+                type: "longtext",
                 nullable: true);
 
             migrationBuilder.AddColumn<string>(
                 name: "Folder",
                 table: "Resources",
-                type: "TEXT",
+                type: "longtext",
                 nullable: true);
 
             migrationBuilder.AddColumn<string>(
                 name: "Folder",
                 table: "Quests",
-                type: "TEXT",
+                type: "longtext",
                 nullable: true);
 
             migrationBuilder.AddColumn<string>(
                 name: "Folder",
                 table: "Projectiles",
-                type: "TEXT",
+                type: "longtext",
                 nullable: true);
 
             migrationBuilder.AddColumn<string>(
                 name: "Folder",
                 table: "PlayerVariables",
-                type: "TEXT",
+                type: "longtext",
                 nullable: true);
 
             migrationBuilder.AddColumn<string>(
                 name: "Folder",
                 table: "Npcs",
-                type: "TEXT",
+                type: "longtext",
                 nullable: true);
 
             migrationBuilder.AddColumn<string>(
                 name: "Folder",
                 table: "Maps",
-                type: "TEXT",
+                type: "longtext",
                 nullable: true);
 
             migrationBuilder.AddColumn<string>(
                 name: "Folder",
                 table: "Items",
-                type: "TEXT",
+                type: "longtext",
                 nullable: true);
 
             migrationBuilder.AddColumn<string>(
                 name: "Folder",
                 table: "GuildVariables",
-                type: "TEXT",
+                type: "longtext",
                 nullable: true);
 
             migrationBuilder.AddColumn<string>(
                 name: "Folder",
                 table: "Events",
-                type: "TEXT",
+                type: "longtext",
                 nullable: true);
 
             migrationBuilder.AddColumn<string>(
                 name: "Folder",
                 table: "Crafts",
-                type: "TEXT",
+                type: "longtext",
                 nullable: true);
 
             migrationBuilder.AddColumn<string>(
                 name: "Folder",
                 table: "CraftingTables",
-                type: "TEXT",
+                type: "longtext",
                 nullable: true);
 
             migrationBuilder.AddColumn<string>(
                 name: "Folder",
                 table: "Classes",
-                type: "TEXT",
+                type: "longtext",
                 nullable: true);
 
             migrationBuilder.AddColumn<string>(
                 name: "Folder",
                 table: "Animations",
-                type: "TEXT",
+                type: "longtext",
                 nullable: true);
 
             migrationBuilder.CreateTable(
                 name: "MapFolders",
                 columns: table => new
                 {
-                    Id = table.Column<byte[]>(type: "BLOB", nullable: false),
-                    JsonData = table.Column<string>(type: "TEXT", nullable: true)
+                    Id = table.Column<Guid>(type: "char(36)", nullable: false),
+                    JsonData = table.Column<string>(type: "longtext", nullable: true)
                 },
                 constraints: table =>
                 {

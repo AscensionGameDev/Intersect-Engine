@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Intersect.Server.Migrations.MySql.Game
 {
     [DbContext(typeof(MySqlGameContext))]
-    [Migration("20220807070228_AddGenericFolders")]
-    partial class AddGenericFolders
+    [Migration("20220901232145_DatabaseTypePatch")]
+    partial class DatabaseTypePatch
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -36,10 +36,6 @@ namespace Intersect.Server.Migrations.MySql.Game
                         .HasColumnType("longtext")
                         .HasColumnOrder(0);
 
-                    b.Property<Guid?>("ParentId")
-                        .HasColumnType("char(36)")
-                        .HasColumnOrder(1);
-
                     b.Property<string>("Sound")
                         .HasColumnType("longtext");
 
@@ -47,8 +43,6 @@ namespace Intersect.Server.Migrations.MySql.Game
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ParentId");
 
                     b.ToTable("Animations");
                 });
@@ -126,10 +120,6 @@ namespace Intersect.Server.Migrations.MySql.Game
                         .HasColumnType("longtext")
                         .HasColumnOrder(0);
 
-                    b.Property<Guid?>("ParentId")
-                        .HasColumnType("char(36)")
-                        .HasColumnOrder(1);
-
                     b.Property<int>("PointIncrease")
                         .HasColumnType("int");
 
@@ -169,8 +159,6 @@ namespace Intersect.Server.Migrations.MySql.Game
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ParentId");
-
                     b.ToTable("Classes");
                 });
 
@@ -203,10 +191,6 @@ namespace Intersect.Server.Migrations.MySql.Game
                         .HasColumnType("longtext")
                         .HasColumnOrder(0);
 
-                    b.Property<Guid?>("ParentId")
-                        .HasColumnType("char(36)")
-                        .HasColumnOrder(1);
-
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
@@ -217,8 +201,6 @@ namespace Intersect.Server.Migrations.MySql.Game
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ParentId");
 
                     b.ToTable("Crafts");
                 });
@@ -239,16 +221,10 @@ namespace Intersect.Server.Migrations.MySql.Game
                         .HasColumnType("longtext")
                         .HasColumnOrder(0);
 
-                    b.Property<Guid?>("ParentId")
-                        .HasColumnType("char(36)")
-                        .HasColumnOrder(1);
-
                     b.Property<long>("TimeCreated")
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ParentId");
 
                     b.ToTable("CraftingTables");
                 });
@@ -278,10 +254,6 @@ namespace Intersect.Server.Migrations.MySql.Game
                         .HasColumnType("longtext")
                         .HasColumnName("Pages");
 
-                    b.Property<Guid?>("ParentId")
-                        .HasColumnType("char(36)")
-                        .HasColumnOrder(1);
-
                     b.Property<int>("SpawnX")
                         .HasColumnType("int");
 
@@ -292,8 +264,6 @@ namespace Intersect.Server.Migrations.MySql.Game
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ParentId");
 
                     b.ToTable("Events");
                 });
@@ -310,10 +280,6 @@ namespace Intersect.Server.Migrations.MySql.Game
                         .HasColumnType("longtext")
                         .HasColumnOrder(0);
 
-                    b.Property<Guid?>("ParentId")
-                        .HasColumnType("char(36)")
-                        .HasColumnOrder(1);
-
                     b.Property<string>("TextId")
                         .HasColumnType("longtext");
 
@@ -324,8 +290,6 @@ namespace Intersect.Server.Migrations.MySql.Game
                         .HasColumnType("tinyint unsigned");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ParentId");
 
                     b.ToTable("GuildVariables");
                 });
@@ -454,10 +418,6 @@ namespace Intersect.Server.Migrations.MySql.Game
                         .HasColumnType("longtext")
                         .HasColumnOrder(0);
 
-                    b.Property<Guid?>("ParentId")
-                        .HasColumnType("char(36)")
-                        .HasColumnOrder(1);
-
                     b.Property<string>("PercentageStatsJson")
                         .HasColumnType("longtext")
                         .HasColumnName("PercentageStatsGiven");
@@ -527,8 +487,6 @@ namespace Intersect.Server.Migrations.MySql.Game
                         .HasColumnName("VitalsRegen");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ParentId");
 
                     b.ToTable("Items");
                 });
@@ -634,10 +592,6 @@ namespace Intersect.Server.Migrations.MySql.Game
                         .HasColumnType("char(36)")
                         .HasColumnName("OnDeathPartyEvent");
 
-                    b.Property<Guid?>("ParentId")
-                        .HasColumnType("char(36)")
-                        .HasColumnOrder(1);
-
                     b.Property<string>("PlayerCanAttackConditionsJson")
                         .HasColumnType("longtext")
                         .HasColumnName("PlayerCanAttackConditions");
@@ -682,8 +636,6 @@ namespace Intersect.Server.Migrations.MySql.Game
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ParentId");
-
                     b.ToTable("Npcs");
                 });
 
@@ -699,10 +651,6 @@ namespace Intersect.Server.Migrations.MySql.Game
                         .HasColumnType("longtext")
                         .HasColumnOrder(0);
 
-                    b.Property<Guid?>("ParentId")
-                        .HasColumnType("char(36)")
-                        .HasColumnOrder(1);
-
                     b.Property<string>("TextId")
                         .HasColumnType("longtext");
 
@@ -713,8 +661,6 @@ namespace Intersect.Server.Migrations.MySql.Game
                         .HasColumnType("tinyint unsigned");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ParentId");
 
                     b.ToTable("PlayerVariables");
                 });
@@ -767,10 +713,6 @@ namespace Intersect.Server.Migrations.MySql.Game
                         .HasColumnType("longtext")
                         .HasColumnOrder(0);
 
-                    b.Property<Guid?>("ParentId")
-                        .HasColumnType("char(36)")
-                        .HasColumnOrder(1);
-
                     b.Property<bool>("PierceTarget")
                         .HasColumnType("tinyint(1)");
 
@@ -795,8 +737,6 @@ namespace Intersect.Server.Migrations.MySql.Game
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ParentId");
 
                     b.ToTable("Projectiles");
                 });
@@ -848,10 +788,6 @@ namespace Intersect.Server.Migrations.MySql.Game
                     b.Property<int>("OrderValue")
                         .HasColumnType("int");
 
-                    b.Property<Guid?>("ParentId")
-                        .HasColumnType("char(36)")
-                        .HasColumnOrder(1);
-
                     b.Property<bool>("Quitable")
                         .HasColumnType("tinyint(1)");
 
@@ -876,8 +812,6 @@ namespace Intersect.Server.Migrations.MySql.Game
                         .HasColumnType("longtext");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ParentId");
 
                     b.ToTable("Quests");
                 });
@@ -919,10 +853,6 @@ namespace Intersect.Server.Migrations.MySql.Game
                         .HasColumnType("longtext")
                         .HasColumnOrder(0);
 
-                    b.Property<Guid?>("ParentId")
-                        .HasColumnType("char(36)")
-                        .HasColumnOrder(1);
-
                     b.Property<int>("SpawnDuration")
                         .HasColumnType("int");
 
@@ -943,8 +873,6 @@ namespace Intersect.Server.Migrations.MySql.Game
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ParentId");
-
                     b.ToTable("Resources");
                 });
 
@@ -964,10 +892,6 @@ namespace Intersect.Server.Migrations.MySql.Game
                         .HasColumnType("longtext")
                         .HasColumnOrder(0);
 
-                    b.Property<Guid?>("ParentId")
-                        .HasColumnType("char(36)")
-                        .HasColumnOrder(1);
-
                     b.Property<string>("TextId")
                         .HasColumnType("longtext");
 
@@ -978,8 +902,6 @@ namespace Intersect.Server.Migrations.MySql.Game
                         .HasColumnType("tinyint unsigned");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ParentId");
 
                     b.ToTable("ServerVariables");
                 });
@@ -1014,10 +936,6 @@ namespace Intersect.Server.Migrations.MySql.Game
                         .HasColumnType("longtext")
                         .HasColumnOrder(0);
 
-                    b.Property<Guid?>("ParentId")
-                        .HasColumnType("char(36)")
-                        .HasColumnOrder(1);
-
                     b.Property<string>("SellSound")
                         .HasColumnType("longtext");
 
@@ -1025,8 +943,6 @@ namespace Intersect.Server.Migrations.MySql.Game
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ParentId");
 
                     b.ToTable("Shops");
                 });
@@ -1086,10 +1002,6 @@ namespace Intersect.Server.Migrations.MySql.Game
                         .HasColumnType("longtext")
                         .HasColumnOrder(0);
 
-                    b.Property<Guid?>("ParentId")
-                        .HasColumnType("char(36)")
-                        .HasColumnOrder(1);
-
                     b.Property<int>("SpellType")
                         .HasColumnType("int");
 
@@ -1106,8 +1018,6 @@ namespace Intersect.Server.Migrations.MySql.Game
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ParentId");
-
                     b.ToTable("Spells");
                 });
 
@@ -1116,22 +1026,13 @@ namespace Intersect.Server.Migrations.MySql.Game
                     b.Property<Guid>("Id")
                         .HasColumnType("char(36)");
 
-                    b.Property<string>("Folder")
-                        .HasColumnType("longtext");
-
                     b.Property<string>("Name")
                         .HasColumnType("longtext");
-
-                    b.Property<Guid?>("ParentId")
-                        .HasColumnType("char(36)")
-                        .HasColumnOrder(1);
 
                     b.Property<long>("TimeCreated")
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ParentId");
 
                     b.ToTable("Tilesets");
                 });
@@ -1157,62 +1058,6 @@ namespace Intersect.Server.Migrations.MySql.Game
                     b.HasKey("Id");
 
                     b.ToTable("Time");
-                });
-
-            modelBuilder.Entity("Intersect.Models.ContentString", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("char(36)");
-
-                    b.Property<string>("Comment")
-                        .HasColumnType("longtext");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ContentStrings");
-                });
-
-            modelBuilder.Entity("Intersect.Models.Folder", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("char(36)")
-                        .HasColumnOrder(0);
-
-                    b.Property<int>("DescriptorType")
-                        .HasColumnType("int")
-                        .HasColumnOrder(1);
-
-                    b.Property<Guid>("NameId")
-                        .HasColumnType("char(36)")
-                        .HasColumnOrder(2);
-
-                    b.Property<Guid?>("ParentId")
-                        .HasColumnType("char(36)")
-                        .HasColumnOrder(3);
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("NameId");
-
-                    b.HasIndex("ParentId");
-
-                    b.ToTable("Folders");
-                });
-
-            modelBuilder.Entity("Intersect.Models.LocaleContentString", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("char(36)");
-
-                    b.Property<string>("Locale")
-                        .HasColumnType("varchar(255)");
-
-                    b.Property<string>("Value")
-                        .HasColumnType("longtext");
-
-                    b.HasKey("Id", "Locale");
-
-                    b.ToTable("LocaleContentStrings");
                 });
 
             modelBuilder.Entity("Intersect.Server.Maps.MapController", b =>
@@ -1252,9 +1097,6 @@ namespace Intersect.Server.Migrations.MySql.Game
                     b.Property<int>("FogYSpeed")
                         .HasColumnType("int");
 
-                    b.Property<string>("Folder")
-                        .HasColumnType("longtext");
-
                     b.Property<int>("GHue")
                         .HasColumnType("int");
 
@@ -1287,10 +1129,6 @@ namespace Intersect.Server.Migrations.MySql.Game
 
                     b.Property<string>("Panorama")
                         .HasColumnType("longtext");
-
-                    b.Property<Guid?>("ParentId")
-                        .HasColumnType("char(36)")
-                        .HasColumnOrder(1);
 
                     b.Property<string>("PlayerLightColorJson")
                         .HasColumnType("longtext")
@@ -1344,17 +1182,11 @@ namespace Intersect.Server.Migrations.MySql.Game
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ParentId");
-
                     b.ToTable("Maps");
                 });
 
             modelBuilder.Entity("Intersect.GameObjects.AnimationBase", b =>
                 {
-                    b.HasOne("Intersect.Models.Folder", "Parent")
-                        .WithMany()
-                        .HasForeignKey("ParentId");
-
                     b.OwnsOne("Intersect.GameObjects.AnimationLayer", "Lower", b1 =>
                         {
                             b1.Property<Guid>("AnimationBaseId")
@@ -1437,62 +1269,11 @@ namespace Intersect.Server.Migrations.MySql.Game
 
                     b.Navigation("Lower");
 
-                    b.Navigation("Parent");
-
                     b.Navigation("Upper");
-                });
-
-            modelBuilder.Entity("Intersect.GameObjects.ClassBase", b =>
-                {
-                    b.HasOne("Intersect.Models.Folder", "Parent")
-                        .WithMany()
-                        .HasForeignKey("ParentId");
-
-                    b.Navigation("Parent");
-                });
-
-            modelBuilder.Entity("Intersect.GameObjects.Crafting.CraftBase", b =>
-                {
-                    b.HasOne("Intersect.Models.Folder", "Parent")
-                        .WithMany()
-                        .HasForeignKey("ParentId");
-
-                    b.Navigation("Parent");
-                });
-
-            modelBuilder.Entity("Intersect.GameObjects.CraftingTableBase", b =>
-                {
-                    b.HasOne("Intersect.Models.Folder", "Parent")
-                        .WithMany()
-                        .HasForeignKey("ParentId");
-
-                    b.Navigation("Parent");
-                });
-
-            modelBuilder.Entity("Intersect.GameObjects.Events.EventBase", b =>
-                {
-                    b.HasOne("Intersect.Models.Folder", "Parent")
-                        .WithMany()
-                        .HasForeignKey("ParentId");
-
-                    b.Navigation("Parent");
-                });
-
-            modelBuilder.Entity("Intersect.GameObjects.GuildVariableBase", b =>
-                {
-                    b.HasOne("Intersect.Models.Folder", "Parent")
-                        .WithMany()
-                        .HasForeignKey("ParentId");
-
-                    b.Navigation("Parent");
                 });
 
             modelBuilder.Entity("Intersect.GameObjects.ItemBase", b =>
                 {
-                    b.HasOne("Intersect.Models.Folder", "Parent")
-                        .WithMany()
-                        .HasForeignKey("ParentId");
-
                     b.OwnsOne("Intersect.GameObjects.ConsumableData", "Consumable", b1 =>
                         {
                             b1.Property<Guid>("ItemBaseId")
@@ -1537,52 +1318,10 @@ namespace Intersect.Server.Migrations.MySql.Game
                     b.Navigation("Consumable");
 
                     b.Navigation("Effect");
-
-                    b.Navigation("Parent");
-                });
-
-            modelBuilder.Entity("Intersect.GameObjects.NpcBase", b =>
-                {
-                    b.HasOne("Intersect.Models.Folder", "Parent")
-                        .WithMany()
-                        .HasForeignKey("ParentId");
-
-                    b.Navigation("Parent");
-                });
-
-            modelBuilder.Entity("Intersect.GameObjects.PlayerVariableBase", b =>
-                {
-                    b.HasOne("Intersect.Models.Folder", "Parent")
-                        .WithMany()
-                        .HasForeignKey("ParentId");
-
-                    b.Navigation("Parent");
-                });
-
-            modelBuilder.Entity("Intersect.GameObjects.ProjectileBase", b =>
-                {
-                    b.HasOne("Intersect.Models.Folder", "Parent")
-                        .WithMany()
-                        .HasForeignKey("ParentId");
-
-                    b.Navigation("Parent");
-                });
-
-            modelBuilder.Entity("Intersect.GameObjects.QuestBase", b =>
-                {
-                    b.HasOne("Intersect.Models.Folder", "Parent")
-                        .WithMany()
-                        .HasForeignKey("ParentId");
-
-                    b.Navigation("Parent");
                 });
 
             modelBuilder.Entity("Intersect.GameObjects.ResourceBase", b =>
                 {
-                    b.HasOne("Intersect.Models.Folder", "Parent")
-                        .WithMany()
-                        .HasForeignKey("ParentId");
-
                     b.OwnsOne("Intersect.GameObjects.ResourceState", "Exhausted", b1 =>
                         {
                             b1.Property<Guid>("ResourceBaseId")
@@ -1654,34 +1393,10 @@ namespace Intersect.Server.Migrations.MySql.Game
                     b.Navigation("Exhausted");
 
                     b.Navigation("Initial");
-
-                    b.Navigation("Parent");
-                });
-
-            modelBuilder.Entity("Intersect.GameObjects.ServerVariableBase", b =>
-                {
-                    b.HasOne("Intersect.Models.Folder", "Parent")
-                        .WithMany()
-                        .HasForeignKey("ParentId");
-
-                    b.Navigation("Parent");
-                });
-
-            modelBuilder.Entity("Intersect.GameObjects.ShopBase", b =>
-                {
-                    b.HasOne("Intersect.Models.Folder", "Parent")
-                        .WithMany()
-                        .HasForeignKey("ParentId");
-
-                    b.Navigation("Parent");
                 });
 
             modelBuilder.Entity("Intersect.GameObjects.SpellBase", b =>
                 {
-                    b.HasOne("Intersect.Models.Folder", "Parent")
-                        .WithMany()
-                        .HasForeignKey("ParentId");
-
                     b.OwnsOne("Intersect.GameObjects.SpellCombatData", "Combat", b1 =>
                         {
                             b1.Property<Guid>("SpellBaseId")
@@ -1815,65 +1530,7 @@ namespace Intersect.Server.Migrations.MySql.Game
 
                     b.Navigation("Dash");
 
-                    b.Navigation("Parent");
-
                     b.Navigation("Warp");
-                });
-
-            modelBuilder.Entity("Intersect.GameObjects.TilesetBase", b =>
-                {
-                    b.HasOne("Intersect.Models.Folder", "Parent")
-                        .WithMany("Children")
-                        .HasForeignKey("ParentId");
-
-                    b.Navigation("Parent");
-                });
-
-            modelBuilder.Entity("Intersect.Models.Folder", b =>
-                {
-                    b.HasOne("Intersect.Models.ContentString", "Name")
-                        .WithMany()
-                        .HasForeignKey("NameId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Intersect.Models.Folder", "Parent")
-                        .WithMany()
-                        .HasForeignKey("ParentId");
-
-                    b.Navigation("Name");
-
-                    b.Navigation("Parent");
-                });
-
-            modelBuilder.Entity("Intersect.Models.LocaleContentString", b =>
-                {
-                    b.HasOne("Intersect.Models.ContentString", "ContentString")
-                        .WithMany("Localizations")
-                        .HasForeignKey("Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ContentString");
-                });
-
-            modelBuilder.Entity("Intersect.Server.Maps.MapController", b =>
-                {
-                    b.HasOne("Intersect.Models.Folder", "Parent")
-                        .WithMany()
-                        .HasForeignKey("ParentId");
-
-                    b.Navigation("Parent");
-                });
-
-            modelBuilder.Entity("Intersect.Models.ContentString", b =>
-                {
-                    b.Navigation("Localizations");
-                });
-
-            modelBuilder.Entity("Intersect.Models.Folder", b =>
-                {
-                    b.Navigation("Children");
                 });
 #pragma warning restore 612, 618
         }

@@ -15,66 +15,66 @@ namespace Intersect.Server.Migrations.MySql.Game
                 type: "TEXT",
                 nullable: true);
 
-            migrationBuilder.AddColumn<byte[]>(
+            migrationBuilder.AddColumn<Guid>(
                 name: "ParentId",
                 table: "Tilesets",
-                type: "BLOB",
+                type: "char(36)",
                 nullable: true)
                 .Annotation("Relational:ColumnOrder", 1);
 
-            migrationBuilder.AddColumn<byte[]>(
+            migrationBuilder.AddColumn<Guid>(
                 name: "ParentId",
                 table: "Spells",
-                type: "BLOB",
+                type: "char(36)",
                 nullable: true)
                 .Annotation("Relational:ColumnOrder", 1);
 
-            migrationBuilder.AddColumn<byte[]>(
+            migrationBuilder.AddColumn<Guid>(
                 name: "ParentId",
                 table: "Shops",
-                type: "BLOB",
+                type: "char(36)",
                 nullable: true)
                 .Annotation("Relational:ColumnOrder", 1);
 
-            migrationBuilder.AddColumn<byte[]>(
+            migrationBuilder.AddColumn<Guid>(
                 name: "ParentId",
                 table: "ServerVariables",
-                type: "BLOB",
+                type: "char(36)",
                 nullable: true)
                 .Annotation("Relational:ColumnOrder", 1);
 
-            migrationBuilder.AddColumn<byte[]>(
+            migrationBuilder.AddColumn<Guid>(
                 name: "ParentId",
                 table: "Resources",
-                type: "BLOB",
+                type: "char(36)",
                 nullable: true)
                 .Annotation("Relational:ColumnOrder", 1);
 
-            migrationBuilder.AddColumn<byte[]>(
+            migrationBuilder.AddColumn<Guid>(
                 name: "ParentId",
                 table: "Quests",
-                type: "BLOB",
+                type: "char(36)",
                 nullable: true)
                 .Annotation("Relational:ColumnOrder", 1);
 
-            migrationBuilder.AddColumn<byte[]>(
+            migrationBuilder.AddColumn<Guid>(
                 name: "ParentId",
                 table: "Projectiles",
-                type: "BLOB",
+                type: "char(36)",
                 nullable: true)
                 .Annotation("Relational:ColumnOrder", 1);
 
-            migrationBuilder.AddColumn<byte[]>(
+            migrationBuilder.AddColumn<Guid>(
                 name: "ParentId",
                 table: "PlayerVariables",
-                type: "BLOB",
+                type: "char(36)",
                 nullable: true)
                 .Annotation("Relational:ColumnOrder", 1);
 
-            migrationBuilder.AddColumn<byte[]>(
+            migrationBuilder.AddColumn<Guid>(
                 name: "ParentId",
                 table: "Npcs",
-                type: "BLOB",
+                type: "char(36)",
                 nullable: true)
                 .Annotation("Relational:ColumnOrder", 1);
 
@@ -84,59 +84,59 @@ namespace Intersect.Server.Migrations.MySql.Game
                 type: "TEXT",
                 nullable: true);
 
-            migrationBuilder.AddColumn<byte[]>(
+            migrationBuilder.AddColumn<Guid>(
                 name: "ParentId",
                 table: "Maps",
-                type: "BLOB",
+                type: "char(36)",
                 nullable: true)
                 .Annotation("Relational:ColumnOrder", 1);
 
-            migrationBuilder.AddColumn<byte[]>(
+            migrationBuilder.AddColumn<Guid>(
                 name: "ParentId",
                 table: "Items",
-                type: "BLOB",
+                type: "char(36)",
                 nullable: true)
                 .Annotation("Relational:ColumnOrder", 1);
 
-            migrationBuilder.AddColumn<byte[]>(
+            migrationBuilder.AddColumn<Guid>(
                 name: "ParentId",
                 table: "GuildVariables",
-                type: "BLOB",
+                type: "char(36)",
                 nullable: true)
                 .Annotation("Relational:ColumnOrder", 1);
 
-            migrationBuilder.AddColumn<byte[]>(
+            migrationBuilder.AddColumn<Guid>(
                 name: "ParentId",
                 table: "Events",
-                type: "BLOB",
+                type: "char(36)",
                 nullable: true)
                 .Annotation("Relational:ColumnOrder", 1);
 
-            migrationBuilder.AddColumn<byte[]>(
+            migrationBuilder.AddColumn<Guid>(
                 name: "ParentId",
                 table: "Crafts",
-                type: "BLOB",
+                type: "char(36)",
                 nullable: true)
                 .Annotation("Relational:ColumnOrder", 1);
 
-            migrationBuilder.AddColumn<byte[]>(
+            migrationBuilder.AddColumn<Guid>(
                 name: "ParentId",
                 table: "CraftingTables",
-                type: "BLOB",
+                type: "char(36)",
                 nullable: true)
                 .Annotation("Relational:ColumnOrder", 1);
 
-            migrationBuilder.AddColumn<byte[]>(
+            migrationBuilder.AddColumn<Guid>(
                 name: "ParentId",
                 table: "Classes",
-                type: "BLOB",
+                type: "char(36)",
                 nullable: true)
                 .Annotation("Relational:ColumnOrder", 1);
 
-            migrationBuilder.AddColumn<byte[]>(
+            migrationBuilder.AddColumn<Guid>(
                 name: "ParentId",
                 table: "Animations",
-                type: "BLOB",
+                type: "char(36)",
                 nullable: true)
                 .Annotation("Relational:ColumnOrder", 1);
 
@@ -144,10 +144,10 @@ namespace Intersect.Server.Migrations.MySql.Game
                 name: "Folders",
                 columns: table => new
                 {
-                    Id = table.Column<byte[]>(type: "BLOB", nullable: false),
+                    Id = table.Column<Guid>(type: "char(36)", nullable: false),
                     DescriptorType = table.Column<int>(type: "INTEGER", nullable: false),
-                    NameId = table.Column<byte[]>(type: "BLOB", nullable: false),
-                    ParentId = table.Column<byte[]>(type: "BLOB", nullable: true)
+                    NameId = table.Column<Guid>(type: "char(36)", nullable: false),
+                    ParentId = table.Column<Guid>(type: "char(36)", nullable: true)
                 },
                 constraints: table =>
                 {
