@@ -49,7 +49,7 @@ public abstract partial class GameContext : IntersectDbContext<GameContext>, IGa
     ) ?? throw new InvalidOperationException();
 
     /// <inheritdoc />
-    protected GameContext(DatabaseContextOptions? databaseContextOptions) : base(databaseContextOptions) { }
+    protected GameContext(DatabaseContextOptions databaseContextOptions) : base(databaseContextOptions) { }
 
     /// <inheritdoc />
     public DbSet<AnimationBase> Animations { get; set; }

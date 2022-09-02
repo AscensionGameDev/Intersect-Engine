@@ -4,6 +4,7 @@ using Intersect.Config;
 using Intersect.Framework;
 using Intersect.Server.Database.Converters;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Logging;
 
@@ -17,10 +18,6 @@ namespace Intersect.Server.Database;
 public abstract partial class IntersectDbContext<TDbContext> : DbContext, ISeedableContext
     where TDbContext : IntersectDbContext<TDbContext>
 {
-    private static DatabaseContextOptions _fallbackContextOptions = new();
-
-    internal Type ContextType => typeof(TDbContext);
-
     public DatabaseContextOptions ContextOptions { get; }
 
     public DbConnectionStringBuilder ConnectionStringBuilder => ContextOptions.ConnectionStringBuilder;
@@ -181,5 +178,33 @@ public abstract partial class IntersectDbContext<TDbContext> : DbContext, ISeeda
             throw new InvalidOperationException("Cannot save changes on a read only context!");
 
         return base.SaveChangesAsync(cancellationToken);
+    }
+
+    protected virtual void StopTracking(EntityEntry entityEntry)
+    {
+        entityEntry.State = EntityState.Detached;
+    }
+
+    public void StopTrackingExcept<TEntity>(params TEntity[] entities)
+    {
+        foreach (var entityEntry in ChangeTracker.Entries().ToArray())
+        {
+            if (entityEntry.State == EntityState.Detached)
+            {
+                continue;
+            }
+
+            if (entityEntry.Entity is not TEntity other)
+            {
+                continue;
+            }
+
+            if (entities.Any(entity => entity.Equals(other)))
+            {
+                continue;
+            }
+
+            StopTracking(entityEntry);
+        }
     }
 }

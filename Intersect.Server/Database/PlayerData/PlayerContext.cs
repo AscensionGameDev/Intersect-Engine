@@ -1,14 +1,13 @@
 using System.Data.Common;
-
 using Intersect.Config;
 using Intersect.Server.Database.PlayerData.Api;
 using Intersect.Server.Database.PlayerData.Migrations;
 using Intersect.Server.Database.PlayerData.Players;
 using Intersect.Server.Database.PlayerData.SeedData;
 using Intersect.Server.Entities;
-
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.Extensions.Logging;
 
 namespace Intersect.Server.Database.PlayerData;
@@ -34,7 +33,7 @@ public sealed class SqlitePlayerContext : PlayerContext, ISqliteDbContext
 public abstract partial class PlayerContext : IntersectDbContext<PlayerContext>, IPlayerContext
 {
     /// <inheritdoc />
-    protected PlayerContext(DatabaseContextOptions? databaseContextOptions) : base(databaseContextOptions) { }
+    protected PlayerContext(DatabaseContextOptions databaseContextOptions) : base(databaseContextOptions) { }
 
     /// <inheritdoc />
     public DbSet<User> Users { get; set; }
@@ -87,10 +86,7 @@ public abstract partial class PlayerContext : IntersectDbContext<PlayerContext>,
     /// <inheritdoc />
     public DbSet<GuildVariable> Guild_Variables { get; set; }
 
-    internal async ValueTask Commit(
-        bool commit = false,
-        CancellationToken cancellationToken = default(CancellationToken)
-    )
+    internal async ValueTask Commit(bool commit = false, CancellationToken cancellationToken = default)
     {
         if (!commit)
         {
@@ -133,12 +129,12 @@ public abstract partial class PlayerContext : IntersectDbContext<PlayerContext>,
         modelBuilder.Entity<Player>().HasMany(b => b.Items).WithOne(p => p.Player);
 
         modelBuilder.Entity<Player>().HasMany(b => b.Variables).WithOne(p => p.Player);
-        modelBuilder.Entity<PlayerVariable>().HasIndex(p => new {p.VariableId, CharacterId = p.PlayerId}).IsUnique();
+        modelBuilder.Entity<PlayerVariable>().HasIndex(p => new { p.VariableId, CharacterId = p.PlayerId }).IsUnique();
 
         modelBuilder.Entity<Player>().HasMany(b => b.Hotbar).WithOne(p => p.Player);
 
         modelBuilder.Entity<Player>().HasMany(b => b.Quests).WithOne(p => p.Player);
-        modelBuilder.Entity<Quest>().HasIndex(p => new {p.QuestId, CharacterId = p.PlayerId}).IsUnique();
+        modelBuilder.Entity<Quest>().HasIndex(p => new { p.QuestId, CharacterId = p.PlayerId }).IsUnique();
 
         modelBuilder.Entity<Player>().HasMany(b => b.Bank).WithOne(p => p.Player);
 
@@ -176,71 +172,58 @@ public abstract partial class PlayerContext : IntersectDbContext<PlayerContext>,
         }
     }
 
-    public void StopTrackingExcept(object obj)
+    /// <inheritdoc />
+    protected override void StopTracking(EntityEntry entityEntry)
     {
-        foreach (var trackingState in ChangeTracker.Entries().ToArray())
+        base.StopTracking(entityEntry);
+
+        if (entityEntry.Entity is Player player)
         {
-            if (trackingState.Entity != obj)
-            {
-                trackingState.State = EntityState.Detached;
-            }
+            StopTrackingPlayer(player);
+        }
+    }
+
+    private void StopTrackingPlayer(Player player)
+    {
+        foreach (var bankSlot in player.Bank)
+        {
+            Entry(bankSlot).State = EntityState.Detached;
+        }
+
+        foreach (var friend in player.Friends)
+        {
+            Entry(friend).State = EntityState.Detached;
+        }
+
+        foreach (var hotbarSlot in player.Hotbar)
+        {
+            Entry(hotbarSlot).State = EntityState.Detached;
+        }
+
+        foreach (var inventorySlot in player.Items)
+        {
+            Entry(inventorySlot).State = EntityState.Detached;
+        }
+
+        foreach (var quest in player.Quests)
+        {
+            Entry(quest).State = EntityState.Detached;
+        }
+
+        foreach (var spellSlot in player.Spells)
+        {
+            Entry(spellSlot).State = EntityState.Detached;
+        }
+
+        foreach (var playerVariable in player.Variables)
+        {
+            Entry(playerVariable).State = EntityState.Detached;
         }
     }
 
     public void StopTrackingUsersExcept(User user)
     {
-        //We don't want to be saving this players friends or anything....
-        var otherUsers = ChangeTracker.Entries().Where(e => (e.State == EntityState.Added || e.State == EntityState.Modified || e.State == EntityState.Deleted) && (e.Entity is User && e.Entity != user)).ToList();
-        foreach (var otherUser in otherUsers)
-        {
-            if (otherUser.Entity != null)
-            {
-                Entry(otherUser.Entity).State = EntityState.Detached;
-            }
-        }
-
-        StopTrackingPlayersExcept(user.Players.ToArray());
-
+        StopTrackingExcept(user);
+        StopTrackingExcept(user.Players.ToArray());
     }
-
-    public void StopTrackingPlayersExcept(Player[] players, bool trackUsers = true)
-    {
-        //We don't want to be saving this players friends or anything....
-        var otherPlayers = ChangeTracker.Entries().Where(e => (e.State == EntityState.Added || e.State == EntityState.Modified || e.State == EntityState.Deleted) && (e.Entity is Player && !players.Contains(e.Entity))).ToList();
-        foreach (var otherPlayer in otherPlayers)
-        {
-            if (otherPlayer.Entity != null)
-            {
-                DetachPlayer((Player)otherPlayer.Entity);
-            }
-        }
-    }
-
-    private void DetachPlayer(Player player)
-    {
-        Entry(player).State = EntityState.Detached;
-
-        foreach (var itm in player.Friends)
-            Entry(itm).State = EntityState.Detached;
-
-        foreach (var itm in player.Spells)
-            Entry(itm).State = EntityState.Detached;
-
-        foreach (var itm in player.Items)
-            Entry(itm).State = EntityState.Detached;
-
-        foreach (var itm in player.Variables)
-            Entry(itm).State = EntityState.Detached;
-
-        foreach (var itm in player.Hotbar)
-            Entry(itm).State = EntityState.Detached;
-
-        foreach (var itm in player.Quests)
-            Entry(itm).State = EntityState.Detached;
-
-        foreach (var itm in player.Bank)
-            Entry(itm).State = EntityState.Detached;
-    }
-
 }
-

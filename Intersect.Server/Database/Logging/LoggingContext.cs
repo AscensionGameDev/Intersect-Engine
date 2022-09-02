@@ -28,7 +28,7 @@ public sealed class SqliteLoggingContext : LoggingContext, ISqliteDbContext
 public abstract partial class LoggingContext : IntersectDbContext<LoggingContext>, ILoggingContext
 {
     /// <inheritdoc />
-    protected LoggingContext(DatabaseContextOptions? databaseContextOptions) : base(databaseContextOptions) { }
+    protected LoggingContext(DatabaseContextOptions databaseContextOptions) : base(databaseContextOptions) { }
 
     /// <inheritdoc />
     public DbSet<RequestLog> RequestLogs { get; set; }

@@ -25,7 +25,7 @@ public partial class IntersectDbContext<TDbContext>
     private static readonly List<IntersectDbContext<TDbContext>> _instances = new();
 #endif
 
-    protected IntersectDbContext(DatabaseContextOptions? databaseContextOptions)
+    protected IntersectDbContext(DatabaseContextOptions databaseContextOptions)
     {
 #if DEBUG
         if (Debugger.IsAttached)
@@ -33,15 +33,10 @@ public partial class IntersectDbContext<TDbContext>
             _instances.Add(this as TDbContext);
         }
 #endif
-        var safeDatabaseContextOptions = databaseContextOptions ?? _fallbackContextOptions;
-        ContextOptions = safeDatabaseContextOptions with
-        {
-            ConnectionStringBuilder = safeDatabaseContextOptions.ConnectionStringBuilder ??
-                                      _fallbackContextOptions.ConnectionStringBuilder
-        };
+        ContextOptions = databaseContextOptions;
 
-        base.ChangeTracker.AutoDetectChangesEnabled = safeDatabaseContextOptions.AutoDetectChanges || IsReadOnly;
-        base.ChangeTracker.LazyLoadingEnabled = safeDatabaseContextOptions.LazyLoading || !IsReadOnly;
+        base.ChangeTracker.AutoDetectChangesEnabled = databaseContextOptions.AutoDetectChanges || IsReadOnly;
+        base.ChangeTracker.LazyLoadingEnabled = databaseContextOptions.LazyLoading || !IsReadOnly;
     }
 
     internal List<IntersectDbContext<TDbContext>> instances => _instances;
