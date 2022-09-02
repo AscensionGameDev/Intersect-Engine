@@ -4,6 +4,7 @@ using Intersect.Config;
 using Intersect.Framework;
 using Intersect.Server.Database.Converters;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Logging;
 
 namespace Intersect.Server.Database;
@@ -50,20 +51,6 @@ public abstract partial class IntersectDbContext<TDbContext> : DbContext, ISeeda
         return property?.GetValue(this) as DbSet<TType>;
     }
 
-    public static void Configure(
-        DbConnectionStringBuilder connectionStringBuilder,
-        DatabaseType databaseType
-    )
-    {
-        _fallbackContextOptions = (_fallbackContextOptions ?? new()) with
-        {
-            ConnectionStringBuilder = connectionStringBuilder, DatabaseType = databaseType
-        };
-    }
-
-    public static void Configure(DatabaseContextOptions databaseContextOptions) =>
-        _fallbackContextOptions = databaseContextOptions;
-
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         base.OnConfiguring(optionsBuilder);
@@ -75,6 +62,7 @@ public abstract partial class IntersectDbContext<TDbContext> : DbContext, ISeeda
         _ = optionsBuilder
             .EnableDetailedErrors(ContextOptions.EnableDetailedErrors)
             .EnableSensitiveDataLogging(ContextOptions.EnableSensitiveDataLogging)
+            .ReplaceService<IModelCacheKeyFactory, IntersectModelCacheKeyFactory>()
             .UseLoggerFactory(ContextOptions.LoggerFactory)
             .UseQueryTrackingBehavior(queryTrackingBehavior);
 
@@ -82,7 +70,7 @@ public abstract partial class IntersectDbContext<TDbContext> : DbContext, ISeeda
         switch (DatabaseType)
         {
             case DatabaseType.SQLite:
-                    optionsBuilder.UseSqlite(connectionString);
+                optionsBuilder.UseSqlite(connectionString);
                 break;
 
             case DatabaseType.MySQL:

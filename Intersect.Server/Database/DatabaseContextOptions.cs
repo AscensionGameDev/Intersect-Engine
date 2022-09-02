@@ -7,11 +7,13 @@ namespace Intersect.Server.Database;
 
 public record DatabaseContextOptions
 {
+    public bool AutoDetectChanges { get; init; }
+
     public DbConnectionStringBuilder ConnectionStringBuilder { get; init; }
 
     public DatabaseType DatabaseType { get; init; }
 
-    public bool AutoDetectChanges { get; init; }
+    public bool DisableAutoInclude { get; set; }
 
     public bool EnableDetailedErrors { get; init; }
 
@@ -21,9 +23,9 @@ public record DatabaseContextOptions
 
     public bool LazyLoading { get; init; }
 
-    public bool ReadOnly { get; init; }
-
     public ILoggerFactory? LoggerFactory { get; init; }
 
     public QueryTrackingBehavior? QueryTrackingBehavior { get; init; }
+
+    public bool ReadOnly { get; init; }
 }

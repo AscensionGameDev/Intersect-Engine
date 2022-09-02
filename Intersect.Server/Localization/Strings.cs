@@ -936,7 +936,19 @@ namespace Intersect.Server.Localization
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString currentlysqlite = @"currently using Sqlite";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString entermysqlinfo = @"Please enter your Mysql connection parameters:";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString DefaultHost = @"localhost";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString DefaultPortMySql = @"3306";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString DefaultUsername = @"root";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString DefaultDatabase = "intersect_{00}_{01}";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString EnterConnectionStringParameters = @"Please enter your connection string parameters:";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString gamedb = @"Game";
 
@@ -945,6 +957,9 @@ namespace Intersect.Server.Localization
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString migratetomysql = @"   [2] Mysql";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString migratetosqlite = @"   [1] Sqlite";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString MigratingDbSet = @"Migrating entities in {00}...";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString migrationcancelled = @"Migration Cancelled";
 
@@ -956,27 +971,27 @@ namespace Intersect.Server.Localization
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString mysqlconnectionerror = @"Error opening db connection! Error: {00}";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString mysqldatabase = @"Database: ";
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString mysqlhost = @"Host: ";
-
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString mysqlnotempty =
                 @"Database must be empty before migration! Please delete any tables before proceeding! Migration Cancelled.";
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString mysqlpass = @"Password: ";
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString mysqlport = @"Port: ";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString mysqltryagain =
                 @"Would you like to try entering your connection info again? (y/n)  ";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString mysqluser = @"User: ";
-
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString overwritecharacter = @"y";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString playerdb = @"Player";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString PromptDatabase = @"Database ({00}): ";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString PromptHost = @"Host ({00}): ";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString PromptPassword = @"Password (empty): ";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString PromptPort = @"Port ({00}): ";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString PromptUsername = @"User ({00}): ";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString selectdb = @"Which database would you like to migrate:";
 

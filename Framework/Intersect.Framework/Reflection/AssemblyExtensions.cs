@@ -38,6 +38,14 @@ public static partial class AssemblyExtensions
         throw new InvalidOperationException($"Failed to create instance of {typeof(TParentType).FullName}.");
     }
 
+    public static string GetVersionName(this Assembly assembly)
+    {
+        var version = assembly.GetName().Version;
+        var versionMajorMinor = $"{version.Major}.{version.Minor}";
+        var versionSuffix = version.Major == 0 ? "-beta" : string.Empty;
+        return versionMajorMinor + versionSuffix;
+    }
+
     public static IEnumerable<Type> FindAbstractSubtypesOf(this Assembly assembly, Type type) =>
         assembly.FindSubtypesOf(type).Where(subtype => subtype?.IsAbstract ?? false);
 

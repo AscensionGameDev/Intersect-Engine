@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using Intersect.Framework.Reflection;
+using Intersect.Logging;
 using Microsoft.EntityFrameworkCore;
 using Intersect.Server.Localization;
 
@@ -7,29 +8,38 @@ namespace Intersect.Server.Database;
 
 public class DatabaseTypeMigrationService
 {
-    private static readonly MethodInfo _methodInfoMigrateDbSet = typeof(DatabaseTypeMigrationService)
-        .GetMethod(nameof(MigrateDbSet), BindingFlags.NonPublic | BindingFlags.Static)
-        ?? throw new InvalidOperationException();
+    private static readonly MethodInfo MethodInfoMigrateDbSet = typeof(DatabaseTypeMigrationService)
+                                                                     .GetMethod(nameof(MigrateDbSet),
+                                                                         BindingFlags.NonPublic | BindingFlags.Static)
+                                                                 ?? throw new InvalidOperationException();
 
-    private async Task<bool> CheckIfNotEmpty<TContext>(TContext context)
+    private async Task<bool> CheckIfNotEmpty<TContext>(DatabaseContextOptions options)
         where TContext : IntersectDbContext<TContext>
     {
+        await using var context = IntersectDbContext<TContext>.Create(options);
         if (context.IsEmpty())
         {
-            _ = await context.Database.EnsureDeletedAsync();
-            await context.Database.MigrateAsync();
-            return false;
+            try
+            {
+                _ = await context.Database.EnsureDeletedAsync();
+                await context.Database.MigrateAsync();
+                return false;
+            }
+            catch (Exception exception)
+            {
+                Log.Error(exception);
+                throw;
+            }
         }
 
-        Console.WriteLine(Strings.Migration.mysqlnotempty);
+        Log.Error(Strings.Migration.mysqlnotempty);
         return true;
     }
 
     public async Task<bool> TryMigrate<TContext>(DatabaseContextOptions fromOptions, DatabaseContextOptions toOptions)
         where TContext : IntersectDbContext<TContext>
     {
-        await using var testToContext = IntersectDbContext<TContext>.Create(toOptions);
-        if (await CheckIfNotEmpty(testToContext))
+        if (await CheckIfNotEmpty<TContext>(toOptions))
         {
             return false;
         }
@@ -40,42 +50,91 @@ public class DatabaseTypeMigrationService
 
         foreach (var dbSetInfo in dbSetInfos)
         {
-            await using var fromContext = IntersectDbContext<TContext>.Create(fromOptions);
-            await using var toContext = IntersectDbContext<TContext>.Create(toOptions);
+            Log.Info(Strings.Migration.MigratingDbSet.ToString(dbSetInfo.Name));
 
-            var fromDbSet = dbSetInfo.GetValue(fromContext);
-            if (fromDbSet == default)
+            try
             {
-                throw new InvalidOperationException();
+                var dbSetContainedType = dbSetInfo.PropertyType.FindGenericTypeParameters(typeof(DbSet<>)).First();
+                var migrateDbSetMethod = MethodInfoMigrateDbSet.MakeGenericMethod(typeof(TContext), dbSetContainedType);
+                var migrateTask =
+                    migrateDbSetMethod.Invoke(null, new object[] { fromOptions, toOptions, dbSetInfo }) as Task;
+                await (migrateTask ?? throw new InvalidOperationException());
             }
-
-            var toDbSet = dbSetInfo.GetValue(toContext);
-            if (toDbSet == default)
+            catch (Exception exception)
             {
-                throw new InvalidOperationException();
+                Log.Error(exception);
+                throw;
             }
-
-            var migrateDbSetMethod = _methodInfoMigrateDbSet.MakeGenericMethod(dbSetInfo.PropertyType);
-            var migrateTask = migrateDbSetMethod.Invoke(null, new[] { fromDbSet, toDbSet }) as Task;
-            await (migrateTask ?? throw new InvalidOperationException());
-            toContext.ChangeTracker.DetectChanges();
-            await toContext.SaveChangesAsync();
         }
 
         return true;
     }
 
 
-    private static async Task MigrateDbSet<T>(DbSet<T> oldDbSet, DbSet<T> newDbSet) where T : class
+    private static async Task MigrateDbSet<TContext, T>(
+        DatabaseContextOptions fromOptions,
+        DatabaseContextOptions toOptions,
+        PropertyInfo dbSetInfo
+    )
+        where TContext : IntersectDbContext<TContext>
+        where T : class
     {
-        var skip = 0;
-        var remaining = await oldDbSet.CountAsync();
-        while (remaining > 0)
+        await using var fromContext = IntersectDbContext<TContext>.Create(fromOptions with
         {
-            var take = Math.Min(remaining, 1000);
-            await newDbSet.AddRangeAsync(oldDbSet.Skip(skip).Take(take));
-            remaining -= take;
-            skip += take;
+            DisableAutoInclude = true
+        });
+        await using var toContext = IntersectDbContext<TContext>.Create(toOptions with
+        {
+            DisableAutoInclude = true,
+            EnableDetailedErrors = true,
+            EnableSensitiveDataLogging = true
+        });
+
+        if (dbSetInfo.GetValue(fromContext) is not DbSet<T> fromDbSet)
+        {
+            throw new InvalidOperationException();
+        }
+
+        if (dbSetInfo.GetValue(toContext) is not DbSet<T> toDbSet)
+        {
+            throw new InvalidOperationException();
+        }
+
+        foreach (var item in fromDbSet)
+        {
+            fromContext.Entry(item).State = EntityState.Detached;
+            toDbSet.Add(item);
+        }
+
+        // var skip = 0;
+        // var remaining = await fromDbSet.CountAsync();
+        // while (remaining > 0)
+        // {
+        //     var take = Math.Min(remaining, 1000);
+        //
+        //     try
+        //     {
+        //         await toDbSet.AddRangeAsync(fromDbSet.AsNoTracking().Skip(skip).Take(take));
+        //     }
+        //     catch (Exception exception)
+        //     {
+        //         Log.Error(exception);
+        //         throw;
+        //     }
+        //
+        //     remaining -= take;
+        //     skip += take;
+        // }
+
+        try
+        {
+            toContext.ChangeTracker.DetectChanges();
+            await toContext.SaveChangesAsync();
+        }
+        catch (Exception exception)
+        {
+            Log.Error(exception);
+            throw;
         }
     }
 }

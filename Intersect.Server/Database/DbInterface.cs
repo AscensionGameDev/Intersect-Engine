@@ -265,8 +265,7 @@ namespace Intersect.Server.Database
 #endif
         }
 
-        // Database setup, version checking
-        internal static bool InitDatabase(IServerContext serverContext)
+        private static bool EnsuredDatabaseUpdated()
         {
             using var gameContext = GameContext.Create(new()
             {
@@ -383,6 +382,17 @@ namespace Intersect.Server.Database
             {
                 var contextType = context.GetType().FindGenericTypeParameters(typeof(IntersectDbContext<>)).First();
                 _methodInfoProcessMigrations.MakeGenericMethod(contextType).Invoke(null, new object[] { context });
+            }
+
+            return true;
+        }
+
+        // Database setup, version checking
+        internal static bool InitDatabase(IServerContext serverContext)
+        {
+            if (!EnsuredDatabaseUpdated())
+            {
+                return false;
             }
 
             LoadAllGameObjects();
@@ -1646,6 +1656,7 @@ namespace Intersect.Server.Database
             catch (Exception exception)
             {
                 Log.Error(exception);
+                throw;
             }
         }
 
@@ -1691,26 +1702,41 @@ namespace Intersect.Server.Database
                 {
                     while (true)
                     {
-                        Console.WriteLine(Strings.Migration.entermysqlinfo);
-                        Console.Write(Strings.Migration.mysqlhost);
-                        var host = Console.ReadLine()?.Trim() ?? "localhost";
+                        Console.WriteLine(Strings.Migration.EnterConnectionStringParameters);
 
-                        Console.Write(Strings.Migration.mysqlport);
+                        Console.Write(Strings.Migration.PromptHost.ToString(Strings.Migration.DefaultHost));
+                        var host = Console.ReadLine()?.Trim();
+                        if (string.IsNullOrWhiteSpace(host))
+                        {
+                            host = Strings.Migration.DefaultHost;
+                        }
+
+                        Console.Write(Strings.Migration.PromptPort.ToString(Strings.Migration.DefaultPortMySql));
                         var portString = Console.ReadLine()?.Trim();
                         if (string.IsNullOrWhiteSpace(portString))
                         {
-                            portString = "3306";
+                            portString = Strings.Migration.DefaultPortMySql;
                         }
-
                         var port = ushort.Parse(portString);
 
-                        Console.Write(Strings.Migration.mysqldatabase);
+                        var contextName = typeof(TContext).Name.Replace("Context", "").ToLowerInvariant();
+                        var version = typeof(Program).Assembly.GetVersionName();
+                        var defaultDatabase = Strings.Migration.DefaultDatabase.ToString(version, contextName);
+                        Console.Write(Strings.Migration.PromptDatabase.ToString(defaultDatabase));
                         var database = Console.ReadLine()?.Trim();
+                        if (string.IsNullOrWhiteSpace(database))
+                        {
+                            database = defaultDatabase;
+                        }
 
-                        Console.Write(Strings.Migration.mysqluser);
+                        Console.Write(Strings.Migration.PromptUsername.ToString(Strings.Migration.DefaultUsername));
                         var username = Console.ReadLine().Trim();
+                        if (string.IsNullOrWhiteSpace(username))
+                        {
+                            username = Strings.Migration.DefaultUsername;
+                        }
 
-                        Console.Write(Strings.Migration.mysqlpass);
+                        Console.Write(Strings.Migration.PromptPassword);
                         var password = GetPassword();
 
                         Console.WriteLine();
@@ -1741,7 +1767,7 @@ namespace Intersect.Server.Database
                         }
                         catch (Exception exception)
                         {
-                            Console.WriteLine(Strings.Migration.mysqlconnectionerror.ToString(exception));
+                            Log.Error(Strings.Migration.mysqlconnectionerror.ToString(exception));
                             Console.WriteLine();
                             Console.WriteLine(Strings.Migration.mysqltryagain);
                             var input = Console.ReadLine();
@@ -1759,7 +1785,7 @@ namespace Intersect.Server.Database
                                 continue;
                             }
 
-                            Console.WriteLine(Strings.Migration.migrationcancelled);
+                            Log.Info(Strings.Migration.migrationcancelled);
                             return;
                         }
                     }
@@ -1792,13 +1818,13 @@ namespace Intersect.Server.Database
                     {
                         // If it does, check if it is OK to overwrite
                         Console.WriteLine();
-                        Console.WriteLine(Strings.Migration.sqlitealreadyexists.ToString(dbFileName));
+                        Log.Error(Strings.Migration.sqlitealreadyexists.ToString(dbFileName));
                         var input = Console.ReadLine();
                         var key = input.Length > 0 ? input[0] : ' ';
                         Console.WriteLine();
                         if (key.ToString() != Strings.Migration.overwritecharacter)
                         {
-                            Console.WriteLine(Strings.Migration.migrationcancelled);
+                            Log.Info(Strings.Migration.migrationcancelled);
                             return;
                         }
                     }
@@ -1820,8 +1846,8 @@ namespace Intersect.Server.Database
                     throw new ArgumentOutOfRangeException(nameof(toDatabaseType), toDatabaseType, null);
             }
 
-            //Shut down server, start migration.
-            Console.WriteLine(Strings.Migration.stoppingserver);
+            // Shut down server, start migration.
+            Log.Info(Strings.Migration.stoppingserver);
 
             //This variable will end the server loop and save any pending changes
             ServerContext.Instance.DisposeWithoutExiting = true;
@@ -1832,7 +1858,7 @@ namespace Intersect.Server.Database
                 Thread.Sleep(100);
             }
 
-            Console.WriteLine(Strings.Migration.startingmigration);
+            Log.Info(Strings.Migration.startingmigration);
             var migrationService = new DatabaseTypeMigrationService();
             if (await migrationService.TryMigrate<TContext>(fromContextOptions, toContextOptions))
             {
@@ -1855,14 +1881,14 @@ namespace Intersect.Server.Database
 
                 Options.SaveToDisk();
 
-                Console.WriteLine(Strings.Migration.migrationcomplete);
+                Log.Info(Strings.Migration.migrationcomplete);
                 Bootstrapper.Context.ConsoleService.Wait(true);
-                ServerContext.Instance.Exit();
+                ServerContext.Exit(0);
             }
             else
             {
-                Console.WriteLine($"Error migrating context type: {typeof(TContext).FullName}");
-                ServerContext.Instance.Exit(1);
+                Log.Error($"Error migrating context type: {typeof(TContext).FullName}");
+                ServerContext.Exit(1);
             }
         }
 

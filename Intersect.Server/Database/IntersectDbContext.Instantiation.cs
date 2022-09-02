@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Linq.Expressions;
 using System.Reflection;
 using Intersect.Config;
@@ -20,8 +21,18 @@ public partial class IntersectDbContext<TDbContext>
             .GetParameters()
             .ToArray();
 
+#if DEBUG
+    private static readonly List<IntersectDbContext<TDbContext>> _instances = new();
+#endif
+
     protected IntersectDbContext(DatabaseContextOptions? databaseContextOptions)
     {
+#if DEBUG
+        if (Debugger.IsAttached)
+        {
+            _instances.Add(this as TDbContext);
+        }
+#endif
         var safeDatabaseContextOptions = databaseContextOptions ?? _fallbackContextOptions;
         ContextOptions = safeDatabaseContextOptions with
         {
@@ -31,6 +42,30 @@ public partial class IntersectDbContext<TDbContext>
 
         base.ChangeTracker.AutoDetectChangesEnabled = safeDatabaseContextOptions.AutoDetectChanges || IsReadOnly;
         base.ChangeTracker.LazyLoadingEnabled = safeDatabaseContextOptions.LazyLoading || !IsReadOnly;
+    }
+
+    internal List<IntersectDbContext<TDbContext>> instances => _instances;
+
+    public override void Dispose()
+    {
+#if DEBUG
+        if (Debugger.IsAttached && !_instances.Remove(this))
+        {
+            Debugger.Break();
+        }
+#endif
+        base.Dispose();
+    }
+
+    public override ValueTask DisposeAsync()
+    {
+#if DEBUG
+        if (Debugger.IsAttached && !_instances.Remove(this))
+        {
+            Debugger.Break();
+        }
+#endif
+        return base.DisposeAsync();
     }
 
     private static DbContextConstructor CreateConstructorDelegate<TContextType>(

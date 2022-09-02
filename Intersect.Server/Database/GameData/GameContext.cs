@@ -123,7 +123,7 @@ public abstract partial class GameContext : IntersectDbContext<GameContext>, IGa
 
         modelBuilder.Entity<TDescriptor>()
             .Navigation(descriptor => descriptor.Parent)
-            .AutoInclude();
+            .AutoInclude(!ContextOptions.DisableAutoInclude);
     }
 
     private static Type CorrectDescriptorType(Type descriptorType)
@@ -144,21 +144,21 @@ public abstract partial class GameContext : IntersectDbContext<GameContext>, IGa
 
         modelBuilder.Entity<ContentString>()
             .Navigation(contentString => contentString.Localizations)
-            .AutoInclude();
+            .AutoInclude(!ContextOptions.DisableAutoInclude);
 
         modelBuilder.Entity<LocaleContentString>()
             .HasKey(lcs => new { lcs.Id, lcs.Locale });
 
         modelBuilder.Entity<LocaleContentString>()
             .Navigation(lcs => lcs.ContentString)
-            .AutoInclude();
+            .AutoInclude(!ContextOptions.DisableAutoInclude);
 
         modelBuilder.Entity<Folder>()
             .HasOne(folder => folder.Name);
 
         modelBuilder.Entity<Folder>()
             .Navigation(folder => folder.Name)
-            .AutoInclude();
+            .AutoInclude(!ContextOptions.DisableAutoInclude);
 
         modelBuilder.Entity<Folder>()
             .HasMany(folder => (ICollection<Folder>)folder.Children)
@@ -166,7 +166,7 @@ public abstract partial class GameContext : IntersectDbContext<GameContext>, IGa
 
         modelBuilder.Entity<Folder>()
             .Navigation(folder => folder.Parent)
-            .AutoInclude();
+            .AutoInclude(!ContextOptions.DisableAutoInclude);
 
         var descriptorTypes = Enum
             .GetValues<GameObjectType>()
@@ -178,7 +178,7 @@ public abstract partial class GameContext : IntersectDbContext<GameContext>, IGa
             var correctedDescriptorType = CorrectDescriptorType(descriptorType);
             var methodInfoOnModelCreatingDesriptorType =
                 _descriptorOnModelCreating.MakeGenericMethod(correctedDescriptorType);
-            _ = methodInfoOnModelCreatingDesriptorType.Invoke(this, new[] { modelBuilder });
+            _ = methodInfoOnModelCreatingDesriptorType.Invoke(this, new object[] { modelBuilder });
         }
     }
 

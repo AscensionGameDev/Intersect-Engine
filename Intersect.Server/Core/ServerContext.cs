@@ -191,6 +191,11 @@ namespace Intersect.Server.Core
             Environment.Exit(exitCode ?? ExitCode);
         }
 
+        internal static void Exit(int exitCode)
+        {
+            Environment.Exit(exitCode);
+        }
+
         #endregion
 
         #region Threads
