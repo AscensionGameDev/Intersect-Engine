@@ -614,7 +614,7 @@ namespace Intersect.Client.Localization
             public static LocalizedString CraftChance = @"Chance to fail: {00}%";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString CraftingTime = "Time needed for craft: {00}s";
+            public static LocalizedString CraftingTime = "Time to craft: {00}s";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString craftstop = "Stop";
