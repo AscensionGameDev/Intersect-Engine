@@ -18,11 +18,6 @@ namespace Intersect.Client.Interface.Game.Crafting
 
     public partial class CraftingWindow
     {
-
-        private static int sItemXPadding = 4;
-
-        private static int sItemYPadding = 4;
-
         public bool Crafting;
 
         private ImagePanel mBar;
@@ -43,8 +38,6 @@ namespace Intersect.Client.Interface.Game.Crafting
 
         private int mAutoCraftAmount = 0;
 
-        private ImagePanel mCraftedItemTemplate;
-
         private Guid mCraftId;
 
         //Controls
@@ -56,18 +49,27 @@ namespace Intersect.Client.Interface.Game.Crafting
 
         private List<RecipeItem> mItems = new List<RecipeItem>();
 
-        private ImagePanel mItemTemplate;
-
         private Label mLblIngredients;
 
         private Label mLblProduct;
 
         private Label mLblRecipes;
 
+        private Label mLblCraftingChance;
+
+        private Label mLblDestroyMaterialsChance;
+
+        private Label mLblCraftingTime;
+
         //Objects
         private ListBox mRecipes;
 
         private List<Label> mValues = new List<Label>();
+
+        //Location
+        public int X => mCraftWindow.X;
+
+        public int Y => mCraftWindow.Y;
 
         public CraftingWindow(Canvas gameCanvas)
         {
@@ -85,6 +87,15 @@ namespace Intersect.Client.Interface.Game.Crafting
 
             mLblProduct = new Label(mCraftWindow, "ProductLabel");
             mLblProduct.Text = Strings.Crafting.product;
+
+            mLblCraftingChance = new Label(mCraftWindow, "ProductChanceLabel");
+            mLblCraftingChance.Text = Strings.Crafting.CraftChance.ToString(0);
+
+            mLblDestroyMaterialsChance = new Label(mCraftWindow, "DestroyMaterialsChanceLabel");
+            mLblDestroyMaterialsChance.Text = Strings.Crafting.DestroyMaterialsChance.ToString(0);
+
+            mLblCraftingTime = new Label(mCraftWindow, "CraftingTimeLabel");
+            mLblCraftingTime.Text = Strings.Crafting.CraftingTime.ToString(0);
 
             //Recepie list
             mRecipes = new ListBox(mCraftWindow, "RecipesList");
@@ -113,11 +124,6 @@ namespace Intersect.Client.Interface.Game.Crafting
                 LoadCraftItems(mCraftId);
             };
         }
-
-        //Location
-        public int X => mCraftWindow.X;
-
-        public int Y => mCraftWindow.Y;
 
         private void LoadCraftItems(Guid id)
         {
@@ -245,6 +251,11 @@ namespace Intersect.Client.Interface.Game.Crafting
                         yPadding
                     );
             }
+
+            //Show crafting time and chances
+            mLblCraftingTime.Text = Strings.Crafting.CraftingTime.ToString(craft.Time / 1000.0);
+            mLblCraftingChance.Text = Strings.Crafting.CraftChance.ToString(craft.FailureChance);
+            mLblDestroyMaterialsChance.Text = Strings.Crafting.DestroyMaterialsChance.ToString(craft.ItemLossChance);
 
             //If crafting & we no longer have the items for the craft then stop!
             if (Crafting)
