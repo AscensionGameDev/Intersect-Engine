@@ -26,6 +26,7 @@ using System.Reflection;
 using Intersect.Utilities;
 
 using MainMenu = Intersect.Client.Interface.Menu.MainMenu;
+using Intersect.Logging;
 
 namespace Intersect.Client.MonoGame
 {
@@ -67,7 +68,15 @@ namespace Intersect.Client.MonoGame
             Context = context;
             PostStartupAction = postStartupAction;
 
-            Strings.Load();
+            try
+            {
+                Strings.Load();
+            }
+            catch (Exception exception)
+            {
+                Log.Error(exception);
+                throw;
+            }
 
             mGraphics = new GraphicsDeviceManager(this)
             {

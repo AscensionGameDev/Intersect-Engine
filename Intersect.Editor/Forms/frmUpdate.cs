@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -9,6 +9,7 @@ using Intersect.Configuration;
 using Intersect.Editor.Content;
 using Intersect.Editor.General;
 using Intersect.Editor.Localization;
+using Intersect.Logging;
 using Intersect.Updater;
 
 namespace Intersect.Editor.Forms
@@ -29,7 +30,15 @@ namespace Intersect.Editor.Forms
         private void frmUpdate_Load(object sender, EventArgs e)
         {
             AppDomain.CurrentDomain.UnhandledException += Program.CurrentDomain_UnhandledException;
-            Strings.Load();
+            try
+            {
+                Strings.Load();
+            }
+            catch (Exception exception)
+            {
+                Log.Error(exception);
+                throw;
+            }
             GameContentManager.CheckForResources();
             Database.LoadOptions();
             InitLocalization();

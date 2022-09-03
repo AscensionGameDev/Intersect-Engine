@@ -205,9 +205,10 @@ namespace Intersect.Editor.Forms.Editors
             lblBankStackLimit.Text = Strings.ItemEditor.BankStackLimit;
 
             cmbRarity.Items.Clear();
-            for (var i = 0; i < Strings.ItemEditor.rarity.Count; i++)
+            for (var i = 0; i < Options.Instance.Items.RarityTiers.Count; i++)
             {
-                cmbRarity.Items.Add(Strings.ItemEditor.rarity[i]);
+                var rarityName = Options.Instance.Items.RarityTiers[i];
+                cmbRarity.Items.Add(Strings.ItemEditor.rarity[rarityName]);
             }
 
             grpEquipment.Text = Strings.ItemEditor.equipment;

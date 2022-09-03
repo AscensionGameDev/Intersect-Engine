@@ -1,10 +1,11 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Windows.Forms;
 
 using Intersect.Core;
 using Intersect.Editor.Content;
 using Intersect.Editor.General;
+using Intersect.Editor.Localization;
 using Intersect.Editor.Maps;
 using Intersect.Enums;
 using Intersect.GameObjects;
@@ -138,6 +139,14 @@ namespace Intersect.Editor.Networking
         public void HandlePacket(IPacketSender packetSender, ConfigPacket packet)
         {
             Options.LoadFromServer(packet.Config);
+            try
+            {
+                Strings.Load();
+            } catch (Exception exception)
+            {
+                Log.Error(exception);
+                throw;
+            }
         }
 
         //JoinGamePacket
