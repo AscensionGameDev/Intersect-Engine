@@ -60,7 +60,8 @@ namespace Intersect.Editor.Localization
 
             if (labelAttribute == default || displayAttribute == default)
             {
-                Log.Warn($"{propertyInfo.DeclaringType.FullName}.{propertyInfo.Name} must have both a label and display attribute.");
+                // TODO: Re-enable this, disabled for spamming the logs
+                // Log.Warn($"{propertyInfo.DeclaringType.FullName}.{propertyInfo.Name} must have both a label and display attribute.");
                 editorProperty = default;
                 return false;
             }

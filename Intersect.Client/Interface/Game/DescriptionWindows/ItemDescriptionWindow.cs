@@ -5,6 +5,7 @@ using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Client.General;
 using Intersect.Client.Localization;
+using Intersect.Logging;
 
 namespace Intersect.Client.Interface.Game.DescriptionWindows
 {
@@ -132,8 +133,17 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
             }
 
             // Set up the item rarity label.
-            Strings.ItemDescription.Rarity.TryGetValue(mItem.Rarity, out var rarityDesc);
-            header.SetDescription(rarityDesc, rarityColor ?? Color.White);
+            try
+            {
+                var rarityName = Options.Instance.Items.RarityTiers[mItem.Rarity];
+                _ = Strings.ItemDescription.Rarity.TryGetValue(rarityName, out var rarityLabel);
+                header.SetDescription(rarityLabel, rarityColor ?? Color.White);
+            }
+            catch (Exception exception)
+            {
+                Log.Error(exception);
+                throw;
+            }
 
             header.SizeToChildren(true, false);
         }

@@ -8,6 +8,7 @@ using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 using Intersect.Localization;
+using Intersect.Logging;
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -16,6 +17,8 @@ namespace Intersect.Editor.Localization
 {
     public static partial class Strings
     {
+        private const string StringsFileName = "editor_strings.json";
+
         public static string FormatBoolean(bool value, BooleanStyle booleanStyle)
         {
             switch (booleanStyle)
@@ -63,7 +66,7 @@ namespace Intersect.Editor.Localization
 
         public static string GetEventConditionalDesc(VariableIsCondition condition)
         {
-            var pVar = GetVariableComparisonString((dynamic) condition.Comparison);
+            var pVar = GetVariableComparisonString((dynamic)condition.Comparison);
 
             if (condition.VariableType == VariableTypes.PlayerVariable)
             {
@@ -166,7 +169,7 @@ namespace Intersect.Editor.Localization
             }
             else
             {
-                lvlorstat = Combat.stats[(int) condition.Stat];
+                lvlorstat = Combat.stats[(int)condition.Stat];
             }
 
             return EventConditionDesc.levelorstat.ToString(lvlorstat, pLvl);
@@ -475,37 +478,54 @@ namespace Intersect.Editor.Localization
             return "";
         }
 
+        private static void SynchronizeConfigurableStrings()
+        {
+            if (Intersect.Options.Instance == default)
+            {
+                return;
+            }
+
+            for (var rarityCode = 0; rarityCode < Intersect.Options.Instance.Items.RarityTiers.Count; rarityCode++)
+            {
+                var rarityName = Intersect.Options.Instance.Items.RarityTiers[rarityCode];
+                if (!ItemEditor.rarity.ContainsKey(rarityName))
+                {
+                    ItemEditor.rarity[rarityName] = $"{rarityCode}:{rarityName}";
+                }
+            }
+        }
+
         public static void Load()
         {
-            if (File.Exists(Path.Combine("resources", "editor_strings.json")))
+            SynchronizeConfigurableStrings();
+
+            try
             {
-                var strings = new Dictionary<string, Dictionary<string, object>>();
-                strings = JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, object>>>(
-                    File.ReadAllText(Path.Combine("resources", "editor_strings.json"))
+                var serialized = new Dictionary<string, Dictionary<string, object>>();
+                serialized = JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, object>>>(
+                    File.ReadAllText(Path.Combine("resources", StringsFileName))
                 );
 
-                var type = typeof(Strings);
-
-                var fields = new List<Type>();
-                fields.AddRange(
-                    type.GetNestedTypes(BindingFlags.Static | BindingFlags.Public)
-                );
-
-                foreach (var p in fields)
+                var rootType = typeof(Strings);
+                var groupTypes = rootType.GetNestedTypes(BindingFlags.Static | BindingFlags.Public);
+                var missingStrings = new List<string>();
+                foreach (var groupType in groupTypes)
                 {
-                    if (!strings.ContainsKey(p.Name))
+                    if (!serialized.TryGetValue(groupType.Name, out var serializedGroup))
                     {
+                        missingStrings.Add($"{groupType.Name}");
+                        serialized[groupType.Name] = SerializeGroup(groupType);
                         continue;
                     }
 
-                    var dict = strings[p.Name];
-                    foreach (var fieldInfo in p.GetFields(BindingFlags.Public | BindingFlags.Static))
+                    foreach (var fieldInfo in groupType.GetFields(BindingFlags.Public | BindingFlags.Static))
                     {
-                        if (!dict.TryGetValue(fieldInfo.Name, out var jsonValue))
+                        if (!serializedGroup.TryGetValue(fieldInfo.Name, out var jsonValue))
                         {
-                            var foundKey = dict.Keys.FirstOrDefault(key => string.Equals(fieldInfo.Name, key, StringComparison.OrdinalIgnoreCase));
-                            if (foundKey == default || !dict.TryGetValue(foundKey, out jsonValue))
+                            var foundKey = serializedGroup.Keys.FirstOrDefault(key => string.Equals(fieldInfo.Name, key, StringComparison.OrdinalIgnoreCase));
+                            if (foundKey == default || !serializedGroup.TryGetValue(foundKey, out jsonValue))
                             {
+                                missingStrings.Add($"{groupType.Name}.{fieldInfo.Name}");
                                 continue;
                             }
                         }
@@ -519,6 +539,12 @@ namespace Intersect.Editor.Localization
                                 {
                                     fieldInfo.SetValue(null, new LocalizedString(jsonString));
                                 }
+                                else
+                                {
+                                    Log.Warn($"{groupType.Name}.{fieldInfo.Name} is null.");
+                                    missingStrings.Add($"{groupType.Name}.{fieldInfo.Name} (string)");
+                                    serializedGroup[fieldInfo.Name] = fieldValue;
+                                }
                                 break;
 
                             case Dictionary<int, LocalizedString> intDictionary:
@@ -530,11 +556,18 @@ namespace Intersect.Editor.Localization
                                     {
                                         if (!jsonIntDictionary.TryGetValue(key, out var jsonStringValue) || jsonStringValue == default)
                                         {
+                                            missingStrings.Add($"{groupType.Name}.{fieldInfo.Name}[{key}]");
+                                            jsonIntDictionary[key] = intDictionary[key];
                                             continue;
                                         }
 
                                         intDictionary[key] = new LocalizedString(jsonStringValue);
                                     }
+                                }
+                                else
+                                {
+                                    missingStrings.Add($"{groupType.Name}.{fieldInfo.Name} (int dictionary)");
+                                    serializedGroup[fieldInfo.Name] = intDictionary;
                                 }
                                 break;
 
@@ -547,11 +580,18 @@ namespace Intersect.Editor.Localization
                                     {
                                         if (!jsonStringDictionary.TryGetValue(key, out var jsonStringValue) || jsonStringValue == default)
                                         {
+                                            missingStrings.Add($"{groupType.Name}.{fieldInfo.Name}[{key}]");
+                                            jsonStringDictionary[key] = stringDictionary[key];
                                             continue;
                                         }
 
                                         stringDictionary[key] = new LocalizedString(jsonStringValue);
                                     }
+                                }
+                                else
+                                {
+                                    missingStrings.Add($"{groupType.Name}.{fieldInfo.Name} (string dictionary)");
+                                    serializedGroup[fieldInfo.Name] = stringDictionary;
                                 }
                                 break;
 
@@ -560,53 +600,86 @@ namespace Intersect.Editor.Localization
                         }
                     }
                 }
-            }
 
-            Save();
+                if (missingStrings.Count > 0)
+                {
+                    Log.Warn($"Missing strings, overwriting strings file:\n\t{string.Join(",\n\t", missingStrings)}");
+                    SaveSerialized(serialized);
+                }
+            }
+            catch (Exception exception)
+            {
+                Log.Warn(exception);
+                Save();
+            }
         }
 
-        public static void Save()
+        private static Dictionary<string, object> SerializeGroup(Type groupType)
         {
-            var strings = new Dictionary<string, Dictionary<string, object>>();
-            var type = typeof(Strings);
-            var fields = type.GetNestedTypes(
-                BindingFlags.Static | BindingFlags.Public
-            );
-
-            foreach (var p in fields)
+            var serializedGroup = new Dictionary<string, object>();
+            foreach (var fieldInfo in groupType.GetFields(BindingFlags.Static | BindingFlags.Public))
             {
-                var dict = new Dictionary<string, object>();
-                foreach (var p1 in p.GetFields(
-                    BindingFlags.Static | BindingFlags.Public
-                ))
+                switch (fieldInfo.GetValue(null))
                 {
-                    switch (p1.GetValue(null))
-                    {
-                        case LocalizedString localizedString:
-                            dict.Add(p1.Name, localizedString.ToString());
-                            break;
+                    case LocalizedString localizedString:
+                        serializedGroup.Add(fieldInfo.Name, localizedString.ToString());
+                        break;
 
-                        case Dictionary<int, LocalizedString> localizedIntKeyDictionary:
-                            dict.Add(p1.Name, localizedIntKeyDictionary.ToDictionary(pair => pair.Key, pair => pair.Value.ToString()));
-                            break;
+                    case Dictionary<int, LocalizedString> localizedIntKeyDictionary:
+                        serializedGroup.Add(fieldInfo.Name, localizedIntKeyDictionary.ToDictionary(pair => pair.Key, pair => pair.Value.ToString()));
+                        break;
 
-                        case Dictionary<string, LocalizedString> localizedStringKeyDictionary:
-                            dict.Add(p1.Name, localizedStringKeyDictionary.ToDictionary(pair => pair.Key, pair => pair.Value.ToString()));
-                            break;
-                    }
+                    case Dictionary<string, LocalizedString> localizedStringKeyDictionary:
+                        serializedGroup.Add(fieldInfo.Name, localizedStringKeyDictionary.ToDictionary(pair => pair.Key, pair => pair.Value.ToString()));
+                        break;
                 }
-
-                strings.Add(p.Name, dict);
             }
+            return serializedGroup;
+        }
 
+        private static void SaveSerialized(Dictionary<string, Dictionary<string, object>> serialized)
+        {
             var languageDirectory = Path.Combine("resources");
             if (Directory.Exists(languageDirectory))
             {
                 File.WriteAllText(
-                    Path.Combine(languageDirectory, "editor_strings.json"),
-                    JsonConvert.SerializeObject(strings, Formatting.Indented)
+                    Path.Combine(languageDirectory, StringsFileName),
+                    JsonConvert.SerializeObject(serialized, Formatting.Indented)
                 );
             }
+        }
+
+        public static void Save()
+        {
+            var serialized = new Dictionary<string, Dictionary<string, object>>();
+            var rootType = typeof(Strings);
+            var groupTypes = rootType.GetNestedTypes(BindingFlags.Static | BindingFlags.Public);
+
+            foreach (var groupType in groupTypes)
+            {
+                var serializedGroup = new Dictionary<string, object>();
+                foreach (var fieldInfo in groupType.GetFields(BindingFlags.Static | BindingFlags.Public))
+                {
+                    switch (fieldInfo.GetValue(null))
+                    {
+                        case LocalizedString localizedString:
+                            serializedGroup.Add(fieldInfo.Name, localizedString.ToString());
+                            break;
+
+                        case Dictionary<int, LocalizedString> localizedIntKeyDictionary:
+                            serializedGroup.Add(fieldInfo.Name, localizedIntKeyDictionary.ToDictionary(pair => pair.Key, pair => pair.Value.ToString()));
+                            break;
+
+                        case Dictionary<string, LocalizedString> localizedStringKeyDictionary:
+                            serializedGroup.Add(fieldInfo.Name, localizedStringKeyDictionary.ToDictionary(pair => pair.Key, pair => pair.Value.ToString()));
+                            break;
+                    }
+                }
+
+                serialized.Add(groupType.Name, serializedGroup);
+            }
+
+            SaveSerialized(serialized);
         }
 
         public static Localizer Localizer { get; } = new Localizer();
@@ -1314,7 +1387,7 @@ Tick timer saved in server config.json.";
                 @"Are you sure you want to undo changes made to this craft? This action cannot be reverted!";
 
             public static LocalizedString undotitle = @"Undo Changes";
-            
+
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString commonevent = @"Common Event:";
 
@@ -3499,14 +3572,14 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString price = @"Price:";
 
-            public static Dictionary<int, LocalizedString> rarity = new Dictionary<int, LocalizedString>
+            public static Dictionary<string, LocalizedString> rarity = new Dictionary<string, LocalizedString>
             {
-                {0, @"None"},
-                {1, @"Common"},
-                {2, @"Uncommon"},
-                {3, @"Rare"},
-                {4, @"Epic"},
-                {5, @"Legendary"},
+                {"None", @"None"},
+                {"Common", @"Common"},
+                {"Uncommon", @"Uncommon"},
+                {"Rare", @"Rare"},
+                {"Epic", @"Epic"},
+                {"Legendary", @"Legendary"},
             };
 
             public static LocalizedString projectile = @"Projectile:";
@@ -4895,7 +4968,7 @@ Tick timer saved in server config.json.";
             public static LocalizedString ignorezdimension = @"Z-Dimension Blocks";
 
             public static LocalizedString ishotdot = @"HOT/DOT?";
-            
+
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString TickAnimation = @"Tick Animation:";
 
@@ -5206,7 +5279,7 @@ Negative values for time to flow backwards.";
             public static LocalizedString to = @"to";
 
         }
-        
+
         public partial struct Update
         {
 

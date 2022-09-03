@@ -82,6 +82,8 @@ namespace Intersect
 
         public InstancingOptions Instancing = new InstancingOptions();
 
+        public ItemOptions Items = new ItemOptions();
+
         public static Options Instance { get; private set; }
 
         [JsonIgnore]
