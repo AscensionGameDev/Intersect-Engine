@@ -8,6 +8,12 @@ namespace Intersect.Localization.Common.Descriptors;
 public partial class DescriptorsNamespace : LocaleNamespace
 {
     [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+    public readonly LocalizedString Folder = @"Folder";
+
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+    public readonly LocalizedString FolderTooltipOfTheX = @"The folder {00:lower} is filed under.";
+
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
     public readonly MapDescriptorNamespace Map = new();
 
     [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]

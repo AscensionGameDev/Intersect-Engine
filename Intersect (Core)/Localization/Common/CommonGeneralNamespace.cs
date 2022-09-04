@@ -17,7 +17,22 @@ public partial class CommonGeneralNamespace : LocaleNamespace
     public readonly LocalizedString False = @"False";
 
     [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+    public readonly LocalizedString General = @"General";
+
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+    public readonly LocalizedString Id = @"Id";
+
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+    public readonly LocalizedString IdTooltipOfTheX = @"The ID of the {00:lower}.";
+
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
     public readonly LocalizedString MissingTranslation = @"Missing Translation";
+
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+    public readonly LocalizedString Name = @"Name";
+
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+    public readonly LocalizedString NameTooltipOfTheX = @"The name of the {00:lower}.";
 
     [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
     public readonly LocalizedString No = @"No";
