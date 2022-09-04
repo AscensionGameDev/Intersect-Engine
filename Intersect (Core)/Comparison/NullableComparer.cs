@@ -18,22 +18,17 @@ public class NullableComparer : IComparer
         var xIsNull = IsNull(comparableX);
         var yIsNull = IsNull(comparableY);
 
-        if (!xIsNull && !yIsNull)
+        return xIsNull switch
         {
-            return comparableX!.CompareTo(comparableY!);
-        }
-
-        if (xIsNull && yIsNull)
-        {
-            return 0;
-        }
-
-        return NullComparison switch
-        {
-            NullComparison.NullFirst => xIsNull ? -1 : 1,
-            NullComparison.NullLast => xIsNull ? 1 : -1,
-            NullComparison.NullEqual => 0,
-            _ => throw new NotImplementedException(),
+            false when !yIsNull => comparableX!.CompareTo(comparableY!),
+            true when yIsNull => 0,
+            _ => NullComparison switch
+            {
+                NullComparison.NullFirst => xIsNull ? -1 : 1,
+                NullComparison.NullLast => xIsNull ? 1 : -1,
+                NullComparison.NullEqual => 0,
+                _ => throw new NotImplementedException(),
+            }
         };
     }
 }
