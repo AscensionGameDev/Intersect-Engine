@@ -93,7 +93,7 @@ public abstract partial class Descriptor : IDatabaseObject, IFolderable
         (matchParent && (Parent?.Matches(guid, matchParent: true, matchChildren: false) ?? false));
 
     public bool Matches(string @string, StringComparison stringComparison, bool matchParent = false, bool matchChildren = false) =>
-        string.Equals(Name, @string, stringComparison) ||
+        Name.Contains(@string, stringComparison) ||
         (matchParent && (Parent?.Matches(@string, stringComparison, matchParent: true, matchChildren: false) ?? false));
 }
 

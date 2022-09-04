@@ -112,8 +112,8 @@ public class ContentString :
         AsKeyValuePairs().GetEnumerator();
 
     public bool Matches(string @string, StringComparison stringComparison) =>
-        string.Equals(Comment, @string, stringComparison)
-        || Localizations.Any(lcs => string.Equals(lcs, @string, stringComparison));
+        (Comment?.Contains(@string, stringComparison) ?? false)
+        || Localizations.Any(lcs => lcs.Value.Contains(@string, stringComparison));
 
     public bool Remove(string key) => TryGetValue(key, out var existing) && Localizations.Remove(existing);
 
