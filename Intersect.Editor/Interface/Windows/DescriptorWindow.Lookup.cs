@@ -1,12 +1,16 @@
+using System.Diagnostics;
+using System.Globalization;
 using System.Numerics;
-
+using System.Reflection;
 using ImGuiNET;
-
 using Intersect.Collections;
 using Intersect.Comparison;
 using Intersect.Editor.Localization;
 using Intersect.Enums;
+using Intersect.Framework.Reflection;
+using Intersect.Logging;
 using Intersect.Models;
+using Intersect.Models.Annotations;
 using Intersect.Numerics;
 using Intersect.Time;
 
@@ -14,33 +18,22 @@ namespace Intersect.Editor.Interface.Windows;
 
 internal class FolderableComparer : IComparer<IFolderable>
 {
-    public static readonly FolderableComparer Instance = new();
-
     public bool FoldersFirst { get; set; }
 
     public int Compare(IFolderable? x, IFolderable? y)
     {
-        if (x is Folder xFolder && y is Folder yFolder)
+        return x switch
         {
-            return xFolder.CompareTo(yFolder);
-        }
-
-        if (x is Descriptor xDescriptor && y is Descriptor yDescriptor)
-        {
-            return xDescriptor.Name.CompareTo(yDescriptor.Name);
-        }
-
-        if (x is Folder && y is Descriptor)
-        {
-            return FoldersFirst ? -1 : 1;
-        }
-
-        if (x is Descriptor && y is Folder)
-        {
-            return FoldersFirst ? 1 : -1;
-        }
-
-        throw new InvalidOperationException($"Unsupported folderable subtype: {x?.GetType()} / {y?.GetType()}");
+            Folder xFolder when y is Folder yFolder => xFolder.CompareTo(yFolder),
+            Descriptor xDescriptor when y is Descriptor yDescriptor => string.Compare(
+                xDescriptor.Name,
+                yDescriptor.Name,
+                StringComparison.CurrentCulture
+            ),
+            Folder when y is Descriptor => FoldersFirst ? -1 : 1,
+            Descriptor when y is Folder => FoldersFirst ? 1 : -1,
+            _ => throw new InvalidOperationException($"Unsupported folderable subtype: {x?.GetType()} / {y?.GetType()}")
+        };
     }
 }
 
@@ -48,14 +41,10 @@ internal partial class DescriptorWindow
 {
     private readonly NullHandlingStringComparer _lookupComparer = new()
     {
-        EmptyStringComparison = EmptyStringComparison.AsNull,
-        NullComparison = NullComparison.NullLast,
+        EmptyStringComparison = EmptyStringComparison.AsNull, NullComparison = NullComparison.NullLast,
     };
 
-    private readonly FolderableComparer _folderableComparer = new()
-    {
-        FoldersFirst = true,
-    };
+    private readonly FolderableComparer _folderableComparer = new() { FoldersFirst = true, };
 
     private bool _groupByFolder = true;
     private string _searchQuery = string.Empty;
@@ -64,7 +53,8 @@ internal partial class DescriptorWindow
     private void LayoutLookupNode(FrameTime frameTime, ref Guid selectedObjectId, IFolderable folderable)
         => LayoutLookupNode(frameTime, ref selectedObjectId, folderable, new(), out _);
 
-    private void LayoutLookupNode(FrameTime frameTime, ref Guid selectedObjectId, IFolderable folderable, FloatRect groupRect, out FloatRect itemRect)
+    private void LayoutLookupNode(FrameTime frameTime, ref Guid selectedObjectId, IFolderable folderable,
+        FloatRect groupRect, out FloatRect itemRect)
     {
         itemRect = new();
 
@@ -72,71 +62,105 @@ internal partial class DescriptorWindow
         var treeIndent = ImGui.GetStyle().IndentSpacing;
         var treeLineColor = ImGui.GetColorU32(ImGuiCol.Text);
 
-        if (folderable is Descriptor descriptor)
+        switch (folderable)
         {
-            ImGui.TreePush(descriptor.Id.ToString());
-
-            var currentlySelected = selectedObjectId == descriptor.Id;
-            if (ImGui.Selectable($"{descriptor.Name}###{descriptor.Id}", currentlySelected, ImGuiSelectableFlags.SpanAllColumns))
+            case Descriptor descriptor:
             {
-                selectedObjectId = descriptor.Id;
-            }
-            else if (currentlySelected)
-            {
-                selectedObjectId = default;
-            }
+                ImGui.TreePush(descriptor.Id.ToString());
 
-            var max = ImGui.GetItemRectMax();
-            var min = ImGui.GetItemRectMin();
-            itemRect = new FloatRect(min, max - min);
+                var currentlySelected = selectedObjectId == descriptor.Id;
+                var wasSelected = currentlySelected;
+                _ = ImGui.Selectable(
+                    $"{descriptor.Name}###{descriptor.Id}",
+                    ref currentlySelected,
+                    ImGuiSelectableFlags.SpanAllColumns
+                );
+                if (currentlySelected)
+                {
+                    selectedObjectId = descriptor.Id;
+                }
+                else if (wasSelected)
+                {
+                    selectedObjectId = default;
+                }
 
-            if (_groupByFolder && descriptor.ParentId != default)
-            {
-                var horizontalLineStart = itemRect.Position + Vector2.UnitX * (float)Math.Ceiling(treeIndent / 2) + Vector2.UnitY * itemRect.Height / 2;
-                drawList.AddLine(horizontalLineStart, horizontalLineStart + Vector2.UnitX * treeIndent, treeLineColor);
-            }
+                var max = ImGui.GetItemRectMax();
+                var min = ImGui.GetItemRectMin();
+                itemRect = new(min, max - min);
 
-            ImGui.TreePop();
-        }
-        else if (folderable is Folder folder)
-        {
-            var searchId = selectedObjectId;
-            var groupSelected = searchId != default && folder.Matches(searchId, matchParent: false, matchChildren: true);
-            var nodeFlags = groupSelected ? ImGuiTreeNodeFlags.Selected : ImGuiTreeNodeFlags.None;
+                if (_groupByFolder && descriptor.ParentId != default)
+                {
+                    var horizontalLineStart = itemRect.Position + Vector2.UnitX * (float)Math.Ceiling(treeIndent / 2) +
+                                              Vector2.UnitY * itemRect.Height / 2;
+                    drawList.AddLine(horizontalLineStart, horizontalLineStart + Vector2.UnitX * treeIndent,
+                        treeLineColor);
+                }
 
-            if (!ImGui.TreeNodeEx($"{folder.Name ?? string.Empty}###descriptor_folder_{folder.Id}", nodeFlags))
-            {
-                return;
-            }
-
-            var max = ImGui.GetItemRectMax();
-            var min = ImGui.GetItemRectMin();
-            itemRect = new FloatRect(min, max - min);
-
-            var offsetVertical = itemRect.Height;
-
-            var verticalStart = itemRect.Position + Vector2.UnitX * treeIndent + Vector2.UnitY * offsetVertical / 2;
-            verticalStart.X += 1 - treeIndent / 2;
-
-            var verticalEnd = verticalStart;
-
-            foreach (var child in folder.Children)
-            {
-                LayoutLookupNode(frameTime, ref selectedObjectId, child, itemRect, out var childRect);
-                verticalEnd.Y = (childRect.Top + childRect.Bottom) / 2;
+                ImGui.TreePop();
+                break;
             }
 
-            drawList.AddLine(verticalStart, verticalEnd, treeLineColor);
-            ImGui.TreePop();
+            case Folder folder:
+            {
+                var searchId = selectedObjectId;
+                var groupSelected =
+                    searchId != default && folder.Matches(searchId, matchParent: false, matchChildren: true);
+                var nodeFlags = groupSelected ? ImGuiTreeNodeFlags.Selected : ImGuiTreeNodeFlags.None;
+
+                if (!ImGui.TreeNodeEx($"{folder.Name ?? string.Empty}###descriptor_folder_{folder.Id}", nodeFlags))
+                {
+                    return;
+                }
+
+                var max = ImGui.GetItemRectMax();
+                var min = ImGui.GetItemRectMin();
+                itemRect = new FloatRect(min, max - min);
+
+                var offsetVertical = itemRect.Height;
+
+                var verticalStart = itemRect.Position + Vector2.UnitX * treeIndent + Vector2.UnitY * offsetVertical / 2;
+                verticalStart.X += 1 - treeIndent / 2;
+
+                var verticalEnd = verticalStart;
+
+                foreach (var child in folder.Children)
+                {
+                    LayoutLookupNode(frameTime, ref selectedObjectId, child, itemRect, out var childRect);
+                    verticalEnd.Y = (childRect.Top + childRect.Bottom) / 2;
+                }
+
+                drawList.AddLine(verticalStart, verticalEnd, treeLineColor);
+                ImGui.TreePop();
+                break;
+            }
         }
     }
 
-    public virtual bool LayoutLookup(FrameTime frameTime)
+    protected virtual bool LayoutLookup(FrameTime frameTime)
     {
-        _ = ImGui.InputTextWithHint("###descriptor_lookup_searchQuery", Strings.Windows.Descriptor.SearchQueryHint.ToString(DescriptorName), ref _searchQuery, 100, ImGuiInputTextFlags.AutoSelectAll);
-        var inputSize = ImGui.GetItemRectSize();
+        var contentArea = ImGui.GetWindowContentRegionMax();
+        var windowPadding = ImGui.GetStyle().WindowPadding;
 
-        _ = ImGui.BeginChild(string.Empty, new(inputSize.X, 500), true);
+        ImGui.BeginChild(
+            "###descriptor_lookup",
+            contentArea with { X = Math.Clamp(contentArea.X * 0.2f, 250f, 400f) },
+            false
+        );
+
+        ImGui.SetNextItemWidth(Math.Clamp(contentArea.X * 0.2f, 250f, 400f));
+        _ = ImGui.InputTextWithHint("###descriptor_lookup_searchQuery",
+            Strings.Windows.Descriptor.SearchQueryHint.ToString(DescriptorName),
+            ref _searchQuery,
+            100,
+            ImGuiInputTextFlags.AutoSelectAll
+        );
+
+        var inputSize = ImGui.GetItemRectSize();
+        var lookupTreeContainerSize = inputSize with
+        {
+            Y = contentArea.Y - (ImGui.GetCursorPosY() + windowPadding.Y + inputSize.Y)
+        };
+        _ = ImGui.BeginChild("###descriptor_lookup_tree", lookupTreeContainerSize, true);
 
         var storeFolders = ObjectStore<Folder>.Instance
             .Where(kvp => kvp.Value.DescriptorType == DescriptorType)
@@ -172,8 +196,145 @@ internal partial class DescriptorWindow
         }
 
         ImGui.EndChild();
+        ImGui.EndChild();
 
-        SizeConstraintMinimum = ImGui.GetCursorPos();
+        ImGui.SameLine();
+
+        var editorContentArea = ImGui.GetWindowContentRegionMax();
+        editorContentArea -= ImGui.GetCursorPos();
+        ImGui.BeginChild("###descriptor_editor", editorContentArea, true);
+
+        if (_selectedObjectId != default)
+        {
+            var selectedDescriptor = descriptorLookup.Get<Descriptor>(_selectedObjectId);
+
+            foreach (var groupInteropInfo in ObjectInteropModel.Groups)
+            {
+                ImGui.BeginChild(
+                    $"descriptor_editor_group_{groupInteropInfo.Name?.Get(Strings.Root)}",
+                    new(),
+                    true,
+                    ImGuiWindowFlags.AlwaysAutoResize
+                );
+
+                var descriptorName = DescriptorType.GetLocalizedName(Strings.Descriptors);
+
+                foreach (var propertyInteropInfo in groupInteropInfo.Properties)
+                {
+                    try
+                    {
+                        var propertyName = propertyInteropInfo.PropertyInfo.GetFullName();
+                        var propertyValue = propertyInteropInfo.DelegateGet.DynamicInvoke(selectedDescriptor);
+                        var propertyId = $"descriptor_editor_{selectedDescriptor.Id}_{propertyName}";
+
+                        var inputAttribute = propertyInteropInfo.Input;
+                        var label = propertyInteropInfo.Label?.Get(Strings.Root);
+                        if (label != default)
+                        {
+                            ImGui.Text(label.ToString(descriptorName));
+                            ImGui.SameLine();
+                        }
+
+                        switch (inputAttribute)
+                        {
+                            case null:
+                                ImGui.Text($"{propertyValue}");
+                                break;
+
+                            case InputLookupAttribute inputLookupAttribute:
+                            {
+                                // https://gist.github.com/harold-b/7dcc02557c2b15d76c61fde1186e31d0
+                                var selectedCombo = 0;
+                                // ImGui.BeginCombo(
+                                //     $"{inputLookupAttribute.ForeignKeyName}###{propertyId}",
+                                //     propertyValue?.ToString()
+                                // );
+                                ImGui.Combo(
+                                    $"###{propertyId}",
+                                    ref selectedCombo,
+                                    new[] { propertyValue?.ToString() ?? "Test" },
+                                    1
+                                );
+                                break;
+                            }
+
+                            case InputTextAttribute inputTextAttribute:
+                            {
+                                var hint = inputTextAttribute.GetHint(Strings.Root);
+                                var inputTextValue = propertyValue as string ?? propertyValue?.ToString();
+                                var textInputFlags = ImGuiInputTextFlags.AutoSelectAll;
+                                var maxLength = inputTextAttribute.MaximumLength;
+                                if (propertyInteropInfo.IsReadOnly || inputTextAttribute.ReadOnly)
+                                {
+                                    textInputFlags |= ImGuiInputTextFlags.ReadOnly;
+                                }
+
+                                var result = hint == default
+                                    ? ImGui.InputText(
+                                        $"###{propertyId}",
+                                        ref inputTextValue,
+                                        maxLength,
+                                        textInputFlags
+                                    )
+                                    : ImGui.InputTextWithHint(
+                                        $"###{propertyId}",
+                                        hint,
+                                        ref inputTextValue,
+                                        maxLength,
+                                        textInputFlags
+                                    );
+
+                                propertyInteropInfo.DelegateSet?.DynamicInvoke(selectedDescriptor, inputTextValue);
+                                break;
+                            }
+                        }
+
+                        var tooltip = propertyInteropInfo.Tooltip?.Get(Strings.Root);
+                        if (tooltip != default && ImGui.IsItemHovered())
+                        {
+                            ImGui.BeginTooltip();
+                            ImGui.Text(tooltip.ToString(descriptorName));
+                            ImGui.EndTooltip();
+                        }
+                    }
+                    catch (Exception exception)
+                    {
+                        Log.Error(exception);
+                        throw;
+                    }
+                }
+
+                ImGui.EndChild();
+            }
+            // var propertyInfos = DescriptorType.GetObjectType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
+            //
+            // foreach (var propertyInfo in propertyInfos)
+            // {
+            //     if (propertyInfo.PropertyType == typeof(string))
+            //     {
+            //         var inputValue = propertyInfo.GetValue(selectedDescriptor) as string;
+            //         var textInputFlags = ImGuiInputTextFlags.AutoSelectAll;
+            //         if (propertyInfo.SetMethod == default)
+            //         {
+            //             textInputFlags |= ImGuiInputTextFlags.ReadOnly;
+            //         }
+            //         ImGui.Text(propertyInfo.Name);
+            //         _ = ImGui.InputTextWithHint(
+            //             $"###{propertyInfo.GetFullName()}+{selectedDescriptor.Id}",
+            //             "hint",
+            //             ref inputValue,
+            //             255,
+            //             textInputFlags
+            //         );
+            //         if (propertyInfo.SetMethod != default)
+            //         {
+            //             propertyInfo.SetValue(selectedDescriptor, inputValue);
+            //         }
+            //     }
+            // }
+        }
+
+        ImGui.EndChild();
 
         return true;
     }
