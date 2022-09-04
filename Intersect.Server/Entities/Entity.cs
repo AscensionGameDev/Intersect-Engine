@@ -1745,12 +1745,14 @@ namespace Intersect.Server.Entities
         {
             var damagingAttack = baseDamage > 0;
             var secondaryDamagingAttack = secondaryDamage > 0;
-            
+
             if (enemy == null)
             {
                 return;
             }
 
+            //Let's save the entity's vital before they takes damage to use in lifesteal
+            var enemyHealth = enemy.GetVital(Vitals.Health);
             var invulnerable = enemy.CachedStatuses.Any(status => status.Type == StatusTypes.Invulnerable);
 
             bool isCrit = false;
@@ -1939,7 +1941,8 @@ namespace Intersect.Server.Entities
             if (this is Player && !(enemy is Resource))
             {
                 var lifesteal = thisPlayer.GetEquipmentBonusEffect(EffectType.Lifesteal) / 100f;
-                var healthRecovered = lifesteal * baseDamage;
+                var healthRecovered = Math.Min(enemyHealth, lifesteal * baseDamage);
+
                 if (healthRecovered > 0) //Don't send any +0 msg's.
                 {
                     AddVital(Vitals.Health, (int) healthRecovered);
