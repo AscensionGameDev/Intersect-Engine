@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -17,7 +18,7 @@ namespace Intersect.Client.Localization
     public static partial class Strings
     {
         private const string StringsFileName = "client_strings.json";
-        private static char[] mQuantityTrimChars = new char[] {'.', '0'};
+        private static char[] mQuantityTrimChars = new char[] { '.', '0' };
 
         public static string FormatQuantityAbbreviated(long value)
         {
@@ -97,6 +98,13 @@ namespace Intersect.Client.Localization
             }
         }
 
+        private static void PostLoad()
+        {
+
+            Program.OpenGLLink = Errors.opengllink.ToString();
+            Program.OpenALLink = Errors.openallink.ToString();
+        }
+
         public static void Load()
         {
             SynchronizeConfigurableStrings();
@@ -122,79 +130,42 @@ namespace Intersect.Client.Localization
 
                     foreach (var fieldInfo in groupType.GetFields(BindingFlags.Public | BindingFlags.Static))
                     {
-                        if (!serializedGroup.TryGetValue(fieldInfo.Name, out var jsonValue))
+                        var fieldValue = fieldInfo.GetValue(null);
+                        if (!serializedGroup.TryGetValue(fieldInfo.Name, out var serializedValue))
                         {
                             var foundKey = serializedGroup.Keys.FirstOrDefault(key => string.Equals(fieldInfo.Name, key, StringComparison.OrdinalIgnoreCase));
-                            if (foundKey == default || !serializedGroup.TryGetValue(foundKey, out jsonValue))
+                            if (foundKey != default)
                             {
-                                missingStrings.Add($"{groupType.Name}.{fieldInfo.Name}");
-                                continue;
+                                _ = serializedGroup.TryGetValue(foundKey, out serializedValue);
                             }
                         }
 
-                        var fieldValue = fieldInfo.GetValue(null);
                         switch (fieldValue)
                         {
                             case LocalizedString localizedString:
-                                var jsonString = (string)jsonValue;
-                                if (jsonString != default)
-                                {
-                                    fieldInfo.SetValue(null, new LocalizedString(jsonString));
-                                }
-                                else
+                                var jsonString = (string)serializedValue;
+                                if (jsonString == default)
                                 {
                                     Log.Warn($"{groupType.Name}.{fieldInfo.Name} is null.");
                                     missingStrings.Add($"{groupType.Name}.{fieldInfo.Name} (string)");
-                                    serializedGroup[fieldInfo.Name] = fieldValue;
+                                    serializedGroup[fieldInfo.Name] = (string)localizedString;
+                                }
+                                else
+                                {
+                                    fieldInfo.SetValue(null, new LocalizedString(jsonString));
                                 }
                                 break;
 
                             case Dictionary<int, LocalizedString> intDictionary:
-                                var jsonIntDictionary = (jsonValue as JObject).ToObject<Dictionary<int, string>>();
-                                if (jsonIntDictionary != default)
-                                {
-                                    var keys = intDictionary.Keys.ToList();
-                                    foreach (var key in keys)
-                                    {
-                                        if (!jsonIntDictionary.TryGetValue(key, out var jsonStringValue) || jsonStringValue == default)
-                                        {
-                                            missingStrings.Add($"{groupType.Name}.{fieldInfo.Name}[{key}]");
-                                            jsonIntDictionary[key] = intDictionary[key];
-                                            continue;
-                                        }
-
-                                        intDictionary[key] = new LocalizedString(jsonStringValue);
-                                    }
-                                }
-                                else
-                                {
-                                    missingStrings.Add($"{groupType.Name}.{fieldInfo.Name} (int dictionary)");
-                                    serializedGroup[fieldInfo.Name] = intDictionary;
-                                }
+                                DeserializeDictionary(missingStrings, groupType, fieldInfo, fieldValue, serializedGroup, serializedValue, intDictionary);
                                 break;
 
                             case Dictionary<string, LocalizedString> stringDictionary:
-                                var jsonStringDictionary = (jsonValue as JObject).ToObject<Dictionary<string, string>>();
-                                if (jsonStringDictionary != default)
-                                {
-                                    var keys = stringDictionary.Keys.ToList();
-                                    foreach (var key in keys)
-                                    {
-                                        if (!jsonStringDictionary.TryGetValue(key, out var jsonStringValue) || jsonStringValue == default)
-                                        {
-                                            missingStrings.Add($"{groupType.Name}.{fieldInfo.Name}[{key}]");
-                                            jsonStringDictionary[key] = stringDictionary[key];
-                                            continue;
-                                        }
+                                DeserializeDictionary(missingStrings, groupType, fieldInfo, fieldValue, serializedGroup, serializedValue, stringDictionary);
+                                break;
 
-                                        stringDictionary[key] = new LocalizedString(jsonStringValue);
-                                    }
-                                }
-                                else
-                                {
-                                    missingStrings.Add($"{groupType.Name}.{fieldInfo.Name} (string dictionary)");
-                                    serializedGroup[fieldInfo.Name] = stringDictionary;
-                                }
+                            case Dictionary <ChatboxTab, LocalizedString> chatboxTabDictionary:
+                                DeserializeDictionary(missingStrings, groupType, fieldInfo, fieldValue, serializedGroup, serializedValue, chatboxTabDictionary);
                                 break;
 
                             default:
@@ -215,8 +186,50 @@ namespace Intersect.Client.Localization
                 Save();
             }
 
-            Program.OpenGLLink = Errors.opengllink.ToString();
-            Program.OpenALLink = Errors.openallink.ToString();
+            PostLoad();
+        }
+
+        private static void DeserializeDictionary<TKey>(
+            List<string> missingStrings,
+            Type groupType,
+            FieldInfo fieldInfo,
+            object fieldValue,
+            Dictionary<string, object> serializedGroup,
+            object serializedValue,
+            Dictionary<TKey, LocalizedString> dictionary
+        )
+        {
+            var serializedDictionary = serializedValue as JObject;
+            var serializedField = JToken.FromObject(fieldValue);
+            if (serializedValue == default)
+            {
+                missingStrings.Add($"{groupType.Name}.{fieldInfo.Name} (string dictionary)");
+                serializedGroup[fieldInfo.Name] = serializedField;
+            }
+            else
+            {
+                var keys = dictionary.Keys.ToList();
+                foreach (var key in keys)
+                {
+                    var stringKey = key.ToString();
+                    if (!serializedDictionary.TryGetValue(stringKey, out var token) || token?.Type != JTokenType.String)
+                    {
+                        missingStrings.Add($"{groupType.Name}.{fieldInfo.Name}[{key}]");
+                        serializedDictionary[stringKey] = (string)dictionary[key];
+                        continue;
+                    }
+
+                    dictionary[key] = new LocalizedString((string)token);
+                }
+            }
+        }
+
+        private static Dictionary<string, string> SerializeDictionary<TKey>(Dictionary<TKey, LocalizedString> localizedDictionary)
+        {
+            return localizedDictionary.ToDictionary(
+                pair => pair.Key.ToString(),
+                pair => pair.Value.ToString()
+            );
         }
 
         private static Dictionary<string, object> SerializeGroup(Type groupType)
@@ -231,11 +244,15 @@ namespace Intersect.Client.Localization
                         break;
 
                     case Dictionary<int, LocalizedString> localizedIntKeyDictionary:
-                        serializedGroup.Add(fieldInfo.Name, localizedIntKeyDictionary.ToDictionary(pair => pair.Key, pair => pair.Value.ToString()));
+                        serializedGroup.Add(fieldInfo.Name, SerializeDictionary(localizedIntKeyDictionary));
                         break;
 
                     case Dictionary<string, LocalizedString> localizedStringKeyDictionary:
-                        serializedGroup.Add(fieldInfo.Name, localizedStringKeyDictionary.ToDictionary(pair => pair.Key, pair => pair.Value.ToString()));
+                        serializedGroup.Add(fieldInfo.Name, SerializeDictionary(localizedStringKeyDictionary));
+                        break;
+
+                    case Dictionary<ChatboxTab, LocalizedString> localizedChatboxTabKeyDictionary:
+                        serializedGroup.Add(fieldInfo.Name, SerializeDictionary(localizedChatboxTabKeyDictionary));
                         break;
                 }
             }
@@ -331,7 +348,7 @@ namespace Intersect.Client.Localization
             public static LocalizedString nocliptip = @"Check to walk through obstacles.";
 
             public static LocalizedString none = @"None";
-            
+
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString OverworldReturn = @"Leave Instance";
 
@@ -1257,7 +1274,7 @@ namespace Intersect.Client.Localization
                 {3, @"Magic Resist:"},
                 {4, @"Speed:"}
             };
-            
+
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString ScalingStat = @"Scaling Stat:";
 
