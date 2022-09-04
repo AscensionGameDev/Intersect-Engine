@@ -16,6 +16,7 @@ internal partial class DescriptorWindow : Window
     {
         DescriptorType = descriptorType;
 
+        SizeConstraintMinimum = new(600, 400);
         Title = Strings.Windows.Descriptor.Title.ToString(DescriptorName);
 
         try

@@ -1,5 +1,3 @@
-using ImGuiNET;
-
 using Intersect.Client.Framework.UserInterface.Components;
 using Intersect.Editor.Localization;
 using Intersect.Time;
@@ -10,13 +8,12 @@ internal partial class LocalizationWindow : Window
 {
     public LocalizationWindow() : base(nameof(LocalizationWindow))
     {
+        SizeConstraintMinimum = new(600, 400);
         Title = Strings.Windows.Localization.Title;
     }
 
     protected override bool LayoutBegin(FrameTime frameTime)
     {
-        var workSize = ImGui.GetWindowViewport().WorkSize;
-        ImGui.SetNextWindowSizeConstraints(new(600, 400), workSize);
         if (!base.LayoutBegin(frameTime))
         {
             return false;

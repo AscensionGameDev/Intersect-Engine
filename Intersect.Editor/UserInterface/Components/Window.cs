@@ -192,8 +192,8 @@ public class Window : Component
 
     protected static bool LayoutChild(FrameTime frameTime, string childId, Vector2 size, Func<FrameTime, bool> doLayout)
     {
-        bool result;
-        if (result = ImGui.BeginChild(childId, size, true, ImGuiWindowFlags.None))
+        bool result = ImGui.BeginChild(childId, size, true, ImGuiWindowFlags.None);
+        if (result)
         {
             try
             {
