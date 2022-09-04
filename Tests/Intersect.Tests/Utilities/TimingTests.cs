@@ -1,10 +1,6 @@
-﻿using Intersect.Extensions;
-using Intersect.Utilities;
-
-using NUnit.Framework;
-
-using System;
+﻿using NUnit.Framework;
 using System.Diagnostics;
+using Intersect.Time;
 
 namespace Intersect.Tests.Server
 {
