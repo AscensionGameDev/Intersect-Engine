@@ -55,34 +55,34 @@ namespace Intersect.Editor.Core
 
                 case Keys.Enter:
 
-                    for (int i = Interface.Interface.InputBlockingElements.Count - 1; i >= 0; i--)
-                    {
-                        try
-                        {
-                            //var iBox = (InputBox)Interface.Interface.InputBlockingElements[i];
-                            //if (iBox != null && !iBox.IsHidden)
-                            //{
-                            //    iBox.okayBtn_Clicked(null, null);
-                            //    canFocusChat = false;
+                    // for (int i = Interface.Interface.InputBlockingElements.Count - 1; i >= 0; i--)
+                    // {
+                    //     try
+                    //     {
+                    //         //var iBox = (InputBox)Interface.Interface.InputBlockingElements[i];
+                    //         //if (iBox != null && !iBox.IsHidden)
+                    //         //{
+                    //         //    iBox.okayBtn_Clicked(null, null);
+                    //         //    canFocusChat = false;
 
-                            //    break;
-                            //}
-                        }
-                        catch { }
+                    //         //    break;
+                    //         //}
+                    //     }
+                    //     catch { }
 
-                        try
-                        {
-                            //var eventWindow = (EventWindow)Interface.Interface.InputBlockingElements[i];
-                            //if (eventWindow != null && !eventWindow.IsHidden && Globals.EventDialogs.Count > 0)
-                            //{
-                            //    eventWindow.EventResponse1_Clicked(null, null);
-                            //    canFocusChat = false;
+                    //     try
+                    //     {
+                    //         //var eventWindow = (EventWindow)Interface.Interface.InputBlockingElements[i];
+                    //         //if (eventWindow != null && !eventWindow.IsHidden && Globals.EventDialogs.Count > 0)
+                    //         //{
+                    //         //    eventWindow.EventResponse1_Clicked(null, null);
+                    //         //    canFocusChat = false;
 
-                            //    break;
-                            //}
-                        }
-                        catch { }
-                    }
+                    //         //    break;
+                    //         //}
+                    //     }
+                    //     catch { }
+                    // }
 
                     break;
             }
