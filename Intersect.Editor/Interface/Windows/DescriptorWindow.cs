@@ -5,6 +5,8 @@ using Intersect.Editor.Networking;
 using Intersect.Enums;
 using Intersect.Localization;
 using Intersect.Models.Interop;
+using Intersect.Network;
+using Intersect.Network.Events;
 using Intersect.Time;
 
 namespace Intersect.Editor.Interface.Windows;
@@ -26,7 +28,17 @@ internal partial class DescriptorWindow : Window
 
         try
         {
+            void RequestDescriptors(INetworkLayerInterface? sender, ConnectionEventArgs? connectionEventArgs)
+            {
             PacketSender.SendOpenEditor(DescriptorType);
+        }
+
+            if (Networking.Network.Connected)
+            {
+                RequestDescriptors(default, default);
+            }
+
+            Networking.Network.Socket.Connected += RequestDescriptors;
         }
         catch
         {
