@@ -104,6 +104,10 @@ namespace Intersect.Client.Interface.Game.Character
 
         int CooldownAmount = 0;
 
+        Label mManaSteal;
+
+        int ManaStealAmount = 0;
+
         //Init
         public CharacterWindow(Canvas gameCanvas)
         {
@@ -176,6 +180,7 @@ namespace Intersect.Client.Interface.Game.Character
             mLuck = new Label(mCharacterWindow, "Luck");
             mTenacity = new Label(mCharacterWindow, "Tenacity");
             mCooldownReduction = new Label(mCharacterWindow, "CooldownReduction");
+            mManaSteal = new Label(mCharacterWindow, "Manasteal");
 
             mCharacterWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
         }
@@ -411,12 +416,14 @@ namespace Intersect.Client.Interface.Game.Character
             TenacityAmount = 0;
             LuckAmount = 0;
             ExtraExpAmount = 0;
+            ManaStealAmount = 0;
 
             mLifeSteal.SetText(Strings.Character.Lifesteal.ToString(0));
             mExtraExp.SetText(Strings.Character.ExtraExp.ToString(0));
             mLuck.SetText(Strings.Character.Luck.ToString(0));
             mTenacity.SetText(Strings.Character.Tenacity.ToString(0));
             mCooldownReduction.SetText(Strings.Character.CooldownReduction.ToString(0));
+            mManaSteal.SetText(Strings.Character.Manasteal.ToString(0));
 
             mAttackSpeed.SetText(Strings.Character.AttackSpeed.ToString(Globals.Me.CalculateAttackTime() / 1000f));
         }
@@ -475,6 +482,11 @@ namespace Intersect.Client.Interface.Game.Character
                     case EffectType.EXP:
                         ExtraExpAmount += item.Effect.Percentage;
                         mExtraExp?.SetText(Strings.Character.ExtraExp.ToString(ExtraExpAmount));
+
+                        break;
+                    case EffectType.Manasteal:
+                        ManaStealAmount += item.Effect.Percentage;
+                        mManaSteal?.SetText(Strings.Character.Manasteal.ToString(ManaStealAmount));
 
                         break;
                 }

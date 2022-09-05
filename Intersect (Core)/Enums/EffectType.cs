@@ -1,4 +1,4 @@
-﻿namespace Intersect.Enums
+namespace Intersect.Enums
 {
 
     public enum EffectType : byte
@@ -14,7 +14,9 @@
 
         Luck = 4,
 
-        EXP = 5
+        EXP = 5,
+
+        Manasteal = 6,
 
     }
 
