@@ -563,7 +563,8 @@ namespace Intersect.Editor.Localization
                                 break;
 
                             default:
-                                throw new NotSupportedException($"Unsupported localization type {fieldInfo.FieldType.FullName}.");
+                                Log.Error(new NotSupportedException($"Unsupported localization type for {groupType.Name}.{fieldInfo.Name}: {fieldInfo.FieldType.FullName}"));
+                                break;
                         }
                     }
                 }
@@ -4035,7 +4036,7 @@ Tick timer saved in server config.json.";
         public partial struct MapProperties
         {
 
-            public static Dictionary<string, string> categories = new Dictionary<string, string>()
+            public static Dictionary<string, LocalizedString> categories = new Dictionary<string, LocalizedString>()
             {
                 {"general", @"General"},
                 {"lighting", @"Lighting"},
@@ -4047,7 +4048,7 @@ Tick timer saved in server config.json.";
                 {"player", @"Player"},
             };
 
-            public static Dictionary<string, string> displaynames = new Dictionary<string, string>()
+            public static Dictionary<string, LocalizedString> displaynames = new Dictionary<string, LocalizedString>()
             {
                 {"ahue", @"AHue"},
                 {"bhue", @"BHue"},
@@ -4076,7 +4077,7 @@ Tick timer saved in server config.json.";
                 {"hideequipment", @"Hide Equipment"},
             };
 
-            public static Dictionary<string, string> descriptions = new Dictionary<string, string>()
+            public static Dictionary<string, LocalizedString> descriptions = new Dictionary<string, LocalizedString>()
             {
                 {
                     "ahuedesc",
