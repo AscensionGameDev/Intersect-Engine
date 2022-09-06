@@ -169,7 +169,8 @@ namespace Intersect.Client.Localization
                                 break;
 
                             default:
-                                throw new NotSupportedException($"Unsupported localization type {fieldInfo.FieldType.FullName}.");
+                                Log.Error(new NotSupportedException($"Unsupported localization type for {groupType.Name}.{fieldInfo.Name}: {fieldInfo.FieldType.FullName}"));
+                                break;
                         }
                     }
                 }
