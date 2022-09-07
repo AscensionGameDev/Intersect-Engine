@@ -12,6 +12,7 @@ using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.General;
 using Intersect.Client.Localization;
 using Intersect.Client.Networking;
+using Intersect.Configuration;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Logging;
@@ -592,11 +593,37 @@ namespace Intersect.Client.Interface.Game.EntityPanel
             }
         }
 
-        private void UpdateGauge(ImagePanel backgroundBar, ImagePanel foregroundBar, float size)
+        private void UpdateGauge(ImagePanel backgroundBar, ImagePanel foregroundBar, float CurrentBarSize, DisplayDirection direction)
         {
-            //StartToEnd
-            foregroundBar.Width = (int) size;
-            foregroundBar.SetTextureRect(0, 0, (int) size, foregroundBar.Height);
+            switch(direction)
+            {
+                case DisplayDirection.StartToEnd:
+                    foregroundBar.Width = (int) CurrentBarSize;
+                    foregroundBar.SetTextureRect(0, 0, (int) CurrentBarSize, foregroundBar.Height);
+                    break;
+
+                case DisplayDirection.EndToStart:
+                    var backgroundWidthFactor = backgroundBar.Width - (int) CurrentBarSize;
+
+                    foregroundBar.X = backgroundBar.X + backgroundWidthFactor;
+                    foregroundBar.Width = (int) CurrentBarSize;
+                    foregroundBar.SetTextureRect(backgroundWidthFactor, 0, (int) CurrentBarSize, foregroundBar.Height);
+                    break;
+
+                case DisplayDirection.TopToBottom:
+                    foregroundBar.Height = (int) CurrentBarSize;
+                    foregroundBar.SetTextureRect(0, 0, foregroundBar.Width, (int) CurrentBarSize);
+                    break;
+
+                case DisplayDirection.BottomToTop:
+                    var backgroundHeightFactor = backgroundBar.Height - (int) CurrentBarSize;
+
+                    foregroundBar.Y = backgroundBar.Y + backgroundHeightFactor;
+                    foregroundBar.Height = (int) CurrentBarSize;
+                    foregroundBar.SetTextureRect(0, backgroundHeightFactor, foregroundBar.Width, (int) CurrentBarSize);
+                    break;
+            }
+
             foregroundBar.IsHidden = false;
         }
 
@@ -604,11 +631,15 @@ namespace Intersect.Client.Interface.Game.EntityPanel
         {
             var targetHpSize = 0f;
             var targetShieldSize = 0f;
+            var clientSetting = ClientConfiguration.Instance.EntityBarDirections[(int) Vitals.Health];
+
             if (MyEntity.MaxVital[(int) Vitals.Health] > 0)
             {
                 var maxVital = MyEntity.MaxVital[(int) Vitals.Health];
-                var vitalSize = HpBackground.Width;
                 var shieldSize = MyEntity.GetShieldSize();
+                var vitalSize = (int) clientSetting < (int) DisplayDirection.TopToBottom
+                    ? HpBackground.Width
+                    : HpBackground.Height;
 
                 if (shieldSize + MyEntity.Vital[(int) Vitals.Health] > maxVital)
                 {
@@ -651,7 +682,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                 }
                 else
                 {
-                    UpdateGauge(null, HpBar, CurHpSize);
+                    UpdateGauge(HpBackground, HpBar, CurHpSize, clientSetting);
                 }
             }
 
@@ -683,9 +714,14 @@ namespace Intersect.Client.Interface.Game.EntityPanel
         private void UpdateMpBar(float elapsedTime, bool instant = false)
         {
             var targetMpSize = 0f;
-            if (MyEntity.MaxVital[(int)Vitals.Mana] > 0)
+            var clientSetting = ClientConfiguration.Instance.EntityBarDirections[(int) Vitals.Mana];
+
+            if (MyEntity.MaxVital[(int) Vitals.Mana] > 0)
             {
-                var vitalSize = MpBackground.Width;
+                var vitalSize = (int) clientSetting < (int) DisplayDirection.TopToBottom
+                    ? MpBackground.Width
+                    : MpBackground.Height;
+
                 targetMpSize = SetTargetBarSize(
                     MyEntity.Vital[(int)Vitals.Mana],
                     MyEntity.MaxVital[(int)Vitals.Mana],
@@ -727,7 +763,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                 }
                 else
                 {
-                    UpdateGauge(null, MpBar, CurMpSize);
+                    UpdateGauge(MpBackground, MpBar, CurMpSize, clientSetting);
                 }
             }
         }
@@ -735,7 +771,10 @@ namespace Intersect.Client.Interface.Game.EntityPanel
         private void UpdateXpBar(float elapsedTime, bool instant = false)
         {
             float targetExpSize = 1;
-            var vitalSize = ExpBackground.Width;
+            var clientSetting = ClientConfiguration.Instance.EntityBarDirections[(int) Vitals.VitalCount];
+            var vitalSize = (int) clientSetting < (int) DisplayDirection.TopToBottom
+                    ? ExpBackground.Width
+                    : ExpBackground.Height;
 
             if (((Player)MyEntity).GetNextLevelExperience() > 0)
             {
@@ -781,7 +820,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
             }
             else
             {
-                UpdateGauge(null, ExpBar, CurExpSize);
+                UpdateGauge(ExpBackground, ExpBar, CurExpSize, clientSetting);
             }
         }
 
