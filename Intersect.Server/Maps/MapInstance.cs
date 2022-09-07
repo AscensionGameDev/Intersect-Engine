@@ -1270,6 +1270,14 @@ namespace Intersect.Server.Maps
 
                     en.Value.StatusesUpdated = false;
                 }
+
+                foreach (var status in en.Value.CachedStatuses)
+                {
+                    if (status.Type == StatusTypes.Shield)
+                    {
+                        statusUpdates.Add(en.Value);
+                    }
+                }
             }
 
             if (vitalUpdates.Count > 0)
