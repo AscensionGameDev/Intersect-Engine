@@ -556,6 +556,50 @@ namespace Intersect.Client.Interface.Game.EntityPanel
             }
         }
 
+        private float SetTargetBarSize(long vital, long maxVital, int vitalSize)
+        {
+            var barfillRatio = (float) vital / maxVital;
+            barfillRatio = Math.Min(1, Math.Max(0, barfillRatio));
+
+            return (float) Math.Ceiling(barfillRatio * vitalSize);
+        }
+
+        private float SetCurrentBarSize(float elapsedTime, bool instant, float targetSize, float currentSize)
+        {
+            if (!instant)
+            {
+                if ((int)targetSize > currentSize)
+                {
+                    currentSize += 100f * elapsedTime;
+                    if (currentSize > (int)targetSize)
+                    {
+                        currentSize = targetSize;
+                    }
+                }
+                else
+                {
+                    currentSize -= 100f * elapsedTime;
+                    if (currentSize < targetSize)
+                    {
+                        currentSize = targetSize;
+                    }
+                }
+                return currentSize;
+            }
+            else
+            {
+                return (int) targetSize;
+            }
+        }
+
+        private void UpdateGauge(ImagePanel backgroundBar, ImagePanel foregroundBar, float size)
+        {
+            //StartToEnd
+            foregroundBar.Width = (int) size;
+            foregroundBar.SetTextureRect(0, 0, (int) size, foregroundBar.Height);
+            foregroundBar.IsHidden = false;
+        }
+
         private void UpdateHpBar(float elapsedTime, bool instant = false)
         {
             var targetHpSize = 0f;
@@ -563,24 +607,18 @@ namespace Intersect.Client.Interface.Game.EntityPanel
             if (MyEntity.MaxVital[(int) Vitals.Health] > 0)
             {
                 var maxVital = MyEntity.MaxVital[(int) Vitals.Health];
+                var vitalSize = HpBackground.Width;
                 var shieldSize = MyEntity.GetShieldSize();
 
-                if (shieldSize + MyEntity.Vital[(int)Vitals.Health] > maxVital)
+                if (shieldSize + MyEntity.Vital[(int) Vitals.Health] > maxVital)
                 {
-                    maxVital = shieldSize + MyEntity.Vital[(int)Vitals.Health];
+                    maxVital = shieldSize + MyEntity.Vital[(int) Vitals.Health];
                 }
 
-                var width = HpBackground.Width;
+                targetHpSize = SetTargetBarSize(MyEntity.Vital[(int) Vitals.Health], maxVital, vitalSize);
+                targetShieldSize = SetTargetBarSize(shieldSize, maxVital, vitalSize);
 
-                var hpfillRatio = (float) MyEntity.Vital[(int) Vitals.Health] / maxVital;
-                hpfillRatio = Math.Min(1, Math.Max(0, hpfillRatio));
-                targetHpSize = (float) Math.Ceiling(hpfillRatio * width);
-
-                var shieldfillRatio = (float) shieldSize / maxVital;
-                shieldfillRatio = Math.Min(1, Math.Max(0, shieldfillRatio));
-                targetShieldSize = (float) Math.Floor(shieldfillRatio * width);
-
-                float hpPercentage = hpfillRatio * 100;
+                float hpPercentage = (MyEntity.Vital[(int)Vitals.Health] / maxVital) * 100;
                 var hpPercentageText = $"{hpPercentage:0.##}%";
                 var hpValueText = Strings.EntityBox.vital0val.ToString(
                     MyEntity.Vital[(int)Vitals.Health], MyEntity.MaxVital[(int)Vitals.Health]
@@ -603,31 +641,9 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                 targetHpSize = HpBackground.Width;
             }
 
-            if ((int)targetHpSize != CurHpSize)
+            if ((int) targetHpSize != CurHpSize)
             {
-                if (!instant)
-                {
-                    if ((int)targetHpSize > CurHpSize)
-                    {
-                        CurHpSize += 100f * elapsedTime;
-                        if (CurHpSize > (int)targetHpSize)
-                        {
-                            CurHpSize = targetHpSize;
-                        }
-                    }
-                    else
-                    {
-                        CurHpSize -= 100f * elapsedTime;
-                        if (CurHpSize < targetHpSize)
-                        {
-                            CurHpSize = targetHpSize;
-                        }
-                    }
-                }
-                else
-                {
-                    CurHpSize = (int)targetHpSize;
-                }
+                CurHpSize = SetCurrentBarSize(elapsedTime, instant, targetHpSize, CurHpSize);
 
                 if (CurHpSize == 0)
                 {
@@ -635,37 +651,13 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                 }
                 else
                 {
-                    HpBar.Width = (int)CurHpSize;
-                    HpBar.SetTextureRect(0, 0, (int)CurHpSize, HpBar.Height);
-                    HpBar.IsHidden = false;
+                    UpdateGauge(null, HpBar, CurHpSize);
                 }
             }
 
             if ((int)targetShieldSize != CurShieldSize)
             {
-                if (!instant)
-                {
-                    if ((int)targetShieldSize > CurShieldSize)
-                    {
-                        CurShieldSize += 100f * elapsedTime;
-                        if (CurShieldSize > (int)targetShieldSize)
-                        {
-                            CurShieldSize = targetShieldSize;
-                        }
-                    }
-                    else
-                    {
-                        CurShieldSize -= 100f * elapsedTime;
-                        if (CurShieldSize < targetShieldSize)
-                        {
-                            CurShieldSize = targetShieldSize;
-                        }
-                    }
-                }
-                else
-                {
-                    CurShieldSize = (int)targetShieldSize;
-                }
+                CurShieldSize = SetCurrentBarSize(elapsedTime, instant, targetShieldSize, CurShieldSize);
 
                 if (CurShieldSize == 0)
                 {
@@ -693,8 +685,13 @@ namespace Intersect.Client.Interface.Game.EntityPanel
             var targetMpSize = 0f;
             if (MyEntity.MaxVital[(int)Vitals.Mana] > 0)
             {
-                targetMpSize = MyEntity.Vital[(int) Vitals.Mana] / (float) MyEntity.MaxVital[(int) Vitals.Mana];
-                targetMpSize = Math.Min(1, Math.Max(0, targetMpSize));
+                var vitalSize = MpBackground.Width;
+                targetMpSize = SetTargetBarSize(
+                    MyEntity.Vital[(int)Vitals.Mana],
+                    MyEntity.MaxVital[(int)Vitals.Mana],
+                    vitalSize
+                );
+
                 float mpPercentage = targetMpSize * 100;
                 var mpPercentageText = $"{mpPercentage:0.##}%";
                 var mpValueText = Strings.EntityBox.vital1val.ToString(
@@ -722,29 +719,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
 
             if (!targetMpSize.Equals(CurMpSize))
             {
-                if (!instant)
-                {
-                    if ((int)targetMpSize > CurMpSize)
-                    {
-                        CurMpSize += 100f * elapsedTime;
-                        if (CurMpSize > (int)targetMpSize)
-                        {
-                            CurMpSize = targetMpSize;
-                        }
-                    }
-                    else
-                    {
-                        CurMpSize -= 100f * elapsedTime;
-                        if (CurMpSize < targetMpSize)
-                        {
-                            CurMpSize = targetMpSize;
-                        }
-                    }
-                }
-                else
-                {
-                    CurMpSize = (int)targetMpSize;
-                }
+                CurMpSize = SetCurrentBarSize(elapsedTime, instant, targetMpSize, CurMpSize);
 
                 if (CurMpSize == 0)
                 {
@@ -752,9 +727,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                 }
                 else
                 {
-                    MpBar.Width = (int)CurMpSize;
-                    MpBar.SetTextureRect(0, 0, (int)CurMpSize, MpBar.Height);
-                    MpBar.IsHidden = false;
+                    UpdateGauge(null, MpBar, CurMpSize);
                 }
             }
         }
@@ -762,10 +735,16 @@ namespace Intersect.Client.Interface.Game.EntityPanel
         private void UpdateXpBar(float elapsedTime, bool instant = false)
         {
             float targetExpSize = 1;
-            if (((Player) MyEntity).GetNextLevelExperience() > 0)
+            var vitalSize = ExpBackground.Width;
+
+            if (((Player)MyEntity).GetNextLevelExperience() > 0)
             {
-                targetExpSize = (float)((Player)MyEntity).Experience /
-                                 (float)((Player)MyEntity).GetNextLevelExperience();
+                targetExpSize = SetTargetBarSize(
+                    ((Player)MyEntity).Experience,
+                    ((Player)MyEntity).GetNextLevelExperience(),
+                    vitalSize
+                );
+
                 float expPercentage = targetExpSize * 100;
                 var expPercentageText = $"{expPercentage:0.##}%";
                 var expValueText = Strings.EntityBox.expval.ToString(
@@ -789,35 +768,12 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                 ExpLbl.Text = Strings.EntityBox.maxlevel;
             }
 
-            targetExpSize *= ExpBackground.Width;
             if (Math.Abs((int) targetExpSize - CurExpSize) < 0.01)
             {
                 return;
             }
 
-            if (!instant)
-            {
-                if ((int)targetExpSize > CurExpSize)
-                {
-                    CurExpSize += 100f * elapsedTime;
-                    if (CurExpSize > (int)targetExpSize)
-                    {
-                        CurExpSize = targetExpSize;
-                    }
-                }
-                else
-                {
-                    CurExpSize -= 100f * elapsedTime;
-                    if (CurExpSize < targetExpSize)
-                    {
-                        CurExpSize = targetExpSize;
-                    }
-                }
-            }
-            else
-            {
-                CurExpSize = (int)targetExpSize;
-            }
+            CurExpSize = SetCurrentBarSize(elapsedTime, instant, targetExpSize, CurExpSize);
 
             if (CurExpSize == 0)
             {
@@ -825,9 +781,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
             }
             else
             {
-                ExpBar.Width = (int) CurExpSize;
-                ExpBar.SetTextureRect(0, 0, (int) CurExpSize, ExpBar.Height);
-                ExpBar.IsHidden = false;
+                UpdateGauge(null, ExpBar, CurExpSize);
             }
         }
 
