@@ -593,34 +593,93 @@ namespace Intersect.Client.Interface.Game.EntityPanel
             }
         }
 
-        private void UpdateGauge(ImagePanel backgroundBar, ImagePanel foregroundBar, float CurrentBarSize, DisplayDirection direction)
+        private void UpdateGauge(
+            ImagePanel backgroundBar,
+            ImagePanel foregroundBar,
+            float CurrentBarSize,
+            DisplayDirection direction,
+            bool isShield = false
+        )
         {
-            switch(direction)
+            //If this method is called to update the shield, we need to invert the directions
+            if (isShield)
+            {
+                switch(direction)
+                {
+                    case DisplayDirection.StartToEnd:
+                        direction = DisplayDirection.EndToStart;
+                        foregroundBar.X = backgroundBar.X;
+                        break;
+                    case DisplayDirection.EndToStart:
+                        direction = DisplayDirection.StartToEnd;
+                        foregroundBar.X = backgroundBar.X;
+                        break;
+                    case DisplayDirection.TopToBottom:
+                        direction = DisplayDirection.BottomToTop;
+                        foregroundBar.X = backgroundBar.X;
+                        break;
+                    case DisplayDirection.BottomToTop:
+                        direction = DisplayDirection.TopToBottom;
+                        foregroundBar.X = backgroundBar.X;
+                        break;
+                }
+            }
+
+            var backgroundWidthFactor = backgroundBar.Width - (int)CurrentBarSize;
+            var backgroundHeightFactor = backgroundBar.Height - (int)CurrentBarSize;
+
+            switch (direction)
             {
                 case DisplayDirection.StartToEnd:
-                    foregroundBar.Width = (int) CurrentBarSize;
-                    foregroundBar.SetTextureRect(0, 0, (int) CurrentBarSize, foregroundBar.Height);
+                    foregroundBar.SetBounds(
+                        foregroundBar.X,
+                        foregroundBar.Y,
+                        (int) CurrentBarSize,
+                        foregroundBar.Height
+                    );
+
+                    foregroundBar.SetTextureRect(
+                        0, 0, (int) CurrentBarSize, foregroundBar.Height
+                    );
                     break;
 
                 case DisplayDirection.EndToStart:
-                    var backgroundWidthFactor = backgroundBar.Width - (int) CurrentBarSize;
+                    foregroundBar.SetBounds(
+                        backgroundBar.X + backgroundWidthFactor,
+                        foregroundBar.Y,
+                        (int) CurrentBarSize,
+                        foregroundBar.Height
+                    );
 
-                    foregroundBar.X = backgroundBar.X + backgroundWidthFactor;
-                    foregroundBar.Width = (int) CurrentBarSize;
-                    foregroundBar.SetTextureRect(backgroundWidthFactor, 0, (int) CurrentBarSize, foregroundBar.Height);
+                    foregroundBar.SetTextureRect(
+                        backgroundWidthFactor, 0, (int) CurrentBarSize, foregroundBar.Height
+                    );
                     break;
 
                 case DisplayDirection.TopToBottom:
-                    foregroundBar.Height = (int) CurrentBarSize;
-                    foregroundBar.SetTextureRect(0, 0, foregroundBar.Width, (int) CurrentBarSize);
+                    foregroundBar.SetBounds(
+                        foregroundBar.X,
+                        foregroundBar.Y,
+                        foregroundBar.Width,
+                        (int) CurrentBarSize
+                    );
+
+                    foregroundBar.SetTextureRect(
+                        0, 0, foregroundBar.Width, (int) CurrentBarSize
+                    );
                     break;
 
                 case DisplayDirection.BottomToTop:
-                    var backgroundHeightFactor = backgroundBar.Height - (int) CurrentBarSize;
+                    foregroundBar.SetBounds(
+                        foregroundBar.X,
+                        backgroundBar.Y + backgroundHeightFactor,
+                        foregroundBar.Width,
+                        (int) CurrentBarSize
+                    );
 
-                    foregroundBar.Y = backgroundBar.Y + backgroundHeightFactor;
-                    foregroundBar.Height = (int) CurrentBarSize;
-                    foregroundBar.SetTextureRect(0, backgroundHeightFactor, foregroundBar.Width, (int) CurrentBarSize);
+                    foregroundBar.SetTextureRect(
+                        0, backgroundHeightFactor, foregroundBar.Width, (int) CurrentBarSize
+                    );
                     break;
             }
 
@@ -669,7 +728,9 @@ namespace Intersect.Client.Interface.Game.EntityPanel
             else
             {
                 HpLbl.Text = Strings.EntityBox.vital0val.ToString(0, 0);
-                targetHpSize = HpBackground.Width;
+                targetHpSize = (int) clientSetting < (int) DisplayDirection.TopToBottom
+                    ? HpBackground.Width
+                    : HpBackground.Height;
             }
 
             if ((int) targetHpSize != CurHpSize)
@@ -696,18 +757,8 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                 }
                 else
                 {
-                    ShieldBar.Width = (int)CurShieldSize;
-                    ShieldBar.SetBounds(CurHpSize + HpBar.X, HpBar.Y, CurShieldSize, ShieldBar.Height);
-                    ShieldBar.SetTextureRect(
-                        (int)(HpBackground.Width - CurShieldSize), 0, (int)CurShieldSize, ShieldBar.Height
-                    );
-
-                    ShieldBar.IsHidden = false;
+                    UpdateGauge(HpBackground, ShieldBar, CurShieldSize, clientSetting, true);
                 }
-            }
-            else
-            {
-                ShieldBar.SetPosition(HpBar.X + CurHpSize, HpBar.Y);
             }
         }
 
@@ -750,7 +801,9 @@ namespace Intersect.Client.Interface.Game.EntityPanel
             else
             {
                 MpLbl.Text = Strings.EntityBox.vital1val.ToString(0, 0);
-                targetMpSize = MpBackground.Width;
+                targetMpSize = (int) clientSetting < (int) DisplayDirection.TopToBottom
+                    ? MpBackground.Width
+                    : MpBackground.Height;
             }
 
             if (!targetMpSize.Equals(CurMpSize))
