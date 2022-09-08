@@ -164,13 +164,35 @@ namespace Intersect.Client.Localization
                                 DeserializeDictionary(missingStrings, groupType, fieldInfo, fieldValue, serializedGroup, serializedValue, stringDictionary);
                                 break;
 
-                            case Dictionary <ChatboxTab, LocalizedString> chatboxTabDictionary:
-                                DeserializeDictionary(missingStrings, groupType, fieldInfo, fieldValue, serializedGroup, serializedValue, chatboxTabDictionary);
-                                break;
-
                             default:
-                                Log.Error(new NotSupportedException($"Unsupported localization type for {groupType.Name}.{fieldInfo.Name}: {fieldInfo.FieldType.FullName}"));
-                                break;
+                                {
+                                    var fieldType = fieldInfo.FieldType;
+                                    if (!fieldType.IsGenericType || typeof(Dictionary<,>) != fieldType.GetGenericTypeDefinition())
+                                    {
+                                        Log.Error(new NotSupportedException($"Unsupported localization type for {groupType.Name}.{fieldInfo.Name}: {fieldInfo.FieldType.FullName}"));
+                                        break;
+                                    }
+
+                                    var parameters = fieldType.GenericTypeArguments;
+                                    var localizedParameterType = parameters.Last();
+                                    if (localizedParameterType != typeof(LocalizedString))
+                                    {
+                                        Log.Error(new NotSupportedException($"Unsupported localization dictionary value type for {groupType.Name}.{fieldInfo.Name}: {localizedParameterType.FullName}"));
+                                        break;
+                                    }
+
+                                    _ = _methodInfoDeserializeDictionary.MakeGenericMethod(parameters.First()).Invoke(default, new object[]
+                                    {
+                                                missingStrings,
+                                                groupType,
+                                                fieldInfo,
+                                                fieldValue,
+                                                serializedGroup,
+                                                serializedValue,
+                                                fieldValue
+                                    });
+                                    break;
+                                }
                         }
                     }
                 }
@@ -189,6 +211,11 @@ namespace Intersect.Client.Localization
 
             PostLoad();
         }
+
+        private static readonly MethodInfo _methodInfoDeserializeDictionary = typeof(Strings).GetMethod(
+                                                nameof(DeserializeDictionary),
+                                                BindingFlags.NonPublic | BindingFlags.Static
+                                            ) ?? throw new InvalidOperationException();
 
         private static void DeserializeDictionary<TKey>(
             List<string> missingStrings,
