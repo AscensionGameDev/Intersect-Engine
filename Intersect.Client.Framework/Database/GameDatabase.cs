@@ -2,18 +2,15 @@ using System;
 
 namespace Intersect.Client.Framework.Database
 {
-
+    /// <summary>
+    /// User preferences database for client settings.
+    /// </summary>
     public abstract partial class GameDatabase
     {
-        // Registry Database for Client Settings Preferences.
-
         public bool FullScreen { get; set; }
-
-        public bool HideOthersOnWindowOpen { get; set; }
 
         public bool TargetAccountDirection { get; set; }
 
-        //Preferences
         public int MusicVolume { get; set; }
 
         public int SoundVolume { get; set; }
@@ -26,17 +23,25 @@ namespace Intersect.Client.Framework.Database
 
         public bool StickyTarget { get; set; }
 
-        public bool FriendOverheadInfo;
+        public bool FriendOverheadInfo { get; set; }
 
-        public bool GuildMemberOverheadInfo;
+        public bool GuildMemberOverheadInfo { get; set; }
 
-        public bool MyOverheadInfo;
+        public bool MyOverheadInfo { get; set; }
 
-        public bool NpcOverheadInfo;
+        public bool NpcOverheadInfo { get; set; }
 
-        public bool PartyMemberOverheadInfo;
+        public bool PartyMemberOverheadInfo { get; set; }
 
-        public bool PlayerOverheadInfo;
+        public bool PlayerOverheadInfo { get; set; }
+
+        public bool HideOthersOnWindowOpen { get; set; }
+
+        public bool UiExpToPercentage { get; set; }
+
+        public bool UiHpToPercentage { get; set; }
+
+        public bool UiMpToPercentage { get; set; }
 
         public abstract void DeletePreference(string key);
 
@@ -76,6 +81,9 @@ namespace Intersect.Client.Framework.Database
             NpcOverheadInfo = LoadPreference("NpcOverheadInfo", true);
             PartyMemberOverheadInfo = LoadPreference("PartyMemberOverheadInfo", true);
             PlayerOverheadInfo = LoadPreference("PlayerOverheadInfo", true);
+            UiExpToPercentage = LoadPreference("UiExpToPercentage", true);
+            UiHpToPercentage = LoadPreference("UiHpToPercentage", false);
+            UiMpToPercentage = LoadPreference("UiMpToPercentage", false);
         }
 
         public virtual void SavePreferences()
@@ -95,6 +103,9 @@ namespace Intersect.Client.Framework.Database
             SavePreference("NpcOverheadInfo", NpcOverheadInfo.ToString());
             SavePreference("PartyMemberOverheadInfo", PartyMemberOverheadInfo.ToString());
             SavePreference("PlayerOverheadInfo", PlayerOverheadInfo.ToString());
+            SavePreference("UiExpToPercentage", UiExpToPercentage.ToString());
+            SavePreference("UiHpToPercentage", UiHpToPercentage.ToString());
+            SavePreference("UiMpToPercentage", UiMpToPercentage.ToString());
         }
 
         public abstract bool LoadConfig();
