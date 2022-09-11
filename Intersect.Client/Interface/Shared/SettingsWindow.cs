@@ -77,11 +77,11 @@ namespace Intersect.Client.Interface.Shared
 
         private readonly LabeledCheckBox mAutoCloseWindowsCheckbox;
 
-        private readonly LabeledCheckBox mUiExpToPercentageCheckbox;
+        private readonly LabeledCheckBox mShowExperienceAsPercentageCheckbox;
         
-        private readonly LabeledCheckBox mUiHpToPercentageCheckbox;
+        private readonly LabeledCheckBox mShowHealthAsPercentageCheckbox;
         
-        private readonly LabeledCheckBox mUiMpToPercentageCheckbox;
+        private readonly LabeledCheckBox mShowManaAsPercentageCheckbox;
 
         // Video Settings.
         private readonly ImagePanel mResolutionBackground;
@@ -211,12 +211,12 @@ namespace Intersect.Client.Interface.Shared
             mAutoCloseWindowsCheckbox.Text = Strings.Settings.AutoCloseWindows;
 
             // Game Settings - Toggle for: User Interface EXP/HP/MP to Percentage.
-            mUiExpToPercentageCheckbox = new LabeledCheckBox(mGameSettingsContainer, "UiExpToPercentageCheckbox");
-            mUiExpToPercentageCheckbox.Text = Strings.Settings.UiExpToPercentage;
-            mUiHpToPercentageCheckbox = new LabeledCheckBox(mGameSettingsContainer, "UiHpToPercentageCheckbox");
-            mUiHpToPercentageCheckbox.Text = Strings.Settings.UiHpToPercentage;
-            mUiMpToPercentageCheckbox = new LabeledCheckBox(mGameSettingsContainer, "UiMpToPercentageCheckbox");
-            mUiMpToPercentageCheckbox.Text = Strings.Settings.UiMpToPercentage;
+            mShowExperienceAsPercentageCheckbox = new LabeledCheckBox(mGameSettingsContainer, "ShowExperienceAsPercentageCheckbox");
+            mShowExperienceAsPercentageCheckbox.Text = Strings.Settings.ShowExperienceAsPercentage;
+            mShowHealthAsPercentageCheckbox = new LabeledCheckBox(mGameSettingsContainer, "ShowHealthAsPercentageCheckbox");
+            mShowHealthAsPercentageCheckbox.Text = Strings.Settings.ShowHealthAsPercentage;
+            mShowManaAsPercentageCheckbox = new LabeledCheckBox(mGameSettingsContainer, "ShowManaAsPercentageCheckbox");
+            mShowManaAsPercentageCheckbox.Text = Strings.Settings.ShowManaAsPercentage;
             
             #endregion
 
@@ -568,9 +568,9 @@ namespace Intersect.Client.Interface.Shared
             mPartyMemberOverheadInfoCheckbox.IsChecked = Globals.Database.PartyMemberOverheadInfo;
             mPlayerOverheadInfoCheckbox.IsChecked = Globals.Database.PlayerOverheadInfo;
             mAutoCloseWindowsCheckbox.IsChecked = Globals.Database.HideOthersOnWindowOpen;
-            mUiExpToPercentageCheckbox.IsChecked = Globals.Database.UiExpToPercentage;
-            mUiHpToPercentageCheckbox.IsChecked = Globals.Database.UiHpToPercentage;
-            mUiMpToPercentageCheckbox.IsChecked = Globals.Database.UiMpToPercentage;
+            mShowExperienceAsPercentageCheckbox.IsChecked = Globals.Database.ShowExperienceAsPercentage;
+            mShowHealthAsPercentageCheckbox.IsChecked = Globals.Database.ShowHealthAsPercentage;
+            mShowManaAsPercentageCheckbox.IsChecked = Globals.Database.ShowManaAsPercentage;
 
             // Video Settings.
             mFullscreenCheckbox.IsChecked = Globals.Database.FullScreen;
@@ -739,9 +739,9 @@ namespace Intersect.Client.Interface.Shared
             Globals.Database.PartyMemberOverheadInfo = mPartyMemberOverheadInfoCheckbox.IsChecked;
             Globals.Database.PlayerOverheadInfo = mPlayerOverheadInfoCheckbox.IsChecked;
             Globals.Database.HideOthersOnWindowOpen = mAutoCloseWindowsCheckbox.IsChecked;
-            Globals.Database.UiExpToPercentage = mUiExpToPercentageCheckbox.IsChecked;
-            Globals.Database.UiHpToPercentage = mUiHpToPercentageCheckbox.IsChecked;
-            Globals.Database.UiMpToPercentage = mUiMpToPercentageCheckbox.IsChecked;
+            Globals.Database.ShowExperienceAsPercentage = mShowExperienceAsPercentageCheckbox.IsChecked;
+            Globals.Database.ShowHealthAsPercentage = mShowHealthAsPercentageCheckbox.IsChecked;
+            Globals.Database.ShowManaAsPercentage = mShowManaAsPercentageCheckbox.IsChecked;
 
 
             // Video Settings.

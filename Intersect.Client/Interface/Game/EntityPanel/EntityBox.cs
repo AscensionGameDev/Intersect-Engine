@@ -586,22 +586,20 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                 targetShieldWidth = (float) Math.Floor(shieldfillRatio * width);
 
                 float hpPercentage = hpfillRatio * 100;
-                var hpPercentageText = hpPercentage == 0 ? $"{hpPercentage}%" : $"{hpPercentage:0.0}%";
+                var hpPercentageText = $"{hpPercentage:0.##}%";
                 var hpValueText = Strings.EntityBox.vital0val.ToString(
                     MyEntity.Vital[(int)Vitals.Health], MyEntity.MaxVital[(int)Vitals.Health]
                 );
 
-                if (Globals.Database.UiHpToPercentage)
+                if (Globals.Database.ShowHealthAsPercentage)
                 {
                     HpLbl.Text = hpPercentageText;
                     HpBackground.SetToolTipText(hpValueText);
-                    HpBar.SetToolTipText(hpValueText);
                 }
                 else
                 {
                     HpLbl.Text = hpValueText;
                     HpBackground.SetToolTipText(hpPercentageText);
-                    HpBar.SetToolTipText(hpPercentageText);
                 }
             }
             else
@@ -704,22 +702,20 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                 targetMpWidth = MyEntity.Vital[(int)Vitals.Mana] / (float)MyEntity.MaxVital[(int)Vitals.Mana];
                 targetMpWidth = Math.Min(1, Math.Max(0, targetMpWidth));
                 float mpPercentage = targetMpWidth * 100;
-                var mpPercentageText = mpPercentage == 0 ? $"{mpPercentage}%" : $"{mpPercentage:0.0}%";
+                var mpPercentageText = $"{mpPercentage:0.##}%";
                 var mpValueText = Strings.EntityBox.vital1val.ToString(
                     MyEntity.Vital[(int)Vitals.Mana], MyEntity.MaxVital[(int)Vitals.Mana]
                 );
 
-                if (Globals.Database.UiMpToPercentage)
+                if (Globals.Database.ShowManaAsPercentage)
                 {
                     MpLbl.Text = mpPercentageText;
                     MpBackground.SetToolTipText(mpValueText);
-                    MpBar.SetToolTipText(mpValueText);
                 }
                 else
                 {
                     MpLbl.Text = mpValueText;
                     MpBackground.SetToolTipText(mpPercentageText);
-                    MpBar.SetToolTipText(mpPercentageText);
                 }
 
                 targetMpWidth *= MpBackground.Width;
@@ -778,22 +774,20 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                 targetExpWidth = (float)((Player)MyEntity).Experience /
                                  (float)((Player)MyEntity).GetNextLevelExperience();
                 float expPercentage = targetExpWidth * 100;
-                var expPercentageText = expPercentage == 0 ? $"{expPercentage}%" : $"{expPercentage:0.00}%";
+                var expPercentageText = $"{expPercentage:0.##}%";
                 var expValueText = Strings.EntityBox.expval.ToString(
                     ((Player)MyEntity)?.Experience, ((Player)MyEntity)?.GetNextLevelExperience()
                 );
 
-                if (Globals.Database.UiExpToPercentage)
+                if (Globals.Database.ShowExperienceAsPercentage)
                 {
                     ExpLbl.Text = expPercentageText;
                     ExpBackground.SetToolTipText(expValueText);
-                    ExpBar.SetToolTipText(expValueText);
                 }
                 else
                 {
                     ExpLbl.Text = expValueText;
                     ExpBackground.SetToolTipText(expPercentageText);
-                    ExpBar.SetToolTipText(expPercentageText);
                 }
             }
             else

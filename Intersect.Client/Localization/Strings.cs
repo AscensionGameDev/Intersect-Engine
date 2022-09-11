@@ -1789,13 +1789,13 @@ namespace Intersect.Client.Localization
             public static LocalizedString Vsync = @"V-Sync";
             
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString UiExpToPercentage = @"EXP to Percentage";
+            public static LocalizedString ShowExperienceAsPercentage = @"Experience as percentage";
             
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString UiHpToPercentage = @"HP to Percentage";
+            public static LocalizedString ShowHealthAsPercentage = @"Health as percentage";
             
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString UiMpToPercentage = @"MP to Percentage";
+            public static LocalizedString ShowManaAsPercentage = @"Mana as percentage";
         }
 
         public partial struct Parties
