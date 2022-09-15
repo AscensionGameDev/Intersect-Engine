@@ -2,18 +2,17 @@ using System;
 
 namespace Intersect.Client.Framework.Database
 {
-
+    /// <summary>
+    /// User preferences database for client settings.
+    /// </summary>
     public abstract partial class GameDatabase
     {
-        // Registry Database for Client Settings Preferences.
-
         public bool FullScreen { get; set; }
 
         public bool HideOthersOnWindowOpen { get; set; }
 
         public bool TargetAccountDirection { get; set; }
 
-        //Preferences
         public int MusicVolume { get; set; }
 
         public int SoundVolume { get; set; }
@@ -26,17 +25,23 @@ namespace Intersect.Client.Framework.Database
 
         public bool StickyTarget { get; set; }
 
-        public bool FriendOverheadInfo;
+        public bool FriendOverheadInfo { get; set; }
 
-        public bool GuildMemberOverheadInfo;
+        public bool GuildMemberOverheadInfo { get; set; }
 
-        public bool MyOverheadInfo;
+        public bool MyOverheadInfo { get; set; }
 
-        public bool NpcOverheadInfo;
+        public bool NpcOverheadInfo { get; set; }
 
-        public bool PartyMemberOverheadInfo;
+        public bool PartyMemberOverheadInfo { get; set; }
 
-        public bool PlayerOverheadInfo;
+        public bool PlayerOverheadInfo { get; set; }
+
+        public bool ShowExperienceAsPercentage { get; set; }
+
+        public bool ShowHealthAsPercentage { get; set; }
+
+        public bool ShowManaAsPercentage { get; set; }
 
         public abstract void DeletePreference(string key);
 
@@ -58,43 +63,54 @@ namespace Intersect.Client.Framework.Database
             return (T) Convert.ChangeType(value, typeof(T));
         }
 
-        //Load all preferences when the game starts
+        /// <summary>
+        /// Load all settings preferences when the game starts.
+        /// </summary>
         public virtual void LoadPreferences()
         {
-            MusicVolume = LoadPreference("MusicVolume", 25);
-            SoundVolume = LoadPreference("SoundVolume", 25);
-            TargetResolution = LoadPreference("Resolution", 0);
-            TargetFps = LoadPreference("Fps", 0);
-            FullScreen = LoadPreference("Fullscreen", false);
-            EnableLighting = LoadPreference("EnableLighting", true);
-            HideOthersOnWindowOpen = LoadPreference("HideOthersOnWindowOpen", true);
-            TargetAccountDirection = LoadPreference("TargetAccountDirection", false);
-            StickyTarget = LoadPreference("StickyTarget", true);
-            FriendOverheadInfo = LoadPreference("FriendOverheadInfo", true);
-            GuildMemberOverheadInfo = LoadPreference("GuildMemberOverheadInfo", true);
-            MyOverheadInfo = LoadPreference("MyOverheadInfo", true);
-            NpcOverheadInfo = LoadPreference("NpcOverheadInfo", true);
-            PartyMemberOverheadInfo = LoadPreference("PartyMemberOverheadInfo", true);
-            PlayerOverheadInfo = LoadPreference("PlayerOverheadInfo", true);
+            MusicVolume = LoadPreference(nameof(MusicVolume), 25);
+            SoundVolume = LoadPreference(nameof(SoundVolume), 25);
+            TargetResolution = LoadPreference(nameof(TargetResolution), 0);
+            TargetFps = LoadPreference(nameof(TargetFps), 0);
+            FullScreen = LoadPreference(nameof(FullScreen), false);
+            EnableLighting = LoadPreference(nameof(EnableLighting), true);
+            HideOthersOnWindowOpen = LoadPreference(nameof(HideOthersOnWindowOpen), true);
+            TargetAccountDirection = LoadPreference(nameof(TargetAccountDirection), false);
+            StickyTarget = LoadPreference(nameof(StickyTarget), true);
+            FriendOverheadInfo = LoadPreference(nameof(FriendOverheadInfo), true);
+            GuildMemberOverheadInfo = LoadPreference(nameof(GuildMemberOverheadInfo), true);
+            MyOverheadInfo = LoadPreference(nameof(MyOverheadInfo), true);
+            NpcOverheadInfo = LoadPreference(nameof(NpcOverheadInfo), true);
+            PartyMemberOverheadInfo = LoadPreference(nameof(PartyMemberOverheadInfo), true);
+            PlayerOverheadInfo = LoadPreference(nameof(PlayerOverheadInfo), true);
+            ShowExperienceAsPercentage = LoadPreference(nameof(ShowExperienceAsPercentage), true);
+            ShowHealthAsPercentage = LoadPreference(nameof(ShowHealthAsPercentage), false);
+            ShowManaAsPercentage = LoadPreference(nameof(ShowManaAsPercentage), false);
         }
 
+        /// <summary>
+        /// Saves all settings when applying preferences.
+        /// </summary>
         public virtual void SavePreferences()
         {
-            SavePreference("MusicVolume", MusicVolume.ToString());
-            SavePreference("SoundVolume", SoundVolume.ToString());
-            SavePreference("Fullscreen", FullScreen.ToString());
-            SavePreference("Resolution", TargetResolution.ToString());
-            SavePreference("Fps", TargetFps.ToString());
-            SavePreference("EnableLighting", EnableLighting.ToString());
-            SavePreference("HideOthersOnWindowOpen", HideOthersOnWindowOpen.ToString());
-            SavePreference("TargetAccountDirection", TargetAccountDirection.ToString());
-            SavePreference("StickyTarget", StickyTarget.ToString());
-            SavePreference("FriendOverheadInfo", FriendOverheadInfo.ToString());
-            SavePreference("GuildMemberOverheadInfo", GuildMemberOverheadInfo.ToString());
-            SavePreference("MyOverheadInfo", MyOverheadInfo.ToString());
-            SavePreference("NpcOverheadInfo", NpcOverheadInfo.ToString());
-            SavePreference("PartyMemberOverheadInfo", PartyMemberOverheadInfo.ToString());
-            SavePreference("PlayerOverheadInfo", PlayerOverheadInfo.ToString());
+            SavePreference(nameof(MusicVolume), MusicVolume);
+            SavePreference(nameof(SoundVolume), SoundVolume);
+            SavePreference(nameof(TargetResolution), TargetResolution);
+            SavePreference(nameof(TargetFps), TargetFps);
+            SavePreference(nameof(FullScreen), FullScreen);
+            SavePreference(nameof(EnableLighting), EnableLighting);
+            SavePreference(nameof(HideOthersOnWindowOpen), HideOthersOnWindowOpen);
+            SavePreference(nameof(TargetAccountDirection), TargetAccountDirection);
+            SavePreference(nameof(StickyTarget), StickyTarget);
+            SavePreference(nameof(FriendOverheadInfo), FriendOverheadInfo);
+            SavePreference(nameof(GuildMemberOverheadInfo), GuildMemberOverheadInfo);
+            SavePreference(nameof(MyOverheadInfo), MyOverheadInfo);
+            SavePreference(nameof(NpcOverheadInfo), NpcOverheadInfo);
+            SavePreference(nameof(PartyMemberOverheadInfo), PartyMemberOverheadInfo);
+            SavePreference(nameof(PlayerOverheadInfo), PlayerOverheadInfo);
+            SavePreference(nameof(ShowExperienceAsPercentage), ShowExperienceAsPercentage);
+            SavePreference(nameof(ShowHealthAsPercentage), ShowHealthAsPercentage);
+            SavePreference(nameof(ShowManaAsPercentage), ShowManaAsPercentage);
         }
 
         public abstract bool LoadConfig();

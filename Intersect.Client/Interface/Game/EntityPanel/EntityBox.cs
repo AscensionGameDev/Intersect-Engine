@@ -585,10 +585,22 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                 shieldfillRatio = Math.Min(1, Math.Max(0, shieldfillRatio));
                 targetShieldWidth = (float) Math.Floor(shieldfillRatio * width);
 
-                //Fix the Labels
-                HpLbl.Text = Strings.EntityBox.vital0val.ToString(
-                    MyEntity.Vital[(int) Vitals.Health], MyEntity.MaxVital[(int) Vitals.Health]
+                float hpPercentage = hpfillRatio * 100;
+                var hpPercentageText = $"{hpPercentage:0.##}%";
+                var hpValueText = Strings.EntityBox.vital0val.ToString(
+                    MyEntity.Vital[(int)Vitals.Health], MyEntity.MaxVital[(int)Vitals.Health]
                 );
+
+                if (Globals.Database.ShowHealthAsPercentage)
+                {
+                    HpLbl.Text = hpPercentageText;
+                    HpBackground.SetToolTipText(hpValueText);
+                }
+                else
+                {
+                    HpLbl.Text = hpValueText;
+                    HpBackground.SetToolTipText(hpPercentageText);
+                }
             }
             else
             {
@@ -684,13 +696,27 @@ namespace Intersect.Client.Interface.Game.EntityPanel
         private void UpdateMpBar(float elapsedTime, bool instant = false)
         {
             var targetMpWidth = 0f;
-            if (MyEntity.MaxVital[(int) Vitals.Mana] > 0)
+            
+            if (MyEntity.MaxVital[(int)Vitals.Mana] > 0)
             {
-                targetMpWidth = MyEntity.Vital[(int) Vitals.Mana] / (float) MyEntity.MaxVital[(int) Vitals.Mana];
+                targetMpWidth = MyEntity.Vital[(int)Vitals.Mana] / (float)MyEntity.MaxVital[(int)Vitals.Mana];
                 targetMpWidth = Math.Min(1, Math.Max(0, targetMpWidth));
-                MpLbl.Text = Strings.EntityBox.vital1val.ToString(
-                    MyEntity.Vital[(int) Vitals.Mana], MyEntity.MaxVital[(int) Vitals.Mana]
+                float mpPercentage = targetMpWidth * 100;
+                var mpPercentageText = $"{mpPercentage:0.##}%";
+                var mpValueText = Strings.EntityBox.vital1val.ToString(
+                    MyEntity.Vital[(int)Vitals.Mana], MyEntity.MaxVital[(int)Vitals.Mana]
                 );
+
+                if (Globals.Database.ShowManaAsPercentage)
+                {
+                    MpLbl.Text = mpPercentageText;
+                    MpBackground.SetToolTipText(mpValueText);
+                }
+                else
+                {
+                    MpLbl.Text = mpValueText;
+                    MpBackground.SetToolTipText(mpPercentageText);
+                }
 
                 targetMpWidth *= MpBackground.Width;
             }
@@ -700,7 +726,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                 targetMpWidth = MpBackground.Width;
             }
 
-            if ((int)targetMpWidth != CurMpWidth)
+            if (!targetMpWidth.Equals(CurMpWidth))
             {
                 if (!instant)
                 {
@@ -742,14 +768,27 @@ namespace Intersect.Client.Interface.Game.EntityPanel
         private void UpdateXpBar(float elapsedTime, bool instant = false)
         {
             float targetExpWidth = 1;
-            if (((Player) MyEntity).GetNextLevelExperience() > 0)
-            {
-                targetExpWidth = (float) ((Player) MyEntity).Experience /
-                                 (float) ((Player) MyEntity).GetNextLevelExperience();
 
-                ExpLbl.Text = Strings.EntityBox.expval.ToString(
-                    ((Player) MyEntity)?.Experience, ((Player) MyEntity)?.GetNextLevelExperience()
+            if (((Player)MyEntity).GetNextLevelExperience() > 0)
+            {
+                targetExpWidth = (float)((Player)MyEntity).Experience /
+                                 (float)((Player)MyEntity).GetNextLevelExperience();
+                float expPercentage = targetExpWidth * 100;
+                var expPercentageText = $"{expPercentage:0.##}%";
+                var expValueText = Strings.EntityBox.expval.ToString(
+                    ((Player)MyEntity)?.Experience, ((Player)MyEntity)?.GetNextLevelExperience()
                 );
+
+                if (Globals.Database.ShowExperienceAsPercentage)
+                {
+                    ExpLbl.Text = expPercentageText;
+                    ExpBackground.SetToolTipText(expValueText);
+                }
+                else
+                {
+                    ExpLbl.Text = expValueText;
+                    ExpBackground.SetToolTipText(expPercentageText);
+                }
             }
             else
             {

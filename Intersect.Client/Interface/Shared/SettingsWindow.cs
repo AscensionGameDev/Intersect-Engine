@@ -77,6 +77,12 @@ namespace Intersect.Client.Interface.Shared
 
         private readonly LabeledCheckBox mAutoCloseWindowsCheckbox;
 
+        private readonly LabeledCheckBox mShowExperienceAsPercentageCheckbox;
+        
+        private readonly LabeledCheckBox mShowHealthAsPercentageCheckbox;
+        
+        private readonly LabeledCheckBox mShowManaAsPercentageCheckbox;
+
         // Video Settings.
         private readonly ImagePanel mResolutionBackground;
 
@@ -193,17 +199,25 @@ namespace Intersect.Client.Interface.Shared
             mPlayerOverheadInfoCheckbox = new LabeledCheckBox(mGameSettingsContainer, "PlayerOverheadInfoCheckbox");
             mPlayerOverheadInfoCheckbox.Text = Strings.Settings.PlayerOverheadInfo;
 
-            // Game Settings - Interface.
+            // Game Settings - User Interface.
             mInterfaceSettings = new Button(mGameSettingsContainer, "InterfaceSettings");
             mInterfaceSettings.Text = Strings.Settings.InterfaceSettings;
             mInterfaceSettingsHelper =
                 new Button(mGameSettingsContainer, "InterfaceSettingsHelper");
             mInterfaceSettingsHelper.SetToolTipText(Strings.Settings.InterfaceSettingsHelper);
 
-            // Game Settings - Toggle for: Interface Auto-close Windows.
+            // Game Settings - Toggle for: User Interface Auto-close Windows.
             mAutoCloseWindowsCheckbox = new LabeledCheckBox(mGameSettingsContainer, "AutoCloseWindowsCheckbox");
             mAutoCloseWindowsCheckbox.Text = Strings.Settings.AutoCloseWindows;
 
+            // Game Settings - Toggle for: User Interface EXP/HP/MP to Percentage.
+            mShowExperienceAsPercentageCheckbox = new LabeledCheckBox(mGameSettingsContainer, "ShowExperienceAsPercentageCheckbox");
+            mShowExperienceAsPercentageCheckbox.Text = Strings.Settings.ShowExperienceAsPercentage;
+            mShowHealthAsPercentageCheckbox = new LabeledCheckBox(mGameSettingsContainer, "ShowHealthAsPercentageCheckbox");
+            mShowHealthAsPercentageCheckbox.Text = Strings.Settings.ShowHealthAsPercentage;
+            mShowManaAsPercentageCheckbox = new LabeledCheckBox(mGameSettingsContainer, "ShowManaAsPercentageCheckbox");
+            mShowManaAsPercentageCheckbox.Text = Strings.Settings.ShowManaAsPercentage;
+            
             #endregion
 
             #region InitVideoSettings
@@ -546,7 +560,22 @@ namespace Intersect.Client.Interface.Shared
                 mSettingsPanel.MakeModal(true);
             }
 
-            mKeybindingEditControls = new Controls(Controls.ActiveControls);
+            // Game Settings.
+            mFriendOverheadInfoCheckbox.IsChecked = Globals.Database.FriendOverheadInfo;
+            mGuildMemberOverheadInfoCheckbox.IsChecked = Globals.Database.GuildMemberOverheadInfo;
+            mMyOverheadInfoCheckbox.IsChecked = Globals.Database.MyOverheadInfo;
+            mNpcOverheadInfoCheckbox.IsChecked = Globals.Database.NpcOverheadInfo;
+            mPartyMemberOverheadInfoCheckbox.IsChecked = Globals.Database.PartyMemberOverheadInfo;
+            mPlayerOverheadInfoCheckbox.IsChecked = Globals.Database.PlayerOverheadInfo;
+            mAutoCloseWindowsCheckbox.IsChecked = Globals.Database.HideOthersOnWindowOpen;
+            mShowExperienceAsPercentageCheckbox.IsChecked = Globals.Database.ShowExperienceAsPercentage;
+            mShowHealthAsPercentageCheckbox.IsChecked = Globals.Database.ShowHealthAsPercentage;
+            mShowManaAsPercentageCheckbox.IsChecked = Globals.Database.ShowManaAsPercentage;
+
+            // Video Settings.
+            mFullscreenCheckbox.IsChecked = Globals.Database.FullScreen;
+            mLightingEnabledCheckbox.IsChecked = Globals.Database.EnableLighting;
+
             if (Graphics.Renderer.GetValidVideoModes().Count > 0)
             {
                 string resolutionLabel;
@@ -601,19 +630,6 @@ namespace Intersect.Client.Interface.Shared
                     break;
             }
 
-            // Game Settings.
-            mFriendOverheadInfoCheckbox.IsChecked = Globals.Database.FriendOverheadInfo;
-            mGuildMemberOverheadInfoCheckbox.IsChecked = Globals.Database.GuildMemberOverheadInfo;
-            mMyOverheadInfoCheckbox.IsChecked = Globals.Database.MyOverheadInfo;
-            mNpcOverheadInfoCheckbox.IsChecked = Globals.Database.NpcOverheadInfo;
-            mPartyMemberOverheadInfoCheckbox.IsChecked = Globals.Database.PartyMemberOverheadInfo;
-            mPlayerOverheadInfoCheckbox.IsChecked = Globals.Database.PlayerOverheadInfo;
-
-            // Video Settings.
-            mAutoCloseWindowsCheckbox.IsChecked = Globals.Database.HideOthersOnWindowOpen;
-            mFullscreenCheckbox.IsChecked = Globals.Database.FullScreen;
-            mLightingEnabledCheckbox.IsChecked = Globals.Database.EnableLighting;
-
             // Audio Settings.
             mPreviousMusicVolume = Globals.Database.MusicVolume;
             mPreviousSoundVolume = Globals.Database.SoundVolume;
@@ -621,6 +637,9 @@ namespace Intersect.Client.Interface.Shared
             mSoundSlider.Value = Globals.Database.SoundVolume;
             mMusicLabel.Text = Strings.Settings.MusicVolume.ToString((int)mMusicSlider.Value);
             mSoundLabel.Text = Strings.Settings.SoundVolume.ToString((int)mSoundSlider.Value);
+
+            // Control Settings.
+            mKeybindingEditControls = new Controls(Controls.ActiveControls);
 
             // Settings Window is not hidden anymore.
             mSettingsPanel.Show();
@@ -711,24 +730,42 @@ namespace Intersect.Client.Interface.Shared
         private void SettingsApplyBtn_Clicked(Base sender, ClickedEventArgs arguments)
         {
             var shouldReset = false;
+
+            // Game Settings.
+            Globals.Database.FriendOverheadInfo = mFriendOverheadInfoCheckbox.IsChecked;
+            Globals.Database.GuildMemberOverheadInfo = mGuildMemberOverheadInfoCheckbox.IsChecked;
+            Globals.Database.MyOverheadInfo = mMyOverheadInfoCheckbox.IsChecked;
+            Globals.Database.NpcOverheadInfo = mNpcOverheadInfoCheckbox.IsChecked;
+            Globals.Database.PartyMemberOverheadInfo = mPartyMemberOverheadInfoCheckbox.IsChecked;
+            Globals.Database.PlayerOverheadInfo = mPlayerOverheadInfoCheckbox.IsChecked;
+            Globals.Database.HideOthersOnWindowOpen = mAutoCloseWindowsCheckbox.IsChecked;
+            Globals.Database.ShowExperienceAsPercentage = mShowExperienceAsPercentageCheckbox.IsChecked;
+            Globals.Database.ShowHealthAsPercentage = mShowHealthAsPercentageCheckbox.IsChecked;
+            Globals.Database.ShowManaAsPercentage = mShowManaAsPercentageCheckbox.IsChecked;
+
+
+            // Video Settings.
             var resolution = mResolutionList.SelectedItem;
             var validVideoModes = Graphics.Renderer.GetValidVideoModes();
-            var targetResolution = validVideoModes?.FindIndex(videoMode => string.Equals(videoMode, resolution.Text)) ?? -1;
+            var targetResolution = validVideoModes?.FindIndex(videoMode =>
+                string.Equals(videoMode, resolution.Text)) ?? -1;
+            var newFps = 0;
+
+            Globals.Database.EnableLighting = mLightingEnabledCheckbox.IsChecked;
 
             if (targetResolution > -1)
             {
-                shouldReset = Globals.Database.TargetResolution != targetResolution || Graphics.Renderer.HasOverrideResolution;
+                shouldReset = Globals.Database.TargetResolution != targetResolution ||
+                              Graphics.Renderer.HasOverrideResolution;
                 Globals.Database.TargetResolution = targetResolution;
             }
 
-            Globals.Database.HideOthersOnWindowOpen = mAutoCloseWindowsCheckbox.IsChecked;
             if (Globals.Database.FullScreen != mFullscreenCheckbox.IsChecked)
             {
                 Globals.Database.FullScreen = mFullscreenCheckbox.IsChecked;
                 shouldReset = true;
             }
 
-            var newFps = 0;
             if (mFpsList.SelectedItem.Text == Strings.Settings.UnlimitedFps)
             {
                 newFps = -1;
@@ -756,44 +793,16 @@ namespace Intersect.Client.Interface.Shared
                 Globals.Database.TargetFps = newFps;
             }
 
-            Globals.Database.EnableLighting = mLightingEnabledCheckbox.IsChecked;
-
-            if (Globals.Database.FriendOverheadInfo != mFriendOverheadInfoCheckbox.IsChecked)
-            {
-                Globals.Database.FriendOverheadInfo = mFriendOverheadInfoCheckbox.IsChecked;
-            }
-
-            if (Globals.Database.GuildMemberOverheadInfo != mGuildMemberOverheadInfoCheckbox.IsChecked)
-            {
-                Globals.Database.GuildMemberOverheadInfo = mGuildMemberOverheadInfoCheckbox.IsChecked;
-            }
-
-            if (Globals.Database.MyOverheadInfo != mMyOverheadInfoCheckbox.IsChecked)
-            {
-                Globals.Database.MyOverheadInfo = mMyOverheadInfoCheckbox.IsChecked;
-            }
-
-            if (Globals.Database.NpcOverheadInfo != mNpcOverheadInfoCheckbox.IsChecked)
-            {
-                Globals.Database.NpcOverheadInfo = mNpcOverheadInfoCheckbox.IsChecked;
-            }
-
-            if (Globals.Database.PartyMemberOverheadInfo != mPartyMemberOverheadInfoCheckbox.IsChecked)
-            {
-                Globals.Database.PartyMemberOverheadInfo = mPartyMemberOverheadInfoCheckbox.IsChecked;
-            }
-
-            if (Globals.Database.PlayerOverheadInfo != mPlayerOverheadInfoCheckbox.IsChecked)
-            {
-                Globals.Database.PlayerOverheadInfo = mPlayerOverheadInfoCheckbox.IsChecked;
-            }
-
-            // Save Settings.
+            // Audio Settings.
             Globals.Database.MusicVolume = (int)mMusicSlider.Value;
             Globals.Database.SoundVolume = (int)mSoundSlider.Value;
             Audio.UpdateGlobalVolume();
+
+            // Control Settings.
             Controls.ActiveControls = mKeybindingEditControls;
             Controls.ActiveControls.Save();
+
+            // Save Preferences.
             Globals.Database.SavePreferences();
 
             if (shouldReset)
@@ -803,7 +812,7 @@ namespace Intersect.Client.Interface.Shared
                 Graphics.Renderer.Init();
             }
 
-            // Hide our current window.
+            // Hide the currently opened window.
             Hide();
         }
 
