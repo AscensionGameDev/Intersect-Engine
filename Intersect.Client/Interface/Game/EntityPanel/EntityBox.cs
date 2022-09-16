@@ -694,25 +694,28 @@ namespace Intersect.Client.Interface.Game.EntityPanel
 
             if (MyEntity.MaxVital[(int) Vitals.Health] > 0)
             {
-                var maxVital = MyEntity.MaxVital[(int) Vitals.Health];
+                var entityVital = MyEntity.Vital[(int)Vitals.Health];
+                var entityMaxVital = MyEntity.MaxVital[(int) Vitals.Health];
+
                 var shieldSize = MyEntity.GetShieldSize();
                 var vitalSize = (int) clientSetting < (int) DisplayDirection.TopToBottom
                     ? HpBackground.Width
                     : HpBackground.Height;
 
-                if (shieldSize + MyEntity.Vital[(int) Vitals.Health] > maxVital)
+                //We have to get the maxVital value before being changed by the shield
+                //Shield changes vitalMax only on client, showing incorrect values
+                float hpPercentage = entityVital / (float)entityMaxVital * 100;
+
+                if (shieldSize + entityVital > entityMaxVital)
                 {
-                    maxVital = shieldSize + MyEntity.Vital[(int) Vitals.Health];
+                    entityMaxVital = shieldSize + entityVital;
                 }
 
-                targetHpSize = SetTargetBarSize(MyEntity.Vital[(int) Vitals.Health], maxVital, vitalSize);
-                targetShieldSize = SetTargetBarSize(shieldSize, maxVital, vitalSize);
+                targetHpSize = SetTargetBarSize(entityVital, entityMaxVital, vitalSize);
+                targetShieldSize = SetTargetBarSize(shieldSize, entityMaxVital, vitalSize);
 
-                float hpPercentage = (MyEntity.Vital[(int)Vitals.Health] / maxVital) * 100;
                 var hpPercentageText = $"{hpPercentage:0.##}%";
-                var hpValueText = Strings.EntityBox.vital0val.ToString(
-                    MyEntity.Vital[(int)Vitals.Health], MyEntity.MaxVital[(int)Vitals.Health]
-                );
+                var hpValueText = Strings.EntityBox.vital0val.ToString(entityVital, entityMaxVital);
 
                 if (Globals.Database.ShowHealthAsPercentage)
                 {
@@ -769,21 +772,19 @@ namespace Intersect.Client.Interface.Game.EntityPanel
 
             if (MyEntity.MaxVital[(int) Vitals.Mana] > 0)
             {
+
+                var entityVital = MyEntity.Vital[(int)Vitals.Mana];
+                var entityMaxVital = MyEntity.MaxVital[(int)Vitals.Mana];
+
                 var vitalSize = (int) clientSetting < (int) DisplayDirection.TopToBottom
                     ? MpBackground.Width
                     : MpBackground.Height;
 
-                targetMpSize = SetTargetBarSize(
-                    MyEntity.Vital[(int)Vitals.Mana],
-                    MyEntity.MaxVital[(int)Vitals.Mana],
-                    vitalSize
-                );
+                targetMpSize = SetTargetBarSize(entityVital, entityMaxVital, vitalSize);
 
-                float mpPercentage = targetMpSize * 100;
+                float mpPercentage = entityVital / (float)entityMaxVital * 100;
                 var mpPercentageText = $"{mpPercentage:0.##}%";
-                var mpValueText = Strings.EntityBox.vital1val.ToString(
-                    MyEntity.Vital[(int)Vitals.Mana], MyEntity.MaxVital[(int)Vitals.Mana]
-                );
+                var mpValueText = Strings.EntityBox.vital1val.ToString(entityVital, entityMaxVital);
 
                 if (Globals.Database.ShowManaAsPercentage)
                 {
@@ -795,8 +796,6 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                     MpLbl.Text = mpValueText;
                     MpBackground.SetToolTipText(mpPercentageText);
                 }
-
-                targetMpSize *= MpBackground.Width;
             }
             else
             {
@@ -806,7 +805,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                     : MpBackground.Height;
             }
 
-            if (!targetMpSize.Equals(CurMpSize))
+            if ((int)targetMpSize != CurMpSize)
             {
                 CurMpSize = SetCurrentBarSize(elapsedTime, instant, targetMpSize, CurMpSize);
 
@@ -825,19 +824,21 @@ namespace Intersect.Client.Interface.Game.EntityPanel
         {
             float targetExpSize = 1;
             var clientSetting = ClientConfiguration.Instance.EntityBarDirections[(int) Vitals.VitalCount];
-            var vitalSize = (int) clientSetting < (int) DisplayDirection.TopToBottom
-                    ? ExpBackground.Width
-                    : ExpBackground.Height;
 
             if (((Player)MyEntity).GetNextLevelExperience() > 0)
             {
+                var vitalSize = (int)clientSetting < (int)DisplayDirection.TopToBottom
+                    ? ExpBackground.Width
+                    : ExpBackground.Height;
+
                 targetExpSize = SetTargetBarSize(
                     ((Player)MyEntity).Experience,
                     ((Player)MyEntity).GetNextLevelExperience(),
                     vitalSize
                 );
 
-                float expPercentage = targetExpSize * 100;
+                float expPercentage =
+                    ((Player)MyEntity).Experience / (float)((Player)MyEntity).GetNextLevelExperience() * 100;
                 var expPercentageText = $"{expPercentage:0.##}%";
                 var expValueText = Strings.EntityBox.expval.ToString(
                     ((Player)MyEntity)?.Experience, ((Player)MyEntity)?.GetNextLevelExperience()
