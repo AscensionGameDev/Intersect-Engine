@@ -1719,47 +1719,22 @@ namespace Intersect.Client.Localization
             public static LocalizedString Fps90 = @"90";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString FriendOverheadInfo = @"Friends";
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString Fullscreen = @"Fullscreen";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString GameSettingsTab = @"Game";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString GuildMemberOverheadInfo = @"Guild";
+            public static LocalizedString InformationSettings = @"Information";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString InterfaceSettings = @"Interface";
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString InterfaceSettingsHelper = @"Game Interface related settings.";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString KeyBindingSettingsTab = @"Controls";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString MusicVolume = @"Music Volume: {00}%";
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString MyOverheadInfo = @"Myself";
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString NpcOverheadInfo = @"NPCs";
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString OverheadInformationSettings = @"Overhead Information";
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString OverheadInfoSettingsHelper =
-                @"Overhead information may still be viewed by positioning the cursor over the hidden cases.";
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString PartyMemberOverheadInfo = @"Party";
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString PlayerOverheadInfo = @"Players";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString Resolution = @"Resolution:";
@@ -1774,7 +1749,40 @@ namespace Intersect.Client.Localization
             public static LocalizedString SoundVolume = @"Sound Volume: {00}%";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString ShowExperienceAsPercentage = @"Show Experience as percentage";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString ShowFriendOverheadInformation = @"Show Friend Overhead Information";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString ShowGuildOverheadInformation = @"Show Guild Overhead Information";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString ShowHealthAsPercentage = @"Show Health as percentage";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString ShowNpcOverheadInformation = @"Show Npc Overhead Information";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString ShowManaAsPercentage = @"Show Mana as percentage";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString ShowMyOverheadInformation = @"Show My Overhead Information";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString ShowPartyOverheadInformation = @"Show Party Overhead Information";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString ShowPlayerOverheadInformation = @"Show Players Overhead Information";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString StickyTarget = @"Sticky Target";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString TargetFps = @"Target FPS:";
+            
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString TargetingSettings = @"Targeting";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString Title = @"Settings";
@@ -1787,15 +1795,6 @@ namespace Intersect.Client.Localization
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString Vsync = @"V-Sync";
-            
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString ShowExperienceAsPercentage = @"Show Experience as percentage";
-            
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString ShowHealthAsPercentage = @"Show Health as percentage";
-            
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString ShowManaAsPercentage = @"Show Mana as percentage";
         }
 
         public partial struct Parties

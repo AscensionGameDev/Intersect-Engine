@@ -76,7 +76,7 @@ namespace Intersect.Client.Framework.Database
             EnableLighting = LoadPreference(nameof(EnableLighting), true);
             HideOthersOnWindowOpen = LoadPreference(nameof(HideOthersOnWindowOpen), true);
             TargetAccountDirection = LoadPreference(nameof(TargetAccountDirection), false);
-            StickyTarget = LoadPreference(nameof(StickyTarget), true);
+            StickyTarget = LoadPreference(nameof(StickyTarget), false);
             FriendOverheadInfo = LoadPreference(nameof(FriendOverheadInfo), true);
             GuildMemberOverheadInfo = LoadPreference(nameof(GuildMemberOverheadInfo), true);
             MyOverheadInfo = LoadPreference(nameof(MyOverheadInfo), true);
