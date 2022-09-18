@@ -138,7 +138,7 @@ internal partial class DescriptorWindow
 
     protected virtual bool LayoutLookup(FrameTime frameTime)
     {
-        var contentArea = ImGui.GetWindowContentRegionMax();
+        var contentArea = ImGui.GetWindowContentRegionMax() - ImGui.GetWindowContentRegionMin();
         var windowPadding = ImGui.GetStyle().WindowPadding;
 
         ImGui.BeginChild(
@@ -158,8 +158,9 @@ internal partial class DescriptorWindow
         var inputSize = ImGui.GetItemRectSize();
         var lookupTreeContainerSize = inputSize with
         {
-            Y = contentArea.Y - (ImGui.GetCursorPosY() + windowPadding.Y + inputSize.Y)
+            Y = contentArea.Y - ImGui.GetCursorPosY()
         };
+
         _ = ImGui.BeginChild("###descriptor_lookup_tree", lookupTreeContainerSize, true);
 
         var storeFolders = ObjectStore<Folder>.Instance
@@ -196,144 +197,6 @@ internal partial class DescriptorWindow
         }
 
         ImGui.EndChild();
-        ImGui.EndChild();
-
-        ImGui.SameLine();
-
-        var editorContentArea = ImGui.GetWindowContentRegionMax();
-        editorContentArea -= ImGui.GetCursorPos();
-        ImGui.BeginChild("###descriptor_editor", editorContentArea, true);
-
-        if (_selectedObjectId != default)
-        {
-            var selectedDescriptor = descriptorLookup.Get<Descriptor>(_selectedObjectId);
-
-            foreach (var groupInteropInfo in ObjectInteropModel.Groups)
-            {
-                ImGui.BeginChild(
-                    $"descriptor_editor_group_{groupInteropInfo.Name?.Get(Strings.Root)}",
-                    new(),
-                    true,
-                    ImGuiWindowFlags.AlwaysAutoResize
-                );
-
-                var descriptorName = DescriptorType.GetLocalizedName(Strings.Descriptors);
-
-                foreach (var propertyInteropInfo in groupInteropInfo.Properties)
-                {
-                    try
-                    {
-                        var propertyName = propertyInteropInfo.PropertyInfo.GetFullName();
-                        var propertyValue = propertyInteropInfo.DelegateGet.DynamicInvoke(selectedDescriptor);
-                        var propertyId = $"descriptor_editor_{selectedDescriptor.Id}_{propertyName}";
-
-                        var inputAttribute = propertyInteropInfo.Input;
-                        var label = propertyInteropInfo.Label?.Get(Strings.Root);
-                        if (label != default)
-                        {
-                            ImGui.Text(label.ToString(descriptorName));
-                            ImGui.SameLine();
-                        }
-
-                        switch (inputAttribute)
-                        {
-                            case null:
-                                ImGui.Text($"{propertyValue}");
-                                break;
-
-                            case InputLookupAttribute inputLookupAttribute:
-                            {
-                                // https://gist.github.com/harold-b/7dcc02557c2b15d76c61fde1186e31d0
-                                var selectedCombo = 0;
-                                // ImGui.BeginCombo(
-                                //     $"{inputLookupAttribute.ForeignKeyName}###{propertyId}",
-                                //     propertyValue?.ToString()
-                                // );
-                                ImGui.Combo(
-                                    $"###{propertyId}",
-                                    ref selectedCombo,
-                                    new[] { propertyValue?.ToString() ?? "Test" },
-                                    1
-                                );
-                                break;
-                            }
-
-                            case InputTextAttribute inputTextAttribute:
-                            {
-                                var hint = inputTextAttribute.GetHint(Strings.Root);
-                                var inputTextValue = propertyValue as string ?? propertyValue?.ToString();
-                                var textInputFlags = ImGuiInputTextFlags.AutoSelectAll;
-                                var maxLength = inputTextAttribute.MaximumLength;
-                                if (propertyInteropInfo.IsReadOnly || inputTextAttribute.ReadOnly)
-                                {
-                                    textInputFlags |= ImGuiInputTextFlags.ReadOnly;
-                                }
-
-                                var result = hint == default
-                                    ? ImGui.InputText(
-                                        $"###{propertyId}",
-                                        ref inputTextValue,
-                                        maxLength,
-                                        textInputFlags
-                                    )
-                                    : ImGui.InputTextWithHint(
-                                        $"###{propertyId}",
-                                        hint,
-                                        ref inputTextValue,
-                                        maxLength,
-                                        textInputFlags
-                                    );
-
-                                propertyInteropInfo.DelegateSet?.DynamicInvoke(selectedDescriptor, inputTextValue);
-                                break;
-                            }
-                        }
-
-                        var tooltip = propertyInteropInfo.Tooltip?.Get(Strings.Root);
-                        if (tooltip != default && ImGui.IsItemHovered())
-                        {
-                            ImGui.BeginTooltip();
-                            ImGui.Text(tooltip.ToString(descriptorName));
-                            ImGui.EndTooltip();
-                        }
-                    }
-                    catch (Exception exception)
-                    {
-                        Log.Error(exception);
-                        throw;
-                    }
-                }
-
-                ImGui.EndChild();
-            }
-            // var propertyInfos = DescriptorType.GetObjectType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
-            //
-            // foreach (var propertyInfo in propertyInfos)
-            // {
-            //     if (propertyInfo.PropertyType == typeof(string))
-            //     {
-            //         var inputValue = propertyInfo.GetValue(selectedDescriptor) as string;
-            //         var textInputFlags = ImGuiInputTextFlags.AutoSelectAll;
-            //         if (propertyInfo.SetMethod == default)
-            //         {
-            //             textInputFlags |= ImGuiInputTextFlags.ReadOnly;
-            //         }
-            //         ImGui.Text(propertyInfo.Name);
-            //         _ = ImGui.InputTextWithHint(
-            //             $"###{propertyInfo.GetFullName()}+{selectedDescriptor.Id}",
-            //             "hint",
-            //             ref inputValue,
-            //             255,
-            //             textInputFlags
-            //         );
-            //         if (propertyInfo.SetMethod != default)
-            //         {
-            //             propertyInfo.SetValue(selectedDescriptor, inputValue);
-            //         }
-            //     }
-            // }
-        }
-
         ImGui.EndChild();
 
         return true;

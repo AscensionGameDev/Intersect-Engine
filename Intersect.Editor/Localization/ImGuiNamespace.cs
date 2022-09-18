@@ -10,6 +10,9 @@ internal partial class ImGuiNamespace : LocaleNamespace
     public readonly LocalizedString ImGuiDebugger = @"ImGui Debugger";
 
     [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+    public readonly LocalizedString ShowDemoWindow = @"Show Demo Window";
+
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
     public readonly LocalizedString ShowMetricsWindow = @"Show Metrics Window";
 
     [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]

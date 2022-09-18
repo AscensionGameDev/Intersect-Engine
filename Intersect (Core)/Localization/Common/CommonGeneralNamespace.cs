@@ -26,6 +26,9 @@ public partial class CommonGeneralNamespace : LocaleNamespace
     public readonly LocalizedString IdTooltipOfTheX = @"The ID of the {00:lower}.";
 
     [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+    public readonly LocalizedString Miscellaneous = @"Miscellaneous";
+
+    [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
     public readonly LocalizedString MissingTranslation = @"Missing Translation";
 
     [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]

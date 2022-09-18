@@ -1,4 +1,5 @@
 using System.Reflection;
+using ImGuiNET;
 using Intersect.Client.Framework.UserInterface.Components;
 using Intersect.Editor.Localization;
 using Intersect.Editor.Networking;
@@ -30,8 +31,8 @@ internal partial class DescriptorWindow : Window
         {
             void RequestDescriptors(INetworkLayerInterface? sender, ConnectionEventArgs? connectionEventArgs)
             {
-            PacketSender.SendOpenEditor(DescriptorType);
-        }
+                PacketSender.SendOpenEditor(DescriptorType);
+            }
 
             if (Networking.Network.Connected)
             {
@@ -60,6 +61,13 @@ internal partial class DescriptorWindow : Window
         }
 
         if (!LayoutLookup(frameTime))
+        {
+            return false;
+        }
+
+        ImGui.SameLine();
+
+        if (!LayoutEditor(frameTime))
         {
             return false;
         }

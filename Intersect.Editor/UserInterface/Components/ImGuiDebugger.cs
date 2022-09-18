@@ -9,6 +9,7 @@ namespace Intersect.Editor.UserInterface.Components;
 
 public class ImGuiDebugger : Component
 {
+    private bool _showDemoWindow;
     private bool _showMetricsWindow;
     private bool _showStackToolWindow;
     private bool _showStyleEditor;
@@ -17,6 +18,11 @@ public class ImGuiDebugger : Component
 
     protected override bool LayoutBegin(FrameTime frameTime)
     {
+        if (_showDemoWindow)
+        {
+            ImGui.ShowDemoWindow();
+        }
+
         if (_showMetricsWindow)
         {
             ImGui.ShowMetricsWindow();
@@ -46,6 +52,13 @@ public class ImGuiDebugger : Component
 #if DEBUG
         ImGuiDebugger imGuiDebugger = new();
 
+        var menuItemDemoWindow = new MenuItemOption
+        {
+            Name = Strings.ImGui.ShowDemoWindow
+        };
+
+        menuItemDemoWindow.Selected += (_, _) => imGuiDebugger._showDemoWindow = !imGuiDebugger._showDemoWindow;
+
         var menuItemMetricsWindow = new MenuItemOption
         {
             Name = Strings.ImGui.ShowMetricsWindow
@@ -70,8 +83,9 @@ public class ImGuiDebugger : Component
         menuItem = new MenuItem
         {
             Name = Strings.General.OpenX.ToString(Strings.ImGui.ImGuiDebugger),
-            Items = new List<IMenuItem>
+            Items = new()
             {
+                menuItemDemoWindow,
                 menuItemMetricsWindow,
                 menuItemShowStackToolWindow,
                 menuItemShowStyleEditor,
