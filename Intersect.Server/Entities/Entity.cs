@@ -1951,23 +1951,23 @@ namespace Intersect.Server.Entities
                     );
                 }
 
-                var manasteal = thisPlayer.GetEquipmentBonusEffect(EffectType.Manasteal) / 100f;
-                var manaRecovered = Math.Min(enemyVitals[(int) Vitals.Mana], manasteal * baseDamage);
+                var manasteal = (thisPlayer.GetEquipmentBonusEffect(EffectType.Manasteal) / 100f) * baseDamage;
+                var manaRecovered = Math.Min(enemyVitals[(int) Vitals.Mana], manasteal);
 
                 if (manaRecovered > 0) //Don't send any +0 msg's.
                 {
-                    AddVital(Vitals.Mana, (int) manaRecovered);
+                    AddVital(Vitals.Mana, (int) manasteal);
                     PacketSender.SendActionMsg(
-                        this, Strings.Combat.addsymbol + (int) manaRecovered, CustomColors.Combat.AddMana
+                        this, Strings.Combat.addsymbol + (int) manasteal, CustomColors.Combat.AddMana
                     );
 
-                    enemy.SubVital(Vitals.Mana, (int)manaRecovered);
+                    enemy.SubVital(Vitals.Mana, (int) manaRecovered);
 
                     //Whether the attacking player should recover more mana than the enemy has
                     //the rest will damage the enemy's health
-                    if (manasteal * baseDamage > enemyVitals[(int) Vitals.Mana])
+                    if (manasteal > enemyVitals[(int) Vitals.Mana])
                     {
-                        var amountToRemove = Math.Floor(manasteal * baseDamage - manaRecovered);
+                        var amountToRemove = Math.Floor(manasteal - manaRecovered);
                         if(amountToRemove > 0)
                         {
                             enemy.SubVital(Vitals.Health, (int) amountToRemove);
@@ -1980,12 +1980,16 @@ namespace Intersect.Server.Entities
                 else
                 {
                     //If enemy has 0 mana, all value will be dealt as damage
-                    var amountToRemove = Math.Floor(manasteal * baseDamage);
-                    if (amountToRemove > 0)
+                    if (manasteal > 0)
                     {
-                        enemy.SubVital(Vitals.Health, (int)amountToRemove);
+                        enemy.SubVital(Vitals.Health, (int) manasteal);
                         PacketSender.SendActionMsg(
-                            enemy, Strings.Combat.removesymbol + amountToRemove, CustomColors.Combat.TrueDamage
+                            enemy, Strings.Combat.removesymbol + manasteal, CustomColors.Combat.TrueDamage
+                        );
+
+                        AddVital(Vitals.Mana, (int)Math.Min(enemy.GetVital(Vitals.Health), manasteal));
+                        PacketSender.SendActionMsg(
+                            this, Strings.Combat.addsymbol + (int) manasteal, CustomColors.Combat.AddMana
                         );
                     }
                 }
