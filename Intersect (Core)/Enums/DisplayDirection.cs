@@ -3,25 +3,28 @@ using Newtonsoft.Json.Converters;
 namespace Intersect.Enums
 {
     /// <summary>
-    /// Defines the way the bar will be rendered
+    /// Defines the direction from which bars are filled up.
     /// </summary>
     [JsonConverter(typeof(StringEnumConverter))]
     public enum DisplayDirection
     {
         /// <summary>
-        /// The bar will render from start (empty life) to end (full life)
+        /// <para>The bar will be filled from:</para> start (left: empty life) to end (right: full life).
         /// </summary>
         StartToEnd = 0,
+
         /// <summary>
-        /// The bar will render from end (empty life) to start (full life)
+        /// <para>The bar will be filled from:</para> end (right: empty life) to start (left: full life).
         /// </summary>
         EndToStart,
+
         /// <summary>
-        /// The bar will render from top (empty life) to bottom (full life)
+        /// <para>The bar will be filled from:</para> top (empty life) to bottom (full life).
         /// </summary>
         TopToBottom,
+
         /// <summary>
-        /// The bar will render from bottom (empty life) to top (full life)
+        /// <para>The bar will be filled from:</para> bottom (empty life) to top (full life).
         /// </summary>
         BottomToTop,
     }
