@@ -12,6 +12,7 @@
     <RootNamespace>Intersect.Client</RootNamespace>
     <AssemblyName>Intersect Client</AssemblyName>
     <AppDesignerFolder>Properties</AppDesignerFolder>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
 
