@@ -1945,7 +1945,16 @@ namespace Intersect.Editor.Forms
             var lastTargetDirectory = Preferences.LoadPreference("update_targetDirectory");
 
             var sourceDirectory = SelectDirectoryWithRetry(Strings.UpdatePacking.SourceDirectoryPromptDescription, string.IsNullOrWhiteSpace(lastSourceDirectory) ? Environment.CurrentDirectory : lastSourceDirectory, false);
+            if (sourceDirectory == default)
+            {
+                return;
+            }
+
             var targetDirectory = SelectDirectoryWithRetry(Strings.UpdatePacking.TargetDirectoryPromptDescription, string.IsNullOrWhiteSpace(lastTargetDirectory) ? Environment.CurrentDirectory : lastTargetDirectory, true);
+            if (targetDirectory == default)
+            {
+                return;
+            }
 
             Preferences.SavePreference("update_sourceDirectory", sourceDirectory);
             Preferences.SavePreference("update_targetDirectory", targetDirectory);
