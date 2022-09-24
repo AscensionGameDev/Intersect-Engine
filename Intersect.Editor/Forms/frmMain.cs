@@ -1764,7 +1764,19 @@ namespace Intersect.Editor.Forms
         private void packAssets(string rootDirectory)
         {
             //TODO: Make packing heuristic that the texture packer class should use configurable.
-            var maxPackSize = Convert.ToInt32(Preferences.LoadPreference("TexturePackSize"));
+            var preferenceTexturePackSize = Preferences.LoadPreference("TexturePackSize");
+            if (!int.TryParse(preferenceTexturePackSize, out var maxPackSize))
+            {
+                _ = MessageBox.Show(
+                    this,
+                    Strings.Errors.UnableToParseInvalidIntegerFormat.ToString(preferenceTexturePackSize),
+                    Strings.Errors.InvalidInputCaption,
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error
+                );
+                return;
+            }
+
             var resourcesDirectory = Path.Combine(rootDirectory, "resources");
             var packsDirectory = Path.Combine(resourcesDirectory, "packs");
 
