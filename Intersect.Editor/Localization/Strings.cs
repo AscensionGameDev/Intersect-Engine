@@ -1543,6 +1543,8 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString InvalidInputCaption = @"Invalid Input";
 
+            public static LocalizedString InvalidInputXCaption = @"Invalid Input - {0}";
+
             public static LocalizedString importfailed =
                 @"Cannot import map. Currently selected map is not an Intersect map file or was exported with a different version of the Intersect editor!";
 
