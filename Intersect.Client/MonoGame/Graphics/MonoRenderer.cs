@@ -17,6 +17,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 using XNARectangle = Microsoft.Xna.Framework.Rectangle;
 using XNAColor = Microsoft.Xna.Framework.Color;
+using System.Globalization;
 
 namespace Intersect.Client.MonoGame.Graphics
 {
@@ -790,13 +791,13 @@ namespace Intersect.Client.MonoGame.Graphics
 
             var database = Globals.Database;
             var validVideoModes = GetValidVideoModes();
-            var targetResolution = database.TargetResolution;
+            var targetResolution = Intersect.Utilities.MathHelper.Clamp(database.TargetResolution, 0, validVideoModes?.Count ?? 0);
 
-            if (targetResolution < 0 || validVideoModes?.Count <= targetResolution)
+            if (targetResolution != database.TargetResolution)
             {
                 Debug.Assert(database != null, "database != null");
                 database.TargetResolution = 0;
-                database.SavePreference("Resolution", database.TargetResolution.ToString());
+                database.SavePreference("Resolution", database.TargetResolution.ToString(CultureInfo.InvariantCulture));
             }
 
             var targetVideoMode = validVideoModes?[targetResolution];
