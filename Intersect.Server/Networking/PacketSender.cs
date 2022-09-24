@@ -478,7 +478,7 @@ namespace Intersect.Server.Networking
         //EntityDataPacket
         public static void SendEntityDataToMap(Entity en, MapController map, Player except = null)
         {
-            if (en == null || !MapController.TryGetInstanceFromMap(en.Map.Id, en.MapInstanceId, out var mapInstance))
+            if (en == null || !MapController.TryGetInstanceFromMap(map.Id, en.MapInstanceId, out var mapInstance))
             {
                 return;
             }
