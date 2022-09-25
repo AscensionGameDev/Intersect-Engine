@@ -458,7 +458,7 @@ namespace Intersect.Editor.Forms.Editors
             // chkCanGuildBank
             // 
             this.chkCanGuildBank.AutoSize = true;
-            this.chkCanGuildBank.Location = new System.Drawing.Point(121, 241);
+            this.chkCanGuildBank.Location = new System.Drawing.Point(121, 263);
             this.chkCanGuildBank.Name = "chkCanGuildBank";
             this.chkCanGuildBank.Size = new System.Drawing.Size(106, 17);
             this.chkCanGuildBank.TabIndex = 99;
@@ -527,7 +527,7 @@ namespace Intersect.Editor.Forms.Editors
             // 
             this.nudDeathDropChance.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.nudDeathDropChance.ForeColor = System.Drawing.Color.Gainsboro;
-            this.nudDeathDropChance.Location = new System.Drawing.Point(154, 300);
+            this.nudDeathDropChance.Location = new System.Drawing.Point(154, 304);
             this.nudDeathDropChance.Name = "nudDeathDropChance";
             this.nudDeathDropChance.Size = new System.Drawing.Size(48, 20);
             this.nudDeathDropChance.TabIndex = 94;
@@ -541,7 +541,7 @@ namespace Intersect.Editor.Forms.Editors
             // lblDeathDropChance
             // 
             this.lblDeathDropChance.AutoSize = true;
-            this.lblDeathDropChance.Location = new System.Drawing.Point(12, 305);
+            this.lblDeathDropChance.Location = new System.Drawing.Point(12, 308);
             this.lblDeathDropChance.Name = "lblDeathDropChance";
             this.lblDeathDropChance.Size = new System.Drawing.Size(136, 13);
             this.lblDeathDropChance.TabIndex = 93;
@@ -550,7 +550,7 @@ namespace Intersect.Editor.Forms.Editors
             // chkCanSell
             // 
             this.chkCanSell.AutoSize = true;
-            this.chkCanSell.Location = new System.Drawing.Point(121, 281);
+            this.chkCanSell.Location = new System.Drawing.Point(13, 285);
             this.chkCanSell.Name = "chkCanSell";
             this.chkCanSell.Size = new System.Drawing.Size(71, 17);
             this.chkCanSell.TabIndex = 92;
@@ -560,7 +560,7 @@ namespace Intersect.Editor.Forms.Editors
             // chkCanTrade
             // 
             this.chkCanTrade.AutoSize = true;
-            this.chkCanTrade.Location = new System.Drawing.Point(13, 281);
+            this.chkCanTrade.Location = new System.Drawing.Point(13, 263);
             this.chkCanTrade.Name = "chkCanTrade";
             this.chkCanTrade.Size = new System.Drawing.Size(82, 17);
             this.chkCanTrade.TabIndex = 91;
@@ -570,7 +570,7 @@ namespace Intersect.Editor.Forms.Editors
             // chkCanBag
             // 
             this.chkCanBag.AutoSize = true;
-            this.chkCanBag.Location = new System.Drawing.Point(121, 261);
+            this.chkCanBag.Location = new System.Drawing.Point(121, 285);
             this.chkCanBag.Name = "chkCanBag";
             this.chkCanBag.Size = new System.Drawing.Size(73, 17);
             this.chkCanBag.TabIndex = 90;
@@ -580,7 +580,7 @@ namespace Intersect.Editor.Forms.Editors
             // chkCanBank
             // 
             this.chkCanBank.AutoSize = true;
-            this.chkCanBank.Location = new System.Drawing.Point(13, 261);
+            this.chkCanBank.Location = new System.Drawing.Point(121, 241);
             this.chkCanBank.Name = "chkCanBank";
             this.chkCanBank.Size = new System.Drawing.Size(79, 17);
             this.chkCanBank.TabIndex = 89;
