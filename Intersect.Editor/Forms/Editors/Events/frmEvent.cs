@@ -1785,7 +1785,6 @@ namespace Intersect.Editor.Forms.Editors.Events
             lblCommand.Hide();
             lblVariableTrigger.Hide();
             cmbVariable.Hide();
-            grpTriggers.Height = 45;
 
             if (MyEvent.CommonEvent)
             {
@@ -1798,7 +1797,6 @@ namespace Intersect.Editor.Forms.Editors.Events
                     txtCommand.Text = CurrentPage.TriggerCommand;
                     lblCommand.Show();
                     lblCommand.Text = Strings.EventEditor.command;
-                    grpTriggers.Height = 75;
                 }
                 else if (cmbTrigger.SelectedIndex == (int)CommonEventTrigger.PlayerVariableChange)
                 {
@@ -1808,7 +1806,6 @@ namespace Intersect.Editor.Forms.Editors.Events
                     cmbVariable.SelectedIndex = PlayerVariableBase.ListIndex(CurrentPage.TriggerId) + 1;
                     lblVariableTrigger.Show();
                     lblVariableTrigger.Text = Strings.EventEditor.VariableTrigger;
-                    grpTriggers.Height = 75;
                 }
                 else if (cmbTrigger.SelectedIndex == (int)CommonEventTrigger.ServerVariableChange)
                 {
@@ -1818,7 +1815,6 @@ namespace Intersect.Editor.Forms.Editors.Events
                     cmbVariable.SelectedIndex = ServerVariableBase.ListIndex(CurrentPage.TriggerId) + 1;
                     lblVariableTrigger.Show();
                     lblVariableTrigger.Text = Strings.EventEditor.VariableTrigger;
-                    grpTriggers.Height = 75;
                 }
                 else if (cmbTrigger.SelectedIndex == (int)CommonEventTrigger.GuildVariableChange)
                 {
@@ -1828,7 +1824,6 @@ namespace Intersect.Editor.Forms.Editors.Events
                     cmbVariable.SelectedIndex = GuildVariableBase.ListIndex(CurrentPage.TriggerId) + 1;
                     lblVariableTrigger.Show();
                     lblVariableTrigger.Text = Strings.EventEditor.VariableTrigger;
-                    grpTriggers.Height = 75;
                 }
             }
         }
