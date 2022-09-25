@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -27,6 +27,8 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         private int mSpawnX;
 
         private int mSpawnY;
+
+        private Grid? mGrid;
 
         public EventCommandPlayAnimation(
             FrmEvent eventEditor,
@@ -180,7 +182,23 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 
         private void UpdateSpawnPreview()
         {
-            pnlSpawnLoc.BackgroundImage = GridHelper.DrawGrid(pnlSpawnLoc.Width, pnlSpawnLoc.Height, 5, 5, new GridCell(2, 2, null, "E"), new GridCell(mSpawnX + 2, mSpawnY + 2, System.Drawing.Color.Red));
+            if (mGrid == null)
+            {
+                mGrid = new Grid
+                {
+                    DisplayWidth = pnlSpawnLoc.Width,
+                    DisplayHeight = pnlSpawnLoc.Height,
+                    Columns = 5,
+                    Rows = 5,
+                    Cells = new[] { new GridCell(2, 2, null, "E") }
+                };
+            }
+
+            pnlSpawnLoc.BackgroundImage = GridHelper.DrawGrid(
+                mGrid.Value.WithAdditionalCells(
+                    new GridCell(mSpawnX + 2, mSpawnY + 2, System.Drawing.Color.Red)
+                )
+            );
         }
 
         private void btnSave_Click(object sender, EventArgs e)
@@ -277,10 +295,15 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 
         private void pnlSpawnLoc_MouseDown(object sender, MouseEventArgs e)
         {
-            if (e.X >= 0 && e.Y >= 0 && e.X < pnlSpawnLoc.Width && e.Y < pnlSpawnLoc.Height)
+            if (mGrid == null)
             {
-                mSpawnX = (int) Math.Floor((double) e.X / Options.TileWidth) - 2;
-                mSpawnY = (int) Math.Floor((double) e.Y / Options.TileHeight) - 2;
+                return;
+            }
+
+            var cell = GridHelper.CellFromPoint(mGrid.Value, e.X, e.Y);
+            if (cell != null)
+            {
+                (mSpawnX, mSpawnY) = cell.Value;
                 UpdateSpawnPreview();
             }
         }
