@@ -1541,6 +1541,10 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString InvalidDirectoryCaption = @"Invalid Directory";
 
+            public static LocalizedString InvalidInputCaption = @"Invalid Input";
+
+            public static LocalizedString InvalidInputXCaption = @"Invalid Input - {0}";
+
             public static LocalizedString importfailed =
                 @"Cannot import map. Currently selected map is not an Intersect map file or was exported with a different version of the Intersect editor!";
 
@@ -1550,6 +1554,8 @@ Tick timer saved in server config.json.";
                 @"The resources directory could not be found! Intersect will now close.";
 
             public static LocalizedString resourcesnotfoundtitle = @"Resources not found!";
+
+            public static LocalizedString UnableToParseInvalidIntegerFormat = @"Unable to parse '{00}', the input should only be digits and the minus sign (-) for negative numbers.";
 
         }
 

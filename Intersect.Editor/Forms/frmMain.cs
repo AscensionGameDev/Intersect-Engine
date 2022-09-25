@@ -1764,7 +1764,46 @@ namespace Intersect.Editor.Forms
         private void packAssets(string rootDirectory)
         {
             //TODO: Make packing heuristic that the texture packer class should use configurable.
-            var maxPackSize = Convert.ToInt32(Preferences.LoadPreference("TexturePackSize"));
+            var preferenceMusicPackSize = Preferences.LoadPreference("MusicPackSize");
+            var preferenceSoundPackSize = Preferences.LoadPreference("SoundPackSize");
+            var preferenceTexturePackSize = Preferences.LoadPreference("TexturePackSize");
+
+            if (!int.TryParse(preferenceMusicPackSize, out var musicPackSize))
+            {
+                _ = MessageBox.Show(
+                    this,
+                    Strings.Errors.UnableToParseInvalidIntegerFormat.ToString(preferenceMusicPackSize),
+                    Strings.Errors.InvalidInputXCaption.ToString(Strings.Options.MusicPackSize),
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error
+                );
+                return;
+            }
+
+            if (!int.TryParse(preferenceSoundPackSize, out var soundPackSize))
+            {
+                _ = MessageBox.Show(
+                    this,
+                    Strings.Errors.UnableToParseInvalidIntegerFormat.ToString(preferenceSoundPackSize),
+                    Strings.Errors.InvalidInputXCaption.ToString(Strings.Options.SoundPackSize),
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error
+                );
+                return;
+            }
+
+            if (!int.TryParse(preferenceTexturePackSize, out var texturePackSize))
+            {
+                _ = MessageBox.Show(
+                    this,
+                    Strings.Errors.UnableToParseInvalidIntegerFormat.ToString(preferenceTexturePackSize),
+                    Strings.Errors.InvalidInputXCaption.ToString(Strings.Options.TextureSize),
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error
+                );
+                return;
+            }
+
             var resourcesDirectory = Path.Combine(rootDirectory, "resources");
             var packsDirectory = Path.Combine(resourcesDirectory, "packs");
 
@@ -1833,7 +1872,7 @@ namespace Intersect.Editor.Forms
 
                 if (!inserted)
                 {
-                    if (tex.GetWidth() > maxPackSize || tex.GetHeight() > maxPackSize)
+                    if (tex.GetWidth() > texturePackSize || tex.GetHeight() > texturePackSize)
                     {
                         //Own texture
                         var pack = new TexturePacker(resourcesDirectory, tex.GetWidth(), tex.GetHeight(), false);
@@ -1842,7 +1881,7 @@ namespace Intersect.Editor.Forms
                     }
                     else
                     {
-                        var pack = new TexturePacker(resourcesDirectory, maxPackSize, maxPackSize, true);
+                        var pack = new TexturePacker(resourcesDirectory, texturePackSize, texturePackSize, true);
                         packs.Add(pack);
                         if (!pack.InsertTex(tex))
                         {
@@ -1864,12 +1903,12 @@ namespace Intersect.Editor.Forms
             // Package up sounds!
             Globals.PackingProgressForm.SetProgress(Strings.AssetPacking.sounds, 80, false);
             Application.DoEvents();
-            AssetPacker.PackageAssets(Path.Combine(resourcesDirectory, "sounds"), "*.wav", packsDirectory, "sound.index", "sound", ".asset", Convert.ToInt32(Preferences.LoadPreference("SoundPackSize")));
+            AssetPacker.PackageAssets(Path.Combine(resourcesDirectory, "sounds"), "*.wav", packsDirectory, "sound.index", "sound", ".asset", soundPackSize);
 
             // Package up music!
             Globals.PackingProgressForm.SetProgress(Strings.AssetPacking.music, 90, false);
             Application.DoEvents();
-            AssetPacker.PackageAssets(Path.Combine(resourcesDirectory, "music"), "*.ogg", packsDirectory, "music.index", "music", ".asset", Convert.ToInt32(Preferences.LoadPreference("MusicPackSize")));
+            AssetPacker.PackageAssets(Path.Combine(resourcesDirectory, "music"), "*.ogg", packsDirectory, "music.index", "music", ".asset", musicPackSize);
 
             Globals.PackingProgressForm.SetProgress(Strings.AssetPacking.done, 100, false);
             Application.DoEvents();
