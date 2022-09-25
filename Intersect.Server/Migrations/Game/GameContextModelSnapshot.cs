@@ -48,8 +48,6 @@ namespace Intersect.Server.Migrations.Game
 
                     b.Property<int>("AttackSpeedValue");
 
-                    b.Property<string>("AttackSpriteOverride");
-
                     b.Property<long>("BaseExp");
 
                     b.Property<int>("BasePoints");
@@ -357,8 +355,6 @@ namespace Intersect.Server.Migrations.Game
 
                     b.Property<string>("VitalsRegenJson")
                         .HasColumnName("VitalsRegen");
-
-                    b.Property<string>("WeaponSpriteOverride");
 
                     b.HasKey("Id");
 
@@ -724,8 +720,6 @@ namespace Intersect.Server.Migrations.Game
                         .HasColumnName("CastAnimation");
 
                     b.Property<int>("CastDuration");
-
-                    b.Property<string>("CastSpriteOverride");
 
                     b.Property<int>("CooldownDuration");
 
