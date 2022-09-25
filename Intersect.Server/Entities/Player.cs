@@ -419,23 +419,22 @@ namespace Intersect.Server.Entities
                 EventTileLookup.Clear();
             }
 
-            InGame = false;
-            mSentMap = false;
-            mCommonEventLaunches = 0;
-            LastMapEntered = Guid.Empty;
-            ChatTarget = null;
+            InGame = default;
+            mSentMap = default;
+            mCommonEventLaunches = default;
+            LastMapEntered = default;
+            ChatTarget = default;
             QuestOffers.Clear();
-            CraftingTableId = Guid.Empty;
-            CraftId = Guid.Empty;
-            CraftTimer = 0;
-            PartyRequester = null;
+            OpenCraftingTableId = default;
+            CraftingState = default;
+            PartyRequester = default;
             PartyRequests.Clear();
-            FriendRequester = null;
+            FriendRequester = default;
             FriendRequests.Clear();
-            InBag = null;
+            InBag = default;
             BankInterface?.Dispose();
-            BankInterface = null;
-            InShop = null;
+            BankInterface = default;
+            InShop = default;
 
             //Clear cooldowns that have expired
             var keys = SpellCooldowns.Keys.ToArray();
@@ -527,26 +526,29 @@ namespace Intersect.Server.Entities
                         }
                     }
 
-                    if (CraftingTableId != Guid.Empty && CraftId != Guid.Empty)
+                    if (CraftingTableBase.TryGet(OpenCraftingTableId, out var b) && CraftingState?.Id != default)
                     {
-                        var b = CraftingTableBase.Get(CraftingTableId);
-                        if (b.Crafts.Contains(CraftId))
+                        if (b.Crafts.Contains(CraftingState.Id))
                         {
-                            if (CraftTimer + CraftBase.Get(CraftId).Time < timeMs)
+                            while (CraftingState?.NextCraftCompletionTime < timeMs)
                             {
-                                CraftItem(CraftId);
-                            }
-                            else
-                            {
-                                if (!CheckCrafting(CraftId))
+                                CraftItem();
+                                CraftingState.NextCraftCompletionTime += CraftingState.DurationPerCraft;
+
+                                if (CraftingState.RemainingCount < 1)
                                 {
-                                    CraftId = Guid.Empty;
+                                    CraftingState = default;
                                 }
+                            }
+
+                            if (ShouldCancelCrafting())
+                            {
+                                CraftingState = default;
                             }
                         }
                         else
                         {
-                            CraftId = Guid.Empty;
+                            CraftingState = default;
                         }
                     }
 
@@ -3607,7 +3609,7 @@ namespace Intersect.Server.Entities
 
             if (table != null)
             {
-                CraftingTableId = table.Id;
+                OpenCraftingTableId = table.Id;
                 PacketSender.SendOpenCraftingTable(this, table);
             }
 
@@ -3616,35 +3618,30 @@ namespace Intersect.Server.Entities
 
         public void CloseCraftingTable()
         {
-            if (CraftingTableId != Guid.Empty && CraftId == Guid.Empty)
-            {
-                CraftingTableId = Guid.Empty;
-                PacketSender.SendCloseCraftingTable(this);
-            }
+            OpenCraftingTableId = default;
+            CraftingState = default;
+            PacketSender.SendCloseCraftingTable(this);
         }
 
         //Craft a new item
-        public void CraftItem(Guid id)
+        public void CraftItem()
         {
-            if (CraftingTableId == Guid.Empty)
+            if (OpenCraftingTableId == default)
             {
                 return;
             }
 
-            var table = CraftingTableBase.Get(CraftingTableId);
-            if (table == null)
+            if (!CraftingTableBase.TryGet(OpenCraftingTableId, out var table))
             {
                 return;
             }
 
-            if (!table.Crafts.Contains(id))
+            if (!table.Crafts.Contains(CraftingState?.Id ?? default))
             {
                 return;
             }
 
-            var craftDescriptor = CraftBase.Get(id);
-
-            if (craftDescriptor == null)
+            if (!CraftBase.TryGet(CraftingState?.Id ?? default, out var craftDescriptor))
             {
                 return;
             }
@@ -3652,7 +3649,6 @@ namespace Intersect.Server.Entities
             if (!Conditions.MeetsConditionLists(craftDescriptor.CraftingRequirements, this, null))
             {
                 PacketSender.SendChatMsg(this, Strings.Crafting.RequirementsNotMet.ToString(), ChatMessageType.Error);
-
                 return;
             }
 
@@ -3662,12 +3658,11 @@ namespace Intersect.Server.Entities
                 backupItems.Add(backupItem.Clone());
             }
 
-            var craft = CraftBase.Get(id);
-            var craftItem = ItemBase.Get(craft.ItemId);
+            var craftItem = ItemBase.Get(craftDescriptor.ItemId);
             if (craftItem == null)
             {
                 PacketSender.SendChatMsg(this, Strings.Errors.UnknownErrorTryAgain, ChatMessageType.Error, CustomColors.Alerts.Error);
-                Log.Error($"Unable to find item descriptor {craftItem.Id} for craft {craft.Id}.");
+                Log.Error($"Unable to find item descriptor {craftItem.Id} for craft {craftDescriptor.Id}.");
                 return;
             }
 
@@ -3675,40 +3670,42 @@ namespace Intersect.Server.Entities
             var inventoryItems = new Dictionary<Guid, int>();
             foreach (var inventoryItem in Items)
             {
-                if (inventoryItem != null)
+                if (inventoryItem == null)
                 {
-                    var quantity = inventoryItem.Quantity;
-                    if (inventoryItems.ContainsKey(inventoryItem.ItemId))
-                    {
-                        quantity += inventoryItems[inventoryItem.ItemId];
-                    }
-                    inventoryItems[inventoryItem.ItemId] = quantity;
+                    continue;
                 }
+
+                var quantity = inventoryItem.Quantity;
+                if (inventoryItems.TryGetValue(inventoryItem.ItemId, out var currentQuantitySum))
+                {
+                    quantity += currentQuantitySum;
+                }
+                inventoryItems[inventoryItem.ItemId] = quantity;
             }
 
             //Check the player actually has the items
-            foreach (var ingredient in craft.Ingredients)
+            foreach (var ingredient in craftDescriptor.Ingredients)
             {
-                if (!inventoryItems.ContainsKey(ingredient.ItemId))
+                if (!inventoryItems.TryGetValue(ingredient.ItemId, out var currentQuantity))
                 {
-                    CraftId = Guid.Empty;
+                    CraftingState.Id = Guid.Empty;
                     return;
                 }
 
-                var currentQuantity = inventoryItems[ingredient.ItemId];
                 if (currentQuantity < ingredient.Quantity)
                 {
-                    CraftId = Guid.Empty;
+                    CraftingState.Id = Guid.Empty;
                     return;
                 }
+
                 inventoryItems[ingredient.ItemId] = currentQuantity - ingredient.Quantity;
             }
 
             //Return true if the craft was a success
-            if (Randomization.Next(0, 101) > craft.FailureChance)
+            if (Randomization.Next(0, 101) > craftDescriptor.FailureChance)
             {
                 //Take the items
-                foreach (var ingredient in craft.Ingredients)
+                foreach (var ingredient in craftDescriptor.Ingredients)
                 {
                     if (TryTakeItem(ingredient.ItemId, ingredient.Quantity))
                     {
@@ -3721,13 +3718,13 @@ namespace Intersect.Server.Entities
                     }
 
                     PacketSender.SendInventory(this);
-                    CraftId = Guid.Empty;
+                    CraftingState.RemainingCount--;
 
                     return;
                 }
 
                 //Give them the craft
-                var quantity = Math.Max(craft.Quantity, 1);
+                var quantity = Math.Max(craftDescriptor.Quantity, 1);
                 if (!craftItem.IsStackable)
                 {
                     quantity = 1;
@@ -3740,9 +3737,9 @@ namespace Intersect.Server.Entities
                         CustomColors.Alerts.Success
                     );
 
-                    if (craft.Event != default)
+                    if (craftDescriptor.Event != default)
                     {
-                        StartCommonEvent(craft.Event);
+                        StartCommonEvent(craftDescriptor.Event);
                     }
                 }
                 else
@@ -3764,10 +3761,10 @@ namespace Intersect.Server.Entities
                 var message = Strings.Crafting.CraftFailure;
 
                 //Returns true if items should be taken from the player
-                if (Randomization.Next(0, 101) < craft.ItemLossChance)
+                if (Randomization.Next(0, 101) < craftDescriptor.ItemLossChance)
                 {
                     //Take the items
-                    foreach (var ingredient in craft.Ingredients)
+                    foreach (var ingredient in craftDescriptor.Ingredients)
                     {
                         if (TryTakeItem(ingredient.ItemId, ingredient.Quantity))
                         {
@@ -3780,7 +3777,7 @@ namespace Intersect.Server.Entities
                         }
 
                         PacketSender.SendInventory(this);
-                        CraftId = Guid.Empty;
+                        CraftingState.RemainingCount--;
 
                         return;
                     }
@@ -3792,61 +3789,63 @@ namespace Intersect.Server.Entities
                 PacketSender.SendChatMsg(this, message.ToString(craftItem.Name), ChatMessageType.Crafting, CustomColors.Alerts.Error);
             }
 
-            CraftId = Guid.Empty;
+            CraftingState.RemainingCount--;
         }
 
-        public bool CheckCrafting(Guid id)
+        public bool ShouldCancelCrafting()
         {
+            if (!CraftBase.TryGet(CraftingState?.Id ?? default, out var craftDescriptor))
+            {
+                return true;
+            }
+
             //See if we have lost the items needed for our current craft, if so end the crafting session
             //Quickly Look through the inventory and create a catalog of what items we have, and how many
-            var itemdict = new Dictionary<Guid, int>();
+            var inventoryItems = new Dictionary<Guid, int>();
             foreach (var item in Items)
             {
-                if (item != null)
+                if (item == default)
                 {
-                    if (itemdict.ContainsKey(item.ItemId))
-                    {
-                        itemdict[item.ItemId] += item.Quantity;
-                    }
-                    else
-                    {
-                        itemdict.Add(item.ItemId, item.Quantity);
-                    }
+                    continue;
                 }
+
+                var quantity = item.Quantity;
+                if (inventoryItems.TryGetValue(item.ItemId, out var quantitySum))
+                {
+                    quantity += quantitySum;
+                }
+
+                inventoryItems[item.ItemId] = quantity;
             }
 
             //Check the player actually has the items
-            foreach (var c in CraftBase.Get(id).Ingredients)
+            foreach (var ingredient in craftDescriptor.Ingredients)
             {
-                if (itemdict.ContainsKey(c.ItemId))
+                if (!inventoryItems.TryGetValue(ingredient.ItemId, out int quantity))
                 {
-                    if (itemdict[c.ItemId] >= c.Quantity)
-                    {
-                        itemdict[c.ItemId] -= c.Quantity;
-                    }
-                    else
-                    {
-                        return false;
-                    }
+                    return true;
                 }
-                else
+
+                if (quantity < ingredient.Quantity)
                 {
-                    return false;
+                    return true;
                 }
+
+                inventoryItems[ingredient.ItemId] = quantity - ingredient.Quantity;
             }
 
-            return true;
+            return false;
         }
 
         //Business
         private bool IsBusy() =>
-            InShop != null ||
+            InShop != default ||
             InBank ||
-            CraftingTableId != Guid.Empty ||
-            Trading.Counterparty != null ||
-            Trading.Requester != null ||
-            PartyRequester != null ||
-            FriendRequester != null;
+            OpenCraftingTableId != default ||
+            Trading.Counterparty != default ||
+            Trading.Requester != default ||
+            PartyRequester != default ||
+            FriendRequester != default;
 
         //Bank
         public bool OpenBank(bool guild = false)
@@ -6391,7 +6390,7 @@ namespace Intersect.Server.Entities
         public override int CanMove(int moveDir)
         {
             //If crafting or locked by event return blocked
-            if (CraftingTableId != Guid.Empty && CraftId != Guid.Empty)
+            if (OpenCraftingTableId != default && CraftingState != default)
             {
                 return -5;
             }
@@ -6863,11 +6862,9 @@ namespace Intersect.Server.Entities
 
         #region Crafting
 
-        [NotMapped, JsonIgnore] public Guid CraftingTableId = Guid.Empty;
+        [NotMapped, JsonIgnore] public CraftingState CraftingState { get; set; }
 
-        [NotMapped, JsonIgnore] public Guid CraftId = Guid.Empty;
-
-        [NotMapped, JsonIgnore] public long CraftTimer = 0;
+        [NotMapped, JsonIgnore] public Guid OpenCraftingTableId { get; set; }
 
         #endregion
 
@@ -6934,6 +6931,19 @@ namespace Intersect.Server.Entities
 
         #endregion
 
+    }
+
+    public class CraftingState
+    {
+        public Guid Id { get; set; }
+
+        public int CraftCount { get; set; }
+
+        public int RemainingCount { get; set; }
+
+        public int DurationPerCraft { get; set; }
+
+        public long NextCraftCompletionTime { get; set; }
     }
 
 }

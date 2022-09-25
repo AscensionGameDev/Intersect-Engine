@@ -1882,8 +1882,37 @@ namespace Intersect.Server.Networking
                 return;
             }
 
-            player.CraftId = packet.CraftId;
-            player.CraftTimer = Timing.Global.Milliseconds;
+            if (packet.CraftId == default)
+            {
+                player.CraftingState = default;
+            }
+
+            if (!CraftBase.TryGet(packet.CraftId, out var craftDescriptor))
+            {
+                Log.Warn($"Player {player.Id} tried to craft {packet.CraftId} which does not exist.");
+                return;
+            }
+
+            if (player.OpenCraftingTableId == default)
+            {
+                Log.Warn($"Player {player.Id} tried to craft {packet.CraftId} without having opened a table yet.");
+                return;
+            }
+
+            if (player.CraftingState != default)
+            {
+                PacketSender.SendChatMsg(player, Strings.Crafting.AlreadyCrafting, ChatMessageType.Crafting, CustomColors.Alerts.Error);
+                return;
+            }
+
+            player.CraftingState = new CraftingState
+            {
+                Id = packet.CraftId,
+                CraftCount = packet.Count,
+                RemainingCount = packet.Count,
+                DurationPerCraft = craftDescriptor.Time,
+                NextCraftCompletionTime = Timing.Global.Milliseconds + craftDescriptor.Time
+            };
         }
 
         //CloseBankPacket

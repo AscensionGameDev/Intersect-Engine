@@ -509,6 +509,9 @@ namespace Intersect.Server.Localization
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString RequirementsNotMet = @"You do not meet the requirements in order to craft this item!";
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString AlreadyCrafting = @"You are already crafting!";
+
         }
 
         public sealed partial class DatabaseNamespace : LocaleNamespace
