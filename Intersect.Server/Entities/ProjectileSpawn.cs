@@ -68,6 +68,11 @@ namespace Intersect.Server.Entities
 
         public bool HitEntity(Entity targetEntity)
         {
+            if (targetEntity is EventPageInstance)
+            {
+                return false;
+            }
+
             Player targetPlayer = targetEntity as Player;
 
             if (targetEntity != null && targetEntity != Parent.Owner)
