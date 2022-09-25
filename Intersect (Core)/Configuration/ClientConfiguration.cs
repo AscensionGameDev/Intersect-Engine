@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 
 using Intersect.Enums;
+using Intersect.GameObjects;
 using Newtonsoft.Json;
 
 namespace Intersect.Configuration
@@ -68,6 +69,60 @@ namespace Intersect.Configuration
             ChatLines = Math.Min(Math.Max(ChatLines, 10), 500);
             MenuBackground = new List<string>(MenuBackground?.Distinct() ?? new List<string> {"background.png"});
             IntroImages = new List<string>(IntroImages?.Distinct() ?? new List<string>());
+            EditorBrushCursor =
+                new EditorCursor(
+                    string.IsNullOrWhiteSpace(EditorBrushCursor.Sprite) ? "brush.png" : EditorBrushCursor.Sprite,
+                    EditorBrushCursor.XClickPoint != default
+                        ? EditorBrushCursor.XClickPoint
+                        : 2,
+                    EditorBrushCursor.YClickPoint != default
+                        ? EditorBrushCursor.YClickPoint
+                        : 2);
+            EditorMarqueeSelectCursor =
+                new EditorCursor(
+                    string.IsNullOrWhiteSpace(EditorMarqueeSelectCursor.Sprite) ? "marquee_select.png" : EditorMarqueeSelectCursor.Sprite,
+                    EditorMarqueeSelectCursor.XClickPoint != default
+                        ? EditorMarqueeSelectCursor.XClickPoint
+                        : 8,
+                    EditorMarqueeSelectCursor.YClickPoint != default
+                        ? EditorMarqueeSelectCursor.YClickPoint
+                        : 5);
+            EditorRectangleFillCursor =
+                new EditorCursor(
+                    string.IsNullOrWhiteSpace(EditorRectangleFillCursor.Sprite) ? "rect_fill.png" : EditorRectangleFillCursor.Sprite,
+                    EditorRectangleFillCursor.XClickPoint != default
+                        ? EditorRectangleFillCursor.XClickPoint
+                        : 8,
+                    EditorRectangleFillCursor.YClickPoint != default
+                        ? EditorRectangleFillCursor.YClickPoint
+                        : 8);
+            EditorLayerFillCursor =
+                new EditorCursor(
+                    string.IsNullOrWhiteSpace(EditorLayerFillCursor.Sprite) ? "layer_fill.png" : EditorLayerFillCursor.Sprite,
+                    EditorLayerFillCursor.XClickPoint != default
+                        ? EditorLayerFillCursor.XClickPoint
+                        : 2,
+                    EditorLayerFillCursor.YClickPoint != default
+                        ? EditorLayerFillCursor.YClickPoint
+                        : 16);
+            EditorEraserCursor =
+                new EditorCursor(
+                    string.IsNullOrWhiteSpace(EditorEraserCursor.Sprite) ? "eraser.png" : EditorEraserCursor.Sprite,
+                    EditorEraserCursor.XClickPoint != default
+                        ? EditorEraserCursor.XClickPoint
+                        : 6,
+                    EditorEraserCursor.YClickPoint != default
+                        ? EditorEraserCursor.YClickPoint
+                        : 14);
+            EditorEyedropperCursor =
+                new EditorCursor(
+                    string.IsNullOrWhiteSpace(EditorEyedropperCursor.Sprite) ? "eyedropper.png" : EditorEyedropperCursor.Sprite,
+                    EditorEyedropperCursor.XClickPoint != default
+                        ? EditorEyedropperCursor.XClickPoint
+                        : 0,
+                    EditorEyedropperCursor.YClickPoint != default
+                        ? EditorEyedropperCursor.YClickPoint
+                        : 15);
         }
 
         #endregion
@@ -148,9 +203,44 @@ namespace Intersect.Configuration
         public string UpdateUrl { get; set; } = "";
 
         /// <summary>
-        /// Sets a custom mouse cursor.
+        /// Sets a sprite (must end in .png) for the game client's cursor.
         /// </summary>
-        public string MouseCursor { get; set; } = "";
+        public string ClientCursorSprite { get; set; } = "";
+
+        /// <summary>
+        /// Enables cursor sprites for the game editor's tools.
+        /// </summary>
+        public bool EnableEditorCursorSprites { get; set; }
+
+        /// <summary>
+        /// Sprite file name, X click-point and Y click-point for the editor brush tool's cursor.
+        /// </summary>
+        public EditorCursor EditorBrushCursor { get; set; }
+
+        /// <summary>
+        /// Sprite file name, X click-point and Y click-point for the editor marquee selection tool's cursor.
+        /// </summary>
+        public EditorCursor EditorMarqueeSelectCursor { get; set; }
+
+        /// <summary>
+        /// Sprite file name, X click-point and Y click-point for the editor rectangle fill tool's cursor.
+        /// </summary>
+        public EditorCursor EditorRectangleFillCursor { get; set; }
+
+        /// <summary>
+        /// Sprite file name, X click-point and Y click-point for the editor layer fill tool's cursor.
+        /// </summary>
+        public EditorCursor EditorLayerFillCursor { get; set; }
+
+        /// <summary>
+        /// Sprite file name, X click-point and Y click-point for the editor eraser tool's cursor.
+        /// </summary>
+        public EditorCursor EditorEraserCursor { get; set; }
+
+        /// <summary>
+        /// Sprite file name, X click-point and Y click-point for the editor eyedropper tool's cursor.
+        /// </summary>
+        public EditorCursor EditorEyedropperCursor { get; set; }
 
         /// <summary>
         /// Determines the time it takes to fade-in or fade-out a song when no other instructions are given.

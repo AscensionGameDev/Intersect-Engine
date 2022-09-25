@@ -312,7 +312,7 @@ namespace Intersect.Editor.Forms
             this.toolStripBtnBrush.CheckState = System.Windows.Forms.CheckState.Checked;
             this.toolStripBtnBrush.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.toolStripBtnBrush.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.toolStripBtnBrush.Image = global::Intersect.Editor.Properties.Resources.paintbrush;
+            this.toolStripBtnBrush.Image = ((System.Drawing.Image)(resources.GetObject("toolStripBtnBrush.Image")));
             this.toolStripBtnBrush.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripBtnBrush.Name = "toolStripBtnBrush";
             this.toolStripBtnBrush.Size = new System.Drawing.Size(23, 22);
@@ -1035,7 +1035,6 @@ namespace Intersect.Editor.Forms
 		}
 
 		#endregion
-		private System.Windows.Forms.ToolStripMenuItem hihiToolStripMenuItem;
 		private DarkStatusStrip statusStrip1;
 		public ToolStripStatusLabel toolStripLabelCoords;
 		private ToolStripSeparator toolStripSeparator7;

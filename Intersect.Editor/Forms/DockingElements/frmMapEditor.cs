@@ -2,10 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
 using DarkUI.Forms;
 using Intersect.Config;
+using Intersect.Configuration;
 using Intersect.Editor.Classes.Maps;
 using Intersect.Editor.Core;
 using Intersect.Editor.Forms.Editors.Events;
@@ -40,13 +42,41 @@ namespace Intersect.Editor.Forms.DockingElements
         private SwapChainRenderTarget mChain;
 
         private bool mMapChanged;
+        
+        // MapGrid Cursor
+        private Bitmap mCurSprite;
+
+        private string mCurPath;
+
+        private int mCurXClickPoint;
+        
+        private int mCurYClickPoint;
+
+        public struct IconInfo
+        {
+            public bool FIcon;
+            public int XHotspot;
+            public int YHotspot;
+            public IntPtr HbmMask;
+            public IntPtr HbmColor;
+        }
+
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool GetIconInfo(IntPtr hIcon, ref IconInfo pIconInfo);
+
+        [DllImport("user32.dll")]
+        private static extern IntPtr CreateIconIndirect(ref IconInfo icon);
+
+        [DllImport("user32.dll")]
+        private static extern bool DestroyIcon(IntPtr hIcon);
 
         //Init/Form Functions
         public FrmMapEditor()
         {
             InitializeComponent();
-            Icon = System.Drawing.Icon.ExtractAssociatedIcon(System.Reflection.Assembly.GetExecutingAssembly().Location);
-            picMap.MouseLeave += (_sender, _args) => tooltipMapAttribute?.Hide();
+            Icon = Icon.ExtractAssociatedIcon(System.Reflection.Assembly.GetExecutingAssembly().Location);
+            picMap.MouseLeave += (sender, args) => tooltipMapAttribute?.Hide();
         }
 
         private void InitLocalization()
@@ -178,17 +208,17 @@ namespace Intersect.Editor.Forms.DockingElements
         }
 
         //PicMap Functions
-        public void picMap_MouseDown(object sender, MouseEventArgs e)
+        private void picMap_MouseDown(object sender, MouseEventArgs e)
         {
-            if (!Globals.MapEditorWindow.DockPanel.Focused)
+            if (Globals.CurrentEditor != -1 || Globals.EditingLight != null)
             {
-                Globals.MapEditorWindow.DockPanel.Focus();
-
                 return;
             }
 
-            if (Globals.EditingLight != null)
+            if (!picMap.Focused)
             {
+                picMap.Focus();
+
                 return;
             }
 
@@ -218,7 +248,7 @@ namespace Intersect.Editor.Forms.DockingElements
             {
                 case MouseButtons.Left:
                     Globals.MouseButton = 0;
-                    if (Globals.CurrentTool == (int) EditingTool.Droppler)
+                    if (Globals.CurrentTool == (int) EditingTool.Eyedropper)
                     {
                         foreach (var layer in Enumerable.Reverse(Options.Instance.MapOpts.Layers.All))
                         {
@@ -234,13 +264,14 @@ namespace Intersect.Editor.Forms.DockingElements
                                 Globals.CurSelY = tmpMap.Layers[layer][Globals.CurTileX, Globals.CurTileY].Y;
                                 Globals.CurrentTool = (int)EditingTool.Brush;
                                 Globals.MapLayersWindow.SetLayer(layer);
+                                SetCursorSpriteInGrid();
 
                                 break;
                             }
                         }
                         return;
                     }
-                    else if (Globals.CurrentTool == (int) EditingTool.Selection)
+                    else if (Globals.CurrentTool == (int) EditingTool.MarqueeSelection)
                     {
                         if (Globals.Dragging == true)
                         {
@@ -288,14 +319,14 @@ namespace Intersect.Editor.Forms.DockingElements
                             }
                         }
                     }
-                    else if (Globals.CurrentTool == (int) EditingTool.Rectangle)
+                    else if (Globals.CurrentTool == (int) EditingTool.RectangleFill)
                     {
                         Globals.CurMapSelX = Globals.CurTileX;
                         Globals.CurMapSelY = Globals.CurTileY;
                         Globals.CurMapSelW = 0;
                         Globals.CurMapSelH = 0;
                     }
-                    else if (Globals.CurrentTool == (int) EditingTool.Fill)
+                    else if (Globals.CurrentTool == (int) EditingTool.LayerFill)
                     {
                         if (Globals.CurrentLayer == LayerOptions.Attributes)
                         {
@@ -308,7 +339,7 @@ namespace Intersect.Editor.Forms.DockingElements
 
                         Globals.MouseButton = -1;
                     }
-                    else if (Globals.CurrentTool == (int) EditingTool.Erase)
+                    else if (Globals.CurrentTool == (int) EditingTool.Eraser)
                     {
                         if (Globals.CurrentLayer == LayerOptions.Attributes)
                         {
@@ -387,7 +418,7 @@ namespace Intersect.Editor.Forms.DockingElements
                 case MouseButtons.Right:
                     Globals.MouseButton = 1;
 
-                    if (Globals.CurrentTool == (int) EditingTool.Selection)
+                    if (Globals.CurrentTool == (int) EditingTool.MarqueeSelection)
                     {
                         if (Globals.Dragging)
                         {
@@ -397,7 +428,7 @@ namespace Intersect.Editor.Forms.DockingElements
                         }
                     }
 
-                    if (Globals.CurrentTool == (int) EditingTool.Fill)
+                    if (Globals.CurrentTool == (int) EditingTool.LayerFill)
                     {
                         if (Options.Instance.MapOpts.Layers.All.Contains(Globals.CurrentLayer))
                         {
@@ -406,7 +437,7 @@ namespace Intersect.Editor.Forms.DockingElements
 
                         Globals.MouseButton = -1;
                     }
-                    else if (Globals.CurrentTool == (int) EditingTool.Erase)
+                    else if (Globals.CurrentTool == (int) EditingTool.Eraser)
                     {
                         if (Options.Instance.MapOpts.Layers.All.Contains(Globals.CurrentLayer))
                         {
@@ -426,8 +457,8 @@ namespace Intersect.Editor.Forms.DockingElements
                                 mMapChanged = true;
                             }
                         }
-                        else if (Globals.CurrentTool == (int) EditingTool.Rectangle ||
-                                 Globals.CurrentTool == (int) EditingTool.Selection)
+                        else if (Globals.CurrentTool == (int) EditingTool.RectangleFill ||
+                                 Globals.CurrentTool == (int) EditingTool.MarqueeSelection)
                         {
                             Globals.CurMapSelX = Globals.CurTileX;
                             Globals.CurMapSelY = Globals.CurTileY;
@@ -466,8 +497,8 @@ namespace Intersect.Editor.Forms.DockingElements
                             tmpMap.InitAutotiles();
                             mMapChanged = true;
                         }
-                        else if (Globals.CurrentTool == (int) EditingTool.Rectangle ||
-                                 Globals.CurrentTool == (int) EditingTool.Selection)
+                        else if (Globals.CurrentTool == (int) EditingTool.RectangleFill ||
+                                 Globals.CurrentTool == (int) EditingTool.MarqueeSelection)
                         {
                             Globals.CurMapSelX = Globals.CurTileX;
                             Globals.CurMapSelY = Globals.CurTileY;
@@ -618,9 +649,9 @@ namespace Intersect.Editor.Forms.DockingElements
                 Core.Graphics.TilePreviewUpdated = true;
             }
 
-            if (Globals.CurrentTool == (int) EditingTool.Erase ||
-                Globals.CurrentTool == (int) EditingTool.Fill ||
-                Globals.CurrentTool == (int) EditingTool.Droppler)
+            if (Globals.CurrentTool == (int) EditingTool.Eraser ||
+                Globals.CurrentTool == (int) EditingTool.LayerFill ||
+                Globals.CurrentTool == (int) EditingTool.Eyedropper)
             {
                 return; //No click/drag with fill, erase, or droppler tools
             }
@@ -630,7 +661,7 @@ namespace Intersect.Editor.Forms.DockingElements
                 var tmpMap = Globals.CurrentMap;
                 if (Globals.MouseButton == 0)
                 {
-                    if (Globals.CurrentTool == (int) EditingTool.Selection)
+                    if (Globals.CurrentTool == (int) EditingTool.MarqueeSelection)
                     {
                         if (!Globals.Dragging)
                         {
@@ -638,7 +669,7 @@ namespace Intersect.Editor.Forms.DockingElements
                             Globals.CurMapSelH = Globals.CurTileY - Globals.CurMapSelY;
                         }
                     }
-                    else if (Globals.CurrentTool == (int) EditingTool.Rectangle)
+                    else if (Globals.CurrentTool == (int) EditingTool.RectangleFill)
                     {
                         Globals.CurMapSelW = Globals.CurTileX - Globals.CurMapSelX;
                         Globals.CurMapSelH = Globals.CurTileY - Globals.CurMapSelY;
@@ -746,7 +777,7 @@ namespace Intersect.Editor.Forms.DockingElements
                 }
                 else if (Globals.MouseButton == 1)
                 {
-                    if (Globals.CurrentTool == (int) EditingTool.Rectangle)
+                    if (Globals.CurrentTool == (int) EditingTool.RectangleFill)
                     {
                         Globals.CurMapSelW = Globals.CurTileX - Globals.CurMapSelX;
                         Globals.CurMapSelH = Globals.CurTileY - Globals.CurMapSelY;
@@ -805,7 +836,7 @@ namespace Intersect.Editor.Forms.DockingElements
             }
             else
             {
-                if (Globals.CurrentTool != (int) EditingTool.Selection)
+                if (Globals.CurrentTool != (int) EditingTool.MarqueeSelection)
                 {
                     Globals.CurMapSelX = Globals.CurTileX;
                     Globals.CurMapSelY = Globals.CurTileY;
@@ -821,7 +852,7 @@ namespace Intersect.Editor.Forms.DockingElements
             }
 
             var tmpMap = Globals.CurrentMap;
-            if (Globals.CurrentTool == (int) EditingTool.Rectangle)
+            if (Globals.CurrentTool == (int) EditingTool.RectangleFill)
             {
                 int selX = Globals.CurMapSelX,
                     selY = Globals.CurMapSelY,
@@ -957,7 +988,7 @@ namespace Intersect.Editor.Forms.DockingElements
                 mMapChanged = false;
             }
 
-            if (Globals.CurrentTool != (int) EditingTool.Selection)
+            if (Globals.CurrentTool != (int) EditingTool.MarqueeSelection)
             {
                 Globals.CurMapSelX = Globals.CurTileX;
                 Globals.CurMapSelY = Globals.CurTileY;
@@ -1249,17 +1280,9 @@ namespace Intersect.Editor.Forms.DockingElements
             Core.Graphics.TilePreviewUpdated = true;
         }
 
-        private void picMap_MouseEnter(object sender, EventArgs e)
-        {
-            if (Globals.CurrentEditor == -1)
-            {
-                Globals.MapEditorWindow.DockPanel.Focus();
-            }
-        }
-
         private void SaveMap()
         {
-            if (Globals.CurrentTool == (int) EditingTool.Selection)
+            if (Globals.CurrentTool == (int) EditingTool.MarqueeSelection)
             {
                 if (Globals.Dragging == true)
                 {
@@ -1740,8 +1763,8 @@ namespace Intersect.Editor.Forms.DockingElements
                 selH = Globals.CurMapSelH;
 
             int dragxoffset = 0, dragyoffset = 0;
-            if (Globals.CurrentTool == (int) EditingTool.Rectangle ||
-                Globals.CurrentTool == (int) EditingTool.Selection)
+            if (Globals.CurrentTool == (int) EditingTool.RectangleFill ||
+                Globals.CurrentTool == (int) EditingTool.MarqueeSelection)
             {
                 if (selW < 0)
                 {
@@ -1921,8 +1944,8 @@ namespace Intersect.Editor.Forms.DockingElements
                 selH = Globals.CurMapSelH;
 
             int dragxoffset = 0, dragyoffset = 0;
-            if (Globals.CurrentTool == (int) EditingTool.Rectangle ||
-                Globals.CurrentTool == (int) EditingTool.Selection)
+            if (Globals.CurrentTool == (int) EditingTool.RectangleFill ||
+                Globals.CurrentTool == (int) EditingTool.MarqueeSelection)
             {
                 if (selW < 0)
                 {
@@ -2072,8 +2095,8 @@ namespace Intersect.Editor.Forms.DockingElements
 
             MapUndoStates.Add(CurrentMapState);
 
-            if (Globals.CurrentTool == (int) EditingTool.Rectangle ||
-                Globals.CurrentTool == (int) EditingTool.Selection)
+            if (Globals.CurrentTool == (int) EditingTool.RectangleFill ||
+                Globals.CurrentTool == (int) EditingTool.MarqueeSelection)
             {
                 if (selW < 0)
                 {
@@ -2146,8 +2169,8 @@ namespace Intersect.Editor.Forms.DockingElements
 
             MapUndoStates.Add(CurrentMapState);
 
-            if (Globals.CurrentTool == (int) EditingTool.Rectangle ||
-                Globals.CurrentTool == (int) EditingTool.Selection)
+            if (Globals.CurrentTool == (int) EditingTool.RectangleFill ||
+                Globals.CurrentTool == (int) EditingTool.MarqueeSelection)
             {
                 if (selW < 0)
                 {
@@ -2228,7 +2251,7 @@ namespace Intersect.Editor.Forms.DockingElements
 
         public void Copy()
         {
-            if (Globals.CurrentTool == (int) EditingTool.Selection)
+            if (Globals.CurrentTool == (int) EditingTool.MarqueeSelection)
             {
                 Globals.CopySource = new MapInstance(Globals.CurrentMap);
                 Globals.CopyMapSelH = Globals.CurMapSelH;
@@ -2257,7 +2280,7 @@ namespace Intersect.Editor.Forms.DockingElements
         {
             if (Globals.HasCopy && Globals.CopySource != null)
             {
-                Globals.CurrentTool = (int) EditingTool.Selection;
+                Globals.CurrentTool = (int) EditingTool.MarqueeSelection;
                 int selX1 = Globals.CurMapSelX,
                     selY1 = Globals.CurMapSelY,
                     selW1 = Globals.CurMapSelW,
@@ -2343,6 +2366,114 @@ namespace Intersect.Editor.Forms.DockingElements
         {
         }
 
+        private void picMap_MouseEnter(object sender, EventArgs e)
+        {
+            SetCursorSpriteInGrid();
+        }
+
+        private void picMap_MouseLeave(object sender, EventArgs e)
+        {
+            if (!ClientConfiguration.Instance.EnableEditorCursorSprites)
+            {
+                return;
+            }
+
+            mCurSprite.Dispose();
+            DestroyIcon(Cursor.Handle);
+            Cursor = Cursors.Default;
+        }
+
+        private void picMap_KeyDown(object sender, KeyEventArgs e)
+        {
+            var toolKeyIsPressed = (e.KeyData == Keys.B || e.KeyData == Keys.M || e.KeyData == Keys.R ||
+                                    e.KeyData == Keys.F || e.KeyData == Keys.E || e.KeyData == Keys.I);
+            if (toolKeyIsPressed)
+            {
+                SetCursorSpriteInGrid();
+            }
+        }
+
+        private void SetCursorSpriteInGrid()
+        {
+            if (!ClientConfiguration.Instance.EnableEditorCursorSprites || Globals.CurrentEditor != -1)
+            {
+                return;
+            }
+
+            picMap.Focus();
+
+            switch (Globals.CurrentTool)
+            {
+                case (int)EditingTool.Brush: // Brush Tool.
+                    mCurPath = "resources/misc/" + ClientConfiguration.Instance.EditorBrushCursor.Sprite;
+                    mCurXClickPoint = ClientConfiguration.Instance.EditorBrushCursor.XClickPoint;
+                    mCurYClickPoint = ClientConfiguration.Instance.EditorBrushCursor.YClickPoint;
+                    break;
+
+                case (int)EditingTool.MarqueeSelection: // MarqueeSelection Tool.
+                    mCurPath = "resources/misc/" + ClientConfiguration.Instance.EditorMarqueeSelectCursor.Sprite;
+                    mCurXClickPoint = ClientConfiguration.Instance.EditorMarqueeSelectCursor.XClickPoint;
+                    mCurYClickPoint = ClientConfiguration.Instance.EditorMarqueeSelectCursor.YClickPoint;
+                    break;
+
+                case (int)EditingTool.RectangleFill: // Rectangle Fill Tool.
+                    mCurPath = "resources/misc/" + ClientConfiguration.Instance.EditorRectangleFillCursor.Sprite;
+                    mCurXClickPoint = ClientConfiguration.Instance.EditorRectangleFillCursor.XClickPoint;
+                    mCurYClickPoint = ClientConfiguration.Instance.EditorRectangleFillCursor.YClickPoint;
+                    break;
+
+                case (int)EditingTool.LayerFill: // Layer Fill Tool.
+                    mCurPath = "resources/misc/" + ClientConfiguration.Instance.EditorLayerFillCursor.Sprite;
+                    mCurXClickPoint = ClientConfiguration.Instance.EditorLayerFillCursor.XClickPoint;
+                    mCurYClickPoint = ClientConfiguration.Instance.EditorLayerFillCursor.YClickPoint;
+                    break;
+
+                case (int)EditingTool.Eraser: // Eraser Tool.
+                    mCurPath = "resources/misc/" + ClientConfiguration.Instance.EditorEraserCursor.Sprite;
+                    mCurXClickPoint = ClientConfiguration.Instance.EditorEraserCursor.XClickPoint;
+                    mCurYClickPoint = ClientConfiguration.Instance.EditorEraserCursor.YClickPoint;
+                    break;
+
+                case (int)EditingTool.Eyedropper: // Eyedropper Tool.
+                    mCurPath = "resources/misc/" + ClientConfiguration.Instance.EditorEyedropperCursor.Sprite;
+                    mCurXClickPoint = ClientConfiguration.Instance.EditorEyedropperCursor.XClickPoint;
+                    mCurYClickPoint = ClientConfiguration.Instance.EditorEyedropperCursor.YClickPoint;
+                    break;
+
+                default:
+                    return;
+            }
+
+            if (string.IsNullOrEmpty(mCurPath))
+            {
+                return;
+            }
+
+            mCurSprite = new Bitmap(mCurPath);
+
+            if (mCurSprite == null)
+            {
+                return;
+            }
+
+            Cursor = CreateCursorInGrid(mCurSprite, mCurXClickPoint, mCurYClickPoint);
+        }
+
+        /// <summary>
+        /// Creates a cursor from a bitmap depending on the user preferences and selected tool.
+        /// </summary>
+        private Cursor CreateCursorInGrid(Bitmap bmp, int curXHotSpot, int curYHotSpot)
+        {
+            DestroyIcon(Cursor.Handle);
+            IntPtr ptr = bmp.GetHicon();
+            IconInfo tmp = new IconInfo();
+            GetIconInfo(ptr, ref tmp);
+            tmp.XHotspot = curXHotSpot;
+            tmp.YHotspot = curYHotSpot;
+            tmp.FIcon = false;
+            ptr = CreateIconIndirect(ref tmp);
+            return new Cursor(ptr);
+        }
     }
 
 }
