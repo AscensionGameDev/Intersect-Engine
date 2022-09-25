@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
@@ -592,6 +592,64 @@ namespace Intersect.Editor.Content
             }
 
             return textureDict?.Keys.ToArray();
+        }
+
+        private static readonly char[] OverridesDelimiter = new[] { '_' };
+
+        public static IEnumerable<string> GetOverridesFor(TextureType textureType, string filterState, string filterBase = default)
+        {
+            return GetTextureNames(textureType)
+                /* By using SelectMany() instead of Select() we do not have to then filter out null */
+                .SelectMany(sprite =>
+                {
+                    // Trim .png
+                    var baseName = Path.GetFileNameWithoutExtension(sprite);
+
+                    // Split the baseName on _ but only until there is a maximum of 3 segments
+                    // So base_attack_custom_3 would be split to "base", "attack", "custom_3"
+                    // [if Split("_") or Split("_", 4) was used it would become "base", "attack", "custom", "3"]
+                    var parts = baseName.Split(OverridesDelimiter, 3);
+
+                    // If there are less than 3 parts (base.png, base_attack.png would both have less than 3) mark invalid
+                    if (parts.Length < 3)
+                    {
+                        // By returning an empty enumerable instead of null, SelectMany() just reduces it
+                        // into an single-dimensional array without us doing an additional != null filter
+                        return Enumerable.Empty<string>();
+                    }
+
+
+                    // If if the first part is not equal to our base filter, mark invalid
+                    if (!string.IsNullOrWhiteSpace(filterBase) && !string.Equals(parts[0], filterBase, StringComparison.OrdinalIgnoreCase))
+                    {
+                        return Enumerable.Empty<string>();
+                    }
+
+                    // If the second part is not equal to our state filter, mark invalid
+                    if (!string.Equals(filterState, parts[1], StringComparison.OrdinalIgnoreCase))
+                    {
+                        return Enumerable.Empty<string>();
+                    }
+
+                    // If there are less than 3 parts (base.png, base_attack.png would both have less than 3,
+                    // or if the second part is not equal to our state name, return no matches
+                    if (parts.Length < 3 || !string.Equals(filterState, parts[1], StringComparison.OrdinalIgnoreCase))
+                    {
+                        // By returning an empty enumerable instead of null, SelectMany() just reduces it
+                        // into an single-dimensional array without us doing an additional != null filter
+                        return Enumerable.Empty<string>();
+                    }
+
+                    // Return the 3rd segment
+                    // We do Skip(2) instead of Last() because Skip(2) returns an IEnumerable<string>
+                    // which will automatically be consumed correctly by SelectMany(), while Last()
+                    // or LastOrDefault() would return a string/string? which then would need to be
+                    // wrapped in a new []{ <last> } to turn it back into an IEnumerable<string>
+                    // to be consumed by SelectMany()
+                    return parts.Skip(2);
+                })
+                /* Find only distinct values, don't show duplicates */
+                .Distinct();
         }
 
         private static string[] SmartSort(string[] strings)

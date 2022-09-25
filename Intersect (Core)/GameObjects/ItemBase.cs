@@ -132,6 +132,8 @@ namespace Intersect.GameObjects
 
         public int AttackSpeedValue { get; set; }
 
+        public string WeaponSpriteOverride { get; set; }
+
         public ConsumableData Consumable { get; set; }
 
         public int EquipmentSlot { get; set; }

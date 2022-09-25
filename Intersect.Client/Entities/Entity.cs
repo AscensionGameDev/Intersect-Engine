@@ -61,7 +61,22 @@ namespace Intersect.Client.Entities
 
         public float elapsedtime { get; set; } //to be removed
 
-        public Guid[] Equipment { get; set; } = new Guid[Options.EquipmentSlots.Count];
+        private Guid[] _equipment = new Guid[Options.EquipmentSlots.Count];
+
+        public Guid[] Equipment
+        {
+            get => _equipment;
+            set
+            {
+                if (_equipment == value)
+                {
+                    return;
+                }
+
+                _equipment = value;
+                LoadAnimationTexture(Sprite ?? TransformedSprite, SpriteAnimations.Weapon);
+            }
+        }
 
         IReadOnlyList<int> IEntity.EquipmentSlots => MyEquipment.ToList();
 
@@ -144,7 +159,22 @@ namespace Intersect.Client.Entities
         //Rendering Variables
         public HashSet<Entity> RenderList { get; set; }
 
-        public Guid SpellCast { get; set; }
+        private Guid _spellCast;
+
+        public Guid SpellCast
+        {
+            get => _spellCast;
+            set
+            {
+                if (value == SpellCast)
+                {
+                    return;
+                }
+
+                _spellCast = value;
+                LoadAnimationTexture(Sprite ?? TransformedSprite, SpriteAnimations.Cast);
+            }
+        }
 
         public Spell[] Spells { get; set; } = new Spell[Options.MaxPlayerSkills];
 
@@ -938,8 +968,12 @@ namespace Intersect.Client.Entities
                 Sprite = sprite;
             }
 
-            var texture = AnimatedTextures[SpriteAnimation] ?? Texture;
-            if (texture == null)
+            if (!AnimatedTextures.TryGetValue(SpriteAnimation, out var texture))
+            {
+                texture = Texture;
+            }
+
+            if (texture == default)
             {
                 // We don't have a texture to render, but we still want this to be targetable.
                 WorldPos = new FloatRect(
@@ -1011,9 +1045,10 @@ namespace Intersect.Client.Entities
                             }
 
                             var item = ItemBase.Get(itemId);
-                            if (item != null)
+                            if (ItemBase.TryGet(itemId, out var itemDescriptor))
                             {
-                                DrawEquipment(Gender == 0 ? item.MalePaperdoll : item.FemalePaperdoll, item.Color * renderColor, destRectangle);
+                                var itemPaperdoll = Gender == 0 ? itemDescriptor.MalePaperdoll : itemDescriptor.FemalePaperdoll;
+                                DrawEquipment(itemPaperdoll, item.Color * renderColor, destRectangle);
                             }
                         }
                     }
@@ -1052,8 +1087,19 @@ namespace Intersect.Client.Entities
             }
 
             var filenameNoExt = Path.GetFileNameWithoutExtension(filename);
+            string filenameSuffix = SpriteAnimation.ToString();
+
+            if (SpriteAnimation == SpriteAnimations.Attack ||
+                SpriteAnimation == SpriteAnimations.Cast ||
+                SpriteAnimation == SpriteAnimations.Weapon)
+            {
+                var animationName = Path.GetFileNameWithoutExtension(AnimatedTextures[SpriteAnimation].Name);
+                int separatorIndex = animationName.IndexOf('_') + 1;
+                filenameSuffix = animationName.Substring(separatorIndex);
+            }
+
             var paperdollTex = Globals.ContentManager.GetTexture(
-                TextureType.Paperdoll, $"{filenameNoExt}_{SpriteAnimation}.png"
+                TextureType.Paperdoll, $"{filenameNoExt}_{filenameSuffix}.png"
             );
 
             var spriteFrames = SpriteFrames;
@@ -1610,15 +1656,18 @@ namespace Intersect.Client.Entities
 
         public void UpdateSpriteAnimation()
         {
-            var oldAnim = SpriteAnimation;
-
             //Exit if textures haven't been loaded yet
             if (AnimatedTextures.Count == 0)
             {
                 return;
             }
 
-            SpriteAnimation = AnimatedTextures[SpriteAnimations.Idle] != null && LastActionTime + Options.Instance.Sprites.TimeBeforeIdle < Timing.Global.Milliseconds ? SpriteAnimations.Idle : SpriteAnimations.Normal;
+            SpriteAnimation = SpriteAnimations.Normal;
+            if (AnimatedTextures.TryGetValue(SpriteAnimations.Idle, out _) && LastActionTime + Options.Instance.Sprites.TimeBeforeIdle < Timing.Global.Milliseconds)
+            {
+                SpriteAnimation = SpriteAnimations.Idle;
+            }
+
             if (IsMoving)
             {
                 SpriteAnimation = SpriteAnimations.Normal;
@@ -1629,7 +1678,7 @@ namespace Intersect.Client.Entities
                 var timeIn = CalculateAttackTime() - (AttackTimer - Timing.Global.Ticks / TimeSpan.TicksPerMillisecond);
                 LastActionTime = Timing.Global.Milliseconds;
 
-                if (AnimatedTextures[SpriteAnimations.Attack] != null)
+                if (AnimatedTextures.TryGetValue(SpriteAnimations.Attack, out _))
                 {
                     SpriteAnimation = SpriteAnimations.Attack;
                 }
@@ -1656,12 +1705,14 @@ namespace Intersect.Client.Entities
                         var item = ItemBase.Get(itemId);
                         if (item != null)
                         {
-                            if (AnimatedTextures[SpriteAnimations.Weapon] != null)
+                            if (AnimatedTextures.TryGetValue(SpriteAnimations.Weapon, out _))
                             {
                                 SpriteAnimation = SpriteAnimations.Weapon;
                             }
 
-                            if (AnimatedTextures[SpriteAnimations.Shoot] != null && item.ProjectileId != Guid.Empty)
+                            if (AnimatedTextures.TryGetValue(SpriteAnimations.Shoot, out _) &&
+                                item.ProjectileId != Guid.Empty &&
+                                item.WeaponSpriteOverride == null)
                             {
                                 SpriteAnimation = SpriteAnimations.Shoot;
                             }
@@ -1682,15 +1733,19 @@ namespace Intersect.Client.Entities
                     var duration = spell.CastDuration;
                     var timeIn = duration - (CastTime - Timing.Global.Milliseconds);
 
-                    if (AnimatedTextures[SpriteAnimations.Cast] != null)
+                    if (AnimatedTextures.TryGetValue(SpriteAnimations.Cast, out _))
                     {
                         SpriteAnimation = SpriteAnimations.Cast;
                     }
 
                     if (spell.SpellType == SpellTypes.CombatSpell &&
-                        spell.Combat.TargetType == SpellTargetTypes.Projectile && AnimatedTextures[SpriteAnimations.Shoot] != null)
+                        spell.Combat.TargetType == SpellTargetTypes.Projectile &&
+                        spell.CastSpriteOverride == null)
                     {
-                        SpriteAnimation = SpriteAnimations.Shoot;
+                        if (AnimatedTextures.TryGetValue(SpriteAnimations.Shoot, out _))
+                        {
+                            SpriteAnimation = SpriteAnimations.Shoot;
+                        }
                     }
 
                     SpriteFrame = (int)Math.Floor((timeIn / (duration / (float)SpriteFrames)));
@@ -1724,26 +1779,103 @@ namespace Intersect.Client.Entities
 
         public virtual void LoadTextures(string textureName)
         {
-            Texture = Globals.ContentManager.GetTexture(TextureType.Entity, textureName);
-            LoadAnimationTextures(textureName);
+            AnimatedTextures.Clear();
+            foreach (SpriteAnimations spriteAnimation in Enum.GetValues(typeof(SpriteAnimations)))
+            {
+                if (spriteAnimation == SpriteAnimations.Normal)
+                {
+                    Texture = Globals.ContentManager.GetTexture(TextureType.Entity, textureName);
+                }
+                else
+                {
+                    LoadAnimationTexture(textureName, spriteAnimation);
+                }
+            }
         }
 
-        public virtual void LoadAnimationTextures(string textureName)
+        protected virtual void LoadAnimationTexture(string textureName, SpriteAnimations spriteAnimation)
+        {
+            SpriteAnimations spriteAnimationOveride = spriteAnimation;
+            string textureOverride = default;
+
+            switch (spriteAnimation)
+            {
+                // No override for this
+                case SpriteAnimations.Normal: break;
+
+                case SpriteAnimations.Idle: break;
+                case SpriteAnimations.Attack:
+                    if (this is Player player && ClassBase.TryGet(player.Class, out var classDescriptor))
+                    {
+                        textureOverride = classDescriptor.AttackSpriteOverride;
+                    }
+                    break;
+
+                case SpriteAnimations.Shoot:
+                    {
+                        if (Equipment.Length <= Options.WeaponIndex)
+                        {
+                            break;
+                        }
+
+                        var weaponId = Equipment[Options.WeaponIndex];
+                        if (ItemBase.TryGet(weaponId, out var itemDescriptor))
+                        {
+                            textureOverride = itemDescriptor.WeaponSpriteOverride;
+                        }
+
+                        if (!string.IsNullOrWhiteSpace(textureOverride))
+                        {
+                            spriteAnimationOveride = SpriteAnimations.Weapon;
+                        }
+                    }
+                    break;
+
+                case SpriteAnimations.Cast:
+                    if (SpellBase.TryGet(SpellCast, out var spellDescriptor))
+                    {
+                        textureOverride = spellDescriptor.CastSpriteOverride;
+                    }
+                    break;
+
+                case SpriteAnimations.Weapon:
+                    {
+                        if (Equipment.Length <= Options.WeaponIndex)
+                        {
+                            break;
+                        }
+
+                        var weaponId = Equipment[Options.WeaponIndex];
+                        if (ItemBase.TryGet(weaponId, out var itemDescriptor))
+                        {
+                            textureOverride = itemDescriptor.WeaponSpriteOverride;
+                        }
+                    }
+                    break;
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(spriteAnimation));
+            }
+
+            if (TryGetAnimationTexture(textureName, spriteAnimationOveride, textureOverride, out var texture))
+            {
+                AnimatedTextures[spriteAnimation] = texture;
+            }
+        }
+
+        protected virtual bool TryGetAnimationTexture(string textureName, SpriteAnimations spriteAnimation, string textureOverride, out GameTexture texture)
         {
             var baseFilename = Path.GetFileNameWithoutExtension(textureName);
             var extension = Path.GetExtension(textureName);
+            var animationTextureName = $"{baseFilename}_{spriteAnimation.ToString()?.ToLowerInvariant() ?? string.Empty}";
 
-            AnimatedTextures.Clear();
-            foreach (var animationName in Enum.GetValues(typeof(SpriteAnimations)))
+            if (!string.IsNullOrWhiteSpace(textureOverride))
             {
-                AnimatedTextures.Add(
-                    (SpriteAnimations)animationName,
-                    Globals.ContentManager.GetTexture(
-                        TextureType.Entity,
-                        $@"{baseFilename}_{animationName}{extension}"
-                    )
-                );
+                animationTextureName = $"{animationTextureName}_{textureOverride}";
             }
+
+            texture = Globals.ContentManager.GetTexture(TextureType.Entity, $"{animationTextureName}{extension}");
+            return texture != default;
         }
 
         //Movement

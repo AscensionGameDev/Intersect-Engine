@@ -1005,7 +1005,9 @@ namespace Intersect.Editor.Localization
 
             public static LocalizedString armorboost = @"Armor (+{00}):";
 
-            public static LocalizedString attackanimation = @"Attack Animation:";
+            public static LocalizedString attackanimation = @"Extra Attack Animation:";
+
+            public static LocalizedString AttackSpriteOverride = @"Sprite Attack Animation:";
 
             public static LocalizedString attackboost = @"Attack (+{00}):";
 
@@ -3455,7 +3457,7 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString animation = @"Animation:";
 
-            public static LocalizedString attackanimation = @"Attack Animation:";
+            public static LocalizedString attackanimation = @"Extra Attack Animation:";
 
             public static LocalizedString attackbonus = @"Attack:";
 
@@ -3676,6 +3678,8 @@ Tick timer saved in server config.json.";
             public static LocalizedString title = @"Item Editor";
 
             public static LocalizedString tooltype = @"Tool Type:";
+
+            public static LocalizedString AttackSpriteOverride = @"Sprite Attack Animation:";
 
             public static LocalizedString twohanded = @"2 Hand";
 
@@ -4902,7 +4906,9 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString cancel = @"Cancel";
 
-            public static LocalizedString castanimation = @"Cast Animation:";
+            public static LocalizedString castanimation = @"Extra Cast Anim.:";
+
+            public static LocalizedString CastSpriteOverride = @"Sprite Cast Anim.:";
 
             public static LocalizedString castrange = @"Cast Range (tiles):";
 

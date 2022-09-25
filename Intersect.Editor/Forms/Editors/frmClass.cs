@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
@@ -174,6 +174,9 @@ namespace Intersect.Editor.Forms.Editors
                 nudScaling.Value = mEditorItem.Scaling;
                 cmbDamageType.SelectedIndex = mEditorItem.DamageType;
                 cmbScalingStat.SelectedIndex = mEditorItem.ScalingStat;
+                cmbAttackSprite.SelectedIndex = cmbAttackSprite.FindString(
+                        TextUtils.NullToNone(mEditorItem.AttackSpriteOverride)
+                );
                 cmbAttackAnimation.SelectedIndex = AnimationBase.ListIndex(mEditorItem.AttackAnimationId) + 1;
                 cmbAttackSpeedModifier.SelectedIndex = mEditorItem.AttackSpeedModifier;
                 nudAttackSpeedValue.Value = mEditorItem.AttackSpeedValue;
@@ -299,6 +302,11 @@ namespace Intersect.Editor.Forms.Editors
             cmbAttackAnimation.Items.Clear();
             cmbAttackAnimation.Items.Add(Strings.General.None);
             cmbAttackAnimation.Items.AddRange(AnimationBase.Names);
+            cmbAttackSprite.Items.Clear();
+            cmbAttackSprite.Items.Add(Strings.General.None);
+            cmbAttackSprite.Items.AddRange(
+                GameContentManager.GetOverridesFor(GameContentManager.TextureType.Entity, "attack").ToArray()
+            );
             cmbScalingStat.Items.Clear();
             for (var x = 0; x < ((int)Stats.Speed) + 1; x++)
             {
@@ -394,6 +402,7 @@ namespace Intersect.Editor.Forms.Editors
             lblScalingStat.Text = Strings.ClassEditor.scalingstat;
             lblScalingAmount.Text = Strings.ClassEditor.scalingamount;
             lblAttackAnimation.Text = Strings.ClassEditor.attackanimation;
+            lblSpriteAttack.Text = Strings.ClassEditor.AttackSpriteOverride;
 
             grpAttackSpeed.Text = Strings.NpcEditor.attackspeed;
             lblAttackSpeedModifier.Text = Strings.NpcEditor.attackspeedmodifier;
@@ -909,6 +918,11 @@ namespace Intersect.Editor.Forms.Editors
         {
             mEditorItem.AttackAnimation =
                 AnimationBase.Get(AnimationBase.IdFromList(cmbAttackAnimation.SelectedIndex - 1));
+        }
+
+        private void cmbAttackSprite_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            mEditorItem.AttackSpriteOverride = TextUtils.SanitizeNone(cmbAttackSprite?.Text);
         }
 
         private void cmbDamageType_SelectedIndexChanged(object sender, EventArgs e)
@@ -1525,7 +1539,6 @@ namespace Intersect.Editor.Forms.Editors
         }
 
         #endregion
-
     }
 
 }

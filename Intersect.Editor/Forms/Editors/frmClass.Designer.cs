@@ -1,4 +1,4 @@
-﻿using DarkUI.Controls;
+using DarkUI.Controls;
 
 namespace Intersect.Editor.Forms.Editors
 {
@@ -31,9 +31,9 @@ namespace Intersect.Editor.Forms.Editors
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmClass));
             this.grpClasses = new DarkUI.Controls.DarkGroupBox();
             this.btnClearSearch = new DarkUI.Controls.DarkButton();
@@ -99,6 +99,7 @@ namespace Intersect.Editor.Forms.Editors
             this.lblSpawnItemAmount = new System.Windows.Forms.Label();
             this.lblSpawnItem = new System.Windows.Forms.Label();
             this.grpCombat = new DarkUI.Controls.DarkGroupBox();
+            this.lblSpriteAttack = new System.Windows.Forms.Label();
             this.grpAttackSpeed = new DarkUI.Controls.DarkGroupBox();
             this.nudAttackSpeedValue = new DarkUI.Controls.DarkNumericUpDown();
             this.lblAttackSpeedValue = new System.Windows.Forms.Label();
@@ -174,6 +175,7 @@ namespace Intersect.Editor.Forms.Editors
             this.toolStripItemUndo = new System.Windows.Forms.ToolStripButton();
             this.mnuExpGrid = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.btnExpPaste = new System.Windows.Forms.ToolStripMenuItem();
+            this.cmbAttackSprite = new DarkUI.Controls.DarkComboBox();
             this.grpClasses.SuspendLayout();
             this.grpBaseStats.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudBaseMana)).BeginInit();
@@ -1151,6 +1153,8 @@ namespace Intersect.Editor.Forms.Editors
             // 
             this.grpCombat.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.grpCombat.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpCombat.Controls.Add(this.cmbAttackSprite);
+            this.grpCombat.Controls.Add(this.lblSpriteAttack);
             this.grpCombat.Controls.Add(this.grpAttackSpeed);
             this.grpCombat.Controls.Add(this.nudCritMultiplier);
             this.grpCombat.Controls.Add(this.lblCritMultiplier);
@@ -1169,10 +1173,19 @@ namespace Intersect.Editor.Forms.Editors
             this.grpCombat.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpCombat.Location = new System.Drawing.Point(537, 169);
             this.grpCombat.Name = "grpCombat";
-            this.grpCombat.Size = new System.Drawing.Size(226, 405);
+            this.grpCombat.Size = new System.Drawing.Size(226, 446);
             this.grpCombat.TabIndex = 30;
             this.grpCombat.TabStop = false;
             this.grpCombat.Text = "Combat (Unarmed)";
+            // 
+            // lblSpriteAttack
+            // 
+            this.lblSpriteAttack.AutoSize = true;
+            this.lblSpriteAttack.Location = new System.Drawing.Point(10, 267);
+            this.lblSpriteAttack.Name = "lblSpriteAttack";
+            this.lblSpriteAttack.Size = new System.Drawing.Size(120, 13);
+            this.lblSpriteAttack.TabIndex = 67;
+            this.lblSpriteAttack.Text = "Sprite Attack Animation:";
             // 
             // grpAttackSpeed
             // 
@@ -1183,7 +1196,7 @@ namespace Intersect.Editor.Forms.Editors
             this.grpAttackSpeed.Controls.Add(this.cmbAttackSpeedModifier);
             this.grpAttackSpeed.Controls.Add(this.lblAttackSpeedModifier);
             this.grpAttackSpeed.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpAttackSpeed.Location = new System.Drawing.Point(13, 309);
+            this.grpAttackSpeed.Location = new System.Drawing.Point(13, 351);
             this.grpAttackSpeed.Name = "grpAttackSpeed";
             this.grpAttackSpeed.Size = new System.Drawing.Size(192, 86);
             this.grpAttackSpeed.TabIndex = 66;
@@ -1429,7 +1442,7 @@ namespace Intersect.Editor.Forms.Editors
             this.cmbAttackAnimation.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cmbAttackAnimation.ForeColor = System.Drawing.Color.Gainsboro;
             this.cmbAttackAnimation.FormattingEnabled = true;
-            this.cmbAttackAnimation.Location = new System.Drawing.Point(12, 277);
+            this.cmbAttackAnimation.Location = new System.Drawing.Point(12, 325);
             this.cmbAttackAnimation.Name = "cmbAttackAnimation";
             this.cmbAttackAnimation.Size = new System.Drawing.Size(192, 21);
             this.cmbAttackAnimation.TabIndex = 50;
@@ -1440,11 +1453,11 @@ namespace Intersect.Editor.Forms.Editors
             // lblAttackAnimation
             // 
             this.lblAttackAnimation.AutoSize = true;
-            this.lblAttackAnimation.Location = new System.Drawing.Point(9, 262);
+            this.lblAttackAnimation.Location = new System.Drawing.Point(9, 310);
             this.lblAttackAnimation.Name = "lblAttackAnimation";
-            this.lblAttackAnimation.Size = new System.Drawing.Size(90, 13);
+            this.lblAttackAnimation.Size = new System.Drawing.Size(117, 13);
             this.lblAttackAnimation.TabIndex = 49;
-            this.lblAttackAnimation.Text = "Attack Animation:";
+            this.lblAttackAnimation.Text = "Extra Attack Animation:";
             // 
             // lblDamage
             // 
@@ -1667,21 +1680,21 @@ namespace Intersect.Editor.Forms.Editors
             this.expGrid.AllowUserToDeleteRows = false;
             this.expGrid.AllowUserToResizeColumns = false;
             this.expGrid.AllowUserToResizeRows = false;
-            dataGridViewCellStyle1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(50)))), ((int)(((byte)(53)))), ((int)(((byte)(55)))));
-            this.expGrid.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(50)))), ((int)(((byte)(53)))), ((int)(((byte)(55)))));
+            this.expGrid.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle4;
             this.expGrid.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.expGrid.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.expGrid.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.None;
             this.expGrid.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableWithoutHeaderText;
             this.expGrid.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.None;
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle2.ForeColor = System.Drawing.Color.Gainsboro;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.expGrid.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle5.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle5.ForeColor = System.Drawing.Color.Gainsboro;
+            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.expGrid.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle5;
             this.expGrid.ColumnHeadersHeight = 24;
             this.expGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
             this.expGrid.EnableHeadersVisualStyles = false;
@@ -1689,8 +1702,8 @@ namespace Intersect.Editor.Forms.Editors
             this.expGrid.MultiSelect = false;
             this.expGrid.Name = "expGrid";
             this.expGrid.RowHeadersVisible = false;
-            dataGridViewCellStyle3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
-            this.expGrid.RowsDefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle6.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
+            this.expGrid.RowsDefaultCellStyle = dataGridViewCellStyle6;
             this.expGrid.Size = new System.Drawing.Size(515, 125);
             this.expGrid.TabIndex = 0;
             this.expGrid.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.expGrid_CellEndEdit);
@@ -2243,6 +2256,27 @@ namespace Intersect.Editor.Forms.Editors
             this.btnExpPaste.Text = "Paste";
             this.btnExpPaste.Click += new System.EventHandler(this.btnPaste_Click);
             // 
+            // cmbAttackSprite
+            // 
+            this.cmbAttackSprite.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.cmbAttackSprite.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbAttackSprite.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbAttackSprite.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbAttackSprite.DrawDropdownHoverOutline = false;
+            this.cmbAttackSprite.DrawFocusRectangle = false;
+            this.cmbAttackSprite.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cmbAttackSprite.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbAttackSprite.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbAttackSprite.ForeColor = System.Drawing.Color.Gainsboro;
+            this.cmbAttackSprite.FormattingEnabled = true;
+            this.cmbAttackSprite.Location = new System.Drawing.Point(12, 283);
+            this.cmbAttackSprite.Name = "cmbAttackSprite";
+            this.cmbAttackSprite.Size = new System.Drawing.Size(192, 21);
+            this.cmbAttackSprite.TabIndex = 68;
+            this.cmbAttackSprite.Text = null;
+            this.cmbAttackSprite.TextPadding = new System.Windows.Forms.Padding(2);
+            this.cmbAttackSprite.SelectedIndexChanged += new System.EventHandler(this.cmbAttackSprite_SelectedIndexChanged);
+            // 
             // FrmClass
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2473,5 +2507,7 @@ namespace Intersect.Editor.Forms.Editors
         private DarkComboBox cmbAttackSpeedModifier;
         private System.Windows.Forms.Label lblAttackSpeedModifier;
         private Controls.GameObjectList lstGameObjects;
+        private System.Windows.Forms.Label lblSpriteAttack;
+        private DarkComboBox cmbAttackSprite;
     }
 }

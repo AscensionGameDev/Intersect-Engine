@@ -108,6 +108,8 @@ namespace Intersect.GameObjects
 
         public string CannotCastMessage { get; set; } = "";
 
+        public string CastSpriteOverride { get; set; }
+
         //Combat Info
         public SpellCombatData Combat { get; set; } = new SpellCombatData();
 

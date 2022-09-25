@@ -159,6 +159,7 @@ namespace Intersect.Editor.Forms.Editors
             this.nudBlockChance = new DarkUI.Controls.DarkNumericUpDown();
             this.lblBlockChance = new System.Windows.Forms.Label();
             this.grpWeaponProperties = new DarkUI.Controls.DarkGroupBox();
+            this.lblSpriteAttack = new System.Windows.Forms.Label();
             this.nudCritMultiplier = new DarkUI.Controls.DarkNumericUpDown();
             this.lblCritMultiplier = new System.Windows.Forms.Label();
             this.grpAttackSpeed = new DarkUI.Controls.DarkGroupBox();
@@ -214,6 +215,7 @@ namespace Intersect.Editor.Forms.Editors
             this.toolStripItemPaste = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripItemUndo = new System.Windows.Forms.ToolStripButton();
+            this.cmbWeaponSprite = new DarkUI.Controls.DarkComboBox();
             this.grpItems.SuspendLayout();
             this.grpGeneral.SuspendLayout();
             this.grpRequirements.SuspendLayout();
@@ -1094,7 +1096,7 @@ namespace Intersect.Editor.Forms.Editors
             this.grpEquipment.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpEquipment.Location = new System.Drawing.Point(2, 435);
             this.grpEquipment.Name = "grpEquipment";
-            this.grpEquipment.Size = new System.Drawing.Size(439, 742);
+            this.grpEquipment.Size = new System.Drawing.Size(439, 794);
             this.grpEquipment.TabIndex = 12;
             this.grpEquipment.TabStop = false;
             this.grpEquipment.Text = "Equipment";
@@ -1364,7 +1366,7 @@ namespace Intersect.Editor.Forms.Editors
             this.cmbEquipmentAnimation.FormattingEnabled = true;
             this.cmbEquipmentAnimation.Items.AddRange(new object[] {
             "None"});
-            this.cmbEquipmentAnimation.Location = new System.Drawing.Point(221, 509);
+            this.cmbEquipmentAnimation.Location = new System.Drawing.Point(221, 557);
             this.cmbEquipmentAnimation.Name = "cmbEquipmentAnimation";
             this.cmbEquipmentAnimation.Size = new System.Drawing.Size(207, 21);
             this.cmbEquipmentAnimation.TabIndex = 57;
@@ -1375,7 +1377,7 @@ namespace Intersect.Editor.Forms.Editors
             // lblEquipmentAnimation
             // 
             this.lblEquipmentAnimation.AutoSize = true;
-            this.lblEquipmentAnimation.Location = new System.Drawing.Point(218, 493);
+            this.lblEquipmentAnimation.Location = new System.Drawing.Point(218, 541);
             this.lblEquipmentAnimation.Name = "lblEquipmentAnimation";
             this.lblEquipmentAnimation.Size = new System.Drawing.Size(109, 13);
             this.lblEquipmentAnimation.TabIndex = 56;
@@ -1385,9 +1387,9 @@ namespace Intersect.Editor.Forms.Editors
             // 
             this.nudEffectPercent.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.nudEffectPercent.ForeColor = System.Drawing.Color.Gainsboro;
-            this.nudEffectPercent.Location = new System.Drawing.Point(103, 510);
+            this.nudEffectPercent.Location = new System.Drawing.Point(14, 558);
             this.nudEffectPercent.Name = "nudEffectPercent";
-            this.nudEffectPercent.Size = new System.Drawing.Size(114, 20);
+            this.nudEffectPercent.Size = new System.Drawing.Size(203, 20);
             this.nudEffectPercent.TabIndex = 55;
             this.nudEffectPercent.Value = new decimal(new int[] {
             0,
@@ -1824,9 +1826,9 @@ namespace Intersect.Editor.Forms.Editors
             this.cmbFemalePaperdoll.FormattingEnabled = true;
             this.cmbFemalePaperdoll.Items.AddRange(new object[] {
             "None"});
-            this.cmbFemalePaperdoll.Location = new System.Drawing.Point(221, 550);
+            this.cmbFemalePaperdoll.Location = new System.Drawing.Point(221, 598);
             this.cmbFemalePaperdoll.Name = "cmbFemalePaperdoll";
-            this.cmbFemalePaperdoll.Size = new System.Drawing.Size(168, 21);
+            this.cmbFemalePaperdoll.Size = new System.Drawing.Size(207, 21);
             this.cmbFemalePaperdoll.TabIndex = 36;
             this.cmbFemalePaperdoll.Text = "None";
             this.cmbFemalePaperdoll.TextPadding = new System.Windows.Forms.Padding(2);
@@ -1835,7 +1837,7 @@ namespace Intersect.Editor.Forms.Editors
             // lblFemalePaperdoll
             // 
             this.lblFemalePaperdoll.AutoSize = true;
-            this.lblFemalePaperdoll.Location = new System.Drawing.Point(218, 533);
+            this.lblFemalePaperdoll.Location = new System.Drawing.Point(218, 581);
             this.lblFemalePaperdoll.Name = "lblFemalePaperdoll";
             this.lblFemalePaperdoll.Size = new System.Drawing.Size(91, 13);
             this.lblFemalePaperdoll.TabIndex = 35;
@@ -1844,7 +1846,7 @@ namespace Intersect.Editor.Forms.Editors
             // picFemalePaperdoll
             // 
             this.picFemalePaperdoll.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.picFemalePaperdoll.Location = new System.Drawing.Point(221, 577);
+            this.picFemalePaperdoll.Location = new System.Drawing.Point(221, 625);
             this.picFemalePaperdoll.Name = "picFemalePaperdoll";
             this.picFemalePaperdoll.Size = new System.Drawing.Size(200, 156);
             this.picFemalePaperdoll.TabIndex = 34;
@@ -1853,7 +1855,7 @@ namespace Intersect.Editor.Forms.Editors
             // lblEffectPercent
             // 
             this.lblEffectPercent.AutoSize = true;
-            this.lblEffectPercent.Location = new System.Drawing.Point(10, 512);
+            this.lblEffectPercent.Location = new System.Drawing.Point(10, 542);
             this.lblEffectPercent.Name = "lblEffectPercent";
             this.lblEffectPercent.Size = new System.Drawing.Size(94, 13);
             this.lblEffectPercent.TabIndex = 31;
@@ -1872,7 +1874,7 @@ namespace Intersect.Editor.Forms.Editors
             this.cmbEquipmentBonus.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cmbEquipmentBonus.ForeColor = System.Drawing.Color.Gainsboro;
             this.cmbEquipmentBonus.FormattingEnabled = true;
-            this.cmbEquipmentBonus.Location = new System.Drawing.Point(103, 483);
+            this.cmbEquipmentBonus.Location = new System.Drawing.Point(103, 504);
             this.cmbEquipmentBonus.Name = "cmbEquipmentBonus";
             this.cmbEquipmentBonus.Size = new System.Drawing.Size(114, 21);
             this.cmbEquipmentBonus.TabIndex = 29;
@@ -1883,7 +1885,7 @@ namespace Intersect.Editor.Forms.Editors
             // lblBonusEffect
             // 
             this.lblBonusEffect.AutoSize = true;
-            this.lblBonusEffect.Location = new System.Drawing.Point(10, 486);
+            this.lblBonusEffect.Location = new System.Drawing.Point(10, 507);
             this.lblBonusEffect.Name = "lblBonusEffect";
             this.lblBonusEffect.Size = new System.Drawing.Size(71, 13);
             this.lblBonusEffect.TabIndex = 28;
@@ -1934,9 +1936,9 @@ namespace Intersect.Editor.Forms.Editors
             this.cmbMalePaperdoll.FormattingEnabled = true;
             this.cmbMalePaperdoll.Items.AddRange(new object[] {
             "None"});
-            this.cmbMalePaperdoll.Location = new System.Drawing.Point(11, 550);
+            this.cmbMalePaperdoll.Location = new System.Drawing.Point(11, 598);
             this.cmbMalePaperdoll.Name = "cmbMalePaperdoll";
-            this.cmbMalePaperdoll.Size = new System.Drawing.Size(168, 21);
+            this.cmbMalePaperdoll.Size = new System.Drawing.Size(206, 21);
             this.cmbMalePaperdoll.TabIndex = 22;
             this.cmbMalePaperdoll.Text = "None";
             this.cmbMalePaperdoll.TextPadding = new System.Windows.Forms.Padding(2);
@@ -1945,7 +1947,7 @@ namespace Intersect.Editor.Forms.Editors
             // lblMalePaperdoll
             // 
             this.lblMalePaperdoll.AutoSize = true;
-            this.lblMalePaperdoll.Location = new System.Drawing.Point(8, 533);
+            this.lblMalePaperdoll.Location = new System.Drawing.Point(8, 581);
             this.lblMalePaperdoll.Name = "lblMalePaperdoll";
             this.lblMalePaperdoll.Size = new System.Drawing.Size(80, 13);
             this.lblMalePaperdoll.TabIndex = 21;
@@ -1954,7 +1956,7 @@ namespace Intersect.Editor.Forms.Editors
             // picMalePaperdoll
             // 
             this.picMalePaperdoll.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.picMalePaperdoll.Location = new System.Drawing.Point(11, 577);
+            this.picMalePaperdoll.Location = new System.Drawing.Point(11, 625);
             this.picMalePaperdoll.Name = "picMalePaperdoll";
             this.picMalePaperdoll.Size = new System.Drawing.Size(200, 156);
             this.picMalePaperdoll.TabIndex = 16;
@@ -2059,6 +2061,8 @@ namespace Intersect.Editor.Forms.Editors
             // 
             this.grpWeaponProperties.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.grpWeaponProperties.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpWeaponProperties.Controls.Add(this.cmbWeaponSprite);
+            this.grpWeaponProperties.Controls.Add(this.lblSpriteAttack);
             this.grpWeaponProperties.Controls.Add(this.nudCritMultiplier);
             this.grpWeaponProperties.Controls.Add(this.lblCritMultiplier);
             this.grpWeaponProperties.Controls.Add(this.grpAttackSpeed);
@@ -2082,11 +2086,20 @@ namespace Intersect.Editor.Forms.Editors
             this.grpWeaponProperties.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpWeaponProperties.Location = new System.Drawing.Point(221, 14);
             this.grpWeaponProperties.Name = "grpWeaponProperties";
-            this.grpWeaponProperties.Size = new System.Drawing.Size(207, 463);
+            this.grpWeaponProperties.Size = new System.Drawing.Size(207, 519);
             this.grpWeaponProperties.TabIndex = 39;
             this.grpWeaponProperties.TabStop = false;
             this.grpWeaponProperties.Text = "Weapon Properties";
             this.grpWeaponProperties.Visible = false;
+            // 
+            // lblSpriteAttack
+            // 
+            this.lblSpriteAttack.AutoSize = true;
+            this.lblSpriteAttack.Location = new System.Drawing.Point(12, 296);
+            this.lblSpriteAttack.Name = "lblSpriteAttack";
+            this.lblSpriteAttack.Size = new System.Drawing.Size(120, 13);
+            this.lblSpriteAttack.TabIndex = 59;
+            this.lblSpriteAttack.Text = "Sprite Attack Animation:";
             // 
             // nudCritMultiplier
             // 
@@ -2132,7 +2145,7 @@ namespace Intersect.Editor.Forms.Editors
             this.grpAttackSpeed.Controls.Add(this.cmbAttackSpeedModifier);
             this.grpAttackSpeed.Controls.Add(this.lblAttackSpeedModifier);
             this.grpAttackSpeed.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpAttackSpeed.Location = new System.Drawing.Point(15, 371);
+            this.grpAttackSpeed.Location = new System.Drawing.Point(15, 423);
             this.grpAttackSpeed.Name = "grpAttackSpeed";
             this.grpAttackSpeed.Size = new System.Drawing.Size(180, 86);
             this.grpAttackSpeed.TabIndex = 56;
@@ -2369,7 +2382,7 @@ namespace Intersect.Editor.Forms.Editors
             this.cmbAttackAnimation.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cmbAttackAnimation.ForeColor = System.Drawing.Color.Gainsboro;
             this.cmbAttackAnimation.FormattingEnabled = true;
-            this.cmbAttackAnimation.Location = new System.Drawing.Point(15, 308);
+            this.cmbAttackAnimation.Location = new System.Drawing.Point(15, 350);
             this.cmbAttackAnimation.Name = "cmbAttackAnimation";
             this.cmbAttackAnimation.Size = new System.Drawing.Size(180, 21);
             this.cmbAttackAnimation.TabIndex = 38;
@@ -2380,11 +2393,11 @@ namespace Intersect.Editor.Forms.Editors
             // lblAttackAnimation
             // 
             this.lblAttackAnimation.AutoSize = true;
-            this.lblAttackAnimation.Location = new System.Drawing.Point(12, 293);
+            this.lblAttackAnimation.Location = new System.Drawing.Point(12, 335);
             this.lblAttackAnimation.Name = "lblAttackAnimation";
-            this.lblAttackAnimation.Size = new System.Drawing.Size(90, 13);
+            this.lblAttackAnimation.Size = new System.Drawing.Size(117, 13);
             this.lblAttackAnimation.TabIndex = 37;
-            this.lblAttackAnimation.Text = "Attack Animation:";
+            this.lblAttackAnimation.Text = "Extra Attack Animation:";
             // 
             // chk2Hand
             // 
@@ -2399,7 +2412,7 @@ namespace Intersect.Editor.Forms.Editors
             // lblToolType
             // 
             this.lblToolType.AutoSize = true;
-            this.lblToolType.Location = new System.Drawing.Point(13, 335);
+            this.lblToolType.Location = new System.Drawing.Point(13, 377);
             this.lblToolType.Name = "lblToolType";
             this.lblToolType.Size = new System.Drawing.Size(58, 13);
             this.lblToolType.TabIndex = 26;
@@ -2418,7 +2431,7 @@ namespace Intersect.Editor.Forms.Editors
             this.cmbToolType.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cmbToolType.ForeColor = System.Drawing.Color.Gainsboro;
             this.cmbToolType.FormattingEnabled = true;
-            this.cmbToolType.Location = new System.Drawing.Point(16, 349);
+            this.cmbToolType.Location = new System.Drawing.Point(16, 391);
             this.cmbToolType.Name = "cmbToolType";
             this.cmbToolType.Size = new System.Drawing.Size(180, 21);
             this.cmbToolType.TabIndex = 27;
@@ -2869,6 +2882,27 @@ namespace Intersect.Editor.Forms.Editors
             this.toolStripItemUndo.Text = "Undo";
             this.toolStripItemUndo.Click += new System.EventHandler(this.toolStripItemUndo_Click);
             // 
+            // cmbWeaponSprite
+            // 
+            this.cmbWeaponSprite.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.cmbWeaponSprite.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbWeaponSprite.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbWeaponSprite.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbWeaponSprite.DrawDropdownHoverOutline = false;
+            this.cmbWeaponSprite.DrawFocusRectangle = false;
+            this.cmbWeaponSprite.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cmbWeaponSprite.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbWeaponSprite.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbWeaponSprite.ForeColor = System.Drawing.Color.Gainsboro;
+            this.cmbWeaponSprite.FormattingEnabled = true;
+            this.cmbWeaponSprite.Location = new System.Drawing.Point(15, 312);
+            this.cmbWeaponSprite.Name = "cmbWeaponSprite";
+            this.cmbWeaponSprite.Size = new System.Drawing.Size(180, 21);
+            this.cmbWeaponSprite.TabIndex = 60;
+            this.cmbWeaponSprite.Text = null;
+            this.cmbWeaponSprite.TextPadding = new System.Windows.Forms.Padding(2);
+            this.cmbWeaponSprite.SelectedIndexChanged += new System.EventHandler(this.cmbWeaponSprite_SelectedIndexChanged);
+            // 
             // FrmItem
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -3147,5 +3181,7 @@ namespace Intersect.Editor.Forms.Editors
         private Label lblBlockAmount;
         private DarkNumericUpDown nudBlockChance;
         private Label lblBlockChance;
+        private Label lblSpriteAttack;
+        private DarkComboBox cmbWeaponSprite;
     }
 }
