@@ -1428,7 +1428,7 @@ namespace Intersect.Server.Entities
             bool trapTrigger = false
         )
         {
-            if (target is Resource)
+            if (target is Resource || target is EventPageInstance)
             {
                 return;
             }
