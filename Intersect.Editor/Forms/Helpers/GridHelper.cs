@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Drawing;
 using System.Linq;
 
@@ -71,6 +71,25 @@ namespace Intersect.Editor.Forms.Helpers
             (String.IsNullOrEmpty(gridCell.Label) ? 0 : 2) + (gridCell.Color == null ? 0 : 1);
     }
 
+    public struct Grid
+    {
+        public int DisplayWidth;
+        public int DisplayHeight;
+        public int Columns;
+        public int Rows;
+        public GridCell[] Cells;
+
+        public Grid WithAdditionalCells(params GridCell[] additionalCells) =>
+            new Grid
+            {
+                DisplayWidth = DisplayWidth,
+                DisplayHeight = DisplayHeight,
+                Columns = Columns,
+                Rows = Rows,
+                Cells = Cells.Concat(additionalCells).ToArray()
+            };
+    }
+
     /// <summary>
     /// Helper class for drawing grids on <see cref="Bitmap"/>s.
     /// </summary>
@@ -95,6 +114,30 @@ namespace Intersect.Editor.Forms.Helpers
         /// Mutable fallback font for text rendering on grids, default Arial 14pt.
         /// </summary>
         public static Font DefaultFont { get; set; } = new Font(new FontFamily("Arial"), 14);
+
+        public static (int x, int y)? CellFromPoint(Grid grid, int x, int y)
+        {
+            if (x < 0 || y < 0 || grid.DisplayWidth <= x || grid.DisplayHeight <= y)
+            {
+                return null;
+            }
+
+            var cellWidth = grid.DisplayWidth / grid.Columns;
+            var cellHeight = grid.DisplayHeight / grid.Rows;
+            return (
+                (int)Math.Floor((double)x / cellWidth) - 2,
+                (int)Math.Floor((double)y / cellHeight) - 2
+            );
+
+        }
+
+        /// <summary>
+        /// Creates a bitmap of the given grid.
+        /// </summary>
+        /// <param name="grid">the grid to draw</param>
+        /// <returns>a bitmap with the configured grid drawn on it</returns>
+        public static Bitmap DrawGrid(Grid grid) =>
+            DrawGrid(grid.DisplayWidth, grid.DisplayHeight, grid.Columns, grid.Rows, grid.Cells);
 
         /// <summary>
         /// Creates a bitmap of the given dimensions and renders a grid with the specified dimensions and optional cell contents.
