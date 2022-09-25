@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 
 using Intersect.Enums;
+using Newtonsoft.Json;
 
 namespace Intersect.Configuration
 {
@@ -165,6 +166,13 @@ namespace Intersect.Configuration
         /// Configures the name of the skin or skin texture (must end in .png) to use.
         /// </summary>
         public string UiSkin { get; set; } = "Intersect2021";
+
+        /// <summary>
+        /// Configures the rendering direction of entity bars, vitals in their order, then experience
+        /// </summary>
+        [JsonProperty(ObjectCreationHandling = ObjectCreationHandling.Replace)]
+        public List<DisplayDirection> EntityBarDirections { get; set; } =
+            Enumerable.Range(0, 1 + (int)Vitals.VitalCount).Select(_ => DisplayDirection.StartToEnd).ToList();
 
         #endregion
 

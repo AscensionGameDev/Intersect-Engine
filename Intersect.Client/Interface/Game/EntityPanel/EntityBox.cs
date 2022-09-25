@@ -12,6 +12,7 @@ using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.General;
 using Intersect.Client.Localization;
 using Intersect.Client.Networking;
+using Intersect.Configuration;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Logging;
@@ -22,29 +23,24 @@ namespace Intersect.Client.Interface.Game.EntityPanel
 
     public partial class EntityBox
     {
+        public readonly Label EntityLevel;
 
-        private static int sStatusXPadding = 2;
+        public readonly Label EntityMap;
 
-        private static int sStatusYPadding = 2;
+        public readonly Label EntityName;
 
-        public readonly Framework.Gwen.Control.Label EntityLevel;
-
-        public readonly Framework.Gwen.Control.Label EntityMap;
-
-        public readonly Framework.Gwen.Control.Label EntityName;
-
-        public readonly Framework.Gwen.Control.Label EntityNameAndLevel;
+        public readonly Label EntityNameAndLevel;
 
         //Controls
         public readonly ImagePanel EntityWindow;
 
-        public float CurExpWidth = -1;
+        public float CurExpSize = -1;
 
-        public float CurHpWidth = -1;
+        public float CurHpSize = -1;
 
-        public float CurMpWidth = -1;
+        public float CurMpSize = -1;
 
-        public float CurShieldWidth = -1;
+        public float CurShieldSize = -1;
 
         public ImagePanel EntityFace;
 
@@ -62,9 +58,9 @@ namespace Intersect.Client.Interface.Game.EntityPanel
 
         public ImagePanel ExpBar;
 
-        public Framework.Gwen.Control.Label ExpLbl;
+        public Label ExpLbl;
 
-        public Framework.Gwen.Control.Label ExpTitle;
+        public Label ExpTitle;
 
         public Button FriendLabel;
 
@@ -72,9 +68,9 @@ namespace Intersect.Client.Interface.Game.EntityPanel
 
         public ImagePanel HpBar;
 
-        public Framework.Gwen.Control.Label HpLbl;
+        public Label HpLbl;
 
-        public Framework.Gwen.Control.Label HpTitle;
+        public Label HpTitle;
 
         private Dictionary<Guid, SpellStatus> mActiveStatuses = new Dictionary<Guid, SpellStatus>();
 
@@ -86,9 +82,9 @@ namespace Intersect.Client.Interface.Game.EntityPanel
 
         public ImagePanel MpBar;
 
-        public Framework.Gwen.Control.Label MpLbl;
+        public Label MpLbl;
 
-        public Framework.Gwen.Control.Label MpTitle;
+        public Label MpTitle;
 
         public Entity MyEntity;
 
@@ -123,12 +119,12 @@ namespace Intersect.Client.Interface.Game.EntityPanel
 
             EntityInfoPanel = new ImagePanel(EntityWindow, "EntityInfoPanel");
 
-            EntityName = new Framework.Gwen.Control.Label(EntityInfoPanel, "EntityNameLabel") {Text = myEntity?.Name};
-            EntityLevel = new Framework.Gwen.Control.Label(EntityInfoPanel, "EntityLevelLabel");
-            EntityNameAndLevel = new Framework.Gwen.Control.Label(EntityInfoPanel, "NameAndLevelLabel")
+            EntityName = new Label(EntityInfoPanel, "EntityNameLabel") {Text = myEntity?.Name};
+            EntityLevel = new Label(EntityInfoPanel, "EntityLevelLabel");
+            EntityNameAndLevel = new Label(EntityInfoPanel, "NameAndLevelLabel")
                 {IsHidden = true};
 
-            EntityMap = new Framework.Gwen.Control.Label(EntityInfoPanel, "EntityMapLabel");
+            EntityMap = new Label(EntityInfoPanel, "EntityMapLabel");
 
             PaperdollPanels = new ImagePanel[Options.EquipmentSlots.Count];
             PaperdollTextures = new string[Options.EquipmentSlots.Count];
@@ -157,21 +153,21 @@ namespace Intersect.Client.Interface.Game.EntityPanel
             HpBackground = new ImagePanel(EntityInfoPanel, "HPBarBackground");
             HpBar = new ImagePanel(EntityInfoPanel, "HPBar");
             ShieldBar = new ImagePanel(EntityInfoPanel, "ShieldBar");
-            HpTitle = new Framework.Gwen.Control.Label(EntityInfoPanel, "HPTitle");
+            HpTitle = new Label(EntityInfoPanel, "HPTitle");
             HpTitle.SetText(Strings.EntityBox.vital0);
-            HpLbl = new Framework.Gwen.Control.Label(EntityInfoPanel, "HPLabel");
+            HpLbl = new Label(EntityInfoPanel, "HPLabel");
 
             MpBackground = new ImagePanel(EntityInfoPanel, "MPBackground");
             MpBar = new ImagePanel(EntityInfoPanel, "MPBar");
-            MpTitle = new Framework.Gwen.Control.Label(EntityInfoPanel, "MPTitle");
+            MpTitle = new Label(EntityInfoPanel, "MPTitle");
             MpTitle.SetText(Strings.EntityBox.vital1);
-            MpLbl = new Framework.Gwen.Control.Label(EntityInfoPanel, "MPLabel");
+            MpLbl = new Label(EntityInfoPanel, "MPLabel");
 
             ExpBackground = new ImagePanel(EntityInfoPanel, "EXPBackground");
             ExpBar = new ImagePanel(EntityInfoPanel, "EXPBar");
-            ExpTitle = new Framework.Gwen.Control.Label(EntityInfoPanel, "EXPTitle");
+            ExpTitle = new Label(EntityInfoPanel, "EXPTitle");
             ExpTitle.SetText(Strings.EntityBox.exp);
-            ExpLbl = new Framework.Gwen.Control.Label(EntityInfoPanel, "EXPLabel");
+            ExpLbl = new Label(EntityInfoPanel, "EXPLabel");
 
             TradeLabel = new Button(EntityInfoPanel, "TradeButton");
             TradeLabel.SetText(Strings.EntityBox.trade);
@@ -283,10 +279,10 @@ namespace Intersect.Client.Interface.Game.EntityPanel
             ShowAllElements();
 
             //Update Bars
-            CurHpWidth = -1;
-            CurShieldWidth = -1;
-            CurMpWidth = -1;
-            CurExpWidth = -1;
+            CurHpSize = -1;
+            CurShieldSize = -1;
+            CurMpSize = -1;
+            CurExpSize = -1;
             ShieldBar.Hide();
             UpdateHpBar(0, true);
             UpdateMpBar(0, true);
@@ -561,280 +557,287 @@ namespace Intersect.Client.Interface.Game.EntityPanel
             }
         }
 
-        private void UpdateHpBar(float elapsedTime, bool instant = false)
+        private static float SetTargetBarSize(float barRatio, int barSize)
         {
-            var targetHpWidth = 0f;
-            var targetShieldWidth = 0f;
-            if (MyEntity.MaxVital[(int) Vitals.Health] > 0)
+            var barFillRatio = Math.Min(1, Math.Max(0, barRatio));
+
+            return (float)Math.Ceiling((barFillRatio * barSize));
+        }
+
+        private static float SetCurrentBarSize(float elapsedTime, bool instant, float targetSize, float currentSize)
+        {
+            if (instant)
             {
-                var maxVital = MyEntity.MaxVital[(int) Vitals.Health];
-                var shieldSize = MyEntity.GetShieldSize();
+                return (int)targetSize;
+            }
 
-                if (shieldSize + MyEntity.Vital[(int)Vitals.Health] > maxVital)
+            if ((int)targetSize > currentSize)
+            {
+                currentSize += 100f * elapsedTime;
+                if (currentSize > (int)targetSize)
                 {
-                    maxVital = shieldSize + MyEntity.Vital[(int)Vitals.Health];
-                }
-
-                var width = HpBackground.Width;
-
-                var hpfillRatio = (float) MyEntity.Vital[(int) Vitals.Health] / maxVital;
-                hpfillRatio = Math.Min(1, Math.Max(0, hpfillRatio));
-                targetHpWidth = (float) Math.Ceiling(hpfillRatio * width);
-
-                var shieldfillRatio = (float) shieldSize / maxVital;
-                shieldfillRatio = Math.Min(1, Math.Max(0, shieldfillRatio));
-                targetShieldWidth = (float) Math.Floor(shieldfillRatio * width);
-
-                float hpPercentage = hpfillRatio * 100;
-                var hpPercentageText = $"{hpPercentage:0.##}%";
-                var hpValueText = Strings.EntityBox.vital0val.ToString(
-                    MyEntity.Vital[(int)Vitals.Health], MyEntity.MaxVital[(int)Vitals.Health]
-                );
-
-                if (Globals.Database.ShowHealthAsPercentage)
-                {
-                    HpLbl.Text = hpPercentageText;
-                    HpBackground.SetToolTipText(hpValueText);
-                }
-                else
-                {
-                    HpLbl.Text = hpValueText;
-                    HpBackground.SetToolTipText(hpPercentageText);
+                    currentSize = targetSize;
                 }
             }
             else
             {
-                HpLbl.Text = Strings.EntityBox.vital0val.ToString(0, 0);
-                targetHpWidth = HpBackground.Width;
+                currentSize -= 100f * elapsedTime;
+                if (currentSize < targetSize)
+                {
+                    currentSize = targetSize;
+                }
             }
 
-            if ((int)targetHpWidth != CurHpWidth)
+            return currentSize;
+        }
+
+        private static void UpdateGauge(
+            Base backgroundBar,
+            ImagePanel foregroundBar,
+            float currentBarSize,
+            DisplayDirection direction,
+            bool isShield = false
+        )
+        {
+            //If this method is called to update the shield, we need to invert the directions
+            if (isShield)
             {
-                if (!instant)
+                switch (direction)
                 {
-                    if ((int)targetHpWidth > CurHpWidth)
-                    {
-                        CurHpWidth += 100f * elapsedTime;
-                        if (CurHpWidth > (int)targetHpWidth)
-                        {
-                            CurHpWidth = targetHpWidth;
-                        }
-                    }
-                    else
-                    {
-                        CurHpWidth -= 100f * elapsedTime;
-                        if (CurHpWidth < targetHpWidth)
-                        {
-                            CurHpWidth = targetHpWidth;
-                        }
-                    }
+                    case DisplayDirection.StartToEnd:
+                        direction = DisplayDirection.EndToStart;
+                        foregroundBar.X = backgroundBar.X;
+                        break;
+
+                    case DisplayDirection.EndToStart:
+                        direction = DisplayDirection.StartToEnd;
+                        foregroundBar.X = backgroundBar.X;
+                        break;
+
+                    case DisplayDirection.TopToBottom:
+                        direction = DisplayDirection.BottomToTop;
+                        foregroundBar.X = backgroundBar.X;
+                        break;
+
+                    case DisplayDirection.BottomToTop:
+                        direction = DisplayDirection.TopToBottom;
+                        foregroundBar.X = backgroundBar.X;
+                        break;
                 }
-                else
+            }
+
+            var backgroundWidthFactor = backgroundBar.Width - (int)currentBarSize;
+            var backgroundHeightFactor = backgroundBar.Height - (int)currentBarSize;
+
+            switch (direction)
+            {
+                case DisplayDirection.StartToEnd:
+                    foregroundBar.SetBounds(
+                        foregroundBar.X,
+                        foregroundBar.Y,
+                        (int)currentBarSize,
+                        foregroundBar.Height
+                    );
+                    foregroundBar.SetTextureRect(
+                        0, 0, (int)currentBarSize, foregroundBar.Height
+                    );
+                    break;
+
+                case DisplayDirection.EndToStart:
+                    foregroundBar.SetBounds(
+                        backgroundBar.X + backgroundWidthFactor,
+                        foregroundBar.Y,
+                        (int)currentBarSize,
+                        foregroundBar.Height
+                    );
+                    foregroundBar.SetTextureRect(
+                        backgroundWidthFactor, 0, (int)currentBarSize, foregroundBar.Height
+                    );
+                    break;
+
+                case DisplayDirection.TopToBottom:
+                    foregroundBar.SetBounds(
+                        foregroundBar.X,
+                        foregroundBar.Y,
+                        foregroundBar.Width,
+                        (int)currentBarSize
+                    );
+                    foregroundBar.SetTextureRect(
+                        0, 0, foregroundBar.Width, (int)currentBarSize
+                    );
+                    break;
+
+                case DisplayDirection.BottomToTop:
+                    foregroundBar.SetBounds(
+                        foregroundBar.X,
+                        backgroundBar.Y + backgroundHeightFactor,
+                        foregroundBar.Width,
+                        (int)currentBarSize
+                    );
+                    foregroundBar.SetTextureRect(
+                        0, backgroundHeightFactor, foregroundBar.Width, (int)currentBarSize
+                    );
+                    break;
+            }
+
+            foregroundBar.IsHidden = false;
+        }
+
+        private void UpdateHpBar(float elapsedTime, bool instant = false)
+        {
+            float targetHpSize;
+            float targetShieldSize;
+            var barDirectionSetting = ClientConfiguration.Instance.EntityBarDirections[(int)Vitals.Health];
+            var barPercentageSetting = Globals.Database.ShowHealthAsPercentage;
+            var entityVital = (float)MyEntity.Vital[(int)Vitals.Health];
+
+            if (entityVital > 0)
+            {
+                var entityMaxVital = (float)MyEntity.MaxVital[(int)Vitals.Health];
+                var shieldSize = (float)MyEntity.GetShieldSize();
+                var vitalSize = (int)barDirectionSetting < (int)DisplayDirection.TopToBottom
+                    ? HpBackground.Width
+                    : HpBackground.Height;
+
+                //We have to get the maxVital value before being changed by the shield
+                //Shield changes vitalMax only on client, showing incorrect values
+                if (shieldSize + entityVital > entityMaxVital)
                 {
-                    CurHpWidth = (int)targetHpWidth;
+                    entityMaxVital = shieldSize + entityVital;
                 }
 
-                if (CurHpWidth == 0)
+                var entityVitalRatio = entityVital / entityMaxVital;
+                var entityShieldRatio = shieldSize / entityMaxVital;
+                var hpPercentage = entityVitalRatio * 100;
+                var hpPercentageText = $"{hpPercentage:0.##}%";
+                var hpValueText = Strings.EntityBox.vital0val.ToString(entityVital, entityMaxVital);
+                HpLbl.Text = barPercentageSetting ? hpPercentageText : hpValueText;
+                HpBackground.SetToolTipText(barPercentageSetting ? hpValueText : hpPercentageText);
+                targetHpSize = SetTargetBarSize(entityVitalRatio, vitalSize);
+                targetShieldSize = SetTargetBarSize(entityShieldRatio, vitalSize);
+            }
+            else
+            {
+                HpLbl.Text = barPercentageSetting ? "0%" : Strings.EntityBox.vital0val.ToString(0, 0);
+                HpBackground.SetToolTipText(barPercentageSetting ? Strings.EntityBox.vital0val.ToString(0, 0) : "0%");
+                targetHpSize = 0;
+                targetShieldSize = 0;
+            }
+
+            if ((int)targetHpSize != (int)CurHpSize)
+            {
+                CurHpSize = SetCurrentBarSize(elapsedTime, instant, targetHpSize, CurHpSize);
+
+                if (CurHpSize == 0)
                 {
                     HpBar.IsHidden = true;
                 }
                 else
                 {
-                    HpBar.Width = (int)CurHpWidth;
-                    HpBar.SetTextureRect(0, 0, (int)CurHpWidth, HpBar.Height);
-                    HpBar.IsHidden = false;
+                    UpdateGauge(HpBackground, HpBar, CurHpSize, barDirectionSetting);
                 }
             }
 
-            if ((int)targetShieldWidth != CurShieldWidth)
+            if ((int)targetShieldSize != (int)CurShieldSize)
             {
-                if (!instant)
-                {
-                    if ((int)targetShieldWidth > CurShieldWidth)
-                    {
-                        CurShieldWidth += 100f * elapsedTime;
-                        if (CurShieldWidth > (int)targetShieldWidth)
-                        {
-                            CurShieldWidth = targetShieldWidth;
-                        }
-                    }
-                    else
-                    {
-                        CurShieldWidth -= 100f * elapsedTime;
-                        if (CurShieldWidth < targetShieldWidth)
-                        {
-                            CurShieldWidth = targetShieldWidth;
-                        }
-                    }
-                }
-                else
-                {
-                    CurShieldWidth = (int)targetShieldWidth;
-                }
+                CurShieldSize = SetCurrentBarSize(elapsedTime, instant, targetShieldSize, CurShieldSize);
 
-                if (CurShieldWidth == 0)
+                if (CurShieldSize == 0)
                 {
                     ShieldBar.IsHidden = true;
                 }
                 else
                 {
-                    ShieldBar.Width = (int)CurShieldWidth;
-                    ShieldBar.SetBounds(CurHpWidth + HpBar.X, HpBar.Y, CurShieldWidth, ShieldBar.Height);
-                    ShieldBar.SetTextureRect(
-                        (int)(HpBackground.Width - CurShieldWidth), 0, (int)CurShieldWidth, ShieldBar.Height
-                    );
-
-                    ShieldBar.IsHidden = false;
+                    UpdateGauge(HpBackground, ShieldBar, CurShieldSize, barDirectionSetting, true);
                 }
-            }
-            else
-            {
-                ShieldBar.SetPosition(HpBar.X + CurHpWidth, HpBar.Y);
             }
         }
 
         private void UpdateMpBar(float elapsedTime, bool instant = false)
         {
-            var targetMpWidth = 0f;
-            
-            if (MyEntity.MaxVital[(int)Vitals.Mana] > 0)
+            float targetMpSize;
+            var barDirectionSetting = ClientConfiguration.Instance.EntityBarDirections[(int)Vitals.Mana];
+            var barPercentageSetting = Globals.Database.ShowManaAsPercentage;
+            var entityVital = (float)MyEntity.Vital[(int)Vitals.Mana];
+
+            if (entityVital > 0)
             {
-                targetMpWidth = MyEntity.Vital[(int)Vitals.Mana] / (float)MyEntity.MaxVital[(int)Vitals.Mana];
-                targetMpWidth = Math.Min(1, Math.Max(0, targetMpWidth));
-                float mpPercentage = targetMpWidth * 100;
+                var entityMaxVital = (float)MyEntity.MaxVital[(int)Vitals.Mana];
+                var entityVitalRatio = entityVital / entityMaxVital;
+                var vitalSize = (int)barDirectionSetting < (int)DisplayDirection.TopToBottom
+                    ? MpBackground.Width
+                    : MpBackground.Height;
+                float mpPercentage = entityVitalRatio * 100;
                 var mpPercentageText = $"{mpPercentage:0.##}%";
-                var mpValueText = Strings.EntityBox.vital1val.ToString(
-                    MyEntity.Vital[(int)Vitals.Mana], MyEntity.MaxVital[(int)Vitals.Mana]
-                );
-
-                if (Globals.Database.ShowManaAsPercentage)
-                {
-                    MpLbl.Text = mpPercentageText;
-                    MpBackground.SetToolTipText(mpValueText);
-                }
-                else
-                {
-                    MpLbl.Text = mpValueText;
-                    MpBackground.SetToolTipText(mpPercentageText);
-                }
-
-                targetMpWidth *= MpBackground.Width;
+                var mpValueText = Strings.EntityBox.vital1val.ToString(entityVital, entityMaxVital);
+                MpLbl.Text = barPercentageSetting ? mpPercentageText : mpValueText;
+                MpBackground.SetToolTipText(barPercentageSetting ? mpValueText : mpPercentageText);
+                targetMpSize = SetTargetBarSize(entityVitalRatio, vitalSize);
             }
             else
             {
-                MpLbl.Text = Strings.EntityBox.vital1val.ToString(0, 0);
-                targetMpWidth = MpBackground.Width;
+                MpLbl.Text = barPercentageSetting ? "0%" : Strings.EntityBox.vital1val.ToString(0, 0);
+                MpBackground.SetToolTipText(barPercentageSetting ? Strings.EntityBox.vital1val.ToString(0, 0) : "0%");
+                targetMpSize = 0;
             }
 
-            if (!targetMpWidth.Equals(CurMpWidth))
+            if ((int)targetMpSize != (int)CurMpSize)
             {
-                if (!instant)
-                {
-                    if ((int)targetMpWidth > CurMpWidth)
-                    {
-                        CurMpWidth += 100f * elapsedTime;
-                        if (CurMpWidth > (int)targetMpWidth)
-                        {
-                            CurMpWidth = targetMpWidth;
-                        }
-                    }
-                    else
-                    {
-                        CurMpWidth -= 100f * elapsedTime;
-                        if (CurMpWidth < targetMpWidth)
-                        {
-                            CurMpWidth = targetMpWidth;
-                        }
-                    }
-                }
-                else
-                {
-                    CurMpWidth = (int)targetMpWidth;
-                }
+                CurMpSize = SetCurrentBarSize(elapsedTime, instant, targetMpSize, CurMpSize);
 
-                if (CurMpWidth == 0)
+                if (CurMpSize == 0)
                 {
                     MpBar.IsHidden = true;
                 }
                 else
                 {
-                    MpBar.Width = (int)CurMpWidth;
-                    MpBar.SetTextureRect(0, 0, (int)CurMpWidth, MpBar.Height);
-                    MpBar.IsHidden = false;
+                    UpdateGauge(MpBackground, MpBar, CurMpSize, barDirectionSetting);
                 }
             }
         }
 
         private void UpdateXpBar(float elapsedTime, bool instant = false)
         {
-            float targetExpWidth = 1;
+            float targetExpSize;
+            var barDirectionSetting = ClientConfiguration.Instance.EntityBarDirections[(int)Vitals.VitalCount];
+            var barPercentageSetting = Globals.Database.ShowExperienceAsPercentage;
+            var entityExperienceToNextLevel = (float)((Player)MyEntity).GetNextLevelExperience();
 
-            if (((Player)MyEntity).GetNextLevelExperience() > 0)
+            if (entityExperienceToNextLevel > 0)
             {
-                targetExpWidth = (float)((Player)MyEntity).Experience /
-                                 (float)((Player)MyEntity).GetNextLevelExperience();
-                float expPercentage = targetExpWidth * 100;
+                var entityExperience = ((Player)MyEntity).Experience;
+                var entityExperienceRatio = entityExperience / entityExperienceToNextLevel;
+                var vitalSize = (int)barDirectionSetting < (int)DisplayDirection.TopToBottom
+                    ? ExpBackground.Width
+                    : ExpBackground.Height;
+                var expPercentage = entityExperienceRatio * 100;
                 var expPercentageText = $"{expPercentage:0.##}%";
-                var expValueText = Strings.EntityBox.expval.ToString(
-                    ((Player)MyEntity)?.Experience, ((Player)MyEntity)?.GetNextLevelExperience()
-                );
-
-                if (Globals.Database.ShowExperienceAsPercentage)
-                {
-                    ExpLbl.Text = expPercentageText;
-                    ExpBackground.SetToolTipText(expValueText);
-                }
-                else
-                {
-                    ExpLbl.Text = expValueText;
-                    ExpBackground.SetToolTipText(expPercentageText);
-                }
+                var expValueText = Strings.EntityBox.expval.ToString(entityExperience, entityExperienceToNextLevel);
+                ExpLbl.Text = barPercentageSetting ? expPercentageText : expValueText;
+                ExpBackground.SetToolTipText(barPercentageSetting ? expValueText : expPercentageText);
+                targetExpSize = SetTargetBarSize(entityExperienceRatio, vitalSize);
             }
             else
             {
-                targetExpWidth = 1f;
+                targetExpSize = 1f;
                 ExpLbl.Text = Strings.EntityBox.maxlevel;
+                ExpBackground.SetToolTipText(Strings.EntityBox.maxlevel);
             }
 
-            targetExpWidth *= ExpBackground.Width;
-            if (Math.Abs((int) targetExpWidth - CurExpWidth) < 0.01)
+            if (Math.Abs((int)targetExpSize - CurExpSize) < 0.01)
             {
                 return;
             }
 
-            if (!instant)
-            {
-                if ((int)targetExpWidth > CurExpWidth)
-                {
-                    CurExpWidth += 100f * elapsedTime;
-                    if (CurExpWidth > (int)targetExpWidth)
-                    {
-                        CurExpWidth = targetExpWidth;
-                    }
-                }
-                else
-                {
-                    CurExpWidth -= 100f * elapsedTime;
-                    if (CurExpWidth < targetExpWidth)
-                    {
-                        CurExpWidth = targetExpWidth;
-                    }
-                }
-            }
-            else
-            {
-                CurExpWidth = (int)targetExpWidth;
-            }
+            CurExpSize = SetCurrentBarSize(elapsedTime, instant, targetExpSize, CurExpSize);
 
-            if (CurExpWidth == 0)
+            if (CurExpSize == 0)
             {
                 ExpBar.IsHidden = true;
             }
             else
             {
-                ExpBar.Width = (int) CurExpWidth;
-                ExpBar.SetTextureRect(0, 0, (int) CurExpWidth, ExpBar.Height);
-                ExpBar.IsHidden = false;
+                UpdateGauge(ExpBackground, ExpBar, CurExpSize, barDirectionSetting);
             }
         }
 
