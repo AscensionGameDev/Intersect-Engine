@@ -18,8 +18,6 @@ namespace Intersect.Client.Interface.Game.Crafting
 
     public partial class CraftingWindow
     {
-        public bool Crafting;
-
         private ImagePanel mBar;
 
         private ImagePanel mBarContainer;
@@ -36,7 +34,7 @@ namespace Intersect.Client.Interface.Game.Crafting
 
         private Guid mAutoCraftId = Guid.Empty;
 
-        private int mAutoCraftAmount = 0;
+        private int mRemainingCrafts = 0;
 
         private Guid mCraftId;
 
@@ -70,6 +68,8 @@ namespace Intersect.Client.Interface.Game.Crafting
         public int X => mCraftWindow.X;
 
         public int Y => mCraftWindow.Y;
+
+        public bool IsCrafting => mRemainingCrafts > 0;
 
         public CraftingWindow(Canvas gameCanvas)
         {
@@ -111,7 +111,7 @@ namespace Intersect.Client.Interface.Game.Crafting
 
             //Craft all button
             mCraftAll = new Button(mCraftWindow, "CraftAllButton");
-            mCraftAll.SetText(Strings.Crafting.craftall.ToString("1"));
+            mCraftAll.SetText(Strings.Crafting.craftall.ToString(1));
             mCraftAll.Clicked += craftAll_Clicked;
 
             mCraftWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
@@ -258,7 +258,7 @@ namespace Intersect.Client.Interface.Game.Crafting
             mLblDestroyMaterialsChance.Text = Strings.Crafting.DestroyMaterialsChance.ToString(craft.ItemLossChance);
 
             //If crafting & we no longer have the items for the craft then stop!
-            if (Crafting)
+            if (IsCrafting)
             {
                 var cancraft = true;
                 foreach (var c in CraftBase.Get(mCraftId).Ingredients)
@@ -286,7 +286,7 @@ namespace Intersect.Client.Interface.Game.Crafting
 
                 if (!cancraft)
                 {
-                    Crafting = false;
+                    mRemainingCrafts = 0;
                     mCraftWindow.IsClosable = true;
                     mBar.Width = 0;
                     ChatboxMsg.AddMessage(new ChatboxMsg(Strings.Crafting.incorrectresources, CustomColors.Alerts.Error, Enums.ChatMessageType.Crafting));
@@ -294,45 +294,22 @@ namespace Intersect.Client.Interface.Game.Crafting
                     return;
                 }
             }
+
+            if (craftableQuantity > 1)
+            {
+                mCraftAll.SetText(Strings.Crafting.craftall.ToString(craftableQuantity));
+                mCraftAll.UserData = craftableQuantity;
+                mCraftAll.IsDisabled = IsCrafting;
+            }
             else
             {
-                var autoCrafting = false;
-
-                //Auto craft if that's what we were doing
-                if (mAutoCraftId != Guid.Empty && mCraftId == mAutoCraftId)
-                {
-                    if (mAutoCraftAmount > 0 && CanCraft())
-                    {
-                        craft_Clicked(null, null);
-                        mAutoCraftAmount--;
-                        autoCrafting = true;
-                    }
-                    else
-                    {
-                        mAutoCraftId = Guid.Empty;
-                    }
-                }
-
-                if (!autoCrafting)
-                {
-                    //Update craft buttons!
-                    if (craftableQuantity > 1)
-                    {
-                        mCraftAll.Show();
-                        mCraftAll.SetText(Strings.Crafting.craftall.ToString(craftableQuantity.ToString()));
-                    }
-                    else
-                    {
-                        mCraftAll.Hide();
-                    }
-                    mCraftAll.UserData = craftableQuantity;
-                }
+                mCraftAll.IsHidden = true;
             }
         }
 
         public void Close()
         {
-            if (Crafting == false)
+            if (IsCrafting == false)
             {
                 mCraftWindow.Close();
             }
@@ -345,7 +322,7 @@ namespace Intersect.Client.Interface.Game.Crafting
 
         public void Hide()
         {
-            if (Crafting == false)
+            if (IsCrafting == false)
             {
                 mCraftWindow.IsHidden = true;
             }
@@ -354,7 +331,7 @@ namespace Intersect.Client.Interface.Game.Crafting
         //Load new recepie
         void tmpNode_DoubleClicked(Base sender, ClickedEventArgs arguments)
         {
-            if (Crafting == false)
+            if (IsCrafting == false)
             {
                 LoadCraftItems((Guid) ((ListBoxRow) sender).UserData);
             }
@@ -408,17 +385,15 @@ namespace Intersect.Client.Interface.Game.Crafting
             return canCraft;
         }
 
-        //Craft the item
-        void craft_Clicked(Base sender, ClickedEventArgs arguments)
+        void DoCraft(int count)
         {
-            if (Crafting)
+            if (IsCrafting)
             {
-                PacketSender.SendCraftItem(Guid.Empty);
-                Crafting = false;
+                PacketSender.SendCraftItem(default, default);
+                mRemainingCrafts = 0;
                 mCraftWindow.IsClosable = true;
                 mBar.Width = 0;
-                mAutoCraftAmount = 0;
-                mAutoCraftId = Guid.Empty;
+                mAutoCraftId = default;
 
                 LoadCraftItems(mCraftId);
 
@@ -427,11 +402,11 @@ namespace Intersect.Client.Interface.Game.Crafting
 
             if (CanCraft())
             {
-                Crafting = true;
+                mRemainingCrafts = count;
                 mBarTimer = Timing.Global.Milliseconds;
-                PacketSender.SendCraftItem(mCraftId);
+                PacketSender.SendCraftItem(mCraftId, count);
                 mCraftWindow.IsClosable = false;
-                mCraftAll.Hide();
+                mCraftAll.IsDisabled = true;
 
                 return;
             }
@@ -439,15 +414,17 @@ namespace Intersect.Client.Interface.Game.Crafting
             ChatboxMsg.AddMessage(new ChatboxMsg(Strings.Crafting.incorrectresources, CustomColors.Alerts.Error, Enums.ChatMessageType.Crafting));
         }
 
+        //Craft the item
+        void craft_Clicked(Base sender, ClickedEventArgs arguments) => DoCraft(1);
+
         //Craft all the items
         void craftAll_Clicked(Base sender, ClickedEventArgs arguments)
         {
             if (CanCraft())
             {
-                craft_Clicked(null, null);
-                mAutoCraftAmount = (int)mCraftAll.UserData - 1;
+                DoCraft((int)mCraftAll.UserData);
                 mAutoCraftId = mCraftId;
-                mCraftAll.Hide();
+                mCraftAll.Disable();
             }
             else
             {
@@ -488,16 +465,15 @@ namespace Intersect.Client.Interface.Game.Crafting
                 mInitialized = true;
             }
 
-            if (!Crafting)
+            if (IsCrafting)
             {
-                mCraft.SetText(Strings.Crafting.craft);
-                mBar.Width = 0;
-
-                return;
+                mCraft.SetText(Strings.Crafting.craftstop);
             }
             else
             {
-                mCraft.SetText(Strings.Crafting.craftstop);
+                mCraft.SetText(Strings.Crafting.craft);
+                mBar.Width = 0;
+                return;
             }
 
             var craft = CraftBase.Get(mCraftId);
@@ -510,13 +486,20 @@ namespace Intersect.Client.Interface.Game.Crafting
             if (delta > craft.Time)
             {
                 delta = craft.Time;
-                Crafting = false;
-                if (mCraftWindow != null)
+                mRemainingCrafts--;
+                if (mRemainingCrafts < 1)
                 {
-                    mCraftWindow.IsClosable = true;
-                }
+                    if (mCraftWindow != null)
+                    {
+                        mCraftWindow.IsClosable = true;
+                    }
 
-                mBar.Width = 0;
+                    mBar.Width = 0;
+                }
+                else
+                {
+                    mBarTimer = Timing.Global.Milliseconds;
+                }
             }
 
             var ratio = craft.Time == 0 ? 0 : Convert.ToDecimal(delta) / Convert.ToDecimal(craft.Time);

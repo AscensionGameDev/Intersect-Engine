@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 using Intersect.Enums;
@@ -142,7 +142,7 @@ namespace Intersect.Server.Entities.Events
                         }
 
                         if (curStack.WaitingForResponse == CommandInstance.EventResponse.Crafting &&
-                            Player.CraftingTableId == Guid.Empty)
+                            Player.OpenCraftingTableId == Guid.Empty)
                         {
                             curStack.WaitingForResponse = CommandInstance.EventResponse.None;
                         }

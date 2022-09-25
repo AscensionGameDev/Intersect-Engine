@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 using Intersect.Admin.Actions;
 using Intersect.Client.Entities.Events;
@@ -211,9 +211,9 @@ namespace Intersect.Client.Networking
             Network.SendPacket(new SwapBankItemsPacket(slot1, slot2));
         }
 
-        public static void SendCraftItem(Guid id)
+        public static void SendCraftItem(Guid id, int count)
         {
-            Network.SendPacket(new CraftItemPacket(id));
+            Network.SendPacket(new CraftItemPacket(id, count));
         }
 
         public static void SendPartyInvite(Guid targetId)
