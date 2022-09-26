@@ -32,6 +32,7 @@ namespace Intersect.Editor.Forms.DockingElements
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.lblLayer = new System.Windows.Forms.Label();
             this.lblTileType = new System.Windows.Forms.Label();
             this.lblTileset = new System.Windows.Forms.Label();
@@ -147,6 +148,9 @@ namespace Intersect.Editor.Forms.DockingElements
             this.pnlEvents = new System.Windows.Forms.Panel();
             this.pnlLights = new System.Windows.Forms.Panel();
             this.lightEditor = new Intersect.Editor.Forms.Controls.LightEditorCtrl();
+            this.nudItemRespawnTime = new DarkUI.Controls.DarkNumericUpDown();
+            this.lblItemRespawnTime = new System.Windows.Forms.Label();
+            this.tooltips = new System.Windows.Forms.ToolTip(this.components);
             this.grpResource.SuspendLayout();
             this.grpZResource.SuspendLayout();
             this.grpItem.SuspendLayout();
@@ -462,6 +466,8 @@ namespace Intersect.Editor.Forms.DockingElements
             //
             this.grpItem.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.grpItem.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpItem.Controls.Add(this.nudItemRespawnTime);
+            this.grpItem.Controls.Add(this.lblItemRespawnTime);
             this.grpItem.Controls.Add(this.nudItemQuantity);
             this.grpItem.Controls.Add(this.cmbItemAttribute);
             this.grpItem.Controls.Add(this.lblMaxItemAmount);
@@ -469,7 +475,7 @@ namespace Intersect.Editor.Forms.DockingElements
             this.grpItem.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpItem.Location = new System.Drawing.Point(6, 179);
             this.grpItem.Name = "grpItem";
-            this.grpItem.Size = new System.Drawing.Size(246, 98);
+            this.grpItem.Size = new System.Drawing.Size(246, 148);
             this.grpItem.TabIndex = 22;
             this.grpItem.TabStop = false;
             this.grpItem.Text = "Map Item";
@@ -1742,6 +1748,35 @@ namespace Intersect.Editor.Forms.DockingElements
             this.lightEditor.Visible = false;
             this.lightEditor.Load += new System.EventHandler(this.lightEditor_Load);
             //
+            // nudItemRespawnTime
+            //
+            this.nudItemRespawnTime.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.nudItemRespawnTime.ForeColor = System.Drawing.Color.Gainsboro;
+            this.nudItemRespawnTime.Location = new System.Drawing.Point(16, 116);
+            this.nudItemRespawnTime.Maximum = new decimal(new int[] {
+            2147483647,
+            0,
+            0,
+            0});
+            this.nudItemRespawnTime.Name = "nudItemRespawnTime";
+            this.nudItemRespawnTime.Size = new System.Drawing.Size(219, 20);
+            this.nudItemRespawnTime.TabIndex = 12;
+            this.nudItemRespawnTime.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.nudItemRespawnTime.ValueChanged += new System.EventHandler(this.NudItemRespawnTime_ValueChanged);
+            //
+            // lblItemRespawnTime
+            //
+            this.lblItemRespawnTime.AutoSize = true;
+            this.lblItemRespawnTime.Location = new System.Drawing.Point(13, 98);
+            this.lblItemRespawnTime.Name = "lblItemRespawnTime";
+            this.lblItemRespawnTime.Size = new System.Drawing.Size(215, 13);
+            this.lblItemRespawnTime.TabIndex = 11;
+            this.lblItemRespawnTime.Text = "Respawn Time (ms)";
+            //
             // FrmMapLayers
             //
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1816,6 +1851,7 @@ namespace Intersect.Editor.Forms.DockingElements
             this.pnlEvents.ResumeLayout(false);
             this.pnlEvents.PerformLayout();
             this.pnlLights.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.nudItemRespawnTime)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -1936,5 +1972,8 @@ namespace Intersect.Editor.Forms.DockingElements
         private CheckBox chkChangeInstance;
         private DarkComboBox cmbWarpSound;
         private Label lblWarpSound;
+        private DarkNumericUpDown nudItemRespawnTime;
+        private Label lblItemRespawnTime;
+        private ToolTip tooltips;
     }
 }

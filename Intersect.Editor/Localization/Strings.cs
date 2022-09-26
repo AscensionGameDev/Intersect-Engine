@@ -963,6 +963,10 @@ namespace Intersect.Editor.Localization
 
             public static LocalizedString ResourceSpawn = @"Resource";
 
+            public static LocalizedString RespawnTime = @"Respawn Time (ms)";
+
+            public static LocalizedString RespawnTimeTooltip = @"0 for server default";
+
             public static LocalizedString Slide = @"Slide";
 
             public static LocalizedString Sound = @"Sound";
@@ -3509,6 +3513,12 @@ Tick timer saved in server config.json.";
             public static LocalizedString DeathDropChance = @"Drop chance on Death (%):";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString DespawnTime = @"Item Despawn Time (ms)";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString DespawnTimeTooltip = @"0 for server default";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString CanBag = @"Can Bag?";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -5316,8 +5326,8 @@ Tick timer saved in server config.json.";
             public static LocalizedString rate = @"Time Rate:";
 
             public static LocalizedString ratedesc = @"Enter 1 for normal rate of time.
-Values larger than one for faster days. 
-Values between 0 and 1 for longer days. 
+Values larger than one for faster days.
+Values between 0 and 1 for longer days.
 Negative values for time to flow backwards.";
 
             public static LocalizedString ratesuffix = @"x Normal";
