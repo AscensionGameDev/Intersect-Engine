@@ -201,6 +201,8 @@ namespace Intersect.Editor.Forms.Editors
             chkCanDrop.Text = Strings.ItemEditor.CanDrop;
             lblDeathDropChance.Text = Strings.ItemEditor.DeathDropChance;
             lblDespawnTime.Text = Strings.ItemEditor.DespawnTime;
+            tooltips.SetToolTip(lblDespawnTime, Strings.ItemEditor.DespawnTimeTooltip);
+            tooltips.SetToolTip(nudItemDespawnTime, Strings.ItemEditor.DespawnTimeTooltip);
             chkCanBank.Text = Strings.ItemEditor.CanBank;
             chkCanGuildBank.Text = Strings.ItemEditor.CanGuildBank;
             chkCanBag.Text = Strings.ItemEditor.CanBag;

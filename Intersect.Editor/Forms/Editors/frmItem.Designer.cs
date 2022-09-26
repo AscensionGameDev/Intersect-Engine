@@ -217,6 +217,7 @@ namespace Intersect.Editor.Forms.Editors
             this.toolStripItemPaste = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripItemUndo = new System.Windows.Forms.ToolStripButton();
+            this.tooltips = new System.Windows.Forms.ToolTip(this.components);
             this.cmbWeaponSprite = new DarkUI.Controls.DarkComboBox();
             this.grpItems.SuspendLayout();
             this.grpGeneral.SuspendLayout();
@@ -3220,5 +3221,6 @@ namespace Intersect.Editor.Forms.Editors
         private DarkComboBox cmbWeaponSprite;
         private DarkNumericUpDown nudItemDespawnTime;
         private Label lblDespawnTime;
+        private ToolTip tooltips;
     }
 }

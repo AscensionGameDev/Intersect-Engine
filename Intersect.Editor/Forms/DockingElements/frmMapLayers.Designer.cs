@@ -32,6 +32,7 @@ namespace Intersect.Editor.Forms.DockingElements
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.lblLayer = new System.Windows.Forms.Label();
             this.lblTileType = new System.Windows.Forms.Label();
             this.lblTileset = new System.Windows.Forms.Label();
@@ -149,6 +150,7 @@ namespace Intersect.Editor.Forms.DockingElements
             this.lightEditor = new Intersect.Editor.Forms.Controls.LightEditorCtrl();
             this.nudItemRespawnTime = new DarkUI.Controls.DarkNumericUpDown();
             this.lblItemRespawnTime = new System.Windows.Forms.Label();
+            this.tooltips = new System.Windows.Forms.ToolTip(this.components);
             this.grpResource.SuspendLayout();
             this.grpZResource.SuspendLayout();
             this.grpItem.SuspendLayout();
@@ -183,7 +185,6 @@ namespace Intersect.Editor.Forms.DockingElements
             ((System.ComponentModel.ISupportInitialize)(this.picTileset)).BeginInit();
             this.pnlEvents.SuspendLayout();
             this.pnlLights.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nudItemRespawnTime)).BeginInit();
             this.SuspendLayout();
             //
             // lblLayer
@@ -1774,7 +1775,7 @@ namespace Intersect.Editor.Forms.DockingElements
             this.lblItemRespawnTime.Name = "lblItemRespawnTime";
             this.lblItemRespawnTime.Size = new System.Drawing.Size(215, 13);
             this.lblItemRespawnTime.TabIndex = 11;
-            this.lblItemRespawnTime.Text = "Respawn Time (ms):      [0 for server default]";
+            this.lblItemRespawnTime.Text = "Respawn Time (ms)";
             //
             // FrmMapLayers
             //
@@ -1973,5 +1974,6 @@ namespace Intersect.Editor.Forms.DockingElements
         private Label lblWarpSound;
         private DarkNumericUpDown nudItemRespawnTime;
         private Label lblItemRespawnTime;
+        private ToolTip tooltips;
     }
 }

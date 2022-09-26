@@ -963,7 +963,9 @@ namespace Intersect.Editor.Localization
 
             public static LocalizedString ResourceSpawn = @"Resource";
 
-            public static LocalizedString RespawnTime = @"Respawn Time (ms):      [0 for server default]";
+            public static LocalizedString RespawnTime = @"Respawn Time (ms)";
+
+            public static LocalizedString RespawnTimeTooltip = @"0 for server default";
 
             public static LocalizedString Slide = @"Slide";
 
@@ -3511,7 +3513,10 @@ Tick timer saved in server config.json.";
             public static LocalizedString DeathDropChance = @"Drop chance on Death (%):";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString DespawnTime = @"Item Despawn Time (ms):     [0 for server default]";
+            public static LocalizedString DespawnTime = @"Item Despawn Time (ms)";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString DespawnTimeTooltip = @"0 for server default";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString CanBag = @"Can Bag?";

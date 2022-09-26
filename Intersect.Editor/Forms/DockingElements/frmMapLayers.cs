@@ -1081,6 +1081,8 @@ namespace Intersect.Editor.Forms.DockingElements
             lblMapItem.Text = Strings.Attributes.Item;
             lblMaxItemAmount.Text = Strings.Attributes.Quantity;
             lblItemRespawnTime.Text = Strings.Attributes.RespawnTime;
+            tooltips.SetToolTip(lblItemRespawnTime, Strings.Attributes.RespawnTimeTooltip);
+            tooltips.SetToolTip(nudItemRespawnTime, Strings.Attributes.RespawnTimeTooltip);
 
             //Z-Dimension
             grpZDimension.Text = Strings.Attributes.ZDimension;
