@@ -295,15 +295,12 @@ namespace Intersect.Client.Interface.Game.Crafting
                 }
             }
 
-            if (craftableQuantity > 1)
+            mCraftAll.IsHidden = craftableQuantity < 2;
+            if (!mCraftAll.IsHidden)
             {
                 mCraftAll.SetText(Strings.Crafting.craftall.ToString(craftableQuantity));
                 mCraftAll.UserData = craftableQuantity;
                 mCraftAll.IsDisabled = IsCrafting;
-            }
-            else
-            {
-                mCraftAll.IsHidden = true;
             }
         }
 
