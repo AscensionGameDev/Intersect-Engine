@@ -390,15 +390,15 @@ namespace Intersect.Client.Entities
         {
             long count = 0;
 
-            for (var i = 0; i < Options.MaxInvItems; i++)
+            foreach (var slot in Inventory)
             {
-                if (Inventory[i].ItemId == itemId)
+                if (slot.ItemId == itemId)
                 {
-                    count += Inventory[i].Quantity;
+                    count += slot.Quantity;
                 }
             }
 
-            return count > Int32.MaxValue ? Int32.MaxValue : (int)count;
+            return count > int.MaxValue ? int.MaxValue : (int)count;
         }
 
         public void TryUseItem(int index)
@@ -642,20 +642,42 @@ namespace Intersect.Client.Entities
         public void TryBuyItem(int slot)
         {
             //Confirm the purchase
-            var item = ItemBase.Get(Globals.GameShop.SellingItems[slot].ItemId);
+            var shopItem = Globals.GameShop.SellingItems[slot];
+            var item = ItemBase.Get(shopItem.ItemId);
             if (item != null)
             {
-                // Determine how many items we can purchase.
-                var currencyCount = GetItemQuantity(Globals.GameShop.SellingItems[slot].CostItemId);
-                var maxBuyAmount = (int)Math.Floor(currencyCount / (float)Globals.GameShop.SellingItems[slot].CostItemQuantity);
+                var maxBuyAmount = 0;
+                if (shopItem.CostItemQuantity < 1)
+                {
+                    var emptySlots = Inventory.Count(inventorySlot => inventorySlot.ItemId == default);
+                    var currentItemQuantity = GetItemQuantity(shopItem.ItemId);
+                    var stackSize = item.IsStackable ? item.MaxInventoryStack : 1;
+                    var partialStackSize = currentItemQuantity % stackSize;
+                    var partialStackSpace = partialStackSize < 1 ? 0 : stackSize - partialStackSize;
+                    maxBuyAmount = emptySlots * stackSize + partialStackSpace;
+                }
+                else
+                {
+                    var currencyCount = GetItemQuantity(shopItem.CostItemId);
+                    maxBuyAmount = (int)Math.Floor(currencyCount / (float)Globals.GameShop.SellingItems[slot].CostItemQuantity);
+                }
 
                 // Is the item stackable, and can we make a purchase at all?
                 if (item.IsStackable && maxBuyAmount != 0)
                 {
-                    var iBox = new InputBox(
-                        Strings.Shop.buyitem, Strings.Shop.buyitemprompt.ToString(item.Name), true,
-                        InputBox.InputType.NumericSliderInput, BuyItemInputBoxOkay, null, slot, maxBuyAmount, maxBuyAmount
-                    );
+                    using (_ = new InputBox(
+                        title: Strings.Shop.buyitem,
+                        prompt: Strings.Shop.buyitemprompt.ToString(item.Name),
+                        modal: true,
+                        inputType: InputBox.InputType.NumericSliderInput,
+                        onSuccess: BuyItemInputBoxOkay,
+                        null,
+                        userData: slot,
+                        quantity: maxBuyAmount,
+                        maxQuantity: maxBuyAmount
+                    )) {
+                        // Do nothing
+                    }
                 }
                 // In any other case, attempt to purchase one and let the server handle the error and double checking.
                 else
