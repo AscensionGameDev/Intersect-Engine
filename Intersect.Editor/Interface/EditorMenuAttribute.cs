@@ -1,6 +1,5 @@
 using System.Reflection;
-
-using Intersect.Client.Framework.UserInterface.Components;
+using Intersect.Editor.Interface.Components;
 
 namespace Intersect.Editor.Interface;
 

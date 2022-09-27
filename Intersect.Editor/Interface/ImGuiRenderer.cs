@@ -1,15 +1,13 @@
 using System.Numerics;
 using System.Runtime.InteropServices;
-
 using ImGuiNET;
-
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Input;
 using Intersect.Client.Framework.Windows;
 using Intersect.Numerics;
 using Intersect.Time;
 
-namespace Intersect.Client.Framework.UserInterface;
+namespace Intersect.Editor.Interface;
 
 /// <summary>
 /// ImGui renderer for use with XNA-likes (FNA & MonoGame)

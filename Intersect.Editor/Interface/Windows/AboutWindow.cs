@@ -4,7 +4,7 @@ using System.Reflection;
 using ImGuiNET;
 
 using Intersect.Client.Framework.Content;
-using Intersect.Client.Framework.UserInterface.Components;
+using Intersect.Editor.Interface.Components;
 using Intersect.Editor.Localization;
 using Intersect.Editor.MonoGame.Content;
 using Intersect.Localization;

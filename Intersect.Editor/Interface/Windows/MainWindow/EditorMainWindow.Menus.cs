@@ -1,6 +1,5 @@
-using Intersect.Client.Framework.UserInterface.Components;
+using Intersect.Editor.Interface.Components;
 using Intersect.Editor.Localization;
-using Intersect.Editor.UserInterface.Components;
 using Intersect.Enums;
 using Intersect.Platform;
 

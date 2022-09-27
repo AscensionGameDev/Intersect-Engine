@@ -1,6 +1,6 @@
 using Intersect.Localization;
 
-namespace Intersect.Client.Framework.UserInterface;
+namespace Intersect.Editor.Interface;
 
 public partial class Component
 {

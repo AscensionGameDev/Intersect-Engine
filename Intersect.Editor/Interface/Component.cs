@@ -1,11 +1,8 @@
 using System.Numerics;
-
 using Intersect.Client.Framework.Content;
-using Intersect.Client.Framework.UserInterface.Styling;
-using Intersect.Collections;
 using Intersect.Numerics;
 
-namespace Intersect.Client.Framework.UserInterface;
+namespace Intersect.Editor.Interface;
 
 public abstract partial class Component
 {
@@ -13,17 +10,15 @@ public abstract partial class Component
 
     private FloatRect _bounds;
     private FloatRect? _boundsDirty;
-    private DisplayMode _displayMode;
 
     protected Component(string? name = default)
     {
-        _metadata = new ComponentMetadata(this);
+        _metadata = new(this);
 
         Name = name;
 
-        _childrenNotifier = new ChildrenNotifier(this);
-        _children = new NotifierList<Component>(_childrenNotifier);
-        _displayMode = DisplayMode.Initial;
+        _childrenNotifier = new(this);
+        _children = new(_childrenNotifier);
     }
 
     public FloatRect Bounds
@@ -42,20 +37,6 @@ public abstract partial class Component
     }
 
     protected virtual IContentManager? ContentManager => Parent?.ContentManager;
-
-    public DisplayMode Display
-    {
-        get => _displayMode;
-        set
-        {
-            if (value == _displayMode)
-            {
-                return;
-            }
-
-            _displayMode = value;
-        }
-    }
 
     public Vector2 Position
     {

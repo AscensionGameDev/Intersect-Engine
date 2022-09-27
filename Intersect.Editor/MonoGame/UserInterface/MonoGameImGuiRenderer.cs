@@ -1,4 +1,4 @@
-using Intersect.Client.Framework.UserInterface;
+using Intersect.Editor.Interface;
 using Intersect.Editor.MonoGame.Graphics;
 using Intersect.Editor.MonoGame.Input;
 

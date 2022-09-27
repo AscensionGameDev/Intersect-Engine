@@ -3,8 +3,7 @@ using ImGuiNET;
 using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Platform;
-using Intersect.Client.Framework.UserInterface;
-using Intersect.Client.Framework.UserInterface.Components;
+using Intersect.Editor.Interface.Components;
 using Intersect.Time;
 
 namespace Intersect.Editor.Interface.Windows.MainWindow;

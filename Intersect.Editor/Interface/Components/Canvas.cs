@@ -1,11 +1,10 @@
-using Intersect.Client.Framework.UserInterface.Styling;
-using ImGuiNET;
-using Intersect.Time;
 using System.Numerics;
+using ImGuiNET;
 using Intersect.Client.Framework.Content;
 using Intersect.Numerics;
+using Intersect.Time;
 
-namespace Intersect.Client.Framework.UserInterface.Components;
+namespace Intersect.Editor.Interface.Components;
 
 public class Canvas : Window
 {
@@ -26,7 +25,6 @@ public class Canvas : Window
     {
         _contentManager = contentManager;
 
-        Display = DisplayMode.Block;
         Flags = CanvasFlags;
     }
 

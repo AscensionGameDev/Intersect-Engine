@@ -1,12 +1,10 @@
 using System.Numerics;
-
 using ImGuiNET;
-
 using Intersect.Localization;
 using Intersect.Logging;
 using Intersect.Time;
 
-namespace Intersect.Client.Framework.UserInterface.Components;
+namespace Intersect.Editor.Interface.Components;
 
 public class Window : Component
 {

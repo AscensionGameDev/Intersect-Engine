@@ -1,9 +1,7 @@
 using System.Numerics;
 
 using ImGuiNET;
-
-using Intersect.Client.Framework.UserInterface;
-using Intersect.Client.Framework.UserInterface.Components;
+using Intersect.Editor.Interface.Components;
 using Intersect.Editor.Localization;
 using Intersect.Time;
 

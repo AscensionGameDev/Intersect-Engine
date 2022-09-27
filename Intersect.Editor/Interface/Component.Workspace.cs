@@ -1,10 +1,8 @@
 using System.Numerics;
-
 using ImGuiNET;
-
 using Intersect.Numerics;
 
-namespace Intersect.Client.Framework.UserInterface;
+namespace Intersect.Editor.Interface;
 
 public partial class Component
 {

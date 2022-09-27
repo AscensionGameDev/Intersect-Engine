@@ -2,7 +2,7 @@ using System.Numerics;
 
 using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.Graphics;
-using Intersect.Client.Framework.UserInterface;
+using Intersect.Editor.Interface;
 
 namespace Intersect.Editor.MonoGame.Content;
 

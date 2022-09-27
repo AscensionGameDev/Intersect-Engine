@@ -1,8 +1,6 @@
-using Intersect.Client.Framework.UserInterface.Components;
-using Intersect.Client.Framework.UserInterface.Styling;
 using Intersect.Time;
 
-namespace Intersect.Client.Framework.UserInterface;
+namespace Intersect.Editor.Interface;
 
 public partial class Component
 {
@@ -26,11 +24,6 @@ public partial class Component
     }
     public void Layout(FrameTime frameTime)
     {
-        if (Display == DisplayMode.None)
-        {
-            return;
-        }
-
         if (_dirty)
         {
             LayoutDirty(frameTime);

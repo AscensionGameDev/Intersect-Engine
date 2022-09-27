@@ -1,4 +1,4 @@
-namespace Intersect.Client.Framework.UserInterface;
+namespace Intersect.Editor.Interface;
 
 public partial class Component : IDisposable
 {
@@ -21,7 +21,7 @@ public partial class Component : IDisposable
     {
         if (_disposed)
         {
-            throw new ObjectDisposedException(Name ?? (GetType() ?? typeof(Component)).FullName);
+            throw new ObjectDisposedException(Name ?? (GetType() ?? typeof(Editor.Interface.Component)).FullName);
         }
 
         foreach (var child in Children)

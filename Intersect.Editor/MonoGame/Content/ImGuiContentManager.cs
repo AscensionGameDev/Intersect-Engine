@@ -1,6 +1,6 @@
 using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.Graphics;
-using Intersect.Client.Framework.UserInterface;
+using Intersect.Editor.Interface;
 using Intersect.Editor.MonoGame.Graphics;
 using Intersect.Plugins;
 

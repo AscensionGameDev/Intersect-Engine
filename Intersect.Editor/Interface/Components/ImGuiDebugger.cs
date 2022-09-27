@@ -1,11 +1,8 @@
 using ImGuiNET;
-
-using Intersect.Client.Framework.UserInterface;
-using Intersect.Client.Framework.UserInterface.Components;
 using Intersect.Editor.Localization;
 using Intersect.Time;
 
-namespace Intersect.Editor.UserInterface.Components;
+namespace Intersect.Editor.Interface.Components;
 
 public class ImGuiDebugger : Component
 {

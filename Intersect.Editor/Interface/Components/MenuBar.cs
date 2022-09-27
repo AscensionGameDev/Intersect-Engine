@@ -1,12 +1,9 @@
 using System.Collections;
-
 using ImGuiNET;
-
-using Intersect.Client.Framework.UserInterface.Styling;
 using Intersect.Localization;
 using Intersect.Time;
 
-namespace Intersect.Client.Framework.UserInterface.Components;
+namespace Intersect.Editor.Interface.Components;
 
 public interface IHasMenuItems
 {
@@ -97,7 +94,6 @@ public class MenuBar : Component, IList<Menu>
     {
         _menus = new();
 
-        Display = DisplayMode.Block;
         SkipLayoutEnd = true;
     }
 

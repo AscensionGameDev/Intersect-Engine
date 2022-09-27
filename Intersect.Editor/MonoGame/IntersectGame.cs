@@ -4,13 +4,10 @@ using System.Reflection;
 using ImGuiNET;
 
 using Intersect.Client.Framework.Content;
-using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Input;
 using Intersect.Client.Framework.Gwen.Renderer;
 using Intersect.Client.Framework.Input;
 using Intersect.Client.Framework.Platform;
-using Intersect.Client.Framework.UserInterface;
-using Intersect.Client.Framework.UserInterface.Components;
 using Intersect.Configuration;
 using Intersect.Editor.Core;
 using Intersect.Editor.Core.Controls;
@@ -27,21 +24,11 @@ using Intersect.Editor.MonoGame.Input;
 using Intersect.Editor.MonoGame.Network;
 using Intersect.Editor.MonoGame.UserInterface;
 using Intersect.Editor.Platform;
-using Intersect.Enums;
-using Intersect.GameObjects.Annotations;
-using Intersect.Localization;
-using Intersect.Localization.Common.Descriptors.Maps;
 using Intersect.Time;
 using Intersect.Updater;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-
-using Newtonsoft.Json;
-
-using Menu = Intersect.Client.Framework.UserInterface.Components.Menu;
-using Texture = Intersect.Client.Framework.Graphics.Texture;
-using Window = Intersect.Client.Framework.UserInterface.Components.Window;
 
 namespace Intersect.Editor.MonoGame
 {

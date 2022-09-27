@@ -1,16 +1,10 @@
-using System.Diagnostics;
-using System.Globalization;
 using System.Numerics;
-using System.Reflection;
 using ImGuiNET;
 using Intersect.Collections;
 using Intersect.Comparison;
 using Intersect.Editor.Localization;
 using Intersect.Enums;
-using Intersect.Framework.Reflection;
-using Intersect.Logging;
 using Intersect.Models;
-using Intersect.Models.Annotations;
 using Intersect.Numerics;
 using Intersect.Time;
 
