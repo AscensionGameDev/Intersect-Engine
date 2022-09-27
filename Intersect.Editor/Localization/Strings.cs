@@ -2833,6 +2833,8 @@ Tick timer saved in server config.json.";
                 {3, "Player Bump"},
             };
 
+            public static LocalizedString VariableTrigger = @"Variable:";
+
             public static LocalizedString walkinganim = @"Walking Anim";
 
         }

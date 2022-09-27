@@ -186,13 +186,13 @@ namespace Intersect.Editor.Forms.Editors.Events
             this.lblType = new System.Windows.Forms.Label();
             this.cmbMoveType = new DarkUI.Controls.DarkComboBox();
             this.grpTriggers = new DarkUI.Controls.DarkGroupBox();
-            this.cmbVariable = new DarkUI.Controls.DarkComboBox();
             this.lblVariableTrigger = new System.Windows.Forms.Label();
-            this.txtCommand = new DarkUI.Controls.DarkTextBox();
             this.lblCommand = new System.Windows.Forms.Label();
             this.lblTriggerVal = new System.Windows.Forms.Label();
-            this.cmbTriggerVal = new DarkUI.Controls.DarkComboBox();
             this.cmbTrigger = new DarkUI.Controls.DarkComboBox();
+            this.cmbTriggerVal = new DarkUI.Controls.DarkComboBox();
+            this.cmbVariable = new DarkUI.Controls.DarkComboBox();
+            this.txtCommand = new DarkUI.Controls.DarkTextBox();
             this.grpEventConditions = new DarkUI.Controls.DarkGroupBox();
             this.btnEditConditions = new DarkUI.Controls.DarkButton();
             this.grpNewCommands = new DarkUI.Controls.DarkGroupBox();
@@ -269,7 +269,7 @@ namespace Intersect.Editor.Forms.Editors.Events
             this.grpEntityOptions.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpEntityOptions.Location = new System.Drawing.Point(21, 150);
             this.grpEntityOptions.Name = "grpEntityOptions";
-            this.grpEntityOptions.Size = new System.Drawing.Size(326, 423);
+            this.grpEntityOptions.Size = new System.Drawing.Size(326, 450);
             this.grpEntityOptions.TabIndex = 12;
             this.grpEntityOptions.TabStop = false;
             this.grpEntityOptions.Text = "Entity Options";
@@ -668,70 +668,35 @@ namespace Intersect.Editor.Forms.Editors.Events
             // 
             this.grpTriggers.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.grpTriggers.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.grpTriggers.Controls.Add(this.cmbVariable);
             this.grpTriggers.Controls.Add(this.lblVariableTrigger);
-            this.grpTriggers.Controls.Add(this.txtCommand);
             this.grpTriggers.Controls.Add(this.lblCommand);
             this.grpTriggers.Controls.Add(this.lblTriggerVal);
-            this.grpTriggers.Controls.Add(this.cmbTriggerVal);
             this.grpTriggers.Controls.Add(this.cmbTrigger);
+            this.grpTriggers.Controls.Add(this.cmbTriggerVal);
+            this.grpTriggers.Controls.Add(this.cmbVariable);
+            this.grpTriggers.Controls.Add(this.txtCommand);
             this.grpTriggers.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpTriggers.Location = new System.Drawing.Point(25, 517);
             this.grpTriggers.Name = "grpTriggers";
-            this.grpTriggers.Size = new System.Drawing.Size(317, 44);
+            this.grpTriggers.Size = new System.Drawing.Size(317, 75);
             this.grpTriggers.TabIndex = 21;
             this.grpTriggers.TabStop = false;
             this.grpTriggers.Text = "Trigger";
             // 
-            // cmbVariable
-            // 
-            this.cmbVariable.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.cmbVariable.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.cmbVariable.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
-            this.cmbVariable.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbVariable.DrawDropdownHoverOutline = false;
-            this.cmbVariable.DrawFocusRectangle = false;
-            this.cmbVariable.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.cmbVariable.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbVariable.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.cmbVariable.ForeColor = System.Drawing.Color.Gainsboro;
-            this.cmbVariable.FormattingEnabled = true;
-            this.cmbVariable.Items.AddRange(new object[] {
-            "None"});
-            this.cmbVariable.Location = new System.Drawing.Point(181, 13);
-            this.cmbVariable.Name = "cmbVariable";
-            this.cmbVariable.Size = new System.Drawing.Size(130, 21);
-            this.cmbVariable.TabIndex = 14;
-            this.cmbVariable.Text = "None";
-            this.cmbVariable.TextPadding = new System.Windows.Forms.Padding(2);
-            this.cmbVariable.SelectedIndexChanged += new System.EventHandler(this.cmbVariable_SelectedIndexChanged);
-            // 
             // lblVariableTrigger
             // 
             this.lblVariableTrigger.AutoSize = true;
-            this.lblVariableTrigger.Location = new System.Drawing.Point(113, 17);
+            this.lblVariableTrigger.Location = new System.Drawing.Point(7, 48);
             this.lblVariableTrigger.Name = "lblVariableTrigger";
             this.lblVariableTrigger.Size = new System.Drawing.Size(48, 13);
             this.lblVariableTrigger.TabIndex = 13;
             this.lblVariableTrigger.Text = "Variable:";
             this.lblVariableTrigger.Visible = false;
             // 
-            // txtCommand
-            // 
-            this.txtCommand.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.txtCommand.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.txtCommand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.txtCommand.Location = new System.Drawing.Point(181, 13);
-            this.txtCommand.Name = "txtCommand";
-            this.txtCommand.Size = new System.Drawing.Size(130, 20);
-            this.txtCommand.TabIndex = 12;
-            this.txtCommand.Visible = false;
-            this.txtCommand.TextChanged += new System.EventHandler(this.txtCommand_TextChanged);
-            // 
             // lblCommand
             // 
             this.lblCommand.AutoSize = true;
-            this.lblCommand.Location = new System.Drawing.Point(113, 17);
+            this.lblCommand.Location = new System.Drawing.Point(7, 48);
             this.lblCommand.Name = "lblCommand";
             this.lblCommand.Size = new System.Drawing.Size(70, 13);
             this.lblCommand.TabIndex = 11;
@@ -741,35 +706,12 @@ namespace Intersect.Editor.Forms.Editors.Events
             // lblTriggerVal
             // 
             this.lblTriggerVal.AutoSize = true;
-            this.lblTriggerVal.Location = new System.Drawing.Point(113, 17);
+            this.lblTriggerVal.Location = new System.Drawing.Point(7, 48);
             this.lblTriggerVal.Name = "lblTriggerVal";
             this.lblTriggerVal.Size = new System.Drawing.Size(53, 13);
             this.lblTriggerVal.TabIndex = 10;
             this.lblTriggerVal.Text = "Projectile:";
             this.lblTriggerVal.Visible = false;
-            // 
-            // cmbTriggerVal
-            // 
-            this.cmbTriggerVal.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.cmbTriggerVal.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.cmbTriggerVal.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
-            this.cmbTriggerVal.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbTriggerVal.DrawDropdownHoverOutline = false;
-            this.cmbTriggerVal.DrawFocusRectangle = false;
-            this.cmbTriggerVal.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.cmbTriggerVal.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbTriggerVal.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.cmbTriggerVal.ForeColor = System.Drawing.Color.Gainsboro;
-            this.cmbTriggerVal.FormattingEnabled = true;
-            this.cmbTriggerVal.Items.AddRange(new object[] {
-            "None"});
-            this.cmbTriggerVal.Location = new System.Drawing.Point(181, 13);
-            this.cmbTriggerVal.Name = "cmbTriggerVal";
-            this.cmbTriggerVal.Size = new System.Drawing.Size(130, 21);
-            this.cmbTriggerVal.TabIndex = 9;
-            this.cmbTriggerVal.Text = "None";
-            this.cmbTriggerVal.TextPadding = new System.Windows.Forms.Padding(2);
-            this.cmbTriggerVal.Visible = false;
             // 
             // cmbTrigger
             // 
@@ -789,13 +731,71 @@ namespace Intersect.Editor.Forms.Editors.Events
             "Player Touch",
             "Autorun",
             "Projectile Hit"});
-            this.cmbTrigger.Location = new System.Drawing.Point(6, 13);
+            this.cmbTrigger.Location = new System.Drawing.Point(6, 17);
             this.cmbTrigger.Name = "cmbTrigger";
-            this.cmbTrigger.Size = new System.Drawing.Size(101, 21);
+            this.cmbTrigger.Size = new System.Drawing.Size(301, 21);
             this.cmbTrigger.TabIndex = 2;
             this.cmbTrigger.Text = "Action Button";
             this.cmbTrigger.TextPadding = new System.Windows.Forms.Padding(2);
             this.cmbTrigger.SelectedIndexChanged += new System.EventHandler(this.cmbTrigger_SelectedIndexChanged);
+            // 
+            // cmbTriggerVal
+            // 
+            this.cmbTriggerVal.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.cmbTriggerVal.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbTriggerVal.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbTriggerVal.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbTriggerVal.DrawDropdownHoverOutline = false;
+            this.cmbTriggerVal.DrawFocusRectangle = false;
+            this.cmbTriggerVal.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cmbTriggerVal.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbTriggerVal.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbTriggerVal.ForeColor = System.Drawing.Color.Gainsboro;
+            this.cmbTriggerVal.FormattingEnabled = true;
+            this.cmbTriggerVal.Items.AddRange(new object[] {
+            "None"});
+            this.cmbTriggerVal.Location = new System.Drawing.Point(84, 44);
+            this.cmbTriggerVal.Name = "cmbTriggerVal";
+            this.cmbTriggerVal.Size = new System.Drawing.Size(223, 21);
+            this.cmbTriggerVal.TabIndex = 9;
+            this.cmbTriggerVal.Text = "None";
+            this.cmbTriggerVal.TextPadding = new System.Windows.Forms.Padding(2);
+            this.cmbTriggerVal.Visible = false;
+            // 
+            // cmbVariable
+            // 
+            this.cmbVariable.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.cmbVariable.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbVariable.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbVariable.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbVariable.DrawDropdownHoverOutline = false;
+            this.cmbVariable.DrawFocusRectangle = false;
+            this.cmbVariable.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cmbVariable.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbVariable.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbVariable.ForeColor = System.Drawing.Color.Gainsboro;
+            this.cmbVariable.FormattingEnabled = true;
+            this.cmbVariable.Items.AddRange(new object[] {
+            "None"});
+            this.cmbVariable.Location = new System.Drawing.Point(84, 44);
+            this.cmbVariable.Name = "cmbVariable";
+            this.cmbVariable.Size = new System.Drawing.Size(223, 21);
+            this.cmbVariable.TabIndex = 14;
+            this.cmbVariable.Text = "None";
+            this.cmbVariable.TextPadding = new System.Windows.Forms.Padding(2);
+            this.cmbVariable.SelectedIndexChanged += new System.EventHandler(this.cmbVariable_SelectedIndexChanged);
+            // 
+            // txtCommand
+            // 
+            this.txtCommand.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.txtCommand.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtCommand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+            this.txtCommand.Location = new System.Drawing.Point(84, 44);
+            this.txtCommand.Name = "txtCommand";
+            this.txtCommand.Size = new System.Drawing.Size(223, 20);
+            this.txtCommand.TabIndex = 12;
+            this.txtCommand.Visible = false;
+            this.txtCommand.TextChanged += new System.EventHandler(this.txtCommand_TextChanged);
             // 
             // grpEventConditions
             // 
@@ -829,7 +829,7 @@ namespace Intersect.Editor.Forms.Editors.Events
             this.grpNewCommands.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpNewCommands.Location = new System.Drawing.Point(353, 89);
             this.grpNewCommands.Name = "grpNewCommands";
-            this.grpNewCommands.Size = new System.Drawing.Size(457, 484);
+            this.grpNewCommands.Size = new System.Drawing.Size(457, 503);
             this.grpNewCommands.TabIndex = 7;
             this.grpNewCommands.TabStop = false;
             this.grpNewCommands.Text = "Add Commands";
@@ -1049,7 +1049,7 @@ namespace Intersect.Editor.Forms.Editors.Events
             treeNode56,
             treeNode60,
             treeNode65});
-            this.lstCommands.Size = new System.Drawing.Size(445, 440);
+            this.lstCommands.Size = new System.Drawing.Size(445, 465);
             this.lstCommands.TabIndex = 2;
             this.lstCommands.NodeMouseDoubleClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.lstCommands_NodeMouseDoubleClick);
             // 
@@ -1061,7 +1061,7 @@ namespace Intersect.Editor.Forms.Editors.Events
             this.grpEventCommands.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpEventCommands.Location = new System.Drawing.Point(353, 89);
             this.grpEventCommands.Name = "grpEventCommands";
-            this.grpEventCommands.Size = new System.Drawing.Size(457, 484);
+            this.grpEventCommands.Size = new System.Drawing.Size(457, 503);
             this.grpEventCommands.TabIndex = 6;
             this.grpEventCommands.TabStop = false;
             this.grpEventCommands.Text = "Commands";
@@ -1078,7 +1078,7 @@ namespace Intersect.Editor.Forms.Editors.Events
             "@>"});
             this.lstEventCommands.Location = new System.Drawing.Point(6, 19);
             this.lstEventCommands.Name = "lstEventCommands";
-            this.lstEventCommands.Size = new System.Drawing.Size(445, 457);
+            this.lstEventCommands.Size = new System.Drawing.Size(445, 470);
             this.lstEventCommands.TabIndex = 0;
             this.lstEventCommands.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.lstEventCommands_DrawItem);
             this.lstEventCommands.SelectedIndexChanged += new System.EventHandler(this.lstEventCommands_SelectedIndexChanged);
@@ -1093,14 +1093,14 @@ namespace Intersect.Editor.Forms.Editors.Events
             this.grpCreateCommands.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpCreateCommands.Location = new System.Drawing.Point(353, 89);
             this.grpCreateCommands.Name = "grpCreateCommands";
-            this.grpCreateCommands.Size = new System.Drawing.Size(457, 484);
+            this.grpCreateCommands.Size = new System.Drawing.Size(457, 511);
             this.grpCreateCommands.TabIndex = 8;
             this.grpCreateCommands.TabStop = false;
             this.grpCreateCommands.Visible = false;
             // 
             // btnSave
             // 
-            this.btnSave.Location = new System.Drawing.Point(628, 586);
+            this.btnSave.Location = new System.Drawing.Point(631, 615);
             this.btnSave.Name = "btnSave";
             this.btnSave.Padding = new System.Windows.Forms.Padding(5);
             this.btnSave.Size = new System.Drawing.Size(93, 30);
@@ -1110,7 +1110,7 @@ namespace Intersect.Editor.Forms.Editors.Events
             // 
             // btnCancel
             // 
-            this.btnCancel.Location = new System.Drawing.Point(727, 586);
+            this.btnCancel.Location = new System.Drawing.Point(730, 615);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Padding = new System.Windows.Forms.Padding(5);
             this.btnCancel.Size = new System.Drawing.Size(93, 30);
@@ -1316,7 +1316,7 @@ namespace Intersect.Editor.Forms.Editors.Events
             this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panel1.Location = new System.Drawing.Point(12, 83);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(811, 498);
+            this.panel1.Size = new System.Drawing.Size(811, 526);
             this.panel1.TabIndex = 23;
             // 
             // FrmEvent
@@ -1325,8 +1325,7 @@ namespace Intersect.Editor.Forms.Editors.Events
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            this.ClientSize = new System.Drawing.Size(835, 622);
-            this.Controls.Add(this.grpNewCommands);
+            this.ClientSize = new System.Drawing.Size(835, 653);
             this.Controls.Add(this.grpTriggers);
             this.Controls.Add(this.btnTabsRight);
             this.Controls.Add(this.btnTabsLeft);
@@ -1340,6 +1339,7 @@ namespace Intersect.Editor.Forms.Editors.Events
             this.Controls.Add(this.grpEventCommands);
             this.Controls.Add(this.grpCreateCommands);
             this.Controls.Add(this.panel1);
+            this.Controls.Add(this.grpNewCommands);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.KeyPreview = true;
             this.MaximizeBox = false;

@@ -1804,6 +1804,8 @@ namespace Intersect.Editor.Forms.Editors.Events
                     cmbVariable.Items.Add(Strings.General.None);
                     cmbVariable.Items.AddRange(PlayerVariableBase.Names);
                     cmbVariable.SelectedIndex = PlayerVariableBase.ListIndex(CurrentPage.TriggerId) + 1;
+                    lblVariableTrigger.Show();
+                    lblVariableTrigger.Text = Strings.EventEditor.VariableTrigger;
                 }
                 else if (cmbTrigger.SelectedIndex == (int)CommonEventTrigger.ServerVariableChange)
                 {
@@ -1811,6 +1813,8 @@ namespace Intersect.Editor.Forms.Editors.Events
                     cmbVariable.Items.Add(Strings.General.None);
                     cmbVariable.Items.AddRange(ServerVariableBase.Names);
                     cmbVariable.SelectedIndex = ServerVariableBase.ListIndex(CurrentPage.TriggerId) + 1;
+                    lblVariableTrigger.Show();
+                    lblVariableTrigger.Text = Strings.EventEditor.VariableTrigger;
                 }
                 else if (cmbTrigger.SelectedIndex == (int)CommonEventTrigger.GuildVariableChange)
                 {
@@ -1818,6 +1822,8 @@ namespace Intersect.Editor.Forms.Editors.Events
                     cmbVariable.Items.Add(Strings.General.None);
                     cmbVariable.Items.AddRange(GuildVariableBase.Names);
                     cmbVariable.SelectedIndex = GuildVariableBase.ListIndex(CurrentPage.TriggerId) + 1;
+                    lblVariableTrigger.Show();
+                    lblVariableTrigger.Text = Strings.EventEditor.VariableTrigger;
                 }
             }
         }
