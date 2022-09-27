@@ -1940,58 +1940,47 @@ namespace Intersect.Server.Entities
             //Check for lifesteal/manasteal
             if (this is Player && !(enemy is Resource))
             {
-                var lifesteal = thisPlayer.GetEquipmentBonusEffect(EffectType.Lifesteal) / 100f;
-                var healthRecovered = Math.Min(enemyVitals[(int) Vitals.Health], lifesteal * baseDamage);
+                var lifestealRate = thisPlayer.GetEquipmentBonusEffect(EffectType.Lifesteal) / 100f;
+                var idealHealthRecovered = lifestealRate * baseDamage;
+                var actualHealthRecovered = Math.Min(enemyVitals[(int)Vitals.Health], idealHealthRecovered);
 
-                if (healthRecovered > 0) //Don't send any +0 msg's.
+                if (actualHealthRecovered > 0)
                 {
-                    AddVital(Vitals.Health, (int) healthRecovered);
+                    // Don't send any +0 msg's.
+                    AddVital(Vitals.Health, (int)actualHealthRecovered);
                     PacketSender.SendActionMsg(
-                        this, Strings.Combat.addsymbol + (int) healthRecovered, CustomColors.Combat.Heal
+                        this,
+                        Strings.Combat.addsymbol + (int)actualHealthRecovered,
+                        CustomColors.Combat.Heal
                     );
                 }
 
-                var manasteal = (thisPlayer.GetEquipmentBonusEffect(EffectType.Manasteal) / 100f) * baseDamage;
-                var manaRecovered = Math.Min(enemyVitals[(int) Vitals.Mana], manasteal);
+                var manastealRate = (thisPlayer.GetEquipmentBonusEffect(EffectType.Manasteal) / 100f);
+                var idealManaRecovered = manastealRate * baseDamage;
+                var actualManaRecovered = Math.Min(enemyVitals[(int)Vitals.Mana], idealManaRecovered);
 
-                if (manaRecovered > 0) //Don't send any +0 msg's.
+                if (actualManaRecovered > 0)
                 {
-                    AddVital(Vitals.Mana, (int) manasteal);
+                    // Don't send any +0 msg's.
+                    AddVital(Vitals.Mana, (int)actualManaRecovered);
+                    enemy.SubVital(Vitals.Mana, (int)actualManaRecovered);
                     PacketSender.SendActionMsg(
-                        this, Strings.Combat.addsymbol + (int) manasteal, CustomColors.Combat.AddMana
+                        this,
+                        Strings.Combat.addsymbol + (int)actualManaRecovered,
+                        CustomColors.Combat.AddMana
                     );
-
-                    enemy.SubVital(Vitals.Mana, (int) manaRecovered);
-
-                    //Whether the attacking player should recover more mana than the enemy has
-                    //the rest will damage the enemy's health
-                    if (manasteal > enemyVitals[(int) Vitals.Mana])
-                    {
-                        var amountToRemove = Math.Floor(manasteal - manaRecovered);
-                        if(amountToRemove > 0)
-                        {
-                            enemy.SubVital(Vitals.Health, (int) amountToRemove);
-                            PacketSender.SendActionMsg(
-                                enemy, Strings.Combat.removesymbol + amountToRemove, CustomColors.Combat.TrueDamage
-                            );
-                        }
-                    }
                 }
-                else
-                {
-                    //If enemy has 0 mana, all value will be dealt as damage
-                    if (manasteal > 0)
-                    {
-                        enemy.SubVital(Vitals.Health, (int) manasteal);
-                        PacketSender.SendActionMsg(
-                            enemy, Strings.Combat.removesymbol + manasteal, CustomColors.Combat.TrueDamage
-                        );
 
-                        AddVital(Vitals.Mana, (int)Math.Min(enemy.GetVital(Vitals.Health), manasteal));
-                        PacketSender.SendActionMsg(
-                            this, Strings.Combat.addsymbol + (int) manasteal, CustomColors.Combat.AddMana
-                        );
-                    }
+                var remainingManaRecovery = idealManaRecovered - actualManaRecovered;
+                if (remainingManaRecovery > 0)
+                {
+                    // If the mana recovered is less than it should be, deal the remainder as bonus damage
+                    enemy.SubVital(Vitals.Health, (int)remainingManaRecovery);
+                    PacketSender.SendActionMsg(
+                        enemy,
+                        Strings.Combat.removesymbol + remainingManaRecovery,
+                        CustomColors.Combat.TrueDamage
+                    );
                 }
             }
 
