@@ -1,4 +1,4 @@
-﻿using Intersect.Enums;
+using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Network.Packets.Server;
 using Intersect.Server.Database;
@@ -257,7 +257,7 @@ namespace Intersect.Server.Entities
             if (slot >= 0 && slot < mMaxSlots)
             {
                 // Is this slot empty?
-                if (IsSlotOpen(slot))
+                if (IsSlotOpen(slot) || item.ItemId == mBank[slot].ItemId)
                 {
                     // It is! Can we store the full quantity of this item though?
                     return CanStoreItem(item);
@@ -628,70 +628,69 @@ namespace Intersect.Server.Entities
                 return;
             }
 
-            if (bankSlotItem.ItemId != Guid.Empty)
-            {
-                lock (mLock)
-                {
-                    if (itemBase.IsStackable)
-                    {
-                        if (!CanTakeItem(itemBase.Id, amount))
-                        {
-                            amount = FindItemQuantity(itemBase.Id);
-                        }
-                    }
-                    else
-                    {
-                        amount = 1;
-                    }
-
-                    if (!mPlayer.CanGiveItem(itemBase.Id, amount, invSlot))
-                    {
-                        PacketSender.SendChatMsg(mPlayer, Strings.Banks.inventorynospace, ChatMessageType.Inventory, CustomColors.Alerts.Error);
-                        return;
-                    }
-
-                    var toTake = amount;
-                    if (itemBase.IsStackable)
-                    {
-                        mPlayer.TryGiveItem(itemBase.Id, amount, ItemHandling.Normal, false, invSlot, true);
-
-                        // Go through our bank and take what we need!
-                        foreach (var s in FindItemSlots(itemBase.Id))
-                        {
-                            // Do we still have items to take? If not leave the loop!
-                            if (toTake == 0)
-                            {
-                                break;
-                            }
-
-                            if (mBank[s].Quantity >= toTake)
-                            {
-                                TakeItem(s, toTake, true);
-                                toTake = 0;
-                            }
-                            else // Take away the entire quantity of the item and lower our items that we still need to take!
-                            {
-                                toTake -= mBank[s].Quantity;
-                                TakeItem(s, mBank[s].Quantity, true);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        mPlayer.TryGiveItem(mBank[slot], invSlot);
-                        mBank[slot].Set(Item.None);
-                        SendBankUpdate(slot);
-                    }
-
-                    if (mGuild != null)
-                    {
-                        DbInterface.Pool.QueueWorkItem(mGuild.Save);
-                    }
-                }
-            }
-            else
+            if (bankSlotItem.ItemId == default)
             {
                 PacketSender.SendChatMsg(mPlayer, Strings.Banks.withdrawinvalid, ChatMessageType.Bank, CustomColors.Alerts.Error);
+                return;
+            }
+
+            lock (mLock)
+            {
+                if (itemBase.IsStackable)
+                {
+                    if (!CanTakeItem(itemBase.Id, amount))
+                    {
+                        amount = FindItemQuantity(itemBase.Id);
+                    }
+                }
+                else
+                {
+                    amount = 1;
+                }
+
+                if (!mPlayer.CanGiveItem(itemBase.Id, amount, invSlot))
+                {
+                    PacketSender.SendChatMsg(mPlayer, Strings.Banks.inventorynospace, ChatMessageType.Inventory, CustomColors.Alerts.Error);
+                    return;
+                }
+
+                var toTake = amount;
+                if (itemBase.IsStackable)
+                {
+                    mPlayer.TryGiveItem(itemBase.Id, amount, ItemHandling.Normal, false, invSlot, true);
+
+                    // Go through our bank and take what we need!
+                    foreach (var s in FindItemSlots(itemBase.Id))
+                    {
+                        // Do we still have items to take? If not leave the loop!
+                        if (toTake == 0)
+                        {
+                            break;
+                        }
+
+                        if (mBank[s].Quantity >= toTake)
+                        {
+                            TakeItem(s, toTake, true);
+                            toTake = 0;
+                        }
+                        else // Take away the entire quantity of the item and lower our items that we still need to take!
+                        {
+                            toTake -= mBank[s].Quantity;
+                            TakeItem(s, mBank[s].Quantity, true);
+                        }
+                    }
+                }
+                else
+                {
+                    mPlayer.TryGiveItem(mBank[slot], invSlot);
+                    mBank[slot].Set(Item.None);
+                    SendBankUpdate(slot);
+                }
+
+                if (mGuild != null)
+                {
+                    DbInterface.Pool.QueueWorkItem(mGuild.Save);
+                }
             }
         }
 

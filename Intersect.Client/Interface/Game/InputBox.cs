@@ -216,7 +216,8 @@ namespace Intersect.Client.Interface.Game
                 return;
             }
 
-            mNumericSliderTextbox.Value = (int) mNumericSlider.Value;
+            var value = (int)Math.Round(mNumericSlider.Value);
+            mNumericSliderTextbox.Value = value;
         }
 
         private void TextBox_SubmitPressed(Base sender, EventArgs arguments)

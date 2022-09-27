@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Gwen.Control;
@@ -303,8 +303,6 @@ namespace Intersect.Client.Interface.Game.Spells
                         {
                             if (mYindex != bestIntersectIndex && !Globals.Me.IsCasting)
                             {
-                                //Try to swap....
-                                PacketSender.SendSwapSpells(bestIntersectIndex, mYindex);
                                 Globals.Me.SwapSpells(bestIntersectIndex, mYindex);
                             }
                         }

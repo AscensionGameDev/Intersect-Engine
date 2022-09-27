@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 using Intersect.Client.Core;
 using Intersect.Client.Framework.GenericClasses;
@@ -431,9 +431,7 @@ namespace Intersect.Client.Interface.Game.Inventory
                         {
                             if (mMySlot != bestIntersectIndex)
                             {
-                                //Try to swap....
-                                PacketSender.SendSwapInvItems(bestIntersectIndex, mMySlot);
-                                Globals.Me.SwapItems(bestIntersectIndex, mMySlot);
+                                Globals.Me.SwapItems(mMySlot, bestIntersectIndex);
                             }
                         }
                     }

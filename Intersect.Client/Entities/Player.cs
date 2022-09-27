@@ -8,6 +8,7 @@ using Intersect.Client.Entities.Events;
 using Intersect.Client.Entities.Projectiles;
 using Intersect.Client.Framework.Entities;
 using Intersect.Client.Framework.GenericClasses;
+using Intersect.Client.Framework.Items;
 using Intersect.Client.General;
 using Intersect.Client.Interface.Game;
 using Intersect.Client.Interface.Game.Chat;
@@ -86,7 +87,7 @@ namespace Intersect.Client.Entities
 
         public Guid TargetIndex { get; set; }
 
-        TargetTypes IPlayer.TargetType => (TargetTypes) TargetType;
+        TargetTypes IPlayer.TargetType => (TargetTypes)TargetType;
 
         public int TargetType { get; set; }
 
@@ -259,7 +260,7 @@ namespace Intersect.Client.Entities
                 }
 
                 //Holding block button for "auto blocking"
-                if(Controls.KeyDown(Control.Block))
+                if (Controls.KeyDown(Control.Block))
                 {
                     TryBlock();
                 }
@@ -331,34 +332,57 @@ namespace Intersect.Client.Entities
         }
 
         //Item Processing
-        public void SwapItems(int item1, int item2)
+        public void SwapItems(int fromSlotIndex, int toSlotIndex)
         {
-            var tmpInstance = Inventory[item2].Clone();
-            Inventory[item2] = Inventory[item1].Clone();
-            Inventory[item1] = tmpInstance.Clone();
+            PacketSender.SendSwapInvItems(fromSlotIndex, toSlotIndex);
+            var fromSlot = Inventory[fromSlotIndex];
+            var toSlot = Inventory[toSlotIndex];
+
+            if (
+                fromSlot.ItemId == toSlot.ItemId
+                && ItemBase.TryGet(toSlot.ItemId, out var itemInSlot)
+                && itemInSlot.IsStackable
+                && fromSlot.Quantity < itemInSlot.MaxInventoryStack
+                && toSlot.Quantity < itemInSlot.MaxInventoryStack
+            )
+            {
+                var combinedQuantity = fromSlot.Quantity + toSlot.Quantity;
+                var toQuantity = Math.Min(itemInSlot.MaxInventoryStack, combinedQuantity);
+                var fromQuantity = combinedQuantity - toQuantity;
+                toSlot.Quantity = toQuantity;
+                fromSlot.Quantity = fromQuantity;
+                if (fromQuantity < 1)
+                {
+                    Inventory[fromSlotIndex].ItemId = default;
+                }
+            }
+            else
+            {
+                Inventory[fromSlotIndex] = toSlot;
+                Inventory[toSlotIndex] = fromSlot;
+            }
         }
 
-        public void TryDropItem(int index)
+        public void TryDropItem(int inventorySlotIndex)
         {
-            var slot = Inventory[index];
-            var descriptor = ItemBase.Get(slot.ItemId);
-            if (descriptor == default)
+            var inventorySlot = Inventory[inventorySlotIndex];
+            if (!ItemBase.TryGet(inventorySlot.ItemId, out var itemDescriptor))
             {
                 return;
             }
 
-            var quantity = slot.Quantity;
+            var quantity = inventorySlot.Quantity;
             var canDropMultiple = quantity > 1;
             var inputType = canDropMultiple ? InputBox.InputType.NumericSliderInput : InputBox.InputType.YesNo;
             var prompt = canDropMultiple ? Strings.Inventory.DropItemPrompt : Strings.Inventory.DropPrompt;
             InputBox.Open(
                 title: Strings.Inventory.DropItemTitle,
-                prompt: prompt.ToString(descriptor.Name),
+                prompt: prompt.ToString(itemDescriptor.Name),
                 modal: true,
                 inputType: inputType,
                 onSuccess: DropInputBoxOkay,
                 onCancel: default,
-                userData: index,
+                userData: inventorySlotIndex,
                 quantity: quantity,
                 maxQuantity: quantity
             );
@@ -366,7 +390,7 @@ namespace Intersect.Client.Entities
 
         private void DropInputBoxOkay(object sender, EventArgs e)
         {
-            var value = (int)((InputBox)sender).Value;
+            var value = (int)Math.Round(((InputBox)sender).Value);
             if (value > 0)
             {
                 PacketSender.SendDropItem((int)((InputBox)sender).UserData, value);
@@ -386,20 +410,26 @@ namespace Intersect.Client.Entities
             return -1;
         }
 
-        public int GetItemQuantity(Guid itemId)
+        private int GetQuantityOfItemIn(IEnumerable<IItem> items, Guid itemId)
         {
             long count = 0;
 
-            for (var i = 0; i < Options.MaxInvItems; i++)
+            foreach (var slot in (items ?? Enumerable.Empty<IItem>()))
             {
-                if (Inventory[i].ItemId == itemId)
+                if (slot?.ItemId == itemId)
                 {
-                    count += Inventory[i].Quantity;
+                    count += slot.Quantity;
                 }
             }
 
-            return count > Int32.MaxValue ? Int32.MaxValue : (int)count;
+            return (int)Math.Min(count, int.MaxValue);
         }
+
+        public int GetQuantityOfItemInBag(Guid itemId) => GetQuantityOfItemIn(Globals.Bag, itemId);
+
+        public int GetQuantityOfItemInBank(Guid itemId) => GetQuantityOfItemIn(Globals.Bank, itemId);
+
+        public int GetQuantityOfItemInInventory(Guid itemId) => GetQuantityOfItemIn(Inventory, itemId);
 
         public void TryUseItem(int index)
         {
@@ -580,94 +610,108 @@ namespace Intersect.Client.Entities
             return cooldown;
         }
 
-        public void TrySellItem(int index)
+        public void TrySellItem(int inventorySlotIndex)
         {
-            var slot = Inventory[index];
-            var sellingItem = ItemBase.Get(slot.ItemId);
-            if (sellingItem == null)
+            var inventorySlot = Inventory[inventorySlotIndex];
+            if (!ItemBase.TryGet(inventorySlot.ItemId, out var itemDescriptor))
             {
                 return;
             }
 
-            var foundItem = -1;
-            for (var i = 0; i < Globals.GameShop.BuyingItems.Count; i++)
-            {
-                if (Globals.GameShop.BuyingItems[i].ItemId != slot.ItemId)
-                {
-                    continue;
-                }
+            var shop = Globals.GameShop;
+            var shopCanBuyItem =
+                shop.BuyingWhitelist && shop.BuyingItems.Any(buyingItem => buyingItem.ItemId == itemDescriptor.Id)
+                || !shop.BuyingWhitelist && !shop.BuyingItems.Any(buyingItem => buyingItem.ItemId == itemDescriptor.Id);
 
-                foundItem = i;
-
-                break;
-            }
-
-            var hasFoundItem = foundItem > -1 && Globals.GameShop.BuyingWhitelist ||
-                               foundItem == -1 && !Globals.GameShop.BuyingWhitelist;
             var prompt = Strings.Shop.sellprompt;
             var inputType = InputBox.InputType.YesNo;
             EventHandler onSuccess = SellInputBoxOkay;
-            var userData = index;
-            var quantity = slot.Quantity;
+            var userData = inventorySlotIndex;
+            var slotQuantity = inventorySlot.Quantity;
+            var maxQuantity = slotQuantity;
 
-            if (quantity > 1)
-            {
-                prompt = Strings.Shop.sellitemprompt;
-                inputType = InputBox.InputType.NumericSliderInput;
-                onSuccess = SellItemInputBoxOkay;
-                userData = index;
-            }
-
-            if (!hasFoundItem)
+            if (!shopCanBuyItem)
             {
                 prompt = Strings.Shop.cannotsell;
                 inputType = InputBox.InputType.OkayOnly;
                 onSuccess = null;
                 userData = -1;
             }
+            else if (itemDescriptor.IsStackable || slotQuantity > 1)
+            {
+                var inventoryQuantity = GetQuantityOfItemInInventory(itemDescriptor.Id);
+                if (inventoryQuantity > 1)
+                {
+                    maxQuantity = inventoryQuantity;
+                    prompt = Strings.Shop.sellitemprompt;
+                    inputType = InputBox.InputType.NumericSliderInput;
+                    onSuccess = SellItemInputBoxOkay;
+                    userData = inventorySlotIndex;
+                }
+            }
 
             InputBox.Open(
                 title: Strings.Shop.sellitem,
-                prompt: prompt.ToString(sellingItem.Name),
+                prompt: prompt.ToString(itemDescriptor.Name),
                 modal: true,
                 inputType: inputType,
                 onSuccess: onSuccess,
                 onCancel: null,
                 userData: userData,
-                quantity: quantity,
-                maxQuantity: quantity
+                quantity: slotQuantity,
+                maxQuantity: maxQuantity
             );
         }
 
-        public void TryBuyItem(int slot)
+        public void TryBuyItem(int shopSlotIndex)
         {
             //Confirm the purchase
-            var item = ItemBase.Get(Globals.GameShop.SellingItems[slot].ItemId);
-            if (item != null)
+            var shopSlot = Globals.GameShop.SellingItems[shopSlotIndex];
+            if (!ItemBase.TryGet(shopSlot.ItemId, out var itemDescriptor))
             {
-                // Determine how many items we can purchase.
-                var currencyCount = GetItemQuantity(Globals.GameShop.SellingItems[slot].CostItemId);
-                var maxBuyAmount = (int)Math.Floor(currencyCount / (float)Globals.GameShop.SellingItems[slot].CostItemQuantity);
-
-                // Is the item stackable, and can we make a purchase at all?
-                if (item.IsStackable && maxBuyAmount != 0)
-                {
-                    var iBox = new InputBox(
-                        Strings.Shop.buyitem, Strings.Shop.buyitemprompt.ToString(item.Name), true,
-                        InputBox.InputType.NumericSliderInput, BuyItemInputBoxOkay, null, slot, maxBuyAmount, maxBuyAmount
-                    );
-                }
-                // In any other case, attempt to purchase one and let the server handle the error and double checking.
-                else
-                {
-                    PacketSender.SendBuyItem(slot, 1);
-                }
+                return;
             }
+
+            var maxBuyAmount = 0;
+            if (shopSlot.CostItemQuantity < 1)
+            {
+                var emptySlots = Inventory.Count(inventorySlot => inventorySlot.ItemId == default);
+                var slotsWithItem = Inventory.Count(inventorySlot => inventorySlot.ItemId == itemDescriptor.Id);
+                var currentItemQuantity = GetQuantityOfItemInInventory(shopSlot.ItemId);
+                var stackSize = itemDescriptor.IsStackable ? itemDescriptor.MaxInventoryStack : 1;
+                var itemQuantityLimitInCurrentStacks = slotsWithItem * stackSize;
+                var partialStackEmptyQuantity = itemQuantityLimitInCurrentStacks - currentItemQuantity;
+                maxBuyAmount = emptySlots * stackSize + partialStackEmptyQuantity;
+            }
+            else
+            {
+                var currencyCount = GetQuantityOfItemInInventory(shopSlot.CostItemId);
+                maxBuyAmount = (int)Math.Floor(currencyCount / (float)shopSlot.CostItemQuantity);
+            }
+
+            // If our max buy amount is 0 or the item isn't stackable, let the server handle it
+            if (!itemDescriptor.IsStackable || maxBuyAmount == 0)
+            {
+                PacketSender.SendBuyItem(shopSlotIndex, 1);
+                return;
+            }
+
+            InputBox.Open(
+                title: Strings.Shop.buyitem,
+                prompt: Strings.Shop.buyitemprompt.ToString(itemDescriptor.Name),
+                modal: true,
+                inputType: InputBox.InputType.NumericSliderInput,
+                onSuccess: BuyItemInputBoxOkay,
+                onCancel: null,
+                userData: shopSlotIndex,
+                quantity: maxBuyAmount,
+                maxQuantity: maxBuyAmount
+            );
         }
 
         private void BuyItemInputBoxOkay(object sender, EventArgs e)
         {
-            var value = (int)((InputBox)sender).Value;
+            var value = (int)Math.Round(((InputBox)sender).Value);
             if (value > 0)
             {
                 PacketSender.SendBuyItem((int)((InputBox)sender).UserData, value);
@@ -676,7 +720,7 @@ namespace Intersect.Client.Entities
 
         private void SellItemInputBoxOkay(object sender, EventArgs e)
         {
-            var value = (int)((InputBox)sender).Value;
+            var value = (int)Math.Round(((InputBox)sender).Value);
             if (value > 0)
             {
                 PacketSender.SendSellItem((int)((InputBox)sender).UserData, value);
@@ -689,96 +733,114 @@ namespace Intersect.Client.Entities
         }
 
         //bank
-        public void TryDepositItem(int index, int bankSlot = -1)
+        public void TryDepositItem(int inventorySlotIndex, int bankSlotIndex = -1)
         {
-            if (ItemBase.Get(Inventory[index].ItemId) != null)
+            var inventorySlot = Inventory[inventorySlotIndex];
+            if (!ItemBase.TryGet(inventorySlot.ItemId, out var itemDescriptor))
             {
-                //Permission Check
-                if (Globals.GuildBank)
-                {
-                    var rank = Globals.Me.GuildRank;
-                    if (string.IsNullOrWhiteSpace(Globals.Me.Guild) || (!rank.Permissions.BankDeposit && Globals.Me.Rank != 0))
-                    {
-                        ChatboxMsg.AddMessage(new ChatboxMsg(Strings.Guilds.NotAllowedDeposit.ToString(Globals.Me.Guild), CustomColors.Alerts.Error, ChatMessageType.Bank));
-                        return;
-                    }
-                }
+                return;
+            }
 
-                if (Inventory[index].Quantity > 1)
+            //Permission Check
+            if (Globals.GuildBank)
+            {
+                var rank = Globals.Me.GuildRank;
+                if (string.IsNullOrWhiteSpace(Globals.Me.Guild) || (!rank.Permissions.BankDeposit && Globals.Me.Rank != 0))
                 {
-                    int[] userData = new int[2] { index, bankSlot };
-
-                    InputBox.Open(
-                        title: Strings.Bank.deposititem,
-                        prompt: Strings.Bank.deposititemprompt.ToString(ItemBase.Get(Inventory[index].ItemId).Name),
-                        modal: true,
-                        inputType: InputBox.InputType.NumericSliderInput,
-                        onSuccess: DepositItemInputBoxOkay,
-                        onCancel: null,
-                        userData: userData,
-                        quantity: Inventory[index].Quantity,
-                        maxQuantity: Inventory[index].Quantity
-                    );
-                }
-                else
-                {
-                    PacketSender.SendDepositItem(index, 1, bankSlot);
+                    ChatboxMsg.AddMessage(new ChatboxMsg(Strings.Guilds.NotAllowedDeposit.ToString(Globals.Me.Guild), CustomColors.Alerts.Error, ChatMessageType.Bank));
+                    return;
                 }
             }
+
+            var inventoryQuantity = GetQuantityOfItemInInventory(itemDescriptor.Id);
+            if (inventorySlot.Quantity < 2)
+            {
+                PacketSender.SendDepositItem(inventorySlotIndex, 1, bankSlotIndex);
+            }
+
+            var userData = new int[2] { inventorySlotIndex, bankSlotIndex };
+
+            InputBox.Open(
+                title: Strings.Bank.deposititem,
+                prompt: Strings.Bank.deposititemprompt.ToString(itemDescriptor.Name),
+                modal: true,
+                inputType: InputBox.InputType.NumericSliderInput,
+                onSuccess: DepositItemInputBoxOkay,
+                onCancel: null,
+                userData: userData,
+                quantity: inventorySlot.Quantity,
+                maxQuantity: inventoryQuantity
+            );
+
         }
 
         private void DepositItemInputBoxOkay(object sender, EventArgs e)
         {
-            var value = (int)((InputBox)sender).Value;
+            var value = (int)Math.Round(((InputBox)sender).Value);
             if (value > 0)
             {
-                int[] userData = (int[])((InputBox)sender).UserData;
+                var userData = (int[])((InputBox)sender).UserData;
 
                 PacketSender.SendDepositItem(userData[0], value, userData[1]);
             }
         }
 
-        public void TryWithdrawItem(int index, int invSlot = -1)
+        public void TryWithdrawItem(int bankSlotIndex, int inventorySlotIndex = -1)
         {
-            if (Globals.Bank[index] != null && ItemBase.Get(Globals.Bank[index].ItemId) != null)
+            var bankSlot = Globals.Bank[bankSlotIndex];
+            if (bankSlot == default)
             {
-                //Permission Check
-                if (Globals.GuildBank)
-                {
-                    var rank = Globals.Me.GuildRank;
-                    if (string.IsNullOrWhiteSpace(Globals.Me.Guild) || (!rank.Permissions.BankRetrieve && Globals.Me.Rank != 0))
-                    {
-                        ChatboxMsg.AddMessage(new ChatboxMsg(Strings.Guilds.NotAllowedWithdraw.ToString(Globals.Me.Guild), CustomColors.Alerts.Error, ChatMessageType.Bank));
-                        return;
-                    }
-                }
+                return;
+            }
 
-                if (Globals.Bank[index].Quantity > 1)
-                {
-                    int[] userData = new int[2] { index, invSlot };
+            if (!ItemBase.TryGet(bankSlot.ItemId, out var itemDescriptor))
+            {
+                return;
+            }
 
-                    InputBox.Open(
-                        title: Strings.Bank.withdrawitem,
-                        prompt: Strings.Bank.withdrawitemprompt.ToString(ItemBase.Get(Globals.Bank[index].ItemId).Name),
-                        modal: true,
-                        inputType: InputBox.InputType.NumericSliderInput,
-                        onSuccess: WithdrawItemInputBoxOkay,
-                        onCancel: null,
-                        userData: userData,
-                        quantity: Globals.Bank[index].Quantity,
-                        maxQuantity: Globals.Bank[index].Quantity
-                    );
-                }
-                else
+            //Permission Check
+            if (Globals.GuildBank)
+            {
+                var rank = Globals.Me.GuildRank;
+                if (string.IsNullOrWhiteSpace(Globals.Me.Guild) || (!rank.Permissions.BankRetrieve && Globals.Me.Rank != 0))
                 {
-                    PacketSender.SendWithdrawItem(index, 1, invSlot);
+                    ChatboxMsg.AddMessage(new ChatboxMsg(Strings.Guilds.NotAllowedWithdraw.ToString(Globals.Me.Guild), CustomColors.Alerts.Error, ChatMessageType.Bank));
+                    return;
                 }
             }
+
+            var quantity = bankSlot.Quantity;
+            var maxQuantity = quantity;
+
+            if (itemDescriptor.IsStackable)
+            {
+                maxQuantity = GetQuantityOfItemInBank(itemDescriptor.Id);
+            }
+
+            if (maxQuantity < 2)
+            {
+                PacketSender.SendWithdrawItem(bankSlotIndex, 1, inventorySlotIndex);
+                return;
+            }
+
+            int[] userData = new int[2] { bankSlotIndex, inventorySlotIndex };
+
+            InputBox.Open(
+                title: Strings.Bank.withdrawitem,
+                prompt: Strings.Bank.withdrawitemprompt.ToString(itemDescriptor.Name),
+                modal: true,
+                inputType: InputBox.InputType.NumericSliderInput,
+                onSuccess: WithdrawItemInputBoxOkay,
+                onCancel: null,
+                userData: userData,
+                quantity: quantity,
+                maxQuantity: maxQuantity
+            );
         }
 
         private void WithdrawItemInputBoxOkay(object sender, EventArgs e)
         {
-            var value = (int)((InputBox)sender).Value;
+            var value = (int)Math.Round(((InputBox)sender).Value);
             if (value > 0)
             {
                 int[] userData = (int[])((InputBox)sender).UserData;
@@ -787,31 +849,46 @@ namespace Intersect.Client.Entities
         }
 
         //Bag
-        public void TryStoreBagItem(int invSlot, int bagSlot)
+        public void TryStoreBagItem(int inventorySlotIndex, int bagSlotIndex)
         {
-            if (ItemBase.Get(Inventory[invSlot].ItemId) != null)
+            var inventorySlot = Inventory[inventorySlotIndex];
+            if (!ItemBase.TryGet(inventorySlot.ItemId, out var itemDescriptor))
             {
-                if (Inventory[invSlot].Quantity > 1)
-                {
-                    int[] userData = new int[2] { invSlot, bagSlot };
-
-                    var iBox = new InputBox(
-                        Strings.Bags.storeitem,
-                        Strings.Bags.storeitemprompt.ToString(ItemBase.Get(Inventory[invSlot].ItemId).Name), true,
-                        InputBox.InputType.NumericSliderInput, StoreBagItemInputBoxOkay, null, userData, Inventory[invSlot].Quantity,
-                        Inventory[invSlot].Quantity
-                    );
-                }
-                else
-                {
-                    PacketSender.SendStoreBagItem(invSlot, 1, bagSlot);
-                }
+                return;
             }
+
+            int[] userData = new int[2] { inventorySlotIndex, bagSlotIndex };
+
+            var quantity = inventorySlot.Quantity;
+            var maxQuantity = quantity;
+
+            // TODO: Refactor server bagging logic to allow transferring quantities from the entire inventory and not just the slot
+            //if (itemDescriptor.IsStackable)
+            //{
+            //    maxQuantity = GetQuantityOfItemInInventory(itemDescriptor.Id);
+            //}
+
+            if (maxQuantity < 2)
+            {
+                PacketSender.SendStoreBagItem(inventorySlotIndex, 1, bagSlotIndex);
+                return;
+            }
+
+            InputBox.Open(
+                title: Strings.Bags.storeitem,
+                prompt: Strings.Bags.storeitemprompt.ToString(itemDescriptor.Name), true,
+                inputType: InputBox.InputType.NumericSliderInput,
+                onSuccess: StoreBagItemInputBoxOkay,
+                onCancel: null,
+                userData: userData,
+                quantity: quantity,
+                maxQuantity: maxQuantity
+            );
         }
 
         private void StoreBagItemInputBoxOkay(object sender, EventArgs e)
         {
-            var value = (int)((InputBox)sender).Value;
+            var value = (int)Math.Round(((InputBox)sender).Value);
             if (value > 0)
             {
                 int[] userData = (int[])((InputBox)sender).UserData;
@@ -819,31 +896,52 @@ namespace Intersect.Client.Entities
             }
         }
 
-        public void TryRetreiveBagItem(int bagSlot, int invSlot)
+        public void TryRetreiveBagItem(int bagSlotIndex, int inventorySlotIndex)
         {
-            if (Globals.Bag[bagSlot] != null && ItemBase.Get(Globals.Bag[bagSlot].ItemId) != null)
+            var bagSlot = Globals.Bag[bagSlotIndex];
+            if (bagSlot == default)
             {
-                int[] userData = new int[2] { bagSlot, invSlot };
-
-                if (Globals.Bag[bagSlot].Quantity > 1)
-                {
-                    var iBox = new InputBox(
-                        Strings.Bags.retreiveitem,
-                        Strings.Bags.retreiveitemprompt.ToString(ItemBase.Get(Globals.Bag[bagSlot].ItemId).Name), true,
-                        InputBox.InputType.NumericSliderInput, RetreiveBagItemInputBoxOkay, null, userData, Globals.Bag[bagSlot].Quantity,
-                        Globals.Bag[bagSlot].Quantity
-                    );
-                }
-                else
-                {
-                    PacketSender.SendRetrieveBagItem(bagSlot, 1, invSlot);
-                }
+                return;
             }
+
+            if (!ItemBase.TryGet(bagSlot.ItemId, out var itemDescriptor))
+            {
+                return;
+            }
+
+            var userData = new int[2] { bagSlotIndex, inventorySlotIndex };
+
+            var quantity = bagSlot.Quantity;
+            var maxQuantity = quantity;
+
+            // TODO: Refactor server bagging logic to allow transferring quantities from the entire inventory and not just the slot
+            //if (itemDescriptor.IsStackable)
+            //{
+            //    maxQuantity = GetQuantityOfItemInBag(itemDescriptor.Id);
+            //}
+
+            if (maxQuantity < 2)
+            {
+                PacketSender.SendRetrieveBagItem(bagSlotIndex, 1, inventorySlotIndex);
+                return;
+            }
+
+            InputBox.Open(
+                title: Strings.Bags.retreiveitem,
+                prompt: Strings.Bags.retreiveitemprompt.ToString(itemDescriptor.Name),
+                modal: true,
+                inputType: InputBox.InputType.NumericSliderInput,
+                onSuccess: RetreiveBagItemInputBoxOkay,
+                onCancel: null,
+                userData: userData,
+                quantity: quantity,
+                maxQuantity: maxQuantity
+            );
         }
 
         private void RetreiveBagItemInputBoxOkay(object sender, EventArgs e)
         {
-            var value = (int)((InputBox)sender).Value;
+            var value = (int)Math.Round(((InputBox)sender).Value);
             if (value > 0)
             {
                 int[] userData = (int[])((InputBox)sender).UserData;
@@ -883,7 +981,7 @@ namespace Intersect.Client.Entities
 
         private void TradeItemInputBoxOkay(object sender, EventArgs e)
         {
-            var value = (int)((InputBox)sender).Value;
+            var value = (int)Math.Round(((InputBox)sender).Value);
             if (value > 0)
             {
                 PacketSender.SendOfferTradeItem((int)((InputBox)sender).UserData, value);
@@ -921,7 +1019,7 @@ namespace Intersect.Client.Entities
 
         private void RevokeItemInputBoxOkay(object sender, EventArgs e)
         {
-            var value = (int)((InputBox)sender).Value;
+            var value = (int)Math.Round(((InputBox)sender).Value);
             if (value > 0)
             {
                 PacketSender.SendRevokeTradeItem((int)((InputBox)sender).UserData, value);
@@ -929,21 +1027,27 @@ namespace Intersect.Client.Entities
         }
 
         //Spell Processing
-        public void SwapSpells(int spell1, int spell2)
+        public void SwapSpells(int fromSpellIndex, int toSpellIndex)
         {
-            var tmpInstance = Spells[spell2].Clone();
-            Spells[spell2] = Spells[spell1].Clone();
-            Spells[spell1] = tmpInstance.Clone();
+            PacketSender.SendSwapSpells(fromSpellIndex, toSpellIndex);
+            var tmpInstance = Spells[toSpellIndex];
+            Spells[toSpellIndex] = Spells[fromSpellIndex];
+            Spells[fromSpellIndex] = tmpInstance;
         }
 
-        public void TryForgetSpell(int index)
+        public void TryForgetSpell(int spellIndex)
         {
-            if (SpellBase.Get(Spells[index].Id) != null)
+            var spellSlot = Spells[spellIndex];
+            if (SpellBase.TryGet(spellSlot.Id, out var spellDescriptor))
             {
-                var iBox = new InputBox(
-                    Strings.Spells.forgetspell,
-                    Strings.Spells.forgetspellprompt.ToString(SpellBase.Get(Spells[index].Id).Name), true,
-                    InputBox.InputType.YesNo, ForgetSpellInputBoxOkay, null, index
+                InputBox.Open(
+                    title: Strings.Spells.forgetspell,
+                    prompt: Strings.Spells.forgetspellprompt.ToString(spellDescriptor.Name),
+                    modal: true,
+                    inputType: InputBox.InputType.YesNo,
+                    onSuccess: ForgetSpellInputBoxOkay,
+                    onCancel: null,
+                    userData: spellIndex
                 );
             }
         }
