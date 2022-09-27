@@ -17,7 +17,7 @@ namespace Intersect.GameObjects
 
         [NotMapped] public ConditionLists AttackOnSightConditions = new ConditionLists();
 
-        [NotMapped] public List<NpcDrop> Drops = new List<NpcDrop>();
+        [NotMapped] public List<Drop> Drops = new List<Drop>();
 
         [NotMapped] public int[] MaxVital = new int[(int) Vitals.VitalCount];
 
@@ -161,7 +161,7 @@ namespace Intersect.GameObjects
         public string JsonDrops
         {
             get => JsonConvert.SerializeObject(Drops);
-            set => Drops = JsonConvert.DeserializeObject<List<NpcDrop>>(value);
+            set => Drops = JsonConvert.DeserializeObject<List<Drop>>(value);
         }
 
         /// <summary>
@@ -259,17 +259,6 @@ namespace Intersect.GameObjects
 
             return SpellBase.Get(spellId);
         }
-
-    }
-
-    public partial class NpcDrop
-    {
-
-        public double Chance;
-
-        public Guid ItemId;
-
-        public int Quantity;
 
     }
 
