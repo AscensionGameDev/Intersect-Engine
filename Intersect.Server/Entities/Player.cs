@@ -2414,8 +2414,6 @@ namespace Intersect.Server.Entities
             var openSlots = FindOpenInventorySlots().Count;
             var slotsRequired = (int)Math.Ceiling(item.Quantity / (double) item.Descriptor.MaxInventoryStack);
 
-            int spawnAmount = 0;
-
             // How are we going to be handling this?
             var success = false;
             switch (handler)
@@ -2427,37 +2425,41 @@ namespace Intersect.Server.Entities
                         GiveItem(item, slot, sendUpdate);
                         success = true;
                     }
-
                     break;
+
                 case ItemHandling.Overflow:
-                    if (CanGiveItem(item)) // Can receive item under regular rules.
                     {
-                        GiveItem(item, slot, sendUpdate);
-                        success = true;
+                        int spawnAmount;
+                        if (CanGiveItem(item)) // Can receive item under regular rules.
+                        {
+                            GiveItem(item, slot, sendUpdate);
+                            success = true;
+                            break;
+                        }
+                        else if (item.Descriptor.Stackable && openSlots < slotsRequired) // Is stackable, but no inventory space.
+                        {
+                            spawnAmount = item.Quantity;
+                        }
+                        else // Time to give them as much as they can take, and spawn the rest on the map!
+                        {
+                            spawnAmount = item.Quantity - openSlots;
+                            if (openSlots > 0)
+                            {
+                                item.Quantity = openSlots;
+                                GiveItem(item, slot, sendUpdate);
+                            }
+                        }
+
+                        // Do we have any items to spawn to the map?
+                        if (spawnAmount > 0 && MapController.TryGetInstanceFromMap(Map.Id, MapInstanceId, out var instance))
+                        {
+                            instance.SpawnItem(overflowTileX > -1 ? overflowTileX : X, overflowTileY > -1 ? overflowTileY : Y, item, spawnAmount, Id);
+                            return spawnAmount != item.Quantity;
+                        }
+
                         break;
                     }
-                    else if (item.Descriptor.Stackable && openSlots < slotsRequired) // Is stackable, but no inventory space.
-                    {
-                        spawnAmount = item.Quantity;
-                    }
-                    else // Time to give them as much as they can take, and spawn the rest on the map!
-                    {
-                        spawnAmount = item.Quantity - openSlots;
-                        if (openSlots > 0)
-                        {
-                            item.Quantity = openSlots;
-                            GiveItem(item, slot, sendUpdate);
-                        }
-                    }
-
-                    // Do we have any items to spawn to the map?
-                    if (spawnAmount > 0 && MapController.TryGetInstanceFromMap(Map.Id, MapInstanceId, out var instance))
-                    {
-                        instance.SpawnItem(overflowTileX > -1 ? overflowTileX : X, overflowTileY > -1 ? overflowTileY : Y, item, spawnAmount, Id);
-                        return spawnAmount != item.Quantity;
-                    }
-
-                    break;
+                    
                 case ItemHandling.UpTo:
                     if (CanGiveItem(item, slot)) // Can receive item under regular rules.
                     {
@@ -2470,8 +2472,8 @@ namespace Intersect.Server.Entities
                         GiveItem(item, slot, sendUpdate);
                         success = true;
                     }
-
                     break;
+
                     // Did you forget to change this method when you added something? ;)
                 default:
                     throw new NotImplementedException();
@@ -2614,7 +2616,7 @@ namespace Intersect.Server.Entities
                     }
 
                     var openSlots = FindOpenInventorySlots();
-                    for (var slot = 0; slot < Math.Ceiling((double) item.Quantity / item.Descriptor.MaxInventoryStack); slot++)
+                    for (var slot = 0; toGive > 0 && slot < Math.Ceiling((double) item.Quantity / item.Descriptor.MaxInventoryStack); slot++)
                     {
                         var quantity = item.Descriptor.MaxInventoryStack <= toGive ?
                             item.Descriptor.MaxInventoryStack :
@@ -2677,10 +2679,32 @@ namespace Intersect.Server.Entities
             TryGetSlot(fromSlotIndex, out var fromSlot, true);
             TryGetSlot(toSlotIndex, out var toSlot, true);
 
-            var toSlotClone = toSlot.Clone();
-            toSlot.Set(fromSlot);
-            fromSlot.Set(toSlotClone);
+            if (
+                fromSlot.ItemId == toSlot.ItemId
+                && ItemBase.TryGet(toSlot.ItemId, out var itemInSlot)
+                && itemInSlot.IsStackable
+                && fromSlot.Quantity < itemInSlot.MaxInventoryStack
+                && toSlot.Quantity < itemInSlot.MaxInventoryStack
+            )
+            {
+                var combinedQuantity = fromSlot.Quantity + toSlot.Quantity;
+                var toQuantity = Math.Min(itemInSlot.MaxInventoryStack, combinedQuantity);
+                var fromQuantity = combinedQuantity - toQuantity;
+                toSlot.Quantity = toQuantity;
+                fromSlot.Quantity = fromQuantity;
+                if (fromQuantity < 1)
+                {
+                    fromSlot.Set(new InventorySlot());
+                }
+            }
+            else
+            {
+                var toSlotClone = toSlot.Clone();
+                toSlot.Set(fromSlot);
+                fromSlot.Set(toSlotClone);
+            }
 
+            // TODO(0.8-beta): combine into 1 batch packet
             PacketSender.SendInventoryItemUpdate(this, fromSlotIndex);
             PacketSender.SendInventoryItemUpdate(this, toSlotIndex);
             EquipmentProcessItemSwap(fromSlotIndex, toSlotIndex);
@@ -3951,7 +3975,7 @@ namespace Intersect.Server.Entities
             }
         }
 
-        private bool TryFillInventoryStacksOfItemFroTradeOffer(Item tradeItem, int offerIdx, List<InventorySlot> inventorySlots, ItemBase itemDescriptor, int amountToGive = 1)
+        private bool TryFillInventoryStacksOfItemForTradeOffer(Item tradeItem, int offerIdx, List<InventorySlot> inventorySlots, ItemBase itemDescriptor, int amountToGive = 1)
         {
             int amountRemainder = amountToGive;
             foreach (var invItem in inventorySlots)
@@ -4112,49 +4136,48 @@ namespace Intersect.Server.Entities
             return amountRemainder < 1;
         }
 
-        public void StoreBagItem(int slot, int amount, int bagSlot)
+        public void StoreBagItem(int inventorySlotIndex, int amount, int bagSlotIndex)
         {
             if (InBag == null || !HasBag(InBag))
             {
                 return;
             }
 
-            var inventoryItem = Items[slot];
-            var itemBase = inventoryItem.Descriptor;
+            var inventorySlot = Items[inventorySlotIndex];
+            var itemDescriptor = inventorySlot.Descriptor;
             var bag = GetBag();
 
-            if (itemBase == null || bag == null || inventoryItem.ItemId == default)
+            if (itemDescriptor == default || bag == default || inventorySlot.ItemId == default)
             {
                 return;
             }
 
-            if (!itemBase.CanBag)
+            if (!itemDescriptor.CanBag)
             {
                 PacketSender.SendChatMsg(this, Strings.Items.nobag, ChatMessageType.Inventory, CustomColors.Items.Bound);
                 return;
             }
 
-            //Make Sure we are not Storing a Bag inside of itself
-            if (inventoryItem.Bag == InBag)
+            // Make Sure we are not Storing a Bag inside of itself
+            if (inventorySlot.Bag == InBag)
             {
                 PacketSender.SendChatMsg(this, Strings.Bags.baginself, ChatMessageType.Inventory, CustomColors.Alerts.Error);
-
                 return;
             }
-            if (itemBase.ItemType == ItemTypes.Bag)
+
+            if (itemDescriptor.ItemType == ItemTypes.Bag)
             {
                 PacketSender.SendChatMsg(this, Strings.Bags.baginbag, ChatMessageType.Inventory, CustomColors.Alerts.Error);
-
                 return;
             }
 
-            bool specificSlot = bagSlot != -1;
+            bool specificSlot = bagSlotIndex != -1;
             // Sanitize amount
-            if (itemBase.IsStackable)
+            if (itemDescriptor.IsStackable)
             {
-                if (amount >= inventoryItem.Quantity)
+                if (amount >= inventorySlot.Quantity)
                 {
-                    amount = Math.Min(inventoryItem.Quantity, inventoryItem.Descriptor.MaxInventoryStack);
+                    amount = Math.Min(inventorySlot.Quantity, inventorySlot.Descriptor.MaxInventoryStack);
                 }
             }
             else
@@ -4168,10 +4191,10 @@ namespace Intersect.Server.Entities
             var relevantSlots = new List<BagSlot>();
             if (specificSlot)
             {
-                currSlot = bagSlot;
+                currSlot = bagSlotIndex;
                 var requestedSlot = bag.Slots[currSlot];
                 // If the slot we're trying to fill is occupied...
-                if (requestedSlot.ItemId != default && (!itemBase.IsStackable || requestedSlot.ItemId != itemBase.Id))
+                if (requestedSlot.ItemId != default && (!itemDescriptor.IsStackable || requestedSlot.ItemId != itemDescriptor.Id))
                 {
                     // Alert the user
                     PacketSender.SendChatMsg(this, Strings.Bags.SlotOccupied, ChatMessageType.Inventory, CustomColors.Alerts.Error);
@@ -4180,17 +4203,18 @@ namespace Intersect.Server.Entities
 
                 relevantSlots.Add(requestedSlot);
             }
+            
             // If the item is stackable, add slots that contain that item into the mix
-            if (itemBase.IsStackable)
+            if (itemDescriptor.IsStackable)
             {
-                relevantSlots.AddRange(bag.FindBagItemSlots(itemBase.Id));
+                relevantSlots.AddRange(bag.FindBagItemSlots(itemDescriptor.Id));
             }
             // And last, add any and all open slots as valid locations for this item, if need be
             relevantSlots.AddRange(bag.FindOpenBagSlots());
             relevantSlots.Select(sl => sl).Distinct();
 
             // Otherwise, fill in the empty slots as much as possible
-            if (!TryFillBagStacksOfItemFromInventorySlot(bag, slot, relevantSlots, itemBase, amount))
+            if (!TryFillBagStacksOfItemFromInventorySlot(bag, inventorySlotIndex, relevantSlots, itemDescriptor, amount))
             {
                 // If we're STILL not done, alert the user that we didn't have enough slots
                 PacketSender.SendChatMsg(this, Strings.Bags.bagnospace, ChatMessageType.Inventory, CustomColors.Alerts.Error);
@@ -4554,7 +4578,7 @@ namespace Intersect.Server.Entities
             relevantSlots.Select(sl => sl).Distinct();
 
             // Otherwise, fill in the empty slots as much as possible
-            if (!TryFillInventoryStacksOfItemFroTradeOffer(tradeItem, slot, relevantSlots, itemBase, amount))
+            if (!TryFillInventoryStacksOfItemForTradeOffer(tradeItem, slot, relevantSlots, itemBase, amount))
             {
                 // If we're STILL not done, alert the user that we didn't have enough slots
                 PacketSender.SendChatMsg(this, Strings.Bags.withdrawinvalid, ChatMessageType.Inventory, CustomColors.Alerts.Error);
