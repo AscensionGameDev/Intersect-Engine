@@ -520,6 +520,8 @@ namespace Intersect.Client.Localization
 
             public static LocalizedString CooldownReduction = @"Cooldown Reduction: {00}%";
 
+            public static LocalizedString Manasteal = @"Manasteal: {00}%";
+
         }
 
         public partial struct CharacterCreation
@@ -1341,6 +1343,7 @@ namespace Intersect.Client.Localization
                 {3, @"Tenacity:"},
                 {4, @"Luck:"},
                 {5, @"Bonus Experience:"},
+                {6, @"Manasteal:"},
             };
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
