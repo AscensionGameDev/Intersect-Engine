@@ -3501,38 +3501,53 @@ namespace Intersect.Server.Entities
                         }
                     }
 
-                    amount = Math.Min(itemInSlot.Quantity, amount);
+                    var amountInInventory = FindInventoryItemQuantity(itemInSlot.ItemId);
 
-                    if (amount == itemInSlot.Quantity)
+                    var amountRemaining = Math.Min(amountInInventory, amount);
+                    var currentSlot = itemInSlot;
+                    var currentSlotIndex = slot;
+                    while (currentSlot != default && amountRemaining > 0)
                     {
-                        // Definitely can get reward.
-                        itemInSlot.Set(Item.None);
-                        EquipmentProcessItemLoss(slot);
-                    }
-                    else
-                    {
-                        //check if can get reward
-                        if (!CanGiveItem(rewardItemId, rewardItemVal))
+                        var amountFromSlot = Math.Min(currentSlot.Quantity, amountRemaining);
+                        if (amountFromSlot < currentSlot.Quantity)
                         {
-                            canSellItem = false;
+                            //check if can get reward
+                            if (!CanGiveItem(rewardItemId, rewardItemVal))
+                            {
+                                canSellItem = false;
+                            }
+                            else
+                            {
+                                currentSlot.Quantity -= amountFromSlot;
+                            }
                         }
                         else
                         {
-                            itemInSlot.Quantity -= amount;
+                            // Definitely can get reward.
+                            currentSlot.Set(Item.None);
+                            EquipmentProcessItemLoss(currentSlotIndex);
                         }
-                    }
 
-                    if (canSellItem)
-                    {
-                        TryGiveItem(rewardItemId, rewardItemVal * amount);
-
-                        if (!TextUtils.IsNone(shop.SellSound))
+                        if (canSellItem)
                         {
-                            PacketSender.SendPlaySound(this, shop.SellSound);
+                            TryGiveItem(rewardItemId, rewardItemVal * amountFromSlot);
+
+                            if (!TextUtils.IsNone(shop.SellSound))
+                            {
+                                PacketSender.SendPlaySound(this, shop.SellSound);
+                            }
+                        }
+
+                        PacketSender.SendInventoryItemUpdate(this, currentSlotIndex);
+                        
+                        amountRemaining -= amountFromSlot;
+                        if (amountRemaining > 0)
+                        {
+                            currentSlot = FindInventoryItemSlot(sellItemNum);
+                            currentSlotIndex = FindInventoryItemSlotIndex(currentSlot);
                         }
                     }
 
-                    PacketSender.SendInventoryItemUpdate(this, slot);
                 }
             }
         }

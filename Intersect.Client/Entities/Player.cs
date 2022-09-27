@@ -363,9 +363,9 @@ namespace Intersect.Client.Entities
             }
         }
 
-        public void TryDropItem(int inventoryIndex)
+        public void TryDropItem(int inventorySlotIndex)
         {
-            var inventorySlot = Inventory[inventoryIndex];
+            var inventorySlot = Inventory[inventorySlotIndex];
             if (!ItemBase.TryGet(inventorySlot.ItemId, out var itemDescriptor))
             {
                 return;
@@ -382,7 +382,7 @@ namespace Intersect.Client.Entities
                 inputType: inputType,
                 onSuccess: DropInputBoxOkay,
                 onCancel: default,
-                userData: inventoryIndex,
+                userData: inventorySlotIndex,
                 quantity: quantity,
                 maxQuantity: quantity
             );
@@ -619,7 +619,9 @@ namespace Intersect.Client.Entities
             }
 
             var shop = Globals.GameShop;
-            var shopCanBuyItem = shop.BuyingWhitelist && shop.BuyingItems.Any(buyingItem => buyingItem.ItemId == itemDescriptor.Id);
+            var shopCanBuyItem =
+                shop.BuyingWhitelist && shop.BuyingItems.Any(buyingItem => buyingItem.ItemId == itemDescriptor.Id)
+                || !shop.BuyingWhitelist && !shop.BuyingItems.Any(buyingItem => buyingItem.ItemId == itemDescriptor.Id);
 
             var prompt = Strings.Shop.sellprompt;
             var inputType = InputBox.InputType.YesNo;
@@ -674,11 +676,12 @@ namespace Intersect.Client.Entities
             if (shopSlot.CostItemQuantity < 1)
             {
                 var emptySlots = Inventory.Count(inventorySlot => inventorySlot.ItemId == default);
+                var slotsWithItem = Inventory.Count(inventorySlot => inventorySlot.ItemId == itemDescriptor.Id);
                 var currentItemQuantity = GetQuantityOfItemInInventory(shopSlot.ItemId);
                 var stackSize = itemDescriptor.IsStackable ? itemDescriptor.MaxInventoryStack : 1;
-                var partialStackSize = currentItemQuantity % stackSize;
-                var partialStackSpace = partialStackSize < 1 ? 0 : stackSize - partialStackSize;
-                maxBuyAmount = emptySlots * stackSize + partialStackSpace;
+                var itemQuantityLimitInCurrentStacks = slotsWithItem * stackSize;
+                var partialStackEmptyQuantity = itemQuantityLimitInCurrentStacks - currentItemQuantity;
+                maxBuyAmount = emptySlots * stackSize + partialStackEmptyQuantity;
             }
             else
             {
@@ -733,7 +736,7 @@ namespace Intersect.Client.Entities
         public void TryDepositItem(int inventorySlotIndex, int bankSlotIndex = -1)
         {
             var inventorySlot = Inventory[inventorySlotIndex];
-            if (!ItemBase.TryGet(inventorySlot.ItemId, out var item))
+            if (!ItemBase.TryGet(inventorySlot.ItemId, out var itemDescriptor))
             {
                 return;
             }
@@ -749,7 +752,7 @@ namespace Intersect.Client.Entities
                 }
             }
 
-            var inventoryQuantity = GetQuantityOfItemInInventory(item.Id);
+            var inventoryQuantity = GetQuantityOfItemInInventory(itemDescriptor.Id);
             if (inventorySlot.Quantity < 2)
             {
                 PacketSender.SendDepositItem(inventorySlotIndex, 1, bankSlotIndex);
@@ -759,7 +762,7 @@ namespace Intersect.Client.Entities
 
             InputBox.Open(
                 title: Strings.Bank.deposititem,
-                prompt: Strings.Bank.deposititemprompt.ToString(item.Name),
+                prompt: Strings.Bank.deposititemprompt.ToString(itemDescriptor.Name),
                 modal: true,
                 inputType: InputBox.InputType.NumericSliderInput,
                 onSuccess: DepositItemInputBoxOkay,
@@ -854,12 +857,6 @@ namespace Intersect.Client.Entities
                 return;
             }
 
-            if (inventorySlot.Quantity < 2)
-            {
-                PacketSender.SendStoreBagItem(inventorySlotIndex, 1, bagSlotIndex);
-                return;
-            }
-
             int[] userData = new int[2] { inventorySlotIndex, bagSlotIndex };
 
             var quantity = inventorySlot.Quantity;
@@ -870,6 +867,12 @@ namespace Intersect.Client.Entities
             //{
             //    maxQuantity = GetQuantityOfItemInInventory(itemDescriptor.Id);
             //}
+
+            if (maxQuantity < 2)
+            {
+                PacketSender.SendStoreBagItem(inventorySlotIndex, 1, bagSlotIndex);
+                return;
+            }
 
             InputBox.Open(
                 title: Strings.Bags.storeitem,
@@ -901,12 +904,6 @@ namespace Intersect.Client.Entities
                 return;
             }
 
-            if (bagSlot.Quantity < 2)
-            {
-                PacketSender.SendRetrieveBagItem(bagSlotIndex, 1, inventorySlotIndex);
-                return;
-            }
-
             if (!ItemBase.TryGet(bagSlot.ItemId, out var itemDescriptor))
             {
                 return;
@@ -922,6 +919,12 @@ namespace Intersect.Client.Entities
             //{
             //    maxQuantity = GetQuantityOfItemInBag(itemDescriptor.Id);
             //}
+
+            if (maxQuantity < 2)
+            {
+                PacketSender.SendRetrieveBagItem(bagSlotIndex, 1, inventorySlotIndex);
+                return;
+            }
 
             InputBox.Open(
                 title: Strings.Bags.retreiveitem,
