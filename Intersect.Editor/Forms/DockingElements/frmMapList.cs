@@ -47,7 +47,7 @@ namespace Intersect.Editor.Forms.DockingElements
 
         private void SaveMap()
         {
-            if (Globals.CurrentTool == (int) EditingTool.MarqueeSelection)
+            if (Globals.CurrentTool == (int) EditingTool.Selection)
             {
                 if (Globals.Dragging == true)
                 {

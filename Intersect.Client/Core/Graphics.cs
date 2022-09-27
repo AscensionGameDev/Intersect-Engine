@@ -656,11 +656,11 @@ namespace Intersect.Client.Core
             );
 
             // Draw our mousecursor at the very end, but not when taking screenshots.
-            if (!takingScreenshot && !string.IsNullOrWhiteSpace(ClientConfiguration.Instance.ClientCursorSprite))
+            if (!takingScreenshot && !string.IsNullOrWhiteSpace(ClientConfiguration.Instance.MouseCursor))
             {
                 var renderLoc = ConvertToWorldPoint(Globals.InputManager.GetMousePosition());
                 DrawGameTexture(
-                    Globals.ContentManager.GetTexture(Framework.Content.TextureType.Misc, ClientConfiguration.Instance.ClientCursorSprite), renderLoc.X, renderLoc.Y
+                    Globals.ContentManager.GetTexture(Framework.Content.TextureType.Misc, ClientConfiguration.Instance.MouseCursor), renderLoc.X, renderLoc.Y
                );
             }
 

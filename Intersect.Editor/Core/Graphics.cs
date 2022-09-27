@@ -503,8 +503,8 @@ namespace Intersect.Editor.Core
 
             int x1 = 0, y1 = 0, x2 = 0, y2 = 0, xoffset = 0, yoffset = 0;
             int dragxoffset = 0, dragyoffset = 0;
-            if (Globals.CurrentTool == (int) EditingTool.RectangleFill ||
-                Globals.CurrentTool == (int) EditingTool.MarqueeSelection)
+            if (Globals.CurrentTool == (int) EditingTool.Rectangle ||
+                Globals.CurrentTool == (int) EditingTool.Selection)
             {
                 if (selW < 0)
                 {
@@ -584,7 +584,7 @@ namespace Intersect.Editor.Core
                         //Lets Create the Preview
                         //Mimic Mouse Down
                         tmpMap = TilePreviewStruct;
-                        if (Globals.CurrentTool == (int) EditingTool.MarqueeSelection && Globals.Dragging)
+                        if (Globals.CurrentTool == (int) EditingTool.Selection && Globals.Dragging)
                         {
                             Globals.MapEditorWindow.ProcessSelectionMovement(tmpMap, false, true);
                         }
@@ -596,7 +596,7 @@ namespace Intersect.Editor.Core
                                 {
                                     Globals.MapLayersWindow.PlaceAttribute(tmpMap, Globals.CurTileX, Globals.CurTileY);
                                 }
-                                else if (Globals.CurrentTool == (int) EditingTool.RectangleFill)
+                                else if (Globals.CurrentTool == (int) EditingTool.Rectangle)
                                 {
                                     for (var x = selX; x < selX + selW + 1; x++)
                                     {
@@ -658,7 +658,7 @@ namespace Intersect.Editor.Core
 
                                     tmpMap.Autotiles.UpdateCliffAutotiles(tmpMap, Globals.CurrentLayer);
                                 }
-                                else if (Globals.CurrentTool == (int) EditingTool.RectangleFill)
+                                else if (Globals.CurrentTool == (int) EditingTool.Rectangle)
                                 {
                                     var x = 0;
                                     var y = 0;
@@ -860,8 +860,8 @@ namespace Intersect.Editor.Core
                 selH = Globals.CurMapSelH;
 
             int dragxoffset = 0, dragyoffset = 0;
-            if (Globals.CurrentTool == (int) EditingTool.RectangleFill ||
-                Globals.CurrentTool == (int) EditingTool.MarqueeSelection)
+            if (Globals.CurrentTool == (int) EditingTool.Rectangle ||
+                Globals.CurrentTool == (int) EditingTool.Selection)
             {
                 if (selW < 0)
                 {
@@ -1006,7 +1006,7 @@ namespace Intersect.Editor.Core
                 }
             }
 
-            if (Globals.CurrentTool == (int) EditingTool.MarqueeSelection && Globals.Dragging)
+            if (Globals.CurrentTool == (int) EditingTool.Selection && Globals.Dragging)
             {
                 DrawBoxOutline(
                     CurrentView.Left + Globals.CurTileX * Options.TileWidth,
@@ -1015,8 +1015,8 @@ namespace Intersect.Editor.Core
                 );
             }
 
-            if (Globals.CurrentTool == (int) EditingTool.RectangleFill ||
-                Globals.CurrentTool == (int) EditingTool.MarqueeSelection)
+            if (Globals.CurrentTool == (int) EditingTool.Rectangle ||
+                Globals.CurrentTool == (int) EditingTool.Selection)
             {
                 DrawBoxOutline(
                     CurrentView.Left + (selX + dragxoffset) * Options.TileWidth,

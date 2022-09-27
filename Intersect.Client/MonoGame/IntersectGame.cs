@@ -121,7 +121,7 @@ namespace Intersect.Client.MonoGame
             Window.AllowAltF4 = false;
 
             // If we're going to be rendering a custom mouse cursor, hide the default one!
-            if (!string.IsNullOrWhiteSpace(ClientConfiguration.Instance.ClientCursorSprite))
+            if (!string.IsNullOrWhiteSpace(ClientConfiguration.Instance.MouseCursor))
             {
                 IsMouseVisible = false;
             }

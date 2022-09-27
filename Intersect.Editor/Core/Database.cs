@@ -3,7 +3,7 @@ using System.Drawing;
 using System.IO;
 
 using Intersect.Configuration;
-
+using Intersect.Editor.Configuration;
 using Mono.Data.Sqlite;
 
 namespace Intersect.Editor
@@ -57,6 +57,7 @@ namespace Intersect.Editor
 
             /* Load configuration */
             ClientConfiguration.LoadAndSave(ClientConfiguration.DefaultPath);
+            ToolCursor.LoadAndSave();
         }
 
         //Map Cache DB

@@ -242,7 +242,7 @@ namespace Intersect.Editor.Maps
 
         private void SaveMap()
         {
-            if (Globals.CurrentTool == (int) EditingTool.MarqueeSelection)
+            if (Globals.CurrentTool == (int) EditingTool.Selection)
             {
                 if (Globals.Dragging == true)
                 {
