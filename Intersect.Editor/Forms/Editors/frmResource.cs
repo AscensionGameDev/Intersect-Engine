@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
@@ -633,7 +633,7 @@ namespace Intersect.Editor.Forms.Editors
 
         private void btnDropAdd_Click(object sender, EventArgs e)
         {
-            mEditorItem.Drops.Add(new ResourceBase.ResourceDrop());
+            mEditorItem.Drops.Add(new Drop());
             mEditorItem.Drops[mEditorItem.Drops.Count - 1].ItemId = ItemBase.IdFromList(cmbDropItem.SelectedIndex - 1);
             mEditorItem.Drops[mEditorItem.Drops.Count - 1].Quantity = (int) nudDropAmount.Value;
             mEditorItem.Drops[mEditorItem.Drops.Count - 1].Chance = (double) nudDropChance.Value;
