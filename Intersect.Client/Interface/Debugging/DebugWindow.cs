@@ -23,33 +23,49 @@ namespace Intersect.Client.Interface.Debugging
         private readonly List<IDisposable> _disposables;
         private bool _wasParentDrawDebugOutlinesEnabled;
         private bool _drawDebugOutlinesEnabled;
+        private object _initializationLock;
+        private bool _initialized;
 
         public DebugWindow(Base parent) : base(parent, Strings.Debug.Title, false, nameof(DebugWindow))
         {
             _disposables = new List<IDisposable>();
+            _initializationLock = new object();
 
             DisableResizing();
-
-            CheckboxDrawDebugOutlines = CreateCheckboxDrawDebugOutlines();
-            CheckboxEnableLayoutHotReloading = CreateCheckboxEnableLayoutHotReloading();
-            ButtonShutdownServer = CreateButtonShutdownServer();
-            ButtonShutdownServerAndExit = CreateButtonShutdownServerAndExit();
-            TableDebugStats = CreateTableDebugStats();
-
-            LoadJsonUi(UI.Debug, Graphics.Renderer.GetResolutionString());
 
             IsHidden = true;
         }
 
-        private LabeledCheckBox CheckboxDrawDebugOutlines { get; }
+        private LabeledCheckBox CheckboxDrawDebugOutlines { get; set; }
 
-        private LabeledCheckBox CheckboxEnableLayoutHotReloading { get; }
+        private LabeledCheckBox CheckboxEnableLayoutHotReloading { get; set; }
 
-        private Button ButtonShutdownServer { get; }
+        private Button ButtonShutdownServer { get; set; }
 
-        private Button ButtonShutdownServerAndExit { get; }
+        private Button ButtonShutdownServerAndExit { get; set; }
 
-        private Table TableDebugStats { get; }
+        private Table TableDebugStats { get; set; }
+
+        private void EnsureInitialized()
+        {
+            if (_initialized)
+            {
+                return;
+            }
+
+            lock (_initializationLock)
+            {
+                CheckboxDrawDebugOutlines = CreateCheckboxDrawDebugOutlines();
+                CheckboxEnableLayoutHotReloading = CreateCheckboxEnableLayoutHotReloading();
+                ButtonShutdownServer = CreateButtonShutdownServer();
+                ButtonShutdownServerAndExit = CreateButtonShutdownServerAndExit();
+                TableDebugStats = CreateTableDebugStats();
+
+                LoadJsonUi(UI.Debug, Graphics.Renderer.GetResolutionString());
+            }
+
+            _initialized = true;
+        }
 
         protected override void OnAttached(Base parent)
         {
@@ -77,6 +93,7 @@ namespace Intersect.Client.Interface.Debugging
 
         protected override void Render(Framework.Gwen.Skin.Base skin)
         {
+            EnsureInitialized();
             base.Render(skin);
         }
 
@@ -234,7 +251,10 @@ namespace Intersect.Client.Interface.Debugging
             {
                 try
                 {
-                    return Interface.CurrentInterface?.Children.ToArray().SelectManyRecursive(x => x.Children, cancellationToken).ToArray().Length ?? 0;
+                    return Interface.CurrentInterface?.Children.ToArray().SelectManyRecursive(
+                        x => x.Children.ToArray(),
+                        cancellationToken
+                    ).ToArray().Length ?? 0;
                 }
                 catch (ObjectDisposedException)
                 {
