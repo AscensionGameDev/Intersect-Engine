@@ -44,6 +44,16 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>ModelAnnotationStrings.resx</DependentUpon>
     </Compile>
+    <Compile Update="Core\ApplicationContext.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ApplicationContext.resx</DependentUpon>
+    </Compile>
+    <Compile Update="CommonStrings.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>CommonStrings.resx</DependentUpon>
+    </Compile>
   </ItemGroup>
 
   <ItemGroup>
@@ -66,6 +76,14 @@
     <EmbeddedResource Update="Models\Annotations\ModelAnnotationStrings.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>ModelAnnotationStrings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Core\ApplicationContext.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>ApplicationContext.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="CommonStrings.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>CommonStrings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
 

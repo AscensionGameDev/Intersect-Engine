@@ -302,9 +302,7 @@ namespace Intersect.Server.Core
         internal static void DispatchUnhandledException(Exception exception, bool isTerminating = true)
         {
             var sender = Thread.CurrentThread;
-            Task.Factory.StartNew(
-                () => HandleUnhandledException(sender, new UnhandledExceptionEventArgs(exception, isTerminating))
-            );
+            Task.Factory.StartNew(() => HandleUnhandledException(sender, new(exception, isTerminating)));
         }
 
         #endregion Exception Handling

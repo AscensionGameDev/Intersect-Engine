@@ -1,6 +1,5 @@
 using Intersect.Logging;
 using Intersect.Threading;
-
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -10,7 +9,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-
+using Intersect.Framework;
 using Intersect.Properties;
 using Intersect.Plugins.Interfaces;
 using Intersect.Network;
@@ -113,7 +112,7 @@ namespace Intersect.Core
         {
             if (mServices.TryGetValue(typeof(TApplicationService), out var service))
             {
-                return (TApplicationService) service;
+                return (TApplicationService)service;
             }
 
             return default;
@@ -128,7 +127,7 @@ namespace Intersect.Core
         protected TApplicationService GetExpectedService<TApplicationService>()
             where TApplicationService : IApplicationService
         {
-            var service = (TApplicationService) mServices[typeof(TApplicationService)];
+            var service = (TApplicationService)mServices[typeof(TApplicationService)];
             if (service != null)
             {
                 return service;
@@ -144,7 +143,7 @@ namespace Intersect.Core
         /// </summary>
         /// <returns>interesting assemblies</returns>
         protected virtual IEnumerable<Assembly> GetAssemblies() =>
-            new List<Assembly> {typeof(IApplicationContext).Assembly, typeof(TContext).Assembly};
+            new List<Assembly> { typeof(IApplicationContext).Assembly, typeof(TContext).Assembly };
 
         private void AddService(Type type, IApplicationService service)
         {
@@ -179,7 +178,9 @@ namespace Intersect.Core
                 );
 
         private void RunOnAllServices(Action<IApplicationService> action, bool isRunning, bool force = true) =>
-            Services.Where(service => (default != service) && service.IsEnabled && (force || (isRunning == service.IsRunning))).ToList().ForEach(action);
+            Services.Where(service =>
+                    (default != service) && service.IsEnabled && (force || (isRunning == service.IsRunning))).ToList()
+                .ForEach(action);
 
         /// <summary>
         /// Run the bootstrap lifecycle method on all enabled services.
@@ -195,7 +196,8 @@ namespace Intersect.Core
         /// Run the shutdown lifecycle method on all enabled services.
         /// </summary>
         /// <param name="force">if the service should be forced to stop no matter its status</param>
-        protected virtual void StopServices(bool force = false) => RunOnAllServices(service => service?.Stop(this), true, force);
+        protected virtual void StopServices(bool force = false) =>
+            RunOnAllServices(service => service?.Stop(this), true, force);
 
         #endregion Service
 
@@ -364,7 +366,7 @@ namespace Intersect.Core
 
             while (currentException != null)
             {
-                Log.Error(innerException ? "Caused by:" : $"Received unhandled exception from {sender}.");
+                Log.Error(innerException ? CommonStrings.ExceptionCausedBy : string.Format(ApplicationContext.ProcessUnhandledException_ReceivedUnhandledExceptionFromX, sender));
                 Log.Error(currentException);
 
                 currentException = currentException.InnerException;
@@ -396,7 +398,14 @@ namespace Intersect.Core
         {
             if (unhandledExceptionEvent.ExceptionObject is not Exception unhandledException)
             {
-                throw new ArgumentNullException(nameof(unhandledExceptionEvent.ExceptionObject));
+                throw new ArgumentException(
+                    string.Format(
+                        ApplicationContext.HandleUnhandledException_InvalidExceptionObject,
+                        nameof(Exception),
+                        unhandledExceptionEvent.ExceptionObject.GetType().FullName
+                    ),
+                    nameof(unhandledExceptionEvent)
+                );
             }
 
             ProcessUnhandledException(sender, unhandledException);
@@ -421,8 +430,7 @@ namespace Intersect.Core
         {
             ProcessUnhandledException(
                 sender,
-                unobservedTaskExceptionEvent.Exception ??
-                throw new ArgumentNullException(nameof(unobservedTaskExceptionEvent.Exception))
+                unobservedTaskExceptionEvent.Exception
             );
 
             if (!ConcurrentInstance.HasInstance)
