@@ -4,7 +4,7 @@
     "CopyrightYear": "2015-2022",
     "Components": [
       {
-        "Name": "Intersect.EndUser.Runtime.MonoGame",
+        "Name": "Intersect.Runtime.MonoGame",
         "CopyrightYear": "2022",
         "License": "MIT"
       },

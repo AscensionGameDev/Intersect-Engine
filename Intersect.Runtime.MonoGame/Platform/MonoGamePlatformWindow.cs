@@ -5,7 +5,7 @@ using Intersect.Numerics;
 using Game = Microsoft.Xna.Framework.Game;
 using GameWindow = Microsoft.Xna.Framework.GameWindow;
 
-namespace Intersect.EndUser.Runtime.MonoGame.Platform;
+namespace Intersect.Runtime.MonoGame.Platform;
 
 public sealed class MonoGamePlatformWindow : PlatformWindow
 {

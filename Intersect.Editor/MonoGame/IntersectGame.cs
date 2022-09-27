@@ -239,7 +239,7 @@ namespace Intersect.Editor.MonoGame
             var libraryHandle = RuntimeHelper.LoadNativeLibrary("cimgui");
 
             _graphicsDevice = new MonoGameGraphicsDevice(GraphicsDevice);
-            _platformWindow = new EndUser.Runtime.MonoGame.Platform.MonoGamePlatformWindow(this, _graphicsDevice, Window);
+            _platformWindow = new Runtime.MonoGame.Platform.MonoGamePlatformWindow(this, _graphicsDevice, Window);
             _imGuiRenderer = new MonoGameImGuiRenderer(this);
             _contentManager = new ImGuiContentManager(Globals.ContentManager, _imGuiRenderer);
 

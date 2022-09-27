@@ -22,7 +22,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Intersect (Core)\Intersect.Core.csproj" />
     <ProjectReference Include="..\Intersect.Client.Framework\Intersect.Client.Framework.csproj" />
-    <ProjectReference Include="..\Intersect.EndUser.Runtime.MonoGame\Intersect.EndUser.Runtime.MonoGame.csproj" />
+    <ProjectReference Include="..\Intersect.Runtime.MonoGame\Intersect.Runtime.MonoGame.csproj" />
     <ProjectReference Include="..\Intersect.Network\Intersect.Network.csproj" />
   </ItemGroup>
 
