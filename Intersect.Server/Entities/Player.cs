@@ -1398,7 +1398,12 @@ namespace Intersect.Server.Entities
 
         public override bool CanAttack(Entity entity, SpellBase spell)
         {
-            // If self-cast, AoE, Projectile or Dash.. always accept.
+            var npc = entity as Npc;
+            if (npc != default && !npc.CanPlayerAttack(this))
+            {
+                return false;
+            }
+            
             if (spell?.Combat?.TargetType == SpellTargetTypes.Self ||
                 spell?.Combat?.TargetType == SpellTargetTypes.Projectile ||
                 spell?.SpellType == SpellTypes.Dash
@@ -1412,7 +1417,7 @@ namespace Intersect.Server.Entities
                 return false;
             }
 
-            if (entity is EventPage)
+            if (entity is EventPageInstance)
             {
                 return false;
             }
@@ -1452,7 +1457,7 @@ namespace Intersect.Server.Entities
                 }
             }
 
-            if (entity is Npc npc)
+            if (npc != default)
             {
                 return !friendly && npc.CanPlayerAttack(this) || friendly && npc.IsAllyOf(this);
             }
