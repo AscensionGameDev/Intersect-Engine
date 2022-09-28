@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -60,9 +60,9 @@ namespace Intersect.Server.Metrics.Controllers
         }
 
 
-        public override IDictionary<string, object> Data()
+        protected override IDictionary<string, object> Data(int additionalCapacity)
         {
-            var res = base.Data();
+            var res = base.Data(additionalCapacity + 14);
 
             res.Add("LogicPoolMaxThreads", Options.Instance.Processing.MaxLogicThreads);
             res.Add("LogicPoolMinThreads", Options.Instance.Processing.MinLogicThreads);

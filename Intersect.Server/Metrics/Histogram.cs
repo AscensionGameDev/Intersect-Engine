@@ -1,28 +1,22 @@
-﻿using Intersect.Server.Metrics.Controllers;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
+using Intersect.Server.Metrics.Controllers;
 
 namespace Intersect.Server.Metrics
 {
-    public partial class Histogram
+    public struct HistogramData
     {
-        [JsonIgnore]
-        public string Name { get; private set; }
-
-        public long Min { get; private set; }
-
-        public long Max { get; private set; }
-
-        public long Count { get; private set; }
-
-        public long Sum { get; private set; }
+        public long Count;
+        public long Min;
+        public long Max;
+        public long Sum;
 
         public double Mean => Count > 0 ? Sum / (double)Count : 0;
+    }
+
+    public partial class Histogram
+    {
+        public string Name { get; private set; }
+
+        private HistogramData Data;
 
         public Histogram(string name, MetricsController controller)
         {
@@ -32,25 +26,27 @@ namespace Intersect.Server.Metrics
 
         public void Record(long val)
         {
-            if (val < Min || Count == 0)
+            if (val < Data.Min || Data.Count == 0)
             {
-                Min = val;
+                Data.Min = val;
             }
 
-            if (val > Max || Count == 0)
+            if (val > Data.Max || Data.Count == 0)
             {
-                Max = val;
+                Data.Max = val;
             }
-            Sum += val;
-            Count++;
+            Data.Sum += val;
+            Data.Count++;
         }
 
         public void Clear()
         {
-            Min = 0;
-            Max = 0;
-            Sum = 0;
-            Count = 0;
+            Data.Min = 0;
+            Data.Max = 0;
+            Data.Sum = 0;
+            Data.Count = 0;
         }
+
+        public HistogramData Snapshot => Data;
     }
 }

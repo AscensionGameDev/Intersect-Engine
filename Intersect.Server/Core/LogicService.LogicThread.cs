@@ -76,8 +76,10 @@ namespace Intersect.Server.Core
 
                 try
                 {
+                    var currentProcess = Process.GetCurrentProcess();
+
                     var swCpsTimer = Timing.Global.Milliseconds + 1000;
-                    var lastCpuTime = Process.GetCurrentProcess().TotalProcessorTime;
+                    var lastCpuTime = currentProcess.TotalProcessorTime;
                     var saveServerVariablesTimer = Timing.Global.Milliseconds + Options.Instance.Processing.DatabaseSaveServerVariablesInterval;
                     var metricsTimer = 0l;
                     long swCps = 0;
@@ -218,14 +220,14 @@ namespace Intersect.Server.Core
                             if (Options.Instance.Metrics.Enable)
                             {
                                 //Get Average CPU Usage for the last second
-                                var currentCpuTime = Process.GetCurrentProcess().TotalProcessorTime;
+                                var currentCpuTime = currentProcess.TotalProcessorTime;
                                 var cpuUsedMs = (currentCpuTime - lastCpuTime).TotalMilliseconds;
                                 var totalMsPassed = Timing.Global.Milliseconds - (swCpsTimer - 1000);
                                 var cpuUsageTotal = (cpuUsedMs / (Environment.ProcessorCount * totalMsPassed)) * 100f;
                                 lastCpuTime = currentCpuTime;
 
                                 MetricsRoot.Instance.Application.Cpu.Record((int)cpuUsageTotal);
-                                MetricsRoot.Instance.Application.Memory.Record(Process.GetCurrentProcess().PrivateMemorySize64);
+                                MetricsRoot.Instance.Application.Memory.Record(currentProcess.PrivateMemorySize64);
 
                                 MetricsRoot.Instance.Game.Cps.Record(Globals.Cps);
 

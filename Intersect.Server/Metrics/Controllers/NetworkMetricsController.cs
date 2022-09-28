@@ -1,4 +1,4 @@
-﻿using Intersect.Server.Networking;
+using Intersect.Server.Networking;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -51,10 +51,9 @@ namespace Intersect.Server.Metrics.Controllers
 
         }
 
-
-        public override IDictionary<string, object> Data()
+        protected override IDictionary<string, object> Data(int additionalCapacity)
         {
-            var res = base.Data();
+            var res = base.Data(additionalCapacity + 2);
 
             var top10Sent = PacketSender.SentPacketTypes.Where(pair => pair.Value > 0).OrderByDescending(pair => pair.Value).Take(10).ToArray();
             var top10Received = PacketHandler.AcceptedPacketTypes.Where(pair => pair.Value > 0).OrderByDescending(pair => pair.Value).Take(10).ToArray();
