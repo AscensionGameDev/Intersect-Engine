@@ -490,7 +490,6 @@ namespace Intersect.Client.Networking
             {
                 if (Globals.Entities?.ContainsKey(id) ?? false)
                 {
-                    Globals.Entities[id]?.Dispose();
                     Globals.EntitiesToDispose?.Add(id);
                 }
             }
@@ -1370,9 +1369,8 @@ namespace Intersect.Client.Networking
             {
                 foreach (var projDeath in packet.ProjectileDeaths)
                 {
-                    if (Globals.Entities.ContainsKey(projDeath) && Globals.Entities[projDeath] is Projectile projectile)
+                    if (Globals.Entities.ContainsKey(projDeath) && Globals.Entities[projDeath] is Projectile)
                     {
-                        projectile.Dispose();
                         Globals.EntitiesToDispose?.Add(projDeath);
                     }
                 }
