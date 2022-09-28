@@ -106,7 +106,7 @@ namespace Intersect.Models
 
         public static Guid IdFromList(int listIndex)
         {
-            if (listIndex < 0 || listIndex > Lookup.KeyList.Count)
+            if (listIndex < 0 || listIndex >= Lookup.KeyList.Count)
             {
                 return Guid.Empty;
             }
@@ -116,7 +116,7 @@ namespace Intersect.Models
 
         public static TObject FromList(int listIndex)
         {
-            if (listIndex < 0 || listIndex > Lookup.ValueList.Count)
+            if (listIndex < 0 || listIndex >= Lookup.ValueList.Count)
             {
                 return null;
             }

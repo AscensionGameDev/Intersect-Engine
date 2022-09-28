@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Windows.Forms;
 
 using Intersect.Editor.Localization;
@@ -197,17 +197,21 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 
         private void cmbVariable_SelectedIndexChanged(object sender, EventArgs e)
         {
+            Guid variableId;
             if (rdoPlayerVariables.Checked)
             {
-                UpdateMinMaxValues(
-                    PlayerVariableBase.Get(PlayerVariableBase.IdFromList(cmbVariable.SelectedIndex)).Type
-                );
+                variableId = PlayerVariableBase.IdFromList(cmbVariable.SelectedIndex);
+                UpdateMinMaxValues(PlayerVariableBase.Get(variableId).Type);
             }
-            else
+            else if (rdoGlobalVariables.Checked)
             {
-                UpdateMinMaxValues(
-                    ServerVariableBase.Get(ServerVariableBase.IdFromList(cmbVariable.SelectedIndex)).Type
-                );
+                variableId = ServerVariableBase.IdFromList(cmbVariable.SelectedIndex);
+                UpdateMinMaxValues(ServerVariableBase.Get(variableId).Type);
+            }
+            else if (rdoGuildVariables.Checked)
+            {
+                variableId = GuildVariableBase.IdFromList(cmbVariable.SelectedIndex);
+                UpdateMinMaxValues(GuildVariableBase.Get(variableId).Type);
             }
         }
 
