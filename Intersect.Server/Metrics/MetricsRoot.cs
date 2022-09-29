@@ -1,20 +1,18 @@
-﻿using Intersect.Server.General;
-using Intersect.Server.Metrics.Controllers;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Dynamic;
-using System.Threading.Tasks;
 
+using Intersect.Server.Metrics.Controllers;
 using Intersect.Utilities;
+
+using Newtonsoft.Json;
 
 namespace Intersect.Server.Metrics
 {
     public partial class MetricsRoot
     {
+        private const string EmptyJson = "{}";
 
-        private List<MetricsController> MetricsControllers = new List<MetricsController>();
+        private readonly List<MetricsController> MetricsControllers;
 
         public GameMetricsController Game { get; private set; } = new GameMetricsController();
 
@@ -24,22 +22,22 @@ namespace Intersect.Server.Metrics
 
         public ThreadingMetricsController Threading { get; private set; } = new ThreadingMetricsController();
 
-        public string Metrics => mLatestSnapshot;
+        public string Metrics => mLatestSnapshot == default ? EmptyJson : JsonConvert.SerializeObject(mLatestSnapshot);
 
-        private string mLatestSnapshot = "{}";
+        private IDictionary<string, object> mLatestSnapshot;
 
         /// <summary>
         /// Creates and configures metric tracking for our various controllers
         /// </summary>
-        public MetricsRoot()
+        private MetricsRoot()
         {
-            if (Instance == null)
-                Instance = this;
-
-            MetricsControllers.Add(Application);
-            MetricsControllers.Add(Game);
-            MetricsControllers.Add(Network);
-            MetricsControllers.Add(Threading);
+            MetricsControllers = new List<MetricsController>(4)
+            {
+                Application,
+                Game,
+                Network,
+                Threading
+            };
         }
 
         /// <summary>
@@ -60,34 +58,41 @@ namespace Intersect.Server.Metrics
         /// </summary>
         public void Disable()
         {
-            mLatestSnapshot = "{}";
+            mLatestSnapshot = default;
         }
 
         public void Capture()
         {
-            var data = Data();
-            mLatestSnapshot = JsonConvert.SerializeObject(data);
+            mLatestSnapshot = Data();
             Clear();
         }
 
         public void Clear()
         {
-            MetricsControllers.ForEach(m => m.Clear());
+            for (var i = 0; i < MetricsControllers.Count; i++)
+            {
+                var controller = MetricsControllers[i];
+                controller.Clear();
+            }
         }
 
-        private object Data()
+        private IDictionary<string, object> Data()
         {
-            var result = new ExpandoObject() as IDictionary<string, object>;
-            foreach (var controller in MetricsControllers)
+            var result = new Dictionary<string, object>(MetricsControllers.Count);
+            for (var i = 0; i < MetricsControllers.Count; i++)
             {
-                result.Add(controller.Context, controller.Data());
+                var controller = MetricsControllers[i];
+                result[controller.Context] = controller.Data();
             }
-            return new
+
+            var data = new Dictionary<string, object>(3)
             {
-                uptime = Timing.Global.Milliseconds,
-                datetime = DateTime.UtcNow,
-                metrics = result
+                ["uptime"] = Timing.Global.Milliseconds,
+                ["datetime"] = DateTime.UtcNow,
+                ["metrics"] = result
             };
+
+            return data;
         }
     }
 }

@@ -1,11 +1,6 @@
 ﻿using Intersect.Server.Metrics.Controllers;
+
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Intersect.Server.Metrics
 {
@@ -41,6 +36,7 @@ namespace Intersect.Server.Metrics
             {
                 Max = val;
             }
+
             Sum += val;
             Count++;
         }

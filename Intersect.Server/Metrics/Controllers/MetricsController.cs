@@ -1,31 +1,43 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Dynamic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace Intersect.Server.Metrics.Controllers
 {
-    public partial class MetricsController
+    public abstract partial class MetricsController
     {
-        public virtual string Context { get; set; }
+        private int _allocations;
 
-        public virtual List<Histogram> Measurements { get; set; } = new List<Histogram>();
+        protected MetricsController(string context)
+        {
+            Context = context;
+        }
+
+        public string Context { get; }
+
+        public List<Histogram> Measurements { get; } = new List<Histogram>();
 
         public virtual void Clear()
         {
-            Measurements.ForEach(m => m.Clear());
+            for (var i = 0; i < Measurements.Count; i++)
+            {
+                Measurements[i].Clear();
+            }
         }
 
-        public virtual IDictionary<string, object> Data()
+        public IDictionary<string, object> Data() {
+            var data = InternalData();
+            _allocations = data.Count;
+            return data;
+        }
+
+        protected virtual IDictionary<string, object> InternalData()
         {
-            var result = new ExpandoObject() as IDictionary<string, object>;
-            foreach (var hist in Measurements)
+            var data = new Dictionary<string, object>(_allocations);
+            for (var i = 0; i < Measurements.Count; i++)
             {
-                result.Add(hist.Name, hist);
+                var histogram = Measurements[i];
+                data[histogram.Name] = histogram;
             }
-            return result;
+            return data;
         }
     }
 }

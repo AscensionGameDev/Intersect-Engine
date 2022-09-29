@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace Intersect.Server.Metrics.Controllers
 {
@@ -39,10 +35,8 @@ namespace Intersect.Server.Metrics.Controllers
         public Histogram SystemPoolInUseIOThreads { get; private set; }
 
 
-        public ThreadingMetricsController()
+        public ThreadingMetricsController() : base(CONTEXT)
         {
-            Context = CONTEXT;
-
             ThreadPool.GetMaxThreads(out mMaxSystemThreadPoolThreads, out mMaxSystemThreadPoolIOThreads);
             ThreadPool.GetMinThreads(out mMinSystemThreadPoolThreads, out mMinSystemThreadPoolIOThreads);
 
@@ -59,8 +53,7 @@ namespace Intersect.Server.Metrics.Controllers
             SystemPoolInUseIOThreads = new Histogram(nameof(SystemPoolInUseIOThreads), this);
         }
 
-
-        public override IDictionary<string, object> Data()
+        protected override IDictionary<string, object> InternalData()
         {
             var res = base.Data();
 
