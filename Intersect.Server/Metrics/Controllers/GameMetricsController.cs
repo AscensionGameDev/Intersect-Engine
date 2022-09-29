@@ -1,4 +1,4 @@
-﻿namespace Intersect.Server.Metrics.Controllers
+namespace Intersect.Server.Metrics.Controllers
 {
     public partial class GameMetricsController : MetricsController
     {
@@ -26,10 +26,8 @@
 
         public Histogram MapTotalUpdateTime { get; private set; }
 
-        public GameMetricsController()
+        public GameMetricsController() : base(CONTEXT)
         {
-            Context = CONTEXT;
-
             Cps = new Histogram(nameof(Cps), this);
             Players = new Histogram(nameof(Players), this);
             ActiveMaps = new Histogram(nameof(ActiveMaps), this);
