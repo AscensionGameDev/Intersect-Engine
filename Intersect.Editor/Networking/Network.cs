@@ -94,7 +94,7 @@ namespace Intersect.Editor.Networking
             {
                 EditorLidgrenNetwork?.Close();
                 EditorLidgrenNetwork = null;
-                PacketHandler.Registry.Dispose();
+                PacketHandler?.Registry?.Dispose();
                 PacketHandler = null;
             }
             catch (Exception)
