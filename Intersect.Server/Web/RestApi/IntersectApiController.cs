@@ -1,7 +1,12 @@
-﻿using System.Web.Http;
+using System;
+using System.Security.Claims;
+using System.Web.Http;
 using System.Web.Http.Controllers;
 
+using Intersect.Security.Claims;
 using Intersect.Server.Web.RestApi.Serialization;
+
+using IntersectUser = Intersect.Server.Database.PlayerData.User;
 
 namespace Intersect.Server.Web.RestApi
 {
@@ -20,6 +25,30 @@ namespace Intersect.Server.Web.RestApi
             {
                 Configuration.Formatters.JsonFormatter.SerializerSettings.ContractResolver =
                     new ApiVisibilityContractResolver(RequestContext);
+            }
+        }
+
+        private IntersectUser _intersectUser;
+
+        public IntersectUser IntersectUser
+        {
+            get
+            {
+                if (_intersectUser != default)
+                {
+                    return _intersectUser;
+                }
+
+                var identity = User.Identity as ClaimsIdentity;
+                var idString = identity?.FindFirst(IntersectClaimTypes.UserId)?.Value;
+                if (string.IsNullOrWhiteSpace(idString) || !Guid.TryParse(idString, out var id))
+                {
+                    return default;
+                }
+
+                _intersectUser = IntersectUser.FindOnline(id) ?? IntersectUser.Find(id);
+
+                return _intersectUser;
             }
         }
 
