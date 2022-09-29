@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -30,20 +30,20 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
         [Route]
         [HttpPost]
-        public object ListPost([FromBody] PagingInfo pageInfo)
+        public DataPage<User> ListPost([FromBody] PagingInfo pageInfo)
         {
-            pageInfo.Page = Math.Max(pageInfo.Page, 0);
-            pageInfo.Count = Math.Max(Math.Min(pageInfo.Count, PAGE_SIZE_MAX), 5);
+            var page = Math.Max(pageInfo.Page, 0);
+            var pageSize = Math.Max(Math.Min(pageInfo.Count, PAGE_SIZE_MAX), PAGE_SIZE_MIN);
 
-            int totalEntries = 0;
-            var entries = Database.PlayerData.User.List(null, null, SortDirection.Ascending, pageInfo.Page * pageInfo.Count, pageInfo.Count, out totalEntries);
+            var values = Database.PlayerData.User.List(null, null, SortDirection.Ascending, pageInfo.Page * pageInfo.Count, pageInfo.Count, out var total);
 
-            return new
+            return new DataPage<User>
             {
-                total = Database.PlayerData.User.Count(),
-                pageInfo.Page,
-                count = entries.Count,
-                entries
+                Total = total,
+                Page = page,
+                PageSize = pageSize,
+                Count = values.Count,
+                Values = values
             };
         }
 
@@ -62,8 +62,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             pageSize = Math.Max(Math.Min(pageSize, PAGE_SIZE_MAX), PAGE_SIZE_MIN);
             limit = Math.Max(Math.Min(limit, pageSize), 1);
 
-            int total = 0;
-            var values = Database.PlayerData.User.List(search?.Length > 2 ? search : null, sortBy, sortDirection, page * pageSize, pageSize, out total);
+            var values = Database.PlayerData.User.List(search?.Length > 2 ? search : null, sortBy, sortDirection, page * pageSize, pageSize, out var total);
 
             if (limit != pageSize)
             {
@@ -116,7 +115,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             {
                 return Request.CreateErrorResponse(
                     HttpStatusCode.BadRequest,
-                    $@"Username, Email, and Password all must be provided, and not null/empty."
+                    "Username, Email, and Password all must be provided, and not null/empty."
                 );
             }
 
@@ -803,10 +802,14 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return onError();
             }
 
-            var player = client?.Entity;
-            var targetIp = client?.GetIp() ?? "";
-            var actionPerformer = Player.Find(actionParameters.Moderator);
+            var actionPerformer = IntersectUser;
+            if (actionPerformer == default)
+            {
+                return onError();
+            }
 
+            var player = client?.Entity;
+            var targetIp = client?.GetIp() ?? string.Empty;
             switch (adminAction)
             {
                 case AdminActions.Ban:
