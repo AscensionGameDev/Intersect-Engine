@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 
 using Intersect.Server.Networking;
@@ -52,7 +52,7 @@ namespace Intersect.Server.Metrics.Controllers
 
         protected override IDictionary<string, object> InternalData()
         {
-            var res = base.Data();
+            var res = base.InternalData();
 
             var top10Sent = PacketSender.SentPacketTypes.Where(pair => pair.Value > 0).OrderByDescending(pair => pair.Value).Take(10).ToArray();
             var top10Received = PacketHandler.AcceptedPacketTypes.Where(pair => pair.Value > 0).OrderByDescending(pair => pair.Value).Take(10).ToArray();

@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Threading;
 
 namespace Intersect.Server.Metrics.Controllers
@@ -55,7 +55,7 @@ namespace Intersect.Server.Metrics.Controllers
 
         protected override IDictionary<string, object> InternalData()
         {
-            var res = base.Data();
+            var res = base.InternalData();
 
             res.Add("LogicPoolMaxThreads", Options.Instance.Processing.MaxLogicThreads);
             res.Add("LogicPoolMinThreads", Options.Instance.Processing.MinLogicThreads);
