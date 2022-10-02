@@ -307,6 +307,8 @@ namespace Intersect.Client.MonoGame
 
         protected override void OnExiting(object sender, EventArgs args)
         {
+            Log.Info("System window closing (due to user interaction most likely).");
+
             if (Globals.Me != null && Globals.Me.CombatTimer > Timing.Global?.Milliseconds)
             {
                 //Try to prevent SDL Window Close

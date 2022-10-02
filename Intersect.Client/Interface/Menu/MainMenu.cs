@@ -9,6 +9,7 @@ using Intersect.Client.General;
 using Intersect.Client.Interface.Shared;
 using Intersect.Client.Localization;
 using Intersect.Client.Networking;
+using Intersect.Logging;
 using Intersect.Network;
 
 namespace Intersect.Client.Interface.Menu
@@ -312,6 +313,7 @@ namespace Intersect.Client.Interface.Menu
 
         void ExitButton_Clicked(Base sender, ClickedEventArgs arguments)
         {
+            Log.Info("User clicked exit button.");
             Globals.IsRunning = false;
         }
 

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 
 using Intersect.Client.Framework.Audio;
@@ -97,7 +97,7 @@ namespace Intersect.Client.MonoGame.Audio
             }
             catch (Exception exception)
             {
-                Log.Error($"Error loading '{mPath}'.", exception);
+                Log.Error(exception, $"Error loading '{mPath}'.");
                 ChatboxMsg.AddMessage(
                     new ChatboxMsg(
                         $"{Strings.Errors.LoadFile.ToString(Strings.Words.lcase_sound)} [{mPath}]",
