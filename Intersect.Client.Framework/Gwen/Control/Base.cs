@@ -17,6 +17,7 @@ using Intersect.Client.Framework.Audio;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Intersect.Logging;
+using Intersect.Client.Framework.Gwen.Renderer;
 
 namespace Intersect.Client.Framework.Gwen.Control
 {
@@ -697,7 +698,18 @@ namespace Intersect.Client.Framework.Gwen.Control
                 return;
             }
 
-            var cache = Skin.Renderer.Ctt;
+            ICacheToTexture cache = default;
+
+#pragma warning disable CA1031 // Do not catch general exception types
+            try
+            {
+                cache = Skin.Renderer.Ctt;
+            }
+            catch
+            {
+                // If this fails it's because mSkin and mParent.Skin are null, we couldn't care less
+            }
+#pragma warning restore CA1031 // Do not catch general exception types
 
             if (ShouldCacheToTexture && cache != null)
             {
