@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
@@ -24,17 +24,24 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// <param name="parent">Parent control.</param>
         public LabeledCheckBox(Base parent, string name = "") : base(parent, name)
         {
-            SetSize(200, 19);
-            mCheckBox = new CheckBox(this);
-            mCheckBox.Dock = Pos.Left;
-            mCheckBox.Margin = new Margin(0, 2, 2, 2);
-            mCheckBox.IsTabable = false;
+            _ = SetSize(200, 19);
+
+            mCheckBox = new CheckBox(this)
+            {
+                InheritParentEnablementProperties = true,
+                Dock = Pos.Left,
+                Margin = new Margin(0, 2, 2, 2),
+                IsTabable = false
+            };
             mCheckBox.CheckChanged += OnCheckChanged;
 
-            mLabel = new Label(this);
-            mLabel.Dock = Pos.Fill;
+            mLabel = new Label(this)
+            {
+                InheritParentEnablementProperties = true,
+                Dock = Pos.Fill,
+                IsTabable = false
+            };
             mLabel.Clicked += delegate(Base control, ClickedEventArgs args) { mCheckBox.Press(control); };
-            mLabel.IsTabable = false;
 
             IsTabable = false;
         }

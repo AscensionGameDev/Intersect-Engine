@@ -1,4 +1,4 @@
-﻿using Intersect.Client.Framework.Gwen.Control.EventArguments;
+using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Framework.Gwen.Input;
 
 namespace Intersect.Client.Framework.Gwen.Control
@@ -21,21 +21,25 @@ namespace Intersect.Client.Framework.Gwen.Control
         public LabeledRadioButton(Base parent) : base(parent)
         {
             MouseInputEnabled = true;
-            SetSize(100, 20);
+            _ = SetSize(100, 20);
 
-            mRadioButton = new RadioButton(this);
+            mRadioButton = new RadioButton(this)
+            {
+                //Dock = Pos.Left, // no docking, it causes resizing
+                InheritParentEnablementProperties = true,
+                IsTabable = false,
+                KeyboardInputEnabled = false,
+                //Margin = new Margin(0, 2, 2, 2),
+            };
 
-            //m_RadioButton.Dock = Pos.Left; // no docking, it causes resizing
-            //m_RadioButton.Margin = new Margin(0, 2, 2, 2);
-            mRadioButton.IsTabable = false;
-            mRadioButton.KeyboardInputEnabled = false;
-
-            mLabel = new Label(this);
-            mLabel.Alignment = Pos.CenterV | Pos.Left;
-            mLabel.Text = "Radio Button";
-            mLabel.Clicked += delegate(Base control, ClickedEventArgs args) { mRadioButton.Press(control); };
-            mLabel.IsTabable = false;
-            mLabel.KeyboardInputEnabled = false;
+            mLabel = new Label(this)
+            {
+                Alignment = Pos.CenterV | Pos.Left,
+                InheritParentEnablementProperties = true,
+                IsTabable = false,
+                KeyboardInputEnabled = false,
+            };
+            mLabel.Clicked += delegate (Base control, ClickedEventArgs args) { mRadioButton.Press(control); };
         }
 
         /// <summary>
