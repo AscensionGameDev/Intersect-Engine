@@ -1403,6 +1403,20 @@ namespace Intersect.Client.Entities
             TargetBox?.Show();
         }
 
+        private void AutoTurnToTarget(Entity en)
+        {
+            if (!Globals.Database.AutoTurnToTarget || !Options.EnableAutoTurnToTarget || IsMoving ||
+                Dir == MoveDir)
+            {
+                return;
+            }
+
+            MoveDir = -1;
+            byte directionToTarget = DirectionToTarget(en);
+            Dir = directionToTarget;
+            PacketSender.SendDirection(directionToTarget);
+        }
+
         public bool TryBlock()
         {
             if (IsBlocking)
@@ -2268,44 +2282,35 @@ namespace Intersect.Client.Entities
 
         public void DrawTargets()
         {
-            foreach (var en in Globals.Entities)
+            foreach (var en in Globals.Entities.Where(en => en.Value != null))
             {
-                if (en.Value == null)
+                if (en.Value.IsHidden ||
+                    (en.Value.IsStealthed && (!(en.Value is Player player) || !Globals.Me.IsInMyParty(player))) ||
+                    (en.Value is Projectile || en.Value is Resource) || TargetType != 0 ||
+                    TargetIndex != en.Value.Id)
                 {
                     continue;
                 }
 
-                if (!en.Value.IsHidden && (!en.Value.IsStealthed || en.Value is Player player && Globals.Me.IsInMyParty(player)))
-                {
-                    if (!(en.Value is Projectile || en.Value is Resource))
-                    {
-                        if (TargetType == 0 && TargetIndex == en.Value.Id)
-                        {
-                            en.Value.DrawTarget((int)TargetTypes.Selected);
-                        }
-                    }
-                }
+                en.Value.DrawTarget((int)TargetTypes.Selected);
+                AutoTurnToTarget(en.Value);
             }
 
             foreach (MapInstance eventMap in Maps.MapInstance.Lookup.Values)
             {
-                foreach (var en in eventMap.LocalEntities)
+                foreach (var en in eventMap.LocalEntities.Where(en => en.Value != null))
                 {
-                    if (en.Value == null)
+                    if (en.Value.MapId != eventMap.Id ||
+                        ((Event)en.Value).DisablePreview ||
+                        en.Value.IsHidden ||
+                        (en.Value.IsStealthed && (!(en.Value is Player player) || !Globals.Me.IsInMyParty(player))) ||
+                        TargetType != 1 || TargetIndex != en.Value.Id)
                     {
                         continue;
                     }
 
-                    if (en.Value.MapId == eventMap.Id &&
-                        !((Event)en.Value).DisablePreview &&
-                        !en.Value.IsHidden &&
-                        (!en.Value.IsStealthed || en.Value is Player player && Globals.Me.IsInMyParty(player)))
-                    {
-                        if (TargetType == 1 && TargetIndex == en.Value.Id)
-                        {
-                            en.Value.DrawTarget((int)TargetTypes.Selected);
-                        }
-                    }
+                    en.Value.DrawTarget((int)TargetTypes.Selected);
+                    AutoTurnToTarget(en.Value);
                 }
             }
 

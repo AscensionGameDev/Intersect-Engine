@@ -1785,6 +1785,9 @@ namespace Intersect.Client.Localization
             public static LocalizedString TargetingSettings = @"Targeting";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString AutoTurnToTarget = @"Auto-turn to target";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString Title = @"Settings";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]

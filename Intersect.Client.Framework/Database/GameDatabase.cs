@@ -25,6 +25,8 @@ namespace Intersect.Client.Framework.Database
 
         public bool StickyTarget { get; set; }
 
+        public bool AutoTurnToTarget { get; set; }
+
         public bool FriendOverheadInfo { get; set; }
 
         public bool GuildMemberOverheadInfo { get; set; }
@@ -77,6 +79,7 @@ namespace Intersect.Client.Framework.Database
             HideOthersOnWindowOpen = LoadPreference(nameof(HideOthersOnWindowOpen), true);
             TargetAccountDirection = LoadPreference(nameof(TargetAccountDirection), false);
             StickyTarget = LoadPreference(nameof(StickyTarget), false);
+            AutoTurnToTarget = LoadPreference(nameof(AutoTurnToTarget), false);
             FriendOverheadInfo = LoadPreference(nameof(FriendOverheadInfo), true);
             GuildMemberOverheadInfo = LoadPreference(nameof(GuildMemberOverheadInfo), true);
             MyOverheadInfo = LoadPreference(nameof(MyOverheadInfo), true);
@@ -102,6 +105,7 @@ namespace Intersect.Client.Framework.Database
             SavePreference(nameof(HideOthersOnWindowOpen), HideOthersOnWindowOpen);
             SavePreference(nameof(TargetAccountDirection), TargetAccountDirection);
             SavePreference(nameof(StickyTarget), StickyTarget);
+            SavePreference(nameof(AutoTurnToTarget), AutoTurnToTarget);
             SavePreference(nameof(FriendOverheadInfo), FriendOverheadInfo);
             SavePreference(nameof(GuildMemberOverheadInfo), GuildMemberOverheadInfo);
             SavePreference(nameof(MyOverheadInfo), MyOverheadInfo);

@@ -1878,6 +1878,83 @@ namespace Intersect.Client.Entities
             return texture != default;
         }
 
+        /// <summary>
+        /// <para>Returns the direction to a player's selected target.
+        /// Thanks to Daywalkr (Middle Ages: Online) for this !</para>
+        /// </summary>
+        /// <param name="en">entity's target</param>
+        /// <returns>direction to player's selected target</returns>
+        protected byte DirectionToTarget(Entity en)
+        {
+            byte newDir = Dir;
+
+            if (en == null)
+            {
+                return newDir;
+            }
+
+            int originY = Y;
+            int originX = X;
+            int targetY = en.Y;
+            int targetX = en.X;
+
+            if (en.MapInstance.Id != MapInstance.Id)
+            {
+                if (en.MapInstance.GridY < MapInstance.GridY)
+                {
+                    originY += Options.MapHeight - 1;
+                }
+                else if (en.MapInstance.GridY > MapInstance.GridY)
+                {
+                    targetY += Options.MapHeight - 1;
+                }
+
+                if (en.MapInstance.GridX < MapInstance.GridX)
+                {
+                    originX += Options.MapWidth - 1;
+                }
+                else if (en.MapInstance.GridX > MapInstance.GridX)
+                {
+                    targetX += (Options.MapWidth - 1);
+                }
+            }
+
+            var yOffset = originY - targetY;
+            var xOffset = originX - targetX;
+            var preferY = (Math.Abs(yOffset) - Math.Abs(xOffset)) > 0;
+
+            switch (preferY)
+            {
+                case true when yOffset > 0:
+                    newDir = (byte)Directions.Up;
+                    break;
+                case true when yOffset < 0:
+                    newDir = (byte)Directions.Down;
+                    break;
+                case true when xOffset > 0:
+                    newDir = (byte)Directions.Left;
+                    break;
+                case true when xOffset < 0:
+                    newDir = (byte)Directions.Right;
+                    break;
+
+                case false when xOffset > 0:
+                    newDir = (byte)Directions.Left;
+                    break;
+                case false when xOffset < 0:
+                    newDir = (byte)Directions.Right;
+                    break;
+                case false when yOffset > 0:
+                    newDir = (byte)Directions.Up;
+                    break;
+                case false when yOffset < 0:
+                    newDir = (byte)Directions.Down;
+                    break;
+            }
+
+            return newDir;
+        }
+
         //Movement
         /// <summary>
         ///     Returns -6 if the tile is blocked by a global (non-event) entity

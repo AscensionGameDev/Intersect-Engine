@@ -16,6 +16,11 @@
         public bool AllowCombatMovement { get; set; } = true;
 
         /// <summary>
+        /// Enables de client setting 'Auto-turn to target'.
+        /// </summary>
+        public bool EnableAutoTurnToTarget { get; set; } = true;
+
+        /// <summary>
         /// Enables or disables friend login notifications when a user joins the game.
         /// </summary>
         public bool EnableFriendLoginNotifications { get; set; } = true;
