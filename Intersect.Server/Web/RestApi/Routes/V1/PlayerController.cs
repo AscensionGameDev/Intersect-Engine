@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -913,7 +913,12 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             var user = client?.User;
             var userId = user?.Id ?? player.UserId;
             var targetIp = client?.GetIp() ?? string.Empty;
-            var actionPerformer = Player.Find(actionParameters.Moderator);
+
+            var actionPerformer = IntersectUser;
+            if (actionPerformer == default)
+            {
+                return onError();
+            }
 
             switch (adminAction)
             {
