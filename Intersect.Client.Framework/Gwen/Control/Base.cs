@@ -28,6 +28,19 @@ namespace Intersect.Client.Framework.Gwen.Control
     public partial class Base : IDisposable
     {
 
+        private bool _inheritParentEnablementProperties;
+
+        internal bool InheritParentEnablementProperties
+        {
+            get => _inheritParentEnablementProperties;
+            set
+            {
+                _inheritParentEnablementProperties = value;
+                IsDisabled = Parent?.IsDisabled ?? IsDisabled;
+                IsHidden = Parent?.IsHidden ?? IsHidden;
+            }
+        }
+
         /// <summary>
         ///     Delegate used for all control event handlers.
         /// </summary>
@@ -432,9 +445,9 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// <summary>
         ///     Indicates whether the control is disabled.
         /// </summary>
-        public bool IsDisabled
+        public virtual bool IsDisabled
         {
-            get => mDisabled;
+            get => (_inheritParentEnablementProperties && Parent != default) ? Parent.IsDisabled : mDisabled;
             set
             {
                 if (value == mDisabled)
@@ -442,7 +455,15 @@ namespace Intersect.Client.Framework.Gwen.Control
                     return;
                 }
 
-                mDisabled = value;
+                if (_inheritParentEnablementProperties)
+                {
+                    mDisabled = Parent?.IsDisabled ?? value;
+                }
+                else
+                {
+                    mDisabled = value;
+                }
+
                 Invalidate();
             }
         }
@@ -452,7 +473,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// </summary>
         public virtual bool IsHidden
         {
-            get => mHidden;
+            get => (_inheritParentEnablementProperties && Parent != default) ? Parent.IsHidden : mHidden;
             set
             {
                 if (value == mHidden)
@@ -460,7 +481,15 @@ namespace Intersect.Client.Framework.Gwen.Control
                     return;
                 }
 
-                mHidden = value;
+                if (_inheritParentEnablementProperties)
+                {
+                    mHidden = Parent?.IsHidden ?? value;
+                }
+                else
+                {
+                    mHidden = value;
+                }
+
                 Invalidate();
                 InvalidateParent();
             }
