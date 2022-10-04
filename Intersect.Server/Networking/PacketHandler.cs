@@ -1000,15 +1000,15 @@ namespace Intersect.Server.Networking
                 //Search for command activated events and run them
                 foreach (var evt in EventBase.Lookup)
                 {
-                    if ((EventBase) evt.Value != null)
+                    var eventDescriptor = evt.Value as EventBase;
+                    if (eventDescriptor == default)
                     {
-                        if (client.Entity.StartCommonEvent(
-                                (EventBase) evt.Value, CommonEventTrigger.SlashCommand, cmd.TrimStart('/'), msg
-                            ) ==
-                            true)
-                        {
-                            return; //Found our /command, exit now :)
-                        }
+                        continue;
+                    }
+
+                    if (client.Entity.UnsafeStartCommonEvent(eventDescriptor, CommonEventTrigger.SlashCommand, cmd.TrimStart('/'), msg))
+                    {
+                        return; //Found our /command, exit now :)
                     }
                 }
 

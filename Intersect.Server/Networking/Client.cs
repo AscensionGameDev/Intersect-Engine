@@ -294,7 +294,7 @@ namespace Intersect.Server.Networking
                         {
                             timedPacket.UpdateTiming();
                         }
-                        mConnection.Send(packet, mode);
+                        mConnection?.Send(packet, mode);
                         if (Options.Instance.Metrics.Enable)
                         {
                             if (!PacketSender.SentPacketTypes.ContainsKey(packet.GetType().Name))
