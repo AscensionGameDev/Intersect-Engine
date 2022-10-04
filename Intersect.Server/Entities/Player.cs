@@ -567,7 +567,7 @@ namespace Intersect.Server.Entities
                                 {
                                     autorunEvents += evt.Pages.Count(p => p.CommonTrigger == CommonEventTrigger.Autorun);
                                 }
-                                StartCommonEvent(evt, CommonEventTrigger.Autorun);
+                                EnqueueStartCommonEvent(evt, CommonEventTrigger.Autorun);
                             }
                         }
 
@@ -695,6 +695,16 @@ namespace Intersect.Server.Entities
                                 }
                             }
                             MapAutorunEvents = autorunEvents;
+
+                            while (_queueStartCommonEvent.TryDequeue(out var startCommonEventMetadata))
+                            {
+                                _ = UnsafeStartCommonEvent(
+                                    startCommonEventMetadata.EventDescriptor,
+                                    startCommonEventMetadata.Trigger,
+                                    startCommonEventMetadata.Command,
+                                    startCommonEventMetadata.Parameter
+                                );
+                            }
                         }
                     }
 
@@ -1163,7 +1173,7 @@ namespace Intersect.Server.Entities
                                 {
                                     if ((Options.Party.NpcDeathCommonEventStartRange <= 0 || partyMember.InRangeOf(this, Options.Party.NpcDeathCommonEventStartRange)) && !(partyMember == this && playerEvent != null))
                                     {
-                                        partyMember.StartCommonEvent(partyEvent);
+                                        partyMember.EnqueueStartCommonEvent(partyEvent);
                                     }
                                 }
                             }
@@ -1176,7 +1186,7 @@ namespace Intersect.Server.Entities
 
                         if (playerEvent != null)
                         {
-                            StartCommonEvent(playerEvent);
+                            EnqueueStartCommonEvent(playerEvent);
                         }
 
                         break;
@@ -1187,7 +1197,7 @@ namespace Intersect.Server.Entities
                         var descriptor = resource.Base;
                         if (descriptor?.Event != null)
                         {
-                            StartCommonEvent(descriptor.Event);
+                            EnqueueStartCommonEvent(descriptor.Event);
                         }
 
                         break;
@@ -3004,7 +3014,7 @@ namespace Intersect.Server.Entities
                         break;
                     case ItemTypes.Event:
                         var evt = EventBase.Get(itemBase.EventId);
-                        if (evt == null || !StartCommonEvent(evt))
+                        if (evt == null || !UnsafeStartCommonEvent(evt))
                         {
                             return;
                         }
@@ -3817,7 +3827,7 @@ namespace Intersect.Server.Entities
 
                     if (craftDescriptor.Event != default)
                     {
-                        StartCommonEvent(craftDescriptor.Event);
+                        EnqueueStartCommonEvent(craftDescriptor.Event);
                     }
                 }
                 else
@@ -5164,7 +5174,7 @@ namespace Intersect.Server.Entities
                         var evt = spellBase.Event;
                         if (evt != null)
                         {
-                            StartCommonEvent(evt);
+                            EnqueueStartCommonEvent(evt);
                         }
 
                         base.CastSpell(spellId, spellSlot); //To get cooldown :P
@@ -5371,7 +5381,7 @@ namespace Intersect.Server.Entities
             {
                 if (value is EventBase eventDescriptor && eventDescriptor.Pages.Any(p => p.CommonTrigger == trigger))
                 {
-                    StartCommonEvent(eventDescriptor, trigger, command, param);
+                    EnqueueStartCommonEvent(eventDescriptor, trigger, command, param);
                 }
             }
         }
@@ -5385,7 +5395,7 @@ namespace Intersect.Server.Entities
                 {
                     foreach (var player in players)
                     {
-                        player.StartCommonEvent(eventDescriptor, trigger, command, param);
+                        player.EnqueueStartCommonEvent(eventDescriptor, trigger, command, param);
                     }
                 }
             }
@@ -5583,7 +5593,7 @@ namespace Intersect.Server.Entities
                     UpdateGatherItemQuests(quest.Tasks[0].TargetId);
                 }
 
-                StartCommonEvent(EventBase.Get(quest.StartEventId));
+                EnqueueStartCommonEvent(EventBase.Get(quest.StartEventId));
                 PacketSender.SendChatMsg(
                     this, Strings.Quests.started.ToString(quest.Name), ChatMessageType.Quest, CustomColors.QuestAlert.Started
                 );
@@ -5712,10 +5722,10 @@ namespace Intersect.Server.Entities
                                     questProgress.TaskProgress = -1;
                                     if (quest.Tasks[i].CompletionEvent != null)
                                     {
-                                        StartCommonEvent(quest.Tasks[i].CompletionEvent);
+                                        EnqueueStartCommonEvent(quest.Tasks[i].CompletionEvent);
                                     }
 
-                                    StartCommonEvent(EventBase.Get(quest.EndEventId));
+                                    EnqueueStartCommonEvent(EventBase.Get(quest.EndEventId));
                                     PacketSender.SendChatMsg(
                                         this, Strings.Quests.completed.ToString(quest.Name), ChatMessageType.Quest,
                                         CustomColors.QuestAlert.Completed
@@ -5728,7 +5738,7 @@ namespace Intersect.Server.Entities
                                     questProgress.TaskProgress = 0;
                                     if (quest.Tasks[i].CompletionEvent != null)
                                     {
-                                        StartCommonEvent(quest.Tasks[i].CompletionEvent);
+                                        EnqueueStartCommonEvent(quest.Tasks[i].CompletionEvent);
                                     }
 
                                     if (quest.Tasks[i + 1].Objective == QuestObjective.GatherItems)
@@ -5765,7 +5775,7 @@ namespace Intersect.Server.Entities
                     questProgress.TaskProgress = -1;
                     if (!skipCompletionEvent)
                     {
-                        StartCommonEvent(EventBase.Get(quest.EndEventId));
+                        EnqueueStartCommonEvent(EventBase.Get(quest.EndEventId));
                         PacketSender.SendChatMsg(
                             this, Strings.Quests.completed.ToString(quest.Name), ChatMessageType.Quest,
                             CustomColors.QuestAlert.Completed
@@ -6303,7 +6313,41 @@ namespace Intersect.Server.Entities
             }
         }
 
-        public bool StartCommonEvent(
+        [NotMapped, JsonIgnore]
+        private readonly ConcurrentQueue<StartCommonEventMetadata> _queueStartCommonEvent = new ConcurrentQueue<StartCommonEventMetadata>();
+
+        public class StartCommonEventMetadata
+        {
+            public string Command { get; }
+
+            public EventBase EventDescriptor { get; }
+
+            public string Parameter { get; }
+
+            public CommonEventTrigger Trigger { get; }
+
+            public StartCommonEventMetadata(
+                string command,
+                EventBase eventDescriptor,
+                string parameter,
+                CommonEventTrigger trigger
+            )
+            {
+                Command = command;
+                EventDescriptor = eventDescriptor;
+                Parameter = parameter;
+                Trigger = trigger;
+            }
+        }
+
+        public void EnqueueStartCommonEvent(
+            EventBase eventDescriptor,
+            CommonEventTrigger trigger = CommonEventTrigger.None,
+            string command = default,
+            string parameter = default
+        ) => _queueStartCommonEvent.Enqueue(new StartCommonEventMetadata(command ?? string.Empty, eventDescriptor, parameter ?? string.Empty, trigger));
+
+        public bool UnsafeStartCommonEvent(
             EventBase baseEvent,
             CommonEventTrigger trigger = CommonEventTrigger.None,
             string command = "",
