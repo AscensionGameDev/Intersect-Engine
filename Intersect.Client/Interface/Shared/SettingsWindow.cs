@@ -418,24 +418,20 @@ namespace Intersect.Client.Interface.Shared
             mInformationSettings.Hide();
             mTargetingSettings.Hide();
         }
-        
+
         void InformationSettings_Clicked(Base sender, ClickedEventArgs arguments)
         {
             mInterfaceSettings.Hide();
             mInformationSettings.Show();
             mTargetingSettings.Hide();
         }
-        
+
         void TargetingSettings_Clicked(Base sender, ClickedEventArgs arguments)
         {
             mInterfaceSettings.Hide();
             mInformationSettings.Hide();
             mTargetingSettings.Show();
-            if (!Options.EnableAutoTurnToTarget)
-            {
-                mAutoTurnToTarget.IsChecked = false;
-                mAutoTurnToTarget.IsDisabled = true;
-            }
+            mAutoTurnToTarget.IsDisabled = !Options.Instance.PlayerOpts.EnableAutoTurnToTarget;
         }
 
         private void VideoSettingsTab_Clicked(Base sender, ClickedEventArgs arguments)

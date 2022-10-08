@@ -102,8 +102,6 @@ namespace Intersect
         /// </summary>
         public static int MaxLoggedinUsers => Instance._maxUsers;
 
-        public static bool EnableAutoTurnToTarget => Instance.PlayerOpts.EnableAutoTurnToTarget;
-
         public static int MaxStatValue => Instance.PlayerOpts.MaxStat;
 
         public static int MaxLevel => Instance.PlayerOpts.MaxLevel;

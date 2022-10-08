@@ -1921,35 +1921,16 @@ namespace Intersect.Client.Entities
 
             var yOffset = originY - targetY;
             var xOffset = originX - targetX;
-            var preferY = (Math.Abs(yOffset) - Math.Abs(xOffset)) > 0;
 
-            switch (preferY)
+            if ((Math.Abs(yOffset) - Math.Abs(xOffset)) > 0)
             {
-                case true when yOffset > 0:
-                    newDir = (byte)Directions.Up;
-                    break;
-                case true when yOffset < 0:
-                    newDir = (byte)Directions.Down;
-                    break;
-                case true when xOffset > 0:
-                    newDir = (byte)Directions.Left;
-                    break;
-                case true when xOffset < 0:
-                    newDir = (byte)Directions.Right;
-                    break;
-
-                case false when xOffset > 0:
-                    newDir = (byte)Directions.Left;
-                    break;
-                case false when xOffset < 0:
-                    newDir = (byte)Directions.Right;
-                    break;
-                case false when yOffset > 0:
-                    newDir = (byte)Directions.Up;
-                    break;
-                case false when yOffset < 0:
-                    newDir = (byte)Directions.Down;
-                    break;
+                newDir = (Math.Abs(yOffset) != 0) ? (yOffset > 0) ? (byte)Directions.Up : (byte)Directions.Down :
+                    (xOffset > 0) ? (byte)Directions.Left : (byte)Directions.Right;
+            }
+            else
+            {
+                newDir = (Math.Abs(xOffset) != 0) ? (xOffset > 0) ? (byte)Directions.Left : (byte)Directions.Right :
+                    (yOffset > 0) ? (byte)Directions.Up : (byte)Directions.Down;
             }
 
             return newDir;

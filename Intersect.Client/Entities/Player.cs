@@ -1405,7 +1405,7 @@ namespace Intersect.Client.Entities
 
         private void AutoTurnToTarget(Entity en)
         {
-            if (!Globals.Database.AutoTurnToTarget || !Options.EnableAutoTurnToTarget || IsMoving ||
+            if (!Globals.Database.AutoTurnToTarget || !Options.Instance.PlayerOpts.EnableAutoTurnToTarget || IsMoving ||
                 Dir == MoveDir)
             {
                 return;
@@ -2282,12 +2282,29 @@ namespace Intersect.Client.Entities
 
         public void DrawTargets()
         {
-            foreach (var en in Globals.Entities.Where(en => en.Value != null))
+            foreach (var en in Globals.Entities)
             {
-                if (en.Value.IsHidden ||
-                    (en.Value.IsStealthed && (!(en.Value is Player player) || !Globals.Me.IsInMyParty(player))) ||
-                    (en.Value is Projectile || en.Value is Resource) || TargetType != 0 ||
-                    TargetIndex != en.Value.Id)
+                if (en.Value == null)
+                {
+                    continue;
+                }
+
+                if (en.Value.IsHidden)
+                {
+                    continue;
+                }
+
+                if (en.Value.IsStealthed && (!(en.Value is Player player) || !Globals.Me.IsInMyParty(player)))
+                {
+                    continue;
+                }
+
+                if (en.Value is Projectile || en.Value is Resource)
+                {
+                    continue;
+                }
+
+                if (TargetType != 0 || TargetIndex != en.Value.Id)
                 {
                     continue;
                 }
@@ -2298,13 +2315,34 @@ namespace Intersect.Client.Entities
 
             foreach (MapInstance eventMap in Maps.MapInstance.Lookup.Values)
             {
-                foreach (var en in eventMap.LocalEntities.Where(en => en.Value != null))
+                foreach (var en in eventMap.LocalEntities)
                 {
-                    if (en.Value.MapId != eventMap.Id ||
-                        ((Event)en.Value).DisablePreview ||
-                        en.Value.IsHidden ||
-                        (en.Value.IsStealthed && (!(en.Value is Player player) || !Globals.Me.IsInMyParty(player))) ||
-                        TargetType != 1 || TargetIndex != en.Value.Id)
+                    if (en.Value == null)
+                    {
+                        continue;
+                    }
+
+                    if (en.Value.MapId != eventMap.Id)
+                    {
+                        continue;
+                    }
+
+                    if (((Event)en.Value).DisablePreview)
+                    {
+                        continue;
+                    }
+
+                    if (en.Value.IsHidden)
+                    {
+                        continue;
+                    }
+
+                    if (en.Value.IsStealthed && (!(en.Value is Player player) || !Globals.Me.IsInMyParty(player)))
+                    {
+                        continue;
+                    }
+
+                    if (TargetType != 1 || TargetIndex != en.Value.Id)
                     {
                         continue;
                     }
