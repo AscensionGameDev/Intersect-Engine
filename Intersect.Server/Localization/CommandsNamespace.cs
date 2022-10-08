@@ -220,6 +220,15 @@ namespace Intersect.Server.Localization
                 Help = @"shows all players online"
             };
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocaleCommand Panic = new LocaleCommand
+            {
+                Name = @"panic",
+                Description = @"Collects and dumps information -- THIS WILL CRASH YOUR SERVER",
+                Help = @"collects and dumps information -- THIS WILL CRASH YOUR SERVER"
+            };
+
+
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly CommandParsingNamespace Parsing = new CommandParsingNamespace();
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -366,6 +375,13 @@ namespace Intersect.Server.Localization
                 {
                     Name = @"page-size",
                     Description = @"the number of items to display per page"
+                };
+
+                [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+                public readonly LocaleArgument PanicType = new LocaleArgument
+                {
+                    Name = @"type",
+                    Description = @"which information dump to process (attack/stack)"
                 };
 
                 [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]

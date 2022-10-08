@@ -49,6 +49,7 @@ namespace Intersect.Server.Core
                 Parser.Register<MuteCommand>();
                 Parser.Register<NetDebugCommand>();
                 Parser.Register<OnlineListCommand>();
+                Parser.Register<PanicCommand>();
                 Parser.Register<PowerAccountCommand>();
                 Parser.Register<PowerCommand>();
                 Parser.Register<SetVariableCommand>();
