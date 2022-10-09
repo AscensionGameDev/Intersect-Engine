@@ -1410,15 +1410,15 @@ namespace Intersect.Client.Entities
                 return;
             }
 
-            if (IsMoving || Dir == MoveDir)
+            byte directionToTarget = DirectionToTarget(en);
+
+            if (IsMoving || Dir == MoveDir || Dir == directionToTarget)
             {
-                AutoTargetingTime = Timing.Global.Milliseconds + 120;
+                AutoTurnToTargetTimer = Timing.Global.Milliseconds + Options.Instance.PlayerOpts.AutoTurnToTargetDelay;
                 return;
             }
 
-            byte directionToTarget = DirectionToTarget(en);
-
-            if (AutoTargetingTime + 120 > Timing.Global.Milliseconds || Dir == directionToTarget)
+            if (AutoTurnToTargetTimer > Timing.Global.Milliseconds)
             {
                 return;
             }

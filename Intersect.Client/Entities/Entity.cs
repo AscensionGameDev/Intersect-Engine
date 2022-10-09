@@ -199,7 +199,7 @@ namespace Intersect.Client.Entities
 
         public long LastActionTime { get; set; } = -1;
 
-        public long AutoTargetingTime { get; set; } = -1;
+        public long AutoTurnToTargetTimer { get; set; } = -1;
 
         #endregion
 
