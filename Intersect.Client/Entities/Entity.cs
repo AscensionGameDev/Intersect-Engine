@@ -198,6 +198,9 @@ namespace Intersect.Client.Entities
         public long SpriteFrameTimer { get; set; } = -1;
 
         public long LastActionTime { get; set; } = -1;
+
+        public long AutoTargetingTime { get; set; } = -1;
+
         #endregion
 
         public EntityTypes Type { get; }
@@ -1921,17 +1924,10 @@ namespace Intersect.Client.Entities
 
             var yOffset = originY - targetY;
             var xOffset = originX - targetX;
+            var xDir = xOffset == 0 ? newDir : (xOffset < 0 ? (byte)Directions.Right : (byte)Directions.Left);
+            var yDir = yOffset == 0 ? newDir : (yOffset < 0 ? (byte)Directions.Down : (byte)Directions.Up);
 
-            if ((Math.Abs(yOffset) - Math.Abs(xOffset)) > 0)
-            {
-                newDir = (Math.Abs(yOffset) != 0) ? (yOffset > 0) ? (byte)Directions.Up : (byte)Directions.Down :
-                    (xOffset > 0) ? (byte)Directions.Left : (byte)Directions.Right;
-            }
-            else
-            {
-                newDir = (Math.Abs(xOffset) != 0) ? (xOffset > 0) ? (byte)Directions.Left : (byte)Directions.Right :
-                    (yOffset > 0) ? (byte)Directions.Up : (byte)Directions.Down;
-            }
+            newDir = Math.Abs(yOffset) > Math.Abs(xOffset) ? yDir : xDir;
 
             return newDir;
         }

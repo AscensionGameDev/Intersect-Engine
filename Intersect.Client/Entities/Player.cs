@@ -1405,16 +1405,27 @@ namespace Intersect.Client.Entities
 
         private void AutoTurnToTarget(Entity en)
         {
-            if (!Globals.Database.AutoTurnToTarget || !Options.Instance.PlayerOpts.EnableAutoTurnToTarget || IsMoving ||
-                Dir == MoveDir)
+            if (!Globals.Database.AutoTurnToTarget || !Options.Instance.PlayerOpts.EnableAutoTurnToTarget)
+            {
+                return;
+            }
+
+            if (IsMoving || Dir == MoveDir)
+            {
+                AutoTargetingTime = Timing.Global.Milliseconds + 120;
+                return;
+            }
+
+            byte directionToTarget = DirectionToTarget(en);
+
+            if (AutoTargetingTime + 120 > Timing.Global.Milliseconds || Dir == directionToTarget)
             {
                 return;
             }
 
             MoveDir = -1;
-            byte directionToTarget = DirectionToTarget(en);
             Dir = directionToTarget;
-            PacketSender.SendDirection(directionToTarget);
+            PacketSender.SendDirection(Dir);
         }
 
         public bool TryBlock()
@@ -2327,7 +2338,7 @@ namespace Intersect.Client.Entities
                         continue;
                     }
 
-                    if (((Event)en.Value).DisablePreview)
+                    if (en.Value is Event eventEntity && eventEntity.DisablePreview)
                     {
                         continue;
                     }
