@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Collections.ObjectModel;
@@ -116,6 +116,9 @@ namespace Intersect.Server.Web.RestApi.Configuration
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public bool DebugMode { get; private set; } = false;
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public NetworkTypes AllowedNetworkTypes { get; private set; } = NetworkTypes.Loopback;
 
 #if DEBUG
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
