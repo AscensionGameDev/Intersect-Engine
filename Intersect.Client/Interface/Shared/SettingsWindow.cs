@@ -12,6 +12,7 @@ using Intersect.Client.General;
 using Intersect.Client.Interface.Game;
 using Intersect.Client.Interface.Menu;
 using Intersect.Client.Localization;
+using Intersect.Logging;
 using Intersect.Utilities;
 using static Intersect.Client.Framework.File_Management.GameContentManager;
 
@@ -378,6 +379,8 @@ namespace Intersect.Client.Interface.Shared
 
             Input.KeyDown += OnKeyDown;
             Input.MouseDown += OnKeyDown;
+            Input.KeyUp += OnKeyUp;
+            Input.MouseUp += OnKeyUp;
 
             #endregion
 
@@ -533,10 +536,30 @@ namespace Intersect.Client.Interface.Shared
             mKeybindingRestoreBtn.Hide();
         }
 
+        private readonly HashSet<Keys> _keysDown = new HashSet<Keys>();
+
         private void OnKeyDown(Keys modifier, Keys key)
         {
+            if (mKeybindingEditBtn != default)
+            {
+                _ = _keysDown.Add(key);
+            }
+        }
+
+        private void OnKeyUp(Keys modifier, Keys key)
+        {
+            if (modifier == Keys.None && key == Keys.None)
+            {
+                return;
+            }
+
             if (mKeybindingEditBtn != null)
             {
+                if (!_keysDown.Remove(key))
+                {
+                    return;
+                }
+
                 mKeybindingEditControls.UpdateControl(mKeybindingEditControl, mKeyEdit, modifier, key);
                 mKeybindingEditBtn.Text = Strings.Keys.FormatKeyName(modifier, key);
 
@@ -568,6 +591,7 @@ namespace Intersect.Client.Interface.Shared
 
                 mKeybindingEditBtn.PlayHoverSound();
                 mKeybindingEditBtn = null;
+                _keysDown.Clear();
                 Interface.GwenInput.HandleInput = true;
             }
         }
@@ -579,7 +603,7 @@ namespace Intersect.Client.Interface.Shared
                 mKeybindingEditBtn != null &&
                 mKeybindingListeningTimer < Timing.Global.Milliseconds)
             {
-                OnKeyDown(Keys.None, Keys.None);
+                OnKeyUp(Keys.None, Keys.None);
             }
         }
 

@@ -36,11 +36,6 @@ namespace Intersect.Client.Core
                 return;
             }
 
-            if (IsModifier(key))
-            {
-                return;
-            }
-
             var consumeKey = false;
             bool canFocusChat = true;
 
@@ -285,11 +280,6 @@ namespace Intersect.Client.Core
 
         public static void OnKeyReleased(Keys modifier, Keys key)
         {
-            if (IsModifier(key))
-            {
-                return;
-            }
-
             KeyUp?.Invoke(modifier, key);
             if (Interface.Interface.HasInputFocus())
             {
