@@ -31,6 +31,10 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         private void InitializeComponent()
         {
             this.grpConditional = new DarkUI.Controls.DarkGroupBox();
+            this.grpNpc = new DarkUI.Controls.DarkGroupBox();
+            this.chkNpc = new DarkUI.Controls.DarkCheckBox();
+            this.cmbNpcs = new DarkUI.Controls.DarkComboBox();
+            this.lblNpc = new System.Windows.Forms.Label();
             this.grpInventoryConditions = new DarkUI.Controls.DarkGroupBox();
             this.chkBank = new DarkUI.Controls.DarkCheckBox();
             this.grpVariableAmount = new DarkUI.Controls.DarkGroupBox();
@@ -145,11 +149,13 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.grpCheckEquippedSlot = new DarkUI.Controls.DarkGroupBox();
             this.cmbCheckEquippedSlot = new DarkUI.Controls.DarkComboBox();
             this.lblCheckEquippedSlot = new System.Windows.Forms.Label();
-            this.grpNpc = new DarkUI.Controls.DarkGroupBox();
-            this.cmbNpcs = new DarkUI.Controls.DarkComboBox();
-            this.lblNpc = new System.Windows.Forms.Label();
-            this.chkNpc = new DarkUI.Controls.DarkCheckBox();
+            this.rdoUserVariable = new DarkUI.Controls.DarkRadioButton();
+            this.cmbCompareUserVar = new DarkUI.Controls.DarkComboBox();
+            this.rdoVarCompareUserVar = new DarkUI.Controls.DarkRadioButton();
+            this.cmbBooleanUserVariable = new DarkUI.Controls.DarkComboBox();
+            this.optBooleanUserVariable = new DarkUI.Controls.DarkRadioButton();
             this.grpConditional.SuspendLayout();
+            this.grpNpc.SuspendLayout();
             this.grpInventoryConditions.SuspendLayout();
             this.grpVariableAmount.SuspendLayout();
             this.grpManualAmount.SuspendLayout();
@@ -177,15 +183,12 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.grpGender.SuspendLayout();
             this.grpEquippedItem.SuspendLayout();
             this.grpCheckEquippedSlot.SuspendLayout();
-            this.grpNpc.SuspendLayout();
             this.SuspendLayout();
             // 
             // grpConditional
             // 
             this.grpConditional.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
             this.grpConditional.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.grpConditional.Controls.Add(this.grpNpc);
-            this.grpConditional.Controls.Add(this.grpInventoryConditions);
             this.grpConditional.Controls.Add(this.grpVariable);
             this.grpConditional.Controls.Add(this.grpMapZoneType);
             this.grpConditional.Controls.Add(this.grpInGuild);
@@ -208,6 +211,8 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.grpConditional.Controls.Add(this.grpGender);
             this.grpConditional.Controls.Add(this.grpEquippedItem);
             this.grpConditional.Controls.Add(this.grpCheckEquippedSlot);
+            this.grpConditional.Controls.Add(this.grpNpc);
+            this.grpConditional.Controls.Add(this.grpInventoryConditions);
             this.grpConditional.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpConditional.Location = new System.Drawing.Point(3, 3);
             this.grpConditional.Name = "grpConditional";
@@ -215,6 +220,60 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.grpConditional.TabIndex = 17;
             this.grpConditional.TabStop = false;
             this.grpConditional.Text = "Conditional";
+            // 
+            // grpNpc
+            // 
+            this.grpNpc.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
+            this.grpNpc.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpNpc.Controls.Add(this.chkNpc);
+            this.grpNpc.Controls.Add(this.cmbNpcs);
+            this.grpNpc.Controls.Add(this.lblNpc);
+            this.grpNpc.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpNpc.Location = new System.Drawing.Point(10, 48);
+            this.grpNpc.Name = "grpNpc";
+            this.grpNpc.Size = new System.Drawing.Size(260, 74);
+            this.grpNpc.TabIndex = 40;
+            this.grpNpc.TabStop = false;
+            this.grpNpc.Text = "NPCs";
+            this.grpNpc.Visible = false;
+            // 
+            // chkNpc
+            // 
+            this.chkNpc.Location = new System.Drawing.Point(7, 22);
+            this.chkNpc.Name = "chkNpc";
+            this.chkNpc.Size = new System.Drawing.Size(98, 17);
+            this.chkNpc.TabIndex = 60;
+            this.chkNpc.Text = "Specify NPC?";
+            this.chkNpc.CheckedChanged += new System.EventHandler(this.chkNpc_CheckedChanged);
+            // 
+            // cmbNpcs
+            // 
+            this.cmbNpcs.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.cmbNpcs.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbNpcs.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbNpcs.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbNpcs.DrawDropdownHoverOutline = false;
+            this.cmbNpcs.DrawFocusRectangle = false;
+            this.cmbNpcs.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cmbNpcs.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbNpcs.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbNpcs.ForeColor = System.Drawing.Color.Gainsboro;
+            this.cmbNpcs.FormattingEnabled = true;
+            this.cmbNpcs.Location = new System.Drawing.Point(67, 45);
+            this.cmbNpcs.Name = "cmbNpcs";
+            this.cmbNpcs.Size = new System.Drawing.Size(177, 21);
+            this.cmbNpcs.TabIndex = 39;
+            this.cmbNpcs.Text = null;
+            this.cmbNpcs.TextPadding = new System.Windows.Forms.Padding(2);
+            // 
+            // lblNpc
+            // 
+            this.lblNpc.AutoSize = true;
+            this.lblNpc.Location = new System.Drawing.Point(6, 49);
+            this.lblNpc.Name = "lblNpc";
+            this.lblNpc.Size = new System.Drawing.Size(32, 13);
+            this.lblNpc.TabIndex = 38;
+            this.lblNpc.Text = "NPC:";
             // 
             // grpInventoryConditions
             // 
@@ -449,6 +508,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             // 
             this.grpSelectVariable.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
             this.grpSelectVariable.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpSelectVariable.Controls.Add(this.rdoUserVariable);
             this.grpSelectVariable.Controls.Add(this.rdoPlayerVariable);
             this.grpSelectVariable.Controls.Add(this.cmbVariable);
             this.grpSelectVariable.Controls.Add(this.rdoGlobalVariable);
@@ -518,6 +578,8 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             // 
             this.grpNumericVariable.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
             this.grpNumericVariable.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpNumericVariable.Controls.Add(this.cmbCompareUserVar);
+            this.grpNumericVariable.Controls.Add(this.rdoVarCompareUserVar);
             this.grpNumericVariable.Controls.Add(this.cmbNumericComparitor);
             this.grpNumericVariable.Controls.Add(this.nudVariableValue);
             this.grpNumericVariable.Controls.Add(this.lblNumericComparator);
@@ -529,9 +591,9 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.grpNumericVariable.Controls.Add(this.cmbCompareGlobalVar);
             this.grpNumericVariable.Controls.Add(this.rdoVarCompareGlobalVar);
             this.grpNumericVariable.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpNumericVariable.Location = new System.Drawing.Point(8, 144);
+            this.grpNumericVariable.Location = new System.Drawing.Point(8, 139);
             this.grpNumericVariable.Name = "grpNumericVariable";
-            this.grpNumericVariable.Size = new System.Drawing.Size(247, 171);
+            this.grpNumericVariable.Size = new System.Drawing.Size(247, 182);
             this.grpNumericVariable.TabIndex = 51;
             this.grpNumericVariable.TabStop = false;
             this.grpNumericVariable.Text = "Numeric Variable:";
@@ -780,6 +842,8 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             // 
             this.grpBooleanVariable.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
             this.grpBooleanVariable.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpBooleanVariable.Controls.Add(this.cmbBooleanUserVariable);
+            this.grpBooleanVariable.Controls.Add(this.optBooleanUserVariable);
             this.grpBooleanVariable.Controls.Add(this.optBooleanTrue);
             this.grpBooleanVariable.Controls.Add(this.optBooleanFalse);
             this.grpBooleanVariable.Controls.Add(this.cmbBooleanComparator);
@@ -791,9 +855,9 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.grpBooleanVariable.Controls.Add(this.cmbBooleanGlobalVariable);
             this.grpBooleanVariable.Controls.Add(this.optBooleanGlobalVariable);
             this.grpBooleanVariable.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpBooleanVariable.Location = new System.Drawing.Point(8, 145);
+            this.grpBooleanVariable.Location = new System.Drawing.Point(8, 139);
             this.grpBooleanVariable.Name = "grpBooleanVariable";
-            this.grpBooleanVariable.Size = new System.Drawing.Size(247, 170);
+            this.grpBooleanVariable.Size = new System.Drawing.Size(247, 182);
             this.grpBooleanVariable.TabIndex = 52;
             this.grpBooleanVariable.TabStop = false;
             this.grpBooleanVariable.Text = "Boolean Variable:";
@@ -861,7 +925,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.cmbBooleanGuildVariable.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cmbBooleanGuildVariable.ForeColor = System.Drawing.Color.Gainsboro;
             this.cmbBooleanGuildVariable.FormattingEnabled = true;
-            this.cmbBooleanGuildVariable.Location = new System.Drawing.Point(146, 129);
+            this.cmbBooleanGuildVariable.Location = new System.Drawing.Point(146, 124);
             this.cmbBooleanGuildVariable.Name = "cmbBooleanGuildVariable";
             this.cmbBooleanGuildVariable.Size = new System.Drawing.Size(94, 21);
             this.cmbBooleanGuildVariable.TabIndex = 48;
@@ -881,7 +945,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.cmbBooleanPlayerVariable.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cmbBooleanPlayerVariable.ForeColor = System.Drawing.Color.Gainsboro;
             this.cmbBooleanPlayerVariable.FormattingEnabled = true;
-            this.cmbBooleanPlayerVariable.Location = new System.Drawing.Point(146, 75);
+            this.cmbBooleanPlayerVariable.Location = new System.Drawing.Point(146, 70);
             this.cmbBooleanPlayerVariable.Name = "cmbBooleanPlayerVariable";
             this.cmbBooleanPlayerVariable.Size = new System.Drawing.Size(94, 21);
             this.cmbBooleanPlayerVariable.TabIndex = 47;
@@ -891,7 +955,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             // optBooleanPlayerVariable
             // 
             this.optBooleanPlayerVariable.AutoSize = true;
-            this.optBooleanPlayerVariable.Location = new System.Drawing.Point(10, 76);
+            this.optBooleanPlayerVariable.Location = new System.Drawing.Point(10, 71);
             this.optBooleanPlayerVariable.Name = "optBooleanPlayerVariable";
             this.optBooleanPlayerVariable.Size = new System.Drawing.Size(128, 17);
             this.optBooleanPlayerVariable.TabIndex = 45;
@@ -900,7 +964,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             // optBooleanGuildVariable
             // 
             this.optBooleanGuildVariable.AutoSize = true;
-            this.optBooleanGuildVariable.Location = new System.Drawing.Point(10, 130);
+            this.optBooleanGuildVariable.Location = new System.Drawing.Point(10, 125);
             this.optBooleanGuildVariable.Name = "optBooleanGuildVariable";
             this.optBooleanGuildVariable.Size = new System.Drawing.Size(123, 17);
             this.optBooleanGuildVariable.TabIndex = 46;
@@ -919,7 +983,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.cmbBooleanGlobalVariable.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cmbBooleanGlobalVariable.ForeColor = System.Drawing.Color.Gainsboro;
             this.cmbBooleanGlobalVariable.FormattingEnabled = true;
-            this.cmbBooleanGlobalVariable.Location = new System.Drawing.Point(146, 102);
+            this.cmbBooleanGlobalVariable.Location = new System.Drawing.Point(146, 97);
             this.cmbBooleanGlobalVariable.Name = "cmbBooleanGlobalVariable";
             this.cmbBooleanGlobalVariable.Size = new System.Drawing.Size(94, 21);
             this.cmbBooleanGlobalVariable.TabIndex = 48;
@@ -929,7 +993,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             // optBooleanGlobalVariable
             // 
             this.optBooleanGlobalVariable.AutoSize = true;
-            this.optBooleanGlobalVariable.Location = new System.Drawing.Point(10, 103);
+            this.optBooleanGlobalVariable.Location = new System.Drawing.Point(10, 98);
             this.optBooleanGlobalVariable.Name = "optBooleanGlobalVariable";
             this.optBooleanGlobalVariable.Size = new System.Drawing.Size(129, 17);
             this.optBooleanGlobalVariable.TabIndex = 46;
@@ -1865,59 +1929,74 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.lblCheckEquippedSlot.TabIndex = 2;
             this.lblCheckEquippedSlot.Text = "Slot:";
             // 
-            // grpNpc
+            // rdoUserVariable
             // 
-            this.grpNpc.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
-            this.grpNpc.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.grpNpc.Controls.Add(this.chkNpc);
-            this.grpNpc.Controls.Add(this.cmbNpcs);
-            this.grpNpc.Controls.Add(this.lblNpc);
-            this.grpNpc.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpNpc.Location = new System.Drawing.Point(10, 48);
-            this.grpNpc.Name = "grpNpc";
-            this.grpNpc.Size = new System.Drawing.Size(260, 74);
-            this.grpNpc.TabIndex = 40;
-            this.grpNpc.TabStop = false;
-            this.grpNpc.Text = "NPCs";
-            this.grpNpc.Visible = false;
+            this.rdoUserVariable.AutoSize = true;
+            this.rdoUserVariable.Location = new System.Drawing.Point(116, 41);
+            this.rdoUserVariable.Name = "rdoUserVariable";
+            this.rdoUserVariable.Size = new System.Drawing.Size(106, 17);
+            this.rdoUserVariable.TabIndex = 36;
+            this.rdoUserVariable.Text = "Account Variable";
+            this.rdoUserVariable.CheckedChanged += new System.EventHandler(this.rdoUserVariable_CheckedChanged);
             // 
-            // cmbNpcs
+            // cmbCompareUserVar
             // 
-            this.cmbNpcs.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.cmbNpcs.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.cmbNpcs.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
-            this.cmbNpcs.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbNpcs.DrawDropdownHoverOutline = false;
-            this.cmbNpcs.DrawFocusRectangle = false;
-            this.cmbNpcs.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.cmbNpcs.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbNpcs.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.cmbNpcs.ForeColor = System.Drawing.Color.Gainsboro;
-            this.cmbNpcs.FormattingEnabled = true;
-            this.cmbNpcs.Location = new System.Drawing.Point(67, 45);
-            this.cmbNpcs.Name = "cmbNpcs";
-            this.cmbNpcs.Size = new System.Drawing.Size(177, 21);
-            this.cmbNpcs.TabIndex = 39;
-            this.cmbNpcs.Text = null;
-            this.cmbNpcs.TextPadding = new System.Windows.Forms.Padding(2);
+            this.cmbCompareUserVar.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.cmbCompareUserVar.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbCompareUserVar.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbCompareUserVar.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbCompareUserVar.DrawDropdownHoverOutline = false;
+            this.cmbCompareUserVar.DrawFocusRectangle = false;
+            this.cmbCompareUserVar.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cmbCompareUserVar.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbCompareUserVar.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbCompareUserVar.ForeColor = System.Drawing.Color.Gainsboro;
+            this.cmbCompareUserVar.FormattingEnabled = true;
+            this.cmbCompareUserVar.Location = new System.Drawing.Point(146, 156);
+            this.cmbCompareUserVar.Name = "cmbCompareUserVar";
+            this.cmbCompareUserVar.Size = new System.Drawing.Size(94, 21);
+            this.cmbCompareUserVar.TabIndex = 51;
+            this.cmbCompareUserVar.Text = null;
+            this.cmbCompareUserVar.TextPadding = new System.Windows.Forms.Padding(2);
             // 
-            // lblNpc
+            // rdoVarCompareUserVar
             // 
-            this.lblNpc.AutoSize = true;
-            this.lblNpc.Location = new System.Drawing.Point(6, 49);
-            this.lblNpc.Name = "lblNpc";
-            this.lblNpc.Size = new System.Drawing.Size(32, 13);
-            this.lblNpc.TabIndex = 38;
-            this.lblNpc.Text = "NPC:";
+            this.rdoVarCompareUserVar.AutoSize = true;
+            this.rdoVarCompareUserVar.Location = new System.Drawing.Point(10, 157);
+            this.rdoVarCompareUserVar.Name = "rdoVarCompareUserVar";
+            this.rdoVarCompareUserVar.Size = new System.Drawing.Size(139, 17);
+            this.rdoVarCompareUserVar.TabIndex = 50;
+            this.rdoVarCompareUserVar.Text = "Account Variable Value:";
+            this.rdoVarCompareUserVar.CheckedChanged += new System.EventHandler(this.rdoVarCompareUserVar_CheckedChanged);
             // 
-            // chkNpc
+            // cmbBooleanUserVariable
             // 
-            this.chkNpc.Location = new System.Drawing.Point(7, 22);
-            this.chkNpc.Name = "chkNpc";
-            this.chkNpc.Size = new System.Drawing.Size(98, 17);
-            this.chkNpc.TabIndex = 60;
-            this.chkNpc.Text = "Specify NPC?";
-            this.chkNpc.CheckedChanged += new System.EventHandler(this.chkNpc_CheckedChanged);
+            this.cmbBooleanUserVariable.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.cmbBooleanUserVariable.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.cmbBooleanUserVariable.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbBooleanUserVariable.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbBooleanUserVariable.DrawDropdownHoverOutline = false;
+            this.cmbBooleanUserVariable.DrawFocusRectangle = false;
+            this.cmbBooleanUserVariable.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cmbBooleanUserVariable.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbBooleanUserVariable.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbBooleanUserVariable.ForeColor = System.Drawing.Color.Gainsboro;
+            this.cmbBooleanUserVariable.FormattingEnabled = true;
+            this.cmbBooleanUserVariable.Location = new System.Drawing.Point(146, 151);
+            this.cmbBooleanUserVariable.Name = "cmbBooleanUserVariable";
+            this.cmbBooleanUserVariable.Size = new System.Drawing.Size(94, 21);
+            this.cmbBooleanUserVariable.TabIndex = 52;
+            this.cmbBooleanUserVariable.Text = null;
+            this.cmbBooleanUserVariable.TextPadding = new System.Windows.Forms.Padding(2);
+            // 
+            // optBooleanUserVariable
+            // 
+            this.optBooleanUserVariable.AutoSize = true;
+            this.optBooleanUserVariable.Location = new System.Drawing.Point(10, 152);
+            this.optBooleanUserVariable.Name = "optBooleanUserVariable";
+            this.optBooleanUserVariable.Size = new System.Drawing.Size(139, 17);
+            this.optBooleanUserVariable.TabIndex = 51;
+            this.optBooleanUserVariable.Text = "Account Variable Value:";
             // 
             // EventCommandConditionalBranch
             // 
@@ -1930,6 +2009,8 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.Size = new System.Drawing.Size(285, 440);
             this.grpConditional.ResumeLayout(false);
             this.grpConditional.PerformLayout();
+            this.grpNpc.ResumeLayout(false);
+            this.grpNpc.PerformLayout();
             this.grpInventoryConditions.ResumeLayout(false);
             this.grpInventoryConditions.PerformLayout();
             this.grpVariableAmount.ResumeLayout(false);
@@ -1979,8 +2060,6 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.grpEquippedItem.PerformLayout();
             this.grpCheckEquippedSlot.ResumeLayout(false);
             this.grpCheckEquippedSlot.PerformLayout();
-            this.grpNpc.ResumeLayout(false);
-            this.grpNpc.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -2106,5 +2185,10 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         private DarkCheckBox chkNpc;
         private DarkComboBox cmbNpcs;
         private System.Windows.Forms.Label lblNpc;
+        private DarkRadioButton rdoUserVariable;
+        internal DarkComboBox cmbCompareUserVar;
+        internal DarkRadioButton rdoVarCompareUserVar;
+        internal DarkComboBox cmbBooleanUserVariable;
+        internal DarkRadioButton optBooleanUserVariable;
     }
 }

@@ -87,6 +87,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             rdoPlayerVariable.Text = Strings.EventConditional.playervariable;
             rdoGlobalVariable.Text = Strings.EventConditional.globalvariable;
             rdoGuildVariable.Text = Strings.EventConditional.guildvariable;
+            rdoUserVariable.Text = Strings.EventConditional.UserVariable;
 
             //Numeric Variable
             grpNumericVariable.Text = Strings.EventConditional.numericvariable;
@@ -95,6 +96,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             rdoVarComparePlayerVar.Text = Strings.EventConditional.playervariablevalue;
             rdoVarCompareGlobalVar.Text = Strings.EventConditional.globalvariablevalue;
             rdoVarCompareGuildVar.Text = Strings.EventConditional.guildvariablevalue;
+            rdoVarCompareUserVar.Text = Strings.EventConditional.UserVariableValue;
             cmbNumericComparitor.Items.Clear();
             for (var i = 0; i < Strings.EventConditional.comparators.Count; i++)
             {
@@ -114,6 +116,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             optBooleanGlobalVariable.Text = Strings.EventConditional.globalvariablevalue;
             optBooleanPlayerVariable.Text = Strings.EventConditional.playervariablevalue;
             optBooleanGuildVariable.Text = Strings.EventConditional.guildvariablevalue;
+            optBooleanUserVariable.Text = Strings.EventConditional.UserVariableValue;
 
             //String Variable
             grpStringVariable.Text = Strings.EventConditional.stringvariable;
@@ -441,6 +444,8 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                     cmbComparePlayerVar.Items.AddRange(PlayerVariableBase.Names);
                     cmbCompareGuildVar.Items.Clear();
                     cmbCompareGuildVar.Items.AddRange(GuildVariableBase.Names);
+                    cmbCompareUserVar.Items.Clear();
+                    cmbCompareUserVar.Items.AddRange(UserVariableBase.Names);
 
                     cmbBooleanGlobalVariable.Items.Clear();
                     cmbBooleanGlobalVariable.Items.AddRange(ServerVariableBase.Names);
@@ -448,6 +453,8 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                     cmbBooleanPlayerVariable.Items.AddRange(PlayerVariableBase.Names);
                     cmbBooleanGuildVariable.Items.Clear();
                     cmbBooleanGuildVariable.Items.AddRange(GuildVariableBase.Names);
+                    cmbBooleanUserVariable.Items.Clear();
+                    cmbBooleanUserVariable.Items.AddRange(UserVariableBase.Names);
 
                     break;
                 case ConditionTypes.HasItem:
@@ -688,12 +695,18 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             UpdateNumericVariableElements();
         }
 
+        private void rdoVarCompareUserVar_CheckedChanged(object sender, EventArgs e)
+        {
+            UpdateNumericVariableElements();
+        }
+
         private void UpdateNumericVariableElements()
         {
             nudVariableValue.Enabled = rdoVarCompareStaticValue.Checked;
             cmbComparePlayerVar.Enabled = rdoVarComparePlayerVar.Checked;
             cmbCompareGlobalVar.Enabled = rdoVarCompareGlobalVar.Checked;
             cmbCompareGuildVar.Enabled = rdoVarCompareGuildVar.Checked;
+            cmbCompareUserVar.Enabled = rdoVarCompareUserVar.Checked;
         }
 
         private void UpdateVariableElements()
@@ -729,6 +742,14 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                     if (guildVar != null)
                     {
                         varType = (byte)guildVar.Type;
+                    }
+                }
+                else if (rdoUserVariable.Checked)
+                {
+                    var userVar = UserVariableBase.FromList(cmbVariable.SelectedIndex);
+                    if (userVar != null)
+                    {
+                        varType = (byte)userVar.Type;
                     }
                 }
             }
@@ -800,6 +821,11 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                     optBooleanGuildVariable.Checked = true;
                     cmbBooleanGuildVariable.SelectedIndex = GuildVariableBase.ListIndex(booleanComparison.CompareVariableId);
                 }
+                else if (booleanComparison.CompareVariableType == VariableTypes.UserVariable)
+                {
+                    optBooleanUserVariable.Checked = true;
+                    cmbBooleanUserVariable.SelectedIndex = UserVariableBase.ListIndex(booleanComparison.CompareVariableId);
+                }
             }
         }
 
@@ -833,6 +859,11 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                 {
                     rdoVarCompareGuildVar.Checked = true;
                     cmbCompareGuildVar.SelectedIndex = GuildVariableBase.ListIndex(integerComparison.CompareVariableId);
+                }
+                else if (integerComparison.CompareVariableType == VariableTypes.UserVariable)
+                {
+                    rdoVarCompareUserVar.Checked = true;
+                    cmbCompareUserVar.SelectedIndex = UserVariableBase.ListIndex(integerComparison.CompareVariableId);
                 }
             }
             else
@@ -880,6 +911,11 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                 cmbVariable.Items.AddRange(GuildVariableBase.Names);
                 cmbVariable.SelectedIndex = GuildVariableBase.ListIndex(variableId);
             }
+            else if (rdoUserVariable.Checked)
+            {
+                cmbVariable.Items.AddRange(UserVariableBase.Names);
+                cmbVariable.SelectedIndex = UserVariableBase.ListIndex(variableId);
+            }
 
             mLoading = false;
         }
@@ -911,6 +947,11 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             {
                 comparison.CompareVariableType = VariableTypes.GuildVariable;
                 comparison.CompareVariableId = GuildVariableBase.IdFromList(cmbBooleanGuildVariable.SelectedIndex);
+            }
+            else if (optBooleanUserVariable.Checked)
+            {
+                comparison.CompareVariableType = VariableTypes.UserVariable;
+                comparison.CompareVariableId = UserVariableBase.IdFromList(cmbBooleanUserVariable.SelectedIndex);
             }
 
             return comparison;
@@ -949,6 +990,11 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                 comparison.CompareVariableType = VariableTypes.GuildVariable;
                 comparison.CompareVariableId = GuildVariableBase.IdFromList(cmbCompareGuildVar.SelectedIndex);
             }
+            else if (rdoVarCompareUserVar.Checked)
+            {
+                comparison.CompareVariableType = VariableTypes.UserVariable;
+                comparison.CompareVariableId = UserVariableBase.IdFromList(cmbCompareUserVar.SelectedIndex);
+            }
 
             return comparison;
         }
@@ -980,14 +1026,20 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 
         private void rdoGlobalVariable_CheckedChanged(object sender, EventArgs e)
         {
-            InitVariableElements(Guid.Empty);
-            if (!mLoading && cmbVariable.Items.Count > 0)
-            {
-                cmbVariable.SelectedIndex = 0;
-            }
+            VariableRadioChanged();
         }
 
         private void rdoGuildVariable_CheckedChanged(object sender, EventArgs e)
+        {
+            VariableRadioChanged();
+        }
+
+        private void rdoUserVariable_CheckedChanged(object sender, EventArgs e)
+        {
+            VariableRadioChanged();
+        }
+
+        private void VariableRadioChanged()
         {
             InitVariableElements(Guid.Empty);
             if (!mLoading && cmbVariable.Items.Count > 0)
@@ -1014,6 +1066,10 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             else if (rdoGuildVariable.Checked)
             {
                 InitVariableElements(GuildVariableBase.IdFromList(cmbVariable.SelectedIndex));
+            }
+            else if (rdoUserVariable.Checked)
+            {
+                InitVariableElements(UserVariableBase.IdFromList(cmbVariable.SelectedIndex));
             }
 
             UpdateVariableElements();
@@ -1180,6 +1236,10 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             else if (condition.VariableType == VariableTypes.GuildVariable)
             {
                 rdoGuildVariable.Checked = true;
+            }
+            else if (condition.VariableType == VariableTypes.UserVariable)
+            {
+                rdoUserVariable.Checked = true;
             }
 
             InitVariableElements(condition.VariableId);
@@ -1348,6 +1408,11 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             {
                 condition.VariableType = VariableTypes.GuildVariable;
                 condition.VariableId = GuildVariableBase.IdFromList(cmbVariable.SelectedIndex);
+            }
+            else if (rdoUserVariable.Checked)
+            {
+                condition.VariableType = VariableTypes.UserVariable;
+                condition.VariableId = UserVariableBase.IdFromList(cmbVariable.SelectedIndex);
             }
 
             if (grpBooleanVariable.Visible)

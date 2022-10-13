@@ -86,6 +86,12 @@ namespace Intersect.Editor.Localization
                     GuildVariableBase.GetName(condition.VariableId), pVar
                 );
             }
+            else if (condition.VariableType == VariableTypes.UserVariable)
+            {
+                return EventConditionDesc.UserVariable.ToString(
+                    UserVariableBase.GetName(condition.VariableId), pVar
+                );
+            }
 
             return "";
         }
@@ -2537,6 +2543,12 @@ Tick timer saved in server config.json.";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString CheckBank = @"Check Bank?";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString UserVariable = @"Account Variable";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString UserVariableValue = @"Account Variable Value:";
         }
 
         public partial struct EventConditionDesc
@@ -2647,6 +2659,8 @@ Tick timer saved in server config.json.";
             public static LocalizedString timeinvalid = @"invalid";
 
             public static LocalizedString True = @"True";
+
+            public static LocalizedString UserVariable = @"Account Variable: {00} {01}";
 
         }
 
