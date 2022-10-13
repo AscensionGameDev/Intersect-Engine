@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
@@ -213,7 +213,7 @@ namespace Intersect.Client.MonoGame.Input
                 {
                     if (kbState.IsKeyDown(key.Value) && !mLastKeyboardState.IsKeyDown(key.Value))
                     {
-                        Log.Diagnostic($"{key.Key.ToString()} -> {key.Value.ToString()}");
+                        Log.Diagnostic("{0} -> {1}", key.Key, key.Value);
                         Interface.Interface.GwenInput.ProcessMessage(
                             new GwenInputMessage(
                                 IntersectInput.InputEvent.KeyDown, GetMousePosition(), (int) MouseButtons.None, key.Key

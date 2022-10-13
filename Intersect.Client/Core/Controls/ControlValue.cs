@@ -1,6 +1,7 @@
 using Intersect.Client.General;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Input;
+using Newtonsoft.Json;
 
 namespace Intersect.Client.Core.Controls
 {
@@ -14,10 +15,17 @@ namespace Intersect.Client.Core.Controls
 
         public bool IsMouseKey => Key == Keys.LButton || Key == Keys.RButton || Key == Keys.MButton;
 
+        [JsonConstructor]
         public ControlValue(Keys modifier, Keys key)
         {
             Modifier = modifier;
             Key = key;
+        }
+
+        public ControlValue(ControlValue controlValue)
+        {
+            Modifier = controlValue.Modifier;
+            Key = controlValue.Key;
         }
 
         public bool IsDown()
