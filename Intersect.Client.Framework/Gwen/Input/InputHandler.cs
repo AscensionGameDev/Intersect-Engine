@@ -260,6 +260,8 @@ namespace Intersect.Client.Framework.Gwen.Input
                     }
                 }
             }
+
+            UpdateHoveredControl(control);
         }
 
         /// <summary>
