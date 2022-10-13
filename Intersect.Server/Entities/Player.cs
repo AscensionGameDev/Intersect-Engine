@@ -6283,7 +6283,7 @@ namespace Intersect.Server.Entities
                                 if (changed)
                                 {
                                     variable.Value = value;
-                                    User.StartCommonEventsWithTriggerForAll(CommonEventTrigger.UserVariableChanged, "", cmd.VariableId.ToString());
+                                    User.StartCommonEventsWithTriggerForAll(CommonEventTrigger.UserVariableChange, "", cmd.VariableId.ToString());
                                     User.UpdatedVariables.AddOrUpdate(cmd.VariableId, UserVariableBase.Get(cmd.VariableId), (key, oldValue) => UserVariableBase.Get(cmd.VariableId));
                                 }
                             }

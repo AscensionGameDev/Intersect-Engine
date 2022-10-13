@@ -40,7 +40,7 @@ namespace Intersect.Enums
 
         MapChanged,
 
-        UserVariableChanged,
+        UserVariableChange,
 
     }
 

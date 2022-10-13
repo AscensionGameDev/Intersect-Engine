@@ -2711,6 +2711,7 @@ Tick timer saved in server config.json.";
                 {15, @"Guild Variable Changed"},
                 {16, @"Inventory Changed"},
                 {17, @"Map Changed"},
+                {18, @"Account Variable Changed"},
             };
 
             public static LocalizedString conditions = @"Conditions";

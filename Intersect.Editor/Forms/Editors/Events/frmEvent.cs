@@ -1825,6 +1825,15 @@ namespace Intersect.Editor.Forms.Editors.Events
                     lblVariableTrigger.Show();
                     lblVariableTrigger.Text = Strings.EventEditor.VariableTrigger;
                 }
+                else if (cmbTrigger.SelectedIndex == (int)CommonEventTrigger.UserVariableChange)
+                {
+                    cmbVariable.Show();
+                    cmbVariable.Items.Add(Strings.General.None);
+                    cmbVariable.Items.AddRange(UserVariableBase.Names);
+                    cmbVariable.SelectedIndex = UserVariableBase.ListIndex(CurrentPage.TriggerId) + 1;
+                    lblVariableTrigger.Show();
+                    lblVariableTrigger.Text = Strings.EventEditor.VariableTrigger;
+                }
             }
         }
 
@@ -1843,6 +1852,10 @@ namespace Intersect.Editor.Forms.Editors.Events
                 else if (cmbTrigger.SelectedIndex == (int)CommonEventTrigger.GuildVariableChange)
                 {
                     CurrentPage.TriggerId = GuildVariableBase.IdFromList(cmbVariable.SelectedIndex - 1);
+                }
+                else if (cmbTrigger.SelectedIndex == (int)CommonEventTrigger.UserVariableChange)
+                {
+                    CurrentPage.TriggerId = UserVariableBase.IdFromList(cmbVariable.SelectedIndex - 1);
                 }
             }
         }
