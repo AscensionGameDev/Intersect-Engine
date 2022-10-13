@@ -3313,6 +3313,8 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString maxlength = @"Maximum Length";
 
+            public static LocalizedString UserVariable = @"Account Variable";
+
         }
 
         public partial struct EventSpawnNpc

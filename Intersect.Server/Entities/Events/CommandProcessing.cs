@@ -101,17 +101,21 @@ namespace Intersect.Server.Entities.Events
                     type = (int)variable.Type;
                 }
             }
-
-            if (type == -1)
-            {
-                var tmpStack = new CommandInstance(stackInfo.Page, command.BranchIds[1]);
-                callStack.Push(tmpStack);
-                return;
-            }
             else if (command.VariableType == VariableTypes.GuildVariable)
             {
                 var variable = GuildVariableBase.Get(command.VariableId);
                 type = (int)variable.Type;
+            }
+            else if (command.VariableType == VariableTypes.UserVariable)
+            {
+                var variable = UserVariableBase.Get(command.VariableId);
+                type = (int)variable.Type;
+            }
+            else if (type == -1)
+            {
+                var tmpStack = new CommandInstance(stackInfo.Page, command.BranchIds[1]);
+                callStack.Push(tmpStack);
+                return;
             }
 
             PacketSender.SendInputVariableDialog(player, title, txt, (VariableDataTypes)type, instance.PageInstance.Id);

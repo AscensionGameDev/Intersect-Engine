@@ -6172,6 +6172,16 @@ namespace Intersect.Server.Entities
 
                                 value = Guild?.GetVariableValue(cmd.VariableId) ?? new VariableValue();
                             }
+                            else if (cmd.VariableType == VariableTypes.UserVariable)
+                            {
+                                var variable = UserVariableBase.Get(cmd.VariableId);
+                                if (variable != null)
+                                {
+                                    type = variable.Type;
+                                }
+
+                                value = User.GetVariableValue(cmd.VariableId) ?? new VariableValue();
+                            }
 
                             if (value == null)
                             {
@@ -6265,6 +6275,16 @@ namespace Intersect.Server.Entities
                                         Guild.StartCommonEventsWithTriggerForAll(Enums.CommonEventTrigger.GuildVariableChange, "", cmd.VariableId.ToString());
                                         Guild.UpdatedVariables.AddOrUpdate(cmd.VariableId, GuildVariableBase.Get(cmd.VariableId), (key, oldValue) => GuildVariableBase.Get(cmd.VariableId));
                                     }
+                                }
+                            }
+                            else if (cmd.VariableType == VariableTypes.UserVariable)
+                            {
+                                var variable = User.GetVariable(cmd.VariableId);
+                                if (changed)
+                                {
+                                    variable.Value = value;
+                                    User.StartCommonEventsWithTriggerForAll(CommonEventTrigger.UserVariableChanged, "", cmd.VariableId.ToString());
+                                    User.UpdatedVariables.AddOrUpdate(cmd.VariableId, UserVariableBase.Get(cmd.VariableId), (key, oldValue) => UserVariableBase.Get(cmd.VariableId));
                                 }
                             }
 

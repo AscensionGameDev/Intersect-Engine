@@ -21,7 +21,9 @@ namespace Intersect.Enums
 
         ServerVariable,
 
-        GuildVariable
+        GuildVariable,
+
+        UserVariable,
 
     }
 
