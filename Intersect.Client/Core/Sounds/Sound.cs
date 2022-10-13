@@ -41,8 +41,8 @@ namespace Intersect.Client.Core.Sounds
             {
                 mSound = sound.CreateInstance();
                 mSound.IsLooping = mLoop && mLoopInterval <= 0;
-
-                mSound.SetVolume(Globals.Database.SoundVolume);
+               
+                mSound.SetVolume(100);
                 mSound.Play();
                 Loaded = true;
             }
