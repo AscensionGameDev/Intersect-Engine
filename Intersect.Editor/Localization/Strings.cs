@@ -1899,11 +1899,15 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString dupguildvariable = @"Guild Variable: {00}'s Value";
 
+            public static LocalizedString DupUserVariable = @"Account Variable: {00}'s Value";
+
             public static LocalizedString addglobalvariable = @"Add Global Variable: {00}'s Value";
 
             public static LocalizedString addplayervariable = @"Add Player Variable: {00}'s Value";
 
             public static LocalizedString addguildvariable = @"Add Guild Variable: {00}'s Value";
+
+            public static LocalizedString AddUserVariable = @"Add Account Variable: {00}'s Value";
 
             public static LocalizedString subtractglobalvariable = @"Subtract Global Variable: {00}'s Value";
 
@@ -1911,11 +1915,15 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString subtractguildvariable = @"Subtract Guild Variable: {00}'s Value";
 
+            public static LocalizedString SubtractUserVariable = @"Subtract Account Variable: {00}'s Value";
+
             public static LocalizedString multiplyglobalvariable = @"Multiply Global Variable: {00}'s Value";
 
             public static LocalizedString multiplyplayervariable = @"Multiply Player Variable: {00}'s Value";
 
             public static LocalizedString multiplyguildvariable = @"Multiply Guild Variable: {00}'s Value";
+
+            public static LocalizedString MultiplyUserVariable = @"Multiply Account Variable: {00}'s Value";
 
             public static LocalizedString divideglobalvariable = @"Divide Global Variable: {00}'s Value";
 
@@ -1923,17 +1931,23 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString divideguildvariable = @"Divide Guild Variable: {00}'s Value";
 
+            public static LocalizedString DivideUserVariable = @"Divide Account Variable: {00}'s Value";
+
             public static LocalizedString leftshiftglobalvariable = @"Left Bit Shift Global Variable: {00}'s Value";
 
             public static LocalizedString leftshiftplayervariable = @"Left Bit Shift Player Variable: {00}'s Value";
 
             public static LocalizedString leftshiftguildvariable = @"Left Bit Shift Guild Variable: {00}'s Value";
 
+            public static LocalizedString LeftShiftUserVariable = @"Left Bit Shift Account Variable: {00}'s Value";
+
             public static LocalizedString rightshiftglobalvariable = @"Right Bit Shift Global Variable: {00}'s Value";
 
             public static LocalizedString rightshiftplayervariable = @"Right Bit Shift Player Variable: {00}'s Value";
 
             public static LocalizedString rightshiftguildvariable = @"Right Bit Shift Guild Variable: {00}'s Value";
+
+            public static LocalizedString RightShiftUserVariable = @"Right Bit Shift Account Variable: {00}'s Value";
 
             public static LocalizedString enditemchange = @"End Item Change";
 
@@ -1968,6 +1982,8 @@ Tick timer saved in server config.json.";
             public static LocalizedString globalvariable = @"Set Global Variable {00} ({01})";
 
             public static LocalizedString guildvariable = @"Set Guild Variable {00} ({01})";
+
+            public static LocalizedString UserVariable = @"Set Account Variable {00} ({01})";
 
             public static LocalizedString gotolabel = @"Go to Label {00}";
 
@@ -3195,6 +3211,8 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString booleancloneplayervariablevalue = @"Player Variable Value: ";
 
+            public static LocalizedString BooleanCloneUserVariableValue = @"Account Variable Value: ";
+
             public static LocalizedString numericlabel = @"Integer Variable:";
 
             public static LocalizedString numericadd = @"Add";
@@ -3205,9 +3223,11 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString numericcloneglobalvariablevalue = @"Global Variable Value: ";
 
-            public static LocalizedString numericcloneguildvariablevalue = @"Global Variable Value: ";
+            public static LocalizedString numericcloneguildvariablevalue = @"Guild Variable Value: ";
 
             public static LocalizedString numericcloneplayervariablevalue = @"Player Variable Value: ";
+
+            public static LocalizedString NumericCloneUserVariableValue = @"Account Variable Value: ";
 
             public static LocalizedString numericmultiply = @"Multiply";
 
@@ -3240,6 +3260,8 @@ Tick timer saved in server config.json.";
             public static LocalizedString stringreplacereplace = @"Replace:";
 
             public static LocalizedString stringtip = @"Text variables work with strings. Click here for a list!";
+
+            public static LocalizedString UserVariable = @"Account Variable";
 
         }
 
