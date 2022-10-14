@@ -2545,9 +2545,9 @@ namespace Intersect.Client.Entities
         private void TurnAround()
         {
             // If players hold the 'TurnAround' Control Key and tap to any direction, they will turn on their own axis.
-            for (var i = 0; i < Options.Instance.Sprites.Directions; i++)
+            for (var direction = 0; direction < Options.Instance.Sprites.Directions; direction++)
             {
-                if (!Controls.KeyDown(Control.TurnAround) || i != Globals.Me.MoveDir)
+                if (!Controls.KeyDown(Control.TurnAround) || direction != Globals.Me.MoveDir)
                 {
                     continue;
                 }

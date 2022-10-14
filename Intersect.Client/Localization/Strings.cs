@@ -713,7 +713,7 @@ namespace Intersect.Client.Localization
                 {"opendebugger", @"Open Debugger:"},
                 {"openadminpanel", @"Open Admin Panel:"},
                 {"togglegui", @"Toggle Interface:"},
-                {"turnaround", @"Hold to turn around:"}
+                {"turnaround", @"Hold to turn around:"},
             };
 
             public static LocalizedString listening = @"Listening";
