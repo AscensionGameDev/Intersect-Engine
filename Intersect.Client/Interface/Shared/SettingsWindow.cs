@@ -83,6 +83,8 @@ namespace Intersect.Client.Interface.Shared
 
         private readonly LabeledCheckBox mStickyTarget;
 
+        private readonly LabeledCheckBox mAutoTurnToTarget;
+
         // Video Settings.
         private readonly ComboBox mResolutionList;
 
@@ -228,6 +230,10 @@ namespace Intersect.Client.Interface.Shared
             // Game Settings - Targeting: Sticky Target.
             mStickyTarget = new LabeledCheckBox(mTargetingSettings, "StickyTargetCheckbox");
             mStickyTarget.Text = Strings.Settings.StickyTarget;
+
+            // Game Settings - Targeting: Auto-turn to Target.
+            mAutoTurnToTarget = new LabeledCheckBox(mTargetingSettings, "AutoTurnToTargetCheckbox");
+            mAutoTurnToTarget.Text = Strings.Settings.AutoTurnToTarget;
 
             #endregion
 
@@ -415,19 +421,20 @@ namespace Intersect.Client.Interface.Shared
             mInformationSettings.Hide();
             mTargetingSettings.Hide();
         }
-        
+
         void InformationSettings_Clicked(Base sender, ClickedEventArgs arguments)
         {
             mInterfaceSettings.Hide();
             mInformationSettings.Show();
             mTargetingSettings.Hide();
         }
-        
+
         void TargetingSettings_Clicked(Base sender, ClickedEventArgs arguments)
         {
             mInterfaceSettings.Hide();
             mInformationSettings.Hide();
             mTargetingSettings.Show();
+            mAutoTurnToTarget.IsDisabled = !Options.Instance.PlayerOpts.EnableAutoTurnToTarget;
         }
 
         private void VideoSettingsTab_Clicked(Base sender, ClickedEventArgs arguments)
@@ -627,6 +634,7 @@ namespace Intersect.Client.Interface.Shared
             mPartyMemberOverheadInfoCheckbox.IsChecked = Globals.Database.PartyMemberOverheadInfo;
             mPlayerOverheadInfoCheckbox.IsChecked = Globals.Database.PlayerOverheadInfo;
             mStickyTarget.IsChecked = Globals.Database.StickyTarget;
+            mAutoTurnToTarget.IsChecked = Globals.Database.AutoTurnToTarget;
 
             // Video Settings.
             mFullscreenCheckbox.IsChecked = Globals.Database.FullScreen;
@@ -799,6 +807,7 @@ namespace Intersect.Client.Interface.Shared
             Globals.Database.PartyMemberOverheadInfo = mPartyMemberOverheadInfoCheckbox.IsChecked;
             Globals.Database.PlayerOverheadInfo = mPlayerOverheadInfoCheckbox.IsChecked;
             Globals.Database.StickyTarget = mStickyTarget.IsChecked;
+            Globals.Database.AutoTurnToTarget = mAutoTurnToTarget.IsChecked;
 
             // Video Settings.
             var resolution = mResolutionList.SelectedItem;

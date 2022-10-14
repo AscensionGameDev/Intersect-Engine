@@ -1507,6 +1507,31 @@ namespace Intersect.Client.Entities
             TargetBox?.Show();
         }
 
+        private void AutoTurnToTarget(Entity en)
+        {
+            if (!Globals.Database.AutoTurnToTarget || !Options.Instance.PlayerOpts.EnableAutoTurnToTarget)
+            {
+                return;
+            }
+
+            byte directionToTarget = DirectionToTarget(en);
+
+            if (IsMoving || Dir == MoveDir || Dir == directionToTarget)
+            {
+                AutoTurnToTargetTimer = Timing.Global.Milliseconds + Options.Instance.PlayerOpts.AutoTurnToTargetDelay;
+                return;
+            }
+
+            if (AutoTurnToTargetTimer > Timing.Global.Milliseconds)
+            {
+                return;
+            }
+
+            MoveDir = -1;
+            Dir = directionToTarget;
+            PacketSender.SendDirection(Dir);
+        }
+
         public bool TryBlock()
         {
             if (IsBlocking)
@@ -2379,16 +2404,28 @@ namespace Intersect.Client.Entities
                     continue;
                 }
 
-                if (!en.Value.IsHidden && (!en.Value.IsStealthed || en.Value is Player player && Globals.Me.IsInMyParty(player)))
+                if (en.Value.IsHidden)
                 {
-                    if (!(en.Value is Projectile || en.Value is Resource))
-                    {
-                        if (TargetType == 0 && TargetIndex == en.Value.Id)
-                        {
-                            en.Value.DrawTarget((int)TargetTypes.Selected);
-                        }
-                    }
+                    continue;
                 }
+
+                if (en.Value.IsStealthed && (!(en.Value is Player player) || !Globals.Me.IsInMyParty(player)))
+                {
+                    continue;
+                }
+
+                if (en.Value is Projectile || en.Value is Resource)
+                {
+                    continue;
+                }
+
+                if (TargetType != 0 || TargetIndex != en.Value.Id)
+                {
+                    continue;
+                }
+
+                en.Value.DrawTarget((int)TargetTypes.Selected);
+                AutoTurnToTarget(en.Value);
             }
 
             foreach (MapInstance eventMap in Maps.MapInstance.Lookup.Values)
@@ -2400,16 +2437,33 @@ namespace Intersect.Client.Entities
                         continue;
                     }
 
-                    if (en.Value.MapId == eventMap.Id &&
-                        !((Event)en.Value).DisablePreview &&
-                        !en.Value.IsHidden &&
-                        (!en.Value.IsStealthed || en.Value is Player player && Globals.Me.IsInMyParty(player)))
+                    if (en.Value.MapId != eventMap.Id)
                     {
-                        if (TargetType == 1 && TargetIndex == en.Value.Id)
-                        {
-                            en.Value.DrawTarget((int)TargetTypes.Selected);
-                        }
+                        continue;
                     }
+
+                    if (en.Value is Event eventEntity && eventEntity.DisablePreview)
+                    {
+                        continue;
+                    }
+
+                    if (en.Value.IsHidden)
+                    {
+                        continue;
+                    }
+
+                    if (en.Value.IsStealthed && (!(en.Value is Player player) || !Globals.Me.IsInMyParty(player)))
+                    {
+                        continue;
+                    }
+
+                    if (TargetType != 1 || TargetIndex != en.Value.Id)
+                    {
+                        continue;
+                    }
+
+                    en.Value.DrawTarget((int)TargetTypes.Selected);
+                    AutoTurnToTarget(en.Value);
                 }
             }
 

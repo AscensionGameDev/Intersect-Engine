@@ -198,6 +198,9 @@ namespace Intersect.Client.Entities
         public long SpriteFrameTimer { get; set; } = -1;
 
         public long LastActionTime { get; set; } = -1;
+
+        public long AutoTurnToTargetTimer { get; set; } = -1;
+
         #endregion
 
         public EntityTypes Type { get; }
@@ -1876,6 +1879,57 @@ namespace Intersect.Client.Entities
 
             texture = Globals.ContentManager.GetTexture(TextureType.Entity, $"{animationTextureName}{extension}");
             return texture != default;
+        }
+
+        /// <summary>
+        /// <para>Returns the direction to a player's selected target.
+        /// Thanks to Daywalkr (Middle Ages: Online) for this !</para>
+        /// </summary>
+        /// <param name="en">entity's target</param>
+        /// <returns>direction to player's selected target</returns>
+        protected byte DirectionToTarget(Entity en)
+        {
+            byte newDir = Dir;
+
+            if (en == null)
+            {
+                return newDir;
+            }
+
+            int originY = Y;
+            int originX = X;
+            int targetY = en.Y;
+            int targetX = en.X;
+
+            if (en.MapInstance.Id != MapInstance.Id)
+            {
+                if (en.MapInstance.GridY < MapInstance.GridY)
+                {
+                    originY += Options.MapHeight - 1;
+                }
+                else if (en.MapInstance.GridY > MapInstance.GridY)
+                {
+                    targetY += Options.MapHeight - 1;
+                }
+
+                if (en.MapInstance.GridX < MapInstance.GridX)
+                {
+                    originX += Options.MapWidth - 1;
+                }
+                else if (en.MapInstance.GridX > MapInstance.GridX)
+                {
+                    targetX += (Options.MapWidth - 1);
+                }
+            }
+
+            var yOffset = originY - targetY;
+            var xOffset = originX - targetX;
+            var xDir = xOffset == 0 ? newDir : (xOffset < 0 ? (byte)Directions.Right : (byte)Directions.Left);
+            var yDir = yOffset == 0 ? newDir : (yOffset < 0 ? (byte)Directions.Down : (byte)Directions.Up);
+
+            newDir = Math.Abs(yOffset) > Math.Abs(xOffset) ? yDir : xDir;
+
+            return newDir;
         }
 
         //Movement
