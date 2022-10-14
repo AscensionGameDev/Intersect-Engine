@@ -695,16 +695,6 @@ namespace Intersect.Server.Entities
                                 }
                             }
                             MapAutorunEvents = autorunEvents;
-
-                            while (_queueStartCommonEvent.TryDequeue(out var startCommonEventMetadata))
-                            {
-                                _ = UnsafeStartCommonEvent(
-                                    startCommonEventMetadata.EventDescriptor,
-                                    startCommonEventMetadata.Trigger,
-                                    startCommonEventMetadata.Command,
-                                    startCommonEventMetadata.Parameter
-                                );
-                            }
                         }
                     }
 
@@ -751,6 +741,16 @@ namespace Intersect.Server.Entities
                             }
 
                             RemoveEvent(evt.Value.Id);
+
+                            while (_queueStartCommonEvent.TryDequeue(out var startCommonEventMetadata))
+                            {
+                                _ = UnsafeStartCommonEvent(
+                                    startCommonEventMetadata.EventDescriptor,
+                                    startCommonEventMetadata.Trigger,
+                                    startCommonEventMetadata.Command,
+                                    startCommonEventMetadata.Parameter
+                                );
+                            }
                         }
                     }
                 }
