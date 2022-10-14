@@ -1238,6 +1238,8 @@ namespace Intersect.Client.Entities
                     Globals.Me.MoveDir = 3;
                 }
             }
+            
+            TurnAround();
 
             var castInput = -1;
             for (var barSlot = 0; barSlot < Options.Instance.PlayerOpts.HotbarSlotCount; barSlot++)
@@ -2540,6 +2542,31 @@ namespace Intersect.Client.Entities
             public int DistanceTo;
         }
 
+        private void TurnAround()
+        {
+            // If players hold the 'TurnAround' Control Key and tap to any direction, they will turn on their own axis.
+            for (var direction = 0; direction < Options.Instance.Sprites.Directions; direction++)
+            {
+                if (!Controls.KeyDown(Control.TurnAround) || direction != Globals.Me.MoveDir)
+                {
+                    continue;
+                }
+
+                // Turn around and hold the player in place if the requested direction is different from the current one.
+                if (!Globals.Me.IsMoving && Dir != Globals.Me.MoveDir)
+                {
+                    Dir = (byte)Globals.Me.MoveDir;
+                    PacketSender.SendDirection(Dir);
+                    Globals.Me.MoveDir = -1;
+                }
+
+                // Hold the player in place if the requested direction is the same as the current one.
+                if (!Globals.Me.IsMoving && Dir == Globals.Me.MoveDir)
+                {
+                    Globals.Me.MoveDir = -1;
+                }
+            }
+        }
     }
 
 }

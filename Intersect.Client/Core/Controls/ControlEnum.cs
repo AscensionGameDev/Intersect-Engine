@@ -66,7 +66,9 @@
 
         OpenAdminPanel,
 
-        ToggleGui
+        ToggleGui,
+        
+        TurnAround,
 
     }
 
