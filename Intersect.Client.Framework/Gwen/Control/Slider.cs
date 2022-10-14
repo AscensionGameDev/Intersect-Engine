@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
@@ -110,7 +110,7 @@ namespace Intersect.Client.Framework.Gwen.Control
                 }
 
                 // Normalize Value
-                value = (value - mMin) / (mMax - mMin);
+                value = (value - mMin) / Math.Max(1, mMax - mMin);
                 SetValueInternal(value);
                 Redraw();
             }
