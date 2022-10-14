@@ -23,7 +23,7 @@
         /// <summary>
         /// Sets the delay (milliseconds) for the feature 'Auto-turn to target'.
         /// </summary>
-        public long AutoTurnToTargetDelay { get; set; } = 50;
+        public ushort AutoTurnToTargetDelay { get; set; } = 500;
 
         /// <summary>
         /// Enables or disables friend login notifications when a user joins the game.
