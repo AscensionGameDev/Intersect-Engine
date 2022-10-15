@@ -669,7 +669,7 @@ namespace Intersect.Server.Localization
             public readonly LocalizedString guildvar = @"\guildvar";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public readonly LocalizedString AccountVar = @"\accountvar";
+            public readonly LocalizedString UserVariable = @"\uservar";
 
         }
 

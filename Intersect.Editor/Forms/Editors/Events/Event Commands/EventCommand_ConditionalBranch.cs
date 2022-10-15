@@ -87,7 +87,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             rdoPlayerVariable.Text = Strings.EventConditional.playervariable;
             rdoGlobalVariable.Text = Strings.EventConditional.globalvariable;
             rdoGuildVariable.Text = Strings.EventConditional.guildvariable;
-            rdoUserVariable.Text = Strings.EventConditional.UserVariable;
+            rdoUserVariable.Text = Strings.GameObjectStrings.UserVariable;
 
             //Numeric Variable
             grpNumericVariable.Text = Strings.EventConditional.numericvariable;
@@ -749,7 +749,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                     var userVar = UserVariableBase.FromList(cmbVariable.SelectedIndex);
                     if (userVar != null)
                     {
-                        varType = (byte)userVar.Type;
+                        varType = (byte)userVar.DataType;
                     }
                 }
             }

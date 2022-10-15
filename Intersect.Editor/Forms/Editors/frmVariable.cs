@@ -95,7 +95,7 @@ namespace Intersect.Editor.Forms.Editors
             rdoPlayerVariables.Text = Strings.VariableEditor.playervariables;
             rdoGlobalVariables.Text = Strings.VariableEditor.globalvariables;
             rdoGuildVariables.Text = Strings.VariableEditor.guildvariables;
-            rdoUserVariables.Text = Strings.VariableEditor.UserVariables;
+            rdoUserVariables.Text = Strings.GameObjectStrings.UserVariables;
             grpEditor.Text = Strings.VariableEditor.editor;
             lblName.Text = Strings.VariableEditor.name;
             grpValue.Text = Strings.VariableEditor.value;
@@ -299,7 +299,7 @@ namespace Intersect.Editor.Forms.Editors
                 }
                 else if (rdoUserVariables.Checked)
                 {
-                    lblObject.Text = Strings.VariableEditor.UserVariable;
+                    lblObject.Text = Strings.GameObjectStrings.UserVariable;
                     txtObjectName.Text = ((UserVariableBase)mEditorItem).Name;
                     txtId.Text = ((UserVariableBase)mEditorItem).TextId;
                     cmbFolder.Text = ((UserVariableBase)mEditorItem).Folder;
@@ -642,7 +642,7 @@ namespace Intersect.Editor.Forms.Editors
 
                 mUserKnownFolders.Sort();
                 cmbFolder.Items.AddRange(mUserKnownFolders.ToArray());
-                lblId.Text = Strings.VariableEditor.TextIdUserVar;
+                lblId.Text = Strings.VariableEditor.UserVariableId;
             }
 
             mFolders.Sort();

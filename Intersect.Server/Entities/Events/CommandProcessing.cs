@@ -110,7 +110,7 @@ namespace Intersect.Server.Entities.Events
             else if (command.VariableType == VariableTypes.UserVariable)
             {
                 var variable = UserVariableBase.Get(command.VariableId);
-                type = (int)variable.Type;
+                type = (int)variable.DataType;
             }
             else if (type == -1)
             {

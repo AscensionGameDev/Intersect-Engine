@@ -99,7 +99,7 @@ namespace Intersect.Editor.Forms.Editors
             this.rdoUserVariables.Name = "rdoUserVariables";
             this.rdoUserVariables.Size = new System.Drawing.Size(111, 17);
             this.rdoUserVariables.TabIndex = 5;
-            this.rdoUserVariables.Text = "Account Variables";
+            this.rdoUserVariables.Text = "User Variables";
             this.rdoUserVariables.CheckedChanged += new System.EventHandler(this.rdoUserVariables_CheckedChanged);
             // 
             // rdoGuildVariables

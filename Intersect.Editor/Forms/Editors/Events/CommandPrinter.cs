@@ -1319,6 +1319,7 @@ namespace Intersect.Editor.Forms.Editors.Events
                 else if (mod.DupVariableType == VariableTypes.UserVariable)
                 {
                     varvalue = Strings.EventCommandList.DupUserVariable.ToString(
+                        Strings.GameObjectStrings.UserVariable,
                         UserVariableBase.GetName(mod.DuplicateVariableId)
                     );
                 }
@@ -1359,7 +1360,9 @@ namespace Intersect.Editor.Forms.Editors.Events
             if (command.VariableType == VariableTypes.UserVariable)
             {
                 return Strings.EventCommandList.UserVariable.ToString(
-                    UserVariableBase.GetName(command.VariableId), varvalue
+                    Strings.GameObjectStrings.UserVariable,
+                    UserVariableBase.GetName(command.VariableId),
+                    varvalue
                 );
             }
 
@@ -1545,44 +1548,51 @@ namespace Intersect.Editor.Forms.Editors.Events
 
 
                 //User Variable
-                case Enums.VariableMods.DupUserVar:
+                case Enums.VariableMods.DuplicateUserVariable:
                     varvalue = Strings.EventCommandList.DupUserVariable.ToString(
+                        Strings.GameObjectStrings.UserVariable,
                         UserVariableBase.GetName(mod.DuplicateVariableId)
                     );
 
                     break;
-                case Enums.VariableMods.AddUserVar:
+                case Enums.VariableMods.AddUserVariable:
                     varvalue = Strings.EventCommandList.AddUserVariable.ToString(
+                        Strings.GameObjectStrings.UserVariable,
                         UserVariableBase.GetName(mod.DuplicateVariableId)
                     );
 
                     break;
-                case Enums.VariableMods.SubtractUserVar:
+                case Enums.VariableMods.SubtractUserVariable:
                     varvalue = Strings.EventCommandList.SubtractUserVariable.ToString(
+                        Strings.GameObjectStrings.UserVariable,
                         UserVariableBase.GetName(mod.DuplicateVariableId)
                     );
 
                     break;
-                case Enums.VariableMods.MultiplyUserVar:
+                case Enums.VariableMods.MultiplyUserVariable:
                     varvalue = Strings.EventCommandList.MultiplyUserVariable.ToString(
+                        Strings.GameObjectStrings.UserVariable,
                         UserVariableBase.GetName(mod.DuplicateVariableId)
                     );
 
                     break;
-                case Enums.VariableMods.DivideUserVar:
+                case Enums.VariableMods.DivideUserVariable:
                     varvalue = Strings.EventCommandList.DivideUserVariable.ToString(
+                        Strings.GameObjectStrings.UserVariable,
                         UserVariableBase.GetName(mod.DuplicateVariableId)
                     );
 
                     break;
-                case Enums.VariableMods.LeftShiftUserVar:
+                case Enums.VariableMods.LeftShiftUserVariable:
                     varvalue = Strings.EventCommandList.LeftShiftUserVariable.ToString(
+                        Strings.GameObjectStrings.UserVariable,
                         UserVariableBase.GetName(mod.DuplicateVariableId)
                     );
 
                     break;
-                case Enums.VariableMods.RightShiftUserVar:
+                case Enums.VariableMods.RightShiftUserVariable:
                     varvalue = Strings.EventCommandList.RightShiftUserVariable.ToString(
+                        Strings.GameObjectStrings.UserVariable,
                         UserVariableBase.GetName(mod.DuplicateVariableId)
                     );
 
@@ -1613,7 +1623,9 @@ namespace Intersect.Editor.Forms.Editors.Events
             if (command.VariableType == VariableTypes.UserVariable)
             {
                 return Strings.EventCommandList.UserVariable.ToString(
-                    UserVariableBase.GetName(command.VariableId), varvalue
+                    Strings.GameObjectStrings.UserVariable,
+                    UserVariableBase.GetName(command.VariableId),
+                    varvalue
                 );
             }
 
@@ -1659,7 +1671,9 @@ namespace Intersect.Editor.Forms.Editors.Events
             if (command.VariableType == VariableTypes.UserVariable)
             {
                 return Strings.EventCommandList.UserVariable.ToString(
-                    UserVariableBase.GetName(command.VariableId), varvalue
+                    Strings.GameObjectStrings.UserVariable,
+                    UserVariableBase.GetName(command.VariableId),
+                    varvalue
                 );
             }
 

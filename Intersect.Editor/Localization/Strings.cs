@@ -89,7 +89,9 @@ namespace Intersect.Editor.Localization
             else if (condition.VariableType == VariableTypes.UserVariable)
             {
                 return EventConditionDesc.UserVariable.ToString(
-                    UserVariableBase.GetName(condition.VariableId), pVar
+                    Strings.GameObjectStrings.UserVariable,
+                    UserVariableBase.GetName(condition.VariableId),
+                    pVar
                 );
             }
 
@@ -1905,7 +1907,7 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString dupguildvariable = @"Guild Variable: {00}'s Value";
 
-            public static LocalizedString DupUserVariable = @"Account Variable: {00}'s Value";
+            public static LocalizedString DupUserVariable = @"{00}: {01}'s Value";
 
             public static LocalizedString addglobalvariable = @"Add Global Variable: {00}'s Value";
 
@@ -1913,7 +1915,7 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString addguildvariable = @"Add Guild Variable: {00}'s Value";
 
-            public static LocalizedString AddUserVariable = @"Add Account Variable: {00}'s Value";
+            public static LocalizedString AddUserVariable = @"Add {00}: {01}'s Value";
 
             public static LocalizedString subtractglobalvariable = @"Subtract Global Variable: {00}'s Value";
 
@@ -1921,7 +1923,7 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString subtractguildvariable = @"Subtract Guild Variable: {00}'s Value";
 
-            public static LocalizedString SubtractUserVariable = @"Subtract Account Variable: {00}'s Value";
+            public static LocalizedString SubtractUserVariable = @"Subtract {00}: {01}'s Value";
 
             public static LocalizedString multiplyglobalvariable = @"Multiply Global Variable: {00}'s Value";
 
@@ -1929,7 +1931,7 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString multiplyguildvariable = @"Multiply Guild Variable: {00}'s Value";
 
-            public static LocalizedString MultiplyUserVariable = @"Multiply Account Variable: {00}'s Value";
+            public static LocalizedString MultiplyUserVariable = @"Multiply {00}: {01}'s Value";
 
             public static LocalizedString divideglobalvariable = @"Divide Global Variable: {00}'s Value";
 
@@ -1937,7 +1939,7 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString divideguildvariable = @"Divide Guild Variable: {00}'s Value";
 
-            public static LocalizedString DivideUserVariable = @"Divide Account Variable: {00}'s Value";
+            public static LocalizedString DivideUserVariable = @"Divide {00}: {01}'s Value";
 
             public static LocalizedString leftshiftglobalvariable = @"Left Bit Shift Global Variable: {00}'s Value";
 
@@ -1945,7 +1947,7 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString leftshiftguildvariable = @"Left Bit Shift Guild Variable: {00}'s Value";
 
-            public static LocalizedString LeftShiftUserVariable = @"Left Bit Shift Account Variable: {00}'s Value";
+            public static LocalizedString LeftShiftUserVariable = @"Left Bit Shift {00}: {01}'s Value";
 
             public static LocalizedString rightshiftglobalvariable = @"Right Bit Shift Global Variable: {00}'s Value";
 
@@ -1953,7 +1955,7 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString rightshiftguildvariable = @"Right Bit Shift Guild Variable: {00}'s Value";
 
-            public static LocalizedString RightShiftUserVariable = @"Right Bit Shift Account Variable: {00}'s Value";
+            public static LocalizedString RightShiftUserVariable = @"Right Bit Shift {00}: {01}'s Value";
 
             public static LocalizedString enditemchange = @"End Item Change";
 
@@ -1989,7 +1991,7 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString guildvariable = @"Set Guild Variable {00} ({01})";
 
-            public static LocalizedString UserVariable = @"Set Account Variable {00} ({01})";
+            public static LocalizedString UserVariable = @"Set {00} {01} ({02})";
 
             public static LocalizedString gotolabel = @"Go to Label {00}";
 
@@ -2545,10 +2547,7 @@ Tick timer saved in server config.json.";
             public static LocalizedString CheckBank = @"Check Bank?";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString UserVariable = @"Account Variable";
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString UserVariableValue = @"Account Variable Value:";
+            public static LocalizedString UserVariableValue = @"User Variable Value:";
         }
 
         public partial struct EventConditionDesc
@@ -2660,7 +2659,7 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString True = @"True";
 
-            public static LocalizedString UserVariable = @"Account Variable: {00} {01}";
+            public static LocalizedString UserVariable = @"{00}: {01} {02}";
 
         }
 
@@ -2741,7 +2740,7 @@ Tick timer saved in server config.json.";
                 {15, @"Guild Variable Changed"},
                 {16, @"Inventory Changed"},
                 {17, @"Map Changed"},
-                {18, @"Account Variable Changed"},
+                {18, @"User Variable Changed"},
             };
 
             public static LocalizedString conditions = @"Conditions";
@@ -3225,7 +3224,7 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString booleancloneplayervariablevalue = @"Player Variable Value: ";
 
-            public static LocalizedString BooleanCloneUserVariableValue = @"Account Variable Value: ";
+            public static LocalizedString BooleanCloneUserVariableValue = @"User Variable Value: ";
 
             public static LocalizedString numericlabel = @"Integer Variable:";
 
@@ -3241,7 +3240,7 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString numericcloneplayervariablevalue = @"Player Variable Value: ";
 
-            public static LocalizedString NumericCloneUserVariableValue = @"Account Variable Value: ";
+            public static LocalizedString NumericCloneUserVariableValue = @"User Variable Value: ";
 
             public static LocalizedString numericmultiply = @"Multiply";
 
@@ -3274,8 +3273,6 @@ Tick timer saved in server config.json.";
             public static LocalizedString stringreplacereplace = @"Replace:";
 
             public static LocalizedString stringtip = @"Text variables work with strings. Click here for a list!";
-
-            public static LocalizedString UserVariable = @"Account Variable";
 
         }
 
@@ -3349,8 +3346,6 @@ Tick timer saved in server config.json.";
             public static LocalizedString minlength = @"Minimum Length";
 
             public static LocalizedString maxlength = @"Maximum Length";
-
-            public static LocalizedString UserVariable = @"Account Variable";
 
         }
 
@@ -3472,6 +3467,18 @@ Tick timer saved in server config.json.";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString Yes = @"Yes";
+        }
+
+        public partial struct GameObjectStrings
+        {
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString New = @"New {00}";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString UserVariable = @"User Variable";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString UserVariables = @"User Variables";
         }
 
         public partial struct Time
@@ -5239,11 +5246,7 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString textidguildvar = @"Text Id: \guildvar ";
 
-            public static LocalizedString UserVariable = @"Account Variable";
-
-            public static LocalizedString UserVariables = @"Account Variables";
-
-            public static LocalizedString TextIdUserVar = @"Text Id: \accountvar ";
+            public static LocalizedString UserVariableId = @"Text Id: \uservar ";
 
         }
 

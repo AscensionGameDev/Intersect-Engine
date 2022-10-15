@@ -95,19 +95,19 @@ namespace Intersect.Enums
         
         RightShiftGuildVar,
 
-        DupUserVar,
+        DuplicateUserVariable,
 
-        AddUserVar,
+        AddUserVariable,
 
-        SubtractUserVar,
+        SubtractUserVariable,
 
-        MultiplyUserVar,
+        MultiplyUserVariable,
 
-        DivideUserVar,
+        DivideUserVariable,
 
-        LeftShiftUserVar,
+        LeftShiftUserVariable,
 
-        RightShiftUserVar,
+        RightShiftUserVariable,
     }
 
     public enum VariableComparators

@@ -35,10 +35,12 @@ namespace Intersect.GameObjects
         /// </summary>
         /// <param name="dataType">The data type to retrieve names of.</param>
         /// <returns>Returns an array of names.</returns>
-        public static string[] GetNamesByType(VariableDataTypes dataType)
-        {
-            return Lookup.KeyList.OrderBy(pairs => Lookup[pairs]?.TimeCreated).Where(pairs => ((UserVariableBase)Lookup[pairs]).DataType == dataType).Select(pairs => ((UserVariableBase)Lookup[pairs]).Name).ToArray();
-        }
+        public static string[] GetNamesByType(VariableDataTypes dataType) =>
+            Lookup
+                .Where(pair => pair.Value is UserVariableBase descriptor && descriptor.DataType == dataType)
+                .OrderBy(pair => pair.Value.TimeCreated)
+                .Select(pair => pair.Value.Name)
+                .ToArray();
 
         /// <summary>
         /// Retrieve the list index of an Id within a specific data type list.
@@ -46,10 +48,12 @@ namespace Intersect.GameObjects
         /// <param name="id">The Id to look up.</param>
         /// <param name="dataType">The data type to search up.</param>
         /// <returns>Returns the list Index of the provided Id.</returns>
-        public static int ListIndex(Guid id, VariableDataTypes dataType)
-        {
-            return Lookup.KeyList.OrderBy(pairs => Lookup[pairs]?.TimeCreated).Where(pairs => ((UserVariableBase)Lookup[pairs]).DataType == dataType).Select(pairs => ((UserVariableBase)Lookup[pairs]).Id).ToList().IndexOf(id);
-        }
+        public static int ListIndex(Guid id, VariableDataTypes dataType) =>
+            Lookup
+                .Where(pair => pair.Value is UserVariableBase descriptor && descriptor.DataType == dataType)
+                .OrderBy(pair => pair.Value.TimeCreated)
+                .ToList()
+                .FindIndex(pair => pair.Value.Id == id);
 
         /// <summary>
         /// Retrieve the Id associated with a list index of a specific data type.
@@ -64,7 +68,11 @@ namespace Intersect.GameObjects
                 return Guid.Empty;
             }
 
-            return Lookup.KeyList.OrderBy(pairs => Lookup[pairs]?.TimeCreated).Where(pairs => ((UserVariableBase)Lookup[pairs]).DataType == dataType).Select(pairs => ((UserVariableBase)Lookup[pairs]).Id).ToArray()[listIndex];
+            return Lookup
+                .Where(pair => pair.Value is UserVariableBase descriptor && descriptor.DataType == dataType)
+                .OrderBy(pair => pair.Value.TimeCreated)
+                .Skip(listIndex)
+                .First().Value.Id;
         }
     }
 }

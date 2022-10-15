@@ -6177,7 +6177,7 @@ namespace Intersect.Server.Entities
                                 var variable = UserVariableBase.Get(cmd.VariableId);
                                 if (variable != null)
                                 {
-                                    type = variable.Type;
+                                    type = variable.DataType;
                                 }
 
                                 value = User.GetVariableValue(cmd.VariableId) ?? new VariableValue();

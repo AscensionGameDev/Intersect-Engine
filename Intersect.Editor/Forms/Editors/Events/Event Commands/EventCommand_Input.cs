@@ -63,7 +63,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             rdoPlayerVariables.Text = Strings.EventInput.playervariable;
             rdoGlobalVariables.Text = Strings.EventInput.globalvariable;
             rdoGuildVariables.Text = Strings.EventInput.guildvariable;
-            rdoUserVariables.Text = Strings.EventInput.UserVariable;
+            rdoUserVariables.Text = Strings.GameObjectStrings.UserVariable;
         }
 
         private void LoadVariableList()
@@ -111,7 +111,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                 if (cmbVariable.SelectedIndex != -1)
                 {
                     UpdateMinMaxValues(
-                        UserVariableBase.Get(UserVariableBase.IdFromList(cmbVariable.SelectedIndex)).Type
+                        UserVariableBase.Get(UserVariableBase.IdFromList(cmbVariable.SelectedIndex)).DataType
                     );
                 }
             }
@@ -240,7 +240,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             else if (rdoUserVariables.Checked)
             {
                 variableId = UserVariableBase.IdFromList(cmbVariable.SelectedIndex);
-                UpdateMinMaxValues(UserVariableBase.Get(variableId).Type);
+                UpdateMinMaxValues(UserVariableBase.Get(variableId).DataType);
             }
         }
 

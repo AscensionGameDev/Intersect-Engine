@@ -134,7 +134,7 @@ namespace Intersect.Server.Database.PlayerData
         }
 
         /// <summary>
-        /// Account Variable Values
+        /// User Variable Values
         /// </summary>
         [JsonIgnore]
         public virtual List<UserVariable> Variables { get; set; } = new List<UserVariable>();
@@ -637,10 +637,10 @@ namespace Intersect.Server.Database.PlayerData
         }
 
         /// <summary>
-        /// Returns a variable object given a account variable id
+        /// Returns a variable object given a user variable id
         /// </summary>
         /// <param name="id">Variable id</param>
-        /// <param name="createIfNull">Creates this variable for the account if it hasn't been set yet</param>
+        /// <param name="createIfNull">Creates this variable for the user if it hasn't been set yet</param>
         /// <returns></returns>
         public Variable GetVariable(Guid id, bool createIfNull = false)
         {
@@ -661,7 +661,7 @@ namespace Intersect.Server.Database.PlayerData
         }
 
         /// <summary>
-        /// Creates a variable for this account with a given id if it doesn't already exist
+        /// Creates a variable for this user with a given id if it doesn't already exist
         /// </summary>
         /// <param name="id">Variablke id</param>
         /// <returns></returns>

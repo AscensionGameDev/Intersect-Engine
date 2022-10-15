@@ -146,7 +146,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.rdoUserVariable.Name = "rdoUserVariable";
             this.rdoUserVariable.Size = new System.Drawing.Size(106, 17);
             this.rdoUserVariable.TabIndex = 41;
-            this.rdoUserVariable.Text = "Account Variable";
+            this.rdoUserVariable.Text = "User Variable";
             this.rdoUserVariable.CheckedChanged += new System.EventHandler(this.rdoUserVariable_CheckedChanged);
             // 
             // chkSyncParty
@@ -548,7 +548,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.optNumericCloneUserVar.Name = "optNumericCloneUserVar";
             this.optNumericCloneUserVar.Size = new System.Drawing.Size(139, 17);
             this.optNumericCloneUserVar.TabIndex = 48;
-            this.optNumericCloneUserVar.Text = "Account Variable Value:";
+            this.optNumericCloneUserVar.Text = "User Variable Value:";
             // 
             // nudNumericValue
             // 
