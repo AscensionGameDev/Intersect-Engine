@@ -344,9 +344,12 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
             }
 
             // Bonus Effect
-            if (mItem.Effect.Type != EffectType.None && mItem.Effect.Percentage != 0)
+            foreach(var effect in mItem.Effects)
             {
-                rows.AddKeyValueRow(Strings.ItemDescription.BonusEffects[(int) mItem.Effect.Type], Strings.ItemDescription.Percentage.ToString(mItem.Effect.Percentage));
+                if (effect.Type != EffectType.None && effect.Percentage != 0)
+                {
+                    rows.AddKeyValueRow(Strings.ItemDescription.BonusEffects[(int)effect.Type], Strings.ItemDescription.Percentage.ToString(effect.Percentage));
+                }
             }
 
             // Resize the container.

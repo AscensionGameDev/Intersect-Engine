@@ -3494,6 +3494,9 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString bonuseffect = @"Bonus Effect:";
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString BonusEffectItem = @"{00}: {01}%";
+
             public static Dictionary<int, LocalizedString> bonuseffects = new Dictionary<int, LocalizedString>
             {
                 {0, @"None"},

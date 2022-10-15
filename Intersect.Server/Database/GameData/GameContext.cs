@@ -119,6 +119,11 @@ namespace Intersect.Server.Database.GameData
                 FixQuestTaskCompletionEventsMigration.Run(this);
             }
 
+            if (migrations.IndexOf("20221015154500_MigrateOldBonusEffectToNewListMigration") > -1)
+            {
+                BonusEffectsToListMigration.Run(this);
+            }
+
         }
 
         internal static partial class Queries

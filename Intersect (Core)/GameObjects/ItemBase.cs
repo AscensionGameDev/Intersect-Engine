@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 
@@ -140,6 +141,7 @@ namespace Intersect.GameObjects
 
         public bool TwoHanded { get; set; }
 
+        [Obsolete("Use Effects (List<EffectData>) instead")]
         public EffectData Effect { get; set; }
 
         public int SlotCount { get; set; }
@@ -327,6 +329,38 @@ namespace Intersect.GameObjects
                                    ItemType != ItemTypes.Equipment &&
                                    ItemType != ItemTypes.Bag;
 
+        [NotMapped]
+        public List<EffectData> Effects { get; set; }
+
+        [Column("Effects")]
+        [JsonIgnore]
+        public string EffectsJson
+        {
+            get => JsonConvert.SerializeObject(Effects);
+            set => Effects = JsonConvert.DeserializeObject<List<EffectData>>(value ?? "") ?? new List<EffectData>();
+        }
+
+        public int GetEffectPercentage(EffectType type)
+        {
+            return Effects.Find(effect => effect.Type == type)?.Percentage ?? 0;
+        }
+
+        [NotMapped, JsonIgnore]
+        public EffectType[] EffectsEnabled
+        {
+            get => Effects.Select(effect => effect.Type).ToArray();
+        }
+
+        public void SetEffectOfType(EffectType type, int value)
+        {
+            var effectToEdit = Effects.Find(effect => effect.Type == type);
+            if (effectToEdit == default)
+            {
+                return;
+            }
+            effectToEdit.Percentage = value;
+        }
+
         /// <inheritdoc />
         public string Folder { get; set; } = "";
 
@@ -358,7 +392,7 @@ namespace Intersect.GameObjects
             VitalsRegen = new int[(int) Vitals.VitalCount];
             PercentageVitalsGiven = new int[(int) Vitals.VitalCount];
             Consumable = new ConsumableData();
-            Effect = new EffectData();
+            Effects = new List<EffectData>();
             Color = new Color(255, 255, 255, 255);
         }
 
@@ -379,6 +413,18 @@ namespace Intersect.GameObjects
     [Owned]
     public partial class EffectData
     {
+
+        public EffectData()
+        {
+            Type = default;
+            Percentage = default;
+        }
+
+        public EffectData(EffectType type, int percentage)
+        {
+            Type = type;
+            Percentage = percentage;
+        }
 
         public EffectType Type { get; set; }
 

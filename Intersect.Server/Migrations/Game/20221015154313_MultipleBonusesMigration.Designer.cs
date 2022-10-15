@@ -3,14 +3,16 @@ using System;
 using Intersect.Server.Database.GameData;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Intersect.Server.Migrations.Game
 {
     [DbContext(typeof(GameContext))]
-    partial class GameContextModelSnapshot : ModelSnapshot
+    [Migration("20221015154313_MultipleBonusesMigration")]
+    partial class MultipleBonusesMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -20,6 +22,8 @@ namespace Intersect.Server.Migrations.Game
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
+
+                    b.Property<int>("BrightnessThreshold");
 
                     b.Property<bool>("CompleteSound");
 
@@ -47,8 +51,6 @@ namespace Intersect.Server.Migrations.Game
                     b.Property<int>("AttackSpeedModifier");
 
                     b.Property<int>("AttackSpeedValue");
-
-                    b.Property<string>("AttackSpriteOverride");
 
                     b.Property<long>("BaseExp");
 
@@ -129,7 +131,7 @@ namespace Intersect.Server.Migrations.Game
                     b.Property<Guid>("EventId")
                         .HasColumnName("Event");
 
-                    b.Property<int>("FailureChance");
+                    b.Property<long>("Experience");
 
                     b.Property<string>("Folder");
 
@@ -138,10 +140,8 @@ namespace Intersect.Server.Migrations.Game
 
                     b.Property<Guid>("ItemId");
 
-                    b.Property<int>("ItemLossChance");
-
-                    b.Property<string>("JsonCraftingRequirements")
-                        .HasColumnName("CraftingRequirements");
+                    b.Property<string>("JsonRequirements")
+                        .HasColumnName("Requirements");
 
                     b.Property<string>("Name");
 
@@ -204,12 +204,15 @@ namespace Intersect.Server.Migrations.Game
                     b.ToTable("Events");
                 });
 
-            modelBuilder.Entity("Intersect.GameObjects.GuildVariableBase", b =>
+            modelBuilder.Entity("Intersect.GameObjects.InstanceVariableBase", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
                     b.Property<string>("Folder");
+
+                    b.Property<string>("Json")
+                        .HasColumnName("DefaultValue");
 
                     b.Property<string>("Name");
 
@@ -221,7 +224,7 @@ namespace Intersect.Server.Migrations.Game
 
                     b.HasKey("Id");
 
-                    b.ToTable("GuildVariables");
+                    b.ToTable("InstanceVariables");
                 });
 
             modelBuilder.Entity("Intersect.GameObjects.ItemBase", b =>
@@ -239,15 +242,17 @@ namespace Intersect.Server.Migrations.Game
 
                     b.Property<int>("AttackSpeedValue");
 
-                    b.Property<int>("BlockAbsorption");
+                    b.Property<float>("BackstabMultiplier");
 
-                    b.Property<int>("BlockAmount");
+                    b.Property<int>("BackstepBonus");
 
-                    b.Property<int>("BlockChance");
+                    b.Property<bool>("CanBackstab");
 
                     b.Property<bool>("CanBag");
 
                     b.Property<bool>("CanBank");
+
+                    b.Property<bool>("CanDestroy");
 
                     b.Property<bool>("CanDrop")
                         .HasColumnName("Bound");
@@ -258,7 +263,18 @@ namespace Intersect.Server.Migrations.Game
 
                     b.Property<bool>("CanTrade");
 
+                    b.Property<string>("CannotDestroyMessage");
+
                     b.Property<string>("CannotUseMessage");
+
+                    b.Property<int>("ComboExpBoost")
+                        .HasColumnName("ComboExpBoost");
+
+                    b.Property<int>("ComboInterval")
+                        .HasColumnName("ComboInterval");
+
+                    b.Property<Guid>("ComboSpellId")
+                        .HasColumnName("ComboSpell");
 
                     b.Property<int>("Cooldown");
 
@@ -274,7 +290,7 @@ namespace Intersect.Server.Migrations.Game
 
                     b.Property<string>("Description");
 
-                    b.Property<long>("DespawnTime");
+                    b.Property<bool>("DestroyOnInstanceChange");
 
                     b.Property<int>("DropChanceOnDeath");
 
@@ -293,6 +309,12 @@ namespace Intersect.Server.Migrations.Game
 
                     b.Property<string>("Folder");
 
+                    b.Property<bool>("HideBeard");
+
+                    b.Property<bool>("HideExtra");
+
+                    b.Property<bool>("HideHair");
+
                     b.Property<string>("Icon");
 
                     b.Property<bool>("IgnoreCooldownReduction");
@@ -303,6 +325,9 @@ namespace Intersect.Server.Migrations.Game
 
                     b.Property<string>("JsonColor")
                         .HasColumnName("Color");
+
+                    b.Property<string>("JsonDestroyRequirements")
+                        .HasColumnName("DestroyRequirements");
 
                     b.Property<string>("JsonUsageRequirements")
                         .HasColumnName("UsageRequirements");
@@ -334,6 +359,8 @@ namespace Intersect.Server.Migrations.Game
 
                     b.Property<int>("ScalingStat");
 
+                    b.Property<bool>("ShortHair");
+
                     b.Property<bool>("SingleUse")
                         .HasColumnName("DestroySpell");
 
@@ -348,8 +375,16 @@ namespace Intersect.Server.Migrations.Game
 
                     b.Property<int>("StatGrowth");
 
+                    b.Property<string>("StatLockJson")
+                        .HasColumnName("StatLocks");
+
                     b.Property<string>("StatsJson")
                         .HasColumnName("StatsGiven");
+
+                    b.Property<int>("StrafeBonus");
+
+                    b.Property<string>("TagsJson")
+                        .HasColumnName("Tags");
 
                     b.Property<long>("TimeCreated");
 
@@ -357,17 +392,68 @@ namespace Intersect.Server.Migrations.Game
 
                     b.Property<bool>("TwoHanded");
 
+                    b.Property<string>("TypeDisplayOverride");
+
                     b.Property<string>("VitalsJson")
                         .HasColumnName("VitalsGiven");
 
                     b.Property<string>("VitalsRegenJson")
                         .HasColumnName("VitalsRegen");
 
-                    b.Property<string>("WeaponSpriteOverride");
-
                     b.HasKey("Id");
 
                     b.ToTable("Items");
+                });
+
+            modelBuilder.Entity("Intersect.GameObjects.LabelDescriptor", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("DisplayName");
+
+                    b.Property<string>("Folder");
+
+                    b.Property<string>("Hint");
+
+                    b.Property<string>("JsonColor")
+                        .HasColumnName("Color");
+
+                    b.Property<bool>("MatchNameColor");
+
+                    b.Property<string>("Name");
+
+                    b.Property<int>("Position");
+
+                    b.Property<long>("TimeCreated");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Labels");
+                });
+
+            modelBuilder.Entity("Intersect.GameObjects.LootTableDescriptor", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("DisplayName");
+
+                    b.Property<string>("DropConditionsJson")
+                        .HasColumnName("DropConditions");
+
+                    b.Property<string>("Folder");
+
+                    b.Property<string>("JsonDrops")
+                        .HasColumnName("Drops");
+
+                    b.Property<string>("Name");
+
+                    b.Property<long>("TimeCreated");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("LootTables");
                 });
 
             modelBuilder.Entity("Intersect.GameObjects.Maps.MapList.MapList", b =>
@@ -413,6 +499,12 @@ namespace Intersect.Server.Migrations.Game
 
                     b.Property<int>("DamageType");
 
+                    b.Property<Guid>("DeathAnimationId")
+                        .HasColumnName("DeathAnimation");
+
+                    b.Property<Guid>("DeathTransformId")
+                        .HasColumnName("DeathTransformId");
+
                     b.Property<long>("Experience");
 
                     b.Property<byte>("FleeHealthPercentage");
@@ -438,8 +530,14 @@ namespace Intersect.Server.Migrations.Game
                     b.Property<string>("JsonMaxVital")
                         .HasColumnName("MaxVital");
 
+                    b.Property<string>("JsonSecondaryDrops")
+                        .HasColumnName("SecondaryDrops");
+
                     b.Property<string>("JsonStat")
                         .HasColumnName("Stats");
+
+                    b.Property<string>("JsonTertiaryDrops")
+                        .HasColumnName("TertiaryDrops");
 
                     b.Property<int>("Level");
 
@@ -470,17 +568,25 @@ namespace Intersect.Server.Migrations.Game
 
                     b.Property<int>("ScalingStat");
 
+                    b.Property<double>("SecondaryChance");
+
                     b.Property<int>("SightRange");
 
                     b.Property<int>("SpawnDuration");
+
+                    b.Property<Guid>("SpellAttackOverrideId");
 
                     b.Property<int>("SpellFrequency");
 
                     b.Property<string>("Sprite");
 
+                    b.Property<bool>("StandStill");
+
                     b.Property<bool>("Swarm");
 
                     b.Property<double>("Tenacity");
+
+                    b.Property<double>("TertiaryChance");
 
                     b.Property<long>("TimeCreated");
 
@@ -498,11 +604,21 @@ namespace Intersect.Server.Migrations.Game
 
                     b.Property<string>("Name");
 
+                    b.Property<bool>("RecordLow");
+
+                    b.Property<bool>("RecordSilently");
+
+                    b.Property<bool>("Recordable");
+
+                    b.Property<bool>("SoloRecordOnly");
+
                     b.Property<string>("TextId");
 
                     b.Property<long>("TimeCreated");
 
                     b.Property<byte>("Type");
+
+                    b.Property<string>("VariableGroup");
 
                     b.HasKey("Id");
 
@@ -522,14 +638,15 @@ namespace Intersect.Server.Migrations.Game
                     b.Property<string>("AnimationsJson")
                         .HasColumnName("Animations");
 
+                    b.Property<bool>("AttachToEntities");
+
                     b.Property<int>("Delay");
 
                     b.Property<string>("Folder");
 
                     b.Property<bool>("GrappleHook");
 
-                    b.Property<string>("GrappleHookOptionsJson")
-                        .HasColumnName("GrappleHookOptions");
+                    b.Property<bool>("Grounded");
 
                     b.Property<bool>("IgnoreActiveResources");
 
@@ -558,6 +675,8 @@ namespace Intersect.Server.Migrations.Game
                         .HasColumnName("Spell");
 
                     b.Property<long>("TimeCreated");
+
+                    b.Property<int>("Tool");
 
                     b.HasKey("Id");
 
@@ -597,7 +716,13 @@ namespace Intersect.Server.Migrations.Game
 
                     b.Property<int>("OrderValue");
 
+                    b.Property<int>("QuestClassRank");
+
+                    b.Property<int>("QuestType");
+
                     b.Property<bool>("Quitable");
+
+                    b.Property<Guid>("RelatedClassId");
 
                     b.Property<bool>("Repeatable");
 
@@ -618,6 +743,47 @@ namespace Intersect.Server.Migrations.Game
                     b.ToTable("Quests");
                 });
 
+            modelBuilder.Entity("Intersect.GameObjects.QuestBoard.QuestBoardBase", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("Folder");
+
+                    b.Property<string>("Name");
+
+                    b.Property<string>("QuestListsJson")
+                        .HasColumnName("QuestLists");
+
+                    b.Property<long>("TimeCreated");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("QuestBoards");
+                });
+
+            modelBuilder.Entity("Intersect.GameObjects.QuestList.QuestListBase", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("Folder");
+
+                    b.Property<string>("JsonRequirements")
+                        .HasColumnName("Requirements");
+
+                    b.Property<string>("Name");
+
+                    b.Property<string>("QuestsJson")
+                        .HasColumnName("Quests");
+
+                    b.Property<long>("TimeCreated");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("QuestLists");
+                });
+
             modelBuilder.Entity("Intersect.GameObjects.ResourceBase", b =>
                 {
                     b.Property<Guid>("Id")
@@ -628,8 +794,12 @@ namespace Intersect.Server.Migrations.Game
 
                     b.Property<string>("CannotHarvestMessage");
 
+                    b.Property<bool>("DoNotRecord");
+
                     b.Property<Guid>("EventId")
                         .HasColumnName("Event");
+
+                    b.Property<long>("Experience");
 
                     b.Property<string>("Folder");
 
@@ -644,6 +814,8 @@ namespace Intersect.Server.Migrations.Game
                     b.Property<int>("MinHp");
 
                     b.Property<string>("Name");
+
+                    b.Property<string>("ResourceGroup");
 
                     b.Property<int>("SpawnDuration");
 
@@ -690,6 +862,8 @@ namespace Intersect.Server.Migrations.Game
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<float>("BuyMultiplier");
+
                     b.Property<string>("BuySound");
 
                     b.Property<bool>("BuyingWhitelist");
@@ -702,12 +876,17 @@ namespace Intersect.Server.Migrations.Game
                     b.Property<string>("JsonBuyingItems")
                         .HasColumnName("BuyingItems");
 
+                    b.Property<string>("JsonBuyingTags")
+                        .HasColumnName("BuyingTags");
+
                     b.Property<string>("JsonSellingItems")
                         .HasColumnName("SellingItems");
 
                     b.Property<string>("Name");
 
                     b.Property<string>("SellSound");
+
+                    b.Property<bool>("TagWhitelist");
 
                     b.Property<long>("TimeCreated");
 
@@ -729,8 +908,6 @@ namespace Intersect.Server.Migrations.Game
                         .HasColumnName("CastAnimation");
 
                     b.Property<int>("CastDuration");
-
-                    b.Property<string>("CastSpriteOverride");
 
                     b.Property<int>("CooldownDuration");
 
@@ -757,15 +934,20 @@ namespace Intersect.Server.Migrations.Game
 
                     b.Property<string>("Name");
 
-                    b.Property<int>("SpellType");
+                    b.Property<Guid>("OverTimeAnimationId")
+                        .HasColumnName("OverTimeAnimation");
 
-                    b.Property<Guid>("TickAnimationId")
-                        .HasColumnName("TickAnimation");
+                    b.Property<int>("SpellType");
 
                     b.Property<long>("TimeCreated");
 
+                    b.Property<Guid>("TrapAnimationId")
+                        .HasColumnName("TrapAnimation");
+
                     b.Property<string>("VitalCostJson")
                         .HasColumnName("VitalCost");
+
+                    b.Property<bool>("WeaponSpell");
 
                     b.HasKey("Id");
 
@@ -805,6 +987,54 @@ namespace Intersect.Server.Migrations.Game
                     b.ToTable("Time");
                 });
 
+            modelBuilder.Entity("Intersect.GameObjects.Timers.TimerDescriptor", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<Guid>("CancellationEventId");
+
+                    b.Property<byte>("CompletionBehavior");
+
+                    b.Property<Guid>("CompletionEventId");
+
+                    b.Property<bool>("ContinueAfterExpiration");
+
+                    b.Property<bool>("ContinueOnDeath");
+
+                    b.Property<bool>("ContinueOnInstanceChange");
+
+                    b.Property<string>("DisplayName");
+
+                    b.Property<Guid>("ElapsedTimeVariableId");
+
+                    b.Property<Guid>("ExpirationEventId");
+
+                    b.Property<string>("Folder");
+
+                    b.Property<bool>("Hidden");
+
+                    b.Property<int>("LogoutBehavior");
+
+                    b.Property<string>("Name");
+
+                    b.Property<byte>("OwnerType");
+
+                    b.Property<int>("Repetitions");
+
+                    b.Property<bool>("StartWithServer");
+
+                    b.Property<long>("TimeCreated");
+
+                    b.Property<long>("TimeLimit");
+
+                    b.Property<int>("Type");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Timers");
+                });
+
             modelBuilder.Entity("Intersect.Server.Maps.MapController", b =>
                 {
                     b.Property<Guid>("Id")
@@ -834,14 +1064,15 @@ namespace Intersect.Server.Migrations.Game
 
                     b.Property<int>("GHue");
 
-                    b.Property<bool>("HideEquipment");
-
                     b.Property<bool>("IsIndoors");
 
                     b.Property<Guid>("Left");
 
                     b.Property<string>("LightsJson")
                         .HasColumnName("Lights");
+
+                    b.Property<Guid>("LoginEventId")
+                        .HasColumnName("LoginEvent");
 
                     b.Property<string>("Music");
 
@@ -1114,11 +1345,15 @@ namespace Intersect.Server.Migrations.Game
 
                             b1.Property<bool>("IgnoreActiveResources");
 
+                            b1.Property<bool>("IgnoreEntites");
+
                             b1.Property<bool>("IgnoreInactiveResources");
 
                             b1.Property<bool>("IgnoreMapBlocks");
 
                             b1.Property<bool>("IgnoreZDimensionAttributes");
+
+                            b1.Property<Guid>("SpellId");
 
                             b1.ToTable("Spells");
 
