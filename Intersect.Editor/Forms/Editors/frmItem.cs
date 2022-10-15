@@ -320,6 +320,10 @@ namespace Intersect.Editor.Forms.Editors
 
             btnSave.Text = Strings.ItemEditor.save;
             btnCancel.Text = Strings.ItemEditor.cancel;
+
+            btnAddEffect.Text = Strings.ItemEditor.AddBonusEffect;
+            btnRemoveEffect.Text = Strings.ItemEditor.RemoveBonusEffect;
+            grpEffects.Text = Strings.ItemEditor.BonusEffectGroup;
         }
 
         private void UpdateEditor()

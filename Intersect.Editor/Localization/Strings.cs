@@ -3461,6 +3461,9 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString abilitypowerbonus = @"Ability Pwr:";
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString AddBonusEffect = @"Add";
+
             public static LocalizedString animation = @"Animation:";
 
             public static LocalizedString attackanimation = @"Extra Attack Animation:";
@@ -3493,6 +3496,9 @@ Tick timer saved in server config.json.";
             public static LocalizedString bonusamount = @"Effect Amount (%):";
 
             public static LocalizedString bonuseffect = @"Bonus Effect:";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString BonusEffectGroup = @"Bonus Effects";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString BonusEffectItem = @"{00}: {01}%";
@@ -3655,6 +3661,9 @@ Tick timer saved in server config.json.";
             public static LocalizedString requirementsgroup = @"Requirements";
 
             public static LocalizedString cannotuse = @"Cannot Use Message:";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString RemoveBonusEffect = @"Remove";
 
             public static LocalizedString requirements = @"Edit Usage Requirements";
 
