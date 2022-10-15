@@ -217,12 +217,12 @@ namespace Intersect.Server.Web.RestApi.Authentication.OAuth.Providers
             switch (grantType)
             {
                 case "password":
-                    context.Validated();
+                    _ = context.Validated();
 
                     return;
 
                 case "refresh_token":
-                    context.Validated();
+                    _ = context.Validated();
 
                     return;
 
