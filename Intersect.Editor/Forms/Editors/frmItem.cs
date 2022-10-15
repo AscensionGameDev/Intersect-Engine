@@ -32,6 +32,8 @@ namespace Intersect.Editor.Forms.Editors
 
         private List<string> mKnownCooldownGroups = new List<string>();
 
+        private bool EffectValueUpdating = false;
+
         public FrmItem()
         {
             ApplyHooks();
@@ -43,11 +45,6 @@ namespace Intersect.Editor.Forms.Editors
             cmbToolType.Items.Clear();
             cmbToolType.Items.Add(Strings.General.None);
             cmbToolType.Items.AddRange(Options.ToolTypes.ToArray());
-            cmbEquipmentBonus.Items.Clear();
-            for (var i = 0; i < Strings.ItemEditor.bonuseffects.Count; i++)
-            {
-                cmbEquipmentBonus.Items.Add(Strings.ItemEditor.bonuseffects[i]);
-            }
 
             cmbProjectile.Items.Clear();
             cmbProjectile.Items.Add(Strings.General.None);
@@ -228,14 +225,8 @@ namespace Intersect.Editor.Forms.Editors
             lblMag.Text = Strings.ItemEditor.abilitypowerbonus;
             lblMR.Text = Strings.ItemEditor.magicresistbonus;
             lblRange.Text = Strings.ItemEditor.bonusrange;
-            lblBonusEffect.Text = Strings.ItemEditor.bonuseffect;
             lblEffectPercent.Text = Strings.ItemEditor.bonusamount;
             lblEquipmentAnimation.Text = Strings.ItemEditor.equipmentanimation;
-            cmbEquipmentBonus.Items.Clear();
-            for (var i = 0; i < Strings.ItemEditor.bonuseffects.Count; i++)
-            {
-                cmbEquipmentBonus.Items.Add(Strings.ItemEditor.bonuseffects[i]);
-            }
 
             grpWeaponProperties.Text = Strings.ItemEditor.weaponproperties;
             chk2Hand.Text = Strings.ItemEditor.twohanded;
@@ -321,8 +312,6 @@ namespace Intersect.Editor.Forms.Editors
             btnSave.Text = Strings.ItemEditor.save;
             btnCancel.Text = Strings.ItemEditor.cancel;
 
-            btnAddEffect.Text = Strings.ItemEditor.AddBonusEffect;
-            btnRemoveEffect.Text = Strings.ItemEditor.RemoveBonusEffect;
             grpEffects.Text = Strings.ItemEditor.BonusEffectGroup;
         }
 
@@ -391,10 +380,6 @@ namespace Intersect.Editor.Forms.Editors
                 nudBlockAmount.Value = mEditorItem.BlockAmount;
                 nudBlockDmgAbs.Value = mEditorItem.BlockAbsorption;
                 RefreshExtendedData();
-                if (mEditorItem.ItemType == ItemTypes.Equipment && cmbEquipmentBonus.Items.Count >= 0)
-                {
-                    cmbEquipmentBonus.SelectedIndex = 0;
-                }
 
                 chk2Hand.Checked = mEditorItem.TwoHanded;
                 cmbMalePaperdoll.SelectedIndex =
@@ -784,6 +769,13 @@ namespace Intersect.Editor.Forms.Editors
 
         private void nudEffectPercent_ValueChanged(object sender, EventArgs e)
         {
+            if (!IsValidBonusSelection || EffectValueUpdating)
+            {
+                return;
+            }
+
+            mEditorItem.SetEffectOfType(SelectedEffect, (int)nudEffectPercent.Value);
+            lstBonusEffects.Items[lstBonusEffects.SelectedIndex] = GetBonusEffectRow(SelectedEffect);
         }
 
         private void nudRange_ValueChanged(object sender, EventArgs e)
@@ -1321,41 +1313,48 @@ namespace Intersect.Editor.Forms.Editors
         private void RefreshBonusList()
         {
             lstBonusEffects.Items.Clear();
-            foreach (var effect in mEditorItem.Effects)
+            // Skip the "none" value - we don't care about that anymore, that's legacy
+            var idx = 1;
+            foreach (var effectName in Strings.ItemEditor.bonuseffects.Skip(1))
             {
-                var effectName = Strings.ItemEditor.bonuseffects[(int)effect.Type];
-                var effectAmt = mEditorItem.GetEffectPercentage(effect.Type);
-                var editorString = Strings.ItemEditor.BonusEffectItem.ToString(effectName, effectAmt);
-                lstBonusEffects.Items.Add(editorString);
+                lstBonusEffects.Items.Add(GetBonusEffectRow((EffectType)idx));
+                idx++;
             }
         }
 
-        private void btnAddEffect_Click(object sender, EventArgs e)
+        private bool IsValidBonusSelection
         {
-            var effectType = (EffectType)cmbEquipmentBonus.SelectedIndex;
-            var effectPercentage = (int)nudEffectPercent.Value;
-            var effect = new EffectData(effectType, effectPercentage);
-
-            if (!mEditorItem.EffectsEnabled.Contains(effectType))
-            {
-                mEditorItem.Effects.Add(effect);
-                var editorString = Strings.ItemEditor.BonusEffectItem.ToString(cmbEquipmentBonus.Text, effectPercentage);
-                lstBonusEffects.Items.Add(editorString);
-            }
-            else
-            {
-                mEditorItem.SetEffectOfType(effectType, effectPercentage);
-                RefreshBonusList();
-            }
+            get => lstBonusEffects.SelectedIndex > -1 && lstBonusEffects.SelectedIndex < lstBonusEffects.Items.Count;
         }
 
-        private void btnRemoveEffect_Click(object sender, EventArgs e)
+        private EffectType SelectedEffect
         {
-            if (lstBonusEffects.SelectedIndex >= 0 && lstBonusEffects.SelectedIndex < lstBonusEffects.Items.Count)
+            get => IsValidBonusSelection ? (EffectType)(lstBonusEffects.SelectedIndex + 1) : EffectType.None;
+        }
+
+        private string GetBonusEffectRow(EffectType effectType)
+        {
+            var effectName = Strings.ItemEditor.bonuseffects[(int)effectType];
+            var effectAmt = mEditorItem.GetEffectPercentage(effectType);
+            return Strings.ItemEditor.BonusEffectItem.ToString(effectName, effectAmt);
+        }
+
+        private void lstBonusEffects_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (!IsValidBonusSelection)
             {
-                mEditorItem.Effects.RemoveAt(lstBonusEffects.SelectedIndex);
-                RefreshBonusList();
+                return;
             }
+
+            var selected = SelectedEffect;
+            if (!mEditorItem.EffectsEnabled.Contains(selected))
+            {
+                mEditorItem.Effects.Add(new EffectData(selected, 0));
+            }
+
+            EffectValueUpdating = true;
+            nudEffectPercent.Value = mEditorItem.GetEffectPercentage(selected);
+            EffectValueUpdating = false;
         }
     }
 
