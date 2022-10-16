@@ -404,37 +404,32 @@ namespace Intersect.Server.Maps
         /// </summary>
         private void SpawnMapNpcs()
         {
-            for (var i = 0; i < mMapController.Spawns.Count; i++)
+            var spawns = mMapController.Spawns;
+            for (var i = 0; i < spawns.Count; i++)
             {
-                SpawnMapNpc(i);
+                SpawnMapNpc(spawns[i]);
             }
         }
 
-        /// <summary>
-        /// Spawns a map NPC from the list given to us by out MapController, at some
-        /// given index.
-        /// </summary>
-        /// <param name="i">Index of the NPC in the Map Instance's Spawns list</param>
-        private void SpawnMapNpc(int i)
+        private void SpawnMapNpc(NpcSpawn spawn)
         {
-            var spawns = mMapController.Spawns;
-            var npcBase = NpcBase.Get(spawns[i].NpcId);
+            if (spawn == default)
+            {
+                return;
+            }
+
+            var npcBase = NpcBase.Get(spawn.NpcId);
             if (npcBase != null)
             {
-                MapNpcSpawn npcSpawnInstance;
-                if (NpcSpawnInstances.ContainsKey(spawns[i]))
-                {
-                    npcSpawnInstance = NpcSpawnInstances[spawns[i]];
-                }
-                else
+                if (!NpcSpawnInstances.TryGetValue(spawn, out var npcSpawnInstance))
                 {
                     npcSpawnInstance = new MapNpcSpawn();
-                    NpcSpawnInstances.TryAdd(spawns[i], npcSpawnInstance);
+                    _ = NpcSpawnInstances.TryAdd(spawn, npcSpawnInstance);
                 }
 
-                FindNpcSpawnLocation(mMapController.Spawns[i], out var x, out var y, out var dir);
+                FindNpcSpawnLocation(spawn, out var x, out var y, out var dir);
 
-                npcSpawnInstance.Entity = SpawnNpc((byte) x, (byte) y, dir, spawns[i].NpcId);
+                npcSpawnInstance.Entity = SpawnNpc((byte) x, (byte) y, dir, spawn.NpcId);
             }
         }
 
@@ -491,7 +486,7 @@ namespace Intersect.Server.Maps
         /// <param name="npcId">NPC Entity ID to spawn</param>
         /// <param name="despawnable">Whether or not this NPC can be despawned (for example, if spawned via event command)</param>
         /// <returns></returns>
-        public Entity SpawnNpc(byte tileX, byte tileY, byte dir, Guid npcId, bool despawnable = false)
+        public Npc SpawnNpc(byte tileX, byte tileY, byte dir, Guid npcId, bool despawnable = false)
         {
             var npcBase = NpcBase.Get(npcId);
             if (npcBase != null)
@@ -635,33 +630,32 @@ namespace Intersect.Server.Maps
         /// <param name="spawn"></param>
         private void SpawnMapResource(ResourceSpawn spawn)
         {
-            int x = spawn.X;
-            int y = spawn.Y;
-            var id = Guid.Empty;
-            MapResourceSpawn resourceSpawnInstance;
-            if (ResourceSpawnInstances.ContainsKey(spawn))
+            if (spawn == default)
             {
-                resourceSpawnInstance = ResourceSpawnInstances[spawn];
-            }
-            else
-            {
-                resourceSpawnInstance = new MapResourceSpawn();
-                ResourceSpawnInstances.TryAdd(spawn, resourceSpawnInstance);
+                return;
             }
 
-            if (resourceSpawnInstance.Entity == null)
+            var id = Guid.Empty;
+            if (!ResourceSpawnInstances.TryGetValue(spawn, out var resourceSpawnInstance))
             {
-                var resourceBase = ResourceBase.Get(spawn.ResourceId);
-                if (resourceBase != null)
+                resourceSpawnInstance = new MapResourceSpawn();
+                _ = ResourceSpawnInstances.TryAdd(spawn, resourceSpawnInstance);
+            }
+
+            if (resourceSpawnInstance.Entity == default)
+            {
+                if (ResourceBase.TryGet(spawn.ResourceId, out var resourceDescriptor))
                 {
-                    var res = new Resource(resourceBase);
-                    resourceSpawnInstance.Entity = res;
-                    res.X = spawn.X;
-                    res.Y = spawn.Y;
-                    res.Z = spawn.Z;
-                    res.MapId = mMapController.Id;
-                    res.MapInstanceId = MapInstanceId;
+                    var res = new Resource(resourceDescriptor)
+                    {
+                        X = spawn.X,
+                        Y = spawn.Y,
+                        Z = spawn.Z,
+                        MapId = mMapController.Id,
+                        MapInstanceId = MapInstanceId
+                    };
                     id = res.Id;
+                    resourceSpawnInstance.Entity = res;
                     AddEntity(res);
                 }
             }
@@ -1296,23 +1290,20 @@ namespace Intersect.Server.Maps
             var spawns = mMapController.Spawns;
             for (var i = 0; i < spawns.Count; i++)
             {
-                if (NpcSpawnInstances.ContainsKey(spawns[i]))
+                var spawn = spawns[i];
+                if (!NpcSpawnInstances.TryGetValue(spawn, out var spawnInstance) || spawnInstance?.Entity?.Base == default || !spawnInstance.Entity.Dead)
                 {
-                    var npcSpawnInstance = NpcSpawnInstances[spawns[i]];
-                    if (npcSpawnInstance != null && npcSpawnInstance.Entity.Dead)
-                    {
-                        if (npcSpawnInstance.RespawnTime == -1)
-                        {
-                            npcSpawnInstance.RespawnTime = Timing.Global.Milliseconds +
-                                                           ((Npc)npcSpawnInstance.Entity).Base.SpawnDuration -
-                                                           (Timing.Global.Milliseconds - mLastUpdateTime); ;
-                        }
-                        else if (npcSpawnInstance.RespawnTime < Timing.Global.Milliseconds)
-                        {
-                            SpawnMapNpc(i);
-                            npcSpawnInstance.RespawnTime = -1;
-                        }
-                    }
+                    continue;
+                }
+
+                if (spawnInstance.RespawnTime < 0)
+                {
+                    spawnInstance.RespawnTime = mLastUpdateTime + (spawnInstance.Entity.Base?.SpawnDuration ?? 0);
+                }
+                else if (spawnInstance.RespawnTime < Timing.Global.Milliseconds)
+                {
+                    SpawnMapNpc(spawn);
+                    spawnInstance.RespawnTime = -1;
                 }
             }
         }
@@ -1321,41 +1312,39 @@ namespace Intersect.Server.Maps
         {
             foreach (var spawn in ResourceSpawns)
             {
-                if (ResourceSpawnInstances.ContainsKey(spawn.Value))
+                if (!ResourceSpawnInstances.TryGetValue(spawn.Value, out var spawnInstance) || spawnInstance?.Entity?.Base == default || !spawnInstance.Entity.Dead)
                 {
-                    var resourceSpawnInstance = ResourceSpawnInstances[spawn.Value];
-                    if (resourceSpawnInstance.Entity != null && resourceSpawnInstance.Entity.IsDead())
-                    {
-                        if (resourceSpawnInstance.RespawnTime == -1)
-                        {
-                            resourceSpawnInstance.RespawnTime = Timing.Global.Milliseconds +
-                                                                resourceSpawnInstance.Entity.Base.SpawnDuration;
-                        }
-                        else if (resourceSpawnInstance.RespawnTime < Timing.Global.Milliseconds)
-                        {
-                            // Check to see if this resource can be respawned, if there's an Npc or Player on it we shouldn't let it respawn yet..
-                            // Unless of course the resource is walkable regardless.
-                            var canSpawn = false;
-                            if (resourceSpawnInstance.Entity.Base.WalkableBefore)
-                            {
-                                canSpawn = true;
-                            }
-                            else
-                            {
-                                // Check if this resource is currently stepped on
-                                var spawnBlockers = GetEntities().Where(x => x is Player || x is Npc).ToArray();
-                                if (!spawnBlockers.Any(e => e.X == resourceSpawnInstance.Entity.X && e.Y == resourceSpawnInstance.Entity.Y))
-                                {
-                                    canSpawn = true;
-                                }
-                            }
+                    continue;
+                }
 
-                            if (canSpawn)
-                            {
-                                SpawnMapResource(spawn.Value);
-                                resourceSpawnInstance.RespawnTime = -1;
-                            }
+                var now = Timing.Global.Milliseconds;
+                if (spawnInstance.RespawnTime < 0)
+                {
+                    spawnInstance.RespawnTime = now + (spawnInstance.Entity.Base?.SpawnDuration ?? 0);
+                }
+                else if (spawnInstance.RespawnTime < now)
+                {
+                    // Check to see if this resource can be respawned, if there's an Npc or Player on it we shouldn't let it respawn yet..
+                    // Unless of course the resource is walkable regardless.
+                    var canSpawn = false;
+                    if (spawnInstance.Entity.Base.WalkableBefore)
+                    {
+                        canSpawn = true;
+                    }
+                    else
+                    {
+                        // Check if this resource is currently stepped on
+                        var spawnBlockers = GetEntities().Where(x => x is Player || x is Npc).ToArray();
+                        if (!spawnBlockers.Any(e => e.X == spawnInstance.Entity.X && e.Y == spawnInstance.Entity.Y))
+                        {
+                            canSpawn = true;
                         }
+                    }
+
+                    if (canSpawn)
+                    {
+                        SpawnMapResource(spawn.Value);
+                        spawnInstance.RespawnTime = -1;
                     }
                 }
             }
