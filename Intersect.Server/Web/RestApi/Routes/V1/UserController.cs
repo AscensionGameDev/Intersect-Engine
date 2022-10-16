@@ -740,7 +740,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
             user.Save();
 
-            return "Password updated.";
+            return Request.CreateMessageResponse(HttpStatusCode.OK, "Password updated.");
         }
 
         [Route("{userId:guid}/manage/password/change")]
