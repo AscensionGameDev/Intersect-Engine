@@ -2775,7 +2775,7 @@ namespace Intersect.Server.Entities
             }
         }
 
-        public virtual bool IsDead()
+        public bool IsDead()
         {
             return Dead;
         }
