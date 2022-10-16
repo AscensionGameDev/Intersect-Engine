@@ -17,20 +17,24 @@ namespace Intersect.Server.Migrations.Game
             {
                 case "Microsoft.EntityFrameworkCore.Sqlite":
                     _ = migrationBuilder.Sql("UPDATE Items SET Effects = \"[{\"\"EffectType\"\":\" || Effect_Type || \",\"\"EffectPercentage\"\":\" || Effect_Percentage || \"}]\" WHERE Effect_Percentage <> 0;");
+                    // Drop columns doesn't work, and even the roundabout way of doing it just isn't working even in SQLite Studio
                     break;
 
                 case "Pomelo.EntityFrameworkCore.MySql":
                     _ = migrationBuilder.Sql("UPDATE `Items` SET Effects = CONCAT(\"[{\\\"EffectType\\\":\", Effect_Type, \",\\\"EffectPercentage\\\":\", Effect_Percentage, \"}]\") WHERE Effect_Percentage <> 0;");
+
+                    migrationBuilder.DropColumn(
+                        name: "Effect_Percentage",
+                        table: "Items");
+
+                    migrationBuilder.DropColumn(
+                        name: "Effect_Type",
+                        table: "Items");
                     break;
+
+                default:
+                    throw new NotSupportedException(migrationBuilder.ActiveProvider);
             }
-
-            migrationBuilder.DropColumn(
-                name: "Effect_Percentage",
-                table: "Items");
-
-            migrationBuilder.DropColumn(
-                name: "Effect_Type",
-                table: "Items");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -50,11 +54,14 @@ namespace Intersect.Server.Migrations.Game
             switch (migrationBuilder.ActiveProvider)
             {
                 case "Microsoft.EntityFrameworkCore.Sqlite":
-                    throw new NotSupportedException();
+                    throw new NotImplementedException(migrationBuilder.ActiveProvider);
 
                 case "Pomelo.EntityFrameworkCore.MySql":
                     _ = migrationBuilder.Sql("UPDATE `Items` SET Effect_Type = JSON_VALUE(Effects, \"$[0].EffectType\"), Effect_Percentage = JSON_VALUE(Effects, \"$[0].EffectPercentage\") WHERE CHAR_LENGTH(`Effects`) > 2;");
                     break;
+
+                default:
+                    throw new NotSupportedException(migrationBuilder.ActiveProvider);
             }
 
             migrationBuilder.DropColumn(
