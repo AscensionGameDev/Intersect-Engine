@@ -147,7 +147,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 }
                 else
                 {
-                    DbInterface.CreateAccount(null, user.Username, user.Password.ToUpperInvariant()?.Trim(), user.Email);
+                    DbInterface.CreateAccount(null, user.Username, user.Password?.ToUpperInvariant()?.Trim(), user.Email);
 
                     return new
                     {
@@ -433,7 +433,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return Request.CreateErrorResponse(HttpStatusCode.NotFound, $@"No user with name '{userName}'.");
             }
 
-            if (!user.IsPasswordValid(authorizedChange.Authorization.ToUpperInvariant()?.Trim()))
+            if (!user.IsPasswordValid(authorizedChange.Authorization?.ToUpperInvariant()?.Trim()))
             {
                 return Request.CreateErrorResponse(HttpStatusCode.Forbidden, @"Invalid credentials.");
             }
@@ -472,7 +472,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return Request.CreateErrorResponse(HttpStatusCode.NotFound, $@"No user with id '{userId}'.");
             }
 
-            if (!user.IsPasswordValid(authorizedChange.Authorization.ToUpperInvariant()?.Trim()))
+            if (!user.IsPasswordValid(authorizedChange.Authorization?.ToUpperInvariant()?.Trim()))
             {
                 return Request.CreateErrorResponse(HttpStatusCode.Forbidden, @"Invalid credentials.");
             }
@@ -501,7 +501,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, @"No password provided.");
             }
 
-            if (!Regex.IsMatch(data.Password.ToUpperInvariant()?.Trim(), "^[0-9A-Fa-f]{64}$", RegexOptions.Compiled))
+            if (!Regex.IsMatch(data.Password?.ToUpperInvariant()?.Trim(), "^[0-9A-Fa-f]{64}$", RegexOptions.Compiled))
             {
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, @"Did not receive a valid password.");
             }
@@ -513,7 +513,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return Request.CreateErrorResponse(HttpStatusCode.NotFound, $@"No user with name '{userName}'.");
             }
 
-            if (user.IsPasswordValid(data.Password.ToUpperInvariant()?.Trim()))
+            if (user.IsPasswordValid(data.Password?.ToUpperInvariant()?.Trim()))
             {
                 return Request.CreateMessageResponse(HttpStatusCode.OK, "Password Correct");
             }
@@ -530,7 +530,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, @"No password provided.");
             }
 
-            if (!Regex.IsMatch(data.Password.ToUpperInvariant()?.Trim(), "^[0-9A-Fa-f]{64}$", RegexOptions.Compiled))
+            if (!Regex.IsMatch(data.Password?.ToUpperInvariant()?.Trim(), "^[0-9A-Fa-f]{64}$", RegexOptions.Compiled))
             {
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, @"Did not receive a valid password.");
             }
@@ -542,7 +542,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return Request.CreateErrorResponse(HttpStatusCode.NotFound, $@"No user with name '{userId}'.");
             }
 
-            if (user.IsPasswordValid(data.Password.ToUpperInvariant()?.Trim()))
+            if (user.IsPasswordValid(data.Password?.ToUpperInvariant()?.Trim()))
             {
                 return Request.CreateMessageResponse(HttpStatusCode.OK, "Password Correct");
             }
@@ -571,7 +571,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return Request.CreateErrorResponse(HttpStatusCode.NotFound, $@"No user with name '{userName}'.");
             }
 
-            if (!user.TrySetPassword(authorizedChange.New.ToUpperInvariant()?.Trim()))
+            if (!user.TrySetPassword(authorizedChange.New?.ToUpperInvariant()?.Trim()))
             {
                 return Request.CreateErrorResponse(HttpStatusCode.Forbidden, @"Failed to update password.");
             }
@@ -598,7 +598,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return Request.CreateErrorResponse(HttpStatusCode.NotFound, $@"No user with name '{userId}'.");
             }
 
-            if (!user.TrySetPassword(authorizedChange.New.ToUpperInvariant()?.Trim()))
+            if (!user.TrySetPassword(authorizedChange.New?.ToUpperInvariant()?.Trim()))
             {
                 return Request.CreateErrorResponse(HttpStatusCode.Forbidden, @"Failed to update password.");
             }
@@ -625,7 +625,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             }
 
             if (!user.TryChangePassword(
-                authorizedChange.Authorization.ToUpperInvariant()?.Trim(), authorizedChange.New.ToUpperInvariant()?.Trim()
+                authorizedChange.Authorization?.ToUpperInvariant()?.Trim(), authorizedChange.New?.ToUpperInvariant()?.Trim()
             ))
             {
                 return Request.CreateErrorResponse(HttpStatusCode.Forbidden, @"Invalid credentials.");
@@ -653,7 +653,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             }
 
             if (!user.TryChangePassword(
-                authorizedChange.Authorization.ToUpperInvariant()?.Trim(), authorizedChange.New.ToUpperInvariant()?.Trim()
+                authorizedChange.Authorization?.ToUpperInvariant()?.Trim(), authorizedChange.New?.ToUpperInvariant()?.Trim()
             ))
             {
                 return Request.CreateErrorResponse(HttpStatusCode.Forbidden, @"Invalid credentials.");
