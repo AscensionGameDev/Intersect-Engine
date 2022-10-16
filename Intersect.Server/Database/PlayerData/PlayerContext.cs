@@ -136,7 +136,7 @@ namespace Intersect.Server.Database.PlayerData
             modelBuilder.Entity<GuildVariable>().HasIndex(p => new { p.VariableId, GuildId = p.GuildId }).IsUnique();
 
             modelBuilder.Entity<User>().HasMany(b => b.Variables).WithOne(p => p.User);
-            modelBuilder.Entity<UserVariable>().HasKey();
+            modelBuilder.Entity<UserVariable>().HasKey(p => new { p.VariableId, UserId = p.UserId });
             modelBuilder.Entity<UserVariable>().Ignore(v => v.Id);
         }
 
