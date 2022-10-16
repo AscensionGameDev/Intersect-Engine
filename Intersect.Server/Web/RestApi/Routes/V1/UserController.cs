@@ -81,20 +81,32 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
         [Route("{userId:guid}")]
         [HttpGet]
-        public User UserById(Guid userId)
+        public object UserById(Guid userId)
         {
-            if (userId == Guid.Empty)
+            if (Guid.Empty == userId)
             {
-                return null;
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, $@"Invalid user id '{userId}'.");
             }
 
-            return Database.PlayerData.User.Find(userId);
+            var user = Database.PlayerData.User.Find(userId);
+
+            if (user == null)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.NotFound, $@"No user with id {userId}.");
+            }
+
+            return user;
         }
 
         [Route("{userName}")]
         [HttpGet]
         public object UserByName(string userName)
         {
+            if (string.IsNullOrWhiteSpace(userName))
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Invalid user name.");
+            }
+
             var user = Database.PlayerData.User.Find(userName);
 
             if (user == null)
@@ -162,6 +174,11 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         [HttpDelete]
         public object DeleteUserByUsername(string userName)
         {
+            if (string.IsNullOrWhiteSpace(userName))
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Invalid user name.");
+            }
+
             var user = Database.PlayerData.User.Find(userName);
 
             if (user == null)
@@ -186,6 +203,11 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         [HttpDelete]
         public object DeleteUserById(Guid userId)
         {
+            if (Guid.Empty == userId)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, $@"Invalid user id '{userId}'.");
+            }
+
             var user = Database.PlayerData.User.Find(userId);
 
             if (user == null)
@@ -210,6 +232,11 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         [HttpPost]
         public object ChangeNameByUsername(string userName, [FromBody] NameChange change)
         {
+            if (string.IsNullOrWhiteSpace(userName))
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Invalid user name.");
+            }
+
             if (!FieldChecking.IsValidUsername(change.Name, Strings.Regex.username))
             {
                 return Request.CreateErrorResponse(
@@ -243,6 +270,11 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         [HttpPost]
         public object ChangeNameById(Guid userId, [FromBody] NameChange change)
         {
+            if (Guid.Empty == userId)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, $@"Invalid user id '{userId}'.");
+            }
+
             if (!FieldChecking.IsValidUsername(change.Name, Strings.Regex.username))
             {
                 return Request.CreateErrorResponse(
@@ -263,7 +295,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
             if (user == null)
             {
-                return Request.CreateErrorResponse(HttpStatusCode.NotFound, $@"No user with id '{userId}'.");
+                return Request.CreateErrorResponse(HttpStatusCode.NotFound, $@"No user with id {userId}.");
             }
 
             user.Name = change.Name;
@@ -275,67 +307,162 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         [Route("{userName}/players")]
         [HttpGet]
         [ConfigurableAuthorize, OverrideAuthorization]
-        public List<Player> PlayersByUserName(string userName)
+        public object PlayersByUserName(string userName)
         {
             if (string.IsNullOrWhiteSpace(userName))
             {
-                return null;
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Invalid user name.");
             }
 
-            return Database.PlayerData.User.Find(userName)?.Players;
+            var user = Database.PlayerData.User.Find(userName);
+            if (user == default)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.NotFound, $@"No user with name '{userName}'.");
+            }
+
+            var players = user.Players;
+            if (players == default)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, "Unknown error occurred loading players for user.");
+            }
+
+            return players;
         }
 
         [Route("{userId:guid}/players")]
         [HttpGet]
         [ConfigurableAuthorize, OverrideAuthorization]
-        public List<Player> PlayersByUserId(Guid userId)
+        public object PlayersByUserId(Guid userId)
         {
             if (userId == Guid.Empty)
             {
-                return null;
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Invalid user id.");
             }
 
-            return Database.PlayerData.User.Find(userId)?.Players;
+            var user = Database.PlayerData.User.Find(userId);
+            if (user == default)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.NotFound, $@"No user with id {userId}.");
+            }
+
+            var players = user.Players;
+            if (players == default)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, "Unknown error occurred loading players for user.");
+            }
+
+            return players;
         }
 
         [Route("{userName}/players/{playerName}")]
         [HttpGet]
         [ConfigurableAuthorize, OverrideAuthorization]
-        public Player PlayerByNameForUserByName(string userName, string playerName)
+        public object PlayerByNameForUserByName(string userName, string playerName)
         {
-            if (string.IsNullOrWhiteSpace(userName) || string.IsNullOrWhiteSpace(playerName))
+            if (string.IsNullOrWhiteSpace(userName))
             {
-                return null;
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Invalid user name.");
             }
 
-            return Database.PlayerData.User.Find(userName)
-                ?.Players?.FirstOrDefault(player => string.Equals(player?.Name, playerName, StringComparison.Ordinal));
+            if (string.IsNullOrWhiteSpace(playerName))
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Invalid player name.");
+            }
+
+            var user = Database.PlayerData.User.Find(userName);
+            if (user == default)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.NotFound, $@"No user with name '{userName}'.");
+            }
+
+            var player = user.Players?.FirstOrDefault(p => string.Equals(p?.Name, playerName, StringComparison.Ordinal));
+            if (player == default)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.NotFound, $@"No player exists for '{userName}' with name '{playerName}'.");
+            }
+
+            return player;
         }
 
         [Route("{userId:guid}/players/{playerId:guid}")]
         [HttpGet]
         [ConfigurableAuthorize, OverrideAuthorization]
-        public Player PlayerByIdForUserById(Guid userId, Guid playerId)
+        public object PlayerByIdForUserById(Guid userId, Guid playerId)
         {
-            if (userId == Guid.Empty || playerId == Guid.Empty)
+            if (Guid.Empty == userId)
             {
-                return null;
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, $@"Invalid user id '{userId}'.");
             }
 
-            return Database.PlayerData.User.Find(userId)?.Players?.FirstOrDefault(player => player?.Id == playerId);
+            if (Guid.Empty == playerId)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, $@"Invalid player id '{playerId}'.");
+            }
+
+            var user = Database.PlayerData.User.Find(userId);
+
+            if (user == default)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.NotFound, $@"No user with id '{userId}'.");
+            }
+
+            var players = user.Players;
+            if (players == default)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, "Unknown error occurred loading players for user.");
+            }
+
+            var player = players.FirstOrDefault(p => p?.Id == playerId);
+
+            if (player == default)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.NotFound, $@"No player found on user {userId} with id {playerId}.");
+            }
+
+            return player;
         }
 
         [Route("{userId:guid}/players/{index:int}")]
         [HttpGet]
         [ConfigurableAuthorize, OverrideAuthorization]
-        public Player PlayerByIndexForUserById(Guid userId, int index)
+        public object PlayerByIndexForUserById(Guid userId, int index)
         {
-            if (userId == Guid.Empty || index < 0)
+            if (Guid.Empty == userId)
             {
-                return null;
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, $@"Invalid user id '{userId}'.");
             }
 
-            return Database.PlayerData.User.Find(userId)?.Players?.Skip(index).FirstOrDefault();
+            if (index < 0)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, $@"Invalid player index {index}.");
+            }
+
+            var user = Database.PlayerData.User.Find(userId);
+
+            if (user == null)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.NotFound, $@"No user with id '{userId}'.");
+            }
+
+            var players = user.Players;
+            if (players == default)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, "Unknown error occurred loading players for user.");
+            }
+
+            if (index >= players.Count)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, $@"The user only has {players.Count} players, {index} is out of bounds.");
+            }
+
+            var player = players.Skip(index).FirstOrDefault();
+
+            if (player == default)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.NotFound, $@"No player found on user {userId} with index {index}.");
+            }
+
+            return player;
         }
 
         #region "Change Email"
@@ -345,6 +472,11 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         [HttpPost]
         public object UserChangeEmailByName(string userName, [FromBody] AdminChange authorizedChange)
         {
+            if (string.IsNullOrWhiteSpace(userName))
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Invalid user name.");
+            }
+
             var email = authorizedChange.New;
 
             if (string.IsNullOrWhiteSpace(email))
@@ -380,6 +512,11 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         [HttpPost]
         public object UserChangeEmailById(Guid userId, [FromBody] AdminChange authorizedChange)
         {
+            if (Guid.Empty == userId)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, $@"Invalid user id '{userId}'.");
+            }
+
             var email = authorizedChange.New;
 
             if (string.IsNullOrWhiteSpace(email))
@@ -414,6 +551,11 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         [HttpPost]
         public object UserChangeEmailByName(string userName, [FromBody] AuthorizedChange authorizedChange)
         {
+            if (string.IsNullOrWhiteSpace(userName))
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Invalid user name.");
+            }
+
             var email = authorizedChange.New;
 
             if (string.IsNullOrWhiteSpace(email))
@@ -453,6 +595,11 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         [HttpPost]
         public object UserChangeEmailById(Guid userId, [FromBody] AuthorizedChange authorizedChange)
         {
+            if (Guid.Empty == userId)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, $@"Invalid user id '{userId}'.");
+            }
+
             var email = authorizedChange.New;
 
             if (string.IsNullOrWhiteSpace(email))
@@ -496,6 +643,11 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         [HttpPost]
         public object UserValidatePasswordByName(string userName, [FromBody] PasswordValidation data)
         {
+            if (string.IsNullOrWhiteSpace(userName))
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Invalid user name.");
+            }
+
             if (string.IsNullOrWhiteSpace(data.Password))
             {
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, @"No password provided.");
@@ -525,6 +677,11 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         [HttpPost]
         public object UserValidatePasswordById(Guid userId, [FromBody] PasswordValidation data)
         {
+            if (Guid.Empty == userId)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, $@"Invalid user id '{userId}'.");
+            }
+
             if (string.IsNullOrWhiteSpace(data.Password))
             {
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, @"No password provided.");
@@ -559,6 +716,11 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         [HttpPost]
         public object UserChangePassword(string userName, [FromBody] AdminChange authorizedChange)
         {
+            if (string.IsNullOrWhiteSpace(userName))
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Invalid user name.");
+            }
+
             if (!authorizedChange.IsValid)
             {
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, @"Invalid payload");
@@ -586,6 +748,11 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         [HttpPost]
         public object UserChangePassword(Guid userId, [FromBody] AdminChange authorizedChange)
         {
+            if (Guid.Empty == userId)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, $@"Invalid user id '{userId}'.");
+            }
+
             if (!authorizedChange.IsValid)
             {
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, @"Invalid payload");
@@ -612,6 +779,11 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         [HttpPost]
         public object UserChangePassword(string userName, [FromBody] AuthorizedChange authorizedChange)
         {
+            if (string.IsNullOrWhiteSpace(userName))
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Invalid user name.");
+            }
+
             if (!authorizedChange.IsValid)
             {
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, @"Invalid payload");
@@ -640,6 +812,11 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         [HttpPost]
         public object UserChangePassword(Guid userId, [FromBody] AuthorizedChange authorizedChange)
         {
+            if (Guid.Empty == userId)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, $@"Invalid user id '{userId}'.");
+            }
+
             if (!authorizedChange.IsValid)
             {
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, @"Invalid payload");
@@ -672,6 +849,11 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         [HttpGet]
         public object UserSendPasswordResetEmailByName(string userName)
         {
+            if (string.IsNullOrWhiteSpace(userName))
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Invalid user name.");
+            }
+
             var user = Database.PlayerData.User.Find(userName);
 
             if (user == null)
@@ -768,14 +950,14 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             [FromBody] AdminActionParameters actionParameters
         )
         {
+            if (string.IsNullOrWhiteSpace(userName))
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Invalid user name.");
+            }
+
             if (!Enum.TryParse<AdminActions>(act, true, out var adminAction))
             {
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, @"Invalid action.");
-            }
-
-            if (string.IsNullOrWhiteSpace(userName))
-            {
-                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, $@"Invalid user name '{userName}'.");
             }
 
             Tuple<Client, User> fetchResult;
