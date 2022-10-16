@@ -1,4 +1,4 @@
-﻿namespace Intersect.Enums
+namespace Intersect.Enums
 {
 
     public enum CommonEventTrigger
@@ -39,6 +39,8 @@
         InventoryChanged,
 
         MapChanged,
+
+        UserVariableChange,
 
     }
 

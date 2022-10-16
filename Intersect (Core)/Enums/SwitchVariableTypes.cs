@@ -21,7 +21,9 @@ namespace Intersect.Enums
 
         ServerVariable,
 
-        GuildVariable
+        GuildVariable,
+
+        UserVariable,
 
     }
 
@@ -92,6 +94,20 @@ namespace Intersect.Enums
         LeftShiftGuildVar, 
         
         RightShiftGuildVar,
+
+        DuplicateUserVariable,
+
+        AddUserVariable,
+
+        SubtractUserVariable,
+
+        MultiplyUserVariable,
+
+        DivideUserVariable,
+
+        LeftShiftUserVariable,
+
+        RightShiftUserVariable,
     }
 
     public enum VariableComparators

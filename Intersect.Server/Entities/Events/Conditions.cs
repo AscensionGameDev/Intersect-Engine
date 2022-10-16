@@ -123,6 +123,10 @@ namespace Intersect.Server.Entities.Events
             {
                 value = player.Guild?.GetVariableValue(condition.VariableId);
             }
+            else if (condition.VariableType == VariableTypes.UserVariable)
+            {
+                value = player.User.GetVariableValue(condition.VariableId);
+            }
 
             if (value == null)
             {
@@ -544,6 +548,10 @@ namespace Intersect.Server.Entities.Events
                 {
                     compValue = player.Guild?.GetVariableValue(comparison.CompareVariableId);
                 }
+                else if (comparison.CompareVariableType == VariableTypes.UserVariable)
+                {
+                    compValue = player.User.GetVariableValue(comparison.CompareVariableId);
+                }
             }
             else
             {
@@ -599,6 +607,10 @@ namespace Intersect.Server.Entities.Events
                 else if (comparison.CompareVariableType == VariableTypes.GuildVariable)
                 {
                     compValue = player.Guild?.GetVariableValue(comparison.CompareVariableId);
+                }
+                else if (comparison.CompareVariableType == VariableTypes.UserVariable)
+                {
+                    compValue = player.User.GetVariableValue(comparison.CompareVariableId);
                 }
             }
             else

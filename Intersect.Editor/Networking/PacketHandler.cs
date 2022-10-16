@@ -665,6 +665,21 @@ namespace Intersect.Editor.Networking
                     }
 
                     break;
+
+                case GameObjectType.UserVariable:
+                    if (deleted)
+                    {
+                        var pvar = UserVariableBase.Get(id);
+                        pvar.Delete();
+                    }
+                    else
+                    {
+                        var pvar = new UserVariableBase(id);
+                        pvar.Load(json);
+                        UserVariableBase.Lookup.Set(id, pvar);
+                    }
+
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
