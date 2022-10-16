@@ -975,22 +975,6 @@ namespace Intersect.Server.Migrations.Game
                                 .HasForeignKey("Intersect.GameObjects.ConsumableData", "ItemBaseId")
                                 .OnDelete(DeleteBehavior.Cascade);
                         });
-
-                    b.OwnsOne("Intersect.GameObjects.EffectData", "Effect", b1 =>
-                        {
-                            b1.Property<Guid>("ItemBaseId");
-
-                            b1.Property<int>("Percentage");
-
-                            b1.Property<byte>("Type");
-
-                            b1.ToTable("Items");
-
-                            b1.HasOne("Intersect.GameObjects.ItemBase")
-                                .WithOne("Effect")
-                                .HasForeignKey("Intersect.GameObjects.EffectData", "ItemBaseId")
-                                .OnDelete(DeleteBehavior.Cascade);
-                        });
                 });
 
             modelBuilder.Entity("Intersect.GameObjects.ResourceBase", b =>

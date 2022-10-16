@@ -455,40 +455,48 @@ namespace Intersect.Client.Interface.Game.Character
             }
 
             //Getting extra buffs
-            if (item.Effect.Type != EffectType.None && item.Effect.Percentage > 0)
+            if (item.Effects.Find(effect => effect.Type != EffectType.None && effect.Percentage > 0) != default)
             {
-                switch (item.Effect.Type)
+                foreach(var effect in item.Effects)
                 {
-                    case EffectType.CooldownReduction:
-                        CooldownAmount += item.Effect.Percentage;
-                        mCooldownReduction?.SetText(Strings.Character.CooldownReduction.ToString(CooldownAmount));
+                    if (effect.Percentage <= 0)
+                    {
+                        continue;
+                    }
 
-                        break;
-                    case EffectType.Lifesteal:
-                        LifeStealAmount += item.Effect.Percentage;
-                        mLifeSteal?.SetText(Strings.Character.Lifesteal.ToString(LifeStealAmount));
+                    switch (effect.Type)
+                    {
+                        case EffectType.CooldownReduction:
+                            CooldownAmount += effect.Percentage;
+                            mCooldownReduction?.SetText(Strings.Character.CooldownReduction.ToString(CooldownAmount));
 
-                        break;
-                    case EffectType.Tenacity:
-                        TenacityAmount += item.Effect.Percentage;
-                        mTenacity?.SetText(Strings.Character.Tenacity.ToString(TenacityAmount));
+                            break;
+                        case EffectType.Lifesteal:
+                            LifeStealAmount += effect.Percentage;
+                            mLifeSteal?.SetText(Strings.Character.Lifesteal.ToString(LifeStealAmount));
 
-                        break;
-                    case EffectType.Luck:
-                        LuckAmount += item.Effect.Percentage;
-                        mLuck?.SetText(Strings.Character.Luck.ToString(LuckAmount));
+                            break;
+                        case EffectType.Tenacity:
+                            TenacityAmount += effect.Percentage;
+                            mTenacity?.SetText(Strings.Character.Tenacity.ToString(TenacityAmount));
 
-                        break;
-                    case EffectType.EXP:
-                        ExtraExpAmount += item.Effect.Percentage;
-                        mExtraExp?.SetText(Strings.Character.ExtraExp.ToString(ExtraExpAmount));
+                            break;
+                        case EffectType.Luck:
+                            LuckAmount += effect.Percentage;
+                            mLuck?.SetText(Strings.Character.Luck.ToString(LuckAmount));
 
-                        break;
-                    case EffectType.Manasteal:
-                        ManaStealAmount += item.Effect.Percentage;
-                        mManaSteal?.SetText(Strings.Character.Manasteal.ToString(ManaStealAmount));
+                            break;
+                        case EffectType.EXP:
+                            ExtraExpAmount += effect.Percentage;
+                            mExtraExp?.SetText(Strings.Character.ExtraExp.ToString(ExtraExpAmount));
 
-                        break;
+                            break;
+                        case EffectType.Manasteal:
+                            ManaStealAmount += effect.Percentage;
+                            mManaSteal?.SetText(Strings.Character.Manasteal.ToString(ManaStealAmount));
+
+                            break;
+                    }
                 }
             }
         }

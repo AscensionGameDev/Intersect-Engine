@@ -141,9 +141,6 @@ namespace Intersect.GameObjects
 
         public bool TwoHanded { get; set; }
 
-        [Obsolete("Use Effects (List<EffectData>) instead")]
-        public EffectData Effect { get; set; }
-
         public int SlotCount { get; set; }
 
         [Column("Spell")]

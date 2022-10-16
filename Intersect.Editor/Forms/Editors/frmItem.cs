@@ -460,8 +460,6 @@ namespace Intersect.Editor.Forms.Editors
 
                 mEditorItem.TwoHanded = false;
                 mEditorItem.EquipmentSlot = 0;
-                mEditorItem.Effect.Type = EffectType.None;
-                mEditorItem.Effect.Percentage = 0;
 
                 mEditorItem.SlotCount = 0;
 
