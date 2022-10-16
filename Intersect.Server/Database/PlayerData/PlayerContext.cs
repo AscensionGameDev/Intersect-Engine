@@ -1,4 +1,4 @@
-﻿using System.Data.Common;
+using System.Data.Common;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -71,6 +71,8 @@ namespace Intersect.Server.Database.PlayerData
 
         public DbSet<GuildVariable> Guild_Variables { get; set; }
 
+        public DbSet<UserVariable> User_Variables { get; set; }
+
         internal async ValueTask Commit(
             bool commit = false,
             CancellationToken cancellationToken = default(CancellationToken)
@@ -132,6 +134,10 @@ namespace Intersect.Server.Database.PlayerData
 
             modelBuilder.Entity<Guild>().HasMany(b => b.Variables).WithOne(p => p.Guild);
             modelBuilder.Entity<GuildVariable>().HasIndex(p => new { p.VariableId, GuildId = p.GuildId }).IsUnique();
+
+            modelBuilder.Entity<User>().HasMany(b => b.Variables).WithOne(p => p.User);
+            modelBuilder.Entity<UserVariable>().HasKey();
+            modelBuilder.Entity<UserVariable>().Ignore(v => v.Id);
         }
 
         public void Seed()

@@ -3722,6 +3722,11 @@ namespace Intersect.Server.Networking
 
                     break;
 
+                case GameObjectType.UserVariable:
+                    obj = UserVariableBase.Get(id);
+
+                    break;
+
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -3846,6 +3851,11 @@ namespace Intersect.Server.Networking
 
                     break;
 
+                case GameObjectType.UserVariable:
+                    obj = UserVariableBase.Get(id);
+
+                    break;
+
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -3914,6 +3924,10 @@ namespace Intersect.Server.Networking
                     else if (type == GameObjectType.GuildVariable)
                     {
                         DbInterface.CacheGuildVariableEventTextLookups();
+                    }
+                    else if (type == GameObjectType.UserVariable)
+                    {
+                        DbInterface.CacheUserVariableEventTextLookups();
                     }
 
                     DbInterface.SaveGameObject(obj);

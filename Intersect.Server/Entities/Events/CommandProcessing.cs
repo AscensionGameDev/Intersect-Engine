@@ -1675,6 +1675,12 @@ namespace Intersect.Server.Entities.Events
                         sb.Replace(val.Key, (player.Guild?.GetVariableValue(val.Value.Id) ?? new VariableValue()).ToString((val.Value).Type));
                 }
 
+                foreach (var val in DbInterface.UserVariableEventTextLookup)
+                {
+                    if (input.Contains(val.Key))
+                        sb.Replace(val.Key, (player.User.GetVariableValue(val.Value.Id) ?? new VariableValue()).ToString((val.Value).DataType));
+                }
+
                 if (instance != null)
                 {
                     var parms = instance.GetParams(player);

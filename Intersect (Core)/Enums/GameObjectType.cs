@@ -1,4 +1,4 @@
-﻿using Intersect.Extensions;
+using Intersect.Extensions;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Crafting;
 using Intersect.GameObjects.Events;
@@ -62,6 +62,9 @@ namespace Intersect.Enums
 
         [GameObjectInfo(typeof(GuildVariableBase), "guild_variables")]
         GuildVariable,
+
+        [GameObjectInfo(typeof(UserVariableBase), "user_variables")]
+        UserVariable,
 
     }
 

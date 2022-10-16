@@ -668,6 +668,9 @@ namespace Intersect.Server.Localization
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString guildvar = @"\guildvar";
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString AccountVar = @"\accountvar";
+
         }
 
         public sealed partial class FormulasNamespace : LocaleNamespace

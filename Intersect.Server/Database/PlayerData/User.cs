@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -7,6 +7,8 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
+using Intersect.Enums;
+using Intersect.GameObjects;
 using Intersect.Logging;
 using Intersect.Logging.Output;
 using Intersect.Security;
@@ -130,6 +132,17 @@ namespace Intersect.Server.Database.PlayerData
                 mLoadedPlaytime = value;
             }
         }
+
+        /// <summary>
+        /// Account Variable Values
+        /// </summary>
+        [JsonIgnore]
+        public virtual List<UserVariable> Variables { get; set; } = new List<UserVariable>();
+
+        /// <summary>
+        /// Variables that have been updated for this account which need to be saved to the db
+        /// </summary>
+        public ConcurrentDictionary<Guid, UserVariableBase> UpdatedVariables = new ConcurrentDictionary<Guid, UserVariableBase>();
 
         [NotMapped]
         public DateTime? LoginTime { get; set; }
@@ -611,7 +624,93 @@ namespace Intersect.Server.Database.PlayerData
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        public void Update()
+        {
+            if (UpdatedVariables.Count > 0)
+            {
+                Save();
+                UpdatedVariables.Clear();
+            }
+        }
 
+        /// <summary>
+        /// Returns a variable object given a account variable id
+        /// </summary>
+        /// <param name="id">Variable id</param>
+        /// <param name="createIfNull">Creates this variable for the account if it hasn't been set yet</param>
+        /// <returns></returns>
+        public Variable GetVariable(Guid id, bool createIfNull = false)
+        {
+            foreach (var v in Variables)
+            {
+                if (v.VariableId == id)
+                {
+                    return v;
+                }
+            }
+
+            if (createIfNull)
+            {
+                return CreateVariable(id);
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Creates a variable for this account with a given id if it doesn't already exist
+        /// </summary>
+        /// <param name="id">Variablke id</param>
+        /// <returns></returns>
+        private Variable CreateVariable(Guid id)
+        {
+            if (UserVariableBase.Get(id) == null)
+            {
+                return null;
+            }
+
+            var variable = new UserVariable(id);
+            Variables.Add(variable);
+
+            return variable;
+        }
+
+        /// <summary>
+        /// Gets the value of a account variable given a variable id
+        /// </summary>
+        /// <param name="id">Variable id</param>
+        /// <returns></returns>
+        public GameObjects.Switches_and_Variables.VariableValue GetVariableValue(Guid id)
+        {
+            var v = GetVariable(id, true);
+
+            if (v == null)
+            {
+                return new GameObjects.Switches_and_Variables.VariableValue();
+            }
+
+            return v.Value;
+        }
+
+        /// <summary>
+        /// Starts all common events with a specified trigger for any character online of this account
+        /// </summary>
+        /// <param name="trigger">The common event trigger to run</param>
+        /// <param name="command">The command which started this common event</param>
+        /// <param name="param">Common event parameter</param>
+        public void StartCommonEventsWithTriggerForAll(CommonEventTrigger trigger, string command, string param)
+        {
+            foreach (var plyr in Players)
+            {
+                if (Player.FindOnline(plyr.Id) != null)
+                {
+                    plyr.StartCommonEventsWithTrigger(trigger, command, param);
+                }
+            }
+        }
 
         #region Instance Variables
 
@@ -728,6 +827,7 @@ namespace Intersect.Server.Database.PlayerData
                     .ThenInclude(c => c.Spells)
                     .Include(p => p.Players)
                     .ThenInclude(c => c.Bank)
+                    .Include(p => p.Variables)
                     .FirstOrDefault()
             ) ??
             throw new InvalidOperationException();
@@ -753,6 +853,7 @@ namespace Intersect.Server.Database.PlayerData
                     .ThenInclude(c => c.Spells)
                     .Include(p => p.Players)
                     .ThenInclude(c => c.Bank)
+                    .Include(p => p.Variables)
                     .FirstOrDefault()
             ) ??
             throw new InvalidOperationException();
@@ -777,6 +878,7 @@ namespace Intersect.Server.Database.PlayerData
                     .ThenInclude(c => c.Spells)
                     .Include(p => p.Players)
                     .ThenInclude(c => c.Bank)
+                    .Include(p => p.Variables)
                     .FirstOrDefault()
             ) ??
             throw new InvalidOperationException();
@@ -801,6 +903,7 @@ namespace Intersect.Server.Database.PlayerData
                     .ThenInclude(c => c.Spells)
                     .Include(p => p.Players)
                     .ThenInclude(c => c.Bank)
+                    .Include(p => p.Variables)
                     .FirstOrDefault()
                 ) ?? throw new InvalidOperationException();
 
@@ -834,6 +937,7 @@ namespace Intersect.Server.Database.PlayerData
                     .ThenInclude(c => c.Spells)
                     .Include(p => p.Players)
                     .ThenInclude(c => c.Bank)
+                    .Include(p => p.Variables)
                     .FirstOrDefault()
                 ) ?? throw new InvalidOperationException();
 

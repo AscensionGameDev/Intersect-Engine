@@ -5200,6 +5200,12 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString textidguildvar = @"Text Id: \guildvar ";
 
+            public static LocalizedString UserVariable = @"Account Variable";
+
+            public static LocalizedString UserVariables = @"Account Variables";
+
+            public static LocalizedString TextIdUserVar = @"Text Id: \accountvar ";
+
         }
 
         public partial struct TaskEditor
