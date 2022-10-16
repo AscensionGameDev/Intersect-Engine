@@ -3383,19 +3383,14 @@ namespace Intersect.Server.Entities
 
             for (var i = 0; i < Options.EquipmentSlots.Count; i++)
             {
-                if (Equipment[i] > -1)
+                if (Equipment[i] > -1 && Items[Equipment[i]].ItemId != Guid.Empty)
                 {
-                    if (Items[Equipment[i]].ItemId != Guid.Empty)
+                    var item = ItemBase.Get(Items[Equipment[i]].ItemId);
+                    if (item == null || !item.EffectsEnabled.Contains(effect))
                     {
-                        var item = ItemBase.Get(Items[Equipment[i]].ItemId);
-                        if (item != null)
-                        {
-                            if (item.Effect.Type == effect)
-                            {
-                                value += item.Effect.Percentage;
-                            }
-                        }
+                        continue;   
                     }
+                    value += item.GetEffectPercentage(effect);
                 }
             }
 
