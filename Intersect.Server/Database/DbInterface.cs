@@ -1324,7 +1324,7 @@ namespace Intersect.Server.Database
             {
                 if (!string.IsNullOrWhiteSpace(variable.TextId) && !addedIds.Contains(variable.TextId))
                 {
-                    lookup.Add(Strings.Events.AccountVar + "{" + variable.TextId + "}", variable);
+                    lookup.Add(Strings.Events.UserVariable + "{" + variable.TextId + "}", variable);
                     addedIds.Add(variable.TextId);
                 }
             }
