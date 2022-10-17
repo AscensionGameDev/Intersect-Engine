@@ -97,6 +97,8 @@ namespace Intersect.Server.Database.GameData
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Item>().Property<int>("Effect_Percentage").HasDefaultValue(default(int));
+            modelBuilder.Entity<Item>().Property<byte>("Effect_Type").HasDefaultValue(default(byte));
         }
 
         public override void MigrationsProcessed(string[] migrations)
