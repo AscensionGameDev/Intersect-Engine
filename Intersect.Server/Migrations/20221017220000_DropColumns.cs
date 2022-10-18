@@ -10,30 +10,7 @@ namespace Intersect.Server.Migrations
             switch (migrationBuilder.ActiveProvider)
             {
                 case "Microsoft.EntityFrameworkCore.Sqlite":
-                    _ = migrationBuilder.Sql(
-                        @"
-                        CREATE TABLE Player_Spells__migration AS SELECT Id, PlayerId, Slot, SpellId FROM Player_Spells;
-                        DROP TABLE Player_Spells;
-                        CREATE TABLE Player_Spells AS SELECT * FROM Player_Spells__migration;
-                        DROP TABLE Player_Spells__migration;
-                        "
-                    );
-                    _ = migrationBuilder.Sql(
-                        @"
-                        CREATE TABLE Players__migration AS SELECT Id, UserId, Name, LastOnline, MapId, X, Y, Z, Dir, Gender, Sprite, Face, Level, Exp, ClassId, Vitals, StatPoints, BaseStats, StatPointAllocations, Equipment, NameColor, ItemCooldowns, SpellCooldowns, FooterLabel, HeaderLabel, Color, CreationDate, DbGuildId, GuildJoinDate, GuildRank, PlayTimeSeconds, InstanceType, LastOverworldMapId, LastOverworldX, LastOverworldY, PersonalMapInstanceId, SharedInstanceRespawnDir, SharedInstanceRespawnId, SharedInstanceRespawnX, SharedInstanceRespawnY, SharedMapInstanceId FROM Players;
-                        DROP TABLE Players;
-                        CREATE TABLE Players AS SELECT * FROM Players__migration;
-                        DROP TABLE Players__migration;
-                        "
-                    );
-                    _ = migrationBuilder.Sql(
-                        @"
-                        CREATE TABLE Users__migration AS SELECT Id, Name, Salt, Password, Email, Power, PasswordResetCode, PasswordResetTime, LastIp, RegistrationDate, PlayTimeSeconds FROM Users;
-                        DROP TABLE Users;
-                        CREATE TABLE Users AS SELECT * FROM Users__migration;
-                        DROP TABLE Users__migration;
-                        "
-                    );
+                    // Removed because this will wipe out anything fkey reliant
                     break;
 
                 case "Pomelo.EntityFrameworkCore.MySql":
