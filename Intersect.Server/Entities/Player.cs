@@ -5183,78 +5183,82 @@ namespace Intersect.Server.Entities
             }
         }
 
-        //Equipment
-        public void EquipItem(ItemBase itemBase, int slot = -1)
+        public bool TryGetEquipmentSlot(int equipmentSlot, out int inventorySlot)
         {
-            if (itemBase == null)
+            inventorySlot = -1;
+            if (equipmentSlot > -1 && equipmentSlot < Equipment.Length)
+            {
+                inventorySlot = Equipment.ElementAtOrDefault(equipmentSlot);
+            }
+
+            return inventorySlot > -1;
+        }
+
+        public void SetEquipmentSlot(int equipmentSlot, int inventorySlot)
+        {
+            if (equipmentSlot < 0 || equipmentSlot > Equipment.Length)
             {
                 return;
             }
 
-            if (itemBase.ItemType == ItemTypes.Equipment)
+            Equipment[equipmentSlot] = inventorySlot;
+        }
+
+        public bool TryGetEquippedItem(int equipmentSlot, out Item equippedItem)
+        {
+            equippedItem = null;
+            if (equipmentSlot < -1 || equipmentSlot > Equipment.Length)
             {
-                if (slot == -1)
-                {
-                    for (var i = 0; i < Options.MaxInvItems; i++)
-                    {
-                        var tempItemBase = Items[i].Descriptor;
-                        if (itemBase != null)
-                        {
-                            if (itemBase == tempItemBase)
-                            {
-                                slot = i;
-
-                                break;
-                            }
-                        }
-                    }
-                }
-
-                if (slot != -1)
-                {
-                    if (itemBase.EquipmentSlot == Options.WeaponIndex)
-                    {
-                        if (Options.WeaponIndex > -1)
-                        {
-                            //If we are equipping a 2hand weapon, remove the shield
-                            Equipment[Options.WeaponIndex] = slot;
-                            if (itemBase.TwoHanded)
-                            {
-                                if (Options.ShieldIndex > -1 && Options.ShieldIndex < Equipment.Length)
-                                {
-                                    Equipment[Options.ShieldIndex] = -1;
-                                }
-                            }
-                        }
-                    }
-                    else if (itemBase.EquipmentSlot == Options.ShieldIndex)
-                    {
-                        if (Options.ShieldIndex > -1)
-                        {
-                            if (Options.WeaponIndex > -1 && Equipment[Options.WeaponIndex] > -1)
-                            {
-                                //If we have a 2-hand weapon, remove it to equip this new shield
-                                var item = Items[Equipment[Options.WeaponIndex]].Descriptor;
-                                if (item != null && item.TwoHanded)
-                                {
-                                    Equipment[Options.WeaponIndex] = -1;
-                                }
-                            }
-
-                            Equipment[Options.ShieldIndex] = slot;
-                        }
-                    }
-                    else
-                    {
-                        Equipment[itemBase.EquipmentSlot] = slot;
-                    }
-                }
-
-                FixVitals();
-                StartCommonEventsWithTrigger(CommonEventTrigger.EquipChange);
-                PacketSender.SendPlayerEquipmentToProximity(this);
-                PacketSender.SendEntityStats(this);
+                return false;
             }
+
+            equippedItem = Items[Equipment[Options.WeaponIndex]];
+            return true;
+        }
+
+        //Equipment
+        public void EquipItem(ItemBase itemBase, int slot = -1)
+        {
+            if (itemBase == null || itemBase.ItemType != ItemTypes.Equipment)
+            {
+                return;
+            }
+
+            // Find the appropriate slot if not passed in
+            if (slot == -1)
+            {
+                for (var i = 0; i < Options.MaxInvItems; i++)
+                {
+                    if (itemBase == Items[i].Descriptor)
+                    {
+                        slot = i;
+                        break;
+                    }
+                }
+            }
+
+            if (slot != -1)
+            {
+                if (itemBase.EquipmentSlot == Options.WeaponIndex)
+                {
+                    //If we are equipping a 2hand weapon, remove the shield
+                    if (itemBase.TwoHanded)
+                    {
+                        UnequipItem(Options.ShieldIndex, false);
+                    }
+                }
+                else if (itemBase.EquipmentSlot == Options.ShieldIndex)
+                {
+                    // If we are equipping a shield, remove any 2-handed weapon
+                    if (TryGetEquippedItem(Options.WeaponIndex, out Item weapon) && weapon.Descriptor.TwoHanded)
+                    {
+                        UnequipItem(Options.WeaponIndex, false);
+                    }
+                }
+                SetEquipmentSlot(itemBase.EquipmentSlot, slot);
+            }
+
+            ProcessEquipmentUpdated(true);
         }
 
         public void UnequipItem(Guid itemId, bool sendUpdate = true)
@@ -5263,31 +5267,37 @@ namespace Intersect.Server.Entities
             for (int i = 0; i < Options.EquipmentSlots.Count; i++)
             {
                 var itemSlot = Equipment[i];
-                if (itemSlot > -1 && Items[itemSlot]?.ItemId == itemId)
+                if (Items.ElementAtOrDefault(itemSlot)?.ItemId == itemId)
                 {
-                    Equipment[i] = -1;
+                    UnequipItem(i, false);
                     updated = true;
                 }
             }
-            if (updated)
+            if (!updated)
             {
-                FixVitals();
-                StartCommonEventsWithTrigger(CommonEventTrigger.EquipChange);
-                if (sendUpdate)
-                {
-                    PacketSender.SendPlayerEquipmentToProximity(this);
-                    PacketSender.SendEntityStats(this);
-                }
+                return;
             }
+
+            ProcessEquipmentUpdated(sendUpdate);
         }
 
-        public void UnequipItem(int slot, bool sendUpdate = true)
+        public void UnequipItem(int equipmentSlot, bool sendUpdate = true)
         {
-            Equipment[slot] = -1;
+            if (equipmentSlot < 0 || equipmentSlot > Equipment.Length)
+            {
+                return;
+            }
+
+            Equipment[equipmentSlot] = -1;
+            ProcessEquipmentUpdated(sendUpdate);
+        }
+
+        public void ProcessEquipmentUpdated(bool sendPackets)
+        {
             FixVitals();
             StartCommonEventsWithTrigger(CommonEventTrigger.EquipChange);
 
-            if (sendUpdate)
+            if (sendPackets)
             {
                 PacketSender.SendPlayerEquipmentToProximity(this);
                 PacketSender.SendEntityStats(this);

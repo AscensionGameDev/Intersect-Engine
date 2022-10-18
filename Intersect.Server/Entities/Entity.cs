@@ -1777,12 +1777,9 @@ namespace Intersect.Server.Entities
             //Check on each attack if the enemy is a player AND if they are blocking.
             if (enemy is Player player && player.Blocking)
             {
-                //Getting the ID and Item the player is currently using.
-                var itemId = player.Items[player.Equipment[Options.ShieldIndex]].ItemId;
-                var item = ItemBase.Get(itemId);
-
-                if (item != null)
+                if (player.TryGetEquipmentSlot(Options.ShieldIndex, out var slot) && player.TryGetItemAt(slot, out var itm))
                 {
+                    var item = itm.Descriptor;
                     var originalBaseDamage = baseDamage;
                     var blockChance = item.BlockChance;
                     var blockAmount = item.BlockAmount / 100.0;
