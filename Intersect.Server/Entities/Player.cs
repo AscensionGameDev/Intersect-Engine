@@ -92,6 +92,28 @@ namespace Intersect.Server.Entities
         [NotMapped]
         public int[] Equipment { get; set; } = new int[Options.EquipmentSlots.Count];
 
+        /// <summary>
+        /// Returns a list of all equipped <see cref="Item"/>s
+        /// </summary>
+        [NotMapped, JsonIgnore]
+        public List<Item> EquippedItems
+        {
+            get
+            {
+                var equippedItems = new List<Item>();
+                for (var i = 0; i < Options.EquipmentSlots.Count; i++)
+                {
+                    if (!TryGetEquippedItem(i, out var item))
+                    {
+                        continue;
+                    }
+                    equippedItems.Add(item);
+                }
+
+                return equippedItems;
+            }
+        }
+
         public DateTime? LastOnline { get; set; }
 
         public DateTime? CreationDate { get; set; } = DateTime.UtcNow;
@@ -980,19 +1002,11 @@ namespace Intersect.Server.Entities
             //                                      (itemDescriptor.PercentageVitalsGiven[vital] * baseVital) / 100
             //                ) ?? 0;
             // Loop through equipment and see if any items grant vital buffs
-            for (var i = 0; i < Options.EquipmentSlots.Count; i++)
+
+            foreach(var item in EquippedItems)
             {
-                if (Equipment[i] >= 0 && Equipment[i] < Options.MaxInvItems && Equipment[i] < Items.Count)
-                {
-                    if (Items[Equipment[i]].ItemId != Guid.Empty)
-                    {
-                        var item = ItemBase.Get(Items[Equipment[i]].ItemId);
-                        if (item != null)
-                        {
-                            classVital += item.VitalsGiven[vital] + item.PercentageVitalsGiven[vital] * baseVital / 100;
-                        }
-                    }
-                }
+                var descriptor = item.Descriptor;
+                classVital += descriptor.VitalsGiven[vital] + descriptor.PercentageVitalsGiven[vital] * baseVital / 100;
             }
 
             //Must have at least 1 hp and no less than 0 mp
@@ -1335,13 +1349,7 @@ namespace Intersect.Server.Entities
                 return;
             }
 
-            ItemBase weapon = null;
-            if (Options.WeaponIndex > -1 &&
-                Options.WeaponIndex < Equipment.Length &&
-                Equipment[Options.WeaponIndex] >= 0)
-            {
-                weapon = ItemBase.Get(Items[Equipment[Options.WeaponIndex]].ItemId);
-            }
+            var weapon = TryGetEquippedItem(Options.WeaponIndex, out var item) ? item.Descriptor : null;
 
             //If Entity is resource, check for the correct tool and make sure its not a spell cast.
             if (target is Resource resource)
@@ -1499,7 +1507,6 @@ namespace Intersect.Server.Entities
 
         public override int CalculateAttackTime()
         {
-            ItemBase weapon = null;
             var attackTime = base.CalculateAttackTime();
 
             var cls = ClassBase.Get(ClassId);
@@ -1508,12 +1515,7 @@ namespace Intersect.Server.Entities
                 attackTime = cls.AttackSpeedValue;
             }
 
-            if (Options.WeaponIndex > -1 &&
-                Options.WeaponIndex < Equipment.Length &&
-                Equipment[Options.WeaponIndex] >= 0)
-            {
-                weapon = ItemBase.Get(Items[Equipment[Options.WeaponIndex]].ItemId);
-            }
+            var weapon = TryGetEquippedItem(Options.WeaponIndex, out var item) ? item.Descriptor : null;
 
             if (weapon != null)
             {
@@ -1543,21 +1545,13 @@ namespace Intersect.Server.Entities
             var percentageStats = 0;
 
             //Add up player equipment values
-            for (var i = 0; i < Options.EquipmentSlots.Count; i++)
+            foreach (var equippedItem in EquippedItems)
             {
-                var equipment = Equipment[i];
-                if (equipment >= 0 && equipment < Items.Count)
+                var descriptor = equippedItem.Descriptor;
+                if (descriptor != null)
                 {
-                    var item = Items[equipment];
-                    if (item.ItemId != Guid.Empty)
-                    {
-                        var descriptor = ItemBase.Get(item.ItemId);
-                        if (descriptor != null)
-                        {
-                            flatStats += descriptor.StatsGiven[(int)statType] + item.StatBuffs[(int)statType];
-                            percentageStats += descriptor.PercentageStatsGiven[(int)statType];
-                        }
-                    }
+                    flatStats += descriptor.StatsGiven[(int)statType] + equippedItem.StatBuffs[(int)statType];
+                    percentageStats += descriptor.PercentageStatsGiven[(int)statType];
                 }
             }
 
@@ -2853,21 +2847,10 @@ namespace Intersect.Server.Entities
 
                 // Unequip items even if you do not meet the requirements.
                 // (Need this for silly devs who give people items and then later add restrictions...)
-                if (itemBase.ItemType == ItemTypes.Equipment)
+                if (itemBase.ItemType == ItemTypes.Equipment && SlotIsEquipped(slot, out var equippedSlot))
                 {
-                    for (var i = 0; i < Options.EquipmentSlots.Count; i++)
-                    {
-                        if (Equipment[i] == slot)
-                        {
-                            Equipment[i] = -1;
-                            FixVitals();
-                            StartCommonEventsWithTrigger(CommonEventTrigger.EquipChange);
-                            PacketSender.SendPlayerEquipmentToProximity(this);
-                            PacketSender.SendEntityStats(this);
-
-                            return;
-                        }
-                    }
+                    UnequipItem(equippedSlot, true);
+                    return;
                 }
 
                 if (!Conditions.MeetsConditionLists(itemBase.UsageRequirements, this, null))
@@ -2963,22 +2946,9 @@ namespace Intersect.Server.Entities
 
                         break;
                     case ItemTypes.Equipment:
-                        for (var i = 0; i < Options.EquipmentSlots.Count; i++)
+                        if (SlotIsEquipped(slot, out var eqpSlot))
                         {
-                            if (Equipment[i] == slot)
-                            {
-                                Equipment[i] = -1;
-                                equipped = true;
-                            }
-                        }
-
-                        if (equipped)
-                        {
-                            FixVitals();
-                            StartCommonEventsWithTrigger(CommonEventTrigger.EquipChange);
-                            PacketSender.SendPlayerEquipmentToProximity(this);
-                            PacketSender.SendEntityStats(this);
-
+                            UnequipItem(eqpSlot, true);
                             return;
                         }
 
@@ -3357,19 +3327,12 @@ namespace Intersect.Server.Entities
 
         public override int GetWeaponDamage()
         {
-            if (Equipment[Options.WeaponIndex] > -1 && Equipment[Options.WeaponIndex] < Options.MaxInvItems)
+            if(!TryGetEquippedItem(Options.WeaponIndex, out var item))
             {
-                if (Items[Equipment[Options.WeaponIndex]].ItemId != Guid.Empty)
-                {
-                    var item = ItemBase.Get(Items[Equipment[Options.WeaponIndex]].ItemId);
-                    if (item != null)
-                    {
-                        return item.Damage;
-                    }
-                }
+                return 0;
             }
 
-            return 0;
+            return item.Descriptor.Damage;
         }
 
         /// <summary>
@@ -3381,17 +3344,13 @@ namespace Intersect.Server.Entities
         {
             var value = 0;
 
-            for (var i = 0; i < Options.EquipmentSlots.Count; i++)
+            foreach(var item in EquippedItems)
             {
-                if (Equipment[i] > -1 && Items[Equipment[i]].ItemId != Guid.Empty)
+                if (!item.Descriptor.EffectsEnabled.Contains(effect))
                 {
-                    var item = ItemBase.Get(Items[Equipment[i]].ItemId);
-                    if (item == null || !item.EffectsEnabled.Contains(effect))
-                    {
-                        continue;   
-                    }
-                    value += item.GetEffectPercentage(effect);
+                    continue;
                 }
+                value += item.Descriptor.GetEffectPercentage(effect);
             }
 
             return value;
@@ -3401,19 +3360,9 @@ namespace Intersect.Server.Entities
         {
             var regen = 0;
 
-            for (var i = 0; i < Options.EquipmentSlots.Count; i++)
+            foreach (var item in EquippedItems)
             {
-                if (Equipment[i] > -1)
-                {
-                    if (Items[Equipment[i]].ItemId != Guid.Empty)
-                    {
-                        var item = ItemBase.Get(Items[Equipment[i]].ItemId);
-                        if (item != null)
-                        {
-                            regen += item.VitalsRegen[(int) vital];
-                        }
-                    }
-                }
+                regen += item.Descriptor.VitalsRegen[(int)vital];
             }
 
             return regen;
@@ -5124,12 +5073,12 @@ namespace Intersect.Server.Entities
                     }
                 }
 
-                    if (spell.CastAnimationId != Guid.Empty)
-                    {
-                        PacketSender.SendAnimationToProximity(
-                            spell.CastAnimationId, 1, base.Id, MapId, 0, 0, (sbyte) Dir, MapInstanceId
-                        ); //Target Type 1 will be global entity
-                    }
+                if (spell.CastAnimationId != Guid.Empty)
+                {
+                    PacketSender.SendAnimationToProximity(
+                        spell.CastAnimationId, 1, base.Id, MapId, 0, 0, (sbyte) Dir, MapInstanceId
+                    ); //Target Type 1 will be global entity
+                }
 
                 // Check if the player isn't casting a spell already.
                 if (!IsCasting)
@@ -5165,17 +5114,15 @@ namespace Intersect.Server.Entities
             switch (spellBase.SpellType)
             {
                 case SpellTypes.Event:
+                    var evt = spellBase.Event;
+                    if (evt != null)
                     {
-                        var evt = spellBase.Event;
-                        if (evt != null)
-                        {
-                            EnqueueStartCommonEvent(evt);
-                        }
-
-                        base.CastSpell(spellId, spellSlot); //To get cooldown :P
-
-                        break;
+                        EnqueueStartCommonEvent(evt);
                     }
+
+                    base.CastSpell(spellId, spellSlot); //To get cooldown :P
+
+                    break;
                 default:
                     base.CastSpell(spellId, spellSlot);
 
@@ -5194,7 +5141,12 @@ namespace Intersect.Server.Entities
             return inventorySlot > -1;
         }
 
-        public void SetEquipmentSlot(int equipmentSlot, int inventorySlot)
+        /// <summary>
+        /// Safely sets an equipment slot, if valid
+        /// </summary>
+        /// <param name="equipmentSlot">The slot in <see cref="Equipment"/> to set</param>
+        /// <param name="inventorySlot">The inventory slot of the item</param>
+        private void SetEquipmentSlot(int equipmentSlot, int inventorySlot)
         {
             if (equipmentSlot < 0 || equipmentSlot > Equipment.Length)
             {
@@ -5204,6 +5156,12 @@ namespace Intersect.Server.Entities
             Equipment[equipmentSlot] = inventorySlot;
         }
 
+        /// <summary>
+        /// Returns an equipped item from some equipment slot
+        /// </summary>
+        /// <param name="equipmentSlot">The slot in <see cref="Equipment"/> that we're checking for</param>
+        /// <param name="equippedItem">The equipped <see cref="Item"/>, if found</param>
+        /// <returns></returns>
         public bool TryGetEquippedItem(int equipmentSlot, out Item equippedItem)
         {
             equippedItem = null;
@@ -5214,6 +5172,28 @@ namespace Intersect.Server.Entities
 
             equippedItem = Items[Equipment[Options.WeaponIndex]];
             return true;
+        }
+
+        /// <summary>
+        /// Determines whether or not a given inventory slot is currently equipped
+        /// </summary>
+        /// <param name="slot">The iventory slot of the item</param>
+        /// <param name="equippedSlot">The equipment slot found, if any</param>
+        /// <returns></returns>
+        public bool SlotIsEquipped(int slot, out int equippedSlot)
+        {
+            equippedSlot = 0;
+            foreach (var equipmentSlot in Equipment)
+            {
+                if (equipmentSlot == slot)
+                {
+                    return true;
+                }
+                equippedSlot++;
+            }
+            
+            equippedSlot = -1;
+            return false;
         }
 
         //Equipment
@@ -5292,10 +5272,13 @@ namespace Intersect.Server.Entities
             ProcessEquipmentUpdated(sendUpdate);
         }
 
-        public void ProcessEquipmentUpdated(bool sendPackets)
+        public void ProcessEquipmentUpdated(bool sendPackets, bool ignoreEvents = false)
         {
             FixVitals();
-            StartCommonEventsWithTrigger(CommonEventTrigger.EquipChange);
+            if (!ignoreEvents)
+            {
+                StartCommonEventsWithTrigger(CommonEventTrigger.EquipChange);
+            }
 
             if (sendPackets)
             {
@@ -5318,30 +5301,14 @@ namespace Intersect.Server.Entities
                 }
             }
 
-            FixVitals();
-            PacketSender.SendPlayerEquipmentToProximity(this);
-            PacketSender.SendEntityStats(this);
+            ProcessEquipmentUpdated(true, true);
         }
 
         public void EquipmentProcessItemLoss(int slot)
         {
-            var changed = false;
-            for (var i = 0; i < Options.EquipmentSlots.Count; i++)
+            if (SlotIsEquipped(slot, out var equippedSlot))
             {
-                if (Equipment[i] == slot)
-                {
-                    changed |= Equipment[i] != -1;
-                    Equipment[i] = -1;
-                }
-            }
-
-
-            if (changed)
-            {
-                FixVitals();
-                StartCommonEventsWithTrigger(CommonEventTrigger.EquipChange);
-                PacketSender.SendPlayerEquipmentToProximity(this);
-                PacketSender.SendEntityStats(this);
+                UnequipItem(equippedSlot, true);
             }
         }
 
@@ -5352,31 +5319,21 @@ namespace Intersect.Server.Entities
         public void UnequipInvalidItems()
         {
             var updated = false;
-            for (int i = 0; i < Options.EquipmentSlots.Count; i++)
+
+            foreach (var item in EquippedItems)
             {
-                var itemSlot = Equipment[i];
-                if (itemSlot < 0)
-                {
-                    continue;
-                }
-
-                var item = Items[itemSlot];
-                var descriptor = item?.Descriptor;
-
+                var descriptor = item.Descriptor;
                 if (descriptor == default ||
                     descriptor.ItemType != ItemTypes.Equipment ||
                     !Conditions.MeetsConditionLists(descriptor.UsageRequirements, this, null))
                 {
-                    Equipment[i] = -1;
-                    updated = true;
+                    UnequipItem(item.ItemId);
                 }
             }
+
             if (updated)
             {
-                FixVitals();
-                StartCommonEventsWithTrigger(CommonEventTrigger.EquipChange);
-                PacketSender.SendPlayerEquipmentToProximity(this);
-                PacketSender.SendEntityStats(this);
+                ProcessEquipmentUpdated(true);
             }
         }
 
