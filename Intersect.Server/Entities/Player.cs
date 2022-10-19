@@ -5170,7 +5170,13 @@ namespace Intersect.Server.Entities
                 return false;
             }
 
-            equippedItem = Items[Equipment[Options.WeaponIndex]];
+            var itm = Items.ElementAtOrDefault(Equipment[equipmentSlot]);
+            if (itm?.Descriptor == null)
+            {
+                return false;
+            }
+
+            equippedItem = itm;
             return true;
         }
 
