@@ -453,7 +453,7 @@ namespace Intersect.Server.Entities.Events
             QuestBase questBase
         )
         {
-            if (player == null)
+            if (player == null || condition == null)
             {
                 return false;
             }
