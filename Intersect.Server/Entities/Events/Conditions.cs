@@ -436,18 +436,14 @@ namespace Intersect.Server.Entities.Events
             QuestBase questBase
         )
         {
-            for (var i = 0; i < Options.EquipmentSlots.Count; i++)
+            if (player == null || condition == null)
             {
-                if (player.Equipment[i] >= 0)
-                {
-                    if (player.Items[player.Equipment[i]].ItemId == condition.ItemId)
-                    {
-                        return true;
-                    }
-                }
+                return false;
             }
 
-            return false;
+            var equipmentIds = player.EquippedItems.Select(item => item.Descriptor.Id).ToArray();
+
+            return equipmentIds?.Contains(condition.ItemId) ?? false;
         }
 
         public static bool MeetsCondition(
@@ -457,8 +453,13 @@ namespace Intersect.Server.Entities.Events
             QuestBase questBase
         )
         {
+            if (player == null || condition == null)
+            {
+                return false;
+            }
+
             var equipmentIndex = Options.EquipmentSlots.IndexOf(condition.Name);
-            return player.Equipment[equipmentIndex] >= 0;
+            return player.TryGetEquipmentSlot(equipmentIndex, out _);
         }
 
         public static bool MeetsCondition(
