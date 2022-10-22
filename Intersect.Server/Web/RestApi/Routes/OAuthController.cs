@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -37,7 +37,7 @@ namespace Intersect.Server.Web.RestApi.Routes
                 return StatusCode(HttpStatusCode.Gone);
             }
 
-            if (RefreshToken.Remove(refreshToken, true))
+            if (RefreshToken.Remove(refreshToken))
             {
                 return Ok(
                     new
@@ -71,7 +71,7 @@ namespace Intersect.Server.Web.RestApi.Routes
                 return Unauthorized();
             }
 
-            if (RefreshToken.Remove(refreshToken, true))
+            if (RefreshToken.Remove(refreshToken))
             {
                 return Ok(
                     new

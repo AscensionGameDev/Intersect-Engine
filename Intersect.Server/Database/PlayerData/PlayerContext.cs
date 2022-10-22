@@ -157,13 +157,14 @@ namespace Intersect.Server.Database.PlayerData
             }
         }
 
-        public void StopTrackingExcept(object obj)
+        public void DetachExcept<TEntity>(params TEntity[] entities)
         {
-            foreach (var trackingState in ChangeTracker.Entries().ToArray())
+            var entriesToDetach = ChangeTracker.Entries().Where(entry => entry.State != EntityState.Detached && entry.State != EntityState.Unchanged && entry.Entity is TEntity).ToList();
+            foreach (var entry in entriesToDetach)
             {
-                if (trackingState.Entity != obj)
+                if (entry.Entity is TEntity other && !entities.Contains(other))
                 {
-                    trackingState.State = EntityState.Detached;
+                    entry.State = EntityState.Detached;
                 }
             }
         }
