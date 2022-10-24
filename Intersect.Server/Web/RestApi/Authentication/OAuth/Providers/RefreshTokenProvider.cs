@@ -95,7 +95,7 @@ namespace Intersect.Server.Web.RestApi.Authentication.OAuth.Providers
 
             token.Ticket = context.SerializeTicket();
 
-            if (await RefreshToken.Add(token, true))
+            if (await RefreshToken.TryAddAsync(token))
             {
                 context.SetToken(token.Id.ToString());
             }
@@ -108,9 +108,7 @@ namespace Intersect.Server.Web.RestApi.Authentication.OAuth.Providers
                 return;
             }
 
-            var refreshToken = RefreshToken.Find(refreshTokenId);
-
-            if (refreshToken == null)
+            if (!RefreshToken.TryFind(refreshTokenId, out var refreshToken))
             {
                 return;
             }

@@ -19,14 +19,16 @@ using Intersect.Server.Networking;
 using Intersect.Server.Networking.Lidgren;
 using Intersect.Server.Database.PlayerData.Players;
 using Intersect.Utilities;
+using Intersect.Server.Database.PlayerData.Api;
 
 namespace Intersect.Server.Core
 {
     internal sealed partial class LogicService
     {
-
         internal sealed partial class LogicThread : Threaded<ServerContext>
         {
+            private long _nextClearExpiredTokens;
+
             /// <summary>
             /// We lock on this in order to stop maps from entering the update queue. This is only done when the editor is saving/modifying game maps or the map grids are being rebuilt.
             /// </summary>
@@ -46,6 +48,10 @@ namespace Intersect.Server.Core
                 }
             );
 
+            public LogicThread() : base("ServerLogic")
+            {
+            }
+
             /// <summary>
             /// Queue of active maps which maps are added to after being updated. Once a map makes it to the front of the queue they are updated again.
             /// </summary>
@@ -62,10 +68,6 @@ namespace Intersect.Server.Core
             /// When maps are updated they are not added back into the map update queues unless they exist in this hash set.
             /// </summary>
             public readonly Dictionary<Guid, MapInstance> ActiveMapInstances = new Dictionary<Guid, MapInstance>();
-
-            public LogicThread() : base("ServerLogic")
-            {
-            }
 
             protected override void ThreadStart(ServerContext serverContext)
             {
@@ -91,6 +93,18 @@ namespace Intersect.Server.Core
                     while (ServerContext.Instance.IsRunning)
                     {
                         var startTime = Timing.Global.Milliseconds;
+
+                        // Cron-clear expired refresh tokens
+                        if (startTime > _nextClearExpiredTokens)
+                        {
+#pragma warning disable CA2008 // Do not create tasks without passing a TaskScheduler
+                            _ = RefreshToken
+                                .RemoveExpiredAsync(250)
+                                /* Make it speed up the next call if we definitely have more expired tokens */
+                                .ContinueWith(remainingCount => _nextClearExpiredTokens -= remainingCount.Result > 0 ? 60000 : 0, TaskContinuationOptions.RunContinuationsAsynchronously);
+#pragma warning restore CA2008 // Do not create tasks without passing a TaskScheduler
+                            _nextClearExpiredTokens = startTime + 60000;
+                        }
 
 
                         if (startTime > updateTimer)

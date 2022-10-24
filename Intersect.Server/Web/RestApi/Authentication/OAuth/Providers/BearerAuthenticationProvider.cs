@@ -74,7 +74,7 @@ namespace Intersect.Server.Web.RestApi.Authentication.OAuth.Providers
 
             if (refreshToken.ClientId != clientId || refreshToken.UserId != userId)
             {
-                RefreshToken.Remove(refreshToken.Id, true);
+                _ = RefreshToken.Remove(refreshToken);
                 context.Rejected();
 
                 return;

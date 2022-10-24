@@ -1,10 +1,15 @@
-﻿using System;
+using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Intersect.Logging;
+
+using Microsoft.EntityFrameworkCore;
 
 using Newtonsoft.Json;
 
@@ -40,61 +45,84 @@ namespace Intersect.Server.Database.PlayerData.Api
         [Required]
         public string Ticket { get; set; }
 
-        public static async ValueTask<bool> Add(
+        // To help avoid concurrency exceptions
+        private static readonly ConcurrentDictionary<Guid, EntityState> _pendingChanges = new ConcurrentDictionary<Guid, EntityState>();
+
+        public static async ValueTask<bool> TryAddAsync(
             RefreshToken token,
-            bool commit = false,
-            bool checkForDuplicates = true
+            bool checkForDuplicates = true,
+            CancellationToken cancellationToken = default
         )
         {
+            var tokensToRemove = new List<RefreshToken>();
+
             using (var context = DbInterface.CreatePlayerContext(readOnly: false))
             {
-                if (context.RefreshTokens == null)
+                try
                 {
-                    return false;
+                    if (context.RefreshTokens == null)
+                    {
+                        return false;
+                    }
+
+                    if (checkForDuplicates)
+                    {
+                        if (TryFind(token.Id, out var duplicate))
+                        {
+                            tokensToRemove.Add(duplicate);
+                        }
+
+                        var forClient = FindExpiredForClient(token.ClientId)?.ToList();
+                        if (forClient != null)
+                        {
+                            tokensToRemove.AddRange(forClient);
+                        }
+
+                        var forUser = FindExpiredForUser(token.UserId)?.ToList();
+                        if (forUser != null)
+                        {
+                            tokensToRemove.AddRange(forUser);
+                        }
+                    }
+
+                    _ = context.RefreshTokens.Add(token);
+                    context.DetachExcept(token);
+                    context.ChangeTracker.DetectChanges();
+
+                    if (tokensToRemove.Count > 0)
+                    {
+                        _ = RemoveAllAsync(tokensToRemove, cancellationToken);
+                    }
+
+                    _ = _pendingChanges.TryAdd(token.Id, context.Entry(token).State);
+                    _ = await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+                    _ = _pendingChanges.TryRemove(token.Id, out _);
+
+                    return true;
                 }
-            
-                if (checkForDuplicates)
+                catch (DbUpdateConcurrencyException concurrencyException)
                 {
-                    var duplicate = Find(token.Id);
-                    if (duplicate != null && !Remove(token.Id, commit))
-                    {
-                        return false;
-                    }
-
-                    var forClient = FindForClient(token.ClientId)?.ToList();
-                    if (forClient != null && !RemoveAll(forClient, commit))
-                    {
-                        return false;
-                    }
-
-                    var forUser = FindForUser(token.UserId)?.ToList();
-                    if (forUser != null && !RemoveAll(forUser, commit))
-                    {
-                        return false;
-                    }
+                    concurrencyException.LogError();
+                    throw;
                 }
-
-                context.RefreshTokens.Add(token);
-                context.ChangeTracker.DetectChanges();
-                context.SaveChanges();
-
-                return true;
             }
         }
 
-        public static RefreshToken Find(Guid id)
+        public static bool TryFind(Guid id, out RefreshToken refreshToken)
         {
             try
             {
                 using (var context = DbInterface.CreatePlayerContext())
                 {
-                    return context?.RefreshTokens?.Find(id);
+                    refreshToken = context?.RefreshTokens?.Find(id);
+                    return refreshToken != default;
                 }
             }
             catch (Exception ex)
             {
                 Log.Error(ex);
-                return null;
+                refreshToken = default;
+                return false;
             }
         }
 
@@ -116,7 +144,7 @@ namespace Intersect.Server.Database.PlayerData.Api
                         return refreshToken;
                     }
 
-                    Remove(refreshToken, true);
+                    _ = Remove(refreshToken);
 
                     return null;
                 }
@@ -140,6 +168,29 @@ namespace Intersect.Server.Database.PlayerData.Api
                 using (var context = DbInterface.CreatePlayerContext())
                 {
                     var tokenQuery = context?.RefreshTokens.Where(queryToken => queryToken.ClientId == clientId);
+
+                    return tokenQuery.AsEnumerable()?.ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex);
+                return null;
+            }
+        }
+
+        public static IEnumerable<RefreshToken> FindExpiredForClient(Guid clientId)
+        {
+            if (clientId == Guid.Empty)
+            {
+                return null;
+            }
+
+            try
+            {
+                using (var context = DbInterface.CreatePlayerContext())
+                {
+                    var tokenQuery = context?.RefreshTokens.Where(queryToken => queryToken.ClientId == clientId && queryToken.Expires < DateTime.UtcNow);
 
                     return tokenQuery.AsEnumerable()?.ToList();
                 }
@@ -179,6 +230,34 @@ namespace Intersect.Server.Database.PlayerData.Api
             return FindForUser(user.Id);
         }
 
+        public static IEnumerable<RefreshToken> FindExpiredForUser(Guid userId)
+        {
+            if (userId == Guid.Empty)
+            {
+                return null;
+            }
+
+            try
+            {
+                using (var context = DbInterface.CreatePlayerContext())
+                {
+                    var tokenQuery = context?.RefreshTokens.Where(queryToken => queryToken.UserId == userId && queryToken.Expires < DateTime.UtcNow);
+
+                    return tokenQuery.AsEnumerable()?.ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex);
+                return null;
+            }
+        }
+
+        public static IEnumerable<RefreshToken> FindExpiredForUser(User user)
+        {
+            return FindExpiredForUser(user.Id);
+        }
+
         public static RefreshToken FindOneForUser(Guid userId)
         {
             try
@@ -202,50 +281,77 @@ namespace Intersect.Server.Database.PlayerData.Api
             return FindOneForUser(user.Id);
         }
 
-        public static bool Remove(Guid id, bool commit = false)
-        {
-            var token = Find(id);
+        public static bool Remove(Guid id) => TryFind(id, out var token) && Remove(token);
 
-            return token != null && Remove(token, commit);
-        }
+        public static bool Remove(RefreshToken token) => RemoveAll(new []{ token });
 
-        public static bool Remove(RefreshToken token, bool commit = false)
+        public static bool RemoveAll(IEnumerable<RefreshToken> tokens) => RemoveAllAsync(tokens.ToList(), default).Result;
+
+        public static async Task<bool> RemoveAllAsync(IList<RefreshToken> tokens, CancellationToken cancellationToken)
         {
             try
             {
-                using (var context = DbInterface.CreatePlayerContext(readOnly: false))
+                var unblockedTokens = tokens.Where(token => _pendingChanges.TryAdd(token.Id, EntityState.Deleted)).ToArray();
+
+                if (unblockedTokens.Length < 1)
                 {
-                    context?.RefreshTokens.Remove(token);
-                    context?.SaveChanges();
+                    return false;
                 }
-                return true;
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex);
-                return false;
-            }
-        }
 
-        public static bool RemoveAll(IEnumerable<RefreshToken> tokens, bool commit = false)
-        {
-            try
-            {
+                Log.Diagnostic($"Attempted to remove {tokens.Count} tokens but only {unblockedTokens.Length} were available to remove.");
+
                 using (var context = DbInterface.CreatePlayerContext(readOnly: false))
                 {
-                    context?.RefreshTokens.RemoveRange(tokens);
-                    context?.SaveChanges();
+                    context.RefreshTokens.RemoveRange(unblockedTokens);
+                    context.DetachExcept(unblockedTokens);
+                    _ = await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+                }
+
+                foreach (var token in unblockedTokens)
+                {
+                    _ = _pendingChanges.TryRemove(token.Id, out _);
                 }
 
                 return true;
             }
-            catch (Exception ex)
+            catch (DbUpdateConcurrencyException concurrencyException)
             {
-                Log.Error(ex);
+                concurrencyException.LogError();
                 return false;
             }
         }
 
+        public static async Task<int> RemoveExpiredAsync(int pruneCount, CancellationToken cancellationToken = default)
+        {
+            using (var context = DbInterface.CreatePlayerContext(readOnly: false))
+            {
+                var remaining = 0;
+                try
+                {
+                    var tokensToRemove = context.RefreshTokens.Where(queryToken => queryToken.Expires < DateTime.UtcNow).Take(pruneCount).ToArray();
+                    var unblockedTokens = tokensToRemove.Where(token => _pendingChanges.TryAdd(token.Id, EntityState.Deleted)).ToArray();
+                    context.RefreshTokens.RemoveRange(unblockedTokens);
+                    context.DetachExcept(unblockedTokens);
+                    _ = await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+                    foreach (var token in unblockedTokens)
+                    {
+                        _ = _pendingChanges.TryRemove(token.Id, out _);
+                    }
+
+                    remaining = tokensToRemove.Length - unblockedTokens.Length;
+                }
+                catch (DbUpdateConcurrencyException concurrencyException)
+                {
+                    concurrencyException.LogError();
+                }
+
+                if (remaining == 0)
+                {
+                    remaining = context.RefreshTokens.Where(queryToken => queryToken.Expires < DateTime.UtcNow).Any() ? 1 : 0;
+                }
+
+                return remaining;
+            }
+        }
     }
-
 }
