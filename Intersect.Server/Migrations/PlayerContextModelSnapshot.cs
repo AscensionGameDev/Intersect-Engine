@@ -353,8 +353,6 @@ namespace Intersect.Server.Migrations
 
                     b.Property<int>("Slot");
 
-                    b.Property<long>("SpellCd");
-
                     b.Property<Guid>("SpellId");
 
                     b.HasKey("Id");

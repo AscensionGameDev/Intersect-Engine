@@ -95,12 +95,6 @@ namespace Intersect.Server.Database.GameData
         //Time
         public DbSet<TimeBase> Time { get; set; }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<Item>().Property<int>("Effect_Percentage").HasDefaultValue(default(int));
-            modelBuilder.Entity<Item>().Property<byte>("Effect_Type").HasDefaultValue(default(byte));
-        }
-
         public override void MigrationsProcessed(string[] migrations)
         {
             if (migrations.IndexOf("20190611170819_CombiningSwitchesVariables") > -1)
