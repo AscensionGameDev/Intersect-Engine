@@ -13,6 +13,11 @@ namespace Intersect.Network.Packets.Server
 
         public ItemProperties(ItemProperties other)
         {
+            if (other == default)
+            {
+                throw new ArgumentNullException(nameof(other));
+            }
+
             Array.Copy(other.StatModifiers, StatModifiers, (int)Stats.StatCount);
         }
 
