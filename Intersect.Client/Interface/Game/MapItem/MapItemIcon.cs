@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
@@ -87,7 +87,7 @@ namespace Intersect.Client.Interface.Game.Inventory
             }
             mDescWindow = new ItemDescriptionWindow(
                 ItemBase.Get(MyItem.ItemId), MyItem.Quantity, mMapItemWindow.X,
-                mMapItemWindow.Y, MyItem.StatBuffs
+                mMapItemWindow.Y, MyItem.ItemProperties
            );
         }
 

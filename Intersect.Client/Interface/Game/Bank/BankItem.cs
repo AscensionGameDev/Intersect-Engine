@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Gwen.Control;
@@ -134,7 +134,7 @@ namespace Intersect.Client.Interface.Game.Bank
             {
                 mDescWindow = new ItemDescriptionWindow(
                     Globals.Bank[mMySlot].Base, Globals.Bank[mMySlot].Quantity, mBankWindow.X, mBankWindow.Y,
-                    Globals.Bank[mMySlot].StatBuffs
+                    Globals.Bank[mMySlot].ItemProperties
                 );
             }
         }

@@ -12,6 +12,7 @@ using Intersect.Client.Localization;
 using Intersect.Client.Networking;
 using Intersect.Enums;
 using Intersect.GameObjects;
+using Intersect.Network.Packets.Server;
 
 namespace Intersect.Client.Interface.Game.Character
 {
@@ -54,7 +55,7 @@ namespace Intersect.Client.Interface.Game.Character
 
         Label mDefenseLabel;
 
-        private int[] mEmptyStatBoost = new int[(int)Stats.StatCount];
+        private ItemProperties mItemProperties = null;
 
         Label mMagicRstLabel;
 
@@ -378,19 +379,19 @@ namespace Intersect.Client.Interface.Game.Character
                         Items[i]
                             .Update(
                                 Globals.Me.Inventory[Globals.Me.MyEquipment[i]].ItemId,
-                                Globals.Me.Inventory[Globals.Me.MyEquipment[i]].StatBuffs
+                                Globals.Me.Inventory[Globals.Me.MyEquipment[i]].ItemProperties
                             );
 
                         UpdateExtraBuffs(Globals.Me.Inventory[Globals.Me.MyEquipment[i]].ItemId);
                     }
                     else
                     {
-                        Items[i].Update(Guid.Empty, mEmptyStatBoost);
+                        Items[i].Update(Guid.Empty, mItemProperties);
                     }
                 }
                 else
                 {
-                    Items[i].Update(Guid.Empty, mEmptyStatBoost);
+                    Items[i].Update(Guid.Empty, mItemProperties);
                 }
             }
         }

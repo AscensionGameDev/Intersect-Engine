@@ -1039,7 +1039,7 @@ namespace Intersect.Server.Networking
                 {
                     if (item.VisibleToAll || item.Owner == player?.Id)
                     {
-                        items.Add(new MapItemUpdatePacket(mapId, item.TileIndex, item.UniqueId, item.ItemId, item.BagId, item.Quantity, item.StatBuffs));
+                        items.Add(new MapItemUpdatePacket(mapId, item.TileIndex, item.UniqueId, item.ItemId, item.BagId, item.Quantity, item.Properties));
                     }
                 }   
             }
@@ -1105,12 +1105,12 @@ namespace Intersect.Server.Networking
                     var player = Player.FindOnline(itemRef.Owner);
                     if (player != null)
                     {
-                        player.SendPacket(new MapItemUpdatePacket(mapId, itemRef.TileIndex, itemRef.UniqueId, itemRef.ItemId, itemRef.BagId, itemRef.Quantity, itemRef.StatBuffs));
+                        player.SendPacket(new MapItemUpdatePacket(mapId, itemRef.TileIndex, itemRef.UniqueId, itemRef.ItemId, itemRef.BagId, itemRef.Quantity, itemRef.Properties));
                     }
                 }
                 else
                 {
-                    SendDataToProximityOnMapInstance(mapId, mapInstanceId, new MapItemUpdatePacket(mapId, itemRef.TileIndex, itemRef.UniqueId, itemRef.ItemId, itemRef.BagId, itemRef.Quantity, itemRef.StatBuffs));
+                    SendDataToProximityOnMapInstance(mapId, mapInstanceId, new MapItemUpdatePacket(mapId, itemRef.TileIndex, itemRef.UniqueId, itemRef.ItemId, itemRef.BagId, itemRef.Quantity, itemRef.Properties));
                 }
             }
         }
@@ -1129,7 +1129,7 @@ namespace Intersect.Server.Networking
             {
                 invItems[i] = new InventoryUpdatePacket(
                     i, player.Items[i].ItemId, player.Items[i].Quantity, player.Items[i].BagId,
-                    player.Items[i].StatBuffs
+                    player.Items[i].Properties
                 );
             }
 
@@ -1147,7 +1147,7 @@ namespace Intersect.Server.Networking
             player.SendPacket(
                 new InventoryUpdatePacket(
                     slot, player.Items[slot].ItemId, player.Items[slot].Quantity, player.Items[slot].BagId,
-                    player.Items[slot].StatBuffs
+                    player.Items[slot].Properties
                 )
             );
         }
@@ -1951,7 +1951,7 @@ namespace Intersect.Server.Networking
                 player.SendPacket(
                     new TradeUpdatePacket(
                         trader.Id, slot, trader.Trading.Offer[slot].ItemId, trader.Trading.Offer[slot].Quantity,
-                        trader.Trading.Offer[slot].BagId, trader.Trading.Offer[slot].StatBuffs
+                        trader.Trading.Offer[slot].BagId, trader.Trading.Offer[slot].Properties
                     )
                 );
             }
@@ -2000,7 +2000,7 @@ namespace Intersect.Server.Networking
         {
             if (item != null && item.ItemId != Guid.Empty && item.Quantity > 0)
             {
-                player.SendPacket(new BagUpdatePacket(slot, item.ItemId, item.Quantity, item.BagId, item.StatBuffs));
+                player.SendPacket(new BagUpdatePacket(slot, item.ItemId, item.Quantity, item.BagId, item.Properties));
             }
             else
             {

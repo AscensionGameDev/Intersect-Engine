@@ -1550,7 +1550,13 @@ namespace Intersect.Server.Entities
                 var descriptor = equippedItem.Descriptor;
                 if (descriptor != null)
                 {
-                    flatStats += descriptor.StatsGiven[(int)statType] + equippedItem.StatBuffs[(int)statType];
+                    flatStats += descriptor.StatsGiven[(int)statType];
+
+                    if (equippedItem.Properties.StatModifiers != null)
+                    {
+                        flatStats += equippedItem.Properties.StatModifiers[(int)statType];
+                    }
+
                     percentageStats += descriptor.PercentageStatsGiven[(int)statType];
                 }
             }
@@ -5394,7 +5400,7 @@ namespace Intersect.Server.Entities
                 {
                     Hotbar[index].ItemOrSpellId = item.ItemId;
                     Hotbar[index].BagId = item.BagId ?? Guid.Empty;
-                    Hotbar[index].PreferredStatBuffs = item.StatBuffs;
+                    Hotbar[index].PreferredStatBuffs = item.Properties.StatModifiers;
                 }
             }
             else if (type == 1) //Spell

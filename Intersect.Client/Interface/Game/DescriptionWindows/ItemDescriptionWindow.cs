@@ -6,6 +6,7 @@ using Intersect.GameObjects;
 using Intersect.Client.General;
 using Intersect.Client.Localization;
 using Intersect.Logging;
+using Intersect.Network.Packets.Server;
 
 namespace Intersect.Client.Interface.Game.DescriptionWindows
 {
@@ -15,7 +16,7 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
 
         protected int mAmount;
 
-        protected int[] mStatBuffs;
+        protected ItemProperties mItemProperties;
 
         protected string mTitleOverride;
 
@@ -28,7 +29,7 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
             int amount,
             int x,
             int y,
-            int[] statBuffs,
+            ItemProperties itemProperties,
             string titleOverride = "",
             string valueLabel = "",
             bool centerOnPosition = false
@@ -36,7 +37,7 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
         {
             mItem = item;
             mAmount = amount;
-            mStatBuffs = statBuffs;
+            mItemProperties = itemProperties;
             mTitleOverride = titleOverride;
             mValueLabel = valueLabel;
 
@@ -244,21 +245,21 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
                     var weaponSlot = Globals.Me.MyEquipment[Options.WeaponIndex];
                     if (weaponSlot != -1)
                     {
-                        var statBuffs = Globals.Me.Inventory[weaponSlot].StatBuffs;
+                        var randomStats = Globals.Me.Inventory[weaponSlot].ItemProperties.StatModifiers;
                         var weapon = ItemBase.Get(Globals.Me.Inventory[weaponSlot].ItemId);
-                        if (weapon != null && statBuffs != null)
+                        if (weapon != null && randomStats != null)
                         {
                             speed = (int) Math.Round(speed / ((100 + weapon.PercentageStatsGiven[(int)Stats.Speed]) / 100f));
                             speed -= weapon.StatsGiven[(int)Stats.Speed];
-                            speed -= statBuffs[(int)Stats.Speed];
+                            speed -= randomStats[(int)Stats.Speed];
                         }
                     }
 
                     // Add current item's speed stats!
-                    if (mStatBuffs != null)
+                    if (mItemProperties != null)
                     {
                         speed += mItem.StatsGiven[(int) Stats.Speed];
-                        speed += mStatBuffs[(int) Stats.Speed];
+                        speed += mItemProperties.StatModifiers[(int) Stats.Speed];
                         speed += (int) Math.Floor(speed * (mItem.PercentageStatsGiven[(int)Stats.Speed] / 100f));
                     }
 
@@ -323,11 +324,11 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
             }
 
             // Stats
-            if (mStatBuffs != null)
+            if (mItemProperties != null && mItemProperties.StatModifiers != null)
             {
                 for (var i = 0; i < (int)Stats.StatCount; i++)
                 {
-                    var flatStat = mItem.StatsGiven[i] + mStatBuffs[i];
+                    var flatStat = mItem.StatsGiven[i] + mItemProperties.StatModifiers[i];
                     if (flatStat != 0 && mItem.PercentageStatsGiven[i] != 0)
                     {
                         rows.AddKeyValueRow(Strings.ItemDescription.StatCounts[i], Strings.ItemDescription.RegularAndPercentage.ToString(flatStat, mItem.PercentageStatsGiven[i]));

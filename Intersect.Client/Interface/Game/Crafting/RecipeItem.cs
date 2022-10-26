@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Gwen.Control;
@@ -121,8 +121,7 @@ namespace Intersect.Client.Interface.Game.Crafting
             if (mIngredient != null && ItemBase.Get(mIngredient.ItemId) != null)
             {
                 DescWindow = new ItemDescriptionWindow(
-                    ItemBase.Get(mIngredient.ItemId), mIngredient.Quantity, mCraftingWindow.X, mCraftingWindow.Y,
-                    new int[(int) Stats.StatCount]
+                    ItemBase.Get(mIngredient.ItemId), mIngredient.Quantity, mCraftingWindow.X, mCraftingWindow.Y, null
                 );
             }
         }

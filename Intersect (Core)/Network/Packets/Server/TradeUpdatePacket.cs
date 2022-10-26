@@ -1,4 +1,4 @@
-﻿using MessagePack;
+using MessagePack;
 using System;
 
 namespace Intersect.Network.Packets.Server
@@ -7,12 +7,12 @@ namespace Intersect.Network.Packets.Server
     public partial class TradeUpdatePacket : InventoryUpdatePacket
     {
         //Parameterless Constructor for MessagePack
-        public TradeUpdatePacket() : base(0, Guid.Empty, 0, null, new int[(int)Enums.Stats.StatCount])
+        public TradeUpdatePacket() : base(0, Guid.Empty, 0, null, null)
         {
         }
 
-        public TradeUpdatePacket(Guid traderId, int slot, Guid id, int quantity, Guid? bagId, int[] statBuffs) : base(
-            slot, id, quantity, bagId, statBuffs
+        public TradeUpdatePacket(Guid traderId, int slot, Guid id, int quantity, Guid? bagId, ItemProperties properties) : base(
+            slot, id, quantity, bagId, properties
         )
         {
             TraderId = traderId;
