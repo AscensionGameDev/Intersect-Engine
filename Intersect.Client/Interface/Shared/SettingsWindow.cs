@@ -240,7 +240,7 @@ namespace Intersect.Client.Interface.Shared
                 new LabeledCheckBox(mInformationSettings, "FriendOverheadHpBarCheckbox");
             mFriendOverheadHpBarCheckbox.Text = Strings.Settings.ShowFriendOverheadHpBar;
 
-            // Game Settings - Information: guild overhead members hp bar.
+            // Game Settings - Information: guild members overhead hp bar.
             mGuildMemberOverheadHpBarCheckbox =
                 new LabeledCheckBox(mInformationSettings, "GuildMemberOverheadHpBarCheckbox");
             mGuildMemberOverheadHpBarCheckbox.Text = Strings.Settings.ShowGuildOverheadHpBar;
@@ -255,9 +255,9 @@ namespace Intersect.Client.Interface.Shared
                 new LabeledCheckBox(mInformationSettings, "NpcOverheadHpBarCheckbox");
             mNpcOverheadHpBarCheckbox.Text = Strings.Settings.ShowNpcOverheadHpBar;
 
-            // Game Settings - Information: party overhead members hp bar.
+            // Game Settings - Information: party members overhead hp bar.
             mPartyMemberOverheadHpBarCheckbox =
-                new LabeledCheckBox(mInformationSettings, "PartyOverheadHpBarCheckbox");
+                new LabeledCheckBox(mInformationSettings, "PartyMemberOverheadHpBarCheckbox");
             mPartyMemberOverheadHpBarCheckbox.Text = Strings.Settings.ShowPartyOverheadHpBar;
 
             // Game Settings - Information: players overhead hp bar.
