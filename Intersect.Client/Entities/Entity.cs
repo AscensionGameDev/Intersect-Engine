@@ -214,6 +214,8 @@ namespace Intersect.Client.Entities
         public int WalkFrame { get; set; }
 
         public FloatRect WorldPos { get; set; } = new FloatRect();
+        
+        public bool IsHovered { get; set; }
 
         //Location Info
         public byte X { get; set; }
@@ -1402,7 +1404,7 @@ namespace Intersect.Client.Entities
             return shieldSize;
         }
 
-        public bool ShouldDrawHpBar
+        public virtual bool ShouldDrawHpBar
         {
             get
             {
@@ -1416,8 +1418,6 @@ namespace Intersect.Client.Entities
                     return false;
                 }
 
-                //return true;
-
                 var health = Vital[(int)Vitals.Health];
                 if (health < 1)
                 {
@@ -1426,7 +1426,10 @@ namespace Intersect.Client.Entities
 
                 var maxHealth = MaxVital[(int)Vitals.Health];
                 var shieldSize = GetShieldSize();
-                return shieldSize > 0 || health != maxHealth;
+
+                return (shieldSize > 0 || health != maxHealth) ||
+                       (!(this is Player || this is Projectile || this is Resource || this is Event) &&
+                        (Globals.Database.NpcOverheadHpBar || IsHovered));
             }
         }
 

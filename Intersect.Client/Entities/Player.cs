@@ -210,7 +210,7 @@ namespace Intersect.Client.Entities
             return Party.Count > 0;
         }
 
-        public bool IsInMyParty(IPlayer player) => IsInMyParty(player.Id);
+        public bool IsInMyParty(IPlayer player) => player != null && IsInMyParty(player.Id);
 
         public bool IsInMyParty(Guid id) => Party.Any(member => member.Id == id);
 
@@ -2276,6 +2276,8 @@ namespace Intersect.Client.Entities
                             {
                                 continue;
                             }
+                            
+                            en.Value.IsHovered = false;
 
                             var isPlayer = en.Value is Player;
                             var isNpc = !isPlayer;
@@ -2297,6 +2299,8 @@ namespace Intersect.Client.Entities
                                     var isFriend = isOtherPlayer && Globals.Me.IsFriend(player);
                                     var isGuildMate = isOtherPlayer && Globals.Me.IsGuildMate(player);
                                     var isPartyMate = isOtherPlayer && Globals.Me.IsInMyParty(player);
+                                    
+                                    en.Value.IsHovered = true;
 
                                     // If MyOverheadInfo is toggled off, draw the local Players
                                     // overhead information only when hovered by the cursor.
@@ -2369,6 +2373,48 @@ namespace Intersect.Client.Entities
                         break;
                     }
                 }
+            }
+        }
+
+        public override bool ShouldDrawHpBar
+        {
+            get
+            {
+                if (LatestMap == default)
+                {
+                    return false;
+                }
+
+                if (!ShouldDraw)
+                {
+                    return false;
+                }
+
+                var health = Vital[(int)Vitals.Health];
+                if (health < 1)
+                {
+                    return false;
+                }
+
+                var maxHealth = MaxVital[(int)Vitals.Health];
+                var shieldSize = GetShieldSize();
+
+                var player = this;
+                bool isMe = player.Id == Globals.Me.Id,
+                    isFriend = !isMe && Globals.Me.IsFriend(player),
+                    isPartyMate = !isMe && Globals.Me.IsInMyParty(player),
+                    isGuildMate = !isMe && Globals.Me.IsGuildMate(player),
+                    friendSettingMatch = isFriend && Globals.Database.FriendOverheadHpBar,
+                    guildSettingMatch = isGuildMate && Globals.Database.GuildMemberOverheadHpBar;
+
+                return (shieldSize > 0 || health != maxHealth) ||
+                       (isMe && Globals.Database.MyOverheadHpBar) ||
+                       (!isMe && !isFriend && !isGuildMate && !isPartyMate && Globals.Database.PlayerOverheadHpBar) ||
+                       (isPartyMate && Globals.Database.PartyMemberOverheadHpBar) ||
+                       (friendSettingMatch && guildSettingMatch && !isPartyMate) ||
+                       (friendSettingMatch && !guildSettingMatch && !isPartyMate) ||
+                       (guildSettingMatch && !friendSettingMatch && !isPartyMate) ||
+                       IsHovered;
             }
         }
 
