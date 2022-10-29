@@ -1408,28 +1408,29 @@ namespace Intersect.Client.Entities
         {
             get
             {
-                if (LatestMap == default)
+                if (ShouldNotDrawHpBar)
+                {
+                    return true;
+                }
+
+                return (GetType() == typeof(Entity) && (Globals.Database.NpcOverheadHpBar || IsHovered));
+            }
+        }
+
+        public bool ShouldNotDrawHpBar
+        {
+            get
+            {
+                if (LatestMap == default || !ShouldDraw)
                 {
                     return false;
                 }
 
-                if (!ShouldDraw)
-                {
-                    return false;
-                }
+                int health = Vital[(int)Vitals.Health],
+                    maxHealth = MaxVital[(int)Vitals.Health],
+                    shieldSize = GetShieldSize();
 
-                var health = Vital[(int)Vitals.Health];
-                if (health < 1)
-                {
-                    return false;
-                }
-
-                var maxHealth = MaxVital[(int)Vitals.Health];
-                var shieldSize = GetShieldSize();
-
-                return (shieldSize > 0 || health != maxHealth) ||
-                       (!(this is Player || this is Projectile || this is Resource || this is Event) &&
-                        (Globals.Database.NpcOverheadHpBar || IsHovered));
+                return shieldSize > 0 || health != maxHealth;
             }
         }
 

@@ -2380,41 +2380,37 @@ namespace Intersect.Client.Entities
         {
             get
             {
-                if (LatestMap == default)
+                if (base.ShouldDrawHpBar)
                 {
-                    return false;
+                    return true;
                 }
 
-                if (!ShouldDraw)
+                if (IsHovered)
                 {
-                    return false;
+                    return true;
                 }
 
-                var health = Vital[(int)Vitals.Health];
-                if (health < 1)
+                if (this.Id == Globals.Me.Id)
                 {
-                    return false;
+                    return Globals.Database.MyOverheadHpBar;
                 }
 
-                var maxHealth = MaxVital[(int)Vitals.Health];
-                var shieldSize = GetShieldSize();
+                if (Globals.Database.PartyMemberOverheadHpBar && Globals.Me.IsInMyParty(this))
+                {
+                    return true;
+                }
 
-                var player = this;
-                bool isMe = player.Id == Globals.Me.Id,
-                    isFriend = !isMe && Globals.Me.IsFriend(player),
-                    isPartyMate = !isMe && Globals.Me.IsInMyParty(player),
-                    isGuildMate = !isMe && Globals.Me.IsGuildMate(player),
-                    friendSettingMatch = isFriend && Globals.Database.FriendOverheadHpBar,
-                    guildSettingMatch = isGuildMate && Globals.Database.GuildMemberOverheadHpBar;
+                if (Globals.Database.FriendOverheadHpBar && Globals.Me.IsFriend(this))
+                {
+                    return true;
+                }
 
-                return (shieldSize > 0 || health != maxHealth) ||
-                       (isMe && Globals.Database.MyOverheadHpBar) ||
-                       (!isMe && !isFriend && !isGuildMate && !isPartyMate && Globals.Database.PlayerOverheadHpBar) ||
-                       (isPartyMate && Globals.Database.PartyMemberOverheadHpBar) ||
-                       (friendSettingMatch && guildSettingMatch && !isPartyMate) ||
-                       (friendSettingMatch && !guildSettingMatch && !isPartyMate) ||
-                       (guildSettingMatch && !friendSettingMatch && !isPartyMate) ||
-                       IsHovered;
+                if (Globals.Database.GuildMemberOverheadHpBar && Globals.Me.IsGuildMate(this))
+                {
+                    return true;
+                }
+
+                return Globals.Database.PlayerOverheadHpBar;
             }
         }
 
