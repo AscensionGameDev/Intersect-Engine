@@ -57,6 +57,8 @@ namespace Intersect.Client.Interface.Shared
 
         private readonly LabeledCheckBox mAutoCloseWindowsCheckbox;
 
+        private readonly LabeledCheckBox mBindDescriptionWindowToCursor;
+
         private readonly LabeledCheckBox mShowExperienceAsPercentageCheckbox;
 
         private readonly LabeledCheckBox mShowHealthAsPercentageCheckbox;
@@ -181,6 +183,10 @@ namespace Intersect.Client.Interface.Shared
             // Game Settings - Interface: Auto-close Windows.
             mAutoCloseWindowsCheckbox = new LabeledCheckBox(mInterfaceSettings, "AutoCloseWindowsCheckbox");
             mAutoCloseWindowsCheckbox.Text = Strings.Settings.AutoCloseWindows;
+            
+            // Game Settings - Interface: Bind description windows to cursor.
+            mBindDescriptionWindowToCursor = new LabeledCheckBox(mInterfaceSettings, "BindDescriptionWindowToCursorCheckbox");
+            mBindDescriptionWindowToCursor.Text = Strings.Settings.BindDescriptionWindowToCursor;
 
             // Game Settings - Interface: Show EXP/HP/MP to Percentage.
             mShowExperienceAsPercentageCheckbox =
@@ -624,6 +630,7 @@ namespace Intersect.Client.Interface.Shared
 
             // Game Settings.
             mAutoCloseWindowsCheckbox.IsChecked = Globals.Database.HideOthersOnWindowOpen;
+            mBindDescriptionWindowToCursor.IsChecked = Globals.Database.BindDescriptionWindowToCursor;
             mShowHealthAsPercentageCheckbox.IsChecked = Globals.Database.ShowHealthAsPercentage;
             mShowManaAsPercentageCheckbox.IsChecked = Globals.Database.ShowManaAsPercentage;
             mShowExperienceAsPercentageCheckbox.IsChecked = Globals.Database.ShowExperienceAsPercentage;
@@ -797,6 +804,7 @@ namespace Intersect.Client.Interface.Shared
 
             // Game Settings.
             Globals.Database.HideOthersOnWindowOpen = mAutoCloseWindowsCheckbox.IsChecked;
+            Globals.Database.BindDescriptionWindowToCursor = mBindDescriptionWindowToCursor.IsChecked;
             Globals.Database.ShowExperienceAsPercentage = mShowExperienceAsPercentageCheckbox.IsChecked;
             Globals.Database.ShowHealthAsPercentage = mShowHealthAsPercentageCheckbox.IsChecked;
             Globals.Database.ShowManaAsPercentage = mShowManaAsPercentageCheckbox.IsChecked;

@@ -1,6 +1,6 @@
 using System.Collections.Generic;
-
 using Intersect.Client.Framework.Gwen.Control;
+using Intersect.Client.General;
 using Intersect.Client.Interface.Game.DescriptionWindows.Components;
 
 namespace Intersect.Client.Interface.Game.DescriptionWindows
@@ -137,32 +137,64 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
         /// <inheritdoc/>
         public override void SetPosition(int x, int y)
         {
-            var newX = x - mContainer.Width - mContainer.Padding.Right;
-            var newY = y + mContainer.Padding.Top;
+            int newX, newY;
 
-            // Center on the desired position if requested.
-            if (mCenterOnPosition)
+            if (!Globals.Database.BindDescriptionWindowToCursor)
             {
-                newX += (mContainer.Width - mContainer.Padding.Right) / 2;
-            }
-            
-            // Do not allow it to render outside of the screen canvas.
-            if (newX < 0)
-            {
-                newX = 0;
-            }
-            else if (newX > mContainer.Canvas.Width - mContainer.Width)
-            {
-                newX = mContainer.Canvas.Width - mContainer.Width;
-            }
+                // Legacy behavior: bind description window to it's item/spell container.
+                newX = x - mContainer.Width - mContainer.Padding.Right;
+                newY = y + mContainer.Padding.Top;
 
-            if (newY < 0)
-            {
-                newY = 0;
+                // Center position when prompted by hot-bars.
+                if (mCenterOnPosition)
+                {
+                    newX += (mContainer.Width - mContainer.Padding.Right) / 2;
+                }
+
+                // Do not allow it to render outside of the screen canvas.
+                if (newX < 0)
+                {
+                    newX = 0;
+                }
+                else if (newX > mContainer.Canvas.Width - mContainer.Width)
+                {
+                    newX = mContainer.Canvas.Width - mContainer.Width;
+                }
+
+                if (newY < 0)
+                {
+                    newY = 0;
+                }
+                else if (newY > mContainer.Canvas.Height - mContainer.Height)
+                {
+                    newY = mContainer.Canvas.Height - mContainer.Height;
+                }
             }
-            else if (newY > mContainer.Canvas.Height - mContainer.Height)
+            else
             {
-                newY = mContainer.Canvas.Height - mContainer.Height;
+                // Bind description window to cursor position (ish).
+                const int posAdjust = 16;
+                newX = (int)Globals.InputManager.GetMousePosition().X + posAdjust;
+                newY = (int)Globals.InputManager.GetMousePosition().Y + posAdjust;
+
+                // Center the description window based on the cursor position when prompted by hot-bars.
+                if (mCenterOnPosition)
+                {
+                    newX = (int)Globals.InputManager.GetMousePosition().X - (mContainer.Width / 2);
+                    newY = y + mContainer.Padding.Top;
+                }
+
+                // Do not allow it to render outside of the screen canvas while based on the cursor position.
+                // Note: we no longer need to check after   (newX < 0)   nor    (newY < 0)   in this case.
+                if (newX > mContainer.Canvas.Width - mContainer.Width)
+                {
+                    newX = (int)Globals.InputManager.GetMousePosition().X - mContainer.Width - posAdjust;
+                }
+
+                if (newY > mContainer.Canvas.Height - mContainer.Height)
+                {
+                    newY = (int)Globals.InputManager.GetMousePosition().Y - mContainer.Height - posAdjust;
+                }
             }
 
             mContainer.MoveTo(newX, newY);
