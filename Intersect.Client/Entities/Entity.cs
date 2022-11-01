@@ -1408,16 +1408,16 @@ namespace Intersect.Client.Entities
         {
             get
             {
-                if (ShouldNotDrawHpBar)
+                if (ShouldDrawEntityHpBar)
                 {
                     return true;
                 }
 
-                return (GetType() == typeof(Entity) && (Globals.Database.NpcOverheadHpBar || IsHovered));
+                return (GetType() == typeof(Entity) && (Globals.Database.NpcOverheadHpBar));
             }
         }
 
-        public bool ShouldNotDrawHpBar
+        public bool ShouldDrawEntityHpBar
         {
             get
             {
@@ -1430,7 +1430,12 @@ namespace Intersect.Client.Entities
                     maxHealth = MaxVital[(int)Vitals.Health],
                     shieldSize = GetShieldSize();
 
-                return shieldSize > 0 || health != maxHealth;
+                if (health < 1)
+                {
+                    return false;
+                }
+
+                return IsHovered || health != maxHealth || shieldSize > 0;
             }
         }
 
