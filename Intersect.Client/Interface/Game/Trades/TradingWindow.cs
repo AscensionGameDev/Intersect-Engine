@@ -121,6 +121,7 @@ namespace Intersect.Client.Interface.Game.Trades
 
         public void Close()
         {
+            mContextMenu.Close();
             mTradeWindow.Close();
         }
 

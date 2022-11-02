@@ -125,8 +125,10 @@ namespace Intersect.Client.Interface.Game.Bank
 
         public void Update()
         {
-            if (mBankWindow.IsHidden == true)
+            if (mBankWindow.IsHidden)
             {
+                mContextMenu.Close();
+
                 if (mOpen)
                 {
                     Interface.GameUi.NotifyCloseBank();
