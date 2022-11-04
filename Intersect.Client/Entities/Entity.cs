@@ -1404,7 +1404,7 @@ namespace Intersect.Client.Entities
             return shieldSize;
         }
 
-        public virtual bool ShouldDrawHpBar
+        protected virtual bool ShouldDrawHpBar
         {
             get
             {
@@ -1417,7 +1417,7 @@ namespace Intersect.Client.Entities
             }
         }
 
-        public bool ShouldDrawEntityHpBar
+        protected bool ShouldDrawEntityHpBar
         {
             get
             {

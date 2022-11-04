@@ -2376,7 +2376,7 @@ namespace Intersect.Client.Entities
             }
         }
 
-        public override bool ShouldDrawHpBar
+        protected override bool ShouldDrawHpBar
         {
             get
             {
