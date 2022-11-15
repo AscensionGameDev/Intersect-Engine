@@ -1126,7 +1126,10 @@ namespace Intersect.Client.Entities
             var frame = SpriteFrame;
             if (SpriteAnimation == SpriteAnimations.Normal)
             {
-                frame = (AttackTimer - CalculateAttackTime() / 2 > Timing.Global.Ticks / TimeSpan.TicksPerMillisecond || IsBlocking) ? 3 : WalkFrame;
+                frame = (AttackTimer - CalculateAttackTime() / 2 > Timing.Global.Ticks / TimeSpan.TicksPerMillisecond ||
+                         IsBlocking)
+                    ? Options.Instance.Sprites.NormalSheetAttackFrame
+                    : WalkFrame;
             }
 
             var srcRectangle = new FloatRect(frame * frameWidth, d * frameHeight, frameWidth, frameHeight);
