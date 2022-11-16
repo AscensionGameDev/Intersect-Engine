@@ -126,7 +126,7 @@ namespace Intersect.Client.Interface.Game.Bank
 
         public void Update()
         {
-            if (mBankWindow.IsHidden == true)
+            if (mBankWindow.IsHidden)
             {
                 if (mOpen)
                 {
