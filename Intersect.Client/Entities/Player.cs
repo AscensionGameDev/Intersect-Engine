@@ -2380,7 +2380,7 @@ namespace Intersect.Client.Entities
         {
             get
             {
-                if (base.ShouldDrawEntityHpBar)
+                if (!ShouldNotDrawHpBar || IsHovered)
                 {
                     return true;
                 }
