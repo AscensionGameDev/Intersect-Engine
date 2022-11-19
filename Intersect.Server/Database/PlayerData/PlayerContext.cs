@@ -1,5 +1,8 @@
+using System;
+using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -12,6 +15,7 @@ using Intersect.Server.Entities;
 
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Internal;
 
 namespace Intersect.Server.Database.PlayerData
@@ -154,18 +158,6 @@ namespace Intersect.Server.Database.PlayerData
             if (migrations.IndexOf("20220331140427_GuildBankMaxSlotsMigration") > -1)
             {
                 GuildBankMaxSlotMigration.Run(this);
-            }
-        }
-
-        public void DetachExcept<TEntity>(params TEntity[] entities)
-        {
-            var entriesToDetach = ChangeTracker.Entries().Where(entry => entry.State != EntityState.Detached && entry.State != EntityState.Unchanged && entry.Entity is TEntity).ToList();
-            foreach (var entry in entriesToDetach)
-            {
-                if (entry.Entity is TEntity other && !entities.Contains(other))
-                {
-                    entry.State = EntityState.Detached;
-                }
             }
         }
 
