@@ -119,9 +119,6 @@ namespace Intersect.Server.Migrations
 
                     b.Property<Guid>("ParentBagId");
 
-                    b.Property<string>("PropertiesJson")
-                        .HasColumnName("ItemProperties");
-
                     b.Property<int>("Quantity");
 
                     b.Property<int>("Slot");
@@ -148,9 +145,6 @@ namespace Intersect.Server.Migrations
                     b.Property<Guid>("ItemId");
 
                     b.Property<Guid>("PlayerId");
-
-                    b.Property<string>("PropertiesJson")
-                        .HasColumnName("ItemProperties");
 
                     b.Property<int>("Quantity");
 
@@ -214,9 +208,6 @@ namespace Intersect.Server.Migrations
                     b.Property<Guid>("GuildId");
 
                     b.Property<Guid>("ItemId");
-
-                    b.Property<string>("PropertiesJson")
-                        .HasColumnName("ItemProperties");
 
                     b.Property<int>("Quantity");
 
@@ -289,9 +280,6 @@ namespace Intersect.Server.Migrations
                     b.Property<Guid>("ItemId");
 
                     b.Property<Guid>("PlayerId");
-
-                    b.Property<string>("PropertiesJson")
-                        .HasColumnName("ItemProperties");
 
                     b.Property<int>("Quantity");
 
