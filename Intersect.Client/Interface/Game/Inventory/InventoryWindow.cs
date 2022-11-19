@@ -290,7 +290,7 @@ namespace Intersect.Client.Interface.Game.Inventory
                 return;
             }
 
-            mContextMenu.Close();
+            mContextMenu?.Close();
             mInventoryWindow.IsHidden = true;
         }
 
