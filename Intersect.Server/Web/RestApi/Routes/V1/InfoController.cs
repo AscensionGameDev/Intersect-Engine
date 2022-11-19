@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Net.Http;
 using System.Web.Http;
 
@@ -48,7 +49,12 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         [HttpGet]
         public object CombatStats()
         {
-            return Enum.GetNames(typeof(Enums.Stats));
+            return Enum
+                .GetValues(typeof(Enums.Stats))
+                .OfType<Enums.Stats>()
+                .Where(value => value != Enums.Stats.StatCount)
+                .Select(value => value.ToString())
+                .ToArray();
         }
 
         [Route("stats")]
