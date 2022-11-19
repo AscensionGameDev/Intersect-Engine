@@ -1027,7 +1027,7 @@ namespace Intersect.Client.Networking
 
             if (attackTimer > -1)
             {
-                en.AttackTimer = Timing.Global.Ticks / TimeSpan.TicksPerMillisecond + attackTimer;
+                en.AttackTimer = Timing.Global.Milliseconds + attackTimer;
                 if (!isSelf)
                 {
                     en.AttackTime = attackTimer;

@@ -80,7 +80,7 @@ namespace Intersect.Client.Entities
             var tmpY = (sbyte)Y;
             IEntity blockedBy = null;
 
-            if (!IsMoving && MoveTimer < Timing.Global.Ticks / TimeSpan.TicksPerMillisecond)
+            if (!IsMoving && MoveTimer < Timing.Global.Milliseconds)
             {
                 switch (MoveDir)
                 {
@@ -137,7 +137,7 @@ namespace Intersect.Client.Entities
                     Y = (byte)tmpY;
 
                     //TryToChangeDimension();
-                    MoveTimer = (Timing.Global.Ticks / TimeSpan.TicksPerMillisecond) + (long)GetMovementTime();
+                    MoveTimer = Timing.Global.Milliseconds + (long)GetMovementTime();
                 }
                 else
                 {

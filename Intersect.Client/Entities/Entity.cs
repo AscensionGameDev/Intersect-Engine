@@ -999,7 +999,7 @@ namespace Intersect.Client.Entities
             }
             else if (SpriteAnimation == SpriteAnimations.Normal)
             {
-                frame = AttackTimer - CalculateAttackTime() / 2 > Timing.Global.Ticks / TimeSpan.TicksPerMillisecond || IsBlocking
+                frame = AttackTimer - CalculateAttackTime() / 2 > Timing.Global.Milliseconds || IsBlocking
                     ? Options.Instance.Sprites.NormalSheetAttackFrame
                     : WalkFrame;
             }
@@ -1126,7 +1126,7 @@ namespace Intersect.Client.Entities
             var frame = SpriteFrame;
             if (SpriteAnimation == SpriteAnimations.Normal)
             {
-                frame = (AttackTimer - CalculateAttackTime() / 2 > Timing.Global.Ticks / TimeSpan.TicksPerMillisecond ||
+                frame = (AttackTimer - CalculateAttackTime() / 2 > Timing.Global.Milliseconds ||
                          IsBlocking)
                     ? Options.Instance.Sprites.NormalSheetAttackFrame
                     : WalkFrame;
@@ -1679,9 +1679,9 @@ namespace Intersect.Client.Entities
                 SpriteAnimation = SpriteAnimations.Normal;
                 LastActionTime = Timing.Global.Milliseconds;
             }
-            else if (AttackTimer > Timing.Global.Ticks / TimeSpan.TicksPerMillisecond && !IsBlocking) //Attacking
+            else if (AttackTimer > Timing.Global.Milliseconds && !IsBlocking) //Attacking
             {
-                var timeIn = CalculateAttackTime() - (AttackTimer - Timing.Global.Ticks / TimeSpan.TicksPerMillisecond);
+                var timeIn = CalculateAttackTime() - (AttackTimer - Timing.Global.Milliseconds);
                 LastActionTime = Timing.Global.Milliseconds;
 
                 if (AnimatedTextures.TryGetValue(SpriteAnimations.Attack, out _))
