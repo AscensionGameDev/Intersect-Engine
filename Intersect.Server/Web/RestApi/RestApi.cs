@@ -16,11 +16,14 @@ using Intersect.Server.Web.RestApi.Middleware;
 using Intersect.Server.Web.RestApi.Payloads;
 using Intersect.Server.Web.RestApi.RouteProviders;
 using Intersect.Server.Web.RestApi.Services;
+using Intersect.Server.Web.RestApi.Swagger;
 
 using Microsoft.Owin.Hosting;
 using Microsoft.Owin.Logging;
 
 using Owin;
+
+using Swashbuckle.Application;
 
 namespace Intersect.Server.Web.RestApi
 {
@@ -87,10 +90,26 @@ namespace Intersect.Server.Web.RestApi
             config.DependencyResolver = new IntersectServiceDependencyResolver(Configuration, config);
 
             // Make JSON the default response type for browsers
-            config.Formatters?.JsonFormatter?.Map("accept", "text/html", "application/json");
+            config.Formatters?.XmlFormatter.RemoveSupportedMediaType("application/xml");
+            config.Formatters?.XmlFormatter.RemoveSupportedMediaType("text/xml");
+            config.Formatters?.JsonFormatter.RemoveSupportedMediaType("text/json");
+            config.Formatters?.JsonFormatter.Map("accept", "text/html", "application/json");
 
             if (Configuration.DebugMode)
             {
+                config.EnableSwagger(swaggerConfig =>
+                {
+                    swaggerConfig.MultipleApiVersions(
+                        (description, version) => true,
+                        versionBuilder => versionBuilder.Version("v1", "Intersect v1 REST API")
+                    );
+
+                    swaggerConfig.OperationFilter<AuthorizationFilter>();
+                }).EnableSwaggerUi(swaggerUi =>
+                {
+                    swaggerUi.SupportedSubmitMethods(Array.Empty<string>());
+                });
+
                 appBuilder.SetLoggerFactory(new IntersectLoggerFactory());
             }
 
