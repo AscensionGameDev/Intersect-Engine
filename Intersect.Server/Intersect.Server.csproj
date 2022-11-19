@@ -22,8 +22,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Migrations\Game\20221015235919_MultipleBonusEffectsMigration.cs" />
-    <Compile Remove="Migrations\Game\20221015235919_MultipleBonusEffectsMigration.Designer.cs" />
     <Compile Remove="Networking\IntersectNetworkServer.cs" />
     <Compile Remove="Networking\IntersectNetworkSocket.cs" />
   </ItemGroup>
