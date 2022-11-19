@@ -1081,6 +1081,14 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 case AdminActions.WarpTo:
                     if (player != null)
                     {
+                        if (actionParameters.MapId == Guid.Empty)
+                        {
+                            return Request.CreateErrorResponse(
+                                HttpStatusCode.BadRequest,
+                                @"Expected a map ID."
+                            );
+                        }
+
                         var mapId = actionParameters.MapId == Guid.Empty ? player.MapId : actionParameters.MapId;
                         player.Warp(mapId, (byte) player.X, (byte) player.Y);
 
