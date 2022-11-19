@@ -1,6 +1,7 @@
-﻿using Intersect.Config;
+using Intersect.Config;
 
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.Extensions.Logging;
 
 using System;
@@ -289,6 +290,42 @@ namespace Intersect.Server.Database
                 throw new InvalidOperationException("Cannot save changes on a read only context!");
 
             return base.SaveChangesAsync(cancellationToken);
+        }
+
+        public void DetachExcept<TEntity>(Func<TEntity, bool> predicate)
+        {
+            DetachExcept<TEntity>(entry => entry.Entity is TEntity entity && predicate(entity));
+        }
+
+        public void DetachExcept<TEntity>(Func<EntityEntry, bool> predicate)
+        {
+            if (predicate == default)
+            {
+                throw new ArgumentNullException(nameof(predicate));
+            }
+
+            var entriesToDetach = ChangeTracker.Entries().Where(entry => entry.State != EntityState.Detached && entry.State != EntityState.Unchanged).Where(predicate).ToList();
+            Detach(entriesToDetach);
+        }
+
+        public void DetachExcept<TEntity>(params TEntity[] entities) => DetachExcept(entities.AsEnumerable());
+
+        public void DetachExcept<TEntity>(IEnumerable<TEntity> entities)
+        {
+            DetachExcept<TEntity>(entry => entry.Entity is TEntity other && !entities.Contains(other));
+        }
+
+        public void Detach(IEnumerable<EntityEntry> entries)
+        {
+            if (entries == default)
+            {
+                throw new ArgumentNullException(nameof(entries));
+            }
+
+            foreach (var entry in entries)
+            {
+                entry.State = EntityState.Detached;
+            }
         }
     }
 }
