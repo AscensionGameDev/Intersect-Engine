@@ -87,6 +87,7 @@ namespace Intersect.Client.Interface.Game.Shop
 
         public void Close()
         {
+            mContextMenu.Close();
             mShopWindow.Close();
         }
 

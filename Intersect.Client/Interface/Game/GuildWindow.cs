@@ -146,6 +146,7 @@ namespace Intersect.Client.Interface.Game
 
         public void Hide()
         {
+            mContextMenu.Close();
             mGuildWindow.IsHidden = true;
         }
 

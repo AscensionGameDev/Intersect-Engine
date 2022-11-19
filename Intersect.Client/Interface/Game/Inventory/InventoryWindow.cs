@@ -283,15 +283,15 @@ namespace Intersect.Client.Interface.Game.Inventory
             return !mInventoryWindow.IsHidden;
         }
 
-        public bool Hide()
+        public void Hide()
         {
             if (!Globals.CanCloseInventory)
             {
-                return false;
+                return;
             }
 
+            mContextMenu.Close();
             mInventoryWindow.IsHidden = true;
-            return true;
         }
 
         public FloatRect RenderBounds()
