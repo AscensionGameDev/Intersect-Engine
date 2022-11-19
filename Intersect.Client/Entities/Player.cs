@@ -252,9 +252,9 @@ namespace Intersect.Client.Entities
                     }
                     else if (!Globals.Me.TryAttack())
                     {
-                        if (Globals.Me.AttackTimer < Timing.Global.Ticks / TimeSpan.TicksPerMillisecond)
+                        if (Globals.Me.AttackTimer < Timing.Global.Milliseconds)
                         {
-                            Globals.Me.AttackTimer = Timing.Global.Ticks / TimeSpan.TicksPerMillisecond + Globals.Me.CalculateAttackTime();
+                            Globals.Me.AttackTimer = Timing.Global.Milliseconds + Globals.Me.CalculateAttackTime();
                         }
                     }
                 }
@@ -1516,7 +1516,7 @@ namespace Intersect.Client.Entities
                 return false;
             }
 
-            if (AttackTimer > Timing.Global.Ticks / TimeSpan.TicksPerMillisecond)
+            if (AttackTimer > Timing.Global.Milliseconds)
             {
                 return false;
             }
@@ -1536,7 +1536,7 @@ namespace Intersect.Client.Entities
 
         public bool TryAttack()
         {
-            if (AttackTimer > Timing.Global.Ticks / TimeSpan.TicksPerMillisecond || IsBlocking || (IsMoving && !Options.Instance.PlayerOpts.AllowCombatMovement))
+            if (AttackTimer > Timing.Global.Milliseconds || IsBlocking || (IsMoving && !Options.Instance.PlayerOpts.AllowCombatMovement))
             {
                 return false;
             }
@@ -1582,7 +1582,7 @@ namespace Intersect.Client.Entities
                         {
                             //ATTACKKKKK!!!
                             PacketSender.SendAttack(en.Key);
-                            AttackTimer = Timing.Global.Ticks / TimeSpan.TicksPerMillisecond + CalculateAttackTime();
+                            AttackTimer = Timing.Global.Milliseconds + CalculateAttackTime();
 
                             return true;
                         }
@@ -1605,7 +1605,7 @@ namespace Intersect.Client.Entities
                         {
                             //Talk to Event
                             PacketSender.SendActivateEvent(en.Key);
-                            AttackTimer = Timing.Global.Ticks / TimeSpan.TicksPerMillisecond + CalculateAttackTime();
+                            AttackTimer = Timing.Global.Milliseconds + CalculateAttackTime();
 
                             return true;
                         }
@@ -1615,7 +1615,7 @@ namespace Intersect.Client.Entities
 
             //Projectile/empty swing for animations
             PacketSender.SendAttack(Guid.Empty);
-            AttackTimer = Timing.Global.Ticks / TimeSpan.TicksPerMillisecond + CalculateAttackTime();
+            AttackTimer = Timing.Global.Milliseconds + CalculateAttackTime();
 
             return true;
         }
@@ -1967,7 +1967,7 @@ namespace Intersect.Client.Entities
                 return;
             }
 
-            if (AttackTimer > Timing.Global.Ticks / TimeSpan.TicksPerMillisecond && !Options.Instance.PlayerOpts.AllowCombatMovement)
+            if (AttackTimer > Timing.Global.Milliseconds && !Options.Instance.PlayerOpts.AllowCombatMovement)
             {
                 return;
             }
@@ -1979,7 +1979,7 @@ namespace Intersect.Client.Entities
             if (MoveDir > -1 && Globals.EventDialogs.Count == 0)
             {
                 //Try to move if able and not casting spells.
-                if (!IsMoving && MoveTimer < Timing.Global.Ticks / TimeSpan.TicksPerMillisecond && (Options.Combat.MovementCancelsCast || !IsCasting))
+                if (!IsMoving && MoveTimer < Timing.Global.Milliseconds && (Options.Combat.MovementCancelsCast || !IsCasting))
                 {
                     if (Options.Combat.MovementCancelsCast)
                     {
@@ -2090,7 +2090,7 @@ namespace Intersect.Client.Entities
 
                         TryToChangeDimension();
                         PacketSender.SendMove();
-                        MoveTimer = (Timing.Global.Ticks / TimeSpan.TicksPerMillisecond) + (long)GetMovementTime();
+                        MoveTimer = (Timing.Global.Milliseconds) + (long)GetMovementTime();
                     }
                     else
                     {
