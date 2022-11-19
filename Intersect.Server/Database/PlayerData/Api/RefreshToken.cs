@@ -281,6 +281,24 @@ namespace Intersect.Server.Database.PlayerData.Api
             return FindOneForUser(user.Id);
         }
 
+        public static bool HasTokens(Guid userId)
+        {
+            try
+            {
+                using (var context = DbInterface.CreatePlayerContext())
+                {
+                    return context.RefreshTokens.Any(queryToken => queryToken.UserId == userId);
+                }
+            }
+            catch (Exception exception)
+            {
+                Log.Error(exception);
+                throw;
+            }
+        }
+
+        public static bool HasTokens(User user) => HasTokens(user.Id);
+
         public static bool Remove(Guid id) => TryFind(id, out var token) && Remove(token);
 
         public static bool Remove(RefreshToken token) => RemoveAll(new []{ token });
@@ -318,6 +336,25 @@ namespace Intersect.Server.Database.PlayerData.Api
             {
                 concurrencyException.LogError();
                 return false;
+            }
+        }
+
+        public static async Task<bool> RemoveForUserAsync(Guid userId, CancellationToken cancellationToken)
+        {
+            using (var context = DbInterface.CreatePlayerContext(readOnly: false))
+            {
+                try
+                {
+                    context.RefreshTokens.RemoveRange(context.RefreshTokens.Where(token => token.UserId == userId));
+                    context.DetachExcept<RefreshToken>(entity => entity.UserId == userId);
+                    _ = await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+                    return true;
+                }
+                catch (DbUpdateConcurrencyException concurrencyException)
+                {
+                    concurrencyException.LogError();
+                    return false;
+                }
             }
         }
 

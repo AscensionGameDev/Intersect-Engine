@@ -142,6 +142,7 @@ namespace Intersect.Server.Database.PlayerData
         /// <summary>
         /// Variables that have been updated for this account which need to be saved to the db
         /// </summary>
+        [JsonIgnore]
         public ConcurrentDictionary<Guid, UserVariableBase> UpdatedVariables = new ConcurrentDictionary<Guid, UserVariableBase>();
 
         [NotMapped]
@@ -769,7 +770,15 @@ namespace Intersect.Server.Database.PlayerData
         {
             try
             {
-                using (var context = DbInterface.CreatePlayerContext()) {
+                using (var context = DbInterface.CreatePlayerContext(readOnly: true)) {
+                    foreach (var user in Globals.OnlineList.Select(p => p.User))
+                    {
+                        if (user != default)
+                        {
+                            context.Entry(user).State = EntityState.Unchanged;
+                        }
+                    }
+
                     var compiledQuery = string.IsNullOrWhiteSpace(query) ? context.Users.Include(p => p.Ban).Include(p => p.Mute) : context.Users.Where(u => EF.Functions.Like(u.Name, $"%{query}%") || EF.Functions.Like(u.Email, $"%{query}%"));
 
                     total = compiledQuery.Count();
@@ -791,7 +800,8 @@ namespace Intersect.Server.Database.PlayerData
                             break;
                     }
 
-                    return compiledQuery.Skip(skip).Take(take).ToList();
+                    var users = compiledQuery.Skip(skip).Take(take).AsTracking().ToList();
+                    return users;
                 }
             }
             catch (Exception ex)

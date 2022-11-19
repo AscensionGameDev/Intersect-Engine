@@ -1016,7 +1016,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                         // Add ban
                         Ban.Add(
                             user.Id, actionParameters.Duration, actionParameters.Reason ?? string.Empty,
-                            actionParameters.Moderator ?? @"api", actionParameters.Ip ? targetIp : string.Empty
+                            actionPerformer.Name, actionParameters.Ip ? targetIp : string.Empty
                         );
 
                         // Disconnect the banned player.
@@ -1060,7 +1060,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                     {
                         Mute.Add(
                             user, actionParameters.Duration, actionParameters.Reason ?? string.Empty,
-                            actionParameters.Moderator ?? @"api", actionParameters.Ip ? targetIp : string.Empty
+                            actionPerformer.Name, actionParameters.Ip ? targetIp : string.Empty
                         );
 
                         PacketSender.SendGlobalMsg(Strings.Account.muted.ToString(user.Name));
