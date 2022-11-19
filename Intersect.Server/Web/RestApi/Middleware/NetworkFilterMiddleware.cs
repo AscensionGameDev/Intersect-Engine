@@ -64,6 +64,7 @@ namespace Intersect.Server.Web.RestApi.Middleware
                 NetworkTypes.Loopback,
                 new[]
                 {
+                    new IpRange(IPAddress.Parse("::1")),
                     new IpRange(IPAddress.Parse("0.0.0.0"), IPAddress.Parse("0.255.255.255")),
                     new IpRange(IPAddress.Parse("127.0.0.0"), IPAddress.Parse("127.255.255.255"))
                 }
@@ -72,6 +73,7 @@ namespace Intersect.Server.Web.RestApi.Middleware
                 NetworkTypes.Subnet,
                 new[]
                 {
+                    new IpRange(IPAddress.Parse("fe80::"), IPAddress.Parse("fe80::ffff:ffff:ffff:ffff")),
                     new IpRange(IPAddress.Parse("169.254.0.0"), IPAddress.Parse("169.254.255.255")),
                     new IpRange(IPAddress.Parse("255.255.255.255")),
                 }
@@ -80,6 +82,7 @@ namespace Intersect.Server.Web.RestApi.Middleware
                 NetworkTypes.PrivateNetwork,
                 new[]
                 {
+                    new IpRange(IPAddress.Parse("fc00::"), IPAddress.Parse("fdff:ffff:ffff:ffff:ffff:ffff:ffff:ffff")),
                     new IpRange(IPAddress.Parse("10.0.0.0"), IPAddress.Parse("10.255.255.255")),
                     new IpRange(IPAddress.Parse("100.64.0.0"), IPAddress.Parse("100.127.255.255")),
                     new IpRange(IPAddress.Parse("172.16.0.0"), IPAddress.Parse("172.31.255.255")),

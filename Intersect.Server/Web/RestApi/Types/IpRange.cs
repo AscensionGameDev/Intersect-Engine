@@ -1,5 +1,6 @@
 using System;
 using System.Net;
+using System.Net.Sockets;
 
 namespace Intersect.Server.Web.RestApi.Types
 {
@@ -12,6 +13,7 @@ namespace Intersect.Server.Web.RestApi.Types
                 throw new ArgumentNullException(nameof(address));
             }
 
+            AddressFamily = address.AddressFamily;
             Start = address.GetAddressBytes();
             End = address.GetAddressBytes();
         }
@@ -33,9 +35,12 @@ namespace Intersect.Server.Web.RestApi.Types
                 throw new ArgumentException("AddressFamily mismatch");
             }
 
+            AddressFamily = start.AddressFamily;
             Start = start.GetAddressBytes();
             End = end.GetAddressBytes();
         }
+
+        public AddressFamily AddressFamily { get; }
 
         public byte[] Start { get; }
 
@@ -44,6 +49,11 @@ namespace Intersect.Server.Web.RestApi.Types
         public bool IsInRange(IPAddress address)
         {
             if (Start == default || End == default || address == default) {
+                return false;
+            }
+
+            if (address.AddressFamily != AddressFamily)
+            {
                 return false;
             }
 
