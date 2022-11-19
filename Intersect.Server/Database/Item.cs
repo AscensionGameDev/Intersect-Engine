@@ -72,23 +72,12 @@ namespace Intersect.Server.Database
 
         public int Quantity { get; set; }
 
-        [Column("StatBuffs")]
-        [JsonIgnore]
-        public string StatBuffsJson
-        {
-            get => DatabaseUtils.SaveIntArray(StatBuffs, (int) Stats.StatCount);
-            set => StatBuffs = DatabaseUtils.LoadIntArray(value, (int) Stats.StatCount);
-        }
-
-        [NotMapped][Obsolete]
-        public int[] StatBuffs { get; set; } = new int[(int) Stats.StatCount];
-
         [NotMapped]
         public ItemProperties Properties { get; set; }
 
         [Column("ItemProperties")]
         [JsonIgnore]
-        public string PropertiesJson
+        public string ItemPropertiesJson
         {
             get => JsonConvert.SerializeObject(Properties);
             set => Properties = JsonConvert.DeserializeObject<ItemProperties>(value ?? string.Empty) ?? new ItemProperties();
