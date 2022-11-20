@@ -173,7 +173,7 @@ namespace Intersect.Client.Interface.Game.Spells
 
         public void Hide()
         {
-            mContextMenu.Close();
+            mContextMenu?.Close();
             mSpellWindow.IsHidden = true;
         }
 

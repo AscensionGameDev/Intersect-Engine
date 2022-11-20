@@ -95,7 +95,7 @@ namespace Intersect.Client.Interface.Game.Bank
         {
             mBankWindow.IsHidden = true;
             mOpen = false;
-            mContextMenu.Close();
+            mContextMenu?.Close();
         }
 
         public void Open()

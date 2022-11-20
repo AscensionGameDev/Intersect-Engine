@@ -95,7 +95,7 @@ namespace Intersect.Client.Interface.Game.Bag
 
         public void Close()
         {
-            mContextMenu.Close();
+            mContextMenu?.Close();
             mBagWindow.Close();
         }
 
