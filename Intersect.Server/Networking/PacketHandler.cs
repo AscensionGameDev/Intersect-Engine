@@ -605,16 +605,9 @@ namespace Intersect.Server.Networking
             }
 
             //Otherwise proceed with login normally...
-            if (Options.MaxCharacters > 1)
+            if (client.Characters?.Count > 0)
             {
                 PacketSender.SendPlayerCharacters(client);
-            }
-            else if (client.Characters?.Count > 0)
-            {
-                client.LoadCharacter(client.Characters.First());
-                client.Entity.SetOnline();
-
-                PacketSender.SendJoinGame(client);
             }
             else
             {
@@ -630,7 +623,7 @@ namespace Intersect.Server.Networking
             {
                 UserActivityHistory.LogActivity(client?.User?.Id ?? Guid.Empty, Guid.Empty, client?.GetIp(), UserActivityHistory.PeerType.Client, packet.ReturningToCharSelect ? UserActivityHistory.UserAction.SwitchPlayer : UserActivityHistory.UserAction.DisconnectLogout, $"{client?.Name},{client?.Entity?.Name}");
 
-                if (Options.MaxCharacters > 1 && packet.ReturningToCharSelect)
+                if (packet.ReturningToCharSelect)
                 {
                     client.Entity?.TryLogout(false, true);
                     client.Entity = null;
@@ -1424,16 +1417,8 @@ namespace Intersect.Server.Networking
                         }
                     }
 
-                    //Character selection if more than one.
-                    if (Options.MaxCharacters > 1)
-                    {
-                        PacketSender.SendPlayerCharacters(client);
-                    }
-                    else
-                    {
-                        PacketSender.SendGameObjects(client, GameObjectType.Class);
-                        PacketSender.SendCreateCharacter(client);
-                    }
+                    PacketSender.SendGameObjects(client, GameObjectType.Class);
+                    PacketSender.SendCreateCharacter(client);
                 }
             }
         }
