@@ -310,17 +310,15 @@ namespace Intersect.Client.Entities
             Guild = pkt.Guild;
             Rank = pkt.GuildRank;
 
-            var playerPacket = (PlayerEntityPacket)packet;
-
-            if (playerPacket.Equipment != null)
+            if (pkt.Equipment != null)
             {
-                if (this == Globals.Me && playerPacket.Equipment.InventorySlots != null)
+                if (this == Globals.Me && pkt.Equipment.InventorySlots != null)
                 {
-                    MyEquipment = playerPacket.Equipment.InventorySlots;
+                    MyEquipment = pkt.Equipment.InventorySlots;
                 }
-                else if (playerPacket.Equipment.ItemIds != null)
+                else if (pkt.Equipment.ItemIds != null)
                 {
-                    Equipment = playerPacket.Equipment.ItemIds;
+                    Equipment = pkt.Equipment.ItemIds;
                 }
             }
 
