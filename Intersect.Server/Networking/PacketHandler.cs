@@ -24,7 +24,6 @@ using Intersect.Server.Maps;
 using Intersect.Server.Networking.Lidgren;
 using Intersect.Server.Notifications;
 using Intersect.Utilities;
-
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -1087,7 +1086,7 @@ namespace Intersect.Server.Networking
                 return;
             }
 
-            if (player.AttackTimer > Timing.Global.Milliseconds)
+            if (player.IsAttacking)
             {
                 return;
             }
@@ -1303,7 +1302,7 @@ namespace Intersect.Server.Networking
                 }
             }
 
-            if (player.AttackTimer > Timing.Global.Milliseconds)
+            if (player.IsAttacking)
             {
                 player.AttackTimer = Timing.Global.Milliseconds + latencyAdjustmentMs + player.CalculateAttackTime();
             }
