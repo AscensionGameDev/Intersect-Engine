@@ -604,26 +604,24 @@ namespace Intersect.Server.Networking
                 }
             }
 
-            //Otherwise proceed with login normally...
-            if (client.Characters?.Count > 0)
-            {
-                if (Options.MaxCharacters > 1 ||
-                    !(Options.MaxCharacters == 1 && Options.Instance.PlayerOpts.SkipCharacterSelect))
-                {
-                    PacketSender.SendPlayerCharacters(client);
-                }
-                else
-                {
-                    client.LoadCharacter(client.Characters.First());
-                    client.Entity.SetOnline();
-
-                    PacketSender.SendJoinGame(client);
-                }
-            }
-            else
+            // Send newly accounts with 0 characters thru the character creation menu.
+            if (client.Characters?.Count < 1)
             {
                 PacketSender.SendGameObjects(client, GameObjectType.Class);
                 PacketSender.SendCreateCharacter(client);
+                return;
+            }
+
+            // Show character select menu or login right away by following configuration preferences.
+            if (Options.MaxCharacters > 1 || !Options.Instance.PlayerOpts.SkipCharacterSelect)
+            {
+                PacketSender.SendPlayerCharacters(client);
+            }
+            else
+            {
+                client.LoadCharacter(client.Characters?.First());
+                client.Entity.SetOnline();
+                PacketSender.SendJoinGame(client);
             }
         }
 
@@ -641,9 +639,8 @@ namespace Intersect.Server.Networking
                     ? UserActivityHistory.UserAction.SwitchPlayer
                     : UserActivityHistory.UserAction.DisconnectLogout, $"{client.Name},{client.Entity?.Name}");
 
-            if (packet.ReturningToCharSelect && (Options.MaxCharacters > 1 ||
-                                                 !(Options.MaxCharacters == 1 &&
-                                                   Options.Instance.PlayerOpts.SkipCharacterSelect)))
+            if (packet.ReturningToCharSelect &&
+                (Options.MaxCharacters > 1 || !Options.Instance.PlayerOpts.SkipCharacterSelect))
             {
                 client.Entity?.TryLogout(false, true);
                 client.Entity = null;
