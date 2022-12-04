@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
@@ -59,7 +59,7 @@ namespace Intersect.Client.Interface.Game.Character
                 if (window != null)
                 {
                     var invSlot = Globals.Me.MyEquipment[mYindex];
-                    if (invSlot > 0 && invSlot < Options.MaxInvItems)
+                    if (invSlot >= 0 && invSlot < Options.MaxInvItems)
                     {
                         window.OpenContextMenu(invSlot);
                     }
