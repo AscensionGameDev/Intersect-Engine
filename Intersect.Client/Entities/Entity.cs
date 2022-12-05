@@ -172,7 +172,7 @@ namespace Intersect.Client.Entities
                 }
 
                 _spellCast = value;
-                LoadAnimationTexture(Sprite ?? TransformedSprite, SpriteAnimations.Cast);
+                LoadAnimationTexture(TransformedSprite ?? Sprite, SpriteAnimations.Cast);
             }
         }
 
