@@ -28,22 +28,6 @@ namespace Intersect.Client.Items
             ItemProperties = itemProperties;
         }
 
-        public IItem Clone()
-        {
-            var newItem = new Item() {
-                ItemId = ItemId,
-                Quantity = Quantity,
-                BagId = BagId
-            };
-
-            for (var i = 0; i < (int)Stats.StatCount; i++)
-            {
-                newItem.ItemProperties.StatModifiers[i] = ItemProperties.StatModifiers[i];
-            }
-
-            return newItem;
-        }
-
     }
 
 }

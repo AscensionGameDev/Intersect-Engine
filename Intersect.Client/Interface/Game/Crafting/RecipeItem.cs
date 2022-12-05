@@ -118,10 +118,10 @@ namespace Intersect.Client.Interface.Game.Crafting
                 DescWindow = null;
             }
 
-            if (mIngredient != null && ItemBase.Get(mIngredient.ItemId) != null)
+            if (mIngredient != null && ItemBase.TryGet(mIngredient.ItemId, out var itemDescriptor))
             {
                 DescWindow = new ItemDescriptionWindow(
-                    ItemBase.Get(mIngredient.ItemId), mIngredient.Quantity, mCraftingWindow.X, mCraftingWindow.Y, null
+                    itemDescriptor, mIngredient.Quantity, mCraftingWindow.X, mCraftingWindow.Y, null
                 );
             }
         }

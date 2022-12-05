@@ -256,7 +256,7 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
                     }
 
                     // Add current item's speed stats!
-                    if (mItemProperties != null)
+                    if (mItemProperties?.StatModifiers != default)
                     {
                         speed += mItem.StatsGiven[(int) Stats.Speed];
                         speed += mItemProperties.StatModifiers[(int) Stats.Speed];
@@ -324,7 +324,7 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
             }
 
             // Stats
-            if (mItemProperties != null && mItemProperties.StatModifiers != null)
+            if (mItemProperties?.StatModifiers != default)
             {
                 for (var i = 0; i < (int)Stats.StatCount; i++)
                 {

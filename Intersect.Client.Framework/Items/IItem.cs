@@ -12,7 +12,6 @@ namespace Intersect.Client.Framework.Items
         int Quantity { get; set; }
         ItemProperties ItemProperties { get; set; }
 
-        IItem Clone();
         void Load(Guid id, int quantity, Guid? bagId, ItemProperties ItemProperties);
     }
 }

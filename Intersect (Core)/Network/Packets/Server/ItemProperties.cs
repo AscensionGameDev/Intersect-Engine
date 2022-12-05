@@ -21,7 +21,7 @@ namespace Intersect.Network.Packets.Server
             Array.Copy(other.StatModifiers, StatModifiers, (int)Stats.StatCount);
         }
 
-        [Key(1)]
+        [Key(0)]
         public int[] StatModifiers { get; set; } = new int[(int)Stats.StatCount];
     }
 }
