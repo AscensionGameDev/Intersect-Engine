@@ -302,23 +302,23 @@ namespace Intersect.Client.Entities
         public override void Load(EntityPacket packet)
         {
             base.Load(packet);
-            var pkt = (PlayerEntityPacket)packet;
-            Gender = pkt.Gender;
-            Class = pkt.ClassId;
-            Aggression = pkt.AccessLevel;
-            CombatTimer = pkt.CombatTimeRemaining + Timing.Global.Milliseconds;
-            Guild = pkt.Guild;
-            Rank = pkt.GuildRank;
+            var playerPacket = (PlayerEntityPacket)packet;
+            Gender = playerPacket.Gender;
+            Class = playerPacket.ClassId;
+            Aggression = playerPacket.AccessLevel;
+            CombatTimer = playerPacket.CombatTimeRemaining + Timing.Global.Milliseconds;
+            Guild = playerPacket.Guild;
+            Rank = playerPacket.GuildRank;
 
-            if (pkt.Equipment != null)
+            if (playerPacket.Equipment != null)
             {
-                if (this == Globals.Me && pkt.Equipment.InventorySlots != null)
+                if (this == Globals.Me && playerPacket.Equipment.InventorySlots != null)
                 {
-                    MyEquipment = pkt.Equipment.InventorySlots;
+                    MyEquipment = playerPacket.Equipment.InventorySlots;
                 }
-                else if (pkt.Equipment.ItemIds != null)
+                else if (playerPacket.Equipment.ItemIds != null)
                 {
-                    Equipment = pkt.Equipment.ItemIds;
+                    Equipment = playerPacket.Equipment.ItemIds;
                 }
             }
 
