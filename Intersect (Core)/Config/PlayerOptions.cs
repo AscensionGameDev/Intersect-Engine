@@ -91,6 +91,12 @@
         public bool ShowLevelByName { get; set; } = false;
 
         /// <summary>
+        /// Configures whether or not the game client skips the character select window upon login or going back
+        /// to characters when the max number of characters allowed per account is one.
+        /// </summary>
+        public bool SkipCharacterSelect { get; set; } = false;
+
+        /// <summary>
         /// Distance (in tiles) between players in which a trade offer can be sent and accepted.
         /// </summary>
         public int TradeRange { get; set; } = 6;

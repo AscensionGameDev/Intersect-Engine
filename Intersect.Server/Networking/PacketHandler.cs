@@ -604,42 +604,51 @@ namespace Intersect.Server.Networking
                 }
             }
 
-            //Otherwise proceed with login normally...
-            if (Options.MaxCharacters > 1)
-            {
-                PacketSender.SendPlayerCharacters(client);
-            }
-            else if (client.Characters?.Count > 0)
-            {
-                client.LoadCharacter(client.Characters.First());
-                client.Entity.SetOnline();
-
-                PacketSender.SendJoinGame(client);
-            }
-            else
+            // Send newly accounts with 0 characters thru the character creation menu.
+            if (client.Characters?.Count < 1)
             {
                 PacketSender.SendGameObjects(client, GameObjectType.Class);
                 PacketSender.SendCreateCharacter(client);
+                return;
+            }
+
+            // Show character select menu or login right away by following configuration preferences.
+            if (Options.MaxCharacters > 1 || !Options.Instance.PlayerOpts.SkipCharacterSelect)
+            {
+                PacketSender.SendPlayerCharacters(client);
+            }
+            else
+            {
+                client.LoadCharacter(client.Characters?.First());
+                client.Entity.SetOnline();
+                PacketSender.SendJoinGame(client);
             }
         }
 
         //LogoutPacket
         public void HandlePacket(Client client, LogoutPacket packet)
         {
-            if (client != null)
+            if (client == null)
             {
-                UserActivityHistory.LogActivity(client?.User?.Id ?? Guid.Empty, Guid.Empty, client?.GetIp(), UserActivityHistory.PeerType.Client, packet.ReturningToCharSelect ? UserActivityHistory.UserAction.SwitchPlayer : UserActivityHistory.UserAction.DisconnectLogout, $"{client?.Name},{client?.Entity?.Name}");
+                return;
+            }
 
-                if (Options.MaxCharacters > 1 && packet.ReturningToCharSelect)
-                {
-                    client.Entity?.TryLogout(false, true);
-                    client.Entity = null;
-                    PacketSender.SendPlayerCharacters(client);
-                }
-                else
-                {
-                    client?.Logout();
-                }
+            UserActivityHistory.LogActivity(client.User?.Id ?? Guid.Empty, Guid.Empty, client.GetIp(),
+                UserActivityHistory.PeerType.Client,
+                packet.ReturningToCharSelect
+                    ? UserActivityHistory.UserAction.SwitchPlayer
+                    : UserActivityHistory.UserAction.DisconnectLogout, $"{client.Name},{client.Entity?.Name}");
+
+            if (packet.ReturningToCharSelect &&
+                (Options.MaxCharacters > 1 || !Options.Instance.PlayerOpts.SkipCharacterSelect))
+            {
+                client.Entity?.TryLogout(false, true);
+                client.Entity = null;
+                PacketSender.SendPlayerCharacters(client);
+            }
+            else
+            {
+                client.Logout();
             }
         }
 
@@ -1424,16 +1433,9 @@ namespace Intersect.Server.Networking
                         }
                     }
 
-                    //Character selection if more than one.
-                    if (Options.MaxCharacters > 1)
-                    {
-                        PacketSender.SendPlayerCharacters(client);
-                    }
-                    else
-                    {
-                        PacketSender.SendGameObjects(client, GameObjectType.Class);
-                        PacketSender.SendCreateCharacter(client);
-                    }
+                    //Start the character creation process for the newly created account.
+                    PacketSender.SendGameObjects(client, GameObjectType.Class);
+                    PacketSender.SendCreateCharacter(client);
                 }
             }
         }
