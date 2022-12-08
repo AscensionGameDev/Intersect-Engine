@@ -202,12 +202,15 @@ namespace Intersect.Client.Framework.Gwen.Renderer
                 clip.Width = (int) Math.Round(clip.Width * Scale);
                 clip.Height = (int) Math.Round(clip.Height * Scale);
 
+                var heightRatio = targetRect.Height * Scale / (float)v2;
+                var widthRatio = targetRect.Width * Scale / (float)u2;
+
                 float diff = 0;
                 float vdiff = 0;
                 if (rect.X < clip.X)
                 {
                     diff = clip.X - rect.X;
-                    vdiff = diff;
+                    vdiff = (int)Math.Floor(diff / widthRatio);
                     rect.X += diff;
                     rect.Width -= diff;
                     u1 += vdiff;
@@ -216,7 +219,7 @@ namespace Intersect.Client.Framework.Gwen.Renderer
                 if (rect.X + rect.Width > clip.X + clip.Width)
                 {
                     diff = rect.X + rect.Width - (clip.X + clip.Width);
-                    vdiff = diff;
+                    vdiff = (int)Math.Floor(diff / widthRatio);
                     rect.Width -= diff;
                     u2 -= vdiff;
                 }
@@ -224,7 +227,7 @@ namespace Intersect.Client.Framework.Gwen.Renderer
                 if (rect.Y < clip.Y)
                 {
                     diff = clip.Y - rect.Y;
-                    vdiff = diff;
+                    vdiff = (int)Math.Floor(diff / heightRatio);
                     rect.Y += diff;
                     rect.Height -= diff;
                     v1 += vdiff;
@@ -233,7 +236,7 @@ namespace Intersect.Client.Framework.Gwen.Renderer
                 if (rect.Y + rect.Height > clip.Y + clip.Height)
                 {
                     diff = rect.Y + rect.Height - (clip.Y + clip.Height);
-                    vdiff = diff;
+                    vdiff = (int)Math.Floor(diff / heightRatio);
                     rect.Height -= diff;
                     v2 -= vdiff;
                 }
