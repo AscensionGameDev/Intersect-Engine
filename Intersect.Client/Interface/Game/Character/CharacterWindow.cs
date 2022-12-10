@@ -261,15 +261,9 @@ namespace Intersect.Client.Interface.Game.Character
 
                             if (ItemBase.Get(itemNum) != null)
                             {
-                                var itemdata = ItemBase.Get(itemNum);
-                                if (Globals.Me.Gender == 0)
-                                {
-                                    paperdoll = itemdata.MalePaperdoll;
-                                }
-                                else
-                                {
-                                    paperdoll = itemdata.FemalePaperdoll;
-                                }
+                                var itemData = ItemBase.Get(itemNum);
+                                paperdoll = Globals.Me.Gender == 0 ? itemData.MalePaperdoll : itemData.FemalePaperdoll;
+                                PaperdollPanels[z].RenderColor = itemData.Color;
                             }
                         }
                     }

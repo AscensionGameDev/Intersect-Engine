@@ -917,14 +917,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                             if (ItemBase.Get(itemId) != null)
                             {
                                 var itemdata = ItemBase.Get(itemId);
-                                if (MyEntity.Gender == 0)
-                                {
-                                    paperdoll = itemdata.MalePaperdoll;
-                                }
-                                else
-                                {
-                                    paperdoll = itemdata.FemalePaperdoll;
-                                }
+                                paperdoll = MyEntity.Gender == 0 ? itemdata.MalePaperdoll : itemdata.FemalePaperdoll;
                                 paperdollPanel.RenderColor = itemdata.Color;
                             }
                         }

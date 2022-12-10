@@ -889,14 +889,9 @@ namespace Intersect.Editor.Forms.Editors.Events
 
         private static string GetCommandText(ChangeGenderCommand command, MapInstance map)
         {
-            if (command.Gender == 0)
-            {
-                return Strings.EventCommandList.setgender.ToString(Strings.EventCommandList.male);
-            }
-            else
-            {
-                return Strings.EventCommandList.setgender.ToString(Strings.EventCommandList.female);
-            }
+            return Strings.EventCommandList.setgender.ToString(command.Gender == 0
+                ? Strings.EventCommandList.male
+                : Strings.EventCommandList.female);
         }
 
         private static string GetCommandText(SetAccessCommand command, MapInstance map)
