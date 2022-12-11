@@ -12,7 +12,7 @@ using Intersect.Client.General;
 using Intersect.Client.Interface.Game;
 using Intersect.Client.Interface.Menu;
 using Intersect.Client.Localization;
-using Intersect.Logging;
+using Intersect.Network;
 using Intersect.Utilities;
 using static Intersect.Client.Framework.File_Management.GameContentManager;
 
@@ -434,7 +434,8 @@ namespace Intersect.Client.Interface.Shared
             mInterfaceSettings.Hide();
             mInformationSettings.Hide();
             mTargetingSettings.Show();
-            mAutoTurnToTarget.IsDisabled = !Options.Instance.PlayerOpts.EnableAutoTurnToTarget;
+            mAutoTurnToTarget.IsDisabled = MainMenu.ActiveNetworkStatus == NetworkStatus.Online &&
+                                           !Options.Instance.PlayerOpts.EnableAutoTurnToTarget;
         }
 
         private void VideoSettingsTab_Clicked(Base sender, ClickedEventArgs arguments)
