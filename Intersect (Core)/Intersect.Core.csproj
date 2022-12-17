@@ -58,6 +58,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="AscensionGameDev.Intersect.Rsa" Version="0.8.0.9-beta" />
     <PackageReference Include="Ceras" Version="4.0.40" />
     <PackageReference Include="CommandLineParser" Version="2.7.82" />
     <PackageReference Include="K4os.Compression.LZ4" Version="1.1.10" />

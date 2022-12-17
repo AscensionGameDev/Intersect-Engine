@@ -1,0 +1,10 @@
+# Make sure we keep the default folders to prevent IDE errors when they do not exist
+!/development
+!/development/*/
+!/development/*/.gitkeep
+!/production/
+!/production/*/
+!/production/*/.gitkeep
+!/staging/
+!/staging/*/
+!/staging/*/.gitkeep

@@ -5,8 +5,6 @@ VisualStudioVersion = 17.1.32228.430
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Intersect.Core", "Intersect (Core)\Intersect.Core.csproj", "{BC304B43-1F2C-4454-9EDC-48F47357CA94}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Intersect.Building", "Intersect.Building\Intersect.Building.csproj", "{3CEB8210-E2AD-429C-86F0-EAAD9F49C160}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Intersect.Client", "Intersect.Client\Intersect.Client.csproj", "{2240F3DD-3694-4606-B181-F204CBBCB971}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Intersect.Client.Framework", "Intersect.Client.Framework\Intersect.Client.Framework.csproj", "{40973F13-3339-4548-9008-FF76A0C8CD79}"
@@ -72,12 +70,6 @@ Global
 		{BC304B43-1F2C-4454-9EDC-48F47357CA94}.NoFody|Any CPU.Build.0 = Debug|Any CPU
 		{BC304B43-1F2C-4454-9EDC-48F47357CA94}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BC304B43-1F2C-4454-9EDC-48F47357CA94}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3CEB8210-E2AD-429C-86F0-EAAD9F49C160}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3CEB8210-E2AD-429C-86F0-EAAD9F49C160}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3CEB8210-E2AD-429C-86F0-EAAD9F49C160}.NoFody|Any CPU.ActiveCfg = Debug|Any CPU
-		{3CEB8210-E2AD-429C-86F0-EAAD9F49C160}.NoFody|Any CPU.Build.0 = Debug|Any CPU
-		{3CEB8210-E2AD-429C-86F0-EAAD9F49C160}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3CEB8210-E2AD-429C-86F0-EAAD9F49C160}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2240F3DD-3694-4606-B181-F204CBBCB971}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2240F3DD-3694-4606-B181-F204CBBCB971}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2240F3DD-3694-4606-B181-F204CBBCB971}.NoFody|Any CPU.ActiveCfg = Debug|Any CPU
