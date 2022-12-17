@@ -16,14 +16,10 @@ using Intersect.Server.Web.RestApi.Middleware;
 using Intersect.Server.Web.RestApi.Payloads;
 using Intersect.Server.Web.RestApi.RouteProviders;
 using Intersect.Server.Web.RestApi.Services;
-using Intersect.Server.Web.RestApi.Swagger;
-
 using Microsoft.Owin.Hosting;
 using Microsoft.Owin.Logging;
 
 using Owin;
-
-using Swashbuckle.Application;
 
 namespace Intersect.Server.Web.RestApi
 {
@@ -97,18 +93,7 @@ namespace Intersect.Server.Web.RestApi
 
             if (Configuration.DebugMode)
             {
-                config.EnableSwagger(swaggerConfig =>
-                {
-                    swaggerConfig.MultipleApiVersions(
-                        (description, version) => true,
-                        versionBuilder => versionBuilder.Version("v1", "Intersect v1 REST API")
-                    );
-
-                    swaggerConfig.OperationFilter<AuthorizationFilter>();
-                }).EnableSwaggerUi(swaggerUi =>
-                {
-                    swaggerUi.SupportedSubmitMethods(Array.Empty<string>());
-                });
+                SwaggerIsolation.ConfigureSwagger(config);
 
                 appBuilder.SetLoggerFactory(new IntersectLoggerFactory());
             }

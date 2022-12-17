@@ -25,21 +25,26 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Intersect.Building\Intersect.Building.csproj" />
     <ProjectReference Include="..\Intersect (Core)\Intersect.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="AscensionGameDev.Intersect.Building" Version="0.8.0.13-beta" GeneratePathProperty="True" />
     <PackageReference Include="AscensionGameDev.Lidgren.Network" Version="1.7.7518.2930-debug" />
     <PackageReference Include="System.Collections.Concurrent" Version="4.3.0" />
   </ItemGroup>
 
-  <Target Name="GenerateNetworkKeys" AfterTargets="ResolveReferences">
-    <Message Text="Generating network keys..." Importance="high" Condition="'$(GenerateNetworkKeys)' == 'true' and '$(GenerateEachBuild)' == 'true'" />
-    <Message Text="Generating network keys if they do not exist..." Importance="high" Condition="'$(GenerateNetworkKeys)' == 'true' and '$(GenerateEachBuild)' != 'true'" />
-    <Message Text="Not generating network keys." Importance="high" Condition="'$(GenerateNetworkKeys)' != 'true'" />
-    <Exec Condition=" '$(OS)' == 'Windows_NT' " Command="&quot;$(MSBuildBinPath)\MSBuild.exe&quot; &quot;..\targets\Intersect.Building.KeyGeneration.msbuild&quot; /property:KeySize=4096 /property:GenerateEachBuild=$(GenerateEachBuild) /property:OutputDirectory=&quot;$(NetworkKeyOutputDir)&quot; /property:IntersectBuildingAssemblyFile=&quot;$(IntersectBuildingAssemblyFile)&quot;" />
-    <Exec Condition=" '$(OS)' != 'Windows_NT' " Command="msbuild &quot;..\targets\Intersect.Building.KeyGeneration.msbuild&quot; /property:KeySize=4096 /property:GenerateEachBuild=$(GenerateEachBuild) /property:OutputDirectory=&quot;$(NetworkKeyOutputDir)&quot; /property:IntersectBuildingAssemblyFile=&quot;$(IntersectBuildingAssemblyFile)&quot;" />
+  <PropertyGroup>
+    <IntersectNetworkKeysGenerateEachBuild>$(INTERSECT_GENERATE_EACH_BUILD)</IntersectNetworkKeysGenerateEachBuild>
+    <IntersectNetworkKeySize Condition="'$(IntersectNetworkKeySize)' != ''">4096</IntersectNetworkKeySize>
+    <IntersectNetworkKeysGenerateEachBuild Condition="'$(IntersectNetworkKeysGenerateEachBuild)' != ''">true</IntersectNetworkKeysGenerateEachBuild>
+    <IntersectNetworkKeysOutputDirectory Condition="'$(IntersectNetworkKeysOutputDirectory)' == ''">$(MSBuildProjectDirectory)\bin\$(Configuration)\keys</IntersectNetworkKeysOutputDirectory>
+  </PropertyGroup>
+
+  <UsingTask TaskName="Intersect.Building.KeyGenerationTask" TaskFactory="TaskHostFactory" AssemblyFile="$(PkgAscensionGameDev_Intersect_Building)\lib\netstandard2.0\Intersect.Building.dll" />
+
+  <Target Name="RunKeyGenerationTask" AfterTargets="ResolveReferences">
+    <KeyGenerationTask OutputDirectory="$(IntersectNetworkKeysOutputDirectory)" GenerateEachBuild="$(IntersectNetworkKeysGenerateEachBuild)" KeySize="$(IntersectNetworkKeySize)" />
   </Target>
 
 </Project>

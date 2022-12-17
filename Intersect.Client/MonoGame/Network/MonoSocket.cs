@@ -7,12 +7,10 @@ using Intersect.Client.Framework.Network;
 using Intersect.Configuration;
 using Intersect.Logging;
 using Intersect.Network;
-using Intersect.Crypto;
-using Intersect.Crypto.Formats;
 using Intersect.Network.Packets;
 using Intersect.Utilities;
-using Intersect.Client.Networking;
 using Intersect.Client.Core;
+using Intersect.Rsa;
 
 namespace Intersect.Client.MonoGame.Network
 {
@@ -44,7 +42,7 @@ namespace Intersect.Client.MonoGame.Network
             var assembly = Assembly.GetExecutingAssembly();
             using (var stream = assembly.GetManifestResourceStream("Intersect.Client.network.handshake.bkey.pub"))
             {
-                var rsaKey = EncryptionKey.FromStream<RsaKey>(stream);
+                var rsaKey = new RsaKey(stream);
                 Debug.Assert(rsaKey != null, "rsaKey != null");
                 ClientLidgrenNetwork = new ClientNetwork(Context.PacketHelper, config, rsaKey.Parameters);
             }

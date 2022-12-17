@@ -10,11 +10,6 @@
     <IntersectProjectName>$(MSBuildProjectName.Substring(10))</IntersectProjectName>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(IntersectProjectName)' == 'Network' AND '$(Configuration.ToLower())' != ''">
-    <GenerateEachBuild Condition="'$(INTERSECT_GENERATE_EACH_BUILD)' != ''">true</GenerateEachBuild>
-    <IntersectBuildingAssemblyFile>$(IntersectRepoPath)\Intersect.Building\bin\$(Configuration)\net462\Intersect.Building.dll</IntersectBuildingAssemblyFile>
-  </PropertyGroup>
-
   <PropertyGroup>
     <NetworkKeyOutputDir>$(IntersectRepoPath)\Intersect.Network\bin\$(Configuration)\keys</NetworkKeyOutputDir>
     <NetworkKeyOutputDir Condition="'$(Configuration.ToLower())' == 'nofody'">$(IntersectRepoPath)\Intersect.Network\bin\Debug\keys</NetworkKeyOutputDir>
