@@ -434,7 +434,7 @@ namespace Intersect.Client.Interface.Shared
             mInterfaceSettings.Hide();
             mInformationSettings.Hide();
             mTargetingSettings.Show();
-            mAutoTurnToTarget.IsDisabled = !Options.Instance.PlayerOpts.EnableAutoTurnToTarget;
+            mAutoTurnToTarget.IsDisabled = !(Options.Instance?.PlayerOpts?.EnableAutoTurnToTarget ?? false);
         }
 
         private void VideoSettingsTab_Clicked(Base sender, ClickedEventArgs arguments)
