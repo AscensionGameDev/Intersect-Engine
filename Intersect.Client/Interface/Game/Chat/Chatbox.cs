@@ -160,7 +160,7 @@ namespace Intersect.Client.Interface.Game.Chat
             mTabButtons[ChatboxTab.All].Disable();
 
             // Platform check, are we capable of copy/pasting on this machine?
-            if (GameClipboard.Instance == null || !GameClipboard.Instance.CanCopyPaste())
+            if (GameClipboard.Instance == null || !GameClipboard.Instance.IsEnabled)
             {
                 ChatboxMsg.AddMessage(new ChatboxMsg(Strings.Chatbox.UnableToCopy, CustomColors.Alerts.Error, ChatMessageType.Error));
             }
