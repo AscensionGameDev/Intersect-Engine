@@ -1,5 +1,4 @@
-﻿
-namespace Intersect.Client.Framework.Input
+﻿namespace Intersect.Client.Framework.Input
 {
     public abstract partial class GameClipboard
     {
@@ -21,16 +20,14 @@ namespace Intersect.Client.Framework.Input
         public abstract string GetText();
 
         /// <summary>
-        /// Checks whether the system clipboard contains any text at all.
+        /// If the system clipboard contains any text.
         /// </summary>
-        /// <returns></returns>
-        public abstract bool ContainsText();
+        public abstract bool IsEmpty { get; }
 
 
         /// <summary>
-        /// Checks whether or not the underlying operating system has the capability to copy/paste and the required libraries installed.
+        /// If clipboard support is enabled on this platform.
         /// </summary>
-        /// <returns>Returns whether or not we can copy/paste data to the clipboard.</returns>
-        public abstract bool CanCopyPaste();
+        public abstract bool IsEnabled { get; }
     }
 }

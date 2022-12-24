@@ -37,7 +37,7 @@ namespace Intersect.Client.Framework.Gwen.Platform
                 {
                     try
                     {
-                        if (GameClipboard.Instance == null || !GameClipboard.Instance.ContainsText())
+                        if (GameClipboard.Instance == null || GameClipboard.Instance.IsEmpty)
                         {
                             return;
                         }
