@@ -914,11 +914,11 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                         if (equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z])] != Guid.Empty)
                         {
                             var itemId = equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z])];
-                            if (ItemBase.Get(itemId) != null)
+                            if (ItemBase.TryGet(itemId, out var itemDescriptor))
                             {
-                                var itemdata = ItemBase.Get(itemId);
-                                paperdoll = MyEntity.Gender == 0 ? itemdata.MalePaperdoll : itemdata.FemalePaperdoll;
-                                paperdollPanel.RenderColor = itemdata.Color;
+                                paperdoll = MyEntity.Gender == 0
+                                    ? itemDescriptor.MalePaperdoll : itemDescriptor.FemalePaperdoll;
+                                paperdollPanel.RenderColor = itemDescriptor.Color;
                             }
                         }
                     }
