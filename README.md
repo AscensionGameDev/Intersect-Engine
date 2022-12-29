@@ -22,8 +22,7 @@ Our [build server](https://teamcity.freemmorpgmaker.com/?guest=1) builds, tests,
 
 | Name  | Status |
 |:---|--------|
-| Master (Stable) | [![Build Status](https://teamcity.freemmorpgmaker.com/app/rest/builds/buildType:stable/statusIcon)](https://teamcity.freemmorpgmaker.com/viewType.html?buildTypeId=stable&guest=1) |
-| Prerelease (Nightly) | [![Build Status](https://teamcity.freemmorpgmaker.com/app/rest/builds/buildType:prerelease/statusIcon)](https://teamcity.freemmorpgmaker.com/viewType.html?buildTypeId=prerelease&guest=1) |
+| main | [![Build Status](https://teamcity.freemmorpgmaker.com/app/rest/builds/buildType:main/statusIcon)](https://teamcity.freemmorpgmaker.com/viewType.html?buildTypeId=main&guest=1) |
 
 
 ## Supported Platforms
