@@ -1413,7 +1413,7 @@ namespace Intersect.Client.Entities
                     return true;
                 }
 
-                return GetType() == typeof(Entity) && (Globals.Database.NpcOverheadHpBar);
+                return GetType() == typeof(Entity) && Globals.Database.NpcOverheadHpBar;
             }
         }
 

@@ -2380,12 +2380,17 @@ namespace Intersect.Client.Entities
         {
             get
             {
-                if (!ShouldNotDrawHpBar || IsHovered)
+                if (ShouldNotDrawHpBar)
+                {
+                    return false;
+                }
+
+                if (IsHovered)
                 {
                     return true;
                 }
 
-                if (this.Id == Globals.Me.Id)
+                if (Id == Globals.Me.Id)
                 {
                     return Globals.Database.MyOverheadHpBar;
                 }
