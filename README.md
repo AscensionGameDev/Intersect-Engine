@@ -51,10 +51,6 @@ If you need help using Intersect or have other questions we suggest you post on 
 
 If you are interested in contributing fixes or features to Intersect, please read our [contributors guide](CONTRIBUTING.md) first.
 
-### Donations
-
-If you'd like to help the project by supporting us financially we accept and greatly appreciate donations at [Ascension Game Dev](https://www.ascensiongamedev.com/donate/make-donation/).
-
 
 ## Source Code
 
