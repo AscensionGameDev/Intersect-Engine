@@ -1008,13 +1008,13 @@ namespace Intersect.Client.Maps
         /// </summary>
         public void DrawFog()
         {
-            // Exit early if the player or map data is not available, or if there is no fog texture
+            // Exit early if the player or map data is not available, or if there is no fog texture.
             if (Globals.Me == null || Lookup.Get(Globals.Me.MapId) == null || Fog == null || Fog.Length <= 0)
             {
                 return;
             }
 
-            // Get fog texture and exit early if it is not available
+            // Get fog texture and exit early if it is not available.
             var fogTex = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Fog, Fog);
             if (fogTex == null)
             {
@@ -1195,52 +1195,60 @@ namespace Intersect.Client.Maps
 
         public void CompareEffects(IMapInstance oldMap)
         {
-            var tempMap = oldMap as MapInstance;
-            //Check if fogs the same
-            if (tempMap.Fog == Fog)
+            // Return if the old map is not a MapInstance.
+            if (!(oldMap is MapInstance tempMap))
             {
-                var fogTex = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Fog, Fog);
-                if (fogTex != null)
-                {
-                    //Copy over fog values
-                    mFogUpdateTime = tempMap.mFogUpdateTime;
-                    var ratio = (float)tempMap.FogTransparency / FogTransparency;
-                    mCurFogIntensity = ratio * tempMap.mCurFogIntensity;
-                    mFogCurrentX = tempMap.mFogCurrentX;
-                    mFogCurrentY = tempMap.mFogCurrentY;
-                    if (GetX() > tempMap.GetX())
-                    {
-                        mFogCurrentX -= Options.TileWidth * Options.MapWidth % fogTex.GetWidth();
-                    }
-                    else if (GetX() < oldMap.X)
-                    {
-                        mFogCurrentX += Options.TileWidth * Options.MapWidth % fogTex.GetWidth();
-                    }
-
-                    if (GetY() > oldMap.Y)
-                    {
-                        mFogCurrentY -= Options.TileHeight * Options.MapHeight % fogTex.GetHeight();
-                    }
-                    else if (GetY() < oldMap.Y)
-                    {
-                        mFogCurrentY += Options.TileHeight * Options.MapHeight % fogTex.GetHeight();
-                    }
-
-                    tempMap.mCurFogIntensity = 0;
-                }
+                return;
             }
 
+            // Check if fog is the same.
+            if (tempMap.Fog == Fog)
+            {
+                // Get fog texture.
+                var fogTex = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Fog, Fog);
+                if (fogTex == null)
+                {
+                    return;
+                }
+
+                // Copy over fog values.
+                mFogUpdateTime = tempMap.mFogUpdateTime;
+                var ratio = (float)tempMap.FogTransparency / FogTransparency;
+                mCurFogIntensity = ratio * tempMap.mCurFogIntensity;
+                mFogCurrentX = tempMap.mFogCurrentX;
+                mFogCurrentY = tempMap.mFogCurrentY;
+
+                // Calculate displacement of current map compared to old map.
+                float dx = GetX() - oldMap.X;
+                float dy = GetY() - oldMap.Y;
+
+                // Update fog position based on displacement.
+                float fogWidth = fogTex.GetWidth();
+                float fogHeight = fogTex.GetHeight();
+                mFogCurrentX -= dx * Options.TileWidth * Options.MapWidth % fogWidth;
+                mFogCurrentY -= dy * Options.TileHeight * Options.MapHeight % fogHeight;
+
+                // Reset fog intensity of old map.
+                tempMap.mCurFogIntensity = 0;
+            }
+
+            // Check if panorama is the same.
             if (tempMap.Panorama == Panorama)
             {
+                // Copy over panorama values.
                 mPanoramaIntensity = tempMap.mPanoramaIntensity;
                 mPanoramaUpdateTime = tempMap.mPanoramaUpdateTime;
+                // Reset panorama intensity of old map.
                 tempMap.mPanoramaIntensity = 0;
             }
 
+            // Check if overlay graphic is the same.
             if (tempMap.OverlayGraphic == OverlayGraphic)
             {
+                // Copy over overlay graphic values.
                 mOverlayIntensity = tempMap.mOverlayIntensity;
                 mOverlayUpdateTime = tempMap.mOverlayUpdateTime;
+                // Reset overlay graphic intensity of old map.
                 tempMap.mOverlayIntensity = 0;
             }
         }
