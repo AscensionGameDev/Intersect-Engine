@@ -1036,7 +1036,7 @@ namespace Intersect.Client.Maps
             var yCount = Options.MapHeight * Options.TileHeight * 3 / fogTex.GetHeight();
 
             // Update the fog texture's position based on its speed and elapsed time.
-            mFogCurrentX -= elapsedTime / 1000f * FogXSpeed * -6;
+            mFogCurrentX += elapsedTime / 1000f * FogXSpeed * 2;
             mFogCurrentY += elapsedTime / 1000f * FogYSpeed * 2;
 
             // Handle cases where the fog texture's position goes out of bounds.
