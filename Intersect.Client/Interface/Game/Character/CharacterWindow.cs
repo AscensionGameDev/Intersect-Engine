@@ -259,17 +259,11 @@ namespace Intersect.Client.Interface.Game.Character
                                 .Inventory[equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z])]]
                                 .ItemId;
 
-                            if (ItemBase.Get(itemNum) != null)
+                            if (ItemBase.TryGet(itemNum, out var itemDescriptor))
                             {
-                                var itemdata = ItemBase.Get(itemNum);
-                                if (Globals.Me.Gender == 0)
-                                {
-                                    paperdoll = itemdata.MalePaperdoll;
-                                }
-                                else
-                                {
-                                    paperdoll = itemdata.FemalePaperdoll;
-                                }
+                                paperdoll = Globals.Me.Gender == 0
+                                    ? itemDescriptor.MalePaperdoll : itemDescriptor.FemalePaperdoll;
+                                PaperdollPanels[z].RenderColor = itemDescriptor.Color;
                             }
                         }
                     }
