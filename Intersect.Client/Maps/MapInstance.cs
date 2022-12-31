@@ -1003,104 +1003,62 @@ namespace Intersect.Client.Maps
             return outputBuffers;
         }
 
-        //Fogs/Panorama/Overlay
+        /// <summary>
+        /// Draws the fog over the game view.
+        /// </summary>
         public void DrawFog()
         {
-            if (Globals.Me == null || Lookup.Get(Globals.Me.MapId) == null)
+            // Exit early if the player or map data is not available, or if there is no fog texture.
+            if (Globals.Me == null || Lookup.Get(Globals.Me.MapId) == null || string.IsNullOrWhiteSpace(Fog))
             {
                 return;
             }
 
-            float ecTime = Timing.Global.Milliseconds - mFogUpdateTime;
+            // Get fog texture and exit early if it is not available.
+            var fogTex = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Fog, Fog);
+            if (fogTex == null)
+            {
+                return;
+            }
+
+            // Calculate elapsed time since the last update and set maximum value for elapsedTime to
+            // prevent large jumps in fog intensity (1 second maximum).
+            float elapsedTime = Math.Min(Timing.Global.Milliseconds - mFogUpdateTime, 1000);
             mFogUpdateTime = Timing.Global.Milliseconds;
-            if (Id == Globals.Me.MapId)
+
+            // Update fog intensity based on whether the player is on the current map or not.
+            mCurFogIntensity = Id == Globals.Me.MapId
+                ? Math.Min(1, mCurFogIntensity + elapsedTime / 2000f)
+                : Math.Max(0, mCurFogIntensity - elapsedTime / 2000f);
+
+            // Calculate the number of times the fog texture needs to be drawn to cover the map area.
+            var xCount = Options.MapWidth * Options.TileWidth * 3 / fogTex.Width;
+            var yCount = Options.MapHeight * Options.TileHeight * 3 / fogTex.Height;
+
+            // Update the fog texture's position based on its speed and elapsed time.
+            mFogCurrentX += elapsedTime / 1000f * FogXSpeed * 2;
+            mFogCurrentY += elapsedTime / 1000f * FogYSpeed * 2;
+
+            // Handle cases where the fog texture's position goes out of bounds.
+            mFogCurrentX %= fogTex.Width;
+            mFogCurrentY %= fogTex.Height;
+
+            // Round the fog texture's position to the nearest integer value.
+            var drawX = (float)Math.Round(mFogCurrentX);
+            var drawY = (float)Math.Round(mFogCurrentY);
+
+            for (var x = 0; x <= xCount; x++)
             {
-                if (mCurFogIntensity != 1)
+                for (var y = 0; y <= yCount; y++)
                 {
-                    if (mCurFogIntensity < 1)
-                    {
-                        mCurFogIntensity += ecTime / 2000f;
-                        if (mCurFogIntensity > 1)
-                        {
-                            mCurFogIntensity = 1;
-                        }
-                    }
-                    else
-                    {
-                        mCurFogIntensity -= ecTime / 2000f;
-                        if (mCurFogIntensity < 1)
-                        {
-                            mCurFogIntensity = 1;
-                        }
-                    }
-                }
-            }
-            else
-            {
-                if (mCurFogIntensity != 0)
-                {
-                    mCurFogIntensity -= ecTime / 2000f;
-                    if (mCurFogIntensity < 0)
-                    {
-                        mCurFogIntensity = 0;
-                    }
-                }
-            }
-
-            if (Fog != null && Fog.Length > 0)
-            {
-                var fogTex = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Fog, Fog);
-                if (fogTex != null)
-                {
-                    var xCount = (int)(Options.MapWidth * Options.TileWidth * 3 / fogTex.GetWidth());
-                    var yCount = (int)(Options.MapHeight * Options.TileHeight * 3 / fogTex.GetHeight());
-
-                    mFogCurrentX -= ecTime / 1000f * FogXSpeed * -6;
-                    mFogCurrentY += ecTime / 1000f * FogYSpeed * 2;
-                    float deltaX = 0;
-                    mFogCurrentX -= deltaX;
-                    float deltaY = 0;
-                    mFogCurrentY -= deltaY;
-
-                    if (mFogCurrentX < fogTex.GetWidth())
-                    {
-                        mFogCurrentX += fogTex.GetWidth();
-                    }
-
-                    if (mFogCurrentX > fogTex.GetWidth())
-                    {
-                        mFogCurrentX -= fogTex.GetWidth();
-                    }
-
-                    if (mFogCurrentY < fogTex.GetHeight())
-                    {
-                        mFogCurrentY += fogTex.GetHeight();
-                    }
-
-                    if (mFogCurrentY > fogTex.GetHeight())
-                    {
-                        mFogCurrentY -= fogTex.GetHeight();
-                    }
-
-                    var drawX = (float)Math.Round(mFogCurrentX);
-                    var drawY = (float)Math.Round(mFogCurrentY);
-
-                    for (var x = -1; x < xCount; x++)
-                    {
-                        for (var y = -1; y < yCount; y++)
-                        {
-                            var fogW = fogTex.GetWidth();
-                            var fogH = fogTex.GetHeight();
-                            Graphics.DrawGameTexture(
-                                fogTex, new FloatRect(0, 0, fogW, fogH),
-                                new FloatRect(
-                                    GetX() - Options.MapWidth * Options.TileWidth * 1f + x * fogW + drawX,
-                                    GetY() - Options.MapHeight * Options.TileHeight * 1f + y * fogH + drawY, fogW, fogH
-                                ), new Intersect.Color((byte)(FogTransparency * mCurFogIntensity), 255, 255, 255),
-                                null, GameBlendModes.None
-                            );
-                        }
-                    }
+                    Graphics.DrawGameTexture(
+                        fogTex, new FloatRect(0, 0, fogTex.Width, fogTex.Height),
+                        new FloatRect(
+                            X - Options.MapWidth * Options.TileWidth * 1f + x * fogTex.Width + drawX,
+                            Y - Options.MapHeight * Options.TileHeight * 1f + y * fogTex.Height + drawY,
+                            fogTex.Width, fogTex.Height
+                        ), new Color((byte)(FogTransparency * mCurFogIntensity), 255, 255, 255)
+                    );
                 }
             }
         }
@@ -1236,52 +1194,58 @@ namespace Intersect.Client.Maps
 
         public void CompareEffects(IMapInstance oldMap)
         {
-            var tempMap = oldMap as MapInstance;
-            //Check if fogs the same
-            if (tempMap.Fog == Fog)
+            // Return if the old map is not a MapInstance.
+            if (!(oldMap is MapInstance tempMap))
             {
-                var fogTex = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Fog, Fog);
-                if (fogTex != null)
-                {
-                    //Copy over fog values
-                    mFogUpdateTime = tempMap.mFogUpdateTime;
-                    var ratio = (float)tempMap.FogTransparency / FogTransparency;
-                    mCurFogIntensity = ratio * tempMap.mCurFogIntensity;
-                    mFogCurrentX = tempMap.mFogCurrentX;
-                    mFogCurrentY = tempMap.mFogCurrentY;
-                    if (GetX() > tempMap.GetX())
-                    {
-                        mFogCurrentX -= Options.TileWidth * Options.MapWidth % fogTex.GetWidth();
-                    }
-                    else if (GetX() < oldMap.X)
-                    {
-                        mFogCurrentX += Options.TileWidth * Options.MapWidth % fogTex.GetWidth();
-                    }
-
-                    if (GetY() > oldMap.Y)
-                    {
-                        mFogCurrentY -= Options.TileHeight * Options.MapHeight % fogTex.GetHeight();
-                    }
-                    else if (GetY() < oldMap.Y)
-                    {
-                        mFogCurrentY += Options.TileHeight * Options.MapHeight % fogTex.GetHeight();
-                    }
-
-                    tempMap.mCurFogIntensity = 0;
-                }
+                return;
             }
 
+            // Check if fog is the same.
+            if (tempMap.Fog == Fog)
+            {
+                // Get fog texture.
+                var fogTex = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Fog, Fog);
+                if (fogTex == null)
+                {
+                    return;
+                }
+
+                // Copy over fog values.
+                mFogUpdateTime = tempMap.mFogUpdateTime;
+                var ratio = (float)tempMap.FogTransparency / FogTransparency;
+                mCurFogIntensity = ratio * tempMap.mCurFogIntensity;
+                mFogCurrentX = tempMap.mFogCurrentX;
+                mFogCurrentY = tempMap.mFogCurrentY;
+
+                // Calculate displacement of current map compared to old map.
+                float dx = X - oldMap.X;
+                float dy = Y - oldMap.Y;
+
+                // Update fog position based on displacement.
+                mFogCurrentX -= dx * Options.TileWidth * Options.MapWidth % fogTex.Width;
+                mFogCurrentY -= dy * Options.TileHeight * Options.MapHeight % fogTex.Height;
+
+                // Reset fog intensity of old map.
+                tempMap.mCurFogIntensity = 0;
+            }
+
+            // Check if panorama is the same.
             if (tempMap.Panorama == Panorama)
             {
+                // Copy over panorama values.
                 mPanoramaIntensity = tempMap.mPanoramaIntensity;
                 mPanoramaUpdateTime = tempMap.mPanoramaUpdateTime;
+                // Reset panorama intensity of old map.
                 tempMap.mPanoramaIntensity = 0;
             }
 
+            // Check if overlay graphic is the same.
             if (tempMap.OverlayGraphic == OverlayGraphic)
             {
+                // Copy over overlay graphic values.
                 mOverlayIntensity = tempMap.mOverlayIntensity;
                 mOverlayUpdateTime = tempMap.mOverlayUpdateTime;
+                // Reset overlay graphic intensity of old map.
                 tempMap.mOverlayIntensity = 0;
             }
         }
