@@ -78,6 +78,18 @@ namespace Intersect.Client.Interface.Shared
 
         private readonly LabeledCheckBox mPlayerOverheadInfoCheckbox;
 
+        private readonly LabeledCheckBox mFriendOverheadHpBarCheckbox;
+
+        private readonly LabeledCheckBox mGuildMemberOverheadHpBarCheckbox;
+
+        private readonly LabeledCheckBox mMyOverheadHpBarCheckbox;
+
+        private readonly LabeledCheckBox mNpcOverheadHpBarCheckbox;
+
+        private readonly LabeledCheckBox mPartyMemberOverheadHpBarCheckbox;
+
+        private readonly LabeledCheckBox mPlayerOverheadHpBarCheckbox;
+
         // Game Settings - Targeting.
         private readonly ScrollControl mTargetingSettings;
 
@@ -182,7 +194,7 @@ namespace Intersect.Client.Interface.Shared
             mAutoCloseWindowsCheckbox = new LabeledCheckBox(mInterfaceSettings, "AutoCloseWindowsCheckbox");
             mAutoCloseWindowsCheckbox.Text = Strings.Settings.AutoCloseWindows;
 
-            // Game Settings - Interface: Show EXP/HP/MP to Percentage.
+            // Game Settings - Interface: Show EXP/HP/MP as Percentage.
             mShowExperienceAsPercentageCheckbox =
                 new LabeledCheckBox(mInterfaceSettings, "ShowExperienceAsPercentageCheckbox");
             mShowExperienceAsPercentageCheckbox.Text = Strings.Settings.ShowExperienceAsPercentage;
@@ -222,6 +234,36 @@ namespace Intersect.Client.Interface.Shared
             mPlayerOverheadInfoCheckbox =
                 new LabeledCheckBox(mInformationSettings, "PlayerOverheadInfoCheckbox");
             mPlayerOverheadInfoCheckbox.Text = Strings.Settings.ShowPlayerOverheadInformation;
+
+            // Game Settings - Information: friends overhead hp bar.
+            mFriendOverheadHpBarCheckbox =
+                new LabeledCheckBox(mInformationSettings, "FriendOverheadHpBarCheckbox");
+            mFriendOverheadHpBarCheckbox.Text = Strings.Settings.ShowFriendOverheadHpBar;
+
+            // Game Settings - Information: guild members overhead hp bar.
+            mGuildMemberOverheadHpBarCheckbox =
+                new LabeledCheckBox(mInformationSettings, "GuildMemberOverheadHpBarCheckbox");
+            mGuildMemberOverheadHpBarCheckbox.Text = Strings.Settings.ShowGuildOverheadHpBar;
+
+            // Game Settings - Information: my overhead hp bar.
+            mMyOverheadHpBarCheckbox =
+                new LabeledCheckBox(mInformationSettings, "MyOverheadHpBarCheckbox");
+            mMyOverheadHpBarCheckbox.Text = Strings.Settings.ShowMyOverheadHpBar;
+
+            // Game Settings - Information: NPC overhead hp bar.
+            mNpcOverheadHpBarCheckbox =
+                new LabeledCheckBox(mInformationSettings, "NpcOverheadHpBarCheckbox");
+            mNpcOverheadHpBarCheckbox.Text = Strings.Settings.ShowNpcOverheadHpBar;
+
+            // Game Settings - Information: party members overhead hp bar.
+            mPartyMemberOverheadHpBarCheckbox =
+                new LabeledCheckBox(mInformationSettings, "PartyMemberOverheadHpBarCheckbox");
+            mPartyMemberOverheadHpBarCheckbox.Text = Strings.Settings.ShowPartyOverheadHpBar;
+
+            // Game Settings - Information: players overhead hp bar.
+            mPlayerOverheadHpBarCheckbox =
+                new LabeledCheckBox(mInformationSettings, "PlayerOverheadHpBarCheckbox");
+            mPlayerOverheadHpBarCheckbox.Text = Strings.Settings.ShowPlayerOverheadHpBar;
 
             // Game Settings - Targeting.
             mTargetingSettings = new ScrollControl(mGameSettingsContainer, "TargetingSettings");
@@ -633,6 +675,12 @@ namespace Intersect.Client.Interface.Shared
             mNpcOverheadInfoCheckbox.IsChecked = Globals.Database.NpcOverheadInfo;
             mPartyMemberOverheadInfoCheckbox.IsChecked = Globals.Database.PartyMemberOverheadInfo;
             mPlayerOverheadInfoCheckbox.IsChecked = Globals.Database.PlayerOverheadInfo;
+            mFriendOverheadHpBarCheckbox.IsChecked = Globals.Database.FriendOverheadHpBar;
+            mGuildMemberOverheadHpBarCheckbox.IsChecked = Globals.Database.GuildMemberOverheadHpBar;
+            mMyOverheadHpBarCheckbox.IsChecked = Globals.Database.MyOverheadHpBar;
+            mNpcOverheadHpBarCheckbox.IsChecked = Globals.Database.NpcOverheadHpBar;
+            mPartyMemberOverheadHpBarCheckbox.IsChecked = Globals.Database.PartyMemberOverheadHpBar;
+            mPlayerOverheadHpBarCheckbox.IsChecked = Globals.Database.PlayerOverheadHpBar;
             mStickyTarget.IsChecked = Globals.Database.StickyTarget;
             mAutoTurnToTarget.IsChecked = Globals.Database.AutoTurnToTarget;
 
@@ -806,6 +854,12 @@ namespace Intersect.Client.Interface.Shared
             Globals.Database.NpcOverheadInfo = mNpcOverheadInfoCheckbox.IsChecked;
             Globals.Database.PartyMemberOverheadInfo = mPartyMemberOverheadInfoCheckbox.IsChecked;
             Globals.Database.PlayerOverheadInfo = mPlayerOverheadInfoCheckbox.IsChecked;
+            Globals.Database.FriendOverheadHpBar = mFriendOverheadHpBarCheckbox.IsChecked;
+            Globals.Database.GuildMemberOverheadHpBar = mGuildMemberOverheadHpBarCheckbox.IsChecked;
+            Globals.Database.MyOverheadHpBar= mMyOverheadHpBarCheckbox.IsChecked;
+            Globals.Database.NpcOverheadHpBar= mNpcOverheadHpBarCheckbox.IsChecked;
+            Globals.Database.PartyMemberOverheadHpBar = mPartyMemberOverheadHpBarCheckbox.IsChecked;
+            Globals.Database.PlayerOverheadHpBar = mPlayerOverheadHpBarCheckbox.IsChecked;
             Globals.Database.StickyTarget = mStickyTarget.IsChecked;
             Globals.Database.AutoTurnToTarget = mAutoTurnToTarget.IsChecked;
 

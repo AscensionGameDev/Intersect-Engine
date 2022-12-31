@@ -210,7 +210,7 @@ namespace Intersect.Client.Entities
             return Party.Count > 0;
         }
 
-        public bool IsInMyParty(IPlayer player) => IsInMyParty(player.Id);
+        public bool IsInMyParty(IPlayer player) => player != null && IsInMyParty(player.Id);
 
         public bool IsInMyParty(Guid id) => Party.Any(member => member.Id == id);
 
@@ -2274,6 +2274,8 @@ namespace Intersect.Client.Entities
                             {
                                 continue;
                             }
+                            
+                            en.Value.IsHovered = false;
 
                             var isPlayer = en.Value is Player;
                             var isNpc = !isPlayer;
@@ -2295,6 +2297,8 @@ namespace Intersect.Client.Entities
                                     var isFriend = isOtherPlayer && Globals.Me.IsFriend(player);
                                     var isGuildMate = isOtherPlayer && Globals.Me.IsGuildMate(player);
                                     var isPartyMate = isOtherPlayer && Globals.Me.IsInMyParty(player);
+                                    
+                                    en.Value.IsHovered = true;
 
                                     // If MyOverheadInfo is toggled off, draw the local Players
                                     // overhead information only when hovered by the cursor.
@@ -2367,6 +2371,44 @@ namespace Intersect.Client.Entities
                         break;
                     }
                 }
+            }
+        }
+
+        protected override bool ShouldDrawHpBar
+        {
+            get
+            {
+                if (ShouldNotDrawHpBar)
+                {
+                    return false;
+                }
+
+                if (IsHovered)
+                {
+                    return true;
+                }
+
+                if (Id == Globals.Me.Id)
+                {
+                    return Globals.Database.MyOverheadHpBar;
+                }
+
+                if (Globals.Database.PartyMemberOverheadHpBar && Globals.Me.IsInMyParty(this))
+                {
+                    return true;
+                }
+
+                if (Globals.Database.FriendOverheadHpBar && Globals.Me.IsFriend(this))
+                {
+                    return true;
+                }
+
+                if (Globals.Database.GuildMemberOverheadHpBar && Globals.Me.IsGuildMate(this))
+                {
+                    return true;
+                }
+
+                return Globals.Database.PlayerOverheadHpBar;
             }
         }
 

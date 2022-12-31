@@ -29,15 +29,27 @@ namespace Intersect.Client.Framework.Database
 
         public bool FriendOverheadInfo { get; set; }
 
+        public bool FriendOverheadHpBar { get; set; }
+
         public bool GuildMemberOverheadInfo { get; set; }
+
+        public bool GuildMemberOverheadHpBar { get; set; }
 
         public bool MyOverheadInfo { get; set; }
 
+        public bool MyOverheadHpBar { get; set; }
+
         public bool NpcOverheadInfo { get; set; }
+
+        public bool NpcOverheadHpBar { get; set; }
 
         public bool PartyMemberOverheadInfo { get; set; }
 
+        public bool PartyMemberOverheadHpBar { get; set; }
+
         public bool PlayerOverheadInfo { get; set; }
+
+        public bool PlayerOverheadHpBar { get; set; }
 
         public bool ShowExperienceAsPercentage { get; set; }
 
@@ -81,11 +93,17 @@ namespace Intersect.Client.Framework.Database
             StickyTarget = LoadPreference(nameof(StickyTarget), false);
             AutoTurnToTarget = LoadPreference(nameof(AutoTurnToTarget), false);
             FriendOverheadInfo = LoadPreference(nameof(FriendOverheadInfo), true);
+            FriendOverheadHpBar = LoadPreference(nameof(FriendOverheadHpBar), false);
             GuildMemberOverheadInfo = LoadPreference(nameof(GuildMemberOverheadInfo), true);
+            GuildMemberOverheadHpBar = LoadPreference(nameof(GuildMemberOverheadHpBar), false);
             MyOverheadInfo = LoadPreference(nameof(MyOverheadInfo), true);
+            MyOverheadHpBar = LoadPreference(nameof(MyOverheadHpBar), false);
             NpcOverheadInfo = LoadPreference(nameof(NpcOverheadInfo), true);
+            NpcOverheadHpBar = LoadPreference(nameof(NpcOverheadHpBar), false);
             PartyMemberOverheadInfo = LoadPreference(nameof(PartyMemberOverheadInfo), true);
+            PartyMemberOverheadHpBar = LoadPreference(nameof(PartyMemberOverheadHpBar), false);
             PlayerOverheadInfo = LoadPreference(nameof(PlayerOverheadInfo), true);
+            PlayerOverheadHpBar = LoadPreference(nameof(PlayerOverheadHpBar), false);
             ShowExperienceAsPercentage = LoadPreference(nameof(ShowExperienceAsPercentage), true);
             ShowHealthAsPercentage = LoadPreference(nameof(ShowHealthAsPercentage), false);
             ShowManaAsPercentage = LoadPreference(nameof(ShowManaAsPercentage), false);
@@ -107,11 +125,17 @@ namespace Intersect.Client.Framework.Database
             SavePreference(nameof(StickyTarget), StickyTarget);
             SavePreference(nameof(AutoTurnToTarget), AutoTurnToTarget);
             SavePreference(nameof(FriendOverheadInfo), FriendOverheadInfo);
+            SavePreference(nameof(FriendOverheadHpBar), FriendOverheadHpBar);
             SavePreference(nameof(GuildMemberOverheadInfo), GuildMemberOverheadInfo);
+            SavePreference(nameof(GuildMemberOverheadHpBar), GuildMemberOverheadHpBar);
             SavePreference(nameof(MyOverheadInfo), MyOverheadInfo);
+            SavePreference(nameof(MyOverheadHpBar), MyOverheadHpBar);
             SavePreference(nameof(NpcOverheadInfo), NpcOverheadInfo);
+            SavePreference(nameof(NpcOverheadHpBar), NpcOverheadHpBar);
             SavePreference(nameof(PartyMemberOverheadInfo), PartyMemberOverheadInfo);
+            SavePreference(nameof(PartyMemberOverheadHpBar), PartyMemberOverheadHpBar);
             SavePreference(nameof(PlayerOverheadInfo), PlayerOverheadInfo);
+            SavePreference(nameof(PlayerOverheadHpBar), PlayerOverheadHpBar);
             SavePreference(nameof(ShowExperienceAsPercentage), ShowExperienceAsPercentage);
             SavePreference(nameof(ShowHealthAsPercentage), ShowHealthAsPercentage);
             SavePreference(nameof(ShowManaAsPercentage), ShowManaAsPercentage);

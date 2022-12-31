@@ -214,6 +214,8 @@ namespace Intersect.Client.Entities
         public int WalkFrame { get; set; }
 
         public FloatRect WorldPos { get; set; } = new FloatRect();
+        
+        public bool IsHovered { get; set; }
 
         //Location Info
         public byte X { get; set; }
@@ -1405,31 +1407,33 @@ namespace Intersect.Client.Entities
             return shieldSize;
         }
 
-        public bool ShouldDrawHpBar
+        protected virtual bool ShouldDrawHpBar
         {
             get
             {
-                if (LatestMap == default)
+                if (!ShouldNotDrawHpBar || IsHovered)
                 {
-                    return false;
+                    return true;
                 }
 
-                if (!ShouldDraw)
+                return GetType() == typeof(Entity) && Globals.Database.NpcOverheadHpBar;
+            }
+        }
+
+        protected bool ShouldNotDrawHpBar
+        {
+            get
+            {
+                if (LatestMap == default || !ShouldDraw)
                 {
-                    return false;
+                    return true;
                 }
 
-                //return true;
+                int health = Vital[(int)Vitals.Health],
+                    maxHealth = MaxVital[(int)Vitals.Health],
+                    shieldSize = GetShieldSize();
 
-                var health = Vital[(int)Vitals.Health];
-                if (health < 1)
-                {
-                    return false;
-                }
-
-                var maxHealth = MaxVital[(int)Vitals.Health];
-                var shieldSize = GetShieldSize();
-                return shieldSize > 0 || health != maxHealth;
+                return health < 1 || health == maxHealth || shieldSize > 0;
             }
         }
 
