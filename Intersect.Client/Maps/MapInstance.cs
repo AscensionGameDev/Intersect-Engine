@@ -1009,7 +1009,7 @@ namespace Intersect.Client.Maps
         public void DrawFog()
         {
             // Exit early if the player or map data is not available, or if there is no fog texture.
-            if (Globals.Me == null || Lookup.Get(Globals.Me.MapId) == null || Fog == null || Fog.Length <= 0)
+            if (Globals.Me == null || Lookup.Get(Globals.Me.MapId) == null || string.IsNullOrWhiteSpace(Fog))
             {
                 return;
             }
@@ -1032,32 +1032,31 @@ namespace Intersect.Client.Maps
                 : Math.Max(0, mCurFogIntensity - elapsedTime / 2000f);
 
             // Calculate the number of times the fog texture needs to be drawn to cover the map area.
-            var xCount = Options.MapWidth * Options.TileWidth * 3 / fogTex.GetWidth();
-            var yCount = Options.MapHeight * Options.TileHeight * 3 / fogTex.GetHeight();
+            var xCount = Options.MapWidth * Options.TileWidth * 3 / fogTex.Width;
+            var yCount = Options.MapHeight * Options.TileHeight * 3 / fogTex.Height;
 
             // Update the fog texture's position based on its speed and elapsed time.
             mFogCurrentX += elapsedTime / 1000f * FogXSpeed * 2;
             mFogCurrentY += elapsedTime / 1000f * FogYSpeed * 2;
 
             // Handle cases where the fog texture's position goes out of bounds.
-            mFogCurrentX %= fogTex.GetWidth();
-            mFogCurrentY %= fogTex.GetHeight();
+            mFogCurrentX %= fogTex.Width;
+            mFogCurrentY %= fogTex.Height;
 
             // Round the fog texture's position to the nearest integer value.
             var drawX = (float)Math.Round(mFogCurrentX);
             var drawY = (float)Math.Round(mFogCurrentY);
 
-            for (var x = -1; x < xCount; x++)
+            for (var x = 0; x <= xCount; x++)
             {
-                for (var y = -1; y < yCount; y++)
+                for (var y = 0; y <= yCount; y++)
                 {
-                    var fogW = fogTex.GetWidth();
-                    var fogH = fogTex.GetHeight();
                     Graphics.DrawGameTexture(
-                        fogTex, new FloatRect(0, 0, fogW, fogH),
+                        fogTex, new FloatRect(0, 0, fogTex.Width, fogTex.Height),
                         new FloatRect(
-                            GetX() - Options.MapWidth * Options.TileWidth * 1f + x * fogW + drawX,
-                            GetY() - Options.MapHeight * Options.TileHeight * 1f + y * fogH + drawY, fogW, fogH
+                            X - Options.MapWidth * Options.TileWidth * 1f + x * fogTex.Width + drawX,
+                            Y - Options.MapHeight * Options.TileHeight * 1f + y * fogTex.Height + drawY,
+                            fogTex.Width, fogTex.Height
                         ), new Color((byte)(FogTransparency * mCurFogIntensity), 255, 255, 255)
                     );
                 }
@@ -1219,14 +1218,12 @@ namespace Intersect.Client.Maps
                 mFogCurrentY = tempMap.mFogCurrentY;
 
                 // Calculate displacement of current map compared to old map.
-                float dx = GetX() - oldMap.X;
-                float dy = GetY() - oldMap.Y;
+                float dx = X - oldMap.X;
+                float dy = Y - oldMap.Y;
 
                 // Update fog position based on displacement.
-                float fogWidth = fogTex.GetWidth();
-                float fogHeight = fogTex.GetHeight();
-                mFogCurrentX -= dx * Options.TileWidth * Options.MapWidth % fogWidth;
-                mFogCurrentY -= dy * Options.TileHeight * Options.MapHeight % fogHeight;
+                mFogCurrentX -= dx * Options.TileWidth * Options.MapWidth % fogTex.Width;
+                mFogCurrentY -= dy * Options.TileHeight * Options.MapHeight % fogTex.Height;
 
                 // Reset fog intensity of old map.
                 tempMap.mCurFogIntensity = 0;

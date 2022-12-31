@@ -1834,38 +1834,31 @@ namespace Intersect.Editor.Core
             sFogUpdateTime = Timing.Global.Milliseconds;
 
             // Calculate the number of times the fog texture needs to be drawn to cover the map area.
-            var xCount = Globals.MapEditorWindow.picMap.Width / fogTex.Width + 1;
-            var yCount = Globals.MapEditorWindow.picMap.Height / fogTex.Height + 1;
+            var xCount = Globals.MapEditorWindow.picMap.Width * Options.TileWidth / fogTex.Width;
+            var yCount = Globals.MapEditorWindow.picMap.Height * Options.TileHeight / fogTex.Height;
 
             // Update the fog texture's position based on its speed and elapsed time.
             sFogCurrentX += elapsedTime / 1000f * currentMap.FogXSpeed * 2;
             sFogCurrentY += elapsedTime / 1000f * currentMap.FogYSpeed * 2;
 
             // Handle cases where the fog texture's position goes out of bounds.
-            if (sFogCurrentX < 0 || sFogCurrentX > fogTex.Width)
-            {
-                sFogCurrentX %= fogTex.Width;
-            }
-
-            if (sFogCurrentY < 0 || sFogCurrentY > fogTex.Height)
-            {
-                sFogCurrentY %= fogTex.Height;
-            }
+            sFogCurrentX %= fogTex.Width;
+            sFogCurrentY %= fogTex.Height;
 
             // Round the fog texture's position to the nearest integer value.
             var drawX = (float)Math.Round(sFogCurrentX);
             var drawY = (float)Math.Round(sFogCurrentY);
 
-            for (var x = -1; x < xCount; x++)
+            for (var x = 0; x <= xCount; x++)
             {
-                for (var y = -1; y < yCount; y++)
+                for (var y = 0; y <= yCount; y++)
                 {
-                    var fogW = fogTex.Width;
-                    var fogH = fogTex.Height;
                     DrawTexture(
-                        fogTex, new RectangleF(0, 0, fogW, fogH),
+                        fogTex, new RectangleF(0, 0, fogTex.Width, fogTex.Height),
                         new RectangleF(
-                            x * fogW + drawX, y * fogH + drawY, fogW, fogH
+                            0 - Options.MapWidth * Options.TileWidth * 1f + x * fogTex.Width + drawX,
+                            0 - Options.MapHeight * Options.TileHeight * 1f + y * fogTex.Height + drawY, fogTex.Width,
+                            fogTex.Height
                         ), System.Drawing.Color.FromArgb(currentMap.FogTransparency, 255, 255, 255), target
                     );
                 }
