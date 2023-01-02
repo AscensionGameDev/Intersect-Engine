@@ -393,15 +393,8 @@ namespace Intersect.Client.Framework.Gwen.Control.Layout
             var even = false;
             foreach (TableRow row in Children)
             {
-                if (ClientConfiguration.Instance.MarkListEvenRows)
-                {
-                    row.EvenRow = even;
-                    even = !even;
-                }
-                else
-                {
-                    row.EvenRow = false;
-                }
+                row.EvenRow = even;
+                even = ClientConfiguration.Instance.MarkListEvenRows && !even;
 
                 row.SetColumnWidths(mColumnWidths);
             }
