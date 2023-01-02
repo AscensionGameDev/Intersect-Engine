@@ -44,26 +44,38 @@ namespace Intersect.Client.Interface.Game.Bank
         //Init
         public BankWindow(Canvas gameCanvas)
         {
-            mBankWindow = new WindowControl(gameCanvas, Globals.GuildBank ? Strings.Guilds.Bank.ToString(Globals.Me?.Guild) : Strings.Bank.title.ToString(), false, "BankWindow");
+            // Create a new window to display the contents of the bank.
+            mBankWindow = new WindowControl(gameCanvas,
+                Globals.GuildBank
+                    ? Strings.Guilds.Bank.ToString(Globals.Me?.Guild)
+                    : Strings.Bank.title.ToString(),
+                false, "BankWindow");
+
+            // Disable resizing and add to the list of input-blocking elements.
             mBankWindow.DisableResizing();
             Interface.InputBlockingElements.Add(mBankWindow);
 
+            // Create a new scroll control for the items in the bank.
             mItemContainer = new ScrollControl(mBankWindow, "ItemContainer");
             mItemContainer.EnableScroll(false, true);
 
+            // Initialize the bank window and item container.
             mBankWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
             InitItemContainer();
-            Close();
 
-            // Generate our context menu with basic options.
+            // Create a context menu for the bank items.
             mContextMenu = new Framework.Gwen.Control.Menu(gameCanvas, "BankContextMenu");
             mContextMenu.IsHidden = true;
             mContextMenu.IconMarginDisabled = true;
-            //TODO: Is this a memory leak?
+
+            // Clear the children of the context menu and add a "Withdraw" option.
             mContextMenu.Children.Clear();
             mWithdrawContextItem = mContextMenu.AddItem(Strings.BankContextMenu.Withdraw);
             mWithdrawContextItem.Clicked += MWithdrawContextItem_Clicked;
             mContextMenu.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+
+            // Close the window.
+            Close();
         }
 
         public void OpenContextMenu(int slot)

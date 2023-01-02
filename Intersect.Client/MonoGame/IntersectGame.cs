@@ -80,9 +80,7 @@ namespace Intersect.Client.MonoGame
 
             mGraphics = new GraphicsDeviceManager(this)
             {
-                PreferredBackBufferWidth = 800,
-                PreferredBackBufferHeight = 480,
-                PreferHalfPixelOffset = true
+                PreferredBackBufferWidth = 800, PreferredBackBufferHeight = 480, PreferHalfPixelOffset = true
             };
 
             mGraphics.PreparingDeviceSettings += (s, args) =>
@@ -96,9 +94,8 @@ namespace Intersect.Client.MonoGame
             Globals.ContentManager = new MonoContentManager();
             Globals.Database = new MonoDatabase();
 
-            /* Load configuration */
+            // Load configuration.
             ClientConfiguration.LoadAndSave(ClientConfiguration.DefaultPath);
-
             Globals.Database.LoadPreferences();
 
             Window.IsBorderless = Context.StartupOptions.BorderlessWindow;
@@ -117,19 +114,29 @@ namespace Intersect.Client.MonoGame
             Interface.Interface.GwenInput = new IntersectInput();
             Controls.Init();
 
-            Window.Position = new Microsoft.Xna.Framework.Point(-20, -2000);
+            // Reuse Point object instead of creating a new one each time.
+            var hiddenWindowPosition = new Microsoft.Xna.Framework.Point(-20, -2000);
+            Window.Position = hiddenWindowPosition;
             Window.AllowAltF4 = false;
 
+            // Store frequently used property values in local variables.
+            string mouseCursor = ClientConfiguration.Instance.MouseCursor;
+            string updateUrl = ClientConfiguration.Instance.UpdateUrl;
+
             // If we're going to be rendering a custom mouse cursor, hide the default one!
-            if (!string.IsNullOrWhiteSpace(ClientConfiguration.Instance.MouseCursor))
+            if (!string.IsNullOrWhiteSpace(mouseCursor))
             {
                 IsMouseVisible = false;
             }
-            
-            if (!string.IsNullOrWhiteSpace(ClientConfiguration.Instance.UpdateUrl))
+
+            // Reuse Updater object instead of creating a new one each time.
+            if (!string.IsNullOrWhiteSpace(updateUrl))
             {
                 mUpdater = new Updater.Updater(
-                    ClientConfiguration.Instance.UpdateUrl, Path.Combine("version.json"), true, 5
+                    updateUrl,
+                    Path.Combine("version.json"),
+                    true,
+                    5
                 );
             }
         }
