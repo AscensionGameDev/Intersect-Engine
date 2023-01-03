@@ -613,20 +613,18 @@ namespace Intersect.Client.MonoGame.Graphics
                 rotationDegrees = (float)(Math.PI / 180 * rotationDegrees);
                 origin = new Vector2(sw / 2f, sh / 2f);
 
-                float pntX = 0,
-                    pntY = 0,
-                    pnt1X = tw,
-                    pnt1Y = 0,
-                    pnt2X = 0,
-                    pnt2Y = th,
-                    cntrX = tw / 2,
-                    cntrY = th / 2;
-                Rotate(ref pntX, ref pntY, cntrX, cntrY, rotationDegrees);
-                Rotate(ref pnt1X, ref pnt1Y, cntrX, cntrY, rotationDegrees);
-                Rotate(ref pnt2X, ref pnt2Y, cntrX, cntrY, rotationDegrees);
+                //TODO: Optimize in terms of memory AND performance.
+                var pnt = new Pointf(0, 0);
+                var pnt1 = new Pointf(tw, 0);
+                var pnt2 = new Pointf(0, th);
+                var cntr = new Pointf(tw / 2, th / 2);
 
-                var width = (int)Math.Round(GetDistance(pntX, pntY, pnt1X, pnt1Y));
-                var height = (int)Math.Round(GetDistance(pntX, pntY, pnt2X, pnt2Y));
+                var pntMod = Rotate(pnt, cntr, rotationDegrees);
+                var pntMod2 = Rotate(pnt1, cntr, rotationDegrees);
+                var pntMod3 = Rotate(pnt2, cntr, rotationDegrees);
+
+                var width = (int)Math.Round(GetDistance(pntMod.X, pntMod.Y, pntMod2.X, pntMod2.Y));
+                var height = (int)Math.Round(GetDistance(pntMod.X, pntMod.Y, pntMod3.X, pntMod3.Y));
 
                 if (packRotated)
                 {
@@ -674,20 +672,12 @@ namespace Intersect.Client.MonoGame.Graphics
             return root;
         }
 
-        private void Rotate(ref float x, ref float y, float centerX, float centerY, float angle)
+        private Pointf Rotate(Pointf pnt, Pointf ctr, float angle)
         {
-            // Rotate the point around the center point.
-            float s = (float)Math.Sin(angle);
-            float c = (float)Math.Cos(angle);
-
-            x -= centerX;
-            y -= centerY;
-
-            float newX = x * c - y * s;
-            float newY = x * s + y * c;
-
-            x = newX + centerX;
-            y = newY + centerY;
+            return new Pointf(
+                (float)(pnt.X + ctr.X * Math.Cos(angle) - ctr.Y * Math.Sin(angle)),
+                (float)(pnt.Y + ctr.X * Math.Sin(angle) + ctr.Y * Math.Cos(angle))
+            );
         }
 
         public override void End()
