@@ -244,7 +244,7 @@ namespace Intersect.Client.MonoGame.Graphics
                 UpdateGraphicsState(mScreenWidth, mScreenHeight);
             }
 
-            StartSpritebatch(mCurrentView, GameBlendModes.None, null, null, true);
+            StartSpritebatch(mCurrentView, GameBlendModes.None, null, null, true, null);
 
             return true;
         }
@@ -739,7 +739,7 @@ namespace Intersect.Client.MonoGame.Graphics
 
             var allowedResolutions = new[]
             {
-                new Resolution(800),
+                new Resolution(800, 600),
                 new Resolution(1024, 768),
                 new Resolution(1024, 720),
                 new Resolution(1280, 720),
@@ -845,7 +845,7 @@ namespace Intersect.Client.MonoGame.Graphics
             }
 
             // Concatenate the parts of the name except the last one to get the full name
-            name = string.Join("_", parts.Take(parts.Length - 1));
+            name = string.Join($"{'_'}", parts.Take(parts.Length - 1));
 
             // Return a new MonoFont with the extracted name and size
             return new MonoFont(name, filename, size, mContentManager);

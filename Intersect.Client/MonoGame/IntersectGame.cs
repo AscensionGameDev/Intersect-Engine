@@ -80,7 +80,9 @@ namespace Intersect.Client.MonoGame
 
             mGraphics = new GraphicsDeviceManager(this)
             {
-                PreferredBackBufferWidth = 800, PreferredBackBufferHeight = 480, PreferHalfPixelOffset = true
+                PreferredBackBufferWidth = 800,
+                PreferredBackBufferHeight = 480,
+                PreferHalfPixelOffset = true
             };
 
             mGraphics.PreparingDeviceSettings += (s, args) =>
@@ -114,9 +116,8 @@ namespace Intersect.Client.MonoGame
             Interface.Interface.GwenInput = new IntersectInput();
             Controls.Init();
 
-            // Reuse Point object instead of creating a new one each time.
-            var hiddenWindowPosition = new Microsoft.Xna.Framework.Point(-20, -2000);
-            Window.Position = hiddenWindowPosition;
+            // Windows Position
+            Window.Position = new Microsoft.Xna.Framework.Point(-20, -2000);;
             Window.AllowAltF4 = false;
 
             // Store frequently used property values in local variables.

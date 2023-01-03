@@ -2577,13 +2577,11 @@ namespace Intersect.Client.Framework.Gwen.Control
             // If our parent has an innerpanel and we're a child of it
             // add its offset onto us.
             //
-            if (mParent.mInnerPanel == null || !mParent.mInnerPanel.IsChild(this))
+            if (mParent.mInnerPanel != null && mParent.mInnerPanel.IsChild(this))
             {
-                return mParent.LocalPosToCanvas(new Point(x, y));
+                x += mParent.mInnerPanel.X;
+                y += mParent.mInnerPanel.Y;
             }
-
-            x += mParent.mInnerPanel.X;
-            y += mParent.mInnerPanel.Y;
 
             return mParent.LocalPosToCanvas(new Point(x, y));
         }
@@ -2606,13 +2604,11 @@ namespace Intersect.Client.Framework.Gwen.Control
             // If our parent has an innerpanel and we're a child of it
             // add its offset onto us.
             //
-            if (mParent.mInnerPanel == null || !mParent.mInnerPanel.IsChild(this))
+            if (mParent.mInnerPanel != null && mParent.mInnerPanel.IsChild(this))
             {
-                return mParent.CanvasPosToLocal(new Point(x, y));
+                x -= mParent.mInnerPanel.X;
+                y -= mParent.mInnerPanel.Y;
             }
-
-            x -= mParent.mInnerPanel.X;
-            y -= mParent.mInnerPanel.Y;
 
             return mParent.CanvasPosToLocal(new Point(x, y));
         }
