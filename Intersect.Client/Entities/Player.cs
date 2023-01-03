@@ -2299,8 +2299,10 @@ namespace Intersect.Client.Entities
             );
         }
 
-        // Draw Entities Overhead Information when hovering the cursor by them
-        // (when they are hidden by game settings preferences).
+        /// <summary>
+        /// Draw Entities Overhead Information.
+        /// <para>(when hovering the cursor over them and they're hidden by user preference).</para>
+        /// </summary>
         public void DrawOverheadInfoOnHover()
         {
             var map = this.MapInstance;
@@ -2320,12 +2322,13 @@ namespace Intersect.Client.Entities
             // Iterate over the local entities separately.
             foreach (var en in Globals.Entities)
             {
+                // We don't want to deal with these entities at all.
                 if (en.Value == null || en.Value.MapId != map.Id || en.Value.HideName)
                 {
                     continue;
                 }
 
-                // We don't want to deal with these entities at all.
+                // Neither with these.
                 if (en.Value is Projectile || en.Value is Resource || en.Value is Event)
                 {
                     continue;
@@ -2348,7 +2351,7 @@ namespace Intersect.Client.Entities
                     }
                 }
 
-                // Look up the mouse pos so we can compare it with the iterated entity world position.
+                // Look up the mouse pos so we can compare it with the iterated entity and it's world position.
                 var mousePos = Graphics.ConvertToWorldPoint(Globals.InputManager.MousePosition);
 
                 if (en.Value.IsStealthed && !isPartyMate || !en.Value.WorldPos.Contains(mousePos.X, mousePos.Y))
@@ -2357,69 +2360,57 @@ namespace Intersect.Client.Entities
                     continue;
                 }
 
+                // Consider the entity at this iteration hovered by the cursor.
                 en.Value.IsHovered = true;
 
-                // If MyOverheadInfo is toggled off, draw the local Players
-                // overhead information only when hovered by the cursor.
+                // If MyOverheadInfo is toggled off, draw local player's overhead information.
                 if (!Globals.Database.MyOverheadInfo && isMe)
                 {
                     en.Value.DrawName(null);
-                    continue;
                 }
 
-                // If NpcOverheadInfo is toggled off, draw NPCs
-                // overhead information only when hovered by the cursor.
-                if (!Globals.Database.NpcOverheadInfo && isNpc)
+                // If NpcOverheadInfo is toggled off, draw NPCs overhead information.
+                else if (!Globals.Database.NpcOverheadInfo && isNpc)
                 {
                     en.Value.DrawName(null);
-                    continue;
                 }
 
-                // If PlayerOverheadInfo is toggled off, draw Players
-                // overhead information only when hovered by the cursor.
-                if (!Globals.Database.PlayerOverheadInfo && isOtherPlayer &&
-                    !isFriend && !isGuildMate && !isPartyMate)
+                // If PlayerOverheadInfo is toggled off, draw other player's overhead information.
+                else if (!Globals.Database.PlayerOverheadInfo && isOtherPlayer &&
+                         !isFriend && !isGuildMate && !isPartyMate)
                 {
                     en.Value.DrawName(null);
-                    continue;
                 }
 
-                // If PartyMemberOverheadInfo is toggled off, draw Party Members
-                // overhead information only when hovered by the cursor.
-                if (!Globals.Database.PartyMemberOverheadInfo && isPartyMate)
+                // If PartyMemberOverheadInfo is toggled off, draw party members overhead information.
+                else if (!Globals.Database.PartyMemberOverheadInfo && isPartyMate)
                 {
                     en.Value.DrawName(null);
-                    continue;
                 }
 
-                // If FriendOverheadInfo & GuildMemberOverheadInfo are off,
-                // let's prevent double draw / overlapping.
-                if (!Globals.Database.FriendOverheadInfo && isFriend &&
-                    !Globals.Database.GuildMemberOverheadInfo && isGuildMate && !isPartyMate)
+                // If FriendOverheadInfo & GuildMemberOverheadInfo are off: let's prevent double draw / overlapping.
+                else if (!Globals.Database.FriendOverheadInfo && isFriend &&
+                         !Globals.Database.GuildMemberOverheadInfo && isGuildMate && !isPartyMate)
                 {
                     en.Value.DrawName(null);
-                    continue;
                 }
 
-                // If FriendOverheadInfo is toggled off, draw Friends
-                // overhead information only when hovered by the cursor.
-                if (!Globals.Database.FriendOverheadInfo && isFriend && !isPartyMate)
+                // If FriendOverheadInfo is toggled off, draw friends overhead information.
+                else if (!Globals.Database.FriendOverheadInfo && isFriend && !isPartyMate)
                 {
-                    // Skip if Friend is GuildMate.
+                    // Skip if friend is a guild mate.
                     if (Globals.Database.GuildMemberOverheadInfo && isGuildMate)
                     {
                         continue;
                     }
 
                     en.Value.DrawName(null);
-                    continue;
                 }
 
-                // If GuildMemberOverheadInfo is toggled off, draw Guild Members
-                // overhead information only when hovered by the cursor.
-                if (!Globals.Database.GuildMemberOverheadInfo && isGuildMate && !isPartyMate)
+                // If GuildMemberOverheadInfo is toggled off, draw guild members overhead information.
+                else if (!Globals.Database.GuildMemberOverheadInfo && isGuildMate && !isPartyMate)
                 {
-                    // Skip if GuildMate is Friend.
+                    // Skip if guild mate is a friend.
                     if (Globals.Database.FriendOverheadInfo && isFriend)
                     {
                         continue;
