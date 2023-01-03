@@ -2366,15 +2366,14 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// <returns>Control or null if not found.</returns>
         public virtual Base GetControlAt(int x, int y)
         {
-            // Return null if control is hidden or coordinates are outside the control's bounds
+            // Return null if control is hidden or coordinates are outside the control's bounds.
             if (IsHidden || x < 0 || y < 0 || x >= Width || y >= Height)
             {
                 return null;
             }
 
-            // Check children in reverse order (last added first)
-            var count = mChildren.Count;
-            for (int i = count - 1; i >= 0; i--)
+            // Check children in reverse order (last added first).
+            for (int i = mChildren.Count - 1; i >= 0; i--)
             {
                 var child = mChildren[i];
                 var found = child.GetControlAt(x - child.X, y - child.Y);
@@ -2384,7 +2383,7 @@ namespace Intersect.Client.Framework.Gwen.Control
                 }
             }
 
-            // Return control if it is mouse input enabled, otherwise return null
+            // Return control if it is mouse input enabled, otherwise return null.
             return MouseInputEnabled ? this : null;
         }
 

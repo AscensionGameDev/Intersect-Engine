@@ -434,7 +434,7 @@ namespace Intersect.Client.MonoGame.Graphics
                 return;
             }
 
-            StartSpritebatch(mCurrentView, GameBlendModes.None, null, renderTexture);
+            StartSpritebatch(mCurrentView, GameBlendModes.None, null, renderTexture, false, null);
             foreach (var chr in text)
             {
                 if (!font.Characters.Contains(chr))
@@ -642,6 +642,7 @@ namespace Intersect.Client.MonoGame.Graphics
             void Draw(FloatRect currentView, GameRenderTexture targetObject)
             {
                 StartSpritebatch(currentView, blendMode, shader, targetObject, false, null, drawImmediate);
+
                 mSpriteBatch.Draw((Texture2D)texture, new Vector2(tx, ty),
                     new XNARectangle((int)sx, (int)sy, (int)sw, (int)sh), color, rotationDegrees, origin,
                     new Vector2(tw / sw, th / sh), SpriteEffects.None, 0);
@@ -826,7 +827,8 @@ namespace Intersect.Client.MonoGame.Graphics
                 .TrimStart(Path.DirectorySeparatorChar);
 
             // Split the name into parts
-            var parts = name.Split('_');
+            const char separator = '_';
+            var parts = name.Split(separator);
 
             // Check if the font size can be extracted
             if (parts.Length < 1 || !int.TryParse(parts[parts.Length - 1], out var size))
@@ -835,7 +837,7 @@ namespace Intersect.Client.MonoGame.Graphics
             }
 
             // Concatenate the parts of the name except the last one to get the full name
-            name = string.Join($"{'_'}", parts.Take(parts.Length - 1));
+            name = string.Join(separator.ToString(), parts.Take(parts.Length - 1));
 
             // Return a new MonoFont with the extracted name and size
             return new MonoFont(name, filename, size, mContentManager);
