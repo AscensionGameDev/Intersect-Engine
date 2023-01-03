@@ -2576,7 +2576,6 @@ namespace Intersect.Client.Framework.Gwen.Control
 
             // If our parent has an innerpanel and we're a child of it
             // add its offset onto us.
-            //
             if (mParent.mInnerPanel != null && mParent.mInnerPanel.IsChild(this))
             {
                 x += mParent.mInnerPanel.X;
@@ -2603,7 +2602,6 @@ namespace Intersect.Client.Framework.Gwen.Control
 
             // If our parent has an innerpanel and we're a child of it
             // add its offset onto us.
-            //
             if (mParent.mInnerPanel != null && mParent.mInnerPanel.IsChild(this))
             {
                 x -= mParent.mInnerPanel.X;
