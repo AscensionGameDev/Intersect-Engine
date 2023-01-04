@@ -525,6 +525,7 @@ namespace Intersect.Client.Core
         private static void DrawOverheadInfo(Entity entity)
         {
             // Cache boolean values.
+            bool isEvent = entity is Event;
             bool isNpc = true;
             bool isMe = false;
             bool isOtherPlayer = false;
@@ -549,8 +550,14 @@ namespace Intersect.Client.Core
                 }
             }
 
+            // Events have their own handler for hiding names within the DrawName virtual void in the Entity class.
+            if (isEvent)
+            {
+                entity.DrawName(null);
+            }
+
             // If MyOverheadInfo is toggled on always draw the local player's information.
-            if (Globals.Database.MyOverheadInfo && isMe)
+            else if (Globals.Database.MyOverheadInfo && isMe)
             {
                 entity.DrawName(null);
             }
