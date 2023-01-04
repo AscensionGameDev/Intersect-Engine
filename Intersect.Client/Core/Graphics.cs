@@ -536,7 +536,6 @@ namespace Intersect.Client.Core
             bool isFriend = false;
             bool isGuildMate = false;
             bool isPartyMate = false;
-            bool skip = true;
 
             // Sets our previously cached booleans based on entities.
             if (entity is Player player)
@@ -555,16 +554,15 @@ namespace Intersect.Client.Core
             }
 
             // Check various conditions and skip if any of them are met.
-            if (isEvent) skip = false;
-            else if (Globals.Database.MyOverheadInfo && isMe) skip = false;
-            else if (Globals.Database.NpcOverheadInfo && isNpc) skip = false;
-            else if (Globals.Database.PlayerOverheadInfo && !isMe) skip = false;
-            else if (Globals.Database.PartyMemberOverheadInfo && isPartyMate) skip = false;
-            else if (Globals.Database.FriendOverheadInfo && isFriend) skip = false;
-            else if (Globals.Database.GuildMemberOverheadInfo && isGuildMate) skip = false;
+            var dontSkip = isEvent || (Globals.Database.MyOverheadInfo && isMe) ||
+                           (Globals.Database.NpcOverheadInfo && isNpc) ||
+                           (Globals.Database.PlayerOverheadInfo && !isMe && !isNpc) ||
+                           (Globals.Database.PartyMemberOverheadInfo && isPartyMate) ||
+                           (Globals.Database.FriendOverheadInfo && isFriend) ||
+                           (Globals.Database.GuildMemberOverheadInfo && isGuildMate);
 
             // All the conditions are met: call the DrawName method.
-            if (!skip) entity.DrawName(null);
+            if (dontSkip) entity.DrawName(null);
         }
 
         //Game Rendering

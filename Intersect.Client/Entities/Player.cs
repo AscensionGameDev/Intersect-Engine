@@ -2325,7 +2325,6 @@ namespace Intersect.Client.Entities
                 bool isFriend = false;
                 bool isGuildMate = false;
                 bool isPartyMate = false;
-                bool skip = false;
 
                 switch (en)
                 {
@@ -2366,12 +2365,12 @@ namespace Intersect.Client.Entities
                 en.IsHovered = true;
 
                 // Check various conditions and skip if any of them are met.
-                if (Globals.Database.MyOverheadInfo && isMe) skip = true;
-                else if (Globals.Database.NpcOverheadInfo && isNpc) skip = true;
-                else if (Globals.Database.PlayerOverheadInfo && !isMe) skip = true;
-                else if (Globals.Database.PartyMemberOverheadInfo && isPartyMate) skip = true;
-                else if (Globals.Database.FriendOverheadInfo && isFriend) skip = true;
-                else if (Globals.Database.GuildMemberOverheadInfo && isGuildMate) skip = true;
+                bool skip = (Globals.Database.MyOverheadInfo && isMe) ||
+                            (Globals.Database.NpcOverheadInfo && isNpc) ||
+                            (Globals.Database.PlayerOverheadInfo && !isMe && !isNpc) ||
+                            (Globals.Database.PartyMemberOverheadInfo && isPartyMate) ||
+                            (Globals.Database.FriendOverheadInfo && isFriend) ||
+                            (Globals.Database.GuildMemberOverheadInfo && isGuildMate);
 
                 // All the conditions are met: call the DrawName method.
                 if (!skip) en.DrawName(null);
