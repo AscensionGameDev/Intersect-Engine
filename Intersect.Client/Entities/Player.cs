@@ -2310,31 +2310,31 @@ namespace Intersect.Client.Entities
                 return;
             }
 
-            // Cache booleans to be used later within the loop.
-            bool isNpc = true;
-            bool isMe = false;
-            bool isOtherPlayer = false;
-            bool isFriend = false;
-            bool isGuildMate = false;
-            bool isPartyMate = false;
-
             // Iterate over the local entities separately.
             foreach (var en in Globals.Entities.Values)
             {
                 // We don't want to deal with these entities at all.
-                if (en == null || !en.MapInstance.InView() || en.HideName) // en.MapId != MapId -> has some drawbacks
+                if (en == null || !en.MapInstance.InView() || en.HideName)
                 {
                     continue;
                 }
 
+                // Booleans to be used within the loop (default values).
+                bool isNpc = true;
+                bool isMe = false;
+                bool isFriend = false;
+                bool isGuildMate = false;
+                bool isPartyMate = false;
+                bool skip = false;
+
                 switch (en)
                 {
-                    // Neither with these.
+                    // Skip the following type of entities:
                     case Projectile _:
                     case Resource _:
                     case Event _:
                         continue;
-                    // Sets our previously cached booleans based on the iterated entity.
+                    // Sets our booleans based on the iterated entity.
                     case Player player:
                     {
                         isNpc = false;
@@ -2344,7 +2344,6 @@ namespace Intersect.Client.Entities
                         }
                         else
                         {
-                            isOtherPlayer = true;
                             isFriend = Globals.Me.IsFriend(player);
                             isGuildMate = Globals.Me.IsGuildMate(player);
                             isPartyMate = Globals.Me.IsInMyParty(player);
@@ -2357,7 +2356,7 @@ namespace Intersect.Client.Entities
                 // Look up the mouse pos so we can compare it with the iterated entity and it's world position.
                 var mousePos = Graphics.ConvertToWorldPoint(Globals.InputManager.MousePosition);
 
-                if (en.IsStealthed && !isPartyMate || !en.WorldPos.Contains(mousePos.X, mousePos.Y))
+                if ((en.IsStealthed && !isPartyMate) || !en.WorldPos.Contains(mousePos.X, mousePos.Y))
                 {
                     en.IsHovered = false;
                     continue;
@@ -2366,61 +2365,16 @@ namespace Intersect.Client.Entities
                 // Consider the entity at this iteration hovered by the cursor.
                 en.IsHovered = true;
 
-                // If MyOverheadInfo is toggled off, draw local player's overhead information.
-                if (!Globals.Database.MyOverheadInfo && isMe)
-                {
-                    en.DrawName(null);
-                }
+                // Check various conditions and skip if any of them are met.
+                if (Globals.Database.MyOverheadInfo && isMe) skip = true;
+                else if (Globals.Database.NpcOverheadInfo && isNpc) skip = true;
+                else if (Globals.Database.PlayerOverheadInfo && !isMe) skip = true;
+                else if (Globals.Database.PartyMemberOverheadInfo && isPartyMate) skip = true;
+                else if (Globals.Database.FriendOverheadInfo && isFriend) skip = true;
+                else if (Globals.Database.GuildMemberOverheadInfo && isGuildMate) skip = true;
 
-                // If NpcOverheadInfo is toggled off, draw NPCs overhead information.
-                else if (!Globals.Database.NpcOverheadInfo && isNpc)
-                {
-                    en.DrawName(null);
-                }
-
-                // If PlayerOverheadInfo is toggled off, draw other player's overhead information.
-                else if (!Globals.Database.PlayerOverheadInfo && isOtherPlayer &&
-                         !isFriend && !isGuildMate && !isPartyMate)
-                {
-                    en.DrawName(null);
-                }
-
-                // If PartyMemberOverheadInfo is toggled off, draw party members overhead information.
-                else if (!Globals.Database.PartyMemberOverheadInfo && isPartyMate)
-                {
-                    en.DrawName(null);
-                }
-
-                // If FriendOverheadInfo & GuildMemberOverheadInfo are off: let's prevent double draw / overlapping.
-                else if (!Globals.Database.FriendOverheadInfo && isFriend &&
-                         !Globals.Database.GuildMemberOverheadInfo && isGuildMate && !isPartyMate)
-                {
-                    en.DrawName(null);
-                }
-
-                // If FriendOverheadInfo is toggled off, draw friends overhead information.
-                else if (!Globals.Database.FriendOverheadInfo && isFriend && !isPartyMate)
-                {
-                    // Skip if friend is a guild mate.
-                    if (Globals.Database.GuildMemberOverheadInfo && isGuildMate)
-                    {
-                        continue;
-                    }
-
-                    en.DrawName(null);
-                }
-
-                // If GuildMemberOverheadInfo is toggled off, draw guild members overhead information.
-                else if (!Globals.Database.GuildMemberOverheadInfo && isGuildMate && !isPartyMate)
-                {
-                    // Skip if guild mate is a friend.
-                    if (Globals.Database.FriendOverheadInfo && isFriend)
-                    {
-                        continue;
-                    }
-
-                    en.DrawName(null);
-                }
+                // All the conditions are met: call the DrawName method.
+                if (!skip) en.DrawName(null);
             }
         }
 
