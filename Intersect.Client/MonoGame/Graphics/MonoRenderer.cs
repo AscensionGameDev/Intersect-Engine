@@ -827,8 +827,7 @@ namespace Intersect.Client.MonoGame.Graphics
                 .TrimStart(Path.DirectorySeparatorChar);
 
             // Split the name into parts
-            const char separator = '_';
-            var parts = name.Split(separator);
+            var parts = name.Split('_');
 
             // Check if the font size can be extracted
             if (parts.Length < 1 || !int.TryParse(parts[parts.Length - 1], out var size))
@@ -837,7 +836,7 @@ namespace Intersect.Client.MonoGame.Graphics
             }
 
             // Concatenate the parts of the name except the last one to get the full name
-            name = string.Join(separator.ToString(), parts.Take(parts.Length - 1));
+            name = string.Join("_", parts.Take(parts.Length - 1));
 
             // Return a new MonoFont with the extracted name and size
             return new MonoFont(name, filename, size, mContentManager);
