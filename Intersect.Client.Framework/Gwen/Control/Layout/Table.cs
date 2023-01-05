@@ -394,7 +394,7 @@ namespace Intersect.Client.Framework.Gwen.Control.Layout
             foreach (TableRow row in Children)
             {
                 row.EvenRow = even;
-                even = ClientConfiguration.Instance.MarkListEvenRows && !even;
+                even = ClientConfiguration.Instance.EnableZebraStripedRows && !even;
 
                 row.SetColumnWidths(mColumnWidths);
             }
