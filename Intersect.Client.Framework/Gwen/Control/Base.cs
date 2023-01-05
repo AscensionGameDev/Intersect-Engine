@@ -11,7 +11,6 @@ using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Framework.Gwen.ControlInternal;
 using Intersect.Client.Framework.Gwen.DragDrop;
 using Intersect.Client.Framework.Gwen.Input;
-using Intersect.Client.Framework.Audio;
 #if DEBUG || DIAGNOSTIC
 #endif
 using Newtonsoft.Json;
@@ -1751,49 +1750,48 @@ namespace Intersect.Client.Framework.Gwen.Control
         }
 
         /// <summary>
-        ///     Positions the control inside its parent.
+        /// Positions the control inside its parent.
         /// </summary>
         /// <param name="pos">Target position.</param>
-        /// <param name="xpadding">X padding.</param>
-        /// <param name="ypadding">Y padding.</param>
-        public virtual void Position(Pos pos, int xpadding = 0, int ypadding = 0) // todo: a bit ambiguous name
+        /// <param name="xPadding">X padding.</param>
+        /// <param name="yPadding">Y padding.</param>
+        public virtual void Position(Pos pos, int xPadding = 0, int yPadding = 0)
         {
-            var w = Parent.Width;
-            var h = Parent.Height;
-            var padding = Parent.Padding;
+            // Cache frequently used values.
+            int parentWidth = Parent.Width;
+            int parentHeight = Parent.Height;
+            Padding padding = Parent.Padding;
 
-            var x = X;
-            var y = Y;
-            if (0 != (pos & Pos.Left))
+            // Calculate the new X and Y positions using bitwise operations.
+            int x = X;
+            int y = Y;
+            if ((pos & Pos.Left) != 0)
             {
-                x = padding.Left + xpadding;
+                x = padding.Left + xPadding;
+            }
+            else if ((pos & Pos.Right) != 0)
+            {
+                x = parentWidth - Width - padding.Right - xPadding;
+            }
+            else if ((pos & Pos.CenterH) != 0)
+            {
+                x = (int)(padding.Left + xPadding + (parentWidth - Width - padding.Left - padding.Right) * 0.5f);
             }
 
-            if (0 != (pos & Pos.Right))
+            if ((pos & Pos.Top) != 0)
             {
-                x = w - Width - padding.Right - xpadding;
+                y = padding.Top + yPadding;
+            }
+            else if ((pos & Pos.Bottom) != 0)
+            {
+                y = parentHeight - Height - padding.Bottom - yPadding;
+            }
+            else if ((pos & Pos.CenterV) != 0)
+            {
+                y = (int)(padding.Top + yPadding + (parentHeight - Height - padding.Bottom - padding.Top) * 0.5f);
             }
 
-            if (0 != (pos & Pos.CenterH))
-            {
-                x = (int) (padding.Left + xpadding + (w - Width - padding.Left - padding.Right) * 0.5f);
-            }
-
-            if (0 != (pos & Pos.Top))
-            {
-                y = padding.Top + ypadding;
-            }
-
-            if (0 != (pos & Pos.Bottom))
-            {
-                y = h - Height - padding.Bottom - ypadding;
-            }
-
-            if (0 != (pos & Pos.CenterV))
-            {
-                y = (int) (padding.Top + ypadding + (h - Height - padding.Bottom - padding.Top) * 0.5f);
-            }
-
+            // Set the new position.
             SetPosition(x, y);
         }
 
@@ -1853,61 +1851,56 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// <param name="master">Root parent.</param>
         protected virtual void DoCacheRender(Skin.Base skin, Base master)
         {
-            var render = skin.Renderer;
-            var cache = render.Ctt;
+            var renderer = skin?.Renderer;
+            var cache = renderer?.Ctt;
 
+            // Return early if the cache is not available
             if (cache == null)
             {
                 return;
             }
 
-            var oldRenderOffset = render.RenderOffset;
-            var oldRegion = render.ClipRegion;
+            // Save current render offset and clip region
+            var oldRenderOffset = renderer.RenderOffset;
+            var oldRegion = renderer.ClipRegion;
 
+            // Set render offset and clip region based on whether this control is the root parent
             if (this != master)
             {
-                render.AddRenderOffset(Bounds);
-                render.AddClipRegion(Bounds);
+                renderer.AddRenderOffset(Bounds);
+                renderer.AddClipRegion(Bounds);
             }
             else
             {
-                render.RenderOffset = Point.Empty;
-                render.ClipRegion = new Rectangle(0, 0, Width, Height);
+                renderer.RenderOffset = Point.Empty;
+                renderer.ClipRegion = new Rectangle(0, 0, Width, Height);
             }
 
-            if (mCacheTextureDirty && render.ClipRegionVisible)
+            // Render the control and its children if the cache is dirty and the clip region is visible
+            if (mCacheTextureDirty && renderer.ClipRegionVisible)
             {
-                render.StartClip();
+                renderer.StartClip();
 
+                // Setup the cache texture if necessary
                 if (ShouldCacheToTexture)
                 {
                     cache.SetupCacheTexture(this);
                 }
 
-                //Render myself first
-                //var old = render.ClipRegion;
-                //render.ClipRegion = Bounds;
-                //var old = render.RenderOffset;
-                //render.RenderOffset = new Point(Bounds.X, Bounds.Y);
+                // Render the control
                 Render(skin);
 
-                //render.RenderOffset = old;
-                //render.ClipRegion = old;
-
-                if (mChildren.Count > 0)
+                // Render the children (Reverse).
+                for (int i = 0; i < mChildren.Count; i++)
                 {
-                    //Now render my kids
-                    for (int i = 0; i < mChildren.Count; i++)
+                    var child = mChildren[i];
+                    if (!child.IsHidden)
                     {
-                        if (mChildren[i].IsHidden)
-                        {
-                            continue;
-                        }
-
-                        mChildren[i].DoCacheRender(skin, master);
+                        child.DoCacheRender(skin, master);
                     }
                 }
 
+                // Finish the cache texture if necessary
                 if (ShouldCacheToTexture)
                 {
                     cache.FinishCacheTexture(this);
@@ -1915,10 +1908,12 @@ namespace Intersect.Client.Framework.Gwen.Control
                 }
             }
 
-            render.ClipRegion = oldRegion;
-            render.StartClip();
-            render.RenderOffset = oldRenderOffset;
+            // Restore the original clip region and render offset
+            renderer.ClipRegion = oldRegion;
+            renderer.StartClip();
+            renderer.RenderOffset = oldRenderOffset;
 
+            // Draw the cached control texture if necessary
             if (ShouldCacheToTexture)
             {
                 cache.DrawCachedControlTexture(this);
@@ -2371,22 +2366,16 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// <returns>Control or null if not found.</returns>
         public virtual Base GetControlAt(int x, int y)
         {
-            if (IsHidden)
+            // Return null if control is hidden or coordinates are outside the control's bounds.
+            if (IsHidden || x < 0 || y < 0 || x >= Width || y >= Height)
             {
                 return null;
             }
 
-            if (x < 0 || y < 0 || x >= Width || y >= Height)
+            // Check children in reverse order (last added first).
+            for (int i = mChildren.Count - 1; i >= 0; i--)
             {
-                return null;
-            }
-
-            // todo: convert to linq FindLast
-            var rev = ((IList<Base>) mChildren)
-                .Reverse(); // IList.Reverse creates new list, List.Reverse works in place.. go figure
-
-            foreach (var child in rev)
-            {
+                var child = mChildren[i];
                 var found = child.GetControlAt(x - child.X, y - child.Y);
                 if (found != null)
                 {
@@ -2394,12 +2383,8 @@ namespace Intersect.Client.Framework.Gwen.Control
                 }
             }
 
-            if (!MouseInputEnabled)
-            {
-                return null;
-            }
-
-            return this;
+            // Return control if it is mouse input enabled, otherwise return null.
+            return MouseInputEnabled ? this : null;
         }
 
         public virtual Base GetControlAt(Point point) => GetControlAt(point.X, point.Y);
@@ -2410,7 +2395,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// <param name="skin">Skin to use.</param>
         protected virtual void Layout(Skin.Base skin)
         {
-            if (skin.Renderer.Ctt != null && ShouldCacheToTexture)
+            if (skin?.Renderer.Ctt != null && ShouldCacheToTexture)
             {
                 skin.Renderer.Ctt.CreateControlCacheTexture(this);
             }
@@ -2580,24 +2565,23 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// <returns>Canvas coordinates.</returns>
         public virtual Point LocalPosToCanvas(Point pnt)
         {
-            if (mParent != null)
+            if (mParent == null)
             {
-                var x = pnt.X + X;
-                var y = pnt.Y + Y;
-
-                // If our parent has an innerpanel and we're a child of it
-                // add its offset onto us.
-                //
-                if (mParent.mInnerPanel != null && mParent.mInnerPanel.IsChild(this))
-                {
-                    x += mParent.mInnerPanel.X;
-                    y += mParent.mInnerPanel.Y;
-                }
-
-                return mParent.LocalPosToCanvas(new Point(x, y));
+                return pnt;
             }
 
-            return pnt;
+            var x = pnt.X + X;
+            var y = pnt.Y + Y;
+
+            // If our parent has an innerpanel and we're a child of it
+            // add its offset onto us.
+            if (mParent.mInnerPanel != null && mParent.mInnerPanel.IsChild(this))
+            {
+                x += mParent.mInnerPanel.X;
+                y += mParent.mInnerPanel.Y;
+            }
+
+            return mParent.LocalPosToCanvas(new Point(x, y));
         }
 
         /// <summary>
@@ -2607,24 +2591,23 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// <returns>Local coordinates.</returns>
         public virtual Point CanvasPosToLocal(Point pnt)
         {
-            if (mParent != null)
+            if (mParent == null)
             {
-                var x = pnt.X - X;
-                var y = pnt.Y - Y;
-
-                // If our parent has an innerpanel and we're a child of it
-                // add its offset onto us.
-                //
-                if (mParent.mInnerPanel != null && mParent.mInnerPanel.IsChild(this))
-                {
-                    x -= mParent.mInnerPanel.X;
-                    y -= mParent.mInnerPanel.Y;
-                }
-
-                return mParent.CanvasPosToLocal(new Point(x, y));
+                return pnt;
             }
 
-            return pnt;
+            var x = pnt.X - X;
+            var y = pnt.Y - Y;
+
+            // If our parent has an innerpanel and we're a child of it
+            // add its offset onto us.
+            if (mParent.mInnerPanel != null && mParent.mInnerPanel.IsChild(this))
+            {
+                x -= mParent.mInnerPanel.X;
+                y -= mParent.mInnerPanel.Y;
+            }
+
+            return mParent.CanvasPosToLocal(new Point(x, y));
         }
 
         /// <summary>
