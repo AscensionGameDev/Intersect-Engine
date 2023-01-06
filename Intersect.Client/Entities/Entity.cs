@@ -1333,7 +1333,7 @@ namespace Intersect.Client.Entities
         public virtual void DrawName(Color textColor, Color borderColor = null, Color backgroundColor = null)
         {
             // Are we really supposed to draw this name?
-            if (!DrawNameRequirements(this))
+            if (!DrawNameRequirements())
             {
                 return;
             }
@@ -1384,12 +1384,6 @@ namespace Intersect.Client.Entities
                 backgroundColor = Color.Transparent;
             }
 
-            var map = MapInstance;
-            if (map == null)
-            {
-                return;
-            }
-
             var name = Name;
             if ((this is Player && Options.Player.ShowLevelByName) || (Type == EntityTypes.GlobalEntity && Options.Npc.ShowLevelByName))
             {
@@ -1415,10 +1409,10 @@ namespace Intersect.Client.Entities
             );
         }
 
-        private bool DrawNameRequirements(Entity entity)
+        private bool DrawNameRequirements()
         {
             // Return if the map instance is null or the name is empty or not set to be drawn.
-            if (entity.MapInstance == null || string.IsNullOrWhiteSpace(Name) || !ShouldDrawName)
+            if (MapInstance == null || string.IsNullOrWhiteSpace(Name) || !ShouldDrawName)
             {
                 return false;
             }
@@ -1426,11 +1420,11 @@ namespace Intersect.Client.Entities
             // Look up the mouse position and convert it to a world point.
             var mousePos = Graphics.ConvertToWorldPoint(Globals.InputManager.MousePosition);
 
-            // The entity is considered hovered if the mouse is over its world position (and nor hovering over the GUI).
-            entity.IsHovered = entity.WorldPos.Contains(mousePos.X, mousePos.Y) && !Interface.Interface.MouseHitGui();
+            // Entity is considered hovered if the mouse is over its world position and not hovering over the GUI.
+            IsHovered = WorldPos.Contains(mousePos.X, mousePos.Y) && !Interface.Interface.MouseHitGui();
 
             // Check the type of entity and return whether its name should be drawn based on settings and conditions.
-            switch (entity)
+            switch (this)
             {
                 case Projectile _:
                 case Resource _:
@@ -1439,14 +1433,14 @@ namespace Intersect.Client.Entities
                     return true;
                 case Player player:
                     var me = Globals.Me;
-                    bool fulfillsRequirements = (Globals.Database.MyOverheadInfo && player.Id == me.Id) ||
-                                                (Globals.Database.PlayerOverheadInfo && player.Id != me.Id) ||
-                                                (Globals.Database.PartyMemberOverheadInfo && me.IsInMyParty(player)) ||
-                                                (Globals.Database.FriendOverheadInfo && me.IsFriend(player)) ||
-                                                (Globals.Database.GuildMemberOverheadInfo && me.IsGuildMate(player));
-                    return fulfillsRequirements || entity.IsHovered;
+                    bool meetsRequirements = (Globals.Database.MyOverheadInfo && player.Id == me.Id) ||
+                                             (Globals.Database.PlayerOverheadInfo && player.Id != me.Id) ||
+                                             (Globals.Database.PartyMemberOverheadInfo && me.IsInMyParty(player)) ||
+                                             (Globals.Database.FriendOverheadInfo && me.IsFriend(player)) ||
+                                             (Globals.Database.GuildMemberOverheadInfo && me.IsGuildMate(player));
+                    return meetsRequirements || IsHovered;
                 default:
-                    return Globals.Database.NpcOverheadInfo || entity.IsHovered;
+                    return Globals.Database.NpcOverheadInfo || IsHovered;
             }
         }
 
