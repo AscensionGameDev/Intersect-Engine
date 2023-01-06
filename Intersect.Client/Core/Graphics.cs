@@ -449,9 +449,6 @@ namespace Intersect.Client.Core
             //Draw the players targets
             Globals.Me.DrawTargets();
 
-            // Draw Overhead Information while hovering the cursor on specific entities when their info is set to be hidden.
-            Globals.Me.DrawOverheadInfoOnHover();
-
             DrawOverlay();
 
             // Draw lighting effects.
@@ -464,7 +461,7 @@ namespace Intersect.Client.Core
                 {
                     foreach (var entity in RenderingEntities[x, y])
                     {
-                        DrawOverheadInfo(entity);
+                        entity.DrawName(null);
                         if (entity.GetType() != typeof(Event))
                         {
                             entity.DrawHpBar();
@@ -482,7 +479,7 @@ namespace Intersect.Client.Core
                 {
                     foreach (var entity in RenderingEntities[x, y])
                     {
-                        DrawOverheadInfo(entity);
+                        entity.DrawName(null);
                         if (entity.GetType() != typeof(Event))
                         {
                             entity.DrawHpBar();
@@ -517,52 +514,6 @@ namespace Intersect.Client.Core
             {
                 animInstance.EndDraw();
             }
-        }
-
-        /// <summary>
-        /// Draw Entities Overhead Information.
-        /// </summary>
-        private static void DrawOverheadInfo(Entity entity)
-        {
-            if (entity == null)
-            {
-                return;
-            }
-
-            // Cache boolean values.
-            bool isEvent = entity is Event;
-            bool isNpc = true;
-            bool isMe = false;
-            bool isFriend = false;
-            bool isGuildMate = false;
-            bool isPartyMate = false;
-
-            // Sets our previously cached booleans based on entities.
-            if (entity is Player player)
-            {
-                isNpc = false;
-                if (player.Id == Globals.Me.Id)
-                {
-                    isMe = true;
-                }
-                else
-                {
-                    isFriend = Globals.Me.IsFriend(player);
-                    isGuildMate = Globals.Me.IsGuildMate(player);
-                    isPartyMate = Globals.Me.IsInMyParty(player);
-                }
-            }
-
-            // Check various conditions and skip if any of them are met.
-            var dontSkip = isEvent || (Globals.Database.MyOverheadInfo && isMe) ||
-                           (Globals.Database.NpcOverheadInfo && isNpc) ||
-                           (Globals.Database.PlayerOverheadInfo && !isMe && !isNpc) ||
-                           (Globals.Database.PartyMemberOverheadInfo && isPartyMate) ||
-                           (Globals.Database.FriendOverheadInfo && isFriend) ||
-                           (Globals.Database.GuildMemberOverheadInfo && isGuildMate);
-
-            // All the conditions are met: call the DrawName method.
-            if (dontSkip) entity.DrawName(null);
         }
 
         //Game Rendering
