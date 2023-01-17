@@ -1,5 +1,5 @@
 ﻿using System;
-
+using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Utilities;
 
@@ -13,7 +13,7 @@ namespace Intersect.Client.Entities.Projectiles
 
         public bool AutoRotate;
 
-        public int Dir;
+        public Direction Dir;
 
         public int Distance;
 
@@ -43,7 +43,7 @@ namespace Intersect.Client.Entities.Projectiles
         public int Z;
 
         public ProjectileSpawns(
-            int dir,
+            Direction dir,
             int x,
             int y,
             int z,

@@ -37,7 +37,7 @@ namespace Intersect.Client.Framework.Entities
         bool InView { get; }
         IMapInstance MapInstance { get; }
         Guid MapId { get; }
-        byte Dir { get; }
+        Direction Dir { get; }
         byte X { get; }
         byte Y { get; }
         byte Z { get; }

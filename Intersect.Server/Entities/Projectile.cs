@@ -1,15 +1,11 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps;
 using Intersect.Network.Packets.Server;
 using Intersect.Server.Entities.Combat;
-using Intersect.Server.General;
 using Intersect.Server.Maps;
-using Intersect.Server.Networking;
 using Intersect.Utilities;
 
 namespace Intersect.Server.Entities
@@ -52,7 +48,7 @@ namespace Intersect.Server.Entities
             byte X,
             byte Y,
             byte z,
-            byte direction,
+            Direction direction,
             Entity target
         ) : base()
         {
@@ -101,7 +97,7 @@ namespace Intersect.Server.Entities
                         if (Base.SpawnLocations[x, y].Directions[d] == true && mSpawnedAmount < Spawns.Length)
                         {
                             var s = new ProjectileSpawn(
-                                FindProjectileRotationDir(Dir, d),
+                                FindProjectileRotationDir(Dir, (Direction)d),
                                 (byte) (X + FindProjectileRotationX(Dir, x - 2, y - 2)),
                                 (byte) (Y + FindProjectileRotationY(Dir, x - 2, y - 2)), (byte) Z, MapId, MapInstanceId, Base, this
                             );
@@ -122,116 +118,50 @@ namespace Intersect.Server.Entities
             mSpawnTime = Timing.Global.Milliseconds + Base.Delay;
         }
 
-        private int FindProjectileRotationX(int direction, int x, int y)
+        private static int FindProjectileRotationX(Direction direction, int x, int y)
         {
             switch (direction)
             {
-                case 0: //Up
+                case Direction.Up:
                     return x;
-                case 1: //Down
+                case Direction.Down:
                     return -x;
-                case 2: //Left
+                case Direction.Left:
+                case Direction.UpLeft:
+                case Direction.DownLeft:
                     return y;
-                case 3: //Right
+                case Direction.Right:
+                case Direction.UpRight:
+                case Direction.DownRight:
                     return -y;
                 default:
                     return x;
             }
         }
 
-        private int FindProjectileRotationY(int direction, int x, int y)
+        private static int FindProjectileRotationY(Direction direction, int x, int y)
         {
             switch (direction)
             {
-                case 0: //Up
+                case Direction.Up:
                     return y;
-                case 1: //Down
+                case Direction.Down:
                     return -y;
-                case 2: //Left
+                case Direction.Left:
+                case Direction.UpLeft:
+                case Direction.DownLeft:
                     return -x;
-                case 3: //Right
+                case Direction.Right:
+                case Direction.UpRight:
+                case Direction.DownRight:
                     return x;
                 default:
                     return y;
             }
         }
 
-        private byte FindProjectileRotationDir(int entityDir, byte projectionDir)
-        {
-            switch (entityDir)
-            {
-                case 0: //Up
-                    return projectionDir;
-                case 1: //Down
-                    switch (projectionDir)
-                    {
-                        case 0: //Up
-                            return 1;
-                        case 1: //Down
-                            return 0;
-                        case 2: //Left
-                            return 3;
-                        case 3: //Right
-                            return 2;
-                        case 4: //UpLeft
-                            return 7;
-                        case 5: //UpRight
-                            return 6;
-                        case 6: //DownLeft
-                            return 5;
-                        case 7: //DownRight
-                            return 4;
-                        default:
-                            return projectionDir;
-                    }
-                case 2: //Left
-                    switch (projectionDir)
-                    {
-                        case 0: //Up
-                            return 2;
-                        case 1: //Down
-                            return 3;
-                        case 2: //Left
-                            return 1;
-                        case 3: //Right
-                            return 0;
-                        case 4: //UpLeft
-                            return 6;
-                        case 5: //UpRight
-                            return 4;
-                        case 6: //DownLeft
-                            return 7;
-                        case 7: //DownRight
-                            return 5;
-                        default:
-                            return projectionDir;
-                    }
-                case 3: //Right
-                    switch (projectionDir)
-                    {
-                        case 0: //Up
-                            return 3;
-                        case 1: //Down
-                            return 2;
-                        case 2: //Left
-                            return 0;
-                        case 3: //Right
-                            return 1;
-                        case 4: //UpLeft
-                            return 5;
-                        case 5: //UpRight
-                            return 7;
-                        case 6: //DownLeft
-                            return 4;
-                        case 7: //DownRight
-                            return 6;
-                        default:
-                            return projectionDir;
-                    }
-                default:
-                    return projectionDir;
-            }
-        }
+        private static Direction FindProjectileRotationDir(Direction entityDir, Direction projectionDir) =>
+            (Direction)ProjectileBase.ProjectileRotationDir[(int)entityDir * ProjectileBase.MAX_PROJECTILE_DIRECTIONS + (int)projectionDir];
 
         public void Update(List<Guid> projDeaths, List<KeyValuePair<Guid, int>> spawnDeaths)
         {
@@ -243,45 +173,41 @@ namespace Intersect.Server.Entities
             ProcessFragments(projDeaths, spawnDeaths);
         }
 
-        private int GetRangeX(int direction, int range)
+        private static float GetRangeX(Direction direction, float range)
         {
-            //Left, UpLeft, DownLeft
-            if (direction == 2 || direction == 4 || direction == 6)
+            switch (direction)
             {
-                return -range;
-            }
-
-            //Right, UpRight, DownRight
-            else if (direction == 3 || direction == 5 || direction == 7)
-            {
-                return range;
-            }
-
-            //Up and Down
-            else
-            {
-                return 0;
+                case Direction.Left:
+                case Direction.UpLeft:
+                case Direction.DownLeft:
+                    return -range;
+                case Direction.Right:
+                case Direction.UpRight:
+                case Direction.DownRight:
+                    return range;
+                case Direction.Up:
+                case Direction.Down:
+                default:
+                    return 0;
             }
         }
 
-        private int GetRangeY(int direction, int range)
+        private static float GetRangeY(Direction direction, float range)
         {
-            //Up, UpLeft, UpRight
-            if (direction == 0 || direction == 4 || direction == 5)
+            switch (direction)
             {
-                return -range;
-            }
-
-            //Down, DownLeft, DownRight
-            else if (direction == 1 || direction == 6 || direction == 7)
-            {
-                return range;
-            }
-
-            //Left and Right
-            else
-            {
-                return 0;
+                case Direction.Up:
+                case Direction.UpLeft:
+                case Direction.UpRight:
+                    return -range;
+                case Direction.Down:
+                case Direction.DownLeft:
+                case Direction.DownRight:
+                    return range;
+                case Direction.Left:
+                case Direction.Right:
+                default:
+                    return 0;
             }
         }
 
@@ -345,8 +271,8 @@ namespace Intersect.Server.Entities
 
             //Check Map Entities For Hits
             var map = MapController.Get(spawn.MapId);
-            if ((int)spawn.X < 0 || (int)spawn.X >= Options.Instance.MapOpts.Width ||
-                (int)spawn.Y < 0 || (int)spawn.Y >= Options.Instance.MapOpts.Height)
+            if ((int)spawn.X < 0 || (int)spawn.X >= Options.Instance.MapOpts.MapWidth ||
+                (int)spawn.Y < 0 || (int)spawn.Y >= Options.Instance.MapOpts.MapHeight)
             {
                 return false;
             }
@@ -372,7 +298,7 @@ namespace Intersect.Server.Entities
                     !spawn.Parent.HasGrappled &&
                     (spawn.X != Owner.X || spawn.Y != Owner.Y))
                 {
-                    if (spawn.Dir <= 3) //Don't handle directional projectile grapplehooks
+                    if (spawn.Dir <= Direction.Right) //Don't handle directional projectile grapplehooks
                     {
                         spawn.Parent.HasGrappled = true;
 
@@ -381,7 +307,7 @@ namespace Intersect.Server.Entities
                         {
                             Owner.Dir = spawn.Dir;
                             new Dash(
-                                Owner, spawn.Distance, (byte) Owner.Dir, Base.IgnoreMapBlocks,
+                                Owner, spawn.Distance, Owner.Dir, Base.IgnoreMapBlocks,
                                 Base.IgnoreActiveResources, Base.IgnoreExhaustedResources, Base.IgnoreZDimension
                             );
                         }
@@ -438,7 +364,7 @@ namespace Intersect.Server.Entities
             if (move)
             {
                 spawn.Distance++;
-                spawn.TransmittionTimer += (long)((float)Base.Speed / (float)Base.Range);
+                spawn.TransmittionTimer += (long)(Base.Speed / (float)Base.Range);
                 newx = spawn.X + GetRangeX(spawn.Dir, 1);
                 newy = spawn.Y + GetRangeY(spawn.Dir, 1);
             }

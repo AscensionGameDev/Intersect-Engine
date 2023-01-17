@@ -610,7 +610,7 @@ namespace Intersect.Client.Maps
         }
 
         //Animations
-        public void AddTileAnimation(Guid animId, int tileX, int tileY, int dir = -1, IEntity owner = null)
+        public void AddTileAnimation(Guid animId, int tileX, int tileY, Direction dir = Direction.None, IEntity owner = null)
         {
             var animBase = AnimationBase.Get(animId);
             if (animBase == null)
@@ -862,8 +862,8 @@ namespace Intersect.Client.Maps
             {
                 if (!buffer.UpdateTile(
                     tileset, destX, destY,
-                    (int)Autotiles.Layers[layerName][x, y].QuarterTile[quarterNum].X + xOffset,
-                    (int)Autotiles.Layers[layerName][x, y].QuarterTile[quarterNum].Y + yOffset,
+                    Autotiles.Layers[layerName][x, y].QuarterTile[quarterNum].X + xOffset,
+                    Autotiles.Layers[layerName][x, y].QuarterTile[quarterNum].Y + yOffset,
                     Options.TileWidth / 2, Options.TileHeight / 2
                 ))
                 {
@@ -874,8 +874,8 @@ namespace Intersect.Client.Maps
             {
                 if (!buffer.AddTile(
                     tileset, destX, destY,
-                    (int)Autotiles.Layers[layerName][x, y].QuarterTile[quarterNum].X + xOffset,
-                    (int)Autotiles.Layers[layerName][x, y].QuarterTile[quarterNum].Y + yOffset,
+                    Autotiles.Layers[layerName][x, y].QuarterTile[quarterNum].X + xOffset,
+                    Autotiles.Layers[layerName][x, y].QuarterTile[quarterNum].Y + yOffset,
                     Options.TileWidth / 2, Options.TileHeight / 2
                 ))
                 {
@@ -1085,7 +1085,7 @@ namespace Intersect.Client.Maps
                 if (Timing.Global.Milliseconds > _weatherParticleSpawnTime)
                 {
                     _weatherParticles.Add(new WeatherParticle(_removeParticles, WeatherXSpeed, WeatherYSpeed, anim));
-                    var spawnTime = 25 + (int)(475 * (float)(1f - (float)(WeatherIntensity / 100f)));
+                    var spawnTime = 25 + (int)(475 * (1f - WeatherIntensity / 100f));
                     spawnTime = (int)(spawnTime *
                                        (480000f /
                                         (Graphics.Renderer.GetScreenWidth() * Graphics.Renderer.GetScreenHeight())));
@@ -1266,7 +1266,7 @@ namespace Intersect.Client.Maps
                 var x = (int)Math.Ceiling(GetX() + ActionMessages[n].X * Options.TileWidth + ActionMessages[n].XOffset);
                 var textWidth = Graphics.Renderer.MeasureText(ActionMessages[n].Msg, Graphics.ActionMsgFont, 1).X;
                 Graphics.Renderer.DrawString(
-                    ActionMessages[n].Msg, Graphics.ActionMsgFont, (int)x - textWidth / 2f, (int)y, 1, ActionMessages[n].Color,
+                    ActionMessages[n].Msg, Graphics.ActionMsgFont, x - textWidth / 2f, y, 1, ActionMessages[n].Color,
                     true, null, new Color(40, 40, 40)
                 );
 

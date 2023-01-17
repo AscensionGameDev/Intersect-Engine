@@ -69,7 +69,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             cmbDirection.Items.Clear();
             for (var i = -1; i < 4; i++)
             {
-                cmbDirection.Items.Add(Strings.Directions.dir[i]);
+                cmbDirection.Items.Add(Strings.Direction.dir[(Direction)i]);
             }
 
             chkChangeInstance.Text = Strings.Warping.ChangeInstance;

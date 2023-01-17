@@ -1067,7 +1067,7 @@ namespace Intersect.Editor.Forms.DockingElements
             cmbSlideDir.Items.Clear();
             for (var i = -1; i < 4; i++)
             {
-                cmbSlideDir.Items.Add(Strings.Directions.dir[i]);
+                cmbSlideDir.Items.Add(Strings.Direction.dir[(Direction)i]);
             }
 
             //Map Sound
@@ -1104,7 +1104,7 @@ namespace Intersect.Editor.Forms.DockingElements
             cmbDirection.Items.Clear();
             for (var i = -1; i < 4; i++)
             {
-                cmbDirection.Items.Add(Strings.Directions.dir[i]);
+                cmbDirection.Items.Add(Strings.Direction.dir[(Direction)i]);
             }
             lblInstance.Text = Strings.Warping.InstanceType;
             chkChangeInstance.Text = Strings.Warping.ChangeInstance;
@@ -1136,7 +1136,7 @@ namespace Intersect.Editor.Forms.DockingElements
             cmbCritterDirection.Items.Add(Strings.NpcSpawns.randomdirection);
             for (var i = 0; i < 4; i++)
             {
-                cmbCritterDirection.Items.Add(Strings.Directions.dir[i]);
+                cmbCritterDirection.Items.Add(Strings.Direction.dir[(Direction)i]);
             }
             cmbCritterDirection.SelectedIndex = 0;
 
@@ -1163,7 +1163,7 @@ namespace Intersect.Editor.Forms.DockingElements
             cmbDir.Items.Add(Strings.NpcSpawns.randomdirection);
             for (var i = 0; i < 4; i++)
             {
-                cmbDir.Items.Add(Strings.Directions.dir[i]);
+                cmbDir.Items.Add(Strings.Direction.dir[(Direction)i]);
             }
 
             grpNpcList.Text = Strings.NpcSpawns.addremove;
