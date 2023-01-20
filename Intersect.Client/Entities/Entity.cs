@@ -1411,12 +1411,13 @@ namespace Intersect.Client.Entities
         {
             get
             {
-                if (!ShouldNotDrawHpBar || IsHovered)
+                if (ShouldNotDrawHpBar)
                 {
-                    return true;
+                    return false;
                 }
 
-                return GetType() == typeof(Entity) && Globals.Database.NpcOverheadHpBar;
+                return (GetType() == typeof(Entity) && Globals.Database.NpcOverheadHpBar) ||
+                       Vital[(int)Vitals.Health] != MaxVital[(int)Vitals.Health] || GetShieldSize() > 0 || IsHovered;
             }
         }
 
@@ -1424,16 +1425,7 @@ namespace Intersect.Client.Entities
         {
             get
             {
-                if (LatestMap == default || !ShouldDraw)
-                {
-                    return true;
-                }
-
-                int health = Vital[(int)Vitals.Health],
-                    maxHealth = MaxVital[(int)Vitals.Health],
-                    shieldSize = GetShieldSize();
-
-                return health < 1 || health == maxHealth || shieldSize > 0;
+                return LatestMap == default || !ShouldDraw || Vital[(int)Vitals.Health] < 1;
             }
         }
 
