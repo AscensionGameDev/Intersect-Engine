@@ -1411,12 +1411,8 @@ namespace Intersect.Client.Entities
         {
             get
             {
-                if (!ShouldNotDrawHpBar || IsHovered)
-                {
-                    return true;
-                }
-
-                return GetType() == typeof(Entity) && Globals.Database.NpcOverheadHpBar;
+                bool userPreference = GetType() == typeof(Entity) && Globals.Database.NpcOverheadHpBar;
+                return !ShouldNotDrawHpBar || userPreference || IsHovered;
             }
         }
 
