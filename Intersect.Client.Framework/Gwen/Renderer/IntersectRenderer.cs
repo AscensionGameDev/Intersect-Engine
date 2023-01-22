@@ -202,8 +202,8 @@ namespace Intersect.Client.Framework.Gwen.Renderer
                 clip.Width = (int) Math.Round(clip.Width * Scale);
                 clip.Height = (int) Math.Round(clip.Height * Scale);
 
-                var heightRatio = targetRect.Height * Scale / (float)v2;
-                var widthRatio = targetRect.Width * Scale / (float)u2;
+                var heightRatio = targetRect.Height * Scale / Math.Abs(v2 - v1);
+                var widthRatio = targetRect.Width * Scale / Math.Abs(u2 - u1);
 
                 float diff = 0;
                 float vdiff = 0;
