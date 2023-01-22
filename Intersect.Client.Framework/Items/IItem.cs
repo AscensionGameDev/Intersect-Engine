@@ -1,4 +1,5 @@
-﻿using Intersect.GameObjects;
+using Intersect.GameObjects;
+using Intersect.Network.Packets.Server;
 using System;
 
 namespace Intersect.Client.Framework.Items
@@ -9,9 +10,8 @@ namespace Intersect.Client.Framework.Items
         ItemBase Base { get; }
         Guid ItemId { get; set; }
         int Quantity { get; set; }
-        int[] StatBuffs { get; set; }
+        ItemProperties ItemProperties { get; set; }
 
-        IItem Clone();
-        void Load(Guid id, int quantity, Guid? bagId, int[] statBuffs);
+        void Load(Guid id, int quantity, Guid? bagId, ItemProperties ItemProperties);
     }
 }

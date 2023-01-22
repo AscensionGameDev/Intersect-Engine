@@ -46,7 +46,7 @@ namespace Intersect.Server.Entities
                     items.Add(
                         new BankUpdatePacket(
                             slot, mBank[slot].ItemId, mBank[slot].Quantity, mBank[slot].BagId,
-                            mBank[slot].StatBuffs
+                            mBank[slot].Properties
                         )
                     );
                 }
@@ -73,7 +73,7 @@ namespace Intersect.Server.Entities
                 mPlayer?.SendPacket(
                     new BankUpdatePacket(
                         slot, mBank[slot].ItemId, mBank[slot].Quantity, mBank[slot].BagId,
-                        mBank[slot].StatBuffs
+                        mBank[slot].Properties
                     )
                 );
             }

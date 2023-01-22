@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
@@ -13,6 +13,7 @@ using Intersect.Client.Localization;
 using Intersect.Client.Networking;
 using Intersect.Configuration;
 using Intersect.GameObjects;
+using Intersect.Network.Packets.Server;
 
 namespace Intersect.Client.Interface.Game.Shop
 {
@@ -127,8 +128,13 @@ namespace Intersect.Client.Interface.Game.Shop
             var item = ItemBase.Get(Globals.GameShop.SellingItems[mMySlot].CostItemId);
             if (item != null && Globals.GameShop.SellingItems[mMySlot].Item != null)
             {
+                ItemProperties itemProperty = new ItemProperties()
+                {
+                    StatModifiers = item.StatsGiven,
+                };
+
                 mDescWindow = new ItemDescriptionWindow(
-                    Globals.GameShop.SellingItems[mMySlot].Item, 1, mShopWindow.X, mShopWindow.Y, item.StatsGiven, "",
+                    Globals.GameShop.SellingItems[mMySlot].Item, 1, mShopWindow.X, mShopWindow.Y, itemProperty, "",
                     Strings.Shop.costs.ToString(Globals.GameShop.SellingItems[mMySlot].CostItemQuantity, item.Name)
                 );
             }

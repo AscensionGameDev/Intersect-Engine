@@ -11,6 +11,7 @@ using Intersect.Client.Interface.Game.DescriptionWindows;
 using Intersect.Client.Networking;
 using Intersect.Configuration;
 using Intersect.GameObjects;
+using Intersect.Network.Packets.Server;
 
 namespace Intersect.Client.Interface.Game.Character
 {
@@ -26,7 +27,7 @@ namespace Intersect.Client.Interface.Game.Character
 
         private ItemDescriptionWindow mDescWindow;
 
-        private int[] mStatBoost = new int[(int) Enums.Stats.StatCount];
+        private ItemProperties mItemProperties = null;
 
         private bool mTexLoaded;
 
@@ -105,7 +106,7 @@ namespace Intersect.Client.Interface.Game.Character
                 return;
             }
 
-            mDescWindow = new ItemDescriptionWindow(item, 1, mCharacterWindow.X, mCharacterWindow.Y, mStatBoost, item.Name);
+            mDescWindow = new ItemDescriptionWindow(item, 1, mCharacterWindow.X, mCharacterWindow.Y, mItemProperties, item.Name);
         }
 
         public FloatRect RenderBounds()
@@ -121,12 +122,12 @@ namespace Intersect.Client.Interface.Game.Character
             return rect;
         }
 
-        public void Update(Guid currentItemId, int[] statBoost)
+        public void Update(Guid currentItemId, ItemProperties itemProperties)
         {
             if (currentItemId != mCurrentItemId || !mTexLoaded)
             {
                 mCurrentItemId = currentItemId;
-                mStatBoost = statBoost;
+                mItemProperties = itemProperties;
                 var item = ItemBase.Get(mCurrentItemId);
                 if (item != null)
                 {
