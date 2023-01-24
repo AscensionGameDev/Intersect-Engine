@@ -11,6 +11,17 @@ namespace Intersect.Client.Framework.Gwen
     /// </summary>
     public static partial class Util
     {
+        public static float Approach(float current, float target, float delta)
+        {
+            if (current < target)
+            {
+                return Math.Min(current + delta, target);
+            }
+            else
+            {
+                return Math.Max(current - delta, target);
+            }
+        }
 
         public static int Round(float x)
         {

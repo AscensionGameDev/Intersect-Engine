@@ -252,19 +252,14 @@ namespace Intersect.Client.Framework.Gwen.Control
                 return;
             }
 
-            mScrollOffset = Util.Clamp(mScrollOffset, 0, tabsSize.X - Width + 32);
+            var margin = mTabStrip.Margin;
 
-#if false //
-// This isn't frame rate independent. 
-// Could be better. Get rid of m_ScrollOffset and just use m_TabStrip.GetMargin().left ?
-// Then get a margin animation type and do it properly! 
-// TODO!
-//
-        m_TabStrip.SetMargin( Margin( Gwen::Approach( m_TabStrip.GetMargin().left, m_iScrollOffset * -1, 2 ), 0, 0, 0 ) );
-        InvalidateParent();
-#else
-            mTabStrip.Margin = new Margin(mScrollOffset * -1, 0, 0, 0);
-#endif
+            // Use margin.left
+            margin.Left = (int)Util.Approach(margin.Left, -(tabsSize.X - Width + 32), 2);
+
+            // Clamp margin.left to prevent scrolling too far
+            margin.Left = Util.Clamp(margin.Left, -(tabsSize.X - Width + 32), 0);
+            mTabStrip.Margin = margin;
 
             mScroll[0].SetPosition(Width - 30, 5);
             mScroll[1].SetPosition(mScroll[0].Right, 5);
