@@ -12,8 +12,8 @@ namespace Intersect.Server.Entities.Events
     public static partial class VariableCheckHandlerRegistry
     {
         private static Dictionary<Type, HandleVariableComparison> CheckVariableComparisonFunctions = new Dictionary<Type, HandleVariableComparison>();
-        private delegate bool HandleVariableComparison(VariableValue currentValue, VariableCompaison comparison, Player player, Event eventInstance);
-        private delegate bool HandleVariableComparisonBool<TComparison>(VariableValue currentValue, TComparison comparison, Player player, Event eventInstance) where TComparison : VariableCompaison;
+        private delegate bool HandleVariableComparison(VariableValue currentValue, VariableComparison comparison, Player player, Event eventInstance);
+        private delegate bool HandleVariableComparisonBool<TComparison>(VariableValue currentValue, TComparison comparison, Player player, Event eventInstance) where TComparison : VariableComparison;
         private static MethodInfo CreateWeaklyTypedDelegateForVariableCheckMethodInfoInfo;
         private static bool Initialized = false;
         private static object mLock = new object();
@@ -40,7 +40,7 @@ namespace Intersect.Server.Entities.Events
             Initialized = true;
         }
 
-        public static bool CheckVariableComparison(VariableValue currentValue, VariableCompaison comparison, Player player, Event instance)
+        public static bool CheckVariableComparison(VariableValue currentValue, VariableComparison comparison, Player player, Event instance)
         {
             if (!Initialized)
             {
@@ -57,7 +57,7 @@ namespace Intersect.Server.Entities.Events
         }
 
 
-        private static HandleVariableComparison CreateWeaklyTypedDelegateForVariableCheckMethodInfo<TComparison>(MethodInfo methodInfo, object target = null) where TComparison : VariableCompaison
+        private static HandleVariableComparison CreateWeaklyTypedDelegateForVariableCheckMethodInfo<TComparison>(MethodInfo methodInfo, object target = null) where TComparison : VariableComparison
         {
             if (methodInfo == null)
             {
@@ -68,7 +68,7 @@ namespace Intersect.Server.Entities.Events
                     Delegate.CreateDelegate(typeof(HandleVariableComparisonBool<TComparison>), target, methodInfo) as
                         HandleVariableComparisonBool<TComparison>;
 
-            return (VariableValue currentValue, VariableCompaison comparison, Player player, Event eventInstance) => stronglyTyped(
+            return (VariableValue currentValue, VariableComparison comparison, Player player, Event eventInstance) => stronglyTyped(
                 currentValue, (TComparison)comparison, player, eventInstance
             );
 

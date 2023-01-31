@@ -700,6 +700,11 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             UpdateNumericVariableElements();
         }
 
+        private void rdoTimeSystem_CheckedChanged(object sender, EventArgs e)
+        {
+            UpdateNumericVariableElements();
+        }
+
         private void UpdateNumericVariableElements()
         {
             nudVariableValue.Enabled = rdoVarCompareStaticValue.Checked;
@@ -787,7 +792,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             }
         }
 
-        private void TryLoadVariableBooleanComparison(VariableCompaison comparison)
+        private void TryLoadVariableBooleanComparison(VariableComparison comparison)
         {
             if (!(comparison is BooleanVariableComparison booleanComparison))
             {
@@ -829,7 +834,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             }
         }
 
-        private void TryLoadVariableIntegerComparison(VariableCompaison comparison)
+        private void TryLoadVariableIntegerComparison(VariableComparison comparison)
         {
             if (!(comparison is IntegerVariableComparison integerComparison))
             {
@@ -866,6 +871,10 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                     cmbCompareUserVar.SelectedIndex = UserVariableBase.ListIndex(integerComparison.CompareVariableId);
                 }
             }
+            else if(integerComparison.TimeSystem == true)
+            {
+                rdoTimeSystem.Checked = true;
+            }
             else
             {
                 rdoVarCompareStaticValue.Checked = true;
@@ -875,7 +884,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             UpdateNumericVariableElements();
         }
 
-        private void TryLoadVariableStringComparison(VariableCompaison comparison)
+        private void TryLoadVariableStringComparison(VariableComparison comparison)
         {
             if (!(comparison is StringVariableComparison stringComparison))
             {
@@ -964,11 +973,11 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                 cmbNumericComparitor.SelectedIndex = 0;
             }
 
-
             var comparison = new IntegerVariableComparison
             {
                 Comparator = (VariableComparators)cmbNumericComparitor.SelectedIndex,
                 CompareVariableId = Guid.Empty,
+                TimeSystem = false,
             };
 
             if (rdoVarCompareStaticValue.Checked)
@@ -994,6 +1003,10 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             {
                 comparison.CompareVariableType = VariableTypes.UserVariable;
                 comparison.CompareVariableId = UserVariableBase.IdFromList(cmbCompareUserVar.SelectedIndex);
+            }
+            else
+            {
+                comparison.TimeSystem = true;
             }
 
             return comparison;
@@ -1429,7 +1442,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             }
             else
             {
-                condition.Comparison = new VariableCompaison();
+                condition.Comparison = new VariableComparison();
             }
         }
 
