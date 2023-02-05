@@ -163,6 +163,11 @@ namespace Intersect.Configuration
         public bool EnableContextMenus { get; set; } = true;
 
         /// <summary>
+        /// Configures whether the highlighted even rows of list elements should be marked differently or not.
+        /// </summary>
+        public bool EnableZebraStripedRows { get; set; } = true;
+
+        /// <summary>
         /// Configures the name of the skin or skin texture (must end in .png) to use.
         /// </summary>
         public string UiSkin { get; set; } = "Intersect2021";

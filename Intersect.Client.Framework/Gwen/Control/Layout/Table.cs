@@ -6,7 +6,7 @@ using System.Linq;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Control.Data;
-
+using Intersect.Configuration;
 using Newtonsoft.Json.Linq;
 
 namespace Intersect.Client.Framework.Gwen.Control.Layout
@@ -394,7 +394,8 @@ namespace Intersect.Client.Framework.Gwen.Control.Layout
             foreach (TableRow row in Children)
             {
                 row.EvenRow = even;
-                even = !even;
+                even = ClientConfiguration.Instance.EnableZebraStripedRows && !even;
+
                 row.SetColumnWidths(mColumnWidths);
             }
         }
