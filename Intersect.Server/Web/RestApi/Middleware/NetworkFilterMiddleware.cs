@@ -58,7 +58,6 @@ namespace Intersect.Server.Web.RestApi.Middleware
             context.Response.ReasonPhrase = "HTTPS Required";
             context.Response.Headers["Upgrade"] = "TLS/1.2";
             context.Response.Headers["Upgrade-Insecure-Requests"] = "1";
-            context.Response.Body.Close();
             return Task.CompletedTask;
         }
 
