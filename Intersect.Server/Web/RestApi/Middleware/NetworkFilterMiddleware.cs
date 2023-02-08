@@ -54,7 +54,10 @@ namespace Intersect.Server.Web.RestApi.Middleware
                 }
             }
 
-            context.Response.StatusCode = (int)HttpStatusCode.HttpVersionNotSupported;
+            context.Response.StatusCode = (int)HttpStatusCode.UpgradeRequired;
+            context.Response.ReasonPhrase = "HTTPS Required";
+            context.Response.Headers["Upgrade"] = "TLS/1.2";
+            context.Response.Headers["Upgrade-Insecure-Requests"] = "1";
             return Task.CompletedTask;
         }
 
