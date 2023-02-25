@@ -36,7 +36,7 @@
 
 We expect everyone to adhere to the [Code of Conduct](CODE_OF_CONDUCT.md), and maintainers to uphold the aforementioned Code of Conduct.
 
-If we fail to do so, please let us know [on our Discord](https://discord.gg/CvvsVpPMuF) in our [#code-of-conduct channel](https://discord.com/channels/363106200243535872/951191802977849354) (requires accepting the rules when you join).
+If we fail to do so, please let us know [on our Discord](https://discord.gg/qaJ8kRmdKA) in our [#code-of-conduct channel](https://discord.com/channels/363106200243535872/951191802977849354) (requires accepting the rules when you join).
 
 If you see possible violations of the Code of Conduct please report them per the instructions in our [#reporting channel on Discord](https://discord.com/channels/363106200243535872/951209899134709780).
 
