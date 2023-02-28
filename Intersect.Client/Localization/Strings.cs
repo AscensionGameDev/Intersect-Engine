@@ -463,7 +463,7 @@ namespace Intersect.Client.Localization
 
             public static LocalizedString sixmonths = @"6 months";
 
-            public static LocalizedString cancel = @"Cancel:";
+            public static LocalizedString cancel = @"Cancel";
 
             public static LocalizedString duration = @"Duration:";
 
@@ -471,7 +471,7 @@ namespace Intersect.Client.Localization
 
             public static LocalizedString ip = @"Include IP:";
 
-            public static LocalizedString ok = @"Okay:";
+            public static LocalizedString ok = @"Okay";
 
             public static LocalizedString reason = @"Reason:";
 
