@@ -921,7 +921,71 @@ namespace Intersect.Client.Entities
         /// <summary>
         /// Returns whether the name of this entity should be drawn.
         /// </summary>
-        public virtual bool ShouldDrawName => !HideName && ShouldDraw;
+        public virtual bool ShouldDrawName
+        {
+            get
+            {
+                // Return if the map instance is null or the name is empty or not set to be drawn.
+                if (MapInstance == null || string.IsNullOrWhiteSpace(Name) || HideName || !ShouldDraw)
+                {
+                    return false;
+                }
+
+                // Look up the mouse position and convert it to a world point.
+                var mousePos = Graphics.ConvertToWorldPoint(Globals.InputManager.MousePosition);
+
+                // Entity is considered hovered if the mouse is over its world position and not hovering over the GUI.
+                IsHovered = WorldPos.Contains(mousePos.X, mousePos.Y) && !Interface.Interface.MouseHitGui();
+
+                // Check the type of entity and return whether its name should be drawn based on settings and conditions.
+                switch (this)
+                {
+                    case Projectile _:
+                    case Resource _:
+                        return false;
+                    case Event _:
+                        return true;
+                    case Player player:
+                        if (IsHovered)
+                        {
+                            return true;
+                        }
+
+                        var me = Globals.Me;
+                        bool meetsRequirements = false;
+
+                        if (Globals.Database.MyOverheadInfo && player.Id == me.Id)
+                        {
+                            meetsRequirements = true;
+                        }
+                        else if (Globals.Database.PlayerOverheadInfo && player.Id != me.Id)
+                        {
+                            meetsRequirements = true;
+                        }
+                        else if (Globals.Database.PartyMemberOverheadInfo && me.IsInMyParty(player))
+                        {
+                            meetsRequirements = true;
+                        }
+                        else if (Globals.Database.FriendOverheadInfo && me.IsFriend(player))
+                        {
+                            meetsRequirements = true;
+                        }
+                        else if (Globals.Database.GuildMemberOverheadInfo && me.IsGuildMate(player))
+                        {
+                            meetsRequirements = true;
+                        }
+
+                        return meetsRequirements;
+                    default:
+                        if (IsHovered)
+                        {
+                            return true;
+                        }
+
+                        return Globals.Database.NpcOverheadInfo;
+                }
+            }
+        }
 
         public virtual HashSet<Entity> DetermineRenderOrder(HashSet<Entity> renderList, IMapInstance map)
         {
@@ -1333,7 +1397,7 @@ namespace Intersect.Client.Entities
         public virtual void DrawName(Color textColor, Color borderColor = null, Color backgroundColor = null)
         {
             // Are we really supposed to draw this name?
-            if (!DrawNameRequirements())
+            if (!ShouldDrawName)
             {
                 return;
             }
@@ -1407,41 +1471,6 @@ namespace Intersect.Client.Entities
                 name, Graphics.EntityNameFont, x - (int)Math.Ceiling(textSize.X / 2f), (int)y, 1,
                 Color.FromArgb(textColor.ToArgb()), true, null, Color.FromArgb(borderColor.ToArgb())
             );
-        }
-
-        private bool DrawNameRequirements()
-        {
-            // Return if the map instance is null or the name is empty or not set to be drawn.
-            if (MapInstance == null || string.IsNullOrWhiteSpace(Name) || !ShouldDrawName)
-            {
-                return false;
-            }
-
-            // Look up the mouse position and convert it to a world point.
-            var mousePos = Graphics.ConvertToWorldPoint(Globals.InputManager.MousePosition);
-
-            // Entity is considered hovered if the mouse is over its world position and not hovering over the GUI.
-            IsHovered = WorldPos.Contains(mousePos.X, mousePos.Y) && !Interface.Interface.MouseHitGui();
-
-            // Check the type of entity and return whether its name should be drawn based on settings and conditions.
-            switch (this)
-            {
-                case Projectile _:
-                case Resource _:
-                    return false;
-                case Event _:
-                    return true;
-                case Player player:
-                    var me = Globals.Me;
-                    bool meetsRequirements = (Globals.Database.MyOverheadInfo && player.Id == me.Id) ||
-                                             (Globals.Database.PlayerOverheadInfo && player.Id != me.Id) ||
-                                             (Globals.Database.PartyMemberOverheadInfo && me.IsInMyParty(player)) ||
-                                             (Globals.Database.FriendOverheadInfo && me.IsFriend(player)) ||
-                                             (Globals.Database.GuildMemberOverheadInfo && me.IsGuildMate(player));
-                    return meetsRequirements || IsHovered;
-                default:
-                    return Globals.Database.NpcOverheadInfo || IsHovered;
-            }
         }
 
         public float GetLabelLocation(LabelType type)
