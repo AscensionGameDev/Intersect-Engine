@@ -1416,8 +1416,22 @@ namespace Intersect.Client.Entities
                     return false;
                 }
 
-                return (GetType() == typeof(Entity) && Globals.Database.NpcOverheadHpBar) ||
-                       Vital[(int)Vitals.Health] != MaxVital[(int)Vitals.Health] || GetShieldSize() > 0 || IsHovered;
+                if (IsHovered)
+                {
+                    return true;
+                }
+
+                if (GetShieldSize() > 0)
+                {
+                    return true;
+                }
+
+                if (Vital[(int)Vitals.Health] != MaxVital[(int)Vitals.Health])
+                {
+                    return true;
+                }
+
+                return GetType() == typeof(Entity) && Globals.Database.NpcOverheadHpBar;
             }
         }
 

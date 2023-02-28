@@ -2383,13 +2383,36 @@ namespace Intersect.Client.Entities
                     return false;
                 }
 
+                if (IsHovered)
+                {
+                    return true;
+                }
+
                 var me = Globals.Me;
-                bool userPreference = (Globals.Database.MyOverheadHpBar && Id == me.Id) ||
-                                      (Globals.Database.PlayerOverheadHpBar && Id != me.Id) ||
-                                      (Globals.Database.PartyMemberOverheadHpBar && me.IsInMyParty(this)) ||
-                                      (Globals.Database.FriendOverheadHpBar && me.IsFriend(this)) ||
-                                      (Globals.Database.GuildMemberOverheadHpBar && me.IsGuildMate(this));
-                return userPreference || IsHovered;
+                bool userPreference = false;
+
+                if (Globals.Database.MyOverheadHpBar && Id == me.Id)
+                {
+                    userPreference = true;
+                }
+                else if (Globals.Database.PlayerOverheadHpBar && Id != me.Id)
+                {
+                    userPreference = true;
+                }
+                else if (Globals.Database.PartyMemberOverheadHpBar && me.IsInMyParty(this))
+                {
+                    userPreference = true;
+                }
+                else if (Globals.Database.FriendOverheadHpBar && me.IsFriend(this))
+                {
+                    userPreference = true;
+                }
+                else if (Globals.Database.GuildMemberOverheadHpBar && me.IsGuildMate(this))
+                {
+                    userPreference = true;
+                }
+
+                return userPreference;
             }
         }
 
