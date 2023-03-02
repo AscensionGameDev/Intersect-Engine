@@ -220,7 +220,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         protected override void Render(Skin.Base skin)
         {
             // Calculate the height of the tree node
-            int treeNodeHeight = CalculateTreeNodeHeight();
+            var treeNodeHeight = CalculateTreeNodeHeight();
 
             // Draw the tree node using the specified skin.
             skin.DrawTreeNode(
@@ -237,10 +237,15 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// </summary>
         private int CalculateTreeNodeHeight()
         {
-            int height = mTitle.Height;
+            var height = mTitle.Height;
+
             if (mInnerPanel.Children.Count > 0)
             {
-                height += mInnerPanel.Height;
+                height = mInnerPanel.Children.Last().Y + height;
+            }
+            else if (height == 0)
+            {
+                height = mInnerPanel.Height;
             }
 
             return height;

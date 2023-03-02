@@ -9,7 +9,7 @@ using Intersect.Client.General;
 using Intersect.Client.Localization;
 using Intersect.Client.Networking;
 using Intersect.GameObjects.Maps.MapList;
-
+using Microsoft.Xna.Framework;
 using static Intersect.Client.Framework.File_Management.GameContentManager;
 
 namespace Intersect.Client.Interface.Game
@@ -88,8 +88,12 @@ namespace Intersect.Client.Interface.Game
         public AdminWindow(Base gameCanvas)
         {
             mAdminWindow = new WindowControl(gameCanvas, Strings.Admin.title, false, nameof(AdminWindow));
-            mAdminWindow.SetPosition(Graphics.Renderer.GetScreenWidth() / 2 - mAdminWindow.Width / 2,
-                Graphics.Renderer.GetScreenHeight() / 2 - mAdminWindow.Height / 2);
+
+            var windowSize = new Vector2(mAdminWindow.Width, mAdminWindow.Height);
+            var screenSize = new Vector2(Graphics.Renderer.ScreenWidth, Graphics.Renderer.ScreenHeight);
+            var position = (screenSize - windowSize) / 2;
+            mAdminWindow.SetPosition((int)position.X, (int)position.Y);
+
             mAdminWindow.DisableResizing();
             mAdminWindow.Margin = Margin.Zero;
             mAdminWindow.Padding = Padding.Zero;
@@ -201,8 +205,8 @@ namespace Intersect.Client.Interface.Game
                 return;
             }
 
-            int textFrameWidth = SpritePanel.Texture.Width / Options.Instance.Sprites.NormalFrames;
-            int textFrameHeight = SpritePanel.Texture.Height / Options.Instance.Sprites.Directions;
+            var textFrameWidth = SpritePanel.Texture.Width / Options.Instance.Sprites.NormalFrames;
+            var textFrameHeight = SpritePanel.Texture.Height / Options.Instance.Sprites.Directions;
             SpritePanel.SetTextureRect(0, 0, textFrameWidth, textFrameHeight);
             SpritePanel.SetSize(Math.Min(textFrameWidth, 46), Math.Min(textFrameHeight, 46));
             Align.Center(SpritePanel);
@@ -218,8 +222,8 @@ namespace Intersect.Client.Interface.Game
                 return;
             }
 
-            int textFrameWidth = FacePanel.Texture.Width;
-            int textFrameHeight = FacePanel.Texture.Height;
+            var textFrameWidth = FacePanel.Texture.Width;
+            var textFrameHeight = FacePanel.Texture.Height;
             FacePanel.SetTextureRect(0, 0, textFrameWidth, textFrameHeight);
             FacePanel.SetSize(Math.Min(textFrameWidth, 46), Math.Min(textFrameHeight, 46));
             Align.Center(FacePanel);
@@ -350,12 +354,14 @@ namespace Intersect.Client.Interface.Game
 
         void _banButton_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            if (TextboxName.Text.Trim().Length > 0 && !String.Equals(TextboxName.Text.Trim(), Globals.Me.Name.Trim(),
+            if (string.IsNullOrWhiteSpace(TextboxName.Text) || string.Equals(TextboxName.Text, Globals.Me.Name,
                     StringComparison.CurrentCultureIgnoreCase))
             {
-                mBanMuteWindow = new BanMuteBox(Strings.Admin.bancaption.ToString(TextboxName.Text),
-                    Strings.Admin.banprompt.ToString(TextboxName.Text), true, BanUser);
+                return;
             }
+
+            mBanMuteWindow = new BanMuteBox(Strings.Admin.bancaption.ToString(TextboxName.Text),
+                Strings.Admin.banprompt.ToString(TextboxName.Text), true, BanUser);
         }
 
         private void _setFaceButton_Clicked(Base sender, ClickedEventArgs arguments)
