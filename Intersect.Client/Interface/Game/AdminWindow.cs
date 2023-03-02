@@ -351,13 +351,14 @@ namespace Intersect.Client.Interface.Game
 
         void _banButton_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            var name = TextboxName.Text;
-            if (string.IsNullOrWhiteSpace(name))
+            if (string.IsNullOrWhiteSpace(TextboxName.Text))
             {
                 return;
             }
 
-            if (string.Equals(name.Trim(), Globals.Me.Name, StringComparison.CurrentCultureIgnoreCase))
+            var name = TextboxName.Text.Trim();
+
+            if (string.Equals(name, Globals.Me.Name, StringComparison.CurrentCultureIgnoreCase))
             {
                 return;
             }
