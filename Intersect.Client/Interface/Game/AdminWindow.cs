@@ -351,13 +351,18 @@ namespace Intersect.Client.Interface.Game
 
         void _banButton_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            if (string.IsNullOrWhiteSpace(TextboxName.Text) || string.Equals(TextboxName.Text, Globals.Me.Name,
-                    StringComparison.CurrentCultureIgnoreCase))
+            var name = TextboxName.Text;
+            if (string.IsNullOrWhiteSpace(name))
             {
                 return;
             }
 
-            mBanMuteWindow = new BanMuteBox(Strings.Admin.bancaption.ToString(TextboxName.Text),
+            if (string.Equals(name.Trim(), Globals.Me.Name, StringComparison.CurrentCultureIgnoreCase))
+            {
+                return;
+            }
+
+            mBanMuteWindow = new BanMuteBox(Strings.Admin.bancaption.ToString(name),
                 Strings.Admin.banprompt.ToString(TextboxName.Text), true, BanUser);
         }
 
