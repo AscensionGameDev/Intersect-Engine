@@ -420,7 +420,7 @@ namespace Intersect.Editor.Localization
             {
                 value = comparison.Value.ToString();
 
-                if(comparison.TimeSystem == true)
+                if (comparison.TimeSystem)
                 {
                     value = EventConditionDesc.SystemTime;
                 }
@@ -2656,6 +2656,8 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString startquest = @"Can Start Quest: {00}";
 
+            public static LocalizedString SystemTime = @"System Time (ms)";
+
             public static LocalizedString tasknotfound = @"Not Found";
 
             public static LocalizedString time = @"Time is between {00} and {01}";
@@ -2665,8 +2667,6 @@ Tick timer saved in server config.json.";
             public static LocalizedString True = @"True";
 
             public static LocalizedString UserVariable = @"{00}: {01} {02}";
-
-            public static LocalizedString SystemTime = @"System Time (ms)";
 
         }
 

@@ -871,7 +871,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                     cmbCompareUserVar.SelectedIndex = UserVariableBase.ListIndex(integerComparison.CompareVariableId);
                 }
             }
-            else if(integerComparison.TimeSystem == true)
+            else if (integerComparison.TimeSystem)
             {
                 rdoTimeSystem.Checked = true;
             }

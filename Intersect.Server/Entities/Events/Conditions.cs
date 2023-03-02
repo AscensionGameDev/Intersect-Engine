@@ -614,10 +614,9 @@ namespace Intersect.Server.Entities.Events
                     compValue = player.User.GetVariableValue(comparison.CompareVariableId);
                 }
             }
-            else if(comparison.TimeSystem == true)
+            else if (comparison.TimeSystem)
             {
-                compValue = (long)(DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc))
-                        .TotalMilliseconds;
+                compValue = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
             }
             else
             {

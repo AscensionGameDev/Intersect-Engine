@@ -1914,10 +1914,7 @@ namespace Intersect.Server.Entities.Events
 
                     break;
                 case VariableMods.SystemTime:
-                    var ms = (long) (DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc))
-                        .TotalMilliseconds;
-
-                    value.Integer = ms;
+                    value.Integer = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
 
                     break;
                 case VariableMods.DupPlayerVar:
