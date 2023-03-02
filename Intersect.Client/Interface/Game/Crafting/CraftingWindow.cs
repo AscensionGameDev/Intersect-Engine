@@ -238,12 +238,12 @@ namespace Intersect.Client.Interface.Game.Crafting
                 var xPadding = mItems[i].Container.Margin.Left + mItems[i].Container.Margin.Right;
                 var yPadding = mItems[i].Container.Margin.Top + mItems[i].Container.Margin.Bottom;
 
-                decimal sizeFactor = (mItemContainer.Width - mItemContainer.GetVerticalScrollBar().Width) /
-                                     (decimal)(mItems[i].Container.Width + xPadding);
+                var sizeFactor = (mItemContainer.Width - mItemContainer.GetVerticalScrollBar().Width) /
+                                 (mItems[i].Container.Width + xPadding);
 
                 mItems[i].Container.SetPosition(
-                    i % (int)Math.Ceiling(sizeFactor) * (mItems[i].Container.Width + xPadding) + xPadding,
-                    i / (int)Math.Ceiling(sizeFactor) * (mItems[i].Container.Height + yPadding) + yPadding
+                    i % sizeFactor * (mItems[i].Container.Width + xPadding) + xPadding,
+                    i / sizeFactor * (mItems[i].Container.Height + yPadding) + yPadding
                 );
             }
 
