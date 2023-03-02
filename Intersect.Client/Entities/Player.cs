@@ -2389,30 +2389,28 @@ namespace Intersect.Client.Entities
                 }
 
                 var me = Globals.Me;
-                bool userPreference = false;
 
                 if (Globals.Database.MyOverheadHpBar && Id == me.Id)
                 {
-                    userPreference = true;
-                }
-                else if (Globals.Database.PlayerOverheadHpBar && Id != me.Id)
-                {
-                    userPreference = true;
-                }
-                else if (Globals.Database.PartyMemberOverheadHpBar && me.IsInMyParty(this))
-                {
-                    userPreference = true;
-                }
-                else if (Globals.Database.FriendOverheadHpBar && me.IsFriend(this))
-                {
-                    userPreference = true;
-                }
-                else if (Globals.Database.GuildMemberOverheadHpBar && me.IsGuildMate(this))
-                {
-                    userPreference = true;
+                    return true;
                 }
 
-                return userPreference;
+                if (Globals.Database.PlayerOverheadHpBar && Id != me.Id)
+                {
+                    return true;
+                }
+
+                if (Globals.Database.PartyMemberOverheadHpBar && me.IsInMyParty(this))
+                {
+                    return true;
+                }
+
+                if (Globals.Database.FriendOverheadHpBar && me.IsFriend(this))
+                {
+                    return true;
+                }
+
+                return Globals.Database.GuildMemberOverheadHpBar && me.IsGuildMate(this);
             }
         }
 
