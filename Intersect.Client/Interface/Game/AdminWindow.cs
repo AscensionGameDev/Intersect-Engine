@@ -9,7 +9,6 @@ using Intersect.Client.General;
 using Intersect.Client.Localization;
 using Intersect.Client.Networking;
 using Intersect.GameObjects.Maps.MapList;
-
 using static Intersect.Client.Framework.File_Management.GameContentManager;
 
 namespace Intersect.Client.Interface.Game
@@ -20,6 +19,8 @@ namespace Intersect.Client.Interface.Game
 
         //Graphics
         public ImagePanel PanelFace;
+        
+        public ImagePanel FacePanel;
 
         private ComboBox DropdownAccess;
 
@@ -83,106 +84,70 @@ namespace Intersect.Client.Interface.Game
         public ImagePanel SpritePanel;
 
         //Init
-        public AdminWindow(Canvas gameCanvas)
+        public AdminWindow(Base gameCanvas)
         {
             mAdminWindow = new WindowControl(gameCanvas, Strings.Admin.title, false, nameof(AdminWindow));
-            mAdminWindow.SetSize(200, 540);
             mAdminWindow.SetPosition(
-                Graphics.Renderer.GetScreenWidth() / 2 - mAdminWindow.Width / 2,
-                Graphics.Renderer.GetScreenHeight() / 2 - mAdminWindow.Height / 2
+                (Graphics.Renderer.ScreenWidth - mAdminWindow.Width) / 2,
+                (Graphics.Renderer.ScreenHeight - mAdminWindow.Height) / 2
             );
-
             mAdminWindow.DisableResizing();
             mAdminWindow.Margin = Margin.Zero;
             mAdminWindow.Padding = Padding.Zero;
 
-            //Player Mods
             LabelName = new Label(mAdminWindow, nameof(LabelName));
-            LabelName.SetPosition(6, 4);
             LabelName.Text = Strings.Admin.name;
-
             TextboxName = new TextBox(mAdminWindow, nameof(TextboxName));
-            TextboxName.SetBounds(6, 22, 188, 18);
             Interface.FocusElements.Add(TextboxName);
 
-            ButtonWarpToMe = new Button(mAdminWindow, nameof(ButtonWarpToMe))
-            {
-                Text = Strings.Admin.warp2me
-            };
+            LabelAccess = new Label(mAdminWindow, nameof(LabelAccess));
+            LabelAccess.Text = Strings.Admin.access;
+            DropdownAccess = new ComboBox(mAdminWindow, nameof(DropdownAccess));
+            DropdownAccess.AddItem(Strings.Admin.access0).UserData = "None";
+            DropdownAccess.AddItem(Strings.Admin.access1).UserData = "Moderator";
+            DropdownAccess.AddItem(Strings.Admin.access2).UserData = "Admin";
+            ButtonSetPower = new Button(mAdminWindow, nameof(ButtonSetPower)) { Text = Strings.Admin.setpower };
+            ButtonSetPower.Clicked += _setPowerButton_Clicked;
 
-            ButtonWarpToMe.SetBounds(6, 44, 80, 18);
+            ButtonWarpToMe = new Button(mAdminWindow, nameof(ButtonWarpToMe));
+            ButtonWarpToMe.Text = Strings.Admin.warp2me;
             ButtonWarpToMe.Clicked += _warpToMeButton_Clicked;
 
-            ButtonWarpMeTo = new Button(mAdminWindow, nameof(ButtonWarpMeTo))
-            {
-                Text = Strings.Admin.warpme2
-            };
-
-            ButtonWarpMeTo.SetBounds(6, 64, 80, 18);
+            ButtonWarpMeTo = new Button(mAdminWindow, nameof(ButtonWarpMeTo));
+            ButtonWarpMeTo.Text = Strings.Admin.warpme2;
             ButtonWarpMeTo.Clicked += _warpMeToButton_Clicked;
 
-            ButtonOverworldReturn = new Button(mAdminWindow, nameof(ButtonOverworldReturn))
-            {
-                Text = Strings.Admin.OverworldReturn
-            };
+            ButtonOverworldReturn = new Button(mAdminWindow, nameof(ButtonOverworldReturn));
+            ButtonOverworldReturn.Text = Strings.Admin.OverworldReturn;
+            ButtonOverworldReturn.Clicked += _overWorldReturn_Clicked;
 
-            ButtonOverworldReturn.SetBounds(6, 84, 80, 18);
-            ButtonOverworldReturn.Clicked += _overworldReturn_Clicked;
-
-            ButtonKick = new Button(mAdminWindow, nameof(ButtonKick))
-            {
-                Text = Strings.Admin.kick
-            };
-
-            ButtonKick.SetBounds(90, 44, 50, 18);
+            ButtonKick = new Button(mAdminWindow, nameof(ButtonKick));
+            ButtonKick.Text = Strings.Admin.kick;
             ButtonKick.Clicked += _kickButton_Clicked;
 
-            ButtonKill = new Button(mAdminWindow, nameof(ButtonKill))
-            {
-                Text = Strings.Admin.kill
-            };
-
-            ButtonKill.SetBounds(144, 44, 50, 18);
+            ButtonKill = new Button(mAdminWindow, nameof(ButtonKill));
+            ButtonKill.Text = Strings.Admin.kill;
             ButtonKill.Clicked += _killButton_Clicked;
 
-            ButtonBan = new Button(mAdminWindow, nameof(ButtonBan))
-            {
-                Text = Strings.Admin.ban
-            };
-
-            ButtonBan.SetBounds(90, 64, 50, 18);
+            ButtonBan = new Button(mAdminWindow, nameof(ButtonBan));
+            ButtonBan.Text = Strings.Admin.ban;
             ButtonBan.Clicked += _banButton_Clicked;
 
-            ButtonUnban = new Button(mAdminWindow, nameof(ButtonUnban))
-            {
-                Text = Strings.Admin.unban
-            };
-
-            ButtonUnban.SetBounds(90, 84, 50, 18);
+            ButtonUnban = new Button(mAdminWindow, nameof(ButtonUnban));
+            ButtonUnban.Text = Strings.Admin.unban;
             ButtonUnban.Clicked += _unbanButton_Clicked;
 
-            ButtonMute = new Button(mAdminWindow, nameof(ButtonMute))
-            {
-                Text = Strings.Admin.mute
-            };
-
-            ButtonMute.SetBounds(144, 64, 50, 18);
+            ButtonMute = new Button(mAdminWindow, nameof(ButtonMute));
+            ButtonMute.Text = Strings.Admin.mute;
             ButtonMute.Clicked += _muteButton_Clicked;
 
-            ButtonUnmute = new Button(mAdminWindow, nameof(ButtonUnmute))
-            {
-                Text = Strings.Admin.unmute
-            };
-
-            ButtonUnmute.SetBounds(144, 84, 50, 18);
+            ButtonUnmute = new Button(mAdminWindow, nameof(ButtonUnmute));
+            ButtonUnmute.Text = Strings.Admin.unmute;
             ButtonUnmute.Clicked += _unmuteButton_Clicked;
 
             LabelSprite = new Label(mAdminWindow, nameof(LabelSprite));
-            LabelSprite.SetPosition(6, 112);
             LabelSprite.Text = Strings.Admin.sprite;
-
             DropdownSprite = new ComboBox(mAdminWindow, nameof(DropdownSprite));
-            DropdownSprite.SetBounds(6, 128, 80, 18);
             DropdownSprite.AddItem(Strings.Admin.none);
             var sprites = Globals.ContentManager.GetTextureNames(Framework.Content.TextureType.Entity);
             Array.Sort(sprites, new AlphanumComparatorFast());
@@ -190,28 +155,16 @@ namespace Intersect.Client.Interface.Game
             {
                 DropdownSprite.AddItem(sprite);
             }
-
             DropdownSprite.ItemSelected += _spriteDropdown_ItemSelected;
-
-            ButtonSetSprite = new Button(mAdminWindow, nameof(ButtonSetSprite))
-            {
-                Text = Strings.Admin.setsprite
-            };
-
-            ButtonSetSprite.SetBounds(6, 148, 80, 18);
+            ButtonSetSprite = new Button(mAdminWindow, nameof(ButtonSetSprite));
+            ButtonSetSprite.Text = Strings.Admin.setsprite;
             ButtonSetSprite.Clicked += _setSpriteButton_Clicked;
-
             PanelSprite = new ImagePanel(mAdminWindow, nameof(PanelSprite));
-            PanelSprite.SetSize(50, 50);
-            PanelSprite.SetPosition(115, 114);
             SpritePanel = new ImagePanel(PanelSprite);
 
             LabelFace = new Label(mAdminWindow, nameof(LabelFace));
-            LabelFace.SetPosition(6, 172);
             LabelFace.Text = Strings.Admin.face;
-
             DropdownFace = new ComboBox(mAdminWindow, nameof(DropdownFace));
-            DropdownFace.SetBounds(6, 188, 80, 18);
             DropdownFace.AddItem(Strings.Admin.none);
             var faces = Globals.ContentManager.GetTextureNames(Framework.Content.TextureType.Face);
             Array.Sort(faces, new AlphanumComparatorFast());
@@ -219,84 +172,58 @@ namespace Intersect.Client.Interface.Game
             {
                 DropdownFace.AddItem(face);
             }
-
             DropdownFace.ItemSelected += _faceDropdown_ItemSelected;
-
-            ButtonSetFace = new Button(mAdminWindow, nameof(ButtonSetFace))
-            {
-                Text = Strings.Admin.setface
-            };
-
-            ButtonSetFace.SetBounds(6, 208, 80, 18);
+            ButtonSetFace = new Button(mAdminWindow, nameof(ButtonSetFace));
+            ButtonSetFace.Text = Strings.Admin.setface;
             ButtonSetFace.Clicked += _setFaceButton_Clicked;
-
             PanelFace = new ImagePanel(mAdminWindow, nameof(PanelFace));
-            PanelFace.SetSize(50, 50);
-            PanelFace.SetPosition(115, 174);
+            FacePanel = new ImagePanel(PanelFace);
 
-            LabelAccess = new Label(mAdminWindow, nameof(LabelAccess));
-            LabelAccess.SetPosition(6, 232);
-            LabelAccess.Text = Strings.Admin.access;
-
-            DropdownAccess = new ComboBox(mAdminWindow, nameof(DropdownAccess));
-            DropdownAccess.SetBounds(6, 248, 80, 18);
-            DropdownAccess.AddItem(Strings.Admin.access0).UserData = "None";
-            DropdownAccess.AddItem(Strings.Admin.access1).UserData = "Moderator";
-            DropdownAccess.AddItem(Strings.Admin.access2).UserData = "Admin";
-
-            ButtonSetPower = new Button(mAdminWindow, nameof(ButtonSetPower))
-            {
-                Text = Strings.Admin.setpower
-            };
-
-            ButtonSetPower.SetBounds(6, 268, 80, 18);
-            ButtonSetPower.Clicked += _setPowerButton_Clicked;
-
-            CreateMapList();
-            LabelMapList = new Label(mAdminWindow, nameof(LabelMapList))
-            {
-                Text = Strings.Admin.maplist
-            };
-
-            LabelMapList.SetPosition(4f, 294);
-
+            LabelMapList = new Label(mAdminWindow, nameof(LabelMapList)) { Text = Strings.Admin.maplist };
             CheckboxChronological = new CheckBox(mAdminWindow, nameof(CheckboxChronological));
             CheckboxChronological.SetToolTipText(Strings.Admin.chronologicaltip);
-            CheckboxChronological.SetPosition(mAdminWindow.Width - 24, 294);
             CheckboxChronological.CheckChanged += _chkChronological_CheckChanged;
-
             LabelChronological = new Label(mAdminWindow, nameof(LabelChronological))
             {
                 Text = Strings.Admin.chronological
             };
-
-            LabelChronological.SetPosition(CheckboxChronological.X - 30, 294);
-
+            CreateMapList();
             mAdminWindow.LoadJsonUi(UI.InGame, Graphics.Renderer.GetResolutionString(), true);
-
             UpdateMapList();
         }
 
         private void _spriteDropdown_ItemSelected(Base sender, ItemSelectedEventArgs arguments)
         {
             SpritePanel.Texture = Globals.ContentManager.GetTexture(
-                Framework.Content.TextureType.Entity, DropdownSprite.Text
-            );
+                Framework.Content.TextureType.Entity, DropdownSprite.Text);
 
-            if (SpritePanel.Texture != null)
+            if (SpritePanel.Texture == null)
             {
-                SpritePanel.SetTextureRect(0, 0, SpritePanel.Texture.GetWidth() / Options.Instance.Sprites.NormalFrames, SpritePanel.Texture.GetHeight() / Options.Instance.Sprites.Directions);
-                SpritePanel.SetSize(SpritePanel.Texture.GetWidth() / Options.Instance.Sprites.NormalFrames, SpritePanel.Texture.GetHeight() / Options.Instance.Sprites.Directions);
-                Align.AlignTop(SpritePanel);
-                Align.CenterHorizontally(SpritePanel);
+                return;
             }
+
+            var textFrameWidth = SpritePanel.Texture.Width / Options.Instance.Sprites.NormalFrames;
+            var textFrameHeight = SpritePanel.Texture.Height / Options.Instance.Sprites.Directions;
+            SpritePanel.SetTextureRect(0, 0, textFrameWidth, textFrameHeight);
+            SpritePanel.SetSize(Math.Min(textFrameWidth, 46), Math.Min(textFrameHeight, 46));
+            Align.Center(SpritePanel);
         }
 
         private void _faceDropdown_ItemSelected(Base sender, ItemSelectedEventArgs arguments)
         {
-            PanelFace.Texture = Globals.ContentManager.GetTexture(
-                Framework.Content.TextureType.Face, DropdownFace.Text
-            );
+            FacePanel.Texture = Globals.ContentManager.GetTexture(
+                Framework.Content.TextureType.Face, DropdownFace.Text);
+
+            if (FacePanel.Texture == null)
+            {
+                return;
+            }
+
+            var textFrameWidth = FacePanel.Texture.Width;
+            var textFrameHeight = FacePanel.Texture.Height;
+            FacePanel.SetTextureRect(0, 0, textFrameWidth, textFrameHeight);
+            FacePanel.SetSize(Math.Min(textFrameWidth, 46), Math.Min(textFrameHeight, 46));
+            Align.Center(FacePanel);
         }
 
         //Methods
@@ -308,9 +235,10 @@ namespace Intersect.Client.Interface.Game
         private void CreateMapList()
         {
             mMapList = new TreeControl(mAdminWindow);
-            mMapList.SetPosition(4f, 316);
-            mMapList.Height = 188;
+            mMapList.SetPosition(4f, 330);
             mMapList.Width = mAdminWindow.Width - 8;
+            mMapList.Height = 80;
+            mMapList.RenderColor = Color.FromArgb(255, 255, 255, 255);
             mMapList.MaximumSize = new Point(4096, 999999);
         }
 
@@ -326,7 +254,7 @@ namespace Intersect.Client.Interface.Game
             TreeNode tmpNode;
             if (CheckboxChronological.IsChecked)
             {
-                for (var i = 0; i < MapList.OrderedMaps.Count; i++)
+                for (var i = MapList.OrderedMaps.Count - 1; i >= 0; i--)
                 {
                     tmpNode = mMapList.AddNode(MapList.OrderedMaps[i].Name);
                     tmpNode.UserData = MapList.OrderedMaps[i].MapId;
@@ -388,7 +316,7 @@ namespace Intersect.Client.Interface.Game
             }
         }
 
-        void _overworldReturn_Clicked(Base sender, ClickedEventArgs arguments)
+        void _overWorldReturn_Clicked(Base sender, ClickedEventArgs arguments)
         {
             if (!string.IsNullOrEmpty(TextboxName.Text))
             {
@@ -400,45 +328,43 @@ namespace Intersect.Client.Interface.Game
         {
             if (TextboxName.Text.Trim().Length > 0)
             {
-                mBanMuteWindow = new BanMuteBox(
-                    Strings.Admin.mutecaption.ToString(TextboxName.Text),
-                    Strings.Admin.muteprompt.ToString(TextboxName.Text), true, MuteUser
-                );
+                mBanMuteWindow = new BanMuteBox(Strings.Admin.mutecaption.ToString(TextboxName.Text),
+                    Strings.Admin.muteprompt.ToString(TextboxName.Text), true, MuteUser);
             }
         }
 
         void MuteUser(object sender, EventArgs e)
         {
-            PacketSender.SendAdminAction(
-                new MuteAction(
-                    TextboxName.Text, mBanMuteWindow.GetDuration(), mBanMuteWindow.GetReason(), mBanMuteWindow.BanIp()
-                )
-            );
+            PacketSender.SendAdminAction(new MuteAction(TextboxName.Text, mBanMuteWindow.GetDuration(),
+                mBanMuteWindow.GetReason(), mBanMuteWindow.BanIp()));
 
             mBanMuteWindow.Dispose();
         }
 
         void BanUser(object sender, EventArgs e)
         {
-            PacketSender.SendAdminAction(
-                new BanAction(
-                    TextboxName.Text, mBanMuteWindow.GetDuration(), mBanMuteWindow.GetReason(), mBanMuteWindow.BanIp()
-                )
-            );
+            PacketSender.SendAdminAction(new BanAction(TextboxName.Text, mBanMuteWindow.GetDuration(),
+                mBanMuteWindow.GetReason(), mBanMuteWindow.BanIp()));
 
             mBanMuteWindow.Dispose();
         }
 
         void _banButton_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            if (TextboxName.Text.Trim().Length > 0 &&
-                TextboxName.Text.Trim().ToLower() != Globals.Me.Name.Trim().ToLower())
+            if (string.IsNullOrWhiteSpace(TextboxName.Text))
             {
-                mBanMuteWindow = new BanMuteBox(
-                    Strings.Admin.bancaption.ToString(TextboxName.Text),
-                    Strings.Admin.banprompt.ToString(TextboxName.Text), true, BanUser
-                );
+                return;
             }
+
+            var name = TextboxName.Text.Trim();
+
+            if (string.Equals(name, Globals.Me.Name, StringComparison.CurrentCultureIgnoreCase))
+            {
+                return;
+            }
+
+            mBanMuteWindow = new BanMuteBox(Strings.Admin.bancaption.ToString(name),
+                Strings.Admin.banprompt.ToString(TextboxName.Text), true, BanUser);
         }
 
         private void _setFaceButton_Clicked(Base sender, ClickedEventArgs arguments)
@@ -453,11 +379,9 @@ namespace Intersect.Client.Interface.Game
         {
             if (TextboxName.Text.Trim().Length > 0)
             {
-                var confirmWindow = new InputBox(
-                    Strings.Admin.unmutecaption.ToString(TextboxName.Text),
+                new InputBox(Strings.Admin.unmutecaption.ToString(TextboxName.Text),
                     Strings.Admin.unmuteprompt.ToString(TextboxName.Text), true, InputBox.InputType.YesNo, UnmuteUser,
-                    null, -1
-                );
+                    null, -1);
             }
         }
 
@@ -465,11 +389,9 @@ namespace Intersect.Client.Interface.Game
         {
             if (TextboxName.Text.Trim().Length > 0)
             {
-                var confirmWindow = new InputBox(
-                    Strings.Admin.unbancaption.ToString(TextboxName.Text),
+                new InputBox(Strings.Admin.unbancaption.ToString(TextboxName.Text),
                     Strings.Admin.unbanprompt.ToString(TextboxName.Text), true, InputBox.InputType.YesNo, UnbanUser,
-                    null, -1
-                );
+                    null, -1);
             }
         }
 
@@ -506,7 +428,7 @@ namespace Intersect.Client.Interface.Game
             UpdateMapList();
         }
 
-        void tmpNode_DoubleClicked(Base sender, ClickedEventArgs arguments)
+        static void tmpNode_DoubleClicked(Base sender, ClickedEventArgs arguments)
         {
             PacketSender.SendAdminAction(new WarpToMapAction((Guid) ((TreeNode) sender).UserData));
         }
@@ -529,7 +451,5 @@ namespace Intersect.Client.Interface.Game
         {
             mAdminWindow.IsHidden = true;
         }
-
     }
-
 }

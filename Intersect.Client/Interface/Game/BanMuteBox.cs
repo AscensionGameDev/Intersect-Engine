@@ -34,11 +34,12 @@ namespace Intersect.Client.Interface.Game
             OkayEventHandler = okayClicked;
 
             mMyWindow = new WindowControl(Interface.GameUi.GameCanvas, title, modal);
-            mMyWindow.SetSize(500, 150);
+            mMyWindow.SetSize(400, 150);
             mMyWindow.SetPosition(
                 Graphics.Renderer.GetScreenWidth() / 2 - mMyWindow.Width / 2,
                 Graphics.Renderer.GetScreenHeight() / 2 - mMyWindow.Height / 2
             );
+            mMyWindow.SetTextColor(Color.White, WindowControl.ControlState.Active);
 
             mMyWindow.IsClosable = false;
             mMyWindow.DisableResizing();
@@ -49,6 +50,7 @@ namespace Intersect.Client.Interface.Game
             var promptLabel = new Label(mMyWindow);
             promptLabel.SetText(prompt);
             promptLabel.SetPosition(mMyWindow.Width / 2 - promptLabel.Width / 2, 8);
+            promptLabel.TextColor = Color.White;
 
             var y = promptLabel.Y + promptLabel.Height + 8;
 
@@ -56,24 +58,21 @@ namespace Intersect.Client.Interface.Game
             {
                 Text = Strings.BanMute.reason
             };
-
-            mReasonLabel.SetPosition(100, y);
-
+            mReasonLabel.SetPosition(32, y);
+            mReasonLabel.TextColor = Color.White;
+            
             mReasonBox = new TextBox(mMyWindow);
-            mReasonBox.SetBounds(180, y - 3, 220, 22);
+            mReasonBox.SetBounds(90, y - 3, 220, 22);
             Interface.FocusElements.Add(mReasonBox);
-
             y = mReasonBox.Bottom + 6;
 
-            mDurationLabel = new Label(mMyWindow)
-            {
-                Text = Strings.BanMute.duration
-            };
-
-            mDurationLabel.SetPosition(100, y);
-
+            mDurationLabel = new Label(mMyWindow) { Text = Strings.BanMute.duration };
+            mDurationLabel.SetPosition(32, y);
+            mDurationLabel.TextColor = Color.White;
+            
             mDurationBox = new ComboBox(mMyWindow);
-            mDurationBox.SetBounds(180, y - 3, 80, 22);
+            mDurationBox.SetMenuBackgroundColor(Color.FromArgb(242, 27,36,49));
+            mDurationBox.SetBounds(90, y - 3, 120, 22);
             mDurationBox.AddItem(Strings.BanMute.oneday).UserData = "1 day";
             mDurationBox.AddItem(Strings.BanMute.twodays).UserData = "2 days";
             mDurationBox.AddItem(Strings.BanMute.threedays).UserData = "3 days";
@@ -86,24 +85,33 @@ namespace Intersect.Client.Interface.Game
             mDurationBox.AddItem(Strings.BanMute.sixmonths).UserData = "6 months";
             mDurationBox.AddItem(Strings.BanMute.oneyear).UserData = "1 year";
             mDurationBox.AddItem(Strings.BanMute.forever).UserData = "Indefinitely";
+            
+            mDurationBox.SetTextColor(Color.White, Label.ControlState.Normal);
+            mDurationBox.SetTextColor(Color.White, Label.ControlState.Hovered);
 
             mIpLabel = new Label(mMyWindow)
             {
                 Text = Strings.BanMute.ip
             };
 
-            mIpLabel.SetPosition(320, y);
+            mIpLabel.SetPosition(235, y);
+            mIpLabel.TextColor = Color.White;
 
             mIpCheckbox = new CheckBox(mMyWindow);
-            mIpCheckbox.SetPosition(400 - mIpCheckbox.Width, y);
+            mIpCheckbox.SetSize(22, 22);
+            mIpCheckbox.SetPosition(310 - mIpCheckbox.Width, y - 2);
 
             var okayBtn = new Button(mMyWindow);
             okayBtn.SetSize(86, 22);
+            okayBtn.SetTextColor(Color.White, Label.ControlState.Normal);
+            okayBtn.SetTextColor(Color.White, Label.ControlState.Clicked);
             okayBtn.SetText(Strings.BanMute.ok);
             okayBtn.SetPosition(mMyWindow.Width / 2 - 188 / 2, 90);
             okayBtn.Clicked += okayBtn_Clicked;
 
             var cancelBtn = new Button(mMyWindow);
+            cancelBtn.SetTextColor(Color.White, Label.ControlState.Normal);
+            cancelBtn.SetTextColor(Color.White, Label.ControlState.Clicked);
             cancelBtn.SetSize(86, 22);
             cancelBtn.SetText(Strings.BanMute.cancel);
             cancelBtn.Clicked += CancelBtn_Clicked;
@@ -119,11 +127,7 @@ namespace Intersect.Client.Interface.Game
 
         void okayBtn_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            if (OkayEventHandler != null)
-            {
-                OkayEventHandler(this, EventArgs.Empty);
-            }
-
+            OkayEventHandler?.Invoke(this, EventArgs.Empty);
             mMyWindow.Close();
         }
 

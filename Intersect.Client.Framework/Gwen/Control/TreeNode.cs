@@ -214,29 +214,41 @@ namespace Intersect.Client.Framework.Gwen.Control
         public event GwenEventHandler<EventArgs> Collapsed;
 
         /// <summary>
-        ///     Renders the control using specified skin.
+        /// Renders the control using the specified skin.
         /// </summary>
-        /// <param name="skin">Skin to use.</param>
+        /// <param name="skin">The skin to use.</param>
         protected override void Render(Skin.Base skin)
         {
-            var bottom = 0;
-            if (mInnerPanel.Children.Count > 0)
-            {
-                bottom = mInnerPanel.Children.Last().Y + mInnerPanel.Y;
-            }
+            // Calculate the height of the tree node
+            var treeNodeHeight = CalculateTreeNodeHeight();
 
+            // Draw the tree node using the specified skin.
             skin.DrawTreeNode(
-                this, mInnerPanel.IsVisible, IsSelected, mTitle.Height, mTitle.TextRight,
-                (int) (mToggleButton.Y + mToggleButton.Height * 0.5f), bottom, mTreeControl == Parent
+                this, mInnerPanel.IsVisible, IsSelected, treeNodeHeight, mTitle.TextRight,
+                (int)(mToggleButton.Y + mToggleButton.Height * 0.5f), mInnerPanel.Bottom, mTreeControl == Parent
             ); // IsRoot
 
-            //[halfofastaple] HACK - The treenodes are taking two passes until their height is set correctly,
-            //  this means that the height is being read incorrectly by the parent, causing
-            //  the TreeNode bug where nodes get hidden when expanding and collapsing.
-            //  The hack is to constantly invalide TreeNodes, which isn't bad, but there is
-            //  definitely a better solution (possibly: Make it set the height from childmost
-            //  first and work it's way up?) that invalidates and draws properly in 1 loop.
+            // Invalidate the tree node.
             this.Invalidate();
+        }
+
+        /// <summary>
+        /// Calculates the height of tree node.
+        /// </summary>
+        private int CalculateTreeNodeHeight()
+        {
+            var height = mTitle.Height;
+
+            if (mInnerPanel.Children.Count > 0)
+            {
+                height = mInnerPanel.Children.Last().Y + height;
+            }
+            else if (height == 0)
+            {
+                height = mInnerPanel.Height;
+            }
+
+            return height;
         }
 
         /// <summary>
