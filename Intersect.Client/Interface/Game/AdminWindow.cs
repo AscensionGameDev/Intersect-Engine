@@ -88,12 +88,10 @@ namespace Intersect.Client.Interface.Game
         public AdminWindow(Base gameCanvas)
         {
             mAdminWindow = new WindowControl(gameCanvas, Strings.Admin.title, false, nameof(AdminWindow));
-
-            var windowSize = new Vector2(mAdminWindow.Width, mAdminWindow.Height);
-            var screenSize = new Vector2(Graphics.Renderer.ScreenWidth, Graphics.Renderer.ScreenHeight);
-            var position = (screenSize - windowSize) / 2;
-            mAdminWindow.SetPosition((int)position.X, (int)position.Y);
-
+            mAdminWindow.SetPosition(
+                (Graphics.Renderer.ScreenWidth - mAdminWindow.Width) / 2,
+                (Graphics.Renderer.ScreenHeight - mAdminWindow.Height) / 2
+            );
             mAdminWindow.DisableResizing();
             mAdminWindow.Margin = Margin.Zero;
             mAdminWindow.Padding = Padding.Zero;
