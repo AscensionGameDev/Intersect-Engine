@@ -363,7 +363,7 @@ namespace Intersect.Editor.Localization
             return EventConditionDesc.checkequippedslot.ToString(condition.Name);
         }
 
-        public static string GetVariableComparisonString(VariableCompaison comparison)
+        public static string GetVariableComparisonString(VariableComparison comparison)
         {
             return "";
         }
@@ -419,6 +419,11 @@ namespace Intersect.Editor.Localization
             if (comparison.CompareVariableId == Guid.Empty)
             {
                 value = comparison.Value.ToString();
+
+                if (comparison.TimeSystem)
+                {
+                    value = EventConditionDesc.SystemTime;
+                }
             }
             else
             {
@@ -2650,6 +2655,8 @@ Tick timer saved in server config.json.";
             };
 
             public static LocalizedString startquest = @"Can Start Quest: {00}";
+
+            public static LocalizedString SystemTime = @"System Time (ms)";
 
             public static LocalizedString tasknotfound = @"Not Found";
 

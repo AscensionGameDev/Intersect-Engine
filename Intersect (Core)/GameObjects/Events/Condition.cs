@@ -71,7 +71,7 @@ namespace Intersect.GameObjects.Events
 
         public Guid VariableId { get; set; }
 
-        public VariableCompaison Comparison { get; set; } = new VariableCompaison();
+        public VariableComparison Comparison { get; set; } = new VariableComparison();
 
     }
 
@@ -300,12 +300,12 @@ namespace Intersect.GameObjects.Events
         public MapZones ZoneType { get; set; }
     }
 
-    public partial class VariableCompaison
+    public partial class VariableComparison
     {
 
     }
 
-    public partial class BooleanVariableComparison : VariableCompaison
+    public partial class BooleanVariableComparison : VariableComparison
     {
 
         public VariableTypes CompareVariableType { get; set; } = VariableTypes.PlayerVariable;
@@ -318,7 +318,7 @@ namespace Intersect.GameObjects.Events
 
     }
 
-    public partial class IntegerVariableComparison : VariableCompaison
+    public partial class IntegerVariableComparison : VariableComparison
     {
 
         public VariableComparators Comparator { get; set; } = VariableComparators.Equal;
@@ -329,9 +329,11 @@ namespace Intersect.GameObjects.Events
 
         public long Value { get; set; }
 
+        public bool TimeSystem { get; set; }
+
     }
 
-    public partial class StringVariableComparison : VariableCompaison
+    public partial class StringVariableComparison : VariableComparison
     {
 
         public StringVariableComparators Comparator { get; set; } = StringVariableComparators.Equal;

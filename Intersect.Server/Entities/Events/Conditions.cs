@@ -519,7 +519,7 @@ namespace Intersect.Server.Entities.Events
 
         public static bool CheckVariableComparison(
             VariableValue currentValue,
-            VariableCompaison comparison,
+            VariableComparison comparison,
             Player player,
             Event instance
         )
@@ -613,6 +613,10 @@ namespace Intersect.Server.Entities.Events
                 {
                     compValue = player.User.GetVariableValue(comparison.CompareVariableId);
                 }
+            }
+            else if (comparison.TimeSystem)
+            {
+                compValue = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
             }
             else
             {
