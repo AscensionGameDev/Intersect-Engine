@@ -948,17 +948,32 @@ namespace Intersect.Client.Entities
                         return true;
 
                     case Player player:
-                        if (IsHovered) { return true; }
+                        if (IsHovered)
+                        {
+                            return true;
+                        }
 
                         var me = Globals.Me;
 
-                        if (Globals.Database.MyOverheadInfo && player.Id == me.Id) { return true; }
+                        if (Globals.Database.MyOverheadInfo && player.Id == me.Id)
+                        {
+                            return true;
+                        }
 
-                        if (Globals.Database.PlayerOverheadInfo && player.Id != me.Id) { return true; }
+                        if (Globals.Database.PlayerOverheadInfo && player.Id != me.Id)
+                        {
+                            return true;
+                        }
 
-                        if (Globals.Database.PartyMemberOverheadInfo && me.IsInMyParty(player)) { return true; }
+                        if (Globals.Database.PartyMemberOverheadInfo && me.IsInMyParty(player))
+                        {
+                            return true;
+                        }
 
-                        if (Globals.Database.FriendOverheadInfo && me.IsFriend(player)) { return true; }
+                        if (Globals.Database.FriendOverheadInfo && me.IsFriend(player))
+                        {
+                            return true;
+                        }
 
                         return Globals.Database.GuildMemberOverheadInfo && me.IsGuildMate(player);
 
