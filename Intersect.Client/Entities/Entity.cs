@@ -943,46 +943,27 @@ namespace Intersect.Client.Entities
                     case Projectile _:
                     case Resource _:
                         return false;
+
                     case Event _:
                         return true;
+
                     case Player player:
-                        if (IsHovered)
-                        {
-                            return true;
-                        }
+                        if (IsHovered) { return true; }
 
                         var me = Globals.Me;
-                        bool meetsRequirements = false;
 
-                        if (Globals.Database.MyOverheadInfo && player.Id == me.Id)
-                        {
-                            meetsRequirements = true;
-                        }
-                        else if (Globals.Database.PlayerOverheadInfo && player.Id != me.Id)
-                        {
-                            meetsRequirements = true;
-                        }
-                        else if (Globals.Database.PartyMemberOverheadInfo && me.IsInMyParty(player))
-                        {
-                            meetsRequirements = true;
-                        }
-                        else if (Globals.Database.FriendOverheadInfo && me.IsFriend(player))
-                        {
-                            meetsRequirements = true;
-                        }
-                        else if (Globals.Database.GuildMemberOverheadInfo && me.IsGuildMate(player))
-                        {
-                            meetsRequirements = true;
-                        }
+                        if (Globals.Database.MyOverheadInfo && player.Id == me.Id) { return true; }
 
-                        return meetsRequirements;
+                        if (Globals.Database.PlayerOverheadInfo && player.Id != me.Id) { return true; }
+
+                        if (Globals.Database.PartyMemberOverheadInfo && me.IsInMyParty(player)) { return true; }
+
+                        if (Globals.Database.FriendOverheadInfo && me.IsFriend(player)) { return true; }
+
+                        return Globals.Database.GuildMemberOverheadInfo && me.IsGuildMate(player);
+
                     default:
-                        if (IsHovered)
-                        {
-                            return true;
-                        }
-
-                        return Globals.Database.NpcOverheadInfo;
+                        return IsHovered || Globals.Database.NpcOverheadInfo;
                 }
             }
         }
