@@ -1047,9 +1047,9 @@ namespace Intersect.Client.Maps
             var drawX = (float)Math.Round(mFogCurrentX);
             var drawY = (float)Math.Round(mFogCurrentY);
 
-            for (var x = 0; x <= xCount; x++)
+            for (var x = -1; x <= xCount; x++)
             {
-                for (var y = 0; y <= yCount; y++)
+                for (var y = -1; y <= yCount; y++)
                 {
                     Graphics.DrawGameTexture(
                         fogTex, new FloatRect(0, 0, fogTex.Width, fogTex.Height),
