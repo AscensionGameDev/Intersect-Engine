@@ -1,5 +1,3 @@
-using System;
-
 using Intersect.Client.Framework.Audio;
 using Intersect.Client.Framework.Core.Sounds;
 using Intersect.Client.Framework.File_Management;
@@ -30,7 +28,7 @@ namespace Intersect.Client.Core.Sounds
 
         public Sound(string filename, bool loop, int loopInterval)
         {
-            if (String.IsNullOrEmpty(filename))
+            if (string.IsNullOrEmpty(filename))
             {
                 return;
             }

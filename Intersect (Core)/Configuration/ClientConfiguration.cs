@@ -53,6 +53,8 @@ namespace Intersect.Configuration
 
         public const string DEFAULT_MENU_MUSIC = "RPG-Theme_v001_Looping.ogg";
 
+        public const string DEFAULT_TYPEWRITER_SOUND = "octave-beep-tapped.wav";
+
         public const int DEFAULT_TYPEWRITER_SOUND_FREQ = 5;
 
         public const long DEFAULT_TYPEWRITER_SPEED = 6;
@@ -193,7 +195,7 @@ namespace Intersect.Configuration
 
         public List<string> TypewriterSounds { get; set; } = new List<string>()
         {
-            "octave-beep-tapped.wav"
+            DEFAULT_TYPEWRITER_SOUND
         };
 
         public int TypewriterSoundFrequency { get; set; } = DEFAULT_TYPEWRITER_SOUND_FREQ;
