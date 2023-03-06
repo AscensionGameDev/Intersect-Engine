@@ -81,6 +81,9 @@ namespace Intersect.Configuration
             ChatLines = Math.Min(Math.Max(ChatLines, 10), 500);
             MenuBackground = new List<string>(MenuBackground?.Distinct() ?? new List<string> {"background.png"});
             IntroImages = new List<string>(IntroImages?.Distinct() ?? new List<string>());
+            TypewriterFullStopCharacters = new List<char>(TypewriterFullStopCharacters?.Distinct() ?? new List<char>());
+            TypewriterPartialStopCharacters = new List<char>(TypewriterPartialStopCharacters?.Distinct() ?? new List<char>());
+            TypewriterSounds = new List<string>(TypewriterSounds?.Distinct() ?? new List<string>());
         }
 
         #endregion
