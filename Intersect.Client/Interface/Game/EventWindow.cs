@@ -276,15 +276,15 @@ namespace Intersect.Client.Interface.Game
                     var dialog = Globals.EventDialogs[0];
 
                     // Always show option 1 ("continue" if options empty)
-                    mEventResponse1.IsHidden = !_writer.Done; 
-                    mEventResponse2.IsHidden = !_writer.Done || string.IsNullOrEmpty(dialog.Opt2);
-                    mEventResponse3.IsHidden = !_writer.Done || string.IsNullOrEmpty(dialog.Opt3);
-                    mEventResponse4.IsHidden = !_writer.Done || string.IsNullOrEmpty(dialog.Opt4);
+                    mEventResponse1.IsHidden = !_writer.IsDone; 
+                    mEventResponse2.IsHidden = !_writer.IsDone || string.IsNullOrEmpty(dialog.Opt2);
+                    mEventResponse3.IsHidden = !_writer.IsDone || string.IsNullOrEmpty(dialog.Opt3);
+                    mEventResponse4.IsHidden = !_writer.IsDone || string.IsNullOrEmpty(dialog.Opt4);
 
                     _writer.Write(ClientConfiguration.Instance.TypewriterSounds.ElementAtOrDefault(voiceIdx));
-                    if (_writer.Done)
+                    if (_writer.IsDone)
                     {
-                        var disableResponse = Timing.Global.Milliseconds - _writer.DoneAt < _typewriterResponseDelay;
+                        var disableResponse = Timing.Global.Milliseconds - _writer.DoneAtMilliseconds < _typewriterResponseDelay;
                         mEventResponse1.IsDisabled = disableResponse;
                         mEventResponse2.IsDisabled = disableResponse;
                         mEventResponse3.IsDisabled = disableResponse;
@@ -388,7 +388,7 @@ namespace Intersect.Client.Interface.Game
 
         private void SkipTypewriting()
         {
-            if (_writer?.Done ?? true)
+            if (_writer?.IsDone ?? true)
             {
                 return;
             }

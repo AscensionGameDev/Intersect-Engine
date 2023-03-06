@@ -11,7 +11,7 @@ using Intersect.Utilities;
 namespace Intersect.Client.Interface.Game.Typewriting
 {
 
-    sealed internal class Typewriter
+    internal sealed class Typewriter
     {
         private static List<char> _fullstopChars => ClientConfiguration.Instance.TypewriterFullStopCharacters;
         private static long _fullStopSpeed => ClientConfiguration.Instance.TypewriterFullStopDelay;
@@ -28,9 +28,9 @@ namespace Intersect.Client.Interface.Game.Typewriting
         private char? _lastChar;
         private long _nextUpdateTime;
 
-        public bool Done { get; private set; }
+        public bool IsDone { get; private set; }
 
-        public long DoneAt { get; private set; }
+        public long DoneAtMilliseconds { get; private set; }
 
         public void NewLine()
         {
@@ -53,12 +53,12 @@ namespace Intersect.Client.Interface.Game.Typewriting
             _lineIndex = 0;
             _charIndex = 0;
             _lastChar = null;
-            Done = false;
+            IsDone = false;
         }
 
         public void Write(string voice)
         {
-            if (Done)
+            if (IsDone)
             {
                 return;
             }
@@ -123,7 +123,7 @@ namespace Intersect.Client.Interface.Game.Typewriting
 
         public void End()
         {
-            if (Done || (_lines?.Length ?? 0) == 0)
+            if (IsDone || (_lines?.Length ?? 0) == 0)
             {
                 return;
             }
@@ -138,8 +138,8 @@ namespace Intersect.Client.Interface.Game.Typewriting
                 _labels[i].SetText(_lines[i]);
             }
 
-            Done = true;
-            DoneAt = Timing.Global.Milliseconds;
+            IsDone = true;
+            DoneAtMilliseconds = Timing.Global.Milliseconds;
         }
     }
 }
