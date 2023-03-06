@@ -90,6 +90,8 @@ namespace Intersect.Client.Interface.Shared
 
         private readonly LabeledCheckBox mPlayerOverheadHpBarCheckbox;
 
+        private readonly LabeledCheckBox mTypewriterCheckbox;
+
         // Game Settings - Targeting.
         private readonly ScrollControl mTargetingSettings;
 
@@ -276,6 +278,10 @@ namespace Intersect.Client.Interface.Shared
             // Game Settings - Targeting: Auto-turn to Target.
             mAutoTurnToTarget = new LabeledCheckBox(mTargetingSettings, "AutoTurnToTargetCheckbox");
             mAutoTurnToTarget.Text = Strings.Settings.AutoTurnToTarget;
+
+            // Game Settings - Typewriter Text
+            mTypewriterCheckbox = new LabeledCheckBox(mInterfaceSettings, "TypewriterCheckbox");
+            mTypewriterCheckbox.Text = Strings.Settings.TypewriterText;
 
             #endregion
 
@@ -683,6 +689,7 @@ namespace Intersect.Client.Interface.Shared
             mPlayerOverheadHpBarCheckbox.IsChecked = Globals.Database.PlayerOverheadHpBar;
             mStickyTarget.IsChecked = Globals.Database.StickyTarget;
             mAutoTurnToTarget.IsChecked = Globals.Database.AutoTurnToTarget;
+            mTypewriterCheckbox.IsChecked = Globals.Database.TypewriterText;
 
             // Video Settings.
             mFullscreenCheckbox.IsChecked = Globals.Database.FullScreen;
@@ -862,6 +869,7 @@ namespace Intersect.Client.Interface.Shared
             Globals.Database.PlayerOverheadHpBar = mPlayerOverheadHpBarCheckbox.IsChecked;
             Globals.Database.StickyTarget = mStickyTarget.IsChecked;
             Globals.Database.AutoTurnToTarget = mAutoTurnToTarget.IsChecked;
+            Globals.Database.TypewriterText = mTypewriterCheckbox.IsChecked;
 
             // Video Settings.
             var resolution = mResolutionList.SelectedItem;

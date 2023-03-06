@@ -81,6 +81,13 @@ namespace Intersect.Client.Interface.Game
             mEventResponse4.Clicked += EventResponse4_Clicked;
 
             Writer = new Typewriter();
+
+            mEventDialogWindow.Clicked += Dialog_Clicked;
+        }
+
+        private void Dialog_Clicked(Base sender, ClickedEventArgs arguments)
+        {
+            SkipTypewriting();
         }
 
         //Update
@@ -439,9 +446,10 @@ namespace Intersect.Client.Interface.Game
                 return;
             }
 
-            if (CurrentLine == default || CurrentLabel == default)
+            if (string.IsNullOrEmpty(CurrentLine) || CurrentLabel == default)
             {
                 End();
+                return;
             }
 
             if (Timing.Global.Milliseconds < LastUpdateTime)

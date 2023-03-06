@@ -142,7 +142,7 @@ namespace Intersect.Client.Framework.Database
             SavePreference(nameof(ShowExperienceAsPercentage), ShowExperienceAsPercentage);
             SavePreference(nameof(ShowHealthAsPercentage), ShowHealthAsPercentage);
             SavePreference(nameof(ShowManaAsPercentage), ShowManaAsPercentage);
-            TypewriterText = LoadPreference(nameof(TypewriterText), true);
+            SavePreference(nameof(TypewriterText), TypewriterText);
         }
 
         public abstract bool LoadConfig();
