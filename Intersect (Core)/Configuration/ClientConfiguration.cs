@@ -84,6 +84,7 @@ namespace Intersect.Configuration
             TypewriterFullStopCharacters = new List<char>(TypewriterFullStopCharacters?.Distinct() ?? new List<char>());
             TypewriterPartialStopCharacters = new List<char>(TypewriterPartialStopCharacters?.Distinct() ?? new List<char>());
             TypewriterSounds = new List<string>(TypewriterSounds?.Distinct() ?? new List<string>());
+            EntityBarDirections = new List<DisplayDirection>(EntityBarDirections.Distinct() ?? new List<DisplayDirection>());
         }
 
         #endregion
@@ -199,6 +200,7 @@ namespace Intersect.Configuration
         {
             DEFAULT_TYPEWRITER_SOUND
         };
+
         public bool TypewriterEnabled { get; set; } = DEFAULT_TYPEWRITER_ENABLED;
 
         public List<char> TypewriterFullStopCharacters { get; set; } = new List<char>()
