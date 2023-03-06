@@ -59,7 +59,7 @@ namespace Intersect.Configuration
 
         public const long DEFAULT_TYPEWRITER_PART_DELAY = 6;
 
-        public const long DEFAULT_TYPEWRITER_PARTIAL_STOP_SPEED = 80;
+        public const long DEFAULT_TYPEWRITER_PAUSE_SPEED = 80;
 
         public const long DEFAULT_TYPEWRITER_RESPONSE_DELAY = 600;
 
@@ -82,7 +82,7 @@ namespace Intersect.Configuration
             MenuBackground = new List<string>(MenuBackground?.Distinct() ?? new List<string> {"background.png"});
             IntroImages = new List<string>(IntroImages?.Distinct() ?? new List<string>());
             TypewriterFullStopCharacters = new List<char>(TypewriterFullStopCharacters?.Distinct() ?? new List<char>());
-            TypewriterPartialStopCharacters = new List<char>(TypewriterPartialStopCharacters?.Distinct() ?? new List<char>());
+            TypewriterPauseCharacters = new List<char>(TypewriterPauseCharacters?.Distinct() ?? new List<char>());
             TypewriterSounds = new List<string>(TypewriterSounds?.Distinct() ?? new List<string>());
             EntityBarDirections = new List<DisplayDirection>(EntityBarDirections.Distinct() ?? new List<DisplayDirection>());
         }
@@ -211,18 +211,18 @@ namespace Intersect.Configuration
             ':',
         };
 
-        public long TypewriterFullStopSpeed { get; set; } = DEFAULT_TYPEWRITER_FULL_STOP_SPEED;
+        public long TypewriterFullStopDelay { get; set; } = DEFAULT_TYPEWRITER_FULL_STOP_SPEED;
 
         public long TypewriterPartDelay { get; set; } = DEFAULT_TYPEWRITER_PART_DELAY;
 
-        public List<char> TypewriterPartialStopCharacters { get; set; } = new List<char>()
+        public List<char> TypewriterPauseCharacters { get; set; } = new List<char>()
         {
             ',',
             ';',
             '-',
         };
 
-        public long TypewriterPartialStopSpeed { get; set; } = DEFAULT_TYPEWRITER_PARTIAL_STOP_SPEED;
+        public long TypewriterPartialStopDelay { get; set; } = DEFAULT_TYPEWRITER_PAUSE_SPEED;
 
         public long TypewriterResponseDelay { get; set; } = DEFAULT_TYPEWRITER_RESPONSE_DELAY;
 

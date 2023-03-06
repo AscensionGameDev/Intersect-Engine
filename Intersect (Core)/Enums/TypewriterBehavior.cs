@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Intersect.Enums
 {
-    public enum TypewriterTypes
+    public enum TypewriterBehavior
     {
         Off,
         Word,

@@ -14,9 +14,9 @@ namespace Intersect.Client.Interface.Game.Typewriting
     sealed internal class Typewriter
     {
         private static List<char> _fullstopChars => ClientConfiguration.Instance.TypewriterFullStopCharacters;
-        private static long _fullStopSpeed => ClientConfiguration.Instance.TypewriterFullStopSpeed;
-        private static List<char> _partialstopChars => ClientConfiguration.Instance.TypewriterPartialStopCharacters;
-        private static long _partialStopSpeed => ClientConfiguration.Instance.TypewriterPartialStopSpeed;
+        private static long _fullStopSpeed => ClientConfiguration.Instance.TypewriterFullStopDelay;
+        private static List<char> _partialstopChars => ClientConfiguration.Instance.TypewriterPauseCharacters;
+        private static long _partialStopSpeed => ClientConfiguration.Instance.TypewriterPartialStopDelay;
         private static long _typingSpeed => ClientConfiguration.Instance.TypewriterPartDelay;
 
         private List<Label> _labels;
@@ -32,7 +32,7 @@ namespace Intersect.Client.Interface.Game.Typewriting
 
         public long DoneAt { get; private set; }
 
-        public void CarriageReturn()
+        public void NewLine()
         {
             _lineIndex++;
             if (_lineIndex >= _lines.Length)
@@ -84,7 +84,7 @@ namespace Intersect.Client.Interface.Game.Typewriting
             if (_charIndex >= _currentLine.Length)
             {
                 _currentLabel?.SetText(_currentLine);
-                CarriageReturn();
+                NewLine();
                 return;
             }
 
