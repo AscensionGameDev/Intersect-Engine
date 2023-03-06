@@ -1,4 +1,5 @@
 using System;
+using Intersect.Enums;
 
 namespace Intersect.Client.Framework.Database
 {
@@ -57,7 +58,7 @@ namespace Intersect.Client.Framework.Database
 
         public bool ShowManaAsPercentage { get; set; }
 
-        public bool TypewriterText { get; set; }
+        public TypewriterTypes TypewriterText { get; set; }
 
         public abstract void DeletePreference(string key);
 
@@ -109,7 +110,7 @@ namespace Intersect.Client.Framework.Database
             ShowExperienceAsPercentage = LoadPreference(nameof(ShowExperienceAsPercentage), true);
             ShowHealthAsPercentage = LoadPreference(nameof(ShowHealthAsPercentage), false);
             ShowManaAsPercentage = LoadPreference(nameof(ShowManaAsPercentage), false);
-            TypewriterText = LoadPreference(nameof(TypewriterText), true);
+            TypewriterText = LoadPreference(nameof(TypewriterText), TypewriterTypes.Word);
         }
 
         /// <summary>

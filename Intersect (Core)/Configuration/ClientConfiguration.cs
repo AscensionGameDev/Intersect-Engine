@@ -52,21 +52,20 @@ namespace Intersect.Configuration
         public const long DEFAULT_MENU_BACKGROUND_FRAME_INTERVAL = 50;
 
         public const string DEFAULT_MENU_MUSIC = "RPG-Theme_v001_Looping.ogg";
-
-        public const string DEFAULT_TYPEWRITER_SOUND = "octave-beep-tapped.wav";
-
-        public const int DEFAULT_TYPEWRITER_SOUND_FREQ = 5;
-
-        public const long DEFAULT_TYPEWRITER_SPEED = 6;
-
-        public const long DEFAULT_TYPEWRITER_FULLSTOP_SPEED = 400;
-
-        public const long DEFAULT_TYPEWRITER_PARTIALSTOP_SPEED = 80;
-
+        
         public const bool DEFAULT_TYPEWRITER_ENABLED = true;
+
+        public const long DEFAULT_TYPEWRITER_FULL_STOP_SPEED = 400;
+
+        public const long DEFAULT_TYPEWRITER_PART_DELAY = 6;
+
+        public const long DEFAULT_TYPEWRITER_PARTIAL_STOP_SPEED = 80;
 
         public const long DEFAULT_TYPEWRITER_RESPONSE_DELAY = 600;
 
+        public const string DEFAULT_TYPEWRITER_SOUND = "octave-beep-tapped.wav";
+
+        public const int DEFAULT_TYPEWRITER_SOUND_FREQUENCY = 5;
         #endregion
 
         #region Static Properties and Methods
@@ -197,20 +196,9 @@ namespace Intersect.Configuration
         {
             DEFAULT_TYPEWRITER_SOUND
         };
+        public bool TypewriterEnabled { get; set; } = DEFAULT_TYPEWRITER_ENABLED;
 
-        public int TypewriterSoundFrequency { get; set; } = DEFAULT_TYPEWRITER_SOUND_FREQ;
-
-        public long TypewriterLetterSpeed { get; set; } = DEFAULT_TYPEWRITER_SPEED;
-
-        public long TypewriterFullstopSpeed { get; set; } = DEFAULT_TYPEWRITER_FULLSTOP_SPEED;
-
-        public long TypewriterPartialstopSpeed { get; set; } = DEFAULT_TYPEWRITER_PARTIALSTOP_SPEED;
-
-        public bool EnableTypewriting { get; set; } = DEFAULT_TYPEWRITER_ENABLED;
-
-        public long TypewriterResponseDelay { get; set; } = DEFAULT_TYPEWRITER_RESPONSE_DELAY;
-
-        public List<char> TypewriterFullstopCharacters { get; set; } = new List<char>()
+        public List<char> TypewriterFullStopCharacters { get; set; } = new List<char>()
         {
             '.',
             '!',
@@ -218,12 +206,22 @@ namespace Intersect.Configuration
             ':',
         };
 
-        public List<char> TypewriterPartialstopCharacters { get; set; } = new List<char>()
+        public long TypewriterFullStopSpeed { get; set; } = DEFAULT_TYPEWRITER_FULL_STOP_SPEED;
+
+        public long TypewriterPartDelay { get; set; } = DEFAULT_TYPEWRITER_PART_DELAY;
+
+        public List<char> TypewriterPartialStopCharacters { get; set; } = new List<char>()
         {
             ',',
             ';',
             '-',
         };
+
+        public long TypewriterPartialStopSpeed { get; set; } = DEFAULT_TYPEWRITER_PARTIAL_STOP_SPEED;
+
+        public long TypewriterResponseDelay { get; set; } = DEFAULT_TYPEWRITER_RESPONSE_DELAY;
+
+        public int TypewriterSoundFrequency { get; set; } = DEFAULT_TYPEWRITER_SOUND_FREQUENCY;
 
         #endregion
 

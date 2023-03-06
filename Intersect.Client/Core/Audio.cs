@@ -285,7 +285,7 @@ namespace Intersect.Client.Core
 
         public static void StopAllGameSoundsOf(string[] filenames)
         {
-            var validSounds = sGameSounds.Where(s => filenames.Contains(s.Filename)).ToArray();
+            var validSounds = sGameSounds.Where(s => filenames.Contains(s.Filename));
             foreach (var sound in validSounds)
             {
                 sound.Stop();

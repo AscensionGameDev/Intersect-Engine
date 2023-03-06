@@ -28,7 +28,7 @@ namespace Intersect.Client.Core.Sounds
 
         public Sound(string filename, bool loop, int loopInterval)
         {
-            if (string.IsNullOrEmpty(filename))
+            if (string.IsNullOrWhiteSpace(filename))
             {
                 return;
             }

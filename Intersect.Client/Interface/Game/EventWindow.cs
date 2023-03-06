@@ -8,6 +8,7 @@ using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.General;
+using Intersect.Client.Interface.Game.Typewriting;
 using Intersect.Client.Localization;
 using Intersect.Client.Networking;
 using Intersect.Configuration;
@@ -46,9 +47,9 @@ namespace Intersect.Client.Interface.Game
 
         private bool Typewriting = false;
 
-        private Typewriter Writer;
+        private readonly Typewriter _writer;
 
-        private readonly long TypewriterResponseDelay = ClientConfiguration.Instance.TypewriterResponseDelay;
+        private readonly long _typewriterResponseDelay = ClientConfiguration.Instance.TypewriterResponseDelay;
 
         //Init
         public EventWindow(Canvas gameCanvas)
@@ -80,7 +81,7 @@ namespace Intersect.Client.Interface.Game
             mEventResponse4 = new Button(mEventDialogWindow, "EventResponse4");
             mEventResponse4.Clicked += EventResponse4_Clicked;
 
-            Writer = new Typewriter();
+            _writer = new Typewriter();
 
             mEventDialogWindow.Clicked += Dialog_Clicked;
         }
@@ -143,7 +144,7 @@ namespace Intersect.Client.Interface.Game
                         maxResponse = 4;
                     }
 
-                    Typewriting = ClientConfiguration.Instance.EnableTypewriting && Globals.Database.TypewriterText;
+                    Typewriting = ClientConfiguration.Instance.TypewriterEnabled && Globals.Database.TypewriterText == Enums.TypewriterTypes.Word;
 
                     mEventResponse1.Name = "";
                     mEventResponse2.Name = "";
@@ -275,15 +276,15 @@ namespace Intersect.Client.Interface.Game
                     var dialog = Globals.EventDialogs[0];
 
                     // Always show option 1 ("continue" if options empty)
-                    mEventResponse1.IsHidden = !Writer.Done; 
-                    mEventResponse2.IsHidden = !Writer.Done || string.IsNullOrEmpty(dialog.Opt2);
-                    mEventResponse3.IsHidden = !Writer.Done || string.IsNullOrEmpty(dialog.Opt3);
-                    mEventResponse4.IsHidden = !Writer.Done || string.IsNullOrEmpty(dialog.Opt4);
+                    mEventResponse1.IsHidden = !_writer.Done; 
+                    mEventResponse2.IsHidden = !_writer.Done || string.IsNullOrEmpty(dialog.Opt2);
+                    mEventResponse3.IsHidden = !_writer.Done || string.IsNullOrEmpty(dialog.Opt3);
+                    mEventResponse4.IsHidden = !_writer.Done || string.IsNullOrEmpty(dialog.Opt4);
 
-                    Writer.Write(ClientConfiguration.Instance.TypewriterSounds.ElementAtOrDefault(voiceIdx));
-                    if (Writer.Done)
+                    _writer.Write(ClientConfiguration.Instance.TypewriterSounds.ElementAtOrDefault(voiceIdx));
+                    if (_writer.Done)
                     {
-                        var disableResponse = Timing.Global.Milliseconds - Writer.DoneAt < TypewriterResponseDelay;
+                        var disableResponse = Timing.Global.Milliseconds - _writer.DoneAt < _typewriterResponseDelay;
                         mEventResponse1.IsDisabled = disableResponse;
                         mEventResponse2.IsDisabled = disableResponse;
                         mEventResponse3.IsDisabled = disableResponse;
@@ -314,7 +315,7 @@ namespace Intersect.Client.Interface.Game
             // Do this _after_ sizing so we have lines broken up
             if (Typewriting)
             {
-                Writer.Initialize(dialogLabel.FormattedLabels);
+                _writer.Initialize(dialogLabel.FormattedLabels);
                 mEventResponse1.Hide();
                 mEventResponse2.Hide();
                 mEventResponse3.Hide();
@@ -387,148 +388,12 @@ namespace Intersect.Client.Interface.Game
 
         private void SkipTypewriting()
         {
-            if (Writer?.Done ?? true)
+            if (_writer?.Done ?? true)
             {
                 return;
             }
 
-            Writer.End();
-        }
-    }
-
-    sealed class Typewriter
-    {
-        readonly long TypingSpeed = ClientConfiguration.Instance.TypewriterLetterSpeed;
-        readonly long FullStopSpeed = ClientConfiguration.Instance.TypewriterFullstopSpeed;
-        readonly long PartialStopSpeed = ClientConfiguration.Instance.TypewriterPartialstopSpeed;
-
-        readonly List<char> FullstopChars = ClientConfiguration.Instance.TypewriterFullstopCharacters;
-        readonly List<char> PartialstopChars = ClientConfiguration.Instance.TypewriterPartialstopCharacters;
-
-        private List<Label> Labels { get; set; }
-        private string[] Lines { get; set; }
-        private Label CurrentLabel => Labels.ElementAtOrDefault(LineIdx);
-        private string CurrentLine => Lines.ElementAtOrDefault(LineIdx);
-        private int LineIdx { get; set; }
-        private int CharIdx { get; set; }
-        private char? LastChar { get; set; }
-        private long LastUpdateTime;
-        private long LastPauseTime { get; set; }
-
-        public bool Done { get; private set; }
-
-        public long DoneAt { get; set; }
-
-        public void CarriageReturn()
-        {
-            LineIdx++;
-            if (LineIdx >= Lines.Length)
-            {
-                End();
-                return;
-            }
-            CharIdx = 0;
-            LastChar = null;
-        }
-
-        public void Initialize(List<Label> labels)
-        {
-            LastUpdateTime = Timing.Global.Milliseconds;
-            Labels = labels;
-            Lines = Labels.Select(l => l.Text).ToArray();
-            Labels.ForEach(l => l.SetText("")); // Clear the text from the labels. The writer is the captain now
-            LineIdx = 0;
-            CharIdx = 0;
-            LastChar = null;
-            Done = false;
-        }
-
-        public void Write(string voice)
-        {
-            if (Done)
-            {
-                return;
-            }
-
-            if (string.IsNullOrEmpty(CurrentLine) || CurrentLabel == default)
-            {
-                End();
-                return;
-            }
-
-            if (Timing.Global.Milliseconds < LastUpdateTime)
-            {
-                return;
-            }
-
-            if (!string.IsNullOrEmpty(voice) && CharIdx % ClientConfiguration.Instance.TypewriterSoundFrequency == 0)
-            {
-                Audio.StopAllGameSoundsOf(ClientConfiguration.Instance.TypewriterSounds.ToArray());
-                Audio.AddGameSound(voice ?? string.Empty, false);
-            }
-
-            CharIdx++;
-            if (CharIdx >= CurrentLine.Length)
-            {
-                CurrentLabel?.SetText(CurrentLine);
-                CarriageReturn();
-                return;
-            }
-
-            LastChar = CurrentLine[CharIdx - 1];
-
-            var written = CurrentLine?.Substring(0, CharIdx) ?? string.Empty;
-            CurrentLabel?.SetText(written);
-
-            LastUpdateTime = Timing.Global.Milliseconds + GetTypingSpeed();
-        }
-
-        private long GetTypingSpeed()
-        {
-            if (LastChar == null)
-            {
-                return TypingSpeed;
-            }
-
-            var currentChar = CurrentLine.ElementAtOrDefault(CharIdx);
-            var lastChar = LastChar.GetValueOrDefault();
-            
-            // Allows things like ellipses
-            if (currentChar == lastChar)
-            {
-                return TypingSpeed;
-            }
-            if (FullstopChars.Contains(lastChar))
-            {
-                return FullStopSpeed;
-            }
-            if (PartialstopChars.Contains(lastChar))
-            {
-                return PartialStopSpeed;
-            }
-
-            return TypingSpeed;
-        }
-
-        public void End()
-        {
-            if (Done || (Lines?.Length ?? 0) == 0)
-            {
-                return;
-            }
-
-            for (var i = 0; i < Lines.Length; i++)
-            {
-                if (i >= Labels.Count)
-                {
-                    continue;
-                }
-
-                Labels[i].SetText(Lines[i]);
-            }
-
-            Done = true;
-            DoneAt = Timing.Global.Milliseconds;
+            _writer.End();
         }
     }
 }
