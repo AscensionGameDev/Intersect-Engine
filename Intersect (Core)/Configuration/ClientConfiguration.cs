@@ -210,6 +210,21 @@ namespace Intersect.Configuration
 
         public long TypewriterResponseDelay { get; set; } = DEFAULT_TYPEWRITER_RESPONSE_DELAY;
 
+        public List<char> TypewriterFullstopCharacters { get; set; } = new List<char>()
+        {
+            '.',
+            '!',
+            '?',
+            ':',
+        };
+
+        public List<char> TypewriterPartialstopCharacters { get; set; } = new List<char>()
+        {
+            ',',
+            ';',
+            '-',
+        };
+
         #endregion
 
         #region Serialization Hooks

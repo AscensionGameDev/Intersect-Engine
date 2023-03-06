@@ -402,6 +402,9 @@ namespace Intersect.Client.Interface.Game
         readonly long FullStopSpeed = ClientConfiguration.Instance.TypewriterFullstopSpeed;
         readonly long PartialStopSpeed = ClientConfiguration.Instance.TypewriterPartialstopSpeed;
 
+        readonly List<char> FullstopChars = ClientConfiguration.Instance.TypewriterFullstopCharacters;
+        readonly List<char> PartialstopChars = ClientConfiguration.Instance.TypewriterPartialstopCharacters;
+
         private List<Label> Labels { get; set; }
         private string[] Lines { get; set; }
         private Label CurrentLabel => Labels.ElementAtOrDefault(LineIdx);
@@ -488,11 +491,18 @@ namespace Intersect.Client.Interface.Game
             }
 
             var currentChar = CurrentLine.ElementAtOrDefault(CharIdx);
-            if ((LastChar == '.' || LastChar == '?' || LastChar == '!' || LastChar == ':') && currentChar != LastChar)
+            var lastChar = LastChar.GetValueOrDefault();
+            
+            // Allows things like ellipses
+            if (currentChar == lastChar)
+            {
+                return TypingSpeed;
+            }
+            if (FullstopChars.Contains(lastChar))
             {
                 return FullStopSpeed;
             }
-            if ((LastChar == '-' || LastChar == ',' || LastChar == '-') && currentChar != LastChar)
+            if (PartialstopChars.Contains(lastChar))
             {
                 return PartialStopSpeed;
             }
