@@ -283,10 +283,11 @@ namespace Intersect.Client.Interface.Game
                     Writer.Write(ClientConfiguration.Instance.TypewriterSounds.ElementAtOrDefault(voiceIdx));
                     if (Writer.Done)
                     {
-                        mEventResponse1.IsDisabled = Timing.Global.Milliseconds - Writer.DoneAt < TypewriterResponseDelay;
-                        mEventResponse2.IsDisabled = Timing.Global.Milliseconds - Writer.DoneAt < TypewriterResponseDelay;
-                        mEventResponse3.IsDisabled = Timing.Global.Milliseconds - Writer.DoneAt < TypewriterResponseDelay;
-                        mEventResponse4.IsDisabled = Timing.Global.Milliseconds - Writer.DoneAt < TypewriterResponseDelay;
+                        var disableResponse = Timing.Global.Milliseconds - Writer.DoneAt < TypewriterResponseDelay;
+                        mEventResponse1.IsDisabled = disableResponse;
+                        mEventResponse2.IsDisabled = disableResponse;
+                        mEventResponse3.IsDisabled = disableResponse;
+                        mEventResponse4.IsDisabled = disableResponse;
                     }
                     else if (Controls.KeyDown(Control.AttackInteract))
                     {
