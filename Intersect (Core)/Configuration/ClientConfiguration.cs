@@ -53,6 +53,18 @@ namespace Intersect.Configuration
 
         public const string DEFAULT_MENU_MUSIC = "RPG-Theme_v001_Looping.ogg";
 
+        public const int DEFAULT_TYPEWRITER_SOUND_FREQ = 5;
+
+        public const long DEFAULT_TYPEWRITER_SPEED = 6;
+
+        public const long DEFAULT_TYPEWRITER_FULLSTOP_SPEED = 400;
+
+        public const long DEFAULT_TYPEWRITER_PARTIALSTOP_SPEED = 80;
+
+        public const bool DEFAULT_TYPEWRITER_ENABLED = true;
+
+        public const long DEFAULT_TYPEWRITER_RESPONSE_DELAY = 600;
+
         #endregion
 
         #region Static Properties and Methods
@@ -178,6 +190,23 @@ namespace Intersect.Configuration
         [JsonProperty(ObjectCreationHandling = ObjectCreationHandling.Replace)]
         public List<DisplayDirection> EntityBarDirections { get; set; } =
             Enumerable.Range(0, 1 + (int)Vitals.VitalCount).Select(_ => DisplayDirection.StartToEnd).ToList();
+
+        public List<string> TypewriterSounds { get; set; } = new List<string>()
+        {
+            "octave-beep-tapped.wav"
+        };
+
+        public int TypewriterSoundFrequency { get; set; } = DEFAULT_TYPEWRITER_SOUND_FREQ;
+
+        public long TypewriterLetterSpeed { get; set; } = DEFAULT_TYPEWRITER_SPEED;
+
+        public long TypewriterFullstopSpeed { get; set; } = DEFAULT_TYPEWRITER_FULLSTOP_SPEED;
+
+        public long TypewriterPartialstopSpeed { get; set; } = DEFAULT_TYPEWRITER_PARTIALSTOP_SPEED;
+
+        public bool EnableTypewriting { get; set; } = DEFAULT_TYPEWRITER_ENABLED;
+
+        public long TypewriterResponseDelay { get; set; } = DEFAULT_TYPEWRITER_RESPONSE_DELAY;
 
         #endregion
 

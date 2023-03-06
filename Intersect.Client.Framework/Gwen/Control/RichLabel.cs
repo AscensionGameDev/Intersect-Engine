@@ -26,6 +26,8 @@ namespace Intersect.Client.Framework.Gwen.Control
 
         private bool mNeedsRebuild;
 
+        public List<Label> FormattedLabels { get; set; } = new List<Label>();
+
         /// <summary>
         ///     Initializes a new instance of the <see cref="RichLabel" /> class.
         /// </summary>
@@ -244,6 +246,8 @@ namespace Intersect.Client.Framework.Gwen.Control
             label.AddAlignment(block.Alignment);
             label.ProcessAlignments();
 
+            FormattedLabels.Add(label);
+
             //lineheight = (lineheight + pLabel.Height()) / 2;
 
             x += label.Width;
@@ -269,6 +273,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         protected void Rebuild()
         {
             DeleteAllChildren();
+            FormattedLabels.Clear();
 
             var x = 0;
             var y = 0;
