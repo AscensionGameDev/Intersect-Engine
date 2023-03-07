@@ -41,6 +41,8 @@ namespace Intersect.Configuration
 
         public const int DEFAULT_PORT = 5400;
 
+        public static List<DisplayDirection> DEFAULT_ENTITY_BAR_DIRECTIONS => Enumerable.Range(0, 1 + (int)Vitals.VitalCount).Select(_ => DisplayDirection.StartToEnd).ToList();
+
         public const string DEFAULT_FONT = "sourcesansproblack";
 
         public const string DEFAULT_UI_FONT = "sourcesanspro,8";
@@ -94,7 +96,15 @@ namespace Intersect.Configuration
         public void Validate()
         {
             ChatLines = Math.Min(Math.Max(ChatLines, 10), 500);
-            EntityBarDirections = new List<DisplayDirection>(EntityBarDirections.Distinct() ?? new List<DisplayDirection>());
+
+            var entityBarDirections = EntityBarDirections.Distinct()?.ToList();
+            EntityBarDirections = DEFAULT_ENTITY_BAR_DIRECTIONS.Select(
+                (direction, index) =>
+                    (entityBarDirections?.Count ?? 0) > index
+                        ? entityBarDirections[index]
+                        : direction
+            ).ToList();
+
             GameFont = string.IsNullOrWhiteSpace(GameFont) ? DEFAULT_FONT : GameFont.Trim();
             Host = string.IsNullOrWhiteSpace(Host) ? DEFAULT_HOST : Host.Trim();
             IntroImages = new List<string>(IntroImages?.Distinct() ?? new List<string>());
