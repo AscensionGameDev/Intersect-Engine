@@ -27,7 +27,7 @@ namespace Intersect.Server.Web.RestApi.Constraints
 
             var stringValue = value as string ?? Convert.ToString(value);
 
-            return Enum.TryParse<AdminActions>(stringValue, out _);
+            return Enum.TryParse<AdminAction>(stringValue, out _);
         }
 
     }

@@ -7,6 +7,7 @@ using Intersect.Client.Interface.Game;
 using Intersect.Client.Maps;
 using Intersect.Enums;
 using Intersect.Network.Packets.Client;
+using AdminAction = Intersect.Admin.Actions.AdminAction;
 
 namespace Intersect.Client.Networking
 {
