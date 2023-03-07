@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-
 using Intersect.Client.Core;
 using Intersect.Client.Core.Controls;
 using Intersect.Client.Entities.Events;
@@ -251,7 +250,7 @@ namespace Intersect.Client.Entities
                     }
                     else if (!Globals.Me.TryAttack())
                     {
-                        if (Globals.Me.AttackTimer < Timing.Global.Milliseconds)
+                        if (!Globals.Me.IsAttacking)
                         {
                             Globals.Me.AttackTimer = Timing.Global.Milliseconds + Globals.Me.CalculateAttackTime();
                         }
@@ -1486,42 +1485,29 @@ namespace Intersect.Client.Entities
 
         public bool TryBlock()
         {
-            if (IsBlocking)
+            var shieldIndex = Options.ShieldIndex;
+            var myShieldIndex = MyEquipment[shieldIndex];
+
+            // Return false if character is attacking or if they don't have a shield equipped.
+            if (IsAttacking || shieldIndex < 0 || myShieldIndex < 0)
             {
                 return false;
             }
 
-            if (AttackTimer > Timing.Global.Milliseconds)
+            // Return false if the shield item descriptor could not be retrieved.
+            if (!ItemBase.TryGet(Inventory[myShieldIndex].ItemId, out _))
             {
                 return false;
             }
 
-            if (Options.ShieldIndex > -1 && Globals.Me.MyEquipment[Options.ShieldIndex] > -1)
-            {
-                var item = ItemBase.Get(Globals.Me.Inventory[Globals.Me.MyEquipment[Options.ShieldIndex]].ItemId);
-                if (item != null)
-                {
-                    PacketSender.SendBlock(true);
-                    return true;
-                }
-            }
-
-            return false;
+            IsBlocking = true;
+            PacketSender.SendBlock(IsBlocking);
+            return IsBlocking;
         }
 
         public bool TryAttack()
         {
-            if (AttackTimer > Timing.Global.Milliseconds)
-            {
-                return false;
-            }
-
-            if (IsBlocking)
-            {
-                return false;
-            }
-
-            if (IsMoving && !Options.Instance.PlayerOpts.AllowCombatMovement)
+            if (IsAttacking || IsBlocking || (IsMoving && !Options.Instance.PlayerOpts.AllowCombatMovement))
             {
                 return false;
             }
@@ -1982,7 +1968,7 @@ namespace Intersect.Client.Entities
                 return;
             }
 
-            if (AttackTimer > Timing.Global.Milliseconds && !Options.Instance.PlayerOpts.AllowCombatMovement)
+            if (IsAttacking && !Options.Instance.PlayerOpts.AllowCombatMovement)
             {
                 return;
             }
@@ -2184,7 +2170,7 @@ namespace Intersect.Client.Entities
             }
         }
 
-        public override void DrawEquipment(string filename, Color renderColor, FloatRect entityRect)
+        public override void DrawEquipment(string filename, Color renderColor)
         {
             //check if player is stunned or snared, if so don't let them move.
             for (var n = 0; n < Status.Count; n++)
@@ -2195,7 +2181,7 @@ namespace Intersect.Client.Entities
                 }
             }
 
-            base.DrawEquipment(filename, renderColor, entityRect);
+            base.DrawEquipment(filename, renderColor);
         }
 
         //Override of the original function, used for rendering the color of a player based on rank

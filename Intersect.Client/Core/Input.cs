@@ -1,21 +1,17 @@
 using System;
-
 using Intersect.Admin.Actions;
 using Intersect.Client.Core.Controls;
 using Intersect.Client.Framework.GenericClasses;
-using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
 using Intersect.Client.Interface;
 using Intersect.Client.Interface.Game;
 using Intersect.Client.Maps;
 using Intersect.Client.Networking;
-using Intersect.Logging;
 using Intersect.Utilities;
 
 namespace Intersect.Client.Core
 {
-
     public static partial class Input
     {
 
@@ -346,7 +342,7 @@ namespace Intersect.Client.Core
                     return;
                 }
 
-                if (Globals.Me.AttackTimer < Timing.Global.Milliseconds)
+                if (!Globals.Me.IsAttacking)
                 {
                     Globals.Me.AttackTimer = Timing.Global.Milliseconds + Globals.Me.CalculateAttackTime();
                 }

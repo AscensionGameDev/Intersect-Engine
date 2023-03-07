@@ -19,7 +19,6 @@ using Intersect.Server.Localization;
 using Intersect.Server.Maps;
 using Intersect.Server.Networking;
 using Intersect.Utilities;
-
 using Newtonsoft.Json;
 
 namespace Intersect.Server.Entities
@@ -189,13 +188,7 @@ namespace Intersect.Server.Entities
         public long CastTime { get; set; }
 
         [NotMapped, JsonIgnore]
-        public bool IsCasting => CastTime > Timing.Global.Milliseconds;
-
-        [NotMapped, JsonIgnore]
         public long AttackTimer { get; set; }
-
-        [NotMapped, JsonIgnore]
-        public bool Blocking { get; set; }
 
         [NotMapped, JsonIgnore]
         public Entity CastTarget { get; set; }
@@ -205,6 +198,16 @@ namespace Intersect.Server.Entities
 
         [NotMapped, JsonIgnore]
         public long CombatTimer { get; set; }
+
+        //Combat Status
+        [NotMapped, JsonIgnore]
+        public bool IsAttacking => AttackTimer > Timing.Global.Milliseconds;
+
+        [NotMapped, JsonIgnore]
+        public bool IsBlocking { get; set; }
+
+        [NotMapped, JsonIgnore]
+        public bool IsCasting => CastTime > Timing.Global.Milliseconds;
 
         //Visuals
         [NotMapped, JsonIgnore]
@@ -351,9 +354,9 @@ namespace Intersect.Server.Entities
                     }
 
                     //Blocking timers
-                    if(Blocking && AttackTimer < Timing.Global.Milliseconds)
+                    if(IsBlocking && !IsAttacking)
                     {
-                        Blocking = false;
+                        IsBlocking = false;
                         PacketSender.SendEntityAttack(this, -1);
                     }
                 }
@@ -923,7 +926,7 @@ namespace Intersect.Server.Entities
                 time *= MathHelper.UnitDiagonalLength;
             }
 
-            if (Blocking)
+            if (IsBlocking)
             {
                 time += time * Options.BlockingSlow;
             }
@@ -1266,15 +1269,19 @@ namespace Intersect.Server.Entities
 
         public void TryBlock(bool blocking)
         {
-            if (AttackTimer < Timing.Global.Milliseconds)
+            if (IsAttacking)
             {
-                if (blocking && !Blocking)
-                {
-                    Blocking = true;
-                    AttackTimer = Timing.Global.Milliseconds + CalculateAttackTime();
-                    PacketSender.SendEntityAttack(this, CalculateAttackTime(), true);
-                }
+                return;
             }
+
+            if (!blocking || IsBlocking)
+            {
+                return;
+            }
+
+            IsBlocking = true;
+            AttackTimer = Timing.Global.Milliseconds + CalculateAttackTime();
+            PacketSender.SendEntityAttack(this, CalculateAttackTime(), true);
         }
 
         public virtual int GetWeaponDamage()
@@ -1777,7 +1784,7 @@ namespace Intersect.Server.Entities
             List<KeyValuePair<Guid, Direction>> aliveAnimations = null,
             ItemBase weapon = null)
         {
-            if (AttackTimer > Timing.Global.Milliseconds)
+            if (IsAttacking)
             {
                 return;
             }
@@ -1890,7 +1897,7 @@ namespace Intersect.Server.Entities
             }
 
             //Check on each attack if the enemy is a player AND if they are blocking.
-            if (enemy is Player player && player.Blocking)
+            if (enemy is Player player && player.IsBlocking)
             {
                 if (player.TryGetEquipmentSlot(Options.ShieldIndex, out var slot) && player.TryGetItemAt(slot, out var itm))
                 {

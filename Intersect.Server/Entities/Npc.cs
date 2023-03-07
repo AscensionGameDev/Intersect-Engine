@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Logging;
@@ -393,23 +392,25 @@ namespace Intersect.Server.Entities
 
             //We were forcing at LEAST 1hp base damage.. but then you can't have guards that won't hurt the player.
             //https://www.ascensiongamedev.com/community/bug_tracker/intersect/npc-set-at-0-attack-damage-still-damages-player-by-1-initially-r915/
-            if (AttackTimer < Timing.Global.Milliseconds)
+            if (IsAttacking)
             {
-                if (Base.AttackAnimation != null)
-                {
-                    PacketSender.SendAnimationToProximity(
-                        Base.AttackAnimationId, -1, Guid.Empty, target.MapId, target.X, target.Y, Dir,
-                        target.MapInstanceId
-                    );
-                }
-
-                base.TryAttack(
-                    target, Base.Damage, (DamageType) Base.DamageType, (Stats) Base.ScalingStat, Base.Scaling,
-                    Base.CritChance, Base.CritMultiplier, deadAnimations, aliveAnimations
-                );
-
-                PacketSender.SendEntityAttack(this, CalculateAttackTime());
+                return;
             }
+
+            if (Base.AttackAnimation != null)
+            {
+                PacketSender.SendAnimationToProximity(
+                    Base.AttackAnimationId, -1, Guid.Empty, target.MapId, (byte)target.X, (byte)target.Y,
+                    Dir, target.MapInstanceId
+                );
+            }
+
+            base.TryAttack(
+                target, Base.Damage, (DamageType)Base.DamageType, (Stats)Base.ScalingStat, Base.Scaling,
+                Base.CritChance, Base.CritMultiplier, deadAnimations, aliveAnimations
+            );
+
+            PacketSender.SendEntityAttack(this, CalculateAttackTime());
         }
 
         public bool CanNpcCombat(Entity enemy, bool friendly = false)
