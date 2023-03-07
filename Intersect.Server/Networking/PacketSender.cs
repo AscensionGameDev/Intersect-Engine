@@ -1458,9 +1458,9 @@ namespace Intersect.Server.Networking
             int targetType,
             Guid entityId,
             Guid mapId,
-            byte x,
-            byte y,
-            sbyte direction,
+            int x,
+            int y,
+            Direction direction,
             Guid mapInstanceId
         )
         {
@@ -1779,7 +1779,7 @@ namespace Intersect.Server.Networking
         }
 
         //EntityDashPacket
-        public static void SendEntityDash(Entity en, Guid endMapId, byte endX, byte endY, int dashTime, sbyte direction)
+        public static void SendEntityDash(Entity en, Guid endMapId, byte endX, byte endY, int dashTime, Direction direction)
         {
             SendDataToProximityOnMapInstance(en.MapId, en.MapInstanceId, new EntityDashPacket(en.Id, endMapId, endX, endY, dashTime, direction));
         }

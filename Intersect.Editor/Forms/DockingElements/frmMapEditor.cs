@@ -1033,19 +1033,19 @@ namespace Intersect.Editor.Forms.DockingElements
             {
                 if (gridX == -1 && gridY == 0)
                 {
-                    dir = (int) Directions.Left;
+                    dir = (int) Direction.Left;
                 }
                 else if (gridX == 1 && gridY == 0)
                 {
-                    dir = (int) Directions.Right;
+                    dir = (int) Direction.Right;
                 }
                 else if (gridX == 0 && gridY == -1)
                 {
-                    dir = (int) Directions.Up;
+                    dir = (int) Direction.Up;
                 }
                 else if (gridX == 0 && gridY == 1)
                 {
-                    dir = (int) Directions.Down;
+                    dir = (int) Direction.Down;
                 }
 
                 if (dir != -1)

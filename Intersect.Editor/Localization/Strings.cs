@@ -1456,9 +1456,9 @@ Tick timer saved in server config.json.";
 
         }
 
-        public partial struct Directions
+        public partial struct Direction
         {
-            public static Dictionary<int, LocalizedString> CritterDirections = new Dictionary<int, LocalizedString>()
+            public static Dictionary<int, LocalizedString> CritterDirection = new Dictionary<int, LocalizedString>()
             {
                 {0, @"Random"},
                 {1, @"Up"},
@@ -1467,13 +1467,13 @@ Tick timer saved in server config.json.";
                 {4, @"Right"}
             };
 
-            public static Dictionary<int, LocalizedString> dir = new Dictionary<int, LocalizedString>()
+            public static Dictionary<Enums.Direction, LocalizedString> dir = new Dictionary<Enums.Direction, LocalizedString>()
             {
-                {-1, @"Retain Direction"},
-                {0, @"Up"},
-                {1, @"Down"},
-                {2, @"Left"},
-                {3, @"Right"}
+                {Enums.Direction.None, @"Retain Direction"},
+                {Enums.Direction.Up, @"Up"},
+                {Enums.Direction.Down, @"Down"},
+                {Enums.Direction.Left, @"Left"},
+                {Enums.Direction.Right, @"Right"}
             };
 
             public static Dictionary<int, LocalizedString> WarpDirections = new Dictionary<int, LocalizedString>()
@@ -3003,6 +3003,10 @@ Tick timer saved in server config.json.";
                 {"moveright", @"Move Right"},
                 {"movetowardplayer", @"Move Toward Player"},
                 {"moveup", @"Move Up"},
+                {"moveupleft", @"Move Up Left"},
+                {"moveupright", @"Move Up Right"},
+                {"movedownright", @"Move Down Right"},
+                {"movedownleft", @"Move Down Left"},
                 {"setanimation", @"Set Animation..."},
                 {"setattribute", @"Set Attribute"},
                 {"setgraphic", @"Set Graphic..."},

@@ -6,7 +6,6 @@ using System.Windows.Forms;
 using Intersect.Editor.Content;
 using Intersect.Editor.Localization;
 using Intersect.Enums;
-using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 
 namespace Intersect.Editor.Forms.Editors.Events.Event_Commands

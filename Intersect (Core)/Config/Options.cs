@@ -146,9 +146,9 @@ namespace Intersect
 
         public static bool ZDimensionVisible => Instance.MapOpts.ZDimensionVisible;
 
-        public static int MapWidth => Instance?.MapOpts?.Width ?? 32;
+        public static int MapWidth => Instance?.MapOpts?.MapWidth ?? 32;
 
-        public static int MapHeight => Instance?.MapOpts?.Height ?? 26;
+        public static int MapHeight => Instance?.MapOpts?.MapHeight ?? 26;
 
         public static int TileWidth => Instance.MapOpts.TileWidth;
 

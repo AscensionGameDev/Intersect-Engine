@@ -298,54 +298,30 @@ namespace Intersect.Server.Entities.Pathfinding
             }
         }
 
-        private void StoreNeighborNodes(PathNode inAround, PathNode[] inNeighbors)
+        private void StoreNeighborNodes(PathNode inAround, IList<PathNode> inNeighbors)
         {
             var x = inAround.X;
             var y = inAround.Y;
 
-            inNeighbors[0] = null;
+            inNeighbors[1] = y > 0 ? mSearchSpace[x, y - 1] : null; // Up
+            inNeighbors[3] = x > 0 ? mSearchSpace[x - 1, y] : null; // Left
+            inNeighbors[4] = x < Width - 1 ? mSearchSpace[x + 1, y] : null; // Right
+            inNeighbors[6] = y < Height - 1 ? mSearchSpace[x, y + 1] : null; // Down
 
-            if (y > 0)
+            if (Options.Instance.MapOpts.EnableDiagonalMovement)
             {
-                inNeighbors[1] = mSearchSpace[x, y - 1];
+                inNeighbors[0] = y > 0 && x > 0 ? mSearchSpace[x - 1, y - 1] : null; // UpLeft
+                inNeighbors[2] = y > 0 && x < Width - 1 ? mSearchSpace[x + 1, y - 1] : null; // UpRight
+                inNeighbors[5] = y < Height - 1 && x > 0 ? mSearchSpace[x - 1, y + 1] : null; // DownLeft
+                inNeighbors[7] = y < Height - 1 && x < Width - 1 ? mSearchSpace[x + 1, y + 1] : null; // DownRight
             }
             else
             {
-                inNeighbors[1] = null;
+                inNeighbors[0] = null;
+                inNeighbors[2] = null;
+                inNeighbors[5] = null;
+                inNeighbors[7] = null;
             }
-
-            inNeighbors[2] = null;
-
-            if (x > 0)
-            {
-                inNeighbors[3] = mSearchSpace[x - 1, y];
-            }
-            else
-            {
-                inNeighbors[3] = null;
-            }
-
-            if (x < Width - 1)
-            {
-                inNeighbors[4] = mSearchSpace[x + 1, y];
-            }
-            else
-            {
-                inNeighbors[4] = null;
-            }
-
-            inNeighbors[5] = null;
-
-            if (y < Height - 1)
-            {
-                inNeighbors[6] = mSearchSpace[x, y + 1];
-            }
-            else
-            {
-                inNeighbors[6] = null;
-            }
-
-            inNeighbors[7] = null;
         }
 
         private partial class OpenCloseMap

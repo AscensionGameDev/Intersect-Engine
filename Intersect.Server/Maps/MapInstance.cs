@@ -10,7 +10,6 @@ using Intersect.Logging;
 using Intersect.Network.Packets.Server;
 using Intersect.Server.Database;
 using Intersect.Server.Entities.Events;
-using Intersect.Server.General;
 using Intersect.Server.Networking;
 using Intersect.Utilities;
 using Intersect.Server.Entities;
@@ -115,7 +114,7 @@ namespace Intersect.Server.Maps
 
         // Items
         public ConcurrentDictionary<Guid, MapItemSpawn> ItemRespawns = new ConcurrentDictionary<Guid, MapItemSpawn>();
-        public ConcurrentDictionary<Guid, MapItem>[] TileItems { get; } = new ConcurrentDictionary<Guid, MapItem>[Options.Instance.MapOpts.Width * Options.Instance.MapOpts.Height];
+        public ConcurrentDictionary<Guid, MapItem>[] TileItems { get; } = new ConcurrentDictionary<Guid, MapItem>[Options.Instance.MapOpts.MapWidth * Options.Instance.MapOpts.MapHeight];
         public ConcurrentDictionary<Guid, MapItem> AllMapItems { get; } = new ConcurrentDictionary<Guid, MapItem>();
 
         // Resources
@@ -427,7 +426,7 @@ namespace Intersect.Server.Maps
                     _ = NpcSpawnInstances.TryAdd(spawn, npcSpawnInstance);
                 }
 
-                FindNpcSpawnLocation(spawn, out var x, out var y, out var dir);
+                FindNpcSpawnLocation(spawn, out var x, out var y, out Direction dir);
 
                 npcSpawnInstance.Entity = SpawnNpc((byte) x, (byte) y, dir, spawn.NpcId);
             }
@@ -440,7 +439,7 @@ namespace Intersect.Server.Maps
         /// <param name="x">The X-coordinate to spawn at; out</param>
         /// <param name="y">The Y-coordinate to spawn at; out</param>
         /// <param name="dir">The direction to spawn at; out</param>
-        private void FindNpcSpawnLocation(NpcSpawn spawn, out int x, out int y, out byte dir)
+        private void FindNpcSpawnLocation(NpcSpawn spawn, out int x, out int y, out Direction dir)
         {
             dir = 0;
             x = 0;
@@ -448,11 +447,11 @@ namespace Intersect.Server.Maps
 
             if (spawn.Direction != NpcSpawnDirection.Random)
             {
-                dir = (byte)(spawn.Direction - 1);
+                dir = (Direction)(spawn.Direction - 1);
             }
             else
             {
-                dir = (byte)Randomization.Next(0, Options.Instance.Sprites.Directions);
+                dir = Randomization.NextDirection();
             }
 
             if (spawn.X >= 0 && spawn.Y >= 0)
@@ -486,7 +485,7 @@ namespace Intersect.Server.Maps
         /// <param name="npcId">NPC Entity ID to spawn</param>
         /// <param name="despawnable">Whether or not this NPC can be despawned (for example, if spawned via event command)</param>
         /// <returns></returns>
-        public Npc SpawnNpc(byte tileX, byte tileY, byte dir, Guid npcId, bool despawnable = false)
+        public Npc SpawnNpc(byte tileX, byte tileY, Direction dir, Guid npcId, bool despawnable = false)
         {
             var npcBase = NpcBase.Get(npcId);
             if (npcBase != null)
@@ -974,7 +973,7 @@ namespace Intersect.Server.Maps
             byte x,
             byte y,
             byte z,
-            byte direction,
+            Direction direction,
             Entity target
         )
         {

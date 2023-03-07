@@ -5,8 +5,8 @@ using Intersect.Client.Entities.Events;
 using Intersect.Client.General;
 using Intersect.Client.Interface.Game;
 using Intersect.Client.Maps;
+using Intersect.Enums;
 using Intersect.Network.Packets.Client;
-using Intersect.Utilities;
 
 namespace Intersect.Client.Networking
 {
@@ -59,7 +59,7 @@ namespace Intersect.Client.Networking
             Network.SendPacket(new BlockPacket(blocking));
         }
 
-        public static void SendDirection(byte dir)
+        public static void SendDirection(Direction dir)
         {
             Network.SendPacket(new DirectionPacket(dir));
         }
