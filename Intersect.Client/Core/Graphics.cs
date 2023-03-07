@@ -951,22 +951,22 @@ namespace Intersect.Client.Core
                 var y = map.GetY() - Options.MapHeight * Options.TileHeight;
                 var x1 = map.GetX() + Options.MapWidth * Options.TileWidth * 2;
                 var y1 = map.GetY() + Options.MapHeight * Options.TileHeight * 2;
-                if (map.CameraHolds[(int) Directions.Up])
+                if (map.CameraHolds[(int) Direction.Up])
                 {
                     y += Options.MapHeight * Options.TileHeight;
                 }
 
-                if (map.CameraHolds[(int) Directions.Left])
+                if (map.CameraHolds[(int) Direction.Left])
                 {
                     x += Options.MapWidth * Options.TileWidth;
                 }
 
-                if (map.CameraHolds[(int) Directions.Right])
+                if (map.CameraHolds[(int) Direction.Right])
                 {
                     x1 -= Options.MapWidth * Options.TileWidth;
                 }
 
-                if (map.CameraHolds[(int) Directions.Down])
+                if (map.CameraHolds[(int) Direction.Down])
                 {
                     y1 -= Options.MapHeight * Options.TileHeight;
                 }

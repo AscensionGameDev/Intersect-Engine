@@ -63,8 +63,10 @@ namespace Intersect.Config
         public int TimeBeforeIdle = 4000;
 
         /// <summary>
-        /// Defines the number of rows in sprite sheets which will correlate to the number of directions in the game (Intersect is programmed by default with only 4 directions)
+        /// The number of rows in the sprite sheet that correspond to the number of directions supported in the game.
+        /// Currently, Intersect only supports 4 rows of frames for directions.
         /// </summary>
-        [JsonIgnore] public int Directions => 4;
+        [JsonIgnore]
+        public int Directions => 4;
     }
 }

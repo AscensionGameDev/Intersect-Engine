@@ -1,6 +1,7 @@
 ﻿using System;
 
 using Intersect.Core;
+using Intersect.Enums;
 
 namespace Intersect.Utilities
 {
@@ -55,16 +56,6 @@ namespace Intersect.Utilities
             }
         }
 
-        /// <summary>Returns a random floating-point number that is greater than or equal to 0.0, and less than 1.0.</summary>
-        /// <returns>A double-precision floating point number that is greater than or equal to 0.0, and less than 1.0.</returns>
-        public static double NextDouble()
-        {
-            lock (mRandom)
-            {
-                return mRandom.NextDouble();
-            }
-        }
-
         /// <summary>Fills the elements of a specified array of bytes with random numbers.</summary>
         /// <param name="buffer">An array of bytes to contain random numbers.</param>
         /// <exception cref="T:System.ArgumentNullException">
@@ -74,6 +65,26 @@ namespace Intersect.Utilities
             lock (mRandom)
             {
                 mRandom.NextBytes(buffer);
+            }
+        }
+
+        /// <summary>Generates a random Direction using a synchronized random number generator.</summary>
+        /// <returns>A Direction between Direction.None (inclusive) and the maximum available Direction (exclusive).</returns>
+        public static Direction NextDirection()
+        {
+            lock (mRandom)
+            {
+                return (Direction)mRandom.Next(Options.Instance.MapOpts.MovementDirections);
+            }
+        }
+
+        /// <summary>Returns a random floating-point number that is greater than or equal to 0.0, and less than 1.0.</summary>
+        /// <returns>A double-precision floating point number that is greater than or equal to 0.0, and less than 1.0.</returns>
+        public static double NextDouble()
+        {
+            lock (mRandom)
+            {
+                return mRandom.NextDouble();
             }
         }
     }

@@ -261,7 +261,7 @@ namespace Intersect.Editor.Forms.Editors
             cmbDirection.Items.Clear();
             for (var i = -1; i < 4; i++)
             {
-                cmbDirection.Items.Add(Strings.Directions.dir[i]);
+                cmbDirection.Items.Add(Strings.Direction.dir[(Direction)i]);
             }
 
             btnVisualMapSelector.Text = Strings.Warping.visual;

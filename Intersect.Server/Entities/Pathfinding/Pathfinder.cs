@@ -434,55 +434,77 @@ namespace Intersect.Server.Entities.Pathfinding
             mWaitTime = timeMs + 1000;
         }
 
-        public sbyte GetMove()
+        public Direction GetMove()
         {
             if (mPath == null)
             {
-                return -1;
+                return Direction.None;
             }
 
-            var enm = mPath.GetEnumerator();
-            while (enm.MoveNext())
+            using (var enm = mPath.GetEnumerator())
             {
-                if (enm.Current.X - Options.MapWidth == mEntity.X && enm.Current.Y - Options.MapHeight == mEntity.Y)
+                while (enm.MoveNext())
                 {
-                    if (enm.MoveNext())
+                    if (enm.Current.X - Options.MapWidth != mEntity.X || enm.Current.Y - Options.MapHeight != mEntity.Y)
                     {
-                        var newX = enm.Current.X - Options.MapWidth;
-                        var newY = enm.Current.Y - Options.MapHeight;
-                        if (mEntity.X < newX)
-                        {
-                            enm.Dispose();
+                        continue;
+                    }
 
-                            return (int) Directions.Right;
+                    if (!enm.MoveNext())
+                    {
+                        continue;
+                    }
+
+                    var newX = enm.Current.X - Options.MapWidth;
+                    var newY = enm.Current.Y - Options.MapHeight;
+
+                    if (mEntity.Y > newY && mEntity.X == newX)
+                    {
+                        return Direction.Up;
+                    }
+
+                    if (mEntity.Y < newY && mEntity.X == newX)
+                    {
+                        return Direction.Down;
+                    }
+
+                    if (mEntity.X > newX && mEntity.Y == newY)
+                    {
+                        return Direction.Left;
+                    }
+
+                    if (mEntity.X < newX && mEntity.Y == newY)
+                    {
+                        return Direction.Right;
+                    }
+
+                    if (Options.Instance.MapOpts.EnableDiagonalMovement)
+                    {
+                        if (mEntity.Y > newY && mEntity.X > newX)
+                        {
+                            return Direction.UpLeft;
                         }
-                        else if (mEntity.X > newX)
-                        {
-                            enm.Dispose();
 
-                            return (int) Directions.Left;
+                        if (mEntity.Y > newY && mEntity.X < newX)
+                        {
+                            return Direction.UpRight;
                         }
-                        else if (mEntity.Y < newY)
-                        {
-                            enm.Dispose();
 
-                            return (int) Directions.Down;
+                        if (mEntity.Y < newY && mEntity.X < newX)
+                        {
+                            return Direction.DownRight;
                         }
-                        else if (mEntity.Y > newY)
-                        {
-                            enm.Dispose();
 
-                            return (int) Directions.Up;
+                        if (mEntity.Y < newY && mEntity.X > newX)
+                        {
+                            return Direction.DownLeft;
                         }
                     }
                 }
             }
 
-            enm.Dispose();
-
-            return -1;
+            return Direction.None;
         }
-
     }
 
     public partial class AStarSolver : SpatialAStar

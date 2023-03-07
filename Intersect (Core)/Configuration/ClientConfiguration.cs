@@ -41,6 +41,8 @@ namespace Intersect.Configuration
 
         public const int DEFAULT_PORT = 5400;
 
+        public static List<DisplayDirection> DEFAULT_ENTITY_BAR_DIRECTIONS => Enumerable.Range(0, 1 + (int)Vitals.VitalCount).Select(_ => DisplayDirection.StartToEnd).ToList();
+
         public const string DEFAULT_FONT = "sourcesansproblack";
 
         public const string DEFAULT_UI_FONT = "sourcesanspro,8";
@@ -72,14 +74,23 @@ namespace Intersect.Configuration
 
         public void Validate()
         {
-            Host = string.IsNullOrWhiteSpace(Host) ? DEFAULT_HOST : Host.Trim();
-            Port = Math.Min(Math.Max(Port, (ushort) 1), ushort.MaxValue);
-            GameFont = string.IsNullOrWhiteSpace(GameFont) ? DEFAULT_FONT : GameFont.Trim();
-            UIFont = string.IsNullOrWhiteSpace(UIFont) ? DEFAULT_UI_FONT : UIFont.Trim();
             ChatLines = Math.Min(Math.Max(ChatLines, 10), 500);
-            MenuBackground = new List<string>(MenuBackground?.Distinct() ?? new List<string> {"background.png"});
+
+            var entityBarDirections = EntityBarDirections.Distinct()?.ToList();
+            EntityBarDirections = DEFAULT_ENTITY_BAR_DIRECTIONS.Select(
+                (direction, index) =>
+                    (entityBarDirections?.Count ?? 0) > index
+                        ? entityBarDirections[index]
+                        : direction
+            ).ToList();
+
+            GameFont = string.IsNullOrWhiteSpace(GameFont) ? DEFAULT_FONT : GameFont.Trim();
+            Host = string.IsNullOrWhiteSpace(Host) ? DEFAULT_HOST : Host.Trim();
             IntroImages = new List<string>(IntroImages?.Distinct() ?? new List<string>());
+            MenuBackground = new List<string>(MenuBackground?.Distinct() ?? new List<string> { "background.png" });
+            Port = Math.Min(Math.Max(Port, (ushort)1), ushort.MaxValue);
             TypewriterSounds = new List<string>(TypewriterSounds?.Distinct() ?? new List<string>());
+            UIFont = string.IsNullOrWhiteSpace(UIFont) ? DEFAULT_UI_FONT : UIFont.Trim();
         }
 
         #endregion
@@ -134,10 +145,10 @@ namespace Intersect.Configuration
         /// <summary>
         /// Sets the main menu's background texture, if the the index of the list is bigger than 1,
         /// the background will be animated by sequentially drawing the texture files from the list.
-        /// Static background Example: { "background.png" }, 
+        /// Static background Example: { "background.png" },
         /// Animated background Example: { "background_0.png", "background_1.png", "background_2.png" },
         /// </summary>
-        public List<string> MenuBackground { get; set; } = new List<string> {"background.png"};
+        public List<string> MenuBackground { get; set; } = new List<string> { "background.png" };
 
         /// <summary>
         /// Sets the display mode of the main menu's background.

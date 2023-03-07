@@ -5,6 +5,7 @@ using Intersect.Client.Entities;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Maps;
 using Intersect.Client.General;
+using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Utilities;
 
@@ -142,7 +143,7 @@ namespace Intersect.Client.Maps
                 var timeScale = (Timing.Global.Milliseconds - TransmittionTimer) / 10f;
                 X = originalX + xVelocity * timeScale;
                 Y = originalY + yVelocity * timeScale;
-                animInstance.SetPosition(cameraSpawnX + X, cameraSpawnY + Y, -1, -1, Guid.Empty, -1, 0);
+                animInstance.SetPosition(cameraSpawnX + X, cameraSpawnY + Y, -1, -1, Guid.Empty, Direction.None, 0);
                 animInstance.Update();
             }
         }

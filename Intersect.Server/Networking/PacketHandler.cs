@@ -1,5 +1,4 @@
 using Intersect.Enums;
-using Intersect.ErrorHandling;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Crafting;
 using Intersect.GameObjects.Events;
@@ -1146,30 +1145,42 @@ namespace Intersect.Server.Networking
             var attackingTile = new TileHelper(player.MapId, player.X, player.Y);
             switch (player.Dir)
             {
-                case 0:
+                case Direction.Up:
                     attackingTile.Translate(0, -1);
-
                     break;
 
-                case 1:
+                case Direction.Down:
                     attackingTile.Translate(0, 1);
-
                     break;
 
-                case 2:
+                case Direction.Left:
                     attackingTile.Translate(-1, 0);
-
                     break;
 
-                case 3:
+                case Direction.Right:
                     attackingTile.Translate(1, 0);
+                    break;
 
+                case Direction.UpLeft:
+                    attackingTile.Translate(-1, -1);
+                    break;
+
+                case Direction.UpRight:
+                    attackingTile.Translate(1, -1);
+                    break;
+
+                case Direction.DownLeft:
+                    attackingTile.Translate(-1, 1);
+                    break;
+
+                case Direction.DownRight:
+                    attackingTile.Translate(1, 1);
                     break;
             }
 
             PacketSender.SendEntityAttack(player, player.CalculateAttackTime());
 
-            player.ClientAttackTimer = clientTime + (long) player.CalculateAttackTime();
+            player.ClientAttackTimer = clientTime + player.CalculateAttackTime();
 
             //Fire projectile instead if weapon has it
 
@@ -1184,7 +1195,7 @@ namespace Intersect.Server.Networking
                 {
                     PacketSender.SendAnimationToProximity(
                         attackAnim.Id, -1, player.Id, attackingTile.GetMapId(), attackingTile.GetX(),
-                        attackingTile.GetY(), (sbyte)player.Dir, player.MapInstanceId
+                        attackingTile.GetY(), player.Dir, player.MapInstanceId
                     );
                 }
 
@@ -1237,11 +1248,9 @@ namespace Intersect.Server.Networking
                     if (MapController.TryGetInstanceFromMap(player.MapId, player.MapInstanceId, out var mapInstance))
                     {
                         mapInstance
-                        .SpawnMapProjectile(
-                            player, projectileBase, null, weaponItem, player.MapId,
-                            (byte)player.X, (byte)player.Y, (byte)player.Z,
-                            (byte)player.Dir, null
-                        );
+                            .SpawnMapProjectile(
+                                player, projectileBase, null, weaponItem, player.MapId,
+                                (byte)player.X, (byte)player.Y, (byte)player.Z, player.Dir, null);
 
                         player.AttackTimer = Timing.Global.Milliseconds +
                                              latencyAdjustmentMs +
@@ -1275,7 +1284,7 @@ namespace Intersect.Server.Networking
                     {
                         PacketSender.SendAnimationToProximity(
                             classBase.AttackAnimationId, -1, player.Id, attackingTile.GetMapId(), attackingTile.GetX(),
-                            attackingTile.GetY(), (sbyte) player.Dir, player.MapInstanceId
+                            attackingTile.GetY(), player.Dir, player.MapInstanceId
                         );
                     }
                 }
@@ -1304,12 +1313,8 @@ namespace Intersect.Server.Networking
         public void HandlePacket(Client client, DirectionPacket packet)
         {
             var player = client?.Entity;
-            if (player == null)
-            {
-                return;
-            }
 
-            player.ChangeDir(packet.Direction);
+            player?.ChangeDir(packet.Direction);
         }
 
         //EnterGamePacket
@@ -1344,7 +1349,7 @@ namespace Intersect.Server.Networking
         //EventInputVariablePacket
         public void HandlePacket(Client client, EventInputVariablePacket packet)
         {
-            ((Player) client.Entity).RespondToEventInput(
+            client.Entity.RespondToEventInput(
                 packet.EventId, packet.Value, packet.StringValue, packet.Canceled
             );
         }
@@ -3038,7 +3043,7 @@ namespace Intersect.Server.Networking
 
             foreach (var plyr in players)
             {
-                plyr.Warp(plyr.MapId, (byte) plyr.X, (byte) plyr.Y, (byte) plyr.Dir, false, (byte) plyr.Z, true);
+                plyr.Warp(plyr.MapId, (byte) plyr.X, (byte) plyr.Y, plyr.Dir, false, (byte) plyr.Z, true);
                 PacketSender.SendMap(plyr.Client, packet.MapId);
             }
 
@@ -3385,26 +3390,25 @@ namespace Intersect.Server.Networking
                             //Up
                             if (gridY - 1 >= 0 && grid.MyGrid[gridX, gridY - 1] != Guid.Empty)
                             {
-                                MapController.Get(grid.MyGrid[gridX, gridY - 1])?.ClearConnections((int) Directions.Down);
+                                MapController.Get(grid.MyGrid[gridX, gridY - 1])?.ClearConnections(Direction.Down);
                             }
 
                             //Down
                             if (gridY + 1 < grid.Height && grid.MyGrid[gridX, gridY + 1] != Guid.Empty)
                             {
-                                MapController.Get(grid.MyGrid[gridX, gridY + 1])?.ClearConnections((int) Directions.Up);
+                                MapController.Get(grid.MyGrid[gridX, gridY + 1])?.ClearConnections(Direction.Up);
                             }
 
                             //Left
                             if (gridX - 1 >= 0 && grid.MyGrid[gridX - 1, gridY] != Guid.Empty)
                             {
-                                MapController.Get(grid.MyGrid[gridX - 1, gridY])
-                                    ?.ClearConnections((int) Directions.Right);
+                                MapController.Get(grid.MyGrid[gridX - 1, gridY])?.ClearConnections(Direction.Right);
                             }
 
                             //Right
                             if (gridX + 1 < grid.Width && grid.MyGrid[gridX + 1, gridY] != Guid.Empty)
                             {
-                                MapController.Get(grid.MyGrid[gridX + 1, gridY]).ClearConnections((int) Directions.Left);
+                                MapController.Get(grid.MyGrid[gridX + 1, gridY])?.ClearConnections(Direction.Left);
                             }
 
                             DbInterface.GenerateMapGrids();

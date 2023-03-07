@@ -1,5 +1,6 @@
 ﻿using Intersect.GameObjects;
 using System;
+using Intersect.Enums;
 
 namespace Intersect.Client.Framework.Entities
 {
@@ -12,8 +13,8 @@ namespace Intersect.Client.Framework.Entities
         Point Size { get; }
 
         void Hide();
-        void SetDir(int dir);
-        void SetPosition(float worldX, float worldY, int mapx, int mapy, Guid mapId, int dir, int z = 0);
+        void SetDir(Direction dir);
+        void SetPosition(float worldX, float worldY, int mapx, int mapy, Guid mapId, Direction dir, int z = 0);
         void Show();
     }
 }

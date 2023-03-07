@@ -5,7 +5,6 @@ using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 using Intersect.Network.Packets.Server;
 using Intersect.Server.Entities.Pathfinding;
-using Intersect.Server.General;
 using Intersect.Server.Maps;
 using Intersect.Server.Networking;
 using Intersect.Utilities;
@@ -96,19 +95,19 @@ namespace Intersect.Server.Entities.Events
                 switch (MyGraphic.Y)
                 {
                     case 0:
-                        Dir = 1;
+                        Dir = Direction.Down;
 
                         break;
                     case 1:
-                        Dir = 2;
+                        Dir = Direction.Left;
 
                         break;
                     case 2:
-                        Dir = 3;
+                        Dir = Direction.Right;
 
                         break;
                     case 3:
-                        Dir = 0;
+                        Dir = Direction.Up;
 
                         break;
                 }
@@ -171,19 +170,19 @@ namespace Intersect.Server.Entities.Events
                 switch (MyPage.Graphic.Y)
                 {
                     case 0:
-                        Dir = 1;
+                        Dir = Direction.Down;
 
                         break;
                     case 1:
-                        Dir = 2;
+                        Dir = Direction.Left;
 
                         break;
                     case 2:
-                        Dir = 3;
+                        Dir = Direction.Right;
 
                         break;
                     case 3:
-                        Dir = 0;
+                        Dir = Direction.Up;
 
                         break;
                 }
@@ -337,7 +336,7 @@ namespace Intersect.Server.Entities.Events
                         return;
                     }
 
-                    var dir = (byte)Randomization.Next(0, Options.Instance.Sprites.Directions);
+                    var dir = Randomization.NextDirection();
                     if (CanMove(dir) == -1)
                     {
                         Move(dir, Player);
@@ -348,7 +347,8 @@ namespace Intersect.Server.Entities.Events
         }
 
         /// <inheritdoc />
-        public override void Move(int moveDir, Player forPlayer, bool doNotUpdate = false, bool correction = false)
+        public override void Move(Direction moveDir, Player forPlayer, bool doNotUpdate = false,
+            bool correction = false)
         {
             base.Move(moveDir, forPlayer, doNotUpdate, correction);
 
@@ -371,8 +371,8 @@ namespace Intersect.Server.Entities.Events
             {
                 var moved = false;
                 var shouldSendUpdate = false;
-                int lookDir;
-                int moveDir;
+                Direction lookDir;
+                Direction moveDir;
                 if (MoveRoute.ActionIndex < MoveRoute.Actions.Count)
                 {
                     switch (MoveRoute.Actions[MoveRoute.ActionIndex].Type)
@@ -395,11 +395,11 @@ namespace Intersect.Server.Entities.Events
                                 if (mPathFinder.Update(timeMs) == PathfinderResult.Success)
                                 {
                                     var pathDir = mPathFinder.GetMove();
-                                    if (pathDir > -1)
+                                    if (pathDir > Direction.None)
                                     {
                                         if (CanMove(pathDir) == -1)
                                         {
-                                            Move((byte) pathDir, forPlayer);
+                                            Move(pathDir, forPlayer);
                                             moved = true;
                                         }
                                         else
@@ -415,25 +415,25 @@ namespace Intersect.Server.Entities.Events
                             //This won't be anything special.
                             if (forPlayer != null && GlobalClone == null) //Local Event
                             {
-                                moveDir = (byte) GetDirectionTo(forPlayer);
-                                if (moveDir > -1)
+                                moveDir = GetDirectionTo(forPlayer);
+                                if (moveDir > Direction.None)
                                 {
                                     switch (moveDir)
                                     {
-                                        case (int) Directions.Up:
-                                            moveDir = (int) Directions.Down;
+                                        case Direction.Up:
+                                            moveDir = Direction.Down;
 
                                             break;
-                                        case (int) Directions.Down:
-                                            moveDir = (int) Directions.Up;
+                                        case Direction.Down:
+                                            moveDir = Direction.Up;
 
                                             break;
-                                        case (int) Directions.Left:
-                                            moveDir = (int) Directions.Right;
+                                        case Direction.Left:
+                                            moveDir = Direction.Right;
 
                                             break;
-                                        case (int) Directions.Right:
-                                            moveDir = (int) Directions.Left;
+                                        case Direction.Right:
+                                            moveDir = Direction.Left;
 
                                             break;
                                     }
@@ -446,7 +446,7 @@ namespace Intersect.Server.Entities.Events
                                     else
                                     {
                                         //Move Randomly
-                                        moveDir = (byte)Randomization.Next(0, Options.Instance.Sprites.Directions);
+                                        moveDir = Randomization.NextDirection();
                                         if (CanMove(moveDir) == -1)
                                         {
                                             Move(moveDir, forPlayer);
@@ -457,7 +457,7 @@ namespace Intersect.Server.Entities.Events
                                 else
                                 {
                                     //Move Randomly
-                                    moveDir = (byte)Randomization.Next(0, Options.Instance.Sprites.Directions);
+                                    moveDir = Randomization.NextDirection();
                                     if (CanMove(moveDir) == -1)
                                     {
                                         Move(moveDir, forPlayer);
@@ -471,9 +471,9 @@ namespace Intersect.Server.Entities.Events
                             if (forPlayer != null && GlobalClone == null) //Local Event
                             {
                                 lookDir = GetDirectionTo(forPlayer);
-                                if (lookDir > -1)
+                                if (lookDir > Direction.None)
                                 {
-                                    ChangeDir((byte) lookDir);
+                                    ChangeDir(lookDir);
                                     moved = true;
                                 }
                             }
@@ -483,29 +483,29 @@ namespace Intersect.Server.Entities.Events
                             if (forPlayer != null && GlobalClone == null) //Local Event
                             {
                                 lookDir = GetDirectionTo(forPlayer);
-                                if (lookDir > -1)
+                                if (lookDir > Direction.None)
                                 {
                                     switch (lookDir)
                                     {
-                                        case (int) Directions.Up:
-                                            lookDir = (int) Directions.Down;
+                                        case Direction.Up:
+                                            lookDir = Direction.Down;
 
                                             break;
-                                        case (int) Directions.Down:
-                                            lookDir = (int) Directions.Up;
+                                        case Direction.Down:
+                                            lookDir = Direction.Up;
 
                                             break;
-                                        case (int) Directions.Left:
-                                            lookDir = (int) Directions.Right;
+                                        case Direction.Left:
+                                            lookDir = Direction.Right;
 
                                             break;
-                                        case (int) Directions.Right:
-                                            lookDir = (int) Directions.Left;
+                                        case Direction.Right:
+                                            lookDir = Direction.Left;
 
                                             break;
                                     }
 
-                                    ChangeDir((byte) lookDir);
+                                    ChangeDir(lookDir);
                                     moved = true;
                                 }
                             }
@@ -642,19 +642,19 @@ namespace Intersect.Server.Entities.Events
                                 switch (MoveRoute.Actions[MoveRoute.ActionIndex].Graphic.Y)
                                 {
                                     case 0:
-                                        Dir = 1;
+                                        Dir = Direction.Down;
 
                                         break;
                                     case 1:
-                                        Dir = 2;
+                                        Dir = Direction.Left;
 
                                         break;
                                     case 2:
-                                        Dir = 3;
+                                        Dir = Direction.Right;
 
                                         break;
                                     case 3:
-                                        Dir = 0;
+                                        Dir = Direction.Up;
 
                                         break;
                                 }
@@ -730,7 +730,7 @@ namespace Intersect.Server.Entities.Events
             }
         }
 
-        public override int CanMove(int moveDir)
+        public override int CanMove(Direction moveDir)
         {
             if (Player == null && mPageNum != 0)
             {
@@ -739,28 +739,28 @@ namespace Intersect.Server.Entities.Events
 
             switch (moveDir)
             {
-                case (int) Directions.Up:
+                case Direction.Up:
                     if (Y == 0)
                     {
                         return -5;
                     }
 
                     break;
-                case (int) Directions.Down:
+                case Direction.Down:
                     if (Y == Options.MapHeight - 1)
                     {
                         return -5;
                     }
 
                     break;
-                case (int) Directions.Left:
+                case Direction.Left:
                     if (X == 0)
                     {
                         return -5;
                     }
 
                     break;
-                case (int) Directions.Right:
+                case Direction.Right:
                     if (X == Options.MapWidth - 1)
                     {
                         return -5;
@@ -774,11 +774,11 @@ namespace Intersect.Server.Entities.Events
 
         public void TurnTowardsPlayer()
         {
-            int lookDir;
+            Direction lookDir;
             if (Player != null && GlobalClone == null) //Local Event
             {
                 lookDir = GetDirectionTo(Player);
-                if (lookDir > -1)
+                if (lookDir > Direction.None)
                 {
                     ChangeDir(lookDir);
                 }

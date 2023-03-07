@@ -2,15 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
-
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Events.Commands;
 using Intersect.GameObjects.Switches_and_Variables;
 using Intersect.Server.Database;
-using Intersect.Server.Database.PlayerData;
 using Intersect.Server.Database.PlayerData.Players;
 using Intersect.Server.Database.PlayerData.Security;
 using Intersect.Server.General;
@@ -720,7 +717,7 @@ namespace Intersect.Server.Entities.Events
 
             player.Warp(
                 command.MapId, command.X, command.Y,
-                command.Direction == WarpDirection.Retain ? (byte)player.Dir : (byte)(command.Direction - 1),
+                command.Direction == WarpDirection.Retain ? player.Dir : (Direction)(command.Direction - 1),
                 mapInstanceType: instanceType
             );
         }
@@ -803,7 +800,7 @@ namespace Intersect.Server.Entities.Events
             var mapId = command.MapId;
             var tileX = 0;
             var tileY = 0;
-            var direction = (byte) Directions.Up;
+            Direction direction = (byte) Direction.Up;
             var targetEntity = (Entity) player;
             if (mapId != Guid.Empty)
             {
@@ -835,23 +832,23 @@ namespace Intersect.Server.Entities.Events
                 {
                     int xDiff = command.X;
                     int yDiff = command.Y;
-                    if (command.Dir == 1)
+                    if (command.Dir == Direction.Down)
                     {
                         var tmp = 0;
                         switch (targetEntity.Dir)
                         {
-                            case (int) Directions.Down:
+                            case Direction.Down:
                                 yDiff *= -1;
                                 xDiff *= -1;
 
                                 break;
-                            case (int) Directions.Left:
+                            case  Direction.Left:
                                 tmp = yDiff;
                                 yDiff = xDiff;
                                 xDiff = tmp;
 
                                 break;
-                            case (int) Directions.Right:
+                            case Direction.Right:
                                 tmp = yDiff;
                                 yDiff = xDiff;
                                 xDiff = -tmp;
@@ -859,7 +856,7 @@ namespace Intersect.Server.Entities.Events
                                 break;
                         }
 
-                        direction = (byte) targetEntity.Dir;
+                        direction = targetEntity.Dir;
                     }
 
                     mapId = targetEntity.MapId;
@@ -876,7 +873,7 @@ namespace Intersect.Server.Entities.Events
             if (tile.TryFix() && MapController.TryGetInstanceFromMap(mapId, player.MapInstanceId, out var instance))
             {
                 var npc = instance.SpawnNpc((byte)tileX, (byte)tileY, direction, npcId, true);
-                player.SpawnedNpcs.Add((Npc)npc);
+                player.SpawnedNpcs.Add(npc);
             }
         }
 
@@ -918,13 +915,13 @@ namespace Intersect.Server.Entities.Events
             var mapId = command.MapId;
             var tileX = 0;
             var tileY = 0;
-            var direction = (byte) Directions.Up;
+            var direction = Direction.Up;
             var targetEntity = (Entity) player;
             if (mapId != Guid.Empty)
             {
                 tileX = command.X;
                 tileY = command.Y;
-                direction = command.Dir;
+                direction = (Direction)command.Dir;
             }
             else
             {
@@ -966,18 +963,18 @@ namespace Intersect.Server.Entities.Events
                         var tmp = 0;
                         switch (targetEntity.Dir)
                         {
-                            case (int) Directions.Down:
+                            case Direction.Down:
                                 yDiff *= -1;
                                 xDiff *= -1;
 
                                 break;
-                            case (int) Directions.Left:
+                            case Direction.Left:
                                 tmp = yDiff;
                                 yDiff = xDiff;
                                 xDiff = tmp;
 
                                 break;
-                            case (int) Directions.Right:
+                            case Direction.Right:
                                 tmp = yDiff;
                                 yDiff = xDiff;
                                 xDiff = -tmp;
@@ -985,7 +982,7 @@ namespace Intersect.Server.Entities.Events
                                 break;
                         }
 
-                        direction = (byte) targetEntity.Dir;
+                        direction = targetEntity.Dir;
                     }
 
                     mapId = targetEntity.MapId;
@@ -1002,7 +999,7 @@ namespace Intersect.Server.Entities.Events
             if (tile.TryFix())
             {
                 PacketSender.SendAnimationToProximity(
-                    animId, -1, Guid.Empty, tile.GetMapId(), tile.GetX(), tile.GetY(), (sbyte) direction, player.MapInstanceId
+                    animId, -1, Guid.Empty, tile.GetMapId(), tile.GetX(), tile.GetY(), direction, player.MapInstanceId
                 );
             }
         }
