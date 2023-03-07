@@ -77,7 +77,21 @@ namespace Intersect.Client.Framework.Database
                 return defaultValue;
             }
 
-            return (T) Convert.ChangeType(value, typeof(T));
+            var type = typeof(T);
+            if (type.IsEnum)
+            {
+                try
+                {
+                    var enumValue = Enum.Parse(type, value);
+                    return (T)enumValue;
+                }
+                catch
+                {
+                    return defaultValue;
+                }
+            }
+
+            return (T)Convert.ChangeType(value, typeof(T));
         }
 
         /// <summary>
@@ -110,7 +124,7 @@ namespace Intersect.Client.Framework.Database
             ShowExperienceAsPercentage = LoadPreference(nameof(ShowExperienceAsPercentage), true);
             ShowHealthAsPercentage = LoadPreference(nameof(ShowHealthAsPercentage), false);
             ShowManaAsPercentage = LoadPreference(nameof(ShowManaAsPercentage), false);
-            TypewriterBehavior = (TypewriterBehavior)LoadPreference(nameof(TypewriterBehavior), (int)TypewriterBehavior.Word);
+            TypewriterBehavior = LoadPreference(nameof(TypewriterBehavior), TypewriterBehavior.Word);
         }
 
         /// <summary>
@@ -143,7 +157,7 @@ namespace Intersect.Client.Framework.Database
             SavePreference(nameof(ShowExperienceAsPercentage), ShowExperienceAsPercentage);
             SavePreference(nameof(ShowHealthAsPercentage), ShowHealthAsPercentage);
             SavePreference(nameof(ShowManaAsPercentage), ShowManaAsPercentage);
-            SavePreference(nameof(TypewriterBehavior), (int)TypewriterBehavior);
+            SavePreference(nameof(TypewriterBehavior), TypewriterBehavior);
         }
 
         public abstract bool LoadConfig();
