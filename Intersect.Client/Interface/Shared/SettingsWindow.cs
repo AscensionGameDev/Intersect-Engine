@@ -689,7 +689,7 @@ namespace Intersect.Client.Interface.Shared
             mPlayerOverheadHpBarCheckbox.IsChecked = Globals.Database.PlayerOverheadHpBar;
             mStickyTarget.IsChecked = Globals.Database.StickyTarget;
             mAutoTurnToTarget.IsChecked = Globals.Database.AutoTurnToTarget;
-            mTypewriterCheckbox.IsChecked = Globals.Database.TypewriterText == Enums.TypewriterBehavior.Word;
+            mTypewriterCheckbox.IsChecked = Globals.Database.TypewriterBehavior == Enums.TypewriterBehavior.Word;
 
             // Video Settings.
             mFullscreenCheckbox.IsChecked = Globals.Database.FullScreen;
@@ -869,7 +869,7 @@ namespace Intersect.Client.Interface.Shared
             Globals.Database.PlayerOverheadHpBar = mPlayerOverheadHpBarCheckbox.IsChecked;
             Globals.Database.StickyTarget = mStickyTarget.IsChecked;
             Globals.Database.AutoTurnToTarget = mAutoTurnToTarget.IsChecked;
-            Globals.Database.TypewriterText = mTypewriterCheckbox.IsChecked ? Enums.TypewriterBehavior.Word : Enums.TypewriterBehavior.Off;
+            Globals.Database.TypewriterBehavior = mTypewriterCheckbox.IsChecked ? Enums.TypewriterBehavior.Word : Enums.TypewriterBehavior.Off;
 
             // Video Settings.
             var resolution = mResolutionList.SelectedItem;

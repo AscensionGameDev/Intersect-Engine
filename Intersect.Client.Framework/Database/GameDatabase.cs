@@ -58,7 +58,7 @@ namespace Intersect.Client.Framework.Database
 
         public bool ShowManaAsPercentage { get; set; }
 
-        public TypewriterBehavior TypewriterText { get; set; }
+        public TypewriterBehavior TypewriterBehavior { get; set; }
 
         public abstract void DeletePreference(string key);
 
@@ -110,7 +110,7 @@ namespace Intersect.Client.Framework.Database
             ShowExperienceAsPercentage = LoadPreference(nameof(ShowExperienceAsPercentage), true);
             ShowHealthAsPercentage = LoadPreference(nameof(ShowHealthAsPercentage), false);
             ShowManaAsPercentage = LoadPreference(nameof(ShowManaAsPercentage), false);
-            TypewriterText = LoadPreference(nameof(TypewriterText), TypewriterBehavior.Word);
+            TypewriterBehavior = LoadPreference(nameof(TypewriterBehavior), TypewriterBehavior.Word);
         }
 
         /// <summary>
@@ -143,7 +143,7 @@ namespace Intersect.Client.Framework.Database
             SavePreference(nameof(ShowExperienceAsPercentage), ShowExperienceAsPercentage);
             SavePreference(nameof(ShowHealthAsPercentage), ShowHealthAsPercentage);
             SavePreference(nameof(ShowManaAsPercentage), ShowManaAsPercentage);
-            SavePreference(nameof(TypewriterText), TypewriterText);
+            SavePreference(nameof(TypewriterBehavior), TypewriterBehavior);
         }
 
         public abstract bool LoadConfig();

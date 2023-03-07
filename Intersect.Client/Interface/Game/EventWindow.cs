@@ -45,7 +45,7 @@ namespace Intersect.Client.Interface.Game
 
         private Button mEventResponse4;
 
-        private bool Typewriting = false;
+        private bool _typewriting = false;
 
         private readonly Typewriter _writer;
 
@@ -144,7 +144,7 @@ namespace Intersect.Client.Interface.Game
                         maxResponse = 4;
                     }
 
-                    Typewriting = ClientConfiguration.Instance.TypewriterEnabled && Globals.Database.TypewriterText == Enums.TypewriterBehavior.Word;
+                    _typewriting = ClientConfiguration.Instance.TypewriterEnabled && Globals.Database.TypewriterBehavior == Enums.TypewriterBehavior.Word;
 
                     mEventResponse1.Name = "";
                     mEventResponse2.Name = "";
@@ -269,7 +269,7 @@ namespace Intersect.Client.Interface.Game
                             prompt);
                     }
                 }
-                else if (Typewriting)
+                else if (_typewriting)
                 {
                     var voiceIdx = Randomization.Next(0, ClientConfiguration.Instance.TypewriterSounds.Count);
 
@@ -313,7 +313,7 @@ namespace Intersect.Client.Interface.Game
             dialogLabel.SizeToChildren(false, true);
 
             // Do this _after_ sizing so we have lines broken up
-            if (Typewriting)
+            if (_typewriting)
             {
                 _writer.Initialize(dialogLabel.FormattedLabels);
                 mEventResponse1.Hide();

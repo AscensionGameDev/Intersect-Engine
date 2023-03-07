@@ -55,15 +55,13 @@ namespace Intersect.Configuration
         
         public const bool DEFAULT_TYPEWRITER_ENABLED = true;
 
-        public const long DEFAULT_TYPEWRITER_FULL_STOP_SPEED = 400;
+        public const long DEFAULT_TYPEWRITER_FULL_STOP_DELAY = 400;
 
         public const long DEFAULT_TYPEWRITER_PART_DELAY = 6;
 
-        public const long DEFAULT_TYPEWRITER_PAUSE_SPEED = 80;
+        public const long DEFAULT_TYPEWRITER_PAUSE_DELAY = 80;
 
         public const long DEFAULT_TYPEWRITER_RESPONSE_DELAY = 600;
-
-        public const string DEFAULT_TYPEWRITER_SOUND = "octave-beep-tapped.wav";
 
         public const int DEFAULT_TYPEWRITER_SOUND_FREQUENCY = 5;
         #endregion
@@ -81,8 +79,6 @@ namespace Intersect.Configuration
             ChatLines = Math.Min(Math.Max(ChatLines, 10), 500);
             MenuBackground = new List<string>(MenuBackground?.Distinct() ?? new List<string> {"background.png"});
             IntroImages = new List<string>(IntroImages?.Distinct() ?? new List<string>());
-            TypewriterFullStopCharacters = new List<char>(TypewriterFullStopCharacters?.Distinct() ?? new List<char>());
-            TypewriterPauseCharacters = new List<char>(TypewriterPauseCharacters?.Distinct() ?? new List<char>());
             TypewriterSounds = new List<string>(TypewriterSounds?.Distinct() ?? new List<string>());
             EntityBarDirections = new List<DisplayDirection>(EntityBarDirections.Distinct() ?? new List<DisplayDirection>());
         }
@@ -198,12 +194,12 @@ namespace Intersect.Configuration
 
         public List<string> TypewriterSounds { get; set; } = new List<string>()
         {
-            DEFAULT_TYPEWRITER_SOUND
+            "octave-beep-tapped.wav"
         };
 
         public bool TypewriterEnabled { get; set; } = DEFAULT_TYPEWRITER_ENABLED;
 
-        public List<char> TypewriterFullStopCharacters { get; set; } = new List<char>()
+        public static List<char> TypewriterFullStopCharacters => new List<char>()
         {
             '.',
             '!',
@@ -211,18 +207,18 @@ namespace Intersect.Configuration
             ':',
         };
 
-        public long TypewriterFullStopDelay { get; set; } = DEFAULT_TYPEWRITER_FULL_STOP_SPEED;
+        public long TypewriterFullStopDelay { get; set; } = DEFAULT_TYPEWRITER_FULL_STOP_DELAY;
 
         public long TypewriterPartDelay { get; set; } = DEFAULT_TYPEWRITER_PART_DELAY;
 
-        public List<char> TypewriterPauseCharacters { get; set; } = new List<char>()
+        public static List<char> TypewriterPauseCharacters => new List<char>()
         {
             ',',
             ';',
             '-',
         };
 
-        public long TypewriterPartialStopDelay { get; set; } = DEFAULT_TYPEWRITER_PAUSE_SPEED;
+        public long TypewriterPauseDelay { get; set; } = DEFAULT_TYPEWRITER_PAUSE_DELAY;
 
         public long TypewriterResponseDelay { get; set; } = DEFAULT_TYPEWRITER_RESPONSE_DELAY;
 

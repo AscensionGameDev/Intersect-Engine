@@ -16,7 +16,7 @@ namespace Intersect.Client.Interface.Game.Typewriting
         private static List<char> _fullstopChars => ClientConfiguration.Instance.TypewriterFullStopCharacters;
         private static long _fullStopSpeed => ClientConfiguration.Instance.TypewriterFullStopDelay;
         private static List<char> _partialstopChars => ClientConfiguration.Instance.TypewriterPauseCharacters;
-        private static long _partialStopSpeed => ClientConfiguration.Instance.TypewriterPartialStopDelay;
+        private static long _partialStopSpeed => ClientConfiguration.Instance.TypewriterPauseDelay;
         private static long _typingSpeed => ClientConfiguration.Instance.TypewriterPartDelay;
 
         private List<Label> _labels;
