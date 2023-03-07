@@ -13,9 +13,7 @@ namespace Intersect.Client.Interface.Game.Typewriting
 
     internal sealed class Typewriter
     {
-        private static List<char> _fullstopChars => ClientConfiguration.Instance.TypewriterFullStopCharacters;
         private static long _fullStopSpeed => ClientConfiguration.Instance.TypewriterFullStopDelay;
-        private static List<char> _partialstopChars => ClientConfiguration.Instance.TypewriterPauseCharacters;
         private static long _partialStopSpeed => ClientConfiguration.Instance.TypewriterPauseDelay;
         private static long _typingSpeed => ClientConfiguration.Instance.TypewriterPartDelay;
 
@@ -109,11 +107,11 @@ namespace Intersect.Client.Interface.Game.Typewriting
             {
                 return _typingSpeed;
             }
-            if (_fullstopChars.Contains(lastCharVal))
+            if (ClientConfiguration.TypewriterFullStopCharacters.Contains(lastCharVal))
             {
                 return _fullStopSpeed;
             }
-            if (_partialstopChars.Contains(lastCharVal))
+            if (ClientConfiguration.TypewriterPauseCharacters.Contains(lastCharVal))
             {
                 return _partialStopSpeed;
             }

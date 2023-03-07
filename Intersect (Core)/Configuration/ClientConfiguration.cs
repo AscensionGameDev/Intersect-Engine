@@ -80,7 +80,6 @@ namespace Intersect.Configuration
             MenuBackground = new List<string>(MenuBackground?.Distinct() ?? new List<string> {"background.png"});
             IntroImages = new List<string>(IntroImages?.Distinct() ?? new List<string>());
             TypewriterSounds = new List<string>(TypewriterSounds?.Distinct() ?? new List<string>());
-            EntityBarDirections = new List<DisplayDirection>(EntityBarDirections.Distinct() ?? new List<DisplayDirection>());
         }
 
         #endregion

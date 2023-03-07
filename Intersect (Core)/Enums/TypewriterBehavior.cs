@@ -8,7 +8,7 @@ namespace Intersect.Enums
 {
     public enum TypewriterBehavior
     {
-        Off,
+        Off = 0,
         Word,
     }
 }
