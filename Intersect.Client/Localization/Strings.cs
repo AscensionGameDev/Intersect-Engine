@@ -1813,6 +1813,9 @@ namespace Intersect.Client.Localization
             public static LocalizedString Title = @"Settings";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString TypewriterText = @"Typewriter Text";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString UnlimitedFps = @"No Limit";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]

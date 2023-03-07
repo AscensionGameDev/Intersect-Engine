@@ -1,12 +1,18 @@
+using System.Collections.Generic;
+using System.Linq;
 using Intersect.Client.Core;
+using Intersect.Client.Core.Controls;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.General;
+using Intersect.Client.Interface.Game.Typewriting;
 using Intersect.Client.Localization;
 using Intersect.Client.Networking;
+using Intersect.Configuration;
+using Intersect.Utilities;
 
 namespace Intersect.Client.Interface.Game
 {
@@ -39,6 +45,12 @@ namespace Intersect.Client.Interface.Game
 
         private Button mEventResponse4;
 
+        private bool _typewriting = false;
+
+        private readonly Typewriter _writer;
+
+        private readonly long _typewriterResponseDelay = ClientConfiguration.Instance.TypewriterResponseDelay;
+
         //Init
         public EventWindow(Canvas gameCanvas)
         {
@@ -68,6 +80,15 @@ namespace Intersect.Client.Interface.Game
 
             mEventResponse4 = new Button(mEventDialogWindow, "EventResponse4");
             mEventResponse4.Clicked += EventResponse4_Clicked;
+
+            _writer = new Typewriter();
+
+            mEventDialogWindow.Clicked += Dialog_Clicked;
+        }
+
+        private void Dialog_Clicked(Base sender, ClickedEventArgs arguments)
+        {
+            SkipTypewriting();
         }
 
         //Update
@@ -122,6 +143,8 @@ namespace Intersect.Client.Interface.Game
                         responseCount++;
                         maxResponse = 4;
                     }
+
+                    _typewriting = ClientConfiguration.Instance.TypewriterEnabled && Globals.Database.TypewriterBehavior == Enums.TypewriterBehavior.Word;
 
                     mEventResponse1.Name = "";
                     mEventResponse2.Name = "";
@@ -230,30 +253,76 @@ namespace Intersect.Client.Interface.Game
                         mEventDialogWindow.Texture.GetWidth(), mEventDialogWindow.Texture.GetHeight()
                     );
 
+                    var prompt = Globals.EventDialogs[0].Prompt;
                     if (faceTex != null)
                     {
-                        mEventDialogLabel.ClearText();
-                        mEventDialogLabel.Width = mEventDialogArea.Width -
-                                                  mEventDialogArea.GetVerticalScrollBar().Width;
-
-                        mEventDialogLabel.AddText(Globals.EventDialogs[0].Prompt, mEventDialogLabelTemplate);
-
-                        mEventDialogLabel.SizeToChildren(false, true);
-                        mEventDialogArea.ScrollToTop();
+                        ShowDialog(mEventDialogLabel, 
+                            mEventDialogLabelTemplate, 
+                            mEventDialogArea, 
+                            prompt);
                     }
                     else
                     {
-                        mEventDialogLabelNoFace.ClearText();
-                        mEventDialogLabelNoFace.Width = mEventDialogAreaNoFace.Width -
-                                                        mEventDialogAreaNoFace.GetVerticalScrollBar().Width;
+                        ShowDialog(mEventDialogLabelNoFace,
+                            mEventDialogLabelNoFaceTemplate,
+                            mEventDialogAreaNoFace,
+                            prompt);
+                    }
+                }
+                else if (_typewriting)
+                {
+                    var voiceIdx = Randomization.Next(0, ClientConfiguration.Instance.TypewriterSounds.Count);
 
-                        mEventDialogLabelNoFace.AddText(Globals.EventDialogs[0].Prompt, mEventDialogLabelNoFaceTemplate);
+                    var dialog = Globals.EventDialogs[0];
 
-                        mEventDialogLabelNoFace.SizeToChildren(false, true);
-                        mEventDialogAreaNoFace.ScrollToTop();
+                    // Always show option 1 ("continue" if options empty)
+                    mEventResponse1.IsHidden = !_writer.IsDone; 
+                    mEventResponse2.IsHidden = !_writer.IsDone || string.IsNullOrEmpty(dialog.Opt2);
+                    mEventResponse3.IsHidden = !_writer.IsDone || string.IsNullOrEmpty(dialog.Opt3);
+                    mEventResponse4.IsHidden = !_writer.IsDone || string.IsNullOrEmpty(dialog.Opt4);
+
+                    _writer.Write(ClientConfiguration.Instance.TypewriterSounds.ElementAtOrDefault(voiceIdx));
+                    if (_writer.IsDone)
+                    {
+                        var disableResponse = Timing.Global.Milliseconds - _writer.DoneAtMilliseconds < _typewriterResponseDelay;
+                        mEventResponse1.IsDisabled = disableResponse;
+                        mEventResponse2.IsDisabled = disableResponse;
+                        mEventResponse3.IsDisabled = disableResponse;
+                        mEventResponse4.IsDisabled = disableResponse;
+                    }
+                    else if (Controls.KeyDown(Control.AttackInteract))
+                    {
+                        SkipTypewriting();
                     }
                 }
             }
+        }
+
+        private void ShowDialog(RichLabel dialogLabel, Label dialogLabelTemplate, ScrollControl dialogArea, string prompt)
+        {
+            if (dialogLabel == default || dialogLabelTemplate == default || dialogArea == default)
+            {
+                return;
+            }
+
+            dialogLabel.ClearText();
+            dialogLabel.Width = dialogArea.Width - dialogArea.GetVerticalScrollBar().Width;
+
+            dialogLabel.AddText(prompt, dialogLabelTemplate);
+
+            dialogLabel.SizeToChildren(false, true);
+
+            // Do this _after_ sizing so we have lines broken up
+            if (_typewriting)
+            {
+                _writer.Initialize(dialogLabel.FormattedLabels);
+                mEventResponse1.Hide();
+                mEventResponse2.Hide();
+                mEventResponse3.Hide();
+                mEventResponse4.Hide();
+            }
+
+            dialogArea.ScrollToTop();
         }
 
         //Input Handlers
@@ -317,6 +386,14 @@ namespace Intersect.Client.Interface.Game
             base.Hide();
         }
 
-    }
+        private void SkipTypewriting()
+        {
+            if (_writer?.IsDone ?? true)
+            {
+                return;
+            }
 
+            _writer.End();
+        }
+    }
 }

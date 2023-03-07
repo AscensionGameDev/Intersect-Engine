@@ -52,7 +52,18 @@ namespace Intersect.Configuration
         public const long DEFAULT_MENU_BACKGROUND_FRAME_INTERVAL = 50;
 
         public const string DEFAULT_MENU_MUSIC = "RPG-Theme_v001_Looping.ogg";
+        
+        public const bool DEFAULT_TYPEWRITER_ENABLED = true;
 
+        public const long DEFAULT_TYPEWRITER_FULL_STOP_DELAY = 400;
+
+        public const long DEFAULT_TYPEWRITER_PART_DELAY = 6;
+
+        public const long DEFAULT_TYPEWRITER_PAUSE_DELAY = 80;
+
+        public const long DEFAULT_TYPEWRITER_RESPONSE_DELAY = 600;
+
+        public const int DEFAULT_TYPEWRITER_SOUND_FREQUENCY = 5;
         #endregion
 
         #region Static Properties and Methods
@@ -68,6 +79,8 @@ namespace Intersect.Configuration
             ChatLines = Math.Min(Math.Max(ChatLines, 10), 500);
             MenuBackground = new List<string>(MenuBackground?.Distinct() ?? new List<string> {"background.png"});
             IntroImages = new List<string>(IntroImages?.Distinct() ?? new List<string>());
+            TypewriterSounds = new List<string>(TypewriterSounds?.Distinct() ?? new List<string>());
+            EntityBarDirections = new List<DisplayDirection>(EntityBarDirections.Distinct() ?? new List<DisplayDirection>());
         }
 
         #endregion
@@ -178,6 +191,38 @@ namespace Intersect.Configuration
         [JsonProperty(ObjectCreationHandling = ObjectCreationHandling.Replace)]
         public List<DisplayDirection> EntityBarDirections { get; set; } =
             Enumerable.Range(0, 1 + (int)Vitals.VitalCount).Select(_ => DisplayDirection.StartToEnd).ToList();
+
+        public List<string> TypewriterSounds { get; set; } = new List<string>()
+        {
+            "octave-beep-tapped.wav"
+        };
+
+        public bool TypewriterEnabled { get; set; } = DEFAULT_TYPEWRITER_ENABLED;
+
+        public static List<char> TypewriterFullStopCharacters => new List<char>()
+        {
+            '.',
+            '!',
+            '?',
+            ':',
+        };
+
+        public long TypewriterFullStopDelay { get; set; } = DEFAULT_TYPEWRITER_FULL_STOP_DELAY;
+
+        public long TypewriterPartDelay { get; set; } = DEFAULT_TYPEWRITER_PART_DELAY;
+
+        public static List<char> TypewriterPauseCharacters => new List<char>()
+        {
+            ',',
+            ';',
+            '-',
+        };
+
+        public long TypewriterPauseDelay { get; set; } = DEFAULT_TYPEWRITER_PAUSE_DELAY;
+
+        public long TypewriterResponseDelay { get; set; } = DEFAULT_TYPEWRITER_RESPONSE_DELAY;
+
+        public int TypewriterSoundFrequency { get; set; } = DEFAULT_TYPEWRITER_SOUND_FREQUENCY;
 
         #endregion
 
