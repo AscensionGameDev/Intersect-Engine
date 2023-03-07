@@ -52,18 +52,39 @@ namespace Intersect.Configuration
         public const long DEFAULT_MENU_BACKGROUND_FRAME_INTERVAL = 50;
 
         public const string DEFAULT_MENU_MUSIC = "RPG-Theme_v001_Looping.ogg";
-        
+
         public const bool DEFAULT_TYPEWRITER_ENABLED = true;
+
+        public static List<char> DEFAULT_TYPEWRITER_FULL_STOP_CHARACTERS => new List<char>()
+        {
+            '.',
+            '!',
+            '?',
+            ':',
+        };
 
         public const long DEFAULT_TYPEWRITER_FULL_STOP_DELAY = 400;
 
         public const long DEFAULT_TYPEWRITER_PART_DELAY = 6;
+
+        public static List<char> DEFAULT_TYPEWRITER_PAUSE_CHARACTERS => new List<char>()
+        {
+            ',',
+            ';',
+            '-',
+        };
 
         public const long DEFAULT_TYPEWRITER_PAUSE_DELAY = 80;
 
         public const long DEFAULT_TYPEWRITER_RESPONSE_DELAY = 600;
 
         public const int DEFAULT_TYPEWRITER_SOUND_FREQUENCY = 5;
+
+        public static List<string> DEFAULT_TYPEWRITER_SOUNDS => new List<string>()
+        {
+            "octave-beep-tapped.wav"
+        };
+
         #endregion
 
         #region Static Properties and Methods
@@ -72,15 +93,17 @@ namespace Intersect.Configuration
 
         public void Validate()
         {
-            Host = string.IsNullOrWhiteSpace(Host) ? DEFAULT_HOST : Host.Trim();
-            Port = Math.Min(Math.Max(Port, (ushort) 1), ushort.MaxValue);
-            GameFont = string.IsNullOrWhiteSpace(GameFont) ? DEFAULT_FONT : GameFont.Trim();
-            UIFont = string.IsNullOrWhiteSpace(UIFont) ? DEFAULT_UI_FONT : UIFont.Trim();
             ChatLines = Math.Min(Math.Max(ChatLines, 10), 500);
-            MenuBackground = new List<string>(MenuBackground?.Distinct() ?? new List<string> {"background.png"});
-            IntroImages = new List<string>(IntroImages?.Distinct() ?? new List<string>());
-            TypewriterSounds = new List<string>(TypewriterSounds?.Distinct() ?? new List<string>());
             EntityBarDirections = new List<DisplayDirection>(EntityBarDirections.Distinct() ?? new List<DisplayDirection>());
+            GameFont = string.IsNullOrWhiteSpace(GameFont) ? DEFAULT_FONT : GameFont.Trim();
+            Host = string.IsNullOrWhiteSpace(Host) ? DEFAULT_HOST : Host.Trim();
+            IntroImages = new List<string>(IntroImages?.Distinct() ?? new List<string>());
+            MenuBackground = new List<string>(MenuBackground?.Distinct() ?? new List<string> { "background.png" });
+            Port = Math.Min(Math.Max(Port, (ushort)1), ushort.MaxValue);
+            TypewriterFullStopCharacters = TypewriterFullStopCharacters?.Distinct()?.ToList() ?? new List<char>();
+            TypewriterPauseCharacters = TypewriterPauseCharacters?.Distinct()?.ToList() ?? new List<char>();
+            TypewriterSounds = new List<string>(TypewriterSounds?.Distinct() ?? new List<string>());
+            UIFont = string.IsNullOrWhiteSpace(UIFont) ? DEFAULT_UI_FONT : UIFont.Trim();
         }
 
         #endregion
@@ -135,10 +158,10 @@ namespace Intersect.Configuration
         /// <summary>
         /// Sets the main menu's background texture, if the the index of the list is bigger than 1,
         /// the background will be animated by sequentially drawing the texture files from the list.
-        /// Static background Example: { "background.png" }, 
+        /// Static background Example: { "background.png" },
         /// Animated background Example: { "background_0.png", "background_1.png", "background_2.png" },
         /// </summary>
-        public List<string> MenuBackground { get; set; } = new List<string> {"background.png"};
+        public List<string> MenuBackground { get; set; } = new List<string> { "background.png" };
 
         /// <summary>
         /// Sets the display mode of the main menu's background.
@@ -192,37 +215,23 @@ namespace Intersect.Configuration
         public List<DisplayDirection> EntityBarDirections { get; set; } =
             Enumerable.Range(0, 1 + (int)Vitals.VitalCount).Select(_ => DisplayDirection.StartToEnd).ToList();
 
-        public List<string> TypewriterSounds { get; set; } = new List<string>()
-        {
-            "octave-beep-tapped.wav"
-        };
-
         public bool TypewriterEnabled { get; set; } = DEFAULT_TYPEWRITER_ENABLED;
 
-        public static List<char> TypewriterFullStopCharacters => new List<char>()
-        {
-            '.',
-            '!',
-            '?',
-            ':',
-        };
+        public List<char> TypewriterFullStopCharacters { get; set; } = DEFAULT_TYPEWRITER_FULL_STOP_CHARACTERS;
 
         public long TypewriterFullStopDelay { get; set; } = DEFAULT_TYPEWRITER_FULL_STOP_DELAY;
 
         public long TypewriterPartDelay { get; set; } = DEFAULT_TYPEWRITER_PART_DELAY;
 
-        public static List<char> TypewriterPauseCharacters => new List<char>()
-        {
-            ',',
-            ';',
-            '-',
-        };
+        public List<char> TypewriterPauseCharacters { get; set; } = DEFAULT_TYPEWRITER_PAUSE_CHARACTERS;
 
         public long TypewriterPauseDelay { get; set; } = DEFAULT_TYPEWRITER_PAUSE_DELAY;
 
         public long TypewriterResponseDelay { get; set; } = DEFAULT_TYPEWRITER_RESPONSE_DELAY;
 
         public int TypewriterSoundFrequency { get; set; } = DEFAULT_TYPEWRITER_SOUND_FREQUENCY;
+
+        public List<string> TypewriterSounds { get; set; } = DEFAULT_TYPEWRITER_SOUNDS;
 
         #endregion
 
