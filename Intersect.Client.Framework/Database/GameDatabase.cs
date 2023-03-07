@@ -77,7 +77,21 @@ namespace Intersect.Client.Framework.Database
                 return defaultValue;
             }
 
-            return (T) Convert.ChangeType(value, typeof(T));
+            var type = typeof(T);
+            if (type.IsEnum)
+            {
+                try
+                {
+                    var enumValue = Enum.Parse(type, value);
+                    return (T)enumValue;
+                }
+                catch
+                {
+                    return defaultValue;
+                }
+            }
+
+            return (T)Convert.ChangeType(value, typeof(T));
         }
 
         /// <summary>
