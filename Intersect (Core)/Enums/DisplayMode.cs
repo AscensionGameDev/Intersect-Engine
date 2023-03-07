@@ -5,7 +5,7 @@ namespace Intersect.Enums
 {
     /// <summary> Used for switching the display mode of fullscreen textures. </summary>
     [JsonConverter(typeof(StringEnumConverter))]
-    public enum DisplayModes
+    public enum DisplayMode
     {
         /// <summary> Default display mode of fullscreen textures. </summary>
         Default,

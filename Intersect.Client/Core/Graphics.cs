@@ -196,31 +196,31 @@ namespace Intersect.Client.Core
             // Switch between the preferred display mode, then render the fullscreen texture.
             switch (ClientConfiguration.Instance.MenuBackgroundDisplayMode)
             {
-                case DisplayModes.Default:
+                case DisplayMode.Default:
                     DrawFullScreenTexture(sMenuBackground);
                     break;
 
-                case DisplayModes.Center:
+                case DisplayMode.Center:
                     DrawFullScreenTextureCentered(sMenuBackground);
                     break;
 
-                case DisplayModes.Stretch:
+                case DisplayMode.Stretch:
                     DrawFullScreenTextureStretched(sMenuBackground);
                     break;
 
-                case DisplayModes.FitHeight:
+                case DisplayMode.FitHeight:
                     DrawFullScreenTextureFitHeight(sMenuBackground);
                     break;
 
-                case DisplayModes.FitWidth:
+                case DisplayMode.FitWidth:
                     DrawFullScreenTextureFitWidth(sMenuBackground);
                     break;
 
-                case DisplayModes.Fit:
+                case DisplayMode.Fit:
                     DrawFullScreenTextureFitMaximum(sMenuBackground);
                     break;
 
-                case DisplayModes.Cover:
+                case DisplayMode.Cover:
                     DrawFullScreenTextureFitMinimum(sMenuBackground);
                     break;
             }

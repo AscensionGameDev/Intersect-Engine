@@ -49,7 +49,7 @@ namespace Intersect.Configuration
 
         public const int DEFAULT_CHAT_LINES = 100;
 
-        public const DisplayModes DEFAULT_MENU_BACKGROUND_DISPLAY_MODE = DisplayModes.Default;
+        public const DisplayMode DEFAULT_MENU_BACKGROUND_DISPLAY_MODE = DisplayMode.Default;
 
         public const long DEFAULT_MENU_BACKGROUND_FRAME_INTERVAL = 50;
 
@@ -176,7 +176,7 @@ namespace Intersect.Configuration
         /// <summary>
         /// Sets the display mode of the main menu's background.
         /// </summary>
-        public DisplayModes MenuBackgroundDisplayMode { get; set; } = DEFAULT_MENU_BACKGROUND_DISPLAY_MODE;
+        public DisplayMode MenuBackgroundDisplayMode { get; set; } = DEFAULT_MENU_BACKGROUND_DISPLAY_MODE;
 
         /// <summary>
         /// Sets the frames interval (milliseconds) of the main menu's animated background.
