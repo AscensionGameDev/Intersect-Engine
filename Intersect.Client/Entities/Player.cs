@@ -461,14 +461,14 @@ namespace Intersect.Client.Entities
                         var itemBase = ItemBase.Get(itm.ItemId);
                         if (itemBase != null)
                         {
-                            if (itemBase.ItemType == ItemTypes.Bag)
+                            if (itemBase.ItemType == ItemType.Bag)
                             {
                                 if (hotbarInstance.BagId == itm.BagId)
                                 {
                                     break;
                                 }
                             }
-                            else if (itemBase.ItemType == ItemTypes.Equipment)
+                            else if (itemBase.ItemType == ItemType.Equipment)
                             {
                                 if (hotbarInstance.PreferredStatBuffs != null)
                                 {

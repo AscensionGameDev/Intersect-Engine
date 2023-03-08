@@ -746,7 +746,7 @@ namespace Intersect.Server.Maps
 
             // if we can stack this item or the user configured to drop items consolidated, simply spawn a single stack of it.
             // Does not count for Equipment and bags, these are ALWAYS their own separate item spawn. We don't want to lose data on that!
-            if ((itemDescriptor.ItemType != ItemTypes.Equipment && itemDescriptor.ItemType != ItemTypes.Bag) &&
+            if ((itemDescriptor.ItemType != ItemType.Equipment && itemDescriptor.ItemType != ItemType.Bag) &&
                 (itemDescriptor.Stackable || Options.Loot.ConsolidateMapDrops))
             {
                 // Does this item already exist on this tile? If so, get its value so we can simply consolidate the stack.
@@ -807,7 +807,7 @@ namespace Intersect.Server.Maps
                     };
 
                     // If this is a piece of equipment, set up the stat buffs for it.
-                    if (itemDescriptor.ItemType == ItemTypes.Equipment)
+                    if (itemDescriptor.ItemType == ItemType.Equipment)
                     {
                         mapItem.SetupStatBuffs(item);
                     }
@@ -915,7 +915,7 @@ namespace Intersect.Server.Maps
                 mapItem.DespawnTime = -1;
                 mapItem.AttributeSpawnX = x;
                 mapItem.AttributeSpawnY = y;
-                if (item.ItemType == ItemTypes.Equipment)
+                if (item.ItemType == ItemType.Equipment)
                 {
                     mapItem.Quantity = 1;
                 }

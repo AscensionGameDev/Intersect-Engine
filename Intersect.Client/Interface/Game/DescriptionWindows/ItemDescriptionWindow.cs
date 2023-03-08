@@ -46,7 +46,7 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
             SetPosition(x, y);
 
             // If a spell, also display the spell description!
-            if (mItem.ItemType == ItemTypes.Spell)
+            if (mItem.ItemType == ItemType.Spell)
             {
                 mSpellDescWindow = new SpellDescriptionWindow(mItem.SpellId, x, mContainer.Bottom);
             }
@@ -74,19 +74,19 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
             // Set up information depending on the item type.
             switch (mItem.ItemType)
             {
-                case ItemTypes.Equipment:
+                case ItemType.Equipment:
                     SetupEquipmentInfo();
                     break;
 
-                case ItemTypes.Consumable:
+                case ItemType.Consumable:
                     SetupConsumableInfo();
                     break;
 
-                case ItemTypes.Spell:
+                case ItemType.Spell:
                     SetupSpellInfo();
                     break;
 
-                case ItemTypes.Bag:
+                case ItemType.Bag:
                     SetupBagInfo();
                     break;
             }
@@ -118,7 +118,7 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
             // Set up the description telling us what type of item this is.
             // if equipment, also list what kind.
             Strings.ItemDescription.ItemTypes.TryGetValue((int) mItem.ItemType, out var typeDesc);
-            if (mItem.ItemType == ItemTypes.Equipment)
+            if (mItem.ItemType == ItemType.Equipment)
             {
                 var equipSlot = Options.Equipment.Slots[mItem.EquipmentSlot];
                 var extraInfo = equipSlot;

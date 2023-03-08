@@ -176,7 +176,7 @@ namespace Intersect.GameObjects
 
         public string FemalePaperdoll { get; set; } = "";
 
-        public ItemTypes ItemType { get; set; }
+        public ItemType ItemType { get; set; }
 
         public string MalePaperdoll { get; set; } = "";
 
@@ -322,9 +322,9 @@ namespace Intersect.GameObjects
         }
 
         [JsonIgnore, NotMapped]
-        public bool IsStackable => (ItemType == ItemTypes.Currency || Stackable) &&
-                                   ItemType != ItemTypes.Equipment &&
-                                   ItemType != ItemTypes.Bag;
+        public bool IsStackable => (ItemType == ItemType.Currency || Stackable) &&
+                                   ItemType != ItemType.Equipment &&
+                                   ItemType != ItemType.Bag;
 
         [NotMapped]
         public List<EffectData> Effects { get; set; }

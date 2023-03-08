@@ -2850,7 +2850,7 @@ namespace Intersect.Server.Entities
 
                 // Unequip items even if you do not meet the requirements.
                 // (Need this for silly devs who give people items and then later add restrictions...)
-                if (itemBase.ItemType == ItemTypes.Equipment && SlotIsEquipped(slot, out var equippedSlot))
+                if (itemBase.ItemType == ItemType.Equipment && SlotIsEquipped(slot, out var equippedSlot))
                 {
                     UnequipItem(equippedSlot, true);
                     return;
@@ -2880,12 +2880,12 @@ namespace Intersect.Server.Entities
 
                 switch (itemBase.ItemType)
                 {
-                    case ItemTypes.None:
-                    case ItemTypes.Currency:
+                    case ItemType.None:
+                    case ItemType.Currency:
                         PacketSender.SendChatMsg(this, Strings.Items.cannotuse, ChatMessageType.Error);
 
                         return;
-                    case ItemTypes.Consumable:
+                    case ItemType.Consumable:
                         var value = 0;
                         var color = CustomColors.Items.ConsumeHp;
                         var die = false;
@@ -2948,7 +2948,7 @@ namespace Intersect.Server.Entities
                         TryTakeItem(Items[slot], 1);
 
                         break;
-                    case ItemTypes.Equipment:
+                    case ItemType.Equipment:
                         if (SlotIsEquipped(slot, out var eqpSlot))
                         {
                             UnequipItem(eqpSlot, true);
@@ -2958,7 +2958,7 @@ namespace Intersect.Server.Entities
                         EquipItem(itemBase, slot);
 
                         break;
-                    case ItemTypes.Spell:
+                    case ItemType.Spell:
                         if (itemBase.SpellId == Guid.Empty)
                         {
                             return;
@@ -2985,7 +2985,7 @@ namespace Intersect.Server.Entities
                         }
 
                         break;
-                    case ItemTypes.Event:
+                    case ItemType.Event:
                         var evt = EventBase.Get(itemBase.EventId);
                         if (evt == null || !UnsafeStartCommonEvent(evt))
                         {
@@ -2998,7 +2998,7 @@ namespace Intersect.Server.Entities
                         }
 
                         break;
-                    case ItemTypes.Bag:
+                    case ItemType.Bag:
                         OpenBag(Item, itemBase);
 
                         break;
@@ -3416,7 +3416,7 @@ namespace Intersect.Server.Entities
                     }
 
                     //Check if this is a bag with items.. if so don't allow sale
-                    if (itemDescriptor.ItemType == ItemTypes.Bag)
+                    if (itemDescriptor.ItemType == ItemType.Bag)
                     {
                         if (itemInSlot.TryGetBag(out var bag))
                         {
@@ -4142,7 +4142,7 @@ namespace Intersect.Server.Entities
                 return;
             }
 
-            if (itemDescriptor.ItemType == ItemTypes.Bag)
+            if (itemDescriptor.ItemType == ItemType.Bag)
             {
                 PacketSender.SendChatMsg(this, Strings.Bags.baginbag, ChatMessageType.Inventory, CustomColors.Alerts.Error);
                 return;
@@ -4415,7 +4415,7 @@ namespace Intersect.Server.Entities
                     }
 
                     //Check if this is a bag with items.. if so don't allow sale
-                    if (itemBase.ItemType == ItemTypes.Bag)
+                    if (itemBase.ItemType == ItemType.Bag)
                     {
                         if (Items[slot].TryGetBag(out var bag))
                         {
@@ -5208,7 +5208,7 @@ namespace Intersect.Server.Entities
         //Equipment
         public void EquipItem(ItemBase itemBase, int slot = -1)
         {
-            if (itemBase == null || itemBase.ItemType != ItemTypes.Equipment)
+            if (itemBase == null || itemBase.ItemType != ItemType.Equipment)
             {
                 return;
             }
@@ -5333,7 +5333,7 @@ namespace Intersect.Server.Entities
             {
                 var descriptor = item.Descriptor;
                 if (descriptor == default ||
-                    descriptor.ItemType != ItemTypes.Equipment ||
+                    descriptor.ItemType != ItemType.Equipment ||
                     !Conditions.MeetsConditionLists(descriptor.UsageRequirements, this, null))
                 {
                     UnequipItem(item.ItemId);

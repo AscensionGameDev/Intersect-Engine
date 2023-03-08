@@ -1,9 +1,7 @@
 namespace Intersect.Enums
 {
-
-    public enum ItemTypes : int
+    public enum ItemType
     {
-
         None = 0,
 
         Equipment = 1,
@@ -16,8 +14,6 @@ namespace Intersect.Enums
 
         Event = 5,
 
-        Bag = 6,
-
+        Bag = 6
     }
-
 }

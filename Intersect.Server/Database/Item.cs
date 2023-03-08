@@ -42,7 +42,7 @@ namespace Intersect.Server.Database
                 return;
             }
 
-            if (descriptor.ItemType != ItemTypes.Equipment)
+            if (descriptor.ItemType != ItemType.Equipment)
             {
                 return;
             }
@@ -120,7 +120,7 @@ namespace Intersect.Server.Database
             if (bag == null)
             {
                 var descriptor = Descriptor;
-                if (descriptor?.ItemType == ItemTypes.Bag)
+                if (descriptor?.ItemType == ItemType.Bag)
                 {
                     bag = Bag.GetBag(BagId ?? Guid.Empty);
                     bag?.ValidateSlots();
