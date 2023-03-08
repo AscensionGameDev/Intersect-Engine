@@ -27,7 +27,7 @@ namespace Intersect.GameObjects
         public string TextId { get; set; }
 
         // TODO(0.8): Rename this to DataType
-        public VariableDataTypes Type { get; set; } = VariableDataTypes.Boolean;
+        public VariableDataType Type { get; set; } = VariableDataType.Boolean;
 
         /// <inheritdoc />
         public string Folder { get; set; } = string.Empty;
@@ -37,7 +37,7 @@ namespace Intersect.GameObjects
         /// </summary>
         /// <param name="dataType">The data type to retrieve names of.</param>
         /// <returns>Returns an array of names.</returns>
-        public static string[] GetNamesByType(VariableDataTypes dataType) =>
+        public static string[] GetNamesByType(VariableDataType dataType) =>
             Lookup
                 .Where(pair => pair.Value is PlayerVariableBase descriptor && descriptor.Type == dataType)
                 .OrderBy(pair => pair.Value.TimeCreated)
@@ -50,7 +50,7 @@ namespace Intersect.GameObjects
         /// <param name="id">The Id to look up.</param>
         /// <param name="dataType">The data type to search up.</param>
         /// <returns>Returns the list Index of the provided Id.</returns>
-        public static int ListIndex(Guid id, VariableDataTypes dataType) =>
+        public static int ListIndex(Guid id, VariableDataType dataType) =>
             Lookup
                 .Where(pair => pair.Value is PlayerVariableBase descriptor && descriptor.Type == dataType)
                 .OrderBy(pair => pair.Value.TimeCreated)
@@ -63,7 +63,7 @@ namespace Intersect.GameObjects
         /// <param name="listIndex">The list index to retrieve.</param>
         /// <param name="dataType">The data type to search up.</param>
         /// <returns>Returns the Id of the provided index.</returns>
-        public static Guid IdFromList(int listIndex, VariableDataTypes dataType)
+        public static Guid IdFromList(int listIndex, VariableDataType dataType)
         {
             if (listIndex < 0 || listIndex > GetNamesByType(dataType).Length)
             {

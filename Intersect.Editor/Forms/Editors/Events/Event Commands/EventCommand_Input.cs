@@ -117,7 +117,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             }
         }
 
-        private void UpdateMinMaxValues(VariableDataTypes type)
+        private void UpdateMinMaxValues(VariableDataType type)
         {
             lblMaxVal.Show();
             lblMinVal.Show();
@@ -126,18 +126,18 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 
             switch (type)
             {
-                case VariableDataTypes.Integer:
-                case VariableDataTypes.Number:
+                case VariableDataType.Integer:
+                case VariableDataType.Number:
                     lblMinVal.Text = Strings.EventInput.minval;
                     lblMaxVal.Text = Strings.EventInput.maxval;
 
                     break;
-                case VariableDataTypes.String:
+                case VariableDataType.String:
                     lblMinVal.Text = Strings.EventInput.minlength;
                     lblMaxVal.Text = Strings.EventInput.maxlength;
 
                     break;
-                case VariableDataTypes.Boolean:
+                case VariableDataType.Boolean:
                     lblMaxVal.Hide();
                     lblMinVal.Hide();
                     nudMaxVal.Hide();

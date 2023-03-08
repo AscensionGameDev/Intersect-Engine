@@ -762,25 +762,25 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             //Load the correct editor
             if (varType > 0)
             {
-                switch ((VariableDataTypes) varType)
+                switch ((VariableDataType) varType)
                 {
-                    case VariableDataTypes.Boolean:
+                    case VariableDataType.Boolean:
                         grpBooleanVariable.Show();
                         TryLoadVariableBooleanComparison(((VariableIsCondition) Condition).Comparison);
 
                         break;
 
-                    case VariableDataTypes.Integer:
+                    case VariableDataType.Integer:
                         grpNumericVariable.Show();
                         TryLoadVariableIntegerComparison(((VariableIsCondition) Condition).Comparison);
                         UpdateNumericVariableElements();
 
                         break;
 
-                    case VariableDataTypes.Number:
+                    case VariableDataType.Number:
                         break;
 
-                    case VariableDataTypes.String:
+                    case VariableDataType.String:
                         grpStringVariable.Show();
                         TryLoadVariableStringComparison(((VariableIsCondition) Condition).Comparison);
 
@@ -1156,11 +1156,11 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             cmbInvVariable.Items.Clear();
             if (rdoInvPlayerVariable.Checked)
             {
-                cmbInvVariable.Items.AddRange(PlayerVariableBase.GetNamesByType(VariableDataTypes.Integer));
+                cmbInvVariable.Items.AddRange(PlayerVariableBase.GetNamesByType(VariableDataType.Integer));
                 // Do not update if the wrong type of variable is saved
                 if (conditionVariableType == VariableTypes.PlayerVariable)
                 {
-                    var index = PlayerVariableBase.ListIndex(conditionVariableId, VariableDataTypes.Integer);
+                    var index = PlayerVariableBase.ListIndex(conditionVariableId, VariableDataType.Integer);
                     if (index > -1)
                     {
                         cmbInvVariable.SelectedIndex = index;
@@ -1177,11 +1177,11 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             }
             else if (rdoInvGlobalVariable.Checked)
             {
-                cmbInvVariable.Items.AddRange(ServerVariableBase.GetNamesByType(VariableDataTypes.Integer));
+                cmbInvVariable.Items.AddRange(ServerVariableBase.GetNamesByType(VariableDataType.Integer));
                 // Do not update if the wrong type of variable is saved
                 if (conditionVariableType == VariableTypes.ServerVariable)
                 {
-                    var index = ServerVariableBase.ListIndex(conditionVariableId, VariableDataTypes.Integer);
+                    var index = ServerVariableBase.ListIndex(conditionVariableId, VariableDataType.Integer);
                     if (index > -1)
                     {
                         cmbInvVariable.SelectedIndex = index;
@@ -1198,11 +1198,11 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             }
             else if (rdoInvGuildVariable.Checked)
             {
-                cmbInvVariable.Items.AddRange(GuildVariableBase.GetNamesByType(VariableDataTypes.Integer));
+                cmbInvVariable.Items.AddRange(GuildVariableBase.GetNamesByType(VariableDataType.Integer));
                 // Do not update if the wrong type of variable is saved
                 if (conditionVariableType == VariableTypes.GuildVariable)
                 {
-                    var index = GuildVariableBase.ListIndex(conditionVariableId, VariableDataTypes.Integer);
+                    var index = GuildVariableBase.ListIndex(conditionVariableId, VariableDataType.Integer);
                     if (index > -1)
                     {
                         cmbInvVariable.SelectedIndex = index;

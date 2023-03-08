@@ -1,6 +1,6 @@
 namespace Intersect.Enums
 {
-    public enum VariableDataTypes : byte
+    public enum VariableDataType : byte
     {
 
         Boolean = 1,

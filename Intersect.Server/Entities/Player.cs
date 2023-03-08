@@ -6119,7 +6119,7 @@ namespace Intersect.Server.Entities
                         {
                             var cmd = (InputVariableCommand)stackInfo.WaitingOnCommand;
                             VariableValue value = null;
-                            var type = VariableDataTypes.Boolean;
+                            var type = VariableDataType.Boolean;
                             if (cmd.VariableType == VariableTypes.PlayerVariable)
                             {
                                 var variable = PlayerVariableBase.Get(cmd.VariableId);
@@ -6173,7 +6173,7 @@ namespace Intersect.Server.Entities
                             {
                                 switch (type)
                                 {
-                                    case VariableDataTypes.Integer:
+                                    case VariableDataType.Integer:
                                         if (newValue >= cmd.Minimum && newValue <= cmd.Maximum)
                                         {
                                             if (value.Integer != newValue)
@@ -6185,7 +6185,7 @@ namespace Intersect.Server.Entities
                                         }
 
                                         break;
-                                    case VariableDataTypes.Number:
+                                    case VariableDataType.Number:
                                         if (newValue >= cmd.Minimum && newValue <= cmd.Maximum)
                                         {
                                             if (value.Number != newValue)
@@ -6197,7 +6197,7 @@ namespace Intersect.Server.Entities
                                         }
 
                                         break;
-                                    case VariableDataTypes.String:
+                                    case VariableDataType.String:
                                         if (newValueString.Length >= cmd.Minimum &&
                                             newValueString.Length <= cmd.Maximum)
                                         {
@@ -6210,7 +6210,7 @@ namespace Intersect.Server.Entities
                                         }
 
                                         break;
-                                    case VariableDataTypes.Boolean:
+                                    case VariableDataType.Boolean:
                                         if (value.Boolean != newValue > 0)
                                         {
                                             changed = true;

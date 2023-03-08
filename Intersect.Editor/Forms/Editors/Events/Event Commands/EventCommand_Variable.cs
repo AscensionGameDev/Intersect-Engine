@@ -199,25 +199,25 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             //Load the correct editor
             if (varType > 0)
             {
-                switch ((VariableDataTypes) varType)
+                switch ((VariableDataType) varType)
                 {
-                    case VariableDataTypes.Boolean:
+                    case VariableDataType.Boolean:
                         grpBooleanVariable.Show();
                         TryLoadBooleanMod(mMyCommand.Modification);
 
                         break;
 
-                    case VariableDataTypes.Integer:
+                    case VariableDataType.Integer:
                         grpNumericVariable.Show();
                         TryLoadNumericMod(mMyCommand.Modification);
                         UpdateNumericFormElements();
 
                         break;
 
-                    case VariableDataTypes.Number:
+                    case VariableDataType.Number:
                         break;
 
-                    case VariableDataTypes.String:
+                    case VariableDataType.String:
                         grpStringVariable.Show();
                         TryLoadStringMod(mMyCommand.Modification);
 

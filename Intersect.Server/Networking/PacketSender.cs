@@ -1003,7 +1003,7 @@ namespace Intersect.Server.Networking
             Player player,
             string title,
             string prompt,
-            VariableDataTypes type,
+            VariableDataType type,
             Guid eventId
         )
         {

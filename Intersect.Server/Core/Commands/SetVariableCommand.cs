@@ -61,19 +61,19 @@ namespace Intersect.Server.Core.Commands
 
             switch (variable.Value.Type)
             {
-                case VariableDataTypes.Boolean:
+                case VariableDataType.Boolean:
                     variable.Value.Boolean = bool.Parse(rawServerVariableValue);
                     break;
 
-                case VariableDataTypes.Integer:
+                case VariableDataType.Integer:
                     variable.Value.Integer = int.Parse(rawServerVariableValue, NumberStyles.Integer, CultureInfo.CurrentCulture);
                     break;
 
-                case VariableDataTypes.Number:
+                case VariableDataType.Number:
                     variable.Value.Number = double.Parse(rawServerVariableValue, NumberStyles.Float, CultureInfo.CurrentCulture);
                     break;
 
-                case VariableDataTypes.String:
+                case VariableDataType.String:
                     variable.Value.String = rawServerVariableValue.ToString();
                     formattedPreviousValue = $"\"{formattedPreviousValue}\"";
                     formattedValue = $"\"{variable.Value.String}\"";

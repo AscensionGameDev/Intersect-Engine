@@ -116,7 +116,7 @@ namespace Intersect.Server.Entities.Events
                 return;
             }
 
-            PacketSender.SendInputVariableDialog(player, title, txt, (VariableDataTypes)type, instance.PageInstance.Id);
+            PacketSender.SendInputVariableDialog(player, title, txt, (VariableDataType)type, instance.PageInstance.Id);
             stackInfo.WaitingForResponse = CommandInstance.EventResponse.Dialogue;
             stackInfo.WaitingOnCommand = command;
             stackInfo.BranchIds = command.BranchIds;
@@ -1311,7 +1311,7 @@ namespace Intersect.Server.Entities.Events
             var variable = PlayerVariableBase.Get(command.VariableId);
             if (variable != null)
             {
-                if (variable.Type == VariableDataTypes.String)
+                if (variable.Type == VariableDataType.String)
                 {
                     var data = player.GetVariable(variable.Id)?.Value;
                     if (data != null)
@@ -1354,7 +1354,7 @@ namespace Intersect.Server.Entities.Events
             var playerVariable = PlayerVariableBase.Get(command.VariableId);
 
             // We only accept Strings as our Guild Names!
-            if (playerVariable.Type == VariableDataTypes.String)
+            if (playerVariable.Type == VariableDataType.String)
             {
                 // Get our intended guild name
                 var gname = player.GetVariable(playerVariable.Id)?.Value.String?.Trim();

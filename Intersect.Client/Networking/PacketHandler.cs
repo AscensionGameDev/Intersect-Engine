@@ -1121,16 +1121,16 @@ namespace Intersect.Client.Networking
             var type = InputBox.InputType.NumericInput;
             switch (packet.Type)
             {
-                case VariableDataTypes.String:
+                case VariableDataType.String:
                     type = InputBox.InputType.TextInput;
 
                     break;
-                case VariableDataTypes.Integer:
-                case VariableDataTypes.Number:
+                case VariableDataType.Integer:
+                case VariableDataType.Number:
                     type = InputBox.InputType.NumericInput;
 
                     break;
-                case VariableDataTypes.Boolean:
+                case VariableDataType.Boolean:
                     type = InputBox.InputType.YesNo;
 
                     break;
