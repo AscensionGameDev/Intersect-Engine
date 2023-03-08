@@ -31,7 +31,7 @@ namespace Intersect.Client.Entities
 
         FloatRect mSrcRectangle = FloatRect.Empty;
 
-        public Resource(Guid id, ResourceEntityPacket packet) : base(id, packet, EntityTypes.Resource)
+        public Resource(Guid id, ResourceEntityPacket packet) : base(id, packet, EntityType.Resource)
         {
             mRenderPriority = 0;
         }

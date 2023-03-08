@@ -462,9 +462,9 @@ namespace Intersect.Server.Entities
             return pkt;
         }
 
-        public override EntityTypes GetEntityType()
+        public override EntityType GetEntityType()
         {
-            return EntityTypes.Projectile;
+            return EntityType.Projectile;
         }
 
     }

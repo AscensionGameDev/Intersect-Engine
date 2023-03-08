@@ -50,7 +50,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
 
         public ImagePanel EntityStatusPanel;
 
-        public EntityTypes EntityType;
+        public EntityType EntityType;
 
         public RichLabel EventDesc;
 
@@ -107,7 +107,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
         public Button GuildLabel;
 
         //Init
-        public EntityBox(Canvas gameCanvas, EntityTypes entityType, Entity myEntity, bool playerBox = false)
+        public EntityBox(Canvas gameCanvas, EntityType entityType, Entity myEntity, bool playerBox = false)
         {
             MyEntity = myEntity;
             EntityType = entityType;
@@ -225,7 +225,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
             {
                 SetupEntityElements();
                 UpdateSpellStatus();
-                if (EntityType == EntityTypes.Event)
+                if (EntityType == EntityType.Event)
                 {
                     EventDesc.ClearText();
                     EventDesc.AddText(((Event)MyEntity).Desc, Color.White);
@@ -234,7 +234,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
             }
         }
 
-        public void SetEntity(Entity entity, EntityTypes type)
+        public void SetEntity(Entity entity, EntityType type)
         {
             MyEntity = entity;
             EntityType = type;
@@ -242,7 +242,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
             {
                 SetupEntityElements();
                 UpdateSpellStatus();
-                if (EntityType == EntityTypes.Event)
+                if (EntityType == EntityType.Event)
                 {
                     EventDesc.ClearText();
                     EventDesc.AddText(((Event)MyEntity).Desc, Color.White);
@@ -293,7 +293,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
 
             switch (EntityType)
             {
-                case EntityTypes.Player:
+                case EntityType.Player:
                     if (Globals.Me != null && Globals.Me == MyEntity)
                     {
                         TradeLabel.Hide();
@@ -322,7 +322,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                     EventDesc.Hide();
 
                     break;
-                case EntityTypes.GlobalEntity:
+                case EntityType.GlobalEntity:
                     EventDesc.Hide();
                     ExpBackground.Hide();
                     ExpBar.Hide();
@@ -335,7 +335,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                     EntityMap.Hide();
 
                     break;
-                case EntityTypes.Event:
+                case EntityType.Event:
                     EventDesc.Show();
                     ExpBackground.Hide();
                     ExpBar.Hide();
@@ -404,7 +404,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
             UpdateImage();
 
             IsHidden = true;
-            if (EntityType != EntityTypes.Event)
+            if (EntityType != EntityType.Event)
             {
                 EntityName.SetText(MyEntity.Name);
                 UpdateLevel();
@@ -427,7 +427,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                 UpdateXpBar(elapsedTime);
             }
 
-            if (MyEntity.Type == EntityTypes.Player && MyEntity != Globals.Me)
+            if (MyEntity.Type == EntityType.Player && MyEntity != Globals.Me)
             {
                 if (MyEntity.Vital[(int)Vitals.Health] <= 0)
                 {

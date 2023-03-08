@@ -153,9 +153,9 @@ namespace Intersect.Server.Entities
 
         private bool IsUnableToCastSpells => CachedStatuses.Any(PredicateUnableToCastSpells);
 
-        public override EntityTypes GetEntityType()
+        public override EntityType GetEntityType()
         {
-            return EntityTypes.GlobalEntity;
+            return EntityType.GlobalEntity;
         }
 
         public override void Die(bool generateLoot = true, Entity killer = null)

@@ -43,7 +43,7 @@ namespace Intersect.Client.Entities.Projectiles
         /// <summary>
         ///     The constructor for the inherated projectile class
         /// </summary>
-        public Projectile(Guid id, ProjectileEntityPacket packet) : base(id, packet, EntityTypes.Projectile)
+        public Projectile(Guid id, ProjectileEntityPacket packet) : base(id, packet, EntityType.Projectile)
         {
             Vital[(int) Vitals.Health] = 1;
             MaxVital[(int) Vitals.Health] = 1;

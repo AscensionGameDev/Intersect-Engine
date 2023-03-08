@@ -15,7 +15,7 @@ namespace Intersect.Network.Packets.Server
 
         public EntityVitalsPacket(
             Guid id,
-            EntityTypes type,
+            EntityType type,
             Guid mapId,
             int[] vitals,
             int[] maxVitals,
@@ -40,7 +40,7 @@ namespace Intersect.Network.Packets.Server
         public Guid Id { get; set; }
 
         [Key(1)]
-        public EntityTypes Type { get; set; }
+        public EntityType Type { get; set; }
 
         [Key(2)]
         public Guid MapId { get; set; }

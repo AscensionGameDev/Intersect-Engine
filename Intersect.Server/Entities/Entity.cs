@@ -533,24 +533,24 @@ namespace Intersect.Server.Entities
                                 //Check if this target player is passable....
                                 if (!Options.Instance.Passability.Passable[(int)targetMap.ZoneType])
                                 {
-                                    return (int)EntityTypes.Player;
+                                    return (int)EntityType.Player;
                                 }
                             }
                             else
                             {
-                                return (int)EntityTypes.Player;
+                                return (int)EntityType.Player;
                             }
                         }
                         else if (en is Npc)
                         {
-                            return (int)EntityTypes.Player;
+                            return (int)EntityType.Player;
                         }
                         else if (en is Resource resource)
                         {
                             //If determine if we should walk
                             if (!resource.IsPassable())
                             {
-                                return (int)EntityTypes.Resource;
+                                return (int)EntityType.Resource;
                             }
                         }
                     }
@@ -565,7 +565,7 @@ namespace Intersect.Server.Entities
                         {
                             if (en != null && en.X == tileX && en.Y == tileY && en.Z == Z && !en.Passable)
                             {
-                                return (int)EntityTypes.Event;
+                                return (int)EntityType.Event;
                             }
                         }
                     }
@@ -934,9 +934,9 @@ namespace Intersect.Server.Entities
             return Math.Min(1000f, time);
         }
 
-        public virtual EntityTypes GetEntityType()
+        public virtual EntityType GetEntityType()
         {
-            return EntityTypes.GlobalEntity;
+            return EntityType.GlobalEntity;
         }
 
         public virtual void Move(Direction moveDir, Player forPlayer, bool doNotUpdate = false,

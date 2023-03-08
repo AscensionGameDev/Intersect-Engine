@@ -17,7 +17,7 @@ namespace Intersect.Client.Entities
         private MapCritterAttribute mAttribute;
         private long mLastMove = -1;
 
-        public Critter(MapInstance map, byte x, byte y, MapCritterAttribute att) : base(Guid.NewGuid(), null, EntityTypes.GlobalEntity)
+        public Critter(MapInstance map, byte x, byte y, MapCritterAttribute att) : base(Guid.NewGuid(), null, EntityType.GlobalEntity)
         {
             mAttribute = att;
 

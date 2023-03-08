@@ -201,7 +201,7 @@ namespace Intersect.Client.Entities
 
         #endregion
 
-        public EntityTypes Type { get; }
+        public EntityType Type { get; }
 
         public int Aggression { get; set; }
 
@@ -222,13 +222,13 @@ namespace Intersect.Client.Entities
 
         public byte Z { get; set; }
 
-        public Entity(Guid id, EntityPacket packet, EntityTypes entityType)
+        public Entity(Guid id, EntityPacket packet, EntityType entityType)
         {
             Id = id;
             Type = entityType;
             MapId = Guid.Empty;
 
-            if (Id != Guid.Empty && Type != EntityTypes.Event)
+            if (Id != Guid.Empty && Type != EntityType.Event)
             {
                 for (var i = 0; i < Options.MaxInvItems; i++)
                 {
@@ -1502,7 +1502,7 @@ namespace Intersect.Client.Entities
             }
 
             var name = Name;
-            if ((this is Player && Options.Player.ShowLevelByName) || (Type == EntityTypes.GlobalEntity && Options.Npc.ShowLevelByName))
+            if ((this is Player && Options.Player.ShowLevelByName) || (Type == EntityType.GlobalEntity && Options.Npc.ShowLevelByName))
             {
                 name = Strings.GameWindow.EntityNameAndLevel.ToString(Name, Level);
             }

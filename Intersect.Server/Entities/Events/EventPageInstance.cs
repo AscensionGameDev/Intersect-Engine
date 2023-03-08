@@ -243,9 +243,9 @@ namespace Intersect.Server.Entities.Events
             }
         }
 
-        public override EntityTypes GetEntityType()
+        public override EntityType GetEntityType()
         {
-            return EntityTypes.Event;
+            return EntityType.Event;
         }
 
         public override EntityPacket EntityPacket(EntityPacket packet = null, Player forPlayer = null)

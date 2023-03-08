@@ -833,7 +833,7 @@ namespace Intersect.Server.Networking
                     Strings.Chat.local.ToString(player.Name, msg), ChatMessageType.Local, player.MapId, player.MapInstanceId, chatColor,
                     player.Name
                 );
-                PacketSender.SendChatBubble(player.Id, player.MapInstanceId, (int) EntityTypes.GlobalEntity, msg, player.MapId);
+                PacketSender.SendChatBubble(player.Id, player.MapInstanceId, (int) EntityType.GlobalEntity, msg, player.MapId);
                 ChatHistory.LogMessage(player, msg.Trim(), ChatMessageType.Local, Guid.Empty);
             }
             else if (cmd == Strings.Chat.allcmd || cmd == Strings.Chat.globalcmd)

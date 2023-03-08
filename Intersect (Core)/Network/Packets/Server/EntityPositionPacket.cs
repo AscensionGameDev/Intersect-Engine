@@ -15,7 +15,7 @@ namespace Intersect.Network.Packets.Server
 
         public EntityPositionPacket(
             Guid id,
-            EntityTypes type,
+            EntityType type,
             Guid mapId,
             byte x,
             byte y,
@@ -38,7 +38,7 @@ namespace Intersect.Network.Packets.Server
         public Guid Id { get; set; }
 
         [Key(4)]
-        public EntityTypes Type { get; set; }
+        public EntityType Type { get; set; }
 
         [Key(5)]
         public Guid MapId { get; set; }

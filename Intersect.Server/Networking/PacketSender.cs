@@ -607,7 +607,7 @@ namespace Intersect.Server.Networking
         //EventLeavePacket
         public static void SendEntityLeaveTo(Player player, Event evt)
         {
-            player.SendPacket(new EntityLeftPacket(evt.Id, EntityTypes.Event, evt.MapId));
+            player.SendPacket(new EntityLeftPacket(evt.Id, EntityType.Event, evt.MapId));
         }
 
         /// <summary>
@@ -1902,7 +1902,7 @@ namespace Intersect.Server.Networking
         }
 
         //ChatBubblePacket
-        public static void SendChatBubble(Guid entityId, Guid mapInstanceId, EntityTypes type, string text, Guid mapId)
+        public static void SendChatBubble(Guid entityId, Guid mapInstanceId, EntityType type, string text, Guid mapId)
         {
             SendDataToProximityOnMapInstance(mapId, mapInstanceId, new ChatBubblePacket(entityId, type, mapId, text), null, TransmissionMode.Any);
         }

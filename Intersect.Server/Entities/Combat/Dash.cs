@@ -71,17 +71,17 @@ namespace Intersect.Server.Entities.Combat
                     return;
                 } //Check for active resources
 
-                if (n == (int) EntityTypes.Resource && activeResourcePass == false)
+                if (n == (int) EntityType.Resource && activeResourcePass == false)
                 {
                     return;
                 } //Check for dead resources
 
-                if (n == (int) EntityTypes.Resource && deadResourcePass == false)
+                if (n == (int) EntityType.Resource && deadResourcePass == false)
                 {
                     return;
                 } //Check for players and solid events
 
-                if (n == (int) EntityTypes.Player || n == (int) EntityTypes.Event)
+                if (n == (int) EntityType.Player || n == (int) EntityType.Event)
                 {
                     return;
                 }

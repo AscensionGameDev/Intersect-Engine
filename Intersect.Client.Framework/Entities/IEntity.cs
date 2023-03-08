@@ -11,7 +11,7 @@ namespace Intersect.Client.Framework.Entities
     public interface IEntity : IDisposable
     {
         Guid Id { get; }
-        EntityTypes Type { get; }
+        EntityType Type { get; }
         string Name { get; }
         Gender Gender { get; }
         Color NameColor { get; }

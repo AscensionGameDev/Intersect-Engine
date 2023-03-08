@@ -258,7 +258,7 @@ namespace Intersect.Client.Networking
         //PlayerEntityPacket
         public void HandlePacket(IPacketSender packetSender, PlayerEntityPacket packet)
         {
-            var en = Globals.GetEntity(packet.EntityId, EntityTypes.Player);
+            var en = Globals.GetEntity(packet.EntityId, EntityType.Player);
             if (en != null)
             {
                 en.Load(packet);
@@ -280,7 +280,7 @@ namespace Intersect.Client.Networking
         //NpcEntityPacket
         public void HandlePacket(IPacketSender packetSender, NpcEntityPacket packet)
         {
-            var en = Globals.GetEntity(packet.EntityId, EntityTypes.GlobalEntity);
+            var en = Globals.GetEntity(packet.EntityId, EntityType.GlobalEntity);
             if (en != null)
             {
                 en.Load(packet);
@@ -288,7 +288,7 @@ namespace Intersect.Client.Networking
             }
             else
             {
-                var entity = new Entity(packet.EntityId, packet, EntityTypes.GlobalEntity)
+                var entity = new Entity(packet.EntityId, packet, EntityType.GlobalEntity)
                 {
                     Aggression = packet.Aggression,
                 };
@@ -299,7 +299,7 @@ namespace Intersect.Client.Networking
         //ResourceEntityPacket
         public void HandlePacket(IPacketSender packetSender, ResourceEntityPacket packet)
         {
-            var en = Globals.GetEntity(packet.EntityId, EntityTypes.Resource);
+            var en = Globals.GetEntity(packet.EntityId, EntityType.Resource);
             if (en != null)
             {
                 en.Load(packet);
@@ -314,7 +314,7 @@ namespace Intersect.Client.Networking
         //ProjectileEntityPacket
         public void HandlePacket(IPacketSender packetSender, ProjectileEntityPacket packet)
         {
-            var en = Globals.GetEntity(packet.EntityId, EntityTypes.Projectile);
+            var en = Globals.GetEntity(packet.EntityId, EntityType.Projectile);
             if (en != null)
             {
                 en.Load(packet);
@@ -422,7 +422,7 @@ namespace Intersect.Client.Networking
             var type = packet.Type;
             var mapId = packet.MapId;
             Entity en;
-            if (type != EntityTypes.Event)
+            if (type != EntityType.Event)
             {
                 if (!Globals.Entities.ContainsKey(id))
                 {
@@ -481,12 +481,12 @@ namespace Intersect.Client.Networking
             var id = packet.Id;
             var type = packet.Type;
             var mapId = packet.MapId;
-            if (id == Globals.Me?.Id && type < EntityTypes.Event)
+            if (id == Globals.Me?.Id && type < EntityType.Event)
             {
                 return;
             }
 
-            if (type != EntityTypes.Event)
+            if (type != EntityType.Event)
             {
                 if (Globals.Entities?.ContainsKey(id) ?? false)
                 {
@@ -594,7 +594,7 @@ namespace Intersect.Client.Networking
             var type = packet.Type;
             var mapId = packet.MapId;
             Entity en;
-            if (type < EntityTypes.Event)
+            if (type < EntityType.Event)
             {
                 if (!Globals.Entities.ContainsKey(id))
                 {
@@ -728,7 +728,7 @@ namespace Intersect.Client.Networking
             {
                 Entity entity = null;
 
-                if (en.Type < EntityTypes.Event)
+                if (en.Type < EntityType.Event)
                 {
                     if (!Globals.Entities.ContainsKey(en.Id))
                     {
@@ -778,7 +778,7 @@ namespace Intersect.Client.Networking
             {
                 Entity entity = null;
 
-                if (en.Type < EntityTypes.Event)
+                if (en.Type < EntityType.Event)
                 {
                     if (!Globals.Entities.ContainsKey(en.Id))
                     {
@@ -846,7 +846,7 @@ namespace Intersect.Client.Networking
             var type = packet.Type;
             var mapId = packet.MapId;
             Entity en = null;
-            if (type < EntityTypes.Event)
+            if (type < EntityType.Event)
             {
                 if (!Globals.Entities.ContainsKey(id))
                 {
@@ -930,7 +930,7 @@ namespace Intersect.Client.Networking
             var type = packet.Type;
             var mapId = packet.MapId;
             Entity en = null;
-            if (type < EntityTypes.Event)
+            if (type < EntityType.Event)
             {
                 if (!Globals.Entities.ContainsKey(id))
                 {
@@ -970,7 +970,7 @@ namespace Intersect.Client.Networking
             var type = packet.Type;
             var mapId = packet.MapId;
             Entity en = null;
-            if (type < EntityTypes.Event)
+            if (type < EntityType.Event)
             {
                 if (!Globals.Entities.ContainsKey(id))
                 {
@@ -1012,7 +1012,7 @@ namespace Intersect.Client.Networking
             var attackTimer = packet.AttackTimer;
 
             Entity en = null;
-            if (type < EntityTypes.Event)
+            if (type < EntityType.Event)
             {
                 if (!Globals.Entities.ContainsKey(id))
                 {
@@ -1063,7 +1063,7 @@ namespace Intersect.Client.Networking
             var mapId = packet.MapId;
             
             Entity en = null;
-            if (type < EntityTypes.Event)
+            if (type < EntityType.Event)
             {
                 if (!Globals.Entities.ContainsKey(id))
                 {
@@ -1772,7 +1772,7 @@ namespace Intersect.Client.Networking
             var type = packet.Type;
             var mapId = packet.MapId;
             IEntity en = null;
-            if (type < EntityTypes.Event)
+            if (type < EntityType.Event)
             {
                 if (!Globals.Entities.ContainsKey(id))
                 {

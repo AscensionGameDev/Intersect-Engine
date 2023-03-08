@@ -135,7 +135,7 @@ namespace Intersect.Client.Entities
         /// </summary>
         public GuildMember[] GuildMembers = new GuildMember[0];
 
-        public Player(Guid id, PlayerEntityPacket packet) : base(id, packet, EntityTypes.Player)
+        public Player(Guid id, PlayerEntityPacket packet) : base(id, packet, EntityType.Player)
         {
             for (var i = 0; i < Options.Instance.PlayerOpts.HotbarSlotCount; i++)
             {
@@ -267,7 +267,7 @@ namespace Intersect.Client.Entities
             if (TargetBox == default && this == Globals.Me && Interface.Interface.GameUi != default)
             {
                 // If for WHATEVER reason the box hasn't been created, create it.
-                TargetBox = new EntityBox(Interface.Interface.GameUi.GameCanvas, EntityTypes.Player, null);
+                TargetBox = new EntityBox(Interface.Interface.GameUi.GameCanvas, EntityType.Player, null);
                 TargetBox.Hide();
             }
             else if (TargetIndex != default)
@@ -322,7 +322,7 @@ namespace Intersect.Client.Entities
 
             if (this == Globals.Me && TargetBox == null && Interface.Interface.GameUi != null)
             {
-                TargetBox = new EntityBox(Interface.Interface.GameUi.GameCanvas, EntityTypes.Player, null);
+                TargetBox = new EntityBox(Interface.Interface.GameUi.GameCanvas, EntityType.Player, null);
                 TargetBox.Hide();
             }
         }
@@ -1316,11 +1316,11 @@ namespace Intersect.Client.Entities
 
                     // Check if we are allowed to target players here, if we're not and this is a player then skip!
                     // If we are, check to see if they're our party or nation member, then exclude them. We're friendly happy people here.
-                    if (!canTargetPlayers && en.Value.Type == EntityTypes.Player)
+                    if (!canTargetPlayers && en.Value.Type == EntityType.Player)
                     {
                         continue;
                     }
-                    else if (canTargetPlayers && en.Value.Type == EntityTypes.Player)
+                    else if (canTargetPlayers && en.Value.Type == EntityType.Player)
                     {
                         var player = en.Value as Player;
                         if (IsInMyParty(player))
@@ -1329,7 +1329,7 @@ namespace Intersect.Client.Entities
                         }
                     }
 
-                    if (en.Value.Type == EntityTypes.GlobalEntity || en.Value.Type == EntityTypes.Player)
+                    if (en.Value.Type == EntityType.GlobalEntity || en.Value.Type == EntityType.Player)
                     {
                         // Already in our list?
                         if (mlastTargetList.ContainsKey(en.Value))
@@ -1437,15 +1437,15 @@ namespace Intersect.Client.Entities
 
             if (en is Player)
             {
-                TargetBox?.SetEntity(en, EntityTypes.Player);
+                TargetBox?.SetEntity(en, EntityType.Player);
             }
             else if (en is Event)
             {
-                TargetBox?.SetEntity(en, EntityTypes.Event);
+                TargetBox?.SetEntity(en, EntityType.Event);
             }
             else
             {
-                TargetBox?.SetEntity(en, EntityTypes.GlobalEntity);
+                TargetBox?.SetEntity(en, EntityType.GlobalEntity);
             }
 
             TargetBox?.Show();

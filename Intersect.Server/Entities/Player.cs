@@ -856,9 +856,9 @@ namespace Intersect.Server.Entities
             return pkt;
         }
 
-        public override EntityTypes GetEntityType()
+        public override EntityType GetEntityType()
         {
-            return EntityTypes.Player;
+            return EntityType.Player;
         }
 
         //Spawning/Dying
@@ -6507,7 +6507,7 @@ namespace Intersect.Server.Entities
                             instance.Z == z &&
                             !instance.Passable)
                         {
-                            return (int) EntityTypes.Event;
+                            return (int) EntityType.Event;
                         }
                     }
                 }

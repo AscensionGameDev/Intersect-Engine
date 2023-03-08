@@ -949,7 +949,7 @@ namespace Intersect.Server.Entities.Events
                     {
                         //Attach to entity instead of playing on tile
                         PacketSender.SendAnimationToProximity(
-                            animId, targetEntity.GetEntityType() == EntityTypes.Event ? 2 : 1, targetEntity.Id,
+                            animId, targetEntity.GetEntityType() == EntityType.Event ? 2 : 1, targetEntity.Id,
                             targetEntity.MapId, 0, 0, 0, targetEntity.MapInstanceId
                         );
 

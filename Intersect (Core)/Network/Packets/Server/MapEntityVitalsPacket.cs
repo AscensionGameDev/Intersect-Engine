@@ -32,7 +32,7 @@ namespace Intersect.Network.Packets.Server
         public Guid Id { get; set; }
 
         [Key(1)]
-        public Enums.EntityTypes Type { get; set; }
+        public Enums.EntityType Type { get; set; }
 
         [Key(2)]
         public int[] Vitals { get; set; } = new int[(int) Enums.Vitals.VitalCount];
