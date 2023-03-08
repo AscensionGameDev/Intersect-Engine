@@ -4460,16 +4460,16 @@ Tick timer saved in server config.json.";
             public static LocalizedString Tenacity = @"Tenacity (%):";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static Dictionary<StatusType, LocalizedString> Immunities = new Dictionary<StatusType, LocalizedString>
+            public static Dictionary<SpellEffect, LocalizedString> Immunities = new Dictionary<SpellEffect, LocalizedString>
             {
-                {StatusType.Knockback, @"Knockback"},
-                {StatusType.Silence, @"Silence"},
-                {StatusType.Stun, @"Stun"},
-                {StatusType.Snare, @"Snare"},
-                {StatusType.Blind, @"Blind"},
-                {StatusType.Transform, @"Transform"},
-                {StatusType.Sleep, @"Sleep"},
-                {StatusType.Taunt, @"Taunt"},
+                {SpellEffect.Knockback, @"Knockback"},
+                {SpellEffect.Silence, @"Silence"},
+                {SpellEffect.Stun, @"Stun"},
+                {SpellEffect.Snare, @"Snare"},
+                {SpellEffect.Blind, @"Blind"},
+                {SpellEffect.Transform, @"Transform"},
+                {SpellEffect.Sleep, @"Sleep"},
+                {SpellEffect.Taunt, @"Taunt"},
             };
 
         }

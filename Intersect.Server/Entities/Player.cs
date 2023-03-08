@@ -1116,7 +1116,7 @@ namespace Intersect.Server.Entities
 
         public void GiveExperience(long amount)
         {
-            Exp += (int) Math.Round(amount + (amount * (GetEquipmentBonusEffect(EffectType.EXP) / 100f)));
+            Exp += (int) Math.Round(amount + (amount * (GetEquipmentBonusEffect(ItemEffect.EXP) / 100f)));
             if (Exp < 0)
             {
                 Exp = 0;
@@ -2835,14 +2835,14 @@ namespace Intersect.Server.Entities
                 //Check if the user is silenced or stunned
                 foreach (var status in CachedStatuses)
                 {
-                    if (status.Type == StatusType.Stun)
+                    if (status.Type == SpellEffect.Stun)
                     {
                         PacketSender.SendChatMsg(this, Strings.Items.stunned, ChatMessageType.Error);
 
                         return;
                     }
 
-                    if (status.Type == StatusType.Sleep)
+                    if (status.Type == SpellEffect.Sleep)
                     {
                         PacketSender.SendChatMsg(this, Strings.Items.sleep, ChatMessageType.Error);
 
@@ -3343,9 +3343,9 @@ namespace Intersect.Server.Entities
         /// <summary>
         /// Gets the percentage value of a bonus effect as granted by the currently equipped gear.
         /// </summary>
-        /// <param name="effect">The <see cref="EffectType"/> to retrieve the amount for.</param>
+        /// <param name="effect">The <see cref="ItemEffect"/> to retrieve the amount for.</param>
         /// <returns></returns>
-        public int GetEquipmentBonusEffect(EffectType effect)
+        public int GetEquipmentBonusEffect(ItemEffect effect)
         {
             var value = 0;
 
@@ -5057,7 +5057,7 @@ namespace Intersect.Server.Entities
                 //Remove stealth status.
                 foreach (var status in CachedStatuses)
                 {
-                    if (status.Type == StatusType.Stealth)
+                    if (status.Type == SpellEffect.Stealth)
                     {
                         status.RemoveStatus();
                     }
@@ -6665,7 +6665,7 @@ namespace Intersect.Server.Entities
             {
                 // No, handle singular cooldown as normal.
 
-                var cooldownReduction = 1 - (item.IgnoreCooldownReduction ? 0 : GetEquipmentBonusEffect(EffectType.CooldownReduction) / 100f);
+                var cooldownReduction = 1 - (item.IgnoreCooldownReduction ? 0 : GetEquipmentBonusEffect(ItemEffect.CooldownReduction) / 100f);
                 AssignItemCooldown(item.Id, Timing.Global.MillisecondsUtc + (long)(item.Cooldown * cooldownReduction));
                 PacketSender.SendItemCooldown(this, item.Id);
             }
@@ -6691,7 +6691,7 @@ namespace Intersect.Server.Entities
             else
             {
                 // No, handle singular cooldown as normal.
-                var cooldownReduction = 1 - (spell.IgnoreCooldownReduction ? 0 : GetEquipmentBonusEffect(EffectType.CooldownReduction) / 100f);
+                var cooldownReduction = 1 - (spell.IgnoreCooldownReduction ? 0 : GetEquipmentBonusEffect(ItemEffect.CooldownReduction) / 100f);
                 AssignSpellCooldown(spell.Id, Timing.Global.MillisecondsUtc + (long)(spell.CooldownDuration * cooldownReduction));
                 PacketSender.SendSpellCooldown(this, spell.Id);
             }
@@ -6710,7 +6710,7 @@ namespace Intersect.Server.Entities
             }
 
             // Calculate our global cooldown.
-            var cooldownReduction = 1 - GetEquipmentBonusEffect(EffectType.CooldownReduction) / 100f;
+            var cooldownReduction = 1 - GetEquipmentBonusEffect(ItemEffect.CooldownReduction) / 100f;
             var cooldown = Timing.Global.MillisecondsUtc + (long)(Options.Combat.GlobalCooldownDuration * cooldownReduction);
 
             // Go through each item and spell to assign this cooldown.
@@ -6763,7 +6763,7 @@ namespace Intersect.Server.Entities
                 return;
             }
 
-            var cooldownReduction = 1 - (ignoreCdr ? 0 : GetEquipmentBonusEffect(EffectType.CooldownReduction) / 100f);
+            var cooldownReduction = 1 - (ignoreCdr ? 0 : GetEquipmentBonusEffect(ItemEffect.CooldownReduction) / 100f);
 
             // Retrieve a list of all items and/or spells depending on our settings to set the cooldown for.
             var matchingItems = Array.Empty<ItemBase>();

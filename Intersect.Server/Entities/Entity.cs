@@ -257,7 +257,7 @@ namespace Intersect.Server.Entities
         private Status[] mOldStatuses = new Status[0];
 
         [JsonIgnore, NotMapped]
-        public List<StatusType> Immunities = new List<StatusType>();
+        public List<SpellEffect> Immunities = new List<SpellEffect>();
 
         [NotMapped, JsonIgnore]
         public bool IsDisposed { get; protected set; }
@@ -1419,7 +1419,7 @@ namespace Intersect.Server.Entities
             //Check for any shields.
             foreach (var status in CachedStatuses)
             {
-                if (status.Type == StatusType.Shield)
+                if (status.Type == SpellEffect.Shield)
                 {
                     status.DamageShield(vital, ref amount);
                 }
@@ -1462,7 +1462,7 @@ namespace Intersect.Server.Entities
             //Check for taunt status and trying to attack a target that has not taunted you.
             foreach (var status in CachedStatuses)
             {
-                if (status.Type == StatusType.Taunt)
+                if (status.Type == SpellEffect.Taunt)
                 {
                     if (Target != target)
                     {
@@ -1540,7 +1540,7 @@ namespace Intersect.Server.Entities
             }
 
             // If there is knock-back: knock them backwards.
-            if (projectile.Knockback > 0 && ((int)projectileDir < Options.Instance.MapOpts.MovementDirections) && !target.Immunities.Contains(StatusType.Knockback))
+            if (projectile.Knockback > 0 && ((int)projectileDir < Options.Instance.MapOpts.MovementDirections) && !target.Immunities.Contains(SpellEffect.Knockback))
             {
                 var dash = new Dash(target, projectile.Knockback, projectileDir, false, false, false, false);
             }
@@ -1569,7 +1569,7 @@ namespace Intersect.Server.Entities
             {
                 foreach (var status in CachedStatuses)
                 {
-                    if (status.Type == StatusType.Taunt)
+                    if (status.Type == SpellEffect.Taunt)
                     {
                         if (Target != target)
                         {
@@ -1589,7 +1589,7 @@ namespace Intersect.Server.Entities
                 (spellBase.Combat.TargetType != (int) SpellTargetType.Self || onHitTrigger))
             {
                 //If about to hit self with an unfriendly spell (maybe aoe?) return
-                if (target == this && spellBase.Combat.Effect != StatusType.OnHit)
+                if (target == this && spellBase.Combat.Effect != SpellEffect.OnHit)
                 {
                     return;
                 }
@@ -1645,7 +1645,7 @@ namespace Intersect.Server.Entities
             }
 
             if (spellBase.HitAnimationId != Guid.Empty &&
-                (spellBase.Combat.Effect != StatusType.OnHit || onHitTrigger))
+                (spellBase.Combat.Effect != SpellEffect.OnHit || onHitTrigger))
             {
                 deadAnimations.Add(new KeyValuePair<Guid, Direction>(spellBase.HitAnimationId, Direction.Up));
                 aliveAnimations.Add(new KeyValuePair<Guid, Direction>(spellBase.HitAnimationId, Direction.Up));
@@ -1677,8 +1677,8 @@ namespace Intersect.Server.Entities
             var damageHealth = spellBase.Combat.VitalDiff[(int)Vital.Health];
             var damageMana = spellBase.Combat.VitalDiff[(int)Vital.Mana];
 
-            if ((spellBase.Combat.Effect != StatusType.OnHit || onHitTrigger) &&
-                spellBase.Combat.Effect != StatusType.Shield)
+            if ((spellBase.Combat.Effect != SpellEffect.OnHit || onHitTrigger) &&
+                spellBase.Combat.Effect != SpellEffect.Shield)
             {
                 Attack(
                     target, damageHealth, damageMana, (DamageType) spellBase.Combat.DamageType,
@@ -1690,7 +1690,7 @@ namespace Intersect.Server.Entities
             if (spellBase.Combat.Effect > 0) //Handle status effects
             {
                 //Check for onhit effect to avoid the onhit effect recycling.
-                if (!(onHitTrigger && spellBase.Combat.Effect == StatusType.OnHit))
+                if (!(onHitTrigger && spellBase.Combat.Effect == SpellEffect.OnHit))
                 {
                     // If the entity is immune to some status, then just inform the client of such
                     if (target.Immunities.Contains(spellBase.Combat.Effect)) {
@@ -1716,7 +1716,7 @@ namespace Intersect.Server.Entities
                         );
 
                         //If an onhit or shield status bail out as we don't want to do any damage.
-                        if (spellBase.Combat.Effect == StatusType.OnHit || spellBase.Combat.Effect == StatusType.Shield)
+                        if (spellBase.Combat.Effect == SpellEffect.OnHit || spellBase.Combat.Effect == SpellEffect.Shield)
                         {
                             Animate(target, aliveAnimations);
 
@@ -1817,7 +1817,7 @@ namespace Intersect.Server.Entities
             //Check for taunt status and trying to attack a target that has not taunted you.
             foreach (var status in CachedStatuses)
             {
-                if (status.Type == StatusType.Taunt)
+                if (status.Type == SpellEffect.Taunt)
                 {
                     if (Target != target)
                     {
@@ -1835,9 +1835,9 @@ namespace Intersect.Server.Entities
             {
                 foreach (var status in CachedStatuses)
                 {
-                    if (status.Type == StatusType.Stun ||
-                        status.Type == StatusType.Blind ||
-                        status.Type == StatusType.Sleep)
+                    if (status.Type == SpellEffect.Stun ||
+                        status.Type == SpellEffect.Blind ||
+                        status.Type == SpellEffect.Sleep)
                     {
                         PacketSender.SendActionMsg(this, Strings.Combat.miss, CustomColors.Combat.Missed);
                         PacketSender.SendEntityAttack(this, CalculateAttackTime());
@@ -1877,7 +1877,7 @@ namespace Intersect.Server.Entities
 
             //Let's save the entity's vitals before they takes damage to use in lifesteal/manasteal
             var enemyVitals = enemy.GetVitals();
-            var invulnerable = enemy.CachedStatuses.Any(status => status.Type == StatusType.Invulnerable);
+            var invulnerable = enemy.CachedStatuses.Any(status => status.Type == SpellEffect.Invulnerable);
 
             bool isCrit = false;
             //Is this a critical hit?
@@ -1987,7 +1987,7 @@ namespace Intersect.Server.Entities
                     foreach (var status in enemy.CachedStatuses.ToArray())  // ToArray the Array since removing a status will.. you know, change the collection.
                     {
                         //Wake up any sleeping targets targets and take stealthed entities out of stealth
-                        if (status.Type == StatusType.Sleep || status.Type == StatusType.Stealth)
+                        if (status.Type == SpellEffect.Sleep || status.Type == SpellEffect.Stealth)
                         {
                             status.RemoveStatus();
                         }
@@ -2061,7 +2061,7 @@ namespace Intersect.Server.Entities
             //Check for lifesteal/manasteal
             if (this is Player && !(enemy is Resource))
             {
-                var lifestealRate = thisPlayer.GetEquipmentBonusEffect(EffectType.Lifesteal) / 100f;
+                var lifestealRate = thisPlayer.GetEquipmentBonusEffect(ItemEffect.Lifesteal) / 100f;
                 var idealHealthRecovered = lifestealRate * baseDamage;
                 var actualHealthRecovered = Math.Min(enemyVitals[(int)Vital.Health], idealHealthRecovered);
 
@@ -2076,7 +2076,7 @@ namespace Intersect.Server.Entities
                     );
                 }
 
-                var manastealRate = (thisPlayer.GetEquipmentBonusEffect(EffectType.Manasteal) / 100f);
+                var manastealRate = (thisPlayer.GetEquipmentBonusEffect(ItemEffect.Manasteal) / 100f);
                 var idealManaRecovered = manastealRate * baseDamage;
                 var actualManaRecovered = Math.Min(enemyVitals[(int)Vital.Mana], idealManaRecovered);
 
@@ -2165,7 +2165,7 @@ namespace Intersect.Server.Entities
             {
                 foreach (var status in CachedStatuses)
                 {
-                    if (status.Type == StatusType.OnHit)
+                    if (status.Type == SpellEffect.OnHit)
                     {
                         TryAttack(enemy, status.Spell, true);
                         status.RemoveStatus();
@@ -2212,29 +2212,29 @@ namespace Intersect.Server.Entities
 
             // Check if the caster has any status effects that need to apply.
             // Ignore if the current spell is a Cleanse, this will ignore any and all status effects.
-            if (spell.Combat.Effect != StatusType.Cleanse)
+            if (spell.Combat.Effect != SpellEffect.Cleanse)
             {
                 foreach (var status in CachedStatuses)
                 {
-                    if (status.Type == StatusType.Silence)
+                    if (status.Type == SpellEffect.Silence)
                     {
                         reason = SpellCastFailureReason.Silenced;
                         return false;
                     }
 
-                    if (status.Type == StatusType.Stun)
+                    if (status.Type == SpellEffect.Stun)
                     {
                         reason = SpellCastFailureReason.Stunned;
                         return false;
                     }
 
-                    if (status.Type == StatusType.Sleep)
+                    if (status.Type == SpellEffect.Sleep)
                     {
                         reason = SpellCastFailureReason.Asleep;
                         return false;
                     }
 
-                    if (status.Type == StatusType.Snare)
+                    if (status.Type == SpellEffect.Snare)
                     {
                         // If this spell is a Dash or Warp type ability, we can not use it while snared.
                         if (spell.SpellType == SpellType.Dash || spell.SpellType == SpellType.Warp || spell.SpellType == SpellType.WarpTo)
@@ -2323,7 +2323,7 @@ namespace Intersect.Server.Entities
                     switch (spellBase.Combat.TargetType)
                     {
                         case SpellTargetType.Self:
-                            if (spellBase.HitAnimationId != Guid.Empty && spellBase.Combat.Effect != StatusType.OnHit)
+                            if (spellBase.HitAnimationId != Guid.Empty && spellBase.Combat.Effect != SpellEffect.OnHit)
                             {
                                 PacketSender.SendAnimationToProximity(
                                     spellBase.HitAnimationId, 1, Id, MapId, 0, 0, Dir, MapInstanceId
@@ -2342,7 +2342,7 @@ namespace Intersect.Server.Entities
                             //If target has stealthed we cannot hit the spell.
                             foreach (var status in CastTarget.CachedStatuses)
                             {
-                                if (status.Type == StatusType.Stealth)
+                                if (status.Type == SpellEffect.Stealth)
                                 {
                                     return;
                                 }
@@ -2381,10 +2381,10 @@ namespace Intersect.Server.Entities
 
                             break;
                         case SpellTargetType.OnHit:
-                            if (spellBase.Combat.Effect == StatusType.OnHit)
+                            if (spellBase.Combat.Effect == SpellEffect.OnHit)
                             {
                                 new Status(
-                                    this, this, spellBase, StatusType.OnHit, spellBase.Combat.OnHitDuration,
+                                    this, this, spellBase, SpellEffect.OnHit, spellBase.Combat.OnHitDuration,
                                     spellBase.Combat.TransformSprite
                                 );
 
@@ -2914,7 +2914,7 @@ namespace Intersect.Server.Entities
                 }
 
                 var playerKiller = killer as Player;
-                var dropRateModifier = 1 + (playerKiller?.GetEquipmentBonusEffect(EffectType.Luck) / 100f ?? 0);
+                var dropRateModifier = 1 + (playerKiller?.GetEquipmentBonusEffect(ItemEffect.Luck) / 100f ?? 0);
                 if (!ShouldDropItem(killer, itemDescriptor, drop, dropRateModifier, out Guid lootOwner))
                 {
                     continue;
@@ -3007,7 +3007,7 @@ namespace Intersect.Server.Entities
             {
                 var status = statuses[i];
                 int[] vitalShields = null;
-                if (status.Type == StatusType.Shield)
+                if (status.Type == SpellEffect.Shield)
                 {
                     vitalShields = new int[(int) Vital.VitalCount];
                     for (var x = 0; x < (int) Vital.VitalCount; x++)

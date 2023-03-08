@@ -186,7 +186,7 @@ namespace Intersect.Server.Entities
 
         public bool TargetHasStealth(Entity target)
         {
-            return target == null || target.CachedStatuses.Any(s => s.Type == StatusType.Stealth);
+            return target == null || target.CachedStatuses.Any(s => s.Type == SpellEffect.Stealth);
         }
 
         //Targeting
@@ -220,7 +220,7 @@ namespace Intersect.Server.Entities
                 {
                     foreach (var status in CachedStatuses)
                     {
-                        if (status.Type == StatusType.Taunt && en != status.Attacker && GetDistanceTo(status.Attacker) != 9999)
+                        if (status.Type == SpellEffect.Taunt && en != status.Attacker && GetDistanceTo(status.Attacker) != 9999)
                         {
                             return;
                         }
@@ -325,7 +325,7 @@ namespace Intersect.Server.Entities
             //Check if the attacker is stunned or blinded.
             foreach (var status in CachedStatuses)
             {
-                if (status.Type == StatusType.Stun || status.Type == StatusType.Sleep)
+                if (status.Type == SpellEffect.Stun || status.Type == SpellEffect.Sleep)
                 {
                     return false;
                 }
@@ -463,21 +463,21 @@ namespace Intersect.Server.Entities
         {
             switch (status?.Type)
             {
-                case StatusType.Sleep:
-                case StatusType.Stun:
+                case SpellEffect.Sleep:
+                case SpellEffect.Stun:
                     return true;
 
-                case StatusType.Silence:
-                case StatusType.None:
-                case StatusType.Snare:
-                case StatusType.Blind:
-                case StatusType.Stealth:
-                case StatusType.Transform:
-                case StatusType.Cleanse:
-                case StatusType.Invulnerable:
-                case StatusType.Shield:
-                case StatusType.OnHit:
-                case StatusType.Taunt:
+                case SpellEffect.Silence:
+                case SpellEffect.None:
+                case SpellEffect.Snare:
+                case SpellEffect.Blind:
+                case SpellEffect.Stealth:
+                case SpellEffect.Transform:
+                case SpellEffect.Cleanse:
+                case SpellEffect.Invulnerable:
+                case SpellEffect.Shield:
+                case SpellEffect.OnHit:
+                case SpellEffect.Taunt:
                 case null:
                     return false;
 
@@ -490,21 +490,21 @@ namespace Intersect.Server.Entities
         {
             switch (status?.Type)
             {
-                case StatusType.Silence:
-                case StatusType.Sleep:
-                case StatusType.Stun:
+                case SpellEffect.Silence:
+                case SpellEffect.Sleep:
+                case SpellEffect.Stun:
                     return true;
 
-                case StatusType.None:
-                case StatusType.Snare:
-                case StatusType.Blind:
-                case StatusType.Stealth:
-                case StatusType.Transform:
-                case StatusType.Cleanse:
-                case StatusType.Invulnerable:
-                case StatusType.Shield:
-                case StatusType.OnHit:
-                case StatusType.Taunt:
+                case SpellEffect.None:
+                case SpellEffect.Snare:
+                case SpellEffect.Blind:
+                case SpellEffect.Stealth:
+                case SpellEffect.Transform:
+                case SpellEffect.Cleanse:
+                case SpellEffect.Invulnerable:
+                case SpellEffect.Shield:
+                case SpellEffect.OnHit:
+                case SpellEffect.Taunt:
                 case null:
                     return false;
 
@@ -743,7 +743,7 @@ namespace Intersect.Server.Entities
 
                     foreach (var status in CachedStatuses)
                     {
-                        if (status.Type == StatusType.Stun || status.Type == StatusType.Sleep)
+                        if (status.Type == SpellEffect.Stun || status.Type == SpellEffect.Sleep)
                         {
                             return;
                         }
@@ -820,7 +820,7 @@ namespace Intersect.Server.Entities
                                 targetZ = tempTarget.Z;
                                 foreach (var targetStatus in tempTarget.CachedStatuses)
                                 {
-                                    if (targetStatus.Type == StatusType.Stealth)
+                                    if (targetStatus.Type == SpellEffect.Stealth)
                                     {
                                         targetMap = Guid.Empty;
                                         targetX = 0;
@@ -944,9 +944,9 @@ namespace Intersect.Server.Entities
                                                 //check if NPC is snared or stunned
                                                 foreach (var status in CachedStatuses)
                                                 {
-                                                    if (status.Type == StatusType.Stun ||
-                                                        status.Type == StatusType.Snare ||
-                                                        status.Type == StatusType.Sleep)
+                                                    if (status.Type == SpellEffect.Stun ||
+                                                        status.Type == SpellEffect.Snare ||
+                                                        status.Type == SpellEffect.Sleep)
                                                     {
                                                         return;
                                                     }
@@ -1052,9 +1052,9 @@ namespace Intersect.Server.Entities
                                         //check if NPC is snared or stunned
                                         foreach (var status in CachedStatuses)
                                         {
-                                            if (status.Type == StatusType.Stun ||
-                                                status.Type == StatusType.Snare ||
-                                                status.Type == StatusType.Sleep)
+                                            if (status.Type == SpellEffect.Stun ||
+                                                status.Type == SpellEffect.Snare ||
+                                                status.Type == SpellEffect.Sleep)
                                             {
                                                 return;
                                             }
@@ -1129,9 +1129,9 @@ namespace Intersect.Server.Entities
                                 //check if NPC is snared or stunned
                                 foreach (var status in CachedStatuses)
                                 {
-                                    if (status.Type == StatusType.Stun ||
-                                        status.Type == StatusType.Snare ||
-                                        status.Type == StatusType.Sleep)
+                                    if (status.Type == SpellEffect.Stun ||
+                                        status.Type == SpellEffect.Snare ||
+                                        status.Type == SpellEffect.Sleep)
                                     {
                                         return;
                                     }

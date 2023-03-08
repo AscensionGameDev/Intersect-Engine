@@ -1267,7 +1267,7 @@ namespace Intersect.Server.Maps
 
                 foreach (var status in en.Value.CachedStatuses)
                 {
-                    if (status.Type == StatusType.Shield)
+                    if (status.Type == SpellEffect.Shield)
                     {
                         statusUpdates.Add(en.Value);
                     }

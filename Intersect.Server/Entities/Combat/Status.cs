@@ -27,27 +27,27 @@ namespace Intersect.Server.Entities.Combat
 
         public long StartTime;
 
-        public StatusType Type;
+        public SpellEffect Type;
 
-        public static List<StatusType> TenacityExcluded = new List<StatusType>()
+        public static List<SpellEffect> TenacityExcluded = new List<SpellEffect>()
         {
-            StatusType.None,
-            StatusType.Stealth,
-            StatusType.Cleanse,
-            StatusType.Invulnerable,
-            StatusType.OnHit,
-            StatusType.Shield,
-            StatusType.Transform,
+            SpellEffect.None,
+            SpellEffect.Stealth,
+            SpellEffect.Cleanse,
+            SpellEffect.Invulnerable,
+            SpellEffect.OnHit,
+            SpellEffect.Shield,
+            SpellEffect.Transform,
         };
 
-        public static List<StatusType> InterruptStatusses = new List<StatusType>()
+        public static List<SpellEffect> InterruptStatusses = new List<SpellEffect>()
         {
-            StatusType.Silence,
-            StatusType.Sleep,
-            StatusType.Stun,
+            SpellEffect.Silence,
+            SpellEffect.Sleep,
+            SpellEffect.Stun,
         };
 
-        public Status(Entity en, Entity attacker, SpellBase spell, StatusType type, int duration, string data)
+        public Status(Entity en, Entity attacker, SpellBase spell, SpellEffect type, int duration, string data)
         {
             mEntity = en;
             Attacker = attacker;
@@ -62,7 +62,7 @@ namespace Intersect.Server.Entities.Combat
                 // Get our player's Tenacity stat!
                 if (!TenacityExcluded.Contains(type))
                 {
-                    tenacity = player.GetEquipmentBonusEffect(EffectType.Tenacity);
+                    tenacity = player.GetEquipmentBonusEffect(ItemEffect.Tenacity);
                 }
 
                 // Interrupt their spellcast if we are running a Silence, Sleep or Stun!
@@ -103,7 +103,7 @@ namespace Intersect.Server.Entities.Combat
             }
 
             // If we're adding a shield, actually add that according to the settings.
-            if (type == StatusType.Shield)
+            if (type == SpellEffect.Shield)
             {
                 for (var i = (int)Vital.Health; i < (int)Vital.VitalCount; i++)
                 {
@@ -115,7 +115,7 @@ namespace Intersect.Server.Entities.Combat
             }
 
             // If new Cleanse spell, remove all opposite statusses. (ie friendly dispels unfriendly and vice versa)
-            if (Type == StatusType.Cleanse)
+            if (Type == SpellEffect.Cleanse)
             {
                 foreach (var status in en.CachedStatuses)
                 {
@@ -136,11 +136,11 @@ namespace Intersect.Server.Entities.Combat
 
             // Remove existing taunts if this is one and there are any others.
             // We'll be overwriting it, baby!
-            if (Type == StatusType.Taunt)
+            if (Type == SpellEffect.Taunt)
             {
                 foreach(var status in en.CachedStatuses)
                 {
-                    if (status.Type == StatusType.Taunt)
+                    if (status.Type == SpellEffect.Taunt)
                     {
                         status.RemoveStatus();
                     }
@@ -165,7 +165,7 @@ namespace Intersect.Server.Entities.Combat
             }
 
             // If this is a taunt, force the target properly for players and NPCs
-            if (Type == StatusType.Taunt)
+            if (Type == SpellEffect.Taunt)
             {
                 
                 // If player, force send target!
@@ -213,7 +213,7 @@ namespace Intersect.Server.Entities.Combat
             }
 
             //If shield check for out of hp
-            if (Type == StatusType.Shield)
+            if (Type == SpellEffect.Shield)
             {
                 for (var i = (int) Vital.Health; i < (int) Vital.VitalCount; i++)
                 {
@@ -233,7 +233,7 @@ namespace Intersect.Server.Entities.Combat
             mEntity.CachedStatuses = mEntity.Statuses.Values.ToArray();
 
             // if this was a taunt status being removed, we have to scan for a new target!
-            if (mEntity is Npc npc && Type == StatusType.Taunt)
+            if (mEntity is Npc npc && Type == SpellEffect.Taunt)
             {
                 npc.TryFindNewTarget(0, Guid.Empty, true);
             }
@@ -241,7 +241,7 @@ namespace Intersect.Server.Entities.Combat
 
         public void DamageShield(Vital vital, ref int amount)
         {
-            if (Type == StatusType.Shield)
+            if (Type == SpellEffect.Shield)
             {
                 shield[(int) vital] -= amount;
                 if (shield[(int) vital] <= 0)

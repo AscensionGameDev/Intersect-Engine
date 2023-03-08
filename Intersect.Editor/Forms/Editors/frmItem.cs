@@ -1315,7 +1315,7 @@ namespace Intersect.Editor.Forms.Editors
             var idx = 1;
             foreach (var effectName in Strings.ItemEditor.bonuseffects.Skip(1))
             {
-                lstBonusEffects.Items.Add(GetBonusEffectRow((EffectType)idx));
+                lstBonusEffects.Items.Add(GetBonusEffectRow((ItemEffect)idx));
                 idx++;
             }
         }
@@ -1325,15 +1325,15 @@ namespace Intersect.Editor.Forms.Editors
             get => lstBonusEffects.SelectedIndex > -1 && lstBonusEffects.SelectedIndex < lstBonusEffects.Items.Count;
         }
 
-        private EffectType SelectedEffect
+        private ItemEffect SelectedEffect
         {
-            get => IsValidBonusSelection ? (EffectType)(lstBonusEffects.SelectedIndex + 1) : EffectType.None;
+            get => IsValidBonusSelection ? (ItemEffect)(lstBonusEffects.SelectedIndex + 1) : ItemEffect.None;
         }
 
-        private string GetBonusEffectRow(EffectType effectType)
+        private string GetBonusEffectRow(ItemEffect itemEffect)
         {
-            var effectName = Strings.ItemEditor.bonuseffects[(int)effectType];
-            var effectAmt = mEditorItem.GetEffectPercentage(effectType);
+            var effectName = Strings.ItemEditor.bonuseffects[(int)itemEffect];
+            var effectAmt = mEditorItem.GetEffectPercentage(itemEffect);
             return Strings.ItemEditor.BonusEffectItem.ToString(effectName, effectAmt);
         }
 
