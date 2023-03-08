@@ -276,7 +276,7 @@ namespace Intersect.Client.Entities
             set => mDir = (Direction)((int)(value + Options.Instance.MapOpts.MovementDirections) % Options.Instance.MapOpts.MovementDirections);
         }
 
-        private Direction mLastDirection = Direction.None;
+        private Direction mLastDirection = Direction.Down;
 
         public virtual string TransformedSprite
         {
@@ -1142,9 +1142,10 @@ namespace Intersect.Client.Entities
             WorldPos = destRectangle;
 
             //Order the layers of paperdolls and sprites
-            for (var z = 0; z < Options.PaperdollOrder[spriteRow].Count; z++)
+            var paperdollDir = Math.Max(0, (int)mLastDirection);
+            for (var z = 0; z < Options.PaperdollOrder[paperdollDir].Count; z++)
             {
-                var paperdoll = Options.PaperdollOrder[spriteRow][z];
+                var paperdoll = Options.PaperdollOrder[paperdollDir][z];
                 var equipSlot = Options.EquipmentSlots.IndexOf(paperdoll);
 
                 //Check for player
