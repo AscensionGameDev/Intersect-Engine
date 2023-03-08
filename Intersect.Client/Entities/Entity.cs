@@ -625,10 +625,12 @@ namespace Intersect.Client.Entities
             else if (IsMoving)
             {
                 var displacementTime = ecTime * Options.TileHeight / GetMovementTime();
+
+                PickLastDirection(Dir);
+
                 switch (Dir)
                 {
                     case Direction.Up:
-                        mLastDirection = Direction.Up;
                         OffsetY -= displacementTime;
                         OffsetX = 0;
                         if (OffsetY < 0)
@@ -639,7 +641,6 @@ namespace Intersect.Client.Entities
                         break;
 
                     case Direction.Down:
-                        mLastDirection = Direction.Down;
                         OffsetY += displacementTime;
                         OffsetX = 0;
                         if (OffsetY > 0)
@@ -650,7 +651,6 @@ namespace Intersect.Client.Entities
                         break;
 
                     case Direction.Left:
-                        mLastDirection = Direction.Left;
                         OffsetX -= displacementTime;
                         OffsetY = 0;
                         if (OffsetX < 0)
@@ -661,7 +661,6 @@ namespace Intersect.Client.Entities
                         break;
 
                     case Direction.Right:
-                        mLastDirection = Direction.Right;
                         OffsetX += displacementTime;
                         OffsetY = 0;
                         if (OffsetX > 0)
@@ -1243,6 +1242,37 @@ namespace Intersect.Client.Entities
                 case Direction.DownRight when mLastDirection != Direction.Right:
                 default:
                     return 0;
+            }
+        }
+
+        public void PickLastDirection(Direction direction)
+        {
+            switch (direction)
+            {
+                case Direction.Left:
+                case Direction.DownLeft when mLastDirection == Direction.Left:
+                case Direction.UpLeft when mLastDirection == Direction.Left:
+                    mLastDirection = Direction.Left;
+                    break;
+
+                case Direction.Right:
+                case Direction.DownRight when mLastDirection == Direction.Right:
+                case Direction.UpRight when mLastDirection == Direction.Right:
+                    mLastDirection = Direction.Right;
+                    break;
+
+                case Direction.Up:
+                case Direction.UpLeft when mLastDirection != Direction.Left:
+                case Direction.UpRight when mLastDirection != Direction.Right:
+                    mLastDirection = Direction.Up;
+                    break;
+
+                case Direction.Down:
+                case Direction.DownLeft when mLastDirection != Direction.Left:
+                case Direction.DownRight when mLastDirection != Direction.Right:
+                default:
+                    mLastDirection = Direction.Down;
+                    break;
             }
         }
         
