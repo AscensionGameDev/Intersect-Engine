@@ -17,7 +17,7 @@ namespace Intersect.Client.Framework.Entities
         IReadOnlyList<IPartyMember> PartyMembers { get; }
         long CombatTimer { get; }
         Guid TargetIndex { get; }
-        TargetTypes TargetType { get; }
+        TargetType TargetType { get; }
         IReadOnlyList<IFriendInstance> Friends { get; }
         IReadOnlyList<IHotbarInstance> HotbarSlots { get; }
         IReadOnlyDictionary<Guid, long> ItemCooldowns { get; }

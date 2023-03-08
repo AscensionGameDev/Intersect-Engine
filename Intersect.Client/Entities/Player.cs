@@ -87,7 +87,7 @@ namespace Intersect.Client.Entities
 
         public Guid TargetIndex { get; set; }
 
-        TargetTypes IPlayer.TargetType => (TargetTypes)TargetType;
+        TargetType IPlayer.TargetType => (TargetType)TargetType;
 
         public int TargetType { get; set; }
 
@@ -2355,7 +2355,7 @@ namespace Intersect.Client.Entities
                     continue;
                 }
 
-                en.Value.DrawTarget((int)TargetTypes.Selected);
+                en.Value.DrawTarget((int)Enums.TargetType.Selected);
                 AutoTurnToTarget(en.Value);
             }
 
@@ -2393,7 +2393,7 @@ namespace Intersect.Client.Entities
                         continue;
                     }
 
-                    en.Value.DrawTarget((int)TargetTypes.Selected);
+                    en.Value.DrawTarget((int)Enums.TargetType.Selected);
                     AutoTurnToTarget(en.Value);
                 }
             }
@@ -2427,7 +2427,7 @@ namespace Intersect.Client.Entities
                                     {
                                         if (TargetType != 0 || TargetIndex != en.Value.Id)
                                         {
-                                            en.Value.DrawTarget((int)TargetTypes.Hover);
+                                            en.Value.DrawTarget((int)Enums.TargetType.Hover);
                                         }
                                     }
                                 }
@@ -2451,7 +2451,7 @@ namespace Intersect.Client.Entities
                                     {
                                         if (TargetType != 1 || TargetIndex != en.Value.Id)
                                         {
-                                            en.Value.DrawTarget((int)TargetTypes.Hover);
+                                            en.Value.DrawTarget((int)Enums.TargetType.Hover);
                                         }
                                     }
                                 }
