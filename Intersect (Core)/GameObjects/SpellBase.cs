@@ -30,7 +30,7 @@ namespace Intersect.GameObjects
             Name = "New Spell";
         }
 
-        public SpellTypes SpellType { get; set; }
+        public SpellType SpellType { get; set; }
 
         public string Description { get; set; } = "";
 

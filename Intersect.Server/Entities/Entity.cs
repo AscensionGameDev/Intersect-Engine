@@ -2236,7 +2236,7 @@ namespace Intersect.Server.Entities
                     if (status.Type == StatusTypes.Snare)
                     {
                         // If this spell is a Dash or Warp type ability, we can not use it while snared.
-                        if (spell.SpellType == SpellTypes.Dash || spell.SpellType == SpellTypes.Warp || spell.SpellType == SpellTypes.WarpTo)
+                        if (spell.SpellType == SpellType.Dash || spell.SpellType == SpellType.Warp || spell.SpellType == SpellType.WarpTo)
                         {
                             reason = SpellCastFailureReason.Snared;
                             return false;
@@ -2246,14 +2246,14 @@ namespace Intersect.Server.Entities
             }
 
             // Check for target validity
-            var singleTargetSpell = (spell.SpellType == SpellTypes.CombatSpell && spell.Combat.TargetType == SpellTargetType.Single) || spell.SpellType == SpellTypes.WarpTo;
+            var singleTargetSpell = (spell.SpellType == SpellType.CombatSpell && spell.Combat.TargetType == SpellTargetType.Single) || spell.SpellType == SpellType.WarpTo;
             if (target == null && singleTargetSpell)
             {
                 reason = SpellCastFailureReason.InvalidTarget;
                 return false;
             }
 
-            if (target == this && spell.SpellType == SpellTypes.WarpTo)
+            if (target == this && spell.SpellType == SpellType.WarpTo)
             {
                 reason = SpellCastFailureReason.InvalidTarget;
                 return false;
@@ -2316,8 +2316,8 @@ namespace Intersect.Server.Entities
 
             switch (spellBase.SpellType)
             {
-                case SpellTypes.CombatSpell:
-                case SpellTypes.Event:
+                case SpellType.CombatSpell:
+                case SpellType.Event:
 
                     switch (spellBase.Combat.TargetType)
                     {
@@ -2406,7 +2406,7 @@ namespace Intersect.Server.Entities
                     }
 
                     break;
-                case SpellTypes.Warp:
+                case SpellType.Warp:
                     if (this is Player)
                     {
                         Warp(
@@ -2416,13 +2416,13 @@ namespace Intersect.Server.Entities
                     }
 
                     break;
-                case SpellTypes.WarpTo:
+                case SpellType.WarpTo:
                     if (CastTarget != null)
                     {
                         HandleAoESpell(spellId, spellBase.Combat.CastRange, MapId, X, Y, CastTarget);
                     }
                     break;
-                case SpellTypes.Dash:
+                case SpellType.Dash:
                     PacketSender.SendActionMsg(this, Strings.Combat.dash, CustomColors.Combat.Dash);
                     var dash = new Dash(
                         this, spellBase.Combat.CastRange, Dir, Convert.ToBoolean(spellBase.Dash.IgnoreMapBlocks),
@@ -2481,7 +2481,7 @@ namespace Intersect.Server.Entities
                                 if (entity.GetDistanceTo(startMap, startX, startY) <= range)
                                 {
                                     //Check to handle a warp to spell
-                                    if (spellBase.SpellType == SpellTypes.WarpTo)
+                                    if (spellBase.SpellType == SpellType.WarpTo)
                                     {
                                         if (spellTarget != null)
                                         {

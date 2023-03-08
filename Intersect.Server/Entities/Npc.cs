@@ -640,7 +640,7 @@ namespace Intersect.Server.Entities
             var targetType = spellBase.Combat?.TargetType ?? SpellTargetType.Single;
             var projectileBase = spellBase.Combat?.Projectile;
 
-            if (spellBase.SpellType == SpellTypes.CombatSpell &&
+            if (spellBase.SpellType == SpellType.CombatSpell &&
                 targetType == SpellTargetType.Projectile &&
                 projectileBase != null &&
                 InRangeOf(target, projectileBase.Range))
@@ -664,7 +664,7 @@ namespace Intersect.Server.Entities
 
             CastTime = Timing.Global.Milliseconds + spellBase.CastDuration;
 
-            if ((spellBase.Combat?.Friendly ?? false) && spellBase.SpellType != SpellTypes.WarpTo)
+            if ((spellBase.Combat?.Friendly ?? false) && spellBase.SpellType != SpellType.WarpTo)
             {
                 CastTarget = this;
             }

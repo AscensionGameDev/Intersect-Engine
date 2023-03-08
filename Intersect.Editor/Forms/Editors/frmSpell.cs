@@ -343,9 +343,9 @@ namespace Intersect.Editor.Forms.Editors
             // Reset our combat data location, since event type spells can move it.
             grpCombat.Location = new System.Drawing.Point(grpEvent.Location.X, grpEvent.Location.Y);
 
-            if (cmbType.SelectedIndex == (int) SpellTypes.CombatSpell ||
-                cmbType.SelectedIndex == (int) SpellTypes.WarpTo ||
-                cmbType.SelectedIndex == (int) SpellTypes.Event)
+            if (cmbType.SelectedIndex == (int) SpellType.CombatSpell ||
+                cmbType.SelectedIndex == (int) SpellType.WarpTo ||
+                cmbType.SelectedIndex == (int) SpellType.Event)
             {
                 grpTargetInfo.Show();
                 grpCombat.Show();
@@ -380,7 +380,7 @@ namespace Intersect.Editor.Forms.Editors
                 cmbExtraEffect.SelectedIndex = (int) mEditorItem.Combat.Effect;
                 cmbExtraEffect_SelectedIndexChanged(null, null);
             }
-            else if (cmbType.SelectedIndex == (int) SpellTypes.Warp)
+            else if (cmbType.SelectedIndex == (int) SpellType.Warp)
             {
                 grpWarp.Show();
                 for (var i = 0; i < MapList.OrderedMaps.Count; i++)
@@ -397,7 +397,7 @@ namespace Intersect.Editor.Forms.Editors
                 nudWarpY.Value = mEditorItem.Warp.Y;
                 cmbDirection.SelectedIndex = mEditorItem.Warp.Dir;
             }
-            else if (cmbType.SelectedIndex == (int) SpellTypes.Dash)
+            else if (cmbType.SelectedIndex == (int) SpellType.Dash)
             {
                 grpDash.Show();
                 scrlRange.Value = mEditorItem.Combat.CastRange;
@@ -408,7 +408,7 @@ namespace Intersect.Editor.Forms.Editors
                 chkIgnoreZDimensionBlocks.Checked = mEditorItem.Dash.IgnoreZDimensionAttributes;
             }
 
-            if (cmbType.SelectedIndex == (int) SpellTypes.Event)
+            if (cmbType.SelectedIndex == (int) SpellType.Event)
             {
                 grpEvent.Show();
                 cmbEvent.SelectedIndex = EventBase.ListIndex(mEditorItem.EventId) + 1;
@@ -416,7 +416,7 @@ namespace Intersect.Editor.Forms.Editors
                 grpCombat.Location = new System.Drawing.Point(grpEvent.Location.X, grpEvent.Location.Y + grpEvent.Size.Height + 5);
             }
 
-            if (cmbType.SelectedIndex == (int) SpellTypes.WarpTo)
+            if (cmbType.SelectedIndex == (int) SpellType.WarpTo)
             {
                 grpTargetInfo.Show();
                 cmbTargetType.SelectedIndex = (int) SpellTargetType.Single;
@@ -441,7 +441,7 @@ namespace Intersect.Editor.Forms.Editors
                 lblCastRange.Show();
                 nudCastRange.Show();
                 nudCastRange.Value = mEditorItem.Combat.CastRange;
-                if (cmbType.SelectedIndex == (int) SpellTypes.CombatSpell)
+                if (cmbType.SelectedIndex == (int) SpellType.CombatSpell)
                 {
                     lblHitRadius.Show();
                     nudHitRadius.Show();
@@ -450,7 +450,7 @@ namespace Intersect.Editor.Forms.Editors
             }
 
             if (cmbTargetType.SelectedIndex == (int) SpellTargetType.AoE &&
-                cmbType.SelectedIndex == (int) SpellTypes.CombatSpell)
+                cmbType.SelectedIndex == (int) SpellType.CombatSpell)
             {
                 lblHitRadius.Show();
                 nudHitRadius.Show();
@@ -496,7 +496,7 @@ namespace Intersect.Editor.Forms.Editors
         {
             if (cmbType.SelectedIndex != (int) mEditorItem.SpellType)
             {
-                mEditorItem.SpellType = (SpellTypes) cmbType.SelectedIndex;
+                mEditorItem.SpellType = (SpellType) cmbType.SelectedIndex;
                 UpdateSpellTypePanels();
             }
         }

@@ -1978,7 +1978,7 @@ namespace Intersect.Client.Entities
                         SpriteAnimation = SpriteAnimations.Cast;
                     }
 
-                    if (spell.SpellType == SpellTypes.CombatSpell &&
+                    if (spell.SpellType == SpellType.CombatSpell &&
                         spell.Combat.TargetType == SpellTargetType.Projectile &&
                         spell.CastSpriteOverride == null)
                     {

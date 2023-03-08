@@ -42,11 +42,11 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
             // Set up information depending on the item type.
             switch (mSpell.SpellType)
             {
-                case SpellTypes.CombatSpell:
-                case SpellTypes.WarpTo:
+                case SpellType.CombatSpell:
+                case SpellType.WarpTo:
                     SetupCombatInfo();
                     break;
-                case SpellTypes.Dash:
+                case SpellType.Dash:
                     SetupDashInfo();
                     break;
             }
@@ -79,7 +79,7 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
             header.SetSubtitle(spellType, Color.White);
 
             // Set up the spelldescription based on what kind of spell it is.
-            if (mSpell.SpellType == (int)SpellTypes.CombatSpell)
+            if (mSpell.SpellType == (int)SpellType.CombatSpell)
             {
                 if (mSpell.Combat.TargetType == SpellTargetType.Projectile)
                 {
@@ -104,7 +104,7 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
             var rows = AddRowContainer();
 
             // Friendly / Non Friendly for combat spells.
-            if (mSpell.SpellType == SpellTypes.CombatSpell || mSpell.SpellType == SpellTypes.WarpTo)
+            if (mSpell.SpellType == SpellType.CombatSpell || mSpell.SpellType == SpellType.WarpTo)
             {
                 if (mSpell.Combat.Friendly)
                 {
