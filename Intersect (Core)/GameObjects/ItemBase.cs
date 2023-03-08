@@ -262,8 +262,8 @@ namespace Intersect.GameObjects
         [JsonIgnore]
         public string VitalsJson
         {
-            get => DatabaseUtils.SaveIntArray(VitalsGiven, (int) Vitals.VitalCount);
-            set => VitalsGiven = DatabaseUtils.LoadIntArray(value, (int) Vitals.VitalCount);
+            get => DatabaseUtils.SaveIntArray(VitalsGiven, (int) Vital.VitalCount);
+            set => VitalsGiven = DatabaseUtils.LoadIntArray(value, (int) Vital.VitalCount);
         }
 
         [NotMapped]
@@ -273,8 +273,8 @@ namespace Intersect.GameObjects
         [JsonIgnore]
         public string VitalsRegenJson
         {
-            get => DatabaseUtils.SaveIntArray(VitalsRegen, (int) Vitals.VitalCount);
-            set => VitalsRegen = DatabaseUtils.LoadIntArray(value, (int) Vitals.VitalCount);
+            get => DatabaseUtils.SaveIntArray(VitalsRegen, (int) Vital.VitalCount);
+            set => VitalsRegen = DatabaseUtils.LoadIntArray(value, (int) Vital.VitalCount);
         }
 
         [NotMapped]
@@ -284,8 +284,8 @@ namespace Intersect.GameObjects
         [JsonIgnore]
         public string PercentageVitalsJson
         {
-            get => DatabaseUtils.SaveIntArray(PercentageVitalsGiven, (int) Vitals.VitalCount);
-            set => PercentageVitalsGiven = DatabaseUtils.LoadIntArray(value, (int) Vitals.VitalCount);
+            get => DatabaseUtils.SaveIntArray(PercentageVitalsGiven, (int) Vital.VitalCount);
+            set => PercentageVitalsGiven = DatabaseUtils.LoadIntArray(value, (int) Vital.VitalCount);
         }
 
         [NotMapped]
@@ -385,9 +385,9 @@ namespace Intersect.GameObjects
             Speed = 10; // Set to 10 by default.
             StatsGiven = new int[(int) Stat.StatCount];
             PercentageStatsGiven = new int[(int) Stat.StatCount];
-            VitalsGiven = new int[(int) Vitals.VitalCount];
-            VitalsRegen = new int[(int) Vitals.VitalCount];
-            PercentageVitalsGiven = new int[(int) Vitals.VitalCount];
+            VitalsGiven = new int[(int) Vital.VitalCount];
+            VitalsRegen = new int[(int) Vital.VitalCount];
+            PercentageVitalsGiven = new int[(int) Vital.VitalCount];
             Consumable = new ConsumableData();
             Effects = new List<EffectData>();
             Color = new Color(255, 255, 255, 255);

@@ -311,8 +311,8 @@ namespace Intersect.Editor.Forms.Editors
                     picSpell.BackgroundImage = Image.FromFile("resources/spells/" + cmbSprite.Text);
                 }
 
-                nudHPCost.Value = mEditorItem.VitalCost[(int) Vitals.Health];
-                nudMpCost.Value = mEditorItem.VitalCost[(int) Vitals.Mana];
+                nudHPCost.Value = mEditorItem.VitalCost[(int) Vital.Health];
+                nudMpCost.Value = mEditorItem.VitalCost[(int) Vital.Mana];
 
                 txtCannotCast.Text = mEditorItem.CannotCastMessage;
 
@@ -352,8 +352,8 @@ namespace Intersect.Editor.Forms.Editors
                 cmbTargetType.SelectedIndex = (int) mEditorItem.Combat.TargetType;
                 UpdateTargetTypePanel();
 
-                nudHPDamage.Value = mEditorItem.Combat.VitalDiff[(int) Vitals.Health];
-                nudMPDamage.Value = mEditorItem.Combat.VitalDiff[(int) Vitals.Mana];
+                nudHPDamage.Value = mEditorItem.Combat.VitalDiff[(int) Vital.Health];
+                nudMPDamage.Value = mEditorItem.Combat.VitalDiff[(int) Vital.Mana];
 
                 nudStr.Value = mEditorItem.Combat.StatDiff[(int) Stat.Attack];
                 nudDef.Value = mEditorItem.Combat.StatDiff[(int) Stat.Defense];
@@ -812,22 +812,22 @@ namespace Intersect.Editor.Forms.Editors
 
         private void nudHPCost_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.VitalCost[(int) Vitals.Health] = (int) nudHPCost.Value;
+            mEditorItem.VitalCost[(int) Vital.Health] = (int) nudHPCost.Value;
         }
 
         private void nudMpCost_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.VitalCost[(int) Vitals.Mana] = (int) nudMpCost.Value;
+            mEditorItem.VitalCost[(int) Vital.Mana] = (int) nudMpCost.Value;
         }
 
         private void nudHPDamage_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.Combat.VitalDiff[(int) Vitals.Health] = (int) nudHPDamage.Value;
+            mEditorItem.Combat.VitalDiff[(int) Vital.Health] = (int) nudHPDamage.Value;
         }
 
         private void nudMPDamage_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.Combat.VitalDiff[(int) Vitals.Mana] = (int) nudMPDamage.Value;
+            mEditorItem.Combat.VitalDiff[(int) Vital.Mana] = (int) nudMPDamage.Value;
         }
 
         private void nudStr_ValueChanged(object sender, EventArgs e)

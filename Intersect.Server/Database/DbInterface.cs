@@ -1256,7 +1256,7 @@ namespace Intersect.Server.Database
 
                 cls.Sprites.Add(defaultMale);
                 cls.Sprites.Add(defaultFemale);
-                for (var i = 0; i < (int) Vitals.VitalCount; i++)
+                for (var i = 0; i < (int) Vital.VitalCount; i++)
                 {
                     cls.BaseVital[i] = 20;
                 }

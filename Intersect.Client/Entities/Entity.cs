@@ -114,7 +114,7 @@ namespace Intersect.Client.Entities
         public int Level { get; set; } = 1;
 
         //Vitals & Stats
-        public int[] MaxVital { get; set; } = new int[(int)Vitals.VitalCount];
+        public int[] MaxVital { get; set; } = new int[(int)Enums.Vital.VitalCount];
 
         IReadOnlyList<int> IEntity.MaxVitals => MaxVital.ToList();
 
@@ -206,7 +206,7 @@ namespace Intersect.Client.Entities
 
         public int Aggression { get; set; }
 
-        public int[] Vital { get; set; } = new int[(int)Vitals.VitalCount];
+        public int[] Vital { get; set; } = new int[(int)Enums.Vital.VitalCount];
 
         IReadOnlyList<int> IEntity.Vitals => Vital.ToList();
 
@@ -1605,7 +1605,7 @@ namespace Intersect.Client.Entities
             {
                 if (status.Type == StatusType.Shield)
                 {
-                    shieldSize += status.Shield[(int)Vitals.Health];
+                    shieldSize += status.Shield[(int)Enums.Vital.Health];
                 }
             }
             return shieldSize;
@@ -1630,7 +1630,7 @@ namespace Intersect.Client.Entities
                     return true;
                 }
 
-                if (Vital[(int)Vitals.Health] != MaxVital[(int)Vitals.Health])
+                if (Vital[(int)Enums.Vital.Health] != MaxVital[(int)Enums.Vital.Health])
                 {
                     return true;
                 }
@@ -1643,7 +1643,7 @@ namespace Intersect.Client.Entities
         {
             get
             {
-                return LatestMap == default || !ShouldDraw || Vital[(int)Vitals.Health] < 1;
+                return LatestMap == default || !ShouldDraw || Vital[(int)Enums.Vital.Health] < 1;
             }
         }
 
@@ -1679,15 +1679,15 @@ namespace Intersect.Client.Entities
             var foregroundBoundingTexture = hpForeground;
 
             // Check for shields
-            var maxVital = MaxVital[(int)Vitals.Health];
+            var maxVital = MaxVital[(int)Enums.Vital.Health];
             var shieldSize = GetShieldSize();
 
-            if (shieldSize + Vital[(int)Vitals.Health] > maxVital)
+            if (shieldSize + Vital[(int)Enums.Vital.Health] > maxVital)
             {
-                maxVital = shieldSize + Vital[(int)Vitals.Health];
+                maxVital = shieldSize + Vital[(int)Enums.Vital.Health];
             }
 
-            var hpfillRatio = (float)Vital[(int)Vitals.Health] / maxVital;
+            var hpfillRatio = (float)Vital[(int)Enums.Vital.Health] / maxVital;
             hpfillRatio = Math.Min(1, Math.Max(0, hpfillRatio));
 
             var hpFillWidth = (int)Math.Round(hpfillRatio * foregroundBoundingTexture.Width);

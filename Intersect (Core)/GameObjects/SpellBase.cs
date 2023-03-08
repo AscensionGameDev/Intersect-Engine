@@ -17,7 +17,7 @@ namespace Intersect.GameObjects
     public partial class SpellBase : DatabaseObject<SpellBase>, IFolderable
     {
 
-        [NotMapped] public int[] VitalCost = new int[(int) Vitals.VitalCount];
+        [NotMapped] public int[] VitalCost = new int[(int) Vital.VitalCount];
 
         [JsonConstructor]
         public SpellBase(Guid id) : base(id)
@@ -136,8 +136,8 @@ namespace Intersect.GameObjects
         [JsonIgnore]
         public string VitalCostJson
         {
-            get => DatabaseUtils.SaveIntArray(VitalCost, (int) Vitals.VitalCount);
-            set => VitalCost = DatabaseUtils.LoadIntArray(value, (int) Vitals.VitalCount);
+            get => DatabaseUtils.SaveIntArray(VitalCost, (int) Vital.VitalCount);
+            set => VitalCost = DatabaseUtils.LoadIntArray(value, (int) Vital.VitalCount);
         }
 
         /// <inheritdoc />
@@ -166,7 +166,7 @@ namespace Intersect.GameObjects
     public partial class SpellCombatData
     {
 
-        [NotMapped] public int[] VitalDiff = new int[(int) Vitals.VitalCount];
+        [NotMapped] public int[] VitalDiff = new int[(int) Vital.VitalCount];
 
         public int CritChance { get; set; }
 
@@ -197,8 +197,8 @@ namespace Intersect.GameObjects
         [JsonIgnore]
         public string VitalDiffJson
         {
-            get => DatabaseUtils.SaveIntArray(VitalDiff, (int) Vitals.VitalCount);
-            set => VitalDiff = DatabaseUtils.LoadIntArray(value, (int) Vitals.VitalCount);
+            get => DatabaseUtils.SaveIntArray(VitalDiff, (int) Vital.VitalCount);
+            set => VitalDiff = DatabaseUtils.LoadIntArray(value, (int) Vital.VitalCount);
         }
 
         //Buff/Debuff Data

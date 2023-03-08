@@ -46,8 +46,8 @@ namespace Intersect.Client.Entities.Projectiles
         /// </summary>
         public Projectile(Guid id, ProjectileEntityPacket packet) : base(id, packet, EntityType.Projectile)
         {
-            Vital[(int) Vitals.Health] = 1;
-            MaxVital[(int) Vitals.Health] = 1;
+            Vital[(int) Enums.Vital.Health] = 1;
+            MaxVital[(int) Enums.Vital.Health] = 1;
             HideName = true;
             Passable = true;
             IsMoving = true;

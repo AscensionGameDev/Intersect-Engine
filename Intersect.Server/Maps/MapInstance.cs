@@ -1225,8 +1225,8 @@ namespace Intersect.Server.Maps
                     //Regen Everything & Forget Targets
                     if (en.Value is Resource || en.Value is Npc)
                     {
-                        en.Value.RestoreVital(Vitals.Health);
-                        en.Value.RestoreVital(Vitals.Mana);
+                        en.Value.RestoreVital(Vital.Health);
+                        en.Value.RestoreVital(Vital.Mana);
 
                         if (en.Value is Npc npc)
                         {

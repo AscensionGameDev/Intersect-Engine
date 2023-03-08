@@ -19,7 +19,7 @@ namespace Intersect.GameObjects
 
         [NotMapped] public List<Drop> Drops = new List<Drop>();
 
-        [NotMapped] public int[] MaxVital = new int[(int) Vitals.VitalCount];
+        [NotMapped] public int[] MaxVital = new int[(int) Vital.VitalCount];
 
         [NotMapped] public ConditionLists PlayerCanAttackConditions = new ConditionLists();
 
@@ -27,7 +27,7 @@ namespace Intersect.GameObjects
 
         [NotMapped] public int[] Stats = new int[(int) Enums.Stat.StatCount];
 
-        [NotMapped] public int[] VitalRegen = new int[(int) Vitals.VitalCount];
+        [NotMapped] public int[] VitalRegen = new int[(int) Vital.VitalCount];
 
         [NotMapped]
         public List<StatusType> Immunities = new List<StatusType>();
@@ -178,8 +178,8 @@ namespace Intersect.GameObjects
         [JsonIgnore]
         public string JsonMaxVital
         {
-            get => DatabaseUtils.SaveIntArray(MaxVital, (int) Vitals.VitalCount);
-            set => DatabaseUtils.LoadIntArray(ref MaxVital, value, (int) Vitals.VitalCount);
+            get => DatabaseUtils.SaveIntArray(MaxVital, (int) Vital.VitalCount);
+            set => DatabaseUtils.LoadIntArray(ref MaxVital, value, (int) Vital.VitalCount);
         }
 
         //NPC vs NPC Combat
@@ -240,8 +240,8 @@ namespace Intersect.GameObjects
         [Column("VitalRegen")]
         public string RegenJson
         {
-            get => DatabaseUtils.SaveIntArray(VitalRegen, (int) Vitals.VitalCount);
-            set => VitalRegen = DatabaseUtils.LoadIntArray(value, (int) Vitals.VitalCount);
+            get => DatabaseUtils.SaveIntArray(VitalRegen, (int) Vital.VitalCount);
+            set => VitalRegen = DatabaseUtils.LoadIntArray(value, (int) Vital.VitalCount);
         }
 
         /// <inheritdoc />

@@ -138,7 +138,7 @@ namespace Intersect.Server.Entities
                 itemSlot++;
             }
 
-            for (var i = 0; i < (int) Vitals.VitalCount; i++)
+            for (var i = 0; i < (int) Vital.VitalCount; i++)
             {
                 SetMaxVital(i, myBase.MaxVital[i]);
                 SetVital(i, myBase.MaxVital[i]);
@@ -718,8 +718,8 @@ namespace Intersect.Server.Entities
         {
             if (Base.FleeHealthPercentage > 0)
             {
-                var fleeHpCutoff = GetMaxVital(Vitals.Health) * (Base.FleeHealthPercentage / 100f);
-                if (GetVital(Vitals.Health) < fleeHpCutoff)
+                var fleeHpCutoff = GetMaxVital(Vital.Health) * (Base.FleeHealthPercentage / 100f);
+                if (GetVital(Vital.Health) < fleeHpCutoff)
                 {
                     return true;
                 }
@@ -1240,9 +1240,9 @@ namespace Intersect.Server.Entities
                 CachedStatuses = Statuses.Values.ToArray();
                 DoT.Clear();
                 CachedDots = DoT.Values.ToArray();
-                for (var v = 0; v < (int)Vitals.VitalCount; v++)
+                for (var v = 0; v < (int)Vital.VitalCount; v++)
                 {
-                    RestoreVital((Vitals)v);
+                    RestoreVital((Vital)v);
                 }
             }
         }
@@ -1516,9 +1516,9 @@ namespace Intersect.Server.Entities
                 return;
             }
 
-            foreach (Vitals vital in Enum.GetValues(typeof(Vitals)))
+            foreach (Vital vital in Enum.GetValues(typeof(Vital)))
             {
-                if (vital >= Vitals.VitalCount)
+                if (vital >= Vital.VitalCount)
                 {
                     continue;
                 }

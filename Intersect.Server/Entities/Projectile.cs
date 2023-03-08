@@ -61,8 +61,8 @@ namespace Intersect.Server.Entities
             base.X = X;
             base.Y = Y;
             Z = z;
-            SetMaxVital(Vitals.Health, 1);
-            SetVital(Vitals.Health, 1);
+            SetMaxVital(Vital.Health, 1);
+            SetVital(Vital.Health, 1);
             Dir = direction;
             Spell = parentSpell;
             Item = parentItem;

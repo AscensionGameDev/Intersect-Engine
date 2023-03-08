@@ -34,7 +34,7 @@ namespace Intersect.Server.Entities
 
         public Guid MapInstanceId = Guid.Empty;
 
-        [JsonProperty("MaxVitals"), NotMapped] private int[] _maxVital = new int[(int) Vitals.VitalCount];
+        [JsonProperty("MaxVitals"), NotMapped] private int[] _maxVital = new int[(int) Vital.VitalCount];
 
         [NotMapped, JsonIgnore] public Combat.Stat[] Stat = new Combat.Stat[(int) Enums.Stat.StatCount];
 
@@ -104,18 +104,18 @@ namespace Intersect.Server.Entities
         [JsonIgnore, Column("Vitals")]
         public string VitalsJson
         {
-            get => DatabaseUtils.SaveIntArray(mVitals, (int) Enums.Vitals.VitalCount);
-            set => mVitals = DatabaseUtils.LoadIntArray(value, (int) Enums.Vitals.VitalCount);
+            get => DatabaseUtils.SaveIntArray(mVitals, (int) Enums.Vital.VitalCount);
+            set => mVitals = DatabaseUtils.LoadIntArray(value, (int) Enums.Vital.VitalCount);
         }
 
         [JsonProperty("Vitals"), NotMapped]
-        private int[] mVitals { get; set; } = new int[(int) Enums.Vitals.VitalCount];
+        private int[] mVitals { get; set; } = new int[(int) Enums.Vital.VitalCount];
 
         [JsonIgnore, NotMapped]
-        private int[] mOldVitals { get; set; } = new int[(int)Enums.Vitals.VitalCount];
+        private int[] mOldVitals { get; set; } = new int[(int)Enums.Vital.VitalCount];
 
         [JsonIgnore, NotMapped]
-        private int[] mOldMaxVitals { get; set; } = new int[(int)Enums.Vitals.VitalCount];
+        private int[] mOldMaxVitals { get; set; } = new int[(int)Enums.Vital.VitalCount];
 
         //Stats based on npc settings, class settings, etc for quick calculations
         [JsonIgnore, Column(nameof(BaseStats))]
@@ -1304,13 +1304,13 @@ namespace Intersect.Server.Entities
 
         public int[] GetVitals()
         {
-            var vitals = new int[(int) Vitals.VitalCount];
-            Array.Copy(mVitals, 0, vitals, 0, (int) Vitals.VitalCount);
+            var vitals = new int[(int) Vital.VitalCount];
+            Array.Copy(mVitals, 0, vitals, 0, (int) Vital.VitalCount);
 
             return vitals;
         }
 
-        public int GetVital(Vitals vital)
+        public int GetVital(Vital vital)
         {
             return GetVital((int) vital);
         }
@@ -1330,7 +1330,7 @@ namespace Intersect.Server.Entities
             mVitals[vital] = value;
         }
 
-        public void SetVital(Vitals vital, int value)
+        public void SetVital(Vital vital, int value)
         {
             SetVital((int) vital, value);
         }
@@ -1340,14 +1340,14 @@ namespace Intersect.Server.Entities
             return _maxVital[vital];
         }
 
-        public virtual int GetMaxVital(Vitals vital)
+        public virtual int GetMaxVital(Vital vital)
         {
             return GetMaxVital((int) vital);
         }
 
         public int[] GetMaxVitals()
         {
-            var vitals = new int[(int) Vitals.VitalCount];
+            var vitals = new int[(int) Vital.VitalCount];
             for (var vitalIndex = 0; vitalIndex < vitals.Length; ++vitalIndex)
             {
                 vitals[vitalIndex] = GetMaxVital(vitalIndex);
@@ -1358,12 +1358,12 @@ namespace Intersect.Server.Entities
 
         public void SetMaxVital(int vital, int value)
         {
-            if (value <= 0 && vital == (int) Vitals.Health)
+            if (value <= 0 && vital == (int) Vital.Health)
             {
                 value = 1; //Must have at least 1 hp
             }
 
-            if (value < 0 && vital == (int) Vitals.Mana)
+            if (value < 0 && vital == (int) Vital.Mana)
             {
                 value = 0; //Can't have less than 0 mana
             }
@@ -1375,30 +1375,30 @@ namespace Intersect.Server.Entities
             }
         }
 
-        public void SetMaxVital(Vitals vital, int value)
+        public void SetMaxVital(Vital vital, int value)
         {
             SetMaxVital((int) vital, value);
         }
 
-        public bool HasVital(Vitals vital)
+        public bool HasVital(Vital vital)
         {
             return GetVital(vital) > 0;
         }
 
-        public bool IsFullVital(Vitals vital)
+        public bool IsFullVital(Vital vital)
         {
             return GetVital(vital) == GetMaxVital(vital);
         }
 
         //Vitals
-        public void RestoreVital(Vitals vital)
+        public void RestoreVital(Vital vital)
         {
             SetVital(vital, GetMaxVital(vital));
         }
 
-        public void AddVital(Vitals vital, int amount)
+        public void AddVital(Vital vital, int amount)
         {
-            if (vital >= Vitals.VitalCount)
+            if (vital >= Vital.VitalCount)
             {
                 return;
             }
@@ -1409,9 +1409,9 @@ namespace Intersect.Server.Entities
             SetVital(vital, GetVital(vital) + safeAmount);
         }
 
-        public void SubVital(Vitals vital, int amount)
+        public void SubVital(Vital vital, int amount)
         {
-            if (vital >= Vitals.VitalCount)
+            if (vital >= Vital.VitalCount)
             {
                 return;
             }
@@ -1674,8 +1674,8 @@ namespace Intersect.Server.Entities
                 }
             }
 
-            var damageHealth = spellBase.Combat.VitalDiff[(int)Vitals.Health];
-            var damageMana = spellBase.Combat.VitalDiff[(int)Vitals.Mana];
+            var damageHealth = spellBase.Combat.VitalDiff[(int)Vital.Health];
+            var damageMana = spellBase.Combat.VitalDiff[(int)Vital.Mana];
 
             if ((spellBase.Combat.Effect != StatusType.OnHit || onHitTrigger) &&
                 spellBase.Combat.Effect != StatusType.Shield)
@@ -1930,7 +1930,7 @@ namespace Intersect.Server.Entities
 
                         if (blockAbsorption > 0)
                         {
-                            player.AddVital(Vitals.Health, absorptionAmount);
+                            player.AddVital(Vital.Health, absorptionAmount);
 
                             PacketSender.SendActionMsg(
                             enemy, Strings.Combat.addsymbol + Math.Abs(absorptionAmount),
@@ -1952,14 +1952,14 @@ namespace Intersect.Server.Entities
                     baseDamage = 0;
                 }
 
-                if (baseDamage > 0 && enemy.HasVital(Vitals.Health) && !invulnerable)
+                if (baseDamage > 0 && enemy.HasVital(Vital.Health) && !invulnerable)
                 {
                     if (isCrit)
                     {
                         PacketSender.SendActionMsg(enemy, Strings.Combat.critical, CustomColors.Combat.Critical);
                     }
 
-                    enemy.SubVital(Vitals.Health, baseDamage);
+                    enemy.SubVital(Vital.Health, baseDamage);
                     switch (damageType)
                     {
                         case DamageType.Physical:
@@ -2007,9 +2007,9 @@ namespace Intersect.Server.Entities
 
                     enemy.NotifySwarm(this);
                 }
-                else if (baseDamage < 0 && !enemy.IsFullVital(Vitals.Health))
+                else if (baseDamage < 0 && !enemy.IsFullVital(Vital.Health))
                 {
-                    enemy.AddVital(Vitals.Health, -baseDamage);
+                    enemy.AddVital(Vital.Health, -baseDamage);
                     PacketSender.SendActionMsg(
                         enemy, Strings.Combat.addsymbol + Math.Abs(baseDamage), CustomColors.Combat.Heal
                     );
@@ -2027,10 +2027,10 @@ namespace Intersect.Server.Entities
                     secondaryDamage = 0;
                 }
 
-                if (secondaryDamage > 0 && enemy.HasVital(Vitals.Mana) && !invulnerable)
+                if (secondaryDamage > 0 && enemy.HasVital(Vital.Mana) && !invulnerable)
                 {
                     //If we took damage lets reset our combat timer
-                    enemy.SubVital(Vitals.Mana, secondaryDamage);
+                    enemy.SubVital(Vital.Mana, secondaryDamage);
                     PacketSender.SendActionMsg(
                         enemy, Strings.Combat.removesymbol + secondaryDamage, CustomColors.Combat.RemoveMana
                     );
@@ -2043,9 +2043,9 @@ namespace Intersect.Server.Entities
 
                     enemy.NotifySwarm(this);
                 }
-                else if (secondaryDamage < 0 && !enemy.IsFullVital(Vitals.Mana))
+                else if (secondaryDamage < 0 && !enemy.IsFullVital(Vital.Mana))
                 {
-                    enemy.AddVital(Vitals.Mana, -secondaryDamage);
+                    enemy.AddVital(Vital.Mana, -secondaryDamage);
                     PacketSender.SendActionMsg(
                         enemy, Strings.Combat.addsymbol + Math.Abs(secondaryDamage), CustomColors.Combat.AddMana
                     );
@@ -2063,12 +2063,12 @@ namespace Intersect.Server.Entities
             {
                 var lifestealRate = thisPlayer.GetEquipmentBonusEffect(EffectType.Lifesteal) / 100f;
                 var idealHealthRecovered = lifestealRate * baseDamage;
-                var actualHealthRecovered = Math.Min(enemyVitals[(int)Vitals.Health], idealHealthRecovered);
+                var actualHealthRecovered = Math.Min(enemyVitals[(int)Vital.Health], idealHealthRecovered);
 
                 if (actualHealthRecovered > 0)
                 {
                     // Don't send any +0 msg's.
-                    AddVital(Vitals.Health, (int)actualHealthRecovered);
+                    AddVital(Vital.Health, (int)actualHealthRecovered);
                     PacketSender.SendActionMsg(
                         this,
                         Strings.Combat.addsymbol + (int)actualHealthRecovered,
@@ -2078,13 +2078,13 @@ namespace Intersect.Server.Entities
 
                 var manastealRate = (thisPlayer.GetEquipmentBonusEffect(EffectType.Manasteal) / 100f);
                 var idealManaRecovered = manastealRate * baseDamage;
-                var actualManaRecovered = Math.Min(enemyVitals[(int)Vitals.Mana], idealManaRecovered);
+                var actualManaRecovered = Math.Min(enemyVitals[(int)Vital.Mana], idealManaRecovered);
 
                 if (actualManaRecovered > 0)
                 {
                     // Don't send any +0 msg's.
-                    AddVital(Vitals.Mana, (int)actualManaRecovered);
-                    enemy.SubVital(Vitals.Mana, (int)actualManaRecovered);
+                    AddVital(Vital.Mana, (int)actualManaRecovered);
+                    enemy.SubVital(Vital.Mana, (int)actualManaRecovered);
                     PacketSender.SendActionMsg(
                         this,
                         Strings.Combat.addsymbol + (int)actualManaRecovered,
@@ -2096,7 +2096,7 @@ namespace Intersect.Server.Entities
                 if (remainingManaRecovery > 0)
                 {
                     // If the mana recovered is less than it should be, deal the remainder as bonus damage
-                    enemy.SubVital(Vitals.Health, (int)remainingManaRecovery);
+                    enemy.SubVital(Vital.Health, (int)remainingManaRecovery);
                     PacketSender.SendActionMsg(
                         enemy,
                         Strings.Combat.removesymbol + remainingManaRecovery,
@@ -2106,7 +2106,7 @@ namespace Intersect.Server.Entities
             }
 
             //Dead entity check
-            if (enemy.GetVital(Vitals.Health) <= 0)
+            if (enemy.GetVital(Vital.Health) <= 0)
             {
                 if (enemy is Npc || enemy is Resource)
                 {
@@ -2197,13 +2197,13 @@ namespace Intersect.Server.Entities
                 // Do we meet the vital requirements?
                 if (checkVitalReqs)
             {
-                if (spell.VitalCost[(int)Vitals.Mana] > GetVital(Vitals.Mana))
+                if (spell.VitalCost[(int)Vital.Mana] > GetVital(Vital.Mana))
                 {
                     reason = SpellCastFailureReason.InsufficientMP;
                     return false;
                 }
 
-                if (spell.VitalCost[(int)Vitals.Health] > GetVital(Vitals.Health))
+                if (spell.VitalCost[(int)Vital.Health] > GetVital(Vital.Health))
                 {
                     reason = SpellCastFailureReason.InsufficientHP;
                     return false;
@@ -2297,22 +2297,22 @@ namespace Intersect.Server.Entities
                 return;
             }
 
-            if (spellBase.VitalCost[(int)Vitals.Mana] > 0)
+            if (spellBase.VitalCost[(int)Vital.Mana] > 0)
             {
-                SubVital(Vitals.Mana, spellBase.VitalCost[(int)Vitals.Mana]);
+                SubVital(Vital.Mana, spellBase.VitalCost[(int)Vital.Mana]);
             }
             else
             {
-                AddVital(Vitals.Mana, -spellBase.VitalCost[(int)Vitals.Mana]);
+                AddVital(Vital.Mana, -spellBase.VitalCost[(int)Vital.Mana]);
             }
 
-            if (spellBase.VitalCost[(int)Vitals.Health] > 0)
+            if (spellBase.VitalCost[(int)Vital.Health] > 0)
             {
-                SubVital(Vitals.Health, spellBase.VitalCost[(int)Vitals.Health]);
+                SubVital(Vital.Health, spellBase.VitalCost[(int)Vital.Health]);
             }
             else
             {
-                AddVital(Vitals.Health, -spellBase.VitalCost[(int)Vitals.Health]);
+                AddVital(Vital.Health, -spellBase.VitalCost[(int)Vital.Health]);
             }
 
             switch (spellBase.SpellType)
@@ -2938,9 +2938,9 @@ namespace Intersect.Server.Entities
 
         public virtual void Reset()
         {
-            for (var i = 0; i < (int) Vitals.VitalCount; i++)
+            for (var i = 0; i < (int) Vital.VitalCount; i++)
             {
-                RestoreVital((Vitals) i);
+                RestoreVital((Vital) i);
             }
 
             Dead = false;
@@ -3009,8 +3009,8 @@ namespace Intersect.Server.Entities
                 int[] vitalShields = null;
                 if (status.Type == StatusType.Shield)
                 {
-                    vitalShields = new int[(int) Vitals.VitalCount];
-                    for (var x = 0; x < (int) Vitals.VitalCount; x++)
+                    vitalShields = new int[(int) Vital.VitalCount];
+                    for (var x = 0; x < (int) Vital.VitalCount; x++)
                     {
                         vitalShields[x] = status.shield[x];
                     }

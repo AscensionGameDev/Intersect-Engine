@@ -125,7 +125,7 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
             rows.AddKeyValueRow(Strings.SpellDescription.CastTime, castTime);
 
             // Add Vital Costs
-            for (var i = 0; i < (int)Vitals.VitalCount; i++)
+            for (var i = 0; i < (int)Vital.VitalCount; i++)
             {
                 if (mSpell.VitalCost[i] != 0)
                 {
@@ -183,7 +183,7 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
             // This bit is a bit iffy.. since in 
             var isHeal = false;
             var isDamage = false;
-            for (var i = 0; i < (int)Vitals.VitalCount; i++)
+            for (var i = 0; i < (int)Vital.VitalCount; i++)
             {
                 if (mSpell.Combat.VitalDiff[i] < 0)
                 {

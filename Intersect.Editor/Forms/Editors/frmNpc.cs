@@ -301,8 +301,8 @@ namespace Intersect.Editor.Forms.Editors
                 nudDef.Value = mEditorItem.Stats[(int) Stat.Defense];
                 nudMR.Value = mEditorItem.Stats[(int) Stat.MagicResist];
                 nudSpd.Value = mEditorItem.Stats[(int) Stat.Speed];
-                nudHp.Value = mEditorItem.MaxVital[(int) Vitals.Health];
-                nudMana.Value = mEditorItem.MaxVital[(int) Vitals.Mana];
+                nudHp.Value = mEditorItem.MaxVital[(int) Vital.Health];
+                nudMana.Value = mEditorItem.MaxVital[(int) Vital.Mana];
                 nudExp.Value = mEditorItem.Experience;
                 chkAttackAllies.Checked = mEditorItem.AttackAllies;
                 chkEnabled.Checked = mEditorItem.NpcVsNpcEnabled;
@@ -319,8 +319,8 @@ namespace Intersect.Editor.Forms.Editors
                 nudAttackSpeedValue.Value = mEditorItem.AttackSpeedValue;
 
                 //Regen
-                nudHpRegen.Value = mEditorItem.VitalRegen[(int) Vitals.Health];
-                nudMpRegen.Value = mEditorItem.VitalRegen[(int) Vitals.Mana];
+                nudHpRegen.Value = mEditorItem.VitalRegen[(int) Vital.Health];
+                nudMpRegen.Value = mEditorItem.VitalRegen[(int) Vital.Mana];
 
                 // Add the spells to the list
                 lstSpells.Items.Clear();
@@ -716,12 +716,12 @@ namespace Intersect.Editor.Forms.Editors
 
         private void nudHp_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.MaxVital[(int) Vitals.Health] = (int) nudHp.Value;
+            mEditorItem.MaxVital[(int) Vital.Health] = (int) nudHp.Value;
         }
 
         private void nudMana_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.MaxVital[(int) Vitals.Mana] = (int) nudMana.Value;
+            mEditorItem.MaxVital[(int) Vital.Mana] = (int) nudMana.Value;
         }
 
         private void nudExp_ValueChanged(object sender, EventArgs e)
@@ -808,12 +808,12 @@ namespace Intersect.Editor.Forms.Editors
 
         private void nudHpRegen_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.VitalRegen[(int) Vitals.Health] = (int) nudHpRegen.Value;
+            mEditorItem.VitalRegen[(int) Vital.Health] = (int) nudHpRegen.Value;
         }
 
         private void nudMpRegen_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.VitalRegen[(int) Vitals.Mana] = (int) nudMpRegen.Value;
+            mEditorItem.VitalRegen[(int) Vital.Mana] = (int) nudMpRegen.Value;
         }
 
         private void chkAggressive_CheckedChanged(object sender, EventArgs e)

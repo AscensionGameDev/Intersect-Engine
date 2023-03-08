@@ -105,7 +105,7 @@ namespace Intersect.Server.Entities.Combat
             // If we're adding a shield, actually add that according to the settings.
             if (type == StatusType.Shield)
             {
-                for (var i = (int)Vitals.Health; i < (int)Vitals.VitalCount; i++)
+                for (var i = (int)Vital.Health; i < (int)Vital.VitalCount; i++)
                 {
                     var vitalDiff = spell.Combat.VitalDiff[i];
 
@@ -203,7 +203,7 @@ namespace Intersect.Server.Entities.Combat
             }
         }
 
-        public int[] shield { get; set; } = new int[(int) Enums.Vitals.VitalCount];
+        public int[] shield { get; set; } = new int[(int) Enums.Vital.VitalCount];
 
         public void TryRemoveStatus()
         {
@@ -215,7 +215,7 @@ namespace Intersect.Server.Entities.Combat
             //If shield check for out of hp
             if (Type == StatusType.Shield)
             {
-                for (var i = (int) Vitals.Health; i < (int) Vitals.VitalCount; i++)
+                for (var i = (int) Vital.Health; i < (int) Vital.VitalCount; i++)
                 {
                     if (shield[i] > 0)
                     {
@@ -239,7 +239,7 @@ namespace Intersect.Server.Entities.Combat
             }
         }
 
-        public void DamageShield(Vitals vital, ref int amount)
+        public void DamageShield(Vital vital, ref int amount)
         {
             if (Type == StatusType.Shield)
             {

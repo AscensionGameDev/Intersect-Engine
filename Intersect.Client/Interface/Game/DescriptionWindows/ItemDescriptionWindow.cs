@@ -298,7 +298,7 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
             }
 
             // Vitals
-            for (var i = 0; i < (int)Vitals.VitalCount; i++)
+            for (var i = 0; i < (int)Vital.VitalCount; i++)
             {
                 if (mItem.VitalsGiven[i] != 0 && mItem.PercentageVitalsGiven[i] != 0)
                 {
@@ -315,7 +315,7 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
             }
 
             // Vitals Regen
-            for (var i = 0; i < (int)Vitals.VitalCount; i++)
+            for (var i = 0; i < (int)Vital.VitalCount; i++)
             {
                 if (mItem.VitalsRegen[i] != 0)
                 {

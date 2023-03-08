@@ -429,7 +429,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
 
             if (MyEntity.Type == EntityType.Player && MyEntity != Globals.Me)
             {
-                if (MyEntity.Vital[(int)Vitals.Health] <= 0)
+                if (MyEntity.Vital[(int)Vital.Health] <= 0)
                 {
                     TradeLabel.Hide();
                     PartyLabel.Hide();
@@ -687,13 +687,13 @@ namespace Intersect.Client.Interface.Game.EntityPanel
         {
             float targetHpSize;
             float targetShieldSize;
-            var barDirectionSetting = ClientConfiguration.Instance.EntityBarDirections[(int)Vitals.Health];
+            var barDirectionSetting = ClientConfiguration.Instance.EntityBarDirections[(int)Vital.Health];
             var barPercentageSetting = Globals.Database.ShowHealthAsPercentage;
-            var entityVital = (float)MyEntity.Vital[(int)Vitals.Health];
+            var entityVital = (float)MyEntity.Vital[(int)Vital.Health];
 
             if (entityVital > 0)
             {
-                var entityMaxVital = (float)MyEntity.MaxVital[(int)Vitals.Health];
+                var entityMaxVital = (float)MyEntity.MaxVital[(int)Vital.Health];
                 var shieldSize = (float)MyEntity.GetShieldSize();
                 var vitalSize = (int)barDirectionSetting < (int)DisplayDirection.TopToBottom
                     ? HpBackground.Width
@@ -756,13 +756,13 @@ namespace Intersect.Client.Interface.Game.EntityPanel
         private void UpdateMpBar(float elapsedTime, bool instant = false)
         {
             float targetMpSize;
-            var barDirectionSetting = ClientConfiguration.Instance.EntityBarDirections[(int)Vitals.Mana];
+            var barDirectionSetting = ClientConfiguration.Instance.EntityBarDirections[(int)Vital.Mana];
             var barPercentageSetting = Globals.Database.ShowManaAsPercentage;
-            var entityVital = (float)MyEntity.Vital[(int)Vitals.Mana];
+            var entityVital = (float)MyEntity.Vital[(int)Vital.Mana];
 
             if (entityVital > 0)
             {
-                var entityMaxVital = (float)MyEntity.MaxVital[(int)Vitals.Mana];
+                var entityMaxVital = (float)MyEntity.MaxVital[(int)Vital.Mana];
                 var entityVitalRatio = entityVital / entityMaxVital;
                 var vitalSize = (int)barDirectionSetting < (int)DisplayDirection.TopToBottom
                     ? MpBackground.Width
@@ -799,7 +799,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
         private void UpdateXpBar(float elapsedTime, bool instant = false)
         {
             float targetExpSize;
-            var barDirectionSetting = ClientConfiguration.Instance.EntityBarDirections[(int)Vitals.VitalCount];
+            var barDirectionSetting = ClientConfiguration.Instance.EntityBarDirections[(int)Vital.VitalCount];
             var barPercentageSetting = Globals.Database.ShowExperienceAsPercentage;
             var entityExperienceToNextLevel = (float)((Player)MyEntity).GetNextLevelExperience();
 

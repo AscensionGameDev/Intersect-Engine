@@ -955,9 +955,9 @@ namespace Intersect.Server.Entities
                 return;
             }
 
-            foreach (Vitals vital in Enum.GetValues(typeof(Vitals)))
+            foreach (Vital vital in Enum.GetValues(typeof(Vital)))
             {
-                if (vital >= Vitals.VitalCount)
+                if (vital >= Vital.VitalCount)
                 {
                     continue;
                 }
@@ -1012,11 +1012,11 @@ namespace Intersect.Server.Entities
             }
 
             //Must have at least 1 hp and no less than 0 mp
-            if (vital == (int) Vitals.Health)
+            if (vital == (int) Vital.Health)
             {
                 classVital = Math.Max(classVital, 1);
             }
-            else if (vital == (int) Vitals.Mana)
+            else if (vital == (int) Vital.Mana)
             {
                 classVital = Math.Max(classVital, 0);
             }
@@ -1024,7 +1024,7 @@ namespace Intersect.Server.Entities
             return classVital;
         }
 
-        public override int GetMaxVital(Vitals vital)
+        public override int GetMaxVital(Vital vital)
         {
             return GetMaxVital((int) vital);
         }
@@ -1032,8 +1032,8 @@ namespace Intersect.Server.Entities
         public void FixVitals()
         {
             //If add/remove equipment then our vitals might exceed the new max.. this should fix those cases.
-            SetVital(Vitals.Health, GetVital(Vitals.Health));
-            SetVital(Vitals.Mana, GetVital(Vitals.Mana));
+            SetVital(Vital.Health, GetVital(Vital.Health));
+            SetVital(Vital.Mana, GetVital(Vital.Mana));
         }
 
         //Leveling
@@ -2900,13 +2900,13 @@ namespace Intersect.Server.Entities
                                         itemBase.Consumable.Percentage /
                                         100;
 
-                                AddVital(Vitals.Health, value);
+                                AddVital(Vital.Health, value);
                                 if (value < 0)
                                 {
                                     color = CustomColors.Items.ConsumePoison;
 
                                     //Add a death handler for poison.
-                                    die = !HasVital(Vitals.Health);
+                                    die = !HasVital(Vital.Health);
                                 }
 
                                 break;
@@ -2917,7 +2917,7 @@ namespace Intersect.Server.Entities
                                         itemBase.Consumable.Percentage /
                                         100;
 
-                                AddVital(Vitals.Mana, value);
+                                AddVital(Vital.Mana, value);
                                 color = CustomColors.Items.ConsumeMp;
 
                                 break;
@@ -3361,7 +3361,7 @@ namespace Intersect.Server.Entities
             return value;
         }
 
-        public int GetEquipmentVitalRegen(Vitals vital)
+        public int GetEquipmentVitalRegen(Vital vital)
         {
             var regen = 0;
 

@@ -109,8 +109,8 @@ namespace Intersect.Server.Entities.Combat
                 aliveAnimations.Add(animation);
             }
 
-            var damageHealth = SpellBase.Combat.VitalDiff[(int)Vitals.Health];
-            var damageMana = SpellBase.Combat.VitalDiff[(int)Vitals.Mana];
+            var damageHealth = SpellBase.Combat.VitalDiff[(int)Vital.Health];
+            var damageMana = SpellBase.Combat.VitalDiff[(int)Vital.Mana];
 
             Attacker?.Attack(
                 Target, damageHealth, damageMana,

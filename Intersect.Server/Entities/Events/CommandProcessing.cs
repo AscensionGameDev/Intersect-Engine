@@ -324,13 +324,13 @@ namespace Intersect.Server.Entities.Events
         {
             if (command.Amount > 0)
             {
-                player.AddVital(Vitals.Health, command.Amount);
+                player.AddVital(Vital.Health, command.Amount);
             }
             else if (command.Amount < 0)
             {
-                player.SubVital(Vitals.Health, -command.Amount);
+                player.SubVital(Vital.Health, -command.Amount);
                 player.CombatTimer = Timing.Global.Milliseconds + Options.CombatTime;
-                if (player.GetVital(Vitals.Health) <= 0)
+                if (player.GetVital(Vital.Health) <= 0)
                 {
                     lock (player.EntityLock)
                     {
@@ -340,7 +340,7 @@ namespace Intersect.Server.Entities.Events
             }
             else
             {
-                player.RestoreVital(Vitals.Health);
+                player.RestoreVital(Vital.Health);
             }
         }
 
@@ -355,16 +355,16 @@ namespace Intersect.Server.Entities.Events
         {
             if (command.Amount > 0)
             {
-                player.AddVital(Vitals.Mana, command.Amount);
+                player.AddVital(Vital.Mana, command.Amount);
             }
             else if (command.Amount < 0)
             {
-                player.SubVital(Vitals.Mana, -command.Amount);
+                player.SubVital(Vital.Mana, -command.Amount);
                 player.CombatTimer = Timing.Global.Milliseconds + Options.CombatTime;
             }
             else
             {
-                player.RestoreVital(Vitals.Mana);
+                player.RestoreVital(Vital.Mana);
             }
         }
 

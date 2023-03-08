@@ -1496,8 +1496,8 @@ namespace Intersect.Server.Networking
 
             client.LoadCharacter(newChar);
 
-            newChar.SetVital(Vitals.Health, classBase.BaseVital[(int) Vitals.Health]);
-            newChar.SetVital(Vitals.Mana, classBase.BaseVital[(int) Vitals.Mana]);
+            newChar.SetVital(Vital.Health, classBase.BaseVital[(int) Vital.Health]);
+            newChar.SetVital(Vital.Mana, classBase.BaseVital[(int) Vital.Mana]);
 
             for (var i = 0; i < (int) Stat.StatCount; i++)
             {

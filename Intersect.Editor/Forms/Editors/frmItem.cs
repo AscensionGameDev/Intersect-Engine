@@ -293,7 +293,7 @@ namespace Intersect.Editor.Forms.Editors
             lblVital.Text = Strings.ItemEditor.vital;
             lblInterval.Text = Strings.ItemEditor.consumeamount;
             cmbConsume.Items.Clear();
-            for (var i = 0; i < (int) Vitals.VitalCount; i++)
+            for (var i = 0; i < (int) Vital.VitalCount; i++)
             {
                 cmbConsume.Items.Add(Strings.Combat.vitals[i]);
             }
