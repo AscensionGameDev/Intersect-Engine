@@ -21,6 +21,7 @@ using Intersect.Server.Networking;
 using Intersect.Utilities;
 using Newtonsoft.Json;
 using MapAttribute = Intersect.Enums.MapAttribute;
+using Stat = Intersect.Enums.Stat;
 
 namespace Intersect.Server.Entities
 {
@@ -35,7 +36,7 @@ namespace Intersect.Server.Entities
 
         [JsonProperty("MaxVitals"), NotMapped] private int[] _maxVital = new int[(int) Vitals.VitalCount];
 
-        [NotMapped, JsonIgnore] public Stat[] Stat = new Stat[(int) Stats.StatCount];
+        [NotMapped, JsonIgnore] public Combat.Stat[] Stat = new Combat.Stat[(int) Enums.Stat.StatCount];
 
         [NotMapped, JsonIgnore] public Entity Target { get; set; } = null;
 
@@ -48,9 +49,9 @@ namespace Intersect.Server.Entities
         {
             if (!(this is EventPageInstance) && !(this is Projectile))
             {
-                for (var i = 0; i < (int)Stats.StatCount; i++)
+                for (var i = 0; i < (int)Enums.Stat.StatCount; i++)
                 {
-                    Stat[i] = new Stat((Stats)i, this);
+                    Stat[i] = new Combat.Stat((Stat)i, this);
                 }
             }
             MapInstanceId = mapInstanceId;
@@ -120,24 +121,24 @@ namespace Intersect.Server.Entities
         [JsonIgnore, Column(nameof(BaseStats))]
         public string StatsJson
         {
-            get => DatabaseUtils.SaveIntArray(BaseStats, (int) Enums.Stats.StatCount);
-            set => BaseStats = DatabaseUtils.LoadIntArray(value, (int) Enums.Stats.StatCount);
+            get => DatabaseUtils.SaveIntArray(BaseStats, (int) Enums.Stat.StatCount);
+            set => BaseStats = DatabaseUtils.LoadIntArray(value, (int) Enums.Stat.StatCount);
         }
 
         [NotMapped]
         public int[] BaseStats { get; set; } =
-            new int[(int) Enums.Stats
+            new int[(int) Enums.Stat
                 .StatCount]; // TODO: Why can this be BaseStats while Vitals is _vital and MaxVitals is _maxVital?
 
         [JsonIgnore, Column(nameof(StatPointAllocations))]
         public string StatPointsJson
         {
-            get => DatabaseUtils.SaveIntArray(StatPointAllocations, (int) Enums.Stats.StatCount);
-            set => StatPointAllocations = DatabaseUtils.LoadIntArray(value, (int) Enums.Stats.StatCount);
+            get => DatabaseUtils.SaveIntArray(StatPointAllocations, (int) Enums.Stat.StatCount);
+            set => StatPointAllocations = DatabaseUtils.LoadIntArray(value, (int) Enums.Stat.StatCount);
         }
 
         [NotMapped]
-        public int[] StatPointAllocations { get; set; } = new int[(int) Enums.Stats.StatCount];
+        public int[] StatPointAllocations { get; set; } = new int[(int) Enums.Stat.StatCount];
 
         //Inventory
         [JsonIgnore]
@@ -330,7 +331,7 @@ namespace Intersect.Server.Entities
 
                     var statsUpdated = false;
                     var statTime = Timing.Global.Milliseconds;
-                    for (var i = 0; i < (int)Stats.StatCount; i++)
+                    for (var i = 0; i < (int)Enums.Stat.StatCount; i++)
                     {
                         statsUpdated |= Stat[i].Update(statTime);
                     }
@@ -921,7 +922,7 @@ namespace Intersect.Server.Entities
         //Returns the amount of time required to traverse 1 tile
         public virtual float GetMovementTime()
         {
-            var time = 1000f / (float)(1 + Math.Log(Stat[(int)Stats.Speed].Value()));
+            var time = 1000f / (float)(1 + Math.Log(Stat[(int)Enums.Stat.Speed].Value()));
             if (Dir > Direction.Right)
             {
                 time *= MathHelper.UnitDiagonalLength;
@@ -1264,7 +1265,7 @@ namespace Intersect.Server.Entities
         {
             return (int) (Options.MaxAttackRate +
                           (Options.MinAttackRate - Options.MaxAttackRate) *
-                          (((float) Options.MaxStatValue - Stat[(int) Stats.Speed].Value()) /
+                          (((float) Options.MaxStatValue - Stat[(int) Enums.Stat.Speed].Value()) /
                            Options.MaxStatValue));
         }
 
@@ -1432,8 +1433,8 @@ namespace Intersect.Server.Entities
 
         public virtual int[] GetStatValues()
         {
-            var stats = new int[(int) Stats.StatCount];
-            for (var i = 0; i < (int) Stats.StatCount; i++)
+            var stats = new int[(int) Enums.Stat.StatCount];
+            for (var i = 0; i < (int) Enums.Stat.StatCount; i++)
             {
                 stats[i] = Stat[i].Value();
             }
@@ -1506,7 +1507,7 @@ namespace Intersect.Server.Entities
             if (parentSpell == null)
             {
                 Attack(
-                    target, parentItem.Damage, 0, (DamageType) parentItem.DamageType, (Stats) parentItem.ScalingStat,
+                    target, parentItem.Damage, 0, (DamageType) parentItem.DamageType, (Stat) parentItem.ScalingStat,
                     parentItem.Scaling, parentItem.CritChance, parentItem.CritMultiplier, null, null, true
                 );
             }
@@ -1652,7 +1653,7 @@ namespace Intersect.Server.Entities
 
             var statBuffTime = -1;
             var expireTime = Timing.Global.Milliseconds + spellBase.Combat.Duration;
-            for (var i = 0; i < (int) Stats.StatCount; i++)
+            for (var i = 0; i < (int) Enums.Stat.StatCount; i++)
             {
                 target.Stat[i]
                     .AddBuff(
@@ -1681,7 +1682,7 @@ namespace Intersect.Server.Entities
             {
                 Attack(
                     target, damageHealth, damageMana, (DamageType) spellBase.Combat.DamageType,
-                    (Stats) spellBase.Combat.ScalingStat, spellBase.Combat.Scaling, spellBase.Combat.CritChance,
+                    (Stat) spellBase.Combat.ScalingStat, spellBase.Combat.Scaling, spellBase.Combat.CritChance,
                     spellBase.Combat.CritMultiplier, deadAnimations, aliveAnimations, false
                 );
             }
@@ -1777,7 +1778,7 @@ namespace Intersect.Server.Entities
         public virtual void TryAttack(Entity target,
             int baseDamage,
             DamageType damageType,
-            Stats scalingStat,
+            Stat scalingStat,
             int scaling,
             int critChance,
             double critMultiplier,
@@ -1857,7 +1858,7 @@ namespace Intersect.Server.Entities
             int baseDamage,
             int secondaryDamage,
             DamageType damageType,
-            Stats scalingStat,
+            Stat scalingStat,
             int scaling,
             int critChance,
             double critMultiplier,

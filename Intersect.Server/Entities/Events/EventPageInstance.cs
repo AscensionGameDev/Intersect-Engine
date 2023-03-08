@@ -311,8 +311,8 @@ namespace Intersect.Server.Entities.Events
 
         public override int[] GetStatValues()
         {
-            var stats = new int[(int)Stats.StatCount];
-            stats[(int)Stats.Speed] = Speed;
+            var stats = new int[(int)Enums.Stat.StatCount];
+            stats[(int)Enums.Stat.Speed] = Speed;
             return stats;
         }
 

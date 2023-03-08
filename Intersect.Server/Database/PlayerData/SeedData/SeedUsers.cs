@@ -121,7 +121,7 @@ namespace Intersect.Server.Database.PlayerData.SeedData
                     player.SetVital(Vitals.Health, 10);
                     player.SetVital(Vitals.Mana, 10);
 
-                    for (var i = 0; i < (int) Stats.StatCount; i++)
+                    for (var i = 0; i < (int) Stat.StatCount; i++)
                     {
                         player.Stat[i].BaseStat = 0;
                     }

@@ -937,8 +937,8 @@ namespace Intersect.Server.Networking
         //EntityStatsPacket
         public static EntityStatsPacket GenerateEntityStatsPacket(Entity en)
         {
-            var stats = new int[(int) Stats.StatCount];
-            for (var i = 0; i < (int) Stats.StatCount; i++)
+            var stats = new int[(int) Stat.StatCount];
+            for (var i = 0; i < (int) Stat.StatCount; i++)
             {
                 stats[i] = en.Stat[i].Value();
             }

@@ -37,12 +37,12 @@ namespace Intersect.Server.Database.PlayerData.Players
         [JsonIgnore]
         public string StatBuffsJson
         {
-            get => DatabaseUtils.SaveIntArray(PreferredStatBuffs, (int) Enums.Stats.StatCount);
-            set => PreferredStatBuffs = DatabaseUtils.LoadIntArray(value, (int) Enums.Stats.StatCount);
+            get => DatabaseUtils.SaveIntArray(PreferredStatBuffs, (int) Enums.Stat.StatCount);
+            set => PreferredStatBuffs = DatabaseUtils.LoadIntArray(value, (int) Enums.Stat.StatCount);
         }
 
         [NotMapped]
-        public int[] PreferredStatBuffs { get; set; } = new int[(int) Stats.StatCount];
+        public int[] PreferredStatBuffs { get; set; } = new int[(int) Stat.StatCount];
 
         [JsonIgnore]
         public Guid PlayerId { get; private set; }

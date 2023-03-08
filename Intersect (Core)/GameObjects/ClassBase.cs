@@ -20,7 +20,7 @@ namespace Intersect.GameObjects
 
         public const long DEFAULT_EXPERIENCE_INCREASE = 50;
 
-        [NotMapped] public int[] BaseStat = new int[(int) Stats.StatCount];
+        [NotMapped] public int[] BaseStat = new int[(int) Stat.StatCount];
 
         [NotMapped] public int[] BaseVital = new int[(int) Vitals.VitalCount];
 
@@ -36,7 +36,7 @@ namespace Intersect.GameObjects
 
         [NotMapped] public List<ClassSprite> Sprites = new List<ClassSprite>();
 
-        [NotMapped] public int[] StatIncrease = new int[(int) Stats.StatCount];
+        [NotMapped] public int[] StatIncrease = new int[(int) Stat.StatCount];
 
         [NotMapped] public int[] VitalIncrease = new int[(int) Vitals.VitalCount];
 
@@ -153,8 +153,8 @@ namespace Intersect.GameObjects
         [JsonIgnore]
         public string JsonBaseStats
         {
-            get => DatabaseUtils.SaveIntArray(BaseStat, (int) Stats.StatCount);
-            set => BaseStat = DatabaseUtils.LoadIntArray(value, (int) Stats.StatCount);
+            get => DatabaseUtils.SaveIntArray(BaseStat, (int) Stat.StatCount);
+            set => BaseStat = DatabaseUtils.LoadIntArray(value, (int) Stat.StatCount);
         }
 
         //Base Vitals
@@ -198,8 +198,8 @@ namespace Intersect.GameObjects
         [Column("StatIncreases")]
         public string StatIncreaseJson
         {
-            get => DatabaseUtils.SaveIntArray(StatIncrease, (int) Stats.StatCount);
-            set => StatIncrease = DatabaseUtils.LoadIntArray(value, (int) Stats.StatCount);
+            get => DatabaseUtils.SaveIntArray(StatIncrease, (int) Stat.StatCount);
+            set => StatIncrease = DatabaseUtils.LoadIntArray(value, (int) Stat.StatCount);
         }
 
         //Vital Increases (per level0

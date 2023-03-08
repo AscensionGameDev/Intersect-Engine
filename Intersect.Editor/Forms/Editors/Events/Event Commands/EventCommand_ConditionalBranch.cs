@@ -164,7 +164,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             lblLevelOrStat.Text = Strings.EventConditional.levelstatitem;
             cmbLevelStat.Items.Clear();
             cmbLevelStat.Items.Add(Strings.EventConditional.level);
-            for (var i = 0; i < (int) Stats.StatCount; i++)
+            for (var i = 0; i < (int) Stat.StatCount; i++)
             {
                 cmbLevelStat.Items.Add(Strings.Combat.stats[i]);
             }
@@ -1486,7 +1486,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             condition.ComparingLevel = cmbLevelStat.SelectedIndex == 0;
             if (!condition.ComparingLevel)
             {
-                condition.Stat = (Stats) (cmbLevelStat.SelectedIndex - 1);
+                condition.Stat = (Stat) (cmbLevelStat.SelectedIndex - 1);
             }
 
             condition.IgnoreBuffs = chkStatIgnoreBuffs.Checked;

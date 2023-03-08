@@ -114,7 +114,7 @@ namespace Intersect.Server.Entities.Combat
 
             Attacker?.Attack(
                 Target, damageHealth, damageMana,
-                (DamageType)SpellBase.Combat.DamageType, (Stats)SpellBase.Combat.ScalingStat,
+                (DamageType)SpellBase.Combat.DamageType, (Enums.Stat)SpellBase.Combat.ScalingStat,
                 SpellBase.Combat.Scaling, SpellBase.Combat.CritChance, SpellBase.Combat.CritMultiplier, deadAnimations,
                 aliveAnimations, false
             );

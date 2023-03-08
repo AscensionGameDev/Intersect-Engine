@@ -122,7 +122,7 @@ namespace Intersect.Editor.Forms.Editors
             cmbAttackAnimation.Items.Add(Strings.General.None);
             cmbAttackAnimation.Items.AddRange(AnimationBase.Names);
             cmbScalingStat.Items.Clear();
-            for (var x = 0; x < (int)Stats.StatCount; x++)
+            for (var x = 0; x < (int)Stat.StatCount; x++)
             {
                 cmbScalingStat.Items.Add(Globals.GetStatName(x));
             }

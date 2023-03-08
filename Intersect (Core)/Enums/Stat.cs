@@ -1,9 +1,7 @@
 namespace Intersect.Enums
 {
-
-    public enum Stats
+    public enum Stat
     {
-
         Attack = 0,
 
         AbilityPower,
@@ -15,7 +13,5 @@ namespace Intersect.Enums
         Speed,
 
         StatCount
-
     }
-
 }

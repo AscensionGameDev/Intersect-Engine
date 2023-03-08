@@ -1499,7 +1499,7 @@ namespace Intersect.Server.Networking
             newChar.SetVital(Vitals.Health, classBase.BaseVital[(int) Vitals.Health]);
             newChar.SetVital(Vitals.Mana, classBase.BaseVital[(int) Vitals.Mana]);
 
-            for (var i = 0; i < (int) Stats.StatCount; i++)
+            for (var i = 0; i < (int) Stat.StatCount; i++)
             {
                 newChar.Stat[i].BaseStat = 0;
             }

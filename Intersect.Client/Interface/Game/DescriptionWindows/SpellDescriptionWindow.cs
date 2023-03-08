@@ -218,7 +218,7 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
             var showDuration = false;
             // Handle Stat Buffs
             var blankAdded = false;
-            for (var i = 0; i < (int)Stats.StatCount; i++)
+            for (var i = 0; i < (int)Stat.StatCount; i++)
             {
                 Tuple<string, string> data = null;
                 if (mSpell.Combat.StatDiff[i] != 0 && mSpell.Combat.PercentageStatDiff[i] != 0)

@@ -112,7 +112,7 @@ namespace Intersect.Editor.Forms.Editors
             cmbOnDeathEventParty.Items.Add(Strings.General.None);
             cmbOnDeathEventParty.Items.AddRange(EventBase.Names);
             cmbScalingStat.Items.Clear();
-            for (var x = 0; x < (int)Stats.StatCount; x++)
+            for (var x = 0; x < (int)Stat.StatCount; x++)
             {
                 cmbScalingStat.Items.Add(Globals.GetStatName(x));
             }
@@ -296,11 +296,11 @@ namespace Intersect.Editor.Forms.Editors
                 cmbOnDeathEventKiller.SelectedIndex = EventBase.ListIndex(mEditorItem.OnDeathEventId) + 1;
                 cmbOnDeathEventParty.SelectedIndex = EventBase.ListIndex(mEditorItem.OnDeathPartyEventId) + 1;
 
-                nudStr.Value = mEditorItem.Stats[(int) Stats.Attack];
-                nudMag.Value = mEditorItem.Stats[(int) Stats.AbilityPower];
-                nudDef.Value = mEditorItem.Stats[(int) Stats.Defense];
-                nudMR.Value = mEditorItem.Stats[(int) Stats.MagicResist];
-                nudSpd.Value = mEditorItem.Stats[(int) Stats.Speed];
+                nudStr.Value = mEditorItem.Stats[(int) Stat.Attack];
+                nudMag.Value = mEditorItem.Stats[(int) Stat.AbilityPower];
+                nudDef.Value = mEditorItem.Stats[(int) Stat.Defense];
+                nudMR.Value = mEditorItem.Stats[(int) Stat.MagicResist];
+                nudSpd.Value = mEditorItem.Stats[(int) Stat.Speed];
                 nudHp.Value = mEditorItem.MaxVital[(int) Vitals.Health];
                 nudMana.Value = mEditorItem.MaxVital[(int) Vitals.Mana];
                 nudExp.Value = mEditorItem.Experience;
@@ -681,27 +681,27 @@ namespace Intersect.Editor.Forms.Editors
 
         private void nudStr_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.Stats[(int) Stats.Attack] = (int) nudStr.Value;
+            mEditorItem.Stats[(int) Stat.Attack] = (int) nudStr.Value;
         }
 
         private void nudMag_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.Stats[(int) Stats.AbilityPower] = (int) nudMag.Value;
+            mEditorItem.Stats[(int) Stat.AbilityPower] = (int) nudMag.Value;
         }
 
         private void nudDef_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.Stats[(int) Stats.Defense] = (int) nudDef.Value;
+            mEditorItem.Stats[(int) Stat.Defense] = (int) nudDef.Value;
         }
 
         private void nudMR_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.Stats[(int) Stats.MagicResist] = (int) nudMR.Value;
+            mEditorItem.Stats[(int) Stat.MagicResist] = (int) nudMR.Value;
         }
 
         private void nudSpd_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.Stats[(int) Stats.Speed] = (int) nudSpd.Value;
+            mEditorItem.Stats[(int) Stat.Speed] = (int) nudSpd.Value;
         }
 
         private void nudDamage_ValueChanged(object sender, EventArgs e)

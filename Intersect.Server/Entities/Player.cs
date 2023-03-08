@@ -29,6 +29,7 @@ using Intersect.Utilities;
 
 using Newtonsoft.Json;
 using MapAttribute = Intersect.Enums.MapAttribute;
+using Stat = Intersect.Enums.Stat;
 
 namespace Intersect.Server.Entities
 {
@@ -1392,7 +1393,7 @@ namespace Intersect.Server.Entities
             if (weapon != null)
             {
                 base.TryAttack(
-                    target, weapon.Damage, (DamageType) weapon.DamageType, (Stats) weapon.ScalingStat, weapon.Scaling,
+                    target, weapon.Damage, (DamageType) weapon.DamageType, (Stat) weapon.ScalingStat, weapon.Scaling,
                     weapon.CritChance, weapon.CritMultiplier, null, null, weapon
                 );
             }
@@ -1402,13 +1403,13 @@ namespace Intersect.Server.Entities
                 if (classBase != null)
                 {
                     base.TryAttack(
-                        target, classBase.Damage, (DamageType) classBase.DamageType, (Stats) classBase.ScalingStat,
+                        target, classBase.Damage, (DamageType) classBase.DamageType, (Stat) classBase.ScalingStat,
                         classBase.Scaling, classBase.CritChance, classBase.CritMultiplier
                     );
                 }
                 else
                 {
-                    base.TryAttack(target, 1, DamageType.Physical, Stats.Attack, 100, 10, 1.5);
+                    base.TryAttack(target, 1, DamageType.Physical, Enums.Stat.Attack, 100, 10, 1.5);
                 }
             }
         }
@@ -1534,11 +1535,11 @@ namespace Intersect.Server.Entities
         }
 
         /// <summary>
-        /// Get all StatBuffs for the relevant <see cref="Stats"/>
+        /// Get all StatBuffs for the relevant <see cref="Stat"/>
         /// </summary>
-        /// <param name="statType">The <see cref="Stats"/> to retrieve the amounts for.</param>
+        /// <param name="statType">The <see cref="Stat"/> to retrieve the amounts for.</param>
         /// <returns>Returns a <see cref="Tuple"/> containing the Flat stats on Item1, and Percentage stats on Item2</returns>
-        public Tuple<int, int> GetItemStatBuffs(Stats statType)
+        public Tuple<int, int> GetItemStatBuffs(Stat statType)
         {
             var flatStats = 0;
             var percentageStats = 0;
@@ -1569,7 +1570,7 @@ namespace Intersect.Server.Entities
 
             if (playerClass != null)
             {
-                for (var i = 0; i < (int) Stats.StatCount; i++)
+                for (var i = 0; i < (int) Enums.Stat.StatCount; i++)
                 {
                     var s = playerClass.BaseStat[i];
 
@@ -1613,7 +1614,7 @@ namespace Intersect.Server.Entities
                         }
 
                         i++;
-                        if (i >= (int) Stats.StatCount)
+                        if (i >= (int) Enums.Stat.StatCount)
                         {
                             i = 0;
                         }
@@ -5390,7 +5391,7 @@ namespace Intersect.Server.Entities
         {
             Hotbar[index].ItemOrSpellId = Guid.Empty;
             Hotbar[index].BagId = Guid.Empty;
-            Hotbar[index].PreferredStatBuffs = new int[(int) Stats.StatCount];
+            Hotbar[index].PreferredStatBuffs = new int[(int) Enums.Stat.StatCount];
             if (type == 0) //Item
             {
                 var item = Items[slot];

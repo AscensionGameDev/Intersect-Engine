@@ -1261,7 +1261,7 @@ namespace Intersect.Server.Database
                     cls.BaseVital[i] = 20;
                 }
 
-                for (var i = 0; i < (int) Stats.StatCount; i++)
+                for (var i = 0; i < (int) Stat.StatCount; i++)
                 {
                     cls.BaseStat[i] = 20;
                 }

@@ -179,7 +179,7 @@ namespace Intersect.Client.Entities
 
         IReadOnlyList<Guid> IEntity.Spells => Spells.Select(x => x.Id).ToList();
 
-        public int[] Stat { get; set; } = new int[(int)Stats.StatCount];
+        public int[] Stat { get; set; } = new int[(int)Enums.Stat.StatCount];
 
         IReadOnlyList<int> IEntity.Stats => Stat.ToList();
 
@@ -523,7 +523,7 @@ namespace Intersect.Client.Entities
         //Returns the amount of time required to traverse 1 tile
         public virtual float GetMovementTime()
         {
-            var time = 1000f / (float)(1 + Math.Log(Stat[(int)Stats.Speed]));
+            var time = 1000f / (float)(1 + Math.Log(Stat[(int)Enums.Stat.Speed]));
             if (Dir > Direction.Right)
             {
                 time *= MathHelper.UnitDiagonalLength;
@@ -886,7 +886,7 @@ namespace Intersect.Client.Entities
             //Otherwise return the legacy attack speed calculation
             return (int)(Options.MaxAttackRate +
                           (Options.MinAttackRate - Options.MaxAttackRate) *
-                          (((float)Options.MaxStatValue - Stat[(int)Stats.Speed]) /
+                          (((float)Options.MaxStatValue - Stat[(int)Enums.Stat.Speed]) /
                            Options.MaxStatValue));
         }
 

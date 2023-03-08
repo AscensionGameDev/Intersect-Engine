@@ -128,7 +128,7 @@ namespace Intersect.GameObjects.Events
 
         public bool ComparingLevel { get; set; }
 
-        public Stats Stat { get; set; }
+        public Stat Stat { get; set; }
 
         public VariableComparators Comparator { get; set; } = VariableComparators.Equal;
 

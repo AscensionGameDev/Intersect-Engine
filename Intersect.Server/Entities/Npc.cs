@@ -16,6 +16,7 @@ using Intersect.Server.Entities.Pathfinding;
 using Intersect.Server.Maps;
 using Intersect.Server.Networking;
 using Intersect.Utilities;
+using Stat = Intersect.Enums.Stat;
 
 namespace Intersect.Server.Entities
 {
@@ -111,10 +112,10 @@ namespace Intersect.Server.Entities
             Base = myBase;
             Despawnable = despawnable;
 
-            for (var i = 0; i < (int) Stats.StatCount; i++)
+            for (var i = 0; i < (int) Enums.Stat.StatCount; i++)
             {
                 BaseStats[i] = myBase.Stats[i];
-                Stat[i] = new Stat((Stats) i, this);
+                Stat[i] = new Combat.Stat((Stat) i, this);
             }
 
             var spellSlot = 0;
@@ -406,7 +407,7 @@ namespace Intersect.Server.Entities
             }
 
             base.TryAttack(
-                target, Base.Damage, (DamageType)Base.DamageType, (Stats)Base.ScalingStat, Base.Scaling,
+                target, Base.Damage, (DamageType)Base.DamageType, (Stat)Base.ScalingStat, Base.Scaling,
                 Base.CritChance, Base.CritMultiplier, deadAnimations, aliveAnimations
             );
 

@@ -206,24 +206,24 @@ namespace Intersect.GameObjects
         [JsonIgnore]
         public string StatDiffJson
         {
-            get => DatabaseUtils.SaveIntArray(StatDiff, (int) Stats.StatCount);
-            set => StatDiff = DatabaseUtils.LoadIntArray(value, (int) Stats.StatCount);
+            get => DatabaseUtils.SaveIntArray(StatDiff, (int) Stat.StatCount);
+            set => StatDiff = DatabaseUtils.LoadIntArray(value, (int) Stat.StatCount);
         }
 
         [NotMapped]
-        public int[] StatDiff { get; set; } = new int[(int) Stats.StatCount];
+        public int[] StatDiff { get; set; } = new int[(int) Stat.StatCount];
 
         //Buff/Debuff Data
         [Column("PercentageStatDiff")]
         [JsonIgnore]
         public string PercentageStatDiffJson
         {
-            get => DatabaseUtils.SaveIntArray(PercentageStatDiff, (int) Stats.StatCount);
-            set => PercentageStatDiff = DatabaseUtils.LoadIntArray(value, (int) Stats.StatCount);
+            get => DatabaseUtils.SaveIntArray(PercentageStatDiff, (int) Stat.StatCount);
+            set => PercentageStatDiff = DatabaseUtils.LoadIntArray(value, (int) Stat.StatCount);
         }
 
         [NotMapped]
-        public int[] PercentageStatDiff { get; set; } = new int[(int) Stats.StatCount];
+        public int[] PercentageStatDiff { get; set; } = new int[(int) Stat.StatCount];
 
         public int Scaling { get; set; } = 0;
 

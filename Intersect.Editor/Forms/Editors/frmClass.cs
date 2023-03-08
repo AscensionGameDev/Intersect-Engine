@@ -152,11 +152,11 @@ namespace Intersect.Editor.Forms.Editors
             {
                 pnlContainer.Show();
                 txtName.Text = mEditorItem.Name;
-                nudAttack.Value = mEditorItem.BaseStat[(int) Stats.Attack];
-                nudMag.Value = mEditorItem.BaseStat[(int) Stats.AbilityPower];
-                nudDef.Value = mEditorItem.BaseStat[(int) Stats.Defense];
-                nudMR.Value = mEditorItem.BaseStat[(int) Stats.MagicResist];
-                nudSpd.Value = mEditorItem.BaseStat[(int) Stats.Speed];
+                nudAttack.Value = mEditorItem.BaseStat[(int) Stat.Attack];
+                nudMag.Value = mEditorItem.BaseStat[(int) Stat.AbilityPower];
+                nudDef.Value = mEditorItem.BaseStat[(int) Stat.Defense];
+                nudMR.Value = mEditorItem.BaseStat[(int) Stat.MagicResist];
+                nudSpd.Value = mEditorItem.BaseStat[(int) Stat.Speed];
                 nudBaseHP.Value = Math.Max(
                     Math.Min(mEditorItem.BaseVital[(int) Vitals.Health], nudBaseHP.Maximum), nudBaseHP.Minimum
                 );
@@ -308,7 +308,7 @@ namespace Intersect.Editor.Forms.Editors
                 GameContentManager.GetOverridesFor(GameContentManager.TextureType.Entity, "attack").ToArray()
             );
             cmbScalingStat.Items.Clear();
-            for (var x = 0; x < ((int)Stats.Speed) + 1; x++)
+            for (var x = 0; x < ((int)Stat.Speed) + 1; x++)
             {
                 cmbScalingStat.Items.Add(Globals.GetStatName(x));
             }
@@ -784,19 +784,19 @@ namespace Intersect.Editor.Forms.Editors
             nudMpIncrease.Value = Math.Min(nudMpIncrease.Maximum, mEditorItem.VitalIncrease[(int) Vitals.Mana]);
 
             nudStrengthIncrease.Value = Math.Min(
-                nudStrengthIncrease.Maximum, mEditorItem.StatIncrease[(int) Stats.Attack]
+                nudStrengthIncrease.Maximum, mEditorItem.StatIncrease[(int) Stat.Attack]
             );
 
-            nudArmorIncrease.Value = Math.Min(nudArmorIncrease.Maximum, mEditorItem.StatIncrease[(int) Stats.Defense]);
+            nudArmorIncrease.Value = Math.Min(nudArmorIncrease.Maximum, mEditorItem.StatIncrease[(int) Stat.Defense]);
             nudMagicIncrease.Value = Math.Min(
-                nudMagicIncrease.Maximum, mEditorItem.StatIncrease[(int) Stats.AbilityPower]
+                nudMagicIncrease.Maximum, mEditorItem.StatIncrease[(int) Stat.AbilityPower]
             );
 
             nudMagicResistIncrease.Value = Math.Min(
-                nudMagicResistIncrease.Maximum, mEditorItem.StatIncrease[(int) Stats.MagicResist]
+                nudMagicResistIncrease.Maximum, mEditorItem.StatIncrease[(int) Stat.MagicResist]
             );
 
-            nudSpeedIncrease.Value = Math.Min(nudSpeedIncrease.Maximum, mEditorItem.StatIncrease[(int) Stats.Speed]);
+            nudSpeedIncrease.Value = Math.Min(nudSpeedIncrease.Maximum, mEditorItem.StatIncrease[(int) Stat.Speed]);
 
             lblHpIncrease.Text = Strings.ClassEditor.hpboost.ToString(
                 rdoStaticIncrease.Checked ? "" : Strings.ClassEditor.boostpercent.ToString()
@@ -970,22 +970,22 @@ namespace Intersect.Editor.Forms.Editors
 
         private void nudStr_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.BaseStat[(int) Stats.Attack] = (int) nudAttack.Value;
+            mEditorItem.BaseStat[(int) Stat.Attack] = (int) nudAttack.Value;
         }
 
         private void nudMag_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.BaseStat[(int) Stats.AbilityPower] = (int) nudMag.Value;
+            mEditorItem.BaseStat[(int) Stat.AbilityPower] = (int) nudMag.Value;
         }
 
         private void nudDef_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.BaseStat[(int) Stats.Defense] = (int) nudDef.Value;
+            mEditorItem.BaseStat[(int) Stat.Defense] = (int) nudDef.Value;
         }
 
         private void nudMR_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.BaseStat[(int) Stats.MagicResist] = (int) nudMR.Value;
+            mEditorItem.BaseStat[(int) Stat.MagicResist] = (int) nudMR.Value;
         }
 
         private void nudPoints_ValueChanged(object sender, EventArgs e)
@@ -995,7 +995,7 @@ namespace Intersect.Editor.Forms.Editors
 
         private void nudSpd_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.BaseStat[(int) Stats.Speed] = (int) nudSpd.Value;
+            mEditorItem.BaseStat[(int) Stat.Speed] = (int) nudSpd.Value;
         }
 
         private void nudLevel_ValueChanged(object sender, EventArgs e)
@@ -1047,31 +1047,31 @@ namespace Intersect.Editor.Forms.Editors
 
         private void nudArmorIncrease_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.StatIncrease[(int) Stats.Defense] = (int) nudArmorIncrease.Value;
+            mEditorItem.StatIncrease[(int) Stat.Defense] = (int) nudArmorIncrease.Value;
             UpdateIncreases();
         }
 
         private void nudMagicResistIncrease_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.StatIncrease[(int) Stats.MagicResist] = (int) nudMagicResistIncrease.Value;
+            mEditorItem.StatIncrease[(int) Stat.MagicResist] = (int) nudMagicResistIncrease.Value;
             UpdateIncreases();
         }
 
         private void nudStrengthIncrease_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.StatIncrease[(int) Stats.Attack] = (int) nudStrengthIncrease.Value;
+            mEditorItem.StatIncrease[(int) Stat.Attack] = (int) nudStrengthIncrease.Value;
             UpdateIncreases();
         }
 
         private void nudMagicIncrease_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.StatIncrease[(int) Stats.AbilityPower] = (int) nudMagicIncrease.Value;
+            mEditorItem.StatIncrease[(int) Stat.AbilityPower] = (int) nudMagicIncrease.Value;
             UpdateIncreases();
         }
 
         private void nudSpeedIncrease_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.StatIncrease[(int) Stats.Speed] = (int) nudSpeedIncrease.Value;
+            mEditorItem.StatIncrease[(int) Stat.Speed] = (int) nudSpeedIncrease.Value;
             UpdateIncreases();
         }
 

@@ -25,7 +25,7 @@ namespace Intersect.GameObjects
 
         [NotMapped] public ConditionLists PlayerFriendConditions = new ConditionLists();
 
-        [NotMapped] public int[] Stats = new int[(int) Enums.Stats.StatCount];
+        [NotMapped] public int[] Stats = new int[(int) Enums.Stat.StatCount];
 
         [NotMapped] public int[] VitalRegen = new int[(int) Vitals.VitalCount];
 
@@ -231,8 +231,8 @@ namespace Intersect.GameObjects
         [JsonIgnore]
         public string JsonStat
         {
-            get => DatabaseUtils.SaveIntArray(Stats, (int) Enums.Stats.StatCount);
-            set => DatabaseUtils.LoadIntArray(ref Stats, value, (int) Enums.Stats.StatCount);
+            get => DatabaseUtils.SaveIntArray(Stats, (int) Enums.Stat.StatCount);
+            set => DatabaseUtils.LoadIntArray(ref Stats, value, (int) Enums.Stat.StatCount);
         }
 
         //Vital Regen %
