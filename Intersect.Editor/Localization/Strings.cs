@@ -482,9 +482,9 @@ namespace Intersect.Editor.Localization
         {
             switch (comparison.Comparator)
             {
-                case StringVariableComparators.Equal:
+                case StringVariableComparator.Equal:
                     return EventConditionDesc.equal.ToString(comparison.Value);
-                case StringVariableComparators.Contains:
+                case StringVariableComparator.Contains:
                     return EventConditionDesc.contains.ToString(comparison.Value);
             }
 

@@ -1021,7 +1021,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 
             var comparison = new StringVariableComparison
             {
-                Comparator = (StringVariableComparators)cmbStringComparitor.SelectedIndex,
+                Comparator = (StringVariableComparator)cmbStringComparitor.SelectedIndex,
                 Value = txtStringValue.Text,
             };
 

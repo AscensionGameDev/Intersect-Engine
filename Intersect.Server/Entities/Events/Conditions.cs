@@ -703,9 +703,9 @@ namespace Intersect.Server.Entities.Events
 
             switch (comparison.Comparator)
             {
-                case StringVariableComparators.Equal:
+                case StringVariableComparator.Equal:
                     return varVal == compareAgainst;
-                case StringVariableComparators.Contains:
+                case StringVariableComparator.Contains:
                     return varVal.Contains(compareAgainst);
             }
 

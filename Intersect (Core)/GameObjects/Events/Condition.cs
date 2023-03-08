@@ -336,7 +336,7 @@ namespace Intersect.GameObjects.Events
     public partial class StringVariableComparison : VariableComparison
     {
 
-        public StringVariableComparators Comparator { get; set; } = StringVariableComparators.Equal;
+        public StringVariableComparator Comparator { get; set; } = StringVariableComparator.Equal;
 
         public string Value { get; set; }
 

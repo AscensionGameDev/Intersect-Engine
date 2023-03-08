@@ -1,6 +1,6 @@
 namespace Intersect.Enums
 {
-    public enum StringVariableComparators
+    public enum StringVariableComparator
     {
         Equal = 0,
 
