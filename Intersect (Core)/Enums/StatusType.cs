@@ -1,9 +1,7 @@
 namespace Intersect.Enums
 {
-
-    public enum StatusTypes
+    public enum StatusType
     {
-
         None = 0,
 
         Silence = 1,
@@ -30,8 +28,6 @@ namespace Intersect.Enums
 
         Taunt = 12,
 
-        Knockback = 13,
-
+        Knockback = 13
     }
-
 }

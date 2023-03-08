@@ -21,9 +21,9 @@ namespace Intersect.Client.Entities
 
         public long TotalDuration { get; set; } = 1;
 
-        public StatusTypes Type { get; set; }
+        public StatusType Type { get; set; }
 
-        public Status(Guid spellId, StatusTypes type, string data, long timeRemaining, long totalDuration)
+        public Status(Guid spellId, StatusType type, string data, long timeRemaining, long totalDuration)
         {
             SpellId = spellId;
             Type = type;

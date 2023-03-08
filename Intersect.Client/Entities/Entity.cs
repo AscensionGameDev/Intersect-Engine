@@ -428,7 +428,7 @@ namespace Intersect.Client.Entities
 
                     Status?.Add(instance);
 
-                    if (instance.Type == StatusTypes.Shield)
+                    if (instance.Type == StatusType.Shield)
                     {
                         instance.Shield = status.VitalShields;
                     }
@@ -904,7 +904,7 @@ namespace Intersect.Client.Entities
 
                 for (var n = 0; n < Status.Count; n++)
                 {
-                    if (Status[n].Type == StatusTypes.Stealth)
+                    if (Status[n].Type == StatusType.Stealth)
                     {
                         return true;
                     }
@@ -1072,12 +1072,12 @@ namespace Intersect.Client.Entities
                 switch (status.Type)
                 {
                     // If the entity is transformed: apply that sprite instead.
-                    case StatusTypes.Transform:
+                    case StatusType.Transform:
                         transformedSprite = sprite = status.Data;
                         break;
 
                     // If entity is stealth, don't render unless the entity is the player or is within their party.
-                    case StatusTypes.Stealth:
+                    case StatusType.Stealth:
                         if (this != Globals.Me && !(this is Player player && Globals.Me.IsInMyParty(player)))
                         {
                             return;
@@ -1603,7 +1603,7 @@ namespace Intersect.Client.Entities
             var shieldSize = 0;
             foreach (var status in Status)
             {
-                if (status.Type == StatusTypes.Shield)
+                if (status.Type == StatusType.Shield)
                 {
                     shieldSize += status.Shield[(int)Vitals.Health];
                 }

@@ -813,11 +813,11 @@ namespace Intersect.Client.Networking
 
                     entity.Status.Add(instance);
 
-                    if (instance.Type == StatusTypes.Stun || instance.Type == StatusTypes.Silence)
+                    if (instance.Type == StatusType.Stun || instance.Type == StatusType.Silence)
                     {
                         entity.CastTime = 0;
                     }
-                    else if (instance.Type == StatusTypes.Shield)
+                    else if (instance.Type == StatusType.Shield)
                     {
                         instance.Shield = status.VitalShields;
                     }
@@ -898,11 +898,11 @@ namespace Intersect.Client.Networking
 
                 en.Status.Add(instance);
 
-                if (instance.Type == StatusTypes.Stun || instance.Type == StatusTypes.Silence)
+                if (instance.Type == StatusType.Stun || instance.Type == StatusType.Silence)
                 {
                     en.CastTime = 0;
                 }
-                else if (instance.Type == StatusTypes.Shield)
+                else if (instance.Type == StatusType.Shield)
                 {
                     instance.Shield = status.VitalShields;
                 }

@@ -1272,7 +1272,7 @@ namespace Intersect.Client.Entities
             //Check for taunt status if so don't allow to change target
             for (var i = 0; i < Status.Count; i++)
             {
-                if (Status[i].Type == StatusTypes.Taunt)
+                if (Status[i].Type == StatusType.Taunt)
                 {
                     return;
                 }
@@ -1677,7 +1677,7 @@ namespace Intersect.Client.Entities
             //Check for taunt status if so don't allow to change target
             for (var i = 0; i < Status.Count; i++)
             {
-                if (Status[i].Type == StatusTypes.Taunt)
+                if (Status[i].Type == StatusType.Taunt)
                 {
                     return false;
                 }
@@ -1783,7 +1783,7 @@ namespace Intersect.Client.Entities
             //Check for taunt status if so don't allow to change target
             for (var i = 0; i < Status.Count; i++)
             {
-                if (Status[i].Type == StatusTypes.Taunt && !force)
+                if (Status[i].Type == StatusType.Taunt && !force)
                 {
                     return false;
                 }
@@ -1955,9 +1955,9 @@ namespace Intersect.Client.Entities
             //check if player is stunned or snared, if so don't let them move.
             for (var n = 0; n < Status.Count; n++)
             {
-                if (Status[n].Type == StatusTypes.Stun ||
-                    Status[n].Type == StatusTypes.Snare ||
-                    Status[n].Type == StatusTypes.Sleep)
+                if (Status[n].Type == StatusType.Stun ||
+                    Status[n].Type == StatusType.Snare ||
+                    Status[n].Type == StatusType.Sleep)
                 {
                     return;
                 }
@@ -2176,7 +2176,7 @@ namespace Intersect.Client.Entities
             //check if player is stunned or snared, if so don't let them move.
             for (var n = 0; n < Status.Count; n++)
             {
-                if (Status[n].Type == StatusTypes.Transform)
+                if (Status[n].Type == StatusType.Transform)
                 {
                     return;
                 }
@@ -2252,7 +2252,7 @@ namespace Intersect.Client.Entities
             for (var n = 0; n < Status.Count; n++)
             {
                 //If unit is stealthed, don't render unless the entity is the player.
-                if (Status[n].Type == StatusTypes.Stealth)
+                if (Status[n].Type == StatusType.Stealth)
                 {
                     if (this != Globals.Me && !(this is Player player && Globals.Me.IsInMyParty(player)))
                     {

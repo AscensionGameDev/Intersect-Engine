@@ -2835,14 +2835,14 @@ namespace Intersect.Server.Entities
                 //Check if the user is silenced or stunned
                 foreach (var status in CachedStatuses)
                 {
-                    if (status.Type == StatusTypes.Stun)
+                    if (status.Type == StatusType.Stun)
                     {
                         PacketSender.SendChatMsg(this, Strings.Items.stunned, ChatMessageType.Error);
 
                         return;
                     }
 
-                    if (status.Type == StatusTypes.Sleep)
+                    if (status.Type == StatusType.Sleep)
                     {
                         PacketSender.SendChatMsg(this, Strings.Items.sleep, ChatMessageType.Error);
 
@@ -5057,7 +5057,7 @@ namespace Intersect.Server.Entities
                 //Remove stealth status.
                 foreach (var status in CachedStatuses)
                 {
-                    if (status.Type == StatusTypes.Stealth)
+                    if (status.Type == StatusType.Stealth)
                     {
                         status.RemoveStatus();
                     }

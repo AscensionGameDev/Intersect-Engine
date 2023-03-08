@@ -529,7 +529,7 @@ namespace Intersect.Editor.Forms.Editors
 
         private void cmbExtraEffect_SelectedIndexChanged(object sender, EventArgs e)
         {
-            mEditorItem.Combat.Effect = (StatusTypes) cmbExtraEffect.SelectedIndex;
+            mEditorItem.Combat.Effect = (StatusType) cmbExtraEffect.SelectedIndex;
 
             lblSprite.Visible = false;
             cmbTransform.Visible = false;

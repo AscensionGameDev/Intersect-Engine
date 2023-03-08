@@ -266,7 +266,7 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
             }
 
             // Handle effect display.
-            if (mSpell.Combat.Effect != StatusTypes.None)
+            if (mSpell.Combat.Effect != StatusType.None)
             {
                 showDuration = true;
                 rows.AddKeyValueRow(string.Empty, string.Empty);

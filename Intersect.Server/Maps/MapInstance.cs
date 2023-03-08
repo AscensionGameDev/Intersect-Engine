@@ -1267,7 +1267,7 @@ namespace Intersect.Server.Maps
 
                 foreach (var status in en.Value.CachedStatuses)
                 {
-                    if (status.Type == StatusTypes.Shield)
+                    if (status.Type == StatusType.Shield)
                     {
                         statusUpdates.Add(en.Value);
                     }

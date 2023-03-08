@@ -30,7 +30,7 @@ namespace Intersect.GameObjects
         [NotMapped] public int[] VitalRegen = new int[(int) Vitals.VitalCount];
 
         [NotMapped]
-        public List<StatusTypes> Immunities = new List<StatusTypes>();
+        public List<StatusType> Immunities = new List<StatusType>();
 
         [JsonIgnore]
         [Column("Immunities")]
@@ -39,7 +39,7 @@ namespace Intersect.GameObjects
             get => JsonConvert.SerializeObject(Immunities);
             set
             {
-                Immunities = JsonConvert.DeserializeObject<List<StatusTypes>>(value ?? "") ?? new List<StatusTypes>();
+                Immunities = JsonConvert.DeserializeObject<List<StatusType>>(value ?? "") ?? new List<StatusType>();
             }
         }
 

@@ -38,7 +38,7 @@ namespace Intersect.Server.Entities.Combat
             {
                 foreach (var status in Target.CachedStatuses)
                 {
-                    if (status.Type == StatusTypes.Cleanse)
+                    if (status.Type == StatusType.Cleanse)
                     {
                         return;
                     }

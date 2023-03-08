@@ -677,9 +677,9 @@ namespace Intersect.Server.Networking
             //check if player is stunned or snared, if so don't let them move.
             foreach (var status in player.CachedStatuses)
             {
-                if (status.Type == StatusTypes.Stun ||
-                    status.Type == StatusTypes.Snare ||
-                    status.Type == StatusTypes.Sleep)
+                if (status.Type == StatusType.Stun ||
+                    status.Type == StatusType.Snare ||
+                    status.Type == StatusType.Sleep)
                 {
                     return;
                 }
@@ -1037,14 +1037,14 @@ namespace Intersect.Server.Networking
             var statuses = client.Entity.Statuses.Values.ToArray();
             foreach (var status in statuses)
             {
-                if (status.Type == StatusTypes.Stun)
+                if (status.Type == StatusType.Stun)
                 {
                     PacketSender.SendChatMsg(player, Strings.Combat.stunblocking, ChatMessageType.Combat);
 
                     return;
                 }
 
-                if (status.Type == StatusTypes.Sleep)
+                if (status.Type == StatusType.Sleep)
                 {
                     PacketSender.SendChatMsg(player, Strings.Combat.sleepblocking, ChatMessageType.Combat);
 
@@ -1107,7 +1107,7 @@ namespace Intersect.Server.Networking
             //check if player is blinded or stunned or in stealth mode
             foreach (var status in player.CachedStatuses)
             {
-                if (status.Type == StatusTypes.Stun)
+                if (status.Type == StatusType.Stun)
                 {
                     if (Options.Combat.EnableCombatChatMessages)
                     {
@@ -1117,7 +1117,7 @@ namespace Intersect.Server.Networking
                     return;
                 }
 
-                if (status.Type == StatusTypes.Sleep)
+                if (status.Type == StatusType.Sleep)
                 {
                     if (Options.Combat.EnableCombatChatMessages)
                     {
@@ -1127,7 +1127,7 @@ namespace Intersect.Server.Networking
                     return;
                 }
 
-                if (status.Type == StatusTypes.Blind)
+                if (status.Type == StatusType.Blind)
                 {
                     PacketSender.SendActionMsg(player, Strings.Combat.miss, CustomColors.Combat.Missed);
 
@@ -1135,7 +1135,7 @@ namespace Intersect.Server.Networking
                 }
 
                 //Remove stealth status.
-                if (status.Type == StatusTypes.Stealth)
+                if (status.Type == StatusType.Stealth)
                 {
                     status.RemoveStatus();
                 }
