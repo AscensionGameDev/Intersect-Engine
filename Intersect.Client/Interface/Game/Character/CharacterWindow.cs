@@ -449,7 +449,7 @@ namespace Intersect.Client.Interface.Game.Character
             }
 
             //Getting extra buffs
-            if (item.Effects.Find(effect => effect.Type != EffectType.None && effect.Percentage > 0) != default)
+            if (item.Effects.Find(effect => effect.Type != ItemEffect.None && effect.Percentage > 0) != default)
             {
                 foreach(var effect in item.Effects)
                 {
@@ -460,32 +460,32 @@ namespace Intersect.Client.Interface.Game.Character
 
                     switch (effect.Type)
                     {
-                        case EffectType.CooldownReduction:
+                        case ItemEffect.CooldownReduction:
                             CooldownAmount += effect.Percentage;
                             mCooldownReduction?.SetText(Strings.Character.CooldownReduction.ToString(CooldownAmount));
 
                             break;
-                        case EffectType.Lifesteal:
+                        case ItemEffect.Lifesteal:
                             LifeStealAmount += effect.Percentage;
                             mLifeSteal?.SetText(Strings.Character.Lifesteal.ToString(LifeStealAmount));
 
                             break;
-                        case EffectType.Tenacity:
+                        case ItemEffect.Tenacity:
                             TenacityAmount += effect.Percentage;
                             mTenacity?.SetText(Strings.Character.Tenacity.ToString(TenacityAmount));
 
                             break;
-                        case EffectType.Luck:
+                        case ItemEffect.Luck:
                             LuckAmount += effect.Percentage;
                             mLuck?.SetText(Strings.Character.Luck.ToString(LuckAmount));
 
                             break;
-                        case EffectType.EXP:
+                        case ItemEffect.EXP:
                             ExtraExpAmount += effect.Percentage;
                             mExtraExp?.SetText(Strings.Character.ExtraExp.ToString(ExtraExpAmount));
 
                             break;
-                        case EffectType.Manasteal:
+                        case ItemEffect.Manasteal:
                             ManaStealAmount += effect.Percentage;
                             mManaSteal?.SetText(Strings.Character.Manasteal.ToString(ManaStealAmount));
 

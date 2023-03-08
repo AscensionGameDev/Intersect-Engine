@@ -1,9 +1,7 @@
 namespace Intersect.Enums
 {
-
-    public enum EffectType : byte
+    public enum ItemEffect : byte
     {
-
         None = 0,
 
         CooldownReduction = 1,
@@ -17,7 +15,5 @@ namespace Intersect.Enums
         EXP = 5,
 
         Manasteal = 6,
-
     }
-
 }

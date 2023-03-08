@@ -11,7 +11,7 @@ namespace Intersect.Client.Framework.Entities
         long TimeRecevied { get; set; }
         long TimeRemaining { get; set; }
         long TotalDuration { get; set; }
-        StatusType Type { get; set; }
+        SpellEffect Type { get; set; }
 
         bool IsActive { get; }
         long RemainingMs { get; }

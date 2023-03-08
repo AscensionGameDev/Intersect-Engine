@@ -337,18 +337,18 @@ namespace Intersect.GameObjects
             set => Effects = JsonConvert.DeserializeObject<List<EffectData>>(value ?? "") ?? new List<EffectData>();
         }
 
-        public int GetEffectPercentage(EffectType type)
+        public int GetEffectPercentage(ItemEffect type)
         {
             return Effects.Find(effect => effect.Type == type)?.Percentage ?? 0;
         }
 
         [NotMapped, JsonIgnore]
-        public EffectType[] EffectsEnabled
+        public ItemEffect[] EffectsEnabled
         {
             get => Effects.Select(effect => effect.Type).ToArray();
         }
 
-        public void SetEffectOfType(EffectType type, int value)
+        public void SetEffectOfType(ItemEffect type, int value)
         {
             var effectToEdit = Effects.Find(effect => effect.Type == type);
             if (effectToEdit == default)
@@ -417,13 +417,13 @@ namespace Intersect.GameObjects
             Percentage = default;
         }
 
-        public EffectData(EffectType type, int percentage)
+        public EffectData(ItemEffect type, int percentage)
         {
             Type = type;
             Percentage = percentage;
         }
 
-        public EffectType Type { get; set; }
+        public ItemEffect Type { get; set; }
 
         public int Percentage { get; set; }
 

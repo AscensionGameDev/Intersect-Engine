@@ -1,6 +1,6 @@
 namespace Intersect.Enums
 {
-    public enum StatusType
+    public enum SpellEffect
     {
         None = 0,
 

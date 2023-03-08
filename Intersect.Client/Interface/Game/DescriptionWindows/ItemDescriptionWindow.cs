@@ -347,7 +347,7 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
             // Bonus Effect
             foreach(var effect in mItem.Effects)
             {
-                if (effect.Type != EffectType.None && effect.Percentage != 0)
+                if (effect.Type != ItemEffect.None && effect.Percentage != 0)
                 {
                     rows.AddKeyValueRow(Strings.ItemDescription.BonusEffects[(int)effect.Type], Strings.ItemDescription.Percentage.ToString(effect.Percentage));
                 }

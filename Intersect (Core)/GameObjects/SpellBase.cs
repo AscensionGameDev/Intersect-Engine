@@ -237,7 +237,7 @@ namespace Intersect.GameObjects
 
         public int Duration { get; set; }
 
-        public StatusType Effect { get; set; }
+        public SpellEffect Effect { get; set; }
 
         public string TransformSprite { get; set; }
 

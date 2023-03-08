@@ -15,7 +15,7 @@ namespace Intersect.Network.Packets.Server
 
         public StatusPacket(
             Guid spellId,
-            StatusType type,
+            SpellEffect type,
             string transformSprite,
             long timeRemaining,
             long totalDuration,
@@ -34,7 +34,7 @@ namespace Intersect.Network.Packets.Server
         public Guid SpellId { get; set; }
 
         [Key(1)]
-        public StatusType Type { get; set; }
+        public SpellEffect Type { get; set; }
 
         [Key(2)]
         public string TransformSprite { get; set; }
