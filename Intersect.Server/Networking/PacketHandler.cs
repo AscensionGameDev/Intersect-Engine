@@ -3264,11 +3264,11 @@ namespace Intersect.Server.Networking
             var mapId = Guid.Empty;
             switch (packet.UpdateType)
             {
-                case MapListUpdates.MoveItem:
+                case MapListUpdate.MoveItem:
                     MapList.List.HandleMove(packet.TargetType, packet.TargetId, packet.ParentType, packet.ParentId);
                     break;
 
-                case MapListUpdates.AddFolder:
+                case MapListUpdate.AddFolder:
                     if (packet.ParentId == Guid.Empty)
                     {
                         MapList.List.AddFolder(Strings.Mapping.newfolder);
@@ -3301,7 +3301,7 @@ namespace Intersect.Server.Networking
 
                     break;
 
-                case MapListUpdates.Rename:
+                case MapListUpdate.Rename:
                     if (packet.TargetType == 0)
                     {
                         parent = MapList.List.FindFolder(packet.TargetId);
@@ -3319,7 +3319,7 @@ namespace Intersect.Server.Networking
 
                     break;
 
-                case MapListUpdates.Delete:
+                case MapListUpdate.Delete:
                     if (packet.TargetType == 0)
                     {
                         MapList.List.DeleteFolder(packet.TargetId);
