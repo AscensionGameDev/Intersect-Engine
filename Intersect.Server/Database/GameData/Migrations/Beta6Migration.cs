@@ -16,6 +16,7 @@ using MySql.Data.MySqlClient;
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using MapAttribute = Intersect.GameObjects.Maps.MapAttribute;
 
 namespace Intersect.Server.Database.GameData.Migrations
 {

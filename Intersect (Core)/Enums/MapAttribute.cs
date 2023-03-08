@@ -1,7 +1,6 @@
 namespace Intersect.Enums
 {
-
-    public enum MapAttributes : byte
+    public enum MapAttribute : byte
     {
         Walkable = 0,
 
@@ -26,7 +25,5 @@ namespace Intersect.Enums
         Slide,
 
         Critter
-
     }
-
 }

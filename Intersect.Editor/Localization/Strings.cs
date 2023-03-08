@@ -873,18 +873,18 @@ namespace Intersect.Editor.Localization
         {
             public static Dictionary<int, LocalizedString> AttributeTypes = new Dictionary<int, LocalizedString>
             {
-                {(int) MapAttributes.Animation, @"Map Animation" },
-                {(int) MapAttributes.Blocked, @"Blocked" },
-                {(int) MapAttributes.Critter, @"Critter" },
-                {(int) MapAttributes.GrappleStone, @"Grapple Stone" },
-                {(int) MapAttributes.Item, @"Item Spawn" },
-                {(int) MapAttributes.NpcAvoid, @"Npc Avoid" },
-                {(int) MapAttributes.Resource, @"Resource Spawn" },
-                {(int) MapAttributes.Slide, @"Slide" },
-                {(int) MapAttributes.Sound, @"Map Sound" },
-                {(int) MapAttributes.Walkable, @"Walkable" },
-                {(int) MapAttributes.Warp, @"Warp" },
-                {(int) MapAttributes.ZDimension, @"Z-Dimension" },
+                {(int) MapAttribute.Animation, @"Map Animation" },
+                {(int) MapAttribute.Blocked, @"Blocked" },
+                {(int) MapAttribute.Critter, @"Critter" },
+                {(int) MapAttribute.GrappleStone, @"Grapple Stone" },
+                {(int) MapAttribute.Item, @"Item Spawn" },
+                {(int) MapAttribute.NpcAvoid, @"Npc Avoid" },
+                {(int) MapAttribute.Resource, @"Resource Spawn" },
+                {(int) MapAttribute.Slide, @"Slide" },
+                {(int) MapAttribute.Sound, @"Map Sound" },
+                {(int) MapAttribute.Walkable, @"Walkable" },
+                {(int) MapAttribute.Warp, @"Warp" },
+                {(int) MapAttribute.ZDimension, @"Z-Dimension" },
             };
 
             public static string FormatSpawnLevel(int level)

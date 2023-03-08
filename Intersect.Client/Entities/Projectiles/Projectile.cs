@@ -6,6 +6,7 @@ using Intersect.GameObjects;
 using Intersect.GameObjects.Maps;
 using Intersect.Network.Packets.Server;
 using Intersect.Utilities;
+using MapAttribute = Intersect.Enums.MapAttribute;
 
 namespace Intersect.Client.Entities.Projectiles
 {
@@ -419,7 +420,7 @@ namespace Intersect.Client.Entities.Projectiles
                             //Check for Z-Dimension
                             if (newMap.Attributes[Spawns[i].X, Spawns[i].Y] != null)
                             {
-                                if (newMap.Attributes[Spawns[i].X, Spawns[i].Y].Type == MapAttributes.ZDimension)
+                                if (newMap.Attributes[Spawns[i].X, Spawns[i].Y].Type == MapAttribute.ZDimension)
                                 {
                                     if (((MapZDimensionAttribute) newMap.Attributes[Spawns[i].X, Spawns[i].Y])
                                         .GatewayTo >

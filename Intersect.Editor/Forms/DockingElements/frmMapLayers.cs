@@ -18,6 +18,7 @@ using Intersect.Utilities;
 using Microsoft.Xna.Framework.Graphics;
 
 using WeifenLuo.WinFormsUI.Docking;
+using MapAttribute = Intersect.Enums.MapAttribute;
 
 namespace Intersect.Editor.Forms.DockingElements
 {
@@ -574,142 +575,142 @@ namespace Intersect.Editor.Forms.DockingElements
         {
             if (rbBlocked.Checked == true)
             {
-                return (int) MapAttributes.Blocked;
+                return (int) MapAttribute.Blocked;
             }
             else if (rbItem.Checked == true)
             {
-                return (int) MapAttributes.Item;
+                return (int) MapAttribute.Item;
             }
             else if (rbZDimension.Checked == true)
             {
-                return (int) MapAttributes.ZDimension;
+                return (int) MapAttribute.ZDimension;
             }
             else if (rbNPCAvoid.Checked == true)
             {
-                return (int) MapAttributes.NpcAvoid;
+                return (int) MapAttribute.NpcAvoid;
             }
             else if (rbWarp.Checked == true)
             {
-                return (int) MapAttributes.Warp;
+                return (int) MapAttribute.Warp;
             }
             else if (rbSound.Checked == true)
             {
-                return (int) MapAttributes.Sound;
+                return (int) MapAttribute.Sound;
             }
             else if (rbResource.Checked == true)
             {
-                return (int) MapAttributes.Resource;
+                return (int) MapAttribute.Resource;
             }
             else if (rbAnimation.Checked == true)
             {
-                return (int) MapAttributes.Animation;
+                return (int) MapAttribute.Animation;
             }
             else if (rbGrappleStone.Checked == true)
             {
-                return (int) MapAttributes.GrappleStone;
+                return (int) MapAttribute.GrappleStone;
             }
             else if (rbSlide.Checked == true)
             {
-                return (int) MapAttributes.Slide;
+                return (int) MapAttribute.Slide;
             }
             else if (rbCritter.Checked == true)
             {
-                return (int) MapAttributes.Critter;
+                return (int) MapAttribute.Critter;
             }
 
-            return (int) MapAttributes.Walkable;
+            return (int) MapAttribute.Walkable;
         }
 
-        private MapAttributes SelectedMapAttributeType
+        private MapAttribute SelectedMapAttributeType
         {
             get
             {
                 if (rbBlocked.Checked)
                 {
-                    return MapAttributes.Blocked;
+                    return MapAttribute.Blocked;
                 }
 
                 if (rbItem.Checked)
                 {
-                    return MapAttributes.Item;
+                    return MapAttribute.Item;
                 }
 
                 if (rbZDimension.Checked)
                 {
-                    return MapAttributes.ZDimension;
+                    return MapAttribute.ZDimension;
                 }
 
                 if (rbNPCAvoid.Checked)
                 {
-                    return MapAttributes.NpcAvoid;
+                    return MapAttribute.NpcAvoid;
                 }
 
                 if (rbWarp.Checked)
                 {
-                    return MapAttributes.Warp;
+                    return MapAttribute.Warp;
                 }
 
                 if (rbSound.Checked)
                 {
-                    return MapAttributes.Sound;
+                    return MapAttribute.Sound;
                 }
 
                 if (rbResource.Checked)
                 {
-                    return MapAttributes.Resource;
+                    return MapAttribute.Resource;
                 }
 
                 if (rbAnimation.Checked)
                 {
-                    return MapAttributes.Animation;
+                    return MapAttribute.Animation;
                 }
 
                 if (rbGrappleStone.Checked)
                 {
-                    return MapAttributes.GrappleStone;
+                    return MapAttribute.GrappleStone;
                 }
 
                 if (rbSlide.Checked)
                 {
-                    return MapAttributes.Slide;
+                    return MapAttribute.Slide;
                 }
 
                 if (rbCritter.Checked)
                 {
-                    return MapAttributes.Critter;
+                    return MapAttribute.Critter;
                 }
 
-                return (MapAttributes) byte.MaxValue;
+                return (MapAttribute) byte.MaxValue;
             }
         }
 
         [Obsolete("The entire switch statement should be implemented as a parameterized CreateAttribute().")]
-        public MapAttribute CreateAttribute()
+        public GameObjects.Maps.MapAttribute CreateAttribute()
         {
             var attributeType = SelectedMapAttributeType;
-            var attribute = MapAttribute.CreateAttribute(attributeType);
+            var attribute = GameObjects.Maps.MapAttribute.CreateAttribute(attributeType);
             switch (SelectedMapAttributeType)
             {
-                case MapAttributes.Walkable:
-                case MapAttributes.Blocked:
-                case MapAttributes.GrappleStone:
-                case MapAttributes.NpcAvoid:
+                case MapAttribute.Walkable:
+                case MapAttribute.Blocked:
+                case MapAttribute.GrappleStone:
+                case MapAttribute.NpcAvoid:
                     break;
 
-                case MapAttributes.Item:
+                case MapAttribute.Item:
                     var itemAttribute = attribute as MapItemAttribute;
                     itemAttribute.ItemId = ItemBase.IdFromList(cmbItemAttribute.SelectedIndex);
                     itemAttribute.Quantity = (int)nudItemQuantity.Value;
                     itemAttribute.RespawnTime = (long)nudItemRespawnTime.Value;
                     break;
 
-                case MapAttributes.ZDimension:
+                case MapAttribute.ZDimension:
                     var zDimensionAttribute = attribute as MapZDimensionAttribute;
                     zDimensionAttribute.GatewayTo = GetEditorDimensionGateway();
                     zDimensionAttribute.BlockedLevel = GetEditorDimensionBlock();
                     break;
 
-                case MapAttributes.Warp:
+                case MapAttribute.Warp:
                     var warpAttribute = attribute as MapWarpAttribute;
                     warpAttribute.MapId = MapList.OrderedMaps[cmbWarpMap.SelectedIndex].MapId;
                     warpAttribute.X = (byte)nudWarpX.Value;
@@ -720,31 +721,31 @@ namespace Intersect.Editor.Forms.DockingElements
                     warpAttribute.WarpSound = TextUtils.SanitizeNone(cmbWarpSound.Text);
                     break;
 
-                case MapAttributes.Sound:
+                case MapAttribute.Sound:
                     var soundAttribute = attribute as MapSoundAttribute;
                     soundAttribute.Distance = (byte)nudSoundDistance.Value;
                     soundAttribute.File = TextUtils.SanitizeNone(cmbMapAttributeSound.Text);
                     soundAttribute.LoopInterval = (int)nudSoundLoopInterval.Value;
                     break;
 
-                case MapAttributes.Resource:
+                case MapAttribute.Resource:
                     var resourceAttribute = attribute as MapResourceAttribute;
                     resourceAttribute.ResourceId = ResourceBase.IdFromList(cmbResourceAttribute.SelectedIndex);
                     resourceAttribute.SpawnLevel = (byte)(rbLevel1.Checked ? 0 : 1);
                     break;
 
-                case MapAttributes.Animation:
+                case MapAttribute.Animation:
                     var animationAttribute = attribute as MapAnimationAttribute;
                     animationAttribute.AnimationId = AnimationBase.IdFromList(cmbAnimationAttribute.SelectedIndex);
                     animationAttribute.IsBlock = chkAnimationBlock.Checked;
                     break;
 
-                case MapAttributes.Slide:
+                case MapAttribute.Slide:
                     var slideAttribute = attribute as MapSlideAttribute;
                     slideAttribute.Direction = (byte)cmbSlideDir.SelectedIndex;
                     break;
 
-                case MapAttributes.Critter:
+                case MapAttribute.Critter:
                     var critterAttribute = attribute as MapCritterAttribute;
                     critterAttribute.Sprite = cmbCritterSprite.Text;
                     critterAttribute.AnimationId = AnimationBase.IdFromList(cmbCritterAnimation.SelectedIndex - 1);
@@ -764,7 +765,7 @@ namespace Intersect.Editor.Forms.DockingElements
             return attribute;
         }
 
-        public MapAttribute PlaceAttribute(MapBase mapDescriptor, int x, int y, MapAttribute attribute = null)
+        public GameObjects.Maps.MapAttribute PlaceAttribute(MapBase mapDescriptor, int x, int y, GameObjects.Maps.MapAttribute attribute = null)
         {
             if (attribute == null)
             {
@@ -778,7 +779,7 @@ namespace Intersect.Editor.Forms.DockingElements
 
         public bool RemoveAttribute(MapBase tmpMap, int x, int y)
         {
-            if (tmpMap.Attributes[x, y] != null && tmpMap.Attributes[x, y].Type != MapAttributes.Walkable)
+            if (tmpMap.Attributes[x, y] != null && tmpMap.Attributes[x, y].Type != MapAttribute.Walkable)
             {
                 tmpMap.Attributes[x, y] = null;
 

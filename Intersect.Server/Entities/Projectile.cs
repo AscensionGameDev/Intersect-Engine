@@ -7,6 +7,7 @@ using Intersect.Network.Packets.Server;
 using Intersect.Server.Entities.Combat;
 using Intersect.Server.Maps;
 using Intersect.Utilities;
+using MapAttribute = Intersect.Enums.MapAttribute;
 
 namespace Intersect.Server.Entities
 {
@@ -283,7 +284,7 @@ namespace Intersect.Server.Entities
                 //Check for Z-Dimension
                 if (!spawn.ProjectileBase.IgnoreZDimension)
                 {
-                    if (attribute.Type == MapAttributes.ZDimension)
+                    if (attribute.Type == MapAttribute.ZDimension)
                     {
                         if (((MapZDimensionAttribute) attribute).GatewayTo > 0)
                         {
@@ -293,7 +294,7 @@ namespace Intersect.Server.Entities
                 }
 
                 //Check for grapplehooks.
-                if (attribute.Type == MapAttributes.GrappleStone &&
+                if (attribute.Type == MapAttribute.GrappleStone &&
                     Base.GrappleHookOptions.Contains(GrappleOption.MapAttribute) &&
                     !spawn.Parent.HasGrappled &&
                     (spawn.X != Owner.X || spawn.Y != Owner.Y))
@@ -317,7 +318,7 @@ namespace Intersect.Server.Entities
                 }
 
                 if (!spawn.ProjectileBase.IgnoreMapBlocks &&
-                    (attribute.Type == MapAttributes.Blocked || attribute.Type == MapAttributes.Animation && ((MapAnimationAttribute)attribute).IsBlock))
+                    (attribute.Type == MapAttribute.Blocked || attribute.Type == MapAttribute.Animation && ((MapAnimationAttribute)attribute).IsBlock))
                 {
                     killSpawn = true;
                 }

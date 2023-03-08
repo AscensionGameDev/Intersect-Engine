@@ -14,6 +14,7 @@ using Intersect.Server.Networking;
 using Intersect.Utilities;
 using Intersect.Server.Entities;
 using Intersect.Server.Classes.Maps;
+using MapAttribute = Intersect.Enums.MapAttribute;
 
 namespace Intersect.Server.Maps
 {
@@ -465,7 +466,7 @@ namespace Intersect.Server.Maps
                 {
                     x = (byte)Randomization.Next(0, Options.MapWidth);
                     y = (byte)Randomization.Next(0, Options.MapHeight);
-                    if (mMapController.Attributes[x, y] == null || mMapController.Attributes[x, y].Type == (int)MapAttributes.Walkable)
+                    if (mMapController.Attributes[x, y] == null || mMapController.Attributes[x, y].Type == (int)MapAttribute.Walkable)
                     {
                         break;
                     }
@@ -936,11 +937,11 @@ namespace Intersect.Server.Maps
                 {
                     if (mMapController.Attributes[x, y] != null)
                     {
-                        if (mMapController.Attributes[x, y].Type == MapAttributes.Item)
+                        if (mMapController.Attributes[x, y].Type == MapAttribute.Item)
                         {
                             SpawnAttributeItem(x, y);
                         }
-                        else if (mMapController.Attributes[x, y].Type == MapAttributes.Resource)
+                        else if (mMapController.Attributes[x, y].Type == MapAttribute.Resource)
                         {
                             SpawnAttributeResource(x, y);
                         }
@@ -1111,8 +1112,8 @@ namespace Intersect.Server.Maps
             }
 
             //Check if tile is a blocked attribute
-            if (mMapController.Attributes[x, y] != null && (mMapController.Attributes[x, y].Type == MapAttributes.Blocked ||
-                mMapController.Attributes[x, y].Type == MapAttributes.Animation && ((MapAnimationAttribute)mMapController.Attributes[x, y]).IsBlock))
+            if (mMapController.Attributes[x, y] != null && (mMapController.Attributes[x, y].Type == MapAttribute.Blocked ||
+                mMapController.Attributes[x, y].Type == MapAttribute.Animation && ((MapAnimationAttribute)mMapController.Attributes[x, y]).IsBlock))
             {
                 return true;
             }
@@ -1177,14 +1178,14 @@ namespace Intersect.Server.Maps
                 {
                     if (mMapController.Attributes[x, y] != null)
                     {
-                        if (mMapController.Attributes[x, y].Type == MapAttributes.Blocked ||
-                            mMapController.Attributes[x, y].Type == MapAttributes.GrappleStone ||
-                            mMapController.Attributes[x, y].Type == MapAttributes.Animation && ((MapAnimationAttribute)mMapController.Attributes[x, y]).IsBlock)
+                        if (mMapController.Attributes[x, y].Type == MapAttribute.Blocked ||
+                            mMapController.Attributes[x, y].Type == MapAttribute.GrappleStone ||
+                            mMapController.Attributes[x, y].Type == MapAttribute.Animation && ((MapAnimationAttribute)mMapController.Attributes[x, y]).IsBlock)
                         {
                             blocks.Add(new BytePoint(x, y));
                             npcBlocks.Add(new BytePoint(x, y));
                         }
-                        else if (mMapController.Attributes[x, y].Type == MapAttributes.NpcAvoid)
+                        else if (mMapController.Attributes[x, y].Type == MapAttribute.NpcAvoid)
                         {
                             npcBlocks.Add(new BytePoint(x, y));
                         }

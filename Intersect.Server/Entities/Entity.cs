@@ -20,6 +20,7 @@ using Intersect.Server.Maps;
 using Intersect.Server.Networking;
 using Intersect.Utilities;
 using Newtonsoft.Json;
+using MapAttribute = Intersect.Enums.MapAttribute;
 
 namespace Intersect.Server.Entities
 {
@@ -449,24 +450,24 @@ namespace Intersect.Server.Entities
                 var tileAttribute = mapController.Attributes[tileX, tileY];
                 if (tileAttribute != null)
                 {
-                    if (tileAttribute.Type == MapAttributes.Blocked || (tileAttribute.Type == MapAttributes.Animation && ((MapAnimationAttribute)tileAttribute).IsBlock))
+                    if (tileAttribute.Type == MapAttribute.Blocked || (tileAttribute.Type == MapAttribute.Animation && ((MapAnimationAttribute)tileAttribute).IsBlock))
                     {
                         return -2;
                     }
 
-                    if (tileAttribute.Type == MapAttributes.NpcAvoid && (this is Npc || (this is EventPageInstance evtPage && !evtPage.MyPage.IgnoreNpcAvoids)))
+                    if (tileAttribute.Type == MapAttribute.NpcAvoid && (this is Npc || (this is EventPageInstance evtPage && !evtPage.MyPage.IgnoreNpcAvoids)))
                     {
                         return -2;
                     }
 
-                    if (tileAttribute.Type == MapAttributes.ZDimension &&
+                    if (tileAttribute.Type == MapAttribute.ZDimension &&
                         ((MapZDimensionAttribute) tileAttribute).BlockedLevel > 0 &&
                         ((MapZDimensionAttribute) tileAttribute).BlockedLevel - 1 == Z)
                     {
                         return -3;
                     }
 
-                    if (tileAttribute.Type == MapAttributes.Slide)
+                    if (tileAttribute.Type == MapAttribute.Slide)
                     {
                         if (this is EventPage)
                         {
@@ -1128,13 +1129,13 @@ namespace Intersect.Server.Entities
 
                     // ReSharper disable once InvertIf
                     //Check for slide tiles
-                    if (attribute?.Type == MapAttributes.Slide)
+                    if (attribute?.Type == MapAttribute.Slide)
                     {
                         // If sets direction, set it.
                         if (((MapSlideAttribute)attribute).Direction > 0)
                         {
                             //Check for slide tiles
-                            if (attribute != null && attribute.Type == MapAttributes.Slide)
+                            if (attribute != null && attribute.Type == MapAttribute.Slide)
                             {
                                 if (((MapSlideAttribute)attribute).Direction > 0)
                                 {
@@ -1183,7 +1184,7 @@ namespace Intersect.Server.Entities
                 if (Y < Options.MapHeight && Y >= 0)
                 {
                     var attribute = MapController.Get(MapId).Attributes[X, Y];
-                    if (attribute != null && attribute.Type == MapAttributes.ZDimension)
+                    if (attribute != null && attribute.Type == MapAttribute.ZDimension)
                     {
                         if (((MapZDimensionAttribute) attribute).GatewayTo > 0)
                         {

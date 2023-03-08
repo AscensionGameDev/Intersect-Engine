@@ -26,6 +26,7 @@ using Intersect.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using MapAttribute = Intersect.Enums.MapAttribute;
 
 namespace Intersect.Client.Networking
 {
@@ -706,7 +707,7 @@ namespace Intersect.Client.Networking
 
             // Set the Z-Dimension if the player has moved up or down a dimension.
             if (entityMap.Attributes[en.X, en.Y] != null &&
-                entityMap.Attributes[en.X, en.Y].Type == MapAttributes.ZDimension)
+                entityMap.Attributes[en.X, en.Y].Type == MapAttribute.ZDimension)
             {
                 if (((MapZDimensionAttribute) entityMap.Attributes[en.X, en.Y]).GatewayTo > 0)
                 {
