@@ -2617,7 +2617,7 @@ namespace Intersect.Server.Networking
             // Handle our desired action, assuming we're allowed to of course.
             switch (packet.Action)
             {
-                case GuildMemberUpdateActions.Invite:
+                case GuildMemberUpdateAction.Invite:
                     // Are we allowed to invite players?
                     var inviteRankIndex = Options.Instance.Guild.Ranks.Length - 1;
                     var inviteRank = Options.Instance.Guild.Ranks[inviteRankIndex];
@@ -2658,7 +2658,7 @@ namespace Intersect.Server.Networking
                         PacketSender.SendChatMsg(player, Strings.Guilds.InviteNotOnline, ChatMessageType.Guild, CustomColors.Alerts.Error);
                     }
                     break;
-                case GuildMemberUpdateActions.Remove:
+                case GuildMemberUpdateAction.Remove:
                     if (guild.Members.TryGetValue(packet.Id, out member))
                     {
                         if ((!rank.Permissions.Kick && !isOwner) || member.Rank <= player.GuildRank)
@@ -2680,7 +2680,7 @@ namespace Intersect.Server.Networking
                         PacketSender.SendChatMsg(player, Strings.Guilds.NoSuchPlayer, ChatMessageType.Guild, CustomColors.Alerts.Error);
                     }
                     break;
-                case GuildMemberUpdateActions.Promote:
+                case GuildMemberUpdateAction.Promote:
                     if (guild.Members.TryGetValue(packet.Id, out member))
                     {
                         var promotionRankIndex = Math.Max(0, Math.Min(packet.Rank, Options.Instance.Guild.Ranks.Length - 1));
@@ -2706,7 +2706,7 @@ namespace Intersect.Server.Networking
                         PacketSender.SendChatMsg(player, Strings.Guilds.NoSuchPlayer, ChatMessageType.Guild, CustomColors.Alerts.Error);
                     }
                     break;
-                case GuildMemberUpdateActions.Demote:
+                case GuildMemberUpdateAction.Demote:
                     if (guild.Members.TryGetValue(packet.Id, out member))
                     {
                         var demotionRankIndex = Math.Max(0, Math.Min(packet.Rank, Options.Instance.Guild.Ranks.Length - 1));
@@ -2732,7 +2732,7 @@ namespace Intersect.Server.Networking
                         PacketSender.SendChatMsg(player, Strings.Guilds.NoSuchPlayer, ChatMessageType.Guild, CustomColors.Alerts.Error);
                     }
                     break;
-                case GuildMemberUpdateActions.Transfer:
+                case GuildMemberUpdateAction.Transfer:
                     if (guild.Members.TryGetValue(packet.Id, out member))
                     {
                         if (!isOwner)
