@@ -1,9 +1,7 @@
 namespace Intersect.Enums
 {
-
-    public enum SpellTypes
+    public enum SpellType
     {
-
         CombatSpell = 0,
 
         Warp = 1,
@@ -12,8 +10,6 @@ namespace Intersect.Enums
 
         Dash = 3,
 
-        Event = 4,
-
+        Event = 4
     }
-
 }

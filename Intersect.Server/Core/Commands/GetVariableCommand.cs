@@ -47,7 +47,7 @@ namespace Intersect.Server.Core.Commands
 
             string formattedValue = variable.Value.Value?.ToString();
 
-            if (variable.Value.Type == VariableDataTypes.String)
+            if (variable.Value.Type == VariableDataType.String)
             {
                 formattedValue = $"\"{variable.Value.String}\"";
             }

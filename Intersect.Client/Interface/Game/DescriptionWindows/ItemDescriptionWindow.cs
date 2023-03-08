@@ -46,7 +46,7 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
             SetPosition(x, y);
 
             // If a spell, also display the spell description!
-            if (mItem.ItemType == ItemTypes.Spell)
+            if (mItem.ItemType == ItemType.Spell)
             {
                 mSpellDescWindow = new SpellDescriptionWindow(mItem.SpellId, x, mContainer.Bottom);
             }
@@ -74,19 +74,19 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
             // Set up information depending on the item type.
             switch (mItem.ItemType)
             {
-                case ItemTypes.Equipment:
+                case ItemType.Equipment:
                     SetupEquipmentInfo();
                     break;
 
-                case ItemTypes.Consumable:
+                case ItemType.Consumable:
                     SetupConsumableInfo();
                     break;
 
-                case ItemTypes.Spell:
+                case ItemType.Spell:
                     SetupSpellInfo();
                     break;
 
-                case ItemTypes.Bag:
+                case ItemType.Bag:
                     SetupBagInfo();
                     break;
             }
@@ -118,7 +118,7 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
             // Set up the description telling us what type of item this is.
             // if equipment, also list what kind.
             Strings.ItemDescription.ItemTypes.TryGetValue((int) mItem.ItemType, out var typeDesc);
-            if (mItem.ItemType == ItemTypes.Equipment)
+            if (mItem.ItemType == ItemType.Equipment)
             {
                 var equipSlot = Options.Equipment.Slots[mItem.EquipmentSlot];
                 var extraInfo = equipSlot;
@@ -239,7 +239,7 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
                 if (mItem.AttackSpeedModifier == 0)
                 {
                     // No modifier, assuming base attack rate? We have to calculate the speed stat manually here though..!
-                    var speed = Globals.Me.Stat[(int)Stats.Speed];
+                    var speed = Globals.Me.Stat[(int)Stat.Speed];
 
                     // Remove currently equipped weapon stats.. We want to create a fair display!
                     var weaponSlot = Globals.Me.MyEquipment[Options.WeaponIndex];
@@ -249,18 +249,18 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
                         var weapon = ItemBase.Get(Globals.Me.Inventory[weaponSlot].ItemId);
                         if (weapon != null && randomStats != null)
                         {
-                            speed = (int) Math.Round(speed / ((100 + weapon.PercentageStatsGiven[(int)Stats.Speed]) / 100f));
-                            speed -= weapon.StatsGiven[(int)Stats.Speed];
-                            speed -= randomStats[(int)Stats.Speed];
+                            speed = (int) Math.Round(speed / ((100 + weapon.PercentageStatsGiven[(int)Stat.Speed]) / 100f));
+                            speed -= weapon.StatsGiven[(int)Stat.Speed];
+                            speed -= randomStats[(int)Stat.Speed];
                         }
                     }
 
                     // Add current item's speed stats!
                     if (mItemProperties?.StatModifiers != default)
                     {
-                        speed += mItem.StatsGiven[(int) Stats.Speed];
-                        speed += mItemProperties.StatModifiers[(int) Stats.Speed];
-                        speed += (int) Math.Floor(speed * (mItem.PercentageStatsGiven[(int)Stats.Speed] / 100f));
+                        speed += mItem.StatsGiven[(int) Stat.Speed];
+                        speed += mItemProperties.StatModifiers[(int) Stat.Speed];
+                        speed += (int) Math.Floor(speed * (mItem.PercentageStatsGiven[(int)Stat.Speed] / 100f));
                     }
 
                     // Display the actual speed this weapon would have based off of our calculated speed stat.
@@ -298,7 +298,7 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
             }
 
             // Vitals
-            for (var i = 0; i < (int)Vitals.VitalCount; i++)
+            for (var i = 0; i < (int)Vital.VitalCount; i++)
             {
                 if (mItem.VitalsGiven[i] != 0 && mItem.PercentageVitalsGiven[i] != 0)
                 {
@@ -315,7 +315,7 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
             }
 
             // Vitals Regen
-            for (var i = 0; i < (int)Vitals.VitalCount; i++)
+            for (var i = 0; i < (int)Vital.VitalCount; i++)
             {
                 if (mItem.VitalsRegen[i] != 0)
                 {
@@ -326,7 +326,7 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
             // Stats
             if (mItemProperties?.StatModifiers != default)
             {
-                for (var i = 0; i < (int)Stats.StatCount; i++)
+                for (var i = 0; i < (int)Stat.StatCount; i++)
                 {
                     var flatStat = mItem.StatsGiven[i] + mItemProperties.StatModifiers[i];
                     if (flatStat != 0 && mItem.PercentageStatsGiven[i] != 0)

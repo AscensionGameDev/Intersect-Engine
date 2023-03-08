@@ -77,7 +77,7 @@ namespace Intersect.Server.Web.RestApi
                 .ForEach(corsOptions => appBuilder.UseCors(corsOptions));
 
             var constraintResolver = new DefaultInlineConstraintResolver();
-            constraintResolver.ConstraintMap?.Add(nameof(AdminActions), typeof(AdminActionsConstraint));
+            constraintResolver.ConstraintMap?.Add(nameof(AdminAction), typeof(AdminActionsConstraint));
             constraintResolver.ConstraintMap?.Add(nameof(LookupKey), typeof(LookupKey.Constraint));
             constraintResolver.ConstraintMap?.Add(nameof(ChatMessage), typeof(ChatMessage.Constraint));
 

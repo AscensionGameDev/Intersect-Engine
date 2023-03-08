@@ -870,7 +870,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             [FromBody] AdminActionParameters actionParameters
         )
         {
-            if (!Enum.TryParse<AdminActions>(act, true, out var adminAction))
+            if (!Enum.TryParse<AdminAction>(act, true, out var adminAction))
             {
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, @"Invalid action.");
             }
@@ -899,7 +899,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         private object DoAdminActionOnPlayer(
             Func<Tuple<Client, Player>> fetch,
             Func<HttpResponseMessage> onError,
-            AdminActions adminAction,
+            AdminAction adminAction,
             AdminActionParameters actionParameters
         )
         {
@@ -922,7 +922,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
             switch (adminAction)
             {
-                case AdminActions.Ban:
+                case AdminAction.Ban:
                     if (actionPerformer.Power.CompareTo(player.Power) < 0) // Authority Comparison.
                     {
                         // Inform to whoever performed the action that they are
@@ -959,7 +959,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                         );
                     }
 
-                case AdminActions.UnBan:
+                case AdminAction.UnBan:
                     Ban.Remove(userId);
                     PacketSender.SendGlobalMsg(Strings.Account.UnbanSuccess.ToString(player.Name));
 
@@ -967,7 +967,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                         HttpStatusCode.OK, Strings.Account.UnbanSuccess.ToString(player.Name)
                     );
 
-                case AdminActions.Mute:
+                case AdminAction.Mute:
                     if (actionPerformer.Power.CompareTo(player.Power) < 0) // Authority Comparison.
                     {
                         // Inform to whoever performed the action that they are
@@ -1008,7 +1008,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                         );
                     }
 
-                case AdminActions.UnMute:
+                case AdminAction.UnMute:
                     if (user == null)
                     {
                         Mute.Remove(userId);
@@ -1024,7 +1024,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                         HttpStatusCode.OK, Strings.Account.UnmuteSuccess.ToString(player.Name)
                     );
 
-                case AdminActions.WarpTo:
+                case AdminAction.WarpTo:
                     if (client?.Entity != null)
                     {
                         var mapId = actionParameters.MapId == Guid.Empty ? client.Entity.MapId : actionParameters.MapId;
@@ -1038,7 +1038,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
                     break;
 
-                case AdminActions.WarpToLoc:
+                case AdminAction.WarpToLoc:
                     if (client?.Entity != null)
                     {
                         var mapId = actionParameters.MapId == Guid.Empty ? client.Entity.MapId : actionParameters.MapId;
@@ -1052,7 +1052,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
                     break;
 
-                case AdminActions.Kick:
+                case AdminAction.Kick:
                     if (client != null)
                     {
                         if (actionPerformer.Power.CompareTo(player.Power) < 0) // Authority Comparison.
@@ -1076,7 +1076,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
                     break;
 
-                case AdminActions.Kill:
+                case AdminAction.Kill:
                     if (client != null && client.Entity != null)
                     {
                         if (actionPerformer.Power.CompareTo(player.Power) < 0) // Authority Comparison.
@@ -1104,15 +1104,15 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
                     break;
 
-                case AdminActions.WarpMeTo:
-                case AdminActions.WarpToMe:
+                case AdminAction.WarpMeTo:
+                case AdminAction.WarpToMe:
                     return Request.CreateErrorResponse(
                         HttpStatusCode.BadRequest, $@"'{adminAction.ToString()}' not supported by the API."
                     );
 
-                case AdminActions.SetSprite:
-                case AdminActions.SetFace:
-                case AdminActions.SetAccess:
+                case AdminAction.SetSprite:
+                case AdminAction.SetFace:
+                case AdminAction.SetAccess:
                 default:
                     return Request.CreateErrorResponse(HttpStatusCode.NotImplemented, adminAction.ToString());
             }

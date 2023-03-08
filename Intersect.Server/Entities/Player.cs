@@ -28,6 +28,8 @@ using Intersect.Server.Networking;
 using Intersect.Utilities;
 
 using Newtonsoft.Json;
+using MapAttribute = Intersect.Enums.MapAttribute;
+using Stat = Intersect.Enums.Stat;
 
 namespace Intersect.Server.Entities
 {
@@ -856,9 +858,9 @@ namespace Intersect.Server.Entities
             return pkt;
         }
 
-        public override EntityTypes GetEntityType()
+        public override EntityType GetEntityType()
         {
-            return EntityTypes.Player;
+            return EntityType.Player;
         }
 
         //Spawning/Dying
@@ -953,9 +955,9 @@ namespace Intersect.Server.Entities
                 return;
             }
 
-            foreach (Vitals vital in Enum.GetValues(typeof(Vitals)))
+            foreach (Vital vital in Enum.GetValues(typeof(Vital)))
             {
-                if (vital >= Vitals.VitalCount)
+                if (vital >= Vital.VitalCount)
                 {
                     continue;
                 }
@@ -1010,11 +1012,11 @@ namespace Intersect.Server.Entities
             }
 
             //Must have at least 1 hp and no less than 0 mp
-            if (vital == (int) Vitals.Health)
+            if (vital == (int) Vital.Health)
             {
                 classVital = Math.Max(classVital, 1);
             }
-            else if (vital == (int) Vitals.Mana)
+            else if (vital == (int) Vital.Mana)
             {
                 classVital = Math.Max(classVital, 0);
             }
@@ -1022,7 +1024,7 @@ namespace Intersect.Server.Entities
             return classVital;
         }
 
-        public override int GetMaxVital(Vitals vital)
+        public override int GetMaxVital(Vital vital)
         {
             return GetMaxVital((int) vital);
         }
@@ -1030,8 +1032,8 @@ namespace Intersect.Server.Entities
         public void FixVitals()
         {
             //If add/remove equipment then our vitals might exceed the new max.. this should fix those cases.
-            SetVital(Vitals.Health, GetVital(Vitals.Health));
-            SetVital(Vitals.Mana, GetVital(Vitals.Mana));
+            SetVital(Vital.Health, GetVital(Vital.Health));
+            SetVital(Vital.Mana, GetVital(Vital.Mana));
         }
 
         //Leveling
@@ -1391,7 +1393,7 @@ namespace Intersect.Server.Entities
             if (weapon != null)
             {
                 base.TryAttack(
-                    target, weapon.Damage, (DamageType) weapon.DamageType, (Stats) weapon.ScalingStat, weapon.Scaling,
+                    target, weapon.Damage, (DamageType) weapon.DamageType, (Stat) weapon.ScalingStat, weapon.Scaling,
                     weapon.CritChance, weapon.CritMultiplier, null, null, weapon
                 );
             }
@@ -1401,13 +1403,13 @@ namespace Intersect.Server.Entities
                 if (classBase != null)
                 {
                     base.TryAttack(
-                        target, classBase.Damage, (DamageType) classBase.DamageType, (Stats) classBase.ScalingStat,
+                        target, classBase.Damage, (DamageType) classBase.DamageType, (Stat) classBase.ScalingStat,
                         classBase.Scaling, classBase.CritChance, classBase.CritMultiplier
                     );
                 }
                 else
                 {
-                    base.TryAttack(target, 1, DamageType.Physical, Stats.Attack, 100, 10, 1.5);
+                    base.TryAttack(target, 1, DamageType.Physical, Enums.Stat.Attack, 100, 10, 1.5);
                 }
             }
         }
@@ -1420,9 +1422,9 @@ namespace Intersect.Server.Entities
                 return false;
             }
             
-            if (spell?.Combat?.TargetType == SpellTargetTypes.Self ||
-                spell?.Combat?.TargetType == SpellTargetTypes.Projectile ||
-                spell?.SpellType == SpellTypes.Dash
+            if (spell?.Combat?.TargetType == SpellTargetType.Self ||
+                spell?.Combat?.TargetType == SpellTargetType.Projectile ||
+                spell?.SpellType == SpellType.Dash
                 )
             {
                 return true;
@@ -1448,10 +1450,10 @@ namespace Intersect.Server.Entities
 
                 // Only count safe zones and friendly fire if its a dangerous spell! (If one has been used)
                 // Projectiles are ignored here, because we can always fire those.. Whether they hit or not is a problem for later.
-                if (!friendly && (spell?.Combat?.TargetType != SpellTargetTypes.Self && spell?.Combat?.TargetType != SpellTargetTypes.AoE && spell?.SpellType == SpellTypes.CombatSpell))
+                if (!friendly && (spell?.Combat?.TargetType != SpellTargetType.Self && spell?.Combat?.TargetType != SpellTargetType.AoE && spell?.SpellType == SpellType.CombatSpell))
                 {
                     // Check if either the attacker or the defender is in a "safe zone" (Only apply if combat is PVP)
-                    if (MapController.Get(MapId).ZoneType == MapZones.Safe || MapController.Get(player.MapId).ZoneType == MapZones.Safe)
+                    if (MapController.Get(MapId).ZoneType == MapZone.Safe || MapController.Get(player.MapId).ZoneType == MapZone.Safe)
                     {
                         return false;
                     }
@@ -1533,11 +1535,11 @@ namespace Intersect.Server.Entities
         }
 
         /// <summary>
-        /// Get all StatBuffs for the relevant <see cref="Stats"/>
+        /// Get all StatBuffs for the relevant <see cref="Stat"/>
         /// </summary>
-        /// <param name="statType">The <see cref="Stats"/> to retrieve the amounts for.</param>
+        /// <param name="statType">The <see cref="Stat"/> to retrieve the amounts for.</param>
         /// <returns>Returns a <see cref="Tuple"/> containing the Flat stats on Item1, and Percentage stats on Item2</returns>
-        public Tuple<int, int> GetItemStatBuffs(Stats statType)
+        public Tuple<int, int> GetItemStatBuffs(Stat statType)
         {
             var flatStats = 0;
             var percentageStats = 0;
@@ -1568,7 +1570,7 @@ namespace Intersect.Server.Entities
 
             if (playerClass != null)
             {
-                for (var i = 0; i < (int) Stats.StatCount; i++)
+                for (var i = 0; i < (int) Enums.Stat.StatCount; i++)
                 {
                     var s = playerClass.BaseStat[i];
 
@@ -1612,7 +1614,7 @@ namespace Intersect.Server.Entities
                         }
 
                         i++;
-                        if (i >= (int) Stats.StatCount)
+                        if (i >= (int) Enums.Stat.StatCount)
                         {
                             i = 0;
                         }
@@ -2833,14 +2835,14 @@ namespace Intersect.Server.Entities
                 //Check if the user is silenced or stunned
                 foreach (var status in CachedStatuses)
                 {
-                    if (status.Type == StatusTypes.Stun)
+                    if (status.Type == StatusType.Stun)
                     {
                         PacketSender.SendChatMsg(this, Strings.Items.stunned, ChatMessageType.Error);
 
                         return;
                     }
 
-                    if (status.Type == StatusTypes.Sleep)
+                    if (status.Type == StatusType.Sleep)
                     {
                         PacketSender.SendChatMsg(this, Strings.Items.sleep, ChatMessageType.Error);
 
@@ -2850,7 +2852,7 @@ namespace Intersect.Server.Entities
 
                 // Unequip items even if you do not meet the requirements.
                 // (Need this for silly devs who give people items and then later add restrictions...)
-                if (itemBase.ItemType == ItemTypes.Equipment && SlotIsEquipped(slot, out var equippedSlot))
+                if (itemBase.ItemType == ItemType.Equipment && SlotIsEquipped(slot, out var equippedSlot))
                 {
                     UnequipItem(equippedSlot, true);
                     return;
@@ -2880,12 +2882,12 @@ namespace Intersect.Server.Entities
 
                 switch (itemBase.ItemType)
                 {
-                    case ItemTypes.None:
-                    case ItemTypes.Currency:
+                    case ItemType.None:
+                    case ItemType.Currency:
                         PacketSender.SendChatMsg(this, Strings.Items.cannotuse, ChatMessageType.Error);
 
                         return;
-                    case ItemTypes.Consumable:
+                    case ItemType.Consumable:
                         var value = 0;
                         var color = CustomColors.Items.ConsumeHp;
                         var die = false;
@@ -2898,13 +2900,13 @@ namespace Intersect.Server.Entities
                                         itemBase.Consumable.Percentage /
                                         100;
 
-                                AddVital(Vitals.Health, value);
+                                AddVital(Vital.Health, value);
                                 if (value < 0)
                                 {
                                     color = CustomColors.Items.ConsumePoison;
 
                                     //Add a death handler for poison.
-                                    die = !HasVital(Vitals.Health);
+                                    die = !HasVital(Vital.Health);
                                 }
 
                                 break;
@@ -2915,7 +2917,7 @@ namespace Intersect.Server.Entities
                                         itemBase.Consumable.Percentage /
                                         100;
 
-                                AddVital(Vitals.Mana, value);
+                                AddVital(Vital.Mana, value);
                                 color = CustomColors.Items.ConsumeMp;
 
                                 break;
@@ -2948,7 +2950,7 @@ namespace Intersect.Server.Entities
                         TryTakeItem(Items[slot], 1);
 
                         break;
-                    case ItemTypes.Equipment:
+                    case ItemType.Equipment:
                         if (SlotIsEquipped(slot, out var eqpSlot))
                         {
                             UnequipItem(eqpSlot, true);
@@ -2958,7 +2960,7 @@ namespace Intersect.Server.Entities
                         EquipItem(itemBase, slot);
 
                         break;
-                    case ItemTypes.Spell:
+                    case ItemType.Spell:
                         if (itemBase.SpellId == Guid.Empty)
                         {
                             return;
@@ -2985,7 +2987,7 @@ namespace Intersect.Server.Entities
                         }
 
                         break;
-                    case ItemTypes.Event:
+                    case ItemType.Event:
                         var evt = EventBase.Get(itemBase.EventId);
                         if (evt == null || !UnsafeStartCommonEvent(evt))
                         {
@@ -2998,7 +3000,7 @@ namespace Intersect.Server.Entities
                         }
 
                         break;
-                    case ItemTypes.Bag:
+                    case ItemType.Bag:
                         OpenBag(Item, itemBase);
 
                         break;
@@ -3359,7 +3361,7 @@ namespace Intersect.Server.Entities
             return value;
         }
 
-        public int GetEquipmentVitalRegen(Vitals vital)
+        public int GetEquipmentVitalRegen(Vital vital)
         {
             var regen = 0;
 
@@ -3416,7 +3418,7 @@ namespace Intersect.Server.Entities
                     }
 
                     //Check if this is a bag with items.. if so don't allow sale
-                    if (itemDescriptor.ItemType == ItemTypes.Bag)
+                    if (itemDescriptor.ItemType == ItemType.Bag)
                     {
                         if (itemInSlot.TryGetBag(out var bag))
                         {
@@ -4142,7 +4144,7 @@ namespace Intersect.Server.Entities
                 return;
             }
 
-            if (itemDescriptor.ItemType == ItemTypes.Bag)
+            if (itemDescriptor.ItemType == ItemType.Bag)
             {
                 PacketSender.SendChatMsg(this, Strings.Bags.baginbag, ChatMessageType.Inventory, CustomColors.Alerts.Error);
                 return;
@@ -4415,7 +4417,7 @@ namespace Intersect.Server.Entities
                     }
 
                     //Check if this is a bag with items.. if so don't allow sale
-                    if (itemBase.ItemType == ItemTypes.Bag)
+                    if (itemBase.ItemType == ItemType.Bag)
                     {
                         if (Items[slot].TryGetBag(out var bag))
                         {
@@ -4998,8 +5000,8 @@ namespace Intersect.Server.Entities
             }
 
             // If this is a projectile, check if the user has the corresponding item.
-            if (spell.SpellType == SpellTypes.CombatSpell &&
-                spell.Combat.TargetType == SpellTargetTypes.Projectile &&
+            if (spell.SpellType == SpellType.CombatSpell &&
+                spell.Combat.TargetType == SpellTargetType.Projectile &&
                 spell.Combat.ProjectileId != Guid.Empty)
             {
                 var projectileBase = spell.Combat.Projectile;
@@ -5055,7 +5057,7 @@ namespace Intersect.Server.Entities
                 //Remove stealth status.
                 foreach (var status in CachedStatuses)
                 {
-                    if (status.Type == StatusTypes.Stealth)
+                    if (status.Type == StatusType.Stealth)
                     {
                         status.RemoveStatus();
                     }
@@ -5065,8 +5067,8 @@ namespace Intersect.Server.Entities
                 CastTarget = Target;
 
                 //Check if the caster has the right ammunition if a projectile
-                if (spell.SpellType == SpellTypes.CombatSpell &&
-                    spell.Combat.TargetType == SpellTargetTypes.Projectile &&
+                if (spell.SpellType == SpellType.CombatSpell &&
+                    spell.Combat.TargetType == SpellTargetType.Projectile &&
                     spell.Combat.ProjectileId != Guid.Empty)
                 {
                     var projectileBase = spell.Combat.Projectile;
@@ -5116,7 +5118,7 @@ namespace Intersect.Server.Entities
 
             switch (spellBase.SpellType)
             {
-                case SpellTypes.Event:
+                case SpellType.Event:
                     var evt = spellBase.Event;
                     if (evt != null)
                     {
@@ -5208,7 +5210,7 @@ namespace Intersect.Server.Entities
         //Equipment
         public void EquipItem(ItemBase itemBase, int slot = -1)
         {
-            if (itemBase == null || itemBase.ItemType != ItemTypes.Equipment)
+            if (itemBase == null || itemBase.ItemType != ItemType.Equipment)
             {
                 return;
             }
@@ -5333,7 +5335,7 @@ namespace Intersect.Server.Entities
             {
                 var descriptor = item.Descriptor;
                 if (descriptor == default ||
-                    descriptor.ItemType != ItemTypes.Equipment ||
+                    descriptor.ItemType != ItemType.Equipment ||
                     !Conditions.MeetsConditionLists(descriptor.UsageRequirements, this, null))
                 {
                     UnequipItem(item.ItemId);
@@ -5389,7 +5391,7 @@ namespace Intersect.Server.Entities
         {
             Hotbar[index].ItemOrSpellId = Guid.Empty;
             Hotbar[index].BagId = Guid.Empty;
-            Hotbar[index].PreferredStatBuffs = new int[(int) Stats.StatCount];
+            Hotbar[index].PreferredStatBuffs = new int[(int) Enums.Stat.StatCount];
             if (type == 0) //Item
             {
                 var item = Items[slot];
@@ -6117,8 +6119,8 @@ namespace Intersect.Server.Entities
                         {
                             var cmd = (InputVariableCommand)stackInfo.WaitingOnCommand;
                             VariableValue value = null;
-                            var type = VariableDataTypes.Boolean;
-                            if (cmd.VariableType == VariableTypes.PlayerVariable)
+                            var type = VariableDataType.Boolean;
+                            if (cmd.VariableType == VariableType.PlayerVariable)
                             {
                                 var variable = PlayerVariableBase.Get(cmd.VariableId);
                                 if (variable != null)
@@ -6128,7 +6130,7 @@ namespace Intersect.Server.Entities
 
                                 value = GetVariableValue(cmd.VariableId);
                             }
-                            else if (cmd.VariableType == VariableTypes.ServerVariable)
+                            else if (cmd.VariableType == VariableType.ServerVariable)
                             {
                                 var variable = ServerVariableBase.Get(cmd.VariableId);
                                 if (variable != null)
@@ -6138,7 +6140,7 @@ namespace Intersect.Server.Entities
 
                                 value = ServerVariableBase.Get(cmd.VariableId)?.Value;
                             }
-                            else if (cmd.VariableType == VariableTypes.GuildVariable)
+                            else if (cmd.VariableType == VariableType.GuildVariable)
                             {
                                 var variable = GuildVariableBase.Get(cmd.VariableId);
                                 if (variable != null)
@@ -6148,7 +6150,7 @@ namespace Intersect.Server.Entities
 
                                 value = Guild?.GetVariableValue(cmd.VariableId) ?? new VariableValue();
                             }
-                            else if (cmd.VariableType == VariableTypes.UserVariable)
+                            else if (cmd.VariableType == VariableType.UserVariable)
                             {
                                 var variable = UserVariableBase.Get(cmd.VariableId);
                                 if (variable != null)
@@ -6171,7 +6173,7 @@ namespace Intersect.Server.Entities
                             {
                                 switch (type)
                                 {
-                                    case VariableDataTypes.Integer:
+                                    case VariableDataType.Integer:
                                         if (newValue >= cmd.Minimum && newValue <= cmd.Maximum)
                                         {
                                             if (value.Integer != newValue)
@@ -6183,7 +6185,7 @@ namespace Intersect.Server.Entities
                                         }
 
                                         break;
-                                    case VariableDataTypes.Number:
+                                    case VariableDataType.Number:
                                         if (newValue >= cmd.Minimum && newValue <= cmd.Maximum)
                                         {
                                             if (value.Number != newValue)
@@ -6195,7 +6197,7 @@ namespace Intersect.Server.Entities
                                         }
 
                                         break;
-                                    case VariableDataTypes.String:
+                                    case VariableDataType.String:
                                         if (newValueString.Length >= cmd.Minimum &&
                                             newValueString.Length <= cmd.Maximum)
                                         {
@@ -6208,7 +6210,7 @@ namespace Intersect.Server.Entities
                                         }
 
                                         break;
-                                    case VariableDataTypes.Boolean:
+                                    case VariableDataType.Boolean:
                                         if (value.Boolean != newValue > 0)
                                         {
                                             changed = true;
@@ -6221,7 +6223,7 @@ namespace Intersect.Server.Entities
                             }
 
                             //Reassign variable values in case they didnt already exist and we made them from scratch at the null check above
-                            if (cmd.VariableType == VariableTypes.PlayerVariable)
+                            if (cmd.VariableType == VariableType.PlayerVariable)
                             {
                                 var variable = GetVariable(cmd.VariableId);
                                 if (changed)
@@ -6230,7 +6232,7 @@ namespace Intersect.Server.Entities
                                     StartCommonEventsWithTrigger(CommonEventTrigger.PlayerVariableChange, "", cmd.VariableId.ToString());
                                 }
                             }
-                            else if (cmd.VariableType == VariableTypes.ServerVariable)
+                            else if (cmd.VariableType == VariableType.ServerVariable)
                             {
                                 var variable = ServerVariableBase.Get(cmd.VariableId);
                                 if (changed)
@@ -6240,7 +6242,7 @@ namespace Intersect.Server.Entities
                                     DbInterface.UpdatedServerVariables.AddOrUpdate(variable.Id, variable, (key, oldValue) => variable);
                                 }
                             }
-                            else if (cmd.VariableType == VariableTypes.GuildVariable)
+                            else if (cmd.VariableType == VariableType.GuildVariable)
                             {
                                 if (Guild != null)
                                 {
@@ -6253,7 +6255,7 @@ namespace Intersect.Server.Entities
                                     }
                                 }
                             }
-                            else if (cmd.VariableType == VariableTypes.UserVariable)
+                            else if (cmd.VariableType == VariableType.UserVariable)
                             {
                                 var variable = User.GetVariable(cmd.VariableId);
                                 if (changed)
@@ -6507,7 +6509,7 @@ namespace Intersect.Server.Entities
                             instance.Z == z &&
                             !instance.Passable)
                         {
-                            return (int) EntityTypes.Event;
+                            return (int) EntityType.Event;
                         }
                     }
                 }
@@ -6526,7 +6528,7 @@ namespace Intersect.Server.Entities
 
                 // Check for a warp, if so warp the player.
                 var attribute = MapController.Get(MapId).Attributes[X, Y];
-                if (attribute != null && attribute.Type == MapAttributes.Warp)
+                if (attribute != null && attribute.Type == MapAttribute.Warp)
                 {
                     var warpAtt = (MapWarpAttribute)attribute;
                     var dir = Dir;

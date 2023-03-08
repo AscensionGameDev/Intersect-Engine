@@ -30,19 +30,19 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             nudMaxVal.Value = mMyCommand.Maximum;
             nudMinVal.Value = mMyCommand.Minimum;
 
-            if (mMyCommand.VariableType == VariableTypes.PlayerVariable)
+            if (mMyCommand.VariableType == VariableType.PlayerVariable)
             {
                 rdoPlayerVariables.Checked = true;
             }
-            else if (mMyCommand.VariableType == VariableTypes.ServerVariable)
+            else if (mMyCommand.VariableType == VariableType.ServerVariable)
             {
                 rdoGlobalVariables.Checked = true;
             }
-            else if (mMyCommand.VariableType == VariableTypes.GuildVariable)
+            else if (mMyCommand.VariableType == VariableType.GuildVariable)
             {
                 rdoGuildVariables.Checked = true;
             }
-            else if (mMyCommand.VariableType == VariableTypes.UserVariable)
+            else if (mMyCommand.VariableType == VariableType.UserVariable)
             {
                 rdoUserVariables.Checked = true;
             }
@@ -117,7 +117,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             }
         }
 
-        private void UpdateMinMaxValues(VariableDataTypes type)
+        private void UpdateMinMaxValues(VariableDataType type)
         {
             lblMaxVal.Show();
             lblMinVal.Show();
@@ -126,18 +126,18 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 
             switch (type)
             {
-                case VariableDataTypes.Integer:
-                case VariableDataTypes.Number:
+                case VariableDataType.Integer:
+                case VariableDataType.Number:
                     lblMinVal.Text = Strings.EventInput.minval;
                     lblMaxVal.Text = Strings.EventInput.maxval;
 
                     break;
-                case VariableDataTypes.String:
+                case VariableDataType.String:
                     lblMinVal.Text = Strings.EventInput.minlength;
                     lblMaxVal.Text = Strings.EventInput.maxlength;
 
                     break;
-                case VariableDataTypes.Boolean:
+                case VariableDataType.Boolean:
                     lblMaxVal.Hide();
                     lblMinVal.Hide();
                     nudMaxVal.Hide();
@@ -156,22 +156,22 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 
             if (rdoPlayerVariables.Checked)
             {
-                mMyCommand.VariableType = VariableTypes.PlayerVariable;
+                mMyCommand.VariableType = VariableType.PlayerVariable;
                 mMyCommand.VariableId = PlayerVariableBase.IdFromList(cmbVariable.SelectedIndex);
             }
             else if (rdoGlobalVariables.Checked)
             {
-                mMyCommand.VariableType = VariableTypes.ServerVariable;
+                mMyCommand.VariableType = VariableType.ServerVariable;
                 mMyCommand.VariableId = ServerVariableBase.IdFromList(cmbVariable.SelectedIndex);
             }
             else if (rdoGuildVariables.Checked)
             {
-                mMyCommand.VariableType = VariableTypes.GuildVariable;
+                mMyCommand.VariableType = VariableType.GuildVariable;
                 mMyCommand.VariableId = GuildVariableBase.IdFromList(cmbVariable.SelectedIndex);
             }
             else if (rdoUserVariables.Checked)
             {
-                mMyCommand.VariableType = VariableTypes.UserVariable;
+                mMyCommand.VariableType = VariableType.UserVariable;
                 mMyCommand.VariableId = UserVariableBase.IdFromList(cmbVariable.SelectedIndex);
             }
 

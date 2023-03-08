@@ -67,7 +67,7 @@ namespace Intersect.GameObjects.Events
 
         public override ConditionTypes Type { get; } = ConditionTypes.VariableIs;
 
-        public VariableTypes VariableType { get; set; } = VariableTypes.PlayerVariable;
+        public VariableType VariableType { get; set; } = VariableType.PlayerVariable;
 
         public Guid VariableId { get; set; }
 
@@ -92,7 +92,7 @@ namespace Intersect.GameObjects.Events
         /// <summary>
         /// Defines whether the variable used is a Player or Global variable.
         /// </summary>
-        public VariableTypes VariableType { get; set; } = VariableTypes.PlayerVariable;
+        public VariableType VariableType { get; set; } = VariableType.PlayerVariable;
 
         /// <summary>
         /// The Variable Id to use.
@@ -128,9 +128,9 @@ namespace Intersect.GameObjects.Events
 
         public bool ComparingLevel { get; set; }
 
-        public Stats Stat { get; set; }
+        public Stat Stat { get; set; }
 
-        public VariableComparators Comparator { get; set; } = VariableComparators.Equal;
+        public VariableComparator Comparator { get; set; } = VariableComparator.Equal;
 
         public int Value { get; set; }
 
@@ -259,7 +259,7 @@ namespace Intersect.GameObjects.Events
         /// <summary>
         /// Defines whether the variable used is a Player or Global variable.
         /// </summary>
-        public VariableTypes VariableType { get; set; } = VariableTypes.PlayerVariable;
+        public VariableType VariableType { get; set; } = VariableType.PlayerVariable;
 
         /// <summary>
         /// The Variable Id to use.
@@ -297,7 +297,7 @@ namespace Intersect.GameObjects.Events
         /// <summary>
         /// Defines the map Zone Type to compare to.
         /// </summary>
-        public MapZones ZoneType { get; set; }
+        public MapZone ZoneType { get; set; }
     }
 
     public partial class VariableComparison
@@ -308,7 +308,7 @@ namespace Intersect.GameObjects.Events
     public partial class BooleanVariableComparison : VariableComparison
     {
 
-        public VariableTypes CompareVariableType { get; set; } = VariableTypes.PlayerVariable;
+        public VariableType CompareVariableType { get; set; } = VariableType.PlayerVariable;
 
         public Guid CompareVariableId { get; set; }
 
@@ -321,9 +321,9 @@ namespace Intersect.GameObjects.Events
     public partial class IntegerVariableComparison : VariableComparison
     {
 
-        public VariableComparators Comparator { get; set; } = VariableComparators.Equal;
+        public VariableComparator Comparator { get; set; } = VariableComparator.Equal;
 
-        public VariableTypes CompareVariableType { get; set; } = VariableTypes.PlayerVariable;
+        public VariableType CompareVariableType { get; set; } = VariableType.PlayerVariable;
 
         public Guid CompareVariableId { get; set; }
 
@@ -336,7 +336,7 @@ namespace Intersect.GameObjects.Events
     public partial class StringVariableComparison : VariableComparison
     {
 
-        public StringVariableComparators Comparator { get; set; } = StringVariableComparators.Equal;
+        public StringVariableComparator Comparator { get; set; } = StringVariableComparator.Equal;
 
         public string Value { get; set; }
 

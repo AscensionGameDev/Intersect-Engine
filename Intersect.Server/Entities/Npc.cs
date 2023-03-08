@@ -16,6 +16,7 @@ using Intersect.Server.Entities.Pathfinding;
 using Intersect.Server.Maps;
 using Intersect.Server.Networking;
 using Intersect.Utilities;
+using Stat = Intersect.Enums.Stat;
 
 namespace Intersect.Server.Entities
 {
@@ -111,10 +112,10 @@ namespace Intersect.Server.Entities
             Base = myBase;
             Despawnable = despawnable;
 
-            for (var i = 0; i < (int) Stats.StatCount; i++)
+            for (var i = 0; i < (int) Enums.Stat.StatCount; i++)
             {
                 BaseStats[i] = myBase.Stats[i];
-                Stat[i] = new Stat((Stats) i, this);
+                Stat[i] = new Combat.Stat((Stat) i, this);
             }
 
             var spellSlot = 0;
@@ -137,7 +138,7 @@ namespace Intersect.Server.Entities
                 itemSlot++;
             }
 
-            for (var i = 0; i < (int) Vitals.VitalCount; i++)
+            for (var i = 0; i < (int) Vital.VitalCount; i++)
             {
                 SetMaxVital(i, myBase.MaxVital[i]);
                 SetVital(i, myBase.MaxVital[i]);
@@ -153,9 +154,9 @@ namespace Intersect.Server.Entities
 
         private bool IsUnableToCastSpells => CachedStatuses.Any(PredicateUnableToCastSpells);
 
-        public override EntityTypes GetEntityType()
+        public override EntityType GetEntityType()
         {
-            return EntityTypes.GlobalEntity;
+            return EntityType.GlobalEntity;
         }
 
         public override void Die(bool generateLoot = true, Entity killer = null)
@@ -185,7 +186,7 @@ namespace Intersect.Server.Entities
 
         public bool TargetHasStealth(Entity target)
         {
-            return target == null || target.CachedStatuses.Any(s => s.Type == StatusTypes.Stealth);
+            return target == null || target.CachedStatuses.Any(s => s.Type == StatusType.Stealth);
         }
 
         //Targeting
@@ -219,7 +220,7 @@ namespace Intersect.Server.Entities
                 {
                     foreach (var status in CachedStatuses)
                     {
-                        if (status.Type == StatusTypes.Taunt && en != status.Attacker && GetDistanceTo(status.Attacker) != 9999)
+                        if (status.Type == StatusType.Taunt && en != status.Attacker && GetDistanceTo(status.Attacker) != 9999)
                         {
                             return;
                         }
@@ -324,7 +325,7 @@ namespace Intersect.Server.Entities
             //Check if the attacker is stunned or blinded.
             foreach (var status in CachedStatuses)
             {
-                if (status.Type == StatusTypes.Stun || status.Type == StatusTypes.Sleep)
+                if (status.Type == StatusType.Stun || status.Type == StatusType.Sleep)
                 {
                     return false;
                 }
@@ -406,7 +407,7 @@ namespace Intersect.Server.Entities
             }
 
             base.TryAttack(
-                target, Base.Damage, (DamageType)Base.DamageType, (Stats)Base.ScalingStat, Base.Scaling,
+                target, Base.Damage, (DamageType)Base.DamageType, (Stat)Base.ScalingStat, Base.Scaling,
                 Base.CritChance, Base.CritMultiplier, deadAnimations, aliveAnimations
             );
 
@@ -462,21 +463,21 @@ namespace Intersect.Server.Entities
         {
             switch (status?.Type)
             {
-                case StatusTypes.Sleep:
-                case StatusTypes.Stun:
+                case StatusType.Sleep:
+                case StatusType.Stun:
                     return true;
 
-                case StatusTypes.Silence:
-                case StatusTypes.None:
-                case StatusTypes.Snare:
-                case StatusTypes.Blind:
-                case StatusTypes.Stealth:
-                case StatusTypes.Transform:
-                case StatusTypes.Cleanse:
-                case StatusTypes.Invulnerable:
-                case StatusTypes.Shield:
-                case StatusTypes.OnHit:
-                case StatusTypes.Taunt:
+                case StatusType.Silence:
+                case StatusType.None:
+                case StatusType.Snare:
+                case StatusType.Blind:
+                case StatusType.Stealth:
+                case StatusType.Transform:
+                case StatusType.Cleanse:
+                case StatusType.Invulnerable:
+                case StatusType.Shield:
+                case StatusType.OnHit:
+                case StatusType.Taunt:
                 case null:
                     return false;
 
@@ -489,21 +490,21 @@ namespace Intersect.Server.Entities
         {
             switch (status?.Type)
             {
-                case StatusTypes.Silence:
-                case StatusTypes.Sleep:
-                case StatusTypes.Stun:
+                case StatusType.Silence:
+                case StatusType.Sleep:
+                case StatusType.Stun:
                     return true;
 
-                case StatusTypes.None:
-                case StatusTypes.Snare:
-                case StatusTypes.Blind:
-                case StatusTypes.Stealth:
-                case StatusTypes.Transform:
-                case StatusTypes.Cleanse:
-                case StatusTypes.Invulnerable:
-                case StatusTypes.Shield:
-                case StatusTypes.OnHit:
-                case StatusTypes.Taunt:
+                case StatusType.None:
+                case StatusType.Snare:
+                case StatusType.Blind:
+                case StatusType.Stealth:
+                case StatusType.Transform:
+                case StatusType.Cleanse:
+                case StatusType.Invulnerable:
+                case StatusType.Shield:
+                case StatusType.OnHit:
+                case StatusType.Taunt:
                 case null:
                     return false;
 
@@ -637,11 +638,11 @@ namespace Intersect.Server.Entities
             }
 
             var range = spellBase.Combat?.CastRange ?? 0;
-            var targetType = spellBase.Combat?.TargetType ?? SpellTargetTypes.Single;
+            var targetType = spellBase.Combat?.TargetType ?? SpellTargetType.Single;
             var projectileBase = spellBase.Combat?.Projectile;
 
-            if (spellBase.SpellType == SpellTypes.CombatSpell &&
-                targetType == SpellTargetTypes.Projectile &&
+            if (spellBase.SpellType == SpellType.CombatSpell &&
+                targetType == SpellTargetType.Projectile &&
                 projectileBase != null &&
                 InRangeOf(target, projectileBase.Range))
             {
@@ -664,7 +665,7 @@ namespace Intersect.Server.Entities
 
             CastTime = Timing.Global.Milliseconds + spellBase.CastDuration;
 
-            if ((spellBase.Combat?.Friendly ?? false) && spellBase.SpellType != SpellTypes.WarpTo)
+            if ((spellBase.Combat?.Friendly ?? false) && spellBase.SpellType != SpellType.WarpTo)
             {
                 CastTarget = this;
             }
@@ -717,8 +718,8 @@ namespace Intersect.Server.Entities
         {
             if (Base.FleeHealthPercentage > 0)
             {
-                var fleeHpCutoff = GetMaxVital(Vitals.Health) * (Base.FleeHealthPercentage / 100f);
-                if (GetVital(Vitals.Health) < fleeHpCutoff)
+                var fleeHpCutoff = GetMaxVital(Vital.Health) * (Base.FleeHealthPercentage / 100f);
+                if (GetVital(Vital.Health) < fleeHpCutoff)
                 {
                     return true;
                 }
@@ -742,7 +743,7 @@ namespace Intersect.Server.Entities
 
                     foreach (var status in CachedStatuses)
                     {
-                        if (status.Type == StatusTypes.Stun || status.Type == StatusTypes.Sleep)
+                        if (status.Type == StatusType.Stun || status.Type == StatusType.Sleep)
                         {
                             return;
                         }
@@ -819,7 +820,7 @@ namespace Intersect.Server.Entities
                                 targetZ = tempTarget.Z;
                                 foreach (var targetStatus in tempTarget.CachedStatuses)
                                 {
-                                    if (targetStatus.Type == StatusTypes.Stealth)
+                                    if (targetStatus.Type == StatusType.Stealth)
                                     {
                                         targetMap = Guid.Empty;
                                         targetX = 0;
@@ -943,9 +944,9 @@ namespace Intersect.Server.Entities
                                                 //check if NPC is snared or stunned
                                                 foreach (var status in CachedStatuses)
                                                 {
-                                                    if (status.Type == StatusTypes.Stun ||
-                                                        status.Type == StatusTypes.Snare ||
-                                                        status.Type == StatusTypes.Sleep)
+                                                    if (status.Type == StatusType.Stun ||
+                                                        status.Type == StatusType.Snare ||
+                                                        status.Type == StatusType.Sleep)
                                                     {
                                                         return;
                                                     }
@@ -1051,9 +1052,9 @@ namespace Intersect.Server.Entities
                                         //check if NPC is snared or stunned
                                         foreach (var status in CachedStatuses)
                                         {
-                                            if (status.Type == StatusTypes.Stun ||
-                                                status.Type == StatusTypes.Snare ||
-                                                status.Type == StatusTypes.Sleep)
+                                            if (status.Type == StatusType.Stun ||
+                                                status.Type == StatusType.Snare ||
+                                                status.Type == StatusType.Sleep)
                                             {
                                                 return;
                                             }
@@ -1128,9 +1129,9 @@ namespace Intersect.Server.Entities
                                 //check if NPC is snared or stunned
                                 foreach (var status in CachedStatuses)
                                 {
-                                    if (status.Type == StatusTypes.Stun ||
-                                        status.Type == StatusTypes.Snare ||
-                                        status.Type == StatusTypes.Sleep)
+                                    if (status.Type == StatusType.Stun ||
+                                        status.Type == StatusType.Snare ||
+                                        status.Type == StatusType.Sleep)
                                     {
                                         return;
                                     }
@@ -1239,9 +1240,9 @@ namespace Intersect.Server.Entities
                 CachedStatuses = Statuses.Values.ToArray();
                 DoT.Clear();
                 CachedDots = DoT.Values.ToArray();
-                for (var v = 0; v < (int)Vitals.VitalCount; v++)
+                for (var v = 0; v < (int)Vital.VitalCount; v++)
                 {
-                    RestoreVital((Vitals)v);
+                    RestoreVital((Vital)v);
                 }
             }
         }
@@ -1515,9 +1516,9 @@ namespace Intersect.Server.Entities
                 return;
             }
 
-            foreach (Vitals vital in Enum.GetValues(typeof(Vitals)))
+            foreach (Vital vital in Enum.GetValues(typeof(Vital)))
             {
-                if (vital >= Vitals.VitalCount)
+                if (vital >= Vital.VitalCount)
                 {
                     continue;
                 }

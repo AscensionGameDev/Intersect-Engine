@@ -16,6 +16,8 @@ using MySql.Data.MySqlClient;
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using MapAttribute = Intersect.GameObjects.Maps.MapAttribute;
+using VariableMod = Intersect.Enums.VariableMod;
 
 namespace Intersect.Server.Database.GameData.Migrations
 {
@@ -243,11 +245,11 @@ namespace Intersect.Server.Database.GameData.Migrations
 
             if (obj.ContainsKey("SwitchType") && int.Parse(obj["SwitchType"].ToString()) == 1)
             {
-                cmd.VariableType = VariableTypes.ServerVariable;
+                cmd.VariableType = VariableType.ServerVariable;
             }
             else
             {
-                cmd.VariableType = VariableTypes.PlayerVariable;
+                cmd.VariableType = VariableType.PlayerVariable;
             }
 
             if (obj.ContainsKey("SyncParty") && bool.Parse(obj["SyncParty"].ToString()))
@@ -304,11 +306,11 @@ namespace Intersect.Server.Database.GameData.Migrations
 
             if (obj.ContainsKey("VariableType") && int.Parse(obj["VariableType"].ToString()) == 1)
             {
-                cmd.VariableType = VariableTypes.ServerVariable;
+                cmd.VariableType = VariableType.ServerVariable;
             }
             else
             {
-                cmd.VariableType = VariableTypes.PlayerVariable;
+                cmd.VariableType = VariableType.PlayerVariable;
             }
 
             if (obj.ContainsKey("SyncParty") && bool.Parse(obj["SyncParty"].ToString()))
@@ -340,7 +342,7 @@ namespace Intersect.Server.Database.GameData.Migrations
 
             if (obj.ContainsKey("ModType"))
             {
-                mod.ModType = (VariableMods) int.Parse(obj["ModType"].ToString());
+                mod.ModType = (VariableMod) int.Parse(obj["ModType"].ToString());
             }
 
             var newJson = JsonConvert.SerializeObject(
@@ -373,7 +375,7 @@ namespace Intersect.Server.Database.GameData.Migrations
                 cmd.VariableId = Guid.Parse(obj["SwitchId"].ToString());
             }
 
-            cmd.VariableType = VariableTypes.PlayerVariable;
+            cmd.VariableType = VariableType.PlayerVariable;
 
             var comp = new BooleanVariableComparison();
             cmd.Comparison = comp;
@@ -415,7 +417,7 @@ namespace Intersect.Server.Database.GameData.Migrations
                 cmd.VariableId = Guid.Parse(obj["SwitchId"].ToString());
             }
 
-            cmd.VariableType = VariableTypes.ServerVariable;
+            cmd.VariableType = VariableType.ServerVariable;
 
             var comp = new BooleanVariableComparison();
             cmd.Comparison = comp;
@@ -460,7 +462,7 @@ namespace Intersect.Server.Database.GameData.Migrations
                 cmd.VariableId = Guid.Parse(obj["VariableId"].ToString());
             }
 
-            cmd.VariableType = VariableTypes.PlayerVariable;
+            cmd.VariableType = VariableType.PlayerVariable;
 
             var comp = new IntegerVariableComparison();
             cmd.Comparison = comp;
@@ -477,7 +479,7 @@ namespace Intersect.Server.Database.GameData.Migrations
 
             if (obj.ContainsKey("Comparator"))
             {
-                comp.Comparator = (VariableComparators) int.Parse(obj["Comparator"].ToString());
+                comp.Comparator = (VariableComparator) int.Parse(obj["Comparator"].ToString());
             }
 
             if (!obj.ContainsKey("CompareType"))
@@ -488,11 +490,11 @@ namespace Intersect.Server.Database.GameData.Migrations
             {
                 if (int.Parse(obj["CompareType"].ToString()) == 1)
                 {
-                    comp.CompareVariableType = VariableTypes.PlayerVariable;
+                    comp.CompareVariableType = VariableType.PlayerVariable;
                 }
                 else
                 {
-                    comp.CompareVariableType = VariableTypes.ServerVariable;
+                    comp.CompareVariableType = VariableType.ServerVariable;
                 }
             }
 
@@ -529,7 +531,7 @@ namespace Intersect.Server.Database.GameData.Migrations
                 cmd.VariableId = Guid.Parse(obj["VariableId"].ToString());
             }
 
-            cmd.VariableType = VariableTypes.ServerVariable;
+            cmd.VariableType = VariableType.ServerVariable;
 
             var comp = new IntegerVariableComparison();
             cmd.Comparison = comp;
@@ -546,7 +548,7 @@ namespace Intersect.Server.Database.GameData.Migrations
 
             if (obj.ContainsKey("Comparator"))
             {
-                comp.Comparator = (VariableComparators) int.Parse(obj["Comparator"].ToString());
+                comp.Comparator = (VariableComparator) int.Parse(obj["Comparator"].ToString());
             }
 
             if (!obj.ContainsKey("CompareType"))
@@ -557,11 +559,11 @@ namespace Intersect.Server.Database.GameData.Migrations
             {
                 if (int.Parse(obj["CompareType"].ToString()) == 1)
                 {
-                    comp.CompareVariableType = VariableTypes.PlayerVariable;
+                    comp.CompareVariableType = VariableType.PlayerVariable;
                 }
                 else
                 {
-                    comp.CompareVariableType = VariableTypes.ServerVariable;
+                    comp.CompareVariableType = VariableType.ServerVariable;
                 }
             }
 

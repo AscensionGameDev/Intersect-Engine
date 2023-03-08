@@ -15,7 +15,7 @@ namespace Intersect.Network.Packets.Client
 
         }
 
-        public UpdateGuildMemberPacket(Guid id, string name, GuildMemberUpdateActions action, int rank = -1)
+        public UpdateGuildMemberPacket(Guid id, string name, GuildMemberUpdateAction action, int rank = -1)
         {
             Id = id;
             Name = name;
@@ -30,7 +30,7 @@ namespace Intersect.Network.Packets.Client
         public string Name { get; set; }
 
         [Key(2)]
-        public GuildMemberUpdateActions Action { get; set; }
+        public GuildMemberUpdateAction Action { get; set; }
 
         [Key(3)]
         public int Rank { get; set; }

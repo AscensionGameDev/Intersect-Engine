@@ -6,6 +6,7 @@ using Intersect.GameObjects;
 using Intersect.GameObjects.Maps;
 using Intersect.Network.Packets.Server;
 using Intersect.Utilities;
+using MapAttribute = Intersect.Enums.MapAttribute;
 
 namespace Intersect.Client.Entities.Projectiles
 {
@@ -43,10 +44,10 @@ namespace Intersect.Client.Entities.Projectiles
         /// <summary>
         ///     The constructor for the inherated projectile class
         /// </summary>
-        public Projectile(Guid id, ProjectileEntityPacket packet) : base(id, packet, EntityTypes.Projectile)
+        public Projectile(Guid id, ProjectileEntityPacket packet) : base(id, packet, EntityType.Projectile)
         {
-            Vital[(int) Vitals.Health] = 1;
-            MaxVital[(int) Vitals.Health] = 1;
+            Vital[(int) Enums.Vital.Health] = 1;
+            MaxVital[(int) Enums.Vital.Health] = 1;
             HideName = true;
             Passable = true;
             IsMoving = true;
@@ -419,7 +420,7 @@ namespace Intersect.Client.Entities.Projectiles
                             //Check for Z-Dimension
                             if (newMap.Attributes[Spawns[i].X, Spawns[i].Y] != null)
                             {
-                                if (newMap.Attributes[Spawns[i].X, Spawns[i].Y].Type == MapAttributes.ZDimension)
+                                if (newMap.Attributes[Spawns[i].X, Spawns[i].Y].Type == MapAttribute.ZDimension)
                                 {
                                     if (((MapZDimensionAttribute) newMap.Attributes[Spawns[i].X, Spawns[i].Y])
                                         .GatewayTo >

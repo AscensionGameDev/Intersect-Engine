@@ -112,7 +112,7 @@ namespace Intersect.GameObjects
         }
 
         [NotMapped]
-        public List<GrappleOptions> GrappleHookOptions = new List<GrappleOptions>();
+        public List<GrappleOption> GrappleHookOptions = new List<GrappleOption>();
 
         [JsonIgnore]
         [Column("GrappleHookOptions")]
@@ -121,7 +121,7 @@ namespace Intersect.GameObjects
             get => JsonConvert.SerializeObject(GrappleHookOptions);
             set
             {
-                GrappleHookOptions = JsonConvert.DeserializeObject<List<GrappleOptions>>(value ?? "") ?? new List<GrappleOptions>();
+                GrappleHookOptions = JsonConvert.DeserializeObject<List<GrappleOption>>(value ?? "") ?? new List<GrappleOption>();
             }
         }
 

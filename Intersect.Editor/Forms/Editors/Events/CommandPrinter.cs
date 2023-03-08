@@ -10,6 +10,7 @@ using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Events.Commands;
 using Intersect.GameObjects.Maps.MapList;
 using Intersect.Logging;
+using VariableMod = Intersect.GameObjects.Events.VariableMod;
 
 namespace Intersect.Editor.Forms.Editors.Events
 {
@@ -803,13 +804,13 @@ namespace Intersect.Editor.Forms.Editors.Events
                 var exp = string.Empty;
                 switch (command.VariableType)
                 {
-                    case VariableTypes.PlayerVariable:
+                    case VariableType.PlayerVariable:
                         exp = string.Format(@"({0}: {1})", Strings.EventGiveExperience.PlayerVariable, PlayerVariableBase.GetName(command.VariableId));
                         break;
-                    case VariableTypes.ServerVariable:
+                    case VariableType.ServerVariable:
                         exp = string.Format(@"({0}: {1})", Strings.EventGiveExperience.ServerVariable, ServerVariableBase.GetName(command.VariableId));
                         break;
-                    case VariableTypes.GuildVariable:
+                    case VariableType.GuildVariable:
                         exp = string.Format(@"({0}: {1})", Strings.EventGiveExperience.GuildVariable, GuildVariableBase.GetName(command.VariableId));
                         break;
                 }
@@ -1293,25 +1294,25 @@ namespace Intersect.Editor.Forms.Editors.Events
             var varvalue = "";
             if (mod.DuplicateVariableId != Guid.Empty)
             {
-                if (mod.DupVariableType == VariableTypes.PlayerVariable)
+                if (mod.DupVariableType == VariableType.PlayerVariable)
                 {
                     varvalue = Strings.EventCommandList.dupplayervariable.ToString(
                         PlayerVariableBase.GetName(mod.DuplicateVariableId)
                     );
                 }
-                else if (mod.DupVariableType == VariableTypes.ServerVariable)
+                else if (mod.DupVariableType == VariableType.ServerVariable)
                 {
                     varvalue = Strings.EventCommandList.dupglobalvariable.ToString(
                         ServerVariableBase.GetName(mod.DuplicateVariableId)
                     );
                 }
-                else if (mod.DupVariableType == VariableTypes.GuildVariable)
+                else if (mod.DupVariableType == VariableType.GuildVariable)
                 {
                     varvalue = Strings.EventCommandList.dupguildvariable.ToString(
                         GuildVariableBase.GetName(mod.DuplicateVariableId)
                     );
                 }
-                else if (mod.DupVariableType == VariableTypes.UserVariable)
+                else if (mod.DupVariableType == VariableType.UserVariable)
                 {
                     varvalue = Strings.EventCommandList.DupUserVariable.ToString(
                         Strings.GameObjectStrings.UserVariable,
@@ -1331,28 +1332,28 @@ namespace Intersect.Editor.Forms.Editors.Events
                 }
             }
 
-            if (command.VariableType == VariableTypes.PlayerVariable)
+            if (command.VariableType == VariableType.PlayerVariable)
             {
                 return Strings.EventCommandList.playervariable.ToString(
                     PlayerVariableBase.GetName(command.VariableId), varvalue
                 );
             }
 
-            if (command.VariableType == VariableTypes.ServerVariable)
+            if (command.VariableType == VariableType.ServerVariable)
             {
                 return Strings.EventCommandList.globalvariable.ToString(
                     ServerVariableBase.GetName(command.VariableId), varvalue
                 );
             }
 
-            if (command.VariableType == VariableTypes.GuildVariable)
+            if (command.VariableType == VariableType.GuildVariable)
             {
                 return Strings.EventCommandList.guildvariable.ToString(
                     GuildVariableBase.GetName(command.VariableId), varvalue
                 );
             }
 
-            if (command.VariableType == VariableTypes.UserVariable)
+            if (command.VariableType == VariableType.UserVariable)
             {
                 return Strings.EventCommandList.UserVariable.ToString(
                     Strings.GameObjectStrings.UserVariable,
@@ -1369,82 +1370,82 @@ namespace Intersect.Editor.Forms.Editors.Events
             var varvalue = "";
             switch (mod.ModType)
             {
-                case Enums.VariableMods.Set:
+                case Enums.VariableMod.Set:
                     varvalue = Strings.EventCommandList.setvariable.ToString(mod.Value);
 
                     break;
-                case Enums.VariableMods.Add:
+                case Enums.VariableMod.Add:
                     varvalue = Strings.EventCommandList.addvariable.ToString(mod.Value);
 
                     break;
-                case Enums.VariableMods.Subtract:
+                case Enums.VariableMod.Subtract:
                     varvalue = Strings.EventCommandList.subtractvariable.ToString(mod.Value);
 
                     break;
-                case Enums.VariableMods.Multiply:
+                case Enums.VariableMod.Multiply:
                     varvalue = Strings.EventCommandList.multiplyvariable.ToString(mod.Value);
 
                     break;
-                case Enums.VariableMods.Divide:
+                case Enums.VariableMod.Divide:
                     varvalue = Strings.EventCommandList.dividevariable.ToString(mod.Value);
 
                     break;
-                case Enums.VariableMods.LeftShift:
+                case Enums.VariableMod.LeftShift:
                     varvalue = Strings.EventCommandList.leftshiftvariable.ToString(mod.Value);
 
                     break;
-                case Enums.VariableMods.RightShift:
+                case Enums.VariableMod.RightShift:
                     varvalue = Strings.EventCommandList.rightshiftvariable.ToString(mod.Value);
 
                     break;
-                case Enums.VariableMods.Random:
+                case Enums.VariableMod.Random:
                     varvalue = Strings.EventCommandList.randvariable.ToString(mod.Value, mod.HighValue);
 
                     break;
-                case Enums.VariableMods.SystemTime:
+                case Enums.VariableMod.SystemTime:
                     varvalue = Strings.EventCommandList.systemtimevariable;
 
                     break;
 
 
                 //Player Variable
-                case Enums.VariableMods.DupPlayerVar:
+                case Enums.VariableMod.DupPlayerVar:
                     varvalue = Strings.EventCommandList.dupplayervariable.ToString(
                         PlayerVariableBase.GetName(mod.DuplicateVariableId)
                     );
 
                     break;
-                case Enums.VariableMods.AddPlayerVar:
+                case Enums.VariableMod.AddPlayerVar:
                     varvalue = Strings.EventCommandList.addplayervariable.ToString(
                         PlayerVariableBase.GetName(mod.DuplicateVariableId)
                     );
 
                     break;
-                case Enums.VariableMods.SubtractPlayerVar:
+                case Enums.VariableMod.SubtractPlayerVar:
                     varvalue = Strings.EventCommandList.subtractplayervariable.ToString(
                         PlayerVariableBase.GetName(mod.DuplicateVariableId)
                     );
 
                     break;
-                case Enums.VariableMods.MultiplyPlayerVar:
+                case Enums.VariableMod.MultiplyPlayerVar:
                     varvalue = Strings.EventCommandList.multiplyplayervariable.ToString(
                         PlayerVariableBase.GetName(mod.DuplicateVariableId)
                     );
 
                     break;
-                case Enums.VariableMods.DividePlayerVar:
+                case Enums.VariableMod.DividePlayerVar:
                     varvalue = Strings.EventCommandList.divideplayervariable.ToString(
                         PlayerVariableBase.GetName(mod.DuplicateVariableId)
                     );
 
                     break;
-                case Enums.VariableMods.LeftShiftPlayerVar:
+                case Enums.VariableMod.LeftShiftPlayerVar:
                     varvalue = Strings.EventCommandList.leftshiftplayervariable.ToString(
                         PlayerVariableBase.GetName(mod.DuplicateVariableId)
                     );
 
                     break;
-                case Enums.VariableMods.RightShiftPlayerVar:
+                case Enums.VariableMod.RightShiftPlayerVar:
                     varvalue = Strings.EventCommandList.rightshiftplayervariable.ToString(
                         PlayerVariableBase.GetName(mod.DuplicateVariableId)
                     );
@@ -1453,43 +1454,43 @@ namespace Intersect.Editor.Forms.Editors.Events
 
 
                 //Global Variable
-                case Enums.VariableMods.DupGlobalVar:
+                case Enums.VariableMod.DupGlobalVar:
                     varvalue = Strings.EventCommandList.dupglobalvariable.ToString(
                         ServerVariableBase.GetName(mod.DuplicateVariableId)
                     );
 
                     break;
-                case Enums.VariableMods.AddGlobalVar:
+                case Enums.VariableMod.AddGlobalVar:
                     varvalue = Strings.EventCommandList.addglobalvariable.ToString(
                         ServerVariableBase.GetName(mod.DuplicateVariableId)
                     );
 
                     break;
-                case Enums.VariableMods.SubtractGlobalVar:
+                case Enums.VariableMod.SubtractGlobalVar:
                     varvalue = Strings.EventCommandList.subtractglobalvariable.ToString(
                         ServerVariableBase.GetName(mod.DuplicateVariableId)
                     );
 
                     break;
-                case Enums.VariableMods.MultiplyGlobalVar:
+                case Enums.VariableMod.MultiplyGlobalVar:
                     varvalue = Strings.EventCommandList.multiplyglobalvariable.ToString(
                         ServerVariableBase.GetName(mod.DuplicateVariableId)
                     );
 
                     break;
-                case Enums.VariableMods.DivideGlobalVar:
+                case Enums.VariableMod.DivideGlobalVar:
                     varvalue = Strings.EventCommandList.divideglobalvariable.ToString(
                         ServerVariableBase.GetName(mod.DuplicateVariableId)
                     );
 
                     break;
-                case Enums.VariableMods.LeftShiftGlobalVar:
+                case Enums.VariableMod.LeftShiftGlobalVar:
                     varvalue = Strings.EventCommandList.leftshiftglobalvariable.ToString(
                         ServerVariableBase.GetName(mod.DuplicateVariableId)
                     );
 
                     break;
-                case Enums.VariableMods.RightShiftGlobalVar:
+                case Enums.VariableMod.RightShiftGlobalVar:
                     varvalue = Strings.EventCommandList.rightshiftglobalvariable.ToString(
                         ServerVariableBase.GetName(mod.DuplicateVariableId)
                     );
@@ -1498,43 +1499,43 @@ namespace Intersect.Editor.Forms.Editors.Events
 
 
                 //Guilds Variable
-                case Enums.VariableMods.DupGuildVar:
+                case Enums.VariableMod.DupGuildVar:
                     varvalue = Strings.EventCommandList.dupguildvariable.ToString(
                         GuildVariableBase.GetName(mod.DuplicateVariableId)
                     );
 
                     break;
-                case Enums.VariableMods.AddGuildVar:
+                case Enums.VariableMod.AddGuildVar:
                     varvalue = Strings.EventCommandList.addguildvariable.ToString(
                         GuildVariableBase.GetName(mod.DuplicateVariableId)
                     );
 
                     break;
-                case Enums.VariableMods.SubtractGuildVar:
+                case Enums.VariableMod.SubtractGuildVar:
                     varvalue = Strings.EventCommandList.subtractguildvariable.ToString(
                         GuildVariableBase.GetName(mod.DuplicateVariableId)
                     );
 
                     break;
-                case Enums.VariableMods.MultiplyGuildVar:
+                case Enums.VariableMod.MultiplyGuildVar:
                     varvalue = Strings.EventCommandList.multiplyguildvariable.ToString(
                         GuildVariableBase.GetName(mod.DuplicateVariableId)
                     );
 
                     break;
-                case Enums.VariableMods.DivideGuildVar:
+                case Enums.VariableMod.DivideGuildVar:
                     varvalue = Strings.EventCommandList.divideguildvariable.ToString(
                         GuildVariableBase.GetName(mod.DuplicateVariableId)
                     );
 
                     break;
-                case Enums.VariableMods.LeftShiftGuildVar:
+                case Enums.VariableMod.LeftShiftGuildVar:
                     varvalue = Strings.EventCommandList.leftshiftguildvariable.ToString(
                         GuildVariableBase.GetName(mod.DuplicateVariableId)
                     );
 
                     break;
-                case Enums.VariableMods.RightShiftGuildVar:
+                case Enums.VariableMod.RightShiftGuildVar:
                     varvalue = Strings.EventCommandList.rightshiftguildvariable.ToString(
                         GuildVariableBase.GetName(mod.DuplicateVariableId)
                     );
@@ -1543,49 +1544,49 @@ namespace Intersect.Editor.Forms.Editors.Events
 
 
                 //User Variable
-                case Enums.VariableMods.DuplicateUserVariable:
+                case Enums.VariableMod.DuplicateUserVariable:
                     varvalue = Strings.EventCommandList.DupUserVariable.ToString(
                         Strings.GameObjectStrings.UserVariable,
                         UserVariableBase.GetName(mod.DuplicateVariableId)
                     );
 
                     break;
-                case Enums.VariableMods.AddUserVariable:
+                case Enums.VariableMod.AddUserVariable:
                     varvalue = Strings.EventCommandList.AddUserVariable.ToString(
                         Strings.GameObjectStrings.UserVariable,
                         UserVariableBase.GetName(mod.DuplicateVariableId)
                     );
 
                     break;
-                case Enums.VariableMods.SubtractUserVariable:
+                case Enums.VariableMod.SubtractUserVariable:
                     varvalue = Strings.EventCommandList.SubtractUserVariable.ToString(
                         Strings.GameObjectStrings.UserVariable,
                         UserVariableBase.GetName(mod.DuplicateVariableId)
                     );
 
                     break;
-                case Enums.VariableMods.MultiplyUserVariable:
+                case Enums.VariableMod.MultiplyUserVariable:
                     varvalue = Strings.EventCommandList.MultiplyUserVariable.ToString(
                         Strings.GameObjectStrings.UserVariable,
                         UserVariableBase.GetName(mod.DuplicateVariableId)
                     );
 
                     break;
-                case Enums.VariableMods.DivideUserVariable:
+                case Enums.VariableMod.DivideUserVariable:
                     varvalue = Strings.EventCommandList.DivideUserVariable.ToString(
                         Strings.GameObjectStrings.UserVariable,
                         UserVariableBase.GetName(mod.DuplicateVariableId)
                     );
 
                     break;
-                case Enums.VariableMods.LeftShiftUserVariable:
+                case Enums.VariableMod.LeftShiftUserVariable:
                     varvalue = Strings.EventCommandList.LeftShiftUserVariable.ToString(
                         Strings.GameObjectStrings.UserVariable,
                         UserVariableBase.GetName(mod.DuplicateVariableId)
                     );
 
                     break;
-                case Enums.VariableMods.RightShiftUserVariable:
+                case Enums.VariableMod.RightShiftUserVariable:
                     varvalue = Strings.EventCommandList.RightShiftUserVariable.ToString(
                         Strings.GameObjectStrings.UserVariable,
                         UserVariableBase.GetName(mod.DuplicateVariableId)
@@ -1594,28 +1595,28 @@ namespace Intersect.Editor.Forms.Editors.Events
                     break;
             }
 
-            if (command.VariableType == VariableTypes.PlayerVariable)
+            if (command.VariableType == VariableType.PlayerVariable)
             {
                 return Strings.EventCommandList.playervariable.ToString(
                     PlayerVariableBase.GetName(command.VariableId), varvalue
                 );
             }
 
-            if (command.VariableType == VariableTypes.ServerVariable)
+            if (command.VariableType == VariableType.ServerVariable)
             {
                 return Strings.EventCommandList.globalvariable.ToString(
                     ServerVariableBase.GetName(command.VariableId), varvalue
                 );
             }
 
-            if (command.VariableType == VariableTypes.GuildVariable)
+            if (command.VariableType == VariableType.GuildVariable)
             {
                 return Strings.EventCommandList.guildvariable.ToString(
                     GuildVariableBase.GetName(command.VariableId), varvalue
                 );
             }
 
-            if (command.VariableType == VariableTypes.UserVariable)
+            if (command.VariableType == VariableType.UserVariable)
             {
                 return Strings.EventCommandList.UserVariable.ToString(
                     Strings.GameObjectStrings.UserVariable,
@@ -1632,38 +1633,38 @@ namespace Intersect.Editor.Forms.Editors.Events
             var varvalue = "";
             switch (mod.ModType)
             {
-                case Enums.VariableMods.Set:
+                case Enums.VariableMod.Set:
                     varvalue = Strings.EventCommandList.setvariable.ToString(mod.Value);
 
                     break;
-                case Enums.VariableMods.Replace:
+                case Enums.VariableMod.Replace:
                     varvalue = Strings.EventCommandList.replace.ToString(mod.Value, mod.Replace);
 
                     break;
             }
 
-            if (command.VariableType == VariableTypes.PlayerVariable)
+            if (command.VariableType == VariableType.PlayerVariable)
             {
                 return Strings.EventCommandList.playervariable.ToString(
                     PlayerVariableBase.GetName(command.VariableId), varvalue
                 );
             }
 
-            if (command.VariableType == VariableTypes.ServerVariable)
+            if (command.VariableType == VariableType.ServerVariable)
             {
                 return Strings.EventCommandList.globalvariable.ToString(
                     ServerVariableBase.GetName(command.VariableId), varvalue
                 );
             }
 
-            if (command.VariableType == VariableTypes.GuildVariable)
+            if (command.VariableType == VariableType.GuildVariable)
             {
                 return Strings.EventCommandList.guildvariable.ToString(
                     GuildVariableBase.GetName(command.VariableId), varvalue
                 );
             }
 
-            if (command.VariableType == VariableTypes.UserVariable)
+            if (command.VariableType == VariableType.UserVariable)
             {
                 return Strings.EventCommandList.UserVariable.ToString(
                     Strings.GameObjectStrings.UserVariable,

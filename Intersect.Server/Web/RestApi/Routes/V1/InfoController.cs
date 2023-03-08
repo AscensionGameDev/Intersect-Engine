@@ -50,9 +50,9 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         public object CombatStats()
         {
             return Enum
-                .GetValues(typeof(Enums.Stats))
-                .OfType<Enums.Stats>()
-                .Where(value => value != Enums.Stats.StatCount)
+                .GetValues(typeof(Enums.Stat))
+                .OfType<Enums.Stat>()
+                .Where(value => value != Enums.Stat.StatCount)
                 .Select(value => value.ToString())
                 .ToArray();
         }

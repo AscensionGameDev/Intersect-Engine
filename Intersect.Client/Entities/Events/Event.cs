@@ -62,7 +62,7 @@ namespace Intersect.Client.Entities.Events
             }
         }
 
-        public Event(Guid id, EventEntityPacket packet) : base(id, packet, EntityTypes.Event)
+        public Event(Guid id, EventEntityPacket packet) : base(id, packet, EntityType.Event)
         {
             mRenderPriority = 1;
         }

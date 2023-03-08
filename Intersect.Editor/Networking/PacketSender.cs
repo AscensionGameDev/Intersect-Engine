@@ -7,8 +7,6 @@ using Intersect.GameObjects.Maps.MapList;
 using Intersect.Models;
 using Intersect.Network.Packets.Editor;
 
-using MapListUpdates = Intersect.Enums.MapListUpdates;
-
 namespace Intersect.Editor.Networking
 {
 
@@ -61,7 +59,7 @@ namespace Intersect.Editor.Networking
 
         public static void SendMapListMove(int srcType, Guid srcId, int destType, Guid destId)
         {
-            Network.SendPacket(new MapListUpdatePacket(MapListUpdates.MoveItem, srcType, srcId, destType, destId, ""));
+            Network.SendPacket(new MapListUpdatePacket(MapListUpdate.MoveItem, srcType, srcId, destType, destId, ""));
         }
 
         public static void SendAddFolder(MapListItem parent)
@@ -69,13 +67,13 @@ namespace Intersect.Editor.Networking
             switch (parent)
             {
                 case null:
-                    Network.SendPacket(new MapListUpdatePacket(MapListUpdates.AddFolder, 0, Guid.Empty, 0, Guid.Empty, string.Empty));
+                    Network.SendPacket(new MapListUpdatePacket(MapListUpdate.AddFolder, 0, Guid.Empty, 0, Guid.Empty, string.Empty));
                     break;
 
                 case MapListMap map:
                     Network.SendPacket(
                         new MapListUpdatePacket(
-                            MapListUpdates.AddFolder, 0, Guid.Empty, 1, map.MapId, string.Empty
+                            MapListUpdate.AddFolder, 0, Guid.Empty, 1, map.MapId, string.Empty
                         )
                     );
                     break;
@@ -83,7 +81,7 @@ namespace Intersect.Editor.Networking
                 case MapListFolder folder:
                     Network.SendPacket(
                         new MapListUpdatePacket(
-                            MapListUpdates.AddFolder, 0, Guid.Empty, 0, folder.FolderId, string.Empty
+                            MapListUpdate.AddFolder, 0, Guid.Empty, 0, folder.FolderId, string.Empty
                         )
                     );
                     break;
@@ -96,14 +94,14 @@ namespace Intersect.Editor.Networking
             {
                 case MapListMap map:
                     Network.SendPacket(
-                        new MapListUpdatePacket(MapListUpdates.Rename, 1, map.MapId, 0, Guid.Empty, name)
+                        new MapListUpdatePacket(MapListUpdate.Rename, 1, map.MapId, 0, Guid.Empty, name)
                     );
                     break;
 
                 case MapListFolder folder:
                     Network.SendPacket(
                         new MapListUpdatePacket(
-                            MapListUpdates.Rename, 0, folder.FolderId, 0, Guid.Empty, name
+                            MapListUpdate.Rename, 0, folder.FolderId, 0, Guid.Empty, name
                         )
                     );
                     break;
@@ -116,14 +114,14 @@ namespace Intersect.Editor.Networking
             {
                 case MapListMap map:
                     Network.SendPacket(
-                        new MapListUpdatePacket(MapListUpdates.Delete, 1, map.MapId, 0, Guid.Empty, string.Empty)
+                        new MapListUpdatePacket(MapListUpdate.Delete, 1, map.MapId, 0, Guid.Empty, string.Empty)
                     );
                     break;
 
                 case MapListFolder folder:
                     Network.SendPacket(
                         new MapListUpdatePacket(
-                            MapListUpdates.Delete, 0, folder.FolderId, 0, Guid.Empty, string.Empty
+                            MapListUpdate.Delete, 0, folder.FolderId, 0, Guid.Empty, string.Empty
                         )
                     );
                     break;

@@ -109,7 +109,7 @@ namespace Intersect.Client.Interface.Game
             mChatBox = new Chatbox(GameCanvas, this);
             GameMenu = new Menu(GameCanvas);
             Hotbar = new HotBarWindow(GameCanvas);
-            PlayerBox = new EntityBox(GameCanvas, EntityTypes.Player, Globals.Me, true);
+            PlayerBox = new EntityBox(GameCanvas, EntityType.Player, Globals.Me, true);
             PlayerBox.SetEntity(Globals.Me);
             if (mPictureWindow == null)
             {

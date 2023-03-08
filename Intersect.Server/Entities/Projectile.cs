@@ -7,6 +7,7 @@ using Intersect.Network.Packets.Server;
 using Intersect.Server.Entities.Combat;
 using Intersect.Server.Maps;
 using Intersect.Utilities;
+using MapAttribute = Intersect.Enums.MapAttribute;
 
 namespace Intersect.Server.Entities
 {
@@ -60,8 +61,8 @@ namespace Intersect.Server.Entities
             base.X = X;
             base.Y = Y;
             Z = z;
-            SetMaxVital(Vitals.Health, 1);
-            SetVital(Vitals.Health, 1);
+            SetMaxVital(Vital.Health, 1);
+            SetVital(Vital.Health, 1);
             Dir = direction;
             Spell = parentSpell;
             Item = parentItem;
@@ -283,7 +284,7 @@ namespace Intersect.Server.Entities
                 //Check for Z-Dimension
                 if (!spawn.ProjectileBase.IgnoreZDimension)
                 {
-                    if (attribute.Type == MapAttributes.ZDimension)
+                    if (attribute.Type == MapAttribute.ZDimension)
                     {
                         if (((MapZDimensionAttribute) attribute).GatewayTo > 0)
                         {
@@ -293,8 +294,8 @@ namespace Intersect.Server.Entities
                 }
 
                 //Check for grapplehooks.
-                if (attribute.Type == MapAttributes.GrappleStone &&
-                    Base.GrappleHookOptions.Contains(GrappleOptions.MapAttribute) &&
+                if (attribute.Type == MapAttribute.GrappleStone &&
+                    Base.GrappleHookOptions.Contains(GrappleOption.MapAttribute) &&
                     !spawn.Parent.HasGrappled &&
                     (spawn.X != Owner.X || spawn.Y != Owner.Y))
                 {
@@ -317,7 +318,7 @@ namespace Intersect.Server.Entities
                 }
 
                 if (!spawn.ProjectileBase.IgnoreMapBlocks &&
-                    (attribute.Type == MapAttributes.Blocked || attribute.Type == MapAttributes.Animation && ((MapAnimationAttribute)attribute).IsBlock))
+                    (attribute.Type == MapAttribute.Blocked || attribute.Type == MapAttribute.Animation && ((MapAnimationAttribute)attribute).IsBlock))
                 {
                     killSpawn = true;
                 }
@@ -462,9 +463,9 @@ namespace Intersect.Server.Entities
             return pkt;
         }
 
-        public override EntityTypes GetEntityType()
+        public override EntityType GetEntityType()
         {
-            return EntityTypes.Projectile;
+            return EntityType.Projectile;
         }
 
     }

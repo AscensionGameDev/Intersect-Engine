@@ -41,7 +41,7 @@ namespace Intersect.Configuration
 
         public const int DEFAULT_PORT = 5400;
 
-        public static List<DisplayDirection> DEFAULT_ENTITY_BAR_DIRECTIONS => Enumerable.Range(0, 1 + (int)Vitals.VitalCount).Select(_ => DisplayDirection.StartToEnd).ToList();
+        public static List<DisplayDirection> DEFAULT_ENTITY_BAR_DIRECTIONS => Enumerable.Range(0, 1 + (int)Vital.VitalCount).Select(_ => DisplayDirection.StartToEnd).ToList();
 
         public const string DEFAULT_FONT = "sourcesansproblack";
 
@@ -49,7 +49,7 @@ namespace Intersect.Configuration
 
         public const int DEFAULT_CHAT_LINES = 100;
 
-        public const DisplayModes DEFAULT_MENU_BACKGROUND_DISPLAY_MODE = DisplayModes.Default;
+        public const DisplayMode DEFAULT_MENU_BACKGROUND_DISPLAY_MODE = DisplayMode.Default;
 
         public const long DEFAULT_MENU_BACKGROUND_FRAME_INTERVAL = 50;
 
@@ -176,7 +176,7 @@ namespace Intersect.Configuration
         /// <summary>
         /// Sets the display mode of the main menu's background.
         /// </summary>
-        public DisplayModes MenuBackgroundDisplayMode { get; set; } = DEFAULT_MENU_BACKGROUND_DISPLAY_MODE;
+        public DisplayMode MenuBackgroundDisplayMode { get; set; } = DEFAULT_MENU_BACKGROUND_DISPLAY_MODE;
 
         /// <summary>
         /// Sets the frames interval (milliseconds) of the main menu's animated background.
@@ -223,7 +223,7 @@ namespace Intersect.Configuration
         /// </summary>
         [JsonProperty(ObjectCreationHandling = ObjectCreationHandling.Replace)]
         public List<DisplayDirection> EntityBarDirections { get; set; } =
-            Enumerable.Range(0, 1 + (int)Vitals.VitalCount).Select(_ => DisplayDirection.StartToEnd).ToList();
+            Enumerable.Range(0, 1 + (int)Vital.VitalCount).Select(_ => DisplayDirection.StartToEnd).ToList();
 
         public bool TypewriterEnabled { get; set; } = DEFAULT_TYPEWRITER_ENABLED;
 

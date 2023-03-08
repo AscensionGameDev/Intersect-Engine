@@ -22,6 +22,7 @@ using Intersect.Logging;
 using Microsoft.Xna.Framework.Graphics;
 
 using WeifenLuo.WinFormsUI.Docking;
+using MapAttribute = Intersect.Enums.MapAttribute;
 
 namespace Intersect.Editor.Forms.DockingElements
 {
@@ -1561,7 +1562,7 @@ namespace Intersect.Editor.Forms.DockingElements
             }
         }
 
-        private void SmartFillAttribute(int x, int y, string data  = null, MapAttribute newAttribute = null)
+        private void SmartFillAttribute(int x, int y, string data  = null, GameObjects.Maps.MapAttribute newAttribute = null)
         {
             if (x < 0 || x >= Options.MapWidth || y < 0 || y >= Options.MapHeight)
             {
@@ -1679,9 +1680,9 @@ namespace Intersect.Editor.Forms.DockingElements
             }
         }
 
-        private void SmartEraseAttribute(int x, int y, MapAttributes attribute)
+        private void SmartEraseAttribute(int x, int y, MapAttribute attribute)
         {
-            var a = MapAttributes.Walkable;
+            var a = MapAttribute.Walkable;
 
             if (x < 0 || x >= Options.MapWidth || y < 0 || y >= Options.MapHeight)
             {
@@ -1706,7 +1707,7 @@ namespace Intersect.Editor.Forms.DockingElements
 
         public void SmartEraseAttributes(int x, int y)
         {
-            var attribute = MapAttributes.Walkable;
+            var attribute = MapAttribute.Walkable;
 
             if (Globals.CurrentMap.Attributes[x, y] != null)
             {

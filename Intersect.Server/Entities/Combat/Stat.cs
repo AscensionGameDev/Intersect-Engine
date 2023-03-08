@@ -21,9 +21,9 @@ namespace Intersect.Server.Entities.Combat
 
         private Entity mOwner;
 
-        private Stats mStatType;
+        private Enums.Stat mStatType;
 
-        public Stat(Stats statType, Entity owner)
+        public Stat(Enums.Stat statType, Entity owner)
         {
             mOwner = owner;
             mStatType = statType;

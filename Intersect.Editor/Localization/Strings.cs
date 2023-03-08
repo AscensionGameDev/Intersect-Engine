@@ -68,25 +68,25 @@ namespace Intersect.Editor.Localization
         {
             var pVar = GetVariableComparisonString((dynamic)condition.Comparison);
 
-            if (condition.VariableType == VariableTypes.PlayerVariable)
+            if (condition.VariableType == VariableType.PlayerVariable)
             {
                 return EventConditionDesc.playervariable.ToString(
                     PlayerVariableBase.GetName(condition.VariableId), pVar
                 );
             }
-            else if (condition.VariableType == VariableTypes.ServerVariable)
+            else if (condition.VariableType == VariableType.ServerVariable)
             {
                 return EventConditionDesc.globalvariable.ToString(
                     ServerVariableBase.GetName(condition.VariableId), pVar
                 );
             }
-            else if (condition.VariableType == VariableTypes.GuildVariable)
+            else if (condition.VariableType == VariableType.GuildVariable)
             {
                 return EventConditionDesc.guildvariable.ToString(
                     GuildVariableBase.GetName(condition.VariableId), pVar
                 );
             }
-            else if (condition.VariableType == VariableTypes.UserVariable)
+            else if (condition.VariableType == VariableType.UserVariable)
             {
                 return EventConditionDesc.UserVariable.ToString(
                     Strings.GameObjectStrings.UserVariable,
@@ -105,13 +105,13 @@ namespace Intersect.Editor.Localization
                 var amount = string.Empty;
                 switch (condition.VariableType)
                 {
-                    case VariableTypes.PlayerVariable:
+                    case VariableType.PlayerVariable:
                         amount = string.Format(@"({0}: {1})", EventConditional.playervariable, PlayerVariableBase.GetName(condition.VariableId));
                         break;
-                    case VariableTypes.ServerVariable:
+                    case VariableType.ServerVariable:
                         amount = string.Format(@"({0}: {1})", EventConditional.globalvariable, ServerVariableBase.GetName(condition.VariableId));
                         break;
-                    case VariableTypes.GuildVariable:
+                    case VariableType.GuildVariable:
                         amount = string.Format(@"({0}: {1})", EventConditional.guildvariable, GuildVariableBase.GetName(condition.VariableId));
                         break;
                 }
@@ -144,27 +144,27 @@ namespace Intersect.Editor.Localization
             var pLvl = "";
             switch (condition.Comparator)
             {
-                case VariableComparators.Equal:
+                case VariableComparator.Equal:
                     pLvl = EventConditionDesc.equal.ToString(condition.Value);
 
                     break;
-                case VariableComparators.GreaterOrEqual:
+                case VariableComparator.GreaterOrEqual:
                     pLvl = EventConditionDesc.greaterequal.ToString(condition.Value);
 
                     break;
-                case VariableComparators.LesserOrEqual:
+                case VariableComparator.LesserOrEqual:
                     pLvl = EventConditionDesc.lessthanequal.ToString(condition.Value);
 
                     break;
-                case VariableComparators.Greater:
+                case VariableComparator.Greater:
                     pLvl = EventConditionDesc.greater.ToString(condition.Value);
 
                     break;
-                case VariableComparators.Less:
+                case VariableComparator.Less:
                     pLvl = EventConditionDesc.lessthan.ToString(condition.Value);
 
                     break;
-                case VariableComparators.NotEqual:
+                case VariableComparator.NotEqual:
                     pLvl = EventConditionDesc.notequal.ToString(condition.Value);
 
                     break;
@@ -334,13 +334,13 @@ namespace Intersect.Editor.Localization
                 var amount = string.Empty;
                 switch (condition.VariableType)
                 {
-                    case VariableTypes.PlayerVariable:
+                    case VariableType.PlayerVariable:
                         amount = string.Format(@"({0}: {1})", EventConditional.playervariable, PlayerVariableBase.GetName(condition.VariableId));
                         break;
-                    case VariableTypes.ServerVariable:
+                    case VariableType.ServerVariable:
                         amount = string.Format(@"({0}: {1})", EventConditional.globalvariable, ServerVariableBase.GetName(condition.VariableId));
                         break;
-                    case VariableTypes.GuildVariable:
+                    case VariableType.GuildVariable:
                         amount = string.Format(@"({0}: {1})", EventConditional.guildvariable, GuildVariableBase.GetName(condition.VariableId));
                         break;
                 }
@@ -379,19 +379,19 @@ namespace Intersect.Editor.Localization
             }
             else
             {
-                if (comparison.CompareVariableType == VariableTypes.PlayerVariable)
+                if (comparison.CompareVariableType == VariableType.PlayerVariable)
                 {
                     value = EventConditionDesc.playervariablevalue.ToString(
                         PlayerVariableBase.GetName(comparison.CompareVariableId)
                     );
                 }
-                else if (comparison.CompareVariableType == VariableTypes.ServerVariable)
+                else if (comparison.CompareVariableType == VariableType.ServerVariable)
                 {
                     value = EventConditionDesc.globalvariablevalue.ToString(
                         ServerVariableBase.GetName(comparison.CompareVariableId)
                     );
                 }
-                else if (comparison.CompareVariableType == VariableTypes.GuildVariable)
+                else if (comparison.CompareVariableType == VariableType.GuildVariable)
                 {
                     value = EventConditionDesc.guildvariablevalue.ToString(
                         GuildVariableBase.GetName(comparison.CompareVariableId)
@@ -427,19 +427,19 @@ namespace Intersect.Editor.Localization
             }
             else
             {
-                if (comparison.CompareVariableType == VariableTypes.PlayerVariable)
+                if (comparison.CompareVariableType == VariableType.PlayerVariable)
                 {
                     value = EventConditionDesc.playervariablevalue.ToString(
                         PlayerVariableBase.GetName(comparison.CompareVariableId)
                     );
                 }
-                else if (comparison.CompareVariableType == VariableTypes.ServerVariable)
+                else if (comparison.CompareVariableType == VariableType.ServerVariable)
                 {
                     value = EventConditionDesc.globalvariablevalue.ToString(
                         ServerVariableBase.GetName(comparison.CompareVariableId)
                     );
                 }
-                else if (comparison.CompareVariableType == VariableTypes.GuildVariable)
+                else if (comparison.CompareVariableType == VariableType.GuildVariable)
                 {
                     value = EventConditionDesc.guildvariablevalue.ToString(
                         GuildVariableBase.GetName(comparison.CompareVariableId)
@@ -449,27 +449,27 @@ namespace Intersect.Editor.Localization
 
             switch (comparison.Comparator)
             {
-                case VariableComparators.Equal:
+                case VariableComparator.Equal:
                     pVar = EventConditionDesc.equal.ToString(value);
 
                     break;
-                case VariableComparators.GreaterOrEqual:
+                case VariableComparator.GreaterOrEqual:
                     pVar = EventConditionDesc.greaterequal.ToString(value);
 
                     break;
-                case VariableComparators.LesserOrEqual:
+                case VariableComparator.LesserOrEqual:
                     pVar = EventConditionDesc.lessthanequal.ToString(value);
 
                     break;
-                case VariableComparators.Greater:
+                case VariableComparator.Greater:
                     pVar = EventConditionDesc.greater.ToString(value);
 
                     break;
-                case VariableComparators.Less:
+                case VariableComparator.Less:
                     pVar = EventConditionDesc.lessthan.ToString(value);
 
                     break;
-                case VariableComparators.NotEqual:
+                case VariableComparator.NotEqual:
                     pVar = EventConditionDesc.notequal.ToString(value);
 
                     break;
@@ -482,9 +482,9 @@ namespace Intersect.Editor.Localization
         {
             switch (comparison.Comparator)
             {
-                case StringVariableComparators.Equal:
+                case StringVariableComparator.Equal:
                     return EventConditionDesc.equal.ToString(comparison.Value);
-                case StringVariableComparators.Contains:
+                case StringVariableComparator.Contains:
                     return EventConditionDesc.contains.ToString(comparison.Value);
             }
 
@@ -873,18 +873,18 @@ namespace Intersect.Editor.Localization
         {
             public static Dictionary<int, LocalizedString> AttributeTypes = new Dictionary<int, LocalizedString>
             {
-                {(int) MapAttributes.Animation, @"Map Animation" },
-                {(int) MapAttributes.Blocked, @"Blocked" },
-                {(int) MapAttributes.Critter, @"Critter" },
-                {(int) MapAttributes.GrappleStone, @"Grapple Stone" },
-                {(int) MapAttributes.Item, @"Item Spawn" },
-                {(int) MapAttributes.NpcAvoid, @"Npc Avoid" },
-                {(int) MapAttributes.Resource, @"Resource Spawn" },
-                {(int) MapAttributes.Slide, @"Slide" },
-                {(int) MapAttributes.Sound, @"Map Sound" },
-                {(int) MapAttributes.Walkable, @"Walkable" },
-                {(int) MapAttributes.Warp, @"Warp" },
-                {(int) MapAttributes.ZDimension, @"Z-Dimension" },
+                {(int) MapAttribute.Animation, @"Map Animation" },
+                {(int) MapAttribute.Blocked, @"Blocked" },
+                {(int) MapAttribute.Critter, @"Critter" },
+                {(int) MapAttribute.GrappleStone, @"Grapple Stone" },
+                {(int) MapAttribute.Item, @"Item Spawn" },
+                {(int) MapAttribute.NpcAvoid, @"Npc Avoid" },
+                {(int) MapAttribute.Resource, @"Resource Spawn" },
+                {(int) MapAttribute.Slide, @"Slide" },
+                {(int) MapAttribute.Sound, @"Map Sound" },
+                {(int) MapAttribute.Walkable, @"Walkable" },
+                {(int) MapAttribute.Warp, @"Warp" },
+                {(int) MapAttribute.ZDimension, @"Z-Dimension" },
             };
 
             public static string FormatSpawnLevel(int level)
@@ -4460,16 +4460,16 @@ Tick timer saved in server config.json.";
             public static LocalizedString Tenacity = @"Tenacity (%):";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static Dictionary<StatusTypes, LocalizedString> Immunities = new Dictionary<StatusTypes, LocalizedString>
+            public static Dictionary<StatusType, LocalizedString> Immunities = new Dictionary<StatusType, LocalizedString>
             {
-                {StatusTypes.Knockback, @"Knockback"},
-                {StatusTypes.Silence, @"Silence"},
-                {StatusTypes.Stun, @"Stun"},
-                {StatusTypes.Snare, @"Snare"},
-                {StatusTypes.Blind, @"Blind"},
-                {StatusTypes.Transform, @"Transform"},
-                {StatusTypes.Sleep, @"Sleep"},
-                {StatusTypes.Taunt, @"Taunt"},
+                {StatusType.Knockback, @"Knockback"},
+                {StatusType.Silence, @"Silence"},
+                {StatusType.Stun, @"Stun"},
+                {StatusType.Snare, @"Snare"},
+                {StatusType.Blind, @"Blind"},
+                {StatusType.Transform, @"Transform"},
+                {StatusType.Sleep, @"Sleep"},
+                {StatusType.Taunt, @"Taunt"},
             };
 
         }
@@ -4582,12 +4582,12 @@ Tick timer saved in server config.json.";
             public static LocalizedString GrappleOptionsTitle = @"Grapple Options";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static Dictionary<GrappleOptions, LocalizedString> GrappleOpts = new Dictionary<GrappleOptions, LocalizedString>
+            public static Dictionary<GrappleOption, LocalizedString> GrappleOpts = new Dictionary<GrappleOption, LocalizedString>
             {
-                {GrappleOptions.MapAttribute, @"On Map Attribute"},
-                {GrappleOptions.Player, @"On Player"},
-                {GrappleOptions.NPC, @"On NPC"},
-                {GrappleOptions.Resource, @"On Resource"},
+                {GrappleOption.MapAttribute, @"On Map Attribute"},
+                {GrappleOption.Player, @"On Player"},
+                {GrappleOption.NPC, @"On NPC"},
+                {GrappleOption.Resource, @"On Resource"},
             };
 
             public static LocalizedString ignoreactiveresources = @"Active Resources";

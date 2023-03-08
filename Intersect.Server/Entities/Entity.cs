@@ -20,6 +20,8 @@ using Intersect.Server.Maps;
 using Intersect.Server.Networking;
 using Intersect.Utilities;
 using Newtonsoft.Json;
+using MapAttribute = Intersect.Enums.MapAttribute;
+using Stat = Intersect.Enums.Stat;
 
 namespace Intersect.Server.Entities
 {
@@ -32,9 +34,9 @@ namespace Intersect.Server.Entities
 
         public Guid MapInstanceId = Guid.Empty;
 
-        [JsonProperty("MaxVitals"), NotMapped] private int[] _maxVital = new int[(int) Vitals.VitalCount];
+        [JsonProperty("MaxVitals"), NotMapped] private int[] _maxVital = new int[(int) Vital.VitalCount];
 
-        [NotMapped, JsonIgnore] public Stat[] Stat = new Stat[(int) Stats.StatCount];
+        [NotMapped, JsonIgnore] public Combat.Stat[] Stat = new Combat.Stat[(int) Enums.Stat.StatCount];
 
         [NotMapped, JsonIgnore] public Entity Target { get; set; } = null;
 
@@ -47,9 +49,9 @@ namespace Intersect.Server.Entities
         {
             if (!(this is EventPageInstance) && !(this is Projectile))
             {
-                for (var i = 0; i < (int)Stats.StatCount; i++)
+                for (var i = 0; i < (int)Enums.Stat.StatCount; i++)
                 {
-                    Stat[i] = new Stat((Stats)i, this);
+                    Stat[i] = new Combat.Stat((Stat)i, this);
                 }
             }
             MapInstanceId = mapInstanceId;
@@ -102,41 +104,41 @@ namespace Intersect.Server.Entities
         [JsonIgnore, Column("Vitals")]
         public string VitalsJson
         {
-            get => DatabaseUtils.SaveIntArray(mVitals, (int) Enums.Vitals.VitalCount);
-            set => mVitals = DatabaseUtils.LoadIntArray(value, (int) Enums.Vitals.VitalCount);
+            get => DatabaseUtils.SaveIntArray(mVitals, (int) Enums.Vital.VitalCount);
+            set => mVitals = DatabaseUtils.LoadIntArray(value, (int) Enums.Vital.VitalCount);
         }
 
         [JsonProperty("Vitals"), NotMapped]
-        private int[] mVitals { get; set; } = new int[(int) Enums.Vitals.VitalCount];
+        private int[] mVitals { get; set; } = new int[(int) Enums.Vital.VitalCount];
 
         [JsonIgnore, NotMapped]
-        private int[] mOldVitals { get; set; } = new int[(int)Enums.Vitals.VitalCount];
+        private int[] mOldVitals { get; set; } = new int[(int)Enums.Vital.VitalCount];
 
         [JsonIgnore, NotMapped]
-        private int[] mOldMaxVitals { get; set; } = new int[(int)Enums.Vitals.VitalCount];
+        private int[] mOldMaxVitals { get; set; } = new int[(int)Enums.Vital.VitalCount];
 
         //Stats based on npc settings, class settings, etc for quick calculations
         [JsonIgnore, Column(nameof(BaseStats))]
         public string StatsJson
         {
-            get => DatabaseUtils.SaveIntArray(BaseStats, (int) Enums.Stats.StatCount);
-            set => BaseStats = DatabaseUtils.LoadIntArray(value, (int) Enums.Stats.StatCount);
+            get => DatabaseUtils.SaveIntArray(BaseStats, (int) Enums.Stat.StatCount);
+            set => BaseStats = DatabaseUtils.LoadIntArray(value, (int) Enums.Stat.StatCount);
         }
 
         [NotMapped]
         public int[] BaseStats { get; set; } =
-            new int[(int) Enums.Stats
+            new int[(int) Enums.Stat
                 .StatCount]; // TODO: Why can this be BaseStats while Vitals is _vital and MaxVitals is _maxVital?
 
         [JsonIgnore, Column(nameof(StatPointAllocations))]
         public string StatPointsJson
         {
-            get => DatabaseUtils.SaveIntArray(StatPointAllocations, (int) Enums.Stats.StatCount);
-            set => StatPointAllocations = DatabaseUtils.LoadIntArray(value, (int) Enums.Stats.StatCount);
+            get => DatabaseUtils.SaveIntArray(StatPointAllocations, (int) Enums.Stat.StatCount);
+            set => StatPointAllocations = DatabaseUtils.LoadIntArray(value, (int) Enums.Stat.StatCount);
         }
 
         [NotMapped]
-        public int[] StatPointAllocations { get; set; } = new int[(int) Enums.Stats.StatCount];
+        public int[] StatPointAllocations { get; set; } = new int[(int) Enums.Stat.StatCount];
 
         //Inventory
         [JsonIgnore]
@@ -255,7 +257,7 @@ namespace Intersect.Server.Entities
         private Status[] mOldStatuses = new Status[0];
 
         [JsonIgnore, NotMapped]
-        public List<StatusTypes> Immunities = new List<StatusTypes>();
+        public List<StatusType> Immunities = new List<StatusType>();
 
         [NotMapped, JsonIgnore]
         public bool IsDisposed { get; protected set; }
@@ -329,7 +331,7 @@ namespace Intersect.Server.Entities
 
                     var statsUpdated = false;
                     var statTime = Timing.Global.Milliseconds;
-                    for (var i = 0; i < (int)Stats.StatCount; i++)
+                    for (var i = 0; i < (int)Enums.Stat.StatCount; i++)
                     {
                         statsUpdated |= Stat[i].Update(statTime);
                     }
@@ -449,24 +451,24 @@ namespace Intersect.Server.Entities
                 var tileAttribute = mapController.Attributes[tileX, tileY];
                 if (tileAttribute != null)
                 {
-                    if (tileAttribute.Type == MapAttributes.Blocked || (tileAttribute.Type == MapAttributes.Animation && ((MapAnimationAttribute)tileAttribute).IsBlock))
+                    if (tileAttribute.Type == MapAttribute.Blocked || (tileAttribute.Type == MapAttribute.Animation && ((MapAnimationAttribute)tileAttribute).IsBlock))
                     {
                         return -2;
                     }
 
-                    if (tileAttribute.Type == MapAttributes.NpcAvoid && (this is Npc || (this is EventPageInstance evtPage && !evtPage.MyPage.IgnoreNpcAvoids)))
+                    if (tileAttribute.Type == MapAttribute.NpcAvoid && (this is Npc || (this is EventPageInstance evtPage && !evtPage.MyPage.IgnoreNpcAvoids)))
                     {
                         return -2;
                     }
 
-                    if (tileAttribute.Type == MapAttributes.ZDimension &&
+                    if (tileAttribute.Type == MapAttribute.ZDimension &&
                         ((MapZDimensionAttribute) tileAttribute).BlockedLevel > 0 &&
                         ((MapZDimensionAttribute) tileAttribute).BlockedLevel - 1 == Z)
                     {
                         return -3;
                     }
 
-                    if (tileAttribute.Type == MapAttributes.Slide)
+                    if (tileAttribute.Type == MapAttribute.Slide)
                     {
                         if (this is EventPage)
                         {
@@ -533,24 +535,24 @@ namespace Intersect.Server.Entities
                                 //Check if this target player is passable....
                                 if (!Options.Instance.Passability.Passable[(int)targetMap.ZoneType])
                                 {
-                                    return (int)EntityTypes.Player;
+                                    return (int)EntityType.Player;
                                 }
                             }
                             else
                             {
-                                return (int)EntityTypes.Player;
+                                return (int)EntityType.Player;
                             }
                         }
                         else if (en is Npc)
                         {
-                            return (int)EntityTypes.Player;
+                            return (int)EntityType.Player;
                         }
                         else if (en is Resource resource)
                         {
                             //If determine if we should walk
                             if (!resource.IsPassable())
                             {
-                                return (int)EntityTypes.Resource;
+                                return (int)EntityType.Resource;
                             }
                         }
                     }
@@ -565,7 +567,7 @@ namespace Intersect.Server.Entities
                         {
                             if (en != null && en.X == tileX && en.Y == tileY && en.Z == Z && !en.Passable)
                             {
-                                return (int)EntityTypes.Event;
+                                return (int)EntityType.Event;
                             }
                         }
                     }
@@ -920,7 +922,7 @@ namespace Intersect.Server.Entities
         //Returns the amount of time required to traverse 1 tile
         public virtual float GetMovementTime()
         {
-            var time = 1000f / (float)(1 + Math.Log(Stat[(int)Stats.Speed].Value()));
+            var time = 1000f / (float)(1 + Math.Log(Stat[(int)Enums.Stat.Speed].Value()));
             if (Dir > Direction.Right)
             {
                 time *= MathHelper.UnitDiagonalLength;
@@ -934,9 +936,9 @@ namespace Intersect.Server.Entities
             return Math.Min(1000f, time);
         }
 
-        public virtual EntityTypes GetEntityType()
+        public virtual EntityType GetEntityType()
         {
-            return EntityTypes.GlobalEntity;
+            return EntityType.GlobalEntity;
         }
 
         public virtual void Move(Direction moveDir, Player forPlayer, bool doNotUpdate = false,
@@ -1128,13 +1130,13 @@ namespace Intersect.Server.Entities
 
                     // ReSharper disable once InvertIf
                     //Check for slide tiles
-                    if (attribute?.Type == MapAttributes.Slide)
+                    if (attribute?.Type == MapAttribute.Slide)
                     {
                         // If sets direction, set it.
                         if (((MapSlideAttribute)attribute).Direction > 0)
                         {
                             //Check for slide tiles
-                            if (attribute != null && attribute.Type == MapAttributes.Slide)
+                            if (attribute != null && attribute.Type == MapAttribute.Slide)
                             {
                                 if (((MapSlideAttribute)attribute).Direction > 0)
                                 {
@@ -1183,7 +1185,7 @@ namespace Intersect.Server.Entities
                 if (Y < Options.MapHeight && Y >= 0)
                 {
                     var attribute = MapController.Get(MapId).Attributes[X, Y];
-                    if (attribute != null && attribute.Type == MapAttributes.ZDimension)
+                    if (attribute != null && attribute.Type == MapAttribute.ZDimension)
                     {
                         if (((MapZDimensionAttribute) attribute).GatewayTo > 0)
                         {
@@ -1263,7 +1265,7 @@ namespace Intersect.Server.Entities
         {
             return (int) (Options.MaxAttackRate +
                           (Options.MinAttackRate - Options.MaxAttackRate) *
-                          (((float) Options.MaxStatValue - Stat[(int) Stats.Speed].Value()) /
+                          (((float) Options.MaxStatValue - Stat[(int) Enums.Stat.Speed].Value()) /
                            Options.MaxStatValue));
         }
 
@@ -1302,13 +1304,13 @@ namespace Intersect.Server.Entities
 
         public int[] GetVitals()
         {
-            var vitals = new int[(int) Vitals.VitalCount];
-            Array.Copy(mVitals, 0, vitals, 0, (int) Vitals.VitalCount);
+            var vitals = new int[(int) Vital.VitalCount];
+            Array.Copy(mVitals, 0, vitals, 0, (int) Vital.VitalCount);
 
             return vitals;
         }
 
-        public int GetVital(Vitals vital)
+        public int GetVital(Vital vital)
         {
             return GetVital((int) vital);
         }
@@ -1328,7 +1330,7 @@ namespace Intersect.Server.Entities
             mVitals[vital] = value;
         }
 
-        public void SetVital(Vitals vital, int value)
+        public void SetVital(Vital vital, int value)
         {
             SetVital((int) vital, value);
         }
@@ -1338,14 +1340,14 @@ namespace Intersect.Server.Entities
             return _maxVital[vital];
         }
 
-        public virtual int GetMaxVital(Vitals vital)
+        public virtual int GetMaxVital(Vital vital)
         {
             return GetMaxVital((int) vital);
         }
 
         public int[] GetMaxVitals()
         {
-            var vitals = new int[(int) Vitals.VitalCount];
+            var vitals = new int[(int) Vital.VitalCount];
             for (var vitalIndex = 0; vitalIndex < vitals.Length; ++vitalIndex)
             {
                 vitals[vitalIndex] = GetMaxVital(vitalIndex);
@@ -1356,12 +1358,12 @@ namespace Intersect.Server.Entities
 
         public void SetMaxVital(int vital, int value)
         {
-            if (value <= 0 && vital == (int) Vitals.Health)
+            if (value <= 0 && vital == (int) Vital.Health)
             {
                 value = 1; //Must have at least 1 hp
             }
 
-            if (value < 0 && vital == (int) Vitals.Mana)
+            if (value < 0 && vital == (int) Vital.Mana)
             {
                 value = 0; //Can't have less than 0 mana
             }
@@ -1373,30 +1375,30 @@ namespace Intersect.Server.Entities
             }
         }
 
-        public void SetMaxVital(Vitals vital, int value)
+        public void SetMaxVital(Vital vital, int value)
         {
             SetMaxVital((int) vital, value);
         }
 
-        public bool HasVital(Vitals vital)
+        public bool HasVital(Vital vital)
         {
             return GetVital(vital) > 0;
         }
 
-        public bool IsFullVital(Vitals vital)
+        public bool IsFullVital(Vital vital)
         {
             return GetVital(vital) == GetMaxVital(vital);
         }
 
         //Vitals
-        public void RestoreVital(Vitals vital)
+        public void RestoreVital(Vital vital)
         {
             SetVital(vital, GetMaxVital(vital));
         }
 
-        public void AddVital(Vitals vital, int amount)
+        public void AddVital(Vital vital, int amount)
         {
-            if (vital >= Vitals.VitalCount)
+            if (vital >= Vital.VitalCount)
             {
                 return;
             }
@@ -1407,9 +1409,9 @@ namespace Intersect.Server.Entities
             SetVital(vital, GetVital(vital) + safeAmount);
         }
 
-        public void SubVital(Vitals vital, int amount)
+        public void SubVital(Vital vital, int amount)
         {
-            if (vital >= Vitals.VitalCount)
+            if (vital >= Vital.VitalCount)
             {
                 return;
             }
@@ -1417,7 +1419,7 @@ namespace Intersect.Server.Entities
             //Check for any shields.
             foreach (var status in CachedStatuses)
             {
-                if (status.Type == StatusTypes.Shield)
+                if (status.Type == StatusType.Shield)
                 {
                     status.DamageShield(vital, ref amount);
                 }
@@ -1431,8 +1433,8 @@ namespace Intersect.Server.Entities
 
         public virtual int[] GetStatValues()
         {
-            var stats = new int[(int) Stats.StatCount];
-            for (var i = 0; i < (int) Stats.StatCount; i++)
+            var stats = new int[(int) Enums.Stat.StatCount];
+            for (var i = 0; i < (int) Enums.Stat.StatCount; i++)
             {
                 stats[i] = Stat[i].Value();
             }
@@ -1460,7 +1462,7 @@ namespace Intersect.Server.Entities
             //Check for taunt status and trying to attack a target that has not taunted you.
             foreach (var status in CachedStatuses)
             {
-                if (status.Type == StatusTypes.Taunt)
+                if (status.Type == StatusType.Taunt)
                 {
                     if (Target != target)
                     {
@@ -1486,12 +1488,12 @@ namespace Intersect.Server.Entities
                     targetPlayer.StartCommonEventsWithTrigger(CommonEventTrigger.PlayerInteract, "", this.Name);
                 }
 
-                if (MapController.Get(MapId).ZoneType == MapZones.Safe)
+                if (MapController.Get(MapId).ZoneType == MapZone.Safe)
                 {
                     return;
                 }
 
-                if (MapController.Get(target.MapId).ZoneType == MapZones.Safe)
+                if (MapController.Get(target.MapId).ZoneType == MapZone.Safe)
                 {
                     return;
                 }
@@ -1505,7 +1507,7 @@ namespace Intersect.Server.Entities
             if (parentSpell == null)
             {
                 Attack(
-                    target, parentItem.Damage, 0, (DamageType) parentItem.DamageType, (Stats) parentItem.ScalingStat,
+                    target, parentItem.Damage, 0, (DamageType) parentItem.DamageType, (Stat) parentItem.ScalingStat,
                     parentItem.Scaling, parentItem.CritChance, parentItem.CritMultiplier, null, null, true
                 );
             }
@@ -1538,7 +1540,7 @@ namespace Intersect.Server.Entities
             }
 
             // If there is knock-back: knock them backwards.
-            if (projectile.Knockback > 0 && ((int)projectileDir < Options.Instance.MapOpts.MovementDirections) && !target.Immunities.Contains(StatusTypes.Knockback))
+            if (projectile.Knockback > 0 && ((int)projectileDir < Options.Instance.MapOpts.MovementDirections) && !target.Immunities.Contains(StatusType.Knockback))
             {
                 var dash = new Dash(target, projectile.Knockback, projectileDir, false, false, false, false);
             }
@@ -1567,7 +1569,7 @@ namespace Intersect.Server.Entities
             {
                 foreach (var status in CachedStatuses)
                 {
-                    if (status.Type == StatusTypes.Taunt)
+                    if (status.Type == StatusType.Taunt)
                     {
                         if (Target != target)
                         {
@@ -1584,10 +1586,10 @@ namespace Intersect.Server.Entities
 
             //Only count safe zones and friendly fire if its a dangerous spell! (If one has been used)
             if (!spellBase.Combat.Friendly &&
-                (spellBase.Combat.TargetType != (int) SpellTargetTypes.Self || onHitTrigger))
+                (spellBase.Combat.TargetType != (int) SpellTargetType.Self || onHitTrigger))
             {
                 //If about to hit self with an unfriendly spell (maybe aoe?) return
-                if (target == this && spellBase.Combat.Effect != StatusTypes.OnHit)
+                if (target == this && spellBase.Combat.Effect != StatusType.OnHit)
                 {
                     return;
                 }
@@ -1609,12 +1611,12 @@ namespace Intersect.Server.Entities
                     }
 
                     // Check if either the attacker or the defender is in a "safe zone" (Only apply if combat is PVP)
-                    if (MapController.Get(MapId).ZoneType == MapZones.Safe)
+                    if (MapController.Get(MapId).ZoneType == MapZone.Safe)
                     {
                         return;
                     }
 
-                    if (MapController.Get(target.MapId).ZoneType == MapZones.Safe)
+                    if (MapController.Get(target.MapId).ZoneType == MapZone.Safe)
                     {
                         return;
                     }
@@ -1643,7 +1645,7 @@ namespace Intersect.Server.Entities
             }
 
             if (spellBase.HitAnimationId != Guid.Empty &&
-                (spellBase.Combat.Effect != StatusTypes.OnHit || onHitTrigger))
+                (spellBase.Combat.Effect != StatusType.OnHit || onHitTrigger))
             {
                 deadAnimations.Add(new KeyValuePair<Guid, Direction>(spellBase.HitAnimationId, Direction.Up));
                 aliveAnimations.Add(new KeyValuePair<Guid, Direction>(spellBase.HitAnimationId, Direction.Up));
@@ -1651,7 +1653,7 @@ namespace Intersect.Server.Entities
 
             var statBuffTime = -1;
             var expireTime = Timing.Global.Milliseconds + spellBase.Combat.Duration;
-            for (var i = 0; i < (int) Stats.StatCount; i++)
+            for (var i = 0; i < (int) Enums.Stat.StatCount; i++)
             {
                 target.Stat[i]
                     .AddBuff(
@@ -1672,15 +1674,15 @@ namespace Intersect.Server.Entities
                 }
             }
 
-            var damageHealth = spellBase.Combat.VitalDiff[(int)Vitals.Health];
-            var damageMana = spellBase.Combat.VitalDiff[(int)Vitals.Mana];
+            var damageHealth = spellBase.Combat.VitalDiff[(int)Vital.Health];
+            var damageMana = spellBase.Combat.VitalDiff[(int)Vital.Mana];
 
-            if ((spellBase.Combat.Effect != StatusTypes.OnHit || onHitTrigger) &&
-                spellBase.Combat.Effect != StatusTypes.Shield)
+            if ((spellBase.Combat.Effect != StatusType.OnHit || onHitTrigger) &&
+                spellBase.Combat.Effect != StatusType.Shield)
             {
                 Attack(
                     target, damageHealth, damageMana, (DamageType) spellBase.Combat.DamageType,
-                    (Stats) spellBase.Combat.ScalingStat, spellBase.Combat.Scaling, spellBase.Combat.CritChance,
+                    (Stat) spellBase.Combat.ScalingStat, spellBase.Combat.Scaling, spellBase.Combat.CritChance,
                     spellBase.Combat.CritMultiplier, deadAnimations, aliveAnimations, false
                 );
             }
@@ -1688,7 +1690,7 @@ namespace Intersect.Server.Entities
             if (spellBase.Combat.Effect > 0) //Handle status effects
             {
                 //Check for onhit effect to avoid the onhit effect recycling.
-                if (!(onHitTrigger && spellBase.Combat.Effect == StatusTypes.OnHit))
+                if (!(onHitTrigger && spellBase.Combat.Effect == StatusType.OnHit))
                 {
                     // If the entity is immune to some status, then just inform the client of such
                     if (target.Immunities.Contains(spellBase.Combat.Effect)) {
@@ -1714,7 +1716,7 @@ namespace Intersect.Server.Entities
                         );
 
                         //If an onhit or shield status bail out as we don't want to do any damage.
-                        if (spellBase.Combat.Effect == StatusTypes.OnHit || spellBase.Combat.Effect == StatusTypes.Shield)
+                        if (spellBase.Combat.Effect == StatusType.OnHit || spellBase.Combat.Effect == StatusType.Shield)
                         {
                             Animate(target, aliveAnimations);
 
@@ -1776,7 +1778,7 @@ namespace Intersect.Server.Entities
         public virtual void TryAttack(Entity target,
             int baseDamage,
             DamageType damageType,
-            Stats scalingStat,
+            Stat scalingStat,
             int scaling,
             int critChance,
             double critMultiplier,
@@ -1801,12 +1803,12 @@ namespace Intersect.Server.Entities
                 //Player interaction common events
                 targetPlayer.StartCommonEventsWithTrigger(CommonEventTrigger.PlayerInteract, "", this.Name);
 
-                if (MapController.Get(MapId)?.ZoneType == MapZones.Safe)
+                if (MapController.Get(MapId)?.ZoneType == MapZone.Safe)
                 {
                     return;
                 }
 
-                if (MapController.Get(target.MapId)?.ZoneType == MapZones.Safe)
+                if (MapController.Get(target.MapId)?.ZoneType == MapZone.Safe)
                 {
                     return;
                 }
@@ -1815,7 +1817,7 @@ namespace Intersect.Server.Entities
             //Check for taunt status and trying to attack a target that has not taunted you.
             foreach (var status in CachedStatuses)
             {
-                if (status.Type == StatusTypes.Taunt)
+                if (status.Type == StatusType.Taunt)
                 {
                     if (Target != target)
                     {
@@ -1833,9 +1835,9 @@ namespace Intersect.Server.Entities
             {
                 foreach (var status in CachedStatuses)
                 {
-                    if (status.Type == StatusTypes.Stun ||
-                        status.Type == StatusTypes.Blind ||
-                        status.Type == StatusTypes.Sleep)
+                    if (status.Type == StatusType.Stun ||
+                        status.Type == StatusType.Blind ||
+                        status.Type == StatusType.Sleep)
                     {
                         PacketSender.SendActionMsg(this, Strings.Combat.miss, CustomColors.Combat.Missed);
                         PacketSender.SendEntityAttack(this, CalculateAttackTime());
@@ -1856,7 +1858,7 @@ namespace Intersect.Server.Entities
             int baseDamage,
             int secondaryDamage,
             DamageType damageType,
-            Stats scalingStat,
+            Stat scalingStat,
             int scaling,
             int critChance,
             double critMultiplier,
@@ -1875,7 +1877,7 @@ namespace Intersect.Server.Entities
 
             //Let's save the entity's vitals before they takes damage to use in lifesteal/manasteal
             var enemyVitals = enemy.GetVitals();
-            var invulnerable = enemy.CachedStatuses.Any(status => status.Type == StatusTypes.Invulnerable);
+            var invulnerable = enemy.CachedStatuses.Any(status => status.Type == StatusType.Invulnerable);
 
             bool isCrit = false;
             //Is this a critical hit?
@@ -1928,7 +1930,7 @@ namespace Intersect.Server.Entities
 
                         if (blockAbsorption > 0)
                         {
-                            player.AddVital(Vitals.Health, absorptionAmount);
+                            player.AddVital(Vital.Health, absorptionAmount);
 
                             PacketSender.SendActionMsg(
                             enemy, Strings.Combat.addsymbol + Math.Abs(absorptionAmount),
@@ -1950,14 +1952,14 @@ namespace Intersect.Server.Entities
                     baseDamage = 0;
                 }
 
-                if (baseDamage > 0 && enemy.HasVital(Vitals.Health) && !invulnerable)
+                if (baseDamage > 0 && enemy.HasVital(Vital.Health) && !invulnerable)
                 {
                     if (isCrit)
                     {
                         PacketSender.SendActionMsg(enemy, Strings.Combat.critical, CustomColors.Combat.Critical);
                     }
 
-                    enemy.SubVital(Vitals.Health, baseDamage);
+                    enemy.SubVital(Vital.Health, baseDamage);
                     switch (damageType)
                     {
                         case DamageType.Physical:
@@ -1985,7 +1987,7 @@ namespace Intersect.Server.Entities
                     foreach (var status in enemy.CachedStatuses.ToArray())  // ToArray the Array since removing a status will.. you know, change the collection.
                     {
                         //Wake up any sleeping targets targets and take stealthed entities out of stealth
-                        if (status.Type == StatusTypes.Sleep || status.Type == StatusTypes.Stealth)
+                        if (status.Type == StatusType.Sleep || status.Type == StatusType.Stealth)
                         {
                             status.RemoveStatus();
                         }
@@ -2005,9 +2007,9 @@ namespace Intersect.Server.Entities
 
                     enemy.NotifySwarm(this);
                 }
-                else if (baseDamage < 0 && !enemy.IsFullVital(Vitals.Health))
+                else if (baseDamage < 0 && !enemy.IsFullVital(Vital.Health))
                 {
-                    enemy.AddVital(Vitals.Health, -baseDamage);
+                    enemy.AddVital(Vital.Health, -baseDamage);
                     PacketSender.SendActionMsg(
                         enemy, Strings.Combat.addsymbol + Math.Abs(baseDamage), CustomColors.Combat.Heal
                     );
@@ -2025,10 +2027,10 @@ namespace Intersect.Server.Entities
                     secondaryDamage = 0;
                 }
 
-                if (secondaryDamage > 0 && enemy.HasVital(Vitals.Mana) && !invulnerable)
+                if (secondaryDamage > 0 && enemy.HasVital(Vital.Mana) && !invulnerable)
                 {
                     //If we took damage lets reset our combat timer
-                    enemy.SubVital(Vitals.Mana, secondaryDamage);
+                    enemy.SubVital(Vital.Mana, secondaryDamage);
                     PacketSender.SendActionMsg(
                         enemy, Strings.Combat.removesymbol + secondaryDamage, CustomColors.Combat.RemoveMana
                     );
@@ -2041,9 +2043,9 @@ namespace Intersect.Server.Entities
 
                     enemy.NotifySwarm(this);
                 }
-                else if (secondaryDamage < 0 && !enemy.IsFullVital(Vitals.Mana))
+                else if (secondaryDamage < 0 && !enemy.IsFullVital(Vital.Mana))
                 {
-                    enemy.AddVital(Vitals.Mana, -secondaryDamage);
+                    enemy.AddVital(Vital.Mana, -secondaryDamage);
                     PacketSender.SendActionMsg(
                         enemy, Strings.Combat.addsymbol + Math.Abs(secondaryDamage), CustomColors.Combat.AddMana
                     );
@@ -2061,12 +2063,12 @@ namespace Intersect.Server.Entities
             {
                 var lifestealRate = thisPlayer.GetEquipmentBonusEffect(EffectType.Lifesteal) / 100f;
                 var idealHealthRecovered = lifestealRate * baseDamage;
-                var actualHealthRecovered = Math.Min(enemyVitals[(int)Vitals.Health], idealHealthRecovered);
+                var actualHealthRecovered = Math.Min(enemyVitals[(int)Vital.Health], idealHealthRecovered);
 
                 if (actualHealthRecovered > 0)
                 {
                     // Don't send any +0 msg's.
-                    AddVital(Vitals.Health, (int)actualHealthRecovered);
+                    AddVital(Vital.Health, (int)actualHealthRecovered);
                     PacketSender.SendActionMsg(
                         this,
                         Strings.Combat.addsymbol + (int)actualHealthRecovered,
@@ -2076,13 +2078,13 @@ namespace Intersect.Server.Entities
 
                 var manastealRate = (thisPlayer.GetEquipmentBonusEffect(EffectType.Manasteal) / 100f);
                 var idealManaRecovered = manastealRate * baseDamage;
-                var actualManaRecovered = Math.Min(enemyVitals[(int)Vitals.Mana], idealManaRecovered);
+                var actualManaRecovered = Math.Min(enemyVitals[(int)Vital.Mana], idealManaRecovered);
 
                 if (actualManaRecovered > 0)
                 {
                     // Don't send any +0 msg's.
-                    AddVital(Vitals.Mana, (int)actualManaRecovered);
-                    enemy.SubVital(Vitals.Mana, (int)actualManaRecovered);
+                    AddVital(Vital.Mana, (int)actualManaRecovered);
+                    enemy.SubVital(Vital.Mana, (int)actualManaRecovered);
                     PacketSender.SendActionMsg(
                         this,
                         Strings.Combat.addsymbol + (int)actualManaRecovered,
@@ -2094,7 +2096,7 @@ namespace Intersect.Server.Entities
                 if (remainingManaRecovery > 0)
                 {
                     // If the mana recovered is less than it should be, deal the remainder as bonus damage
-                    enemy.SubVital(Vitals.Health, (int)remainingManaRecovery);
+                    enemy.SubVital(Vital.Health, (int)remainingManaRecovery);
                     PacketSender.SendActionMsg(
                         enemy,
                         Strings.Combat.removesymbol + remainingManaRecovery,
@@ -2104,7 +2106,7 @@ namespace Intersect.Server.Entities
             }
 
             //Dead entity check
-            if (enemy.GetVital(Vitals.Health) <= 0)
+            if (enemy.GetVital(Vital.Health) <= 0)
             {
                 if (enemy is Npc || enemy is Resource)
                 {
@@ -2163,7 +2165,7 @@ namespace Intersect.Server.Entities
             {
                 foreach (var status in CachedStatuses)
                 {
-                    if (status.Type == StatusTypes.OnHit)
+                    if (status.Type == StatusType.OnHit)
                     {
                         TryAttack(enemy, status.Spell, true);
                         status.RemoveStatus();
@@ -2195,13 +2197,13 @@ namespace Intersect.Server.Entities
                 // Do we meet the vital requirements?
                 if (checkVitalReqs)
             {
-                if (spell.VitalCost[(int)Vitals.Mana] > GetVital(Vitals.Mana))
+                if (spell.VitalCost[(int)Vital.Mana] > GetVital(Vital.Mana))
                 {
                     reason = SpellCastFailureReason.InsufficientMP;
                     return false;
                 }
 
-                if (spell.VitalCost[(int)Vitals.Health] > GetVital(Vitals.Health))
+                if (spell.VitalCost[(int)Vital.Health] > GetVital(Vital.Health))
                 {
                     reason = SpellCastFailureReason.InsufficientHP;
                     return false;
@@ -2210,32 +2212,32 @@ namespace Intersect.Server.Entities
 
             // Check if the caster has any status effects that need to apply.
             // Ignore if the current spell is a Cleanse, this will ignore any and all status effects.
-            if (spell.Combat.Effect != StatusTypes.Cleanse)
+            if (spell.Combat.Effect != StatusType.Cleanse)
             {
                 foreach (var status in CachedStatuses)
                 {
-                    if (status.Type == StatusTypes.Silence)
+                    if (status.Type == StatusType.Silence)
                     {
                         reason = SpellCastFailureReason.Silenced;
                         return false;
                     }
 
-                    if (status.Type == StatusTypes.Stun)
+                    if (status.Type == StatusType.Stun)
                     {
                         reason = SpellCastFailureReason.Stunned;
                         return false;
                     }
 
-                    if (status.Type == StatusTypes.Sleep)
+                    if (status.Type == StatusType.Sleep)
                     {
                         reason = SpellCastFailureReason.Asleep;
                         return false;
                     }
 
-                    if (status.Type == StatusTypes.Snare)
+                    if (status.Type == StatusType.Snare)
                     {
                         // If this spell is a Dash or Warp type ability, we can not use it while snared.
-                        if (spell.SpellType == SpellTypes.Dash || spell.SpellType == SpellTypes.Warp || spell.SpellType == SpellTypes.WarpTo)
+                        if (spell.SpellType == SpellType.Dash || spell.SpellType == SpellType.Warp || spell.SpellType == SpellType.WarpTo)
                         {
                             reason = SpellCastFailureReason.Snared;
                             return false;
@@ -2245,14 +2247,14 @@ namespace Intersect.Server.Entities
             }
 
             // Check for target validity
-            var singleTargetSpell = (spell.SpellType == SpellTypes.CombatSpell && spell.Combat.TargetType == SpellTargetTypes.Single) || spell.SpellType == SpellTypes.WarpTo;
+            var singleTargetSpell = (spell.SpellType == SpellType.CombatSpell && spell.Combat.TargetType == SpellTargetType.Single) || spell.SpellType == SpellType.WarpTo;
             if (target == null && singleTargetSpell)
             {
                 reason = SpellCastFailureReason.InvalidTarget;
                 return false;
             }
 
-            if (target == this && spell.SpellType == SpellTypes.WarpTo)
+            if (target == this && spell.SpellType == SpellType.WarpTo)
             {
                 reason = SpellCastFailureReason.InvalidTarget;
                 return false;
@@ -2295,33 +2297,33 @@ namespace Intersect.Server.Entities
                 return;
             }
 
-            if (spellBase.VitalCost[(int)Vitals.Mana] > 0)
+            if (spellBase.VitalCost[(int)Vital.Mana] > 0)
             {
-                SubVital(Vitals.Mana, spellBase.VitalCost[(int)Vitals.Mana]);
+                SubVital(Vital.Mana, spellBase.VitalCost[(int)Vital.Mana]);
             }
             else
             {
-                AddVital(Vitals.Mana, -spellBase.VitalCost[(int)Vitals.Mana]);
+                AddVital(Vital.Mana, -spellBase.VitalCost[(int)Vital.Mana]);
             }
 
-            if (spellBase.VitalCost[(int)Vitals.Health] > 0)
+            if (spellBase.VitalCost[(int)Vital.Health] > 0)
             {
-                SubVital(Vitals.Health, spellBase.VitalCost[(int)Vitals.Health]);
+                SubVital(Vital.Health, spellBase.VitalCost[(int)Vital.Health]);
             }
             else
             {
-                AddVital(Vitals.Health, -spellBase.VitalCost[(int)Vitals.Health]);
+                AddVital(Vital.Health, -spellBase.VitalCost[(int)Vital.Health]);
             }
 
             switch (spellBase.SpellType)
             {
-                case SpellTypes.CombatSpell:
-                case SpellTypes.Event:
+                case SpellType.CombatSpell:
+                case SpellType.Event:
 
                     switch (spellBase.Combat.TargetType)
                     {
-                        case SpellTargetTypes.Self:
-                            if (spellBase.HitAnimationId != Guid.Empty && spellBase.Combat.Effect != StatusTypes.OnHit)
+                        case SpellTargetType.Self:
+                            if (spellBase.HitAnimationId != Guid.Empty && spellBase.Combat.Effect != StatusType.OnHit)
                             {
                                 PacketSender.SendAnimationToProximity(
                                     spellBase.HitAnimationId, 1, Id, MapId, 0, 0, Dir, MapInstanceId
@@ -2331,7 +2333,7 @@ namespace Intersect.Server.Entities
                             TryAttack(this, spellBase);
 
                             break;
-                        case SpellTargetTypes.Single:
+                        case SpellTargetType.Single:
                             if (CastTarget == null)
                             {
                                 return;
@@ -2340,7 +2342,7 @@ namespace Intersect.Server.Entities
                             //If target has stealthed we cannot hit the spell.
                             foreach (var status in CastTarget.CachedStatuses)
                             {
-                                if (status.Type == StatusTypes.Stealth)
+                                if (status.Type == StatusType.Stealth)
                                 {
                                     return;
                                 }
@@ -2359,11 +2361,11 @@ namespace Intersect.Server.Entities
                             }
 
                             break;
-                        case SpellTargetTypes.AoE:
+                        case SpellTargetType.AoE:
                             HandleAoESpell(spellId, spellBase.Combat.HitRadius, MapId, X, Y, null);
 
                             break;
-                        case SpellTargetTypes.Projectile:
+                        case SpellTargetType.Projectile:
                             var projectileBase = spellBase.Combat.Projectile;
                             if (projectileBase != null)
                             {
@@ -2378,11 +2380,11 @@ namespace Intersect.Server.Entities
                             }
 
                             break;
-                        case SpellTargetTypes.OnHit:
-                            if (spellBase.Combat.Effect == StatusTypes.OnHit)
+                        case SpellTargetType.OnHit:
+                            if (spellBase.Combat.Effect == StatusType.OnHit)
                             {
                                 new Status(
-                                    this, this, spellBase, StatusTypes.OnHit, spellBase.Combat.OnHitDuration,
+                                    this, this, spellBase, StatusType.OnHit, spellBase.Combat.OnHitDuration,
                                     spellBase.Combat.TransformSprite
                                 );
 
@@ -2393,7 +2395,7 @@ namespace Intersect.Server.Entities
                             }
 
                             break;
-                        case SpellTargetTypes.Trap:
+                        case SpellTargetType.Trap:
                             if (MapController.TryGetInstanceFromMap(MapId, MapInstanceId, out var instance)) 
                             {
                                 instance.SpawnTrap(this, spellBase, (byte)X, (byte)Y, (byte)Z);
@@ -2405,7 +2407,7 @@ namespace Intersect.Server.Entities
                     }
 
                     break;
-                case SpellTypes.Warp:
+                case SpellType.Warp:
                     if (this is Player)
                     {
                         Warp(
@@ -2415,13 +2417,13 @@ namespace Intersect.Server.Entities
                     }
 
                     break;
-                case SpellTypes.WarpTo:
+                case SpellType.WarpTo:
                     if (CastTarget != null)
                     {
                         HandleAoESpell(spellId, spellBase.Combat.CastRange, MapId, X, Y, CastTarget);
                     }
                     break;
-                case SpellTypes.Dash:
+                case SpellType.Dash:
                     PacketSender.SendActionMsg(this, Strings.Combat.dash, CustomColors.Combat.Dash);
                     var dash = new Dash(
                         this, spellBase.Combat.CastRange, Dir, Convert.ToBoolean(spellBase.Dash.IgnoreMapBlocks),
@@ -2480,7 +2482,7 @@ namespace Intersect.Server.Entities
                                 if (entity.GetDistanceTo(startMap, startX, startY) <= range)
                                 {
                                     //Check to handle a warp to spell
-                                    if (spellBase.SpellType == SpellTypes.WarpTo)
+                                    if (spellBase.SpellType == SpellType.WarpTo)
                                     {
                                         if (spellTarget != null)
                                         {
@@ -2936,9 +2938,9 @@ namespace Intersect.Server.Entities
 
         public virtual void Reset()
         {
-            for (var i = 0; i < (int) Vitals.VitalCount; i++)
+            for (var i = 0; i < (int) Vital.VitalCount; i++)
             {
-                RestoreVital((Vitals) i);
+                RestoreVital((Vital) i);
             }
 
             Dead = false;
@@ -3005,10 +3007,10 @@ namespace Intersect.Server.Entities
             {
                 var status = statuses[i];
                 int[] vitalShields = null;
-                if (status.Type == StatusTypes.Shield)
+                if (status.Type == StatusType.Shield)
                 {
-                    vitalShields = new int[(int) Vitals.VitalCount];
-                    for (var x = 0; x < (int) Vitals.VitalCount; x++)
+                    vitalShields = new int[(int) Vital.VitalCount];
+                    for (var x = 0; x < (int) Vital.VitalCount; x++)
                     {
                         vitalShields[x] = status.shield[x];
                     }

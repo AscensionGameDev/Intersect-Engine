@@ -13,7 +13,7 @@ namespace Intersect.Network.Packets.Server
         {
         }
 
-        public EntityMovePacket(Guid id, EntityTypes type, Guid mapId, byte x, byte y, byte dir, bool correction)
+        public EntityMovePacket(Guid id, EntityType type, Guid mapId, byte x, byte y, byte dir, bool correction)
         {
             Id = id;
             Type = type;
@@ -28,7 +28,7 @@ namespace Intersect.Network.Packets.Server
         public Guid Id { get; set; }
 
         [Key(1)]
-        public EntityTypes Type { get; set; }
+        public EntityType Type { get; set; }
 
         [Key(2)]
         public Guid MapId { get; set; }

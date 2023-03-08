@@ -13,7 +13,7 @@ namespace Intersect.Network.Packets.Server
         {
         }
 
-        public EntityDiePacket(Guid id, EntityTypes type, Guid mapId)
+        public EntityDiePacket(Guid id, EntityType type, Guid mapId)
         {
             Id = id;
             Type = type;
@@ -24,7 +24,7 @@ namespace Intersect.Network.Packets.Server
         public Guid Id { get; set; }
 
         [Key(1)]
-        public EntityTypes Type { get; set; }
+        public EntityType Type { get; set; }
 
         [Key(2)]
         public Guid MapId { get; set; }

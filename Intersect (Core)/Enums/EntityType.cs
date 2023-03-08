@@ -1,9 +1,7 @@
 namespace Intersect.Enums
 {
-
-    public enum EntityTypes
+    public enum EntityType
     {
-
         GlobalEntity = 0,
 
         Player = 1,
@@ -12,8 +10,6 @@ namespace Intersect.Enums
 
         Projectile = 3,
 
-        Event = 4,
-
+        Event = 4
     }
-
 }

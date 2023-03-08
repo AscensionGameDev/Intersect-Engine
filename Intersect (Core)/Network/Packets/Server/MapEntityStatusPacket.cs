@@ -32,7 +32,7 @@ namespace Intersect.Network.Packets.Server
         public Guid Id { get; set; }
 
         [Key(1)]
-        public Enums.EntityTypes Type { get; set; }
+        public Enums.EntityType Type { get; set; }
 
         [Key(2)]
         public StatusPacket[] Statuses { get; set; } = new StatusPacket[0];

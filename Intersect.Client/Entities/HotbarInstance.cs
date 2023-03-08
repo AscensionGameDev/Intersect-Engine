@@ -12,7 +12,7 @@ namespace Intersect.Client.Entities
 
         public Guid ItemOrSpellId { get; set; } = Guid.Empty;
 
-        public int[] PreferredStatBuffs { get; set; } = new int[(int)Stats.StatCount];
+        public int[] PreferredStatBuffs { get; set; } = new int[(int)Stat.StatCount];
 
         public void Load(string data)
         {

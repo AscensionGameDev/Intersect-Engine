@@ -12,35 +12,35 @@ namespace Intersect.GameObjects.Maps
     {
         [EditorLabel("Attributes", "AttributeType")]
         [EditorDictionary("Attributes", "AttributeTypes", FieldType = EditorFieldType.Pivot)]
-        public abstract MapAttributes Type { get; }
+        public abstract Enums.MapAttribute Type { get; }
 
-        public static MapAttribute CreateAttribute(MapAttributes type)
+        public static MapAttribute CreateAttribute(Enums.MapAttribute type)
         {
             switch (type)
             {
-                case MapAttributes.Walkable:
+                case Enums.MapAttribute.Walkable:
                     return null;
-                case MapAttributes.Blocked:
+                case Enums.MapAttribute.Blocked:
                     return new MapBlockedAttribute();
-                case MapAttributes.Item:
+                case Enums.MapAttribute.Item:
                     return new MapItemAttribute();
-                case MapAttributes.ZDimension:
+                case Enums.MapAttribute.ZDimension:
                     return new MapZDimensionAttribute();
-                case MapAttributes.NpcAvoid:
+                case Enums.MapAttribute.NpcAvoid:
                     return new MapNpcAvoidAttribute();
-                case MapAttributes.Warp:
+                case Enums.MapAttribute.Warp:
                     return new MapWarpAttribute();
-                case MapAttributes.Sound:
+                case Enums.MapAttribute.Sound:
                     return new MapSoundAttribute();
-                case MapAttributes.Resource:
+                case Enums.MapAttribute.Resource:
                     return new MapResourceAttribute();
-                case MapAttributes.Animation:
+                case Enums.MapAttribute.Animation:
                     return new MapAnimationAttribute();
-                case MapAttributes.GrappleStone:
+                case Enums.MapAttribute.GrappleStone:
                     return new MapGrappleStoneAttribute();
-                case MapAttributes.Slide:
+                case Enums.MapAttribute.Slide:
                     return new MapSlideAttribute();
-                case MapAttributes.Critter:
+                case Enums.MapAttribute.Critter:
                     return new MapCritterAttribute();
             }
 
@@ -60,12 +60,12 @@ namespace Intersect.GameObjects.Maps
 
     public partial class MapBlockedAttribute : MapAttribute
     {
-        public override MapAttributes Type => MapAttributes.Blocked;
+        public override Enums.MapAttribute Type => Enums.MapAttribute.Blocked;
     }
 
     public partial class MapItemAttribute : MapAttribute
     {
-        public override MapAttributes Type => MapAttributes.Item;
+        public override Enums.MapAttribute Type => Enums.MapAttribute.Item;
 
         [EditorLabel("Attributes", "Item")]
         [EditorReference(typeof(ItemBase), nameof(ItemBase.Name))]
@@ -90,7 +90,7 @@ namespace Intersect.GameObjects.Maps
 
     public partial class MapZDimensionAttribute : MapAttribute
     {
-        public override MapAttributes Type => MapAttributes.ZDimension;
+        public override Enums.MapAttribute Type => Enums.MapAttribute.ZDimension;
 
         [EditorLabel("Attributes", "ZGateway")]
         [EditorFormatted("Attributes", "FormatZLevel")]
@@ -112,12 +112,12 @@ namespace Intersect.GameObjects.Maps
 
     public partial class MapNpcAvoidAttribute : MapAttribute
     {
-        public override MapAttributes Type => MapAttributes.NpcAvoid;
+        public override Enums.MapAttribute Type => Enums.MapAttribute.NpcAvoid;
     }
 
     public partial class MapWarpAttribute : MapAttribute
     {
-        public override MapAttributes Type => MapAttributes.Warp;
+        public override Enums.MapAttribute Type => Enums.MapAttribute.Warp;
 
         [EditorLabel("Attributes", "Map")]
         [EditorReference(typeof(MapBase), nameof(MapBase.Name))]
@@ -163,7 +163,7 @@ namespace Intersect.GameObjects.Maps
 
     public partial class MapSoundAttribute : MapAttribute
     {
-        public override MapAttributes Type => MapAttributes.Sound;
+        public override Enums.MapAttribute Type => Enums.MapAttribute.Sound;
 
         [EditorLabel("Attributes", "Sound")]
         [EditorDisplay(EmptyBehavior = EmptyBehavior.ShowNoneOnNullOrEmpty, StringBehavior = StringBehavior.Trim)]
@@ -190,7 +190,7 @@ namespace Intersect.GameObjects.Maps
 
     public partial class MapResourceAttribute : MapAttribute
     {
-        public override MapAttributes Type => MapAttributes.Resource;
+        public override Enums.MapAttribute Type => Enums.MapAttribute.Resource;
 
         [EditorLabel("Attributes", "Resource")]
         [EditorReference(typeof(ResourceBase), nameof(ResourceBase.Name))]
@@ -212,7 +212,7 @@ namespace Intersect.GameObjects.Maps
 
     public partial class MapAnimationAttribute : MapAttribute
     {
-        public override MapAttributes Type => MapAttributes.Animation;
+        public override Enums.MapAttribute Type => Enums.MapAttribute.Animation;
 
         [EditorLabel("Attributes", "MapAnimation")]
         [EditorReference(typeof(AnimationBase), nameof(AnimationBase.Name))]
@@ -234,12 +234,12 @@ namespace Intersect.GameObjects.Maps
 
     public partial class MapGrappleStoneAttribute : MapAttribute
     {
-        public override MapAttributes Type => MapAttributes.GrappleStone;
+        public override Enums.MapAttribute Type => Enums.MapAttribute.GrappleStone;
     }
 
     public partial class MapSlideAttribute : MapAttribute
     {
-        public override MapAttributes Type => MapAttributes.Slide;
+        public override Enums.MapAttribute Type => Enums.MapAttribute.Slide;
 
         [EditorLabel("Attributes", "Direction")]
         [EditorDictionary(nameof(Direction), "WarpDirections")]
@@ -256,7 +256,7 @@ namespace Intersect.GameObjects.Maps
 
     public partial class MapCritterAttribute : MapAttribute
     {
-        public override MapAttributes Type => MapAttributes.Critter;
+        public override Enums.MapAttribute Type => Enums.MapAttribute.Critter;
 
         [EditorLabel("Attributes", "CritterSprite")]
         [EditorDisplay(EmptyBehavior = EmptyBehavior.ShowNoneOnNullOrEmpty, StringBehavior = StringBehavior.Trim)]

@@ -7,6 +7,7 @@ using Intersect.Client.Interface.Game;
 using Intersect.Client.Maps;
 using Intersect.Enums;
 using Intersect.Network.Packets.Client;
+using AdminAction = Intersect.Admin.Actions.AdminAction;
 
 namespace Intersect.Client.Networking
 {
@@ -393,7 +394,7 @@ namespace Intersect.Client.Networking
 
         public static void SendInviteGuild(string name)
         {
-            Network.SendPacket(new UpdateGuildMemberPacket(Guid.Empty, name, Enums.GuildMemberUpdateActions.Invite));
+            Network.SendPacket(new UpdateGuildMemberPacket(Guid.Empty, name, Enums.GuildMemberUpdateAction.Invite));
         }
 
         public static void SendLeaveGuild()
@@ -403,21 +404,21 @@ namespace Intersect.Client.Networking
 
         public static void SendKickGuildMember(Guid id)
         {
-            Network.SendPacket(new UpdateGuildMemberPacket(id, null, Enums.GuildMemberUpdateActions.Remove));
+            Network.SendPacket(new UpdateGuildMemberPacket(id, null, Enums.GuildMemberUpdateAction.Remove));
         }
         public static void SendPromoteGuildMember(Guid id, int rank)
         {
-            Network.SendPacket(new UpdateGuildMemberPacket(id, null, Enums.GuildMemberUpdateActions.Promote, rank));
+            Network.SendPacket(new UpdateGuildMemberPacket(id, null, Enums.GuildMemberUpdateAction.Promote, rank));
         }
 
         public static void SendDemoteGuildMember(Guid id, int rank)
         {
-            Network.SendPacket(new UpdateGuildMemberPacket(id, null, Enums.GuildMemberUpdateActions.Demote, rank));
+            Network.SendPacket(new UpdateGuildMemberPacket(id, null, Enums.GuildMemberUpdateAction.Demote, rank));
         }
 
         public static void SendTransferGuild(Guid id)
         {
-            Network.SendPacket(new UpdateGuildMemberPacket(id, null, Enums.GuildMemberUpdateActions.Transfer));
+            Network.SendPacket(new UpdateGuildMemberPacket(id, null, Enums.GuildMemberUpdateAction.Transfer));
         }
       
         public static void SendClosePicture(Guid eventId)

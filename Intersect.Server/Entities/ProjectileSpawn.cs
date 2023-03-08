@@ -82,7 +82,7 @@ namespace Intersect.Server.Entities
                     {
                         if(targetPlayer != null)
                         {
-                            if(targetPlayer.Map.ZoneType == Enums.MapZones.Safe ||
+                            if(targetPlayer.Map.ZoneType == Enums.MapZone.Safe ||
                                 Parent.Owner is Player plyr && plyr.InParty(targetPlayer))
                             {
                                 return false;
@@ -111,7 +111,7 @@ namespace Intersect.Server.Entities
 
                         if (!Parent.Base.PierceTarget)
                         {
-                            if (targetPlayer.Map.ZoneType == Enums.MapZones.Safe ||
+                            if (targetPlayer.Map.ZoneType == Enums.MapZone.Safe ||
                                 Parent.Owner is Player plyr && plyr.InParty(targetPlayer))
                             {
                                 return false;
@@ -181,13 +181,13 @@ namespace Intersect.Server.Entities
             switch(en)
             {
                 case Player _:
-                    return ProjectileBase.GrappleHookOptions.Contains(Enums.GrappleOptions.Player);
+                    return ProjectileBase.GrappleHookOptions.Contains(Enums.GrappleOption.Player);
 
                 case Npc _:
-                    return ProjectileBase.GrappleHookOptions.Contains(Enums.GrappleOptions.NPC);
+                    return ProjectileBase.GrappleHookOptions.Contains(Enums.GrappleOption.NPC);
 
                 case Resource _:
-                    return ProjectileBase.GrappleHookOptions.Contains(Enums.GrappleOptions.Resource);
+                    return ProjectileBase.GrappleHookOptions.Contains(Enums.GrappleOption.Resource);
 
                 default:
                     throw new ArgumentException($"Unsupported entity type {en.GetType().FullName}", nameof(en));

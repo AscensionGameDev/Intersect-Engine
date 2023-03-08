@@ -22,6 +22,7 @@ using Intersect.GameObjects;
 using Intersect.GameObjects.Maps;
 using Intersect.Network.Packets.Server;
 using Intersect.Utilities;
+using MapAttribute = Intersect.Enums.MapAttribute;
 
 namespace Intersect.Client.Entities
 {
@@ -86,7 +87,7 @@ namespace Intersect.Client.Entities
 
         public Guid TargetIndex { get; set; }
 
-        TargetTypes IPlayer.TargetType => (TargetTypes)TargetType;
+        TargetType IPlayer.TargetType => (TargetType)TargetType;
 
         public int TargetType { get; set; }
 
@@ -135,7 +136,7 @@ namespace Intersect.Client.Entities
         /// </summary>
         public GuildMember[] GuildMembers = new GuildMember[0];
 
-        public Player(Guid id, PlayerEntityPacket packet) : base(id, packet, EntityTypes.Player)
+        public Player(Guid id, PlayerEntityPacket packet) : base(id, packet, EntityType.Player)
         {
             for (var i = 0; i < Options.Instance.PlayerOpts.HotbarSlotCount; i++)
             {
@@ -267,7 +268,7 @@ namespace Intersect.Client.Entities
             if (TargetBox == default && this == Globals.Me && Interface.Interface.GameUi != default)
             {
                 // If for WHATEVER reason the box hasn't been created, create it.
-                TargetBox = new EntityBox(Interface.Interface.GameUi.GameCanvas, EntityTypes.Player, null);
+                TargetBox = new EntityBox(Interface.Interface.GameUi.GameCanvas, EntityType.Player, null);
                 TargetBox.Hide();
             }
             else if (TargetIndex != default)
@@ -322,7 +323,7 @@ namespace Intersect.Client.Entities
 
             if (this == Globals.Me && TargetBox == null && Interface.Interface.GameUi != null)
             {
-                TargetBox = new EntityBox(Interface.Interface.GameUi.GameCanvas, EntityTypes.Player, null);
+                TargetBox = new EntityBox(Interface.Interface.GameUi.GameCanvas, EntityType.Player, null);
                 TargetBox.Hide();
             }
         }
@@ -461,14 +462,14 @@ namespace Intersect.Client.Entities
                         var itemBase = ItemBase.Get(itm.ItemId);
                         if (itemBase != null)
                         {
-                            if (itemBase.ItemType == ItemTypes.Bag)
+                            if (itemBase.ItemType == ItemType.Bag)
                             {
                                 if (hotbarInstance.BagId == itm.BagId)
                                 {
                                     break;
                                 }
                             }
-                            else if (itemBase.ItemType == ItemTypes.Equipment)
+                            else if (itemBase.ItemType == ItemType.Equipment)
                             {
                                 if (hotbarInstance.PreferredStatBuffs != null)
                                 {
@@ -1092,7 +1093,7 @@ namespace Intersect.Client.Entities
         public void AddToHotbar(int hotbarSlot, sbyte itemType, int itemSlot)
         {
             Hotbar[hotbarSlot].ItemOrSpellId = Guid.Empty;
-            Hotbar[hotbarSlot].PreferredStatBuffs = new int[(int)Stats.StatCount];
+            Hotbar[hotbarSlot].PreferredStatBuffs = new int[(int)Enums.Stat.StatCount];
             if (itemType == 0)
             {
                 var item = Inventory[itemSlot];
@@ -1140,7 +1141,7 @@ namespace Intersect.Client.Entities
                 {
                     if (Maps.MapInstance.Get(MapId) != null && Maps.MapInstance.Get(MapId).Attributes[X, Y] != null)
                     {
-                        if (Maps.MapInstance.Get(MapId).Attributes[X, Y].Type == MapAttributes.ZDimension)
+                        if (Maps.MapInstance.Get(MapId).Attributes[X, Y].Type == MapAttribute.ZDimension)
                         {
                             if (((MapZDimensionAttribute)Maps.MapInstance.Get(MapId).Attributes[X, Y]).GatewayTo > 0)
                             {
@@ -1271,7 +1272,7 @@ namespace Intersect.Client.Entities
             //Check for taunt status if so don't allow to change target
             for (var i = 0; i < Status.Count; i++)
             {
-                if (Status[i].Type == StatusTypes.Taunt)
+                if (Status[i].Type == StatusType.Taunt)
                 {
                     return;
                 }
@@ -1284,7 +1285,7 @@ namespace Intersect.Client.Entities
                 return;
             }
             var currentMap = Globals.Me.MapInstance as MapInstance;
-            var canTargetPlayers = currentMap.ZoneType != MapZones.Safe;
+            var canTargetPlayers = currentMap.ZoneType != MapZone.Safe;
 
             // Build a list of Entities to select from with positions if our list is either old, we've moved or changed maps somehow.
             if (
@@ -1316,11 +1317,11 @@ namespace Intersect.Client.Entities
 
                     // Check if we are allowed to target players here, if we're not and this is a player then skip!
                     // If we are, check to see if they're our party or nation member, then exclude them. We're friendly happy people here.
-                    if (!canTargetPlayers && en.Value.Type == EntityTypes.Player)
+                    if (!canTargetPlayers && en.Value.Type == EntityType.Player)
                     {
                         continue;
                     }
-                    else if (canTargetPlayers && en.Value.Type == EntityTypes.Player)
+                    else if (canTargetPlayers && en.Value.Type == EntityType.Player)
                     {
                         var player = en.Value as Player;
                         if (IsInMyParty(player))
@@ -1329,7 +1330,7 @@ namespace Intersect.Client.Entities
                         }
                     }
 
-                    if (en.Value.Type == EntityTypes.GlobalEntity || en.Value.Type == EntityTypes.Player)
+                    if (en.Value.Type == EntityType.GlobalEntity || en.Value.Type == EntityType.Player)
                     {
                         // Already in our list?
                         if (mlastTargetList.ContainsKey(en.Value))
@@ -1437,15 +1438,15 @@ namespace Intersect.Client.Entities
 
             if (en is Player)
             {
-                TargetBox?.SetEntity(en, EntityTypes.Player);
+                TargetBox?.SetEntity(en, EntityType.Player);
             }
             else if (en is Event)
             {
-                TargetBox?.SetEntity(en, EntityTypes.Event);
+                TargetBox?.SetEntity(en, EntityType.Event);
             }
             else
             {
-                TargetBox?.SetEntity(en, EntityTypes.GlobalEntity);
+                TargetBox?.SetEntity(en, EntityType.GlobalEntity);
             }
 
             TargetBox?.Show();
@@ -1676,7 +1677,7 @@ namespace Intersect.Client.Entities
             //Check for taunt status if so don't allow to change target
             for (var i = 0; i < Status.Count; i++)
             {
-                if (Status[i].Type == StatusTypes.Taunt)
+                if (Status[i].Type == StatusType.Taunt)
                 {
                     return false;
                 }
@@ -1782,7 +1783,7 @@ namespace Intersect.Client.Entities
             //Check for taunt status if so don't allow to change target
             for (var i = 0; i < Status.Count; i++)
             {
-                if (Status[i].Type == StatusTypes.Taunt && !force)
+                if (Status[i].Type == StatusType.Taunt && !force)
                 {
                     return false;
                 }
@@ -1954,9 +1955,9 @@ namespace Intersect.Client.Entities
             //check if player is stunned or snared, if so don't let them move.
             for (var n = 0; n < Status.Count; n++)
             {
-                if (Status[n].Type == StatusTypes.Stun ||
-                    Status[n].Type == StatusTypes.Snare ||
-                    Status[n].Type == StatusTypes.Sleep)
+                if (Status[n].Type == StatusType.Stun ||
+                    Status[n].Type == StatusType.Snare ||
+                    Status[n].Type == StatusType.Sleep)
                 {
                     return;
                 }
@@ -2175,7 +2176,7 @@ namespace Intersect.Client.Entities
             //check if player is stunned or snared, if so don't let them move.
             for (var n = 0; n < Status.Count; n++)
             {
-                if (Status[n].Type == StatusTypes.Transform)
+                if (Status[n].Type == StatusType.Transform)
                 {
                     return;
                 }
@@ -2251,7 +2252,7 @@ namespace Intersect.Client.Entities
             for (var n = 0; n < Status.Count; n++)
             {
                 //If unit is stealthed, don't render unless the entity is the player.
-                if (Status[n].Type == StatusTypes.Stealth)
+                if (Status[n].Type == StatusType.Stealth)
                 {
                     if (this != Globals.Me && !(this is Player player && Globals.Me.IsInMyParty(player)))
                     {
@@ -2354,7 +2355,7 @@ namespace Intersect.Client.Entities
                     continue;
                 }
 
-                en.Value.DrawTarget((int)TargetTypes.Selected);
+                en.Value.DrawTarget((int)Enums.TargetType.Selected);
                 AutoTurnToTarget(en.Value);
             }
 
@@ -2392,7 +2393,7 @@ namespace Intersect.Client.Entities
                         continue;
                     }
 
-                    en.Value.DrawTarget((int)TargetTypes.Selected);
+                    en.Value.DrawTarget((int)Enums.TargetType.Selected);
                     AutoTurnToTarget(en.Value);
                 }
             }
@@ -2426,7 +2427,7 @@ namespace Intersect.Client.Entities
                                     {
                                         if (TargetType != 0 || TargetIndex != en.Value.Id)
                                         {
-                                            en.Value.DrawTarget((int)TargetTypes.Hover);
+                                            en.Value.DrawTarget((int)Enums.TargetType.Hover);
                                         }
                                     }
                                 }
@@ -2450,7 +2451,7 @@ namespace Intersect.Client.Entities
                                     {
                                         if (TargetType != 1 || TargetIndex != en.Value.Id)
                                         {
-                                            en.Value.DrawTarget((int)TargetTypes.Hover);
+                                            en.Value.DrawTarget((int)Enums.TargetType.Hover);
                                         }
                                     }
                                 }

@@ -27,13 +27,13 @@ namespace Intersect.Server.Entities
             Name = resource.Name;
             Sprite = resource.Initial.Graphic;
             SetMaxVital(
-                Vitals.Health,
+                Vital.Health,
                 Randomization.Next(
                     Math.Min(1, resource.MinHp), Math.Max(resource.MaxHp, Math.Min(1, resource.MinHp)) + 1
                 )
             );
 
-            RestoreVital(Vitals.Health);
+            RestoreVital(Vital.Health);
             Passable = resource.WalkableBefore;
             HideName = true;
         }
@@ -83,8 +83,8 @@ namespace Intersect.Server.Entities
                 Base.MaxHp = Base.MinHp;
             }
 
-            SetMaxVital(Vitals.Health, Randomization.Next(Base.MinHp, Base.MaxHp + 1));
-            RestoreVital(Vitals.Health);
+            SetMaxVital(Vital.Health, Randomization.Next(Base.MinHp, Base.MaxHp + 1));
+            RestoreVital(Vital.Health);
             Passable = Base.WalkableBefore;
             Items.Clear();
 
@@ -186,7 +186,7 @@ namespace Intersect.Server.Entities
                     return;
                 }
                 
-                var vital = Vitals.Health;
+                var vital = Vital.Health;
 
                 var vitalId = (int) vital;
                 var vitalValue = GetVital(vital);
@@ -223,9 +223,9 @@ namespace Intersect.Server.Entities
             return pkt;
         }
 
-        public override EntityTypes GetEntityType()
+        public override EntityType GetEntityType()
         {
-            return EntityTypes.Resource;
+            return EntityType.Resource;
         }
     }
 

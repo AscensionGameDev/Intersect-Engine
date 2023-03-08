@@ -1,13 +1,9 @@
 namespace Intersect.Enums
 {
-
-    public enum TargetTypes
+    public enum TargetType
     {
-
         Hover = 0,
 
-        Selected = 1,
-
+        Selected = 1
     }
-
 }

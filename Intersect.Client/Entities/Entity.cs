@@ -21,6 +21,7 @@ using Intersect.GameObjects.Maps;
 using Intersect.Logging;
 using Intersect.Network.Packets.Server;
 using Intersect.Utilities;
+using MapAttribute = Intersect.Enums.MapAttribute;
 
 namespace Intersect.Client.Entities
 {
@@ -113,7 +114,7 @@ namespace Intersect.Client.Entities
         public int Level { get; set; } = 1;
 
         //Vitals & Stats
-        public int[] MaxVital { get; set; } = new int[(int)Vitals.VitalCount];
+        public int[] MaxVital { get; set; } = new int[(int)Enums.Vital.VitalCount];
 
         IReadOnlyList<int> IEntity.MaxVitals => MaxVital.ToList();
 
@@ -178,7 +179,7 @@ namespace Intersect.Client.Entities
 
         IReadOnlyList<Guid> IEntity.Spells => Spells.Select(x => x.Id).ToList();
 
-        public int[] Stat { get; set; } = new int[(int)Stats.StatCount];
+        public int[] Stat { get; set; } = new int[(int)Enums.Stat.StatCount];
 
         IReadOnlyList<int> IEntity.Stats => Stat.ToList();
 
@@ -201,11 +202,11 @@ namespace Intersect.Client.Entities
 
         #endregion
 
-        public EntityTypes Type { get; }
+        public EntityType Type { get; }
 
         public int Aggression { get; set; }
 
-        public int[] Vital { get; set; } = new int[(int)Vitals.VitalCount];
+        public int[] Vital { get; set; } = new int[(int)Enums.Vital.VitalCount];
 
         IReadOnlyList<int> IEntity.Vitals => Vital.ToList();
 
@@ -222,13 +223,13 @@ namespace Intersect.Client.Entities
 
         public byte Z { get; set; }
 
-        public Entity(Guid id, EntityPacket packet, EntityTypes entityType)
+        public Entity(Guid id, EntityPacket packet, EntityType entityType)
         {
             Id = id;
             Type = entityType;
             MapId = Guid.Empty;
 
-            if (Id != Guid.Empty && Type != EntityTypes.Event)
+            if (Id != Guid.Empty && Type != EntityType.Event)
             {
                 for (var i = 0; i < Options.MaxInvItems; i++)
                 {
@@ -427,7 +428,7 @@ namespace Intersect.Client.Entities
 
                     Status?.Add(instance);
 
-                    if (instance.Type == StatusTypes.Shield)
+                    if (instance.Type == StatusType.Shield)
                     {
                         instance.Shield = status.VitalShields;
                     }
@@ -522,7 +523,7 @@ namespace Intersect.Client.Entities
         //Returns the amount of time required to traverse 1 tile
         public virtual float GetMovementTime()
         {
-            var time = 1000f / (float)(1 + Math.Log(Stat[(int)Stats.Speed]));
+            var time = 1000f / (float)(1 + Math.Log(Stat[(int)Enums.Stat.Speed]));
             if (Dir > Direction.Right)
             {
                 time *= MathHelper.UnitDiagonalLength;
@@ -885,7 +886,7 @@ namespace Intersect.Client.Entities
             //Otherwise return the legacy attack speed calculation
             return (int)(Options.MaxAttackRate +
                           (Options.MinAttackRate - Options.MaxAttackRate) *
-                          (((float)Options.MaxStatValue - Stat[(int)Stats.Speed]) /
+                          (((float)Options.MaxStatValue - Stat[(int)Enums.Stat.Speed]) /
                            Options.MaxStatValue));
         }
 
@@ -903,7 +904,7 @@ namespace Intersect.Client.Entities
 
                 for (var n = 0; n < Status.Count; n++)
                 {
-                    if (Status[n].Type == StatusTypes.Stealth)
+                    if (Status[n].Type == StatusType.Stealth)
                     {
                         return true;
                     }
@@ -1071,12 +1072,12 @@ namespace Intersect.Client.Entities
                 switch (status.Type)
                 {
                     // If the entity is transformed: apply that sprite instead.
-                    case StatusTypes.Transform:
+                    case StatusType.Transform:
                         transformedSprite = sprite = status.Data;
                         break;
 
                     // If entity is stealth, don't render unless the entity is the player or is within their party.
-                    case StatusTypes.Stealth:
+                    case StatusType.Stealth:
                         if (this != Globals.Me && !(this is Player player && Globals.Me.IsInMyParty(player)))
                         {
                             return;
@@ -1502,7 +1503,7 @@ namespace Intersect.Client.Entities
             }
 
             var name = Name;
-            if ((this is Player && Options.Player.ShowLevelByName) || (Type == EntityTypes.GlobalEntity && Options.Npc.ShowLevelByName))
+            if ((this is Player && Options.Player.ShowLevelByName) || (Type == EntityType.GlobalEntity && Options.Npc.ShowLevelByName))
             {
                 name = Strings.GameWindow.EntityNameAndLevel.ToString(Name, Level);
             }
@@ -1602,9 +1603,9 @@ namespace Intersect.Client.Entities
             var shieldSize = 0;
             foreach (var status in Status)
             {
-                if (status.Type == StatusTypes.Shield)
+                if (status.Type == StatusType.Shield)
                 {
-                    shieldSize += status.Shield[(int)Vitals.Health];
+                    shieldSize += status.Shield[(int)Enums.Vital.Health];
                 }
             }
             return shieldSize;
@@ -1629,7 +1630,7 @@ namespace Intersect.Client.Entities
                     return true;
                 }
 
-                if (Vital[(int)Vitals.Health] != MaxVital[(int)Vitals.Health])
+                if (Vital[(int)Enums.Vital.Health] != MaxVital[(int)Enums.Vital.Health])
                 {
                     return true;
                 }
@@ -1642,7 +1643,7 @@ namespace Intersect.Client.Entities
         {
             get
             {
-                return LatestMap == default || !ShouldDraw || Vital[(int)Vitals.Health] < 1;
+                return LatestMap == default || !ShouldDraw || Vital[(int)Enums.Vital.Health] < 1;
             }
         }
 
@@ -1678,15 +1679,15 @@ namespace Intersect.Client.Entities
             var foregroundBoundingTexture = hpForeground;
 
             // Check for shields
-            var maxVital = MaxVital[(int)Vitals.Health];
+            var maxVital = MaxVital[(int)Enums.Vital.Health];
             var shieldSize = GetShieldSize();
 
-            if (shieldSize + Vital[(int)Vitals.Health] > maxVital)
+            if (shieldSize + Vital[(int)Enums.Vital.Health] > maxVital)
             {
-                maxVital = shieldSize + Vital[(int)Vitals.Health];
+                maxVital = shieldSize + Vital[(int)Enums.Vital.Health];
             }
 
-            var hpfillRatio = (float)Vital[(int)Vitals.Health] / maxVital;
+            var hpfillRatio = (float)Vital[(int)Enums.Vital.Health] / maxVital;
             hpfillRatio = Math.Min(1, Math.Max(0, hpfillRatio));
 
             var hpFillWidth = (int)Math.Round(hpfillRatio * foregroundBoundingTexture.Width);
@@ -1977,8 +1978,8 @@ namespace Intersect.Client.Entities
                         SpriteAnimation = SpriteAnimations.Cast;
                     }
 
-                    if (spell.SpellType == SpellTypes.CombatSpell &&
-                        spell.Combat.TargetType == SpellTargetTypes.Projectile &&
+                    if (spell.SpellType == SpellType.CombatSpell &&
+                        spell.Combat.TargetType == SpellTargetType.Projectile &&
                         spell.CastSpriteOverride == null)
                     {
                         if (AnimatedTextures.TryGetValue(SpriteAnimations.Shoot, out _))
@@ -2366,18 +2367,18 @@ namespace Intersect.Client.Entities
                 {
                     if (gameMap.Attributes[tmpX, tmpY] != null)
                     {
-                        if (gameMap.Attributes[tmpX, tmpY].Type == MapAttributes.Blocked || (gameMap.Attributes[tmpX, tmpY].Type == MapAttributes.Animation && ((MapAnimationAttribute)gameMap.Attributes[tmpX, tmpY]).IsBlock))
+                        if (gameMap.Attributes[tmpX, tmpY].Type == MapAttribute.Blocked || (gameMap.Attributes[tmpX, tmpY].Type == MapAttribute.Animation && ((MapAnimationAttribute)gameMap.Attributes[tmpX, tmpY]).IsBlock))
                         {
                             return -2;
                         }
-                        else if (gameMap.Attributes[tmpX, tmpY].Type == MapAttributes.ZDimension)
+                        else if (gameMap.Attributes[tmpX, tmpY].Type == MapAttribute.ZDimension)
                         {
                             if (((MapZDimensionAttribute)gameMap.Attributes[tmpX, tmpY]).BlockedLevel - 1 == z)
                             {
                                 return -3;
                             }
                         }
-                        else if (gameMap.Attributes[tmpX, tmpY].Type == MapAttributes.NpcAvoid)
+                        else if (gameMap.Attributes[tmpX, tmpY].Type == MapAttribute.NpcAvoid)
                         {
                             if (!ignoreNpcAvoids)
                             {

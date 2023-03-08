@@ -40,7 +40,7 @@ namespace Intersect.Editor.Forms.Editors
             Icon = System.Drawing.Icon.ExtractAssociatedIcon(System.Reflection.Assembly.GetExecutingAssembly().Location);
 
             cmbScalingStat.Items.Clear();
-            for (var i = 0; i < (int)Stats.StatCount; i++)
+            for (var i = 0; i < (int)Stat.StatCount; i++)
             {
                 cmbScalingStat.Items.Add(Globals.GetStatName(i));
             }
@@ -311,8 +311,8 @@ namespace Intersect.Editor.Forms.Editors
                     picSpell.BackgroundImage = Image.FromFile("resources/spells/" + cmbSprite.Text);
                 }
 
-                nudHPCost.Value = mEditorItem.VitalCost[(int) Vitals.Health];
-                nudMpCost.Value = mEditorItem.VitalCost[(int) Vitals.Mana];
+                nudHPCost.Value = mEditorItem.VitalCost[(int) Vital.Health];
+                nudMpCost.Value = mEditorItem.VitalCost[(int) Vital.Mana];
 
                 txtCannotCast.Text = mEditorItem.CannotCastMessage;
 
@@ -343,29 +343,29 @@ namespace Intersect.Editor.Forms.Editors
             // Reset our combat data location, since event type spells can move it.
             grpCombat.Location = new System.Drawing.Point(grpEvent.Location.X, grpEvent.Location.Y);
 
-            if (cmbType.SelectedIndex == (int) SpellTypes.CombatSpell ||
-                cmbType.SelectedIndex == (int) SpellTypes.WarpTo ||
-                cmbType.SelectedIndex == (int) SpellTypes.Event)
+            if (cmbType.SelectedIndex == (int) SpellType.CombatSpell ||
+                cmbType.SelectedIndex == (int) SpellType.WarpTo ||
+                cmbType.SelectedIndex == (int) SpellType.Event)
             {
                 grpTargetInfo.Show();
                 grpCombat.Show();
                 cmbTargetType.SelectedIndex = (int) mEditorItem.Combat.TargetType;
                 UpdateTargetTypePanel();
 
-                nudHPDamage.Value = mEditorItem.Combat.VitalDiff[(int) Vitals.Health];
-                nudMPDamage.Value = mEditorItem.Combat.VitalDiff[(int) Vitals.Mana];
+                nudHPDamage.Value = mEditorItem.Combat.VitalDiff[(int) Vital.Health];
+                nudMPDamage.Value = mEditorItem.Combat.VitalDiff[(int) Vital.Mana];
 
-                nudStr.Value = mEditorItem.Combat.StatDiff[(int) Stats.Attack];
-                nudDef.Value = mEditorItem.Combat.StatDiff[(int) Stats.Defense];
-                nudSpd.Value = mEditorItem.Combat.StatDiff[(int) Stats.Speed];
-                nudMag.Value = mEditorItem.Combat.StatDiff[(int) Stats.AbilityPower];
-                nudMR.Value = mEditorItem.Combat.StatDiff[(int) Stats.MagicResist];
+                nudStr.Value = mEditorItem.Combat.StatDiff[(int) Stat.Attack];
+                nudDef.Value = mEditorItem.Combat.StatDiff[(int) Stat.Defense];
+                nudSpd.Value = mEditorItem.Combat.StatDiff[(int) Stat.Speed];
+                nudMag.Value = mEditorItem.Combat.StatDiff[(int) Stat.AbilityPower];
+                nudMR.Value = mEditorItem.Combat.StatDiff[(int) Stat.MagicResist];
 
-                nudStrPercentage.Value = mEditorItem.Combat.PercentageStatDiff[(int) Stats.Attack];
-                nudDefPercentage.Value = mEditorItem.Combat.PercentageStatDiff[(int) Stats.Defense];
-                nudMagPercentage.Value = mEditorItem.Combat.PercentageStatDiff[(int) Stats.AbilityPower];
-                nudMRPercentage.Value = mEditorItem.Combat.PercentageStatDiff[(int) Stats.MagicResist];
-                nudSpdPercentage.Value = mEditorItem.Combat.PercentageStatDiff[(int) Stats.Speed];
+                nudStrPercentage.Value = mEditorItem.Combat.PercentageStatDiff[(int) Stat.Attack];
+                nudDefPercentage.Value = mEditorItem.Combat.PercentageStatDiff[(int) Stat.Defense];
+                nudMagPercentage.Value = mEditorItem.Combat.PercentageStatDiff[(int) Stat.AbilityPower];
+                nudMRPercentage.Value = mEditorItem.Combat.PercentageStatDiff[(int) Stat.MagicResist];
+                nudSpdPercentage.Value = mEditorItem.Combat.PercentageStatDiff[(int) Stat.Speed];
 
                 chkFriendly.Checked = Convert.ToBoolean(mEditorItem.Combat.Friendly);
                 cmbDamageType.SelectedIndex = mEditorItem.Combat.DamageType;
@@ -380,7 +380,7 @@ namespace Intersect.Editor.Forms.Editors
                 cmbExtraEffect.SelectedIndex = (int) mEditorItem.Combat.Effect;
                 cmbExtraEffect_SelectedIndexChanged(null, null);
             }
-            else if (cmbType.SelectedIndex == (int) SpellTypes.Warp)
+            else if (cmbType.SelectedIndex == (int) SpellType.Warp)
             {
                 grpWarp.Show();
                 for (var i = 0; i < MapList.OrderedMaps.Count; i++)
@@ -397,7 +397,7 @@ namespace Intersect.Editor.Forms.Editors
                 nudWarpY.Value = mEditorItem.Warp.Y;
                 cmbDirection.SelectedIndex = mEditorItem.Warp.Dir;
             }
-            else if (cmbType.SelectedIndex == (int) SpellTypes.Dash)
+            else if (cmbType.SelectedIndex == (int) SpellType.Dash)
             {
                 grpDash.Show();
                 scrlRange.Value = mEditorItem.Combat.CastRange;
@@ -408,7 +408,7 @@ namespace Intersect.Editor.Forms.Editors
                 chkIgnoreZDimensionBlocks.Checked = mEditorItem.Dash.IgnoreZDimensionAttributes;
             }
 
-            if (cmbType.SelectedIndex == (int) SpellTypes.Event)
+            if (cmbType.SelectedIndex == (int) SpellType.Event)
             {
                 grpEvent.Show();
                 cmbEvent.SelectedIndex = EventBase.ListIndex(mEditorItem.EventId) + 1;
@@ -416,10 +416,10 @@ namespace Intersect.Editor.Forms.Editors
                 grpCombat.Location = new System.Drawing.Point(grpEvent.Location.X, grpEvent.Location.Y + grpEvent.Size.Height + 5);
             }
 
-            if (cmbType.SelectedIndex == (int) SpellTypes.WarpTo)
+            if (cmbType.SelectedIndex == (int) SpellType.WarpTo)
             {
                 grpTargetInfo.Show();
-                cmbTargetType.SelectedIndex = (int) SpellTargetTypes.Single;
+                cmbTargetType.SelectedIndex = (int) SpellTargetType.Single;
                 cmbTargetType.Enabled = false;
                 UpdateTargetTypePanel();
             }
@@ -436,12 +436,12 @@ namespace Intersect.Editor.Forms.Editors
             lblDuration.Hide();
             nudDuration.Hide();
 
-            if (cmbTargetType.SelectedIndex == (int) SpellTargetTypes.Single)
+            if (cmbTargetType.SelectedIndex == (int) SpellTargetType.Single)
             {
                 lblCastRange.Show();
                 nudCastRange.Show();
                 nudCastRange.Value = mEditorItem.Combat.CastRange;
-                if (cmbType.SelectedIndex == (int) SpellTypes.CombatSpell)
+                if (cmbType.SelectedIndex == (int) SpellType.CombatSpell)
                 {
                     lblHitRadius.Show();
                     nudHitRadius.Show();
@@ -449,36 +449,36 @@ namespace Intersect.Editor.Forms.Editors
                 }
             }
 
-            if (cmbTargetType.SelectedIndex == (int) SpellTargetTypes.AoE &&
-                cmbType.SelectedIndex == (int) SpellTypes.CombatSpell)
+            if (cmbTargetType.SelectedIndex == (int) SpellTargetType.AoE &&
+                cmbType.SelectedIndex == (int) SpellType.CombatSpell)
             {
                 lblHitRadius.Show();
                 nudHitRadius.Show();
                 nudHitRadius.Value = mEditorItem.Combat.HitRadius;
             }
 
-            if (cmbTargetType.SelectedIndex < (int) SpellTargetTypes.Self)
+            if (cmbTargetType.SelectedIndex < (int) SpellTargetType.Self)
             {
                 lblCastRange.Show();
                 nudCastRange.Show();
                 nudCastRange.Value = mEditorItem.Combat.CastRange;
             }
 
-            if (cmbTargetType.SelectedIndex == (int) SpellTargetTypes.Projectile)
+            if (cmbTargetType.SelectedIndex == (int) SpellTargetType.Projectile)
             {
                 lblProjectile.Show();
                 cmbProjectile.Show();
                 cmbProjectile.SelectedIndex = ProjectileBase.ListIndex(mEditorItem.Combat.ProjectileId);
             }
 
-            if (cmbTargetType.SelectedIndex == (int) SpellTargetTypes.OnHit)
+            if (cmbTargetType.SelectedIndex == (int) SpellTargetType.OnHit)
             {
                 lblDuration.Show();
                 nudDuration.Show();
                 nudDuration.Value = mEditorItem.Combat.OnHitDuration;
             }
 
-            if (cmbTargetType.SelectedIndex == (int) SpellTargetTypes.Trap)
+            if (cmbTargetType.SelectedIndex == (int) SpellTargetType.Trap)
             {
                 lblDuration.Show();
                 nudDuration.Show();
@@ -496,7 +496,7 @@ namespace Intersect.Editor.Forms.Editors
         {
             if (cmbType.SelectedIndex != (int) mEditorItem.SpellType)
             {
-                mEditorItem.SpellType = (SpellTypes) cmbType.SelectedIndex;
+                mEditorItem.SpellType = (SpellType) cmbType.SelectedIndex;
                 UpdateSpellTypePanels();
             }
         }
@@ -513,7 +513,7 @@ namespace Intersect.Editor.Forms.Editors
 
         private void cmbTargetType_SelectedIndexChanged(object sender, EventArgs e)
         {
-            mEditorItem.Combat.TargetType = (SpellTargetTypes) cmbTargetType.SelectedIndex;
+            mEditorItem.Combat.TargetType = (SpellTargetType) cmbTargetType.SelectedIndex;
             UpdateTargetTypePanel();
         }
 
@@ -529,7 +529,7 @@ namespace Intersect.Editor.Forms.Editors
 
         private void cmbExtraEffect_SelectedIndexChanged(object sender, EventArgs e)
         {
-            mEditorItem.Combat.Effect = (StatusTypes) cmbExtraEffect.SelectedIndex;
+            mEditorItem.Combat.Effect = (StatusType) cmbExtraEffect.SelectedIndex;
 
             lblSprite.Visible = false;
             cmbTransform.Visible = false;
@@ -812,72 +812,72 @@ namespace Intersect.Editor.Forms.Editors
 
         private void nudHPCost_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.VitalCost[(int) Vitals.Health] = (int) nudHPCost.Value;
+            mEditorItem.VitalCost[(int) Vital.Health] = (int) nudHPCost.Value;
         }
 
         private void nudMpCost_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.VitalCost[(int) Vitals.Mana] = (int) nudMpCost.Value;
+            mEditorItem.VitalCost[(int) Vital.Mana] = (int) nudMpCost.Value;
         }
 
         private void nudHPDamage_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.Combat.VitalDiff[(int) Vitals.Health] = (int) nudHPDamage.Value;
+            mEditorItem.Combat.VitalDiff[(int) Vital.Health] = (int) nudHPDamage.Value;
         }
 
         private void nudMPDamage_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.Combat.VitalDiff[(int) Vitals.Mana] = (int) nudMPDamage.Value;
+            mEditorItem.Combat.VitalDiff[(int) Vital.Mana] = (int) nudMPDamage.Value;
         }
 
         private void nudStr_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.Combat.StatDiff[(int) Stats.Attack] = (int) nudStr.Value;
+            mEditorItem.Combat.StatDiff[(int) Stat.Attack] = (int) nudStr.Value;
         }
 
         private void nudMag_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.Combat.StatDiff[(int) Stats.AbilityPower] = (int) nudMag.Value;
+            mEditorItem.Combat.StatDiff[(int) Stat.AbilityPower] = (int) nudMag.Value;
         }
 
         private void nudDef_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.Combat.StatDiff[(int) Stats.Defense] = (int) nudDef.Value;
+            mEditorItem.Combat.StatDiff[(int) Stat.Defense] = (int) nudDef.Value;
         }
 
         private void nudMR_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.Combat.StatDiff[(int) Stats.MagicResist] = (int) nudMR.Value;
+            mEditorItem.Combat.StatDiff[(int) Stat.MagicResist] = (int) nudMR.Value;
         }
 
         private void nudSpd_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.Combat.StatDiff[(int) Stats.Speed] = (int) nudSpd.Value;
+            mEditorItem.Combat.StatDiff[(int) Stat.Speed] = (int) nudSpd.Value;
         }
 
         private void nudStrPercentage_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.Combat.PercentageStatDiff[(int) Stats.Attack] = (int) nudStrPercentage.Value;
+            mEditorItem.Combat.PercentageStatDiff[(int) Stat.Attack] = (int) nudStrPercentage.Value;
         }
 
         private void nudMagPercentage_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.Combat.PercentageStatDiff[(int) Stats.AbilityPower] = (int) nudMagPercentage.Value;
+            mEditorItem.Combat.PercentageStatDiff[(int) Stat.AbilityPower] = (int) nudMagPercentage.Value;
         }
 
         private void nudDefPercentage_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.Combat.PercentageStatDiff[(int) Stats.Defense] = (int) nudDefPercentage.Value;
+            mEditorItem.Combat.PercentageStatDiff[(int) Stat.Defense] = (int) nudDefPercentage.Value;
         }
 
         private void nudMRPercentage_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.Combat.PercentageStatDiff[(int) Stats.MagicResist] = (int) nudMRPercentage.Value;
+            mEditorItem.Combat.PercentageStatDiff[(int) Stat.MagicResist] = (int) nudMRPercentage.Value;
         }
 
         private void nudSpdPercentage_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.Combat.PercentageStatDiff[(int) Stats.Speed] = (int) nudSpdPercentage.Value;
+            mEditorItem.Combat.PercentageStatDiff[(int) Stat.Speed] = (int) nudSpdPercentage.Value;
         }
 
         private void nudBuffDuration_ValueChanged(object sender, EventArgs e)
@@ -912,12 +912,12 @@ namespace Intersect.Editor.Forms.Editors
 
         private void nudOnHitDuration_ValueChanged(object sender, EventArgs e)
         {
-            if (cmbTargetType.SelectedIndex == (int) SpellTargetTypes.OnHit)
+            if (cmbTargetType.SelectedIndex == (int) SpellTargetType.OnHit)
             {
                 mEditorItem.Combat.OnHitDuration = (int) nudDuration.Value;
             }
 
-            if (cmbTargetType.SelectedIndex == (int) SpellTargetTypes.Trap)
+            if (cmbTargetType.SelectedIndex == (int) SpellTargetType.Trap)
             {
                 mEditorItem.Combat.TrapDuration = (int) nudDuration.Value;
             }

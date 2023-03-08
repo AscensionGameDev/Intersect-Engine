@@ -14,6 +14,7 @@ using Intersect.Server.Networking;
 using Intersect.Utilities;
 using Intersect.Server.Entities;
 using Intersect.Server.Classes.Maps;
+using MapAttribute = Intersect.Enums.MapAttribute;
 
 namespace Intersect.Server.Maps
 {
@@ -465,7 +466,7 @@ namespace Intersect.Server.Maps
                 {
                     x = (byte)Randomization.Next(0, Options.MapWidth);
                     y = (byte)Randomization.Next(0, Options.MapHeight);
-                    if (mMapController.Attributes[x, y] == null || mMapController.Attributes[x, y].Type == (int)MapAttributes.Walkable)
+                    if (mMapController.Attributes[x, y] == null || mMapController.Attributes[x, y].Type == (int)MapAttribute.Walkable)
                     {
                         break;
                     }
@@ -746,7 +747,7 @@ namespace Intersect.Server.Maps
 
             // if we can stack this item or the user configured to drop items consolidated, simply spawn a single stack of it.
             // Does not count for Equipment and bags, these are ALWAYS their own separate item spawn. We don't want to lose data on that!
-            if ((itemDescriptor.ItemType != ItemTypes.Equipment && itemDescriptor.ItemType != ItemTypes.Bag) &&
+            if ((itemDescriptor.ItemType != ItemType.Equipment && itemDescriptor.ItemType != ItemType.Bag) &&
                 (itemDescriptor.Stackable || Options.Loot.ConsolidateMapDrops))
             {
                 // Does this item already exist on this tile? If so, get its value so we can simply consolidate the stack.
@@ -807,7 +808,7 @@ namespace Intersect.Server.Maps
                     };
 
                     // If this is a piece of equipment, set up the stat buffs for it.
-                    if (itemDescriptor.ItemType == ItemTypes.Equipment)
+                    if (itemDescriptor.ItemType == ItemType.Equipment)
                     {
                         mapItem.SetupStatBuffs(item);
                     }
@@ -915,7 +916,7 @@ namespace Intersect.Server.Maps
                 mapItem.DespawnTime = -1;
                 mapItem.AttributeSpawnX = x;
                 mapItem.AttributeSpawnY = y;
-                if (item.ItemType == ItemTypes.Equipment)
+                if (item.ItemType == ItemType.Equipment)
                 {
                     mapItem.Quantity = 1;
                 }
@@ -936,11 +937,11 @@ namespace Intersect.Server.Maps
                 {
                     if (mMapController.Attributes[x, y] != null)
                     {
-                        if (mMapController.Attributes[x, y].Type == MapAttributes.Item)
+                        if (mMapController.Attributes[x, y].Type == MapAttribute.Item)
                         {
                             SpawnAttributeItem(x, y);
                         }
-                        else if (mMapController.Attributes[x, y].Type == MapAttributes.Resource)
+                        else if (mMapController.Attributes[x, y].Type == MapAttribute.Resource)
                         {
                             SpawnAttributeResource(x, y);
                         }
@@ -1111,8 +1112,8 @@ namespace Intersect.Server.Maps
             }
 
             //Check if tile is a blocked attribute
-            if (mMapController.Attributes[x, y] != null && (mMapController.Attributes[x, y].Type == MapAttributes.Blocked ||
-                mMapController.Attributes[x, y].Type == MapAttributes.Animation && ((MapAnimationAttribute)mMapController.Attributes[x, y]).IsBlock))
+            if (mMapController.Attributes[x, y] != null && (mMapController.Attributes[x, y].Type == MapAttribute.Blocked ||
+                mMapController.Attributes[x, y].Type == MapAttribute.Animation && ((MapAnimationAttribute)mMapController.Attributes[x, y]).IsBlock))
             {
                 return true;
             }
@@ -1177,14 +1178,14 @@ namespace Intersect.Server.Maps
                 {
                     if (mMapController.Attributes[x, y] != null)
                     {
-                        if (mMapController.Attributes[x, y].Type == MapAttributes.Blocked ||
-                            mMapController.Attributes[x, y].Type == MapAttributes.GrappleStone ||
-                            mMapController.Attributes[x, y].Type == MapAttributes.Animation && ((MapAnimationAttribute)mMapController.Attributes[x, y]).IsBlock)
+                        if (mMapController.Attributes[x, y].Type == MapAttribute.Blocked ||
+                            mMapController.Attributes[x, y].Type == MapAttribute.GrappleStone ||
+                            mMapController.Attributes[x, y].Type == MapAttribute.Animation && ((MapAnimationAttribute)mMapController.Attributes[x, y]).IsBlock)
                         {
                             blocks.Add(new BytePoint(x, y));
                             npcBlocks.Add(new BytePoint(x, y));
                         }
-                        else if (mMapController.Attributes[x, y].Type == MapAttributes.NpcAvoid)
+                        else if (mMapController.Attributes[x, y].Type == MapAttribute.NpcAvoid)
                         {
                             npcBlocks.Add(new BytePoint(x, y));
                         }
@@ -1224,8 +1225,8 @@ namespace Intersect.Server.Maps
                     //Regen Everything & Forget Targets
                     if (en.Value is Resource || en.Value is Npc)
                     {
-                        en.Value.RestoreVital(Vitals.Health);
-                        en.Value.RestoreVital(Vitals.Mana);
+                        en.Value.RestoreVital(Vital.Health);
+                        en.Value.RestoreVital(Vital.Mana);
 
                         if (en.Value is Npc npc)
                         {
@@ -1266,7 +1267,7 @@ namespace Intersect.Server.Maps
 
                 foreach (var status in en.Value.CachedStatuses)
                 {
-                    if (status.Type == StatusTypes.Shield)
+                    if (status.Type == StatusType.Shield)
                     {
                         statusUpdates.Add(en.Value);
                     }

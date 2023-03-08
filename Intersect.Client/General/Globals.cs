@@ -212,7 +212,7 @@ namespace Intersect.Client.General
         //Scene management
         public static bool WaitingOnServer = false;
 
-        public static Entity GetEntity(Guid id, EntityTypes type)
+        public static Entity GetEntity(Guid id, EntityType type)
         {
             if (Entities.ContainsKey(id))
             {

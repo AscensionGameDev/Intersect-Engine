@@ -38,7 +38,7 @@ namespace Intersect.Server.Entities.Combat
             {
                 foreach (var status in Target.CachedStatuses)
                 {
-                    if (status.Type == StatusTypes.Cleanse)
+                    if (status.Type == StatusType.Cleanse)
                     {
                         return;
                     }
@@ -109,12 +109,12 @@ namespace Intersect.Server.Entities.Combat
                 aliveAnimations.Add(animation);
             }
 
-            var damageHealth = SpellBase.Combat.VitalDiff[(int)Vitals.Health];
-            var damageMana = SpellBase.Combat.VitalDiff[(int)Vitals.Mana];
+            var damageHealth = SpellBase.Combat.VitalDiff[(int)Vital.Health];
+            var damageMana = SpellBase.Combat.VitalDiff[(int)Vital.Mana];
 
             Attacker?.Attack(
                 Target, damageHealth, damageMana,
-                (DamageType)SpellBase.Combat.DamageType, (Stats)SpellBase.Combat.ScalingStat,
+                (DamageType)SpellBase.Combat.DamageType, (Enums.Stat)SpellBase.Combat.ScalingStat,
                 SpellBase.Combat.Scaling, SpellBase.Combat.CritChance, SpellBase.Combat.CritMultiplier, deadAnimations,
                 aliveAnimations, false
             );

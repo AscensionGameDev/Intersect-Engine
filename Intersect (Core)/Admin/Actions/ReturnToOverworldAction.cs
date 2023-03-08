@@ -18,7 +18,7 @@ namespace Intersect.Admin.Actions
         }
 
         [Key(1)]
-        public override AdminActions Action { get; } = AdminActions.ReturnToOverworld;
+        public override Enums.AdminAction Action { get; } = Enums.AdminAction.ReturnToOverworld;
 
         [Key(2)]
         public string PlayerName { get; set; }

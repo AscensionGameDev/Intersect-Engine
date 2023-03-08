@@ -24,6 +24,7 @@ using Intersect.Network.Packets.Server;
 using Intersect.Utilities;
 
 using Newtonsoft.Json;
+using MapAttribute = Intersect.Enums.MapAttribute;
 
 namespace Intersect.Client.Maps
 {
@@ -81,8 +82,8 @@ namespace Intersect.Client.Maps
         IReadOnlyList<IMapItemInstance> IMapInstance.Items => MapItems.Values.SelectMany(x => x).ToList();
 
         //Map Attributes
-        private Dictionary<MapAttribute, Animation> mAttributeAnimInstances = new Dictionary<MapAttribute, Animation>();
-        private Dictionary<MapAttribute, Entity> mAttributeCritterInstances = new Dictionary<MapAttribute, Entity>();
+        private Dictionary<GameObjects.Maps.MapAttribute, Animation> mAttributeAnimInstances = new Dictionary<GameObjects.Maps.MapAttribute, Animation>();
+        private Dictionary<GameObjects.Maps.MapAttribute, Entity> mAttributeCritterInstances = new Dictionary<GameObjects.Maps.MapAttribute, Entity>();
 
         protected float mCurFogIntensity;
 
@@ -512,7 +513,7 @@ namespace Intersect.Client.Maps
                         continue;
                     }
 
-                    if (att.Type == MapAttributes.Animation)
+                    if (att.Type == MapAttribute.Animation)
                     {
                         var anim = AnimationBase.Get(((MapAnimationAttribute)att).AnimationId);
                         if (anim == null)
@@ -535,7 +536,7 @@ namespace Intersect.Client.Maps
                     }
 
 
-                    if (att.Type == MapAttributes.Critter)
+                    if (att.Type == MapAttribute.Critter)
                     {
                         var critterAttribute = ((MapCritterAttribute)att);
                         var sprite = critterAttribute.Sprite;
@@ -584,7 +585,7 @@ namespace Intersect.Client.Maps
                 for (var y = 0; y < Options.MapHeight; ++y)
                 {
                     var attribute = Attributes?[x, y];
-                    if (attribute?.Type != MapAttributes.Sound)
+                    if (attribute?.Type != MapAttribute.Sound)
                     {
                         continue;
                     }

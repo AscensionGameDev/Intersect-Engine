@@ -419,22 +419,22 @@ namespace Intersect.Editor.Forms.Editors
                 if (rdoPlayerVariables.Checked)
                 {
                     var obj = PlayerVariableBase.Get((Guid) lstGameObjects.SelectedNode.Tag);
-                    obj.Type = (VariableDataTypes) (cmbVariableType.SelectedIndex + 1);
+                    obj.Type = (VariableDataType) (cmbVariableType.SelectedIndex + 1);
                 }
                 else if (rdoGlobalVariables.Checked)
                 {
                     var obj = ServerVariableBase.Get((Guid) lstGameObjects.SelectedNode.Tag);
-                    obj.Type = (VariableDataTypes) (cmbVariableType.SelectedIndex + 1);
+                    obj.Type = (VariableDataType) (cmbVariableType.SelectedIndex + 1);
                 }
                 else if (rdoGuildVariables.Checked)
                 {
                     var obj = GuildVariableBase.Get((Guid)lstGameObjects.SelectedNode.Tag);
-                    obj.Type = (VariableDataTypes)(cmbVariableType.SelectedIndex + 1);
+                    obj.Type = (VariableDataType)(cmbVariableType.SelectedIndex + 1);
                 }
                 else if (rdoUserVariables.Checked)
                 {
                     var obj = UserVariableBase.Get((Guid)lstGameObjects.SelectedNode.Tag);
-                    obj.DataType = (VariableDataTypes)(cmbVariableType.SelectedIndex + 1);
+                    obj.DataType = (VariableDataType)(cmbVariableType.SelectedIndex + 1);
                 }
 
                 InitValueGroup();
@@ -458,22 +458,22 @@ namespace Intersect.Editor.Forms.Editors
                     txtStringValue.Hide();
                     switch (obj.Type)
                     {
-                        case VariableDataTypes.Boolean:
+                        case VariableDataType.Boolean:
                             cmbBooleanValue.Show();
                             cmbBooleanValue.SelectedIndex = Convert.ToInt32(obj.Value.Boolean);
 
                             break;
 
-                        case VariableDataTypes.Integer:
+                        case VariableDataType.Integer:
                             nudVariableValue.Show();
                             nudVariableValue.Value = obj.Value.Integer;
 
                             break;
 
-                        case VariableDataTypes.Number:
+                        case VariableDataType.Number:
                             break;
 
-                        case VariableDataTypes.String:
+                        case VariableDataType.String:
                             txtStringValue.Show();
                             txtStringValue.Text = obj.Value.String;
 

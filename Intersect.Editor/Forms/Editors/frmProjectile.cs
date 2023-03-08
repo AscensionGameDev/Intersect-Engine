@@ -125,10 +125,10 @@ namespace Intersect.Editor.Forms.Editors
             lblSpell.Text = Strings.ProjectileEditor.spell;
 
             grpGrappleOptions.Text = Strings.ProjectileEditor.GrappleOptionsTitle;
-            chkGrappleOnMap.Text = Strings.ProjectileEditor.GrappleOpts[GrappleOptions.MapAttribute];
-            chkGrappleOnPlayer.Text = Strings.ProjectileEditor.GrappleOpts[GrappleOptions.Player];
-            chkGrappleOnNpc.Text = Strings.ProjectileEditor.GrappleOpts[GrappleOptions.NPC];
-            chkGrappleOnResource.Text = Strings.ProjectileEditor.GrappleOpts[GrappleOptions.Resource];
+            chkGrappleOnMap.Text = Strings.ProjectileEditor.GrappleOpts[GrappleOption.MapAttribute];
+            chkGrappleOnPlayer.Text = Strings.ProjectileEditor.GrappleOpts[GrappleOption.Player];
+            chkGrappleOnNpc.Text = Strings.ProjectileEditor.GrappleOpts[GrappleOption.NPC];
+            chkGrappleOnResource.Text = Strings.ProjectileEditor.GrappleOpts[GrappleOption.Resource];
 
             grpSpawns.Text = Strings.ProjectileEditor.spawns;
 
@@ -287,13 +287,13 @@ namespace Intersect.Editor.Forms.Editors
 
         private void UpdateGrappleOptions()
         {
-            chkGrappleOnMap.Checked = mEditorItem.GrappleHookOptions.Contains(GrappleOptions.MapAttribute);
-            chkGrappleOnPlayer.Checked = mEditorItem.GrappleHookOptions.Contains(GrappleOptions.Player);
-            chkGrappleOnNpc.Checked = mEditorItem.GrappleHookOptions.Contains(GrappleOptions.NPC);
-            chkGrappleOnResource.Checked = mEditorItem.GrappleHookOptions.Contains(GrappleOptions.Resource);
+            chkGrappleOnMap.Checked = mEditorItem.GrappleHookOptions.Contains(GrappleOption.MapAttribute);
+            chkGrappleOnPlayer.Checked = mEditorItem.GrappleHookOptions.Contains(GrappleOption.Player);
+            chkGrappleOnNpc.Checked = mEditorItem.GrappleHookOptions.Contains(GrappleOption.NPC);
+            chkGrappleOnResource.Checked = mEditorItem.GrappleHookOptions.Contains(GrappleOption.Resource);
         }
 
-        private void ChangeGrappleOptions(GrappleOptions option, bool chkValue)
+        private void ChangeGrappleOptions(GrappleOption option, bool chkValue)
         {
             if(chkValue && !mEditorItem.GrappleHookOptions.Contains(option))
             {
@@ -683,22 +683,22 @@ namespace Intersect.Editor.Forms.Editors
         }
         private void chkGrappleOnMap_CheckedChanged(object sender, EventArgs e)
         {
-            ChangeGrappleOptions(GrappleOptions.MapAttribute, chkGrappleOnMap.Checked);
+            ChangeGrappleOptions(GrappleOption.MapAttribute, chkGrappleOnMap.Checked);
         }
 
         private void chkGrappleOnPlayer_CheckedChanged(object sender, EventArgs e)
         {
-            ChangeGrappleOptions(GrappleOptions.Player, chkGrappleOnPlayer.Checked);
+            ChangeGrappleOptions(GrappleOption.Player, chkGrappleOnPlayer.Checked);
         }
 
         private void chkGrappleOnNpc_CheckedChanged(object sender, EventArgs e)
         {
-            ChangeGrappleOptions(GrappleOptions.NPC, chkGrappleOnNpc.Checked);
+            ChangeGrappleOptions(GrappleOption.NPC, chkGrappleOnNpc.Checked);
         }
 
         private void chkGrappleOnResource_CheckedChanged(object sender, EventArgs e)
         {
-            ChangeGrappleOptions(GrappleOptions.Resource, chkGrappleOnResource.Checked);
+            ChangeGrappleOptions(GrappleOption.Resource, chkGrappleOnResource.Checked);
         }
 
         #region "Item List - Folders, Searching, Sorting, Etc"

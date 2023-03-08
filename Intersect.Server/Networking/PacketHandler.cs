@@ -677,9 +677,9 @@ namespace Intersect.Server.Networking
             //check if player is stunned or snared, if so don't let them move.
             foreach (var status in player.CachedStatuses)
             {
-                if (status.Type == StatusTypes.Stun ||
-                    status.Type == StatusTypes.Snare ||
-                    status.Type == StatusTypes.Sleep)
+                if (status.Type == StatusType.Stun ||
+                    status.Type == StatusType.Snare ||
+                    status.Type == StatusType.Sleep)
                 {
                     return;
                 }
@@ -833,7 +833,7 @@ namespace Intersect.Server.Networking
                     Strings.Chat.local.ToString(player.Name, msg), ChatMessageType.Local, player.MapId, player.MapInstanceId, chatColor,
                     player.Name
                 );
-                PacketSender.SendChatBubble(player.Id, player.MapInstanceId, (int) EntityTypes.GlobalEntity, msg, player.MapId);
+                PacketSender.SendChatBubble(player.Id, player.MapInstanceId, (int) EntityType.GlobalEntity, msg, player.MapId);
                 ChatHistory.LogMessage(player, msg.Trim(), ChatMessageType.Local, Guid.Empty);
             }
             else if (cmd == Strings.Chat.allcmd || cmd == Strings.Chat.globalcmd)
@@ -1037,14 +1037,14 @@ namespace Intersect.Server.Networking
             var statuses = client.Entity.Statuses.Values.ToArray();
             foreach (var status in statuses)
             {
-                if (status.Type == StatusTypes.Stun)
+                if (status.Type == StatusType.Stun)
                 {
                     PacketSender.SendChatMsg(player, Strings.Combat.stunblocking, ChatMessageType.Combat);
 
                     return;
                 }
 
-                if (status.Type == StatusTypes.Sleep)
+                if (status.Type == StatusType.Sleep)
                 {
                     PacketSender.SendChatMsg(player, Strings.Combat.sleepblocking, ChatMessageType.Combat);
 
@@ -1107,7 +1107,7 @@ namespace Intersect.Server.Networking
             //check if player is blinded or stunned or in stealth mode
             foreach (var status in player.CachedStatuses)
             {
-                if (status.Type == StatusTypes.Stun)
+                if (status.Type == StatusType.Stun)
                 {
                     if (Options.Combat.EnableCombatChatMessages)
                     {
@@ -1117,7 +1117,7 @@ namespace Intersect.Server.Networking
                     return;
                 }
 
-                if (status.Type == StatusTypes.Sleep)
+                if (status.Type == StatusType.Sleep)
                 {
                     if (Options.Combat.EnableCombatChatMessages)
                     {
@@ -1127,7 +1127,7 @@ namespace Intersect.Server.Networking
                     return;
                 }
 
-                if (status.Type == StatusTypes.Blind)
+                if (status.Type == StatusType.Blind)
                 {
                     PacketSender.SendActionMsg(player, Strings.Combat.miss, CustomColors.Combat.Missed);
 
@@ -1135,7 +1135,7 @@ namespace Intersect.Server.Networking
                 }
 
                 //Remove stealth status.
-                if (status.Type == StatusTypes.Stealth)
+                if (status.Type == StatusType.Stealth)
                 {
                     status.RemoveStatus();
                 }
@@ -1496,10 +1496,10 @@ namespace Intersect.Server.Networking
 
             client.LoadCharacter(newChar);
 
-            newChar.SetVital(Vitals.Health, classBase.BaseVital[(int) Vitals.Health]);
-            newChar.SetVital(Vitals.Mana, classBase.BaseVital[(int) Vitals.Mana]);
+            newChar.SetVital(Vital.Health, classBase.BaseVital[(int) Vital.Health]);
+            newChar.SetVital(Vital.Mana, classBase.BaseVital[(int) Vital.Mana]);
 
-            for (var i = 0; i < (int) Stats.StatCount; i++)
+            for (var i = 0; i < (int) Stat.StatCount; i++)
             {
                 newChar.Stat[i].BaseStat = 0;
             }
@@ -2617,7 +2617,7 @@ namespace Intersect.Server.Networking
             // Handle our desired action, assuming we're allowed to of course.
             switch (packet.Action)
             {
-                case GuildMemberUpdateActions.Invite:
+                case GuildMemberUpdateAction.Invite:
                     // Are we allowed to invite players?
                     var inviteRankIndex = Options.Instance.Guild.Ranks.Length - 1;
                     var inviteRank = Options.Instance.Guild.Ranks[inviteRankIndex];
@@ -2658,7 +2658,7 @@ namespace Intersect.Server.Networking
                         PacketSender.SendChatMsg(player, Strings.Guilds.InviteNotOnline, ChatMessageType.Guild, CustomColors.Alerts.Error);
                     }
                     break;
-                case GuildMemberUpdateActions.Remove:
+                case GuildMemberUpdateAction.Remove:
                     if (guild.Members.TryGetValue(packet.Id, out member))
                     {
                         if ((!rank.Permissions.Kick && !isOwner) || member.Rank <= player.GuildRank)
@@ -2680,7 +2680,7 @@ namespace Intersect.Server.Networking
                         PacketSender.SendChatMsg(player, Strings.Guilds.NoSuchPlayer, ChatMessageType.Guild, CustomColors.Alerts.Error);
                     }
                     break;
-                case GuildMemberUpdateActions.Promote:
+                case GuildMemberUpdateAction.Promote:
                     if (guild.Members.TryGetValue(packet.Id, out member))
                     {
                         var promotionRankIndex = Math.Max(0, Math.Min(packet.Rank, Options.Instance.Guild.Ranks.Length - 1));
@@ -2706,7 +2706,7 @@ namespace Intersect.Server.Networking
                         PacketSender.SendChatMsg(player, Strings.Guilds.NoSuchPlayer, ChatMessageType.Guild, CustomColors.Alerts.Error);
                     }
                     break;
-                case GuildMemberUpdateActions.Demote:
+                case GuildMemberUpdateAction.Demote:
                     if (guild.Members.TryGetValue(packet.Id, out member))
                     {
                         var demotionRankIndex = Math.Max(0, Math.Min(packet.Rank, Options.Instance.Guild.Ranks.Length - 1));
@@ -2732,7 +2732,7 @@ namespace Intersect.Server.Networking
                         PacketSender.SendChatMsg(player, Strings.Guilds.NoSuchPlayer, ChatMessageType.Guild, CustomColors.Alerts.Error);
                     }
                     break;
-                case GuildMemberUpdateActions.Transfer:
+                case GuildMemberUpdateAction.Transfer:
                     if (guild.Members.TryGetValue(packet.Id, out member))
                     {
                         if (!isOwner)
@@ -3264,11 +3264,11 @@ namespace Intersect.Server.Networking
             var mapId = Guid.Empty;
             switch (packet.UpdateType)
             {
-                case MapListUpdates.MoveItem:
+                case MapListUpdate.MoveItem:
                     MapList.List.HandleMove(packet.TargetType, packet.TargetId, packet.ParentType, packet.ParentId);
                     break;
 
-                case MapListUpdates.AddFolder:
+                case MapListUpdate.AddFolder:
                     if (packet.ParentId == Guid.Empty)
                     {
                         MapList.List.AddFolder(Strings.Mapping.newfolder);
@@ -3301,7 +3301,7 @@ namespace Intersect.Server.Networking
 
                     break;
 
-                case MapListUpdates.Rename:
+                case MapListUpdate.Rename:
                     if (packet.TargetType == 0)
                     {
                         parent = MapList.List.FindFolder(packet.TargetId);
@@ -3319,7 +3319,7 @@ namespace Intersect.Server.Networking
 
                     break;
 
-                case MapListUpdates.Delete:
+                case MapListUpdate.Delete:
                     if (packet.TargetType == 0)
                     {
                         MapList.List.DeleteFolder(packet.TargetId);

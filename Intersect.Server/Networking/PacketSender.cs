@@ -607,7 +607,7 @@ namespace Intersect.Server.Networking
         //EventLeavePacket
         public static void SendEntityLeaveTo(Player player, Event evt)
         {
-            player.SendPacket(new EntityLeftPacket(evt.Id, EntityTypes.Event, evt.MapId));
+            player.SendPacket(new EntityLeftPacket(evt.Id, EntityType.Event, evt.MapId));
         }
 
         /// <summary>
@@ -937,8 +937,8 @@ namespace Intersect.Server.Networking
         //EntityStatsPacket
         public static EntityStatsPacket GenerateEntityStatsPacket(Entity en)
         {
-            var stats = new int[(int) Stats.StatCount];
-            for (var i = 0; i < (int) Stats.StatCount; i++)
+            var stats = new int[(int) Stat.StatCount];
+            for (var i = 0; i < (int) Stat.StatCount; i++)
             {
                 stats[i] = en.Stat[i].Value();
             }
@@ -1003,7 +1003,7 @@ namespace Intersect.Server.Networking
             Player player,
             string title,
             string prompt,
-            VariableDataTypes type,
+            VariableDataType type,
             Guid eventId
         )
         {
@@ -1902,7 +1902,7 @@ namespace Intersect.Server.Networking
         }
 
         //ChatBubblePacket
-        public static void SendChatBubble(Guid entityId, Guid mapInstanceId, EntityTypes type, string text, Guid mapId)
+        public static void SendChatBubble(Guid entityId, Guid mapInstanceId, EntityType type, string text, Guid mapId)
         {
             SendDataToProximityOnMapInstance(mapId, mapInstanceId, new ChatBubblePacket(entityId, type, mapId, text), null, TransmissionMode.Any);
         }

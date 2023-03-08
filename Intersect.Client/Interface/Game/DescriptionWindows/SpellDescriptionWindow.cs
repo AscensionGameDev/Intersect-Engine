@@ -42,11 +42,11 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
             // Set up information depending on the item type.
             switch (mSpell.SpellType)
             {
-                case SpellTypes.CombatSpell:
-                case SpellTypes.WarpTo:
+                case SpellType.CombatSpell:
+                case SpellType.WarpTo:
                     SetupCombatInfo();
                     break;
-                case SpellTypes.Dash:
+                case SpellType.Dash:
                     SetupDashInfo();
                     break;
             }
@@ -79,9 +79,9 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
             header.SetSubtitle(spellType, Color.White);
 
             // Set up the spelldescription based on what kind of spell it is.
-            if (mSpell.SpellType == (int)SpellTypes.CombatSpell)
+            if (mSpell.SpellType == (int)SpellType.CombatSpell)
             {
-                if (mSpell.Combat.TargetType == SpellTargetTypes.Projectile)
+                if (mSpell.Combat.TargetType == SpellTargetType.Projectile)
                 {
                     var proj = ProjectileBase.Get(mSpell.Combat.ProjectileId);
                     header.SetDescription(Strings.SpellDescription.TargetTypes[(int)mSpell.Combat.TargetType].ToString(proj?.Range ?? 0, mSpell.Combat.HitRadius), Color.White);
@@ -104,7 +104,7 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
             var rows = AddRowContainer();
 
             // Friendly / Non Friendly for combat spells.
-            if (mSpell.SpellType == SpellTypes.CombatSpell || mSpell.SpellType == SpellTypes.WarpTo)
+            if (mSpell.SpellType == SpellType.CombatSpell || mSpell.SpellType == SpellType.WarpTo)
             {
                 if (mSpell.Combat.Friendly)
                 {
@@ -125,7 +125,7 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
             rows.AddKeyValueRow(Strings.SpellDescription.CastTime, castTime);
 
             // Add Vital Costs
-            for (var i = 0; i < (int)Vitals.VitalCount; i++)
+            for (var i = 0; i < (int)Vital.VitalCount; i++)
             {
                 if (mSpell.VitalCost[i] != 0)
                 {
@@ -183,7 +183,7 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
             // This bit is a bit iffy.. since in 
             var isHeal = false;
             var isDamage = false;
-            for (var i = 0; i < (int)Vitals.VitalCount; i++)
+            for (var i = 0; i < (int)Vital.VitalCount; i++)
             {
                 if (mSpell.Combat.VitalDiff[i] < 0)
                 {
@@ -218,7 +218,7 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
             var showDuration = false;
             // Handle Stat Buffs
             var blankAdded = false;
-            for (var i = 0; i < (int)Stats.StatCount; i++)
+            for (var i = 0; i < (int)Stat.StatCount; i++)
             {
                 Tuple<string, string> data = null;
                 if (mSpell.Combat.StatDiff[i] != 0 && mSpell.Combat.PercentageStatDiff[i] != 0)
@@ -266,7 +266,7 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
             }
 
             // Handle effect display.
-            if (mSpell.Combat.Effect != StatusTypes.None)
+            if (mSpell.Combat.Effect != StatusType.None)
             {
                 showDuration = true;
                 rows.AddKeyValueRow(string.Empty, string.Empty);

@@ -212,10 +212,10 @@ namespace Intersect.Client.Interface.Game
                         if (mHpBar[i].Texture != null)
                         {
                             var partyHpWidthRatio = 1f;
-                            if (Globals.Me.Party[i].MaxVital[(int)Vitals.Health] > 0)
+                            if (Globals.Me.Party[i].MaxVital[(int)Vital.Health] > 0)
                             {
-                                var vitalHp = Globals.Me.Party[i].Vital[(int)Vitals.Health];
-                                var vitalMaxHp = Globals.Me.Party[i].MaxVital[(int)Vitals.Health];
+                                var vitalHp = Globals.Me.Party[i].Vital[(int)Vital.Health];
+                                var vitalMaxHp = Globals.Me.Party[i].MaxVital[(int)Vital.Health];
                                 var ratioHp = (float)vitalHp / (float)vitalMaxHp;
                                 partyHpWidthRatio = Math.Min(1, Math.Max(0, ratioHp));
                             }
@@ -233,17 +233,17 @@ namespace Intersect.Client.Interface.Game
                         }
 
                         mHpValue[i].Text = Strings.Parties.vital0val.ToString(
-                            Globals.Me.Party[i].Vital[(int) Vitals.Health],
-                            Globals.Me.Party[i].MaxVital[(int) Vitals.Health]
+                            Globals.Me.Party[i].Vital[(int) Vital.Health],
+                            Globals.Me.Party[i].MaxVital[(int) Vital.Health]
                         );
 
                         if (mMpBar[i].Texture != null)
                         {
                             var partyMpWidthRatio = 1f;
-                            if (Globals.Me.Party[i].MaxVital[(int)Vitals.Mana] > 0)
+                            if (Globals.Me.Party[i].MaxVital[(int)Vital.Mana] > 0)
                             {
-                                var vitalMp = Globals.Me.Party[i].Vital[(int)Vitals.Mana];
-                                var vitalMaxMp = Globals.Me.Party[i].MaxVital[(int)Vitals.Mana];
+                                var vitalMp = Globals.Me.Party[i].Vital[(int)Vital.Mana];
+                                var vitalMaxMp = Globals.Me.Party[i].MaxVital[(int)Vital.Mana];
                                 var ratioMp = (float)vitalMp / (float)vitalMaxMp;
                                 partyMpWidthRatio = Math.Min(1, Math.Max(0, ratioMp));
                             }
@@ -261,8 +261,8 @@ namespace Intersect.Client.Interface.Game
                         }
 
                         mMpValue[i].Text = Strings.Parties.vital1val.ToString(
-                            Globals.Me.Party[i].Vital[(int) Vitals.Mana],
-                            Globals.Me.Party[i].MaxVital[(int) Vitals.Mana]
+                            Globals.Me.Party[i].Vital[(int) Vital.Mana],
+                            Globals.Me.Party[i].MaxVital[(int) Vital.Mana]
                         );
 
                         if (i > 0)

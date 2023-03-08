@@ -42,12 +42,12 @@ namespace Intersect.Server.Database
                 return;
             }
 
-            if (descriptor.ItemType != ItemTypes.Equipment)
+            if (descriptor.ItemType != ItemType.Equipment)
             {
                 return;
             }
 
-            for (var i = 0; i < (int)Stats.StatCount; i++)
+            for (var i = 0; i < (int)Stat.StatCount; i++)
             {
                 Properties.StatModifiers[i] = Randomization.Next(-descriptor.StatGrowth, descriptor.StatGrowth + 1);
             }
@@ -120,7 +120,7 @@ namespace Intersect.Server.Database
             if (bag == null)
             {
                 var descriptor = Descriptor;
-                if (descriptor?.ItemType == ItemTypes.Bag)
+                if (descriptor?.ItemType == ItemType.Bag)
                 {
                     bag = Bag.GetBag(BagId ?? Guid.Empty);
                     bag?.ValidateSlots();

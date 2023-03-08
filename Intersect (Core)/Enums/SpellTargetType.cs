@@ -1,9 +1,7 @@
 namespace Intersect.Enums
 {
-
-    public enum SpellTargetTypes
+    public enum SpellTargetType
     {
-
         Self = 0,
 
         Single = 1,
@@ -15,7 +13,5 @@ namespace Intersect.Enums
         OnHit = 4,
 
         Trap = 5
-
     }
-
 }

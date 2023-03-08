@@ -1,36 +1,6 @@
 namespace Intersect.Enums
 {
-
-    public enum VariableDataTypes : byte
-    {
-
-        Boolean = 1,
-
-        Integer,
-
-        String,
-
-        Number
-
-    }
-
-    public enum VariableTypes
-    {
-
-        PlayerVariable = 0,
-
-        ServerVariable,
-
-        GuildVariable,
-
-        UserVariable,
-
-    }
-
-    //Should properly seperate static value, player & global vars into a seperate enum.
-    //But technical debt :/
-    //Crying as I add in Guild variables.. don't hate me :(
-    public enum VariableMods
+    public enum VariableMod
     {
 
         Set = 0,
@@ -109,31 +79,4 @@ namespace Intersect.Enums
 
         RightShiftUserVariable,
     }
-
-    public enum VariableComparators
-    {
-
-        Equal = 0,
-
-        GreaterOrEqual,
-
-        LesserOrEqual,
-
-        Greater,
-
-        Less,
-
-        NotEqual
-
-    }
-
-    public enum StringVariableComparators
-    {
-
-        Equal = 0,
-
-        Contains,
-
-    }
-
 }

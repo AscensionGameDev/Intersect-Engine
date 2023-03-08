@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MapAttribute = Intersect.Enums.MapAttribute;
 
 namespace Intersect.Server.Database.GameData.Migrations
 {
@@ -197,33 +198,33 @@ namespace Intersect.Server.Database.GameData.Migrations
 
         private abstract partial class LegacyMapAttribute
         {
-            public abstract MapAttributes Type { get; }
+            public abstract MapAttribute Type { get; }
 
-            public static LegacyMapAttribute CreateAttribute(MapAttributes type)
+            public static LegacyMapAttribute CreateAttribute(MapAttribute type)
             {
                 switch (type)
                 {
-                    case MapAttributes.Walkable:
+                    case MapAttribute.Walkable:
                         return null;
-                    case MapAttributes.Blocked:
+                    case MapAttribute.Blocked:
                         return new LegacyMapBlockedAttribute();
-                    case MapAttributes.Item:
+                    case MapAttribute.Item:
                         return new LegacyMapItemAttribute();
-                    case MapAttributes.ZDimension:
+                    case MapAttribute.ZDimension:
                         return new LegacyMapZDimensionAttribute();
-                    case MapAttributes.NpcAvoid:
+                    case MapAttribute.NpcAvoid:
                         return new LegacyMapNpcAvoidAttribute();
-                    case MapAttributes.Warp:
+                    case MapAttribute.Warp:
                         return new LegacyMapWarpAttribute();
-                    case MapAttributes.Sound:
+                    case MapAttribute.Sound:
                         return new LegacyMapSoundAttribute();
-                    case MapAttributes.Resource:
+                    case MapAttribute.Resource:
                         return new LegacyMapResourceAttribute();
-                    case MapAttributes.Animation:
+                    case MapAttribute.Animation:
                         return new LegacyMapAnimationAttribute();
-                    case MapAttributes.GrappleStone:
+                    case MapAttribute.GrappleStone:
                         return new LegacyMapGrappleStoneAttribute();
-                    case MapAttributes.Slide:
+                    case MapAttribute.Slide:
                         return new LegacyMapSlideAttribute();
                 }
 
@@ -234,14 +235,14 @@ namespace Intersect.Server.Database.GameData.Migrations
         private partial class LegacyMapBlockedAttribute : LegacyMapAttribute
         {
 
-            public override MapAttributes Type { get; } = MapAttributes.Blocked;
+            public override MapAttribute Type { get; } = MapAttribute.Blocked;
 
         }
 
         private partial class LegacyMapItemAttribute : LegacyMapAttribute
         {
 
-            public override MapAttributes Type { get; } = MapAttributes.Item;
+            public override MapAttribute Type { get; } = MapAttribute.Item;
 
             public Guid ItemId { get; set; }
 
@@ -252,7 +253,7 @@ namespace Intersect.Server.Database.GameData.Migrations
         private partial class LegacyMapZDimensionAttribute : LegacyMapAttribute
         {
 
-            public override MapAttributes Type { get; } = MapAttributes.ZDimension;
+            public override MapAttribute Type { get; } = MapAttribute.ZDimension;
 
             public byte GatewayTo { get; set; }
 
@@ -263,14 +264,14 @@ namespace Intersect.Server.Database.GameData.Migrations
         private partial class LegacyMapNpcAvoidAttribute : LegacyMapAttribute
         {
 
-            public override MapAttributes Type { get; } = MapAttributes.NpcAvoid;
+            public override MapAttribute Type { get; } = MapAttribute.NpcAvoid;
 
         }
 
         private partial class LegacyMapWarpAttribute : LegacyMapAttribute
         {
 
-            public override MapAttributes Type { get; } = MapAttributes.Warp;
+            public override MapAttribute Type { get; } = MapAttribute.Warp;
 
             public Guid MapId { get; set; }
 
@@ -285,7 +286,7 @@ namespace Intersect.Server.Database.GameData.Migrations
         private partial class LegacyMapSoundAttribute : LegacyMapAttribute
         {
 
-            public override MapAttributes Type { get; } = MapAttributes.Sound;
+            public override MapAttribute Type { get; } = MapAttribute.Sound;
 
             public string File { get; set; }
 
@@ -296,7 +297,7 @@ namespace Intersect.Server.Database.GameData.Migrations
         private partial class LegacyMapResourceAttribute : LegacyMapAttribute
         {
 
-            public override MapAttributes Type { get; } = MapAttributes.Resource;
+            public override MapAttribute Type { get; } = MapAttribute.Resource;
 
             public Guid ResourceId { get; set; }
 
@@ -307,7 +308,7 @@ namespace Intersect.Server.Database.GameData.Migrations
         private partial class LegacyMapAnimationAttribute : LegacyMapAttribute
         {
 
-            public override MapAttributes Type { get; } = MapAttributes.Animation;
+            public override MapAttribute Type { get; } = MapAttribute.Animation;
 
             public Guid AnimationId { get; set; }
 
@@ -316,14 +317,14 @@ namespace Intersect.Server.Database.GameData.Migrations
         private partial class LegacyMapGrappleStoneAttribute : LegacyMapAttribute
         {
 
-            public override MapAttributes Type { get; } = MapAttributes.GrappleStone;
+            public override MapAttribute Type { get; } = MapAttribute.GrappleStone;
 
         }
 
         private partial class LegacyMapSlideAttribute : LegacyMapAttribute
         {
 
-            public override MapAttributes Type { get; } = MapAttributes.Slide;
+            public override MapAttribute Type { get; } = MapAttribute.Slide;
 
             public byte Direction { get; set; }
 

@@ -15,7 +15,7 @@ namespace Intersect.GameObjects.Events
     public partial class IntegerVariableMod : VariableMod
     {
 
-        public VariableMods ModType { get; set; } = VariableMods.Set;
+        public Enums.VariableMod ModType { get; set; } = Enums.VariableMod.Set;
 
         public long Value { get; set; }
 
@@ -31,7 +31,7 @@ namespace Intersect.GameObjects.Events
 
         public bool Value { get; set; }
 
-        public VariableTypes DupVariableType { get; set; } = VariableTypes.PlayerVariable;
+        public VariableType DupVariableType { get; set; } = VariableType.PlayerVariable;
 
         [JsonProperty("DupVariableId")]
         public Guid DuplicateVariableId { get; set; }
@@ -41,7 +41,7 @@ namespace Intersect.GameObjects.Events
     public partial class StringVariableMod : VariableMod
     {
 
-        public VariableMods ModType { get; set; } = VariableMods.Set;
+        public Enums.VariableMod ModType { get; set; } = Enums.VariableMod.Set;
 
         public string Value { get; set; }
 

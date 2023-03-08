@@ -289,7 +289,7 @@ namespace Intersect.GameObjects.Maps
 
         public int Brightness { get; set; } = 100;
 
-        public MapZones ZoneType { get; set; } = MapZones.Normal;
+        public MapZone ZoneType { get; set; } = MapZone.Normal;
 
         public int PlayerLightSize { get; set; } = 300;
 
