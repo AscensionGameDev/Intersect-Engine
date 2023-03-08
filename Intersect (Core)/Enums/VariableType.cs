@@ -4,7 +4,7 @@ namespace Intersect.Enums
     // But technical debt :/
     // Crying as I add in Guild variables.. don't hate me :(
     
-    public enum VariableTypes
+    public enum VariableType
     {
 
         PlayerVariable = 0,

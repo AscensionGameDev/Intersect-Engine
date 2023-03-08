@@ -804,13 +804,13 @@ namespace Intersect.Editor.Forms.Editors.Events
                 var exp = string.Empty;
                 switch (command.VariableType)
                 {
-                    case VariableTypes.PlayerVariable:
+                    case VariableType.PlayerVariable:
                         exp = string.Format(@"({0}: {1})", Strings.EventGiveExperience.PlayerVariable, PlayerVariableBase.GetName(command.VariableId));
                         break;
-                    case VariableTypes.ServerVariable:
+                    case VariableType.ServerVariable:
                         exp = string.Format(@"({0}: {1})", Strings.EventGiveExperience.ServerVariable, ServerVariableBase.GetName(command.VariableId));
                         break;
-                    case VariableTypes.GuildVariable:
+                    case VariableType.GuildVariable:
                         exp = string.Format(@"({0}: {1})", Strings.EventGiveExperience.GuildVariable, GuildVariableBase.GetName(command.VariableId));
                         break;
                 }
@@ -1294,25 +1294,25 @@ namespace Intersect.Editor.Forms.Editors.Events
             var varvalue = "";
             if (mod.DuplicateVariableId != Guid.Empty)
             {
-                if (mod.DupVariableType == VariableTypes.PlayerVariable)
+                if (mod.DupVariableType == VariableType.PlayerVariable)
                 {
                     varvalue = Strings.EventCommandList.dupplayervariable.ToString(
                         PlayerVariableBase.GetName(mod.DuplicateVariableId)
                     );
                 }
-                else if (mod.DupVariableType == VariableTypes.ServerVariable)
+                else if (mod.DupVariableType == VariableType.ServerVariable)
                 {
                     varvalue = Strings.EventCommandList.dupglobalvariable.ToString(
                         ServerVariableBase.GetName(mod.DuplicateVariableId)
                     );
                 }
-                else if (mod.DupVariableType == VariableTypes.GuildVariable)
+                else if (mod.DupVariableType == VariableType.GuildVariable)
                 {
                     varvalue = Strings.EventCommandList.dupguildvariable.ToString(
                         GuildVariableBase.GetName(mod.DuplicateVariableId)
                     );
                 }
-                else if (mod.DupVariableType == VariableTypes.UserVariable)
+                else if (mod.DupVariableType == VariableType.UserVariable)
                 {
                     varvalue = Strings.EventCommandList.DupUserVariable.ToString(
                         Strings.GameObjectStrings.UserVariable,
@@ -1332,28 +1332,28 @@ namespace Intersect.Editor.Forms.Editors.Events
                 }
             }
 
-            if (command.VariableType == VariableTypes.PlayerVariable)
+            if (command.VariableType == VariableType.PlayerVariable)
             {
                 return Strings.EventCommandList.playervariable.ToString(
                     PlayerVariableBase.GetName(command.VariableId), varvalue
                 );
             }
 
-            if (command.VariableType == VariableTypes.ServerVariable)
+            if (command.VariableType == VariableType.ServerVariable)
             {
                 return Strings.EventCommandList.globalvariable.ToString(
                     ServerVariableBase.GetName(command.VariableId), varvalue
                 );
             }
 
-            if (command.VariableType == VariableTypes.GuildVariable)
+            if (command.VariableType == VariableType.GuildVariable)
             {
                 return Strings.EventCommandList.guildvariable.ToString(
                     GuildVariableBase.GetName(command.VariableId), varvalue
                 );
             }
 
-            if (command.VariableType == VariableTypes.UserVariable)
+            if (command.VariableType == VariableType.UserVariable)
             {
                 return Strings.EventCommandList.UserVariable.ToString(
                     Strings.GameObjectStrings.UserVariable,
@@ -1595,28 +1595,28 @@ namespace Intersect.Editor.Forms.Editors.Events
                     break;
             }
 
-            if (command.VariableType == VariableTypes.PlayerVariable)
+            if (command.VariableType == VariableType.PlayerVariable)
             {
                 return Strings.EventCommandList.playervariable.ToString(
                     PlayerVariableBase.GetName(command.VariableId), varvalue
                 );
             }
 
-            if (command.VariableType == VariableTypes.ServerVariable)
+            if (command.VariableType == VariableType.ServerVariable)
             {
                 return Strings.EventCommandList.globalvariable.ToString(
                     ServerVariableBase.GetName(command.VariableId), varvalue
                 );
             }
 
-            if (command.VariableType == VariableTypes.GuildVariable)
+            if (command.VariableType == VariableType.GuildVariable)
             {
                 return Strings.EventCommandList.guildvariable.ToString(
                     GuildVariableBase.GetName(command.VariableId), varvalue
                 );
             }
 
-            if (command.VariableType == VariableTypes.UserVariable)
+            if (command.VariableType == VariableType.UserVariable)
             {
                 return Strings.EventCommandList.UserVariable.ToString(
                     Strings.GameObjectStrings.UserVariable,
@@ -1643,28 +1643,28 @@ namespace Intersect.Editor.Forms.Editors.Events
                     break;
             }
 
-            if (command.VariableType == VariableTypes.PlayerVariable)
+            if (command.VariableType == VariableType.PlayerVariable)
             {
                 return Strings.EventCommandList.playervariable.ToString(
                     PlayerVariableBase.GetName(command.VariableId), varvalue
                 );
             }
 
-            if (command.VariableType == VariableTypes.ServerVariable)
+            if (command.VariableType == VariableType.ServerVariable)
             {
                 return Strings.EventCommandList.globalvariable.ToString(
                     ServerVariableBase.GetName(command.VariableId), varvalue
                 );
             }
 
-            if (command.VariableType == VariableTypes.GuildVariable)
+            if (command.VariableType == VariableType.GuildVariable)
             {
                 return Strings.EventCommandList.guildvariable.ToString(
                     GuildVariableBase.GetName(command.VariableId), varvalue
                 );
             }
 
-            if (command.VariableType == VariableTypes.UserVariable)
+            if (command.VariableType == VariableType.UserVariable)
             {
                 return Strings.EventCommandList.UserVariable.ToString(
                     Strings.GameObjectStrings.UserVariable,

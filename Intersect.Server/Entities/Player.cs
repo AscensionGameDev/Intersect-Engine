@@ -6120,7 +6120,7 @@ namespace Intersect.Server.Entities
                             var cmd = (InputVariableCommand)stackInfo.WaitingOnCommand;
                             VariableValue value = null;
                             var type = VariableDataType.Boolean;
-                            if (cmd.VariableType == VariableTypes.PlayerVariable)
+                            if (cmd.VariableType == VariableType.PlayerVariable)
                             {
                                 var variable = PlayerVariableBase.Get(cmd.VariableId);
                                 if (variable != null)
@@ -6130,7 +6130,7 @@ namespace Intersect.Server.Entities
 
                                 value = GetVariableValue(cmd.VariableId);
                             }
-                            else if (cmd.VariableType == VariableTypes.ServerVariable)
+                            else if (cmd.VariableType == VariableType.ServerVariable)
                             {
                                 var variable = ServerVariableBase.Get(cmd.VariableId);
                                 if (variable != null)
@@ -6140,7 +6140,7 @@ namespace Intersect.Server.Entities
 
                                 value = ServerVariableBase.Get(cmd.VariableId)?.Value;
                             }
-                            else if (cmd.VariableType == VariableTypes.GuildVariable)
+                            else if (cmd.VariableType == VariableType.GuildVariable)
                             {
                                 var variable = GuildVariableBase.Get(cmd.VariableId);
                                 if (variable != null)
@@ -6150,7 +6150,7 @@ namespace Intersect.Server.Entities
 
                                 value = Guild?.GetVariableValue(cmd.VariableId) ?? new VariableValue();
                             }
-                            else if (cmd.VariableType == VariableTypes.UserVariable)
+                            else if (cmd.VariableType == VariableType.UserVariable)
                             {
                                 var variable = UserVariableBase.Get(cmd.VariableId);
                                 if (variable != null)
@@ -6223,7 +6223,7 @@ namespace Intersect.Server.Entities
                             }
 
                             //Reassign variable values in case they didnt already exist and we made them from scratch at the null check above
-                            if (cmd.VariableType == VariableTypes.PlayerVariable)
+                            if (cmd.VariableType == VariableType.PlayerVariable)
                             {
                                 var variable = GetVariable(cmd.VariableId);
                                 if (changed)
@@ -6232,7 +6232,7 @@ namespace Intersect.Server.Entities
                                     StartCommonEventsWithTrigger(CommonEventTrigger.PlayerVariableChange, "", cmd.VariableId.ToString());
                                 }
                             }
-                            else if (cmd.VariableType == VariableTypes.ServerVariable)
+                            else if (cmd.VariableType == VariableType.ServerVariable)
                             {
                                 var variable = ServerVariableBase.Get(cmd.VariableId);
                                 if (changed)
@@ -6242,7 +6242,7 @@ namespace Intersect.Server.Entities
                                     DbInterface.UpdatedServerVariables.AddOrUpdate(variable.Id, variable, (key, oldValue) => variable);
                                 }
                             }
-                            else if (cmd.VariableType == VariableTypes.GuildVariable)
+                            else if (cmd.VariableType == VariableType.GuildVariable)
                             {
                                 if (Guild != null)
                                 {
@@ -6255,7 +6255,7 @@ namespace Intersect.Server.Entities
                                     }
                                 }
                             }
-                            else if (cmd.VariableType == VariableTypes.UserVariable)
+                            else if (cmd.VariableType == VariableType.UserVariable)
                             {
                                 var variable = User.GetVariable(cmd.VariableId);
                                 if (changed)

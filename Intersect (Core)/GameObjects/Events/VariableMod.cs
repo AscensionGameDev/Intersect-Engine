@@ -31,7 +31,7 @@ namespace Intersect.GameObjects.Events
 
         public bool Value { get; set; }
 
-        public VariableTypes DupVariableType { get; set; } = VariableTypes.PlayerVariable;
+        public VariableType DupVariableType { get; set; } = VariableType.PlayerVariable;
 
         [JsonProperty("DupVariableId")]
         public Guid DuplicateVariableId { get; set; }
