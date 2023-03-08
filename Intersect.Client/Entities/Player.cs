@@ -2501,6 +2501,7 @@ namespace Intersect.Client.Entities
                     Dir = Globals.Me.MoveDir;
                     PacketSender.SendDirection(Dir);
                     Globals.Me.MoveDir = Direction.None;
+                    PickLastDirection(Dir);
                 }
 
                 // Hold the player in place if the requested direction is the same as the current one.
