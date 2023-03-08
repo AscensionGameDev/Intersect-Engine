@@ -110,7 +110,7 @@ namespace Intersect.Client.Entities
 
             var rotationDegrees = 0f;
             var dontRotate = upper && MyBase.Upper.DisableRotations || !upper && MyBase.Lower.DisableRotations;
-            if (AutoRotate || !dontRotate)
+            if ((AutoRotate || mRenderDir != Direction.None) && !dontRotate)
             {
                 switch (mRenderDir)
                 {
