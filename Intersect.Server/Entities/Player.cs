@@ -1421,8 +1421,8 @@ namespace Intersect.Server.Entities
                 return false;
             }
             
-            if (spell?.Combat?.TargetType == SpellTargetTypes.Self ||
-                spell?.Combat?.TargetType == SpellTargetTypes.Projectile ||
+            if (spell?.Combat?.TargetType == SpellTargetType.Self ||
+                spell?.Combat?.TargetType == SpellTargetType.Projectile ||
                 spell?.SpellType == SpellTypes.Dash
                 )
             {
@@ -1449,7 +1449,7 @@ namespace Intersect.Server.Entities
 
                 // Only count safe zones and friendly fire if its a dangerous spell! (If one has been used)
                 // Projectiles are ignored here, because we can always fire those.. Whether they hit or not is a problem for later.
-                if (!friendly && (spell?.Combat?.TargetType != SpellTargetTypes.Self && spell?.Combat?.TargetType != SpellTargetTypes.AoE && spell?.SpellType == SpellTypes.CombatSpell))
+                if (!friendly && (spell?.Combat?.TargetType != SpellTargetType.Self && spell?.Combat?.TargetType != SpellTargetType.AoE && spell?.SpellType == SpellTypes.CombatSpell))
                 {
                     // Check if either the attacker or the defender is in a "safe zone" (Only apply if combat is PVP)
                     if (MapController.Get(MapId).ZoneType == MapZone.Safe || MapController.Get(player.MapId).ZoneType == MapZone.Safe)
@@ -5000,7 +5000,7 @@ namespace Intersect.Server.Entities
 
             // If this is a projectile, check if the user has the corresponding item.
             if (spell.SpellType == SpellTypes.CombatSpell &&
-                spell.Combat.TargetType == SpellTargetTypes.Projectile &&
+                spell.Combat.TargetType == SpellTargetType.Projectile &&
                 spell.Combat.ProjectileId != Guid.Empty)
             {
                 var projectileBase = spell.Combat.Projectile;
@@ -5067,7 +5067,7 @@ namespace Intersect.Server.Entities
 
                 //Check if the caster has the right ammunition if a projectile
                 if (spell.SpellType == SpellTypes.CombatSpell &&
-                    spell.Combat.TargetType == SpellTargetTypes.Projectile &&
+                    spell.Combat.TargetType == SpellTargetType.Projectile &&
                     spell.Combat.ProjectileId != Guid.Empty)
                 {
                     var projectileBase = spell.Combat.Projectile;

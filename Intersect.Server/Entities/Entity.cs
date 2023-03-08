@@ -1585,7 +1585,7 @@ namespace Intersect.Server.Entities
 
             //Only count safe zones and friendly fire if its a dangerous spell! (If one has been used)
             if (!spellBase.Combat.Friendly &&
-                (spellBase.Combat.TargetType != (int) SpellTargetTypes.Self || onHitTrigger))
+                (spellBase.Combat.TargetType != (int) SpellTargetType.Self || onHitTrigger))
             {
                 //If about to hit self with an unfriendly spell (maybe aoe?) return
                 if (target == this && spellBase.Combat.Effect != StatusTypes.OnHit)
@@ -2246,7 +2246,7 @@ namespace Intersect.Server.Entities
             }
 
             // Check for target validity
-            var singleTargetSpell = (spell.SpellType == SpellTypes.CombatSpell && spell.Combat.TargetType == SpellTargetTypes.Single) || spell.SpellType == SpellTypes.WarpTo;
+            var singleTargetSpell = (spell.SpellType == SpellTypes.CombatSpell && spell.Combat.TargetType == SpellTargetType.Single) || spell.SpellType == SpellTypes.WarpTo;
             if (target == null && singleTargetSpell)
             {
                 reason = SpellCastFailureReason.InvalidTarget;
@@ -2321,7 +2321,7 @@ namespace Intersect.Server.Entities
 
                     switch (spellBase.Combat.TargetType)
                     {
-                        case SpellTargetTypes.Self:
+                        case SpellTargetType.Self:
                             if (spellBase.HitAnimationId != Guid.Empty && spellBase.Combat.Effect != StatusTypes.OnHit)
                             {
                                 PacketSender.SendAnimationToProximity(
@@ -2332,7 +2332,7 @@ namespace Intersect.Server.Entities
                             TryAttack(this, spellBase);
 
                             break;
-                        case SpellTargetTypes.Single:
+                        case SpellTargetType.Single:
                             if (CastTarget == null)
                             {
                                 return;
@@ -2360,11 +2360,11 @@ namespace Intersect.Server.Entities
                             }
 
                             break;
-                        case SpellTargetTypes.AoE:
+                        case SpellTargetType.AoE:
                             HandleAoESpell(spellId, spellBase.Combat.HitRadius, MapId, X, Y, null);
 
                             break;
-                        case SpellTargetTypes.Projectile:
+                        case SpellTargetType.Projectile:
                             var projectileBase = spellBase.Combat.Projectile;
                             if (projectileBase != null)
                             {
@@ -2379,7 +2379,7 @@ namespace Intersect.Server.Entities
                             }
 
                             break;
-                        case SpellTargetTypes.OnHit:
+                        case SpellTargetType.OnHit:
                             if (spellBase.Combat.Effect == StatusTypes.OnHit)
                             {
                                 new Status(
@@ -2394,7 +2394,7 @@ namespace Intersect.Server.Entities
                             }
 
                             break;
-                        case SpellTargetTypes.Trap:
+                        case SpellTargetType.Trap:
                             if (MapController.TryGetInstanceFromMap(MapId, MapInstanceId, out var instance)) 
                             {
                                 instance.SpawnTrap(this, spellBase, (byte)X, (byte)Y, (byte)Z);

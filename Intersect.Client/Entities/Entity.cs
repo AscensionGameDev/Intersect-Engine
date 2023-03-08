@@ -1979,7 +1979,7 @@ namespace Intersect.Client.Entities
                     }
 
                     if (spell.SpellType == SpellTypes.CombatSpell &&
-                        spell.Combat.TargetType == SpellTargetTypes.Projectile &&
+                        spell.Combat.TargetType == SpellTargetType.Projectile &&
                         spell.CastSpriteOverride == null)
                     {
                         if (AnimatedTextures.TryGetValue(SpriteAnimations.Shoot, out _))

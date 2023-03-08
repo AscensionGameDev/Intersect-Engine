@@ -419,7 +419,7 @@ namespace Intersect.Editor.Forms.Editors
             if (cmbType.SelectedIndex == (int) SpellTypes.WarpTo)
             {
                 grpTargetInfo.Show();
-                cmbTargetType.SelectedIndex = (int) SpellTargetTypes.Single;
+                cmbTargetType.SelectedIndex = (int) SpellTargetType.Single;
                 cmbTargetType.Enabled = false;
                 UpdateTargetTypePanel();
             }
@@ -436,7 +436,7 @@ namespace Intersect.Editor.Forms.Editors
             lblDuration.Hide();
             nudDuration.Hide();
 
-            if (cmbTargetType.SelectedIndex == (int) SpellTargetTypes.Single)
+            if (cmbTargetType.SelectedIndex == (int) SpellTargetType.Single)
             {
                 lblCastRange.Show();
                 nudCastRange.Show();
@@ -449,7 +449,7 @@ namespace Intersect.Editor.Forms.Editors
                 }
             }
 
-            if (cmbTargetType.SelectedIndex == (int) SpellTargetTypes.AoE &&
+            if (cmbTargetType.SelectedIndex == (int) SpellTargetType.AoE &&
                 cmbType.SelectedIndex == (int) SpellTypes.CombatSpell)
             {
                 lblHitRadius.Show();
@@ -457,28 +457,28 @@ namespace Intersect.Editor.Forms.Editors
                 nudHitRadius.Value = mEditorItem.Combat.HitRadius;
             }
 
-            if (cmbTargetType.SelectedIndex < (int) SpellTargetTypes.Self)
+            if (cmbTargetType.SelectedIndex < (int) SpellTargetType.Self)
             {
                 lblCastRange.Show();
                 nudCastRange.Show();
                 nudCastRange.Value = mEditorItem.Combat.CastRange;
             }
 
-            if (cmbTargetType.SelectedIndex == (int) SpellTargetTypes.Projectile)
+            if (cmbTargetType.SelectedIndex == (int) SpellTargetType.Projectile)
             {
                 lblProjectile.Show();
                 cmbProjectile.Show();
                 cmbProjectile.SelectedIndex = ProjectileBase.ListIndex(mEditorItem.Combat.ProjectileId);
             }
 
-            if (cmbTargetType.SelectedIndex == (int) SpellTargetTypes.OnHit)
+            if (cmbTargetType.SelectedIndex == (int) SpellTargetType.OnHit)
             {
                 lblDuration.Show();
                 nudDuration.Show();
                 nudDuration.Value = mEditorItem.Combat.OnHitDuration;
             }
 
-            if (cmbTargetType.SelectedIndex == (int) SpellTargetTypes.Trap)
+            if (cmbTargetType.SelectedIndex == (int) SpellTargetType.Trap)
             {
                 lblDuration.Show();
                 nudDuration.Show();
@@ -513,7 +513,7 @@ namespace Intersect.Editor.Forms.Editors
 
         private void cmbTargetType_SelectedIndexChanged(object sender, EventArgs e)
         {
-            mEditorItem.Combat.TargetType = (SpellTargetTypes) cmbTargetType.SelectedIndex;
+            mEditorItem.Combat.TargetType = (SpellTargetType) cmbTargetType.SelectedIndex;
             UpdateTargetTypePanel();
         }
 
@@ -912,12 +912,12 @@ namespace Intersect.Editor.Forms.Editors
 
         private void nudOnHitDuration_ValueChanged(object sender, EventArgs e)
         {
-            if (cmbTargetType.SelectedIndex == (int) SpellTargetTypes.OnHit)
+            if (cmbTargetType.SelectedIndex == (int) SpellTargetType.OnHit)
             {
                 mEditorItem.Combat.OnHitDuration = (int) nudDuration.Value;
             }
 
-            if (cmbTargetType.SelectedIndex == (int) SpellTargetTypes.Trap)
+            if (cmbTargetType.SelectedIndex == (int) SpellTargetType.Trap)
             {
                 mEditorItem.Combat.TrapDuration = (int) nudDuration.Value;
             }

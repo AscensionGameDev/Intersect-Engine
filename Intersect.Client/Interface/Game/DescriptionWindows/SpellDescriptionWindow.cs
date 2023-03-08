@@ -81,7 +81,7 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
             // Set up the spelldescription based on what kind of spell it is.
             if (mSpell.SpellType == (int)SpellTypes.CombatSpell)
             {
-                if (mSpell.Combat.TargetType == SpellTargetTypes.Projectile)
+                if (mSpell.Combat.TargetType == SpellTargetType.Projectile)
                 {
                     var proj = ProjectileBase.Get(mSpell.Combat.ProjectileId);
                     header.SetDescription(Strings.SpellDescription.TargetTypes[(int)mSpell.Combat.TargetType].ToString(proj?.Range ?? 0, mSpell.Combat.HitRadius), Color.White);

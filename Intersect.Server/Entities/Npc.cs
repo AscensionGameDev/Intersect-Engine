@@ -637,11 +637,11 @@ namespace Intersect.Server.Entities
             }
 
             var range = spellBase.Combat?.CastRange ?? 0;
-            var targetType = spellBase.Combat?.TargetType ?? SpellTargetTypes.Single;
+            var targetType = spellBase.Combat?.TargetType ?? SpellTargetType.Single;
             var projectileBase = spellBase.Combat?.Projectile;
 
             if (spellBase.SpellType == SpellTypes.CombatSpell &&
-                targetType == SpellTargetTypes.Projectile &&
+                targetType == SpellTargetType.Projectile &&
                 projectileBase != null &&
                 InRangeOf(target, projectileBase.Range))
             {

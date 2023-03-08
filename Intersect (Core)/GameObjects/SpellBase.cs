@@ -229,7 +229,7 @@ namespace Intersect.GameObjects
 
         public int ScalingStat { get; set; }
 
-        public SpellTargetTypes TargetType { get; set; }
+        public SpellTargetType TargetType { get; set; }
 
         public bool HoTDoT { get; set; }
 
