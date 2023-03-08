@@ -1589,7 +1589,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         {
             if (cmbMapZoneType.Items.Count > 0)
             {
-                condition.ZoneType = (MapZones)cmbMapZoneType.SelectedIndex;
+                condition.ZoneType = (MapZone)cmbMapZoneType.SelectedIndex;
             }
         }
 

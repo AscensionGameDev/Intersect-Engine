@@ -1,15 +1,11 @@
 namespace Intersect.Enums
 {
-
-    public enum MapZones
+    public enum MapZone
     {
-
         Normal = 0,
 
         Safe,
 
         Arena
-
     }
-
 }

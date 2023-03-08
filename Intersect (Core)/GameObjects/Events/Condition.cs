@@ -297,7 +297,7 @@ namespace Intersect.GameObjects.Events
         /// <summary>
         /// Defines the map Zone Type to compare to.
         /// </summary>
-        public MapZones ZoneType { get; set; }
+        public MapZone ZoneType { get; set; }
     }
 
     public partial class VariableComparison

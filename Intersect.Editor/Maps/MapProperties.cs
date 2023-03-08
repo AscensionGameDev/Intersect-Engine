@@ -86,11 +86,11 @@ namespace Intersect.Editor.Maps
             set
             {
                 Globals.MapEditorWindow.PrepUndoState();
-                for (byte i = 0; i < Enum.GetNames(typeof(MapZones)).Length; i++)
+                for (byte i = 0; i < Enum.GetNames(typeof(MapZone)).Length; i++)
                 {
                     if (Strings.MapProperties.zones[i] == value)
                     {
-                        mMyMap.ZoneType = (MapZones) i;
+                        mMyMap.ZoneType = (MapZone) i;
                     }
                 }
 
@@ -712,7 +712,7 @@ namespace Intersect.Editor.Maps
         public override StandardValuesCollection GetStandardValues(ITypeDescriptorContext context)
         {
             var values = new List<string>();
-            for (byte i = 0; i < Enum.GetNames(typeof(MapZones)).Length; i++)
+            for (byte i = 0; i < Enum.GetNames(typeof(MapZone)).Length; i++)
             {
                 values.Add(Strings.MapProperties.zones[i]);
             }

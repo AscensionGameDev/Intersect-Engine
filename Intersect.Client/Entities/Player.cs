@@ -1285,7 +1285,7 @@ namespace Intersect.Client.Entities
                 return;
             }
             var currentMap = Globals.Me.MapInstance as MapInstance;
-            var canTargetPlayers = currentMap.ZoneType != MapZones.Safe;
+            var canTargetPlayers = currentMap.ZoneType != MapZone.Safe;
 
             // Build a list of Entities to select from with positions if our list is either old, we've moved or changed maps somehow.
             if (
