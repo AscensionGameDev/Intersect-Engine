@@ -4582,12 +4582,12 @@ Tick timer saved in server config.json.";
             public static LocalizedString GrappleOptionsTitle = @"Grapple Options";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static Dictionary<GrappleOptions, LocalizedString> GrappleOpts = new Dictionary<GrappleOptions, LocalizedString>
+            public static Dictionary<GrappleOption, LocalizedString> GrappleOpts = new Dictionary<GrappleOption, LocalizedString>
             {
-                {GrappleOptions.MapAttribute, @"On Map Attribute"},
-                {GrappleOptions.Player, @"On Player"},
-                {GrappleOptions.NPC, @"On NPC"},
-                {GrappleOptions.Resource, @"On Resource"},
+                {GrappleOption.MapAttribute, @"On Map Attribute"},
+                {GrappleOption.Player, @"On Player"},
+                {GrappleOption.NPC, @"On NPC"},
+                {GrappleOption.Resource, @"On Resource"},
             };
 
             public static LocalizedString ignoreactiveresources = @"Active Resources";
