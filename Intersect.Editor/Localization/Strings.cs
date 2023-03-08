@@ -144,27 +144,27 @@ namespace Intersect.Editor.Localization
             var pLvl = "";
             switch (condition.Comparator)
             {
-                case VariableComparators.Equal:
+                case VariableComparator.Equal:
                     pLvl = EventConditionDesc.equal.ToString(condition.Value);
 
                     break;
-                case VariableComparators.GreaterOrEqual:
+                case VariableComparator.GreaterOrEqual:
                     pLvl = EventConditionDesc.greaterequal.ToString(condition.Value);
 
                     break;
-                case VariableComparators.LesserOrEqual:
+                case VariableComparator.LesserOrEqual:
                     pLvl = EventConditionDesc.lessthanequal.ToString(condition.Value);
 
                     break;
-                case VariableComparators.Greater:
+                case VariableComparator.Greater:
                     pLvl = EventConditionDesc.greater.ToString(condition.Value);
 
                     break;
-                case VariableComparators.Less:
+                case VariableComparator.Less:
                     pLvl = EventConditionDesc.lessthan.ToString(condition.Value);
 
                     break;
-                case VariableComparators.NotEqual:
+                case VariableComparator.NotEqual:
                     pLvl = EventConditionDesc.notequal.ToString(condition.Value);
 
                     break;
@@ -449,27 +449,27 @@ namespace Intersect.Editor.Localization
 
             switch (comparison.Comparator)
             {
-                case VariableComparators.Equal:
+                case VariableComparator.Equal:
                     pVar = EventConditionDesc.equal.ToString(value);
 
                     break;
-                case VariableComparators.GreaterOrEqual:
+                case VariableComparator.GreaterOrEqual:
                     pVar = EventConditionDesc.greaterequal.ToString(value);
 
                     break;
-                case VariableComparators.LesserOrEqual:
+                case VariableComparator.LesserOrEqual:
                     pVar = EventConditionDesc.lessthanequal.ToString(value);
 
                     break;
-                case VariableComparators.Greater:
+                case VariableComparator.Greater:
                     pVar = EventConditionDesc.greater.ToString(value);
 
                     break;
-                case VariableComparators.Less:
+                case VariableComparator.Less:
                     pVar = EventConditionDesc.lessthan.ToString(value);
 
                     break;
-                case VariableComparators.NotEqual:
+                case VariableComparator.NotEqual:
                     pVar = EventConditionDesc.notequal.ToString(value);
 
                     break;

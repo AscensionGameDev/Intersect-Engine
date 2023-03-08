@@ -975,7 +975,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 
             var comparison = new IntegerVariableComparison
             {
-                Comparator = (VariableComparators)cmbNumericComparitor.SelectedIndex,
+                Comparator = (VariableComparator)cmbNumericComparitor.SelectedIndex,
                 CompareVariableId = Guid.Empty,
                 TimeSystem = false,
             };
@@ -1481,7 +1481,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 
         private void SaveFormValues(LevelOrStatCondition condition)
         {
-            condition.Comparator = (VariableComparators) cmbLevelComparator.SelectedIndex;
+            condition.Comparator = (VariableComparator) cmbLevelComparator.SelectedIndex;
             condition.Value = (int) nudLevelStatValue.Value;
             condition.ComparingLevel = cmbLevelStat.SelectedIndex == 0;
             if (!condition.ComparingLevel)

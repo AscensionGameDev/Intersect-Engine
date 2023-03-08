@@ -130,7 +130,7 @@ namespace Intersect.GameObjects.Events
 
         public Stat Stat { get; set; }
 
-        public VariableComparators Comparator { get; set; } = VariableComparators.Equal;
+        public VariableComparator Comparator { get; set; } = VariableComparator.Equal;
 
         public int Value { get; set; }
 
@@ -321,7 +321,7 @@ namespace Intersect.GameObjects.Events
     public partial class IntegerVariableComparison : VariableComparison
     {
 
-        public VariableComparators Comparator { get; set; } = VariableComparators.Equal;
+        public VariableComparator Comparator { get; set; } = VariableComparator.Equal;
 
         public VariableTypes CompareVariableType { get; set; } = VariableTypes.PlayerVariable;
 

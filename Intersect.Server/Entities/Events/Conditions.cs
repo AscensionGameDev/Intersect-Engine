@@ -220,42 +220,42 @@ namespace Intersect.Server.Entities.Events
 
             switch (condition.Comparator) //Comparator
             {
-                case VariableComparators.Equal:
+                case VariableComparator.Equal:
                     if (lvlStat == condition.Value)
                     {
                         return true;
                     }
 
                     break;
-                case VariableComparators.GreaterOrEqual:
+                case VariableComparator.GreaterOrEqual:
                     if (lvlStat >= condition.Value)
                     {
                         return true;
                     }
 
                     break;
-                case VariableComparators.LesserOrEqual:
+                case VariableComparator.LesserOrEqual:
                     if (lvlStat <= condition.Value)
                     {
                         return true;
                     }
 
                     break;
-                case VariableComparators.Greater:
+                case VariableComparator.Greater:
                     if (lvlStat > condition.Value)
                     {
                         return true;
                     }
 
                     break;
-                case VariableComparators.Less:
+                case VariableComparator.Less:
                     if (lvlStat < condition.Value)
                     {
                         return true;
                     }
 
                     break;
-                case VariableComparators.NotEqual:
+                case VariableComparator.NotEqual:
                     if (lvlStat != condition.Value)
                     {
                         return true;
@@ -644,42 +644,42 @@ namespace Intersect.Server.Entities.Events
 
             switch (comparison.Comparator) //Comparator
             {
-                case VariableComparators.Equal:
+                case VariableComparator.Equal:
                     if (varVal == compareAgainst)
                     {
                         return true;
                     }
 
                     break;
-                case VariableComparators.GreaterOrEqual:
+                case VariableComparator.GreaterOrEqual:
                     if (varVal >= compareAgainst)
                     {
                         return true;
                     }
 
                     break;
-                case VariableComparators.LesserOrEqual:
+                case VariableComparator.LesserOrEqual:
                     if (varVal <= compareAgainst)
                     {
                         return true;
                     }
 
                     break;
-                case VariableComparators.Greater:
+                case VariableComparator.Greater:
                     if (varVal > compareAgainst)
                     {
                         return true;
                     }
 
                     break;
-                case VariableComparators.Less:
+                case VariableComparator.Less:
                     if (varVal < compareAgainst)
                     {
                         return true;
                     }
 
                     break;
-                case VariableComparators.NotEqual:
+                case VariableComparator.NotEqual:
                     if (varVal != compareAgainst)
                     {
                         return true;

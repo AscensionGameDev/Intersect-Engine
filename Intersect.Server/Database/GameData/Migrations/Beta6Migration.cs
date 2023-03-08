@@ -478,7 +478,7 @@ namespace Intersect.Server.Database.GameData.Migrations
 
             if (obj.ContainsKey("Comparator"))
             {
-                comp.Comparator = (VariableComparators) int.Parse(obj["Comparator"].ToString());
+                comp.Comparator = (VariableComparator) int.Parse(obj["Comparator"].ToString());
             }
 
             if (!obj.ContainsKey("CompareType"))
@@ -547,7 +547,7 @@ namespace Intersect.Server.Database.GameData.Migrations
 
             if (obj.ContainsKey("Comparator"))
             {
-                comp.Comparator = (VariableComparators) int.Parse(obj["Comparator"].ToString());
+                comp.Comparator = (VariableComparator) int.Parse(obj["Comparator"].ToString());
             }
 
             if (!obj.ContainsKey("CompareType"))
