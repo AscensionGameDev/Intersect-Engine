@@ -3,8 +3,18 @@
 # Core EditorConfig Options   #
 ###############################
 # All files
+root = true
+
 [*]
-indent_style = space
+charset = utf-8
+end_of_line = lf
+
+[*.{c,cjs,cpp,css,cts,h,hpp,gradle,java,js,json,jsx,md,mdx,mjs,mts,py,sh,ts,tsx,xml,xsd,yml,yaml}]
+insert_final_newline = true
+indent_size = 2
+
+[*.{c,cjs,cpp,css,cts,h,hpp,java,js,json,jsx,md,mdx,mjs,mts,sh,ts,tsx,xml,xsd}]
+indent_style = tab
 
 # XML project files
 [*.{csproj,vbproj,vcxproj,vcxproj.filters,proj,projitems,shproj}]
@@ -17,8 +27,7 @@ indent_size = 2
 # Code files
 [*.{cs,csx,vb,vbx}]
 indent_size = 4
-insert_final_newline = true
-charset = utf-8
+indent_style = space
 ###############################
 # .NET Coding Conventions     #
 ###############################
