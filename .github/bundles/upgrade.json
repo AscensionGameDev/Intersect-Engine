@@ -1,0 +1,53 @@
+{
+	"directories": [
+		"Client and Editor",
+		"Server"
+	],
+	"includes": [
+		{
+			"source": "Intersect.Client/LICENSE.md",
+			"target": "Client and Editor/LICENSE.client.md"
+		},
+		{
+			"source": "Intersect.Client/bin/Release/net462/Intersect Client.exe*",
+			"target": "Client and Editor"
+		},
+		{
+			"source": "Intersect.Client/bin/Release/net462/Intersect Client.pdb*",
+			"target": "Client and Editor"
+		},
+		{
+			"source": "Intersect.Editor/LICENSE.md",
+			"target": "Client and Editor/LICENSE.editor.md"
+		},
+		{
+			"source": "Intersect.Editor/bin/Release/net462/Intersect Editor.exe*",
+			"target": "Client and Editor"
+		},
+		{
+			"source": "Intersect.Editor/bin/Release/net462/Intersect Editor.pdb*",
+			"target": "Client and Editor"
+		},
+		{
+			"source": "Intersect.Server/LICENSE.md",
+			"target": "Server/LICENSE.md"
+		},
+		{
+			"source": "Intersect.Server/bin/Release/net462/Intersect Server.exe*",
+			"target": "Server"
+		},
+		{
+			"source": "Intersect.Server/bin/Release/net462/Intersect Server.pdb*",
+			"target": "Server"
+		},
+		{
+			"source": "assets_upgrade/**",
+			"target": "Client and Editor"
+		},
+		{
+			"source": "Documentation/Intersect Documentation.url",
+			"target": "Intersect Documentation.url"
+		}
+	],
+	"name": "upgrade"
+}
