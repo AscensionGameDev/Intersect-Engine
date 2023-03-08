@@ -1,6 +1,6 @@
 namespace Intersect.Enums
 {
-    public enum VariableMods
+    public enum VariableMod
     {
 
         Set = 0,

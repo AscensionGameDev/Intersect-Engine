@@ -15,6 +15,7 @@ using Intersect.Server.Localization;
 using Intersect.Server.Maps;
 using Intersect.Server.Networking;
 using Intersect.Utilities;
+using VariableMod = Intersect.Enums.VariableMod;
 
 namespace Intersect.Server.Entities.Events
 {
@@ -1700,7 +1701,7 @@ namespace Intersect.Server.Entities.Events
 
         private static void ProcessVariableModification(
             SetVariableCommand command,
-            VariableMod mod,
+            GameObjects.Events.VariableMod mod,
             Player player,
             Event instance
         )
@@ -1874,51 +1875,51 @@ namespace Intersect.Server.Entities.Events
 
             switch (mod.ModType)
             {
-                case VariableMods.Set:
+                case VariableMod.Set:
                     value.Integer = mod.Value;
 
                     break;
-                case VariableMods.Add:
+                case VariableMod.Add:
                     value.Integer += mod.Value;
 
                     break;
-                case VariableMods.Subtract:
+                case VariableMod.Subtract:
                     value.Integer -= mod.Value;
 
                     break;
-                case VariableMods.Multiply:
+                case VariableMod.Multiply:
                     value.Integer *= mod.Value;
 
                     break;
-                case VariableMods.Divide:
+                case VariableMod.Divide:
                     if (mod.Value != 0)  //Idiot proofing divide by 0 LOL
                     {
                         value.Integer /= mod.Value;
                     }
 
                     break;
-                case VariableMods.LeftShift:
+                case VariableMod.LeftShift:
                     value.Integer = value.Integer << (int)mod.Value;
 
                     break;
-                case VariableMods.RightShift:
+                case VariableMod.RightShift:
                     value.Integer = value.Integer >> (int)mod.Value;
 
                     break;
-                case VariableMods.Random:
+                case VariableMod.Random:
                     //TODO: Fix - Random doesnt work with longs lolz
                     value.Integer = Randomization.Next((int) mod.Value, (int) mod.HighValue + 1);
 
                     break;
-                case VariableMods.SystemTime:
+                case VariableMod.SystemTime:
                     value.Integer = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
 
                     break;
-                case VariableMods.DupPlayerVar:
+                case VariableMod.DupPlayerVar:
                     value.Integer = player.GetVariableValue(mod.DuplicateVariableId).Integer;
 
                     break;
-                case VariableMods.DupGlobalVar:
+                case VariableMod.DupGlobalVar:
                     var dupServerVariable = ServerVariableBase.Get(mod.DuplicateVariableId);
                     if (dupServerVariable != null)
                     {
@@ -1926,11 +1927,11 @@ namespace Intersect.Server.Entities.Events
                     }
 
                     break;
-                case VariableMods.AddPlayerVar:
+                case VariableMod.AddPlayerVar:
                     value.Integer += player.GetVariableValue(mod.DuplicateVariableId).Integer;
 
                     break;
-                case VariableMods.AddGlobalVar:
+                case VariableMod.AddGlobalVar:
                     var asv = ServerVariableBase.Get(mod.DuplicateVariableId);
                     if (asv != null)
                     {
@@ -1938,11 +1939,11 @@ namespace Intersect.Server.Entities.Events
                     }
 
                     break;
-                case VariableMods.SubtractPlayerVar:
+                case VariableMod.SubtractPlayerVar:
                     value.Integer -= player.GetVariableValue(mod.DuplicateVariableId).Integer;
 
                     break;
-                case VariableMods.SubtractGlobalVar:
+                case VariableMod.SubtractGlobalVar:
                     var ssv = ServerVariableBase.Get(mod.DuplicateVariableId);
                     if (ssv != null)
                     {
@@ -1950,11 +1951,11 @@ namespace Intersect.Server.Entities.Events
                     }
 
                     break;
-                case VariableMods.MultiplyPlayerVar:
+                case VariableMod.MultiplyPlayerVar:
                     value.Integer *= player.GetVariableValue(mod.DuplicateVariableId).Integer;
 
                     break;
-                case VariableMods.MultiplyGlobalVar:
+                case VariableMod.MultiplyGlobalVar:
                     var msv = ServerVariableBase.Get(mod.DuplicateVariableId);
                     if (msv != null)
                     {
@@ -1962,14 +1963,14 @@ namespace Intersect.Server.Entities.Events
                     }
 
                     break;
-                case VariableMods.DividePlayerVar:
+                case VariableMod.DividePlayerVar:
                     if (player.GetVariableValue(mod.DuplicateVariableId).Integer != 0) //Idiot proofing divide by 0 LOL
                     {
                         value.Integer /= player.GetVariableValue(mod.DuplicateVariableId).Integer;
                     }
 
                     break;
-                case VariableMods.DivideGlobalVar:
+                case VariableMod.DivideGlobalVar:
                     var dsv = ServerVariableBase.Get(mod.DuplicateVariableId);
                     if (dsv != null)
                     {
@@ -1980,11 +1981,11 @@ namespace Intersect.Server.Entities.Events
                     }
 
                     break;
-                case VariableMods.LeftShiftPlayerVar:
+                case VariableMod.LeftShiftPlayerVar:
                     value.Integer = value.Integer << (int)player.GetVariableValue(mod.DuplicateVariableId).Integer;
 
                     break;
-                case VariableMods.LeftShiftGlobalVar:
+                case VariableMod.LeftShiftGlobalVar:
                     var lhsv = ServerVariableBase.Get(mod.DuplicateVariableId);
                     if (lhsv != null)
                     {
@@ -1992,11 +1993,11 @@ namespace Intersect.Server.Entities.Events
                     }
 
                     break;
-                case VariableMods.RightShiftPlayerVar:
+                case VariableMod.RightShiftPlayerVar:
                     value.Integer = value.Integer >> (int)player.GetVariableValue(mod.DuplicateVariableId).Integer;
 
                     break;
-                case VariableMods.RightShiftGlobalVar:
+                case VariableMod.RightShiftGlobalVar:
                     var rhsv = ServerVariableBase.Get(mod.DuplicateVariableId);
                     if (rhsv != null)
                     {
@@ -2095,11 +2096,11 @@ namespace Intersect.Server.Entities.Events
 
             switch (mod.ModType)
             {
-                case VariableMods.Set:
+                case VariableMod.Set:
                     value.String = ParseEventText(mod.Value, player, instance);
 
                     break;
-                case VariableMods.Replace:
+                case VariableMod.Replace:
                     var find = ParseEventText(mod.Value, player, instance);
                     var replace = ParseEventText(mod.Replace, player, instance);
                     value.String = value.String.Replace(find, replace);

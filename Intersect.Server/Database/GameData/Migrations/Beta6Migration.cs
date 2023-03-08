@@ -17,6 +17,7 @@ using MySql.Data.MySqlClient;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using MapAttribute = Intersect.GameObjects.Maps.MapAttribute;
+using VariableMod = Intersect.Enums.VariableMod;
 
 namespace Intersect.Server.Database.GameData.Migrations
 {
@@ -341,7 +342,7 @@ namespace Intersect.Server.Database.GameData.Migrations
 
             if (obj.ContainsKey("ModType"))
             {
-                mod.ModType = (VariableMods) int.Parse(obj["ModType"].ToString());
+                mod.ModType = (VariableMod) int.Parse(obj["ModType"].ToString());
             }
 
             var newJson = JsonConvert.SerializeObject(
