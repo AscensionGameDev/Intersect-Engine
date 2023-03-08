@@ -1142,10 +1142,9 @@ namespace Intersect.Client.Entities
             WorldPos = destRectangle;
 
             //Order the layers of paperdolls and sprites
-            var paperdollDir = Math.Max(0, (int)mLastDirection);
-            for (var z = 0; z < Options.PaperdollOrder[paperdollDir].Count; z++)
+            for (var z = 0; z < Options.PaperdollOrder[(int)mLastDirection].Count; z++)
             {
-                var paperdoll = Options.PaperdollOrder[paperdollDir][z];
+                var paperdoll = Options.PaperdollOrder[(int)mLastDirection][z];
                 var equipSlot = Options.EquipmentSlots.IndexOf(paperdoll);
 
                 //Check for player
