@@ -61,7 +61,7 @@ namespace Intersect.Server.Web.RestApi
 
         public void Configure(IAppBuilder appBuilder)
         {
-            // Configure Web API for self-host. 
+            // Configure Web API for self-host.
             var config = new HttpConfiguration();
 
             var services = config.Services;
@@ -93,7 +93,7 @@ namespace Intersect.Server.Web.RestApi
 
             if (Configuration.DebugMode)
             {
-                SwaggerIsolation.ConfigureSwagger(config);
+                // SwaggerIsolation.ConfigureSwagger(config);
 
                 appBuilder.SetLoggerFactory(new IntersectLoggerFactory());
             }
