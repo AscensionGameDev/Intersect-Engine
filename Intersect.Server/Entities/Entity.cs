@@ -329,22 +329,25 @@ namespace Intersect.Server.Entities
                         dot.Tick();
                     }
 
-                    var statsUpdated = false;
-                    var statTime = Timing.Global.Milliseconds;
-                    for (var i = 0; i < (int)Enums.Stat.StatCount; i++)
+                    if (!(this is EventPageInstance) && !(this is Projectile))
                     {
-                        var stat = Stat[i];
-                        if (stat == default)
+                        var statsUpdated = false;
+                        var statTime = Timing.Global.Milliseconds;
+                        for (var i = 0; i < (int)Enums.Stat.StatCount; i++)
                         {
-                            var allStats = string.Join(",\n", Stat.Select(s => s == default ? "\tnull" : $"\t{s}"));
-                            Log.Error($"Stat[{i}] == default for '{GetType().FullName}', Stat=[\n{allStats}\n]");
+                            var stat = Stat[i];
+                            if (stat == default)
+                            {
+                                var allStats = string.Join(",\n", Stat.Select(s => s == default ? "\tnull" : $"\t{s}"));
+                                Log.Error($"Stat[{i}] == default for '{GetType().FullName}', Stat=[\n{allStats}\n]");
+                            }
+                            statsUpdated |= stat.Update(statTime);
                         }
-                        statsUpdated |= stat.Update(statTime);
-                    }
 
-                    if (statsUpdated)
-                    {
-                        PacketSender.SendEntityStats(this);
+                        if (statsUpdated)
+                        {
+                            PacketSender.SendEntityStats(this);
+                        }
                     }
 
                     //Regen Timers and regen in combat validation
