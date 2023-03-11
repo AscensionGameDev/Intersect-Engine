@@ -23,6 +23,12 @@ namespace Intersect.Server.Entities.Combat
 
         private Enums.Stat mStatType;
 
+        public override string ToString()
+        {
+            var cachedBuffs = string.Join(",\n", mCachedBuffs.Select(buff => $"\t\t{buff}"));
+            return $"[{typeof(Stat).FullName}{{Owner={(mOwner?.GetType().Name ?? "UNKNOWN")}, StatType={mStatType}, Changed={mChanged}, CachedBuffs=[\n{cachedBuffs}\n\t], Buff.Count={mBuff.Count} }}]";
+        }
+
         public Stat(Enums.Stat statType, Entity owner)
         {
             mOwner = owner;
@@ -31,8 +37,8 @@ namespace Intersect.Server.Entities.Combat
 
         public int BaseStat
         {
-            get => mOwner.BaseStats[(int) mStatType];
-            set => mOwner.BaseStats[(int) mStatType] = value;
+            get => mOwner.BaseStats[(int)mStatType];
+            set => mOwner.BaseStats[(int)mStatType] = value;
         }
 
         public int Value()
