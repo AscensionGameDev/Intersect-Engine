@@ -23,6 +23,11 @@ namespace Intersect.Server.Entities.Combat
             ExpireTime = expireTime;
         }
 
+        public override string ToString()
+        {
+            return $"[{typeof(Buff).FullName}{{ExpireTime={ExpireTime}, FlatStatcount={FlatStatcount}, PercentageStatcount={PercentageStatcount}, Spell={Spell.Id}}}]";
+        }
+
     }
 
 }
