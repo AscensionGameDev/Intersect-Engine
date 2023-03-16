@@ -24,8 +24,8 @@ namespace Intersect.Server.Entities
     public partial class Npc : Entity
     {
 
-        //Spell casting
-        public long CastFreq;
+        // Spell casting.
+        private long _castFreq;
 
         /// <summary>
         /// Damage Map - Keep track of who is doing the most damage to this npc and focus accordingly
@@ -36,71 +36,62 @@ namespace Intersect.Server.Entities
 
         public Guid[] LootMapCache = Array.Empty<Guid>();
 
-        /// <summary>
-        /// Returns the entity that ranks the highest on this NPC's damage map.
-        /// </summary>
-        public Entity DamageMapHighest { 
-            get {
-                long damage = 0;
-                Entity top = null;
-                foreach (var pair in DamageMap)
-                {
-                    // Only include players on the current instance
-                    if (pair.Value > damage && pair.Key.MapInstanceId == MapInstanceId)
-                    {
-                        top = pair.Key;
-                        damage = pair.Value;
-                    }
-                }
-                return top;
-            } 
-        }
+        public readonly bool Despawnable;
 
-        public bool Despawnable;
+        // Moving.
+        private long _lastRandomMove;
 
-        //Moving
-        public long LastRandomMove;
+        // Pathfinding and targeting.
+        private const int FindTargetDelay = 500;
 
-        //Pathfinding
-        private Pathfinder mPathFinder;
+        private const int TargetFailMax = 10;
 
-        private Task mPathfindingTask;
+        private const int ResetMax = 100;
 
-        public byte Range;
+        private readonly Pathfinder _pathFinder;
 
-        //Respawn/Despawn
-        public long RespawnTime;
+        private readonly byte _range;
 
-        public long FindTargetWaitTime;
-        public int FindTargetDelay = 500;
+        private readonly byte _moveRange;
 
-        private int mTargetFailCounter = 0;
-        private int mTargetFailMax = 10;
+        private Task _pathfindingTask;
 
-        private int mResetDistance = 0;
-        private int mResetCounter = 0;
-        private int mResetMax = 100;
-        private bool mResetting = false;
+        private Guid _moveTargetMap;
+
+        private Point _moveTarget;
+
+        private long _nextPathWaitTime;
+
+        private long _findTargetWaitTime;
+
+        private int _targetFailCounter;
+
+        private int _resetDistance;
+
+        private int _resetCounter;
+
+        private bool _resetting;
 
         /// <summary>
         /// The map on which this NPC was "aggro'd" and started chasing a target.
         /// </summary>
-        public MapController AggroCenterMap;
+        private MapController _aggroCenterMap;
 
         /// <summary>
         /// The X value on which this NPC was "aggro'd" and started chasing a target.
         /// </summary>
-        public int AggroCenterX;
+        private int _aggroCenterX;
 
         /// <summary>
         /// The Y value on which this NPC was "aggro'd" and started chasing a target.
         /// </summary>
-        public int AggroCenterY;
+        private int _aggroCenterY;
 
         /// <summary>
         /// The Z value on which this NPC was "aggro'd" and started chasing a target.
         /// </summary>
-        public int AggroCenterZ;
+        private int _aggroCenterZ;
+
 
         public Npc(NpcBase myBase, bool despawnable = false) : base()
         {
@@ -112,10 +103,10 @@ namespace Intersect.Server.Entities
             Base = myBase;
             Despawnable = despawnable;
 
-            for (var i = 0; i < (int) Enums.Stat.StatCount; i++)
+            for (var i = 0; i < (int)Enums.Stat.StatCount; i++)
             {
                 BaseStats[i] = myBase.Stats[i];
-                Stat[i] = new Combat.Stat((Stat) i, this);
+                Stat[i] = new Combat.Stat((Stat)i, this);
             }
 
             var spellSlot = 0;
@@ -138,14 +129,15 @@ namespace Intersect.Server.Entities
                 itemSlot++;
             }
 
-            for (var i = 0; i < (int) Vital.VitalCount; i++)
+            for (var i = 0; i < (int)Vital.VitalCount; i++)
             {
                 SetMaxVital(i, myBase.MaxVital[i]);
                 SetVital(i, myBase.MaxVital[i]);
             }
 
-            Range = (byte) myBase.SightRange;
-            mPathFinder = new Pathfinder(this);
+            _range = (byte)myBase.SightRange;
+            _moveRange = (byte)Randomization.Next(1, myBase.SightRange);
+            _pathFinder = new Pathfinder(this);
         }
 
         public NpcBase Base { get; private set; }
@@ -164,10 +156,10 @@ namespace Intersect.Server.Entities
             lock (EntityLock) {
                 base.Die(generateLoot, killer);
 
-                AggroCenterMap = null;
-                AggroCenterX = 0;
-                AggroCenterY = 0;
-                AggroCenterZ = 0;
+                _aggroCenterMap = null;
+                _aggroCenterX = 0;
+                _aggroCenterY = 0;
+                _aggroCenterZ = 0;
 
                 if (MapController.TryGetInstanceFromMap(MapId, MapInstanceId, out var instance))
                 {
@@ -184,7 +176,7 @@ namespace Intersect.Server.Entities
             return base.ShouldDropItem(killer, itemDescriptor, item, dropRateModifier, out _);
         }
 
-        public bool TargetHasStealth(Entity target)
+        private static bool TargetHasStealth(Entity target)
         {
             return target == null || target.CachedStatuses.Any(s => s.Type == SpellEffect.Stealth);
         }
@@ -195,20 +187,12 @@ namespace Intersect.Server.Entities
             var oldTarget = Target;
 
             // Are we resetting? If so, do not allow for a new target.
-            var pathTarget = mPathFinder?.GetTarget();
-            if (AggroCenterMap != null && pathTarget != null &&
-                pathTarget.TargetMapId == AggroCenterMap.Id && pathTarget.TargetX == AggroCenterX && pathTarget.TargetY == AggroCenterY)
+            var pathTarget = _pathFinder?.GetTarget();
+            if (_aggroCenterMap != null && pathTarget != null &&
+                pathTarget.TargetMapId == _aggroCenterMap.Id && pathTarget.TargetX == _aggroCenterX &&
+                pathTarget.TargetY == _aggroCenterY)
             {
-                if (en == null)
-                {
-                                    return;
-
-                }
-                else
-                {
-                    return;
-
-                }
+                return;
             }
 
             //Why are we doing all of this logic if we are assigning a target that we already have?
@@ -216,11 +200,14 @@ namespace Intersect.Server.Entities
             {
                 // Can't assign a new target if taunted, unless we're resetting their target somehow.
                 // Also make sure the taunter is in range.. If they're dead or gone, we go for someone else!
-                if ((pathTarget != null && AggroCenterMap != null && (pathTarget.TargetMapId != AggroCenterMap.Id || pathTarget.TargetX != AggroCenterX || pathTarget.TargetY != AggroCenterY)))
+                if ((pathTarget != null && _aggroCenterMap != null && (pathTarget.TargetMapId != _aggroCenterMap.Id ||
+                                                                       pathTarget.TargetX != _aggroCenterX ||
+                                                                       pathTarget.TargetY != _aggroCenterY)))
                 {
                     foreach (var status in CachedStatuses)
                     {
-                        if (status.Type == SpellEffect.Taunt && en != status.Attacker && GetDistanceTo(status.Attacker) != 9999)
+                        if (status.Type == SpellEffect.Taunt && en != status.Attacker &&
+                            GetDistanceTo(status.Attacker) != 9999)
                         {
                             return;
                         }
@@ -268,12 +255,12 @@ namespace Intersect.Server.Entities
                 if (Options.Npc.AllowResetRadius)
                 {
                     // Are we configured to allow new reset locations before they move to their original location, or do we simply not have an original location yet?
-                    if (Options.Npc.AllowNewResetLocationBeforeFinish || AggroCenterMap == null)
+                    if (Options.Npc.AllowNewResetLocationBeforeFinish || _aggroCenterMap == null)
                     {
-                        AggroCenterMap = Map;
-                        AggroCenterX = X;
-                        AggroCenterY = Y;
-                        AggroCenterZ = Z;
+                        _aggroCenterMap = Map;
+                        _aggroCenterX = X;
+                        _aggroCenterY = Y;
+                        _aggroCenterZ = Z;
                     }
                 }
             }
@@ -281,13 +268,14 @@ namespace Intersect.Server.Entities
             {
                 Target = en;
             }
-            
+
             if (Target != oldTarget)
             {
                 CombatTimer = Timing.Global.Milliseconds + Options.CombatTime;
                 PacketSender.SendNpcAggressionToProximity(this);
             }
-            mTargetFailCounter = 0;
+
+            _targetFailCounter = 0;
         }
 
         public void RemoveFromDamageMap(Entity en)
@@ -520,7 +508,7 @@ namespace Intersect.Server.Entities
             // If configured & blocked by an entity, ignore the entity and proceed to move
             if (Options.Instance.NpcOpts.IntangibleDuringReset && canMove > -1 )
             {
-                canMove = mResetting ? -1 : canMove;
+                canMove = _resetting ? -1 : canMove;
             }
             if ((canMove == -1 || canMove == -4) && IsFleeing() && Options.Instance.NpcOpts.AllowResetRadius)
             {
@@ -531,46 +519,45 @@ namespace Intersect.Server.Entities
                 {
                     case Direction.Up:
                         yOffset--;
-
                         break;
+
                     case Direction.Down:
                         yOffset++;
-
                         break;
+
                     case Direction.Left:
                         xOffset--;
-
                         break;
+
                     case Direction.Right:
                         xOffset++;
-
                         break;
+
                     case Direction.UpLeft:
                         yOffset--;
                         xOffset--;
-
                         break;
+
                     case Direction.UpRight:
                         yOffset--;
                         xOffset++;
-
                         break;
+
                     case Direction.DownLeft:
                         yOffset++;
                         xOffset--;
-
                         break;
+
                     case Direction.DownRight:
                         yOffset++;
                         xOffset++;
-
                         break;
                 }
 
                 if (tile.Translate(xOffset, yOffset))
                 {
                     //If this would move us past our reset radius then we cannot move.
-                    var dist = GetDistanceBetween(AggroCenterMap, tile.GetMap(), AggroCenterX, tile.GetX(), AggroCenterY, tile.GetY());
+                    var dist = GetDistanceBetween(_aggroCenterMap, tile.GetMap(), _aggroCenterX, tile.GetX(), _aggroCenterY, tile.GetY());
                     if (dist > Math.Max(Options.Npc.ResetRadius, Base.ResetRadius))
                     {
                         return -2;
@@ -584,7 +571,7 @@ namespace Intersect.Server.Entities
         {
             var target = Target;
 
-            if (target == null || mPathFinder.GetTarget() == null)
+            if (target == null || _pathFinder.GetTarget() == null)
             {
                 return;
             }
@@ -601,7 +588,7 @@ namespace Intersect.Server.Entities
                 return; //can't move while casting
             }
 
-            if (CastFreq >= Timing.Global.Milliseconds)
+            if (_castFreq >= Timing.Global.Milliseconds)
             {
                 return;
             }
@@ -637,7 +624,6 @@ namespace Intersect.Server.Entities
                 return;
             }
 
-            var range = spellBase.Combat?.CastRange ?? 0;
             var targetType = spellBase.Combat?.TargetType ?? SpellTargetType.Single;
             var projectileBase = spellBase.Combat?.Projectile;
 
@@ -646,19 +632,17 @@ namespace Intersect.Server.Entities
                 projectileBase != null &&
                 InRangeOf(target, projectileBase.Range))
             {
-                range = projectileBase.Range;
                 var dirToEnemy = DirToEnemy(target);
                 if (dirToEnemy != Dir)
                 {
-                    if (LastRandomMove >= Timing.Global.Milliseconds)
+                    if (_lastRandomMove >= Timing.Global.Milliseconds)
                     {
                         return;
                     }
 
                     //Face the target -- next frame fire -- then go on with life
                     ChangeDir(dirToEnemy); // Gotta get dir to enemy
-                    LastRandomMove = Timing.Global.Milliseconds + Randomization.Next(1000, 3000);
-
+                    _lastRandomMove = Timing.Global.Milliseconds + Randomization.Next(1000, 3000);
                     return;
                 }
             }
@@ -677,28 +661,23 @@ namespace Intersect.Server.Entities
             switch (Base.SpellFrequency)
             {
                 case 0:
-                    CastFreq = Timing.Global.Milliseconds + 30000;
-
+                    _castFreq = Timing.Global.Milliseconds + 30000;
                     break;
 
                 case 1:
-                    CastFreq = Timing.Global.Milliseconds + 15000;
-
+                    _castFreq = Timing.Global.Milliseconds + 15000;
                     break;
 
                 case 2:
-                    CastFreq = Timing.Global.Milliseconds + 8000;
-
+                    _castFreq = Timing.Global.Milliseconds + 8000;
                     break;
 
                 case 3:
-                    CastFreq = Timing.Global.Milliseconds + 4000;
-
+                    _castFreq = Timing.Global.Milliseconds + 4000;
                     break;
 
                 case 4:
-                    CastFreq = Timing.Global.Milliseconds + 2000;
-
+                    _castFreq = Timing.Global.Milliseconds + 2000;
                     break;
             }
 
@@ -714,17 +693,15 @@ namespace Intersect.Server.Entities
             PacketSender.SendEntityCastTime(this, spellId);
         }
 
-        public bool IsFleeing()
+        private bool IsFleeing()
         {
-            if (Base.FleeHealthPercentage > 0)
+            if (Base.FleeHealthPercentage <= 0)
             {
-                var fleeHpCutoff = GetMaxVital(Vital.Health) * (Base.FleeHealthPercentage / 100f);
-                if (GetVital(Vital.Health) < fleeHpCutoff)
-                {
-                    return true;
-                }
+                return false;
             }
-            return false;
+
+            var fleeHpCutoff = GetMaxVital(Vital.Health) * (Base.FleeHealthPercentage / 100f);
+            return GetVital(Vital.Health) < fleeHpCutoff;
         }
 
         // TODO: Improve NPC movement to be more fluid like a player
@@ -735,394 +712,420 @@ namespace Intersect.Server.Entities
             try
             {
                 Monitor.TryEnter(EntityLock, ref lockObtained);
-                if (lockObtained)
+                if (!lockObtained)
                 {
-                    var curMapLink = MapId;
-                    base.Update(timeMs);
-                    var tempTarget = Target;
+                    return;
+                }
 
-                    foreach (var status in CachedStatuses)
+                var curMapLink = MapId;
+                base.Update(timeMs);
+                var tempTarget = Target;
+
+                foreach (var status in CachedStatuses)
+                {
+                    if (status.Type == SpellEffect.Stun || status.Type == SpellEffect.Sleep)
                     {
-                        if (status.Type == SpellEffect.Stun || status.Type == SpellEffect.Sleep)
+                        return;
+                    }
+                }
+
+                var fleeing = IsFleeing();
+
+                if (MoveTimer < Timing.Global.Milliseconds)
+                {
+                    var targetMap = Guid.Empty;
+                    var targetX = 0;
+                    var targetY = 0;
+                    var targetZ = 0;
+
+                    //TODO Clear Damage Map if out of combat (target is null and combat timer is to the point that regen has started)
+                    if (tempTarget != null && (Options.Instance.NpcOpts.ResetIfCombatTimerExceeded &&
+                                               Timing.Global.Milliseconds > CombatTimer))
+                    {
+                        if (CheckForResetLocation(true))
                         {
+                            if (Target != tempTarget)
+                            {
+                                PacketSender.SendNpcAggressionToProximity(this);
+                            }
+
                             return;
                         }
                     }
 
-                    var fleeing = IsFleeing();
-
-                    if (MoveTimer < Timing.Global.Milliseconds)
+                    // Are we resetting? If so, regenerate completely!
+                    if (_resetting)
                     {
-                        var targetMap = Guid.Empty;
-                        var targetX = 0;
-                        var targetY = 0;
-                        var targetZ = 0;
-
-                        //TODO Clear Damage Map if out of combat (target is null and combat timer is to the point that regen has started)
-                        if (tempTarget != null && (Options.Instance.NpcOpts.ResetIfCombatTimerExceeded && Timing.Global.Milliseconds > CombatTimer))
+                        var distance = GetDistanceTo(_aggroCenterMap, _aggroCenterX, _aggroCenterY);
+                        // Have we reached our destination? If so, clear it.
+                        if (distance < 1)
                         {
-                            if (CheckForResetLocation(true))
-                            {
-                                if (Target != tempTarget)
-                                {
-                                    PacketSender.SendNpcAggressionToProximity(this);
-                                }
-                                return;
-                            }
+                            ResetAggroCenter(out targetMap);
                         }
 
-                        // Are we resetting? If so, regenerate completely!
-                        if (mResetting)
+                        Reset(Options.Instance.NpcOpts.ContinuouslyResetVitalsAndStatuses);
+                        tempTarget = Target;
+
+                        if (distance != _resetDistance)
                         {
-                            var distance = GetDistanceTo(AggroCenterMap, AggroCenterX, AggroCenterY);
-                            // Have we reached our destination? If so, clear it.
-                            if (distance < 1)
+                            _resetDistance = distance;
+                        }
+                        else
+                        {
+                            // Something is fishy here.. We appear to be stuck in a reset loop?
+                            // Give it a few more attempts and reset the NPC's center if we're stuck!
+                            _resetCounter++;
+                            if (_resetCounter > ResetMax)
                             {
                                 ResetAggroCenter(out targetMap);
-                            }
-
-                            Reset(Options.Instance.NpcOpts.ContinuouslyResetVitalsAndStatuses);
-                            tempTarget = Target;
-
-                            if (distance != mResetDistance)
-                            {
-                                mResetDistance = distance;
-                            }
-                            else 
-                            {
-                                // Something is fishy here.. We appear to be stuck in a reset loop?
-                                // Give it a few more attempts and reset the NPC's center if we're stuck!
-                                mResetCounter++;
-                                if (mResetCounter > mResetMax)
-                                {
-                                    ResetAggroCenter(out targetMap);
-                                    mResetCounter = 0;
-                                    mResetDistance = 0;
-                                }
-                            }
-                            
-                        }
-
-                        if (tempTarget != null && (tempTarget.IsDead() || !InRangeOf(tempTarget, Options.MapWidth * 2)))
-                        {
-                            TryFindNewTarget(Timing.Global.Milliseconds, tempTarget.Id);
-                            tempTarget = Target;
-                        }
-
-                        //Check if there is a target, if so, run their ass down.
-                        if (tempTarget != null)
-                        {
-                            if (!tempTarget.IsDead() && CanAttack(tempTarget, null))
-                            {
-                                targetMap = tempTarget.MapId;
-                                targetX = tempTarget.X;
-                                targetY = tempTarget.Y;
-                                targetZ = tempTarget.Z;
-                                foreach (var targetStatus in tempTarget.CachedStatuses)
-                                {
-                                    if (targetStatus.Type == SpellEffect.Stealth)
-                                    {
-                                        targetMap = Guid.Empty;
-                                        targetX = 0;
-                                        targetY = 0;
-                                        targetZ = 0;
-                                    }
-                                }
+                                _resetCounter = 0;
+                                _resetDistance = 0;
                             }
                         }
-                        else //Find a target if able
-                        {
-                            // Check if attack on sight or have other npc's to target
-                            TryFindNewTarget(timeMs);
-                            tempTarget = Target;
-                        }
+                    }
 
-                        if (targetMap != Guid.Empty)
+                    if (tempTarget != null && (tempTarget.IsDead() || !InRangeOf(tempTarget, Options.MapWidth * 2)))
+                    {
+                        TryFindNewTarget(Timing.Global.Milliseconds, tempTarget.Id);
+                        tempTarget = Target;
+                    }
+
+                    //Check if there is a target, if so, run their ass down.
+                    if (tempTarget != null)
+                    {
+                        if (!tempTarget.IsDead() && CanAttack(tempTarget, null))
                         {
-                            //Check if target map is on one of the surrounding maps, if not then we are not even going to look.
-                            if (targetMap != MapId)
+                            targetMap = tempTarget.MapId;
+                            targetX = tempTarget.X;
+                            targetY = tempTarget.Y;
+                            targetZ = tempTarget.Z;
+                            foreach (var targetStatus in tempTarget.CachedStatuses)
                             {
-                                var found = false;
-                                foreach (var map in MapController.Get(MapId).SurroundingMaps)
-                                {
-                                    if (map.Id == targetMap)
-                                    {
-                                        found = true;
-                                        break;
-                                    }
-                                }
-                                if (!found)
+                                if (targetStatus.Type == SpellEffect.Stealth)
                                 {
                                     targetMap = Guid.Empty;
+                                    targetX = 0;
+                                    targetY = 0;
+                                    targetZ = 0;
                                 }
                             }
                         }
+                    }
+                    else //Find a target if able
+                    {
+                        // Check if attack on sight or have other npc's to target
+                        TryFindNewTarget(timeMs);
+                        tempTarget = Target;
+                    }
 
-                        if (targetMap != Guid.Empty)
+                    if (targetMap != Guid.Empty)
+                    {
+                        //Check if target map is on one of the surrounding maps, if not then we are not even going to look.
+                        if (targetMap != MapId)
                         {
-                            if (mPathFinder.GetTarget() != null)
+                            var found = false;
+                            foreach (var map in MapController.Get(MapId).SurroundingMaps)
                             {
-                                if (targetMap != mPathFinder.GetTarget().TargetMapId ||
-                                    targetX != mPathFinder.GetTarget().TargetX ||
-                                    targetY != mPathFinder.GetTarget().TargetY)
+                                if (map.Id == targetMap)
                                 {
-                                    mPathFinder.SetTarget(null);
+                                    found = true;
+                                    break;
                                 }
                             }
 
-                            if (mPathFinder.GetTarget() == null)
+                            if (!found)
                             {
-                                mPathFinder.SetTarget(new PathfinderTarget(targetMap, targetX, targetY, targetZ));
-
-                                if (tempTarget != Target)
-                                {
-                                    tempTarget = Target;
-                                }
+                                targetMap = Guid.Empty;
+                                _moveTargetMap = Guid.Empty;
                             }
-
                         }
+                    }
 
-                        if (mPathFinder.GetTarget() != null && Base.Movement != (int)NpcMovement.Static)
+                    if (_moveRange > 1 && Target == null && Base.Movement == (int)NpcMovement.MoveRandomly)
+                    {
+                        if (_moveTargetMap == Guid.Empty)
                         {
-                            TryCastSpells();
-                            // TODO: Make resetting mobs actually return to their starting location.
-                            if ((!mResetting && !IsOneBlockAway(
-                                mPathFinder.GetTarget().TargetMapId, mPathFinder.GetTarget().TargetX,
-                                mPathFinder.GetTarget().TargetY, mPathFinder.GetTarget().TargetZ
-                            )) ||
-                            (mResetting && GetDistanceTo(AggroCenterMap, AggroCenterX, AggroCenterY) != 0)
-                            )
+                            if (_nextPathWaitTime > Timing.Global.Milliseconds)
                             {
-                                switch (mPathFinder.Update(timeMs))
-                                {
-                                    case PathfinderResult.Success:
+                                _moveTargetMap = Guid.Empty;
+                                _moveTarget.X = 0;
+                                _moveTarget.Y = 0;
+                                return;
+                            }
 
-                                        var dir = mPathFinder.GetMove();
-                                        if (dir > Direction.None)
-                                        {
-                                            if (fleeing)
-                                            {
-                                                switch (dir)
-                                                {
-                                                    case Direction.Up:
-                                                        dir = Direction.Down;
+                            int x = Randomization.Next(-_moveRange, _moveRange);
+                            int y = Randomization.Next(-_moveRange, _moveRange);
 
-                                                        break;
-                                                    case Direction.Down:
-                                                        dir = Direction.Up;
-
-                                                        break;
-                                                    case Direction.Left:
-                                                        dir = Direction.Right;
-
-                                                        break;
-                                                    case Direction.Right:
-                                                        dir = Direction.Left;
-
-                                                        break;
-                                                    case Direction.UpLeft:
-                                                        dir = Direction.UpRight;
-
-                                                        break;
-                                                    case Direction.UpRight:
-                                                        dir = Direction.UpLeft;
-
-                                                        break;
-                                                    case Direction.DownRight:
-                                                        dir = Direction.DownLeft;
-
-                                                        break;
-                                                    case Direction.DownLeft:
-                                                        dir = Direction.DownRight;
-
-                                                        break;
-                                                }
-                                            }
-
-                                            if (CanMove(dir) == -1 || CanMove(dir) == -4)
-                                            {
-                                                //check if NPC is snared or stunned
-                                                foreach (var status in CachedStatuses)
-                                                {
-                                                    if (status.Type == SpellEffect.Stun ||
-                                                        status.Type == SpellEffect.Snare ||
-                                                        status.Type == SpellEffect.Sleep)
-                                                    {
-                                                        return;
-                                                    }
-                                                }
-
-                                                Move(dir, null);
-                                            }
-                                            else
-                                            {
-                                                mPathFinder.PathFailed(timeMs);
-                                            }
-
-                                            // Are we resetting?
-                                            if (mResetting)
-                                            {
-                                                // Have we reached our destination? If so, clear it.
-                                                if (GetDistanceTo(AggroCenterMap, AggroCenterX, AggroCenterY) == 0)
-                                                {
-                                                    targetMap = Guid.Empty;
-
-                                                    // Reset our aggro center so we can get "pulled" again.
-                                                    AggroCenterMap = null;
-                                                    AggroCenterX = 0;
-                                                    AggroCenterY = 0;
-                                                    AggroCenterZ = 0;
-                                                    mPathFinder?.SetTarget(null);
-                                                    mResetting = false;
-                                                }
-                                            }  
-                                        }
-
-                                        break;
-                                    case PathfinderResult.OutOfRange:
-                                        TryFindNewTarget(timeMs, tempTarget?.Id ?? Guid.Empty, true);
-                                        tempTarget = Target;
-                                        targetMap = Guid.Empty;
-
-                                        break;
-                                    case PathfinderResult.NoPathToTarget:
-                                        TryFindNewTarget(timeMs, tempTarget?.Id ?? Guid.Empty, true);
-                                        tempTarget = Target;
-                                        targetMap = Guid.Empty;
-
-                                        break;
-                                    case PathfinderResult.Failure:
-                                        targetMap = Guid.Empty;
-                                        TryFindNewTarget(timeMs, tempTarget?.Id ?? Guid.Empty, true);
-                                        tempTarget = Target;
-
-                                        break;
-                                    case PathfinderResult.Wait:
-                                        targetMap = Guid.Empty;
-
-                                        break;
-                                    default:
-                                        throw new ArgumentOutOfRangeException();
-                                }
+                            var tile = new TileHelper(MapId, X, Y);
+                            if (tile.Translate(x, y))
+                            {
+                                _moveTargetMap = tile.GetMapId();
+                                _moveTarget.X = tile.GetX();
+                                _moveTarget.Y = tile.GetY();
                             }
                             else
                             {
-                                var fleed = false;
-                                if (tempTarget != null && fleeing)
-                                {
-                                    var dir = DirToEnemy(tempTarget);
-                                    switch (dir)
+                                _moveTargetMap = Guid.Empty;
+                                _moveTarget.X = 0;
+                                _moveTarget.Y = 0;
+                            }
+                        }
+                        else
+                        {
+                            targetMap = _moveTargetMap;
+                            targetX = _moveTarget.X;
+                            targetY = _moveTarget.Y;
+                            targetZ = Z;
+                        }
+                    }
+
+                    if (targetMap != Guid.Empty)
+                    {
+                        if (_pathFinder.GetTarget() != null)
+                        {
+                            if (targetMap != _pathFinder.GetTarget().TargetMapId ||
+                                targetX != _pathFinder.GetTarget().TargetX ||
+                                targetY != _pathFinder.GetTarget().TargetY)
+                            {
+                                _pathFinder.SetTarget(null);
+                            }
+                        }
+
+                        if (_pathFinder.GetTarget() == null)
+                        {
+                            _pathFinder.SetTarget(new PathfinderTarget(targetMap, targetX, targetY, targetZ));
+
+                            if (tempTarget != Target)
+                            {
+                                tempTarget = Target;
+                            }
+                        }
+                    }
+
+                    if (_pathFinder.GetTarget() != null && Base.Movement != (int)NpcMovement.Static)
+                    {
+                        TryCastSpells();
+                        // TODO: Make resetting mobs actually return to their starting location.
+                        if ((!_resetting && !IsOneBlockAway(
+                                _pathFinder.GetTarget().TargetMapId, _pathFinder.GetTarget().TargetX,
+                                _pathFinder.GetTarget().TargetY, _pathFinder.GetTarget().TargetZ
+                            )) ||
+                            (_resetting && GetDistanceTo(_aggroCenterMap, _aggroCenterX, _aggroCenterY) != 0)
+                           )
+                        {
+                            switch (_pathFinder.Update(timeMs))
+                            {
+                                case PathfinderResult.Success:
+
+                                    var dir = _pathFinder.GetMove();
+                                    if (dir > Direction.None)
                                     {
-                                        case Direction.Up:
-                                            dir = Direction.Down;
-
-                                            break;
-                                        case Direction.Down:
-                                            dir = Direction.Up;
-
-                                            break;
-                                        case Direction.Left:
-                                            dir = Direction.Right;
-
-                                            break;
-                                        case Direction.Right:
-                                            dir = Direction.Left;
-
-                                            break;
-                                        case Direction.UpLeft:
-                                            dir = Direction.UpRight;
-
-                                            break;
-                                        case Direction.UpRight:
-                                            dir = Direction.UpLeft;
-                                            break;
-
-                                        case Direction.DownRight:
-                                            dir = Direction.DownLeft;
-
-                                            break;
-                                        case Direction.DownLeft:
-                                            dir = Direction.DownRight;
-
-                                            break;
-                                    }
-
-                                    if (CanMove(dir) == -1 || CanMove(dir) == -4)
-                                    {
-                                        //check if NPC is snared or stunned
-                                        foreach (var status in CachedStatuses)
+                                        if (fleeing)
                                         {
-                                            if (status.Type == SpellEffect.Stun ||
-                                                status.Type == SpellEffect.Snare ||
-                                                status.Type == SpellEffect.Sleep)
+                                            switch (dir)
                                             {
-                                                return;
+                                                case Direction.Up:
+                                                    dir = Direction.Down;
+                                                    break;
+
+                                                case Direction.Down:
+                                                    dir = Direction.Up;
+                                                    break;
+
+                                                case Direction.Left:
+                                                    dir = Direction.Right;
+                                                    break;
+
+                                                case Direction.Right:
+                                                    dir = Direction.Left;
+                                                    break;
+
+                                                case Direction.UpLeft:
+                                                    dir = Direction.UpRight;
+                                                    break;
+
+                                                case Direction.UpRight:
+                                                    dir = Direction.UpLeft;
+                                                    break;
+
+                                                case Direction.DownRight:
+                                                    dir = Direction.DownLeft;
+                                                    break;
+
+                                                case Direction.DownLeft:
+                                                    dir = Direction.DownRight;
+                                                    break;
                                             }
                                         }
 
-                                        Move(dir, null);
-                                        fleed = true;
-                                    }
-                                }
-
-                                if (!fleed)
-                                {
-                                    if (tempTarget != null)
-                                    {
-                                        if (Dir != DirToEnemy(tempTarget) && DirToEnemy(tempTarget) != Direction.None)
+                                        if (CanMove(dir) == -1 || CanMove(dir) == -4)
                                         {
-                                            ChangeDir(DirToEnemy(tempTarget));
+                                            //check if NPC is snared or stunned
+                                            foreach (var status in CachedStatuses)
+                                            {
+                                                if (status.Type == SpellEffect.Stun ||
+                                                    status.Type == SpellEffect.Snare ||
+                                                    status.Type == SpellEffect.Sleep)
+                                                {
+                                                    return;
+                                                }
+                                            }
+
+                                            Move(dir, null);
                                         }
                                         else
                                         {
-                                            if (tempTarget.IsDisposed)
+                                            _pathFinder.PathFailed(timeMs);
+                                        }
+
+                                        // Are we resetting?
+                                        if (_resetting)
+                                        {
+                                            // Have we reached our destination? If so, clear it.
+                                            if (GetDistanceTo(_aggroCenterMap, _aggroCenterX, _aggroCenterY) == 0)
                                             {
-                                                TryFindNewTarget(timeMs);
-                                                tempTarget = Target;
+                                                targetMap = Guid.Empty;
+                                                _moveTargetMap = Guid.Empty;
+
+                                                // Reset our aggro center so we can get "pulled" again.
+                                                _aggroCenterMap = null;
+                                                _aggroCenterX = 0;
+                                                _aggroCenterY = 0;
+                                                _aggroCenterZ = 0;
+                                                _pathFinder?.SetTarget(null);
+                                                _resetting = false;
                                             }
-                                            else
-                                            {
-                                                if (CanAttack(tempTarget, null))
-                                                {
-                                                    TryAttack(tempTarget);
-                                                }
-                                            }
+                                        }
+                                    }
+
+                                    break;
+
+                                case PathfinderResult.OutOfRange:
+                                case PathfinderResult.NoPathToTarget:
+                                case PathfinderResult.Failure:
+                                    targetMap = Guid.Empty;
+                                    _moveTargetMap = Guid.Empty;
+                                    TryFindNewTarget(timeMs, tempTarget?.Id ?? Guid.Empty, true);
+                                    break;
+
+                                case PathfinderResult.Wait:
+                                    targetMap = Guid.Empty;
+                                    break;
+
+                                default:
+                                    throw new ArgumentOutOfRangeException();
+                            }
+                        }
+                        else
+                        {
+                            var fled = false;
+                            if (tempTarget != null && fleeing)
+                            {
+                                var dir = DirToEnemy(tempTarget);
+                                switch (dir)
+                                {
+                                    case Direction.Up:
+                                        dir = Direction.Down;
+                                        break;
+
+                                    case Direction.Down:
+                                        dir = Direction.Up;
+                                        break;
+
+                                    case Direction.Left:
+                                        dir = Direction.Right;
+                                        break;
+
+                                    case Direction.Right:
+                                        dir = Direction.Left;
+                                        break;
+
+                                    case Direction.UpLeft:
+                                        dir = Direction.UpRight;
+                                        break;
+
+                                    case Direction.UpRight:
+                                        dir = Direction.UpLeft;
+                                        break;
+
+                                    case Direction.DownRight:
+                                        dir = Direction.DownLeft;
+                                        break;
+
+                                    case Direction.DownLeft:
+                                        dir = Direction.DownRight;
+                                        break;
+                                }
+
+                                if (CanMove(dir) == -1 || CanMove(dir) == -4)
+                                {
+                                    //check if NPC is snared or stunned
+                                    foreach (var status in CachedStatuses)
+                                    {
+                                        if (status.Type == SpellEffect.Stun ||
+                                            status.Type == SpellEffect.Snare ||
+                                            status.Type == SpellEffect.Sleep)
+                                        {
+                                            return;
+                                        }
+                                    }
+
+                                    Move(dir, null);
+                                    fled = true;
+                                }
+                            }
+
+                            if (_moveRange == 0)
+                            {
+                                return;
+                            }
+
+                            if (!fled && Target == null)
+                            {
+                                _moveTargetMap = Guid.Empty;
+                                _nextPathWaitTime = Timing.Global.Milliseconds + Randomization.Next(1500, 4000);
+                            }
+
+                            if (!fled && tempTarget != null)
+                            {
+                                if (Dir != DirToEnemy(tempTarget) && DirToEnemy(tempTarget) != Direction.None)
+                                {
+                                    ChangeDir(DirToEnemy(tempTarget));
+                                }
+                                else
+                                {
+                                    if (tempTarget.IsDisposed)
+                                    {
+                                        TryFindNewTarget(timeMs);
+                                    }
+                                    else
+                                    {
+                                        if (CanAttack(tempTarget, null))
+                                        {
+                                            TryAttack(tempTarget);
                                         }
                                     }
                                 }
                             }
                         }
+                    }
 
-                        CheckForResetLocation();
+                    CheckForResetLocation();
 
-                        //Move randomly
-                        if (targetMap != Guid.Empty)
-                        {
-                            return;
-                        }
+                    //Move randomly
+                    if (targetMap != Guid.Empty)
+                    {
+                        return;
+                    }
 
-                        if (LastRandomMove >= Timing.Global.Milliseconds || IsCasting)
-                        {
-                            return;
-                        }
+                    if (_lastRandomMove >= Timing.Global.Milliseconds || IsCasting)
+                    {
+                        return;
+                    }
 
-                        if (Base.Movement == (int)NpcMovement.StandStill)
-                        {
-                            LastRandomMove = Timing.Global.Milliseconds + Randomization.Next(1000, 3000);
-
-                            return;
-                        }
-                        else if (Base.Movement == (int)NpcMovement.TurnRandomly)
-                        {
-                            ChangeDir(Randomization.NextDirection());
-                            LastRandomMove = Timing.Global.Milliseconds + Randomization.Next(1000, 3000);
-
-                            return;
-                        }
-
-                        var i = Randomization.Next(0, 1);
-                        if (i == 0)
-                        {
+                    switch (Base.Movement)
+                    {
+                        case (int)NpcMovement.MoveRandomly:
                             var direction = Randomization.NextDirection();
                             if (CanMove(direction) == -1)
                             {
@@ -1139,33 +1142,42 @@ namespace Intersect.Server.Entities
 
                                 Move(direction, null);
                             }
-                        }
 
-                        LastRandomMove = Timing.Global.Milliseconds + Randomization.Next(1000, 3000);
+                            break;
 
-                        if (fleeing)
+                        case (int)NpcMovement.TurnRandomly:
+                            ChangeDir(Randomization.NextDirection());
+                            break;
+
+                        case (int)NpcMovement.StandStill:
+                        case (int)NpcMovement.Static:
+                            break;
+                    }
+
+                    _lastRandomMove = Timing.Global.Milliseconds + Randomization.Next(1000, 3000);
+
+                    if (fleeing)
+                    {
+                        _lastRandomMove = Timing.Global.Milliseconds + (long)GetMovementTime();
+                    }
+                }
+
+                //If we switched maps, lets update the maps
+                if (curMapLink != MapId)
+                {
+                    if (curMapLink == Guid.Empty)
+                    {
+                        if (MapController.TryGetInstanceFromMap(curMapLink, MapInstanceId, out var instance))
                         {
-                            LastRandomMove = Timing.Global.Milliseconds + (long)GetMovementTime();
+                            instance.RemoveEntity(this);
                         }
                     }
 
-                    //If we switched maps, lets update the maps
-                    if (curMapLink != MapId)
+                    if (MapId != Guid.Empty)
                     {
-                        if (curMapLink == Guid.Empty)
+                        if (MapController.TryGetInstanceFromMap(MapId, MapInstanceId, out var instance))
                         {
-                            if (MapController.TryGetInstanceFromMap(curMapLink, MapInstanceId, out var instance))
-                            {
-                                instance.RemoveEntity(this);
-                            }
-                        }
-
-                        if (MapId != Guid.Empty)
-                        {
-                            if (MapController.TryGetInstanceFromMap(MapId, MapInstanceId, out var instance))
-                            {
-                                instance.AddEntity(this);
-                            }
+                            instance.AddEntity(this);
                         }
                     }
                 }
@@ -1188,31 +1200,34 @@ namespace Intersect.Server.Entities
             targetMap = Guid.Empty;
 
             // Reset our aggro center so we can get "pulled" again.
-            AggroCenterMap = null;
-            AggroCenterX = 0;
-            AggroCenterY = 0;
-            AggroCenterZ = 0;
-            mPathFinder?.SetTarget(null);
-            mResetting = false;
+            _aggroCenterMap = null;
+            _aggroCenterX = 0;
+            _aggroCenterY = 0;
+            _aggroCenterZ = 0;
+            _pathFinder?.SetTarget(null);
+            _resetting = false;
         }
 
         private bool CheckForResetLocation(bool forceDistance = false)
         {
             // Check if we've moved out of our range we're allowed to move from after being "aggro'd" by something.
             // If so, remove target and move back to the origin point.
-            if (Options.Npc.AllowResetRadius && AggroCenterMap != null && (GetDistanceTo(AggroCenterMap, AggroCenterX, AggroCenterY) > Math.Max(Options.Npc.ResetRadius, Math.Min(Base.ResetRadius, Math.Max(Options.MapWidth, Options.MapHeight))) || forceDistance))
+            if (!Options.Npc.AllowResetRadius || _aggroCenterMap == null ||
+                (GetDistanceTo(_aggroCenterMap, _aggroCenterX, _aggroCenterY) <= Math.Max(Options.Npc.ResetRadius,
+                    Math.Min(Base.ResetRadius, Math.Max(Options.MapWidth, Options.MapHeight))) && !forceDistance))
             {
-                Reset(Options.Npc.ResetVitalsAndStatusses);
-
-                mResetCounter = 0;
-                mResetDistance = 0;
-
-                // Try and move back to where we came from before we started chasing something.
-                mResetting = true;
-                mPathFinder.SetTarget(new PathfinderTarget(AggroCenterMap.Id, AggroCenterX, AggroCenterY, AggroCenterZ));
-                return true;
+                return false;
             }
-            return false;
+
+            Reset(Options.Npc.ResetVitalsAndStatusses);
+
+            _resetCounter = 0;
+            _resetDistance = 0;
+
+            // Try and move back to where we came from before we started chasing something.
+            _resetting = true;
+            _pathFinder.SetTarget(new PathfinderTarget(_aggroCenterMap.Id, _aggroCenterX, _aggroCenterY, _aggroCenterZ));
+            return true;
         }
 
         private void Reset(bool resetVitals, bool clearLocation = false)
@@ -1226,33 +1241,35 @@ namespace Intersect.Server.Entities
 
             if (clearLocation)
             {
-                mPathFinder.SetTarget(null);
-                AggroCenterMap = null;
-                AggroCenterX = 0;
-                AggroCenterY = 0;
-                AggroCenterZ = 0;
+                _pathFinder.SetTarget(null);
+                _aggroCenterMap = null;
+                _aggroCenterX = 0;
+                _aggroCenterY = 0;
+                _aggroCenterZ = 0;
             }
-            
+
             // Reset our vitals and statusses when configured.
-            if (resetVitals)
+            if (!resetVitals)
             {
-                Statuses.Clear();
-                CachedStatuses = Statuses.Values.ToArray();
-                DoT.Clear();
-                CachedDots = DoT.Values.ToArray();
-                for (var v = 0; v < (int)Vital.VitalCount; v++)
-                {
-                    RestoreVital((Vital)v);
-                }
+                return;
+            }
+
+            Statuses.Clear();
+            CachedStatuses = Statuses.Values.ToArray();
+            DoT.Clear();
+            CachedDots = DoT.Values.ToArray();
+            for (var v = 0; v < (int)Vital.VitalCount; v++)
+            {
+                RestoreVital((Vital)v);
             }
         }
 
         // Completely resets an Npc to full health and its spawnpoint if it's current chasing something.
         public override void Reset()
         {
-            if (AggroCenterMap != null)
+            if (_aggroCenterMap != null)
             {
-                Warp(AggroCenterMap.Id, AggroCenterX, AggroCenterY);
+                Warp(_aggroCenterMap.Id, _aggroCenterX, _aggroCenterY);
             }
             
             Reset(true, true);
@@ -1260,20 +1277,26 @@ namespace Intersect.Server.Entities
 
         public override void NotifySwarm(Entity attacker)
         {
-            if (MapController.TryGetInstanceFromMap(MapId, MapInstanceId, out var instance))
+            if (!MapController.TryGetInstanceFromMap(MapId, MapInstanceId, out var instance))
             {
-                foreach (var en in instance.GetEntities(true))
+                return;
+            }
+
+            foreach (var en in instance.GetEntities(true))
+            {
+                if (!(en is Npc npc))
                 {
-                    if (en is Npc npc)
-                    {
-                        if (npc.Target == null & npc.Base.Swarm && npc.Base == Base)
-                        {
-                            if (npc.InRangeOf(attacker, npc.Base.SightRange))
-                            {
-                                npc.AssignTarget(attacker);
-                            }
-                        }
-                    }
+                    continue;
+                }
+
+                if (!(npc.Target == null & npc.Base.Swarm) || npc.Base != Base)
+                {
+                    continue;
+                }
+
+                if (npc.InRangeOf(attacker, npc.Base.SightRange))
+                {
+                    npc.AssignTarget(attacker);
                 }
             }
         }
@@ -1287,13 +1310,8 @@ namespace Intersect.Server.Entities
             }
 
             //If not then check and see if player meets the conditions to attack the npc...
-            if (Base.PlayerCanAttackConditions.Lists.Count == 0 ||
-                Conditions.MeetsConditionLists(Base.PlayerCanAttackConditions, en, null))
-            {
-                return true;
-            }
-
-            return false;
+            return Base.PlayerCanAttackConditions.Lists.Count == 0 ||
+                   Conditions.MeetsConditionLists(Base.PlayerCanAttackConditions, en, null);
         }
 
         public override bool IsAllyOf(Entity otherEntity)
@@ -1302,20 +1320,18 @@ namespace Intersect.Server.Entities
             {
                 case Npc otherNpc:
                     return Base == otherNpc.Base;
+
                 case Player otherPlayer:
                     var conditionLists = Base.PlayerFriendConditions;
-                    if ((conditionLists?.Count ?? 0) == 0)
-                    {
-                        return false;
-                    }
+                    return (conditionLists?.Count ?? 0) != 0 &&
+                           Conditions.MeetsConditionLists(conditionLists, otherPlayer, null);
 
-                    return Conditions.MeetsConditionLists(conditionLists, otherPlayer, null);
                 default:
                     return base.IsAllyOf(otherEntity);
             }
         }
 
-        public bool ShouldAttackPlayerOnSight(Player en)
+        private bool ShouldAttackPlayerOnSight(Player en)
         {
             if (IsAllyOf(en))
             {
@@ -1324,54 +1340,43 @@ namespace Intersect.Server.Entities
 
             if (Base.Aggressive)
             {
-                if (Base.AttackOnSightConditions.Lists.Count > 0 &&
-                    Conditions.MeetsConditionLists(Base.AttackOnSightConditions, en, null))
-                {
-                    return false;
-                }
-
-                return true;
-            }
-            else
-            {
-                if (Base.AttackOnSightConditions.Lists.Count > 0 &&
-                    Conditions.MeetsConditionLists(Base.AttackOnSightConditions, en, null))
-                {
-                    return true;
-                }
+                return Base.AttackOnSightConditions.Lists.Count <= 0 ||
+                       !Conditions.MeetsConditionLists(Base.AttackOnSightConditions, en, null);
             }
 
-            return false;
+            return Base.AttackOnSightConditions.Lists.Count > 0 &&
+                   Conditions.MeetsConditionLists(Base.AttackOnSightConditions, en, null);
         }
 
         public void TryFindNewTarget(long timeMs, Guid avoidId = new Guid(), bool ignoreTimer = false, Entity attackedBy = null)
         {
-            if (!ignoreTimer && FindTargetWaitTime > timeMs)
+            if (!ignoreTimer && _findTargetWaitTime > timeMs)
             {
                 return;
             }
 
             // Are we resetting? If so, do not allow for a new target.
-            var pathTarget = mPathFinder?.GetTarget();
-            if (AggroCenterMap != null && pathTarget != null &&
-                pathTarget.TargetMapId == AggroCenterMap.Id && pathTarget.TargetX == AggroCenterX && pathTarget.TargetY == AggroCenterY)
+            var pathTarget = _pathFinder?.GetTarget();
+            if (_aggroCenterMap != null && pathTarget != null &&
+                pathTarget.TargetMapId == _aggroCenterMap.Id && pathTarget.TargetX == _aggroCenterX &&
+                pathTarget.TargetY == _aggroCenterY)
             {
-                if (!Options.Instance.NpcOpts.AllowEngagingWhileResetting || attackedBy == null || attackedBy.GetDistanceTo(AggroCenterMap, AggroCenterX, AggroCenterY) > Math.Max(Options.Instance.NpcOpts.ResetRadius, Base.ResetRadius))
+                if (!Options.Instance.NpcOpts.AllowEngagingWhileResetting || attackedBy == null ||
+                    attackedBy.GetDistanceTo(_aggroCenterMap, _aggroCenterX, _aggroCenterY) >
+                    Math.Max(Options.Instance.NpcOpts.ResetRadius, Base.ResetRadius))
                 {
                     return;
                 }
-                else
-                {
-                    //We're resetting and just got attacked, and we allow reengagement.. let's stop resetting and fight!
-                    mPathFinder?.SetTarget(null);
-                    mResetting = false;
-                    AssignTarget(attackedBy);
-                    return;
-                }
+
+                // We're resetting and just got attacked, and we allow re-engagement.. let's stop resetting and fight!
+                _pathFinder?.SetTarget(null);
+                _resetting = false;
+                AssignTarget(attackedBy);
+                return;
             }
 
             var possibleTargets = new List<Entity>();
-            var closestRange = Range + 1; //If the range is out of range we didn't find anything.
+            var closestRange = _range + 1; //If the range is out of range we didn't find anything.
             var closestIndex = -1;
             var highestDmgIndex = -1;
            
@@ -1420,35 +1425,42 @@ namespace Intersect.Server.Entities
             {
                 foreach (var entity in instance.GetCachedEntities())
                 {
-                    if (entity != null && !entity.IsDead() && entity != this && entity.Id != avoidId)
+                    if (entity == null || entity.IsDead() || entity == this || entity.Id == avoidId)
                     {
-                        //TODO Check if NPC is allowed to attack player with new conditions
-                        if (entity is Player player)
+                        continue;
+                    }
+
+                    //TODO Check if NPC is allowed to attack player with new conditions
+                    if (entity is Player player)
+                    {
+                        // Are we aggressive towards this player or have they hit us?
+                        if (!ShouldAttackPlayerOnSight(player) &&
+                            (!DamageMap.ContainsKey(entity) || entity.MapInstanceId != MapInstanceId))
                         {
-                            // Are we aggressive towards this player or have they hit us?
-                            if (ShouldAttackPlayerOnSight(player) || (DamageMap.ContainsKey(entity) && entity.MapInstanceId == MapInstanceId))
-                            {
-                                var dist = GetDistanceTo(entity);
-                                if (dist <= Range && dist < closestRange)
-                                {
-                                    possibleTargets.Add(entity);
-                                    closestIndex = possibleTargets.Count - 1;
-                                    closestRange = dist;
-                                }
-                            }
+                            continue;
                         }
-                        else if (entity is Npc npc)
+
+                        var dist = GetDistanceTo(entity);
+                        if (dist <= _range && dist < closestRange)
                         {
-                            if (Base.Aggressive && Base.AggroList.Contains(npc.Base.Id))
-                            {
-                                var dist = GetDistanceTo(entity);
-                                if (dist <= Range && dist < closestRange)
-                                {
-                                    possibleTargets.Add(entity);
-                                    closestIndex = possibleTargets.Count - 1;
-                                    closestRange = dist;
-                                }
-                            }
+                            possibleTargets.Add(entity);
+                            closestIndex = possibleTargets.Count - 1;
+                            closestRange = dist;
+                        }
+                    }
+                    else if (entity is Npc npc)
+                    {
+                        if (!Base.Aggressive || !Base.AggroList.Contains(npc.Base.Id))
+                        {
+                            continue;
+                        }
+
+                        var dist = GetDistanceTo(entity);
+                        if (dist <= _range && dist < closestRange)
+                        {
+                            possibleTargets.Add(entity);
+                            closestIndex = possibleTargets.Count - 1;
+                            closestRange = dist;
                         }
                     }
                 }
@@ -1497,16 +1509,15 @@ namespace Intersect.Server.Entities
             }
             else
             {
-                // ??? What the frick is going on here?
                 // We can't find a valid target somehow, keep it up a few times and reset if this keeps failing!
-                mTargetFailCounter += 1;
-                if (mTargetFailCounter > mTargetFailMax)
+                _targetFailCounter += 1;
+                if (_targetFailCounter > TargetFailMax)
                 {
                     CheckForResetLocation(true);
                 }
             }
 
-            FindTargetWaitTime = timeMs + FindTargetDelay;
+            _findTargetWaitTime = timeMs + FindTargetDelay;
         }
 
         public override void ProcessRegen()
@@ -1523,7 +1534,7 @@ namespace Intersect.Server.Entities
                     continue;
                 }
 
-                var vitalId = (int) vital;
+                var vitalId = (int)vital;
                 var vitalValue = GetVital(vital);
                 var maxVitalValue = GetMaxVital(vital);
                 if (vitalValue >= maxVitalValue)
@@ -1532,7 +1543,7 @@ namespace Intersect.Server.Entities
                 }
 
                 var vitalRegenRate = Base.VitalRegen[vitalId] / 100f;
-                var regenValue = (int) Math.Max(1, maxVitalValue * vitalRegenRate) *
+                var regenValue = (int)Math.Max(1, maxVitalValue * vitalRegenRate) *
                                  Math.Abs(Math.Sign(vitalRegenRate));
 
                 AddVital(vital, regenValue);
@@ -1551,7 +1562,12 @@ namespace Intersect.Server.Entities
             bool fromLogin = false,
             bool forceInstanceChange = false)
         {
-            if (!MapController.TryGetInstanceFromMap(newMapId, MapInstanceId, out var map))
+            if (!MapController.TryGetInstanceFromMap(newMapId, MapInstanceId, out var newMap))
+            {
+                return;
+            }
+
+            if (!MapController.TryGetInstanceFromMap(MapId, MapInstanceId, out var oldMap))
             {
                 return;
             }
@@ -1562,18 +1578,14 @@ namespace Intersect.Server.Entities
             Dir = newDir;
             if (newMapId != MapId)
             {
-                if (MapController.TryGetInstanceFromMap(MapId, MapInstanceId, out var oldMap))
-                {
-                    oldMap.RemoveEntity(this);
-                }
-
+                oldMap.RemoveEntity(this);
                 PacketSender.SendEntityLeave(this);
                 MapId = newMapId;
-                PacketSender.SendEntityDataToProximity(this);
-                PacketSender.SendEntityPositionToAll(this);
             }
             else
             {
+                newMap.AddEntity(this);
+                PacketSender.SendEntityDataToProximity(this);
                 PacketSender.SendEntityPositionToAll(this);
                 PacketSender.SendEntityStats(this);
             }
@@ -1586,34 +1598,33 @@ namespace Intersect.Server.Entities
             {
                 return -1;
             }
-            else
+
+            //Guard = 3
+            //Will attack on sight = 1
+            //Will attack if attacked = 0
+            //Can't attack nor can attack = 2
+            var ally = IsAllyOf(player);
+            var attackOnSight = ShouldAttackPlayerOnSight(player);
+            var canPlayerAttack = CanPlayerAttack(player);
+
+            if (ally && !canPlayerAttack)
             {
-                //Guard = 3
-                //Will attack on sight = 1
-                //Will attack if attacked = 0
-                //Can't attack nor can attack = 2
-                var ally = IsAllyOf(player);
-                var attackOnSight = ShouldAttackPlayerOnSight(player);
-                var canPlayerAttack = CanPlayerAttack(player);
-                if (ally && !canPlayerAttack)
-                {
-                    return 3;
-                }
+                return 3;
+            }
 
-                if (attackOnSight)
-                {
-                    return 1;
-                }
+            if (attackOnSight)
+            {
+                return 1;
+            }
 
-                if (!ally && !attackOnSight && canPlayerAttack)
-                {
-                    return 0;
-                }
+            if (!ally && !attackOnSight && canPlayerAttack)
+            {
+                return 0;
+            }
 
-                if (!ally && !attackOnSight && !canPlayerAttack)
-                {
-                    return 2;
-                }
+            if (!ally && !attackOnSight && !canPlayerAttack)
+            {
+                return 2;
             }
 
             return 2;
