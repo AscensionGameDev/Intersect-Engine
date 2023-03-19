@@ -60,8 +60,6 @@ namespace Intersect.Server.Entities
 
         private Point _moveTarget;
 
-        private long _nextPathWaitTime;
-
         private long _findTargetWaitTime;
 
         private int _targetFailCounter;
@@ -136,7 +134,7 @@ namespace Intersect.Server.Entities
             }
 
             _range = (byte)myBase.SightRange;
-            _moveRange = (byte)Randomization.Next(1, myBase.SightRange);
+            _moveRange = (byte)Randomization.Next(myBase.SightRange / 2, myBase.SightRange);
             _pathFinder = new Pathfinder(this);
         }
 
@@ -153,18 +151,16 @@ namespace Intersect.Server.Entities
 
         public override void Die(bool generateLoot = true, Entity killer = null)
         {
-            lock (EntityLock) {
+            lock (EntityLock)
+            {
                 base.Die(generateLoot, killer);
-
-                _aggroCenterMap = null;
-                _aggroCenterX = 0;
-                _aggroCenterY = 0;
-                _aggroCenterZ = 0;
+                ResetAggroCenter();
 
                 if (MapController.TryGetInstanceFromMap(MapId, MapInstanceId, out var instance))
                 {
                     instance.RemoveEntity(this);
                 }
+
                 PacketSender.SendEntityDie(this);
                 PacketSender.SendEntityLeave(this);
             }
@@ -181,6 +177,15 @@ namespace Intersect.Server.Entities
             return target == null || target.CachedStatuses.Any(s => s.Type == SpellEffect.Stealth);
         }
 
+        private bool IsTargetWithinAggroCenter(PathfinderTarget pathTarget)
+        {
+            return pathTarget != null &&
+                   _aggroCenterMap != null &&
+                   (pathTarget.TargetMapId == _aggroCenterMap.Id ||
+                   pathTarget.TargetX == _aggroCenterX ||
+                   pathTarget.TargetY == _aggroCenterY);
+        }
+
         //Targeting
         public void AssignTarget(Entity en)
         {
@@ -188,9 +193,7 @@ namespace Intersect.Server.Entities
 
             // Are we resetting? If so, do not allow for a new target.
             var pathTarget = _pathFinder?.GetTarget();
-            if (_aggroCenterMap != null && pathTarget != null &&
-                pathTarget.TargetMapId == _aggroCenterMap.Id && pathTarget.TargetX == _aggroCenterX &&
-                pathTarget.TargetY == _aggroCenterY)
+            if (IsTargetWithinAggroCenter(pathTarget))
             {
                 return;
             }
@@ -200,13 +203,12 @@ namespace Intersect.Server.Entities
             {
                 // Can't assign a new target if taunted, unless we're resetting their target somehow.
                 // Also make sure the taunter is in range.. If they're dead or gone, we go for someone else!
-                if ((pathTarget != null && _aggroCenterMap != null && (pathTarget.TargetMapId != _aggroCenterMap.Id ||
-                                                                       pathTarget.TargetX != _aggroCenterX ||
-                                                                       pathTarget.TargetY != _aggroCenterY)))
+                if (IsTargetWithinAggroCenter(pathTarget))
                 {
                     foreach (var status in CachedStatuses)
                     {
-                        if (status.Type == SpellEffect.Taunt && en != status.Attacker &&
+                        if (en != status.Attacker &&
+                            status.Type == SpellEffect.Taunt &&
                             GetDistanceTo(status.Attacker) != 9999)
                         {
                             return;
@@ -501,70 +503,77 @@ namespace Intersect.Server.Entities
             }
         }
 
-        public override int CanMove(Direction moveDir)
+        public override TileType MovesTo(Direction moveDir)
         {
-            var canMove = base.CanMove(moveDir);
+            var movesTo = base.MovesTo(moveDir);
 
             // If configured & blocked by an entity, ignore the entity and proceed to move
-            if (Options.Instance.NpcOpts.IntangibleDuringReset && canMove > -1 )
+            if (Options.Instance.NpcOpts.IntangibleDuringReset && movesTo > TileType.Clear)
             {
-                canMove = _resetting ? -1 : canMove;
+                movesTo = _resetting ? TileType.Clear : movesTo;
             }
-            if ((canMove == -1 || canMove == -4) && IsFleeing() && Options.Instance.NpcOpts.AllowResetRadius)
+
+            if ((movesTo != TileType.Clear && movesTo != TileType.Slide) || !IsFleeing() ||
+                !Options.Instance.NpcOpts.AllowResetRadius)
             {
-                var yOffset = 0;
-                var xOffset = 0;
-                var tile = new TileHelper(MapId, X, Y);
-                switch (moveDir)
+                return movesTo;
+            }
+
+            var yOffset = 0;
+            var xOffset = 0;
+
+            var tile = new TileHelper(MapId, X, Y);
+            switch (moveDir)
+            {
+                case Direction.Up:
+                    yOffset--;
+                    break;
+
+                case Direction.Down:
+                    yOffset++;
+                    break;
+
+                case Direction.Left:
+                    xOffset--;
+                    break;
+
+                case Direction.Right:
+                    xOffset++;
+                    break;
+
+                case Direction.UpLeft:
+                    yOffset--;
+                    xOffset--;
+                    break;
+
+                case Direction.UpRight:
+                    yOffset--;
+                    xOffset++;
+                    break;
+
+                case Direction.DownLeft:
+                    yOffset++;
+                    xOffset--;
+                    break;
+
+                case Direction.DownRight:
+                    yOffset++;
+                    xOffset++;
+                    break;
+            }
+
+            if (tile.Translate(xOffset, yOffset))
+            {
+                //If this would move us past our reset radius then we cannot move.
+                var dist = GetDistanceBetween(_aggroCenterMap, tile.GetMap(), _aggroCenterX, tile.GetX(), _aggroCenterY,
+                    tile.GetY());
+                if (dist > Math.Max(Options.Npc.ResetRadius, Base.ResetRadius))
                 {
-                    case Direction.Up:
-                        yOffset--;
-                        break;
-
-                    case Direction.Down:
-                        yOffset++;
-                        break;
-
-                    case Direction.Left:
-                        xOffset--;
-                        break;
-
-                    case Direction.Right:
-                        xOffset++;
-                        break;
-
-                    case Direction.UpLeft:
-                        yOffset--;
-                        xOffset--;
-                        break;
-
-                    case Direction.UpRight:
-                        yOffset--;
-                        xOffset++;
-                        break;
-
-                    case Direction.DownLeft:
-                        yOffset++;
-                        xOffset--;
-                        break;
-
-                    case Direction.DownRight:
-                        yOffset++;
-                        xOffset++;
-                        break;
-                }
-
-                if (tile.Translate(xOffset, yOffset))
-                {
-                    //If this would move us past our reset radius then we cannot move.
-                    var dist = GetDistanceBetween(_aggroCenterMap, tile.GetMap(), _aggroCenterX, tile.GetX(), _aggroCenterY, tile.GetY());
-                    if (dist > Math.Max(Options.Npc.ResetRadius, Base.ResetRadius))
-                    {
-                        return -2;
-                    }
+                    return TileType.Block;
                 }
             }
-            return canMove;
+
+            return movesTo;
         }
 
         private void TryCastSpells()
@@ -757,10 +766,12 @@ namespace Intersect.Server.Entities
                     if (_resetting)
                     {
                         var distance = GetDistanceTo(_aggroCenterMap, _aggroCenterX, _aggroCenterY);
+
                         // Have we reached our destination? If so, clear it.
                         if (distance < 1)
                         {
-                            ResetAggroCenter(out targetMap);
+                            targetMap = Guid.Empty;
+                            ResetAggroCenter();
                         }
 
                         Reset(Options.Instance.NpcOpts.ContinuouslyResetVitalsAndStatuses);
@@ -777,7 +788,8 @@ namespace Intersect.Server.Entities
                             _resetCounter++;
                             if (_resetCounter > ResetMax)
                             {
-                                ResetAggroCenter(out targetMap);
+                                targetMap = Guid.Empty;
+                                ResetAggroCenter();
                                 _resetCounter = 0;
                                 _resetDistance = 0;
                             }
@@ -841,44 +853,6 @@ namespace Intersect.Server.Entities
                         }
                     }
 
-                    if (_moveRange > 1 && Target == null && Base.Movement == (int)NpcMovement.MoveRandomly)
-                    {
-                        if (_moveTargetMap == Guid.Empty)
-                        {
-                            if (_nextPathWaitTime > Timing.Global.Milliseconds)
-                            {
-                                _moveTargetMap = Guid.Empty;
-                                _moveTarget.X = 0;
-                                _moveTarget.Y = 0;
-                                return;
-                            }
-
-                            int x = Randomization.Next(-_moveRange, _moveRange);
-                            int y = Randomization.Next(-_moveRange, _moveRange);
-
-                            var tile = new TileHelper(MapId, X, Y);
-                            if (tile.Translate(x, y))
-                            {
-                                _moveTargetMap = tile.GetMapId();
-                                _moveTarget.X = tile.GetX();
-                                _moveTarget.Y = tile.GetY();
-                            }
-                            else
-                            {
-                                _moveTargetMap = Guid.Empty;
-                                _moveTarget.X = 0;
-                                _moveTarget.Y = 0;
-                            }
-                        }
-                        else
-                        {
-                            targetMap = _moveTargetMap;
-                            targetX = _moveTarget.X;
-                            targetY = _moveTarget.Y;
-                            targetZ = Z;
-                        }
-                    }
-
                     if (targetMap != Guid.Empty)
                     {
                         if (_pathFinder.GetTarget() != null)
@@ -905,6 +879,7 @@ namespace Intersect.Server.Entities
                     if (_pathFinder.GetTarget() != null && Base.Movement != (int)NpcMovement.Static)
                     {
                         TryCastSpells();
+
                         // TODO: Make resetting mobs actually return to their starting location.
                         if ((!_resetting && !IsOneBlockAway(
                                 _pathFinder.GetTarget().TargetMapId, _pathFinder.GetTarget().TargetX,
@@ -916,8 +891,8 @@ namespace Intersect.Server.Entities
                             switch (_pathFinder.Update(timeMs))
                             {
                                 case PathfinderResult.Success:
-
                                     var dir = _pathFinder.GetMove();
+                                    
                                     if (dir > Direction.None)
                                     {
                                         if (fleeing)
@@ -958,19 +933,8 @@ namespace Intersect.Server.Entities
                                             }
                                         }
 
-                                        if (CanMove(dir) == -1 || CanMove(dir) == -4)
+                                        if (CanMoveTo(dir))
                                         {
-                                            //check if NPC is snared or stunned
-                                            foreach (var status in CachedStatuses)
-                                            {
-                                                if (status.Type == SpellEffect.Stun ||
-                                                    status.Type == SpellEffect.Snare ||
-                                                    status.Type == SpellEffect.Sleep)
-                                                {
-                                                    return;
-                                                }
-                                            }
-
                                             Move(dir, null);
                                         }
                                         else
@@ -986,14 +950,7 @@ namespace Intersect.Server.Entities
                                             {
                                                 targetMap = Guid.Empty;
                                                 _moveTargetMap = Guid.Empty;
-
-                                                // Reset our aggro center so we can get "pulled" again.
-                                                _aggroCenterMap = null;
-                                                _aggroCenterX = 0;
-                                                _aggroCenterY = 0;
-                                                _aggroCenterZ = 0;
-                                                _pathFinder?.SetTarget(null);
-                                                _resetting = false;
+                                                ResetAggroCenter();
                                             }
                                         }
                                     }
@@ -1010,6 +967,7 @@ namespace Intersect.Server.Entities
 
                                 case PathfinderResult.Wait:
                                     targetMap = Guid.Empty;
+                                    _moveTargetMap = Guid.Empty;
                                     break;
 
                                 default:
@@ -1057,33 +1015,11 @@ namespace Intersect.Server.Entities
                                         break;
                                 }
 
-                                if (CanMove(dir) == -1 || CanMove(dir) == -4)
+                                if (CanMoveTo(dir))
                                 {
-                                    //check if NPC is snared or stunned
-                                    foreach (var status in CachedStatuses)
-                                    {
-                                        if (status.Type == SpellEffect.Stun ||
-                                            status.Type == SpellEffect.Snare ||
-                                            status.Type == SpellEffect.Sleep)
-                                        {
-                                            return;
-                                        }
-                                    }
-
                                     Move(dir, null);
                                     fled = true;
                                 }
-                            }
-
-                            if (_moveRange == 0)
-                            {
-                                return;
-                            }
-
-                            if (!fled && Target == null)
-                            {
-                                _moveTargetMap = Guid.Empty;
-                                _nextPathWaitTime = Timing.Global.Milliseconds + Randomization.Next(1500, 4000);
                             }
 
                             if (!fled && tempTarget != null)
@@ -1096,6 +1032,7 @@ namespace Intersect.Server.Entities
                                 {
                                     if (tempTarget.IsDisposed)
                                     {
+                                        _moveTargetMap = Guid.Empty;
                                         TryFindNewTarget(timeMs);
                                     }
                                     else
@@ -1126,23 +1063,7 @@ namespace Intersect.Server.Entities
                     switch (Base.Movement)
                     {
                         case (int)NpcMovement.MoveRandomly:
-                            var direction = Randomization.NextDirection();
-                            if (CanMove(direction) == -1)
-                            {
-                                //check if NPC is snared or stunned
-                                foreach (var status in CachedStatuses)
-                                {
-                                    if (status.Type == SpellEffect.Stun ||
-                                        status.Type == SpellEffect.Snare ||
-                                        status.Type == SpellEffect.Sleep)
-                                    {
-                                        return;
-                                    }
-                                }
-
-                                Move(direction, null);
-                            }
-
+                            MoveRandomly();
                             break;
 
                         case (int)NpcMovement.TurnRandomly:
@@ -1191,15 +1112,65 @@ namespace Intersect.Server.Entities
             }
         }
 
-        /// <summary>
-        /// Resets the NPCs position to be "pulled" from
-        /// </summary>
-        /// <param name="targetMap">For referencing the map that the enemy's target WAS on before a reset.</param>
-        private void ResetAggroCenter(out Guid targetMap)
+        private void MoveRandomly()
         {
-            targetMap = Guid.Empty;
+            if (_moveTargetMap == Guid.Empty)
+            {
+                var randomMoveRange = Randomization.Next(-_moveRange, _moveRange);
+                var tile = new TileHelper(MapId, X, Y);
 
-            // Reset our aggro center so we can get "pulled" again.
+                if (tile.Translate(randomMoveRange, randomMoveRange))
+                {
+                    _moveTargetMap = tile.GetMapId();
+                    _moveTarget.X = tile.GetX();
+                    _moveTarget.Y = tile.GetY();
+                }
+                else
+                {
+                    _moveTargetMap = Guid.Empty;
+                    _moveTarget.X = 0;
+                    _moveTarget.Y = 0;
+                }
+            }
+            else
+            {
+                _pathFinder.SetTarget(new PathfinderTarget(_moveTargetMap, _moveTarget.X, _moveTarget.Y, Z));
+            }
+
+            var direction = Randomization.NextDirection();
+
+            if (CanMoveTo(direction))
+            {
+                Move(direction, null);
+            }
+        }
+
+        private bool CanMoveTo(Direction direction)
+        {
+            if (MovesTo(direction) == TileType.Clear || MovesTo(direction) == TileType.Slide)
+            {
+                foreach (var status in CachedStatuses)
+                {
+                    if (status.Type == SpellEffect.Stun ||
+                        status.Type == SpellEffect.Snare ||
+                        status.Type == SpellEffect.Sleep ||
+                        status.Type == SpellEffect.Knockback)
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Resets the NPCs "Aggro Center".
+        /// </summary>
+        private void ResetAggroCenter()
+        {
             _aggroCenterMap = null;
             _aggroCenterX = 0;
             _aggroCenterY = 0;
@@ -1208,13 +1179,26 @@ namespace Intersect.Server.Entities
             _resetting = false;
         }
 
+        private bool ShouldResetLocation(bool forceDistance)
+        {
+            if (!Options.Npc.AllowResetRadius || _aggroCenterMap == null)
+            {
+                return false;
+            }
+
+            var resetRadius = Math.Max(Options.Npc.ResetRadius,
+                Math.Min(Base.ResetRadius, Math.Max(Options.MapWidth, Options.MapHeight)));
+            var distanceToAggroCenter = GetDistanceTo(_aggroCenterMap, _aggroCenterX, _aggroCenterY);
+            bool withinResetRadius = distanceToAggroCenter <= resetRadius && !forceDistance;
+
+            return !withinResetRadius;
+        }
+
         private bool CheckForResetLocation(bool forceDistance = false)
         {
             // Check if we've moved out of our range we're allowed to move from after being "aggro'd" by something.
             // If so, remove target and move back to the origin point.
-            if (!Options.Npc.AllowResetRadius || _aggroCenterMap == null ||
-                (GetDistanceTo(_aggroCenterMap, _aggroCenterX, _aggroCenterY) <= Math.Max(Options.Npc.ResetRadius,
-                    Math.Min(Base.ResetRadius, Math.Max(Options.MapWidth, Options.MapHeight))) && !forceDistance))
+            if (!ShouldResetLocation(forceDistance))
             {
                 return false;
             }
@@ -1226,7 +1210,8 @@ namespace Intersect.Server.Entities
 
             // Try and move back to where we came from before we started chasing something.
             _resetting = true;
-            _pathFinder.SetTarget(new PathfinderTarget(_aggroCenterMap.Id, _aggroCenterX, _aggroCenterY, _aggroCenterZ));
+            _pathFinder.SetTarget(new PathfinderTarget(_aggroCenterMap.Id, _aggroCenterX, _aggroCenterY,
+                _aggroCenterZ));
             return true;
         }
 
@@ -1241,14 +1226,10 @@ namespace Intersect.Server.Entities
 
             if (clearLocation)
             {
-                _pathFinder.SetTarget(null);
-                _aggroCenterMap = null;
-                _aggroCenterX = 0;
-                _aggroCenterY = 0;
-                _aggroCenterZ = 0;
+                ResetAggroCenter();
             }
 
-            // Reset our vitals and statusses when configured.
+            // Reset our vitals and statuses when configured.
             if (!resetVitals)
             {
                 return;
@@ -1357,9 +1338,7 @@ namespace Intersect.Server.Entities
 
             // Are we resetting? If so, do not allow for a new target.
             var pathTarget = _pathFinder?.GetTarget();
-            if (_aggroCenterMap != null && pathTarget != null &&
-                pathTarget.TargetMapId == _aggroCenterMap.Id && pathTarget.TargetX == _aggroCenterX &&
-                pathTarget.TargetY == _aggroCenterY)
+            if (IsTargetWithinAggroCenter(pathTarget))
             {
                 if (!Options.Instance.NpcOpts.AllowEngagingWhileResetting || attackedBy == null ||
                     attackedBy.GetDistanceTo(_aggroCenterMap, _aggroCenterX, _aggroCenterY) >
@@ -1591,43 +1570,43 @@ namespace Intersect.Server.Entities
             }
         }
 
-        public int GetAggression(Player player)
+        /// <summary>
+        /// Determines the aggression of this NPC towards a player.
+        /// </summary>
+        /// <param name="player">The player object to evaluate the relationship with.</param>
+        /// <returns>The NPC's behavior towards the player.</returns>
+        public NpcBehavior GetAggression(Player player)
         {
-            //Determines the aggression level of this npc to send to the player
             if (this.Target != null)
             {
-                return -1;
+                return NpcBehavior.Aggressive;
             }
 
-            //Guard = 3
-            //Will attack on sight = 1
-            //Will attack if attacked = 0
-            //Can't attack nor can attack = 2
             var ally = IsAllyOf(player);
             var attackOnSight = ShouldAttackPlayerOnSight(player);
             var canPlayerAttack = CanPlayerAttack(player);
 
             if (ally && !canPlayerAttack)
             {
-                return 3;
+                return NpcBehavior.Guard;
             }
 
             if (attackOnSight)
             {
-                return 1;
+                return NpcBehavior.AttackOnSight;
             }
 
             if (!ally && !attackOnSight && canPlayerAttack)
             {
-                return 0;
+                return NpcBehavior.AttackWhenAttacked;
             }
 
             if (!ally && !attackOnSight && !canPlayerAttack)
             {
-                return 2;
+                return NpcBehavior.Neutral;
             }
 
-            return 2;
+            return NpcBehavior.Neutral;
         }
 
         public override EntityPacket EntityPacket(EntityPacket packet = null, Player forPlayer = null)

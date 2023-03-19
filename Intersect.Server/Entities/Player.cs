@@ -830,15 +830,15 @@ namespace Intersect.Server.Entities
 
             if (Power.IsAdmin)
             {
-                pkt.AccessLevel = (int) Access.Admin;
+                pkt.AccessLevel = Access.Admin;
             }
             else if (Power.IsModerator)
             {
-                pkt.AccessLevel = (int) Access.Moderator;
+                pkt.AccessLevel = Access.Moderator;
             }
             else
             {
-                pkt.AccessLevel = 0;
+                pkt.AccessLevel = Access.None;
             }
 
             if (CombatTimer > Timing.Global.Milliseconds)
@@ -6470,52 +6470,54 @@ namespace Intersect.Server.Entities
             }
         }
 
-        public override int CanMove(Direction moveDir)
+        public override TileType MovesTo(Direction moveDir)
         {
             //If crafting or locked by event return blocked
             if (OpenCraftingTableId != default && CraftingState != default)
             {
-                return -5;
+                return TileType.OutOfBounds;
             }
 
             foreach (var evt in EventLookup)
             {
                 if (evt.Value.HoldingPlayer)
                 {
-                    return -5;
+                    return TileType.OutOfBounds;
                 }
             }
 
-            return base.CanMove(moveDir);
+            return base.MovesTo(moveDir);
         }
 
-        protected override int IsTileWalkable(MapController map, int x, int y, int z)
+        protected override TileType IsTileWalkable(MapController map, int x, int y, int z)
         {
-            if (base.IsTileWalkable(map, x, y, z) == -1)
+            if (base.IsTileWalkable(map, x, y, z) == TileType.Clear)
             {
                 foreach (var evt in EventLookup)
                 {
-                    if (evt.Value.PageInstance != null)
+                    if (evt.Value.PageInstance == null)
                     {
-                        var instance = evt.Value.PageInstance;
-                        if (instance.GlobalClone != null)
-                        {
-                            instance = instance.GlobalClone;
-                        }
+                        continue;
+                    }
 
-                        if (instance.Map == map &&
-                            instance.X == x &&
-                            instance.Y == y &&
-                            instance.Z == z &&
-                            !instance.Passable)
-                        {
-                            return (int) EntityType.Event;
-                        }
+                    var instance = evt.Value.PageInstance;
+                    if (instance.GlobalClone != null)
+                    {
+                        instance = instance.GlobalClone;
+                    }
+
+                    if (instance.Map == map &&
+                        instance.X == x &&
+                        instance.Y == y &&
+                        instance.Z == z &&
+                        !instance.Passable)
+                    {
+                        return TileType.WithEvent;
                     }
                 }
             }
 
-            return -1;
+            return TileType.Clear;
         }
 
         public override void Move(Direction moveDir, Player forPlayer, bool dontUpdate = false,

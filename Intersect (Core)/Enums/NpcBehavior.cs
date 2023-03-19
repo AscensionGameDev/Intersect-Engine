@@ -1,14 +1,15 @@
 namespace Intersect.Enums
 {
-
-    // Map Attribtes
-
     public enum NpcBehavior
     {
 
-        AttackWhenAttacked = 0,
+        Aggressive = -1,
+        
+        AttackWhenAttacked,
 
         AttackOnSight,
+        
+        Neutral,
 
         Guard,
 

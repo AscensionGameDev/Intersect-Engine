@@ -48,6 +48,8 @@ namespace Intersect.Client.Entities
                 LoadAnimationTexture(Sprite ?? TransformedSprite, SpriteAnimations.Attack);
             }
         }
+        
+        public Access AccessLevel { get; set; }
 
         public long Experience { get; set; } = 0;
 
@@ -304,7 +306,7 @@ namespace Intersect.Client.Entities
             var playerPacket = (PlayerEntityPacket)packet;
             Gender = playerPacket.Gender;
             Class = playerPacket.ClassId;
-            Aggression = playerPacket.AccessLevel;
+            AccessLevel = playerPacket.AccessLevel;
             CombatTimer = playerPacket.CombatTimeRemaining + Timing.Global.Milliseconds;
             Guild = playerPacket.Guild;
             Rank = playerPacket.GuildRank;
@@ -2204,23 +2206,24 @@ namespace Intersect.Client.Entities
         {
             if (textColor == null)
             {
-                if (Aggression == 1) //Mod
+                switch (AccessLevel)
                 {
-                    textColor = CustomColors.Names.Players["Moderator"].Name;
-                    borderColor = CustomColors.Names.Players["Moderator"].Outline;
-                    backgroundColor = CustomColors.Names.Players["Moderator"].Background;
-                }
-                else if (Aggression == 2) //Admin
-                {
-                    textColor = CustomColors.Names.Players["Admin"].Name;
-                    borderColor = CustomColors.Names.Players["Admin"].Outline;
-                    backgroundColor = CustomColors.Names.Players["Admin"].Background;
-                }
-                else //No Power
-                {
-                    textColor = CustomColors.Names.Players["Normal"].Name;
-                    borderColor = CustomColors.Names.Players["Normal"].Outline;
-                    backgroundColor = CustomColors.Names.Players["Normal"].Background;
+                    case Access.Moderator:
+                        textColor = CustomColors.Names.Players["Moderator"].Name;
+                        borderColor = CustomColors.Names.Players["Moderator"].Outline;
+                        backgroundColor = CustomColors.Names.Players["Moderator"].Background;
+                        break;
+                    case Access.Admin:
+                        textColor = CustomColors.Names.Players["Admin"].Name;
+                        borderColor = CustomColors.Names.Players["Admin"].Outline;
+                        backgroundColor = CustomColors.Names.Players["Admin"].Background;
+                        break;
+                    case Access.None:
+                    default:
+                        textColor = CustomColors.Names.Players["Normal"].Name;
+                        borderColor = CustomColors.Names.Players["Normal"].Outline;
+                        backgroundColor = CustomColors.Names.Players["Normal"].Background;
+                        break;
                 }
             }
 
