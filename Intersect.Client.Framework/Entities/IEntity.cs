@@ -49,7 +49,7 @@ namespace Intersect.Client.Framework.Entities
         IReadOnlyList<int> EquipmentSlots { get; }
         IReadOnlyList<Guid> Spells { get; }
         IReadOnlyList<IStatus> Status { get; }
-        int Aggression { get; }
+        NpcAggression Aggression { get; }
 
         void AddChatBubble(string text);
         float GetLabelLocation(LabelType type);

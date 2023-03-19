@@ -1,4 +1,5 @@
-﻿using MessagePack;
+﻿using Intersect.Enums;
+using MessagePack;
 
 namespace Intersect.Network.Packets.Server
 {
@@ -12,7 +13,7 @@ namespace Intersect.Network.Packets.Server
 
 
         [Key(24)]
-        public int Aggression { get; set; }
+        public NpcAggression Aggression { get; set; }
     }
 
 }

@@ -204,7 +204,7 @@ namespace Intersect.Client.Entities
 
         public EntityType Type { get; }
 
-        public int Aggression { get; set; }
+        public NpcAggression Aggression { get; set; }
 
         public int[] Vital { get; set; } = new int[(int)Enums.Vital.VitalCount];
 
@@ -1492,23 +1492,23 @@ namespace Intersect.Client.Entities
                 LabelColor? color;
                 switch (Aggression)
                 {
-                    case -1: //When entity has a target (showing aggression)
+                    case NpcAggression.Aggressive:
                         color = CustomColors.Names.Npcs["Aggressive"];
                         break;
 
-                    case 0: //Attack when attacked
+                    case NpcAggression.AttackWhenAttacked:
                         color = CustomColors.Names.Npcs["AttackWhenAttacked"];
                         break;
 
-                    case 1: //Attack on sight
+                    case NpcAggression.AttackOnSight:
                         color = CustomColors.Names.Npcs["AttackOnSight"];
                         break;
 
-                    case 3: //Guard
+                    case NpcAggression.Guard:
                         color = CustomColors.Names.Npcs["Guard"];
                         break;
 
-                    case 2: //Neutral
+                    case NpcAggression.Neutral:
                     default:
                         color = CustomColors.Names.Npcs["Neutral"];
                         break;
