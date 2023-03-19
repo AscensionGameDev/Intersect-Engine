@@ -1498,6 +1498,7 @@ namespace Intersect.Client.Entities
             MoveDir = Direction.None;
             Dir = directionToTarget;
             PacketSender.SendDirection(Dir);
+            PickLastDirection(Dir);
         }
 
         public bool TryBlock()
