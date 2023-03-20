@@ -1579,44 +1579,43 @@ namespace Intersect.Server.Entities
             }
         }
 
-        public int GetAggression(Player player)
+        /// <summary>
+        /// Determines the aggression of this NPC towards a player.
+        /// </summary>
+        /// <param name="player">The player to check the relationship with.</param>
+        /// <returns>The NPC's aggression towards the player.</returns>
+        public NpcAggression GetAggression(Player player)
         {
-            //Determines the aggression level of this npc to send to the player
             if (this.Target != null)
             {
-                return -1;
+                return NpcAggression.Aggressive;
             }
-            else
+
+            var ally = IsAllyOf(player);
+            var attackOnSight = ShouldAttackPlayerOnSight(player);
+            var canPlayerAttack = CanPlayerAttack(player);
+
+            if (ally && !canPlayerAttack)
             {
-                //Guard = 3
-                //Will attack on sight = 1
-                //Will attack if attacked = 0
-                //Can't attack nor can attack = 2
-                var ally = IsAllyOf(player);
-                var attackOnSight = ShouldAttackPlayerOnSight(player);
-                var canPlayerAttack = CanPlayerAttack(player);
-                if (ally && !canPlayerAttack)
-                {
-                    return 3;
-                }
-
-                if (attackOnSight)
-                {
-                    return 1;
-                }
-
-                if (!ally && !attackOnSight && canPlayerAttack)
-                {
-                    return 0;
-                }
-
-                if (!ally && !attackOnSight && !canPlayerAttack)
-                {
-                    return 2;
-                }
+                return NpcAggression.Guard;
             }
 
-            return 2;
+            if (attackOnSight)
+            {
+                return NpcAggression.AttackOnSight;
+            }
+
+            if (!ally && !attackOnSight && canPlayerAttack)
+            {
+                return NpcAggression.AttackWhenAttacked;
+            }
+
+            if (!ally && !attackOnSight && !canPlayerAttack)
+            {
+                return NpcAggression.Neutral;
+            }
+
+            return NpcAggression.Neutral;
         }
 
         public override EntityPacket EntityPacket(EntityPacket packet = null, Player forPlayer = null)

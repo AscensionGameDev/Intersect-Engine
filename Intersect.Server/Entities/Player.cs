@@ -830,15 +830,15 @@ namespace Intersect.Server.Entities
 
             if (Power.IsAdmin)
             {
-                pkt.AccessLevel = (int) Access.Admin;
+                pkt.AccessLevel = Access.Admin;
             }
             else if (Power.IsModerator)
             {
-                pkt.AccessLevel = (int) Access.Moderator;
+                pkt.AccessLevel = Access.Moderator;
             }
             else
             {
-                pkt.AccessLevel = 0;
+                pkt.AccessLevel = Access.None;
             }
 
             if (CombatTimer > Timing.Global.Milliseconds)

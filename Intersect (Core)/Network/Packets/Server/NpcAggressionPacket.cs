@@ -1,5 +1,6 @@
 ﻿using MessagePack;
 using System;
+using Intersect.Enums;
 
 namespace Intersect.Network.Packets.Server
 {
@@ -11,7 +12,7 @@ namespace Intersect.Network.Packets.Server
         {
         }
 
-        public NpcAggressionPacket(Guid entityId, int aggression)
+        public NpcAggressionPacket(Guid entityId, NpcAggression aggression)
         {
             EntityId = entityId;
             Aggression = aggression;
@@ -21,7 +22,7 @@ namespace Intersect.Network.Packets.Server
         public Guid EntityId { get; set; }
 
         [Key(1)]
-        public int Aggression { get; set; }
+        public NpcAggression Aggression { get; set; }
 
     }
 
