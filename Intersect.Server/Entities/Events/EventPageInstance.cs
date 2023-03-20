@@ -337,7 +337,7 @@ namespace Intersect.Server.Entities.Events
                     }
 
                     var dir = Randomization.NextDirection();
-                    if (CanMove(dir) == -1)
+                    if (MovesTo(dir) == MapAttribute.Walkable)
                     {
                         Move(dir, Player);
                     }
@@ -397,7 +397,7 @@ namespace Intersect.Server.Entities.Events
                                     var pathDir = mPathFinder.GetMove();
                                     if (pathDir > Direction.None)
                                     {
-                                        if (CanMove(pathDir) == -1)
+                                        if (MovesTo(pathDir) == MapAttribute.Walkable)
                                         {
                                             Move(pathDir, forPlayer);
                                             moved = true;
@@ -438,7 +438,7 @@ namespace Intersect.Server.Entities.Events
                                             break;
                                     }
 
-                                    if (CanMove(moveDir) == -1)
+                                    if (MovesTo(moveDir) == MapAttribute.Walkable)
                                     {
                                         Move(moveDir, forPlayer);
                                         moved = true;
@@ -447,7 +447,7 @@ namespace Intersect.Server.Entities.Events
                                     {
                                         //Move Randomly
                                         moveDir = Randomization.NextDirection();
-                                        if (CanMove(moveDir) == -1)
+                                        if (MovesTo(moveDir) == MapAttribute.Walkable)
                                         {
                                             Move(moveDir, forPlayer);
                                             moved = true;
@@ -458,7 +458,7 @@ namespace Intersect.Server.Entities.Events
                                 {
                                     //Move Randomly
                                     moveDir = Randomization.NextDirection();
-                                    if (CanMove(moveDir) == -1)
+                                    if (MovesTo(moveDir) == MapAttribute.Walkable)
                                     {
                                         Move(moveDir, forPlayer);
                                         moved = true;
@@ -730,11 +730,11 @@ namespace Intersect.Server.Entities.Events
             }
         }
 
-        public override int CanMove(Direction moveDir)
+        public override MapAttribute MovesTo(Direction moveDir)
         {
             if (Player == null && mPageNum != 0)
             {
-                return -5;
+                return MapAttribute.OutOfBounds;
             }
 
             switch (moveDir)
@@ -742,34 +742,34 @@ namespace Intersect.Server.Entities.Events
                 case Direction.Up:
                     if (Y == 0)
                     {
-                        return -5;
+                        return MapAttribute.OutOfBounds;
                     }
 
                     break;
                 case Direction.Down:
                     if (Y == Options.MapHeight - 1)
                     {
-                        return -5;
+                        return MapAttribute.OutOfBounds;
                     }
 
                     break;
                 case Direction.Left:
                     if (X == 0)
                     {
-                        return -5;
+                        return MapAttribute.OutOfBounds;
                     }
 
                     break;
                 case Direction.Right:
                     if (X == Options.MapWidth - 1)
                     {
-                        return -5;
+                        return MapAttribute.OutOfBounds;
                     }
 
                     break;
             }
 
-            return base.CanMove(moveDir);
+            return base.MovesTo(moveDir);
         }
 
         public void TurnTowardsPlayer()

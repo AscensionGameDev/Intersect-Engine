@@ -381,30 +381,24 @@ namespace Intersect.Server.Entities
             }
         }
 
-        //Movement
         /// <summary>
-        ///     Determines if this entity can move in the direction given.
-        ///     Returns -5 if the tile is completely out of bounds.
-        ///     Returns -3 if a tile is blocked because of a Z dimension tile
-        ///     Returns -2 if a tile is blocked by a map attribute.
-        ///     Returns -1 for clear.
-        ///     Returns the type of entity that is blocking the way (if one exists)
+        /// Determines the attribute value of the game tile that the entity is moving to.
         /// </summary>
-        /// <param name="moveDir"></param>
-        /// <returns></returns>
-        public virtual int CanMove(Direction moveDir)
+        /// <param name="moveDir">The direction in which the entity is moving.</param>
+        /// <returns>A MapAttribute enum value representing the attribute of the game tile.</returns>
+        public virtual MapAttribute MovesTo(Direction moveDir)
         {
-            var xOffset = 0;
-            var yOffset = 0;
-
             // If this is an Npc that has the Static behaviour, it can NEVER move.
             if (this is Npc npc)
             {
                 if (npc.Base.Movement == (byte)NpcMovement.Static)
                 {
-                    return -2;
+                    return MapAttribute.Blocked;
                 }
             }
+            
+            var xOffset = 0;
+            var yOffset = 0;
 
             var tile = new TileHelper(MapId, X, Y);
             switch (moveDir)
@@ -448,9 +442,9 @@ namespace Intersect.Server.Entities
                     break;
             }
 
-            MapController mapController = null;
-            int tileX = 0;
-            int tileY = 0;
+            MapController mapController;
+            int tileX;
+            int tileY;
 
             if (tile.Translate(xOffset, yOffset))
             {
@@ -462,55 +456,50 @@ namespace Intersect.Server.Entities
                 {
                     if (tileAttribute.Type == MapAttribute.Blocked || (tileAttribute.Type == MapAttribute.Animation && ((MapAnimationAttribute)tileAttribute).IsBlock))
                     {
-                        return -2;
+                        return MapAttribute.Blocked;
                     }
 
                     if (tileAttribute.Type == MapAttribute.NpcAvoid && (this is Npc || (this is EventPageInstance evtPage && !evtPage.MyPage.IgnoreNpcAvoids)))
                     {
-                        return -2;
+                        return MapAttribute.Blocked;
                     }
 
                     if (tileAttribute.Type == MapAttribute.ZDimension &&
                         ((MapZDimensionAttribute)tileAttribute).BlockedLevel > 0 &&
                         ((MapZDimensionAttribute)tileAttribute).BlockedLevel - 1 == Z)
                     {
-                        return -3;
+                        return MapAttribute.ZDimension;
                     }
 
                     if (tileAttribute.Type == MapAttribute.Slide)
                     {
-                        if (this is EventPage)
-                        {
-                            return -4;
-                        }
-
                         switch (((MapSlideAttribute)tileAttribute).Direction)
                         {
                             case 1:
                                 if (moveDir == Direction.Down)
                                 {
-                                    return -4;
+                                    return MapAttribute.Slide;
                                 }
 
                                 break;
                             case 2:
                                 if (moveDir == Direction.Up)
                                 {
-                                    return -4;
+                                    return MapAttribute.Slide;
                                 }
 
                                 break;
                             case 3:
                                 if (moveDir == Direction.Right)
                                 {
-                                    return -4;
+                                    return MapAttribute.Slide;
                                 }
 
                                 break;
                             case 4:
                                 if (moveDir == Direction.Left)
                                 {
-                                    return -4;
+                                    return MapAttribute.Slide;
                                 }
 
                                 break;
@@ -520,7 +509,7 @@ namespace Intersect.Server.Entities
             }
             else
             {
-                return -5; //Out of Bounds
+                return MapAttribute.OutOfBounds;
             }
 
             if (!Passable)
@@ -544,24 +533,24 @@ namespace Intersect.Server.Entities
                                 //Check if this target player is passable....
                                 if (!Options.Instance.Passability.Passable[(int)targetMap.ZoneType])
                                 {
-                                    return (int)EntityType.Player;
+                                    return MapAttribute.Player;
                                 }
                             }
                             else
                             {
-                                return (int)EntityType.Player;
+                                return MapAttribute.Player;
                             }
                         }
                         else if (en is Npc)
                         {
-                            return (int)EntityType.Player;
+                            return MapAttribute.Player;
                         }
                         else if (en is Resource resource)
                         {
                             //If determine if we should walk
                             if (!resource.IsPassable())
                             {
-                                return (int)EntityType.Resource;
+                                return MapAttribute.Resource;
                             }
                         }
                     }
@@ -576,7 +565,7 @@ namespace Intersect.Server.Entities
                         {
                             if (en != null && en.X == tileX && en.Y == tileY && en.Z == Z && !en.Passable)
                             {
-                                return (int)EntityType.Event;
+                                return MapAttribute.Event;
                             }
                         }
                     }
@@ -586,17 +575,8 @@ namespace Intersect.Server.Entities
             return IsTileWalkable(tile.GetMap(), tile.GetX(), tile.GetY(), Z);
         }
 
-        protected virtual int IsTileWalkable(MapController map, int x, int y, int z)
-        {
-            //Out of bounds if no map
-            if (map == null)
-            {
-                return -5;
-            }
-
-            //Otherwise fine
-            return -1;
-        }
+        protected virtual MapAttribute IsTileWalkable(MapController map, int x, int y, int z) =>
+            map == null ? MapAttribute.OutOfBounds : MapAttribute.Walkable;
 
         protected virtual bool ProcessMoveRoute(Player forPlayer, long timeMs)
         {
@@ -608,124 +588,133 @@ namespace Intersect.Server.Entities
                 switch (MoveRoute.Actions[MoveRoute.ActionIndex].Type)
                 {
                     case MoveRouteEnum.MoveUp:
-                        if (CanMove(Direction.Up) == -1)
+                        if (MovesTo(Direction.Up) == MapAttribute.Walkable)
                         {
                             Move(Direction.Up, forPlayer, false, true);
                             moved = true;
                         }
 
                         break;
+
                     case MoveRouteEnum.MoveDown:
-                        if (CanMove(Direction.Down) == -1)
+                        if (MovesTo(Direction.Down) == MapAttribute.Walkable)
                         {
                             Move(Direction.Down, forPlayer, false, true);
                             moved = true;
                         }
 
                         break;
+
                     case MoveRouteEnum.MoveLeft:
-                        if (CanMove(Direction.Left) == -1)
+                        if (MovesTo(Direction.Left) == MapAttribute.Walkable)
                         {
                             Move(Direction.Left, forPlayer, false, true);
                             moved = true;
                         }
 
                         break;
+
                     case MoveRouteEnum.MoveRight:
-                        if (CanMove(Direction.Right) == -1)
+                        if (MovesTo(Direction.Right) == MapAttribute.Walkable)
                         {
                             Move(Direction.Right, forPlayer, false, true);
                             moved = true;
                         }
 
                         break;
+
                     case MoveRouteEnum.MoveUpLeft:
-                        if (CanMove(Direction.UpLeft) == -1)
+                        if (MovesTo(Direction.UpLeft) == MapAttribute.Walkable)
                         {
                             Move(Direction.UpLeft, forPlayer, false, true);
                             moved = true;
                         }
 
                         break;
+
                     case MoveRouteEnum.MoveUpRight:
-                        if (CanMove(Direction.UpRight) == -1)
+                        if (MovesTo(Direction.UpRight) == MapAttribute.Walkable)
                         {
                             Move(Direction.UpRight, forPlayer, false, true);
                             moved = true;
                         }
 
                         break;
+
                     case MoveRouteEnum.MoveDownRight:
-                        if (CanMove(Direction.DownRight) == -1)
+                        if (MovesTo(Direction.DownRight) == MapAttribute.Walkable)
                         {
                             Move(Direction.DownRight, forPlayer, false, true);
                             moved = true;
                         }
 
                         break;
+
                     case MoveRouteEnum.MoveDownLeft:
-                        if (CanMove(Direction.DownLeft) == -1)
+                        if (MovesTo(Direction.DownLeft) == MapAttribute.Walkable)
                         {
                             Move(Direction.DownLeft, forPlayer, false, true);
                             moved = true;
                         }
 
                         break;
+
                     case MoveRouteEnum.MoveRandomly:
                         var dir = Randomization.NextDirection();
-                        if (CanMove(dir) == -1)
+                        if (MovesTo(dir) == MapAttribute.Walkable)
                         {
                             Move(dir, forPlayer);
                             moved = true;
                         }
 
                         break;
+
                     case MoveRouteEnum.StepForward:
-                        if (CanMove(Dir) == -1)
+                        if (MovesTo(Dir) == MapAttribute.Walkable)
                         {
                             Move(Dir, forPlayer, false, true);
                             moved = true;
                         }
 
                         break;
+
                     case MoveRouteEnum.StepBack:
                         switch (Dir)
                         {
                             case Direction.Up:
                                 moveDir = Direction.Down;
-
                                 break;
+
                             case Direction.Down:
                                 moveDir = Direction.Up;
-
                                 break;
+
                             case Direction.Left:
                                 moveDir = Direction.Right;
-
                                 break;
+
                             case Direction.Right:
                                 moveDir = Direction.Left;
-
                                 break;
+
                             case Direction.UpLeft:
                                 moveDir = Direction.DownRight;
-
                                 break;
+
                             case Direction.UpRight:
                                 moveDir = Direction.DownLeft;
-
                                 break;
+
                             case Direction.DownRight:
                                 moveDir = Direction.UpLeft;
-
                                 break;
+
                             case Direction.DownLeft:
                                 moveDir = Direction.UpRight;
-
                                 break;
                         }
 
-                        if (CanMove(moveDir) == -1)
+                        if (MovesTo(moveDir) == MapAttribute.Walkable)
                         {
                             Move(moveDir, forPlayer, false, true);
                             moved = true;

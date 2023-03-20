@@ -466,7 +466,7 @@ namespace Intersect.Server.Maps
                 {
                     x = (byte)Randomization.Next(0, Options.MapWidth);
                     y = (byte)Randomization.Next(0, Options.MapHeight);
-                    if (mMapController.Attributes[x, y] == null || mMapController.Attributes[x, y].Type == (int)MapAttribute.Walkable)
+                    if (mMapController.Attributes[x, y] == null || mMapController.Attributes[x, y].Type == MapAttribute.Walkable)
                     {
                         break;
                     }

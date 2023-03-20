@@ -513,71 +513,77 @@ namespace Intersect.Server.Entities
             }
         }
 
-        public override int CanMove(Direction moveDir)
+        public override MapAttribute MovesTo(Direction moveDir)
         {
-            var canMove = base.CanMove(moveDir);
+            var movesTo = base.MovesTo(moveDir);
 
             // If configured & blocked by an entity, ignore the entity and proceed to move
-            if (Options.Instance.NpcOpts.IntangibleDuringReset && canMove > -1 )
+            if (Options.Instance.NpcOpts.IntangibleDuringReset && movesTo > MapAttribute.Walkable)
             {
-                canMove = mResetting ? -1 : canMove;
+                movesTo = mResetting ? MapAttribute.Walkable : movesTo;
             }
-            if ((canMove == -1 || canMove == -4) && IsFleeing() && Options.Instance.NpcOpts.AllowResetRadius)
+
+            if ((movesTo != MapAttribute.Walkable && movesTo != MapAttribute.Slide) || !IsFleeing() ||
+                !Options.Instance.NpcOpts.AllowResetRadius)
             {
-                var yOffset = 0;
-                var xOffset = 0;
-                var tile = new TileHelper(MapId, X, Y);
-                switch (moveDir)
+                return movesTo;
+            }
+
+            var yOffset = 0;
+            var xOffset = 0;
+
+            var tile = new TileHelper(MapId, X, Y);
+            switch (moveDir)
+            {
+                case Direction.Up:
+                    yOffset--;
+                    break;
+
+                case Direction.Down:
+                    yOffset++;
+                    break;
+
+                case Direction.Left:
+                    xOffset--;
+                    break;
+
+                case Direction.Right:
+                    xOffset++;
+                    break;
+
+                case Direction.UpLeft:
+                    yOffset--;
+                    xOffset--;
+                    break;
+
+                case Direction.UpRight:
+                    yOffset--;
+                    xOffset++;
+                    break;
+
+                case Direction.DownLeft:
+                    yOffset++;
+                    xOffset--;
+                    break;
+
+                case Direction.DownRight:
+                    yOffset++;
+                    xOffset++;
+                    break;
+            }
+
+            if (tile.Translate(xOffset, yOffset))
+            {
+                //If this would move us past our reset radius then we cannot move.
+                var dist = GetDistanceBetween(AggroCenterMap, tile.GetMap(), AggroCenterX, tile.GetX(), AggroCenterY,
+                    tile.GetY());
+                if (dist > Math.Max(Options.Npc.ResetRadius, Base.ResetRadius))
                 {
-                    case Direction.Up:
-                        yOffset--;
-
-                        break;
-                    case Direction.Down:
-                        yOffset++;
-
-                        break;
-                    case Direction.Left:
-                        xOffset--;
-
-                        break;
-                    case Direction.Right:
-                        xOffset++;
-
-                        break;
-                    case Direction.UpLeft:
-                        yOffset--;
-                        xOffset--;
-
-                        break;
-                    case Direction.UpRight:
-                        yOffset--;
-                        xOffset++;
-
-                        break;
-                    case Direction.DownLeft:
-                        yOffset++;
-                        xOffset--;
-
-                        break;
-                    case Direction.DownRight:
-                        yOffset++;
-                        xOffset++;
-
-                        break;
-                }
-
-                if (tile.Translate(xOffset, yOffset))
-                {
-                    //If this would move us past our reset radius then we cannot move.
-                    var dist = GetDistanceBetween(AggroCenterMap, tile.GetMap(), AggroCenterX, tile.GetX(), AggroCenterY, tile.GetY());
-                    if (dist > Math.Max(Options.Npc.ResetRadius, Base.ResetRadius))
-                    {
-                        return -2;
-                    }
+                    return MapAttribute.Blocked;
                 }
             }
-            return canMove;
+
+            return movesTo;
         }
 
         private void TryCastSpells()
@@ -939,7 +945,7 @@ namespace Intersect.Server.Entities
                                                 }
                                             }
 
-                                            if (CanMove(dir) == -1 || CanMove(dir) == -4)
+                                            if (MovesTo(dir) == MapAttribute.Walkable || MovesTo(dir) == MapAttribute.Slide)
                                             {
                                                 //check if NPC is snared or stunned
                                                 foreach (var status in CachedStatuses)
@@ -1047,7 +1053,7 @@ namespace Intersect.Server.Entities
                                             break;
                                     }
 
-                                    if (CanMove(dir) == -1 || CanMove(dir) == -4)
+                                    if (MovesTo(dir) == MapAttribute.Walkable || MovesTo(dir) == MapAttribute.Slide)
                                     {
                                         //check if NPC is snared or stunned
                                         foreach (var status in CachedStatuses)
@@ -1124,7 +1130,7 @@ namespace Intersect.Server.Entities
                         if (i == 0)
                         {
                             var direction = Randomization.NextDirection();
-                            if (CanMove(direction) == -1)
+                            if (MovesTo(direction) == MapAttribute.Walkable)
                             {
                                 //check if NPC is snared or stunned
                                 foreach (var status in CachedStatuses)

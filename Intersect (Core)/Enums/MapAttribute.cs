@@ -1,29 +1,38 @@
 namespace Intersect.Enums
 {
-    public enum MapAttribute : byte
+    /// <summary>
+    /// This enumeration type represents the attributes and/or entities within in-game tiles.
+    /// </summary>
+    public enum MapAttribute
     {
-        Walkable = 0,
+        Animation,
 
         Blocked,
 
-        Item,
+        Critter,
 
-        ZDimension,
-
-        NpcAvoid,
-
-        Warp,
-
-        Sound,
-
-        Resource,
-
-        Animation,
+        Event,
 
         GrappleStone,
 
+        Item,
+
+        NpcAvoid,
+
+        OutOfBounds,
+
+        Player,
+
+        Resource,
+
         Slide,
 
-        Critter
+        Sound,
+
+        Walkable,
+
+        Warp,
+
+        ZDimension
     }
 }

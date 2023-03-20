@@ -50,40 +50,20 @@ namespace Intersect.Server.Entities.Combat
             bool zdimensionPass = false
         )
         {
-            var n = 0;
             en.MoveTimer = 0;
             Range = 0;
             for (var i = 1; i <= range; i++)
             {
-                n = en.CanMove(Direction);
-                if (n == -5) //Check for out of bounds
+                switch (en.MovesTo(Direction))
                 {
-                    return;
-                } //Check for blocks
-
-                if (n == -2 && blockPass == false)
-                {
-                    return;
-                } //Check for ZDimensionTiles
-
-                if (n == -3 && zdimensionPass == false)
-                {
-                    return;
-                } //Check for active resources
-
-                if (n == (int) EntityType.Resource && activeResourcePass == false)
-                {
-                    return;
-                } //Check for dead resources
-
-                if (n == (int) EntityType.Resource && deadResourcePass == false)
-                {
-                    return;
-                } //Check for players and solid events
-
-                if (n == (int) EntityType.Player || n == (int) EntityType.Event)
-                {
-                    return;
+                    case MapAttribute.OutOfBounds:
+                    case MapAttribute.Blocked when blockPass == false:
+                    case MapAttribute.ZDimension when zdimensionPass == false:
+                    case MapAttribute.Resource when activeResourcePass == false:
+                    case MapAttribute.Resource when deadResourcePass == false:
+                    case MapAttribute.Player:
+                    case MapAttribute.Event:
+                        return;
                 }
 
                 en.Move(Direction, null, true);

@@ -571,56 +571,6 @@ namespace Intersect.Editor.Forms.DockingElements
             return 0;
         }
 
-        public int GetAttributeFromEditor()
-        {
-            if (rbBlocked.Checked == true)
-            {
-                return (int) MapAttribute.Blocked;
-            }
-            else if (rbItem.Checked == true)
-            {
-                return (int) MapAttribute.Item;
-            }
-            else if (rbZDimension.Checked == true)
-            {
-                return (int) MapAttribute.ZDimension;
-            }
-            else if (rbNPCAvoid.Checked == true)
-            {
-                return (int) MapAttribute.NpcAvoid;
-            }
-            else if (rbWarp.Checked == true)
-            {
-                return (int) MapAttribute.Warp;
-            }
-            else if (rbSound.Checked == true)
-            {
-                return (int) MapAttribute.Sound;
-            }
-            else if (rbResource.Checked == true)
-            {
-                return (int) MapAttribute.Resource;
-            }
-            else if (rbAnimation.Checked == true)
-            {
-                return (int) MapAttribute.Animation;
-            }
-            else if (rbGrappleStone.Checked == true)
-            {
-                return (int) MapAttribute.GrappleStone;
-            }
-            else if (rbSlide.Checked == true)
-            {
-                return (int) MapAttribute.Slide;
-            }
-            else if (rbCritter.Checked == true)
-            {
-                return (int) MapAttribute.Critter;
-            }
-
-            return (int) MapAttribute.Walkable;
-        }
-
         private MapAttribute SelectedMapAttributeType
         {
             get
