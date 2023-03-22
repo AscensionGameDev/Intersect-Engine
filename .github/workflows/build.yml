@@ -1,4 +1,4 @@
-name: Build Intersect
+name: Build Intersect 0.7.2-beta
 
 on:
   push:
@@ -15,9 +15,7 @@ env:
 
 jobs:
   build:
-
     runs-on: windows-latest
-
     steps:
     - name: Checkout Code
       uses: actions/checkout@v3
@@ -59,20 +57,13 @@ jobs:
         # Source to scope the NuGet API Key to.
         # nuget-api-key-source: # optional
 
-    # - run: nuget locals all -list
-
     - name: Restore NuGet Packages
       if: steps.cache-binaries.outputs.cache-hit == 'false' || steps.cache-nuget.outputs.cache-hit == 'false'
       run: nuget restore Intersect.sln
 
-    # - run: ls -R ~/.nuget/packages
-    # - run: ls -R
-
     - name: Build solution
       if: steps.cache-binaries.outputs.cache-hit == 'false' || steps.cache-nuget.outputs.cache-hit == 'false'
       run: msbuild Intersect.sln /p:Configuration=Release /p:PackageVersion=${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}${{ github.run_number }}+build.${{ github.sha }} /p:Version=0.7.2.${{ github.run_number }}
-
-    # - run: ls -R
 
     - name: Checkout assets main_upgrade branch
       uses: actions/checkout@v3
@@ -98,55 +89,7 @@ jobs:
         bundle: .github/bundles/*.json
         version: ${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}${{ github.run_number }}+build.${{ github.sha }}
 
-    # - name: Package artifacts
-    #   run: |
-    #     mkdir dist
-    #     mkdir intersect-engine
-    #     mkdir intersect-engine/client
-    #     mkdir intersect-engine/editor
-    #     mkdir intersect-engine/server
-    #     Copy-Item -Path "Intersect.Client/LICENSE.md" -Destination "intersect-engine/client"
-    #     Copy-Item -Path "Intersect.Client/bin/Release/**/Intersect Client.exe*" -Destination "intersect-engine/client"
-    #     Copy-Item -Path "Intersect.Client/bin/Release/**/Intersect Client.pdb" -Destination "intersect-engine/client"
-    #     Copy-Item -Path "Intersect.Editor/LICENSE.md" -Destination "intersect-engine/editor"
-    #     Copy-Item -Path "Intersect.Editor/bin/Release/**/Intersect Editor.exe*" -Destination "intersect-engine/editor"
-    #     Copy-Item -Path "Intersect.Editor/bin/Release/**/Intersect Editor.pdb" "intersect-engine/editor"
-    #     Copy-Item -Path "Intersect.Server/LICENSE.md" -Destination "intersect-engine/server"
-    #     Copy-Item -Path "Intersect.Server/bin/Release/**/Intersect Server.exe*" -Destination "intersect-engine/server"
-    #     Copy-Item -Path "Intersect.Server/bin/Release/**/Intersect Server.pdb" -Destination "intersect-engine/server"
-    #     Copy-Item -Path "AUTHORS.md" -Destination "intersect-engine"
-    #     Copy-Item -Path "LICENSE.md" -Destination "intersect-engine"
-    #     Copy-Item -Path "README.md" -Destination "intersect-engine"
-    #     Copy-Item -Path "Documentation" -Destination "intersect-engine" -Recurse
-    #     Compress-Archive -Path "intersect-engine" -DestinationPath "intersect-${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}${{ github.run_number }}+build.${{ github.sha }}.zip"
-
-    # - name: Upload artifacts
-    #   uses: actions/upload-artifact@v3.1.2
-    #   with:
-    #     if-no-files-found: error
-    #     name: intersect-${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}${{ github.run_number }}+build.${{ github.sha }}
-    #     path: |
-    #       AUTHORS.md
-    #       Documentation/**
-    #       Intersect.*/LICENSE.md
-    #       Intersect.Client/bin/Release/**/Intersect Client.*
-    #       Intersect.Editor/bin/Release/**/Intersect Editor.*
-    #       Intersect.Server/bin/Release/**/Intersect Server.*
-    #       LICENSE.md
-    #       README.md
-    #       !Intersect.*/bin/Release/**/*.xml
-    #       !Intersect.*/bin/Release/**/*.runtimeconfig.*
-    #     retention-days: 1
-
-    # - name: Download artifacts
-    #   uses: actions/download-artifact@v3
-    #   with:
-    #     name: intersect-${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}${{ github.run_number }}+build.${{ github.sha }}
-    #     path: artifacts
-
-    # - run: ls -R
-
-    - name: Publish Release
+    - name: Publish GitHub Release
       uses: softprops/action-gh-release@v0.1.15
       with:
         files: "dist/*.zip"
@@ -155,3 +98,9 @@ jobs:
         name: ${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}${{ github.run_number }}
         tag_name: v${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}${{ github.run_number }}
         target_commitish: ${{ github.sha }}
+
+  # publish:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Publish to Forum
+
