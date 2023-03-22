@@ -1,4 +1,4 @@
-name: Build Intersect v0.7.2-beta
+name: v0.7.2-beta
 
 on:
   push:

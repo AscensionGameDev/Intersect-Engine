@@ -8,8 +8,8 @@ body:
     attributes:
       value: |
         Thanks for taking the time to fill out this bug report! Please make sure to add as much detail as you can, preferably with video or imagery. This will help us diagnose the issue faster and thus resolve it quicker.
-        
-        If this bug presents itself in a project with custom source code modifications/edits please make sure the bug also exists in the vanilla engine builds before sharing. 
+
+        If this bug presents itself in a project with custom source code modifications/edits please make sure the bug also exists in the vanilla engine builds before sharing.
   - type: textarea
     id: description
     attributes:
@@ -23,12 +23,12 @@ body:
     attributes:
       label: Steps to Reproduce
       description: "Describe all the steps we need to take to show the behavior that you have observed. Also, include what you expected to happen and what did actually happen. If this bug the result of undesirable actions with configured game objects (ie: resources, spells, npcs, items, events, etc) please also include image of the related configurations for those game objects."
-      placeholder: | 
+      placeholder: |
         1. Step 1...
         2. Step 2...
         3. ???
         4. 🐞
-        
+
         Expected outcome: the game crashed
         Actual outcome: all was fine
     validations:
@@ -47,7 +47,7 @@ body:
     attributes:
       label: Last version that worked well
       description: Is there a version of Intersect on which this _did_ work? If yes, please provide the version number, otherwise enter 'Unknown'.
-      placeholder: E.g. v0.7.18 or Unknown
+      placeholder: E.g. v0.7.2 or Unknown
     validations:
       required: true
       email: true

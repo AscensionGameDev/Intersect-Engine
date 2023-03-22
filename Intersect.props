@@ -8,7 +8,7 @@
     <Product>Intersect Game Engine</Product>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/AscensionGameDev/Intersect-Engine</RepositoryUrl>
-    <Version>0.7.1.0</Version>
+    <Version>0.7.2.0</Version>
   </PropertyGroup>
 
   <PropertyGroup Label="Assembly Properties">
