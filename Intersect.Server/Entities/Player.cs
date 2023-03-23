@@ -1490,13 +1490,7 @@ namespace Intersect.Server.Entities
                 instance.GetEntities(true).ForEach(
                     entity =>
                     {
-                        if (entity is Npc npc &&
-                            npc.Target == null &&
-                            npc.IsAllyOf(this) &&
-                            InRangeOf(npc, npc.Base.SightRange))
-                        {
-                            npc.AssignTarget(attacker);
-                        }
+                        entity.OnNearPlayerAttacked(this, attacker);
                     }
                 );
             }

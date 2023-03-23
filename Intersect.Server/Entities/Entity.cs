@@ -2726,6 +2726,7 @@ namespace Intersect.Server.Entities
 
         public virtual void NotifySwarm(Entity attacker)
         {
+
         }
 
         protected Direction DirToEnemy(Entity en)
@@ -2943,8 +2944,6 @@ namespace Intersect.Server.Entities
             }
         }
 
-        public virtual void OnEntityDies(Entity en) { }
-
         public bool IsDead()
         {
             return Dead;
@@ -3038,6 +3037,10 @@ namespace Intersect.Server.Entities
 
             return statusPackets;
         }
+
+        public virtual void OnEntityDies(Entity en) { }
+
+        public virtual void OnNearPlayerAttacked(Player victim, Entity attacker)  { }
 
         #region Spell Cooldowns
 
