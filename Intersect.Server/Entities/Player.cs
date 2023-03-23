@@ -904,15 +904,6 @@ namespace Intersect.Server.Entities
                 evt.Value.PlayerHasDied = true;
             }
 
-            // Remove player from ALL threat lists.
-            foreach (var instance in MapController.GetSurroundingMapInstances(Map.Id, MapInstanceId, true))
-            {
-                foreach (var entity in instance.GetCachedEntities())
-                {
-                    entity.OnNearPlayerDies(this);
-                }
-            }
-
             lock (EntityLock)
             {
                 base.Die(dropItems, killer);
@@ -1485,15 +1476,7 @@ namespace Intersect.Server.Entities
             var mapController = MapController.Get(MapId);
             if (mapController == null) return;
 
-            if (MapController.TryGetInstanceFromMap(MapId, MapInstanceId, out var instance))
-            {
-                instance.GetEntities(true).ForEach(
-                    entity =>
-                    {
-                        entity.OnNearPlayerAttacked(this, attacker);
-                    }
-                );
-            }
+            base.NotifySwarm(attacker);
         }
 
         public override int CalculateAttackTime()

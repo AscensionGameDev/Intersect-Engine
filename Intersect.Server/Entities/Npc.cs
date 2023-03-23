@@ -1633,16 +1633,20 @@ namespace Intersect.Server.Entities
             return pkt;
         }
 
-        public override void OnNearPlayerDies(Player en)
+        public override void OnNearEntityDies(Entity en)
         {
-            RemoveFromDamageMap(en);
+            if (en.GetEntityType() == EntityType.Player)
+            {
+                RemoveFromDamageMap(en);
+            }
         }
 
-        public override void OnNearPlayerAttacked(Player victim, Entity attacker) 
+        public override void OnNearEntityAttacked(Entity victim, Entity attacker) 
         {
             if (Target == null &&
                 IsAllyOf(victim) &&
-                InRangeOf(this, Base.SightRange))
+                InRangeOf(this, Base.SightRange) &&
+                victim.GetEntityType() == EntityType.Player)
             {
                 AssignTarget(attacker);
             }
