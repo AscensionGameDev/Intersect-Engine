@@ -909,7 +909,7 @@ namespace Intersect.Server.Entities
             {
                 foreach (var entity in instance.GetCachedEntities())
                 {
-                    entity.OnEntityDies(this);
+                    entity.OnNearPlayerDies(this);
                 }
             }
 
