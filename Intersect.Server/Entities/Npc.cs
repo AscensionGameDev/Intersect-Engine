@@ -1633,7 +1633,7 @@ namespace Intersect.Server.Entities
             return pkt;
         }
 
-        public override void OnEntityDies(Entity en)
+        public override void OnNearPlayerDies(Player en)
         {
             RemoveFromDamageMap(en);
         }

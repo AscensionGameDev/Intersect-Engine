@@ -2724,10 +2724,7 @@ namespace Intersect.Server.Entities
             return false;
         }
 
-        public virtual void NotifySwarm(Entity attacker)
-        {
-
-        }
+        public virtual void NotifySwarm(Entity attacker) { }
 
         protected Direction DirToEnemy(Entity en)
         {
@@ -3038,7 +3035,7 @@ namespace Intersect.Server.Entities
             return statusPackets;
         }
 
-        public virtual void OnEntityDies(Entity en) { }
+        public virtual void OnNearPlayerDies(Player en) { }
 
         public virtual void OnNearPlayerAttacked(Player victim, Entity attacker)  { }
 
