@@ -2724,7 +2724,18 @@ namespace Intersect.Server.Entities
             return false;
         }
 
-        public virtual void NotifySwarm(Entity attacker) { }
+        public virtual void NotifySwarm(Entity attacker) 
+        {
+            if (MapController.TryGetInstanceFromMap(MapId, MapInstanceId, out var instance))
+            {
+                instance.GetEntities(true).ForEach(
+                    entity =>
+                    {
+                        entity.OnNearEntityAttacked(this, attacker);
+                    }
+                );
+            }
+        }
 
         protected Direction DirToEnemy(Entity en)
         {
@@ -2875,6 +2886,11 @@ namespace Intersect.Server.Entities
             foreach (var instance in MapController.GetSurroundingMapInstances(MapId, MapInstanceId, true))
             {
                 instance.ClearEntityTargetsOf(this);
+
+                foreach (var entity in instance.GetCachedEntities())
+                {
+                    entity.OnNearEntityDies(this);
+                }
             }
 
             DoT?.Clear();
@@ -3035,9 +3051,9 @@ namespace Intersect.Server.Entities
             return statusPackets;
         }
 
-        public virtual void OnNearPlayerDies(Player en) { }
+        public virtual void OnNearEntityDies(Entity en) { }
 
-        public virtual void OnNearPlayerAttacked(Player victim, Entity attacker)  { }
+        public virtual void OnNearEntityAttacked(Entity victim, Entity attacker)  { }
 
         #region Spell Cooldowns
 
