@@ -2943,6 +2943,8 @@ namespace Intersect.Server.Entities
             }
         }
 
+        public virtual void OnEntityDies(Entity en) { }
+
         public bool IsDead()
         {
             return Dead;

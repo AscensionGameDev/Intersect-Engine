@@ -1618,6 +1618,11 @@ namespace Intersect.Server.Entities
             return NpcAggression.Neutral;
         }
 
+        public override void OnEntityDies(Entity en)
+        {
+            RemoveFromDamageMap(en);
+        }
+
         public override EntityPacket EntityPacket(EntityPacket packet = null, Player forPlayer = null)
         {
             if (packet == null)

@@ -909,10 +909,7 @@ namespace Intersect.Server.Entities
             {
                 foreach (var entity in instance.GetCachedEntities())
                 {
-                    if (entity is Npc npc)
-                    {
-                        npc.RemoveFromDamageMap(this);
-                    }
+                    entity.OnEntityDies(this);
                 }
             }
 
