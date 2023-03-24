@@ -3,15 +3,15 @@ name: v0.7.2-beta
 on:
   push:
     branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+    paths-ignore:
+      - '.github/**'
 
 permissions:
   contents: write
 
 env:
   VERSION_PREFIX: 0.7.2
-  VERSION_SUFFIX: -beta.
+  VERSION_SUFFIX: -beta
 
 jobs:
   build:
@@ -21,7 +21,7 @@ jobs:
       uses: actions/checkout@v3
 
     - name: Cache binaries
-      uses: actions/cache@v3.2.6
+      uses: actions/cache@v3
       id: cache-binaries
       with:
         path: |
@@ -63,7 +63,7 @@ jobs:
 
     - name: Build solution
       if: steps.cache-binaries.outputs.cache-hit == 'false' || steps.cache-nuget.outputs.cache-hit == 'false'
-      run: msbuild Intersect.sln /p:Configuration=Release /p:PackageVersion=${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}${{ github.run_number }}+build.${{ github.sha }} /p:Version=0.7.2.${{ github.run_number }}
+      run: msbuild Intersect.sln /p:Configuration=Release /p:PackageVersion=${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}+build.${{ github.sha }} /p:Version=0.7.2.${{ github.run_number }}
 
     - name: Checkout assets main_upgrade branch
       uses: actions/checkout@v3
@@ -87,7 +87,7 @@ jobs:
       uses: AscensionGameDev/actions@4c9073d0721da476ac9337fbbfe46a9ca1ae4389
       with:
         bundle: .github/bundles/*.json
-        version: ${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}${{ github.run_number }}+build.${{ github.sha }}
+        version: ${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}+build.${{ github.sha }}
 
     - name: Publish GitHub Release
       uses: softprops/action-gh-release@v0.1.15
@@ -95,8 +95,8 @@ jobs:
         files: "dist/*.zip"
         generate_release_notes: true
         prerelease: true
-        name: ${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}${{ github.run_number }}
-        tag_name: v${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}${{ github.run_number }}
+        name: ${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}
+        tag_name: v${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}
         target_commitish: ${{ github.sha }}
 
   # publish:
