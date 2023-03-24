@@ -1,4 +1,5 @@
-﻿using Intersect.Enums;
+﻿using System;
+using Intersect.Enums;
 using Intersect.Server.Networking;
 using Intersect.Utilities;
 
@@ -50,40 +51,60 @@ namespace Intersect.Server.Entities.Combat
             bool zdimensionPass = false
         )
         {
-            var n = 0;
             en.MoveTimer = 0;
             Range = 0;
             for (var i = 1; i <= range; i++)
             {
-                n = en.CanMove(Direction);
-                if (n == -5) //Check for out of bounds
+                if (!en.CanMoveInDirection(Direction, out var blockerType, out var entityType))
                 {
-                    return;
-                } //Check for blocks
+                    switch (blockerType)
+                    {
+                        case MovementBlockerType.OutOfBounds:
+                            return;
 
-                if (n == -2 && blockPass == false)
-                {
-                    return;
-                } //Check for ZDimensionTiles
+                        case MovementBlockerType.MapAttribute:
+                            if (blockPass)
+                            {
+                                break;
+                            }
 
-                if (n == -3 && zdimensionPass == false)
-                {
-                    return;
-                } //Check for active resources
+                            return;
 
-                if (n == (int) EntityType.Resource && activeResourcePass == false)
-                {
-                    return;
-                } //Check for dead resources
+                        case MovementBlockerType.ZDimension:
+                            if (zdimensionPass)
+                            {
+                                break;
+                            }
 
-                if (n == (int) EntityType.Resource && deadResourcePass == false)
-                {
-                    return;
-                } //Check for players and solid events
+                            return;
 
-                if (n == (int) EntityType.Player || n == (int) EntityType.Event)
-                {
-                    return;
+                        case MovementBlockerType.Entity:
+                            switch (entityType)
+                            {
+                                case EntityType.Resource when activeResourcePass == false:
+                                case EntityType.Resource when deadResourcePass == false:
+                                case EntityType.Event:
+                                case EntityType.Player:
+                                case EntityType.GlobalEntity:
+                                    return;
+                                case EntityType.Projectile:
+                                    break;
+                                default:
+                                    throw new InvalidOperationException(
+                                        "Unreachable"); // TODO: Change to \UnreachableException` in .NET 7`
+                            }
+
+                            break;
+
+                        case MovementBlockerType.NotBlocked:
+                        case MovementBlockerType.Slide:
+                            break;
+
+                        default:
+                            throw
+                                new InvalidOperationException(
+                                    "Unreachable"); // TODO: Change to \UnreachableException` in .NET 7`
+                    }
                 }
 
                 en.Move(Direction, null, true);

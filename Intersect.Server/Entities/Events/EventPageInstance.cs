@@ -337,10 +337,11 @@ namespace Intersect.Server.Entities.Events
                     }
 
                     var dir = Randomization.NextDirection();
-                    if (CanMove(dir) == -1)
+                    if (CanMoveInDirection(dir))
                     {
                         Move(dir, Player);
                     }
+
                     MoveTimer = Timing.Global.Milliseconds + (long)GetMovementTime();
                 }
             }
@@ -372,339 +373,342 @@ namespace Intersect.Server.Entities.Events
                 var moved = false;
                 var shouldSendUpdate = false;
                 Direction lookDir;
-                Direction moveDir;
-                if (MoveRoute.ActionIndex < MoveRoute.Actions.Count)
-                {
-                    switch (MoveRoute.Actions[MoveRoute.ActionIndex].Type)
-                    {
-                        case MoveRouteEnum.MoveTowardsPlayer:
-                            //Pathfinding required.. this will be weird.
-                            if (forPlayer != null && GlobalClone == null) //Local Event
-                            {
-                                if (mPathFinder.GetTarget() == null ||
-                                    mPathFinder.GetTarget().TargetMapId != forPlayer.MapId ||
-                                    mPathFinder.GetTarget().TargetX != forPlayer.X ||
-                                    mPathFinder.GetTarget().TargetY != forPlayer.Y)
-                                {
-                                    mPathFinder.SetTarget(
-                                        new PathfinderTarget(forPlayer.MapId, forPlayer.X, forPlayer.Y, forPlayer.Z)
-                                    );
-                                }
 
-                                //Todo check if next to or on top of player.. if so don't run pathfinder.
-                                if (mPathFinder.Update(timeMs) == PathfinderResult.Success)
-                                {
-                                    var pathDir = mPathFinder.GetMove();
-                                    if (pathDir > Direction.None)
-                                    {
-                                        if (CanMove(pathDir) == -1)
-                                        {
-                                            Move(pathDir, forPlayer);
-                                            moved = true;
-                                        }
-                                        else
-                                        {
-                                            mPathFinder.PathFailed(timeMs);
-                                        }
-                                    }
-                                }
+                if (MoveRoute.ActionIndex >= MoveRoute.Actions.Count)
+                {
+                    return true;
+                }
+
+                switch (MoveRoute.Actions[MoveRoute.ActionIndex].Type)
+                {
+                    case MoveRouteEnum.MoveTowardsPlayer:
+                        //Pathfinding required.. this will be weird.
+                        if (forPlayer != null && GlobalClone == null) //Local Event
+                        {
+                            var target = mPathFinder.GetTarget();
+                            if (target == null ||
+                                target.TargetMapId != forPlayer.MapId ||
+                                target.TargetX != forPlayer.X ||
+                                target.TargetY != forPlayer.Y)
+                            {
+                                mPathFinder.SetTarget(
+                                    new PathfinderTarget(forPlayer.MapId, forPlayer.X, forPlayer.Y, forPlayer.Z)
+                                );
                             }
 
-                            break;
-                        case MoveRouteEnum.MoveAwayFromPlayer:
-                            //This won't be anything special.
-                            if (forPlayer != null && GlobalClone == null) //Local Event
+                            //Todo check if next to or on top of player.. if so don't run pathfinder.
+                            if (mPathFinder.Update(timeMs) != PathfinderResult.Success)
                             {
-                                moveDir = GetDirectionTo(forPlayer);
-                                if (moveDir > Direction.None)
+                                break;
+                            }
+
+                            var pathDir = mPathFinder.GetMove();
+                            if (pathDir != Direction.None && CanMoveInDirection(pathDir))
+                            {
+                                Move(pathDir, forPlayer);
+                                moved = true;
+                            }
+                            else
+                            {
+                                mPathFinder.PathFailed(timeMs);
+                            }
+                        }
+
+                        break;
+
+                    case MoveRouteEnum.MoveAwayFromPlayer:
+                        //This won't be anything special.
+                        if (forPlayer != null && GlobalClone == null) //Local Event
+                        {
+                            var moveDir = GetDirectionTo(forPlayer);
+                            if (moveDir > Direction.None)
+                            {
+                                switch (moveDir)
                                 {
-                                    switch (moveDir)
-                                    {
-                                        case Direction.Up:
-                                            moveDir = Direction.Down;
+                                    case Direction.Up:
+                                        moveDir = Direction.Down;
+                                        break;
 
-                                            break;
-                                        case Direction.Down:
-                                            moveDir = Direction.Up;
+                                    case Direction.Down:
+                                        moveDir = Direction.Up;
+                                        break;
 
-                                            break;
-                                        case Direction.Left:
-                                            moveDir = Direction.Right;
+                                    case Direction.Left:
+                                        moveDir = Direction.Right;
+                                        break;
 
-                                            break;
-                                        case Direction.Right:
-                                            moveDir = Direction.Left;
+                                    case Direction.Right:
+                                        moveDir = Direction.Left;
+                                        break;
+                                }
 
-                                            break;
-                                    }
-
-                                    if (CanMove(moveDir) == -1)
-                                    {
-                                        Move(moveDir, forPlayer);
-                                        moved = true;
-                                    }
-                                    else
-                                    {
-                                        //Move Randomly
-                                        moveDir = Randomization.NextDirection();
-                                        if (CanMove(moveDir) == -1)
-                                        {
-                                            Move(moveDir, forPlayer);
-                                            moved = true;
-                                        }
-                                    }
+                                if (CanMoveInDirection(moveDir))
+                                {
+                                    Move(moveDir, forPlayer);
+                                    moved = true;
                                 }
                                 else
                                 {
                                     //Move Randomly
                                     moveDir = Randomization.NextDirection();
-                                    if (CanMove(moveDir) == -1)
+                                    if (CanMoveInDirection(moveDir))
                                     {
                                         Move(moveDir, forPlayer);
                                         moved = true;
                                     }
                                 }
                             }
-
-                            break;
-                        case MoveRouteEnum.FacePlayer:
-                            if (forPlayer != null && GlobalClone == null) //Local Event
+                            else
                             {
-                                lookDir = GetDirectionTo(forPlayer);
-                                if (lookDir > Direction.None)
+                                //Move Randomly
+                                moveDir = Randomization.NextDirection();
+                                if (CanMoveInDirection(moveDir))
                                 {
-                                    ChangeDir(lookDir);
+                                    Move(moveDir, forPlayer);
                                     moved = true;
                                 }
                             }
-
-                            break;
-                        case MoveRouteEnum.FaceAwayFromPlayer:
-                            if (forPlayer != null && GlobalClone == null) //Local Event
-                            {
-                                lookDir = GetDirectionTo(forPlayer);
-                                if (lookDir > Direction.None)
-                                {
-                                    switch (lookDir)
-                                    {
-                                        case Direction.Up:
-                                            lookDir = Direction.Down;
-
-                                            break;
-                                        case Direction.Down:
-                                            lookDir = Direction.Up;
-
-                                            break;
-                                        case Direction.Left:
-                                            lookDir = Direction.Right;
-
-                                            break;
-                                        case Direction.Right:
-                                            lookDir = Direction.Left;
-
-                                            break;
-                                    }
-
-                                    ChangeDir(lookDir);
-                                    moved = true;
-                                }
-                            }
-
-                            break;
-                        case MoveRouteEnum.SetSpeedSlowest:
-                            SetMovementSpeed(EventMovementSpeed.Slowest);
-                            shouldSendUpdate = true;
-                            moved = true;
-
-                            break;
-                        case MoveRouteEnum.SetSpeedSlower:
-                            SetMovementSpeed(EventMovementSpeed.Slower);
-                            shouldSendUpdate = true;
-                            moved = true;
-
-                            break;
-                        case MoveRouteEnum.SetSpeedNormal:
-                            SetMovementSpeed(EventMovementSpeed.Normal);
-                            shouldSendUpdate = true;
-                            moved = true;
-
-                            break;
-                        case MoveRouteEnum.SetSpeedFaster:
-                            SetMovementSpeed(EventMovementSpeed.Faster);
-                            shouldSendUpdate = true;
-                            moved = true;
-
-                            break;
-                        case MoveRouteEnum.SetSpeedFastest:
-                            SetMovementSpeed(EventMovementSpeed.Fastest);
-                            shouldSendUpdate = true;
-                            moved = true;
-
-                            break;
-                        case MoveRouteEnum.SetFreqLowest:
-                            MovementFreq = EventMovementFrequency.Lowest;
-                            moved = true;
-
-                            break;
-                        case MoveRouteEnum.SetFreqLower:
-                            MovementFreq = EventMovementFrequency.Lower;
-                            moved = true;
-
-                            break;
-                        case MoveRouteEnum.SetFreqNormal:
-                            MovementFreq = EventMovementFrequency.Normal;
-                            moved = true;
-
-                            break;
-                        case MoveRouteEnum.SetFreqHigher:
-                            MovementFreq = EventMovementFrequency.Higher;
-                            moved = true;
-
-                            break;
-                        case MoveRouteEnum.SetFreqHighest:
-                            MovementFreq = EventMovementFrequency.Highest;
-                            moved = true;
-
-                            break;
-                        case MoveRouteEnum.WalkingAnimOn:
-                            mWalkingAnim = true;
-                            shouldSendUpdate = true;
-                            moved = true;
-
-                            break;
-                        case MoveRouteEnum.WalkingAnimOff:
-                            mWalkingAnim = false;
-                            shouldSendUpdate = true;
-                            moved = true;
-
-                            break;
-                        case MoveRouteEnum.DirectionFixOn:
-                            mDirectionFix = true;
-                            moved = true;
-
-                            break;
-                        case MoveRouteEnum.DirectionFixOff:
-                            mDirectionFix = false;
-                            moved = true;
-
-                            break;
-                        case MoveRouteEnum.WalkthroughOn:
-                            Passable = true;
-                            shouldSendUpdate = true;
-                            moved = true;
-
-                            break;
-                        case MoveRouteEnum.WalkthroughOff:
-                            Passable = false;
-                            shouldSendUpdate = true;
-                            moved = true;
-
-                            break;
-                        case MoveRouteEnum.ShowName:
-                            HideName = false;
-                            shouldSendUpdate = true;
-                            moved = true;
-
-                            break;
-                        case MoveRouteEnum.HideName:
-                            HideName = true;
-                            shouldSendUpdate = true;
-                            moved = true;
-
-                            break;
-                        case MoveRouteEnum.SetLevelBelow:
-                            mRenderLayer = EventRenderLayer.BelowPlayer;
-                            shouldSendUpdate = true;
-                            moved = true;
-
-                            break;
-                        case MoveRouteEnum.SetLevelNormal:
-                            mRenderLayer = EventRenderLayer.SameAsPlayer;
-                            shouldSendUpdate = true;
-                            moved = true;
-
-                            break;
-                        case MoveRouteEnum.SetLevelAbove:
-                            mRenderLayer = EventRenderLayer.AbovePlayer;
-                            shouldSendUpdate = true;
-                            moved = true;
-
-                            break;
-                        case MoveRouteEnum.SetGraphic:
-                            MyGraphic.Type = MoveRoute.Actions[MoveRoute.ActionIndex].Graphic.Type;
-                            MyGraphic.Filename = MoveRoute.Actions[MoveRoute.ActionIndex].Graphic.Filename;
-                            MyGraphic.X = MoveRoute.Actions[MoveRoute.ActionIndex].Graphic.X;
-                            MyGraphic.Y = MoveRoute.Actions[MoveRoute.ActionIndex].Graphic.Y;
-                            MyGraphic.Width = MoveRoute.Actions[MoveRoute.ActionIndex].Graphic.Width;
-                            MyGraphic.Height = MoveRoute.Actions[MoveRoute.ActionIndex].Graphic.Height;
-                            if (MyGraphic.Type == EventGraphicType.Sprite)
-                            {
-                                switch (MoveRoute.Actions[MoveRoute.ActionIndex].Graphic.Y)
-                                {
-                                    case 0:
-                                        Dir = Direction.Down;
-
-                                        break;
-                                    case 1:
-                                        Dir = Direction.Left;
-
-                                        break;
-                                    case 2:
-                                        Dir = Direction.Right;
-
-                                        break;
-                                    case 3:
-                                        Dir = Direction.Up;
-
-                                        break;
-                                }
-                            }
-
-                            shouldSendUpdate = true;
-                            moved = true;
-
-                            break;
-                        case MoveRouteEnum.SetAnimation:
-                            Animations.Clear();
-                            var anim = AnimationBase.Get(MoveRoute.Actions[MoveRoute.ActionIndex].AnimationId);
-                            if (anim != null)
-                            {
-                                Animations.Add(MoveRoute.Actions[MoveRoute.ActionIndex].AnimationId);
-                            }
-
-                            shouldSendUpdate = true;
-                            moved = true;
-
-                            break;
-                        default:
-                            //Gonna end up returning false because command not found
-                            return false;
-                    }
-
-                    if (moved || MoveRoute.IgnoreIfBlocked)
-                    {
-                        MoveRoute.ActionIndex++;
-                        if (MoveRoute.ActionIndex >= MoveRoute.Actions.Count)
-                        {
-                            if (MoveRoute.RepeatRoute)
-                            {
-                                MoveRoute.ActionIndex = 0;
-                            }
-
-                            MoveRoute.Complete = true;
                         }
-                    }
 
-                    if (shouldSendUpdate)
-                    {
-                        //Send Update
-                        SendToPlayer();
-                    }
+                        break;
+                    
+                    case MoveRouteEnum.FacePlayer:
+                        if (forPlayer != null && GlobalClone == null) //Local Event
+                        {
+                            lookDir = GetDirectionTo(forPlayer);
+                            if (lookDir > Direction.None)
+                            {
+                                ChangeDir(lookDir);
+                                moved = true;
+                            }
+                        }
 
-                    if (MoveTimer < Timing.Global.Milliseconds)
+                        break;
+                    
+                    case MoveRouteEnum.FaceAwayFromPlayer:
+                        if (forPlayer != null && GlobalClone == null) //Local Event
+                        {
+                            lookDir = GetDirectionTo(forPlayer);
+                            if (lookDir > Direction.None)
+                            {
+                                switch (lookDir)
+                                {
+                                    case Direction.Up:
+                                        lookDir = Direction.Down;
+                                        break;
+
+                                    case Direction.Down:
+                                        lookDir = Direction.Up;
+                                        break;
+
+                                    case Direction.Left:
+                                        lookDir = Direction.Right;
+                                        break;
+
+                                    case Direction.Right:
+                                        lookDir = Direction.Left;
+                                        break;
+                                }
+
+                                ChangeDir(lookDir);
+                                moved = true;
+                            }
+                        }
+
+                        break;
+                    
+                    case MoveRouteEnum.SetSpeedSlowest:
+                        SetMovementSpeed(EventMovementSpeed.Slowest);
+                        shouldSendUpdate = true;
+                        moved = true;
+                        break;
+
+                    case MoveRouteEnum.SetSpeedSlower:
+                        SetMovementSpeed(EventMovementSpeed.Slower);
+                        shouldSendUpdate = true;
+                        moved = true;
+                        break;
+
+                    case MoveRouteEnum.SetSpeedNormal:
+                        SetMovementSpeed(EventMovementSpeed.Normal);
+                        shouldSendUpdate = true;
+                        moved = true;
+                        break;
+
+                    case MoveRouteEnum.SetSpeedFaster:
+                        SetMovementSpeed(EventMovementSpeed.Faster);
+                        shouldSendUpdate = true;
+                        moved = true;
+                        break;
+
+                    case MoveRouteEnum.SetSpeedFastest:
+                        SetMovementSpeed(EventMovementSpeed.Fastest);
+                        shouldSendUpdate = true;
+                        moved = true;
+                        break;
+
+                    case MoveRouteEnum.SetFreqLowest:
+                        MovementFreq = EventMovementFrequency.Lowest;
+                        moved = true;
+                        break;
+
+                    case MoveRouteEnum.SetFreqLower:
+                        MovementFreq = EventMovementFrequency.Lower;
+                        moved = true;
+                        break;
+
+                    case MoveRouteEnum.SetFreqNormal:
+                        MovementFreq = EventMovementFrequency.Normal;
+                        moved = true;
+                        break;
+
+                    case MoveRouteEnum.SetFreqHigher:
+                        MovementFreq = EventMovementFrequency.Higher;
+                        moved = true;
+                        break;
+
+                    case MoveRouteEnum.SetFreqHighest:
+                        MovementFreq = EventMovementFrequency.Highest;
+                        moved = true;
+                        break;
+
+                    case MoveRouteEnum.WalkingAnimOn:
+                        mWalkingAnim = true;
+                        shouldSendUpdate = true;
+                        moved = true;
+                        break;
+
+                    case MoveRouteEnum.WalkingAnimOff:
+                        mWalkingAnim = false;
+                        shouldSendUpdate = true;
+                        moved = true;
+                        break;
+
+                    case MoveRouteEnum.DirectionFixOn:
+                        mDirectionFix = true;
+                        moved = true;
+                        break;
+
+                    case MoveRouteEnum.DirectionFixOff:
+                        mDirectionFix = false;
+                        moved = true;
+                        break;
+
+                    case MoveRouteEnum.WalkthroughOn:
+                        Passable = true;
+                        shouldSendUpdate = true;
+                        moved = true;
+                        break;
+
+                    case MoveRouteEnum.WalkthroughOff:
+                        Passable = false;
+                        shouldSendUpdate = true;
+                        moved = true;
+                        break;
+
+                    case MoveRouteEnum.ShowName:
+                        HideName = false;
+                        shouldSendUpdate = true;
+                        moved = true;
+                        break;
+
+                    case MoveRouteEnum.HideName:
+                        HideName = true;
+                        shouldSendUpdate = true;
+                        moved = true;
+                        break;
+
+                    case MoveRouteEnum.SetLevelBelow:
+                        mRenderLayer = EventRenderLayer.BelowPlayer;
+                        shouldSendUpdate = true;
+                        moved = true;
+                        break;
+
+                    case MoveRouteEnum.SetLevelNormal:
+                        mRenderLayer = EventRenderLayer.SameAsPlayer;
+                        shouldSendUpdate = true;
+                        moved = true;
+                        break;
+
+                    case MoveRouteEnum.SetLevelAbove:
+                        mRenderLayer = EventRenderLayer.AbovePlayer;
+                        shouldSendUpdate = true;
+                        moved = true;
+                        break;
+
+                    case MoveRouteEnum.SetGraphic:
+                        MyGraphic.Type = MoveRoute.Actions[MoveRoute.ActionIndex].Graphic.Type;
+                        MyGraphic.Filename = MoveRoute.Actions[MoveRoute.ActionIndex].Graphic.Filename;
+                        MyGraphic.X = MoveRoute.Actions[MoveRoute.ActionIndex].Graphic.X;
+                        MyGraphic.Y = MoveRoute.Actions[MoveRoute.ActionIndex].Graphic.Y;
+                        MyGraphic.Width = MoveRoute.Actions[MoveRoute.ActionIndex].Graphic.Width;
+                        MyGraphic.Height = MoveRoute.Actions[MoveRoute.ActionIndex].Graphic.Height;
+                        if (MyGraphic.Type == EventGraphicType.Sprite)
+                        {
+                            switch (MoveRoute.Actions[MoveRoute.ActionIndex].Graphic.Y)
+                            {
+                                case 0:
+                                    Dir = Direction.Down;
+                                    break;
+
+                                case 1:
+                                    Dir = Direction.Left;
+                                    break;
+
+                                case 2:
+                                    Dir = Direction.Right;
+                                    break;
+
+                                case 3:
+                                    Dir = Direction.Up;
+                                    break;
+                            }
+                        }
+
+                        shouldSendUpdate = true;
+                        moved = true;
+                        break;
+
+                    case MoveRouteEnum.SetAnimation:
+                        Animations.Clear();
+                        var anim = AnimationBase.Get(MoveRoute.Actions[MoveRoute.ActionIndex].AnimationId);
+                        if (anim != null)
+                        {
+                            Animations.Add(MoveRoute.Actions[MoveRoute.ActionIndex].AnimationId);
+                        }
+
+                        shouldSendUpdate = true;
+                        moved = true;
+                        break;
+
+                    default:
+                        //Gonna end up returning false because command not found
+                        return false;
+                }
+
+                if (moved || MoveRoute.IgnoreIfBlocked)
+                {
+                    MoveRoute.ActionIndex++;
+                    if (MoveRoute.ActionIndex >= MoveRoute.Actions.Count)
                     {
-                        MoveTimer = Timing.Global.Milliseconds + (long) GetMovementTime();
+                        if (MoveRoute.RepeatRoute)
+                        {
+                            MoveRoute.ActionIndex = 0;
+                        }
+
+                        MoveRoute.Complete = true;
                     }
+                }
+
+                if (shouldSendUpdate)
+                {
+                    //Send Update
+                    SendToPlayer();
+                }
+
+                if (MoveTimer < Timing.Global.Milliseconds)
+                {
+                    MoveTimer = Timing.Global.Milliseconds + (long)GetMovementTime();
                 }
             }
 
@@ -730,46 +734,63 @@ namespace Intersect.Server.Entities.Events
             }
         }
 
-        public override int CanMove(Direction moveDir)
+        public override bool CanMoveInDirection(Direction direction) => CanMoveInDirection(direction, out _, out _);
+
+        public override bool CanMoveInDirection(Direction direction,
+            out MovementBlockerType blockerType,
+            out EntityType entityType)
         {
             if (Player == null && mPageNum != 0)
             {
-                return -5;
+                blockerType = MovementBlockerType.OutOfBounds;
+                entityType = default;
+                return false;
             }
 
-            switch (moveDir)
+            switch (direction)
             {
                 case Direction.Up:
                     if (Y == 0)
                     {
-                        return -5;
+                        blockerType = MovementBlockerType.OutOfBounds;
+                        entityType = default;
+                        return false;
                     }
 
                     break;
+
                 case Direction.Down:
                     if (Y == Options.MapHeight - 1)
                     {
-                        return -5;
+                        blockerType = MovementBlockerType.OutOfBounds;
+                        entityType = default;
+                        return false;
                     }
 
                     break;
+
                 case Direction.Left:
                     if (X == 0)
                     {
-                        return -5;
+                        blockerType = MovementBlockerType.OutOfBounds;
+                        entityType = default;
+                        return false;
                     }
 
                     break;
+
                 case Direction.Right:
                     if (X == Options.MapWidth - 1)
                     {
-                        return -5;
+                        blockerType = MovementBlockerType.OutOfBounds;
+                        entityType = default;
+                        return false;
                     }
 
                     break;
             }
 
-            return base.CanMove(moveDir);
+            return base.CanMoveInDirection(direction, out blockerType, out entityType);
         }
 
         public void TurnTowardsPlayer()

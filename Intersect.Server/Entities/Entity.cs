@@ -381,189 +381,154 @@ namespace Intersect.Server.Entities
             }
         }
 
-        //Movement
-        /// <summary>
-        ///     Determines if this entity can move in the direction given.
-        ///     Returns -5 if the tile is completely out of bounds.
-        ///     Returns -3 if a tile is blocked because of a Z dimension tile
-        ///     Returns -2 if a tile is blocked by a map attribute.
-        ///     Returns -1 for clear.
-        ///     Returns the type of entity that is blocking the way (if one exists)
-        /// </summary>
-        /// <param name="moveDir"></param>
-        /// <returns></returns>
-        public virtual int CanMove(Direction moveDir)
-        {
-            var xOffset = 0;
-            var yOffset = 0;
+        public virtual bool CanMoveInDirection(Direction direction) => CanMoveInDirection(direction, out _, out _);
 
+        /// <summary>
+        /// Determines if this entity can move in the given direction and returns what is blocking the path.
+        /// </summary>
+        /// <param name="direction">The direction to check for movement.</param>
+        /// <param name="blockerType">Output parameter for the type of movement blocker, if any.</param>
+        /// <param name="entityType">Output parameter for the type of entity blocking movement, if any.</param>
+        /// <returns>Returns true if the entity can move in the given direction, or false if movement is blocked.</returns>
+        public virtual bool CanMoveInDirection(Direction direction,
+            out MovementBlockerType blockerType,
+            out EntityType entityType)
+        {
             // If this is an Npc that has the Static behaviour, it can NEVER move.
             if (this is Npc npc)
             {
                 if (npc.Base.Movement == (byte)NpcMovement.Static)
                 {
-                    return -2;
+                    blockerType = MovementBlockerType.OutOfBounds;
+                    entityType = default;
+                    return false;
                 }
             }
 
+            var xOffset = 0;
+            var yOffset = 0;
             var tile = new TileHelper(MapId, X, Y);
-            switch (moveDir)
+
+            switch (direction)
             {
                 case Direction.Up:
                     yOffset--;
-
                     break;
+
                 case Direction.Down:
                     yOffset++;
-
                     break;
+
                 case Direction.Left:
                     xOffset--;
-
                     break;
+
                 case Direction.Right:
                     xOffset++;
-
                     break;
+
                 case Direction.UpLeft:
                     yOffset--;
                     xOffset--;
-
                     break;
+
                 case Direction.UpRight:
                     yOffset--;
                     xOffset++;
-
                     break;
+
                 case Direction.DownRight:
                     yOffset++;
                     xOffset++;
-
                     break;
 
                 case Direction.DownLeft:
                     yOffset++;
                     xOffset--;
-
                     break;
             }
 
-            MapController mapController = null;
-            int tileX = 0;
-            int tileY = 0;
-
             if (tile.Translate(xOffset, yOffset))
             {
-                mapController = MapController.Get(tile.GetMapId());
-                tileX = tile.GetX();
-                tileY = tile.GetY();
-                var tileAttribute = mapController.Attributes[tileX, tileY];
-                if (tileAttribute != null)
-                {
-                    if (tileAttribute.Type == MapAttribute.Blocked || (tileAttribute.Type == MapAttribute.Animation && ((MapAnimationAttribute)tileAttribute).IsBlock))
-                    {
-                        return -2;
-                    }
-
-                    if (tileAttribute.Type == MapAttribute.NpcAvoid && (this is Npc || (this is EventPageInstance evtPage && !evtPage.MyPage.IgnoreNpcAvoids)))
-                    {
-                        return -2;
-                    }
-
-                    if (tileAttribute.Type == MapAttribute.ZDimension &&
-                        ((MapZDimensionAttribute)tileAttribute).BlockedLevel > 0 &&
-                        ((MapZDimensionAttribute)tileAttribute).BlockedLevel - 1 == Z)
-                    {
-                        return -3;
-                    }
-
-                    if (tileAttribute.Type == MapAttribute.Slide)
-                    {
-                        if (this is EventPage)
-                        {
-                            return -4;
-                        }
-
-                        switch (((MapSlideAttribute)tileAttribute).Direction)
-                        {
-                            case 1:
-                                if (moveDir == Direction.Down)
-                                {
-                                    return -4;
-                                }
-
-                                break;
-                            case 2:
-                                if (moveDir == Direction.Up)
-                                {
-                                    return -4;
-                                }
-
-                                break;
-                            case 3:
-                                if (moveDir == Direction.Right)
-                                {
-                                    return -4;
-                                }
-
-                                break;
-                            case 4:
-                                if (moveDir == Direction.Left)
-                                {
-                                    return -4;
-                                }
-
-                                break;
-                        }
-                    }
-                }
+                return GetTileBlocker(MapController.Get(tile.GetMapId()), tile.GetX(), tile.GetY(), Z,
+                    out blockerType, out entityType);
             }
-            else
+
+            blockerType = MovementBlockerType.OutOfBounds;
+            entityType = default;
+            return false;
+        }
+
+        protected virtual bool GetTileBlocker(MapController mapController,
+            int x,
+            int y,
+            int z,
+            out MovementBlockerType blockerType,
+            out EntityType entityType)
+        {
+            if (mapController == null)
             {
-                return -5; //Out of Bounds
+                blockerType = MovementBlockerType.OutOfBounds;
+                entityType = default;
+                return false;
+            }
+
+            var tileAttribute = mapController.Attributes[x, y];
+
+            switch (tileAttribute)
+            {
+                case MapAnimationAttribute animAttr when animAttr.IsBlock:
+                case MapBlockedAttribute _:
+                case MapNpcAvoidAttribute _
+                    when (this is Npc || (this is EventPageInstance evtPage && !evtPage.MyPage.IgnoreNpcAvoids)):
+                    blockerType = MovementBlockerType.MapAttribute;
+                    entityType = default;
+                    return false;
+
+                case MapZDimensionAttribute zAttr when zAttr.BlockedLevel > 0 && zAttr.BlockedLevel - 1 == Z:
+                    blockerType = MovementBlockerType.ZDimension;
+                    entityType = default;
+                    return false;
+
+                case MapSlideAttribute _:
+                    blockerType = MovementBlockerType.Slide;
+                    entityType = default;
+                    return false;
             }
 
             if (!Passable)
             {
-                var targetMap = mapController;
                 var mapEntities = new List<Entity>();
+                var zoneType = (int)mapController.ZoneType;
+                var blockableByPlayer = !(this is Player) || !Options.Instance.Passability.Passable[zoneType];
+
                 if (mapController.TryGetInstance(MapInstanceId, out var mapInstance))
                 {
                     mapEntities.AddRange(mapInstance.GetCachedEntities());
                 }
+
                 foreach (var en in mapEntities)
                 {
-                    if (en != null && en.X == tileX && en.Y == tileY && en.Z == Z && !en.Passable)
+                    if (en == null || en.X != x || en.Y != y || en.Z != z || en.Passable)
                     {
-                        //Set a target if a projectile
-                        CollisionIndex = en.Id;
-                        if (en is Player)
-                        {
-                            if (this is Player)
-                            {
-                                //Check if this target player is passable....
-                                if (!Options.Instance.Passability.Passable[(int)targetMap.ZoneType])
-                                {
-                                    return (int)EntityType.Player;
-                                }
-                            }
-                            else
-                            {
-                                return (int)EntityType.Player;
-                            }
-                        }
-                        else if (en is Npc)
-                        {
-                            return (int)EntityType.Player;
-                        }
-                        else if (en is Resource resource)
-                        {
-                            //If determine if we should walk
-                            if (!resource.IsPassable())
-                            {
-                                return (int)EntityType.Resource;
-                            }
-                        }
+                        continue;
+                    }
+
+                    //Set a target if a projectile
+                    CollisionIndex = en.Id;
+
+                    switch (en)
+                    {
+                        case Player _ when blockableByPlayer:
+                        case Npc _:
+                            blockerType = MovementBlockerType.Entity;
+                            entityType = EntityType.Player;
+                            return false;
+
+                        case Resource resource when !resource.IsPassable():
+                            blockerType = MovementBlockerType.Entity;
+                            entityType = EntityType.Resource;
+                            return false;
                     }
                 }
 
@@ -574,28 +539,20 @@ namespace Intersect.Server.Entities
                     {
                         foreach (var en in evt.Value.GlobalPageInstance)
                         {
-                            if (en != null && en.X == tileX && en.Y == tileY && en.Z == Z && !en.Passable)
+                            if (en != null && en.X == x && en.Y == y && en.Z == z && !en.Passable)
                             {
-                                return (int)EntityType.Event;
+                                blockerType = MovementBlockerType.Entity;
+                                entityType = EntityType.Event;
+                                return false;
                             }
                         }
                     }
                 }
             }
 
-            return IsTileWalkable(tile.GetMap(), tile.GetX(), tile.GetY(), Z);
-        }
-
-        protected virtual int IsTileWalkable(MapController map, int x, int y, int z)
-        {
-            //Out of bounds if no map
-            if (map == null)
-            {
-                return -5;
-            }
-
-            //Otherwise fine
-            return -1;
+            blockerType = MovementBlockerType.NotBlocked;
+            entityType = default;
+            return true;
         }
 
         protected virtual bool ProcessMoveRoute(Player forPlayer, long timeMs)
@@ -608,7 +565,7 @@ namespace Intersect.Server.Entities
                 switch (MoveRoute.Actions[MoveRoute.ActionIndex].Type)
                 {
                     case MoveRouteEnum.MoveUp:
-                        if (CanMove(Direction.Up) == -1)
+                        if (CanMoveInDirection(Direction.Up))
                         {
                             Move(Direction.Up, forPlayer, false, true);
                             moved = true;
@@ -616,7 +573,7 @@ namespace Intersect.Server.Entities
 
                         break;
                     case MoveRouteEnum.MoveDown:
-                        if (CanMove(Direction.Down) == -1)
+                        if (CanMoveInDirection(Direction.Down))
                         {
                             Move(Direction.Down, forPlayer, false, true);
                             moved = true;
@@ -624,7 +581,7 @@ namespace Intersect.Server.Entities
 
                         break;
                     case MoveRouteEnum.MoveLeft:
-                        if (CanMove(Direction.Left) == -1)
+                        if (CanMoveInDirection(Direction.Left))
                         {
                             Move(Direction.Left, forPlayer, false, true);
                             moved = true;
@@ -632,7 +589,7 @@ namespace Intersect.Server.Entities
 
                         break;
                     case MoveRouteEnum.MoveRight:
-                        if (CanMove(Direction.Right) == -1)
+                        if (CanMoveInDirection(Direction.Right))
                         {
                             Move(Direction.Right, forPlayer, false, true);
                             moved = true;
@@ -640,7 +597,7 @@ namespace Intersect.Server.Entities
 
                         break;
                     case MoveRouteEnum.MoveUpLeft:
-                        if (CanMove(Direction.UpLeft) == -1)
+                        if (CanMoveInDirection(Direction.UpLeft))
                         {
                             Move(Direction.UpLeft, forPlayer, false, true);
                             moved = true;
@@ -648,7 +605,7 @@ namespace Intersect.Server.Entities
 
                         break;
                     case MoveRouteEnum.MoveUpRight:
-                        if (CanMove(Direction.UpRight) == -1)
+                        if (CanMoveInDirection(Direction.UpRight))
                         {
                             Move(Direction.UpRight, forPlayer, false, true);
                             moved = true;
@@ -656,7 +613,7 @@ namespace Intersect.Server.Entities
 
                         break;
                     case MoveRouteEnum.MoveDownRight:
-                        if (CanMove(Direction.DownRight) == -1)
+                        if (CanMoveInDirection(Direction.DownRight))
                         {
                             Move(Direction.DownRight, forPlayer, false, true);
                             moved = true;
@@ -664,7 +621,7 @@ namespace Intersect.Server.Entities
 
                         break;
                     case MoveRouteEnum.MoveDownLeft:
-                        if (CanMove(Direction.DownLeft) == -1)
+                        if (CanMoveInDirection(Direction.DownLeft))
                         {
                             Move(Direction.DownLeft, forPlayer, false, true);
                             moved = true;
@@ -673,7 +630,7 @@ namespace Intersect.Server.Entities
                         break;
                     case MoveRouteEnum.MoveRandomly:
                         var dir = Randomization.NextDirection();
-                        if (CanMove(dir) == -1)
+                        if (CanMoveInDirection(dir))
                         {
                             Move(dir, forPlayer);
                             moved = true;
@@ -681,7 +638,7 @@ namespace Intersect.Server.Entities
 
                         break;
                     case MoveRouteEnum.StepForward:
-                        if (CanMove(Dir) == -1)
+                        if (CanMoveInDirection(Dir))
                         {
                             Move(Dir, forPlayer, false, true);
                             moved = true;
@@ -725,7 +682,7 @@ namespace Intersect.Server.Entities
                                 break;
                         }
 
-                        if (CanMove(moveDir) == -1)
+                        if (CanMoveInDirection(moveDir))
                         {
                             Move(moveDir, forPlayer, false, true);
                             moved = true;

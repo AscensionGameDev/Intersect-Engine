@@ -243,7 +243,7 @@ namespace Intersect.GameObjects.Maps
 
         [EditorLabel("Attributes", "Direction")]
         [EditorDictionary(nameof(Direction), "WarpDirections")]
-        public byte Direction { get; set; }
+        public Direction Direction { get; set; }
 
         public override MapAttribute Clone()
         {
