@@ -1,4 +1,4 @@
-name: v0.7.2-beta
+name: Pull Requests
 
 on:
   pull_request:
