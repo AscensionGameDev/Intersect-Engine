@@ -99,8 +99,16 @@ jobs:
         tag_name: v${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}
         target_commitish: ${{ github.sha }}
 
-  # publish:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Publish to Forum
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Publish to Forum
+        uses: AscensionGameDev/actions@1931e0237d9bc185277faa3a10e875a95fffadce
+        with:
+          api-key: ${{ secrets.INTERSECTBOT_FORUM_TOKEN }}
+          build: ${{ github.run_number }}
+          hash: ${{ github.sha }}
+          version: ${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}
+
 
