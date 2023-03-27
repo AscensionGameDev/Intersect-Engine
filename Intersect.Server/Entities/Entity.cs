@@ -2726,14 +2726,16 @@ namespace Intersect.Server.Entities
 
         public virtual void NotifySwarm(Entity attacker) 
         {
-            if (MapController.TryGetInstanceFromMap(MapId, MapInstanceId, out var instance))
+            if (!MapController.TryGetInstanceFromMap(MapId, MapInstanceId, out var instance))
             {
-                instance.GetEntities(true).ForEach(
-                    entity =>
-                    {
-                        entity.OnNearEntityAttacked(this, attacker);
-                    }
-                );
+                return;
+            }
+
+            var entities = instance.GetEntities(true);
+
+            foreach (var entity in entities)
+            {
+                entity.OnNearEntityAttacked(this, attacker);
             }
         }
 

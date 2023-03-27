@@ -1643,13 +1643,27 @@ namespace Intersect.Server.Entities
 
         public override void OnNearEntityAttacked(Entity victim, Entity attacker) 
         {
-            if (Target == null &&
-                IsAllyOf(victim) &&
-                InRangeOf(this, Base.SightRange) &&
-                victim.GetEntityType() == EntityType.Player)
+            if (Target != null)
             {
-                AssignTarget(attacker);
+                return;
             }
+
+            if (!IsAllyOf(victim))
+            {
+                return;
+            }
+
+            if (!InRangeOf(attacker, Base.SightRange))
+            {
+                return;
+            }
+
+            if (victim.GetEntityType() != EntityType.Player)
+            {
+                return;
+            }
+
+            AssignTarget(attacker);
         }
     }
 
