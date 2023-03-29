@@ -2724,7 +2724,7 @@ namespace Intersect.Server.Entities
             return false;
         }
 
-        public virtual void NotifySwarm(Entity attacker) 
+        public virtual void NotifySwarm(Entity attacker)
         {
             if (!MapController.TryGetInstanceFromMap(MapId, MapInstanceId, out var instance))
             {
