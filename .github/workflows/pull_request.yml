@@ -19,10 +19,10 @@ jobs:
       uses: actions/cache@v3.2.6
       id: cache-nuget-pr
       with:
+        key: ${{ runner.os }}-nuget-${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}-${{ hashFiles('Intersect*/*.csproj') }}
         path: |
           ~/.nuget/packages
-          Intersect*/obj/project.assets.json
-        key: ${{ runner.os }}-nuget-${{ hashFiles('Intersect.*/*.csproj') }}
+          Intersect*/obj/
 
     - name: Add msbuild to PATH
       uses: microsoft/setup-msbuild@v1.3.1

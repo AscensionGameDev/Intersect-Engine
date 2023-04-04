@@ -46,7 +46,7 @@ jobs:
         key: ${{ runner.os }}-nuget-${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}-${{ hashFiles('Intersect*/*.csproj') }}
         path: |
           ~/.nuget/packages
-          Intersect*/obj/project.assets.json
+          Intersect*/obj/
 
     - name: Cache nuget result
       if: inputs.workflowDebug == true
