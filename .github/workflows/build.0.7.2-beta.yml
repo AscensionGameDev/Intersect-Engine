@@ -98,7 +98,7 @@ jobs:
         token: ${{ secrets.INTERSECTBOT_ACCESS_TOKEN }}
 
     - name: Package artifacts
-      uses: AscensionGameDev/actions@279d01dd89d26b32437e236026d36d3fe9a4766f
+      uses: AscensionGameDev/actions@4c9073d0721da476ac9337fbbfe46a9ca1ae4389
       with:
         bundle: .github/bundles/*.json
         version: ${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}+build.${{ github.sha }}
