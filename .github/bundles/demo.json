@@ -1,0 +1,49 @@
+{
+    "directories": [
+        "Client and Editor",
+        "Server"
+    ],
+    "includes": [
+        {
+            "source": "Intersect.Client/LICENSE.md",
+            "target": "Client and Editor/LICENSE.client.md"
+        },
+        {
+            "source": "Intersect.Client/bin/Release/net462/Intersect Demo.exe*",
+            "target": "Client and Editor"
+        },
+        {
+            "source": "Intersect.Client/bin/Release/net462/Intersect Demo.pdb*",
+            "target": "Client and Editor"
+        },
+        {
+            "source": "Intersect.Editor/LICENSE.md",
+            "target": "Client and Editor/LICENSE.editor.md"
+        },
+        {
+            "source": "Intersect.Editor/bin/Release/net462/Intersect Demo Editor.exe*",
+            "target": "Client and Editor"
+        },
+        {
+            "source": "Intersect.Editor/bin/Release/net462/Intersect Demo Editor.pdb*",
+            "target": "Client and Editor"
+        },
+        {
+            "source": "Intersect.Server/LICENSE.md",
+            "target": "Server/LICENSE.md"
+        },
+        {
+            "source": "Intersect.Server/bin/Release/net462/Intersect Demo Server.exe*",
+            "target": "Server"
+        },
+        {
+            "source": "Intersect.Server/bin/Release/net462/Intersect Demo Server.pdb*",
+            "target": "Server"
+        },
+        {
+            "source": "Documentation/Intersect Documentation.url",
+            "target": "Intersect Documentation.url"
+        }
+    ],
+    "name": "patch"
+}
