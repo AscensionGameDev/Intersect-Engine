@@ -753,13 +753,11 @@ namespace Intersect.Client.Entities
                 }
             }
 
-            var inventoryQuantity = GetQuantityOfItemInInventory(itemDescriptor.Id);
             if (inventorySlot.Quantity < 2)
             {
                 PacketSender.SendDepositItem(inventorySlotIndex, 1, bankSlotIndex);
+                return;
             }
-
-            var userData = new int[2] { inventorySlotIndex, bankSlotIndex };
 
             InputBox.Open(
                 title: Strings.Bank.deposititem,
@@ -768,11 +766,10 @@ namespace Intersect.Client.Entities
                 inputType: InputBox.InputType.NumericSliderInput,
                 onSuccess: DepositItemInputBoxOkay,
                 onCancel: null,
-                userData: userData,
+                userData: new[] { inventorySlotIndex, bankSlotIndex },
                 quantity: inventorySlot.Quantity,
-                maxQuantity: inventoryQuantity
+                maxQuantity: GetQuantityOfItemInInventory(itemDescriptor.Id)
             );
-
         }
 
         private void DepositItemInputBoxOkay(object sender, EventArgs e)

@@ -194,55 +194,26 @@ namespace Intersect.Server.Entities
         /// </summary>
         /// <param name="item">The <see cref="Item"/> to check for.</param>
         /// <returns>Returns whether or not the bank instance can store this item.</returns>
-        public bool CanStoreItem(Item item)
+        private bool CanStoreItem(Item item)
         {
-            if (item.Descriptor != null)
+            // If this item isn't stackable we just need to find an open slot.
+            if (!item.Descriptor.Stackable)
             {
-                // Is the item stackable?
-                if (item.Descriptor.IsStackable)
-                {
-                    // Does the bank have this item already?
-                    var slot = FindItemSlot(item.ItemId);
-                    if (slot >= 0)
-                    {
-                        var existingSlot = mBank[slot];
+                return FindOpenSlot() != -1;
+            }
 
-                        // Can we blindly add more to this stack?
-                        var untilFull = item.Descriptor.MaxBankStack - existingSlot.Quantity;
-                        if (untilFull >= item.Quantity)
-                        {
-                            return true;
-                        }
-
-                        // Check to see if we have the inventory spaces required to hand these items out AFTER filling up the existing slot!
-                        var toGive = item.Quantity - untilFull;
-                        if (Math.Ceiling((double)toGive / item.Descriptor.MaxBankStack) <= FindOpenSlots().Count)
-                        {
-                            return true;
-                        }
-                    }
-                    // User doesn't have this item yet.
-                    else
-                    {
-                        // Does the user have enough free space for these stacks?
-                        if (Math.Ceiling((double)item.Quantity / item.Descriptor.MaxBankStack) <= FindOpenSlots().Count)
-                        {
-                            return true;
-                        }
-                    }
-                }
-                // Not a stacking item, so can we contain the amount we want to give them?
-                else
+            // If it is stackable we need to find an open slot or an existing slot that contains this item type.
+            for (var i = 0; i < mMaxSlots; i++)
+            {
+                var bankSlot = mBank[i];
+                if (bankSlot.ItemId == item.ItemId &&
+                    bankSlot.Quantity + item.Quantity <= bankSlot.Descriptor.MaxBankStack)
                 {
-                    if (FindOpenSlots().Count >= item.Quantity)
-                    {
-                        return true;
-                    }
+                    return true;
                 }
             }
 
-            // Nothing matches in here, give up!
-            return false;
+            return FindOpenSlot() != -1;
         }
 
         /// <summary>
@@ -299,6 +270,36 @@ namespace Intersect.Server.Entities
         }
 
         /// <summary>
+        /// Finds the amount of available space in the bank for a stackable item.
+        /// This method calculates the space available in the bank by checking
+        /// the number of slots that have the same item ID as the provided item, and
+        /// adding up the remaining quantity space in each of those slots. It also
+        /// checks for any empty slots in the bank, and adds the maximum stack size
+        /// of the provided item to the available space for each empty slot found.
+        /// </summary>
+        /// <param name="itemId">The ID of the stackable item to find available space for.</param>
+        /// <param name="amount">The requested amount of the item to deposit.</param>
+        /// <returns>The maximum amount of the stackable item that can be deposited in the bank.</returns>
+        private int FindAvailableSpaceForStackableItem(Guid itemId, int amount)
+        {
+            int spaceLeft = 0;
+            for (int i = 0; i < mMaxSlots; i++)
+            {
+                if (mBank[i]?.ItemId == itemId)
+                {
+                    int quantityLeft = mBank[i].Descriptor.MaxBankStack - mBank[i].Quantity;
+                    spaceLeft += quantityLeft;
+                }
+                else if (mBank[i]?.ItemId == Guid.Empty)
+                {
+                    spaceLeft += ItemBase.Get(itemId).MaxBankStack;
+                }
+            }
+
+            return Math.Min(amount, spaceLeft);
+        }
+
+        /// <summary>
         /// Checks whether or not this bank instance has enough items to accept a take operation.
         /// </summary>
         /// <param name="itemId">The ItemId to see if it can be taken away.</param>
@@ -319,79 +320,106 @@ namespace Intersect.Server.Entities
                 }
             }
 
-            var itemBase = mPlayer.Items[slot].Descriptor;
-            if (itemBase != null)
+            var inventoryItem = mPlayer.Items[slot];
+            var inventoryItemItemId = inventoryItem.ItemId;
+
+            if (inventoryItem == null || inventoryItemItemId == Guid.Empty)
             {
-                if (mPlayer.Items[slot].ItemId != Guid.Empty)
+                PacketSender.SendChatMsg(mPlayer, Strings.Banks.depositinvalid, ChatMessageType.Bank, CustomColors.Alerts.Error);
+                return false;
+            }
+
+            if ((!inventoryItem.Descriptor.CanBank && mGuild == null) ||
+                (!inventoryItem.Descriptor.CanGuildBank && mGuild != null))
+            {
+                PacketSender.SendChatMsg(mPlayer, Strings.Items.nobank, ChatMessageType.Bank, CustomColors.Items.Bound);
+                return false;
+            }
+
+            // Calculate the maximum amount that can be deposited, based on stack-ability, quantity and bank space.
+            var isStackable = inventoryItem.Descriptor.IsStackable;
+            var maxAmount = isStackable ? Math.Min(mPlayer.FindInventoryItemQuantity(inventoryItemItemId),
+                    FindAvailableSpaceForStackableItem(inventoryItemItemId, amount)) : 1;
+            amount = Math.Min(amount, maxAmount);
+
+            if (amount <= 0)
+            {
+                PacketSender.SendChatMsg(mPlayer, Strings.Banks.banknospace, ChatMessageType.Bank,
+                    CustomColors.Alerts.Error);
+                return false;
+            }
+
+            if (isStackable)
+            {
+                if (destSlot < 0 || mBank?[destSlot]?.ItemId != Guid.Empty)
                 {
-                    if ((!itemBase.CanBank && mGuild == null) || (!itemBase.CanGuildBank && mGuild != null))
+                    // Try to find an open slot with the same item type and not at maximum stack size
+                    for (int i = 0; i < mMaxSlots; i++)
                     {
-                        PacketSender.SendChatMsg(mPlayer, Strings.Items.nobank, ChatMessageType.Bank, CustomColors.Items.Bound);
-                        return false;
-                    }
-
-                    lock (mLock)
-                    {
-                        // if stackable, make sure the user actually has this many items or more.
-                        if (itemBase.IsStackable)
+                        var bankItem = mBank[i];
+                        if (bankItem.ItemId == Guid.Empty ||
+                            (bankItem.ItemId != Guid.Empty && bankItem.ItemId == inventoryItemItemId &&
+                             amount + bankItem.Quantity < bankItem.Descriptor.MaxBankStack))
                         {
-                            if (!mPlayer.CanTakeItem(itemBase.Id, amount))
-                            {
-                                amount = mPlayer.FindInventoryItemQuantity(itemBase.Id);
-                            }
+                            destSlot = i;
+                            break;
                         }
-                        else
-                        {
-                            amount = 1;
-                        }
-
-                        if (CanStoreItem(new Item(itemBase.Id, amount), destSlot))
-                        {
-                            if (itemBase.IsStackable)
-                            {
-                                PutItem(new Item(itemBase.Id, amount), destSlot, sendUpdate);
-                                mPlayer.TryTakeItem(itemBase.Id, amount, ItemHandling.Normal, sendUpdate);
-
-                                if (mGuild != null)
-                                {
-                                    DbInterface.Pool.QueueWorkItem(mGuild.Save);
-                                }
-
-                                return true;
-                            }
-                            else
-                            {
-                                PutItem(mPlayer.Items[slot], destSlot, sendUpdate);
-
-                                mPlayer.Items[slot].Set(Item.None);
-                                mPlayer.EquipmentProcessItemLoss(slot);
-
-                                if (sendUpdate)
-                                {
-                                    PacketSender.SendInventoryItemUpdate(mPlayer, slot);
-                                }
-
-                                if (mGuild != null)
-                                {
-                                    DbInterface.Pool.QueueWorkItem(mGuild.Save);
-                                }
-
-                                return true;
-                            }
-                        }
-                        else
-                        {
-                            PacketSender.SendChatMsg(mPlayer, Strings.Banks.banknospace, ChatMessageType.Bank, CustomColors.Alerts.Error);
-                        }  
                     }
                 }
-                else
+            }
+            else
+            {
+                if (destSlot < 0 || mBank?[destSlot]?.ItemId != Guid.Empty)
                 {
-                    PacketSender.SendChatMsg(mPlayer, Strings.Banks.depositinvalid, ChatMessageType.Bank, CustomColors.Alerts.Error);
+                    destSlot = FindOpenSlot();
+                }
+
+                if (destSlot < 0)
+                {
+                    PacketSender.SendChatMsg(mPlayer, Strings.Banks.banknospace, ChatMessageType.Bank,
+                        CustomColors.Alerts.Error);
+                    return false;
                 }
             }
 
-            return false;
+            lock (mLock)
+            {
+                if (CanStoreItem(new Item(inventoryItemItemId, amount), destSlot))
+                {
+                    PacketSender.SendChatMsg(mPlayer,
+                        isStackable
+                            ? Strings.Banks.DepositSuccessStackable.ToString(amount, inventoryItem.ItemName)
+                            : Strings.Banks.DepositSuccessNonStackable.ToString(inventoryItem.ItemName),
+                        ChatMessageType.Bank, CustomColors.Alerts.Success);
+
+                    if (isStackable)
+                    {
+                        PutItem(new Item(inventoryItemItemId, amount), destSlot, sendUpdate);
+                        mPlayer.TryTakeItem(inventoryItemItemId, amount, ItemHandling.Normal, sendUpdate);
+                    }
+                    else
+                    {
+                        PutItem(inventoryItem, destSlot, sendUpdate);
+                        inventoryItem.Set(Item.None);
+                        mPlayer.EquipmentProcessItemLoss(slot);
+                    }
+
+                    if (sendUpdate)
+                    {
+                        PacketSender.SendInventoryItemUpdate(mPlayer, slot);
+                    }
+
+                    if (mGuild != null)
+                    {
+                        DbInterface.Pool.QueueWorkItem(mGuild.Save);
+                    }
+
+                    return true;
+                }
+
+                PacketSender.SendChatMsg(mPlayer, Strings.Banks.banknospace, ChatMessageType.Bank, CustomColors.Alerts.Error);
+                return false;
+            }
         }
 
         public bool TryDepositItem(Item item, bool sendUpdate = true)
@@ -686,6 +714,12 @@ namespace Intersect.Server.Entities
                     mBank[slot].Set(Item.None);
                     SendBankUpdate(slot);
                 }
+                
+                PacketSender.SendChatMsg(mPlayer,
+                    itemBase.IsStackable
+                        ? Strings.Banks.WithdrawSuccessStackable.ToString(amount, itemBase.Name)
+                        : Strings.Banks.WithdrawSuccessNonStackable.ToString(itemBase.Name),
+                    ChatMessageType.Bank, CustomColors.Alerts.Success);
 
                 if (mGuild != null)
                 {
