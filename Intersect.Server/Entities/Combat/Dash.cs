@@ -81,8 +81,14 @@ namespace Intersect.Server.Entities.Combat
                         case MovementBlockerType.Entity:
                             switch (entityType)
                             {
-                                case EntityType.Resource when activeResourcePass == false:
-                                case EntityType.Resource when deadResourcePass == false:
+                                case EntityType.Resource:
+                                    if (activeResourcePass || deadResourcePass)
+                                    {
+                                        break;
+                                    }
+
+                                    return;
+
                                 case EntityType.Event:
                                 case EntityType.Player:
                                 case EntityType.GlobalEntity:
@@ -90,8 +96,7 @@ namespace Intersect.Server.Entities.Combat
                                 case EntityType.Projectile:
                                     break;
                                 default:
-                                    throw new InvalidOperationException(
-                                        "Unreachable"); // TODO: Change to \UnreachableException` in .NET 7`
+                                    throw new InvalidOperationException("Unreachable"); // TODO: Change to UnreachableException in .NET 7
                             }
 
                             break;
@@ -101,9 +106,7 @@ namespace Intersect.Server.Entities.Combat
                             break;
 
                         default:
-                            throw
-                                new InvalidOperationException(
-                                    "Unreachable"); // TODO: Change to \UnreachableException` in .NET 7`
+                            throw new InvalidOperationException("Unreachable"); // TODO: Change to UnreachableException in .NET 7
                     }
                 }
 

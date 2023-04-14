@@ -477,15 +477,37 @@ namespace Intersect.Server.Entities
 
             switch (tileAttribute)
             {
-                case MapAnimationAttribute animAttr when animAttr.IsBlock:
-                case MapBlockedAttribute _:
-                case MapNpcAvoidAttribute _
-                    when (this is Npc || (this is EventPageInstance evtPage && !evtPage.MyPage.IgnoreNpcAvoids)):
+                case MapAnimationAttribute animAttr:
+                    if (!animAttr.IsBlock)
+                    {
+                        break;
+                    }
+
                     blockerType = MovementBlockerType.MapAttribute;
                     entityType = default;
                     return false;
 
-                case MapZDimensionAttribute zAttr when zAttr.BlockedLevel > 0 && zAttr.BlockedLevel - 1 == Z:
+                case MapBlockedAttribute _:
+                    blockerType = MovementBlockerType.MapAttribute;
+                    entityType = default;
+                    return false;
+                
+                case MapNpcAvoidAttribute _:
+                    if (!(this is Npc || (this is EventPageInstance evtPage && !evtPage.MyPage.IgnoreNpcAvoids)))
+                    {
+                        break;
+                    }
+                    
+                    blockerType = MovementBlockerType.MapAttribute;
+                    entityType = default;
+                    return false;
+
+                case MapZDimensionAttribute zAttr:
+                    if (!(zAttr.BlockedLevel > 0 && zAttr.BlockedLevel - 1 == Z))
+                    {
+                        break;
+                    }
+                    
                     blockerType = MovementBlockerType.ZDimension;
                     entityType = default;
                     return false;
@@ -519,13 +541,27 @@ namespace Intersect.Server.Entities
 
                     switch (en)
                     {
-                        case Player _ when blockableByPlayer:
+                        case Player _:
+                            if (!blockableByPlayer)
+                            {
+                                break;
+                            }
+
+                            blockerType = MovementBlockerType.Entity;
+                            entityType = EntityType.Player;
+                            return false;
+
                         case Npc _:
                             blockerType = MovementBlockerType.Entity;
                             entityType = EntityType.Player;
                             return false;
 
-                        case Resource resource when !resource.IsPassable():
+                        case Resource resource:
+                            if (resource.IsPassable())
+                            {
+                                break;
+                            }
+
                             blockerType = MovementBlockerType.Entity;
                             entityType = EntityType.Resource;
                             return false;
