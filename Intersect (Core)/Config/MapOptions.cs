@@ -39,6 +39,16 @@ namespace Intersect.Config
         public LayerOptions Layers { get; set; } = new LayerOptions();
 
         /// <summary>
+        /// The width of map items.
+        /// </summary>
+        public int MapItemHeight { get; set; } = 32;
+
+        /// <summary>
+        /// The height of map items.
+        /// </summary>
+        public int MapItemWidth { get; set; } = 32;
+
+        /// <summary>
         /// The height of the map in tiles.
         /// </summary>
         public int MapHeight { get; set; } = 26;

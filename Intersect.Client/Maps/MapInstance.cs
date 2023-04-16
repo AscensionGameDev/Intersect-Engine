@@ -18,6 +18,7 @@ using Intersect.Client.General;
 using Intersect.Client.Localization;
 using Intersect.Compression;
 using Intersect.Enums;
+using Intersect.Extensions;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps;
 using Intersect.Network.Packets.Server;
@@ -718,32 +719,37 @@ namespace Intersect.Client.Maps
         public void DrawItemsAndLights()
         {
             // Draw map item icons.
-            foreach (var itemCollection in MapItems)
+            foreach (var (key, tileItems) in MapItems)
             {
-                var tileX = itemCollection.Key % Options.MapWidth;
-                var tileY = (int)Math.Floor(itemCollection.Key / (float)Options.MapWidth);
-                var tileItems = itemCollection.Value;
-
                 // Loop through this in reverse to match client/server display and pick-up order.
                 for (var index = tileItems.Count - 1; index >= 0; index--)
                 {
-                    var x = GetX() + tileX * Options.TileWidth;
-                    var y = GetY() + tileY * Options.TileHeight;
-
                     // Set up all information we need to draw this name.
                     var itemBase = ItemBase.Get(tileItems[index].ItemId);
-
                     var itemTex = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Item, itemBase.Icon);
-                    if (itemTex != null)
+
+                    if (itemTex == null)
                     {
-                        Graphics.DrawGameTexture(
-                            itemTex, new FloatRect(0, 0, itemTex.GetWidth(), itemTex.GetHeight()),
-                            new FloatRect(
-                                x, y,
-                                Options.TileWidth, Options.TileHeight
-                            ), itemBase.Color
-                        );
+                        continue;
                     }
+
+                    var tileX = key % Options.MapWidth;
+                    var tileY = (int)Math.Floor(key / (float)Options.MapWidth);
+                    var x = X + tileX * Options.TileWidth;
+                    var y = Y + tileY * Options.TileHeight;
+                    var centerX = x + (Options.TileWidth / 2);
+                    var centerY = y + (Options.TileHeight / 2);
+                    var textureWidth = Options.MapItemWidth;
+                    var textureHeight = Options.MapItemHeight;
+                    var textureXPosition = centerX - (textureWidth / 2);
+                    var textureYPosition = centerY - (textureHeight / 2);
+
+                    Graphics.DrawGameTexture(
+                        itemTex,
+                        new FloatRect(0, 0, itemTex.Width, itemTex.Height),
+                        new FloatRect(textureXPosition, textureYPosition, textureWidth, textureHeight),
+                        itemBase.Color
+                    );
                 }
             }
 

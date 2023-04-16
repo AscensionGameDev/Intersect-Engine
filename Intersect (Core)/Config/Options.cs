@@ -160,6 +160,10 @@ namespace Intersect
 
         public static bool ZDimensionVisible => Instance.MapOpts.ZDimensionVisible;
 
+        public static int MapItemHeight => Instance?.MapOpts?.MapItemHeight ?? 32;
+
+        public static int MapItemWidth => Instance?.MapOpts?.MapItemWidth ?? 32;
+
         public static int MapWidth => Instance?.MapOpts?.MapWidth ?? 32;
 
         public static int MapHeight => Instance?.MapOpts?.MapHeight ?? 26;
