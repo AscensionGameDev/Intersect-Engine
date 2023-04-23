@@ -82,12 +82,12 @@ namespace Intersect.Server.Entities.Combat
                             switch (entityType)
                             {
                                 case EntityType.Resource:
-                                    if (activeResourcePass || deadResourcePass)
+                                    if (!activeResourcePass || !deadResourcePass)
                                     {
-                                        break;
+                                        return;
                                     }
 
-                                    return;
+                                    break;
 
                                 case EntityType.Event:
                                 case EntityType.Player:
