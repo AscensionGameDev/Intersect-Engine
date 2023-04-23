@@ -194,23 +194,25 @@ namespace Intersect.Server.Entities
         /// </summary>
         /// <param name="item">The <see cref="Item"/> to check for.</param>
         /// <returns>Returns whether or not the bank instance can store this item.</returns>
-        private bool CanStoreItem(Item item)
+        public bool CanStoreItem(Item item)
         {
+            // We don't want to store null items !
+            if (item.Descriptor == null)
+            {
+                return false;
+            }
+
             // If this item isn't stackable we just need to find an open slot.
             if (!item.Descriptor.Stackable)
             {
                 return FindOpenSlot() != -1;
             }
 
-            // If it is stackable we need to find an open slot or an existing slot that contains this item type.
-            for (var i = 0; i < mMaxSlots; i++)
+            // At this point, we assume that the item is stackable, let's fill up what we can.
+            if (Math.Ceiling((double)item.Quantity / item.Descriptor.MaxBankStack) <=
+                FindAvailableSpaceForStackableItem(item.ItemId, item.Quantity))
             {
-                var bankSlot = mBank[i];
-                if (bankSlot.ItemId == item.ItemId &&
-                    bankSlot.Quantity + item.Quantity <= bankSlot.Descriptor.MaxBankStack)
-                {
-                    return true;
-                }
+                return true;
             }
 
             return FindOpenSlot() != -1;
