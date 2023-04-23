@@ -6519,7 +6519,7 @@ namespace Intersect.Server.Entities
 
                 if (instance.GlobalClone != null)
                 {
-                    instance = instance?.GlobalClone;
+                    instance = instance?.GlobalClone ?? instance;
                 }
 
                 if (instance.Map != mapController ||
@@ -6536,7 +6536,7 @@ namespace Intersect.Server.Entities
                 return false;
             }
 
-            blockerType = MovementBlockerType.NotBlocked;
+            blockerType = default;
             entityType = default;
             return true;
         }
