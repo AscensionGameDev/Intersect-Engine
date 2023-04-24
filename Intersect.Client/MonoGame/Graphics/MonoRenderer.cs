@@ -203,7 +203,7 @@ namespace Intersect.Client.MonoGame.Graphics
             mOldDisplayMode = currentDisplayMode;
             if (fsChanged)
             {
-                mFsChangedTimer = Timing.Global.Milliseconds + 1000;
+                mFsChangedTimer = Timing.Global.MillisecondsUtc + 1000;
             }
 
             if (fsChanged)
@@ -222,7 +222,7 @@ namespace Intersect.Client.MonoGame.Graphics
 
         public override bool Begin()
         {
-            if (mFsChangedTimer > -1 && mFsChangedTimer < Timing.Global.Milliseconds)
+            if (mFsChangedTimer > -1 && mFsChangedTimer < Timing.Global.MillisecondsUtc)
             {
                 mGraphics.PreferredBackBufferWidth--;
                 mGraphics.ApplyChanges();
@@ -685,11 +685,11 @@ namespace Intersect.Client.MonoGame.Graphics
         {
             EndSpriteBatch();
             mFpsCount++;
-            if (mFpsTimer < Timing.Global.Milliseconds)
+            if (mFpsTimer < Timing.Global.MillisecondsUtc)
             {
                 mFps = mFpsCount;
                 mFpsCount = 0;
-                mFpsTimer = Timing.Global.Milliseconds + 1000;
+                mFpsTimer = Timing.Global.MillisecondsUtc + 1000;
                 mGameWindow.Title = Strings.Main.gamename;
             }
 

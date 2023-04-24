@@ -12,7 +12,6 @@ using Intersect.Client.General;
 using Intersect.Client.Interface.Game;
 using Intersect.Client.Interface.Menu;
 using Intersect.Client.Localization;
-using Intersect.Logging;
 using Intersect.Utilities;
 using static Intersect.Client.Framework.File_Management.GameContentManager;
 
@@ -656,7 +655,7 @@ namespace Intersect.Client.Interface.Shared
         {
             if (mSettingsPanel.IsVisible &&
                 mKeybindingEditBtn != null &&
-                mKeybindingListeningTimer < Timing.Global.Milliseconds)
+                mKeybindingListeningTimer < Timing.Global.MillisecondsUtc)
             {
                 OnKeyUp(Keys.None, Keys.None);
             }
@@ -828,7 +827,7 @@ namespace Intersect.Client.Interface.Shared
                 mKeybindingEditControl = ((KeyValuePair<Control, int>)sender.UserData).Key;
                 mKeybindingEditBtn = sender;
                 Interface.GwenInput.HandleInput = false;
-                mKeybindingListeningTimer = Timing.Global.Milliseconds + 3000;
+                mKeybindingListeningTimer = Timing.Global.MillisecondsUtc + 3000;
             }
         }
 

@@ -248,7 +248,7 @@ namespace Intersect.Client.Entities
                 }
             }
 
-            AnimationTimer = Timing.Global.Milliseconds + Globals.Random.Next(0, 500);
+            AnimationTimer = Timing.Global.MillisecondsUtc + Globals.Random.Next(0, 500);
 
             //TODO Remove because fixed orrrrr change the exception text
             if (Options.EquipmentSlots.Count == 0)
@@ -809,9 +809,9 @@ namespace Intersect.Client.Entities
                 }
             }
 
-            if (AnimationTimer < Timing.Global.Milliseconds)
+            if (AnimationTimer < Timing.Global.MillisecondsUtc)
             {
-                AnimationTimer = Timing.Global.Milliseconds + 200;
+                AnimationTimer = Timing.Global.MillisecondsUtc + 200;
                 AnimationFrame++;
                 if (AnimationFrame >= SpriteFrames)
                 {
@@ -2046,7 +2046,7 @@ namespace Intersect.Client.Entities
         public void ResetSpriteFrame()
         {
             SpriteFrame = 0;
-            SpriteFrameTimer = Timing.Global.Milliseconds;
+            SpriteFrameTimer = Timing.Global.MillisecondsUtc;
         }
 
         public virtual void LoadTextures(string textureName)

@@ -152,7 +152,7 @@ namespace Intersect.Client.MonoGame.Graphics
 
         public void ResetAccessTime()
         {
-            mLastAccessTime = Timing.Global.Milliseconds + 15000;
+            mLastAccessTime = Timing.Global.MillisecondsUtc + 15000;
         }
 
         public override string GetName()
@@ -268,7 +268,7 @@ namespace Intersect.Client.MonoGame.Graphics
                 return;
             }
 
-            if (mLastAccessTime >= Timing.Global.Milliseconds)
+            if (mLastAccessTime >= Timing.Global.MillisecondsUtc)
             {
                 return;
             }

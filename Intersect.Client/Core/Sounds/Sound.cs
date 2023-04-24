@@ -72,11 +72,11 @@ namespace Intersect.Client.Core.Sounds
             {
                 if (mStoppedTime == -1)
                 {
-                    mStoppedTime = Timing.Global.Milliseconds;
+                    mStoppedTime = Timing.Global.MillisecondsUtc;
                 }
                 else
                 {
-                    if (mStoppedTime + mLoopInterval < Timing.Global.Milliseconds)
+                    if (mStoppedTime + mLoopInterval < Timing.Global.MillisecondsUtc)
                     {
                         mSound.Play();
                         mStoppedTime = -1;

@@ -53,7 +53,7 @@ namespace Intersect.Client.Entities
         {
             if (base.Update())
             {
-                if (mLastMove < Timing.Global.Milliseconds)
+                if (mLastMove < Timing.Global.MillisecondsUtc)
                 {
                     switch (mAttribute.Movement)
                     {
@@ -66,7 +66,7 @@ namespace Intersect.Client.Entities
 
                     }
 
-                    mLastMove = Timing.Global.Milliseconds + mAttribute.Frequency + Globals.Random.Next((int)(mAttribute.Frequency * .5f));
+                    mLastMove = Timing.Global.MillisecondsUtc + mAttribute.Frequency + Globals.Random.Next((int)(mAttribute.Frequency * .5f));
                 }
                 return true;
             }
@@ -80,7 +80,7 @@ namespace Intersect.Client.Entities
             var tmpY = (sbyte)Y;
             IEntity blockedBy = null;
 
-            if (IsMoving || MoveTimer >= Timing.Global.Milliseconds)
+            if (IsMoving || MoveTimer >= Timing.Global.MillisecondsUtc)
             {
                 return;
             }
@@ -171,7 +171,7 @@ namespace Intersect.Client.Entities
             {
                 X = (byte)tmpX;
                 Y = (byte)tmpY;
-                MoveTimer = Timing.Global.Milliseconds + (long)GetMovementTime();
+                MoveTimer = Timing.Global.MillisecondsUtc + (long)GetMovementTime();
             }
             else if (MoveDir != Dir)
             {

@@ -1,10 +1,7 @@
-using System.Collections.Generic;
 using System.Linq;
 using Intersect.Client.Core;
 using Intersect.Client.Core.Controls;
 using Intersect.Client.Framework.File_Management;
-using Intersect.Client.Framework.Graphics;
-using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.General;
@@ -284,7 +281,7 @@ namespace Intersect.Client.Interface.Game
                     _writer.Write(ClientConfiguration.Instance.TypewriterSounds.ElementAtOrDefault(voiceIdx));
                     if (_writer.IsDone)
                     {
-                        var disableResponse = Timing.Global.Milliseconds - _writer.DoneAtMilliseconds < _typewriterResponseDelay;
+                        var disableResponse = Timing.Global.MillisecondsUtc - _writer.DoneAtMilliseconds < _typewriterResponseDelay;
                         mEventResponse1.IsDisabled = disableResponse;
                         mEventResponse2.IsDisabled = disableResponse;
                         mEventResponse3.IsDisabled = disableResponse;

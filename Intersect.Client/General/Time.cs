@@ -37,14 +37,14 @@ namespace Intersect.Client.General
                 sUpdateTime = Timing.Global.Milliseconds + 1000;
             }
 
-            float ecTime = Timing.Global.Milliseconds - sColorUpdate;
+            float ecTime = Timing.Global.MillisecondsUtc - sColorUpdate;
             var valChange = 255 * ecTime / 10000f;
             sCurrentColor.A = LerpVal(sCurrentColor.A, sTargetColor.A, valChange);
             sCurrentColor.R = LerpVal(sCurrentColor.R, sTargetColor.R, valChange);
             sCurrentColor.G = LerpVal(sCurrentColor.G, sTargetColor.G, valChange);
             sCurrentColor.B = LerpVal(sCurrentColor.B, sTargetColor.B, valChange);
 
-            sColorUpdate = Timing.Global.Milliseconds;
+            sColorUpdate = Timing.Global.MillisecondsUtc;
         }
 
         private static float LerpVal(float val, float target, float amt)

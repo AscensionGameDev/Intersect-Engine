@@ -90,7 +90,7 @@ namespace Intersect.Client.Interface.Game.Bag
 
         void pnl_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            mClickTime = Timing.Global.Milliseconds + 500;
+            mClickTime = Timing.Global.MillisecondsUtc + 500;
         }
 
         void pnl_HoverLeave(Base sender, EventArgs arguments)
@@ -189,7 +189,7 @@ namespace Intersect.Client.Interface.Game.Bag
                         mCanDrag = true;
                         mMouseX = -1;
                         mMouseY = -1;
-                        if (Timing.Global.Milliseconds < mClickTime)
+                        if (Timing.Global.MillisecondsUtc < mClickTime)
                         {
                             mClickTime = 0;
                         }

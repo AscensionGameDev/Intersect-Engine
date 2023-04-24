@@ -29,14 +29,14 @@ namespace Intersect.Client.Core
         {
             sCurrentAction = FadeType.In;
             sFadeAmt = 255f;
-            sLastUpdate = Timing.Global.Milliseconds;
+            sLastUpdate = Timing.Global.MillisecondsUtc;
         }
 
         public static void FadeOut()
         {
             sCurrentAction = FadeType.Out;
             sFadeAmt = 0f;
-            sLastUpdate = Timing.Global.Milliseconds;
+            sLastUpdate = Timing.Global.MillisecondsUtc;
         }
 
         public static bool DoneFading()
@@ -53,7 +53,7 @@ namespace Intersect.Client.Core
         {
             if (sCurrentAction == FadeType.In)
             {
-                sFadeAmt -= (Timing.Global.Milliseconds - sLastUpdate) / sFadeRate * 255f;
+                sFadeAmt -= (Timing.Global.MillisecondsUtc - sLastUpdate) / sFadeRate * 255f;
                 if (sFadeAmt <= 0f)
                 {
                     sCurrentAction = FadeType.None;
@@ -62,7 +62,7 @@ namespace Intersect.Client.Core
             }
             else if (sCurrentAction == FadeType.Out)
             {
-                sFadeAmt += (Timing.Global.Milliseconds - sLastUpdate) / sFadeRate * 255f;
+                sFadeAmt += (Timing.Global.MillisecondsUtc - sLastUpdate) / sFadeRate * 255f;
                 if (sFadeAmt >= 255f)
                 {
                     sCurrentAction = FadeType.None;
@@ -70,7 +70,7 @@ namespace Intersect.Client.Core
                 }
             }
 
-            sLastUpdate = Timing.Global.Milliseconds;
+            sLastUpdate = Timing.Global.MillisecondsUtc;
         }
 
     }
