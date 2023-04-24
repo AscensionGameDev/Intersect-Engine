@@ -56,7 +56,7 @@ namespace Intersect.Client.Interface.Game
                 mLabel.Text = mLabelText;
 
                 // Are we still supposed to be visible?
-                if (Timing.Global.MillisecondsUtc > mDisplayUntil)
+                if (Timing.Global.Milliseconds > mDisplayUntil)
                 {
                     Hide();
                 }
@@ -71,7 +71,7 @@ namespace Intersect.Client.Interface.Game
         public void ShowAnnouncement(string announcementText, long displayTime)
         {
             mLabelText = announcementText;
-            mDisplayUntil = Timing.Global.MillisecondsUtc + displayTime;
+            mDisplayUntil = Timing.Global.Milliseconds + displayTime;
             Show();
         }
 
