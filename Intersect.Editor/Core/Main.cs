@@ -16,7 +16,7 @@ namespace Intersect.Editor.Core
     public static partial class Main
     {
 
-        private static long sAnimationTimer = Timing.Global.Milliseconds;
+        private static long sAnimationTimer = Timing.Global.MillisecondsUtc;
 
         private static int sFps;
 
@@ -30,7 +30,7 @@ namespace Intersect.Editor.Core
 
         private static FrmProgress sProgressForm;
 
-        private static long sWaterfallTimer = Timing.Global.Milliseconds;
+        private static long sWaterfallTimer = Timing.Global.MillisecondsUtc;
 
         public static void StartLoop()
         {
@@ -75,10 +75,10 @@ namespace Intersect.Editor.Core
         public static void RunFrame()
         {
             //Shooting for 30fps
-            var startTime = Timing.Global.Milliseconds;
+            var startTime = Timing.Global.MillisecondsUtc;
             sMyForm.Update();
 
-            if (sWaterfallTimer < Timing.Global.Milliseconds)
+            if (sWaterfallTimer < Timing.Global.MillisecondsUtc)
             {
                 Globals.WaterfallFrame++;
                 if (Globals.WaterfallFrame == 3)
@@ -86,10 +86,10 @@ namespace Intersect.Editor.Core
                     Globals.WaterfallFrame = 0;
                 }
 
-                sWaterfallTimer = Timing.Global.Milliseconds + 500;
+                sWaterfallTimer = Timing.Global.MillisecondsUtc + 500;
             }
 
-            if (sAnimationTimer < Timing.Global.Milliseconds)
+            if (sAnimationTimer < Timing.Global.MillisecondsUtc)
             {
                 Globals.AutotileFrame++;
                 if (Globals.AutotileFrame == 3)
@@ -97,7 +97,7 @@ namespace Intersect.Editor.Core
                     Globals.AutotileFrame = 0;
                 }
 
-                sAnimationTimer = Timing.Global.Milliseconds + 600;
+                sAnimationTimer = Timing.Global.MillisecondsUtc + 600;
             }
 
             DrawFrame();
@@ -107,15 +107,15 @@ namespace Intersect.Editor.Core
             Application.DoEvents(); // handle form events
 
             sFpsCount++;
-            if (sFpsTime < Timing.Global.Milliseconds)
+            if (sFpsTime < Timing.Global.MillisecondsUtc)
             {
                 sFps = sFpsCount;
                 sMyForm.toolStripLabelFPS.Text = Strings.MainForm.fps.ToString(sFps);
                 sFpsCount = 0;
-                sFpsTime = Timing.Global.Milliseconds + 1000;
+                sFpsTime = Timing.Global.MillisecondsUtc + 1000;
             }
 
-            Thread.Sleep(Math.Max(1, (int) (1000 / 60f - (Timing.Global.Milliseconds - startTime))));
+            Thread.Sleep(Math.Max(1, (int) (1000 / 60f - (Timing.Global.MillisecondsUtc - startTime))));
         }
 
         private static void UpdateMaps()

@@ -79,7 +79,7 @@ namespace Intersect.Editor.Content
 
         public void ResetAccessTime()
         {
-            mLastAccessTime = Timing.Global.Milliseconds + 15000;
+            mLastAccessTime = Timing.Global.MillisecondsUtc + 15000;
         }
 
         public int GetWidth()
@@ -187,7 +187,7 @@ namespace Intersect.Editor.Content
                 return;
             }
 
-            if (mLastAccessTime >= Timing.Global.Milliseconds)
+            if (mLastAccessTime >= Timing.Global.MillisecondsUtc)
             {
                 return;
             }

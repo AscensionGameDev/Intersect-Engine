@@ -1831,8 +1831,8 @@ namespace Intersect.Editor.Core
 
             // Calculate elapsed time since the last update and set maximum value for elapsedTime to
             // prevent large jumps in fog intensity (1 second maximum).
-            float elapsedTime = Math.Min(Timing.Global.Milliseconds - sFogUpdateTime, 1000);
-            sFogUpdateTime = Timing.Global.Milliseconds;
+            float elapsedTime = Math.Min(Timing.Global.MillisecondsUtc - sFogUpdateTime, 1000);
+            sFogUpdateTime = Timing.Global.MillisecondsUtc;
 
             // Calculate the number of times the fog texture needs to be drawn to cover the map area.
             var xCount = Globals.MapEditorWindow.picMap.Width * Options.TileWidth / fogTex.Width;
