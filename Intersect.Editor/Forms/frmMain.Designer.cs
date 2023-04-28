@@ -60,7 +60,7 @@ namespace Intersect.Editor.Forms
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripBtnFill = new System.Windows.Forms.ToolStripButton();
             this.toolStripBtnErase = new System.Windows.Forms.ToolStripButton();
-            this.toolStripBtnEyeDrop = new System.Windows.Forms.ToolStripButton();
+            this.toolStripBtnDropper = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripTimeButton = new System.Windows.Forms.ToolStripDropDownButton();
             this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
@@ -312,7 +312,7 @@ namespace Intersect.Editor.Forms
             this.toolStripBtnBrush.CheckState = System.Windows.Forms.CheckState.Checked;
             this.toolStripBtnBrush.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this.toolStripBtnBrush.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.toolStripBtnBrush.Image = global::Intersect.Editor.Properties.Resources.paintbrush;
+            this.toolStripBtnBrush.Image = ((System.Drawing.Image)(resources.GetObject("toolStripBtnBrush.Image")));
             this.toolStripBtnBrush.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripBtnBrush.Name = "toolStripBtnBrush";
             this.toolStripBtnBrush.Size = new System.Drawing.Size(23, 22);
@@ -370,17 +370,17 @@ namespace Intersect.Editor.Forms
             this.toolStripBtnErase.Text = "Clear Layer";
             this.toolStripBtnErase.Click += new System.EventHandler(this.toolStripBtnErase_Click);
             // 
-            // toolStripBtnEyeDrop
+            // toolStripBtnDropper
             // 
-            this.toolStripBtnEyeDrop.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripBtnEyeDrop.Enabled = false;
-            this.toolStripBtnEyeDrop.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.toolStripBtnEyeDrop.Image = ((System.Drawing.Image)(resources.GetObject("toolStripBtnEyeDrop.Image")));
-            this.toolStripBtnEyeDrop.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripBtnEyeDrop.Name = "toolStripBtnEyeDrop";
-            this.toolStripBtnEyeDrop.Size = new System.Drawing.Size(23, 22);
-            this.toolStripBtnEyeDrop.Text = "Eye Drop Tool";
-            this.toolStripBtnEyeDrop.Click += new System.EventHandler(this.toolStripBtnEyeDrop_Click);
+            this.toolStripBtnDropper.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripBtnDropper.Enabled = false;
+            this.toolStripBtnDropper.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+            this.toolStripBtnDropper.Image = ((System.Drawing.Image)(resources.GetObject("toolStripBtnDropper.Image")));
+            this.toolStripBtnDropper.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripBtnDropper.Name = "toolStripBtnDropper";
+            this.toolStripBtnDropper.Size = new System.Drawing.Size(23, 22);
+            this.toolStripBtnDropper.Text = "Dropper";
+            this.toolStripBtnDropper.Click += new System.EventHandler(this.toolStripBtnDropper_Click);
             // 
             // toolStripSeparator5
             // 
@@ -524,7 +524,7 @@ namespace Intersect.Editor.Forms
             this.toolStripSeparator5,
             this.toolStripBtnFill,
             this.toolStripBtnErase,
-            this.toolStripBtnEyeDrop,
+            this.toolStripBtnDropper,
             this.toolStripSeparator6,
             this.toolStripTimeButton,
             this.toolStripSeparator13,
@@ -1035,7 +1035,6 @@ namespace Intersect.Editor.Forms
 		}
 
 		#endregion
-		private System.Windows.Forms.ToolStripMenuItem hihiToolStripMenuItem;
 		private DarkStatusStrip statusStrip1;
 		public ToolStripStatusLabel toolStripLabelCoords;
 		private ToolStripSeparator toolStripSeparator7;
@@ -1061,7 +1060,7 @@ namespace Intersect.Editor.Forms
 		private ToolStripSeparator toolStripSeparator4;
 		public ToolStripButton toolStripBtnFill;
 		public ToolStripButton toolStripBtnErase;
-		private ToolStripButton toolStripBtnEyeDrop;
+		private ToolStripButton toolStripBtnDropper;
 		private ToolStripSeparator toolStripSeparator5;
 		private ToolStripDropDownButton toolStripTimeButton;
 		private ToolStripSeparator toolStripSeparator6;
