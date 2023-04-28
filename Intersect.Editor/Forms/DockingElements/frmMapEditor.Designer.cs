@@ -66,8 +66,10 @@ namespace Intersect.Editor.Forms.DockingElements
             this.picMap.DoubleClick += new System.EventHandler(this.picMap_DoubleClick);
             this.picMap.MouseDown += new System.Windows.Forms.MouseEventHandler(this.picMap_MouseDown);
             this.picMap.MouseEnter += new System.EventHandler(this.picMap_MouseEnter);
+            this.picMap.MouseLeave += new System.EventHandler(this.picMap_MouseLeave);
             this.picMap.MouseMove += new System.Windows.Forms.MouseEventHandler(this.picMap_MouseMove);
             this.picMap.MouseUp += new System.Windows.Forms.MouseEventHandler(this.picMap_MouseUp);
+            this.picMap.KeyDown += new System.Windows.Forms.KeyEventHandler(this.picMap_KeyDown);
             this.picMap.Resize += new System.EventHandler(this.picMap_Resize);
             //
             // tooltipMapAttribute

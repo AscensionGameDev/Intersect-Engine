@@ -3887,14 +3887,14 @@ Tick timer saved in server config.json.";
             public static LocalizedString darkness = @"Darkness";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString EyeDroppler = @"Eyedropper Tool (I)";
+            public static LocalizedString Dropper = @"Dropper (I)";
 
             public static LocalizedString edit = @"Edit";
 
             public static LocalizedString editors = @"Game Editors";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString Erase = @"Erase Tool (E)";
+            public static LocalizedString Erase = @"Erase (E)";
 
             public static LocalizedString exit = @"Exit";
 
@@ -3903,7 +3903,7 @@ Tick timer saved in server config.json.";
             public static LocalizedString file = @"File";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString Fill = @"Fill Layer Tool (F)";
+            public static LocalizedString Fill = @"Fill (F)";
 
             public static LocalizedString fog = @"Fog";
 
@@ -3933,7 +3933,7 @@ Tick timer saved in server config.json.";
             public static LocalizedString Paste = @"Paste (Ctrl + V)";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString Brush = @"Brush Tool (B)";
+            public static LocalizedString Brush = @"Brush (B)";
 
             public static LocalizedString postquestion = @"Post Question";
 
@@ -3942,16 +3942,16 @@ Tick timer saved in server config.json.";
             public static LocalizedString questeditor = @"Quest Editor";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString Rectangle = @"Rectangle Fill Tool (R)";
+            public static LocalizedString Rectangle = @"Rectangle Fill (R)";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString Redo = @"Redo (Ctrl + Y)";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString FlipHorizontal = @"Horizontal Flip Selection Tool (PageDown)";
+            public static LocalizedString FlipHorizontal = @"Horizontal Flip Selection (PageDown)";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString FlipVertical = @"Vertical Flip Selection Tool (PageUp)";
+            public static LocalizedString FlipVertical = @"Vertical Flip Selection (PageUp)";
 
             public static LocalizedString reportbug = @"Report Bug";
 
@@ -3972,7 +3972,7 @@ Tick timer saved in server config.json.";
             public static LocalizedString screenshot = @"Screenshot Map";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString Selection = @"Marquee Selection Tool (M)";
+            public static LocalizedString Selection = @"Marquee Selection (M)";
 
             public static LocalizedString selectlayers = @"Select...";
 
@@ -4537,6 +4537,9 @@ Tick timer saved in server config.json.";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString TextureSize = @"Max Texture Pack Size (Resolution):";
+            
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString CursorSprites = @"Enable cursor sprites for map tools.";
         }
 
         public partial struct ProgressForm

@@ -53,7 +53,7 @@ namespace Intersect.Editor.General
 
         public static TilesetBase CurrentTileset = null;
 
-        public static int CurrentTool = (int) EditingTool.Brush;
+        public static EditingTool CurrentTool = EditingTool.Brush;
 
         public static int CurSelH;
 
@@ -134,7 +134,7 @@ namespace Intersect.Editor.General
         //Game Object Editors
         public static FrmResource ResourceEditor;
 
-        public static int SavedTool = (int) EditingTool.Brush;
+        public static EditingTool SavedTool = EditingTool.Brush;
 
         public static bool SavingOnClose;
 
