@@ -718,9 +718,21 @@ namespace Intersect.Client.Maps
 
         public void DrawItemsAndLights()
         {
-            // Draw map item icons.
+            // Calculate tile and map item dimensions.
+            var tileWidth = (uint)Options.TileWidth;
+            var tileHeight = (uint)Options.TileHeight;
+            var preferredMapItemWidth = Options.Instance.MapOpts.MapItemWidth;
+            var preferredMapItemHeight = Options.Instance.MapOpts.MapItemHeight;
+            var mapItemWidth = preferredMapItemWidth <= 0 ? tileWidth : preferredMapItemWidth;
+            var mapItemHeight = preferredMapItemHeight <= 0 ? tileHeight : preferredMapItemHeight;
+
+            // Draw map items.
             foreach (var (key, tileItems) in MapItems)
             {
+                // Calculate tile coordinates.
+                var tileX = key % Options.MapWidth;
+                var tileY = (int)Math.Floor(key / (float)Options.MapWidth);
+
                 // Loop through this in reverse to match client/server display and pick-up order.
                 for (var index = tileItems.Count - 1; index >= 0; index--)
                 {
@@ -733,21 +745,18 @@ namespace Intersect.Client.Maps
                         continue;
                     }
 
-                    var tileX = key % Options.MapWidth;
-                    var tileY = (int)Math.Floor(key / (float)Options.MapWidth);
-                    var x = X + tileX * Options.TileWidth;
-                    var y = Y + tileY * Options.TileHeight;
-                    var centerX = x + (Options.TileWidth / 2);
-                    var centerY = y + (Options.TileHeight / 2);
-                    var textureWidth = Options.MapItemWidth;
-                    var textureHeight = Options.MapItemHeight;
-                    var textureXPosition = centerX - (textureWidth / 2);
-                    var textureYPosition = centerY - (textureHeight / 2);
+                    var x = X + tileX * tileWidth;
+                    var y = Y + tileY * tileHeight;
+                    var centerX = x + (tileWidth / 2);
+                    var centerY = y + (tileHeight / 2);
+                    var textureXPosition = centerX - (mapItemWidth / 2);
+                    var textureYPosition = centerY - (mapItemHeight / 2);
 
+                    // Draw the item texture.
                     Graphics.DrawGameTexture(
                         itemTex,
                         new FloatRect(0, 0, itemTex.Width, itemTex.Height),
-                        new FloatRect(textureXPosition, textureYPosition, textureWidth, textureHeight),
+                        new FloatRect(textureXPosition, textureYPosition, mapItemWidth, mapItemHeight),
                         itemBase.Color
                     );
                 }
@@ -757,8 +766,8 @@ namespace Intersect.Client.Maps
             foreach (var light in Lights)
             {
                 double w = light.Size;
-                var x = GetX() + (light.TileX * Options.TileWidth + light.OffsetX) + Options.TileWidth / 2f;
-                var y = GetY() + (light.TileY * Options.TileHeight + light.OffsetY) + Options.TileHeight / 2f;
+                var x = GetX() + (light.TileX * tileWidth + light.OffsetX) + tileWidth / 2f;
+                var y = GetY() + (light.TileY * tileHeight + light.OffsetY) + tileHeight / 2f;
                 Graphics.AddLight((int)x, (int)y, (int)w, light.Intensity, light.Expand, light.Color);
             }
         }

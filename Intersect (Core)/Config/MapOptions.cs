@@ -41,12 +41,12 @@ namespace Intersect.Config
         /// <summary>
         /// The width of map items.
         /// </summary>
-        public int MapItemHeight { get; set; } = 32;
+        public uint MapItemHeight { get; set; }
 
         /// <summary>
         /// The height of map items.
         /// </summary>
-        public int MapItemWidth { get; set; } = 32;
+        public uint MapItemWidth { get; set; }
 
         /// <summary>
         /// The height of the map in tiles.
