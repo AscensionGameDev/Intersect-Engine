@@ -12,6 +12,8 @@ namespace Intersect.Client.Framework.Database
 
         public bool HideOthersOnWindowOpen { get; set; }
 
+        public bool AutoToggleChatLog { get; set; }
+
         public bool TargetAccountDirection { get; set; }
 
         public int MusicVolume { get; set; }
@@ -106,6 +108,7 @@ namespace Intersect.Client.Framework.Database
             FullScreen = LoadPreference(nameof(FullScreen), false);
             EnableLighting = LoadPreference(nameof(EnableLighting), true);
             HideOthersOnWindowOpen = LoadPreference(nameof(HideOthersOnWindowOpen), true);
+            AutoToggleChatLog = LoadPreference(nameof(AutoToggleChatLog), false);
             TargetAccountDirection = LoadPreference(nameof(TargetAccountDirection), false);
             StickyTarget = LoadPreference(nameof(StickyTarget), false);
             AutoTurnToTarget = LoadPreference(nameof(AutoTurnToTarget), false);
@@ -139,6 +142,7 @@ namespace Intersect.Client.Framework.Database
             SavePreference(nameof(FullScreen), FullScreen);
             SavePreference(nameof(EnableLighting), EnableLighting);
             SavePreference(nameof(HideOthersOnWindowOpen), HideOthersOnWindowOpen);
+            SavePreference(nameof(AutoToggleChatLog), AutoToggleChatLog);
             SavePreference(nameof(TargetAccountDirection), TargetAccountDirection);
             SavePreference(nameof(StickyTarget), StickyTarget);
             SavePreference(nameof(AutoTurnToTarget), AutoTurnToTarget);

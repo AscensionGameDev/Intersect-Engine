@@ -37,6 +37,12 @@ namespace Intersect.Client.Interface.Game.Chat
 
         private Button mChatboxSendButton;
 
+        private Button _chatboxToggleLogButton;
+
+        private Button _chatboxClearLogButton;
+
+        private readonly GameTexture _chatboxTexture;
+
         private Label mChatboxText;
 
         private Label mChatboxTitle;
@@ -117,9 +123,9 @@ namespace Intersect.Client.Interface.Game.Chat
             mChatbar.IsHidden = true;
 
             mChatboxInput = new TextBox(mChatboxWindow, "ChatboxInputField");
-            mChatboxInput.SubmitPressed += ChatBoxInput_SubmitPressed;
+            mChatboxInput.SubmitPressed += ChatboxInput_SubmitPressed;
             mChatboxInput.Text = GetDefaultInputText();
-            mChatboxInput.Clicked += ChatBoxInput_Clicked;
+            mChatboxInput.Clicked += ChatboxInput_Clicked;
             mChatboxInput.IsTabable = false;
             mChatboxInput.SetMaxLength(Options.MaxChatLength);
             Interface.FocusElements.Add(mChatboxInput);
@@ -150,10 +156,19 @@ namespace Intersect.Client.Interface.Game.Chat
 
             mChatboxSendButton = new Button(mChatboxWindow, "ChatboxSendButton");
             mChatboxSendButton.Text = Strings.Chatbox.send;
-            mChatboxSendButton.Clicked += ChatBoxSendBtn_Clicked;
+            mChatboxSendButton.Clicked += ChatboxSendBtn_Clicked;
+
+            _chatboxToggleLogButton = new Button(mChatboxWindow, "ChatboxToggleLogButton");
+            _chatboxToggleLogButton.SetToolTipText(Strings.Chatbox.ToggleLogButtonToolTip);
+            _chatboxToggleLogButton.Clicked += ChatboxToggleLogBtn_Clicked;
+
+            _chatboxClearLogButton = new Button(mChatboxWindow, "ChatboxClearLogButton");
+            _chatboxClearLogButton.SetToolTipText(Strings.Chatbox.ClearLogButtonToolTip);
+            _chatboxClearLogButton.Clicked += ChatboxClearLogBtn_Clicked;
 
             mChatboxWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
 
+            _chatboxTexture = mChatboxWindow.Texture; // store chatbox texture here so we can re-use it later.
             mChatboxText.IsHidden = true;
 
             // Disable this to start, since this is the default tab we open the client on.
@@ -346,7 +361,6 @@ namespace Intersect.Client.Interface.Game.Chat
                 mChatboxMessages.GetHorizontalScrollBar().SetScrollAmount(0);
                 mMessageIndex = 0;
                 mReceivedMessage = true;
-
                 mLastTab = mCurrentTab;
             }
 
@@ -443,6 +457,10 @@ namespace Intersect.Client.Interface.Game.Chat
             {
                 mChatboxInput.Text = string.Empty;
                 mChatboxInput.Focus();
+                if (Globals.Database.AutoToggleChatLog)
+                {
+                    ShowChatLog();
+                }
             }
         }
 
@@ -455,12 +473,16 @@ namespace Intersect.Client.Interface.Game.Chat
             {
                 mChatboxInput.Text = GetDefaultInputText();
                 mChatboxMessages.Focus();
+                if (Globals.Database.AutoToggleChatLog)
+                {
+                    HideChatLog();
+                }
             }
         }
 
         //Input Handlers
         //Chatbox Window
-        void ChatBoxInput_Clicked(Base sender, ClickedEventArgs arguments)
+        void ChatboxInput_Clicked(Base sender, ClickedEventArgs arguments)
         {
             if (mChatboxInput.Text == GetDefaultInputText())
             {
@@ -468,14 +490,60 @@ namespace Intersect.Client.Interface.Game.Chat
             }
         }
 
-        void ChatBoxInput_SubmitPressed(Base sender, EventArgs arguments)
+        void ChatboxInput_SubmitPressed(Base sender, EventArgs arguments)
         {
             TrySendMessage();
         }
 
-        void ChatBoxSendBtn_Clicked(Base sender, ClickedEventArgs arguments)
+        void ChatboxSendBtn_Clicked(Base sender, ClickedEventArgs arguments)
         {
             TrySendMessage();
+        }
+
+        void ChatboxClearLogBtn_Clicked(Base sender, ClickedEventArgs arguments)
+        {
+            ChatboxMsg.ClearMessages();
+            mChatboxMessages.Clear();
+            mChatboxMessages.GetHorizontalScrollBar().SetScrollAmount(0);
+            mMessageIndex = 0;
+            mReceivedMessage = true;
+            mLastTab = mCurrentTab;
+        }
+
+        void ChatboxToggleLogBtn_Clicked(Base sender, ClickedEventArgs arguments)
+        {
+            if (mChatboxWindow.Texture != null)
+            {
+                HideChatLog();
+            }
+            else
+            {
+                ShowChatLog();
+            }
+        }
+
+        private void ShowChatLog()
+        {
+            mTabButtons[ChatboxTab.All].Show();
+            mTabButtons[ChatboxTab.Local].Show();
+            mTabButtons[ChatboxTab.Party].Show();
+            mTabButtons[ChatboxTab.Guild].Show();
+            mTabButtons[ChatboxTab.Global].Show();
+            mTabButtons[ChatboxTab.System].Show();
+            mChatboxMessages.Show();
+            mChatboxWindow.Texture = _chatboxTexture;
+        }
+
+        private void HideChatLog()
+        {
+            mTabButtons[ChatboxTab.All].Hide();
+            mTabButtons[ChatboxTab.Local].Hide();
+            mTabButtons[ChatboxTab.Party].Hide();
+            mTabButtons[ChatboxTab.Guild].Hide();
+            mTabButtons[ChatboxTab.Global].Hide();
+            mTabButtons[ChatboxTab.System].Hide();
+            mChatboxMessages.Hide();
+            mChatboxWindow.Texture = null;
         }
 
         void TrySendMessage()
@@ -515,15 +583,17 @@ namespace Intersect.Client.Interface.Game.Chat
                     Strings.Keys.keydict[Enum.GetName(typeof(Keys), key2.Key).ToLower()]
                 );
             }
-            else if (key1.Key != Keys.None && key2.Key == Keys.None)
+
+            if (key1.Key != Keys.None && key2.Key == Keys.None)
             {
                 return Strings.Chatbox.enterchat1.ToString(
                     Strings.Keys.keydict[Enum.GetName(typeof(Keys), key1.Key).ToLower()]
                 );
             }
-            else if (key1.Key != Keys.None && key2.Key != Keys.None)
+
+            if (key1.Key != Keys.None && key2.Key != Keys.None)
             {
-                return Strings.Chatbox.enterchat1.ToString(
+                return Strings.Chatbox.enterchat2.ToString(
                     Strings.Keys.keydict[Enum.GetName(typeof(Keys), key1.Key).ToLower()],
                     Strings.Keys.keydict[Enum.GetName(typeof(Keys), key2.Key).ToLower()]
                 );
