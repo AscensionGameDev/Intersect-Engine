@@ -100,7 +100,7 @@ namespace Intersect.Editor.Forms
             }
             else
             {
-                var seconds = (Globals.ReconnectTime - Timing.Global.Milliseconds) / 1000;
+                var seconds = (Globals.ReconnectTime - Timing.Global.MillisecondsUtc) / 1000;
                 statusString = Strings.Login.failedtoconnect.ToString(seconds.ToString("0"));
             }
 
