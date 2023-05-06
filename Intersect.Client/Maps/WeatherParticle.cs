@@ -43,7 +43,7 @@ namespace Intersect.Client.Maps
 
         public WeatherParticle(List<IWeatherParticle> RemoveParticle, int xvelocity, int yvelocity, AnimationBase anim)
         {
-            TransmittionTimer = Timing.Global.Milliseconds;
+            TransmittionTimer = Timing.Global.MillisecondsUtc;
             bounds = new Rectangle(0, 0, Graphics.Renderer.GetScreenWidth(), Graphics.Renderer.GetScreenHeight());
 
             xVelocity = xvelocity;
@@ -140,7 +140,7 @@ namespace Intersect.Client.Maps
             }
             else
             {
-                var timeScale = (Timing.Global.Milliseconds - TransmittionTimer) / 10f;
+                var timeScale = (Timing.Global.MillisecondsUtc - TransmittionTimer) / 10f;
                 X = originalX + xVelocity * timeScale;
                 Y = originalY + yVelocity * timeScale;
                 animInstance.SetPosition(cameraSpawnX + X, cameraSpawnY + Y, -1, -1, Guid.Empty, Direction.None, 0);

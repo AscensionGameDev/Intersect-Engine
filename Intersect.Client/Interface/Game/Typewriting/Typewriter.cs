@@ -28,7 +28,7 @@ namespace Intersect.Client.Interface.Game.Typewriting
 
         public void Initialize(List<Label> labels)
         {
-            _nextUpdateTime = Timing.Global.Milliseconds;
+            _nextUpdateTime = Timing.Global.MillisecondsUtc;
             _labels = labels;
             _lines = _labels.Select(l => l.Text).ToArray();
             _labels.ForEach(l =>
@@ -66,7 +66,7 @@ namespace Intersect.Client.Interface.Game.Typewriting
                 return;
             }
 
-            if (Timing.Global.Milliseconds < _nextUpdateTime)
+            if (Timing.Global.MillisecondsUtc < _nextUpdateTime)
             {
                 return;
             }
@@ -91,7 +91,7 @@ namespace Intersect.Client.Interface.Game.Typewriting
             var written = currentLine.Substring(0, _charIndex);
             _labels[_lineIndex].SetText(written);
 
-            _nextUpdateTime = Timing.Global.Milliseconds + GetTypingDelayFor(currentLine[_charIndex], _lastChar);
+            _nextUpdateTime = Timing.Global.MillisecondsUtc + GetTypingDelayFor(currentLine[_charIndex], _lastChar);
         }
 
         private static long GetTypingDelayFor(char currentChar, char? lastChar)
@@ -139,7 +139,7 @@ namespace Intersect.Client.Interface.Game.Typewriting
             }
 
             IsDone = true;
-            DoneAtMilliseconds = Timing.Global.Milliseconds;
+            DoneAtMilliseconds = Timing.Global.MillisecondsUtc;
         }
     }
 }

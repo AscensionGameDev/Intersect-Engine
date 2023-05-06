@@ -110,7 +110,7 @@ namespace Intersect.Client.Interface.Game.Trades
                 return;
             }
 
-            mClickTime = Timing.Global.Milliseconds + 500;
+            mClickTime = Timing.Global.MillisecondsUtc + 500;
         }
 
         void pnl_HoverLeave(Base sender, EventArgs arguments)
@@ -214,7 +214,7 @@ namespace Intersect.Client.Interface.Game.Trades
 
                         mMouseX = -1;
                         mMouseY = -1;
-                        if (Timing.Global.Milliseconds < mClickTime)
+                        if (Timing.Global.MillisecondsUtc < mClickTime)
                         {
                             mClickTime = 0;
                         }

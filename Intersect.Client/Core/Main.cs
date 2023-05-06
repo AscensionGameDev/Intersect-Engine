@@ -126,7 +126,7 @@ namespace Intersect.Client.Core
                         {
                             if (Globals.IntroComing)
                             {
-                                Globals.IntroStartTime = Timing.Global.Milliseconds;
+                                Globals.IntroStartTime = Timing.Global.MillisecondsUtc;
                             }
                             else
                             {
@@ -138,7 +138,7 @@ namespace Intersect.Client.Core
                     }
                     else
                     {
-                        if (Timing.Global.Milliseconds > Globals.IntroStartTime + Globals.IntroDelay)
+                        if (Timing.Global.MillisecondsUtc > Globals.IntroStartTime + Globals.IntroDelay)
                         {
                             //If we have shown an image long enough, fade to black -- keep track that the image is going
                             Fade.FadeOut();
@@ -311,7 +311,7 @@ namespace Intersect.Client.Core
             }
 
             //Update Game Animations
-            if (_animTimer < Timing.Global.Milliseconds)
+            if (_animTimer < Timing.Global.MillisecondsUtc)
             {
                 Globals.AnimFrame++;
                 if (Globals.AnimFrame == 3)
@@ -319,7 +319,7 @@ namespace Intersect.Client.Core
                     Globals.AnimFrame = 0;
                 }
 
-                _animTimer = Timing.Global.Milliseconds + 500;
+                _animTimer = Timing.Global.MillisecondsUtc + 500;
             }
 
             //Remove Event Holds If Invalid

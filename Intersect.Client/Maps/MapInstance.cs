@@ -1024,8 +1024,8 @@ namespace Intersect.Client.Maps
 
             // Calculate elapsed time since the last update and set maximum value for elapsedTime to
             // prevent large jumps in fog intensity (1 second maximum).
-            float elapsedTime = Math.Min(Timing.Global.Milliseconds - mFogUpdateTime, 1000);
-            mFogUpdateTime = Timing.Global.Milliseconds;
+            float elapsedTime = Math.Min(Timing.Global.MillisecondsUtc - mFogUpdateTime, 1000);
+            mFogUpdateTime = Timing.Global.MillisecondsUtc;
 
             // Update fog intensity based on whether the player is on the current map or not.
             mCurFogIntensity = Id == Globals.Me.MapId
@@ -1083,7 +1083,7 @@ namespace Intersect.Client.Maps
 
             if ((WeatherXSpeed != 0 || WeatherYSpeed != 0) && Globals.Me.MapInstance == this)
             {
-                if (Timing.Global.Milliseconds > _weatherParticleSpawnTime)
+                if (Timing.Global.MillisecondsUtc > _weatherParticleSpawnTime)
                 {
                     _weatherParticles.Add(new WeatherParticle(_removeParticles, WeatherXSpeed, WeatherYSpeed, anim));
                     var spawnTime = 25 + (int)(475 * (1f - WeatherIntensity / 100f));
@@ -1091,7 +1091,7 @@ namespace Intersect.Client.Maps
                                        (480000f /
                                         (Graphics.Renderer.GetScreenWidth() * Graphics.Renderer.GetScreenHeight())));
 
-                    _weatherParticleSpawnTime = Timing.Global.Milliseconds + spawnTime;
+                    _weatherParticleSpawnTime = Timing.Global.MillisecondsUtc + spawnTime;
                 }
             }
 
@@ -1127,8 +1127,8 @@ namespace Intersect.Client.Maps
 
         public void DrawPanorama()
         {
-            float ecTime = Timing.Global.Milliseconds - mPanoramaUpdateTime;
-            mPanoramaUpdateTime = Timing.Global.Milliseconds;
+            float ecTime = Timing.Global.MillisecondsUtc - mPanoramaUpdateTime;
+            mPanoramaUpdateTime = Timing.Global.MillisecondsUtc;
             if (Id == Globals.Me.MapId)
             {
                 if (mPanoramaIntensity != 1)
@@ -1161,8 +1161,8 @@ namespace Intersect.Client.Maps
 
         public void DrawOverlayGraphic()
         {
-            float ecTime = Timing.Global.Milliseconds - mOverlayUpdateTime;
-            mOverlayUpdateTime = Timing.Global.Milliseconds;
+            float ecTime = Timing.Global.MillisecondsUtc - mOverlayUpdateTime;
+            mOverlayUpdateTime = Timing.Global.MillisecondsUtc;
             if (Id == Globals.Me.MapId)
             {
                 if (mOverlayIntensity != 1)
@@ -1260,7 +1260,7 @@ namespace Intersect.Client.Maps
                     ActionMessages[n].Y * Options.TileHeight -
                     Options.TileHeight *
                     2 *
-                    (1000 - (ActionMessages[n].TransmissionTimer - Timing.Global.Milliseconds)) /
+                    (1000 - (ActionMessages[n].TransmissionTimer - Timing.Global.MillisecondsUtc)) /
                     1000
                 );
 

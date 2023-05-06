@@ -8,7 +8,6 @@ using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
 using Intersect.Client.Interface.Game.DescriptionWindows;
 using Intersect.Client.Localization;
-using Intersect.Client.Networking;
 using Intersect.Configuration;
 using Intersect.GameObjects;
 using Intersect.Utilities;
@@ -78,7 +77,7 @@ namespace Intersect.Client.Interface.Game.Spells
 
         void pnl_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            mClickTime = Timing.Global.Milliseconds + 500;
+            mClickTime = Timing.Global.MillisecondsUtc + 500;
         }
 
         void pnl_RightClicked(Base sender, ClickedEventArgs arguments)
@@ -224,7 +223,7 @@ namespace Intersect.Client.Interface.Game.Spells
                         mCanDrag = true;
                         mMouseX = -1;
                         mMouseY = -1;
-                        if (Timing.Global.Milliseconds < mClickTime)
+                        if (Timing.Global.MillisecondsUtc < mClickTime)
                         {
                             mClickTime = 0;
                         }

@@ -169,7 +169,7 @@ namespace Intersect.Client.Core
                     return;
                 }
 
-                var currentTimeMs = Timing.Global.Milliseconds;
+                var currentTimeMs = Timing.Global.MillisecondsUtc;
 
                 if (sMenuBackgroundInterval < currentTimeMs)
                 {
@@ -638,7 +638,7 @@ namespace Intersect.Client.Core
             var map = MapInstance.Get(Globals.Me.MapId);
             if (map != null)
             {
-                float ecTime = Timing.Global.Milliseconds - sOverlayUpdate;
+                float ecTime = Timing.Global.MillisecondsUtc - sOverlayUpdate;
 
                 if (OverlayColor.A != map.AHue ||
                     OverlayColor.R != map.RHue ||
@@ -744,7 +744,7 @@ namespace Intersect.Client.Core
             }
 
             DrawGameTexture(Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1), CurrentView, OverlayColor, null);
-            sOverlayUpdate = Timing.Global.Milliseconds;
+            sOverlayUpdate = Timing.Global.MillisecondsUtc;
         }
 
         public static FloatRect GetSourceRect(GameTexture gameTexture)
@@ -1092,7 +1092,7 @@ namespace Intersect.Client.Core
             var map = MapInstance.Get(Globals.Me.MapId);
             if (map != null)
             {
-                float ecTime = Timing.Global.Milliseconds - sLightUpdate;
+                float ecTime = Timing.Global.MillisecondsUtc - sLightUpdate;
                 var valChange = 255 * ecTime / 2000f;
                 var brightnessTarget = (byte) (map.Brightness / 100f * 255);
                 if (BrightnessLevel < brightnessTarget)
@@ -1273,7 +1273,7 @@ namespace Intersect.Client.Core
 
                 // Cap instensity between 0 and 255 so as not to overflow (as it is an alpha value)
                 sPlayerLightIntensity = (float) MathHelper.Clamp(sPlayerLightIntensity, 0f, 255f);
-                sLightUpdate = Timing.Global.Milliseconds;
+                sLightUpdate = Timing.Global.MillisecondsUtc;
             }
         }
 
