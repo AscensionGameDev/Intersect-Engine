@@ -83,7 +83,9 @@ namespace Intersect.Client.Interface.Game.Inventory
             {
                 case Enums.ItemType.Spell:
                     mContextMenu.AddChild(mUseItemContextItem);
-                    mUseItemContextItem.SetText(Strings.ItemContextMenu.Learn.ToString(item.Name));
+                    mUseItemContextItem.SetText(item.QuickCast
+                        ? Strings.ItemContextMenu.Cast.ToString(item.Name)
+                        : Strings.ItemContextMenu.Learn.ToString(item.Name));
                     break;
 
                 case Enums.ItemType.Event:
