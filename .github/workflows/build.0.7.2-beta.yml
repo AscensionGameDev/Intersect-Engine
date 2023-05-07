@@ -53,13 +53,13 @@ jobs:
           Intersect*/obj/
 
     - name: Add msbuild to PATH
-      if: steps.cache-binaries.outputs.cache-hit != 'true' && steps.cache-nuget.outputs.cache-hit != 'true' || inputs.forceBuild == true || inputs.forceRestore == true
+      if: steps.cache-binaries.outputs.cache-hit != 'true' || steps.cache-nuget.outputs.cache-hit != 'true' || inputs.forceBuild == true || inputs.forceRestore == true
       uses: microsoft/setup-msbuild@v1
       with:
         msbuild-architecture: x64
 
     - name: Setup NuGet.exe for use with actions
-      if: steps.cache-binaries.outputs.cache-hit != 'true' && steps.cache-nuget.outputs.cache-hit != 'true' || inputs.forceBuild == true || inputs.forceRestore == true
+      if: steps.cache-binaries.outputs.cache-hit != 'true' || steps.cache-nuget.outputs.cache-hit != 'true' || inputs.forceBuild == true || inputs.forceRestore == true
       # You may pin to the exact commit or the version.
       # uses: NuGet/setup-nuget@fd9fffd6ca4541cf4152a9565835ca1a88a6eb37
       uses: NuGet/setup-nuget@v1
@@ -72,11 +72,11 @@ jobs:
         # nuget-api-key-source: # optional
 
     - name: Restore NuGet Packages
-      if: steps.cache-binaries.outputs.cache-hit != 'true' && steps.cache-nuget.outputs.cache-hit != 'true' || inputs.forceBuild == true || inputs.forceRestore == true
+      if: steps.cache-binaries.outputs.cache-hit != 'true' && steps.cache-nuget.outputs.cache-hit != 'true' || inputs.forceRestore == true
       run: nuget restore Intersect.sln
 
     - name: Build solution
-      if: steps.cache-binaries.outputs.cache-hit != 'true' && steps.cache-nuget.outputs.cache-hit != 'true' || inputs.forceBuild == true || inputs.forceRestore == true
+      if: steps.cache-binaries.outputs.cache-hit != 'true' || inputs.forceBuild == true || inputs.forceRestore == true
       run: msbuild Intersect.sln /p:Configuration=Release /p:PackageVersion=${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}+build.${{ github.sha }} /p:Version=0.7.2.${{ github.run_number }}
 
     - name: Checkout assets main_upgrade branch
@@ -128,11 +128,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Publish to Forum
-        uses: AscensionGameDev/actions@1931e0237d9bc185277faa3a10e875a95fffadce
+        uses: AscensionGameDev/actions@fa9bfe32052f7d19f92b41d530641c0ccb7d7306
         with:
           api-key: ${{ secrets.INTERSECTBOT_FORUM_TOKEN }}
           build: ${{ github.run_number }}
           hash: ${{ github.sha }}
+          topic-id: ${{ vars.INTERSECTBOT_FORUM_TOPIC_ID }}
           version: ${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}
 
 
