@@ -2046,7 +2046,7 @@ namespace Intersect.Client.Entities
         public void ResetSpriteFrame()
         {
             SpriteFrame = 0;
-            SpriteFrameTimer = Timing.Global.MillisecondsUtc;
+            SpriteFrameTimer = 0;
         }
 
         public virtual void LoadTextures(string textureName)
