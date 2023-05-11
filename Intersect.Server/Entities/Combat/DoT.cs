@@ -24,7 +24,6 @@ namespace Intersect.Server.Entities.Combat
         public DoT(Entity attacker, Guid spellId, Entity target)
         {
             SpellBase = SpellBase.Get(spellId);
-
             Attacker = attacker;
             Target = target;
 
@@ -33,25 +32,33 @@ namespace Intersect.Server.Entities.Combat
                 return;
             }
 
-            // Does target have a cleanse buff? If so, do not allow this DoT when spell is unfriendly.
-            if (!SpellBase.Combat.Friendly)
+            // Handle Cleanse
+            if (Target.CachedStatuses.Any(status => status.Type == SpellEffect.Cleanse))
             {
                 foreach (var status in Target.CachedStatuses)
                 {
-                    if (status.Type == SpellEffect.Cleanse)
+                    if (!status.Spell.Combat.Friendly && status.Type != SpellEffect.Cleanse)
                     {
-                        return;
+                        status.RemoveStatus();
                     }
                 }
-            }
-            
 
+                foreach (var dot in Target.CachedDots)
+                {
+                    if (!dot.SpellBase.Combat.Friendly)
+                    {
+                        dot.Expire();
+                    }
+                }
+
+                return;
+            }
+
+            //Subtract 1 since the first tick always occurs when the spell is cast.
             mInterval = Timing.Global.Milliseconds + SpellBase.Combat.HotDotInterval;
             Count = SpellBase.Combat.Duration / SpellBase.Combat.HotDotInterval - 1;
             target.DoT.TryAdd(Id, this);
             target.CachedDots = target.DoT.Values.ToArray();
-
-            //Subtract 1 since the first tick always occurs when the spell is cast.
         }
 
         public Entity Target { get; }

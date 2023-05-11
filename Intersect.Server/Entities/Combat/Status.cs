@@ -102,6 +102,26 @@ namespace Intersect.Server.Entities.Combat
                 PacketSender.SendEntityCancelCast(en);
             }
 
+            // Handle Cleanse
+            if (type == SpellEffect.Cleanse)
+            {
+                foreach (var status in en.CachedStatuses)
+                {
+                    if (!status.Spell.Combat.Friendly && status.Type != SpellEffect.Cleanse)
+                    {
+                        status.RemoveStatus();
+                    }
+                }
+
+                foreach (var dot in en.CachedDots)
+                {
+                    if (!dot.SpellBase.Combat.Friendly)
+                    {
+                        dot.Expire();
+                    }
+                }
+            }
+
             // If we're adding a shield, actually add that according to the settings.
             if (type == SpellEffect.Shield)
             {
@@ -111,26 +131,6 @@ namespace Intersect.Server.Entities.Combat
 
                     shield[i] = Math.Abs(vitalDiff) +
                                 (int)(spell.Combat.Scaling * en.Stat[spell.Combat.ScalingStat].BaseStat / 100f);
-                }
-            }
-
-            // If new Cleanse spell, remove all opposite statusses. (ie friendly dispels unfriendly and vice versa)
-            if (Type == SpellEffect.Cleanse)
-            {
-                foreach (var status in en.CachedStatuses)
-                {
-                    if (spell.Combat.Friendly != status.Spell.Combat.Friendly)
-                    {
-                        status.RemoveStatus();
-                    }
-                }
-
-                foreach (var dot in en.CachedDots)
-                {
-                    if (spell.Combat.Friendly != dot.SpellBase.Combat.Friendly)
-                    {
-                        dot.Expire();
-                    }
                 }
             }
 
