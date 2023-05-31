@@ -270,23 +270,13 @@ namespace Intersect.Server.Core
                 return;
             }
 
-            Console.WriteLine();
-
-            UpnP.ConnectNatDevice().Wait(5000);
-#if WEBSOCKETS
-            UpnP.OpenServerPort(Options.ServerPort, Protocol.Tcp).Wait(5000);
-#endif
-            UpnP.OpenServerPort(Options.ServerPort, Protocol.Udp).Wait(5000);
+            Bootstrapper.CheckNetwork();
 
             if (RestApi.IsStarted)
             {
                 RestApi.Configuration.Ports.ToList()
                     .ForEach(port => UpnP.OpenServerPort(port, Protocol.Tcp).Wait(5000));
             }
-
-            Console.WriteLine();
-
-            Bootstrapper.CheckNetwork();
 
             Console.WriteLine();
         }

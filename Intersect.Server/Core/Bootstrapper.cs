@@ -5,7 +5,6 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
 using CommandLine;
-
 using Intersect.Factories;
 using Intersect.Logging;
 using Intersect.Network;
@@ -13,7 +12,6 @@ using Intersect.Plugins;
 using Intersect.Plugins.Contexts;
 using Intersect.Plugins.Helpers;
 using Intersect.Server.Database;
-using Intersect.Server.Database.PlayerData;
 using Intersect.Server.Database.PlayerData.Players;
 using Intersect.Server.Entities;
 using Intersect.Server.General;
@@ -23,12 +21,12 @@ using Intersect.Server.Networking;
 using Intersect.Server.Networking.Helpers;
 using Intersect.Threading;
 using Intersect.Utilities;
+using Open.Nat;
 
 namespace Intersect.Server.Core
 {
-    internal static partial class Bootstrapper
+    internal static class Bootstrapper
     {
-
         static Bootstrapper()
         {
             Console.CancelKeyPress += OnConsoleCancelKeyPress;
@@ -40,7 +38,8 @@ namespace Intersect.Server.Core
 
         public static void Start(params string[] args)
         {
-            (string[] Args, Parser Parser, ServerCommandLineOptions CommandLineOptions) parsedArguments = ParseCommandLineArgs(args);
+            (string[] Args, Parser Parser, ServerCommandLineOptions CommandLineOptions) parsedArguments =
+                ParseCommandLineArgs(args);
             if (!string.IsNullOrWhiteSpace(parsedArguments.CommandLineOptions.WorkingDirectory))
             {
                 var workingDirectory = parsedArguments.CommandLineOptions.WorkingDirectory.Trim();
@@ -111,20 +110,21 @@ namespace Intersect.Server.Core
         {
             var parser = new Parser(
                 parserSettings =>
+                {
+                    if (parserSettings == null)
                     {
-                        if (parserSettings == null)
-                        {
-                            throw new ArgumentNullException(
-                                nameof(parserSettings), @"If this is null the CommandLineParser dependency is likely broken."
-                            );
-                        }
-
-                        parserSettings.AutoHelp = true;
-                        parserSettings.AutoVersion = true;
-                        parserSettings.IgnoreUnknownArguments = true;
-                        parserSettings.MaximumDisplayWidth = Console.BufferWidth;
+                        throw new ArgumentNullException(
+                            nameof(parserSettings),
+                            @"If this is null the CommandLineParser dependency is likely broken."
+                        );
                     }
-                );
+
+                    parserSettings.AutoHelp = true;
+                    parserSettings.AutoVersion = true;
+                    parserSettings.IgnoreUnknownArguments = true;
+                    parserSettings.MaximumDisplayWidth = Console.BufferWidth;
+                }
+            );
 
             var options = parser.ParseArguments<ServerCommandLineOptions>(args)
                 .MapResult(commandLineOptions => commandLineOptions, errors => default);
@@ -132,63 +132,128 @@ namespace Intersect.Server.Core
             return (args, parser, options);
         }
 
-        #region Networking
-
-        internal static void CheckNetwork()
-        {
-            //Check to see if AGD can see this server. If so let the owner know :)
-            if (Options.OpenPortChecker && !Context.StartupOptions.NoNetworkCheck)
-            {
-                var serverAccessible = PortChecker.CanYouSeeMe(Options.ServerPort, out var externalIp);
-
-                Console.WriteLine(Strings.Portchecking.connectioninfo);
-                if (!string.IsNullOrEmpty(externalIp))
-                {
-                    Console.WriteLine(Strings.Portchecking.publicip, externalIp);
-                    Console.WriteLine(Strings.Portchecking.publicport, Options.ServerPort);
-
-                    Console.WriteLine();
-                    if (serverAccessible)
-                    {
-                        Console.WriteLine(Strings.Portchecking.accessible);
-                        Console.WriteLine(Strings.Portchecking.letothersjoin);
-                    }
-                    else
-                    {
-                        Console.WriteLine(Strings.Portchecking.notaccessible);
-                        Console.WriteLine(Strings.Portchecking.debuggingsteps);
-                        Console.WriteLine(Strings.Portchecking.checkfirewalls);
-                        Console.WriteLine(Strings.Portchecking.checkantivirus);
-                        Console.WriteLine(Strings.Portchecking.screwed);
-                        Console.WriteLine();
-                        if (!UpnP.ForwardingSucceeded())
-                        {
-                            Console.WriteLine(Strings.Portchecking.checkrouterupnp);
-                        }
-                    }
-                }
-                else
-                {
-                    Console.WriteLine(Strings.Portchecking.notconnected);
-                }
-
-                Console.WriteLine();
-            }
-        }
-
-        #endregion
-
         #region System Console
 
-        private static void OnConsoleCancelKeyPress(
-            object sender,
-            ConsoleCancelEventArgs cancelEvent
-        )
+        private static void OnConsoleCancelKeyPress(object sender, ConsoleCancelEventArgs cancelEvent)
         {
             ServerContext.Instance.RequestShutdown(true);
 
             //Shutdown();
             cancelEvent.Cancel = true;
+        }
+
+        #endregion
+
+        #region Networking
+
+        internal static void CheckNetwork()
+        {
+            Console.WriteLine();
+
+            if (Options.OpenPortChecker && !Context.StartupOptions.NoNetworkCheck)
+            {
+                if (CheckPort())
+                {
+                    return;
+                }
+
+                if (Options.UPnP)
+                {
+                    Log.Pretty.Info(Strings.Portchecking.PortNotOpenTryingUPnP.ToString(Options.ServerPort));
+                    Console.WriteLine();
+
+                    if (TryUPnP())
+                    {
+                        if (CheckPort())
+                        {
+                            return;
+                        }
+
+                        Log.Pretty.Warn(Strings.Portchecking.ProbablyFirewall.ToString(Options.ServerPort));
+                    }
+                    else
+                    {
+                        Log.Pretty.Warn(Strings.Portchecking.UPnPFailed);
+                    }
+                }
+                else
+                {
+                    Log.Pretty.Warn(Strings.Portchecking.PortNotOpenUPnPDisabled.ToString(Options.ServerPort));
+                }
+            }
+            else if (Options.UPnP)
+            {
+                Log.Pretty.Info(Strings.Portchecking.TryingUPnP);
+                Console.WriteLine();
+
+                if (TryUPnP())
+                {
+                    Log.Pretty.Info(Strings.Portchecking.UPnPSucceededPortCheckerDisabled);
+                }
+                else
+                {
+                    Log.Pretty.Warn(Strings.Portchecking.UPnPFailed);
+                }
+            }
+            else
+            {
+                Log.Pretty.Warn(Strings.Portchecking.PortCheckerAndUPnPDisabled);
+            }
+        }
+
+        private static bool TryUPnP()
+        {
+            UpnP.ConnectNatDevice().Wait(5000);
+#if WEBSOCKETS
+            UpnP.OpenServerPort(Options.ServerPort, Protocol.Tcp).Wait(5000);
+#endif
+            UpnP.OpenServerPort(Options.ServerPort, Protocol.Udp).Wait(5000);
+
+            if (UpnP.ForwardingSucceeded())
+            {
+                return true;
+            }
+
+            Console.WriteLine(Strings.Portchecking.checkrouterupnp);
+            return false;
+        }
+
+        private static bool CheckPort()
+        {
+            if (!Options.OpenPortChecker || Context.StartupOptions.NoNetworkCheck)
+            {
+                return false;
+            }
+
+            var portCheckResult = PortChecker.CanYouSeeMe(Options.ServerPort, out var externalIp);
+
+            if (!Strings.Portchecking.PortCheckerResults.TryGetValue(portCheckResult, out var portCheckResultMessage))
+            {
+                portCheckResultMessage = portCheckResult.ToString();
+            }
+
+            Log.Pretty.Info(portCheckResultMessage.ToString(Strings.Portchecking.DocumentationUrl));
+
+            if (!string.IsNullOrEmpty(externalIp))
+            {
+                Console.WriteLine(Strings.Portchecking.connectioninfo);
+                Console.WriteLine(Strings.Portchecking.publicip, externalIp);
+                Console.WriteLine(Strings.Portchecking.publicport, Options.ServerPort);
+            }
+
+            if (portCheckResult == PortCheckResult.Inaccessible)
+            {
+                Console.WriteLine();
+                
+                Console.WriteLine(Strings.Portchecking.debuggingsteps);
+                Console.WriteLine(Strings.Portchecking.checkfirewalls);
+                Console.WriteLine(Strings.Portchecking.checkantivirus);
+                Console.WriteLine(Strings.Portchecking.screwed);
+            }
+
+            Console.WriteLine();
+
+            return portCheckResult == PortCheckResult.Open;
         }
 
         #endregion
@@ -258,25 +323,29 @@ namespace Intersect.Server.Core
             }
 
             //Configure System Threadpool
-            ThreadPool.GetMaxThreads(out int maxWorkerThreads, out int maxCompletionPortThreads);
-            ThreadPool.GetMinThreads(out int minWorkerThreads, out int minCompletionPortThreads);
+            ThreadPool.GetMaxThreads(out var maxWorkerThreads, out var maxCompletionPortThreads);
+            ThreadPool.GetMinThreads(out var minWorkerThreads, out var minCompletionPortThreads);
             if (Options.Instance.Processing.MaxSystemThreadpoolWorkerThreads >= Environment.ProcessorCount)
             {
                 maxWorkerThreads = Options.Instance.Processing.MaxSystemThreadpoolWorkerThreads;
             }
+
             if (Options.Instance.Processing.MaxSystemThreadpoolIOThreads >= Environment.ProcessorCount)
             {
                 maxCompletionPortThreads = Options.Instance.Processing.MaxSystemThreadpoolIOThreads;
             }
+
             ThreadPool.SetMaxThreads(maxWorkerThreads, maxCompletionPortThreads);
             if (Options.Instance.Processing.MinSystemThreadpoolWorkerThreads >= Environment.ProcessorCount)
             {
                 minWorkerThreads = Options.Instance.Processing.MinSystemThreadpoolWorkerThreads;
             }
+
             if (Options.Instance.Processing.MinSystemThreadpoolIOThreads >= Environment.ProcessorCount)
             {
                 minCompletionPortThreads = Options.Instance.Processing.MinSystemThreadpoolIOThreads;
             }
+
             ThreadPool.SetMinThreads(minWorkerThreads, minCompletionPortThreads);
 
             if (!DbInterface.InitDatabase(Context))
@@ -461,7 +530,6 @@ namespace Intersect.Server.Core
         // sent to the handler routine.
         public enum CtrlTypes
         {
-
             CtrlCEvent = 0,
 
             CtrlBreakEvent,
@@ -471,7 +539,6 @@ namespace Intersect.Server.Core
             CtrlLogoffEvent = 5,
 
             CtrlShutdownEvent
-
         }
 
         private static readonly HandlerRoutine ConsoleCtrlHandler = ConsoleCtrlCheck;
@@ -524,7 +591,5 @@ namespace Intersect.Server.Core
         }
 
         #endregion
-
     }
-
 }

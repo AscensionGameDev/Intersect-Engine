@@ -30,6 +30,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using Intersect.Network.Packets.Editor;
+using LoginPacket = Intersect.Network.Packets.Client.LoginPacket;
+using NeedMapPacket = Intersect.Network.Packets.Client.NeedMapPacket;
+using PingPacket = Intersect.Network.Packets.Client.PingPacket;
 
 namespace Intersect.Server.Networking
 {
@@ -1001,6 +1005,13 @@ namespace Intersect.Server.Networking
                 {
                     PacketSender.SendChatMsg(player, Strings.Player.offline, ChatMessageType.PM, CustomColors.Alerts.Error);
                 }
+            }
+            else if (cmd == "/deletemap")
+            {
+                Instance.HandlePacket(
+                    client,
+                    new MapListUpdatePacket(MapListUpdate.Delete, 1, client.Entity.MapId, 0, Guid.Empty, string.Empty)
+                );
             }
             else
             {
@@ -3255,10 +3266,10 @@ namespace Intersect.Server.Networking
         //MapListUpdatePacket
         public void HandlePacket(Client client, Network.Packets.Editor.MapListUpdatePacket packet)
         {
-            if (!client.IsEditor)
-            {
-                return;
-            }
+            // if (!client.IsEditor)
+            // {
+            //     return;
+            // }
 
             MapListFolder parent = null;
             var mapId = Guid.Empty;

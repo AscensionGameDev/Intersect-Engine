@@ -94,7 +94,7 @@ namespace Intersect.Server.Networking.Helpers
                 (canConnectViaExternalIp ? "Online" : "Offline")
             );
 
-            sb.AppendLine("Server Status (as seen by AGD): " + (serverAccessible ? "Online" : "Offline"));
+            sb.AppendLine($"Server Status (as seen by AGD): {serverAccessible}");
             sb.AppendLine();
             if (Options.UPnP)
             {

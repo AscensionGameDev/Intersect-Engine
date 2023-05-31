@@ -5,7 +5,7 @@ using System.Text;
 
 using Intersect.Localization;
 using Intersect.Logging;
-
+using Intersect.Server.Networking.Helpers;
 using Newtonsoft.Json;
 
 namespace Intersect.Server.Localization
@@ -1254,6 +1254,52 @@ namespace Intersect.Server.Localization
             public readonly LocalizedString screwed =
                 @"   3. If on a college campus, or within a business network you likely do not have permission to open ports or host games in which case you should explore external hosting options!";
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocaleDictionary<PortCheckResult, LocalizedString> PortCheckerResults = new LocaleDictionary<PortCheckResult, LocalizedString>(
+                new Dictionary<PortCheckResult, LocalizedString>
+                {
+                    { PortCheckResult.Unknown, "This server is possibly inaccessible from the outside world, try to connect with the client to verify." },
+                    { PortCheckResult.Open, "This server is accessible from the outside world, properly configured clients can connect." },
+                    { PortCheckResult.PossiblyOpen, "This server is possible accessible from the outside world, but the AscensionGameDev port checker server gave an inconclusive response." },
+                    { PortCheckResult.IntersectResponseNoPlayerCount, "This server is not reporting a player count and may not be accessible, please see the Port Forwarding documentation for more information: {0}" },
+                    { PortCheckResult.IntersectResponseInvalidPlayerCount, "This server reporting an invalid player count and may not be accessible, please see the Port Forwarding documentation for more information: {0}" },
+                    { PortCheckResult.InvalidPortCheckerRequest, "The AscensionGameDev port checker server is down and this server may or may not be accessible from the outside world, try to connect with the client to verify" },
+                    { PortCheckResult.PortCheckerServerError, "The AscensionGameDev port checker server encountered an error and this server may or may not be accessible from the outside world, try to connect with the client to verify." },
+                    { PortCheckResult.PortCheckerServerDown, "The AscensionGameDev port checker server is down and this server may or may not be accessible from the outside world, try to connect with the client to verify" },
+                    { PortCheckResult.PortCheckerServerUnexpectedResponse, "The AscensionGameDev port checker server is down and this server may or may not be accessible from the outside world, try to connect with the client to verify" },
+                    { PortCheckResult.Inaccessible, "This server is not accessible from the outside world, please see the Port Forwarding documentation for more information: {0}" },
+                }
+            );
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString DocumentationUrl =
+                @"https://docs.freemmorpgmaker.com/en-US/deploy/forwarding/";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString PortNotOpenTryingUPnP = @"Port {0} is not open, trying UPnP...";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString PortNotOpenUPnPDisabled = @"Port {0} is not open, but UPnP is disabled. Check your router port forwarding and computer firewall configurations.";
+            
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString PortCheckerAndUPnPDisabled =
+                @"The port checker service and UPnP have both been disabled, please verify the server status manually with a client.";
+            
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString UPnPSucceededPortCheckerDisabled =
+                @"UPnP succeeded but the port checker is disabled. Please verify the server status manually using a client.";
+            
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString UPnPFailed =
+                @"UPnP failed, please verify the server status manually using a client.";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString TryingUPnP =
+                @"Trying to open the port using UPnP...";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString ProbablyFirewall =
+                @"UPnP supposedly succeeded but the server is not accessible on port {0}, check the firewall of the machine this server is running on.";
         }
 
         public sealed partial class QuestsNamespace : LocaleNamespace
