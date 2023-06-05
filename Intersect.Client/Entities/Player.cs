@@ -45,7 +45,7 @@ namespace Intersect.Client.Entities
                 }
 
                 _class = value;
-                LoadAnimationTexture(Sprite ?? TransformedSprite, SpriteAnimations.Attack);
+                LoadAnimationTexture(string.IsNullOrWhiteSpace(TransformedSprite) ? Sprite : TransformedSprite, SpriteAnimations.Attack);
             }
         }
 

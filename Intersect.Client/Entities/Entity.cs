@@ -75,7 +75,7 @@ namespace Intersect.Client.Entities
                 }
 
                 _equipment = value;
-                LoadAnimationTexture(Sprite ?? TransformedSprite, SpriteAnimations.Weapon);
+                LoadAnimationTexture(string.IsNullOrWhiteSpace(TransformedSprite) ? Sprite : TransformedSprite, SpriteAnimations.Weapon);
             }
         }
 
@@ -171,7 +171,7 @@ namespace Intersect.Client.Entities
                 }
 
                 _spellCast = value;
-                LoadAnimationTexture(TransformedSprite ?? Sprite, SpriteAnimations.Cast);
+                LoadAnimationTexture(string.IsNullOrWhiteSpace(TransformedSprite) ? Sprite : TransformedSprite, SpriteAnimations.Cast);
             }
         }
 
