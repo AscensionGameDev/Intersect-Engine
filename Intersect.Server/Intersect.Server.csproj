@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -111,7 +111,7 @@
     <PackageReference Include="Microsoft.VisualStudio.Validation" Version="15.5.31" />
     <PackageReference Include="Mono.Data.Sqlite.Portable" Version="1.0.3.5" />
     <PackageReference Include="MySqlConnector" Version="0.45.1" />
-    <PackageReference Include="NuGet.CommandLine" Version="4.9.6" />
+    <PackageReference Include="NuGet.CommandLine" Version="5.11.5" />
     <PackageReference Include="Owin" Version="1.0" />
     <PackageReference Include="Owin.Security.AesDataProtectorProvider" Version="1.1.2" />
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="2.1.2" />
