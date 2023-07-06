@@ -380,6 +380,58 @@ namespace Intersect.Server.Entities
             }
         }
 
+        /// <summary>
+        ///     Determines if this entity can move in the specified <paramref name="direction"/>.
+        /// </summary>
+        /// <param name="direction">The <see cref="Direction"/> the entity is attempting to move in.</param>
+        /// <param name="blockerType">The type of blocker, if any.</param>
+        /// <param name="entityType">
+        ///     The type of entity that is blocking movement, if <paramref name="blockerType"/> is set to <see cref="MovementBlockerType.Entity"/>.
+        /// </param>
+        /// <returns>If the entity is able to move in the specified direction.</returns>
+        public virtual bool CanMoveInDirection(
+            Direction direction,
+            out MovementBlockerType blockerType,
+            out EntityType entityType
+        )
+        {
+            var result = CanMoveInDirection(direction);
+            switch (result)
+            {
+                case -1:
+                    blockerType = MovementBlockerType.NotBlocked;
+                    entityType = default;
+                    break;
+
+                case -2:
+                    blockerType = MovementBlockerType.MapAttribute;
+                    entityType = default;
+                    break;
+
+                case -3:
+                    blockerType = MovementBlockerType.ZDimension;
+                    entityType = default;
+                    break;
+
+                case -4:
+                    blockerType = MovementBlockerType.Slide;
+                    entityType = default;
+                    break;
+
+                case -5:
+                    blockerType = MovementBlockerType.OutOfBounds;
+                    entityType = default;
+                    break;
+
+                default:
+                    blockerType = MovementBlockerType.Entity;
+                    entityType = (EntityType)result;
+                    break;
+            }
+
+            return blockerType == MovementBlockerType.NotBlocked;
+        }
+
         //Movement
         /// <summary>
         ///     Determines if this entity can move in the direction given.
