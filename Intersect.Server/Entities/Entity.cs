@@ -562,62 +562,67 @@ namespace Intersect.Server.Entities
                 }
             }
 
-            if (!Passable)
+            if (Passable)
             {
-                var targetMap = mapController;
-                var mapEntities = new List<Entity>();
-                if (mapController.TryGetInstance(MapInstanceId, out var mapInstance))
+                return IsTileWalkable(tile.GetMap(), tile.GetX(), tile.GetY(), Z);
+            }
+
+            var targetMap = mapController;
+            var mapEntities = new List<Entity>();
+            if (mapController.TryGetInstance(MapInstanceId, out var mapInstance))
+            {
+                mapEntities.AddRange(mapInstance.GetCachedEntities());
+            }
+
+            foreach (var en in mapEntities)
+            {
+                if (en != null && en.X == tileX && en.Y == tileY && en.Z == Z && !en.Passable)
                 {
-                    mapEntities.AddRange(mapInstance.GetCachedEntities());
-                }
-                foreach (var en in mapEntities)
-                {
-                    if (en != null && en.X == tileX && en.Y == tileY && en.Z == Z && !en.Passable)
+                    //Set a target if a projectile
+                    CollisionIndex = en.Id;
+                    if (en is Player)
                     {
-                        //Set a target if a projectile
-                        CollisionIndex = en.Id;
-                        if (en is Player)
+                        if (this is Player)
                         {
-                            if (this is Player)
-                            {
-                                //Check if this target player is passable....
-                                if (!Options.Instance.Passability.Passable[(int)targetMap.ZoneType])
-                                {
-                                    return (int)EntityType.Player;
-                                }
-                            }
-                            else
+                            //Check if this target player is passable....
+                            if (!Options.Instance.Passability.Passable[(int)targetMap.ZoneType])
                             {
                                 return (int)EntityType.Player;
                             }
                         }
-                        else if (en is Npc)
+                        else
                         {
                             return (int)EntityType.Player;
                         }
-                        else if (en is Resource resource)
+                    }
+                    else if (en is Npc)
+                    {
+                        return (int)EntityType.Player;
+                    }
+                    else if (en is Resource resource)
+                    {
+                        //If determine if we should walk
+                        if (!resource.IsPassable())
                         {
-                            //If determine if we should walk
-                            if (!resource.IsPassable())
-                            {
-                                return (int)EntityType.Resource;
-                            }
+                            return (int)EntityType.Resource;
                         }
                     }
                 }
+            }
 
-                //If this is an npc or other event.. if any global page exists that isn't passable then don't walk here!
-                if (!(this is Player) && mapInstance != null)
+            //If this is an npc or other event.. if any global page exists that isn't passable then don't walk here!
+            if (this is Player || mapInstance == null)
+            {
+                return IsTileWalkable(tile.GetMap(), tile.GetX(), tile.GetY(), Z);
+            }
+
+            foreach (var evt in mapInstance.GlobalEventInstances)
+            {
+                foreach (var en in evt.Value.GlobalPageInstance)
                 {
-                    foreach (var evt in mapInstance.GlobalEventInstances)
+                    if (en != null && en.X == tileX && en.Y == tileY && en.Z == Z && !en.Passable)
                     {
-                        foreach (var en in evt.Value.GlobalPageInstance)
-                        {
-                            if (en != null && en.X == tileX && en.Y == tileY && en.Z == Z && !en.Passable)
-                            {
-                                return (int)EntityType.Event;
-                            }
-                        }
+                        return (int)EntityType.Event;
                     }
                 }
             }
