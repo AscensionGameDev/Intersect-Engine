@@ -6473,23 +6473,30 @@ namespace Intersect.Server.Entities
             }
         }
 
-        public override int CanMove(Direction moveDir)
+        /// <inheritdoc />
+        public override bool CanMoveInDirection(
+            Direction direction,
+            out MovementBlockerType blockerType,
+            out EntityType entityType
+        )
         {
-            //If crafting or locked by event return blocked
+            entityType = default;
+
+            // If crafting or locked by event return blocked
             if (OpenCraftingTableId != default && CraftingState != default)
             {
-                return -5;
+                blockerType = MovementBlockerType.OutOfBounds;
+                return false;
             }
 
-            foreach (var evt in EventLookup)
+            // ReSharper disable once InvertIf
+            if (EventLookup.Values.Any(@event => @event.HoldingPlayer))
             {
-                if (evt.Value.HoldingPlayer)
-                {
-                    return -5;
-                }
+                blockerType = MovementBlockerType.OutOfBounds;
+                return false;
             }
 
-            return base.CanMove(moveDir);
+            return base.CanMoveInDirection(direction, out blockerType, out entityType);
         }
 
         protected override int IsTileWalkable(MapController map, int x, int y, int z)

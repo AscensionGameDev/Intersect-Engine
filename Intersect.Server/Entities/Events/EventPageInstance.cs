@@ -337,7 +337,7 @@ namespace Intersect.Server.Entities.Events
                     }
 
                     var dir = Randomization.NextDirection();
-                    if (CanMove(dir) == -1)
+                    if (CanMoveInDirection(dir))
                     {
                         Move(dir, Player);
                     }
@@ -397,7 +397,7 @@ namespace Intersect.Server.Entities.Events
                                     var pathDir = mPathFinder.GetMove();
                                     if (pathDir > Direction.None)
                                     {
-                                        if (CanMove(pathDir) == -1)
+                                        if (CanMoveInDirection(pathDir))
                                         {
                                             Move(pathDir, forPlayer);
                                             moved = true;
@@ -438,7 +438,7 @@ namespace Intersect.Server.Entities.Events
                                             break;
                                     }
 
-                                    if (CanMove(moveDir) == -1)
+                                    if (CanMoveInDirection(moveDir))
                                     {
                                         Move(moveDir, forPlayer);
                                         moved = true;
@@ -447,7 +447,7 @@ namespace Intersect.Server.Entities.Events
                                     {
                                         //Move Randomly
                                         moveDir = Randomization.NextDirection();
-                                        if (CanMove(moveDir) == -1)
+                                        if (CanMoveInDirection(moveDir))
                                         {
                                             Move(moveDir, forPlayer);
                                             moved = true;
@@ -458,7 +458,7 @@ namespace Intersect.Server.Entities.Events
                                 {
                                     //Move Randomly
                                     moveDir = Randomization.NextDirection();
-                                    if (CanMove(moveDir) == -1)
+                                    if (CanMoveInDirection(moveDir))
                                     {
                                         Move(moveDir, forPlayer);
                                         moved = true;
@@ -730,46 +730,93 @@ namespace Intersect.Server.Entities.Events
             }
         }
 
-        public override int CanMove(Direction moveDir)
+        /// <inheritdoc />
+        public override bool CanMoveInDirection(
+            Direction direction,
+            out MovementBlockerType blockerType,
+            out EntityType entityType
+        )
         {
-            if (Player == null && mPageNum != 0)
+            entityType = default;
+
+            if (Player == default && mPageNum != 0)
             {
-                return -5;
+                blockerType = MovementBlockerType.OutOfBounds;
+                return false;
             }
 
-            switch (moveDir)
+            switch (direction)
             {
                 case Direction.Up:
                     if (Y == 0)
                     {
-                        return -5;
+                        blockerType = MovementBlockerType.OutOfBounds;
+                        return false;
                     }
-
                     break;
+
                 case Direction.Down:
                     if (Y == Options.MapHeight - 1)
                     {
-                        return -5;
+                        blockerType = MovementBlockerType.OutOfBounds;
+                        return false;
                     }
-
                     break;
+
                 case Direction.Left:
                     if (X == 0)
                     {
-                        return -5;
+                        blockerType = MovementBlockerType.OutOfBounds;
+                        return false;
                     }
-
                     break;
+
                 case Direction.Right:
                     if (X == Options.MapWidth - 1)
                     {
-                        return -5;
+                        blockerType = MovementBlockerType.OutOfBounds;
+                        return false;
                     }
+                    break;
 
+                case Direction.UpLeft:
+                    if (Y == 0 || X == 0)
+                    {
+                        blockerType = MovementBlockerType.OutOfBounds;
+                        return false;
+                    }
+                    break;
+
+                case Direction.UpRight:
+                    if (Y == 0 || X == Options.MapWidth - 1)
+                    {
+                        blockerType = MovementBlockerType.OutOfBounds;
+                        return false;
+                    }
+                    break;
+
+                case Direction.DownRight:
+                    if (Y == Options.MapHeight - 1 || X == Options.MapWidth - 1)
+                    {
+                        blockerType = MovementBlockerType.OutOfBounds;
+                        return false;
+                    }
+                    break;
+
+                case Direction.DownLeft:
+                    if (Y == Options.MapHeight - 1 || X == 0)
+                    {
+                        blockerType = MovementBlockerType.OutOfBounds;
+                        return false;
+                    }
+                    break;
+
+                case Direction.None:
+                default:
                     break;
             }
 
-            return base.CanMove(moveDir);
+            return base.CanMoveInDirection(direction, out blockerType, out entityType);
         }
 
         public void TurnTowardsPlayer()

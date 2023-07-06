@@ -513,71 +513,100 @@ namespace Intersect.Server.Entities
             }
         }
 
-        public override int CanMove(Direction moveDir)
+        /// <inheritdoc />
+        public override bool CanMoveInDirection(
+            Direction direction,
+            out MovementBlockerType blockerType,
+            out EntityType entityType
+        )
         {
-            var canMove = base.CanMove(moveDir);
-
-            // If configured & blocked by an entity, ignore the entity and proceed to move
-            if (Options.Instance.NpcOpts.IntangibleDuringReset && canMove > -1 )
+            if (
+                !base.CanMoveInDirection(direction, out blockerType, out entityType)
+                && blockerType == MovementBlockerType.Entity
+                && Options.Instance.NpcOpts.IntangibleDuringReset
+            )
             {
-                canMove = mResetting ? -1 : canMove;
+                if (mResetting)
+                {
+                    blockerType = MovementBlockerType.NotBlocked;
+                }
             }
-            if ((canMove == -1 || canMove == -4) && IsFleeing() && Options.Instance.NpcOpts.AllowResetRadius)
+
+            if (
+                (blockerType == MovementBlockerType.NotBlocked || blockerType == MovementBlockerType.Slide)
+                && IsFleeing()
+                && Options.Instance.NpcOpts.AllowResetRadius
+            )
             {
                 var yOffset = 0;
                 var xOffset = 0;
                 var tile = new TileHelper(MapId, X, Y);
-                switch (moveDir)
+                switch (direction)
                 {
                     case Direction.Up:
                         yOffset--;
-
                         break;
+                    
                     case Direction.Down:
                         yOffset++;
-
                         break;
+                    
                     case Direction.Left:
                         xOffset--;
-
                         break;
+                    
                     case Direction.Right:
                         xOffset++;
-
                         break;
+                    
                     case Direction.UpLeft:
                         yOffset--;
                         xOffset--;
-
                         break;
+                    
                     case Direction.UpRight:
                         yOffset--;
                         xOffset++;
-
                         break;
+                    
                     case Direction.DownLeft:
                         yOffset++;
                         xOffset--;
-
                         break;
+                    
                     case Direction.DownRight:
                         yOffset++;
                         xOffset++;
+                        break;
 
+                    case Direction.None:
+                    default:
                         break;
                 }
 
+                // ReSharper disable once InvertIf
                 if (tile.Translate(xOffset, yOffset))
                 {
-                    //If this would move us past our reset radius then we cannot move.
-                    var dist = GetDistanceBetween(AggroCenterMap, tile.GetMap(), AggroCenterX, tile.GetX(), AggroCenterY, tile.GetY());
+                    // If this would move us past our reset radius then we cannot move.
+                    var dist = GetDistanceBetween(
+                        AggroCenterMap,
+                        tile.GetMap(),
+                        AggroCenterX,
+                        tile.GetX(),
+                        AggroCenterY,
+                        tile.GetY()
+                    );
+
+                    // ReSharper disable once InvertIf
                     if (dist > Math.Max(Options.Npc.ResetRadius, Base.ResetRadius))
                     {
-                        return -2;
+                        blockerType = MovementBlockerType.MapAttribute;
+                        return false;
                     }
                 }
             }
-            return canMove;
+
+            return blockerType == MovementBlockerType.NotBlocked;
         }
 
         private void TryCastSpells()
@@ -939,7 +968,7 @@ namespace Intersect.Server.Entities
                                                 }
                                             }
 
-                                            if (CanMove(dir) == -1 || CanMove(dir) == -4)
+                                            if (CanMoveInDirection(dir, out var blockerType, out _) || blockerType == MovementBlockerType.Slide)
                                             {
                                                 //check if NPC is snared or stunned
                                                 foreach (var status in CachedStatuses)
@@ -1047,7 +1076,7 @@ namespace Intersect.Server.Entities
                                             break;
                                     }
 
-                                    if (CanMove(dir) == -1 || CanMove(dir) == -4)
+                                    if (CanMoveInDirection(dir, out var blockerType, out _) || blockerType == MovementBlockerType.Slide)
                                     {
                                         //check if NPC is snared or stunned
                                         foreach (var status in CachedStatuses)
@@ -1124,7 +1153,7 @@ namespace Intersect.Server.Entities
                         if (i == 0)
                         {
                             var direction = Randomization.NextDirection();
-                            if (CanMove(direction) == -1)
+                            if (CanMoveInDirection(direction))
                             {
                                 //check if NPC is snared or stunned
                                 foreach (var status in CachedStatuses)
