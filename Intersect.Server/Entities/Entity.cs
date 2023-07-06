@@ -574,28 +574,19 @@ namespace Intersect.Server.Entities
                 mapEntities.AddRange(mapInstance.GetCachedEntities());
             }
 
-            foreach (var en in mapEntities.Where(en => en != default && en.X == tileX && en.Y == tileY && en.Z == Z && !en.Passable))
+            foreach (var mapEntity in mapEntities.Where(en => en != default && en.X == tileX && en.Y == tileY && en.Z == Z && !en.Passable))
             {
-                //Set a target if a projectile
-                CollisionIndex = en.Id;
-                if (en is Player)
+                // Set a target if a projectile
+                CollisionIndex = mapEntity.Id;
+                switch (mapEntity)
                 {
-                    if (!CanPassPlayer(targetMap))
-                    {
+                    case Player _ when !CanPassPlayer(targetMap):
                         return (int)EntityType.Player;
-                    }
-                }
-                else if (en is Npc)
-                {
-                    return (int)EntityType.Player;
-                }
-                else if (en is Resource resource)
-                {
-                    //If determine if we should walk
-                    if (!resource.IsPassable())
-                    {
+                    case Npc _:
+                        // There should honestly be an Npc EntityType...
+                        return (int)EntityType.Player;
+                    case Resource resource when !resource.IsPassable():
                         return (int)EntityType.Resource;
-                    }
                 }
             }
 
