@@ -337,7 +337,7 @@ namespace Intersect.Server.Entities.Events
                     }
 
                     var dir = Randomization.NextDirection();
-                    if (CanMoveInDirection(dir) == -1)
+                    if (CanMove(dir) == -1)
                     {
                         Move(dir, Player);
                     }
@@ -397,7 +397,7 @@ namespace Intersect.Server.Entities.Events
                                     var pathDir = mPathFinder.GetMove();
                                     if (pathDir > Direction.None)
                                     {
-                                        if (CanMoveInDirection(pathDir) == -1)
+                                        if (CanMove(pathDir) == -1)
                                         {
                                             Move(pathDir, forPlayer);
                                             moved = true;
@@ -438,7 +438,7 @@ namespace Intersect.Server.Entities.Events
                                             break;
                                     }
 
-                                    if (CanMoveInDirection(moveDir) == -1)
+                                    if (CanMove(moveDir) == -1)
                                     {
                                         Move(moveDir, forPlayer);
                                         moved = true;
@@ -447,7 +447,7 @@ namespace Intersect.Server.Entities.Events
                                     {
                                         //Move Randomly
                                         moveDir = Randomization.NextDirection();
-                                        if (CanMoveInDirection(moveDir) == -1)
+                                        if (CanMove(moveDir) == -1)
                                         {
                                             Move(moveDir, forPlayer);
                                             moved = true;
@@ -458,7 +458,7 @@ namespace Intersect.Server.Entities.Events
                                 {
                                     //Move Randomly
                                     moveDir = Randomization.NextDirection();
-                                    if (CanMoveInDirection(moveDir) == -1)
+                                    if (CanMove(moveDir) == -1)
                                     {
                                         Move(moveDir, forPlayer);
                                         moved = true;
@@ -730,7 +730,7 @@ namespace Intersect.Server.Entities.Events
             }
         }
 
-        public override int CanMoveInDirection(Direction moveDir)
+        public override int CanMove(Direction moveDir)
         {
             if (Player == null && mPageNum != 0)
             {
@@ -769,7 +769,7 @@ namespace Intersect.Server.Entities.Events
                     break;
             }
 
-            return base.CanMoveInDirection(moveDir);
+            return base.CanMove(moveDir);
         }
 
         public void TurnTowardsPlayer()

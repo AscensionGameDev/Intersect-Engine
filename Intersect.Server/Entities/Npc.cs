@@ -513,9 +513,9 @@ namespace Intersect.Server.Entities
             }
         }
 
-        public override int CanMoveInDirection(Direction moveDir)
+        public override int CanMove(Direction moveDir)
         {
-            var canMove = base.CanMoveInDirection(moveDir);
+            var canMove = base.CanMove(moveDir);
 
             // If configured & blocked by an entity, ignore the entity and proceed to move
             if (Options.Instance.NpcOpts.IntangibleDuringReset && canMove > -1 )
@@ -939,7 +939,7 @@ namespace Intersect.Server.Entities
                                                 }
                                             }
 
-                                            if (CanMoveInDirection(dir) == -1 || CanMoveInDirection(dir) == -4)
+                                            if (CanMove(dir) == -1 || CanMove(dir) == -4)
                                             {
                                                 //check if NPC is snared or stunned
                                                 foreach (var status in CachedStatuses)
@@ -1047,7 +1047,7 @@ namespace Intersect.Server.Entities
                                             break;
                                     }
 
-                                    if (CanMoveInDirection(dir) == -1 || CanMoveInDirection(dir) == -4)
+                                    if (CanMove(dir) == -1 || CanMove(dir) == -4)
                                     {
                                         //check if NPC is snared or stunned
                                         foreach (var status in CachedStatuses)
@@ -1124,7 +1124,7 @@ namespace Intersect.Server.Entities
                         if (i == 0)
                         {
                             var direction = Randomization.NextDirection();
-                            if (CanMoveInDirection(direction) == -1)
+                            if (CanMove(direction) == -1)
                             {
                                 //check if NPC is snared or stunned
                                 foreach (var status in CachedStatuses)
