@@ -582,15 +582,7 @@ namespace Intersect.Server.Entities
                     CollisionIndex = en.Id;
                     if (en is Player)
                     {
-                        if (this is Player)
-                        {
-                            //Check if this target player is passable....
-                            if (!Options.Instance.Passability.Passable[(int)targetMap.ZoneType])
-                            {
-                                return (int)EntityType.Player;
-                            }
-                        }
-                        else
+                        if (!CanPassPlayer(targetMap))
                         {
                             return (int)EntityType.Player;
                         }
@@ -616,6 +608,11 @@ namespace Intersect.Server.Entities
             }
 
             return IsTileWalkable(tile.GetMap(), tile.GetX(), tile.GetY(), Z);
+        }
+
+        protected virtual bool CanPassPlayer(MapController targetMap)
+        {
+            return false;
         }
 
         protected virtual bool IsBlockedByEvent(MapInstance mapInstance, int tileX, int tileY)

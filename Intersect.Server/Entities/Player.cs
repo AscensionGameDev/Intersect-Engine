@@ -6499,6 +6499,11 @@ namespace Intersect.Server.Entities
             return base.CanMoveInDirection(direction, out blockerType, out entityType);
         }
 
+        protected override bool CanPassPlayer(MapController targetMap)
+        {
+            return Options.Instance.Passability.Passable[(int)targetMap.ZoneType];
+        }
+
         protected override bool IsBlockedByEvent(MapInstance mapInstance, int tileX, int tileY)
         {
             return false;
