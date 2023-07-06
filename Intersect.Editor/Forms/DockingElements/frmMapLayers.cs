@@ -742,7 +742,7 @@ namespace Intersect.Editor.Forms.DockingElements
 
                 case MapAttribute.Slide:
                     var slideAttribute = attribute as MapSlideAttribute;
-                    slideAttribute.Direction = (byte)cmbSlideDir.SelectedIndex;
+                    slideAttribute.Direction = (Direction)cmbSlideDir.SelectedIndex;
                     break;
 
                 case MapAttribute.Critter:

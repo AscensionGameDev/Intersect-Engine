@@ -25,7 +25,6 @@ using Stat = Intersect.Enums.Stat;
 
 namespace Intersect.Server.Entities
 {
-
     public abstract partial class Entity : IDisposable
     {
 
@@ -486,28 +485,32 @@ namespace Intersect.Server.Entities
 
                         switch (((MapSlideAttribute)tileAttribute).Direction)
                         {
-                            case 1:
+                            // The numbers here seem wrong, I would expect them to be
+                            // either 1 0 3 2 (matching moveDir) or 0 1 2 3 (opposites)
+                            // Instead it's 1 -> Down, 2 -> Right, 3 -> Left, 4 -> UpLeft?
+                            // Makes no sense but I will handle this in a separate commit
+                            case (Direction)1:
                                 if (moveDir == Direction.Down)
                                 {
                                     return -4;
                                 }
 
                                 break;
-                            case 2:
+                            case (Direction)2:
                                 if (moveDir == Direction.Up)
                                 {
                                     return -4;
                                 }
 
                                 break;
-                            case 3:
+                            case (Direction)3:
                                 if (moveDir == Direction.Right)
                                 {
                                     return -4;
                                 }
 
                                 break;
-                            case 4:
+                            case (Direction)4:
                                 if (moveDir == Direction.Left)
                                 {
                                     return -4;
