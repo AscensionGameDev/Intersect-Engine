@@ -510,19 +510,31 @@ namespace Intersect.Server.Entities
             var tileAttribute = mapController.Attributes[tileX, tileY];
             if (tileAttribute != null)
             {
-                switch (tileAttribute.Type)
+                switch (tileAttribute)
                 {
-                    case MapAttribute.Blocked:
-                    case MapAttribute.Animation when ((MapAnimationAttribute)tileAttribute).IsBlock:
-                    case MapAttribute.NpcAvoid when (this is Npc || (this is EventPageInstance evtPage && !evtPage.MyPage.IgnoreNpcAvoids)):
+                    case MapBlockedAttribute _:
+                    case MapAnimationAttribute animationAttribute when animationAttribute.IsBlock:
                         return -2;
-                    case MapAttribute.ZDimension when ((MapZDimensionAttribute)tileAttribute).BlockedLevel > 0 &&
-                                                      ((MapZDimensionAttribute)tileAttribute).BlockedLevel - 1 == Z:
+
+                    case MapNpcAvoidAttribute _:
+                        if (this is Npc ||
+                            this is EventPageInstance thisEventPageInstance &&
+                            !thisEventPageInstance.MyPage.IgnoreNpcAvoids)
+                        {
+                            return -2;
+                        }
+                        break;
+
+                    case MapZDimensionAttribute zDimensionAttribute when zDimensionAttribute.BlockedLevel > 0 && zDimensionAttribute.BlockedLevel - 1 == Z:
                         return -3;
-                    case MapAttribute.Slide when this is EventPageInstance:
-                        return -4;
-                    case MapAttribute.Slide:
-                        switch (((MapSlideAttribute)tileAttribute).Direction)
+
+                    case MapSlideAttribute slideAttribute:
+                        if (this is EventPageInstance)
+                        {
+                            return -4;
+                        }
+
+                        switch (slideAttribute.Direction)
                         {
                             // The numbers here seem wrong, I would expect them to be
                             // either 1 0 3 2 (matching moveDir) or 0 1 2 3 (opposites)
