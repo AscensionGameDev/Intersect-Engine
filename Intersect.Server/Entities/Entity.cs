@@ -610,24 +610,25 @@ namespace Intersect.Server.Entities
                 }
             }
 
-            //If this is an npc or other event.. if any global page exists that isn't passable then don't walk here!
-            if (this is Player || mapInstance == null)
+            if (IsBlockedByEvent(mapInstance, tileX, tileY))
             {
-                return IsTileWalkable(tile.GetMap(), tile.GetX(), tile.GetY(), Z);
-            }
-
-            foreach (var evt in mapInstance.GlobalEventInstances)
-            {
-                foreach (var en in evt.Value.GlobalPageInstance)
-                {
-                    if (en != null && en.X == tileX && en.Y == tileY && en.Z == Z && !en.Passable)
-                    {
-                        return (int)EntityType.Event;
-                    }
-                }
+                return (int)EntityType.Event;
             }
 
             return IsTileWalkable(tile.GetMap(), tile.GetX(), tile.GetY(), Z);
+        }
+
+        protected virtual bool IsBlockedByEvent(MapInstance mapInstance, int tileX, int tileY)
+        {
+            if (mapInstance == default)
+            {
+                return false;
+            }
+
+            return mapInstance.GlobalEventInstances.Values
+                .SelectMany(globalEventInstance => globalEventInstance.GlobalPageInstance)
+                .Where(instance => instance != default && !instance.Passable)
+                .Any(instance => instance.X == tileX && instance.Y == tileY && instance.Z == Z);
         }
 
         protected virtual int IsTileWalkable(MapController map, int x, int y, int z)

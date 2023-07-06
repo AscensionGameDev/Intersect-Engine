@@ -6499,6 +6499,11 @@ namespace Intersect.Server.Entities
             return base.CanMoveInDirection(direction, out blockerType, out entityType);
         }
 
+        protected override bool IsBlockedByEvent(MapInstance mapInstance, int tileX, int tileY)
+        {
+            return false;
+        }
+
         protected override int IsTileWalkable(MapController map, int x, int y, int z)
         {
             if (base.IsTileWalkable(map, x, y, z) == -1)
