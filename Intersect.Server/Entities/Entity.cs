@@ -495,18 +495,14 @@ namespace Intersect.Server.Entities
                     break;
             }
 
-            MapController mapController;
-            int tileX;
-            int tileY;
-
             if (!tile.Translate(xOffset, yOffset))
             {
                 return -5; //Out of Bounds
             }
 
-            mapController = MapController.Get(tile.GetMapId());
-            tileX = tile.GetX();
-            tileY = tile.GetY();
+            var mapController = MapController.Get(tile.GetMapId());
+            int tileX = tile.GetX();
+            int tileY = tile.GetY();
             var tileAttribute = mapController.Attributes[tileX, tileY];
             if (tileAttribute != null)
             {
@@ -579,7 +575,6 @@ namespace Intersect.Server.Entities
                 return IsTileWalkable(tile.GetMap(), tile.GetX(), tile.GetY(), Z);
             }
 
-            var targetMap = mapController;
             var mapEntities = new List<Entity>();
             if (mapController.TryGetInstance(MapInstanceId, out var mapInstance))
             {
@@ -592,7 +587,7 @@ namespace Intersect.Server.Entities
                 CollisionIndex = mapEntity.Id;
                 switch (mapEntity)
                 {
-                    case Player _ when !CanPassPlayer(targetMap):
+                    case Player _ when !CanPassPlayer(mapController):
                         return (int)EntityType.Player;
                     case Npc _:
                         // There should honestly be an Npc EntityType...
