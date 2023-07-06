@@ -384,6 +384,13 @@ namespace Intersect.Server.Entities
         ///     Determines if this entity can move in the specified <paramref name="direction"/>.
         /// </summary>
         /// <param name="direction">The <see cref="Direction"/> the entity is attempting to move in.</param>
+        /// <returns>If the entity is able to move in the specified direction.</returns>
+        public bool CanMoveInDirection(Direction direction) => CanMoveInDirection(direction, out _, out _);
+
+        /// <summary>
+        ///     Determines if this entity can move in the specified <paramref name="direction"/>.
+        /// </summary>
+        /// <param name="direction">The <see cref="Direction"/> the entity is attempting to move in.</param>
         /// <param name="blockerType">The type of blocker, if any.</param>
         /// <param name="entityType">
         ///     The type of entity that is blocking movement, if <paramref name="blockerType"/> is set to <see cref="MovementBlockerType.Entity"/>.
