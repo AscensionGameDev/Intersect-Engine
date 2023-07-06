@@ -453,7 +453,15 @@ namespace Intersect.Server.Entities
                 return false;
             }
 
-            var result = CanMove(direction, tileHelper);
+            var mapController = MapController.Get(tileHelper.GetMapId());
+            int tileX = tileHelper.GetX();
+            int tileY = tileHelper.GetY();
+            if (IsBlockedByMapAttribute(direction, mapController.Attributes[tileX, tileY], out blockerType))
+            {
+                return false;
+            }
+
+            var result = CanMove(mapController, tileHelper);
             switch (result)
             {
                 case -1:
@@ -494,6 +502,38 @@ namespace Intersect.Server.Entities
 
         protected virtual bool IgnoresNpcAvoid => true;
 
+        protected bool IsBlockedByMapAttribute(
+            Direction direction,
+            Intersect.GameObjects.Maps.MapAttribute mapAttribute,
+            out MovementBlockerType blockerType
+        )
+        {
+            blockerType = MovementBlockerType.NotBlocked;
+            if (mapAttribute == default)
+            {
+                return false;
+            }
+
+            switch (mapAttribute)
+            {
+                case MapBlockedAttribute _:
+                case MapAnimationAttribute animationAttribute when animationAttribute.IsBlock:
+                case MapNpcAvoidAttribute _ when !IgnoresNpcAvoid:
+                    blockerType = MovementBlockerType.MapAttribute;
+                    break;
+
+                case MapZDimensionAttribute zDimensionAttribute when zDimensionAttribute.BlockedLevel > 0 && zDimensionAttribute.BlockedLevel - 1 == Z:
+                    blockerType = MovementBlockerType.ZDimension;
+                    break;
+
+                case MapSlideAttribute slideAttribute when !CanMoveOntoSlide(direction, slideAttribute.Direction):
+                    blockerType = MovementBlockerType.Slide;
+                    break;
+            }
+
+            return blockerType != MovementBlockerType.NotBlocked;
+        }
+
         //Movement
         /// <summary>
         ///     Determines if this entity can move in the direction given.
@@ -506,29 +546,8 @@ namespace Intersect.Server.Entities
         /// <param name="direction"></param>
         /// <param name="tileHelper"></param>
         /// <returns></returns>
-        private int CanMove(Direction direction, TileHelper tileHelper)
+        private int CanMove(MapController mapController, TileHelper tileHelper)
         {
-            var mapController = MapController.Get(tileHelper.GetMapId());
-            int tileX = tileHelper.GetX();
-            int tileY = tileHelper.GetY();
-            var tileAttribute = mapController.Attributes[tileX, tileY];
-            if (tileAttribute != null)
-            {
-                switch (tileAttribute)
-                {
-                    case MapBlockedAttribute _:
-                    case MapAnimationAttribute animationAttribute when animationAttribute.IsBlock:
-                    case MapNpcAvoidAttribute _ when !IgnoresNpcAvoid:
-                        return -2;
-
-                    case MapZDimensionAttribute zDimensionAttribute when zDimensionAttribute.BlockedLevel > 0 && zDimensionAttribute.BlockedLevel - 1 == Z:
-                        return -3;
-
-                    case MapSlideAttribute slideAttribute when !CanMoveOntoSlide(direction, slideAttribute.Direction):
-                        return -4;
-                }
-            }
-
             if (Passable)
             {
                 return IsTileWalkable(tileHelper.GetMap(), tileHelper.GetX(), tileHelper.GetY(), Z);
@@ -540,7 +559,7 @@ namespace Intersect.Server.Entities
                 mapEntities.AddRange(mapInstance.GetCachedEntities());
             }
 
-            foreach (var mapEntity in mapEntities.Where(en => en != default && en.X == tileX && en.Y == tileY && en.Z == Z && !en.Passable))
+            foreach (var mapEntity in mapEntities.Where(en => en != default && en.X == tileHelper.GetX() && en.Y == tileHelper.GetY() && en.Z == Z && !en.Passable))
             {
                 // Set a target if a projectile
                 CollisionIndex = mapEntity.Id;
@@ -556,7 +575,7 @@ namespace Intersect.Server.Entities
                 }
             }
 
-            if (IsBlockedByEvent(mapInstance, tileX, tileY))
+            if (IsBlockedByEvent(mapInstance, tileHelper.GetX(), tileHelper.GetY()))
             {
                 return (int)EntityType.Event;
             }
