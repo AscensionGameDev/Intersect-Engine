@@ -445,6 +445,12 @@ namespace Intersect.Server.Entities
                     yOffset++;
                     xOffset--;
                     break;
+
+                case Direction.None:
+                    break;
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(direction), direction, null);
             }
 
             if (!tileHelper.Translate(xOffset, yOffset))
