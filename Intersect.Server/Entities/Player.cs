@@ -6509,33 +6509,32 @@ namespace Intersect.Server.Entities
             return false;
         }
 
-        protected override int IsTileWalkable(MapController map, int x, int y, int z)
+        protected override bool TryGetBlockerOnTile(MapController map, int x, int y, int z, out MovementBlockerType blockerType, out EntityType entityType)
         {
-            if (base.IsTileWalkable(map, x, y, z) == -1)
+            if (base.TryGetBlockerOnTile(map, x, y, z, out blockerType, out entityType))
             {
-                foreach (var evt in EventLookup)
-                {
-                    if (evt.Value.PageInstance != null)
-                    {
-                        var instance = evt.Value.PageInstance;
-                        if (instance.GlobalClone != null)
-                        {
-                            instance = instance.GlobalClone;
-                        }
-
-                        if (instance.Map == map &&
-                            instance.X == x &&
-                            instance.Y == y &&
-                            instance.Z == z &&
-                            !instance.Passable)
-                        {
-                            return (int) EntityType.Event;
-                        }
-                    }
-                }
+                return true;
             }
 
-            return -1;
+            foreach (var evt in EventLookup.Values.Where(evt => evt.PageInstance != default))
+            {
+                var instance = evt.PageInstance;
+                if (instance.GlobalClone != null)
+                {
+                    instance = instance.GlobalClone;
+                }
+
+                if (instance.Map != map || instance.X != x || instance.Y != y || instance.Z != z || instance.Passable)
+                {
+                    continue;
+                }
+
+                blockerType = MovementBlockerType.Entity;
+                entityType = EntityType.Event;
+                return true;
+            }
+
+            return false;
         }
 
         public override void Move(Direction moveDir, Player forPlayer, bool dontUpdate = false,

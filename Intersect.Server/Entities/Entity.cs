@@ -461,37 +461,63 @@ namespace Intersect.Server.Entities
                 return false;
             }
 
-            var result = CanMove(mapController, tileHelper);
-            switch (result)
+            if (Passable)
             {
-                case -1:
-                    blockerType = MovementBlockerType.NotBlocked;
-                    break;
+                return !TryGetBlockerOnTile(
+                    tileHelper.GetMap(),
+                    tileX,
+                    tileY,
+                    Z,
+                    out blockerType,
+                    out entityType
+                );
+            }
 
-                case -2:
-                    blockerType = MovementBlockerType.MapAttribute;
-                    break;
+            var mapEntities = new List<Entity>();
+            if (mapController.TryGetInstance(MapInstanceId, out var mapInstance))
+            {
+                mapEntities.AddRange(mapInstance.GetCachedEntities().Where(entity => entity != default && !entity.Passable));
+            }
 
-                case -3:
-                    blockerType = MovementBlockerType.ZDimension;
-                    break;
+            foreach (var mapEntity in mapEntities.Where(en => en.X == tileHelper.GetX() && en.Y == tileHelper.GetY() && en.Z == Z))
+            {
+                // Set a target if a projectile
+                CollisionIndex = mapEntity.Id;
+                switch (mapEntity)
+                {
+                    case Player _ when !CanPassPlayer(mapController):
+                        blockerType = MovementBlockerType.Entity;
+                        entityType = EntityType.Player;
+                        return false;
+                    case Npc _:
+                        // There should honestly be an Npc EntityType...
+                        blockerType = MovementBlockerType.Entity;
+                        entityType = EntityType.Player;
+                        return false;
+                    case Resource resource when !resource.IsPassable():
+                        blockerType = MovementBlockerType.Entity;
+                        entityType = EntityType.Resource;
+                        return false;
+                }
+            }
 
-                case -4:
-                    blockerType = MovementBlockerType.Slide;
-                    break;
+            if (IsBlockedByEvent(mapInstance, tileHelper.GetX(), tileHelper.GetY()))
+            {
+                blockerType = MovementBlockerType.Entity;
+                entityType = EntityType.Event;
+                return false;
+            }
 
-                case -5:
-                    blockerType = MovementBlockerType.OutOfBounds;
-                    break;
-
-                default:
-                    blockerType = MovementBlockerType.Entity;
-                    entityType = (EntityType)result;
-                    if (!Enum.IsDefined(typeof(EntityType), entityType))
-                    {
-                        throw new NotImplementedException();
-                    }
-                    break;
+            if (TryGetBlockerOnTile(
+                    tileHelper.GetMap(),
+                    tileHelper.GetX(),
+                    tileHelper.GetY(),
+                    Z,
+                    out blockerType,
+                    out entityType
+                ))
+            {
+                return false;
             }
 
             return blockerType == MovementBlockerType.NotBlocked;
@@ -502,7 +528,7 @@ namespace Intersect.Server.Entities
 
         protected virtual bool IgnoresNpcAvoid => true;
 
-        protected bool IsBlockedByMapAttribute(
+        private bool IsBlockedByMapAttribute(
             Direction direction,
             Intersect.GameObjects.Maps.MapAttribute mapAttribute,
             out MovementBlockerType blockerType
@@ -534,59 +560,7 @@ namespace Intersect.Server.Entities
             return blockerType != MovementBlockerType.NotBlocked;
         }
 
-        //Movement
-        /// <summary>
-        ///     Determines if this entity can move in the direction given.
-        ///     Returns -5 if the tile is completely out of bounds.
-        ///     Returns -3 if a tile is blocked because of a Z dimension tile
-        ///     Returns -2 if a tile is blocked by a map attribute.
-        ///     Returns -1 for clear.
-        ///     Returns the type of entity that is blocking the way (if one exists)
-        /// </summary>
-        /// <param name="direction"></param>
-        /// <param name="tileHelper"></param>
-        /// <returns></returns>
-        private int CanMove(MapController mapController, TileHelper tileHelper)
-        {
-            if (Passable)
-            {
-                return IsTileWalkable(tileHelper.GetMap(), tileHelper.GetX(), tileHelper.GetY(), Z);
-            }
-
-            var mapEntities = new List<Entity>();
-            if (mapController.TryGetInstance(MapInstanceId, out var mapInstance))
-            {
-                mapEntities.AddRange(mapInstance.GetCachedEntities());
-            }
-
-            foreach (var mapEntity in mapEntities.Where(en => en != default && en.X == tileHelper.GetX() && en.Y == tileHelper.GetY() && en.Z == Z && !en.Passable))
-            {
-                // Set a target if a projectile
-                CollisionIndex = mapEntity.Id;
-                switch (mapEntity)
-                {
-                    case Player _ when !CanPassPlayer(mapController):
-                        return (int)EntityType.Player;
-                    case Npc _:
-                        // There should honestly be an Npc EntityType...
-                        return (int)EntityType.Player;
-                    case Resource resource when !resource.IsPassable():
-                        return (int)EntityType.Resource;
-                }
-            }
-
-            if (IsBlockedByEvent(mapInstance, tileHelper.GetX(), tileHelper.GetY()))
-            {
-                return (int)EntityType.Event;
-            }
-
-            return IsTileWalkable(tileHelper.GetMap(), tileHelper.GetX(), tileHelper.GetY(), Z);
-        }
-
-        protected virtual bool CanPassPlayer(MapController targetMap)
-        {
-            return false;
-        }
+        protected virtual bool CanPassPlayer(MapController targetMap) => false;
 
         protected virtual bool IsBlockedByEvent(MapInstance mapInstance, int tileX, int tileY)
         {
@@ -601,16 +575,18 @@ namespace Intersect.Server.Entities
                 .Any(instance => instance.X == tileX && instance.Y == tileY && instance.Z == Z);
         }
 
-        protected virtual int IsTileWalkable(MapController map, int x, int y, int z)
+        protected virtual bool TryGetBlockerOnTile(
+            MapController map,
+            int x,
+            int y,
+            int z,
+            out MovementBlockerType blockerType,
+            out EntityType entityType
+        )
         {
-            //Out of bounds if no map
-            if (map == null)
-            {
-                return -5;
-            }
-
-            //Otherwise fine
-            return -1;
+            blockerType = map == default ? MovementBlockerType.OutOfBounds : MovementBlockerType.NotBlocked;
+            entityType = default;
+            return blockerType != MovementBlockerType.NotBlocked;
         }
 
         protected virtual bool ProcessMoveRoute(Player forPlayer, long timeMs)
