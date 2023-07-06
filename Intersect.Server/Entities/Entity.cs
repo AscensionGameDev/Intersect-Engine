@@ -489,7 +489,7 @@ namespace Intersect.Server.Entities
             return blockerType == MovementBlockerType.NotBlocked;
         }
 
-        protected virtual bool CanSlideInDirection(Direction movementDirection, Direction slideDirection) =>
+        protected virtual bool CanMoveOntoSlide(Direction movementDirection, Direction slideDirection) =>
             !movementDirection.IsOppositeOf(slideDirection);
 
         //Movement
@@ -531,7 +531,7 @@ namespace Intersect.Server.Entities
                         return -3;
 
                     case MapSlideAttribute slideAttribute:
-                        if (CanSlideInDirection(direction, slideAttribute.Direction))
+                        if (CanMoveOntoSlide(direction, slideAttribute.Direction))
                         {
                             break;
                         }

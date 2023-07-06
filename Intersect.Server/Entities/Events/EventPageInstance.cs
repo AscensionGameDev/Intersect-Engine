@@ -51,7 +51,7 @@ namespace Intersect.Server.Entities.Events
 
         public int Speed = 20;
 
-        protected override bool CanSlideInDirection(Direction movementDirection, Direction slideDirection) => false;
+        protected override bool CanMoveOntoSlide(Direction movementDirection, Direction slideDirection) => false;
 
         public EventPageInstance(
             EventBase myEvent,
