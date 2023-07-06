@@ -520,6 +520,14 @@ namespace Intersect.Server.Entities
             out EntityType entityType
         )
         {
+            entityType = default;
+
+            if (Base.Movement == (byte)NpcMovement.Static)
+            {
+                blockerType = MovementBlockerType.MapAttribute;
+                return false;
+            }
+            
             if (
                 !base.CanMoveInDirection(direction, out blockerType, out entityType)
                 && blockerType == MovementBlockerType.Entity
@@ -532,77 +540,77 @@ namespace Intersect.Server.Entities
                 }
             }
 
-            if (
-                (blockerType == MovementBlockerType.NotBlocked || blockerType == MovementBlockerType.Slide)
-                && IsFleeing()
-                && Options.Instance.NpcOpts.AllowResetRadius
-            )
+            if ((blockerType != MovementBlockerType.NotBlocked && blockerType != MovementBlockerType.Slide) ||
+                !IsFleeing() ||
+                !Options.Instance.NpcOpts.AllowResetRadius)
             {
-                var yOffset = 0;
-                var xOffset = 0;
-                var tile = new TileHelper(MapId, X, Y);
-                switch (direction)
-                {
-                    case Direction.Up:
-                        yOffset--;
-                        break;
-                    
-                    case Direction.Down:
-                        yOffset++;
-                        break;
-                    
-                    case Direction.Left:
-                        xOffset--;
-                        break;
-                    
-                    case Direction.Right:
-                        xOffset++;
-                        break;
-                    
-                    case Direction.UpLeft:
-                        yOffset--;
-                        xOffset--;
-                        break;
-                    
-                    case Direction.UpRight:
-                        yOffset--;
-                        xOffset++;
-                        break;
-                    
-                    case Direction.DownLeft:
-                        yOffset++;
-                        xOffset--;
-                        break;
-                    
-                    case Direction.DownRight:
-                        yOffset++;
-                        xOffset++;
-                        break;
+                return blockerType == MovementBlockerType.NotBlocked;
+            }
 
-                    case Direction.None:
-                    default:
-                        break;
-                }
+            var yOffset = 0;
+            var xOffset = 0;
+            var tile = new TileHelper(MapId, X, Y);
+            switch (direction)
+            {
+                case Direction.Up:
+                    yOffset--;
+                    break;
+                    
+                case Direction.Down:
+                    yOffset++;
+                    break;
+                    
+                case Direction.Left:
+                    xOffset--;
+                    break;
+                    
+                case Direction.Right:
+                    xOffset++;
+                    break;
+                    
+                case Direction.UpLeft:
+                    yOffset--;
+                    xOffset--;
+                    break;
+                    
+                case Direction.UpRight:
+                    yOffset--;
+                    xOffset++;
+                    break;
+                    
+                case Direction.DownLeft:
+                    yOffset++;
+                    xOffset--;
+                    break;
+                    
+                case Direction.DownRight:
+                    yOffset++;
+                    xOffset++;
+                    break;
+
+                case Direction.None:
+                default:
+                    break;
+            }
+
+            // ReSharper disable once InvertIf
+            if (tile.Translate(xOffset, yOffset))
+            {
+                // If this would move us past our reset radius then we cannot move.
+                var dist = GetDistanceBetween(
+                    AggroCenterMap,
+                    tile.GetMap(),
+                    AggroCenterX,
+                    tile.GetX(),
+                    AggroCenterY,
+                    tile.GetY()
+                );
 
                 // ReSharper disable once InvertIf
-                if (tile.Translate(xOffset, yOffset))
+                if (dist > Math.Max(Options.Npc.ResetRadius, Base.ResetRadius))
                 {
-                    // If this would move us past our reset radius then we cannot move.
-                    var dist = GetDistanceBetween(
-                        AggroCenterMap,
-                        tile.GetMap(),
-                        AggroCenterX,
-                        tile.GetX(),
-                        AggroCenterY,
-                        tile.GetY()
-                    );
-
-                    // ReSharper disable once InvertIf
-                    if (dist > Math.Max(Options.Npc.ResetRadius, Base.ResetRadius))
-                    {
-                        blockerType = MovementBlockerType.MapAttribute;
-                        return false;
-                    }
+                    blockerType = MovementBlockerType.MapAttribute;
+                    return false;
                 }
             }
 
