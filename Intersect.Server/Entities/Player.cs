@@ -6473,7 +6473,7 @@ namespace Intersect.Server.Entities
             }
         }
 
-        public override int CanMove(Direction moveDir)
+        public override int CanMoveInDirection(Direction moveDir)
         {
             //If crafting or locked by event return blocked
             if (OpenCraftingTableId != default && CraftingState != default)
@@ -6489,7 +6489,7 @@ namespace Intersect.Server.Entities
                 }
             }
 
-            return base.CanMove(moveDir);
+            return base.CanMoveInDirection(moveDir);
         }
 
         protected override int IsTileWalkable(MapController map, int x, int y, int z)

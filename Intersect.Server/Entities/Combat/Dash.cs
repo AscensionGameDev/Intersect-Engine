@@ -55,7 +55,7 @@ namespace Intersect.Server.Entities.Combat
             Range = 0;
             for (var i = 1; i <= range; i++)
             {
-                n = en.CanMove(Direction);
+                n = en.CanMoveInDirection(Direction);
                 if (n == -5) //Check for out of bounds
                 {
                     return;

@@ -701,7 +701,7 @@ namespace Intersect.Server.Networking
             if (player.ClientMoveTimer <= clientTime &&
                 (Options.Instance.PlayerOpts.AllowCombatMovement || player.ClientAttackTimer <= clientTime))
             {
-                var canMove = player.CanMove(packet.Dir);
+                var canMove = player.CanMoveInDirection(packet.Dir);
                 if ((canMove == -1 || canMove == -4) && client.Entity.MoveRoute == null)
                 {
                     player.Move(packet.Dir, player, false);
