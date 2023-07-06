@@ -510,68 +510,55 @@ namespace Intersect.Server.Entities
             var tileAttribute = mapController.Attributes[tileX, tileY];
             if (tileAttribute != null)
             {
-                if (tileAttribute.Type == MapAttribute.Blocked ||
-                    (tileAttribute.Type == MapAttribute.Animation &&
-                     ((MapAnimationAttribute)tileAttribute).IsBlock))
+                switch (tileAttribute.Type)
                 {
-                    return -2;
-                }
-
-                if (tileAttribute.Type == MapAttribute.NpcAvoid &&
-                    (this is Npc || (this is EventPageInstance evtPage && !evtPage.MyPage.IgnoreNpcAvoids)))
-                {
-                    return -2;
-                }
-
-                if (tileAttribute.Type == MapAttribute.ZDimension &&
-                    ((MapZDimensionAttribute)tileAttribute).BlockedLevel > 0 &&
-                    ((MapZDimensionAttribute)tileAttribute).BlockedLevel - 1 == Z)
-                {
-                    return -3;
-                }
-
-                if (tileAttribute.Type == MapAttribute.Slide)
-                {
-                    if (this is EventPageInstance)
-                    {
+                    case MapAttribute.Blocked:
+                    case MapAttribute.Animation when ((MapAnimationAttribute)tileAttribute).IsBlock:
+                    case MapAttribute.NpcAvoid when (this is Npc || (this is EventPageInstance evtPage && !evtPage.MyPage.IgnoreNpcAvoids)):
+                        return -2;
+                    case MapAttribute.ZDimension when ((MapZDimensionAttribute)tileAttribute).BlockedLevel > 0 &&
+                                                      ((MapZDimensionAttribute)tileAttribute).BlockedLevel - 1 == Z:
+                        return -3;
+                    case MapAttribute.Slide when this is EventPageInstance:
                         return -4;
-                    }
+                    case MapAttribute.Slide:
+                        switch (((MapSlideAttribute)tileAttribute).Direction)
+                        {
+                            // The numbers here seem wrong, I would expect them to be
+                            // either 1 0 3 2 (matching moveDir) or 0 1 2 3 (opposites)
+                            // Instead it's 1 -> Down, 2 -> Right, 3 -> Left, 4 -> UpLeft?
+                            // Makes no sense but I will handle this in a separate commit
+                            case (Direction)1:
+                                if (moveDir == Direction.Down)
+                                {
+                                    return -4;
+                                }
 
-                    switch (((MapSlideAttribute)tileAttribute).Direction)
-                    {
-                        // The numbers here seem wrong, I would expect them to be
-                        // either 1 0 3 2 (matching moveDir) or 0 1 2 3 (opposites)
-                        // Instead it's 1 -> Down, 2 -> Right, 3 -> Left, 4 -> UpLeft?
-                        // Makes no sense but I will handle this in a separate commit
-                        case (Direction)1:
-                            if (moveDir == Direction.Down)
-                            {
-                                return -4;
-                            }
+                                break;
+                            case (Direction)2:
+                                if (moveDir == Direction.Up)
+                                {
+                                    return -4;
+                                }
 
-                            break;
-                        case (Direction)2:
-                            if (moveDir == Direction.Up)
-                            {
-                                return -4;
-                            }
+                                break;
+                            case (Direction)3:
+                                if (moveDir == Direction.Right)
+                                {
+                                    return -4;
+                                }
 
-                            break;
-                        case (Direction)3:
-                            if (moveDir == Direction.Right)
-                            {
-                                return -4;
-                            }
+                                break;
+                            case (Direction)4:
+                                if (moveDir == Direction.Left)
+                                {
+                                    return -4;
+                                }
 
-                            break;
-                        case (Direction)4:
-                            if (moveDir == Direction.Left)
-                            {
-                                return -4;
-                            }
+                                break;
+                        }
 
-                            break;
-                    }
+                        break;
                 }
             }
 
