@@ -492,6 +492,8 @@ namespace Intersect.Server.Entities
         protected virtual bool CanMoveOntoSlide(Direction movementDirection, Direction slideDirection) =>
             !movementDirection.IsOppositeOf(slideDirection);
 
+        protected virtual bool IgnoresNpcAvoid => true;
+
         //Movement
         /// <summary>
         ///     Determines if this entity can move in the direction given.
@@ -516,26 +518,13 @@ namespace Intersect.Server.Entities
                 {
                     case MapBlockedAttribute _:
                     case MapAnimationAttribute animationAttribute when animationAttribute.IsBlock:
+                    case MapNpcAvoidAttribute _ when !IgnoresNpcAvoid:
                         return -2;
-
-                    case MapNpcAvoidAttribute _:
-                        if (this is Npc ||
-                            this is EventPageInstance thisEventPageInstance &&
-                            !thisEventPageInstance.MyPage.IgnoreNpcAvoids)
-                        {
-                            return -2;
-                        }
-                        break;
 
                     case MapZDimensionAttribute zDimensionAttribute when zDimensionAttribute.BlockedLevel > 0 && zDimensionAttribute.BlockedLevel - 1 == Z:
                         return -3;
 
-                    case MapSlideAttribute slideAttribute:
-                        if (CanMoveOntoSlide(direction, slideAttribute.Direction))
-                        {
-                            break;
-                        }
-
+                    case MapSlideAttribute slideAttribute when !CanMoveOntoSlide(direction, slideAttribute.Direction):
                         return -4;
                 }
             }

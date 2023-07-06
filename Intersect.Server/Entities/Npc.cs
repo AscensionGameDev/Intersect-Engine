@@ -513,6 +513,8 @@ namespace Intersect.Server.Entities
             }
         }
 
+        protected override bool IgnoresNpcAvoid => false;
+
         /// <inheritdoc />
         public override bool CanMoveInDirection(
             Direction direction,
