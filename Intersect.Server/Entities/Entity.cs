@@ -489,6 +489,9 @@ namespace Intersect.Server.Entities
             return blockerType == MovementBlockerType.NotBlocked;
         }
 
+        protected virtual bool CanSlideInDirection(Direction movementDirection, Direction slideDirection) =>
+            !movementDirection.IsOppositeOf(slideDirection);
+
         //Movement
         /// <summary>
         ///     Determines if this entity can move in the direction given.
@@ -528,48 +531,12 @@ namespace Intersect.Server.Entities
                         return -3;
 
                     case MapSlideAttribute slideAttribute:
-                        if (this is EventPageInstance)
+                        if (CanSlideInDirection(direction, slideAttribute.Direction))
                         {
-                            return -4;
+                            break;
                         }
 
-                        switch (slideAttribute.Direction)
-                        {
-                            // The numbers here seem wrong, I would expect them to be
-                            // either 1 0 3 2 (matching moveDir) or 0 1 2 3 (opposites)
-                            // Instead it's 1 -> Down, 2 -> Right, 3 -> Left, 4 -> UpLeft?
-                            // Makes no sense but I will handle this in a separate commit
-                            case (Direction)1:
-                                if (direction == Direction.Down)
-                                {
-                                    return -4;
-                                }
-
-                                break;
-                            case (Direction)2:
-                                if (direction == Direction.Up)
-                                {
-                                    return -4;
-                                }
-
-                                break;
-                            case (Direction)3:
-                                if (direction == Direction.Right)
-                                {
-                                    return -4;
-                                }
-
-                                break;
-                            case (Direction)4:
-                                if (direction == Direction.Left)
-                                {
-                                    return -4;
-                                }
-
-                                break;
-                        }
-
-                        break;
+                        return -4;
                 }
             }
 
