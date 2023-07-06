@@ -532,7 +532,7 @@ namespace Intersect.Server.Entities
 
                 if (tileAttribute.Type == MapAttribute.Slide)
                 {
-                    if (this is EventPage)
+                    if (this is EventPageInstance)
                     {
                         return -4;
                     }
