@@ -402,61 +402,13 @@ namespace Intersect.Server.Entities
             out EntityType entityType
         )
         {
-            var result = CanMove(direction);
-            switch (result)
-            {
-                case -1:
-                    blockerType = MovementBlockerType.NotBlocked;
-                    entityType = default;
-                    break;
+            entityType = default;
 
-                case -2:
-                    blockerType = MovementBlockerType.MapAttribute;
-                    entityType = default;
-                    break;
-
-                case -3:
-                    blockerType = MovementBlockerType.ZDimension;
-                    entityType = default;
-                    break;
-
-                case -4:
-                    blockerType = MovementBlockerType.Slide;
-                    entityType = default;
-                    break;
-
-                case -5:
-                    blockerType = MovementBlockerType.OutOfBounds;
-                    entityType = default;
-                    break;
-
-                default:
-                    blockerType = MovementBlockerType.Entity;
-                    entityType = (EntityType)result;
-                    break;
-            }
-
-            return blockerType == MovementBlockerType.NotBlocked;
-        }
-
-        //Movement
-        /// <summary>
-        ///     Determines if this entity can move in the direction given.
-        ///     Returns -5 if the tile is completely out of bounds.
-        ///     Returns -3 if a tile is blocked because of a Z dimension tile
-        ///     Returns -2 if a tile is blocked by a map attribute.
-        ///     Returns -1 for clear.
-        ///     Returns the type of entity that is blocking the way (if one exists)
-        /// </summary>
-        /// <param name="moveDir"></param>
-        /// <returns></returns>
-        private int CanMove(Direction moveDir)
-        {
             var xOffset = 0;
             var yOffset = 0;
 
-            var tile = new TileHelper(MapId, X, Y);
-            switch (moveDir)
+            var tileHelper = new TileHelper(MapId, X, Y);
+            switch (direction)
             {
                 case Direction.Up:
                     yOffset--;
@@ -495,14 +447,65 @@ namespace Intersect.Server.Entities
                     break;
             }
 
-            if (!tile.Translate(xOffset, yOffset))
+            if (!tileHelper.Translate(xOffset, yOffset))
             {
-                return -5; //Out of Bounds
+                blockerType = MovementBlockerType.OutOfBounds;
+                return false;
             }
 
-            var mapController = MapController.Get(tile.GetMapId());
-            int tileX = tile.GetX();
-            int tileY = tile.GetY();
+            var result = CanMove(direction, tileHelper);
+            switch (result)
+            {
+                case -1:
+                    blockerType = MovementBlockerType.NotBlocked;
+                    break;
+
+                case -2:
+                    blockerType = MovementBlockerType.MapAttribute;
+                    break;
+
+                case -3:
+                    blockerType = MovementBlockerType.ZDimension;
+                    break;
+
+                case -4:
+                    blockerType = MovementBlockerType.Slide;
+                    break;
+
+                case -5:
+                    blockerType = MovementBlockerType.OutOfBounds;
+                    break;
+
+                default:
+                    blockerType = MovementBlockerType.Entity;
+                    entityType = (EntityType)result;
+                    if (!Enum.IsDefined(typeof(EntityType), entityType))
+                    {
+                        throw new NotImplementedException();
+                    }
+                    break;
+            }
+
+            return blockerType == MovementBlockerType.NotBlocked;
+        }
+
+        //Movement
+        /// <summary>
+        ///     Determines if this entity can move in the direction given.
+        ///     Returns -5 if the tile is completely out of bounds.
+        ///     Returns -3 if a tile is blocked because of a Z dimension tile
+        ///     Returns -2 if a tile is blocked by a map attribute.
+        ///     Returns -1 for clear.
+        ///     Returns the type of entity that is blocking the way (if one exists)
+        /// </summary>
+        /// <param name="direction"></param>
+        /// <param name="tileHelper"></param>
+        /// <returns></returns>
+        private int CanMove(Direction direction, TileHelper tileHelper)
+        {
+            var mapController = MapController.Get(tileHelper.GetMapId());
+            int tileX = tileHelper.GetX();
+            int tileY = tileHelper.GetY();
             var tileAttribute = mapController.Attributes[tileX, tileY];
             if (tileAttribute != null)
             {
@@ -537,28 +540,28 @@ namespace Intersect.Server.Entities
                             // Instead it's 1 -> Down, 2 -> Right, 3 -> Left, 4 -> UpLeft?
                             // Makes no sense but I will handle this in a separate commit
                             case (Direction)1:
-                                if (moveDir == Direction.Down)
+                                if (direction == Direction.Down)
                                 {
                                     return -4;
                                 }
 
                                 break;
                             case (Direction)2:
-                                if (moveDir == Direction.Up)
+                                if (direction == Direction.Up)
                                 {
                                     return -4;
                                 }
 
                                 break;
                             case (Direction)3:
-                                if (moveDir == Direction.Right)
+                                if (direction == Direction.Right)
                                 {
                                     return -4;
                                 }
 
                                 break;
                             case (Direction)4:
-                                if (moveDir == Direction.Left)
+                                if (direction == Direction.Left)
                                 {
                                     return -4;
                                 }
@@ -572,7 +575,7 @@ namespace Intersect.Server.Entities
 
             if (Passable)
             {
-                return IsTileWalkable(tile.GetMap(), tile.GetX(), tile.GetY(), Z);
+                return IsTileWalkable(tileHelper.GetMap(), tileHelper.GetX(), tileHelper.GetY(), Z);
             }
 
             var mapEntities = new List<Entity>();
@@ -602,7 +605,7 @@ namespace Intersect.Server.Entities
                 return (int)EntityType.Event;
             }
 
-            return IsTileWalkable(tile.GetMap(), tile.GetX(), tile.GetY(), Z);
+            return IsTileWalkable(tileHelper.GetMap(), tileHelper.GetX(), tileHelper.GetY(), Z);
         }
 
         protected virtual bool CanPassPlayer(MapController targetMap)
