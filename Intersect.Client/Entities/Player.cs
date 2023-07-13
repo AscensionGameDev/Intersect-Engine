@@ -1415,13 +1415,12 @@ namespace Intersect.Client.Entities
                 return;
             }
 
-            Globals.Entities.TryGetValue(currentEntity.Id, out var targetedEntity);
-            if(targetedEntity == default)
+            if(!Globals.Entities.TryGetValue(currentEntity.Id, out var targetedEntity))
             {
                 return;
             }
 
-            if (mlastTargetList.ContainsKey(targetedEntity))
+            if (mlastTargetList.TryGetValue(targetedEntity, out var _))
             {
                 mlastTargetList[targetedEntity].LastTimeSelected = Timing.Global.Milliseconds;
             }
