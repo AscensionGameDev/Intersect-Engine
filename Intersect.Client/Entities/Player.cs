@@ -1415,16 +1415,22 @@ namespace Intersect.Client.Entities
                 return;
             }
 
-            if (mlastTargetList.ContainsKey(currentEntity))
+            Globals.Entities.TryGetValue(currentEntity.Id, out var targetedEntity);
+            if(targetedEntity == default)
             {
-                mlastTargetList[currentEntity].LastTimeSelected = Timing.Global.Milliseconds;
+                return;
             }
-            mLastEntitySelected = currentEntity as Entity;
 
-            if (TargetIndex != currentEntity.Id)
+            if (mlastTargetList.ContainsKey(targetedEntity))
             {
-                SetTargetBox(currentEntity as Entity);
-                TargetIndex = currentEntity.Id;
+                mlastTargetList[targetedEntity].LastTimeSelected = Timing.Global.Milliseconds;
+            }
+            mLastEntitySelected = targetedEntity;
+
+            if (TargetIndex != targetedEntity.Id)
+            {
+                SetTargetBox(targetedEntity);
+                TargetIndex = targetedEntity.Id;
                 TargetType = 0;
             }
         }
