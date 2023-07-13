@@ -1453,17 +1453,17 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             if (rdoInvPlayerVariable.Checked)
             {
                 condition.VariableType = VariableType.PlayerVariable;
-                condition.VariableId = PlayerVariableBase.IdFromList(cmbInvVariable.SelectedIndex);
+                condition.VariableId = PlayerVariableBase.IdFromList(cmbInvVariable.SelectedIndex, VariableDataType.Integer);
             }
             else if (rdoInvGlobalVariable.Checked)
             {
                 condition.VariableType = VariableType.ServerVariable;
-                condition.VariableId = ServerVariableBase.IdFromList(cmbInvVariable.SelectedIndex);
+                condition.VariableId = ServerVariableBase.IdFromList(cmbInvVariable.SelectedIndex, VariableDataType.Integer);
             }
             else if (rdoInvGuildVariable.Checked)
             {
                 condition.VariableType = VariableType.GuildVariable;
-                condition.VariableId = GuildVariableBase.IdFromList(cmbInvVariable.SelectedIndex);
+                condition.VariableId = GuildVariableBase.IdFromList(cmbInvVariable.SelectedIndex, VariableDataType.Integer);
             }
             condition.UseVariable = !rdoManual.Checked;
             condition.CheckBank = chkBank.Checked;
@@ -1565,17 +1565,17 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             if (rdoInvPlayerVariable.Checked)
             {
                 condition.VariableType = VariableType.PlayerVariable;
-                condition.VariableId = PlayerVariableBase.IdFromList(cmbInvVariable.SelectedIndex);
+                condition.VariableId = PlayerVariableBase.IdFromList(cmbInvVariable.SelectedIndex, VariableDataType.Integer);
             }
             else if (rdoInvGlobalVariable.Checked)
             {
                 condition.VariableType = VariableType.ServerVariable;
-                condition.VariableId = ServerVariableBase.IdFromList(cmbInvVariable.SelectedIndex);
+                condition.VariableId = ServerVariableBase.IdFromList(cmbInvVariable.SelectedIndex, VariableDataType.Integer);
             }
             else if (rdoInvGuildVariable.Checked)
             {
                 condition.VariableType = VariableType.GuildVariable;
-                condition.VariableId = GuildVariableBase.IdFromList(cmbInvVariable.SelectedIndex);
+                condition.VariableId = GuildVariableBase.IdFromList(cmbInvVariable.SelectedIndex, VariableDataType.Integer);
             }
             condition.UseVariable = !rdoManual.Checked;
         }
