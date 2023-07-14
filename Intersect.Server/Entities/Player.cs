@@ -3559,36 +3559,34 @@ namespace Intersect.Server.Entities
                 return;
             }
 
-            if (CanGiveItem(boughtItemBase.Id, boughtItemAmount))
-            {
-                if (itemCostTotal > 0)
-                {
-                    var currencySlots = FindInventoryItemSlots(currencyBase.Id);
-                    int remainingCost = itemCostTotal;
-
-                    foreach (var itemSlot in currencySlots)
-                    {
-                        int quantityToRemove = Math.Min(remainingCost, itemSlot.Quantity);
-                        TryTakeItem(itemSlot.ItemId, quantityToRemove);
-                        remainingCost -= quantityToRemove;
-
-                        if (remainingCost <= 0)
-                        {
-                            break;
-                        }
-                    }
-                }
-
-                TryGiveItem(boughtItemBase.Id, boughtItemAmount);
-
-                if (!TextUtils.IsNone(InShop.BuySound))
-                {
-                    PacketSender.SendPlaySound(this, InShop.BuySound);
-                }
-            }
-            else
+            if (!CanGiveItem(boughtItemBase.Id, boughtItemAmount))
             {
                 PacketSender.SendChatMsg(this, Strings.Shops.inventoryfull, ChatMessageType.Inventory, CustomColors.Alerts.Error, Name);
+            }
+
+            if (itemCostTotal > 0)
+            {
+                var currencySlots = FindInventoryItemSlots(currencyBase.Id);
+                int remainingCost = itemCostTotal;
+
+                foreach (var itemSlot in currencySlots)
+                {
+                    int quantityToRemove = Math.Min(remainingCost, itemSlot.Quantity);
+                    TryTakeItem(itemSlot.ItemId, quantityToRemove);
+                    remainingCost -= quantityToRemove;
+
+                    if (remainingCost <= 0)
+                    {
+                        break;
+                    }
+                }
+            }
+
+            TryGiveItem(boughtItemBase.Id, boughtItemAmount);
+
+            if (!TextUtils.IsNone(InShop.BuySound))
+            {
+                PacketSender.SendPlaySound(this, InShop.BuySound);
             }
         }
 
