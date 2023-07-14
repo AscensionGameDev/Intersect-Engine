@@ -579,7 +579,7 @@ namespace Intersect.Server.Entities.Events
             }
             else
             {
-                player.EquipItem(ItemBase.Get(command.ItemId));
+                player.EquipItem(ItemBase.Get(command.ItemId), -1, command.TriggerCooldown);
             }
         }
 
