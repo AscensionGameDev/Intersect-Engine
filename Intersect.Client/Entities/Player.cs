@@ -1420,9 +1420,9 @@ namespace Intersect.Client.Entities
                 return;
             }
 
-            if (mlastTargetList.TryGetValue(targetedEntity, out var _))
+            if (mlastTargetList.TryGetValue(targetedEntity, out var lastTarget))
             {
-                mlastTargetList[targetedEntity].LastTimeSelected = Timing.Global.Milliseconds;
+                lastTarget.LastTimeSelected = Timing.Global.Milliseconds;
             }
             mLastEntitySelected = targetedEntity;
 
