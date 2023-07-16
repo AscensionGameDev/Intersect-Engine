@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 using Intersect.Client.Core;
 using Intersect.Client.Framework.Gwen.Control;
@@ -86,7 +86,15 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows.Components
         /// <summary>
         /// Dispose of the object.
         /// </summary>
-        public virtual void Dispose() => mParent.RemoveChild(mContainer, true);
+        public virtual void Dispose()
+        {
+            if(!mParent.Children.Contains(mContainer))
+            {
+                return;
+            }
+
+            mParent.RemoveChild(mContainer, true);
+        }
 
         /// <summary>
         /// Load the Json layout of the current component.
