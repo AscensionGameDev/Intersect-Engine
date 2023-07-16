@@ -3562,7 +3562,11 @@ namespace Intersect.Server.Entities
             if (!CanGiveItem(boughtItemBase.Id, boughtItemAmount))
             {
                 PacketSender.SendChatMsg(this, Strings.Shops.inventoryfull, ChatMessageType.Inventory, CustomColors.Alerts.Error, Name);
+                return;
             }
+
+            bool sucess = true;
+            Dictionary<Guid, int> removedItems = new Dictionary<Guid, int>();
 
             if (itemCostTotal > 0)
             {
@@ -3572,7 +3576,15 @@ namespace Intersect.Server.Entities
                 foreach (var itemSlot in currencySlots)
                 {
                     int quantityToRemove = Math.Min(remainingCost, itemSlot.Quantity);
-                    TryTakeItem(itemSlot.ItemId, quantityToRemove);
+                    if(!TryTakeItem(itemSlot, quantityToRemove))
+                    {
+                        sucess = false;
+                        Log.Warn(Strings.Shops.FailedRemovedItem.ToString(itemSlot, Id, quantityToRemove, "BuyItem(int slot, int amount)"));
+                        break;
+                    }
+
+                    removedItems.Add(itemSlot.Id, quantityToRemove);
+                    Log.Warn(Strings.Shops.SuccessfullyRemovedItem.ToString(quantityToRemove, itemSlot, Id, "BuyItem(int slot, int amount)"));
                     remainingCost -= quantityToRemove;
 
                     if (remainingCost <= 0)
@@ -3580,6 +3592,18 @@ namespace Intersect.Server.Entities
                         break;
                     }
                 }
+            }
+
+            if(!sucess)
+            {
+                //return all removed items because we failed to remove the rest
+                foreach (var removedItem in removedItems)
+                {
+                    TryGiveItem(removedItem.Key, removedItem.Value);
+                }
+
+                PacketSender.SendChatMsg(this, Strings.Shops.error, ChatMessageType.Inventory, CustomColors.Alerts.Error, Name);
+                return;
             }
 
             TryGiveItem(boughtItemBase.Id, boughtItemAmount);
