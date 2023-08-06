@@ -1049,6 +1049,15 @@ namespace Intersect.Server.Database
 
                             break;
                         case GameObjectType.Map:
+                            //Delete all map events first
+                            foreach (var evtId in ((MapController)gameObject).EventIds)
+                            {
+                                var evt = EventBase.Get(evtId);
+                                if (evt != null)
+                                {
+                                    DeleteGameObject(evt);
+                                }
+                            }
                             context.Maps.Remove((MapController)gameObject);
                             MapController.Lookup.Delete(gameObject);
 
