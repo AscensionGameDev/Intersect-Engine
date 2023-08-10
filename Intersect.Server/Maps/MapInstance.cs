@@ -171,7 +171,12 @@ namespace Intersect.Server.Maps
 
         public bool ShouldBeCleaned()
         {
-            return (MapInstanceId != OverworldInstanceId && !mIsProcessing && LastRequestedUpdateTime > mLastUpdateTime + Options.Map.TimeUntilMapCleanup);
+            return (MapInstanceId != OverworldInstanceId && !ShouldBeActive());
+        }
+
+        public bool ShouldBeActive()
+        {
+            return (mIsProcessing || LastRequestedUpdateTime <= mLastUpdateTime + Options.Map.TimeUntilMapCleanup);
         }
 
         public void RemoveLayerFromController()

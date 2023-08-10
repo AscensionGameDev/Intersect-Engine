@@ -167,7 +167,7 @@ namespace Intersect.Server.Core
                                     {
                                         ActiveMapInstances[layerId].RemoveLayerFromController();
                                         ActiveMapInstances.Remove(layerId);
-                                    } else if (ActiveMapInstances[layerId] == null)
+                                    } else if (ActiveMapInstances[layerId] == null || !ActiveMapInstances[layerId].ShouldBeActive())
                                     {
                                         ActiveMapInstances.Remove(layerId);
                                     }
