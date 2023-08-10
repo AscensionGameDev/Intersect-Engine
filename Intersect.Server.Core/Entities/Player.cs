@@ -182,6 +182,9 @@ namespace Intersect.Server.Entities
         [NotMapped, JsonIgnore]
         public int MapAutorunEvents { get; private set; }
 
+        [NotMapped, JsonIgnore]
+        public bool InOpenInstance => InstanceType != MapInstanceType.Personal && InstanceType != MapInstanceType.Shared && InstanceType != MapInstanceType.Party;
+
         /// <summary>
         /// References the in-memory copy of the guild for this player, reference this instead of the Guild property below.
         /// </summary>
@@ -4899,9 +4902,21 @@ namespace Intersect.Server.Entities
         //Parties
         public void InviteToParty(Player fromPlayer)
         {
+            if (fromPlayer == null)
+            {
+                return;
+            }
+
             if (Party.Count != 0)
             {
                 PacketSender.SendChatMsg(fromPlayer, Strings.Parties.inparty.ToString(Name), ChatMessageType.Party, CustomColors.Alerts.Error);
+
+                return;
+            }
+
+            if (Options.Instance.Instancing.BlockPartyInvitesInInstance && (!InOpenInstance || !fromPlayer.InOpenInstance))
+            {
+                PacketSender.SendChatMsg(fromPlayer, Strings.Parties.InInstance, ChatMessageType.Party, CustomColors.Alerts.Error);
 
                 return;
             }
@@ -4991,6 +5006,13 @@ namespace Intersect.Server.Entities
                         oldMember.Party = new List<Player>();
                         PacketSender.SendParty(oldMember);
                         PacketSender.SendChatMsg(oldMember, Strings.Parties.kicked, ChatMessageType.Party, CustomColors.Alerts.Error);
+
+                        // Kick the player out of your shared instance!
+                        if (Options.Instance.Instancing.KickPartyMembersOnKick && oldMember.InstanceType == MapInstanceType.Shared)
+                        {
+                            oldMember.WarpToLastOverworldLocation(false);
+                        }
+
                         Party.Remove(oldMember);
 
                         if (Party.Count > 1) //Need atleast 2 party members to function

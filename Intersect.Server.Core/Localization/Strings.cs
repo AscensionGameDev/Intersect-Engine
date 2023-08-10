@@ -1132,6 +1132,9 @@ namespace Intersect.Server.Localization
             public readonly LocalizedString disbanded = @"The party has been disbanded.";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString InInstance = @"You cannot invite someone to a party while in an instance!";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString inparty = @"{00} is already in a party!";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
