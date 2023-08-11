@@ -92,6 +92,7 @@ jobs:
       uses: peter-evans/create-or-update-comment@v3
       with:
         issue-number: ${{ github.event.issue.number }}
+        token: ${{ secrets.INTERSECTBOT_ACCESS_TOKEN }}
         body: |
             Developers have requested community assistance to test the code changes in this pull request.
 
