@@ -8,7 +8,7 @@ permissions:
   contents: write
 
 env:
-  VERSION_PREFIX: ${{ github.event.number }}
+  VERSION_PREFIX: ${{ github.event.issue.number }}
   VERSION_SUFFIX: -pr-test
 
 jobs:
@@ -16,8 +16,14 @@ jobs:
     runs-on: windows-latest
     if: contains(github.event.comment.body, '/helptest')
     steps:
-    - name: Checkout Code
+    
+    # Checkout code
+    - name: Checkout
       uses: actions/checkout@v3
+    - name: Checkout Pull Request
+      run: hub pr checkout ${{ github.event.issue.number }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Cache binaries
       uses: actions/cache@v3
