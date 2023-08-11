@@ -1,24 +1,8 @@
 name: request-help
 
 on:
-  push:
-    branches: [ "main" ]
-    paths-ignore:
-      - '.github/**'
-  workflow_dispatch:
-    inputs:
-      workflowDebug:
-        description: 'If the workflow should be debugged (skip release)'
-        default: true
-        type: boolean
-      forceBuild:
-        description: 'If the build should be forced even on cache hit'
-        default: false
-        type: boolean
-      forceRestore:
-        description: 'If dependencies should be forced even on cache hit'
-        default: false
-        type: boolean
+  issue_comment:                                     
+    types: [created]
 
 permissions:
   contents: write
