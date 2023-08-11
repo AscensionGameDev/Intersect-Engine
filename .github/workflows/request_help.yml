@@ -70,28 +70,10 @@ jobs:
       if: steps.cache-binaries.outputs.cache-hit != 'true' || inputs.forceBuild == true || inputs.forceRestore == true
       run: msbuild Intersect.sln /p:Configuration=Release /p:PackageVersion=${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}+build.${{ github.sha }} /p:Version=0.0.${{ env.VERSION_PREFIX }}.${{ github.run_number }}
 
-    - name: Checkout assets main_upgrade branch
-      uses: actions/checkout@v3
-      with:
-        fetch-depth: 0
-        path: assets_upgrade
-        repository: AscensionGameDev/Intersect-Assets
-        ref: main_upgrade
-        token: ${{ secrets.INTERSECTBOT_ACCESS_TOKEN }}
-
-    - name: Checkout target main_full branch
-      uses: actions/checkout@v3
-      with:
-        fetch-depth: 0
-        path: assets_full
-        repository: AscensionGameDev/Intersect-Assets
-        ref: main_full
-        token: ${{ secrets.INTERSECTBOT_ACCESS_TOKEN }}
-
     - name: Package artifacts
       uses: AscensionGameDev/actions@4c9073d0721da476ac9337fbbfe46a9ca1ae4389
       with:
-        bundle: .github/bundles/*.json
+        bundle: .github/bundles/upgrade.json
         version: ${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}+build.${{ github.sha }}
 
     - name: Upload artifacts for workflow debugging
