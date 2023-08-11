@@ -76,11 +76,17 @@ jobs:
         bundle: .github/bundles/patch.json
         version: ${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}+build.${{ github.sha }}
 
+    - name: Extract archive to avoid zips inside of zips
+      run: 7z x dist/${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}+build.${{ github.sha }}.zip
+
+    - name: Delete inner zip
+      run: del dist/*.zip
+  
     - name: Upload artifacts for workflow debugging
       uses: actions/upload-artifact@v3
       with:
-        name: pr-testing
-        path: "dist/*.zip"
+        name: ${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}+build.${{ github.sha }}
+        path: "dist/*"
 
 
 
