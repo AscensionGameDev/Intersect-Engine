@@ -68,7 +68,7 @@ jobs:
 
     - name: Build solution
       if: steps.cache-binaries.outputs.cache-hit != 'true' || inputs.forceBuild == true || inputs.forceRestore == true
-      run: msbuild Intersect.sln /p:Configuration=Release /p:PackageVersion=${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}+build.${{ github.sha }} /p:Version=0.0.${{ github.event.number }}.${{ github.run_number }}
+      run: msbuild Intersect.sln /p:Configuration=Release /p:PackageVersion=${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}+build.${{ github.sha }} /p:Version=0.0.${{ env.VERSION_PREFIX }}.${{ github.run_number }}
 
     - name: Checkout assets main_upgrade branch
       uses: actions/checkout@v3
