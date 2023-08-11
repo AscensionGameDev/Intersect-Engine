@@ -77,7 +77,7 @@ jobs:
         version: ${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}+build.${{ github.sha }}
 
     - name: Extract archive to avoid zips inside of zips
-      run: 7z x dist/${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}+build.${{ github.sha }}.zip
+      run: 7z x dist/*.zip
 
     - name: Delete inner zip
       run: del dist/*.zip
