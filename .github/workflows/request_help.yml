@@ -16,6 +16,9 @@ jobs:
     runs-on: windows-latest
     if: ${{ github.event.issue.pull_request }} && contains(github.event.comment.body, '/helptest')
     steps:
+
+    - name: Check comment body
+      run: echo ${{ github.event.comment.body }}
     
     # Checkout code
     - name: Checkout
@@ -98,8 +101,9 @@ jobs:
 
             If you'd like to help you can download binaries for this PR [here](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}).
 
-            Please note, these builds are only meant for testing and could cause irreputable damage to your game data, make a backup of your game data before proceeding.
-        reactions: '+1'
+            These builds are only meant for testing to validate but fixes and could cause significant damage to your game data.
+            
+            Please make a backup of your game data before proceeding.
 
 
 
