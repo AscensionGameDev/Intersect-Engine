@@ -85,7 +85,7 @@ jobs:
     - name: Upload artifacts for workflow debugging
       uses: actions/upload-artifact@v3
       with:
-        name: intersect-prtest${{ env.VERSION_PREFIX }}.${{ github.run_number }}+build.${{ github.sha }}
+        name: intersect-pr${{ env.VERSION_PREFIX }}-test${{ github.run_number }}+build.${{ github.sha }}
         path: "dist/patch/*"
 
 
