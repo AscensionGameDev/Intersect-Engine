@@ -88,5 +88,17 @@ jobs:
         name: intersect-pr${{ env.VERSION_PREFIX }}-test${{ github.run_number }}+build.${{ github.sha }}
         path: "dist/patch/*"
 
+    - name: Create comment
+      uses: peter-evans/create-or-update-comment@v3
+      with:
+        issue-number: ${{ github.event.issue.number }}
+        body: |
+            Developers have requested community assistance to test the code changes in this pull request.
+
+            If you'd like to help you can download binaries for this PR [here](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}).
+
+            Please note, these builds are only meant for testing and could cause irreputable damage to your game data, make a backup of your game data before proceeding.
+        reactions: '+1'
+
 
 
