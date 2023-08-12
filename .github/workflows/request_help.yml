@@ -101,9 +101,9 @@ jobs:
 
             If you'd like to help you can download binaries for this PR [here](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}).
 
-            These builds are only meant for testing to validate but fixes and could cause significant damage to your game data.
-            
-            Please make a backup of your game data before proceeding.
+            These builds are only meant for testing to validate bug fixes and could cause significant damage to your game data. In other words, make a backup of your game data before proceeding.
+
+            Please comment below to provide testing feedback. Thanks!
 
     - name: Delete comment
       uses: actions/github-script@v3
