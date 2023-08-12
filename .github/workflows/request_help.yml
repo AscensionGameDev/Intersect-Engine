@@ -14,7 +14,7 @@ env:
 jobs:
   build:
     runs-on: windows-latest
-    if: ${{ github.event.issue.pull_request }} && contains(github.event.comment.body, '/helptest')
+    if: ${{ github.event.issue.pull_request && contains(github.event.comment.body, '/helptest')}}
     steps:
 
     - name: Check comment body
