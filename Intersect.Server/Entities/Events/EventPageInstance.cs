@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using Intersect.Enums;
 using Intersect.GameObjects;
@@ -766,6 +766,33 @@ namespace Intersect.Server.Entities.Events
                         return -5;
                     }
 
+                    break;
+                case Direction.UpLeft:
+                    if (Y == 0 || X == 0)
+                    {
+                        return -5;
+                    }
+
+                    break;
+                case Direction.UpRight:
+                    if (Y == 0 || X == Options.MapWidth -1)
+                    {
+                        return -5;
+                    }
+
+                    break;
+                case Direction.DownLeft:
+                    if (X == 0 || Y == Options.MapHeight - 1)
+                    {
+                        return -5;
+                    }
+
+                    break;
+                case Direction.DownRight:
+                    if (X == Options.MapWidth - 1 || Y == Options.MapHeight - 1)
+                    {
+                        return -5;
+                    }
                     break;
             }
 
