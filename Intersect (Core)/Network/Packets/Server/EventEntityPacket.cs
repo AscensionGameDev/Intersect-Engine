@@ -35,6 +35,9 @@ namespace Intersect.Network.Packets.Server
         [Key(29)]
         public byte RenderLayer { get; set; }
 
+        [Key(30)]
+        public bool ActionButtonTriggered { get; set; }
+
     }
 
 }

@@ -1625,7 +1625,7 @@ namespace Intersect.Client.Entities
 
                     if (en.Value.MapId == map && en.Value.X == x && en.Value.Y == y)
                     {
-                        if (en.Value is Event)
+                        if (en.Value is Event evt && evt.ActionButtonTriggered)
                         {
                             //Talk to Event
                             PacketSender.SendActivateEvent(en.Key);
