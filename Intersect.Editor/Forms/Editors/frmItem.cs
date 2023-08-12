@@ -205,6 +205,8 @@ namespace Intersect.Editor.Forms.Editors
             chkCanBag.Text = Strings.ItemEditor.CanBag;
             chkCanTrade.Text = Strings.ItemEditor.CanTrade;
             chkCanSell.Text = Strings.ItemEditor.CanSell;
+
+            grpStack.Text = Strings.ItemEditor.stackoptions;
             chkStackable.Text = Strings.ItemEditor.stackable;
             lblInvStackLimit.Text = Strings.ItemEditor.InventoryStackLimit;
             lblBankStackLimit.Text = Strings.ItemEditor.BankStackLimit;
@@ -247,6 +249,7 @@ namespace Intersect.Editor.Forms.Editors
             lblProjectile.Text = Strings.ItemEditor.projectile;
             lblToolType.Text = Strings.ItemEditor.tooltype;
 
+            grpCooldown.Text = Strings.ItemEditor.CooldownOptions;
             lblCooldown.Text = Strings.ItemEditor.cooldown;
             lblCooldownGroup.Text = Strings.ItemEditor.CooldownGroup;
             chkIgnoreGlobalCooldown.Text = Strings.ItemEditor.IgnoreGlobalCooldown;

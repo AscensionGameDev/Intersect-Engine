@@ -166,7 +166,7 @@ namespace Intersect.Editor.Forms.Editors
             btnPlayerFriendProtectorCond.Text = Strings.NpcEditor.playerfriendprotectorconditions;
             btnAttackOnSightCond.Text = Strings.NpcEditor.attackonsightconditions;
             btnPlayerCanAttackCond.Text = Strings.NpcEditor.playercanattackconditions;
-            lblFocusDamageDealer.Text = Strings.NpcEditor.focusdamagedealer;
+            chkFocusDamageDealer.Text = Strings.NpcEditor.focusdamagedealer;
 
             grpCommonEvents.Text = Strings.NpcEditor.commonevents;
             lblOnDeathEventKiller.Text = Strings.NpcEditor.ondeathevent;
