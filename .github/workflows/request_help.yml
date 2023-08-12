@@ -105,5 +105,10 @@ jobs:
             
             Please make a backup of your game data before proceeding.
 
-
+    - name: Delete comment
+      uses: jungwinter/comment@v1
+      with:
+        type: delete
+        comment_id: ${{ github.event.comment.id }}
+        token: ${{ secrets.INTERSECTBOT_ACCESS_TOKEN }}
 
