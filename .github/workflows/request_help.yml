@@ -106,9 +106,13 @@ jobs:
             Please make a backup of your game data before proceeding.
 
     - name: Delete comment
-      uses: jungwinter/comment@v1
+      uses: actions/github-script@v3
       with:
-        type: delete
-        comment_id: ${{ github.event.comment.id }}
-        token: ${{ secrets.INTERSECTBOT_ACCESS_TOKEN }}
+        github-token: ${{ secrets.INTERSECTBOT_ACCESS_TOKEN }}
+        script: |
+            github.issues.deleteComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              comment_id: ${{ github.event.comment.id }},
+            })
 
