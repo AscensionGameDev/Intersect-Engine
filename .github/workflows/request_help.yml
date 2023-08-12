@@ -3,7 +3,6 @@ name: request-help
 on:
   issue_comment:                                     
     types: [created]
-    if: ${{ github.event.issue.pull_request && contains(github.event.comment.body, '/helptest')}}
 
 permissions:
   contents: write
@@ -15,6 +14,7 @@ env:
 jobs:
   build:
     runs-on: windows-latest
+    if: ${{ github.event.issue.pull_request && contains(github.event.comment.body, '/helptest')}}
     steps:
 
     - name: Check comment body
