@@ -1506,8 +1506,8 @@ namespace Intersect.Client.Entities
             var shieldIndex = Options.ShieldIndex;
             var myShieldIndex = MyEquipment[shieldIndex];
 
-            // Return false if character is attacking or if they don't have a shield equipped.
-            if (IsAttacking || shieldIndex < 0 || myShieldIndex < 0)
+            // Return false if character is attacking, or blocking or if they don't have a shield equipped.
+            if (IsAttacking || IsBlocking || shieldIndex < 0 || myShieldIndex < 0)
             {
                 return false;
             }
