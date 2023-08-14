@@ -13,7 +13,11 @@ namespace Intersect.Client.Core.Controls
 
         public Keys Key { get; set; }
 
-        public bool IsMouseKey => Key == Keys.LButton || Key == Keys.RButton || Key == Keys.MButton;
+        public bool IsMouseKey => Key == Keys.LButton 
+            || Key == Keys.RButton 
+            || Key == Keys.MButton 
+            || Key == Keys.XButton1 
+            || Key == Keys.XButton2;
 
         [JsonConstructor]
         public ControlValue(Keys modifier, Keys key)
@@ -62,6 +66,20 @@ namespace Intersect.Client.Core.Controls
                             break;
                         case Keys.MButton:
                             if (Globals.InputManager.MouseButtonDown(MouseButtons.Middle))
+                            {
+                                return true;
+                            }
+
+                            break;
+                        case Keys.XButton1:
+                            if (Globals.InputManager.MouseButtonDown(MouseButtons.X1))
+                            {
+                                return true;
+                            }
+
+                            break;
+                        case Keys.XButton2:
+                            if (Globals.InputManager.MouseButtonDown(MouseButtons.X2))
                             {
                                 return true;
                             }

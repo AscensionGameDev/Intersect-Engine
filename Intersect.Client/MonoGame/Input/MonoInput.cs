@@ -116,6 +116,10 @@ namespace Intersect.Client.MonoGame.Input
                     return mLastMouseState.RightButton == ButtonState.Pressed;
                 case MouseButtons.Middle:
                     return mLastMouseState.MiddleButton == ButtonState.Pressed;
+                case MouseButtons.X1:
+                    return mLastMouseState.XButton1 == ButtonState.Pressed;
+                case MouseButtons.X2:
+                    return mLastMouseState.XButton2 == ButtonState.Pressed;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(mb), mb, null);
             }
@@ -206,6 +210,8 @@ namespace Intersect.Client.MonoGame.Input
                 CheckMouseButton(modifier, state.LeftButton, MouseButtons.Left);
                 CheckMouseButton(modifier, state.RightButton, MouseButtons.Right);
                 CheckMouseButton(modifier, state.MiddleButton, MouseButtons.Middle);
+                CheckMouseButton(modifier, state.XButton1, MouseButtons.X1);
+                CheckMouseButton(modifier, state.XButton2, MouseButtons.X2);
 
                 CheckMouseScrollWheel(state.ScrollWheelValue, state.HorizontalScrollWheelValue);
 
@@ -258,6 +264,8 @@ namespace Intersect.Client.MonoGame.Input
                 CheckMouseButton(modifier, ButtonState.Released, MouseButtons.Left);
                 CheckMouseButton(modifier, ButtonState.Released, MouseButtons.Right);
                 CheckMouseButton(modifier, ButtonState.Released, MouseButtons.Middle);
+                CheckMouseButton(modifier, ButtonState.Released, MouseButtons.X1);
+                CheckMouseButton(modifier, ButtonState.Released, MouseButtons.X2);
                 mLastKeyboardState = new KeyboardState();
                 mLastMouseState = new MouseState();
             }

@@ -9,7 +9,11 @@
 
         Right,
 
-        Middle
+        Middle,
+
+        X1,
+
+        X2
 
     }
 }
