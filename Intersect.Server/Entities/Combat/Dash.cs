@@ -1,4 +1,6 @@
-﻿using Intersect.Enums;
+﻿using System;
+using Intersect.Enums;
+using Intersect.Logging;
 using Intersect.Server.Networking;
 using Intersect.Utilities;
 
@@ -47,43 +49,79 @@ namespace Intersect.Server.Entities.Combat
             bool blockPass = false,
             bool activeResourcePass = false,
             bool deadResourcePass = false,
-            bool zdimensionPass = false
+            bool zDimensionPass = false
         )
         {
-            var n = 0;
-            en.MoveTimer = 0;
             Range = 0;
+            if (en == default)
+            {
+                Log.Error(
+                    new ArgumentNullException(
+                        nameof(en),
+                        "Entity was null when calling CalcuateRange(), this isn't supported."
+                    )
+                );
+                return;
+            }
+
+            en.MoveTimer = 0;
             for (var i = 1; i <= range; i++)
             {
-                n = en.CanMove(Direction);
-                if (n == -5) //Check for out of bounds
+                if (!en.CanMoveInDirection(Direction, out var blockerType, out var blockingEntityType))
                 {
-                    return;
-                } //Check for blocks
+                    switch (blockerType)
+                    {
+                        case MovementBlockerType.OutOfBounds:
+                            return;
+                        
+                        case MovementBlockerType.MapAttribute:
+                            if (!blockPass)
+                            {
+                                return;
+                            }
 
-                if (n == -2 && blockPass == false)
-                {
-                    return;
-                } //Check for ZDimensionTiles
+                            break;
+                        
+                        case MovementBlockerType.ZDimension:
+                            if (!zDimensionPass)
+                            {
+                                return;
+                            }
 
-                if (n == -3 && zdimensionPass == false)
-                {
-                    return;
-                } //Check for active resources
+                            break;
+                        
+                        case MovementBlockerType.Entity:
+                            switch (blockingEntityType)
+                            {
+                                case EntityType.Resource:
+                                    if (activeResourcePass || deadResourcePass)
+                                    {
+                                        break;
+                                    }
 
-                if (n == (int) EntityType.Resource && activeResourcePass == false)
-                {
-                    return;
-                } //Check for dead resources
+                                    return;
 
-                if (n == (int) EntityType.Resource && deadResourcePass == false)
-                {
-                    return;
-                } //Check for players and solid events
+                                case EntityType.Event:
+                                case EntityType.Player:
+                                    return;
 
-                if (n == (int) EntityType.Player || n == (int) EntityType.Event)
-                {
-                    return;
+                                case EntityType.GlobalEntity:
+                                case EntityType.Projectile:
+                                    break;
+
+                                default:
+                                    throw new NotImplementedException($"{blockingEntityType} not implemented.");
+                            }
+
+                            break;
+
+                        case MovementBlockerType.NotBlocked:
+                        case MovementBlockerType.Slide:
+                            break;
+
+                        default:
+                            throw new NotImplementedException($"{blockerType} not implemented.");
+                    }
                 }
 
                 en.Move(Direction, null, true);

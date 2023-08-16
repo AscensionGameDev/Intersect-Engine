@@ -6473,52 +6473,68 @@ namespace Intersect.Server.Entities
             }
         }
 
-        public override int CanMove(Direction moveDir)
+        /// <inheritdoc />
+        public override bool CanMoveInDirection(
+            Direction direction,
+            out MovementBlockerType blockerType,
+            out EntityType entityType
+        )
         {
-            //If crafting or locked by event return blocked
+            entityType = default;
+
+            // If crafting or locked by event return blocked
             if (OpenCraftingTableId != default && CraftingState != default)
             {
-                return -5;
+                blockerType = MovementBlockerType.OutOfBounds;
+                return false;
             }
 
-            foreach (var evt in EventLookup)
+            // ReSharper disable once InvertIf
+            if (EventLookup.Values.Any(@event => @event.HoldingPlayer))
             {
-                if (evt.Value.HoldingPlayer)
-                {
-                    return -5;
-                }
+                blockerType = MovementBlockerType.OutOfBounds;
+                return false;
             }
 
-            return base.CanMove(moveDir);
+            return base.CanMoveInDirection(direction, out blockerType, out entityType);
         }
 
-        protected override int IsTileWalkable(MapController map, int x, int y, int z)
+        protected override bool CanPassPlayer(MapController targetMap)
         {
-            if (base.IsTileWalkable(map, x, y, z) == -1)
-            {
-                foreach (var evt in EventLookup)
-                {
-                    if (evt.Value.PageInstance != null)
-                    {
-                        var instance = evt.Value.PageInstance;
-                        if (instance.GlobalClone != null)
-                        {
-                            instance = instance.GlobalClone;
-                        }
+            return Options.Instance.Passability.Passable[(int)targetMap.ZoneType];
+        }
 
-                        if (instance.Map == map &&
-                            instance.X == x &&
-                            instance.Y == y &&
-                            instance.Z == z &&
-                            !instance.Passable)
-                        {
-                            return (int) EntityType.Event;
-                        }
-                    }
-                }
+        protected override bool IsBlockedByEvent(MapInstance mapInstance, int tileX, int tileY)
+        {
+            return false;
+        }
+
+        protected override bool TryGetBlockerOnTile(MapController map, int x, int y, int z, out MovementBlockerType blockerType, out EntityType entityType)
+        {
+            if (base.TryGetBlockerOnTile(map, x, y, z, out blockerType, out entityType))
+            {
+                return true;
             }
 
-            return -1;
+            foreach (var evt in EventLookup.Values.Where(evt => evt.PageInstance != default))
+            {
+                var instance = evt.PageInstance;
+                if (instance.GlobalClone != null)
+                {
+                    instance = instance.GlobalClone;
+                }
+
+                if (instance.Map != map || instance.X != x || instance.Y != y || instance.Z != z || instance.Passable)
+                {
+                    continue;
+                }
+
+                blockerType = MovementBlockerType.Entity;
+                entityType = EntityType.Event;
+                return true;
+            }
+
+            return false;
         }
 
         public override void Move(Direction moveDir, Player forPlayer, bool dontUpdate = false,
