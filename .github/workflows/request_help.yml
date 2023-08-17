@@ -106,7 +106,7 @@ jobs:
             Please comment below to provide testing feedback. Thanks!
 
     - name: Delete comment
-      uses: actions/github-script@v3
+      uses: actions/github-script@v6
       with:
         github-token: ${{ secrets.INTERSECTBOT_ACCESS_TOKEN }}
         script: |
