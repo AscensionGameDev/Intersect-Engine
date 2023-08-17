@@ -116,8 +116,11 @@ namespace Intersect.Client.MonoGame
             Interface.Interface.GwenInput = new IntersectInput();
             Controls.Init();
 
-            // Windows Position
-            Window.Position = new Microsoft.Xna.Framework.Point(-20, -2000);;
+            // Windows
+            Window.Position = new Microsoft.Xna.Framework.Point(
+                renderer.ScreenWidth - renderer.ActiveResolution.X,
+                renderer.ScreenHeight - renderer.ActiveResolution.Y
+            ) / new Microsoft.Xna.Framework.Point(2);
             Window.AllowAltF4 = false;
 
             // Store frequently used property values in local variables.

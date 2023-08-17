@@ -10,6 +10,7 @@ using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.General;
 using Intersect.Client.Localization;
+using Intersect.Client.MonoGame.NativeInterop;
 using Intersect.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -195,8 +196,11 @@ namespace Intersect.Client.MonoGame.Graphics
             mDisplayHeight = mGraphics.GraphicsDevice.Adapter.CurrentDisplayMode.Height;
             if (fsChanged || initial)
             {
+                var displayBounds = Sdl2.GetDisplayBounds();
+                var currentDisplayBounds = displayBounds[0];
                 mGameWindow.Position = new Microsoft.Xna.Framework.Point(
-                    (mDisplayWidth - mScreenWidth) / 2, (mDisplayHeight - mScreenHeight) / 2
+                    currentDisplayBounds.x + (currentDisplayBounds.w - mScreenWidth) / 2, 
+                    currentDisplayBounds.y + (currentDisplayBounds.h - mScreenHeight) / 2
                 );
             }
 
