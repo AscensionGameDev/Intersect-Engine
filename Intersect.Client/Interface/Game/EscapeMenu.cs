@@ -134,7 +134,7 @@ namespace Intersect.Client.Interface.Game
         /// <inheritdoc />
         public override void ToggleHidden()
         {
-            if (mSettingsWindow.IsVisible())
+            if (mSettingsWindow.IsVisible)
             {
                 return;
             }

@@ -659,7 +659,7 @@ namespace Intersect.Client.Interface.Shared
         // Methods.
         public void Update()
         {
-            if (mSettingsPanel.IsVisible &&
+            if (IsVisible &&
                 mKeybindingEditBtn != null &&
                 mKeybindingListeningTimer < Timing.Global.MillisecondsUtc)
             {
@@ -776,7 +776,7 @@ namespace Intersect.Client.Interface.Shared
             mReturnToMenu = returnToMenu;
         }
 
-        public bool IsVisible() => !mSettingsPanel.IsHidden;
+        public bool IsVisible => !mSettingsPanel.IsHidden;
 
         public void Hide()
         {
