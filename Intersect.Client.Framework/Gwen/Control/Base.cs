@@ -72,6 +72,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         private Point mAlignmentTransform;
 
         private Rectangle mBounds;
+        private Rectangle mBoundsOnDisk;
 
         private bool mCacheTextureDirty;
 
@@ -797,34 +798,12 @@ namespace Intersect.Client.Framework.Gwen.Control
             mAlignments.Clear();
         }
 
-        public virtual string GetJsonUI()
+        public virtual string GetJsonUI(bool isRoot = false)
         {
-            return JsonConvert.SerializeObject(GetJson(), Formatting.Indented);
+            return JsonConvert.SerializeObject(GetJson(isRoot), Formatting.Indented);
         }
 
-        public virtual void WriteBaseUIJson(string path, bool includeBounds = true, bool onlyChildren = false)
-        {
-            if (onlyChildren)
-            {
-                if (HasNamedChildren())
-                {
-                    foreach (var ctrl in mChildren)
-                    {
-                        if (!string.IsNullOrEmpty(ctrl.Name))
-                        {
-                            ctrl.WriteBaseUIJson(path);
-                        }
-                    }
-                }
-            }
-            else
-            {
-                path = Path.Combine(path, Name + ".json");
-                File.WriteAllText(path, JsonConvert.SerializeObject(GetJson(), Formatting.Indented));
-            }
-        }
-
-        public virtual JObject GetJson()
+        public virtual JObject GetJson(bool isRoot = default)
         {
             var alignments = new List<string>();
             foreach (var alignment in mAlignments)
@@ -832,8 +811,13 @@ namespace Intersect.Client.Framework.Gwen.Control
                 alignments.Add(alignment.ToString());
             }
 
+            isRoot |= Parent == default;
+
+            var boundsToWrite = isRoot
+                ? new Rectangle(mBoundsOnDisk.X, mBoundsOnDisk.Y, mBounds.Width, mBounds.Height)
+                : mBounds;
             var o = new JObject(
-                new JProperty("Bounds", Rectangle.ToString(mBounds)),
+                new JProperty("Bounds", Rectangle.ToString(boundsToWrite)),
                 new JProperty("Padding", Padding.ToString(mPadding)),
                 new JProperty("AlignmentEdgeDistances", Padding.ToString(mAlignmentDistance)),
                 new JProperty("AlignmentTransform", Point.ToString(mAlignmentTransform)),
@@ -896,7 +880,7 @@ namespace Intersect.Client.Framework.Gwen.Control
 
                         if (obj != null)
                         {
-                            LoadJson(obj);
+                            LoadJson(obj, true);
                             ProcessAlignments();
                         }
                     }
@@ -909,12 +893,12 @@ namespace Intersect.Client.Framework.Gwen.Control
 
                 if (!cacheHit && saveOutput)
                 {
-                    GameContentManager.Current?.SaveUIJson(stage, Name, GetJsonUI(), resolution);
+                    GameContentManager.Current?.SaveUIJson(stage, Name, GetJsonUI(true), resolution);
                 }
             });
         }
 
-        public virtual void LoadJson(JToken obj)
+        public virtual void LoadJson(JToken obj, bool isRoot = default)
         {
             if (obj["Alignments"] != null)
             {
@@ -964,7 +948,16 @@ namespace Intersect.Client.Framework.Gwen.Control
 
             if (obj["Bounds"] != null)
             {
-                SetBounds(Rectangle.FromString((string) obj["Bounds"]));
+                mBoundsOnDisk = Rectangle.FromString((string)obj["Bounds"]);
+                isRoot = isRoot || Parent == default;
+                if (isRoot)
+                {
+                    SetSize(mBoundsOnDisk.Width, mBoundsOnDisk.Height);
+                }
+                else
+                {
+                    SetBounds(mBoundsOnDisk);
+                }
             }
 
             if (obj["Padding"] != null)

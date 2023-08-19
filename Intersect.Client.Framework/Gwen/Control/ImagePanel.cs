@@ -89,9 +89,9 @@ namespace Intersect.Client.Framework.Gwen.Control
             base.Dispose();
         }
 
-        public override JObject GetJson()
+        public override JObject GetJson(bool isRoot = default)
         {
-            var obj = base.GetJson();
+            var obj = base.GetJson(isRoot);
             obj.Add("Texture", TextureFilename);
             obj.Add("HoverSound", mHoverSound);
             obj.Add("LeftMouseClickSound", mLeftMouseClickSound);
@@ -100,7 +100,7 @@ namespace Intersect.Client.Framework.Gwen.Control
             return base.FixJson(obj);
         }
 
-        public override void LoadJson(JToken obj)
+        public override void LoadJson(JToken obj, bool isRoot = default)
         {
             base.LoadJson(obj);
             if (obj["Texture"] != null)

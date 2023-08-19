@@ -90,20 +90,20 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// </summary>
         public event GwenEventHandler<EventArgs> Resized;
 
-        public override JObject GetJson()
+        public override JObject GetJson(bool isRoot = default)
         {
-            var obj = base.GetJson();
+            var obj = base.GetJson(isRoot);
             obj.Add("ClampMovement", ClampMovement);
 
             return base.FixJson(obj);
         }
 
-        public override void LoadJson(JToken obj)
+        public override void LoadJson(JToken obj, bool isRoot = default)
         {
             base.LoadJson(obj);
             if (obj["ClampMovement"] != null)
             {
-                ClampMovement = (bool) obj["ClampMovement"];
+                ClampMovement = (bool)obj["ClampMovement"];
             }
         }
 

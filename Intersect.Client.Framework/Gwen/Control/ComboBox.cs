@@ -111,9 +111,9 @@ namespace Intersect.Client.Framework.Gwen.Control
             }
         }
 
-        public override JObject GetJson()
+        public override JObject GetJson(bool isRoot = default)
         {
-            var obj = base.GetJson();
+            var obj = base.GetJson(isRoot);
             obj.Add("MenuAbove", mMenuAbove);
             obj.Add("Menu", mMenu.GetJson());
             obj.Add("DropDownButton", mButton.GetJson());
@@ -126,12 +126,12 @@ namespace Intersect.Client.Framework.Gwen.Control
             return base.FixJson(obj);
         }
 
-        public override void LoadJson(JToken obj)
+        public override void LoadJson(JToken obj, bool isRoot = default)
         {
             base.LoadJson(obj);
             if (obj["MenuAbove"] != null)
             {
-                mMenuAbove = (bool) obj["MenuAbove"];
+                mMenuAbove = (bool)obj["MenuAbove"];
             }
 
             if (obj["Menu"] != null)
@@ -146,27 +146,27 @@ namespace Intersect.Client.Framework.Gwen.Control
 
             if (obj["OpenMenuSound"] != null)
             {
-                mOpenMenuSound = (string) obj["OpenMenuSound"];
+                mOpenMenuSound = (string)obj["OpenMenuSound"];
             }
 
             if (obj["CloseMenuSound"] != null)
             {
-                mCloseMenuSound = (string) obj["CloseMenuSound"];
+                mCloseMenuSound = (string)obj["CloseMenuSound"];
             }
 
             if (obj["HoverMenuSound"] != null)
             {
-                mHoverMenuSound = (string) obj["HoverMenuSound"];
+                mHoverMenuSound = (string)obj["HoverMenuSound"];
             }
 
             if (obj["ItemHoverSound"] != null)
             {
-                mHoverItemSound = (string) obj["ItemHoverSound"];
+                mHoverItemSound = (string)obj["ItemHoverSound"];
             }
 
             if (obj["SelectItemSound"] != null)
             {
-                mSelectItemSound = (string) obj["SelectItemSound"];
+                mSelectItemSound = (string)obj["SelectItemSound"];
             }
 
             foreach (var child in Children)

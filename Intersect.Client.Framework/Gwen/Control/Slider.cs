@@ -121,9 +121,9 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// </summary>
         public event GwenEventHandler<EventArgs> ValueChanged;
 
-        public override JObject GetJson()
+        public override JObject GetJson(bool isRoot = default)
         {
-            var obj = base.GetJson();
+            var obj = base.GetJson(isRoot);
             obj.Add("BackgroundImage", GetImageFilename());
             obj.Add("SnapToNotches", mSnapToNotches);
             obj.Add("NotchCount", mNotchCount);
@@ -132,26 +132,26 @@ namespace Intersect.Client.Framework.Gwen.Control
             return base.FixJson(obj);
         }
 
-        public override void LoadJson(JToken obj)
+        public override void LoadJson(JToken obj, bool isRoot = default)
         {
             base.LoadJson(obj);
             if (obj["BackgroundImage"] != null)
             {
                 SetImage(
                     GameContentManager.Current.GetTexture(
-                        Framework.Content.TextureType.Gui, (string) obj["BackgroundImage"]
-                    ), (string) obj["BackgroundImage"]
+                        Framework.Content.TextureType.Gui, (string)obj["BackgroundImage"]
+                    ), (string)obj["BackgroundImage"]
                 );
             }
 
             if (obj["SnapToNotches"] != null)
             {
-                mSnapToNotches = (bool) obj["SnapToNotches"];
+                mSnapToNotches = (bool)obj["SnapToNotches"];
             }
 
             if (obj["NotchCount"] != null)
             {
-                mNotchCount = (int) obj["NotchCount"];
+                mNotchCount = (int)obj["NotchCount"];
             }
 
             if (obj["SliderBar"] != null)
@@ -290,7 +290,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         {
             if (mSnapToNotches)
             {
-                val = (double) Math.Floor(val * mNotchCount + 0.5f);
+                val = (double)Math.Floor(val * mNotchCount + 0.5f);
                 val /= mNotchCount;
             }
 

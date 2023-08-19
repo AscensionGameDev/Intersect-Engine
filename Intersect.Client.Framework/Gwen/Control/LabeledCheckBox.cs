@@ -41,7 +41,7 @@ namespace Intersect.Client.Framework.Gwen.Control
                 Dock = Pos.Fill,
                 IsTabable = false
             };
-            mLabel.Clicked += delegate(Base control, ClickedEventArgs args) { mCheckBox.Press(control); };
+            mLabel.Clicked += delegate (Base control, ClickedEventArgs args) { mCheckBox.Press(control); };
 
             IsTabable = false;
         }
@@ -79,16 +79,16 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// </summary>
         public event GwenEventHandler<EventArgs> CheckChanged;
 
-        public override JObject GetJson()
+        public override JObject GetJson(bool isRoot = default)
         {
-            var obj = base.GetJson();
+            var obj = base.GetJson(isRoot);
             obj.Add("Label", mLabel.GetJson());
             obj.Add("Checkbox", mCheckBox.GetJson());
 
             return base.FixJson(obj);
         }
 
-        public override void LoadJson(JToken obj)
+        public override void LoadJson(JToken obj, bool isRoot = default)
         {
             base.LoadJson(obj);
             if (obj["Label"] != null)

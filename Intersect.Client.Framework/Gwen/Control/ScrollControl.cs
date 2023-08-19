@@ -129,9 +129,9 @@ namespace Intersect.Client.Framework.Gwen.Control
             }
         }
 
-        public override JObject GetJson()
+        public override JObject GetJson(bool isRoot = default)
         {
-            var obj = base.GetJson();
+            var obj = base.GetJson(isRoot);
             obj.Add("CanScrollH", mCanScrollH);
             obj.Add("CanScrollV", mCanScrollV);
             obj.Add("AutoHideBars", mAutoHideBars);
@@ -142,22 +142,22 @@ namespace Intersect.Client.Framework.Gwen.Control
             return base.FixJson(obj);
         }
 
-        public override void LoadJson(JToken obj)
+        public override void LoadJson(JToken obj, bool isRoot = default)
         {
             base.LoadJson(obj);
             if (obj["CanScrollH"] != null)
             {
-                mCanScrollH = (bool) obj["CanScrollH"];
+                mCanScrollH = (bool)obj["CanScrollH"];
             }
 
             if (obj["CanScrollV"] != null)
             {
-                mCanScrollV = (bool) obj["CanScrollV"];
+                mCanScrollV = (bool)obj["CanScrollV"];
             }
 
             if (obj["AutoHideBars"] != null)
             {
-                mAutoHideBars = (bool) obj["AutoHideBars"];
+                mAutoHideBars = (bool)obj["AutoHideBars"];
             }
 
             if (obj["InnerPanel"] != null)
@@ -322,10 +322,10 @@ namespace Intersect.Client.Framework.Gwen.Control
                 }
 
                 var wPercent = Width /
-                               (float) (childrenWidth + (mVerticalScrollBar.IsHidden ? 0 : mVerticalScrollBar.Width));
+                               (float)(childrenWidth + (mVerticalScrollBar.IsHidden ? 0 : mVerticalScrollBar.Width));
 
                 var hPercent = Height /
-                               (float) (childrenHeight +
+                               (float)(childrenHeight +
                                         (mHorizontalScrollBar.IsHidden ? 0 : mHorizontalScrollBar.Height));
 
                 if (mCanScrollV)
@@ -360,7 +360,7 @@ namespace Intersect.Client.Framework.Gwen.Control
                 if (CanScrollV && !mVerticalScrollBar.IsHidden)
                 {
                     newInnerPanelPosY =
-                        (int) (-(mInnerPanel.Height -
+                        (int)(-(mInnerPanel.Height -
                                  Height +
                                  (mHorizontalScrollBar.IsHidden ? 0 : mHorizontalScrollBar.Height)) *
                                mVerticalScrollBar.ScrollAmount);
@@ -369,7 +369,7 @@ namespace Intersect.Client.Framework.Gwen.Control
                 if (CanScrollH && !mHorizontalScrollBar.IsHidden)
                 {
                     newInnerPanelPosX =
-                        (int) (-(mInnerPanel.Width -
+                        (int)(-(mInnerPanel.Width -
                                  Width +
                                  (mVerticalScrollBar.IsHidden ? 0 : mVerticalScrollBar.Width)) *
                                mHorizontalScrollBar.ScrollAmount);

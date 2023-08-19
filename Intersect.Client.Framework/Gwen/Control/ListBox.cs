@@ -120,7 +120,7 @@ namespace Intersect.Client.Framework.Gwen.Control
                 var tmp = new List<TableRow>();
                 foreach (var row in mSelectedRows)
                 {
-                    tmp.Add((TableRow) row);
+                    tmp.Add((TableRow)row);
                 }
 
                 return tmp;
@@ -222,9 +222,9 @@ namespace Intersect.Client.Framework.Gwen.Control
             });
         }
 
-        public override JObject GetJson()
+        public override JObject GetJson(bool isRoot = default)
         {
-            var obj = base.GetJson();
+            var obj = base.GetJson(isRoot);
             obj.Add("SizeToContents", mSizeToContents);
             obj.Add("MultiSelect", AllowMultiSelect);
             obj.Add("IsToggle", IsToggle);
@@ -238,43 +238,43 @@ namespace Intersect.Client.Framework.Gwen.Control
             return base.FixJson(obj);
         }
 
-        public override void LoadJson(JToken obj)
+        public override void LoadJson(JToken obj, bool isRoot = default)
         {
             base.LoadJson(obj);
             if (obj["SizeToContents"] != null)
             {
-                mSizeToContents = (bool) obj["SizeToContents"];
+                mSizeToContents = (bool)obj["SizeToContents"];
             }
 
             if (obj["MultiSelect"] != null)
             {
-                AllowMultiSelect = (bool) obj["MultiSelect"];
+                AllowMultiSelect = (bool)obj["MultiSelect"];
             }
 
             if (obj["IsToggle"] != null)
             {
-                IsToggle = (bool) obj["IsToggle"];
+                IsToggle = (bool)obj["IsToggle"];
             }
 
             if (obj["ItemHoverSound"] != null)
             {
-                mItemHoverSound = (string) obj["ItemHoverSound"];
+                mItemHoverSound = (string)obj["ItemHoverSound"];
             }
 
             if (obj["ItemClickSound"] != null)
             {
-                mItemClickSound = (string) obj["ItemClickSound"];
+                mItemClickSound = (string)obj["ItemClickSound"];
             }
 
             if (obj["ItemRightClickSound"] != null)
             {
-                mItemRightClickSound = (string) obj["ItemRightClickSound"];
+                mItemRightClickSound = (string)obj["ItemRightClickSound"];
             }
 
             if (obj["Font"] != null && obj["Font"].Type != JTokenType.Null)
             {
-                var fontArr = ((string) obj["Font"]).Split(',');
-                mFontInfo = (string) obj["Font"];
+                var fontArr = ((string)obj["Font"]).Split(',');
+                mFontInfo = (string)obj["Font"];
                 mFont = GameContentManager.Current.GetFont(fontArr[0], int.Parse(fontArr[1]));
             }
 
@@ -290,7 +290,7 @@ namespace Intersect.Client.Framework.Gwen.Control
 
             foreach (var itm in mTable.Children)
             {
-                var row = (ListBoxRow) itm;
+                var row = (ListBoxRow)itm;
                 row.HoverSound = mItemHoverSound;
                 row.ClickSound = mItemClickSound;
                 row.RightClickSound = mItemRightClickSound;

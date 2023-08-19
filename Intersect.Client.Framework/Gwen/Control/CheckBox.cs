@@ -83,9 +83,9 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// </summary>
         protected virtual bool AllowUncheck => true;
 
-        public override JObject GetJson()
+        public override JObject GetJson(bool isRoot = default)
         {
-            var obj = base.GetJson();
+            var obj = base.GetJson(isRoot);
             obj.Add("NormalImage", GetImageFilename(ControlState.Normal));
             obj.Add("CheckedImage", GetImageFilename(ControlState.CheckedNormal));
             obj.Add("DisabledImage", GetImageFilename(ControlState.Disabled));
@@ -96,15 +96,15 @@ namespace Intersect.Client.Framework.Gwen.Control
             return base.FixJson(obj);
         }
 
-        public override void LoadJson(JToken obj)
+        public override void LoadJson(JToken obj, bool isRoot = default)
         {
             base.LoadJson(obj);
             if (obj["NormalImage"] != null)
             {
                 SetImage(
                     GameContentManager.Current.GetTexture(
-                        Framework.Content.TextureType.Gui, (string) obj["NormalImage"]
-                    ), (string) obj["NormalImage"], ControlState.Normal
+                        Framework.Content.TextureType.Gui, (string)obj["NormalImage"]
+                    ), (string)obj["NormalImage"], ControlState.Normal
                 );
             }
 
@@ -112,8 +112,8 @@ namespace Intersect.Client.Framework.Gwen.Control
             {
                 SetImage(
                     GameContentManager.Current.GetTexture(
-                        Framework.Content.TextureType.Gui, (string) obj["CheckedImage"]
-                    ), (string) obj["CheckedImage"], ControlState.CheckedNormal
+                        Framework.Content.TextureType.Gui, (string)obj["CheckedImage"]
+                    ), (string)obj["CheckedImage"], ControlState.CheckedNormal
                 );
             }
 
@@ -121,8 +121,8 @@ namespace Intersect.Client.Framework.Gwen.Control
             {
                 SetImage(
                     GameContentManager.Current.GetTexture(
-                        Framework.Content.TextureType.Gui, (string) obj["DisabledImage"]
-                    ), (string) obj["DisabledImage"], ControlState.Disabled
+                        Framework.Content.TextureType.Gui, (string)obj["DisabledImage"]
+                    ), (string)obj["DisabledImage"], ControlState.Disabled
                 );
             }
 
@@ -130,19 +130,19 @@ namespace Intersect.Client.Framework.Gwen.Control
             {
                 SetImage(
                     GameContentManager.Current.GetTexture(
-                        Framework.Content.TextureType.Gui, (string) obj["CheckedDisabledImage"]
-                    ), (string) obj["CheckedDisabledImage"], ControlState.CheckedDisabled
+                        Framework.Content.TextureType.Gui, (string)obj["CheckedDisabledImage"]
+                    ), (string)obj["CheckedDisabledImage"], ControlState.CheckedDisabled
                 );
             }
 
             if (obj["CheckedSound"] != null)
             {
-                mCheckSound = (string) obj["CheckedSound"];
+                mCheckSound = (string)obj["CheckedSound"];
             }
 
             if (obj["UncheckedSound"] != null)
             {
-                mUncheckedSound = (string) obj["UncheckedSound"];
+                mUncheckedSound = (string)obj["UncheckedSound"];
             }
         }
 
