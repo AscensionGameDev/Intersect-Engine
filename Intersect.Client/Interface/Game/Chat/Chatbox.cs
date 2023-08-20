@@ -14,6 +14,7 @@ using Intersect.Client.Localization;
 using Intersect.Client.Networking;
 using Intersect.Configuration;
 using Intersect.Enums;
+using Intersect.Extensions;
 using Intersect.Localization;
 using Intersect.Utilities;
 
@@ -246,7 +247,7 @@ namespace Intersect.Client.Interface.Game.Chat
 
         private void MGuildInviteContextItem_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            var name = (string) sender.Parent.UserData;
+            var name = (string)sender.Parent.UserData;
             PacketSender.SendInviteGuild(name);
         }
 
@@ -321,7 +322,7 @@ namespace Intersect.Client.Interface.Game.Chat
             {
                 case ChatboxTab.System:
                 case ChatboxTab.All:
-                        mChannelCombobox.SelectByUserData(mLastChatChannel[tab]);
+                    mChannelCombobox.SelectByUserData(mLastChatChannel[tab]);
                     break;
 
                 case ChatboxTab.Local:
@@ -420,7 +421,7 @@ namespace Intersect.Client.Interface.Game.Chat
                 if (ClientConfiguration.Instance.EnableContextMenus)
                 {
                     OpenContextMenu(target);
-                } 
+                }
                 else
                 {
                     SetChatboxText($"/pm {target} ");
@@ -439,8 +440,8 @@ namespace Intersect.Client.Interface.Game.Chat
 
         private void ChatboxRow_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            var rw = (ListBoxRow) sender;
-            var target = (string) rw.UserData;
+            var rw = (ListBoxRow)sender;
+            var target = (string)rw.UserData;
             if (!string.IsNullOrWhiteSpace(target))
             {
                 if (mGameUi.AdminWindowOpen())
@@ -549,13 +550,33 @@ namespace Intersect.Client.Interface.Game.Chat
         void TrySendMessage()
         {
             var msg = mChatboxInput.Text.Trim();
+
+            if (msg.StartsWith("/zoom"))
+            {
+                if (msg == "/zoom world")
+                {
+                    ChatboxMsg.AddMessage(new ChatboxMsg($"WorldZoom is {Graphics.Renderer.WorldZoom}", Color.Orange, ChatMessageType.Notice));
+                }
+                else if (msg.StartsWith("/zoom world"))
+                {
+                    Graphics.Renderer.WorldZoom = (float)MathHelper.Clamp(float.Parse(msg.Slice("/zoom world".Length)), 1.0f, 4.0f);
+                    ChatboxMsg.AddMessage(new ChatboxMsg($"Set WorldZoom to {Graphics.Renderer.WorldZoom}", Color.Orange, ChatMessageType.Notice));
+                }
+                else
+                {
+                    ChatboxMsg.AddMessage(new ChatboxMsg($"Unknown command '{msg}'", Color.Red, ChatMessageType.Error));
+                }
+                mChatboxInput.Text = GetDefaultInputText();
+                return;
+            }
+
             if (string.IsNullOrWhiteSpace(msg) || string.Equals(msg, GetDefaultInputText(), StringComparison.Ordinal))
             {
                 mChatboxInput.Text = GetDefaultInputText();
 
                 return;
             }
-            
+
             if (mLastChatTime > Timing.Global.MillisecondsUtc)
             {
                 ChatboxMsg.AddMessage(new ChatboxMsg(Strings.Chatbox.toofast, Color.Red, ChatMessageType.Error));
