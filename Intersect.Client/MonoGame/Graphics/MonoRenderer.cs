@@ -199,7 +199,7 @@ namespace Intersect.Client.MonoGame.Graphics
                 var displayBounds = Sdl2.GetDisplayBounds();
                 var currentDisplayBounds = displayBounds[0];
                 mGameWindow.Position = new Microsoft.Xna.Framework.Point(
-                    currentDisplayBounds.x + (currentDisplayBounds.w - mScreenWidth) / 2, 
+                    currentDisplayBounds.x + (currentDisplayBounds.w - mScreenWidth) / 2,
                     currentDisplayBounds.y + (currentDisplayBounds.h - mScreenHeight) / 2
                 );
             }
@@ -248,8 +248,17 @@ namespace Intersect.Client.MonoGame.Graphics
                 UpdateGraphicsState(mScreenWidth, mScreenHeight);
             }
 
-            StartSpritebatch(mCurrentView, GameBlendModes.None, null, null, true, null);
+            return RecreateSpriteBatch();
+        }
 
+        protected override bool RecreateSpriteBatch()
+        {
+            if (mSpriteBatchBegan)
+            {
+                EndSpriteBatch();
+            }
+
+            StartSpritebatch(mCurrentView, GameBlendModes.None, null, null, true, null);
             return true;
         }
 
@@ -341,12 +350,19 @@ namespace Intersect.Client.MonoGame.Graphics
                     shader.ResetChanged();
                 }
 
+                var zoomOffsetX = (view.Width - (view.Width / _scale)) / 2;
+                var zoomOffsetY = (view.Height - (view.Height / _scale)) / 2;
+
                 mSpriteBatch.Begin(
-                    drawImmediate ? SpriteSortMode.Immediate : SpriteSortMode.Deferred, blend, SamplerState.PointClamp,
-                    null, rs, useEffect,
+                    drawImmediate ? SpriteSortMode.Immediate : SpriteSortMode.Deferred,
+                    blend,
+                    SamplerState.PointClamp,
+                    null,
+                    rs,
+                    useEffect,
                     Matrix.CreateRotationZ(0f) *
-                    Matrix.CreateScale(new Vector3(1, 1, 1)) *
-                    Matrix.CreateTranslation(-view.X, -view.Y, 0)
+                    Matrix.CreateTranslation(-view.X - zoomOffsetX, -view.Y - zoomOffsetY, 0) *
+                    Matrix.CreateScale(new Vector3(_scale))
                 );
 
                 mCurrentSpriteView = view;
@@ -396,7 +412,7 @@ namespace Intersect.Client.MonoGame.Graphics
             mGraphicsDevice.SetRenderTarget(mScreenshotRenderTarget);
             mGraphicsDevice.BlendState = mNormalState;
             mGraphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
-            mGraphicsDevice.SamplerStates[0] = SamplerState.LinearClamp;
+            mGraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
             mGraphicsDevice.DepthStencilState = DepthStencilState.None;
             ((MonoTileBuffer)buffer).Draw(mBasicEffect, mCurrentView);
         }
@@ -901,9 +917,11 @@ namespace Intersect.Client.MonoGame.Graphics
             projection.M41 += -0.5f * projection.M11;
             projection.M42 += -0.5f * projection.M22;
             mBasicEffect.Projection = projection;
+            var zoomOffsetX = (view.Width - (view.Width / WorldZoom)) / 2;
+            var zoomOffsetY = (view.Height - (view.Height / WorldZoom)) / 2;
             mBasicEffect.View = Matrix.CreateRotationZ(0f) *
-                                Matrix.CreateScale(new Vector3(1, 1, 1)) *
-                                Matrix.CreateTranslation(-view.X, -view.Y, 0);
+                                Matrix.CreateTranslation(-view.X - zoomOffsetX, -view.Y - zoomOffsetY, 0) *
+                                Matrix.CreateScale(new Vector3(WorldZoom));
         }
 
         public override bool BeginScreenshot()

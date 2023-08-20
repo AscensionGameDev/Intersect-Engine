@@ -530,6 +530,8 @@ namespace Intersect.Client.Core
                 return;
             }
 
+            Renderer.Scale = Renderer.WorldZoom;
+
             if (Renderer.GetScreenWidth() != sOldWidth ||
                 Renderer.GetScreenHeight() != sOldHeight ||
                 Renderer.DisplayModeChanged())
@@ -570,6 +572,8 @@ namespace Intersect.Client.Core
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+
+            Renderer.Scale = 1;
 
             Interface.Interface.DrawGui();
 
