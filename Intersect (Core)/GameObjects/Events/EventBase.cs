@@ -132,7 +132,7 @@ namespace Intersect.GameObjects.Events
         /// <inheritdoc />
         public string Folder { get; set; } = "";
 
-        public new static Guid IdFromList(int listIndex)
+        public static new Guid IdFromList(int listIndex)
         {
             if (listIndex < 0)
             {
@@ -151,12 +151,12 @@ namespace Intersect.GameObjects.Events
             return commonEvents[listIndex].Value?.Id ?? Guid.Empty;
         }
 
-        public new static EventBase FromList(int listIndex)
+        public static new EventBase FromList(int listIndex)
         {
             return Get(IdFromList(listIndex));
         }
 
-        public new static int ListIndex(Guid id)
+        public static new int ListIndex(Guid id)
         {
             var commonEvents = Lookup.Where(pair => ((EventBase) pair.Value)?.CommonEvent ?? false)
                 .OrderBy(p => p.Value?.Name)
