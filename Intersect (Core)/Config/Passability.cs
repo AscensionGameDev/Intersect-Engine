@@ -18,14 +18,14 @@ namespace Intersect.Config
         [JsonIgnore]
         public bool[] Passable
         {
-            get => mPassableCache ?? (mPassableCache = new[] {Normal, Safe, Arena});
+            get => mPassableCache ?? (mPassableCache = new[] { Normal, Safe, Arena });
             set => mPassableCache = value;
         }
 
         [OnDeserialized]
         internal void OnDeserializedMethod(StreamingContext context)
         {
-            Passable = new[] {Normal, Safe, Arena};
+            Passable = new[] { Normal, Safe, Arena };
         }
     }
 }

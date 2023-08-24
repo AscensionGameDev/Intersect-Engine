@@ -36,7 +36,7 @@ namespace Intersect.GameObjects.Events
             SpawnY = y;
             CommonEvent = isCommon;
             Global = isGlobal;
-            Pages = new List<EventPage> {new EventPage()};
+            Pages = new List<EventPage> { new EventPage() };
         }
 
         public EventBase(Guid id, bool isCommon = false) : base(id)

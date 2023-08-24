@@ -27,7 +27,7 @@ namespace Intersect.Config
         public int NaturalUpperMargin { get; set; } = 500;
 
         /// <summary>
-        /// Number of consecutive unnatural packets that are accepted in short intervals before being dropped. 
+        /// Number of consecutive unnatural packets that are accepted in short intervals before being dropped.
         /// </summary>
         public int AllowedSpikePackets { get; set; } = 5;
 
@@ -57,7 +57,7 @@ namespace Intersect.Config
         public FloodThreshholds EditorThreshholds = FloodThreshholds.Editor();
 
         /// <summary>
-        /// Packet flooding detection thresholds for general players. Pretty strict. 
+        /// Packet flooding detection thresholds for general players. Pretty strict.
         /// Might need to be adjusted if there is a lot of high paceed actions/movement/combat in your game.
         /// </summary>
         [JsonProperty("PlayerFloodThreshholds")]

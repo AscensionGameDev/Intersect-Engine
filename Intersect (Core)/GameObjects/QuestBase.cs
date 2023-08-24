@@ -241,7 +241,7 @@ namespace Intersect.GameObjects
                 switch (Objective)
                 {
                     case QuestObjective.EventDriven: //Event Driven
-                        taskString = descriptions[(int) Objective].ToString(Description);
+                        taskString = descriptions[(int)Objective].ToString(Description);
 
                         break;
                     case QuestObjective.GatherItems: //Gather Items

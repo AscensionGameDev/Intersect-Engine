@@ -9,12 +9,12 @@
         public bool BatchPlayerMovementPackets { get; set; } = true;
 
         /// <summary>
-        /// If this value is true, action messages will be sent in a batch maps update instead of in realtime which will reduce workload on the network pool at the expense of being slightly delayed 
+        /// If this value is true, action messages will be sent in a batch maps update instead of in realtime which will reduce workload on the network pool at the expense of being slightly delayed
         /// </summary>
         public bool BatchActionMessagePackets { get; set; } = true;
 
         /// <summary>
-        /// If this value is true, animation packetswill be sent in a batch maps update instead of in realtime which will reduce workload on the network pool at the expense of being slightly delayed 
+        /// If this value is true, animation packetswill be sent in a batch maps update instead of in realtime which will reduce workload on the network pool at the expense of being slightly delayed
         /// </summary>
         public bool BatchAnimationPackets { get; set; } = true;
         #endregion

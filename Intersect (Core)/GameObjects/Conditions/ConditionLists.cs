@@ -77,7 +77,7 @@ namespace Intersect.GameObjects.Conditions
         {
             writer.WriteStartObject();
             writer.WritePropertyName("Lists");
-            serializer.Serialize(writer, ((ConditionLists) value).Data());
+            serializer.Serialize(writer, ((ConditionLists)value).Data());
             writer.WriteEndObject();
         }
     }
