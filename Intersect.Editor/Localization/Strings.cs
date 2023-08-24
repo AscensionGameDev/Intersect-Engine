@@ -3753,7 +3753,7 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString SingleUseEvent = @"Destroy On Use?";
 
-            public static LocalizedString stackoptions = @"Stackable?";
+            public static LocalizedString StackOptions = @"Stackable";
 
             public static LocalizedString stackable = @"Stackable?";
 

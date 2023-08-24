@@ -206,7 +206,7 @@ namespace Intersect.Editor.Forms.Editors
             chkCanTrade.Text = Strings.ItemEditor.CanTrade;
             chkCanSell.Text = Strings.ItemEditor.CanSell;
 
-            grpStack.Text = Strings.ItemEditor.stackoptions;
+            grpStack.Text = Strings.ItemEditor.StackOptions;
             chkStackable.Text = Strings.ItemEditor.stackable;
             lblInvStackLimit.Text = Strings.ItemEditor.InventoryStackLimit;
             lblBankStackLimit.Text = Strings.ItemEditor.BankStackLimit;
