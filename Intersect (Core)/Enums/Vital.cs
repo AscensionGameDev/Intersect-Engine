@@ -6,6 +6,6 @@ namespace Intersect.Enums
 
         Mana,
 
-        VitalCount
+        VitalCount,
     }
 }

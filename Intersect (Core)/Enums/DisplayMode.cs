@@ -26,6 +26,6 @@ namespace Intersect.Enums
         Fit,
 
         /// <summary> Fits the texture to the game window by using the DrawFullScreenTextureFitMinimum method. </summary>
-        Cover
+        Cover,
     }
 }

@@ -9,6 +9,7 @@
         Promote,
 
         Demote,
-        Transfer
+
+        Transfer,
     }
 }

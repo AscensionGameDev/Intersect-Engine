@@ -6,6 +6,6 @@ namespace Intersect.Enums
 
         Safe,
 
-        Arena
+        Arena,
     }
 }

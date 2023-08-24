@@ -8,6 +8,6 @@ namespace Intersect.Enums
 
         String,
 
-        Number
+        Number,
     }
 }

@@ -10,6 +10,6 @@
 
         Left,
 
-        Right
+        Right,
     }
 }

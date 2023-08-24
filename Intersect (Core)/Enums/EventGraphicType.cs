@@ -6,6 +6,6 @@
 
         Sprite,
 
-        Tileset
+        Tileset,
     }
 }

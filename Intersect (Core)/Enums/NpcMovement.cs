@@ -8,6 +8,6 @@
 
         StandStill,
 
-        Static
+        Static,
     }
 }

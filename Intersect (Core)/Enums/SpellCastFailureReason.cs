@@ -34,6 +34,6 @@ namespace Intersect.Enums
 
         ConditionsNotMet,
 
-        OnCooldown
+        OnCooldown,
     }
 }

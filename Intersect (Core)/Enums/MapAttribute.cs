@@ -24,6 +24,6 @@ namespace Intersect.Enums
 
         Slide,
 
-        Critter
+        Critter,
     }
 }

@@ -6,6 +6,6 @@
 
         SameAsPlayer,
 
-        AbovePlayer
+        AbovePlayer,
     }
 }

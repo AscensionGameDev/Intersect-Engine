@@ -10,6 +10,6 @@
 
         Faster,
 
-        Fastest
+        Fastest,
     }
 }

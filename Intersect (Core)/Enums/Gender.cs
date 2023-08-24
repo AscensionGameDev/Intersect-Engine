@@ -4,6 +4,6 @@
     {
         Male = 0,
 
-        Female
+        Female,
     }
 }

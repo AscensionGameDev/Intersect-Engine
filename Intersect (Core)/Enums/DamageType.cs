@@ -6,6 +6,6 @@ namespace Intersect.Enums
 
         Magic,
 
-        True
+        True,
     }
 }

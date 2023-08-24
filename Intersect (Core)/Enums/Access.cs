@@ -6,6 +6,6 @@
 
         Moderator,
 
-        Admin
+        Admin,
     }
 }

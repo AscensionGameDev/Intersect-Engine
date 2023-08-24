@@ -10,6 +10,6 @@
 
         Party,
 
-        Guild
+        Guild,
     }
 }

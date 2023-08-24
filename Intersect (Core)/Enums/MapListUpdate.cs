@@ -8,6 +8,6 @@ namespace Intersect.Enums
 
         Rename = 2,
 
-        Delete = 3
+        Delete = 3,
     }
 }

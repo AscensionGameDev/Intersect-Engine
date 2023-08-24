@@ -10,6 +10,6 @@
 
         Higher,
 
-        Highest
+        Highest,
     }
 }

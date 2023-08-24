@@ -6,6 +6,6 @@
 
         GatherItems,
 
-        KillNpcs
+        KillNpcs,
     }
 }

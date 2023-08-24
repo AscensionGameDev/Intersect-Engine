@@ -4,6 +4,6 @@ namespace Intersect.Enums
     {
         Equal = 0,
 
-        Contains
+        Contains,
     }
 }
