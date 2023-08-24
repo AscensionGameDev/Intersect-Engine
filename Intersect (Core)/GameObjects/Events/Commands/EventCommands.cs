@@ -133,8 +133,8 @@ namespace Intersect.GameObjects.Events.Commands
 
         public long Maximum { get; set; } = 0;
 
-        public Guid[] BranchIds { get; set; } =
-            new Guid[2]; //Branch[0] is the event commands to execute when the condition is met, Branch[1] is for when it's not.
+        //Branch[0] is the event commands to execute when the condition is met, Branch[1] is for when it's not.
+        public Guid[] BranchIds { get; set; } = new Guid[2];
 
         public override string GetCopyData(
             Dictionary<Guid, List<EventCommand>> commandLists,
@@ -224,8 +224,8 @@ namespace Intersect.GameObjects.Events.Commands
 
         public Condition Condition { get; set; }
 
-        public Guid[] BranchIds { get; set; } =
-            new Guid[2]; //Branch[0] is the event commands to execute when the condition is met, Branch[1] is for when it's not.
+        //Branch[0] is the event commands to execute when the condition is met, Branch[1] is for when it's not.
+        public Guid[] BranchIds { get; set; } = new Guid[2];
 
         public override string GetCopyData(
             Dictionary<Guid, List<EventCommand>> commandLists,
@@ -355,8 +355,8 @@ namespace Intersect.GameObjects.Events.Commands
 
         public bool Add { get; set; } //If !Add then Remove
 
-        public Guid[] BranchIds { get; set; } =
-            new Guid[2]; //Branch[0] is the event commands to execute when taught/removed successfully, Branch[1] is for when it's not.
+        //Branch[0] is the event commands to execute when taught/removed successfully, Branch[1] is for when it's not.
+        public Guid[] BranchIds { get; set; } = new Guid[2];
 
         public override string GetCopyData(
             Dictionary<Guid, List<EventCommand>> commandLists,
@@ -434,8 +434,8 @@ namespace Intersect.GameObjects.Events.Commands
 
         public int Quantity { get; set; }
 
-        public Guid[] BranchIds { get; set; } =
-            new Guid[2]; //Branch[0] is the event commands to execute when given/taken successfully, Branch[1] is for when they're not.
+        //Branch[0] is the event commands to execute when given/taken successfully, Branch[1] is for when they're not.
+        public Guid[] BranchIds { get; set; } = new Guid[2];
 
         public override string GetCopyData(
             Dictionary<Guid, List<EventCommand>> commandLists,
@@ -748,8 +748,8 @@ namespace Intersect.GameObjects.Events.Commands
 
         public bool Offer { get; set; } //Show the offer screen and give the player a chance to decline the quest
 
-        public Guid[] BranchIds { get; set; } =
-            new Guid[2]; //Branch[0] is the event commands to execute when quest is started successfully, Branch[1] is for when it's not.
+        //Branch[0] is the event commands to execute when quest is started successfully, Branch[1] is for when it's not.
+        public Guid[] BranchIds { get; set; } = new Guid[2];
 
         public override string GetCopyData(
             Dictionary<Guid, List<EventCommand>> commandLists,
@@ -837,8 +837,8 @@ namespace Intersect.GameObjects.Events.Commands
 
         public Guid VariableId { get; set; }
 
-        public Guid[] BranchIds { get; set; } =
-            new Guid[2]; //Branch[0] is the event commands to execute when given/taken successfully, Branch[1] is for when they're not.
+        //Branch[0] is the event commands to execute when given/taken successfully, Branch[1] is for when they're not.
+        public Guid[] BranchIds { get; set; } = new Guid[2];
 
         public override string GetCopyData(
             Dictionary<Guid, List<EventCommand>> commandLists,
@@ -892,8 +892,8 @@ namespace Intersect.GameObjects.Events.Commands
 
         public Guid VariableId { get; set; }
 
-        public Guid[] BranchIds { get; set; } =
-            new Guid[2]; //Branch[0] is the event commands to execute when quest is started successfully, Branch[1] is for when it's not.
+        //Branch[0] is the event commands to execute when quest is started successfully, Branch[1] is for when it's not.
+        public Guid[] BranchIds { get; set; } = new Guid[2];
 
         public override string GetCopyData(
             Dictionary<Guid, List<EventCommand>> commandLists,
@@ -934,8 +934,8 @@ namespace Intersect.GameObjects.Events.Commands
 
         public override EventCommandType Type { get; } = EventCommandType.DisbandGuild;
 
-        public Guid[] BranchIds { get; set; } =
-            new Guid[2]; //Branch[0] is the event commands to execute when quest is started successfully, Branch[1] is for when it's not.
+        //Branch[0] is the event commands to execute when quest is started successfully, Branch[1] is for when it's not.
+        public Guid[] BranchIds { get; set; } = new Guid[2];
 
         public override string GetCopyData(
             Dictionary<Guid, List<EventCommand>> commandLists,
