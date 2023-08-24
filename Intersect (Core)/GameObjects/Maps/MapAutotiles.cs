@@ -381,10 +381,7 @@ namespace Intersect.GameObjects.Maps
                 {
                     for (var y = 0; y < Options.MapHeight; y++)
                     {
-                        layer[x, y] = new QuarterTileCls()
-                        {
-                            QuarterTile = new PointStruct[5]
-                        };
+                        layer[x, y] = new QuarterTileCls() { QuarterTile = new PointStruct[5] };
                     }
                 }
                 Layers.Add(layerName, layer);

@@ -207,11 +207,7 @@ namespace Intersect.GameObjects.Switches_and_Variables
 
         public static implicit operator VariableValue(bool value)
         {
-            return new VariableValue
-            {
-                Type = VariableDataType.Boolean,
-                Boolean = value
-            };
+            return new VariableValue { Type = VariableDataType.Boolean, Boolean = value };
         }
 
         public static implicit operator bool(VariableValue variableValue)
@@ -221,11 +217,7 @@ namespace Intersect.GameObjects.Switches_and_Variables
 
         public static implicit operator VariableValue(long value)
         {
-            return new VariableValue
-            {
-                Type = VariableDataType.String,
-                Integer = value
-            };
+            return new VariableValue { Type = VariableDataType.String, Integer = value };
         }
 
         public static implicit operator long(VariableValue variableValue)
@@ -235,11 +227,7 @@ namespace Intersect.GameObjects.Switches_and_Variables
 
         public static implicit operator VariableValue(double value)
         {
-            return new VariableValue
-            {
-                Type = VariableDataType.Number,
-                Number = value
-            };
+            return new VariableValue { Type = VariableDataType.Number, Number = value };
         }
 
         public static implicit operator double(VariableValue variableValue)
@@ -249,11 +237,7 @@ namespace Intersect.GameObjects.Switches_and_Variables
 
         public static implicit operator VariableValue(string value)
         {
-            return new VariableValue
-            {
-                Type = VariableDataType.String,
-                String = value
-            };
+            return new VariableValue { Type = VariableDataType.String, String = value };
         }
 
         public static implicit operator string(VariableValue variableValue)

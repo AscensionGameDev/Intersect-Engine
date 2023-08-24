@@ -105,12 +105,7 @@ namespace Intersect.GameObjects.Maps.MapList
 
         public void AddFolder(string folderName)
         {
-            var tmp = new MapListFolder()
-            {
-                Name = folderName,
-                FolderId = Guid.NewGuid()
-            };
-
+            var tmp = new MapListFolder() { Name = folderName, FolderId = Guid.NewGuid() };
             Items.Add(tmp);
         }
 
