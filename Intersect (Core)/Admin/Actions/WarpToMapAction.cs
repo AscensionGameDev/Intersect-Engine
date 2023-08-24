@@ -1,6 +1,5 @@
 ﻿using System;
 
-using Intersect.Enums;
 using MessagePack;
 
 namespace Intersect.Admin.Actions
