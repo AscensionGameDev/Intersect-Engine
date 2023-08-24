@@ -27,7 +27,8 @@ namespace Intersect.GameObjects.Conditions
         {
             Lists.Clear();
             JsonConvert.PopulateObject(
-                data, Lists,
+                data,
+                Lists,
                 new JsonSerializerSettings()
                 {
                     TypeNameHandling = TypeNameHandling.Auto,

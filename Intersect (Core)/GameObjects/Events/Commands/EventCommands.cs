@@ -17,10 +17,12 @@ namespace Intersect.GameObjects.Events.Commands
         )
         {
             return JsonConvert.SerializeObject(
-                this, typeof(EventCommand),
+                this,
+                typeof(EventCommand),
                 new JsonSerializerSettings()
                 {
-                    Formatting = Formatting.None, TypeNameHandling = TypeNameHandling.Auto,
+                    Formatting = Formatting.None,
+                    TypeNameHandling = TypeNameHandling.Auto,
                     DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
                     ObjectCreationHandling = ObjectCreationHandling.Replace
                 }

@@ -47,7 +47,10 @@ namespace Intersect.Enums
 
         public static IDatabaseObject CreateNew(this GameObjectType gameObjectType)
         {
-            var instance = Activator.CreateInstance(AttributeMap?[gameObjectType]?.Type, new object[] { });
+            var instance = Activator.CreateInstance(
+                AttributeMap?[gameObjectType]?.Type,
+                new object[] { }
+            );
 
             return instance as IDatabaseObject;
         }

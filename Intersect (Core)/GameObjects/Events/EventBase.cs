@@ -182,7 +182,8 @@ namespace Intersect.GameObjects.Events
         {
             var oldTime = TimeCreated;
             JsonConvert.PopulateObject(
-                json, this,
+                json,
+                this,
                 new JsonSerializerSettings()
                 {
                     TypeNameHandling = TypeNameHandling.Auto,

@@ -101,7 +101,8 @@ namespace Intersect.GameObjects
                 .Where(pair => pair.Value is ServerVariableBase descriptor && descriptor.Type == dataType)
                 .OrderBy(pair => pair.Value.TimeCreated)
                 .Skip(listIndex)
-                .First().Value.Id;
+                .First()
+                .Value.Id;
         }
     }
 }

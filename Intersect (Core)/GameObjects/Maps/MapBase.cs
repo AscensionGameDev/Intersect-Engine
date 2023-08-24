@@ -178,7 +178,10 @@ namespace Intersect.GameObjects.Maps
             set
             {
                 var str = LZ4.UnPickleString(value);
-                mAttributes = JsonConvert.DeserializeObject<MapAttribute[,]>(LZ4.UnPickleString(value), mJsonSerializerSettings);
+                mAttributes = JsonConvert.DeserializeObject<MapAttribute[,]>(
+                    LZ4.UnPickleString(value),
+                    mJsonSerializerSettings
+                );
                 mCachedAttributeData = value;
             }
         }
@@ -192,7 +195,13 @@ namespace Intersect.GameObjects.Maps
             set
             {
                 mAttributes = value;
-                mCachedAttributeData = LZ4.PickleString(JsonConvert.SerializeObject(mAttributes, Formatting.None, mJsonSerializerSettings));
+                mCachedAttributeData = LZ4.PickleString(
+                    JsonConvert.SerializeObject(
+                        mAttributes,
+                        Formatting.None,
+                        mJsonSerializerSettings
+                    )
+                );
             }
         }
 

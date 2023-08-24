@@ -72,7 +72,8 @@ namespace Intersect.GameObjects
                 .Where(pair => pair.Value is PlayerVariableBase descriptor && descriptor.Type == dataType)
                 .OrderBy(pair => pair.Value.TimeCreated)
                 .Skip(listIndex)
-                .First().Value.Id;
+                .First()
+                .Value.Id;
         }
     }
 }

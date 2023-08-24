@@ -321,9 +321,10 @@ namespace Intersect.GameObjects
         }
 
         [JsonIgnore, NotMapped]
-        public bool IsStackable => (ItemType == ItemType.Currency || Stackable) &&
-                                   ItemType != ItemType.Equipment &&
-                                   ItemType != ItemType.Bag;
+        public bool IsStackable =>
+            (ItemType == ItemType.Currency || Stackable)
+            && ItemType != ItemType.Equipment
+            && ItemType != ItemType.Bag;
 
         [NotMapped]
         public List<EffectData> Effects { get; set; }
@@ -375,7 +376,10 @@ namespace Intersect.GameObjects
                 return Array.Empty<ItemBase>();
             }
 
-            return Lookup.Where(i => ((ItemBase)i.Value).CooldownGroup.Trim() == cooldownGroup).Select(i => (ItemBase)i.Value).ToArray();
+            return Lookup
+                .Where(i => ((ItemBase)i.Value).CooldownGroup.Trim() == cooldownGroup)
+                .Select(i => (ItemBase)i.Value)
+                .ToArray();
         }
 
         private void Initialize()

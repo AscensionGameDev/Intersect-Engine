@@ -245,13 +245,19 @@ namespace Intersect.GameObjects
 
                         break;
                     case QuestObjective.GatherItems: //Gather Items
-                        taskString = descriptions[(int) Objective]
-                            .ToString(ItemBase.GetName(TargetId), Quantity, Description);
+                        taskString = descriptions[(int)Objective].ToString(
+                            ItemBase.GetName(TargetId),
+                            Quantity,
+                            Description
+                        );
 
                         break;
                     case QuestObjective.KillNpcs: //Kill Npcs
-                        taskString = descriptions[(int) Objective]
-                            .ToString(NpcBase.GetName(TargetId), Quantity, Description);
+                        taskString = descriptions[(int)Objective].ToString(
+                            NpcBase.GetName(TargetId),
+                            Quantity,
+                            Description
+                        );
 
                         break;
                 }

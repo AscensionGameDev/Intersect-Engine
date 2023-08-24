@@ -156,7 +156,10 @@ namespace Intersect.GameObjects
                 return Array.Empty<SpellBase>();
             }
 
-            return Lookup.Where(i => ((SpellBase)i.Value).CooldownGroup.Trim() == cooldownGroup).Select(i => (SpellBase)i.Value).ToArray();
+            return Lookup
+                .Where(i => ((SpellBase)i.Value).CooldownGroup.Trim() == cooldownGroup)
+                .Select(i => (SpellBase)i.Value)
+                .ToArray();
         }
     }
 

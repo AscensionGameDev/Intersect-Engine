@@ -256,7 +256,9 @@ namespace Intersect
 
             if (File.Exists("resources/config.json"))
             {
-                Instance = JsonConvert.DeserializeObject<Options>(File.ReadAllText("resources/config.json"));
+                Instance = JsonConvert.DeserializeObject<Options>(
+                    File.ReadAllText("resources/config.json")
+                );
             }
 
             Instance.SmtpValid = Instance.SmtpSettings.IsValid();
