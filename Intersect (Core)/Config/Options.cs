@@ -99,7 +99,11 @@ namespace Intersect
         public bool SendingToClient { get; set; } = true;
 
         //Public Getters
-        public static ushort ServerPort { get => Instance._serverPort; set => Instance._serverPort = value; }
+        public static ushort ServerPort
+        {
+            get => Instance._serverPort;
+            set => Instance._serverPort = value;
+        }
 
         /// <summary>
         /// Defines the maximum amount of network connections our server is allowed to handle.
@@ -185,7 +189,11 @@ namespace Intersect
 
         public static int PasswordResetExpirationMinutes => Instance._passResetExpirationMin;
 
-        public static bool AdminOnly { get => Instance._adminOnly; set => Instance._adminOnly = value; }
+        public static bool AdminOnly
+        {
+            get => Instance._adminOnly;
+            set => Instance._adminOnly = value;
+        }
 
         public static bool BlockClientRegistrations
         {

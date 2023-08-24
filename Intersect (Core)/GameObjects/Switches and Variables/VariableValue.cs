@@ -16,7 +16,11 @@ namespace Intersect.GameObjects.Switches_and_Variables
         public VariableDataType Type { get; set; }
 
         [NotMapped]
-        public dynamic Value { get => mValue; set => SetValue(value); }
+        public dynamic Value
+        {
+            get => mValue;
+            set => SetValue(value);
+        }
 
         [JsonIgnore]
         public JObject Json
