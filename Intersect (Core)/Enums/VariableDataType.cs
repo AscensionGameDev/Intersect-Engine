@@ -2,7 +2,6 @@ namespace Intersect.Enums
 {
     public enum VariableDataType : byte
     {
-
         Boolean = 1,
 
         Integer,
@@ -10,6 +9,5 @@ namespace Intersect.Enums
         String,
 
         Number
-
     }
 }

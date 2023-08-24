@@ -8,10 +8,8 @@ using Intersect.Models;
 
 namespace Intersect.Enums
 {
-
     public static partial class GameObjectTypeExtensions
     {
-
         static GameObjectTypeExtensions()
         {
             EnumType = typeof(GameObjectType);
@@ -53,7 +51,5 @@ namespace Intersect.Enums
 
             return instance as IDatabaseObject;
         }
-
     }
-
 }

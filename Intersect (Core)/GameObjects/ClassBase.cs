@@ -12,10 +12,8 @@ using Newtonsoft.Json;
 
 namespace Intersect.GameObjects
 {
-
     public partial class ClassBase : DatabaseObject<ClassBase>, IFolderable
     {
-
         public const long DEFAULT_BASE_EXPERIENCE = 100;
 
         public const long DEFAULT_EXPERIENCE_INCREASE = 50;
@@ -247,12 +245,10 @@ namespace Intersect.GameObjects
 
             return ExperienceCurve.Calculate(level);
         }
-
     }
 
     public partial class ClassItem
     {
-
         [JsonProperty]
         public Guid Id { get; set; }
 
@@ -262,12 +258,10 @@ namespace Intersect.GameObjects
         {
             return ItemBase.Get(Id);
         }
-
     }
 
     public partial class ClassSpell
     {
-
         [JsonProperty]
         public Guid Id { get; set; }
 
@@ -277,18 +271,14 @@ namespace Intersect.GameObjects
         {
             return SpellBase.Get(Id);
         }
-
     }
 
     public partial class ClassSprite
     {
-
         public string Face = "";
 
         public Gender Gender;
 
         public string Sprite = "";
-
     }
-
 }

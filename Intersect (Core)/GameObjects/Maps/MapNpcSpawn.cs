@@ -4,10 +4,8 @@ using Intersect.Enums;
 
 namespace Intersect.GameObjects.Maps
 {
-
     public partial class NpcSpawn
     {
-
         public NpcSpawnDirection Direction;
 
         public Guid NpcId;
@@ -27,7 +25,5 @@ namespace Intersect.GameObjects.Maps
             Y = copy.Y;
             Direction = copy.Direction;
         }
-
     }
-
 }

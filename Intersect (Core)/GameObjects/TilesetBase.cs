@@ -6,10 +6,8 @@ using Newtonsoft.Json;
 
 namespace Intersect.GameObjects
 {
-
     public partial class TilesetBase : DatabaseObject<TilesetBase>
     {
-
         [JsonConstructor]
         public TilesetBase(Guid id) : base(id)
         {
@@ -27,7 +25,5 @@ namespace Intersect.GameObjects
             get => base.Name;
             set => base.Name = value?.Trim().ToLower();
         }
-
     }
-
 }

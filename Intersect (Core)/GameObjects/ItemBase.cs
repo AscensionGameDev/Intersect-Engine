@@ -15,7 +15,6 @@ using Newtonsoft.Json;
 
 namespace Intersect.GameObjects
 {
-
     public partial class ItemBase : DatabaseObject<ItemBase>, IFolderable
     {
 
@@ -257,7 +256,6 @@ namespace Intersect.GameObjects
         /// </summary>
         public long DespawnTime { get; set; }
 
-
         [Column("VitalsGiven")]
         [JsonIgnore]
         public string VitalsJson
@@ -392,25 +390,21 @@ namespace Intersect.GameObjects
             Effects = new List<EffectData>();
             Color = new Color(255, 255, 255, 255);
         }
-
     }
 
     [Owned]
     public partial class ConsumableData
     {
-
         public ConsumableType Type { get; set; }
 
         public int Value { get; set; }
 
         public int Percentage { get; set; }
-
     }
 
     [Owned]
     public partial class EffectData
     {
-
         public EffectData()
         {
             Type = default;
@@ -426,7 +420,5 @@ namespace Intersect.GameObjects
         public ItemEffect Type { get; set; }
 
         public int Percentage { get; set; }
-
     }
-
 }

@@ -11,7 +11,6 @@ using Newtonsoft.Json;
 
 namespace Intersect.GameObjects.Maps
 {
-
     public partial class MapBase : DatabaseObject<MapBase>
     {
         [NotMapped]
@@ -84,7 +83,6 @@ namespace Intersect.GameObjects.Maps
                     IsIndoors = mapBase.IsIndoors;
                     if (Layers != null && mapBase.Layers != null)
                     {
-
                         Layers.Clear();
 
                         foreach (var layer in mapBase.Layers)
@@ -346,7 +344,6 @@ namespace Intersect.GameObjects.Maps
 
         public partial class MapControllers : DatabaseObjectLookup
         {
-
             private readonly DatabaseObjectLookup mBaseLookup;
 
             public MapControllers(DatabaseObjectLookup baseLookup) : base(baseLookup.StoredType)
@@ -378,9 +375,6 @@ namespace Intersect.GameObjects.Maps
                 mBaseLookup?.Clear();
                 base.Clear();
             }
-
         }
-
     }
-
 }

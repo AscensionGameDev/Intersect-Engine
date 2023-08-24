@@ -8,12 +8,10 @@ using Newtonsoft.Json;
 
 namespace Intersect.GameObjects
 {
-
     public partial class ProjectileBase : DatabaseObject<ProjectileBase>, IFolderable
     {
-
         public const int MAX_PROJECTILE_DIRECTIONS = 8;
-        
+
         public static readonly int[] ProjectileRotationDir =
         {
             0, 1, 2, 3, 4, 5, 6, 7, // Up
@@ -140,19 +138,15 @@ namespace Intersect.GameObjects
 
         /// <inheritdoc />
         public string Folder { get; set; } = "";
-
     }
 
     public partial class Location
     {
-
         public bool[] Directions = new bool[ProjectileBase.MAX_PROJECTILE_DIRECTIONS];
-
     }
 
     public partial class ProjectileAnimation
     {
-
         public Guid AnimationId;
 
         public bool AutoRotate;
@@ -165,7 +159,5 @@ namespace Intersect.GameObjects
             SpawnRange = spawnRange;
             AutoRotate = autoRotate;
         }
-
     }
-
 }

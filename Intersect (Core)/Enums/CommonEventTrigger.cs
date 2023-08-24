@@ -1,9 +1,7 @@
 namespace Intersect.Enums
 {
-
     public enum CommonEventTrigger
     {
-
         None = 0,
 
         Login,
@@ -41,7 +39,5 @@ namespace Intersect.Enums
         MapChanged,
 
         UserVariableChange,
-
     }
-
 }

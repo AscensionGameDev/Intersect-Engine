@@ -315,5 +315,4 @@ namespace Intersect.GameObjects.Maps
             return att;
         }
     }
-
 }

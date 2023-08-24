@@ -8,7 +8,6 @@ using Newtonsoft.Json;
 
 namespace Intersect.GameObjects
 {
-
     public partial class ShopBase : DatabaseObject<ShopBase>, IFolderable
     {
 
@@ -65,12 +64,10 @@ namespace Intersect.GameObjects
 
         /// <inheritdoc />
         public string Folder { get; set; } = "";
-
     }
 
     public partial class ShopItem
     {
-
         public Guid CostItemId;
 
         public int CostItemQuantity;
@@ -88,7 +85,5 @@ namespace Intersect.GameObjects
         [NotMapped]
         [JsonIgnore]
         public ItemBase Item => ItemBase.Get(ItemId);
-
     }
-
 }

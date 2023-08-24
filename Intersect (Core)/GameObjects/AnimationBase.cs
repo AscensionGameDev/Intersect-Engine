@@ -9,11 +9,9 @@ using Newtonsoft.Json;
 
 namespace Intersect.GameObjects
 {
-
     [Owned]
     public partial class AnimationLayer
     {
-
         public AnimationLayer()
         {
             Lights = new LightBase[FrameCount];
@@ -49,12 +47,10 @@ namespace Intersect.GameObjects
 
         [NotMapped]
         public LightBase[] Lights { get; set; }
-
     }
 
     public partial class AnimationBase : DatabaseObject<AnimationBase>, IFolderable
     {
-
         [JsonConstructor]
         public AnimationBase(Guid id) : base(id)
         {
@@ -84,7 +80,5 @@ namespace Intersect.GameObjects
 
         /// <inheritdoc />
         public string Folder { get; set; } = "";
-
     }
-
 }

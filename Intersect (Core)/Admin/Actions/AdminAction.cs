@@ -21,7 +21,5 @@ namespace Intersect.Admin.Actions
     {
         [Key(0)]
         public abstract Enums.AdminAction Action { get; }
-
     }
-
 }

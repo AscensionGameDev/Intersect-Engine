@@ -8,7 +8,6 @@ using Newtonsoft.Json;
 
 namespace Intersect.GameObjects
 {
-
     public partial class CraftingTableBase : DatabaseObject<CraftingTableBase>, IFolderable
     {
 
@@ -36,7 +35,5 @@ namespace Intersect.GameObjects
 
         /// <inheritdoc />
         public string Folder { get; set; } = "";
-
     }
-
 }

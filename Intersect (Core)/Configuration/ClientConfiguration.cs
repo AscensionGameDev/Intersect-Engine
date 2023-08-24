@@ -8,14 +8,12 @@ using Newtonsoft.Json;
 
 namespace Intersect.Configuration
 {
-
     /// <inheritdoc />
     /// <summary>
     /// Client configuration options
     /// </summary>
     public sealed partial class ClientConfiguration : IConfiguration<ClientConfiguration>
     {
-
         public const string DefaultPath = @"resources/config.json";
 
         /// <inheritdoc />
@@ -261,7 +259,5 @@ namespace Intersect.Configuration
         }
 
         #endregion
-
     }
-
 }

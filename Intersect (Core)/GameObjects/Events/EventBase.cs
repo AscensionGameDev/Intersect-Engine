@@ -9,10 +9,8 @@ using Newtonsoft.Json;
 
 namespace Intersect.GameObjects.Events
 {
-
     public partial class EventBase : DatabaseObject<EventBase>, IFolderable
     {
-
         //Cached Pages Data
         private string mCachedPagesData = null;
 
@@ -198,7 +196,5 @@ namespace Intersect.GameObjects.Events
                 TimeCreated = oldTime;
             }
         }
-
     }
-
 }

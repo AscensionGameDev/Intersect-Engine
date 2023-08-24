@@ -8,10 +8,8 @@ using Newtonsoft.Json;
 
 namespace Intersect.GameObjects.Maps.MapList
 {
-
     public partial class MapList
     {
-
         //So EF will save this :P
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; protected set; }
@@ -366,7 +364,5 @@ namespace Intersect.GameObjects.Maps.MapList
 
             return lowestMap;
         }
-
     }
-
 }

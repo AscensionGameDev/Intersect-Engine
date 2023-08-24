@@ -1,13 +1,11 @@
 ﻿namespace Intersect.Configuration
 {
-
     /// <summary>
     /// Base interface for configuration structures
     /// </summary>
     /// <typeparam name="TConfiguration">Configuration type</typeparam>
     public interface IConfiguration<out TConfiguration>
     {
-
         /// <summary>
         /// Loads configuration into this instance from the specified file.
         /// </summary>
@@ -23,7 +21,5 @@
         /// <param name="failQuietly">do not throw an exception if an error is encountered, default false</param>
         /// <returns></returns>
         TConfiguration Save(string filePath, bool failQuietly = false);
-
     }
-
 }

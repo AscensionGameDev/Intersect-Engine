@@ -9,7 +9,6 @@ namespace Intersect.GameObjects
 {
     public partial class UserVariableBase : DatabaseObject<UserVariableBase>, IFolderable
     {
-
         [JsonConstructor]
         public UserVariableBase(Guid id) : base(id)
         {

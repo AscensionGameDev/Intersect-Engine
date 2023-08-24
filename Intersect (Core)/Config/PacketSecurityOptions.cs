@@ -2,10 +2,8 @@
 
 namespace Intersect.Config
 {
-
     public partial class PacketSecurityOptions
     {
-
         #region "Packet Sanitization and Hacking Detection Options"
 
         /// <summary>
@@ -17,7 +15,6 @@ namespace Intersect.Config
         /// This factor is multiplied by the client ping in order to determine the acceptable error margin in packet timing.
         /// </summary>
         public float ErrorMarginFactor { get; set; } = 0.25f;
-
 
         /// <summary>
         /// Lower bounds of adjusted packet times with pings taken into account for packets to be considered natural.
@@ -116,7 +113,5 @@ namespace Intersect.Config
                 KickAvgPacketPerSec = 3,
             };
         }
-
     }
-
 }

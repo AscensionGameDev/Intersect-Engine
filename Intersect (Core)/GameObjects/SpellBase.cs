@@ -13,7 +13,6 @@ using Newtonsoft.Json;
 
 namespace Intersect.GameObjects
 {
-
     public partial class SpellBase : DatabaseObject<SpellBase>, IFolderable
     {
 
@@ -50,7 +49,6 @@ namespace Intersect.GameObjects
 
         [Column("HitAnimation")]
         public Guid HitAnimationId { get; set; }
-
 
         [NotMapped]
         [JsonIgnore]
@@ -246,13 +244,11 @@ namespace Intersect.GameObjects
 
         [Column("Trap")]
         public int TrapDuration { get; set; }
-
     }
 
     [Owned]
     public partial class SpellWarpData
     {
-
         public Guid MapId { get; set; }
 
         public int X { get; set; }
@@ -260,13 +256,11 @@ namespace Intersect.GameObjects
         public int Y { get; set; }
 
         public int Dir { get; set; }
-
     }
 
     [Owned]
     public partial class SpellDashOpts
     {
-
         public bool IgnoreMapBlocks { get; set; }
 
         public bool IgnoreActiveResources { get; set; }
@@ -274,7 +268,5 @@ namespace Intersect.GameObjects
         public bool IgnoreInactiveResources { get; set; }
 
         public bool IgnoreZDimensionAttributes { get; set; }
-
     }
-
 }

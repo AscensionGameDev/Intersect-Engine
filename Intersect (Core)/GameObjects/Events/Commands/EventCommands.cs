@@ -7,10 +7,8 @@ using Newtonsoft.Json;
 
 namespace Intersect.GameObjects.Events.Commands
 {
-
     public abstract partial class EventCommand
     {
-
         public abstract EventCommandType Type { get; }
 
         public virtual string GetCopyData(
@@ -37,18 +35,15 @@ namespace Intersect.GameObjects.Events.Commands
 
     public partial class ShowTextCommand : EventCommand
     {
-
         public override EventCommandType Type { get; } = EventCommandType.ShowText;
 
         public string Text { get; set; } = "";
 
         public string Face { get; set; } = "";
-
     }
 
     public partial class ShowOptionsCommand : EventCommand
     {
-
         //For Json Deserialization
         public ShowOptionsCommand()
         {
@@ -104,12 +99,10 @@ namespace Intersect.GameObjects.Events.Commands
                 }
             }
         }
-
     }
 
     public partial class InputVariableCommand : EventCommand
     {
-
         //For Json Deserialization
         public InputVariableCommand()
         {
@@ -171,12 +164,10 @@ namespace Intersect.GameObjects.Events.Commands
                 }
             }
         }
-
     }
 
     public partial class AddChatboxTextCommand : EventCommand
     {
-
         public override EventCommandType Type { get; } = EventCommandType.AddChatboxText;
 
         public string Text { get; set; } = "";
@@ -187,12 +178,10 @@ namespace Intersect.GameObjects.Events.Commands
         public string Color { get; set; } = "";
 
         public ChatboxChannel Channel { get; set; } = ChatboxChannel.Player;
-
     }
 
     public partial class SetVariableCommand : EventCommand
     {
-
         public override EventCommandType Type { get; } = EventCommandType.SetVariable;
 
         public VariableType VariableType { get; set; } = VariableType.PlayerVariable;
@@ -202,23 +191,19 @@ namespace Intersect.GameObjects.Events.Commands
         public bool SyncParty { get; set; }
 
         public VariableMod Modification { get; set; }
-
     }
 
     public partial class SetSelfSwitchCommand : EventCommand
     {
-
         public override EventCommandType Type { get; } = EventCommandType.SetSelfSwitch;
 
         public int SwitchId { get; set; } //0 through 3
 
         public bool Value { get; set; }
-
     }
 
     public partial class ConditionalBranchCommand : EventCommand
     {
-
         //For Json Deserialization
         public ConditionalBranchCommand()
         {
@@ -270,71 +255,55 @@ namespace Intersect.GameObjects.Events.Commands
                 }
             }
         }
-
     }
 
     public partial class ExitEventProcessingCommand : EventCommand
     {
-
         public override EventCommandType Type { get; } = EventCommandType.ExitEventProcess;
-
     }
 
     public partial class LabelCommand : EventCommand
     {
-
         public override EventCommandType Type { get; } = EventCommandType.Label;
 
         public string Label { get; set; }
-
     }
 
     public partial class GoToLabelCommand : EventCommand
     {
-
         public override EventCommandType Type { get; } = EventCommandType.GoToLabel;
 
         public string Label { get; set; }
-
     }
 
     public partial class StartCommmonEventCommand : EventCommand
     {
-
         public override EventCommandType Type { get; } = EventCommandType.StartCommonEvent;
 
         public Guid EventId { get; set; }
-
     }
 
     public partial class RestoreHpCommand : EventCommand
     {
-
         public override EventCommandType Type { get; } = EventCommandType.RestoreHp;
 
         public int Amount { get; set; }
-
     }
 
     public partial class RestoreMpCommand : EventCommand
     {
-
         public override EventCommandType Type { get; } = EventCommandType.RestoreMp;
 
         public int Amount { get; set; }
-
     }
 
     public partial class LevelUpCommand : EventCommand
     {
-
         public override EventCommandType Type { get; } = EventCommandType.LevelUp;
-
     }
 
     public partial class GiveExperienceCommand : EventCommand
     {
-
         public override EventCommandType Type { get; } = EventCommandType.GiveExperience;
 
         public long Exp { get; set; }
@@ -353,21 +322,17 @@ namespace Intersect.GameObjects.Events.Commands
         /// The Variable Id to use.
         /// </summary>
         public Guid VariableId { get; set; }
-
     }
 
     public partial class ChangeLevelCommand : EventCommand
     {
-
         public override EventCommandType Type { get; } = EventCommandType.ChangeLevel;
 
         public int Level { get; set; }
-
     }
 
     public partial class ChangeSpellsCommand : EventCommand
     {
-
         //For Json Deserialization
         public ChangeSpellsCommand()
         {
@@ -421,12 +386,10 @@ namespace Intersect.GameObjects.Events.Commands
                 }
             }
         }
-
     }
 
     public partial class ChangeItemsCommand : EventCommand
     {
-
         //For Json Deserialization
         public ChangeItemsCommand()
         {
@@ -502,32 +465,26 @@ namespace Intersect.GameObjects.Events.Commands
                 }
             }
         }
-
     }
 
     public partial class EquipItemCommand : EventCommand
     {
-
         public override EventCommandType Type { get; } = EventCommandType.EquipItem;
 
         public Guid ItemId { get; set; }
 
         public bool Unequip { get; set; }
-
     }
 
     public partial class ChangeSpriteCommand : EventCommand
     {
-
         public override EventCommandType Type { get; } = EventCommandType.ChangeSprite;
 
         public string Sprite { get; set; } = "";
-
     }
 
     public partial class ChangeNameColorCommand : EventCommand
     {
-
         public override EventCommandType Type { get; } = EventCommandType.ChangeNameColor;
 
         public Color Color { get; set; }
@@ -535,12 +492,10 @@ namespace Intersect.GameObjects.Events.Commands
         public bool Override { get; set; }
 
         public bool Remove { get; set; }
-
     }
 
     public partial class ChangePlayerLabelCommand : EventCommand
     {
-
         public override EventCommandType Type { get; } = EventCommandType.PlayerLabel;
 
         public string Value { get; set; }
@@ -550,39 +505,31 @@ namespace Intersect.GameObjects.Events.Commands
         public Color Color { get; set; }
 
         public bool MatchNameColor { get; set; }
-
     }
 
     public partial class ChangeFaceCommand : EventCommand
     {
-
         public override EventCommandType Type { get; } = EventCommandType.ChangeFace;
 
         public string Face { get; set; } = "";
-
     }
 
     public partial class ChangeGenderCommand : EventCommand
     {
-
         public override EventCommandType Type { get; } = EventCommandType.ChangeGender;
 
         public Gender Gender { get; set; } = Gender.Male;
-
     }
 
     public partial class SetAccessCommand : EventCommand
     {
-
         public override EventCommandType Type { get; } = EventCommandType.SetAccess;
 
         public Access Access { get; set; }
-
     }
 
     public partial class WarpCommand : EventCommand
     {
-
         public override EventCommandType Type { get; } = EventCommandType.WarpPlayer;
 
         public Guid MapId { get; set; }
@@ -602,30 +549,24 @@ namespace Intersect.GameObjects.Events.Commands
         /// The <see cref="MapInstanceType"/> we are going to be warping to
         /// </summary>
         public MapInstanceType InstanceType { get; set; } = MapInstanceType.Overworld;
-
     }
 
     public partial class SetMoveRouteCommand : EventCommand
     {
-
         public override EventCommandType Type { get; } = EventCommandType.SetMoveRoute;
 
         public EventMoveRoute Route { get; set; } = new EventMoveRoute();
-
     }
 
     public partial class WaitForRouteCommand : EventCommand
     {
-
         public override EventCommandType Type { get; } = EventCommandType.WaitForRouteCompletion;
 
         public Guid TargetId { get; set; }
-
     }
 
     public partial class SpawnNpcCommand : EventCommand
     {
-
         public override EventCommandType Type { get; } = EventCommandType.SpawnNpc;
 
         public Guid NpcId { get; set; }
@@ -642,21 +583,17 @@ namespace Intersect.GameObjects.Events.Commands
         public sbyte X { get; set; }
 
         public sbyte Y { get; set; }
-
     }
 
     public partial class DespawnNpcCommand : EventCommand
     {
-
         public override EventCommandType Type { get; } = EventCommandType.DespawnNpc;
 
         //No parameters, only despawns npcs that have been spawned via events for the player
-
     }
 
     public partial class PlayAnimationCommand : EventCommand
     {
-
         public override EventCommandType Type { get; } = EventCommandType.PlayAnimation;
 
         public Guid AnimationId { get; set; }
@@ -673,72 +610,54 @@ namespace Intersect.GameObjects.Events.Commands
         public sbyte X { get; set; }
 
         public sbyte Y { get; set; }
-
     }
 
     public partial class HoldPlayerCommand : EventCommand
     {
-
         public override EventCommandType Type { get; } = EventCommandType.HoldPlayer;
-
     }
 
     public partial class ReleasePlayerCommand : EventCommand
     {
-
         public override EventCommandType Type { get; } = EventCommandType.ReleasePlayer;
-
     }
 
     public partial class HidePlayerCommand : EventCommand
     {
-
         public override EventCommandType Type { get; } = EventCommandType.HidePlayer;
-
     }
 
     public partial class ShowPlayerCommand : EventCommand
     {
-
         public override EventCommandType Type { get; } = EventCommandType.ShowPlayer;
-
     }
 
     public partial class PlayBgmCommand : EventCommand
     {
-
         public override EventCommandType Type { get; } = EventCommandType.PlayBgm;
 
         public string File { get; set; } = "";
-
     }
 
     public partial class FadeoutBgmCommand : EventCommand
     {
-
         public override EventCommandType Type { get; } = EventCommandType.FadeoutBgm;
-
     }
 
     public partial class PlaySoundCommand : EventCommand
     {
-
         public override EventCommandType Type { get; } = EventCommandType.PlaySound;
 
         public string File { get; set; } = "";
-
     }
 
     public partial class StopSoundsCommand : EventCommand
     {
-
         public override EventCommandType Type { get; } = EventCommandType.StopSounds;
-
     }
 
     public partial class ShowPictureCommand : EventCommand
     {
-
         public override EventCommandType Type { get; } = EventCommandType.ShowPicture;
 
         /// <summary>
@@ -765,62 +684,48 @@ namespace Intersect.GameObjects.Events.Commands
         /// If true this event won't continue with commands until this picture is closed.
         /// </summary>
         public bool WaitUntilClosed { get; set; }
-
     }
 
     public partial class HidePictureCommmand : EventCommand
     {
-
         public override EventCommandType Type { get; } = EventCommandType.HidePicture;
-
     }
 
     public partial class WaitCommand : EventCommand
     {
-
         public override EventCommandType Type { get; } = EventCommandType.Wait;
 
         public int Time { get; set; }
-
     }
 
     public partial class OpenBankCommand : EventCommand
     {
-
         public override EventCommandType Type { get; } = EventCommandType.OpenBank;
-
     }
 
     public partial class OpenShopCommand : EventCommand
     {
-
         public override EventCommandType Type { get; } = EventCommandType.OpenShop;
 
         public Guid ShopId { get; set; }
-
     }
 
     public partial class OpenCraftingTableCommand : EventCommand
     {
-
         public override EventCommandType Type { get; } = EventCommandType.OpenCraftingTable;
 
         public Guid CraftingTableId { get; set; }
-
     }
 
     public partial class SetClassCommand : EventCommand
     {
-
         public override EventCommandType Type { get; } = EventCommandType.SetClass;
 
         public Guid ClassId { get; set; }
-
     }
 
     public partial class StartQuestCommand : EventCommand
     {
-
         //For Json Deserialization
         public StartQuestCommand()
         {
@@ -874,29 +779,24 @@ namespace Intersect.GameObjects.Events.Commands
                 }
             }
         }
-
     }
 
     public partial class CompleteQuestTaskCommand : EventCommand
     {
-
         public override EventCommandType Type { get; } = EventCommandType.CompleteQuestTask;
 
         public Guid QuestId { get; set; }
 
         public Guid TaskId { get; set; }
-
     }
 
     public partial class EndQuestCommand : EventCommand
     {
-
         public override EventCommandType Type { get; } = EventCommandType.EndQuest;
 
         public Guid QuestId { get; set; }
 
         public bool SkipCompletionEvent { get; set; }
-
     }
 
     /// <summary>
@@ -904,7 +804,6 @@ namespace Intersect.GameObjects.Events.Commands
     /// </summary>
     public partial class ChangePlayerColorCommand : EventCommand
     {
-
         /// <summary>
         /// The <see cref="EventCommandType"/> of this command.
         /// </summary>
@@ -914,7 +813,6 @@ namespace Intersect.GameObjects.Events.Commands
         /// The <see cref="Color"/> to apply to the player.
         /// </summary>
         public Color Color { get; set; } = new Color(255, 255, 255, 255);
-
     }
 
     public partial class ChangeNameCommand : EventCommand
@@ -960,7 +858,6 @@ namespace Intersect.GameObjects.Events.Commands
             return base.GetCopyData(commandLists, copyLists);
         }
 
-
         public override void FixBranchIds(Dictionary<Guid, Guid> idDict)
         {
             for (var i = 0; i < BranchIds.Length; i++)
@@ -975,7 +872,6 @@ namespace Intersect.GameObjects.Events.Commands
 
     public partial class CreateGuildCommand : EventCommand
     {
-
         //For Json Deserialization
         public CreateGuildCommand()
         {
@@ -1020,7 +916,6 @@ namespace Intersect.GameObjects.Events.Commands
 
     public partial class DisbandGuildCommand : EventCommand
     {
-
         //For Json Deserialization
         public DisbandGuildCommand()
         {
@@ -1070,31 +965,24 @@ namespace Intersect.GameObjects.Events.Commands
                 }
             }
         }
-
     }
 
     public partial class OpenGuildBankCommand : EventCommand
     {
-
         public override EventCommandType Type { get; } = EventCommandType.OpenGuildBank;
-
     }
 
     public partial class SetGuildBankSlotsCommand : EventCommand
     {
-
         public override EventCommandType Type { get; } = EventCommandType.SetGuildBankSlots;
 
         public VariableType VariableType { get; set; }
 
         public Guid VariableId { get; set; }
-
     }
 
     public partial class ResetStatPointAllocationsCommand : EventCommand
     {
-
         public override EventCommandType Type { get; } = EventCommandType.ResetStatPointAllocations;
-
     }
 }

@@ -4,10 +4,8 @@ using Newtonsoft.Json;
 
 namespace Intersect.Config
 {
-
     public partial class Passability
     {
-
         public bool Arena = false;
 
         private bool[] mPassableCache;
@@ -29,7 +27,5 @@ namespace Intersect.Config
         {
             Passable = new[] {Normal, Safe, Arena};
         }
-
     }
-
 }

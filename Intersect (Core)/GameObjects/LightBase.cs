@@ -1,6 +1,5 @@
 ﻿namespace Intersect.GameObjects
 {
-
     public partial class LightBase
     {
 
@@ -63,7 +62,6 @@
 
         public int TileY { get; set; }
 
-
         /// <summary>
         /// Only checks for matching colors, intensity, and expand values... so we know if we can group lights and render them with the same shader values to boost performance.
         /// </summary>
@@ -84,7 +82,5 @@
                 return Intensity == light.Intensity && Color == light.Color && Expand == light.Expand;
             return false;
         }
-
     }
-
 }

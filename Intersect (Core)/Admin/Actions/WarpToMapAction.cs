@@ -23,7 +23,5 @@ namespace Intersect.Admin.Actions
 
         [Key(2)]
         public Guid MapId { get; set; }
-
     }
-
 }

@@ -2,10 +2,8 @@
 
 namespace Intersect.GameObjects.Events
 {
-
     public partial class EventMovement
     {
-
         public EventMovementType Type { get; set; } = EventMovementType.None;
 
         public EventMovementFrequency Frequency { get; set; } = EventMovementFrequency.Normal;
@@ -13,7 +11,5 @@ namespace Intersect.GameObjects.Events
         public EventMovementSpeed Speed { get; set; } = EventMovementSpeed.Normal;
 
         public EventMoveRoute Route { get; set; } = new EventMoveRoute();
-
     }
-
 }

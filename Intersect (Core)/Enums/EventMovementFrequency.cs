@@ -1,9 +1,7 @@
 ﻿namespace Intersect.Enums
 {
-
     public enum EventMovementFrequency
     {
-
         Lowest = 0,
 
         Lower,
@@ -13,7 +11,5 @@
         Higher,
 
         Highest
-
     }
-
 }

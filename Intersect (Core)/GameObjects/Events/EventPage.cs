@@ -9,10 +9,8 @@ using Newtonsoft.Json;
 
 namespace Intersect.GameObjects.Events
 {
-
     public partial class EventPage
     {
-
         public EventPage()
         {
             CommandLists.Add(Guid.NewGuid(), new List<EventCommand>());
@@ -63,7 +61,5 @@ namespace Intersect.GameObjects.Events
         public bool WalkingAnimation { get; set; } = true;
 
         public bool IgnoreNpcAvoids { get; set; }
-
     }
-
 }

@@ -8,14 +8,19 @@ namespace Intersect.GameObjects.Events
     {
         [Key(0)]
         public string Filename;
+
         [Key(1)]
         public int Height;
+
         [Key(2)]
         public EventGraphicType Type;
+
         [Key(3)]
         public int Width;
+
         [Key(4)]
         public int X;
+
         [Key(5)]
         public int Y;
 
@@ -38,7 +43,5 @@ namespace Intersect.GameObjects.Events
             Width = toCopy.Width;
             Height = toCopy.Height;
         }
-
     }
-
 }

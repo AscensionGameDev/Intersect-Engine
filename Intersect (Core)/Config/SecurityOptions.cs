@@ -4,10 +4,8 @@ using Newtonsoft.Json;
 
 namespace Intersect.Config
 {
-
     public partial class SecurityOptions
     {
-
         public List<string> IpBlacklist = new List<string>();
 
         [JsonProperty("Packets")] public PacketSecurityOptions PacketOpts = new PacketSecurityOptions();
@@ -46,7 +44,5 @@ namespace Intersect.Config
 
             return true; //Good Ip
         }
-
     }
-
 }

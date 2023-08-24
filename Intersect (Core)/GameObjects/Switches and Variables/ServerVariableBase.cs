@@ -10,10 +10,8 @@ using Newtonsoft.Json;
 
 namespace Intersect.GameObjects
 {
-
     public partial class ServerVariableBase : DatabaseObject<ServerVariableBase>, IFolderable
     {
-
         [JsonConstructor]
         public ServerVariableBase(Guid id) : base(id)
         {

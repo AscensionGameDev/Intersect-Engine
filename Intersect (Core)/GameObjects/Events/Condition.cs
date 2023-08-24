@@ -4,10 +4,8 @@ using Intersect.Enums;
 
 namespace Intersect.GameObjects.Events
 {
-
     public enum ConditionTypes
     {
-
         VariableIs = 0,
 
         HasItem = 4,
@@ -45,12 +43,10 @@ namespace Intersect.GameObjects.Events
         MapZoneTypeIs,
 
         CheckEquipment,
-
     }
 
     public partial class Condition
     {
-
         public virtual ConditionTypes Type { get; }
 
         public bool Negated { get; set; }
@@ -59,12 +55,10 @@ namespace Intersect.GameObjects.Events
         /// Configures whether or not this condition does or does not have an else branch.
         /// </summary>
         public bool ElseEnabled { get; set; } = true;
-
     }
 
     public partial class VariableIsCondition : Condition
     {
-
         public override ConditionTypes Type { get; } = ConditionTypes.VariableIs;
 
         public VariableType VariableType { get; set; } = VariableType.PlayerVariable;
@@ -72,12 +66,10 @@ namespace Intersect.GameObjects.Events
         public Guid VariableId { get; set; }
 
         public VariableComparison Comparison { get; set; } = new VariableComparison();
-
     }
 
     public partial class HasItemCondition : Condition
     {
-
         public override ConditionTypes Type { get; } = ConditionTypes.HasItem;
 
         public Guid ItemId { get; set; }
@@ -100,30 +92,24 @@ namespace Intersect.GameObjects.Events
         public Guid VariableId { get; set; }
 
         public bool CheckBank { get; set; }
-
     }
 
     public partial class ClassIsCondition : Condition
     {
-
         public override ConditionTypes Type { get; } = ConditionTypes.ClassIs;
 
         public Guid ClassId { get; set; }
-
     }
 
     public partial class KnowsSpellCondition : Condition
     {
-
         public override ConditionTypes Type { get; } = ConditionTypes.KnowsSpell;
 
         public Guid SpellId { get; set; }
-
     }
 
     public partial class LevelOrStatCondition : Condition
     {
-
         public override ConditionTypes Type { get; } = ConditionTypes.LevelOrStat;
 
         public bool ComparingLevel { get; set; }
@@ -135,50 +121,40 @@ namespace Intersect.GameObjects.Events
         public int Value { get; set; }
 
         public bool IgnoreBuffs { get; set; }
-
     }
 
     public partial class SelfSwitchCondition : Condition
     {
-
         public override ConditionTypes Type { get; } = ConditionTypes.SelfSwitch;
 
         public int SwitchIndex { get; set; } //0 through 3
 
         public bool Value { get; set; }
-
     }
 
     public partial class AccessIsCondition : Condition
     {
-
         public override ConditionTypes Type { get; } = ConditionTypes.AccessIs;
 
         public Access Access { get; set; }
-
     }
 
     public partial class TimeBetweenCondition : Condition
     {
-
         public override ConditionTypes Type { get; } = ConditionTypes.TimeBetween;
 
         public int[] Ranges { get; set; } = new int[2];
-
     }
 
     public partial class CanStartQuestCondition : Condition
     {
-
         public override ConditionTypes Type { get; } = ConditionTypes.CanStartQuest;
 
         public Guid QuestId { get; set; }
-
     }
 
     public partial class QuestInProgressCondition : Condition
     {
-
         public override ConditionTypes Type { get; } = ConditionTypes.QuestInProgress;
 
         public Guid QuestId { get; set; }
@@ -186,54 +162,43 @@ namespace Intersect.GameObjects.Events
         public QuestProgressState Progress { get; set; } = QuestProgressState.OnAnyTask;
 
         public Guid TaskId { get; set; }
-
     }
 
     public partial class QuestCompletedCondition : Condition
     {
-
         public override ConditionTypes Type { get; } = ConditionTypes.QuestCompleted;
 
         public Guid QuestId { get; set; }
-
     }
 
     public partial class NoNpcsOnMapCondition : Condition
     {
-
         public override ConditionTypes Type { get; } = ConditionTypes.NoNpcsOnMap;
 
         public bool SpecificNpc { get; set; }
 
         public Guid NpcId { get; set; }
-
     }
 
     public partial class GenderIsCondition : Condition
     {
-
         public override ConditionTypes Type { get; } = ConditionTypes.GenderIs;
 
         public Gender Gender { get; set; } = Gender.Male;
-
     }
 
     public partial class MapIsCondition : Condition
     {
-
         public override ConditionTypes Type { get; } = ConditionTypes.MapIs;
 
         public Guid MapId { get; set; }
-
     }
 
     public partial class IsItemEquippedCondition : Condition
     {
-
         public override ConditionTypes Type { get; } = ConditionTypes.IsItemEquipped;
 
         public Guid ItemId { get; set; }
-
     }
 
     /// <summary>
@@ -265,7 +230,6 @@ namespace Intersect.GameObjects.Events
         /// The Variable Id to use.
         /// </summary>
         public Guid VariableId { get; set; }
-
     }
 
     /// <summary>
@@ -307,7 +271,6 @@ namespace Intersect.GameObjects.Events
 
     public partial class BooleanVariableComparison : VariableComparison
     {
-
         public VariableType CompareVariableType { get; set; } = VariableType.PlayerVariable;
 
         public Guid CompareVariableId { get; set; }
@@ -315,12 +278,10 @@ namespace Intersect.GameObjects.Events
         public bool ComparingEqual { get; set; }
 
         public bool Value { get; set; }
-
     }
 
     public partial class IntegerVariableComparison : VariableComparison
     {
-
         public VariableComparator Comparator { get; set; } = VariableComparator.Equal;
 
         public VariableType CompareVariableType { get; set; } = VariableType.PlayerVariable;
@@ -330,25 +291,19 @@ namespace Intersect.GameObjects.Events
         public long Value { get; set; }
 
         public bool TimeSystem { get; set; }
-
     }
 
     public partial class StringVariableComparison : VariableComparison
     {
-
         public StringVariableComparator Comparator { get; set; } = StringVariableComparator.Equal;
 
         public string Value { get; set; }
-
     }
 
     public partial class CheckEquippedSlot : Condition
     {
-
         public override ConditionTypes Type { get; } = ConditionTypes.CheckEquipment;
 
         public string Name { get; set; }
-
     }
-
 }

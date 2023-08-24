@@ -9,7 +9,6 @@ namespace Intersect.GameObjects
 {
     public partial class GuildVariableBase : DatabaseObject<GuildVariableBase>, IFolderable
     {
-
         [JsonConstructor]
         public GuildVariableBase(Guid id) : base(id)
         {

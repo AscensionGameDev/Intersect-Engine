@@ -7,10 +7,8 @@ using Newtonsoft.Json;
 
 namespace Intersect
 {
-
     public partial class Options
     {
-
         //Caching Json
         private static string optionsCompressed = "";
 
@@ -77,7 +75,7 @@ namespace Intersect
         public GuildOptions Guild = new GuildOptions();
 
         public LoggingOptions Logging = new LoggingOptions();
-        
+
         public BankOptions Bank = new BankOptions();
 
         public InstancingOptions Instancing = new InstancingOptions();
@@ -131,7 +129,7 @@ namespace Intersect
         public static List<string> AnimatedSprites => Instance._animatedSprites;
 
         public static int RegenTime => Instance.CombatOpts.RegenTime;
-        
+
         public static int CombatTime => Instance.CombatOpts.CombatTime;
 
         public static int MinAttackRate => Instance.CombatOpts.MinAttackRate;
@@ -305,7 +303,5 @@ namespace Intersect
         public const int DEFAULT_SERVER_PORT = 5400;
 
         #endregion
-
     }
-
 }

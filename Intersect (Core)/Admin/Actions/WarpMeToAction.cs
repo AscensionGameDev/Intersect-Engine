@@ -21,7 +21,5 @@ namespace Intersect.Admin.Actions
 
         [Key(2)]
         public string Name { get; set; }
-
     }
-
 }

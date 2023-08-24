@@ -31,7 +31,5 @@ namespace Intersect.Admin.Actions
 
         [Key(4)]
         public byte Y { get; set; }
-
     }
-
 }

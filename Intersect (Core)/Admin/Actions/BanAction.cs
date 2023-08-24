@@ -33,7 +33,5 @@ namespace Intersect.Admin.Actions
 
         [Key(5)]
         public bool BanIp { get; set; }
-
     }
-
 }

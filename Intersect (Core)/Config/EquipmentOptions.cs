@@ -5,10 +5,8 @@ using System.Runtime.Serialization;
 
 namespace Intersect.Config
 {
-
     public partial class EquipmentOptions
     {
-
         public PaperdollOptions Paperdoll = new PaperdollOptions();
 
         public int ShieldSlot = 3;
@@ -61,7 +59,5 @@ namespace Intersect.Config
 
             Paperdoll.Validate(this);
         }
-
     }
-
 }

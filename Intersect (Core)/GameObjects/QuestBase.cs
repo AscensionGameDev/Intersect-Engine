@@ -12,10 +12,8 @@ using Newtonsoft.Json;
 
 namespace Intersect.GameObjects
 {
-
     public enum QuestProgressState
     {
-
         OnAnyTask = 0,
 
         BeforeTask = 1,
@@ -23,12 +21,10 @@ namespace Intersect.GameObjects
         AfterTask = 2,
 
         OnTask = 3,
-
     }
 
     public partial class QuestProgress
     {
-
         public bool Completed;
 
         public Guid TaskId;
@@ -39,7 +35,6 @@ namespace Intersect.GameObjects
         {
             JsonConvert.PopulateObject(data, this);
         }
-
     }
 
     public partial class QuestBase : DatabaseObject<QuestBase>, IFolderable
@@ -180,7 +175,6 @@ namespace Intersect.GameObjects
         /// </summary>
         public int OrderValue { get; set; }
 
-
         public int GetTaskIndex(Guid taskId)
         {
             for (var i = 0; i < Tasks.Count; i++)
@@ -260,9 +254,6 @@ namespace Intersect.GameObjects
 
                 return taskString;
             }
-
         }
-
     }
-
 }

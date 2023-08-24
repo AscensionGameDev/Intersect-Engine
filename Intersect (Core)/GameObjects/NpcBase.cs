@@ -259,7 +259,5 @@ namespace Intersect.GameObjects
 
             return SpellBase.Get(spellId);
         }
-
     }
-
 }

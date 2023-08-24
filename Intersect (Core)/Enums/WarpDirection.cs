@@ -1,9 +1,7 @@
 ﻿namespace Intersect.Enums
 {
-
     public enum WarpDirection
     {
-
         Retain = 0,
 
         Up,
@@ -13,7 +11,5 @@
         Left,
 
         Right
-
     }
-
 }

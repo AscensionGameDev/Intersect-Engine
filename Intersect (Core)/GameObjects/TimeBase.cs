@@ -5,10 +5,8 @@ using Newtonsoft.Json;
 
 namespace Intersect.GameObjects
 {
-
     public partial class TimeBase
     {
-
         private static TimeBase sTimeBase = new TimeBase();
 
         [NotMapped] public Color[] DaylightHues;
@@ -134,7 +132,5 @@ namespace Intersect.GameObjects
         {
             return sTimeBase;
         }
-
     }
-
 }

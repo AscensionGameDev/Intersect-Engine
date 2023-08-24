@@ -7,7 +7,6 @@ using Newtonsoft.Json;
 
 namespace Intersect.Config
 {
-
     public partial class PaperdollOptions
     {
 
@@ -113,7 +112,5 @@ namespace Intersect.Config
                 }
             }
         }
-
     }
-
 }
