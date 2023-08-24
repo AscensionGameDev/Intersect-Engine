@@ -3349,11 +3349,12 @@ namespace Intersect.Server.Networking
 
                         lock (ServerContext.Instance.LogicService.LogicLock)
                         {
+                            var map = MapController.Get(mapId);
                             ServerContext.Instance.LogicService.LogicPool.WaitForIdle();
                             mapId = packet.TargetId;
-                            var players = MapController.Get(mapId).GetPlayersOnAllInstances();
+                            var players = map.GetPlayersOnAllInstances();
                             MapList.List.DeleteMap(mapId);
-                            DbInterface.DeleteGameObject(MapController.Get(mapId));
+                            DbInterface.DeleteGameObject(map);
                             DbInterface.GenerateMapGrids();
                             PacketSender.SendMapListToAll();
                             foreach (var plyr in players)
