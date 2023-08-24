@@ -73,7 +73,8 @@ namespace Intersect.Config
         /// <summary>
         /// Packet flooding detection threshholds for all users who are not yet logged in.
         /// </summary>
-        [JsonProperty("FloodThreshholds")] public FloodThreshholds Threshholds = FloodThreshholds.NotLoggedIn();
+        [JsonProperty("FloodThreshholds")]
+        public FloodThreshholds Threshholds = FloodThreshholds.NotLoggedIn();
         #endregion
     }
 

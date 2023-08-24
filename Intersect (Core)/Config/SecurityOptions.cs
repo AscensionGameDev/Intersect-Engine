@@ -8,7 +8,8 @@ namespace Intersect.Config
     {
         public List<string> IpBlacklist = new List<string>();
 
-        [JsonProperty("Packets")] public PacketSecurityOptions PacketOpts = new PacketSecurityOptions();
+        [JsonProperty("Packets")]
+        public PacketSecurityOptions PacketOpts = new PacketSecurityOptions();
 
         public bool CheckIp(string ip)
         {

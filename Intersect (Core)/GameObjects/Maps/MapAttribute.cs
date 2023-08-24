@@ -144,7 +144,10 @@ namespace Intersect.GameObjects.Maps
         public MapInstanceType InstanceType { get; set; } = MapInstanceType.Overworld;
 
         [EditorLabel("Attributes", "WarpSound")]
-        [EditorDisplay(EmptyBehavior = EmptyBehavior.ShowNoneOnNullOrEmpty, StringBehavior = StringBehavior.Trim)]
+        [EditorDisplay(
+            EmptyBehavior = EmptyBehavior.ShowNoneOnNullOrEmpty,
+            StringBehavior = StringBehavior.Trim
+        )]
         public string WarpSound { get; set; }
 
         public override MapAttribute Clone()
@@ -166,7 +169,10 @@ namespace Intersect.GameObjects.Maps
         public override Enums.MapAttribute Type => Enums.MapAttribute.Sound;
 
         [EditorLabel("Attributes", "Sound")]
-        [EditorDisplay(EmptyBehavior = EmptyBehavior.ShowNoneOnNullOrEmpty, StringBehavior = StringBehavior.Trim)]
+        [EditorDisplay(
+            EmptyBehavior = EmptyBehavior.ShowNoneOnNullOrEmpty,
+            StringBehavior = StringBehavior.Trim
+        )]
         public string File { get; set; }
 
         [EditorLabel("Attributes", "SoundDistance")]
@@ -259,7 +265,10 @@ namespace Intersect.GameObjects.Maps
         public override Enums.MapAttribute Type => Enums.MapAttribute.Critter;
 
         [EditorLabel("Attributes", "CritterSprite")]
-        [EditorDisplay(EmptyBehavior = EmptyBehavior.ShowNoneOnNullOrEmpty, StringBehavior = StringBehavior.Trim)]
+        [EditorDisplay(
+            EmptyBehavior = EmptyBehavior.ShowNoneOnNullOrEmpty,
+            StringBehavior = StringBehavior.Trim
+        )]
         public string Sprite { get; set; }
 
         [EditorLabel("Attributes", "CritterAnimation")]

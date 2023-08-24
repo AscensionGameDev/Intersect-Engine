@@ -14,20 +14,26 @@ namespace Intersect.GameObjects
 {
     public partial class NpcBase : DatabaseObject<NpcBase>, IFolderable
     {
+        [NotMapped]
+        public ConditionLists AttackOnSightConditions = new ConditionLists();
 
-        [NotMapped] public ConditionLists AttackOnSightConditions = new ConditionLists();
+        [NotMapped]
+        public List<Drop> Drops = new List<Drop>();
 
-        [NotMapped] public List<Drop> Drops = new List<Drop>();
+        [NotMapped]
+        public int[] MaxVital = new int[(int)Vital.VitalCount];
 
-        [NotMapped] public int[] MaxVital = new int[(int) Vital.VitalCount];
+        [NotMapped]
+        public ConditionLists PlayerCanAttackConditions = new ConditionLists();
 
-        [NotMapped] public ConditionLists PlayerCanAttackConditions = new ConditionLists();
+        [NotMapped]
+        public ConditionLists PlayerFriendConditions = new ConditionLists();
 
-        [NotMapped] public ConditionLists PlayerFriendConditions = new ConditionLists();
+        [NotMapped]
+        public int[] Stats = new int[(int)Enums.Stat.StatCount];
 
-        [NotMapped] public int[] Stats = new int[(int) Enums.Stat.StatCount];
-
-        [NotMapped] public int[] VitalRegen = new int[(int) Vital.VitalCount];
+        [NotMapped]
+        public int[] VitalRegen = new int[(int)Vital.VitalCount];
 
         [NotMapped]
         public List<SpellEffect> Immunities = new List<SpellEffect>();

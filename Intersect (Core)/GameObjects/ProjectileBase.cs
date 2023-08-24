@@ -28,9 +28,14 @@ namespace Intersect.GameObjects
 
         public const int SPAWN_LOCATIONS_WIDTH = 5;
 
-        [NotMapped] public List<ProjectileAnimation> Animations = new List<ProjectileAnimation>();
+        [NotMapped]
+        public List<ProjectileAnimation> Animations = new List<ProjectileAnimation>();
 
-        [NotMapped] public Location[,] SpawnLocations = new Location[SPAWN_LOCATIONS_WIDTH, SPAWN_LOCATIONS_HEIGHT];
+        [NotMapped]
+        public Location[,] SpawnLocations = new Location[
+            SPAWN_LOCATIONS_WIDTH,
+            SPAWN_LOCATIONS_HEIGHT
+        ];
 
         //Init
         [JsonConstructor]

@@ -39,14 +39,17 @@ namespace Intersect.GameObjects
 
     public partial class QuestBase : DatabaseObject<QuestBase>, IFolderable
     {
+        [NotMapped]
+        [JsonIgnore]
+        //Events that need to be added for the quest, int is task id
+        public Dictionary<Guid, EventBase> AddEvents = new Dictionary<Guid, EventBase>();
 
-        [NotMapped] [JsonIgnore]
-        public Dictionary<Guid, EventBase>
-            AddEvents = new Dictionary<Guid, EventBase>(); //Events that need to be added for the quest, int is task id
+        [NotMapped]
+        //Events that need to be removed for the quest
+        public List<Guid> RemoveEvents = new List<Guid>();
 
-        [NotMapped] public List<Guid> RemoveEvents = new List<Guid>(); //Events that need to be removed for the quest
-
-        [NotMapped] public List<QuestTask> Tasks = new List<QuestTask>();
+        [NotMapped]
+        public List<QuestTask> Tasks = new List<QuestTask>();
 
         [JsonConstructor]
         public QuestBase(Guid Id) : base(Id)
@@ -203,8 +206,9 @@ namespace Intersect.GameObjects
 
         public partial class QuestTask
         {
-
-            [NotMapped] [JsonIgnore] public EventBase EditingEvent;
+            [NotMapped]
+            [JsonIgnore]
+            public EventBase EditingEvent;
 
             public QuestTask(Guid id)
             {

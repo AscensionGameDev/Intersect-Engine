@@ -22,15 +22,22 @@ namespace Intersect.GameObjects.Maps
             ObjectCreationHandling = ObjectCreationHandling.Replace
         };
 
-        [NotMapped] [JsonIgnore]        public readonly Dictionary<Guid, EventBase> LocalEvents = new Dictionary<Guid, EventBase>();
+        [NotMapped]
+        [JsonIgnore]
+        public readonly Dictionary<Guid, EventBase> LocalEvents = new Dictionary<Guid, EventBase>();
 
         //Client/Editor Only
-        [JsonIgnore] [NotMapped] public MapAutotiles Autotiles;
+        [JsonIgnore]
+        [NotMapped]
+        public MapAutotiles Autotiles;
 
-        [NotMapped] public List<Guid> EventIds = new List<Guid>();
+        [NotMapped]
+        public List<Guid> EventIds = new List<Guid>();
 
         //Core Data
-        [JsonIgnore] [NotMapped] public Dictionary<string, Tile[,]> Layers = new Dictionary<string, Tile[,]>();
+        [JsonIgnore]
+        [NotMapped]
+        public Dictionary<string, Tile[,]> Layers = new Dictionary<string, Tile[,]>();
 
         //Map Attributes
         private MapAttribute[,] mAttributes = new MapAttribute[Options.MapWidth, Options.MapHeight];
@@ -39,7 +46,9 @@ namespace Intersect.GameObjects.Maps
         private byte[] mCachedAttributeData = null;
 
         //SyncLock
-        [JsonIgnore] [NotMapped] protected object mMapLock = new object();
+        [JsonIgnore]
+        [NotMapped]
+        protected object mMapLock = new object();
 
         [JsonConstructor]
         public MapBase(Guid id) : base(id)

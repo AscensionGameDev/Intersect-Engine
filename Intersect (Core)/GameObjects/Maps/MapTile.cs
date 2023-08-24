@@ -14,7 +14,7 @@ namespace Intersect.GameObjects.Maps
 
         public byte Autotile;
 
-        [JsonIgnore] public object TilesetTex;
-
+        [JsonIgnore]
+        public object TilesetTex;
     }
 }

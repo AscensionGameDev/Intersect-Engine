@@ -16,7 +16,8 @@ namespace Intersect
         protected bool _adminOnly = false;
 
         //Constantly Animated Sprites
-        [JsonProperty("AnimatedSprites")] protected List<string> _animatedSprites = new List<string>();
+        [JsonProperty("AnimatedSprites")]
+        protected List<string> _animatedSprites = new List<string>();
 
         [JsonProperty("BlockClientRegistrations", Order = -2)]
         protected bool _blockClientRegistrations = false;
@@ -33,36 +34,46 @@ namespace Intersect
         [JsonProperty("MaximumLoggedinUsers")]
         protected int _maxUsers = 50;
 
-        [JsonProperty("UPnP", Order = -1)] protected bool _upnp = true;
+        [JsonProperty("UPnP", Order = -1)]
+        protected bool _upnp = true;
 
-        [JsonProperty("Chat")] public ChatOptions ChatOpts = new ChatOptions();
+        [JsonProperty("Chat")]
+        public ChatOptions ChatOpts = new ChatOptions();
 
-        [JsonProperty("Combat")] public CombatOptions CombatOpts = new CombatOptions();
+        [JsonProperty("Combat")]
+        public CombatOptions CombatOpts = new CombatOptions();
 
-        [JsonProperty("Equipment")] public EquipmentOptions EquipmentOpts = new EquipmentOptions();
+        [JsonProperty("Equipment")]
+        public EquipmentOptions EquipmentOpts = new EquipmentOptions();
 
         [JsonProperty("EventWatchdogKillThreshold")]
         public int EventKillTheshhold = 5000;
 
         public DatabaseOptions GameDatabase = new DatabaseOptions();
 
-        [JsonProperty("Map")] public MapOptions MapOpts = new MapOptions();
+        [JsonProperty("Map")]
+        public MapOptions MapOpts = new MapOptions();
 
         public DatabaseOptions PlayerDatabase = new DatabaseOptions();
 
-        [JsonProperty("Player")] public PlayerOptions PlayerOpts = new PlayerOptions();
+        [JsonProperty("Player")]
+        public PlayerOptions PlayerOpts = new PlayerOptions();
 
-        [JsonProperty("Party")] public PartyOptions PartyOpts = new PartyOptions();
+        [JsonProperty("Party")]
+        public PartyOptions PartyOpts = new PartyOptions();
 
-        [JsonProperty("Security")] public SecurityOptions SecurityOpts = new SecurityOptions();
+        [JsonProperty("Security")]
+        public SecurityOptions SecurityOpts = new SecurityOptions();
 
-        [JsonProperty("Loot")] public LootOptions LootOpts = new LootOptions();
+        [JsonProperty("Loot")]
+        public LootOptions LootOpts = new LootOptions();
 
         public ProcessingOptions Processing = new ProcessingOptions();
 
         public SpriteOptions Sprites = new SpriteOptions();
 
-        [JsonProperty("Npc")] public NpcOptions NpcOpts = new NpcOptions();
+        [JsonProperty("Npc")]
+        public NpcOptions NpcOpts = new NpcOptions();
 
         public MetricsOptions Metrics = new MetricsOptions();
 

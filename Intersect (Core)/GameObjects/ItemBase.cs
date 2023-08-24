@@ -17,8 +17,8 @@ namespace Intersect.GameObjects
 {
     public partial class ItemBase : DatabaseObject<ItemBase>, IFolderable
     {
-
-        [NotMapped] public ConditionLists UsageRequirements = new ConditionLists();
+        [NotMapped]
+        public ConditionLists UsageRequirements = new ConditionLists();
 
         public string CannotUseMessage { get; set; } = "";
 
@@ -70,7 +70,8 @@ namespace Intersect.GameObjects
         /// <summary>
         /// Defines whether or not this item can be dropped by a player.
         /// </summary>
-        [Column("Bound")]   // Not exactly the cleanest solution, since CanDrop and Bound set to true will do the opposite.. But don't want to leave a bogus field!
+        // Not exactly the cleanest solution, since CanDrop and Bound set to true will do the opposite.. But don't want to leave a bogus field!
+        [Column("Bound")]
         public bool CanDrop { get; set; } = true;
 
         /// <summary>

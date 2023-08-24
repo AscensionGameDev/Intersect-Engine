@@ -32,10 +32,11 @@ namespace Intersect.GameObjects
 
     public partial class ResourceBase : DatabaseObject<ResourceBase>, IFolderable
     {
+        [NotMapped]
+        public List<Drop> Drops = new List<Drop>();
 
-        [NotMapped] public List<Drop> Drops = new List<Drop>();
-
-        [NotMapped] public ConditionLists HarvestingRequirements = new ConditionLists();
+        [NotMapped]
+        public ConditionLists HarvestingRequirements = new ConditionLists();
 
         public string CannotHarvestMessage { get; set; } = "";
 

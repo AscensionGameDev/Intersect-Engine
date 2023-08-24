@@ -15,8 +15,8 @@ namespace Intersect.GameObjects
 {
     public partial class SpellBase : DatabaseObject<SpellBase>, IFolderable
     {
-
-        [NotMapped] public int[] VitalCost = new int[(int) Vital.VitalCount];
+        [NotMapped]
+        public int[] VitalCost = new int[(int) Vital.VitalCount];
 
         [JsonConstructor]
         public SpellBase(Guid id) : base(id)
@@ -163,8 +163,8 @@ namespace Intersect.GameObjects
     [Owned]
     public partial class SpellCombatData
     {
-
-        [NotMapped] public int[] VitalDiff = new int[(int) Vital.VitalCount];
+        [NotMapped]
+        public int[] VitalDiff = new int[(int) Vital.VitalCount];
 
         public int CritChance { get; set; }
 

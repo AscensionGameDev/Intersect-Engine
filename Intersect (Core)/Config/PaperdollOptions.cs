@@ -9,8 +9,8 @@ namespace Intersect.Config
 {
     public partial class PaperdollOptions
     {
-
-        [JsonIgnore] public List<string>[] Directions;
+        [JsonIgnore]
+        public List<string>[] Directions;
 
         public List<string> Down = new List<string>()
         {

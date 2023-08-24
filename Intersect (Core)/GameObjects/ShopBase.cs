@@ -10,10 +10,11 @@ namespace Intersect.GameObjects
 {
     public partial class ShopBase : DatabaseObject<ShopBase>, IFolderable
     {
+        [NotMapped]
+        public List<ShopItem> BuyingItems = new List<ShopItem>();
 
-        [NotMapped] public List<ShopItem> BuyingItems = new List<ShopItem>();
-
-        [NotMapped] public List<ShopItem> SellingItems = new List<ShopItem>();
+        [NotMapped]
+        public List<ShopItem> SellingItems = new List<ShopItem>();
 
         [JsonConstructor]
         public ShopBase(Guid id) : base(id)

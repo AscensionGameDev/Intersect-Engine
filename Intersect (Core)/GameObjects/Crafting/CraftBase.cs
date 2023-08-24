@@ -12,8 +12,8 @@ namespace Intersect.GameObjects.Crafting
 {
     public partial class CraftBase : DatabaseObject<CraftBase>, IFolderable
     {
-
-        [NotMapped] public List<CraftIngredient> Ingredients = new List<CraftIngredient>();
+        [NotMapped]
+        public List<CraftIngredient> Ingredients = new List<CraftIngredient>();
 
         [JsonConstructor]
         public CraftBase(Guid id) : base(id)
@@ -65,7 +65,8 @@ namespace Intersect.GameObjects.Crafting
             set => EventId = value?.Id ?? Guid.Empty;
         }
 
-        [NotMapped] public ConditionLists CraftingRequirements = new ConditionLists();
+        [NotMapped]
+        public ConditionLists CraftingRequirements = new ConditionLists();
 
         //Requirements
         [Column("CraftingRequirements")]

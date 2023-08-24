@@ -43,7 +43,8 @@ namespace Intersect.Config
 
         [JsonConverter(typeof(StringEnumConverter))]
         [JsonProperty(
-            NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling = DefaultValueHandling.Populate
+            NullValueHandling = NullValueHandling.Ignore,
+            DefaultValueHandling = DefaultValueHandling.Populate
         )]
         [DefaultValue(Logging.LogLevel.Error)]
         public Logging.LogLevel LogLevel { get; set; } = Logging.LogLevel.Error;

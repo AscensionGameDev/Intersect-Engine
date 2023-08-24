@@ -9,7 +9,8 @@ namespace Intersect.GameObjects
     {
         private static TimeBase sTimeBase = new TimeBase();
 
-        [NotMapped] public Color[] DaylightHues;
+        [NotMapped]
+        public Color[] DaylightHues;
 
         public TimeBase()
         {
