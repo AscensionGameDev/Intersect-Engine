@@ -25,8 +25,6 @@ namespace Intersect.Client.Framework.Graphics
 
         public Resolution PreferredResolution { get; set; }
 
-        public float WorldZoom { get; set; } = 1.0f;
-
         protected float _scale = 1.0f;
 
         public float Scale
@@ -34,6 +32,11 @@ namespace Intersect.Client.Framework.Graphics
             get => _scale;
             set
             {
+                if (Math.Abs(_scale - value) < 0.001)
+                {
+                    return;
+                }
+
                 _scale = value;
                 RecreateSpriteBatch();
             }

@@ -64,6 +64,9 @@ namespace Intersect.Config
         /// </summary>
         public int TileWidth { get; set; } = 32;
 
+        [JsonIgnore]
+        public float TileScale => 32f / Math.Min(TileWidth, TileHeight);
+
         /// <summary>
         /// The time, in milliseconds, until the map is cleaned up.
         /// </summary>

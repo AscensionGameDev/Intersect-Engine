@@ -350,9 +350,6 @@ namespace Intersect.Client.MonoGame.Graphics
                     shader.ResetChanged();
                 }
 
-                var zoomOffsetX = (view.Width - (view.Width / _scale)) / 2;
-                var zoomOffsetY = (view.Height - (view.Height / _scale)) / 2;
-
                 mSpriteBatch.Begin(
                     drawImmediate ? SpriteSortMode.Immediate : SpriteSortMode.Deferred,
                     blend,
@@ -360,9 +357,7 @@ namespace Intersect.Client.MonoGame.Graphics
                     null,
                     rs,
                     useEffect,
-                    Matrix.CreateRotationZ(0f) *
-                    Matrix.CreateTranslation(-view.X - zoomOffsetX, -view.Y - zoomOffsetY, 0) *
-                    Matrix.CreateScale(new Vector3(_scale))
+                    CreateViewMatrix(view)
                 );
 
                 mCurrentSpriteView = view;
@@ -909,6 +904,13 @@ namespace Intersect.Client.MonoGame.Graphics
             return new Pointf(size.X * fontScale, size.Y * fontScale);
         }
 
+        private Matrix CreateViewMatrix(FloatRect view)
+        {
+            return Matrix.CreateRotationZ(0f) *
+                   Matrix.CreateTranslation(-view.X, -view.Y, 0) *
+                   Matrix.CreateScale(new Vector3(_scale));
+        }
+        
         public override void SetView(FloatRect view)
         {
             mCurrentView = view;
@@ -917,11 +919,7 @@ namespace Intersect.Client.MonoGame.Graphics
             projection.M41 += -0.5f * projection.M11;
             projection.M42 += -0.5f * projection.M22;
             mBasicEffect.Projection = projection;
-            var zoomOffsetX = (view.Width - (view.Width / WorldZoom)) / 2;
-            var zoomOffsetY = (view.Height - (view.Height / WorldZoom)) / 2;
-            mBasicEffect.View = Matrix.CreateRotationZ(0f) *
-                                Matrix.CreateTranslation(-view.X - zoomOffsetX, -view.Y - zoomOffsetY, 0) *
-                                Matrix.CreateScale(new Vector3(WorldZoom));
+            mBasicEffect.View = CreateViewMatrix(view);
         }
 
         public override bool BeginScreenshot()

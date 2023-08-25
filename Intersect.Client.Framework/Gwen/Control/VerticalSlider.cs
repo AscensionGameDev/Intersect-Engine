@@ -58,7 +58,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// <param name="skin">Skin to use.</param>
         protected override void Render(Skin.Base skin)
         {
-            skin.DrawSlider(this, false, mSnapToNotches ? mNotchCount : 0, mSliderBar.Height);
+            skin.DrawSlider(this, false, Notches, mSnapToNotches ? mNotchCount : 0, mSliderBar.Height);
         }
 
     }

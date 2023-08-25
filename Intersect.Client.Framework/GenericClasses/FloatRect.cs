@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 
 namespace Intersect.Client.Framework.GenericClasses
 {
@@ -116,6 +117,34 @@ namespace Intersect.Client.Framework.GenericClasses
             return Contains(pt.X, pt.Y);
         }
 
-    }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static FloatRect operator *(FloatRect lhs, float rhs)
+        {
+            return new FloatRect(
+                lhs.X * rhs,
+                lhs.Y * rhs,
+                lhs.Width * rhs,
+                lhs.Height * rhs
+            );
+        }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static FloatRect operator *(float lhs, FloatRect rhs) => rhs * lhs;
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static FloatRect operator /(FloatRect lhs, float rhs)
+        {
+            return new FloatRect(
+                lhs.X / rhs,
+                lhs.Y / rhs,
+                lhs.Width / rhs,
+                lhs.Height / rhs
+            );
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static FloatRect operator /(float lhs, FloatRect rhs) => rhs / lhs;
+
+        public override string ToString() => $"{Left},{Top} + {Width},{Height} -> {Right},{Bottom}";
+    }
 }

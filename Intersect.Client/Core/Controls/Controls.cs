@@ -33,7 +33,13 @@ namespace Intersect.Client.Core.Controls
                     MigrateControlBindings(control);
 
                     var name = Enum.GetName(typeof(Control), control);
-                    var bindings = ControlMapping[control].Bindings;
+
+                    if (!ControlMapping.TryGetValue(control, out var controlMapping))
+                    {
+                        continue;
+                    }
+
+                    var bindings = controlMapping.Bindings;
                     for (var bindingIndex = 0; bindingIndex < bindings.Count; bindingIndex++)
                     {
                         var preferenceKey = $"{name}_binding{bindingIndex}";
@@ -88,6 +94,10 @@ namespace Intersect.Client.Core.Controls
             CreateControlMap(Control.OpenAdminPanel, new ControlValue(Keys.None, Keys.Insert), ControlValue.Default);
             CreateControlMap(Control.ToggleGui, new ControlValue(Keys.None, Keys.F11), ControlValue.Default);
             CreateControlMap(Control.TurnAround, new ControlValue(Keys.None, Keys.Control), ControlValue.Default);
+            CreateControlMap(Control.ToggleZoomIn, ControlValue.Default, ControlValue.Default);
+            CreateControlMap(Control.ToggleZoomOut, ControlValue.Default, ControlValue.Default);
+            CreateControlMap(Control.HoldToZoomIn, ControlValue.Default, ControlValue.Default);
+            CreateControlMap(Control.HoldToZoomOut, ControlValue.Default, ControlValue.Default);
         }
 
         private static void MigrateControlBindings(Control control)

@@ -551,25 +551,6 @@ namespace Intersect.Client.Interface.Game.Chat
         {
             var msg = mChatboxInput.Text.Trim();
 
-            if (msg.StartsWith("/zoom"))
-            {
-                if (msg == "/zoom world")
-                {
-                    ChatboxMsg.AddMessage(new ChatboxMsg($"WorldZoom is {Graphics.Renderer.WorldZoom}", Color.Orange, ChatMessageType.Notice));
-                }
-                else if (msg.StartsWith("/zoom world"))
-                {
-                    Graphics.Renderer.WorldZoom = (float)MathHelper.Clamp(float.Parse(msg.Slice("/zoom world".Length)), 1.0f, 4.0f);
-                    ChatboxMsg.AddMessage(new ChatboxMsg($"Set WorldZoom to {Graphics.Renderer.WorldZoom}", Color.Orange, ChatMessageType.Notice));
-                }
-                else
-                {
-                    ChatboxMsg.AddMessage(new ChatboxMsg($"Unknown command '{msg}'", Color.Red, ChatMessageType.Error));
-                }
-                mChatboxInput.Text = GetDefaultInputText();
-                return;
-            }
-
             if (string.IsNullOrWhiteSpace(msg) || string.Equals(msg, GetDefaultInputText(), StringComparison.Ordinal))
             {
                 mChatboxInput.Text = GetDefaultInputText();

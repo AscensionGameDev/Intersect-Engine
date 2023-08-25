@@ -1567,17 +1567,36 @@ namespace Intersect.Client.Framework.Gwen.Skin
             mTextures.Input.ListBox.OddLine.Draw(Renderer, control.RenderBounds, control.RenderColor);
         }
 
-        public void DrawSliderNotchesH(Rectangle rect, int numNotches, float dist)
+        public void DrawSliderNotchesH(Rectangle rect, double[] notches, int numNotches, float dist)
         {
             if (numNotches == 0)
             {
                 return;
             }
 
-            var iSpacing = rect.Width / (float) numNotches;
-            for (var i = 0; i < numNotches + 1; i++)
+            var notchMin = notches?.Min();
+            var notchMax = notches?.Max();
+            var notchRange = notchMax - notchMin;
+            if (notchRange == 0)
             {
-                Renderer.DrawFilledRect(Util.FloatRect(rect.X + iSpacing * i, rect.Y + dist - 2, 1, 5));
+                notchRange = 1;
+            }
+            var notchPositions = notches?.Select(notch => (rect.Width * (notch - notchMin) / notchRange).Value).ToArray();
+
+            if (notchPositions != null)
+            {
+                foreach (var notchPosition in notchPositions)
+                {
+                    Renderer.DrawFilledRect(Util.FloatRect(rect.X + (float)notchPosition, rect.Y + dist - 2, 1, 5));
+                }
+            }
+            else
+            {
+                var iSpacing = rect.Width / (float) numNotches;
+                for (var i = 0; i < numNotches + 1; i++)
+                {
+                    Renderer.DrawFilledRect(Util.FloatRect(rect.X + iSpacing * i, rect.Y + dist - 2, 1, 5));
+                }
             }
         }
 
@@ -1595,7 +1614,7 @@ namespace Intersect.Client.Framework.Gwen.Skin
             }
         }
 
-        public override void DrawSlider(Control.Base control, bool horizontal, int numNotches, int barSize)
+        public override void DrawSlider(Control.Base control, bool horizontal, double[] notches, int numNotches, int barSize)
         {
             if (((Slider) control).GetImage() != null)
             {
@@ -1636,7 +1655,7 @@ namespace Intersect.Client.Framework.Gwen.Skin
                     rect.Width -= barSize;
                     rect.Y += (int) (rect.Height * 0.5 - 1);
                     rect.Height = 1;
-                    DrawSliderNotchesH(rect, numNotches, barSize * 0.5f);
+                    DrawSliderNotchesH(rect, notches, numNotches, barSize * 0.5f);
                     Renderer.DrawFilledRect(rect);
 
                     return;

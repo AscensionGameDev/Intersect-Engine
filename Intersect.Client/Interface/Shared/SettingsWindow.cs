@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Intersect.Client.Core;
 using Intersect.Client.Core.Controls;
 using Intersect.Client.Framework.File_Management;
@@ -14,6 +15,7 @@ using Intersect.Client.Interface.Menu;
 using Intersect.Client.Localization;
 using Intersect.Utilities;
 using static Intersect.Client.Framework.File_Management.GameContentManager;
+using MathHelper = Intersect.Client.Utilities.MathHelper;
 
 namespace Intersect.Client.Interface.Shared
 {
@@ -106,6 +108,10 @@ namespace Intersect.Client.Interface.Shared
         private MenuItem mCustomResolutionMenuItem;
 
         private readonly ComboBox mFpsList;
+
+        private readonly LabeledHorizontalSlider _worldScale;
+
+        private readonly LabeledHorizontalSlider _uiScale;
 
         private readonly LabeledCheckBox mFullscreenCheckbox;
 
@@ -319,13 +325,36 @@ namespace Intersect.Client.Interface.Shared
                 }
             );
 
+            Globals.Database.WorldZoom = MathHelper.Clamp(Globals.Database.WorldZoom, 1, 4);
+
+            var worldScaleNotches = new double[] { 1, 2, 4 }.Select(n => n * Graphics.BaseWorldScale).ToArray();
+            _worldScale = new LabeledHorizontalSlider(mVideoSettingsContainer, "WorldScale")
+            {
+                Label = Strings.Settings.WorldScale,
+                Min = worldScaleNotches.Min(),
+                Max = worldScaleNotches.Max(),
+                Notches = worldScaleNotches,
+                SnapToNotches = false,
+                Value = Globals.Database.WorldZoom,
+            };
+
+            // _uiScale = new LabeledHorizontalSlider(mVideoSettingsContainer, "UIScale")
+            // {
+            //     Label = Strings.Settings.UIScale,
+            //     Min = 0.5f,
+            //     Max = 4f,
+            //     Notches = new double[] { 0.5, 1, 2, 4 },
+            //     SnapToNotches = true,
+            //     Value = 1f,
+            // };
+
             // Video Settings - FPS Background.
             var fpsBackground = new ImagePanel(mVideoSettingsContainer, "FPSPanel");
 
             // Video Settings - FPS Label.
             var fpsLabel = new Label(fpsBackground, "FPSLabel");
             fpsLabel.SetText(Strings.Settings.TargetFps);
-
+            
             // Video Settings - FPS List.
             mFpsList = new ComboBox(fpsBackground, "FPSCombobox");
             mFpsList.AddItem(Strings.Settings.Vsync);
@@ -594,6 +623,17 @@ namespace Intersect.Client.Interface.Shared
             mSettingsApplyBtn.Show();
             mSettingsCancelBtn.Show();
             mKeybindingRestoreBtn.Hide();
+
+            var worldScaleNotches = new double[] { 1, 2, 4 }.Select(n => n * Graphics.BaseWorldScale).ToArray();
+
+            Globals.Database.WorldZoom = (float)MathHelper.Clamp(
+                Globals.Database.WorldZoom,
+                worldScaleNotches.Min(),
+                worldScaleNotches.Max()
+            );
+            _worldScale.Min = worldScaleNotches.Min();
+            _worldScale.Max = worldScaleNotches.Max();
+            _worldScale.Value = Globals.Database.WorldZoom;
         }
 
         private readonly HashSet<Keys> _keysDown = new HashSet<Keys>();
@@ -700,6 +740,9 @@ namespace Intersect.Client.Interface.Shared
             // Video Settings.
             mFullscreenCheckbox.IsChecked = Globals.Database.FullScreen;
             mLightingEnabledCheckbox.IsChecked = Globals.Database.EnableLighting;
+
+            // _uiScale.Value = Globals.Database.UIScale;
+            _worldScale.Value = Globals.Database.WorldZoom;
 
             if (Graphics.Renderer.GetValidVideoModes().Count > 0)
             {
@@ -879,6 +922,10 @@ namespace Intersect.Client.Interface.Shared
             Globals.Database.TypewriterBehavior = mTypewriterCheckbox.IsChecked ? Enums.TypewriterBehavior.Word : Enums.TypewriterBehavior.Off;
 
             // Video Settings.
+
+            // Globals.Database.UIScale = (float)_uiScale.Value;
+            Globals.Database.WorldZoom = (float)_worldScale.Value;
+
             var resolution = mResolutionList.SelectedItem;
             var validVideoModes = Graphics.Renderer.GetValidVideoModes();
             var targetResolution = validVideoModes?.FindIndex(videoMode =>
