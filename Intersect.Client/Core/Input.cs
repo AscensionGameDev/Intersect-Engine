@@ -27,19 +27,19 @@ namespace Intersect.Client.Core
 
         private static void HandleZoomOut()
         {
-            Globals.Database.WorldZoom *= 2;
-            if (Globals.Database.WorldZoom > Graphics.BaseWorldScale * 4)
+            Globals.Database.WorldZoom /= 2;
+            if (Globals.Database.WorldZoom < Graphics.BaseWorldScale)
             {
-                Globals.Database.WorldZoom = Graphics.BaseWorldScale;
+                Globals.Database.WorldZoom = Graphics.BaseWorldScale * 4;
             }
         }
 
         private static void HandleZoomIn()
         {
-            Globals.Database.WorldZoom /= 2;
-            if (Globals.Database.WorldZoom < Graphics.BaseWorldScale)
+            Globals.Database.WorldZoom *= 2;
+            if (Globals.Database.WorldZoom > Graphics.BaseWorldScale * 4)
             {
-                Globals.Database.WorldZoom = Graphics.BaseWorldScale * 4;
+                Globals.Database.WorldZoom = Graphics.BaseWorldScale;
             }
         }
 
