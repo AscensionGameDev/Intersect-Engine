@@ -1628,7 +1628,7 @@ namespace Intersect.Client.Framework.Gwen.Skin
             else
             {
                 var rect = control.RenderBounds;
-                Renderer.DrawColor = Color.FromArgb(100, 0, 0, 0);
+                Renderer.DrawColor = control.RenderColor;
 
                 if (horizontal)
                 {

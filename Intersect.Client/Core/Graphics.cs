@@ -517,13 +517,15 @@ namespace Intersect.Client.Core
         }
 
         //Game Rendering
-        public static void Render(TimeSpan deltaTime)
+        public static void Render(TimeSpan deltaTime, TimeSpan totalTime)
         {
             var takingScreenshot = false;
             if (Renderer?.ScreenshotRequests.Count > 0)
             {
                 takingScreenshot = Renderer.BeginScreenshot();
             }
+
+            Renderer.WorldZoom = (float)(Math.Cos(totalTime.TotalSeconds * 1) + 1) * 1.5f + 1;
 
             if (!(Renderer?.Begin() ?? false))
             {

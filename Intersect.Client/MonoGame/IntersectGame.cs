@@ -298,7 +298,7 @@ namespace Intersect.Client.MonoGame
                 {
                     lock (Globals.GameLock)
                     {
-                        Core.Graphics.Render(gameTime.ElapsedGameTime);
+                        Core.Graphics.Render(gameTime.ElapsedGameTime, gameTime.TotalGameTime);
                     }
                 }
             }

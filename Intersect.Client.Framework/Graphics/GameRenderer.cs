@@ -25,6 +25,20 @@ namespace Intersect.Client.Framework.Graphics
 
         public Resolution PreferredResolution { get; set; }
 
+        public float WorldZoom { get; set; } = 1.0f;
+
+        protected float _scale = 1.0f;
+
+        public float Scale
+        {
+            get => _scale;
+            set
+            {
+                _scale = value;
+                RecreateSpriteBatch();
+            }
+        }
+
         public abstract void Init();
 
         /// <summary>
@@ -34,6 +48,8 @@ namespace Intersect.Client.Framework.Graphics
         public abstract bool Begin();
 
         public abstract bool BeginScreenshot();
+
+        protected abstract bool RecreateSpriteBatch();
 
         /// <summary>
         ///     Called when the frame is done being drawn, generally used to finally display the content to the screen.
