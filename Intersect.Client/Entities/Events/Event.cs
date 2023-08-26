@@ -40,7 +40,7 @@ namespace Intersect.Client.Entities.Events
 
         public bool WalkingAnim { get; set; } = true;
 
-        public bool ActionButtonTriggered { get; set; }
+        public EventTrigger Trigger { get; set; }
 
         protected override Pointf CenterOffset
         {
@@ -82,7 +82,7 @@ namespace Intersect.Client.Entities.Events
             Desc = eventEntityPacket.Description;
             Graphic = eventEntityPacket.Graphic;
             RenderLevel = eventEntityPacket.RenderLayer;
-            ActionButtonTriggered = eventEntityPacket.ActionButtonTriggered;
+            Trigger = eventEntityPacket.Trigger;
 
             _drawCompletedWithoutTexture = Graphic.Type != EventGraphicType.Tileset;
 
