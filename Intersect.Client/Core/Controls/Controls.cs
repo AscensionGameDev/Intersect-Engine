@@ -92,13 +92,13 @@ namespace Intersect.Client.Core.Controls
             CreateControlMap(Control.OpenSettings, new ControlValue(Keys.None, Keys.O), ControlValue.Default);
             CreateControlMap(Control.OpenDebugger, new ControlValue(Keys.None, Keys.F2), ControlValue.Default);
             CreateControlMap(Control.OpenAdminPanel, new ControlValue(Keys.None, Keys.Insert), ControlValue.Default);
-            CreateControlMap(Control.ToggleGui, new ControlValue(Keys.Shift, Keys.F11), ControlValue.Default);
+            CreateControlMap(Control.ToggleGui, new ControlValue(Keys.None, Keys.F11), ControlValue.Default);
             CreateControlMap(Control.TurnAround, new ControlValue(Keys.None, Keys.Control), ControlValue.Default);
             CreateControlMap(Control.ToggleZoomIn, ControlValue.Default, ControlValue.Default);
             CreateControlMap(Control.ToggleZoomOut, ControlValue.Default, ControlValue.Default);
             CreateControlMap(Control.HoldToZoomIn, ControlValue.Default, ControlValue.Default);
             CreateControlMap(Control.HoldToZoomOut, ControlValue.Default, ControlValue.Default);
-            CreateControlMap(Control.ToggleFullscreen, new ControlValue(Keys.None, Keys.F11), ControlValue.Default);
+            CreateControlMap(Control.ToggleFullscreen, new ControlValue(Keys.Alt, Keys.Enter), ControlValue.Default);
         }
 
         private static void MigrateControlBindings(Control control)
