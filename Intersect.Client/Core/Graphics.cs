@@ -538,7 +538,14 @@ namespace Intersect.Client.Core
                 takingScreenshot = Renderer.BeginScreenshot();
             }
 
-            if (!(Renderer?.Begin() ?? false))
+            if (Renderer == default)
+            {
+                return;
+            }
+
+            Renderer.Scale = Globals.GameState == GameStates.InGame ? Globals.Database.WorldZoom : 1.0f;
+
+            if (!Renderer.Begin())
             {
                 return;
             }
@@ -553,8 +560,6 @@ namespace Intersect.Client.Core
                 sOldWidth = Renderer.GetScreenWidth();
                 sOldHeight = Renderer.GetScreenHeight();
             }
-
-            Renderer.Scale = Globals.GameState == GameStates.InGame ? Globals.Database.WorldZoom : 1.0f;
 
             Renderer.Clear(Color.Black);
             DrawCalls = 0;
@@ -875,7 +880,7 @@ namespace Intersect.Client.Core
 
         private static void UpdateView()
         {
-            var scale = Globals.Database.WorldZoom;
+            var scale = Renderer.Scale;
 
             if (Globals.GameState != GameStates.InGame || !MapInstance.TryGet(Globals.Me?.MapId ?? Guid.Empty, out var map))
             {
