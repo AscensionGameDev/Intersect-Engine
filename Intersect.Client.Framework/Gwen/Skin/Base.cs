@@ -167,7 +167,7 @@ namespace Intersect.Client.Framework.Gwen.Skin
         {
         }
 
-        public virtual void DrawSlider(Control.Base control, bool horizontal, int numNotches, int barSize)
+        public virtual void DrawSlider(Control.Base control, bool horizontal, double[] notches, int numNotches, int barSize)
         {
         }
 

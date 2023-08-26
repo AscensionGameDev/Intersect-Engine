@@ -39,7 +39,7 @@ namespace Intersect.Client.MonoGame.Database
 
         public override bool HasPreference(string key) => GetInstanceKey()?.GetValue(key) != default;
 
-        public override void SavePreference(string key, object value)
+        public override void SavePreference<TValue>(string key, TValue value)
         {
             try
             {

@@ -33,7 +33,7 @@ namespace Intersect.Client.Framework.Entities
         bool TryTarget();
         bool TryTarget(IEntity entity, bool force = false);
         void AutoTarget();
-        void ClearTarget();
+        bool ClearTarget();
         void AddToHotbar(int hotbarSlot, sbyte itemType, int itemSlot);
         int FindHotbarItem(IHotbarInstance hotbarInstance);
         int FindHotbarSpell(IHotbarInstance hotbarInstance);

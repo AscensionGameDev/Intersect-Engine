@@ -116,9 +116,9 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// </summary>
         public event GwenEventHandler<EventArgs> BarMoved;
 
-        public override JObject GetJson()
+        public override JObject GetJson(bool isRoot = default)
         {
-            var obj = base.GetJson();
+            var obj = base.GetJson(isRoot);
             obj.Add("BackgroundTemplate", mBackgroundTemplateFilename);
             obj.Add("UpOrLeftButton", mScrollButton[0].GetJson());
             obj.Add("Bar", mBar.GetJson());
@@ -127,15 +127,15 @@ namespace Intersect.Client.Framework.Gwen.Control
             return base.FixJson(obj);
         }
 
-        public override void LoadJson(JToken obj)
+        public override void LoadJson(JToken obj, bool isRoot = default)
         {
             base.LoadJson(obj);
             if (obj["BackgroundTemplate"] != null)
             {
                 SetBackgroundTemplate(
                     GameContentManager.Current.GetTexture(
-                        Framework.Content.TextureType.Gui, (string) obj["BackgroundTemplate"]
-                    ), (string) obj["BackgroundTemplate"]
+                        Framework.Content.TextureType.Gui, (string)obj["BackgroundTemplate"]
+                    ), (string)obj["BackgroundTemplate"]
                 );
             }
 

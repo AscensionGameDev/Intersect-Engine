@@ -62,12 +62,16 @@ namespace Intersect.Client.Framework.Database
 
         public TypewriterBehavior TypewriterBehavior { get; set; }
 
+        public float UIScale { get; set; } = 1.0f;
+
+        public float WorldZoom { get; set; } = 1.0f;
+
         public abstract void DeletePreference(string key);
 
         public abstract bool HasPreference(string key);
 
         //Saving password, other stuff we don't want in the games directory
-        public abstract void SavePreference(string key, object value);
+        public abstract void SavePreference<TValue>(string key, TValue value);
 
         public abstract string LoadPreference(string key);
 
@@ -128,6 +132,8 @@ namespace Intersect.Client.Framework.Database
             ShowHealthAsPercentage = LoadPreference(nameof(ShowHealthAsPercentage), false);
             ShowManaAsPercentage = LoadPreference(nameof(ShowManaAsPercentage), false);
             TypewriterBehavior = LoadPreference(nameof(TypewriterBehavior), TypewriterBehavior.Word);
+            UIScale = LoadPreference(nameof(UIScale), 1.0f);
+            WorldZoom = LoadPreference(nameof(WorldZoom), 1.0f);
         }
 
         /// <summary>
@@ -162,6 +168,8 @@ namespace Intersect.Client.Framework.Database
             SavePreference(nameof(ShowHealthAsPercentage), ShowHealthAsPercentage);
             SavePreference(nameof(ShowManaAsPercentage), ShowManaAsPercentage);
             SavePreference(nameof(TypewriterBehavior), TypewriterBehavior);
+            SavePreference(nameof(UIScale), UIScale);
+            SavePreference(nameof(WorldZoom), WorldZoom);
         }
 
         public abstract bool LoadConfig();

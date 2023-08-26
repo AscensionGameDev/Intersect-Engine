@@ -146,9 +146,9 @@ namespace Intersect.Client.Framework.Gwen.Control
             get { return Parent.Children.Where(x => x is WindowControl).Last() == this; }
         }
 
-        public override JObject GetJson()
+        public override JObject GetJson(bool isRoot = default)
         {
-            var obj = base.GetJson();
+            var obj = base.GetJson(isRoot);
             obj.Add("ActiveImage", GetImageFilename(ControlState.Active));
             obj.Add("InactiveImage", GetImageFilename(ControlState.Inactive));
             obj.Add("ActiveColor", Color.ToString(mActiveColor));
@@ -162,15 +162,15 @@ namespace Intersect.Client.Framework.Gwen.Control
             return base.FixJson(obj);
         }
 
-        public override void LoadJson(JToken obj)
+        public override void LoadJson(JToken obj, bool isRoot = default)
         {
             base.LoadJson(obj);
             if (obj["ActiveImage"] != null)
             {
                 SetImage(
                     GameContentManager.Current.GetTexture(
-                        Framework.Content.TextureType.Gui, (string) obj["ActiveImage"]
-                    ), (string) obj["ActiveImage"], ControlState.Active
+                        Framework.Content.TextureType.Gui, (string)obj["ActiveImage"]
+                    ), (string)obj["ActiveImage"], ControlState.Active
                 );
             }
 
@@ -178,24 +178,24 @@ namespace Intersect.Client.Framework.Gwen.Control
             {
                 SetImage(
                     GameContentManager.Current.GetTexture(
-                        Framework.Content.TextureType.Gui, (string) obj["InactiveImage"]
-                    ), (string) obj["InactiveImage"], ControlState.Inactive
+                        Framework.Content.TextureType.Gui, (string)obj["InactiveImage"]
+                    ), (string)obj["InactiveImage"], ControlState.Inactive
                 );
             }
 
             if (obj["ActiveColor"] != null)
             {
-                mActiveColor = Color.FromString((string) obj["ActiveColor"]);
+                mActiveColor = Color.FromString((string)obj["ActiveColor"]);
             }
 
             if (obj["InactiveColor"] != null)
             {
-                mInactiveColor = Color.FromString((string) obj["InactiveColor"]);
+                mInactiveColor = Color.FromString((string)obj["InactiveColor"]);
             }
 
             if (obj["Closable"] != null)
             {
-                IsClosable = (bool) obj["Closable"];
+                IsClosable = (bool)obj["Closable"];
             }
 
             if (obj["Titlebar"] != null)

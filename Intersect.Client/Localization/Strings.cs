@@ -406,6 +406,8 @@ namespace Intersect.Client.Localization
 
             public static LocalizedString warpme2 = @"Warp Me To";
 
+            public static LocalizedString Zoom = @"Zoom";
+
         }
 
         public partial struct Bags
@@ -718,6 +720,10 @@ namespace Intersect.Client.Localization
                 {"openadminpanel", @"Open Admin Panel:"},
                 {"togglegui", @"Toggle Interface:"},
                 {"turnaround", @"Hold to turn around:"},
+                {"togglezoomin", "Toggle Zoom In:"},
+                {"holdtozoomin", "Hold to Zoom In:"},
+                {"togglezoomout", "Toggle Zoom Out:"},
+                {"holdtozoomout", "Hold to Zoom Out:"},
             };
 
             public static LocalizedString listening = @"Listening";
@@ -1826,6 +1832,9 @@ namespace Intersect.Client.Localization
             public static LocalizedString TypewriterText = @"Typewriter Text";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString UIScale = @"UI Scale";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString UnlimitedFps = @"No Limit";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -1833,6 +1842,9 @@ namespace Intersect.Client.Localization
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString Vsync = @"V-Sync";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString WorldScale = @"World Scale";
         }
 
         public partial struct Parties

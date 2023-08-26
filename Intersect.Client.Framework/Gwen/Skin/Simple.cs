@@ -589,7 +589,7 @@ namespace Intersect.Client.Framework.Gwen.Skin
             }
         }
 
-        public override void DrawSlider(Control.Base control, bool horizontal, int numNotches, int barSize)
+        public override void DrawSlider(Control.Base control, bool horizontal, double[] notches, int numNotches, int barSize)
         {
             var rect = control.RenderBounds;
             var notchRect = rect;

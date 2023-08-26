@@ -159,9 +159,9 @@ namespace Intersect.Client.Framework.Gwen.Control.Layout
             row.SetCellText(args.Column, args.NewValue?.ToString());
         }
 
-        public override JObject GetJson()
+        public override JObject GetJson(bool isRoot = default)
         {
-            var obj = base.GetJson();
+            var obj = base.GetJson(isRoot);
             obj.Add("SizeToContents", mSizeToContents);
             obj.Add("DefaultRowHeight", mDefaultRowHeight);
             obj.Add(nameof(ColumnAlignments), new JArray(ColumnAlignments.Select(alignment => alignment.ToString() as object).ToArray()));
@@ -172,7 +172,7 @@ namespace Intersect.Client.Framework.Gwen.Control.Layout
             return base.FixJson(obj);
         }
 
-        public override void LoadJson(JToken obj)
+        public override void LoadJson(JToken obj, bool isRoot = default)
         {
             base.LoadJson(obj);
             if (obj[nameof(SizeToContents)] != null)
@@ -445,7 +445,7 @@ namespace Intersect.Client.Framework.Gwen.Control.Layout
                 height += row.Height;
             }
 
-            // sum all column widths 
+            // sum all column widths
             width += mColumnWidths.Take(ColumnCount).Sum();
 
             return (width, height);

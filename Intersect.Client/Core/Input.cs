@@ -25,6 +25,24 @@ namespace Intersect.Client.Core
 
         public static HandleKeyEvent MouseUp;
 
+        private static void HandleZoomOut()
+        {
+            Globals.Database.WorldZoom /= 2;
+            if (Globals.Database.WorldZoom < Graphics.BaseWorldScale)
+            {
+                Globals.Database.WorldZoom = Graphics.BaseWorldScale * 4;
+            }
+        }
+
+        private static void HandleZoomIn()
+        {
+            Globals.Database.WorldZoom *= 2;
+            if (Globals.Database.WorldZoom > Graphics.BaseWorldScale * 4)
+            {
+                Globals.Database.WorldZoom = Graphics.BaseWorldScale;
+            }
+        }
+
         public static void OnKeyPressed(Keys modifier, Keys key)
         {
             if (key == Keys.None)
@@ -143,6 +161,20 @@ namespace Intersect.Client.Core
                                 }
 
                                 break;
+
+                            case Control.HoldToZoomIn:
+                            case Control.ToggleZoomIn:
+                            {
+                                HandleZoomIn();
+                                break;
+                            }
+
+                            case Control.HoldToZoomOut:
+                            case Control.ToggleZoomOut:
+                            {
+                                HandleZoomOut();
+                                break;
+                            }
 
                             case Control.OpenDebugger:
                                 MutableInterface.ToggleDebug();
@@ -282,6 +314,16 @@ namespace Intersect.Client.Core
                 return;
             }
 
+            if (Controls.Controls.ControlHasKey(Control.HoldToZoomIn, modifier, key))
+            {
+                HandleZoomOut();
+            }
+
+            if (Controls.Controls.ControlHasKey(Control.HoldToZoomOut, modifier, key))
+            {
+                HandleZoomIn();
+            }
+
             if (Globals.Me == null)
             {
                 return;
@@ -338,7 +380,7 @@ namespace Intersect.Client.Core
                 return;
             }
 
-            if (Globals.Me.TryTarget())
+            if (modifier == Keys.None && btn == MouseButtons.Left && Globals.Me.TryTarget())
             {
                 return;
             }
@@ -398,6 +440,16 @@ namespace Intersect.Client.Core
             if (Interface.Interface.HasInputFocus())
             {
                 return;
+            }
+
+            if (Controls.Controls.ControlHasKey(Control.HoldToZoomIn, modifier, key))
+            {
+                HandleZoomOut();
+            }
+
+            if (Controls.Controls.ControlHasKey(Control.HoldToZoomOut, modifier, key))
+            {
+                HandleZoomIn();
             }
 
             if (Globals.Me == null)

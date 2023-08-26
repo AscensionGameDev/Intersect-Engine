@@ -171,9 +171,9 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// </summary>
         public event GwenEventHandler<EventArgs> ToggledOff;
 
-        public override JObject GetJson()
+        public override JObject GetJson(bool isRoot = default)
         {
-            var obj = base.GetJson();
+            var obj = base.GetJson(isRoot);
             if (this.GetType() != typeof(CheckBox))
             {
                 obj.Add("NormalImage", GetImageFilename(ControlState.Normal));
@@ -194,15 +194,15 @@ namespace Intersect.Client.Framework.Gwen.Control
             return base.FixJson(obj);
         }
 
-        public override void LoadJson(JToken obj)
+        public override void LoadJson(JToken obj, bool isRoot = default)
         {
             base.LoadJson(obj);
             if (obj["NormalImage"] != null)
             {
                 SetImage(
                     GameContentManager.Current.GetTexture(
-                        Framework.Content.TextureType.Gui, (string) obj["NormalImage"]
-                    ), (string) obj["NormalImage"], ControlState.Normal
+                        Framework.Content.TextureType.Gui, (string)obj["NormalImage"]
+                    ), (string)obj["NormalImage"], ControlState.Normal
                 );
             }
 
@@ -210,8 +210,8 @@ namespace Intersect.Client.Framework.Gwen.Control
             {
                 SetImage(
                     GameContentManager.Current.GetTexture(
-                        Framework.Content.TextureType.Gui, (string) obj["HoveredImage"]
-                    ), (string) obj["HoveredImage"], ControlState.Hovered
+                        Framework.Content.TextureType.Gui, (string)obj["HoveredImage"]
+                    ), (string)obj["HoveredImage"], ControlState.Hovered
                 );
             }
 
@@ -219,8 +219,8 @@ namespace Intersect.Client.Framework.Gwen.Control
             {
                 SetImage(
                     GameContentManager.Current.GetTexture(
-                        Framework.Content.TextureType.Gui, (string) obj["ClickedImage"]
-                    ), (string) obj["ClickedImage"], ControlState.Clicked
+                        Framework.Content.TextureType.Gui, (string)obj["ClickedImage"]
+                    ), (string)obj["ClickedImage"], ControlState.Clicked
                 );
             }
 
@@ -228,36 +228,36 @@ namespace Intersect.Client.Framework.Gwen.Control
             {
                 SetImage(
                     GameContentManager.Current.GetTexture(
-                        Framework.Content.TextureType.Gui, (string) obj["DisabledImage"]
-                    ), (string) obj["DisabledImage"], ControlState.Disabled
+                        Framework.Content.TextureType.Gui, (string)obj["DisabledImage"]
+                    ), (string)obj["DisabledImage"], ControlState.Disabled
                 );
             }
 
             if (obj["CenterImage"] != null)
             {
-                mCenterImage = (bool) obj["CenterImage"];
+                mCenterImage = (bool)obj["CenterImage"];
             }
 
             if (this.GetType() != typeof(ComboBox) && this.GetType() != typeof(CheckBox))
             {
                 if (obj["HoverSound"] != null)
                 {
-                    mHoverSound = (string) obj["HoverSound"];
+                    mHoverSound = (string)obj["HoverSound"];
                 }
 
                 if (obj["MouseUpSound"] != null)
                 {
-                    mMouseUpSound = (string) obj["MouseUpSound"];
+                    mMouseUpSound = (string)obj["MouseUpSound"];
                 }
 
                 if (obj["MouseDownSound"] != null)
                 {
-                    mMouseDownSound = (string) obj["MouseDownSound"];
+                    mMouseDownSound = (string)obj["MouseDownSound"];
                 }
 
                 if (obj["ClickSound"] != null)
                 {
-                    mClickSound = (string) obj["ClickSound"];
+                    mClickSound = (string)obj["ClickSound"];
                 }
             }
         }

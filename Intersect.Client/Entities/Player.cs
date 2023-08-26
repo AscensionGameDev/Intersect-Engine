@@ -1787,8 +1787,7 @@ namespace Intersect.Client.Entities
                             else if (!Globals.Database.StickyTarget)
                             {
                                 // We've clicked off of our target and are allowed to clear it!
-                                ClearTarget();
-                                return true;
+                                return ClearTarget();
                             }
                         }
 
@@ -1844,12 +1843,18 @@ namespace Intersect.Client.Entities
 
         }
 
-        public void ClearTarget()
+        public bool ClearTarget()
         {
             SetTargetBox(null);
 
+            if (TargetIndex == default && TargetType == -1)
+            {
+                return false;
+            }
+
             TargetIndex = Guid.Empty;
             TargetType = -1;
+            return true;
         }
 
         /// <summary>

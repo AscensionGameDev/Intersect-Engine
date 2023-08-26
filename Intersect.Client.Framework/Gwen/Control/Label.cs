@@ -211,9 +211,9 @@ namespace Intersect.Client.Framework.Gwen.Control
             }
         }
 
-        public override JObject GetJson()
+        public override JObject GetJson(bool isRoot = default)
         {
-            var obj = base.GetJson();
+            var obj = base.GetJson(isRoot);
             if (typeof(Label) == GetType())
             {
                 obj.Add("BackgroundTemplate", mBackgroundTemplateFilename);
@@ -232,7 +232,7 @@ namespace Intersect.Client.Framework.Gwen.Control
             return base.FixJson(obj);
         }
 
-        public override void LoadJson(JToken obj)
+        public override void LoadJson(JToken obj, bool isRoot = default)
         {
             base.LoadJson(obj);
             if (typeof(Label) == GetType() && obj["BackgroundTemplate"] != null)

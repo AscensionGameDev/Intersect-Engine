@@ -599,7 +599,7 @@ namespace Intersect.Client.Framework.Gwen.Control
             ValidateCursor();
 
             var start = Math.Min(mCursorPos, mCursorEnd);
-            
+
             if (Text.Length > 0 && start < 0)
             {
                 // Make sure that start is not more negative than the text length
@@ -629,7 +629,7 @@ namespace Intersect.Client.Framework.Gwen.Control
 
             // How long is the text we are inserting in place of the selection?
             var replacementLength = replacement?.Length ?? 0;
-            
+
             // Bound it to the limit
             replacementLength = Math.Min(replacementLength, maximumReplacementLength);
 
@@ -655,7 +655,7 @@ namespace Intersect.Client.Framework.Gwen.Control
 
             DeleteText(start, end - start, playSound);
 
-            // Move the cursor to the start of the selection, 
+            // Move the cursor to the start of the selection,
             // since the end is probably outside of the string now.
             mCursorPos = start;
             mCursorEnd = start;
@@ -735,7 +735,7 @@ namespace Intersect.Client.Framework.Gwen.Control
             }
 
             // The ideal position is for the caret to be right in the middle
-            var idealx = (int) (-caretPos + Width * 0.5f);
+            var idealx = (int)(-caretPos + Width * 0.5f);
 
             // Don't show too much whitespace to the right
             if (idealx + TextWidth < Width - TextPadding.Right - Padding.Right)
@@ -780,9 +780,9 @@ namespace Intersect.Client.Framework.Gwen.Control
             MaximumLength = val;
         }
 
-        public override JObject GetJson()
+        public override JObject GetJson(bool isRoot = default)
         {
-            var obj = base.GetJson();
+            var obj = base.GetJson(isRoot);
             obj.Add("AddTextSound", mAddTextSound);
             obj.Add("RemoveTextSound", mRemoveTextSound);
             obj.Add("SubmitSound", mSubmitSound);
@@ -790,22 +790,22 @@ namespace Intersect.Client.Framework.Gwen.Control
             return base.FixJson(obj);
         }
 
-        public override void LoadJson(JToken obj)
+        public override void LoadJson(JToken obj, bool isRoot = default)
         {
             base.LoadJson(obj);
             if (obj["AddTextSound"] != null)
             {
-                mAddTextSound = (string) obj["AddTextSound"];
+                mAddTextSound = (string)obj["AddTextSound"];
             }
 
             if (obj["RemoveTextSound"] != null)
             {
-                mRemoveTextSound = (string) obj["RemoveTextSound"];
+                mRemoveTextSound = (string)obj["RemoveTextSound"];
             }
 
             if (obj["SubmitSound"] != null)
             {
-                mSubmitSound = (string) obj["SubmitSound"];
+                mSubmitSound = (string)obj["SubmitSound"];
             }
         }
 

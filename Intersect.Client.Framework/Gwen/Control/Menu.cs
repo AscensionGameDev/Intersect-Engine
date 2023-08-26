@@ -318,9 +318,9 @@ namespace Intersect.Client.Framework.Gwen.Control
             return true;
         }
 
-        public override JObject GetJson()
+        public override JObject GetJson(bool isRoot = default)
         {
-            var obj = base.GetJson();
+            var obj = base.GetJson(isRoot);
             if (!(this is CheckBox))
             {
                 obj.Add("BackgroundTemplate", mBackgroundTemplateFilename);
@@ -332,32 +332,32 @@ namespace Intersect.Client.Framework.Gwen.Control
             return base.FixJson(obj);
         }
 
-        public override void LoadJson(JToken obj)
+        public override void LoadJson(JToken obj, bool isRoot = default)
         {
             base.LoadJson(obj);
             if (obj["BackgroundTemplate"] != null)
             {
                 SetBackgroundTemplate(
                     GameContentManager.Current.GetTexture(
-                        Framework.Content.TextureType.Gui, (string) obj["BackgroundTemplate"]
-                    ), (string) obj["BackgroundTemplate"]
+                        Framework.Content.TextureType.Gui, (string)obj["BackgroundTemplate"]
+                    ), (string)obj["BackgroundTemplate"]
                 );
             }
 
             if (obj["ItemTextColor"] != null)
             {
-                mItemNormalTextColor = Color.FromString((string) obj["ItemTextColor"]);
+                mItemNormalTextColor = Color.FromString((string)obj["ItemTextColor"]);
             }
 
             if (obj["ItemHoveredTextColor"] != null)
             {
-                mItemHoverTextColor = Color.FromString((string) obj["ItemHoveredTextColor"]);
+                mItemHoverTextColor = Color.FromString((string)obj["ItemHoveredTextColor"]);
             }
 
             if (obj["ItemFont"] != null && obj["ItemFont"].Type != JTokenType.Null)
             {
-                var fontArr = ((string) obj["ItemFont"]).Split(',');
-                mItemFontInfo = (string) obj["ItemFont"];
+                var fontArr = ((string)obj["ItemFont"]).Split(',');
+                mItemFontInfo = (string)obj["ItemFont"];
                 mItemFont = GameContentManager.Current.GetFont(fontArr[0], int.Parse(fontArr[1]));
             }
 
@@ -369,7 +369,7 @@ namespace Intersect.Client.Framework.Gwen.Control
             var menuItems = Children.Where(x => x is MenuItem).ToArray();
             foreach (var item in menuItems)
             {
-                var itm = (MenuItem) item;
+                var itm = (MenuItem)item;
                 if (mItemFont != null)
                 {
                     itm.Font = mItemFont;

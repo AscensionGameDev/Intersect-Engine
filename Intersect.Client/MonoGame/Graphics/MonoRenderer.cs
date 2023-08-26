@@ -199,7 +199,7 @@ namespace Intersect.Client.MonoGame.Graphics
                 var displayBounds = Sdl2.GetDisplayBounds();
                 var currentDisplayBounds = displayBounds[0];
                 mGameWindow.Position = new Microsoft.Xna.Framework.Point(
-                    currentDisplayBounds.x + (currentDisplayBounds.w - mScreenWidth) / 2, 
+                    currentDisplayBounds.x + (currentDisplayBounds.w - mScreenWidth) / 2,
                     currentDisplayBounds.y + (currentDisplayBounds.h - mScreenHeight) / 2
                 );
             }
@@ -248,8 +248,17 @@ namespace Intersect.Client.MonoGame.Graphics
                 UpdateGraphicsState(mScreenWidth, mScreenHeight);
             }
 
-            StartSpritebatch(mCurrentView, GameBlendModes.None, null, null, true, null);
+            return RecreateSpriteBatch();
+        }
 
+        protected override bool RecreateSpriteBatch()
+        {
+            if (mSpriteBatchBegan)
+            {
+                EndSpriteBatch();
+            }
+
+            StartSpritebatch(mCurrentView, GameBlendModes.None, null, null, true, null);
             return true;
         }
 
@@ -342,11 +351,13 @@ namespace Intersect.Client.MonoGame.Graphics
                 }
 
                 mSpriteBatch.Begin(
-                    drawImmediate ? SpriteSortMode.Immediate : SpriteSortMode.Deferred, blend, SamplerState.PointClamp,
-                    null, rs, useEffect,
-                    Matrix.CreateRotationZ(0f) *
-                    Matrix.CreateScale(new Vector3(1, 1, 1)) *
-                    Matrix.CreateTranslation(-view.X, -view.Y, 0)
+                    drawImmediate ? SpriteSortMode.Immediate : SpriteSortMode.Deferred,
+                    blend,
+                    SamplerState.PointClamp,
+                    null,
+                    rs,
+                    useEffect,
+                    CreateViewMatrix(view)
                 );
 
                 mCurrentSpriteView = view;
@@ -396,7 +407,7 @@ namespace Intersect.Client.MonoGame.Graphics
             mGraphicsDevice.SetRenderTarget(mScreenshotRenderTarget);
             mGraphicsDevice.BlendState = mNormalState;
             mGraphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
-            mGraphicsDevice.SamplerStates[0] = SamplerState.LinearClamp;
+            mGraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
             mGraphicsDevice.DepthStencilState = DepthStencilState.None;
             ((MonoTileBuffer)buffer).Draw(mBasicEffect, mCurrentView);
         }
@@ -893,6 +904,13 @@ namespace Intersect.Client.MonoGame.Graphics
             return new Pointf(size.X * fontScale, size.Y * fontScale);
         }
 
+        private Matrix CreateViewMatrix(FloatRect view)
+        {
+            return Matrix.CreateRotationZ(0f) *
+                   Matrix.CreateTranslation(-view.X, -view.Y, 0) *
+                   Matrix.CreateScale(new Vector3(_scale));
+        }
+        
         public override void SetView(FloatRect view)
         {
             mCurrentView = view;
@@ -901,9 +919,7 @@ namespace Intersect.Client.MonoGame.Graphics
             projection.M41 += -0.5f * projection.M11;
             projection.M42 += -0.5f * projection.M22;
             mBasicEffect.Projection = projection;
-            mBasicEffect.View = Matrix.CreateRotationZ(0f) *
-                                Matrix.CreateScale(new Vector3(1, 1, 1)) *
-                                Matrix.CreateTranslation(-view.X, -view.Y, 0);
+            mBasicEffect.View = CreateViewMatrix(view);
         }
 
         public override bool BeginScreenshot()

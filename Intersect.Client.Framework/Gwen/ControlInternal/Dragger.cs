@@ -163,9 +163,9 @@ namespace Intersect.Client.Framework.Gwen.ControlInternal
         {
         }
 
-        public override JObject GetJson()
+        public override JObject GetJson(bool isRoot = default)
         {
-            var obj = base.GetJson();
+            var obj = base.GetJson(isRoot);
             obj.Add("NormalImage", GetImageFilename(ControlState.Normal));
             obj.Add("HoveredImage", GetImageFilename(ControlState.Hovered));
             obj.Add("ClickedImage", GetImageFilename(ControlState.Clicked));
@@ -177,7 +177,7 @@ namespace Intersect.Client.Framework.Gwen.ControlInternal
             return base.FixJson(obj);
         }
 
-        public override void LoadJson(JToken obj)
+        public override void LoadJson(JToken obj, bool isRoot = default)
         {
             base.LoadJson(obj);
             if (obj["NormalImage"] != null)
