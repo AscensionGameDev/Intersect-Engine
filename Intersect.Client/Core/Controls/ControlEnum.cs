@@ -78,6 +78,8 @@
 
         HoldToZoomOut,
 
+        ToggleFullscreen,
+
     }
 
 }

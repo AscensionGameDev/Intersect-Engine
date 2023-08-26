@@ -284,11 +284,10 @@ namespace Intersect.Client.MonoGame.Input
                 modifier = Keys.Shift;
             }
 
-            // TODO: Make Alt function? For some reason MonoGame / XNA seems to just not capture the alt key properly. GWEN manages to capture it but the game does not?
-            //if (state.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.) || state.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.RightAlt))
-            //{
-            //    modifier = Keys.Alt;
-            //}
+            if (state.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.LeftAlt) || state.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.RightAlt))
+            {
+                modifier = Keys.Alt;
+            }
 
             return modifier;
         }

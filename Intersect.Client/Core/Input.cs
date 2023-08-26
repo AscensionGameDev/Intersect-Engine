@@ -2,6 +2,7 @@ using System;
 using Intersect.Admin.Actions;
 using Intersect.Client.Core.Controls;
 using Intersect.Client.Framework.GenericClasses;
+using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
 using Intersect.Client.Interface;
@@ -173,6 +174,15 @@ namespace Intersect.Client.Core
                             case Control.ToggleZoomOut:
                             {
                                 HandleZoomOut();
+                                break;
+                            }
+
+                            case Control.ToggleFullscreen:
+                            {
+                                Globals.Database.FullScreen = !Globals.Database.FullScreen;
+                                Globals.Database.SavePreferences();
+                                Graphics.Renderer.OverrideResolution = Resolution.Empty;
+                                Graphics.Renderer.Init();
                                 break;
                             }
 
