@@ -282,6 +282,7 @@ namespace Intersect.Server.Entities.Events
             pkt.Description = MyPage.Description;
             pkt.Graphic = MyGraphic;
             pkt.RenderLayer = (byte) mRenderLayer;
+            pkt.Trigger = Trigger;
 
             return pkt;
         }

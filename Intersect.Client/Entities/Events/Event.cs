@@ -40,6 +40,8 @@ namespace Intersect.Client.Entities.Events
 
         public bool WalkingAnim { get; set; } = true;
 
+        public EventTrigger Trigger { get; set; }
+
         protected override Pointf CenterOffset
         {
             get
@@ -80,6 +82,7 @@ namespace Intersect.Client.Entities.Events
             Desc = eventEntityPacket.Description;
             Graphic = eventEntityPacket.Graphic;
             RenderLevel = eventEntityPacket.RenderLayer;
+            Trigger = eventEntityPacket.Trigger;
 
             _drawCompletedWithoutTexture = Graphic.Type != EventGraphicType.Tileset;
 

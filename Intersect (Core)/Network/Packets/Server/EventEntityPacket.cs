@@ -1,4 +1,5 @@
-﻿using Intersect.GameObjects.Events;
+﻿using Intersect.Enums;
+using Intersect.GameObjects.Events;
 using MessagePack;
 
 namespace Intersect.Network.Packets.Server
@@ -34,6 +35,9 @@ namespace Intersect.Network.Packets.Server
 
         [Key(29)]
         public byte RenderLayer { get; set; }
+
+        [Key(30)]
+        public EventTrigger Trigger { get; set; }
 
     }
 
