@@ -724,6 +724,7 @@ namespace Intersect.Client.Localization
                 {"holdtozoomin", "Hold to Zoom In:"},
                 {"togglezoomout", "Toggle Zoom Out:"},
                 {"holdtozoomout", "Hold to Zoom Out:"},
+                {"togglefullscreen", "Toggle Fullscreen:"},
             };
 
             public static LocalizedString listening = @"Listening";
