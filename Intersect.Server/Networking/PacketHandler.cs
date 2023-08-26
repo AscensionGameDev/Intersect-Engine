@@ -1885,37 +1885,42 @@ namespace Intersect.Server.Networking
                 return;
             }
 
-            if (packet.CraftId == default)
+            lock(player.EntityLock)
             {
-                player.CraftingState = default;
-            }
+                //if player hit stop button in crafting window
+                if (packet.CraftId == default)
+                {
+                    player.CraftingState = default;
+                    return;
+                }
 
-            if (!CraftBase.TryGet(packet.CraftId, out var craftDescriptor))
-            {
-                Log.Warn($"Player {player.Id} tried to craft {packet.CraftId} which does not exist.");
-                return;
-            }
+                if (!CraftBase.TryGet(packet.CraftId, out var craftDescriptor))
+                {
+                    Log.Warn($"Player {player.Id} tried to craft {packet.CraftId} which does not exist.");
+                    return;
+                }
 
-            if (player.OpenCraftingTableId == default)
-            {
-                Log.Warn($"Player {player.Id} tried to craft {packet.CraftId} without having opened a table yet.");
-                return;
-            }
+                if (player.OpenCraftingTableId == default)
+                {
+                    Log.Warn($"Player {player.Id} tried to craft {packet.CraftId} without having opened a table yet.");
+                    return;
+                }
 
-            if (player.CraftingState != default)
-            {
-                PacketSender.SendChatMsg(player, Strings.Crafting.AlreadyCrafting, ChatMessageType.Crafting, CustomColors.Alerts.Error);
-                return;
-            }
+                if (player.CraftingState != default)
+                {
+                    PacketSender.SendChatMsg(player, Strings.Crafting.AlreadyCrafting, ChatMessageType.Crafting, CustomColors.Alerts.Error);
+                    return;
+                }
 
-            player.CraftingState = new CraftingState
-            {
-                Id = packet.CraftId,
-                CraftCount = packet.Count,
-                RemainingCount = packet.Count,
-                DurationPerCraft = craftDescriptor.Time,
-                NextCraftCompletionTime = Timing.Global.Milliseconds + craftDescriptor.Time
-            };
+                player.CraftingState = new CraftingState
+                {
+                    Id = packet.CraftId,
+                    CraftCount = packet.Count,
+                    RemainingCount = packet.Count,
+                    DurationPerCraft = craftDescriptor.Time,
+                    NextCraftCompletionTime = Timing.Global.Milliseconds + craftDescriptor.Time
+                };
+            }
         }
 
         //CloseBankPacket
