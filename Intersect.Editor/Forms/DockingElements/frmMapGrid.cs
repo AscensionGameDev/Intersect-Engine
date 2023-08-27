@@ -10,6 +10,8 @@ using Microsoft.Xna.Framework.Graphics;
 
 using WeifenLuo.WinFormsUI.Docking;
 
+using Graphics = Intersect.Editor.Core.Graphics;
+
 namespace Intersect.Editor.Forms.DockingElements
 {
 

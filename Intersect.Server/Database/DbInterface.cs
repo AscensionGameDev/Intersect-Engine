@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Data.Common;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
@@ -36,7 +37,8 @@ using Intersect.Server.Networking;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 
-using MySql.Data.MySqlClient;
+using MySqlConnector;
+using LogLevel = Intersect.Logging.LogLevel;
 
 namespace Intersect.Server.Database
 {
@@ -107,13 +109,18 @@ namespace Intersect.Server.Database
         /// </summary>
         /// <param name="readOnly">Defines whether or not the context should initialize with change tracking. If readonly is true then SaveChanges will not work.</param>
         /// <returns></returns>
-        public static PlayerContext CreatePlayerContext(bool readOnly = true)
+        public static PlayerContext CreatePlayerContext(bool readOnly = true, bool explicitLoad = false)
         {
             return new PlayerContext(
-                    CreateConnectionStringBuilder(
-                        Options.PlayerDb ?? throw new InvalidOperationException(), PlayersDbFilename
-                    ), Options.PlayerDb.Type, readOnly, playerDbLogger, Options.PlayerDb.LogLevel
-                );
+                CreateConnectionStringBuilder(
+                    Options.PlayerDb ?? throw new InvalidOperationException(), PlayersDbFilename
+                ),
+                Options.PlayerDb.Type,
+                logger: playerDbLogger,
+                logLevel: Options.PlayerDb.LogLevel,
+                readOnly: readOnly,
+                explicitLoad: explicitLoad
+            );
         }
 
         internal static LoggingContext CreateLoggingContext(bool readOnly = true)
@@ -389,7 +396,7 @@ namespace Intersect.Server.Database
 
         public static string UsernameFromEmail(string email)
         {
-            var user = User.FindFromEmail(email);
+            var user = User.FindByEmail(email);
             if (user != null)
             {
                 return user.Name;
@@ -397,18 +404,89 @@ namespace Intersect.Server.Database
             return null;
         }
 
-        public static Player GetUserCharacter(User user, Guid characterId)
+        public static Player GetUserCharacter(User user, Guid playerId, bool explicitLoad = false)
         {
-            if (user == null) return null;
-            foreach (var character in user.Players)
+            if (user == default)
             {
-                if (character.Id == characterId)
+                return default;
+            }
+
+            foreach (var player in user.Players)
+            {
+                if (player.Id != playerId)
                 {
-                    return character;
+                    continue;
                 }
+
+                if (!explicitLoad)
+                {
+                    return player;
+                }
+
+                try
+                {
+                    using var playerContext = CreatePlayerContext(readOnly: true, explicitLoad: false);
+                    var playerEntry = playerContext.Players.Attach(player);
+                    playerEntry.Collection(p => p.Items).Query().Load();
+                    playerEntry.Collection(player => player.Bank).Load();
+                    playerEntry.Collection(player => player.Hotbar).Load();
+                    playerEntry.Collection(player => player.Items).Load();
+                    playerEntry.Collection(player => player.Quests).Load();
+                    playerEntry.Collection(player => player.Spells).Load();
+                    playerEntry.Collection(player => player.Variables).Load();
+                    _ = Player.Validate(player);
+                }
+                catch (Exception exception)
+                {
+                    Debugger.Break();
+                    Log.Error(exception);
+                    throw new Exception($"Error during explicit load of player {BitConverter.ToString(playerId.ToByteArray()).Replace("-", string.Empty)}", exception);
+                }
+
+                return player;
             }
 
             return null;
+        }
+        
+        public static bool TryRegister(
+            string username,
+            string email,
+            string password,
+            [NotNullWhen(true)] out User? user
+        )
+        {
+            try
+            {
+                var rawSaltData = RandomNumberGenerator.GetBytes(20);
+                var rawSalt = Convert.ToBase64String(rawSaltData);
+                var encodedSaltData = Encoding.UTF8.GetBytes(rawSalt);
+                var saltData = SHA256.HashData(encodedSaltData);
+                var salt = BitConverter.ToString(saltData).Replace("-", string.Empty);
+
+                user = new User
+                {
+                    Name = username,
+                    Email = email,
+                    Salt = salt,
+                    Password = User.SaltPasswordHash(password, salt),
+                    Power = UserRights.None,
+                };
+
+                if (User.Count() == 0)
+                {
+                    user.Power = UserRights.Admin;
+                }
+
+                user.Save(create: true);
+                return true;
+            }
+            catch (Exception exception)
+            {
+                Log.Error(exception);
+                user = default;
+                return false;
+            }
         }
 
         public static void CreateAccount(
@@ -588,7 +666,7 @@ namespace Intersect.Server.Database
                     switch (gameObjectType)
                     {
                         case GameObjectType.Animation:
-                            foreach (var anim in context.Animations)
+                            foreach (var anim in context.Animations) // TODO: fix "The data is NULL at ordinal 2"
                             {
                                 AnimationBase.Lookup.Set(anim.Id, anim);
                             }

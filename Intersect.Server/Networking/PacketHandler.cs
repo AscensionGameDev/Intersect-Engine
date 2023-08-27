@@ -2459,26 +2459,30 @@ namespace Intersect.Server.Networking
         public void HandlePacket(Client client, SelectCharacterPacket packet)
         {
             if (client.User == null)
-                return;
-
-            var character = DbInterface.GetUserCharacter(client.User, packet.CharacterId);
-            if (character != null)
             {
-                client.LoadCharacter(character);
+                return;
+            }
 
-                UserActivityHistory.LogActivity(client.User?.Id ?? Guid.Empty, client?.Entity?.Id ?? Guid.Empty, client?.GetIp(), UserActivityHistory.PeerType.Client, UserActivityHistory.UserAction.SelectPlayer, $"{client?.Name},{client?.Entity?.Name}");
+            var character = DbInterface.GetUserCharacter(client.User, packet.CharacterId, true);
+            if (character == null)
+            {
+                return;
+            }
 
-                try
-                {
-                    client.Entity?.SetOnline();
-                    PacketSender.SendJoinGame(client);
-                }
-                catch (Exception exception)
-                {
-                    Log.Warn(exception);
-                    PacketSender.SendError(client, Strings.Account.loadfail);
-                    client.Logout();
-                }
+            client.LoadCharacter(character);
+
+            UserActivityHistory.LogActivity(client.User?.Id ?? Guid.Empty, client?.Entity?.Id ?? Guid.Empty, client?.GetIp(), UserActivityHistory.PeerType.Client, UserActivityHistory.UserAction.SelectPlayer, $"{client?.Name},{client?.Entity?.Name}");
+
+            try
+            {
+                client.Entity?.SetOnline();
+                PacketSender.SendJoinGame(client);
+            }
+            catch (Exception exception)
+            {
+                Log.Warn(exception);
+                PacketSender.SendError(client, Strings.Account.loadfail);
+                client.Logout();
             }
         }
 

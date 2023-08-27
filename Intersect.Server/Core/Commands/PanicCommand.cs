@@ -1,3 +1,4 @@
+using Intersect.Extensions;
 using Intersect.Logging;
 using Intersect.Server.Core.CommandParsing;
 using Intersect.Server.Core.CommandParsing.Arguments;
@@ -10,6 +11,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using Intersect.Reflection;
 
 namespace Intersect.Server.Core.Commands
 {
@@ -82,53 +84,51 @@ namespace Intersect.Server.Core.Commands
                     {
                         _ = dumpBuilder.AppendLine(StringifyThreadInfo(thread, culture, 0));
 
-                        var blockingObjects = thread.BlockingObjects.ToArray();
-                        if (blockingObjects.Length > 0)
-                        {
-                            _ = dumpBuilder.AppendFormat(culture, "  Blocked on {0,3} locks\n", blockingObjects.Length);
-
-                            foreach (var blockingObject in thread.BlockingObjects)
-                            {
-                                _ = dumpBuilder.AppendFormat(
-                                    culture,
-                                    "{0}ID: 0x{1,-16:X} Taken: {2} Reason: {3,-14} HasSingleOwner: {4}, Lock RecursionCount: {5,2}\n",
-                                    new string(' ', 4),
-                                    blockingObject.Object,
-                                    blockingObject.Taken,
-                                    blockingObject.Reason,
-                                    blockingObject.HasSingleOwner,
-                                    blockingObject.RecursionCount
-                                );
-
-                                _ = dumpBuilder.AppendLine("    Owning Threads:");
-
-                                foreach (var owner in blockingObject.Owners)
-                                {
-                                    _ = dumpBuilder.AppendLine(StringifyThreadInfo(owner, culture, 6));
-                                }
-
-                                _ = dumpBuilder.AppendLine("    Waiting Threads:");
-
-                                foreach (var waiter in blockingObject.Waiters)
-                                {
-                                    _ = dumpBuilder.AppendLine(StringifyThreadInfo(waiter, culture, 6));
-                                }
-                            }
-                        }
+                        // var blockingObjects = thread.BlockingObjects.ToArray();
+                        // if (blockingObjects.Length > 0)
+                        // {
+                        //     _ = dumpBuilder.AppendFormat(culture, "  Blocked on {0,3} locks\n", blockingObjects.Length);
+                        //
+                        //     foreach (var blockingObject in thread.BlockingObjects)
+                        //     {
+                        //         _ = dumpBuilder.AppendFormat(
+                        //             culture,
+                        //             "{0}ID: 0x{1,-16:X} Taken: {2} Reason: {3,-14} HasSingleOwner: {4}, Lock RecursionCount: {5,2}\n",
+                        //             new string(' ', 4),
+                        //             blockingObject.Object,
+                        //             blockingObject.Taken,
+                        //             blockingObject.Reason,
+                        //             blockingObject.HasSingleOwner,
+                        //             blockingObject.RecursionCount
+                        //         );
+                        //
+                        //         _ = dumpBuilder.AppendLine("    Owning Threads:");
+                        //
+                        //         foreach (var owner in blockingObject.Owners)
+                        //         {
+                        //             _ = dumpBuilder.AppendLine(StringifyThreadInfo(owner, culture, 6));
+                        //         }
+                        //
+                        //         _ = dumpBuilder.AppendLine("    Waiting Threads:");
+                        //
+                        //         foreach (var waiter in blockingObject.Waiters)
+                        //         {
+                        //             _ = dumpBuilder.AppendLine(StringifyThreadInfo(waiter, culture, 6));
+                        //         }
+                        //     }
+                        // }
 
                         _ = dumpBuilder.AppendLine("  Call Stack:");
-                        var stackFrames = thread.StackTrace.ToArray();
+                        var stackFrames = thread.EnumerateStackTrace().ToArray();
                         foreach (var stackFrame in stackFrames)
                         {
                             _ = dumpBuilder.AppendFormat(
                                 culture,
-                                "    {0,13} 0x{1,-16:X} 0x{2,-16:X} {3,20} {4,-4} 0x{5,-16:X} {6}\n",
+                                "    {0,13} 0x{1,-16:X} 0x{2,-16:X} {3,-4} {4}\n",
                                 stackFrame.Kind,
                                 stackFrame.StackPointer,
                                 stackFrame.InstructionPointer,
-                                stackFrame.ModuleName,
                                 stackFrame.Method?.CompilationType ?? MethodCompilationType.None,
-                                stackFrame.Method?.IL?.Address ?? 0,
                                 stackFrame.Method?.GetFullSignature() ?? "<unknown>"
                             );
                         }

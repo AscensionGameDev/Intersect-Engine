@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using Microsoft.Diagnostics.Runtime;
 
 namespace Intersect.Reflection
 {
@@ -34,5 +35,14 @@ namespace Intersect.Reflection
         }
 
         public static string GetFullSignature(this MethodInfo methodInfo) => GetSignature(methodInfo, true);
+
+        public static string GetSignature(this ClrMethod method, bool fullyQualified = false)
+        {
+            Debug.Assert(method != null);
+
+            return method.Signature ?? string.Empty;
+        }
+
+        public static string GetFullSignature(this ClrMethod method) => method.GetSignature(true);
     }
 }

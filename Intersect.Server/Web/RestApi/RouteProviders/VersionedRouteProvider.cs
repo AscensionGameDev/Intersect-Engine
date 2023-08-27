@@ -6,6 +6,7 @@ using System.Web.Http.Controllers;
 using System.Web.Http.Routing;
 
 using Intersect.Server.Web.RestApi.Routes;
+using IInlineConstraintResolver = System.Web.Http.Routing.IInlineConstraintResolver;
 
 namespace Intersect.Server.Web.RestApi.RouteProviders
 {

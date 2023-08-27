@@ -1,7 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net462</TargetFramework>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -21,16 +20,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="Microsoft.CSharp" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\Intersect (Core)\Intersect.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="AscensionGameDev.Intersect.Building" Version="0.8.0.13-beta" GeneratePathProperty="True" />
-    <PackageReference Include="AscensionGameDev.Lidgren.Network" Version="1.7.7518.2930-debug" />
+    <PackageReference Include="AscensionGameDev.Lidgren.Network" Version="2.0.0.30-beta" />
     <PackageReference Include="System.Collections.Concurrent" Version="4.3.0" />
   </ItemGroup>
 

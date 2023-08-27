@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using Intersect.Config;
+using Intersect.Extensions;
 using Intersect.Server.Database.PlayerData.Api;
 using Intersect.Server.Database.PlayerData.Migrations;
 using Intersect.Server.Database.PlayerData.Players;
@@ -32,9 +33,18 @@ namespace Intersect.Server.Database.PlayerData
             DbConnectionStringBuilder connectionStringBuilder,
             DatabaseOptions.DatabaseType databaseType,
             bool readOnly = false,
+            bool explicitLoad = false,
             Intersect.Logging.Logger logger = null,
             Intersect.Logging.LogLevel logLevel = Intersect.Logging.LogLevel.None
-        ) : base(connectionStringBuilder, databaseType, logger, logLevel, readOnly, false)
+        ) : base(
+            connectionStringBuilder,
+            databaseType,
+            logger,
+            logLevel,
+            readOnly,
+            explicitLoad,
+            false
+        )
         {
         }
 

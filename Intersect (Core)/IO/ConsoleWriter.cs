@@ -61,11 +61,6 @@ namespace Intersect.IO
             return TextWriter.InitializeLifetimeService();
         }
 
-        public override ObjRef CreateObjRef(Type requestedType)
-        {
-            return TextWriter.CreateObjRef(requestedType);
-        }
-
         public override void Close()
         {
             TextWriter.Close();

@@ -262,7 +262,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                     );
                 }
 
-                var user = Database.PlayerData.User.Find(player.UserId);
+                var user = Database.PlayerData.User.FindById(player.UserId);
                 if (user == null)
                 {
                     return Request.CreateErrorResponse(

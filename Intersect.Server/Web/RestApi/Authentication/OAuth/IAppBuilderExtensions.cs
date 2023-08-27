@@ -5,6 +5,7 @@ using Intersect.Server.Web.RestApi.Middleware;
 using Microsoft.Owin;
 
 using Owin;
+using PathString = Microsoft.Owin.PathString;
 
 namespace Intersect.Server.Web.RestApi.Authentication.OAuth
 {

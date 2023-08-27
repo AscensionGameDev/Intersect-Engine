@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+using Timer = System.Windows.Forms.Timer;
 
 namespace Intersect.Editor.Forms.Controls
 {

@@ -11,6 +11,7 @@ using Microsoft.Owin.Security.OAuth;
 
 using Owin;
 using Owin.Security.AesDataProtectorProvider;
+using PathString = Microsoft.Owin.PathString;
 
 namespace Intersect.Server.Web.RestApi.Authentication.OAuth
 {

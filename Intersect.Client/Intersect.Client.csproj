@@ -1,9 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>WinExe</OutputType>
-    <TargetFramework>net462</TargetFramework>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <OutputType>WinExe</OutputType>
+    <PublishSingleFile>true</PublishSingleFile>
+    <SelfContained>true</SelfContained>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -15,18 +16,12 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <FileAlignment>512</FileAlignment>
-    <DebugType>embedded</DebugType>
   </PropertyGroup>
 
   <ItemGroup>
     <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
       <_Parameter1>Intersect.Tests.Client</_Parameter1>
     </AssemblyAttribute>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Windows.Forms" />
   </ItemGroup>
 
   <ItemGroup>
@@ -59,13 +54,10 @@
     <EmbeddedResource Include="Resources\openal32.dll" />
     <EmbeddedResource Include="Resources\Shaders\radialgradient.xnb" />
     <None Include="app.manifest" />
-    <None Include="FodyWeavers.xml">
-      <SubType>Designer</SubType>
-    </None>
   </ItemGroup>
 
   <ItemGroup Label="Package Embedded Resources">
-    <EmbeddedResource Include="$(PkgMonoGame_Framework_DesktopGL)\lib\net452\MonoGame.Framework.dll">
+    <EmbeddedResource Include="$(PkgMonoGame_Framework_DesktopGL)\lib\net6.0\MonoGame.Framework.dll">
       <Link>Resources\MonoGame.Framework.dll</Link>
     </EmbeddedResource>
     <EmbeddedResource Include="$(PkgMonoGame_Framework_DesktopGL)\runtimes\win-x86\native\SDL2.dll">
@@ -86,8 +78,8 @@
     <EmbeddedResource Include="$(PkgMonoGame_Framework_DesktopGL)\runtimes\linux-x64\native\libSDL2-2.0.so.0" WithCulture="false">
       <Link>Resources\libSDL2-2.0.so.0</Link>
     </EmbeddedResource>
-    <EmbeddedResource Include="$(PkgMonoGame_Framework_DesktopGL)\runtimes\osx\native\libSDL2-2.0.0.dylib">
-      <Link>Resources\libSDL2-2.0.0.dylib</Link>
+    <EmbeddedResource Include="$(PkgMonoGame_Framework_DesktopGL)\runtimes\osx\native\libSDL2.dylib">
+      <Link>Resources\libSDL2.dylib</Link>
     </EmbeddedResource>
     <EmbeddedResource Include="$(PkgMonoGame_Framework_DesktopGL)\runtimes\osx\native\libopenal.1.dylib">
       <Link>Resources\libopenal.1.dylib</Link>
@@ -95,16 +87,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Costura.Fody" Version="5.7.0">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="Fody" Version="6.6.4">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="MonoGame.Content.Builder" Version="3.7.0.9" />
-    <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.0.1641" GeneratePathProperty="True" />
+    <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.1.303" GeneratePathProperty="True" />
   </ItemGroup>
 
 </Project>

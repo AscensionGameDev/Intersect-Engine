@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net462</TargetFramework>
+    <Nullable>warnings</Nullable>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -22,6 +22,9 @@
 
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Diagnostics.Runtime">
+      <HintPath>..\..\..\..\..\.nuget\packages\microsoft.diagnostics.runtime\2.4.416101\lib\net6.0\Microsoft.Diagnostics.Runtime.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
   <ItemGroup>
@@ -59,61 +62,67 @@
 
   <ItemGroup>
     <PackageReference Include="AscensionGameDev.Intersect.Rsa" Version="0.8.0.9-beta" />
-    <PackageReference Include="Ceras" Version="4.0.40" />
-    <PackageReference Include="CommandLineParser" Version="2.7.82" />
-    <PackageReference Include="K4os.Compression.LZ4" Version="1.1.10" />
-    <PackageReference Include="MathNet.Numerics" Version="4.9.0" />
-    <PackageReference Include="MessagePack" Version="2.2.85" />
-    <PackageReference Include="MessagePack.Annotations" Version="2.2.85" />
-    <PackageReference Include="MessagePackAnalyzer" Version="2.2.85" />
-    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="1.1.0" />
-    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.0.0" />
-    <PackageReference Include="Microsoft.CodeAnalysis.VersionCheckAnalyzer" Version="3.0.0" />
-    <PackageReference Include="Microsoft.CodeQuality.Analyzers" Version="3.0.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" Version="2.1.3" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Analyzers" Version="2.1.3" />
-    <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="2.1.2" />
-    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="2.1.2" />
-    <PackageReference Include="Microsoft.Extensions.Configuration" Version="3.1.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="3.1.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="3.1.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.1.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="3.1.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="3.1.0" />
-    <PackageReference Include="Microsoft.Extensions.Options" Version="3.1.0" />
-    <PackageReference Include="Microsoft.Extensions.Primitives" Version="3.1.0" />
-    <PackageReference Include="Microsoft.NetCore.Analyzers" Version="3.0.0" />
-    <PackageReference Include="Microsoft.NetFramework.Analyzers" Version="3.0.0" />
-    <PackageReference Include="Microsoft.VisualStudio.Validation" Version="15.5.31" />
-    <PackageReference Include="ncalc" Version="1.3.8" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="Semver" Version="2.0.6" />
+    <PackageReference Include="Ceras" Version="4.1.7" />
+    <PackageReference Include="CommandLineParser" Version="2.9.1" />
+    <PackageReference Include="K4os.Compression.LZ4" Version="1.3.5" />
+    <PackageReference Include="MathNet.Numerics" Version="5.0.0" />
+    <PackageReference Include="MessagePack" Version="2.5.108" />
+    <PackageReference Include="MessagePackAnalyzer" Version="2.5.108">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Diagnostics.Runtime" Version="3.0.442202" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" Version="7.0.4" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Analyzers" Version="7.0.4" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="7.0.4" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Configuration" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="7.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Primitives" Version="7.0.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Validation" Version="17.0.71" />
+    <PackageReference Include="Microsoft.Win32.Primitives" Version="4.3.0" />
+    <PackageReference Include="NCalcSync" Version="3.6.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="Semver" Version="2.3.0" />
+    <PackageReference Include="Serilog" Version="2.12.0" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="4.1.0" />
+    <PackageReference Include="Serilog.Sinks.Debug" Version="2.0.0" />
+    <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
     <PackageReference Include="System.Buffers" Version="4.5.1" />
     <PackageReference Include="System.Collections" Version="4.3.0" />
-    <PackageReference Include="System.Collections.Immutable" Version="5.0.0" />
-    <PackageReference Include="System.ComponentModel.Annotations" Version="4.7.0" />
+    <PackageReference Include="System.Collections.Immutable" Version="7.0.0" />
+    <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
     <PackageReference Include="System.Diagnostics.Debug" Version="4.3.0" />
-    <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="4.7.0" />
-    <PackageReference Include="System.Interactive.Async" Version="3.2.0" />
-    <PackageReference Include="System.IO.Abstractions" Version="12.0.4" />
+    <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="7.0.2" />
+    <PackageReference Include="System.Interactive.Async" Version="6.0.1" />
+    <PackageReference Include="System.IO.Abstractions" Version="19.2.4" />
+    <PackageReference Include="System.IO.FileSystem" Version="4.3.0" />
     <PackageReference Include="System.Linq" Version="4.3.0" />
-    <PackageReference Include="System.Linq.Async" Version="4.0.0" />
+    <PackageReference Include="System.Linq.Async" Version="6.0.1" />
     <PackageReference Include="System.Linq.Expressions" Version="4.3.0" />
     <PackageReference Include="System.Linq.Queryable" Version="4.3.0" />
-    <PackageReference Include="System.Memory" Version="4.5.4" />
+    <PackageReference Include="System.Memory" Version="4.5.5" />
+    <PackageReference Include="System.Net.Primitives" Version="4.3.1" />
     <PackageReference Include="System.Numerics.Vectors" Version="4.5.0" />
     <PackageReference Include="System.ObjectModel" Version="4.3.0" />
     <PackageReference Include="System.Reflection" Version="4.3.0" />
-    <PackageReference Include="System.Reflection.Emit" Version="4.6.0" />
-    <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.6.0" />
+    <PackageReference Include="System.Reflection.Emit" Version="4.7.0" />
+    <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.7.0" />
     <PackageReference Include="System.Reflection.Extensions" Version="4.3.0" />
     <PackageReference Include="System.Runtime" Version="4.3.1" />
-    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="4.7.0" />
+    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.0.0" />
     <PackageReference Include="System.Runtime.Extensions" Version="4.3.1" />
+    <PackageReference Include="System.Text.Encoding.Extensions" Version="4.3.0" />
+    <PackageReference Include="System.Text.Encodings.Web" Version="7.0.0" />
     <PackageReference Include="System.Threading" Version="4.3.0" />
-    <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.5.3" />
+    <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.5.4" />
     <PackageReference Include="System.ValueTuple" Version="4.5.0" />
-    <PackageReference Include="TaskParallelLibrary" Version="1.0.2856.0" />
   </ItemGroup>
 
 </Project>

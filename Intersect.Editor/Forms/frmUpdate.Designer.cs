@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Windows.Forms;
 using DarkUI.Controls;
+using Timer = System.Windows.Forms.Timer;
 
 namespace Intersect.Editor.Forms
 {
@@ -43,9 +44,9 @@ namespace Intersect.Editor.Forms
             this.tmrUpdate = new System.Windows.Forms.Timer(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.picLogo)).BeginInit();
             this.SuspendLayout();
-            // 
+            //
             // lblStatus
-            // 
+            //
             this.lblStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblStatus.ForeColor = System.Drawing.Color.White;
             this.lblStatus.Location = new System.Drawing.Point(31, 220);
@@ -54,9 +55,9 @@ namespace Intersect.Editor.Forms
             this.lblStatus.TabIndex = 0;
             this.lblStatus.Text = "Checking for updates, please wait!";
             this.lblStatus.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
+            //
             // picLogo
-            // 
+            //
             this.picLogo.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("picLogo.BackgroundImage")));
             this.picLogo.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.picLogo.Location = new System.Drawing.Point(32, 22);
@@ -64,9 +65,9 @@ namespace Intersect.Editor.Forms
             this.picLogo.Size = new System.Drawing.Size(580, 160);
             this.picLogo.TabIndex = 4;
             this.picLogo.TabStop = false;
-            // 
+            //
             // lblVersion
-            // 
+            //
             this.lblVersion.BackColor = System.Drawing.Color.Transparent;
             this.lblVersion.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblVersion.ForeColor = System.Drawing.Color.Gainsboro;
@@ -76,17 +77,17 @@ namespace Intersect.Editor.Forms
             this.lblVersion.TabIndex = 5;
             this.lblVersion.Text = "Editor v1.0.0.0";
             this.lblVersion.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
+            //
             // progressBar
-            // 
+            //
             this.progressBar.Location = new System.Drawing.Point(32, 246);
             this.progressBar.Name = "progressBar";
             this.progressBar.Size = new System.Drawing.Size(568, 26);
             this.progressBar.TabIndex = 6;
             this.progressBar.Value = 20;
-            // 
+            //
             // lblFiles
-            // 
+            //
             this.lblFiles.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblFiles.ForeColor = System.Drawing.Color.White;
             this.lblFiles.Location = new System.Drawing.Point(28, 275);
@@ -96,9 +97,9 @@ namespace Intersect.Editor.Forms
             this.lblFiles.Text = "20 Files Remaining";
             this.lblFiles.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.lblFiles.Visible = false;
-            // 
+            //
             // lblSize
-            // 
+            //
             this.lblSize.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblSize.ForeColor = System.Drawing.Color.White;
             this.lblSize.Location = new System.Drawing.Point(363, 275);
@@ -108,15 +109,15 @@ namespace Intersect.Editor.Forms
             this.lblSize.Text = "100 MB Left";
             this.lblSize.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.lblSize.Visible = false;
-            // 
+            //
             // tmrUpdate
-            // 
+            //
             this.tmrUpdate.Enabled = true;
             this.tmrUpdate.Interval = 10;
             this.tmrUpdate.Tick += new System.EventHandler(this.tmrUpdate_Tick);
-            // 
+            //
             // FrmUpdate
-            // 
+            //
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));

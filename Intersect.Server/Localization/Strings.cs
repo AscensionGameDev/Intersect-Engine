@@ -97,6 +97,9 @@ namespace Intersect.Server.Localization
                 @"Account registrations are currently blocked by the server.";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString emailfail = @"Failed to send your password reset email at this time. Please try again later.";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString UnknownError = @"An unknown error occurred while saving the user.";
         }
 
         public sealed partial class BagsNamespace : LocaleNamespace

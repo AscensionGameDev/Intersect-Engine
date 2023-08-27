@@ -8,6 +8,8 @@ using Intersect.Utilities;
 
 using Microsoft.Xna.Framework.Graphics;
 
+using Graphics = Intersect.Editor.Core.Graphics;
+
 namespace Intersect.Editor.Content
 {
     public partial class Texture

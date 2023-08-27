@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 using Intersect.Properties;
 using Intersect.Plugins.Interfaces;
 using Intersect.Network;
+using AssemblyExtensions = Intersect.Reflection.AssemblyExtensions;
 
 namespace Intersect.Core
 {
