@@ -754,14 +754,19 @@ namespace Intersect.Client.Entities
             }
 
             var itemQuantityInInventory = GetQuantityOfItemInInventory(itemDescriptor.Id);
+            var availableSpace = FindAvailableBankSpaceForItem(inventorySlot.ItemId);
+
+            if (availableSpace < 1)
+            {
+                ChatboxMsg.AddMessage(new ChatboxMsg(Strings.Bank.NoSpace, CustomColors.Alerts.Error, ChatMessageType.Bank));
+                return;
+            }
 
             if (itemQuantityInInventory < 2)
             {
                 PacketSender.SendDepositItem(inventorySlotIndex, 1, bankSlotIndex);
                 return;
             }
-
-            int availableSpace = FindAvailableBankSpaceForItem(inventorySlot.ItemId);
 
             InputBox.Open(
                 title: Strings.Bank.deposititem,
