@@ -345,19 +345,20 @@ namespace Intersect.Server.Entities
             }
 
             // Calculate the maximum amount that can be deposited, based on quantity and bank space.
-            var depositMultipleItems = mPlayer.FindInventoryItemQuantity(inventoryItemItemId) > 1;
-            var maxAmount = depositMultipleItems ? Math.Min(mPlayer.FindInventoryItemQuantity(inventoryItemItemId),
-                    FindAvailableSpaceForItem(inventoryItemItemId, amount)) : 1;
+            var inventoryQuantity = mPlayer.FindInventoryItemQuantity(inventoryItemItemId);
+            amount = Math.Min(amount, inventoryQuantity);
+            var availableStorageSpace = FindAvailableSpaceForItem(inventoryItemItemId, amount);
+            var maxAmount = Math.Min(inventoryQuantity, availableStorageSpace);
             amount = Math.Min(amount, maxAmount);
 
-            if (amount <= 0)
+            if (amount < 1)
             {
                 PacketSender.SendChatMsg(mPlayer, Strings.Banks.banknospace, ChatMessageType.Bank,
                     CustomColors.Alerts.Error);
                 return false;
             }
 
-            if (depositMultipleItems)
+            if (amount > 1)
             {
                 if (destSlot < 0 || mBank?[destSlot]?.ItemId != Guid.Empty)
                 {
@@ -394,23 +395,25 @@ namespace Intersect.Server.Entities
             {
                 if (CanStoreItem(new Item(inventoryItemItemId, amount), destSlot))
                 {
-                    PacketSender.SendChatMsg(mPlayer,
-                        depositMultipleItems
-                            ? Strings.Banks.DepositSuccessStackable.ToString(amount, inventoryItem.ItemName)
-                            : Strings.Banks.DepositSuccessNonStackable.ToString(inventoryItem.ItemName),
-                        ChatMessageType.Bank, CustomColors.Alerts.Success);
+                    string successMessage;
+                    Item itemToPut;
 
-                    if (depositMultipleItems)
+                    if (amount > 1)
                     {
-                        PutItem(new Item(inventoryItemItemId, amount), destSlot, sendUpdate);
+                        successMessage = Strings.Banks.DepositSuccessStackable.ToString(amount, inventoryItem.ItemName);
+                        itemToPut = new Item(inventoryItemItemId, amount);
                         mPlayer.TryTakeItem(inventoryItemItemId, amount, ItemHandling.Normal, sendUpdate);
                     }
                     else
                     {
-                        PutItem(inventoryItem, destSlot, sendUpdate);
+                        successMessage = Strings.Banks.DepositSuccessNonStackable.ToString(inventoryItem.ItemName);
+                        itemToPut = new Item(inventoryItemItemId, 1);
                         inventoryItem.Set(Item.None);
                         mPlayer.EquipmentProcessItemLoss(slot);
                     }
+
+                    PacketSender.SendChatMsg(mPlayer, successMessage, ChatMessageType.Bank, CustomColors.Alerts.Success);
+                    PutItem(itemToPut, destSlot, sendUpdate);
 
                     if (sendUpdate)
                     {
