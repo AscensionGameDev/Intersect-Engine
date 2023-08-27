@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 
 using Microsoft.Owin;
+using PathString = Microsoft.Owin.PathString;
 
 namespace Intersect.Server.Web.RestApi.Middleware
 {

@@ -1,5 +1,7 @@
 ﻿
 using Microsoft.Owin.Logging;
+using ILogger = Microsoft.Owin.Logging.ILogger;
+using ILoggerFactory = Microsoft.Owin.Logging.ILoggerFactory;
 
 namespace Intersect.Server.Web.RestApi.Logging
 {

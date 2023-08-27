@@ -46,7 +46,7 @@ namespace Intersect.Server.Web.RestApi
                     return default;
                 }
 
-                _intersectUser = IntersectUser.FindOnline(id) ?? IntersectUser.Find(id);
+                _intersectUser = IntersectUser.FindOnline(id) ?? IntersectUser.FindById(id);
 
                 return _intersectUser;
             }

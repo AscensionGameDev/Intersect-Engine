@@ -11,6 +11,8 @@ using Intersect.GameObjects;
 using Intersect.GameObjects.Maps;
 using Intersect.Utilities;
 
+using Graphics = Intersect.Editor.Core.Graphics;
+
 namespace Intersect.Editor.Maps
 {
 
@@ -82,7 +84,7 @@ namespace Intersect.Editor.Maps
          DefaultValue("Normal"), TypeConverter(typeof(MapZoneProperty)), Browsable(true)]
         public string ZoneType
         {
-            get => Strings.MapProperties.zones[(int) mMyMap.ZoneType];
+            get => Strings.MapProperties.zones[(int)mMyMap.ZoneType];
             set
             {
                 Globals.MapEditorWindow.PrepUndoState();
@@ -90,7 +92,7 @@ namespace Intersect.Editor.Maps
                 {
                     if (Strings.MapProperties.zones[i] == value)
                     {
-                        mMyMap.ZoneType = (MapZone) i;
+                        mMyMap.ZoneType = (MapZone)i;
                     }
                 }
 
@@ -104,7 +106,7 @@ namespace Intersect.Editor.Maps
         {
             get
             {
-                var musicList = new List<string> {Strings.General.None};
+                var musicList = new List<string> { Strings.General.None };
                 musicList.AddRange(GameContentManager.SmartSortedMusicNames);
                 mMyMap.Music = musicList.Find(
                     item => string.Equals(item, mMyMap.Music, StringComparison.InvariantCultureIgnoreCase)
@@ -129,7 +131,7 @@ namespace Intersect.Editor.Maps
         {
             get
             {
-                var soundList = new List<string> {Strings.General.None};
+                var soundList = new List<string> { Strings.General.None };
                 soundList.AddRange(GameContentManager.SmartSortedSoundNames);
                 mMyMap.Sound = soundList.Find(
                     item => string.Equals(item, mMyMap.Sound, StringComparison.InvariantCultureIgnoreCase)
@@ -229,8 +231,8 @@ namespace Intersect.Editor.Maps
                 if (mMyMap.PlayerLightIntensity != value)
                 {
                     Globals.MapEditorWindow.PrepUndoState();
-                    var val = Math.Max(value, (byte) 0);
-                    mMyMap.PlayerLightIntensity = (byte) Math.Min(val, (byte) 255);
+                    var val = Math.Max(value, (byte)0);
+                    mMyMap.PlayerLightIntensity = (byte)Math.Min(val, (byte)255);
                     Graphics.TilePreviewUpdated = true;
                     Globals.MapEditorWindow.AddUndoState();
                 }
@@ -584,7 +586,7 @@ namespace Intersect.Editor.Maps
 
         public override bool GetStandardValuesExclusive(ITypeDescriptorContext context)
         {
-            //true will limit to list. false will show the list, 
+            //true will limit to list. false will show the list,
             //but allow free-form entry
             return false;
         }
@@ -614,7 +616,7 @@ namespace Intersect.Editor.Maps
 
         public override bool GetStandardValuesExclusive(ITypeDescriptorContext context)
         {
-            //true will limit to list. false will show the list, 
+            //true will limit to list. false will show the list,
             //but allow free-form entry
             return false;
         }
@@ -644,7 +646,7 @@ namespace Intersect.Editor.Maps
 
         public override bool GetStandardValuesExclusive(ITypeDescriptorContext context)
         {
-            //true will limit to list. false will show the list, 
+            //true will limit to list. false will show the list,
             //but allow free-form entry
             return false;
         }
@@ -674,7 +676,7 @@ namespace Intersect.Editor.Maps
 
         public override bool GetStandardValuesExclusive(ITypeDescriptorContext context)
         {
-            //true will limit to list. false will show the list, 
+            //true will limit to list. false will show the list,
             //but allow free-form entry
             return false;
         }
@@ -704,7 +706,7 @@ namespace Intersect.Editor.Maps
 
         public override bool GetStandardValuesExclusive(ITypeDescriptorContext context)
         {
-            //true will limit to list. false will show the list, 
+            //true will limit to list. false will show the list,
             //but allow free-form entry
             return false;
         }
@@ -733,7 +735,7 @@ namespace Intersect.Editor.Maps
 
         public override bool GetStandardValuesExclusive(ITypeDescriptorContext context)
         {
-            //true will limit to list. false will show the list, 
+            //true will limit to list. false will show the list,
             //but allow free-form entry
             return false;
         }

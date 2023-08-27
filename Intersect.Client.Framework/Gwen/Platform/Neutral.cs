@@ -51,7 +51,7 @@ namespace Intersect.Client.Framework.Gwen.Platform
                 }
             );
 
-            staThread.SetApartmentState(ApartmentState.STA);
+            // staThread.SetApartmentState(ApartmentState.STA);
             staThread.Start();
             staThread.Join();
 

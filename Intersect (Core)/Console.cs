@@ -373,6 +373,7 @@ namespace Intersect
         // TODO: Implement Wait ReadKey
         public static ConsoleKeyInfo ReadKeyWait()
         {
+            
             Context.Check();
 
             var result = Context.Wait(ContextOut.TextWriter.Write, ReadKey);

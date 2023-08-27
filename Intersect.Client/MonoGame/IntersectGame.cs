@@ -22,7 +22,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-
+using Intersect.Client.Framework.Database;
 using Intersect.Utilities;
 
 using MainMenu = Intersect.Client.Interface.Menu.MainMenu;
@@ -82,19 +82,21 @@ namespace Intersect.Client.MonoGame
             {
                 PreferredBackBufferWidth = 800,
                 PreferredBackBufferHeight = 480,
-                PreferHalfPixelOffset = true
+                PreferHalfPixelOffset = true,
+                PreferMultiSampling = true,
             };
 
-            mGraphics.PreparingDeviceSettings += (s, args) =>
+            mGraphics.PreparingDeviceSettings += (_, args) =>
             {
                 args.GraphicsDeviceInformation.PresentationParameters.RenderTargetUsage =
                     RenderTargetUsage.PreserveContents;
+                args.GraphicsDeviceInformation.PresentationParameters.MultiSampleCount = 16;
             };
 
             Content.RootDirectory = "";
             IsMouseVisible = true;
             Globals.ContentManager = new MonoContentManager();
-            Globals.Database = new MonoDatabase();
+            Globals.Database = new JsonDatabase();
 
             // Load configuration.
             ClientConfiguration.LoadAndSave(ClientConfiguration.DefaultPath);
@@ -405,7 +407,7 @@ namespace Intersect.Client.MonoGame
                 case UpdateStatus.Updating:
                     status = Strings.Update.Updating;
                     progressPercent = mUpdater.Progress / 100f;
-                    progress = Strings.Update.Percent.ToString((int) mUpdater.Progress);
+                    progress = Strings.Update.Percent.ToString((int)mUpdater.Progress);
                     filesRemaining = Strings.Update.Files.ToString(mUpdater.FilesRemaining);
                     sizeRemaining = Strings.Update.Size.ToString(mUpdater.GetHumanReadableFileSize(mUpdater.SizeRemaining));
                     break;
@@ -448,10 +450,10 @@ namespace Intersect.Client.MonoGame
             if (updaterProgressBar != null)
             {
                 updateBatch.Draw(
-                    updaterProgressBar, new Rectangle(100, 400, (int) (600 * progressPercent), 32),
+                    updaterProgressBar, new Rectangle(100, 400, (int)(600 * progressPercent), 32),
                     new Rectangle?(
                         new Rectangle(
-                            0, 0, (int) (updaterProgressBar.Width * progressPercent), updaterProgressBar.Height
+                            0, 0, (int)(updaterProgressBar.Width * progressPercent), updaterProgressBar.Height
                         )
                     ), Microsoft.Xna.Framework.Color.White
                 );

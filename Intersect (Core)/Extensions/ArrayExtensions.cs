@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Intersect.Extensions
@@ -20,6 +21,7 @@ namespace Intersect.Extensions
             }
         }
 
+        public static int IndexOf<T>(this T[] array, T value) => Array.IndexOf(array, value);
     }
 
 }

@@ -12,7 +12,7 @@ using Intersect.Network;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 
-using MySql.Data.MySqlClient;
+using MySqlConnector;
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;

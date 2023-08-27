@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Net;
 using Intersect.Logging;
 using Intersect.Server.Localization;
 using Intersect.Server.Networking;
@@ -42,8 +44,8 @@ namespace Intersect.Server.Database.PlayerData
             User = user;
         }
 
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public Guid Id { get; private set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public Guid Id { get; private set; } = Guid.NewGuid();
 
         [ForeignKey("Player"), Column("PlayerId")] // SOURCE TODO: Migrate column
         public Guid UserId { get; private set; }
@@ -241,6 +243,12 @@ namespace Intersect.Server.Database.PlayerData
                 : Strings.Account.banstatus.ToString(ban.StartTime, ban.Banner, ban.EndTime, ban.Reason);
         }
 
+        public static bool IsBanned(IPAddress ipAddress, [NotNullWhen(true)] out string? message)
+        {
+            message = CheckBan(ipAddress.ToString());
+            return message != default;
+        }
+        
         public static string CheckBan(string ip) => CheckBan(null, ip);
 
         public static Ban Find(User user) => Find(user.Id);
@@ -293,8 +301,7 @@ namespace Intersect.Server.Database.PlayerData
         private static readonly Func<PlayerContext, string, IEnumerable<Ban>> ByIp =
             EF.CompileQuery<PlayerContext, string, Ban>(
                 (context, ip) => context.Bans.Where(
-                    ban => ban.Ip == ip &&
-                           ban.EndTime > DateTime.UtcNow
+                    ban => ban.Ip == ip && ban.EndTime > DateTime.UtcNow
                 )
             ) ??
             throw new InvalidOperationException();

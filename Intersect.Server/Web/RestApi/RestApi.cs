@@ -20,6 +20,7 @@ using Microsoft.Owin.Hosting;
 using Microsoft.Owin.Logging;
 
 using Owin;
+using DefaultInlineConstraintResolver = System.Web.Http.Routing.DefaultInlineConstraintResolver;
 
 namespace Intersect.Server.Web.RestApi
 {

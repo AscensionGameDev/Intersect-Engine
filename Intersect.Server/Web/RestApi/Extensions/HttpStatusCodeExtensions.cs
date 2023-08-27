@@ -2,6 +2,7 @@
 using System.Net.Http;
 
 using Intersect.Logging;
+using LogLevel = Intersect.Logging.LogLevel;
 
 namespace Intersect.Server.Web.RestApi.Extensions
 {

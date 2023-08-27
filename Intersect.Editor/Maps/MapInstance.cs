@@ -13,6 +13,8 @@ using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps;
 using Newtonsoft.Json;
 
+using Graphics = Intersect.Editor.Core.Graphics;
+
 namespace Intersect.Editor.Maps
 {
 
@@ -41,8 +43,8 @@ namespace Intersect.Editor.Maps
                 Autotiles = new MapAutotiles(this);
                 if (typeof(MapInstance) == mapStruct.GetType())
                 {
-                    MapGridX = ((MapInstance) mapStruct).MapGridX;
-                    MapGridY = ((MapInstance) mapStruct).MapGridY;
+                    MapGridX = ((MapInstance)mapStruct).MapGridX;
+                    MapGridY = ((MapInstance)mapStruct).MapGridY;
                 }
 
                 InitAutotiles();

@@ -14,6 +14,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
 using WebApiThrottle;
+using LogLevel = Intersect.Logging.LogLevel;
 
 namespace Intersect.Server.Web.RestApi.Configuration
 {

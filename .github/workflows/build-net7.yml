@@ -1,0 +1,117 @@
+name: Build Intersect (.NET 7.0)
+
+on:
+  push:
+    branches: [ "main-net7" ]
+  pull_request:
+    branches: [ "main-net7" ]
+  workflow_dispatch:
+    inputs:
+      workflowDebug:
+        description: 'If the workflow should be debugged (skip release)'
+        default: true
+        type: boolean
+      forceBuild:
+        description: 'If the build should be forced even on cache hit'
+        default: false
+        type: boolean
+      forceRestore:
+        description: 'If dependencies should be forced even on cache hit'
+        default: false
+        type: boolean
+
+permissions:
+  contents: write
+
+env:
+  VERSION_PREFIX: 0.7.2
+  VERSION_SUFFIX: -beta-net7
+
+jobs:
+  build:
+
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - name: Cache binaries
+      uses: actions/cache@v3.2.6
+      id: cache-binaries
+      with:
+        key: ${{ runner.os }}-binaries-${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}-${{ hashFiles('Intersect*/**/*.cs*') }}
+        path: |
+          Intersect*/bin/Release/**/Intersect*
+
+    - name: Setup dotnet
+      if: steps.cache-binaries.outputs.cache-hit != 'true' || inputs.forceBuild == true || inputs.forceRestore == true
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 7.0.x
+
+    - name: Cache NuGet dependencies
+      uses: actions/cache@v3.2.6
+      id: cache-nuget
+      if: steps.cache-binaries.outputs.cache-hit != 'true' || inputs.forceBuild == true || inputs.forceRestore == true
+      with:
+        key: ${{ runner.os }}-nuget-${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}-${{ hashFiles('Intersect*/*.csproj') }}
+        path: |
+          ~/.nuget/packages
+          Intersect*/obj/
+
+    - name: Restore NuGet Packages
+      if: steps.cache-binaries.outputs.cache-hit != 'true' && steps.cache-nuget.outputs.cache-hit != 'true' || inputs.forceRestore == true
+      run: dotnet restore Intersect.sln
+
+    # - run: ls -R ~/.nuget/packages
+
+    - name: Build solution
+      if: steps.cache-binaries.outputs.cache-hit != 'true' || inputs.forceBuild == true || inputs.forceRestore == true
+      run: |
+        dotnet publish Intersect.sln -r win-x64   -p:Configuration=Release -p:PackageVersion=${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}+build.${{ github.sha }} -p:Version=0.7.2.${{ github.run_number }}
+        dotnet publish Intersect.sln -r linux-x64 -p:Configuration=Release -p:PackageVersion=${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}+build.${{ github.sha }} -p:Version=0.7.2.${{ github.run_number }}
+
+    - name: Debug output of Build Solution
+      run: ls -R
+
+    - name: Checkout assets main_upgrade branch
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+        path: assets_upgrade
+        repository: AscensionGameDev/Intersect-Assets
+        ref: main_upgrade
+        token: ${{ secrets.INTERSECTBOT_ACCESS_TOKEN }}
+
+    - name: Checkout target main_full branch
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+        path: assets_full
+        repository: AscensionGameDev/Intersect-Assets
+        ref: main_full
+        token: ${{ secrets.INTERSECTBOT_ACCESS_TOKEN }}
+
+    - name: Package artifacts
+      uses: AscensionGameDev/actions@4c9073d0721da476ac9337fbbfe46a9ca1ae4389
+      with:
+        bundle: .github/bundles/*.json
+        version: ${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}+build.${{ github.sha }}
+
+    - name: Upload artifacts for workflow debugging
+      uses: actions/upload-artifact@v3
+      with:
+        name: workflow-debug
+        path: "dist/*.zip"
+
+    - name: Publish GitHub Release
+      if: inputs.workflowDebug != true
+      uses: softprops/action-gh-release@v0.1.15
+      with:
+        files: "dist/*.zip"
+        generate_release_notes: true
+        prerelease: true
+        name: ${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}
+        tag_name: v${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}
+        target_commitish: ${{ github.sha }}

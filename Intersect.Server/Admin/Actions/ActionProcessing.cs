@@ -31,7 +31,7 @@ namespace Intersect.Server.Admin.Actions
                 return;
             }
 
-            var targetUsername = User.Find(target.UserId);
+            var targetUsername = User.FindById(target.UserId);
             if (player.Power.CompareTo(target.Power) < 1) // Authority Comparison.
             {
                 // Inform to whoever performed the action that they are
@@ -190,7 +190,7 @@ namespace Intersect.Server.Admin.Actions
                 return;
             }
 
-            var targetUsername = User.Find(target.UserId);
+            var targetUsername = User.FindById(target.UserId);
             if (player.Power.CompareTo(target.Power) < 1) // Authority Comparison.
             {
                 // Inform to whoever performed the action that they are
@@ -334,7 +334,7 @@ namespace Intersect.Server.Admin.Actions
                 return;
             }
 
-            var targetUsername = User.Find(unbannedPlayer.UserId);
+            var targetUsername = User.FindById(unbannedPlayer.UserId);
             if (Ban.Find(targetUsername) == null) // If the target is not banned.
             {
                 PacketSender.SendChatMsg(
@@ -370,7 +370,7 @@ namespace Intersect.Server.Admin.Actions
                 return;
             }
 
-            var targetUsername = User.Find(unmuteUser.UserId);
+            var targetUsername = User.FindById(unmuteUser.UserId);
             if (Mute.Find(targetUsername) == null) // If the target is not muted.
             {
                 PacketSender.SendChatMsg(

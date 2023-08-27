@@ -17,4 +17,12 @@
     <NetworkHandshakePrivateKey>$(NetworkKeyOutputDir)\network.handshake.bkey</NetworkHandshakePrivateKey>
   </PropertyGroup>
 
+  <PropertyGroup Label="Language Properties">
+    <Deterministic>true</Deterministic>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <TargetFramework>net7.0</TargetFramework>
+  </PropertyGroup>
+
 </Project>

@@ -33,7 +33,7 @@ namespace Intersect.Server.Database
         private static ILoggerFactory loggerFactory;
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="connectionStringBuilder"></param>
         /// <param name="databaseType"></param>
@@ -43,7 +43,9 @@ namespace Intersect.Server.Database
             DatabaseOptions.DatabaseType databaseType = DatabaseOptions.DatabaseType.SQLite,
             Intersect.Logging.Logger dbLogger = null,
             Intersect.Logging.LogLevel logLevel = Intersect.Logging.LogLevel.None,
-            bool asReadOnly = false, bool autoDetectChanges = true
+            bool asReadOnly = false,
+            bool explicitLoad = false,
+            bool autoDetectChanges = true
         )
         {
             ConnectionStringBuilder = connectionStringBuilder;
@@ -114,7 +116,10 @@ namespace Intersect.Server.Database
             if (ReadOnly)
             {
                 ChangeTracker.LazyLoadingEnabled = false;
-                ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
+                if (!explicitLoad)
+                {
+                    ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
+                }
             }
         }
 
@@ -122,17 +127,17 @@ namespace Intersect.Server.Database
             LoggerFactory.Create(builder => builder.AddConsole());
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public DatabaseOptions.DatabaseType DatabaseType { get; }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public bool ReadOnly { get; }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public DbConnectionStringBuilder ConnectionStringBuilder { get; }
 
@@ -167,7 +172,7 @@ namespace Intersect.Server.Database
             if (!constructorCache.TryGetValue(type, out var constructorInfo))
             {
                 constructorInfo = type.GetConstructor(
-                    new[] {typeof(DbConnectionStringBuilder), typeof(DatabaseOptions.DatabaseType)}
+                    new[] { typeof(DbConnectionStringBuilder), typeof(DatabaseOptions.DatabaseType) }
                 );
 
                 constructorCache[type] = constructorInfo;
@@ -196,7 +201,7 @@ namespace Intersect.Server.Database
         {
             base.OnConfiguring(optionsBuilder);
 
-            var connectionString = ConnectionStringBuilder.ToString();
+            var connectionString = ConnectionStringBuilder.ConnectionString;
 
             //optionsBuilder.UseLoggerFactory(MsExtLoggerFactory);
 
@@ -204,17 +209,34 @@ namespace Intersect.Server.Database
             switch (DatabaseType)
             {
                 case DatabaseOptions.DatabaseType.SQLite:
-                    optionsBuilder.UseLoggerFactory(loggerFactory).UseSqlite(connectionString).UseQueryTrackingBehavior(ReadOnly ? QueryTrackingBehavior.NoTracking : QueryTrackingBehavior.TrackAll);
-
+                    //optionsBuilder.UseLoggerFactory(loggerFactory);
+                    optionsBuilder.UseSqlite(connectionString).UseQueryTrackingBehavior(ReadOnly ? QueryTrackingBehavior.NoTracking : QueryTrackingBehavior.TrackAll);
                     break;
 
                 case DatabaseOptions.DatabaseType.MySQL:
-                    optionsBuilder.UseLoggerFactory(loggerFactory).UseMySql(connectionString, options => options.EnableRetryOnFailure(5, TimeSpan.FromSeconds(12), null)).UseQueryTrackingBehavior(ReadOnly ? QueryTrackingBehavior.NoTracking : QueryTrackingBehavior.TrackAll);
-
+                    optionsBuilder.UseLoggerFactory(loggerFactory).UseMySql(
+                        connectionString,
+                        ServerVersion.AutoDetect(connectionString),
+                        options => options.EnableRetryOnFailure(5, TimeSpan.FromSeconds(12), null)).UseQueryTrackingBehavior(ReadOnly ? QueryTrackingBehavior.NoTracking : QueryTrackingBehavior.TrackAll
+                    );
                     break;
 
                 default:
                     throw new ArgumentOutOfRangeException(nameof(DatabaseType));
+            }
+        }
+
+        protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
+        {
+            base.ConfigureConventions(configurationBuilder);
+
+            switch (DatabaseType)
+            {
+                case DatabaseOptions.DatabaseType.SQLite:
+                    configurationBuilder
+                        .Properties<Guid>()
+                        .HaveConversion<GuidBinaryConverter>();
+                    break;
             }
         }
 

@@ -6,6 +6,8 @@ using Intersect.Editor.General;
 using Intersect.Editor.Localization;
 using Intersect.GameObjects;
 
+using Graphics = Intersect.Editor.Core.Graphics;
+
 namespace Intersect.Editor.Forms.Controls
 {
 
@@ -35,7 +37,7 @@ namespace Intersect.Editor.Forms.Controls
             nudSize.Value = tmpLight.Size;
             nudOffsetX.Value = tmpLight.OffsetX;
             nudOffsetY.Value = tmpLight.OffsetY;
-            nudExpand.Value = (int) tmpLight.Expand;
+            nudExpand.Value = (int)tmpLight.Expand;
             pnlLightColor.BackColor = System.Drawing.Color.FromArgb(
                 tmpLight.Color.A, tmpLight.Color.R, tmpLight.Color.G, tmpLight.Color.B
             );
@@ -121,7 +123,7 @@ namespace Intersect.Editor.Forms.Controls
                 return;
             }
 
-            mEditingLight.OffsetX = (int) nudOffsetX.Value;
+            mEditingLight.OffsetX = (int)nudOffsetX.Value;
             Graphics.TilePreviewUpdated = true;
         }
 
@@ -132,7 +134,7 @@ namespace Intersect.Editor.Forms.Controls
                 return;
             }
 
-            mEditingLight.OffsetY = (int) nudOffsetY.Value;
+            mEditingLight.OffsetY = (int)nudOffsetY.Value;
             Graphics.TilePreviewUpdated = true;
         }
 
@@ -143,7 +145,7 @@ namespace Intersect.Editor.Forms.Controls
                 return;
             }
 
-            mEditingLight.Size = (int) nudSize.Value;
+            mEditingLight.Size = (int)nudSize.Value;
             Graphics.TilePreviewUpdated = true;
         }
 
@@ -154,7 +156,7 @@ namespace Intersect.Editor.Forms.Controls
                 return;
             }
 
-            mEditingLight.Intensity = (byte) nudIntensity.Value;
+            mEditingLight.Intensity = (byte)nudIntensity.Value;
             Graphics.TilePreviewUpdated = true;
         }
 
@@ -165,7 +167,7 @@ namespace Intersect.Editor.Forms.Controls
                 return;
             }
 
-            mEditingLight.Expand = (int) nudExpand.Value;
+            mEditingLight.Expand = (int)nudExpand.Value;
             Graphics.TilePreviewUpdated = true;
         }
 

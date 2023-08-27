@@ -88,7 +88,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, $@"Invalid user id '{userId}'.");
             }
 
-            var user = Database.PlayerData.User.Find(userId);
+            var user = Database.PlayerData.User.FindById(userId);
 
             if (user == null)
             {
@@ -208,7 +208,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, $@"Invalid user id '{userId}'.");
             }
 
-            var user = Database.PlayerData.User.Find(userId);
+            var user = Database.PlayerData.User.FindById(userId);
 
             if (user == null)
             {
@@ -291,7 +291,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 );
             }
 
-            var user = Database.PlayerData.User.Find(userId);
+            var user = Database.PlayerData.User.FindById(userId);
 
             if (user == null)
             {
@@ -339,7 +339,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Invalid user id.");
             }
 
-            var user = Database.PlayerData.User.Find(userId);
+            var user = Database.PlayerData.User.FindById(userId);
             if (user == default)
             {
                 return Request.CreateErrorResponse(HttpStatusCode.NotFound, $@"No user with id {userId}.");
@@ -399,7 +399,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, $@"Invalid player id '{playerId}'.");
             }
 
-            var user = Database.PlayerData.User.Find(userId);
+            var user = Database.PlayerData.User.FindById(userId);
 
             if (user == default)
             {
@@ -437,7 +437,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, $@"Invalid player index {index}.");
             }
 
-            var user = Database.PlayerData.User.Find(userId);
+            var user = Database.PlayerData.User.FindById(userId);
 
             if (user == null)
             {
@@ -529,7 +529,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, $@"Malformed email address '{email}'.");
             }
 
-            var user = Database.PlayerData.User.Find(userId);
+            var user = Database.PlayerData.User.FindById(userId);
 
             if (user == null)
             {
@@ -612,7 +612,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, $@"Malformed email address '{email}'.");
             }
 
-            var user = Database.PlayerData.User.Find(userId);
+            var user = Database.PlayerData.User.FindById(userId);
 
             if (user == null)
             {
@@ -692,7 +692,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, @"Did not receive a valid password.");
             }
 
-            var user = Database.PlayerData.User.Find(userId);
+            var user = Database.PlayerData.User.FindById(userId);
 
             if (user == null)
             {
@@ -758,7 +758,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, @"Invalid payload");
             }
 
-            var user = Database.PlayerData.User.Find(userId);
+            var user = Database.PlayerData.User.FindById(userId);
 
             if (user == null)
             {
@@ -822,7 +822,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, @"Invalid payload");
             }
 
-            var user = Database.PlayerData.User.Find(userId);
+            var user = Database.PlayerData.User.FindById(userId);
 
             if (user == null)
             {
@@ -884,7 +884,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         [HttpGet]
         public object UserSendPasswordResetEmailById(Guid userId)
         {
-            var user = Database.PlayerData.User.Find(userId);
+            var user = Database.PlayerData.User.FindById(userId);
 
             if (user == null)
             {

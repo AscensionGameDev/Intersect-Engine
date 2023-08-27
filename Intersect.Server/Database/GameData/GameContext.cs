@@ -4,6 +4,7 @@ using System.Data.Common;
 using System.Linq;
 
 using Intersect.Config;
+using Intersect.Extensions;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Crafting;
 using Intersect.GameObjects.Events;

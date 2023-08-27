@@ -1254,6 +1254,14 @@ namespace Intersect.Server.Networking
                 return;
             }
 
+            using (var playerContext = DbInterface.CreatePlayerContext())
+            {
+                foreach (var player in client.Characters.OrderByDescending(p => p.LastOnline))
+                {
+                    player.LoadRelationships(playerContext);
+                }
+            }
+
             if (client.Characters.Count > 0)
             {
                 foreach (var character in client.Characters.OrderByDescending(p => p.LastOnline))
@@ -1270,8 +1278,12 @@ namespace Intersect.Server.Networking
                                 equipmentArray[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z])] <
                                 Options.MaxInvItems)
                             {
+                                var paperdollOrder = Options.PaperdollOrder[1][z];
+                                var equipmentSlot = Options.EquipmentSlots.IndexOf(paperdollOrder);
+                                var itemIndex = equipmentArray[equipmentSlot];
+
                                 var itemId = character
-                                    .Items[equipmentArray[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z])]]
+                                    .Items[itemIndex]
                                     .ItemId;
 
                                 if (ItemBase.Get(itemId) != null)
