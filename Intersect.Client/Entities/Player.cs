@@ -761,6 +761,8 @@ namespace Intersect.Client.Entities
                 return;
             }
 
+            int availableSpace = FindAvailableBankSpaceForItem(inventorySlot.ItemId);
+
             InputBox.Open(
                 title: Strings.Bank.deposititem,
                 prompt: Strings.Bank.deposititemprompt.ToString(itemDescriptor.Name),
@@ -769,9 +771,31 @@ namespace Intersect.Client.Entities
                 onSuccess: DepositItemInputBoxOkay,
                 onCancel: null,
                 userData: new[] { inventorySlotIndex, bankSlotIndex },
-                quantity: itemQuantityInInventory,
-                maxQuantity: itemQuantityInInventory
+                quantity: availableSpace,
+                maxQuantity: availableSpace
             );
+        }
+
+        private static int FindAvailableBankSpaceForItem(Guid itemId)
+        {
+            int spaceLeft = 0;
+
+            // Calculate the total available space in the bank for the item
+            for (int i = 0; i < Globals.BankSlots; i++)
+            {
+                var bankItem = Globals.Bank[i];
+                if (bankItem != null && bankItem.ItemId == itemId)
+                {
+                    int quantityLeft = ItemBase.Get(itemId).MaxBankStack - bankItem.Quantity;
+                    spaceLeft += quantityLeft;
+                }
+                else if (bankItem == null || bankItem.ItemId == Guid.Empty)
+                {
+                    spaceLeft += ItemBase.Get(itemId).MaxBankStack;
+                }
+            }
+
+            return spaceLeft;
         }
 
         private void DepositItemInputBoxOkay(object sender, EventArgs e)
