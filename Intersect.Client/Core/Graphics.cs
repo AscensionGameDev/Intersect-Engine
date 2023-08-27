@@ -1320,7 +1320,10 @@ namespace Intersect.Client.Core
         /// <returns>The converted point.</returns>
         public static Pointf ConvertToWorldPoint(Pointf windowPoint)
         {
-            return new Pointf((int)Math.Floor(windowPoint.X + CurrentView.Left), (int)Math.Floor(windowPoint.Y + CurrentView.Top));
+            return new Pointf(
+                (int)Math.Floor(windowPoint.X / Globals.Database.WorldZoom + CurrentView.Left),
+                (int)Math.Floor(windowPoint.Y / Globals.Database.WorldZoom + CurrentView.Top)
+            );
         }
 
         //Rendering Functions
