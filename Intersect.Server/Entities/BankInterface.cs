@@ -285,6 +285,12 @@ namespace Intersect.Server.Entities
         private int FindAvailableSpaceForItem(Guid itemId, int amount)
         {
             int spaceLeft = 0;
+
+            if (spaceLeft >= amount)
+            {
+                return amount;
+            }
+
             for (int i = 0; i < mMaxSlots; i++)
             {
                 if (mBank[i]?.ItemId == itemId)
