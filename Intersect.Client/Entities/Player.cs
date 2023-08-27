@@ -753,7 +753,9 @@ namespace Intersect.Client.Entities
                 }
             }
 
-            if (inventorySlot.Quantity < 2)
+            var itemQuantityInInventory = GetQuantityOfItemInInventory(itemDescriptor.Id);
+
+            if (itemQuantityInInventory < 2)
             {
                 PacketSender.SendDepositItem(inventorySlotIndex, 1, bankSlotIndex);
                 return;
@@ -767,8 +769,8 @@ namespace Intersect.Client.Entities
                 onSuccess: DepositItemInputBoxOkay,
                 onCancel: null,
                 userData: new[] { inventorySlotIndex, bankSlotIndex },
-                quantity: inventorySlot.Quantity,
-                maxQuantity: GetQuantityOfItemInInventory(itemDescriptor.Id)
+                quantity: itemQuantityInInventory,
+                maxQuantity: itemQuantityInInventory
             );
         }
 

@@ -210,7 +210,7 @@ namespace Intersect.Server.Entities
 
             // At this point, we assume that the item is stackable, let's fill up what we can.
             if (Math.Ceiling((double)item.Quantity / item.Descriptor.MaxBankStack) <=
-                FindAvailableSpaceForStackableItem(item.ItemId, item.Quantity))
+                FindAvailableSpaceForItem(item.ItemId, item.Quantity))
             {
                 return true;
             }
@@ -272,17 +272,17 @@ namespace Intersect.Server.Entities
         }
 
         /// <summary>
-        /// Finds the amount of available space in the bank for a stackable item.
+        /// Finds the amount of available space in the bank for items.
         /// This method calculates the space available in the bank by checking
         /// the number of slots that have the same item ID as the provided item, and
         /// adding up the remaining quantity space in each of those slots. It also
         /// checks for any empty slots in the bank, and adds the maximum stack size
         /// of the provided item to the available space for each empty slot found.
         /// </summary>
-        /// <param name="itemId">The ID of the stackable item to find available space for.</param>
+        /// <param name="itemId">The ID of the item to find available space for.</param>
         /// <param name="amount">The requested amount of the item to deposit.</param>
-        /// <returns>The maximum amount of the stackable item that can be deposited in the bank.</returns>
-        private int FindAvailableSpaceForStackableItem(Guid itemId, int amount)
+        /// <returns>The maximum amount of the item that can be deposited in the bank.</returns>
+        private int FindAvailableSpaceForItem(Guid itemId, int amount)
         {
             int spaceLeft = 0;
             for (int i = 0; i < mMaxSlots; i++)
@@ -338,10 +338,10 @@ namespace Intersect.Server.Entities
                 return false;
             }
 
-            // Calculate the maximum amount that can be deposited, based on stack-ability, quantity and bank space.
-            var isStackable = inventoryItem.Descriptor.IsStackable;
-            var maxAmount = isStackable ? Math.Min(mPlayer.FindInventoryItemQuantity(inventoryItemItemId),
-                    FindAvailableSpaceForStackableItem(inventoryItemItemId, amount)) : 1;
+            // Calculate the maximum amount that can be deposited, based on quantity and bank space.
+            var depositMultipleItems = mPlayer.FindInventoryItemQuantity(inventoryItemItemId) > 1;
+            var maxAmount = depositMultipleItems ? Math.Min(mPlayer.FindInventoryItemQuantity(inventoryItemItemId),
+                    FindAvailableSpaceForItem(inventoryItemItemId, amount)) : 1;
             amount = Math.Min(amount, maxAmount);
 
             if (amount <= 0)
@@ -351,7 +351,7 @@ namespace Intersect.Server.Entities
                 return false;
             }
 
-            if (isStackable)
+            if (depositMultipleItems)
             {
                 if (destSlot < 0 || mBank?[destSlot]?.ItemId != Guid.Empty)
                 {
@@ -389,12 +389,12 @@ namespace Intersect.Server.Entities
                 if (CanStoreItem(new Item(inventoryItemItemId, amount), destSlot))
                 {
                     PacketSender.SendChatMsg(mPlayer,
-                        isStackable
+                        depositMultipleItems
                             ? Strings.Banks.DepositSuccessStackable.ToString(amount, inventoryItem.ItemName)
                             : Strings.Banks.DepositSuccessNonStackable.ToString(inventoryItem.ItemName),
                         ChatMessageType.Bank, CustomColors.Alerts.Success);
 
-                    if (isStackable)
+                    if (depositMultipleItems)
                     {
                         PutItem(new Item(inventoryItemItemId, amount), destSlot, sendUpdate);
                         mPlayer.TryTakeItem(inventoryItemItemId, amount, ItemHandling.Normal, sendUpdate);
