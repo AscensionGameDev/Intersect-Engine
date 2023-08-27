@@ -754,7 +754,7 @@ namespace Intersect.Client.Entities
             }
 
             var itemQuantityInInventory = GetQuantityOfItemInInventory(itemDescriptor.Id);
-            var availableSpace = FindAvailableBankSpaceForItem(inventorySlot.ItemId);
+            var availableSpace = FindAvailableBankSpaceForItem(inventorySlot.ItemId, itemQuantityInInventory);
 
             if (availableSpace < 1)
             {
@@ -781,7 +781,7 @@ namespace Intersect.Client.Entities
             );
         }
 
-        private static int FindAvailableBankSpaceForItem(Guid itemId)
+        private static int FindAvailableBankSpaceForItem(Guid itemId, int itemQuantityInInventory)
         {
             int spaceLeft = 0;
 
@@ -800,7 +800,7 @@ namespace Intersect.Client.Entities
                 }
             }
 
-            return spaceLeft;
+            return Math.Min(itemQuantityInInventory, spaceLeft);
         }
 
         private void DepositItemInputBoxOkay(object sender, EventArgs e)
