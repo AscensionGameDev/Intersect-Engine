@@ -29,28 +29,29 @@ namespace Intersect.Editor.Configuration
 
         public static void Load()
         {
-            ToolCursor toolCursor = new ToolCursor();
             foreach (EditingTool tool in Enum.GetValues(typeof(EditingTool)))
             {
-                string fileName = $"resources/cursors/editor_{tool.ToString().ToLowerInvariant()}.json";
+                var fileName = $"resources/cursors/editor_{tool.ToString().ToLowerInvariant()}.json";
+                ToolCursor toolCursor;
 
                 if (File.Exists(fileName))
                 {
-                    if (!_toolCursorDict.TryGetValue(tool, out ToolCursor cursor))
+                    if (!_toolCursorDict.TryGetValue(tool, out toolCursor))
                     {
                         continue;
                     }
 
-                    string json = File.ReadAllText(fileName);
-                    cursor = JsonConvert.DeserializeObject<ToolCursor>(json);
-                    _toolCursorDict[tool] = cursor;
+                    var json = File.ReadAllText(fileName);
+                    toolCursor = JsonConvert.DeserializeObject<ToolCursor>(json);
                 }
                 else
                 {
-                    string json = JsonConvert.SerializeObject(toolCursor);
+                    toolCursor = new ToolCursor();
+                    var json = JsonConvert.SerializeObject(toolCursor);
                     File.WriteAllText(fileName, json);
-                    _toolCursorDict[tool] = toolCursor;
                 }
+
+                _toolCursorDict[tool] = toolCursor;
             }
         }
     }
