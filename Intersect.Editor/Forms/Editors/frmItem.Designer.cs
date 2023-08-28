@@ -435,7 +435,7 @@ namespace Intersect.Editor.Forms.Editors
             this.grpStack.TabIndex = 88;
             this.grpStack.TabStop = false;
             this.grpStack.Text = "Stack Options:";
-            this.grpStack.Visible = false;
+            this.grpStack.UseWaitCursor = true;
             // 
             // chkStackable
             // 
@@ -445,6 +445,7 @@ namespace Intersect.Editor.Forms.Editors
             this.chkStackable.Size = new System.Drawing.Size(80, 17);
             this.chkStackable.TabIndex = 27;
             this.chkStackable.Text = "Stackable?";
+            this.chkStackable.UseWaitCursor = true;
             this.chkStackable.CheckedChanged += new System.EventHandler(this.chkStackable_CheckedChanged);
             // 
             // lblInvStackLimit
@@ -455,6 +456,7 @@ namespace Intersect.Editor.Forms.Editors
             this.lblInvStackLimit.Size = new System.Drawing.Size(109, 13);
             this.lblInvStackLimit.TabIndex = 95;
             this.lblInvStackLimit.Text = "Inventory Stack Limit:";
+            this.lblInvStackLimit.UseWaitCursor = true;
             // 
             // nudInvStackLimit
             // 
@@ -469,6 +471,7 @@ namespace Intersect.Editor.Forms.Editors
             this.nudInvStackLimit.Name = "nudInvStackLimit";
             this.nudInvStackLimit.Size = new System.Drawing.Size(151, 20);
             this.nudInvStackLimit.TabIndex = 97;
+            this.nudInvStackLimit.UseWaitCursor = true;
             this.nudInvStackLimit.Value = new decimal(new int[] {
             0,
             0,
@@ -484,6 +487,7 @@ namespace Intersect.Editor.Forms.Editors
             this.lblBankStackLimit.Size = new System.Drawing.Size(90, 13);
             this.lblBankStackLimit.TabIndex = 96;
             this.lblBankStackLimit.Text = "Bank Stack Limit:";
+            this.lblBankStackLimit.UseWaitCursor = true;
             // 
             // nudBankStackLimit
             // 
@@ -498,6 +502,7 @@ namespace Intersect.Editor.Forms.Editors
             this.nudBankStackLimit.Name = "nudBankStackLimit";
             this.nudBankStackLimit.Size = new System.Drawing.Size(151, 20);
             this.nudBankStackLimit.TabIndex = 98;
+            this.nudBankStackLimit.UseWaitCursor = true;
             this.nudBankStackLimit.Value = new decimal(new int[] {
             0,
             0,
@@ -523,7 +528,7 @@ namespace Intersect.Editor.Forms.Editors
             this.grpCooldown.TabIndex = 74;
             this.grpCooldown.TabStop = false;
             this.grpCooldown.Text = "Cooldown Options:";
-            this.grpCooldown.Visible = false;
+            this.grpCooldown.UseWaitCursor = true;
             // 
             // lblCooldown
             // 
@@ -533,6 +538,7 @@ namespace Intersect.Editor.Forms.Editors
             this.lblCooldown.Size = new System.Drawing.Size(79, 13);
             this.lblCooldown.TabIndex = 38;
             this.lblCooldown.Text = "Cooldown (ms):";
+            this.lblCooldown.UseWaitCursor = true;
             // 
             // nudCooldown
             // 
@@ -547,6 +553,7 @@ namespace Intersect.Editor.Forms.Editors
             this.nudCooldown.Name = "nudCooldown";
             this.nudCooldown.Size = new System.Drawing.Size(171, 20);
             this.nudCooldown.TabIndex = 39;
+            this.nudCooldown.UseWaitCursor = true;
             this.nudCooldown.Value = new decimal(new int[] {
             0,
             0,
@@ -562,6 +569,7 @@ namespace Intersect.Editor.Forms.Editors
             this.lblCooldownGroup.Size = new System.Drawing.Size(89, 13);
             this.lblCooldownGroup.TabIndex = 50;
             this.lblCooldownGroup.Text = "Cooldown Group:";
+            this.lblCooldownGroup.UseWaitCursor = true;
             // 
             // cmbCooldownGroup
             // 
@@ -582,6 +590,7 @@ namespace Intersect.Editor.Forms.Editors
             this.cmbCooldownGroup.TabIndex = 51;
             this.cmbCooldownGroup.Text = null;
             this.cmbCooldownGroup.TextPadding = new System.Windows.Forms.Padding(2);
+            this.cmbCooldownGroup.UseWaitCursor = true;
             this.cmbCooldownGroup.SelectedIndexChanged += new System.EventHandler(this.cmbCooldownGroup_SelectedIndexChanged);
             // 
             // btnAddCooldownGroup
@@ -592,6 +601,7 @@ namespace Intersect.Editor.Forms.Editors
             this.btnAddCooldownGroup.Size = new System.Drawing.Size(21, 21);
             this.btnAddCooldownGroup.TabIndex = 52;
             this.btnAddCooldownGroup.Text = "+";
+            this.btnAddCooldownGroup.UseWaitCursor = true;
             this.btnAddCooldownGroup.Click += new System.EventHandler(this.btnAddCooldownGroup_Click);
             // 
             // chkIgnoreGlobalCooldown
@@ -602,6 +612,7 @@ namespace Intersect.Editor.Forms.Editors
             this.chkIgnoreGlobalCooldown.Size = new System.Drawing.Size(145, 17);
             this.chkIgnoreGlobalCooldown.TabIndex = 53;
             this.chkIgnoreGlobalCooldown.Text = "Ignore Global Cooldown?";
+            this.chkIgnoreGlobalCooldown.UseWaitCursor = true;
             this.chkIgnoreGlobalCooldown.CheckedChanged += new System.EventHandler(this.chkIgnoreGlobalCooldown_CheckedChanged);
             // 
             // chkIgnoreCdr
@@ -612,6 +623,7 @@ namespace Intersect.Editor.Forms.Editors
             this.chkIgnoreCdr.Size = new System.Drawing.Size(164, 17);
             this.chkIgnoreCdr.TabIndex = 87;
             this.chkIgnoreCdr.Text = "Ignore Cooldown Reduction?";
+            this.chkIgnoreCdr.UseWaitCursor = true;
             this.chkIgnoreCdr.CheckedChanged += new System.EventHandler(this.chkIgnoreCdr_CheckedChanged);
             // 
             // nudItemDespawnTime
