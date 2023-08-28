@@ -1,4 +1,4 @@
-﻿namespace Intersect.GameObjects
+namespace Intersect.GameObjects
 {
     public partial class LightBase
     {
@@ -68,11 +68,7 @@
         /// <returns></returns>
         public override int GetHashCode()
         {
-            return Intensity ^ (int)Expand ^ Color?.A
-                ?? 0 ^ Color?.R
-                ?? 0 ^ Color?.G
-                ?? 0 ^ Color?.B
-                ?? 0;
+            return Intensity ^ (int)Expand ^ (Color?.GetHashCode() ?? 0);
         }
 
         /// <summary>
@@ -83,9 +79,10 @@
         public override bool Equals(object obj)
         {
             if (obj is LightBase light)
-                return Intensity == light.Intensity
-                    && Color == light.Color
-                    && Expand == light.Expand;
+            {
+                return Intensity == light.Intensity && Color == light.Color&& Expand == light.Expand;
+            }
+
             return false;
         }
     }
