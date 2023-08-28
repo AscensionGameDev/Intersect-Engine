@@ -3565,7 +3565,7 @@ namespace Intersect.Server.Entities
                 return;
             }
 
-            bool sucess = true;
+            bool success = true;
             Dictionary<Guid, int> removedItems = new Dictionary<Guid, int>();
 
             if (itemCostTotal > 0)
@@ -3578,7 +3578,7 @@ namespace Intersect.Server.Entities
                     int quantityToRemove = Math.Min(remainingCost, itemSlot.Quantity);
                     if(!TryTakeItem(itemSlot, quantityToRemove))
                     {
-                        sucess = false;
+                        success = false;
                         Log.Warn(Strings.Shops.FailedRemovedItem.ToString(itemSlot, Id, quantityToRemove, "BuyItem(int slot, int amount)"));
                         break;
                     }
@@ -3594,7 +3594,7 @@ namespace Intersect.Server.Entities
                 }
             }
 
-            if(!sucess)
+            if(!success)
             {
                 //return all removed items because we failed to remove the rest
                 foreach (var removedItem in removedItems)
