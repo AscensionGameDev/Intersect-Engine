@@ -2,7 +2,6 @@
 {
     public partial class PartyOptions
     {
-        
         /// <summary>
         /// Defines the maximum amount of members a party can have.
         /// </summary>
@@ -17,6 +16,5 @@
         /// A monster that would give 100 XP, now gives 120, getting 60 for each member, when 2 in the party.
         /// </summary>
         public float BonusExperiencePercentPerMember = 0;
-
     }
 }

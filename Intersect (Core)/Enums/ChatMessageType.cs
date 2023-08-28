@@ -44,6 +44,5 @@
         Notice = 40,
 
         Error,
-
     }
 }

@@ -9,7 +9,6 @@ namespace Intersect.GameObjects
 {
     public partial class UserVariableBase : DatabaseObject<UserVariableBase>, IFolderable
     {
-
         [JsonConstructor]
         public UserVariableBase(Guid id) : base(id)
         {
@@ -72,7 +71,8 @@ namespace Intersect.GameObjects
                 .Where(pair => pair.Value is UserVariableBase descriptor && descriptor.DataType == dataType)
                 .OrderBy(pair => pair.Value.TimeCreated)
                 .Skip(listIndex)
-                .First().Value.Id;
+                .First()
+                .Value.Id;
         }
     }
 }

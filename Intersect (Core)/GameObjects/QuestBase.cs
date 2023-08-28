@@ -12,10 +12,8 @@ using Newtonsoft.Json;
 
 namespace Intersect.GameObjects
 {
-
     public enum QuestProgressState
     {
-
         OnAnyTask = 0,
 
         BeforeTask = 1,
@@ -23,12 +21,10 @@ namespace Intersect.GameObjects
         AfterTask = 2,
 
         OnTask = 3,
-
     }
 
     public partial class QuestProgress
     {
-
         public bool Completed;
 
         public Guid TaskId;
@@ -39,19 +35,21 @@ namespace Intersect.GameObjects
         {
             JsonConvert.PopulateObject(data, this);
         }
-
     }
 
     public partial class QuestBase : DatabaseObject<QuestBase>, IFolderable
     {
+        [NotMapped]
+        [JsonIgnore]
+        //Events that need to be added for the quest, int is task id
+        public Dictionary<Guid, EventBase> AddEvents = new Dictionary<Guid, EventBase>();
 
-        [NotMapped] [JsonIgnore]
-        public Dictionary<Guid, EventBase>
-            AddEvents = new Dictionary<Guid, EventBase>(); //Events that need to be added for the quest, int is task id
+        [NotMapped]
+        //Events that need to be removed for the quest
+        public List<Guid> RemoveEvents = new List<Guid>();
 
-        [NotMapped] public List<Guid> RemoveEvents = new List<Guid>(); //Events that need to be removed for the quest
-
-        [NotMapped] public List<QuestTask> Tasks = new List<QuestTask>();
+        [NotMapped]
+        public List<QuestTask> Tasks = new List<QuestTask>();
 
         [JsonConstructor]
         public QuestBase(Guid Id) : base(Id)
@@ -180,7 +178,6 @@ namespace Intersect.GameObjects
         /// </summary>
         public int OrderValue { get; set; }
 
-
         public int GetTaskIndex(Guid taskId)
         {
             for (var i = 0; i < Tasks.Count; i++)
@@ -209,8 +206,9 @@ namespace Intersect.GameObjects
 
         public partial class QuestTask
         {
-
-            [NotMapped] [JsonIgnore] public EventBase EditingEvent;
+            [NotMapped]
+            [JsonIgnore]
+            public EventBase EditingEvent;
 
             public QuestTask(Guid id)
             {
@@ -243,26 +241,29 @@ namespace Intersect.GameObjects
                 switch (Objective)
                 {
                     case QuestObjective.EventDriven: //Event Driven
-                        taskString = descriptions[(int) Objective].ToString(Description);
+                        taskString = descriptions[(int)Objective].ToString(Description);
 
                         break;
                     case QuestObjective.GatherItems: //Gather Items
-                        taskString = descriptions[(int) Objective]
-                            .ToString(ItemBase.GetName(TargetId), Quantity, Description);
+                        taskString = descriptions[(int)Objective].ToString(
+                            ItemBase.GetName(TargetId),
+                            Quantity,
+                            Description
+                        );
 
                         break;
                     case QuestObjective.KillNpcs: //Kill Npcs
-                        taskString = descriptions[(int) Objective]
-                            .ToString(NpcBase.GetName(TargetId), Quantity, Description);
+                        taskString = descriptions[(int)Objective].ToString(
+                            NpcBase.GetName(TargetId),
+                            Quantity,
+                            Description
+                        );
 
                         break;
                 }
 
                 return taskString;
             }
-
         }
-
     }
-
 }

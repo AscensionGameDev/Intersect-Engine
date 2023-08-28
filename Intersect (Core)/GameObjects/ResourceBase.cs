@@ -12,11 +12,9 @@ using Newtonsoft.Json;
 
 namespace Intersect.GameObjects
 {
-
     [Owned]
     public partial class ResourceState
     {
-
         public string Graphic { get; set; } = null;
 
         public bool RenderBelowEntities { get; set; }
@@ -30,15 +28,15 @@ namespace Intersect.GameObjects
         public int Width { get; set; }
 
         public int Height { get; set; }
-
     }
 
     public partial class ResourceBase : DatabaseObject<ResourceBase>, IFolderable
     {
+        [NotMapped]
+        public List<Drop> Drops = new List<Drop>();
 
-        [NotMapped] public List<Drop> Drops = new List<Drop>();
-
-        [NotMapped] public ConditionLists HarvestingRequirements = new ConditionLists();
+        [NotMapped]
+        public ConditionLists HarvestingRequirements = new ConditionLists();
 
         public string CannotHarvestMessage { get; set; } = "";
 

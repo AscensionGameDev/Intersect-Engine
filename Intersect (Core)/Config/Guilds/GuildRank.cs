@@ -19,6 +19,5 @@
         /// Permissions that this rank holds for the guild and the actions they can take
         /// </summary>
         public GuildPermissions Permissions { get; set; } = new GuildPermissions();
-
     }
 }

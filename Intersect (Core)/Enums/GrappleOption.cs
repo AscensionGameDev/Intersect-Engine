@@ -8,6 +8,6 @@ namespace Intersect.Enums
 
         NPC,
 
-        Resource
+        Resource,
     }
 }

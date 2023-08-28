@@ -10,11 +10,10 @@ using Intersect.GameObjects.Conditions;
 
 namespace Intersect.GameObjects.Crafting
 {
-
     public partial class CraftBase : DatabaseObject<CraftBase>, IFolderable
     {
-
-        [NotMapped] public List<CraftIngredient> Ingredients = new List<CraftIngredient>();
+        [NotMapped]
+        public List<CraftIngredient> Ingredients = new List<CraftIngredient>();
 
         [JsonConstructor]
         public CraftBase(Guid id) : base(id)
@@ -66,7 +65,8 @@ namespace Intersect.GameObjects.Crafting
             set => EventId = value?.Id ?? Guid.Empty;
         }
 
-        [NotMapped] public ConditionLists CraftingRequirements = new ConditionLists();
+        [NotMapped]
+        public ConditionLists CraftingRequirements = new ConditionLists();
 
         //Requirements
         [Column("CraftingRequirements")]
@@ -76,12 +76,10 @@ namespace Intersect.GameObjects.Crafting
             get => CraftingRequirements.Data();
             set => CraftingRequirements.Load(value ?? "[]");
         }
-
     }
 
     public partial class CraftIngredient
     {
-
         public Guid ItemId;
 
         public int Quantity = 1;
@@ -96,7 +94,5 @@ namespace Intersect.GameObjects.Crafting
         {
             return ItemBase.Get(ItemId);
         }
-
     }
-
 }

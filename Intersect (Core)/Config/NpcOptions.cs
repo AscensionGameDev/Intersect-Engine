@@ -1,12 +1,10 @@
 ﻿namespace Intersect.Config
 {
-
     /// <summary>
     /// Contains configurable options pertaining to the way Npcs are handled by the engine.
     /// </summary>
     public partial class NpcOptions
     {
-
         /// <summary>
         /// Configures whether or not Npcs are allowed to reset after moving out of a specified radius when starting to fight another entity.
         /// </summary>
@@ -54,5 +52,4 @@
         /// </summary>
         public bool ResetIfCombatTimerExceeded = true;
     }
-
 }

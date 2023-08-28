@@ -12,35 +12,44 @@ using Newtonsoft.Json;
 
 namespace Intersect.GameObjects
 {
-
     public partial class ClassBase : DatabaseObject<ClassBase>, IFolderable
     {
-
         public const long DEFAULT_BASE_EXPERIENCE = 100;
 
         public const long DEFAULT_EXPERIENCE_INCREASE = 50;
 
-        [NotMapped] public int[] BaseStat = new int[(int) Stat.StatCount];
+        [NotMapped]
+        public int[] BaseStat = new int[(int)Stat.StatCount];
 
-        [NotMapped] public int[] BaseVital = new int[(int) Vital.VitalCount];
+        [NotMapped]
+        public int[] BaseVital = new int[(int)Vital.VitalCount];
 
-        [NotMapped] public Dictionary<int, long> ExperienceOverrides = new Dictionary<int, long>();
+        [NotMapped]
+        public Dictionary<int, long> ExperienceOverrides = new Dictionary<int, long>();
 
-        [NotMapped] public List<ClassItem> Items = new List<ClassItem>();
+        [NotMapped]
+        public List<ClassItem> Items = new List<ClassItem>();
 
-        [JsonIgnore] private long mBaseExp;
+        [JsonIgnore]
+        private long mBaseExp;
 
-        [JsonIgnore] private long mExpIncrease;
+        [JsonIgnore]
+        private long mExpIncrease;
 
-        [NotMapped] public List<ClassSpell> Spells = new List<ClassSpell>();
+        [NotMapped]
+        public List<ClassSpell> Spells = new List<ClassSpell>();
 
-        [NotMapped] public List<ClassSprite> Sprites = new List<ClassSprite>();
+        [NotMapped]
+        public List<ClassSprite> Sprites = new List<ClassSprite>();
 
-        [NotMapped] public int[] StatIncrease = new int[(int) Stat.StatCount];
+        [NotMapped]
+        public int[] StatIncrease = new int[(int)Stat.StatCount];
 
-        [NotMapped] public int[] VitalIncrease = new int[(int) Vital.VitalCount];
+        [NotMapped]
+        public int[] VitalIncrease = new int[(int)Vital.VitalCount];
 
-        [NotMapped] public int[] VitalRegen = new int[(int) Vital.VitalCount];
+        [NotMapped]
+        public int[] VitalRegen = new int[(int)Vital.VitalCount];
 
         [JsonConstructor]
         public ClassBase(Guid id) : base(id)
@@ -247,12 +256,10 @@ namespace Intersect.GameObjects
 
             return ExperienceCurve.Calculate(level);
         }
-
     }
 
     public partial class ClassItem
     {
-
         [JsonProperty]
         public Guid Id { get; set; }
 
@@ -262,12 +269,10 @@ namespace Intersect.GameObjects
         {
             return ItemBase.Get(Id);
         }
-
     }
 
     public partial class ClassSpell
     {
-
         [JsonProperty]
         public Guid Id { get; set; }
 
@@ -277,18 +282,14 @@ namespace Intersect.GameObjects
         {
             return SpellBase.Get(Id);
         }
-
     }
 
     public partial class ClassSprite
     {
-
         public string Face = "";
 
         public Gender Gender;
 
         public string Sprite = "";
-
     }
-
 }

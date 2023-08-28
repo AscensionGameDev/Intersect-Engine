@@ -6,10 +6,8 @@ using Newtonsoft.Json;
 
 namespace Intersect.GameObjects.Conditions
 {
-
     public partial class ConditionList
     {
-
         public List<Condition> Conditions = new List<Condition>(); //Long story.. just go with it.. okay?
 
         public string Name = "New Condition List";
@@ -26,7 +24,8 @@ namespace Intersect.GameObjects.Conditions
         public void Load(string data)
         {
             JsonConvert.PopulateObject(
-                data, this,
+                data,
+                this,
                 new JsonSerializerSettings()
                 {
                     TypeNameHandling = TypeNameHandling.Auto,
@@ -47,7 +46,5 @@ namespace Intersect.GameObjects.Conditions
                 }
             );
         }
-
     }
-
 }

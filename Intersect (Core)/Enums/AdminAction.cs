@@ -30,6 +30,6 @@ namespace Intersect.Enums
 
         SetAccess,
 
-        ReturnToOverworld
+        ReturnToOverworld,
     }
 }

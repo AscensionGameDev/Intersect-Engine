@@ -1,9 +1,7 @@
 ﻿namespace Intersect.Config
 {
-
     public partial class SmtpSettings
     {
-
         public string FromAddress { get; set; } = "";
 
         public string FromName { get; set; } = "";
@@ -22,7 +20,5 @@
         {
             return !string.IsNullOrEmpty(FromAddress) && !string.IsNullOrEmpty(Host);
         }
-
     }
-
 }

@@ -1,9 +1,7 @@
 ﻿namespace Intersect.Config
 {
-
     public partial class CombatOptions
     {
-
         public int BlockingSlow = 30; //Slow when moving with a shield. Default 30%
 
         public int CombatTime = 10000; //10 seconds
@@ -16,7 +14,7 @@
 
         //Combat
         public int RegenTime = 3000; //3 seconds
-        
+
         public bool EnableCombatChatMessages = false; // Enables or disables combat chat messages.
 
         //Spells
@@ -25,7 +23,7 @@
         /// If enabled this allows spell casts to stop/be canceled if the player tries to move around (WASD)
         /// </summary>
         public bool MovementCancelsCast = false;
-        
+
         // Cooldowns
 
         /// <summary>
@@ -60,11 +58,10 @@
         /// Configures the maximum distance a target is allowed to be from the player when auto targetting.
         /// </summary>
         public int MaxPlayerAutoTargetRadius = 15;
-        
+
         /// <summary>
         /// If enabled this allows regenerate vitals in combat
         /// </summary>
         public bool RegenVitalsInCombat = false;
     }
-
 }

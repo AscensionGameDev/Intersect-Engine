@@ -8,10 +8,8 @@ using Intersect.Models;
 
 namespace Intersect.Enums
 {
-
     public static partial class GameObjectTypeExtensions
     {
-
         static GameObjectTypeExtensions()
         {
             EnumType = typeof(GameObjectType);
@@ -49,11 +47,12 @@ namespace Intersect.Enums
 
         public static IDatabaseObject CreateNew(this GameObjectType gameObjectType)
         {
-            var instance = Activator.CreateInstance(AttributeMap?[gameObjectType]?.Type, new object[] { });
+            var instance = Activator.CreateInstance(
+                AttributeMap?[gameObjectType]?.Type,
+                new object[] { }
+            );
 
             return instance as IDatabaseObject;
         }
-
     }
-
 }

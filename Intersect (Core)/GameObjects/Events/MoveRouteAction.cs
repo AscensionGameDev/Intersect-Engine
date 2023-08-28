@@ -2,10 +2,8 @@
 
 namespace Intersect.GameObjects.Events
 {
-
     public partial class MoveRouteAction
     {
-
         public Guid AnimationId { get; set; }
 
         public EventGraphic Graphic { get; set; }
@@ -31,7 +29,5 @@ namespace Intersect.GameObjects.Events
 
             return copy;
         }
-
     }
-
 }

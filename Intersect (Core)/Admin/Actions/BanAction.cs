@@ -1,4 +1,3 @@
-﻿using Intersect.Enums;
 using MessagePack;
 
 namespace Intersect.Admin.Actions
@@ -34,7 +33,5 @@ namespace Intersect.Admin.Actions
 
         [Key(5)]
         public bool BanIp { get; set; }
-
     }
-
 }

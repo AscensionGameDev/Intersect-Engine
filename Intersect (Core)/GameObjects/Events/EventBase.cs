@@ -9,10 +9,8 @@ using Newtonsoft.Json;
 
 namespace Intersect.GameObjects.Events
 {
-
     public partial class EventBase : DatabaseObject<EventBase>, IFolderable
     {
-
         //Cached Pages Data
         private string mCachedPagesData = null;
 
@@ -38,7 +36,7 @@ namespace Intersect.GameObjects.Events
             SpawnY = y;
             CommonEvent = isCommon;
             Global = isGlobal;
-            Pages = new List<EventPage> {new EventPage()};
+            Pages = new List<EventPage> { new EventPage() };
         }
 
         public EventBase(Guid id, bool isCommon = false) : base(id)
@@ -134,7 +132,7 @@ namespace Intersect.GameObjects.Events
         /// <inheritdoc />
         public string Folder { get; set; } = "";
 
-        public new static Guid IdFromList(int listIndex)
+        public static new Guid IdFromList(int listIndex)
         {
             if (listIndex < 0)
             {
@@ -153,12 +151,12 @@ namespace Intersect.GameObjects.Events
             return commonEvents[listIndex].Value?.Id ?? Guid.Empty;
         }
 
-        public new static EventBase FromList(int listIndex)
+        public static new EventBase FromList(int listIndex)
         {
             return Get(IdFromList(listIndex));
         }
 
-        public new static int ListIndex(Guid id)
+        public static new int ListIndex(Guid id)
         {
             var commonEvents = Lookup.Where(pair => ((EventBase) pair.Value)?.CommonEvent ?? false)
                 .OrderBy(p => p.Value?.Name)
@@ -184,7 +182,8 @@ namespace Intersect.GameObjects.Events
         {
             var oldTime = TimeCreated;
             JsonConvert.PopulateObject(
-                json, this,
+                json,
+                this,
                 new JsonSerializerSettings()
                 {
                     TypeNameHandling = TypeNameHandling.Auto,
@@ -198,7 +197,5 @@ namespace Intersect.GameObjects.Events
                 TimeCreated = oldTime;
             }
         }
-
     }
-
 }

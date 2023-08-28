@@ -8,13 +8,13 @@ using Newtonsoft.Json;
 
 namespace Intersect.GameObjects
 {
-
     public partial class ShopBase : DatabaseObject<ShopBase>, IFolderable
     {
+        [NotMapped]
+        public List<ShopItem> BuyingItems = new List<ShopItem>();
 
-        [NotMapped] public List<ShopItem> BuyingItems = new List<ShopItem>();
-
-        [NotMapped] public List<ShopItem> SellingItems = new List<ShopItem>();
+        [NotMapped]
+        public List<ShopItem> SellingItems = new List<ShopItem>();
 
         [JsonConstructor]
         public ShopBase(Guid id) : base(id)
@@ -65,12 +65,10 @@ namespace Intersect.GameObjects
 
         /// <inheritdoc />
         public string Folder { get; set; } = "";
-
     }
 
     public partial class ShopItem
     {
-
         public Guid CostItemId;
 
         public int CostItemQuantity;
@@ -88,7 +86,5 @@ namespace Intersect.GameObjects
         [NotMapped]
         [JsonIgnore]
         public ItemBase Item => ItemBase.Get(ItemId);
-
     }
-
 }

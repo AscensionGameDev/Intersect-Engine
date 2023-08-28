@@ -4,10 +4,8 @@ using Intersect.Logging;
 
 namespace Intersect.GameObjects.Maps
 {
-
     public partial class MapAutotiles
     {
-
         public const byte AUTO_TILE_FILL = 5;
 
         public const byte AUTO_TILE_HORIZONTAL = 3;
@@ -383,10 +381,7 @@ namespace Intersect.GameObjects.Maps
                 {
                     for (var y = 0; y < Options.MapHeight; y++)
                     {
-                        layer[x, y] = new QuarterTileCls()
-                        {
-                            QuarterTile = new PointStruct[5]
-                        };
+                        layer[x, y] = new QuarterTileCls() { QuarterTile = new PointStruct[5] };
                     }
                 }
                 Layers.Add(layerName, layer);
@@ -439,7 +434,7 @@ namespace Intersect.GameObjects.Maps
                             {
                                 continue;
                             }
-                            
+
                             var oldautotile = Layers[layer][x1, y1].Copy();
                             // calculate the subtile positions and place them
                             CalculateAutotile(x1, y1, layer, surroundingMaps);
@@ -2637,21 +2632,17 @@ namespace Intersect.GameObjects.Maps
             }
             Layers[layerName][x, y].QuarterTile[tileQuarter] = quarterTile;
         }
-
     }
 
     public partial struct PointStruct
     {
-
         public Int16 X;
 
         public Int16 Y;
-
     }
 
     public partial class QuarterTileCls
     {
-
         public PointStruct[] QuarterTile = new PointStruct[5];
 
         public byte RenderState;
@@ -2696,8 +2687,5 @@ namespace Intersect.GameObjects.Maps
 
             return true;
         }
-
     }
-
-
 }

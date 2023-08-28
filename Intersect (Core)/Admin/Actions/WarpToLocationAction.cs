@@ -1,6 +1,5 @@
 ﻿using System;
 
-using Intersect.Enums;
 using MessagePack;
 
 namespace Intersect.Admin.Actions
@@ -32,7 +31,5 @@ namespace Intersect.Admin.Actions
 
         [Key(4)]
         public byte Y { get; set; }
-
     }
-
 }

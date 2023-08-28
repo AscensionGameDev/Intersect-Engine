@@ -1,6 +1,5 @@
 ﻿namespace Intersect.Enums
 {
-    
     /// <summary>
     /// Contains the definitions to be used on how to handle giving or taking away items to and from players.
     /// </summary>
@@ -22,7 +21,5 @@
         /// NOTE: Requires at least one change to be successful!
         /// </summary>
         UpTo,
-
     }
-
 }

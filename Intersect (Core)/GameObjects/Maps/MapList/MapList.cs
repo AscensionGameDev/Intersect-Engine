@@ -8,10 +8,8 @@ using Newtonsoft.Json;
 
 namespace Intersect.GameObjects.Maps.MapList
 {
-
     public partial class MapList
     {
-
         //So EF will save this :P
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; protected set; }
@@ -107,12 +105,7 @@ namespace Intersect.GameObjects.Maps.MapList
 
         public void AddFolder(string folderName)
         {
-            var tmp = new MapListFolder()
-            {
-                Name = folderName,
-                FolderId = Guid.NewGuid()
-            };
-
+            var tmp = new MapListFolder() { Name = folderName, FolderId = Guid.NewGuid() };
             Items.Add(tmp);
         }
 
@@ -366,7 +359,5 @@ namespace Intersect.GameObjects.Maps.MapList
 
             return lowestMap;
         }
-
     }
-
 }

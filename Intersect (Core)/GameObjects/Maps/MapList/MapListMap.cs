@@ -4,10 +4,8 @@ using Intersect.Collections;
 
 namespace Intersect.GameObjects.Maps.MapList
 {
-
     public partial class MapListMap : MapListItem, IComparable<MapListMap>
     {
-
         public Guid MapId;
 
         public long TimeCreated;
@@ -40,7 +38,5 @@ namespace Intersect.GameObjects.Maps.MapList
                 }
             }
         }
-
     }
-
 }

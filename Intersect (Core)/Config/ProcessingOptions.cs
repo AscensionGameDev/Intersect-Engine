@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+using System;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Intersect.Config
 {
@@ -51,6 +47,7 @@ namespace Intersect.Config
         /// Minimum number of threads that will be used for database interactions like player or variable saving
         /// </summary>
         public int MinDatabaseThreads { get; set; } = 2;
+
         /// <summary>
         /// Maximum number of threads that will be used for database interactions like player or variable saving
         /// </summary>
@@ -70,14 +67,17 @@ namespace Intersect.Config
         /// Minimum number of worker threads that will be used in the system managed threadpool (-1 for default)
         /// </summary>
         public int MinSystemThreadpoolWorkerThreads { get; set; } = -1;
+
         /// <summary>
         /// Maximum number of worker threads that will be used in the system managed threadpool (-1 for default)
         /// </summary>
         public int MaxSystemThreadpoolWorkerThreads { get; set; } = -1;
+
         /// <summary>
         /// Minimum number of worker threads that will be used for io the system managed threadpool (-1 for default)
         /// </summary>
         public int MinSystemThreadpoolIOThreads { get; set; } = -1;
+
         /// <summary>
         /// Maximum number of worker threads that will be used for io the system managed threadpool (-1 for default)
         /// </summary>

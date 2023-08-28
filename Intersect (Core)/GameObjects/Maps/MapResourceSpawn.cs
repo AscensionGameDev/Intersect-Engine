@@ -2,7 +2,6 @@
 
 namespace Intersect.GameObjects.Maps
 {
-
     public partial class ResourceSpawn
     {
         public Guid Id { get; set; } = Guid.NewGuid();
@@ -14,7 +13,5 @@ namespace Intersect.GameObjects.Maps
         public byte Y;
 
         public byte Z;
-
     }
-
 }

@@ -8,14 +8,12 @@ using Newtonsoft.Json;
 
 namespace Intersect.Configuration
 {
-
     /// <inheritdoc />
     /// <summary>
     /// Client configuration options
     /// </summary>
     public sealed partial class ClientConfiguration : IConfiguration<ClientConfiguration>
     {
-
         public const string DefaultPath = @"resources/config.json";
 
         /// <inheritdoc />
@@ -41,7 +39,11 @@ namespace Intersect.Configuration
 
         public const int DEFAULT_PORT = 5400;
 
-        public static List<DisplayDirection> DEFAULT_ENTITY_BAR_DIRECTIONS => Enumerable.Range(0, 1 + (int)Vital.VitalCount).Select(_ => DisplayDirection.StartToEnd).ToList();
+        public static List<DisplayDirection> DEFAULT_ENTITY_BAR_DIRECTIONS =>
+            Enumerable
+                .Range(0, 1 + (int)Vital.VitalCount)
+                .Select(_ => DisplayDirection.StartToEnd)
+                .ToList();
 
         public const string DEFAULT_FONT = "sourcesansproblack";
 
@@ -108,7 +110,9 @@ namespace Intersect.Configuration
             GameFont = string.IsNullOrWhiteSpace(GameFont) ? DEFAULT_FONT : GameFont.Trim();
             Host = string.IsNullOrWhiteSpace(Host) ? DEFAULT_HOST : Host.Trim();
             IntroImages = new List<string>(IntroImages?.Distinct() ?? new List<string>());
-            MenuBackground = new List<string>(MenuBackground?.Distinct() ?? new List<string> { "background.png" });
+            MenuBackground = new List<string>(
+                MenuBackground?.Distinct() ?? new List<string> { "background.png" }
+            );
             Port = Math.Min(Math.Max(Port, (ushort)1), ushort.MaxValue);
             TypewriterFullStopCharacters = TypewriterFullStopCharacters?.Distinct()?.ToList() ?? new List<char>();
             TypewriterPauseCharacters = TypewriterPauseCharacters?.Distinct()?.ToList() ?? new List<char>();
@@ -223,7 +227,10 @@ namespace Intersect.Configuration
         /// </summary>
         [JsonProperty(ObjectCreationHandling = ObjectCreationHandling.Replace)]
         public List<DisplayDirection> EntityBarDirections { get; set; } =
-            Enumerable.Range(0, 1 + (int)Vital.VitalCount).Select(_ => DisplayDirection.StartToEnd).ToList();
+            Enumerable
+                .Range(0, 1 + (int)Vital.VitalCount)
+                .Select(_ => DisplayDirection.StartToEnd)
+                .ToList();
 
         public bool TypewriterEnabled { get; set; } = DEFAULT_TYPEWRITER_ENABLED;
 
@@ -261,7 +268,5 @@ namespace Intersect.Configuration
         }
 
         #endregion
-
     }
-
 }

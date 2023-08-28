@@ -7,10 +7,8 @@ using Newtonsoft.Json;
 
 namespace Intersect.GameObjects
 {
-
     public partial class PlayerVariableBase : DatabaseObject<PlayerVariableBase>, IFolderable
     {
-
         [JsonConstructor]
         public PlayerVariableBase(Guid id) : base(id)
         {
@@ -74,8 +72,8 @@ namespace Intersect.GameObjects
                 .Where(pair => pair.Value is PlayerVariableBase descriptor && descriptor.Type == dataType)
                 .OrderBy(pair => pair.Value.TimeCreated)
                 .Skip(listIndex)
-                .First().Value.Id;
+                .First()
+                .Value.Id;
         }
     }
-
 }

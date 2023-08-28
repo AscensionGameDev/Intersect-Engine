@@ -20,7 +20,7 @@ namespace Intersect.Enums
 
         DownRight,
 
-        DownLeft
+        DownLeft,
     }
 
     public static class DirectionExtensions

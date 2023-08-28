@@ -10,6 +10,6 @@ namespace Intersect.Enums
 
         Dash = 3,
 
-        Event = 4
+        Event = 4,
     }
 }

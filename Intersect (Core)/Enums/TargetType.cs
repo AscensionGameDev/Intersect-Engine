@@ -4,6 +4,6 @@ namespace Intersect.Enums
     {
         Hover = 0,
 
-        Selected = 1
+        Selected = 1,
     }
 }

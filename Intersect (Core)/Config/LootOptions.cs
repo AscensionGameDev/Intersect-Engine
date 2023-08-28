@@ -5,7 +5,6 @@
     /// </summary>
     public partial class LootOptions
     {
-
         /// <summary>
         /// Defines how long (in ms) loot will be available for picking up on the map.
         /// </summary>

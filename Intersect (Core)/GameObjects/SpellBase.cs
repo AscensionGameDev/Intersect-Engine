@@ -13,11 +13,10 @@ using Newtonsoft.Json;
 
 namespace Intersect.GameObjects
 {
-
     public partial class SpellBase : DatabaseObject<SpellBase>, IFolderable
     {
-
-        [NotMapped] public int[] VitalCost = new int[(int) Vital.VitalCount];
+        [NotMapped]
+        public int[] VitalCost = new int[(int) Vital.VitalCount];
 
         [JsonConstructor]
         public SpellBase(Guid id) : base(id)
@@ -50,7 +49,6 @@ namespace Intersect.GameObjects
 
         [Column("HitAnimation")]
         public Guid HitAnimationId { get; set; }
-
 
         [NotMapped]
         [JsonIgnore]
@@ -158,15 +156,18 @@ namespace Intersect.GameObjects
                 return Array.Empty<SpellBase>();
             }
 
-            return Lookup.Where(i => ((SpellBase)i.Value).CooldownGroup.Trim() == cooldownGroup).Select(i => (SpellBase)i.Value).ToArray();
+            return Lookup
+                .Where(i => ((SpellBase)i.Value).CooldownGroup.Trim() == cooldownGroup)
+                .Select(i => (SpellBase)i.Value)
+                .ToArray();
         }
     }
 
     [Owned]
     public partial class SpellCombatData
     {
-
-        [NotMapped] public int[] VitalDiff = new int[(int) Vital.VitalCount];
+        [NotMapped]
+        public int[] VitalDiff = new int[(int) Vital.VitalCount];
 
         public int CritChance { get; set; }
 
@@ -246,13 +247,11 @@ namespace Intersect.GameObjects
 
         [Column("Trap")]
         public int TrapDuration { get; set; }
-
     }
 
     [Owned]
     public partial class SpellWarpData
     {
-
         public Guid MapId { get; set; }
 
         public int X { get; set; }
@@ -260,13 +259,11 @@ namespace Intersect.GameObjects
         public int Y { get; set; }
 
         public int Dir { get; set; }
-
     }
 
     [Owned]
     public partial class SpellDashOpts
     {
-
         public bool IgnoreMapBlocks { get; set; }
 
         public bool IgnoreActiveResources { get; set; }
@@ -274,7 +271,5 @@ namespace Intersect.GameObjects
         public bool IgnoreInactiveResources { get; set; }
 
         public bool IgnoreZDimensionAttributes { get; set; }
-
     }
-
 }

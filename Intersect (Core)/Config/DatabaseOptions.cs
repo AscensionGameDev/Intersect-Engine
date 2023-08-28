@@ -6,14 +6,11 @@ using Newtonsoft.Json.Converters;
 
 namespace Intersect.Config
 {
-
     public partial class DatabaseOptions
     {
-
         [SuppressMessage("ReSharper", "InconsistentNaming")]
         public enum DatabaseType
         {
-
             SQLite,
 
             sqlite = SQLite,
@@ -29,7 +26,6 @@ namespace Intersect.Config
             MariaDB = MySQL,
 
             mariadb = MariaDB
-
         }
 
         [JsonConverter(typeof(StringEnumConverter))]
@@ -47,11 +43,10 @@ namespace Intersect.Config
 
         [JsonConverter(typeof(StringEnumConverter))]
         [JsonProperty(
-            NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling = DefaultValueHandling.Populate
+            NullValueHandling = NullValueHandling.Ignore,
+            DefaultValueHandling = DefaultValueHandling.Populate
         )]
         [DefaultValue(Logging.LogLevel.Error)]
         public Logging.LogLevel LogLevel { get; set; } = Logging.LogLevel.Error;
-
     }
-
 }

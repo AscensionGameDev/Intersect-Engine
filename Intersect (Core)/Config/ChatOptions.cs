@@ -1,9 +1,7 @@
 ﻿namespace Intersect.Config
 {
-
     public partial class ChatOptions
     {
-
         /// <summary>
         /// The maximum length of a chat message in characters.
         /// </summary>
@@ -24,5 +22,4 @@
         /// </summary>
         public int AnnouncementDisplayDuration = 5000;
     }
-
 }

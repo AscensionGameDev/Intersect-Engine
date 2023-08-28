@@ -9,10 +9,8 @@ using Newtonsoft.Json;
 
 namespace Intersect.Configuration
 {
-
     public static partial class ConfigurationHelper
     {
-
         public static T Load<T>(T configuration, string filePath, bool failQuietly = false)
             where T : IConfiguration<T>
         {
@@ -97,7 +95,5 @@ namespace Intersect.Configuration
 
             return configuration;
         }
-
     }
-
 }

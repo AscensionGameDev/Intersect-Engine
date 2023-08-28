@@ -18,6 +18,6 @@
         System,
 
         // Always keep this at the bottom, or you're going to have a very bad time!
-        Count
+        Count,
     }
 }

@@ -2,7 +2,6 @@ namespace Intersect.Enums
 {
     public enum VariableMod
     {
-
         Set = 0,
 
         Add,
@@ -54,15 +53,15 @@ namespace Intersect.Enums
         DupGuildVar,
 
         AddGuildVar,
-        
+
         SubtractGuildVar,
-        
+
         MultiplyGuildVar,
-        
+
         DivideGuildVar,
-        
-        LeftShiftGuildVar, 
-        
+
+        LeftShiftGuildVar,
+
         RightShiftGuildVar,
 
         DuplicateUserVariable,

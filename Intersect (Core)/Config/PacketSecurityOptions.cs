@@ -2,10 +2,8 @@
 
 namespace Intersect.Config
 {
-
     public partial class PacketSecurityOptions
     {
-
         #region "Packet Sanitization and Hacking Detection Options"
 
         /// <summary>
@@ -18,7 +16,6 @@ namespace Intersect.Config
         /// </summary>
         public float ErrorMarginFactor { get; set; } = 0.25f;
 
-
         /// <summary>
         /// Lower bounds of adjusted packet times with pings taken into account for packets to be considered natural.
         /// </summary>
@@ -30,7 +27,7 @@ namespace Intersect.Config
         public int NaturalUpperMargin { get; set; } = 500;
 
         /// <summary>
-        /// Number of consecutive unnatural packets that are accepted in short intervals before being dropped. 
+        /// Number of consecutive unnatural packets that are accepted in short intervals before being dropped.
         /// </summary>
         public int AllowedSpikePackets { get; set; } = 5;
 
@@ -60,7 +57,7 @@ namespace Intersect.Config
         public FloodThreshholds EditorThreshholds = FloodThreshholds.Editor();
 
         /// <summary>
-        /// Packet flooding detection thresholds for general players. Pretty strict. 
+        /// Packet flooding detection thresholds for general players. Pretty strict.
         /// Might need to be adjusted if there is a lot of high paceed actions/movement/combat in your game.
         /// </summary>
         [JsonProperty("PlayerFloodThreshholds")]
@@ -76,7 +73,8 @@ namespace Intersect.Config
         /// <summary>
         /// Packet flooding detection threshholds for all users who are not yet logged in.
         /// </summary>
-        [JsonProperty("FloodThreshholds")] public FloodThreshholds Threshholds = FloodThreshholds.NotLoggedIn();
+        [JsonProperty("FloodThreshholds")]
+        public FloodThreshholds Threshholds = FloodThreshholds.NotLoggedIn();
         #endregion
     }
 
@@ -116,7 +114,5 @@ namespace Intersect.Config
                 KickAvgPacketPerSec = 3,
             };
         }
-
     }
-
 }

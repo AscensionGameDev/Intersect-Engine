@@ -122,7 +122,7 @@ namespace Intersect.Config.Guilds
 
             if (Ranks[0].Limit != 1)
             {
-                throw new Exception(Ranks[0].Title + " is considered a guild leader (first rank) so the limit should be 1.");
+                throw new Exception($"{Ranks[0].Title} is considered a guild leader (first rank) so the limit should be 1.");
             }
 
             //Leader is always going to be the first rank, just make sure they can invite or kick

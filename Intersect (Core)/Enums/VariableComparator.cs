@@ -2,7 +2,6 @@ namespace Intersect.Enums
 {
     public enum VariableComparator
     {
-
         Equal = 0,
 
         GreaterOrEqual,
@@ -13,7 +12,6 @@ namespace Intersect.Enums
 
         Less,
 
-        NotEqual
-
+        NotEqual,
     }
 }

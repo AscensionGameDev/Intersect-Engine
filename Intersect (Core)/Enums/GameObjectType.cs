@@ -6,10 +6,8 @@ using Intersect.GameObjects.Maps;
 
 namespace Intersect.Enums
 {
-
     public enum GameObjectType
     {
-
         [GameObjectInfo(typeof(AnimationBase), "animations")]
         Animation = 0,
 
@@ -58,14 +56,13 @@ namespace Intersect.Enums
         [GameObjectInfo(typeof(TilesetBase), "tilesets")]
         Tileset,
 
-        [GameObjectInfo(typeof(TimeBase), "")] Time,
+        [GameObjectInfo(typeof(TimeBase), "")]
+        Time,
 
         [GameObjectInfo(typeof(GuildVariableBase), "guild_variables")]
         GuildVariable,
 
         [GameObjectInfo(typeof(UserVariableBase), "user_variables")]
         UserVariable,
-
     }
-
 }

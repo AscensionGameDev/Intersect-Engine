@@ -15,11 +15,10 @@ using Newtonsoft.Json;
 
 namespace Intersect.GameObjects
 {
-
     public partial class ItemBase : DatabaseObject<ItemBase>, IFolderable
     {
-
-        [NotMapped] public ConditionLists UsageRequirements = new ConditionLists();
+        [NotMapped]
+        public ConditionLists UsageRequirements = new ConditionLists();
 
         public string CannotUseMessage { get; set; } = "";
 
@@ -71,7 +70,8 @@ namespace Intersect.GameObjects
         /// <summary>
         /// Defines whether or not this item can be dropped by a player.
         /// </summary>
-        [Column("Bound")]   // Not exactly the cleanest solution, since CanDrop and Bound set to true will do the opposite.. But don't want to leave a bogus field!
+        // Not exactly the cleanest solution, since CanDrop and Bound set to true will do the opposite.. But don't want to leave a bogus field!
+        [Column("Bound")]
         public bool CanDrop { get; set; } = true;
 
         /// <summary>
@@ -257,7 +257,6 @@ namespace Intersect.GameObjects
         /// </summary>
         public long DespawnTime { get; set; }
 
-
         [Column("VitalsGiven")]
         [JsonIgnore]
         public string VitalsJson
@@ -322,9 +321,10 @@ namespace Intersect.GameObjects
         }
 
         [JsonIgnore, NotMapped]
-        public bool IsStackable => (ItemType == ItemType.Currency || Stackable) &&
-                                   ItemType != ItemType.Equipment &&
-                                   ItemType != ItemType.Bag;
+        public bool IsStackable =>
+            (ItemType == ItemType.Currency || Stackable)
+            && ItemType != ItemType.Equipment
+            && ItemType != ItemType.Bag;
 
         [NotMapped]
         public List<EffectData> Effects { get; set; }
@@ -376,7 +376,10 @@ namespace Intersect.GameObjects
                 return Array.Empty<ItemBase>();
             }
 
-            return Lookup.Where(i => ((ItemBase)i.Value).CooldownGroup.Trim() == cooldownGroup).Select(i => (ItemBase)i.Value).ToArray();
+            return Lookup
+                .Where(i => ((ItemBase)i.Value).CooldownGroup.Trim() == cooldownGroup)
+                .Select(i => (ItemBase)i.Value)
+                .ToArray();
         }
 
         private void Initialize()
@@ -392,25 +395,21 @@ namespace Intersect.GameObjects
             Effects = new List<EffectData>();
             Color = new Color(255, 255, 255, 255);
         }
-
     }
 
     [Owned]
     public partial class ConsumableData
     {
-
         public ConsumableType Type { get; set; }
 
         public int Value { get; set; }
 
         public int Percentage { get; set; }
-
     }
 
     [Owned]
     public partial class EffectData
     {
-
         public EffectData()
         {
             Type = default;
@@ -426,7 +425,5 @@ namespace Intersect.GameObjects
         public ItemEffect Type { get; set; }
 
         public int Percentage { get; set; }
-
     }
-
 }

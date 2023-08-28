@@ -4,10 +4,8 @@ using Newtonsoft.Json;
 
 namespace Intersect.GameObjects.Maps
 {
-
     public partial struct Tile
     {
-
         public Guid TilesetId;
 
         public int X;
@@ -16,8 +14,7 @@ namespace Intersect.GameObjects.Maps
 
         public byte Autotile;
 
-        [JsonIgnore] public object TilesetTex;
-
+        [JsonIgnore]
+        public object TilesetTex;
     }
-
 }

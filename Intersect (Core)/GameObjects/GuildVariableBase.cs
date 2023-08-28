@@ -9,7 +9,6 @@ namespace Intersect.GameObjects
 {
     public partial class GuildVariableBase : DatabaseObject<GuildVariableBase>, IFolderable
     {
-
         [JsonConstructor]
         public GuildVariableBase(Guid id) : base(id)
         {
@@ -73,7 +72,8 @@ namespace Intersect.GameObjects
                 .Where(pair => pair.Value is GuildVariableBase descriptor && descriptor.Type == dataType)
                 .OrderBy(pair => pair.Value.TimeCreated)
                 .Skip(listIndex)
-                .First().Value.Id;
+                .First()
+                .Value.Id;
         }
     }
 }

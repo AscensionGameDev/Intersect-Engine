@@ -10,10 +10,8 @@ using Newtonsoft.Json;
 
 namespace Intersect.GameObjects
 {
-
     public partial class ServerVariableBase : DatabaseObject<ServerVariableBase>, IFolderable
     {
-
         [JsonConstructor]
         public ServerVariableBase(Guid id) : base(id)
         {
@@ -38,7 +36,11 @@ namespace Intersect.GameObjects
 
         [NotMapped]
         [JsonProperty("Value")]
-        public dynamic ValueData { get => Value.Value; set => Value.Value = value; }
+        public dynamic ValueData
+        {
+            get => Value.Value;
+            set => Value.Value = value;
+        }
 
         [Column(nameof(Value))]
         [JsonIgnore]
@@ -99,7 +101,8 @@ namespace Intersect.GameObjects
                 .Where(pair => pair.Value is ServerVariableBase descriptor && descriptor.Type == dataType)
                 .OrderBy(pair => pair.Value.TimeCreated)
                 .Skip(listIndex)
-                .First().Value.Id;
+                .First()
+                .Value.Id;
         }
     }
 }

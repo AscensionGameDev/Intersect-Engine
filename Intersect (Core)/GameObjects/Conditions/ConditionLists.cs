@@ -7,11 +7,9 @@ using Newtonsoft.Json.Linq;
 
 namespace Intersect.GameObjects.Conditions
 {
-
     [JsonConverter(typeof(ConditionListsSerializer))]
     public partial class ConditionLists
     {
-
         public List<ConditionList> Lists = new List<ConditionList>();
 
         public ConditionLists()
@@ -29,7 +27,8 @@ namespace Intersect.GameObjects.Conditions
         {
             Lists.Clear();
             JsonConvert.PopulateObject(
-                data, Lists,
+                data,
+                Lists,
                 new JsonSerializerSettings()
                 {
                     TypeNameHandling = TypeNameHandling.Auto,
@@ -50,12 +49,10 @@ namespace Intersect.GameObjects.Conditions
                 }
             );
         }
-
     }
 
     public partial class ConditionListsSerializer : JsonConverter
     {
-
         public override bool CanConvert(Type objectType)
         {
             return true;
@@ -80,10 +77,8 @@ namespace Intersect.GameObjects.Conditions
         {
             writer.WriteStartObject();
             writer.WritePropertyName("Lists");
-            serializer.Serialize(writer, ((ConditionLists) value).Data());
+            serializer.Serialize(writer, ((ConditionLists)value).Data());
             writer.WriteEndObject();
         }
-
     }
-
 }

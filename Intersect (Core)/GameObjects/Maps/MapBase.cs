@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text;
 using Intersect.Collections;
 using Intersect.Compression;
 using Intersect.Enums;
@@ -12,7 +11,6 @@ using Newtonsoft.Json;
 
 namespace Intersect.GameObjects.Maps
 {
-
     public partial class MapBase : DatabaseObject<MapBase>
     {
         [NotMapped]
@@ -24,15 +22,22 @@ namespace Intersect.GameObjects.Maps
             ObjectCreationHandling = ObjectCreationHandling.Replace
         };
 
-        [NotMapped] [JsonIgnore]        public readonly Dictionary<Guid, EventBase> LocalEvents = new Dictionary<Guid, EventBase>();
+        [NotMapped]
+        [JsonIgnore]
+        public readonly Dictionary<Guid, EventBase> LocalEvents = new Dictionary<Guid, EventBase>();
 
         //Client/Editor Only
-        [JsonIgnore] [NotMapped] public MapAutotiles Autotiles;
+        [JsonIgnore]
+        [NotMapped]
+        public MapAutotiles Autotiles;
 
-        [NotMapped] public List<Guid> EventIds = new List<Guid>();
+        [NotMapped]
+        public List<Guid> EventIds = new List<Guid>();
 
         //Core Data
-        [JsonIgnore] [NotMapped] public Dictionary<string, Tile[,]> Layers = new Dictionary<string, Tile[,]>();
+        [JsonIgnore]
+        [NotMapped]
+        public Dictionary<string, Tile[,]> Layers = new Dictionary<string, Tile[,]>();
 
         //Map Attributes
         private MapAttribute[,] mAttributes = new MapAttribute[Options.MapWidth, Options.MapHeight];
@@ -41,7 +46,9 @@ namespace Intersect.GameObjects.Maps
         private byte[] mCachedAttributeData = null;
 
         //SyncLock
-        [JsonIgnore] [NotMapped] protected object mMapLock = new object();
+        [JsonIgnore]
+        [NotMapped]
+        protected object mMapLock = new object();
 
         [JsonConstructor]
         public MapBase(Guid id) : base(id)
@@ -85,7 +92,6 @@ namespace Intersect.GameObjects.Maps
                     IsIndoors = mapBase.IsIndoors;
                     if (Layers != null && mapBase.Layers != null)
                     {
-
                         Layers.Clear();
 
                         foreach (var layer in mapBase.Layers)
@@ -172,7 +178,10 @@ namespace Intersect.GameObjects.Maps
             set
             {
                 var str = LZ4.UnPickleString(value);
-                mAttributes = JsonConvert.DeserializeObject<MapAttribute[,]>(LZ4.UnPickleString(value), mJsonSerializerSettings);
+                mAttributes = JsonConvert.DeserializeObject<MapAttribute[,]>(
+                    LZ4.UnPickleString(value),
+                    mJsonSerializerSettings
+                );
                 mCachedAttributeData = value;
             }
         }
@@ -186,7 +195,13 @@ namespace Intersect.GameObjects.Maps
             set
             {
                 mAttributes = value;
-                mCachedAttributeData = LZ4.PickleString(JsonConvert.SerializeObject(mAttributes, Formatting.None, mJsonSerializerSettings));
+                mCachedAttributeData = LZ4.PickleString(
+                    JsonConvert.SerializeObject(
+                        mAttributes,
+                        Formatting.None,
+                        mJsonSerializerSettings
+                    )
+                );
             }
         }
 
@@ -347,7 +362,6 @@ namespace Intersect.GameObjects.Maps
 
         public partial class MapControllers : DatabaseObjectLookup
         {
-
             private readonly DatabaseObjectLookup mBaseLookup;
 
             public MapControllers(DatabaseObjectLookup baseLookup) : base(baseLookup.StoredType)
@@ -379,9 +393,6 @@ namespace Intersect.GameObjects.Maps
                 mBaseLookup?.Clear();
                 base.Clear();
             }
-
         }
-
     }
-
 }

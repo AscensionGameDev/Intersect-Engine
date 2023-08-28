@@ -1,4 +1,3 @@
-﻿using Intersect.Enums;
 using MessagePack;
 
 namespace Intersect.Admin.Actions
@@ -26,7 +25,5 @@ namespace Intersect.Admin.Actions
 
         [Key(3)]
         public string Sprite { get; set; }
-
     }
-
 }

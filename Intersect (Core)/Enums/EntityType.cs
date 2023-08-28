@@ -10,6 +10,6 @@ namespace Intersect.Enums
 
         Projectile = 3,
 
-        Event = 4
+        Event = 4,
     }
 }

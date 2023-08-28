@@ -1,4 +1,3 @@
-using Intersect.Enums;
 using MessagePack;
 
 namespace Intersect.Admin.Actions
@@ -22,7 +21,5 @@ namespace Intersect.Admin.Actions
 
         [Key(2)]
         public string PlayerName { get; set; }
-
     }
-
 }
