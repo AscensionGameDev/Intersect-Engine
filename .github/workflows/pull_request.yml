@@ -6,7 +6,7 @@ on:
 
 env:
   VERSION_PREFIX: 0.7.2
-  VERSION_SUFFIX: -beta
+  VERSION_SUFFIX: -pr${{ github.event.issue.number }}
 
 jobs:
   build:
@@ -51,3 +51,34 @@ jobs:
 
     - name: Build solution (Release)
       run: msbuild Intersect.sln /p:Configuration=Release /p:PackageVersion=${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}+build.${{ github.sha }} /p:Version=0.7.2.${{ github.run_number }}
+
+    - name: Package artifacts
+      uses: AscensionGameDev/actions@4c9073d0721da476ac9337fbbfe46a9ca1ae4389
+      with:
+        bundle: .github/bundles/patch.json
+        version: ${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}+build.${{ github.sha }}
+
+    - name: Extract archive to avoid zips inside of zips
+      run: 7z x dist/*.zip
+
+    - name: Delete inner zip
+      run: del dist/*.zip
+  
+    - name: Upload artifacts for workflow debugging
+      uses: actions/upload-artifact@v3
+      with:
+        name: intersect-${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}+build.${{ github.sha }}
+        path: "dist/patch/*"
+
+    - name: Create comment
+      uses: peter-evans/create-or-update-comment@v3
+      with:
+        issue-number: ${{ github.event.issue.number }}
+        token: ${{ secrets.INTERSECTBOT_ACCESS_TOKEN }}
+        body: |
+            If you'd like to test this PR you can download the patch binaries for the latest commit [here](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}).
+
+            **Please make a backup of your game data before using the patch as it may corrupt your game data**
+
+            Please comment below to provide testing feedback. Thanks!
+
