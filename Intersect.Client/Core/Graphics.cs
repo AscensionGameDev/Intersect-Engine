@@ -1071,13 +1071,6 @@ namespace Intersect.Client.Core
                     Color.White,
                     blendMode: GameBlendModes.Multiply
                 );
-                // DrawGameTexture(
-                //     sDarknessTexture,
-                //     CurrentView.Left,
-                //     CurrentView.Top,
-                //     null,
-                //     GameBlendModes.Multiply
-                // );
             }
         }
 
