@@ -3273,10 +3273,10 @@ namespace Intersect.Server.Networking
         //MapListUpdatePacket
         public void HandlePacket(Client client, Network.Packets.Editor.MapListUpdatePacket packet)
         {
-            // if (!client.IsEditor)
-            // {
-            //     return;
-            // }
+            if (!client.IsEditor)
+            {
+                return;
+            }
 
             MapListFolder parent = null;
             var mapId = Guid.Empty;
