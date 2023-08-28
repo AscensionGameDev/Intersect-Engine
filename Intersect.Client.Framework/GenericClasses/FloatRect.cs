@@ -39,6 +39,26 @@ namespace Intersect.Client.Framework.GenericClasses
             set => mHeight = value;
         }
 
+        public Pointf Position
+        {
+            get => new Pointf(X, Y);
+            set
+            {
+                X = value.X;
+                Y = value.Y;
+            }
+        }
+
+        public Pointf Size
+        {
+            get => new Pointf(Width, Height);
+            set
+            {
+                Width = value.X;
+                Height = value.Y;
+            }
+        }
+
         public float Left => X;
 
         public float Top => Y;
@@ -56,6 +76,8 @@ namespace Intersect.Client.Framework.GenericClasses
             mWidth = w;
             mHeight = h;
         }
+
+        public FloatRect(Pointf position, Pointf size) : this(position.X, position.Y, size.X, size.Y) { }
 
         public static FloatRect Intersect(FloatRect a, FloatRect b)
         {

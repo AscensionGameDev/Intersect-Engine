@@ -1061,7 +1061,23 @@ namespace Intersect.Client.Core
             var radialShader = Globals.ContentManager.GetShader("radialgradient");
             if (radialShader != null)
             {
-                DrawGameTexture(sDarknessTexture, CurrentView.Left, CurrentView.Top, null, GameBlendModes.Multiply);
+                DrawGameTexture(
+                    sDarknessTexture,
+                    sDarknessTexture.Bounds,
+                    new FloatRect(
+                        CurrentView.Position,
+                        CurrentView.Size / Globals.Database.WorldZoom
+                    ),
+                    Color.White,
+                    blendMode: GameBlendModes.Multiply
+                );
+                // DrawGameTexture(
+                //     sDarknessTexture,
+                //     CurrentView.Left,
+                //     CurrentView.Top,
+                //     null,
+                //     GameBlendModes.Multiply
+                // );
             }
         }
 
