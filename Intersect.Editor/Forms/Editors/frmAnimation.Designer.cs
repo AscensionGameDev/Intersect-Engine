@@ -49,8 +49,9 @@ namespace Intersect.Editor.Forms.Editors
             this.lblName = new System.Windows.Forms.Label();
             this.txtName = new DarkUI.Controls.DarkTextBox();
             this.grpLower = new DarkUI.Controls.DarkGroupBox();
-            this.chkRenderAbovePlayer = new DarkUI.Controls.DarkCheckBox();
+            this.grpLowerExtraOptions = new DarkUI.Controls.DarkGroupBox();
             this.chkDisableLowerRotations = new DarkUI.Controls.DarkCheckBox();
+            this.chkRenderAbovePlayer = new DarkUI.Controls.DarkCheckBox();
             this.nudLowerLoopCount = new DarkUI.Controls.DarkNumericUpDown();
             this.nudLowerFrameDuration = new DarkUI.Controls.DarkNumericUpDown();
             this.nudLowerFrameCount = new DarkUI.Controls.DarkNumericUpDown();
@@ -72,8 +73,9 @@ namespace Intersect.Editor.Forms.Editors
             this.lblLowerGraphic = new System.Windows.Forms.Label();
             this.picLowerAnimation = new System.Windows.Forms.PictureBox();
             this.grpUpper = new DarkUI.Controls.DarkGroupBox();
-            this.chkRenderBelowFringe = new DarkUI.Controls.DarkCheckBox();
+            this.grpUpperExtraOptions = new DarkUI.Controls.DarkGroupBox();
             this.chkDisableUpperRotations = new DarkUI.Controls.DarkCheckBox();
+            this.chkRenderBelowFringe = new DarkUI.Controls.DarkCheckBox();
             this.nudUpperLoopCount = new DarkUI.Controls.DarkNumericUpDown();
             this.nudUpperFrameDuration = new DarkUI.Controls.DarkNumericUpDown();
             this.nudUpperFrameCount = new DarkUI.Controls.DarkNumericUpDown();
@@ -114,6 +116,7 @@ namespace Intersect.Editor.Forms.Editors
             this.grpAnimations.SuspendLayout();
             this.grpGeneral.SuspendLayout();
             this.grpLower.SuspendLayout();
+            this.grpLowerExtraOptions.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudLowerLoopCount)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudLowerFrameDuration)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudLowerFrameCount)).BeginInit();
@@ -123,6 +126,7 @@ namespace Intersect.Editor.Forms.Editors
             this.grpLowerPlayback.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picLowerAnimation)).BeginInit();
             this.grpUpper.SuspendLayout();
+            this.grpUpperExtraOptions.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudUpperLoopCount)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudUpperFrameDuration)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudUpperFrameCount)).BeginInit();
@@ -145,14 +149,14 @@ namespace Intersect.Editor.Forms.Editors
             this.grpAnimations.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpAnimations.Location = new System.Drawing.Point(3, 28);
             this.grpAnimations.Name = "grpAnimations";
-            this.grpAnimations.Size = new System.Drawing.Size(203, 537);
+            this.grpAnimations.Size = new System.Drawing.Size(200, 559);
             this.grpAnimations.TabIndex = 17;
             this.grpAnimations.TabStop = false;
             this.grpAnimations.Text = "Animations";
             // 
             // btnClearSearch
             // 
-            this.btnClearSearch.Location = new System.Drawing.Point(179, 19);
+            this.btnClearSearch.Location = new System.Drawing.Point(175, 19);
             this.btnClearSearch.Name = "btnClearSearch";
             this.btnClearSearch.Padding = new System.Windows.Forms.Padding(5);
             this.btnClearSearch.Size = new System.Drawing.Size(18, 20);
@@ -165,9 +169,9 @@ namespace Intersect.Editor.Forms.Editors
             this.txtSearch.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.txtSearch.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.txtSearch.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.txtSearch.Location = new System.Drawing.Point(6, 19);
+            this.txtSearch.Location = new System.Drawing.Point(5, 19);
             this.txtSearch.Name = "txtSearch";
-            this.txtSearch.Size = new System.Drawing.Size(167, 20);
+            this.txtSearch.Size = new System.Drawing.Size(165, 20);
             this.txtSearch.TabIndex = 18;
             this.txtSearch.Text = "Search...";
             this.txtSearch.Click += new System.EventHandler(this.txtSearch_Click);
@@ -184,10 +188,10 @@ namespace Intersect.Editor.Forms.Editors
             this.lstGameObjects.HideSelection = false;
             this.lstGameObjects.ImageIndex = 0;
             this.lstGameObjects.LineColor = System.Drawing.Color.FromArgb(((int)(((byte)(150)))), ((int)(((byte)(150)))), ((int)(((byte)(150)))));
-            this.lstGameObjects.Location = new System.Drawing.Point(6, 46);
+            this.lstGameObjects.Location = new System.Drawing.Point(5, 46);
             this.lstGameObjects.Name = "lstGameObjects";
             this.lstGameObjects.SelectedImageIndex = 0;
-            this.lstGameObjects.Size = new System.Drawing.Size(191, 485);
+            this.lstGameObjects.Size = new System.Drawing.Size(190, 505);
             this.lstGameObjects.TabIndex = 2;
             // 
             // grpGeneral
@@ -206,9 +210,9 @@ namespace Intersect.Editor.Forms.Editors
             this.grpGeneral.Controls.Add(this.lblName);
             this.grpGeneral.Controls.Add(this.txtName);
             this.grpGeneral.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpGeneral.Location = new System.Drawing.Point(1, 1);
+            this.grpGeneral.Location = new System.Drawing.Point(8, 5);
             this.grpGeneral.Name = "grpGeneral";
-            this.grpGeneral.Size = new System.Drawing.Size(988, 76);
+            this.grpGeneral.Size = new System.Drawing.Size(980, 76);
             this.grpGeneral.TabIndex = 18;
             this.grpGeneral.TabStop = false;
             this.grpGeneral.Text = "General";
@@ -346,8 +350,7 @@ namespace Intersect.Editor.Forms.Editors
             // 
             this.grpLower.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.grpLower.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.grpLower.Controls.Add(this.chkRenderAbovePlayer);
-            this.grpLower.Controls.Add(this.chkDisableLowerRotations);
+            this.grpLower.Controls.Add(this.grpLowerExtraOptions);
             this.grpLower.Controls.Add(this.nudLowerLoopCount);
             this.grpLower.Controls.Add(this.nudLowerFrameDuration);
             this.grpLower.Controls.Add(this.nudLowerFrameCount);
@@ -364,32 +367,46 @@ namespace Intersect.Editor.Forms.Editors
             this.grpLower.Controls.Add(this.lblLowerGraphic);
             this.grpLower.Controls.Add(this.picLowerAnimation);
             this.grpLower.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpLower.Location = new System.Drawing.Point(1, 84);
+            this.grpLower.Location = new System.Drawing.Point(8, 87);
             this.grpLower.Name = "grpLower";
-            this.grpLower.Size = new System.Drawing.Size(484, 450);
+            this.grpLower.Size = new System.Drawing.Size(484, 458);
             this.grpLower.TabIndex = 19;
             this.grpLower.TabStop = false;
             this.grpLower.Text = "Lower Layer (Below Target)";
             // 
-            // chkRenderAbovePlayer
+            // grpLowerExtraOptions
             // 
-            this.chkRenderAbovePlayer.AutoSize = true;
-            this.chkRenderAbovePlayer.Location = new System.Drawing.Point(134, 424);
-            this.chkRenderAbovePlayer.Name = "chkRenderAbovePlayer";
-            this.chkRenderAbovePlayer.Size = new System.Drawing.Size(127, 17);
-            this.chkRenderAbovePlayer.TabIndex = 27;
-            this.chkRenderAbovePlayer.Text = "Render Above Player";
-            this.chkRenderAbovePlayer.CheckedChanged += new System.EventHandler(this.chkRenderAbovePlayer_CheckedChanged);
+            this.grpLowerExtraOptions.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.grpLowerExtraOptions.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpLowerExtraOptions.Controls.Add(this.chkDisableLowerRotations);
+            this.grpLowerExtraOptions.Controls.Add(this.chkRenderAbovePlayer);
+            this.grpLowerExtraOptions.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpLowerExtraOptions.Location = new System.Drawing.Point(213, 405);
+            this.grpLowerExtraOptions.Name = "grpLowerExtraOptions";
+            this.grpLowerExtraOptions.Size = new System.Drawing.Size(265, 45);
+            this.grpLowerExtraOptions.TabIndex = 28;
+            this.grpLowerExtraOptions.TabStop = false;
+            this.grpLowerExtraOptions.Text = "Extra Options:";
             // 
             // chkDisableLowerRotations
             // 
             this.chkDisableLowerRotations.AutoSize = true;
-            this.chkDisableLowerRotations.Location = new System.Drawing.Point(9, 424);
+            this.chkDisableLowerRotations.Location = new System.Drawing.Point(9, 19);
             this.chkDisableLowerRotations.Name = "chkDisableLowerRotations";
             this.chkDisableLowerRotations.Size = new System.Drawing.Size(109, 17);
             this.chkDisableLowerRotations.TabIndex = 26;
             this.chkDisableLowerRotations.Text = "Disable Rotations";
             this.chkDisableLowerRotations.CheckedChanged += new System.EventHandler(this.chkDisableLowerRotations_CheckedChanged);
+            // 
+            // chkRenderAbovePlayer
+            // 
+            this.chkRenderAbovePlayer.AutoSize = true;
+            this.chkRenderAbovePlayer.Location = new System.Drawing.Point(133, 19);
+            this.chkRenderAbovePlayer.Name = "chkRenderAbovePlayer";
+            this.chkRenderAbovePlayer.Size = new System.Drawing.Size(127, 17);
+            this.chkRenderAbovePlayer.TabIndex = 27;
+            this.chkRenderAbovePlayer.Text = "Render Above Player";
+            this.chkRenderAbovePlayer.CheckedChanged += new System.EventHandler(this.chkRenderAbovePlayer_CheckedChanged);
             // 
             // nudLowerLoopCount
             // 
@@ -518,7 +535,7 @@ namespace Intersect.Editor.Forms.Editors
             this.grpLowerFrameOpts.Controls.Add(this.btnLowerClone);
             this.grpLowerFrameOpts.Controls.Add(this.lightEditorLower);
             this.grpLowerFrameOpts.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpLowerFrameOpts.Location = new System.Drawing.Point(213, 93);
+            this.grpLowerFrameOpts.Location = new System.Drawing.Point(213, 85);
             this.grpLowerFrameOpts.Name = "grpLowerFrameOpts";
             this.grpLowerFrameOpts.Size = new System.Drawing.Size(265, 319);
             this.grpLowerFrameOpts.TabIndex = 20;
@@ -551,7 +568,7 @@ namespace Intersect.Editor.Forms.Editors
             this.grpLowerPlayback.Controls.Add(this.scrlLowerFrame);
             this.grpLowerPlayback.Controls.Add(this.lblLowerFrame);
             this.grpLowerPlayback.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpLowerPlayback.Location = new System.Drawing.Point(213, 19);
+            this.grpLowerPlayback.Location = new System.Drawing.Point(213, 13);
             this.grpLowerPlayback.Name = "grpLowerPlayback";
             this.grpLowerPlayback.Size = new System.Drawing.Size(265, 68);
             this.grpLowerPlayback.TabIndex = 16;
@@ -678,8 +695,7 @@ namespace Intersect.Editor.Forms.Editors
             // 
             this.grpUpper.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.grpUpper.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.grpUpper.Controls.Add(this.chkRenderBelowFringe);
-            this.grpUpper.Controls.Add(this.chkDisableUpperRotations);
+            this.grpUpper.Controls.Add(this.grpUpperExtraOptions);
             this.grpUpper.Controls.Add(this.nudUpperLoopCount);
             this.grpUpper.Controls.Add(this.nudUpperFrameDuration);
             this.grpUpper.Controls.Add(this.nudUpperFrameCount);
@@ -696,32 +712,46 @@ namespace Intersect.Editor.Forms.Editors
             this.grpUpper.Controls.Add(this.lblUpperGraphic);
             this.grpUpper.Controls.Add(this.picUpperAnimation);
             this.grpUpper.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpUpper.Location = new System.Drawing.Point(504, 84);
+            this.grpUpper.Location = new System.Drawing.Point(500, 87);
             this.grpUpper.Name = "grpUpper";
-            this.grpUpper.Size = new System.Drawing.Size(485, 450);
+            this.grpUpper.Size = new System.Drawing.Size(485, 458);
             this.grpUpper.TabIndex = 20;
             this.grpUpper.TabStop = false;
             this.grpUpper.Text = "Upper Layer (Above Target)";
             // 
-            // chkRenderBelowFringe
+            // grpUpperExtraOptions
             // 
-            this.chkRenderBelowFringe.AutoSize = true;
-            this.chkRenderBelowFringe.Location = new System.Drawing.Point(139, 424);
-            this.chkRenderBelowFringe.Name = "chkRenderBelowFringe";
-            this.chkRenderBelowFringe.Size = new System.Drawing.Size(125, 17);
-            this.chkRenderBelowFringe.TabIndex = 31;
-            this.chkRenderBelowFringe.Text = "Render Below Fringe";
-            this.chkRenderBelowFringe.CheckedChanged += new System.EventHandler(this.chkRenderBelowFringe_CheckedChanged);
+            this.grpUpperExtraOptions.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.grpUpperExtraOptions.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpUpperExtraOptions.Controls.Add(this.chkDisableUpperRotations);
+            this.grpUpperExtraOptions.Controls.Add(this.chkRenderBelowFringe);
+            this.grpUpperExtraOptions.ForeColor = System.Drawing.Color.Gainsboro;
+            this.grpUpperExtraOptions.Location = new System.Drawing.Point(212, 405);
+            this.grpUpperExtraOptions.Name = "grpUpperExtraOptions";
+            this.grpUpperExtraOptions.Size = new System.Drawing.Size(265, 45);
+            this.grpUpperExtraOptions.TabIndex = 29;
+            this.grpUpperExtraOptions.TabStop = false;
+            this.grpUpperExtraOptions.Text = "Extra Options:";
             // 
             // chkDisableUpperRotations
             // 
             this.chkDisableUpperRotations.AutoSize = true;
-            this.chkDisableUpperRotations.Location = new System.Drawing.Point(6, 424);
+            this.chkDisableUpperRotations.Location = new System.Drawing.Point(9, 19);
             this.chkDisableUpperRotations.Name = "chkDisableUpperRotations";
             this.chkDisableUpperRotations.Size = new System.Drawing.Size(109, 17);
             this.chkDisableUpperRotations.TabIndex = 27;
             this.chkDisableUpperRotations.Text = "Disable Rotations";
             this.chkDisableUpperRotations.CheckedChanged += new System.EventHandler(this.chkDisableUpperRotations_CheckedChanged);
+            // 
+            // chkRenderBelowFringe
+            // 
+            this.chkRenderBelowFringe.AutoSize = true;
+            this.chkRenderBelowFringe.Location = new System.Drawing.Point(135, 19);
+            this.chkRenderBelowFringe.Name = "chkRenderBelowFringe";
+            this.chkRenderBelowFringe.Size = new System.Drawing.Size(125, 17);
+            this.chkRenderBelowFringe.TabIndex = 31;
+            this.chkRenderBelowFringe.Text = "Render Below Fringe";
+            this.chkRenderBelowFringe.CheckedChanged += new System.EventHandler(this.chkRenderBelowFringe_CheckedChanged);
             // 
             // nudUpperLoopCount
             // 
@@ -851,7 +881,7 @@ namespace Intersect.Editor.Forms.Editors
             this.grpUpperPlayback.Controls.Add(this.scrlUpperFrame);
             this.grpUpperPlayback.Controls.Add(this.lblUpperFrame);
             this.grpUpperPlayback.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpUpperPlayback.Location = new System.Drawing.Point(212, 19);
+            this.grpUpperPlayback.Location = new System.Drawing.Point(212, 13);
             this.grpUpperPlayback.Name = "grpUpperPlayback";
             this.grpUpperPlayback.Size = new System.Drawing.Size(265, 68);
             this.grpUpperPlayback.TabIndex = 18;
@@ -896,7 +926,7 @@ namespace Intersect.Editor.Forms.Editors
             this.grpUpperFrameOpts.Controls.Add(this.btnUpperClone);
             this.grpUpperFrameOpts.Controls.Add(this.lightEditorUpper);
             this.grpUpperFrameOpts.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpUpperFrameOpts.Location = new System.Drawing.Point(212, 93);
+            this.grpUpperFrameOpts.Location = new System.Drawing.Point(212, 85);
             this.grpUpperFrameOpts.Name = "grpUpperFrameOpts";
             this.grpUpperFrameOpts.Size = new System.Drawing.Size(265, 319);
             this.grpUpperFrameOpts.TabIndex = 19;
@@ -1019,7 +1049,7 @@ namespace Intersect.Editor.Forms.Editors
             // btnCancel
             // 
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnCancel.Location = new System.Drawing.Point(1014, 574);
+            this.btnCancel.Location = new System.Drawing.Point(1017, 593);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Padding = new System.Windows.Forms.Padding(5);
             this.btnCancel.Size = new System.Drawing.Size(190, 27);
@@ -1029,7 +1059,7 @@ namespace Intersect.Editor.Forms.Editors
             // 
             // btnSave
             // 
-            this.btnSave.Location = new System.Drawing.Point(818, 574);
+            this.btnSave.Location = new System.Drawing.Point(821, 593);
             this.btnSave.Name = "btnSave";
             this.btnSave.Padding = new System.Windows.Forms.Padding(5);
             this.btnSave.Size = new System.Drawing.Size(190, 27);
@@ -1042,9 +1072,9 @@ namespace Intersect.Editor.Forms.Editors
             this.pnlContainer.Controls.Add(this.grpUpper);
             this.pnlContainer.Controls.Add(this.grpGeneral);
             this.pnlContainer.Controls.Add(this.grpLower);
-            this.pnlContainer.Location = new System.Drawing.Point(216, 28);
+            this.pnlContainer.Location = new System.Drawing.Point(210, 34);
             this.pnlContainer.Name = "pnlContainer";
-            this.pnlContainer.Size = new System.Drawing.Size(988, 537);
+            this.pnlContainer.Size = new System.Drawing.Size(997, 553);
             this.pnlContainer.TabIndex = 21;
             this.pnlContainer.Visible = false;
             // 
@@ -1067,7 +1097,7 @@ namespace Intersect.Editor.Forms.Editors
             this.toolStrip.Location = new System.Drawing.Point(0, 0);
             this.toolStrip.Name = "toolStrip";
             this.toolStrip.Padding = new System.Windows.Forms.Padding(5, 0, 1, 0);
-            this.toolStrip.Size = new System.Drawing.Size(1210, 25);
+            this.toolStrip.Size = new System.Drawing.Size(1214, 25);
             this.toolStrip.TabIndex = 41;
             this.toolStrip.Text = "toolStrip1";
             // 
@@ -1181,7 +1211,7 @@ namespace Intersect.Editor.Forms.Editors
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            this.ClientSize = new System.Drawing.Size(1210, 607);
+            this.ClientSize = new System.Drawing.Size(1214, 631);
             this.ControlBox = false;
             this.Controls.Add(this.toolStrip);
             this.Controls.Add(this.btnSave);
@@ -1203,6 +1233,8 @@ namespace Intersect.Editor.Forms.Editors
             this.grpGeneral.PerformLayout();
             this.grpLower.ResumeLayout(false);
             this.grpLower.PerformLayout();
+            this.grpLowerExtraOptions.ResumeLayout(false);
+            this.grpLowerExtraOptions.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudLowerLoopCount)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudLowerFrameDuration)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudLowerFrameCount)).EndInit();
@@ -1214,6 +1246,8 @@ namespace Intersect.Editor.Forms.Editors
             ((System.ComponentModel.ISupportInitialize)(this.picLowerAnimation)).EndInit();
             this.grpUpper.ResumeLayout(false);
             this.grpUpper.PerformLayout();
+            this.grpUpperExtraOptions.ResumeLayout(false);
+            this.grpUpperExtraOptions.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudUpperLoopCount)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudUpperFrameDuration)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudUpperFrameCount)).EndInit();
@@ -1311,5 +1345,7 @@ namespace Intersect.Editor.Forms.Editors
         private DarkTextBox txtSearch;
         private DarkCheckBox chkCompleteSoundPlayback;
         private Controls.GameObjectList lstGameObjects;
+        private DarkGroupBox grpLowerExtraOptions;
+        private DarkGroupBox grpUpperExtraOptions;
     }
 }

@@ -769,6 +769,8 @@ namespace Intersect.Editor.Localization
 
             public static LocalizedString deletetitle = @"Delete Animation";
 
+            public static LocalizedString extraoptions = @"Extra Options:";
+
             public static LocalizedString folderlabel = @"Folder:";
 
             public static LocalizedString foldertitle = @"Add Folder";
@@ -1016,9 +1018,9 @@ namespace Intersect.Editor.Localization
 
             public static LocalizedString abilitypowerboost = @"Ability Pwr (+{00}):";
 
-            public static LocalizedString addicon = @"+";
+            public static LocalizedString addsprite = @"Add Sprite";
 
-            public static LocalizedString addspell = @"Add";
+            public static LocalizedString addspell = @"Add Spell";
 
             public static LocalizedString armorboost = @"Armor (+{00}):";
 
@@ -1127,7 +1129,7 @@ namespace Intersect.Editor.Localization
 
             public static LocalizedString leveling = @"Leveling Up";
 
-            public static LocalizedString locked = @"Locked";
+            public static LocalizedString locked = @"Class Locked";
 
             public static LocalizedString magicresistboost = @"Magic Resist (+{00}):";
 
@@ -1153,9 +1155,9 @@ namespace Intersect.Editor.Localization
 
 Tick timer saved in server config.json.";
 
-            public static LocalizedString removeicon = @"-";
+            public static LocalizedString removeicon = @"Remove Sprite";
 
-            public static LocalizedString removespell = @"Remove";
+            public static LocalizedString removespell = @"Remove Spell";
 
             public static LocalizedString save = @"Save";
 
@@ -1174,9 +1176,9 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString spawnamount = @"Amount:";
 
-            public static LocalizedString spawnitemadd = @"Add";
+            public static LocalizedString spawnitemadd = @"Add Item";
 
-            public static LocalizedString spawnitemremove = @"Remove";
+            public static LocalizedString spawnitemremove = @"Remove Item";
 
             public static LocalizedString spawnitemdisplay = @"{00} x{01}";
 
@@ -3521,7 +3523,7 @@ Tick timer saved in server config.json.";
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString AddBonusEffect = @"Add";
 
-            public static LocalizedString animation = @"Animation:";
+            public static LocalizedString animation = @"Animation on Use:";
 
             public static LocalizedString attackanimation = @"Extra Attack Animation:";
 
@@ -3624,6 +3626,8 @@ Tick timer saved in server config.json.";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString IgnoreCooldownReduction = @"Ignore Cooldown Reduction?";
+
+            public static LocalizedString CooldownOptions = @"Cooldown Options";
 
             public static LocalizedString copy = @"Copy Item";
 
@@ -3748,6 +3752,8 @@ Tick timer saved in server config.json.";
             public static LocalizedString destroyspell = @"Destroy On Use?";
 
             public static LocalizedString SingleUseEvent = @"Destroy On Use?";
+
+            public static LocalizedString StackOptions = @"Stackable Options";
 
             public static LocalizedString stackable = @"Stackable?";
 
@@ -4338,7 +4344,7 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString folderprompt = @"Enter a name for the folder you'd like to add:";
 
-            public static LocalizedString frequency = @"Freq:";
+            public static LocalizedString frequency = @"Frequency:";
 
             public static Dictionary<int, LocalizedString> frequencies = new Dictionary<int, LocalizedString>
             {

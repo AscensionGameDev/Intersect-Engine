@@ -352,8 +352,8 @@ namespace Intersect.Editor.Forms.Editors
             btnVisualMapSelector.Text = Strings.Warping.visual;
 
             grpSprite.Text = Strings.ClassEditor.spriteface;
-            lblSpriteOptions.Text = Strings.ClassEditor.spriteoptions;
-            btnAdd.Text = Strings.ClassEditor.addicon;
+            grpSpriteOptions.Text = Strings.ClassEditor.spriteoptions;
+            btnAdd.Text = Strings.ClassEditor.addsprite;
             btnRemove.Text = Strings.ClassEditor.removeicon;
             grpGender.Text = Strings.ClassEditor.gender;
             rbMale.Text = Strings.ClassEditor.male;
