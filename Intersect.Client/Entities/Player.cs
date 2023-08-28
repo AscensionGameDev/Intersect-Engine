@@ -1705,8 +1705,9 @@ namespace Intersect.Client.Entities
                 }
             }
 
-            var x = (int)Math.Floor(Globals.InputManager.GetMousePosition().X + Graphics.CurrentView.Left);
-            var y = (int)Math.Floor(Globals.InputManager.GetMousePosition().Y + Graphics.CurrentView.Top);
+            var mouseInWorld = Graphics.ConvertToWorldPoint(Globals.InputManager.GetMousePosition());
+            var x = (int)mouseInWorld.X;
+            var y = (int)mouseInWorld.Y;
             var targetRect = new FloatRect(x - 8, y - 8, 16, 16); //Adjust to allow more/less error
 
             IEntity bestMatch = null;
@@ -2431,13 +2432,13 @@ namespace Intersect.Client.Entities
 
             if (!Interface.Interface.MouseHitGui())
             {
-                var mousePos = Graphics.ConvertToWorldPoint(Globals.InputManager.GetMousePosition());
+                var mouseInWorld = Graphics.ConvertToWorldPoint(Globals.InputManager.GetMousePosition());
                 foreach (MapInstance map in Maps.MapInstance.Lookup.Values)
                 {
-                    if (mousePos.X >= map.GetX() && mousePos.X <= map.GetX() + Options.MapWidth * Options.TileWidth)
+                    if (mouseInWorld.X >= map.GetX() && mouseInWorld.X <= map.GetX() + Options.MapWidth * Options.TileWidth)
                     {
-                        if (mousePos.Y >= map.GetY() &&
-                            mousePos.Y <= map.GetY() + Options.MapHeight * Options.TileHeight)
+                        if (mouseInWorld.Y >= map.GetY() &&
+                            mouseInWorld.Y <= map.GetY() + Options.MapHeight * Options.TileHeight)
                         {
                             var mapId = map.Id;
 
@@ -2452,7 +2453,7 @@ namespace Intersect.Client.Entities
                                     !en.Value.HideName &&
                                     (!en.Value.IsStealthed ||
                                      en.Value is Player player && Globals.Me.IsInMyParty(player)) &&
-                                    en.Value.WorldPos.Contains(mousePos.X, mousePos.Y))
+                                    en.Value.WorldPos.Contains(mouseInWorld.X, mouseInWorld.Y))
                                 {
                                     if (!(en.Value is Projectile || en.Value is Resource))
                                     {
@@ -2478,7 +2479,7 @@ namespace Intersect.Client.Entities
                                         !en.Value.IsHidden &&
                                         (!en.Value.IsStealthed ||
                                          en.Value is Player player && Globals.Me.IsInMyParty(player)) &&
-                                        en.Value.WorldPos.Contains(mousePos.X, mousePos.Y))
+                                        en.Value.WorldPos.Contains(mouseInWorld.X, mouseInWorld.Y))
                                     {
                                         if (TargetType != 1 || TargetIndex != en.Value.Id)
                                         {
