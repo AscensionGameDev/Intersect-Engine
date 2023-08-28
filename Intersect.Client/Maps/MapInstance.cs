@@ -719,12 +719,10 @@ namespace Intersect.Client.Maps
         public void DrawItemsAndLights()
         {
             // Calculate tile and map item dimensions.
-            var tileWidth = (uint)Options.TileWidth;
-            var tileHeight = (uint)Options.TileHeight;
-            var preferredMapItemWidth = Options.Instance.MapOpts.MapItemWidth;
-            var preferredMapItemHeight = Options.Instance.MapOpts.MapItemHeight;
-            var mapItemWidth = preferredMapItemWidth <= 0 ? tileWidth : preferredMapItemWidth;
-            var mapItemHeight = preferredMapItemHeight <= 0 ? tileHeight : preferredMapItemHeight;
+            var tileWidth = Options.TileWidth;
+            var tileHeight = Options.TileHeight;
+            var mapItemWidth = Options.Instance.MapOpts.MapItemWidth;
+            var mapItemHeight = Options.Instance.MapOpts.MapItemHeight;
 
             // Draw map items.
             foreach (var (key, tileItems) in MapItems)

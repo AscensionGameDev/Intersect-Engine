@@ -119,6 +119,9 @@ namespace Intersect.Config
             {
                 throw new Exception("Config Error: Map size out of bounds! (All values should be > 10 and < 64)");
             }
+
+            MapItemWidth = MapItemWidth < 1 ? (uint)TileWidth : MapItemWidth;
+            MapItemHeight = MapItemHeight < 1 ? (uint)TileHeight : MapItemHeight;
         }
     }
 }
