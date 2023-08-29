@@ -4,6 +4,9 @@ on:
   pull_request:
     branches: [ "main" ]
 
+permissions:
+  issues: write
+
 env:
   VERSION_PREFIX: 0.7.2
   VERSION_SUFFIX: -pr${{ github.event.number }}
