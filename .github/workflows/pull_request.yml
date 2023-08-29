@@ -4,9 +4,6 @@ on:
   pull_request:
     branches: [ "main" ]
 
-permissions:
-  issues: write
-
 env:
   VERSION_PREFIX: 0.7.2
   VERSION_SUFFIX: -pr${{ github.event.number }}
@@ -72,16 +69,3 @@ jobs:
       with:
         name: intersect-${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}+build.${{ github.sha }}
         path: "dist/patch/*"
-
-    - name: Create comment
-      uses: peter-evans/create-or-update-comment@v3
-      with:
-        issue-number: ${{ github.event.number }}
-        token: ${{ secrets.INTERSECTBOT_ACCESS_TOKEN }}
-        body: |
-            If you'd like to test this PR you can download the patch binaries for the latest commit [here](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}).
-
-            **Please make a backup of your game data before using the patch as it may corrupt your game data**
-
-            Please comment below to provide testing feedback. Thanks!
-
