@@ -56,7 +56,7 @@
 
         Erase = 4,
 
-        Dropper = 5,
+        Droppler = 5,
 
     }
 

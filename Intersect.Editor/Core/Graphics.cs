@@ -504,8 +504,8 @@ namespace Intersect.Editor.Core
 
             int x1 = 0, y1 = 0, x2 = 0, y2 = 0, xoffset = 0, yoffset = 0;
             int dragxoffset = 0, dragyoffset = 0;
-            if (Globals.CurrentTool == EditingTool.Rectangle ||
-                Globals.CurrentTool == EditingTool.Selection)
+            if (Globals.CurrentTool == (int) EditingTool.Rectangle ||
+                Globals.CurrentTool == (int) EditingTool.Selection)
             {
                 if (selW < 0)
                 {
@@ -585,7 +585,7 @@ namespace Intersect.Editor.Core
                         //Lets Create the Preview
                         //Mimic Mouse Down
                         tmpMap = TilePreviewStruct;
-                        if (Globals.CurrentTool == EditingTool.Selection && Globals.Dragging)
+                        if (Globals.CurrentTool == (int) EditingTool.Selection && Globals.Dragging)
                         {
                             Globals.MapEditorWindow.ProcessSelectionMovement(tmpMap, false, true);
                         }
@@ -593,11 +593,11 @@ namespace Intersect.Editor.Core
                         {
                             if (Globals.CurrentLayer == LayerOptions.Attributes)
                             {
-                                if (Globals.CurrentTool == EditingTool.Brush)
+                                if (Globals.CurrentTool == (int) EditingTool.Brush)
                                 {
                                     Globals.MapLayersWindow.PlaceAttribute(tmpMap, Globals.CurTileX, Globals.CurTileY);
                                 }
-                                else if (Globals.CurrentTool == EditingTool.Rectangle)
+                                else if (Globals.CurrentTool == (int) EditingTool.Rectangle)
                                 {
                                     for (var x = selX; x < selX + selW + 1; x++)
                                     {
@@ -626,7 +626,7 @@ namespace Intersect.Editor.Core
                             }
                             else if (Globals.CurrentTileset != null)
                             {
-                                if (Globals.CurrentTool == EditingTool.Brush)
+                                if (Globals.CurrentTool == (int) EditingTool.Brush)
                                 {
                                     if (Globals.Autotilemode == 0)
                                     {
@@ -659,7 +659,7 @@ namespace Intersect.Editor.Core
 
                                     tmpMap.Autotiles.UpdateCliffAutotiles(tmpMap, Globals.CurrentLayer);
                                 }
-                                else if (Globals.CurrentTool == EditingTool.Rectangle)
+                                else if (Globals.CurrentTool == (int) EditingTool.Rectangle)
                                 {
                                     var x = 0;
                                     var y = 0;
@@ -861,8 +861,8 @@ namespace Intersect.Editor.Core
                 selH = Globals.CurMapSelH;
 
             int dragxoffset = 0, dragyoffset = 0;
-            if (Globals.CurrentTool == EditingTool.Rectangle ||
-                Globals.CurrentTool == EditingTool.Selection)
+            if (Globals.CurrentTool == (int) EditingTool.Rectangle ||
+                Globals.CurrentTool == (int) EditingTool.Selection)
             {
                 if (selW < 0)
                 {
@@ -1007,7 +1007,7 @@ namespace Intersect.Editor.Core
                 }
             }
 
-            if (Globals.CurrentTool == EditingTool.Selection && Globals.Dragging)
+            if (Globals.CurrentTool == (int) EditingTool.Selection && Globals.Dragging)
             {
                 DrawBoxOutline(
                     CurrentView.Left + Globals.CurTileX * Options.TileWidth,
@@ -1016,8 +1016,8 @@ namespace Intersect.Editor.Core
                 );
             }
 
-            if (Globals.CurrentTool == EditingTool.Rectangle ||
-                Globals.CurrentTool == EditingTool.Selection)
+            if (Globals.CurrentTool == (int) EditingTool.Rectangle ||
+                Globals.CurrentTool == (int) EditingTool.Selection)
             {
                 DrawBoxOutline(
                     CurrentView.Left + (selX + dragxoffset) * Options.TileWidth,
