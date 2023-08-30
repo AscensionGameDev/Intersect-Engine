@@ -28,8 +28,6 @@ namespace Intersect.Editor.Forms
 
             // Load settings for the General tab
             var suppressTilesetWarning = Preferences.LoadPreference("SuppressTextureWarning");
-            var enableCursorSprites = Preferences.LoadPreference("EnableCursorSprites");
-
             if (suppressTilesetWarning == "")
             {
                 chkSuppressTilesetWarning.Checked = false;
@@ -38,9 +36,6 @@ namespace Intersect.Editor.Forms
             {
                 chkSuppressTilesetWarning.Checked = Convert.ToBoolean(suppressTilesetWarning);
             }
-
-            chkCursorSprites.Checked = !string.IsNullOrEmpty(enableCursorSprites) &&
-                                       Convert.ToBoolean(enableCursorSprites);
 
             txtGamePath.Text = Preferences.LoadPreference("ClientPath");
 
@@ -83,7 +78,6 @@ namespace Intersect.Editor.Forms
             Text = Strings.Options.title;
             btnGeneralOptions.Text = Strings.Options.generaltab.ToString(Application.ProductVersion);
             chkSuppressTilesetWarning.Text = Strings.Options.tilesetwarning;
-            chkCursorSprites.Text = Strings.Options.CursorSprites;
             grpClientPath.Text = Strings.Options.pathgroup;
             btnBrowseClient.Text = Strings.Options.browsebtn;
             btnUpdateOptions.Text = Strings.Options.UpdateTab;
@@ -97,7 +91,6 @@ namespace Intersect.Editor.Forms
         private void frmOptions_FormClosing(object sender, FormClosingEventArgs e)
         {
             Preferences.SavePreference("SuppressTextureWarning", chkSuppressTilesetWarning.Checked.ToString());
-            Preferences.SavePreference("EnableCursorSprites", chkCursorSprites.Checked.ToString());
             Preferences.SavePreference("ClientPath", txtGamePath.Text);
             Preferences.SavePreference("PackageUpdateAssets", chkPackageAssets.Checked.ToString());
             Preferences.SavePreference("SoundPackSize", nudSoundBatch.Value.ToString(CultureInfo.InvariantCulture));
