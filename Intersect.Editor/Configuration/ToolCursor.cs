@@ -29,9 +29,16 @@ namespace Intersect.Editor.Configuration
 
         public static void Load()
         {
+            const string cursorFolder = "resources/cursors/";
+
+            if (!Directory.Exists(cursorFolder))
+            {
+                return;
+            }
+
             foreach (EditingTool tool in Enum.GetValues(typeof(EditingTool)))
             {
-                var fileName = $"resources/cursors/editor_{tool.ToString().ToLowerInvariant()}.json";
+                var fileName = $"{cursorFolder}editor_{tool.ToString().ToLowerInvariant()}.json";
                 ToolCursor toolCursor;
 
                 if (File.Exists(fileName))

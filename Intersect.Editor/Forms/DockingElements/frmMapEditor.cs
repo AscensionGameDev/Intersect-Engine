@@ -45,6 +45,8 @@ namespace Intersect.Editor.Forms.DockingElements
         // MapGrid Cursor
         private Bitmap mCurSprite;
 
+        private readonly string mCurFolder = "resources/cursors/";
+        
         private string mCurPath;
 
         private Point mCurClickPoint;
@@ -2401,24 +2403,27 @@ namespace Intersect.Editor.Forms.DockingElements
 
         private void SetCursorSpriteInGrid()
         {
+            if (!Directory.Exists(mCurFolder) || Globals.CurrentEditor != -1)
+            {
+                return;
+            }
+
             var enableCursorSprites = Preferences.LoadPreference("EnableCursorSprites");
 
-            if (!(!string.IsNullOrEmpty(enableCursorSprites) && Convert.ToBoolean(enableCursorSprites)) ||
-                Globals.CurrentEditor != -1)
+            if (!(!string.IsNullOrEmpty(enableCursorSprites) && Convert.ToBoolean(enableCursorSprites)))
+            {
+                return;
+            }
+
+            mCurPath = $"{mCurFolder}editor_{Globals.CurrentTool.ToString().ToLowerInvariant()}.png";
+
+            if (!File.Exists(mCurPath))
             {
                 return;
             }
 
             picMap.Focus();
-
-            mCurPath = $"resources/cursors/editor_{Globals.CurrentTool.ToString().ToLowerInvariant()}.png";
             mCurClickPoint = ToolCursor.ToolCursorDict[Globals.CurrentTool].CursorClickPoint;
-
-            if (string.IsNullOrEmpty(mCurPath) || !File.Exists(mCurPath))
-            {
-                return;
-            }
-
             mCurSprite = new Bitmap(mCurPath);
             Cursor = CreateCursorInGrid(mCurSprite, mCurClickPoint);
         }
