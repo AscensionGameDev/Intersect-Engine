@@ -3,6 +3,7 @@ using System;
 using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Logging;
+using MathNet.Numerics.Random;
 
 namespace Intersect.Client.Framework.Graphics
 {
@@ -19,6 +20,8 @@ namespace Intersect.Client.Framework.Graphics
         public int Area => Width * Height;
 
         public Pointf Dimensions => new Pointf(Width, Height);
+
+        public FloatRect Bounds => new FloatRect(0, 0, Width, Height);
 
         public Pointf Center => Dimensions / 2;
 
