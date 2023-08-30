@@ -3278,8 +3278,8 @@ namespace Intersect.Server.Networking
                 return;
             }
 
-            MapListFolder parent = null;
-            var mapId = Guid.Empty;
+            MapListFolder parent = default;
+            MapList currentList;
             switch (packet.UpdateType)
             {
                 case MapListUpdate.MoveItem:
@@ -3289,50 +3289,57 @@ namespace Intersect.Server.Networking
                 case MapListUpdate.AddFolder:
                     if (packet.ParentId == Guid.Empty)
                     {
+                        parent = default;
                         MapList.List.AddFolder(Strings.Mapping.newfolder);
-                    }
-                    else if (packet.ParentType == 0)
-                    {
-                        parent = MapList.List.FindFolder(packet.ParentId);
-                        if (parent == null)
-                        {
-                            MapList.List.AddFolder(Strings.Mapping.newfolder);
-                        }
-                        else
-                        {
-                            parent.Children.AddFolder(Strings.Mapping.newfolder);
-                        }
-                    }
-                    else if (packet.ParentType == 1)
-                    {
-                        mapId = packet.ParentId;
-                        parent = MapList.List.FindMapParent(mapId, null);
-                        if (parent == null)
-                        {
-                            MapList.List.AddFolder(Strings.Mapping.newfolder);
-                        }
-                        else
-                        {
-                            parent.Children.AddFolder(Strings.Mapping.newfolder);
-                        }
+                        break;
                     }
 
+                    switch (packet.ParentType)
+                    {
+                        case 0:
+                            parent = MapList.List.FindFolder(packet.ParentId);
+                            break;
+                        case 1:
+                            parent = MapList.List.FindMapParent(packet.ParentId, null);
+                            break;
+                    }
+
+                    currentList = parent?.Children ?? MapList.List;
+                    currentList.AddFolder(Strings.Mapping.newfolder);
                     break;
 
                 case MapListUpdate.Rename:
                     if (packet.TargetType == 0)
                     {
                         parent = MapList.List.FindFolder(packet.TargetId);
+                        if (parent == default)
+                        {
+                            Log.Warn($"Tried to rename {nameof(MapListFolder)} {packet.TargetId} but it was not found.");
+                            return;
+                        }
+
                         parent.Name = packet.Name;
-                        PacketSender.SendMapListToAll();
+                        break;
                     }
-                    else if (packet.TargetType == 1)
+
+                    if (packet.TargetType == 1)
                     {
                         var mapListMap = MapList.List.FindMap(packet.TargetId);
+                        if (mapListMap == default)
+                        {
+                            Log.Warn($"Tried to rename {nameof(MapListMap)} {packet.TargetId} but it was not found in the map list.");
+                            return;
+                        }
+
+                        if (!MapController.TryGet(packet.TargetId, out var mapToRename))
+                        {
+                            Log.Warn($"Tried to rename {nameof(MapListMap)} {packet.TargetId} but the map itself could not be found.");
+                            return;
+                        }
+
                         mapListMap.Name = packet.Name;
-                        MapController.Get(packet.TargetId).Name = packet.Name;
-                        DbInterface.SaveGameObject(MapController.Get(packet.TargetId));
-                        PacketSender.SendMapListToAll();
+                        mapToRename.Name = packet.Name;
+                        DbInterface.SaveGameObject(mapToRename);
                     }
 
                     break;
@@ -3341,37 +3348,73 @@ namespace Intersect.Server.Networking
                     if (packet.TargetType == 0)
                     {
                         MapList.List.DeleteFolder(packet.TargetId);
-                        PacketSender.SendMapListToAll();
+                        break;
                     }
-                    else if (packet.TargetType == 1)
-                    {
-                        if (MapController.Lookup.Count == 1)
-                        {
-                            PacketSender.SendError(client, Strings.Mapping.lastmaperror, Strings.Mapping.lastmap);
 
+                    if (packet.TargetType == 1)
+                    {
+                        if (MapController.Lookup == default)
+                        {
+                            Log.Warn($"Tried to delete {nameof(MapListMap)} {packet.TargetId} but the {nameof(MapController)}.{nameof(MapController.Lookup)} was null?");
                             return;
                         }
 
-                        lock (ServerContext.Instance.LogicService.LogicLock)
+                        if (MapController.Lookup.Count < 2)
                         {
-                            var map = MapController.Get(mapId);
-                            ServerContext.Instance.LogicService.LogicPool.WaitForIdle();
-                            mapId = packet.TargetId;
-                            var players = map.GetPlayersOnAllInstances();
-                            MapList.List.DeleteMap(mapId);
-                            DbInterface.DeleteGameObject(map);
-                            DbInterface.GenerateMapGrids();
-                            PacketSender.SendMapListToAll();
-                            foreach (var plyr in players)
-                            {
-                                plyr.WarpToSpawn();
-                            }
+                            PacketSender.SendError(client, Strings.Mapping.lastmaperror, Strings.Mapping.lastmap);
+                            return;
                         }
 
-                        PacketSender.SendMapToEditors(mapId);
+                        var logicService = ServerContext.Instance?.LogicService;
+                        var logicLock = logicService?.LogicLock;
+                        if (logicLock == default)
+                        {
+                            Log.Error($"{nameof(ServerContext)}.{nameof(ServerContext.Instance)}.{nameof(ServerContext.LogicService)}.{nameof(LogicService.LogicLock)} was unexpectedly null when try to delete {nameof(MapListMap)} {packet.TargetId}.");
+                            return;
+                        }
+
+                        var logicPool = logicService.LogicPool;
+                        if (logicPool == default)
+                        {
+                            Log.Error($"{nameof(ServerContext)}.{nameof(ServerContext.Instance)}.{nameof(ServerContext.LogicService)}.{nameof(LogicService.LogicPool)} was unexpectedly null when try to delete {nameof(MapListMap)} {packet.TargetId}.");
+                            return;
+                        }
+
+                        if (!MapController.TryGet(packet.TargetId, out var mapToDelete))
+                        {
+                            Log.Warn($"Tried to delete {nameof(MapListMap)} {packet.TargetId} but the map itself could not be found.");
+                            return;
+                        }
+
+                        if (!(mapToDelete is MapController mapController))
+                        {
+                            Log.Warn($"Tried to delete {nameof(MapListMap)} {packet.TargetId} but {nameof(MapController)}.{nameof(MapController.TryGet)} returned something other than a {nameof(MapController)}.");
+                            return;
+                        }
+
+                        lock (logicLock)
+                        {
+                            logicPool.WaitForIdle();
+
+                            // Warp players off the map being deleted
+                            var players = mapController.GetPlayersOnAllInstances();
+                            foreach (var player in players)
+                            {
+                                player.WarpToSpawn();
+                            }
+
+                            MapList.List.DeleteMap(mapController.Id);
+                            DbInterface.DeleteGameObject(mapController);
+                            DbInterface.GenerateMapGrids();
+                        }
+
+                        PacketSender.SendMapToEditors(mapController.Id);
                     }
 
                     break;
+
+                default:
+                    throw new IndexOutOfRangeException($"{nameof(packet.UpdateType)} was not a valid value or has not been implemented: {packet.UpdateType}");
             }
 
             DbInterface.SaveMapList();
