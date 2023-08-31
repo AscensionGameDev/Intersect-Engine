@@ -603,7 +603,7 @@ namespace Intersect.Client.Core
             // Draw our mousecursor at the very end, but not when taking screenshots.
             if (!takingScreenshot && !string.IsNullOrWhiteSpace(ClientConfiguration.Instance.MouseCursor))
             {
-                var renderLoc = ConvertToWorldPoint(Globals.InputManager.GetMousePosition());
+                var renderLoc = ConvertToWorldPointNoZoom(Globals.InputManager.GetMousePosition());
                 DrawGameTexture(
                     Globals.ContentManager.GetTexture(Framework.Content.TextureType.Misc, ClientConfiguration.Instance.MouseCursor), renderLoc.X, renderLoc.Y
                );
@@ -1333,6 +1333,16 @@ namespace Intersect.Client.Core
                 (int)Math.Floor(windowPoint.X / Globals.Database.WorldZoom + CurrentView.Left),
                 (int)Math.Floor(windowPoint.Y / Globals.Database.WorldZoom + CurrentView.Top)
             );
+        }
+
+        /// <summary>
+        /// Converts a point in the window to its place in the world view without respecting zoom
+        /// </summary>
+        /// <param name="windowPoint">The point to convert.</param>
+        /// <returns>The converted point.</returns>
+        public static Pointf ConvertToWorldPointNoZoom(Pointf windowPoint)
+        {
+            return new Pointf((int)Math.Floor(windowPoint.X + CurrentView.Left), (int)Math.Floor(windowPoint.Y + CurrentView.Top));
         }
 
         //Rendering Functions
