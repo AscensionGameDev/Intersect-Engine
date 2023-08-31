@@ -123,7 +123,7 @@ namespace Intersect.Client.Entities
                 CalculateRenderBounds();
             }
 
-            if (!Graphics.Viewport.IntersectsWith(mDestRectangle))
+            if (!Graphics.WorldViewport.IntersectsWith(mDestRectangle))
             {
                 if (RenderList != null)
                 {

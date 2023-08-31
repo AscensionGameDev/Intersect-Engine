@@ -42,7 +42,7 @@ namespace Intersect.Client.Core
             }
         }
         
-        public static FloatRect Viewport => new FloatRect(CurrentView.Position, CurrentView.Size / (Globals.Database?.WorldZoom ?? 1));
+        public static FloatRect WorldViewport => new FloatRect(CurrentView.Position, CurrentView.Size / (Globals.Database?.WorldZoom ?? 1));
 
         public static GameShader DefaultShader;
 
@@ -629,7 +629,7 @@ namespace Intersect.Client.Core
 
             if (!new FloatRect(
                 map.GetX(), map.GetY(), Options.TileWidth * Options.MapWidth, Options.TileHeight * Options.MapHeight
-            ).IntersectsWith(Viewport))
+            ).IntersectsWith(WorldViewport))
             {
                 return;
             }
@@ -648,7 +648,7 @@ namespace Intersect.Client.Core
             {
                 if (!new FloatRect(
                     map.GetX(), map.GetY(), Options.TileWidth * Options.MapWidth, Options.TileHeight * Options.MapHeight
-                ).IntersectsWith(Viewport))
+                ).IntersectsWith(WorldViewport))
                 {
                     return;
                 }
@@ -1067,7 +1067,7 @@ namespace Intersect.Client.Core
                 DrawGameTexture(
                     sDarknessTexture,
                     sDarknessTexture.Bounds,
-                    Viewport,
+                    WorldViewport,
                     Color.White,
                     blendMode: GameBlendModes.Multiply
                 );
