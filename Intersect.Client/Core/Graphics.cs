@@ -41,6 +41,8 @@ namespace Intersect.Client.Core
                 Renderer.SetView(_currentView);
             }
         }
+        
+        public static FloatRect WorldViewport => new FloatRect(CurrentView.Position, CurrentView.Size / (Globals.Database?.WorldZoom ?? 1));
 
         public static GameShader DefaultShader;
 
@@ -627,7 +629,7 @@ namespace Intersect.Client.Core
 
             if (!new FloatRect(
                 map.GetX(), map.GetY(), Options.TileWidth * Options.MapWidth, Options.TileHeight * Options.MapHeight
-            ).IntersectsWith(CurrentView))
+            ).IntersectsWith(WorldViewport))
             {
                 return;
             }
@@ -646,7 +648,7 @@ namespace Intersect.Client.Core
             {
                 if (!new FloatRect(
                     map.GetX(), map.GetY(), Options.TileWidth * Options.MapWidth, Options.TileHeight * Options.MapHeight
-                ).IntersectsWith(CurrentView))
+                ).IntersectsWith(WorldViewport))
                 {
                     return;
                 }
@@ -1011,11 +1013,12 @@ namespace Intersect.Client.Core
                 return;
             }
 
+            var destRect = new FloatRect(new Pointf(), sDarknessTexture.Dimensions / Globals.Database.WorldZoom);
             if (map.IsIndoors)
             {
                 DrawGameTexture(
                     Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1),
-                    new FloatRect(0, 0, sDarknessTexture.GetWidth(), sDarknessTexture.GetHeight()),
+                    destRect,
                     new Color((byte)BrightnessLevel, 255, 255, 255), sDarknessTexture, GameBlendModes.Add
                 );
             }
@@ -1023,13 +1026,13 @@ namespace Intersect.Client.Core
             {
                 DrawGameTexture(
                     Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1),
-                    new FloatRect(0, 0, sDarknessTexture.GetWidth(), sDarknessTexture.GetHeight()),
+                    destRect,
                     new Color(255, 255, 255, 255), sDarknessTexture, GameBlendModes.Add
                 );
 
                 DrawGameTexture(
                     Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1),
-                    new FloatRect(0, 0, sDarknessTexture.GetWidth(), sDarknessTexture.GetHeight()),
+                    destRect,
                     new Color(
                         (int)Time.GetTintColor().A, (int)Time.GetTintColor().R, (int)Time.GetTintColor().G,
                         (int)Time.GetTintColor().B
@@ -1064,10 +1067,7 @@ namespace Intersect.Client.Core
                 DrawGameTexture(
                     sDarknessTexture,
                     sDarknessTexture.Bounds,
-                    new FloatRect(
-                        CurrentView.Position,
-                        CurrentView.Size / Globals.Database.WorldZoom
-                    ),
+                    WorldViewport,
                     Color.White,
                     blendMode: GameBlendModes.Multiply
                 );
