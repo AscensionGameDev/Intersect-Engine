@@ -1013,7 +1013,7 @@ namespace Intersect.Client.Core
                 return;
             }
 
-            var destRect = new FloatRect(new Pointf(), new Pointf(sDarknessTexture.GetWidth() / Globals.Database.WorldZoom, sDarknessTexture.GetHeight() / Globals.Database.WorldZoom));
+            var destRect = new FloatRect(new Pointf(), sDarknessTexture.Dimensions / Globals.Database.WorldZoom);
             if (map.IsIndoors)
             {
                 DrawGameTexture(
