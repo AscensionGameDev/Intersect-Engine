@@ -69,7 +69,24 @@ namespace Intersect.Server.Database.Logging.Entities
         /// <param name="initiator">The id of the player who caused this activity (or null if caused by the api or something else).</param>
         /// <param name="type">The type of message we are sending.</param>
         /// <param name="meta">Any other info regarding this activity</param>
-        public static void LogActivity(Guid guildId, Player player, Player initiator, GuildActivityType type, string meta = "")
+        public static void LogActivity(
+            Guid guildId,
+            Player player,
+            Player initiator,
+            GuildActivityType type,
+            string meta = ""
+        ) =>
+            LogActivity(
+                guildId,
+                player?.UserId ?? default,
+                player?.Id ?? default,
+                player?.Client?.GetIp() ?? string.Empty,
+                initiator,
+                type,
+                meta
+            );
+
+        public static void LogActivity(Guid guildId, Guid userId, Guid playerId, string playerIp, Player initiator, GuildActivityType type, string meta = "")
         {
             if (Options.Instance.Logging.GuildActivity)
             {
@@ -77,9 +94,9 @@ namespace Intersect.Server.Database.Logging.Entities
                 {
                     GuildId = guildId,
                     TimeStamp = DateTime.UtcNow,
-                    UserId = player?.Client?.User?.Id ?? Guid.Empty,
-                    PlayerId = player?.Id ?? Guid.Empty,
-                    Ip = player?.Client?.GetIp(),
+                    UserId = userId,
+                    PlayerId = playerId,
+                    Ip = playerIp,
                     InitiatorId = initiator?.Id ?? Guid.Empty,
                     Type = type,
                     Meta = meta,

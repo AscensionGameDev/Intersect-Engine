@@ -2691,7 +2691,7 @@ namespace Intersect.Server.Networking
                             mem.StartCommonEventsWithTrigger(CommonEventTrigger.GuildMemberKicked, guild.Name, member.Name);
                         }
 
-                        guild.RemoveMember(Player.Find(packet.Id), player, GuildHistory.GuildActivityType.Kicked);
+                        guild.RemoveMember(packet.Id, default, player, GuildHistory.GuildActivityType.Kicked);
                     }
                     else
                     {
@@ -2891,7 +2891,7 @@ namespace Intersect.Server.Networking
                 member.StartCommonEventsWithTrigger(CommonEventTrigger.GuildMemberLeft, guild.Name, player.Name);
             }
 
-            guild.RemoveMember(player, null, GuildHistory.GuildActivityType.Left);
+            guild.RemoveMember(player.Id, player, null, GuildHistory.GuildActivityType.Left);
 
             // Send the newly updated player information to their surroundings.
             PacketSender.SendEntityDataToProximity(player);

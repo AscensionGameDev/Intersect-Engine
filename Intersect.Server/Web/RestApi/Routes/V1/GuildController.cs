@@ -240,7 +240,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 );
             }
 
-            guild.RemoveMember(player, null, Database.Logging.Entities.GuildHistory.GuildActivityType.Kicked);
+            guild.RemoveMember(player.Id, player, default, Database.Logging.Entities.GuildHistory.GuildActivityType.Kicked);
 
             return player;
         }
@@ -303,7 +303,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 );
             }
 
-            guild.SetPlayerRank(player, guildRank.Rank, null);
+            guild.SetPlayerRank(player.Id, player, guildRank.Rank, default);
 
             return player;
         }
