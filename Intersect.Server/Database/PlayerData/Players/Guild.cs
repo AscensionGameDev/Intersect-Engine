@@ -268,44 +268,50 @@ namespace Intersect.Server.Database.PlayerData.Players
         /// <summary>
         /// Removes a player from the guild.
         /// </summary>
-        /// <param name="player">The player to remove from the guild.</param>
+        /// <param name="targetId">The ID of the player to remove from the guild.</param>
+        /// <param name="targetPlayer">The player to remove from the guild.</param>
         /// <param name="initiator">The player who initiated this change (null if done by the api or some other method).</param>
-        public void RemoveMember(Player player, Player initiator = null, GuildActivityType action = GuildActivityType.Left)
+        public void RemoveMember(Guid targetId, Player targetPlayer, Player initiator = null, GuildActivityType action = GuildActivityType.Left)
         {
-            if (player != null)
+            if (targetPlayer == default)
             {
-                using (var context = DbInterface.CreatePlayerContext(readOnly: false))
+                targetPlayer = Player.Find(targetId);
+            }
+
+            using (var context = DbInterface.CreatePlayerContext(readOnly: false))
+            {
+                var dbPlayer = context.Players.Where(p => p.Id == targetId && p.DbGuild.Id == this.Id).Include(p => p.DbGuild).FirstOrDefault();
+                if (dbPlayer != default)
                 {
-                    var dbPlayer = context.Players.Where(p => p.Id == player.Id && p.DbGuild.Id == this.Id).Include(p => p.DbGuild).FirstOrDefault();
-                    if (dbPlayer != null)
+                    dbPlayer.DbGuild = default;
+                    dbPlayer.GuildRank = 0;
+
+                    context.ChangeTracker.DetectChanges();
+                    context.SaveChanges();
+                }
+
+                if (targetPlayer != default)
+                {
+                    targetPlayer.Guild = default;
+                    targetPlayer.GuildRank = 0;
+                    targetPlayer.GuildInvite = default;
+
+                    if (targetPlayer.BankInterface != null && targetPlayer.GuildBank)
                     {
-                        dbPlayer.DbGuild = null;
-                        dbPlayer.GuildRank = 0;
-
-                        context.ChangeTracker.DetectChanges();
-                        context.SaveChanges();
-
-                        player.Guild = null;
-                        player.GuildRank = 0;
-                        player.GuildInvite = null;
-
-                        if (player.BankInterface != null && player.GuildBank)
-                        {
-                            player.BankInterface.Dispose();
-                        }
-
-                        Members.TryRemove(player.Id, out GuildMember removed);
-
-                        // Send our new guild list to everyone that's online.
-                        UpdateMemberList();
-
-                        // Send our entity data to nearby players.
-                        PacketSender.SendEntityDataToProximity(Player.FindOnline(player.Id));
-
-                        LogActivity(Id, player, initiator, action);
+                        targetPlayer.BankInterface.Dispose();
                     }
                 }
 
+
+                Members.TryRemove(targetId, out GuildMember _);
+
+                // Send our new guild list to everyone that's online.
+                UpdateMemberList();
+
+                // Send our entity data to nearby players.
+                PacketSender.SendEntityDataToProximity(Player.FindOnline(targetId));
+
+                LogActivity(Id, targetPlayer?.UserId ?? default, targetId, targetPlayer?.Client?.GetIp() ?? string.Empty, initiator, action);
             }
         }
 
@@ -340,50 +346,74 @@ namespace Intersect.Server.Database.PlayerData.Players
         /// <param name="id">The player to set the rank for.</param>
         /// <param name="rank">The integer index of the rank to assign.</param>
         /// <param name="initiator">The player who initiated this change (null if done by the api or some other method).</param>
-        public void SetPlayerRank(Guid id, int rank, Player initiator = null) => SetPlayerRank(Player.Find(id), rank, initiator);
+        public void SetPlayerRank(Guid id, int rank, Player initiator = null) => SetPlayerRank(id, default, rank, initiator);
 
         /// <summary>
         /// Sets a player's guild rank.
         /// </summary>
-        /// <param name="player">The player to set the rank for.</param>
+        /// <param name="targetId">The player to set the rank for.</param>
+        /// <param name="targetPlayer">The player to set the rank for.</param>
         /// <param name="rank">The integer index of the rank to assign.</param>
         /// <param name="initiator">The player who initiated this change (null if done by the api or some other method).</param>
-        public void SetPlayerRank(Player player, int rank, Player initiator = null)
+        public void SetPlayerRank(Guid targetId, Player targetPlayer, int rank, Player initiator = null)
         {
+            if (targetPlayer == default)
+            {
+                targetPlayer = Player.Find(targetId);
+            }
+
             using (var context = DbInterface.CreatePlayerContext(readOnly: false))
             {
-                var dbPlayer = context.Players.Where(p => p.Id == player.Id && p.DbGuild.Id == this.Id).FirstOrDefault();
-                if (dbPlayer != null)
+                var dbPlayer = context.Players.FirstOrDefault(p => p.Id == targetId && p.DbGuild.Id == this.Id);
+                var origRank = dbPlayer?.GuildRank;
+                if (dbPlayer != default)
                 {
-                    var origRank = dbPlayer.GuildRank;
-
                     dbPlayer.GuildRank = rank;
 
                     context.ChangeTracker.DetectChanges();
                     context.SaveChanges();
+                }
 
-                    player.GuildRank = rank;
+                if (targetPlayer != default)
+                {
+                    targetPlayer.GuildRank = rank;
+                }
 
-                    if (Members.TryGetValue(player.Id, out GuildMember val))
-                    {
-                        val.Rank = rank;
-                    }
+                if (Members.TryGetValue(targetId, out GuildMember val))
+                {
+                    val.Rank = rank;
+                }
 
-                    // Send our new guild list to everyone that's online.
-                    UpdateMemberList();
+                // Send our new guild list to everyone that's online.
+                UpdateMemberList();
 
-                    // Send our entity data to nearby players.
-                    PacketSender.SendEntityDataToProximity(Player.FindOnline(player.Id));
+                // Send our entity data to nearby players.
+                PacketSender.SendEntityDataToProximity(Player.FindOnline(targetId));
 
-                    //Log this change
-                    if (origRank < rank)
-                    {
-                        LogActivity(Id, player, initiator, GuildActivityType.Demoted, rank.ToString());
-                    }
-                    else if (origRank > rank)
-                    {
-                        LogActivity(Id, player, initiator, GuildActivityType.Promoted, rank.ToString());
-                    }
+                //Log this change
+                if (!origRank.HasValue || origRank < rank)
+                {
+                    LogActivity(
+                        Id,
+                        targetPlayer?.UserId ?? default,
+                        targetId,
+                        targetPlayer?.Client?.GetIp() ?? string.Empty,
+                        initiator,
+                        GuildActivityType.Demoted,
+                        rank.ToString()
+                    );
+                }
+                else if (origRank > rank)
+                {
+                    LogActivity(
+                        Id,
+                        targetPlayer?.UserId ?? default,
+                        targetId,
+                        targetPlayer?.Client?.GetIp() ?? string.Empty,
+                        initiator,
+                        GuildActivityType.Promoted,
+                        rank.ToString()
+                    );
                 }
             }
         }
