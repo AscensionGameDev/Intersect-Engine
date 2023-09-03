@@ -126,6 +126,7 @@ namespace Intersect.Client.Interface.Menu
         void BackBtn_Clicked(Base sender, ClickedEventArgs arguments)
         {
             Hide();
+            Globals.WaitingOnServer = false;
             Interface.MenuUi.MainMenu.NotifyOpenLogin();
         }
 

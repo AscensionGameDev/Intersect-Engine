@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Net;
 using System.Net.Mail;
@@ -40,6 +40,14 @@ namespace Intersect.Server.Notifications
                         //Send the email
                         var fromAddress = new MailAddress(Options.Smtp.FromAddress, Options.Smtp.FromName);
                         var toAddress = new MailAddress(ToAddress);
+
+                        var securityProtocol = (int)System.Net.ServicePointManager.SecurityProtocol;
+
+                        // 0 = SystemDefault in .NET 4.7+
+                        if (securityProtocol != 0)
+                        {
+                            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+                        }
 
                         var smtp = new SmtpClient
                         {
