@@ -1,10 +1,11 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Net;
-using System.Net.Mail;
-
 using Intersect.Logging;
 using Intersect.Server.Localization;
+using MailKit.Net.Smtp;
+using MailKit.Security;
+using MimeKit;
 
 namespace Intersect.Server.Notifications
 {
@@ -38,27 +39,32 @@ namespace Intersect.Server.Notifications
                     try
                     {
                         //Send the email
-                        var fromAddress = new MailAddress(Options.Smtp.FromAddress, Options.Smtp.FromName);
-                        var toAddress = new MailAddress(ToAddress);
+                        var fromAddress = new MailboxAddress(Options.Smtp.FromName, Options.Smtp.FromAddress);
+                        var toAddress = new MailboxAddress(ToAddress, ToAddress);
 
-                        var smtp = new SmtpClient
+                        using (var client = new SmtpClient())
                         {
-                            Host = Options.Smtp.Host,
-                            Port = Options.Smtp.Port,
-                            EnableSsl = Options.Smtp.UseSsl,
-                            DeliveryMethod = SmtpDeliveryMethod.Network,
-                            UseDefaultCredentials = false,
-                            Credentials = new NetworkCredential(Options.Smtp.Username, Options.Smtp.Password)
-                        };
+                            client.Connect(Options.Smtp.Host, Options.Smtp.Port, Options.Smtp.UseSsl ? SecureSocketOptions.StartTls : SecureSocketOptions.Auto);
+                            client.Authenticate(Options.Smtp.Username, Options.Smtp.Password);
 
-                        using (var message = new MailMessage(fromAddress, toAddress)
-                        {
-                            Subject = Subject,
-                            Body = Body,
-                            IsBodyHtml = IsHtml
-                        })
-                        {
-                            smtp.Send(message);
+                            var message = new MimeMessage();
+                            message.To.Add(toAddress);
+                            message.From.Add(fromAddress);
+                            message.Subject = Subject;
+
+                            var bodyBuilder = new BodyBuilder();
+                            if (IsHtml)
+                            {
+                                bodyBuilder.HtmlBody = Body;
+                            }
+                            else
+                            {
+                                bodyBuilder.TextBody = Body;
+                            }
+                            message.Body = bodyBuilder.ToMessageBody();
+
+                            client.Send(message);
+                            client.Disconnect(true);
                         }
 
                         return true;
