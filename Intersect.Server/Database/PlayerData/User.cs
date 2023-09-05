@@ -527,7 +527,7 @@ namespace Intersect.Server.Database.PlayerData
             {
                 using (var context = DbInterface.CreatePlayerContext())
                 {
-                    return User.PostLoad(QueryUserByName(context, nameOrEmail));
+                    return User.PostLoad(QueryUserByNameOrEmail(context, nameOrEmail));
                 }
             }
             catch (Exception ex)
