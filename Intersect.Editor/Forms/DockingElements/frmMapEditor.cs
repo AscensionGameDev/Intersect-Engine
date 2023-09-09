@@ -2366,7 +2366,7 @@ namespace Intersect.Editor.Forms.DockingElements
         {
             var enableCursorSprites = Preferences.LoadPreference("EnableCursorSprites");
 
-            if (!Globals.MapEditorWindow.DockPanel.Focused)
+            if (!Globals.MapEditorWindow.DockPanel.Focused && Globals.CurrentEditor == -1)
             {
                 Globals.MapEditorWindow.DockPanel.Focus();
             }
