@@ -62,13 +62,12 @@ namespace Intersect.Editor.Forms.DockingElements
             this.picMap.TabIndex = 2;
             this.picMap.TabStop = false;
             this.picMap.Visible = false;
-            this.picMap.Paint += new System.Windows.Forms.PaintEventHandler(this.picMap_Paint);
             this.picMap.DoubleClick += new System.EventHandler(this.picMap_DoubleClick);
             this.picMap.MouseDown += new System.Windows.Forms.MouseEventHandler(this.picMap_MouseDown);
             this.picMap.MouseEnter += new System.EventHandler(this.picMap_MouseEnter);
+            this.picMap.MouseLeave += new System.EventHandler(this.picMap_MouseLeave);
             this.picMap.MouseMove += new System.Windows.Forms.MouseEventHandler(this.picMap_MouseMove);
             this.picMap.MouseUp += new System.Windows.Forms.MouseEventHandler(this.picMap_MouseUp);
-            this.picMap.Resize += new System.EventHandler(this.picMap_Resize);
             //
             // tooltipMapAttribute
             //
@@ -91,7 +90,6 @@ namespace Intersect.Editor.Forms.DockingElements
             this.Text = "Map Editor";
             this.DockStateChanged += new System.EventHandler(this.frmMapEditor_DockStateChanged);
             this.Load += new System.EventHandler(this.frmMapEditor_Load);
-            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.frmMapEditor_KeyDown);
             this.pnlMapContainer.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.picMap)).EndInit();
             this.picMap.Controls.Add(this.tooltipMapAttribute);

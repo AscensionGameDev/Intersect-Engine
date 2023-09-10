@@ -35,6 +35,7 @@ namespace Intersect.Editor.Forms
             this.chkSuppressTilesetWarning = new DarkUI.Controls.DarkCheckBox();
             this.btnGeneralOptions = new DarkUI.Controls.DarkButton();
             this.pnlGeneral = new System.Windows.Forms.Panel();
+            this.chkCursorSprites = new DarkUI.Controls.DarkCheckBox();
             this.grpClientPath = new DarkUI.Controls.DarkGroupBox();
             this.btnUpdateOptions = new DarkUI.Controls.DarkButton();
             this.pnlUpdate = new System.Windows.Forms.Panel();
@@ -77,7 +78,7 @@ namespace Intersect.Editor.Forms
             // 
             // chkSuppressTilesetWarning
             // 
-            this.chkSuppressTilesetWarning.Location = new System.Drawing.Point(8, 5);
+            this.chkSuppressTilesetWarning.Location = new System.Drawing.Point(8, 16);
             this.chkSuppressTilesetWarning.Name = "chkSuppressTilesetWarning";
             this.chkSuppressTilesetWarning.Size = new System.Drawing.Size(332, 17);
             this.chkSuppressTilesetWarning.TabIndex = 0;
@@ -96,16 +97,23 @@ namespace Intersect.Editor.Forms
             // 
             // pnlGeneral
             // 
-            this.pnlGeneral.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.pnlGeneral.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.pnlGeneral.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pnlGeneral.Controls.Add(this.chkCursorSprites);
             this.pnlGeneral.Controls.Add(this.chkSuppressTilesetWarning);
             this.pnlGeneral.Controls.Add(this.grpClientPath);
             this.pnlGeneral.Location = new System.Drawing.Point(4, 26);
             this.pnlGeneral.Name = "pnlGeneral";
-            this.pnlGeneral.Size = new System.Drawing.Size(357, 149);
+            this.pnlGeneral.Size = new System.Drawing.Size(357, 163);
             this.pnlGeneral.TabIndex = 20;
+            // 
+            // chkCursorSprites
+            // 
+            this.chkCursorSprites.Location = new System.Drawing.Point(8, 39);
+            this.chkCursorSprites.Name = "chkCursorSprites";
+            this.chkCursorSprites.Size = new System.Drawing.Size(332, 17);
+            this.chkCursorSprites.TabIndex = 5;
+            this.chkCursorSprites.Text = "Enable cursor sprites for map tools";
             // 
             // grpClientPath
             // 
@@ -114,7 +122,7 @@ namespace Intersect.Editor.Forms
             this.grpClientPath.Controls.Add(this.btnBrowseClient);
             this.grpClientPath.Controls.Add(this.txtGamePath);
             this.grpClientPath.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpClientPath.Location = new System.Drawing.Point(8, 29);
+            this.grpClientPath.Location = new System.Drawing.Point(8, 73);
             this.grpClientPath.Name = "grpClientPath";
             this.grpClientPath.Size = new System.Drawing.Size(332, 45);
             this.grpClientPath.TabIndex = 3;
@@ -134,15 +142,13 @@ namespace Intersect.Editor.Forms
             // 
             // pnlUpdate
             // 
-            this.pnlUpdate.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.pnlUpdate.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.pnlUpdate.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.pnlUpdate.Controls.Add(this.grpAssetPackingOptions);
             this.pnlUpdate.Controls.Add(this.chkPackageAssets);
             this.pnlUpdate.Location = new System.Drawing.Point(4, 26);
             this.pnlUpdate.Name = "pnlUpdate";
-            this.pnlUpdate.Size = new System.Drawing.Size(357, 149);
+            this.pnlUpdate.Size = new System.Drawing.Size(357, 163);
             this.pnlUpdate.TabIndex = 22;
             // 
             // grpAssetPackingOptions
@@ -156,9 +162,9 @@ namespace Intersect.Editor.Forms
             this.grpAssetPackingOptions.Controls.Add(this.lblMusicBatch);
             this.grpAssetPackingOptions.Controls.Add(this.lblSoundBatch);
             this.grpAssetPackingOptions.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpAssetPackingOptions.Location = new System.Drawing.Point(14, 29);
+            this.grpAssetPackingOptions.Location = new System.Drawing.Point(8, 48);
             this.grpAssetPackingOptions.Name = "grpAssetPackingOptions";
-            this.grpAssetPackingOptions.Size = new System.Drawing.Size(332, 112);
+            this.grpAssetPackingOptions.Size = new System.Drawing.Size(332, 101);
             this.grpAssetPackingOptions.TabIndex = 4;
             this.grpAssetPackingOptions.TabStop = false;
             this.grpAssetPackingOptions.Text = "Asset Packing Options";
@@ -176,15 +182,8 @@ namespace Intersect.Editor.Forms
             this.cmbTextureSize.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.cmbTextureSize.ForeColor = System.Drawing.Color.Gainsboro;
             this.cmbTextureSize.FormattingEnabled = true;
-            this.cmbTextureSize.Items.AddRange(new object[] {
-            "1",
-            "256",
-            "512",
-            "1024",
-            "2048",
-            "4096",
-            "8192"});
-            this.cmbTextureSize.Location = new System.Drawing.Point(261, 14);
+            this.cmbTextureSize.Items.AddRange(new object[] { "1", "256", "512", "1024", "2048", "4096", "8192" });
+            this.cmbTextureSize.Location = new System.Drawing.Point(261, 20);
             this.cmbTextureSize.Name = "cmbTextureSize";
             this.cmbTextureSize.Size = new System.Drawing.Size(59, 21);
             this.cmbTextureSize.TabIndex = 52;
@@ -195,7 +194,7 @@ namespace Intersect.Editor.Forms
             // 
             this.lblTextureSize.AutoSize = true;
             this.lblTextureSize.ForeColor = System.Drawing.Color.White;
-            this.lblTextureSize.Location = new System.Drawing.Point(6, 20);
+            this.lblTextureSize.Location = new System.Drawing.Point(6, 26);
             this.lblTextureSize.Name = "lblTextureSize";
             this.lblTextureSize.Size = new System.Drawing.Size(179, 13);
             this.lblTextureSize.TabIndex = 51;
@@ -205,56 +204,32 @@ namespace Intersect.Editor.Forms
             // 
             this.nudMusicBatch.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.nudMusicBatch.ForeColor = System.Drawing.Color.Gainsboro;
-            this.nudMusicBatch.Location = new System.Drawing.Point(261, 41);
-            this.nudMusicBatch.Maximum = new decimal(new int[] {
-            999999999,
-            0,
-            0,
-            0});
-            this.nudMusicBatch.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
+            this.nudMusicBatch.Location = new System.Drawing.Point(261, 47);
+            this.nudMusicBatch.Maximum = new decimal(new int[] { 999999999, 0, 0, 0 });
+            this.nudMusicBatch.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
             this.nudMusicBatch.Name = "nudMusicBatch";
             this.nudMusicBatch.Size = new System.Drawing.Size(59, 20);
             this.nudMusicBatch.TabIndex = 50;
-            this.nudMusicBatch.Value = new decimal(new int[] {
-            8,
-            0,
-            0,
-            0});
+            this.nudMusicBatch.Value = new decimal(new int[] { 8, 0, 0, 0 });
             // 
             // nudSoundBatch
             // 
             this.nudSoundBatch.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.nudSoundBatch.ForeColor = System.Drawing.Color.Gainsboro;
-            this.nudSoundBatch.Location = new System.Drawing.Point(261, 67);
-            this.nudSoundBatch.Maximum = new decimal(new int[] {
-            999999999,
-            0,
-            0,
-            0});
-            this.nudSoundBatch.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
+            this.nudSoundBatch.Location = new System.Drawing.Point(261, 73);
+            this.nudSoundBatch.Maximum = new decimal(new int[] { 999999999, 0, 0, 0 });
+            this.nudSoundBatch.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
             this.nudSoundBatch.Name = "nudSoundBatch";
             this.nudSoundBatch.Size = new System.Drawing.Size(59, 20);
             this.nudSoundBatch.TabIndex = 49;
-            this.nudSoundBatch.Value = new decimal(new int[] {
-            8,
-            0,
-            0,
-            0});
+            this.nudSoundBatch.Value = new decimal(new int[] { 8, 0, 0, 0 });
             this.nudSoundBatch.ValueChanged += new System.EventHandler(this.nudSoundBatch_ValueChanged);
             // 
             // lblMusicBatch
             // 
             this.lblMusicBatch.AutoSize = true;
             this.lblMusicBatch.ForeColor = System.Drawing.Color.White;
-            this.lblMusicBatch.Location = new System.Drawing.Point(6, 43);
+            this.lblMusicBatch.Location = new System.Drawing.Point(6, 49);
             this.lblMusicBatch.Name = "lblMusicBatch";
             this.lblMusicBatch.Size = new System.Drawing.Size(137, 13);
             this.lblMusicBatch.TabIndex = 8;
@@ -264,7 +239,7 @@ namespace Intersect.Editor.Forms
             // 
             this.lblSoundBatch.AutoSize = true;
             this.lblSoundBatch.ForeColor = System.Drawing.Color.White;
-            this.lblSoundBatch.Location = new System.Drawing.Point(6, 69);
+            this.lblSoundBatch.Location = new System.Drawing.Point(6, 75);
             this.lblSoundBatch.Name = "lblSoundBatch";
             this.lblSoundBatch.Size = new System.Drawing.Size(140, 13);
             this.lblSoundBatch.TabIndex = 7;
@@ -272,7 +247,7 @@ namespace Intersect.Editor.Forms
             // 
             // chkPackageAssets
             // 
-            this.chkPackageAssets.Location = new System.Drawing.Point(14, 5);
+            this.chkPackageAssets.Location = new System.Drawing.Point(8, 15);
             this.chkPackageAssets.Name = "chkPackageAssets";
             this.chkPackageAssets.Size = new System.Drawing.Size(332, 17);
             this.chkPackageAssets.TabIndex = 1;
@@ -283,9 +258,9 @@ namespace Intersect.Editor.Forms
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            this.ClientSize = new System.Drawing.Size(373, 180);
-            this.Controls.Add(this.pnlUpdate);
+            this.ClientSize = new System.Drawing.Size(373, 194);
             this.Controls.Add(this.btnUpdateOptions);
+            this.Controls.Add(this.pnlUpdate);
             this.Controls.Add(this.pnlGeneral);
             this.Controls.Add(this.btnGeneralOptions);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
@@ -302,25 +277,26 @@ namespace Intersect.Editor.Forms
             ((System.ComponentModel.ISupportInitialize)(this.nudMusicBatch)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudSoundBatch)).EndInit();
             this.ResumeLayout(false);
-
         }
+
+        private DarkUI.Controls.DarkCheckBox chkCursorSprites;
 
         #endregion
         private DarkTextBox txtGamePath;
         private DarkButton btnBrowseClient;
-        private DarkCheckBox chkSuppressTilesetWarning;
+        private DarkUI.Controls.DarkCheckBox chkSuppressTilesetWarning;
         private DarkUI.Controls.DarkButton btnGeneralOptions;
         private System.Windows.Forms.Panel pnlGeneral;
-        private DarkGroupBox grpClientPath;
+        private DarkUI.Controls.DarkGroupBox grpClientPath;
         private DarkButton btnUpdateOptions;
         private System.Windows.Forms.Panel pnlUpdate;
-        private DarkCheckBox chkPackageAssets;
-        private DarkGroupBox grpAssetPackingOptions;
+        private DarkUI.Controls.DarkCheckBox chkPackageAssets;
+        private DarkUI.Controls.DarkGroupBox grpAssetPackingOptions;
         private System.Windows.Forms.Label lblMusicBatch;
         private System.Windows.Forms.Label lblSoundBatch;
-        private DarkNumericUpDown nudMusicBatch;
-        private DarkNumericUpDown nudSoundBatch;
+        private DarkUI.Controls.DarkNumericUpDown nudMusicBatch;
+        private DarkUI.Controls.DarkNumericUpDown nudSoundBatch;
         private System.Windows.Forms.Label lblTextureSize;
-        private DarkComboBox cmbTextureSize;
+        private DarkUI.Controls.DarkComboBox cmbTextureSize;
     }
 }
