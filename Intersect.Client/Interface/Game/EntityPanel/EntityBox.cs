@@ -801,7 +801,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
             float targetExpSize;
             var barDirectionSetting = ClientConfiguration.Instance.EntityBarDirections[(int)Vital.VitalCount];
             var barPercentageSetting = Globals.Database.ShowExperienceAsPercentage;
-            var entityExperienceToNextLevel = (float)((Player)MyEntity).GetNextLevelExperience();
+            var entityExperienceToNextLevel = ((Player)MyEntity).GetNextLevelExperience();
 
             if (entityExperienceToNextLevel > 0)
             {
