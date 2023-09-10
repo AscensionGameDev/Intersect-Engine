@@ -9,8 +9,7 @@ namespace Intersect.Server.Migrations.Game
             migrationBuilder.AddColumn<string>(
                 name: "CooldownGroup",
                 table: "Items",
-                nullable: false,
-                defaultValue: string.Empty);
+                nullable: false);
 
             migrationBuilder.AddColumn<bool>(
                 name: "IgnoreGlobalCooldown",
@@ -21,8 +20,7 @@ namespace Intersect.Server.Migrations.Game
             migrationBuilder.AddColumn<string>(
                 name: "CooldownGroup",
                 table: "Spells",
-                nullable: false,
-                defaultValue: string.Empty);
+                nullable: false);
 
             migrationBuilder.AddColumn<bool>(
                 name: "IgnoreGlobalCooldown",
