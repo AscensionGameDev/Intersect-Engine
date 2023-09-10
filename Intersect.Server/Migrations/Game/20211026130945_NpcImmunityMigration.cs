@@ -9,7 +9,7 @@ namespace Intersect.Server.Migrations.Game
             migrationBuilder.AddColumn<string>(
                 name: "Immunities",
                 table: "Npcs",
-                nullable: false);
+                nullable: true);
             migrationBuilder.AddColumn<double>(
                 name: "Tenacity",
                 table: "Npcs",
