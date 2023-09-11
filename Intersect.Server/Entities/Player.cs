@@ -3520,13 +3520,13 @@ namespace Intersect.Server.Entities
         {
             if (InShop == default)
             {
-                PacketSender.SendChatMsg(this, Strings.Shops.error, ChatMessageType.Inventory, CustomColors.Alerts.Error, Name);
+                PacketSender.SendChatMsg(this, Strings.Shops.TransactionFailed, ChatMessageType.Inventory, CustomColors.Alerts.Error, Name);
                 return;
             }
 
             if (slot < 0 || slot >= InShop.SellingItems.Count)
             {
-                PacketSender.SendChatMsg(this, Strings.Shops.error, ChatMessageType.Inventory, CustomColors.Alerts.Error, Name);
+                PacketSender.SendChatMsg(this, Strings.Shops.TransactionFailed, ChatMessageType.Inventory, CustomColors.Alerts.Error, Name);
                 return;
             }
 
@@ -3534,14 +3534,14 @@ namespace Intersect.Server.Entities
             var boughtItemBase = ItemBase.Get(boughtItem.ItemId);
             if (boughtItemBase == default)
             {
-                PacketSender.SendChatMsg(this, Strings.Shops.error, ChatMessageType.Inventory, CustomColors.Alerts.Error, Name);
+                PacketSender.SendChatMsg(this, Strings.Shops.TransactionFailed, ChatMessageType.Inventory, CustomColors.Alerts.Error, Name);
                 return;
             }
 
             var currencyBase = ItemBase.Get(boughtItem.CostItemId);
             if (currencyBase == default)
             {
-                PacketSender.SendChatMsg(this, Strings.Shops.error, ChatMessageType.Inventory, CustomColors.Alerts.Error, Name);
+                PacketSender.SendChatMsg(this, Strings.Shops.TransactionFailed, ChatMessageType.Inventory, CustomColors.Alerts.Error, Name);
                 return;
             }
 
@@ -3602,7 +3602,7 @@ namespace Intersect.Server.Entities
                     TryGiveItem(removedItem.Key, removedItem.Value);
                 }
 
-                PacketSender.SendChatMsg(this, Strings.Shops.error, ChatMessageType.Inventory, CustomColors.Alerts.Error, Name);
+                PacketSender.SendChatMsg(this, Strings.Shops.TransactionFailed, ChatMessageType.Inventory, CustomColors.Alerts.Error, Name);
                 return;
             }
 

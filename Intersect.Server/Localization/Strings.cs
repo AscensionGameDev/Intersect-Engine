@@ -1357,7 +1357,7 @@ namespace Intersect.Server.Localization
             public readonly LocalizedString bound = @"This item is bound to you and cannot be sold!";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public readonly LocalizedString error = @"Transaction failed!";
+            public readonly LocalizedString TransactionFailed = @"Transaction failed!";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString cantafford = @"Transaction failed due to insufficent funds.";
