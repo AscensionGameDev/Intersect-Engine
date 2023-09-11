@@ -29,7 +29,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             cmbSpell.Items.AddRange(SpellBase.Names);
             cmbAction.SelectedIndex = refCommand.Add ? 0 : 1;
             cmbSpell.SelectedIndex = SpellBase.ListIndex(mMyCommand.SpellId);
-            chkRemoveBounded.Checked = mMyCommand.RemoveBoundSpell;
+            chkRemoveBound.Checked = mMyCommand.RemoveBoundSpell;
         }
 
         private void InitLocalization()
@@ -43,7 +43,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 
             lblAction.Text = Strings.EventChangeSpells.action;
             lblSpell.Text = Strings.EventChangeSpells.spell;
-            chkRemoveBounded.Text = Strings.EventChangeSpells.RemoveBounded;
+            chkRemoveBound.Text = Strings.EventChangeSpells.RemoveBound;
             btnSave.Text = Strings.EventChangeSpells.okay;
             btnCancel.Text = Strings.EventChangeSpells.cancel;
         }
@@ -52,7 +52,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         {
             mMyCommand.Add = !Convert.ToBoolean(cmbAction.SelectedIndex);
             mMyCommand.SpellId = SpellBase.IdFromList(cmbSpell.SelectedIndex);
-            mMyCommand.RemoveBoundSpell = chkRemoveBounded.Checked;
+            mMyCommand.RemoveBoundSpell = chkRemoveBound.Checked;
             mEventEditor.FinishCommandEdit();
         }
 
@@ -60,12 +60,12 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         {
             if (cmbAction.SelectedIndex == 0)
             {
-                chkRemoveBounded.Checked = false;
-                chkRemoveBounded.Enabled = false;
+                chkRemoveBound.Checked = false;
+                chkRemoveBound.Enabled = false;
             }
             else
             {
-                chkRemoveBounded.Enabled = true;
+                chkRemoveBound.Enabled = true;
             }
         }
 

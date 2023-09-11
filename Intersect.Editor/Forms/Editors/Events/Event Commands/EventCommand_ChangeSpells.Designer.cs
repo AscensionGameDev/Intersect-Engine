@@ -31,7 +31,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         private void InitializeComponent()
         {
             this.grpChangeSpells = new DarkUI.Controls.DarkGroupBox();
-            this.chkRemoveBounded = new DarkUI.Controls.DarkCheckBox();
+            this.chkRemoveBound = new DarkUI.Controls.DarkCheckBox();
             this.cmbSpell = new DarkUI.Controls.DarkComboBox();
             this.lblSpell = new System.Windows.Forms.Label();
             this.cmbAction = new DarkUI.Controls.DarkComboBox();
@@ -45,7 +45,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             // 
             this.grpChangeSpells.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
             this.grpChangeSpells.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.grpChangeSpells.Controls.Add(this.chkRemoveBounded);
+            this.grpChangeSpells.Controls.Add(this.chkRemoveBound);
             this.grpChangeSpells.Controls.Add(this.cmbSpell);
             this.grpChangeSpells.Controls.Add(this.lblSpell);
             this.grpChangeSpells.Controls.Add(this.cmbAction);
@@ -60,15 +60,15 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.grpChangeSpells.TabStop = false;
             this.grpChangeSpells.Text = "Change Player Spells:";
             // 
-            // chkRemoveBounded
+            // chkRemoveBound
             // 
-            this.chkRemoveBounded.AutoSize = true;
-            this.chkRemoveBounded.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
-            this.chkRemoveBounded.Location = new System.Drawing.Point(8, 87);
-            this.chkRemoveBounded.Name = "chkRemoveBounded";
-            this.chkRemoveBounded.Size = new System.Drawing.Size(147, 17);
-            this.chkRemoveBounded.TabIndex = 41;
-            this.chkRemoveBounded.Text = "Remove Bounded Spell ?";
+            this.chkRemoveBound.AutoSize = true;
+            this.chkRemoveBound.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
+            this.chkRemoveBound.Location = new System.Drawing.Point(8, 87);
+            this.chkRemoveBound.Name = "chkRemoveBound";
+            this.chkRemoveBound.Size = new System.Drawing.Size(147, 17);
+            this.chkRemoveBound.TabIndex = 41;
+            this.chkRemoveBound.Text = "Remove Bound Spell ?";
             // 
             // cmbSpell
             // 
@@ -160,7 +160,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         private DarkGroupBox grpChangeSpells;
         private DarkButton btnCancel;
         private DarkButton btnSave;
-        private DarkCheckBox chkRemoveBounded;
+        private DarkCheckBox chkRemoveBound;
         private DarkComboBox cmbAction;
         private System.Windows.Forms.Label lblAction;
         private DarkComboBox cmbSpell;
