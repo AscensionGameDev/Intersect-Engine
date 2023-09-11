@@ -444,7 +444,7 @@ namespace Intersect.Server.Entities.Events
             {
                 if (player.FindSpell(command.SpellId) > -1 && command.SpellId != Guid.Empty)
                 {
-                    player.ForgetSpell(player.FindSpell(command.SpellId));
+                    player.ForgetSpell(player.FindSpell(command.SpellId), command.RemoveBoundSpell);
                     success = true;
                 }
             }

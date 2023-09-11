@@ -355,6 +355,8 @@ namespace Intersect.GameObjects.Events.Commands
 
         public bool Add { get; set; } //If !Add then Remove
 
+        public bool RemoveBoundSpell { get; set; }
+
         //Branch[0] is the event commands to execute when taught/removed successfully, Branch[1] is for when it's not.
         public Guid[] BranchIds { get; set; } = new Guid[2];
 

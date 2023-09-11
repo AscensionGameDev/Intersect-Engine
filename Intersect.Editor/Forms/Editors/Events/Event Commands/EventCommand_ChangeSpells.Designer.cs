@@ -31,6 +31,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         private void InitializeComponent()
         {
             this.grpChangeSpells = new DarkUI.Controls.DarkGroupBox();
+            this.chkRemoveBound = new DarkUI.Controls.DarkCheckBox();
             this.cmbSpell = new DarkUI.Controls.DarkComboBox();
             this.lblSpell = new System.Windows.Forms.Label();
             this.cmbAction = new DarkUI.Controls.DarkComboBox();
@@ -44,6 +45,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             // 
             this.grpChangeSpells.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
             this.grpChangeSpells.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpChangeSpells.Controls.Add(this.chkRemoveBound);
             this.grpChangeSpells.Controls.Add(this.cmbSpell);
             this.grpChangeSpells.Controls.Add(this.lblSpell);
             this.grpChangeSpells.Controls.Add(this.cmbAction);
@@ -53,10 +55,20 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.grpChangeSpells.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpChangeSpells.Location = new System.Drawing.Point(3, 3);
             this.grpChangeSpells.Name = "grpChangeSpells";
-            this.grpChangeSpells.Size = new System.Drawing.Size(193, 112);
+            this.grpChangeSpells.Size = new System.Drawing.Size(193, 139);
             this.grpChangeSpells.TabIndex = 17;
             this.grpChangeSpells.TabStop = false;
             this.grpChangeSpells.Text = "Change Player Spells:";
+            // 
+            // chkRemoveBound
+            // 
+            this.chkRemoveBound.AutoSize = true;
+            this.chkRemoveBound.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
+            this.chkRemoveBound.Location = new System.Drawing.Point(8, 87);
+            this.chkRemoveBound.Name = "chkRemoveBound";
+            this.chkRemoveBound.Size = new System.Drawing.Size(147, 17);
+            this.chkRemoveBound.TabIndex = 41;
+            this.chkRemoveBound.Text = "Remove Bound Spell ?";
             // 
             // cmbSpell
             // 
@@ -97,6 +109,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.cmbAction.Name = "cmbAction";
             this.cmbAction.Size = new System.Drawing.Size(115, 21);
             this.cmbAction.TabIndex = 22;
+            this.cmbAction.SelectedIndexChanged += new System.EventHandler(this.cmbAction_IndexChanged);
             // 
             // lblAction
             // 
@@ -109,7 +122,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             // 
             // btnCancel
             // 
-            this.btnCancel.Location = new System.Drawing.Point(89, 83);
+            this.btnCancel.Location = new System.Drawing.Point(89, 110);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Padding = new System.Windows.Forms.Padding(5);
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
@@ -119,7 +132,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             // 
             // btnSave
             // 
-            this.btnSave.Location = new System.Drawing.Point(8, 83);
+            this.btnSave.Location = new System.Drawing.Point(8, 110);
             this.btnSave.Name = "btnSave";
             this.btnSave.Padding = new System.Windows.Forms.Padding(5);
             this.btnSave.Size = new System.Drawing.Size(75, 23);
@@ -135,7 +148,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.Controls.Add(this.grpChangeSpells);
             this.Name = "EventCommandChangeSpells";
-            this.Size = new System.Drawing.Size(205, 118);
+            this.Size = new System.Drawing.Size(205, 145);
             this.grpChangeSpells.ResumeLayout(false);
             this.grpChangeSpells.PerformLayout();
             this.ResumeLayout(false);
@@ -147,6 +160,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         private DarkGroupBox grpChangeSpells;
         private DarkButton btnCancel;
         private DarkButton btnSave;
+        private DarkCheckBox chkRemoveBound;
         private DarkComboBox cmbAction;
         private System.Windows.Forms.Label lblAction;
         private DarkComboBox cmbSpell;

@@ -29,6 +29,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             cmbSpell.Items.AddRange(SpellBase.Names);
             cmbAction.SelectedIndex = refCommand.Add ? 0 : 1;
             cmbSpell.SelectedIndex = SpellBase.ListIndex(mMyCommand.SpellId);
+            chkRemoveBound.Checked = mMyCommand.RemoveBoundSpell;
         }
 
         private void InitLocalization()
@@ -42,6 +43,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 
             lblAction.Text = Strings.EventChangeSpells.action;
             lblSpell.Text = Strings.EventChangeSpells.spell;
+            chkRemoveBound.Text = Strings.EventChangeSpells.RemoveBound;
             btnSave.Text = Strings.EventChangeSpells.okay;
             btnCancel.Text = Strings.EventChangeSpells.cancel;
         }
@@ -50,7 +52,21 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         {
             mMyCommand.Add = !Convert.ToBoolean(cmbAction.SelectedIndex);
             mMyCommand.SpellId = SpellBase.IdFromList(cmbSpell.SelectedIndex);
+            mMyCommand.RemoveBoundSpell = chkRemoveBound.Checked;
             mEventEditor.FinishCommandEdit();
+        }
+
+        private void cmbAction_IndexChanged(object sender, EventArgs e)
+        {
+            if (cmbAction.SelectedIndex == 0)
+            {
+                chkRemoveBound.Checked = false;
+                chkRemoveBound.Enabled = false;
+            }
+            else
+            {
+                chkRemoveBound.Enabled = true;
+            }
         }
 
         private void btnCancel_Click(object sender, EventArgs e)

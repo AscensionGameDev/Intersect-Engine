@@ -1781,6 +1781,8 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString okay = @"Ok";
 
+            public static LocalizedString RemoveBound = @"Remove Bound Spell ?";
+            
             public static LocalizedString spell = @"Spell: ";
 
             public static LocalizedString title = @"Change Player Spells";

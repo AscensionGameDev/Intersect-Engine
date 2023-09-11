@@ -4844,9 +4844,9 @@ namespace Intersect.Server.Entities
             PacketSender.SendPlayerSpellUpdate(this, spell2);
         }
 
-        public void ForgetSpell(int spellSlot)
+        public void ForgetSpell(int spellSlot, bool removeBoundSpell = false)
         {
-            if (!SpellBase.Get(Spells[spellSlot].SpellId).Bound)
+            if (!SpellBase.Get(Spells[spellSlot].SpellId).Bound || removeBoundSpell)
             {
                 Spells[spellSlot].Set(Spell.None);
                 PacketSender.SendPlayerSpellUpdate(this, spellSlot);
