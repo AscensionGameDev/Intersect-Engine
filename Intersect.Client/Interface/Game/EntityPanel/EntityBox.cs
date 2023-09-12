@@ -806,7 +806,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
             if (entityExperienceToNextLevel > 0)
             {
                 var entityExperience = ((Player)MyEntity).Experience;
-                var entityExperienceRatio = entityExperience / entityExperienceToNextLevel;
+                var entityExperienceRatio = (float)entityExperience / entityExperienceToNextLevel;
                 var vitalSize = (int)barDirectionSetting < (int)DisplayDirection.TopToBottom
                     ? ExpBackground.Width
                     : ExpBackground.Height;
