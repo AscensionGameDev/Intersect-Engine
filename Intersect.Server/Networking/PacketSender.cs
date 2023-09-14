@@ -1907,6 +1907,12 @@ namespace Intersect.Server.Networking
             SendDataToProximityOnMapInstance(mapId, mapInstanceId, new ChatBubblePacket(entityId, type, mapId, text), null, TransmissionMode.Any);
         }
 
+        //ChatBubblePacket
+        public static void SendChatBubbleToPlayer(Player player, Guid entityId, EntityType type, string text, Guid mapId)
+        {
+            player.SendPacket(new ChatBubblePacket(entityId, type, mapId, text));
+        }
+
         //QuestOfferPacket
         public static void SendQuestOffer(Player player, Guid questId)
         {

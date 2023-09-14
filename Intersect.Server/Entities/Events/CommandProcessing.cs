@@ -162,6 +162,17 @@ namespace Intersect.Server.Entities.Events
                     }
                     break;
             }
+
+            if (command.ShowChatBubble)
+            {
+                PacketSender.SendChatBubbleToPlayer(
+                    player,
+                    instance.PageInstance.Id,
+                    instance.PageInstance.GetEntityType(),
+                    txt,
+                    instance.PageInstance.MapId
+                );
+            }
         }
 
         //Set Variable Commands
