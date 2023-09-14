@@ -1855,6 +1855,8 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString title = @"Add Chatbox Text";
 
+            public static LocalizedString ShowChatBubble = @"Show Chat Bubble";
+
         }
 
         public partial struct EventCommandList

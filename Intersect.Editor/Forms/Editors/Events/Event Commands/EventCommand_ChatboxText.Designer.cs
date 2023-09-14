@@ -40,6 +40,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.lblText = new System.Windows.Forms.Label();
             this.btnCancel = new DarkUI.Controls.DarkButton();
             this.btnSave = new DarkUI.Controls.DarkButton();
+            this.chkShowChatBubble = new DarkUI.Controls.DarkCheckBox();
             this.grpChatboxText.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -47,6 +48,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             // 
             this.grpChatboxText.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
             this.grpChatboxText.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpChatboxText.Controls.Add(this.chkShowChatBubble);
             this.grpChatboxText.Controls.Add(this.lblCommands);
             this.grpChatboxText.Controls.Add(this.cmbChannel);
             this.grpChatboxText.Controls.Add(this.lblChannel);
@@ -59,7 +61,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.grpChatboxText.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpChatboxText.Location = new System.Drawing.Point(3, 3);
             this.grpChatboxText.Name = "grpChatboxText";
-            this.grpChatboxText.Size = new System.Drawing.Size(259, 281);
+            this.grpChatboxText.Size = new System.Drawing.Size(259, 295);
             this.grpChatboxText.TabIndex = 17;
             this.grpChatboxText.TabStop = false;
             this.grpChatboxText.Text = "Add Chatbox Text";
@@ -82,9 +84,13 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.cmbChannel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.cmbChannel.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbChannel.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbChannel.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbChannel.DrawDropdownHoverOutline = false;
+            this.cmbChannel.DrawFocusRectangle = false;
             this.cmbChannel.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbChannel.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbChannel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbChannel.ForeColor = System.Drawing.Color.Gainsboro;
             this.cmbChannel.FormattingEnabled = true;
             this.cmbChannel.Items.AddRange(new object[] {
             "Player",
@@ -92,8 +98,10 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             "Global"});
             this.cmbChannel.Location = new System.Drawing.Point(7, 206);
             this.cmbChannel.Name = "cmbChannel";
-            this.cmbChannel.Size = new System.Drawing.Size(232, 21);
+            this.cmbChannel.Size = new System.Drawing.Size(246, 21);
             this.cmbChannel.TabIndex = 26;
+            this.cmbChannel.Text = "Player";
+            this.cmbChannel.TextPadding = new System.Windows.Forms.Padding(2);
             // 
             // lblChannel
             // 
@@ -109,19 +117,25 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.cmbColor.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.cmbColor.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.cmbColor.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
+            this.cmbColor.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
+            this.cmbColor.DrawDropdownHoverOutline = false;
+            this.cmbColor.DrawFocusRectangle = false;
             this.cmbColor.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.cmbColor.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cmbColor.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbColor.ForeColor = System.Drawing.Color.Gainsboro;
             this.cmbColor.FormattingEnabled = true;
-            this.cmbColor.Location = new System.Drawing.Point(9, 157);
+            this.cmbColor.Location = new System.Drawing.Point(7, 162);
             this.cmbColor.Name = "cmbColor";
-            this.cmbColor.Size = new System.Drawing.Size(232, 21);
+            this.cmbColor.Size = new System.Drawing.Size(246, 21);
             this.cmbColor.TabIndex = 24;
+            this.cmbColor.Text = null;
+            this.cmbColor.TextPadding = new System.Windows.Forms.Padding(2);
             // 
             // lblColor
             // 
             this.lblColor.AutoSize = true;
-            this.lblColor.Location = new System.Drawing.Point(6, 141);
+            this.lblColor.Location = new System.Drawing.Point(6, 146);
             this.lblColor.Name = "lblColor";
             this.lblColor.Size = new System.Drawing.Size(34, 13);
             this.lblColor.TabIndex = 23;
@@ -136,7 +150,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.txtAddText.Multiline = true;
             this.txtAddText.Name = "txtAddText";
             this.txtAddText.ScrollBars = System.Windows.Forms.ScrollBars.Horizontal;
-            this.txtAddText.Size = new System.Drawing.Size(234, 100);
+            this.txtAddText.Size = new System.Drawing.Size(246, 100);
             this.txtAddText.TabIndex = 22;
             // 
             // lblText
@@ -150,7 +164,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             // 
             // btnCancel
             // 
-            this.btnCancel.Location = new System.Drawing.Point(89, 252);
+            this.btnCancel.Location = new System.Drawing.Point(89, 264);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Padding = new System.Windows.Forms.Padding(5);
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
@@ -160,7 +174,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             // 
             // btnSave
             // 
-            this.btnSave.Location = new System.Drawing.Point(7, 252);
+            this.btnSave.Location = new System.Drawing.Point(7, 264);
             this.btnSave.Name = "btnSave";
             this.btnSave.Padding = new System.Windows.Forms.Padding(5);
             this.btnSave.Size = new System.Drawing.Size(75, 23);
@@ -168,7 +182,15 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.btnSave.Text = "Ok";
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
-            // EventCommand_ChatboxText
+            // chkShowChatBubble
+            // 
+            this.chkShowChatBubble.Location = new System.Drawing.Point(7, 236);
+            this.chkShowChatBubble.Name = "chkShowChatBubble";
+            this.chkShowChatBubble.Size = new System.Drawing.Size(111, 17);
+            this.chkShowChatBubble.TabIndex = 57;
+            this.chkShowChatBubble.Text = "Show Chat Bubble";
+            // 
+            // EventCommandChatboxText
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -176,7 +198,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.Controls.Add(this.grpChatboxText);
             this.Name = "EventCommandChatboxText";
-            this.Size = new System.Drawing.Size(268, 287);
+            this.Size = new System.Drawing.Size(268, 304);
             this.grpChatboxText.ResumeLayout(false);
             this.grpChatboxText.PerformLayout();
             this.ResumeLayout(false);
@@ -195,5 +217,6 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         private DarkComboBox cmbChannel;
         private System.Windows.Forms.Label lblChannel;
         private System.Windows.Forms.Label lblCommands;
+        private DarkCheckBox chkShowChatBubble;
     }
 }

@@ -180,6 +180,8 @@ namespace Intersect.GameObjects.Events.Commands
         public string Color { get; set; } = "";
 
         public ChatboxChannel Channel { get; set; } = ChatboxChannel.Player;
+
+        public bool ShowChatBubble { get; set; }
     }
 
     public partial class SetVariableCommand : EventCommand
