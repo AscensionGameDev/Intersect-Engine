@@ -810,21 +810,20 @@ namespace Intersect.Client.Entities
                 }
             }
 
-            var quantity = bankSlot.Quantity;
-            var maxQuantity = quantity;
+            var itemQuantityInBank = bankSlot.Quantity;
+            int availableSpace = FindAvailableInventorySpaceForItem(itemDescriptor.Id);
 
-            if (itemDescriptor.IsStackable)
+            if (availableSpace < 1)
             {
-                maxQuantity = GetQuantityOfItemInBank(itemDescriptor.Id);
+                ChatboxMsg.AddMessage(new ChatboxMsg(Strings.Bank.WithdrawItemNoSpace, CustomColors.Alerts.Error, ChatMessageType.Bank));
+                return;
             }
 
-            if (maxQuantity < 2)
+            if (itemQuantityInBank < 2)
             {
                 PacketSender.SendWithdrawItem(bankSlotIndex, 1, inventorySlotIndex);
                 return;
             }
-
-            int[] userData = new int[2] { bankSlotIndex, inventorySlotIndex };
 
             InputBox.Open(
                 title: Strings.Bank.withdrawitem,
@@ -833,10 +832,32 @@ namespace Intersect.Client.Entities
                 inputType: InputBox.InputType.NumericSliderInput,
                 onSuccess: WithdrawItemInputBoxOkay,
                 onCancel: null,
-                userData: userData,
-                quantity: quantity,
-                maxQuantity: maxQuantity
+                userData: new[] { bankSlotIndex, inventorySlotIndex },
+                quantity: availableSpace,
+                maxQuantity: availableSpace
             );
+        }
+
+        private int FindAvailableInventorySpaceForItem(Guid itemId)
+        {
+            int spaceLeft = 0;
+            int maxInventoryStack = ItemBase.Get(itemId).MaxInventoryStack;
+
+            // Calculate the total available space in the player's inventory for this item.
+            for (int i = 0; i < Inventory.Length; i++)
+            {
+                var inventorySlot = Inventory[i];
+                if (inventorySlot?.ItemId == itemId)
+                {
+                    spaceLeft += maxInventoryStack - inventorySlot.Quantity;
+                }
+                else if (inventorySlot?.ItemId == Guid.Empty)
+                {
+                    spaceLeft += maxInventoryStack;
+                }
+            }
+
+            return spaceLeft;
         }
 
         private void WithdrawItemInputBoxOkay(object sender, EventArgs e)
