@@ -161,24 +161,26 @@ namespace Intersect.Core
         /// <summary>
         /// Discovers, creates, and registers services.
         /// </summary>
-        protected virtual void DiscoverServices() =>
-            GetAssemblies()
+        protected virtual void DiscoverServices()
+        {
+            var serviceTypes = GetAssemblies()
                 .SelectMany(AssemblyExtensions.FindDefinedSubtypesOf<IApplicationService>)
-                .ToList()
-                .ForEach(
-                    serviceType =>
-                    {
-                        Debug.Assert(serviceType != null, nameof(serviceType) + " != null");
-                        if (!(Activator.CreateInstance(serviceType) is IApplicationService service))
-                        {
-                            throw new InvalidOperationException(
-                                $@"Failed to create service of type {serviceType.FullName}."
-                            );
-                        }
+                .ToArray();
 
-                        AddService(service.ServiceType, service);
-                    }
-                );
+            foreach (var serviceType in serviceTypes)
+            {
+                Log.Info($"Discovered service type: {serviceType.FullName}");
+                Debug.Assert(serviceType != null, nameof(serviceType) + " != null");
+                if (!(Activator.CreateInstance(serviceType) is IApplicationService service))
+                {
+                    throw new InvalidOperationException(
+                        $@"Failed to create service of type {serviceType.FullName}."
+                    );
+                }
+
+                AddService(service.ServiceType, service);
+            }
+        }
 
         private void RunOnAllServices(Action<IApplicationService> action, bool isRunning, bool force = true) =>
             Services.Where(service => (default != service) && service.IsEnabled && (force || (isRunning == service.IsRunning))).ToList().ForEach(action);
@@ -363,7 +365,7 @@ namespace Intersect.Core
 
             while (currentException != null)
             {
-                Log.Error(innerException ? "Caused by:" : $"Received unhandled exception from {sender}.");
+                Log.Error(innerException ? "Caused by:" : $"Received unhandled exception from {sender}: {currentException.Message}");
                 Log.Error(currentException);
 
                 currentException = currentException.InnerException;

@@ -1,6 +1,7 @@
 ﻿using Intersect.Core;
 using Intersect.Server.Core.Services;
 using Intersect.Server.Networking.Lidgren;
+using Intersect.Server.Web;
 using Intersect.Server.Web.RestApi;
 
 namespace Intersect.Server.Core
@@ -11,6 +12,11 @@ namespace Intersect.Server.Core
     internal interface IServerContext : IApplicationContext<ServerCommandLineOptions>
     {
         #region Services
+
+        /// <summary>
+        /// The server's REST API provider service.
+        /// </summary>
+        IApiService ApiService { get; }
 
         /// <summary>
         /// The server's console processing service.
@@ -26,11 +32,6 @@ namespace Intersect.Server.Core
         /// The server's network processing service.
         /// </summary>
         ServerNetwork Network { get; }
-
-        /// <summary>
-        /// The server's REST API provider service.
-        /// </summary>
-        RestApi RestApi { get; }
 
         #endregion Services
     }
