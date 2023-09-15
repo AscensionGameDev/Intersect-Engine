@@ -299,25 +299,12 @@ namespace Intersect.Server.Database
                     }
 
                     playerContext.MigrationsProcessed(processedPlayerMigrations.ToArray());
-#if DEBUG
-                    if (ServerContext.Instance.RestApi.Configuration.SeedMode)
-                    {
-                        playerContext.Seed();
-                    }
-#endif
 
                     try
                     {
                         using (var loggingContext = LoggingContext)
                         {
                             loggingContext.Database?.Migrate();
-
-#if DEBUG
-                            if (ServerContext.Instance.RestApi.Configuration.SeedMode)
-                            {
-                                loggingContext.Seed();
-                            }
-#endif
                         }
                     }
                     catch (Exception exception)

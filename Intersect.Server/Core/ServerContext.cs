@@ -5,27 +5,19 @@ using Intersect.Server.Core.Services;
 using Intersect.Server.Database;
 using Intersect.Server.Localization;
 using Intersect.Server.Networking;
-using Intersect.Server.Networking.Helpers;
 using Intersect.Server.Networking.Lidgren;
-using Intersect.Server.Web.RestApi;
 
-using Open.Nat;
-
-using System;
 using System.Diagnostics;
-using System.Linq;
 using System.Reflection;
-using System.Threading;
-using System.Threading.Tasks;
 
 using Intersect.Factories;
 using Intersect.Plugins;
 using Intersect.Server.Plugins;
 using Intersect.Server.General;
-using System.Collections.Generic;
 using Intersect.Plugins.Interfaces;
 using Intersect.Rsa;
 using Intersect.Server.Database.PlayerData.Players;
+using Intersect.Server.Web;
 
 #if WEBSOCKETS
 using Intersect.Server.Networking.Websockets;
@@ -50,18 +42,16 @@ namespace Intersect.Server.Core
                 Options.ServerPort = startupOptions.Port;
             }
 
-            RestApi = new RestApi(startupOptions.ApiPort);
-
             Network = CreateNetwork(packetHelper);
         }
+
+        public IApiService ApiService => GetExpectedService<IApiService>();
 
         public IConsoleService ConsoleService => GetExpectedService<IConsoleService>();
 
         public ILogicService LogicService => GetExpectedService<ILogicService>();
 
         public ServerNetwork Network { get; }
-
-        public RestApi RestApi { get; }
 
         #region Startup
 
@@ -147,11 +137,6 @@ namespace Intersect.Server.Core
                         client.Disconnect("Server Shutdown", true);
                     }
                 }
-
-
-                // TODO: This needs to not be a global. I'm also in the middle of rewriting the API anyway.
-                Log.Info("Shutting down the API..." + $" ({stopwatch.ElapsedMilliseconds}ms)");
-                RestApi.Dispose();
 
                 #endregion
 
@@ -263,20 +248,12 @@ namespace Intersect.Server.Core
             Console.WriteLine();
 #endif
 
-            RestApi.Start();
-
             if (!Options.UPnP || Instance.StartupOptions.NoNatPunchthrough)
             {
                 return;
             }
 
             Bootstrapper.CheckNetwork();
-
-            if (RestApi.IsStarted)
-            {
-                RestApi.Configuration.Ports.ToList()
-                    .ForEach(port => UpnP.OpenServerPort(port, Protocol.Tcp).Wait(5000));
-            }
 
             Console.WriteLine();
         }

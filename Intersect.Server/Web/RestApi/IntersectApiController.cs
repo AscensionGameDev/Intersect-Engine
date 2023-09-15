@@ -5,11 +5,42 @@ using System.Web.Http.Controllers;
 
 using Intersect.Security.Claims;
 using Intersect.Server.Web.RestApi.Serialization;
-
+using Microsoft.AspNetCore.Mvc;
 using IntersectUser = Intersect.Server.Database.PlayerData.User;
 
 namespace Intersect.Server.Web.RestApi
 {
+    public abstract partial class IntersectController : Controller
+    {
+        public const int PAGE_SIZE_MAX = 100;
+
+        public const int PAGE_SIZE_MIN = 5;
+
+        private IntersectUser? _intersectUser;
+
+        public IntersectUser IntersectUser
+        {
+            get
+            {
+                if (_intersectUser != default)
+                {
+                    return _intersectUser;
+                }
+
+                var identity = User.Identity as ClaimsIdentity;
+                var idString = identity?.FindFirst(IntersectClaimTypes.UserId)?.Value;
+                if (string.IsNullOrWhiteSpace(idString) || !Guid.TryParse(idString, out var id))
+                {
+                    return default;
+                }
+
+                _intersectUser = IntersectUser.FindOnline(id) ?? IntersectUser.FindById(id);
+
+                return _intersectUser;
+            }
+        }
+    }
+
 
     public abstract partial class IntersectApiController : ApiController
     {
