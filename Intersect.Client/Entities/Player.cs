@@ -528,7 +528,7 @@ namespace Intersect.Client.Entities
                     {
                         return true;
                     }
-                    else if (!ItemBase.Get(itm.ItemId).IgnoreGlobalCooldown && Globals.Me.GlobalCooldown > Timing.Global.Milliseconds)
+                    else if ((ItemBase.TryGet(itm.ItemId, out var itemBase) && !itemBase.IgnoreGlobalCooldown) && Globals.Me.GlobalCooldown > Timing.Global.Milliseconds)
                     {
                         return true;
                     }
@@ -549,7 +549,7 @@ namespace Intersect.Client.Entities
                     {
                         return ItemCooldowns[itm.ItemId] - Timing.Global.Milliseconds;
                     }
-                    else if (!ItemBase.Get(itm.ItemId).IgnoreGlobalCooldown && Globals.Me.GlobalCooldown > Timing.Global.Milliseconds)
+                    else if ((ItemBase.TryGet(itm.ItemId, out var itemBase) && !itemBase.IgnoreGlobalCooldown) && Globals.Me.GlobalCooldown > Timing.Global.Milliseconds)
                     {
                         return Globals.Me.GlobalCooldown - Timing.Global.Milliseconds;
                     }
@@ -570,7 +570,7 @@ namespace Intersect.Client.Entities
                     {
                         return true;
                     }
-                    else if (!SpellBase.Get(spl.Id).IgnoreGlobalCooldown && Globals.Me.GlobalCooldown > Timing.Global.Milliseconds)
+                    else if ((SpellBase.TryGet(spl.Id, out var spellBase) && !spellBase.IgnoreGlobalCooldown) && Globals.Me.GlobalCooldown > Timing.Global.Milliseconds)
                     {
                         return true;
                     }
@@ -591,7 +591,7 @@ namespace Intersect.Client.Entities
                     {
                         return ItemCooldowns[spl.Id] - Timing.Global.Milliseconds;
                     }
-                    else if (!SpellBase.Get(spl.Id).IgnoreGlobalCooldown && Globals.Me.GlobalCooldown > Timing.Global.Milliseconds)
+                    else if ((SpellBase.TryGet(spl.Id, out var spellBase) && !spellBase.IgnoreGlobalCooldown) && Globals.Me.GlobalCooldown > Timing.Global.Milliseconds)
                     {
                         return Globals.Me.GlobalCooldown - Timing.Global.Milliseconds;
                     }
@@ -1066,11 +1066,11 @@ namespace Intersect.Client.Entities
 
         public long GetSpellCooldown(Guid id)
         {
-            if (SpellCooldowns.ContainsKey(id) && SpellCooldowns[id] > Timing.Global.Milliseconds)
+            if (SpellCooldowns.TryGetValue(id, out var cd) && cd > Timing.Global.Milliseconds)
             {
-                return SpellCooldowns[id];
+                return cd;
             }
-            else if (!SpellBase.Get(id).IgnoreGlobalCooldown && Globals.Me.GlobalCooldown > Timing.Global.Milliseconds)
+            else if ((SpellBase.TryGet(id, out var spellBase) && !spellBase.IgnoreGlobalCooldown) && Globals.Me.GlobalCooldown > Timing.Global.Milliseconds)
             {
                 return Globals.Me.GlobalCooldown;
             }
