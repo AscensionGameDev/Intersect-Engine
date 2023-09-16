@@ -1,20 +1,13 @@
-using System;
-using System.Linq;
-using System.Net;
-using System.Text.Json.Serialization;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Web.Http;
-
 using Intersect.Server.Database.PlayerData.Api;
-using Intersect.Server.Web.RestApi.Attributes;
+using Microsoft.AspNetCore.Mvc;
+using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Intersect.Server.Web.RestApi.Routes
 {
-
-    [RoutePrefix("oauth")]
-    [ConfigurableAuthorize]
-    public sealed partial class OAuthController : IntersectApiController
+    [Route("api/oauth")]
+    // [ConfigurableAuthorize]
+    public sealed partial class OAuthController : IntersectController
     {
 
         private class UsernameAndTokenResponse
@@ -28,7 +21,7 @@ namespace Intersect.Server.Web.RestApi.Routes
 
         [HttpDelete]
         [Route("tokens/{tokenId:guid}")]
-        public async Task<IHttpActionResult> DeleteTokenById(Guid tokenId)
+        public async Task<IActionResult> DeleteTokenById(Guid tokenId)
         {
             var actor = IntersectUser;
             if (actor == default)
@@ -51,28 +44,23 @@ namespace Intersect.Server.Web.RestApi.Routes
                 return Unauthorized();
             }
 
-            if (!RefreshToken.Remove(refreshToken))
-            {
-                return InternalServerError();
-            }
-
-            return Ok(new UsernameAndTokenResponse { TokenId = tokenId });
+            return RefreshToken.Remove(refreshToken) ? Ok(new UsernameAndTokenResponse { TokenId = tokenId }) : InternalServerError();
         }
 
         [Authorize]
         [HttpDelete]
         [Route("tokens/{username}")]
-        public async Task<IHttpActionResult> DeleteTokensForUsername(string username, CancellationToken cancellationToken)
+        public async Task<IActionResult> DeleteTokensForUsername(string username, CancellationToken cancellationToken)
         {
-            var user = Database.PlayerData.User.Find(username);
-
-            if (user == null)
+            var actor = IntersectUser;
+            if (actor == default)
             {
                 return Unauthorized();
             }
 
-            var actor = IntersectUser;
-            if (actor == default)
+            var user = Database.PlayerData.User.Find(username);
+
+            if (user == null)
             {
                 return Unauthorized();
             }
@@ -84,17 +72,23 @@ namespace Intersect.Server.Web.RestApi.Routes
 
             if (!RefreshToken.HasTokens(user))
             {
-                return StatusCode(HttpStatusCode.Gone);
+                return Gone();
             }
 
             var success = await RefreshToken.RemoveForUserAsync(user.Id, cancellationToken).ConfigureAwait(false);
-            return success ? (IHttpActionResult)Ok(new { Username = username }) : StatusCode(HttpStatusCode.Unauthorized);
+            return success ? Ok(new { Username = username }) : Unauthorized();
         }
 
         [HttpDelete]
         [Route("tokens/{username}/{tokenId:guid}")]
-        public async Task<IHttpActionResult> DeleteTokenForUsernameById(string username, Guid tokenId)
+        public async Task<IActionResult> DeleteTokenForUsernameById(string username, Guid tokenId)
         {
+            var intersectUser = IntersectUser;
+            if (intersectUser == default)
+            {
+                return Unauthorized();
+            }
+
             var user = Database.PlayerData.User.Find(username);
 
             if (user == null)
@@ -102,24 +96,17 @@ namespace Intersect.Server.Web.RestApi.Routes
                 return Unauthorized();
             }
 
-            if (IntersectUser?.Id != user.Id && !IntersectUser.Power.ApiRoles.UserManage)
+            if (intersectUser.Id != user.Id && !intersectUser.Power.ApiRoles.UserManage)
             {
                 return Unauthorized();
             }
 
             if (!RefreshToken.TryFind(tokenId, out _))
             {
-                return StatusCode(HttpStatusCode.Gone);
+                return Gone();
             }
 
-            if (!RefreshToken.Remove(tokenId))
-            {
-                return InternalServerError();
-            }
-
-            return Ok(new UsernameAndTokenResponse { TokenId = tokenId, Username = username });
+            return !RefreshToken.Remove(tokenId) ? InternalServerError() : Ok(new UsernameAndTokenResponse { TokenId = tokenId, Username = username });
         }
-
     }
-
 }

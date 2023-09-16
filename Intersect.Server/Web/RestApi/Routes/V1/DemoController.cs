@@ -1,16 +1,12 @@
-﻿using System.Web.Http;
-
-using Intersect.Server.Web.RestApi.Attributes;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Intersect.Server.Web.RestApi.Routes.V1
 {
-
-    [ConfigurableAuthorize]
-    [RoutePrefix("demo")]
-    public sealed partial class DemoController : ApiController
+    [Authorize]
+    [Route("api/v1/demo")]
+    public sealed partial class DemoController : IntersectController
     {
-
-        [Route]
         [HttpGet]
         [AllowAnonymous]
         public string Default()
@@ -18,38 +14,11 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             return "GET:demo";
         }
 
-        [Route("authorize")]
-        [HttpGet]
+        [HttpGet("authorize")]
         [Authorize]
         public object Authorize()
         {
             return "GET:demo/authorize";
         }
-
-        [Route("configurable_authorize")]
-        [HttpGet]
-        [ConfigurableAuthorize]
-        public string ConfigurableAuthorize()
-        {
-            return "GET:demo/configurable_authorize";
-        }
-
-        [Route("configurable_authorize/{param}")]
-        [HttpGet]
-        [ConfigurableAuthorize]
-        public string ConfigurableAuthorize(string param)
-        {
-            return "GET:demo/configurable_authorize:" + param;
-        }
-
-        [Route("configurable_authorize/{*param}")]
-        [HttpGet]
-        [ConfigurableAuthorize]
-        public string ConfigurableAuthorizeParams(string param)
-        {
-            return "GET:demo/configurable_authorize:" + param;
-        }
-
     }
-
 }

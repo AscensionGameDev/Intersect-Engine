@@ -81,6 +81,7 @@
     <PackageReference Include="AscensionGameDev.Open.NAT" Version="3.0.0.7" />
     <PackageReference Include="AscensionGameDev.WebApiThrottle" Version="1.5.4.2" />
     <PackageReference Include="AscensionGameDev.WebSocketSharp" Version="1.0.0.7-beta" />
+    <PackageReference Include="Asp.Versioning.OData.ApiExplorer" Version="7.0.4" />
     <PackageReference Include="MailKit" Version="4.2.0" />
     <PackageReference Include="Markdown" Version="2.2.1" />
     <PackageReference Include="Microsoft.AspNet.Cors" Version="5.2.9" />

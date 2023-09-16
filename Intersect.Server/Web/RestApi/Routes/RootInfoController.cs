@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web.Http;
+﻿using Microsoft.AspNetCore.Mvc;
 
 namespace Intersect.Server.Web.RestApi.Routes
 {
-
-    [RoutePrefix("info")]
-    public partial class RootInfoController : ApiController
+    [Route("api/info")]
+    public partial class RootInfoController : Controller
     {
-
         static RootInfoController()
         {
             var rootNamespace = typeof(RootInfoController).Namespace ?? throw new InvalidOperationException();
@@ -24,7 +19,6 @@ namespace Intersect.Server.Web.RestApi.Routes
 
         private static string[] DiscoveredVersions { get; }
 
-        [Route]
         [HttpGet]
         public object Default()
         {
@@ -37,13 +31,10 @@ namespace Intersect.Server.Web.RestApi.Routes
             };
         }
 
-        [Route("versions")]
-        [HttpGet]
+        [HttpGet("versions")]
         public IEnumerable<string> Versions()
         {
             return DiscoveredVersions;
         }
-
     }
-
 }

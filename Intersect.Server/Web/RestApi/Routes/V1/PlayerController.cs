@@ -1,32 +1,22 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Web.Http;
-
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Server.Database;
 using Intersect.Server.Database.PlayerData;
 using Intersect.Server.Database.PlayerData.Players;
 using Intersect.Server.Entities;
-using Intersect.Server.Extensions;
 using Intersect.Server.General;
 using Intersect.Server.Localization;
 using Intersect.Server.Networking;
-using Intersect.Server.Web.RestApi.Attributes;
-using Intersect.Server.Web.RestApi.Extensions;
 using Intersect.Server.Web.RestApi.Payloads;
 using Intersect.Server.Web.RestApi.Types;
 using Intersect.Utilities;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Intersect.Server.Web.RestApi.Routes.V1
 {
-
     public partial struct AdminActionParameters
     {
-
         public string Moderator { get; set; }
 
         public int Duration { get; set; }
@@ -40,15 +30,13 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         public byte Y { get; set; }
 
         public Guid MapId { get; set; }
-
     }
 
-    [RoutePrefix("players")]
-    [ConfigurableAuthorize]
-    public sealed partial class PlayerController : IntersectApiController
+    [Route("api/v1/players")]
+    [Authorize]
+    public sealed partial class PlayerController : IntersectController
     {
 
-        [Route]
         [HttpPost]
         public object ListPost([FromBody] PagingInfo pageInfo)
         {
@@ -67,15 +55,14 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             };
         }
 
-        [Route]
         [HttpGet]
         public DataPage<Player> List(
-            [FromUri] int page = 0,
-            [FromUri] int pageSize = 0,
-            [FromUri] int limit = PAGE_SIZE_MAX,
-            [FromUri] string sortBy = null,
-            [FromUri] SortDirection sortDirection = SortDirection.Ascending,
-            [FromUri] string search = null
+            [FromQuery] int page = 0,
+            [FromQuery] int pageSize = 0,
+            [FromQuery] int limit = PAGE_SIZE_MAX,
+            [FromQuery] string sortBy = null,
+            [FromQuery] SortDirection sortDirection = SortDirection.Ascending,
+            [FromQuery] string search = null
         )
         {
             page = Math.Max(page, 0);
@@ -100,13 +87,12 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             };
         }
 
-        [Route("rank")]
-        [HttpGet]
+        [HttpGet("rank")]
         public DataPage<Player> Rank(
-            [FromUri] int page = 0,
-            [FromUri] int pageSize = 0,
-            [FromUri] int limit = PAGE_SIZE_MAX,
-            [FromUri] SortDirection sortDirection = SortDirection.Descending
+            [FromQuery] int page = 0,
+            [FromQuery] int pageSize = 0,
+            [FromQuery] int limit = PAGE_SIZE_MAX,
+            [FromQuery] SortDirection sortDirection = SortDirection.Descending
         )
         {
             page = Math.Max(page, 0);
@@ -133,8 +119,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             };
         }
 
-        [Route("online")]
-        [HttpPost]
+        [HttpPost("online")]
         public object OnlinePost([FromBody] PagingInfo pageInfo)
         {
             pageInfo.Page = Math.Max(pageInfo.Page, 0);
@@ -151,15 +136,14 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             };
         }
 
-        [Route("online")]
-        [HttpGet]
+        [HttpGet("online")]
         public DataPage<Player> Online(
-            [FromUri] int page = 0,
-            [FromUri] int pageSize = 0,
-            [FromUri] int limit = PAGE_SIZE_MAX,
-            [FromUri] string sortBy = null,
-            [FromUri] SortDirection sortDirection = SortDirection.Ascending,
-            [FromUri] string search = null
+            [FromQuery] int page = 0,
+            [FromQuery] int pageSize = 0,
+            [FromQuery] int limit = PAGE_SIZE_MAX,
+            [FromQuery] string sortBy = null,
+            [FromQuery] SortDirection sortDirection = SortDirection.Ascending,
+            [FromQuery] string search = null
         )
         {
             page = Math.Max(page, 0);
@@ -207,8 +191,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             };
         }
 
-        [Route("online/count")]
-        [HttpGet]
+        [HttpGet("online/count")]
         public object OnlineCount()
         {
             return new
@@ -217,15 +200,12 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             };
         }
 
-        [Route("{lookupKey:LookupKey}")]
-        [HttpGet]
+        [HttpGet("{lookupKey:LookupKey}")]
         public object LookupPlayer(LookupKey lookupKey)
         {
             if (lookupKey.IsInvalid)
             {
-                return Request.CreateErrorResponse(
-                    HttpStatusCode.BadRequest, lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name."
-                );
+                return BadRequest(lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name.");
             }
 
             var (client, player) = Player.Fetch(lookupKey);
@@ -234,21 +214,15 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return player;
             }
 
-            return Request.CreateErrorResponse(
-                HttpStatusCode.NotFound,
-                lookupKey.HasId ? $@"No player with id '{lookupKey.Id}'." : $@"No player with name '{lookupKey.Name}'."
-            );
+            return NotFound(lookupKey.HasId ? $@"No player with id '{lookupKey.Id}'." : $@"No player with name '{lookupKey.Name}'.");
         }
 
-        [Route("{lookupKey:LookupKey}")]
-        [HttpDelete]
+        [HttpDelete("{lookupKey:LookupKey}")]
         public object DeletePlayer(LookupKey lookupKey)
         {
             if (lookupKey.IsInvalid)
             {
-                return Request.CreateErrorResponse(
-                    HttpStatusCode.BadRequest, lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name."
-                );
+                return BadRequest(lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name.");
             }
 
             var (client, player) = Player.Fetch(lookupKey);
@@ -256,19 +230,13 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             {
                 if (Player.FindOnline(player.Id) != null)
                 {
-                    return Request.CreateErrorResponse(
-                        HttpStatusCode.InternalServerError,
-                        "Failed to delete player because they are online!"
-                    );
+                    return InternalServerError("Failed to delete player because they are online!");
                 }
 
                 var user = Database.PlayerData.User.FindById(player.UserId);
                 if (user == null)
                 {
-                    return Request.CreateErrorResponse(
-                        HttpStatusCode.BadRequest,
-                        $@"Failed to load user for {player.Name}!"
-                    );
+                    return BadRequest($@"Failed to load user for {player.Name}!");
                 }
 
                 user.DeleteCharacter(user.Players.FirstOrDefault(p => p.Id == player.Id));
@@ -276,37 +244,25 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return player;
             }
 
-            return Request.CreateErrorResponse(
-                HttpStatusCode.NotFound,
-                lookupKey.HasId ? $@"No player with id '{lookupKey.Id}'." : $@"No player with name '{lookupKey.Name}'."
-            );
+            return NotFound(lookupKey.HasId ? $@"No player with id '{lookupKey.Id}'." : $@"No player with name '{lookupKey.Name}'.");
         }
 
-        [Route("{lookupKey:LookupKey}/name")]
-        [HttpPost]
+        [HttpPost("{lookupKey:LookupKey}/name")]
         public object ChangeName(LookupKey lookupKey, [FromBody] NameChange change)
         {
             if (lookupKey.IsInvalid)
             {
-                return Request.CreateErrorResponse(
-                    HttpStatusCode.BadRequest, lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name."
-                );
+                return BadRequest(lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name.");
             }
 
             if (!FieldChecking.IsValidUsername(change.Name, Strings.Regex.username))
             {
-                return Request.CreateErrorResponse(
-                    HttpStatusCode.BadRequest,
-                    $@"Invalid name."
-                );
+                return BadRequest($@"Invalid name.");
             }
 
             if (Player.PlayerExists(change.Name))
             {
-                return Request.CreateErrorResponse(
-                    HttpStatusCode.BadRequest,
-                    $@"Name already taken."
-                );
+                return BadRequest($@"Name already taken.");
             }
 
             var (client, player) = Player.Fetch(lookupKey);
@@ -327,28 +283,21 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return player;
             }
 
-            return Request.CreateErrorResponse(
-                HttpStatusCode.NotFound,
-                lookupKey.HasId ? $@"No player with id '{lookupKey.Id}'." : $@"No player with name '{lookupKey.Name}'."
-            );
+            return NotFound(lookupKey.HasId ? $@"No player with id '{lookupKey.Id}'." : $@"No player with name '{lookupKey.Name}'.");
         }
 
-        [Route("{lookupKey:LookupKey}/variables")]
-        [HttpGet]
+        [HttpGet("{lookupKey:LookupKey}/variables")]
         public object PlayerVariableGet(LookupKey lookupKey)
         {
             if (lookupKey.IsInvalid)
             {
-                return Request.CreateErrorResponse(
-                    HttpStatusCode.BadRequest, lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name."
-                );
+                return BadRequest(lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name.");
             }
 
             var (client, player) = Player.Fetch(lookupKey);
             if (player == null)
             {
-                return Request.CreateErrorResponse(
-                    HttpStatusCode.NotFound,
+                return NotFound(
                     lookupKey.HasId
                         ? $@"No player with id '{lookupKey.Id}'."
                         : $@"No player with name '{lookupKey.Name}'."
@@ -358,27 +307,23 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             return player.Variables;
         }
 
-        [Route("{lookupKey:LookupKey}/variables/{variableId:guid}")]
-        [HttpGet]
+        [HttpGet("{lookupKey:LookupKey}/variables/{variableId:guid}")]
         public object PlayerVariableGet(LookupKey lookupKey, Guid variableId)
         {
             if (lookupKey.IsInvalid)
             {
-                return Request.CreateErrorResponse(
-                    HttpStatusCode.BadRequest, lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name."
-                );
+                return BadRequest(lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name.");
             }
 
             if (variableId == Guid.Empty || PlayerVariableBase.Get(variableId) == null)
             {
-                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, $@"Invalid variable id ${variableId}.");
+                return BadRequest($@"Invalid variable id ${variableId}.");
             }
 
             var (client, player) = Player.Fetch(lookupKey);
             if (player == null)
             {
-                return Request.CreateErrorResponse(
-                    HttpStatusCode.NotFound,
+                return NotFound(
                     lookupKey.HasId
                         ? $@"No player with id '{lookupKey.Id}'."
                         : $@"No player with name '{lookupKey.Name}'."
@@ -388,27 +333,23 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             return player.GetVariable(variableId, true);
         }
 
-        [Route("{lookupKey:LookupKey}/variables/{variableId:guid}/value")]
-        [HttpGet]
+        [HttpGet("{lookupKey:LookupKey}/variables/{variableId:guid}/value")]
         public object PlayerVariableGetValue(LookupKey lookupKey, Guid variableId)
         {
             if (lookupKey.IsInvalid)
             {
-                return Request.CreateErrorResponse(
-                    HttpStatusCode.BadRequest, lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name."
-                );
+                return BadRequest(lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name.");
             }
 
             if (variableId == Guid.Empty || PlayerVariableBase.Get(variableId) == null)
             {
-                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, $@"Invalid variable id ${variableId}.");
+                return BadRequest($@"Invalid variable id ${variableId}.");
             }
 
             var (client, player) = Player.Fetch(lookupKey);
             if (player == null)
             {
-                return Request.CreateErrorResponse(
-                    HttpStatusCode.NotFound,
+                return NotFound(
                     lookupKey.HasId
                         ? $@"No player with id '{lookupKey.Id}'."
                         : $@"No player with name '{lookupKey.Name}'."
@@ -421,27 +362,23 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             };
         }
 
-        [Route("{lookupKey:LookupKey}/variables/{variableId:guid}")]
-        [HttpPost]
+        [HttpPost("{lookupKey:LookupKey}/variables/{variableId:guid}")]
         public object PlayerVariableSet(LookupKey lookupKey, Guid variableId, [FromBody] VariableValue value)
         {
             if (lookupKey.IsInvalid)
             {
-                return Request.CreateErrorResponse(
-                    HttpStatusCode.BadRequest, lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name."
-                );
+                return BadRequest(lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name.");
             }
 
             if (variableId == Guid.Empty || PlayerVariableBase.Get(variableId) == null)
             {
-                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, $@"Invalid variable id ${variableId}.");
+                return BadRequest($@"Invalid variable id ${variableId}.");
             }
 
             var (client, player) = Player.Fetch(lookupKey);
             if (player == null)
             {
-                return Request.CreateErrorResponse(
-                    HttpStatusCode.NotFound,
+                return NotFound(
                     lookupKey.HasId
                         ? $@"No player with id '{lookupKey.Id}'."
                         : $@"No player with name '{lookupKey.Name}'."
@@ -478,20 +415,17 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             return variable;
         }
 
-        [Route("{lookupKey:LookupKey}/class")]
-        [HttpPost]
+        [HttpPost("{lookupKey:LookupKey}/class")]
         public object PlayerClassSet(LookupKey lookupKey, [FromBody] ClassChange change)
         {
             if (lookupKey.IsInvalid)
             {
-                return Request.CreateErrorResponse(
-                    HttpStatusCode.BadRequest, lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name."
-                );
+                return BadRequest(lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name.");
             }
 
             if (change.ClassId == Guid.Empty || ClassBase.Get(change.ClassId) == null)
             {
-                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, $@"Invalid class id ${change.ClassId}.");
+                return BadRequest($@"Invalid class id ${change.ClassId}.");
             }
 
             var (client, player) = Player.Fetch(lookupKey);
@@ -514,21 +448,15 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return player;
             }
 
-            return Request.CreateErrorResponse(
-                HttpStatusCode.NotFound,
-                lookupKey.HasId ? $@"No player with id '{lookupKey.Id}'." : $@"No player with name '{lookupKey.Name}'."
-            );
+            return NotFound(lookupKey.HasId ? $@"No player with id '{lookupKey.Id}'." : $@"No player with name '{lookupKey.Name}'.");
         }
 
-        [Route("{lookupKey:LookupKey}/level")]
-        [HttpPost]
+        [HttpPost("{lookupKey:LookupKey}/level")]
         public object PlayerLevelSet(LookupKey lookupKey, [FromBody] LevelChange change)
         {
             if (lookupKey.IsInvalid)
             {
-                return Request.CreateErrorResponse(
-                    HttpStatusCode.BadRequest, lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name."
-                );
+                return BadRequest(lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name.");
             }
 
             var (client, player) = Player.Fetch(lookupKey);
@@ -549,14 +477,10 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return player;
             }
 
-            return Request.CreateErrorResponse(
-                HttpStatusCode.NotFound,
-                lookupKey.HasId ? $@"No player with id '{lookupKey.Id}'." : $@"No player with name '{lookupKey.Name}'."
-            );
+            return NotFound(lookupKey.HasId ? $@"No player with id '{lookupKey.Id}'." : $@"No player with name '{lookupKey.Name}'.");
         }
 
-        [Route("{lookupKey:LookupKey}/items")]
-        [HttpGet]
+        [HttpGet("{lookupKey:LookupKey}/items")]
         public object ItemsList(LookupKey lookupKey)
         {
             return new
@@ -566,22 +490,18 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             };
         }
 
-        [Route("{lookupKey:LookupKey}/items/bank")]
-        [HttpGet]
+        [HttpGet("{lookupKey:LookupKey}/items/bank")]
         public object ItemsListBank(LookupKey lookupKey)
         {
             if (lookupKey.IsInvalid)
             {
-                return Request.CreateErrorResponse(
-                    HttpStatusCode.BadRequest, lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name."
-                );
+                return BadRequest(lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name.");
             }
 
             var (client, player) = Player.Fetch(lookupKey);
             if (player == null)
             {
-                return Request.CreateErrorResponse(
-                    HttpStatusCode.NotFound,
+                return NotFound(
                     lookupKey.HasId
                         ? $@"No player with id '{lookupKey.Id}'."
                         : $@"No player with name '{lookupKey.Name}'."
@@ -591,20 +511,19 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             return player.Bank;
         }
 
-        [Route("bag/{bagId:guid}")]
-        [HttpGet]
+        [HttpGet("bag/{bagId:guid}")]
         public object ItemsListBag(Guid bagId)
         {
             if (bagId == Guid.Empty)
             {
-                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, @"Invalid bag id.");
+                return BadRequest(@"Invalid bag id.");
             }
 
             var bag = Bag.GetBag(bagId);
 
             if (bag == null)
             {
-                return Request.CreateErrorResponse(HttpStatusCode.NotFound, @"Bag does not exist.");
+                return NotFound(@"Bag does not exist.");
             }
             else
             {
@@ -612,22 +531,18 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             }
         }
 
-        [Route("{lookupKey:LookupKey}/items/inventory")]
-        [HttpGet]
+        [HttpGet("{lookupKey:LookupKey}/items/inventory")]
         public object ItemsListInventory(LookupKey lookupKey)
         {
             if (lookupKey.IsInvalid)
             {
-                return Request.CreateErrorResponse(
-                    HttpStatusCode.BadRequest, lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name."
-                );
+                return BadRequest(lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name.");
             }
 
             var (client, player) = Player.Fetch(lookupKey);
             if (player == null)
             {
-                return Request.CreateErrorResponse(
-                    HttpStatusCode.NotFound,
+                return NotFound(
                     lookupKey.HasId
                         ? $@"No player with id '{lookupKey.Id}'."
                         : $@"No player with name '{lookupKey.Name}'."
@@ -637,34 +552,28 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             return player.Items;
         }
 
-        [Route("{lookupKey:LookupKey}/items/give")]
-        [HttpPost]
+        [HttpPost("{lookupKey:LookupKey}/items/give")]
         public object ItemsGive(LookupKey lookupKey, [FromBody] ItemInfo itemInfo)
         {
             if (lookupKey.IsInvalid)
             {
-                return Request.CreateErrorResponse(
-                    HttpStatusCode.BadRequest, lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name."
-                );
+                return BadRequest(lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name.");
             }
 
             if (ItemBase.Get(itemInfo.ItemId) == null)
             {
-                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, @"Invalid item id.");
+                return BadRequest(@"Invalid item id.");
             }
 
             if (itemInfo.Quantity < 1)
             {
-                return Request.CreateErrorResponse(
-                    HttpStatusCode.BadRequest, "Cannot give 0, or a negative amount of an item."
-                );
+                return BadRequest("Cannot give 0, or a negative amount of an item.");
             }
 
             var (client, player) = Player.Fetch(lookupKey);
             if (player == null)
             {
-                return Request.CreateErrorResponse(
-                    HttpStatusCode.NotFound,
+                return NotFound(
                     lookupKey.HasId
                         ? $@"No player with id '{lookupKey.Id}'."
                         : $@"No player with name '{lookupKey.Name}'."
@@ -673,10 +582,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
             if (!player.TryGiveItem(itemInfo.ItemId, itemInfo.Quantity, ItemHandling.Normal, itemInfo.BankOverflow, -1, true))
             {
-                return Request.CreateErrorResponse(
-                    HttpStatusCode.InternalServerError,
-                    $@"Failed to give player {itemInfo.Quantity} of '{itemInfo.ItemId}'."
-                );
+                return InternalServerError($@"Failed to give player {itemInfo.Quantity} of '{itemInfo.ItemId}'.");
             }
 
             using (var context = DbInterface.CreatePlayerContext(false))
@@ -700,29 +606,23 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             };
         }
 
-        [Route("{lookupKey:LookupKey}/items/take")]
-        [HttpPost]
+        [HttpPost("{lookupKey:LookupKey}/items/take")]
         public object ItemsTake(LookupKey lookupKey, [FromBody] ItemInfo itemInfo)
         {
             if (lookupKey.IsInvalid)
             {
-                return Request.CreateErrorResponse(
-                    HttpStatusCode.BadRequest, lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name."
-                );
+                return BadRequest(lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name.");
             }
 
             if (itemInfo.Quantity < 1)
             {
-                return Request.CreateErrorResponse(
-                    HttpStatusCode.BadRequest, "Cannot take 0, or a negative amount of an item."
-                );
+                return BadRequest("Cannot take 0, or a negative amount of an item.");
             }
 
             var (client, player) = Player.Fetch(lookupKey);
             if (player == null)
             {
-                return Request.CreateErrorResponse(
-                    HttpStatusCode.NotFound,
+                return NotFound(
                     lookupKey.HasId
                         ? $@"No player with id '{lookupKey.Id}'."
                         : $@"No player with name '{lookupKey.Name}'."
@@ -744,28 +644,21 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 };
             }
 
-            return Request.CreateErrorResponse(
-                HttpStatusCode.InternalServerError,
-                $@"Failed to take {itemInfo.Quantity} of '{itemInfo.ItemId}' from player."
-            );
+            return InternalServerError($@"Failed to take {itemInfo.Quantity} of '{itemInfo.ItemId}' from player.");
         }
 
-        [Route("{lookupKey:LookupKey}/spells")]
-        [HttpGet]
+        [HttpGet("{lookupKey:LookupKey}/spells")]
         public object SpellsList(LookupKey lookupKey)
         {
             if (lookupKey.IsInvalid)
             {
-                return Request.CreateErrorResponse(
-                    HttpStatusCode.BadRequest, lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name."
-                );
+                return BadRequest(lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name.");
             }
 
             var (client, player) = Player.Fetch(lookupKey);
             if (player == null)
             {
-                return Request.CreateErrorResponse(
-                    HttpStatusCode.NotFound,
+                return NotFound(
                     lookupKey.HasId
                         ? $@"No player with id '{lookupKey.Id}'."
                         : $@"No player with name '{lookupKey.Name}'."
@@ -775,27 +668,23 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             return player.Spells;
         }
 
-        [Route("{lookupKey:LookupKey}/spells/teach")]
-        [HttpPost]
+        [HttpPost("{lookupKey:LookupKey}/spells/teach")]
         public object SpellsTeach(LookupKey lookupKey, [FromBody] SpellInfo spell)
         {
             if (lookupKey.IsInvalid)
             {
-                return Request.CreateErrorResponse(
-                    HttpStatusCode.BadRequest, lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name."
-                );
+                return BadRequest(lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name.");
             }
 
             if (SpellBase.Get(spell.SpellId) == null)
             {
-                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, @"Invalid spell id.");
+                return BadRequest(@"Invalid spell id.");
             }
 
             var (client, player) = Player.Fetch(lookupKey);
             if (player == null)
             {
-                return Request.CreateErrorResponse(
-                    HttpStatusCode.NotFound,
+                return NotFound(
                     lookupKey.HasId
                         ? $@"No player with id '{lookupKey.Id}'."
                         : $@"No player with name '{lookupKey.Name}'."
@@ -813,33 +702,26 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return spell;
             }
 
-            return Request.CreateErrorResponse(
-                HttpStatusCode.InternalServerError,
-                $@"Failed to teach player spell with id '{spell.SpellId}'. They might already know it!"
-            );
+            return InternalServerError($@"Failed to teach player spell with id '{spell.SpellId}'. They might already know it!");
         }
 
-        [Route("{lookupKey:LookupKey}/spells/forget")]
-        [HttpPost]
+        [HttpPost("{lookupKey:LookupKey}/spells/forget")]
         public object SpellsTake(LookupKey lookupKey, [FromBody] SpellInfo spell)
         {
             if (lookupKey.IsInvalid)
             {
-                return Request.CreateErrorResponse(
-                    HttpStatusCode.BadRequest, lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name."
-                );
+                return BadRequest(lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name.");
             }
 
             if (SpellBase.Get(spell.SpellId) == null)
             {
-                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, @"Invalid spell id.");
+                return BadRequest(@"Invalid spell id.");
             }
 
             var (client, player) = Player.Fetch(lookupKey);
             if (player == null)
             {
-                return Request.CreateErrorResponse(
-                    HttpStatusCode.NotFound,
+                return NotFound(
                     lookupKey.HasId
                         ? $@"No player with id '{lookupKey.Id}'."
                         : $@"No player with name '{lookupKey.Name}'."
@@ -857,13 +739,10 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return spell;
             }
 
-            return Request.CreateErrorResponse(
-                HttpStatusCode.InternalServerError, $@"Failed to remove player spell with id '{spell.SpellId}'."
-            );
+            return InternalServerError($@"Failed to remove player spell with id '{spell.SpellId}'.");
         }
 
-        [Route("{lookupKey:LookupKey}/admin/{act}")]
-        [HttpPost]
+        [HttpPost("{lookupKey:LookupKey}/admin/{act}")]
         public object DoAdminActionOnPlayerByName(
             LookupKey lookupKey,
             string act,
@@ -872,14 +751,12 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         {
             if (!Enum.TryParse<AdminAction>(act, true, out var adminAction))
             {
-                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, @"Invalid action.");
+                return BadRequest(@"Invalid action.");
             }
 
             if (lookupKey.IsInvalid)
             {
-                return Request.CreateErrorResponse(
-                    HttpStatusCode.BadRequest, lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name."
-                );
+                return BadRequest(lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name.");
             }
 
             Tuple<Client, Player> fetchResult;
@@ -887,8 +764,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
             return DoAdminActionOnPlayer(
                 () => fetchResult,
-                () => Request.CreateErrorResponse(
-                    HttpStatusCode.NotFound,
+                () => NotFound(
                     lookupKey.HasId
                         ? $@"No player with id '{lookupKey.Id}'."
                         : $@"No player with name '{lookupKey.Name}'."
@@ -898,7 +774,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
         private object DoAdminActionOnPlayer(
             Func<Tuple<Client, Player>> fetch,
-            Func<HttpResponseMessage> onError,
+            Func<IActionResult> onError,
             AdminAction adminAction,
             AdminActionParameters actionParameters
         )
@@ -927,15 +803,11 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                     {
                         // Inform to whoever performed the action that they are
                         // not allowed to do this due to the lack of authority over their target.
-                        return Request.CreateMessageResponse(
-                            HttpStatusCode.BadRequest, Strings.Account.NotAllowed.ToString(player.Name)
-                        );
+                        return BadRequest(Strings.Account.NotAllowed.ToString(player.Name));
                     }
                     else if (Ban.Find(userId) != null) // If the target is already banned.
                     {
-                        return Request.CreateMessageResponse(
-                            HttpStatusCode.BadRequest, Strings.Account.alreadybanned.ToString(player.Name)
-                        );
+                        return BadRequest(Strings.Account.alreadybanned.ToString(player.Name));
                     }
 
                     // If target is online, not yet banned and the banner has the authority to ban.
@@ -954,33 +826,25 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                         PacketSender.SendGlobalMsg(Strings.Account.banned.ToString(player.Name));
 
                         //  Inform to the API about the successful ban.
-                        return Request.CreateMessageResponse(
-                            HttpStatusCode.OK, Strings.Account.banned.ToString(player.Name)
-                        );
+                        return Ok(Strings.Account.banned.ToString(player.Name));
                     }
 
                 case AdminAction.UnBan:
                     Ban.Remove(userId);
                     PacketSender.SendGlobalMsg(Strings.Account.UnbanSuccess.ToString(player.Name));
 
-                    return Request.CreateMessageResponse(
-                        HttpStatusCode.OK, Strings.Account.UnbanSuccess.ToString(player.Name)
-                    );
+                    return Ok(Strings.Account.UnbanSuccess.ToString(player.Name));
 
                 case AdminAction.Mute:
                     if (actionPerformer.Power.CompareTo(player.Power) < 0) // Authority Comparison.
                     {
                         // Inform to whoever performed the action that they are
                         // not allowed to do this due to the lack of authority over their target.
-                        return Request.CreateMessageResponse(
-                            HttpStatusCode.BadRequest, Strings.Account.NotAllowed.ToString(player.Name)
-                        );
+                        return BadRequest(Strings.Account.NotAllowed.ToString(player.Name));
                     }
                     else if (Mute.Find(userId) != null) // If the target is already muted.
                     {
-                        return Request.CreateMessageResponse(
-                            HttpStatusCode.BadRequest, Strings.Account.alreadymuted.ToString(player.Name)
-                        );
+                        return BadRequest(Strings.Account.alreadymuted.ToString(player.Name));
                     }
 
                     // If target is online, not yet muted and the action performer has the authority to mute.
@@ -1003,9 +867,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
                         PacketSender.SendGlobalMsg(Strings.Account.muted.ToString(player.Name));
 
-                        return Request.CreateMessageResponse(
-                            HttpStatusCode.OK, Strings.Account.muted.ToString(player.Name)
-                        );
+                        return Ok(Strings.Account.muted.ToString(player.Name));
                     }
 
                 case AdminAction.UnMute:
@@ -1020,9 +882,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
                     PacketSender.SendGlobalMsg(Strings.Account.UnmuteSuccess.ToString(player.Name));
 
-                    return Request.CreateMessageResponse(
-                        HttpStatusCode.OK, Strings.Account.UnmuteSuccess.ToString(player.Name)
-                    );
+                    return Ok(Strings.Account.UnmuteSuccess.ToString(player.Name));
 
                 case AdminAction.WarpTo:
                     if (client?.Entity != null)
@@ -1030,10 +890,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                         var mapId = actionParameters.MapId == Guid.Empty ? client.Entity.MapId : actionParameters.MapId;
                         client.Entity.Warp(mapId, (byte) client.Entity.X, (byte) client.Entity.Y);
 
-                        return Request.CreateMessageResponse(
-                            HttpStatusCode.OK,
-                            $@"Warped '{player.Name}' to {mapId} ({client.Entity.X}, {client.Entity.Y})."
-                        );
+                        return Ok($@"Warped '{player.Name}' to {mapId} ({client.Entity.X}, {client.Entity.Y}).");
                     }
 
                     break;
@@ -1044,10 +901,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                         var mapId = actionParameters.MapId == Guid.Empty ? client.Entity.MapId : actionParameters.MapId;
                         client.Entity.Warp(mapId, actionParameters.X, actionParameters.Y, true);
 
-                        return Request.CreateMessageResponse(
-                            HttpStatusCode.OK,
-                            $@"Warped '{player.Name}' to {mapId} ({actionParameters.X}, {actionParameters.Y})."
-                        );
+                        return Ok($@"Warped '{player.Name}' to {mapId} ({actionParameters.X}, {actionParameters.Y}).");
                     }
 
                     break;
@@ -1059,18 +913,14 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                         {
                             // Inform to whoever performed the action that they are
                             // not allowed to do this due to the lack of authority over their target.
-                            return Request.CreateMessageResponse(
-                                HttpStatusCode.BadRequest, Strings.Account.NotAllowed.ToString(player.Name)
-                            );
+                            return BadRequest(Strings.Account.NotAllowed.ToString(player.Name));
                         }
                         else
                         {
                             client.Disconnect(actionParameters.Reason);
                             PacketSender.SendGlobalMsg(Strings.Player.serverkicked.ToString(player.Name));
 
-                            return Request.CreateMessageResponse(
-                                HttpStatusCode.OK, Strings.Player.serverkicked.ToString(player.Name)
-                            );
+                            return Ok(Strings.Player.serverkicked.ToString(player.Name));
                         }
                     }
 
@@ -1083,9 +933,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                         {
                             // Inform to whoever performed the action that they are
                             // not allowed to do this due to the lack of authority over their target.
-                            return Request.CreateMessageResponse(
-                                HttpStatusCode.BadRequest, Strings.Account.NotAllowed.ToString(player.Name)
-                            );
+                            return BadRequest(Strings.Account.NotAllowed.ToString(player.Name));
                         }
                         else
                         {
@@ -1096,9 +944,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
                             PacketSender.SendGlobalMsg(Strings.Player.serverkilled.ToString(player.Name));
 
-                            return Request.CreateMessageResponse(
-                                HttpStatusCode.OK, Strings.Commandoutput.killsuccess.ToString(player.Name)
-                            );
+                            return Ok(Strings.Commandoutput.killsuccess.ToString(player.Name));
                         }
                     }
 
@@ -1106,20 +952,16 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
                 case AdminAction.WarpMeTo:
                 case AdminAction.WarpToMe:
-                    return Request.CreateErrorResponse(
-                        HttpStatusCode.BadRequest, $@"'{adminAction.ToString()}' not supported by the API."
-                    );
+                    return BadRequest($@"'{adminAction.ToString()}' not supported by the API.");
 
                 case AdminAction.SetSprite:
                 case AdminAction.SetFace:
                 case AdminAction.SetAccess:
                 default:
-                    return Request.CreateErrorResponse(HttpStatusCode.NotImplemented, adminAction.ToString());
+                    return NotImplemented(adminAction.ToString());
             }
 
-            return Request.CreateErrorResponse(HttpStatusCode.NotFound, Strings.Player.offline);
+            return NotFound(Strings.Player.offline);
         }
-
     }
-
 }

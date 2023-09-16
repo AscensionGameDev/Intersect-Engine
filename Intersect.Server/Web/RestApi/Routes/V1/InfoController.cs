@@ -1,34 +1,29 @@
-﻿using System;
-using System.Linq;
-using System.Net.Http;
-using System.Web.Http;
-
-using Intersect.Server.General;
+﻿using Intersect.Server.General;
 using Intersect.Server.Metrics;
-using Intersect.Server.Web.RestApi.Attributes;
 using Intersect.Utilities;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Intersect.Server.Web.RestApi.Routes.V1
 {
 
-    [RoutePrefix("info")]
-    [ConfigurableAuthorize]
-    public sealed partial class InfoController : ApiController
+    [Route("api/v1/info")]
+    [Authorize]
+    public sealed partial class InfoController : Controller
     {
 
-        [Route("authorized")]
-        [HttpGet]
+        [HttpGet("authorized")]
         [Authorize]
         public object Authorized()
         {
             return new
             {
-                authorized = true
+                authorized = true,
             };
         }
 
-        [Route]
         [HttpGet]
+        [AllowAnonymous]
         public object Default()
         {
             return new
@@ -38,15 +33,13 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             };
         }
 
-        [Route("config")]
-        [HttpGet]
+        [HttpGet("config")]
         public object Config()
         {
             return Options.Instance;
         }
 
-        [Route("config/stats")]
-        [HttpGet]
+        [HttpGet("config/stats")]
         public object CombatStats()
         {
             return Enum
@@ -57,8 +50,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 .ToArray();
         }
 
-        [Route("stats")]
-        [HttpGet]
+        [HttpGet("stats")]
         public object Stats()
         {
             return new
@@ -70,8 +62,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             };
         }
 
-        [Route("metrics")]
-        [HttpGet]
+        [HttpGet("metrics")]
         public object StatsMetrics()
         {
             return new HttpResponseMessage()
@@ -80,5 +71,4 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             };
         }
     }
-
 }

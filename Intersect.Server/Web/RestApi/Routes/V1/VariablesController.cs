@@ -1,26 +1,19 @@
-﻿using System;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Web.Http;
-using Intersect.GameObjects;
+﻿using Intersect.GameObjects;
 using Intersect.Server.Database;
 using Intersect.Server.Database.GameData;
 using Intersect.Server.Entities;
-using Intersect.Server.Web.RestApi.Attributes;
 using Intersect.Server.Web.RestApi.Payloads;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Intersect.Server.Web.RestApi.Routes.V1
 {
-
-    [RoutePrefix("variables")]
-    [ConfigurableAuthorize]
-    public sealed partial class VariablesController : ApiController
+    [Route("api/v1/variables")]
+    [Authorize]
+    public sealed partial class VariablesController : IntersectController
     {
-
-        [Route("global")]
-        [HttpPost]
-        public object GlobalVariablesGet([FromBody] PagingInfo pageInfo)
+        [HttpGet("global")]
+        public object GlobalVariablesGet([FromQuery] PagingInfo pageInfo)
         {
             pageInfo.Page = Math.Max(pageInfo.Page, 0);
             pageInfo.Count = Math.Max(Math.Min(pageInfo.Count, 100), 5);
@@ -36,39 +29,37 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             };
         }
 
-        [Route("global/{guid:guid}")]
-        [HttpGet]
+        [HttpGet("global/{guid:guid}")]
         public object GlobalVariableGet(Guid guid)
         {
             if (Guid.Empty == guid)
             {
-                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, @"Invalid global variable id.");
+                return BadRequest(@"Invalid global variable id.");
             }
 
             var variable = GameContext.Queries.ServerVariableById(guid);
 
             if (variable == null)
             {
-                return Request.CreateErrorResponse(HttpStatusCode.NotFound, $@"No global variable with id '{guid}'.");
+                return NotFound($@"No global variable with id '{guid}'.");
             }
 
             return variable;
         }
 
-        [Route("global/{guid:guid}/value")]
-        [HttpGet]
+        [HttpGet("global/{guid:guid}/value")]
         public object GlobalVariableGetValue(Guid guid)
         {
             if (Guid.Empty == guid)
             {
-                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, @"Invalid global variable id.");
+                return BadRequest(@"Invalid global variable id.");
             }
 
             var variable = GameContext.Queries.ServerVariableById(guid);
 
             if (variable == null)
             {
-                return Request.CreateErrorResponse(HttpStatusCode.NotFound, $@"No global variable with id '{guid}'.");
+                return NotFound($@"No global variable with id '{guid}'.");
             }
 
             return new
@@ -77,20 +68,19 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             };
         }
 
-        [Route("global/{guid:guid}")]
-        [HttpPost]
+        [HttpPost("global/{guid:guid}")]
         public object GlobalVariableSet(Guid guid, [FromBody] VariableValue value)
         {
             if (Guid.Empty == guid)
             {
-                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, @"Invalid global variable id.");
+                return BadRequest(@"Invalid global variable id.");
             }
 
             var variable = GameContext.Queries.ServerVariableById(guid);
 
             if (variable == null)
             {
-                return Request.CreateErrorResponse(HttpStatusCode.NotFound, $@"No global variable with id '{guid}'.");
+                return NotFound($@"No global variable with id '{guid}'.");
             }
 
             var changed = true;
@@ -108,7 +98,5 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
             return variable;
         }
-
     }
-
 }

@@ -10,6 +10,7 @@ using Intersect.Server.Web.RestApi.Payloads;
 using Intersect.Server.Web.Serialization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.OData;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -36,6 +37,7 @@ internal partial class ApiService : ApplicationService<ServerContext, IApiServic
             {
                 routeOptions.ConstraintMap.Add(nameof(AdminAction), typeof(AdminActionsConstraint));
                 routeOptions.ConstraintMap.Add(nameof(ChatMessage), typeof(ChatMessage.RouteConstraint));
+                routeOptions.ConstraintMap.Add(nameof(GameObjectType), typeof(GameObjectTypeConstraint));
                 routeOptions.ConstraintMap.Add(nameof(LookupKey), typeof(LookupKey.RouteConstraint));
             }
         );
@@ -73,33 +75,72 @@ internal partial class ApiService : ApplicationService<ServerContext, IApiServic
         );
 
         builder.Services.AddControllers(
-            mvcOptions =>
-            {
-                mvcOptions.FormatterMappings.ClearMediaTypeMappingForFormat("application/xml");
-                mvcOptions.FormatterMappings.ClearMediaTypeMappingForFormat("text/xml");
-                mvcOptions.FormatterMappings.ClearMediaTypeMappingForFormat("text/json");
-                mvcOptions.FormatterMappings.ClearMediaTypeMappingForFormat("application/xml");
-            }
-        ).AddJsonOptions(
-            jsonOptions =>
-            {
-            }
-        ).AddNewtonsoftJson(
-            newtonsoftOptions =>
-            {
-                newtonsoftOptions.SerializerSettings.ContractResolver = new ApiVisibilityContractResolver(new HttpContextAccessor());
-            }
-        );
+                mvcOptions =>
+                {
+                    mvcOptions.FormatterMappings.ClearMediaTypeMappingForFormat("application/xml");
+                    mvcOptions.FormatterMappings.ClearMediaTypeMappingForFormat("text/xml");
+                    mvcOptions.FormatterMappings.ClearMediaTypeMappingForFormat("text/json");
+                    mvcOptions.FormatterMappings.ClearMediaTypeMappingForFormat("application/xml");
+                }
+            )
+            .AddJsonOptions(
+                jsonOptions =>
+                {
+                }
+            )
+            .AddNewtonsoftJson(
+                newtonsoftOptions =>
+                {
+                    newtonsoftOptions.SerializerSettings.ContractResolver =
+                        new ApiVisibilityContractResolver(new HttpContextAccessor());
+                }
+            )
+            .AddOData(
+                options =>
+                {
+                    options.Count().Select().OrderBy();
+                    options.RouteOptions.EnableKeyInParenthesis = false;
+                    options.RouteOptions.EnableNonParenthesisForEmptyParameterFunction = true;
+                    options.RouteOptions.EnableQualifiedOperationCall = false;
+                    options.RouteOptions.EnableUnqualifiedOperationCall = true;
+                }
+            );
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddHealthChecks();
         builder.Services.AddSwaggerGen();
+
+        // builder.Services.AddApiVersioning().AddOData(
+        //     options =>
+        //     {
+        //         // options.AddRouteComponents( "api/v{version:apiVersion}" );
+        //     }
+        // );
+
+        if (builder.Environment.IsDevelopment())
+        {
+            builder.Services.AddProblemDetails();
+        }
 
         var app = builder.Build();
 
         if (app.Environment.IsDevelopment())
         {
+            app.UseODataRouteDebug();
             app.UseSwagger();
-            app.UseSwaggerUI();
+            app.UseSwaggerUI(
+                options =>
+                {
+                    // var descriptions = app.DescribeApiVersions();
+                    //
+                    // // build a swagger endpoint for each discovered API version
+                    // foreach ( var description in descriptions )
+                    // {
+                    //     var url = $"/swagger/{description.GroupName}/swagger.json";
+                    //     var name = description.GroupName.ToUpperInvariant();
+                    //     options.SwaggerEndpoint( url, name );
+                    // }
+                }
+            );
         }
 
         if (app.Environment.IsProduction())
@@ -116,6 +157,8 @@ internal partial class ApiService : ApplicationService<ServerContext, IApiServic
         app.UseAuthorization();
 
         app.MapControllers();
+
+        // app.MapControllers();
 
         var healthChecksBuilder = app.MapHealthChecks("/health");
         if (app.Environment.IsProduction())
