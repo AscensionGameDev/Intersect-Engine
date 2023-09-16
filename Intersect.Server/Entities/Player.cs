@@ -253,6 +253,8 @@ namespace Intersect.Server.Entities
         [NotMapped, JsonIgnore]
         public int InstanceLives { get; set; }
 
+        private long mStaleCooldownTimer;
+
         private long mGlobalCooldownTimer;
 
         public static Player FindOnline(Guid id)
@@ -463,23 +465,8 @@ namespace Intersect.Server.Entities
             InShop = default;
 
             //Clear cooldowns that have expired
-            var keys = SpellCooldowns.Keys.ToArray();
-            foreach (var key in keys)
-            {
-                if (SpellCooldowns.TryGetValue(key, out var time) && time < Timing.Global.MillisecondsUtc)
-                {
-                    SpellCooldowns.TryRemove(key, out _);
-                }
-            }
-
-            keys = ItemCooldowns.Keys.ToArray();
-            foreach (var key in keys)
-            {
-                if (ItemCooldowns.TryGetValue(key, out var time) && time < Timing.Global.MillisecondsUtc)
-                {
-                    ItemCooldowns.TryRemove(key, out _);
-                }
-            }
+            RemoveStaleItemCooldowns();
+            RemoveStaleSpellCooldowns();
 
             PacketSender.SendEntityLeave(this);
 
@@ -577,6 +564,17 @@ namespace Intersect.Server.Entities
                             CraftingState = default;
                         }
                     }
+
+                    // Check for stale cooldown values and remove them
+                    if (mStaleCooldownTimer <= Timing.Global.Milliseconds)
+                    {
+                        RemoveStaleItemCooldowns();
+                        RemoveStaleSpellCooldowns();
+
+                        // Increment our timer for the next check.
+                        mStaleCooldownTimer = Timing.Global.Milliseconds + Options.Instance.Processing.StaleCooldownRemovalTimer;
+                    }
+
 
                     base.Update(timeMs);
 
@@ -6854,6 +6852,54 @@ namespace Intersect.Server.Entities
             else
             {
                 SpellCooldowns.TryAdd(spellId, cooldownTime);
+            }
+        }
+
+        /// <summary>
+        /// Remove the cooldown time entry for a specified Item.
+        /// </summary>
+        /// <param name="itemId">The <see cref="ItemBase"/> id to remove the cooldown entry for.</param>
+        private void RemoveItemCooldown(Guid itemId)
+        {
+            ItemCooldowns.TryRemove(itemId, out _);
+        }
+
+        /// <summary>
+        /// Remove the cooldown time entry for a specified Spell.
+        /// </summary>
+        /// <param name="itemId">The <see cref="SpellBase"/> id to remove the cooldown entry for.</param>
+        private void RemoveSpellCooldown(Guid itemId)
+        {
+            SpellCooldowns.TryRemove(itemId, out _);
+        }
+
+        /// <summary>
+        /// Remove all stale spell cooldowns.
+        /// </summary>
+        private void RemoveStaleSpellCooldowns()
+        {
+            var spellcds = SpellCooldowns.ToArray();
+            foreach (var cd in spellcds)
+            {
+                if (cd.Value <= Timing.Global.Milliseconds)
+                {
+                    RemoveSpellCooldown(cd.Key);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Remove all stale item cooldowns.
+        /// </summary>
+        private void RemoveStaleItemCooldowns()
+        {
+            var itemcds = ItemCooldowns.ToArray();
+            foreach (var cd in itemcds)
+            {
+                if (cd.Value <= Timing.Global.Milliseconds)
+                {
+                    RemoveItemCooldown(cd.Key);
+                }
             }
         }
 

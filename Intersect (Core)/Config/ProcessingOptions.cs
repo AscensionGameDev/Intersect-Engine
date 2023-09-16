@@ -103,6 +103,11 @@ namespace Intersect.Config
         /// </summary>
         public int CommonEventAutorunStartInterval { get; set; } = 500;
 
+        /// <summary>
+        /// How often should the server check for stale cooldowns on players to remove them from their respective collections.
+        /// </summary>
+        public int StaleCooldownRemovalTimer { get; set; } = 60000;
+
         [OnDeserialized]
         internal void OnDeserializedMethod(StreamingContext context)
         {
@@ -169,6 +174,11 @@ namespace Intersect.Config
             if (PlayerSaveInterval < 20000)
             {
                 throw new InvalidOperationException("Player save interval is too low and would cause performance issues, consider raising.");
+            }
+
+            if (StaleCooldownRemovalTimer < 100) 
+            {
+                throw new InvalidOperationException("StaleCooldownRemovalTimer is too low, value should be at least 100ms to avoid running this check every server tick.");
             }
         }
     }
