@@ -190,6 +190,8 @@ namespace Intersect.Server.Entities
         /// </summary>
         [NotMapped] [JsonIgnore] public Guild Guild { get; set; }
 
+        [NotMapped] public Guid GuildId => DbGuild?.Id ?? default;
+
         /// <summary>
         /// This field is used for EF database fields only and should never be assigned to or used, instead the guild instance will be assigned to CachedGuild above
         /// </summary>

@@ -1,24 +1,17 @@
-﻿using System;
-using System.Net;
-using System.Net.Http;
-using System.Web.Http;
-
-using Intersect.Server.General;
+﻿using Intersect.Server.General;
 using Intersect.Server.Networking;
-using Intersect.Server.Web.RestApi.Attributes;
 using Intersect.Server.Web.RestApi.Payloads;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Intersect.Server.Web.RestApi.Routes.V1
 {
-
-    [RoutePrefix("chat")]
-    [ConfigurableAuthorize]
-    public sealed partial class ChatController : ApiController
+    [Route("api/v1/chat")]
+    [Authorize]
+    public sealed partial class ChatController : IntersectController
     {
-
-        [Route]
-        [Route("global")]
         [HttpPost]
+        [HttpPost("global")]
         public object SendGlobal([FromBody] ChatMessage chatMessage)
         {
             try
@@ -35,19 +28,16 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             }
             catch (Exception exception)
             {
-                return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, exception.Message);
+                return InternalServerError(exception.Message);
             }
         }
 
-        [Route("direct/{lookupKey:LookupKey}")]
-        [HttpPost]
+        [HttpPost("direct/{lookupKey:LookupKey}")]
         public object SendDirect(LookupKey lookupKey, [FromBody] ChatMessage chatMessage)
         {
             if (lookupKey.IsInvalid)
             {
-                return Request.CreateErrorResponse(
-                    HttpStatusCode.BadRequest, lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name."
-                );
+                return BadRequest(lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name.");
             }
 
             var client = Globals.Clients.Find(
@@ -58,7 +48,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
             if (client == null)
             {
-                return Request.CreateErrorResponse(HttpStatusCode.NotFound, $@"No player found for '{lookupKey}'.");
+                return NotFound($@"No player found for '{lookupKey}'.");
             }
 
             try
@@ -77,17 +67,16 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             }
             catch (Exception exception)
             {
-                return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, exception.Message);
+                return InternalServerError(exception.Message);
             }
         }
 
-        [Route("proximity/{mapId:guid}")]
-        [HttpPost]
+        [HttpPost("proximity/{mapId:guid}")]
         public object SendProximity(Guid mapId, [FromBody] ChatMessage chatMessage)
         {
             if (Guid.Empty == mapId)
             {
-                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, $@"Invalid map id '{mapId}'.");
+                return BadRequest($@"Invalid map id '{mapId}'.");
             }
 
             try
@@ -104,16 +93,14 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                     };
                 }
 
-                return Request.CreateErrorResponse(HttpStatusCode.NotFound, $@"No map found for '{mapId}'.");
+                return NotFound($@"No map found for '{mapId}'.");
             }
             catch (Exception exception)
             {
-                return Request.CreateErrorResponse(HttpStatusCode.InternalServerError, exception.Message);
+                return InternalServerError(exception.Message);
             }
         }
 
         // TODO: "party" message endpoint?
-
     }
-
 }

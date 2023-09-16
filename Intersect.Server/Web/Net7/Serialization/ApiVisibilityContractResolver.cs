@@ -35,7 +35,7 @@ public class ApiVisibilityContractResolver : DefaultContractResolver
 
         if (!hasAccessToType)
         {
-            return new List<MemberInfo>();
+            // return new List<MemberInfo>();
         }
 
         var serializableMembers = base.GetSerializableMembers(objectType);

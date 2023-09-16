@@ -1,37 +1,30 @@
 ﻿using Intersect.Enums;
 using Intersect.Server.Database;
 using Intersect.Server.Database.Logging.Entities;
-using Intersect.Server.Web.RestApi.Attributes;
 using Intersect.Server.Web.RestApi.Payloads;
 using Intersect.Server.Web.RestApi.Types;
-
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web.Http;
 
 namespace Intersect.Server.Web.RestApi.Routes.V1
 {
-
-    [RoutePrefix("logs")]
-    [ConfigurableAuthorize]
-    public sealed partial class LogsController : IntersectApiController
+    [Route("api/v1/logs")]
+    [Authorize]
+    public sealed partial class LogsController : IntersectController
     {
 
-        [Route("chat")]
-        [HttpGet]
+        [HttpGet("chat")]
         public DataPage<ChatHistory> ListChat(
-            [FromUri] int page = 0,
-            [FromUri] int pageSize = 0,
-            [FromUri] int limit = PAGE_SIZE_MAX,
-            [FromUri] int messageType = -1,
-            [FromUri] Guid userId = default(Guid),
-            [FromUri] Guid playerId = default(Guid),
-            [FromUri] Guid guildId = default(Guid),
-            [FromUri] string search = null,
-            [FromUri] SortDirection sortDirection = SortDirection.Ascending
+            [FromQuery] int page = 0,
+            [FromQuery] int pageSize = 0,
+            [FromQuery] int limit = PAGE_SIZE_MAX,
+            [FromQuery] int messageType = -1,
+            [FromQuery] Guid userId = default,
+            [FromQuery] Guid playerId = default,
+            [FromQuery] Guid guildId = default,
+            [FromQuery] string search = null,
+            [FromQuery] SortDirection sortDirection = SortDirection.Ascending
         )
         {
             page = Math.Max(page, 0);
@@ -103,16 +96,15 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             }
         }
 
-        [Route("pm")]
-        [HttpGet]
+        [HttpGet("pm")]
         public DataPage<ChatHistory> ListPMs(
-            [FromUri] Guid player1Id,
-            [FromUri] Guid player2Id,
-            [FromUri] int page = 0,
-            [FromUri] int pageSize = 0,
-            [FromUri] int limit = PAGE_SIZE_MAX,
-            [FromUri] string search = null,
-            [FromUri] SortDirection sortDirection = SortDirection.Ascending
+            [FromQuery] Guid player1Id,
+            [FromQuery] Guid player2Id,
+            [FromQuery] int page = 0,
+            [FromQuery] int pageSize = 0,
+            [FromQuery] int limit = PAGE_SIZE_MAX,
+            [FromQuery] string search = null,
+            [FromQuery] SortDirection sortDirection = SortDirection.Ascending
         )
         {
             page = Math.Max(page, 0);
@@ -196,13 +188,12 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
         }
 
-        [Route("user/{userId:guid}/ip")]
-        [HttpGet]
+        [HttpGet("user/{userId:guid}/ip")]
         public DataPage<IpAddress> ListIpHistory(
             Guid userId,
-            [FromUri] int page = 0,
-            [FromUri] int pageSize = 0,
-            [FromUri] int limit = PAGE_SIZE_MAX
+            [FromQuery] int page = 0,
+            [FromQuery] int pageSize = 0,
+            [FromQuery] int limit = PAGE_SIZE_MAX
         )
         {
             page = Math.Max(page, 0);
@@ -245,14 +236,13 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         }
 
 
-        [Route("user/{userId:guid}/activity")]
-        [HttpGet]
+        [HttpGet("user/{userId:guid}/activity")]
         public DataPage<UserActivityHistory> ListUserActivity(
             Guid userId,
-            [FromUri] int page = 0,
-            [FromUri] int pageSize = 0,
-            [FromUri] int limit = PAGE_SIZE_MAX,
-            [FromUri] SortDirection sortDirection = SortDirection.Ascending
+            [FromQuery] int page = 0,
+            [FromQuery] int pageSize = 0,
+            [FromQuery] int limit = PAGE_SIZE_MAX,
+            [FromQuery] SortDirection sortDirection = SortDirection.Ascending
         )
         {
             page = Math.Max(page, 0);
@@ -287,14 +277,13 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
         }
 
-        [Route("player/{playerId:guid}/activity")]
-        [HttpGet]
+        [HttpGet("player/{playerId:guid}/activity")]
         public DataPage<UserActivityHistory> ListPlayerActivity(
             Guid playerId,
-            [FromUri] int page = 0,
-            [FromUri] int pageSize = 0,
-            [FromUri] int limit = PAGE_SIZE_MAX,
-            [FromUri] SortDirection sortDirection = SortDirection.Ascending
+            [FromQuery] int page = 0,
+            [FromQuery] int pageSize = 0,
+            [FromQuery] int limit = PAGE_SIZE_MAX,
+            [FromQuery] SortDirection sortDirection = SortDirection.Ascending
         )
         {
             page = Math.Max(page, 0);
@@ -329,15 +318,14 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
         }
 
-        [Route("trade")]
-        [HttpGet]
+        [HttpGet("trade")]
         public DataPage<TradeHistory> ListTrades(
-            [FromUri] int page = 0,
-            [FromUri] int pageSize = 0,
-            [FromUri] int limit = PAGE_SIZE_MAX,
-            [FromUri] Guid userId = default(Guid),
-            [FromUri] Guid playerId = default(Guid),
-            [FromUri] SortDirection sortDirection = SortDirection.Ascending
+            [FromQuery] int page = 0,
+            [FromQuery] int pageSize = 0,
+            [FromQuery] int limit = PAGE_SIZE_MAX,
+            [FromQuery] Guid userId = default,
+            [FromQuery] Guid playerId = default,
+            [FromQuery] SortDirection sortDirection = SortDirection.Ascending
         )
         {
             page = Math.Max(page, 0);
@@ -438,14 +426,13 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         }
 
 
-        [Route("guild/{guildId:guid}/activity")]
-        [HttpGet]
+        [HttpGet("guild/{guildId:guid}/activity")]
         public DataPage<GuildHistory> ListGuildActivity(
             Guid guildId,
-            [FromUri] int page = 0,
-            [FromUri] int pageSize = 0,
-            [FromUri] int limit = PAGE_SIZE_MAX,
-            [FromUri] SortDirection sortDirection = SortDirection.Ascending
+            [FromQuery] int page = 0,
+            [FromQuery] int pageSize = 0,
+            [FromQuery] int limit = PAGE_SIZE_MAX,
+            [FromQuery] SortDirection sortDirection = SortDirection.Ascending
         )
         {
             page = Math.Max(page, 0);
@@ -524,6 +511,5 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             }
 
         }
-
     }
 }

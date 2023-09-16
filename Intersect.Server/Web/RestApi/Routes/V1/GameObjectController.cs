@@ -1,34 +1,19 @@
-﻿using System;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Web.Http;
-
-using Intersect.Enums;
+﻿using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
-using Intersect.Server.Web.RestApi.Attributes;
 using Intersect.Server.Web.RestApi.Payloads;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Intersect.Server.Web.RestApi.Routes.V1
 {
-
-    [RoutePrefix("gameobjects")]
-    [ConfigurableAuthorize]
-    public sealed partial class GameObjectController : ApiController
+    [Route("api/v1/gameobjects")]
+    [Authorize]
+    public sealed partial class GameObjectController : IntersectController
     {
-
-        [Route("{objType}")]
-        [HttpPost]
-        public object List(string objType, [FromBody] PagingInfo pageInfo)
+        [HttpGet("{gameObjectType}")]
+        public object List(GameObjectType gameObjectType, [FromQuery] PagingInfo pageInfo)
         {
-            GameObjectType gameObjectType;
-            if (!Enum.TryParse<GameObjectType>(objType, true, out gameObjectType) ||
-                gameObjectType == GameObjectType.Time)
-            {
-                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, @"Invalid object type.");
-            }
-
             pageInfo.Page = Math.Max(pageInfo.Page, 0);
             pageInfo.Count = Math.Max(Math.Min(pageInfo.Count, 100), 5);
 
@@ -56,25 +41,16 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 };
             }
 
-            return null;
+            return BadRequest();
         }
 
-        [Route("{objType}/names")]
-        [HttpPost]
-        public object Names(string objType)
+        [HttpGet("{gameObjectType}/names")]
+        public object Names(GameObjectType gameObjectType)
         {
-            GameObjectType gameObjectType;
-            if (!Enum.TryParse<GameObjectType>(objType, true, out gameObjectType) ||
-                gameObjectType == GameObjectType.Time)
-            {
-                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, @"Invalid object type.");
-            }
-
             var lookup = GameObjectTypeExtensions.GetLookup(gameObjectType);
 
             if (lookup != null)
             {
-                
                 var entries = gameObjectType == GameObjectType.Event
                     ? lookup.Where(obj => ((EventBase)obj.Value).CommonEvent).Select(t => new { t.Key, t.Value.Name }).ToDictionary(t => t.Key, t => t.Name)
                     : lookup.Select(t => new { t.Key, t.Value.Name }).ToDictionary(t => t.Key, t => t.Name);
@@ -82,24 +58,15 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return entries;
             }
 
-            return null;
+            return BadRequest();
         }
 
-        [Route("{objType}/{objId:guid}")]
-        [HttpGet]
-        public object GameObjectById(string objType, Guid objId)
+        [HttpGet("{gameObjectType}/{objId:guid}")]
+        public object GameObjectById(GameObjectType gameObjectType, Guid objId)
         {
             if (objId == Guid.Empty)
             {
-                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, @"Object not found!");
-                return null;
-            }
-
-            GameObjectType gameObjectType;
-            if (!Enum.TryParse<GameObjectType>(objType, true, out gameObjectType) ||
-                gameObjectType == GameObjectType.Time)
-            {
-                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, @"Invalid object type.");
+                return BadRequest(@"Object not found!");
             }
 
             var obj = GameObjectTypeExtensions.GetLookup(gameObjectType)?.Get(objId);
@@ -109,16 +76,13 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return obj;
             }
 
-            return Request.CreateErrorResponse(HttpStatusCode.BadRequest, @"Object not found!");
+            return NotFound(@"Object not found!");
         }
 
-        [Route("time")]
-        [HttpGet]
+        [HttpGet("time")]
         public object Time()
         {
             return TimeBase.GetTimeBase();
         }
-
     }
-
 }

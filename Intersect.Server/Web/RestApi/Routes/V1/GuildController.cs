@@ -1,30 +1,19 @@
 ﻿using Intersect.GameObjects;
-using Intersect.Server.Database;
 using Intersect.Server.Database.PlayerData.Players;
 using Intersect.Server.Entities;
 using Intersect.Server.Localization;
-using Intersect.Server.Networking;
-using Intersect.Server.Web.RestApi.Attributes;
 using Intersect.Server.Web.RestApi.Payloads;
 using Intersect.Server.Web.RestApi.Types;
 using Intersect.Utilities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
-using System.Web.Http;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Intersect.Server.Web.RestApi.Routes.V1
 {
-    [RoutePrefix("guilds")]
-    [ConfigurableAuthorize]
-    public sealed partial class GuildController : IntersectApiController
+    [Route("api/v1/guilds")]
+    [Authorize]
+    public sealed partial class GuildController : IntersectController
     {
-
-        [Route]
         [HttpPost]
         public object ListPost([FromBody] PagingInfo pageInfo)
         {
@@ -42,15 +31,14 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             };
         }
 
-        [Route]
         [HttpGet]
         public DataPage<KeyValuePair<Guild, int>> List(
-            [FromUri] int page = 0,
-            [FromUri] int pageSize = 0,
-            [FromUri] int limit = PAGE_SIZE_MAX,
-            [FromUri] string sortBy = null,
-            [FromUri] SortDirection sortDirection = SortDirection.Ascending,
-            [FromUri] string search = null
+            [FromQuery] int page = 0,
+            [FromQuery] int pageSize = 0,
+            [FromQuery] int limit = PAGE_SIZE_MAX,
+            [FromQuery] string sortBy = null,
+            [FromQuery] SortDirection sortDirection = SortDirection.Ascending,
+            [FromQuery] string search = null
         )
         {
             page = Math.Max(page, 0);
@@ -74,30 +62,25 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             };
         }
 
-        [Route("{guildId:guid}")]
-        [HttpGet]
+        [HttpGet("{guildId:guid}")]
         public object GuildGet(Guid guildId)
         {
             var guild = Guild.LoadGuild(guildId);
 
             if (guild == null)
             {
-                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, $@"Guild not found: ${guildId}.");
+                return BadRequest($@"Guild not found: ${guildId}.");
             }
 
             return guild;
         }
 
-        [Route("{guildId:guid}/name")]
-        [HttpPost]
+        [HttpPost("{guildId:guid}/name")]
         public object ChangeName(Guid guildId, [FromBody] NameChange change)
         {
             if (!FieldChecking.IsValidGuildName(change.Name, Strings.Regex.guildname))
             {
-                return Request.CreateErrorResponse(
-                    HttpStatusCode.BadRequest,
-                    $@"Invalid guild name."
-                );
+                return BadRequest($@"Invalid guild name.");
             }
 
             var guild = Guild.LoadGuild(guildId);
@@ -109,17 +92,11 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 }
                 else
                 {
-                    return Request.CreateErrorResponse(
-                        HttpStatusCode.BadRequest,
-                        $@"Invalid name, or name already taken."
-                    );
+                    return BadRequest($@"Invalid name, or name already taken.");
                 }
             }
 
-            return Request.CreateErrorResponse(
-                HttpStatusCode.NotFound,
-                $@"No guild with id '{guildId}'."
-            );
+            return NotFound($@"No guild with id '{guildId}'.");
         }
 
         [Route("{guildId:guid}")]
@@ -134,23 +111,19 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return guild;
             }
 
-            return Request.CreateErrorResponse(
-                HttpStatusCode.NotFound,
-                $@"No guild with id '{guildId}'."
-            );
+            return NotFound($@"No guild with id '{guildId}'.");
         }
 
-        [Route("{guildId:guid}/members")]
-        [HttpGet]
+        [HttpGet("{guildId:guid}/members")]
         public DataPage<Player> Members(
             Guid guildId,
-            [FromUri] int page = 0,
-            [FromUri] int pageSize = 0,
-            [FromUri] int limit = PAGE_SIZE_MAX,
-            [FromUri] string sortBy = null,
-            [FromUri] SortDirection sortDirection = SortDirection.Ascending,
-            [FromUri] string search = null
-)
+            [FromQuery] int page = 0,
+            [FromQuery] int pageSize = 0,
+            [FromQuery] int limit = PAGE_SIZE_MAX,
+            [FromQuery] string sortBy = null,
+            [FromQuery] SortDirection sortDirection = SortDirection.Ascending,
+            [FromQuery] string search = null
+        )
         {
             page = Math.Max(page, 0);
             pageSize = Math.Max(Math.Min(pageSize, 100), 5);
@@ -173,31 +146,24 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             };
         }
 
-        [Route("{guildId:guid}/bank")]
-        [HttpGet]
+        [HttpGet("{guildId:guid}/bank")]
         public object ItemsListBank(Guid guildId)
         {
             var guild = Guild.LoadGuild(guildId);
             if (guild == null)
             {
-                return Request.CreateErrorResponse(
-                    HttpStatusCode.NotFound,
-                    $@"No guild with id '{guildId}'."
-                );
+                return NotFound($@"No guild with id '{guildId}'.");
             }
 
             return guild.Bank;
         }
 
-        [Route("{guildId:guid}/kick/{lookupKey:LookupKey}")]
-        [HttpPost]
+        [HttpPost("{guildId:guid}/kick/{lookupKey:LookupKey}")]
         public object Kick(Guid guildId, LookupKey lookupKey)
         {
             if (lookupKey.IsInvalid)
             {
-                return Request.CreateErrorResponse(
-                    HttpStatusCode.BadRequest, lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name."
-                );
+                return BadRequest(lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name.");
             }
 
 
@@ -205,10 +171,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             
             if (guild == null)
             {
-                return Request.CreateErrorResponse(
-                    HttpStatusCode.BadRequest,
-                    $@"Guild does not exist."
-                );
+                return BadRequest($@"Guild does not exist.");
             }
 
             var (client, player) = Player.Fetch(lookupKey);
@@ -216,28 +179,19 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             //Player not found
             if (player == null)
             {
-                return Request.CreateErrorResponse(
-                    HttpStatusCode.BadRequest,
-                    $@"Player not found."
-                );
+                return BadRequest($@"Player not found.");
             }
 
             //Player is not a member of this guild
             if (!guild.IsMember(player.Id))
             {
-                return Request.CreateErrorResponse(
-                    HttpStatusCode.BadRequest,
-                    $@"{player.Name} is not a member of {guild.Name}."
-                );
+                return BadRequest($@"{player.Name} is not a member of {guild.Name}.");
             }
             
             //Cannot kick the owner!
             if (player.GuildRank == 0)
             {
-                return Request.CreateErrorResponse(
-                    HttpStatusCode.BadRequest,
-                    $@"Cannot kick a guild owner, transfer ownership first."
-                );
+                return BadRequest($@"Cannot kick a guild owner, transfer ownership first.");
             }
 
             guild.RemoveMember(player.Id, player, default, Database.Logging.Entities.GuildHistory.GuildActivityType.Kicked);
@@ -245,22 +199,17 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             return player;
         }
 
-        [Route("{guildId:guid}/rank/{lookupKey:LookupKey}")]
-        [HttpPost]
+        [HttpPost("{guildId:guid}/rank/{lookupKey:LookupKey}")]
         public object SetRank(Guid guildId, LookupKey lookupKey, [FromBody] GuildRank guildRank)
         {
             if (lookupKey.IsInvalid)
             {
-                return Request.CreateErrorResponse(
-                    HttpStatusCode.BadRequest, lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name."
-                );
+                return BadRequest(lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name.");
             }
 
             if (guildRank.Rank <= 0 || guildRank.Rank >= Options.Instance.Guild.Ranks.Length)
             {
-                return Request.CreateErrorResponse(
-                    HttpStatusCode.BadRequest, $@"Invalid guild rank, should be > 0 and < {Options.Instance.Guild.Ranks.Length}."
-                );
+                return BadRequest($@"Invalid guild rank, should be > 0 and < {Options.Instance.Guild.Ranks.Length}.");
             }
 
 
@@ -268,10 +217,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
             if (guild == null)
             {
-                return Request.CreateErrorResponse(
-                    HttpStatusCode.BadRequest,
-                    $@"Guild does not exist."
-                );
+                return BadRequest($@"Guild does not exist.");
             }
 
             var (client, player) = Player.Fetch(lookupKey);
@@ -279,28 +225,19 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             //Player not found
             if (player == null)
             {
-                return Request.CreateErrorResponse(
-                    HttpStatusCode.BadRequest,
-                    $@"Player not found."
-                );
+                return BadRequest($@"Player not found.");
             }
 
             //Player is not a member of this guild
             if (!guild.IsMember(player.Id))
             {
-                return Request.CreateErrorResponse(
-                    HttpStatusCode.BadRequest,
-                    $@"{player.Name} is not a member of {guild.Name}."
-                );
+                return BadRequest($@"{player.Name} is not a member of {guild.Name}.");
             }
 
             //Cannot kick the owner!
             if (player.GuildRank == 0)
             {
-                return Request.CreateErrorResponse(
-                    HttpStatusCode.BadRequest,
-                    $@"Cannot change rank of the guild owner, transfer ownership first!"
-                );
+                return BadRequest($@"Cannot change rank of the guild owner, transfer ownership first!");
             }
 
             guild.SetPlayerRank(player.Id, player, guildRank.Rank, default);
@@ -308,15 +245,12 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             return player;
         }
 
-        [Route("{guildId:guid}/transfer/{lookupKey:LookupKey}")]
-        [HttpPost]
+        [HttpPost("{guildId:guid}/transfer/{lookupKey:LookupKey}")]
         public object Transfer(Guid guildId, LookupKey lookupKey)
         {
             if (lookupKey.IsInvalid)
             {
-                return Request.CreateErrorResponse(
-                    HttpStatusCode.BadRequest, lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name."
-                );
+                return BadRequest(lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name.");
             }
 
 
@@ -324,10 +258,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
             if (guild == null)
             {
-                return Request.CreateErrorResponse(
-                    HttpStatusCode.BadRequest,
-                    $@"Guild does not exist."
-                );
+                return BadRequest($@"Guild does not exist.");
             }
 
             var (client, player) = Player.Fetch(lookupKey);
@@ -335,28 +266,19 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             //Player not found
             if (player == null)
             {
-                return Request.CreateErrorResponse(
-                    HttpStatusCode.BadRequest,
-                    $@"Player not found."
-                );
+                return BadRequest($@"Player not found.");
             }
 
             //Player is not a member of this guild
             if (!guild.IsMember(player.Id))
             {
-                return Request.CreateErrorResponse(
-                    HttpStatusCode.BadRequest,
-                    $@"{player.Name} is not a member of {guild.Name}."
-                );
+                return BadRequest($@"{player.Name} is not a member of {guild.Name}.");
             }
 
             //Cannot kick the owner!
             if (player.GuildRank == 0)
             {
-                return Request.CreateErrorResponse(
-                    HttpStatusCode.BadRequest,
-                    $@"Cannot transfer ownership of a guild to ones self."
-                );
+                return BadRequest($@"Cannot transfer ownership of a guild to ones self.");
             }
 
             guild.TransferOwnership(player);
@@ -364,62 +286,50 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             return player;
         }
 
-        [Route("{guildId:guid}/variables")]
-        [HttpGet]
+        [HttpGet("{guildId:guid}/variables")]
         public object GuildVariablesGet(Guid guildId)
         {
             var guild = Guild.LoadGuild(guildId);
 
             if (guild == null)
             {
-                return Request.CreateErrorResponse(
-                    HttpStatusCode.BadRequest,
-                    $@"Guild does not exist."
-                );
+                return BadRequest($@"Guild does not exist.");
             }
 
             return guild.Variables;
         }
 
-        [Route("{guildId:guid}/variables/{variableId:guid}")]
-        [HttpGet]
+        [HttpGet("{guildId:guid}/variables/{variableId:guid}")]
         public object GuildVariableGet(Guid guildId, Guid variableId)
         {
             var guild = Guild.LoadGuild(guildId);
 
             if (guild == null)
             {
-                return Request.CreateErrorResponse(
-                    HttpStatusCode.BadRequest,
-                    $@"Guild does not exist."
-                );
+                return BadRequest($@"Guild does not exist.");
             }
 
             if (variableId == Guid.Empty || GuildVariableBase.Get(variableId) == null)
             {
-                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, $@"Invalid variable id ${variableId}.");
+                return BadRequest($@"Invalid variable id ${variableId}.");
             }
 
             return guild.GetVariable(variableId, true);
         }
 
-        [Route("{guildId:guid}/variables/{variableId:guid}/value")]
-        [HttpGet]
+        [HttpGet("{guildId:guid}/variables/{variableId:guid}/value")]
         public object GuildVariableGetValue(Guid guildId, Guid variableId)
         {
             var guild = Guild.LoadGuild(guildId);
 
             if (guild == null)
             {
-                return Request.CreateErrorResponse(
-                    HttpStatusCode.BadRequest,
-                    $@"Guild does not exist."
-                );
+                return BadRequest($@"Guild does not exist.");
             }
 
             if (variableId == Guid.Empty || GuildVariableBase.Get(variableId) == null)
             {
-                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, $@"Invalid variable id ${variableId}.");
+                return BadRequest($@"Invalid variable id ${variableId}.");
             }
 
             return new
@@ -428,23 +338,19 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             };
         }
 
-        [Route("{guildId:guid}/variables/{variableId:guid}")]
-        [HttpPost]
+        [HttpPost("{guildId:guid}/variables/{variableId:guid}")]
         public object GuildVariableSet(Guid guildId, Guid variableId, [FromBody] VariableValue value)
         {
             var guild = Guild.LoadGuild(guildId);
 
             if (guild == null)
             {
-                return Request.CreateErrorResponse(
-                    HttpStatusCode.BadRequest,
-                    $@"Guild does not exist."
-                );
+                return BadRequest($@"Guild does not exist.");
             }
 
             if (variableId == Guid.Empty || GuildVariableBase.Get(variableId) == null)
             {
-                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, $@"Invalid variable id ${variableId}.");
+                return BadRequest($@"Invalid variable id ${variableId}.");
             }
 
             var variable = guild.GetVariable(variableId, true);
