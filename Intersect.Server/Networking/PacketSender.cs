@@ -1446,6 +1446,12 @@ namespace Intersect.Server.Networking
             }
         }
 
+        //GlobalCooldownPacket
+        public static void SendGlobalCooldown(Player player, long cooldown)
+        {
+            player.SendPacket(new GlobalCooldownPacket(cooldown - Timing.Global.MillisecondsUtc), TransmissionMode.All);
+        }
+
         //ExperiencePacket
         public static void SendExperience(Player player)
         {

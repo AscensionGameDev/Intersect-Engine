@@ -1373,6 +1373,12 @@ namespace Intersect.Client.Networking
             }
         }
 
+        //GlobalCooldownPacket
+        public void HandlePacket(IPacketSender packetSender, GlobalCooldownPacket packet)
+        {
+            Globals.Me.GlobalCooldown = Timing.Global.Milliseconds + packet.GlobalCooldown;
+        }
+
         //ExperiencePacket
         public void HandlePacket(IPacketSender packetSender, ExperiencePacket packet)
         {
