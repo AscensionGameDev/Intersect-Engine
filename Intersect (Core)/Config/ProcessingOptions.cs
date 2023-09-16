@@ -175,6 +175,11 @@ namespace Intersect.Config
             {
                 throw new InvalidOperationException("Player save interval is too low and would cause performance issues, consider raising.");
             }
+
+            if (StaleCooldownRemovalTimer < 100) 
+            {
+                throw new InvalidOperationException("StaleCooldownRemovalTimer is too low, value should be at least 100ms to avoid running this check every server tick.");
+            }
         }
     }
 }
