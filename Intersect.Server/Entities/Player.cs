@@ -253,6 +253,8 @@ namespace Intersect.Server.Entities
         [NotMapped, JsonIgnore]
         public int InstanceLives { get; set; }
 
+        private long mGlobalCooldownTimer;
+
         public static Player FindOnline(Guid id)
         {
             return OnlinePlayers.ContainsKey(id) ? OnlinePlayers[id] : null;
@@ -2872,6 +2874,15 @@ namespace Intersect.Server.Entities
                     return;
                 }
 
+                // Check if there's a global cooldown blocking our action.
+                if (!itemBase.IgnoreGlobalCooldown && mGlobalCooldownTimer > Timing.Global.MillisecondsUtc)
+                {
+                    //Cooldown warning!
+                    PacketSender.SendChatMsg(this, Strings.Items.cooldown, ChatMessageType.Error);
+
+                    return;
+                }
+
                 if (ItemCooldowns.ContainsKey(itemBase.Id) && ItemCooldowns[itemBase.Id] > Timing.Global.MillisecondsUtc)
                 {
                     //Cooldown warning!
@@ -4961,6 +4972,14 @@ namespace Intersect.Server.Entities
                 return false;
             }
 
+            // Check if out action is blocked by the global cooldown
+            if (!spell.IgnoreGlobalCooldown && mGlobalCooldownTimer > Timing.Global.MillisecondsUtc)
+            {
+                // Notify our user!
+                PacketSender.SendChatMsg(this, Strings.Combat.cooldown, ChatMessageType.Combat);
+                return false;
+            }
+
             // Check for dynamic conditions.
             if (!Conditions.MeetsConditionLists(spell.CastingRequirements, this, null))
             {
@@ -6703,43 +6722,13 @@ namespace Intersect.Server.Entities
                 return;
             }
 
-            // Calculate our global cooldown.
+            // Calculate our global cooldown and set it.
             var cooldownReduction = 1 - GetEquipmentBonusEffect(ItemEffect.CooldownReduction) / 100f;
-            var cooldown = Timing.Global.MillisecondsUtc + (long)(Options.Combat.GlobalCooldownDuration * cooldownReduction);
+            mGlobalCooldownTimer = Timing.Global.MillisecondsUtc + (long)(Options.Combat.GlobalCooldownDuration * cooldownReduction);
 
-            // Go through each item and spell to assign this cooldown.
-            // Do not allow this to overwrite things that are still on a cooldown above our new cooldown though, don't want us to lower cooldowns!
-            // We do however want to overwrite lower cooldowns than our new one, it is a GLOBAL cooldown after all!
-            foreach(var item in ItemBase.Lookup)
-            {
-                // Skip this item if it is unaffected by global cooldowns.
-                if (((ItemBase)item.Value).IgnoreGlobalCooldown)
-                {
-                    continue;
-                }
-
-                if (!ItemCooldowns.ContainsKey(item.Key) || ItemCooldowns[item.Key] < cooldown)
-                {
-                    AssignItemCooldown(item.Key, cooldown);
-                }
-            }
-            foreach (var spell in SpellBase.Lookup)
-            {
-                // Skip this item if it is unaffected by global cooldowns.
-                if (((SpellBase)spell.Value).IgnoreGlobalCooldown)
-                {
-                    continue;
-                }
-
-                if (!SpellCooldowns.ContainsKey(spell.Key) || SpellCooldowns[spell.Key] < cooldown)
-                {
-                    AssignSpellCooldown(spell.Key, cooldown);
-                }
-            }
 
             // Send these cooldowns to the user!
-            PacketSender.SendItemCooldowns(this);
-            PacketSender.SendSpellCooldowns(this);
+            PacketSender.SendGlobalCooldown(this, mGlobalCooldownTimer);
         }
 
         /// <summary>
