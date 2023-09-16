@@ -103,6 +103,11 @@ namespace Intersect.Config
         /// </summary>
         public int CommonEventAutorunStartInterval { get; set; } = 500;
 
+        /// <summary>
+        /// How often should the server check for stale cooldowns on players to remove them from their respective collections.
+        /// </summary>
+        public int StaleCooldownRemovalTimer { get; set; } = 60000;
+
         [OnDeserialized]
         internal void OnDeserializedMethod(StreamingContext context)
         {
