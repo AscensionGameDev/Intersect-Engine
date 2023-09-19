@@ -20,6 +20,7 @@ using Intersect.Configuration;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps;
+using Intersect.Logging;
 using Intersect.Network.Packets.Server;
 using Intersect.Utilities;
 using MapAttribute = Intersect.Enums.MapAttribute;
@@ -582,20 +583,29 @@ namespace Intersect.Client.Entities
 
         public long GetSpellRemainingCooldown(int slot)
         {
-            var spl = Spells[slot];
-            if (spl != null)
+            if (slot < 0 || Spells.Length <= slot)
             {
-                if (spl.Id != Guid.Empty)
-                {
-                    if (SpellCooldowns.TryGetValue(spl.Id, out var cd) && cd > Timing.Global.Milliseconds)
-                    {
-                        return cd - Timing.Global.Milliseconds;
-                    }
-                    else if ((SpellBase.TryGet(spl.Id, out var spellBase) && !spellBase.IgnoreGlobalCooldown) && Globals.Me.GlobalCooldown > Timing.Global.Milliseconds)
-                    {
-                        return Globals.Me.GlobalCooldown - Timing.Global.Milliseconds;
-                    }
-                }
+                Log.Warn(new ArgumentOutOfRangeException(nameof(slot), slot, $@"Slot was out of the range [0,{Spells.Length}"));
+                return 0;
+            }
+
+            var spell = Spells[slot];
+            // These two can't be combined into a nullish expression because Guid is a struct
+            if (spell == default || spell.Id == Guid.Empty)
+            {
+                return 0;
+            }
+
+            var now = Timing.Global.Milliseconds;
+
+            if (SpellCooldowns.TryGetValue(spell.Id, out var cd) && cd > now)
+            {
+                return cd - now;
+            }
+
+            if (SpellBase.TryGet(spell.Id, out var spellBase) && !spellBase.IgnoreGlobalCooldown && Globals.Me.GlobalCooldown > now)
+            {
+                return Globals.Me.GlobalCooldown - now;
             }
 
             return 0;
