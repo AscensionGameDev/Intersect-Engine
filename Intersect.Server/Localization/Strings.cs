@@ -1357,6 +1357,9 @@ namespace Intersect.Server.Localization
             public readonly LocalizedString bound = @"This item is bound to you and cannot be sold!";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString TransactionFailed = @"Transaction failed!";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString cantafford = @"Transaction failed due to insufficent funds.";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -1364,6 +1367,12 @@ namespace Intersect.Server.Localization
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString inventoryfull = @"You do not have space to purchase that item!";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString SuccessfullyRemovedItem = @"Successfully took {00} items from slot {01} for player {02} at {03}";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString FailedRemovedItem = @"Failed to take items from slot {00} for player {01}. Quantity to remove: {02} at {03}";
 
         }
 

@@ -3527,87 +3527,99 @@ namespace Intersect.Server.Entities
 
         public void BuyItem(int slot, int amount)
         {
-            var canSellItem = true;
-            var buyItemNum = Guid.Empty;
-            var buyItemAmt = 1;
-            var shop = InShop;
-            if (shop != null)
+            if (InShop == default)
             {
-                if (slot >= 0 && slot < shop.SellingItems.Count)
+                PacketSender.SendChatMsg(this, Strings.Shops.TransactionFailed, ChatMessageType.Inventory, CustomColors.Alerts.Error, Name);
+                return;
+            }
+
+            if (slot < 0 || slot >= InShop.SellingItems.Count)
+            {
+                PacketSender.SendChatMsg(this, Strings.Shops.TransactionFailed, ChatMessageType.Inventory, CustomColors.Alerts.Error, Name);
+                return;
+            }
+
+            var boughtItem = InShop.SellingItems[slot];
+            var boughtItemBase = ItemBase.Get(boughtItem.ItemId);
+            if (boughtItemBase == default)
+            {
+                PacketSender.SendChatMsg(this, Strings.Shops.TransactionFailed, ChatMessageType.Inventory, CustomColors.Alerts.Error, Name);
+                return;
+            }
+
+            var currencyBase = ItemBase.Get(boughtItem.CostItemId);
+            if (currencyBase == default)
+            {
+                PacketSender.SendChatMsg(this, Strings.Shops.TransactionFailed, ChatMessageType.Inventory, CustomColors.Alerts.Error, Name);
+                return;
+            }
+
+            var boughtItemAmount = 1;
+            if (boughtItemBase.IsStackable)
+            {
+                boughtItemAmount = Math.Max(1, amount);
+            }
+
+            var currencyAmount = FindInventoryItemQuantity(currencyBase.Id);
+            var itemCostTotal = boughtItem.CostItemQuantity * boughtItemAmount;
+            if (currencyAmount < itemCostTotal)
+            {
+                PacketSender.SendChatMsg(this, Strings.Shops.cantafford, ChatMessageType.Inventory, CustomColors.Alerts.Error, Name);
+                return;
+            }
+
+            if (!CanGiveItem(boughtItemBase.Id, boughtItemAmount))
+            {
+                PacketSender.SendChatMsg(this, Strings.Shops.inventoryfull, ChatMessageType.Inventory, CustomColors.Alerts.Error, Name);
+                return;
+            }
+
+            bool success = true;
+            Dictionary<Guid, int> removedItems = new Dictionary<Guid, int>();
+
+            if (itemCostTotal > 0)
+            {
+                var currencySlots = FindInventoryItemSlots(currencyBase.Id);
+                int remainingCost = itemCostTotal;
+
+                foreach (var itemSlot in currencySlots)
                 {
-                    var itemBase = ItemBase.Get(shop.SellingItems[slot].ItemId);
-                    if (itemBase != null)
+                    int quantityToRemove = Math.Min(remainingCost, itemSlot.Quantity);
+                    if(!TryTakeItem(itemSlot, quantityToRemove))
                     {
-                        buyItemNum = shop.SellingItems[slot].ItemId;
-                        if (itemBase.IsStackable)
-                        {
-                            buyItemAmt = Math.Max(1, amount);
-                        }
+                        success = false;
+                        Log.Warn(Strings.Shops.FailedRemovedItem.ToString(itemSlot, Id, quantityToRemove, "BuyItem(int slot, int amount)"));
+                        break;
+                    }
 
-                        if (shop.SellingItems[slot].CostItemQuantity == 0 ||
-                            FindInventoryItemSlot(
-                                shop.SellingItems[slot].CostItemId,
-                                shop.SellingItems[slot].CostItemQuantity * buyItemAmt
-                            ) !=
-                            null)
-                        {
-                            if (CanGiveItem(buyItemNum, buyItemAmt))
-                            {
-                                if (shop.SellingItems[slot].CostItemQuantity > 0)
-                                {
-                                    TryTakeItem(
-                                        FindInventoryItemSlot(
-                                            shop.SellingItems[slot].CostItemId,
-                                            shop.SellingItems[slot].CostItemQuantity * buyItemAmt
-                                        ), shop.SellingItems[slot].CostItemQuantity * buyItemAmt
-                                    );
-                                }
+                    removedItems.Add(itemSlot.Id, quantityToRemove);
+                    Log.Warn(Strings.Shops.SuccessfullyRemovedItem.ToString(quantityToRemove, itemSlot, Id, "BuyItem(int slot, int amount)"));
+                    remainingCost -= quantityToRemove;
 
-                                TryGiveItem(buyItemNum, buyItemAmt);
-
-                                if (!TextUtils.IsNone(shop.BuySound))
-                                {
-                                    PacketSender.SendPlaySound(this, shop.BuySound);
-                                }
-                            }
-                            else
-                            {
-                                if (shop.SellingItems[slot].CostItemQuantity * buyItemAmt ==
-                                    Items[
-                                            FindInventoryItemSlot(
-                                                shop.SellingItems[slot].CostItemId,
-                                                shop.SellingItems[slot].CostItemQuantity * buyItemAmt
-                                            ).Slot]
-                                        .Quantity)
-                                {
-                                    TryTakeItem(
-                                        FindInventoryItemSlot(
-                                            shop.SellingItems[slot].CostItemId,
-                                            shop.SellingItems[slot].CostItemQuantity * buyItemAmt
-                                        ), shop.SellingItems[slot].CostItemQuantity * buyItemAmt
-                                    );
-
-                                    TryGiveItem(buyItemNum, buyItemAmt);
-
-                                    if (!TextUtils.IsNone(shop.BuySound))
-                                    {
-                                        PacketSender.SendPlaySound(this, shop.BuySound);
-                                    }
-                                }
-                                else
-                                {
-                                    PacketSender.SendChatMsg(
-                                        this, Strings.Shops.inventoryfull, ChatMessageType.Inventory, CustomColors.Alerts.Error, Name
-                                    );
-                                }
-                            }
-                        }
-                        else
-                        {
-                            PacketSender.SendChatMsg(this, Strings.Shops.cantafford, ChatMessageType.Inventory, CustomColors.Alerts.Error, Name);
-                        }
+                    if (remainingCost <= 0)
+                    {
+                        break;
                     }
                 }
+            }
+
+            if(!success)
+            {
+                //return all removed items because we failed to remove the rest
+                foreach (var removedItem in removedItems)
+                {
+                    TryGiveItem(removedItem.Key, removedItem.Value);
+                }
+
+                PacketSender.SendChatMsg(this, Strings.Shops.TransactionFailed, ChatMessageType.Inventory, CustomColors.Alerts.Error, Name);
+                return;
+            }
+
+            TryGiveItem(boughtItemBase.Id, boughtItemAmount);
+
+            if (!TextUtils.IsNone(InShop.BuySound))
+            {
+                PacketSender.SendPlaySound(this, InShop.BuySound);
             }
         }
 
