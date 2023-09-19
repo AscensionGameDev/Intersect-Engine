@@ -582,14 +582,14 @@ namespace Intersect.Client.Entities
 
         public long GetSpellRemainingCooldown(int slot)
         {
-            if (Spells[slot] != null)
+            var spl = Spells[slot];
+            if (spl != null)
             {
-                var spl = Spells[slot];
                 if (spl.Id != Guid.Empty)
                 {
-                    if (SpellCooldowns.ContainsKey(spl.Id) && SpellCooldowns[spl.Id] > Timing.Global.Milliseconds)
+                    if (SpellCooldowns.TryGetValue(spl.Id, out var cd) && cd > Timing.Global.Milliseconds)
                     {
-                        return ItemCooldowns[spl.Id] - Timing.Global.Milliseconds;
+                        return cd - Timing.Global.Milliseconds;
                     }
                     else if ((SpellBase.TryGet(spl.Id, out var spellBase) && !spellBase.IgnoreGlobalCooldown) && Globals.Me.GlobalCooldown > Timing.Global.Milliseconds)
                     {
