@@ -2834,11 +2834,15 @@ namespace Intersect.Server.Entities
                         var player = Player.FindOnline(entityEntry);
                         if (player != null)
                         {
+
+                            // Cache our value for further processing.
+                            var party = player.Party.ToArray();
+
                             // is this player in a party?
-                            if (player.Party.Count > 0 && Options.Instance.LootOpts.IndividualizedLootAutoIncludePartyMembers)
+                            if (party.Length > 0 && Options.Instance.LootOpts.IndividualizedLootAutoIncludePartyMembers)
                             {
                                 // They are, so check for all party members and drop if still eligible!
-                                foreach (var partyMember in player.Party)
+                                foreach (var partyMember in party)
                                 {
                                     if (!lootGenerated.Contains(partyMember))
                                     {
