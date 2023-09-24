@@ -1005,10 +1005,12 @@ namespace Intersect.Server.Entities
             //                ) ?? 0;
             // Loop through equipment and see if any items grant vital buffs
 
-            foreach(var item in EquippedItems)
+            foreach (var item in EquippedItems.ToArray())
             {
-                var descriptor = item.Descriptor;
-                classVital += descriptor.VitalsGiven[vital] + descriptor.PercentageVitalsGiven[vital] * baseVital / 100;
+                if (ItemBase.TryGet(item.ItemId, out var descriptor))
+                {
+                    classVital += descriptor.VitalsGiven[vital] + descriptor.PercentageVitalsGiven[vital] * baseVital / 100;
+                }
             }
 
             //Must have at least 1 hp and no less than 0 mp
