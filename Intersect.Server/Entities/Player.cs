@@ -1005,7 +1005,7 @@ namespace Intersect.Server.Entities
             //                ) ?? 0;
             // Loop through equipment and see if any items grant vital buffs
 
-            foreach(var item in EquippedItems)
+            foreach (var item in EquippedItems.ToArray())
             {
                 if (ItemBase.TryGet(item.ItemId, out var descriptor))
                 {
