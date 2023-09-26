@@ -17,6 +17,10 @@
 			"target": "Client and Editor"
 		},
 		{
+			"source": "Intersect.Client/bin/Release/**/*.dll*",
+			"target": "Client and Editor"
+		},
+		{
 			"source": "Intersect.Editor/LICENSE.md",
 			"target": "Client and Editor/LICENSE.editor.md"
 		},
@@ -29,6 +33,10 @@
 			"target": "Client and Editor"
 		},
 		{
+			"source": "Intersect.Editor/bin/Release/**/*.dll*",
+			"target": "Client and Editor"
+		},
+		{
 			"source": "Intersect.Server/LICENSE.md",
 			"target": "Server/LICENSE.md"
 		},
@@ -38,6 +46,10 @@
 		},
 		{
 			"source": "Intersect.Server/bin/Release/**/Intersect Server.pdb*",
+			"target": "Server"
+		},
+		{
+			"source": "Intersect.Server/bin/Release/**/*.dll*",
 			"target": "Server"
 		},
 		{
