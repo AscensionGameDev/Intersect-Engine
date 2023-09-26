@@ -784,6 +784,7 @@ namespace Intersect.Client.Entities
         private static int FindAvailableBankSpaceForItem(Guid itemId, int itemQuantityInInventory)
         {
             int spaceLeft = 0;
+            int maxBankStack = ItemBase.Get(itemId).MaxBankStack;
 
             // Calculate the total available space in the bank for the item
             for (int i = 0; i < Globals.BankSlots; i++)
@@ -791,12 +792,12 @@ namespace Intersect.Client.Entities
                 var bankItem = Globals.Bank[i];
                 if (bankItem != null && bankItem.ItemId == itemId)
                 {
-                    int quantityLeft = ItemBase.Get(itemId).MaxBankStack - bankItem.Quantity;
+                    int quantityLeft = maxBankStack - bankItem.Quantity;
                     spaceLeft += quantityLeft;
                 }
                 else if (bankItem == null || bankItem.ItemId == Guid.Empty)
                 {
-                    spaceLeft += ItemBase.Get(itemId).MaxBankStack;
+                    spaceLeft += maxBankStack;
                 }
             }
 
