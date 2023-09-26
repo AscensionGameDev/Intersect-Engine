@@ -847,11 +847,11 @@ namespace Intersect.Client.Entities
             for (int i = 0; i < Inventory.Length; i++)
             {
                 var inventorySlot = Inventory[i];
-                if (inventorySlot?.ItemId == itemId)
+                if (inventorySlot != null && inventorySlot.ItemId == itemId)
                 {
                     spaceLeft += maxInventoryStack - inventorySlot.Quantity;
                 }
-                else if (inventorySlot?.ItemId == Guid.Empty)
+                else if (inventorySlot == null || inventorySlot.ItemId == Guid.Empty)
                 {
                     spaceLeft += maxInventoryStack;
                 }
