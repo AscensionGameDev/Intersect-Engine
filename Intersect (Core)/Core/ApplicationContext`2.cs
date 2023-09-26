@@ -265,9 +265,8 @@ namespace Intersect.Core
 
         protected virtual void PostStartup()
         {
-            StartServices();
-
             IsRunning = true;
+            StartServices();
         }
 
         /// <inheritdoc />

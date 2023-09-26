@@ -1,7 +1,20 @@
+using System.ComponentModel.DataAnnotations;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 using Intersect.Server.Database.PlayerData.Api;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json.Serialization;
+using System.Text.RegularExpressions;
+using Intersect.Security.Claims;
+using Intersect.Server.Database.PlayerData;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
+using JsonConverter = Newtonsoft.Json.JsonConverter;
 
 namespace Intersect.Server.Web.RestApi.Routes
 {
@@ -9,18 +22,272 @@ namespace Intersect.Server.Web.RestApi.Routes
     // [ConfigurableAuthorize]
     public sealed partial class OAuthController : IntersectController
     {
+        private readonly IOptions<TokenGenerationOptions> _tokenGenerationOptions;
+
+        public OAuthController(IOptions<TokenGenerationOptions> tokenGenerationOptions)
+        {
+            _tokenGenerationOptions = tokenGenerationOptions;
+        }
+
+        public class TokenGenerationOptions
+        {
+            public string Audience { get; set; } = "https://localhost/api";
+
+            public string Issuer { get; set; } = "https://localhost";
+
+            public int RefreshTokenLifetime { get; set; } = 10080;
+
+            [Required]
+            public string Secret
+            {
+                get => Encoding.UTF8.GetString(SecretData ?? Array.Empty<byte>());
+                set => SecretData = Encoding.UTF8.GetBytes(value);
+            }
+
+            [Newtonsoft.Json.JsonIgnore]
+            public byte[] SecretData { get; set; }
+        }
 
         private class UsernameAndTokenResponse
         {
-            [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+            [System.Text.Json.Serialization.JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
             public Guid TokenId { get; set; } = default;
 
-            [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+            [System.Text.Json.Serialization.JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
             public string Username { get; set; } = default;
         }
 
-        [HttpDelete]
-        [Route("tokens/{tokenId:guid}")]
+        private class TokenResponse
+        {
+            [JsonProperty("access_token")]
+            public string AccessToken { get; set; }
+
+            [JsonProperty("refresh_token")]
+            public string RefreshToken { get; set; }
+
+            [JsonProperty("token_type")]
+            public string TokenType { get; set; } = "bearer";
+
+            [JsonProperty("expires_in")]
+            public int ExpiresIn => (int)(Expires - DateTime.UtcNow).TotalMinutes;
+
+            [JsonProperty(".issued")]
+            public DateTime Issued { get; set; } = DateTime.UtcNow;
+
+            [JsonProperty(".expires")]
+            public DateTime Expires { get; set; }
+        }
+
+        public partial class GrantTypeConverter : Newtonsoft.Json.JsonConverter<GrantType>
+        {
+            public override void WriteJson(JsonWriter writer, GrantType value, JsonSerializer serializer)
+            {
+                var enumString = value.ToString();
+                enumString = TitleCaseCharacterPattern().Replace(
+                    enumString,
+                    match => (match.Index == 0 ? string.Empty : "_") + match.Value.ToLowerInvariant()
+                );
+                writer.WriteValue(enumString);
+            }
+
+            public override GrantType ReadJson(
+                JsonReader reader,
+                Type objectType,
+                GrantType existingValue,
+                bool hasExistingValue,
+                JsonSerializer serializer
+            )
+            {
+                if (reader.TokenType != JsonToken.String)
+                {
+                    return default;
+                }
+
+                if (reader.Value is not string enumString)
+                {
+                    return default;
+                }
+
+                enumString = SnakeCaseCharacterPattern().Replace(enumString, match => match.Value.Last().ToString().ToUpperInvariant());
+                return Enum.TryParse<GrantType>(enumString, out var grantType) ? grantType : default;
+            }
+
+            [GeneratedRegex("[A-Z]")]
+            private static partial Regex TitleCaseCharacterPattern();
+            [GeneratedRegex("(?:^|_)[a-z]")]
+            private static partial Regex SnakeCaseCharacterPattern();
+        }
+
+        [Newtonsoft.Json.JsonConverter(typeof(GrantTypeConverter))]
+        public enum GrantType
+        {
+            Password,
+            RefreshToken,
+        }
+
+        public sealed class TokenRequestConverter : Newtonsoft.Json.JsonConverter<TokenRequest>
+        {
+            public override bool CanWrite => false;
+
+            public override void WriteJson(JsonWriter writer, TokenRequest value, JsonSerializer serializer)
+            {
+                throw new NotImplementedException();
+            }
+
+            public override TokenRequest ReadJson(
+                JsonReader reader,
+                Type objectType,
+                TokenRequest existingValue,
+                bool hasExistingValue,
+                JsonSerializer serializer
+            )
+            {
+                if (reader.TokenType == JsonToken.Null)
+                {
+                    return default;
+                }
+
+                var @object = JObject.Load(reader);
+                if (!@object.TryGetValue("grant_type", out var grantTypeToken))
+                {
+                    return default;
+                }
+
+                var grantType = grantTypeToken.ToObject<GrantType>();
+                TokenRequest tokenRequest = grantType switch
+                {
+                    GrantType.Password => JsonConvert.DeserializeObject<TokenRequestPasswordGrant>(@object.ToString(), SerializerSettings),
+                    GrantType.RefreshToken => JsonConvert.DeserializeObject<TokenRequestRefreshTokenGrant>(@object.ToString(), SerializerSettings),
+                    _ => default,
+                };
+                return tokenRequest;
+            }
+
+            private static readonly JsonSerializerSettings SerializerSettings = new()
+            {
+                ContractResolver = new BaseSpecifiedConcreteClassConverter(),
+            };
+        }
+
+        public class BaseSpecifiedConcreteClassConverter : DefaultContractResolver
+        {
+            protected override JsonConverter ResolveContractConverter(Type objectType)
+            {
+                if (typeof(TokenRequest).IsAssignableFrom(objectType) && !objectType.IsAbstract)
+                {
+                    return default;
+                }
+                return base.ResolveContractConverter(objectType);
+            }
+        }
+
+        [Newtonsoft.Json.JsonConverter(typeof(TokenRequestConverter))]
+        public abstract class TokenRequest
+        {
+            [Newtonsoft.Json.JsonIgnore]
+            public abstract GrantType GrantType { get; }
+        }
+
+        public class TokenRequestPasswordGrant : TokenRequest
+        {
+            [Newtonsoft.Json.JsonIgnore]
+            public override GrantType GrantType => GrantType.Password;
+
+            [JsonProperty("username")]
+            public string Username { get; set; }
+
+            [JsonProperty("password")]
+            public string Password { get; set; }
+        }
+
+        public class TokenRequestRefreshTokenGrant : TokenRequest
+        {
+            public override GrantType GrantType => GrantType.RefreshToken;
+
+            [JsonProperty("refresh_token")]
+            public string RefreshToken { get; set; }
+        }
+
+        [HttpPost("token")]
+        public async Task<IActionResult> RequestToken([FromBody] TokenRequest tokenRequest)
+        {
+            return tokenRequest switch
+            {
+                TokenRequestPasswordGrant passwordGrant => await RequestTokenFrom(passwordGrant),
+                TokenRequestRefreshTokenGrant refreshTokenGrant => await RequestTokenFrom(refreshTokenGrant),
+                _ => BadRequest()
+            };
+        }
+
+        private async Task<IActionResult> RequestTokenFrom(TokenRequestPasswordGrant passwordGrant)
+        {
+            var user = Database.PlayerData.User.Find(passwordGrant.Username);
+            if (!user.IsPasswordValid(passwordGrant.Password))
+            {
+                return BadRequest();
+            }
+
+            var tokenResponse = await IssueTokenFor(user);
+            return Ok(tokenResponse);
+        }
+
+        private async Task<IActionResult> RequestTokenFrom(TokenRequestRefreshTokenGrant refreshTokenGrant)
+        {
+            var refreshTokenId = Guid.TryParse(refreshTokenGrant.RefreshToken, out var parsedId) ? parsedId : default;
+            if (!RefreshToken.TryFind(refreshTokenId, out var refreshToken) || refreshToken?.User == default)
+            {
+                return BadRequest();
+            }
+
+            var tokenResponse = await IssueTokenFor(refreshToken.User);
+            return Ok(tokenResponse);
+        }
+
+        private async Task<TokenResponse> IssueTokenFor(User user)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var ticketId = Guid.NewGuid();
+            var clientId = Guid.Empty;
+            var claims = user.Claims.ToList();
+            claims.Add(new Claim(IntersectClaimTypes.ClientId, clientId.ToString()));
+            claims.Add(new Claim(IntersectClaimTypes.TicketId, ticketId.ToString()));
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Audience = _tokenGenerationOptions.Value.Audience,
+                Issuer = _tokenGenerationOptions.Value.Issuer,
+                Subject = new ClaimsIdentity(claims.ToArray()),
+                Expires = DateTime.UtcNow.AddDays(7),
+                SigningCredentials = new SigningCredentials(
+                    new SymmetricSecurityKey(_tokenGenerationOptions.Value.SecretData),
+                    SecurityAlgorithms.HmacSha512Signature
+                ),
+            };
+            var accessToken = tokenHandler.CreateToken(tokenDescriptor);
+            var serializedAccessToken = tokenHandler.WriteToken(accessToken);
+            var issued = DateTime.UtcNow;
+            var expires = issued.AddMinutes(_tokenGenerationOptions.Value.RefreshTokenLifetime);
+            var refreshToken = new RefreshToken
+            {
+                UserId = user.Id,
+                ClientId = clientId,
+                Subject = user.Name,
+                Issued = issued,
+                Expires = expires,
+                TicketId = ticketId,
+                Ticket = serializedAccessToken,
+            };
+            await RefreshToken.TryAddAsync(refreshToken);
+            return new TokenResponse
+            {
+                AccessToken = serializedAccessToken,
+                RefreshToken = refreshToken.Id.ToString(),
+                Expires = expires,
+                Issued = issued,
+                TokenType = "bearer",
+            };
+        }
+
+        [HttpDelete("tokens/{tokenId:guid}")]
         public async Task<IActionResult> DeleteTokenById(Guid tokenId)
         {
             var actor = IntersectUser;
@@ -48,8 +315,7 @@ namespace Intersect.Server.Web.RestApi.Routes
         }
 
         [Authorize]
-        [HttpDelete]
-        [Route("tokens/{username}")]
+        [HttpDelete("tokens/{username}")]
         public async Task<IActionResult> DeleteTokensForUsername(string username, CancellationToken cancellationToken)
         {
             var actor = IntersectUser;
@@ -79,8 +345,7 @@ namespace Intersect.Server.Web.RestApi.Routes
             return success ? Ok(new { Username = username }) : Unauthorized();
         }
 
-        [HttpDelete]
-        [Route("tokens/{username}/{tokenId:guid}")]
+        [HttpDelete("tokens/{username}/{tokenId:guid}")]
         public async Task<IActionResult> DeleteTokenForUsernameById(string username, Guid tokenId)
         {
             var intersectUser = IntersectUser;
