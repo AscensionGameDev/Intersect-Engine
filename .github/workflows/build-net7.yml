@@ -70,7 +70,6 @@ jobs:
       if: steps.cache-binaries.outputs.cache-hit != 'true' || inputs.forceBuild == true || inputs.forceRestore == true
       run: |
         dotnet publish Intersect.sln -r win-x64   -p:Configuration=Release -p:PackageVersion=${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}+build.${{ github.sha }} -p:Version=0.7.2.${{ github.run_number }}
-        dotnet publish Intersect.sln -r linux-x64 -p:Configuration=Release -p:PackageVersion=${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}+build.${{ github.sha }} -p:Version=0.7.2.${{ github.run_number }}
 
     - name: Debug output of Build Solution
       run: ls -R
