@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Intersect.Logging;
-
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 using Newtonsoft.Json;
@@ -43,6 +43,7 @@ namespace Intersect.Server.Database.PlayerData.Api
         public Guid TicketId { get; set; }
 
         [Required]
+        [ProtectedPersonalData]
         public string Ticket { get; set; }
 
         // To help avoid concurrency exceptions
@@ -112,11 +113,9 @@ namespace Intersect.Server.Database.PlayerData.Api
         {
             try
             {
-                using (var context = DbInterface.CreatePlayerContext())
-                {
-                    refreshToken = context?.RefreshTokens?.Find(id);
-                    return refreshToken != default;
-                }
+                using var context = DbInterface.CreatePlayerContext();
+                refreshToken = context?.RefreshTokens?.Where(token => token.Id == id).Include(token => token.User).FirstOrDefault();
+                return refreshToken != default;
             }
             catch (Exception ex)
             {

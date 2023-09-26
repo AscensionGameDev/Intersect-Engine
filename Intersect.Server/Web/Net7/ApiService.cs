@@ -2,17 +2,27 @@ using System.Reflection;
 using System.Threading.RateLimiting;
 using Intersect.Core;
 using Intersect.Enums;
+using Intersect.Logging;
 using Intersect.Server.Core;
+using Intersect.Server.Database.PlayerData;
+using Intersect.Server.Web.Authentication;
 using Intersect.Server.Web.Constraints;
 using Intersect.Server.Web.Middleware;
 using Intersect.Server.Web.RestApi.Configuration;
 using Intersect.Server.Web.RestApi.Payloads;
+using Intersect.Server.Web.RestApi.Routes;
 using Intersect.Server.Web.Serialization;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.OData;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Logging;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Intersect.Server.Web;
 
@@ -83,11 +93,6 @@ internal partial class ApiService : ApplicationService<ServerContext, IApiServic
                     mvcOptions.FormatterMappings.ClearMediaTypeMappingForFormat("application/xml");
                 }
             )
-            .AddJsonOptions(
-                jsonOptions =>
-                {
-                }
-            )
             .AddNewtonsoftJson(
                 newtonsoftOptions =>
                 {
@@ -108,13 +113,73 @@ internal partial class ApiService : ApplicationService<ServerContext, IApiServic
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddHealthChecks();
         builder.Services.AddSwaggerGen();
+        var tokenGenerationOptionsSection =
+            builder.Configuration.GetRequiredSection(nameof(OAuthController.TokenGenerationOptions));
+        var tokenGenerationOptions = tokenGenerationOptionsSection.Get<OAuthController.TokenGenerationOptions>();
 
-        // builder.Services.AddApiVersioning().AddOData(
-        //     options =>
-        //     {
-        //         // options.AddRouteComponents( "api/v{version:apiVersion}" );
-        //     }
-        // );
+        builder.Services.Configure<OAuthController.TokenGenerationOptions>(tokenGenerationOptionsSection);
+
+        IdentityModelEventSource.ShowPII = true;
+        builder.Services.AddAuthentication(
+                options =>
+                {
+                    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                }
+            )
+            .AddJwtBearer(
+                JwtBearerDefaults.AuthenticationScheme,
+                options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ClockSkew = TimeSpan.FromSeconds(5),
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = false,
+                        ValidateIssuerSigningKey = true,
+                    };
+                    builder.Configuration.Bind(nameof(JwtBearerOptions), options);
+                    options.TokenValidationParameters.ValidAudience ??= tokenGenerationOptions.Audience;
+                    options.TokenValidationParameters.ValidIssuer ??= tokenGenerationOptions.Issuer;
+                    options.Events = new JwtBearerEvents()
+                    {
+                        OnAuthenticationFailed = async (context) => {},
+                        OnChallenge = async (context) => {},
+                        OnMessageReceived = async (context) => {},
+                        OnTokenValidated = async (context) => {},
+                    };
+                    SymmetricSecurityKey issuerKey = new(tokenGenerationOptions.SecretData);
+                    options.TokenValidationParameters.IssuerSigningKey = issuerKey;
+                }
+            )
+            .AddCookie(
+                CookieAuthenticationDefaults.AuthenticationScheme,
+                options =>
+                {
+                    builder.Configuration.Bind(nameof(CookieAuthenticationOptions), options);
+                }
+            );
+
+        builder.Services.AddAuthorization(
+            authOptions =>
+            {
+                authOptions.DefaultPolicy = new AuthorizationPolicyBuilder(authOptions.DefaultPolicy)
+                    .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
+                    .Build();
+            }
+        );
+
+        builder.Services
+            .AddIdentity<User, UserRole>(
+                identityOptions =>
+                {
+                    identityOptions.Stores.ProtectPersonalData = true;
+                }
+            )
+            .AddUserStore<IntersectUserStore>()
+            .AddRoleStore<IntersectRoleStore>();
 
         if (builder.Environment.IsDevelopment())
         {
@@ -127,20 +192,7 @@ internal partial class ApiService : ApplicationService<ServerContext, IApiServic
         {
             app.UseODataRouteDebug();
             app.UseSwagger();
-            app.UseSwaggerUI(
-                options =>
-                {
-                    // var descriptions = app.DescribeApiVersions();
-                    //
-                    // // build a swagger endpoint for each discovered API version
-                    // foreach ( var description in descriptions )
-                    // {
-                    //     var url = $"/swagger/{description.GroupName}/swagger.json";
-                    //     var name = description.GroupName.ToUpperInvariant();
-                    //     options.SwaggerEndpoint( url, name );
-                    // }
-                }
-            );
+            app.UseSwaggerUI();
         }
 
         if (app.Environment.IsProduction())
@@ -154,6 +206,9 @@ internal partial class ApiService : ApplicationService<ServerContext, IApiServic
             app.UseIntersectRequestLogging(Configuration.RequestLogLevel);
         }
 
+        app.UseRouting();
+
+        app.UseAuthentication();
         app.UseAuthorization();
 
         app.MapControllers();
@@ -171,9 +226,17 @@ internal partial class ApiService : ApplicationService<ServerContext, IApiServic
 
     private async Task StartAsync(CancellationToken cancellationToken = default)
     {
-        var app = Configure();
-        _app = app;
-        await app.StartAsync(cancellationToken);
+        try
+        {
+            var app = Configure();
+            _app = app;
+            await app.StartAsync(cancellationToken);
+        }
+        catch (Exception exception)
+        {
+            Log.Error(exception);
+            throw;
+        }
     }
 
     private async Task StopAsync(CancellationToken cancellationToken = default)
