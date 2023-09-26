@@ -147,7 +147,7 @@ namespace Intersect.Server.Core
                     {
                         try
                         {
-                            ThreadConsole.Abort();
+                            ThreadConsole.Interrupt();
                         }
                         catch (ThreadAbortException threadAbortException)
                         {
@@ -163,7 +163,7 @@ namespace Intersect.Server.Core
                     {
                         try
                         {
-                            ThreadLogic.Abort();
+                            ThreadLogic.Interrupt();
                         }
                         catch (ThreadAbortException threadAbortException)
                         {

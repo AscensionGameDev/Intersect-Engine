@@ -692,10 +692,11 @@ namespace Intersect.Updater
                 {
                     try
                     {
-                        dlThread?.Abort();
+                        dlThread?.Interrupt();
                     }
-                    catch
+                    catch (Exception exception)
                     {
+                        System.Console.WriteLine(exception);
                     }
                 }
             }

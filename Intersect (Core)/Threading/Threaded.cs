@@ -27,7 +27,7 @@ namespace Intersect.Threading
                 return;
             }
 
-            mThread.Abort();
+            mThread.Interrupt();
 
             mDisposed = true;
         }
