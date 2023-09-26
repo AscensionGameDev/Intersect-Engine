@@ -291,16 +291,18 @@ namespace Intersect.Server.Entities
                 return amount;
             }
 
+            int maxBankStack = ItemBase.Get(itemId).MaxBankStack;
+
             for (int i = 0; i < mMaxSlots; i++)
             {
-                if (mBank[i]?.ItemId == itemId)
+                var bankSlot = mBank[i];
+                if (bankSlot != null && bankSlot.ItemId == itemId)
                 {
-                    int quantityLeft = mBank[i].Descriptor.MaxBankStack - mBank[i].Quantity;
-                    spaceLeft += quantityLeft;
+                    spaceLeft += maxBankStack - bankSlot.Quantity;
                 }
-                else if (mBank[i]?.ItemId == Guid.Empty)
+                else if (bankSlot == null || bankSlot.ItemId == Guid.Empty)
                 {
-                    spaceLeft += ItemBase.Get(itemId).MaxBankStack;
+                    spaceLeft += maxBankStack;
                 }
             }
 
