@@ -1,5 +1,3 @@
-using System;
-
 namespace Intersect.Server.Web.RestApi.Configuration
 {
     [Flags]
@@ -7,6 +5,6 @@ namespace Intersect.Server.Web.RestApi.Configuration
     {
         Loopback = 1,
         Subnet = 2,
-        PrivateNetwork = 4
+        PrivateNetwork = 4,
     }
 }

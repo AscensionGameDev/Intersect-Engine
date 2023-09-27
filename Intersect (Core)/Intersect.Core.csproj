@@ -21,10 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Microsoft.Diagnostics.Runtime">
-      <HintPath>..\..\..\..\..\.nuget\packages\microsoft.diagnostics.runtime\2.4.416101\lib\net6.0\Microsoft.Diagnostics.Runtime.dll</HintPath>
-    </Reference>
+    <Reference Include="Microsoft.Diagnostics.Runtime" />
   </ItemGroup>
 
   <ItemGroup>

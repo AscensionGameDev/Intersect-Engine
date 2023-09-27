@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Globalization;
-using System.Net.Http;
-using System.Web.Http.Routing;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Newtonsoft.Json;
@@ -42,23 +38,6 @@ namespace Intersect.Server.Web.RestApi.Payloads
                 }
 
                 return JsonConvert.DeserializeObject<ChatMessage>(value as string);
-            }
-
-        }
-
-        internal sealed partial class Constraint : IHttpRouteConstraint
-        {
-
-            /// <inheritdoc />
-            public bool Match(
-                HttpRequestMessage request,
-                IHttpRoute route,
-                string parameterName,
-                IDictionary<string, object> values,
-                HttpRouteDirection routeDirection
-            )
-            {
-                return values.TryGetValue(parameterName, out var value) && value != null;
             }
 
         }
