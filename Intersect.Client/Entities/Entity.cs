@@ -1015,25 +1015,29 @@ namespace Intersect.Client.Entities
                                 priority += 3;
                             }
 
-                            HashSet<Entity> renderSet;
+                            HashSet<Entity> renderSet = default;
+                            int entY;
 
                             if (y == gridY - 1)
                             {
-                                renderSet = Graphics.RenderingEntities[priority, Options.MapHeight + Y];
+                                entY = Options.MapHeight + Y;
                             }
                             else if (y == gridY)
                             {
-                                renderSet = Graphics.RenderingEntities[priority, Options.MapHeight * 2 + Y];
+                                entY = Options.MapHeight * 2 + Y;
                             }
                             else
                             {
-                                renderSet = Graphics.RenderingEntities[priority, Options.MapHeight * 3 + Y];
+                                entY = Options.MapHeight * 3 + Y;
                             }
 
-                            renderSet.Add(this);
-                            renderList = renderSet;
-
-                            return renderList;
+                            if (priority < Graphics.RenderingEntities.GetLength(0) && entY < Graphics.RenderingEntities.GetLength(1))
+                            {
+                                renderSet = Graphics.RenderingEntities[priority, entY];
+                                renderSet.Add(this);
+                            }
+                            
+                            return renderSet;
                         }
                     }
                 }
