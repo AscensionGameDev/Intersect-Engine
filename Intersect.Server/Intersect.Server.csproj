@@ -79,16 +79,10 @@
 
   <ItemGroup>
     <PackageReference Include="AscensionGameDev.Open.NAT" Version="3.0.0.7" />
-    <PackageReference Include="AscensionGameDev.WebApiThrottle" Version="1.5.4.2" />
     <PackageReference Include="AscensionGameDev.WebSocketSharp" Version="1.0.0.7-beta" />
     <PackageReference Include="Asp.Versioning.OData.ApiExplorer" Version="7.0.4" />
     <PackageReference Include="MailKit" Version="4.2.0" />
     <PackageReference Include="Markdown" Version="2.2.1" />
-    <PackageReference Include="Microsoft.AspNet.Cors" Version="5.2.9" />
-    <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.9" />
-    <PackageReference Include="Microsoft.AspNet.WebApi.Core" Version="5.2.9" />
-    <PackageReference Include="Microsoft.AspNet.WebApi.Owin" Version="5.2.9" />
-    <PackageReference Include="Microsoft.AspNet.WebApi.OwinSelfHost" Version="5.2.9" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.4" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="7.0.4" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="7.0.4" />
@@ -110,16 +104,8 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="7.0.0" />
-    <PackageReference Include="Microsoft.Owin" Version="4.2.2" />
-    <PackageReference Include="Microsoft.Owin.Cors" Version="4.2.2" />
-    <PackageReference Include="Microsoft.Owin.Host.HttpListener" Version="4.2.2" />
-    <PackageReference Include="Microsoft.Owin.Hosting" Version="4.2.2" />
-    <PackageReference Include="Microsoft.Owin.Security" Version="4.2.2" />
-    <PackageReference Include="Microsoft.Owin.Security.OAuth" Version="4.2.2" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="7.0.5" />
     <PackageReference Include="Mono.Data.Sqlite.Portable" Version="1.0.3.5" />
-    <PackageReference Include="Owin" Version="1.0" />
-    <PackageReference Include="Owin.Security.AesDataProtectorProvider" Version="1.2.4" />
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="7.0.0" />
     <PackageReference Include="Pomelo.JsonObject" Version="2.2.1" />
     <PackageReference Include="Remotion.Linq" Version="2.2.0" />

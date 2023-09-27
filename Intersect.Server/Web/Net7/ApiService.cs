@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.OData;
 using Microsoft.Extensions.Configuration;
@@ -36,11 +37,27 @@ internal partial class ApiService : ApplicationService<ServerContext, IApiServic
     private WebApplication? _app;
     private static readonly Assembly Assembly = typeof(ApiService).Assembly;
 
-    public ApiConfiguration Configuration { get; } = ApiConfiguration.Create();
-
     private WebApplication Configure()
     {
         var builder = WebApplication.CreateBuilder();
+
+        var configurationSection = builder.Configuration.GetRequiredSection("Api");
+        var configuration = configurationSection.Get<ApiConfiguration>();
+        builder.Services.Configure<ApiConfiguration>(configurationSection);
+
+        var corsPolicies = builder.Configuration.GetValue<Dictionary<string, CorsPolicy>>("Cors");
+        if (corsPolicies != default)
+        {
+            builder.Services.AddCors(
+                options =>
+                {
+                    foreach (var (name, policy) in corsPolicies)
+                    {
+                        options.AddPolicy(name, policy);
+                    }
+                }
+            );
+        }
 
         builder.Services.AddRouting(
             routeOptions =>
@@ -188,6 +205,8 @@ internal partial class ApiService : ApplicationService<ServerContext, IApiServic
 
         var app = builder.Build();
 
+        app.UseNetworkFilterMiddleware(configuration.AllowedNetworkTypes);
+
         if (app.Environment.IsDevelopment())
         {
             app.UseODataRouteDebug();
@@ -201,9 +220,9 @@ internal partial class ApiService : ApplicationService<ServerContext, IApiServic
             app.UseHsts();
         }
 
-        if (Configuration.RequestLogging)
+        if (configuration.RequestLogging)
         {
-            app.UseIntersectRequestLogging(Configuration.RequestLogLevel);
+            app.UseIntersectRequestLogging(configuration.RequestLogLevel);
         }
 
         app.UseRouting();
@@ -258,4 +277,7 @@ internal partial class ApiService : ApplicationService<ServerContext, IApiServic
     {
         StopAsync().ConfigureAwait(false).GetAwaiter().GetResult();
     }
+
+    public ApiConfiguration Configuration =>
+        _app?.Configuration.GetValue<ApiConfiguration>("Api") ?? new ApiConfiguration { Enabled = true };
 }

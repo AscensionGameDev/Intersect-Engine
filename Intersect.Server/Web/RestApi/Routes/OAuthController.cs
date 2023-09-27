@@ -31,6 +31,8 @@ namespace Intersect.Server.Web.RestApi.Routes
 
         public class TokenGenerationOptions
         {
+            public int AccessTokenLifetime { get; set; } = 5;
+
             public string Audience { get; set; } = "https://localhost/api";
 
             public string Issuer { get; set; } = "https://localhost";
@@ -256,7 +258,7 @@ namespace Intersect.Server.Web.RestApi.Routes
                 Audience = _tokenGenerationOptions.Value.Audience,
                 Issuer = _tokenGenerationOptions.Value.Issuer,
                 Subject = new ClaimsIdentity(claims.ToArray()),
-                Expires = DateTime.UtcNow.AddDays(7),
+                Expires = DateTime.UtcNow.AddMinutes(_tokenGenerationOptions.Value.AccessTokenLifetime),
                 SigningCredentials = new SigningCredentials(
                     new SymmetricSecurityKey(_tokenGenerationOptions.Value.SecretData),
                     SecurityAlgorithms.HmacSha512Signature
