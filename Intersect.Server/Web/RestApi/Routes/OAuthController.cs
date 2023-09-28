@@ -1,13 +1,12 @@
-using System.ComponentModel.DataAnnotations;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Text;
 using Intersect.Server.Database.PlayerData.Api;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using Intersect.Security.Claims;
 using Intersect.Server.Database.PlayerData;
+using Intersect.Server.Web.Configuration;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -27,27 +26,6 @@ namespace Intersect.Server.Web.RestApi.Routes
         public OAuthController(IOptions<TokenGenerationOptions> tokenGenerationOptions)
         {
             _tokenGenerationOptions = tokenGenerationOptions;
-        }
-
-        public class TokenGenerationOptions
-        {
-            public int AccessTokenLifetime { get; set; } = 5;
-
-            public string Audience { get; set; } = "https://localhost/api";
-
-            public string Issuer { get; set; } = "https://localhost";
-
-            public int RefreshTokenLifetime { get; set; } = 10080;
-
-            [Required]
-            public string Secret
-            {
-                get => Encoding.UTF8.GetString(SecretData ?? Array.Empty<byte>());
-                set => SecretData = Encoding.UTF8.GetBytes(value);
-            }
-
-            [Newtonsoft.Json.JsonIgnore]
-            public byte[] SecretData { get; set; }
         }
 
         private class UsernameAndTokenResponse

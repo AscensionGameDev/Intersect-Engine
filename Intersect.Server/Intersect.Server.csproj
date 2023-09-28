@@ -3,8 +3,11 @@
   <PropertyGroup>
     <Nullable>disable</Nullable>
     <OutputType>Exe</OutputType>
-<!--    <PublishSingleFile>true</PublishSingleFile>-->
-<!--    <SelfContained>true</SelfContained>-->
+  </PropertyGroup>
+
+  <PropertyGroup Condition="$(Configuration) != 'Debug'">
+    <PublishSingleFile>true</PublishSingleFile>
+    <SelfContained>true</SelfContained>
   </PropertyGroup>
 
   <PropertyGroup>

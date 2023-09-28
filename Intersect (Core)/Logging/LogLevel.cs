@@ -1,6 +1,10 @@
-﻿namespace Intersect.Logging
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+
+namespace Intersect.Logging
 {
 
+    [JsonConverter(typeof(StringEnumConverter))]
     public enum LogLevel : byte
     {
 

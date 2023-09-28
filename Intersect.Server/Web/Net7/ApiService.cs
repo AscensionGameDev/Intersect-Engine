@@ -6,11 +6,10 @@ using Intersect.Logging;
 using Intersect.Server.Core;
 using Intersect.Server.Database.PlayerData;
 using Intersect.Server.Web.Authentication;
+using Intersect.Server.Web.Configuration;
 using Intersect.Server.Web.Constraints;
 using Intersect.Server.Web.Middleware;
-using Intersect.Server.Web.RestApi.Configuration;
 using Intersect.Server.Web.RestApi.Payloads;
-using Intersect.Server.Web.RestApi.Routes;
 using Intersect.Server.Web.Serialization;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -29,21 +28,22 @@ namespace Intersect.Server.Web;
 
 internal partial class ApiService : ApplicationService<ServerContext, IApiService, ApiService>, IApiService
 {
-    static ApiService()
-    {
-        UnpackAppSettings();
-    }
-
     private WebApplication? _app;
     private static readonly Assembly Assembly = typeof(ApiService).Assembly;
 
     private WebApplication Configure()
     {
+        UnpackAppSettings();
+
+        ValidateConfiguration();
+
         var builder = WebApplication.CreateBuilder();
 
-        var configurationSection = builder.Configuration.GetRequiredSection("Api");
-        var configuration = configurationSection.Get<ApiConfiguration>();
-        builder.Services.Configure<ApiConfiguration>(configurationSection);
+        Log.Info($"Launching Intersect REST API in '{builder.Environment.EnvironmentName}' mode...");
+
+        var apiConfigurationSection = builder.Configuration.GetRequiredSection("Api");
+        var configuration = apiConfigurationSection.Get<ApiConfiguration>();
+        builder.Services.Configure<ApiConfiguration>(apiConfigurationSection);
 
         var corsPolicies = builder.Configuration.GetValue<Dictionary<string, CorsPolicy>>("Cors");
         if (corsPolicies != default)
@@ -131,10 +131,10 @@ internal partial class ApiService : ApplicationService<ServerContext, IApiServic
         builder.Services.AddHealthChecks();
         builder.Services.AddSwaggerGen();
         var tokenGenerationOptionsSection =
-            builder.Configuration.GetRequiredSection(nameof(OAuthController.TokenGenerationOptions));
-        var tokenGenerationOptions = tokenGenerationOptionsSection.Get<OAuthController.TokenGenerationOptions>();
+            apiConfigurationSection.GetRequiredSection(nameof(TokenGenerationOptions));
+        var tokenGenerationOptions = tokenGenerationOptionsSection.Get<TokenGenerationOptions>();
 
-        builder.Services.Configure<OAuthController.TokenGenerationOptions>(tokenGenerationOptionsSection);
+        builder.Services.Configure<TokenGenerationOptions>(tokenGenerationOptionsSection);
 
         IdentityModelEventSource.ShowPII = true;
         builder.Services.AddAuthentication(
@@ -157,7 +157,7 @@ internal partial class ApiService : ApplicationService<ServerContext, IApiServic
                         ValidateLifetime = false,
                         ValidateIssuerSigningKey = true,
                     };
-                    builder.Configuration.Bind(nameof(JwtBearerOptions), options);
+                    builder.Configuration.Bind($"Api.{nameof(JwtBearerOptions)}", options);
                     options.TokenValidationParameters.ValidAudience ??= tokenGenerationOptions.Audience;
                     options.TokenValidationParameters.ValidIssuer ??= tokenGenerationOptions.Issuer;
                     options.Events = new JwtBearerEvents()
