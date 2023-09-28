@@ -49,7 +49,7 @@ namespace Intersect.Client.MonoGame.NativeInterop
                         case Platform.Linux:
                             return "libSDL2-2.0.so.0";
 
-                        case Platform.MacOS: return "libSDL2-2.0.0.dylib";
+                        case Platform.MacOS: return "libSDL2.dylib";
                         case Platform.Windows: return "SDL2.dll";
                         default: throw new IndexOutOfRangeException();
                     }
