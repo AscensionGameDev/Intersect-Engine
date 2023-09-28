@@ -217,6 +217,7 @@ namespace Intersect.Client
             }
             else
             {
+                Log.Warn($"Was looking for '{resourceName}' but only the following resources were found:\n{string.Join("\n\t", assembly.GetManifestResourceNames())}");
                 var resourceStream = assembly.GetManifestResourceStream("Intersect Client.g.resources");
                 Debug.Assert(resourceStream != null, "resourceStream != null");
                 var resources = new ResourceSet(resourceStream);
