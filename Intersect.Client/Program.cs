@@ -164,7 +164,7 @@ namespace Intersect.Client
 
                 case PlatformID.MacOSX:
                     ExportDependency("libopenal.1.dylib", "");
-                    ExportDependency("libSDL2-2.0.0.dylib", "");
+                    ExportDependency("libSDL2.dylib", "");
                     ExportDependency("openal32.dll", "");
                     ExportDependency("MonoGame.Framework.dll.config", "", "MonoGame.Framework.Client.dll.config");
 
