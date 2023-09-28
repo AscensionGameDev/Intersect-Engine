@@ -1,12 +1,13 @@
 using System.Collections.Immutable;
 using System.ComponentModel;
-
+using Intersect.Server.Web.RestApi.Configuration;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Cors.Infrastructure;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using LogLevel = Intersect.Logging.LogLevel;
 
-namespace Intersect.Server.Web.RestApi.Configuration
+namespace Intersect.Server.Web.Configuration
 {
     /// <summary>
     /// Configuration options for <see cref="T:Intersect.Server.Web.RestApi.RestApi" />.
@@ -46,6 +47,9 @@ namespace Intersect.Server.Web.RestApi.Configuration
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling = DefaultValueHandling.Ignore)]
         [DefaultValue(false)]
         public bool RequestLogging { get; set; }
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling = DefaultValueHandling.Ignore)]
+        public TokenGenerationOptions? TokenGenerationOptions { get; set; }
 
         #endregion
     }
