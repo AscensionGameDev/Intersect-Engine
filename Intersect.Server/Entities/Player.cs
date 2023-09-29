@@ -541,17 +541,22 @@ namespace Intersect.Server.Entities
 
                     if (CraftingTableBase.TryGet(OpenCraftingTableId, out var b) && CraftingState?.Id != default)
                     {
-                        if (b.Crafts.Contains(CraftingState.Id))
+                        if (CraftingState != default && b.Crafts.Contains(CraftingState.Id))
                         {
                             while (CraftingState?.NextCraftCompletionTime < timeMs)
                             {
                                 CraftItem();
-                                CraftingState.NextCraftCompletionTime += CraftingState.DurationPerCraft;
 
-                                if (CraftingState.RemainingCount < 1)
+                                if (CraftingState != default)
                                 {
-                                    CraftingState = default;
+                                    CraftingState.NextCraftCompletionTime += CraftingState.DurationPerCraft;
+
+                                    if (CraftingState.RemainingCount < 1)
+                                    {
+                                        CraftingState = default;
+                                    }
                                 }
+                                
                             }
 
                             if (ShouldCancelCrafting())
@@ -3652,7 +3657,7 @@ namespace Intersect.Server.Entities
         //Craft a new item
         public void CraftItem()
         {
-            if(ShouldCancelCrafting())
+            if(ShouldCancelCrafting() || CraftingState == default)
             {
                 return;
             }
@@ -3668,7 +3673,11 @@ namespace Intersect.Server.Entities
                 backupItems.Add(backupItem.Clone());
             }
 
-            var craftItem = ItemBase.Get(craftDescriptor.ItemId);
+            if (!ItemBase.TryGet(craftDescriptor.ItemId, out var craftItem) && CraftingState != default)
+            {
+                CraftingState.RemainingCount--;
+                return;
+            }
 
             lock (EntityLock)
             {
@@ -3696,7 +3705,10 @@ namespace Intersect.Server.Entities
                             }
 
                             PacketSender.SendInventory(this);
-                            CraftingState.RemainingCount--;
+                            if (CraftingState != default)
+                            {
+                                CraftingState.RemainingCount--;
+                            }
 
                             return;
                         }
@@ -3723,7 +3735,10 @@ namespace Intersect.Server.Entities
                         }
 
                         PacketSender.SendInventory(this);
-                        CraftingState.RemainingCount--;
+                        if (CraftingState != default)
+                        {
+                            CraftingState.RemainingCount--;
+                        }
 
                         return;
                     }
@@ -3762,7 +3777,10 @@ namespace Intersect.Server.Entities
                     }
                 }
 
-                CraftingState.RemainingCount--;
+                if (CraftingState != default)
+                {
+                    CraftingState.RemainingCount--;
+                }
             }
         }
 
@@ -3822,13 +3840,14 @@ namespace Intersect.Server.Entities
             //Check the player actually has the items
             foreach (var ingredient in craftDescriptor.Ingredients)
             {
-                if (!inventoryItems.TryGetValue(ingredient.ItemId, out var currentQuantity))
+                var qSearch = inventoryItems.TryGetValue(ingredient.ItemId, out var currentQuantity);
+                if (CraftingState != default && !qSearch)
                 {
                     CraftingState.Id = Guid.Empty;
                     return true;
                 }
 
-                if (currentQuantity < ingredient.Quantity)
+                if (CraftingState != default && currentQuantity < ingredient.Quantity)
                 {
                     CraftingState.Id = Guid.Empty;
                     return true;
