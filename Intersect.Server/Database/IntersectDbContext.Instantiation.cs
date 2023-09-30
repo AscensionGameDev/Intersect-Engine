@@ -20,45 +20,21 @@ public partial class IntersectDbContext<TDbContext>
             .GetParameters()
             .ToArray();
 
-#if DEBUG
-    private static readonly List<IntersectDbContext<TDbContext>> _instances = new();
-#endif
-
     protected IntersectDbContext(DatabaseContextOptions databaseContextOptions)
     {
-#if DEBUG
-        if (Debugger.IsAttached)
-        {
-            _instances.Add(this as TDbContext);
-        }
-#endif
         ContextOptions = databaseContextOptions;
 
         base.ChangeTracker.AutoDetectChangesEnabled = databaseContextOptions.AutoDetectChanges || IsReadOnly;
         base.ChangeTracker.LazyLoadingEnabled = databaseContextOptions.LazyLoading || !IsReadOnly;
     }
 
-    internal List<IntersectDbContext<TDbContext>> instances => _instances;
-
     public override void Dispose()
     {
-#if DEBUG
-        if (Debugger.IsAttached && !_instances.Remove(this))
-        {
-            Debugger.Break();
-        }
-#endif
         base.Dispose();
     }
 
     public override ValueTask DisposeAsync()
     {
-#if DEBUG
-        if (Debugger.IsAttached && !_instances.Remove(this))
-        {
-            Debugger.Break();
-        }
-#endif
         return base.DisposeAsync();
     }
 
