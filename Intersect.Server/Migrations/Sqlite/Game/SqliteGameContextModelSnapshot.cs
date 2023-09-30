@@ -5,10 +5,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace Intersect.Server.Migrations.MySql.Game
+namespace Intersect.Server.Migrations.Sqlite.Game
 {
-    [DbContext(typeof(MySqlGameContext))]
-    partial class GameContextModelSnapshot : ModelSnapshot
+    [DbContext(typeof(SqliteGameContext))]
+    partial class SqliteGameContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
         {

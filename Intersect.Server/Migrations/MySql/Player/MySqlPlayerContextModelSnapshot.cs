@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Intersect.Server.Migrations.MySql.Player
 {
     [DbContext(typeof(MySqlPlayerContext))]
-    partial class PlayerContextModelSnapshot : ModelSnapshot
+    partial class MySqlPlayerContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
         {

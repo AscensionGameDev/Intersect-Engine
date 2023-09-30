@@ -5,10 +5,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace Intersect.Server.Migrations.MySql.Logging
+namespace Intersect.Server.Migrations.Sqlite.Logging
 {
-    [DbContext(typeof(MySqlLoggingContext))]
-    partial class LoggingContextModelSnapshot : ModelSnapshot
+    [DbContext(typeof(SqliteLoggingContext))]
+    partial class SqliteLoggingContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
