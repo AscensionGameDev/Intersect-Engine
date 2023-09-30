@@ -38,7 +38,7 @@ namespace Intersect.Editor.Forms.DockingElements
         public FrmMapGrid()
         {
             InitializeComponent();
-            Icon = System.Drawing.Icon.ExtractAssociatedIcon(System.Reflection.Assembly.GetExecutingAssembly().Location);
+            Icon = Program.Icon;
 
             pnlMapGrid.MouseWheel += PnlMapGrid_MouseWheel;
         }

@@ -81,7 +81,7 @@ namespace Intersect.Editor.Forms.DockingElements
         public FrmMapEditor()
         {
             InitializeComponent();
-            Icon = Icon.ExtractAssociatedIcon(System.Reflection.Assembly.GetExecutingAssembly().Location);
+            Icon = Program.Icon;
             picMap.MouseLeave += (_sender, _args) => tooltipMapAttribute?.Hide();
             // Initialize cursor timer
             cursorUpdateTimer = new Timer();

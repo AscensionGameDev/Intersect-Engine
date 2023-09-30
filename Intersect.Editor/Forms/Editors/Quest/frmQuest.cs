@@ -33,7 +33,7 @@ namespace Intersect.Editor.Forms.Editors.Quest
         {
             ApplyHooks();
             InitializeComponent();
-            Icon = System.Drawing.Icon.ExtractAssociatedIcon(System.Reflection.Assembly.GetExecutingAssembly().Location);
+            Icon = Program.Icon;
 
             InitLocalization();
 

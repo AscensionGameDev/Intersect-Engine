@@ -789,7 +789,7 @@ namespace Intersect.Editor.Forms.Editors.Events
         public FrmEvent(MapBase currentMap)
         {
             InitializeComponent();
-            Icon = System.Drawing.Icon.ExtractAssociatedIcon(System.Reflection.Assembly.GetExecutingAssembly().Location);
+            Icon = Program.Icon;
 
             mCurrentMap = currentMap;
         }

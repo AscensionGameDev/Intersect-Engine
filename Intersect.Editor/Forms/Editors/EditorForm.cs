@@ -15,7 +15,7 @@ namespace Intersect.Editor.Forms.Editors
 
         protected EditorForm()
         {
-            Icon = System.Drawing.Icon.ExtractAssociatedIcon(System.Reflection.Assembly.GetExecutingAssembly().Location);
+            Icon = Program.Icon;
 
             ApplyHooks();
         }

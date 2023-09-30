@@ -34,7 +34,7 @@ namespace Intersect.Editor.Forms.Editors
         {
             ApplyHooks();
             InitializeComponent();
-            Icon = System.Drawing.Icon.ExtractAssociatedIcon(System.Reflection.Assembly.GetExecutingAssembly().Location);
+            Icon = Program.Icon;
 
             cmbWarpMap.Items.Clear();
             for (var i = 0; i < MapList.OrderedMaps.Count; i++)

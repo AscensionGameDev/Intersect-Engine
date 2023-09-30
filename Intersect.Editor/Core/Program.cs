@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
@@ -13,9 +13,25 @@ using Intersect.Logging;
 // ReSharper disable once CheckNamespace
 namespace Intersect.Editor
 {
-
     public static partial class Program
     {
+        internal static readonly Icon? Icon;
+
+        private const string IconManifestResourceName = "Intersect.Editor.intersect-logo-qu.ico";
+
+        static Program()
+        {
+            var iconStream = typeof(Program).Assembly.GetManifestResourceStream(IconManifestResourceName);
+            if (iconStream == default)
+            {
+                Console.Error.WriteLine($"Unable to find embedded resource with name '{IconManifestResourceName}'.");
+            }
+            else
+            {
+                Icon = new Icon(iconStream);
+                Console.WriteLine("Loaded embedded application icon successfully");
+            }
+        }
 
         /// <summary>
         ///     The main entry point for the application.

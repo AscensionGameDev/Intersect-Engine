@@ -20,7 +20,7 @@ namespace Intersect.Editor.Forms
         public FrmProgress()
         {
             InitializeComponent();
-            Icon = System.Drawing.Icon.ExtractAssociatedIcon(System.Reflection.Assembly.GetExecutingAssembly().Location);
+            Icon = Program.Icon;
 
             InitLocalization();
         }
