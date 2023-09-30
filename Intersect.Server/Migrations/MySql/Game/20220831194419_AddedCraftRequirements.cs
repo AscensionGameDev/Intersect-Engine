@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace Intersect.Server.Migrations.Game
+namespace Intersect.Server.Migrations.MySql.Game
 {
     public partial class AddedCraftRequirements : Migration
     {

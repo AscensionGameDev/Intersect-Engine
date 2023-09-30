@@ -1,10 +1,8 @@
-﻿using System;
-
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 // ReSharper disable PossibleNullReferenceException
 
-namespace Intersect.Server.Migrations
+namespace Intersect.Server.Migrations.MySql.Player
 {
 
     public partial class StandardizeVocabulary1 : Migration

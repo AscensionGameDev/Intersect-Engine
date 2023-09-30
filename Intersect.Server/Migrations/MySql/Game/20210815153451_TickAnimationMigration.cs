@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.Migrations;
-using System;
 
-namespace Intersect.Server.Migrations.Game
+namespace Intersect.Server.Migrations.MySql.Game
 {
     public partial class TickAnimationMigration : Migration
     {

@@ -1,7 +1,6 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace Intersect.Server.Migrations.Logging
+namespace Intersect.Server.Migrations.MySql.Logging
 {
     public partial class LogPlayerTrades : Migration
     {

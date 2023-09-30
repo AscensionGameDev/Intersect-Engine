@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace Intersect.Server.Migrations
+namespace Intersect.Server.Migrations.Sqlite.Player
 {
 
     public partial class PlayerUpgrades_Labels : Migration
