@@ -68,10 +68,13 @@ namespace Intersect.Server.Core
 
                 DatabaseContextOptions databaseContextOptions = new()
                 {
-                    ConnectionStringBuilder = connectionStringBuilder, DatabaseType = databaseType
+                    ConnectionStringBuilder = connectionStringBuilder,
+                    DatabaseType = databaseType,
                 };
 
                 services.AddSingleton(databaseContextOptions);
+
+                Console.WriteLine($"Generating migration for DatabaseType={databaseType}, ConnectionString=\"{connectionString}\"...");
             });
     }
 }
