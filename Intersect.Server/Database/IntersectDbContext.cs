@@ -89,15 +89,6 @@ public abstract partial class IntersectDbContext<TDbContext> : DbContext, IDbCon
     protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
     {
         base.ConfigureConventions(configurationBuilder);
-
-        switch (DatabaseType)
-        {
-            case DatabaseType.SQLite:
-                configurationBuilder
-                    .Properties<Guid>()
-                    .HaveConversion<GuidBinaryConverter>();
-                break;
-        }
     }
 
     /// <summary>

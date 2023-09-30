@@ -134,14 +134,14 @@ namespace Intersect.Server.Database.PlayerData
             }
         }
 
+        public static string GenerateSalt(ushort sizeInBits = 256)
+        {
+            return Convert.ToHexString(RandomNumberGenerator.GetBytes(sizeInBits >> 3));
+        }
+
         public static string SaltPasswordHash(string passwordHash, string salt)
         {
-            using (var sha = new SHA256Managed())
-            {
-                return BitConverter
-                    .ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(passwordHash.ToUpperInvariant() + salt)))
-                    .Replace("-", "");
-            }
+            return Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(passwordHash.ToUpperInvariant() + salt)));
         }
 
         public bool IsPasswordValid(string passwordHash)
