@@ -51,16 +51,21 @@ namespace Intersect.Server.Core
 
             if (!PreContextSetup(args))
             {
+                Console.Error.WriteLine("[FATAL] Pre-context setup failed.");
                 return;
             }
+
+            Console.WriteLine("Pre-context setup finished.");
 
             var logger = Log.Default;
             var packetTypeRegistry = new PacketTypeRegistry(logger);
             if (!packetTypeRegistry.TryRegisterBuiltIn())
             {
-                logger.Error("Failed to load built-in packet types.");
+                logger.Error("[FATAL] Failed to load built-in packet types.");
                 return;
             }
+
+            Console.WriteLine("Built-in packets registered to the packet type registry.");
 
             var packetHandlerRegistry = new PacketHandlerRegistry(packetTypeRegistry, logger);
             var packetHelper = new PacketHelper(packetTypeRegistry, packetHandlerRegistry);
@@ -73,14 +78,20 @@ namespace Intersect.Server.Core
                 )
             );
 
+            Console.WriteLine("Creating server context...");
+
             Context = new ServerContext(parsedArguments.CommandLineOptions, logger, packetHelper);
             var noHaltOnError = Context?.StartupOptions.DoNotHaltOnError ?? false;
 
             if (!PostContextSetup())
             {
+                Console.Error.WriteLine("[FATAL] Post-context setup failed.");
                 return;
             }
 
+            Console.WriteLine("Finished post-context setup.");
+
+            Console.WriteLine("Starting main thread...");
             MainThread = Context.StartWithActionQueue();
             Action action;
             while (null != (action = MainThread.NextAction))
@@ -317,10 +328,15 @@ namespace Intersect.Server.Core
 
         private static bool PostContextSetup()
         {
+            Console.WriteLine("Starting post-context setup...");
+
             if (Context == null)
             {
+                Console.Error.WriteLine("No context?");
                 throw new ArgumentNullException(nameof(Context));
             }
+
+            Console.WriteLine("Configuring thread pool...");
 
             //Configure System Threadpool
             ThreadPool.GetMaxThreads(out var maxWorkerThreads, out var maxCompletionPortThreads);
@@ -350,6 +366,8 @@ namespace Intersect.Server.Core
 
             if (!DbInterface.InitDatabase(Context))
             {
+                Console.Error.WriteLine("Failed to initialize the database.");
+
                 Console.ReadKey();
 
                 return false;
@@ -395,6 +413,8 @@ namespace Intersect.Server.Core
 
         private static void ClearDlls()
         {
+            Console.WriteLine("Deleting old dependencies...");
+
             DeleteIfExists("libe_sqlite3.so");
             DeleteIfExists("e_sqlite3.dll");
             DeleteIfExists("libe_sqlite3.dylib");
@@ -453,6 +473,8 @@ namespace Intersect.Server.Core
 
         private static void ExportDependencies(params string[] args)
         {
+            Console.WriteLine("Exporting dependencies...");
+
             ClearDlls();
 
             var platformId = Environment.OSVersion.Platform;

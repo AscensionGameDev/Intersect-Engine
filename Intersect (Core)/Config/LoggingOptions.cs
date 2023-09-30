@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+using Intersect.Logging;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +11,8 @@ namespace Intersect.Config
 {
     public partial class LoggingOptions
     {
+        public LogLevel Level { get; set; } = LogLevel.Info;
+
         /// <summary>
         /// Determines whether chat logs should be written into the logging database
         /// </summary>

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
@@ -24,7 +24,7 @@ namespace Intersect.Logging
 
         private Immutable<IReadOnlyList<ILogFormatter>> mFormatters;
 
-        private Immutable<LogLevel> mLogLevel;
+        private LogLevel mLogLevel;
 
         private Immutable<IReadOnlyList<ILogOutput>> mOutputs;
 
@@ -54,7 +54,7 @@ namespace Intersect.Logging
         public LogLevel LogLevel
         {
             get => mLogLevel;
-            set => mLogLevel.Value = value;
+            set => mLogLevel = value;
         }
 
         public IReadOnlyList<ILogOutput> Outputs

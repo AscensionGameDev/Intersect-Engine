@@ -254,6 +254,8 @@ namespace Intersect
 
         public static bool Load()
         {
+            Console.WriteLine("Loading custom colors...");
+
             var filepath = Path.Combine("resources", "colors.json");
 
             // Really don't want two JsonSave() return points...
@@ -278,6 +280,8 @@ namespace Intersect
 
         public static bool Save()
         {
+            Console.WriteLine("Saving custom colors...");
+
             try
             {
                 var filepath = Path.Combine("resources", "colors.json");

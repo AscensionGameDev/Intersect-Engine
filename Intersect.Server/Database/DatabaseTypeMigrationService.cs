@@ -20,7 +20,7 @@ public class DatabaseTypeMigrationService
 
         try
         {
-            if (context.IsEmpty())
+            if (context.IsEmpty)
             {
                 _ = await context.Database.EnsureDeletedAsync();
                 await context.Database.MigrateAsync();

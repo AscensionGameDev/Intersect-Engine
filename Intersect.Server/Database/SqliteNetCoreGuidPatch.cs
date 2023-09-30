@@ -1,4 +1,4 @@
-﻿using Dapper;
+using Dapper;
 using Intersect.Config;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
@@ -23,7 +23,7 @@ public sealed class SqliteNetCoreGuidPatch
     public static bool ShouldBeAppliedTo<TContext>(TContext context)
         where TContext : IntersectDbContext<TContext>
     {
-        if (context.DatabaseType != DatabaseType.Sqlite)
+        if (context.DatabaseType != DatabaseType.Sqlite || context.IsEmpty)
         {
             return false;
         }
