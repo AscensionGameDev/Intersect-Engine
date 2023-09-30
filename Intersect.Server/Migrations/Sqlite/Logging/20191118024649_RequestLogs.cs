@@ -1,10 +1,7 @@
-﻿using System;
-
-using Intersect.Utilities;
-
+﻿using Intersect.Utilities;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace Intersect.Server.Migrations.Logging
+namespace Intersect.Server.Migrations.Sqlite.Logging
 {
 
     public partial class RequestLogs : Migration

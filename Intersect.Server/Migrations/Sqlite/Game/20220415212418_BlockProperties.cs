@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace Intersect.Server.Migrations.Game
+namespace Intersect.Server.Migrations.Sqlite.Game
 {
     public partial class BlockProperties : Migration
     {

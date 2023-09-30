@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace Intersect.Server.Migrations.Game
+namespace Intersect.Server.Migrations.MySql.Game
 {
 
     public partial class Spell_Upgrades_Traps_Item_Upgrades_Effects_Event_Upgrades_Labels : Migration

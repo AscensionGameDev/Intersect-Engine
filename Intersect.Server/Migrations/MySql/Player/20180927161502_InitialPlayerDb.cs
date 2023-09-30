@@ -1,8 +1,6 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
-using Microsoft.EntityFrameworkCore.Migrations;
-
-namespace Intersect.Server.Migrations
+namespace Intersect.Server.Migrations.MySql.Player
 {
 
     public partial class InitialPlayerDb : Migration

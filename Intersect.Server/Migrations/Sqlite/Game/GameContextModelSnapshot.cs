@@ -5,9 +5,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace Intersect.Server.Migrations.Game
+namespace Intersect.Server.Migrations.Sqlite.Game
 {
-    [DbContext(typeof(GameContext))]
+    [DbContext(typeof(SqliteGameContext))]
     partial class GameContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)

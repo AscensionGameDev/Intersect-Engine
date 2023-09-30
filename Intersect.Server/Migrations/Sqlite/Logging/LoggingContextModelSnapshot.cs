@@ -5,9 +5,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace Intersect.Server.Migrations.Logging
+namespace Intersect.Server.Migrations.Sqlite.Logging
 {
-    [DbContext(typeof(LoggingContext))]
+    [DbContext(typeof(SqliteLoggingContext))]
     partial class LoggingContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
