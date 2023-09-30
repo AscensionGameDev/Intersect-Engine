@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Intersect.Server.Migrations.Sqlite.Player
 {
     [DbContext(typeof(SqlitePlayerContext))]
-    partial class PlayerContextModelSnapshot : ModelSnapshot
+    partial class SqlitePlayerContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
