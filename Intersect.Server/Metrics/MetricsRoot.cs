@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 using Intersect.Server.Metrics.Controllers;
@@ -50,6 +50,8 @@ namespace Intersect.Server.Metrics
         /// </summary>
         public static void Init()
         {
+            Console.WriteLine("Initializing metrics logger...");
+
             Instance = new MetricsRoot();
         }
 

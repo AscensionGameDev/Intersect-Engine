@@ -1,3 +1,4 @@
+using Intersect.Logging;
 using Intersect.Reflection;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
@@ -35,7 +36,9 @@ public sealed class MigrationScheduler<TContext>
 
         if (SqliteNetCoreGuidPatch.ShouldBeAppliedTo(_context))
         {
+            Log.Verbose("Applying .NET Core patch...");
             SqliteNetCoreGuidPatch.ApplyTo(_context);
+            Log.Verbose("Finished applying .NET Core patch.");
         }
 
         var migrator = _context.Database.GetService<IMigrator>();

@@ -3,6 +3,7 @@ using System.IO;
 
 using Intersect.Config;
 using Intersect.Config.Guilds;
+using Intersect.Logging;
 using Newtonsoft.Json;
 
 namespace Intersect
@@ -254,6 +255,7 @@ namespace Intersect
             Instance.SmtpValid = Instance.SmtpSettings.IsValid();
             Instance.SendingToClient = false;
             Instance.FixAnimatedSprites();
+            Log.Default.Configuration.LogLevel = Instance.Logging.Level;
             File.WriteAllText("resources/config.json", JsonConvert.SerializeObject(Instance, Formatting.Indented));
             Instance.SendingToClient = true;
             optionsCompressed = JsonConvert.SerializeObject(Instance);
@@ -275,13 +277,25 @@ namespace Intersect
         }
 
         // ReSharper disable once UnusedMember.Global
-        public bool ShouldSerializePlayerDatabase()
+        public bool ShouldSerializeGameDatabase()
         {
             return !SendingToClient;
         }
 
         // ReSharper disable once UnusedMember.Global
-        public bool ShouldSerializeGameDatabase()
+        public bool ShouldSerializeLoggingDatabase()
+        {
+            return !SendingToClient;
+        }
+
+        // ReSharper disable once UnusedMember.Global
+        public bool ShouldSerializeLogging()
+        {
+            return !SendingToClient;
+        }
+
+        // ReSharper disable once UnusedMember.Global
+        public bool ShouldSerializePlayerDatabase()
         {
             return !SendingToClient;
         }

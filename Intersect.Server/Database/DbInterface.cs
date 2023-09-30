@@ -239,8 +239,19 @@ namespace Intersect.Server.Database
             where TContext : IntersectDbContext<TContext>
         {
             var pendingMigrations = context.PendingMigrations;
+            if (pendingMigrations.Count < 1)
+            {
+                Log.Verbose("No pending migrations, skipping...");
+                return;
+            }
+
+            Log.Verbose($"Pending migrations for {typeof(TContext).Name}:\n\t{string.Join("\n\t", pendingMigrations)}");
+
             var migrationScheduler = new MigrationScheduler<TContext>(context);
+            Log.Verbose("Scheduling pending migrations...");
             migrationScheduler.SchedulePendingMigrations();
+
+            Log.Verbose("Applying scheduled migrations...");
             migrationScheduler.ApplyScheduledMigrations();
 
             var remainingPendingMigrations = context.PendingMigrations.ToList();
@@ -252,6 +263,7 @@ namespace Intersect.Server.Database
 
         private static bool EnsureUpdated()
         {
+            Log.Verbose("Creating game context...");
             using var gameContext = GameContext.Create(new DatabaseContextOptions
             {
                 ConnectionStringBuilder = Options.Instance.GameDatabase.Type.CreateConnectionStringBuilder(
@@ -263,6 +275,7 @@ namespace Intersect.Server.Database
                 EnableSensitiveDataLogging = true,
             });
 
+            Log.Verbose("Creating player context...");
             using var playerContext = PlayerContext.Create(new DatabaseContextOptions
             {
                 ConnectionStringBuilder = Options.Instance.PlayerDatabase.Type.CreateConnectionStringBuilder(
@@ -274,6 +287,7 @@ namespace Intersect.Server.Database
                 EnableSensitiveDataLogging = true,
             });
 
+            Log.Verbose("Creating logging context...");
             using var loggingContext = LoggingContext.Create(new DatabaseContextOptions
             {
                 ConnectionStringBuilder = Options.Instance.LoggingDatabase.Type.CreateConnectionStringBuilder(
@@ -361,6 +375,10 @@ namespace Intersect.Server.Database
                     "Please wait! Migrations can take several minutes, and even longer if you are using MySQL databases!"
                 );
             }
+            else
+            {
+                Console.WriteLine("No migrations pending, skipping...");
+            }
 
             var contexts = new List<DbContext> { gameContext, playerContext, loggingContext };
             foreach (var context in contexts)
@@ -375,10 +393,15 @@ namespace Intersect.Server.Database
         // Database setup, version checking
         internal static bool InitDatabase(IServerContext serverContext)
         {
+            Console.WriteLine("Initializing database...");
+
             if (!EnsureUpdated())
             {
+                Console.Error.WriteLine("Database not updated.");
                 return false;
             }
+
+            Console.WriteLine("Loading game data...");
 
             LoadAllGameObjects();
             LoadTime();

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 
 using Intersect.Enums;
@@ -33,6 +33,8 @@ namespace Intersect.Server.General
 
         public static void LoadFormulas()
         {
+            Console.WriteLine("Loading formulae...");
+
             try
             {
                 mFormulas = new Formulas();

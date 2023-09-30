@@ -1,4 +1,4 @@
-﻿namespace Intersect.Config
+namespace Intersect.Config
 {
     /// <summary>
     /// Contains configurable options pertaining to stat/metrics collecting
@@ -8,6 +8,6 @@
         /// <summary>
         /// Track game performance metrics
         /// </summary>
-        public bool Enable { get; set; } = true;
+        public bool Enable { get; set; } = false;
     }
 }

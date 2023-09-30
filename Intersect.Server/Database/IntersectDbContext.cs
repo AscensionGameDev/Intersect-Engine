@@ -108,30 +108,27 @@ public abstract partial class IntersectDbContext<TDbContext> : DbContext, IDbCon
     /// <summary>
     /// Checks if the database is empty by checking if there are any tables.
     /// </summary>
-    /// <returns>if the database is empty</returns>
-    public bool IsEmpty()
+    public bool IsEmpty
     {
-        var connection = Database?.GetDbConnection();
-        if (connection == null)
+        get
         {
-            throw new InvalidOperationException("Cannot get connection to the database.");
+            var connection = (Database?.GetDbConnection()) ?? throw new InvalidOperationException("Cannot get connection to the database.");
+            using var command = connection.CreateCommand();
+            command.CommandText = DatabaseType switch
+            {
+                DatabaseType.SQLite => "SELECT name FROM sqlite_master WHERE type='table';",
+                DatabaseType.MySQL => "show tables;",
+                DatabaseType.Unknown => throw new DatabaseTypeInvalidException(DatabaseType),
+                _ => throw new UnreachableException(),
+            };
+
+            command.CommandType = CommandType.Text;
+
+            Database.OpenConnection();
+
+            using var result = command.ExecuteReader();
+            return !result.HasRows;
         }
-
-        using var command = connection.CreateCommand();
-        command.CommandText = DatabaseType switch
-        {
-            DatabaseType.SQLite => "SELECT name FROM sqlite_master WHERE type='table';",
-            DatabaseType.MySQL => "show tables;",
-            DatabaseType.Unknown => throw new DatabaseTypeInvalidException(DatabaseType),
-            _ => throw new UnreachableException(),
-        };
-
-        command.CommandType = CommandType.Text;
-
-        Database.OpenConnection();
-
-        using var result = command.ExecuteReader();
-        return !result.HasRows;
     }
 
     public virtual void MigrationsProcessed(string[] migrations) { }
