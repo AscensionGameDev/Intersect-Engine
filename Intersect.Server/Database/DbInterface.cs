@@ -549,21 +549,15 @@ namespace Intersect.Server.Database
             string email
         )
         {
-            var sha = new SHA256Managed();
-
-            //Generate a Salt
-            var rng = new RNGCryptoServiceProvider();
-            var buff = new byte[20];
-            rng.GetBytes(buff);
-            var salt = BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(Convert.ToBase64String(buff))))
-                .Replace("-", "");
+            var salt = User.GenerateSalt();
+            var saltedPasswordHash = User.SaltPasswordHash(password, salt);
 
             var user = new User
             {
                 Name = username,
                 Email = email,
                 Salt = salt,
-                Password = User.SaltPasswordHash(password, salt),
+                Password = saltedPasswordHash,
                 Power = UserRights.None,
             };
 
@@ -572,7 +566,7 @@ namespace Intersect.Server.Database
                 user.Power = UserRights.Admin;
             }
 
-            user.Save();
+            user.Save(create: true);
 
             client?.SetUser(user);
         }
