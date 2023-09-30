@@ -53,7 +53,7 @@ namespace Intersect.Server.Core
             {
                 var rawDatabaseType = hostContext.Configuration.GetValue<string>("DatabaseType") ??
                                       DatabaseType.Sqlite.ToString();
-                if (!Enum.TryParse(rawDatabaseType, out DatabaseType databaseType))
+                if (!Enum.TryParse(rawDatabaseType, out DatabaseType databaseType) || databaseType == DatabaseType.Unknown)
                 {
                     throw new InvalidOperationException($"Invalid database type: {rawDatabaseType}");
                 }
@@ -63,7 +63,8 @@ namespace Intersect.Server.Core
                 {
                     DatabaseType.MySql => new MySqlConnectionStringBuilder(connectionString),
                     DatabaseType.Sqlite => new SqliteConnectionStringBuilder(connectionString),
-                    _ => throw new IndexOutOfRangeException($"Unsupported database type: {databaseType}")
+                    DatabaseType.Unknown => throw new DatabaseTypeInvalidException(databaseType),
+                    _ => throw new IndexOutOfRangeException($"Unsupported database type: {databaseType}"),
                 };
 
                 DatabaseContextOptions databaseContextOptions = new()

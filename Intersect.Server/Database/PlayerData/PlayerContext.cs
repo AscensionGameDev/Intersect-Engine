@@ -1,3 +1,4 @@
+using Intersect.Config;
 using Intersect.Extensions;
 using Intersect.Server.Database.PlayerData.Api;
 using Intersect.Server.Database.PlayerData.Migrations;
@@ -15,6 +16,8 @@ namespace Intersect.Server.Database.PlayerData
     {
         /// <inheritdoc />
         public MySqlPlayerContext(DatabaseContextOptions databaseContextOptions) : base(databaseContextOptions) { }
+
+        public override DatabaseType DatabaseType => DatabaseType.MySql;
     }
 
     /// <summary>
@@ -24,6 +27,8 @@ namespace Intersect.Server.Database.PlayerData
     {
         /// <inheritdoc />
         public SqlitePlayerContext(DatabaseContextOptions databaseContextOptions) : base(databaseContextOptions) { }
+
+        public override DatabaseType DatabaseType => DatabaseType.Sqlite;
     }
 
     public abstract partial class PlayerContext : IntersectDbContext<PlayerContext>, IPlayerContext

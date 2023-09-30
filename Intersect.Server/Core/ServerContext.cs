@@ -144,7 +144,7 @@ namespace Intersect.Server.Core
 
                 #endregion
 
-                if (ThreadConsole?.IsAlive ?? false)
+                if (!DisposeWithoutExiting && (ThreadConsole?.IsAlive ?? false))
                 {
                     Log.Info("Shutting down the console thread..." + $" ({stopwatch.ElapsedMilliseconds}ms)");
                     if (!ThreadConsole.Join(1000))
@@ -182,17 +182,19 @@ namespace Intersect.Server.Core
             Log.Info("Base dispose." + $" ({stopwatch.ElapsedMilliseconds}ms)");
             base.Dispose(disposing);
             Log.Info("Finished disposing server context." + $" ({stopwatch.ElapsedMilliseconds}ms)");
-            Console.WriteLine(Strings.Commands.exited);
 
-            if (!DisposeWithoutExiting)
+            if (DisposeWithoutExiting)
             {
-                Exit();
+                return;
             }
+
+            Console.WriteLine(Strings.Commands.exited);
+            Exit();
         }
 
         internal void Exit(int? exitCode = null)
         {
-            Environment.Exit(exitCode ?? ExitCode);
+            Exit(exitCode ?? ExitCode);
         }
 
         internal static void Exit(int exitCode)
