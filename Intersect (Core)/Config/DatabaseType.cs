@@ -2,6 +2,8 @@ namespace Intersect.Config;
 
 public enum DatabaseType
 {
+    Unknown,
+
     SQLite,
 
     Sqlite = SQLite,
@@ -18,5 +20,5 @@ public enum DatabaseType
 
     MariaDB = MySQL,
 
-    mariadb = MariaDB
+    mariadb = MariaDB,
 }

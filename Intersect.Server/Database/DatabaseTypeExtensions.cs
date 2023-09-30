@@ -24,6 +24,7 @@ internal static class DatabaseTypeExtensions
             UserID = databaseOptions.Username,
             Password = databaseOptions.Password
         },
+        DatabaseType.Unknown => throw new DatabaseTypeInvalidException(databaseType),
         _ => throw new ArgumentOutOfRangeException(nameof(databaseType)),
     };
 

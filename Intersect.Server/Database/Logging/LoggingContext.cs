@@ -5,6 +5,7 @@ using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 
 using System.Data.Common;
+using Intersect.Config;
 
 namespace Intersect.Server.Database.Logging
 {
@@ -15,6 +16,8 @@ namespace Intersect.Server.Database.Logging
     {
         /// <inheritdoc />
         public MySqlLoggingContext(DatabaseContextOptions databaseContextOptions) : base(databaseContextOptions) { }
+
+        public override DatabaseType DatabaseType => DatabaseType.MySql;
     }
 
     /// <summary>
@@ -24,6 +27,8 @@ namespace Intersect.Server.Database.Logging
     {
         /// <inheritdoc />
         public SqliteLoggingContext(DatabaseContextOptions databaseContextOptions) : base(databaseContextOptions) { }
+
+        public override DatabaseType DatabaseType => DatabaseType.Sqlite;
     }
 
     public abstract partial class LoggingContext : IntersectDbContext<LoggingContext>, ILoggingContext

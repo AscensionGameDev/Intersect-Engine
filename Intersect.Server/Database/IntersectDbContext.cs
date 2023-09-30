@@ -1,5 +1,6 @@
 using System.Data;
 using System.Data.Common;
+using System.Diagnostics;
 using Intersect.Config;
 using Intersect.Server.Database.Converters;
 using Microsoft.EntityFrameworkCore;
@@ -20,7 +21,7 @@ public abstract partial class IntersectDbContext<TDbContext> : DbContext, IDbCon
 
     public DbConnectionStringBuilder ConnectionStringBuilder => ContextOptions.ConnectionStringBuilder;
 
-    public DatabaseType DatabaseType { get; }
+    public abstract DatabaseType DatabaseType { get; }
 
     public bool IsReadOnly => ContextOptions.ReadOnly;
 
@@ -89,6 +90,19 @@ public abstract partial class IntersectDbContext<TDbContext> : DbContext, IDbCon
     protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
     {
         base.ConfigureConventions(configurationBuilder);
+
+        switch (DatabaseType)
+        {
+            case DatabaseType.MySql:
+                configurationBuilder.Properties<Guid>().HaveColumnType("char(36)").UseCollation("ascii_general_ci");
+                break;
+            case DatabaseType.SQLite:
+                break;
+            case DatabaseType.Unknown:
+                throw new DatabaseTypeInvalidException(DatabaseType);
+            default:
+                throw new UnreachableException();
+        }
     }
 
     /// <summary>
@@ -103,33 +117,21 @@ public abstract partial class IntersectDbContext<TDbContext> : DbContext, IDbCon
             throw new InvalidOperationException("Cannot get connection to the database.");
         }
 
-        using (var command = connection.CreateCommand())
+        using var command = connection.CreateCommand();
+        command.CommandText = DatabaseType switch
         {
-            switch (DatabaseType)
-            {
-                case DatabaseType.SQLite:
-                    command.CommandText = "SELECT name FROM sqlite_master WHERE type='table';";
+            DatabaseType.SQLite => "SELECT name FROM sqlite_master WHERE type='table';",
+            DatabaseType.MySQL => "show tables;",
+            DatabaseType.Unknown => throw new DatabaseTypeInvalidException(DatabaseType),
+            _ => throw new UnreachableException(),
+        };
 
-                    break;
+        command.CommandType = CommandType.Text;
 
-                case DatabaseType.MySQL:
-                    command.CommandText = "show tables;";
+        Database.OpenConnection();
 
-                    break;
-
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(DatabaseType));
-            }
-
-            command.CommandType = CommandType.Text;
-
-            Database.OpenConnection();
-
-            using (var result = command.ExecuteReader())
-            {
-                return !(result?.HasRows ?? false);
-            }
-        }
+        using var result = command.ExecuteReader();
+        return !result.HasRows;
     }
 
     public virtual void MigrationsProcessed(string[] migrations) { }

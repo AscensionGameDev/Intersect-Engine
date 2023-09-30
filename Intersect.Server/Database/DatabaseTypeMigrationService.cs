@@ -17,19 +17,20 @@ public class DatabaseTypeMigrationService
         where TContext : IntersectDbContext<TContext>
     {
         await using var context = IntersectDbContext<TContext>.Create(options);
-        if (context.IsEmpty())
+
+        try
         {
-            try
+            if (context.IsEmpty())
             {
                 _ = await context.Database.EnsureDeletedAsync();
                 await context.Database.MigrateAsync();
                 return false;
             }
-            catch (Exception exception)
-            {
-                Log.Error(exception);
-                throw;
-            }
+        }
+        catch (Exception exception)
+        {
+            Log.Error(exception);
+            return true;
         }
 
         Log.Error(Strings.Migration.MySqlNotEmpty);
@@ -39,35 +40,45 @@ public class DatabaseTypeMigrationService
     public async Task<bool> TryMigrate<TContext>(DatabaseContextOptions fromOptions, DatabaseContextOptions toOptions)
         where TContext : IntersectDbContext<TContext>
     {
-        if (await CheckIfNotEmpty<TContext>(toOptions))
+        try
         {
-            return false;
+            if (await CheckIfNotEmpty<TContext>(toOptions))
+            {
+                return false;
+            }
+
+            var dbSetInfos = typeof(TContext).GetProperties()
+                .Where(propertyInfo => propertyInfo.PropertyType.Extends(typeof(DbSet<>)));
+
+            foreach (var dbSetInfo in dbSetInfos)
+            {
+                Log.Info(Strings.Migration.MigratingDbSet.ToString(dbSetInfo.Name));
+
+                try
+                {
+                    var dbSetContainedType = dbSetInfo.PropertyType.FindGenericTypeParameters(typeof(DbSet<>)).First();
+                    var migrateDbSetMethod =
+                        MethodInfoMigrateDbSet.MakeGenericMethod(typeof(TContext), dbSetContainedType);
+                    var migrateTask = migrateDbSetMethod.Invoke(
+                        null,
+                        new object[] { fromOptions, toOptions, dbSetInfo }
+                    ) as Task;
+                    await (migrateTask ?? throw new InvalidOperationException());
+                }
+                catch (Exception exception)
+                {
+                    Log.Error(exception);
+                    throw;
+                }
+            }
+
+            return true;
         }
-
-        var dbSetInfos = typeof(TContext)
-            .GetProperties()
-            .Where(propertyInfo => propertyInfo.PropertyType.Extends(typeof(DbSet<>)));
-
-        foreach (var dbSetInfo in dbSetInfos)
+        catch (Exception exception)
         {
-            Log.Info(Strings.Migration.MigratingDbSet.ToString(dbSetInfo.Name));
-
-            try
-            {
-                var dbSetContainedType = dbSetInfo.PropertyType.FindGenericTypeParameters(typeof(DbSet<>)).First();
-                var migrateDbSetMethod = MethodInfoMigrateDbSet.MakeGenericMethod(typeof(TContext), dbSetContainedType);
-                var migrateTask =
-                    migrateDbSetMethod.Invoke(null, new object[] { fromOptions, toOptions, dbSetInfo }) as Task;
-                await (migrateTask ?? throw new InvalidOperationException());
-            }
-            catch (Exception exception)
-            {
-                Log.Error(exception);
-                throw;
-            }
+            Log.Error(exception);
+            throw;
         }
-
-        return true;
     }
 
 

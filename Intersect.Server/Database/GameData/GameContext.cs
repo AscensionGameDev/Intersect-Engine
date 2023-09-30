@@ -1,3 +1,4 @@
+using Intersect.Config;
 using Intersect.Extensions;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Crafting;
@@ -16,6 +17,8 @@ namespace Intersect.Server.Database.GameData
     {
         /// <inheritdoc />
         public MySqlGameContext(DatabaseContextOptions databaseContextOptions) : base(databaseContextOptions) { }
+
+        public override DatabaseType DatabaseType => DatabaseType.MySql;
     }
 
     /// <summary>
@@ -25,6 +28,8 @@ namespace Intersect.Server.Database.GameData
     {
         /// <inheritdoc />
         public SqliteGameContext(DatabaseContextOptions databaseContextOptions) : base(databaseContextOptions) { }
+
+        public override DatabaseType DatabaseType => DatabaseType.Sqlite;
     }
 
     /// <summary>
