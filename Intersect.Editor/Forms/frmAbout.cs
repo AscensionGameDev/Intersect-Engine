@@ -12,7 +12,7 @@ namespace Intersect.Editor.Forms
         public FrmAbout()
         {
             InitializeComponent();
-            Icon = System.Drawing.Icon.ExtractAssociatedIcon(System.Reflection.Assembly.GetExecutingAssembly().Location);
+            Icon = Program.Icon;
         }
 
         private void lblWebsite_Click(object sender, EventArgs e)

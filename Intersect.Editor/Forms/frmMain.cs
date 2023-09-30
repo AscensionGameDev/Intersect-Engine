@@ -88,7 +88,7 @@ namespace Intersect.Editor.Forms
         public FrmMain()
         {
             InitializeComponent();
-            Icon = System.Drawing.Icon.ExtractAssociatedIcon(System.Reflection.Assembly.GetExecutingAssembly().Location);
+            Icon = Program.Icon;
 
             dockLeft.Theme = new VS2015DarkTheme();
             Globals.MapListWindow = new FrmMapList();

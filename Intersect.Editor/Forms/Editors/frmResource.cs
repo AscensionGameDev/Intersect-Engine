@@ -47,7 +47,7 @@ namespace Intersect.Editor.Forms.Editors
         {
             ApplyHooks();
             InitializeComponent();
-            Icon = System.Drawing.Icon.ExtractAssociatedIcon(System.Reflection.Assembly.GetExecutingAssembly().Location);
+            Icon = Program.Icon;
 
             cmbToolType.Items.Clear();
             cmbToolType.Items.Add(Strings.General.None);

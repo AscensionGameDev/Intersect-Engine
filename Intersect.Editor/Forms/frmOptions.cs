@@ -13,7 +13,7 @@ namespace Intersect.Editor.Forms
         public FrmOptions()
         {
             InitializeComponent();
-            Icon = System.Drawing.Icon.ExtractAssociatedIcon(System.Reflection.Assembly.GetExecutingAssembly().Location);
+            Icon = Program.Icon;
 
             InitForm();
             InitLocalization();

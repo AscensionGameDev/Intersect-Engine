@@ -35,7 +35,7 @@ namespace Intersect.Editor.Forms
         public FrmWarpSelection()
         {
             InitializeComponent();
-            Icon = Icon.ExtractAssociatedIcon(Assembly.GetExecutingAssembly().Location);
+            Icon = Program.Icon;
 
             InitLocalization();
             mapTreeList1.UpdateMapList(mCurrentMapId);

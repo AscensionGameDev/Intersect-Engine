@@ -34,7 +34,7 @@ namespace Intersect.Editor.Forms.Editors
         {
             ApplyHooks();
             InitializeComponent();
-            Icon = System.Drawing.Icon.ExtractAssociatedIcon(System.Reflection.Assembly.GetExecutingAssembly().Location);
+            Icon = Program.Icon;
 
             lstGameObjects.LostFocus += itemList_FocusChanged;
             lstGameObjects.GotFocus += itemList_FocusChanged;

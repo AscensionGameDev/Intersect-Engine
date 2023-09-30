@@ -19,7 +19,7 @@ namespace Intersect.Editor.Forms.DockingElements
         public FrmMapProperties()
         {
             InitializeComponent();
-            Icon = System.Drawing.Icon.ExtractAssociatedIcon(System.Reflection.Assembly.GetExecutingAssembly().Location);
+            Icon = Program.Icon;
 
             UpdatePropertiesDelegate = Update;
         }

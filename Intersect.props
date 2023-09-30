@@ -26,5 +26,6 @@
 
   <ItemGroup>
     <None Include="$(IntersectRepoPath)\assets\intersect-logo-qu.png" Pack="true" PackagePath="\" />
+    <EmbeddedResource Include="$(IntersectRepoPath)\assets\intersect-logo-qu.ico" Pack="true" PackagePath="\" />
   </ItemGroup>
 </Project>

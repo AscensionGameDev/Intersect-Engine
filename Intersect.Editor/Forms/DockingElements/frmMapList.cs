@@ -19,7 +19,7 @@ namespace Intersect.Editor.Forms.DockingElements
         public FrmMapList()
         {
             InitializeComponent();
-            Icon = System.Drawing.Icon.ExtractAssociatedIcon(System.Reflection.Assembly.GetExecutingAssembly().Location);
+            Icon = Program.Icon;
 
             //Enable Editting of the list
             mapTreeList.EnableEditing(contextMenuStrip1);
