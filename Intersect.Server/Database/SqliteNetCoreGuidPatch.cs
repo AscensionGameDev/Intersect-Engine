@@ -31,13 +31,13 @@ public sealed class SqliteNetCoreGuidPatch
         var dbConnection = context.Database.GetDbConnection();
         var queryCompiler = context.DatabaseType.CreateQueryCompiler();
         var queryFactory = new QueryFactory(dbConnection, queryCompiler);
-        var hasNet6MigrationsApplied = queryFactory
+        var hasNetCoreMigrationsApplied = queryFactory
             .Query("__EFMigrationsHistory")
-            .Select("MigrationId", "ProductVersion")
-            .WhereStarts("ProductVersion", "6")
+            .Select("MigrationId")
+            .Where("MigrationId", "20230930000000_Net7Upgrade")
             .AsCount()
             .First<int>();
-        return hasNet6MigrationsApplied < 1;
+        return hasNetCoreMigrationsApplied < 1;
     }
 
     public static void ApplyTo<TContext>(TContext context)
