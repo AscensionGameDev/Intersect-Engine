@@ -1,7 +1,5 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 using Intersect.GameObjects;
-using Intersect.GameObjects.Switches_and_Variables;
 using Intersect.Server.Entities;
 
 using Newtonsoft.Json;

@@ -2,9 +2,6 @@
 
 using Microsoft.EntityFrameworkCore;
 
-using System;
-using System.Linq;
-
 namespace Intersect.Server.Database.Logging.Seed
 {
     internal partial class SeedTrades : SeedData<TradeHistory>

@@ -1,6 +1,4 @@
-﻿using System;
-
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 
 namespace Intersect.Server.Database
 {

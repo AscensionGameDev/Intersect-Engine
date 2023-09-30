@@ -1,15 +1,13 @@
-﻿using Intersect.Enums;
-using Intersect.Server.Entities;
+﻿using Intersect.Server.Entities;
 using Newtonsoft.Json;
-using System;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Intersect.Server.Database.Logging.Entities
 {
     public partial class TradeHistory
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public Guid Id { get; private set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public Guid Id { get; private set; } = Guid.NewGuid();
 
         public Guid TradeId { get; set; }
 
@@ -101,10 +99,8 @@ namespace Intersect.Server.Database.Logging.Entities
 
         private static void Log(TradeHistory tradeHistory)
         {
-            using (var logging = DbInterface.LoggingContext)
-            {
-                logging.TradeHistory.Add(tradeHistory);
-            }
+            using var loggingContext = DbInterface.CreateLoggingContext(readOnly: false);
+            _ = loggingContext.TradeHistory.Add(tradeHistory);
         }
     }
 }

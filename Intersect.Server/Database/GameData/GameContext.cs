@@ -1,9 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Data.Common;
-using System.Linq;
-
-using Intersect.Config;
 using Intersect.Extensions;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Crafting;
@@ -11,35 +5,35 @@ using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps.MapList;
 using Intersect.Server.Database.GameData.Migrations;
 using Intersect.Server.Maps;
-
-using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Internal;
 
 namespace Intersect.Server.Database.GameData
 {
-
-    public partial class GameContext : IntersectDbContext<GameContext>, IGameContext
+    /// <summary>
+    /// MySQL/MariaDB-specific implementation of <see cref="GameContext"/>
+    /// </summary>
+    public sealed class MySqlGameContext : GameContext, IMySqlDbContext
     {
+        /// <inheritdoc />
+        public MySqlGameContext(DatabaseContextOptions databaseContextOptions) : base(databaseContextOptions) { }
+    }
 
-        public GameContext() : base(DefaultConnectionStringBuilder)
-        {
+    /// <summary>
+    /// SQLite-specific implementation of <see cref="GameContext"/>
+    /// </summary>
+    public sealed class SqliteGameContext : GameContext, ISqliteDbContext
+    {
+        /// <inheritdoc />
+        public SqliteGameContext(DatabaseContextOptions databaseContextOptions) : base(databaseContextOptions) { }
+    }
 
-        }
-
-        public GameContext(
-            DbConnectionStringBuilder connectionStringBuilder,
-            DatabaseOptions.DatabaseType databaseType,
-            bool readOnly = false,
-            Intersect.Logging.Logger logger = null,
-            Intersect.Logging.LogLevel logLevel = Intersect.Logging.LogLevel.None
-        ) : base(connectionStringBuilder, databaseType, logger, logLevel, readOnly, false)
-        {
-
-        }
-
-        public static DbConnectionStringBuilder DefaultConnectionStringBuilder =>
-            new SqliteConnectionStringBuilder(@"Data Source=resources/gamedata.db");
+    /// <summary>
+    /// <see cref="DbContext"/> implementation that contains static game content descriptors.
+    /// </summary>
+    public abstract partial class GameContext : IntersectDbContext<GameContext>, IGameContext
+    {
+        /// <inheritdoc />
+        protected GameContext(DatabaseContextOptions databaseContextOptions) : base(databaseContextOptions) { }
 
         //Animations
         public DbSet<AnimationBase> Animations { get; set; }

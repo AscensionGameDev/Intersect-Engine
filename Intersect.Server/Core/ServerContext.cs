@@ -74,6 +74,10 @@ namespace Intersect.Server.Core
 
         #region Dispose
 
+        internal int ExitCode { get; set; }
+
+        internal bool DisposeWithoutExiting { get; set; }
+
         protected override void Dispose(bool disposing)
         {
             var stopwatch = new Stopwatch();
@@ -179,7 +183,21 @@ namespace Intersect.Server.Core
             base.Dispose(disposing);
             Log.Info("Finished disposing server context." + $" ({stopwatch.ElapsedMilliseconds}ms)");
             Console.WriteLine(Strings.Commands.exited);
-            System.Environment.Exit(-1);
+
+            if (!DisposeWithoutExiting)
+            {
+                Exit();
+            }
+        }
+
+        internal void Exit(int? exitCode = null)
+        {
+            Environment.Exit(exitCode ?? ExitCode);
+        }
+
+        internal static void Exit(int exitCode)
+        {
+            Environment.Exit(exitCode);
         }
 
         #endregion

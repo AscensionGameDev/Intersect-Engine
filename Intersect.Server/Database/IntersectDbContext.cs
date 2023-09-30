@@ -1,353 +1,207 @@
-using Intersect.Config;
-
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
-using Microsoft.Extensions.Logging;
-
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
-using System.Linq;
-using System.Reflection;
-using System.Threading;
-using System.Threading.Tasks;
+using Intersect.Config;
+using Intersect.Server.Database.Converters;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 
-namespace Intersect.Server.Database
+namespace Intersect.Server.Database;
+
+/// <summary>
+/// Abstract DbContext class for all Intersect database contexts.
+/// </summary>
+/// <inheritdoc cref="DbContext" />
+/// <inheritdoc cref="ISeedableContext" />
+public abstract partial class IntersectDbContext<TDbContext> : DbContext, IDbContext, ISeedableContext
+    where TDbContext : IntersectDbContext<TDbContext>
 {
-    /// <summary>
-    /// Abstract DbContext class for all Intersect database contexts.
-    /// </summary>
-    /// <inheritdoc cref="DbContext" />
-    /// <inheritdoc cref="ISeedableContext" />
-    public abstract partial class IntersectDbContext<T> : DbContext, ISeedableContext where T : IntersectDbContext<T>
+    public DatabaseContextOptions ContextOptions { get; }
+
+    public DbConnectionStringBuilder ConnectionStringBuilder => ContextOptions.ConnectionStringBuilder;
+
+    public DatabaseType DatabaseType { get; }
+
+    public bool IsReadOnly => ContextOptions.ReadOnly;
+
+    public IReadOnlyCollection<string> AllMigrations =>
+        (Database?.GetMigrations()?.ToList() ?? new())
+        .AsReadOnly();
+
+    public IReadOnlyCollection<string> AppliedMigrations =>
+        (Database?.GetAppliedMigrations()?.ToList() ?? new())
+        .AsReadOnly();
+
+    public IReadOnlyCollection<string> PendingMigrations =>
+        (Database?.GetPendingMigrations()?.ToList() ?? new())
+        .AsReadOnly();
+
+    public DbSet<TType> GetDbSet<TType>() where TType : class
     {
-        private static readonly IDictionary<Type, ConstructorInfo> constructorCache =
-            new ConcurrentDictionary<Type, ConstructorInfo>();
+        var searchType = typeof(DbSet<TType>);
+        var property = GetType()
+            .GetProperties()
+            .FirstOrDefault(propertyInfo => searchType == propertyInfo.PropertyType);
 
-        private static DbConnectionStringBuilder configuredConnectionStringBuilder;
+        return property?.GetValue(this) as DbSet<TType>;
+    }
 
-        private static DatabaseOptions.DatabaseType configuredDatabaseType = DatabaseOptions.DatabaseType.SQLite;
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        base.OnConfiguring(optionsBuilder);
 
-        private static ILoggerFactory loggerFactory;
+        var queryTrackingBehavior = ContextOptions.QueryTrackingBehavior ??
+                                    (ContextOptions.ReadOnly && !ContextOptions.ExplicitLoad
+                                        ? QueryTrackingBehavior.NoTracking
+                                        : QueryTrackingBehavior.TrackAll);
+        _ = optionsBuilder
+            .EnableDetailedErrors(ContextOptions.EnableDetailedErrors)
+            .EnableSensitiveDataLogging(ContextOptions.EnableSensitiveDataLogging)
+            .ReplaceService<IModelCacheKeyFactory, IntersectModelCacheKeyFactory>()
+            .UseLoggerFactory(ContextOptions.LoggerFactory)
+            .UseQueryTrackingBehavior(queryTrackingBehavior);
 
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="connectionStringBuilder"></param>
-        /// <param name="databaseType"></param>
-        /// <inheritdoc />
-        protected IntersectDbContext(
-            DbConnectionStringBuilder connectionStringBuilder,
-            DatabaseOptions.DatabaseType databaseType = DatabaseOptions.DatabaseType.SQLite,
-            Intersect.Logging.Logger dbLogger = null,
-            Intersect.Logging.LogLevel logLevel = Intersect.Logging.LogLevel.None,
-            bool asReadOnly = false,
-            bool explicitLoad = false,
-            bool autoDetectChanges = true
-        )
+        var connectionString = ConnectionStringBuilder.ConnectionString;
+        switch (DatabaseType)
         {
-            ConnectionStringBuilder = connectionStringBuilder;
-            DatabaseType = databaseType;
+            case DatabaseType.SQLite:
+                optionsBuilder.UseSqlite(connectionString);
+                break;
 
-            //Translate Intersect.Logging.LogLevel into LoggerFactory Log Level
-            if (loggerFactory == null && dbLogger != null && logLevel > Intersect.Logging.LogLevel.None)
-            {
-                var efLogLevel = LogLevel.None;
-                switch (logLevel)
-                {
-                    case Intersect.Logging.LogLevel.None:
-                        break;
-
-                    case Intersect.Logging.LogLevel.Error:
-                        efLogLevel = LogLevel.Error;
-
-                        break;
-
-                    case Intersect.Logging.LogLevel.Warn:
-                        efLogLevel = LogLevel.Warning;
-
-                        break;
-
-                    case Intersect.Logging.LogLevel.Info:
-                        efLogLevel = LogLevel.Information;
-
-                        break;
-
-                    case Intersect.Logging.LogLevel.Trace:
-                        efLogLevel = LogLevel.Trace;
-
-                        break;
-
-                    case Intersect.Logging.LogLevel.Verbose:
-                        efLogLevel = LogLevel.Trace;
-
-                        break;
-
-                    case Intersect.Logging.LogLevel.Debug:
-                        efLogLevel = LogLevel.Debug;
-
-                        break;
-
-                    case Intersect.Logging.LogLevel.Diagnostic:
-                        efLogLevel = LogLevel.Trace;
-
-                        break;
-
-                    case Intersect.Logging.LogLevel.All:
-                        efLogLevel = LogLevel.Trace;
-
-                        break;
-                }
-
-                loggerFactory = LoggerFactory.Create(
-                    builder =>
-                    {
-                        builder.AddFilter((level) => level >= efLogLevel).AddProvider(new DbLoggerProvider(dbLogger));
-                    }
+            case DatabaseType.MySQL:
+                optionsBuilder.UseMySql(
+                    connectionString,
+                    ServerVersion.AutoDetect(connectionString),
+                    options => options
+                        .EnableRetryOnFailure(
+                            5,
+                            TimeSpan.FromSeconds(12),
+                            default
+                        )
                 );
-            }
+                break;
 
-            ReadOnly = asReadOnly;
+            default:
+                throw new IndexOutOfRangeException($"Invalid DatabaseType: {DatabaseType}");
+        }
+    }
 
-            ChangeTracker.AutoDetectChangesEnabled = autoDetectChanges || ReadOnly;
+    protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
+    {
+        base.ConfigureConventions(configurationBuilder);
 
-            if (ReadOnly)
-            {
-                ChangeTracker.LazyLoadingEnabled = false;
-                if (!explicitLoad)
-                {
-                    ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
-                }
-            }
+        switch (DatabaseType)
+        {
+            case DatabaseType.SQLite:
+                configurationBuilder
+                    .Properties<Guid>()
+                    .HaveConversion<GuidBinaryConverter>();
+                break;
+        }
+    }
+
+    /// <summary>
+    /// Checks if the database is empty by checking if there are any tables.
+    /// </summary>
+    /// <returns>if the database is empty</returns>
+    public bool IsEmpty()
+    {
+        var connection = Database?.GetDbConnection();
+        if (connection == null)
+        {
+            throw new InvalidOperationException("Cannot get connection to the database.");
         }
 
-        private static ILoggerFactory MsExtLoggerFactory { get; } =
-            LoggerFactory.Create(builder => builder.AddConsole());
-
-        /// <summary>
-        ///
-        /// </summary>
-        public DatabaseOptions.DatabaseType DatabaseType { get; }
-
-        /// <summary>
-        ///
-        /// </summary>
-        public bool ReadOnly { get; }
-
-        /// <summary>
-        ///
-        /// </summary>
-        public DbConnectionStringBuilder ConnectionStringBuilder { get; }
-
-        public ICollection<string> PendingMigrations =>
-            Database?.GetPendingMigrations()?.ToList() ?? new List<string>();
-
-        public DbSet<TType> GetDbSet<TType>() where TType : class
+        using (var command = connection.CreateCommand())
         {
-            var searchType = typeof(DbSet<TType>);
-            var property = GetType()
-                .GetProperties()
-                .FirstOrDefault(propertyInfo => searchType == propertyInfo.PropertyType);
-
-            return property?.GetValue(this) as DbSet<TType>;
-        }
-
-        public static void Configure(
-            DatabaseOptions.DatabaseType databaseType = DatabaseOptions.DatabaseType.SQLite,
-            DbConnectionStringBuilder connectionStringBuilder = null
-        )
-        {
-            configuredDatabaseType = databaseType;
-            configuredConnectionStringBuilder = connectionStringBuilder;
-        }
-
-        public static T Create(
-            DatabaseOptions.DatabaseType? databaseType = null,
-            DbConnectionStringBuilder connectionStringBuilder = null
-        )
-        {
-            var type = typeof(T);
-            if (!constructorCache.TryGetValue(type, out var constructorInfo))
-            {
-                constructorInfo = type.GetConstructor(
-                    new[] { typeof(DbConnectionStringBuilder), typeof(DatabaseOptions.DatabaseType) }
-                );
-
-                constructorCache[type] = constructorInfo;
-            }
-
-            if (constructorInfo == null)
-            {
-                throw new InvalidOperationException(@"Missing IntersectDbContext constructor.");
-            }
-
-            if (!(constructorInfo.Invoke(
-                new object[]
-                {
-                    connectionStringBuilder ?? configuredConnectionStringBuilder,
-                    databaseType ?? configuredDatabaseType
-                }
-            ) is T contextInstance))
-            {
-                throw new InvalidOperationException();
-            }
-
-            return contextInstance;
-        }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            base.OnConfiguring(optionsBuilder);
-
-            var connectionString = ConnectionStringBuilder.ConnectionString;
-
-            //optionsBuilder.UseLoggerFactory(MsExtLoggerFactory);
-
-            optionsBuilder.EnableSensitiveDataLogging(true);
             switch (DatabaseType)
             {
-                case DatabaseOptions.DatabaseType.SQLite:
-                    //optionsBuilder.UseLoggerFactory(loggerFactory);
-                    optionsBuilder.UseSqlite(connectionString).UseQueryTrackingBehavior(ReadOnly ? QueryTrackingBehavior.NoTracking : QueryTrackingBehavior.TrackAll);
+                case DatabaseType.SQLite:
+                    command.CommandText = "SELECT name FROM sqlite_master WHERE type='table';";
+
                     break;
 
-                case DatabaseOptions.DatabaseType.MySQL:
-                    optionsBuilder.UseLoggerFactory(loggerFactory).UseMySql(
-                        connectionString,
-                        ServerVersion.AutoDetect(connectionString),
-                        options => options.EnableRetryOnFailure(5, TimeSpan.FromSeconds(12), null)).UseQueryTrackingBehavior(ReadOnly ? QueryTrackingBehavior.NoTracking : QueryTrackingBehavior.TrackAll
-                    );
+                case DatabaseType.MySQL:
+                    command.CommandText = "show tables;";
+
                     break;
 
                 default:
                     throw new ArgumentOutOfRangeException(nameof(DatabaseType));
             }
-        }
 
-        protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
-        {
-            base.ConfigureConventions(configurationBuilder);
+            command.CommandType = CommandType.Text;
 
-            switch (DatabaseType)
+            Database.OpenConnection();
+
+            using (var result = command.ExecuteReader())
             {
-                case DatabaseOptions.DatabaseType.SQLite:
-                    configurationBuilder
-                        .Properties<Guid>()
-                        .HaveConversion<GuidBinaryConverter>();
-                    break;
+                return !(result?.HasRows ?? false);
             }
         }
+    }
 
-        /// <summary>
-        /// Checks if the database is empty by checking if there are any tables.
-        /// </summary>
-        /// <returns>if the database is empty</returns>
-        public bool IsEmpty()
+    public virtual void MigrationsProcessed(string[] migrations) { }
+
+    public virtual void Seed() { }
+
+    public override int SaveChanges()
+    {
+        if (IsReadOnly)
+            throw new InvalidOperationException("Cannot save changes on a read only context!");
+
+        return base.SaveChanges();
+    }
+
+    public override int SaveChanges(bool acceptAllChangesOnSuccess)
+    {
+        if (IsReadOnly)
+            throw new InvalidOperationException("Cannot save changes on a read only context!");
+
+        return base.SaveChanges(acceptAllChangesOnSuccess);
+    }
+
+    public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess,
+        CancellationToken cancellationToken = default)
+    {
+        if (IsReadOnly)
+            throw new InvalidOperationException("Cannot save changes on a read only context!");
+        return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+    }
+
+    public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        if (IsReadOnly)
+            throw new InvalidOperationException("Cannot save changes on a read only context!");
+
+        return base.SaveChangesAsync(cancellationToken);
+    }
+
+    protected virtual void StopTracking(EntityEntry entityEntry)
+    {
+        entityEntry.State = EntityState.Detached;
+    }
+
+    public void StopTrackingExcept<TEntity>(params TEntity[] entities)
+    {
+        foreach (var entityEntry in ChangeTracker.Entries().ToArray())
         {
-            var connection = Database?.GetDbConnection();
-            if (connection == null)
+            if (entityEntry.State == EntityState.Detached)
             {
-                throw new InvalidOperationException("Cannot get connection to the database.");
+                continue;
             }
 
-            using (var command = connection.CreateCommand())
+            if (entityEntry.Entity is not TEntity other)
             {
-                switch (DatabaseType)
-                {
-                    case DatabaseOptions.DatabaseType.SQLite:
-                        command.CommandText = "SELECT name FROM sqlite_master WHERE type='table';";
-
-                        break;
-
-                    case DatabaseOptions.DatabaseType.MySQL:
-                        command.CommandText = "show tables;";
-
-                        break;
-
-                    default:
-                        throw new ArgumentOutOfRangeException(nameof(DatabaseType));
-                }
-
-                command.CommandType = CommandType.Text;
-
-                Database.OpenConnection();
-
-                using (var result = command.ExecuteReader())
-                {
-                    return !(result?.HasRows ?? false);
-                }
-            }
-        }
-
-        public virtual void MigrationsProcessed(string[] migrations) { }
-
-        public override int SaveChanges()
-        {
-            if (ReadOnly)
-                throw new InvalidOperationException("Cannot save changes on a read only context!");
-
-            return base.SaveChanges();
-        }
-
-        public override int SaveChanges(bool acceptAllChangesOnSuccess)
-        {
-            if (ReadOnly)
-                throw new InvalidOperationException("Cannot save changes on a read only context!");
-
-            return base.SaveChanges(acceptAllChangesOnSuccess);
-        }
-
-        public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
-        {
-            if (ReadOnly)
-                throw new InvalidOperationException("Cannot save changes on a read only context!");
-            return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
-        }
-
-        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
-        {
-            if (ReadOnly)
-                throw new InvalidOperationException("Cannot save changes on a read only context!");
-
-            return base.SaveChangesAsync(cancellationToken);
-        }
-
-        public void DetachExcept<TEntity>(Func<TEntity, bool> predicate)
-        {
-            DetachExcept<TEntity>(entry => entry.Entity is TEntity entity && predicate(entity));
-        }
-
-        public void DetachExcept<TEntity>(Func<EntityEntry, bool> predicate)
-        {
-            if (predicate == default)
-            {
-                throw new ArgumentNullException(nameof(predicate));
+                continue;
             }
 
-            var entriesToDetach = ChangeTracker.Entries().Where(entry => entry.State != EntityState.Detached && entry.State != EntityState.Unchanged).Where(predicate).ToList();
-            Detach(entriesToDetach);
-        }
-
-        public void DetachExcept<TEntity>(params TEntity[] entities) => DetachExcept(entities.AsEnumerable());
-
-        public void DetachExcept<TEntity>(IEnumerable<TEntity> entities)
-        {
-            DetachExcept<TEntity>(entry => entry.Entity is TEntity other && !entities.Contains(other));
-        }
-
-        public void Detach(IEnumerable<EntityEntry> entries)
-        {
-            if (entries == default)
+            if (entities.Any(entity => entity.Equals(other)))
             {
-                throw new ArgumentNullException(nameof(entries));
+                continue;
             }
 
-            foreach (var entry in entries)
-            {
-                entry.State = EntityState.Detached;
-            }
+            StopTracking(entityEntry);
         }
     }
 }

@@ -1,15 +1,13 @@
-﻿using Intersect.Enums;
-using Intersect.Server.Entities;
+﻿using Intersect.Server.Entities;
 using Newtonsoft.Json;
-using System;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Intersect.Server.Database.Logging.Entities
 {
     public partial class GuildHistory
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public Guid Id { get; private set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public Guid Id { get; private set; } = Guid.NewGuid();
 
         public Guid GuildId { get; private set; }
 
@@ -104,12 +102,10 @@ namespace Intersect.Server.Database.Logging.Entities
             }
         }
 
-        private static void Log(GuildHistory guildActivity)
+        private static void Log(GuildHistory guildHistory)
         {
-            using (var logging = DbInterface.LoggingContext)
-            {
-                logging.GuildHistory.Add(guildActivity);
-            }
+            using var loggingContext = DbInterface.CreateLoggingContext(readOnly: false);
+            _ = loggingContext.GuildHistory.Add(guildHistory);
         }
     }
 }

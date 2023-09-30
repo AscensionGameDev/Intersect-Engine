@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Intersect.Server.Database.PlayerData.Players
+﻿namespace Intersect.Server.Database.PlayerData.Players
 {
 
     public static partial class SlotHelper

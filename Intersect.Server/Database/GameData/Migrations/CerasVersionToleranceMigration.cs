@@ -2,16 +2,10 @@
 using Intersect.Enums;
 using Intersect.GameObjects.Maps;
 using Intersect.Network;
-using JetBrains.Annotations;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using MySqlConnector;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using MapAttribute = Intersect.Enums.MapAttribute;
 
 namespace Intersect.Server.Database.GameData.Migrations

@@ -18,9 +18,7 @@ namespace Intersect.Models
 
         private string mBackup;
 
-        protected DatabaseObject() : this(Guid.Empty)
-        {
-        }
+        protected DatabaseObject() { }
 
         [JsonConstructor]
         protected DatabaseObject(Guid guid)
@@ -39,8 +37,8 @@ namespace Intersect.Models
 
         public static DatabaseObjectLookup Lookup => LookupUtils.GetLookup(typeof(TObject));
 
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public Guid Id { get; protected set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public Guid Id { get; protected set; } = Guid.NewGuid();
 
         public long TimeCreated { get; set; }
 

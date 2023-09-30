@@ -1,8 +1,7 @@
-using Intersect.Reflection;
-
 using System;
 using System.Linq;
 using System.Reflection;
+using Intersect.Reflection;
 
 namespace Intersect.Network
 {

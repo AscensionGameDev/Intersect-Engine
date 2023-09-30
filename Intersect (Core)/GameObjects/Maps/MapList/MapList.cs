@@ -11,8 +11,8 @@ namespace Intersect.GameObjects.Maps.MapList
     public partial class MapList
     {
         //So EF will save this :P
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public Guid Id { get; protected set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public Guid Id { get; protected set; } = Guid.NewGuid();
 
         [NotMapped]
         public List<MapListItem> Items { get; set; } = new List<MapListItem>();

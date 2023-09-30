@@ -1,5 +1,4 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
 using Intersect.Server.Entities;
 
@@ -23,9 +22,9 @@ namespace Intersect.Server.Database.PlayerData.Players
             QuestId = id;
         }
 
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         [JsonIgnore]
-        public Guid Id { get; private set; }
+        public Guid Id { get; private set; } = Guid.NewGuid();
 
         [JsonIgnore]
         public Guid QuestId { get; private set; }

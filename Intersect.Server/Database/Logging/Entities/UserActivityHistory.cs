@@ -1,12 +1,12 @@
 ﻿using Newtonsoft.Json;
-using System;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Intersect.Server.Database.Logging.Entities
 {
     public partial class UserActivityHistory
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)] public Guid Id { get; private set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public Guid Id { get; private set; } = Guid.NewGuid();
 
         public DateTime TimeStamp { get; set; }
 
@@ -127,12 +127,10 @@ namespace Intersect.Server.Database.Logging.Entities
             }
         }
 
-        private static void Log(UserActivityHistory activity)
+        private static void Log(UserActivityHistory userActivityHistory)
         {
-            using (var logging = DbInterface.LoggingContext)
-            {
-                logging.UserActivityHistory.Add(activity);
-            }
+            using var loggingContext = DbInterface.CreateLoggingContext(readOnly: false);
+            _ = loggingContext.UserActivityHistory.Add(userActivityHistory);
         }
     }
 }

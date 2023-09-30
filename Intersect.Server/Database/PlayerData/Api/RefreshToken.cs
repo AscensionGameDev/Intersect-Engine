@@ -1,12 +1,6 @@
-using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using Intersect.Logging;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -19,10 +13,10 @@ namespace Intersect.Server.Database.PlayerData.Api
     public partial class RefreshToken
     {
 
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         [Column(Order = 0)]
         [Key]
-        public Guid Id { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
 
         [Required, ForeignKey(nameof(User))]
         public Guid UserId { get; set; }
@@ -87,7 +81,6 @@ namespace Intersect.Server.Database.PlayerData.Api
                     }
 
                     _ = context.RefreshTokens.Add(token);
-                    context.DetachExcept(token);
                     context.ChangeTracker.DetectChanges();
 
                     if (tokensToRemove.Count > 0)
@@ -320,7 +313,6 @@ namespace Intersect.Server.Database.PlayerData.Api
                 using (var context = DbInterface.CreatePlayerContext(readOnly: false))
                 {
                     context.RefreshTokens.RemoveRange(unblockedTokens);
-                    context.DetachExcept(unblockedTokens);
                     _ = await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
                 }
 
@@ -345,7 +337,6 @@ namespace Intersect.Server.Database.PlayerData.Api
                 try
                 {
                     context.RefreshTokens.RemoveRange(context.RefreshTokens.Where(token => token.UserId == userId));
-                    context.DetachExcept<RefreshToken>(entity => entity.UserId == userId);
                     _ = await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
                     return true;
                 }
@@ -367,7 +358,6 @@ namespace Intersect.Server.Database.PlayerData.Api
                     var tokensToRemove = context.RefreshTokens.Where(queryToken => queryToken.Expires < DateTime.UtcNow).Take(pruneCount).ToArray();
                     var unblockedTokens = tokensToRemove.Where(token => _pendingChanges.TryAdd(token.Id, EntityState.Deleted)).ToArray();
                     context.RefreshTokens.RemoveRange(unblockedTokens);
-                    context.DetachExcept(unblockedTokens);
                     _ = await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
                     foreach (var token in unblockedTokens)
                     {

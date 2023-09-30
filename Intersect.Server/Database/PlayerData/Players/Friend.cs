@@ -1,5 +1,4 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
 using Intersect.Server.Entities;
 
@@ -36,8 +35,8 @@ namespace Intersect.Server.Database.PlayerData.Players
         // one that Entity Framework expects/creates under the covers.
         private Guid JsonTargetId => Target?.Id ?? Guid.Empty;
 
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public Guid Id { get; private set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public Guid Id { get; private set; } = Guid.NewGuid();
 
         [JsonIgnore]
         public virtual Player Owner { get; private set; }

@@ -1,9 +1,5 @@
-using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Threading;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
@@ -27,9 +23,8 @@ namespace Intersect.Server.Entities
 {
     public abstract partial class Entity : IDisposable
     {
-
         //Instance Values
-        private Guid _id;
+        private Guid _id = Guid.NewGuid();
 
         public Guid MapInstanceId = Guid.Empty;
 
@@ -157,7 +152,7 @@ namespace Intersect.Server.Entities
         [NotMapped]
         public Color NameColor { get; set; }
 
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         [Column(Order = 0)]
         public Guid Id { get => _id; set => _id = value; }
 

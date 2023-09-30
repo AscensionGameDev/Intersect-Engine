@@ -1,6 +1,4 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-
+﻿using Intersect.Config;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace Intersect.Server.Database
@@ -8,6 +6,8 @@ namespace Intersect.Server.Database
     public interface IDbContext
     {
         DatabaseFacade Database { get; }
+
+        DatabaseType DatabaseType { get; }
 
         int SaveChanges();
 

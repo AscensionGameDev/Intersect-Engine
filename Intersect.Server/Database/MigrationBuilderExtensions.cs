@@ -1,7 +1,4 @@
-﻿using System;
-using System.Linq;
-
-using Intersect.Config;
+﻿using Intersect.Config;
 
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Migrations.Operations;
@@ -13,17 +10,17 @@ namespace Intersect.Server.Database
     public static partial class MigrationBuilderExtensions
     {
 
-        public static DatabaseOptions.DatabaseType GetDatabaseType(this MigrationBuilder migrationBuilder)
+        public static DatabaseType GetDatabaseType(this MigrationBuilder migrationBuilder)
         {
             switch (migrationBuilder.ActiveProvider)
             {
                 default:
                     if (migrationBuilder.ActiveProvider?.ToLowerInvariant().Contains("sqlite") ?? false)
                     {
-                        return DatabaseOptions.DatabaseType.SQLite;
+                        return DatabaseType.SQLite;
                     }
 
-                    return DatabaseOptions.DatabaseType.MySQL;
+                    return DatabaseType.MySQL;
             }
         }
 
@@ -37,7 +34,7 @@ namespace Intersect.Server.Database
         /// <see cref="MigrationBuilder.Sql(string, bool)"/>
         public static OperationBuilder<SqlOperation> Sql(
             this MigrationBuilder migrationBuilder,
-            params (DatabaseOptions.DatabaseType DatabaseType, string Sql)[] conditionalQueries
+            params (DatabaseType DatabaseType, string Sql)[] conditionalQueries
         )
         {
             return migrationBuilder.Sql(
@@ -56,7 +53,7 @@ namespace Intersect.Server.Database
         /// <see cref="MigrationBuilder.Sql(string, bool)"/>
         public static OperationBuilder<SqlOperation> Sql(
             this MigrationBuilder migrationBuilder,
-            params (DatabaseOptions.DatabaseType DatabaseType, string Sql, bool SuppressTransaction)[]
+            params (DatabaseType DatabaseType, string Sql, bool SuppressTransaction)[]
                 conditionalQueries
         )
         {
