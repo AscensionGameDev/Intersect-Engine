@@ -1,5 +1,4 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
 using Intersect.Server.Entities;
 
@@ -23,8 +22,8 @@ namespace Intersect.Server.Database.PlayerData.Players
             SwitchId = id;
         }
 
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public Guid Id { get; private set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public Guid Id { get; private set; } = Guid.NewGuid();
 
         public Guid SwitchId { get; private set; }
 

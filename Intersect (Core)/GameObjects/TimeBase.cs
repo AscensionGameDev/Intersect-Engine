@@ -17,8 +17,8 @@ namespace Intersect.GameObjects
             ResetColors();
         }
 
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public Guid Id { get; protected set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public Guid Id { get; protected set; } = Guid.NewGuid();
 
         [JsonIgnore]
         [Column("DaylightHues")]

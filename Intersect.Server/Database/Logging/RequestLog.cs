@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
-using Intersect.Logging;
 using Intersect.Utilities;
 
 using Microsoft.EntityFrameworkCore;
@@ -15,17 +11,15 @@ using LogLevel = Intersect.Logging.LogLevel;
 
 namespace Intersect.Server.Database.Logging
 {
-
     [Serializable]
     public partial class RequestLog
     {
-
         private string mMethod;
 
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         [Column(Order = 0)]
         [Key]
-        public Guid Id { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
 
         public DateTime Time { get; set; }
 

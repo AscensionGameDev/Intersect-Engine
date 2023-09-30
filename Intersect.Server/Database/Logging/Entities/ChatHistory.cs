@@ -1,15 +1,14 @@
 ﻿using Intersect.Enums;
 using Intersect.Server.Entities;
 using Newtonsoft.Json;
-using System;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Intersect.Server.Database.Logging.Entities
 {
     public partial class ChatHistory
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public Guid Id { get; private set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public Guid Id { get; private set; } = Guid.NewGuid();
 
         public Guid UserId { get; set; }
 
@@ -69,10 +68,8 @@ namespace Intersect.Server.Database.Logging.Entities
 
         private static void Log(ChatHistory chatHistory)
         {
-            using (var logging = DbInterface.LoggingContext)
-            {
-                logging.ChatHistory.Add(chatHistory);
-            }
+            using var loggingContext = DbInterface.CreateLoggingContext(readOnly: false);
+            _ = loggingContext.ChatHistory.Add(chatHistory);
         }
     }
 }

@@ -1,25 +1,18 @@
-using System;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Collections.Generic;
-using System.Linq;
-
 using Newtonsoft.Json;
 
 using Intersect.Enums;
 using Intersect.Server.Entities;
-using JetBrains.Annotations;
 using Intersect.Server.Networking;
 using System.Collections.Concurrent;
 using Microsoft.EntityFrameworkCore;
 using Intersect.Network.Packets.Server;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps;
-using Intersect.Server.General;
 using Intersect.Server.Web.RestApi.Payloads;
 using Intersect.Logging;
 using Intersect.Utilities;
 using Intersect.Server.Localization;
-using Intersect.Server.Database.Logging.Entities;
 using static Intersect.Server.Database.Logging.Entities.GuildHistory;
 
 namespace Intersect.Server.Database.PlayerData.Players
@@ -40,8 +33,8 @@ namespace Intersect.Server.Database.PlayerData.Players
         /// <summary>
         /// The database Id of the guild.
         /// </summary>
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public Guid Id { get; private set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public Guid Id { get; private set; } = Guid.NewGuid();
 
         /// <summary>
         /// The name of the guild.

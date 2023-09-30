@@ -1,7 +1,4 @@
-﻿using System;
-using System.Linq;
-
-using Intersect.Logging;
+﻿using Intersect.Logging;
 using Intersect.GameObjects.Events;
 
 namespace Intersect.Server.Database.GameData.Migrations

@@ -8,26 +8,6 @@ namespace Intersect.Config
 {
     public partial class DatabaseOptions
     {
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public enum DatabaseType
-        {
-            SQLite,
-
-            sqlite = SQLite,
-
-            MySQL,
-
-            MySql = MySQL,
-
-            Mysql = MySQL,
-
-            mysql = MySQL,
-
-            MariaDB = MySQL,
-
-            mariadb = MariaDB
-        }
-
         [JsonConverter(typeof(StringEnumConverter))]
         public DatabaseType Type { get; set; } = DatabaseType.SQLite;
 

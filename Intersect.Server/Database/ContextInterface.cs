@@ -1,9 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore.Infrastructure;
 
-using System;
-using System.Threading;
-using System.Threading.Tasks;
-
 namespace Intersect.Server.Database
 {
     public abstract partial class ContextInterface<TContext> : IDisposable where TContext : IDbContext

@@ -1,6 +1,4 @@
-﻿using System.Linq;
-
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace Intersect.Server.Database
 {

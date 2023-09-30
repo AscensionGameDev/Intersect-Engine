@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-
+﻿using System.ComponentModel.DataAnnotations.Schema;
 using Intersect.GameObjects;
 using Intersect.Logging;
 using Microsoft.EntityFrameworkCore;
@@ -32,8 +28,8 @@ namespace Intersect.Server.Database.PlayerData.Players
         [JsonIgnore, NotMapped]
         public bool IsEmpty => Slots?.All(slot => slot?.ItemId == default || ItemBase.Get(slot.ItemId) == default) ?? true;
 
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public Guid Id { get; private set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        public Guid Id { get; private set; } = Guid.NewGuid();
 
         public int SlotCount { get; private set; }
 

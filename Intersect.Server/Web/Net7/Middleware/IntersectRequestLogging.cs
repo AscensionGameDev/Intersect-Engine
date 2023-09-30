@@ -1,5 +1,6 @@
 using System.Net;
 using Intersect.Logging;
+using Intersect.Server.Database;
 using Intersect.Server.Database.Logging;
 using Intersect.Server.Web.RestApi.Extensions;
 using Microsoft.AspNetCore.Builder;
@@ -23,7 +24,7 @@ public static class IntersectRequestLogging
                     }
 
                     var request = httpContext.Request;
-                    var requestMethod = new HttpMethod(request.Method?.ToUpperInvariant() ?? HttpMethod.Get?.Method);
+                    var requestMethod = new HttpMethod(request.Method.ToUpperInvariant());
                     var requestHeaders = request.Headers.ToDictionary(
                         pair => pair.Key,
                         pair => pair.Value.ToList()
@@ -91,7 +92,7 @@ public static class IntersectRequestLogging
                             ResponseHeaders = responseHeaders
                         };
 
-                        await using var context = LoggingContext.Create();
+                        await using var context = DbInterface.CreateLoggingContext();
                         context.Add(log);
                         await context.SaveChangesAsync();
                     }

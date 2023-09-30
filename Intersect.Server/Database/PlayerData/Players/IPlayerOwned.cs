@@ -1,6 +1,4 @@
-﻿using System;
-
-using Intersect.Server.Entities;
+﻿using Intersect.Server.Entities;
 
 namespace Intersect.Server.Database.PlayerData.Players
 {

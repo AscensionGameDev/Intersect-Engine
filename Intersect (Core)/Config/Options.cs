@@ -49,10 +49,12 @@ namespace Intersect
         [JsonProperty("EventWatchdogKillThreshold")]
         public int EventKillTheshhold = 5000;
 
-        public DatabaseOptions GameDatabase = new DatabaseOptions();
-
         [JsonProperty("Map")]
         public MapOptions MapOpts = new MapOptions();
+
+        public DatabaseOptions GameDatabase = new DatabaseOptions();
+
+        public DatabaseOptions LoggingDatabase = new DatabaseOptions();
 
         public DatabaseOptions PlayerDatabase = new DatabaseOptions();
 
@@ -199,18 +201,6 @@ namespace Intersect
         {
             get => Instance._blockClientRegistrations;
             set => Instance._blockClientRegistrations = value;
-        }
-
-        public static DatabaseOptions PlayerDb
-        {
-            get => Instance.PlayerDatabase;
-            set => Instance.PlayerDatabase = value;
-        }
-
-        public static DatabaseOptions GameDb
-        {
-            get => Instance.GameDatabase;
-            set => Instance.GameDatabase = value;
         }
 
         public static PlayerOptions Player => Instance.PlayerOpts;
