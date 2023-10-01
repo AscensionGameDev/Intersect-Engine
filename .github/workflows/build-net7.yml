@@ -102,6 +102,7 @@ jobs:
         version: ${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}+build.${{ github.sha }}
 
     - name: Upload artifacts for workflow debugging
+      if: inputs.workflowDebug == true
       uses: actions/upload-artifact@v3
       with:
         name: workflow-debug
