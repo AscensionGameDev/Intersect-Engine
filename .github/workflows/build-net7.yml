@@ -106,13 +106,13 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: workflow-debug
-        path: "dist/*.zip"
+        path: "dist/**/*.zip"
 
     - name: Publish GitHub Release
       if: inputs.workflowDebug != true
       uses: ncipollo/release-action@v1.13.0
       with:
-        artifacts: "dist/*.zip"
+        artifacts: "dist/**/*.zip"
         commit: ${{ github.sha }}
         generateReleaseNotes: true
         name: ${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}
