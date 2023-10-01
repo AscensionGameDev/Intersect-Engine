@@ -21,10 +21,6 @@
 			"target": "Server"
 		},
 		{
-			"source": "assets_upgrade/**",
-			"target": "Client and Editor"
-		},
-		{
 			"source": "Documentation/Intersect Documentation.url",
 			"target": "Intersect Documentation.url"
 		}
