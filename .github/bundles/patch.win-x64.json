@@ -9,11 +9,7 @@
 			"target": "Client and Editor/LICENSE.client.md"
 		},
 		{
-			"source": "Intersect.Client/bin/Release/**/**/publish/Intersect Client",
-			"target": "Client and Editor"
-		},
-		{
-			"source": "Intersect.Client/bin/Release/**/**/publish/Intersect Client.exe",
+			"source": "Intersect.Client/bin/Release/**/win-x64/publish/Intersect Client.exe",
 			"target": "Client and Editor"
 		},
 		{
@@ -21,7 +17,7 @@
 			"target": "Client and Editor/LICENSE.editor.md"
 		},
 		{
-			"source": "Intersect.Editor/bin/Release/**/**/publish/Intersect Editor.exe",
+			"source": "Intersect.Editor/bin/Release/**/win-x64/publish/Intersect Editor.exe",
 			"target": "Client and Editor"
 		},
 		{
@@ -29,21 +25,13 @@
 			"target": "Server/LICENSE.md"
 		},
 		{
-			"source": "Intersect.Server/bin/Release/**/**/publish/Intersect Server",
+			"source": "Intersect.Server/bin/Release/**/win-x64/publish/Intersect Server.exe",
 			"target": "Server"
-		},
-		{
-			"source": "Intersect.Server/bin/Release/**/**/publish/Intersect Server.exe",
-			"target": "Server"
-		},
-		{
-			"source": "assets_full/**",
-			"target": "Client and Editor"
 		},
 		{
 			"source": "Documentation/Intersect Documentation.url",
 			"target": "Intersect Documentation.url"
 		}
 	],
-	"name": "full"
+	"name": "patch"
 }
