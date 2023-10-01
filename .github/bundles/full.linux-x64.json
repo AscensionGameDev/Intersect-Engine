@@ -1,0 +1,33 @@
+{
+	"directories": [
+		"Client and Editor",
+		"Server"
+	],
+	"includes": [
+		{
+			"source": "Intersect.Client/LICENSE.md",
+			"target": "Client and Editor/LICENSE.client.md"
+		},
+		{
+			"source": "Intersect.Client/bin/Release/**/linux-x64/publish/Intersect Client",
+			"target": "Client and Editor"
+		},
+		{
+			"source": "Intersect.Server/LICENSE.md",
+			"target": "Server/LICENSE.md"
+		},
+		{
+			"source": "Intersect.Server/bin/Release/**/linux-x64/publish/Intersect Server",
+			"target": "Server"
+		},
+		{
+			"source": "assets_full/**",
+			"target": "Client and Editor"
+		},
+		{
+			"source": "Documentation/Intersect Documentation.url",
+			"target": "Intersect Documentation.url"
+		}
+	],
+	"name": "full"
+}
