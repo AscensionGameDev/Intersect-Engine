@@ -31,7 +31,7 @@ internal partial class ApiService : ApplicationService<ServerContext, IApiServic
     private WebApplication? _app;
     private static readonly Assembly Assembly = typeof(ApiService).Assembly;
 
-    private WebApplication Configure()
+    private WebApplication? Configure()
     {
         UnpackAppSettings();
 
@@ -44,6 +44,11 @@ internal partial class ApiService : ApplicationService<ServerContext, IApiServic
         var apiConfigurationSection = builder.Configuration.GetRequiredSection("Api");
         var configuration = apiConfigurationSection.Get<ApiConfiguration>();
         builder.Services.Configure<ApiConfiguration>(apiConfigurationSection);
+
+        if (!configuration.Enabled)
+        {
+            return default;
+        }
 
         var corsPolicies = builder.Configuration.GetValue<Dictionary<string, CorsPolicy>>("Cors");
         if (corsPolicies != default)
@@ -248,6 +253,11 @@ internal partial class ApiService : ApplicationService<ServerContext, IApiServic
         try
         {
             var app = Configure();
+            if (app == default)
+            {
+                return;
+            }
+
             _app = app;
             await app.StartAsync(cancellationToken);
         }
