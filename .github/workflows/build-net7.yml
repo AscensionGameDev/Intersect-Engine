@@ -34,10 +34,10 @@ jobs:
 
     steps:
     - name: Checkout Code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Cache binaries
-      uses: actions/cache@v3.2.6
+      uses: actions/cache@v3
       id: cache-binaries
       with:
         key: ${{ runner.os }}-binaries-${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}-${{ hashFiles('Intersect*/**/*.cs*') }}
@@ -51,7 +51,7 @@ jobs:
         dotnet-version: 7.0.x
 
     - name: Cache NuGet dependencies
-      uses: actions/cache@v3.2.6
+      uses: actions/cache@v3
       id: cache-nuget
       if: steps.cache-binaries.outputs.cache-hit != 'true' || inputs.forceBuild == true || inputs.forceRestore == true
       with:
@@ -78,7 +78,7 @@ jobs:
       run: ls -R
 
     - name: Checkout assets main_upgrade branch
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         fetch-depth: 0
         path: assets_upgrade
@@ -87,7 +87,7 @@ jobs:
         token: ${{ secrets.INTERSECTBOT_ACCESS_TOKEN }}
 
     - name: Checkout target main_full branch
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         fetch-depth: 0
         path: assets_full
