@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Runtime.Serialization;
 
 using Intersect.Enums;
+using Intersect.Logging;
 using Newtonsoft.Json;
 
 namespace Intersect.Configuration
@@ -249,6 +251,14 @@ namespace Intersect.Configuration
         public int TypewriterSoundFrequency { get; set; } = DEFAULT_TYPEWRITER_SOUND_FREQUENCY;
 
         public List<string> TypewriterSounds { get; set; } = DEFAULT_TYPEWRITER_SOUNDS;
+
+        #region Hidden Properties
+
+        [JsonProperty(DefaultValueHandling = DefaultValueHandling.Ignore)]
+        [DefaultValue(LogLevel.Info)]
+        public LogLevel LogLevel { get; set; } = LogLevel.Info;
+
+        #endregion
 
         #endregion
 

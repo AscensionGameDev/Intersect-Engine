@@ -594,35 +594,15 @@ namespace Intersect.Network.Lidgren
                             NetworkStatus networkStatus;
                             try
                             {
-                                switch (reason)
+                                networkStatus = reason switch
                                 {
                                     //Lidgren won't accept a connection with a bad version and sends this message back so we need to manually handle it
-                                    case "Wrong application identifier!":
-                                        networkStatus = NetworkStatus.VersionMismatch;
-
-                                        break;
-
-                                    case "Connection timed out":
-                                        networkStatus = NetworkStatus.Quitting;
-
-                                        break;
-
-                                    case "Failed to establish connection - no response from remote host":
-                                        networkStatus = NetworkStatus.Offline;
-
-                                        break;
-
-                                    case "closing":
-                                        networkStatus = NetworkStatus.Offline;
-                                        break;
-
-                                    default:
-                                        networkStatus = (NetworkStatus) Enum.Parse(
-                                            typeof(NetworkStatus), reason ?? "<null>", true
-                                        );
-
-                                        break;
-                                }
+                                    "Wrong application identifier!" => NetworkStatus.VersionMismatch,
+                                    "Connection timed out" => NetworkStatus.Quitting,
+                                    "Failed to establish connection - no response from remote host" => NetworkStatus.Offline,
+                                    "closing" => NetworkStatus.Offline,
+                                    _ => (NetworkStatus)Enum.Parse(typeof(NetworkStatus), reason ?? "<null>", true)
+                                };
                             }
                             catch (Exception exception)
                             {
@@ -640,7 +620,7 @@ namespace Intersect.Network.Lidgren
                                 case NetworkStatus.Failed:
                                     disconnectHandler = OnConnectionDenied;
                                     disconnectHandlerName = nameof(OnConnectionDenied);
-
+                                    Log.Diagnostic($"Disconnecting because of {networkStatus} ({reason})");
                                     break;
 
                                 case NetworkStatus.Connecting:
