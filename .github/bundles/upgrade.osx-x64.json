@@ -29,5 +29,6 @@
 			"target": "Intersect Documentation.url"
 		}
 	],
-	"name": "upgrade.osx-x64"
+	"name": "upgrade",
+	"platform": "osx-x64"
 }

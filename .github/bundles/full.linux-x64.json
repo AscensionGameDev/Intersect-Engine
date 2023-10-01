@@ -29,5 +29,6 @@
 			"target": "Intersect Documentation.url"
 		}
 	],
-	"name": "full.linux-x64"
+	"name": "full",
+	"platform": "linux-x64"
 }

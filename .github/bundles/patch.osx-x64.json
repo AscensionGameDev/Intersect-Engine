@@ -29,5 +29,6 @@
 			"target": "Intersect Documentation.url"
 		}
 	],
-	"name": "patch.osx-x64"
+	"name": "patch",
+	"platform": "osx-x64"
 }
