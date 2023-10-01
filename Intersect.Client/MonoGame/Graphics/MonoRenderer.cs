@@ -89,7 +89,7 @@ namespace Intersect.Client.MonoGame.Graphics
 
         private List<string> mValidVideoModes;
 
-        private GameRenderTexture mWhiteTexture;
+        private GameTexture mWhiteTexture;
 
         public MonoRenderer(GraphicsDeviceManager graphics, ContentManager contentManager, Game monoGame)
         {
@@ -218,10 +218,9 @@ namespace Intersect.Client.MonoGame.Graphics
 
         public void CreateWhiteTexture()
         {
-            mWhiteTexture = CreateRenderTexture(1, 1);
-            mWhiteTexture.Begin();
-            mWhiteTexture.Clear(Color.White);
-            mWhiteTexture.End();
+            var texture = new Texture2D(mGraphicsDevice, 1, 1);
+            texture.SetData(new[] { XNAColor.White });
+            mWhiteTexture = MonoTexture.CreateFromTexture2D(texture, "white_1px_1px");
         }
 
         public override bool Begin()
@@ -910,7 +909,7 @@ namespace Intersect.Client.MonoGame.Graphics
                    Matrix.CreateTranslation(-view.X, -view.Y, 0) *
                    Matrix.CreateScale(new Vector3(_scale));
         }
-        
+
         public override void SetView(FloatRect view)
         {
             mCurrentView = view;

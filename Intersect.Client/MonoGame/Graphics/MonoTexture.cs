@@ -38,6 +38,17 @@ namespace Intersect.Client.MonoGame.Graphics
 
         private readonly Func<Stream> CreateStream;
 
+        private bool _doNotFree = false;
+
+        private MonoTexture(Texture2D texture2D, string assetName)
+        {
+            mGraphicsDevice = texture2D.GraphicsDevice;
+            mPath = assetName;
+            mName = assetName;
+            mTexture = texture2D;
+            _doNotFree = true;
+        }
+
         public MonoTexture(GraphicsDevice graphicsDevice, string filename, string realPath)
         {
             mGraphicsDevice = graphicsDevice;
@@ -263,6 +274,11 @@ namespace Intersect.Client.MonoGame.Graphics
 
         public void Update()
         {
+            if (_doNotFree)
+            {
+                return;
+            }
+
             if (mTexture == null)
             {
                 return;
@@ -275,6 +291,11 @@ namespace Intersect.Client.MonoGame.Graphics
 
             mTexture.Dispose();
             mTexture = null;
+        }
+
+        public static MonoTexture CreateFromTexture2D(Texture2D texture2D, string assetName)
+        {
+            return new MonoTexture(texture2D, assetName);
         }
     }
 }
