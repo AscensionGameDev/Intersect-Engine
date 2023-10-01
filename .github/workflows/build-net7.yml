@@ -96,7 +96,7 @@ jobs:
         token: ${{ secrets.INTERSECTBOT_ACCESS_TOKEN }}
 
     - name: Package artifacts
-      uses: AscensionGameDev/actions@f900da52d250768d54823b1715d7bc4c7d52fdf7
+      uses: AscensionGameDev/actions@b487dbf2c44a5096d7f1dcbc9480c1ef227bcd3d
       with:
         bundle: .github/bundles/*.json
         version: ${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}+build.${{ github.sha }}
@@ -110,11 +110,11 @@ jobs:
 
     - name: Publish GitHub Release
       if: inputs.workflowDebug != true
-      uses: softprops/action-gh-release@v0.1.15
+      uses: ncipollo/release-action@v1.13.0
       with:
-        files: "dist/*.zip"
-        generate_release_notes: true
-        prerelease: true
+        artifacts: "dist/*.zip"
+        commit: ${{ github.sha }}
+        generateReleaseNotes: true
         name: ${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}
-        tag_name: v${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}
-        target_commitish: ${{ github.sha }}
+        prerelease: true
+        tag: v${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}
