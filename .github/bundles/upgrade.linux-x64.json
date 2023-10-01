@@ -29,5 +29,6 @@
 			"target": "Intersect Documentation.url"
 		}
 	],
-	"name": "upgrade.linux-x64"
+	"name": "upgrade",
+	"platform": "linux-x64"
 }

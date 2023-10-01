@@ -29,5 +29,6 @@
 			"target": "Intersect Documentation.url"
 		}
 	],
-	"name": "full.osx-x64"
+	"name": "full",
+	"platform": "osx-x64"
 }

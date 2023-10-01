@@ -29,5 +29,6 @@
 			"target": "Intersect Documentation.url"
 		}
 	],
-	"name": "patch.linux-x64"
+	"name": "patch",
+	"platform": "linux-x64"
 }

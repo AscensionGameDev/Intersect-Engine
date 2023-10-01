@@ -33,5 +33,6 @@
 			"target": "Intersect Documentation.url"
 		}
 	],
-	"name": "patch.win-x64"
+	"name": "patch",
+	"platform": "win-x64"
 }
