@@ -18,7 +18,6 @@ using Microsoft.Xna.Framework.Graphics;
 using MathHelper = Intersect.Utilities.MathHelper;
 using XNARectangle = Microsoft.Xna.Framework.Rectangle;
 using XNAColor = Microsoft.Xna.Framework.Color;
-
 namespace Intersect.Client.MonoGame.Graphics
 {
 
@@ -929,10 +928,15 @@ namespace Intersect.Client.MonoGame.Graphics
             }
 
             mScreenshotRenderTarget = new RenderTarget2D(
-                mGraphicsDevice, mScreenWidth, mScreenHeight, false,
-                mGraphicsDevice.PresentationParameters.BackBufferFormat,
-                mGraphicsDevice.PresentationParameters.DepthStencilFormat,
-                mGraphicsDevice.PresentationParameters.MultiSampleCount, RenderTargetUsage.PreserveContents
+                mGraphicsDevice,
+                mScreenWidth,
+                mScreenHeight,
+                mipMap: false,
+                preferredFormat: mGraphicsDevice.PresentationParameters.BackBufferFormat,
+                preferredDepthFormat: mGraphicsDevice.PresentationParameters.DepthStencilFormat,
+                /* For whatever reason if this isn't zero everything breaks in .NET 7 on MacOS and most Windows devices */
+                preferredMultiSampleCount: 0, // mGraphicsDevice.PresentationParameters.MultiSampleCount,
+                usage: RenderTargetUsage.PreserveContents
             );
 
             return true;

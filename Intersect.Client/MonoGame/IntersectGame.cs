@@ -159,8 +159,6 @@ namespace Intersect.Client.MonoGame
 
             if (mUpdater != null)
             {
-                LoadUpdaterContent();
-
                 //Set the size of the updater screen before applying graphic changes.
                 //We need to do this here instead of in the constructor for the size change to apply to Linux
                 mGraphics.PreferredBackBufferWidth = 800;
@@ -264,6 +262,16 @@ namespace Intersect.Client.MonoGame
             }
 
             base.Update(gameTime);
+        }
+
+        protected override void LoadContent()
+        {
+            base.LoadContent();
+
+            if (mUpdater != null)
+            {
+                LoadUpdaterContent();
+            }
         }
 
         /// <summary>
