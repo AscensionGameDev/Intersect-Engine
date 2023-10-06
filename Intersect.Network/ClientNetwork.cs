@@ -2,11 +2,13 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Security.Cryptography;
-
+using Intersect.Core;
 using Intersect.Logging;
 using Intersect.Network.Events;
 using Intersect.Network.Lidgren;
+using Intersect.Network.LiteNetLib;
 using Intersect.Plugins.Interfaces;
 
 using Lidgren.Network;
@@ -17,10 +19,14 @@ namespace Intersect.Network
     public partial class ClientNetwork : AbstractNetwork, IClient
     {
 
-        private readonly LidgrenInterface mLidgrenInterface;
+        private readonly INetworkLayerInterface _interface;
 
-        public ClientNetwork(IPacketHelper packetHelper, NetworkConfiguration configuration, RSAParameters rsaParameters) : base(
-            packetHelper,
+        public ClientNetwork(
+            IApplicationContext applicationContext,
+            NetworkConfiguration configuration,
+            RSAParameters rsaParameters
+        ) : base(
+            applicationContext,
             configuration
         )
         {
@@ -28,21 +34,23 @@ namespace Intersect.Network
 
             IsConnected = false;
 
-            mLidgrenInterface = new LidgrenInterface(this, typeof(NetClient), rsaParameters);
-            mLidgrenInterface.OnConnected += HandleInterfaceOnConnected;
-            mLidgrenInterface.OnConnectionApproved += HandleInterfaceOnConnectonApproved;
-            mLidgrenInterface.OnConnectionDenied += HandleInterfaceOnConnectonDenied;
-            mLidgrenInterface.OnDisconnected += HandleInterfaceOnDisconnected;
-            AddNetworkLayerInterface(mLidgrenInterface);
+            _interface = new LiteNetLibInterface(this, rsaParameters);
+            // _interface = new LidgrenInterface(this, typeof(NetClient), rsaParameters);
+            _interface.OnConnected += HandleInterfaceOnConnected;
+            _interface.OnConnectionApproved += HandleInterfaceOnConnectonApproved;
+            _interface.OnConnectionDenied += HandleInterfaceOnConnectonDenied;
+            _interface.OnDisconnected += HandleInterfaceOnDisconnected;
+            AddNetworkLayerInterface(_interface);
+            StartInterfaces();
         }
 
-        public HandleConnectionEvent OnConnected { get; set; }
-
-        public HandleConnectionEvent OnConnectionApproved { get; set; }
-
-        public HandleConnectionEvent OnConnectionDenied { get; set; }
-
-        public HandleConnectionEvent OnDisconnected { get; set; }
+        public override event HandleConnectionEvent OnConnected;
+        public override event HandleConnectionEvent OnConnectionApproved;
+        public override event HandleConnectionEvent OnConnectionDenied;
+        public override event HandleConnectionRequest OnConnectionRequested;
+        public override event HandleConnectionEvent OnDisconnected;
+        public override event HandlePacketAvailable OnPacketAvailable;
+        public override event HandleUnconnectedMessage OnUnconnectedMessage;
 
         public IConnection Connection => Connections.FirstOrDefault();
 
@@ -50,21 +58,7 @@ namespace Intersect.Network
 
         public bool IsServerOnline => IsConnected;
 
-        public int Ping
-        {
-            get
-            {
-                var connection = FindConnection<LidgrenConnection>(Guid.Empty);
-
-                //Log.Debug($"connection={connection},ping={connection?.NetConnection?.AverageRoundtripTime ?? -1}");
-                if (connection == null)
-                {
-                    return -1;
-                }
-
-                return (int) (1000 * connection.NetConnection.AverageRoundtripTime);
-            }
-        }
+        public int Ping => (int)(Connections.FirstOrDefault()?.Statistics.Ping ?? -1);
 
         public bool Connect()
         {
@@ -73,19 +67,15 @@ namespace Intersect.Network
                 Disconnect("client_starting_connection");
             }
 
-            if (mLidgrenInterface == null)
-            {
-                return false;
-            }
-
-            StartInterfaces();
-
-            return true;
+            return _interface.Connect();
         }
+
+        protected override bool SendUnconnected(IPEndPoint endPoint, UnconnectedPacket packet) =>
+            _interface.SendUnconnectedPacket(endPoint, packet);
 
         public override bool Send(IPacket packet, TransmissionMode mode = TransmissionMode.All)
         {
-            return mLidgrenInterface?.SendPacket(packet, (IConnection)null, mode) ?? false;
+            return _interface?.SendPacket(packet, (IConnection)null, mode) ?? false;
         }
 
         public override bool Send(IConnection connection, IPacket packet, TransmissionMode mode = TransmissionMode.All)

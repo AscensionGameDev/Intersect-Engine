@@ -1,26 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-
+﻿using System.Net;
 using Intersect.Memory;
-using Intersect.Network.Events;
 
 namespace Intersect.Network
 {
-
-    public delegate void HandlePacketAvailable(INetworkLayerInterface sender);
-
-    public delegate void HandleConnectionEvent(INetworkLayerInterface sender, ConnectionEventArgs connectionEventArgs);
-
-    public delegate bool HandleConnectionRequest(INetworkLayerInterface sender, IConnection connection);
-
     public interface INetworkLayerInterface : IDisposable
     {
+        event HandleConnectionEvent? OnConnected;
 
-        HandlePacketAvailable OnPacketAvailable { get; set; }
+        event HandleConnectionEvent? OnConnectionApproved;
 
-        HandleConnectionEvent OnConnected { get; set; }
+        event HandleConnectionEvent? OnConnectionDenied;
 
-        HandleConnectionEvent OnDisconnected { get; set; }
+        event HandleConnectionRequest? OnConnectionRequested;
+
+        event HandleConnectionEvent? OnDisconnected;
+
+        event HandlePacketAvailable? OnPacketAvailable;
+
+        event HandleUnconnectedMessage? OnUnconnectedMessage;
 
         bool TryGetInboundBuffer(out IBuffer buffer, out IConnection connection);
 
@@ -38,6 +35,8 @@ namespace Intersect.Network
             TransmissionMode transmissionMode = TransmissionMode.All
         );
 
+        bool SendUnconnectedPacket(IPEndPoint target, UnconnectedPacket packet);
+
         void Start();
 
         void Stop(string reason = "stopping");
@@ -47,7 +46,5 @@ namespace Intersect.Network
         void Disconnect(IConnection connection, string message);
 
         void Disconnect(ICollection<IConnection> connections, string messages);
-
     }
-
 }

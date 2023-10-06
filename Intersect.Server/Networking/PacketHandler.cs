@@ -21,14 +21,11 @@ using Intersect.Server.Entities;
 using Intersect.Server.General;
 using Intersect.Server.Localization;
 using Intersect.Server.Maps;
-using Intersect.Server.Networking.Lidgren;
+using Intersect.Server.Networking.LiteNetLib;
 using Intersect.Server.Notifications;
 using Intersect.Utilities;
-using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Text;
 using Intersect.Network.Packets.Editor;
 using LoginPacket = Intersect.Network.Packets.Client.LoginPacket;
@@ -77,6 +74,11 @@ namespace Intersect.Server.Networking
             if (!Registry.TryRegisterAvailableMethodHandlers(GetType(), this, false) || Registry.IsEmpty)
             {
                 throw new InvalidOperationException("Failed to register method handlers, see logs for more details.");
+            }
+
+            if (!Registry.TryRegisterAvailableTypeHandlers(GetType().Assembly))
+            {
+                throw new InvalidOperationException("Failed to register type handlers, see logs for more details.");
             }
 
             Instance = this;
@@ -276,9 +278,6 @@ namespace Intersect.Server.Networking
             if (packet is AbstractTimedPacket timedPacket)
             {
                 var ping = connection.Statistics.Ping;
-                var ncPing = (long) Math.Ceiling(
-                    (connection as LidgrenConnection).NetConnection.AverageRoundtripTime * 1000
-                );
 
                 var localAdjusted = Timing.Global.Ticks;
                 var localAdjustedMs = localAdjusted / TimeSpan.TicksPerMillisecond;
@@ -342,7 +341,7 @@ namespace Intersect.Server.Networking
                 {
                     Log.Debug(
                         "\n\t" +
-                        $"Ping[Connection={ping}, NetConnection={ncPing}, Error={Math.Abs(ncPing - ping)}]\n\t" +
+                        $"Ping[Connection={ping}, Error={Math.Abs(ping)}]\n\t" +
                         $"Error[G={Math.Abs(localAdjustedMs - remoteAdjustedMs)}, R={Math.Abs(localUtcMs - remoteUtcMs)}, O={Math.Abs(localOffsetMs - remoteOffsetMs)}]\n\t" +
                         $"Delta[Adjusted={deltaAdjusted}, AWP={deltaWithPing}, AWEN={deltaWithErrorMinimum}, AWEX={deltaWithErrorMaximum}]\n\t" +
                         $"Natural[A={natural} WP={naturalWithPing}, WEN={naturalWithErrorMinimum}, WEX={naturalWithErrorMaximum}]\n\t" +
@@ -591,7 +590,7 @@ namespace Intersect.Server.Networking
 
             UserActivityHistory.LogActivity(user?.Id ?? Guid.Empty, Guid.Empty, client?.GetIp(), UserActivityHistory.PeerType.Client, UserActivityHistory.UserAction.Login, null);
 
-            PacketSender.SendServerConfig(client);
+            // PacketSender.SendServerConfig(client); // TODO: We already send this when the client is initialized, why do we send it again here?
 
             //Check if we already have a player online/stuck in combat.. if so we will login straight to him
             foreach (var chr in client.Characters)
@@ -1437,7 +1436,7 @@ namespace Intersect.Server.Networking
                         }
                     }
 
-                    PacketSender.SendServerConfig(client);
+                    // PacketSender.SendServerConfig(client); // TODO: We already send this when the client is initialized, why do we send it again here?
 
                     //Check that server is in admin only mode
                     if (Options.AdminOnly)
@@ -2980,7 +2979,7 @@ namespace Intersect.Server.Networking
                 }
             }
 
-            PacketSender.SendServerConfig(client);
+            // PacketSender.SendServerConfig(client); // TODO: We already send this when the client is initialized, why do we send it again here?
 
             //Editor doesn't receive packet before login
             PacketSender.SendJoinGame(client);

@@ -63,34 +63,29 @@
     <EmbeddedResource Include="$(PkgMonoGame_Framework_DesktopGL)\lib\net6.0\MonoGame.Framework.dll">
       <Link>Resources\MonoGame.Framework.dll</Link>
     </EmbeddedResource>
-    <EmbeddedResource Include="$(PkgMonoGame_Framework_DesktopGL)\runtimes\win-x86\native\SDL2.dll">
-      <Link>Resources\x86\SDL2.dll</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="$(PkgMonoGame_Framework_DesktopGL)\runtimes\win-x64\native\SDL2.dll">
-      <Link>Resources\x64\SDL2.dll</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="$(PkgMonoGame_Framework_DesktopGL)\runtimes\win-x86\native\soft_oal.dll">
-      <Link>Resources\x86\soft_oal.dll</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="$(PkgMonoGame_Framework_DesktopGL)\runtimes\win-x64\native\soft_oal.dll">
-      <Link>Resources\x64\soft_oal.dll</Link>
-    </EmbeddedResource>
     <EmbeddedResource Include="$(PkgMonoGame_Framework_DesktopGL)\runtimes\linux-x64\native\libopenal.so.1" WithCulture="false">
       <Link>Resources\libopenal.so.1</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="$(PkgMonoGame_Framework_DesktopGL)\runtimes\linux-x64\native\libSDL2-2.0.so.0" WithCulture="false">
-      <Link>Resources\libSDL2-2.0.so.0</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="$(PkgMonoGame_Framework_DesktopGL)\runtimes\osx\native\libSDL2.dylib">
-      <Link>Resources\libSDL2.dylib</Link>
     </EmbeddedResource>
     <EmbeddedResource Include="$(PkgMonoGame_Framework_DesktopGL)\runtimes\osx\native\libopenal.1.dylib">
       <Link>Resources\libopenal.1.dylib</Link>
     </EmbeddedResource>
+    <EmbeddedResource Include="$(PkgMonoGame_Framework_DesktopGL)\runtimes\win-x64\native\soft_oal.dll">
+      <Link>Resources\x64\soft_oal.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="$(PkgMonoGame_Library_SDL)\runtimes\linux-x64\native\libSDL2-2.0.so.0" WithCulture="false">
+      <Link>Resources\libSDL2-2.0.so.0</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="$(PkgMonoGame_Library_SDL)\runtimes\osx\native\libSDL2.dylib">
+      <Link>Resources\libSDL2.dylib</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="$(PkgMonoGame_Library_SDL)\runtimes\win-x64\native\SDL2.dll">
+      <Link>Resources\x64\SDL2.dll</Link>
+    </EmbeddedResource>
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.1.303" GeneratePathProperty="True" />
+    <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.1.489-develop" GeneratePathProperty="True" />
+    <PackageReference Include="MonoGame.Library.SDL" Version="2.26.5.5" GeneratePathProperty="True" />
   </ItemGroup>
 
 </Project>

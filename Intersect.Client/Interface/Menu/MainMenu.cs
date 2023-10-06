@@ -11,12 +11,20 @@ using Intersect.Client.Localization;
 using Intersect.Client.Networking;
 using Intersect.Logging;
 using Intersect.Network;
+using Intersect.Network.Events;
+using Intersect.Utilities;
 
 namespace Intersect.Client.Interface.Menu
 {
 
     public partial class MainMenu : MutableInterface
     {
+        public static void HandleReceivedConfiguration()
+        {
+            ReceivedConfiguration?.Invoke(default, EventArgs.Empty);
+        }
+
+        private static event EventHandler ReceivedConfiguration;
 
         public delegate void NetworkStatusHandler();
 
@@ -162,6 +170,12 @@ namespace Intersect.Client.Interface.Menu
         //Methods
         public void Update()
         {
+            if (Networking.Network.Connected)
+            {
+                mLoginButton.IsDisabled = Globals.WaitingOnServer;
+                mRegisterButton.IsDisabled = Globals.WaitingOnServer;
+            }
+
             if (mShouldOpenCharacterSelection)
             {
                 CreateCharacterSelection();
@@ -289,14 +303,80 @@ namespace Intersect.Client.Interface.Menu
         //Input Handlers
         void LoginButton_Clicked(Base sender, ClickedEventArgs arguments)
         {
+            if (Networking.Network.Connected)
+            {
+                SwitchToWindow(mLoginWindow);
+            }
+            else
+            {
+                mLoginButton.IsDisabled = Globals.WaitingOnServer;
+                AddLoginEvents();
+                Networking.Network.TryConnect();
+            }
+        }
+
+        private void AddLoginEvents()
+        {
+            ReceivedConfiguration += LoginConnected;
+            Networking.Network.Socket.ConnectionFailed += LoginConnectionFailed;
+            Networking.Network.Socket.Disconnected += LoginDisconnected;
+        }
+
+        private void RemoveLoginEvents()
+        {
+            ReceivedConfiguration -= LoginConnected;
+            Networking.Network.Socket.ConnectionFailed -= LoginConnectionFailed;
+            Networking.Network.Socket.Disconnected -= LoginDisconnected;
+        }
+
+        private void LoginConnectionFailed(INetworkLayerInterface nli, ConnectionEventArgs args, bool denied) => RemoveLoginEvents();
+        private void LoginDisconnected(INetworkLayerInterface nli, ConnectionEventArgs args) => RemoveLoginEvents();
+        private void LoginConnected(object? sender, EventArgs eventArgs)
+        {
+            RemoveLoginEvents();
+            SwitchToWindow(mLoginWindow);
+        }
+
+        private void SwitchToWindow(IMainMenuWindow mainMenuWindow)
+        {
             Hide();
-            mLoginWindow.Show();
+            mainMenuWindow.Show();
+        }
+
+        private void AddRegisterEvents()
+        {
+            ReceivedConfiguration += RegisterConnected;
+            Networking.Network.Socket.ConnectionFailed += LoginConnectionFailed;
+            Networking.Network.Socket.Disconnected += LoginDisconnected;
+        }
+
+        private void RemoveRegisterEvents()
+        {
+            ReceivedConfiguration -= RegisterConnected;
+            Networking.Network.Socket.ConnectionFailed -= LoginConnectionFailed;
+            Networking.Network.Socket.Disconnected -= LoginDisconnected;
+        }
+
+        private void RegisterConnectionFailed(INetworkLayerInterface nli, ConnectionEventArgs args, bool denied) => RemoveRegisterEvents();
+        private void RegisterDisconnected(INetworkLayerInterface nli, ConnectionEventArgs args) => RemoveRegisterEvents();
+        private void RegisterConnected(object? sender, EventArgs eventArgs)
+        {
+            RemoveRegisterEvents();
+            SwitchToWindow(mRegisterWindow);
         }
 
         void RegisterButton_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            Hide();
-            mRegisterWindow.Show();
+            if (Networking.Network.Connected)
+            {
+                SwitchToWindow(mRegisterWindow);
+            }
+            else
+            {
+                mRegisterButton.IsDisabled = Globals.WaitingOnServer;
+                AddRegisterEvents();
+                Networking.Network.TryConnect();
+            }
         }
 
         void CreditsButton_Clicked(Base sender, ClickedEventArgs arguments)
@@ -339,7 +419,10 @@ namespace Intersect.Client.Interface.Menu
         {
             ActiveNetworkStatus = networkStatus;
             NetworkStatusChanged?.Invoke();
+            LastNetworkStatusChangeTime = Timing.Global.MillisecondsUtc;
         }
+
+        public static long LastNetworkStatusChangeTime { get; private set; }
 
     }
 

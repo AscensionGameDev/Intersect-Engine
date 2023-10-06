@@ -17,7 +17,7 @@ using Intersect.Utilities;
 namespace Intersect.Client.Interface.Menu
 {
 
-    public partial class RegisterWindow
+    public partial class RegisterWindow : IMainMenuWindow
     {
 
         private Button mBackBtn;

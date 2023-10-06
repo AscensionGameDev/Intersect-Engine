@@ -63,7 +63,7 @@ namespace Intersect.Plugins.Interfaces
         /// <typeparam name="TPacket"></typeparam>
         /// <returns></returns>
         bool TryRegisterPacketPreprocessor<THandler, TPacket>(out THandler handler)
-            where TPacket : IPacket where THandler : IPacketHandler<TPacket>;
+            where TPacket : class, IPacket where THandler : IPacketHandler<TPacket>;
 
         /// <summary>
         /// Try to add a packet handler (can only be one per packet) to the
@@ -74,7 +74,7 @@ namespace Intersect.Plugins.Interfaces
         /// <typeparam name="TPacket"></typeparam>
         /// <returns></returns>
         bool TryRegisterPacketHandler<THandler, TPacket>(out THandler handler)
-            where TPacket : IPacket where THandler : IPacketHandler<TPacket>;
+            where TPacket : class, IPacket where THandler : IPacketHandler<TPacket>;
 
         /// <summary>
         /// Try to add a packet pre-hook (multiple allowed) to the packet
@@ -87,7 +87,7 @@ namespace Intersect.Plugins.Interfaces
         /// <typeparam name="TPacket"></typeparam>
         /// <returns></returns>
         bool TryRegisterPacketPreHook<THandler, TPacket>(out THandler handler)
-            where TPacket : IPacket where THandler : IPacketHandler<TPacket>;
+            where TPacket : class, IPacket where THandler : IPacketHandler<TPacket>;
 
         /// <summary>
         /// Try to add a packet post-hook (multiple allowed) to the packet
@@ -100,6 +100,6 @@ namespace Intersect.Plugins.Interfaces
         /// <typeparam name="TPacket"></typeparam>
         /// <returns></returns>
         bool TryRegisterPacketPostHook<THandler, TPacket>(out THandler handler)
-            where TPacket : IPacket where THandler : IPacketHandler<TPacket>;
+            where TPacket : class, IPacket where THandler : IPacketHandler<TPacket>;
     }
 }

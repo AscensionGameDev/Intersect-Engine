@@ -26,6 +26,8 @@ using Intersect.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Intersect.Client.Framework.Network;
+using Intersect.Client.Plugins.Helpers;
 using MapAttribute = Intersect.Enums.MapAttribute;
 
 namespace Intersect.Client.Networking
@@ -37,6 +39,8 @@ namespace Intersect.Client.Networking
         {
             public IApplicationContext ApplicationContext { get; }
 
+            public INetwork Network => Networking.Network.Socket.GetNetwork();
+
             public VirtualPacketSender(IApplicationContext applicationContext) =>
                 ApplicationContext = applicationContext ?? throw new ArgumentNullException(nameof(applicationContext));
             
@@ -47,7 +51,7 @@ namespace Intersect.Client.Networking
             {
                 if (packet is IntersectPacket intersectPacket)
                 {
-                    Network.SendPacket(intersectPacket);
+                    Networking.Network.SendPacket(intersectPacket);
                     return true;
                 }
 
@@ -77,6 +81,11 @@ namespace Intersect.Client.Networking
             if (!Registry.TryRegisterAvailableMethodHandlers(GetType(), this, false) || Registry.IsEmpty)
             {
                 throw new InvalidOperationException("Failed to register method handlers, see logs for more details.");
+            }
+
+            if (!Registry.TryRegisterAvailableTypeHandlers(GetType().Assembly))
+            {
+                throw new InvalidOperationException("Failed to register type handlers, see logs for more details.");
             }
 
             VirtualSender = new VirtualPacketSender(context);
@@ -160,7 +169,10 @@ namespace Intersect.Client.Networking
         //ConfigPacket
         public void HandlePacket(IPacketSender packetSender, ConfigPacket packet)
         {
+            Log.Debug("Received configuration from server.");
             Options.LoadFromServer(packet.Config);
+            Globals.WaitingOnServer = false;
+            MainMenu.HandleReceivedConfiguration();
             try
             {
                 Strings.Load();

@@ -1,16 +1,15 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
+﻿using System.Collections.Concurrent;
+using System.Net;
 using System.Security.Cryptography;
 using Amib.Threading;
+using Intersect.Core;
 using Intersect.Logging;
+using Intersect.Memory;
 using Intersect.Network;
 using Intersect.Network.Events;
 using Intersect.Network.Lidgren;
 using Intersect.Plugins.Interfaces;
 using Intersect.Server.Core;
-using Intersect.Server.Entities;
-
 using Lidgren.Network;
 
 namespace Intersect.Server.Networking.Lidgren
@@ -32,30 +31,37 @@ namespace Intersect.Server.Networking.Lidgren
             }
         );
 
-        internal ServerNetwork(IServerContext context, IPacketHelper packetHelper, NetworkConfiguration configuration, RSAParameters rsaParameters) : base(
-            packetHelper, configuration
+        internal ServerNetwork(
+            IServerContext context,
+            IApplicationContext applicationContext,
+            NetworkConfiguration configuration,
+            RSAParameters rsaParameters
+        ) : base(
+            applicationContext, configuration
         )
         {
             Context = context ?? throw new ArgumentNullException(nameof(context));
 
             Guid = Guid.NewGuid();
 
-            var lidgrenInterface = new LidgrenInterface(this, typeof(NetServer), rsaParameters);
-            lidgrenInterface.OnConnected += HandleInterfaceOnConnected;
-            lidgrenInterface.OnConnectionApproved += HandleInterfaceOnConnectonApproved;
-            lidgrenInterface.OnDisconnected += HandleInterfaceOnDisconnected;
-            lidgrenInterface.OnUnconnectedMessage += HandleOnUnconnectedMessage;
-            lidgrenInterface.OnConnectionRequested += HandleConnectionRequested;
-            AddNetworkLayerInterface(lidgrenInterface);
+            var networkLayerInterface = new LidgrenInterface(this, typeof(NetServer), rsaParameters);
+            networkLayerInterface.OnConnected += HandleInterfaceOnConnected;
+            networkLayerInterface.OnConnectionApproved += HandleInterfaceOnConnectonApproved;
+            networkLayerInterface.OnDisconnected += HandleInterfaceOnDisconnected;
+            networkLayerInterface.OnUnconnectedMessage += HandleOnUnconnectedMessage;
+            networkLayerInterface.OnConnectionRequested += HandleConnectionRequested;
+            AddNetworkLayerInterface(networkLayerInterface);
         }
 
         private IServerContext Context { get; }
 
-        public HandleConnectionEvent OnConnected { get; set; }
-
-        public HandleConnectionEvent OnConnectionApproved { get; set; }
-
-        public HandleConnectionEvent OnDisconnected { get; set; }
+        public override event HandleConnectionEvent OnConnected;
+        public override event HandleConnectionEvent OnConnectionApproved;
+        public override event HandleConnectionEvent OnConnectionDenied;
+        public override event HandleConnectionRequest OnConnectionRequested;
+        public override event HandleConnectionEvent OnDisconnected;
+        public override event HandlePacketAvailable OnPacketAvailable;
+        public override event HandleUnconnectedMessage OnUnconnectedMessage;
 
         public bool Listen()
         {
@@ -70,7 +76,7 @@ namespace Intersect.Server.Networking.Lidgren
         )
         {
             Log.Info($"Connected [{connectionEventArgs.Connection?.Guid}].");
-            Client.CreateBeta4Client(Context, connectionEventArgs.Connection);
+            Client.CreateBeta4Client(Context, this, connectionEventArgs.Connection);
             OnConnected?.Invoke(sender, connectionEventArgs);
         }
 
@@ -93,7 +99,7 @@ namespace Intersect.Server.Networking.Lidgren
             OnDisconnected?.Invoke(sender, connectionEventArgs);
         }
 
-        protected virtual void HandleOnUnconnectedMessage(NetPeer peer, NetIncomingMessage message)
+        protected virtual void HandleOnUnconnectedMessage(UnconnectedMessageSender sender, IBuffer message)
         {
             try
             {
@@ -101,10 +107,10 @@ namespace Intersect.Server.Networking.Lidgren
                 switch (packetType)
                 {
                     case "status":
-                        var response = peer.CreateMessage();
-                        response.WriteVariableInt32(Player.OnlineCount);
-                        peer.SendUnconnectedMessage(response, message.SenderEndPoint);
-
+                        // TODO: Response buffers
+                        // var response = peer.CreateMessage();
+                        // response.WriteVariableInt32(Player.OnlineCount);
+                        // peer.SendUnconnectedMessage(response, message.SenderEndPoint);
                         break;
                 }
             }
@@ -121,6 +127,11 @@ namespace Intersect.Server.Networking.Lidgren
             }
 
             return true;
+        }
+
+        protected override bool SendUnconnected(IPEndPoint endPoint, UnconnectedPacket packet)
+        {
+            throw new NotImplementedException();
         }
 
         public override bool Send(IPacket packet, TransmissionMode mode = TransmissionMode.All)

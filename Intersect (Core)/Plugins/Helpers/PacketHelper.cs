@@ -62,22 +62,22 @@ namespace Intersect.Plugins.Helpers
         public IReadOnlyList<Type> CurrentPluginPacketTypes => PluginPacketTypes.WrapReadOnly();
 
         public bool TryRegisterPacketHandler<THandler, TPacket>(out THandler handler)
-            where TPacket : IPacket
+            where TPacket : class, IPacket
             where THandler : IPacketHandler<TPacket>
             => HandlerRegistry.TryRegisterHandler(out handler);
 
         public bool TryRegisterPacketPostHook<THandler, TPacket>(out THandler handler)
-            where TPacket : IPacket
+            where TPacket : class, IPacket
             where THandler : IPacketHandler<TPacket>
             => HandlerRegistry.TryRegisterPostHook<THandler, TPacket>(out handler);
 
         public bool TryRegisterPacketPreHook<THandler, TPacket>(out THandler handler)
-            where TPacket : IPacket
+            where TPacket : class, IPacket
             where THandler : IPacketHandler<TPacket>
             => HandlerRegistry.TryRegisterPreHook<THandler, TPacket>(out handler);
 
         public bool TryRegisterPacketPreprocessor<THandler, TPacket>(out THandler handler)
-            where TPacket : IPacket
+            where TPacket : class, IPacket
             where THandler : IPacketHandler<TPacket>
             => HandlerRegistry.TryRegisterPreHook<THandler, TPacket>(out handler);
 

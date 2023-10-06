@@ -22,5 +22,7 @@ namespace Intersect.Network
         void HandleApproved();
 
         void HandleDisconnected();
+
+        void Disconnect(string? message = default);
     }
 }

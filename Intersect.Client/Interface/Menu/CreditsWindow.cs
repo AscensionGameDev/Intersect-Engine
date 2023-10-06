@@ -11,7 +11,7 @@ using Newtonsoft.Json;
 namespace Intersect.Client.Interface.Menu
 {
 
-    public partial class CreditsWindow
+    public partial class CreditsWindow : IMainMenuWindow
     {
 
         private Button mBackBtn;

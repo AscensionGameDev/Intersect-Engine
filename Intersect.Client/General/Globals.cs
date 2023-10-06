@@ -210,7 +210,7 @@ namespace Intersect.Client.General
         public static Item[,] Trade;
 
         //Scene management
-        public static bool WaitingOnServer = false;
+        public static bool WaitingOnServer { get; set; } = false;
 
         public static Entity GetEntity(Guid id, EntityType type)
         {

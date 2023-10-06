@@ -1,5 +1,4 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Security.Cryptography;
 
 using Intersect.Logging;
@@ -30,7 +29,7 @@ namespace Intersect.Network.Packets
         }
 
         public HailPacket(
-            RSACryptoServiceProvider rsa,
+            RSA rsa,
             byte[] handshakeSecret,
             byte[] versionData,
             RSAParameters rsaParameters
@@ -83,14 +82,14 @@ namespace Intersect.Network.Packets
 
                 Debug.Assert(mRsa != null, "mRsa != null");
 
-                EncryptedData = mRsa.Encrypt(buffer.ToArray(), true) ??
+                EncryptedData = mRsa.Encrypt(buffer.ToArray(), RSAEncryptionPadding.OaepSHA256) ??
                                 throw new InvalidOperationException("Failed to encrypt the buffer.");
 
                 return true;
             }
         }
 
-        public override bool Decrypt(RSACryptoServiceProvider rsa)
+        public override bool Decrypt(RSA rsa)
         {
             try
             {
@@ -101,7 +100,7 @@ namespace Intersect.Network.Packets
                     throw new ArgumentNullException(nameof(rsa));
                 }
 
-                var decryptedHail = mRsa.Decrypt(EncryptedData, true);
+                var decryptedHail = mRsa.Decrypt(EncryptedData, RSAEncryptionPadding.OaepSHA256);
                 using (var buffer = new MemoryBuffer(decryptedHail))
                 {
                     if (!buffer.Read(out mVersionData))

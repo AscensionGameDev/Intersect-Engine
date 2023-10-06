@@ -1,8 +1,7 @@
 ﻿using Intersect.Core;
 using Intersect.Server.Core.Services;
-using Intersect.Server.Networking.Lidgren;
+using Intersect.Server.Networking.LiteNetLib;
 using Intersect.Server.Web;
-using Intersect.Server.Web.RestApi;
 
 namespace Intersect.Server.Core
 {

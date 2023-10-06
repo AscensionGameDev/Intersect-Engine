@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace Intersect.Memory
@@ -45,9 +46,9 @@ namespace Intersect.Memory
 
         bool Read(out short value);
 
-        bool Read(out string value);
+        bool Read([NotNullWhen(true)] out string? value);
 
-        bool Read(out string value, Encoding encoding, bool nullTerminated = false);
+        bool Read([NotNullWhen(true)] out string? value, Encoding encoding, bool nullTerminated = false);
 
         bool Read(out uint value);
 
@@ -59,67 +60,67 @@ namespace Intersect.Memory
 
         #region ReadX()
 
-        bool ReadBool();
+        bool ReadBool() => Read(out bool value) ? value : default;
 
-        bool ReadBoolean();
+        bool ReadBoolean() => Read(out bool value) ? value : default;
 
-        byte ReadByte();
+        byte ReadByte() => Read(out byte value) ? value : default;
 
-        byte ReadUInt8();
+        byte ReadUInt8() => Read(out byte value) ? value : default;
 
-        byte[] ReadBytes();
+        byte[] ReadBytes() => Read(out byte[] value) ? value : default;
 
-        byte[] ReadBytes(long count);
+        byte[] ReadBytes(long count) => Read(out byte[] value, count) ? value : default;
 
-        byte[] ReadBytes(ref byte[] bytes, long offset, long count);
+        byte[] ReadBytes(ref byte[] bytes, long offset, long count) => Read(ref bytes, offset, count) ? bytes : default;
 
-        char ReadChar();
+        char ReadChar() => Read(out char value) ? value : default;
 
-        char ReadCharacter();
+        char ReadCharacter() => Read(out char value) ? value : default;
 
-        decimal ReadDecimal();
+        decimal ReadDecimal() => Read(out decimal value) ? value : default;
 
-        double ReadDouble();
+        double ReadDouble() => Read(out double value) ? value : default;
 
-        float ReadFloat();
+        float ReadFloat() => Read(out float value) ? value : default;
 
-        float ReadSingle();
+        float ReadSingle() => Read(out float value) ? value : default;
 
-        int ReadInt();
+        int ReadInt() => Read(out int value) ? value : default;
 
-        int ReadInt32();
+        int ReadInt32() => Read(out int value) ? value : default;
 
-        int ReadInteger();
+        int ReadInteger() => Read(out int value) ? value : default;
 
-        long ReadInt64();
+        long ReadInt64() => Read(out long value) ? value : default;
 
-        long ReadLong();
+        long ReadLong() => Read(out long value) ? value : default;
 
-        sbyte ReadInt8();
+        sbyte ReadInt8() => Read(out sbyte value) ? value : default;
 
-        sbyte ReadSByte();
+        sbyte ReadSByte() => Read(out sbyte value) ? value : default;
 
-        short ReadInt16();
+        short ReadInt16() => Read(out short value) ? value : default;
 
-        short ReadShort();
+        short ReadShort() => Read(out short value) ? value : default;
 
-        string ReadString();
+        string? ReadString() => Read(out string? value) ? value : default;
 
-        string ReadString(Encoding encoding, bool nullTerminated = false);
+        string? ReadString(Encoding encoding, bool nullTerminated = false) => Read(out var value, encoding, nullTerminated) ? value : default;
 
-        uint ReadUInt();
+        uint ReadUInt() => Read(out uint value) ? value : default;
 
-        uint ReadUInt32();
+        uint ReadUInt32() => Read(out uint value) ? value : default;
 
-        uint ReadUnsignedInteger();
+        uint ReadUnsignedInteger() => Read(out uint value) ? value : default;
 
-        ulong ReadULong();
+        ulong ReadULong() => Read(out ulong value) ? value : default;
 
-        ulong ReadUInt64();
+        ulong ReadUInt64() => Read(out ulong value) ? value : default;
 
-        ushort ReadUInt16();
+        ushort ReadUInt16() => Read(out ushort value) ? value : default;
 
-        ushort ReadUShort();
+        ushort ReadUShort() => Read(out ushort value) ? value : default;
 
         #endregion
 

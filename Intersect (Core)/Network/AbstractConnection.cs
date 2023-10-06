@@ -64,6 +64,7 @@ namespace Intersect.Network
             Log.Debug($"Connection terminated to remote [{Guid}/{Ip}:{Port}].");
         }
 
+        public abstract void Disconnect(string message = default);
     }
 
 }

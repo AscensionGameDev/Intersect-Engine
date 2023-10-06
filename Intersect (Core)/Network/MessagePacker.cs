@@ -1,56 +1,55 @@
 ﻿using Intersect.Logging;
-using Intersect.Network.Packets.Client;
-using Intersect.Network.Packets.Server;
 using MessagePack;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Intersect.Memory;
 
 namespace Intersect.Network
 {
     public partial class MessagePacker
     {
-        public static readonly MessagePacker Instance = new MessagePacker();
+        public static readonly MessagePacker Instance = new();
 
         private readonly MessagePackSerializerOptions mOptions  = MessagePackSerializerOptions.Standard.
             WithResolver(MessagePack.Resolvers.CompositeResolver.Create(
-                new IFormatterResolver[] { 
-                    MessagePack.Resolvers.NativeGuidResolver.Instance, 
-                    MessagePack.Resolvers.NativeDateTimeResolver.Instance, 
-                    MessagePack.Resolvers.NativeDecimalResolver.Instance, 
-                    MessagePack.Resolvers.StandardResolver.Instance }
+                    MessagePack.Resolvers.NativeGuidResolver.Instance,
+                MessagePack.Resolvers.NativeDateTimeResolver.Instance,
+                MessagePack.Resolvers.NativeDecimalResolver.Instance,
+                MessagePack.Resolvers.StandardResolver.Instance
                 )
             );
 
         private readonly MessagePackSerializerOptions mCompressedOptions = MessagePackSerializerOptions.Standard.WithCompression(MessagePackCompression.Lz4Block);
 
-        public byte[] Serialize(IntersectPacket pkt)
+        public byte[] Serialize(IntersectPacket packet)
         {
-            var packedPacket = new PackedIntersectPacket(pkt)
+            var packedPacket = new PackedIntersectPacket(packet)
             {
-                Data = MessagePackSerializer.Serialize((object)pkt, mOptions)
+                Data = MessagePackSerializer.Serialize((object)packet, mOptions)
             };
 
             return MessagePackSerializer.Serialize((object)packedPacket, mCompressedOptions);
         }
 
-        public object Deserialize(byte[] data)
+        public object? Deserialize(byte[] packetData)
         {
             try
             {
-                var packedPacket = MessagePackSerializer.Deserialize<PackedIntersectPacket>(data, mCompressedOptions);
+                var packedPacket = MessagePackSerializer.Deserialize<PackedIntersectPacket>(packetData, mCompressedOptions);
                 var intersectPacket = MessagePackSerializer.Deserialize(packedPacket.PacketType, packedPacket.Data, mOptions);
                 return intersectPacket;
             }
             catch (Exception exception)
             {
+#if DIAGNOSTIC
+                Log.Debug($"Invalid packet: {Convert.ToHexString(data)}");
+#endif
+
                 Log.Error(exception);
 
                 return null;
             }
         }
+
+        public object Deserialize(IBuffer buffer) => Deserialize(buffer.ReadBytes(buffer.Remaining));
 
     }
 }
