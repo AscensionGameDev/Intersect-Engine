@@ -25,6 +25,8 @@ namespace Intersect.Editor.Networking
         {
             public IApplicationContext ApplicationContext { get; }
 
+            public INetwork Network => Networking.Network.EditorLidgrenNetwork;
+
             public VirtualPacketSender(IApplicationContext applicationContext) =>
                 ApplicationContext = applicationContext ?? throw new ArgumentNullException(nameof(applicationContext));
 
@@ -35,7 +37,7 @@ namespace Intersect.Editor.Networking
             {
                 if (packet is IntersectPacket intersectPacket)
                 {
-                    Network.SendPacket(intersectPacket);
+                    Networking.Network.SendPacket(intersectPacket);
 
                     return true;
                 }

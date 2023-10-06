@@ -18,6 +18,50 @@ using Intersect.Rsa;
 namespace Intersect.Editor.Networking
 {
 
+    internal sealed class VirtualApplicationContext : IApplicationContext
+    {
+        public VirtualApplicationContext(IPacketHelper packetHelper)
+        {
+            PacketHelper = packetHelper;
+        }
+
+        public bool HasErrors => throw new NotImplementedException();
+
+        public bool IsDisposed => throw new NotImplementedException();
+
+        public bool IsStarted => throw new NotImplementedException();
+
+        public bool IsRunning => throw new NotImplementedException();
+
+        public ICommandLineOptions StartupOptions => throw new NotImplementedException();
+
+        public Logger Logger => throw new NotImplementedException();
+
+        public IPacketHelper PacketHelper { get; }
+
+        public List<IApplicationService> Services => throw new NotImplementedException();
+
+        public void Dispose()
+        {
+            throw new NotImplementedException();
+        }
+
+        public TApplicationService GetService<TApplicationService>() where TApplicationService : IApplicationService
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Start(bool lockUntilShutdown = true)
+        {
+            throw new NotImplementedException();
+        }
+
+        public LockingActionQueue StartWithActionQueue()
+        {
+            throw new NotImplementedException();
+        }
+    }
+
     internal static partial class Network
     {
 
@@ -52,12 +96,13 @@ namespace Intersect.Editor.Networking
                     ClientConfiguration.Instance.Host, ClientConfiguration.Instance.Port
                 );
 
+                var virtualApplicationContext = new VirtualApplicationContext(packetHelper);
                 var assembly = Assembly.GetExecutingAssembly();
                 using (var stream = assembly.GetManifestResourceStream("Intersect.Editor.network.handshake.bkey.pub"))
                 {
                     var rsaKey = new RsaKey(stream);
                     Debug.Assert(rsaKey != null, "rsaKey != null");
-                    EditorLidgrenNetwork = new ClientNetwork(packetHelper, config, rsaKey.Parameters);
+                    EditorLidgrenNetwork = new ClientNetwork(virtualApplicationContext, config, rsaKey.Parameters);
                 }
 
                 EditorLidgrenNetwork.Handler = PacketHandler.HandlePacket;
