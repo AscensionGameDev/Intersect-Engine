@@ -1,10 +1,10 @@
 diff --git a/LiteNetLib/LiteNetLib.csproj b/LiteNetLib/LiteNetLib.csproj
-index 4a58e9e..315645b 100644
+index 4a58e9e..9e8e142 100644
 --- a/LiteNetLib/LiteNetLib.csproj
 +++ b/LiteNetLib/LiteNetLib.csproj
 @@ -1,62 +1,61 @@
  ﻿<Project Sdk="Microsoft.NET.Sdk">
-
+ 
 -  <PropertyGroup>
 -    <AssemblyName>LiteNetLib</AssemblyName>
 -    <RootNamespace>LiteNetLib</RootNamespace>
@@ -118,6 +118,6 @@ index 4a58e9e..315645b 100644
 -      <PackagePath>\</PackagePath>
 -    </None>
 -  </ItemGroup>
-
+ 
  </Project>
 \ No newline at end of file
