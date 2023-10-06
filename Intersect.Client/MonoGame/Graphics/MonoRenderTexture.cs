@@ -1,4 +1,4 @@
-﻿using Intersect.Client.Framework.Graphics;
+using Intersect.Client.Framework.Graphics;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -20,9 +20,15 @@ namespace Intersect.Client.MonoGame.Graphics
         public MonoRenderTexture(GraphicsDevice graphicsDevice, int width, int height) : base(width, height)
         {
             mRenderTexture = new RenderTarget2D(
-                graphicsDevice, width, height, false, graphicsDevice.PresentationParameters.BackBufferFormat,
-                graphicsDevice.PresentationParameters.DepthStencilFormat,
-                graphicsDevice.PresentationParameters.MultiSampleCount, RenderTargetUsage.PreserveContents
+                graphicsDevice,
+                width,
+                height,
+                mipMap: false,
+                preferredFormat: graphicsDevice.PresentationParameters.BackBufferFormat,
+                preferredDepthFormat: graphicsDevice.PresentationParameters.DepthStencilFormat,
+                /* For whatever reason if this isn't zero everything breaks in .NET 7 on MacOS and most Windows devices */
+                preferredMultiSampleCount: 0, // graphicsDevice.PresentationParameters.MultiSampleCount,
+                usage: RenderTargetUsage.PreserveContents
             );
 
             RenderTextureCount++;
