@@ -71,13 +71,13 @@ jobs:
     - name: Build solution
       if: steps.cache-binaries.outputs.cache-hit != 'true' || inputs.forceBuild == true || inputs.forceRestore == true
       run: |
-        git apply disable-windows-editor.patch
         cd vendor/LiteNetLib
         cat LiteNetLib/LiteNetLib.csproj
         git apply --whitespace=fix ../LiteNetLib.patch
         cat LiteNetLib/LiteNetLib.csproj
         cd ../..
         dotnet publish Intersect.sln -r win-x64   -p:Configuration=Release -p:PackageVersion=${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}+build.${{ github.sha }} -p:Version=${{ env.VERSION_PREFIX }}.${{ github.run_number }}
+        git apply disable-windows-editor.patch
         dotnet publish Intersect.sln -r linux-x64 -p:Configuration=Release -p:PackageVersion=${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}+build.${{ github.sha }} -p:Version=${{ env.VERSION_PREFIX }}.${{ github.run_number }}
         dotnet publish Intersect.sln -r osx-x64   -p:Configuration=Release -p:PackageVersion=${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}+build.${{ github.sha }} -p:Version=${{ env.VERSION_PREFIX }}.${{ github.run_number }}
 
