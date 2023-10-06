@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\RevenantX\LiteNetLib\LiteNetLib\LiteNetLib.csproj" />
+    <ProjectReference Include="..\vendor\LiteNetLib\LiteNetLib\LiteNetLib.csproj" />
     <ProjectReference Include="..\Intersect (Core)\Intersect.Core.csproj" />
   </ItemGroup>
 
