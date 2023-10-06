@@ -74,7 +74,7 @@ jobs:
         git apply disable-windows-editor.patch
         cd vendor/LiteNetLib
         cat LiteNetLib/LiteNetLib.csproj
-        git apply ../LiteNetLib.patch
+        git apply --whitespace=fix ../LiteNetLib.patch
         cat LiteNetLib/LiteNetLib.csproj
         cd ../..
         dotnet publish Intersect.sln -r win-x64   -p:Configuration=Release -p:PackageVersion=${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}+build.${{ github.sha }} -p:Version=${{ env.VERSION_PREFIX }}.${{ github.run_number }}
