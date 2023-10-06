@@ -1,29 +1,36 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-
+﻿using System.Collections.Concurrent;
+using System.Net;
+using Intersect.Core;
 using Intersect.Logging;
 using Intersect.Memory;
 using Intersect.Plugins.Interfaces;
+using Intersect.Utilities;
 
 namespace Intersect.Network
 {
     public abstract partial class AbstractNetwork : INetwork
     {
+        private record struct PendingUnconnectedMessage(Guid MessageId, HandleUnconnectedMessage ResponseHandler);
+
         private bool mDisposed;
 
         private readonly object mDisposeLock;
 
         private readonly List<INetworkLayerInterface> mNetworkLayerInterfaces;
 
-        protected AbstractNetwork(IPacketHelper packetHelper, NetworkConfiguration configuration)
+        private readonly PriorityQueue<PendingUnconnectedMessage, long> _pendingUnconnectedCallbacks = new();
+
+        protected AbstractNetwork(IApplicationContext applicationContext, NetworkConfiguration configuration)
         {
             mDisposed = false;
             mDisposeLock = new object();
 
-            Helper = packetHelper ?? throw new ArgumentNullException(nameof(packetHelper));
+            ApplicationContext = applicationContext ?? throw new ArgumentNullException(nameof(applicationContext));
+            Helper = applicationContext.PacketHelper ??
+                     throw new ArgumentException(
+                         $"{nameof(IApplicationContext.PacketHelper)} was null.",
+                         nameof(applicationContext)
+                     );
 
             mNetworkLayerInterfaces = new List<INetworkLayerInterface>();
 
@@ -37,6 +44,8 @@ namespace Intersect.Network
             Configuration = configuration;
         }
 
+        public IApplicationContext ApplicationContext { get; }
+
         public IPacketHelper Helper { get; }
 
         public ICollection<IConnection> Connections => ConnectionLookup.Values;
@@ -48,6 +57,13 @@ namespace Intersect.Network
         public ShouldProcessPacket PreProcessHandler { get; set; }
 
         public int ConnectionCount => Connections.Count;
+        public abstract event HandleConnectionEvent OnConnected;
+        public abstract event HandleConnectionEvent OnConnectionApproved;
+        public abstract event HandleConnectionEvent OnConnectionDenied;
+        public abstract event HandleConnectionRequest OnConnectionRequested;
+        public abstract event HandleConnectionEvent OnDisconnected;
+        public abstract event HandlePacketAvailable OnPacketAvailable;
+        public abstract event HandleUnconnectedMessage OnUnconnectedMessage;
 
         public NetworkConfiguration Configuration { get; }
 
@@ -111,6 +127,43 @@ namespace Intersect.Network
             return true;
         }
 
+        public bool SendUnconnected(
+            IPEndPoint endPoint,
+            UnconnectedPacket packet,
+            HandleUnconnectedMessage? responseCallback = default,
+            long timeout = INetwork.DefaultUnconnectedMessageTimeout
+        )
+        {
+            if (!SendUnconnected(endPoint, packet))
+            {
+                return false;
+            }
+
+            if (responseCallback != default)
+            {
+                _pendingUnconnectedCallbacks.Enqueue(
+                    new PendingUnconnectedMessage(packet.MessageId, responseCallback),
+                    timeout
+                );
+            }
+
+            return true;
+        }
+
+        protected abstract bool SendUnconnected(IPEndPoint endPoint, UnconnectedPacket packet);
+
+        public void Update()
+        {
+            var now = Timing.Global.MillisecondsUtc;
+            while (_pendingUnconnectedCallbacks.TryPeek(out _, out var time) && time < now)
+            {
+                if (!_pendingUnconnectedCallbacks.TryDequeue(out _, out _))
+                {
+                    return;
+                }
+            }
+        }
+
         public abstract bool Send(IPacket packet, TransmissionMode mode = TransmissionMode.All);
 
         public bool Send(Guid guid, IPacket packet, TransmissionMode mode = TransmissionMode.All)
@@ -167,6 +220,18 @@ namespace Intersect.Network
 
             networkLayerInterface.OnPacketAvailable += HandleInboundMessageAvailable;
             mNetworkLayerInterfaces.Add(networkLayerInterface);
+        }
+
+        protected bool RunForInterface<TNetworkLayerInterface>(Func<TNetworkLayerInterface, bool> action)
+        {
+            if (action != default)
+            {
+                return mNetworkLayerInterfaces.OfType<TNetworkLayerInterface>().Any(action);
+            }
+
+            Log.Error(new ArgumentNullException(nameof(action)));
+            return false;
+
         }
 
         private void HandleInboundMessageAvailable(INetworkLayerInterface sender)

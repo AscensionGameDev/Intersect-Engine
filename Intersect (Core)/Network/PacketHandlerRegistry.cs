@@ -110,7 +110,7 @@ namespace Intersect.Network
 
         protected virtual HandlePacketGeneric CreateHandlerDelegateForInstance<TPacket>(
             IPacketHandler packetHandlerGeneric
-        ) where TPacket : IPacket
+        ) where TPacket : class, IPacket
         {
             var stronglyTypedPacketHandler = packetHandlerGeneric as IPacketHandler<TPacket>;
 
@@ -119,7 +119,7 @@ namespace Intersect.Network
         }
 
         protected virtual HandlePacketGeneric CreateHandlerDelegateForType<TPacket>(Type handlerType)
-            where TPacket : IPacket
+            where TPacket : class, IPacket
         {
             var packetHandler = Activator.CreateInstance(handlerType) as IPacketHandler;
 
@@ -355,7 +355,7 @@ namespace Intersect.Network
         }
 
         protected virtual bool TryRegister<THandler, TPacket>(Dictionary<Type, List<IPacketHandler>> collection, out THandler handler)
-            where TPacket : IPacket
+            where TPacket : class, IPacket
             where THandler : IPacketHandler<TPacket>
         {
             if (TryRegister(collection, typeof(THandler), typeof(TPacket), out var genericHandler))
@@ -372,7 +372,7 @@ namespace Intersect.Network
             TryRegister(Preprocessors, handlerType, packetType, out handler);
 
         public bool TryRegisterPreprocessor<THandler, TPacket>(out THandler handler)
-            where TPacket : IPacket
+            where TPacket : class, IPacket
             where THandler : IPacketHandler<TPacket>
             => TryRegister<THandler, TPacket>(Preprocessors, out handler);
 
@@ -380,7 +380,7 @@ namespace Intersect.Network
             TryRegister(PreHooks, handlerType, packetType, out handler);
 
         public bool TryRegisterPreHook<THandler, TPacket>(out THandler handler)
-            where TPacket : IPacket
+            where TPacket : class, IPacket
             where THandler : IPacketHandler<TPacket>
             => TryRegister<THandler, TPacket>(PreHooks, out handler);
 
@@ -388,7 +388,7 @@ namespace Intersect.Network
             TryRegister(PostHooks, handlerType, packetType, out handler);
 
         public bool TryRegisterPostHook<THandler, TPacket>(out THandler handler)
-            where TPacket : IPacket
+            where TPacket : class, IPacket
             where THandler : IPacketHandler<TPacket>
             => TryRegister<THandler, TPacket>(PostHooks, out handler);
 
@@ -441,8 +441,7 @@ namespace Intersect.Network
                 target
             );
 
-        // TODO: Expose this
-        bool TryRegisterAvailableTypeHandlers(Assembly assembly, bool requireAttribute = true) =>
+        public bool TryRegisterAvailableTypeHandlers(Assembly assembly, bool requireAttribute = true) =>
             TryRegister(DiscoverTypes(assembly, requireAttribute));
 
         /// <summary>

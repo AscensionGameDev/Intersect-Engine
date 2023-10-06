@@ -6,6 +6,8 @@ namespace Intersect.Network
     {
         IApplicationContext ApplicationContext { get; }
 
+        INetwork Network { get; }
+
         bool Send(IPacket packet);
     }
 }

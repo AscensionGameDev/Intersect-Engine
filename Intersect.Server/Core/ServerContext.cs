@@ -5,7 +5,7 @@ using Intersect.Server.Core.Services;
 using Intersect.Server.Database;
 using Intersect.Server.Localization;
 using Intersect.Server.Networking;
-using Intersect.Server.Networking.Lidgren;
+using Intersect.Server.Networking.LiteNetLib;
 
 using System.Diagnostics;
 using System.Reflection;
@@ -30,7 +30,11 @@ namespace Intersect.Server.Core
     /// </summary>
     internal sealed partial class ServerContext : ApplicationContext<ServerContext, ServerCommandLineOptions>, IServerContext
     {
-        internal ServerContext(ServerCommandLineOptions startupOptions, Logger logger, IPacketHelper packetHelper) : base(
+        internal ServerContext(
+            ServerCommandLineOptions startupOptions,
+            Logger logger,
+            IPacketHelper packetHelper
+        ) : base(
             startupOptions, logger, packetHelper
         )
         {
@@ -42,7 +46,7 @@ namespace Intersect.Server.Core
                 Options.ServerPort = startupOptions.Port;
             }
 
-            Network = CreateNetwork(packetHelper);
+            Network = CreateNetwork(this);
         }
 
         public IApiService ApiService => GetExpectedService<IApiService>();
@@ -214,7 +218,7 @@ namespace Intersect.Server.Core
 
         #region Network
 
-        private ServerNetwork CreateNetwork(IPacketHelper packetHelper)
+        private ServerNetwork CreateNetwork(IApplicationContext applicationContext)
         {
             ServerNetwork network;
 
@@ -231,14 +235,14 @@ namespace Intersect.Server.Core
             {
                 var rsaKey = new RsaKey(stream ?? throw new InvalidOperationException());
                 Debug.Assert(rsaKey != null, "rsaKey != null");
-                network = new ServerNetwork(this, packetHelper, new NetworkConfiguration(Options.ServerPort), rsaKey.Parameters);
+                network = new ServerNetwork(this, applicationContext, new NetworkConfiguration(Options.ServerPort), rsaKey.Parameters);
             }
 
             #endregion
 
             #region Configure Packet Handlers
 
-            var packetHandler = new PacketHandler(this, packetHelper.HandlerRegistry);
+            var packetHandler = new PacketHandler(this, applicationContext.PacketHelper.HandlerRegistry);
             network.Handler = packetHandler.HandlePacket;
             network.PreProcessHandler = packetHandler.PreProcessPacket;
 

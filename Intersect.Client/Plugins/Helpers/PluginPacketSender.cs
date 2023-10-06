@@ -9,7 +9,7 @@ namespace Intersect.Client.Plugins.Helpers
 {
     public sealed partial class PluginPacketSender : IPacketSender
     {
-        private static IPacketSender VirtualSender => Networking.Network.PacketHandler?.VirtualSender;
+        private static IPacketSender? VirtualSender => Networking.Network.PacketHandler?.VirtualSender;
         
         private readonly IPacketHelper mPluginPluginPacketHelper;
 
@@ -20,6 +20,8 @@ namespace Intersect.Client.Plugins.Helpers
 
         /// <inheritdoc />
         public IApplicationContext ApplicationContext => VirtualSender?.ApplicationContext;
+
+        public INetwork Network => VirtualSender?.Network;
 
         /// <inheritdoc />
         public bool Send(IPacket packet)

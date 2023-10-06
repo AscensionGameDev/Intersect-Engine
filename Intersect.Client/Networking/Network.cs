@@ -1,6 +1,4 @@
-﻿using System;
-
-using Intersect.Client.Core;
+﻿using Intersect.Client.Core;
 using Intersect.Client.Framework.Network;
 using Intersect.Client.General;
 using Intersect.Client.Interface.Menu;
@@ -8,7 +6,6 @@ using Intersect.Configuration;
 using Intersect.Logging;
 using Intersect.Network;
 using Intersect.Network.Events;
-using Intersect.Plugins.Interfaces;
 
 namespace Intersect.Client.Networking
 {
@@ -22,7 +19,7 @@ namespace Intersect.Client.Networking
 
         public static GameSocket Socket { get; set; }
 
-        internal static PacketHandler PacketHandler { get; set; }
+        internal static PacketHandler? PacketHandler { get; set; }
 
         private static int sPing;
 
@@ -45,18 +42,23 @@ namespace Intersect.Client.Networking
             Socket.Disconnected += MySocket_OnDisconnected;
             Socket.DataReceived += MySocket_OnDataReceived;
             Socket.ConnectionFailed += MySocket_OnConnectionFailed;
-            TryConnect();
         }
 
-        private static void TryConnect()
+        public static void TryConnect()
         {
+            if (Connected)
+            {
+                return;
+            }
+
             sConnected = false;
-            MainMenu.OnNetworkConnecting();
+            Globals.WaitingOnServer = true;
             Socket?.Connect(ClientConfiguration.Instance.Host, ClientConfiguration.Instance.Port);
         }
 
         private static void MySocket_OnConnectionFailed(INetworkLayerInterface sender, ConnectionEventArgs connectionEventArgs, bool denied)
         {
+            Globals.WaitingOnServer = false;
             sConnected = false;
             if (!denied)
             {
@@ -71,6 +73,7 @@ namespace Intersect.Client.Networking
 
         private static void MySocket_OnDisconnected(INetworkLayerInterface sender, ConnectionEventArgs connectionEventArgs)
         {
+            Globals.WaitingOnServer = false;
             //Not sure how to handle this yet!
             sConnected = false;
             if (Globals.GameState == GameStates.InGame || Globals.GameState == GameStates.Loading)
@@ -90,6 +93,8 @@ namespace Intersect.Client.Networking
         {
             //Not sure how to handle this yet!
             sConnected = true;
+
+            Globals.WaitingOnServer = false;
         }
 
         public static void Close(string reason)

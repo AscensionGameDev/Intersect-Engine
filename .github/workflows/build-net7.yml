@@ -2,7 +2,7 @@ name: Build Intersect (.NET 7.0)
 
 on:
   push:
-    branches: [ "main-net7" ]
+    branches: [ "main-net7", "main-net7-proto" ]
   pull_request:
     branches: [ "main-net7" ]
   workflow_dispatch:

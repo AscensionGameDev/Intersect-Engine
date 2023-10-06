@@ -30,7 +30,7 @@ namespace Intersect
         protected bool _portChecker = true;
 
         [JsonProperty("MaxClientConnections")]
-        protected int _maxConnections = 100;
+        public int MaxClientConnections { get; set; }= 100;
 
         [JsonProperty("MaximumLoggedinUsers")]
         protected int _maxUsers = 50;
@@ -107,11 +107,6 @@ namespace Intersect
             get => Instance._serverPort;
             set => Instance._serverPort = value;
         }
-
-        /// <summary>
-        /// Defines the maximum amount of network connections our server is allowed to handle.
-        /// </summary>
-        public static int MaxConnections => Instance._maxConnections;
 
         /// <summary>
         /// Defines the maximum amount of logged in users our server is allowed to handle.

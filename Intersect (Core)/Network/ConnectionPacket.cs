@@ -19,7 +19,7 @@ namespace Intersect.Network
         protected const int SIZE_HANDSHAKE_SECRET = 32;
 
         [IgnoreMember]
-        protected RSACryptoServiceProvider mRsa;
+        protected RSA mRsa;
 
         [IgnoreMember]
         protected byte[] mHandshakeSecret;
@@ -37,9 +37,9 @@ namespace Intersect.Network
         {
         }
 
-        protected ConnectionPacket(RSACryptoServiceProvider rsa, byte[] handshakeSecret)
+        protected ConnectionPacket(RSA rsa, byte[] handshakeSecret)
         {
-            mRsa = rsa ?? throw new ArgumentNullException();
+            mRsa = rsa ?? throw new ArgumentNullException(nameof(rsa));
 
             mHandshakeSecret = handshakeSecret;
 
@@ -81,7 +81,7 @@ namespace Intersect.Network
 
         public abstract bool Encrypt();
 
-        public abstract bool Decrypt(RSACryptoServiceProvider rsa);
+        public abstract bool Decrypt(RSA rsa);
 
         protected static void DumpKey(RSAParameters parameters, bool isPublic)
         {

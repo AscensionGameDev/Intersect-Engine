@@ -3,7 +3,6 @@ using Intersect.Network.Events;
 
 namespace Intersect.Client.Framework.Network
 {
-
     public abstract partial class GameSocket
     {
 
@@ -49,6 +48,7 @@ namespace Intersect.Client.Framework.Network
             Disconnected?.Invoke(sender, connectionEventArgs);
         }
 
+        public abstract INetwork GetNetwork();
     }
 
     public delegate void DataReceivedHandler(IPacket packet);

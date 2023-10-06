@@ -21,12 +21,6 @@ namespace Intersect.Network.Lidgren
 
         private byte[] mRsaSecret;
 
-        public LidgrenConnection(INetwork network, NetConnection connection, byte[] aesKey) : this(
-            network, Guid.NewGuid(), connection, aesKey
-        )
-        {
-        }
-
         public LidgrenConnection(INetwork network, NetConnection connection, byte[] aesKey, RSAParameters rsaParameters)
             : this(network, Guid.NewGuid(), connection, aesKey)
         {
@@ -142,6 +136,10 @@ namespace Intersect.Network.Lidgren
             return Network?.Send(this, packet, mode) ?? false;
         }
 
+        public override void Disconnect(string message = default)
+        {
+            NetConnection?.Disconnect(message);
+        }
     }
 
 }

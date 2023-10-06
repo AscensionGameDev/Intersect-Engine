@@ -1,7 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-
-using Intersect.Collections;
+﻿using Intersect.Collections;
+#if DIAGNOSTIC
+using Intersect.Logging;
+#endif
+using Intersect.Reflection;
 using MessagePack;
 
 namespace Intersect.Network
@@ -26,9 +27,12 @@ namespace Intersect.Network
         {
             get
             {
-                if (mCachedData == null)
-                    mCachedData = MessagePacker.Instance.Serialize(this) ?? throw new Exception("Failed to serialize packet.");
+                mCachedData ??= MessagePacker.Instance.Serialize(this) ??
+                                       throw new Exception($"Failed to serialize {this.GetFullishName()}");
 
+#if DIAGNOSTIC
+                Log.Debug($"{GetType().FullName}({mCachedData.Length})={Convert.ToHexString(mCachedData)}");
+#endif
                 return mCachedData;
             }
         }
