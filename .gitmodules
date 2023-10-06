@@ -1,0 +1,3 @@
+[submodule "vendor/LiteNetLib"]
+	path = vendor/LiteNetLib
+	url = https://github.com/AscensionGameDev/LiteNetLib.git
