@@ -1,10 +1,11 @@
-﻿using System;
+using System;
 using System.Windows.Forms;
 
 using Intersect.Editor.General;
 using Intersect.Editor.Localization;
 using Intersect.Enums;
 using Intersect.GameObjects.Events.Commands;
+using Intersect.Utilities;
 
 namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 {
@@ -73,9 +74,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 
         private void lblCommands_Click(object sender, EventArgs e)
         {
-            System.Diagnostics.Process.Start(
-                "http://www.ascensiongamedev.com/community/topic/749-event-text-variables/"
-            );
+            BrowserUtils.Open("http://www.ascensiongamedev.com/community/topic/749-event-text-variables/");
         }
 
     }

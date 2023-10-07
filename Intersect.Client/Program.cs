@@ -1,5 +1,5 @@
-﻿using Intersect.Logging;
-
+using Intersect.Logging;
+using Intersect.Utilities;
 using System;
 using System.Diagnostics;
 using System.Globalization;
@@ -52,7 +52,7 @@ namespace Intersect.Client
 
                             if (!string.IsNullOrEmpty(OpenGLLink))
                             {
-                                Process.Start(OpenGLLink);
+                                BrowserUtils.Open(OpenGLLink);
                             }
 
                             Environment.Exit(-1);
@@ -63,7 +63,7 @@ namespace Intersect.Client
                         {
                             if (!string.IsNullOrEmpty(OpenALLink))
                             {
-                                Process.Start(OpenALLink);
+                                BrowserUtils.Open(OpenALLink);
                             }
 
                             Environment.Exit(-1);

@@ -27,7 +27,7 @@ using Intersect.GameObjects;
 using Intersect.Localization;
 using Intersect.Network;
 using Intersect.Updater;
-
+using Intersect.Utilities;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -1505,12 +1505,12 @@ namespace Intersect.Editor.Forms
 
         private void toolStripButtonQuestion_Click(object sender, EventArgs e)
         {
-            Process.Start("https://www.ascensiongamedev.com/community/forum/53-questions-and-answers/");
+            BrowserUtils.Open("https://www.ascensiongamedev.com/community/forum/53-questions-and-answers/");
         }
 
         private void toolStripButtonBug_Click(object sender, EventArgs e)
         {
-            Process.Start("https://github.com/AscensionGameDev/Intersect-Engine/issues/new/choose");
+            BrowserUtils.Open("https://github.com/AscensionGameDev/Intersect-Engine/issues/new/choose");
         }
 
         private void UpdateTimeSimulationList()
