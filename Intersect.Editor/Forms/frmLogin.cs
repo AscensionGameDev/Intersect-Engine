@@ -124,6 +124,7 @@ namespace Intersect.Editor.Forms
 
             if (_loginPending && Networking.Network.Connected)
             {
+                _loginPending = false;
                 if (txtUsername.Text.Trim().Length > 0 && txtPassword.Text.Trim().Length > 0)
                 {
                     using (var sha = new SHA256Managed())
