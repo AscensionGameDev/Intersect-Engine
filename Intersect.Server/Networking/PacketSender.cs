@@ -411,7 +411,7 @@ namespace Intersect.Server.Networking
             {
                 var entitiesToDispose = oldMapInstance.GetEntities(true);
                 var effectedMaps = oldMapInstance.GetController().GetSurroundingMapIds(true);
-                
+
                 var enPackets = new List<EntityPacket>();
                 for (var i = 0; i < entitiesToDispose.Count; i++)
                 {
@@ -1041,7 +1041,7 @@ namespace Intersect.Server.Networking
                     {
                         items.Add(new MapItemUpdatePacket(mapId, item.TileIndex, item.UniqueId, item.ItemId, item.BagId, item.Quantity, item.Properties));
                     }
-                }   
+                }
             }
             return new MapItemsPacket(mapId, items.ToArray());
         }
@@ -1095,7 +1095,7 @@ namespace Intersect.Server.Networking
                         SendDataToProximityOnMapInstance(mapId, mapInstanceId, new MapItemUpdatePacket(mapId, itemRef.TileIndex, itemRef.UniqueId));
                     }
                 }
-                
+
             }
             else
             {
@@ -1262,7 +1262,12 @@ namespace Intersect.Server.Networking
                 }
             }
 
-            if (client.Characters.Count > 0)
+            var clientCharacters = client?.Characters;
+            if (clientCharacters == default) {
+                Log.Error($"PLEASE REPORT THIS WITH LOGS: About to crash because {(client == default ? nameof(client) : nameof(client.Characters))} is null.");
+            }
+
+            if (client.Characters.Count > 0) /* TODO: Fix NRE when logging out and back in */
             {
                 foreach (var character in client.Characters.OrderByDescending(p => p.LastOnline))
                 {
@@ -2167,7 +2172,7 @@ namespace Intersect.Server.Networking
             {
                 return false;
             }
-            
+
             SendDataToAllLayersOfMap(mapId, packet, except, mode);
 
             foreach (var surrMap in map.SurroundingMapIds)
