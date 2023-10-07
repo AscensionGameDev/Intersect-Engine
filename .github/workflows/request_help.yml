@@ -19,14 +19,11 @@ jobs:
 
     - name: Check comment body
       run: echo ${{ github.event.comment.body }}
-    
-    # Checkout code
-    - name: Checkout
-      uses: actions/checkout@v3
-    - name: Checkout Pull Request
-      run: hub pr checkout ${{ github.event.issue.number }}
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Checkout pull request
+      uses: actions/checkout@v4
+      with:
+        ref: refs/pull/${{ github.event.issue.number }}/head
 
     - name: Cache binaries
       uses: actions/cache@v3
