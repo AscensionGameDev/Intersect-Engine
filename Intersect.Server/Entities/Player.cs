@@ -498,11 +498,24 @@ namespace Intersect.Server.Entities
             DbInterface.Pool.QueueWorkItem(CompleteLogout);
         }
 
+#if DIAGNOSTIC
+        private int _logoutCounter = 0;
+#endif
+
         public void CompleteLogout()
         {
+#if DIAGNOSTIC
+            var currentExecutionId = _logoutCounter++;
+            Log.Debug($"Started {nameof(CompleteLogout)}() #{currentExecutionId} on {Name} ({User?.Name})");
+#endif
+
             User?.Save();
 
             Dispose();
+
+#if DIAGNOSTIC
+            Log.Debug($"Finished {nameof(CompleteLogout)}() #{currentExecutionId} on {Name} ({User?.Name})");
+#endif
         }
 
         //Update
@@ -535,6 +548,10 @@ namespace Intersect.Server.Entities
                             var user = User;
                             if (user != null)
                             {
+                                if (Client.IsEditor)
+                                {
+                                    Log.Debug($"Editor saving user: {user.Name}");
+                                }
                                 DbInterface.Pool.QueueWorkItem(user.Save, false);
                             }
                             SaveTimer = Timing.Global.Milliseconds + Options.Instance.Processing.PlayerSaveInterval;
@@ -1430,7 +1447,7 @@ namespace Intersect.Server.Entities
             {
                 return false;
             }
-            
+
             if (spell?.Combat?.TargetType == SpellTargetType.Self ||
                 spell?.Combat?.TargetType == SpellTargetType.Projectile ||
                 spell?.SpellType == SpellType.Dash
@@ -2482,7 +2499,7 @@ namespace Intersect.Server.Entities
 
                         break;
                     }
-                    
+
                 case ItemHandling.UpTo:
                     if (CanGiveItem(item, slot)) // Can receive item under regular rules.
                     {
@@ -3283,10 +3300,10 @@ namespace Intersect.Server.Entities
         /// </summary>
         /// <param name="slot">The <see cref="InventorySlot"/> to find</param>
         /// <returns>An <see cref="int"/>containing the relevant index, or -1 if not found</returns>
-        public int FindInventoryItemSlotIndex(InventorySlot slot) 
+        public int FindInventoryItemSlotIndex(InventorySlot slot)
         {
             return Items.FindIndex(sl => sl.Id == slot.Id);
-        } 
+        }
 
         /// <summary>
         /// Finds all inventory slots matching the desired item and quantity.
@@ -3521,7 +3538,7 @@ namespace Intersect.Server.Entities
                         }
 
                         PacketSender.SendInventoryItemUpdate(this, currentSlotIndex);
-                        
+
                         amountRemaining -= amountFromSlot;
                         if (amountRemaining > 0)
                         {
@@ -4201,7 +4218,7 @@ namespace Intersect.Server.Entities
 
                 relevantSlots.Add(requestedSlot);
             }
-            
+
             // If the item is stackable, add slots that contain that item into the mix
             if (itemDescriptor.IsStackable)
             {
@@ -5232,7 +5249,7 @@ namespace Intersect.Server.Entities
                 }
                 equippedSlot++;
             }
-            
+
             equippedSlot = -1;
             return false;
         }
