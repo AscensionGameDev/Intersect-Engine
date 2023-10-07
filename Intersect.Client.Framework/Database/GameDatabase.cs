@@ -105,8 +105,8 @@ namespace Intersect.Client.Framework.Database
         /// </summary>
         public virtual void LoadPreferences()
         {
-            MusicVolume = LoadPreference(nameof(MusicVolume), 25);
-            SoundVolume = LoadPreference(nameof(SoundVolume), 25);
+            MusicVolume = LoadPreference(nameof(MusicVolume), 10);
+            SoundVolume = LoadPreference(nameof(SoundVolume), 15);
             TargetResolution = LoadPreference(nameof(TargetResolution), 0);
             TargetFps = LoadPreference(nameof(TargetFps), 0);
             FullScreen = LoadPreference(nameof(FullScreen), false);
