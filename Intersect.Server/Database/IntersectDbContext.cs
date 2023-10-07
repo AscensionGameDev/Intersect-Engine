@@ -3,6 +3,7 @@ using System.Data.Common;
 using System.Diagnostics;
 using Intersect.Config;
 using Intersect.Server.Database.Converters;
+using Intersect.Server.Database.PlayerData;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Infrastructure;
@@ -57,18 +58,21 @@ public abstract partial class IntersectDbContext<TDbContext> : DbContext, IDbCon
                                         : QueryTrackingBehavior.TrackAll);
 
         var loggerFactory = ContextOptions.LoggerFactory;
-#if DEBUG
-        loggerFactory ??= new IntersectLoggerFactory();
+#if DIAGNOSTIC
+        if (this is PlayerContext)
+        {
+            loggerFactory ??= new IntersectLoggerFactory();
+        }
 #endif
 
         var enableSensitiveDataLogging = ContextOptions.EnableSensitiveDataLogging;
-#if DEBUG
-        enableSensitiveDataLogging = true;
+#if DIAGNOSTIC
+        enableSensitiveDataLogging = this is PlayerContext;
 #endif
 
         var enableDetailedErrors = ContextOptions.EnableDetailedErrors;
-#if DEBUG
-        enableDetailedErrors = true;
+#if DIAGNOSTIC
+        enableDetailedErrors = this is PlayerContext;
 #endif
 
         _ = optionsBuilder

@@ -7,6 +7,7 @@ using System.Text;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Logging;
+using Intersect.Reflection;
 using Intersect.Security;
 using Intersect.Server.Core;
 using Intersect.Server.Database.Logging.Entities;
@@ -309,8 +310,16 @@ namespace Intersect.Server.Database.PlayerData
 
         public void Save(bool force = false, bool create = false) => Save(default, force, create);
 
-        public void Save(PlayerContext? playerContext, bool force = false, bool create = false)
+#if DIAGNOSTIC
+        private int _saveCounter = 0;
+#endif
+
+        private void Save(PlayerContext? playerContext, bool force = false, bool create = false)
         {
+#if DIAGNOSTIC
+            var currentExecutionId = _saveCounter++;
+#endif
+
             //No passing in custom contexts here.. they may already have this user in the change tracker and things just get weird.
             //The cost of making a new context is almost nil.
             var lockTaken = false;
@@ -331,6 +340,10 @@ namespace Intersect.Server.Database.PlayerData
                 {
                     return;
                 }
+
+#if DIAGNOSTIC
+                Log.Debug($"DBOP-A Save({playerContext}, {force}, {create}) #{currentExecutionId} {Name} ({Id})");
+#endif
 
                 if (playerContext == null)
                 {
@@ -360,6 +373,10 @@ namespace Intersect.Server.Database.PlayerData
                 }
 
                 playerContext.SaveChanges();
+
+#if DIAGNOSTIC
+                Log.Debug($"DBOP-B Save({playerContext}, {force}, {create}) #{currentExecutionId} {Name} ({Id})");
+#endif
             }
             catch (DbUpdateConcurrencyException ex)
             {
@@ -369,21 +386,17 @@ namespace Intersect.Server.Database.PlayerData
                     var type = entry.GetType().FullName;
                     concurrencyErrors.AppendLine($"Entry Type [{type} / {entry.State}]");
                     concurrencyErrors.AppendLine("--------------------");
+                    concurrencyErrors.AppendLine($"Type: {entry.Entity.GetFullishName()}");
 
                     var proposedValues = entry.CurrentValues;
                     var databaseValues = entry.GetDatabaseValues();
 
+                    var propertyNameColumnSize = proposedValues.Properties.Max(property => property.Name.Length);
+
                     foreach (var property in proposedValues.Properties)
                     {
                         concurrencyErrors.AppendLine(
-                            $"{property.Name} (Token: {property.IsConcurrencyToken}): Proposed: {proposedValues[property]}  Original Value: {entry.OriginalValues[property]}  Database Value: {(databaseValues != null ? databaseValues[property] : "null")}"
-                        );
-                    }
-
-                    foreach (var property in entry.Properties)
-                    {
-                        concurrencyErrors.AppendLine(
-                            $"{property.Metadata.Name} {nameof(property.IsModified)}={property.IsModified} {nameof(property.IsTemporary)}={property.IsTemporary}"
+                            $"\t{property.Name:propertyNameColumnSize} (Token: {property.IsConcurrencyToken}): Proposed: {proposedValues[property]}  Original Value: {entry.OriginalValues[property]}  Database Value: {(databaseValues != null ? databaseValues[property] : "null")}"
                         );
                     }
 
@@ -391,8 +404,17 @@ namespace Intersect.Server.Database.PlayerData
                     concurrencyErrors.AppendLine("");
                 }
 
-                Log.Error(ex, $"Jackpot! Concurrency Bug For {Name} in {(createdContext == default ? "Existing" : "Created")} Context");
+                var suffix = string.Empty;
+#if DIAGNOSTIC
+                suffix = $"#{currentExecutionId}";
+#endif
+                Log.Error(ex, $"Jackpot! Concurrency Bug For {Name} in {(createdContext == default ? "Existing" : "Created")} Context {suffix}");
                 Log.Error(concurrencyErrors.ToString());
+
+#if DIAGNOSTIC
+                Log.Debug($"DBOP-C Save({playerContext}, {force}, {create}) #{currentExecutionId} {Name} ({Id})");
+#endif
+
                 ServerContext.DispatchUnhandledException(
                     new Exception("Failed to save user, shutting down to prevent rollbacks!")
                 );
@@ -400,6 +422,10 @@ namespace Intersect.Server.Database.PlayerData
             catch (Exception ex)
             {
                 Log.Error(ex, "Failed to save user: " + Name);
+
+#if DIAGNOSTIC
+                Log.Debug($"DBOP-C Save({playerContext}, {force}, {create}) #{currentExecutionId} {Name} ({Id})");
+#endif
                 ServerContext.DispatchUnhandledException(
                     new Exception("Failed to save user, shutting down to prevent rollbacks!")
                 );
@@ -449,7 +475,8 @@ namespace Intersect.Server.Database.PlayerData
                 var hashedPassword = SaltPasswordHash(ptPassword, user.Salt);
                 if (string.Equals(user.Password, hashedPassword, StringComparison.Ordinal))
                 {
-                    return PostLoad(user);
+                    //return PostLoad(user);
+                    return user;
                 }
             }
             else
