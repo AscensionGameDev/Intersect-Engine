@@ -387,8 +387,7 @@
     <Compile Update="Forms\Editors\Events\Event Commands\EventCommand_WaitForRouteCompletion.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile
-      Update="Forms\Editors\Events\Event Commands\EventCommand_WaitForRouteCompletion.Designer.cs">
+    <Compile Update="Forms\Editors\Events\Event Commands\EventCommand_WaitForRouteCompletion.Designer.cs">
       <DependentUpon>EventCommand_WaitForRouteCompletion.cs</DependentUpon>
     </Compile>
     <Compile Update="Forms\Editors\Events\Event Commands\EventCommand_Warp.cs">
@@ -406,8 +405,7 @@
     <Compile Update="Forms\Editors\Events\Event Commands\Event_MoveRouteAnimationSelector.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile
-      Update="Forms\Editors\Events\Event Commands\Event_MoveRouteAnimationSelector.Designer.cs">
+    <Compile Update="Forms\Editors\Events\Event Commands\Event_MoveRouteAnimationSelector.Designer.cs">
       <DependentUpon>Event_MoveRouteAnimationSelector.cs</DependentUpon>
     </Compile>
     <Compile Update="Forms\Editors\Events\Event Commands\Event_MoveRouteDesigner.cs">

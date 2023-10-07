@@ -57,13 +57,23 @@ public abstract partial class IntersectDbContext<TDbContext> : DbContext, IDbCon
                                         : QueryTrackingBehavior.TrackAll);
 
         var loggerFactory = ContextOptions.LoggerFactory;
-        #if DEBUG
+#if DEBUG
         loggerFactory ??= new IntersectLoggerFactory();
-        #endif
+#endif
+
+        var enableSensitiveDataLogging = ContextOptions.EnableSensitiveDataLogging;
+#if DEBUG
+        enableSensitiveDataLogging = true;
+#endif
+
+        var enableDetailedErrors = ContextOptions.EnableDetailedErrors;
+#if DEBUG
+        enableDetailedErrors = true;
+#endif
 
         _ = optionsBuilder
-            .EnableDetailedErrors(ContextOptions.EnableDetailedErrors)
-            .EnableSensitiveDataLogging(ContextOptions.EnableSensitiveDataLogging)
+            .EnableDetailedErrors(enableDetailedErrors)
+            .EnableSensitiveDataLogging(enableSensitiveDataLogging)
             .ReplaceService<IModelCacheKeyFactory, IntersectModelCacheKeyFactory>()
             .UseLoggerFactory(loggerFactory)
             .UseQueryTrackingBehavior(queryTrackingBehavior);
