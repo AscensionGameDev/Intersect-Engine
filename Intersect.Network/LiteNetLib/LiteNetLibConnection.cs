@@ -5,6 +5,7 @@ using System.Text;
 using Intersect.Logging;
 using Intersect.Memory;
 using Intersect.Network.Packets;
+using Intersect.Reflection;
 using LiteNetLib;
 using LiteNetLib.Utils;
 
@@ -14,9 +15,14 @@ public sealed class LiteNetLibConnection : AbstractConnection
 {
     private readonly RSA _asymmetric;
     private readonly NetPeer _peer;
-    private readonly AesGcmContainer _symmetric;
+    private readonly ISymmetricAlgorithm _symmetric;
 
-    internal LiteNetLibConnection(NetPeer peer, RSAParameters asymmetricParameters, ReadOnlySpan<byte> symmetricKey)
+    internal LiteNetLibConnection(
+        NetPeer peer,
+        RSAParameters asymmetricParameters,
+        byte symmetricVersion,
+        ReadOnlySpan<byte> symmetricKey
+    )
     {
         if (symmetricKey == default || symmetricKey.Length != 32)
         {
@@ -29,7 +35,8 @@ public sealed class LiteNetLibConnection : AbstractConnection
         _asymmetric = RSA.Create(asymmetricParameters);
         _peer = peer;
         _peer.Tag = Guid;
-        _symmetric = new AesGcmContainer(symmetricKey);
+        _symmetric = SymmetricAlgorithm.PickForVersion(symmetricVersion, symmetricKey);
+        Log.Debug($"Created {_symmetric.GetFullishName()} for {_peer.EndPoint} ({Guid})");
     }
 
     internal LiteNetLibConnection(INetwork network, NetManager manager, RSA interfaceAsymmetric)
@@ -54,7 +61,8 @@ public sealed class LiteNetLibConnection : AbstractConnection
 
         _peer = manager.Connect(network.Configuration.Host, network.Configuration.Port, connectionData);
         _peer.Tag = Guid;
-        _symmetric = new AesGcmContainer();
+        _symmetric = SymmetricAlgorithm.PickForPlatform();
+        Log.Debug($"Created {_symmetric.GetFullishName()} for {_peer.EndPoint} ({Guid})");
     }
 
     public override string Ip => _peer.EndPoint.Address.ToString();
@@ -94,7 +102,9 @@ public sealed class LiteNetLibConnection : AbstractConnection
 #if DIAGNOSTIC
         Log.Debug($"TryProcessInboundMessage() cipherdata({cipherdata.Length})={Convert.ToHexString(cipherdata)}");
 #endif
-        switch (_symmetric.TryDecrypt(cipherdata, out var plaindata))
+
+        var decryptionResult = _symmetric.TryDecrypt(cipherdata, out var plaindata);
+        switch (decryptionResult)
         {
             case EncryptionResult.Success:
                 break;
@@ -105,6 +115,7 @@ public sealed class LiteNetLibConnection : AbstractConnection
             case EncryptionResult.EmptyInput:
             case EncryptionResult.SizeMismatch:
             case EncryptionResult.Error:
+                Log.Warn($"RIEP: {Guid} {decryptionResult}");
                 return false;
             default:
                 throw new UnreachableException();
@@ -117,8 +128,8 @@ public sealed class LiteNetLibConnection : AbstractConnection
     public override bool Send(IPacket packet, TransmissionMode transmissionMode = TransmissionMode.All)
     {
         var packetData = packet.Data;
-        var decryptionResult = _symmetric.TryEncrypt(packetData, out var cipherdata);
-        switch (decryptionResult)
+        var encryptionResult = _symmetric.TryEncrypt(packetData, out var cipherdata);
+        switch (encryptionResult)
         {
             case EncryptionResult.Success:
                 break;
@@ -130,7 +141,7 @@ public sealed class LiteNetLibConnection : AbstractConnection
             case EncryptionResult.EmptyInput:
             case EncryptionResult.SizeMismatch:
             case EncryptionResult.Error:
-                Log.Warn($"RIEP: {Guid} {decryptionResult}");
+                Log.Warn($"RIEP: {Guid} {encryptionResult}");
                 return false;
 
             default:

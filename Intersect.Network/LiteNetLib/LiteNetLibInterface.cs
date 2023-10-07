@@ -426,7 +426,7 @@ public sealed class LiteNetLibInterface : INetworkLayerInterface, INetEventListe
         Log.Debug($"NCPing={peer.Ping}");
 
         var symmetricKey = RandomNumberGenerator.GetBytes(32);
-        var connection = new LiteNetLibConnection(peer, hail.RsaParameters, symmetricKey);
+        var connection = new LiteNetLibConnection(peer, hail.RsaParameters, hail.SymmetricVersion, symmetricKey);
 
         if (!(OnConnectionRequested?.Invoke(this, connection) ?? true))
         {

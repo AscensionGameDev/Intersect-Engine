@@ -20,6 +20,8 @@ namespace Intersect.Network.Packets
         [IgnoreMember]
         private RSAParameters mRsaParameters;
 
+        private byte _symmetricVersion = (byte)(AesGcm.IsSupported ? 1 : 0);
+
         public HailPacket()
         {
         }
@@ -53,6 +55,13 @@ namespace Intersect.Network.Packets
             set => mRsaParameters = value;
         }
 
+        [IgnoreMember]
+        public byte SymmetricVersion
+        {
+            get => _symmetricVersion;
+            set => _symmetricVersion = value;
+        }
+
         public override bool Encrypt()
         {
             using (var buffer = new MemoryBuffer())
@@ -75,6 +84,7 @@ namespace Intersect.Network.Packets
                 buffer.Write(bits);
                 buffer.Write(RsaParameters.Exponent, 3);
                 buffer.Write(RsaParameters.Modulus, bits >> 3);
+                buffer.Write(SymmetricVersion);
 
 #if INTERSECT_DIAGNOSTIC
                 DumpKey(RsaParameters, true);
@@ -147,6 +157,11 @@ namespace Intersect.Network.Packets
                     }
 
                     if (!buffer.Read(out mRsaParameters.Modulus, bits >> 3))
+                    {
+                        return false;
+                    }
+
+                    if (!buffer.Read(out _symmetricVersion))
                     {
                         return false;
                     }
