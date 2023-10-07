@@ -23,7 +23,7 @@ public class JsonDatabase : GameDatabase
     private static string GetInstancePath(ClientConfiguration instance)
     {
         return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), ".intersect",
-            Assembly.GetEntryAssembly().GetName().Name, $"{instance.Host}:{instance.Port}.json");
+            Assembly.GetEntryAssembly().GetName().Name, $"{instance.Host}.{instance.Port}.json");
     }
 
     private static bool TryOpenOrCreate(string instancePath, [NotNullWhen(true)] out JObject? instance)
