@@ -1,7 +1,8 @@
-﻿using System;
+using System;
 using System.Windows.Forms;
 
 using Intersect.Editor.Localization;
+using Intersect.Utilities;
 
 namespace Intersect.Editor.Forms
 {
@@ -17,7 +18,7 @@ namespace Intersect.Editor.Forms
 
         private void lblWebsite_Click(object sender, EventArgs e)
         {
-            System.Diagnostics.Process.Start("http://ascensiongamedev.com");
+            BrowserUtils.Open("http://ascensiongamedev.com");
         }
 
         private void frmAbout_Load(object sender, EventArgs e)

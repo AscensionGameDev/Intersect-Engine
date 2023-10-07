@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
@@ -89,9 +89,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 
         private void lblCommands_Click(object sender, EventArgs e)
         {
-            System.Diagnostics.Process.Start(
-                "http://www.ascensiongamedev.com/community/topic/749-event-text-variables/"
-            );
+            BrowserUtils.Open("http://www.ascensiongamedev.com/community/topic/749-event-text-variables/");
         }
 
     }
