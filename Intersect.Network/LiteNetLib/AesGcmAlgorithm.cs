@@ -5,7 +5,7 @@ using Intersect.Logging;
 
 namespace Intersect.Network.LiteNetLib;
 
-public sealed class AesGcmContainer : IDisposable
+public sealed class AesGcmAlgorithm : SymmetricAlgorithm
 {
     // Encode the version (1 byte), plaindata length (1 int), the nonce length (1 byte), and the tag length (1 byte)
     private const int HeaderSize = sizeof(int) + sizeof(byte) * 3;
@@ -15,7 +15,7 @@ public sealed class AesGcmContainer : IDisposable
     private AesGcm _aesGcm;
     private MemoryHandle _keyHandle;
 
-    public AesGcmContainer(ReadOnlySpan<byte> key = default)
+    public AesGcmAlgorithm(ReadOnlySpan<byte> key = default)
     {
         var buffer = RandomNumberGenerator.GetBytes(32);
         if (key != default)
@@ -31,7 +31,7 @@ public sealed class AesGcmContainer : IDisposable
             if (!key.TryCopyTo(buffer))
             {
                 throw new ArgumentException(
-                    "The provided key could not  be copied to the internal buffer.",
+                    "The provided key could not be copied to the internal buffer.",
                     nameof(key)
                 );
             }
@@ -42,7 +42,13 @@ public sealed class AesGcmContainer : IDisposable
         _aesGcm = new AesGcm(_key.Span);
     }
 
-    public bool SetKey(ReadOnlySpan<byte> key)
+    public override void Dispose()
+    {
+        _keyHandle.Dispose();
+        _aesGcm.Dispose();
+    }
+
+    public override bool SetKey(ReadOnlySpan<byte> key)
     {
         if (!key.TryCopyTo(_key.Span))
         {
@@ -51,44 +57,9 @@ public sealed class AesGcmContainer : IDisposable
 
         _aesGcm = new AesGcm(_key.Span);
         return true;
-
     }
 
-    private static bool IsValidSize(KeySizes sizes, int size)
-    {
-        if (size == sizes.MinSize || size == sizes.MaxSize)
-        {
-            return true;
-        }
-
-        if (size < sizes.MinSize || size > sizes.MaxSize)
-        {
-            return false;
-        }
-
-        return (size - sizes.MinSize) % sizes.SkipSize == 0;
-    }
-
-    private static bool TryPickValidSize(KeySizes sizes, out byte size)
-    {
-        if (sizes.MinSize > byte.MaxValue)
-        {
-            size = default;
-            return false;
-        }
-
-        var currentSize = sizes.MaxSize;
-
-        while (currentSize > byte.MaxValue)
-        {
-            currentSize -= sizes.SkipSize;
-        }
-
-        size = (byte)currentSize;
-        return true;
-    }
-
-    public EncryptionResult TryDecrypt(ReadOnlySpan<byte> cipherdata, out ReadOnlySpan<byte> plaindata)
+    public override EncryptionResult TryDecrypt(ReadOnlySpan<byte> cipherdata, out ReadOnlySpan<byte> plaindata)
     {
         if (cipherdata.Length < HeaderSize)
         {
@@ -169,10 +140,10 @@ public sealed class AesGcmContainer : IDisposable
         }
     }
 
-    public EncryptionResult TryDecrypt(ReadOnlySpan<byte> cipherdata, int offset, int length, out ReadOnlySpan<byte> plaindata) =>
+    public override EncryptionResult TryDecrypt(ReadOnlySpan<byte> cipherdata, int offset, int length, out ReadOnlySpan<byte> plaindata) =>
         TryDecrypt(cipherdata[offset..(offset + length)], out plaindata);
 
-    public EncryptionResult TryEncrypt(ReadOnlySpan<byte> plaindata, out ReadOnlySpan<byte> cipherdata)
+    public override EncryptionResult TryEncrypt(ReadOnlySpan<byte> plaindata, out ReadOnlySpan<byte> cipherdata)
     {
         if (plaindata.Length < 1)
         {
@@ -242,12 +213,6 @@ public sealed class AesGcmContainer : IDisposable
         }
     }
 
-    public EncryptionResult TryEncrypt(ReadOnlySpan<byte> plaindata, int offset, int length, out ReadOnlySpan<byte> cipherdata) =>
+    public override EncryptionResult TryEncrypt(ReadOnlySpan<byte> plaindata, int offset, int length, out ReadOnlySpan<byte> cipherdata) =>
         TryEncrypt(plaindata[offset..(offset + length)], out cipherdata);
-
-    public void Dispose()
-    {
-        _keyHandle.Dispose();
-        _aesGcm.Dispose();
-    }
 }
