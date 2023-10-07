@@ -135,7 +135,7 @@ namespace Intersect.Server.Networking
 
             if (user != null && user != User)
             {
-                User.Login(user, mConnection.Ip);
+                User.Login(user, mConnection?.Ip);
             }
 
             User = user;

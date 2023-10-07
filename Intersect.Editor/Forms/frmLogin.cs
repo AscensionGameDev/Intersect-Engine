@@ -77,6 +77,16 @@ namespace Intersect.Editor.Forms
             lblStatus.Text = Strings.Login.connecting;
         }
 
+        public long LastNetworkStatusChangeTime { get; private set; }
+
+        private NetworkStatus _networkStatus;
+
+        public void SetNetworkStatus(NetworkStatus networkStatus)
+        {
+            _networkStatus = networkStatus;
+            LastNetworkStatusChangeTime = Timing.Global.MillisecondsUtc;
+        }
+
         private void tmrSocket_Tick(object sender, EventArgs e)
         {
             if (!mOptionsLoaded)
@@ -85,68 +95,67 @@ namespace Intersect.Editor.Forms
             }
 
             Networking.Network.Update();
-            var statusString = Strings.Login.connecting;
-            btnLogin.Enabled = Networking.Network.Connected;
-            if (Networking.Network.Connected)
-            {
-                statusString = Strings.Login.connected;
-            }
-            else if (Networking.Network.Connecting)
-            {
-            }
-            else if (Networking.Network.ConnectionDenied)
-            {
-                statusString = Strings.Login.Denied;
-            }
-            else
-            {
-                var seconds = (Globals.ReconnectTime - Timing.Global.MillisecondsUtc) / 1000;
-                statusString = Strings.Login.failedtoconnect.ToString(seconds.ToString("0"));
-            }
+            btnLogin.Enabled = _networkStatus == NetworkStatus.Online || Networking.Network.Connected;
 
-            Process.GetProcesses()
-                .ToList()
-                .ForEach(
-                    process =>
-                    {
-                        if (!(process?.ProcessName.Contains("raptr") ?? false))
-                        {
-                            return;
-                        }
+            string statusString = _networkStatus switch
+            {
+                NetworkStatus.Unknown => Strings.Login.Denied,
+                NetworkStatus.Connecting => Strings.Login.connecting,
+                NetworkStatus.Online => Strings.Login.connected,
+                NetworkStatus.Offline => Strings.Login.failedtoconnect.ToString(((Globals.ReconnectTime - Timing.Global.MillisecondsUtc) / 1000).ToString("0")),
+                NetworkStatus.Failed => Strings.Login.Denied,
+                NetworkStatus.VersionMismatch => Strings.Login.Denied,
+                NetworkStatus.ServerFull => Strings.Login.Denied,
+                NetworkStatus.HandshakeFailure => Strings.Login.Denied,
+                NetworkStatus.Quitting => Strings.Login.Denied,
+                _ => throw new UnreachableException(),
+            };
 
-                        statusString = Strings.Login.raptr;
-                        btnLogin.Enabled = false;
-                    }
-                );
+            var hasRaptr = Process.GetProcesses()
+                .ToArray()
+                .Any(process => process.ProcessName.Contains("raptr"));
+            if (hasRaptr)
+            {
+                statusString = Strings.Login.raptr;
+                btnLogin.Enabled = false;
+            }
 
             Globals.LoginForm.lblStatus.Text = statusString;
-        }
 
-        private void btnLogin_Click(object sender, EventArgs e)
-        {
-            if (!Networking.Network.Connected || !btnLogin.Enabled)
+            if (_loginPending && Networking.Network.Connected)
             {
-                return;
-            }
-
-            if (txtUsername.Text.Trim().Length > 0 && txtPassword.Text.Trim().Length > 0)
-            {
-                using (var sha = new SHA256Managed())
+                if (txtUsername.Text.Trim().Length > 0 && txtPassword.Text.Trim().Length > 0)
                 {
-                    if (mSavedPassword != "")
+                    using (var sha = new SHA256Managed())
                     {
-                        PacketSender.SendLogin(txtUsername.Text.Trim(), mSavedPassword);
-                    }
-                    else
-                    {
-                        PacketSender.SendLogin(
-                            txtUsername.Text.Trim(),
-                            BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(txtPassword.Text.Trim())))
-                                .Replace("-", "")
-                        );
+                        if (mSavedPassword != "")
+                        {
+                            PacketSender.SendLogin(txtUsername.Text.Trim(), mSavedPassword);
+                        }
+                        else
+                        {
+                            PacketSender.SendLogin(
+                                txtUsername.Text.Trim(),
+                                BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(txtPassword.Text.Trim())))
+                                    .Replace("-", "")
+                            );
+                        }
                     }
                 }
             }
+        }
+
+        private bool _loginPending = false;
+
+        private void btnLogin_Click(object sender, EventArgs e)
+        {
+            if (!Networking.Network.Connected)
+            {
+                Networking.Network.Connect();
+            }
+
+            _loginPending = true;
+            btnLogin.Enabled = false;
         }
 
         protected override void OnKeyPress(KeyPressEventArgs e)

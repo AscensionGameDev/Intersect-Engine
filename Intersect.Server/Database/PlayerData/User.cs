@@ -367,7 +367,7 @@ namespace Intersect.Server.Database.PlayerData
                 foreach (var entry in ex.Entries)
                 {
                     var type = entry.GetType().FullName;
-                    concurrencyErrors.AppendLine($"Entry Type [{type}]");
+                    concurrencyErrors.AppendLine($"Entry Type [{type} / {entry.State}]");
                     concurrencyErrors.AppendLine("--------------------");
 
                     var proposedValues = entry.CurrentValues;
@@ -377,6 +377,13 @@ namespace Intersect.Server.Database.PlayerData
                     {
                         concurrencyErrors.AppendLine(
                             $"{property.Name} (Token: {property.IsConcurrencyToken}): Proposed: {proposedValues[property]}  Original Value: {entry.OriginalValues[property]}  Database Value: {(databaseValues != null ? databaseValues[property] : "null")}"
+                        );
+                    }
+
+                    foreach (var property in entry.Properties)
+                    {
+                        concurrencyErrors.AppendLine(
+                            $"{property.Metadata.Name} {nameof(property.IsModified)}={property.IsModified} {nameof(property.IsTemporary)}={property.IsTemporary}"
                         );
                     }
 
