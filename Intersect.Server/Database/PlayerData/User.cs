@@ -384,7 +384,7 @@ namespace Intersect.Server.Database.PlayerData
                     concurrencyErrors.AppendLine("");
                 }
 
-                Log.Error(ex, "Jackpot! Concurrency Bug For " + Name);
+                Log.Error(ex, $"Jackpot! Concurrency Bug For {Name} in {(createdContext == default ? "Existing" : "Created")} Context");
                 Log.Error(concurrencyErrors.ToString());
                 ServerContext.DispatchUnhandledException(
                     new Exception("Failed to save user, shutting down to prevent rollbacks!")
