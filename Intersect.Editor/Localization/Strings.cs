@@ -4121,12 +4121,12 @@ Tick timer saved in server config.json.";
 
         public partial struct Mapping
         {
-            public static Dictionary<int, LocalizedString> InstanceTypes = new Dictionary<int, LocalizedString>()
+            public static LocaleDictionary<MapInstanceType, LocalizedString> InstanceTypes = new LocaleDictionary<MapInstanceType, LocalizedString>()
             {
-                {(int)MapInstanceType.Overworld, @"Overworld"},
-                {(int)MapInstanceType.Personal, @"Personal"},
-                {(int)MapInstanceType.Guild, @"Guild"},
-                {(int)MapInstanceType.Shared, @"Shared"},
+                {MapInstanceType.Overworld, @"Overworld"},
+                {MapInstanceType.Personal, @"Personal"},
+                {MapInstanceType.Guild, @"Guild"},
+                {MapInstanceType.Shared, @"Shared"},
             };
 
             public static LocalizedString createmap = @"Create new map.";
