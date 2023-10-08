@@ -58,19 +58,31 @@ jobs:
         dotnet publish Intersect.sln -r osx-x64   -p:Configuration=Release -p:PackageVersion=${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}+build.${{ github.sha }} -p:Version=${{ env.VERSION_PREFIX }}.${{ github.run_number }}
 
     - name: Package artifacts
-      uses: AscensionGameDev/actions@cc2eb0e356546042e4dc7eca6788fd0b5a063b32
+      uses: AscensionGameDev/actions@a573cea975b37832c9fe4a9ee880e22af93696de
       with:
-        bundle: .github/bundles/patch.json
+        bundle: .github/bundles/patch.*.json
         version: ${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}+build.${{ github.sha }}
 
-    - name: Extract archive to avoid zips inside of zips
-      run: 7z x dist/patch/*.zip
+    - name: Debug output
+      run: ls -R ./dist
 
-    - name: Delete inner zip
-      run: del dist/patch/*.zip
-
-    - name: Upload artifacts for workflow debugging
+    - name: Upload linux-x64 artifacts for workflow debugging
       uses: actions/upload-artifact@v3
       with:
-        name: intersect-${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}+build.${{ github.sha }}
-        path: "dist/patch/*.zip"
+        if-no-files-found: error
+        path: "dist/linux-x64/**/*"
+        name: intersect-linux-x64-${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}+build.${{ github.sha }}
+
+    - name: Upload osx-x64 artifacts for workflow debugging
+      uses: actions/upload-artifact@v3
+      with:
+        if-no-files-found: error
+        path: "dist/osx-x64/**/*"
+        name: intersect-osx-x64-${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}+build.${{ github.sha }}
+
+    - name: Upload win-x64 artifacts for workflow debugging
+      uses: actions/upload-artifact@v3
+      with:
+        if-no-files-found: error
+        path: "dist/win-x64/**/*"
+        name: intersect-win-x64-${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}+build.${{ github.sha }}
