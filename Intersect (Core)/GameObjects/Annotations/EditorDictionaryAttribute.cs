@@ -64,7 +64,7 @@ namespace Intersect.GameObjects.Annotations
 
                         if (!intKeyDictionary.TryGetValue(key, out var localizedString))
                         {
-                            throw new ArgumentOutOfRangeException($"Key missing: {key}");
+                            localizedString = $"KEY_MISSING=\"{key}\"";
                         }
 
                         return localizedString;
