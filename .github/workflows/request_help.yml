@@ -1,7 +1,7 @@
 name: request-help
 
 on:
-  issue_comment:                                     
+  issue_comment:
     types: [created]
 
 permissions:
@@ -24,6 +24,7 @@ jobs:
       uses: actions/checkout@v4
       with:
         ref: refs/pull/${{ github.event.issue.number }}/head
+        submodules: recursive
 
     - name: Cache binaries
       uses: actions/cache@v3
@@ -31,62 +32,55 @@ jobs:
       with:
         key: ${{ runner.os }}-binaries-${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}-${{ hashFiles('Intersect*/**/*.cs*') }}
         path: |
-          Intersect*/bin/Release/**/Intersect*
+          Intersect*/bin/Release/**/*
+
+    - name: Setup dotnet
+      if: steps.cache-binaries.outputs.cache-hit != 'true'
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 7.0.x
 
     - name: Cache NuGet dependencies
-      if: steps.cache-binaries.outputs.cache-hit != 'true' || inputs.forceBuild == true || inputs.forceRestore == true
       uses: actions/cache@v3
       id: cache-nuget
+      if: steps.cache-binaries.outputs.cache-hit != 'true'
       with:
         key: ${{ runner.os }}-nuget-${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}-${{ hashFiles('Intersect*/*.csproj') }}
         path: |
           ~/.nuget/packages
           Intersect*/obj/
 
-    - name: Add msbuild to PATH
-      if: steps.cache-binaries.outputs.cache-hit != 'true' || steps.cache-nuget.outputs.cache-hit != 'true' || inputs.forceBuild == true || inputs.forceRestore == true
-      uses: microsoft/setup-msbuild@v1
-      with:
-        msbuild-architecture: x64
-
-    - name: Setup NuGet.exe for use with actions
-      if: steps.cache-binaries.outputs.cache-hit != 'true' || steps.cache-nuget.outputs.cache-hit != 'true' || inputs.forceBuild == true || inputs.forceRestore == true
-      # You may pin to the exact commit or the version.
-      # uses: NuGet/setup-nuget@fd9fffd6ca4541cf4152a9565835ca1a88a6eb37
-      uses: NuGet/setup-nuget@v1
-      with:
-        # NuGet version to install. Can be `latest`, `preview`, a concrete version like `5.3.1`, or a semver range specifier like `5.x`.
-        nuget-version: latest # optional, default is latest
-        # NuGet API Key to configure.
-        # nuget-api-key: # optional
-        # Source to scope the NuGet API Key to.
-        # nuget-api-key-source: # optional
-
     - name: Restore NuGet Packages
-      if: steps.cache-binaries.outputs.cache-hit != 'true' && steps.cache-nuget.outputs.cache-hit != 'true' || inputs.forceRestore == true
-      run: nuget restore Intersect.sln
+      if: steps.cache-binaries.outputs.cache-hit != 'true' && steps.cache-nuget.outputs.cache-hit != 'true'
+      run: dotnet restore Intersect.sln
+
+    # - run: ls -R ~/.nuget/packages
 
     - name: Build solution
-      if: steps.cache-binaries.outputs.cache-hit != 'true' || inputs.forceBuild == true || inputs.forceRestore == true
-      run: msbuild Intersect.sln /p:Configuration=Release /p:PackageVersion=${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}+build.${{ github.sha }} /p:Version=0.0.${{ env.VERSION_PREFIX }}.${{ github.run_number }}
+      if: steps.cache-binaries.outputs.cache-hit != 'true'
+      run: |
+        dotnet publish Intersect.sln -r win-x64   -p:Configuration=Release -p:PackageVersion=${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}+build.${{ github.sha }} -p:Version=${{ env.VERSION_PREFIX }}.${{ github.run_number }}
+        git apply disable-windows-editor.patch
+        dotnet publish Intersect.sln -r linux-x64 -p:Configuration=Release -p:PackageVersion=${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}+build.${{ github.sha }} -p:Version=${{ env.VERSION_PREFIX }}.${{ github.run_number }}
+        dotnet publish Intersect.sln -r osx-x64   -p:Configuration=Release -p:PackageVersion=${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}+build.${{ github.sha }} -p:Version=${{ env.VERSION_PREFIX }}.${{ github.run_number }}
 
     - name: Package artifacts
-      uses: AscensionGameDev/actions@4c9073d0721da476ac9337fbbfe46a9ca1ae4389
+      uses: AscensionGameDev/actions@cc2eb0e356546042e4dc7eca6788fd0b5a063b32
       with:
         bundle: .github/bundles/patch.json
         version: ${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}+build.${{ github.sha }}
 
     - name: Extract archive to avoid zips inside of zips
-      run: 7z x dist/*.zip
+      run: 7z x dist/**/*.zip
 
     - name: Delete inner zip
-      run: del dist/*.zip
-  
+      run: del dist/**/*.zip
+
     - name: Upload artifacts for workflow debugging
       uses: actions/upload-artifact@v3
       with:
         name: intersect-pr${{ env.VERSION_PREFIX }}-test${{ github.run_number }}+build.${{ github.sha }}
-        path: "dist/patch/*"
+        path: "dist/patch/*.zip"
 
     - name: Create comment
       uses: peter-evans/create-or-update-comment@v3
