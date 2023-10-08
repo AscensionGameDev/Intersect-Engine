@@ -1,4 +1,6 @@
 using System.Diagnostics;
+using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
 using Intersect.Logging;
 using Intersect.Server.Web.Configuration;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -11,6 +13,9 @@ namespace Intersect.Server.Web;
 
 internal partial class ApiService
 {
+    private const string SelfSignedCertificateName = "self-signed.crt";
+    private const string SelfSignedKeyName = "self-signed.key";
+
     private static void UnpackAppSettings()
     {
         Log.Info("Unpacking appsettings...");
@@ -145,5 +150,57 @@ internal partial class ApiService
 
         var updatedAppSettingsJson = configurationJObject.ToString();
         File.WriteAllText(environmentAppSettingsFileName, updatedAppSettingsJson);
+
+        if (!configurationJObject.TryGetValue("Kestrel", out var kestrelToken) || kestrelToken is not JObject kestrel)
+        {
+            return;
+        }
+
+        if (!kestrel.TryGetValue("Endpoints", out var endpointsToken) || endpointsToken is not JObject endpoints)
+        {
+            return;
+        }
+
+        foreach (var endpointToken in endpoints.PropertyValues())
+        {
+            if (endpointToken is not JObject endpoint)
+            {
+                continue;
+            }
+
+            if (!endpoint.TryGetValue("Certificate", out var certificateToken) ||
+                certificateToken is not JObject certificate)
+            {
+                continue;
+            }
+
+            try
+            {
+                var certificatePath = certificate.Value<string>("Path");
+                var keyPath = certificate.Value<string>("KeyPath");
+
+                if (!string.Equals(certificatePath, SelfSignedCertificateName) ||
+                    !string.Equals(keyPath, SelfSignedKeyName))
+                {
+                    continue;
+                }
+
+                using var ecdsa = ECDsa.Create();
+                CertificateRequest request = new("cn=self-signed", ecdsa, HashAlgorithmName.SHA256);
+                var selfSignedCertificate = request.CreateSelfSigned(
+                    DateTimeOffset.Now,
+                    DateTimeOffset.Now.AddDays(30)
+                );
+
+                var certificatePem = selfSignedCertificate.ExportCertificatePem();
+                var keyPem = selfSignedCertificate.GetECDsaPrivateKey().ExportECPrivateKeyPem();
+                File.WriteAllText(SelfSignedCertificateName, certificatePem);
+                File.WriteAllText(SelfSignedKeyName, keyPem);
+            }
+            catch (Exception exception)
+            {
+                Log.Warn(exception);
+            }
+        }
     }
 }
