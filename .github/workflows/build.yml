@@ -1,10 +1,10 @@
-name: Build Intersect (.NET 7.0)
+name: Intersect (main)
 
 on:
   push:
-    branches: [ "main-net7", "main-net7-proto" ]
-  pull_request:
-    branches: [ "main-net7" ]
+    branches: [ "main" ]
+    paths-ignore:
+      - '.github/**'
   workflow_dispatch:
     inputs:
       workflowDebug:
@@ -71,11 +71,6 @@ jobs:
     - name: Build solution
       if: steps.cache-binaries.outputs.cache-hit != 'true' || inputs.forceBuild == true || inputs.forceRestore == true
       run: |
-        cd vendor/LiteNetLib
-        cat LiteNetLib/LiteNetLib.csproj
-        git apply --whitespace=fix ../LiteNetLib.patch
-        cat LiteNetLib/LiteNetLib.csproj
-        cd ../..
         dotnet publish Intersect.sln -r win-x64   -p:Configuration=Release -p:PackageVersion=${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}+build.${{ github.sha }} -p:Version=${{ env.VERSION_PREFIX }}.${{ github.run_number }}
         git apply disable-windows-editor.patch
         dotnet publish Intersect.sln -r linux-x64 -p:Configuration=Release -p:PackageVersion=${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}+build.${{ github.sha }} -p:Version=${{ env.VERSION_PREFIX }}.${{ github.run_number }}
@@ -125,3 +120,18 @@ jobs:
         name: ${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}
         prerelease: true
         tag: v${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}
+
+  publish:
+    if: inputs.workflowDebug != true
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Publish to Forum
+        uses: AscensionGameDev/actions@0223df40becb110039c705c02cfd2cd8f274199c
+        with:
+          api-key: ${{ secrets.INTERSECTBOT_FORUM_TOKEN }}
+          build: ${{ github.run_number }}
+          hash: ${{ github.sha }}
+          runtime-identifiers: linux-x64,osx-x64,win-x64
+          topic-id: ${{ vars.INTERSECTBOT_FORUM_TOPIC_ID }}
+          version: ${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}

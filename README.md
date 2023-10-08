@@ -4,13 +4,19 @@ Intersect provides a complete game development suite for creating 2d mmorpgs wit
 
 [![Home https://freemmorpgmaker.com](https://img.shields.io/badge/Home-Free%20MMORPG%20Maker-informational)](https://freemmorpgmaker.com)
 [![Docs https://docs.freemmorpgmaker.com](https://img.shields.io/badge/Docs-Online-success)](https://docs.freemmorpgmaker.com)
-[![v0.7.2-beta](https://github.com/AscensionGameDev/Intersect-Engine/actions/workflows/build.0.7.2-beta.yml/badge.svg?branch=main)](https://github.com/AscensionGameDev/Intersect-Engine/actions/workflows/build.0.7.2-beta.yml)
+[![main](https://github.com/AscensionGameDev/Intersect-Engine/actions/workflows/build.yml/badge.svg)](https://github.com/AscensionGameDev/Intersect-Engine/actions/workflows/build.yml)
 [![Visit us at https://ascensiongamedev.com](https://img.shields.io/badge/Community-Ascension%20Game%20Dev-orange)](https://ascensiongamedev.com)
 [![Join the chat at https://discord.gg/Ggt3KJV](https://img.shields.io/discord/363106200243535872?color=%237289DA&label=Discord&logoColor=white)](https://discord.gg/Ggt3KJV)
 
 - [Intersect Engine](#intersect-engine)
 	- [Automated Builds](#automated-builds)
 	- [Supported Platforms](#supported-platforms)
+	- [Compiling/Development](#compilingdevelopment)
+		- [Dependencies](#dependencies)
+			- [Required](#required)
+			- [Optional (strongly recommended)](#optional-strongly-recommended)
+		- [Getting started](#getting-started)
+		- [Compiling](#compiling)
 	- [Intersect Assets](#intersect-assets)
 	- [Support and Contributions](#support-and-contributions)
 	- [Source Code](#source-code)
@@ -22,22 +28,43 @@ Intersect provides a complete game development suite for creating 2d mmorpgs wit
 
 We use [GitHub Actions](https://github.com/AscensionGameDev/Intersect-Engine/actions) for building and packaging the latest updates for the engine. Releases with downloadable bundles can be found on the [Releases page on our GitHub repository](https://github.com/AscensionGameDev/Intersect-Engine/releases).
 
-| Name | Status                                                                                                                                                                         |
-| :--- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| main | [![Build Status](https://teamcity.freemmorpgmaker.com/app/rest/builds/buildType:main/statusIcon)](https://teamcity.freemmorpgmaker.com/viewType.html?buildTypeId=main&guest=1) |
-
-
 ## Supported Platforms
 
- * Desktop PCs (Open GL)
-    * Windows
-    * Mac OS X
-    * Linux
+Please refer to the [Requirements](./REQUIREMENTS.md) document for support matrices.
 
 Our editor uses DirectX and must be ran in Windows, but you can host and play your game on any desktop os that supports OpenGL.
 
 We're open to expanding to new platforms (mobile, web, etc) but don't have the capacity to do so at this time. If you're interested in helping out let us know!
 
+## Compiling/Development
+
+### Dependencies
+
+#### Required
+
+- [.NET 7 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/7.0), verified for v7.0.11 (SDK 7.0.401)
+
+#### Optional (strongly recommended)
+
+- git: required for cloning submodules, if you want to do this manually this is not needed
+  - Tested on 2.42.0
+
+### Getting started
+
+After cloning, run `scripts/clone.sh` for non-Windows systems, and `scripts/clone.ps1` for Windows
+- On all platforms this clones any submodules via `git submodule update --init --recursive`
+- Via the .sh file it will also disable the Windows-only editor via `git apply disable-windows-editor.patch`
+
+### Compiling
+
+To compile either use an IDE or one of the following commands:
+- `dotnet build -p:Configuration=Debug -p:PackageVersion=0.8.0-beta -p:Version=0.8.0`
+  - Debug builds, all debug builds will _not_ create single-file binary outputs
+- `dotnet build -p:Configuration=Release -p:PackageVersion=0.8.0-beta -p:Version=0.8.0`
+	- Release builds will create single-file binary outputs but to get a clean output use `dotnet publish`
+- `dotnet publish -p:Configuration=Release -p:PackageVersion=0.8.0-beta -p:Version=0.8.0 -r <runtime-id>`
+	- e.g. `dotnet publish -p:Configuration=Release -p:PackageVersion=0.8.0-beta -p:Version=0.8.0 -r linux-x64`
+	- The automated builds use the above command for the RIDs `linux-x64`, `osx-x64` and `win-x64`
 
 ## Intersect Assets
 
