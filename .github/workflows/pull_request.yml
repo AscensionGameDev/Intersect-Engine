@@ -3,6 +3,16 @@ name: Pull Requests
 on:
   pull_request:
     branches: [ "main" ]
+  workflow_dispatch:
+    inputs:
+      forceBuild:
+        description: 'If the build should be forced even on cache hit'
+        default: false
+        type: boolean
+      forceRestore:
+        description: 'If dependencies should be forced even on cache hit'
+        default: false
+        type: boolean
 
 env:
   VERSION_PREFIX: 0.8.0
@@ -28,7 +38,7 @@ jobs:
           Intersect*/bin/Release/**/*
 
     - name: Setup dotnet
-      if: steps.cache-binaries.outputs.cache-hit != 'true'
+      if: steps.cache-binaries.outputs.cache-hit != 'true' || inputs.forceBuild == true || inputs.forceRestore == true
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: 7.0.x
@@ -36,7 +46,7 @@ jobs:
     - name: Cache NuGet dependencies
       uses: actions/cache@v3
       id: cache-nuget
-      if: steps.cache-binaries.outputs.cache-hit != 'true'
+      if: steps.cache-binaries.outputs.cache-hit != 'true' || inputs.forceBuild == true || inputs.forceRestore == true
       with:
         key: ${{ runner.os }}-nuget-${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}-${{ hashFiles('Intersect*/*.csproj') }}
         path: |
@@ -44,13 +54,13 @@ jobs:
           Intersect*/obj/
 
     - name: Restore NuGet Packages
-      if: steps.cache-binaries.outputs.cache-hit != 'true' && steps.cache-nuget.outputs.cache-hit != 'true'
+      if: steps.cache-binaries.outputs.cache-hit != 'true' && steps.cache-nuget.outputs.cache-hit != 'true' || inputs.forceRestore == true
       run: dotnet restore Intersect.sln
 
     # - run: ls -R ~/.nuget/packages
 
     - name: Build solution
-      if: steps.cache-binaries.outputs.cache-hit != 'true'
+      if: steps.cache-binaries.outputs.cache-hit != 'true' || inputs.forceBuild == true || inputs.forceRestore == true
       run: |
         dotnet publish Intersect.sln -r win-x64   -p:Configuration=Release -p:PackageVersion=${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}+build.${{ github.sha }} -p:Version=${{ env.VERSION_PREFIX }}.${{ github.run_number }}
         git apply disable-windows-editor.patch
@@ -63,26 +73,29 @@ jobs:
         bundle: .github/bundles/patch.*.json
         version: ${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}+build.${{ github.sha }}
 
-    - name: Debug output
-      run: ls -R ./dist
+    # - name: Debug output
+    #   run: ls -R ./dist
 
-    - name: Upload linux-x64 artifacts for workflow debugging
+    - name: Upload linux-x64 artifacts
       uses: actions/upload-artifact@v3
       with:
         if-no-files-found: error
         path: "dist/linux-x64/**/*"
         name: intersect-linux-x64-${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}+build.${{ github.sha }}
+        retention-days: 1
 
-    - name: Upload osx-x64 artifacts for workflow debugging
+    - name: Upload osx-x64 artifacts
       uses: actions/upload-artifact@v3
       with:
         if-no-files-found: error
         path: "dist/osx-x64/**/*"
         name: intersect-osx-x64-${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}+build.${{ github.sha }}
+        retention-days: 1
 
-    - name: Upload win-x64 artifacts for workflow debugging
+    - name: Upload win-x64 artifacts
       uses: actions/upload-artifact@v3
       with:
         if-no-files-found: error
         path: "dist/win-x64/**/*"
         name: intersect-win-x64-${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}+build.${{ github.sha }}
+        retention-days: 1

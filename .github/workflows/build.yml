@@ -7,10 +7,6 @@ on:
       - '.github/**'
   workflow_dispatch:
     inputs:
-      workflowDebug:
-        description: 'If the workflow should be debugged (skip release)'
-        default: true
-        type: boolean
       forceBuild:
         description: 'If the build should be forced even on cache hit'
         default: false
@@ -18,6 +14,10 @@ on:
       forceRestore:
         description: 'If dependencies should be forced even on cache hit'
         default: false
+        type: boolean
+      workflowDebug:
+        description: 'If the workflow should be debugged (skip release)'
+        default: true
         type: boolean
 
 permissions:
@@ -103,13 +103,6 @@ jobs:
         bundle: .github/bundles/*.json
         version: ${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}+build.${{ github.sha }}
 
-    - name: Upload artifacts for workflow debugging
-      if: inputs.workflowDebug == true
-      uses: actions/upload-artifact@v3
-      with:
-        name: workflow-debug
-        path: "dist/**/*.zip"
-
     - name: Publish GitHub Release
       if: inputs.workflowDebug != true
       uses: ncipollo/release-action@v1.13.0
@@ -120,6 +113,14 @@ jobs:
         name: ${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}
         prerelease: true
         tag: v${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}
+
+    - name: Upload artifacts for workflow debugging
+      if: inputs.workflowDebug == true || failure()
+      uses: actions/upload-artifact@v3
+      with:
+        if-no-files-found: error
+        name: workflow-debug
+        path: "dist/**/*.zip"
 
   publish:
     if: inputs.workflowDebug != true
