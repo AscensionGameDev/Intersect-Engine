@@ -1,3 +1,4 @@
+using System.Net;
 using System.Reflection;
 using System.Threading.RateLimiting;
 using Intersect.Core;
@@ -17,6 +18,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.OData;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -208,8 +210,30 @@ internal partial class ApiService : ApplicationService<ServerContext, IApiServic
             builder.Services.AddProblemDetails();
         }
 
+        if (configuration.KnownProxies.Count > 0)
+        {
+            builder.Services.Configure<ForwardedHeadersOptions>(options =>
+            {
+                options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedHost;
+
+                foreach (var proxy in configuration.KnownProxies)
+                {
+                    if (IPAddress.TryParse(proxy, out IPAddress address))
+                    {
+                        Log.Info($"Added \"{proxy}\" as good known proxy for forwarded headers middleware.");
+                        options.KnownProxies.Add(address);
+                    }
+                    else
+                    {
+                        Log.Error($"Failed to parse \"{proxy}\" as good known proxy for forwarded headers middleware.");
+                    }
+                }
+            });
+        }
+
         var app = builder.Build();
 
+        app.UseForwardedHeaders();
         app.UseNetworkFilterMiddleware(configuration.AllowedNetworkTypes);
 
         if (app.Environment.IsDevelopment())
