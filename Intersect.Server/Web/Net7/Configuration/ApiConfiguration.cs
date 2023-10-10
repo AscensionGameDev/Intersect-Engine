@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using System.ComponentModel;
+using System.Net;
 using Intersect.Server.Web.RestApi.Configuration;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Cors.Infrastructure;
@@ -50,6 +51,9 @@ namespace Intersect.Server.Web.Configuration
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore, DefaultValueHandling = DefaultValueHandling.Ignore)]
         public TokenGenerationOptions? TokenGenerationOptions { get; set; }
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public List<string> KnownProxies { get; set; } = new List<string>();
 
         #endregion
     }
