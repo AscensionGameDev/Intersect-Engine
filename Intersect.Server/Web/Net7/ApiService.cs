@@ -210,23 +210,26 @@ internal partial class ApiService : ApplicationService<ServerContext, IApiServic
             builder.Services.AddProblemDetails();
         }
 
-        builder.Services.Configure<ForwardedHeadersOptions>(options =>
+        if (configuration.KnownProxies.Count > 0)
         {
-            options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedHost;
-
-            foreach (var proxy in configuration.KnownProxies)
+            builder.Services.Configure<ForwardedHeadersOptions>(options =>
             {
-                if (IPAddress.TryParse(proxy, out IPAddress address) && address != null)
+                options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedHost;
+
+                foreach (var proxy in configuration.KnownProxies)
                 {
-                    Log.Info($"Added {proxy} as good known proxy for forwarded headers middleware.");
-                    options.KnownProxies.Add(address);
+                    if (IPAddress.TryParse(proxy, out IPAddress address))
+                    {
+                        Log.Info($"Added \"{proxy}\" as good known proxy for forwarded headers middleware.");
+                        options.KnownProxies.Add(address);
+                    }
+                    else
+                    {
+                        Log.Error($"Failed to parse \"{proxy}\" as good known proxy for forwarded headers middleware.");
+                    }
                 }
-                else
-                {
-                    Log.Error($"Failed to parse {proxy} as good known proxy for forwarded headers middleware.");
-                }
-            }
-        });
+            });
+        }
 
         var app = builder.Build();
 
