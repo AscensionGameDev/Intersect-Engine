@@ -1,5 +1,7 @@
 using Dapper;
 using Intersect.Config;
+using Intersect.Logging;
+using Intersect.Reflection;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
@@ -64,8 +66,11 @@ public sealed class SqliteNetCoreGuidPatch
                 .Where("type", "table")
                 .Get<string>()
                 .ToList();
+
+        var startTimeDatabase = DateTime.UtcNow;
         foreach (var entityType in context.Model.GetEntityTypes())
         {
+            var startTimeTable = DateTime.UtcNow;
             var entityTable = entityType.GetTableName();
             if (!tablesInDatabase.Contains(entityTable))
             {
@@ -87,15 +92,23 @@ public sealed class SqliteNetCoreGuidPatch
                 )
                 .Select(column => column.Name)
                 .ToArray();
+
+            if (entityTable == "Players")
+            {
+                guidColumnNames = guidColumnNames.Append("DbGuildId").Distinct().ToArray();
+            }
+
             var notNullLookup = columnsInDatabase.ToDictionary(
                 column => column.Name,
                 column => column.NotNull
             );
 
             var numberOfRows = queryFactory.Query(entityTable).Select("*").AsCount().First<int>();
+            var convertedRowCount = 0;
             const int take = 100;
             for (var skip = 0; skip < numberOfRows; skip += take)
             {
+                var startTimeSegment = DateTime.UtcNow;
                 var rows = queryFactory
                     .Query(entityTable)
                     .Select(guidColumnNames)
@@ -142,20 +155,40 @@ public sealed class SqliteNetCoreGuidPatch
                         }
                     )
                     .ToList();
+
+                dbConnection.Open();
+                var transaction = dbConnection.BeginTransaction();
+                var segmentConvertedRowCount = 0;
                 foreach (var (convertedRow, searchId) in convertedRows)
                 {
                     var result = queryFactory
                         .Query(entityTable)
                         .Where("Id", searchId)
-                        .AsUpdate(convertedRow)
-                        .Get();
-                    result.ToString();
-                }
+                        .Update(convertedRow, transaction: transaction);
 
-                string.Empty.ToString();
+                    var searchIdString = searchId is byte[] searchIdBytes
+                        ? new Guid(searchIdBytes).ToString()
+                        : searchId.ToString();
+
+                    if (Log.Default.Configuration.LogLevel >= LogLevel.Debug)
+                    {
+                        Log.Debug($"Processed row {convertedRowCount++}/{numberOfRows} in '{entityTable}' (segment {segmentConvertedRowCount++}/{convertedRows.Count}) ({searchIdString} was {searchId.GetFullishName()}), {result} rows changed.");
+                    }
+                }
+                transaction.Commit();
+                dbConnection.Close();
+
+                if (Log.Default.Configuration.LogLevel >= LogLevel.Debug)
+                {
+                    Log.Debug(
+                        $"Completed updating segment in {(DateTime.UtcNow - startTimeSegment).TotalMilliseconds}ms ('{entityTable}', {convertedRows.Count} rows updated)"
+                    );
+                }
             }
 
-            string.Empty.ToString();
+            Log.Verbose($"Completed updating table in {(DateTime.UtcNow - startTimeTable).TotalMilliseconds}ms  ('{entityTable}', {numberOfRows} rows updated)");
         }
+
+        Log.Verbose($"Completed updating database in {(DateTime.UtcNow - startTimeDatabase).TotalMilliseconds}ms");
     }
 }
