@@ -53,6 +53,7 @@ public static class PortChecker
             if (responseMessage.StatusCode != HttpStatusCode.OK)
             {
                 var statusCodePrefix = (int)responseMessage.StatusCode / 100;
+                Log.Debug($"Received {statusCodePrefix} from port checker service");
                 return statusCodePrefix switch
                 {
                     1 => PortCheckResult.PortCheckerServerUnexpectedResponse,
