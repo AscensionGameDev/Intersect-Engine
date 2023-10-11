@@ -27,11 +27,11 @@ public class RootController : Controller
         }
 
         var remoteEndPoint = new IPEndPoint(remoteAddress, port);
-        var secret = await _portChecker.CheckPort(remoteEndPoint);
+        var (secret, endPoint) = await _portChecker.CheckPort(remoteEndPoint);
         var responseTime = DateTime.UtcNow;
 
         var ip = remoteEndPoint.Address.ToString();
-        Response.Headers["ip"] = ip;
+        Response.Headers["ip"] = endPoint.ToString();
         Response.Headers["request_time"] = requestTime.ToBinary().ToString();
         Response.Headers["response_time"] = responseTime.ToBinary().ToString();
         Response.Headers["secret"] = secret;

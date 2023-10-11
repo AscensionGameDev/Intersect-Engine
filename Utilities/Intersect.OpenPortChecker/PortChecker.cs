@@ -25,9 +25,13 @@ public sealed class PortChecker : INetEventListener, INetLogger
         CheckPortRequestData = writer.CopyData();
     }
 
-    public PortChecker(ILoggerFactory loggerProvider, IOptions<PortCheckerOptions> options, IHostApplicationLifetime applicationLifetime)
+    public PortChecker(
+        ILoggerFactory loggerProvider,
+        IOptions<PortCheckerOptions> options,
+        IHostApplicationLifetime applicationLifetime
+    )
     {
-        applicationLifetime.ApplicationStopping.Register(() => PruneTasks(onlyExpired: false));
+        applicationLifetime.ApplicationStopping.Register(() => PruneTasks(false));
         _logger = loggerProvider.CreateLogger<PortChecker>();
         _options = options;
         _manager = new NetManager(this)
@@ -46,6 +50,7 @@ public sealed class PortChecker : INetEventListener, INetLogger
             UnsyncedEvents = true,
             UnsyncedDeliveryEvent = true,
             UnsyncedReceiveEvent = true,
+            UseNativeSockets = true,
             UseSafeMtu = true,
         };
         _manager.Start();
@@ -141,6 +146,19 @@ public sealed class PortChecker : INetEventListener, INetLogger
         request.Reject();
     }
 
+    public void WriteNet(NetLogLevel level, string str, params object[] args)
+    {
+        var logLevel = level switch
+        {
+            NetLogLevel.Warning => LogLevel.Warning,
+            NetLogLevel.Error => LogLevel.Error,
+            NetLogLevel.Trace => LogLevel.Trace,
+            NetLogLevel.Info => LogLevel.Information,
+            _ => throw new ArgumentOutOfRangeException(nameof(level), level, null),
+        };
+        _logger.Log(logLevel, str, args);
+    }
+
     public void PruneTasks(bool onlyExpired = true)
     {
         if (onlyExpired == false)
@@ -159,7 +177,7 @@ public sealed class PortChecker : INetEventListener, INetLogger
         }
 
         var now = DateTime.UtcNow;
-        while (_pendingRequestExpiries.TryPeek(out var _, out var pendingRequestExpiry))
+        while (_pendingRequestExpiries.TryPeek(out _, out var pendingRequestExpiry))
         {
             if (pendingRequestExpiry > now)
             {
@@ -182,7 +200,7 @@ public sealed class PortChecker : INetEventListener, INetLogger
         }
     }
 
-    public async Task<string?> CheckPort(IPEndPoint endPoint)
+    public async Task<(string?, EndPoint)> CheckPort(IPEndPoint endPoint)
     {
         _logger.LogDebug("Checking port: {EndPoint}", endPoint);
 
@@ -215,23 +233,46 @@ public sealed class PortChecker : INetEventListener, INetLogger
         }
 
         _pendingRequestExpiries.Enqueue(pendingRequest.Id, expiry);
-        _manager.SendUnconnectedMessage(writer, endPoint);
-        _logger.LogDebug("Waiting for response from {EndPoint} ({Id})", endPoint, pendingRequest.Id);
+
+        if (_manager.SendUnconnectedMessage(writer, endPoint))
+        {
+            _logger.LogDebug("Waiting for response from {EndPoint} ({Id})", endPoint, pendingRequest.Id);
+        }
+        else if (endPoint.Address.IsIPv4MappedToIPv6)
+        {
+            var ipv6EndPoint = endPoint;
+            endPoint = new IPEndPoint(endPoint.Address.MapToIPv4(), endPoint.Port);
+
+            _logger.LogDebug(
+                "Failed to send request to {IPv6EndPoint} ({Id}), retrying for {IPv4EndPont}...",
+                ipv6EndPoint,
+                pendingRequest.Id,
+                endPoint
+            );
+
+            if (_manager.SendUnconnectedMessage(writer, endPoint))
+            {
+                _logger.LogDebug(
+                    "Waiting for response from {IPv4EndPoint} ({Id}) (originally {IPv6EndPoint})",
+                    endPoint,
+                    pendingRequest.Id,
+                    ipv6EndPoint
+                );
+            }
+            else
+            {
+                _logger.LogDebug("Failed to send request to {EndPoint} ({Id})", endPoint, pendingRequest.Id);
+                return (null, endPoint);
+            }
+        }
+        else
+        {
+            _logger.LogDebug("Failed to send request to {EndPoint} ({Id})", endPoint, pendingRequest.Id);
+            return (null, endPoint);
+        }
+
         var secret = await pendingRequest.TaskCompletionSource.Task;
         _logger.LogDebug("Received secret from {EndPoint} ({Id})", endPoint, pendingRequest.Id);
-        return secret;
-    }
-
-    public void WriteNet(NetLogLevel level, string str, params object[] args)
-    {
-        LogLevel logLevel = level switch
-        {
-            NetLogLevel.Warning => LogLevel.Warning,
-            NetLogLevel.Error => LogLevel.Error,
-            NetLogLevel.Trace => LogLevel.Trace,
-            NetLogLevel.Info => LogLevel.Information,
-            _ => throw new ArgumentOutOfRangeException(nameof(level), level, null),
-        };
-        _logger.Log(logLevel, str, args);
+        return (secret, endPoint);
     }
 }
