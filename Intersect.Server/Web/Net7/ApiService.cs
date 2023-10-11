@@ -41,8 +41,6 @@ internal partial class ApiService : ApplicationService<ServerContext, IApiServic
 
         var builder = WebApplication.CreateBuilder();
 
-        Log.Info($"Launching Intersect REST API in '{builder.Environment.EnvironmentName}' mode...");
-
         var apiConfigurationSection = builder.Configuration.GetRequiredSection("Api");
         var configuration = apiConfigurationSection.Get<ApiConfiguration>();
         builder.Services.Configure<ApiConfiguration>(apiConfigurationSection);
@@ -51,6 +49,8 @@ internal partial class ApiService : ApplicationService<ServerContext, IApiServic
         {
             return default;
         }
+
+        Log.Info($"Launching Intersect REST API in '{builder.Environment.EnvironmentName}' mode...");
 
         var corsPolicies = builder.Configuration.GetValue<Dictionary<string, CorsPolicy>>("Cors");
         if (corsPolicies != default)

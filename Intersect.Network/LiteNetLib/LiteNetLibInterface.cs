@@ -304,6 +304,9 @@ public sealed class LiteNetLibInterface : INetworkLayerInterface, INetEventListe
         OnPacketAvailable?.Invoke(this);
     }
 
+    public bool SendUnconnectedPacket(IPEndPoint target, ReadOnlySpan<byte> data) =>
+        _manager.SendUnconnectedMessage(data.ToArray(), target);
+
     public bool SendUnconnectedPacket(IPEndPoint target, UnconnectedPacket packet)
     {
         using var tempAsymmetric = RSA.Create(_asymmetricServer.ExportParameters(false));
@@ -332,11 +335,17 @@ public sealed class LiteNetLibInterface : INetworkLayerInterface, INetEventListe
         Log.Debug($"{nameof(SendUnconnectedPacket)} {nameof(encryptedPacketData)}({encryptedPacketData.Length})={Convert.ToHexString(encryptedPacketData)}");
 #endif
 
-        var data = NetDataWriter.FromBytes(encryptedPacketData, false);
+        NetDataWriter data = new(false, encryptedPacketData.Length + 1);
+        data.Put((byte)UnconnectedPacketType.AsymmetricEncrypted);
+        data.Put(encryptedPacketData);
         return _manager.SendUnconnectedMessage(data, target);
     }
 
-    public void OnNetworkReceiveUnconnected(IPEndPoint remoteEndPoint, NetPacketReader reader, UnconnectedMessageType messageType)
+    private void HandleAsymmetricEncryptedUnconnectedPacket(
+        IPEndPoint remoteEndPoint,
+        NetDataReader reader,
+        UnconnectedMessageType messageType
+    )
     {
         try
         {
@@ -371,6 +380,41 @@ public sealed class LiteNetLibInterface : INetworkLayerInterface, INetEventListe
             if (!handlerInstance.Invoke(packetSender, unconnectedPacket))
             {
                 Log.Warn($"Packet handler failed for {innerPacket.GetFullishName()}");
+            }
+        }
+        catch (Exception exception)
+        {
+            Log.Debug(exception);
+        }
+    }
+
+    public void OnNetworkReceiveUnconnected(IPEndPoint remoteEndPoint, NetPacketReader reader, UnconnectedMessageType messageType)
+    {
+        try
+        {
+            if (!reader.TryGetByte(out var unconnectedPacketTypeAsByte))
+            {
+                return;
+            }
+
+            var unconnectedPacketType = (UnconnectedPacketType)unconnectedPacketTypeAsByte;
+            if (!Enum.IsDefined(typeof(UnconnectedPacketType), unconnectedPacketTypeAsByte))
+            {
+                unconnectedPacketType = UnconnectedPacketType.AsymmetricEncrypted;
+            }
+
+            switch (unconnectedPacketType)
+            {
+                case UnconnectedPacketType.Plaintext:
+                    OnUnconnectedMessage?.Invoke(
+                        new UnconnectedMessageSender(this, remoteEndPoint, default),
+                        new LiteNetLibInboundBuffer(reader)
+                    );
+                    break;
+                case UnconnectedPacketType.AsymmetricEncrypted:
+                    HandleAsymmetricEncryptedUnconnectedPacket(remoteEndPoint, reader, messageType);
+                    break;
+                default: throw new UnreachableException();
             }
         }
         catch (Exception exception)

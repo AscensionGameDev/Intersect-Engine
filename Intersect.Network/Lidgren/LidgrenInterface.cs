@@ -149,6 +149,11 @@ namespace Intersect.Network.Lidgren
 
         public bool IsDisposed { get; private set; }
 
+        public bool SendUnconnectedPacket(IPEndPoint target, ReadOnlySpan<byte> data)
+        {
+            throw new NotImplementedException();
+        }
+
         public bool SendUnconnectedPacket(IPEndPoint target, UnconnectedPacket packet)
         {
             throw new NotImplementedException();
