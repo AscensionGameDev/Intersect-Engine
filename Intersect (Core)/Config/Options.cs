@@ -29,6 +29,9 @@ namespace Intersect
         [JsonProperty("OpenPortChecker", Order = 0)]
         protected bool _portChecker = true;
 
+        [JsonProperty(NullValueHandling = NullValueHandling.Include)]
+        public string? PortCheckerUrl { get; set; }
+
         [JsonProperty("MaxClientConnections")]
         public int MaxClientConnections { get; set; }= 100;
 

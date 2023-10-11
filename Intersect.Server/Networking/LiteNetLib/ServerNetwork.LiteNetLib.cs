@@ -9,6 +9,8 @@ using Intersect.Network;
 using Intersect.Network.Events;
 using Intersect.Network.LiteNetLib;
 using Intersect.Server.Core;
+using Intersect.Server.Networking.Helpers;
+using LiteNetLib.Utils;
 
 namespace Intersect.Server.Networking.LiteNetLib;
 
@@ -92,14 +94,24 @@ public class ServerNetwork : AbstractNetwork, IServer
     {
         try
         {
-            var packetType = message.ReadString();
+            if (!message.Read(out string packetType))
+            {
+                return;
+            }
+
             switch (packetType)
             {
-                case "status":
-                    // TODO: Response buffers
-                    // var response = peer.CreateMessage();
-                    // response.WriteVariableInt32(Player.OnlineCount);
-                    // peer.SendUnconnectedMessage(response, message.SenderEndPoint);
+                case "open_port_check":
+                    if (!message.Read(out var guidData, 16))
+                    {
+                        return;
+                    }
+
+                    NetDataWriter checkPortResponse = new();
+                    checkPortResponse.Put(PortChecker.Secret);
+                    checkPortResponse.Put(guidData);
+                    Log.Debug($"Responding to port checker service with {new Guid(guidData)}");
+                    sender.Reply(checkPortResponse.CopyData());
                     break;
             }
         }

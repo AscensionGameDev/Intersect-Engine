@@ -35,6 +35,8 @@ namespace Intersect.Network
             TransmissionMode transmissionMode = TransmissionMode.All
         );
 
+        bool SendUnconnectedPacket(IPEndPoint target, ReadOnlySpan<byte> data);
+
         bool SendUnconnectedPacket(IPEndPoint target, UnconnectedPacket packet);
 
         void Start();

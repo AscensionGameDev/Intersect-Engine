@@ -61,6 +61,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Dependencies", "Dependencie
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiteNetLib", "vendor\LiteNetLib\LiteNetLib\LiteNetLib.csproj", "{03C1FB5D-DFB0-414D-831F-BD14DEE49B6A}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Utilities", "Utilities", "{D89EF539-3EC6-4D07-9E98-65BC55F1DAA4}"
+	ProjectSection(SolutionItems) = preProject
+		Utilities\Directory.Build.props = Utilities\Directory.Build.props
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Intersect.OpenPortChecker", "Utilities\Intersect.OpenPortChecker\Intersect.OpenPortChecker.csproj", "{8BA9007B-9707-46F3-9836-F93C99F8C0C7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -134,6 +141,12 @@ Global
 		{03C1FB5D-DFB0-414D-831F-BD14DEE49B6A}.NoFody|Any CPU.Build.0 = Debug|Any CPU
 		{03C1FB5D-DFB0-414D-831F-BD14DEE49B6A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{03C1FB5D-DFB0-414D-831F-BD14DEE49B6A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8BA9007B-9707-46F3-9836-F93C99F8C0C7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8BA9007B-9707-46F3-9836-F93C99F8C0C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8BA9007B-9707-46F3-9836-F93C99F8C0C7}.NoFody|Any CPU.ActiveCfg = Debug|Any CPU
+		{8BA9007B-9707-46F3-9836-F93C99F8C0C7}.NoFody|Any CPU.Build.0 = Debug|Any CPU
+		{8BA9007B-9707-46F3-9836-F93C99F8C0C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8BA9007B-9707-46F3-9836-F93C99F8C0C7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -147,6 +160,7 @@ Global
 		{F55A208D-6E20-462F-A204-EF13BCCF67D8} = {91D46B09-C92B-450B-AEC2-C7A6EE0F8E3B}
 		{BAD9DA5F-4FA5-42A3-A58A-A7B880573121} = {0C9FAC99-60FC-4063-A15F-7A200096F67C}
 		{03C1FB5D-DFB0-414D-831F-BD14DEE49B6A} = {31380BF9-EC1C-4ABE-8A1A-A715B6DF024A}
+		{8BA9007B-9707-46F3-9836-F93C99F8C0C7} = {D89EF539-3EC6-4D07-9E98-65BC55F1DAA4}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {06095334-0BBD-4FDA-A230-272D08AFB221}

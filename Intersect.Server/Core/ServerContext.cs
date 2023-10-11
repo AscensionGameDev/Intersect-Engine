@@ -272,11 +272,6 @@ namespace Intersect.Server.Core
             Console.WriteLine();
 #endif
 
-            if (!Options.UPnP || Instance.StartupOptions.NoNatPunchthrough)
-            {
-                return;
-            }
-
             Bootstrapper.CheckNetwork();
 
             Console.WriteLine();

@@ -53,7 +53,7 @@ namespace Intersect.Server.Web.Configuration
         public TokenGenerationOptions? TokenGenerationOptions { get; set; }
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public List<string> KnownProxies { get; set; } = new List<string>();
+        public List<string>? KnownProxies { get; set; } = new();
 
         #endregion
     }

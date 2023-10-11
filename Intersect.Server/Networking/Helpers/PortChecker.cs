@@ -1,98 +1,149 @@
-﻿using System;
-using System.Globalization;
-using System.Linq;
+﻿using System.Globalization;
 using System.Net;
+using System.Security.Cryptography;
 using Intersect.Logging;
-using WebSocketSharp;
+using Microsoft.AspNetCore.WebUtilities;
 
-namespace Intersect.Server.Networking.Helpers
+namespace Intersect.Server.Networking.Helpers;
+
+public static class PortChecker
 {
-    public enum PortCheckResult
+    internal static readonly string Secret = WebEncoders.Base64UrlEncode(RandomNumberGenerator.GetBytes(32));
+
+    private static DateTime DateTimeFrom(IEnumerable<string> values)
     {
-        Unknown,
-        Open,
-        PossiblyOpen,
-        IntersectResponseNoPlayerCount,
-        IntersectResponseInvalidPlayerCount,
-        InvalidPortCheckerRequest,
-        PortCheckerServerError,
-        PortCheckerServerDown,
-        PortCheckerServerUnexpectedResponse,
-        Inaccessible
+        var binaryDateTime = values.Select(value => long.TryParse(value, out var ticks) ? ticks : 0).Max();
+        return DateTime.FromBinary(binaryDateTime);
     }
 
-    // ReSharper disable once PartialTypeWithSinglePart
-    public static partial class PortChecker
+    public static PortCheckResult CanYouSeeMe(int port, out string externalIp)
     {
-        public static PortCheckResult CanYouSeeMe(int port, out string externalIp)
+        externalIp = string.Empty;
+        try
         {
-            externalIp = string.Empty;
-            try
+            var portCheckerUrl = Options.Instance.PortCheckerUrl;
+            if (string.IsNullOrWhiteSpace(portCheckerUrl))
             {
-                var request = WebRequest.Create(
-                    $"http://status.freemmorpgmaker.com:5400/?time={DateTime.Now.ToBinary()}"
-                );
+                portCheckerUrl = "http://status.freemmorpgmaker.com:5400/";
+            }
 
-                request.Headers.Add("port", port.ToString(CultureInfo.InvariantCulture));
-                request.Timeout = 4000;
-                var response = (HttpWebResponse)request.GetResponse();
-                if (response.StatusCode != HttpStatusCode.OK)
+            UriBuilder portCheckerUriBuilder = new(portCheckerUrl)
+            {
+                Query = $"?time={DateTime.UtcNow.ToBinary()}",
+            };
+
+            var portCheckerUri = portCheckerUriBuilder.Uri;
+
+            HttpClientHandler httpClientHandler = new();
+#if DEBUG
+            httpClientHandler.ServerCertificateCustomValidationCallback += (_, _, _, _) => true;
+#endif
+            using var httpClient = new HttpClient(httpClientHandler);
+            httpClient.Timeout = TimeSpan.FromMilliseconds(10000);
+
+            HttpRequestMessage requestMessage = new(HttpMethod.Get, portCheckerUri)
+            {
+                Headers = { { "port", port.ToString(CultureInfo.InvariantCulture) } },
+            };
+
+            var responseMessage = httpClient.Send(requestMessage);
+
+            DateTime receivedResponseTime = DateTime.UtcNow;
+
+            if (responseMessage.StatusCode != HttpStatusCode.OK)
+            {
+                var statusCodePrefix = (int)responseMessage.StatusCode / 100;
+                Log.Debug($"Received {statusCodePrefix} from port checker service");
+                return statusCodePrefix switch
                 {
-                    var statusCodePrefix = (int)response.StatusCode / 100;
-                    switch (statusCodePrefix)
-                    {
-                        case 1:
-                            return PortCheckResult.PortCheckerServerUnexpectedResponse;
+                    1 => PortCheckResult.PortCheckerServerUnexpectedResponse,
+                    2 => PortCheckResult.PossiblyOpen,
+                    3 => PortCheckResult.PortCheckerServerUnexpectedResponse,
+                    4 => PortCheckResult.InvalidPortCheckerRequest,
+                    5 => PortCheckResult.PortCheckerServerError,
+                    _ => PortCheckResult.Unknown,
+                };
+            }
 
-                        case 2:
-                            return PortCheckResult.PossiblyOpen;
+            if (!responseMessage.Headers.Any())
+            {
+                Log.Debug("Received no headers from port checker service.");
+                return PortCheckResult.Inaccessible;
+            }
 
-                        case 3:
-                            return PortCheckResult.PortCheckerServerUnexpectedResponse;
+            DateTime time = default;
+            if (responseMessage.Headers.TryGetValues("time", out var timeValues))
+            {
+                time = DateTimeFrom(timeValues);
+            }
 
-                        case 4:
-                            return PortCheckResult.InvalidPortCheckerRequest;
+            DateTime requestTime = default;
+            if (responseMessage.Headers.TryGetValues("request_time", out var requestTimeValues))
+            {
+                requestTime = DateTimeFrom(requestTimeValues);
+            }
 
-                        case 5:
-                            return PortCheckResult.PortCheckerServerError;
+            DateTime responseTime = default;
+            if (responseMessage.Headers.TryGetValues("response_time", out var responseTimeValues))
+            {
+                responseTime = DateTimeFrom(responseTimeValues);
+            }
 
-                        default:
-                            return PortCheckResult.Unknown;
-                    }
-                }
+            Log.Verbose($"Port checker service received request after {(requestTime - time).TotalMilliseconds}ms.");
+            Log.Verbose($"Port checker service responded to the request after {(responseTime - requestTime).TotalMilliseconds}ms.");
+            Log.Verbose($"Port checker service response was received after {(receivedResponseTime - responseTime).TotalMilliseconds}ms.");
 
-                if (!response.Headers.HasKeys())
-                {
-                    return PortCheckResult.Inaccessible;
-                }
+            if (!responseMessage.Headers.TryGetValues("ip", out var ipValues))
+            {
+                Log.Debug("Received no 'ip' header from port checker service.");
+                return PortCheckResult.InvalidPortCheckerResponse;
+            }
 
-                if (response.Headers.AllKeys.Contains("ip"))
-                {
-                    externalIp = response.Headers["ip"];
-                }
+            externalIp = ipValues.FirstOrDefault(value => !string.IsNullOrWhiteSpace(value));
+            if (string.IsNullOrWhiteSpace(externalIp))
+            {
+                Log.Debug("Received empty 'ip' header from port checker service.");
+                return PortCheckResult.InvalidPortCheckerResponse;
+            }
 
-                if (!response.Headers.AllKeys.Contains("players"))
-                {
-                    return PortCheckResult.IntersectResponseNoPlayerCount;
-                }
+            if (!responseMessage.Headers.TryGetValues("secret", out var portCheckerSecretValues))
+            {
+                Log.Debug("Received no 'secret' header from port checker service.");
+                return PortCheckResult.InvalidPortCheckerResponse;
+            }
 
-                if (!int.TryParse(response.Headers["players"], out var players) || players < 0)
-                {
-                    return PortCheckResult.IntersectResponseInvalidPlayerCount;
-                }
+            var portCheckerSecret = portCheckerSecretValues.FirstOrDefault(value => !string.IsNullOrWhiteSpace(value));
+            if (string.IsNullOrWhiteSpace(portCheckerSecret))
+            {
+                Log.Debug("Received empty 'secret' header from port checker service.");
+                return PortCheckResult.InvalidPortCheckerResponse;
+            }
 
+            if (string.Equals(Secret, portCheckerSecret, StringComparison.Ordinal))
+            {
                 return PortCheckResult.Open;
             }
-            catch (WebException webException)
-            {
-                Log.Debug(webException);
-                return PortCheckResult.PortCheckerServerDown;
-            }
-            catch (Exception exception)
-            {
-                Log.Debug(exception);
-                return PortCheckResult.PortCheckerServerError;
-            }
+
+            Log.Debug($"Received invalid 'secret' header from port checker service: {portCheckerSecret}");
+            return PortCheckResult.InvalidPortCheckerResponse;
+        }
+        catch (HttpRequestException httpRequestException)
+        {
+            Log.Debug(httpRequestException);
+
+            return httpRequestException.StatusCode.HasValue
+                ? PortCheckResult.PortCheckerServerError
+                : PortCheckResult.PortCheckerServerDown;
+        }
+        catch (TaskCanceledException taskCanceledException)
+        {
+            Log.Debug(taskCanceledException.Message);
+            return PortCheckResult.PortCheckerServerError;
+        }
+        catch (Exception exception)
+        {
+            Log.Debug(exception);
+            return PortCheckResult.PortCheckerServerError;
         }
     }
 }

@@ -8,5 +8,7 @@ public sealed record UnconnectedMessageSender(
     object? InterfaceMetadata
 )
 {
+    public void Reply(ReadOnlySpan<byte> data) => NetworkInterface.SendUnconnectedPacket(RemoteEndPoint, data);
+
     public void Reply(UnconnectedPacket packet) => NetworkInterface.SendUnconnectedPacket(RemoteEndPoint, packet);
 }

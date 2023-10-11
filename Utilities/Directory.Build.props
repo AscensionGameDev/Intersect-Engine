@@ -1,0 +1,5 @@
+<Project>
+  <PropertyGroup>
+    <IntersectRepoPath>$(MSBuildProjectDirectory)\..\..</IntersectRepoPath>
+  </PropertyGroup>
+</Project>

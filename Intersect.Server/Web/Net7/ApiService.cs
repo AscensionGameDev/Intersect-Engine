@@ -41,8 +41,6 @@ internal partial class ApiService : ApplicationService<ServerContext, IApiServic
 
         var builder = WebApplication.CreateBuilder();
 
-        Log.Info($"Launching Intersect REST API in '{builder.Environment.EnvironmentName}' mode...");
-
         var apiConfigurationSection = builder.Configuration.GetRequiredSection("Api");
         var configuration = apiConfigurationSection.Get<ApiConfiguration>();
         builder.Services.Configure<ApiConfiguration>(apiConfigurationSection);
@@ -51,6 +49,8 @@ internal partial class ApiService : ApplicationService<ServerContext, IApiServic
         {
             return default;
         }
+
+        Log.Info($"Launching Intersect REST API in '{builder.Environment.EnvironmentName}' mode...");
 
         var corsPolicies = builder.Configuration.GetValue<Dictionary<string, CorsPolicy>>("Cors");
         if (corsPolicies != default)
@@ -210,22 +210,44 @@ internal partial class ApiService : ApplicationService<ServerContext, IApiServic
             builder.Services.AddProblemDetails();
         }
 
-        if (configuration.KnownProxies.Count > 0)
+        var knownProxies = configuration.KnownProxies;
+        if (knownProxies?.Any() ?? false)
         {
             builder.Services.Configure<ForwardedHeadersOptions>(options =>
             {
                 options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedHost;
 
-                foreach (var proxy in configuration.KnownProxies)
+                foreach (var rawProxyAddress in knownProxies)
                 {
-                    if (IPAddress.TryParse(proxy, out IPAddress address))
+                    if (string.IsNullOrWhiteSpace(rawProxyAddress))
                     {
-                        Log.Info($"Added \"{proxy}\" as good known proxy for forwarded headers middleware.");
-                        options.KnownProxies.Add(address);
+                        Log.Debug($"Invalid address '{rawProxyAddress}'");
+                    }
+                    else if (IPAddress.TryParse(rawProxyAddress.Trim(), out IPAddress? proxyAddress))
+                    {
+                        Log.Debug($"Added {proxyAddress} as a known good proxy for forwarded headers");
+                        options.KnownProxies.Add(proxyAddress);
                     }
                     else
                     {
-                        Log.Error($"Failed to parse \"{proxy}\" as good known proxy for forwarded headers middleware.");
+                        try
+                        {
+                            var addresses = Dns.GetHostAddresses(rawProxyAddress.Trim());
+                            foreach (var address in addresses)
+                            {
+                                Log.Debug($"Added {address} as a known good proxy for forwarded headers");
+                                options.KnownProxies.Add(address);
+                            }
+
+                            if (addresses.Length < 1)
+                            {
+                                Log.Warn($"Failed to resolve {rawProxyAddress.Trim()}, unable to add as known proxy");
+                            }
+                        }
+                        catch (Exception exception)
+                        {
+                            Log.Debug(exception, $"Failed to resolve {rawProxyAddress.Trim()}");
+                        }
                     }
                 }
             });
@@ -233,7 +255,10 @@ internal partial class ApiService : ApplicationService<ServerContext, IApiServic
 
         var app = builder.Build();
 
-        app.UseForwardedHeaders();
+        if (knownProxies?.Any() ?? false)
+        {
+            app.UseForwardedHeaders();
+        }
         app.UseNetworkFilterMiddleware(configuration.AllowedNetworkTypes);
 
         if (app.Environment.IsDevelopment())

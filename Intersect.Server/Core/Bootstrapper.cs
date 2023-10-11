@@ -168,7 +168,7 @@ namespace Intersect.Server.Core
                     return;
                 }
 
-                if (Options.UPnP)
+                if (Options.UPnP && !Context.StartupOptions.NoNatPunchthrough)
                 {
                     Log.Pretty.Info(Strings.Portchecking.PortNotOpenTryingUPnP.ToString(Options.ServerPort));
                     Console.WriteLine();
