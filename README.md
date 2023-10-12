@@ -14,7 +14,6 @@ Intersect provides a complete game development suite for creating 2d mmorpgs wit
 	- [Compiling/Development](#compilingdevelopment)
 		- [Dependencies](#dependencies)
 			- [Required](#required)
-			- [Optional (strongly recommended)](#optional-strongly-recommended)
 		- [Getting started](#getting-started)
 		- [Compiling](#compiling)
 	- [Intersect Assets](#intersect-assets)
@@ -43,10 +42,7 @@ We're open to expanding to new platforms (mobile, web, etc) but don't have the c
 #### Required
 
 - [.NET 7 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/7.0), verified for v7.0.11 (SDK 7.0.401)
-
-#### Optional (strongly recommended)
-
-- git: required for cloning submodules, if you want to do this manually this is not needed
+- git: required for cloning submodules, if you want to do this manually you don't need this and use the .zip download but that is not supported
   - Tested on 2.42.0
 
 ### Getting started

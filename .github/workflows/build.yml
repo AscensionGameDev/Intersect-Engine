@@ -5,6 +5,11 @@ on:
     branches: [ "main" ]
     paths-ignore:
       - '.github/**'
+      - 'Documentation/**'
+      - '.gitignore'
+      - '*.DotSettings'
+      - '*.json'
+      - '*.md'
   workflow_dispatch:
     inputs:
       forceBuild:
