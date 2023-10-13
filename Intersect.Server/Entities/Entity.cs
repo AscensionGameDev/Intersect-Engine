@@ -2645,20 +2645,28 @@ namespace Intersect.Server.Entities
                 return false;
             }
 
-            var dx = target.X - X;
-            var dy = target.Y - Y;
+            var originMapController = MapController.Get(MapId);
+            var targetMapController = MapController.Get(target.MapId);
+
+            var originY = Y + originMapController.MapGridY * Options.MapHeight;
+            var originX = X + originMapController.MapGridX * Options.MapWidth;
+            var targetY = target.Y + targetMapController.MapGridY * Options.MapHeight;
+            var targetX = target.X + targetMapController.MapGridX * Options.MapWidth;
+
+            var xDiff = targetX - originX;
+            var yDiff = targetY - originY;
             var diagonalMovement = Options.Instance.MapOpts.EnableDiagonalMovement;
 
-            switch (dx)
+            switch (xDiff)
             {
-                case 0 when dy == -1 && Dir == Direction.Up:
-                case 0 when dy == 1 && Dir == Direction.Down:
-                case 1 when dy == 0 && Dir == Direction.Right:
-                case -1 when dy == 0 && Dir == Direction.Left:
-                case 1 when diagonalMovement && dy == -1 && Dir == Direction.UpRight:
-                case -1 when diagonalMovement && dy == -1 && Dir == Direction.UpLeft:
-                case 1 when diagonalMovement && dy == 1 && Dir == Direction.DownRight:
-                case -1 when diagonalMovement && dy == 1 && Dir == Direction.DownLeft:
+                case 0 when yDiff == -1 && Dir == Direction.Up:
+                case 0 when yDiff == 1 && Dir == Direction.Down:
+                case 1 when yDiff == 0 && Dir == Direction.Right:
+                case -1 when yDiff == 0 && Dir == Direction.Left:
+                case 1 when diagonalMovement && yDiff == -1 && Dir == Direction.UpRight:
+                case -1 when diagonalMovement && yDiff == -1 && Dir == Direction.UpLeft:
+                case 1 when diagonalMovement && yDiff == 1 && Dir == Direction.DownRight:
+                case -1 when diagonalMovement && yDiff == 1 && Dir == Direction.DownLeft:
                     return true;
                 default:
                     return false;
