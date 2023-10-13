@@ -222,6 +222,7 @@ namespace Intersect.Editor.Networking
                     }
 
                     _nextServerStatusPing = now + ServerStatusPingInterval;
+                    Globals.NextServerStatusPing = _nextServerStatusPing;
                 }
             }
 
