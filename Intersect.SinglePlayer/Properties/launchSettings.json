@@ -1,0 +1,31 @@
+{
+	"profiles": {
+		"Development": {
+			"commandName": "Project",
+			"commandLineArgs": "",
+			"environmentVariables": {
+				"DOTNET_ENVIRONMENT": "Development",
+				"LD_LIBRARY_PATH": "."
+			},
+			"workingDirectory": "$(ProjectDir)../assets/development/single-player"
+		},
+		"Staging": {
+			"commandName": "Project",
+			"commandLineArgs": "",
+			"environmentVariables": {
+				"DOTNET_ENVIRONMENT": "Staging",
+				"LD_LIBRARY_PATH": "."
+			},
+			"workingDirectory": "$(ProjectDir)../assets/staging/single-player"
+		},
+		"Production": {
+			"commandName": "Project",
+			"commandLineArgs": "",
+			"environmentVariables": {
+				"DOTNET_ENVIRONMENT": "Production",
+				"LD_LIBRARY_PATH": "."
+			},
+			"workingDirectory": "$(ProjectDir)../assets/production/single-player"
+		}
+	}
+}

@@ -1,25 +1,22 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Concurrent;
 using System.Net;
 using System.Security.Cryptography;
 using Intersect.Core;
 using Intersect.Logging;
 using Intersect.Network.Events;
-using Intersect.Network.Lidgren;
 using Intersect.Network.LiteNetLib;
-using Intersect.Plugins.Interfaces;
-
-using Lidgren.Network;
 
 namespace Intersect.Network
 {
-
     public partial class ClientNetwork : AbstractNetwork, IClient
     {
+        private static readonly NetworkLayerInterfaceFactory DefaultNetworkLayerInterfaceFactory =
+            (network, parameters) => new LiteNetLibInterface(network, parameters);
+
+        internal static NetworkLayerInterfaceFactory? NetworkLayerInterfaceFactory { get; set; }
 
         private readonly INetworkLayerInterface _interface;
+        private bool _isConnected;
 
         public ClientNetwork(
             IApplicationContext applicationContext,
@@ -32,10 +29,10 @@ namespace Intersect.Network
         {
             Guid = Guid.Empty;
 
-            IsConnected = false;
+            _isConnected = false;
 
-            _interface = new LiteNetLibInterface(this, rsaParameters);
-            // _interface = new LidgrenInterface(this, typeof(NetClient), rsaParameters);
+            _interface =
+                (NetworkLayerInterfaceFactory ?? DefaultNetworkLayerInterfaceFactory).Invoke(this, rsaParameters);
             _interface.OnConnected += HandleInterfaceOnConnected;
             _interface.OnConnectionApproved += HandleInterfaceOnConnectonApproved;
             _interface.OnConnectionDenied += HandleInterfaceOnConnectonDenied;
@@ -54,7 +51,7 @@ namespace Intersect.Network
 
         public IConnection Connection => Connections.FirstOrDefault();
 
-        public bool IsConnected { get; private set; }
+        public override bool IsConnected => _isConnected;
 
         public bool IsServerOnline => IsConnected;
 
@@ -91,7 +88,7 @@ namespace Intersect.Network
         protected virtual void HandleInterfaceOnConnected(INetworkLayerInterface sender, ConnectionEventArgs connectionEventArgs)
         {
             Log.Info($"Connected [{connectionEventArgs.Connection?.Guid}].");
-            IsConnected = true;
+            _isConnected = true;
             OnConnected?.Invoke(sender, connectionEventArgs);
         }
 
@@ -110,11 +107,11 @@ namespace Intersect.Network
         protected virtual void HandleInterfaceOnDisconnected(INetworkLayerInterface sender, ConnectionEventArgs connectionEventArgs)
         {
             Log.Info($"Disconnected [{connectionEventArgs.Connection?.Guid ?? Guid.Empty}].");
-            IsConnected = false;
+            _isConnected = false;
             OnDisconnected?.Invoke(sender, connectionEventArgs);
         }
 
-        public void Close()
+        public override void Close()
         {
             StopInterfaces("closing");
         }
@@ -128,7 +125,5 @@ namespace Intersect.Network
         {
             return new ConcurrentDictionary<TKey, TValue>();
         }
-
     }
-
 }

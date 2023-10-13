@@ -145,8 +145,23 @@ namespace Intersect.Core
         /// Gets all of the interesting assemblies (e.g. core and application).
         /// </summary>
         /// <returns>interesting assemblies</returns>
-        protected virtual IEnumerable<Assembly> GetAssemblies() =>
-            new List<Assembly> {typeof(IApplicationContext).Assembly, typeof(TContext).Assembly};
+        protected virtual IEnumerable<Assembly> GetAssemblies()
+        {
+            var type = GetType();
+            var assemblies = new List<Assembly>
+            {
+                typeof(IApplicationContext).Assembly,
+                typeof(TContext).Assembly,
+            };
+
+            while (type != null && type != typeof(object) && type != typeof(TContext))
+            {
+                assemblies.Add(type.Assembly);
+                type = type.BaseType;
+            }
+
+            return assemblies;
+        }
 
         private void AddService(Type type, IApplicationService service)
         {

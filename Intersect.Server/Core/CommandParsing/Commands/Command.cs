@@ -6,6 +6,7 @@ using System.Text;
 
 using Intersect.Core;
 using Intersect.Localization;
+using Intersect.Reflection;
 using Intersect.Server.Core.CommandParsing.Arguments;
 
 namespace Intersect.Server.Core.CommandParsing.Commands
@@ -168,7 +169,7 @@ namespace Intersect.Server.Core.CommandParsing.Commands
                 );
             }
 
-            if (context.GetType() != ContextType)
+            if (!context.GetType().Extends<TContext>())
             {
                 throw new ArgumentException(
                     $@"Expected {ContextType.FullName} not {context.GetType().FullName}.", nameof(context)

@@ -47,7 +47,7 @@ namespace Intersect.Client.Core
 
             var packetHandlerRegistry = new PacketHandlerRegistry(packetTypeRegistry, logger);
             var packetHelper = new PacketHelper(packetTypeRegistry, packetHandlerRegistry);
-            FactoryRegistry<IPluginBootstrapContext>.RegisterFactory(PluginBootstrapContext.CreateFactory(args ?? Array.Empty<string>(), parser, packetHelper));
+            FactoryRegistry<IPluginBootstrapContext>.RegisterFactory(PluginBootstrapContext.CreateFactory(args, parser, packetHelper));
 
             var commandLineOptions = parser.ParseArguments<ClientCommandLineOptions>(args)
                 .MapResult(HandleParsedArguments, HandleParserErrors);
