@@ -10,15 +10,19 @@ namespace Intersect.Network
     {
         const long DefaultUnconnectedMessageTimeout = 10_000;
 
+        IApplicationContext ApplicationContext { get; }
+
         NetworkConfiguration Configuration { get; }
 
-        IApplicationContext ApplicationContext { get; }
+        int ConnectionCount { get; }
 
         IPacketHelper Helper { get; }
 
+        bool IsConnected { get; }
+
         Guid Guid { get; }
 
-        int ConnectionCount { get; }
+        int Ping => default;
 
         event HandleConnectionEvent? OnConnected;
 
@@ -34,6 +38,10 @@ namespace Intersect.Network
 
         event HandleUnconnectedMessage? OnUnconnectedMessage;
 
+        void Close();
+
+        bool Connect() => throw new NotSupportedException();
+
         bool Disconnect(string message = "");
 
         bool Disconnect(Guid guid, string message = "");
@@ -43,6 +51,8 @@ namespace Intersect.Network
         bool Disconnect(ICollection<Guid> guids, string message = "");
 
         bool Disconnect(ICollection<IConnection> connections, string message = "");
+
+        bool Listen() => throw new NotSupportedException();
 
         bool SendUnconnected(
             IPEndPoint endPoint,

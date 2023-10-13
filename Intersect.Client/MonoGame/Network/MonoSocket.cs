@@ -1,9 +1,7 @@
 ﻿using System.Collections.Concurrent;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Net;
-using System.Reflection;
-
+using System.Resources;
 using Intersect.Client.Framework.Network;
 using Intersect.Configuration;
 using Intersect.Logging;
@@ -18,25 +16,41 @@ using Intersect.Rsa;
 
 namespace Intersect.Client.MonoGame.Network
 {
-
     internal partial class MonoSocket : GameSocket
     {
+        internal static NetworkFactory? NetworkFactory { get; set; }
+
+        private static readonly NetworkFactory DefaultNetworkFactory =
+            (context, parameters, handlePacket, _) =>
+            {
+                var config = new NetworkConfiguration(
+                    ClientConfiguration.Instance.Host,
+                    ClientConfiguration.Instance.Port
+                );
+                return new ClientNetwork(context, config, parameters)
+                {
+                    Handler = handlePacket,
+                };
+            };
+
         /// <summary>
         /// Interval between status pings in ms (e.g. full, bad version, etc.)
         /// </summary>
 #if DEBUG
         private const long ServerStatusPingInterval = 1_000;
+
+        private const string AsymmetricKeyManifestResourceName = "Intersect.Client.network.handshake.bkey.pub";
 #else
         private const long ServerStatusPingInterval = 15_000;
 #endif
 
-        public static ClientNetwork? ClientNetwork { get; set; }
+        public static INetwork? ClientNetwork { get; set; }
 
-        private ClientNetwork? _network;
+        private INetwork? _network;
 
         public override INetwork GetNetwork() => Network!;
 
-        public ClientNetwork? Network
+        public INetwork? Network
         {
             get
             {
@@ -45,17 +59,22 @@ namespace Intersect.Client.MonoGame.Network
                     return _network;
                 }
 
-                ClientNetwork network;
-                var config = new NetworkConfiguration(ClientConfiguration.Instance.Host, ClientConfiguration.Instance.Port);
-                var assembly = Assembly.GetExecutingAssembly();
-
-                using var stream = assembly.GetManifestResourceStream("Intersect.Client.network.handshake.bkey.pub");
-                var rsaKey = new RsaKey(stream);
-                Debug.Assert(rsaKey != null, "rsaKey != null");
-                network = new ClientNetwork(Context, config, rsaKey.Parameters)
+                using var asymmetricKeyStream =
+                    typeof(MonoSocket).Assembly.GetManifestResourceStream(AsymmetricKeyManifestResourceName);
+                if (asymmetricKeyStream == default)
                 {
-                    Handler = AddPacketToQueue,
-                };
+                    throw new MissingManifestResourceException(
+                        $"Unable to get manifest resource stream for '{AsymmetricKeyManifestResourceName}'"
+                    );
+                }
+
+                var rsaKey = new RsaKey(asymmetricKeyStream);
+                var network = (NetworkFactory ?? DefaultNetworkFactory).Invoke(
+                    Context,
+                    rsaKey.Parameters,
+                    AddPacketToQueue,
+                    default
+                );
 
                 network.OnConnected += OnConnected;
                 network.OnDisconnected += OnDisconnected;
@@ -64,15 +83,9 @@ namespace Intersect.Client.MonoGame.Network
                 ClientNetwork = _network;
                 return _network;
             }
-            set
-            {
-                _network = value;
-                ClientNetwork = _network;
-            }
         }
 
-        public static ConcurrentQueue<KeyValuePair<IConnection, IPacket>> PacketQueue =
-            new ConcurrentQueue<KeyValuePair<IConnection, IPacket>>();
+        public static ConcurrentQueue<KeyValuePair<IConnection, IPacket>> PacketQueue = new();
 
         private IClientContext Context { get; }
 
@@ -218,18 +231,8 @@ namespace Intersect.Client.MonoGame.Network
             ClientNetwork = null;
         }
 
-        public override bool IsConnected()
-        {
-            return ClientNetwork?.IsConnected ?? false;
-        }
+        public override bool IsConnected() => ClientNetwork?.IsConnected ?? false;
 
-        public override int Ping
-        {
-            get
-            {
-                return ClientNetwork?.Ping ?? -1;
-            }
-        }
+        public override int Ping => ClientNetwork?.Ping ?? -1;
     }
-
 }

@@ -8,7 +8,6 @@ using Intersect.Memory;
 using Intersect.Network;
 using Intersect.Network.Events;
 using Intersect.Network.Lidgren;
-using Intersect.Plugins.Interfaces;
 using Intersect.Server.Core;
 using Lidgren.Network;
 
@@ -55,6 +54,8 @@ namespace Intersect.Server.Networking.Lidgren
 
         private IServerContext Context { get; }
 
+        public override bool IsConnected => Connections.Any();
+
         public override event HandleConnectionEvent OnConnected;
         public override event HandleConnectionEvent OnConnectionApproved;
         public override event HandleConnectionEvent OnConnectionDenied;
@@ -62,6 +63,8 @@ namespace Intersect.Server.Networking.Lidgren
         public override event HandleConnectionEvent OnDisconnected;
         public override event HandlePacketAvailable OnPacketAvailable;
         public override event HandleUnconnectedMessage OnUnconnectedMessage;
+
+        public override void Close() => Disconnect("closing");
 
         public bool Listen()
         {

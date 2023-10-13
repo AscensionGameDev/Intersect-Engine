@@ -1,30 +1,30 @@
 using Intersect.Logging;
 using Intersect.Utilities;
-using System;
 using System.Diagnostics;
 using System.Globalization;
-using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Resources;
+using Intersect.Client.Core;
+using Intersect.Extensions;
+using Microsoft.Xna.Framework.Audio;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Intersect.Client
 {
     /// <summary>
     ///     The main class.
     /// </summary>
-    static partial class Program
+    static class Program
     {
+        public static string OpenALLink { get; set; }= string.Empty;
 
-        public static string OpenALLink = "";
-
-        public static string OpenGLLink = "";
+        public static string OpenGLLink { get; set; }= string.Empty;
 
         /// <summary>
         ///     The main entry point for the application.
         /// </summary>
         [STAThread]
-        static void Main(string[] args)
+        internal static void Main(string[] args)
         {
             CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("en-US");
 
@@ -39,48 +39,53 @@ namespace Intersect.Client
                 Debug.Assert(method != null, "method != null");
                 method.Invoke(null, new object[] { args });
             }
+            catch (NoSuitableGraphicsDeviceException noSuitableGraphicsDeviceException)
+            {
+                try
+                {
+                    var message = noSuitableGraphicsDeviceException.AsFullStackString();
+                    Console.Error.WriteLine(message);
+                    File.WriteAllText("graphics-error.txt", message);
+                }
+                catch (Exception exception)
+                {
+                    Console.Error.WriteLine(exception);
+                }
+                finally
+                {
+                    if (!string.IsNullOrEmpty(OpenGLLink))
+                    {
+                        BrowserUtils.Open(OpenGLLink);
+                    }
+
+                    Environment.Exit(-1);
+                }
+            }
+            catch (NoAudioHardwareException noAudioHardwareException)
+            {
+                try
+                {
+                    var message = noAudioHardwareException.AsFullStackString();
+                    Console.Error.WriteLine(message);
+                    File.WriteAllText("audio-error.txt", message);
+                }
+                catch (Exception exception)
+                {
+                    Console.Error.WriteLine(exception);
+                }
+                finally
+                {
+                    if (!string.IsNullOrEmpty(OpenALLink))
+                    {
+                        BrowserUtils.Open(OpenALLink);
+                    }
+
+                    Environment.Exit(-1);
+                }
+            }
             catch (Exception exception)
             {
-                switch (exception.InnerException?.GetType().Name)
-                {
-                    case "NoSuitableGraphicsDeviceException":
-                        {
-                            var txt = "NoSuitableGraphicsDeviceException" + Environment.NewLine;
-                            txt += exception.InnerException.ToString();
-                            txt += exception.InnerException.InnerException?.ToString();
-                            File.WriteAllText("gfxerror.txt", txt);
-
-                            if (!string.IsNullOrEmpty(OpenGLLink))
-                            {
-                                BrowserUtils.Open(OpenGLLink);
-                            }
-
-                            Environment.Exit(-1);
-                            break;
-                        }
-
-                    case "NoAudioHardwareException":
-                        {
-                            if (!string.IsNullOrEmpty(OpenALLink))
-                            {
-                                BrowserUtils.Open(OpenALLink);
-                            }
-
-                            Environment.Exit(-1);
-                            break;
-                        }
-                }
-
-                var type = Type.GetType("Intersect.Client.Core.ClientContext", true);
-                Debug.Assert(type != null, "type != null");
-
-                var staticMethodInfo = type.GetMethod(
-                    "DispatchUnhandledException", BindingFlags.Static | BindingFlags.NonPublic
-                );
-
-                Debug.Assert(staticMethodInfo != null, nameof(staticMethodInfo) + " != null");
-
-                staticMethodInfo.Invoke(null, new object[] { exception.InnerException ?? exception, true, true });
+                ClientContext.DispatchUnhandledException(exception, true, true);
             }
         }
 

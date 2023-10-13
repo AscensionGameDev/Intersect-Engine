@@ -47,6 +47,7 @@ namespace Intersect.Network
         public IApplicationContext ApplicationContext { get; }
 
         public IPacketHelper Helper { get; }
+        public abstract bool IsConnected { get; }
 
         public ICollection<IConnection> Connections => ConnectionLookup.Values;
 
@@ -105,6 +106,8 @@ namespace Intersect.Network
 
             ConnectionLookup.Clear();
         }
+
+        public abstract void Close();
 
         public bool Disconnect(string message = "") => Disconnect(Connections, message);
 

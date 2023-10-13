@@ -72,7 +72,7 @@ internal partial class ApiService : ApplicationService<ServerContext, IApiServic
                 routeOptions.ConstraintMap.Add(nameof(AdminAction), typeof(AdminActionsConstraint));
                 routeOptions.ConstraintMap.Add(nameof(ChatMessage), typeof(ChatMessage.RouteConstraint));
                 routeOptions.ConstraintMap.Add(nameof(GameObjectType), typeof(GameObjectTypeConstraint));
-                routeOptions.ConstraintMap.Add(nameof(LookupKey), typeof(LookupKey.RouteConstraint));
+                routeOptions.ConstraintMap.Add(nameof(LookupKey), typeof(LookupKeyConstraint));
             }
         );
 

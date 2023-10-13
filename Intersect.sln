@@ -68,6 +68,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Utilities", "Utilities", "{
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Intersect.OpenPortChecker", "Utilities\Intersect.OpenPortChecker\Intersect.OpenPortChecker.csproj", "{8BA9007B-9707-46F3-9836-F93C99F8C0C7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Intersect.Server.Core", "Intersect.Server.Core\Intersect.Server.Core.csproj", "{C62BA88C-C3D8-476B-87CA-3D968B82E19B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Intersect.SinglePlayer", "Intersect.SinglePlayer\Intersect.SinglePlayer.csproj", "{999025E8-C034-4A91-8166-5C2D95E9C9C3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Single Player", "Single Player", "{F990372C-0580-4D69-89DC-A46A86396BBD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -147,6 +153,18 @@ Global
 		{8BA9007B-9707-46F3-9836-F93C99F8C0C7}.NoFody|Any CPU.Build.0 = Debug|Any CPU
 		{8BA9007B-9707-46F3-9836-F93C99F8C0C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8BA9007B-9707-46F3-9836-F93C99F8C0C7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C62BA88C-C3D8-476B-87CA-3D968B82E19B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C62BA88C-C3D8-476B-87CA-3D968B82E19B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C62BA88C-C3D8-476B-87CA-3D968B82E19B}.NoFody|Any CPU.ActiveCfg = Debug|Any CPU
+		{C62BA88C-C3D8-476B-87CA-3D968B82E19B}.NoFody|Any CPU.Build.0 = Debug|Any CPU
+		{C62BA88C-C3D8-476B-87CA-3D968B82E19B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C62BA88C-C3D8-476B-87CA-3D968B82E19B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{999025E8-C034-4A91-8166-5C2D95E9C9C3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{999025E8-C034-4A91-8166-5C2D95E9C9C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{999025E8-C034-4A91-8166-5C2D95E9C9C3}.NoFody|Any CPU.ActiveCfg = Debug|Any CPU
+		{999025E8-C034-4A91-8166-5C2D95E9C9C3}.NoFody|Any CPU.Build.0 = Debug|Any CPU
+		{999025E8-C034-4A91-8166-5C2D95E9C9C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{999025E8-C034-4A91-8166-5C2D95E9C9C3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -161,6 +179,7 @@ Global
 		{BAD9DA5F-4FA5-42A3-A58A-A7B880573121} = {0C9FAC99-60FC-4063-A15F-7A200096F67C}
 		{03C1FB5D-DFB0-414D-831F-BD14DEE49B6A} = {31380BF9-EC1C-4ABE-8A1A-A715B6DF024A}
 		{8BA9007B-9707-46F3-9836-F93C99F8C0C7} = {D89EF539-3EC6-4D07-9E98-65BC55F1DAA4}
+		{999025E8-C034-4A91-8166-5C2D95E9C9C3} = {F990372C-0580-4D69-89DC-A46A86396BBD}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {06095334-0BBD-4FDA-A230-272D08AFB221}
