@@ -1,7 +1,4 @@
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.Serialization;
 
 using Intersect.Enums;
@@ -16,21 +13,23 @@ namespace Intersect.Configuration
     /// </summary>
     public sealed partial class ClientConfiguration : IConfiguration<ClientConfiguration>
     {
-        public const string DefaultPath = @"resources/config.json";
+        public static string ResourcesDirectory { get; set; } = "resources";
+
+        public static string DefaultPath => Path.Combine(ResourcesDirectory, "config.json");
 
         /// <inheritdoc />
-        public ClientConfiguration Load(string filePath = DefaultPath, bool failQuietly = false)
+        public ClientConfiguration Load(string? filePath = default, bool failQuietly = false)
         {
-            return ConfigurationHelper.Load(this, filePath, failQuietly);
+            return ConfigurationHelper.Load(this, filePath ?? DefaultPath, failQuietly);
         }
 
         /// <inheritdoc />
-        public ClientConfiguration Save(string filePath = DefaultPath, bool failQuietly = false)
+        public ClientConfiguration Save(string? filePath = default, bool failQuietly = false)
         {
-            return ConfigurationHelper.Save(this, filePath, failQuietly);
+            return ConfigurationHelper.Save(this, filePath ?? DefaultPath, failQuietly);
         }
 
-        public static ClientConfiguration LoadAndSave(string filePath = null)
+        public static ClientConfiguration LoadAndSave(string? filePath = default)
         {
             return ConfigurationHelper.LoadSafely(Instance, filePath);
         }

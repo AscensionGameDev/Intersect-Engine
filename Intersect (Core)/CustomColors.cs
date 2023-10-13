@@ -256,7 +256,7 @@ namespace Intersect
         {
             Console.WriteLine("Loading custom colors...");
 
-            var filepath = Path.Combine("resources", "colors.json");
+            var filepath = Path.Combine(Options.ResourcesDirectory, "colors.json");
 
             // Really don't want two JsonSave() return points...
             // ReSharper disable once InvertIf
@@ -284,8 +284,8 @@ namespace Intersect
 
             try
             {
-                var filepath = Path.Combine("resources", "colors.json");
-                Directory.CreateDirectory("resources");
+                var filepath = Path.Combine(Options.ResourcesDirectory, "colors.json");
+                Directory.CreateDirectory(Options.ResourcesDirectory);
                 var json = JsonConvert.SerializeObject(Root, Formatting.Indented, new ColorConverter());
                 File.WriteAllText(filepath, json, Encoding.UTF8);
 

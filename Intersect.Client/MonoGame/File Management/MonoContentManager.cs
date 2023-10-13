@@ -11,6 +11,7 @@ using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Localization;
 using Intersect.Client.MonoGame.Audio;
 using Intersect.Compression;
+using Intersect.Configuration;
 using Intersect.Logging;
 
 using Newtonsoft.Json.Linq;
@@ -25,7 +26,7 @@ namespace Intersect.Client.MonoGame.File_Management
         {
             Init(this);
 
-            var rootPath = Path.GetFullPath("resources");
+            var rootPath = Path.GetFullPath(ClientConfiguration.ResourcesDirectory);
 
             if (!Directory.Exists(rootPath))
             {
@@ -44,10 +45,10 @@ namespace Intersect.Client.MonoGame.File_Management
 
             IEnumerable<string> tilesetFiles = Array.Empty<string>();
 
-            var dir = Path.Combine("resources", "tilesets");
+            var dir = Path.Combine(ClientConfiguration.ResourcesDirectory, "tilesets");
             if (!Directory.Exists(dir))
             {
-                if (!Directory.Exists(Path.Combine("resources", "packs")))
+                if (!Directory.Exists(Path.Combine(ClientConfiguration.ResourcesDirectory, "packs")))
                 {
                     Directory.CreateDirectory(dir);
                 }
@@ -62,11 +63,11 @@ namespace Intersect.Client.MonoGame.File_Management
                 var realFilename = tilesetFiles.FirstOrDefault(file => t.Equals(file, StringComparison.InvariantCultureIgnoreCase)) ?? string.Empty;
                 if (!string.IsNullOrWhiteSpace(t) &&
                     (!string.IsNullOrWhiteSpace(realFilename) ||
-                     GameTexturePacks.GetFrame(Path.Combine("resources", "tilesets", t.ToLower())) != null) &&
+                     GameTexturePacks.GetFrame(Path.Combine(ClientConfiguration.ResourcesDirectory, "tilesets", t.ToLower())) != null) &&
                     !mTilesetDict.ContainsKey(t.ToLower()))
                 {
                     mTilesetDict.Add(
-                        t.ToLower(), Core.Graphics.Renderer.LoadTexture(Path.Combine("resources", "tilesets", t), Path.Combine("resources", "tilesets", realFilename))
+                        t.ToLower(), Core.Graphics.Renderer.LoadTexture(Path.Combine(ClientConfiguration.ResourcesDirectory, "tilesets", t), Path.Combine(ClientConfiguration.ResourcesDirectory, "tilesets", realFilename))
                     );
                 }
             }
@@ -77,7 +78,7 @@ namespace Intersect.Client.MonoGame.File_Management
         public override void LoadTexturePacks()
         {
             mTexturePackDict.Clear();
-            var dir = Path.Combine("resources", "packs");
+            var dir = Path.Combine(ClientConfiguration.ResourcesDirectory, "packs");
             if (!Directory.Exists(dir))
             {
                 Directory.CreateDirectory(dir);
@@ -90,9 +91,9 @@ namespace Intersect.Client.MonoGame.File_Management
                 var obj = JObject.Parse(json);
                 var frames = (JArray) obj["frames"];
                 var img = obj["meta"]["image"].ToString();
-                if (File.Exists(Path.Combine("resources", "packs", img)))
+                if (File.Exists(Path.Combine(ClientConfiguration.ResourcesDirectory, "packs", img)))
                 {
-                    var platformText = Core.Graphics.Renderer.LoadTexture(Path.Combine("resources", "packs", img), Path.Combine("resources", "packs", img));
+                    var platformText = Core.Graphics.Renderer.LoadTexture(Path.Combine(ClientConfiguration.ResourcesDirectory, "packs", img), Path.Combine(ClientConfiguration.ResourcesDirectory, "packs", img));
                     if (platformText != null)
                     {
                         foreach (var frame in frames)
@@ -123,10 +124,10 @@ namespace Intersect.Client.MonoGame.File_Management
         public void LoadTextureGroup(string directory, Dictionary<string, IAsset> dict)
         {
             dict.Clear();
-            var dir = Path.Combine("resources", directory);
+            var dir = Path.Combine(ClientConfiguration.ResourcesDirectory, directory);
             if (!Directory.Exists(dir))
             {
-                if (!Directory.Exists(Path.Combine("resources", "packs")))
+                if (!Directory.Exists(Path.Combine(ClientConfiguration.ResourcesDirectory, "packs")))
                 {
                     Directory.CreateDirectory(dir);
                 }
@@ -192,7 +193,7 @@ namespace Intersect.Client.MonoGame.File_Management
 
         public override void LoadResources()
         {
-            LoadTextureGroup("resources", mResourceDict);
+            LoadTextureGroup(ClientConfiguration.ResourcesDirectory, mResourceDict);
         }
 
         public override void LoadPaperdolls()
@@ -213,7 +214,7 @@ namespace Intersect.Client.MonoGame.File_Management
         public override void LoadFonts()
         {
             mFontDict.Clear();
-            var dir = Path.Combine("resources", "fonts");
+            var dir = Path.Combine(ClientConfiguration.ResourcesDirectory, "fonts");
             if (!Directory.Exists(dir))
             {
                 Directory.CreateDirectory(dir);
@@ -255,10 +256,10 @@ namespace Intersect.Client.MonoGame.File_Management
         public override void LoadSounds()
         {
             mSoundDict.Clear();
-            var dir = Path.Combine("resources", "sounds");
+            var dir = Path.Combine(ClientConfiguration.ResourcesDirectory, "sounds");
             if (!Directory.Exists(dir))
             {
-                if (!Directory.Exists(Path.Combine("resources", "packs")))
+                if (!Directory.Exists(Path.Combine(ClientConfiguration.ResourcesDirectory, "packs")))
                 {
                     Directory.CreateDirectory(dir);
                 }
@@ -279,9 +280,9 @@ namespace Intersect.Client.MonoGame.File_Management
             }
 
             // If we have a sound index file, load from it!
-            if (File.Exists(Path.Combine("resources", "packs", "sound.index")))
+            if (File.Exists(Path.Combine(ClientConfiguration.ResourcesDirectory, "packs", "sound.index")))
             {
-                SoundPacks = new AssetPacker(Path.Combine("resources", "packs", "sound.index"), Path.Combine("resources", "packs"));
+                SoundPacks = new AssetPacker(Path.Combine(ClientConfiguration.ResourcesDirectory, "packs", "sound.index"), Path.Combine(ClientConfiguration.ResourcesDirectory, "packs"));
                 foreach(var item in SoundPacks.FileList)
                 {
                     if (!mSoundDict.ContainsKey(RemoveExtension(item).ToLower()))
@@ -299,10 +300,10 @@ namespace Intersect.Client.MonoGame.File_Management
         public override void LoadMusic()
         {
             mMusicDict.Clear();
-            var dir = Path.Combine("resources", "music");
+            var dir = Path.Combine(ClientConfiguration.ResourcesDirectory, "music");
             if (!Directory.Exists(dir))
             {
-                if (!Directory.Exists(Path.Combine("resources", "packs")))
+                if (!Directory.Exists(Path.Combine(ClientConfiguration.ResourcesDirectory, "packs")))
                 {
                     Directory.CreateDirectory(dir);
                 }
@@ -318,9 +319,9 @@ namespace Intersect.Client.MonoGame.File_Management
             }
 
             // If we have a music index file, load from it!
-            if (File.Exists(Path.Combine("resources", "packs", "music.index")))
+            if (File.Exists(Path.Combine(ClientConfiguration.ResourcesDirectory, "packs", "music.index")))
             {
-                MusicPacks = new AssetPacker(Path.Combine("resources", "packs", "music.index"), Path.Combine("resources", "packs"));
+                MusicPacks = new AssetPacker(Path.Combine(ClientConfiguration.ResourcesDirectory, "packs", "music.index"), Path.Combine(ClientConfiguration.ResourcesDirectory, "packs"));
                 foreach (var item in MusicPacks.FileList)
                 {
                     if (!mMusicDict.ContainsKey(RemoveExtension(item).ToLower()))

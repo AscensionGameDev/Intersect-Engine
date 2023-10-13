@@ -4,7 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-
+using Intersect.Configuration;
 using Intersect.Enums;
 using Intersect.Localization;
 using Intersect.Logging;
@@ -113,7 +113,7 @@ namespace Intersect.Client.Localization
             {
                 var serialized = new Dictionary<string, Dictionary<string, object>>();
                 serialized = JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, object>>>(
-                    File.ReadAllText(Path.Combine("resources", StringsFileName))
+                    File.ReadAllText(Path.Combine(ClientConfiguration.ResourcesDirectory, StringsFileName))
                 );
 
                 var rootType = typeof(Strings);
@@ -289,7 +289,7 @@ namespace Intersect.Client.Localization
 
         private static void SaveSerialized(Dictionary<string, Dictionary<string, object>> serialized)
         {
-            var languageDirectory = Path.Combine("resources");
+            var languageDirectory = Path.Combine(ClientConfiguration.ResourcesDirectory);
             if (Directory.Exists(languageDirectory))
             {
                 File.WriteAllText(

@@ -54,17 +54,15 @@ namespace Intersect.Utilities
             return builder.ToString();
         }
 
-        public static bool ExtractResource(string resourceName, string destinationName)
+        public static bool ExtractResource(string resourceName, string destinationName, Assembly? assembly = default)
         {
             if (string.IsNullOrEmpty(destinationName))
             {
                 throw new ArgumentNullException(nameof(destinationName));
             }
 
-            using (var destinationStream = new FileStream(destinationName, FileMode.OpenOrCreate, FileAccess.ReadWrite))
-            {
-                return ExtractResource(resourceName, destinationStream);
-            }
+            using var destinationStream = new FileStream(destinationName, FileMode.OpenOrCreate, FileAccess.ReadWrite);
+            return ExtractResource(resourceName, destinationStream, assembly);
         }
 
         public static bool ExtractCosturaResource(string resourceName, string destinationName)
@@ -134,7 +132,7 @@ namespace Intersect.Utilities
             }
         }
 
-        public static bool ExtractResource(string resourceName, Stream destinationStream)
+        public static bool ExtractResource(string resourceName, Stream destinationStream, Assembly? assembly = default)
         {
             if (string.IsNullOrEmpty(resourceName))
             {
@@ -148,11 +146,9 @@ namespace Intersect.Utilities
 
             try
             {
-                var executingAssembly = Assembly.GetEntryAssembly();
-                using (var resourceStream = executingAssembly?.GetManifestResourceStream(resourceName))
-                {
-                    StreamUtils.Pipe(resourceStream, destinationStream);
-                }
+                var executingAssembly = assembly ?? Assembly.GetEntryAssembly();
+                using var resourceStream = executingAssembly?.GetManifestResourceStream(resourceName);
+                StreamUtils.Pipe(resourceStream, destinationStream);
 
                 return true;
             }

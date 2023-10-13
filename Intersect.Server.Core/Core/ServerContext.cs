@@ -24,6 +24,16 @@ namespace Intersect.Server.Core
     /// </summary>
     internal partial class ServerContext : ApplicationContext<ServerContext, ServerCommandLineOptions>, IServerContext
     {
+        private const string DefaultResourceDirectory = "resources";
+
+        internal static string ResourceDirectory { get; set; } = DefaultResourceDirectory;
+
+        internal static bool IsDefaultResourceDirectory => string.Equals(
+            ResourceDirectory,
+            DefaultResourceDirectory,
+            StringComparison.Ordinal
+        );
+
         public static ServerContextFactory ServerContextFactory { get; set; } = (options, logger, packetHelper) =>
             new ServerContext(options, logger, packetHelper);
 

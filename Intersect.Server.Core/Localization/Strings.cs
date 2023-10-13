@@ -5,6 +5,7 @@ using System.Text;
 using Intersect.Config;
 using Intersect.Localization;
 using Intersect.Logging;
+using Intersect.Server.Core;
 using Intersect.Server.Networking.Helpers;
 using Newtonsoft.Json;
 
@@ -1481,7 +1482,7 @@ namespace Intersect.Server.Localization
 
         public static bool Load()
         {
-            var filepath = Path.Combine("resources", "server_strings.json");
+            var filepath = Path.Combine(ServerContext.ResourceDirectory, "server_strings.json");
 
             // Really don't want two JsonSave() return points...
             // ReSharper disable once InvertIf
@@ -1514,8 +1515,8 @@ namespace Intersect.Server.Localization
         {
             try
             {
-                var filepath = Path.Combine("resources", "server_strings.json");
-                Directory.CreateDirectory("resources");
+                var filepath = Path.Combine(ServerContext.ResourceDirectory, "server_strings.json");
+                Directory.CreateDirectory(ServerContext.ResourceDirectory);
                 var json = JsonConvert.SerializeObject(Root, Formatting.Indented, new LocalizedStringConverter());
                 File.WriteAllText(filepath, json, Encoding.UTF8);
 

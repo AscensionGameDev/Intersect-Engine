@@ -5,7 +5,7 @@ using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Localization;
-
+using Intersect.Configuration;
 using Newtonsoft.Json;
 
 namespace Intersect.Client.Interface.Menu
@@ -76,7 +76,7 @@ namespace Intersect.Client.Interface.Menu
             mCreditsWindow.IsHidden = false;
             mRichLabel.ClearText();
             var credits = new Credits();
-            var creditsFile = Path.Combine("resources", "credits.json");
+            var creditsFile = Path.Combine(ClientConfiguration.ResourcesDirectory, "credits.json");
             if (File.Exists(creditsFile))
             {
                 credits = JsonConvert.DeserializeObject<Credits>(File.ReadAllText(creditsFile));

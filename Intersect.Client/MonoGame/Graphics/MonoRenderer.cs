@@ -11,6 +11,7 @@ using Intersect.Client.Framework.Graphics;
 using Intersect.Client.General;
 using Intersect.Client.Localization;
 using Intersect.Client.MonoGame.NativeInterop;
+using Intersect.Configuration;
 using Intersect.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -836,7 +837,7 @@ namespace Intersect.Client.MonoGame.Graphics
         {
             // Get font size from filename, format should be name_size.xnb or whatever
             var name = GameContentManager.RemoveExtension(filename)
-                .Replace(Path.Combine("resources", "fonts"), "")
+                .Replace(Path.Combine(ClientConfiguration.ResourcesDirectory, "fonts"), "")
                 .TrimStart(Path.DirectorySeparatorChar);
 
             // Split the name into parts

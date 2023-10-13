@@ -494,28 +494,28 @@ namespace Intersect.Client.MonoGame
 
         private void LoadUpdaterContent()
         {
-            if (File.Exists(Path.Combine("resources", "updater", "background.png")))
+            if (File.Exists(Path.Combine(ClientConfiguration.ResourcesDirectory, "updater", "background.png")))
             {
                 updaterBackground = Texture2D.FromFile(
-                    GraphicsDevice, Path.Combine("resources", "updater", "background.png")
+                    GraphicsDevice, Path.Combine(ClientConfiguration.ResourcesDirectory, "updater", "background.png")
                 );
             }
 
-            if (File.Exists(Path.Combine("resources", "updater", "progressbar.png")))
+            if (File.Exists(Path.Combine(ClientConfiguration.ResourcesDirectory, "updater", "progressbar.png")))
             {
                 updaterProgressBar = Texture2D.FromFile(
-                    GraphicsDevice, Path.Combine("resources", "updater", "progressbar.png")
+                    GraphicsDevice, Path.Combine(ClientConfiguration.ResourcesDirectory, "updater", "progressbar.png")
                 );
             }
 
-            if (File.Exists(Path.Combine("resources", "updater", "font.xnb")))
+            if (File.Exists(Path.Combine(ClientConfiguration.ResourcesDirectory, "updater", "font.xnb")))
             {
-                updaterFont = Content.Load<SpriteFont>(Path.Combine("resources", "updater", "font"));
+                updaterFont = Content.Load<SpriteFont>(Path.Combine(ClientConfiguration.ResourcesDirectory, "updater", "font"));
             }
 
-            if (File.Exists(Path.Combine("resources", "updater", "fontsmall.xnb")))
+            if (File.Exists(Path.Combine(ClientConfiguration.ResourcesDirectory, "updater", "fontsmall.xnb")))
             {
-                updaterFontSmall = Content.Load<SpriteFont>(Path.Combine("resources", "updater", "fontsmall"));
+                updaterFontSmall = Content.Load<SpriteFont>(Path.Combine(ClientConfiguration.ResourcesDirectory, "updater", "fontsmall"));
             }
         }
 

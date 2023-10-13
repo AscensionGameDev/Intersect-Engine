@@ -1,6 +1,8 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
+using Intersect;
 using Intersect.Client.MonoGame.Network;
+using Intersect.Configuration;
 using Intersect.Server.Core;
 using Intersect.SinglePlayer.Networking;
 
@@ -19,6 +21,11 @@ ServerContext.NetworkFactory = (context, _, _, _) =>
     return serverNetwork;
 };
 
-Bootstrapper.Start(args);
+ClientConfiguration.ResourcesDirectory = "client-resources";
+Options.ResourcesDirectory = "server-resources";
+ServerContext.ResourceDirectory = "server-resources";
+
+Thread serverThread = new(args => Bootstrapper.Start(args as string[]));
+serverThread.Start(args);
 
 Intersect.Client.Program.Main(args);

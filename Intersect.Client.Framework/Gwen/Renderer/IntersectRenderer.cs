@@ -4,6 +4,7 @@ using System.Linq;
 
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
+using Intersect.Configuration;
 using Intersect.Logging;
 
 namespace Intersect.Client.Framework.Gwen.Renderer
@@ -295,9 +296,10 @@ namespace Intersect.Client.Framework.Gwen.Renderer
 
         private string RemoveResourcesSlash(string fileName)
         {
-            if (fileName.ToLower().StartsWith("resources/") || fileName.ToLower().StartsWith("resources\\"))
+            var resourcesDirectory = ClientConfiguration.ResourcesDirectory;
+            if (fileName.ToLower().StartsWith($"{resourcesDirectory}/") || fileName.ToLower().StartsWith($"{resourcesDirectory}\\"))
             {
-                fileName = fileName.Substring(10);
+                fileName = fileName[(resourcesDirectory.Length + 1)..];
             }
 
             return fileName;

@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Reflection;
+using System.Resources;
 using System.Runtime.InteropServices;
 using CommandLine;
 using Intersect.Factories;
@@ -179,17 +180,20 @@ namespace Intersect.Server.Core
                 return false;
             }
 
-            if (!Directory.Exists(Path.Combine("resources", "notifications")))
+            if (ServerContext.IsDefaultResourceDirectory)
             {
-                Directory.CreateDirectory(Path.Combine("resources", "notifications"));
-            }
+                if (!Directory.Exists(Path.Combine(ServerContext.ResourceDirectory, "notifications")))
+                {
+                    Directory.CreateDirectory(Path.Combine(ServerContext.ResourceDirectory, "notifications"));
+                }
 
-            if (!File.Exists(Path.Combine("resources", "notifications", "PasswordReset.html")))
-            {
-                ReflectionUtils.ExtractResource(
-                    "Intersect.Server.Resources.notifications.PasswordReset.html",
-                    Path.Combine("resources", "notifications", "PasswordReset.html")
-                );
+                if (!File.Exists(Path.Combine(ServerContext.ResourceDirectory, "notifications", "PasswordReset.html")))
+                {
+                    ReflectionUtils.ExtractResource(
+                        "Intersect.Server.Resources.notifications.PasswordReset.html",
+                        Path.Combine(ServerContext.ResourceDirectory, "notifications", "PasswordReset.html")
+                    );
+                }
             }
 
             DbInterface.InitializeDbLoggers();
@@ -372,45 +376,41 @@ namespace Intersect.Server.Core
                 }
             }
 
-            string sqliteResourceName = null;
-            string sqliteFileName = null;
-            switch (platformId)
+            var platformBaseRid = "unknown";
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
-                case PlatformID.Win32NT:
-                case PlatformID.Win32S:
-                case PlatformID.Win32Windows:
-                case PlatformID.WinCE:
-                    sqliteResourceName = Environment.Is64BitProcess ? "e_sqlite3x64.dll" : "e_sqlite3x86.dll";
-                    sqliteFileName = "e_sqlite3.dll";
-
-                    break;
-
-                case PlatformID.MacOSX:
-                    sqliteResourceName = "libe_sqlite3.dylib";
-                    sqliteFileName = "libe_sqlite3.dylib";
-
-                    break;
-
-                case PlatformID.Unix:
-                    sqliteResourceName = Environment.Is64BitProcess ? "libe_sqlite3_x64.so" : "libe_sqlite3_x86.so";
-                    sqliteFileName = "libe_sqlite3.so";
-
-                    break;
-
-                case PlatformID.Xbox:
-                    break;
-
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(platformId));
+                platformBaseRid = "linux";
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                platformBaseRid = "osx";
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                platformBaseRid = "win";
             }
 
-            if (string.IsNullOrWhiteSpace(sqliteResourceName) || string.IsNullOrWhiteSpace(sqliteFileName))
+            platformBaseRid = $"{platformBaseRid}_{RuntimeInformation.OSArchitecture.ToString().ToLowerInvariant()}";
+
+            var assembly = typeof(Bootstrapper).Assembly;
+            var resourceNameRoot = $"Intersect.Server.Resources.runtimes.{platformBaseRid}";
+            var resourceNames = assembly.GetManifestResourceNames();
+            var matchingResourceNames = resourceNames
+                .Where(name => name.StartsWith(resourceNameRoot) && name.Contains("e_sqlite3"))
+                .ToArray();
+
+            var sqliteResourceName = matchingResourceNames.FirstOrDefault();
+            if (string.IsNullOrWhiteSpace(sqliteResourceName))
             {
-                return;
+                throw new MissingManifestResourceException($"No matching manifest resource found for e_sqlite3");
             }
 
-            sqliteResourceName = $"Intersect.Server.Resources.{sqliteResourceName}";
-            if (ReflectionUtils.ExtractResource(sqliteResourceName, sqliteFileName))
+            var sqliteFileName = string.Join(
+                '.',
+                sqliteResourceName.Split('.').SkipWhile(part => !part.Contains("e_sqlite3"))
+            );
+
+            if (ReflectionUtils.ExtractResource(sqliteResourceName, sqliteFileName, assembly))
             {
                 return;
             }
