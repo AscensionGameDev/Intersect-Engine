@@ -1,6 +1,6 @@
 Permission to change the license from GPLv3 to MIT:
 - pandacoder@pm.me
-
+- Lucas Tardivo <lutardivo@hotmail.com> I give permission to the maintainers of AscensionGameDev/Intersect-Engine to change the license from GPLv3 to MIT of the code in commit 74398e0cc965488c6d7013f1f010a6fc8ddb551d
 
 License:
                     GNU GENERAL PUBLIC LICENSE
