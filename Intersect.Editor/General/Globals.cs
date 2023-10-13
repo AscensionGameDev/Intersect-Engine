@@ -131,6 +131,8 @@ namespace Intersect.Editor.General
         //Network Variables
         public static int ReconnectTime = 3000;
 
+        public static long NextServerStatusPing;
+
         //Game Object Editors
         public static FrmResource ResourceEditor;
 

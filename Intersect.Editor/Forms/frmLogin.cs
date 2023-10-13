@@ -102,7 +102,7 @@ namespace Intersect.Editor.Forms
                 NetworkStatus.Unknown => Strings.Login.Denied,
                 NetworkStatus.Connecting => Strings.Login.connecting,
                 NetworkStatus.Online => Strings.Login.connected,
-                NetworkStatus.Offline => Strings.Login.failedtoconnect.ToString(((Globals.ReconnectTime - Timing.Global.MillisecondsUtc) / 1000).ToString("0")),
+                NetworkStatus.Offline => Strings.Login.failedtoconnect.ToString(((Globals.NextServerStatusPing - Timing.Global.MillisecondsUtc) / 1000).ToString("0")),
                 NetworkStatus.Failed => Strings.Login.Denied,
                 NetworkStatus.VersionMismatch => Strings.Login.Denied,
                 NetworkStatus.ServerFull => Strings.Login.Denied,
