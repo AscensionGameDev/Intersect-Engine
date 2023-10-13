@@ -57,11 +57,11 @@ namespace Intersect.Server.Database
                 }
             );
 
-        private const string GameDbFilename = "resources/gamedata.db";
+        private static string GameDbFilename => Path.Combine(ServerContext.ResourceDirectory, "gamedata.db");
 
-        private const string LoggingDbFilename = "resources/logging.db";
+        private static string LoggingDbFilename => Path.Combine(ServerContext.ResourceDirectory, "logging.db");
 
-        private const string PlayersDbFilename = "resources/playerdata.db";
+        private static string PlayersDbFilename => Path.Combine(ServerContext.ResourceDirectory, "playerdata.db");
 
         private static Logger _gameDatabaseLogger { get; set; }
 
@@ -118,7 +118,8 @@ namespace Intersect.Server.Database
             bool lazyLoading = false,
             bool autoDetectChanges = false,
             QueryTrackingBehavior? queryTrackingBehavior = default
-        ) => PlayerContext.Create(new DatabaseContextOptions {
+        ) => PlayerContext.Create(new DatabaseContextOptions
+        {
             AutoDetectChanges = autoDetectChanges,
             ConnectionStringBuilder = Options.Instance.PlayerDatabase.Type.CreateConnectionStringBuilder(
                 Options.Instance.PlayerDatabase,
@@ -140,7 +141,8 @@ namespace Intersect.Server.Database
             bool lazyLoading = false,
             bool autoDetectChanges = false,
             QueryTrackingBehavior? queryTrackingBehavior = default
-        ) => LoggingContext.Create(new DatabaseContextOptions {
+        ) => LoggingContext.Create(new DatabaseContextOptions
+        {
             AutoDetectChanges = autoDetectChanges,
             ConnectionStringBuilder = Options.Instance.LoggingDatabase.Type.CreateConnectionStringBuilder(
                 Options.Instance.LoggingDatabase,
@@ -190,9 +192,20 @@ namespace Intersect.Server.Database
         //Check Directories
         public static void CheckDirectories()
         {
-            if (!Directory.Exists("resources"))
+            if (Directory.Exists(ServerContext.ResourceDirectory))
             {
-                Directory.CreateDirectory("resources");
+                return;
+            }
+
+            if (ServerContext.IsDefaultResourceDirectory)
+            {
+                Directory.CreateDirectory(ServerContext.ResourceDirectory);
+            }
+            else
+            {
+                throw new DirectoryNotFoundException(
+                    Path.Combine(Environment.CurrentDirectory, ServerContext.ResourceDirectory)
+                );
             }
         }
 
@@ -533,7 +546,7 @@ namespace Intersect.Server.Database
 
             return null;
         }
-        
+
         public static bool TryRegister(
             string username,
             string email,
@@ -642,7 +655,7 @@ namespace Intersect.Server.Database
             foreach (var value in Enum.GetValues(typeof(GameObjectType)))
             {
                 Debug.Assert(value != null, "value != null");
-                var type = (GameObjectType) value;
+                var type = (GameObjectType)value;
                 if (type == GameObjectType.Time)
                 {
                     continue;
@@ -968,10 +981,10 @@ namespace Intersect.Server.Database
 
                 case GameObjectType.Quest:
                     dbObj = new QuestBase(predefinedid);
-                    ((QuestBase) dbObj).StartEvent = (EventBase) AddGameObject(GameObjectType.Event);
-                    ((QuestBase) dbObj).EndEvent = (EventBase) AddGameObject(GameObjectType.Event);
-                    ((QuestBase) dbObj).StartEvent.CommonEvent = false;
-                    ((QuestBase) dbObj).EndEvent.CommonEvent = false;
+                    ((QuestBase)dbObj).StartEvent = (EventBase)AddGameObject(GameObjectType.Event);
+                    ((QuestBase)dbObj).EndEvent = (EventBase)AddGameObject(GameObjectType.Event);
+                    ((QuestBase)dbObj).StartEvent.CommonEvent = false;
+                    ((QuestBase)dbObj).EndEvent.CommonEvent = false;
 
                     break;
 
@@ -1397,7 +1410,7 @@ namespace Intersect.Server.Database
 
             foreach (var map in MapController.Lookup)
             {
-                ((MapController) map.Value).Initialize();
+                ((MapController)map.Value).Initialize();
             }
         }
 
@@ -1406,7 +1419,7 @@ namespace Intersect.Server.Database
             if (ClassBase.Lookup.Count == 0)
             {
                 Console.WriteLine(Strings.Database.noclasses);
-                var cls = (ClassBase) AddGameObject(GameObjectType.Class);
+                var cls = (ClassBase)AddGameObject(GameObjectType.Class);
                 cls.Name = Strings.Database.Default;
                 var defaultMale = new ClassSprite()
                 {
@@ -1422,12 +1435,12 @@ namespace Intersect.Server.Database
 
                 cls.Sprites.Add(defaultMale);
                 cls.Sprites.Add(defaultFemale);
-                for (var i = 0; i < (int) Vital.VitalCount; i++)
+                for (var i = 0; i < (int)Vital.VitalCount; i++)
                 {
                     cls.BaseVital[i] = 20;
                 }
 
-                for (var i = 0; i < (int) Stat.StatCount; i++)
+                for (var i = 0; i < (int)Stat.StatCount; i++)
                 {
                     cls.BaseStat[i] = 20;
                 }
@@ -1915,150 +1928,150 @@ namespace Intersect.Server.Database
             switch (toDatabaseType)
             {
                 case DatabaseType.MySql:
-                {
-                    while (true)
                     {
-                        Console.WriteLine(Strings.Migration.EnterConnectionStringParameters);
-
-                        Console.Write(Strings.Migration.PromptHost.ToString(Strings.Migration.DefaultHost));
-                        var host = Console.ReadLine()?.Trim();
-                        if (string.IsNullOrWhiteSpace(host))
+                        while (true)
                         {
-                            host = Strings.Migration.DefaultHost;
+                            Console.WriteLine(Strings.Migration.EnterConnectionStringParameters);
+
+                            Console.Write(Strings.Migration.PromptHost.ToString(Strings.Migration.DefaultHost));
+                            var host = Console.ReadLine()?.Trim();
+                            if (string.IsNullOrWhiteSpace(host))
+                            {
+                                host = Strings.Migration.DefaultHost;
+                            }
+
+                            Console.Write(Strings.Migration.PromptPort.ToString(Strings.Migration.DefaultPortMySql));
+                            var portString = Console.ReadLine()?.Trim();
+                            if (string.IsNullOrWhiteSpace(portString))
+                            {
+                                portString = Strings.Migration.DefaultPortMySql;
+                            }
+                            var port = ushort.Parse(portString);
+
+                            var contextName = typeof(TContext).Name.Replace("Context", "").ToLowerInvariant();
+                            var version = typeof(DbInterface).Assembly.GetVersionName();
+                            var defaultDatabase = Strings.Migration.DefaultDatabase.ToString(version, contextName);
+                            Console.Write(Strings.Migration.PromptDatabase.ToString(defaultDatabase));
+                            var database = Console.ReadLine()?.Trim();
+                            if (string.IsNullOrWhiteSpace(database))
+                            {
+                                database = defaultDatabase;
+                            }
+
+                            Console.Write(Strings.Migration.PromptUsername.ToString(Strings.Migration.DefaultUsername));
+                            var username = Console.ReadLine().Trim();
+                            if (string.IsNullOrWhiteSpace(username))
+                            {
+                                username = Strings.Migration.DefaultUsername;
+                            }
+
+                            Console.Write(Strings.Migration.PromptPassword);
+                            var password = GetPassword();
+
+                            Console.WriteLine();
+                            Console.WriteLine(Strings.Migration.MySqlConnecting);
+
+                            toDatabaseOptions = new()
+                            {
+                                Type = toDatabaseType,
+                                Server = host,
+                                Port = port,
+                                Database = database,
+                                Username = username,
+                                Password = password
+                            };
+                            toContextOptions = new()
+                            {
+                                ConnectionStringBuilder = toDatabaseType.CreateConnectionStringBuilder(
+                                    toDatabaseOptions,
+                                    default
+                                ),
+                                DatabaseType = toDatabaseType
+                            };
+
+                            try
+                            {
+                                await using var testContext = IntersectDbContext<TContext>.Create(toContextOptions);
+                                break;
+                            }
+                            catch (Exception exception)
+                            {
+                                Log.Error(Strings.Migration.MySqlConnectionError.ToString(exception));
+                                Console.WriteLine();
+                                Console.WriteLine(Strings.Migration.MySqlTryAgain);
+                                var input = Console.ReadLine();
+                                var key = input.Length > 0 ? input[0] : ' ';
+                                Console.WriteLine();
+
+                                var shouldTryAgain = string.Equals(
+                                    Strings.Migration.TryAgainCharacter,
+                                    key.ToString(),
+                                    StringComparison.Ordinal
+                                );
+
+                                if (shouldTryAgain)
+                                {
+                                    continue;
+                                }
+
+                                Log.Info(Strings.Migration.MigrationCanceled);
+                                return;
+                            }
                         }
 
-                        Console.Write(Strings.Migration.PromptPort.ToString(Strings.Migration.DefaultPortMySql));
-                        var portString = Console.ReadLine()?.Trim();
-                        if (string.IsNullOrWhiteSpace(portString))
-                        {
-                            portString = Strings.Migration.DefaultPortMySql;
-                        }
-                        var port = ushort.Parse(portString);
+                        break;
+                    }
 
-                        var contextName = typeof(TContext).Name.Replace("Context", "").ToLowerInvariant();
-                        var version = typeof(DbInterface).Assembly.GetVersionName();
-                        var defaultDatabase = Strings.Migration.DefaultDatabase.ToString(version, contextName);
-                        Console.Write(Strings.Migration.PromptDatabase.ToString(defaultDatabase));
-                        var database = Console.ReadLine()?.Trim();
-                        if (string.IsNullOrWhiteSpace(database))
+                case DatabaseType.Sqlite:
+                    {
+                        string dbFileName;
+                        if (typeof(TContext).Extends<GameContext>())
                         {
-                            database = defaultDatabase;
+                            dbFileName = GameDbFilename;
                         }
-
-                        Console.Write(Strings.Migration.PromptUsername.ToString(Strings.Migration.DefaultUsername));
-                        var username = Console.ReadLine().Trim();
-                        if (string.IsNullOrWhiteSpace(username))
+                        else if (typeof(TContext).Extends<PlayerContext>())
                         {
-                            username = Strings.Migration.DefaultUsername;
+                            dbFileName = PlayersDbFilename;
+                        }
+                        else if (typeof(TContext).Extends<LoggingContext>())
+                        {
+                            dbFileName = LoggingDbFilename;
+                        }
+                        else
+                        {
+                            throw new InvalidOperationException($"Unsupported context type: {typeof(TContext).FullName}");
                         }
 
-                        Console.Write(Strings.Migration.PromptPassword);
-                        var password = GetPassword();
-
-                        Console.WriteLine();
-                        Console.WriteLine(Strings.Migration.MySqlConnecting);
-
-                        toDatabaseOptions = new()
+                        // Check if target SQLite file exists
+                        if (File.Exists(dbFileName))
                         {
-                            Type = toDatabaseType,
-                            Server = host,
-                            Port = port,
-                            Database = database,
-                            Username = username,
-                            Password = password
-                        };
+                            // If it does, check if it is OK to overwrite
+                            Console.WriteLine();
+                            Log.Error(Strings.Migration.DatabaseFileAlreadyExists.ToString(dbFileName));
+                            var input = Console.ReadLine();
+                            var key = input.Length > 0 ? input[0] : ' ';
+                            Console.WriteLine();
+                            if (key.ToString() != Strings.Migration.ConfirmCharacter)
+                            {
+                                Log.Info(Strings.Migration.MigrationCanceled);
+                                return;
+                            }
+
+                            File.Delete(dbFileName);
+                        }
+
+                        toDatabaseOptions = new() { Type = toDatabaseType };
                         toContextOptions = new()
                         {
                             ConnectionStringBuilder = toDatabaseType.CreateConnectionStringBuilder(
                                 toDatabaseOptions,
-                                default
+                                dbFileName
                             ),
                             DatabaseType = toDatabaseType
                         };
 
-                        try
-                        {
-                            await using var testContext = IntersectDbContext<TContext>.Create(toContextOptions);
-                            break;
-                        }
-                        catch (Exception exception)
-                        {
-                            Log.Error(Strings.Migration.MySqlConnectionError.ToString(exception));
-                            Console.WriteLine();
-                            Console.WriteLine(Strings.Migration.MySqlTryAgain);
-                            var input = Console.ReadLine();
-                            var key = input.Length > 0 ? input[0] : ' ';
-                            Console.WriteLine();
-
-                            var shouldTryAgain = string.Equals(
-                                Strings.Migration.TryAgainCharacter,
-                                key.ToString(),
-                                StringComparison.Ordinal
-                            );
-
-                            if (shouldTryAgain)
-                            {
-                                continue;
-                            }
-
-                            Log.Info(Strings.Migration.MigrationCanceled);
-                            return;
-                        }
+                        break;
                     }
-
-                    break;
-                }
-
-                case DatabaseType.Sqlite:
-                {
-                    string dbFileName;
-                    if (typeof(TContext).Extends<GameContext>())
-                    {
-                        dbFileName = GameDbFilename;
-                    }
-                    else if (typeof(TContext).Extends<PlayerContext>())
-                    {
-                        dbFileName = PlayersDbFilename;
-                    }
-                    else if (typeof(TContext).Extends<LoggingContext>())
-                    {
-                        dbFileName = LoggingDbFilename;
-                    }
-                    else
-                    {
-                        throw new InvalidOperationException($"Unsupported context type: {typeof(TContext).FullName}");
-                    }
-
-                    // Check if target SQLite file exists
-                    if (File.Exists(dbFileName))
-                    {
-                        // If it does, check if it is OK to overwrite
-                        Console.WriteLine();
-                        Log.Error(Strings.Migration.DatabaseFileAlreadyExists.ToString(dbFileName));
-                        var input = Console.ReadLine();
-                        var key = input.Length > 0 ? input[0] : ' ';
-                        Console.WriteLine();
-                        if (key.ToString() != Strings.Migration.ConfirmCharacter)
-                        {
-                            Log.Info(Strings.Migration.MigrationCanceled);
-                            return;
-                        }
-
-                        File.Delete(dbFileName);
-                    }
-
-                    toDatabaseOptions = new() { Type = toDatabaseType };
-                    toContextOptions = new()
-                    {
-                        ConnectionStringBuilder = toDatabaseType.CreateConnectionStringBuilder(
-                            toDatabaseOptions,
-                            dbFileName
-                        ),
-                        DatabaseType = toDatabaseType
-                    };
-
-                    break;
-                }
 
                 default:
                     throw new ArgumentOutOfRangeException(nameof(toDatabaseType), toDatabaseType, null);

@@ -1319,9 +1319,15 @@ namespace Intersect.Server.Networking
                 }
             }
 
-            client.Send(
-                new CharactersPacket(characters.ToArray(), client.Characters.Count < Options.MaxCharacters)
+            CharactersPacket packet = new(
+                characters.ToArray(),
+                client.Characters.Count < Options.MaxCharacters
             );
+
+            if (!client.Send(packet))
+            {
+                Log.Error($"Failed to send {packet.Characters.Length} characters to {client.Id}");
+            }
         }
 
         //AdminPanelPacket

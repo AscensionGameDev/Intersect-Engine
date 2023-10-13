@@ -8,6 +8,7 @@ using Intersect.Client.Framework.Audio;
 using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Compression;
+using Intersect.Configuration;
 using Intersect.Logging;
 using Intersect.Plugins;
 
@@ -370,7 +371,7 @@ namespace Intersect.Client.Framework.File_Management
 
             void addCreateOrChangeListener(string targetPath, bool createIfMissing)
             {
-                var resourcePath = Path.Combine("resources", targetPath);
+                var resourcePath = Path.Combine(ClientConfiguration.ResourcesDirectory, targetPath);
                 if (File.Exists(resourcePath))
                 {
                     addChangeListener(targetPath);
@@ -414,7 +415,7 @@ namespace Intersect.Client.Framework.File_Management
                 stageName = "game";
             }
 
-            var resourceDirectory = Path.Combine("resources", "gui", "layouts", stageName);
+            var resourceDirectory = Path.Combine(ClientConfiguration.ResourcesDirectory, "gui", "layouts", stageName);
 
             if (!Directory.Exists(resourceDirectory))
             {
@@ -458,7 +459,7 @@ namespace Intersect.Client.Framework.File_Management
             if (resolution != null)
             {
                 resourceName = Path.Combine(stagePartialPath, $"{name}.{resolution}.json");
-                var resourcePath = Path.Combine("resources", resourceName);
+                var resourcePath = Path.Combine(ClientConfiguration.ResourcesDirectory, resourceName);
                 if (File.Exists(resourcePath))
                 {
                     ContentWatcher?.Modify(resourceName, () =>
@@ -479,7 +480,7 @@ namespace Intersect.Client.Framework.File_Management
             resourceName = Path.Combine(stagePartialPath, $"{name}.json");
             ContentWatcher?.Modify(resourceName, () =>
             {
-                var resourcePath = Path.Combine("resources", resourceName);
+                var resourcePath = Path.Combine(ClientConfiguration.ResourcesDirectory, resourceName);
                 try
                 {
                     File.WriteAllText(resourcePath, json);

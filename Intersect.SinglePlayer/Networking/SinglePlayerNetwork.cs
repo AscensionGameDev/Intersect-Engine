@@ -1,6 +1,9 @@
 using System.Net;
 using Intersect.Core;
+using Intersect.Logging;
 using Intersect.Network;
+using Intersect.Network.Packets.Unconnected.Client;
+using Intersect.Network.Packets.Unconnected.Server;
 using Intersect.Plugins.Interfaces;
 
 namespace Intersect.SinglePlayer.Networking;
@@ -8,6 +11,8 @@ namespace Intersect.SinglePlayer.Networking;
 internal sealed class SinglePlayerNetwork : INetwork
 {
     private readonly NetworkPairAccessor _networkPairAccessor;
+
+    private IPacketSender? _sender;
 
     public SinglePlayerNetwork(IApplicationContext applicationContext, NetworkPairAccessor networkPairAccessor)
     {
@@ -27,7 +32,7 @@ internal sealed class SinglePlayerNetwork : INetwork
 
     public IPacketHelper Helper { get; }
 
-    public bool IsConnected => _networkPairAccessor() != default;
+    public bool IsConnected { get; private set; }
 
     public Guid Guid => default;
 
@@ -43,12 +48,36 @@ internal sealed class SinglePlayerNetwork : INetwork
 
     public void Close()
     {
-        throw new NotImplementedException();
+        Log.Debug($"Disposing {nameof(SinglePlayerNetwork)}");
     }
 
-    public bool Disconnect(string message = "")
+    public bool Connect()
     {
-        throw new NotImplementedException();
+        _sender = Client.Networking.Network.PacketHandler?.VirtualSender;
+
+        var serverNetwork = _networkPairAccessor();
+        if (serverNetwork == default)
+        {
+            throw new InvalidOperationException("Server network does not exist yet?");
+        }
+        serverNetwork.HandleConnection();
+
+        IsConnected = true;
+
+        return IsConnected;
+    }
+
+    private void HandleConnection()
+    {
+        SinglePlayerConnection connection = new(this);
+        _sender = Server.Networking.Client.CreateBeta4Client(ApplicationContext, this, connection);
+        IsConnected = true;
+    }
+
+    public bool Disconnect(string? message = default)
+    {
+        Log.Info(message);
+        return true;
     }
 
     public bool Disconnect(Guid guid, string message = "") => Disconnect(message);
@@ -59,10 +88,18 @@ internal sealed class SinglePlayerNetwork : INetwork
 
     public bool Disconnect(ICollection<IConnection> connections, string message = "") => Disconnect(message);
 
-    public void Dispose() { }
+    public void Dispose()
+    {
+        Log.Debug($"Disposing {nameof(SinglePlayerNetwork)}");
+    }
 
     private bool Handle(IPacket packet)
     {
+        if (Helper.HandlerRegistry.TryGetHandler(packet.GetType(), out var packetHandler))
+        {
+            return packetHandler.Invoke(_sender, packet);
+        }
+
         throw new NotImplementedException();
     }
 
@@ -73,8 +110,22 @@ internal sealed class SinglePlayerNetwork : INetwork
         long timeout = INetwork.DefaultUnconnectedMessageTimeout
     )
     {
-        throw new NotImplementedException();
+        switch (packet)
+        {
+            case ServerStatusRequestPacket _:
+                SendUnconnected(endPoint, new ServerStatusResponsePacket { Status = NetworkStatus.Online });
+                return true;
+            default:
+                if (Helper.HandlerRegistry.TryGetHandler(packet.GetType(), out var packetHandler))
+                {
+                    return packetHandler.Invoke(_sender, packet);
+                }
+
+                throw new NotImplementedException();
+        }
     }
+
+    public bool Listen() => true;
 
     public bool SendUnconnected(
         IPEndPoint endPoint,

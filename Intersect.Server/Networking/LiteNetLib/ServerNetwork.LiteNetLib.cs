@@ -67,7 +67,8 @@ public class ServerNetwork : AbstractNetwork, IServer
     )
     {
         Log.Info($"Connected [{connectionEventArgs.Connection?.Guid}].");
-        Client.CreateBeta4Client(Context, this, connectionEventArgs.Connection);
+        var client = Client.CreateBeta4Client(Context, this, connectionEventArgs.Connection);
+        PacketSender.SendPing(client);
         OnConnected?.Invoke(sender, connectionEventArgs);
     }
 

@@ -2,6 +2,7 @@ using System;
 using System.IO;
 
 using Intersect.Enums;
+using Intersect.Server.Core;
 using Intersect.Server.Entities;
 using Intersect.Server.Localization;
 using Intersect.Utilities;
@@ -16,7 +17,7 @@ namespace Intersect.Server.General
     public partial class Formulas
     {
 
-        private const string FORMULAS_FILE = "resources/formulas.json";
+        private static string FORMULAS_FILE => Path.Combine(ServerContext.ResourceDirectory, "formulas.json");
 
         private static Formulas mFormulas;
 

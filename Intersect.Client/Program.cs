@@ -5,6 +5,7 @@ using System.Globalization;
 using System.Reflection;
 using System.Resources;
 using Intersect.Client.Core;
+using Intersect.Configuration;
 using Intersect.Extensions;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
@@ -227,7 +228,7 @@ namespace Intersect.Client
                 Debug.Assert(resourceStream != null, "resourceStream != null");
                 var resources = new ResourceSet(resourceStream);
 
-                path = Path.Combine("resources", folder, filename.Split('.')[0].Split('-')[0]);
+                path = Path.Combine(ClientConfiguration.ResourcesDirectory, folder, filename.Split('.')[0].Split('-')[0]);
 
                 path = path.ToLower();
 

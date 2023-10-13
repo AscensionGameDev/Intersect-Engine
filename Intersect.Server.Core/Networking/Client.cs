@@ -50,7 +50,7 @@ namespace Intersect.Server.Networking
         //Sent Maps
         public Dictionary<Guid, Tuple<long, int>> SentMaps = new Dictionary<Guid, Tuple<long, int>>();
 
-        public Client(IApplicationContext applicationContext, INetwork network, IConnection connection = null)
+        private Client(IApplicationContext applicationContext, INetwork network, IConnection connection = null)
         {
             ApplicationContext = applicationContext;
             Network = network;
@@ -60,7 +60,6 @@ namespace Intersect.Server.Networking
             mConnectionTimeout = Timing.Global.Milliseconds + mTimeout;
 
             PacketSender.SendServerConfig(this);
-            PacketSender.SendPing(this);
         }
 
         //Game Incorperation Variables
@@ -418,20 +417,24 @@ namespace Intersect.Server.Networking
         /// <inheritdoc />
         public bool Send(IPacket packet, TransmissionMode mode)
         {
-            if (mConnection != null)
+            if (mConnection == null)
             {
-                mSendPacketQueue.Enqueue(new Tuple<IPacket, TransmissionMode, long>(packet, mode, Timing.Global.Milliseconds));
-                lock (mSendPacketQueue)
-                {
-                    if (!PacketSendingQueued)
-                    {
-                        PacketSendingQueued = true;
-                        EnqueueNetworkTask.Invoke(SendPackets);
-                    }
-                }
-                return true;
+                return false;
             }
-            return false;
+
+            mSendPacketQueue.Enqueue(new Tuple<IPacket, TransmissionMode, long>(packet, mode, Timing.Global.Milliseconds));
+            lock (mSendPacketQueue)
+            {
+                if (PacketSendingQueued)
+                {
+                    return true;
+                }
+
+                PacketSendingQueued = true;
+                EnqueueNetworkTask.Invoke(SendPackets);
+            }
+
+            return true;
         }
 
         #endregion

@@ -235,18 +235,22 @@ namespace Intersect
             }
         }
 
+        public static string ResourcesDirectory { get; set; } = "resources";
+
         public static bool LoadFromDisk()
         {
             Instance = new Options();
-            if (!Directory.Exists("resources"))
+            if (!Directory.Exists(ResourcesDirectory))
             {
-                Directory.CreateDirectory("resources");
+                Directory.CreateDirectory(ResourcesDirectory);
             }
 
-            if (File.Exists("resources/config.json"))
+            var configPath = Path.Combine(ResourcesDirectory, "config.json");
+
+            if (File.Exists(configPath))
             {
                 Instance = JsonConvert.DeserializeObject<Options>(
-                    File.ReadAllText("resources/config.json")
+                    File.ReadAllText(configPath)
                 );
             }
 
@@ -254,7 +258,7 @@ namespace Intersect
             Instance.SendingToClient = false;
             Instance.FixAnimatedSprites();
             Log.Default.Configuration.LogLevel = Instance.Logging.Level;
-            File.WriteAllText("resources/config.json", JsonConvert.SerializeObject(Instance, Formatting.Indented));
+            File.WriteAllText(configPath, JsonConvert.SerializeObject(Instance, Formatting.Indented));
             Instance.SendingToClient = true;
             optionsCompressed = JsonConvert.SerializeObject(Instance);
 
@@ -264,7 +268,10 @@ namespace Intersect
         public static void SaveToDisk()
         {
             Instance.SendingToClient = false;
-            File.WriteAllText("resources/config.json", JsonConvert.SerializeObject(Instance, Formatting.Indented));
+            File.WriteAllText(
+                Path.Combine(ResourcesDirectory, "config.json"),
+                JsonConvert.SerializeObject(Instance, Formatting.Indented)
+            );
             Instance.SendingToClient = true;
             optionsCompressed = JsonConvert.SerializeObject(Instance);
         }
