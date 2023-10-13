@@ -1,3 +1,8 @@
+Permission to change the license from GPLv3 to MIT:
+- pandacoder@pm.me
+
+
+License:
                     GNU GENERAL PUBLIC LICENSE
                        Version 3, 29 June 2007
 
