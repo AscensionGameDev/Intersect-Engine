@@ -686,7 +686,7 @@ namespace Intersect.Server.Entities
                 InRangeOf(target, projectileBase.Range))
             {
                 range = projectileBase.Range;
-                var dirToEnemy = DirToEnemy(target);
+                var dirToEnemy = DirectionToTarget(target);
                 if (dirToEnemy != Dir)
                 {
                     if (LastRandomMove >= Timing.Global.Milliseconds)
@@ -1049,7 +1049,7 @@ namespace Intersect.Server.Entities
                                 var fleed = false;
                                 if (tempTarget != null && fleeing)
                                 {
-                                    var dir = DirToEnemy(tempTarget);
+                                    var dir = DirectionToTarget(tempTarget);
                                     switch (dir)
                                     {
                                         case Direction.Up:
@@ -1108,9 +1108,9 @@ namespace Intersect.Server.Entities
                                 {
                                     if (tempTarget != null)
                                     {
-                                        if (Dir != DirToEnemy(tempTarget) && DirToEnemy(tempTarget) != Direction.None)
+                                        if (Dir != DirectionToTarget(tempTarget) && DirectionToTarget(tempTarget) != Direction.None)
                                         {
-                                            ChangeDir(DirToEnemy(tempTarget));
+                                            ChangeDir(DirectionToTarget(tempTarget));
                                         }
                                         else
                                         {

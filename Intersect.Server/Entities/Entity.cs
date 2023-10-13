@@ -2492,7 +2492,7 @@ namespace Intersect.Server.Entities
                                             //Spelltarget used to be Target. I don't know if this is correct or not.
                                             int[] position = GetPositionNearTarget(spellTarget.MapId, spellTarget.X, spellTarget.Y);
                                             Warp(spellTarget.MapId, (byte)position[0], (byte)position[1], Dir);
-                                            ChangeDir(DirToEnemy(spellTarget));
+                                            ChangeDir(DirectionToTarget(spellTarget));
                                         }
                                     }
 
@@ -2720,41 +2720,21 @@ namespace Intersect.Server.Entities
         {
         }
 
-        protected Direction DirToEnemy(Entity en)
+        protected Direction DirectionToTarget(Entity en)
         {
             if (en == null)
             {
                 return Dir;
             }
 
-            var originY = Y;
-            var originX = X;
-            var targetY = en.Y;
-            var targetX = en.X;
+            var originMapController = MapController.Get(MapId);
+            var targetMapController = MapController.Get(en.MapId);
 
-            // Calculate Y and X offset between origin and target if they're not on the same map instance.
-            if (en.MapInstanceId != MapInstanceId)
-            {
-                if (en.Map.MapGridY < Map.MapGridY)
-                {
-                    originY += Options.MapHeight - 1;
-                }
-                else if (en.Map.MapGridY > Map.MapGridY)
-                {
-                    targetY += Options.MapHeight - 1;
-                }
+            var originY = Y + originMapController.MapGridY * Options.MapHeight;
+            var originX = X + originMapController.MapGridX * Options.MapWidth;
+            var targetY = en.Y + targetMapController.MapGridY * Options.MapHeight;
+            var targetX = en.X + targetMapController.MapGridX * Options.MapWidth;
 
-                if (en.Map.MapGridX < Map.MapGridX)
-                {
-                    originX += Options.MapWidth - 1;
-                }
-                else if (en.Map.MapGridX > Map.MapGridX)
-                {
-                    targetX += (Options.MapWidth - 1);
-                }
-            }
-
-            // Calculate the offset between origin and target along both of their axis.
             var yDiff = originY - targetY;
             var xDiff = originX - targetX;
 
