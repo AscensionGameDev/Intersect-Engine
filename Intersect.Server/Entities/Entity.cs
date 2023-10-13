@@ -2492,7 +2492,7 @@ namespace Intersect.Server.Entities
                                             //Spelltarget used to be Target. I don't know if this is correct or not.
                                             int[] position = GetPositionNearTarget(spellTarget.MapId, spellTarget.X, spellTarget.Y);
                                             Warp(spellTarget.MapId, (byte)position[0], (byte)position[1], Dir);
-                                            ChangeDir(DirToEnemy(spellTarget));
+                                            ChangeDir(DirectionToTarget(spellTarget));
                                         }
                                     }
 
@@ -2645,20 +2645,31 @@ namespace Intersect.Server.Entities
                 return false;
             }
 
-            var dx = target.X - X;
-            var dy = target.Y - Y;
+            if (!MapController.TryGet(MapId, out var originMapController) ||
+                !MapController.TryGet(target.MapId, out var targetMapController))
+            {
+                return false;
+            }
+
+            var originY = Y + originMapController.MapGridY * Options.MapHeight;
+            var originX = X + originMapController.MapGridX * Options.MapWidth;
+            var targetY = target.Y + targetMapController.MapGridY * Options.MapHeight;
+            var targetX = target.X + targetMapController.MapGridX * Options.MapWidth;
+
+            var xDiff = targetX - originX;
+            var yDiff = targetY - originY;
             var diagonalMovement = Options.Instance.MapOpts.EnableDiagonalMovement;
 
-            switch (dx)
+            switch (xDiff)
             {
-                case 0 when dy == -1 && Dir == Direction.Up:
-                case 0 when dy == 1 && Dir == Direction.Down:
-                case 1 when dy == 0 && Dir == Direction.Right:
-                case -1 when dy == 0 && Dir == Direction.Left:
-                case 1 when diagonalMovement && dy == -1 && Dir == Direction.UpRight:
-                case -1 when diagonalMovement && dy == -1 && Dir == Direction.UpLeft:
-                case 1 when diagonalMovement && dy == 1 && Dir == Direction.DownRight:
-                case -1 when diagonalMovement && dy == 1 && Dir == Direction.DownLeft:
+                case 0 when yDiff == -1 && Dir == Direction.Up:
+                case 0 when yDiff == 1 && Dir == Direction.Down:
+                case 1 when yDiff == 0 && Dir == Direction.Right:
+                case -1 when yDiff == 0 && Dir == Direction.Left:
+                case 1 when diagonalMovement && yDiff == -1 && Dir == Direction.UpRight:
+                case -1 when diagonalMovement && yDiff == -1 && Dir == Direction.UpLeft:
+                case 1 when diagonalMovement && yDiff == 1 && Dir == Direction.DownRight:
+                case -1 when diagonalMovement && yDiff == 1 && Dir == Direction.DownLeft:
                     return true;
                 default:
                     return false;
@@ -2720,41 +2731,24 @@ namespace Intersect.Server.Entities
         {
         }
 
-        protected Direction DirToEnemy(Entity en)
+        protected Direction DirectionToTarget(Entity en)
         {
             if (en == null)
             {
                 return Dir;
             }
 
-            var originY = Y;
-            var originX = X;
-            var targetY = en.Y;
-            var targetX = en.X;
-
-            // Calculate Y and X offset between origin and target if they're not on the same map instance.
-            if (en.MapInstanceId != MapInstanceId)
+            if (!MapController.TryGet(MapId, out var originMapController) ||
+                !MapController.TryGet(en.MapId, out var targetMapController))
             {
-                if (en.Map.MapGridY < Map.MapGridY)
-                {
-                    originY += Options.MapHeight - 1;
-                }
-                else if (en.Map.MapGridY > Map.MapGridY)
-                {
-                    targetY += Options.MapHeight - 1;
-                }
-
-                if (en.Map.MapGridX < Map.MapGridX)
-                {
-                    originX += Options.MapWidth - 1;
-                }
-                else if (en.Map.MapGridX > Map.MapGridX)
-                {
-                    targetX += (Options.MapWidth - 1);
-                }
+                return Dir;
             }
 
-            // Calculate the offset between origin and target along both of their axis.
+            var originY = Y + originMapController.MapGridY * Options.MapHeight;
+            var originX = X + originMapController.MapGridX * Options.MapWidth;
+            var targetY = en.Y + targetMapController.MapGridY * Options.MapHeight;
+            var targetX = en.X + targetMapController.MapGridX * Options.MapWidth;
+
             var yDiff = originY - targetY;
             var xDiff = originX - targetX;
 
@@ -2789,20 +2783,25 @@ namespace Intersect.Server.Entities
                 return false;
             }
 
-            var x1 = X + MapController.Get(MapId).MapGridX * Options.MapWidth;
-            var y1 = Y + MapController.Get(MapId).MapGridY * Options.MapHeight;
-            var x2 = x + MapController.Get(mapId).MapGridX * Options.MapWidth;
-            var y2 = y + MapController.Get(mapId).MapGridY * Options.MapHeight;
-
-            var dx = Math.Abs(x1 - x2);
-            var dy = Math.Abs(y1 - y2);
-
-            if (dx == 1 && dy == 0 || dx == 0 && dy == 1)
+            if (!MapController.TryGet(MapId, out var originMapController) ||
+                !MapController.TryGet(mapId, out var targetMapController))
             {
-                return true;
+                return false;
             }
 
-            return Options.Instance.MapOpts.EnableDiagonalMovement && dx == 1 && dy == 1;
+            // Adjust coordinates based on map grid positions.
+            var originY = Y + originMapController.MapGridY * Options.MapHeight;
+            var originX = X + originMapController.MapGridX * Options.MapWidth;
+            var targetY = y + targetMapController.MapGridY * Options.MapHeight;
+            var targetX = x + targetMapController.MapGridX * Options.MapWidth;
+
+            // Calculate the absolute differences in coordinates.
+            var yDiff = Math.Abs(originY - targetY);
+            var xDiff = Math.Abs(originX - targetX);
+
+            // Check if entities are one block away.
+            return (xDiff == 1 && yDiff == 0) || (xDiff == 0 && yDiff == 1) ||
+                   (Options.Instance.MapOpts.EnableDiagonalMovement && xDiff == 1 && yDiff == 1);
         }
 
         //Spawning/Dying

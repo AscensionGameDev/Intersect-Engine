@@ -135,6 +135,18 @@ namespace Intersect.Server.Maps
         }
 
         /// <summary>
+        /// Tries to get a Map Controller from its <see cref="MapBase"/> ID
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="mapController">The retrieved Map Controller, if successful</param>
+        /// <returns><c>true</c> if the Map Controller was found; otherwise, <c>false</c></returns>
+        public static bool TryGet(Guid id, out MapController mapController)
+        {
+            mapController = Lookup.Get<MapController>(id);
+            return mapController != null;
+        }
+
+        /// <summary>
         /// Tries to get a <see cref="MapInstance"/> when given an instanceId.
         /// </summary>
         /// <param name="mapControllerId">The id of the <see cref="MapController"/></param>
