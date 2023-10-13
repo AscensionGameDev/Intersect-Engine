@@ -2769,20 +2769,22 @@ namespace Intersect.Server.Entities
                 return false;
             }
 
-            var x1 = X + MapController.Get(MapId).MapGridX * Options.MapWidth;
-            var y1 = Y + MapController.Get(MapId).MapGridY * Options.MapHeight;
-            var x2 = x + MapController.Get(mapId).MapGridX * Options.MapWidth;
-            var y2 = y + MapController.Get(mapId).MapGridY * Options.MapHeight;
+            var originMapController = MapController.Get(MapId);
+            var targetMapController = MapController.Get(mapId);
 
-            var dx = Math.Abs(x1 - x2);
-            var dy = Math.Abs(y1 - y2);
+            // Adjust coordinates based on map grid positions.
+            var originY = Y + originMapController.MapGridY * Options.MapHeight;
+            var originX = X + originMapController.MapGridX * Options.MapWidth;
+            var targetY = y + targetMapController.MapGridY * Options.MapHeight;
+            var targetX = x + targetMapController.MapGridX * Options.MapWidth;
 
-            if (dx == 1 && dy == 0 || dx == 0 && dy == 1)
-            {
-                return true;
-            }
+            // Calculate the absolute differences in coordinates.
+            var yDiff = Math.Abs(originY - targetY);
+            var xDiff = Math.Abs(originX - targetX);
 
-            return Options.Instance.MapOpts.EnableDiagonalMovement && dx == 1 && dy == 1;
+            // Check if entities are one block away.
+            return (xDiff == 1 && yDiff == 0) || (xDiff == 0 && yDiff == 1) ||
+                   (Options.Instance.MapOpts.EnableDiagonalMovement && xDiff == 1 && yDiff == 1);
         }
 
         //Spawning/Dying
