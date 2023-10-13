@@ -2735,8 +2735,11 @@ namespace Intersect.Server.Entities
                 return Dir;
             }
 
-            var originMapController = MapController.Get(MapId);
-            var targetMapController = MapController.Get(en.MapId);
+            if (!MapController.TryGet(MapId, out var originMapController) ||
+                !MapController.TryGet(en.MapId, out var targetMapController))
+            {
+                return Dir;
+            }
 
             var originY = Y + originMapController.MapGridY * Options.MapHeight;
             var originX = X + originMapController.MapGridX * Options.MapWidth;
