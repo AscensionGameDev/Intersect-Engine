@@ -2777,8 +2777,11 @@ namespace Intersect.Server.Entities
                 return false;
             }
 
-            var originMapController = MapController.Get(MapId);
-            var targetMapController = MapController.Get(mapId);
+            if (!MapController.TryGet(MapId, out var originMapController) ||
+                !MapController.TryGet(mapId, out var targetMapController))
+            {
+                return false;
+            }
 
             // Adjust coordinates based on map grid positions.
             var originY = Y + originMapController.MapGridY * Options.MapHeight;
