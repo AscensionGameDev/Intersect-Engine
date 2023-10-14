@@ -2168,32 +2168,13 @@ namespace Intersect.Client.Entities
                 return Dir;
             }
 
-            int originY = Y;
-            int originX = X;
-            int targetY = en.Y;
-            int targetX = en.X;
+            var originMapController = MapInstance;
+            var targetMapController = en.MapInstance;
 
-            // Calculate Y and X offset between origin and target if they're not on the same map instance.
-            if (en.MapInstance.Id != MapInstance.Id)
-            {
-                if (en.MapInstance.GridY < MapInstance.GridY)
-                {
-                    originY += Options.MapHeight - 1;
-                }
-                else if (en.MapInstance.GridY > MapInstance.GridY)
-                {
-                    targetY += Options.MapHeight - 1;
-                }
-
-                if (en.MapInstance.GridX < MapInstance.GridX)
-                {
-                    originX += Options.MapWidth - 1;
-                }
-                else if (en.MapInstance.GridX > MapInstance.GridX)
-                {
-                    targetX += (Options.MapWidth - 1);
-                }
-            }
+            var originY = Y + originMapController.GridY * Options.MapHeight;
+            var originX = X + originMapController.GridX * Options.MapWidth;
+            var targetY = en.Y + targetMapController.GridY * Options.MapHeight;
+            var targetX = en.X + targetMapController.GridX * Options.MapWidth;
 
             // Calculate the offset between origin and target along both of their axis.
             var yDiff = originY - targetY;
