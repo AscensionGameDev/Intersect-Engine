@@ -1305,7 +1305,7 @@ namespace Intersect.Server.Entities
                 {
                     if (en is Npc npc)
                     {
-                        if (npc.Target == null & npc.Base.Swarm && npc.Base == Base)
+                        if (npc.Target == null && npc.Base == Base && npc.Base.Swarm)
                         {
                             if (npc.InRangeOf(attacker, npc.Base.SightRange))
                             {
