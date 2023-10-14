@@ -1,5 +1,6 @@
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
+using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Skin.Texturing;
 using Single = Intersect.Client.Framework.Gwen.Skin.Texturing.Single;
@@ -10,7 +11,7 @@ namespace Intersect.Client.Framework.Gwen.Skin
     /// <summary>
     ///     Base textured skin.
     /// </summary>
-    public partial class Intersect2021 : TexturedBase
+    public class Intersect2021 : TexturedBase
     {
         /// <summary>
         ///     Initializes a new instance of the <see cref="TexturedBase" /> class.
@@ -35,8 +36,10 @@ namespace Intersect.Client.Framework.Gwen.Skin
         {
             base.InitializeTextures();
 
-            mTextures.Window.Normal = new Bordered(mTexture, 0, 0, 16, 40, new Margin(4, 32, 4, 4));
-            mTextures.Window.Inactive = new Bordered(mTexture, 16, 0, 16, 40, new Margin(4, 32, 4, 4));
+            mTextures.Window.Normal = new Bordered(mTexture, 0, 24, 16, 16, new Margin(4, 4, 4, 4));
+            mTextures.Window.ActiveTitleBar = new Bordered(mTexture, 0, 0, 16, 24, new Margin(4, 4, 4, 4));
+            mTextures.Window.Inactive = new Bordered(mTexture, 16, 24, 16, 16, new Margin(4, 4, 4, 4));
+            mTextures.Window.InactiveTitleBar = new Bordered(mTexture, 16, 0, 16, 24, new Margin(4, 4, 4, 4));
 
             mTextures.Window.Close = new Single(mTexture, 60, 0, 24, 24);
             mTextures.Window.CloseDown = new Single(mTexture, 60, 24, 24, 24);
@@ -87,7 +90,7 @@ namespace Intersect.Client.Framework.Gwen.Skin
             if (TryGetOverrideTexture(checkBox, selected, depressed, out var overrideTexture))
             {
                 Renderer.DrawColor = checkBox.RenderColor;
-                Renderer.DrawTexturedRect(overrideTexture, checkBox.RenderBounds, checkBox.RenderColor, 0, 0);
+                Renderer.DrawTexturedRect(overrideTexture, checkBox.RenderBounds, checkBox.RenderColor);
                 return;
             }
 
@@ -122,7 +125,7 @@ namespace Intersect.Client.Framework.Gwen.Skin
             if (TryGetOverrideTexture(radioButton, selected, depressed, out var overrideTexture))
             {
                 Renderer.DrawColor = radioButton.RenderColor;
-                Renderer.DrawTexturedRect(overrideTexture, radioButton.RenderBounds, radioButton.RenderColor, 0, 0);
+                Renderer.DrawTexturedRect(overrideTexture, radioButton.RenderBounds, radioButton.RenderColor);
                 return;
             }
 
@@ -145,6 +148,64 @@ namespace Intersect.Client.Framework.Gwen.Skin
             {
                 buttonState.Fill.Draw(Renderer, radioButton.RenderBounds, radioButton.RenderColor);
             }
+        }
+
+
+        public override void DrawWindow(Control.Base control, int topHeight, bool inFocus)
+        {
+            if (control is not WindowControl windowControl)
+            {
+                return;
+            }
+
+
+            GameTexture? renderTexture = null;
+            if (windowControl.TryGetTexture(WindowControl.ControlState.Active, out var activeTexture))
+            {
+                renderTexture = activeTexture;
+            }
+
+            if (windowControl.TryGetTexture(WindowControl.ControlState.Inactive, out var inactiveTexture))
+            {
+                renderTexture = inactiveTexture;
+            }
+
+            if (renderTexture != null)
+            {
+                Renderer.DrawColor = control.RenderColor;
+                Renderer.DrawTexturedRect(renderTexture, control.RenderBounds, control.RenderColor);
+                return;
+            }
+
+            Bordered titleBar;
+            Bordered frame;
+
+            if (inFocus)
+            {
+                titleBar = mTextures.Window.ActiveTitleBar;
+                frame = mTextures.Window.Normal;
+            }
+            else
+            {
+                titleBar = mTextures.Window.InactiveTitleBar;
+                frame = mTextures.Window.Inactive;
+            }
+
+            Rectangle frameBounds = windowControl.RenderBounds;
+
+            if (titleBar != default)
+            {
+                frameBounds = new Rectangle(
+                    0,
+                    windowControl.TitleBar.Bottom,
+                    control.RenderBounds.Width,
+                    control.RenderBounds.Height
+                );
+
+                titleBar.Draw(Renderer, windowControl.TitleBar.Bounds, windowControl.RenderColor);
+            }
+
+            frame.Draw(Renderer, frameBounds, windowControl.RenderColor);
         }
 
         #endregion

@@ -32,6 +32,7 @@ namespace Intersect.Client.Interface.Menu
             mServerStatusArea = new ImagePanel(mMenuCanvas, "ServerStatusArea");
             mServerStatusLabel = new Label(mServerStatusArea, "ServerStatusLabel")
             {
+                IsHidden = ClientContext.IsSinglePlayer,
                 Text = Strings.Server.StatusLabel.ToString(MainMenu.ActiveNetworkStatus.ToLocalizedString()),
             };
 
@@ -59,6 +60,7 @@ namespace Intersect.Client.Interface.Menu
                 mShouldReset = false;
             }
 
+            mServerStatusArea.IsHidden = ClientContext.IsSinglePlayer;
             MainMenu.Update();
         }
 

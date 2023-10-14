@@ -602,7 +602,7 @@ namespace Intersect.Client.Framework.Gwen.Control
             UpdateColors();
         }
 
-        public virtual Color GetTextColor(ControlState state)
+        public virtual Color? GetTextColor(ControlState state)
         {
             switch (state)
             {

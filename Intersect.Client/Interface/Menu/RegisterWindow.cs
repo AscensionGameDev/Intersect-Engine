@@ -57,7 +57,7 @@ namespace Intersect.Client.Interface.Menu
         private TextBox mUsernameTextbox;
 
         //Init
-        public RegisterWindow(Canvas parent, MainMenu mainMenu, ImagePanel parentPanel)
+        public RegisterWindow(Canvas parent, MainMenu mainMenu)
         {
             //Assign References
             mMainMenu = mainMenu;

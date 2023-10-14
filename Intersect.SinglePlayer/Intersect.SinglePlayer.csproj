@@ -12,4 +12,10 @@
       <ProjectReference Include="..\Intersect.Server.Core\Intersect.Server.Core.csproj" />
     </ItemGroup>
 
+  <ItemGroup Label="Project Embedded Resources">
+    <EmbeddedResource Include="$(IntersectRepoPath)\assets\intersect-logo-qu.bmp">
+      <LogicalName>Icon.bmp</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+
 </Project>

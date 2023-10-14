@@ -14,7 +14,7 @@ namespace Intersect.Client.Framework.Gwen.Skin.Texturing
     /// <summary>
     ///     3x3 texture grid.
     /// </summary>
-    public partial struct Bordered
+    public partial struct Bordered : IEquatable<Bordered>
     {
 
         private GameTexture mTexture;
@@ -166,6 +166,24 @@ namespace Intersect.Client.Framework.Gwen.Skin.Texturing
             );
         }
 
+        public bool Equals(Bordered other)
+        {
+            return mTexture.Equals(other.mTexture) && mRects.Equals(other.mRects) && mMargin.Equals(other.mMargin) && mWidth.Equals(other.mWidth) && mHeight.Equals(other.mHeight);
+        }
+
+        public override bool Equals(object? obj)
+        {
+            return obj is Bordered other && Equals(other);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(mTexture, mRects, mMargin, mWidth, mHeight);
+        }
+
+        public static bool operator ==(Bordered lhs, Bordered rhs) => lhs.Equals(rhs);
+
+        public static bool operator !=(Bordered lhs, Bordered rhs) => !lhs.Equals(rhs);
     }
 
 }

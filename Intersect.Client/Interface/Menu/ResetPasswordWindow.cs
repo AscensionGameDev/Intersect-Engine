@@ -54,7 +54,7 @@ namespace Intersect.Client.Interface.Menu
         private Label mWindowHeader;
 
         //Init
-        public ResetPasswordWindow(Canvas parent, MainMenu mainMenu, ImagePanel parentPanel)
+        public ResetPasswordWindow(Canvas parent, MainMenu mainMenu)
         {
             //Assign References
             mMainMenu = mainMenu;

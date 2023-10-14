@@ -24,5 +24,7 @@ namespace Intersect.Server.Core
         #endregion Services
 
         void WaitForConsole();
+
+        void RequestShutdown(bool join = false);
     }
 }

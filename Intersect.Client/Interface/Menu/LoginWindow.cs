@@ -52,7 +52,7 @@ namespace Intersect.Client.Interface.Menu
         private bool mUseSavedPass;
 
         //Init
-        public LoginWindow(Canvas parent, MainMenu mainMenu, ImagePanel parentPanel)
+        public LoginWindow(Canvas parent, MainMenu mainMenu)
         {
             //Assign References
             mMainMenu = mainMenu;

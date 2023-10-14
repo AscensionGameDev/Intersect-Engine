@@ -1,10 +1,22 @@
-﻿// See https://aka.ms/new-console-template for more information
-
+﻿using System.Security.Cryptography;
+using System.Text;
 using Intersect;
+using Intersect.Client.Core;
 using Intersect.Client.MonoGame.Network;
 using Intersect.Configuration;
 using Intersect.Server.Core;
+using Intersect.Server.Database;
 using Intersect.SinglePlayer.Networking;
+using Bootstrapper = Intersect.Server.Core.Bootstrapper;
+
+const string singleplayer = "singleplayer";
+var singleplayerPassword = Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(singleplayer)));
+
+ClientConfiguration.ResourcesDirectory = "client-resources";
+Options.ResourcesDirectory = "server-resources";
+ServerContext.ResourceDirectory = "server-resources";
+
+ClientContext.IsSinglePlayer = true;
 
 SinglePlayerNetwork? clientNetwork = default;
 SinglePlayerNetwork? serverNetwork = default;
@@ -21,11 +33,34 @@ ServerContext.NetworkFactory = (context, _, _, _) =>
     return serverNetwork;
 };
 
-ClientConfiguration.ResourcesDirectory = "client-resources";
-Options.ResourcesDirectory = "server-resources";
-ServerContext.ResourceDirectory = "server-resources";
+try
+{
+    Bootstrapper.OnPostContextSetupCompleted += () =>
+    {
+        if (DbInterface.RegisteredPlayers < 1)
+        {
+            DbInterface.CreateAccount(
+                default,
+                singleplayer,
+                singleplayerPassword,
+                singleplayer,
+#if DEBUG
+                grantFirstUserAdmin: true
+#else
+                grantFirstUserAdmin: false
+#endif
+            );
+        }
+    };
 
-Thread serverThread = new(args => Bootstrapper.Start(args as string[]));
-serverThread.Start(args);
+    Thread serverThread = new(args => Bootstrapper.Start(args as string[]));
+    serverThread.Start(args);
 
-Intersect.Client.Program.Main(args);
+    Intersect.Client.Program.Main(args);
+}
+finally
+{
+    Bootstrapper.Context?.RequestShutdown();
+}
+
+

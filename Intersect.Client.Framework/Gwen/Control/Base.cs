@@ -122,7 +122,7 @@ namespace Intersect.Client.Framework.Gwen.Control
 
         private Padding mPadding;
 
-        private Base mParent;
+        private Base? mParent;
 
         private Rectangle mRenderBounds;
 
@@ -151,7 +151,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// </summary>
         /// <param name="parent">parent control</param>
         /// <param name="name">name of this control</param>
-        public Base(Base parent = null, string name = default)
+        public Base(Base? parent = default, string? name = default)
         {
             mName = name ?? string.Empty;
             mChildren = new List<Base>();
@@ -215,7 +215,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// <summary>
         ///     The logical parent. It's usually what you expect, the control you've parented it to.
         /// </summary>
-        public Base Parent
+        public Base? Parent
         {
             get => mParent;
             set
@@ -643,6 +643,7 @@ namespace Intersect.Client.Framework.Gwen.Control
 
                 return Parent == null || Parent.IsVisible;
             }
+            set => IsHidden = !value;
         }
 
         /// <summary>
@@ -712,7 +713,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         ///     Gets the canvas (root parent) of the control.
         /// </summary>
         /// <returns></returns>
-        public virtual Canvas Canvas => mParent?.GetCanvas();
+        public Canvas? Canvas => GetCanvas();
 
         public bool SkipSerialization { get; set; } = false;
 
@@ -1203,16 +1204,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         ///     Gets the canvas (root parent) of the control.
         /// </summary>
         /// <returns></returns>
-        public virtual Canvas GetCanvas()
-        {
-            var canvas = mParent;
-            if (canvas == null)
-            {
-                return null;
-            }
-
-            return canvas.GetCanvas();
-        }
+        public virtual Canvas? GetCanvas() => mParent?.GetCanvas();
 
         /// <summary>
         ///     Enables the control.
@@ -1320,10 +1312,10 @@ namespace Intersect.Client.Framework.Gwen.Control
         {
             for (int i = 0; i < mChildren.Count; i++)
             {
-                mChildren[i].Invalidate();
+                mChildren[i]?.Invalidate();
                 if (recursive)
                 {
-                    mChildren[i].InvalidateChildren(true);
+                    mChildren[i]?.InvalidateChildren(true);
                 }
             }
 
@@ -1331,10 +1323,10 @@ namespace Intersect.Client.Framework.Gwen.Control
             {
                 foreach (var child in mInnerPanel.mChildren)
                 {
-                    child.Invalidate();
+                    child?.Invalidate();
                     if (recursive)
                     {
-                        child.InvalidateChildren(true);
+                        child?.InvalidateChildren(true);
                     }
                 }
             }
