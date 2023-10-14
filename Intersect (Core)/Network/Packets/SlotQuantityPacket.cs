@@ -36,7 +36,7 @@ namespace Intersect.Network.Packets
         [Key(2)]
         public int Quantity { get; set; }
 
-        [Key(3)]
+        [IgnoreMember]
         public override bool IsValid => Slot >= 0 && Quantity >= 0;
 
         public override Dictionary<string, SanitizedValue<object>> Sanitize()

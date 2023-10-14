@@ -1,23 +1,19 @@
 ﻿using MessagePack;
 
-namespace Intersect.Network.Packets.Client
+namespace Intersect.Network.Packets.Client;
+
+[MessagePackObject]
+public class RetrieveBagItemPacket : SlotQuantityPacket
 {
-    [MessagePackObject]
-    public partial class RetrieveBagItemPacket : SlotQuantityPacket
+    //Parameterless Constructor for MessagePack
+    public RetrieveBagItemPacket() : base(0, 0)
     {
-        //Parameterless Constructor for MessagePack
-        public RetrieveBagItemPacket() : base(0, 0)
-        {
-        }
-
-        public RetrieveBagItemPacket(int bagSlot, int quantity, int invSlot) : base(bagSlot, quantity)
-        {
-            InventorySlot = invSlot;
-        }
-
-        [Key(4)]
-        public int InventorySlot { get; set; }
-
     }
 
+    public RetrieveBagItemPacket(int bagSlot, int quantity, int invSlot) : base(bagSlot, quantity)
+    {
+        InventorySlot = invSlot;
+    }
+
+    [Key(3)] public int InventorySlot { get; set; }
 }

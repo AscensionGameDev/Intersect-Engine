@@ -1,19 +1,16 @@
 ﻿using MessagePack;
 
-namespace Intersect.Network.Packets.Client
+namespace Intersect.Network.Packets.Client;
+
+[MessagePackObject]
+public class RevokeTradeItemPacket : SlotQuantityPacket
 {
-    [MessagePackObject]
-    public partial class RevokeTradeItemPacket : SlotQuantityPacket
+    //Parameterless Constructor for MessagePack
+    public RevokeTradeItemPacket() : base(0, 0)
     {
-        //Parameterless Constructor for MessagePack
-        public RevokeTradeItemPacket() : base(0,0)
-        {
-        }
-
-        public RevokeTradeItemPacket(int slot, int quantity) : base(slot, quantity)
-        {
-        }
-
     }
 
+    public RevokeTradeItemPacket(int slot, int quantity) : base(slot, quantity)
+    {
+    }
 }
