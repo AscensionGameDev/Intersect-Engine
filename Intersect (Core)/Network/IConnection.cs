@@ -7,6 +7,8 @@ namespace Intersect.Network
     {
         Guid Guid { get; }
 
+        bool CanDisconnect => true;
+
         bool IsConnected { get; }
 
         string Ip { get; }
