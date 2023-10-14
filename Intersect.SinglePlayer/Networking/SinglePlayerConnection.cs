@@ -12,11 +12,16 @@ internal class SinglePlayerConnection : IConnection
         Statistics = new ConnectionStatistics();
     }
 
-
     public Guid Guid => default;
+
+    public bool CanDisconnect => false;
+
     public bool IsConnected => _network.IsConnected;
+
     public string Ip => "127.0.0.1";
+
     public int Port => 5400;
+
     public ConnectionStatistics Statistics { get; }
 
     public void Dispose()

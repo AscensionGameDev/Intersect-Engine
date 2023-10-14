@@ -25,7 +25,7 @@ namespace Intersect.Server.Networking
         public bool IsEditor;
 
         //Network Variables
-        private IConnection mConnection;
+        private IConnection mConnection { get; set; }
 
         private long mConnectionTimeout;
 
@@ -167,19 +167,24 @@ namespace Intersect.Server.Networking
         {
             lock (Globals.ClientLock)
             {
-                if (mConnection != null)
+                if (mConnection == null)
                 {
-                    Logout(shutdown);
-                        
-                    Globals.Clients.Remove(this);
-                    Globals.ClientArray = Globals.Clients.ToArray();
-                    Globals.ClientLookup.Remove(mConnection.Guid);
-
-                    mConnection.Dispose();
-                    mConnection = null;
-
                     return;
                 }
+
+                Logout(shutdown);
+
+                Globals.Clients.Remove(this);
+                Globals.ClientArray = Globals.Clients.ToArray();
+                Globals.ClientLookup.Remove(mConnection.Guid);
+
+                if (!mConnection.CanDisconnect)
+                {
+                    return;
+                }
+
+                mConnection.Dispose();
+                mConnection = null;
             }
         }
 

@@ -352,7 +352,12 @@ namespace Intersect.Client.Core
         {
             Audio.PlayMusic(ClientConfiguration.Instance.MenuMusic, ClientConfiguration.Instance.MusicFadeTimer, ClientConfiguration.Instance.MusicFadeTimer, true);
             Fade.FadeOut();
-            PacketSender.SendLogout(characterSelect);
+
+            if (!ClientContext.IsSinglePlayer)
+            {
+                PacketSender.SendLogout(characterSelect);
+            }
+
             Globals.LoggedIn = false;
             Globals.WaitingOnServer = false;
             Globals.GameState = GameStates.Menu;
@@ -394,6 +399,12 @@ namespace Intersect.Client.Core
             Globals.PendingEvents.Clear();
 
             Interface.Interface.InitGwen();
+
+            if (ClientContext.IsSinglePlayer)
+            {
+                PacketSender.SendLogout(characterSelect);
+            }
+
             Fade.FadeIn();
         }
 
