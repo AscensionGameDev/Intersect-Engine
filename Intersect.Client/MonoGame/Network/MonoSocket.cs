@@ -38,11 +38,11 @@ namespace Intersect.Client.MonoGame.Network
         /// </summary>
 #if DEBUG
         private const long ServerStatusPingInterval = 1_000;
-
-        private const string AsymmetricKeyManifestResourceName = "Intersect.Client.network.handshake.bkey.pub";
 #else
         private const long ServerStatusPingInterval = 15_000;
 #endif
+
+        private const string AsymmetricKeyManifestResourceName = "Intersect.Client.network.handshake.bkey.pub";
 
         public static INetwork? ClientNetwork { get; set; }
 
