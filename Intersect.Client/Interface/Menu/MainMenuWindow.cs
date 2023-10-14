@@ -23,7 +23,7 @@ public partial class MainMenuWindow : Window
     private readonly MainMenu _mainMenu;
 
     // ReSharper disable once SuggestBaseTypeForParameterInConstructor
-    public MainMenuWindow(Canvas canvas, MainMenu mainMenu) : base(canvas, Strings.MainMenu.Title, false, nameof(MainMenuWindow))
+    public MainMenuWindow(Canvas canvas, MainMenu mainMenu) : base(canvas, Strings.MainMenu.Title, false, $"{nameof(MainMenuWindow)}_{(ClientContext.IsSinglePlayer ? "singleplayer" : "online")}")
     {
         _mainMenu = mainMenu;
 
