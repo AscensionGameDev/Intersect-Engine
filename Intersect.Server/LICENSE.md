@@ -4,6 +4,7 @@ Permission to change the license from GPLv3 to MIT:
 - WeylonSantana <63019821+WeylonSantana@users.noreply.github.com> I give permission to the maintainers of AscensionGameDev/Intersect-engine to change the license from GPLv3 to MIT of the code I have contributed to the Intersect.Server project
 - Fernando Arzola <17498701+Arufonsu@users.noreply.github.com> I give permission to the maintainers of AscensionGameDev/Intersect-engine to change the license from GPLv3 to MIT of the code I have contributed to the Intersect.Server project
 - Cheshire <azurebeats@hotmail.nl> I give permission to the maintainers of AscensionGameDev/Intersect-engine to change the license from GPLv3 to MIT of the code I have contributed to the Intersect.Server project
+- JC Snider <jcsnider@users.noreply.github.com> I give permission to the maintainers of AscensionGameDev/Intersect-engine to change the license from GPLv3 to MIT of the code I have contributed to the Intersect.Server and Intersect.Server.Framework projects
 
 License:
                     GNU GENERAL PUBLIC LICENSE
