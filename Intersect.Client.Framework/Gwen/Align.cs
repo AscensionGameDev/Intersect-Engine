@@ -41,8 +41,8 @@ namespace Intersect.Client.Framework.Gwen
             }
 
             control.SetPosition(
-                parent.Padding.Left + (parent.Width - parent.Padding.Left - parent.Padding.Right - control.Width) / 2,
-                (parent.Height - control.Height) / 2
+                parent.Padding.Left + (parent.Width - parent.Padding.Left - parent.Padding.Right - control.Width) / 2 + control.AlignmentDistance.Left,
+                (parent.Height - control.Height) / 2 + control.AlignmentDistance.Top
             );
         }
 

@@ -1,5 +1,5 @@
 using System;
-
+using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Input;
@@ -8,6 +8,20 @@ using Newtonsoft.Json.Linq;
 
 namespace Intersect.Client.Framework.Gwen.Control
 {
+    public static class ButtonControlStateExtensions
+    {
+        public static Label.ControlState ToLabelControlState(this Button.ControlState controlState)
+        {
+            return controlState switch
+            {
+                Button.ControlState.Normal => Label.ControlState.Normal,
+                Button.ControlState.Hovered => Label.ControlState.Hovered,
+                Button.ControlState.Clicked => Label.ControlState.Clicked,
+                Button.ControlState.Disabled => Label.ControlState.Disabled,
+                _ => throw new ArgumentOutOfRangeException(nameof(controlState), controlState, null),
+            };
+        }
+    }
 
     /// <summary>
     ///     Button control.
@@ -469,6 +483,12 @@ namespace Intersect.Client.Framework.Gwen.Control
             OnMouseClickedLeft(x, y, true);
         }
 
+        public void SetImage(string textureName, ControlState controlState)
+        {
+            var texture = GameContentManager.Current.GetTexture(TextureType.Gui, textureName);
+            SetImage(texture, textureName, controlState);
+        }
+
         /// <summary>
         ///     Sets the button's image.
         /// </summary>
@@ -507,7 +527,7 @@ namespace Intersect.Client.Framework.Gwen.Control
             }
         }
 
-        public GameTexture GetImage(ControlState state)
+        public GameTexture? GetImage(ControlState state)
         {
             switch (state)
             {

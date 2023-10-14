@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Linq;
 
 using Intersect.Client.Framework.File_Management;
@@ -46,6 +47,10 @@ namespace Intersect.Client.Framework.Gwen.Skin
 
             public Bordered Inactive;
 
+            public Bordered ActiveTitleBar;
+
+            public Bordered InactiveTitleBar;
+
             public Single Close;
 
             public Single CloseHover;
@@ -55,6 +60,7 @@ namespace Intersect.Client.Framework.Gwen.Skin
             public Single CloseDisabled;
 
         }
+
         public partial struct _FillableButton
         {
             public Single Box;
@@ -695,73 +701,54 @@ namespace Intersect.Client.Framework.Gwen.Skin
 
         public override void DrawButton(Control.Base control, bool depressed, bool hovered, bool disabled)
         {
-            GameTexture renderImg = null;
-            var textColor = ((Button) control).GetTextColor(Control.Label.ControlState.Normal);
-            if (disabled && ((Button) control).GetTextColor(Control.Label.ControlState.Disabled) != null)
+            if (control is not Button button)
             {
-                textColor = ((Button) control).GetTextColor(Control.Label.ControlState.Disabled);
+                return;
             }
-            else if (depressed && ((Button) control).GetTextColor(Control.Label.ControlState.Clicked) != null)
+
+            Button.ControlState controlState = Button.ControlState.Normal;
+            if (disabled)
             {
-                textColor = ((Button) control).GetTextColor(Control.Label.ControlState.Clicked);
+                controlState = Button.ControlState.Disabled;
             }
-            else if (hovered && ((Button) control).GetTextColor(Control.Label.ControlState.Hovered) != null)
+            else if (depressed)
             {
-                textColor = ((Button) control).GetTextColor(Control.Label.ControlState.Hovered);
+                controlState = Button.ControlState.Clicked;
             }
+            else if (hovered)
+            {
+                controlState = Button.ControlState.Hovered;
+            }
+
+            var textColor = button.GetTextColor(controlState.ToLabelControlState()) ??
+                            button.GetTextColor(Label.ControlState.Normal);
 
             if (textColor != null)
             {
-                ((Button) control).TextColorOverride = textColor;
+                button.TextColorOverride = textColor;
             }
 
-            if (disabled && ((Button) control).GetImage(Control.Button.ControlState.Disabled) != null)
-            {
-                renderImg = ((Button) control).GetImage(Control.Button.ControlState.Disabled);
-            }
-            else if (!disabled && depressed && ((Button) control).GetImage(Control.Button.ControlState.Clicked) != null)
-            {
-                renderImg = ((Button) control).GetImage(Control.Button.ControlState.Clicked);
-            }
-            else if (!disabled && hovered && ((Button) control).GetImage(Control.Button.ControlState.Hovered) != null)
-            {
-                renderImg = ((Button) control).GetImage(Control.Button.ControlState.Hovered);
-            }
-            else if (((Button) control).GetImage(Control.Button.ControlState.Normal) != null)
-            {
-                renderImg = ((Button) control).GetImage(Control.Button.ControlState.Normal);
-            }
+            var controlStateTexture = button.GetImage(controlState);
+            controlStateTexture ??= button.GetImage(Button.ControlState.Normal);
 
-            if (renderImg != null)
+            if (controlStateTexture != null)
             {
-                Renderer.DrawColor = control.RenderColor;
-                Renderer.DrawTexturedRect(renderImg, control.RenderBounds, control.RenderColor);
-
+                Renderer.DrawColor = button.RenderColor;
+                Renderer.DrawTexturedRect(controlStateTexture, button.RenderBounds, button.RenderColor);
                 return;
             }
 
-            if (disabled)
+            var buttonTextureGroup = mTextures.Input.Button;
+            var target = controlState switch
             {
-                mTextures.Input.Button.Disabled.Draw(Renderer, control.RenderBounds, control.RenderColor);
+                Button.ControlState.Normal => buttonTextureGroup.Normal,
+                Button.ControlState.Hovered => buttonTextureGroup.Hovered,
+                Button.ControlState.Clicked => buttonTextureGroup.Pressed,
+                Button.ControlState.Disabled => buttonTextureGroup.Disabled,
+                _ => throw new UnreachableException(),
+            };
 
-                return;
-            }
-
-            if (depressed)
-            {
-                mTextures.Input.Button.Pressed.Draw(Renderer, control.RenderBounds, control.RenderColor);
-
-                return;
-            }
-
-            if (hovered)
-            {
-                mTextures.Input.Button.Hovered.Draw(Renderer, control.RenderBounds, control.RenderColor);
-
-                return;
-            }
-
-            mTextures.Input.Button.Normal.Draw(Renderer, control.RenderBounds, control.RenderColor);
+            target.Draw(Renderer, button.RenderBounds, button.RenderColor);
         }
 
         public override void DrawMenuRightArrow(Control.Base control)

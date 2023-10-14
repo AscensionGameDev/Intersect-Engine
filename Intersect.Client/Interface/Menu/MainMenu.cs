@@ -1,17 +1,12 @@
-using System.Collections.Generic;
-
 using Intersect.Client.Core;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
-using Intersect.Client.General;
 using Intersect.Client.Interface.Shared;
 using Intersect.Client.Localization;
 using Intersect.Client.Networking;
-using Intersect.Logging;
 using Intersect.Network;
-using Intersect.Network.Events;
 using Intersect.Utilities;
 
 namespace Intersect.Client.Interface.Menu
@@ -24,7 +19,7 @@ namespace Intersect.Client.Interface.Menu
             ReceivedConfiguration?.Invoke(default, EventArgs.Empty);
         }
 
-        private static event EventHandler ReceivedConfiguration;
+        internal static event EventHandler? ReceivedConfiguration;
 
         public delegate void NetworkStatusHandler();
 
@@ -34,15 +29,9 @@ namespace Intersect.Client.Interface.Menu
 
         private readonly CreateCharacterWindow mCreateCharacterWindow;
 
-        private readonly Button mCreditsButton;
-
         private readonly CreditsWindow mCreditsWindow;
 
-        private readonly Button mExitButton;
-
         private readonly ForgotPasswordWindow mForgotPasswordWindow;
-
-        private readonly Button mLoginButton;
 
         private readonly LoginWindow mLoginWindow;
 
@@ -51,21 +40,13 @@ namespace Intersect.Client.Interface.Menu
 
         private readonly Label mMenuHeader;
 
-        private readonly ImagePanel mMenuWindow;
-
-        private readonly Button mSettingsButton;
-
         private readonly SettingsWindow mSettingsWindow;
-
-        private readonly Button mRegisterButton;
 
         private readonly RegisterWindow mRegisterWindow;
 
         private readonly ResetPasswordWindow mResetPasswordWindow;
 
         private readonly SelectCharacterWindow mSelectCharacterWindow;
-
-        private readonly Label mServerStatusLabel;
 
         //Character creation feild check
         private bool mHasMadeCharacterCreation;
@@ -74,91 +55,43 @@ namespace Intersect.Client.Interface.Menu
 
         private bool mShouldOpenCharacterSelection;
 
+        private readonly MainMenuWindow _mainMenuWindow;
+
         //Init
         public MainMenu(Canvas menuCanvas) : base(menuCanvas)
         {
             mMenuCanvas = menuCanvas;
 
+            _mainMenuWindow = new MainMenuWindow(mMenuCanvas, this);
+
             var logo = new ImagePanel(menuCanvas, "Logo");
             logo.LoadJsonUi(GameContentManager.UI.Menu, Graphics.Renderer.GetResolutionString());
 
-            //Main Menu Window
-            mMenuWindow = new ImagePanel(menuCanvas, "MenuWindow");
-
-            mServerStatusLabel = new Label(mMenuWindow, "ServerStatusLabel")
-            {
-                AutoSizeToContents = true,
-                ShouldDrawBackground = true,
-                Text = Strings.Server.StatusLabel.ToString(ActiveNetworkStatus.ToLocalizedString()),
-            };
-
-            mServerStatusLabel.SetTextColor(Color.White, Label.ControlState.Normal);
-            mServerStatusLabel.AddAlignment(Alignments.Bottom);
-            mServerStatusLabel.AddAlignment(Alignments.Left);
-            mServerStatusLabel.ProcessAlignments();
-
             NetworkStatusChanged += HandleNetworkStatusChanged;
-
-            //Menu Header
-            mMenuHeader = new Label(mMenuWindow, "Title");
-            mMenuHeader.SetText(Strings.MainMenu.Title);
-
-            //Login Button
-            mLoginButton = new Button(mMenuWindow, "LoginButton");
-            mLoginButton.SetText(Strings.MainMenu.Login);
-            mLoginButton.Clicked += LoginButton_Clicked;
-
-            //Register Button
-            mRegisterButton = new Button(mMenuWindow, "RegisterButton");
-            mRegisterButton.SetText(Strings.MainMenu.Register);
-            mRegisterButton.Clicked += RegisterButton_Clicked;
-
-            //Credits Button
-            mCreditsButton = new Button(mMenuWindow, "CreditsButton");
-            mCreditsButton.SetText(Strings.MainMenu.Credits);
-            mCreditsButton.Clicked += CreditsButton_Clicked;
-
-            //Exit Button
-            mExitButton = new Button(mMenuWindow, "ExitButton");
-            mExitButton.SetText(Strings.MainMenu.Exit);
-            mExitButton.Clicked += ExitButton_Clicked;
-
-            //Settings Button
-            mSettingsButton = new Button(mMenuWindow, "SettingsButton");
-            mSettingsButton.Clicked += SettingsButton_Clicked;
-            mSettingsButton.SetText(Strings.MainMenu.Settings);
-            if (!string.IsNullOrEmpty(Strings.MainMenu.SettingsTooltip))
-            {
-                mSettingsButton.SetToolTipText(Strings.MainMenu.SettingsTooltip);
-            }
-
-            mMenuWindow.LoadJsonUi(GameContentManager.UI.Menu, Graphics.Renderer.GetResolutionString());
 
             //Settings Controls
             mSettingsWindow = new SettingsWindow(menuCanvas, this, null);
 
             //Login Controls
-            mLoginWindow = new LoginWindow(menuCanvas, this, mMenuWindow);
+            mLoginWindow = new LoginWindow(menuCanvas, this);
 
             //Register Controls
-            mRegisterWindow = new RegisterWindow(menuCanvas, this, mMenuWindow);
+            mRegisterWindow = new RegisterWindow(menuCanvas, this);
 
             //Forgot Password Controls
-            mForgotPasswordWindow = new ForgotPasswordWindow(menuCanvas, this, mMenuWindow);
+            mForgotPasswordWindow = new ForgotPasswordWindow(menuCanvas, this);
 
             //Reset Password Controls
-            mResetPasswordWindow = new ResetPasswordWindow(menuCanvas, this, mMenuWindow);
+            mResetPasswordWindow = new ResetPasswordWindow(menuCanvas, this);
 
             //Character Selection Controls
-            mSelectCharacterWindow = new SelectCharacterWindow(mMenuCanvas, this, mMenuWindow);
+            mSelectCharacterWindow = new SelectCharacterWindow(mMenuCanvas, this);
 
             //Character Creation Controls
-            mCreateCharacterWindow = new CreateCharacterWindow(mMenuCanvas, this, mMenuWindow, mSelectCharacterWindow);
+            mCreateCharacterWindow = new CreateCharacterWindow(mMenuCanvas, this, mSelectCharacterWindow);
 
             //Credits Controls
             mCreditsWindow = new CreditsWindow(mMenuCanvas, this);
-
-            UpdateDisabled();
         }
 
         ~MainMenu()
@@ -170,10 +103,9 @@ namespace Intersect.Client.Interface.Menu
         //Methods
         public void Update()
         {
-            if (Networking.Network.Connected)
+            if (_mainMenuWindow.IsVisible)
             {
-                mLoginButton.IsDisabled = Globals.WaitingOnServer;
-                mRegisterButton.IsDisabled = Globals.WaitingOnServer;
+                _mainMenuWindow.Update();
             }
 
             if (mShouldOpenCharacterSelection)
@@ -227,21 +159,13 @@ namespace Intersect.Client.Interface.Menu
                 mSelectCharacterWindow.Hide();
             }
 
-            mMenuWindow.Show();
-            mSettingsButton.Show();
+            _mainMenuWindow.Show();
+            _mainMenuWindow.Reset();
         }
 
-        public void Show()
-        {
-            mMenuWindow.IsHidden = false;
-            mSettingsButton.IsHidden = false;
-        }
+        public void Show() => _mainMenuWindow.Show();
 
-        public void Hide()
-        {
-            mMenuWindow.IsHidden = true;
-            mSettingsButton.IsHidden = true;
-        }
+        public void Hide() => _mainMenuWindow.Hide();
 
         public void NotifyOpenCharacterSelection(List<Character> characters)
         {
@@ -300,119 +224,32 @@ namespace Intersect.Client.Interface.Menu
             mShouldOpenCharacterCreation = false;
         }
 
-        //Input Handlers
-        void LoginButton_Clicked(Base sender, ClickedEventArgs arguments)
+        internal void SwitchToWindow<TMainMenuWindow>() where TMainMenuWindow : IMainMenuWindow
         {
-            if (Networking.Network.Connected)
+            _mainMenuWindow.Hide();
+            if (typeof(TMainMenuWindow) == typeof(LoginWindow))
             {
-                SwitchToWindow(mLoginWindow);
+                mLoginWindow.Show();
             }
-            else
+            else if (typeof(TMainMenuWindow) == typeof(RegisterWindow))
             {
-                mLoginButton.IsDisabled = Globals.WaitingOnServer;
-                AddLoginEvents();
-                Networking.Network.TryConnect();
+                mRegisterWindow.Show();
             }
-        }
-
-        private void AddLoginEvents()
-        {
-            ReceivedConfiguration += LoginConnected;
-            Networking.Network.Socket.ConnectionFailed += LoginConnectionFailed;
-            Networking.Network.Socket.Disconnected += LoginDisconnected;
-        }
-
-        private void RemoveLoginEvents()
-        {
-            ReceivedConfiguration -= LoginConnected;
-            Networking.Network.Socket.ConnectionFailed -= LoginConnectionFailed;
-            Networking.Network.Socket.Disconnected -= LoginDisconnected;
-        }
-
-        private void LoginConnectionFailed(INetworkLayerInterface nli, ConnectionEventArgs args, bool denied) => RemoveLoginEvents();
-        private void LoginDisconnected(INetworkLayerInterface nli, ConnectionEventArgs args) => RemoveLoginEvents();
-        private void LoginConnected(object? sender, EventArgs eventArgs)
-        {
-            RemoveLoginEvents();
-            SwitchToWindow(mLoginWindow);
-        }
-
-        private void SwitchToWindow(IMainMenuWindow mainMenuWindow)
-        {
-            Hide();
-            mainMenuWindow.Show();
-        }
-
-        private void AddRegisterEvents()
-        {
-            ReceivedConfiguration += RegisterConnected;
-            Networking.Network.Socket.ConnectionFailed += LoginConnectionFailed;
-            Networking.Network.Socket.Disconnected += LoginDisconnected;
-        }
-
-        private void RemoveRegisterEvents()
-        {
-            ReceivedConfiguration -= RegisterConnected;
-            Networking.Network.Socket.ConnectionFailed -= LoginConnectionFailed;
-            Networking.Network.Socket.Disconnected -= LoginDisconnected;
-        }
-
-        private void RegisterConnectionFailed(INetworkLayerInterface nli, ConnectionEventArgs args, bool denied) => RemoveRegisterEvents();
-        private void RegisterDisconnected(INetworkLayerInterface nli, ConnectionEventArgs args) => RemoveRegisterEvents();
-        private void RegisterConnected(object? sender, EventArgs eventArgs)
-        {
-            RemoveRegisterEvents();
-            SwitchToWindow(mRegisterWindow);
-        }
-
-        void RegisterButton_Clicked(Base sender, ClickedEventArgs arguments)
-        {
-            if (Networking.Network.Connected)
+            else if (typeof(TMainMenuWindow) == typeof(CreditsWindow))
             {
-                SwitchToWindow(mRegisterWindow);
-            }
-            else
-            {
-                mRegisterButton.IsDisabled = Globals.WaitingOnServer;
-                AddRegisterEvents();
-                Networking.Network.TryConnect();
+                mCreditsWindow.Show();
             }
         }
 
-        void CreditsButton_Clicked(Base sender, ClickedEventArgs arguments)
-        {
-            Hide();
-            mCreditsWindow.Show();
-        }
-
-        void SettingsButton_Clicked(Base sender, ClickedEventArgs arguments)
+        internal void SettingsButton_Clicked(Base sender, ClickedEventArgs arguments)
         {
             Hide();
             mSettingsWindow.Show(true);
         }
 
-        void ExitButton_Clicked(Base sender, ClickedEventArgs arguments)
-        {
-            Log.Info("User clicked exit button.");
-            Globals.IsRunning = false;
-        }
-
         private void HandleNetworkStatusChanged()
         {
-            mServerStatusLabel.Text = Strings.Server.StatusLabel.ToString(ActiveNetworkStatus.ToLocalizedString());
-            UpdateDisabled();
-        }
-
-        private void UpdateDisabled()
-        {
-            mLoginButton.IsDisabled = ActiveNetworkStatus != NetworkStatus.Online;
-            mRegisterButton.IsDisabled = ActiveNetworkStatus != NetworkStatus.Online ||
-                                         Options.Loaded && Options.BlockClientRegistrations;
-        }
-
-        public static void OnNetworkConnecting()
-        {
-            ActiveNetworkStatus = NetworkStatus.Connecting;
+            _mainMenuWindow.UpdateDisabled();
         }
 
         public static void SetNetworkStatus(NetworkStatus networkStatus)
@@ -423,7 +260,5 @@ namespace Intersect.Client.Interface.Menu
         }
 
         public static long LastNetworkStatusChangeTime { get; private set; }
-
     }
-
 }

@@ -109,7 +109,7 @@ namespace Intersect.Client.Framework.Gwen.Control
 
         // Children call parent.GetCanvas() until they get to 
         // this top level function.
-        public override Canvas GetCanvas()
+        public override Canvas? GetCanvas()
         {
             return this;
         }

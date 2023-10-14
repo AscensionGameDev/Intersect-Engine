@@ -588,10 +588,11 @@ namespace Intersect.Server.Database
         }
 
         public static void CreateAccount(
-            Client client,
+            Client? client,
             string username,
             string password,
-            string email
+            string email,
+            bool grantFirstUserAdmin = true
         )
         {
             var salt = User.GenerateSalt();
@@ -606,7 +607,7 @@ namespace Intersect.Server.Database
                 Power = UserRights.None,
             };
 
-            if (User.Count() == 0)
+            if (grantFirstUserAdmin && User.Count() == 0)
             {
                 user.Power = UserRights.Admin;
             }

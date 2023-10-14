@@ -3,14 +3,9 @@ using Intersect.Client.Plugins.Contexts;
 using Intersect.Core;
 using Intersect.Factories;
 using Intersect.Logging;
-using Intersect.Network;
 using Intersect.Plugins;
 using Intersect.Plugins.Interfaces;
 using Intersect.Reflection;
-
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Intersect.Client.Core
 {
@@ -19,6 +14,8 @@ namespace Intersect.Client.Core
     /// </summary>
     internal sealed partial class ClientContext : ApplicationContext<ClientContext, ClientCommandLineOptions>, IClientContext
     {
+        internal static bool IsSinglePlayer { get; set; }
+
         private IPlatformRunner mPlatformRunner;
 
         internal ClientContext(ClientCommandLineOptions startupOptions, Logger logger, IPacketHelper packetHelper) : base(

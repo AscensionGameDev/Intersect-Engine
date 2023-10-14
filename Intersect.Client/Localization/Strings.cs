@@ -1704,6 +1704,9 @@ namespace Intersect.Client.Localization
             public static LocalizedString SettingsTooltip = @"";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Start = @"Start";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString Title = @"Main Menu";
         }
 

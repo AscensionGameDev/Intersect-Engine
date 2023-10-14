@@ -57,7 +57,7 @@ namespace Intersect.Client.Interface.Menu
         private int mSelectedChar = 0;
 
         //Init
-        public SelectCharacterWindow(Canvas parent, MainMenu mainMenu, ImagePanel parentPanel)
+        public SelectCharacterWindow(Canvas parent, MainMenu mainMenu)
         {
             //Assign References
             mMainMenu = mainMenu;

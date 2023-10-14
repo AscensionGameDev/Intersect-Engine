@@ -1,9 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-
 using Intersect.Async;
 using Intersect.Client.Core;
 using Intersect.Client.Framework.Gwen.Control;
@@ -18,18 +12,15 @@ using static Intersect.Client.Framework.File_Management.GameContentManager;
 
 namespace Intersect.Client.Interface.Debugging
 {
-    internal sealed partial class DebugWindow : WindowControl
+    internal sealed partial class DebugWindow : Window
     {
         private readonly List<IDisposable> _disposables;
         private bool _wasParentDrawDebugOutlinesEnabled;
         private bool _drawDebugOutlinesEnabled;
-        private object _initializationLock;
-        private bool _initialized;
 
         public DebugWindow(Base parent) : base(parent, Strings.Debug.Title, false, nameof(DebugWindow))
         {
             _disposables = new List<IDisposable>();
-            _initializationLock = new object();
 
             DisableResizing();
 
@@ -46,25 +37,15 @@ namespace Intersect.Client.Interface.Debugging
 
         private Table TableDebugStats { get; set; }
 
-        private void EnsureInitialized()
+        protected override void EnsureInitialized()
         {
-            if (_initialized)
-            {
-                return;
-            }
+            CheckboxDrawDebugOutlines = CreateCheckboxDrawDebugOutlines();
+            CheckboxEnableLayoutHotReloading = CreateCheckboxEnableLayoutHotReloading();
+            ButtonShutdownServer = CreateButtonShutdownServer();
+            ButtonShutdownServerAndExit = CreateButtonShutdownServerAndExit();
+            TableDebugStats = CreateTableDebugStats();
 
-            lock (_initializationLock)
-            {
-                CheckboxDrawDebugOutlines = CreateCheckboxDrawDebugOutlines();
-                CheckboxEnableLayoutHotReloading = CreateCheckboxEnableLayoutHotReloading();
-                ButtonShutdownServer = CreateButtonShutdownServer();
-                ButtonShutdownServerAndExit = CreateButtonShutdownServerAndExit();
-                TableDebugStats = CreateTableDebugStats();
-
-                LoadJsonUi(UI.Debug, Graphics.Renderer.GetResolutionString());
-            }
-
-            _initialized = true;
+            LoadJsonUi(UI.Debug, Graphics.Renderer.GetResolutionString());
         }
 
         protected override void OnAttached(Base parent)
@@ -89,12 +70,6 @@ namespace Intersect.Client.Interface.Debugging
         {
             base.OnDetaching(oldParent);
             oldParent.DrawDebugOutlines = _wasParentDrawDebugOutlinesEnabled;
-        }
-
-        protected override void Render(Framework.Gwen.Skin.Base skin)
-        {
-            EnsureInitialized();
-            base.Render(skin);
         }
 
         public override void Dispose()
@@ -302,7 +277,7 @@ namespace Intersect.Client.Interface.Debugging
             {
                 return new AsyncValueGenerator<Base>(() => Task.Delay(100).ContinueWith((completedTask) => Interface.FindControlAtCursor(), TaskScheduler.Current), (component) =>
                 {
-                    DataChanged?.Invoke(this, new TableDataChangedEventArgs(0, 1, default, component?.GetType()?.Name ?? Strings.Internals.NotApplicable));
+                    DataChanged?.Invoke(this, new TableDataChangedEventArgs(0, 1, default, component?.GetType().Name ?? Strings.Internals.NotApplicable));
                     DataChanged?.Invoke(this, new TableDataChangedEventArgs(1, 1, default, component?.CanonicalName ?? string.Empty));
                     DataChanged?.Invoke(this, new TableDataChangedEventArgs(2, 1, default, component?.Bounds.ToString() ?? string.Empty));
                     DataChanged?.Invoke(this, new TableDataChangedEventArgs(3, 1, default, component?.BoundsGlobal.ToString() ?? string.Empty));

@@ -1,7 +1,9 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.ControlInternal;
 
@@ -49,13 +51,30 @@ namespace Intersect.Client.Framework.Gwen.Control
 
         private Base mOldParent;
 
+        public Dragger TitleBar => mTitleBar;
+
+        public Label TitleLabel => mTitle;
+
+        public Padding InnerPanelPadding
+        {
+            get => mInnerPanel?.Padding ?? default;
+            set
+            {
+                if (mInnerPanel != default)
+                {
+                    mInnerPanel.Padding = value;
+                }
+            }
+        }
+
         /// <summary>
         ///     Initializes a new instance of the <see cref="WindowControl" /> class.
         /// </summary>
         /// <param name="parent">Parent control.</param>
-        /// <param name="caption">Window caption.</param>
+        /// <param name="title">Window title.</param>
         /// <param name="modal">Determines whether the window should be modal.</param>
-        public WindowControl(Base parent, string title = "", bool modal = false, string name = "") : base(parent, name)
+        /// <param name="name">name of this control</param>
+        public WindowControl(Base parent, string? title = default, bool modal = false, string? name = default) : base(parent, name)
         {
             mTitleBar = new Dragger(this);
             mTitleBar.Height = 24;
@@ -66,7 +85,7 @@ namespace Intersect.Client.Framework.Gwen.Control
 
             mTitle = new Label(mTitleBar);
             mTitle.Alignment = Pos.Left | Pos.CenterV;
-            mTitle.Text = title;
+            mTitle.Text = title ?? string.Empty;
             mTitle.Dock = Pos.Fill;
             mTitle.Padding = new Padding(8, 4, 0, 0);
             mTitle.TextColor = Skin.Colors.Window.TitleInactive;
@@ -341,6 +360,8 @@ namespace Intersect.Client.Framework.Gwen.Control
         {
         }
 
+        public Rectangle TitleBarBounds => mTitleBar?.Bounds ?? default;
+
         public void SetTitleBarHeight(int h)
         {
             mTitleBar.SetSize(mTitleBar.Width, h);
@@ -421,7 +442,7 @@ namespace Intersect.Client.Framework.Gwen.Control
             }
         }
 
-        public GameTexture GetImage(ControlState state)
+        public GameTexture? GetImage(ControlState state)
         {
             switch (state)
             {
@@ -432,6 +453,12 @@ namespace Intersect.Client.Framework.Gwen.Control
                 default:
                     return null;
             }
+        }
+
+        public bool TryGetTexture(ControlState controlState, [NotNullWhen(true)] out GameTexture? texture)
+        {
+            texture = GetImage(controlState);
+            return texture != default;
         }
 
         public string GetImageFilename(ControlState state)

@@ -28,6 +28,8 @@ namespace Intersect.Server.Core
             Console.CancelKeyPress += OnConsoleCancelKeyPress;
         }
 
+        internal static event Action OnPostContextSetupCompleted;
+
         public static IServerContext Context { get; private set; }
 
         public static LockingActionQueue MainThread { get; private set; }
@@ -88,6 +90,8 @@ namespace Intersect.Server.Core
                 Console.Error.WriteLine("[FATAL] Post-context setup failed.");
                 return;
             }
+
+            OnPostContextSetupCompleted?.Invoke();
 
             Console.WriteLine("Finished post-context setup.");
 

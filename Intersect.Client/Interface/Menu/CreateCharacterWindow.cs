@@ -78,7 +78,6 @@ namespace Intersect.Client.Interface.Menu
         public CreateCharacterWindow(
             Canvas parent,
             MainMenu mainMenu,
-            ImagePanel parentPanel,
             SelectCharacterWindow selectCharacterWindow
         )
         {

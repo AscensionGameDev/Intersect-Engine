@@ -43,7 +43,7 @@ namespace Intersect.Client.Interface.Menu
         private Label mWindowHeader;
 
         //Init
-        public ForgotPasswordWindow(Canvas parent, MainMenu mainMenu, ImagePanel parentPanel)
+        public ForgotPasswordWindow(Canvas parent, MainMenu mainMenu)
         {
             //Assign References
             mMainMenu = mainMenu;

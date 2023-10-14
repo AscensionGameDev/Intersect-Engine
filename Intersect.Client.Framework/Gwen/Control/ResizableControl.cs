@@ -21,7 +21,8 @@ namespace Intersect.Client.Framework.Gwen.Control
         ///     Initializes a new instance of the <see cref="ResizableControl" /> class.
         /// </summary>
         /// <param name="parent">Parent control.</param>
-        public ResizableControl(Base parent, string name = "") : base(parent, name)
+        /// <param name="name">name of this control</param>
+        public ResizableControl(Base parent, string? name) : base(parent, name)
         {
             mResizer = new Resizer[10];
             MinimumSize = new Point(5, 5);
