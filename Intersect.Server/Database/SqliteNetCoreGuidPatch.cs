@@ -5,6 +5,7 @@ using Intersect.Reflection;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Remotion.Linq.Clauses;
 using SqlKata.Execution;
 
 namespace Intersect.Server.Database;
@@ -103,6 +104,12 @@ public sealed class SqliteNetCoreGuidPatch
                 column => column.NotNull
             );
 
+            var searchIdColumns = new[] { "Id" };
+            if (!guidColumnNames.Contains("Id"))
+            {
+                searchIdColumns = guidColumnNames;
+            }
+
             var numberOfRows = queryFactory.Query(entityTable).Select("*").AsCount().First<int>();
             var convertedRowCount = 0;
             const int take = 100;
@@ -151,7 +158,10 @@ public sealed class SqliteNetCoreGuidPatch
                                     }
                                 }
                             );
-                            return (convertedRow, row["Id"]);
+                            var searchValues = searchIdColumns
+                                .Select(searchIdColumn => (searchIdColumn, row[searchIdColumn]))
+                                .ToArray();
+                            return (convertedRow, searchValues);
                         }
                     )
                     .ToList();
@@ -159,20 +169,19 @@ public sealed class SqliteNetCoreGuidPatch
                 dbConnection.Open();
                 var transaction = dbConnection.BeginTransaction();
                 var segmentConvertedRowCount = 0;
-                foreach (var (convertedRow, searchId) in convertedRows)
+                foreach (var (convertedRow, searchIds) in convertedRows)
                 {
-                    var result = queryFactory
-                        .Query(entityTable)
-                        .Where("Id", searchId)
-                        .Update(convertedRow, transaction: transaction);
+                    var query = queryFactory.Query(entityTable);
+                    foreach (var (columnName, searchId) in searchIds)
+                    {
+                        query = query.Where(columnName, searchId);
+                    }
 
-                    var searchIdString = searchId is byte[] searchIdBytes
-                        ? new Guid(searchIdBytes).ToString()
-                        : searchId.ToString();
+                    var result = query.Update(convertedRow, transaction: transaction);
 
                     if (Log.Default.Configuration.LogLevel >= LogLevel.Debug)
                     {
-                        Log.Debug($"Processed row {convertedRowCount++}/{numberOfRows} in '{entityTable}' (segment {segmentConvertedRowCount++}/{convertedRows.Count}) ({searchIdString} was {searchId.GetFullishName()}), {result} rows changed.");
+                        Log.Debug($"Processed row {convertedRowCount++}/{numberOfRows} in '{entityTable}' (segment {segmentConvertedRowCount++}/{convertedRows.Count}), {result} rows changed.");
                     }
                 }
                 transaction.Commit();
