@@ -261,7 +261,7 @@ namespace Intersect.Server.Database
             context.MigrationsProcessed(processedMigrations.ToArray());
         }
 
-        private static bool EnsureUpdated()
+        private static bool EnsureUpdated(IServerContext serverContext)
         {
             Log.Verbose("Creating game context...");
             using var gameContext = GameContext.Create(new DatabaseContextOptions
@@ -273,6 +273,7 @@ namespace Intersect.Server.Database
                 DatabaseType = Options.Instance.GameDatabase.Type,
                 EnableDetailedErrors = true,
                 EnableSensitiveDataLogging = true,
+                LoggerFactory = new IntersectLoggerFactory(),
             });
 
             Log.Verbose("Creating player context...");
@@ -285,6 +286,7 @@ namespace Intersect.Server.Database
                 DatabaseType = Options.Instance.PlayerDatabase.Type,
                 EnableDetailedErrors = true,
                 EnableSensitiveDataLogging = true,
+                LoggerFactory = new IntersectLoggerFactory(),
             });
 
             Log.Verbose("Creating logging context...");
@@ -297,6 +299,7 @@ namespace Intersect.Server.Database
                 DatabaseType = Options.Instance.LoggingDatabase.Type,
                 EnableDetailedErrors = true,
                 EnableSensitiveDataLogging = true,
+                LoggerFactory = new IntersectLoggerFactory(),
             });
 
             // We don't want anyone running the old migration tool accidentally
@@ -338,36 +341,44 @@ namespace Intersect.Server.Database
 
             if (showMigrationWarning)
             {
-                Console.WriteLine();
-                Console.WriteLine(Strings.Database.upgraderequired);
-                Console.WriteLine(
-                    Strings.Database.upgradebackup.ToString(Strings.Database.upgradeready, Strings.Database.upgradeexit)
-                );
-
-                Console.WriteLine();
-                while (true)
+                if (serverContext.StartupOptions.MigrateAutomatically)
                 {
-                    Console.Write("> ");
-                    var input = Console.ReadLine().Trim();
-                    if (input == Strings.Database.upgradeready.ToString().Trim())
-                    {
-                        break;
-                    }
+                    Console.WriteLine(Strings.Database.MigratingAutomatically);
+                    Log.Default.Write("Skipping user prompt for database migration...");
+                }
+                else
+                {
+                    Console.WriteLine();
+                    Console.WriteLine(Strings.Database.upgraderequired);
+                    Console.WriteLine(
+                        Strings.Database.upgradebackup.ToString(Strings.Database.upgradeready, Strings.Database.upgradeexit)
+                    );
 
-                    if (
-                        !string.Equals(
-                            input,
-                            Strings.Database.upgradeexit.ToString().Trim(),
-                            StringComparison.CurrentCultureIgnoreCase
+                    Console.WriteLine();
+                    while (true)
+                    {
+                        Console.Write("> ");
+                        var input = Console.ReadLine().Trim();
+                        if (input == Strings.Database.upgradeready.ToString().Trim())
+                        {
+                            break;
+                        }
+
+                        if (
+                            !string.Equals(
+                                input,
+                                Strings.Database.upgradeexit.ToString().Trim(),
+                                StringComparison.CurrentCultureIgnoreCase
+                            )
                         )
-                    )
-                    {
-                        continue;
+                        {
+                            continue;
+                        }
+
+                        Environment.Exit(1);
+
+                        return false;
                     }
-
-                    Environment.Exit(1);
-
-                    return false;
                 }
 
                 Console.WriteLine();
@@ -395,7 +406,7 @@ namespace Intersect.Server.Database
         {
             Console.WriteLine("Initializing database...");
 
-            if (!EnsureUpdated())
+            if (!EnsureUpdated(serverContext))
             {
                 Console.Error.WriteLine("Database not updated.");
                 return false;

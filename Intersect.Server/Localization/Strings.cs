@@ -531,6 +531,9 @@ namespace Intersect.Server.Localization
             public readonly LocalizedString Default = @"Default";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString MigratingAutomatically = @"The --migrate-automatically flag was passed to the server on startup and the user will not be prompted...";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString noclasses = @"No classes found! - Creating a default class!";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
