@@ -1,5 +1,7 @@
+using System.Diagnostics;
 using Dapper;
 using Intersect.Config;
+using Intersect.Extensions;
 using Intersect.Logging;
 using Intersect.Reflection;
 using Microsoft.Data.Sqlite;
@@ -110,11 +112,14 @@ public sealed class SqliteNetCoreGuidPatch
                 searchIdColumns = guidColumnNames;
             }
 
+            HashSet<string> skippedKeys = new();
             var numberOfRows = queryFactory.Query(entityTable).Select("*").AsCount().First<int>();
             var convertedRowCount = 0;
             const int take = 100;
+            var numberOfSegments = numberOfRows / take + (numberOfRows % take == 0 ? 0 : 1);
             for (var skip = 0; skip < numberOfRows; skip += take)
             {
+                var segmentNumber = 1 + skip / take;
                 var startTimeSegment = DateTime.UtcNow;
                 var rows = queryFactory
                     .Query(entityTable)
@@ -123,79 +128,136 @@ public sealed class SqliteNetCoreGuidPatch
                     .Take(take)
                     .Get()
                     .Select(row => (IDictionary<string, object>)row)
-                    .ToList();
+                    .ToArray();
                 var convertedRows = rows
                     .Select(
                         row =>
                         {
-                            var convertedRow = row.ToDictionary(
-                                column => column.Key,
-                                column =>
-                                {
-                                    switch (column.Value)
+                            var convertedRow = row.Where(
+                                    pair =>
                                     {
-                                        case string @string
-                                            when Guid.TryParse(@string, out _): return @string.ToUpperInvariant();
-                                        case null: return column.Value;
-                                        case byte[] data:
-                                            switch (data.Length)
-                                            {
-                                                case 0: return null;
-                                                case 16:
-                                                {
-                                                    var guid = new Guid(data);
-                                                    return Guid.Empty != guid ||
-                                                           notNullLookup.TryGetValue(column.Key, out var notNull) && notNull
-                                                        ? guid.ToString().ToUpperInvariant()
-                                                        : null;
-                                                }
-                                                default: return column.Value;
-                                            }
+                                        var (key, _) = pair;
+                                        if (!skippedKeys.Contains(key) && !(key.StartsWith('"') && key.EndsWith('"')))
+                                        {
+                                            return true;
+                                        }
 
-                                        default:
-                                            throw new InvalidOperationException(
-                                                $"Expected byte[], received: '{column.Value}'");
+                                        skippedKeys.Add(key);
+                                        skippedKeys.Add(key[1..^1]);
+                                        return false;
+
                                     }
-                                }
-                            );
+                                )
+                                .ToDictionary(
+                                    column => column.Key,
+                                    column =>
+                                    {
+                                        switch (column.Value)
+                                        {
+                                            case string @string when Guid.TryParse(@string, out _):
+                                                return string.Equals(
+                                                    @string.ToUpperInvariant(),
+                                                    @string,
+                                                    StringComparison.Ordinal
+                                                )
+                                                    ? null
+                                                    : @string.ToUpperInvariant();
+
+                                            case null:
+                                                return column.Value;
+                                            case byte[] data:
+                                                switch (data.Length)
+                                                {
+                                                    case 0:
+                                                        return null;
+                                                    case 16:
+                                                    {
+                                                        var guid = new Guid(data);
+                                                        return Guid.Empty != guid ||
+                                                               notNullLookup.TryGetValue(column.Key, out var notNull) &&
+                                                               notNull
+                                                            ? guid.ToString().ToUpperInvariant()
+                                                            : null;
+                                                    }
+                                                    default:
+                                                        return column.Value;
+                                                }
+
+                                            default:
+                                                var columnKey = column.Key;
+                                                throw new InvalidOperationException(
+                                                    $"Expected byte[], received: '{column.Value}' for '{columnKey}'"
+                                                );
+                                        }
+                                    }
+                                );
+
                             var searchValues = searchIdColumns
                                 .Select(searchIdColumn => (searchIdColumn, row[searchIdColumn]))
                                 .ToArray();
                             return (convertedRow, searchValues);
                         }
                     )
-                    .ToList();
+                    .Where(
+                        convertedRowEntry =>
+                        {
+                            var (convertedRow, _) = convertedRowEntry;
+                            return convertedRow.Values.Any(value => value is not null);
+                        })
+                    .ToArray();
 
-                dbConnection.Open();
-                var transaction = dbConnection.BeginTransaction();
-                var segmentConvertedRowCount = 0;
-                foreach (var (convertedRow, searchIds) in convertedRows)
+                if (convertedRows.Length > 0)
                 {
-                    var query = queryFactory.Query(entityTable);
-                    foreach (var (columnName, searchId) in searchIds)
+                    dbConnection.Open();
+                    var transaction = dbConnection.BeginTransaction();
+                    var segmentConvertedRowCount = 0;
+                    foreach (var (convertedRow, searchIds) in convertedRows)
                     {
-                        query = query.Where(columnName, searchId);
-                    }
+                        try
+                        {
+                            var query = queryFactory.Query(entityTable);
+                            foreach (var (columnName, searchId) in searchIds)
+                            {
+                                if (skippedKeys.Contains(columnName))
+                                {
+                                    Log.Warn($"Dropping '{columnName}' as a query constraint while updating '{entityTable}'");
+                                    continue;
+                                }
 
-                    var result = query.Update(convertedRow, transaction: transaction);
+                                query = query.Where(columnName, searchId);
+                            }
+
+                            var result = query.Update(convertedRow, transaction: transaction);
+
+                            if (Log.Default.Configuration.LogLevel >= LogLevel.Debug)
+                            {
+                                Log.Debug($"Processed row {convertedRowCount++}/{numberOfRows} in '{entityTable}' (segment {segmentConvertedRowCount++}/{convertedRows.Length}), {result} rows changed.");
+                            }
+                        }
+                        catch
+                        {
+#if DEBUG
+                            Debugger.Break();
+#endif
+                        }
+                    }
+                    transaction.Commit();
+                    dbConnection.Close();
 
                     if (Log.Default.Configuration.LogLevel >= LogLevel.Debug)
                     {
-                        Log.Debug($"Processed row {convertedRowCount++}/{numberOfRows} in '{entityTable}' (segment {segmentConvertedRowCount++}/{convertedRows.Count}), {result} rows changed.");
+                        Log.Debug(
+                            $"Completed updating segment {segmentNumber}/{numberOfSegments} in {(DateTime.UtcNow - startTimeSegment).TotalMilliseconds}ms ('{entityTable}', {convertedRows.Length} rows updated)"
+                        );
                     }
                 }
-                transaction.Commit();
-                dbConnection.Close();
-
-                if (Log.Default.Configuration.LogLevel >= LogLevel.Debug)
+                else
                 {
-                    Log.Debug(
-                        $"Completed updating segment in {(DateTime.UtcNow - startTimeSegment).TotalMilliseconds}ms ('{entityTable}', {convertedRows.Count} rows updated)"
-                    );
+                    Log.Debug($"Skipped segment {segmentNumber}/{numberOfSegments} because it has no changed rows ('{entityTable}')");
                 }
             }
 
-            Log.Verbose($"Completed updating table in {(DateTime.UtcNow - startTimeTable).TotalMilliseconds}ms  ('{entityTable}', {numberOfRows} rows updated)");
+            Log.Verbose($"Completed updating table in {(DateTime.UtcNow - startTimeTable).TotalMilliseconds}ms  ('{entityTable}', {convertedRowCount} rows updated)");
         }
 
         Log.Verbose($"Completed updating database in {(DateTime.UtcNow - startTimeDatabase).TotalMilliseconds}ms");
