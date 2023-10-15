@@ -113,7 +113,7 @@ namespace Intersect.GameObjects
         /// <summary>
         /// Defines which cooldown group this item belongs to.
         /// </summary>
-        public string CooldownGroup { get; set; } = string.Empty;
+        public string? CooldownGroup { get; set; }
 
         /// <summary>
         /// Configures whether this should not trigger and be triggered by the global cooldown.
