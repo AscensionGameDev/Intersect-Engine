@@ -195,15 +195,15 @@ internal partial class ApiService : ApplicationService<ServerContext, IApiServic
             }
         );
 
-        builder.Services
-            .AddIdentity<User, UserRole>(
-                identityOptions =>
-                {
-                    identityOptions.Stores.ProtectPersonalData = true;
-                }
-            )
-            .AddUserStore<IntersectUserStore>()
-            .AddRoleStore<IntersectRoleStore>();
+        //builder.Services
+        //    .AddIdentity<User, UserRole>(
+        //        identityOptions =>
+        //        {
+        //            identityOptions.Stores.ProtectPersonalData = true;
+        //        }
+        //    )
+        //    .AddUserStore<IntersectUserStore>()
+        //    .AddRoleStore<IntersectRoleStore>();
 
         if (builder.Environment.IsDevelopment())
         {
