@@ -2,7 +2,7 @@
   "profiles": {
     "Development": {
       "commandName": "Project",
-      "commandLineArgs": "",
+      "commandLineArgs": "--migrate-automatically",
       "environmentVariables": {
         "DOTNET_ENVIRONMENT": "Development",
         "LD_LIBRARY_PATH": "."
