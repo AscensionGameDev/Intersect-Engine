@@ -49,6 +49,8 @@ namespace Intersect.Client.Entities
 
         public bool IsCasting => CastTime > Timing.Global.Milliseconds;
 
+        public bool IsTurnAroundWhileCastingDisabled => !Options.Instance.CombatOpts.EnableTurnAroundWhileCasting && IsCasting;
+
         public bool IsDashing => Dashing != null;
 
         //Dashing instance

@@ -1512,6 +1512,11 @@ namespace Intersect.Client.Entities
                 return;
             }
 
+            if (IsTurnAroundWhileCastingDisabled)
+            {
+                return;
+            }
+
             var directionToTarget = DirectionToTarget(en);
 
             if (IsMoving || Dir == MoveDir || Dir == directionToTarget)
@@ -2539,7 +2544,7 @@ namespace Intersect.Client.Entities
             // If players hold the 'TurnAround' Control Key and tap to any direction, they will turn on their own axis.
             for (var direction = 0; direction < Options.Instance.MapOpts.MovementDirections; direction++)
             {
-                if (!Controls.KeyDown(Control.TurnAround) || direction != (int)Globals.Me.MoveDir)
+                if (!Controls.KeyDown(Control.TurnAround) || direction != (int)Globals.Me.MoveDir || IsTurnAroundWhileCastingDisabled)
                 {
                     continue;
                 }
