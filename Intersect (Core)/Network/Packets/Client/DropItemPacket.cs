@@ -1,19 +1,16 @@
 ﻿using MessagePack;
 
-namespace Intersect.Network.Packets.Client
+namespace Intersect.Network.Packets.Client;
+
+[MessagePackObject]
+public class DropItemPacket : SlotQuantityPacket
 {
-    [MessagePackObject]
-    public partial class DropItemPacket : SlotQuantityPacket
+    //Parameterless Constructor for MessagePack
+    public DropItemPacket() : base(0, 0)
     {
-        //Parameterless Constructor for MessagePack
-        public DropItemPacket() : base(0, 0)
-        {
-        }
-
-        public DropItemPacket(int slot, int quantity) : base(slot, quantity)
-        {
-        }
-
     }
 
+    public DropItemPacket(int slot, int quantity) : base(slot, quantity)
+    {
+    }
 }
