@@ -231,6 +231,10 @@ namespace Intersect.Server.Web.RestApi.Routes
             var claims = user.Claims.ToList();
             claims.Add(new Claim(IntersectClaimTypes.ClientId, clientId.ToString()));
             claims.Add(new Claim(IntersectClaimTypes.TicketId, ticketId.ToString()));
+            foreach (var role in user.Power.Roles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, role));
+            }
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Audience = _tokenGenerationOptions.Value.Audience,
