@@ -969,6 +969,7 @@ namespace Intersect.Server.Database.PlayerData
                     .Include(p => p.Ban)
                     .Include(p => p.Mute)
                     .Include(p => p.Players)
+                    .AsSplitQuery()
                     .FirstOrDefault()
             ) ??
             throw new InvalidOperationException();
@@ -980,6 +981,7 @@ namespace Intersect.Server.Database.PlayerData
                     .Include(p => p.Ban)
                     .Include(p => p.Mute)
                     .Include(p => p.Players)
+                    .AsSplitQuery()
                     .FirstOrDefault()
             ) ??
             throw new InvalidOperationException();
@@ -992,6 +994,7 @@ namespace Intersect.Server.Database.PlayerData
                     .Include(p => p.Ban)
                     .Include(p => p.Mute)
                     .Include(p => p.Players)
+                    .AsSplitQuery()
                     .FirstOrDefault()
             ) ??
             throw new InvalidOperationException();
@@ -1001,6 +1004,7 @@ namespace Intersect.Server.Database.PlayerData
                     .Include(p => p.Ban)
                     .Include(p => p.Mute)
                     .Include(p => p.Players)
+                    .AsSplitQuery()
                     .FirstOrDefault()
             ) ??
             throw new InvalidOperationException();
@@ -1023,6 +1027,7 @@ namespace Intersect.Server.Database.PlayerData
                     .Include(p => p.Ban)
                     .Include(p => p.Mute)
                     .Include(p => p.Players)
+                    .AsSplitQuery()
                     .FirstOrDefault()
         ) ??
         throw new InvalidOperationException();
