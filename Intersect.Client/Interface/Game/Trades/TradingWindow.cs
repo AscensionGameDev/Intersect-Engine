@@ -169,12 +169,6 @@ namespace Intersect.Client.Interface.Game.Trades
                             TradeSegment[n].Values[i].IsHidden = true;
                         }
 
-                        if (TradeSegment[n].Items[i].IsDragging)
-                        {
-                            TradeSegment[n].Items[i].Pnl.IsHidden = true;
-                            TradeSegment[n].Values[i].IsHidden = true;
-                        }
-
                         TradeSegment[n].Items[i].Update();
                     }
                     else
