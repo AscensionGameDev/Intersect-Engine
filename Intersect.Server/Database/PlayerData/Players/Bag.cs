@@ -22,7 +22,7 @@ namespace Intersect.Server.Database.PlayerData.Players
         {
             SlotCount = slots;
             ValidateSlots();
-            Save();
+            Save(create: true);
         }
 
         [JsonIgnore, NotMapped]
@@ -116,13 +116,20 @@ namespace Intersect.Server.Database.PlayerData.Players
             }
         }
 
-        public void Save ()
+        public void Save (bool create = false)
         {
             try
             {
                 using (var context = DbInterface.CreatePlayerContext(readOnly: false))
                 {
-                    context.Bags.Update(this);
+                    if (create)
+                    {
+                        context.Bags.Add(this);
+                    }
+                    else
+                    {
+                        context.Bags.Update(this);
+                    }
                     context.ChangeTracker.DetectChanges();
                     context.SaveChanges();
                 }
