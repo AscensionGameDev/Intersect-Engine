@@ -406,6 +406,7 @@ namespace Intersect.Server.Entities
                     .Include(p => p.Variables)
                     .Include(p => p.Items)
                     .Include(p => p.Spells)
+                    .AsSplitQuery()
             ) ??
             throw new InvalidOperationException();
 
@@ -422,6 +423,7 @@ namespace Intersect.Server.Entities
                     .Include(p => p.Variables)
                     .Include(p => p.Items)
                     .Include(p => p.Spells)
+                    .AsSplitQuery()
             ) ??
             throw new InvalidOperationException();
 
@@ -434,6 +436,7 @@ namespace Intersect.Server.Entities
                     .Include(p => p.Variables)
                     .Include(p => p.Items)
                     .Include(p => p.Spells)
+                    .AsSplitQuery()
                     .FirstOrDefault()
             ) ??
             throw new InvalidOperationException();
@@ -448,6 +451,7 @@ namespace Intersect.Server.Entities
                     .Include(p => p.Variables)
                     .Include(p => p.Items)
                     .Include(p => p.Spells)
+                    .AsSplitQuery()
                     .FirstOrDefault()
             ) ??
             throw new InvalidOperationException();
@@ -466,6 +470,7 @@ namespace Intersect.Server.Entities
                     .Include(c => c.Quests)
                     .Include(c => c.Spells)
                     .Include(c => c.Variables)
+                    .AsSplitQuery()
                     .FirstOrDefault()
             ) ??
             throw new InvalidOperationException();
