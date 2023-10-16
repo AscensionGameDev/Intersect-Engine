@@ -63,5 +63,10 @@
         /// If enabled this allows regenerate vitals in combat
         /// </summary>
         public bool RegenVitalsInCombat = false;
+
+        /// <summary>
+        /// If enabled, this allows entities to turn around while casting
+        /// </summary>
+        public bool EnableTurnAroundWhileCasting = false;
     }
 }
