@@ -1,16 +1,13 @@
 using System.Diagnostics;
 using Dapper;
 using Intersect.Config;
-using Intersect.Extensions;
 using Intersect.Logging;
-using Intersect.Reflection;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Remotion.Linq.Clauses;
 using SqlKata.Execution;
 
-namespace Intersect.Server.Database;
+namespace Intersect.Server.Database.DataMigrations;
 
 public sealed class SqliteNetCoreGuidPatch
 {

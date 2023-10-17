@@ -1,7 +1,11 @@
 using System.Data;
 using System.Data.Common;
 using System.Diagnostics;
+using System.Text;
 using Intersect.Config;
+using Intersect.Logging;
+using Intersect.Reflection;
+using Intersect.Server.Core;
 using Intersect.Server.Database.Converters;
 using Intersect.Server.Database.PlayerData;
 using Microsoft.EntityFrameworkCore;
@@ -18,6 +22,9 @@ namespace Intersect.Server.Database;
 public abstract partial class IntersectDbContext<TDbContext> : DbContext, IDbContext, ISeedableContext
     where TDbContext : IntersectDbContext<TDbContext>
 {
+    private IReadOnlyCollection<DataMigrationMetadata>? _dataMigrations;
+    private IReadOnlyCollection<DataMigrationMetadata>? _pendingDataMigrations;
+
     public DatabaseContextOptions ContextOptions { get; }
 
     public DbConnectionStringBuilder ConnectionStringBuilder => ContextOptions.ConnectionStringBuilder;
@@ -26,17 +33,24 @@ public abstract partial class IntersectDbContext<TDbContext> : DbContext, IDbCon
 
     public bool IsReadOnly => ContextOptions.ReadOnly;
 
-    public IReadOnlyCollection<string> AllMigrations =>
-        (Database?.GetMigrations()?.ToList() ?? new())
-        .AsReadOnly();
+    public bool HasPendingMigrations => PendingSchemaMigrations.Any() || PendingDataMigrations.Any();
 
-    public IReadOnlyCollection<string> AppliedMigrations =>
-        (Database?.GetAppliedMigrations()?.ToList() ?? new())
-        .AsReadOnly();
+    public IReadOnlyCollection<DataMigrationMetadata> AllDataMigrations => _dataMigrations ??= FindAllDataMigrations();
 
-    public IReadOnlyCollection<string> PendingMigrations =>
-        (Database?.GetPendingMigrations()?.ToList() ?? new())
-        .AsReadOnly();
+    public IReadOnlyCollection<DataMigrationMetadata> PendingDataMigrations => _pendingDataMigrations =
+        FilterPendingMigrations(
+            _pendingDataMigrations ??= FindPendingDataMigrations(AllDataMigrations),
+            this as TDbContext
+        );
+
+    public IReadOnlyCollection<string> PendingDataMigrationNames =>
+        PendingDataMigrations.Select(dataMigration => dataMigration.Name).ToList().AsReadOnly();
+
+    public IReadOnlyCollection<string> AllSchemaMigrations => Database.GetMigrations().ToList().AsReadOnly();
+
+    public IReadOnlyCollection<string> AppliedSchemaMigrations => Database.GetAppliedMigrations().ToList().AsReadOnly();
+
+    public IReadOnlyCollection<string> PendingSchemaMigrations => Database.GetPendingMigrations().ToList().AsReadOnly();
 
     public DbSet<TType> GetDbSet<TType>() where TType : class
     {
@@ -132,7 +146,7 @@ public abstract partial class IntersectDbContext<TDbContext> : DbContext, IDbCon
     {
         get
         {
-            var connection = (Database?.GetDbConnection()) ?? throw new InvalidOperationException("Cannot get connection to the database.");
+            var connection = Database.GetDbConnection();
             using var command = connection.CreateCommand();
             command.CommandText = DatabaseType switch
             {
@@ -151,24 +165,95 @@ public abstract partial class IntersectDbContext<TDbContext> : DbContext, IDbCon
         }
     }
 
-    public virtual void MigrationsProcessed(string[] migrations) { }
+    public virtual void OnSchemaMigrationsProcessed(string[] migrations) { }
 
     public virtual void Seed() { }
 
     public override int SaveChanges()
     {
         if (IsReadOnly)
+        {
+
             throw new InvalidOperationException("Cannot save changes on a read only context!");
+        }
 
         return base.SaveChanges();
     }
 
+#if DEBUG
+        private int _saveCounter = 0;
+#endif
+
     public override int SaveChanges(bool acceptAllChangesOnSuccess)
     {
         if (IsReadOnly)
+        {
             throw new InvalidOperationException("Cannot save changes on a read only context!");
+        }
 
-        return base.SaveChanges(acceptAllChangesOnSuccess);
+#if DEBUG
+            var currentExecutionId = _saveCounter++;
+#endif
+
+        try
+        {
+#if DEBUG
+            Log.Debug($"DBOP-A SaveChanges({acceptAllChangesOnSuccess}) #{currentExecutionId}");
+#endif
+
+            var rowsChanged = base.SaveChanges(acceptAllChangesOnSuccess);
+
+#if DEBUG
+            Log.Debug($"DBOP-B SaveChanges({{acceptAllChangesOnSuccess}}) #{{currentExecutionId}}");
+#endif
+
+            return rowsChanged;
+        }
+        catch (DbUpdateConcurrencyException ex)
+        {
+            var concurrencyErrors = new StringBuilder();
+            foreach (var entry in ex.Entries)
+            {
+                var type = entry.GetType().FullName;
+                concurrencyErrors.AppendLine($"Entry Type [{type} / {entry.State}]");
+                concurrencyErrors.AppendLine("--------------------");
+                concurrencyErrors.AppendLine($"Type: {entry.Entity.GetFullishName()}");
+
+                var proposedValues = entry.CurrentValues;
+                var databaseValues = entry.GetDatabaseValues();
+
+                foreach (var property in proposedValues.Properties)
+                {
+                    concurrencyErrors.AppendLine(
+                        $"\t{property.Name:propertyNameColumnSize} (Token: {property.IsConcurrencyToken}): Proposed: {proposedValues[property]}  Original Value: {entry.OriginalValues[property]}  Database Value: {(databaseValues != null ? databaseValues[property] : "null")}"
+                    );
+                }
+
+                concurrencyErrors.AppendLine("");
+                concurrencyErrors.AppendLine("");
+            }
+
+            var suffix = string.Empty;
+#if DEBUG
+            suffix = $"#{currentExecutionId}";
+#endif
+            var entityTypeNames = ChangeTracker.Entries()
+                .Select(entry => entry.Entity.GetType().Name)
+                .Distinct()
+                .ToArray();
+            Log.Error(ex, $"Jackpot! Concurrency Bug For {string.Join(", ", entityTypeNames)} {suffix}");
+            Log.Error(concurrencyErrors.ToString());
+
+#if DEBUG
+            Log.Debug($"DBOP-C SaveChanges({{acceptAllChangesOnSuccess}}) #{{currentExecutionId}}");
+#endif
+
+            ServerContext.DispatchUnhandledException(
+                new Exception($"Failed to save {this.GetFullishName()}, shutting down to prevent rollbacks!")
+            );
+
+            return -1;
+        }
     }
 
     public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess,

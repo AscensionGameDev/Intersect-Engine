@@ -16,6 +16,7 @@ namespace Intersect.Server.Database.PlayerData.Players
         [NotMapped]
         public string VariableName => UserVariableBase.GetName(VariableId);
 
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         [JsonIgnore]
         public Guid UserId { get; protected set; }
 

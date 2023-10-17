@@ -15,7 +15,15 @@ public class DataMigrationMetadata : MigrationMetadata
     internal IReadOnlyCollection<SchemaMigrationAttribute> SchemaMigrationAttributes { get; init; }
 
     public override bool CanBeAppliedTo<TContext>(TContext dbContext) =>
-        base.CanBeAppliedTo(dbContext)
-        && SchemaMigrations.Any(dbContext.PendingMigrations.ToList().Contains)
-        && SchemaMigrations.All(dbContext.AllMigrations.ToList().Contains);
+        base.CanBeAppliedTo(dbContext) &&
+        SchemaMigrations.All(dbContext.AllSchemaMigrations.ToList().Contains) &&
+        (SchemaMigrations.Any(dbContext.PendingSchemaMigrations.ToList().Contains) ||
+         SchemaMigrationAttributes.Any(
+             migration => migration.ApplyIfLast &&
+                          string.Equals(
+                              migration.SchemaMigrationName,
+                              dbContext.AppliedSchemaMigrations.LastOrDefault(),
+                              StringComparison.Ordinal
+                          )
+         ));
 }

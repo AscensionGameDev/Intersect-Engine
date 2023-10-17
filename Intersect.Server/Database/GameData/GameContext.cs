@@ -95,7 +95,7 @@ namespace Intersect.Server.Database.GameData
         //Time
         public DbSet<TimeBase> Time { get; set; }
 
-        public override void MigrationsProcessed(string[] migrations)
+        public override void OnSchemaMigrationsProcessed(string[] migrations)
         {
             if (migrations.IndexOf("20190611170819_CombiningSwitchesVariables") > -1)
             {
