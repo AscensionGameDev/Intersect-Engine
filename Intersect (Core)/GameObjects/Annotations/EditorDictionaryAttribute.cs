@@ -5,6 +5,8 @@ using System.Linq;
 using System.Reflection;
 
 using Intersect.Localization;
+using Intersect.Reflection;
+using MessagePack.Resolvers;
 
 #if !DEBUG
 using Intersect.Logging;
@@ -76,7 +78,7 @@ namespace Intersect.GameObjects.Annotations
 
                 case Dictionary<string, LocalizedString> stringKeyDictionary:
                     {
-                        if (!(value is string key))
+                        if (value is not string key)
                         {
                             throw new ArgumentException($"Expected an int but received a {value?.GetType()?.FullName}", nameof(value));
                         }
@@ -90,8 +92,67 @@ namespace Intersect.GameObjects.Annotations
                     }
 
                 default:
+                    if (typeof(LocaleDictionary<,>).ExtendedBy(fieldValue?.GetType()) && value is Enum enumKey)
+                    {
+                        return FormatLocaleDictionary(fieldValue, enumKey);
+                    }
+
                     throw new InvalidOperationException($"Unsupported type: {fieldInfo.FieldType.FullName}");
             }
+        }
+
+        private delegate string? GetStringFromLocaleDictionaryGeneric(object? dictionaryObject, Enum genericKey);
+        private static readonly Dictionary<Type, GetStringFromLocaleDictionaryGeneric> _cachedFormatters = new();
+        private static readonly MethodInfo _methodInfoCreateWeaklyTypedDelegate = typeof(EditorDictionaryAttribute).GetMethod(nameof(CreateWeaklyTypedDelegate), BindingFlags.NonPublic | BindingFlags.Static);
+
+        private static GetStringFromLocaleDictionaryGeneric CreateWeaklyTypedDelegate<TKey>()
+        {
+            return (dictionaryObject, genericKey) =>
+            {
+                if (dictionaryObject is not LocaleDictionary<TKey, LocalizedString> dictionary)
+                {
+                    throw new ArgumentException($"Dictionary was a {dictionaryObject?.GetType().Name} but expected {typeof(LocaleDictionary<TKey, LocalizedString>).Name}", nameof(dictionaryObject));
+                }
+
+                if (genericKey is not TKey key)
+                {
+                    throw new ArgumentException($"Key was a {genericKey.GetFullishName()} but expected {typeof(TKey).Name}.");
+                }
+
+                return Format<TKey>(dictionary, key);
+            };
+        }
+
+        private static string? FormatLocaleDictionary(object? dictionaryObject, Enum key)
+        {
+            if (dictionaryObject == null)
+            {
+                return default;
+            }
+
+            var dictionaryType = dictionaryObject.GetType();
+            if (!_cachedFormatters.TryGetValue(dictionaryType, out var formatter))
+            {
+                var createdDelegate = _methodInfoCreateWeaklyTypedDelegate.MakeGenericMethod(key.GetType()).Invoke(null, Array.Empty<object>());
+                if (createdDelegate is not GetStringFromLocaleDictionaryGeneric genericFormatter)
+                {
+                    throw new InvalidOperationException();
+                }
+
+                formatter = genericFormatter;
+            }
+
+            return formatter(dictionaryObject, key);
+        }
+
+        private static string? Format<TKey>(LocaleDictionary<TKey, LocalizedString> dictionary, TKey key)
+        {
+            if (!dictionary.TryGetValue(key, out var localizedString))
+            {
+                throw new ArgumentOutOfRangeException($"Key missing: '{key}'");
+            }
+
+            return localizedString;
         }
     }
 }
