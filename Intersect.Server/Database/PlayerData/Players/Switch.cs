@@ -22,8 +22,8 @@ namespace Intersect.Server.Database.PlayerData.Players
             SwitchId = id;
         }
 
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public Guid Id { get; private set; } = Guid.NewGuid();
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity), JsonIgnore]
+        public Guid Id { get; private set; }
 
         public Guid SwitchId { get; private set; }
 

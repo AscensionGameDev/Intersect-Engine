@@ -24,9 +24,8 @@ namespace Intersect.Server.Database.PlayerData.Players
             Slot = slot;
         }
 
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        [JsonIgnore]
-        public Guid Id { get; private set; } = Guid.NewGuid();
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity), JsonIgnore]
+        public Guid Id { get; private set; }
 
         public Guid ItemOrSpellId { get; set; } = Guid.Empty;
 

@@ -22,9 +22,8 @@ namespace Intersect.Server.Database.PlayerData.Players
             QuestId = id;
         }
 
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        [JsonIgnore]
-        public Guid Id { get; private set; } = Guid.NewGuid();
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity), JsonIgnore]
+        public Guid Id { get; private set; }
 
         [JsonIgnore]
         public Guid QuestId { get; private set; }
