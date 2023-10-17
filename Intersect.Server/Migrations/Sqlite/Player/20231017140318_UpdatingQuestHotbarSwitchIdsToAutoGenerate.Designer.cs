@@ -3,54 +3,51 @@ using System;
 using Intersect.Server.Database.PlayerData;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Intersect.Server.Migrations.MySql.Player
+namespace Intersect.Server.Migrations.Sqlite.Player
 {
-    [DbContext(typeof(MySqlPlayerContext))]
-    partial class MySqlPlayerContextModelSnapshot : ModelSnapshot
+    [DbContext(typeof(SqlitePlayerContext))]
+    [Migration("20231017140318_UpdatingQuestHotbarSwitchIdsToAutoGenerate")]
+    partial class UpdatingQuestHotbarSwitchIdsToAutoGenerate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.11")
-                .HasAnnotation("Relational:MaxIdentifierLength", 64);
+            modelBuilder.HasAnnotation("ProductVersion", "7.0.11");
 
             modelBuilder.Entity("Intersect.Server.Database.PlayerData.Api.RefreshToken", b =>
                 {
                     b.Property<Guid>("Id")
-                        .HasColumnType("char(36)")
-                        .HasColumnOrder(0)
-                        .UseCollation("ascii_general_ci");
+                        .HasColumnType("TEXT")
+                        .HasColumnOrder(0);
 
                     b.Property<Guid>("ClientId")
-                        .HasColumnType("char(36)")
-                        .UseCollation("ascii_general_ci");
+                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("Expires")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("Issued")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Subject")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Ticket")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("TEXT");
 
                     b.Property<Guid>("TicketId")
-                        .HasColumnType("char(36)")
-                        .UseCollation("ascii_general_ci");
+                        .HasColumnType("TEXT");
 
                     b.Property<Guid>("UserId")
-                        .HasColumnType("char(36)")
-                        .UseCollation("ascii_general_ci");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
@@ -62,28 +59,26 @@ namespace Intersect.Server.Migrations.MySql.Player
             modelBuilder.Entity("Intersect.Server.Database.PlayerData.Ban", b =>
                 {
                     b.Property<Guid>("Id")
-                        .HasColumnType("char(36)")
-                        .UseCollation("ascii_general_ci");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Banner")
-                        .HasColumnType("longtext");
+                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("EndTime")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Ip")
-                        .HasColumnType("longtext");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Reason")
-                        .HasColumnType("longtext");
+                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("StartTime")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("TEXT");
 
                     b.Property<Guid>("UserId")
-                        .HasColumnType("char(36)")
-                        .HasColumnName("PlayerId")
-                        .UseCollation("ascii_general_ci");
+                        .HasColumnType("TEXT")
+                        .HasColumnName("PlayerId");
 
                     b.HasKey("Id");
 
@@ -96,28 +91,26 @@ namespace Intersect.Server.Migrations.MySql.Player
             modelBuilder.Entity("Intersect.Server.Database.PlayerData.Mute", b =>
                 {
                     b.Property<Guid>("Id")
-                        .HasColumnType("char(36)")
-                        .UseCollation("ascii_general_ci");
+                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("EndTime")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Ip")
-                        .HasColumnType("longtext");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Muter")
-                        .HasColumnType("longtext");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Reason")
-                        .HasColumnType("longtext");
+                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("StartTime")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("TEXT");
 
                     b.Property<Guid>("UserId")
-                        .HasColumnType("char(36)")
-                        .HasColumnName("PlayerId")
-                        .UseCollation("ascii_general_ci");
+                        .HasColumnType("TEXT")
+                        .HasColumnName("PlayerId");
 
                     b.HasKey("Id");
 
@@ -130,11 +123,10 @@ namespace Intersect.Server.Migrations.MySql.Player
             modelBuilder.Entity("Intersect.Server.Database.PlayerData.Players.Bag", b =>
                 {
                     b.Property<Guid>("Id")
-                        .HasColumnType("char(36)")
-                        .UseCollation("ascii_general_ci");
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("SlotCount")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
@@ -145,30 +137,26 @@ namespace Intersect.Server.Migrations.MySql.Player
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)")
-                        .UseCollation("ascii_general_ci");
+                        .HasColumnType("TEXT");
 
                     b.Property<Guid?>("BagId")
-                        .HasColumnType("char(36)")
-                        .UseCollation("ascii_general_ci");
+                        .HasColumnType("TEXT");
 
                     b.Property<Guid>("ItemId")
-                        .HasColumnType("char(36)")
-                        .UseCollation("ascii_general_ci");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("ItemPropertiesJson")
-                        .HasColumnType("longtext")
+                        .HasColumnType("TEXT")
                         .HasColumnName("ItemProperties");
 
                     b.Property<Guid>("ParentBagId")
-                        .HasColumnType("char(36)")
-                        .UseCollation("ascii_general_ci");
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("Quantity")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("Slot")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
@@ -183,30 +171,26 @@ namespace Intersect.Server.Migrations.MySql.Player
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)")
-                        .UseCollation("ascii_general_ci");
+                        .HasColumnType("TEXT");
 
                     b.Property<Guid?>("BagId")
-                        .HasColumnType("char(36)")
-                        .UseCollation("ascii_general_ci");
+                        .HasColumnType("TEXT");
 
                     b.Property<Guid>("ItemId")
-                        .HasColumnType("char(36)")
-                        .UseCollation("ascii_general_ci");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("ItemPropertiesJson")
-                        .HasColumnType("longtext")
+                        .HasColumnType("TEXT")
                         .HasColumnName("ItemProperties");
 
                     b.Property<Guid>("PlayerId")
-                        .HasColumnType("char(36)")
-                        .UseCollation("ascii_general_ci");
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("Quantity")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("Slot")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
@@ -220,16 +204,13 @@ namespace Intersect.Server.Migrations.MySql.Player
             modelBuilder.Entity("Intersect.Server.Database.PlayerData.Players.Friend", b =>
                 {
                     b.Property<Guid>("Id")
-                        .HasColumnType("char(36)")
-                        .UseCollation("ascii_general_ci");
+                        .HasColumnType("TEXT");
 
                     b.Property<Guid?>("OwnerId")
-                        .HasColumnType("char(36)")
-                        .UseCollation("ascii_general_ci");
+                        .HasColumnType("TEXT");
 
                     b.Property<Guid?>("TargetId")
-                        .HasColumnType("char(36)")
-                        .UseCollation("ascii_general_ci");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
@@ -243,21 +224,19 @@ namespace Intersect.Server.Migrations.MySql.Player
             modelBuilder.Entity("Intersect.Server.Database.PlayerData.Players.Guild", b =>
                 {
                     b.Property<Guid>("Id")
-                        .HasColumnType("char(36)")
-                        .UseCollation("ascii_general_ci");
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("BankSlotsCount")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("FoundingDate")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("TEXT");
 
                     b.Property<Guid>("GuildInstanceId")
-                        .HasColumnType("char(36)")
-                        .UseCollation("ascii_general_ci");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
-                        .HasColumnType("longtext");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
@@ -268,30 +247,26 @@ namespace Intersect.Server.Migrations.MySql.Player
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)")
-                        .UseCollation("ascii_general_ci");
+                        .HasColumnType("TEXT");
 
                     b.Property<Guid?>("BagId")
-                        .HasColumnType("char(36)")
-                        .UseCollation("ascii_general_ci");
+                        .HasColumnType("TEXT");
 
                     b.Property<Guid>("GuildId")
-                        .HasColumnType("char(36)")
-                        .UseCollation("ascii_general_ci");
+                        .HasColumnType("TEXT");
 
                     b.Property<Guid>("ItemId")
-                        .HasColumnType("char(36)")
-                        .UseCollation("ascii_general_ci");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("ItemPropertiesJson")
-                        .HasColumnType("longtext")
+                        .HasColumnType("TEXT")
                         .HasColumnName("ItemProperties");
 
                     b.Property<int>("Quantity")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("Slot")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
@@ -306,20 +281,17 @@ namespace Intersect.Server.Migrations.MySql.Player
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)")
-                        .UseCollation("ascii_general_ci");
+                        .HasColumnType("TEXT");
 
                     b.Property<Guid>("GuildId")
-                        .HasColumnType("char(36)")
-                        .UseCollation("ascii_general_ci");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Json")
-                        .HasColumnType("longtext")
+                        .HasColumnType("TEXT")
                         .HasColumnName("Value");
 
                     b.Property<Guid>("VariableId")
-                        .HasColumnType("char(36)")
-                        .UseCollation("ascii_general_ci");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
@@ -335,26 +307,22 @@ namespace Intersect.Server.Migrations.MySql.Player
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)")
-                        .UseCollation("ascii_general_ci");
+                        .HasColumnType("TEXT");
 
                     b.Property<Guid>("BagId")
-                        .HasColumnType("char(36)")
-                        .UseCollation("ascii_general_ci");
+                        .HasColumnType("TEXT");
 
                     b.Property<Guid>("ItemOrSpellId")
-                        .HasColumnType("char(36)")
-                        .UseCollation("ascii_general_ci");
+                        .HasColumnType("TEXT");
 
                     b.Property<Guid>("PlayerId")
-                        .HasColumnType("char(36)")
-                        .UseCollation("ascii_general_ci");
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("Slot")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("StatBuffsJson")
-                        .HasColumnType("longtext")
+                        .HasColumnType("TEXT")
                         .HasColumnName("PreferredStatBuffs");
 
                     b.HasKey("Id");
@@ -368,30 +336,26 @@ namespace Intersect.Server.Migrations.MySql.Player
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)")
-                        .UseCollation("ascii_general_ci");
+                        .HasColumnType("TEXT");
 
                     b.Property<Guid?>("BagId")
-                        .HasColumnType("char(36)")
-                        .UseCollation("ascii_general_ci");
+                        .HasColumnType("TEXT");
 
                     b.Property<Guid>("ItemId")
-                        .HasColumnType("char(36)")
-                        .UseCollation("ascii_general_ci");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("ItemPropertiesJson")
-                        .HasColumnType("longtext")
+                        .HasColumnType("TEXT")
                         .HasColumnName("ItemProperties");
 
                     b.Property<Guid>("PlayerId")
-                        .HasColumnType("char(36)")
-                        .UseCollation("ascii_general_ci");
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("Quantity")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("Slot")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
@@ -406,20 +370,17 @@ namespace Intersect.Server.Migrations.MySql.Player
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)")
-                        .UseCollation("ascii_general_ci");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Json")
-                        .HasColumnType("longtext")
+                        .HasColumnType("TEXT")
                         .HasColumnName("Value");
 
                     b.Property<Guid>("PlayerId")
-                        .HasColumnType("char(36)")
-                        .UseCollation("ascii_general_ci");
+                        .HasColumnType("TEXT");
 
                     b.Property<Guid>("VariableId")
-                        .HasColumnType("char(36)")
-                        .UseCollation("ascii_general_ci");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
@@ -435,26 +396,22 @@ namespace Intersect.Server.Migrations.MySql.Player
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)")
-                        .UseCollation("ascii_general_ci");
+                        .HasColumnType("TEXT");
 
                     b.Property<bool>("Completed")
-                        .HasColumnType("tinyint(1)");
+                        .HasColumnType("INTEGER");
 
                     b.Property<Guid>("PlayerId")
-                        .HasColumnType("char(36)")
-                        .UseCollation("ascii_general_ci");
+                        .HasColumnType("TEXT");
 
                     b.Property<Guid>("QuestId")
-                        .HasColumnType("char(36)")
-                        .UseCollation("ascii_general_ci");
+                        .HasColumnType("TEXT");
 
                     b.Property<Guid>("TaskId")
-                        .HasColumnType("char(36)")
-                        .UseCollation("ascii_general_ci");
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("TaskProgress")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
@@ -470,19 +427,16 @@ namespace Intersect.Server.Migrations.MySql.Player
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)")
-                        .UseCollation("ascii_general_ci");
+                        .HasColumnType("TEXT");
 
                     b.Property<Guid>("PlayerId")
-                        .HasColumnType("char(36)")
-                        .UseCollation("ascii_general_ci");
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("Slot")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<Guid>("SpellId")
-                        .HasColumnType("char(36)")
-                        .UseCollation("ascii_general_ci");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
@@ -494,15 +448,13 @@ namespace Intersect.Server.Migrations.MySql.Player
             modelBuilder.Entity("Intersect.Server.Database.PlayerData.Players.UserVariable", b =>
                 {
                     b.Property<Guid>("VariableId")
-                        .HasColumnType("char(36)")
-                        .UseCollation("ascii_general_ci");
+                        .HasColumnType("TEXT");
 
                     b.Property<Guid>("UserId")
-                        .HasColumnType("char(36)")
-                        .UseCollation("ascii_general_ci");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Json")
-                        .HasColumnType("longtext")
+                        .HasColumnType("TEXT")
                         .HasColumnName("Value");
 
                     b.HasKey("VariableId", "UserId");
@@ -515,42 +467,41 @@ namespace Intersect.Server.Migrations.MySql.Player
             modelBuilder.Entity("Intersect.Server.Database.PlayerData.User", b =>
                 {
                     b.Property<Guid>("Id")
-                        .HasColumnType("char(36)")
-                        .HasColumnOrder(0)
-                        .UseCollation("ascii_general_ci");
+                        .HasColumnType("TEXT")
+                        .HasColumnOrder(0);
 
                     b.Property<string>("Email")
-                        .HasColumnType("longtext")
+                        .HasColumnType("TEXT")
                         .HasColumnOrder(2);
 
                     b.Property<string>("LastIp")
-                        .HasColumnType("longtext");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
-                        .HasColumnType("longtext")
+                        .HasColumnType("TEXT")
                         .HasColumnOrder(1);
 
                     b.Property<string>("Password")
-                        .HasColumnType("longtext");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("PasswordResetCode")
-                        .HasColumnType("longtext");
+                        .HasColumnType("TEXT");
 
                     b.Property<DateTime?>("PasswordResetTime")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("TEXT");
 
                     b.Property<ulong>("PlayTimeSeconds")
-                        .HasColumnType("bigint unsigned");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("PowerJson")
-                        .HasColumnType("longtext")
+                        .HasColumnType("TEXT")
                         .HasColumnName("Power");
 
                     b.Property<DateTime?>("RegistrationDate")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Salt")
-                        .HasColumnType("longtext");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
@@ -560,150 +511,141 @@ namespace Intersect.Server.Migrations.MySql.Player
             modelBuilder.Entity("Intersect.Server.Entities.Player", b =>
                 {
                     b.Property<Guid>("Id")
-                        .HasColumnType("char(36)")
-                        .HasColumnOrder(0)
-                        .UseCollation("ascii_general_ci");
+                        .HasColumnType("TEXT")
+                        .HasColumnOrder(0);
 
                     b.Property<Guid>("ClassId")
-                        .HasColumnType("char(36)")
-                        .UseCollation("ascii_general_ci");
+                        .HasColumnType("TEXT");
 
                     b.Property<DateTime?>("CreationDate")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("TEXT");
 
                     b.Property<Guid?>("DbGuildId")
-                        .HasColumnType("char(36)")
-                        .UseCollation("ascii_general_ci");
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("Dir")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("EquipmentJson")
-                        .HasColumnType("longtext")
+                        .HasColumnType("TEXT")
                         .HasColumnName("Equipment");
 
                     b.Property<long>("Exp")
-                        .HasColumnType("bigint");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Face")
-                        .HasColumnType("longtext");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("FooterLabelJson")
-                        .HasColumnType("longtext")
+                        .HasColumnType("TEXT")
                         .HasColumnName("FooterLabel");
 
                     b.Property<int>("Gender")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("GuildJoinDate")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("GuildRank")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("HeaderLabelJson")
-                        .HasColumnType("longtext")
+                        .HasColumnType("TEXT")
                         .HasColumnName("HeaderLabel");
 
                     b.Property<int>("InstanceType")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("ItemCooldownsJson")
-                        .HasColumnType("longtext")
+                        .HasColumnType("TEXT")
                         .HasColumnName("ItemCooldowns");
 
                     b.Property<string>("JsonColor")
-                        .HasColumnType("longtext")
+                        .HasColumnType("TEXT")
                         .HasColumnName("Color");
 
                     b.Property<DateTime?>("LastOnline")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("TEXT");
 
                     b.Property<Guid>("LastOverworldMapId")
-                        .HasColumnType("char(36)")
-                        .HasColumnName("LastOverworldMapId")
-                        .UseCollation("ascii_general_ci");
+                        .HasColumnType("TEXT")
+                        .HasColumnName("LastOverworldMapId");
 
                     b.Property<int>("LastOverworldX")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("LastOverworldY")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("Level")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<Guid>("MapId")
-                        .HasColumnType("char(36)")
-                        .UseCollation("ascii_general_ci");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
-                        .HasColumnType("longtext")
+                        .HasColumnType("TEXT")
                         .HasColumnOrder(1);
 
                     b.Property<string>("NameColorJson")
-                        .HasColumnType("longtext")
+                        .HasColumnType("TEXT")
                         .HasColumnName("NameColor");
 
                     b.Property<Guid>("PersonalMapInstanceId")
-                        .HasColumnType("char(36)")
-                        .UseCollation("ascii_general_ci");
+                        .HasColumnType("TEXT");
 
                     b.Property<ulong>("PlayTimeSeconds")
-                        .HasColumnType("bigint unsigned");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("SharedInstanceRespawnDir")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<Guid>("SharedInstanceRespawnId")
-                        .HasColumnType("char(36)")
-                        .HasColumnName("SharedInstanceRespawnId")
-                        .UseCollation("ascii_general_ci");
+                        .HasColumnType("TEXT")
+                        .HasColumnName("SharedInstanceRespawnId");
 
                     b.Property<int>("SharedInstanceRespawnX")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("SharedInstanceRespawnY")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<Guid>("SharedMapInstanceId")
-                        .HasColumnType("char(36)")
-                        .UseCollation("ascii_general_ci");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("SpellCooldownsJson")
-                        .HasColumnType("longtext")
+                        .HasColumnType("TEXT")
                         .HasColumnName("SpellCooldowns");
 
                     b.Property<string>("Sprite")
-                        .HasColumnType("longtext");
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("StatPoints")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("StatPointsJson")
-                        .HasColumnType("longtext")
+                        .HasColumnType("TEXT")
                         .HasColumnName("StatPointAllocations");
 
                     b.Property<string>("StatsJson")
-                        .HasColumnType("longtext")
+                        .HasColumnType("TEXT")
                         .HasColumnName("BaseStats");
 
                     b.Property<Guid>("UserId")
-                        .HasColumnType("char(36)")
-                        .UseCollation("ascii_general_ci");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("VitalsJson")
-                        .HasColumnType("longtext")
+                        .HasColumnType("TEXT")
                         .HasColumnName("Vitals");
 
                     b.Property<int>("X")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("Y")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("Z")
-                        .HasColumnType("int");
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 

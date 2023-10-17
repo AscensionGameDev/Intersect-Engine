@@ -303,6 +303,7 @@ namespace Intersect.Server.Migrations.Sqlite.Player
             modelBuilder.Entity("Intersect.Server.Database.PlayerData.Players.HotbarSlot", b =>
                 {
                     b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
                     b.Property<Guid>("BagId")
@@ -391,6 +392,7 @@ namespace Intersect.Server.Migrations.Sqlite.Player
             modelBuilder.Entity("Intersect.Server.Database.PlayerData.Players.Quest", b =>
                 {
                     b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
                     b.Property<bool>("Completed")
