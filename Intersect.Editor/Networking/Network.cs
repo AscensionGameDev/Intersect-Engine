@@ -139,12 +139,10 @@ namespace Intersect.Editor.Networking
         /// Interval between status pings in ms (e.g. full, bad version, etc.)
         /// </summary>
 #if DEBUG
-        private const long ServerStatusPingInterval = 1_000;
+        private const long ServerStatusPingInterval = 15_000;
 #else
         private const long ServerStatusPingInterval = 15_000;
 #endif
-
-        private static long _nextServerStatusPing;
 
         private static string? _lastHost;
         private static int? _lastPort;
@@ -197,7 +195,7 @@ namespace Intersect.Editor.Networking
             {
                 var now = Timing.Global.MillisecondsUtc;
                 // ReSharper disable once InvertIf
-                if (_nextServerStatusPing <= now)
+                if (Globals.NextServerStatusPing <= now)
                 {
                     if (TryResolveEndPoint(out var serverEndpoint))
                     {
@@ -209,6 +207,7 @@ namespace Intersect.Editor.Networking
                         else
                         {
                             network.SendUnconnected(serverEndpoint, new ServerStatusRequestPacket());
+                            Globals.NextServerStatusPing = now + ServerStatusPingInterval;
                         }
                     }
                     else
@@ -220,9 +219,6 @@ namespace Intersect.Editor.Networking
                     {
                         Globals.LoginForm.SetNetworkStatus(NetworkStatus.Offline);
                     }
-
-                    _nextServerStatusPing = now + ServerStatusPingInterval;
-                    Globals.NextServerStatusPing = _nextServerStatusPing;
                 }
             }
 
