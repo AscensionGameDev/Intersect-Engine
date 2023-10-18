@@ -1795,16 +1795,6 @@ namespace Intersect.Server.Networking
             player.HotbarSwap(packet.Slot1, packet.Slot2);
         }
 
-        //OpenAdminWindowPacket
-        public void HandlePacket(Client client, OpenAdminWindowPacket packet)
-        {
-            if (client.Power.IsModerator)
-            {
-                PacketSender.SendMapList(client);
-                PacketSender.SendOpenAdminWindow(client);
-            }
-        }
-
         //BuyItemPacket
         public void HandlePacket(Client client, BuyItemPacket packet)
         {

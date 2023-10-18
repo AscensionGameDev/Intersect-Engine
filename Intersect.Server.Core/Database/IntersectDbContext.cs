@@ -6,8 +6,6 @@ using Intersect.Config;
 using Intersect.Logging;
 using Intersect.Reflection;
 using Intersect.Server.Core;
-using Intersect.Server.Database.Converters;
-using Intersect.Server.Database.PlayerData;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Infrastructure;

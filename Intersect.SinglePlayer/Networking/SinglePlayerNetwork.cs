@@ -2,6 +2,7 @@ using System.Net;
 using Intersect.Core;
 using Intersect.Logging;
 using Intersect.Network;
+using Intersect.Network.Packets.Client;
 using Intersect.Network.Packets.Unconnected.Client;
 using Intersect.Network.Packets.Unconnected.Server;
 using Intersect.Plugins.Interfaces;
@@ -98,6 +99,11 @@ internal sealed class SinglePlayerNetwork : INetwork
         if (Helper.HandlerRegistry.TryGetHandler(packet.GetType(), out var packetHandler))
         {
             return packetHandler.Invoke(_sender, packet);
+        }
+
+        if (packet is AdminActionPacket or OpenAdminWindowPacket)
+        {
+            return false;
         }
 
         throw new NotImplementedException();
