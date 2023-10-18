@@ -110,12 +110,12 @@ namespace Intersect.Server.Database.PlayerData
             modelBuilder.Entity<Player>().HasMany(b => b.Items).WithOne(p => p.Player);
 
             modelBuilder.Entity<Player>().HasMany(b => b.Variables).WithOne(p => p.Player);
-            modelBuilder.Entity<PlayerVariable>().HasIndex(p => new {p.VariableId, CharacterId = p.PlayerId}).IsUnique();
+            modelBuilder.Entity<PlayerVariable>().HasIndex(p => new {p.VariableId, p.PlayerId}).IsUnique();
 
             modelBuilder.Entity<Player>().HasMany(b => b.Hotbar).WithOne(p => p.Player);
 
             modelBuilder.Entity<Player>().HasMany(b => b.Quests).WithOne(p => p.Player);
-            modelBuilder.Entity<Quest>().HasIndex(p => new {p.QuestId, CharacterId = p.PlayerId}).IsUnique();
+            modelBuilder.Entity<Quest>().HasIndex(p => new {p.QuestId, p.PlayerId}).IsUnique();
 
             modelBuilder.Entity<Player>().HasMany(b => b.Bank).WithOne(p => p.Player);
 

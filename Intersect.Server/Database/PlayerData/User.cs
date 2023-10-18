@@ -351,11 +351,13 @@ namespace Intersect.Server.Database.PlayerData
                     playerContext = createdContext;
                 }
 
-                var entityEntry = playerContext.Users.Update(this);
-
                 if (create)
                 {
-                    entityEntry.State = EntityState.Added;
+                    playerContext.Users.Add(this);
+                }
+                else
+                {
+                    playerContext.Users.Update(this);
                 }
 
                 playerContext.ChangeTracker.DetectChanges();

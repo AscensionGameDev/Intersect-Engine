@@ -1,8 +1,13 @@
-﻿using System.Reflection;
+﻿using System.Collections.ObjectModel;
+using System.Reflection;
+using Intersect.Collections;
+using Intersect.Extensions;
 using Intersect.Logging;
 using Intersect.Reflection;
+using Intersect.Server.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Intersect.Server.Localization;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace Intersect.Server.Database;
 
@@ -22,7 +27,7 @@ public class DatabaseTypeMigrationService
         {
             if (context.IsEmpty)
             {
-                _ = await context.Database.EnsureDeletedAsync();
+                // _ = await context.Database.EnsureDeletedAsync();
                 await context.Database.MigrateAsync();
                 return false;
             }
@@ -37,6 +42,82 @@ public class DatabaseTypeMigrationService
         return true;
     }
 
+    private class ModelGraphNode : Dictionary<Type, ModelGraphNode>
+    {
+        public ModelGraphNode(IEntityType entityType)
+        {
+            EntityType = entityType;
+        }
+
+        public IEntityType EntityType { get; }
+
+        public bool IsRoot => !EntityType.GetForeignKeys().Any();
+
+        public Type Type => EntityType.ClrType;
+
+        public bool Includes(ModelGraphNode otherNode) =>
+            otherNode.Type == Type || Values.Any(childNode => childNode.Includes(otherNode));
+    }
+
+    private static ModelGraphNode[] GetModelGraph<TContext>(DatabaseContextOptions databaseContextOptions)
+        where TContext : IntersectDbContext<TContext>
+    {
+        using var context = IntersectDbContext<TContext>.Create(databaseContextOptions);
+        var model = context.Model;
+        var entityTypes = model.GetEntityTypes().ToArray();
+        Dictionary<Type, ModelGraphNode> modelGraphNodes = new(entityTypes.Length);
+
+        foreach (var entityType in entityTypes)
+        {
+            if (!modelGraphNodes.TryGetValue(entityType.ClrType, out var entityNode))
+            {
+                entityNode = new ModelGraphNode(entityType);
+                modelGraphNodes.Add(entityType.ClrType, entityNode);
+            }
+
+            var foreignKeys = entityType.GetForeignKeys();
+            foreach (var foreignKey in foreignKeys)
+            {
+                var foreignKeyType = foreignKey.PrincipalEntityType;
+                if (!modelGraphNodes.TryGetValue(foreignKeyType.ClrType, out var foreignKeyNode))
+                {
+                    foreignKeyNode = new ModelGraphNode(foreignKeyType);
+                    modelGraphNodes.Add(foreignKeyType.ClrType, foreignKeyNode);
+                }
+
+                foreignKeyNode[entityType.ClrType] = entityNode;
+            }
+        }
+
+        List<ModelGraphNode> modelGraphRoots = new();
+
+        var missingNodes = modelGraphNodes.Values.OrderBy(node => node.IsRoot ? 0 : 1).ToList();
+
+        while (missingNodes.Count > 0)
+        {
+            var currentNode = missingNodes[0];
+            if (!modelGraphRoots.Any(root => root.Includes(currentNode)))
+            {
+                modelGraphRoots.Add(currentNode);
+            }
+            missingNodes.RemoveAt(0);
+        }
+
+        return modelGraphRoots.ToArray();
+    }
+
+    private static Type[] Flatten(ModelGraphNode[] nodes)
+    {
+        List<ModelGraphNode> added = new(nodes);
+        for (var index = 0; index < added.Count; ++index)
+        {
+            added.AddRange(added[index].Values);
+        }
+
+        added = added.Distinct().ToList();
+        return added.Select(node => node.Type).ToArray();
+    }
+
     public async Task<bool> TryMigrate<TContext>(DatabaseContextOptions fromOptions, DatabaseContextOptions toOptions)
         where TContext : IntersectDbContext<TContext>
     {
@@ -47,10 +128,23 @@ public class DatabaseTypeMigrationService
                 return false;
             }
 
-            var dbSetInfos = typeof(TContext).GetProperties()
-                .Where(propertyInfo => propertyInfo.PropertyType.Extends(typeof(DbSet<>)));
+            var modelGraphRoots = GetModelGraph<TContext>(fromOptions);
+            var modelGraphSortedTypes = Flatten(modelGraphRoots);
 
-            foreach (var dbSetInfo in dbSetInfos)
+            var dbSetInfos = typeof(TContext).GetProperties()
+                .Where(propertyInfo => propertyInfo.PropertyType.Extends(typeof(DbSet<>)))
+                .ToArray();
+
+            var sortedDbSetInfos = dbSetInfos.OrderBy(
+                    propertyInfo =>
+                    {
+                        var type = propertyInfo.PropertyType.GenericTypeArguments[0];
+                        return modelGraphSortedTypes.IndexOf(type);
+                    }
+                )
+                .ToArray();
+
+            foreach (var dbSetInfo in sortedDbSetInfos)
             {
                 Log.Info(Strings.Migration.MigratingDbSet.ToString(dbSetInfo.Name));
 
@@ -81,7 +175,6 @@ public class DatabaseTypeMigrationService
         }
     }
 
-
     private static async Task MigrateDbSet<TContext, T>(
         DatabaseContextOptions fromOptions,
         DatabaseContextOptions toOptions,
@@ -92,13 +185,15 @@ public class DatabaseTypeMigrationService
     {
         await using var fromContext = IntersectDbContext<TContext>.Create(fromOptions with
         {
-            DisableAutoInclude = true
+            DisableAutoInclude = true,
+            LoggerFactory = new IntersectLoggerFactory(),
         });
         await using var toContext = IntersectDbContext<TContext>.Create(toOptions with
         {
             DisableAutoInclude = true,
             EnableDetailedErrors = true,
-            EnableSensitiveDataLogging = true
+            EnableSensitiveDataLogging = true,
+            LoggerFactory = new IntersectLoggerFactory(),
         });
 
         if (dbSetInfo.GetValue(fromContext) is not DbSet<T> fromDbSet)
@@ -116,26 +211,6 @@ public class DatabaseTypeMigrationService
             fromContext.Entry(item).State = EntityState.Detached;
             toDbSet.Add(item);
         }
-
-        // var skip = 0;
-        // var remaining = await fromDbSet.CountAsync();
-        // while (remaining > 0)
-        // {
-        //     var take = Math.Min(remaining, 1000);
-        //
-        //     try
-        //     {
-        //         await toDbSet.AddRangeAsync(fromDbSet.AsNoTracking().Skip(skip).Take(take));
-        //     }
-        //     catch (Exception exception)
-        //     {
-        //         Log.Error(exception);
-        //         throw;
-        //     }
-        //
-        //     remaining -= take;
-        //     skip += take;
-        // }
 
         try
         {

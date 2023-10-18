@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations.Schema;
 using Intersect.GameObjects;
 using Intersect.Server.Entities;
 
@@ -20,6 +20,7 @@ namespace Intersect.Server.Database.PlayerData.Players
         [NotMapped]
         public string VariableName => PlayerVariableBase.GetName(VariableId);
 
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         [JsonIgnore]
         public Guid PlayerId { get; protected set; }
 

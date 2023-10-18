@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using Intersect.Config;
 using Intersect.Logging;
 using Intersect.Server.Database.PlayerData;
 using Microsoft.EntityFrameworkCore;
@@ -20,6 +21,9 @@ public sealed class UserVariablePopulateNewColumnId : IDataMigration<PlayerConte
         const string tableName = "User_Variables";
 
         using var context = PlayerContext.Create(databaseContextOptions);
+        var databaseName = databaseContextOptions.DatabaseType == DatabaseType.SQLite
+            ? default
+            : databaseContextOptions.ConnectionStringBuilder["Database"].ToString();
         var queryCompiler = context.DatabaseType.CreateQueryCompiler();
         var dbConnection = context.Database.GetDbConnection();
         var queryFactory = new QueryFactory(dbConnection, queryCompiler);
@@ -29,7 +33,7 @@ public sealed class UserVariablePopulateNewColumnId : IDataMigration<PlayerConte
                     "tbl_name FROM sqlite_master WHERE type = 'table' AND tbl_name LIKE 'User_Variables';"
                 )
             )
-            .ForMySql(q => q.SelectRaw($"INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_SCHEMA = '{databaseContextOptions.ConnectionStringBuilder["Database"]}' AND TABLE_NAME LIKE '{tableName}'"))
+            .ForMySql(q => q.SelectRaw($"INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' AND TABLE_SCHEMA = '{databaseName}' AND TABLE_NAME LIKE '{tableName}'"))
             .AsCount()
             .First<int>();
 

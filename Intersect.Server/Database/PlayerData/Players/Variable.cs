@@ -8,7 +8,7 @@ namespace Intersect.Server.Database.PlayerData.Players
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [JsonIgnore]
-        public Guid Id { get; protected set; } = Guid.NewGuid();
+        public Guid Id { get; protected set; }
 
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public Guid VariableId { get; protected set; }

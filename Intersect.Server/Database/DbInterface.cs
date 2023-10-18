@@ -2043,6 +2043,8 @@ namespace Intersect.Server.Database
                             Log.Info(Strings.Migration.MigrationCanceled);
                             return;
                         }
+
+                        File.Delete(dbFileName);
                     }
 
                     toDatabaseOptions = new() { Type = toDatabaseType };
