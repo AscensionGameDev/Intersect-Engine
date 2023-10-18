@@ -36,6 +36,16 @@ internal sealed partial class NetworkedPacketHandler
         ActionProcessing.ProcessAction(player, (dynamic) packet.Action);
     }
 
+    //OpenAdminWindowPacket
+    public void HandlePacket(Client client, OpenAdminWindowPacket packet)
+    {
+        if (client.Power.IsModerator)
+        {
+            PacketSender.SendMapList(client);
+            PacketSender.SendOpenAdminWindow(client);
+        }
+    }
+
     //RequestPasswordResetPacket
     public void HandlePacket(Client client, RequestPasswordResetPacket packet)
     {

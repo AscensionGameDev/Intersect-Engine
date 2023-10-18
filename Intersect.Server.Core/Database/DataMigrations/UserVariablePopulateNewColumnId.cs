@@ -8,9 +8,9 @@ using SqlKata.Extensions;
 
 namespace Intersect.Server.Database.DataMigrations;
 
-[SchemaMigration(typeof(Migrations.MySql.Player.UserVariables_AddStandaloneIdPK), ApplyIfLast = true)]
-[SchemaMigration(typeof(Migrations.Sqlite.Player.UserVariables_AddStandaloneIdPK), ApplyIfLast = true)]
-public sealed class UserVariablePopulateNewColumnId : IDataMigration<PlayerContext>
+/// <see cref="T:Intersect.Server.Database.DataMigrations.Sqlite.SqliteUserVariablePopulateNewColumnId"/>
+/// <see cref="T:Intersect.Server.Database.DataMigrations.MySql.MySqlUserVariablePopulateNewColumnId"/>
+public abstract class UserVariablePopulateNewColumnId : IDataMigration<PlayerContext>
 {
     public void Down(DatabaseContextOptions databaseContextOptions)
     {

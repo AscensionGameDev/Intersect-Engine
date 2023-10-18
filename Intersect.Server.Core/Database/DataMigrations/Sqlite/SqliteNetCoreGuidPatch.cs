@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using SqlKata.Execution;
 
-namespace Intersect.Server.Database.DataMigrations;
+namespace Intersect.Server.Database.DataMigrations.Sqlite;
 
 public sealed class SqliteNetCoreGuidPatch
 {

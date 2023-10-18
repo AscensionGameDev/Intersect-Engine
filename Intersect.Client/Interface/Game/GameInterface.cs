@@ -31,7 +31,7 @@ namespace Intersect.Client.Interface.Game
         //Public Components - For clicking/dragging
         public HotBarWindow Hotbar;
 
-        private AdminWindow mAdminWindow;
+        private AdminWindow? mAdminWindow;
 
         private BagWindow mBagWindow;
 
@@ -83,7 +83,7 @@ namespace Intersect.Client.Interface.Game
 
         private string mTradingTarget;
 
-        private TradingWindow mTradingWindow;
+        private TradingWindow? mTradingWindow;
 
         public EntityBox PlayerBox;
 
@@ -153,20 +153,15 @@ namespace Intersect.Client.Interface.Game
 
         public void OpenAdminWindow()
         {
-            if (mAdminWindow == null)
+            mAdminWindow ??= new AdminWindow(GameCanvas);
+
+            if (mAdminWindow.IsVisible())
             {
-                mAdminWindow = new AdminWindow(GameCanvas);
+                mAdminWindow.Hide();
             }
             else
             {
-                if (mAdminWindow.IsVisible())
-                {
-                    mAdminWindow.Hide();
-                }
-                else
-                {
-                    mAdminWindow.Show();
-                }
+                mAdminWindow.Show();
             }
 
             mShouldOpenAdminWindow = false;
@@ -282,39 +277,20 @@ namespace Intersect.Client.Interface.Game
 
         public void OpenTrading()
         {
-            if (mTradingWindow != null)
-            {
-                mTradingWindow.Close();
-            }
-
+            mTradingWindow?.Close();
             mTradingWindow = new TradingWindow(GameCanvas, mTradingTarget);
             mShouldOpenTrading = false;
             Globals.InTrade = true;
         }
 
-        public void ShowAdminWindow()
-        {
-            if (mAdminWindow == null)
-            {
-                mAdminWindow = new AdminWindow(GameCanvas);
-            }
-
-            mAdminWindow.Show();
-        }
-
         public bool AdminWindowOpen()
         {
-            if (mAdminWindow != null && mAdminWindow.IsVisible())
-            {
-                return true;
-            }
-
-            return false;
+            return mAdminWindow?.IsVisible() ?? false;
         }
 
         public void AdminWindowSelectName(string name)
         {
-            mAdminWindow.SetName(name);
+            mAdminWindow?.SetName(name);
         }
 
         public void Update()

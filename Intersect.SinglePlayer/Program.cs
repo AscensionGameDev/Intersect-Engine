@@ -6,6 +6,7 @@ using Intersect.Client.MonoGame.Network;
 using Intersect.Configuration;
 using Intersect.Server.Core;
 using Intersect.Server.Database;
+using Intersect.Server.Database.PlayerData;
 using Intersect.SinglePlayer.Networking;
 using Bootstrapper = Intersect.Server.Core.Bootstrapper;
 
@@ -37,7 +38,7 @@ try
 {
     Bootstrapper.OnPostContextSetupCompleted += () =>
     {
-        if (DbInterface.RegisteredPlayers < 1)
+        if (User.Count() < 1)
         {
             DbInterface.CreateAccount(
                 default,
@@ -54,7 +55,7 @@ try
     };
 
     Thread serverThread = new(args => Bootstrapper.Start(args as string[]));
-    serverThread.Start(args);
+    serverThread.Start(args.Append("--migrate-automatically").Distinct().ToArray());
 
     Intersect.Client.Program.Main(args);
 }
