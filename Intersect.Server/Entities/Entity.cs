@@ -2194,7 +2194,8 @@ namespace Intersect.Server.Entities
             }
 
             // Is this spell on cooldown?
-            if (SpellCooldowns.ContainsKey(spell.Id) && SpellCooldowns[spell.Id] > Timing.Global.MillisecondsUtc)
+            if (SpellCooldowns.TryGetValue(spell.Id, out var spellCooldown) &&
+                spellCooldown > Timing.Global.MillisecondsUtc)
             {
                 reason = SpellCastFailureReason.OnCooldown;
                 return false;
@@ -2209,7 +2210,7 @@ namespace Intersect.Server.Entities
                     return false;
                 }
 
-                if (spell.VitalCost[(int)Vital.Health] > GetVital(Vital.Health))
+                if (spell.VitalCost[(int)Vital.Health] >= GetVital(Vital.Health))
                 {
                     reason = SpellCastFailureReason.InsufficientHP;
                     return false;
@@ -2292,13 +2293,12 @@ namespace Intersect.Server.Entities
 
         public virtual void CastSpell(Guid spellId, int spellSlot = -1)
         {
-            var spellBase = SpellBase.Get(spellId);
-            if (spellBase == null)
+            if (!SpellBase.TryGet(spellId, out var spellBase))
             {
                 return;
             }
 
-            if (!CanCastSpell(spellBase, CastTarget, false, out var _))
+            if (!CanCastSpell(spellBase, CastTarget, false, out _))
             {
                 return;
             }
@@ -2321,145 +2321,185 @@ namespace Intersect.Server.Entities
                 AddVital(Vital.Health, -spellBase.VitalCost[(int)Vital.Health]);
             }
 
-            switch (spellBase.SpellType)
+            try
             {
-                case SpellType.CombatSpell:
-                case SpellType.Event:
+                switch (spellBase.SpellType)
+                {
+                    case SpellType.CombatSpell:
+                    case SpellType.Event:
 
-                    switch (spellBase.Combat.TargetType)
-                    {
-                        case SpellTargetType.Self:
-                            if (spellBase.HitAnimationId != Guid.Empty && spellBase.Combat.Effect != SpellEffect.OnHit)
-                            {
-                                PacketSender.SendAnimationToProximity(
-                                    spellBase.HitAnimationId, 1, Id, MapId, 0, 0, Dir, MapInstanceId
-                                ); //Target Type 1 will be global entity
-                            }
+                        switch (spellBase.Combat.TargetType)
+                        {
+                            case SpellTargetType.Self:
+                                if (spellBase.HitAnimationId != Guid.Empty &&
+                                    spellBase.Combat.Effect != SpellEffect.OnHit)
+                                {
+                                    PacketSender.SendAnimationToProximity(
+                                        spellBase.HitAnimationId,
+                                        1,
+                                        Id,
+                                        MapId,
+                                        0,
+                                        0,
+                                        Dir,
+                                        MapInstanceId
+                                    ); //Target Type 1 will be global entity
+                                }
 
-                            TryAttack(this, spellBase);
+                                TryAttack(this, spellBase);
 
-                            break;
-                        case SpellTargetType.Single:
-                            if (CastTarget == null)
-                            {
-                                return;
-                            }
-
-                            //If target has stealthed we cannot hit the spell.
-                            foreach (var status in CastTarget.CachedStatuses)
-                            {
-                                if (status.Type == SpellEffect.Stealth)
+                                break;
+                            case SpellTargetType.Single:
+                                if (CastTarget == null)
                                 {
                                     return;
                                 }
-                            }
 
-                            if (spellBase.Combat.HitRadius > 0) //Single target spells with AoE hit radius'
-                            {
-                                HandleAoESpell(
-                                    spellId, spellBase.Combat.HitRadius, CastTarget.MapId, CastTarget.X, CastTarget.Y,
-                                    null
-                                );
-                            }
-                            else
-                            {
-                                TryAttack(CastTarget, spellBase);
-                            }
-
-                            break;
-                        case SpellTargetType.AoE:
-                            HandleAoESpell(spellId, spellBase.Combat.HitRadius, MapId, X, Y, null);
-
-                            break;
-                        case SpellTargetType.Projectile:
-                            var projectileBase = spellBase.Combat.Projectile;
-                            if (projectileBase != null)
-                            {
-                                if (MapController.TryGetInstanceFromMap(MapId, MapInstanceId, out var mapInstance))
+                                //If target has stealthed we cannot hit the spell.
+                                foreach (var status in CastTarget.CachedStatuses)
                                 {
-                                    mapInstance
-                                        .SpawnMapProjectile(
-                                            this, projectileBase, spellBase, null, MapId, (byte)X, (byte)Y, (byte)Z,
-                                            Dir, CastTarget
-                                        );
+                                    if (status.Type == SpellEffect.Stealth)
+                                    {
+                                        return;
+                                    }
                                 }
-                            }
 
-                            break;
-                        case SpellTargetType.OnHit:
-                            if (spellBase.Combat.Effect == SpellEffect.OnHit)
-                            {
-                                new Status(
-                                    this, this, spellBase, SpellEffect.OnHit, spellBase.Combat.OnHitDuration,
-                                    spellBase.Combat.TransformSprite
-                                );
+                                if (spellBase.Combat.HitRadius > 0) //Single target spells with AoE hit radius'
+                                {
+                                    HandleAoESpell(
+                                        spellId,
+                                        spellBase.Combat.HitRadius,
+                                        CastTarget.MapId,
+                                        CastTarget.X,
+                                        CastTarget.Y,
+                                        null
+                                    );
+                                }
+                                else
+                                {
+                                    TryAttack(CastTarget, spellBase);
+                                }
 
-                                PacketSender.SendActionMsg(
-                                    this, Strings.Combat.status[(int)spellBase.Combat.Effect],
-                                    CustomColors.Combat.Status
-                                );
-                            }
+                                break;
+                            case SpellTargetType.AoE:
+                                HandleAoESpell(spellId, spellBase.Combat.HitRadius, MapId, X, Y, null);
 
-                            break;
-                        case SpellTargetType.Trap:
-                            if (MapController.TryGetInstanceFromMap(MapId, MapInstanceId, out var instance))
-                            {
-                                instance.SpawnTrap(this, spellBase, (byte)X, (byte)Y, (byte)Z);
-                            }
+                                break;
+                            case SpellTargetType.Projectile:
+                                var projectileBase = spellBase.Combat.Projectile;
+                                if (projectileBase != null)
+                                {
+                                    if (MapController.TryGetInstanceFromMap(MapId, MapInstanceId, out var mapInstance))
+                                    {
+                                        mapInstance.SpawnMapProjectile(
+                                            this,
+                                            projectileBase,
+                                            spellBase,
+                                            null,
+                                            MapId,
+                                            (byte)X,
+                                            (byte)Y,
+                                            (byte)Z,
+                                            Dir,
+                                            CastTarget
+                                        );
+                                    }
+                                }
 
-                            break;
-                        default:
-                            break;
-                    }
+                                break;
+                            case SpellTargetType.OnHit:
+                                if (spellBase.Combat.Effect == SpellEffect.OnHit)
+                                {
+                                    new Status(
+                                        this,
+                                        this,
+                                        spellBase,
+                                        SpellEffect.OnHit,
+                                        spellBase.Combat.OnHitDuration,
+                                        spellBase.Combat.TransformSprite
+                                    );
 
-                    break;
-                case SpellType.Warp:
-                    if (this is Player)
-                    {
-                        Warp(
-                            spellBase.Warp.MapId, spellBase.Warp.X, spellBase.Warp.Y,
-                            spellBase.Warp.Dir - 1 == -1 ? this.Dir : (Direction)(spellBase.Warp.Dir - 1)
+                                    PacketSender.SendActionMsg(
+                                        this,
+                                        Strings.Combat.status[(int)spellBase.Combat.Effect],
+                                        CustomColors.Combat.Status
+                                    );
+                                }
+
+                                break;
+                            case SpellTargetType.Trap:
+                                if (MapController.TryGetInstanceFromMap(MapId, MapInstanceId, out var instance))
+                                {
+                                    instance.SpawnTrap(this, spellBase, (byte)X, (byte)Y, (byte)Z);
+                                }
+
+                                break;
+                            default:
+                                break;
+                        }
+
+                        break;
+                    case SpellType.Warp:
+                        if (this is Player)
+                        {
+                            Warp(
+                                spellBase.Warp.MapId,
+                                spellBase.Warp.X,
+                                spellBase.Warp.Y,
+                                spellBase.Warp.Dir - 1 == -1 ? this.Dir : (Direction)(spellBase.Warp.Dir - 1)
+                            );
+                        }
+
+                        break;
+                    case SpellType.WarpTo:
+                        if (CastTarget != null)
+                        {
+                            HandleAoESpell(spellId, spellBase.Combat.CastRange, MapId, X, Y, CastTarget);
+                        }
+
+                        break;
+                    case SpellType.Dash:
+                        PacketSender.SendActionMsg(this, Strings.Combat.dash, CustomColors.Combat.Dash);
+                        var dash = new Dash(
+                            this,
+                            spellBase.Combat.CastRange,
+                            Dir,
+                            Convert.ToBoolean(spellBase.Dash.IgnoreMapBlocks),
+                            Convert.ToBoolean(spellBase.Dash.IgnoreActiveResources),
+                            Convert.ToBoolean(spellBase.Dash.IgnoreInactiveResources),
+                            Convert.ToBoolean(spellBase.Dash.IgnoreZDimensionAttributes)
                         );
-                    }
 
-                    break;
-                case SpellType.WarpTo:
-                    if (CastTarget != null)
-                    {
-                        HandleAoESpell(spellId, spellBase.Combat.CastRange, MapId, X, Y, CastTarget);
-                    }
-                    break;
-                case SpellType.Dash:
-                    PacketSender.SendActionMsg(this, Strings.Combat.dash, CustomColors.Combat.Dash);
-                    var dash = new Dash(
-                        this, spellBase.Combat.CastRange, Dir, Convert.ToBoolean(spellBase.Dash.IgnoreMapBlocks),
-                        Convert.ToBoolean(spellBase.Dash.IgnoreActiveResources),
-                        Convert.ToBoolean(spellBase.Dash.IgnoreInactiveResources),
-                        Convert.ToBoolean(spellBase.Dash.IgnoreZDimensionAttributes)
-                    );
+                        break;
+                    default:
+                        break;
+                }
 
-                    break;
-                default:
-                    break;
-            }
-
-            if (spellSlot >= 0 && spellSlot < Options.MaxPlayerSkills)
-            {
-                // Player cooldown handling is done elsewhere!
-                if (this is Player player)
+                if (spellSlot >= 0 && spellSlot < Options.MaxPlayerSkills)
                 {
-                    player.UpdateCooldown(spellBase);
-
-                    // Trigger the global cooldown, if we're allowed to.
-                    if (!spellBase.IgnoreGlobalCooldown)
+                    // Player cooldown handling is done elsewhere!
+                    if (this is Player player)
                     {
-                        player.UpdateGlobalCooldown();
+                        player.UpdateCooldown(spellBase);
+
+                        // Trigger the global cooldown, if we're allowed to.
+                        if (!spellBase.IgnoreGlobalCooldown)
+                        {
+                            player.UpdateGlobalCooldown();
+                        }
+                    }
+                    else
+                    {
+                        SpellCooldowns[Spells[spellSlot].SpellId] =
+                            Timing.Global.MillisecondsUtc + spellBase.CooldownDuration;
                     }
                 }
-                else
+            }
+            finally
+            {
+                if (GetVital(Vital.Health) < 1)
                 {
-                    SpellCooldowns[Spells[spellSlot].SpellId] =
-                    Timing.Global.MillisecondsUtc + spellBase.CooldownDuration;
+                    Die(true, this);
                 }
             }
         }

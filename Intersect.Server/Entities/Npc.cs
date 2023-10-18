@@ -651,7 +651,7 @@ namespace Intersect.Server.Entities
                 return;
             }
 
-            if (Base.Spells == null || Base.Spells.Count <= 0)
+            if (Base.Spells is not { Count: > 0 })
             {
                 return;
             }
@@ -659,8 +659,7 @@ namespace Intersect.Server.Entities
             // Pick a random spell
             var spellIndex = Randomization.Next(0, Spells.Count);
             var spellId = Base.Spells[spellIndex];
-            var spellBase = SpellBase.Get(spellId);
-            if (spellBase == null)
+            if (!SpellBase.TryGet(spellId, out var spellBase))
             {
                 return;
             }
@@ -671,12 +670,11 @@ namespace Intersect.Server.Entities
             }
 
             // Check if we are even allowed to cast this spell.
-            if (!CanCastSpell(spellBase, target, true, out var _))
+            if (!CanCastSpell(spellBase, target, true, out _))
             {
                 return;
             }
 
-            var range = spellBase.Combat?.CastRange ?? 0;
             var targetType = spellBase.Combat?.TargetType ?? SpellTargetType.Single;
             var projectileBase = spellBase.Combat?.Projectile;
 
@@ -685,7 +683,6 @@ namespace Intersect.Server.Entities
                 projectileBase != null &&
                 InRangeOf(target, projectileBase.Range))
             {
-                range = projectileBase.Range;
                 var dirToEnemy = DirectionToTarget(target);
                 if (dirToEnemy != Dir)
                 {
