@@ -24,6 +24,7 @@ on:
 env:
   VERSION_PREFIX: 0.8.0
   VERSION_SUFFIX: -pr${{ github.event.number }}
+  PARENT_VERSION_SUFFIX: -beta
 
 jobs:
   build:
@@ -55,7 +56,7 @@ jobs:
       id: cache-nuget
       if: steps.cache-binaries.outputs.cache-hit != 'true' || inputs.forceBuild == true || inputs.forceRestore == true
       with:
-        key: ${{ runner.os }}-nuget-${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}-${{ hashFiles('Intersect*/*.csproj') }}
+        key: ${{ runner.os }}-nuget-${{ env.VERSION_PREFIX }}${{ env.PARENT_VERSION_SUFFIX }}-${{ hashFiles('Intersect*/*.csproj') }}
         path: |
           ~/.nuget/packages
           Intersect*/obj/
