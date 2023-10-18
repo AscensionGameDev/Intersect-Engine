@@ -1,5 +1,6 @@
 using Intersect.Logging;
 using Intersect.Reflection;
+using Intersect.Server.Database.DataMigrations;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 
@@ -18,9 +19,9 @@ public sealed class MigrationScheduler<TContext>
 
     public IReadOnlyCollection<string> AvailableDataMigrations => throw new NotImplementedException();
 
-    public IReadOnlyCollection<string> AppliedSchemaMigrations => _context.AppliedMigrations;
+    public IReadOnlyCollection<string> AppliedSchemaMigrations => _context.AppliedSchemaMigrations;
 
-    public IReadOnlyCollection<string> AvailableSchemaMigrations => _context.PendingMigrations;
+    public IReadOnlyCollection<string> AvailableSchemaMigrations => _context.PendingSchemaMigrations;
 
     public void ApplyScheduledMigrations()
     {
@@ -87,25 +88,25 @@ public sealed class MigrationScheduler<TContext>
 
     public MigrationScheduler<TContext> SchedulePendingMigrations()
     {
-        var dataMigrations = FindValidDataMigrations(_context);
+        var pendingDataMigrations = _context.PendingDataMigrations;
         List<MigrationMetadata> scheduledMigrations = new();
 
-        var pendingMigrations = _context.PendingMigrations.ToList();
-        var pendingMigrationMetadata = pendingMigrations
+        var pendingSchemaMigrationNames = _context.PendingSchemaMigrations.ToList();
+        var pendingSchemaMigrations = pendingSchemaMigrationNames
             .Select(pendingMigration => MigrationMetadata.CreateSchemaMigrationMetadata(pendingMigration, typeof(TContext)))
             .ToList();
 
-        foreach (var pendingMigration in pendingMigrationMetadata)
+        // Add schema migrations in their order and interleave any data migrations
+        foreach (var pendingMigration in pendingSchemaMigrations)
         {
             scheduledMigrations.Add(pendingMigration);
             scheduledMigrations.AddRange(
-                dataMigrations
-                    .OfType<DataMigrationMetadata>()
+                pendingDataMigrations
                     .Where(dataMigration =>
                         string.Equals(
                             pendingMigration.Name,
                             dataMigration.SchemaMigrations
-                                .OrderBy(name => pendingMigrations.IndexOf(name))
+                                .OrderBy(name => pendingSchemaMigrationNames.IndexOf(name))
                                 .Last(),
                             StringComparison.Ordinal
                         )
@@ -113,7 +114,14 @@ public sealed class MigrationScheduler<TContext>
             );
         }
 
-        var unscheduledDataMigrations = dataMigrations
+        // Add remaining data migrations
+        scheduledMigrations.AddRange(
+            pendingDataMigrations.Where(
+                pdm => !scheduledMigrations.Contains(pdm) && pdm.SchemaMigrationAttributes.Any(sma => sma.ApplyIfLast)
+            )
+        );
+
+        var unscheduledDataMigrations = pendingDataMigrations
             .Where(metadata => !scheduledMigrations.Contains(metadata))
             .ToList();
 
@@ -127,38 +135,5 @@ public sealed class MigrationScheduler<TContext>
         _scheduledMigrations = scheduledMigrations;
 
         return this;
-    }
-
-    public static List<MigrationMetadata> FindValidDataMigrations(TContext context) =>
-        FindDataMigrationsForContextType()
-            .Select(MigrationMetadata.CreateDataMigrationMetadata)
-            .Cast<DataMigrationMetadata>()
-            .Where(index => index.CanBeAppliedTo(context))
-            .OrderBy(
-                index => index.SchemaMigrations.Aggregate(
-                    0,
-                    (currentIndex, migrationName) => Math.Max(
-                        currentIndex,
-                        context.AllMigrations.ToList().IndexOf(migrationName)
-                    )
-                )
-            )
-            .Cast<MigrationMetadata>()
-            .ToList();
-
-    public static ICollection<Type> FindDataMigrationsForContextType()
-    {
-        var assembly = typeof(TContext).Assembly;
-        var dataMigrationTypes = assembly.GetTypes()
-            .Where(
-                type => type.IsClass
-                    && !type.IsAbstract
-                    && !type.IsGenericType
-                    && type.FindGenericTypeParameters(
-                        typeof(IDataMigration<>),
-                        false
-                    ).FirstOrDefault() == typeof(TContext)
-            );
-        return dataMigrationTypes.ToList().AsReadOnly();
     }
 }

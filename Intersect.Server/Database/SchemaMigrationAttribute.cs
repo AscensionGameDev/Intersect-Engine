@@ -5,4 +5,6 @@ internal sealed partial class SchemaMigrationAttribute : SchemaMigrationTypeAttr
 {
     public SchemaMigrationAttribute(Type schemaMigrationType)
         : base(schemaMigrationType) { }
+
+    public bool ApplyIfLast { get; set; }
 }

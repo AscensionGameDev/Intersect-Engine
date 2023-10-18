@@ -351,11 +351,13 @@ namespace Intersect.Server.Database.PlayerData
                     playerContext = createdContext;
                 }
 
-                var entityEntry = playerContext.Users.Update(this);
-
                 if (create)
                 {
-                    entityEntry.State = EntityState.Added;
+                    playerContext.Users.Add(this);
+                }
+                else
+                {
+                    playerContext.Users.Update(this);
                 }
 
                 playerContext.ChangeTracker.DetectChanges();
@@ -440,15 +442,28 @@ namespace Intersect.Server.Database.PlayerData
             }
         }
 
-        public static User PostLoad(User user)
+        [return: NotNullIfNotNull(nameof(user))]
+        public static User? PostLoad(User? user, PlayerContext? playerContext = default)
         {
-            if (user != null)
+            if (user == default)
             {
-                foreach (var player in user.Players)
-                {
-                    Player.Validate(player);
-                }
+                return user;
             }
+
+            if (playerContext == default)
+            {
+                using var context = DbInterface.CreatePlayerContext();
+                if (context == default)
+                {
+                    throw new InvalidOperationException();
+                }
+
+                // ReSharper disable once TailRecursiveCall
+                return PostLoad(user, context);
+            }
+
+            var entityEntry = playerContext.Users.Attach(user);
+            entityEntry.Collection(u => u.Variables).Load();
 
             return user;
         }
@@ -475,24 +490,20 @@ namespace Intersect.Server.Database.PlayerData
                 var hashedPassword = SaltPasswordHash(ptPassword, user.Salt);
                 if (string.Equals(user.Password, hashedPassword, StringComparison.Ordinal))
                 {
-                    //return PostLoad(user);
-                    return user;
+                    return PostLoad(user);
                 }
             }
             else
             {
                 try
                 {
-                    using (var context = DbInterface.CreatePlayerContext())
+                    using var context = DbInterface.CreatePlayerContext();
+                    var salt = GetUserSalt(username);
+                    if (!string.IsNullOrWhiteSpace(salt))
                     {
-                        var salt = GetUserSalt(username);
-                        if (!string.IsNullOrWhiteSpace(salt))
-                        {
-                            var pass = SaltPasswordHash(ptPassword, salt);
-                            var queriedUser = QueryUserByNameAndPasswordShallow(context, username, pass);
-                            //return PostLoad(queriedUser);
-                            return queriedUser;
-                        }
+                        var pass = SaltPasswordHash(ptPassword, salt);
+                        var queriedUser = QueryUserByNameAndPasswordShallow(context, username, pass);
+                        return PostLoad(queriedUser, context);
                     }
                 }
                 catch (Exception exception)

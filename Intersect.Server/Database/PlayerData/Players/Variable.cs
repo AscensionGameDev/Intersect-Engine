@@ -6,14 +6,16 @@ namespace Intersect.Server.Database.PlayerData.Players
 {
     public partial class Variable
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity), JsonIgnore]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [JsonIgnore]
         public Guid Id { get; protected set; }
 
+        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public Guid VariableId { get; protected set; }
 
         [NotMapped]
         [JsonIgnore]
-        public VariableValue Value { get; set; } = new VariableValue();
+        public VariableValue Value { get; set; } = new();
 
         [NotMapped]
         [JsonProperty("Value")]

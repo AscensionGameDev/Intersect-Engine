@@ -493,11 +493,8 @@ namespace Intersect.Server.Migrations.MySql.Player
 
             modelBuilder.Entity("Intersect.Server.Database.PlayerData.Players.UserVariable", b =>
                 {
-                    b.Property<Guid>("VariableId")
-                        .HasColumnType("char(36)")
-                        .UseCollation("ascii_general_ci");
-
-                    b.Property<Guid>("UserId")
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)")
                         .UseCollation("ascii_general_ci");
 
@@ -505,9 +502,20 @@ namespace Intersect.Server.Migrations.MySql.Player
                         .HasColumnType("longtext")
                         .HasColumnName("Value");
 
-                    b.HasKey("VariableId", "UserId");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("char(36)")
+                        .UseCollation("ascii_general_ci");
+
+                    b.Property<Guid>("VariableId")
+                        .HasColumnType("char(36)")
+                        .UseCollation("ascii_general_ci");
+
+                    b.HasKey("Id");
 
                     b.HasIndex("UserId");
+
+                    b.HasIndex("VariableId", "UserId")
+                        .IsUnique();
 
                     b.ToTable("User_Variables");
                 });

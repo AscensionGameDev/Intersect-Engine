@@ -16,7 +16,7 @@ public abstract class MigrationMetadata
 
     public override string ToString() => $"MigrationType={MigrationType}, Name={Name}, Context={ContextType.FullName}";
 
-    public static MigrationMetadata CreateDataMigrationMetadata(Type dataMigrationType)
+    public static DataMigrationMetadata CreateDataMigrationMetadata(Type dataMigrationType)
     {
         var contextType = dataMigrationType.FindGenericTypeParameters(typeof(IDataMigration<>)).FirstOrDefault();
         if (contextType == default)

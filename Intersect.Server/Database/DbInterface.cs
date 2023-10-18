@@ -47,7 +47,7 @@ namespace Intersect.Server.Database
         /// This is our thread pool for handling game-loop database interactions.
         /// Min/Max Number of Threads & Idle Timeouts are set via server config.
         /// </summary>
-        public static SmartThreadPool Pool = new SmartThreadPool(
+        public static SmartThreadPool Pool = new(
                 new STPStartInfo()
                 {
                     ThreadPoolName = "DatabasePool",
@@ -59,36 +59,25 @@ namespace Intersect.Server.Database
 
         private const string GameDbFilename = "resources/gamedata.db";
 
-        internal const string LoggingDbFilename = "resources/logging.db";
+        private const string LoggingDbFilename = "resources/logging.db";
 
         private const string PlayersDbFilename = "resources/playerdata.db";
 
-        private static Logger gameDbLogger { get; set; }
+        private static Logger _gameDatabaseLogger { get; set; }
 
-        private static Logger playerDbLogger { get; set; }
+        private static Logger _playerDatabaseLogger { get; set; }
 
-        public static Dictionary<string, ServerVariableBase> ServerVariableEventTextLookup = new Dictionary<string, ServerVariableBase>();
+        public static Dictionary<string, ServerVariableBase> ServerVariableEventTextLookup = new();
 
-        public static Dictionary<string, PlayerVariableBase> PlayerVariableEventTextLookup = new Dictionary<string, PlayerVariableBase>();
+        public static Dictionary<string, PlayerVariableBase> PlayerVariableEventTextLookup = new();
 
-        public static Dictionary<string, GuildVariableBase> GuildVariableEventTextLookup = new Dictionary<string, GuildVariableBase>();
+        public static Dictionary<string, GuildVariableBase> GuildVariableEventTextLookup = new();
 
-        public static Dictionary<string, UserVariableBase> UserVariableEventTextLookup = new Dictionary<string, UserVariableBase>();
+        public static Dictionary<string, UserVariableBase> UserVariableEventTextLookup = new();
 
-        public static ConcurrentDictionary<Guid, ServerVariableBase> UpdatedServerVariables = new ConcurrentDictionary<Guid, ServerVariableBase>();
+        public static ConcurrentDictionary<Guid, ServerVariableBase> UpdatedServerVariables = new();
 
-        private static List<MapGrid> mapGrids = new List<MapGrid>();
-
-        public static long RegisteredPlayers
-        {
-            get
-            {
-                using (var context = CreatePlayerContext())
-                {
-                    return context.Players.Count();
-                }
-            }
-        }
+        private static List<MapGrid> mapGrids = new();
 
         /// <summary>
         /// Creates a game context to query. Best practice is to scope this within a using statement.
@@ -111,8 +100,11 @@ namespace Intersect.Server.Database
             DatabaseType = Options.Instance.GameDatabase.Type,
             ExplicitLoad = explicitLoad,
             LazyLoading = lazyLoading,
+#if DEBUG
+            LoggerFactory = new IntersectLoggerFactory(),
+#endif
             QueryTrackingBehavior = queryTrackingBehavior,
-            ReadOnly = readOnly
+            ReadOnly = readOnly,
         });
 
         /// <summary>
@@ -135,6 +127,9 @@ namespace Intersect.Server.Database
             DatabaseType = Options.Instance.PlayerDatabase.Type,
             ExplicitLoad = explicitLoad,
             LazyLoading = lazyLoading,
+#if DEBUG
+            LoggerFactory = new IntersectLoggerFactory(),
+#endif
             QueryTrackingBehavior = queryTrackingBehavior,
             ReadOnly = readOnly,
         });
@@ -154,6 +149,9 @@ namespace Intersect.Server.Database
             DatabaseType = Options.Instance.LoggingDatabase.Type,
             ExplicitLoad = explicitLoad,
             LazyLoading = lazyLoading,
+#if DEBUG
+            LoggerFactory = new IntersectLoggerFactory(),
+#endif
             QueryTrackingBehavior = queryTrackingBehavior,
             ReadOnly = readOnly,
         });
@@ -162,7 +160,7 @@ namespace Intersect.Server.Database
         {
             if (Options.Instance.GameDatabase.LogLevel > LogLevel.None)
             {
-                gameDbLogger = new Logger(
+                _gameDatabaseLogger = new Logger(
                     new LogConfiguration
                     {
                         Tag = "GAMEDB",
@@ -176,7 +174,7 @@ namespace Intersect.Server.Database
 
             if (Options.Instance.PlayerDatabase.LogLevel > LogLevel.None)
             {
-                playerDbLogger = new Logger(
+                _playerDatabaseLogger = new Logger(
                     new LogConfiguration
                     {
                         Tag = "PLAYERDB",
@@ -238,14 +236,14 @@ namespace Intersect.Server.Database
         private static void ProcessMigrations<TContext>(TContext context)
             where TContext : IntersectDbContext<TContext>
         {
-            var pendingMigrations = context.PendingMigrations;
-            if (pendingMigrations.Count < 1)
+            if (!context.HasPendingMigrations)
             {
                 Log.Verbose("No pending migrations, skipping...");
                 return;
             }
 
-            Log.Verbose($"Pending migrations for {typeof(TContext).Name}:\n\t{string.Join("\n\t", pendingMigrations)}");
+            Log.Verbose($"Pending schema migrations for {typeof(TContext).Name}:\n\t{string.Join("\n\t", context.PendingSchemaMigrations)}");
+            Log.Verbose($"Pending data migrations for {typeof(TContext).Name}:\n\t{string.Join("\n\t", context.PendingDataMigrationNames)}");
 
             var migrationScheduler = new MigrationScheduler<TContext>(context);
             Log.Verbose("Scheduling pending migrations...");
@@ -254,11 +252,11 @@ namespace Intersect.Server.Database
             Log.Verbose("Applying scheduled migrations...");
             migrationScheduler.ApplyScheduledMigrations();
 
-            var remainingPendingMigrations = context.PendingMigrations.ToList();
-            var processedMigrations = pendingMigrations
-                .Where(migration => !remainingPendingMigrations.Contains(migration));
+            var remainingPendingSchemaMigrations = context.PendingSchemaMigrations.ToList();
+            var processedSchemaMigrations =
+                context.PendingSchemaMigrations.Where(migration => !remainingPendingSchemaMigrations.Contains(migration));
 
-            context.MigrationsProcessed(processedMigrations.ToArray());
+            context.OnSchemaMigrationsProcessed(processedSchemaMigrations.ToArray());
         }
 
         private static bool EnsureUpdated(IServerContext serverContext)
@@ -325,9 +323,9 @@ namespace Intersect.Server.Database
                 // ignored
             }
 
-            var gameContextPendingMigrations = gameContext.PendingMigrations;
-            var playerContextPendingMigrations = playerContext.PendingMigrations;
-            var loggingContextPendingMigrations = loggingContext.PendingMigrations;
+            var gameContextPendingMigrations = gameContext.PendingSchemaMigrations;
+            var playerContextPendingMigrations = playerContext.PendingSchemaMigrations;
+            var loggingContextPendingMigrations = loggingContext.PendingSchemaMigrations;
 
             var showMigrationWarning = (
                 gameContextPendingMigrations.Any() && !gameContextPendingMigrations.Contains("20180905042857_Initial")
@@ -2045,6 +2043,8 @@ namespace Intersect.Server.Database
                             Log.Info(Strings.Migration.MigrationCanceled);
                             return;
                         }
+
+                        File.Delete(dbFileName);
                     }
 
                     toDatabaseOptions = new() { Type = toDatabaseType };
