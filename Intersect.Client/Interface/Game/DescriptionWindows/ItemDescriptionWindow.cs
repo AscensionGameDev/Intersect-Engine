@@ -324,15 +324,16 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
             }
 
             // Stats
+            var statModifiers = mItemProperties?.StatModifiers;
             for (var i = 0; i < (int)Stat.StatCount; i++)
             {
                 // Do we have item properties, if so this is a finished item. Otherwise does this item not have growing stats?
-                if (mItemProperties != default || mItem.StatGrowth == 0)
+                if (statModifiers != default || mItem.StatGrowth == 0)
                 {
                     var flatStat = mItem.StatsGiven[i];
-                    if (mItemProperties != default)
+                    if (statModifiers != default)
                     {
-                        flatStat += mItemProperties.StatModifiers[i];
+                        flatStat += statModifiers[i];
                     }
 
                     if (flatStat != 0 && mItem.PercentageStatsGiven[i] != 0)
