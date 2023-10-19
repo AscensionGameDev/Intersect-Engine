@@ -1301,6 +1301,9 @@ namespace Intersect.Client.Localization
             public static LocalizedString RegularAndPercentage = @"{00} + {01}%";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString StatGrowthRange = @"{00} to {01}";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static Dictionary<int, LocalizedString> Stats = new Dictionary<int, LocalizedString>
             {
                 {0, @"Attack"},
