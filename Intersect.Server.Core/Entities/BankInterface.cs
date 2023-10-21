@@ -680,7 +680,7 @@ namespace Intersect.Server.Entities
 
             lock (mLock)
             {
-                if (itemBase.IsStackable)
+                if (amount > 1)
                 {
                     if (!CanTakeItem(itemBase.Id, amount))
                     {
@@ -699,7 +699,7 @@ namespace Intersect.Server.Entities
                 }
 
                 var toTake = amount;
-                if (itemBase.IsStackable)
+                if (amount > 1)
                 {
                     mPlayer.TryGiveItem(itemBase.Id, amount, ItemHandling.Normal, false, invSlot, true);
 

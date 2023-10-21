@@ -847,8 +847,8 @@ namespace Intersect.Client.Entities
                 return;
             }
 
-            var itemQuantityInBank = bankSlot.Quantity;
-            int availableSpace = FindAvailableInventorySpaceForItem(itemDescriptor.Id);
+            var itemQuantityInBank = GetQuantityOfItemInBank(itemDescriptor.Id);
+            int availableSpace = FindAvailableInventorySpaceForItem(itemDescriptor.Id, itemQuantityInBank);
 
             if (availableSpace < 1)
             {
@@ -856,7 +856,7 @@ namespace Intersect.Client.Entities
                 return;
             }
 
-            if (itemQuantityInBank < 2)
+            if (itemQuantityInBank == 1 || availableSpace == 1)
             {
                 WithdrawSingleItem(bankSlotIndex, inventorySlotIndex);
                 return;
@@ -891,7 +891,7 @@ namespace Intersect.Client.Entities
             );
         }
 
-        private int FindAvailableInventorySpaceForItem(Guid itemId)
+        private int FindAvailableInventorySpaceForItem(Guid itemId, int itemQuantityInBank)
         {
             int spaceLeft = 0;
             int maxInventoryStack = ItemBase.Get(itemId).MaxInventoryStack;
@@ -910,7 +910,7 @@ namespace Intersect.Client.Entities
                 }
             }
 
-            return spaceLeft;
+            return Math.Min(itemQuantityInBank, spaceLeft);
         }
         
         private void WithdrawItemInputBoxOkay(object sender, EventArgs e)
