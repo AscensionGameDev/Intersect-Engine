@@ -196,53 +196,26 @@ namespace Intersect.Server.Entities
         /// <returns>Returns whether or not the bank instance can store this item.</returns>
         public bool CanStoreItem(Item item)
         {
-            if (item.Descriptor != null)
+            // We don't want to store null items !
+            if (item.Descriptor == null)
             {
-                // Is the item stackable?
-                if (item.Descriptor.IsStackable)
-                {
-                    // Does the bank have this item already?
-                    var slot = FindItemSlot(item.ItemId);
-                    if (slot >= 0)
-                    {
-                        var existingSlot = mBank[slot];
-
-                        // Can we blindly add more to this stack?
-                        var untilFull = item.Descriptor.MaxBankStack - existingSlot.Quantity;
-                        if (untilFull >= item.Quantity)
-                        {
-                            return true;
-                        }
-
-                        // Check to see if we have the inventory spaces required to hand these items out AFTER filling up the existing slot!
-                        var toGive = item.Quantity - untilFull;
-                        if (Math.Ceiling((double)toGive / item.Descriptor.MaxBankStack) <= FindOpenSlots().Count)
-                        {
-                            return true;
-                        }
-                    }
-                    // User doesn't have this item yet.
-                    else
-                    {
-                        // Does the user have enough free space for these stacks?
-                        if (Math.Ceiling((double)item.Quantity / item.Descriptor.MaxBankStack) <= FindOpenSlots().Count)
-                        {
-                            return true;
-                        }
-                    }
-                }
-                // Not a stacking item, so can we contain the amount we want to give them?
-                else
-                {
-                    if (FindOpenSlots().Count >= item.Quantity)
-                    {
-                        return true;
-                    }
-                }
+                return false;
             }
 
-            // Nothing matches in here, give up!
-            return false;
+            // If this item isn't stackable we just need to find an open slot.
+            if (!item.Descriptor.Stackable)
+            {
+                return FindOpenSlot() != -1;
+            }
+
+            // At this point, we assume that the item is stackable, let's fill up what we can.
+            if (Math.Ceiling((double)item.Quantity / item.Descriptor.MaxBankStack) <=
+                FindAvailableBankSpaceForItem(item.ItemId, item.Quantity))
+            {
+                return true;
+            }
+
+            return FindOpenSlot() != -1;
         }
 
         /// <summary>
