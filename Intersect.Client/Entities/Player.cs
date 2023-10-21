@@ -742,25 +742,45 @@ namespace Intersect.Client.Entities
                 return;
             }
 
-            //Permission Check
-            if (Globals.GuildBank)
+            // Permission Check for Guild Bank
+            if (Globals.GuildBank && !IsGuildBankDepositAllowed())
             {
-                var rank = Globals.Me.GuildRank;
-                if (string.IsNullOrWhiteSpace(Globals.Me.Guild) || (!rank.Permissions.BankDeposit && Globals.Me.Rank != 0))
-                {
-                    ChatboxMsg.AddMessage(new ChatboxMsg(Strings.Guilds.NotAllowedDeposit.ToString(Globals.Me.Guild), CustomColors.Alerts.Error, ChatMessageType.Bank));
-                    return;
-                }
+                ChatboxMsg.AddMessage(new ChatboxMsg(Strings.Guilds.NotAllowedDeposit.ToString(Globals.Me.Guild), CustomColors.Alerts.Error, ChatMessageType.Bank));
+                return;
             }
 
-            var inventoryQuantity = GetQuantityOfItemInInventory(itemDescriptor.Id);
-            if (inventorySlot.Quantity < 2)
+            var itemQuantityInInventory = GetQuantityOfItemInInventory(itemDescriptor.Id);
+            var availableSpace = FindAvailableBankSpaceForItem(inventorySlot.ItemId, itemQuantityInInventory);
+
+            if (availableSpace < 1)
             {
-                PacketSender.SendDepositItem(inventorySlotIndex, 1, bankSlotIndex);
+                ChatboxMsg.AddMessage(new ChatboxMsg(Strings.Bank.NoSpace, CustomColors.Alerts.Error,
+                    ChatMessageType.Bank));
+                return;
             }
 
-            var userData = new int[2] { inventorySlotIndex, bankSlotIndex };
+            if (itemQuantityInInventory < 2)
+            {
+                DepositSingleItem(inventorySlotIndex, bankSlotIndex);
+                return;
+            }
 
+            OpenDepositItemInputBox(itemDescriptor, inventorySlotIndex, bankSlotIndex, availableSpace);
+        }
+
+        private bool IsGuildBankDepositAllowed()
+        {
+            var rank = Globals.Me.GuildRank;
+            return !string.IsNullOrWhiteSpace(Globals.Me.Guild) && (rank.Permissions.BankDeposit || Globals.Me.Rank == 0);
+        }
+
+        private void DepositSingleItem(int inventorySlotIndex, int bankSlotIndex)
+        {
+            PacketSender.SendDepositItem(inventorySlotIndex, 1, bankSlotIndex);
+        }
+
+        private void OpenDepositItemInputBox(ItemBase itemDescriptor, int inventorySlotIndex, int bankSlotIndex, int availableSpace)
+        {
             InputBox.Open(
                 title: Strings.Bank.deposititem,
                 prompt: Strings.Bank.deposititemprompt.ToString(itemDescriptor.Name),
@@ -768,11 +788,9 @@ namespace Intersect.Client.Entities
                 inputType: InputBox.InputType.NumericSliderInput,
                 onSuccess: DepositItemInputBoxOkay,
                 onCancel: null,
-                userData: userData,
-                quantity: inventorySlot.Quantity,
-                maxQuantity: inventoryQuantity
-            );
-
+                userData: new[] { inventorySlotIndex, bankSlotIndex },
+                quantity: availableSpace,
+                maxQuantity: availableSpace);
         }
 
         private static int FindAvailableBankSpaceForItem(Guid itemId, int itemQuantityInInventory)
