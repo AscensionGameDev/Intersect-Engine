@@ -759,6 +759,7 @@ namespace Intersect.Client.Entities
                 return;
             }
 
+            // TODO: Unify depositing single/multiple items.
             if (itemQuantityInInventory < 2)
             {
                 DepositSingleItem(inventorySlotIndex, bankSlotIndex);
