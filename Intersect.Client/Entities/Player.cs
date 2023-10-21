@@ -840,33 +840,44 @@ namespace Intersect.Client.Entities
                 return;
             }
 
-            //Permission Check
-            if (Globals.GuildBank)
+            // Permission Check for Guild Bank
+            if (Globals.GuildBank && !IsGuildBankWithdrawAllowed())
             {
-                var rank = Globals.Me.GuildRank;
-                if (string.IsNullOrWhiteSpace(Globals.Me.Guild) || (!rank.Permissions.BankRetrieve && Globals.Me.Rank != 0))
-                {
-                    ChatboxMsg.AddMessage(new ChatboxMsg(Strings.Guilds.NotAllowedWithdraw.ToString(Globals.Me.Guild), CustomColors.Alerts.Error, ChatMessageType.Bank));
-                    return;
-                }
-            }
-
-            var quantity = bankSlot.Quantity;
-            var maxQuantity = quantity;
-
-            if (itemDescriptor.IsStackable)
-            {
-                maxQuantity = GetQuantityOfItemInBank(itemDescriptor.Id);
-            }
-
-            if (maxQuantity < 2)
-            {
-                PacketSender.SendWithdrawItem(bankSlotIndex, 1, inventorySlotIndex);
+                ChatboxMsg.AddMessage(new ChatboxMsg(Strings.Guilds.NotAllowedWithdraw.ToString(Globals.Me.Guild), CustomColors.Alerts.Error, ChatMessageType.Bank));
                 return;
             }
 
-            int[] userData = new int[2] { bankSlotIndex, inventorySlotIndex };
+            var itemQuantityInBank = bankSlot.Quantity;
+            int availableSpace = FindAvailableInventorySpaceForItem(itemDescriptor.Id);
 
+            if (availableSpace < 1)
+            {
+                ChatboxMsg.AddMessage(new ChatboxMsg(Strings.Bank.WithdrawItemNoSpace, CustomColors.Alerts.Error, ChatMessageType.Bank));
+                return;
+            }
+
+            if (itemQuantityInBank < 2)
+            {
+                WithdrawSingleItem(bankSlotIndex, inventorySlotIndex);
+                return;
+            }
+
+            OpenWithdrawItemInputBox(itemDescriptor, bankSlotIndex, inventorySlotIndex, availableSpace);
+        }
+
+        private bool IsGuildBankWithdrawAllowed()
+        {
+            var rank = Globals.Me.GuildRank;
+            return !string.IsNullOrWhiteSpace(Globals.Me.Guild) && (rank.Permissions.BankRetrieve || Globals.Me.Rank == 0);
+        }
+
+        private void WithdrawSingleItem(int bankSlotIndex, int inventorySlotIndex)
+        {
+            PacketSender.SendWithdrawItem(bankSlotIndex, 1, inventorySlotIndex);
+        }
+
+        private void OpenWithdrawItemInputBox(ItemBase itemDescriptor, int bankSlotIndex, int inventorySlotIndex, int availableSpace)
+        {
             InputBox.Open(
                 title: Strings.Bank.withdrawitem,
                 prompt: Strings.Bank.withdrawitemprompt.ToString(itemDescriptor.Name),
@@ -874,9 +885,9 @@ namespace Intersect.Client.Entities
                 inputType: InputBox.InputType.NumericSliderInput,
                 onSuccess: WithdrawItemInputBoxOkay,
                 onCancel: null,
-                userData: userData,
-                quantity: quantity,
-                maxQuantity: maxQuantity
+                userData: new[] { bankSlotIndex, inventorySlotIndex },
+                quantity: availableSpace,
+                maxQuantity: availableSpace
             );
         }
 

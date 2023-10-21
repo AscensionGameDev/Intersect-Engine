@@ -440,6 +440,8 @@ namespace Intersect.Client.Localization
 
             public static LocalizedString withdrawitemprompt = @"How many/much {00} would you like to withdraw?";
 
+            public static LocalizedString WithdrawItemNoSpace = @"There is no space left in your inventory for that item!";
+
         }
 
         public partial struct BanMute
