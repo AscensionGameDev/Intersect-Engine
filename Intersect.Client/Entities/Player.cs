@@ -880,6 +880,28 @@ namespace Intersect.Client.Entities
             );
         }
 
+        private int FindAvailableInventorySpaceForItem(Guid itemId)
+        {
+            int spaceLeft = 0;
+            int maxInventoryStack = ItemBase.Get(itemId).MaxInventoryStack;
+
+            // Calculate the total available space in the player's inventory for this item.
+            for (int i = 0; i < Inventory.Length; i++)
+            {
+                var inventorySlot = Inventory[i];
+                if (inventorySlot != null && inventorySlot.ItemId == itemId)
+                {
+                    spaceLeft += maxInventoryStack - inventorySlot.Quantity;
+                }
+                else if (inventorySlot == null || inventorySlot.ItemId == Guid.Empty)
+                {
+                    spaceLeft += maxInventoryStack;
+                }
+            }
+
+            return spaceLeft;
+        }
+        
         private void WithdrawItemInputBoxOkay(object sender, EventArgs e)
         {
             var value = (int)Math.Round(((InputBox)sender).Value);
