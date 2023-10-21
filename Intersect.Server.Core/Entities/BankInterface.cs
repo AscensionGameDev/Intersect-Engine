@@ -273,6 +273,44 @@ namespace Intersect.Server.Entities
         }
 
         /// <summary>
+        /// Finds the amount of available space in the bank for items.
+        /// This method calculates the space available in the bank by checking
+        /// the number of slots that have the same item ID as the provided item, and
+        /// adding up the remaining quantity space in each of those slots. It also
+        /// checks for any empty slots in the bank, and adds the maximum stack size
+        /// of the provided item to the available space for each empty slot found.
+        /// </summary>
+        /// <param name="itemId">The ID of the item to find available space for.</param>
+        /// <param name="amount">The requested amount of the item to deposit.</param>
+        /// <returns>The maximum amount of the item that can be deposited in the bank.</returns>
+        private int FindAvailableBankSpaceForItem(Guid itemId, int amount)
+        {
+            int spaceLeft = 0;
+
+            if (spaceLeft >= amount)
+            {
+                return amount;
+            }
+
+            int maxBankStack = ItemBase.Get(itemId).MaxBankStack;
+
+            for (int i = 0; i < mMaxSlots; i++)
+            {
+                var bankSlot = mBank[i];
+                if (bankSlot != null && bankSlot.ItemId == itemId)
+                {
+                    spaceLeft += maxBankStack - bankSlot.Quantity;
+                }
+                else if (bankSlot == null || bankSlot.ItemId == Guid.Empty)
+                {
+                    spaceLeft += maxBankStack;
+                }
+            }
+
+            return Math.Min(amount, spaceLeft);
+        }
+        
+        /// <summary>
         /// Find the amount of a specific item this bank instance has.
         /// </summary>
         /// <param name="itemId">The item Id to look for.</param>
