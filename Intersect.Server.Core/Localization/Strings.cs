@@ -152,11 +152,27 @@ namespace Intersect.Server.Localization
             public readonly LocalizedString depositinvalid = @"Invalid item selected to deposit!";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString DepositSuccessStackable =
+                @"You have stored: {00} {01}";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString DepositSuccessNonStackable =
+                @"You have stored: {00}";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString inventorynospace =
                 @"There is no space left in your inventory for that item!";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString withdrawinvalid = @"Invalid item selected to withdraw!";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString WithdrawSuccessStackable =
+                @"You have withdrawn: {00} {01}";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString WithdrawSuccessNonStackable =
+                @"You have withdrawn: {00}";
 
         }
 

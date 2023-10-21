@@ -330,79 +330,112 @@ namespace Intersect.Server.Entities
                 }
             }
 
-            var itemBase = mPlayer.Items[slot].Descriptor;
-            if (itemBase != null)
+            var inventoryItem = mPlayer.Items[slot];
+            var inventoryItemItemId = inventoryItem.ItemId;
+
+            if (inventoryItem == null || inventoryItemItemId == Guid.Empty)
             {
-                if (mPlayer.Items[slot].ItemId != Guid.Empty)
+                PacketSender.SendChatMsg(mPlayer, Strings.Banks.depositinvalid, ChatMessageType.Bank,
+                    CustomColors.Alerts.Error);
+                return false;
+            }
+
+            if ((!inventoryItem.Descriptor.CanBank && mGuild == null) ||
+                (!inventoryItem.Descriptor.CanGuildBank && mGuild != null))
+            {
+                PacketSender.SendChatMsg(mPlayer, Strings.Items.nobank, ChatMessageType.Bank, CustomColors.Items.Bound);
+                return false;
+            }
+
+            // Calculate the maximum amount that can be deposited, based on quantity and bank space.
+            var inventoryQuantity = mPlayer.FindInventoryItemQuantity(inventoryItemItemId);
+            amount = Math.Min(amount, inventoryQuantity);
+            var availableStorageSpace = FindAvailableBankSpaceForItem(inventoryItemItemId, amount);
+            var maxAmount = Math.Min(inventoryQuantity, availableStorageSpace);
+            amount = Math.Min(amount, maxAmount);
+
+            if (amount < 1)
+            {
+                PacketSender.SendChatMsg(mPlayer, Strings.Banks.banknospace, ChatMessageType.Bank,
+                    CustomColors.Alerts.Error);
+                return false;
+            }
+
+            if (amount > 1)
+            {
+                if (destSlot < 0 || mBank?[destSlot]?.ItemId != Guid.Empty)
                 {
-                    if ((!itemBase.CanBank && mGuild == null) || (!itemBase.CanGuildBank && mGuild != null))
+                    // Try to find an open slot with the same item type and not at maximum stack size
+                    for (int i = 0; i < mMaxSlots; i++)
                     {
-                        PacketSender.SendChatMsg(mPlayer, Strings.Items.nobank, ChatMessageType.Bank, CustomColors.Items.Bound);
-                        return false;
-                    }
-
-                    lock (mLock)
-                    {
-                        // if stackable, make sure the user actually has this many items or more.
-                        if (itemBase.IsStackable)
+                        var bankItem = mBank[i];
+                        if (bankItem.ItemId == Guid.Empty ||
+                            (bankItem.ItemId != Guid.Empty && bankItem.ItemId == inventoryItemItemId &&
+                             amount + bankItem.Quantity < bankItem.Descriptor.MaxBankStack))
                         {
-                            if (!mPlayer.CanTakeItem(itemBase.Id, amount))
-                            {
-                                amount = mPlayer.FindInventoryItemQuantity(itemBase.Id);
-                            }
+                            destSlot = i;
+                            break;
                         }
-                        else
-                        {
-                            amount = 1;
-                        }
-
-                        if (CanStoreItem(new Item(itemBase.Id, amount), destSlot))
-                        {
-                            if (itemBase.IsStackable)
-                            {
-                                PutItem(new Item(itemBase.Id, amount), destSlot, sendUpdate);
-                                mPlayer.TryTakeItem(itemBase.Id, amount, ItemHandling.Normal, sendUpdate);
-
-                                if (mGuild != null)
-                                {
-                                    DbInterface.Pool.QueueWorkItem(mGuild.Save);
-                                }
-
-                                return true;
-                            }
-                            else
-                            {
-                                PutItem(mPlayer.Items[slot], destSlot, sendUpdate);
-
-                                mPlayer.Items[slot].Set(Item.None);
-                                mPlayer.EquipmentProcessItemLoss(slot);
-
-                                if (sendUpdate)
-                                {
-                                    PacketSender.SendInventoryItemUpdate(mPlayer, slot);
-                                }
-
-                                if (mGuild != null)
-                                {
-                                    DbInterface.Pool.QueueWorkItem(mGuild.Save);
-                                }
-
-                                return true;
-                            }
-                        }
-                        else
-                        {
-                            PacketSender.SendChatMsg(mPlayer, Strings.Banks.banknospace, ChatMessageType.Bank, CustomColors.Alerts.Error);
-                        }  
                     }
                 }
-                else
+            }
+            else
+            {
+                if (destSlot < 0 || mBank?[destSlot]?.ItemId != Guid.Empty)
                 {
-                    PacketSender.SendChatMsg(mPlayer, Strings.Banks.depositinvalid, ChatMessageType.Bank, CustomColors.Alerts.Error);
+                    destSlot = FindOpenSlot();
+                }
+
+                if (destSlot < 0)
+                {
+                    PacketSender.SendChatMsg(mPlayer, Strings.Banks.banknospace, ChatMessageType.Bank,
+                        CustomColors.Alerts.Error);
+                    return false;
                 }
             }
 
-            return false;
+            lock (mLock)
+            {
+                if (CanStoreItem(new Item(inventoryItemItemId, amount), destSlot))
+                {
+                    string successMessage;
+                    Item itemToPut;
+
+                    if (amount > 1)
+                    {
+                        successMessage = Strings.Banks.DepositSuccessStackable.ToString(amount, inventoryItem.ItemName);
+                        itemToPut = new Item(inventoryItemItemId, amount);
+                        mPlayer.TryTakeItem(inventoryItemItemId, amount, ItemHandling.Normal, sendUpdate);
+                    }
+                    else
+                    {
+                        successMessage = Strings.Banks.DepositSuccessNonStackable.ToString(inventoryItem.ItemName);
+                        itemToPut = new Item(inventoryItemItemId, 1);
+                        inventoryItem.Set(Item.None);
+                        mPlayer.EquipmentProcessItemLoss(slot);
+                    }
+
+                    PacketSender.SendChatMsg(mPlayer, successMessage, ChatMessageType.Bank,
+                        CustomColors.Alerts.Success);
+                    PutItem(itemToPut, destSlot, sendUpdate);
+
+                    if (sendUpdate)
+                    {
+                        PacketSender.SendInventoryItemUpdate(mPlayer, slot);
+                    }
+
+                    if (mGuild != null)
+                    {
+                        DbInterface.Pool.QueueWorkItem(mGuild.Save);
+                    }
+
+                    return true;
+                }
+
+                PacketSender.SendChatMsg(mPlayer, Strings.Banks.banknospace, ChatMessageType.Bank,
+                    CustomColors.Alerts.Error);
+                return false;
+            }
         }
 
         public bool TryDepositItem(Item item, bool sendUpdate = true)
