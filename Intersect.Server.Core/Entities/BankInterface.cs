@@ -735,6 +735,18 @@ namespace Intersect.Server.Entities
                 {
                     DbInterface.Pool.QueueWorkItem(mGuild.Save);
                 }
+
+                string successMessage;
+                if (amount > 1)
+                {
+                    successMessage = Strings.Banks.WithdrawSuccessStackable.ToString(amount, itemBase.Name);
+                }
+                else
+                {
+                    successMessage = Strings.Banks.WithdrawSuccessNonStackable.ToString(itemBase.Name);
+                }
+
+                PacketSender.SendChatMsg(mPlayer, successMessage, ChatMessageType.Bank, CustomColors.Alerts.Success);
             }
         }
 
