@@ -760,7 +760,7 @@ namespace Intersect.Client.Entities
             }
 
             // TODO: Unify depositing single/multiple items.
-            if (itemQuantityInInventory < 2)
+            if (itemQuantityInInventory == 1 || availableSpace == 1)
             {
                 DepositSingleItem(inventorySlotIndex, bankSlotIndex);
                 return;
