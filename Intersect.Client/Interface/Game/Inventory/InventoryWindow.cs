@@ -209,7 +209,7 @@ namespace Intersect.Client.Interface.Game.Inventory
 
             mInventoryWindow.IsClosable = Globals.CanCloseInventory;
 
-            for (var i = 0; i < Options.MaxInvItems; i++)
+            for (var i = 0; i < Options.MaxInventorySlots; i++)
             {
                 var item = ItemBase.Get(Globals.Me.Inventory[i].ItemId);
                 if (item != null)
@@ -243,7 +243,7 @@ namespace Intersect.Client.Interface.Game.Inventory
 
         private void InitItemContainer()
         {
-            for (var i = 0; i < Options.MaxInvItems; i++)
+            for (var i = 0; i < Options.MaxInventorySlots; i++)
             {
                 Items.Add(new InventoryItem(this, i));
                 Items[i].Container = new ImagePanel(mItemContainer, "InventoryItem");

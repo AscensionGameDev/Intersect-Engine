@@ -60,7 +60,7 @@ namespace Intersect.Client.Interface.Game.Character
                 if (window != null)
                 {
                     var invSlot = Globals.Me.MyEquipment[mYindex];
-                    if (invSlot >= 0 && invSlot < Options.MaxInvItems)
+                    if (invSlot >= 0 && invSlot < Options.MaxInventorySlots)
                     {
                         window.OpenContextMenu(invSlot);
                     }

@@ -102,7 +102,7 @@ namespace Intersect.Client.Entities
         public Guid Id { get; set; }
 
         //Inventory/Spells/Equipment
-        public IItem[] Inventory { get; set; } = new IItem[Options.MaxInvItems];
+        public IItem[] Inventory { get; set; } = new IItem[Options.MaxInventorySlots];
 
         IReadOnlyList<IItem> IEntity.Items => Inventory.ToList();
 
@@ -177,7 +177,7 @@ namespace Intersect.Client.Entities
             }
         }
 
-        public Spell[] Spells { get; set; } = new Spell[Options.MaxPlayerSkills];
+        public Spell[] Spells { get; set; } = new Spell[Options.MaxSpellSlots];
 
         IReadOnlyList<Guid> IEntity.Spells => Spells.Select(x => x.Id).ToList();
 
@@ -233,12 +233,12 @@ namespace Intersect.Client.Entities
 
             if (Id != Guid.Empty && Type != EntityType.Event)
             {
-                for (var i = 0; i < Options.MaxInvItems; i++)
+                for (var i = 0; i < Options.MaxInventorySlots; i++)
                 {
                     Inventory[i] = new Item();
                 }
 
-                for (var i = 0; i < Options.MaxPlayerSkills; i++)
+                for (var i = 0; i < Options.MaxSpellSlots; i++)
                 {
                     Spells[i] = new Spell();
                 }
@@ -741,7 +741,7 @@ namespace Intersect.Client.Entities
             {
                 for (var z = 0; z < Options.EquipmentSlots.Count; z++)
                 {
-                    if (Equipment[z] != Guid.Empty && (this != Globals.Me || MyEquipment[z] < Options.MaxInvItems))
+                    if (Equipment[z] != Guid.Empty && (this != Globals.Me || MyEquipment[z] < Options.MaxInventorySlots))
                     {
                         var itemId = Guid.Empty;
                         if (this == Globals.Me)
@@ -1163,7 +1163,7 @@ namespace Intersect.Client.Entities
                     if (sprite == Sprite && Equipment.Length == Options.EquipmentSlots.Count)
                     {
                         if (Equipment[equipSlot] != Guid.Empty && this != Globals.Me ||
-                            MyEquipment[equipSlot] < Options.MaxInvItems)
+                            MyEquipment[equipSlot] < Options.MaxInventorySlots)
                         {
                             var itemId = Guid.Empty;
                             if (this == Globals.Me)
@@ -1951,7 +1951,7 @@ namespace Intersect.Client.Entities
                 if (Options.WeaponIndex > -1 && Options.WeaponIndex < Equipment.Length)
                 {
                     if (Equipment[Options.WeaponIndex] != Guid.Empty && this != Globals.Me ||
-                        MyEquipment[Options.WeaponIndex] < Options.MaxInvItems)
+                        MyEquipment[Options.WeaponIndex] < Options.MaxInventorySlots)
                     {
                         var itemId = Guid.Empty;
                         if (this == Globals.Me)

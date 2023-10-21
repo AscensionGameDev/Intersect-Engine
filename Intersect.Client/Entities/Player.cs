@@ -399,7 +399,7 @@ namespace Intersect.Client.Entities
 
         public int FindItem(Guid itemId, int itemVal = 1)
         {
-            for (var i = 0; i < Options.MaxInvItems; i++)
+            for (var i = 0; i < Options.MaxInventorySlots; i++)
             {
                 if (Inventory[i].ItemId == itemId && Inventory[i].Quantity >= itemVal)
                 {

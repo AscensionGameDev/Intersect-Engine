@@ -120,11 +120,11 @@ namespace Intersect
 
         public static int MaxLevel => Instance.PlayerOpts.MaxLevel;
 
-        public static int MaxInvItems => Instance.PlayerOpts.MaxInventory;
+        public static int MaxInventorySlots => Instance.PlayerOpts.MaxInventorySlots;
 
-        public static int MaxPlayerSkills => Instance.PlayerOpts.MaxSpells;
+        public static int MaxSpellSlots => Instance.PlayerOpts.MaxSpellSlots;
 
-        public static int MaxCharacters => Instance.PlayerOpts.MaxCharacters;
+        public static int MaxCharacterSlots => Instance.PlayerOpts.MaxCharacterSlots;
 
         public static int ItemDropChance => Instance.PlayerOpts.ItemDropChance;
 

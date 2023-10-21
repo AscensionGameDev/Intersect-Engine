@@ -611,7 +611,7 @@ namespace Intersect.Server.Networking
             }
 
             // Show character select menu or login right away by following configuration preferences.
-            if (Options.MaxCharacters > 1 || !Options.Instance.PlayerOpts.SkipCharacterSelect)
+            if (Options.MaxCharacterSlots > 1 || !Options.Instance.PlayerOpts.SkipCharacterSelect)
             {
                 PacketSender.SendPlayerCharacters(client);
             }
@@ -638,7 +638,7 @@ namespace Intersect.Server.Networking
                     : UserActivityHistory.UserAction.DisconnectLogout, $"{client.Name},{client.Entity?.Name}");
 
             if (packet.ReturningToCharSelect &&
-                (Options.MaxCharacters > 1 || !Options.Instance.PlayerOpts.SkipCharacterSelect))
+                (Options.MaxCharacterSlots > 1 || !Options.Instance.PlayerOpts.SkipCharacterSelect))
             {
                 client.Entity?.TryLogout(false, true);
                 client.Entity = null;
@@ -2482,7 +2482,7 @@ namespace Intersect.Server.Networking
         //NewCharacterPacket
         public void HandlePacket(Client client, NewCharacterPacket packet)
         {
-            if (client?.Characters?.Count < Options.MaxCharacters)
+            if (client?.Characters?.Count < Options.MaxCharacterSlots)
             {
                 PacketSender.SendGameObjects(client, GameObjectType.Class);
                 PacketSender.SendCreateCharacter(client);

@@ -62,12 +62,12 @@
         /// <summary>
         /// Number of characters an account may create.
         /// </summary>
-        public int MaxCharacters { get; set; } = 1;
+        public int MaxCharacterSlots { get; set; } = 1;
 
         /// <summary>
         /// Number of inventory slots a player has.
         /// </summary>
-        public int MaxInventory { get; set; } = 35;
+        public int MaxInventorySlots { get; set; } = 35;
 
         /// <summary>
         /// Max level a player can achieve.
@@ -77,7 +77,7 @@
         /// <summary>
         /// Number of spell slots a player has.
         /// </summary>
-        public int MaxSpells { get; set; } = 35;
+        public int MaxSpellSlots { get; set; } = 35;
 
         /// <summary>
         /// The highest value a single stat can be for a player.

@@ -124,7 +124,7 @@ namespace Intersect.Client.Interface.Game.Spells
 
             X = mSpellWindow.X;
             Y = mSpellWindow.Y;
-            for (var i = 0; i < Options.MaxPlayerSkills; i++)
+            for (var i = 0; i < Options.MaxSpellSlots; i++)
             {
                 var spell = SpellBase.Get(Globals.Me.Spells[i].Id);
                 Items[i].Pnl.IsHidden = spell == null || Items[i].IsDragging;
@@ -137,7 +137,7 @@ namespace Intersect.Client.Interface.Game.Spells
 
         private void InitItemContainer()
         {
-            for (var i = 0; i < Options.MaxPlayerSkills; i++)
+            for (var i = 0; i < Options.MaxSpellSlots; i++)
             {
                 Items.Add(new SpellItem(this, i));
                 Items[i].Container = new ImagePanel(mItemContainer, "Spell");

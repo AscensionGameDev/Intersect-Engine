@@ -892,7 +892,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                     for (var i = 0; i < MyEntity.MyEquipment.Length; i++)
                     {
                         var eqp = MyEntity.MyEquipment[i];
-                        if (eqp > -1 && eqp < Options.MaxInvItems)
+                        if (eqp > -1 && eqp < Options.MaxInventorySlots)
                         {
                             equipment[i] = MyEntity.Inventory[eqp].ItemId;
                         }

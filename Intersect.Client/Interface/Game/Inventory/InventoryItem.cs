@@ -425,7 +425,7 @@ namespace Intersect.Client.Interface.Game.Inventory
                     //Check inventory first.
                     if (mInventoryWindow.RenderBounds().IntersectsWith(dragRect))
                     {
-                        for (var i = 0; i < Options.MaxInvItems; i++)
+                        for (var i = 0; i < Options.MaxInventorySlots; i++)
                         {
                             if (mInventoryWindow.Items[i].RenderBounds().IntersectsWith(dragRect))
                             {

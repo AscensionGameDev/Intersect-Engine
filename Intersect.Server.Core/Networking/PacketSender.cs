@@ -1123,8 +1123,8 @@ namespace Intersect.Server.Networking
                 return;
             }
 
-            var invItems = new InventoryUpdatePacket[Options.MaxInvItems];
-            for (var i = 0; i < Options.MaxInvItems; i++)
+            var invItems = new InventoryUpdatePacket[Options.MaxInventorySlots];
+            for (var i = 0; i < Options.MaxInventorySlots; i++)
             {
                 invItems[i] = new InventoryUpdatePacket(
                     i, player.Items[i].ItemId, player.Items[i].Quantity, player.Items[i].BagId,
@@ -1159,8 +1159,8 @@ namespace Intersect.Server.Networking
                 return;
             }
 
-            var spells = new SpellUpdatePacket[Options.MaxPlayerSkills];
-            for (var i = 0; i < Options.MaxPlayerSkills; i++)
+            var spells = new SpellUpdatePacket[Options.MaxSpellSlots];
+            for (var i = 0; i < Options.MaxSpellSlots; i++)
             {
                 spells[i] = new SpellUpdatePacket(i, player.Spells[i].SpellId);
             }
@@ -1280,7 +1280,7 @@ namespace Intersect.Server.Networking
                         {
                             if (equipmentArray[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z])] > -1 &&
                                 equipmentArray[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z])] <
-                                Options.MaxInvItems)
+                                Options.MaxInventorySlots)
                             {
                                 var paperdollOrder = Options.PaperdollOrder[1][z];
                                 var equipmentSlot = Options.EquipmentSlots.IndexOf(paperdollOrder);
@@ -1321,7 +1321,7 @@ namespace Intersect.Server.Networking
 
             CharactersPacket packet = new(
                 characters.ToArray(),
-                client.Characters.Count < Options.MaxCharacters
+                client.Characters.Count < Options.MaxCharacterSlots
             );
 
             if (!client.Send(packet))

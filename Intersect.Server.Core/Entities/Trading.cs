@@ -29,7 +29,7 @@ namespace Intersect.Server.Entities
 
             Accepted = false;
             Counterparty = null;
-            Offer = new Item[Options.MaxInvItems];
+            Offer = new Item[Options.MaxInventorySlots];
             Requester = null;
             Requests = new Dictionary<Player, long>();
         }

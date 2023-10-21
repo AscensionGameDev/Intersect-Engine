@@ -2475,7 +2475,7 @@ namespace Intersect.Server.Entities
                         break;
                 }
 
-                if (spellSlot >= 0 && spellSlot < Options.MaxPlayerSkills)
+                if (spellSlot >= 0 && spellSlot < Options.MaxSpellSlots)
                 {
                     // Player cooldown handling is done elsewhere!
                     if (this is Player player)

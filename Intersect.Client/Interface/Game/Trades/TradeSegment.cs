@@ -58,7 +58,7 @@ namespace Intersect.Client.Interface.Game.Trades
                 prefix = "Their";
             }
 
-            for (var i = 0; i < Options.MaxInvItems; i++)
+            for (var i = 0; i < Options.MaxInventorySlots; i++)
             {
                 Items.Add(new TradeItem(mParent, i, index));
                 Items[i].Container = new ImagePanel(ItemContainer, prefix + "TradeItem");

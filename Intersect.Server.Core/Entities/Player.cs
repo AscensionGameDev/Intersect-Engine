@@ -273,8 +273,8 @@ namespace Intersect.Server.Entities
         {
             var changes = false;
 
-            changes |= SlotHelper.ValidateSlots(Spells, Options.MaxPlayerSkills);
-            changes |= SlotHelper.ValidateSlots(Items, Options.MaxInvItems);
+            changes |= SlotHelper.ValidateSlots(Spells, Options.MaxSpellSlots);
+            changes |= SlotHelper.ValidateSlots(Items, Options.MaxInventorySlots);
             changes |= SlotHelper.ValidateSlots(Bank, Options.Instance.PlayerOpts.InitialBankslots);
 
             if (Hotbar.Count < Options.Instance.PlayerOpts.HotbarSlotCount)
@@ -2696,7 +2696,7 @@ namespace Intersect.Server.Entities
         public List<InventorySlot> FindOpenInventorySlots()
         {
             var slots = new List<InventorySlot>();
-            for (var i = 0; i < Options.MaxInvItems; i++)
+            for (var i = 0; i < Options.MaxInventorySlots; i++)
             {
                 var inventorySlot = Items[i];
 
@@ -3279,7 +3279,7 @@ namespace Intersect.Server.Entities
             }
 
             long itemCount = 0;
-            for (var i = 0; i < Options.MaxInvItems; i++)
+            for (var i = 0; i < Options.MaxInventorySlots; i++)
             {
                 var item = Items[i];
                 if (item.ItemId == itemId)
@@ -3324,7 +3324,7 @@ namespace Intersect.Server.Entities
                 return slots;
             }
 
-            for (var i = 0; i < Options.MaxInvItems; i++)
+            for (var i = 0; i < Options.MaxInventorySlots; i++)
             {
                 var item = Items[i];
                 if (item?.ItemId != itemId)
@@ -4473,7 +4473,7 @@ namespace Intersect.Server.Entities
                     //Find a spot in the trade for it!
                     if (itemBase.IsStackable)
                     {
-                        for (var i = 0; i < Options.MaxInvItems; i++)
+                        for (var i = 0; i < Options.MaxInventorySlots; i++)
                         {
                             if (Trading.Offer[i] != null && Trading.Offer[i].ItemId == Items[slot].ItemId)
                             {
@@ -4501,7 +4501,7 @@ namespace Intersect.Server.Entities
                     }
 
                     //Either a non stacking item, or we couldn't find the item already existing in the players inventory
-                    for (var i = 0; i < Options.MaxInvItems; i++)
+                    for (var i = 0; i < Options.MaxInventorySlots; i++)
                     {
                         if (Trading.Offer[i] == null || Trading.Offer[i].ItemId == Guid.Empty)
                         {
@@ -4823,10 +4823,10 @@ namespace Intersect.Server.Entities
             target.Trading.Counterparty = this;
             Trading.Accepted = false;
             target.Trading.Accepted = false;
-            Trading.Offer = new Item[Options.MaxInvItems];
-            target.Trading.Offer = new Item[Options.MaxInvItems];
+            Trading.Offer = new Item[Options.MaxInventorySlots];
+            target.Trading.Offer = new Item[Options.MaxInventorySlots];
 
-            for (var i = 0; i < Options.MaxInvItems; i++)
+            for (var i = 0; i < Options.MaxInventorySlots; i++)
             {
                 Trading.Offer[i] = new Item();
                 target.Trading.Offer[i] = new Item();
@@ -4855,7 +4855,7 @@ namespace Intersect.Server.Entities
                 return false;
             }
 
-            for (var i = 0; i < Options.MaxPlayerSkills; i++)
+            for (var i = 0; i < Options.MaxSpellSlots; i++)
             {
                 if (Spells[i].SpellId == Guid.Empty)
                 {
@@ -4877,7 +4877,7 @@ namespace Intersect.Server.Entities
 
         public bool KnowsSpell(Guid spellId)
         {
-            for (var i = 0; i < Options.MaxPlayerSkills; i++)
+            for (var i = 0; i < Options.MaxSpellSlots; i++)
             {
                 if (Spells[i].SpellId == spellId)
                 {
@@ -4890,7 +4890,7 @@ namespace Intersect.Server.Entities
 
         public int FindSpell(Guid spellId)
         {
-            for (var i = 0; i < Options.MaxPlayerSkills; i++)
+            for (var i = 0; i < Options.MaxSpellSlots; i++)
             {
                 if (Spells[i].SpellId == spellId)
                 {
@@ -5270,7 +5270,7 @@ namespace Intersect.Server.Entities
             // Find the appropriate slot if not passed in
             if (slot == -1)
             {
-                for (var i = 0; i < Options.MaxInvItems; i++)
+                for (var i = 0; i < Options.MaxInventorySlots; i++)
                 {
                     if (itemBase == Items[i].Descriptor)
                     {

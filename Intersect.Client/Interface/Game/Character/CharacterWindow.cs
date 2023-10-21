@@ -253,7 +253,7 @@ namespace Intersect.Client.Interface.Game.Character
                         var equipment = Globals.Me.MyEquipment;
                         if (equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z])] > -1 &&
                             equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z])] <
-                            Options.MaxInvItems)
+                            Options.MaxInventorySlots)
                         {
                             var itemNum = Globals.Me
                                 .Inventory[equipment[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z])]]
@@ -365,7 +365,7 @@ namespace Intersect.Client.Interface.Game.Character
 
             for (var i = 0; i < Options.EquipmentSlots.Count; i++)
             {
-                if (Globals.Me.MyEquipment[i] > -1 && Globals.Me.MyEquipment[i] < Options.MaxInvItems)
+                if (Globals.Me.MyEquipment[i] > -1 && Globals.Me.MyEquipment[i] < Options.MaxInventorySlots)
                 {
                     if (Globals.Me.Inventory[Globals.Me.MyEquipment[i]].ItemId != Guid.Empty)
                     {

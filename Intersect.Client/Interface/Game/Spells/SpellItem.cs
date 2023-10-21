@@ -280,7 +280,7 @@ namespace Intersect.Client.Interface.Game.Spells
                     //Check spell first.
                     if (mSpellWindow.RenderBounds().IntersectsWith(dragRect))
                     {
-                        for (var i = 0; i < Options.MaxInvItems; i++)
+                        for (var i = 0; i < Options.MaxInventorySlots; i++)
                         {
                             if (i < mSpellWindow.Items.Count &&
                                 mSpellWindow.Items[i].RenderBounds().IntersectsWith(dragRect))

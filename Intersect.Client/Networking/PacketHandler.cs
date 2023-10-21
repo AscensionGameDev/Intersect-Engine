@@ -1874,12 +1874,12 @@ namespace Intersect.Client.Networking
         {
             if (!string.IsNullOrEmpty(packet.TradePartner))
             {
-                Globals.Trade = new Item[2, Options.MaxInvItems];
+                Globals.Trade = new Item[2, Options.MaxInventorySlots];
 
                 //Gotta initialize the trade values
                 for (var x = 0; x < 2; x++)
                 {
-                    for (var y = 0; y < Options.MaxInvItems; y++)
+                    for (var y = 0; y < Options.MaxInventorySlots; y++)
                     {
                         Globals.Trade[x, y] = new Item();
                     }

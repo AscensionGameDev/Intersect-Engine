@@ -84,7 +84,7 @@ namespace Intersect.Client.Interface.Game
 
             mContainer.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
 
-            if (Options.Player.MaxCharacters <= 1)
+            if (Options.Player.MaxCharacterSlots <= 1)
             {
                 mGoToCharacterSelect.IsDisabled = true;
             }
