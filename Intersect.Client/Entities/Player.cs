@@ -904,13 +904,23 @@ namespace Intersect.Client.Entities
 
         private int FindAvailableInventorySpaceForItem(Guid itemId, int itemQuantityInBank)
         {
+            if (!ItemBase.TryGet(itemId, out var itemDescriptor))
+            {
+                return 0;
+            }
+
             int spaceLeft = 0;
-            int maxInventoryStack = ItemBase.Get(itemId).MaxInventoryStack;
+            int maxInventoryStack = itemDescriptor.MaxInventoryStack;
+
+            if (spaceLeft >= itemQuantityInBank)
+            {
+                return itemQuantityInBank;
+            }
 
             // Calculate the total available space in the player's inventory for this item.
-            for (int i = 0; i < Inventory.Length; i++)
+            var inventorySlots = Inventory.ToArray();
+            foreach (var inventorySlot in inventorySlots)
             {
-                var inventorySlot = Inventory[i];
                 if (inventorySlot != null && inventorySlot.ItemId == itemId)
                 {
                     spaceLeft += maxInventoryStack - inventorySlot.Quantity;
