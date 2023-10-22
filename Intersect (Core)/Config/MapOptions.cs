@@ -80,20 +80,6 @@ namespace Intersect.Config
         // A private field to hold the value of the EnableDiagonalMovement.
         private bool mEnableDiagonalMovement;
 
-        [Obsolete("Renamed to MapHeight, this will be removed in 0.8-beta.", true)]
-        public int Height
-        {
-            get => MapHeight;
-            set => MapHeight = value;
-        }
-
-        [Obsolete("Renamed to MapWidth, this will be removed in 0.8-beta.", true)]
-        public int Width
-        {
-            get => MapWidth;
-            set => MapWidth = value;
-        }
-
         [OnDeserialized]
         internal void OnDeserializedMethod(StreamingContext context)
         {
