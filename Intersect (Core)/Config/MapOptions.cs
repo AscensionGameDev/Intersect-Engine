@@ -21,6 +21,10 @@ namespace Intersect.Config
                 MovementDirections = mEnableDiagonalMovement ? 8 : 4;
             }
         }
+        /// <summary>
+        /// option to drop items on arena type maps
+        /// </summary>
+        public bool DisablePlayerDropsInArenaMaps { get; set; } = false;
 
         /// <summary>
         /// The style of the game's border.
