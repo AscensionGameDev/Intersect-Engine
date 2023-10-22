@@ -841,11 +841,6 @@ namespace Intersect.Client.Entities
         public void TryWithdrawItem(int bankSlotIndex, int inventorySlotIndex = -1)
         {
             var bankSlot = Globals.Bank[bankSlotIndex];
-            if (bankSlot == default)
-            {
-                return;
-            }
-
             if (!ItemBase.TryGet(bankSlot.ItemId, out var itemDescriptor))
             {
                 return;
