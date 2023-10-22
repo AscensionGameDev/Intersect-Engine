@@ -258,18 +258,22 @@ namespace Intersect.Server.Entities
         /// <returns>The maximum amount of the item that can be deposited in the bank.</returns>
         private int FindAvailableBankSpaceForItem(Guid itemId, int amount)
         {
+            if (!ItemBase.TryGet(itemId, out var itemDescriptor))
+            {
+                return 0;
+            }
+
             int spaceLeft = 0;
+            int maxBankStack = itemDescriptor.MaxBankStack;
 
             if (spaceLeft >= amount)
             {
                 return amount;
             }
 
-            int maxBankStack = ItemBase.Get(itemId).MaxBankStack;
-
-            for (int i = 0; i < mMaxSlots; i++)
+            var bankSlots = mBank.ToArray();
+            foreach (var bankSlot in bankSlots)
             {
-                var bankSlot = mBank[i];
                 if (bankSlot != null && bankSlot.ItemId == itemId)
                 {
                     spaceLeft += maxBankStack - bankSlot.Quantity;
