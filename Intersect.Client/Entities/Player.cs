@@ -733,8 +733,17 @@ namespace Intersect.Client.Entities
             PacketSender.SendSellItem((int)((InputBox)sender).UserData, 1);
         }
 
-        //bank
-        public void TryDepositItem(int inventorySlotIndex, int bankSlotIndex = -1)
+        /// <summary>
+        /// Tries to deposit items into the bank.
+        /// </summary>
+        /// <param name="inventorySlotIndex">The slot of the item in the player's inventory.</param>
+        /// <param name="bankSlotIndex">The slot of the bank to deposit the item into.</param>
+        /// <param name="contextMenu">Indicates if the action was triggered by a context menu.</param>
+        /// <param name="shiftKey">Indicates if the action was triggered by the shift key</param>
+        public void TryDepositItem(int inventorySlotIndex,
+            int bankSlotIndex = -1,
+            bool contextMenu = false,
+            bool shiftKey = false)
         {
             var inventorySlot = Inventory[inventorySlotIndex];
             if (!ItemBase.TryGet(inventorySlot.ItemId, out var itemDescriptor))
@@ -750,38 +759,70 @@ namespace Intersect.Client.Entities
             }
 
             var itemQuantityInInventory = GetQuantityOfItemInInventory(itemDescriptor.Id);
-            var availableSpace = FindAvailableBankSpaceForItem(inventorySlot.ItemId, itemQuantityInInventory);
+            var availableBankSpaceForItem = FindAvailableBankSpaceForItem(inventorySlot.ItemId, itemQuantityInInventory);
 
-            if (availableSpace < 1)
+            if (availableBankSpaceForItem < 1)
             {
                 ChatboxMsg.AddMessage(new ChatboxMsg(Strings.Bank.NoSpace, CustomColors.Alerts.Error,
                     ChatMessageType.Bank));
                 return;
             }
 
-            // TODO: Unify depositing single/multiple items.
-            if (itemQuantityInInventory == 1 || availableSpace == 1)
+            DepositItem(inventorySlotIndex,
+                bankSlotIndex,
+                itemQuantityInInventory,
+                inventorySlot.Quantity,
+                availableBankSpaceForItem,
+                itemDescriptor,
+                contextMenu,
+                shiftKey);
+        }
+
+        /// <summary>
+        /// Deposits items into the bank.
+        /// </summary>
+        /// <param name="inventorySlot">The slot of the item to deposit from player's inventory.</param>
+        /// <param name="bankSlot">The slot of the bank to deposit the item into.</param>
+        /// <param name="itemQuantityInInventory">The total quantity of the item in the player's inventory.</param>
+        /// <param name="itemQuantityInInventorySlot">The quantity of the item in the source inventory slot.</param>
+        /// <param name="availableBankSpaceForItem">The available space in the bank.</param>
+        /// <param name="itemDescriptor">The descriptor of the item being deposited.</param>
+        /// <param name="contextMenu">Indicates if the action was triggered by a context menu.</param>
+        /// <param name="shiftKey">Indicates if the action was triggered by the shift key</param>
+        private void DepositItem(int inventorySlot,
+            int bankSlot,
+            int itemQuantityInInventory,
+            int itemQuantityInInventorySlot,
+            int availableBankSpaceForItem,
+            ItemBase itemDescriptor,
+            bool contextMenu,
+            bool shiftKey)
+        {
+            if (shiftKey)
             {
-                DepositSingleItem(inventorySlotIndex, bankSlotIndex);
+                PacketSender.SendDepositItem(inventorySlot, availableBankSpaceForItem);
                 return;
             }
 
-            OpenDepositItemInputBox(itemDescriptor, inventorySlotIndex, bankSlotIndex, availableSpace);
-        }
+            if (itemQuantityInInventory == 1 || availableBankSpaceForItem == 1 ||
+                !contextMenu && itemQuantityInInventorySlot == 1)
+            {
+                PacketSender.SendDepositItem(inventorySlot, 1, bankSlot);
+                return;
+            }
 
-        private bool IsGuildBankDepositAllowed()
-        {
-            return !string.IsNullOrWhiteSpace(Globals.Me.Guild) &&
-                   (Globals.Me.GuildRank.Permissions.BankDeposit || Globals.Me.Rank == 0);
-        }
+            if (itemQuantityInInventorySlot > availableBankSpaceForItem)
+            {
+                itemQuantityInInventorySlot = availableBankSpaceForItem;
+            }
 
-        private void DepositSingleItem(int inventorySlotIndex, int bankSlotIndex)
-        {
-            PacketSender.SendDepositItem(inventorySlotIndex, 1, bankSlotIndex);
-        }
+            if ((bankSlot > -1) || // Dragging item(s) into a bank slot.
+                (!contextMenu && itemQuantityInInventory <= itemDescriptor.MaxInventoryStack)) // One stack in inventory.
+            {
+                PacketSender.SendDepositItem(inventorySlot, itemQuantityInInventorySlot, bankSlot);
+                return;
+            }
 
-        private void OpenDepositItemInputBox(ItemBase itemDescriptor, int inventorySlotIndex, int bankSlotIndex, int availableSpace)
-        {
             InputBox.Open(
                 title: Strings.Bank.deposititem,
                 prompt: Strings.Bank.deposititemprompt.ToString(itemDescriptor.Name),
@@ -789,9 +830,15 @@ namespace Intersect.Client.Entities
                 inputType: InputBox.InputType.NumericSliderInput,
                 onSuccess: DepositItemInputBoxOkay,
                 onCancel: null,
-                userData: new[] { inventorySlotIndex, bankSlotIndex },
-                quantity: availableSpace,
-                maxQuantity: availableSpace);
+                userData: new[] { inventorySlot, bankSlot },
+                quantity: contextMenu ? availableBankSpaceForItem : itemQuantityInInventorySlot,
+                maxQuantity: availableBankSpaceForItem);
+        }
+
+        private bool IsGuildBankDepositAllowed()
+        {
+            return !string.IsNullOrWhiteSpace(Globals.Me.Guild) &&
+                   (Globals.Me.GuildRank.Permissions.BankDeposit || Globals.Me.Rank == 0);
         }
 
         private static int FindAvailableBankSpaceForItem(Guid itemId, int itemQuantityInInventory)

@@ -96,7 +96,14 @@ namespace Intersect.Client.Interface.Game.Inventory
             }
             else if (Globals.InBank)
             {
-                Globals.Me.TryDepositItem(mMySlot);
+                if (Globals.InputManager.KeyDown(Keys.Shift))
+                {
+                    Globals.Me.TryDepositItem(mMySlot, -1, false, true);
+                }
+                else
+                {
+                    Globals.Me.TryDepositItem(mMySlot);
+                }
             }
             else if (Globals.InBag)
             {
