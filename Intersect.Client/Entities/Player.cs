@@ -878,8 +878,8 @@ namespace Intersect.Client.Entities
 
         private bool IsGuildBankWithdrawAllowed()
         {
-            var rank = Globals.Me.GuildRank;
-            return !string.IsNullOrWhiteSpace(Globals.Me.Guild) && (rank.Permissions.BankRetrieve || Globals.Me.Rank == 0);
+            return !string.IsNullOrWhiteSpace(Globals.Me.Guild) &&
+                   (Globals.Me.GuildRank.Permissions.BankRetrieve || Globals.Me.Rank == 0);
         }
 
         private void WithdrawSingleItem(int bankSlotIndex, int inventorySlotIndex)
