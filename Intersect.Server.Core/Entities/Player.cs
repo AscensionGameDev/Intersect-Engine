@@ -6719,7 +6719,7 @@ namespace Intersect.Server.Entities
             }
 
             // Are we dealing with a cooldown group?
-            if (item.CooldownGroup.Trim().Length > 0)
+            if (!string.IsNullOrWhiteSpace(item.CooldownGroup))
             {
                 // Yes, so handle it!
                 UpdateCooldownGroup(GameObjectType.Item, item.CooldownGroup, item.Cooldown, item.IgnoreCooldownReduction);
