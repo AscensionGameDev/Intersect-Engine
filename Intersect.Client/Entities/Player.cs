@@ -885,7 +885,17 @@ namespace Intersect.Client.Entities
             }
         }
 
-        public void TryWithdrawItem(int bankSlotIndex, int inventorySlotIndex = -1)
+        /// <summary>
+        /// Tries to withdraw items from the bank.
+        /// </summary>
+        /// <param name="bankSlotIndex">The slot of the bank slot to withdraw the item from.</param>
+        /// <param name="inventorySlotIndex">The slot of the inventory to deposit the item into.</param>
+        /// <param name="contextMenu">Indicates if the action was triggered by a context menu.</param>
+        /// <param name="shiftKey">Indicates if the action was triggered by the shift key.</param>
+        public void TryWithdrawItem(int bankSlotIndex,
+            int inventorySlotIndex = -1,
+            bool contextMenu = false,
+            bool shiftKey = false)
         {
             var bankSlot = Globals.Bank[bankSlotIndex];
             if (!ItemBase.TryGet(bankSlot.ItemId, out var itemDescriptor))
@@ -901,36 +911,69 @@ namespace Intersect.Client.Entities
             }
 
             var itemQuantityInBank = GetQuantityOfItemInBank(itemDescriptor.Id);
-            int availableSpace = FindAvailableInventorySpaceForItem(itemDescriptor.Id, itemQuantityInBank);
+            int availableInventorySpaceForItem = FindAvailableInventorySpaceForItem(itemDescriptor.Id, itemQuantityInBank);
 
-            if (availableSpace < 1)
+            if (availableInventorySpaceForItem < 1)
             {
                 ChatboxMsg.AddMessage(new ChatboxMsg(Strings.Bank.WithdrawItemNoSpace, CustomColors.Alerts.Error, ChatMessageType.Bank));
                 return;
             }
 
-            if (itemQuantityInBank == 1 || availableSpace == 1)
+            WithdrawItem(bankSlotIndex,
+                inventorySlotIndex,
+                itemQuantityInBank,
+                bankSlot.Quantity,
+                availableInventorySpaceForItem,
+                itemDescriptor,
+                contextMenu,
+                shiftKey);
+        }
+
+        /// <summary>
+        /// Withdraws items from the bank.
+        /// </summary>
+        /// <param name="bankSlot">The bank slot to withdraw the item from.</param>
+        /// <param name="inventorySlot">The inventory slot to deposit the item into.</param>
+        /// <param name="itemQuantityInBank">The total quantity of the item in the bank.</param>
+        /// <param name="itemQuantityInBankSlot">The quantity of the item in the source bank slot.</param>
+        /// <param name="availableInventorySpaceForItem">The available space in the player's inventory for the item.</param>
+        /// <param name="itemDescriptor">The descriptor of the item being withdrawn.</param>
+        /// <param name="contextMenu">Indicates if the action was triggered by a context menu.</param>
+        /// <param name="shiftKey">Indicates if the action was triggered by the shift key.</param>
+        private void WithdrawItem(int bankSlot,
+            int inventorySlot,
+            int itemQuantityInBank,
+            int itemQuantityInBankSlot,
+            int availableInventorySpaceForItem,
+            ItemBase itemDescriptor,
+            bool contextMenu,
+            bool shiftKey)
+        {
+            if (shiftKey)
             {
-                WithdrawSingleItem(bankSlotIndex, inventorySlotIndex);
+                PacketSender.SendWithdrawItem(bankSlot, availableInventorySpaceForItem);
                 return;
             }
 
-            OpenWithdrawItemInputBox(itemDescriptor, bankSlotIndex, inventorySlotIndex, availableSpace);
-        }
+            if (itemQuantityInBank == 1 || availableInventorySpaceForItem == 1 ||
+                !contextMenu && itemQuantityInBankSlot == 1)
+            {
+                PacketSender.SendWithdrawItem(bankSlot, 1, inventorySlot);
+                return;
+            }
 
-        private bool IsGuildBankWithdrawAllowed()
-        {
-            return !string.IsNullOrWhiteSpace(Globals.Me.Guild) &&
-                   (Globals.Me.GuildRank.Permissions.BankRetrieve || Globals.Me.Rank == 0);
-        }
+            if (itemQuantityInBankSlot > availableInventorySpaceForItem)
+            {
+                itemQuantityInBankSlot = availableInventorySpaceForItem;
+            }
 
-        private void WithdrawSingleItem(int bankSlotIndex, int inventorySlotIndex)
-        {
-            PacketSender.SendWithdrawItem(bankSlotIndex, 1, inventorySlotIndex);
-        }
+            if ((inventorySlot > -1) || // Dragging item(s) into an inventory slot.
+                (!contextMenu && itemQuantityInBank <= itemDescriptor.MaxBankStack)) // One stack in bank.
+            {
+                PacketSender.SendWithdrawItem(bankSlot, itemQuantityInBankSlot, inventorySlot);
+                return;
+            }
 
-        private void OpenWithdrawItemInputBox(ItemBase itemDescriptor, int bankSlotIndex, int inventorySlotIndex, int availableSpace)
-        {
             InputBox.Open(
                 title: Strings.Bank.withdrawitem,
                 prompt: Strings.Bank.withdrawitemprompt.ToString(itemDescriptor.Name),
@@ -938,10 +981,16 @@ namespace Intersect.Client.Entities
                 inputType: InputBox.InputType.NumericSliderInput,
                 onSuccess: WithdrawItemInputBoxOkay,
                 onCancel: null,
-                userData: new[] { bankSlotIndex, inventorySlotIndex },
-                quantity: availableSpace,
-                maxQuantity: availableSpace
+                userData: new[] { bankSlot, inventorySlot },
+                quantity: contextMenu ? availableInventorySpaceForItem : itemQuantityInBankSlot,
+                maxQuantity: availableInventorySpaceForItem
             );
+        }
+
+        private bool IsGuildBankWithdrawAllowed()
+        {
+            return !string.IsNullOrWhiteSpace(Globals.Me.Guild) &&
+                   (Globals.Me.GuildRank.Permissions.BankRetrieve || Globals.Me.Rank == 0);
         }
 
         private int FindAvailableInventorySpaceForItem(Guid itemId, int itemQuantityInBank)

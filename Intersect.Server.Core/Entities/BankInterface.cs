@@ -696,7 +696,12 @@ namespace Intersect.Server.Entities
                     amount = 1;
                 }
 
-                if (!mPlayer.CanGiveItem(itemBase.Id, amount, invSlot))
+                if (!mPlayer.CanGiveItem(itemBase.Id, amount, invSlot) || invSlot < 0)
+                {
+                    invSlot = mPlayer.FindOpenInventorySlot().Slot;
+                }
+
+                if (invSlot < 0)
                 {
                     PacketSender.SendChatMsg(mPlayer, Strings.Banks.inventorynospace, ChatMessageType.Inventory, CustomColors.Alerts.Error);
                     return;

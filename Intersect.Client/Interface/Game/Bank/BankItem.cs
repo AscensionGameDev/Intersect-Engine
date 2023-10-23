@@ -87,7 +87,14 @@ namespace Intersect.Client.Interface.Game.Bank
         {
             if (Globals.InBank)
             {
-                Globals.Me.TryWithdrawItem(mMySlot);
+                if (Globals.InputManager.KeyDown(Keys.Shift))
+                {
+                    Globals.Me.TryWithdrawItem(mMySlot, -1, false, true);
+                }
+                else
+                {
+                    Globals.Me.TryWithdrawItem(mMySlot);
+                }
             }
         }
 
