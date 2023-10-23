@@ -376,9 +376,8 @@ namespace Intersect.GameObjects
                 return Array.Empty<ItemBase>();
             }
 
-            return Lookup
-                .Where(i => ((ItemBase)i.Value).CooldownGroup.Trim() == cooldownGroup)
-                .Select(i => (ItemBase)i.Value)
+            return Lookup.Values.OfType<ItemBase>()
+                .Where(descriptor => descriptor.CooldownGroup?.Trim() == cooldownGroup)
                 .ToArray();
         }
 
