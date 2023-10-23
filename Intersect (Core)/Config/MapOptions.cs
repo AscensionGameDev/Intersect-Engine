@@ -27,6 +27,11 @@ namespace Intersect.Config
         public bool DisablePlayerDropsInArenaMaps { get; set; } = false;
 
         /// <summary>
+        /// option to dont loss exp in arena type maps
+        /// </summary>
+        public bool DisableExpLossInArenaMaps { get; set; } = false;
+
+        /// <summary>
         /// The style of the game's border.
         /// 0: Smart borders, 1: Non-seamless, 2: Black borders
         /// </summary>
