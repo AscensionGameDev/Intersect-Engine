@@ -1156,6 +1156,11 @@ namespace Intersect.Server.Entities
 
         public void TakeExperience(long amount)
         {
+            if (this is Player && Options.Instance.MapOpts.DisableExpLossInArenaMaps && Map.ZoneType == MapZone.Arena)
+            {
+                return;
+            }
+            
             Exp -= amount;
             if (Exp < 0)
             {
