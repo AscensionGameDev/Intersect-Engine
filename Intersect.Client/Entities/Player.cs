@@ -740,7 +740,7 @@ namespace Intersect.Client.Entities
         /// <param name="bankSlotIndex">The slot of the bank to deposit the item into.</param>
         /// <param name="contextMenu">Indicates if the action was triggered by a context menu.</param>
         /// <param name="shiftKey">Indicates if the action was triggered by the shift key</param>
-        public void TryDepositItem(int inventorySlotIndex,
+        public bool TryDepositItem(int inventorySlotIndex,
             int bankSlotIndex = -1,
             bool contextMenu = false,
             bool shiftKey = false)
@@ -748,14 +748,14 @@ namespace Intersect.Client.Entities
             var inventorySlot = Inventory[inventorySlotIndex];
             if (!ItemBase.TryGet(inventorySlot.ItemId, out var itemDescriptor))
             {
-                return;
+                return false;
             }
 
             // Permission Check for Guild Bank
             if (Globals.GuildBank && !IsGuildBankDepositAllowed())
             {
                 ChatboxMsg.AddMessage(new ChatboxMsg(Strings.Guilds.NotAllowedDeposit.ToString(Globals.Me.Guild), CustomColors.Alerts.Error, ChatMessageType.Bank));
-                return;
+                return false;
             }
 
             var itemQuantityInInventory = GetQuantityOfItemInInventory(itemDescriptor.Id);
@@ -765,7 +765,7 @@ namespace Intersect.Client.Entities
             {
                 ChatboxMsg.AddMessage(new ChatboxMsg(Strings.Bank.NoSpace, CustomColors.Alerts.Error,
                     ChatMessageType.Bank));
-                return;
+                return false;
             }
 
 
@@ -774,14 +774,14 @@ namespace Intersect.Client.Entities
             if (shiftKey)
             {
                 PacketSender.SendDepositItem(inventorySlotIndex, availableBankSpaceForItem);
-                return;
+                return true;
             }
 
             if (itemQuantityInInventory == 1 || availableBankSpaceForItem == 1 ||
                 !contextMenu && itemQuantityInInventorySlot == 1)
             {
                 PacketSender.SendDepositItem(inventorySlotIndex, 1, bankSlotIndex);
-                return;
+                return true;
             }
 
             if (itemQuantityInInventorySlot > availableBankSpaceForItem)
@@ -793,7 +793,7 @@ namespace Intersect.Client.Entities
                 (!contextMenu && itemQuantityInInventory <= itemDescriptor.MaxInventoryStack)) // One stack in inventory.
             {
                 PacketSender.SendDepositItem(inventorySlotIndex, itemQuantityInInventorySlot, bankSlotIndex);
-                return;
+                return true;
             }
 
             InputBox.Open(
@@ -807,6 +807,8 @@ namespace Intersect.Client.Entities
                 quantity: contextMenu ? availableBankSpaceForItem : itemQuantityInInventorySlot,
                 maxQuantity: availableBankSpaceForItem
             );
+
+            return true;
         }
 
         private bool IsGuildBankDepositAllowed()
