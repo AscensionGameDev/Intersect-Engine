@@ -768,46 +768,19 @@ namespace Intersect.Client.Entities
                 return;
             }
 
-            DepositItem(inventorySlotIndex,
-                bankSlotIndex,
-                itemQuantityInInventory,
-                inventorySlot.Quantity,
-                availableBankSpaceForItem,
-                itemDescriptor,
-                contextMenu,
-                shiftKey);
-        }
 
-        /// <summary>
-        /// Deposits items into the bank.
-        /// </summary>
-        /// <param name="inventorySlot">The slot of the item to deposit from player's inventory.</param>
-        /// <param name="bankSlot">The slot of the bank to deposit the item into.</param>
-        /// <param name="itemQuantityInInventory">The total quantity of the item in the player's inventory.</param>
-        /// <param name="itemQuantityInInventorySlot">The quantity of the item in the source inventory slot.</param>
-        /// <param name="availableBankSpaceForItem">The available space in the bank.</param>
-        /// <param name="itemDescriptor">The descriptor of the item being deposited.</param>
-        /// <param name="contextMenu">Indicates if the action was triggered by a context menu.</param>
-        /// <param name="shiftKey">Indicates if the action was triggered by the shift key</param>
-        private void DepositItem(int inventorySlot,
-            int bankSlot,
-            int itemQuantityInInventory,
-            int itemQuantityInInventorySlot,
-            int availableBankSpaceForItem,
-            ItemBase itemDescriptor,
-            bool contextMenu,
-            bool shiftKey)
-        {
+            var itemQuantityInInventorySlot = inventorySlot.Quantity;
+
             if (shiftKey)
             {
-                PacketSender.SendDepositItem(inventorySlot, availableBankSpaceForItem);
+                PacketSender.SendDepositItem(inventorySlotIndex, availableBankSpaceForItem);
                 return;
             }
 
             if (itemQuantityInInventory == 1 || availableBankSpaceForItem == 1 ||
                 !contextMenu && itemQuantityInInventorySlot == 1)
             {
-                PacketSender.SendDepositItem(inventorySlot, 1, bankSlot);
+                PacketSender.SendDepositItem(inventorySlotIndex, 1, bankSlotIndex);
                 return;
             }
 
@@ -816,10 +789,10 @@ namespace Intersect.Client.Entities
                 itemQuantityInInventorySlot = availableBankSpaceForItem;
             }
 
-            if ((bankSlot > -1) || // Dragging item(s) into a bank slot.
+            if ((bankSlotIndex > -1) || // Dragging item(s) into a bank slot.
                 (!contextMenu && itemQuantityInInventory <= itemDescriptor.MaxInventoryStack)) // One stack in inventory.
             {
-                PacketSender.SendDepositItem(inventorySlot, itemQuantityInInventorySlot, bankSlot);
+                PacketSender.SendDepositItem(inventorySlotIndex, itemQuantityInInventorySlot, bankSlotIndex);
                 return;
             }
 
@@ -830,9 +803,10 @@ namespace Intersect.Client.Entities
                 inputType: InputBox.InputType.NumericSliderInput,
                 onSuccess: DepositItemInputBoxOkay,
                 onCancel: null,
-                userData: new[] { inventorySlot, bankSlot },
+                userData: new[] { inventorySlotIndex, bankSlotIndex },
                 quantity: contextMenu ? availableBankSpaceForItem : itemQuantityInInventorySlot,
-                maxQuantity: availableBankSpaceForItem);
+                maxQuantity: availableBankSpaceForItem
+            );
         }
 
         private bool IsGuildBankDepositAllowed()
