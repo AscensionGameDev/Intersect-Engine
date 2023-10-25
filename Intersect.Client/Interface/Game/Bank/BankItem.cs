@@ -89,11 +89,20 @@ namespace Intersect.Client.Interface.Game.Bank
             {
                 if (Globals.InputManager.KeyDown(Keys.Shift))
                 {
-                    Globals.Me.TryWithdrawItem(mMySlot, -1, false, true);
+                    Globals.Me.TryWithdrawItem(
+                        mMySlot,
+                        skipPrompt: true
+                    );
                 }
                 else
                 {
-                    Globals.Me.TryWithdrawItem(mMySlot);
+                    var slot = Globals.Bank[mMySlot];
+                    Globals.Me.TryWithdrawItem(
+                        mMySlot,
+                        slot,
+                        quantityHint: slot.Quantity,
+                        skipPrompt: false
+                    );
                 }
             }
         }
@@ -320,7 +329,13 @@ namespace Intersect.Client.Interface.Game.Bank
 
                             if (bestIntersectIndex > -1)
                             {
-                                Globals.Me.TryWithdrawItem(mMySlot, bestIntersectIndex);
+                                var slot = Globals.Bank[mMySlot];
+                                Globals.Me.TryWithdrawItem(
+                                    mMySlot,
+                                    inventorySlotIndex: bestIntersectIndex,
+                                    quantityHint: slot.Quantity,
+                                    skipPrompt: true
+                                );
                             }
                         }
                     }

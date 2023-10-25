@@ -169,7 +169,7 @@ namespace Intersect.Client.Interface.Game.Inventory
             }
             else if (Globals.InBank)
             {
-                Globals.Me.TryDepositItem(slot, -1, true);
+                Globals.Me.TryDepositItem(slot);
             }
             else if (Globals.InBag)
             {

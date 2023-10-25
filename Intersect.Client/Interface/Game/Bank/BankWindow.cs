@@ -100,7 +100,7 @@ namespace Intersect.Client.Interface.Game.Bank
         private void MWithdrawContextItem_Clicked(Base sender, Framework.Gwen.Control.EventArguments.ClickedEventArgs arguments)
         {
             var slot = (int)sender.Parent.UserData;
-            Globals.Me.TryWithdrawItem(slot, -1, true);
+            Globals.Me.TryWithdrawItem(slot);
         }
 
         public void Close()

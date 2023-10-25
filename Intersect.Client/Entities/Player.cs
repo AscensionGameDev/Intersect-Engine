@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Intersect.Client.Core;
 using Intersect.Client.Core.Controls;
 using Intersect.Client.Entities.Events;
@@ -12,6 +9,7 @@ using Intersect.Client.General;
 using Intersect.Client.Interface.Game;
 using Intersect.Client.Interface.Game.Chat;
 using Intersect.Client.Interface.Game.EntityPanel;
+using Intersect.Client.Items;
 using Intersect.Client.Localization;
 using Intersect.Client.Maps;
 using Intersect.Client.Networking;
@@ -58,7 +56,7 @@ namespace Intersect.Client.Entities
 
         IReadOnlyList<IFriendInstance> IPlayer.Friends => Friends;
 
-        public List<IFriendInstance> Friends { get; set; } = new List<IFriendInstance>();
+        public List<IFriendInstance> Friends { get; set; } = new();
 
         IReadOnlyList<IHotbarInstance> IPlayer.HotbarSlots => Hotbar.ToList();
 
@@ -68,21 +66,21 @@ namespace Intersect.Client.Entities
 
         IReadOnlyDictionary<Guid, long> IPlayer.ItemCooldowns => ItemCooldowns;
 
-        public Dictionary<Guid, long> ItemCooldowns { get; set; } = new Dictionary<Guid, long>();
+        public Dictionary<Guid, long> ItemCooldowns { get; set; } = new();
 
-        private Entity mLastBumpedEvent = null;
+        private Entity mLastBumpedEvent;
 
         private List<IPartyMember> mParty;
 
         IReadOnlyDictionary<Guid, QuestProgress> IPlayer.QuestProgress => QuestProgress;
 
-        public Dictionary<Guid, QuestProgress> QuestProgress { get; set; } = new Dictionary<Guid, QuestProgress>();
+        public Dictionary<Guid, QuestProgress> QuestProgress { get; set; } = new();
 
         public Guid[] HiddenQuests { get; set; } = new Guid[0];
 
         IReadOnlyDictionary<Guid, long> IPlayer.SpellCooldowns => SpellCooldowns;
 
-        public Dictionary<Guid, long> SpellCooldowns { get; set; } = new Dictionary<Guid, long>();
+        public Dictionary<Guid, long> SpellCooldowns { get; set; } = new();
 
         public int StatPoints { get; set; } = 0;
 
@@ -94,24 +92,24 @@ namespace Intersect.Client.Entities
 
         public int TargetType { get; set; }
 
-        public long CombatTimer { get; set; } = 0;
+        public long CombatTimer { get; set; }
 
         public long IsCastingCheckTimer { get; set; }
 
         public long GlobalCooldown { get; set; }
 
         // Target data
-        private long mlastTargetScanTime = 0;
+        private long mlastTargetScanTime;
 
         Guid mlastTargetScanMap = Guid.Empty;
 
-        Point mlastTargetScanLocation = new Point(-1, -1);
+        Point mlastTargetScanLocation = new(-1, -1);
 
-        Dictionary<Entity, TargetInfo> mlastTargetList = new Dictionary<Entity, TargetInfo>(); // Entity, Last Time Selected
+        Dictionary<Entity, TargetInfo> mlastTargetList = new(); // Entity, Last Time Selected
 
-        Entity mLastEntitySelected = null;
+        Entity mLastEntitySelected;
 
-        private Dictionary<int, long> mLastHotbarUseTime = new Dictionary<int, long>();
+        private Dictionary<int, long> mLastHotbarUseTime = new();
         private int mHotbarUseDelay = 150;
 
         /// <summary>
@@ -427,8 +425,6 @@ namespace Intersect.Client.Entities
             return (int)Math.Min(count, int.MaxValue);
         }
 
-        public int GetQuantityOfItemInBag(Guid itemId) => GetQuantityOfItemIn(Globals.Bag, itemId);
-
         public int GetQuantityOfItemInBank(Guid itemId) => GetQuantityOfItemIn(Globals.Bank, itemId);
 
         public int GetQuantityOfItemInInventory(Guid itemId) => GetQuantityOfItemIn(Inventory, itemId);
@@ -529,7 +525,8 @@ namespace Intersect.Client.Entities
                     {
                         return true;
                     }
-                    else if ((ItemBase.TryGet(itm.ItemId, out var itemBase) && !itemBase.IgnoreGlobalCooldown) && Globals.Me.GlobalCooldown > Timing.Global.Milliseconds)
+
+                    if ((ItemBase.TryGet(itm.ItemId, out var itemBase) && !itemBase.IgnoreGlobalCooldown) && Globals.Me.GlobalCooldown > Timing.Global.Milliseconds)
                     {
                         return true;
                     }
@@ -550,7 +547,8 @@ namespace Intersect.Client.Entities
                     {
                         return ItemCooldowns[itm.ItemId] - Timing.Global.Milliseconds;
                     }
-                    else if ((ItemBase.TryGet(itm.ItemId, out var itemBase) && !itemBase.IgnoreGlobalCooldown) && Globals.Me.GlobalCooldown > Timing.Global.Milliseconds)
+
+                    if ((ItemBase.TryGet(itm.ItemId, out var itemBase) && !itemBase.IgnoreGlobalCooldown) && Globals.Me.GlobalCooldown > Timing.Global.Milliseconds)
                     {
                         return Globals.Me.GlobalCooldown - Timing.Global.Milliseconds;
                     }
@@ -571,7 +569,8 @@ namespace Intersect.Client.Entities
                     {
                         return true;
                     }
-                    else if ((SpellBase.TryGet(spl.Id, out var spellBase) && !spellBase.IgnoreGlobalCooldown) && Globals.Me.GlobalCooldown > Timing.Global.Milliseconds)
+
+                    if ((SpellBase.TryGet(spl.Id, out var spellBase) && !spellBase.IgnoreGlobalCooldown) && Globals.Me.GlobalCooldown > Timing.Global.Milliseconds)
                     {
                         return true;
                     }
@@ -734,23 +733,22 @@ namespace Intersect.Client.Entities
         }
 
         /// <summary>
-        /// Tries to deposit items into the bank.
+        /// Attempts to deposit the item from the inventory into the bank.
         /// </summary>
-        /// <param name="inventorySlotIndex">The slot of the item in the player's inventory.</param>
-        /// <param name="bankSlotIndex">The slot of the bank to deposit the item into.</param>
-        /// <param name="contextMenu">Indicates if the action was triggered by a context menu.</param>
-        /// <param name="shiftKey">Indicates if the action was triggered by the shift key</param>
-        public bool TryDepositItem(int inventorySlotIndex,
+        /// <param name="inventorySlotIndex"></param>
+        /// <param name="slot"></param>
+        /// <param name="bankSlotIndex"></param>
+        /// <param name="quantityHint"></param>
+        /// <param name="skipPrompt"></param>
+        /// <returns></returns>
+        public bool TryDepositItem(
+            int inventorySlotIndex,
+            IItem? slot = null,
             int bankSlotIndex = -1,
-            bool contextMenu = false,
-            bool shiftKey = false)
+            int quantityHint = -1,
+            bool skipPrompt = false
+        )
         {
-            var inventorySlot = Inventory[inventorySlotIndex];
-            if (!ItemBase.TryGet(inventorySlot.ItemId, out var itemDescriptor))
-            {
-                return false;
-            }
-
             // Permission Check for Guild Bank
             if (Globals.GuildBank && !IsGuildBankDepositAllowed())
             {
@@ -758,41 +756,61 @@ namespace Intersect.Client.Entities
                 return false;
             }
 
-            var itemQuantityInInventory = GetQuantityOfItemInInventory(itemDescriptor.Id);
-            var availableBankSpaceForItem = FindAvailableBankSpaceForItem(inventorySlot.ItemId, itemQuantityInInventory);
-
-            if (availableBankSpaceForItem < 1)
+            slot ??= Inventory[inventorySlotIndex];
+            if (!ItemBase.TryGet(slot.ItemId, out var itemDescriptor))
             {
-                ChatboxMsg.AddMessage(new ChatboxMsg(Strings.Bank.NoSpace, CustomColors.Alerts.Error,
-                    ChatMessageType.Bank));
+                Log.Warn($"Tried to move item that does not exist from slot {inventorySlotIndex}: {itemDescriptor.Id}");
                 return false;
             }
 
-
-            var itemQuantityInInventorySlot = inventorySlot.Quantity;
-
-            if (shiftKey)
+            // ReSharper disable once ConvertIfStatementToSwitchStatement
+            if (quantityHint == 0)
             {
-                PacketSender.SendDepositItem(inventorySlotIndex, availableBankSpaceForItem);
+                Log.Warn($"Tried to move 0 of '{itemDescriptor.Name}' ({itemDescriptor.Id})");
+                return false;
+            }
+
+            var maximumStack = itemDescriptor.Stackable ? itemDescriptor.MaxBankStack : 1;
+            var sourceQuantity = GetQuantityOfItemInInventory(itemDescriptor.Id);
+            var quantity = quantityHint < 0 ? sourceQuantity : quantityHint;
+
+            var targetSlots = Globals.Bank.ToArray();
+
+            var movableQuantity = Item.FindSpaceForItem(
+                itemDescriptor.Id,
+                maximumStack,
+                bankSlotIndex,
+                quantityHint < 0 ? sourceQuantity : quantityHint,
+                targetSlots
+            );
+
+            if (movableQuantity < 1)
+            {
+                ChatboxMsg.AddMessage(new ChatboxMsg(
+                    Strings.Bank.NoSpace,
+                    CustomColors.Alerts.Error,
+                    ChatMessageType.Bank
+                ));
+                return false;
+            }
+
+            if (skipPrompt)
+            {
+                PacketSender.SendDepositItem(inventorySlotIndex, movableQuantity, bankSlotIndex);
                 return true;
             }
 
-            if (itemQuantityInInventory == 1 || availableBankSpaceForItem == 1 ||
-                !contextMenu && itemQuantityInInventorySlot == 1)
-            {
-                PacketSender.SendDepositItem(inventorySlotIndex, 1, bankSlotIndex);
-                return true;
-            }
+            var maximumQuantity = movableQuantity < quantity ? movableQuantity : Item.FindSpaceForItem(
+                itemDescriptor.Id,
+                maximumStack,
+                bankSlotIndex,
+                sourceQuantity,
+                targetSlots
+            );
 
-            if (itemQuantityInInventorySlot > availableBankSpaceForItem)
+            if (maximumQuantity == 1)
             {
-                itemQuantityInInventorySlot = availableBankSpaceForItem;
-            }
-
-            if ((bankSlotIndex > -1) || // Dragging item(s) into a bank slot.
-                (!contextMenu && itemQuantityInInventory <= itemDescriptor.MaxInventoryStack)) // One stack in inventory.
-            {
-                PacketSender.SendDepositItem(inventorySlotIndex, itemQuantityInInventorySlot, bankSlotIndex);
+                PacketSender.SendDepositItem(inventorySlotIndex, movableQuantity, bankSlotIndex);
                 return true;
             }
 
@@ -804,8 +822,8 @@ namespace Intersect.Client.Entities
                 onSuccess: DepositItemInputBoxOkay,
                 onCancel: null,
                 userData: new[] { inventorySlotIndex, bankSlotIndex },
-                quantity: contextMenu ? availableBankSpaceForItem : itemQuantityInInventorySlot,
-                maxQuantity: availableBankSpaceForItem
+                quantity: movableQuantity,
+                maxQuantity: maximumQuantity
             );
 
             return true;
@@ -815,39 +833,6 @@ namespace Intersect.Client.Entities
         {
             return !string.IsNullOrWhiteSpace(Globals.Me.Guild) &&
                    (Globals.Me.GuildRank.Permissions.BankDeposit || Globals.Me.Rank == 0);
-        }
-
-        private static int FindAvailableBankSpaceForItem(Guid itemId, int itemQuantityInInventory)
-        {
-            if (!ItemBase.TryGet(itemId, out var itemDescriptor))
-            {
-                return 0;
-            }
-
-            int spaceLeft = 0;
-            int maxBankStack = itemDescriptor.MaxBankStack;
-
-            if (spaceLeft >= itemQuantityInInventory)
-            {
-                return itemQuantityInInventory;
-            }
-
-            // Calculate the total available space in the bank for the item
-            var bankSlots = Globals.Bank.ToArray();
-            foreach (var bankSlot in bankSlots)
-            {
-                if (bankSlot != null && bankSlot.ItemId == itemId)
-                {
-                    int quantityLeft = maxBankStack - bankSlot.Quantity;
-                    spaceLeft += quantityLeft;
-                }
-                else if (bankSlot == null || bankSlot.ItemId == Guid.Empty)
-                {
-                    spaceLeft += maxBankStack;
-                }
-            }
-
-            return Math.Min(itemQuantityInInventory, spaceLeft);
         }
 
         private void DepositItemInputBoxOkay(object sender, EventArgs e)
@@ -862,92 +847,84 @@ namespace Intersect.Client.Entities
         }
 
         /// <summary>
-        /// Tries to withdraw items from the bank.
+        /// Attempts to withdraw items from the bank into the inventory.
         /// </summary>
-        /// <param name="bankSlotIndex">The slot of the bank slot to withdraw the item from.</param>
-        /// <param name="inventorySlotIndex">The slot of the inventory to deposit the item into.</param>
-        /// <param name="contextMenu">Indicates if the action was triggered by a context menu.</param>
-        /// <param name="shiftKey">Indicates if the action was triggered by the shift key.</param>
-        public void TryWithdrawItem(int bankSlotIndex,
+        /// <param name="bankSlotIndex"></param>
+        /// <param name="slot"></param>
+        /// <param name="inventorySlotIndex"></param>
+        /// <param name="quantityHint"></param>
+        /// <param name="skipPrompt"></param>
+        /// <returns></returns>
+        public bool TryWithdrawItem(
+            int bankSlotIndex,
+            IItem? slot = null,
             int inventorySlotIndex = -1,
-            bool contextMenu = false,
-            bool shiftKey = false)
+            int quantityHint = -1,
+            bool skipPrompt = false
+        )
         {
-            var bankSlot = Globals.Bank[bankSlotIndex];
-            if (!ItemBase.TryGet(bankSlot.ItemId, out var itemDescriptor))
-            {
-                return;
-            }
-
             // Permission Check for Guild Bank
             if (Globals.GuildBank && !IsGuildBankWithdrawAllowed())
             {
                 ChatboxMsg.AddMessage(new ChatboxMsg(Strings.Guilds.NotAllowedWithdraw.ToString(Globals.Me.Guild), CustomColors.Alerts.Error, ChatMessageType.Bank));
-                return;
+                return false;
             }
 
-            var itemQuantityInBank = GetQuantityOfItemInBank(itemDescriptor.Id);
-            int availableInventorySpaceForItem = FindAvailableInventorySpaceForItem(itemDescriptor.Id, itemQuantityInBank);
-
-            if (availableInventorySpaceForItem < 1)
+            slot ??= Globals.Bank[bankSlotIndex];
+            if (!ItemBase.TryGet(slot.ItemId, out var itemDescriptor))
             {
-                ChatboxMsg.AddMessage(new ChatboxMsg(Strings.Bank.WithdrawItemNoSpace, CustomColors.Alerts.Error, ChatMessageType.Bank));
-                return;
+                Log.Warn($"Tried to move item that does not exist from slot {bankSlotIndex}: {itemDescriptor.Id}");
+                return false;
             }
 
-            WithdrawItem(bankSlotIndex,
+            // ReSharper disable once ConvertIfStatementToSwitchStatement
+            if (quantityHint == 0)
+            {
+                Log.Warn($"Tried to move 0 of '{itemDescriptor.Name}' ({itemDescriptor.Id})");
+                return false;
+            }
+
+            var maximumStack = itemDescriptor.Stackable ? itemDescriptor.MaxInventoryStack : 1;
+            var sourceQuantity = GetQuantityOfItemInBank(itemDescriptor.Id);
+            var quantity = quantityHint < 0 ? sourceQuantity : quantityHint;
+            var targetSlots = Inventory.ToArray();
+
+            var movableQuantity = Item.FindSpaceForItem(
+                itemDescriptor.Id,
+                maximumStack,
+                bankSlotIndex,
+                quantityHint < 0 ? sourceQuantity : quantityHint,
+                targetSlots
+            );
+
+            if (movableQuantity < 1)
+            {
+                ChatboxMsg.AddMessage(new ChatboxMsg(
+                    Strings.Bank.WithdrawItemNoSpace,
+                    CustomColors.Alerts.Error,
+                    ChatMessageType.Bank
+                ));
+                return false;
+            }
+
+            if (skipPrompt)
+            {
+                PacketSender.SendWithdrawItem(bankSlotIndex, movableQuantity, inventorySlotIndex);
+                return true;
+            }
+
+            var maximumQuantity = movableQuantity < quantity ? movableQuantity : Item.FindSpaceForItem(
+                itemDescriptor.Id,
+                maximumStack,
                 inventorySlotIndex,
-                itemQuantityInBank,
-                bankSlot.Quantity,
-                availableInventorySpaceForItem,
-                itemDescriptor,
-                contextMenu,
-                shiftKey);
-        }
+                sourceQuantity,
+                targetSlots
+            );
 
-        /// <summary>
-        /// Withdraws items from the bank.
-        /// </summary>
-        /// <param name="bankSlot">The bank slot to withdraw the item from.</param>
-        /// <param name="inventorySlot">The inventory slot to deposit the item into.</param>
-        /// <param name="itemQuantityInBank">The total quantity of the item in the bank.</param>
-        /// <param name="itemQuantityInBankSlot">The quantity of the item in the source bank slot.</param>
-        /// <param name="availableInventorySpaceForItem">The available space in the player's inventory for the item.</param>
-        /// <param name="itemDescriptor">The descriptor of the item being withdrawn.</param>
-        /// <param name="contextMenu">Indicates if the action was triggered by a context menu.</param>
-        /// <param name="shiftKey">Indicates if the action was triggered by the shift key.</param>
-        private void WithdrawItem(int bankSlot,
-            int inventorySlot,
-            int itemQuantityInBank,
-            int itemQuantityInBankSlot,
-            int availableInventorySpaceForItem,
-            ItemBase itemDescriptor,
-            bool contextMenu,
-            bool shiftKey)
-        {
-            if (shiftKey)
+            if (maximumQuantity == 1)
             {
-                PacketSender.SendWithdrawItem(bankSlot, availableInventorySpaceForItem);
-                return;
-            }
-
-            if (itemQuantityInBank == 1 || availableInventorySpaceForItem == 1 ||
-                !contextMenu && itemQuantityInBankSlot == 1)
-            {
-                PacketSender.SendWithdrawItem(bankSlot, 1, inventorySlot);
-                return;
-            }
-
-            if (itemQuantityInBankSlot > availableInventorySpaceForItem)
-            {
-                itemQuantityInBankSlot = availableInventorySpaceForItem;
-            }
-
-            if ((inventorySlot > -1) || // Dragging item(s) into an inventory slot.
-                (!contextMenu && itemQuantityInBank <= itemDescriptor.MaxBankStack)) // One stack in bank.
-            {
-                PacketSender.SendWithdrawItem(bankSlot, itemQuantityInBankSlot, inventorySlot);
-                return;
+                PacketSender.SendWithdrawItem(bankSlotIndex, movableQuantity, inventorySlotIndex);
+                return true;
             }
 
             InputBox.Open(
@@ -957,10 +934,12 @@ namespace Intersect.Client.Entities
                 inputType: InputBox.InputType.NumericSliderInput,
                 onSuccess: WithdrawItemInputBoxOkay,
                 onCancel: null,
-                userData: new[] { bankSlot, inventorySlot },
-                quantity: contextMenu ? availableInventorySpaceForItem : itemQuantityInBankSlot,
-                maxQuantity: availableInventorySpaceForItem
+                userData: new[] { bankSlotIndex, inventorySlotIndex },
+                quantity: movableQuantity,
+                maxQuantity: maximumQuantity
             );
+
+            return true;
         }
 
         private bool IsGuildBankWithdrawAllowed()
@@ -969,38 +948,6 @@ namespace Intersect.Client.Entities
                    (Globals.Me.GuildRank.Permissions.BankRetrieve || Globals.Me.Rank == 0);
         }
 
-        private int FindAvailableInventorySpaceForItem(Guid itemId, int itemQuantityInBank)
-        {
-            if (!ItemBase.TryGet(itemId, out var itemDescriptor))
-            {
-                return 0;
-            }
-
-            int spaceLeft = 0;
-            int maxInventoryStack = itemDescriptor.MaxInventoryStack;
-
-            if (spaceLeft >= itemQuantityInBank)
-            {
-                return itemQuantityInBank;
-            }
-
-            // Calculate the total available space in the player's inventory for this item.
-            var inventorySlots = Inventory.ToArray();
-            foreach (var inventorySlot in inventorySlots)
-            {
-                if (inventorySlot != null && inventorySlot.ItemId == itemId)
-                {
-                    spaceLeft += maxInventoryStack - inventorySlot.Quantity;
-                }
-                else if (inventorySlot == null || inventorySlot.ItemId == Guid.Empty)
-                {
-                    spaceLeft += maxInventoryStack;
-                }
-            }
-
-            return Math.Min(itemQuantityInBank, spaceLeft);
-        }
-        
         private void WithdrawItemInputBoxOkay(object sender, EventArgs e)
         {
             var value = (int)Math.Round(((InputBox)sender).Value);
@@ -1242,7 +1189,8 @@ namespace Intersect.Client.Entities
             {
                 return cd;
             }
-            else if ((SpellBase.TryGet(id, out var spellBase) && !spellBase.IgnoreGlobalCooldown) && Globals.Me.GlobalCooldown > Timing.Global.Milliseconds)
+
+            if ((SpellBase.TryGet(id, out var spellBase) && !spellBase.IgnoreGlobalCooldown) && Globals.Me.GlobalCooldown > Timing.Global.Milliseconds)
             {
                 return Globals.Me.GlobalCooldown;
             }
@@ -1516,7 +1464,8 @@ namespace Intersect.Client.Entities
                     {
                         continue;
                     }
-                    else if (canTargetPlayers && en.Value.Type == EntityType.Player)
+
+                    if (canTargetPlayers && en.Value.Type == EntityType.Player)
                     {
                         var player = en.Value as Player;
                         if (IsInMyParty(player))
@@ -1535,7 +1484,7 @@ namespace Intersect.Client.Entities
                         else
                         {
                             // Add entity with blank time. Never been selected.
-                            mlastTargetList.Add(en.Value, new TargetInfo() { DistanceTo = GetDistanceTo(en.Value), LastTimeSelected = 0 });
+                            mlastTargetList.Add(en.Value, new TargetInfo { DistanceTo = GetDistanceTo(en.Value), LastTimeSelected = 0 });
                         }
                     }
                 }
@@ -1983,7 +1932,8 @@ namespace Intersect.Client.Entities
 
                                 return true;
                             }
-                            else if (!Globals.Database.StickyTarget)
+
+                            if (!Globals.Database.StickyTarget)
                             {
                                 // We've clicked off of our target and are allowed to clear it!
                                 return ClearTarget();
@@ -2065,7 +2015,7 @@ namespace Intersect.Client.Entities
         /// <param name="uniqueId">The Unique Id of the specific item we want to pick up, leave <see cref="Guid.Empty"/> to not specificy an item and pick up the first thing we can find.</param>
         /// <param name="firstOnly">Defines whether we only want to pick up the first item we can find when true, or all items when false.</param>
         /// <returns></returns>
-        public bool TryPickupItem(Guid mapId, int tileIndex, Guid uniqueId = new Guid(), bool firstOnly = false)
+        public bool TryPickupItem(Guid mapId, int tileIndex, Guid uniqueId = new(), bool firstOnly = false)
         {
             var map = Maps.MapInstance.Get(mapId);
             if (map == null || tileIndex < 0 || tileIndex >= Options.MapWidth * Options.MapHeight)
@@ -2173,7 +2123,7 @@ namespace Intersect.Client.Entities
         private void ProcessDirectionalInput()
         {
             //Check if player is crafting
-            if (Globals.InCraft == true)
+            if (Globals.InCraft)
             {
                 return;
             }
@@ -2505,8 +2455,8 @@ namespace Intersect.Client.Entities
             if (backgroundColor != Color.Transparent)
             {
                 Graphics.DrawGameTexture(
-                    Graphics.Renderer.GetWhiteTexture(), new Framework.GenericClasses.FloatRect(0, 0, 1, 1),
-                    new Framework.GenericClasses.FloatRect(x - textSize.X / 2f - 4, y, textSize.X + 8, textSize.Y), backgroundColor
+                    Graphics.Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1),
+                    new FloatRect(x - textSize.X / 2f - 4, y, textSize.X + 8, textSize.Y), backgroundColor
                 );
             }
 
@@ -2694,7 +2644,7 @@ namespace Intersect.Client.Entities
             }
         }
 
-        private partial class TargetInfo
+        private class TargetInfo
         {
             public long LastTimeSelected;
 

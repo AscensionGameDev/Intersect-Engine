@@ -98,11 +98,20 @@ namespace Intersect.Client.Interface.Game.Inventory
             {
                 if (Globals.InputManager.KeyDown(Keys.Shift))
                 {
-                    Globals.Me.TryDepositItem(mMySlot, -1, false, true);
+                    Globals.Me.TryDepositItem(
+                        mMySlot,
+                        skipPrompt: true
+                    );
                 }
                 else
                 {
-                    Globals.Me.TryDepositItem(mMySlot);
+                    var slot = Globals.Me.Inventory[mMySlot];
+                    Globals.Me.TryDepositItem(
+                        mMySlot,
+                        slot,
+                        quantityHint: slot.Quantity,
+                        skipPrompt: false
+                    );
                 }
             }
             else if (Globals.InBag)
@@ -523,7 +532,13 @@ namespace Intersect.Client.Interface.Game.Inventory
 
                             if (bestIntersectIndex > -1)
                             {
-                                Globals.Me.TryDepositItem(mMySlot, bestIntersectIndex);
+                                var slot = Globals.Me.Inventory[mMySlot];
+                                Globals.Me.TryDepositItem(
+                                    mMySlot,
+                                    bankSlotIndex: bestIntersectIndex,
+                                    quantityHint: slot.Quantity,
+                                    skipPrompt: true
+                                );
                             }
                         }
                     }
