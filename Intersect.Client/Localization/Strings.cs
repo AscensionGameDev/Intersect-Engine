@@ -432,11 +432,15 @@ namespace Intersect.Client.Localization
 
             public static LocalizedString deposititemprompt = @"How many/much {00} would you like to deposit?";
 
+            public static LocalizedString NoSpace = @"There is no space left in your bank for that item!";
+
             public static LocalizedString title = @"Bank";
 
             public static LocalizedString withdrawitem = @"Withdraw Item";
 
             public static LocalizedString withdrawitemprompt = @"How many/much {00} would you like to withdraw?";
+
+            public static LocalizedString WithdrawItemNoSpace = @"There is no space left in your inventory for that item!";
 
         }
 

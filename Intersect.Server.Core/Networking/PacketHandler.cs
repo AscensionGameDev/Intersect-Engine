@@ -1905,25 +1905,13 @@ namespace Intersect.Server.Networking
         //DepositItemPacket
         public void HandlePacket(Client client, DepositItemPacket packet)
         {
-            var player = client?.Entity;
-            if (player == null)
-            {
-                return;
-            }
-
-            player?.BankInterface?.TryDepositItem(packet.Slot, packet.Quantity, packet.BankSlot);
+            client?.Entity?.BankInterface?.TryDepositItem(default, packet.Slot, packet.Quantity, packet.BankSlot);
         }
 
         //WithdrawItemPacket
         public void HandlePacket(Client client, WithdrawItemPacket packet)
         {
-            var player = client?.Entity;
-            if (player == null)
-            {
-                return;
-            }
-
-            player?.BankInterface?.WithdrawItem(packet.Slot, packet.Quantity, packet.InvSlot);
+            client?.Entity?.BankInterface?.TryWithdrawItem(default, packet.Slot, packet.Quantity, packet.InvSlot);
         }
 
         //MoveBankItemPacket
