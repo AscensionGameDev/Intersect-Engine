@@ -299,7 +299,8 @@ namespace Intersect.Server.Entities
                     !spawn.Parent.HasGrappled &&
                     (spawn.X != Owner.X || spawn.Y != Owner.Y))
                 {
-                    if (spawn.Dir <= Direction.Right) //Don't handle directional projectile grapplehooks
+                    if (spawn.Dir <= Direction.Right ||
+                        spawn.Dir != Direction.None && Options.Instance.MapOpts.EnableDiagonalMovement)
                     {
                         spawn.Parent.HasGrappled = true;
 
