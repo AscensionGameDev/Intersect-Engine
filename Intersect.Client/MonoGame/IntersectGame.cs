@@ -90,7 +90,7 @@ namespace Intersect.Client.MonoGame
             {
                 args.GraphicsDeviceInformation.PresentationParameters.RenderTargetUsage =
                     RenderTargetUsage.PreserveContents;
-                args.GraphicsDeviceInformation.PresentationParameters.MultiSampleCount = 16;
+                args.GraphicsDeviceInformation.PresentationParameters.MultiSampleCount = 8;
             };
 
             Content.RootDirectory = "";
