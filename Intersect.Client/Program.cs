@@ -27,6 +27,14 @@ namespace Intersect.Client
         [STAThread]
         internal static void Main(string[] args)
         {
+            var waitForDebugger = args.Contains("--debugger");
+
+            while (waitForDebugger && !Debugger.IsAttached)
+            {
+                System.Console.WriteLine("Waiting for debugger, sleeping 5000ms...");
+                Thread.Sleep(5000);
+            }
+
             CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("en-US");
 
             ExportDependencies();
