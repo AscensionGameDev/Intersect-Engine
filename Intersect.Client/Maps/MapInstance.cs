@@ -18,6 +18,7 @@ using Intersect.Client.General;
 using Intersect.Client.Localization;
 using Intersect.Compression;
 using Intersect.Enums;
+using Intersect.Extensions;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps;
 using Intersect.Network.Packets.Server;
@@ -717,33 +718,45 @@ namespace Intersect.Client.Maps
 
         public void DrawItemsAndLights()
         {
-            // Draw map item icons.
-            foreach (var itemCollection in MapItems)
+            // Calculate tile and map item dimensions.
+            var tileWidth = Options.TileWidth;
+            var tileHeight = Options.TileHeight;
+            var mapItemWidth = Options.Instance.MapOpts.MapItemWidth;
+            var mapItemHeight = Options.Instance.MapOpts.MapItemHeight;
+
+            // Draw map items.
+            foreach (var (key, tileItems) in MapItems)
             {
-                var tileX = itemCollection.Key % Options.MapWidth;
-                var tileY = (int)Math.Floor(itemCollection.Key / (float)Options.MapWidth);
-                var tileItems = itemCollection.Value;
+                // Calculate tile coordinates.
+                var tileX = key % Options.MapWidth;
+                var tileY = (int)Math.Floor(key / (float)Options.MapWidth);
 
                 // Loop through this in reverse to match client/server display and pick-up order.
                 for (var index = tileItems.Count - 1; index >= 0; index--)
                 {
-                    var x = GetX() + tileX * Options.TileWidth;
-                    var y = GetY() + tileY * Options.TileHeight;
-
                     // Set up all information we need to draw this name.
                     var itemBase = ItemBase.Get(tileItems[index].ItemId);
-
                     var itemTex = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Item, itemBase.Icon);
-                    if (itemTex != null)
+
+                    if (itemTex == null)
                     {
-                        Graphics.DrawGameTexture(
-                            itemTex, new FloatRect(0, 0, itemTex.GetWidth(), itemTex.GetHeight()),
-                            new FloatRect(
-                                x, y,
-                                Options.TileWidth, Options.TileHeight
-                            ), itemBase.Color
-                        );
+                        continue;
                     }
+
+                    var x = X + tileX * tileWidth;
+                    var y = Y + tileY * tileHeight;
+                    var centerX = x + (tileWidth / 2);
+                    var centerY = y + (tileHeight / 2);
+                    var textureXPosition = centerX - (mapItemWidth / 2);
+                    var textureYPosition = centerY - (mapItemHeight / 2);
+
+                    // Draw the item texture.
+                    Graphics.DrawGameTexture(
+                        itemTex,
+                        new FloatRect(0, 0, itemTex.Width, itemTex.Height),
+                        new FloatRect(textureXPosition, textureYPosition, mapItemWidth, mapItemHeight),
+                        itemBase.Color
+                    );
                 }
             }
 
@@ -751,8 +764,8 @@ namespace Intersect.Client.Maps
             foreach (var light in Lights)
             {
                 double w = light.Size;
-                var x = GetX() + (light.TileX * Options.TileWidth + light.OffsetX) + Options.TileWidth / 2f;
-                var y = GetY() + (light.TileY * Options.TileHeight + light.OffsetY) + Options.TileHeight / 2f;
+                var x = GetX() + (light.TileX * tileWidth + light.OffsetX) + tileWidth / 2f;
+                var y = GetY() + (light.TileY * tileHeight + light.OffsetY) + tileHeight / 2f;
                 Graphics.AddLight((int)x, (int)y, (int)w, light.Intensity, light.Expand, light.Color);
             }
         }

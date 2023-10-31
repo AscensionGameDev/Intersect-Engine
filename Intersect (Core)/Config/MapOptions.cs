@@ -48,6 +48,16 @@ namespace Intersect.Config
         public LayerOptions Layers { get; set; } = new LayerOptions();
 
         /// <summary>
+        /// The width of map items.
+        /// </summary>
+        public uint MapItemHeight { get; set; }
+
+        /// <summary>
+        /// The height of map items.
+        /// </summary>
+        public uint MapItemWidth { get; set; }
+
+        /// <summary>
         /// The height of the map in tiles.
         /// </summary>
         public int MapHeight { get; set; } = 26;
@@ -104,6 +114,9 @@ namespace Intersect.Config
             {
                 throw new Exception("Config Error: Map size out of bounds! (All values should be > 10 and < 64)");
             }
+
+            MapItemWidth = MapItemWidth < 1 ? (uint)TileWidth : MapItemWidth;
+            MapItemHeight = MapItemHeight < 1 ? (uint)TileHeight : MapItemHeight;
         }
     }
 }
