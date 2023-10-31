@@ -1223,8 +1223,8 @@ namespace Intersect.Client.Maps
                 float dy = Y - oldMap.Y;
 
                 // Update fog position based on displacement.
-                mFogCurrentX -= dx * Options.TileWidth * Options.MapWidth % fogTex.Width;
-                mFogCurrentY -= dy * Options.TileHeight * Options.MapHeight % fogTex.Height;
+                mFogCurrentX += (dx > 0 ? -1 : 1) * (Options.TileWidth * Options.MapWidth) % fogTex.Width;
+                mFogCurrentY += (dy > 0 ? -1 : 1) * (Options.TileHeight * Options.MapHeight) % fogTex.Height;
 
                 // Reset fog intensity of old map.
                 tempMap.mCurFogIntensity = 0;
