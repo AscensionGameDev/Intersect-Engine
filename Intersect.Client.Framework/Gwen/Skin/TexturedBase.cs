@@ -755,7 +755,7 @@ namespace Intersect.Client.Framework.Gwen.Skin
             if (focused)
             {
                 Renderer.PushDrawColor(Color.White);
-                Renderer.PushLineThickness(4);
+                Renderer.PushLineThickness(1);
                 Renderer.DrawLinedRect(button.RenderBounds);
                 Renderer.PopLineThickness();
                 Renderer.PopDrawColor();
