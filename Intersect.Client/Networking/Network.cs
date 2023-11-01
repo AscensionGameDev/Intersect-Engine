@@ -74,6 +74,7 @@ namespace Intersect.Client.Networking
         private static void MySocket_OnDisconnected(INetworkLayerInterface sender, ConnectionEventArgs connectionEventArgs)
         {
             Globals.WaitingOnServer = false;
+            Fade.Cancel();
             //Not sure how to handle this yet!
             sConnected = false;
             if (Globals.GameState == GameStates.InGame || Globals.GameState == GameStates.Loading)

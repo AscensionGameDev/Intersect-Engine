@@ -206,7 +206,10 @@ public sealed class LiteNetLibInterface : INetworkLayerInterface, INetEventListe
 
     public void OnPeerDisconnected(NetPeer peer, DisconnectInfo disconnectInfo)
     {
-        Log.Debug($"DCON: {peer.EndPoint} \"{disconnectInfo.Reason}\" ({disconnectInfo.SocketErrorCode})");
+        var message = (disconnectInfo.AdditionalData.EndOfData
+            ? string.Empty
+            : disconnectInfo.AdditionalData.GetString());
+        Log.Debug($"DCON: {peer.EndPoint} \"{disconnectInfo.Reason}\" ({disconnectInfo.SocketErrorCode}): {message}");
 
         if (!_connectionIdLookup.TryRemove(peer.Id, out var connectionId))
         {

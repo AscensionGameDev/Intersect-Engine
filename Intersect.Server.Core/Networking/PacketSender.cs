@@ -1124,11 +1124,20 @@ namespace Intersect.Server.Networking
             }
 
             var invItems = new InventoryUpdatePacket[Options.MaxInvItems];
+            if (player.Items.Count < Options.MaxInvItems)
+            {
+                throw new InvalidOperationException($"Tried to send inventory before fully loading player {player.Id}");
+            }
+
             for (var i = 0; i < Options.MaxInvItems; i++)
             {
+                var playerItem = player.Items[i];
                 invItems[i] = new InventoryUpdatePacket(
-                    i, player.Items[i].ItemId, player.Items[i].Quantity, player.Items[i].BagId,
-                    player.Items[i].Properties
+                    i,
+                    playerItem.ItemId,
+                    playerItem.Quantity,
+                    playerItem.BagId,
+                    playerItem.Properties
                 );
             }
 
