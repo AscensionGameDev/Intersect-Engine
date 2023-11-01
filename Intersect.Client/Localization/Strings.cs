@@ -612,7 +612,7 @@ namespace Intersect.Client.Localization
             public static LocalizedString toofast = @"You are chatting too fast!";
 
             public static LocalizedString ToggleLogButtonToolTip = @"Toggle chat log visibility";
-            
+
             public static LocalizedString ClearLogButtonToolTip = @"Clear chat log messages";
 
             public static Dictionary<ChatboxTab, LocalizedString> ChatTabButtons = new Dictionary<Enums.ChatboxTab, LocalizedString>() {
@@ -729,6 +729,10 @@ namespace Intersect.Client.Localization
                 {"togglezoomout", "Toggle Zoom Out:"},
                 {"holdtozoomout", "Hold to Zoom Out:"},
                 {"togglefullscreen", "Toggle Fullscreen:"},
+                // {"submit", "Submit"},
+                // {"cancel", "Cancel"},
+                // {"next", "Next"},
+                // {"previous", "Previous"},
             };
 
             public static LocalizedString listening = @"Listening";
@@ -1727,7 +1731,7 @@ namespace Intersect.Client.Localization
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString AutoCloseWindows = @"Auto-close Windows";
-            
+
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString AutoToggleChatLog = @"Auto-toggle chat log visibility";
 
@@ -1829,7 +1833,7 @@ namespace Intersect.Client.Localization
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString TargetFps = @"Target FPS:";
-            
+
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString TargetingSettings = @"Targeting";
 

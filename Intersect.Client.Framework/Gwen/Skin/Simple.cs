@@ -67,7 +67,7 @@ namespace Intersect.Client.Framework.Gwen.Skin
 
         #region UI elements
 
-        public override void DrawButton(Control.Base control, bool depressed, bool hovered, bool disabled)
+        public override void DrawButton(Control.Base control, bool depressed, bool hovered, bool disabled, bool focused)
         {
             var w = control.Width;
             var h = control.Height;
@@ -475,7 +475,7 @@ namespace Intersect.Client.Framework.Gwen.Skin
         public override void DrawWindowCloseButton(Control.Base control, bool depressed, bool hovered, bool disabled)
         {
             // TODO
-            DrawButton(control, depressed, hovered, disabled);
+            DrawButton(control, depressed, hovered, disabled, control.HasFocus);
         }
 
         public override void DrawHighlight(Control.Base control)
@@ -503,7 +503,7 @@ namespace Intersect.Client.Framework.Gwen.Skin
         public override void DrawScrollBarBar(Control.Base control, bool depressed, bool hovered, bool horizontal)
         {
             //TODO: something specialized
-            DrawButton(control, depressed, hovered, false);
+            DrawButton(control, depressed, hovered, false, control.HasFocus);
         }
 
         public override void DrawTabTitleBar(Control.Base control)
@@ -673,7 +673,7 @@ namespace Intersect.Client.Framework.Gwen.Skin
             bool disabled
         )
         {
-            DrawButton(control, depressed, false, false);
+            DrawButton(control, depressed, false, false, control.HasFocus);
 
             mRenderer.DrawColor = Color.FromArgb(240, 0, 0, 0);
 
@@ -843,7 +843,7 @@ namespace Intersect.Client.Framework.Gwen.Skin
 
         public override void DrawSliderButton(Control.Base control, bool depressed, bool horizontal)
         {
-            DrawButton(control, depressed, control.IsHovered, control.IsDisabled);
+            DrawButton(control, depressed, control.IsHovered, control.IsDisabled, control.HasFocus);
         }
 
         public override void DrawCategoryHolder(Control.Base control)

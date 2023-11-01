@@ -1,4 +1,5 @@
-﻿using Intersect.Client.Framework.GenericClasses;
+﻿using System.Numerics;
+using Intersect.Client.Framework.GenericClasses;
 
 namespace Intersect.Client.Framework.Input
 {
@@ -14,7 +15,7 @@ namespace Intersect.Client.Framework.Input
 
         public abstract Pointf GetMousePosition();
 
-        public abstract void Update();
+        public abstract void Update(TimeSpan elapsed);
 
         public abstract void OpenKeyboard(
             KeyboardType type,
@@ -22,6 +23,16 @@ namespace Intersect.Client.Framework.Input
             bool autoCorrection,
             bool multiLine,
             bool secure
+        );
+
+        public abstract void OpenKeyboard(
+            KeyboardType keyboardType,
+            Action<string?> inputHandler,
+            string description,
+            string text,
+            bool multiline = false,
+            uint maxLength = 1024,
+            Rectangle? inputBounds = default
         );
 
     }

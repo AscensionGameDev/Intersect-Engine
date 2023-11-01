@@ -328,7 +328,7 @@ namespace Intersect.Client.Framework.Gwen.Control
 
                 var bDrawHovered = IsHovered && ShouldDrawHover;
 
-                skin.DrawButton(this, drawDepressed, bDrawHovered, IsDisabled);
+                skin.DrawButton(this, drawDepressed, bDrawHovered, IsDisabled, HasFocus);
             }
         }
 
@@ -580,6 +580,16 @@ namespace Intersect.Client.Framework.Gwen.Control
         public void SetClickSound(string sound)
         {
             mClickSound = sound;
+        }
+
+        public void SetMouseDownSound(string sound)
+        {
+            mMouseDownSound = sound;
+        }
+
+        public void SetMouseUpSound(string sound)
+        {
+            mMouseUpSound = sound;
         }
 
     }

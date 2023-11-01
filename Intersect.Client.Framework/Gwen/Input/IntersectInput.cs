@@ -129,11 +129,11 @@ namespace Intersect.Client.Framework.Gwen.Input
                         return InputHandler.HandleAccelerator(mCanvas, ch);
                     }
 
-                    return mCanvas.Input_Key(key, true); //TODO FIX THIS LAST PARAMETER
+                    return mCanvas.Input_Key(key, true, msg.Shift); //TODO FIX THIS LAST PARAMETER
                 case InputEvent.KeyUp:
                     key = TranslateKeyCode(msg.Key);
 
-                    return mCanvas.Input_Key(key, false); //TODO FIX THIS LAST PARAMETER
+                    return mCanvas.Input_Key(key, false, msg.Shift); //TODO FIX THIS LAST PARAMETER
                 case InputEvent.MouseScroll:
                     return mCanvas.Input_MouseScroll((int)msg.MousePosition.X, (int)msg.MousePosition.Y);
                 default:

@@ -2295,7 +2295,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// <summary>
         ///     Focuses the control.
         /// </summary>
-        public virtual void Focus()
+        public virtual void Focus(bool moveMouse = false)
         {
             if (InputHandler.KeyboardFocus == this)
             {
@@ -2307,7 +2307,15 @@ namespace Intersect.Client.Framework.Gwen.Control
                 InputHandler.KeyboardFocus.OnLostKeyboardFocus();
             }
 
-            InputHandler.KeyboardFocus = this;
+            if (moveMouse)
+            {
+                InputHandler.Focus(FocusSource.Keyboard, this);
+            }
+            else
+            {
+                InputHandler.KeyboardFocus = this;
+            }
+
             OnKeyboardFocus();
             Redraw();
         }
@@ -2514,22 +2522,19 @@ namespace Intersect.Client.Framework.Gwen.Control
 
             PostLayout(skin);
 
-            if (IsTabable)
+            var canvas = GetCanvas();
+            // ReSharper disable once InvertIf
+            if (canvas != default)
             {
-                if (GetCanvas().mFirstTab == null)
+                if (IsTabable && !canvas._tabQueue.Contains(this))
                 {
-                    GetCanvas().mFirstTab = this;
+                    canvas._tabQueue.AddLast(this);
                 }
 
-                if (GetCanvas().mNextTab == null)
+                if (InputHandler.KeyboardFocus == this && !canvas._tabQueue.Contains(this))
                 {
-                    GetCanvas().mNextTab = this;
+                    canvas._tabQueue.AddLast(this);
                 }
-            }
-
-            if (InputHandler.KeyboardFocus == this)
-            {
-                GetCanvas().mNextTab = null;
             }
         }
 
@@ -2937,19 +2942,49 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// </summary>
         /// <param name="down">Indicates whether the key was pressed or released.</param>
         /// <returns>True if handled.</returns>
-        protected virtual bool OnKeyTab(bool down)
+        protected virtual bool OnKeyTab(bool down, bool shift = false)
         {
             if (!down)
             {
                 return true;
             }
 
-            if (GetCanvas()?.mNextTab == null)
+            var canvas = GetCanvas();
+            if (canvas == default)
             {
                 return true;
             }
 
-            GetCanvas()?.mNextTab?.Focus();
+            Base? next;
+            lock (canvas._tabQueue)
+            {
+                do
+                {
+                    next = (shift ? canvas._tabQueue.Last : canvas._tabQueue.First)?.Value;
+                    if (next == default)
+                    {
+                        return true;
+                    }
+
+                    if (shift)
+                    {
+                        canvas._tabQueue.RemoveLast();
+                        canvas._tabQueue.AddFirst(next);
+                    }
+                    else
+                    {
+                        canvas._tabQueue.RemoveFirst();
+                        canvas._tabQueue.AddLast(next);
+                    }
+                }
+                while (next.IsDisabled && canvas._tabQueue.Any(control => !control.IsDisabled));
+            }
+
+            if (!next.IsDisabled)
+            {
+                next.Focus(moveMouse: true);
+            }
+
             Redraw();
 
             return true;

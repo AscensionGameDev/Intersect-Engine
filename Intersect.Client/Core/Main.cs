@@ -103,7 +103,7 @@ namespace Intersect.Client.Core
                         );
                 }
 
-                Globals.InputManager.Update();
+                Globals.InputManager.Update(deltaTime);
                 Audio.Update();
 
                 Globals.OnGameUpdate(deltaTime);

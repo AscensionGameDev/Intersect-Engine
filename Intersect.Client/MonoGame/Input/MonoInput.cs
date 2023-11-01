@@ -4,16 +4,19 @@ using System.Diagnostics;
 
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
+using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Input;
 using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
 using Intersect.Client.MonoGame.Graphics;
+using Intersect.Client.ThirdParty;
 using Intersect.Logging;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
-
+using Steamworks;
 using Keys = Intersect.Client.Framework.GenericClasses.Keys;
+using Rectangle = Intersect.Client.Framework.GenericClasses.Rectangle;
 
 namespace Intersect.Client.MonoGame.Input
 {
@@ -36,6 +39,15 @@ namespace Intersect.Client.MonoGame.Input
         private int mMouseHScroll;
 
         private Game mMyGame;
+
+        private readonly GamePadCapabilities[] _gamePadCapabilities =
+            new GamePadCapabilities[GamePad.MaximumGamePadCount];
+
+        private GamePadState _lastGamePadState;
+
+        private int _activeGamePad;
+
+        private bool _keyboardOpened;
 
         public MonoInput(Game myGame)
         {
@@ -94,6 +106,32 @@ namespace Intersect.Client.MonoGame.Input
                     Debug.WriteLine("Mono does not have a key to match: " + key);
                 }
             }
+
+            InputHandler.FocusChanged += InputHandlerOnFocusChanged;
+        }
+
+        private void InputHandlerOnFocusChanged(Base? control, FocusSource focusSource)
+        {
+            if (control == default)
+            {
+                return;
+            }
+
+            if (focusSource == FocusSource.Mouse)
+            {
+                return;
+            }
+
+            Vector2 center = new(
+                (control.BoundsGlobal.Left + control.BoundsGlobal.Right) / 2f,
+                (control.BoundsGlobal.Bottom + control.BoundsGlobal.Top) / 2f
+            );
+
+            Mouse.SetPosition((int)center.X, (int)center.Y);
+            var mouseState = Mouse.GetState();
+            Interface.Interface.GwenInput.ProcessMessage(
+                new GwenInputMessage(IntersectInput.InputEvent.MouseMove, new Pointf(mouseState.X, mouseState.Y), (int)MouseButtons.None, Keys.Alt)
+            );
         }
 
         private void Window_TextInput(object sender, TextInputEventArgs e)
@@ -185,17 +223,52 @@ namespace Intersect.Client.MonoGame.Input
             }
         }
 
-        public override void Update()
+        public override void Update(TimeSpan elapsed)
         {
             if (mMyGame.IsActive)
             {
-                var kbState = Keyboard.GetState();
-                var state = Mouse.GetState();
-
-                if (state.X != mMouseX || state.Y != mMouseY)
+                if (_keyboardOpened)
                 {
-                    mMouseX = (int)(state.X * ((MonoRenderer)Core.Graphics.Renderer).GetMouseOffset().X);
-                    mMouseY = (int)(state.Y * ((MonoRenderer)Core.Graphics.Renderer).GetMouseOffset().Y);
+                    Steam.PumpEvents();
+                }
+
+                var gamePadCapabilities = Enumerable.Range(0, GamePad.MaximumGamePadCount)
+                    .Select(GamePad.GetCapabilities)
+                    .ToArray();
+
+                Array.Copy(
+                    gamePadCapabilities,
+                    _gamePadCapabilities,
+                    Math.Min(gamePadCapabilities.Length, _gamePadCapabilities.Length)
+                );
+
+                var gamePadState = Enumerable
+                    .Range(0, GamePad.MaximumGamePadCount)
+                    .Select(GamePad.GetState)
+                    .Skip(_activeGamePad)
+                    .FirstOrDefault(gamePad => gamePad.IsConnected);
+
+                if (gamePadState.IsConnected)
+                {
+                    var deltaX = (int)(gamePadState.ThumbSticks.Right.X * elapsed.TotalSeconds * 1000);
+                    var deltaY = (int)(-gamePadState.ThumbSticks.Right.Y * elapsed.TotalSeconds * 1000);
+
+                    var temporaryMouseState = Mouse.GetState();
+                    Mouse.SetPosition(temporaryMouseState.X + deltaX, temporaryMouseState.Y + deltaY);
+                }
+                else
+                {
+                    var state = GamePad.GetState(0);
+                    Log.Info(state.ToString());
+                }
+
+                var keyboardState = Keyboard.GetState();
+                var mouseState = Mouse.GetState();
+
+                if (mouseState.X != mMouseX || mouseState.Y != mMouseY)
+                {
+                    mMouseX = (int)(mouseState.X * ((MonoRenderer)Core.Graphics.Renderer).GetMouseOffset().X);
+                    mMouseY = (int)(mouseState.Y * ((MonoRenderer)Core.Graphics.Renderer).GetMouseOffset().Y);
                     Interface.Interface.GwenInput.ProcessMessage(
                         new GwenInputMessage(
                             IntersectInput.InputEvent.MouseMove, GetMousePosition(), (int)MouseButtons.None, Keys.Alt
@@ -203,21 +276,85 @@ namespace Intersect.Client.MonoGame.Input
                     );
                 }
 
+                if (gamePadState.IsConnected)
+                {
+                    var leftMouseButton = gamePadState.Buttons.A == ButtonState.Released
+                        ? mouseState.LeftButton
+                        : ButtonState.Pressed;
+
+                    var rightMouseButton = gamePadState.Buttons.B == ButtonState.Released
+                        ? mouseState.RightButton
+                        : ButtonState.Pressed;
+
+                    mouseState = new MouseState(
+                        mouseState.X,
+                        mouseState.Y,
+                        mouseState.ScrollWheelValue,
+                        leftMouseButton,
+                        mouseState.MiddleButton,
+                        rightMouseButton,
+                        mouseState.XButton1,
+                        mouseState.XButton2,
+                        mouseState.HorizontalScrollWheelValue
+                    );
+
+                    var gamePadKeys = Enum.GetValues<Buttons>()
+                        .Where(gamePadState.IsButtonDown)
+                        .Select(
+                            button => button switch
+                            {
+                                Buttons.None => Microsoft.Xna.Framework.Input.Keys.None,
+                                Buttons.DPadUp => Microsoft.Xna.Framework.Input.Keys.Up,
+                                Buttons.DPadDown => Microsoft.Xna.Framework.Input.Keys.Down,
+                                Buttons.DPadLeft => Microsoft.Xna.Framework.Input.Keys.Left,
+                                Buttons.DPadRight => Microsoft.Xna.Framework.Input.Keys.Right,
+                                Buttons.Start => Microsoft.Xna.Framework.Input.Keys.Escape,
+                                Buttons.Back => Microsoft.Xna.Framework.Input.Keys.None,
+                                Buttons.LeftStick => Microsoft.Xna.Framework.Input.Keys.None,
+                                Buttons.RightStick => Microsoft.Xna.Framework.Input.Keys.None,
+                                Buttons.LeftShoulder => Microsoft.Xna.Framework.Input.Keys.Back,
+                                Buttons.RightShoulder => Microsoft.Xna.Framework.Input.Keys.Tab,
+                                Buttons.BigButton => Microsoft.Xna.Framework.Input.Keys.None,
+                                Buttons.A => Microsoft.Xna.Framework.Input.Keys.Enter,
+                                Buttons.B => Microsoft.Xna.Framework.Input.Keys.Back,
+                                Buttons.X => Microsoft.Xna.Framework.Input.Keys.E,
+                                Buttons.Y => Microsoft.Xna.Framework.Input.Keys.None,
+                                Buttons.LeftThumbstickLeft => Microsoft.Xna.Framework.Input.Keys.None,
+                                Buttons.RightTrigger => Microsoft.Xna.Framework.Input.Keys.None,
+                                Buttons.LeftTrigger => Microsoft.Xna.Framework.Input.Keys.None,
+                                Buttons.RightThumbstickUp => Microsoft.Xna.Framework.Input.Keys.None,
+                                Buttons.RightThumbstickDown => Microsoft.Xna.Framework.Input.Keys.None,
+                                Buttons.RightThumbstickRight => Microsoft.Xna.Framework.Input.Keys.None,
+                                Buttons.RightThumbstickLeft => Microsoft.Xna.Framework.Input.Keys.None,
+                                Buttons.LeftThumbstickUp => Microsoft.Xna.Framework.Input.Keys.None,
+                                Buttons.LeftThumbstickDown => Microsoft.Xna.Framework.Input.Keys.None,
+                                Buttons.LeftThumbstickRight => Microsoft.Xna.Framework.Input.Keys.None,
+                                _ => throw new ArgumentOutOfRangeException(nameof(button), button, null)
+                            }
+                        );
+
+                    keyboardState = new KeyboardState(
+                        keyboardState.GetPressedKeys().Concat(gamePadKeys).ToArray(),
+                        keyboardState.CapsLock,
+                        keyboardState.NumLock
+                    );
+                }
+
                 // Get what modifier key we're currently pressing.
-                var modifier = GetPressedModifier(kbState);
+                var modifier = GetPressedModifier(keyboardState);
 
                 //Check for state changes in the left mouse button
-                CheckMouseButton(modifier, state.LeftButton, MouseButtons.Left);
-                CheckMouseButton(modifier, state.RightButton, MouseButtons.Right);
-                CheckMouseButton(modifier, state.MiddleButton, MouseButtons.Middle);
-                CheckMouseButton(modifier, state.XButton1, MouseButtons.X1);
-                CheckMouseButton(modifier, state.XButton2, MouseButtons.X2);
+                CheckMouseButton(modifier, mouseState.LeftButton, MouseButtons.Left);
+                CheckMouseButton(modifier, mouseState.RightButton, MouseButtons.Right);
+                CheckMouseButton(modifier, mouseState.MiddleButton, MouseButtons.Middle);
+                CheckMouseButton(modifier, mouseState.XButton1, MouseButtons.X1);
+                CheckMouseButton(modifier, mouseState.XButton2, MouseButtons.X2);
 
-                CheckMouseScrollWheel(state.ScrollWheelValue, state.HorizontalScrollWheelValue);
+                CheckMouseScrollWheel(mouseState.ScrollWheelValue, mouseState.HorizontalScrollWheelValue);
 
                 foreach (var key in mKeyDictionary)
                 {
-                    if (kbState.IsKeyDown(key.Value) && !mLastKeyboardState.IsKeyDown(key.Value))
+                    if (keyboardState.IsKeyDown(key.Value) && !mLastKeyboardState.IsKeyDown(key.Value))
                     {
                         Log.Diagnostic("{0} -> {1}", key.Key, key.Value);
                         Interface.Interface.GwenInput.ProcessMessage(
@@ -228,7 +365,7 @@ namespace Intersect.Client.MonoGame.Input
 
                         Core.Input.OnKeyPressed(modifier, key.Key);
                     }
-                    else if (!kbState.IsKeyDown(key.Value) && mLastKeyboardState.IsKeyDown(key.Value))
+                    else if (!keyboardState.IsKeyDown(key.Value) && mLastKeyboardState.IsKeyDown(key.Value))
                     {
                         Interface.Interface.GwenInput.ProcessMessage(
                             new GwenInputMessage(
@@ -240,8 +377,9 @@ namespace Intersect.Client.MonoGame.Input
                     }
                 }
 
-                mLastKeyboardState = kbState;
-                mLastMouseState = state;
+                mLastKeyboardState = keyboardState;
+                mLastMouseState = mouseState;
+                _lastGamePadState = gamePadState;
             }
             else
             {
@@ -302,6 +440,30 @@ namespace Intersect.Client.MonoGame.Input
             return; //no on screen keyboard for pc clients
         }
 
+        public override void OpenKeyboard(
+            KeyboardType keyboardType,
+            Action<string?> inputHandler,
+            string description,
+            string text,
+            bool multiline = false,
+            uint maxLength = 1024,
+            Rectangle? inputBounds = default
+        )
+        {
+            if (!Steam.SteamDeck)
+            {
+                return;
+            }
+
+            _keyboardOpened = Steam.ShowKeyboard(
+                inputHandler,
+                description,
+                existingInput: text,
+                keyboardType == KeyboardType.Password,
+                maxLength,
+                inputBounds
+            );
+        }
     }
 
 }

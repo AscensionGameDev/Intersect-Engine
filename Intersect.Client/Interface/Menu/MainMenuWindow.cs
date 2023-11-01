@@ -29,12 +29,14 @@ public partial class MainMenuWindow : Window
 
         _buttonCredits = new Button(this, nameof(_buttonCredits))
         {
+            IsTabable = true,
             Text = Strings.MainMenu.Credits,
         };
         _buttonCredits.Clicked += ButtonCreditsOnClicked;
 
         _buttonExit = new Button(this, nameof(_buttonExit))
         {
+            IsTabable = true,
             Text = Strings.MainMenu.Exit,
         };
         _buttonExit.Clicked += ButtonExitOnClicked;
@@ -43,6 +45,7 @@ public partial class MainMenuWindow : Window
         {
             IsDisabled = MainMenu.ActiveNetworkStatus != NetworkStatus.Online,
             IsHidden = ClientContext.IsSinglePlayer,
+            IsTabable = true,
             Text = Strings.MainMenu.Login,
         };
         _buttonLogin.Clicked += ButtonLoginOnClicked;
@@ -51,12 +54,14 @@ public partial class MainMenuWindow : Window
         {
             IsDisabled = MainMenu.ActiveNetworkStatus != NetworkStatus.Online || Options.Loaded && Options.BlockClientRegistrations,
             IsHidden = ClientContext.IsSinglePlayer,
+            IsTabable = true,
             Text = Strings.MainMenu.Register,
         };
         _buttonRegister.Clicked += ButtonRegisterOnClicked;
 
         _buttonSettings = new Button(this, nameof(_buttonSettings))
         {
+            IsTabable = true,
             Text = Strings.MainMenu.Settings,
         };
         _buttonSettings.Clicked += ButtonSettingsOnClicked;
@@ -67,6 +72,7 @@ public partial class MainMenuWindow : Window
 
         _buttonStart = new Button(this, nameof(_buttonStart))
         {
+            IsTabable = true,
             IsVisible = ClientContext.IsSinglePlayer,
             Text = Strings.MainMenu.Start,
         };

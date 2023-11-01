@@ -107,7 +107,14 @@ namespace Intersect.Client.MonoGame.NativeInterop
 
             public override IntPtr LoadLibrary(string libraryName)
             {
-                return _dlopen(libraryName, RTLD_LAZY);
+                var result = _dlopen(libraryName, RTLD_LAZY);
+
+                if (result == default)
+                {
+                    result = _dlopen(Path.Combine(Environment.CurrentDirectory, libraryName), RTLD_LAZY);
+                }
+
+                return result;
             }
 
             protected override IntPtr LoadFunctionPointer(IntPtr libraryHandle, string functionName)

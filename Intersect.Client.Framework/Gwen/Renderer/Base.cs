@@ -19,6 +19,11 @@ namespace Intersect.Client.Framework.Gwen.Renderer
         //public Random rnd;
         private Point mRenderOffset;
 
+        private readonly Stack<Color> _drawColor = new();
+        private readonly Stack<int> _lineThickness = new();
+
+        private Color _legacyDrawColor;
+
         /// <summary>
         ///     Initializes a new instance of the <see cref="Base" /> class.
         /// </summary>
@@ -31,6 +36,8 @@ namespace Intersect.Client.Framework.Gwen.Renderer
             {
                 Ctt.Initialize();
             }
+
+            _lineThickness.Push(1);
         }
 
         //protected ICacheToTexture m_RTT;
@@ -40,7 +47,11 @@ namespace Intersect.Client.Framework.Gwen.Renderer
         /// <summary>
         ///     Gets or sets the current drawing color.
         /// </summary>
-        public virtual Color DrawColor { get; set; }
+        public virtual Color DrawColor
+        {
+            get => _drawColor.Count > 0 ? _drawColor.Peek() : _legacyDrawColor;
+            set => _legacyDrawColor = value;
+        }
 
         /// <summary>
         ///     Rendering offset. No need to touch it usually.
@@ -252,12 +263,20 @@ namespace Intersect.Client.Framework.Gwen.Renderer
         /// <param name="rect">Target rectangle.</param>
         public virtual void DrawLinedRect(Rectangle rect)
         {
-            DrawFilledRect(new Rectangle(rect.X, rect.Y, rect.Width, 1));
-            DrawFilledRect(new Rectangle(rect.X, rect.Y + rect.Height - 1, rect.Width, 1));
+            DrawFilledRect(new Rectangle(rect.X, rect.Y, rect.Width, _lineThickness.Peek()));
+            DrawFilledRect(new Rectangle(rect.X, rect.Y + rect.Height - _lineThickness.Peek(), rect.Width, _lineThickness.Peek()));
 
-            DrawFilledRect(new Rectangle(rect.X, rect.Y, 1, rect.Height));
-            DrawFilledRect(new Rectangle(rect.X + rect.Width - 1, rect.Y, 1, rect.Height));
+            DrawFilledRect(new Rectangle(rect.X, rect.Y, _lineThickness.Peek(), rect.Height));
+            DrawFilledRect(new Rectangle(rect.X + rect.Width - _lineThickness.Peek(), rect.Y, _lineThickness.Peek(), rect.Height));
         }
+
+        public void PushLineThickness(int lineThickness) => _lineThickness.Push(Math.Max(0, lineThickness));
+
+        public int PopLineThickness() => _lineThickness.Pop();
+
+        public void PushDrawColor(Color color) => _drawColor.Push(color);
+
+        public Color PopDrawColor() => _drawColor.Pop();
 
         /// <summary>
         ///     Draws a single pixel. Very slow, do not use. :P

@@ -85,6 +85,7 @@ namespace Intersect.Client.Interface.Menu
             mPasswordTextbox = new TextBoxPassword(mPasswordBackground, "PasswordField");
             mPasswordTextbox.SubmitPressed += PasswordTextbox_SubmitPressed;
             mPasswordTextbox.TextChanged += _passwordTextbox_TextChanged;
+            mPasswordTextbox.Clicked += MPasswordTextboxOnClicked;
 
             //Login Save Pass Checkbox
             mSavePassChk = new LabeledCheckBox(mLoginWindow, "SavePassCheckbox") {Text = Strings.Login.savepass};
@@ -111,6 +112,16 @@ namespace Intersect.Client.Interface.Menu
 
         }
 
+        private void MPasswordTextboxOnClicked(Base sender, ClickedEventArgs arguments)
+        {
+            Globals.InputManager.OpenKeyboard(
+                KeyboardType.Password,
+                text => mPasswordTextbox.Text = text ?? string.Empty,
+                "Password",
+                mPasswordTextbox.Text
+            );
+        }
+
         public bool IsHidden => mLoginWindow.IsHidden;
 
         private void mForgotPassswordButton_Clicked(Base sender, ClickedEventArgs arguments)
@@ -121,7 +132,11 @@ namespace Intersect.Client.Interface.Menu
         private void _usernameTextbox_Clicked(Base sender, ClickedEventArgs arguments)
         {
             Globals.InputManager.OpenKeyboard(
-                KeyboardType.Normal, mUsernameTextbox.Text, false, false, false
+                KeyboardType.Normal,
+                text => mUsernameTextbox.Text = text ?? string.Empty,
+                "Username",
+                mUsernameTextbox.Text,
+                inputBounds: mUsernameTextbox.BoundsGlobal
             );
         }
 

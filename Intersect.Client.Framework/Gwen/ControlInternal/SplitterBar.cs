@@ -27,7 +27,7 @@ namespace Intersect.Client.Framework.Gwen.ControlInternal
         {
             if (ShouldDrawBackground)
             {
-                skin.DrawButton(this, true, false, IsDisabled);
+                skin.DrawButton(this, true, false, IsDisabled, HasFocus);
             }
         }
 
