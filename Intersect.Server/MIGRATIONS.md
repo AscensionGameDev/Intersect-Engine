@@ -7,7 +7,7 @@
 
 ## Supported Database Providers
 - MySQL (`MySql` in code)
-- SQLite (`Sqlite` in code)
+- SQLite (`Sqlite` in code, see [Intersect.Server.Core/MIGRATIONS.md](../Intersect.Server.Core/MIGRATIONS.md) for more details)
 
 ## Generating Migrations
 
@@ -65,26 +65,16 @@ Example:
 			at System.Reflection.RuntimeConstructorInfo.Invoke(BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
 			at Microsoft.Extensions.DependencyInjection.ActivatorUtilities.ConstructorMatcher.CreateInstance(IServiceProvider provider)
 			at Microsoft.Extensions.DependencyInjection.ActivatorUtilities.CreateInstance(IServiceProvider provider, Type instanceType, Object[] parameters)
-			at Microsoft.EntityFrameworkCore.Design.Internal.DbContextOperations.<>c__DisplayClass21_4.<FindContextTypes>b__13()
+			at Microsoft.EntityFrameworkCore.Design.Internal.DbContextOperations.&lt;&gt;c__DisplayClass21_4.&lt;FindContextTypes&gt;b__13()
 			--- End of inner exception stack trace ---
-			at Microsoft.EntityFrameworkCore.Design.Internal.DbContextOperations.<>c__DisplayClass21_4.<FindContextTypes>b__13()
+			at Microsoft.EntityFrameworkCore.Design.Internal.DbContextOperations.&lt;&gt;c__DisplayClass21_4.&lt;FindContextTypes&gt;b__13()
 			at Microsoft.EntityFrameworkCore.Design.Internal.DbContextOperations.CreateContext(Func`1 factory)
 			at Microsoft.EntityFrameworkCore.Design.Internal.DbContextOperations.CreateContext(String contextType)
 			at Microsoft.EntityFrameworkCore.Design.Internal.MigrationsOperations.AddMigration(String name, String outputDir, String contextType, String namespace)
 			at Microsoft.EntityFrameworkCore.Design.OperationExecutor.AddMigrationImpl(String name, String outputDir, String contextType, String namespace)
-			at Microsoft.EntityFrameworkCore.Design.OperationExecutor.AddMigration.<>c__DisplayClass0_0.<.ctor>b__0()
-			at Microsoft.EntityFrameworkCore.Design.OperationExecutor.OperationBase.<>c__DisplayClass3_0`1.<Execute>b__0()
+			at Microsoft.EntityFrameworkCore.Design.OperationExecutor.AddMigration.&lt;&gt;c__DisplayClass0_0.&lt;.ctor&gt;b__0()
+			at Microsoft.EntityFrameworkCore.Design.OperationExecutor.OperationBase.&lt;&gt;c__DisplayClass3_0`1.&lt;Execute&gt;b__0()
 			at Microsoft.EntityFrameworkCore.Design.OperationExecutor.OperationBase.Execute(Action action)
 		Unable to create an object of type 'MySqlPlayerContext'. For the different patterns supported at design time, see https://go.microsoft.com/fwlink/?linkid=851728
 	</code>
 </details>
-
-### SQLite Migrations
-
-General command pattern is:
-
-`dotnet ef migrations add <migration name> --context Sqlite<context full> --namespace Intersect.Server.Migrations.Sqlite.<context root> --output-dir Migrations/Sqlite/<context root>/ -- --databaseType Sqlite`
-
-Example:
-
-`dotnet ef migrations add Net7Upgrade --context SqlitePlayerContext --namespace Intersect.Server.Migrations.Sqlite.Player `
