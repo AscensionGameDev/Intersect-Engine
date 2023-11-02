@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Dapper;
 using Intersect.Config;
 using Intersect.Logging;
@@ -98,6 +99,17 @@ public sealed class SqliteNetCoreGuidPatch
                 guidColumnNames = guidColumnNames.Append("DbGuildId").Distinct().ToArray();
             }
 
+            var searchColumnNames = new[] { "Id" };
+            if (entityTable == "User_Variables")
+            {
+                searchColumnNames = new[] { "UserId", "VariableId" };
+            }
+
+            if (searchColumnNames.Length < 1)
+            {
+                throw new InvalidOperationException("There should be at least 1 search column");
+            }
+
             var notNullLookup = columnsInDatabase.ToDictionary(
                 column => column.Name,
                 column => column.NotNull
@@ -137,10 +149,16 @@ public sealed class SqliteNetCoreGuidPatch
                                                 case 16:
                                                 {
                                                     var guid = new Guid(data);
-                                                    return Guid.Empty != guid ||
-                                                           notNullLookup.TryGetValue(column.Key, out var notNull) && notNull
-                                                        ? guid.ToString().ToUpperInvariant()
-                                                        : null;
+                                                    if (Guid.Empty != guid ||
+                                                        notNullLookup.TryGetValue(column.Key, out var notNull) &&
+                                                        notNull)
+                                                    {
+                                                        return guid.ToString().ToUpperInvariant();
+                                                    }
+                                                    else
+                                                    {
+                                                        return (string)null;
+                                                    }
                                                 }
                                                 default: return column.Value;
                                             }
@@ -151,7 +169,7 @@ public sealed class SqliteNetCoreGuidPatch
                                     }
                                 }
                             );
-                            return (convertedRow, row["Id"]);
+                            return (convertedRow, searchColumnNames.Select(columnName => row[columnName]).ToArray());
                         }
                     )
                     .ToList();
@@ -159,21 +177,46 @@ public sealed class SqliteNetCoreGuidPatch
                 dbConnection.Open();
                 var transaction = dbConnection.BeginTransaction();
                 var segmentConvertedRowCount = 0;
-                foreach (var (convertedRow, searchId) in convertedRows)
+                foreach (var (convertedRow, searchValues) in convertedRows)
                 {
-                    var result = queryFactory
-                        .Query(entityTable)
-                        .Where("Id", searchId)
-                        .Update(convertedRow, transaction: transaction);
-
-                    var searchIdString = searchId is byte[] searchIdBytes
-                        ? new Guid(searchIdBytes).ToString()
-                        : searchId.ToString();
-
-                    if (Log.Default.Configuration.LogLevel >= LogLevel.Debug)
+                    var query = queryFactory.Query(entityTable);
+                    if (searchValues.Length != searchColumnNames.Length)
                     {
-                        Log.Debug($"Processed row {convertedRowCount++}/{numberOfRows} in '{entityTable}' (segment {segmentConvertedRowCount++}/{convertedRows.Count}) ({searchIdString} was {searchId.GetFullishName()}), {result} rows changed.");
+                        throw new InvalidOperationException(
+                            $"Expected {searchColumnNames.Length} values but received {searchValues.Length}"
+                        );
                     }
+
+                    for (var searchColumnIndex = 0; searchColumnIndex < searchColumnNames.Length; ++searchColumnIndex)
+                    {
+                        query = query.Where(searchColumnNames[searchColumnIndex], searchValues[searchColumnIndex]);
+                    }
+
+                    var result = query.Update(convertedRow, transaction: transaction);
+
+                    // Only debug logging below here in this loop
+                    // If more logic needs to be added this should be inverted
+                    // and the logging logic put back inside the if statement
+                    if (Log.Default.Configuration.LogLevel < LogLevel.Debug)
+                    {
+                        continue;
+                    }
+
+                    var searchValuesString = string.Join(
+                        ", ",
+                        searchValues.Select(
+                            searchValue => searchValue is byte[] searchIdBytes
+                                ? new Guid(searchIdBytes).ToString()
+                                : searchValue.ToString()
+                        )
+                    );
+
+                    var searchValuesTypeString = string.Join(
+                        ", ",
+                        searchValues.Select(searchValue => searchValue?.GetFullishName())
+                    );
+
+                    Log.Debug($"Processed row {convertedRowCount++}/{numberOfRows} in '{entityTable}' (segment {segmentConvertedRowCount++}/{convertedRows.Count}) ({searchValuesString} was {searchValuesTypeString}), {result} rows changed.");
                 }
                 transaction.Commit();
                 dbConnection.Close();
