@@ -603,7 +603,7 @@ namespace Intersect.Server.Networking
             }
 
             // Send newly accounts with 0 characters thru the character creation menu.
-            if (client.Characters?.Count < 1)
+            if (client.Characters == default || client.Characters.Count < 1)
             {
                 PacketSender.SendGameObjects(client, GameObjectType.Class);
                 PacketSender.SendCreateCharacter(client);
@@ -617,7 +617,12 @@ namespace Intersect.Server.Networking
             }
             else
             {
-                client.LoadCharacter(client.Characters?.First());
+                var character = DbInterface.GetUserCharacter(
+                    client.User,
+                    client.Characters.First().Id,
+                    explicitLoad: true
+                );
+                client.LoadCharacter(character);
                 client.Entity.SetOnline();
                 PacketSender.SendJoinGame(client);
             }

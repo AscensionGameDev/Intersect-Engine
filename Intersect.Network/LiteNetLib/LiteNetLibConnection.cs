@@ -171,9 +171,11 @@ public sealed class LiteNetLibConnection : AbstractConnection
         }
     }
 
-    public override void Disconnect(string message = default)
+    public override void Disconnect(string? message = default)
     {
-        _peer.Disconnect(string.IsNullOrWhiteSpace(message) ? Array.Empty<byte>() : Encoding.UTF8.GetBytes(message));
+        NetDataWriter writer = new();
+        writer.Put(string.IsNullOrEmpty(message) ? string.Empty : message);
+        _peer.Disconnect(writer.CopyData());
     }
 
     public override void Dispose()

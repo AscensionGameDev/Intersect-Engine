@@ -39,6 +39,12 @@ namespace Intersect.Client.Core
             sLastUpdate = Timing.Global.MillisecondsUtc;
         }
 
+        public static void Cancel()
+        {
+            sCurrentAction = FadeType.None;
+            sFadeAmt = default;
+        }
+
         public static bool DoneFading()
         {
             return sCurrentAction == FadeType.None;

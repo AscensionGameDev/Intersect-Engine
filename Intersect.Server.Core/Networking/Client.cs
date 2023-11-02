@@ -163,7 +163,7 @@ namespace Intersect.Server.Networking
             }
         }
 
-        public void Disconnect(string reason = "", bool shutdown = false)
+        public void Disconnect(string? reason = default, bool shutdown = false)
         {
             lock (Globals.ClientLock)
             {
@@ -182,6 +182,8 @@ namespace Intersect.Server.Networking
                 {
                     return;
                 }
+
+                mConnection.Disconnect(reason);
 
                 mConnection.Dispose();
                 mConnection = null;
