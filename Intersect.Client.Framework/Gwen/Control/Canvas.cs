@@ -45,6 +45,7 @@ namespace Intersect.Client.Framework.Gwen.Control
             Scale = 1.0f;
             BackgroundColor = Color.White;
             ShouldDrawBackground = false;
+            IsTabable = false;
 
             mDisposeQueue = new List<IDisposable>();
         }

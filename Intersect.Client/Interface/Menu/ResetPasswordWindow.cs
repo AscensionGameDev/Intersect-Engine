@@ -73,7 +73,10 @@ namespace Intersect.Client.Interface.Menu
             mCodeInputLabel = new Label(mCodeInputBackground, "CodeLabel");
             mCodeInputLabel.SetText(Strings.ResetPass.code);
 
-            mCodeInputTextbox = new TextBox(mCodeInputBackground, "CodeField");
+            mCodeInputTextbox = new TextBox(mCodeInputBackground, "CodeField")
+            {
+                IsTabable = true,
+            };
             mCodeInputTextbox.SubmitPressed += Textbox_SubmitPressed;
             mCodeInputTextbox.Clicked += Textbox_Clicked;
 
@@ -84,7 +87,10 @@ namespace Intersect.Client.Interface.Menu
             mPasswordLabel = new Label(mPasswordBackground, "Password1Label");
             mPasswordLabel.SetText(Strings.ResetPass.password);
 
-            mPasswordTextbox = new TextBoxPassword(mPasswordBackground, "Password1Field");
+            mPasswordTextbox = new TextBoxPassword(mPasswordBackground, "Password1Field")
+            {
+                IsTabable = true,
+            };
             mPasswordTextbox.SubmitPressed += PasswordTextbox_SubmitPressed;
 
             //Confirm Password Fields/Labels
@@ -93,16 +99,25 @@ namespace Intersect.Client.Interface.Menu
             mPasswordLabel2 = new Label(mPasswordBackground2, "Password2Label");
             mPasswordLabel2.SetText(Strings.ResetPass.password2);
 
-            mPasswordTextbox2 = new TextBoxPassword(mPasswordBackground2, "Password2Field");
+            mPasswordTextbox2 = new TextBoxPassword(mPasswordBackground2, "Password2Field")
+            {
+                IsTabable = true,
+            };
             mPasswordTextbox2.SubmitPressed += PasswordTextbox2_SubmitPressed;
 
             //Login - Send Login Button
-            mSubmitBtn = new Button(mResetWindow, "SubmitButton");
+            mSubmitBtn = new Button(mResetWindow, "SubmitButton")
+            {
+                IsTabable = true,
+            };
             mSubmitBtn.SetText(Strings.ResetPass.submit);
             mSubmitBtn.Clicked += SubmitBtn_Clicked;
 
             //Login - Back Button
-            mBackBtn = new Button(mResetWindow, "BackButton");
+            mBackBtn = new Button(mResetWindow, "BackButton")
+            {
+                IsTabable = true,
+            };
             mBackBtn.SetText(Strings.ResetPass.back);
             mBackBtn.Clicked += BackBtn_Clicked;
 

@@ -17,6 +17,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Intersect.Logging;
 using Intersect.Client.Framework.Gwen.Renderer;
+using Intersect.Reflection;
 
 namespace Intersect.Client.Framework.Gwen.Control
 {
@@ -494,6 +495,10 @@ namespace Intersect.Client.Framework.Gwen.Control
                 InvalidateParent();
             }
         }
+
+        public virtual bool IsHiddenByTree => mHidden || (Parent?.IsHidden ?? false);
+
+        public virtual bool IsDisabledByTree => mDisabled || (Parent?.IsDisabled ?? false);
 
         /// <summary>
         ///     Determines whether the control's position should be restricted to parent's bounds.
@@ -2958,6 +2963,31 @@ namespace Intersect.Client.Framework.Gwen.Control
             Base? next;
             lock (canvas._tabQueue)
             {
+                var hasValid = canvas._tabQueue.Any(
+                    control => control is { IsDisabledByTree: false, IsHiddenByTree: false }
+                );
+                if (!hasValid)
+                {
+                    return true;
+                }
+
+                var currentFocus = InputHandler.KeyboardFocus;
+                var last = (shift ? canvas._tabQueue.First : canvas._tabQueue.Last)?.Value;
+                if (currentFocus != default && canvas._tabQueue.Contains(currentFocus) && currentFocus != last)
+                {
+                    while (canvas._tabQueue.Last?.Value != currentFocus)
+                    {
+                        next = canvas._tabQueue.First?.Value;
+                        if (next == default)
+                        {
+                            break;
+                        }
+
+                        canvas._tabQueue.RemoveFirst();
+                        canvas._tabQueue.AddLast(next);
+                    }
+                }
+
                 do
                 {
                     next = (shift ? canvas._tabQueue.Last : canvas._tabQueue.First)?.Value;
@@ -2977,12 +3007,13 @@ namespace Intersect.Client.Framework.Gwen.Control
                         canvas._tabQueue.AddLast(next);
                     }
                 }
-                while (next.IsDisabled && canvas._tabQueue.Any(control => !control.IsDisabled));
+                while (next.IsHiddenByTree || next.IsDisabledByTree || !next.IsTabable);
             }
 
-            if (!next.IsDisabled)
+            if (next is { IsTabable: true, IsDisabledByTree: false, IsHiddenByTree: false })
             {
-                next.Focus(moveMouse: true);
+                Console.WriteLine($"Focusing {next.CanonicalName} ({next.GetFullishName()})");
+                next.Focus(moveMouse: next is not TextBox);
             }
 
             Redraw();
