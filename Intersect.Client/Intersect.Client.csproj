@@ -86,9 +86,33 @@
     </EmbeddedResource>
   </ItemGroup>
 
+  <ItemGroup Label="Steam Resources" Condition="'$(INTERSECT_STEAMWORKS)' != ''">
+    <AssemblyAttribute Include="Intersect.Client.ThirdParty.Steam.Supported" />
+    <Content Include="steam_appid.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <EmbeddedResource Include="Resources\runtimes\linux-x64\native\libsdkencryptedappticket.so" />
+    <EmbeddedResource Include="Resources\runtimes\linux-x64\native\libsteam_api.so" />
+    <EmbeddedResource Include="Resources\runtimes\osx\native\libsdkencryptedappticket.dylib" />
+    <EmbeddedResource Include="Resources\runtimes\osx\native\libsteam_api.dylib" />
+    <EmbeddedResource Include="Resources\runtimes\win-x64\native\sdkencryptedappticket64.dll" />
+    <EmbeddedResource Include="Resources\runtimes\win-x64\native\steam_api64.dll" />
+  </ItemGroup>
+
+  <ItemGroup Label="Steam Resources (Exclusion)" Condition="'$(INTERSECT_STEAMWORKS)' == ''">
+    <None Include="steam_appid.txt" />
+    <None Include="Resources\runtimes\linux-x64\native\libsdkencryptedappticket.so" />
+    <None Include="Resources\runtimes\linux-x64\native\libsteam_api.so" />
+    <None Include="Resources\runtimes\osx\native\libsdkencryptedappticket.dylib" />
+    <None Include="Resources\runtimes\osx\native\libsteam_api.dylib" />
+    <None Include="Resources\runtimes\win-x64\native\sdkencryptedappticket64.dll" />
+    <None Include="Resources\runtimes\win-x64\native\steam_api64.dll" />
+  </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.1.303" GeneratePathProperty="True" />
     <PackageReference Include="MonoGame.Library.SDL" Version="2.26.5.5" GeneratePathProperty="True" />
+    <PackageReference Include="Steamworks.NET" Version="20.1.0" />
   </ItemGroup>
 
 </Project>

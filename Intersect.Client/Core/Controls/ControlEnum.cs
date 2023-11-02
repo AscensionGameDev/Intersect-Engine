@@ -80,6 +80,14 @@
 
         ToggleFullscreen,
 
+        // Submit,
+        //
+        // Cancel,
+        //
+        // Previous,
+        //
+        // Next,
+
     }
 
 }

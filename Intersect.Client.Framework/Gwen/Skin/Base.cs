@@ -65,7 +65,7 @@ namespace Intersect.Client.Framework.Gwen.Skin
 
         #region UI elements
 
-        public virtual void DrawButton(Control.Base control, bool depressed, bool hovered, bool disabled)
+        public virtual void DrawButton(Control.Base control, bool depressed, bool hovered, bool disabled, bool focused)
         {
         }
 

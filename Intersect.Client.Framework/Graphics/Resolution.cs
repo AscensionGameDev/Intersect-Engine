@@ -3,7 +3,7 @@
 namespace Intersect.Client.Framework.Graphics
 {
 
-    public partial struct Resolution
+    public partial struct Resolution : IComparable<Resolution>
     {
 
         public static readonly Resolution Empty = default;
@@ -39,6 +39,12 @@ namespace Intersect.Client.Framework.Graphics
 
             var y = overrideResolution?.Y ?? resolution.Y;
             Y = y > 0 ? y : resolution.Y;
+        }
+
+        public int CompareTo(Resolution other)
+        {
+            var diffX = X - other.X;
+            return diffX != 0 ? diffX : Y - other.Y;
         }
 
         public override bool Equals(object obj) => obj is Resolution resolution && Equals(resolution);

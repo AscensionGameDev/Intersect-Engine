@@ -5,10 +5,12 @@ using System.Globalization;
 using System.Reflection;
 using System.Resources;
 using Intersect.Client.Core;
+using Intersect.Client.ThirdParty;
 using Intersect.Configuration;
 using Intersect.Extensions;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
+using Steamworks;
 
 namespace Intersect.Client
 {
@@ -110,6 +112,13 @@ namespace Intersect.Client
             DeleteIfExists("openal32.dll");
             DeleteIfExists("MonoGame.Framework.Client.dll.config");
             DeleteIfExists("MonoGame.Framework.Client.dll");
+
+            DeleteIfExists("libsdkencryptedappticket.dylib");
+            DeleteIfExists("libsteam_api.dylib");
+            DeleteIfExists("libsdkencryptedappticket.so");
+            DeleteIfExists("libsteam_api.so");
+            DeleteIfExists("sdkencryptedappticket64.dll");
+            DeleteIfExists("steam_api64.dll");
         }
 
         private static string ReadProcessOutput(string name)
@@ -163,7 +172,10 @@ namespace Intersect.Client
                 }
             }
 
-            var folder = Environment.Is64BitProcess ? "x64" : "x86";
+            if (!Environment.Is64BitProcess)
+            {
+                throw new PlatformNotSupportedException("x86 (32-bit) systems are not supported.");
+            }
 
             switch (platformId)
             {
@@ -171,17 +183,25 @@ namespace Intersect.Client
                 case PlatformID.Win32S:
                 case PlatformID.Win32Windows:
                 case PlatformID.WinCE:
-                    ExportDependency("SDL2.dll", folder);
-                    ExportDependency("soft_oal.dll", folder);
-
+                    ExportDependency("SDL2.dll", "x64");
+                    ExportDependency("soft_oal.dll", "x64");
+                    if (Steam.SupportedAttribute.IsPresent(typeof(Program).Assembly))
+                    {
+                        ExportDependency("sdkencryptedappticket64.dll", "runtimes/win-x64/native");
+                        ExportDependency("steam_api64.dll", "runtimes/win-x64/native");
+                    }
                     break;
 
                 case PlatformID.MacOSX:
-                    ExportDependency("libopenal.1.dylib", "");
-                    ExportDependency("libSDL2.dylib", "");
-                    ExportDependency("openal32.dll", "");
-                    ExportDependency("MonoGame.Framework.dll.config", "", "MonoGame.Framework.Client.dll.config");
-
+                    ExportDependency("libopenal.1.dylib");
+                    ExportDependency("libSDL2.dylib");
+                    ExportDependency("openal32.dll");
+                    ExportDependency("MonoGame.Framework.dll.config", nameoverride: "MonoGame.Framework.Client.dll.config");
+                    if (Steam.SupportedAttribute.IsPresent(typeof(Program).Assembly))
+                    {
+                        ExportDependency("libsdkencryptedappticket.dylib", "runtimes/osx/native");
+                        ExportDependency("libsteam_api.dylib", "runtimes/osx/native");
+                    }
                     break;
 
                 case PlatformID.Xbox:
@@ -189,18 +209,22 @@ namespace Intersect.Client
 
                 case PlatformID.Unix:
                 default:
-                    ExportDependency("libopenal.so.1", "");
-                    ExportDependency("libSDL2-2.0.so.0", "");
-                    ExportDependency("openal32.dll", "");
-                    ExportDependency("MonoGame.Framework.dll.config", "", "MonoGame.Framework.Client.dll.config");
-
+                    ExportDependency("libopenal.so.1");
+                    ExportDependency("libSDL2-2.0.so.0");
+                    ExportDependency("openal32.dll");
+                    ExportDependency("MonoGame.Framework.dll.config", nameoverride: "MonoGame.Framework.Client.dll.config");
+                    if (Steam.SupportedAttribute.IsPresent(typeof(Program).Assembly))
+                    {
+                        ExportDependency("libsdkencryptedappticket.so", "runtimes/linux-x64/native");
+                        ExportDependency("libsteam_api.so", "runtimes/linux-x64/native");
+                    }
                     break;
             }
 
             ExportDependency("MonoGame.Framework.dll", "", "MonoGame.Framework.Client.dll");
         }
 
-        private static void ExportDependency(string filename, string folder, string nameoverride = null)
+        private static void ExportDependency(string filename, string? folder = default, string? nameoverride = default)
         {
             /* If it failed it means the file already exists and can't be deleted for whatever reason. */
             var path = string.IsNullOrEmpty(nameoverride) ? filename : nameoverride;
@@ -212,22 +236,22 @@ namespace Intersect.Client
             Debug.Assert(filename != null, "filename != null");
 
             var assembly = Assembly.GetExecutingAssembly();
-            var resourceName =
-                $"Intersect.Client.Resources.{(string.IsNullOrEmpty(folder) ? "" : $"{folder}.")}{filename}";
+            var cleanFolder = folder?.Trim().Replace('/', '.').Replace('\\', '.').Replace('-', '_') ?? string.Empty;
+            if (cleanFolder.Length > 0)
+            {
+                cleanFolder += '.';
+            }
+            var resourceName = $"Intersect.Client.Resources.{cleanFolder}{filename}";
 
             if (assembly.GetManifestResourceNames().Contains(resourceName))
             {
                 Console.WriteLine($@"Resource: {resourceName}");
-                using (var resourceStream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
-                {
-                    Debug.Assert(resourceStream != null, "resourceStream != null");
-                    using (var fileStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite))
-                    {
-                        var data = new byte[resourceStream.Length];
-                        resourceStream.Read(data, 0, (int)resourceStream.Length);
-                        fileStream.Write(data, 0, data.Length);
-                    }
-                }
+                using var resourceStream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName);
+                Debug.Assert(resourceStream != null, "resourceStream != null");
+                using var fileStream = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite);
+                var data = new byte[resourceStream.Length];
+                resourceStream.Read(data, 0, (int)resourceStream.Length);
+                fileStream.Write(data, 0, data.Length);
             }
             else
             {
@@ -249,21 +273,20 @@ namespace Intersect.Client
                         continue;
                     }
 
-                    using (var fs = new FileStream(
+                    using var fs = new FileStream(
                         string.IsNullOrEmpty(nameoverride) ? filename : nameoverride, FileMode.OpenOrCreate,
                         FileAccess.ReadWrite
-                    ))
+                    );
+                    var memoryStream = (UnmanagedMemoryStream)enumerator.Value;
+                    if (memoryStream == null)
                     {
-                        var memoryStream = (UnmanagedMemoryStream)enumerator.Value;
-                        if (memoryStream == null)
-                        {
-                            continue;
-                        }
-
-                        var data = new byte[memoryStream.Length];
-                        memoryStream.Read(data, 0, (int)memoryStream.Length);
-                        fs.Write(data, 0, data.Length);
+                        continue;
                     }
+
+                    var data = new byte[memoryStream.Length];
+                    var read = memoryStream.Read(data, 0, (int)memoryStream.Length);
+                    Debug.Assert(read == memoryStream.Length);
+                    fs.Write(data, 0, read);
                 }
             }
         }

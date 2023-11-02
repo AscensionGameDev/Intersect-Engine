@@ -11,6 +11,7 @@ using Intersect.Client.Framework.Graphics;
 using Intersect.Client.General;
 using Intersect.Client.Localization;
 using Intersect.Client.MonoGame.NativeInterop;
+using Intersect.Client.ThirdParty;
 using Intersect.Configuration;
 using Intersect.Utilities;
 using Microsoft.Xna.Framework;
@@ -743,21 +744,28 @@ namespace Intersect.Client.MonoGame.Graphics
             mValidVideoModes = new List<string>();
 
             var allowedResolutions = new[]
+                {
+                    new Resolution(800, 600), new Resolution(1024, 768), new Resolution(1024, 720),
+                    new Resolution(1280, 720), new Resolution(1280, 768), new Resolution(1280, 1024),
+                    new Resolution(1360, 768), new Resolution(1366, 768), new Resolution(1440, 1050),
+                    new Resolution(1440, 900), new Resolution(1600, 900), new Resolution(1680, 1050),
+                    new Resolution(1920, 1080),
+                }.Concat(
+                    mGraphicsDevice.Adapter.SupportedDisplayModes.Select(
+                        displayMode => new Resolution(displayMode.Width, displayMode.Height)
+                    )
+                )
+                .Distinct()
+                .Order()
+                .ToArray();
+
+            if (Steam.SteamDeck)
             {
-                new Resolution(800, 600),
-                new Resolution(1024, 768),
-                new Resolution(1024, 720),
-                new Resolution(1280, 720),
-                new Resolution(1280, 768),
-                new Resolution(1280, 1024),
-                new Resolution(1360, 768),
-                new Resolution(1366, 768),
-                new Resolution(1440, 1050),
-                new Resolution(1440, 900),
-                new Resolution(1600, 900),
-                new Resolution(1680, 1050),
-                new Resolution(1920, 1080)
-            };
+                allowedResolutions = new[]
+                {
+                    new Resolution(mGraphicsDevice.DisplayMode.Width, mGraphicsDevice.DisplayMode.Height),
+                };
+            }
 
             var displayWidth = mGraphicsDevice?.DisplayMode?.Width;
             var displayHeight = mGraphicsDevice?.DisplayMode?.Height;
@@ -796,19 +804,23 @@ namespace Intersect.Client.MonoGame.Graphics
 
             var database = Globals.Database;
             var validVideoModes = GetValidVideoModes();
-            var targetResolution = MathHelper.Clamp(database.TargetResolution, 0, validVideoModes?.Count ?? 0);
+
+            var targetResolution = MathHelper.Clamp(database.TargetResolution, 0, validVideoModes.Count);
 
             if (targetResolution != database.TargetResolution)
             {
-                Debug.Assert(database != null, "database != null");
+                Debug.Assert(database != default, "database != null");
                 database.TargetResolution = 0;
                 database.SavePreference("Resolution", database.TargetResolution.ToString(CultureInfo.InvariantCulture));
             }
 
-            var targetVideoMode = validVideoModes?[targetResolution];
-            if (Resolution.TryParse(targetVideoMode, out var resolution))
+            if (0 <= targetResolution && targetResolution < validVideoModes.Count)
             {
-                PreferredResolution = resolution;
+                var targetVideoMode = validVideoModes[targetResolution];
+                if (Resolution.TryParse(targetVideoMode, out var resolution))
+                {
+                    PreferredResolution = resolution;
+                }
             }
 
             mGraphics.PreferredBackBufferWidth = PreferredResolution.X;

@@ -17,6 +17,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Intersect.Logging;
 using Intersect.Client.Framework.Gwen.Renderer;
+using Intersect.Reflection;
 
 namespace Intersect.Client.Framework.Gwen.Control
 {
@@ -494,6 +495,10 @@ namespace Intersect.Client.Framework.Gwen.Control
                 InvalidateParent();
             }
         }
+
+        public virtual bool IsHiddenByTree => mHidden || (Parent?.IsHidden ?? false);
+
+        public virtual bool IsDisabledByTree => mDisabled || (Parent?.IsDisabled ?? false);
 
         /// <summary>
         ///     Determines whether the control's position should be restricted to parent's bounds.
@@ -2295,7 +2300,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// <summary>
         ///     Focuses the control.
         /// </summary>
-        public virtual void Focus()
+        public virtual void Focus(bool moveMouse = false)
         {
             if (InputHandler.KeyboardFocus == this)
             {
@@ -2307,7 +2312,15 @@ namespace Intersect.Client.Framework.Gwen.Control
                 InputHandler.KeyboardFocus.OnLostKeyboardFocus();
             }
 
-            InputHandler.KeyboardFocus = this;
+            if (moveMouse)
+            {
+                InputHandler.Focus(FocusSource.Keyboard, this);
+            }
+            else
+            {
+                InputHandler.KeyboardFocus = this;
+            }
+
             OnKeyboardFocus();
             Redraw();
         }
@@ -2514,22 +2527,19 @@ namespace Intersect.Client.Framework.Gwen.Control
 
             PostLayout(skin);
 
-            if (IsTabable)
+            var canvas = GetCanvas();
+            // ReSharper disable once InvertIf
+            if (canvas != default)
             {
-                if (GetCanvas().mFirstTab == null)
+                if (IsTabable && !canvas._tabQueue.Contains(this))
                 {
-                    GetCanvas().mFirstTab = this;
+                    canvas._tabQueue.AddLast(this);
                 }
 
-                if (GetCanvas().mNextTab == null)
+                if (InputHandler.KeyboardFocus == this && !canvas._tabQueue.Contains(this))
                 {
-                    GetCanvas().mNextTab = this;
+                    canvas._tabQueue.AddLast(this);
                 }
-            }
-
-            if (InputHandler.KeyboardFocus == this)
-            {
-                GetCanvas().mNextTab = null;
             }
         }
 
@@ -2937,19 +2947,75 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// </summary>
         /// <param name="down">Indicates whether the key was pressed or released.</param>
         /// <returns>True if handled.</returns>
-        protected virtual bool OnKeyTab(bool down)
+        protected virtual bool OnKeyTab(bool down, bool shift = false)
         {
             if (!down)
             {
                 return true;
             }
 
-            if (GetCanvas()?.mNextTab == null)
+            var canvas = GetCanvas();
+            if (canvas == default)
             {
                 return true;
             }
 
-            GetCanvas()?.mNextTab?.Focus();
+            Base? next;
+            lock (canvas._tabQueue)
+            {
+                var hasValid = canvas._tabQueue.Any(
+                    control => control is { IsDisabledByTree: false, IsHiddenByTree: false }
+                );
+                if (!hasValid)
+                {
+                    return true;
+                }
+
+                var currentFocus = InputHandler.KeyboardFocus;
+                var last = (shift ? canvas._tabQueue.First : canvas._tabQueue.Last)?.Value;
+                if (currentFocus != default && canvas._tabQueue.Contains(currentFocus) && currentFocus != last)
+                {
+                    while (canvas._tabQueue.Last?.Value != currentFocus)
+                    {
+                        next = canvas._tabQueue.First?.Value;
+                        if (next == default)
+                        {
+                            break;
+                        }
+
+                        canvas._tabQueue.RemoveFirst();
+                        canvas._tabQueue.AddLast(next);
+                    }
+                }
+
+                do
+                {
+                    next = (shift ? canvas._tabQueue.Last : canvas._tabQueue.First)?.Value;
+                    if (next == default)
+                    {
+                        return true;
+                    }
+
+                    if (shift)
+                    {
+                        canvas._tabQueue.RemoveLast();
+                        canvas._tabQueue.AddFirst(next);
+                    }
+                    else
+                    {
+                        canvas._tabQueue.RemoveFirst();
+                        canvas._tabQueue.AddLast(next);
+                    }
+                }
+                while (next.IsHiddenByTree || next.IsDisabledByTree || !next.IsTabable);
+            }
+
+            if (next is { IsTabable: true, IsDisabledByTree: false, IsHiddenByTree: false })
+            {
+                Console.WriteLine($"Focusing {next.CanonicalName} ({next.GetFullishName()})");
+                next.Focus(moveMouse: next is not TextBox);
+            }
+
             Redraw();
 
             return true;

@@ -429,40 +429,55 @@ namespace Intersect.Client.Interface.Shared
 
             // Keybinding Settings - Controls 
             var row = 0;
-            var defaultFont = GameContentManager.Current?.GetFont("sourcesansproblack", 16);
+            var defaultFont = Current.GetFont("sourcesansproblack", 10);
             foreach (Control control in Enum.GetValues(typeof(Control)))
             {
-                var offset = row * 32;
+                var offset = row++ * 32;
                 var name = Enum.GetName(typeof(Control), control)?.ToLower();
 
-                var label = new Label(mKeybindingSettingsContainer, $"Control{Enum.GetName(typeof(Control), control)}Label");
-                label.Text = Strings.Controls.controldict[name];
-                label.AutoSizeToContents = true;
-                label.Font = defaultFont;
-                label.SetBounds(8, 8 + offset, 0, 24);
+                var prefix = $"Control{Enum.GetName(typeof(Control), control)}";
+                var label = new Label(mKeybindingSettingsContainer, $"{prefix}Label")
+                {
+                    Text = Strings.Controls.controldict[name],
+                    AutoSizeToContents = true,
+                    Font = defaultFont,
+                };
+                label.SetBounds(14, 11 + offset, 21, 16);
                 label.SetTextColor(new Color(255, 255, 255, 255), Label.ControlState.Normal);
 
-                var key1 = new Button(mKeybindingSettingsContainer, $"Control{Enum.GetName(typeof(Control), control)}Button1");
-                key1.Text = "";
-                key1.AutoSizeToContents = false;
-                key1.UserData = new KeyValuePair<Control, int>(control, 0);
-                key1.Font = defaultFont;
-
+                var key1 = new Button(mKeybindingSettingsContainer, $"{prefix}Button1")
+                {
+                    AutoSizeToContents = false,
+                    Font = defaultFont,
+                    Text = string.Empty,
+                    UserData = new KeyValuePair<Control, int>(control, 0),
+                };
+                key1.SetTextColor(Color.White, Label.ControlState.Normal);
+                key1.SetImage("control_button.png", Button.ControlState.Normal);
+                key1.SetImage("control_button_hovered.png", Button.ControlState.Hovered);
+                key1.SetImage("control_button_clicked.png", Button.ControlState.Clicked);
+                key1.SetHoverSound("octave-tap-resonant.wav");
+                key1.SetMouseDownSound("octave-tap-warm.wav");
+                key1.SetBounds(181, 6 + offset, 120, 28);
                 key1.Clicked += Key_Clicked;
 
-                var key2 = new Button(mKeybindingSettingsContainer, $"Control{Enum.GetName(typeof(Control), control)}Button2")
+                var key2 = new Button(mKeybindingSettingsContainer, $"{prefix}Button2")
                 {
-                    Text = "",
                     AutoSizeToContents = false,
+                    Font = defaultFont,
+                    Text = string.Empty,
                     UserData = new KeyValuePair<Control, int>(control, 1),
-                    Font = defaultFont
                 };
-
+                key2.SetTextColor(Color.White, Label.ControlState.Normal);
+                key2.SetImage("control_button.png", Button.ControlState.Normal);
+                key2.SetImage("control_button_hovered.png", Button.ControlState.Hovered);
+                key2.SetImage("control_button_clicked.png", Button.ControlState.Clicked);
+                key2.SetHoverSound("octave-tap-resonant.wav");
+                key2.SetMouseDownSound("octave-tap-warm.wav");
+                key2.SetBounds(309, 6 + offset, 120, 28);
                 key2.Clicked += Key_Clicked;
 
                 mKeybindingBtns.Add(control, new[] { key1, key2 });
-
-                row++;
             }
 
             Input.KeyDown += OnKeyDown;

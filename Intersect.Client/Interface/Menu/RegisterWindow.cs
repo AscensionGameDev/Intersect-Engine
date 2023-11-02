@@ -77,7 +77,10 @@ namespace Intersect.Client.Interface.Menu
             mUsernameLabel.SetText(Strings.Registration.username);
 
             //Register Username Textbox
-            mUsernameTextbox = new TextBox(mUsernameBackground, "UsernameField");
+            mUsernameTextbox = new TextBox(mUsernameBackground, "UsernameField")
+            {
+                IsTabable = true,
+            };
             mUsernameTextbox.SubmitPressed += UsernameTextbox_SubmitPressed;
 
             //Register Email Background
@@ -88,7 +91,10 @@ namespace Intersect.Client.Interface.Menu
             mEmailLabel.SetText(Strings.Registration.email);
 
             //Register Email Textbox
-            mEmailTextbox = new TextBox(mEmailBackground, "EmailField");
+            mEmailTextbox = new TextBox(mEmailBackground, "EmailField")
+            {
+                IsTabable = true,
+            };
             mEmailTextbox.SubmitPressed += EmailTextbox_SubmitPressed;
 
             //Register Password Background
@@ -99,7 +105,10 @@ namespace Intersect.Client.Interface.Menu
             mPasswordLabel.SetText(Strings.Registration.password);
 
             //Register Password Textbox
-            mPasswordTextbox = new TextBoxPassword(mPasswordBackground, "Password1Field");
+            mPasswordTextbox = new TextBoxPassword(mPasswordBackground, "Password1Field")
+            {
+                IsTabable = true,
+            };
             mPasswordTextbox.SubmitPressed += PasswordTextbox_SubmitPressed;
 
             //Register Password Background
@@ -110,17 +119,26 @@ namespace Intersect.Client.Interface.Menu
             mPasswordLabel2.SetText(Strings.Registration.confirmpass);
 
             //Register Password Textbox2
-            mPasswordTextbox2 = new TextBoxPassword(mPasswordBackground2, "Password2Field");
+            mPasswordTextbox2 = new TextBoxPassword(mPasswordBackground2, "Password2Field")
+            {
+                IsTabable = true,
+            };
             mPasswordTextbox2.SubmitPressed += PasswordTextbox2_SubmitPressed;
 
             //Register - Send Registration Button
-            mRegisterBtn = new Button(mRegistrationPanel, "RegisterButton");
-            mRegisterBtn.SetText(Strings.Registration.register);
+            mRegisterBtn = new Button(mRegistrationPanel, "RegisterButton")
+            {
+                // IsTabable = true,
+                Text = Strings.Registration.register,
+            };
             mRegisterBtn.Clicked += RegisterBtn_Clicked;
 
             //Register - Back Button
-            mBackBtn = new Button(mRegistrationPanel, "BackButton");
-            mBackBtn.SetText(Strings.Registration.back);
+            mBackBtn = new Button(mRegistrationPanel, "BackButton")
+            {
+                // IsTabable = true,
+                Text = Strings.Registration.back,
+            };
             mBackBtn.Clicked += BackBtn_Clicked;
 
             mRegistrationPanel.LoadJsonUi(GameContentManager.UI.Menu, Graphics.Renderer.GetResolutionString());

@@ -810,11 +810,11 @@ namespace Intersect.Client.Framework.Gwen.Control
         /// <returns>
         ///     True if handled.
         /// </returns>
-        protected override bool OnKeyTab(bool down)
+        protected override bool OnKeyTab(bool down, bool shift = false)
         {
             if (!AcceptTabs)
             {
-                return base.OnKeyTab(down);
+                return base.OnKeyTab(down, shift);
             }
 
             if (!down)

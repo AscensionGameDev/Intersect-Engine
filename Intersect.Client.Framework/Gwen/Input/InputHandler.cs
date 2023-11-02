@@ -6,7 +6,6 @@ using Intersect.Client.Framework.Gwen.DragDrop;
 
 namespace Intersect.Client.Framework.Gwen.Input
 {
-
     /// <summary>
     ///     Input handling.
     /// </summary>
@@ -17,6 +16,11 @@ namespace Intersect.Client.Framework.Gwen.Input
 
         private static readonly float[] LastClickTime = new float[MaxMouseButtons];
 
+        private static Base? _focusedKeyboard;
+        private static Base? _focusedMouse;
+
+        public static event Action<Base?, FocusSource>? FocusChanged;
+
         /// <summary>
         ///     Control currently hovered by mouse.
         /// </summary>
@@ -25,12 +29,34 @@ namespace Intersect.Client.Framework.Gwen.Input
         /// <summary>
         ///     Control that corrently has keyboard focus.
         /// </summary>
-        public static Base KeyboardFocus;
+        public static Base? KeyboardFocus
+        {
+            get => _focusedKeyboard;
+            set => _focusedKeyboard = value;
+        }
 
         /// <summary>
         ///     Control that currently has mouse focus.
         /// </summary>
-        public static Base MouseFocus;
+        public static Base? MouseFocus
+        {
+            get => _focusedMouse;
+            set => _focusedMouse = value;
+        }
+
+        public static void Focus(FocusSource focusSource, Base? control)
+        {
+            if (focusSource == FocusSource.Keyboard)
+            {
+                KeyboardFocus = control;
+            }
+            else
+            {
+                MouseFocus = control;
+            }
+
+            FocusChanged?.Invoke(control, focusSource);
+        }
 
         /// <summary>
         ///     Current mouse position.
@@ -223,7 +249,7 @@ namespace Intersect.Client.Framework.Gwen.Input
 
             if (KeyboardFocus != null && (!KeyboardFocus.IsVisible || !KeyboardFocus.KeyboardInputEnabled))
             {
-                KeyboardFocus = null;
+                // KeyboardFocus = null;
             }
 
             if (null == KeyboardFocus)

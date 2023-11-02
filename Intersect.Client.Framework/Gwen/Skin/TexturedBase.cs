@@ -699,7 +699,7 @@ namespace Intersect.Client.Framework.Gwen.Skin
 
         #region UI elements
 
-        public override void DrawButton(Control.Base control, bool depressed, bool hovered, bool disabled)
+        public override void DrawButton(Control.Base control, bool depressed, bool hovered, bool disabled, bool focused)
         {
             if (control is not Button button)
             {
@@ -731,24 +731,35 @@ namespace Intersect.Client.Framework.Gwen.Skin
             var controlStateTexture = button.GetImage(controlState);
             controlStateTexture ??= button.GetImage(Button.ControlState.Normal);
 
-            if (controlStateTexture != null)
+            if (controlStateTexture == null)
+            {
+                var buttonTextureGroup = mTextures.Input.Button;
+                var target = controlState switch
+                {
+                    Button.ControlState.Normal => buttonTextureGroup.Normal,
+                    Button.ControlState.Hovered => buttonTextureGroup.Hovered,
+                    Button.ControlState.Clicked => buttonTextureGroup.Pressed,
+                    Button.ControlState.Disabled => buttonTextureGroup.Disabled,
+                    _ => throw new UnreachableException(),
+                };
+
+                target.Draw(Renderer, button.RenderBounds, button.RenderColor);
+            }
+            else
             {
                 Renderer.DrawColor = button.RenderColor;
                 Renderer.DrawTexturedRect(controlStateTexture, button.RenderBounds, button.RenderColor);
-                return;
             }
 
-            var buttonTextureGroup = mTextures.Input.Button;
-            var target = controlState switch
+            // ReSharper disable once InvertIf
+            if (focused)
             {
-                Button.ControlState.Normal => buttonTextureGroup.Normal,
-                Button.ControlState.Hovered => buttonTextureGroup.Hovered,
-                Button.ControlState.Clicked => buttonTextureGroup.Pressed,
-                Button.ControlState.Disabled => buttonTextureGroup.Disabled,
-                _ => throw new UnreachableException(),
-            };
-
-            target.Draw(Renderer, button.RenderBounds, button.RenderColor);
+                Renderer.PushDrawColor(Color.White);
+                Renderer.PushLineThickness(1);
+                Renderer.DrawLinedRect(button.RenderBounds);
+                Renderer.PopLineThickness();
+                Renderer.PopDrawColor();
+            }
         }
 
         public override void DrawMenuRightArrow(Control.Base control)

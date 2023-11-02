@@ -3,6 +3,7 @@ namespace Intersect.Client.MonoGame.NativeInterop
     public enum KnownLibrary
     {
         OpenAL,
-        SDL2
+        SDL2,
+        steam_api,
     }
 }

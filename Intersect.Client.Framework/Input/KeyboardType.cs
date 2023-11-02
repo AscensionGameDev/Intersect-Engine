@@ -1,17 +1,10 @@
-﻿namespace Intersect.Client.Framework.Input
+﻿namespace Intersect.Client.Framework.Input;
+
+public enum KeyboardType
 {
-    public enum KeyboardType
-    {
-
-        Normal,
-
-        Password,
-
-        Email,
-
-        Numberic,
-
-        Pin
-
-    }
+    Normal,
+    Password,
+    Email,
+    Numeric,
+    Pin,
 }

@@ -21,11 +21,13 @@ namespace Intersect.Client.Framework.Gwen.Control
         private Color mBackgroundColor;
 
         // [omeg] these are not created by us, so no disposing
-        internal Base mFirstTab;
+        internal Base? mFirstTab;
+
+        internal Base? mNextTab;
+
+        internal readonly LinkedList<Base> _tabQueue = new();
 
         private bool mNeedsRedraw;
-
-        internal Base mNextTab;
 
         private float mScale;
 
@@ -43,6 +45,7 @@ namespace Intersect.Client.Framework.Gwen.Control
             Scale = 1.0f;
             BackgroundColor = Color.White;
             ShouldDrawBackground = false;
+            IsTabable = false;
 
             mDisposeQueue = new List<IDisposable>();
         }
@@ -341,7 +344,7 @@ namespace Intersect.Client.Framework.Gwen.Control
         ///     Handles keyboard events. Called from Input subsystems.
         /// </summary>
         /// <returns>True if handled.</returns>
-        public bool Input_Key(Key key, bool down)
+        public bool Input_Key(Key key, bool down, bool shift = false)
         {
             if (IsHidden)
             {
@@ -356,6 +359,11 @@ namespace Intersect.Client.Framework.Gwen.Control
             if (key >= Key.Count)
             {
                 return false;
+            }
+
+            if (key == Key.Tab)
+            {
+                return OnKeyTab(down, shift);
             }
 
             return InputHandler.OnKeyEvent(this, key, down);

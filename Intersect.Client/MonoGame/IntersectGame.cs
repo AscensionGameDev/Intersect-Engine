@@ -23,6 +23,8 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using Intersect.Client.Framework.Database;
+using Intersect.Client.Framework.Graphics;
+using Intersect.Client.ThirdParty;
 using Intersect.Utilities;
 
 using MainMenu = Intersect.Client.Interface.Menu.MainMenu;
@@ -38,6 +40,8 @@ namespace Intersect.Client.MonoGame
         private bool mInitialized;
 
         private double mLastUpdateTime = 0;
+
+        private readonly GameRenderer _gameRenderer;
 
         private GraphicsDeviceManager mGraphics;
 
@@ -93,26 +97,27 @@ namespace Intersect.Client.MonoGame
                 args.GraphicsDeviceInformation.PresentationParameters.MultiSampleCount = 8;
             };
 
+            ClientConfiguration.LoadAndSave(ClientConfiguration.DefaultPath);
+
             Content.RootDirectory = "";
             IsMouseVisible = true;
             Globals.ContentManager = new MonoContentManager();
             Globals.Database = new JsonDatabase();
 
             // Load configuration.
-            ClientConfiguration.LoadAndSave(ClientConfiguration.DefaultPath);
             Globals.Database.LoadPreferences();
 
             Window.IsBorderless = Context.StartupOptions.BorderlessWindow;
 
-            var renderer = new MonoRenderer(mGraphics, Content, this)
+            _gameRenderer = new MonoRenderer(mGraphics, Content, this)
             {
-                OverrideResolution = Context.StartupOptions.ScreenResolution
+                OverrideResolution = Context.StartupOptions.ScreenResolution,
             };
 
             Globals.InputManager = new MonoInput(this);
             GameClipboard.Instance = new MonoClipboard();
 
-            Core.Graphics.Renderer = renderer;
+            Core.Graphics.Renderer = _gameRenderer;
 
             Interface.Interface.GwenRenderer = new IntersectRenderer(null, Core.Graphics.Renderer);
             Interface.Interface.GwenInput = new IntersectInput();
@@ -120,8 +125,8 @@ namespace Intersect.Client.MonoGame
 
             // Windows
             Window.Position = new Microsoft.Xna.Framework.Point(
-                renderer.ScreenWidth - renderer.ActiveResolution.X,
-                renderer.ScreenHeight - renderer.ActiveResolution.Y
+                _gameRenderer.ScreenWidth - _gameRenderer.ActiveResolution.X,
+                _gameRenderer.ScreenHeight - _gameRenderer.ActiveResolution.Y
             ) / new Microsoft.Xna.Framework.Point(2);
             Window.AllowAltF4 = false;
 
@@ -163,6 +168,22 @@ namespace Intersect.Client.MonoGame
                 //We need to do this here instead of in the constructor for the size change to apply to Linux
                 mGraphics.PreferredBackBufferWidth = 800;
                 mGraphics.PreferredBackBufferHeight = 480;
+            }
+
+            if (Steam.SteamDeck)
+            {
+                Window.IsBorderless = true;
+
+                var displayResolution = new Resolution(
+                    GraphicsDevice.DisplayMode.Width,
+                    GraphicsDevice.DisplayMode.Height
+                );
+
+                _gameRenderer.PreferredResolution = displayResolution;
+                _gameRenderer.OverrideResolution = displayResolution;
+
+                mGraphics.PreferredBackBufferWidth = displayResolution.X;
+                mGraphics.PreferredBackBufferHeight = displayResolution.Y;
             }
 
             mGraphics.ApplyChanges();

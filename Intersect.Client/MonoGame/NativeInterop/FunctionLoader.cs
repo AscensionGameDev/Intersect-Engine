@@ -54,6 +54,16 @@ namespace Intersect.Client.MonoGame.NativeInterop
                         default: throw new IndexOutOfRangeException();
                     }
 
+                case KnownLibrary.steam_api:
+                    return PlatformHelper.CurrentPlatform switch
+                    {
+                        Platform.Unknown => "libsteam_api.so",
+                        Platform.Linux => "libsteam_api.so",
+                        Platform.MacOS => "libsteam_api.dylib",
+                        Platform.Windows => "steam_api64.dll",
+                        _ => throw new IndexOutOfRangeException(),
+                    };
+
                 default:
                     throw new ArgumentOutOfRangeException(nameof(knownLibrary), knownLibrary, null);
             }
