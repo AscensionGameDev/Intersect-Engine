@@ -824,17 +824,31 @@ namespace Intersect.Server.Entities.Events
             return base.CanMoveInDirection(direction, out blockerType, out entityType);
         }
 
+        protected override bool CanLookInDirection(Direction direction)
+        {
+            return !mDirectionFix && base.CanLookInDirection(direction);
+        }
+
         public void TurnTowardsPlayer()
         {
-            Direction lookDir;
-            if (Player != null && GlobalClone == null) //Local Event
+            if (mDirectionFix)
             {
-                lookDir = GetDirectionTo(Player);
-                if (lookDir > Direction.None)
-                {
-                    ChangeDir(lookDir);
-                }
+                return;
             }
+
+            // Local Event
+            if (Player == null || GlobalClone != null)
+            {
+                return;
+            }
+
+            var lookDir = GetDirectionTo(Player);
+            if (!Enum.IsDefined(lookDir) || lookDir == Direction.None)
+            {
+                return;
+            }
+
+            ChangeDir(lookDir);
         }
 
         public bool ShouldDespawn(MapController map)

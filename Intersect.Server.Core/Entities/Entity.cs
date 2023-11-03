@@ -1155,8 +1155,15 @@ namespace Intersect.Server.Entities
             }
         }
 
+        protected virtual bool CanLookInDirection(Direction direction) => true;
+
         public void ChangeDir(Direction dir)
         {
+            if (!CanLookInDirection(dir))
+            {
+                return;
+            }
+
             if (dir == Direction.None || Dir == dir)
             {
                 return;
