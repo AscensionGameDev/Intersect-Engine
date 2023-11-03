@@ -169,7 +169,7 @@ namespace Intersect.Server.Networking
                     switch (Options.GameBorderStyle)
                     {
                         case 1:
-                            mapPacket.CameraHolds = new bool[4] {true, true, true, true};
+                            mapPacket.CameraHolds = new bool[4] { true, true, true, true };
 
                             break;
 
@@ -522,7 +522,7 @@ namespace Intersect.Server.Networking
 
             client.Send(
                 new EntityPositionPacket(
-                    en.Id, en.GetEntityType(), en.MapId, (byte) en.X, (byte) en.Y, (byte) en.Dir, en.Passable,
+                    en.Id, en.GetEntityType(), en.MapId, (byte)en.X, (byte)en.Y, (byte)en.Dir, en.Passable,
                     en.HideName
                 )
             );
@@ -539,7 +539,7 @@ namespace Intersect.Server.Networking
             SendDataToProximityOnMapInstance(
                 en.MapId, en.MapInstanceId,
                 new EntityPositionPacket(
-                    en.Id, en.GetEntityType(), en.MapId, (byte) en.X, (byte) en.Y, (byte) en.Dir, en.Passable,
+                    en.Id, en.GetEntityType(), en.MapId, (byte)en.X, (byte)en.Y, (byte)en.Dir, en.Passable,
                     en.HideName
                 )
             );
@@ -681,22 +681,22 @@ namespace Intersect.Server.Networking
             //Send massive amounts of game data
             foreach (var val in Enum.GetValues(typeof(GameObjectType)))
             {
-                if ((GameObjectType) val == GameObjectType.Map)
+                if ((GameObjectType)val == GameObjectType.Map)
                 {
                     continue;
                 }
 
-                if ((GameObjectType) val == GameObjectType.Shop ||
-                    (GameObjectType) val == GameObjectType.Event ||
-                    (GameObjectType) val == GameObjectType.PlayerVariable ||
-                    (GameObjectType) val == GameObjectType.ServerVariable ||
-                    (GameObjectType) val == GameObjectType.GuildVariable ||
-                    (GameObjectType) val == GameObjectType.UserVariable)
+                if ((GameObjectType)val == GameObjectType.Shop ||
+                    (GameObjectType)val == GameObjectType.Event ||
+                    (GameObjectType)val == GameObjectType.PlayerVariable ||
+                    (GameObjectType)val == GameObjectType.ServerVariable ||
+                    (GameObjectType)val == GameObjectType.GuildVariable ||
+                    (GameObjectType)val == GameObjectType.UserVariable)
                 {
                     continue;
                 }
 
-                SendGameObjects(null, (GameObjectType) val, gameObjects);
+                SendGameObjects(null, (GameObjectType)val, gameObjects);
             }
 
             CachedGameDataPacket = new GameDataPacket(gameObjects.ToArray(), CustomColors.Json());
@@ -780,7 +780,7 @@ namespace Intersect.Server.Networking
                 {
                     if (player.Power != UserRights.None)
                     {
-                        SendChatMsg(player, message, ChatMessageType.Admin , color, target);
+                        SendChatMsg(player, message, ChatMessageType.Admin, color, target);
                     }
                 }
             }
@@ -799,7 +799,7 @@ namespace Intersect.Server.Networking
             {
                 if (p != null)
                 {
-                    SendChatMsg(p, message, ChatMessageType.Party , color, target);
+                    SendChatMsg(p, message, ChatMessageType.Party, color, target);
                 }
             }
         }
@@ -890,7 +890,7 @@ namespace Intersect.Server.Networking
             }
 
             // Send the data to the surroundings!
-            SendDataToProximityOnMapInstance(map.Id, mapInstanceId,new MapEntityVitalsPacket(map.Id, data.ToArray()));
+            SendDataToProximityOnMapInstance(map.Id, mapInstanceId, new MapEntityVitalsPacket(map.Id, data.ToArray()));
         }
 
         public static void SendMapEntityStatusUpdate(MapController map, Entity[] entities, Guid mapInstanceId)
@@ -936,8 +936,8 @@ namespace Intersect.Server.Networking
         //EntityStatsPacket
         public static EntityStatsPacket GenerateEntityStatsPacket(Entity en)
         {
-            var stats = new int[(int) Stat.StatCount];
-            for (var i = 0; i < (int) Stat.StatCount; i++)
+            var stats = new int[Enum.GetValues<Stat>().Length];
+            for (var i = 0; i < Enum.GetValues<Stat>().Length; i++)
             {
                 stats[i] = en.Stat[i].Value();
             }
@@ -955,7 +955,7 @@ namespace Intersect.Server.Networking
         public static void SendEntityDir(Entity en)
         {
             SendDataToProximityOnMapInstance(
-                en.MapId, en.MapInstanceId, new EntityDirectionPacket(en.Id, en.GetEntityType(), en.MapId, (byte) en.Dir), null, TransmissionMode.Any
+                en.MapId, en.MapInstanceId, new EntityDirectionPacket(en.Id, en.GetEntityType(), en.MapId, (byte)en.Dir), null, TransmissionMode.Any
             );
         }
 
@@ -974,7 +974,7 @@ namespace Intersect.Server.Networking
         //EntityDirectionPacket
         public static void SendEntityDirTo(Player player, Entity en)
         {
-            player.SendPacket(new EntityDirectionPacket(en.Id, en.GetEntityType(), en.MapId, (byte) en.Dir), TransmissionMode.Any);
+            player.SendPacket(new EntityDirectionPacket(en.Id, en.GetEntityType(), en.MapId, (byte)en.Dir), TransmissionMode.Any);
         }
 
         //EventDialogPacket
@@ -995,7 +995,7 @@ namespace Intersect.Server.Networking
             Guid eventId
         )
         {
-            player.SendPacket(new EventDialogPacket(eventId, prompt, face, 1, new string[4] {opt1, opt2, opt3, opt4}));
+            player.SendPacket(new EventDialogPacket(eventId, prompt, face, 1, new string[4] { opt1, opt2, opt3, opt4 }));
         }
 
         public static void SendInputVariableDialog(
@@ -1055,7 +1055,7 @@ namespace Intersect.Server.Networking
         public static void SendMapItemsToProximity(Guid mapId, MapInstance mapInstance)
         {
             // Send all players on a map instance and its surrounding instances a map item update.
-            foreach(var player in mapInstance.GetPlayers(true))
+            foreach (var player in mapInstance.GetPlayers(true))
             {
                 player.SendPacket(GenerateMapItemsPacket(player, mapId));
             }
@@ -1271,7 +1271,8 @@ namespace Intersect.Server.Networking
             }
 
             var clientCharacters = client?.Characters;
-            if (clientCharacters == default) {
+            if (clientCharacters == default)
+            {
                 Log.Error($"PLEASE REPORT THIS WITH LOGS: About to crash because {(client == default ? nameof(client) : nameof(client.Characters))} is null.");
             }
 
@@ -1382,7 +1383,7 @@ namespace Intersect.Server.Networking
         public static void SendMapGrid(Client client, int gridId, bool clearKnownMaps = false)
         {
             var grid = DbInterface.GetGrid(gridId);
-            SendMapGrid(client,grid,clearKnownMaps);
+            SendMapGrid(client, grid, clearKnownMaps);
         }
         public static void SendMapGrid(Client client, MapGrid grid, bool clearKnownMaps = false)
         {
@@ -1696,7 +1697,7 @@ namespace Intersect.Server.Networking
                 case GameObjectType.Event:
                     foreach (var obj in EventBase.Lookup)
                     {
-                        if (((EventBase) obj.Value).CommonEvent)
+                        if (((EventBase)obj.Value).CommonEvent)
                         {
                             SendGameObject(client, obj.Value, false, false, packetList);
                         }
@@ -1764,7 +1765,7 @@ namespace Intersect.Server.Networking
                 //If editor send quest events and map events
                 if (obj.Type == GameObjectType.Quest)
                 {
-                    SendQuestEventsTo(client, (QuestBase) obj);
+                    SendQuestEventsTo(client, (QuestBase)obj);
                 }
             }
 
@@ -1828,7 +1829,7 @@ namespace Intersect.Server.Networking
         /// <param name="duration">The duration (in milliseconds) for the message to display.</param>
         public static void SendGameAnnouncement(string message, long duration)
         {
-             SendDataToAllPlayers(new AnnouncementPacket(message, duration));
+            SendDataToAllPlayers(new AnnouncementPacket(message, duration));
         }
 
         //ActionMsgPacket
@@ -2208,7 +2209,8 @@ namespace Intersect.Server.Networking
                 }
 
                 return true;
-            } else
+            }
+            else
             {
                 return false;
             }

@@ -1,6 +1,7 @@
 using System;
 using System.Drawing;
 using System.Linq;
+using Intersect.Editor.Core;
 
 namespace Intersect.Editor.Forms.Helpers
 {

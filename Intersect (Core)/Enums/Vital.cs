@@ -5,7 +5,5 @@ namespace Intersect.Enums
         Health = 0,
 
         Mana,
-
-        VitalCount,
     }
 }

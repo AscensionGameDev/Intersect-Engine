@@ -119,10 +119,10 @@ namespace Intersect.Client.Interface.Game.EntityPanel
 
             EntityInfoPanel = new ImagePanel(EntityWindow, "EntityInfoPanel");
 
-            EntityName = new Label(EntityInfoPanel, "EntityNameLabel") {Text = myEntity?.Name};
+            EntityName = new Label(EntityInfoPanel, "EntityNameLabel") { Text = myEntity?.Name };
             EntityLevel = new Label(EntityInfoPanel, "EntityLevelLabel");
             EntityNameAndLevel = new Label(EntityInfoPanel, "NameAndLevelLabel")
-                {IsHidden = true};
+            { IsHidden = true };
 
             EntityMap = new Label(EntityInfoPanel, "EntityMapLabel");
 
@@ -799,7 +799,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
         private void UpdateXpBar(float elapsedTime, bool instant = false)
         {
             float targetExpSize;
-            var barDirectionSetting = ClientConfiguration.Instance.EntityBarDirections[(int)Vital.VitalCount];
+            var barDirectionSetting = ClientConfiguration.Instance.EntityBarDirections[Enum.GetValues<Vital>().Length];
             var barPercentageSetting = Globals.Database.ShowExperienceAsPercentage;
             var entityExperienceToNextLevel = ((Player)MyEntity).GetNextLevelExperience();
 

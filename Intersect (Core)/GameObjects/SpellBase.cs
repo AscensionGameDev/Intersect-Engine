@@ -16,7 +16,7 @@ namespace Intersect.GameObjects
     public partial class SpellBase : DatabaseObject<SpellBase>, IFolderable
     {
         [NotMapped]
-        public int[] VitalCost = new int[(int) Vital.VitalCount];
+        public int[] VitalCost = new int[Enum.GetValues<Vital>().Length];
 
         [JsonConstructor]
         public SpellBase(Guid id) : base(id)
@@ -134,8 +134,8 @@ namespace Intersect.GameObjects
         [JsonIgnore]
         public string VitalCostJson
         {
-            get => DatabaseUtils.SaveIntArray(VitalCost, (int) Vital.VitalCount);
-            set => VitalCost = DatabaseUtils.LoadIntArray(value, (int) Vital.VitalCount);
+            get => DatabaseUtils.SaveIntArray(VitalCost, Enum.GetValues<Vital>().Length);
+            set => VitalCost = DatabaseUtils.LoadIntArray(value, Enum.GetValues<Vital>().Length);
         }
 
         /// <inheritdoc />
@@ -167,7 +167,7 @@ namespace Intersect.GameObjects
     public partial class SpellCombatData
     {
         [NotMapped]
-        public int[] VitalDiff = new int[(int) Vital.VitalCount];
+        public int[] VitalDiff = new int[Enum.GetValues<Vital>().Length];
 
         public int CritChance { get; set; }
 
@@ -198,8 +198,8 @@ namespace Intersect.GameObjects
         [JsonIgnore]
         public string VitalDiffJson
         {
-            get => DatabaseUtils.SaveIntArray(VitalDiff, (int) Vital.VitalCount);
-            set => VitalDiff = DatabaseUtils.LoadIntArray(value, (int) Vital.VitalCount);
+            get => DatabaseUtils.SaveIntArray(VitalDiff, Enum.GetValues<Vital>().Length);
+            set => VitalDiff = DatabaseUtils.LoadIntArray(value, Enum.GetValues<Vital>().Length);
         }
 
         //Buff/Debuff Data
@@ -207,24 +207,24 @@ namespace Intersect.GameObjects
         [JsonIgnore]
         public string StatDiffJson
         {
-            get => DatabaseUtils.SaveIntArray(StatDiff, (int) Stat.StatCount);
-            set => StatDiff = DatabaseUtils.LoadIntArray(value, (int) Stat.StatCount);
+            get => DatabaseUtils.SaveIntArray(StatDiff, Enum.GetValues<Stat>().Length);
+            set => StatDiff = DatabaseUtils.LoadIntArray(value, Enum.GetValues<Stat>().Length);
         }
 
         [NotMapped]
-        public int[] StatDiff { get; set; } = new int[(int) Stat.StatCount];
+        public int[] StatDiff { get; set; } = new int[Enum.GetValues<Stat>().Length];
 
         //Buff/Debuff Data
         [Column("PercentageStatDiff")]
         [JsonIgnore]
         public string PercentageStatDiffJson
         {
-            get => DatabaseUtils.SaveIntArray(PercentageStatDiff, (int) Stat.StatCount);
-            set => PercentageStatDiff = DatabaseUtils.LoadIntArray(value, (int) Stat.StatCount);
+            get => DatabaseUtils.SaveIntArray(PercentageStatDiff, Enum.GetValues<Stat>().Length);
+            set => PercentageStatDiff = DatabaseUtils.LoadIntArray(value, Enum.GetValues<Stat>().Length);
         }
 
         [NotMapped]
-        public int[] PercentageStatDiff { get; set; } = new int[(int) Stat.StatCount];
+        public int[] PercentageStatDiff { get; set; } = new int[Enum.GetValues<Stat>().Length];
 
         public int Scaling { get; set; } = 0;
 

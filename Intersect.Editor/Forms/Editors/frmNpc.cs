@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using DarkUI.Forms;
 
 using Intersect.Editor.Content;
+using Intersect.Editor.Core;
 using Intersect.Editor.General;
 using Intersect.Editor.Localization;
 using Intersect.Editor.Networking;
@@ -112,7 +113,7 @@ namespace Intersect.Editor.Forms.Editors
             cmbOnDeathEventParty.Items.Add(Strings.General.None);
             cmbOnDeathEventParty.Items.AddRange(EventBase.Names);
             cmbScalingStat.Items.Clear();
-            for (var x = 0; x < (int)Stat.StatCount; x++)
+            for (var x = 0; x < Enum.GetValues<Stat>().Length; x++)
             {
                 cmbScalingStat.Items.Add(Globals.GetStatName(x));
             }
@@ -296,13 +297,13 @@ namespace Intersect.Editor.Forms.Editors
                 cmbOnDeathEventKiller.SelectedIndex = EventBase.ListIndex(mEditorItem.OnDeathEventId) + 1;
                 cmbOnDeathEventParty.SelectedIndex = EventBase.ListIndex(mEditorItem.OnDeathPartyEventId) + 1;
 
-                nudStr.Value = mEditorItem.Stats[(int) Stat.Attack];
-                nudMag.Value = mEditorItem.Stats[(int) Stat.AbilityPower];
-                nudDef.Value = mEditorItem.Stats[(int) Stat.Defense];
-                nudMR.Value = mEditorItem.Stats[(int) Stat.MagicResist];
-                nudSpd.Value = mEditorItem.Stats[(int) Stat.Speed];
-                nudHp.Value = mEditorItem.MaxVital[(int) Vital.Health];
-                nudMana.Value = mEditorItem.MaxVital[(int) Vital.Mana];
+                nudStr.Value = mEditorItem.Stats[(int)Stat.Attack];
+                nudMag.Value = mEditorItem.Stats[(int)Stat.AbilityPower];
+                nudDef.Value = mEditorItem.Stats[(int)Stat.Defense];
+                nudMR.Value = mEditorItem.Stats[(int)Stat.MagicResist];
+                nudSpd.Value = mEditorItem.Stats[(int)Stat.Speed];
+                nudHp.Value = mEditorItem.MaxVital[(int)Vital.Health];
+                nudMana.Value = mEditorItem.MaxVital[(int)Vital.Mana];
                 nudExp.Value = mEditorItem.Experience;
                 chkAttackAllies.Checked = mEditorItem.AttackAllies;
                 chkEnabled.Checked = mEditorItem.NpcVsNpcEnabled;
@@ -310,7 +311,7 @@ namespace Intersect.Editor.Forms.Editors
                 //Combat
                 nudDamage.Value = mEditorItem.Damage;
                 nudCritChance.Value = mEditorItem.CritChance;
-                nudCritMultiplier.Value = (decimal) mEditorItem.CritMultiplier;
+                nudCritMultiplier.Value = (decimal)mEditorItem.CritMultiplier;
                 nudScaling.Value = mEditorItem.Scaling;
                 cmbDamageType.SelectedIndex = mEditorItem.DamageType;
                 cmbScalingStat.SelectedIndex = mEditorItem.ScalingStat;
@@ -319,8 +320,8 @@ namespace Intersect.Editor.Forms.Editors
                 nudAttackSpeedValue.Value = mEditorItem.AttackSpeedValue;
 
                 //Regen
-                nudHpRegen.Value = mEditorItem.VitalRegen[(int) Vital.Health];
-                nudMpRegen.Value = mEditorItem.VitalRegen[(int) Vital.Mana];
+                nudHpRegen.Value = mEditorItem.VitalRegen[(int)Vital.Health];
+                nudMpRegen.Value = mEditorItem.VitalRegen[(int)Vital.Mana];
 
                 // Add the spells to the list
                 lstSpells.Items.Clear();
@@ -369,7 +370,7 @@ namespace Intersect.Editor.Forms.Editors
                 }
 
                 // Tenacity and immunities
-                nudTenacity.Value = (decimal) mEditorItem.Tenacity;
+                nudTenacity.Value = (decimal)mEditorItem.Tenacity;
 
                 UpdateImmunities();
             }
@@ -666,67 +667,67 @@ namespace Intersect.Editor.Forms.Editors
 
         private void nudScaling_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.Scaling = (int) nudScaling.Value;
+            mEditorItem.Scaling = (int)nudScaling.Value;
         }
 
         private void nudSpawnDuration_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.SpawnDuration = (int) nudSpawnDuration.Value;
+            mEditorItem.SpawnDuration = (int)nudSpawnDuration.Value;
         }
 
         private void nudSightRange_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.SightRange = (int) nudSightRange.Value;
+            mEditorItem.SightRange = (int)nudSightRange.Value;
         }
 
         private void nudStr_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.Stats[(int) Stat.Attack] = (int) nudStr.Value;
+            mEditorItem.Stats[(int)Stat.Attack] = (int)nudStr.Value;
         }
 
         private void nudMag_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.Stats[(int) Stat.AbilityPower] = (int) nudMag.Value;
+            mEditorItem.Stats[(int)Stat.AbilityPower] = (int)nudMag.Value;
         }
 
         private void nudDef_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.Stats[(int) Stat.Defense] = (int) nudDef.Value;
+            mEditorItem.Stats[(int)Stat.Defense] = (int)nudDef.Value;
         }
 
         private void nudMR_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.Stats[(int) Stat.MagicResist] = (int) nudMR.Value;
+            mEditorItem.Stats[(int)Stat.MagicResist] = (int)nudMR.Value;
         }
 
         private void nudSpd_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.Stats[(int) Stat.Speed] = (int) nudSpd.Value;
+            mEditorItem.Stats[(int)Stat.Speed] = (int)nudSpd.Value;
         }
 
         private void nudDamage_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.Damage = (int) nudDamage.Value;
+            mEditorItem.Damage = (int)nudDamage.Value;
         }
 
         private void nudCritChance_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.CritChance = (int) nudCritChance.Value;
+            mEditorItem.CritChance = (int)nudCritChance.Value;
         }
 
         private void nudHp_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.MaxVital[(int) Vital.Health] = (int) nudHp.Value;
+            mEditorItem.MaxVital[(int)Vital.Health] = (int)nudHp.Value;
         }
 
         private void nudMana_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.MaxVital[(int) Vital.Mana] = (int) nudMana.Value;
+            mEditorItem.MaxVital[(int)Vital.Mana] = (int)nudMana.Value;
         }
 
         private void nudExp_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.Experience = (int) nudExp.Value;
+            mEditorItem.Experience = (int)nudExp.Value;
         }
 
         private void cmbDropItem_SelectedIndexChanged(object sender, EventArgs e)
@@ -749,7 +750,7 @@ namespace Intersect.Editor.Forms.Editors
                 return;
             }
 
-            mEditorItem.Drops[(int) lstDrops.SelectedIndex].Quantity = (int) nudDropAmount.Value;
+            mEditorItem.Drops[(int)lstDrops.SelectedIndex].Quantity = (int)nudDropAmount.Value;
             UpdateDropValues(true);
         }
 
@@ -759,7 +760,7 @@ namespace Intersect.Editor.Forms.Editors
             {
                 cmbDropItem.SelectedIndex = ItemBase.ListIndex(mEditorItem.Drops[lstDrops.SelectedIndex].ItemId) + 1;
                 nudDropAmount.Value = mEditorItem.Drops[lstDrops.SelectedIndex].Quantity;
-                nudDropChance.Value = (decimal) mEditorItem.Drops[lstDrops.SelectedIndex].Chance;
+                nudDropChance.Value = (decimal)mEditorItem.Drops[lstDrops.SelectedIndex].Chance;
             }
         }
 
@@ -767,8 +768,8 @@ namespace Intersect.Editor.Forms.Editors
         {
             mEditorItem.Drops.Add(new Drop());
             mEditorItem.Drops[mEditorItem.Drops.Count - 1].ItemId = ItemBase.IdFromList(cmbDropItem.SelectedIndex - 1);
-            mEditorItem.Drops[mEditorItem.Drops.Count - 1].Quantity = (int) nudDropAmount.Value;
-            mEditorItem.Drops[mEditorItem.Drops.Count - 1].Chance = (double) nudDropChance.Value;
+            mEditorItem.Drops[mEditorItem.Drops.Count - 1].Quantity = (int)nudDropAmount.Value;
+            mEditorItem.Drops[mEditorItem.Drops.Count - 1].Chance = (double)nudDropChance.Value;
 
             UpdateDropValues();
         }
@@ -792,7 +793,7 @@ namespace Intersect.Editor.Forms.Editors
                 return;
             }
 
-            mEditorItem.Drops[(int) lstDrops.SelectedIndex].Chance = (double) nudDropChance.Value;
+            mEditorItem.Drops[(int)lstDrops.SelectedIndex].Chance = (double)nudDropChance.Value;
             UpdateDropValues(true);
         }
 
@@ -803,17 +804,17 @@ namespace Intersect.Editor.Forms.Editors
 
         private void nudLevel_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.Level = (int) nudLevel.Value;
+            mEditorItem.Level = (int)nudLevel.Value;
         }
 
         private void nudHpRegen_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.VitalRegen[(int) Vital.Health] = (int) nudHpRegen.Value;
+            mEditorItem.VitalRegen[(int)Vital.Health] = (int)nudHpRegen.Value;
         }
 
         private void nudMpRegen_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.VitalRegen[(int) Vital.Mana] = (int) nudMpRegen.Value;
+            mEditorItem.VitalRegen[(int)Vital.Mana] = (int)nudMpRegen.Value;
         }
 
         private void chkAggressive_CheckedChanged(object sender, EventArgs e)
@@ -831,7 +832,7 @@ namespace Intersect.Editor.Forms.Editors
 
         private void cmbMovement_SelectedIndexChanged(object sender, EventArgs e)
         {
-            mEditorItem.Movement = (byte) cmbMovement.SelectedIndex;
+            mEditorItem.Movement = (byte)cmbMovement.SelectedIndex;
         }
 
         private void chkSwarm_CheckedChanged(object sender, EventArgs e)
@@ -841,7 +842,7 @@ namespace Intersect.Editor.Forms.Editors
 
         private void nudFlee_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.FleeHealthPercentage = (byte) nudFlee.Value;
+            mEditorItem.FleeHealthPercentage = (byte)nudFlee.Value;
         }
 
         private void btnPlayerFriendProtectorCond_Click(object sender, EventArgs e)
@@ -900,7 +901,7 @@ namespace Intersect.Editor.Forms.Editors
 
         private void nudCritMultiplier_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.CritMultiplier = (double) nudCritMultiplier.Value;
+            mEditorItem.CritMultiplier = (double)nudCritMultiplier.Value;
         }
 
         private void cmbAttackSpeedModifier_SelectedIndexChanged(object sender, EventArgs e)
@@ -911,7 +912,7 @@ namespace Intersect.Editor.Forms.Editors
 
         private void nudAttackSpeedValue_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.AttackSpeedValue = (int) nudAttackSpeedValue.Value;
+            mEditorItem.AttackSpeedValue = (int)nudAttackSpeedValue.Value;
         }
 
         private void nudRgbaR_ValueChanged(object sender, EventArgs e)
@@ -957,13 +958,13 @@ namespace Intersect.Editor.Forms.Editors
             var mFolders = new List<string>();
             foreach (var itm in NpcBase.Lookup)
             {
-                if (!string.IsNullOrEmpty(((NpcBase) itm.Value).Folder) &&
-                    !mFolders.Contains(((NpcBase) itm.Value).Folder))
+                if (!string.IsNullOrEmpty(((NpcBase)itm.Value).Folder) &&
+                    !mFolders.Contains(((NpcBase)itm.Value).Folder))
                 {
-                    mFolders.Add(((NpcBase) itm.Value).Folder);
-                    if (!mKnownFolders.Contains(((NpcBase) itm.Value).Folder))
+                    mFolders.Add(((NpcBase)itm.Value).Folder);
+                    if (!mKnownFolders.Contains(((NpcBase)itm.Value).Folder))
                     {
-                        mKnownFolders.Add(((NpcBase) itm.Value).Folder);
+                        mKnownFolders.Add(((NpcBase)itm.Value).Folder);
                     }
                 }
             }

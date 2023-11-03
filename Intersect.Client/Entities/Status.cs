@@ -11,7 +11,7 @@ namespace Intersect.Client.Entities
 
         public string Data { get; set; } = "";
 
-        public int[] Shield { get; set; } = new int[(int)Vital.VitalCount];
+        public int[] Shield { get; set; } = new int[Enum.GetValues<Vital>().Length];
 
         public Guid SpellId { get; set; }
 

@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using DarkUI.Forms;
 
 using Intersect.Editor.Content;
+using Intersect.Editor.Core;
 using Intersect.Editor.General;
 using Intersect.Editor.Localization;
 using Intersect.Editor.Networking;
@@ -122,7 +123,7 @@ namespace Intersect.Editor.Forms.Editors
             cmbAttackAnimation.Items.Add(Strings.General.None);
             cmbAttackAnimation.Items.AddRange(AnimationBase.Names);
             cmbScalingStat.Items.Clear();
-            for (var x = 0; x < (int)Stat.StatCount; x++)
+            for (var x = 0; x < Enum.GetValues<Stat>().Length; x++)
             {
                 cmbScalingStat.Items.Add(Globals.GetStatName(x));
             }
@@ -296,7 +297,7 @@ namespace Intersect.Editor.Forms.Editors
             lblVital.Text = Strings.ItemEditor.vital;
             lblInterval.Text = Strings.ItemEditor.consumeamount;
             cmbConsume.Items.Clear();
-            for (var i = 0; i < (int) Vital.VitalCount; i++)
+            for (var i = 0; i < Enum.GetValues<Vital>().Length; i++)
             {
                 cmbConsume.Items.Add(Strings.Combat.vitals[i]);
             }
@@ -327,7 +328,7 @@ namespace Intersect.Editor.Forms.Editors
                 txtName.Text = mEditorItem.Name;
                 cmbFolder.Text = mEditorItem.Folder;
                 txtDesc.Text = mEditorItem.Description;
-                cmbType.SelectedIndex = (int) mEditorItem.ItemType;
+                cmbType.SelectedIndex = (int)mEditorItem.ItemType;
                 cmbPic.SelectedIndex = cmbPic.FindString(TextUtils.NullToNone(mEditorItem.Icon));
                 nudRgbaR.Value = mEditorItem.Color.R;
                 nudRgbaG.Value = mEditorItem.Color.G;
@@ -358,7 +359,7 @@ namespace Intersect.Editor.Forms.Editors
 
                 nudDamage.Value = mEditorItem.Damage;
                 nudCritChance.Value = mEditorItem.CritChance;
-                nudCritMultiplier.Value = (decimal) mEditorItem.CritMultiplier;
+                nudCritMultiplier.Value = (decimal)mEditorItem.CritMultiplier;
                 cmbAttackSpeedModifier.SelectedIndex = mEditorItem.AttackSpeedModifier;
                 nudAttackSpeedValue.Value = mEditorItem.AttackSpeedValue;
                 nudScaling.Value = mEditorItem.Scaling;
@@ -393,7 +394,7 @@ namespace Intersect.Editor.Forms.Editors
 
                 if (mEditorItem.ItemType == ItemType.Consumable)
                 {
-                    cmbConsume.SelectedIndex = (int) mEditorItem.Consumable.Type;
+                    cmbConsume.SelectedIndex = (int)mEditorItem.Consumable.Type;
                     nudInterval.Value = mEditorItem.Consumable.Value;
                     nudIntervalPercentage.Value = mEditorItem.Consumable.Percentage;
                 }
@@ -456,7 +457,7 @@ namespace Intersect.Editor.Forms.Editors
             grpBags.Visible = false;
             chkStackable.Enabled = true;
 
-            if ((int) mEditorItem.ItemType != cmbType.SelectedIndex)
+            if ((int)mEditorItem.ItemType != cmbType.SelectedIndex)
             {
                 mEditorItem.Consumable.Type = ConsumableType.Health;
                 mEditorItem.Consumable.Value = 0;
@@ -473,27 +474,27 @@ namespace Intersect.Editor.Forms.Editors
                 mEditorItem.Event = null;
             }
 
-            if (cmbType.SelectedIndex == (int) ItemType.Consumable)
+            if (cmbType.SelectedIndex == (int)ItemType.Consumable)
             {
-                cmbConsume.SelectedIndex = (int) mEditorItem.Consumable.Type;
+                cmbConsume.SelectedIndex = (int)mEditorItem.Consumable.Type;
                 nudInterval.Value = mEditorItem.Consumable.Value;
                 nudIntervalPercentage.Value = mEditorItem.Consumable.Percentage;
                 grpConsumable.Visible = true;
             }
-            else if (cmbType.SelectedIndex == (int) ItemType.Spell)
+            else if (cmbType.SelectedIndex == (int)ItemType.Spell)
             {
                 cmbTeachSpell.SelectedIndex = SpellBase.ListIndex(mEditorItem.SpellId) + 1;
                 chkQuickCast.Checked = mEditorItem.QuickCast;
                 chkSingleUseSpell.Checked = mEditorItem.SingleUse;
                 grpSpell.Visible = true;
             }
-            else if (cmbType.SelectedIndex == (int) ItemType.Event)
+            else if (cmbType.SelectedIndex == (int)ItemType.Event)
             {
                 cmbEvent.SelectedIndex = EventBase.ListIndex(mEditorItem.EventId) + 1;
                 chkSingleUseEvent.Checked = mEditorItem.SingleUse;
                 grpEvent.Visible = true;
             }
-            else if (cmbType.SelectedIndex == (int) ItemType.Equipment)
+            else if (cmbType.SelectedIndex == (int)ItemType.Equipment)
             {
                 grpEquipment.Visible = true;
                 if (mEditorItem.EquipmentSlot < -1 || mEditorItem.EquipmentSlot >= cmbEquipmentSlot.Items.Count)
@@ -509,7 +510,7 @@ namespace Intersect.Editor.Forms.Editors
 
                 RefreshBonusList();
             }
-            else if (cmbType.SelectedIndex == (int) ItemType.Bag)
+            else if (cmbType.SelectedIndex == (int)ItemType.Bag)
             {
                 // Cant have no space or negative space.
                 mEditorItem.SlotCount = Math.Max(1, mEditorItem.SlotCount);
@@ -527,7 +528,7 @@ namespace Intersect.Editor.Forms.Editors
                 chkStackable.Enabled = false;
             }
 
-            mEditorItem.ItemType = (ItemType) cmbType.SelectedIndex;
+            mEditorItem.ItemType = (ItemType)cmbType.SelectedIndex;
         }
 
         private void cmbType_SelectedIndexChanged(object sender, EventArgs e)
@@ -554,7 +555,7 @@ namespace Intersect.Editor.Forms.Editors
 
         private void cmbConsume_SelectedIndexChanged(object sender, EventArgs e)
         {
-            mEditorItem.Consumable.Type = (ConsumableType) cmbConsume.SelectedIndex;
+            mEditorItem.Consumable.Type = (ConsumableType)cmbConsume.SelectedIndex;
         }
 
         private void cmbPaperdoll_SelectedIndexChanged(object sender, EventArgs e)
@@ -750,22 +751,22 @@ namespace Intersect.Editor.Forms.Editors
 
         private void nudPrice_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.Price = (int) nudPrice.Value;
+            mEditorItem.Price = (int)nudPrice.Value;
         }
 
         private void nudScaling_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.Scaling = (int) nudScaling.Value;
+            mEditorItem.Scaling = (int)nudScaling.Value;
         }
 
         private void nudDamage_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.Damage = (int) nudDamage.Value;
+            mEditorItem.Damage = (int)nudDamage.Value;
         }
 
         private void nudCritChance_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.CritChance = (int) nudCritChance.Value;
+            mEditorItem.CritChance = (int)nudCritChance.Value;
         }
 
         private void nudEffectPercent_ValueChanged(object sender, EventArgs e)
@@ -781,72 +782,72 @@ namespace Intersect.Editor.Forms.Editors
 
         private void nudRange_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.StatGrowth = (int) nudRange.Value;
+            mEditorItem.StatGrowth = (int)nudRange.Value;
         }
 
         private void nudStr_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.StatsGiven[0] = (int) nudStr.Value;
+            mEditorItem.StatsGiven[0] = (int)nudStr.Value;
         }
 
         private void nudMag_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.StatsGiven[1] = (int) nudMag.Value;
+            mEditorItem.StatsGiven[1] = (int)nudMag.Value;
         }
 
         private void nudDef_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.StatsGiven[2] = (int) nudDef.Value;
+            mEditorItem.StatsGiven[2] = (int)nudDef.Value;
         }
 
         private void nudMR_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.StatsGiven[3] = (int) nudMR.Value;
+            mEditorItem.StatsGiven[3] = (int)nudMR.Value;
         }
 
         private void nudSpd_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.StatsGiven[4] = (int) nudSpd.Value;
+            mEditorItem.StatsGiven[4] = (int)nudSpd.Value;
         }
 
         private void nudStrPercentage_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.PercentageStatsGiven[0] = (int) nudStrPercentage.Value;
+            mEditorItem.PercentageStatsGiven[0] = (int)nudStrPercentage.Value;
         }
 
         private void nudMagPercentage_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.PercentageStatsGiven[1] = (int) nudMagPercentage.Value;
+            mEditorItem.PercentageStatsGiven[1] = (int)nudMagPercentage.Value;
         }
 
         private void nudDefPercentage_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.PercentageStatsGiven[2] = (int) nudDefPercentage.Value;
+            mEditorItem.PercentageStatsGiven[2] = (int)nudDefPercentage.Value;
         }
 
         private void nudMRPercentage_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.PercentageStatsGiven[3] = (int) nudMRPercentage.Value;
+            mEditorItem.PercentageStatsGiven[3] = (int)nudMRPercentage.Value;
         }
 
         private void nudSpdPercentage_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.PercentageStatsGiven[4] = (int) nudSpdPercentage.Value;
+            mEditorItem.PercentageStatsGiven[4] = (int)nudSpdPercentage.Value;
         }
 
         private void nudBag_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.SlotCount = (int) nudBag.Value;
+            mEditorItem.SlotCount = (int)nudBag.Value;
         }
 
         private void nudInterval_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.Consumable.Value = (int) nudInterval.Value;
+            mEditorItem.Consumable.Value = (int)nudInterval.Value;
         }
 
         private void nudIntervalPercentage_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.Consumable.Percentage = (int) nudIntervalPercentage.Value;
+            mEditorItem.Consumable.Percentage = (int)nudIntervalPercentage.Value;
         }
 
         private void chkBound_CheckedChanged(object sender, EventArgs e)
@@ -914,42 +915,42 @@ namespace Intersect.Editor.Forms.Editors
 
         private void nudCritMultiplier_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.CritMultiplier = (double) nudCritMultiplier.Value;
+            mEditorItem.CritMultiplier = (double)nudCritMultiplier.Value;
         }
 
         private void nudCooldown_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.Cooldown = (int) nudCooldown.Value;
+            mEditorItem.Cooldown = (int)nudCooldown.Value;
         }
 
         private void nudHealthBonus_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.VitalsGiven[0] = (int) nudHealthBonus.Value;
+            mEditorItem.VitalsGiven[0] = (int)nudHealthBonus.Value;
         }
 
         private void nudManaBonus_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.VitalsGiven[1] = (int) nudManaBonus.Value;
+            mEditorItem.VitalsGiven[1] = (int)nudManaBonus.Value;
         }
 
         private void nudHPPercentage_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.PercentageVitalsGiven[0] = (int) nudHPPercentage.Value;
+            mEditorItem.PercentageVitalsGiven[0] = (int)nudHPPercentage.Value;
         }
 
         private void nudMPPercentage_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.PercentageVitalsGiven[1] = (int) nudMPPercentage.Value;
+            mEditorItem.PercentageVitalsGiven[1] = (int)nudMPPercentage.Value;
         }
 
         private void nudHPRegen_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.VitalsRegen[0] = (int) nudHPRegen.Value;
+            mEditorItem.VitalsRegen[0] = (int)nudHPRegen.Value;
         }
 
         private void nudMpRegen_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.VitalsRegen[1] = (int) nudMpRegen.Value;
+            mEditorItem.VitalsRegen[1] = (int)nudMpRegen.Value;
         }
 
         private void cmbEquipmentAnimation_SelectedIndexChanged(object sender, EventArgs e)
@@ -966,7 +967,7 @@ namespace Intersect.Editor.Forms.Editors
 
         private void nudAttackSpeedValue_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.AttackSpeedValue = (int) nudAttackSpeedValue.Value;
+            mEditorItem.AttackSpeedValue = (int)nudAttackSpeedValue.Value;
         }
 
         private void chkQuickCast_CheckedChanged(object sender, EventArgs e)
@@ -1193,13 +1194,13 @@ namespace Intersect.Editor.Forms.Editors
             var mFolders = new List<string>();
             foreach (var itm in ItemBase.Lookup)
             {
-                if (!string.IsNullOrEmpty(((ItemBase) itm.Value).Folder) &&
-                    !mFolders.Contains(((ItemBase) itm.Value).Folder))
+                if (!string.IsNullOrEmpty(((ItemBase)itm.Value).Folder) &&
+                    !mFolders.Contains(((ItemBase)itm.Value).Folder))
                 {
-                    mFolders.Add(((ItemBase) itm.Value).Folder);
-                    if (!mKnownFolders.Contains(((ItemBase) itm.Value).Folder))
+                    mFolders.Add(((ItemBase)itm.Value).Folder);
+                    if (!mKnownFolders.Contains(((ItemBase)itm.Value).Folder))
                     {
-                        mKnownFolders.Add(((ItemBase) itm.Value).Folder);
+                        mKnownFolders.Add(((ItemBase)itm.Value).Folder);
                     }
                 }
 
@@ -1213,7 +1214,7 @@ namespace Intersect.Editor.Forms.Editors
             // Do we add spell cooldown groups as well?
             if (Options.Combat.LinkSpellAndItemCooldowns)
             {
-                foreach(var itm in SpellBase.Lookup)
+                foreach (var itm in SpellBase.Lookup)
                 {
                     if (!string.IsNullOrWhiteSpace(((SpellBase)itm.Value).CooldownGroup) &&
                     !mKnownCooldownGroups.Contains(((SpellBase)itm.Value).CooldownGroup))

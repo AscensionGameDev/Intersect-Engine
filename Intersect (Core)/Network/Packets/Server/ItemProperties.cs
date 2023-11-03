@@ -18,10 +18,10 @@ namespace Intersect.Network.Packets.Server
                 throw new ArgumentNullException(nameof(other));
             }
 
-            Array.Copy(other.StatModifiers, StatModifiers, (int)Stat.StatCount);
+            Array.Copy(other.StatModifiers, StatModifiers, Enum.GetValues<Stat>().Length);
         }
 
         [Key(0)]
-        public int[] StatModifiers { get; set; } = new int[(int)Stat.StatCount];
+        public int[] StatModifiers { get; set; } = new int[Enum.GetValues<Stat>().Length];
     }
 }

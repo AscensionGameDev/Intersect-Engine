@@ -12,7 +12,7 @@ namespace Intersect.Server.Database;
 
 public class Item
 {
-    [JsonIgnore] [NotMapped] public double DropChance = 100;
+    [JsonIgnore][NotMapped] public double DropChance = 100;
 
     public Item()
     {
@@ -54,7 +54,7 @@ public class Item
             return;
         }
 
-        for (var i = 0; i < (int)Stat.StatCount; i++)
+        for (var i = 0; i < Enum.GetValues<Stat>().Length; i++)
         {
             Properties.StatModifiers[i] = Randomization.Next(-descriptor.StatGrowth, descriptor.StatGrowth + 1);
         }
@@ -88,7 +88,7 @@ public class Item
             Properties = JsonConvert.DeserializeObject<ItemProperties>(value ?? string.Empty) ?? new ItemProperties();
     }
 
-    [JsonIgnore] [NotMapped] public ItemBase Descriptor => ItemBase.Get(ItemId);
+    [JsonIgnore][NotMapped] public ItemBase Descriptor => ItemBase.Get(ItemId);
 
     public static Item None => new();
 

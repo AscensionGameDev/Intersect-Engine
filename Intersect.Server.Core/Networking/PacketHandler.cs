@@ -394,7 +394,7 @@ namespace Intersect.Server.Networking
                          naturalWithPing && naturalWithError ||
                          naturalWithError && natural)
                 {
-                    client.TimedBufferPacketsRemaining += (int) Math.Ceiling(
+                    client.TimedBufferPacketsRemaining += (int)Math.Ceiling(
                         (configurableAllowedSpikePackets - client.TimedBufferPacketsRemaining) / 2.0
                     );
                 }
@@ -713,8 +713,8 @@ namespace Intersect.Server.Networking
                     var currentMs = packet.ReceiveTime;
                     if (player.MoveTimer > currentMs)
                     {
-                        player.MoveTimer = currentMs + latencyAdjustmentMs + (long) (player.GetMovementTime() * .75f);
-                        player.ClientMoveTimer = clientTime + (long) player.GetMovementTime();
+                        player.MoveTimer = currentMs + latencyAdjustmentMs + (long)(player.GetMovementTime() * .75f);
+                        player.ClientMoveTimer = clientTime + (long)player.GetMovementTime();
                     }
                 }
                 else
@@ -748,12 +748,12 @@ namespace Intersect.Server.Networking
 
             var msg = packet.Message;
             var channel = packet.Channel;
-            
+
             if (string.IsNullOrWhiteSpace(msg))
             {
                 return;
             }
-            
+
             if (client?.User.IsMuted ?? false) //Don't let the tongueless toxic kids speak.
             {
                 PacketSender.SendChatMsg(player, client?.User?.Mute?.Reason, ChatMessageType.Notice);
@@ -816,7 +816,7 @@ namespace Intersect.Server.Networking
                 msg = msg.Remove(0, cmd.Length);
             }
 
-            var msgSplit = msg.Split(new char[] {' '}, StringSplitOptions.RemoveEmptyEntries);
+            var msgSplit = msg.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
             if (cmd == Strings.Chat.localcmd)
             {
@@ -840,7 +840,7 @@ namespace Intersect.Server.Networking
                     Strings.Chat.local.ToString(player.Name, msg), ChatMessageType.Local, player.MapId, player.MapInstanceId, chatColor,
                     player.Name
                 );
-                PacketSender.SendChatBubble(player.Id, player.MapInstanceId, (int) EntityType.GlobalEntity, msg, player.MapId);
+                PacketSender.SendChatBubble(player.Id, player.MapInstanceId, (int)EntityType.GlobalEntity, msg, player.MapId);
                 ChatHistory.LogMessage(player, msg.Trim(), ChatMessageType.Local, Guid.Empty);
             }
             else if (cmd == Strings.Chat.allcmd || cmd == Strings.Chat.globalcmd)
@@ -1503,10 +1503,10 @@ namespace Intersect.Server.Networking
 
             client.LoadCharacter(newChar);
 
-            newChar.SetVital(Vital.Health, classBase.BaseVital[(int) Vital.Health]);
-            newChar.SetVital(Vital.Mana, classBase.BaseVital[(int) Vital.Mana]);
+            newChar.SetVital(Vital.Health, classBase.BaseVital[(int)Vital.Health]);
+            newChar.SetVital(Vital.Mana, classBase.BaseVital[(int)Vital.Mana]);
 
-            for (var i = 0; i < (int) Stat.StatCount; i++)
+            for (var i = 0; i < Enum.GetValues<Stat>().Length; i++)
             {
                 newChar.Stat[i].BaseStat = 0;
             }
@@ -1576,7 +1576,7 @@ namespace Intersect.Server.Networking
                         {
                             continue;
                         }
-                        
+
                         if (!giveItems.ContainsKey(itemMap.Key))
                         {
                             giveItems.Add(tempMap, new List<MapItem>());
@@ -1862,7 +1862,7 @@ namespace Intersect.Server.Networking
                 return;
             }
 
-            lock(player.EntityLock)
+            lock (player.EntityLock)
             {
                 //if player hit stop button in crafting window
                 if (packet.CraftId == default)
@@ -1945,8 +1945,8 @@ namespace Intersect.Server.Networking
                 return;
             }
 
-            var target = packet.TargetId != Guid.Empty ? 
-                Player.FindOnline(packet.TargetId) : 
+            var target = packet.TargetId != Guid.Empty ?
+                Player.FindOnline(packet.TargetId) :
                 Player.FindOnline(packet.Target.Trim());
 
             if (target != null && target.Id != player.Id)
