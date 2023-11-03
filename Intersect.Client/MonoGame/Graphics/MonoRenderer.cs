@@ -90,7 +90,7 @@ namespace Intersect.Client.MonoGame.Graphics
 
         private List<string> mValidVideoModes;
 
-        private GameTexture mWhiteTexture;
+        private GameTexture? mWhiteTexture;
 
         public MonoRenderer(GraphicsDeviceManager graphics, ContentManager contentManager, Game monoGame)
         {
@@ -814,13 +814,10 @@ namespace Intersect.Client.MonoGame.Graphics
                 database.SavePreference("Resolution", database.TargetResolution.ToString(CultureInfo.InvariantCulture));
             }
 
-            if (0 <= targetResolution && targetResolution < validVideoModes.Count)
+            var targetVideoMode = validVideoModes?[MathHelper.Clamp(targetResolution, 0, validVideoModes.Count - 1)];
+            if (!string.IsNullOrWhiteSpace(targetVideoMode) && Resolution.TryParse(targetVideoMode, out var resolution))
             {
-                var targetVideoMode = validVideoModes[targetResolution];
-                if (Resolution.TryParse(targetVideoMode, out var resolution))
-                {
-                    PreferredResolution = resolution;
-                }
+                PreferredResolution = resolution;
             }
 
             mGraphics.PreferredBackBufferWidth = PreferredResolution.X;
