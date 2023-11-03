@@ -102,6 +102,11 @@ internal partial class ApiService
             apiConfiguration.TokenGenerationOptions.Issuer = TokenGenerationOptions.DefaultIssuer;
         }
 
+        if (apiConfiguration.StaticFilePaths == default)
+        {
+            apiConfiguration.StaticFilePaths = new List<StaticFilePathOptions> { new("wwwroot") };
+        }
+
         var updatedApiConfigurationJObject = JObject.FromObject(apiConfiguration);
         configurationJObject["Api"] = updatedApiConfigurationJObject;
 

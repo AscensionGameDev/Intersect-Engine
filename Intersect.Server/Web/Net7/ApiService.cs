@@ -5,8 +5,6 @@ using Intersect.Core;
 using Intersect.Enums;
 using Intersect.Logging;
 using Intersect.Server.Core;
-using Intersect.Server.Database.PlayerData;
-using Intersect.Server.Web.Authentication;
 using Intersect.Server.Web.Configuration;
 using Intersect.Server.Web.Constraints;
 using Intersect.Server.Web.Middleware;
@@ -22,6 +20,8 @@ using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.OData;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.FileProviders.Physical;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
@@ -44,6 +44,11 @@ internal partial class ApiService : ApplicationService<ServerContext, IApiServic
         var apiConfigurationSection = builder.Configuration.GetRequiredSection("Api");
         var configuration = apiConfigurationSection.Get<ApiConfiguration>();
         builder.Services.Configure<ApiConfiguration>(apiConfigurationSection);
+
+        // I can't get System.Text.Json to deserialize an array as non-null, and it totally ignores
+        // the JsonConverter attribute I tried putting on it, so I am just giving up and doing this
+        // to make sure the array is not null in the event that it is empty.
+        configuration.StaticFilePaths ??= new List<StaticFilePathOptions>();
 
         if (!configuration.Enabled)
         {
@@ -167,12 +172,12 @@ internal partial class ApiService : ApplicationService<ServerContext, IApiServic
                     builder.Configuration.Bind($"Api.{nameof(JwtBearerOptions)}", options);
                     options.TokenValidationParameters.ValidAudience ??= tokenGenerationOptions.Audience;
                     options.TokenValidationParameters.ValidIssuer ??= tokenGenerationOptions.Issuer;
-                    options.Events = new JwtBearerEvents()
+                    options.Events = new JwtBearerEvents
                     {
-                        OnAuthenticationFailed = async (context) => {},
-                        OnChallenge = async (context) => {},
-                        OnMessageReceived = async (context) => {},
-                        OnTokenValidated = async (context) => {},
+                        OnAuthenticationFailed = async context => {},
+                        OnChallenge = async context => {},
+                        OnMessageReceived = async context => {},
+                        OnTokenValidated = async context => {},
                     };
                     SymmetricSecurityKey issuerKey = new(tokenGenerationOptions.SecretData);
                     options.TokenValidationParameters.IssuerSigningKey = issuerKey;
@@ -272,6 +277,28 @@ internal partial class ApiService : ApplicationService<ServerContext, IApiServic
         {
             app.UseHttpsRedirection();
             app.UseHsts();
+        }
+
+        // Unreadable if it LINQs it...
+        // ReSharper disable once ForeachCanBePartlyConvertedToQueryUsingAnotherGetEnumerator
+        foreach (var (sourcePath, requestPath) in configuration.StaticFilePaths)
+        {
+            var pathToRoot = Path.Combine(builder.Environment.ContentRootPath, sourcePath);
+            if (!Directory.Exists(pathToRoot))
+            {
+                Directory.CreateDirectory(pathToRoot);
+            }
+
+            app.UseStaticFiles(
+                new StaticFileOptions
+                {
+                    FileProvider = new PhysicalFileProvider(
+                        pathToRoot,
+                        ExclusionFilters.Sensitive
+                    ),
+                    RequestPath = requestPath ?? string.Empty,
+                }
+            );
         }
 
         if (configuration.RequestLogging)
