@@ -1552,8 +1552,13 @@ namespace Intersect.Server.Networking
             {
                 var map = MapController.Get(packet.MapId);
 
+                var lootDistance = Math.Min(
+                    Math.Min(Options.Instance.MapOpts.MapWidth, Options.Instance.MapOpts.MapHeight),
+                    Options.Loot.MaximumLootWindowDistance
+                );
+
                 // Is our user within range of the item they are trying to pick up?
-                if (player.GetDistanceTo(map, packet.TileIndex % Options.MapWidth, (int)Math.Floor(packet.TileIndex / (float)Options.MapWidth)) > Options.Loot.MaximumLootWindowDistance)
+                if (player.GetDistanceTo(map, packet.TileIndex % Options.MapWidth, (int)Math.Floor(packet.TileIndex / (float)Options.MapWidth)) > lootDistance)
                 {
                     return;
                 }
@@ -1563,7 +1568,7 @@ namespace Intersect.Server.Networking
                 if (packet.UniqueId == Guid.Empty)
                 {
                     // GET IT ALL! BE GREEDY!
-                    foreach (var itemMap in map.FindSurroundingTiles(new Point(player.X, player.Y), Options.Loot.MaximumLootWindowDistance))
+                    foreach (var itemMap in map.FindSurroundingTiles(new Point(player.X, player.Y), lootDistance))
                     {
                         var tempMap = itemMap.Key;
 
