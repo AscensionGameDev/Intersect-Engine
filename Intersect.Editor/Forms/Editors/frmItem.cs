@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using DarkUI.Forms;
 
 using Intersect.Editor.Content;
+using Intersect.Editor.Core;
 using Intersect.Editor.General;
 using Intersect.Editor.Localization;
 using Intersect.Editor.Networking;
@@ -296,7 +297,7 @@ namespace Intersect.Editor.Forms.Editors
             lblVital.Text = Strings.ItemEditor.vital;
             lblInterval.Text = Strings.ItemEditor.consumeamount;
             cmbConsume.Items.Clear();
-            for (var i = 0; i < (int)Vital.VitalCount; i++)
+            for (var i = 0; i < Enum.GetValues<Vital>().Length; i++)
             {
                 cmbConsume.Items.Add(Strings.Combat.vitals[i]);
             }

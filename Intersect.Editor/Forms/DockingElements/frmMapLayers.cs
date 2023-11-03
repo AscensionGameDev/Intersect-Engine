@@ -6,6 +6,7 @@ using System.Linq;
 using System.Windows.Forms;
 using Intersect.Config;
 using Intersect.Editor.Content;
+using Intersect.Editor.Core;
 using Intersect.Editor.General;
 using Intersect.Editor.Localization;
 using Intersect.Enums;

@@ -261,8 +261,8 @@ namespace Intersect.GameObjects
         [JsonIgnore]
         public string VitalsJson
         {
-            get => DatabaseUtils.SaveIntArray(VitalsGiven, (int)Vital.VitalCount);
-            set => VitalsGiven = DatabaseUtils.LoadIntArray(value, (int)Vital.VitalCount);
+            get => DatabaseUtils.SaveIntArray(VitalsGiven, Enum.GetValues<Vital>().Length);
+            set => VitalsGiven = DatabaseUtils.LoadIntArray(value, Enum.GetValues<Vital>().Length);
         }
 
         [NotMapped]
@@ -272,8 +272,8 @@ namespace Intersect.GameObjects
         [JsonIgnore]
         public string VitalsRegenJson
         {
-            get => DatabaseUtils.SaveIntArray(VitalsRegen, (int)Vital.VitalCount);
-            set => VitalsRegen = DatabaseUtils.LoadIntArray(value, (int)Vital.VitalCount);
+            get => DatabaseUtils.SaveIntArray(VitalsRegen, Enum.GetValues<Vital>().Length);
+            set => VitalsRegen = DatabaseUtils.LoadIntArray(value, Enum.GetValues<Vital>().Length);
         }
 
         [NotMapped]
@@ -283,8 +283,8 @@ namespace Intersect.GameObjects
         [JsonIgnore]
         public string PercentageVitalsJson
         {
-            get => DatabaseUtils.SaveIntArray(PercentageVitalsGiven, (int)Vital.VitalCount);
-            set => PercentageVitalsGiven = DatabaseUtils.LoadIntArray(value, (int)Vital.VitalCount);
+            get => DatabaseUtils.SaveIntArray(PercentageVitalsGiven, Enum.GetValues<Vital>().Length);
+            set => PercentageVitalsGiven = DatabaseUtils.LoadIntArray(value, Enum.GetValues<Vital>().Length);
         }
 
         [NotMapped]
@@ -387,9 +387,9 @@ namespace Intersect.GameObjects
             Speed = 10; // Set to 10 by default.
             StatsGiven = new int[Enum.GetValues<Stat>().Length];
             PercentageStatsGiven = new int[Enum.GetValues<Stat>().Length];
-            VitalsGiven = new int[(int)Vital.VitalCount];
-            VitalsRegen = new int[(int)Vital.VitalCount];
-            PercentageVitalsGiven = new int[(int)Vital.VitalCount];
+            VitalsGiven = new int[Enum.GetValues<Vital>().Length];
+            VitalsRegen = new int[Enum.GetValues<Vital>().Length];
+            PercentageVitalsGiven = new int[Enum.GetValues<Vital>().Length];
             Consumable = new ConsumableData();
             Effects = new List<EffectData>();
             Color = new Color(255, 255, 255, 255);

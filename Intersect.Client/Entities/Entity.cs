@@ -116,7 +116,7 @@ namespace Intersect.Client.Entities
         public int Level { get; set; } = 1;
 
         //Vitals & Stats
-        public int[] MaxVital { get; set; } = new int[(int)Enums.Vital.VitalCount];
+        public int[] MaxVital { get; set; } = new int[Enum.GetValues<Vital>().Length];
 
         IReadOnlyList<int> IEntity.MaxVitals => MaxVital.ToList();
 
@@ -208,7 +208,7 @@ namespace Intersect.Client.Entities
 
         public NpcAggression Aggression { get; set; }
 
-        public int[] Vital { get; set; } = new int[(int)Enums.Vital.VitalCount];
+        public int[] Vital { get; set; } = new int[Enum.GetValues<Vital>().Length];
 
         IReadOnlyList<int> IEntity.Vitals => Vital.ToList();
 
@@ -530,7 +530,7 @@ namespace Intersect.Client.Entities
             {
                 time *= MathHelper.UnitDiagonalLength;
             }
-            
+
             if (IsBlocking)
             {
                 time += time * Options.BlockingSlow;
@@ -1038,7 +1038,7 @@ namespace Intersect.Client.Entities
                                 renderSet = Graphics.RenderingEntities[priority, entY];
                                 renderSet.Add(this);
                             }
-                            
+
                             return renderSet;
                         }
                     }
@@ -1281,7 +1281,7 @@ namespace Intersect.Client.Entities
                     break;
             }
         }
-        
+
         public void DrawChatBubbles()
         {
             //Don't draw if the entity is hidden

@@ -42,7 +42,7 @@ namespace Intersect.Configuration
 
         public static List<DisplayDirection> DEFAULT_ENTITY_BAR_DIRECTIONS =>
             Enumerable
-                .Range(0, 1 + (int)Vital.VitalCount)
+                .Range(0, Enum.GetValues<Vital>().Length)
                 .Select(_ => DisplayDirection.StartToEnd)
                 .ToList();
 
@@ -229,7 +229,7 @@ namespace Intersect.Configuration
         [JsonProperty(ObjectCreationHandling = ObjectCreationHandling.Replace)]
         public List<DisplayDirection> EntityBarDirections { get; set; } =
             Enumerable
-                .Range(0, 1 + (int)Vital.VitalCount)
+                .Range(0, 1 + Enum.GetValues<Vital>().Length)
                 .Select(_ => DisplayDirection.StartToEnd)
                 .ToList();
 

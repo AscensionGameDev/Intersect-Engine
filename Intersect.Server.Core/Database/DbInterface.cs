@@ -1436,7 +1436,7 @@ namespace Intersect.Server.Database
 
                 cls.Sprites.Add(defaultMale);
                 cls.Sprites.Add(defaultFemale);
-                for (var i = 0; i < (int)Vital.VitalCount; i++)
+                for (var i = 0; i < Enum.GetValues<Vital>().Length; i++)
                 {
                     cls.BaseVital[i] = 20;
                 }

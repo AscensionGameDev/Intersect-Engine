@@ -1,6 +1,7 @@
 ﻿using MessagePack;
 using System;
 using System.Collections.Generic;
+using Intersect.Enums;
 
 namespace Intersect.Network.Packets.Server
 {
@@ -35,10 +36,10 @@ namespace Intersect.Network.Packets.Server
         public Enums.EntityType Type { get; set; }
 
         [Key(2)]
-        public int[] Vitals { get; set; } = new int[(int) Enums.Vital.VitalCount];
+        public int[] Vitals { get; set; } = new int[Enum.GetValues<Vital>().Length];
 
         [Key(3)]
-        public int[] MaxVitals { get; set; } = new int[(int)Enums.Vital.VitalCount];
+        public int[] MaxVitals { get; set; } = new int[Enum.GetValues<Vital>().Length];
 
         [Key(4)]
         public long CombatTimeRemaining { get; set; }

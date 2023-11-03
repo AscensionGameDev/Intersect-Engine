@@ -55,7 +55,7 @@ namespace Intersect.Server.Entities.Combat
             Type = type;
             Data = data;
 
-            // Handle Player specific stuff, such as interrupting spellcasts 
+            // Handle Player specific stuff, such as interrupting spellcasts
             var tenacity = 0f;
             if (en is Player player)
             {
@@ -73,7 +73,8 @@ namespace Intersect.Server.Entities.Combat
                     player.SpellCastSlot = -1;
                     PacketSender.SendEntityCancelCast(player);
                 }
-            } else if (en is Npc thisNpc)
+            }
+            else if (en is Npc thisNpc)
             {
                 // Get our NPC's Tenacity stat
                 if (!Status.TenacityExcluded.Contains(type))
@@ -105,7 +106,7 @@ namespace Intersect.Server.Entities.Combat
             // If we're adding a shield, actually add that according to the settings.
             if (type == SpellEffect.Shield)
             {
-                for (var i = (int)Vital.Health; i < (int)Vital.VitalCount; i++)
+                for (var i = (int)Vital.Health; i < Enum.GetValues<Vital>().Length; i++)
                 {
                     var vitalDiff = spell.Combat.VitalDiff[i];
 
@@ -138,7 +139,7 @@ namespace Intersect.Server.Entities.Combat
             // We'll be overwriting it, baby!
             if (Type == SpellEffect.Taunt)
             {
-                foreach(var status in en.CachedStatuses)
+                foreach (var status in en.CachedStatuses)
                 {
                     if (status.Type == SpellEffect.Taunt)
                     {
@@ -152,14 +153,14 @@ namespace Intersect.Server.Entities.Combat
             if (en.Statuses.ContainsKey(spell))
             {
                 en.Statuses[spell].StartTime = Timing.Global.Milliseconds;
-                en.Statuses[spell].Duration = Timing.Global.Milliseconds + (long) finalDuration;
+                en.Statuses[spell].Duration = Timing.Global.Milliseconds + (long)finalDuration;
                 en.Statuses[spell].StartTime = StartTime;
                 en.CachedStatuses = en.Statuses.Values.ToArray();
             }
             else
-            { 
+            {
                 StartTime = Timing.Global.Milliseconds;
-                Duration = Timing.Global.Milliseconds + (long) finalDuration;
+                Duration = Timing.Global.Milliseconds + (long)finalDuration;
                 en.Statuses.TryAdd(Spell, this);
                 en.CachedStatuses = en.Statuses.Values.ToArray();
             }
@@ -167,7 +168,7 @@ namespace Intersect.Server.Entities.Combat
             // If this is a taunt, force the target properly for players and NPCs
             if (Type == SpellEffect.Taunt)
             {
-                
+
                 // If player, force send target!
                 if (en is Player targetPlayer)
                 {
@@ -199,11 +200,11 @@ namespace Intersect.Server.Entities.Combat
                 {
                     en.Target = Attacker;
                 }
-                
+
             }
         }
 
-        public int[] shield { get; set; } = new int[(int) Enums.Vital.VitalCount];
+        public int[] shield { get; set; } = new int[Enum.GetValues<Vital>().Length];
 
         public void TryRemoveStatus()
         {
@@ -215,7 +216,7 @@ namespace Intersect.Server.Entities.Combat
             //If shield check for out of hp
             if (Type == SpellEffect.Shield)
             {
-                for (var i = (int) Vital.Health; i < (int) Vital.VitalCount; i++)
+                for (var i = (int)Vital.Health; i < Enum.GetValues<Vital>().Length; i++)
                 {
                     if (shield[i] > 0)
                     {
@@ -243,11 +244,11 @@ namespace Intersect.Server.Entities.Combat
         {
             if (Type == SpellEffect.Shield)
             {
-                shield[(int) vital] -= amount;
-                if (shield[(int) vital] <= 0)
+                shield[(int)vital] -= amount;
+                if (shield[(int)vital] <= 0)
                 {
-                    amount = -shield[(int) vital]; //Return piercing damage.
-                    shield[(int) vital] = 0;
+                    amount = -shield[(int)vital]; //Return piercing damage.
+                    shield[(int)vital] = 0;
                     TryRemoveStatus();
                 }
                 else

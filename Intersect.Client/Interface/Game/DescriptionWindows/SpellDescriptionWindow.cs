@@ -53,7 +53,7 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
 
             // Set up bind info, if applicable.
             SetupExtraInfo();
-            
+
 
             // Resize the container, correct the display and position our window.
             FinalizeWindow();
@@ -75,7 +75,7 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
             header.SetTitle(mSpell.Name, Color.White);
 
             // Set up the spell type description.
-            Strings.SpellDescription.SpellTypes.TryGetValue((int) mSpell.SpellType, out var spellType);
+            Strings.SpellDescription.SpellTypes.TryGetValue((int)mSpell.SpellType, out var spellType);
             header.SetSubtitle(spellType, Color.White);
 
             // Set up the spelldescription based on what kind of spell it is.
@@ -99,7 +99,7 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
         {
             // Add a divider.
             AddDivider();
-            
+
             // Add a new row control to add our details into.
             var rows = AddRowContainer();
 
@@ -125,7 +125,7 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
             rows.AddKeyValueRow(Strings.SpellDescription.CastTime, castTime);
 
             // Add Vital Costs
-            for (var i = 0; i < (int)Vital.VitalCount; i++)
+            for (var i = 0; i < Enum.GetValues<Vital>().Length; i++)
             {
                 if (mSpell.VitalCost[i] != 0)
                 {
@@ -180,10 +180,10 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
             var rows = AddRowContainer();
 
             // Vital Damage, if 0 don't display!
-            // This bit is a bit iffy.. since in 
+            // This bit is a bit iffy.. since in
             var isHeal = false;
             var isDamage = false;
-            for (var i = 0; i < (int)Vital.VitalCount; i++)
+            for (var i = 0; i < Enum.GetValues<Vital>().Length; i++)
             {
                 if (mSpell.Combat.VitalDiff[i] < 0)
                 {
@@ -257,7 +257,7 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
                 if (isHeal)
                 {
                     rows.AddKeyValueRow(Strings.SpellDescription.HoT, string.Empty);
-                } 
+                }
                 else if (isDamage)
                 {
                     rows.AddKeyValueRow(Strings.SpellDescription.DoT, string.Empty);
@@ -270,7 +270,7 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
             {
                 showDuration = true;
                 rows.AddKeyValueRow(string.Empty, string.Empty);
-                rows.AddKeyValueRow(Strings.SpellDescription.Effect, Strings.SpellDescription.Effects[(int) mSpell.Combat.Effect]);
+                rows.AddKeyValueRow(Strings.SpellDescription.Effect, Strings.SpellDescription.Effects[(int)mSpell.Combat.Effect]);
             }
 
             // Show Stat Buff / Effect / HoT / DoT duration.

@@ -140,7 +140,7 @@ namespace Intersect.Server.Entities
                 itemSlot++;
             }
 
-            for (var i = 0; i < (int)Vital.VitalCount; i++)
+            for (var i = 0; i < Enum.GetValues<Vital>().Length; i++)
             {
                 SetMaxVital(i, myBase.MaxVital[i]);
                 SetVital(i, myBase.MaxVital[i]);
@@ -1279,7 +1279,7 @@ namespace Intersect.Server.Entities
                 CachedStatuses = Statuses.Values.ToArray();
                 DoT.Clear();
                 CachedDots = DoT.Values.ToArray();
-                for (var v = 0; v < (int)Vital.VitalCount; v++)
+                for (var v = 0; v < Enum.GetValues<Vital>().Length; v++)
                 {
                     RestoreVital((Vital)v);
                 }
@@ -1557,7 +1557,7 @@ namespace Intersect.Server.Entities
 
             foreach (Vital vital in Enum.GetValues(typeof(Vital)))
             {
-                if (vital >= Vital.VitalCount)
+                if (!Enum.IsDefined(vital))
                 {
                     continue;
                 }

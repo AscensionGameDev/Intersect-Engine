@@ -28,7 +28,7 @@ namespace Intersect.Server.Entities
 
         public Guid MapInstanceId = Guid.Empty;
 
-        [JsonProperty("MaxVitals"), NotMapped] private int[] _maxVital = new int[(int)Vital.VitalCount];
+        [JsonProperty("MaxVitals"), NotMapped] private int[] _maxVital = new int[Enum.GetValues<Vital>().Length];
 
         [NotMapped, JsonIgnore] public Combat.Stat[] Stat = new Combat.Stat[Enum.GetValues<Stat>().Length];
 
@@ -98,18 +98,18 @@ namespace Intersect.Server.Entities
         [JsonIgnore, Column("Vitals")]
         public string VitalsJson
         {
-            get => DatabaseUtils.SaveIntArray(mVitals, (int)Enums.Vital.VitalCount);
-            set => mVitals = DatabaseUtils.LoadIntArray(value, (int)Enums.Vital.VitalCount);
+            get => DatabaseUtils.SaveIntArray(mVitals, Enum.GetValues<Vital>().Length);
+            set => mVitals = DatabaseUtils.LoadIntArray(value, Enum.GetValues<Vital>().Length);
         }
 
         [JsonProperty("Vitals"), NotMapped]
-        private int[] mVitals { get; set; } = new int[(int)Enums.Vital.VitalCount];
+        private int[] mVitals { get; set; } = new int[Enum.GetValues<Vital>().Length];
 
         [JsonIgnore, NotMapped]
-        private int[] mOldVitals { get; set; } = new int[(int)Enums.Vital.VitalCount];
+        private int[] mOldVitals { get; set; } = new int[Enum.GetValues<Vital>().Length];
 
         [JsonIgnore, NotMapped]
-        private int[] mOldMaxVitals { get; set; } = new int[(int)Enums.Vital.VitalCount];
+        private int[] mOldMaxVitals { get; set; } = new int[Enum.GetValues<Vital>().Length];
 
         //Stats based on npc settings, class settings, etc for quick calculations
         [JsonIgnore, Column(nameof(BaseStats))]
@@ -1308,8 +1308,8 @@ namespace Intersect.Server.Entities
 
         public int[] GetVitals()
         {
-            var vitals = new int[(int)Vital.VitalCount];
-            Array.Copy(mVitals, 0, vitals, 0, (int)Vital.VitalCount);
+            var vitals = new int[Enum.GetValues<Vital>().Length];
+            Array.Copy(mVitals, 0, vitals, 0, Enum.GetValues<Vital>().Length);
 
             return vitals;
         }
@@ -1351,7 +1351,7 @@ namespace Intersect.Server.Entities
 
         public int[] GetMaxVitals()
         {
-            var vitals = new int[(int)Vital.VitalCount];
+            var vitals = new int[Enum.GetValues<Vital>().Length];
             for (var vitalIndex = 0; vitalIndex < vitals.Length; ++vitalIndex)
             {
                 vitals[vitalIndex] = GetMaxVital(vitalIndex);
@@ -1402,7 +1402,7 @@ namespace Intersect.Server.Entities
 
         public void AddVital(Vital vital, int amount)
         {
-            if (vital >= Vital.VitalCount)
+            if (!Enum.IsDefined(vital))
             {
                 return;
             }
@@ -1415,7 +1415,7 @@ namespace Intersect.Server.Entities
 
         public void SubVital(Vital vital, int amount)
         {
-            if (vital >= Vital.VitalCount)
+            if (!Enum.IsDefined(vital))
             {
                 return;
             }
@@ -2992,7 +2992,7 @@ namespace Intersect.Server.Entities
 
         public virtual void Reset()
         {
-            for (var i = 0; i < (int)Vital.VitalCount; i++)
+            for (var i = 0; i < Enum.GetValues<Vital>().Length; i++)
             {
                 RestoreVital((Vital)i);
             }
@@ -3063,8 +3063,8 @@ namespace Intersect.Server.Entities
                 int[] vitalShields = null;
                 if (status.Type == SpellEffect.Shield)
                 {
-                    vitalShields = new int[(int)Vital.VitalCount];
-                    for (var x = 0; x < (int)Vital.VitalCount; x++)
+                    vitalShields = new int[Enum.GetValues<Vital>().Length];
+                    for (var x = 0; x < Enum.GetValues<Vital>().Length; x++)
                     {
                         vitalShields[x] = status.shield[x];
                     }

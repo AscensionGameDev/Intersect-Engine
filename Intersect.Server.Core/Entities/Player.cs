@@ -981,7 +981,7 @@ namespace Intersect.Server.Entities
 
             foreach (Vital vital in Enum.GetValues(typeof(Vital)))
             {
-                if (vital >= Vital.VitalCount)
+                if (!Enum.IsDefined(vital))
                 {
                     continue;
                 }

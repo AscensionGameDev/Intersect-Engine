@@ -117,7 +117,7 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
 
             // Set up the description telling us what type of item this is.
             // if equipment, also list what kind.
-            Strings.ItemDescription.ItemTypes.TryGetValue((int) mItem.ItemType, out var typeDesc);
+            Strings.ItemDescription.ItemTypes.TryGetValue((int)mItem.ItemType, out var typeDesc);
             if (mItem.ItemType == ItemType.Equipment)
             {
                 var equipSlot = Options.Equipment.Slots[mItem.EquipmentSlot];
@@ -249,7 +249,7 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
                         var weapon = ItemBase.Get(Globals.Me.Inventory[weaponSlot].ItemId);
                         if (weapon != null && randomStats != null)
                         {
-                            speed = (int) Math.Round(speed / ((100 + weapon.PercentageStatsGiven[(int)Stat.Speed]) / 100f));
+                            speed = (int)Math.Round(speed / ((100 + weapon.PercentageStatsGiven[(int)Stat.Speed]) / 100f));
                             speed -= weapon.StatsGiven[(int)Stat.Speed];
                             speed -= randomStats[(int)Stat.Speed];
                         }
@@ -258,9 +258,9 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
                     // Add current item's speed stats!
                     if (mItemProperties?.StatModifiers != default)
                     {
-                        speed += mItem.StatsGiven[(int) Stat.Speed];
-                        speed += mItemProperties.StatModifiers[(int) Stat.Speed];
-                        speed += (int) Math.Floor(speed * (mItem.PercentageStatsGiven[(int)Stat.Speed] / 100f));
+                        speed += mItem.StatsGiven[(int)Stat.Speed];
+                        speed += mItemProperties.StatModifiers[(int)Stat.Speed];
+                        speed += (int)Math.Floor(speed * (mItem.PercentageStatsGiven[(int)Stat.Speed] / 100f));
                     }
 
                     // Display the actual speed this weapon would have based off of our calculated speed stat.
@@ -298,7 +298,7 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
             }
 
             // Vitals
-            for (var i = 0; i < (int)Vital.VitalCount; i++)
+            for (var i = 0; i < Enum.GetValues<Vital>().Length; i++)
             {
                 if (mItem.VitalsGiven[i] != 0 && mItem.PercentageVitalsGiven[i] != 0)
                 {
@@ -315,7 +315,7 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
             }
 
             // Vitals Regen
-            for (var i = 0; i < (int)Vital.VitalCount; i++)
+            for (var i = 0; i < Enum.GetValues<Vital>().Length; i++)
             {
                 if (mItem.VitalsRegen[i] != 0)
                 {
@@ -364,11 +364,11 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
                         rows.AddKeyValueRow(Strings.ItemDescription.StatCounts[i], Strings.ItemDescription.StatGrowthRange.ToString(statLow, statHigh));
                     }
                 }
-                
+
             }
 
             // Bonus Effect
-            foreach(var effect in mItem.Effects)
+            foreach (var effect in mItem.Effects)
             {
                 if (effect.Type != ItemEffect.None && effect.Percentage != 0)
                 {
@@ -393,7 +393,7 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
             {
                 if (mItem.Consumable.Value > 0 && mItem.Consumable.Percentage > 0)
                 {
-                    rows.AddKeyValueRow(Strings.ItemDescription.ConsumableTypes[(int) mItem.Consumable.Type], Strings.ItemDescription.RegularAndPercentage.ToString(mItem.Consumable.Value, mItem.Consumable.Percentage));
+                    rows.AddKeyValueRow(Strings.ItemDescription.ConsumableTypes[(int)mItem.Consumable.Type], Strings.ItemDescription.RegularAndPercentage.ToString(mItem.Consumable.Value, mItem.Consumable.Percentage));
                 }
                 else if (mItem.Consumable.Value > 0)
                 {
