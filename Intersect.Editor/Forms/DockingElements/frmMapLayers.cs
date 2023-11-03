@@ -19,6 +19,7 @@ using Intersect.Utilities;
 using Microsoft.Xna.Framework.Graphics;
 
 using WeifenLuo.WinFormsUI.Docking;
+using Graphics = System.Drawing.Graphics;
 using MapAttribute = Intersect.Enums.MapAttribute;
 
 namespace Intersect.Editor.Forms.DockingElements

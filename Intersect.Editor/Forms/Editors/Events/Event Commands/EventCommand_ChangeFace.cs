@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
@@ -8,6 +8,7 @@ using Intersect.Editor.Core;
 using Intersect.Editor.Localization;
 using Intersect.GameObjects.Events.Commands;
 using Intersect.Utilities;
+using Graphics = System.Drawing.Graphics;
 
 namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 {

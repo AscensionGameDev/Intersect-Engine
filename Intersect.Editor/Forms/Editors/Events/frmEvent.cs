@@ -22,6 +22,7 @@ using Intersect.GameObjects.Maps;
 using Intersect.Utilities;
 
 using Newtonsoft.Json;
+using Graphics = System.Drawing.Graphics;
 
 namespace Intersect.Editor.Forms.Editors.Events
 {
