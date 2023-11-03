@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-using System.Linq;
 using System.Reflection;
 using Intersect.Configuration;
 using Intersect.Enums;
@@ -916,6 +911,9 @@ namespace Intersect.Client.Localization
 
             public static LocalizedString lostconnection =
                 @"Lost connection to the game server. Please make sure you're connected to the internet and try again!";
+
+            public static LocalizedString HostNotFound =
+                @"DNS resolution error, please report this to the game administrator.";
 
         }
 
