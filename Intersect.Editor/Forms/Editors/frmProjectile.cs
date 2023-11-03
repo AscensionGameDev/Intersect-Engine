@@ -12,6 +12,7 @@ using Intersect.Editor.Localization;
 using Intersect.Editor.Networking;
 using Intersect.Enums;
 using Intersect.GameObjects;
+using Graphics = System.Drawing.Graphics;
 
 namespace Intersect.Editor.Forms.Editors
 {

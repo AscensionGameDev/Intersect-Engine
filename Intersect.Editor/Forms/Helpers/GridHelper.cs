@@ -6,6 +6,7 @@ using Intersect.Editor.Core;
 namespace Intersect.Editor.Forms.Helpers
 {
     using Color = System.Drawing.Color;
+    using Graphics = System.Drawing.Graphics;
 
     public partial struct GridCell
     {
