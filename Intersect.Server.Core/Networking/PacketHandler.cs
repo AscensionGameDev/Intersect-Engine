@@ -659,13 +659,17 @@ namespace Intersect.Server.Networking
         public void HandlePacket(Client client, NeedMapPacket packet)
         {
             var player = client?.Entity;
-            var map = MapController.Get(packet.MapId);
-            if (map != null)
+            foreach (var mapId in packet.MapIds)
             {
-                PacketSender.SendMap(client, packet.MapId);
-                if (player != null && packet.MapId == player.MapId)
+                if (!MapController.TryGet(mapId, out var mapController))
                 {
-                    PacketSender.SendMapGrid(client, map.MapGrid);
+                    continue;
+                }
+
+                PacketSender.SendMap(client, mapId);
+                if (player != null && mapId == player.MapId)
+                {
+                    PacketSender.SendMapGrid(client, mapController.MapGrid);
                 }
             }
         }

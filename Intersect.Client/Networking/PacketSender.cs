@@ -30,14 +30,44 @@ namespace Intersect.Client.Networking
             Network.SendPacket(new LogoutPacket(characterSelect));
         }
 
-        public static void SendNeedMap(Guid mapId)
+        public static void SendNeedMap(params Guid[] mapIds)
         {
-            if (mapId == default || MapInstance.Get(mapId) != null || !MapInstance.MapNotRequested(mapId))
+            var validMapIds = mapIds.Where(
+                    mapId => mapId != default && MapInstance.TryGet(mapId, out _) && MapInstance.MapNotRequested(mapId)
+                )
+                .ToArray();
+            if (validMapIds.Length < 1)
             {
                 return;
             }
-            Network.SendPacket(new NeedMapPacket(mapId));
-            MapInstance.UpdateMapRequestTime(mapId);
+
+            Network.SendPacket(new NeedMapPacket(validMapIds));
+            MapInstance.UpdateMapRequestTime(validMapIds);
+        }
+
+        public static void SendNeedMapForGrid(MapInstance? mapInstance)
+        {
+            if (mapInstance == default && !MapInstance.TryGet(Globals.Me.MapId, out mapInstance))
+            {
+                return;
+            }
+
+            var gridX = mapInstance.GridX;
+            var gridY = mapInstance.GridY;
+            var minX = Math.Max(0, gridX - 1);
+            var minY = Math.Max(0, gridY - 1);
+            var maxX = Math.Max(Globals.MapGridWidth, gridX + 2);
+            var maxY = Math.Max(Globals.MapGridHeight, gridY + 2);
+            for (int x = minX; x < maxX; x++)
+            {
+                for (int y = minY; y < maxY; y++)
+                {
+                    if (Globals.MapGrid[x, y] != Guid.Empty)
+                    {
+                        PacketSender.SendNeedMap(Globals.MapGrid[x, y]);
+                    }
+                }
+            }
         }
 
         public static void SendMove()

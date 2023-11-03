@@ -11,13 +11,13 @@ namespace Intersect.Network.Packets.Client
         {
         }
 
-        public NeedMapPacket(Guid mapId)
+        public NeedMapPacket(params Guid[] mapIds)
         {
-            MapId = mapId;
+            MapIds = new List<Guid>(mapIds);
         }
 
         [Key(0)]
-        public Guid MapId { get; set; }
+        public List<Guid> MapIds { get; set; }
 
     }
 
