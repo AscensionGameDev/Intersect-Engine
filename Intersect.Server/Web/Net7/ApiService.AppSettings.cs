@@ -179,6 +179,13 @@ internal partial class ApiService
                 var certificatePath = certificate.Value<string>("Path");
                 var keyPath = certificate.Value<string>("KeyPath");
 
+#if DEBUG
+                if (File.Exists(SelfSignedCertificateName) && File.Exists(SelfSignedKeyName))
+                {
+                    return;
+                }
+#endif
+
                 if (!string.Equals(certificatePath, SelfSignedCertificateName) ||
                     !string.Equals(keyPath, SelfSignedKeyName))
                 {
