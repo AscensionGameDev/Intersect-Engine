@@ -2327,10 +2327,10 @@ namespace Intersect.Client.Entities
                 return;
             }
 
-            if (Maps.MapInstance.Get(Globals.Me.MapId) != null)
+            if (Maps.MapInstance.TryGet(Globals.Me.MapId, out var mapInstance))
             {
-                var gridX = Maps.MapInstance.Get(Globals.Me.MapId).GridX;
-                var gridY = Maps.MapInstance.Get(Globals.Me.MapId).GridY;
+                var gridX = mapInstance.GridX;
+                var gridY = mapInstance.GridY;
                 for (var x = gridX - 1; x <= gridX + 1; x++)
                 {
                     for (var y = gridY - 1; y <= gridY + 1; y++)

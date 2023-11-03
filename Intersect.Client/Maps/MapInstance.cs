@@ -1370,9 +1370,17 @@ namespace Intersect.Client.Maps
 
         public static bool MapNotRequested(Guid mapId) => !MapRequests.ContainsKey(mapId) || MapRequests[mapId] < Timing.Global.Milliseconds;
 
-        public static void UpdateMapRequestTime(Guid mapId)
+        public static void UpdateMapRequestTime(params Guid[] mapIds)
         {
-            MapRequests[mapId] = Timing.Global.Milliseconds + 2000;
+            foreach (var mapId in mapIds)
+            {
+                if (mapId == default)
+                {
+                    continue;
+                }
+
+                MapRequests[mapId] = Timing.Global.Milliseconds + 2000;
+            }
         }
     }
 
