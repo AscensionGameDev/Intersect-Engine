@@ -17,6 +17,7 @@ using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps.MapList;
 using Intersect.Utilities;
+using Graphics = System.Drawing.Graphics;
 
 namespace Intersect.Editor.Forms.Editors
 {
