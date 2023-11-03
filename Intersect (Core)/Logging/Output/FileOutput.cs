@@ -111,18 +111,30 @@ namespace Intersect.Logging.Output
             params object[] args
         )
         {
-            if (LogLevel < logLevel)
+            try
             {
-                return;
+                if (LogLevel < logLevel)
+                {
+                    return;
+                }
+
+                var line = configuration.Formatter.Format(
+                    configuration,
+                    logLevel,
+                    DateTime.UtcNow,
+                    exception,
+                    format,
+                    args
+                );
+
+                Writer.Write(line);
+                Writer.Write(Spacer);
+                Writer.Flush();
             }
-
-            var line = configuration.Formatter.Format(
-                configuration, logLevel, DateTime.UtcNow, exception, format, args
-            );
-
-            Writer.Write(line);
-            Writer.Write(Spacer);
-            Writer.Flush();
+            catch (Exception exceptionWhileWriting)
+            {
+                Console.WriteLine(exceptionWhileWriting);
+            }
         }
 
         ~FileOutput()
