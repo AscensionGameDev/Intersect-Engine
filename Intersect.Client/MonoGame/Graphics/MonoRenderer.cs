@@ -13,6 +13,7 @@ using Intersect.Client.Localization;
 using Intersect.Client.MonoGame.NativeInterop;
 using Intersect.Client.ThirdParty;
 using Intersect.Configuration;
+using Intersect.Extensions;
 using Intersect.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -734,15 +735,8 @@ namespace Intersect.Client.MonoGame.Graphics
             return mScreenWidth + "x" + mScreenHeight;
         }
 
-        public override List<string> GetValidVideoModes()
+        public Resolution[] GetAllowedResolutions()
         {
-            if (mValidVideoModes != null)
-            {
-                return mValidVideoModes;
-            }
-
-            mValidVideoModes = new List<string>();
-
             var allowedResolutions = new[]
                 {
                     new Resolution(800, 600), new Resolution(1024, 768), new Resolution(1024, 720),
@@ -751,9 +745,9 @@ namespace Intersect.Client.MonoGame.Graphics
                     new Resolution(1440, 900), new Resolution(1600, 900), new Resolution(1680, 1050),
                     new Resolution(1920, 1080),
                 }.Concat(
-                    mGraphicsDevice.Adapter.SupportedDisplayModes.Select(
-                        displayMode => new Resolution(displayMode.Width, displayMode.Height)
-                    )
+                    mGraphicsDevice.Adapter.SupportedDisplayModes
+                        .Select(displayMode => new Resolution(displayMode.Width, displayMode.Height))
+                        .Where(resolution => resolution is { X: >= 800, Y: >= 480 })
                 )
                 .Distinct()
                 .Order()
@@ -766,6 +760,20 @@ namespace Intersect.Client.MonoGame.Graphics
                     new Resolution(mGraphicsDevice.DisplayMode.Width, mGraphicsDevice.DisplayMode.Height),
                 };
             }
+
+            return allowedResolutions;
+        }
+
+        public override List<string> GetValidVideoModes()
+        {
+            if (mValidVideoModes != null)
+            {
+                return mValidVideoModes;
+            }
+
+            mValidVideoModes = new List<string>();
+
+            var allowedResolutions = GetAllowedResolutions();
 
             var displayWidth = mGraphicsDevice?.DisplayMode?.Width;
             var displayHeight = mGraphicsDevice?.DisplayMode?.Height;
@@ -804,6 +812,19 @@ namespace Intersect.Client.MonoGame.Graphics
 
             var database = Globals.Database;
             var validVideoModes = GetValidVideoModes();
+
+            if (database.TargetResolution < 0)
+            {
+                var allowedResolutions = GetAllowedResolutions();
+                var currentDisplayMode = mGraphicsDevice.Adapter.CurrentDisplayMode;
+                var defaultResolution = allowedResolutions.LastOrDefault(
+                    allowedResolution => allowedResolution.X < currentDisplayMode.Width && allowedResolution.Y < currentDisplayMode.Height
+                );
+                if (defaultResolution != default)
+                {
+                    database.TargetResolution = allowedResolutions.IndexOf(defaultResolution);
+                }
+            }
 
             var targetResolution = MathHelper.Clamp(database.TargetResolution, 0, validVideoModes.Count);
 
