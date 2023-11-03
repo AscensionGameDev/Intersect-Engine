@@ -775,7 +775,9 @@ namespace Intersect.Client.Interface.Shared
                 }
                 else
                 {
-                    resolutionLabel = Graphics.Renderer.GetValidVideoModes()[Globals.Database.TargetResolution];
+                    var validVideoModes = Graphics.Renderer.GetValidVideoModes();
+                    var targetResolution = Globals.Database.TargetResolution;
+                    resolutionLabel = targetResolution < 0 || validVideoModes.Count <= targetResolution ? Strings.Settings.ResolutionCustom : validVideoModes[Globals.Database.TargetResolution];
                 }
 
                 mResolutionList.SelectByText(resolutionLabel);
