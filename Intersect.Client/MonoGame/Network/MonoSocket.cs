@@ -1,6 +1,7 @@
 ﻿using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
 using System.Net;
+using System.Net.Sockets;
 using System.Resources;
 using Intersect.Client.Framework.Network;
 using Intersect.Configuration;
@@ -11,6 +12,7 @@ using Intersect.Utilities;
 using Intersect.Client.Core;
 using Intersect.Client.General;
 using Intersect.Client.Interface.Menu;
+using Intersect.Client.Localization;
 using Intersect.Network.Packets.Unconnected.Client;
 using Intersect.Rsa;
 
@@ -94,6 +96,7 @@ namespace Intersect.Client.MonoGame.Network
         private string? _lastHost;
         private int? _lastPort;
         private IPEndPoint? _lastEndpoint;
+        private static HashSet<string> UnresolvableHostNames = new();
 
         internal MonoSocket(IClientContext context)
         {
@@ -103,6 +106,12 @@ namespace Intersect.Client.MonoGame.Network
         private bool TryResolveEndPoint([NotNullWhen(true)] out IPEndPoint? endPoint)
         {
             var currentHost = ClientConfiguration.Instance.Host;
+            if (UnresolvableHostNames.Contains(currentHost))
+            {
+                endPoint = default;
+                return false;
+            }
+
             if (!string.Equals(_lastHost, currentHost))
             {
                 _lastHost = currentHost;
@@ -128,17 +137,33 @@ namespace Intersect.Client.MonoGame.Network
                 return true;
             }
 
-            var address = Dns.GetHostAddresses(_lastHost).FirstOrDefault();
-            var port = _lastPort;
-            if (address == default || !port.HasValue)
+            try
             {
+                var address = Dns.GetHostAddresses(_lastHost).FirstOrDefault();
+                var port = _lastPort;
+                if (address == default || !port.HasValue)
+                {
+                    endPoint = default;
+                    return false;
+                }
+
+                endPoint = new IPEndPoint(address, port.Value);
+                _lastEndpoint = endPoint;
+                return true;
+            }
+            catch (SocketException socketException)
+            {
+                if (socketException.SocketErrorCode != SocketError.HostNotFound)
+                {
+                    throw;
+                }
+
+                UnresolvableHostNames.Add(_lastHost);
+                Interface.Interface.ShowError(Strings.Errors.HostNotFound);
+                Log.Error(socketException, $"Failed to resolve host: '{_lastHost}'");
                 endPoint = default;
                 return false;
             }
-
-            endPoint = new IPEndPoint(address, port.Value);
-            _lastEndpoint = endPoint;
-            return true;
         }
 
         public override void Connect(string host, int port)
@@ -178,6 +203,10 @@ namespace Intersect.Client.MonoGame.Network
             return true;
         }
 
+        private volatile bool _resolvingHost;
+
+
+
         public override void Update()
         {
             while (PacketQueue.TryDequeue(out KeyValuePair<IConnection, IPacket> dequeued))
@@ -192,21 +221,39 @@ namespace Intersect.Client.MonoGame.Network
                 // ReSharper disable once InvertIf
                 if (_nextServerStatusPing <= now)
                 {
-                    if (TryResolveEndPoint(out var serverEndpoint))
+                    if (!_resolvingHost)
                     {
-                        var network = Network;
-                        if (network == default)
-                        {
-                            Log.Info("No network created to poll for server status.");
-                        }
-                        else
-                        {
-                            network.SendUnconnected(serverEndpoint, new ServerStatusRequestPacket());
-                        }
-                    }
-                    else
-                    {
-                        Log.Info($"Unable to resolve '{_lastHost}:{_lastPort}'");
+                        _resolvingHost = true;
+                        Task.Run(
+                            () =>
+                            {
+                                try
+                                {
+                                    if (TryResolveEndPoint(out var serverEndpoint))
+                                    {
+                                        var network = Network;
+                                        if (network == default)
+                                        {
+                                            Log.Info("No network created to poll for server status.");
+                                        }
+                                        else
+                                        {
+                                            network.SendUnconnected(serverEndpoint, new ServerStatusRequestPacket());
+                                        }
+                                    }
+                                    else if (!UnresolvableHostNames.Contains(_lastHost))
+                                    {
+                                        Log.Info($"Unable to resolve '{_lastHost}:{_lastPort}'");
+                                    }
+                                }
+                                catch (Exception exception)
+                                {
+                                    Log.Error(exception);
+                                }
+
+                                _resolvingHost = false;
+                            }
+                        );
                     }
 
                     if (MainMenu.LastNetworkStatusChangeTime + ServerStatusPingInterval < now)

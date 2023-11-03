@@ -1,8 +1,4 @@
-using System.Collections.Generic;
-using System.Linq;
-
 using Intersect.Client.Core;
-using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Control;
@@ -22,8 +18,12 @@ namespace Intersect.Client.Interface
     public static partial class Interface
     {
 
-        public static readonly List<KeyValuePair<string, string>> MsgboxErrors =
-            new List<KeyValuePair<string, string>>();
+        public static readonly List<KeyValuePair<string, string>> MsgboxErrors = new();
+
+        public static void ShowError(string message, string? header = default)
+        {
+            MsgboxErrors.Add(new KeyValuePair<string, string>(header ?? string.Empty, message));
+        }
 
         public static ErrorHandler ErrorMsgHandler;
 
