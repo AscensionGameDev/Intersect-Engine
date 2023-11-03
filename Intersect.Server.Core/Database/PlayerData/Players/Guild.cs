@@ -162,33 +162,30 @@ namespace Intersect.Server.Database.PlayerData.Players
         {
             if (!Guilds.TryGetValue(id, out Guild found))
             {
-                using (var context = DbInterface.CreatePlayerContext())
+                using var context = DbInterface.CreatePlayerContext();
+                var guild = context.Guilds.Where(g => g.Id == id).Include(g => g.Bank).Include(g => g.Variables).FirstOrDefault();
+                if (guild == default)
                 {
-                    var guild = context.Guilds.Where(g => g.Id == id).Include(g => g.Bank).Include(g => g.Variables).FirstOrDefault();
-                    if (guild != null)
-                    {
-                        //Load Members
-                        var members = context.Players.Where(p => p.DbGuild.Id == id).ToDictionary(t => t.Id, t => new Tuple<Guid, string, int, int, Guid, Guid>(t.Id, t.Name, t.GuildRank, t.Level, t.ClassId, t.MapId));
-                        foreach (var member in members)
-                        {
-                            var gmember = new GuildMember(member.Value.Item1, member.Value.Item2, member.Value.Item3, member.Value.Item4, ClassBase.GetName(member.Value.Item5), MapBase.GetName(member.Value.Item6));
-                            guild.Members.AddOrUpdate(member.Key, gmember, (key, oldValue) => gmember);
-                        }
-
-                        SlotHelper.ValidateSlots(guild.Bank, guild.BankSlotsCount);
-                        guild.Bank = guild.Bank.OrderBy(bankSlot => bankSlot?.Slot).ToList();
-
-                        Guilds.AddOrUpdate(id, guild, (key, oldValue) => guild);
-
-                        return guild;
-                    }
+                    return default;
                 }
+
+                // Load Members
+                var members = context.Players.Where(p => p.DbGuild.Id == id).ToDictionary(t => t.Id, t => new Tuple<Guid, string, int, int, Guid, Guid>(t.Id, t.Name, t.GuildRank, t.Level, t.ClassId, t.MapId));
+                foreach (var member in members)
+                {
+                    var guildMember = new GuildMember(member.Value.Item1, member.Value.Item2, member.Value.Item3, member.Value.Item4, ClassBase.GetName(member.Value.Item5), MapBase.GetName(member.Value.Item6));
+                    guild.Members.AddOrUpdate(member.Key, guildMember, (key, oldValue) => guildMember);
+                }
+
+                SlotHelper.ValidateSlots(guild.Bank, guild.BankSlotsCount);
+                guild.Bank = guild.Bank.OrderBy(bankSlot => bankSlot?.Slot).ToList();
+
+                Guilds.AddOrUpdate(id, guild, (key, oldValue) => guild);
+
+                return guild;
             }
-            else
-            {
-                return found;
-            }
-            return null;
+
+            return found;
         }
 
         /// <summary>
@@ -826,28 +823,26 @@ namespace Intersect.Server.Database.PlayerData.Players
         {
             try
             {
-                using (var context = DbInterface.CreatePlayerContext())
+                using var context = DbInterface.CreatePlayerContext();
+                var compiledQuery = string.IsNullOrWhiteSpace(query) ? context.Guilds : context.Guilds.Where(p => EF.Functions.Like(p.Name, $"%{query}%"));
+
+                total = compiledQuery.Count();
+
+                switch (sortBy?.ToLower() ?? "")
                 {
-                    var compiledQuery = string.IsNullOrWhiteSpace(query) ? context.Guilds : context.Guilds.Where(p => EF.Functions.Like(p.Name, $"%{query}%"));
-
-                    total = compiledQuery.Count();
-
-                    switch (sortBy?.ToLower() ?? "")
-                    {
-                        case "members":
-                            compiledQuery = sortDirection == SortDirection.Ascending ? compiledQuery.OrderBy(g => context.Players.Where(p => p.DbGuild.Id == g.Id).Count()) : compiledQuery.OrderByDescending(g => context.Players.Where(p => p.DbGuild.Id == g.Id).Count());
-                            break;
-                        case "foundingdate":
-                            compiledQuery = sortDirection == SortDirection.Ascending ? compiledQuery.OrderBy(u => u.FoundingDate) : compiledQuery.OrderByDescending(u => u.FoundingDate);
-                            break;
-                        case "name":
-                        default:
-                            compiledQuery = sortDirection == SortDirection.Ascending ? compiledQuery.OrderBy(u => u.Name.ToUpper()) : compiledQuery.OrderByDescending(u => u.Name.ToUpper());
-                            break;
-                    }
-
-                    return compiledQuery.Skip(skip).Take(take).Select(g => new KeyValuePair<Guild, int>(g, context.Players.Where(p => p.DbGuild.Id == g.Id).Count())).ToList();
+                    case "members":
+                        compiledQuery = sortDirection == SortDirection.Ascending ? compiledQuery.OrderBy(g => context.Players.Where(p => p.DbGuild.Id == g.Id).Count()) : compiledQuery.OrderByDescending(g => context.Players.Where(p => p.DbGuild.Id == g.Id).Count());
+                        break;
+                    case "foundingdate":
+                        compiledQuery = sortDirection == SortDirection.Ascending ? compiledQuery.OrderBy(u => u.FoundingDate) : compiledQuery.OrderByDescending(u => u.FoundingDate);
+                        break;
+                    case "name":
+                    default:
+                        compiledQuery = sortDirection == SortDirection.Ascending ? compiledQuery.OrderBy(u => u.Name.ToUpper()) : compiledQuery.OrderByDescending(u => u.Name.ToUpper());
+                        break;
                 }
+
+                return compiledQuery.Skip(skip).Take(take).Select(g => new KeyValuePair<Guild, int>(g, context.Players.Where(p => p.DbGuild.Id == g.Id).Count())).ToList();
             }
             catch (Exception ex)
             {
