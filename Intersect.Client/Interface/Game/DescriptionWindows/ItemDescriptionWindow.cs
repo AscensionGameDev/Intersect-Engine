@@ -325,7 +325,7 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
 
             // Stats
             var statModifiers = mItemProperties?.StatModifiers;
-            for (var i = 0; i < (int)Stat.StatCount; i++)
+            for (var i = 0; i < Enum.GetValues<Stat>().Length; i++)
             {
                 // Do we have item properties, if so this is a finished item. Otherwise does this item not have growing stats?
                 if (statModifiers != default || mItem.StatGrowth == 0)

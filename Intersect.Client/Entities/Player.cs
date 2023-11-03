@@ -1236,7 +1236,7 @@ namespace Intersect.Client.Entities
         public void AddToHotbar(int hotbarSlot, sbyte itemType, int itemSlot)
         {
             Hotbar[hotbarSlot].ItemOrSpellId = Guid.Empty;
-            Hotbar[hotbarSlot].PreferredStatBuffs = new int[(int)Enums.Stat.StatCount];
+            Hotbar[hotbarSlot].PreferredStatBuffs = new int[Enum.GetValues<Stat>().Length];
             if (itemType == 0)
             {
                 var item = Inventory[itemSlot];

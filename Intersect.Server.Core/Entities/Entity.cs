@@ -30,7 +30,7 @@ namespace Intersect.Server.Entities
 
         [JsonProperty("MaxVitals"), NotMapped] private int[] _maxVital = new int[(int)Vital.VitalCount];
 
-        [NotMapped, JsonIgnore] public Combat.Stat[] Stat = new Combat.Stat[(int)Enums.Stat.StatCount];
+        [NotMapped, JsonIgnore] public Combat.Stat[] Stat = new Combat.Stat[Enum.GetValues<Stat>().Length];
 
         [NotMapped, JsonIgnore] public Entity Target { get; set; } = null;
 
@@ -43,7 +43,7 @@ namespace Intersect.Server.Entities
         {
             if (!(this is EventPageInstance) && !(this is Projectile))
             {
-                for (var i = 0; i < (int)Enums.Stat.StatCount; i++)
+                for (var i = 0; i < Enum.GetValues<Stat>().Length; i++)
                 {
                     Stat[i] = new Combat.Stat((Stat)i, this);
                 }
@@ -115,24 +115,23 @@ namespace Intersect.Server.Entities
         [JsonIgnore, Column(nameof(BaseStats))]
         public string StatsJson
         {
-            get => DatabaseUtils.SaveIntArray(BaseStats, (int)Enums.Stat.StatCount);
-            set => BaseStats = DatabaseUtils.LoadIntArray(value, (int)Enums.Stat.StatCount);
+            get => DatabaseUtils.SaveIntArray(BaseStats, Enum.GetValues<Stat>().Length);
+            set => BaseStats = DatabaseUtils.LoadIntArray(value, Enum.GetValues<Stat>().Length);
         }
 
+        // TODO: Why can this be BaseStats while Vitals is _vital and MaxVitals is _maxVital?
         [NotMapped]
-        public int[] BaseStats { get; set; } =
-            new int[(int)Enums.Stat
-                .StatCount]; // TODO: Why can this be BaseStats while Vitals is _vital and MaxVitals is _maxVital?
+        public int[] BaseStats { get; set; } = new int[Enum.GetValues<Stat>().Length];
 
         [JsonIgnore, Column(nameof(StatPointAllocations))]
         public string StatPointsJson
         {
-            get => DatabaseUtils.SaveIntArray(StatPointAllocations, (int)Enums.Stat.StatCount);
-            set => StatPointAllocations = DatabaseUtils.LoadIntArray(value, (int)Enums.Stat.StatCount);
+            get => DatabaseUtils.SaveIntArray(StatPointAllocations, Enum.GetValues<Stat>().Length);
+            set => StatPointAllocations = DatabaseUtils.LoadIntArray(value, Enum.GetValues<Stat>().Length);
         }
 
         [NotMapped]
-        public int[] StatPointAllocations { get; set; } = new int[(int)Enums.Stat.StatCount];
+        public int[] StatPointAllocations { get; set; } = new int[Enum.GetValues<Stat>().Length];
 
         //Inventory
         [JsonIgnore]
@@ -330,7 +329,7 @@ namespace Intersect.Server.Entities
                     {
                         var statsUpdated = false;
                         var statTime = Timing.Global.Milliseconds;
-                        for (var i = 0; i < (int)Enums.Stat.StatCount; i++)
+                        for (var i = 0; i < Enum.GetValues<Stat>().Length; i++)
                         {
                             var stat = Stat[i];
                             if (stat == default)
@@ -1438,8 +1437,8 @@ namespace Intersect.Server.Entities
 
         public virtual int[] GetStatValues()
         {
-            var stats = new int[(int)Enums.Stat.StatCount];
-            for (var i = 0; i < (int)Enums.Stat.StatCount; i++)
+            var stats = new int[Enum.GetValues<Stat>().Length];
+            for (var i = 0; i < Enum.GetValues<Stat>().Length; i++)
             {
                 stats[i] = Stat[i].Value();
             }
@@ -1658,7 +1657,7 @@ namespace Intersect.Server.Entities
 
             var statBuffTime = -1;
             var expireTime = Timing.Global.Milliseconds + spellBase.Combat.Duration;
-            for (var i = 0; i < (int)Enums.Stat.StatCount; i++)
+            for (var i = 0; i < Enum.GetValues<Stat>().Length; i++)
             {
                 target.Stat[i]
                     .AddBuff(

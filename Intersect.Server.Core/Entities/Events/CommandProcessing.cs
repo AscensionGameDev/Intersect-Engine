@@ -30,7 +30,7 @@ namespace Intersect.Server.Entities.Events
             stackInfo.WaitingOnCommand = null;
             stackInfo.BranchIds = null;
 
-            ProcessCommand((dynamic) command, player, instance, instance.CallStack.Peek(), instance.CallStack);
+            ProcessCommand((dynamic)command, player, instance, instance.CallStack.Peek(), instance.CallStack);
 
             stackInfo.CommandIndex++;
         }
@@ -153,7 +153,7 @@ namespace Intersect.Server.Entities.Events
                     {
                         PacketSender.SendPartyMsg(player, txt, color, player.Name);
                     }
-                    
+
                     break;
                 case ChatboxChannel.Guild:
                     if (player.Guild != null)
@@ -184,7 +184,7 @@ namespace Intersect.Server.Entities.Events
             Stack<CommandInstance> callStack
         )
         {
-            ProcessVariableModification(command, (dynamic) command.Modification, player, instance);
+            ProcessVariableModification(command, (dynamic)command.Modification, player, instance);
         }
 
         //Set Self Switch Command
@@ -240,7 +240,8 @@ namespace Intersect.Server.Entities.Events
 
             if (newCommandList != null)
             {
-                var tmpStack = new CommandInstance(stackInfo.Page) {
+                var tmpStack = new CommandInstance(stackInfo.Page)
+                {
                     CommandList = newCommandList,
                     CommandIndex = 0,
                 };
@@ -709,7 +710,7 @@ namespace Intersect.Server.Entities.Events
             }
 
             PacketSender.SendEntityDataToProximity(player);
-            PacketSender.SendChatMsg(player, Strings.Player.powerchanged, ChatMessageType.Notice ,Color.Red);
+            PacketSender.SendChatMsg(player, Strings.Player.powerchanged, ChatMessageType.Notice, Color.Red);
         }
 
         //Warp Player Command
@@ -812,8 +813,8 @@ namespace Intersect.Server.Entities.Events
             var mapId = command.MapId;
             var tileX = 0;
             var tileY = 0;
-            Direction direction = (byte) Direction.Up;
-            var targetEntity = (Entity) player;
+            Direction direction = (byte)Direction.Up;
+            var targetEntity = (Entity)player;
             if (mapId != Guid.Empty)
             {
                 tileX = command.X;
@@ -854,7 +855,7 @@ namespace Intersect.Server.Entities.Events
                                 xDiff *= -1;
 
                                 break;
-                            case  Direction.Left:
+                            case Direction.Left:
                                 tmp = yDiff;
                                 yDiff = xDiff;
                                 xDiff = tmp;
@@ -872,8 +873,8 @@ namespace Intersect.Server.Entities.Events
                     }
 
                     mapId = targetEntity.MapId;
-                    tileX = (byte) (targetEntity.X + xDiff);
-                    tileY = (byte) (targetEntity.Y + yDiff);
+                    tileX = (byte)(targetEntity.X + xDiff);
+                    tileY = (byte)(targetEntity.Y + yDiff);
                 }
                 else
                 {
@@ -928,7 +929,7 @@ namespace Intersect.Server.Entities.Events
             var tileX = 0;
             var tileY = 0;
             var direction = Direction.Up;
-            var targetEntity = (Entity) player;
+            var targetEntity = (Entity)player;
             if (mapId != Guid.Empty)
             {
                 tileX = command.X;
@@ -1134,7 +1135,7 @@ namespace Intersect.Server.Entities.Events
                 id = instance.PageInstance.Id;
                 stackInfo.WaitingForResponse = CommandInstance.EventResponse.Picture;
             }
-            
+
             PacketSender.SendShowPicture(player, command.File, command.Size, command.Clickable, command.HideTime, id);
         }
 
@@ -1536,7 +1537,7 @@ namespace Intersect.Server.Entities.Events
             Stack<CommandInstance> callStack
         )
         {
-            for (var i = 0; i < (int)Stat.StatCount; i++)
+            for (var i = 0; i < Enum.GetValues<Stat>().Length; i++)
             {
                 player.StatPointAllocations[i] = 0;
             }
@@ -1573,32 +1574,32 @@ namespace Intersect.Server.Entities.Events
                     switch (command.Type)
                     {
                         case EventCommandType.ShowOptions:
-                            branchIds.AddRange(((ShowOptionsCommand) command).BranchIds);
+                            branchIds.AddRange(((ShowOptionsCommand)command).BranchIds);
 
                             break;
                         case EventCommandType.InputVariable:
-                            branchIds.AddRange(((InputVariableCommand) command).BranchIds);
+                            branchIds.AddRange(((InputVariableCommand)command).BranchIds);
 
                             break;
                         case EventCommandType.ConditionalBranch:
-                            branchIds.AddRange(((ConditionalBranchCommand) command).BranchIds);
+                            branchIds.AddRange(((ConditionalBranchCommand)command).BranchIds);
 
                             break;
                         case EventCommandType.ChangeSpells:
-                            branchIds.AddRange(((ChangeSpellsCommand) command).BranchIds);
+                            branchIds.AddRange(((ChangeSpellsCommand)command).BranchIds);
 
                             break;
                         case EventCommandType.ChangeItems:
-                            branchIds.AddRange(((ChangeItemsCommand) command).BranchIds);
+                            branchIds.AddRange(((ChangeItemsCommand)command).BranchIds);
 
                             break;
                         case EventCommandType.StartQuest:
-                            branchIds.AddRange(((StartQuestCommand) command).BranchIds);
+                            branchIds.AddRange(((StartQuestCommand)command).BranchIds);
 
                             break;
                         case EventCommandType.Label:
                             //See if we found the label!
-                            if (((LabelCommand) command).Label == label)
+                            if (((LabelCommand)command).Label == label)
                             {
                                 return true;
                             }
@@ -1919,7 +1920,7 @@ namespace Intersect.Server.Entities.Events
                     break;
                 case VariableMod.Random:
                     //TODO: Fix - Random doesnt work with longs lolz
-                    value.Integer = Randomization.Next((int) mod.Value, (int) mod.HighValue + 1);
+                    value.Integer = Randomization.Next((int)mod.Value, (int)mod.HighValue + 1);
 
                     break;
                 case VariableMod.SystemTime:

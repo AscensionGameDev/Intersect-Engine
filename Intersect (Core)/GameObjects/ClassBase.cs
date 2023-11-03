@@ -19,7 +19,7 @@ namespace Intersect.GameObjects
         public const long DEFAULT_EXPERIENCE_INCREASE = 50;
 
         [NotMapped]
-        public int[] BaseStat = new int[(int)Stat.StatCount];
+        public int[] BaseStat = new int[Enum.GetValues<Stat>().Length];
 
         [NotMapped]
         public int[] BaseVital = new int[(int)Vital.VitalCount];
@@ -43,7 +43,7 @@ namespace Intersect.GameObjects
         public List<ClassSprite> Sprites = new List<ClassSprite>();
 
         [NotMapped]
-        public int[] StatIncrease = new int[(int)Stat.StatCount];
+        public int[] StatIncrease = new int[Enum.GetValues<Stat>().Length];
 
         [NotMapped]
         public int[] VitalIncrease = new int[(int)Vital.VitalCount];
@@ -162,8 +162,8 @@ namespace Intersect.GameObjects
         [JsonIgnore]
         public string JsonBaseStats
         {
-            get => DatabaseUtils.SaveIntArray(BaseStat, (int) Stat.StatCount);
-            set => BaseStat = DatabaseUtils.LoadIntArray(value, (int) Stat.StatCount);
+            get => DatabaseUtils.SaveIntArray(BaseStat, Enum.GetValues<Stat>().Length);
+            set => BaseStat = DatabaseUtils.LoadIntArray(value, Enum.GetValues<Stat>().Length);
         }
 
         //Base Vitals
@@ -171,8 +171,8 @@ namespace Intersect.GameObjects
         [JsonIgnore]
         public string JsonBaseVitals
         {
-            get => DatabaseUtils.SaveIntArray(BaseVital, (int) Vital.VitalCount);
-            set => BaseVital = DatabaseUtils.LoadIntArray(value, (int) Vital.VitalCount);
+            get => DatabaseUtils.SaveIntArray(BaseVital, (int)Vital.VitalCount);
+            set => BaseVital = DatabaseUtils.LoadIntArray(value, (int)Vital.VitalCount);
         }
 
         //Starting Items
@@ -207,8 +207,8 @@ namespace Intersect.GameObjects
         [Column("StatIncreases")]
         public string StatIncreaseJson
         {
-            get => DatabaseUtils.SaveIntArray(StatIncrease, (int) Stat.StatCount);
-            set => StatIncrease = DatabaseUtils.LoadIntArray(value, (int) Stat.StatCount);
+            get => DatabaseUtils.SaveIntArray(StatIncrease, Enum.GetValues<Stat>().Length);
+            set => StatIncrease = DatabaseUtils.LoadIntArray(value, Enum.GetValues<Stat>().Length);
         }
 
         //Vital Increases (per level0
@@ -216,8 +216,8 @@ namespace Intersect.GameObjects
         [Column("VitalIncreases")]
         public string VitalIncreaseJson
         {
-            get => DatabaseUtils.SaveIntArray(VitalIncrease, (int) Vital.VitalCount);
-            set => VitalIncrease = DatabaseUtils.LoadIntArray(value, (int) Vital.VitalCount);
+            get => DatabaseUtils.SaveIntArray(VitalIncrease, (int)Vital.VitalCount);
+            set => VitalIncrease = DatabaseUtils.LoadIntArray(value, (int)Vital.VitalCount);
         }
 
         //Vital Regen %
@@ -225,8 +225,8 @@ namespace Intersect.GameObjects
         [Column("VitalRegen")]
         public string RegenJson
         {
-            get => DatabaseUtils.SaveIntArray(VitalRegen, (int) Vital.VitalCount);
-            set => VitalRegen = DatabaseUtils.LoadIntArray(value, (int) Vital.VitalCount);
+            get => DatabaseUtils.SaveIntArray(VitalRegen, (int)Vital.VitalCount);
+            set => VitalRegen = DatabaseUtils.LoadIntArray(value, (int)Vital.VitalCount);
         }
 
         [JsonIgnore]

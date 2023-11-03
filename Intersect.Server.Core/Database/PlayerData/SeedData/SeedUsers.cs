@@ -35,7 +35,7 @@ namespace Intersect.Server.Database.PlayerData.SeedData
 
         public override void Seed(DbSet<User> dbSet)
         {
-            var emptyBytes = new byte[] {0, 0, 0, 0, 0, 0, 0, 1};
+            var emptyBytes = new byte[] { 0, 0, 0, 0, 0, 0, 0, 1 };
             using (var rng = new RNGCryptoServiceProvider())
             {
                 for (var n = 0; n < 300; ++n)
@@ -120,7 +120,7 @@ namespace Intersect.Server.Database.PlayerData.SeedData
                     player.SetVital(Vital.Health, 10);
                     player.SetVital(Vital.Mana, 10);
 
-                    for (var i = 0; i < (int) Stat.StatCount; i++)
+                    for (var i = 0; i < Enum.GetValues<Stat>().Length; i++)
                     {
                         player.Stat[i].BaseStat = 0;
                     }

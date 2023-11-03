@@ -11,7 +11,5 @@ namespace Intersect.Enums
         MagicResist,
 
         Speed,
-
-        StatCount,
     }
 }

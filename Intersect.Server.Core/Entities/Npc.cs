@@ -39,8 +39,10 @@ namespace Intersect.Server.Entities
         /// <summary>
         /// Returns the entity that ranks the highest on this NPC's damage map.
         /// </summary>
-        public Entity DamageMapHighest { 
-            get {
+        public Entity DamageMapHighest
+        {
+            get
+            {
                 long damage = 0;
                 Entity top = null;
                 foreach (var pair in DamageMap)
@@ -53,7 +55,7 @@ namespace Intersect.Server.Entities
                     }
                 }
                 return top;
-            } 
+            }
         }
 
         public bool Despawnable;
@@ -112,10 +114,10 @@ namespace Intersect.Server.Entities
             Base = myBase;
             Despawnable = despawnable;
 
-            for (var i = 0; i < (int) Enums.Stat.StatCount; i++)
+            for (var i = 0; i < Enum.GetValues<Stat>().Length; i++)
             {
                 BaseStats[i] = myBase.Stats[i];
-                Stat[i] = new Combat.Stat((Stat) i, this);
+                Stat[i] = new Combat.Stat((Stat)i, this);
             }
 
             var spellSlot = 0;
@@ -138,13 +140,13 @@ namespace Intersect.Server.Entities
                 itemSlot++;
             }
 
-            for (var i = 0; i < (int) Vital.VitalCount; i++)
+            for (var i = 0; i < (int)Vital.VitalCount; i++)
             {
                 SetMaxVital(i, myBase.MaxVital[i]);
                 SetVital(i, myBase.MaxVital[i]);
             }
 
-            Range = (byte) myBase.SightRange;
+            Range = (byte)myBase.SightRange;
             mPathFinder = new Pathfinder(this);
         }
 
@@ -161,7 +163,8 @@ namespace Intersect.Server.Entities
 
         public override void Die(bool generateLoot = true, Entity killer = null)
         {
-            lock (EntityLock) {
+            lock (EntityLock)
+            {
                 base.Die(generateLoot, killer);
 
                 AggroCenterMap = null;
@@ -201,7 +204,7 @@ namespace Intersect.Server.Entities
             {
                 if (en == null)
                 {
-                                    return;
+                    return;
 
                 }
                 else
@@ -281,7 +284,7 @@ namespace Intersect.Server.Entities
             {
                 Target = en;
             }
-            
+
             if (Target != oldTarget)
             {
                 CombatTimer = Timing.Global.Milliseconds + Options.CombatTime;
@@ -529,7 +532,7 @@ namespace Intersect.Server.Entities
                 blockerType = MovementBlockerType.MapAttribute;
                 return false;
             }
-            
+
             if (
                 !base.CanMoveInDirection(direction, out blockerType, out entityType)
                 && blockerType == MovementBlockerType.Entity
@@ -557,34 +560,34 @@ namespace Intersect.Server.Entities
                 case Direction.Up:
                     yOffset--;
                     break;
-                    
+
                 case Direction.Down:
                     yOffset++;
                     break;
-                    
+
                 case Direction.Left:
                     xOffset--;
                     break;
-                    
+
                 case Direction.Right:
                     xOffset++;
                     break;
-                    
+
                 case Direction.UpLeft:
                     yOffset--;
                     xOffset--;
                     break;
-                    
+
                 case Direction.UpRight:
                     yOffset--;
                     xOffset++;
                     break;
-                    
+
                 case Direction.DownLeft:
                     yOffset++;
                     xOffset--;
                     break;
-                    
+
                 case Direction.DownRight:
                     yOffset++;
                     xOffset++;
@@ -824,7 +827,7 @@ namespace Intersect.Server.Entities
                             {
                                 mResetDistance = distance;
                             }
-                            else 
+                            else
                             {
                                 // Something is fishy here.. We appear to be stuck in a reset loop?
                                 // Give it a few more attempts and reset the NPC's center if we're stuck!
@@ -836,7 +839,7 @@ namespace Intersect.Server.Entities
                                     mResetDistance = 0;
                                 }
                             }
-                            
+
                         }
 
                         if (tempTarget != null && (tempTarget.IsDead() || !InRangeOf(tempTarget, Options.MapWidth * 2)))
@@ -1011,7 +1014,7 @@ namespace Intersect.Server.Entities
                                                     mPathFinder?.SetTarget(null);
                                                     mResetting = false;
                                                 }
-                                            }  
+                                            }
                                         }
 
                                         break;
@@ -1268,7 +1271,7 @@ namespace Intersect.Server.Entities
                 AggroCenterY = 0;
                 AggroCenterZ = 0;
             }
-            
+
             // Reset our vitals and statusses when configured.
             if (resetVitals)
             {
@@ -1290,7 +1293,7 @@ namespace Intersect.Server.Entities
             {
                 Warp(AggroCenterMap.Id, AggroCenterX, AggroCenterY);
             }
-            
+
             Reset(true, true);
         }
 
@@ -1410,7 +1413,7 @@ namespace Intersect.Server.Entities
             var closestRange = Range + 1; //If the range is out of range we didn't find anything.
             var closestIndex = -1;
             var highestDmgIndex = -1;
-           
+
             if (DamageMap.Count > 0)
             {
                 // Go through all of our potential targets in order of damage done as instructed and select the first matching one.
@@ -1422,11 +1425,11 @@ namespace Intersect.Server.Entities
                     {
                         continue;
                     }
-                    
+
                     // Is this entry dead?, if so skip it.
                     if (en.Key.IsDead())
                     {
-                        continue;   
+                        continue;
                     }
 
                     // Is this entity on our instance anymore? If not skip it, but don't remove it in case they come back and need item drop determined
@@ -1445,8 +1448,8 @@ namespace Intersect.Server.Entities
                         {
                             highestDmgIndex = possibleTargets.Count - 1;
                             highestDamage = en.Value;
-                        }    
-                        
+                        }
+
                     }
                 }
             }
@@ -1559,7 +1562,7 @@ namespace Intersect.Server.Entities
                     continue;
                 }
 
-                var vitalId = (int) vital;
+                var vitalId = (int)vital;
                 var vitalValue = GetVital(vital);
                 var maxVitalValue = GetMaxVital(vital);
                 if (vitalValue >= maxVitalValue)
@@ -1568,7 +1571,7 @@ namespace Intersect.Server.Entities
                 }
 
                 var vitalRegenRate = Base.VitalRegen[vitalId] / 100f;
-                var regenValue = (int) Math.Max(1, maxVitalValue * vitalRegenRate) *
+                var regenValue = (int)Math.Max(1, maxVitalValue * vitalRegenRate) *
                                  Math.Abs(Math.Sign(vitalRegenRate));
 
                 AddVital(vital, regenValue);
@@ -1663,7 +1666,7 @@ namespace Intersect.Server.Entities
 
             packet = base.EntityPacket(packet, forPlayer);
 
-            var pkt = (NpcEntityPacket) packet;
+            var pkt = (NpcEntityPacket)packet;
             pkt.Aggression = GetAggression(forPlayer);
 
             return pkt;

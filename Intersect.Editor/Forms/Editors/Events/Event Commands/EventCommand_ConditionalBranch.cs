@@ -50,7 +50,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             var typeIndex = 0;
             foreach (var itm in Strings.EventConditional.conditions)
             {
-                if (itm.Key == (int) Condition.Type)
+                if (itm.Key == (int)Condition.Type)
                 {
                     cmbConditionType.SelectedIndex = typeIndex;
 
@@ -64,7 +64,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             nudVariableValue.Maximum = long.MaxValue;
             chkNegated.Checked = refCommand.Negated;
             chkHasElse.Checked = refCommand.ElseEnabled;
-            SetupFormValues((dynamic) refCommand);
+            SetupFormValues((dynamic)refCommand);
             mLoading = false;
         }
 
@@ -165,7 +165,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             lblLevelOrStat.Text = Strings.EventConditional.levelstatitem;
             cmbLevelStat.Items.Clear();
             cmbLevelStat.Items.Add(Strings.EventConditional.level);
-            for (var i = 0; i < (int) Stat.StatCount; i++)
+            for (var i = 0; i < Enum.GetValues<Stat>().Length; i++)
             {
                 cmbLevelStat.Items.Add(Strings.Combat.stats[i]);
             }
@@ -276,7 +276,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             {
                 case ConditionTypes.VariableIs:
                     Condition = new VariableIsCondition();
-                    SetupFormValues((dynamic) Condition);
+                    SetupFormValues((dynamic)Condition);
 
                     break;
                 case ConditionTypes.HasItem:
@@ -385,7 +385,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                     break;
                 case ConditionTypes.HasFreeInventorySlots:
                     Condition = new HasFreeInventorySlots();
-                    
+
 
                     break;
                 case ConditionTypes.InGuildWithRank:
@@ -582,7 +582,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            SaveFormValues((dynamic) Condition);
+            SaveFormValues((dynamic)Condition);
             Condition.Negated = chkNegated.Checked;
             Condition.ElseEnabled = chkHasElse.Checked;
 
@@ -626,10 +626,10 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                 type = 0;
             }
 
-            UpdateFormElements((ConditionTypes) type);
-            if ((ConditionTypes) type != Condition.Type)
+            UpdateFormElements((ConditionTypes)type);
+            if ((ConditionTypes)type != Condition.Type)
             {
-                ConditionTypeChanged((ConditionTypes) type);
+                ConditionTypeChanged((ConditionTypes)type);
             }
         }
 
@@ -667,7 +667,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         {
             var frmWarpSelection = new FrmWarpSelection();
             frmWarpSelection.InitForm(false, null);
-            frmWarpSelection.SelectTile((Guid) btnSelectMap.Tag, 0, 0);
+            frmWarpSelection.SelectTile((Guid)btnSelectMap.Tag, 0, 0);
             frmWarpSelection.TopMost = true;
             frmWarpSelection.ShowDialog();
             if (frmWarpSelection.GetResult())
@@ -731,7 +731,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                     var playerVar = PlayerVariableBase.FromList(cmbVariable.SelectedIndex);
                     if (playerVar != null)
                     {
-                        varType = (byte) playerVar.Type;
+                        varType = (byte)playerVar.Type;
                     }
                 }
                 else if (rdoGlobalVariable.Checked)
@@ -739,7 +739,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                     var serverVar = ServerVariableBase.FromList(cmbVariable.SelectedIndex);
                     if (serverVar != null)
                     {
-                        varType = (byte) serverVar.Type;
+                        varType = (byte)serverVar.Type;
                     }
                 }
                 else if (rdoGuildVariable.Checked)
@@ -763,17 +763,17 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             //Load the correct editor
             if (varType > 0)
             {
-                switch ((VariableDataType) varType)
+                switch ((VariableDataType)varType)
                 {
                     case VariableDataType.Boolean:
                         grpBooleanVariable.Show();
-                        TryLoadVariableBooleanComparison(((VariableIsCondition) Condition).Comparison);
+                        TryLoadVariableBooleanComparison(((VariableIsCondition)Condition).Comparison);
 
                         break;
 
                     case VariableDataType.Integer:
                         grpNumericVariable.Show();
-                        TryLoadVariableIntegerComparison(((VariableIsCondition) Condition).Comparison);
+                        TryLoadVariableIntegerComparison(((VariableIsCondition)Condition).Comparison);
                         UpdateNumericVariableElements();
 
                         break;
@@ -783,7 +783,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 
                     case VariableDataType.String:
                         grpStringVariable.Show();
-                        TryLoadVariableStringComparison(((VariableIsCondition) Condition).Comparison);
+                        TryLoadVariableStringComparison(((VariableIsCondition)Condition).Comparison);
 
                         break;
 
@@ -983,7 +983,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 
             if (rdoVarCompareStaticValue.Checked)
             {
-                comparison.Value = (long) nudVariableValue.Value;
+                comparison.Value = (long)nudVariableValue.Value;
             }
             else if (rdoVarCompareGlobalVar.Checked)
             {
@@ -1282,9 +1282,9 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 
         private void SetupFormValues(LevelOrStatCondition condition)
         {
-            cmbLevelComparator.SelectedIndex = (int) condition.Comparator;
+            cmbLevelComparator.SelectedIndex = (int)condition.Comparator;
             nudLevelStatValue.Value = condition.Value;
-            cmbLevelStat.SelectedIndex = condition.ComparingLevel ? 0 : (int) condition.Stat + 1;
+            cmbLevelStat.SelectedIndex = condition.ComparingLevel ? 0 : (int)condition.Stat + 1;
             chkStatIgnoreBuffs.Checked = condition.IgnoreBuffs;
         }
 
@@ -1296,7 +1296,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 
         private void SetupFormValues(AccessIsCondition condition)
         {
-            cmbPower.SelectedIndex = (int) condition.Access;
+            cmbPower.SelectedIndex = (int)condition.Access;
         }
 
         private void SetupFormValues(TimeBetweenCondition condition)
@@ -1313,7 +1313,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         private void SetupFormValues(QuestInProgressCondition condition)
         {
             cmbQuestInProgress.SelectedIndex = QuestBase.ListIndex(condition.QuestId);
-            cmbTaskModifier.SelectedIndex = (int) condition.Progress;
+            cmbTaskModifier.SelectedIndex = (int)condition.Progress;
             if (cmbTaskModifier.SelectedIndex == -1)
             {
                 cmbTaskModifier.SelectedIndex = 0;
@@ -1359,7 +1359,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 
         private void SetupFormValues(GenderIsCondition condition)
         {
-            cmbGender.SelectedIndex = (int) condition.Gender;
+            cmbGender.SelectedIndex = (int)condition.Gender;
         }
 
         private void SetupFormValues(MapIsCondition condition)
@@ -1448,7 +1448,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         private void SaveFormValues(HasItemCondition condition)
         {
             condition.ItemId = ItemBase.IdFromList(cmbItem.SelectedIndex);
-            condition.Quantity = (int) nudItemAmount.Value;
+            condition.Quantity = (int)nudItemAmount.Value;
             if (rdoInvPlayerVariable.Checked)
             {
                 condition.VariableType = VariableType.PlayerVariable;
@@ -1480,12 +1480,12 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 
         private void SaveFormValues(LevelOrStatCondition condition)
         {
-            condition.Comparator = (VariableComparator) cmbLevelComparator.SelectedIndex;
-            condition.Value = (int) nudLevelStatValue.Value;
+            condition.Comparator = (VariableComparator)cmbLevelComparator.SelectedIndex;
+            condition.Value = (int)nudLevelStatValue.Value;
             condition.ComparingLevel = cmbLevelStat.SelectedIndex == 0;
             if (!condition.ComparingLevel)
             {
-                condition.Stat = (Stat) (cmbLevelStat.SelectedIndex - 1);
+                condition.Stat = (Stat)(cmbLevelStat.SelectedIndex - 1);
             }
 
             condition.IgnoreBuffs = chkStatIgnoreBuffs.Checked;
@@ -1499,7 +1499,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 
         private void SaveFormValues(AccessIsCondition condition)
         {
-            condition.Access = (Access) cmbPower.SelectedIndex;
+            condition.Access = (Access)cmbPower.SelectedIndex;
         }
 
         private void SaveFormValues(TimeBetweenCondition condition)
@@ -1516,7 +1516,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         private void SaveFormValues(QuestInProgressCondition condition)
         {
             condition.QuestId = QuestBase.IdFromList(cmbQuestInProgress.SelectedIndex);
-            condition.Progress = (QuestProgressState) cmbTaskModifier.SelectedIndex;
+            condition.Progress = (QuestProgressState)cmbTaskModifier.SelectedIndex;
             condition.TaskId = Guid.Empty;
             if (cmbTaskModifier.SelectedIndex != 0)
             {
@@ -1545,12 +1545,12 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 
         private void SaveFormValues(GenderIsCondition condition)
         {
-            condition.Gender = (Gender) cmbGender.SelectedIndex;
+            condition.Gender = (Gender)cmbGender.SelectedIndex;
         }
 
         private void SaveFormValues(MapIsCondition condition)
         {
-            condition.MapId = (Guid) btnSelectMap.Tag;
+            condition.MapId = (Guid)btnSelectMap.Tag;
         }
 
         private void SaveFormValues(IsItemEquippedCondition condition)
@@ -1560,7 +1560,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 
         private void SaveFormValues(HasFreeInventorySlots condition)
         {
-            condition.Quantity = (int) nudItemAmount.Value;
+            condition.Quantity = (int)nudItemAmount.Value;
             if (rdoInvPlayerVariable.Checked)
             {
                 condition.VariableType = VariableType.PlayerVariable;
@@ -1604,8 +1604,8 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             {
                 lblNpc.Hide();
                 cmbNpcs.Hide();
-                
-                return;   
+
+                return;
             }
 
             lblNpc.Show();

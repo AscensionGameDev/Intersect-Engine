@@ -181,7 +181,7 @@ namespace Intersect.Client.Entities
 
         IReadOnlyList<Guid> IEntity.Spells => Spells.Select(x => x.Id).ToList();
 
-        public int[] Stat { get; set; } = new int[(int)Enums.Stat.StatCount];
+        public int[] Stat { get; set; } = new int[Enum.GetValues<Stat>().Length];
 
         IReadOnlyList<int> IEntity.Stats => Stat.ToList();
 

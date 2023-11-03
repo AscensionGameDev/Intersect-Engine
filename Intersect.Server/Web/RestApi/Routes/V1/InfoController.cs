@@ -1,4 +1,5 @@
-﻿using Intersect.Server.General;
+﻿using Intersect.Enums;
+using Intersect.Server.General;
 using Intersect.Server.Metrics;
 using Intersect.Utilities;
 using Microsoft.AspNetCore.Authorization;
@@ -40,15 +41,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         }
 
         [HttpGet("config/stats")]
-        public object CombatStats()
-        {
-            return Enum
-                .GetValues(typeof(Enums.Stat))
-                .OfType<Enums.Stat>()
-                .Where(value => value != Enums.Stat.StatCount)
-                .Select(value => value.ToString())
-                .ToArray();
-        }
+        public object CombatStats() => Enum.GetNames<Stat>();
 
         [HttpGet("stats")]
         public object Stats()

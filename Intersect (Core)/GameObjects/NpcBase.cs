@@ -30,7 +30,7 @@ namespace Intersect.GameObjects
         public ConditionLists PlayerFriendConditions = new ConditionLists();
 
         [NotMapped]
-        public int[] Stats = new int[(int)Enums.Stat.StatCount];
+        public int[] Stats = new int[Enum.GetValues<Stat>().Length];
 
         [NotMapped]
         public int[] VitalRegen = new int[(int)Vital.VitalCount];
@@ -184,8 +184,8 @@ namespace Intersect.GameObjects
         [JsonIgnore]
         public string JsonMaxVital
         {
-            get => DatabaseUtils.SaveIntArray(MaxVital, (int) Vital.VitalCount);
-            set => DatabaseUtils.LoadIntArray(ref MaxVital, value, (int) Vital.VitalCount);
+            get => DatabaseUtils.SaveIntArray(MaxVital, (int)Vital.VitalCount);
+            set => DatabaseUtils.LoadIntArray(ref MaxVital, value, (int)Vital.VitalCount);
         }
 
         //NPC vs NPC Combat
@@ -237,8 +237,8 @@ namespace Intersect.GameObjects
         [JsonIgnore]
         public string JsonStat
         {
-            get => DatabaseUtils.SaveIntArray(Stats, (int) Enums.Stat.StatCount);
-            set => DatabaseUtils.LoadIntArray(ref Stats, value, (int) Enums.Stat.StatCount);
+            get => DatabaseUtils.SaveIntArray(Stats, Enum.GetValues<Stat>().Length);
+            set => DatabaseUtils.LoadIntArray(ref Stats, value, Enum.GetValues<Stat>().Length);
         }
 
         //Vital Regen %
@@ -246,8 +246,8 @@ namespace Intersect.GameObjects
         [Column("VitalRegen")]
         public string RegenJson
         {
-            get => DatabaseUtils.SaveIntArray(VitalRegen, (int) Vital.VitalCount);
-            set => VitalRegen = DatabaseUtils.LoadIntArray(value, (int) Vital.VitalCount);
+            get => DatabaseUtils.SaveIntArray(VitalRegen, (int)Vital.VitalCount);
+            set => VitalRegen = DatabaseUtils.LoadIntArray(value, (int)Vital.VitalCount);
         }
 
         /// <inheritdoc />
