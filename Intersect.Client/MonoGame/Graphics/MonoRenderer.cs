@@ -826,16 +826,16 @@ namespace Intersect.Client.MonoGame.Graphics
                 }
             }
 
-            var targetResolution = MathHelper.Clamp(database.TargetResolution, 0, validVideoModes.Count);
+            var targetResolution = MathHelper.Clamp(database.TargetResolution, 0, validVideoModes.Count - 1);
 
             if (targetResolution != database.TargetResolution)
             {
                 Debug.Assert(database != default, "database != null");
-                database.TargetResolution = 0;
+                database.TargetResolution = targetResolution;
                 database.SavePreference("Resolution", database.TargetResolution.ToString(CultureInfo.InvariantCulture));
             }
 
-            var targetVideoMode = validVideoModes?[MathHelper.Clamp(targetResolution, 0, validVideoModes.Count - 1)];
+            var targetVideoMode = validVideoModes[targetResolution];
             if (!string.IsNullOrWhiteSpace(targetVideoMode) && Resolution.TryParse(targetVideoMode, out var resolution))
             {
                 PreferredResolution = resolution;
