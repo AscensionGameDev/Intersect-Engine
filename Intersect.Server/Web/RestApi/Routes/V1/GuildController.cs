@@ -84,19 +84,17 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             }
 
             var guild = Guild.LoadGuild(guildId);
-            if (guild != null)
+            if (guild == null)
             {
-                if (guild.Rename(change.Name))
-                {
-                    return guild;
-                }
-                else
-                {
-                    return BadRequest($@"Invalid name, or name already taken.");
-                }
+                return NotFound($@"No guild with id '{guildId}'.");
             }
 
-            return NotFound($@"No guild with id '{guildId}'.");
+            if (guild.Rename(change.Name))
+            {
+                return guild;
+            }
+
+            return BadRequest($@"Invalid name, or name already taken.");
         }
 
         [Route("{guildId:guid}")]
@@ -104,14 +102,14 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         public object DisbandGuild(Guid guildId)
         {
             var guild = Guild.LoadGuild(guildId);
-            if (guild != null)
+            if (guild == null)
             {
-                Guild.DeleteGuild(guild);
-
-                return guild;
+                return NotFound($@"No guild with id '{guildId}'.");
             }
 
-            return NotFound($@"No guild with id '{guildId}'.");
+            Guild.DeleteGuild(guild);
+
+            return guild;
         }
 
         [HttpGet("{guildId:guid}/members")]
@@ -212,7 +210,6 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return BadRequest($@"Invalid guild rank, should be > 0 and < {Options.Instance.Guild.Ranks.Length}.");
             }
 
-
             var guild = Guild.LoadGuild(guildId);
 
             if (guild == null)
@@ -220,21 +217,19 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return BadRequest($@"Guild does not exist.");
             }
 
-            var (client, player) = Player.Fetch(lookupKey);
+            var (_, player) = Player.Fetch(lookupKey);
 
-            //Player not found
             if (player == null)
             {
                 return BadRequest($@"Player not found.");
             }
 
-            //Player is not a member of this guild
             if (!guild.IsMember(player.Id))
             {
                 return BadRequest($@"{player.Name} is not a member of {guild.Name}.");
             }
 
-            //Cannot kick the owner!
+            // Cannot kick the owner!
             if (player.GuildRank == 0)
             {
                 return BadRequest($@"Cannot change rank of the guild owner, transfer ownership first!");
@@ -253,7 +248,6 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return BadRequest(lookupKey.IsIdInvalid ? @"Invalid player id." : @"Invalid player name.");
             }
 
-
             var guild = Guild.LoadGuild(guildId);
 
             if (guild == null)
@@ -261,21 +255,19 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 return BadRequest($@"Guild does not exist.");
             }
 
-            var (client, player) = Player.Fetch(lookupKey);
+            var (_, player) = Player.Fetch(lookupKey);
 
-            //Player not found
             if (player == null)
             {
                 return BadRequest($@"Player not found.");
             }
 
-            //Player is not a member of this guild
             if (!guild.IsMember(player.Id))
             {
                 return BadRequest($@"{player.Name} is not a member of {guild.Name}.");
             }
 
-            //Cannot kick the owner!
+            // Cannot kick the owner!
             if (player.GuildRank == 0)
             {
                 return BadRequest($@"Cannot transfer ownership of a guild to ones self.");
