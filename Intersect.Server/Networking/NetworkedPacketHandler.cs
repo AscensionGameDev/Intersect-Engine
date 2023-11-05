@@ -369,7 +369,7 @@ internal sealed partial class NetworkedPacketHandler
                         {
                             if (tmpMap.MapGridY + 1 < grid.Height)
                             {
-                                tmpMap.Down = grid.MyGrid[tmpMap.MapGridX, tmpMap.MapGridY + 1];
+                                tmpMap.Down = grid.MapIdGrid[tmpMap.MapGridX, tmpMap.MapGridY + 1];
 
                                 if (tmpMap.Down != Guid.Empty)
                                 {
@@ -380,7 +380,7 @@ internal sealed partial class NetworkedPacketHandler
 
                             if (tmpMap.MapGridY - 1 >= 0)
                             {
-                                tmpMap.Up = grid.MyGrid[tmpMap.MapGridX, tmpMap.MapGridY - 1];
+                                tmpMap.Up = grid.MapIdGrid[tmpMap.MapGridX, tmpMap.MapGridY - 1];
 
                                 if (tmpMap.Up != Guid.Empty)
                                 {
@@ -394,7 +394,7 @@ internal sealed partial class NetworkedPacketHandler
                         {
                             if (tmpMap.MapGridX - 1 >= 0)
                             {
-                                tmpMap.Left = grid.MyGrid[tmpMap.MapGridX - 1, tmpMap.MapGridY];
+                                tmpMap.Left = grid.MapIdGrid[tmpMap.MapGridX - 1, tmpMap.MapGridY];
 
                                 if (tmpMap.Left != Guid.Empty)
                                 {
@@ -405,7 +405,7 @@ internal sealed partial class NetworkedPacketHandler
 
                             if (tmpMap.MapGridX + 1 < grid.Width)
                             {
-                                tmpMap.Right = grid.MyGrid[tmpMap.MapGridX + 1, tmpMap.MapGridY];
+                                tmpMap.Right = grid.MapIdGrid[tmpMap.MapGridX + 1, tmpMap.MapGridY];
 
                                 if (tmpMap.Right != Guid.Empty)
                                 {
@@ -617,27 +617,27 @@ internal sealed partial class NetworkedPacketHandler
                             var gridY = map.MapGridY;
 
                             //Up
-                            if (gridY - 1 >= 0 && grid.MyGrid[gridX, gridY - 1] != Guid.Empty)
+                            if (gridY - 1 >= 0 && grid.MapIdGrid[gridX, gridY - 1] != Guid.Empty)
                             {
-                                MapController.Get(grid.MyGrid[gridX, gridY - 1])?.ClearConnections(Direction.Down);
+                                MapController.Get(grid.MapIdGrid[gridX, gridY - 1])?.ClearConnections(Direction.Down);
                             }
 
                             //Down
-                            if (gridY + 1 < grid.Height && grid.MyGrid[gridX, gridY + 1] != Guid.Empty)
+                            if (gridY + 1 < grid.Height && grid.MapIdGrid[gridX, gridY + 1] != Guid.Empty)
                             {
-                                MapController.Get(grid.MyGrid[gridX, gridY + 1])?.ClearConnections(Direction.Up);
+                                MapController.Get(grid.MapIdGrid[gridX, gridY + 1])?.ClearConnections(Direction.Up);
                             }
 
                             //Left
-                            if (gridX - 1 >= 0 && grid.MyGrid[gridX - 1, gridY] != Guid.Empty)
+                            if (gridX - 1 >= 0 && grid.MapIdGrid[gridX - 1, gridY] != Guid.Empty)
                             {
-                                MapController.Get(grid.MyGrid[gridX - 1, gridY])?.ClearConnections(Direction.Right);
+                                MapController.Get(grid.MapIdGrid[gridX - 1, gridY])?.ClearConnections(Direction.Right);
                             }
 
                             //Right
-                            if (gridX + 1 < grid.Width && grid.MyGrid[gridX + 1, gridY] != Guid.Empty)
+                            if (gridX + 1 < grid.Width && grid.MapIdGrid[gridX + 1, gridY] != Guid.Empty)
                             {
-                                MapController.Get(grid.MyGrid[gridX + 1, gridY])?.ClearConnections(Direction.Left);
+                                MapController.Get(grid.MapIdGrid[gridX + 1, gridY])?.ClearConnections(Direction.Left);
                             }
 
                             DbInterface.GenerateMapGrids();
@@ -690,16 +690,16 @@ internal sealed partial class NetworkedPacketHandler
                                     y + yOffset >= 0 &&
                                     y + yOffset < linkGrid.Height)
                                 {
-                                    if (adjacentGrid.MyGrid[x, y] != Guid.Empty &&
-                                        linkGrid.MyGrid[x + xOffset, y + yOffset] != Guid.Empty)
+                                    if (adjacentGrid.MapIdGrid[x, y] != Guid.Empty &&
+                                        linkGrid.MapIdGrid[x + xOffset, y + yOffset] != Guid.Empty)
                                     {
                                         //Incompatible Link!
                                         PacketSender.SendError(
                                             client,
                                             Strings.Mapping.linkfailerror.ToString(
                                                 MapBase.GetName(linkMapId), MapBase.GetName(adjacentMapId),
-                                                MapBase.GetName(adjacentGrid.MyGrid[x, y]),
-                                                MapBase.GetName(linkGrid.MyGrid[x + xOffset, y + yOffset])
+                                                MapBase.GetName(adjacentGrid.MapIdGrid[x, y]),
+                                                MapBase.GetName(linkGrid.MapIdGrid[x + xOffset, y + yOffset])
                                             ), Strings.Mapping.linkfail
                                         );
 
@@ -721,53 +721,53 @@ internal sealed partial class NetworkedPacketHandler
                                         y + yOffset >= 0 &&
                                         y + yOffset < linkGrid.Height)
                                     {
-                                        if (linkGrid.MyGrid[x + xOffset, y + yOffset] != Guid.Empty)
+                                        if (linkGrid.MapIdGrid[x + xOffset, y + yOffset] != Guid.Empty)
                                         {
                                             var inXBounds = x > -1 && x < adjacentGrid.Width;
                                             var inYBounds = y > -1 && y < adjacentGrid.Height;
                                             if (inXBounds && inYBounds)
                                             {
-                                                adjacentGrid.MyGrid[x, y] = linkGrid.MyGrid[x + xOffset, y + yOffset];
+                                                adjacentGrid.MapIdGrid[x, y] = linkGrid.MapIdGrid[x + xOffset, y + yOffset];
                                             }
 
-                                            if (inXBounds && y - 1 >= 0 && adjacentGrid.MyGrid[x, y - 1] != Guid.Empty)
+                                            if (inXBounds && y - 1 >= 0 && adjacentGrid.MapIdGrid[x, y - 1] != Guid.Empty)
                                             {
-                                                MapController.Get(linkGrid.MyGrid[x + xOffset, y + yOffset]).Up = adjacentGrid.MyGrid[x, y - 1];
-                                                updatedMaps.Add(MapController.Get(linkGrid.MyGrid[x + xOffset, y + yOffset]));
+                                                MapController.Get(linkGrid.MapIdGrid[x + xOffset, y + yOffset]).Up = adjacentGrid.MapIdGrid[x, y - 1];
+                                                updatedMaps.Add(MapController.Get(linkGrid.MapIdGrid[x + xOffset, y + yOffset]));
 
-                                                MapController.Get(adjacentGrid.MyGrid[x, y - 1]).Down = linkGrid.MyGrid[x + xOffset, y + yOffset];
-                                                updatedMaps.Add(MapController.Get(adjacentGrid.MyGrid[x, y - 1]));
+                                                MapController.Get(adjacentGrid.MapIdGrid[x, y - 1]).Down = linkGrid.MapIdGrid[x + xOffset, y + yOffset];
+                                                updatedMaps.Add(MapController.Get(adjacentGrid.MapIdGrid[x, y - 1]));
                                             }
 
                                             if (inXBounds &&
                                                 y + 1 < adjacentGrid.Height &&
-                                                adjacentGrid.MyGrid[x, y + 1] != Guid.Empty)
+                                                adjacentGrid.MapIdGrid[x, y + 1] != Guid.Empty)
                                             {
-                                                MapController.Get(linkGrid.MyGrid[x + xOffset, y + yOffset]).Down = adjacentGrid.MyGrid[x, y + 1];
-                                                updatedMaps.Add(MapController.Get(linkGrid.MyGrid[x + xOffset, y + yOffset]));
+                                                MapController.Get(linkGrid.MapIdGrid[x + xOffset, y + yOffset]).Down = adjacentGrid.MapIdGrid[x, y + 1];
+                                                updatedMaps.Add(MapController.Get(linkGrid.MapIdGrid[x + xOffset, y + yOffset]));
 
-                                                MapController.Get(adjacentGrid.MyGrid[x, y + 1]).Up = linkGrid.MyGrid[x + xOffset, y + yOffset];
-                                                updatedMaps.Add(MapController.Get(adjacentGrid.MyGrid[x, y + 1]));
+                                                MapController.Get(adjacentGrid.MapIdGrid[x, y + 1]).Up = linkGrid.MapIdGrid[x + xOffset, y + yOffset];
+                                                updatedMaps.Add(MapController.Get(adjacentGrid.MapIdGrid[x, y + 1]));
                                             }
 
-                                            if (inYBounds && x - 1 >= 0 && adjacentGrid.MyGrid[x - 1, y] != Guid.Empty)
+                                            if (inYBounds && x - 1 >= 0 && adjacentGrid.MapIdGrid[x - 1, y] != Guid.Empty)
                                             {
-                                                MapController.Get(linkGrid.MyGrid[x + xOffset, y + yOffset]).Left = adjacentGrid.MyGrid[x - 1, y];
-                                                updatedMaps.Add(MapController.Get(linkGrid.MyGrid[x + xOffset, y + yOffset]));
+                                                MapController.Get(linkGrid.MapIdGrid[x + xOffset, y + yOffset]).Left = adjacentGrid.MapIdGrid[x - 1, y];
+                                                updatedMaps.Add(MapController.Get(linkGrid.MapIdGrid[x + xOffset, y + yOffset]));
 
-                                                MapController.Get(adjacentGrid.MyGrid[x - 1, y]).Right = linkGrid.MyGrid[x + xOffset, y + yOffset];
-                                                updatedMaps.Add(MapController.Get(adjacentGrid.MyGrid[x - 1, y]));
+                                                MapController.Get(adjacentGrid.MapIdGrid[x - 1, y]).Right = linkGrid.MapIdGrid[x + xOffset, y + yOffset];
+                                                updatedMaps.Add(MapController.Get(adjacentGrid.MapIdGrid[x - 1, y]));
                                             }
 
                                             if (inYBounds &&
                                                 x + 1 < adjacentGrid.Width &&
-                                                adjacentGrid.MyGrid[x + 1, y] != Guid.Empty)
+                                                adjacentGrid.MapIdGrid[x + 1, y] != Guid.Empty)
                                             {
-                                                MapController.Get(linkGrid.MyGrid[x + xOffset, y + yOffset]).Right = adjacentGrid.MyGrid[x + 1, y];
-                                                updatedMaps.Add(MapController.Get(linkGrid.MyGrid[x + xOffset, y + yOffset]));
+                                                MapController.Get(linkGrid.MapIdGrid[x + xOffset, y + yOffset]).Right = adjacentGrid.MapIdGrid[x + 1, y];
+                                                updatedMaps.Add(MapController.Get(linkGrid.MapIdGrid[x + xOffset, y + yOffset]));
 
-                                                MapController.Get(adjacentGrid.MyGrid[x + 1, y]).Left = linkGrid.MyGrid[x + xOffset, y + yOffset];
-                                                updatedMaps.Add(MapController.Get(adjacentGrid.MyGrid[x + 1, y]));
+                                                MapController.Get(adjacentGrid.MapIdGrid[x + 1, y]).Left = linkGrid.MapIdGrid[x + xOffset, y + yOffset];
+                                                updatedMaps.Add(MapController.Get(adjacentGrid.MapIdGrid[x + 1, y]));
                                             }
                                         }
                                     }

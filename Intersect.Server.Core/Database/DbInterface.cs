@@ -1565,30 +1565,25 @@ namespace Intersect.Server.Database
                 mapGrids.Clear();
                 foreach (var map in MapController.Lookup.Values)
                 {
-                    if (mapGrids.Count == 0)
+                    if (mapGrids.Count < 1)
                     {
                         mapGrids.Add(new MapGrid(map.Id, 0));
+                        continue;
                     }
-                    else
+
+                    for (var y = 0; y < mapGrids.Count; y++)
                     {
-                        for (var y = 0; y < mapGrids.Count; y++)
+                        if (!mapGrids[y].Contains(map.Id))
                         {
-                            if (!mapGrids[y].HasMap(map.Id))
+                            if (y != mapGrids.Count - 1)
                             {
-                                if (y != mapGrids.Count - 1)
-                                {
-                                    continue;
-                                }
-
-                                mapGrids.Add(new MapGrid(map.Id, mapGrids.Count));
-
-                                break;
+                                continue;
                             }
-                            else
-                            {
-                                break;
-                            }
+
+                            mapGrids.Add(new MapGrid(map.Id, mapGrids.Count));
                         }
+
+                        break;
                     }
                 }
 
@@ -1596,7 +1591,8 @@ namespace Intersect.Server.Database
                 {
                     lock (map.GetMapLock())
                     {
-                        var myGrid = map.MapGrid;
+                        var gridIndex = map.MapGrid;
+                        var grid = mapGrids[gridIndex];
                         var surroundingMapIds = new List<Guid>();
                         var surroundingMaps = new List<MapController>();
                         for (var x = map.MapGridX - 1; x <= map.MapGridX + 1; x++)
@@ -1608,15 +1604,21 @@ namespace Intersect.Server.Database
                                     continue;
                                 }
 
-                                if (x >= mapGrids[myGrid].XMin &&
-                                    x < mapGrids[myGrid].XMax &&
-                                    y >= mapGrids[myGrid].YMin &&
-                                    y < mapGrids[myGrid].YMax &&
-                                    mapGrids[myGrid].MyGrid[x, y] != Guid.Empty)
+                                if (x < grid.XMin || x >= grid.XMax || y < grid.YMin || y >= grid.YMax)
                                 {
+                                    continue;
+                                }
 
-                                    surroundingMapIds.Add(mapGrids[myGrid].MyGrid[x, y]);
-                                    surroundingMaps.Add(MapController.Get(mapGrids[myGrid].MyGrid[x, y]));
+                                if (grid.MapIdGrid[x, y] == Guid.Empty)
+                                {
+                                    continue;
+                                }
+
+                                var idFromGrid = grid.MapIdGrid[x, y];
+                                surroundingMapIds.Add(idFromGrid);
+                                if (MapController.TryGet(idFromGrid, out var mapOnGrid))
+                                {
+                                    surroundingMaps.Add(mapOnGrid);
                                 }
                             }
                         }
@@ -1625,9 +1627,9 @@ namespace Intersect.Server.Database
                     }
                 }
 
-                for (var i = 0; i < mapGrids.Count; i++)
+                for (var gridIndex = 0; gridIndex < mapGrids.Count; gridIndex++)
                 {
-                    PacketSender.SendMapGridToAll(i);
+                    PacketSender.SendMapGridToAll(gridIndex);
                 }
             }
         }
@@ -1644,7 +1646,7 @@ namespace Intersect.Server.Database
         {
             lock (mapGrids)
             {
-                return mapGrids.Any(g => g.HasMap(id));
+                return mapGrids.Any(mapGrid => mapGrid.Contains(id));
             }
         }
 

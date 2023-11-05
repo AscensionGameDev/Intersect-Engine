@@ -334,7 +334,15 @@ namespace Intersect.Server.Networking
                     timeDesync = false;
                 }
 
-                if (Debugger.IsAttached)
+                var logDiagnostics = Debugger.IsAttached;
+#if !DIAGNOSTIC
+                if (packet is PingPacket)
+                {
+                    logDiagnostics = false;
+                }
+#endif
+
+                if (logDiagnostics)
                 {
                     Log.Debug(
                         "\n\t" +
@@ -659,18 +667,30 @@ namespace Intersect.Server.Networking
         public void HandlePacket(Client client, NeedMapPacket packet)
         {
             var player = client?.Entity;
-            foreach (var mapId in packet.MapIds)
-            {
-                if (!MapController.TryGet(mapId, out var mapController))
-                {
-                    continue;
-                }
 
+            if (player == default)
+            {
+                return;
+            }
+
+            if (!MapController.TryGet(player.MapId, out var playerMapController))
+            {
+                return;
+            }
+
+            var playerMapGrid = DbInterface.GetGrid(playerMapController.MapGrid);
+            var validIds = packet.MapIds.Where(playerMapGrid.MapIds.Contains)
+                .Where(MapController.Lookup.Keys.Contains)
+                .ToArray();
+
+            if (validIds.Contains(player.MapId))
+            {
+                PacketSender.SendMapGrid(client, playerMapGrid);
+            }
+
+            foreach (var mapId in validIds)
+            {
                 PacketSender.SendMap(client, mapId);
-                if (player != null && mapId == player.MapId)
-                {
-                    PacketSender.SendMapGrid(client, mapController.MapGrid);
-                }
             }
         }
 

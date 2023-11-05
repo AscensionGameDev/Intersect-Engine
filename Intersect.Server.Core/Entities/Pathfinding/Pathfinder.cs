@@ -99,9 +99,9 @@ namespace Intersect.Server.Entities.Pathfinding
                                     continue;
                                 }
 
-                                if (grid.MyGrid[x, y] != Guid.Empty)
+                                if (grid.MapIdGrid[x, y] != Guid.Empty)
                                 {
-                                    if (grid.MyGrid[x, y] == mTarget.TargetMapId)
+                                    if (grid.MapIdGrid[x, y] == mTarget.TargetMapId)
                                     {
                                         targetX = (x - gridX + 1) * Options.MapWidth + mTarget.TargetX;
                                         targetY = (y - gridY + 1) * Options.MapHeight + mTarget.TargetY;
@@ -179,7 +179,7 @@ namespace Intersect.Server.Entities.Pathfinding
                                                 continue;
                                             }
 
-                                            if (MapController.TryGetInstanceFromMap(grid.MyGrid[x, y], mEntity.MapInstanceId, out var instance))
+                                            if (MapController.TryGetInstanceFromMap(grid.MapIdGrid[x, y], mEntity.MapInstanceId, out var instance))
                                             {
                                                 //Copy the cached array of tile blocks
 

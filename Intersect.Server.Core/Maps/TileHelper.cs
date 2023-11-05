@@ -87,9 +87,9 @@ namespace Intersect.Server.Maps
             switch (direction)
             {
                 case (int) Direction.Up:
-                    if (gridY > 0 && grid.MyGrid[gridX, gridY - 1] != Guid.Empty)
+                    if (gridY > 0 && grid.MapIdGrid[gridX, gridY - 1] != Guid.Empty)
                     {
-                        mMapId = grid.MyGrid[gridX, gridY - 1];
+                        mMapId = grid.MapIdGrid[gridX, gridY - 1];
                         mTileY += Options.MapHeight;
 
                         return true;
@@ -97,9 +97,9 @@ namespace Intersect.Server.Maps
 
                     return false;
                 case (int) Direction.Down:
-                    if (gridY + 1 < grid.Height && grid.MyGrid[gridX, gridY + 1] != Guid.Empty)
+                    if (gridY + 1 < grid.Height && grid.MapIdGrid[gridX, gridY + 1] != Guid.Empty)
                     {
-                        mMapId = grid.MyGrid[gridX, gridY + 1];
+                        mMapId = grid.MapIdGrid[gridX, gridY + 1];
                         mTileY -= Options.MapHeight;
 
                         return true;
@@ -107,9 +107,9 @@ namespace Intersect.Server.Maps
 
                     return false;
                 case (int) Direction.Left:
-                    if (gridX > 0 && grid.MyGrid[gridX - 1, gridY] != Guid.Empty)
+                    if (gridX > 0 && grid.MapIdGrid[gridX - 1, gridY] != Guid.Empty)
                     {
-                        mMapId = grid.MyGrid[gridX - 1, gridY];
+                        mMapId = grid.MapIdGrid[gridX - 1, gridY];
                         mTileX += Options.MapWidth;
 
                         return true;
@@ -117,9 +117,9 @@ namespace Intersect.Server.Maps
 
                     return false;
                 case (int) Direction.Right:
-                    if (gridX + 1 < grid.Width && grid.MyGrid[gridX + 1, gridY] != Guid.Empty)
+                    if (gridX + 1 < grid.Width && grid.MapIdGrid[gridX + 1, gridY] != Guid.Empty)
                     {
-                        mMapId = grid.MyGrid[gridX + 1, gridY];
+                        mMapId = grid.MapIdGrid[gridX + 1, gridY];
                         mTileX -= Options.MapWidth;
 
                         return true;
