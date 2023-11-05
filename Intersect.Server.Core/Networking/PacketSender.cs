@@ -141,64 +141,61 @@ namespace Intersect.Server.Networking
                 return null;
             }
 
-            var map = MapController.Get(mapId);
-            if (map == null)
+            if (!MapController.TryGet(mapId, out var map))
             {
                 return new MapPacket(mapId, true);
             }
+
+            var mapPacket = new MapPacket(
+                mapId, false, map.JsonData, map.TileData, map.AttributeData, map.Revision, map.MapGridX,
+                map.MapGridY, new bool[4]
+            );
+
+            if (client.IsEditor)
+            {
+                foreach (var id in map.EventIds)
+                {
+                    var evt = EventBase.Get(id);
+                    if (evt != null)
+                    {
+                        SendGameObject(client, evt);
+                    }
+                }
+            }
             else
             {
-                var mapPacket = new MapPacket(
-                    mapId, false, map.JsonData, map.TileData, map.AttributeData, map.Revision, map.MapGridX,
-                    map.MapGridY, new bool[4]
-                );
-
-                if (client.IsEditor)
+                switch (Options.GameBorderStyle)
                 {
-                    foreach (var id in map.EventIds)
-                    {
-                        var evt = EventBase.Get(id);
-                        if (evt != null)
+                    case 1:
+                        mapPacket.CameraHolds = new bool[4] { true, true, true, true };
+
+                        break;
+
+                    case 0:
+                        var grid = DbInterface.GetGrid(map.MapGrid);
+                        if (grid != null)
                         {
-                            SendGameObject(client, evt);
-                        }
-                    }
-                }
-                else
-                {
-                    switch (Options.GameBorderStyle)
-                    {
-                        case 1:
-                            mapPacket.CameraHolds = new bool[4] { true, true, true, true };
-
-                            break;
-
-                        case 0:
-                            var grid = DbInterface.GetGrid(map.MapGrid);
-                            if (grid != null)
+                            mapPacket.CameraHolds = new bool[4]
                             {
-                                mapPacket.CameraHolds = new bool[4]
-                                {
-                                    0 == map.MapGridY, grid.YMax - 1 == map.MapGridY,
-                                    0 == map.MapGridX, grid.XMax - 1 == map.MapGridX
-                                };
-                            }
+                                0 == map.MapGridY, grid.YMax - 1 == map.MapGridY,
+                                0 == map.MapGridX, grid.XMax - 1 == map.MapGridX
+                            };
+                        }
 
-                            break;
-                    }
+                        break;
                 }
+            }
 
-                if (client.IsEditor)
-                {
-                    return mapPacket;
-                }
-                else
-                {
-                    mapPacket.MapItems = GenerateMapItemsPacket(client.Entity, mapId);
-                    mapPacket.MapEntities = GenerateMapEntitiesPacket(mapId, client.Entity);
+            if (client.IsEditor)
+            {
+                return mapPacket;
+            }
+            else
+            {
+                mapPacket.MapItems = GenerateMapItemsPacket(client.Entity, mapId);
+                mapPacket.MapEntities = GenerateMapEntitiesPacket(mapId, client.Entity);
 
-                    return mapPacket;
-                }
+                return mapPacket;
             }
         }
 
@@ -1354,27 +1351,20 @@ namespace Intersect.Server.Networking
         public static void SendMapGridToAll(MapGrid grid)
         {
             if (grid == null) return;
-            for (var i = 0; i < Globals.Clients.Count; i++)
+            var clients = Globals.Clients.ToArray();
+            foreach (var client in clients)
             {
-                if (Globals.Clients[i] != null)
+                if (client == default)
                 {
-                    if (Globals.Clients[i].IsEditor)
-                    {
-                        if (grid.HasMap(Globals.Clients[i].EditorMap))
-                        {
-                            SendMapGrid(Globals.Clients[i], grid);
-                        }
-                    }
-                    else
-                    {
-                        if (Globals.Clients[i].Entity != null)
-                        {
-                            if (grid.HasMap(Globals.Clients[i].Entity.MapId))
-                            {
-                                SendMapGrid(Globals.Clients[i], grid, true);
-                            }
-                        }
-                    }
+                    continue;
+                }
+
+                var isEditor = client.IsEditor;
+                var mapId = isEditor ? client.EditorMap : (client.Entity?.MapId ?? default);
+
+                if (grid.Contains(mapId))
+                {
+                    SendMapGrid(client, grid, clearKnownMaps: !isEditor);
                 }
             }
         }

@@ -253,25 +253,7 @@ namespace Intersect.Client.Core
             }
             else
             {
-                if (MapInstance.TryGet(Globals.Me.MapId, out var mapInstance))
-                {
-                    var gridX = mapInstance.GridX;
-                    var gridY = mapInstance.GridY;
-                    for (int x = gridX - 1; x <= gridX + 1; x++)
-                    {
-                        for (int y = gridY - 1; y <= gridY + 1; y++)
-                        {
-                            if (x >= 0 &&
-                                x < Globals.MapGridWidth &&
-                                y >= 0 &&
-                                y < Globals.MapGridHeight &&
-                                Globals.MapGrid[x, y] != Guid.Empty)
-                            {
-                                PacketSender.SendNeedMap(Globals.MapGrid[x, y]);
-                            }
-                        }
-                    }
-                }
+                PacketSender.SendNeedMapForGrid();
             }
 
             if (!Globals.NeedsMaps)

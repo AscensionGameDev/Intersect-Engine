@@ -205,36 +205,33 @@ namespace Intersect.Client.Networking
         private void HandleMap(IPacketSender packetSender, MapPacket packet)
         {
             var mapId = packet.MapId;
-            var map = MapInstance.Get(mapId);
-            if (map != null)
+            if (MapInstance.TryGet(mapId, out var mapInstance))
             {
-                if (packet.Revision == map.Revision)
+                if (packet.Revision == mapInstance.Revision)
                 {
                     return;
                 }
-                else
-                {
-                    map.Dispose(false, false);
-                }
+
+                mapInstance.Dispose(false, false);
             }
 
-            map = new MapInstance(mapId);
-            MapInstance.Lookup.Set(mapId, map);
-            lock (map.MapLock)
+            mapInstance = new MapInstance(mapId);
+            MapInstance.Lookup.Set(mapId, mapInstance);
+            lock (mapInstance.MapLock)
             {
-                map.Load(packet.Data);
-                map.LoadTileData(packet.TileData);
-                map.AttributeData = packet.AttributeData;
-                map.CreateMapSounds();
+                mapInstance.Load(packet.Data);
+                mapInstance.LoadTileData(packet.TileData);
+                mapInstance.AttributeData = packet.AttributeData;
+                mapInstance.CreateMapSounds();
                 if (mapId == Globals.Me.MapId)
                 {
-                    Audio.PlayMusic(map.Music, ClientConfiguration.Instance.MusicFadeTimer, ClientConfiguration.Instance.MusicFadeTimer, true);
+                    Audio.PlayMusic(mapInstance.Music, ClientConfiguration.Instance.MusicFadeTimer, ClientConfiguration.Instance.MusicFadeTimer, true);
                 }
 
-                map.GridX = packet.GridX;
-                map.GridY = packet.GridY;
-                map.CameraHolds = packet.CameraHolds;
-                map.Autotiles.InitAutotiles(map.GenerateAutotileGrid());
+                mapInstance.GridX = packet.GridX;
+                mapInstance.GridY = packet.GridY;
+                mapInstance.CameraHolds = packet.CameraHolds;
+                mapInstance.Autotiles.InitAutotiles(mapInstance.GenerateAutotileGrid());
 
                 //Process Entities and Items if provided in this packet
                 if (packet.MapEntities != null)
@@ -251,14 +248,14 @@ namespace Intersect.Client.Networking
                 {
                     foreach (var evt in Globals.PendingEvents[mapId])
                     {
-                        map.AddEvent(evt.Key, evt.Value);
+                        mapInstance.AddEvent(evt.Key, evt.Value);
                     }
 
                     Globals.PendingEvents[mapId].Clear();
                 }
             }
 
-            MapInstance.OnMapLoaded?.Invoke(map);
+            MapInstance.OnMapLoaded?.Invoke(mapInstance);
         }
 
         //MapPacket

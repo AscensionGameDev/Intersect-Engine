@@ -33,7 +33,7 @@ namespace Intersect.Client.Networking
         public static void SendNeedMap(params Guid[] mapIds)
         {
             var validMapIds = mapIds.Where(
-                    mapId => mapId != default && MapInstance.TryGet(mapId, out _) && MapInstance.MapNotRequested(mapId)
+                    mapId => mapId != default && !MapInstance.TryGet(mapId, out _) && MapInstance.MapNotRequested(mapId)
                 )
                 .ToArray();
             if (validMapIds.Length < 1)
@@ -45,7 +45,7 @@ namespace Intersect.Client.Networking
             MapInstance.UpdateMapRequestTime(validMapIds);
         }
 
-        public static void SendNeedMapForGrid(MapInstance? mapInstance)
+        public static void SendNeedMapForGrid(MapInstance? mapInstance = default)
         {
             if (mapInstance == default && !MapInstance.TryGet(Globals.Me.MapId, out mapInstance))
             {
@@ -56,18 +56,26 @@ namespace Intersect.Client.Networking
             var gridY = mapInstance.GridY;
             var minX = Math.Max(0, gridX - 1);
             var minY = Math.Max(0, gridY - 1);
-            var maxX = Math.Max(Globals.MapGridWidth, gridX + 2);
-            var maxY = Math.Max(Globals.MapGridHeight, gridY + 2);
+            var maxX = Math.Min(Globals.MapGridWidth, gridX + 2);
+            var maxY = Math.Min(Globals.MapGridHeight, gridY + 2);
+
+            List<Guid> idsToFetch = new(9);
+
             for (int x = minX; x < maxX; x++)
             {
                 for (int y = minY; y < maxY; y++)
                 {
-                    if (Globals.MapGrid[x, y] != Guid.Empty)
+                    var mapId = Globals.MapGrid[x, y];
+                    if (mapId == Guid.Empty)
                     {
-                        PacketSender.SendNeedMap(Globals.MapGrid[x, y]);
+                        continue;
                     }
+
+                    idsToFetch.Add(mapId);
                 }
             }
+
+            SendNeedMap(idsToFetch.ToArray());
         }
 
         public static void SendMove()
