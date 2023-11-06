@@ -31,6 +31,25 @@ public class Item : IItem
             .Aggregate(0, (totalQuantity, slot) => totalQuantity + slot.Quantity);
     }
 
+    public static int FindFirstPartialSlot<TItem>(Guid itemDescriptorId, TItem?[] slots, int maximumStack) where TItem : IItem
+    {
+        for (var slotIndex = 0; slotIndex < slots.Length; ++slotIndex)
+        {
+            var slot = slots[slotIndex];
+            if (slot?.ItemId != itemDescriptorId)
+            {
+                continue;
+            }
+
+            if (slot.Quantity < maximumStack)
+            {
+                return slotIndex;
+            }
+        }
+
+        return -1;
+    }
+
     public static int FindSpaceForItem<TItem>(
         Guid itemDescriptorId,
         int maximumStack,

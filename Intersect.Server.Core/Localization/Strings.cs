@@ -160,6 +160,9 @@ namespace Intersect.Server.Localization
                 @"You have stored: {00}";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString InvalidSlotToSwap = @"Invalid slots to swap!";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString inventorynospace =
                 @"There is no space left in your inventory for that item!";
 

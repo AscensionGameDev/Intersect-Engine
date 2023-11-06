@@ -794,6 +794,11 @@ namespace Intersect.Client.Entities
                 return false;
             }
 
+            if (bankSlotIndex < 0 && itemDescriptor.IsStackable)
+            {
+                bankSlotIndex = Item.FindFirstPartialSlot(itemDescriptor.Id, targetSlots, maximumStack);
+            }
+
             if (skipPrompt)
             {
                 PacketSender.SendDepositItem(inventorySlotIndex, movableQuantity, bankSlotIndex);
@@ -905,6 +910,11 @@ namespace Intersect.Client.Entities
                     ChatMessageType.Bank
                 ));
                 return false;
+            }
+
+            if (inventorySlotIndex < 0 && itemDescriptor.IsStackable)
+            {
+                inventorySlotIndex = Item.FindFirstPartialSlot(itemDescriptor.Id, targetSlots, maximumStack);
             }
 
             if (skipPrompt)

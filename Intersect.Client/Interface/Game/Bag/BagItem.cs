@@ -264,7 +264,7 @@ namespace Intersect.Client.Interface.Game.Bag
                             if (mMySlot != bestIntersectIndex)
                             {
                                 //Try to swap....
-                                PacketSender.SendMoveBagItems(bestIntersectIndex, mMySlot);
+                                PacketSender.SendMoveBagItems(mMySlot, bestIntersectIndex);
                             }
                         }
                     }
