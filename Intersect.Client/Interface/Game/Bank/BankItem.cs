@@ -298,7 +298,7 @@ namespace Intersect.Client.Interface.Game.Bank
 
                                 if (allowed)
                                 {
-                                    PacketSender.SendMoveBankItems(bestIntersectIndex, mMySlot);
+                                    PacketSender.SendMoveBankItems(mMySlot, bestIntersectIndex);
                                 }
 
                                 //Globals.Me.SwapItems(bestIntersectIndex, _mySlot);

@@ -12,6 +12,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Intersect.Localization;
+using Intersect.Utilities;
 using Serilog;
 using Log = Intersect.Logging.Log;
 
@@ -89,83 +90,6 @@ namespace Intersect.Server.Entities
         public void SendCloseBank()
         {
             mPlayer?.SendPacket(new BankPacket(true, false, -1, null));
-        }
-
-        /// <summary>
-        /// Retrieves a list of open bank slots for this instance.
-        /// </summary>
-        /// <returns>Returns a list of open slots in this bank instance.</returns>
-        public List<int> FindOpenSlots()
-        {
-            var slots = new List<int>();
-            for (var i = 0; i < mMaxSlots; i++)
-            {
-                var bankSlot = mBank[i];
-
-                if (bankSlot != null && bankSlot.ItemId == Guid.Empty)
-                {
-                    slots.Add(i);
-                }
-            }
-
-            return slots;
-        }
-
-        /// <summary>
-        /// Finds all bank slots matching the desired item and quantity.
-        /// </summary>
-        /// <param name="itemId">The item Id to look for.</param>
-        /// <param name="quantity">The quantity of the item to look for.</param>
-        /// <returns>Returns a list of slots containing the requested item.</returns>
-        public List<int> FindItemSlots(Guid itemId, int quantity = 1)
-        {
-            var slots = new List<int>();
-            if (mBank == null)
-            {
-                return slots;
-            }
-
-            for (var i = 0; i < mMaxSlots; i++)
-            {
-                var item = mBank[i];
-                if (item?.ItemId != itemId)
-                {
-                    continue;
-                }
-
-                if (item.Quantity >= quantity)
-                {
-                    slots.Add(i);
-                }
-            }
-
-            return slots;
-        }
-        
-        /// <summary>
-        /// Find the amount of a specific item this bank instance has.
-        /// </summary>
-        /// <param name="itemId">The item Id to look for.</param>
-        /// <returns>The amount of the requested item this bank instance contains.</returns>
-        public int FindItemQuantity(Guid itemId)
-        {
-            if (mBank == null)
-            {
-                return 0;
-            }
-
-            long itemCount = 0;
-            for (var i = 0; i < mMaxSlots; i++)
-            {
-                var item = mBank[i];
-                if (item.ItemId == itemId)
-                {
-                    itemCount = item.Descriptor.Stackable ? itemCount += item.Quantity : itemCount += 1;
-                }
-            }
-
-            // TODO: Stop using Int32 for item quantities
-            return itemCount >= Int32.MaxValue ? Int32.MaxValue : (int)itemCount;
         }
 
         public bool TryDepositItem(Item? slot, int inventorySlotIndex, int quantityHint, int bankSlotIndex = -1, bool sendUpdate = true)
@@ -517,43 +441,102 @@ namespace Intersect.Server.Entities
             }
         }
 
-        public void SwapBankItems(int item1, int item2)
+        public void SwapBankItems(int slotFrom, int slotTo)
         {
+            var bank = mBank;
+            if (bank == null)
+            {
+                Log.Error($"SwapBankItems() called on invalid bank for {mPlayer.Id}");
+                return;
+            }
+
+            if (Math.Clamp(slotFrom, 0, bank.Count - 1) != slotFrom || Math.Clamp(slotTo, 0, bank.Count - 1) != slotTo)
+            {
+                PacketSender.SendChatMsg(
+                    mPlayer,
+                    Strings.Banks.InvalidSlotToSwap,
+                    ChatMessageType.Bank,
+                    CustomColors.Alerts.Error
+                );
+                Log.Error($"Invalid slot indices SwapBankItems({slotFrom}, {slotTo}) ({bank.Count}, {mPlayer.Id})");
+                return;
+            }
+
             //Permission Check
             if (mGuild != null)
             {
-                var rank = Options.Instance.Guild.Ranks[Math.Max(0, Math.Min(Options.Instance.Guild.Ranks.Length - 1, mPlayer.GuildRank))];
-                if (!rank.Permissions.BankMove && mPlayer.GuildRank != 0)
+                var ranks = Options.Instance.Guild.Ranks;
+                var rankIndex = Math.Clamp(mPlayer.GuildRank, 0, ranks.Length - 1);
+                var rank = ranks[rankIndex];
+                if (mPlayer.GuildRank != rankIndex || (!rank.Permissions.BankMove && mPlayer.GuildRank != 0))
                 {
-                    PacketSender.SendChatMsg(mPlayer, Strings.Guilds.NotAllowedSwap.ToString(mGuild.Name), ChatMessageType.Bank, CustomColors.Alerts.Error);
+                    PacketSender.SendChatMsg(
+                        mPlayer,
+                        Strings.Guilds.NotAllowedSwap.ToString(mGuild.Name),
+                        ChatMessageType.Bank,
+                        CustomColors.Alerts.Error
+                    );
                     return;
                 }
             }
 
-            Item tmpInstance = null;
             lock (mLock)
             {
-                if (mBank != null)
+                try
                 {
-                    tmpInstance = mBank[item2].Clone();
-                }
+                    var destinationSlot = (bank[slotTo] ??= Item.None);
+                    var sourceSlot = (bank[slotFrom] ??= Item.None);
+                    var temporarySlot = destinationSlot.Clone();
 
-                if (mBank[item1] != null)
-                {
-                    mBank[item2].Set(mBank[item1]);
-                }
-                else
-                {
-                    mBank[item2].Set(Item.None);
-                }
+                    if (destinationSlot.ItemId == sourceSlot.ItemId)
+                    {
+                        if (sourceSlot.ItemId == default)
+                        {
+                            Log.Warn($"SwapBankItems({slotFrom}, {slotTo}) for {mPlayer.Id} with empty item ID");
+                            return;
+                        }
 
-                if (tmpInstance != null)
-                {
-                    mBank[item1].Set(tmpInstance);
+                        /* Items are the same, move the maximum quantity */
+                        if (!ItemBase.TryGet(sourceSlot.ItemId, out var itemDescriptor))
+                        {
+                            Log.Error($"SwapBankItems({slotFrom}, {slotTo}) for {mPlayer.Id} failed due to missing item {sourceSlot.ItemId}");
+                            return;
+                        }
+
+                        if (itemDescriptor.Stackable)
+                        {
+                            var moveQuantity = Math.Clamp(
+                                sourceSlot.Quantity,
+                                0,
+                                itemDescriptor.MaxBankStack - destinationSlot.Quantity
+                            );
+
+                            destinationSlot.Quantity += moveQuantity;
+                            sourceSlot.Quantity -= moveQuantity;
+
+                            if (sourceSlot.Quantity < 1)
+                            {
+                                sourceSlot.Set(Item.None);
+                            }
+                        }
+                        else
+                        {
+                            /* Items are not stackable, swap them */
+                            destinationSlot.Set(sourceSlot);
+                            sourceSlot.Set(temporarySlot);
+                        }
+                    }
+                    else
+                    {
+                        /* Items are different, swap them */
+                        destinationSlot.Set(sourceSlot);
+                        sourceSlot.Set(temporarySlot);
+                    }
                 }
-                else
+                catch (Exception exception)
                 {
-                    mBank[item1].Set(Item.None);
+                    Log.Error(exception, $"Error in SwapBankItems({slotFrom}, {slotTo}) for {mPlayer.Id}");
+                    return;
                 }
 
                 if (mGuild != null)
@@ -562,8 +545,8 @@ namespace Intersect.Server.Entities
                 }
             }
 
-            SendBankUpdate(item1);
-            SendBankUpdate(item2);
+            SendBankUpdate(slotFrom);
+            SendBankUpdate(slotTo);
         }
 
 
