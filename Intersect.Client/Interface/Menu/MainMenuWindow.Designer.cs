@@ -47,7 +47,6 @@ public partial class MainMenuWindow
         ProcessAlignments();
 
         TitleLabel.TextColor = Color.White;
-        TitleLabel.TextColorOverride = Color.White;
         TitleLabel.FontName = "sourcesansproblack";
         TitleLabel.FontSize = 12;
         TitleLabel.Padding = new Padding(8, 4, 8, 4);
