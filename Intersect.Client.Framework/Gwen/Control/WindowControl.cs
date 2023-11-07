@@ -33,19 +33,19 @@ namespace Intersect.Client.Framework.Gwen.Control
 
         private readonly Dragger mTitleBar;
 
-        private Color mActiveColor;
+        private Color? mActiveColor;
 
-        private GameTexture mActiveImage;
+        private Color? mInactiveColor;
 
-        private string mActiveImageFilename;
+        private GameTexture? mActiveImage;
+
+        private GameTexture? mInactiveImage;
+
+        private string? mActiveImageFilename;
+
+        private string? mInactiveImageFilename;
 
         private bool mDeleteOnClose;
-
-        private Color mInactiveColor;
-
-        private GameTexture mInactiveImage;
-
-        private string mInactiveImageFilename;
 
         private Modal mModal;
 
@@ -315,23 +315,15 @@ namespace Intersect.Client.Framework.Gwen.Control
         protected override void Render(Skin.Base skin)
         {
             var hasFocus = IsOnTop;
-            var clr = GetTextColor(ControlState.Active);
-            if (clr == null && !hasFocus)
+            var textColor = GetTextColor(ControlState.Active);
+            if (textColor == null && !hasFocus)
             {
-                clr = GetTextColor(ControlState.Inactive);
+                textColor = GetTextColor(ControlState.Inactive);
             }
 
-            //if (clr == null && hasFocus)
-            //{
-            //    clr = Skin.Colors.Window.TitleActive;
-            //}
+            textColor ??= Skin.Colors.Window.TitleInactive;
 
-            if (clr == null)
-            {
-                clr = Skin.Colors.Window.TitleInactive;
-            }
-
-            mTitle.TextColor = clr;
+            mTitle.TextColor = textColor;
 
             skin.DrawWindow(this, mTitleBar.Bottom, hasFocus);
         }
@@ -404,19 +396,14 @@ namespace Intersect.Client.Framework.Gwen.Control
             }
         }
 
-        public Color GetTextColor(ControlState state)
+        public Color? GetTextColor(ControlState state)
         {
-            switch (state)
+            return state switch
             {
-                case ControlState.Active:
-                    return mActiveColor;
-
-                case ControlState.Inactive:
-                    return mInactiveColor;
-
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(state), state, null);
-            }
+                ControlState.Active => mActiveColor,
+                ControlState.Inactive => mInactiveColor,
+                _ => throw new ArgumentOutOfRangeException(nameof(state), state, $"Invalid {nameof(ControlState)}"),
+            };
         }
 
         /// <summary>
