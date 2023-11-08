@@ -202,12 +202,12 @@ namespace Intersect.Client.Framework.Gwen.Control
                 );
             }
 
-            if (obj["ActiveColor"] != null)
+            if (!string.IsNullOrWhiteSpace((string)obj["ActiveColor"]))
             {
                 mActiveColor = Color.FromString((string)obj["ActiveColor"]);
             }
 
-            if (obj["InactiveColor"] != null)
+            if (!string.IsNullOrWhiteSpace((string)obj["InactiveColor"]))
             {
                 mInactiveColor = Color.FromString((string)obj["InactiveColor"]);
             }

@@ -14,6 +14,8 @@ public abstract class Window : WindowControl
         string? name = default
     ) : base(parent, title, modal, name)
     {
+        SetTextColor(Color.White, ControlState.Active);
+        SetTextColor(new Color(a: 255, r: 191, g: 191, b: 191), ControlState.Inactive);
     }
 
     protected override void Render(Framework.Gwen.Skin.Base skin)
