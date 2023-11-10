@@ -778,6 +778,7 @@ namespace Intersect.Client.Entities
 
             var movableQuantity = Item.FindSpaceForItem(
                 itemDescriptor.Id,
+                itemDescriptor.ItemType,
                 maximumStack,
                 bankSlotIndex,
                 quantityHint < 0 ? sourceQuantity : quantityHint,
@@ -807,6 +808,7 @@ namespace Intersect.Client.Entities
 
             var maximumQuantity = movableQuantity < quantity ? movableQuantity : Item.FindSpaceForItem(
                 itemDescriptor.Id,
+                itemDescriptor.ItemType,
                 maximumStack,
                 bankSlotIndex,
                 sourceQuantity,
@@ -896,6 +898,7 @@ namespace Intersect.Client.Entities
 
             var movableQuantity = Item.FindSpaceForItem(
                 itemDescriptor.Id,
+                itemDescriptor.ItemType,
                 maximumStack,
                 bankSlotIndex,
                 quantityHint < 0 ? sourceQuantity : quantityHint,
@@ -925,6 +928,7 @@ namespace Intersect.Client.Entities
 
             var maximumQuantity = movableQuantity < quantity ? movableQuantity : Item.FindSpaceForItem(
                 itemDescriptor.Id,
+                itemDescriptor.ItemType,
                 maximumStack,
                 inventorySlotIndex,
                 sourceQuantity,
