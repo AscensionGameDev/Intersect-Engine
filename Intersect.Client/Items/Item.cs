@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using Intersect.Client.Framework.Items;
+using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Network.Packets.Server;
 
@@ -52,6 +53,7 @@ public class Item : IItem
 
     public static int FindSpaceForItem<TItem>(
         Guid itemDescriptorId,
+        ItemType itemType,
         int maximumStack,
         int slotHint,
         int searchQuantity,
@@ -69,6 +71,11 @@ public class Item : IItem
             if (slot == null || slot.ItemId == default)
             {
                 availableQuantity += maximumStack;
+            }
+            else if (itemType == ItemType.Equipment)
+            {
+                // Equipment slots are not valid target slots because they can have randomized stats
+                continue;
             }
             else if (slot.ItemId == itemDescriptorId)
             {

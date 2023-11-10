@@ -136,6 +136,7 @@ namespace Intersect.Server.Entities
             {
                 var movableQuantity = Item.FindSpaceForItem(
                     itemDescriptor.Id,
+                    itemDescriptor.ItemType,
                     maximumStack,
                     bankSlotIndex,
                     quantityHint < 0 ? sourceQuantity : quantityHint,
@@ -155,6 +156,7 @@ namespace Intersect.Server.Entities
 
                 var slotIndicesToFill = Item.FindCompatibleSlotsForItem(
                     itemDescriptor.Id,
+                    itemDescriptor.ItemType,
                     maximumStack,
                     bankSlotIndex,
                     movableQuantity,
@@ -178,6 +180,50 @@ namespace Intersect.Server.Entities
                     return false;
                 }
 
+                var nextSlotIndexToRemoveFrom = 0;
+                var remainingQuantity = movableQuantity;
+                foreach (var slotIndexToFill in slotIndicesToFill)
+                {
+                    if (slotIndicesToRemoveFrom.Length <= nextSlotIndexToRemoveFrom)
+                    {
+                        Log.Warn($"Ran out of slots to remove from for {mPlayer.Id}");
+                        break;
+                    }
+
+                    if (remainingQuantity < 1)
+                    {
+                        break;
+                    }
+
+                    var slotToFill = targetSlots[slotIndexToFill];
+                    Debug.Assert(slotToFill != default);
+                    var quantityToStoreInSlot = Math.Min(remainingQuantity, maximumStack - slotToFill.Quantity);
+
+                    if (slotToFill.ItemId == default && maximumStack <= 1)
+                    {
+                        if (slotIndicesToRemoveFrom.Length <= nextSlotIndexToRemoveFrom)
+                        {
+                            break;
+                        }
+
+                        var slotIndexToRemoveFrom = slotIndicesToRemoveFrom[nextSlotIndexToRemoveFrom++];
+                        var sourceSlot = sourceSlots[slotIndexToRemoveFrom];
+                        slotToFill.Set(sourceSlot);
+                        remainingQuantity -= 1;
+                        continue;
+                    }
+
+                    if (itemDescriptor.ItemType == ItemType.Equipment || maximumStack <= 1)
+                    {
+                        Log.Warn($"{nameof(Item.FindCompatibleSlotsForItem)}() returned incompatible slots for {nameof(ItemBase)} {itemDescriptor.Id}");
+                        break;
+                    }
+
+                    slotToFill.ItemId = itemDescriptor.Id;
+                    slotToFill.Quantity += quantityToStoreInSlot;
+                    remainingQuantity -= quantityToStoreInSlot;
+                }
+
                 var remainingQuantityToRemove = movableQuantity;
                 foreach (var slotIndexToRemoveFrom in slotIndicesToRemoveFrom)
                 {
@@ -196,22 +242,6 @@ namespace Intersect.Server.Entities
                     }
 
                     remainingQuantityToRemove -= quantityToRemoveFromSlot;
-                }
-
-                var remainingQuantity = movableQuantity;
-                foreach (var slotIndexToFill in slotIndicesToFill)
-                {
-                    if (remainingQuantity < 1)
-                    {
-                        break;
-                    }
-
-                    var slotToFill = targetSlots[slotIndexToFill];
-                    Debug.Assert(slotToFill != default);
-                    var quantityToStoreInSlot = Math.Min(remainingQuantity, maximumStack - slotToFill.Quantity);
-                    slotToFill.ItemId = itemDescriptor.Id;
-                    slotToFill.Quantity += quantityToStoreInSlot;
-                    remainingQuantity -= quantityToStoreInSlot;
                 }
 
                 // ReSharper disable once ConvertIfStatementToSwitchStatement
@@ -318,6 +348,7 @@ namespace Intersect.Server.Entities
             {
                 var movableQuantity = Item.FindSpaceForItem(
                     itemDescriptor.Id,
+                    itemDescriptor.ItemType,
                     maximumStack,
                     inventorySlotIndex,
                     quantityHint < 0 ? sourceQuantity : quantityHint,
@@ -337,6 +368,7 @@ namespace Intersect.Server.Entities
 
                 var slotIndicesToFill = Item.FindCompatibleSlotsForItem(
                     itemDescriptor.Id,
+                    itemDescriptor.ItemType,
                     maximumStack,
                     inventorySlotIndex,
                     movableQuantity,
@@ -360,6 +392,50 @@ namespace Intersect.Server.Entities
                     return false;
                 }
 
+                var nextSlotIndexToRemoveFrom = 0;
+                var remainingQuantity = movableQuantity;
+                foreach (var slotIndexToFill in slotIndicesToFill)
+                {
+                    if (slotIndicesToRemoveFrom.Length <= nextSlotIndexToRemoveFrom)
+                    {
+                        Log.Warn($"Ran out of slots to remove from for {mPlayer.Id}");
+                        break;
+                    }
+
+                    if (remainingQuantity < 1)
+                    {
+                        break;
+                    }
+
+                    var slotToFill = targetSlots[slotIndexToFill];
+                    Debug.Assert(slotToFill != default);
+                    var quantityToStoreInSlot = Math.Min(remainingQuantity, maximumStack - slotToFill.Quantity);
+
+                    if (slotToFill.ItemId == default && maximumStack <= 1)
+                    {
+                        if (slotIndicesToRemoveFrom.Length <= nextSlotIndexToRemoveFrom)
+                        {
+                            break;
+                        }
+
+                        var slotIndexToRemoveFrom = slotIndicesToRemoveFrom[nextSlotIndexToRemoveFrom++];
+                        var sourceSlot = sourceSlots[slotIndexToRemoveFrom];
+                        slotToFill.Set(sourceSlot);
+                        remainingQuantity -= 1;
+                        continue;
+                    }
+
+                    if (itemDescriptor.ItemType == ItemType.Equipment || maximumStack <= 1)
+                    {
+                        Log.Warn($"{nameof(Item.FindCompatibleSlotsForItem)}() returned incompatible slots for {nameof(ItemBase)} {itemDescriptor.Id}");
+                        break;
+                    }
+
+                    slotToFill.ItemId = itemDescriptor.Id;
+                    slotToFill.Quantity += quantityToStoreInSlot;
+                    remainingQuantity -= quantityToStoreInSlot;
+                }
+
                 var remainingQuantityToRemove = movableQuantity;
                 foreach (var slotIndexToRemoveFrom in slotIndicesToRemoveFrom)
                 {
@@ -378,22 +454,6 @@ namespace Intersect.Server.Entities
                     }
 
                     remainingQuantityToRemove -= quantityToRemoveFromSlot;
-                }
-
-                var remainingQuantity = movableQuantity;
-                foreach (var slotIndexToFill in slotIndicesToFill)
-                {
-                    if (remainingQuantity < 1)
-                    {
-                        break;
-                    }
-
-                    var slotToFill = targetSlots[slotIndexToFill];
-                    Debug.Assert(slotToFill != default);
-                    var quantityToStoreInSlot = Math.Min(remainingQuantity, maximumStack - slotToFill.Quantity);
-                    slotToFill.ItemId = itemDescriptor.Id;
-                    slotToFill.Quantity += quantityToStoreInSlot;
-                    remainingQuantity -= quantityToStoreInSlot;
                 }
 
                 // ReSharper disable once ConvertIfStatementToSwitchStatement

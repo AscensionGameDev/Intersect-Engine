@@ -173,6 +173,7 @@ public class Item
 
     public static int[] FindCompatibleSlotsForItem<TItem>(
         Guid itemDescriptorId,
+        ItemType itemType,
         int maximumStack,
         int slotHint,
         int searchQuantity,
@@ -219,6 +220,11 @@ public class Item
                 availableQuantity += maximumStack;
                 compatibleSlots.Add(slotIndex);
             }
+            else if (itemType == ItemType.Equipment)
+            {
+                // Equipment slots are not valid target slots because they can have randomized stats
+                continue;
+            }
             else if (slot.ItemId == itemDescriptorId)
             {
                 var availableQuantityInSlot = maximumStack - slot.Quantity;
@@ -243,6 +249,7 @@ public class Item
 
     public static int FindSpaceForItem<TItem>(
         Guid itemDescriptorId,
+        ItemType itemType,
         int maximumStack,
         int slotHint,
         int searchQuantity,
@@ -260,6 +267,11 @@ public class Item
             if (slot == null || slot.ItemId == default)
             {
                 availableQuantity += maximumStack;
+            }
+            else if (itemType == ItemType.Equipment)
+            {
+                // Equipment slots are not valid target slots because they can have randomized stats
+                continue;
             }
             else if (slot.ItemId == itemDescriptorId)
             {
