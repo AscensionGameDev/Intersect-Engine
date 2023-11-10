@@ -1,5 +1,4 @@
-﻿using System;
-using System.Runtime.Serialization;
+﻿using System.Runtime.Serialization;
 using Newtonsoft.Json;
 
 namespace Intersect.Config
@@ -9,27 +8,30 @@ namespace Intersect.Config
     /// </summary>
     public partial class MapOptions
     {
+        private bool _enableDiagonalMovement = true;
+
         /// <summary>
-        /// Indicates whether or not diagonal movement is enabled for entities within the map.
+        /// option to dont loss exp in arena type maps
         /// </summary>
-        public bool EnableDiagonalMovement
-        {
-            get { return mEnableDiagonalMovement; }
-            set
-            {
-                mEnableDiagonalMovement = value;
-                MovementDirections = mEnableDiagonalMovement ? 8 : 4;
-            }
-        }
+        public bool DisableExpLossInArenaMaps { get; set; } = false;
+
         /// <summary>
         /// option to drop items on arena type maps
         /// </summary>
         public bool DisablePlayerDropsInArenaMaps { get; set; } = false;
 
         /// <summary>
-        /// option to dont loss exp in arena type maps
+        /// Indicates whether or not diagonal movement is enabled for entities within the map.
         /// </summary>
-        public bool DisableExpLossInArenaMaps { get; set; } = false;
+        public bool EnableDiagonalMovement
+        {
+            get { return _enableDiagonalMovement; }
+            set
+            {
+                _enableDiagonalMovement = value;
+                MovementDirections = _enableDiagonalMovement ? 8 : 4;
+            }
+        }
 
         /// <summary>
         /// The style of the game's border.
@@ -48,6 +50,11 @@ namespace Intersect.Config
         public LayerOptions Layers { get; set; } = new LayerOptions();
 
         /// <summary>
+        /// The height of the map in tiles.
+        /// </summary>
+        public int MapHeight { get; set; } = 26;
+
+        /// <summary>
         /// The width of map items.
         /// </summary>
         public uint MapItemHeight { get; set; }
@@ -56,11 +63,6 @@ namespace Intersect.Config
         /// The height of map items.
         /// </summary>
         public uint MapItemWidth { get; set; }
-
-        /// <summary>
-        /// The height of the map in tiles.
-        /// </summary>
-        public int MapHeight { get; set; } = 26;
 
         /// <summary>
         /// The width of the map in tiles.
@@ -78,13 +80,13 @@ namespace Intersect.Config
         /// </summary>
         public int TileHeight { get; set; } = 32;
 
+        [JsonIgnore]
+        public float TileScale => 32f / Math.Min(TileWidth, TileHeight);
+
         /// <summary>
         /// The width of each tile in pixels.
         /// </summary>
         public int TileWidth { get; set; } = 32;
-
-        [JsonIgnore]
-        public float TileScale => 32f / Math.Min(TileWidth, TileHeight);
 
         /// <summary>
         /// The time, in milliseconds, until the map is cleaned up.
@@ -95,9 +97,6 @@ namespace Intersect.Config
         /// Indicates whether the Z-dimension is visible in the map.
         /// </summary>
         public bool ZDimensionVisible { get; set; }
-
-        // A private field to hold the value of the EnableDiagonalMovement.
-        private bool mEnableDiagonalMovement;
 
         [OnDeserialized]
         internal void OnDeserializedMethod(StreamingContext context)
@@ -114,6 +113,9 @@ namespace Intersect.Config
             {
                 throw new Exception("Config Error: Map size out of bounds! (All values should be > 10 and < 64)");
             }
+
+            // Forcibly reset MovementDirections to the correct value
+            EnableDiagonalMovement = _enableDiagonalMovement;
 
             MapItemWidth = MapItemWidth < 1 ? (uint)TileWidth : MapItemWidth;
             MapItemHeight = MapItemHeight < 1 ? (uint)TileHeight : MapItemHeight;
