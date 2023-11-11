@@ -135,7 +135,7 @@ namespace Intersect.Client.Entities
 
         public Color Color { get; set; } = new Color(255, 255, 255, 255);
 
-        public Direction MoveDir { get; set; } = Direction.None;
+        public virtual Direction MoveDir { get; set; } = Direction.None;
 
         public long MoveTimer { get; set; }
 
@@ -1405,11 +1405,6 @@ namespace Intersect.Client.Entities
                 return;
             }
 
-            if (OffsetY != 0)
-            {
-                System.Console.WriteLine($"{X}, {OffsetY}");
-            }
-
             mOrigin = new Pointf(
                 LatestMap.X + X * Options.TileWidth + OffsetX + Options.TileWidth / 2,
                 LatestMap.Y + Y * Options.TileHeight + OffsetY + Options.TileHeight
@@ -2227,8 +2222,7 @@ namespace Intersect.Client.Entities
         /// </summary>
         /// <returns></returns>
         public int IsTileBlocked(
-            int x,
-            int y,
+            Point delta,
             int z,
             Guid mapId,
             ref IEntity blockedBy,
@@ -2248,31 +2242,31 @@ namespace Intersect.Client.Entities
             var gridY = mapInstance.GridY;
             try
             {
-                var tmpX = x;
-                var tmpY = y;
+                var tmpX = delta.X;
+                var tmpY = delta.Y;
                 var tmpMapId = Guid.Empty;
-                if (x < 0)
+                if (delta.X < 0)
                 {
                     gridX--;
-                    tmpX = Options.MapWidth - x * -1;
+                    tmpX = Options.MapWidth - delta.X * -1;
                 }
 
-                if (y < 0)
+                if (delta.Y < 0)
                 {
                     gridY--;
-                    tmpY = Options.MapHeight - y * -1;
+                    tmpY = Options.MapHeight - delta.Y * -1;
                 }
 
-                if (x > Options.MapWidth - 1)
+                if (delta.X > Options.MapWidth - 1)
                 {
                     gridX++;
-                    tmpX = x - Options.MapWidth;
+                    tmpX = delta.X - Options.MapWidth;
                 }
 
-                if (y > Options.MapHeight - 1)
+                if (delta.Y > Options.MapHeight - 1)
                 {
                     gridY++;
-                    tmpY = y - Options.MapHeight;
+                    tmpY = delta.Y - Options.MapHeight;
                 }
 
                 if (gridX < 0 || gridY < 0 || gridX >= Globals.MapGridWidth || gridY >= Globals.MapGridHeight)
