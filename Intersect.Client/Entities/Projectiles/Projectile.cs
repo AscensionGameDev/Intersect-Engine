@@ -466,45 +466,56 @@ namespace Intersect.Client.Entities.Projectiles
         private bool Collided(int i)
         {
             var killSpawn = false;
-            IEntity blockedBy = null;
+            IEntity? blockedBy = default;
+            var spawn = Spawns[i];
             var tileBlocked = Globals.Me.IsTileBlocked(
-                Spawns[i].X, Spawns[i].Y, Z, Spawns[i].MapId, ref blockedBy,
-                Spawns[i].ProjectileBase.IgnoreActiveResources, Spawns[i].ProjectileBase.IgnoreExhaustedResources, true, true
+                new Point(spawn.X, spawn.Y),
+                Z,
+                Spawns[i].MapId,
+                ref blockedBy,
+                spawn.ProjectileBase.IgnoreActiveResources,
+                spawn.ProjectileBase.IgnoreExhaustedResources,
+                true,
+                true
             );
 
-            if (tileBlocked != -1)
+            switch (tileBlocked)
             {
-                if (tileBlocked == -6 &&
-                    blockedBy != null &&
+                case -1:
+                    return killSpawn;
+                case -6 when
+                    blockedBy != default &&
                     blockedBy.Id != mOwner &&
-                    Globals.Entities.ContainsKey(blockedBy.Id))
+                    Globals.Entities.ContainsKey(blockedBy.Id):
                 {
                     if (blockedBy is Resource)
                     {
                         killSpawn = true;
                     }
+
+                    break;
                 }
-                else
+                case -2:
                 {
-                    if (tileBlocked == -2)
-                    {
-                        if (!Spawns[i].ProjectileBase.IgnoreMapBlocks)
-                        {
-                            killSpawn = true;
-                        }
-                    }
-                    else if (tileBlocked == -3)
-                    {
-                        if (!Spawns[i].ProjectileBase.IgnoreZDimension)
-                        {
-                            killSpawn = true;
-                        }
-                    }
-                    else if (tileBlocked == -5)
+                    if (!Spawns[i].ProjectileBase.IgnoreMapBlocks)
                     {
                         killSpawn = true;
                     }
+
+                    break;
                 }
+                case -3:
+                {
+                    if (!Spawns[i].ProjectileBase.IgnoreZDimension)
+                    {
+                        killSpawn = true;
+                    }
+
+                    break;
+                }
+                case -5:
+                    killSpawn = true;
+                    break;
             }
 
             return killSpawn;

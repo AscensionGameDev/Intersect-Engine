@@ -72,6 +72,18 @@ namespace Intersect.Client.Entities
 
         private List<IPartyMember> mParty;
 
+        private Direction _lastMoveDirection;
+
+        public override Direction MoveDir
+        {
+            get => base.MoveDir;
+            set
+            {
+                _lastMoveDirection = base.MoveDir;
+                base.MoveDir = value;
+            }
+        }
+
         IReadOnlyDictionary<Guid, QuestProgress> IPlayer.QuestProgress => QuestProgress;
 
         public Dictionary<Guid, QuestProgress> QuestProgress { get; set; } = new();
@@ -1315,8 +1327,9 @@ namespace Intersect.Client.Entities
         //Input Handling
         private void HandleInput()
         {
-            var movex = 0f;
-            var movey = 0f;
+            var inputX = 0;
+            var inputY = 0;
+
             if (Interface.Interface.HasInputFocus())
             {
                 return;
@@ -1324,56 +1337,76 @@ namespace Intersect.Client.Entities
 
             if (Controls.KeyDown(Control.MoveUp))
             {
-                movey = 1;
+                inputY += 1;
             }
 
             if (Controls.KeyDown(Control.MoveDown))
             {
-                movey = -1;
+                inputY -= 1;
             }
 
             if (Controls.KeyDown(Control.MoveLeft))
             {
-                movex = -1;
+                inputX -= 1;
             }
 
             if (Controls.KeyDown(Control.MoveRight))
             {
-                movex = 1;
+                inputX += 1;
             }
 
-            Globals.Me.MoveDir = Direction.None;
-            if (movex != 0f || movey != 0f)
+            Direction inputDirection;
+            if (inputX == 0 && inputY == 0)
             {
-                var diagonalMovement = movex != 0 && Options.Instance.MapOpts.EnableDiagonalMovement;
-                if (movey < 0)
+                inputDirection = Direction.None;
+            }
+            else
+            {
+                var diagonalMovement = inputX != 0 && Options.Instance.MapOpts.EnableDiagonalMovement;
+                var inputXDirection = Math.Sign(inputX) switch
                 {
-                    if (diagonalMovement)
+                    < 0 => Direction.Left,
+                    > 0 => Direction.Right,
+                    _ => Direction.None,
+                };
+                var inputYDirection = Math.Sign(inputY) switch
+                {
+                    < 0 => Direction.Down,
+                    > 0 => Direction.Up,
+                    _ => Direction.None,
+                };
+
+                if (diagonalMovement)
+                {
+                    inputDirection = inputYDirection switch
                     {
-                        Globals.Me.MoveDir = movex < 0 ? Direction.DownLeft : Direction.DownRight;
-                    }
-                    else
-                    {
-                        Globals.Me.MoveDir = Direction.Down;
-                    }
+                        Direction.Down => inputXDirection switch
+                        {
+                            Direction.Left => Direction.DownLeft,
+                            Direction.Right => Direction.DownRight,
+                            _ => inputYDirection,
+                        },
+                        Direction.Up => inputXDirection switch
+                        {
+                            Direction.Left => Direction.UpLeft,
+                            Direction.Right => Direction.UpRight,
+                            _ => inputYDirection,
+                        },
+                        _ => inputXDirection,
+                    };
                 }
-                else if (movey > 0)
+                else if (inputYDirection != Direction.None)
                 {
-                    if (diagonalMovement)
-                    {
-                        Globals.Me.MoveDir = movex < 0 ? Direction.UpLeft : Direction.UpRight;
-                    }
-                    else
-                    {
-                        Globals.Me.MoveDir = Direction.Up;
-                    }
+                    inputDirection = inputYDirection;
                 }
                 else
                 {
-                    Globals.Me.MoveDir = movex < 0 ? Direction.Left : Direction.Right;
+                    inputDirection = inputXDirection;
                 }
             }
-            
+
+            Globals.Me.MoveDir = inputDirection;
+
             TurnAround();
 
             var castInput = -1;
@@ -2164,8 +2197,7 @@ namespace Intersect.Client.Entities
                 return;
             }
 
-            var tmpX = (sbyte)X;
-            var tmpY = (sbyte)Y;
+            Point position = new(X, Y);
             IEntity blockedBy = null;
 
             if (MoveDir <= Direction.None || Globals.EventDialogs.Count != 0)
@@ -2185,78 +2217,56 @@ namespace Intersect.Client.Entities
                 CastTime = 0;
             }
 
-            var deltaX = 0;
-            var deltaY = 0;
+            var dir = Dir;
+            var moveDir = MoveDir;
 
-            switch (MoveDir)
+            if (moveDir != Direction.None)
             {
-                case Direction.Up:
-                    deltaX = 0;
-                    deltaY = -1;
-                    break;
-                
-                case Direction.Down:
-                    deltaX = 0;
-                    deltaY = 1;
-                    break;
-                
-                case Direction.Left:
-                    deltaX = -1;
-                    deltaY = 0;
-                    break;
-                
-                case Direction.Right:
-                    deltaX = 1;
-                    deltaY = 0;
-                    break;
-                
-                case Direction.UpLeft:
-                    deltaX = -1;
-                    deltaY = -1;
-                    break;
-                
-                case Direction.UpRight:
-                    deltaX = 1;
-                    deltaY = -1;
-                    break;
-                
-                case Direction.DownLeft:
-                    deltaX = -1;
-                    deltaY = 1;
-                    break;
-                
-                case Direction.DownRight:
-                    deltaX = 1;
-                    deltaY = 1;
-                    break;
-            }
-
-            if (deltaX != 0 || deltaY != 0)
-            {
-                if (IsTileBlocked(tmpX + deltaX, tmpY + deltaY, Z, MapId, ref blockedBy) == -1)
+                List<Direction> possibleDirections = new(4) { moveDir };
+                if (dir.IsAdjacent(moveDir))
                 {
-                    tmpX += (sbyte)deltaX;
-                    tmpY += (sbyte)deltaY;
+                    System.Console.WriteLine($"{dir} is adjacent to {moveDir}");
+                    possibleDirections.Add(dir);
+                }
+
+                if (moveDir.IsDiagonal())
+                {
+                    possibleDirections.AddRange(moveDir.GetComponentDirections());
+                }
+
+                foreach (var possibleDirection in possibleDirections)
+                {
+                    var delta = possibleDirection.GetDeltaPoint();
+                    var target = position + delta;
+                    if (IsTileBlocked(target, Z, MapId, ref blockedBy) != -1)
+                    {
+                        continue;
+                    }
+
+                    position.X += delta.X;
+                    position.Y += delta.Y;
                     IsMoving = true;
-                    Dir = MoveDir;
-                    
-                    if (deltaX == 0)
+                    Dir = possibleDirection;
+
+                    if (delta.X == 0)
                     {
                         OffsetX = 0;
                     }
                     else
                     {
-                        OffsetX = deltaX > 0 ? -Options.TileWidth : Options.TileWidth;
+                        OffsetX = delta.X > 0 ? -Options.TileWidth : Options.TileWidth;
                     }
 
-                    if (deltaY == 0)
+                    if (delta.Y == 0)
                     {
                         OffsetY = 0;
                     }
                     else
                     {
-                        OffsetY = deltaY > 0 ? -Options.TileHeight : Options.TileHeight;
+                        OffsetY = delta.Y > 0 ? -Options.TileHeight : Options.TileHeight;
                     }
+
+                    break;
                 }
             }
 
@@ -2267,38 +2277,38 @@ namespace Intersect.Client.Entities
 
             if (IsMoving)
             {
-                if (tmpX < 0 || tmpY < 0 || tmpX > Options.MapWidth - 1 || tmpY > Options.MapHeight - 1)
+                if (position.X < 0 || position.Y < 0 || position.X > Options.MapWidth - 1 || position.Y > Options.MapHeight - 1)
                 {
                     var gridX = Maps.MapInstance.Get(Globals.Me.MapId).GridX;
                     var gridY = Maps.MapInstance.Get(Globals.Me.MapId).GridY;
-                    if (tmpX < 0)
+                    if (position.X < 0)
                     {
                         gridX--;
                         X = (byte)(Options.MapWidth - 1);
                     }
-                    else if (tmpX >= Options.MapWidth)
+                    else if (position.X >= Options.MapWidth)
                     {
                         X = 0;
                         gridX++;
                     }
                     else
                     {
-                        X = (byte)tmpX;
+                        X = (byte)position.X;
                     }
 
-                    if (tmpY < 0)
+                    if (position.Y < 0)
                     {
                         gridY--;
                         Y = (byte)(Options.MapHeight - 1);
                     }
-                    else if (tmpY >= Options.MapHeight)
+                    else if (position.Y >= Options.MapHeight)
                     {
                         Y = 0;
                         gridY++;
                     }
                     else
                     {
-                        Y = (byte)tmpY;
+                        Y = (byte)position.Y;
                     }
 
                     if (MapId != Globals.MapGrid[gridX, gridY])
@@ -2309,8 +2319,8 @@ namespace Intersect.Client.Entities
                 }
                 else
                 {
-                    X = (byte)tmpX;
-                    Y = (byte)tmpY;
+                    X = (byte)position.X;
+                    Y = (byte)position.Y;
                 }
 
                 TryToChangeDimension();

@@ -135,8 +135,16 @@ namespace Intersect.Client.Entities
             {
                 var newX = tmpX + deltaX;
                 var newY = tmpY + deltaY;
-                var isBlocked =
-                    IsTileBlocked(newX, newY, Z, MapId, ref blockedBy, true, true, mAttribute.IgnoreNpcAvoids) == -1;
+                var isBlocked = -1 ==
+                                IsTileBlocked(
+                                    new Point(newX, newY),
+                                    Z,
+                                    MapId,
+                                    ref blockedBy,
+                                    true,
+                                    true,
+                                    mAttribute.IgnoreNpcAvoids
+                                );
                 var playerOnTile = PlayerOnTile(MapId, newX, newY);
 
                 if (isBlocked && newX >= 0 && newX < Options.MapWidth && newY >= 0 && newY < Options.MapHeight &&
