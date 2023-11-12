@@ -81,7 +81,10 @@ jobs:
       with:
         if-no-files-found: error
         name: engine
-        path: "*/bin/Release/*/*/publish"
+        path: |
+          "Intersect.Client/bin/Release/*/*/publish"
+          "Intersect.Editor/bin/Release/*/*/publish"
+          "Intersect.Server/bin/Release/*/*/publish"
 
   build-macos:
     runs-on: macos-latest
@@ -131,7 +134,10 @@ jobs:
       with:
         if-no-files-found: error
         name: engine
-        path: "*/bin/Release/*/*/publish"
+        path: |
+          "Intersect.Client/bin/Release/*/*/publish"
+          "Intersect.Editor/bin/Release/*/*/publish"
+          "Intersect.Server/bin/Release/*/*/publish"
 
   build-windows:
     runs-on: windows-latest
@@ -181,7 +187,10 @@ jobs:
       with:
         if-no-files-found: error
         name: engine
-        path: "*/bin/Release/*/*/publish"
+        path: |
+          "Intersect.Client/bin/Release/*/*/publish"
+          "Intersect.Editor/bin/Release/*/*/publish"
+          "Intersect.Server/bin/Release/*/*/publish"
 
   debug-build-artifacts:
     if: inputs.workflowDebug == true
