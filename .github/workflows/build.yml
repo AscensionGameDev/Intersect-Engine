@@ -256,7 +256,7 @@ jobs:
         path: "dist/**/*.zip"
 
   debug-build-artifacts:
-    if: inputs.workflowDebug != true
+    if: inputs.workflowDebug == true
     needs: [build-linux, build-macos, build-windows]
     runs-on: ubuntu-latest
     steps:
