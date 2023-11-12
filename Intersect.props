@@ -8,7 +8,7 @@
     <Product>Intersect Game Engine</Product>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/AscensionGameDev/Intersect-Engine</RepositoryUrl>
-    <Version>0.7.2.0</Version>
+    <Version>0.8.0.0</Version>
   </PropertyGroup>
 
   <PropertyGroup Label="Assembly Properties">
@@ -25,7 +25,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="$(IntersectRepoPath)\assets\intersect-logo-qu.png" Pack="true" PackagePath="\"/>
-    <EmbeddedResource Include="$(IntersectRepoPath)\assets\intersect-logo-qu.ico" Pack="true" PackagePath="\"/>
+    <None Include="$(IntersectRepoPath)\assets\intersect-logo-qu.png" Pack="true" PackagePath="\" />
+    <EmbeddedResource Include="$(IntersectRepoPath)\assets\intersect-logo-qu.ico" Pack="true" PackagePath="\" />
   </ItemGroup>
 </Project>
