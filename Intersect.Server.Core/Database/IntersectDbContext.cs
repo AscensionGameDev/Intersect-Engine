@@ -199,7 +199,7 @@ public abstract partial class IntersectDbContext<TDbContext> : DbContext, IDbCon
             var rowsChanged = base.SaveChanges(acceptAllChangesOnSuccess);
 
 #if DEBUG
-            Log.Debug($"DBOP-B SaveChanges({{acceptAllChangesOnSuccess}}) #{{currentExecutionId}}");
+            Log.Debug($"DBOP-B SaveChanges({acceptAllChangesOnSuccess}) #{currentExecutionId}");
 #endif
 
             return rowsChanged;
@@ -240,7 +240,7 @@ public abstract partial class IntersectDbContext<TDbContext> : DbContext, IDbCon
             Log.Error(concurrencyErrors.ToString());
 
 #if DEBUG
-            Log.Debug($"DBOP-C SaveChanges({{acceptAllChangesOnSuccess}}) #{{currentExecutionId}}");
+            Log.Debug($"DBOP-C SaveChanges({acceptAllChangesOnSuccess}) #{currentExecutionId}");
 #endif
 
             ServerContext.DispatchUnhandledException(

@@ -1251,7 +1251,7 @@ namespace Intersect.Server.Networking
         }
 
         //CharactersPacket
-        public static void SendPlayerCharacters(Client client)
+        public static void SendPlayerCharacters(Client client, Player? lastPlayer = default)
         {
             var characters = new List<CharacterPacket>();
             if (client.User == null)
@@ -1263,6 +1263,11 @@ namespace Intersect.Server.Networking
             {
                 foreach (var player in client.Characters.OrderByDescending(p => p.LastOnline))
                 {
+                    if (player.Id == lastPlayer?.Id)
+                    {
+                        continue;
+                    }
+
                     player.LoadRelationships(playerContext);
                 }
             }
