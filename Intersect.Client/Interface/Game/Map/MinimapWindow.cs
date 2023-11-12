@@ -530,20 +530,22 @@ namespace Intersect.Client.Interface.Game.Map
             return entityInfo;
         }
 
-        private GameRenderTexture GenerateBaseRenderTexture()
+        private GameRenderTexture GenerateRenderTexture(int multiplier)
         {
-            var sizeX = (_minimapTileSize.X * Options.Instance.MapOpts.MapWidth) * 3;
-            var sizeY = (_minimapTileSize.Y * Options.Instance.MapOpts.MapHeight) * 3;
+            var sizeX = _minimapTileSize.X * Options.Instance.MapOpts.MapWidth * multiplier;
+            var sizeY = _minimapTileSize.Y * Options.Instance.MapOpts.MapHeight * multiplier;
 
             return Graphics.Renderer.CreateRenderTexture(sizeX, sizeY);
         }
 
+        private GameRenderTexture GenerateBaseRenderTexture()
+        {
+            return GenerateRenderTexture(3);
+        }
+
         private GameRenderTexture GenerateMapRenderTexture()
         {
-            var sizeX = _minimapTileSize.X * Options.Instance.MapOpts.MapWidth;
-            var sizeY = _minimapTileSize.Y * Options.Instance.MapOpts.MapHeight;
-
-            return Graphics.Renderer.CreateRenderTexture(sizeX, sizeY);
+            return GenerateRenderTexture(1);
         }
 
         private void MZoomOutButton_Clicked(Base sender, ClickedEventArgs arguments)
