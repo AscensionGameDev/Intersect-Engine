@@ -21,7 +21,7 @@ namespace Intersect.Client.Interface.Game.Map
 
         private bool _redrawMaps;
         private bool _redrawEntities;
-        private byte _zoomLevel;
+        private int _zoomLevel;
         private Point _minimapTileSize;
 
         private Dictionary<MapPosition, MapBase> _mapGrid = new();
@@ -548,30 +548,14 @@ namespace Intersect.Client.Interface.Game.Map
 
         private void MZoomOutButton_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            if (_zoomLevel >= Options.Instance.MinimapOpts.MaximumZoom)
-            {
-                return;
-            }
-
-            _zoomLevel += Options.Instance.MinimapOpts.ZoomStep;
-            if (_zoomLevel > Options.Instance.MinimapOpts.MaximumZoom)
-            {
-                _zoomLevel = Options.Instance.MinimapOpts.MaximumZoom;
-            }
+            _zoomLevel = Math.Min(_zoomLevel + Options.Instance.MinimapOpts.ZoomStep,
+                Options.Instance.MinimapOpts.MaximumZoom);
         }
 
         private void MZoomInButton_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            if (_zoomLevel <= Options.Instance.MinimapOpts.MinimumZoom)
-            {
-                return;
-            }
-
-            _zoomLevel -= Options.Instance.MinimapOpts.ZoomStep;
-            if (_zoomLevel < Options.Instance.MinimapOpts.MinimumZoom)
-            {
-                _zoomLevel = Options.Instance.MinimapOpts.MinimumZoom;
-            }
+            _zoomLevel = Math.Max(_zoomLevel - Options.Instance.MinimapOpts.ZoomStep,
+                Options.Instance.MinimapOpts.MinimumZoom);
         }
 
         private enum MapPosition
