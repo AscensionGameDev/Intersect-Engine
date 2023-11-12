@@ -381,6 +381,13 @@ namespace Intersect.GameObjects
                 .ToArray();
         }
 
+        public string GetPaperdollForGender(Gender gender) =>
+            gender switch
+            {
+                Gender.Male => MalePaperdoll,
+                _ => FemalePaperdoll,
+            };
+
         private void Initialize()
         {
             Name = "New Item";

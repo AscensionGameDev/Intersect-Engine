@@ -524,14 +524,7 @@ namespace Intersect.Server.Database
                 try
                 {
                     using var playerContext = CreatePlayerContext(readOnly: true, explicitLoad: false);
-                    var playerEntry = playerContext.Players.Attach(player);
-                    playerEntry.Collection(p => p.Items).Query().Load();
-                    playerEntry.Collection(player => player.Bank).Load();
-                    playerEntry.Collection(player => player.Hotbar).Load();
-                    playerEntry.Collection(player => player.Items).Load();
-                    playerEntry.Collection(player => player.Quests).Load();
-                    playerEntry.Collection(player => player.Spells).Load();
-                    playerEntry.Collection(player => player.Variables).Load();
+                    player.LoadRelationships(playerContext);
                     _ = Player.Validate(player);
                 }
                 catch (Exception exception)

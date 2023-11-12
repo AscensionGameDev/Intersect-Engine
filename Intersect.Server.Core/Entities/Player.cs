@@ -1,11 +1,6 @@
-using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics;
-using System.Linq;
-using System.Threading;
-
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Crafting;
@@ -407,6 +402,11 @@ namespace Intersect.Server.Entities
 
         private void Logout(bool softLogout = false)
         {
+            lock (_savingLock)
+            {
+                _saving = true;
+            }
+
             if (MapController.TryGetInstanceFromMap(MapId, MapInstanceId, out var instance))
             {
                 instance.RemoveEntity(this);
@@ -510,6 +510,11 @@ namespace Intersect.Server.Entities
 #endif
 
             User?.Save();
+
+            lock (_savingLock)
+            {
+                _saving = false;
+            }
 
             Dispose();
 

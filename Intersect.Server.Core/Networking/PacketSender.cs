@@ -1253,9 +1253,23 @@ namespace Intersect.Server.Networking
         //CharactersPacket
         public static void SendPlayerCharacters(Client client)
         {
-            var characters = new List<CharacterPacket>();
-            if (client.User == null)
+            if (client == default)
             {
+                Log.Warn($"Tried to {nameof(SendPlayerCharacters)}() to a null client?");
+                return;
+            }
+
+            var user = client.User;
+            if (user == default)
+            {
+                Log.Warn($"Tried to {nameof(SendPlayerCharacters)}() to client with no user? ({client.Id})");
+                return;
+            }
+
+            var clientCharacters = client.Characters;
+            if (clientCharacters == default)
+            {
+                Log.Warn($"Tried to {nameof(SendPlayerCharacters)}() to client with no characters? (client {client.Id}/user {user.Id})");
                 return;
             }
 
@@ -1267,73 +1281,92 @@ namespace Intersect.Server.Networking
                 }
             }
 
-            var clientCharacters = client?.Characters;
-            if (clientCharacters == default)
+            var characterPackets = new List<CharacterPacket>();
+
+            var equipmentSlotsOptions = Options.EquipmentSlots;
+            var paperdollOrderOptions = Options.PaperdollOrder;
+
+            if (clientCharacters.Count < 1)
             {
-                Log.Error($"PLEASE REPORT THIS WITH LOGS: About to crash because {(client == default ? nameof(client) : nameof(client.Characters))} is null.");
+                CharactersPacket emptyBulkCharactersPacket = new(
+                    Array.Empty<CharacterPacket>(),
+                    client.Characters.Count < Options.MaxCharacters
+                );
+
+                if (!client.Send(emptyBulkCharactersPacket))
+                {
+                    Log.Error($"Failed to send empty bulk characters packet to {client.Id}");
+                }
+
+                return;
             }
 
-            if (client.Characters.Count > 0) /* TODO: Fix NRE when logging out and back in */
+            foreach (var character in clientCharacters.OrderByDescending(p => p.LastOnline))
             {
-                foreach (var character in client.Characters.OrderByDescending(p => p.LastOnline))
+                var equipmentArray = character.Equipment;
+                var equipment = new EquipmentFragment[equipmentSlotsOptions.Count + 1];
+
+                // Draw the equipment/paperdolls
+                var paperdollOrderOptionLayer1 = paperdollOrderOptions[1];
+                for (var z = 0; z < paperdollOrderOptionLayer1.Count; z++)
                 {
-                    var equipmentArray = character.Equipment;
-                    var equipment = new EquipmentFragment[Options.EquipmentSlots.Count + 1];
-
-                    //Draw the equipment/paperdolls
-                    for (var z = 0; z < Options.PaperdollOrder[1].Count; z++)
+                    var indexOfPaperdoll = equipmentSlotsOptions.IndexOf(Options.PaperdollOrder[1][z]);
+                    if (indexOfPaperdoll < 0)
                     {
-                        if (Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z]) > -1)
+                        const string equipmentFragmentNamePlayer = "Player";
+                        if (Options.PaperdollOrder[1][z] == equipmentFragmentNamePlayer)
                         {
-                            if (equipmentArray[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z])] > -1 &&
-                                equipmentArray[Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z])] <
-                                Options.MaxInvItems)
-                            {
-                                var paperdollOrder = Options.PaperdollOrder[1][z];
-                                var equipmentSlot = Options.EquipmentSlots.IndexOf(paperdollOrder);
-                                var itemIndex = equipmentArray[equipmentSlot];
-
-                                var itemId = character
-                                    .Items[itemIndex]
-                                    .ItemId;
-
-                                if (ItemBase.Get(itemId) != null)
-                                {
-                                    var itemdata = ItemBase.Get(itemId);
-                                    equipment[z] = new EquipmentFragment
-                                    {
-                                        Name = character.Gender == 0 ? itemdata.MalePaperdoll : itemdata.FemalePaperdoll,
-                                        RenderColor = itemdata.Color,
-                                    };
-                                }
-                            }
+                            equipment[z] = new EquipmentFragment { Name = equipmentFragmentNamePlayer };
                         }
-                        else
-                        {
-                            if (Options.PaperdollOrder[1][z] == "Player")
-                            {
-                                equipment[z] = new EquipmentFragment { Name = "Player" };
-                            }
-                        }
+
+                        continue;
                     }
 
-                    characters.Add(
-                        new CharacterPacket(
-                            character.Id, character.Name, character.Sprite, character.Face, character.Level,
-                            ClassBase.GetName(character.ClassId), equipment
-                        )
-                    );
+                    var inventoryIndexOfEquip = equipmentArray[indexOfPaperdoll];
+                    if (inventoryIndexOfEquip <= -1 || inventoryIndexOfEquip >= Options.MaxInvItems)
+                    {
+                        continue;
+                    }
+
+                    var paperdollOrder = paperdollOrderOptionLayer1[z];
+                    var equipmentSlot = equipmentSlotsOptions.IndexOf(paperdollOrder);
+                    var itemIndex = equipmentArray[equipmentSlot];
+
+                    var itemId = character.Items[itemIndex].ItemId;
+
+                    if (!ItemBase.TryGet(itemId, out var itemDescriptor))
+                    {
+                        continue;
+                    }
+
+                    equipment[z] = new EquipmentFragment
+                    {
+                        Name = itemDescriptor.GetPaperdollForGender(character.Gender),
+                        RenderColor = itemDescriptor.Color,
+                    };
                 }
+
+                characterPackets.Add(
+                    new CharacterPacket(
+                        character.Id,
+                        character.Name,
+                        character.Sprite,
+                        character.Face,
+                        character.Level,
+                        ClassBase.GetName(character.ClassId),
+                        equipment
+                    )
+                );
             }
 
-            CharactersPacket packet = new(
-                characters.ToArray(),
+            CharactersPacket bulkCharactersPacket = new(
+                characterPackets.ToArray(),
                 client.Characters.Count < Options.MaxCharacters
             );
 
-            if (!client.Send(packet))
+            if (!client.Send(bulkCharactersPacket))
             {
-                Log.Error($"Failed to send {packet.Characters.Length} characters to {client.Id}");
+                Log.Error($"Failed to send {bulkCharactersPacket.Characters.Length} characters to {client.Id}");
             }
         }
 
