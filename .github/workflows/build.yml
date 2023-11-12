@@ -97,7 +97,7 @@ jobs:
     - name: Package artifacts
       uses: AscensionGameDev/actions@cc2eb0e356546042e4dc7eca6788fd0b5a063b32
       with:
-        bundle: .github/bundles/*.json
+        bundle: .github/bundles/*.linux-*.json
         version: ${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}+build.${{ github.sha }}
 
     - name: Upload artifacts for publishing/debugging
@@ -171,7 +171,7 @@ jobs:
     - name: Package artifacts
       uses: AscensionGameDev/actions@cc2eb0e356546042e4dc7eca6788fd0b5a063b32
       with:
-        bundle: .github/bundles/*.json
+        bundle: .github/bundles/*.osx-*.json
         version: ${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}+build.${{ github.sha }}
 
     - name: Upload artifacts for publishing/debugging
@@ -245,7 +245,7 @@ jobs:
     - name: Package artifacts
       uses: AscensionGameDev/actions@cc2eb0e356546042e4dc7eca6788fd0b5a063b32
       with:
-        bundle: .github/bundles/*.json
+        bundle: .github/bundles/*.win-*.json
         version: ${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}+build.${{ github.sha }}
 
     - name: Upload artifacts for publishing/debugging
