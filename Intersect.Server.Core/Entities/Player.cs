@@ -185,6 +185,8 @@ namespace Intersect.Server.Entities
         /// </summary>
         [NotMapped][JsonIgnore] public Guild Guild { get; set; }
 
+        [NotMapped][JsonIgnore] public bool IsInGuild => Guild != null;
+
         [NotMapped] public Guid GuildId => DbGuild?.Id ?? default;
 
         /// <summary>
@@ -253,6 +255,9 @@ namespace Intersect.Server.Entities
         private long mStaleCooldownTimer;
 
         private long mGlobalCooldownTimer;
+
+        [NotMapped, JsonIgnore]
+        public bool IsInParty => Party != null && Party.Count >= 2;
 
         public static Player FindOnline(Guid id)
         {

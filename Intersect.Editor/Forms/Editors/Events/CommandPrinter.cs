@@ -1283,6 +1283,11 @@ namespace Intersect.Editor.Forms.Editors.Events
             return Strings.EventCommandList.resetstatpointallocations;
         }
 
+        private static string GetCommandText(CastSpellOn command, MapInstance map)
+        {
+            return Strings.EventCommandList.CastSpellOn.ToString(SpellBase.GetName(command.SpellId), command.Self, command.PartyMembers, command.GuildMembers);
+        }
+
         //Set Variable Modification Texts
         private static string GetVariableModText(SetVariableCommand command, VariableMod mod)
         {

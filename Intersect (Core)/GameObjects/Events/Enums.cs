@@ -234,5 +234,7 @@ namespace Intersect.GameObjects.Events
 
         //Reset Stats
         ResetStatPointAllocations,
+
+        CastSpellOn,
     }
 }

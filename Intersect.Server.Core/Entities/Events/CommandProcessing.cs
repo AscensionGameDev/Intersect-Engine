@@ -1546,6 +1546,48 @@ namespace Intersect.Server.Entities.Events
             PacketSender.SendEntityDataToProximity(player);
         }
 
+        // Cast Spell On command
+        private static void ProcessCommand(
+           CastSpellOn command,
+           Player player,
+           Event instance,
+           CommandInstance stackInfo,
+           Stack<CommandInstance> callStack
+       )
+        {
+            if (player == null || !player.Online)
+            {
+                return;
+            }
+
+            List<Player> affectedPlayers = new List<Player>();
+
+            if (command.Self)
+            {
+                affectedPlayers.Add(player);
+            }
+
+            if (command.PartyMembers && player.IsInParty)
+            {
+                affectedPlayers.AddRange(player.Party.Where(pl => pl.Id != player.Id));
+            }
+
+            if (command.GuildMembers && player.IsInGuild)
+            {
+                affectedPlayers.AddRange(player.Guild.FindOnlineMembers().Where(pl => pl.Id != player.Id));
+            }
+
+            foreach (var affectedPlayer in affectedPlayers.DistinctBy(pl => pl.Id))
+            {
+                if (!affectedPlayer.Online)
+                {
+                    continue;
+                }
+
+                affectedPlayer?.CastSpell(command.SpellId);
+            }
+        }
+
         private static Stack<CommandInstance> LoadLabelCallstack(string label, EventPage currentPage)
         {
             var newStack = new Stack<CommandInstance>();

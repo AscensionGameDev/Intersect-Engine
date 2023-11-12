@@ -32,827 +32,802 @@ namespace Intersect.Editor.Forms.Editors.Events
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.TreeNode treeNode1 = new System.Windows.Forms.TreeNode("Show Text");
-            System.Windows.Forms.TreeNode treeNode2 = new System.Windows.Forms.TreeNode("Show Options");
-            System.Windows.Forms.TreeNode treeNode3 = new System.Windows.Forms.TreeNode("Input Variable");
-            System.Windows.Forms.TreeNode treeNode4 = new System.Windows.Forms.TreeNode("Add Chatbox Text");
-            System.Windows.Forms.TreeNode treeNode5 = new System.Windows.Forms.TreeNode("Dialogue", new System.Windows.Forms.TreeNode[] {
-            treeNode1,
-            treeNode2,
-            treeNode3,
-            treeNode4});
-            System.Windows.Forms.TreeNode treeNode6 = new System.Windows.Forms.TreeNode("Set Variable");
-            System.Windows.Forms.TreeNode treeNode7 = new System.Windows.Forms.TreeNode("Set Self Switch");
-            System.Windows.Forms.TreeNode treeNode8 = new System.Windows.Forms.TreeNode("Conditional Branch");
-            System.Windows.Forms.TreeNode treeNode9 = new System.Windows.Forms.TreeNode("Exit Event Process");
-            System.Windows.Forms.TreeNode treeNode10 = new System.Windows.Forms.TreeNode("Label");
-            System.Windows.Forms.TreeNode treeNode11 = new System.Windows.Forms.TreeNode("Go To Label");
-            System.Windows.Forms.TreeNode treeNode12 = new System.Windows.Forms.TreeNode("Start Common Event");
-            System.Windows.Forms.TreeNode treeNode13 = new System.Windows.Forms.TreeNode("Logic Flow", new System.Windows.Forms.TreeNode[] {
-            treeNode6,
-            treeNode7,
-            treeNode8,
-            treeNode9,
-            treeNode10,
-            treeNode11,
-            treeNode12});
-            System.Windows.Forms.TreeNode treeNode14 = new System.Windows.Forms.TreeNode("Restore HP");
-            System.Windows.Forms.TreeNode treeNode15 = new System.Windows.Forms.TreeNode("Restore MP");
-            System.Windows.Forms.TreeNode treeNode16 = new System.Windows.Forms.TreeNode("Level Up");
-            System.Windows.Forms.TreeNode treeNode17 = new System.Windows.Forms.TreeNode("Give Experience");
-            System.Windows.Forms.TreeNode treeNode18 = new System.Windows.Forms.TreeNode("Change Level");
-            System.Windows.Forms.TreeNode treeNode19 = new System.Windows.Forms.TreeNode("Change Spells");
-            System.Windows.Forms.TreeNode treeNode20 = new System.Windows.Forms.TreeNode("Change Items");
-            System.Windows.Forms.TreeNode treeNode21 = new System.Windows.Forms.TreeNode("Change Sprite");
-            System.Windows.Forms.TreeNode treeNode22 = new System.Windows.Forms.TreeNode("Change Player Color");
-            System.Windows.Forms.TreeNode treeNode23 = new System.Windows.Forms.TreeNode("Change Face");
-            System.Windows.Forms.TreeNode treeNode24 = new System.Windows.Forms.TreeNode("Change Gender");
-            System.Windows.Forms.TreeNode treeNode25 = new System.Windows.Forms.TreeNode("Set Access");
-            System.Windows.Forms.TreeNode treeNode26 = new System.Windows.Forms.TreeNode("Change Class");
-            System.Windows.Forms.TreeNode treeNode27 = new System.Windows.Forms.TreeNode("Equip/Unequip Item");
-            System.Windows.Forms.TreeNode treeNode28 = new System.Windows.Forms.TreeNode("Change Name Color");
-            System.Windows.Forms.TreeNode treeNode29 = new System.Windows.Forms.TreeNode("Change Player Label");
-            System.Windows.Forms.TreeNode treeNode30 = new System.Windows.Forms.TreeNode("Change Player Name");
-            System.Windows.Forms.TreeNode treeNode31 = new System.Windows.Forms.TreeNode("Reset Stat Point Allocations");
-            System.Windows.Forms.TreeNode treeNode32 = new System.Windows.Forms.TreeNode("Player Control", new System.Windows.Forms.TreeNode[] {
-            treeNode14,
-            treeNode15,
-            treeNode16,
-            treeNode17,
-            treeNode18,
-            treeNode19,
-            treeNode20,
-            treeNode21,
-            treeNode22,
-            treeNode23,
-            treeNode24,
-            treeNode25,
-            treeNode26,
-            treeNode27,
-            treeNode28,
-            treeNode29,
-            treeNode30,
-            treeNode31});
-            System.Windows.Forms.TreeNode treeNode33 = new System.Windows.Forms.TreeNode("Warp Player");
-            System.Windows.Forms.TreeNode treeNode34 = new System.Windows.Forms.TreeNode("Set Move Route");
-            System.Windows.Forms.TreeNode treeNode35 = new System.Windows.Forms.TreeNode("Wait for Route Completion");
-            System.Windows.Forms.TreeNode treeNode36 = new System.Windows.Forms.TreeNode("Hold Player");
-            System.Windows.Forms.TreeNode treeNode37 = new System.Windows.Forms.TreeNode("Release Player");
-            System.Windows.Forms.TreeNode treeNode38 = new System.Windows.Forms.TreeNode("Spawn NPC");
-            System.Windows.Forms.TreeNode treeNode39 = new System.Windows.Forms.TreeNode("Despawn NPC");
-            System.Windows.Forms.TreeNode treeNode40 = new System.Windows.Forms.TreeNode("Hide Player");
-            System.Windows.Forms.TreeNode treeNode41 = new System.Windows.Forms.TreeNode("Show Player");
-            System.Windows.Forms.TreeNode treeNode42 = new System.Windows.Forms.TreeNode("Movement", new System.Windows.Forms.TreeNode[] {
-            treeNode33,
-            treeNode34,
-            treeNode35,
-            treeNode36,
-            treeNode37,
-            treeNode38,
-            treeNode39,
-            treeNode40,
-            treeNode41});
-            System.Windows.Forms.TreeNode treeNode43 = new System.Windows.Forms.TreeNode("Play Animation");
-            System.Windows.Forms.TreeNode treeNode44 = new System.Windows.Forms.TreeNode("Play BGM");
-            System.Windows.Forms.TreeNode treeNode45 = new System.Windows.Forms.TreeNode("Fadeout BGM");
-            System.Windows.Forms.TreeNode treeNode46 = new System.Windows.Forms.TreeNode("Play Sound");
-            System.Windows.Forms.TreeNode treeNode47 = new System.Windows.Forms.TreeNode("Stop Sounds");
-            System.Windows.Forms.TreeNode treeNode48 = new System.Windows.Forms.TreeNode("Show Picture");
-            System.Windows.Forms.TreeNode treeNode49 = new System.Windows.Forms.TreeNode("Hide Picture");
-            System.Windows.Forms.TreeNode treeNode50 = new System.Windows.Forms.TreeNode("Special Effects", new System.Windows.Forms.TreeNode[] {
-            treeNode43,
-            treeNode44,
-            treeNode45,
-            treeNode46,
-            treeNode47,
-            treeNode48,
-            treeNode49});
-            System.Windows.Forms.TreeNode treeNode51 = new System.Windows.Forms.TreeNode("Start Quest");
-            System.Windows.Forms.TreeNode treeNode52 = new System.Windows.Forms.TreeNode("Complete Quest Task");
-            System.Windows.Forms.TreeNode treeNode53 = new System.Windows.Forms.TreeNode("End Quest");
-            System.Windows.Forms.TreeNode treeNode54 = new System.Windows.Forms.TreeNode("Quest Control", new System.Windows.Forms.TreeNode[] {
-            treeNode51,
-            treeNode52,
-            treeNode53});
-            System.Windows.Forms.TreeNode treeNode55 = new System.Windows.Forms.TreeNode("Wait...");
-            System.Windows.Forms.TreeNode treeNode56 = new System.Windows.Forms.TreeNode("Etc", new System.Windows.Forms.TreeNode[] {
-            treeNode55});
-            System.Windows.Forms.TreeNode treeNode57 = new System.Windows.Forms.TreeNode("Open Bank");
-            System.Windows.Forms.TreeNode treeNode58 = new System.Windows.Forms.TreeNode("Open Shop");
-            System.Windows.Forms.TreeNode treeNode59 = new System.Windows.Forms.TreeNode("Open Crafting Station");
-            System.Windows.Forms.TreeNode treeNode60 = new System.Windows.Forms.TreeNode("Shop and Bank", new System.Windows.Forms.TreeNode[] {
-            treeNode57,
-            treeNode58,
-            treeNode59});
-            System.Windows.Forms.TreeNode treeNode61 = new System.Windows.Forms.TreeNode("Create Guild");
-            System.Windows.Forms.TreeNode treeNode62 = new System.Windows.Forms.TreeNode("Disband Guild");
-            System.Windows.Forms.TreeNode treeNode63 = new System.Windows.Forms.TreeNode("Open Guild Bank");
-            System.Windows.Forms.TreeNode treeNode64 = new System.Windows.Forms.TreeNode("Set Guild Bank Slots Count");
-            System.Windows.Forms.TreeNode treeNode65 = new System.Windows.Forms.TreeNode("Guilds", new System.Windows.Forms.TreeNode[] {
-            treeNode61,
-            treeNode62,
-            treeNode63,
-            treeNode64});
-            this.lblName = new System.Windows.Forms.Label();
-            this.txtEventname = new DarkUI.Controls.DarkTextBox();
-            this.grpEntityOptions = new DarkUI.Controls.DarkGroupBox();
-            this.grpExtra = new DarkUI.Controls.DarkGroupBox();
-            this.chkIgnoreNpcAvoids = new DarkUI.Controls.DarkCheckBox();
-            this.chkInteractionFreeze = new DarkUI.Controls.DarkCheckBox();
-            this.chkWalkingAnimation = new DarkUI.Controls.DarkCheckBox();
-            this.chkDirectionFix = new DarkUI.Controls.DarkCheckBox();
-            this.chkHideName = new DarkUI.Controls.DarkCheckBox();
-            this.chkWalkThrough = new DarkUI.Controls.DarkCheckBox();
-            this.grpInspector = new DarkUI.Controls.DarkGroupBox();
-            this.pnlFacePreview = new System.Windows.Forms.Panel();
-            this.lblInspectorDesc = new System.Windows.Forms.Label();
-            this.txtDesc = new DarkUI.Controls.DarkTextBox();
-            this.chkDisableInspector = new DarkUI.Controls.DarkCheckBox();
-            this.cmbPreviewFace = new DarkUI.Controls.DarkComboBox();
-            this.lblFace = new System.Windows.Forms.Label();
-            this.grpPreview = new DarkUI.Controls.DarkGroupBox();
-            this.lblAnimation = new System.Windows.Forms.Label();
-            this.cmbAnimation = new DarkUI.Controls.DarkComboBox();
-            this.pnlPreview = new System.Windows.Forms.Panel();
-            this.grpMovement = new DarkUI.Controls.DarkGroupBox();
-            this.lblLayer = new System.Windows.Forms.Label();
-            this.cmbLayering = new DarkUI.Controls.DarkComboBox();
-            this.cmbEventFreq = new DarkUI.Controls.DarkComboBox();
-            this.cmbEventSpeed = new DarkUI.Controls.DarkComboBox();
-            this.lblFreq = new System.Windows.Forms.Label();
-            this.lblSpeed = new System.Windows.Forms.Label();
-            this.btnSetRoute = new DarkUI.Controls.DarkButton();
-            this.lblType = new System.Windows.Forms.Label();
-            this.cmbMoveType = new DarkUI.Controls.DarkComboBox();
-            this.grpTriggers = new DarkUI.Controls.DarkGroupBox();
-            this.lblVariableTrigger = new System.Windows.Forms.Label();
-            this.lblCommand = new System.Windows.Forms.Label();
-            this.lblTriggerVal = new System.Windows.Forms.Label();
-            this.cmbTrigger = new DarkUI.Controls.DarkComboBox();
-            this.cmbTriggerVal = new DarkUI.Controls.DarkComboBox();
-            this.cmbVariable = new DarkUI.Controls.DarkComboBox();
-            this.txtCommand = new DarkUI.Controls.DarkTextBox();
-            this.grpEventConditions = new DarkUI.Controls.DarkGroupBox();
-            this.btnEditConditions = new DarkUI.Controls.DarkButton();
-            this.grpNewCommands = new DarkUI.Controls.DarkGroupBox();
-            this.lblCloseCommands = new System.Windows.Forms.Label();
-            this.lstCommands = new System.Windows.Forms.TreeView();
-            this.grpEventCommands = new DarkUI.Controls.DarkGroupBox();
-            this.lstEventCommands = new System.Windows.Forms.ListBox();
-            this.grpCreateCommands = new DarkUI.Controls.DarkGroupBox();
-            this.btnSave = new DarkUI.Controls.DarkButton();
-            this.btnCancel = new DarkUI.Controls.DarkButton();
-            this.commandMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.btnInsert = new System.Windows.Forms.ToolStripMenuItem();
-            this.btnEdit = new System.Windows.Forms.ToolStripMenuItem();
-            this.btnCut = new System.Windows.Forms.ToolStripMenuItem();
-            this.btnCopy = new System.Windows.Forms.ToolStripMenuItem();
-            this.btnPaste = new System.Windows.Forms.ToolStripMenuItem();
-            this.btnDelete = new System.Windows.Forms.ToolStripMenuItem();
-            this.grpPageOptions = new DarkUI.Controls.DarkGroupBox();
-            this.btnClearPage = new DarkUI.Controls.DarkButton();
-            this.btnDeletePage = new DarkUI.Controls.DarkButton();
-            this.btnPastePage = new DarkUI.Controls.DarkButton();
-            this.btnCopyPage = new DarkUI.Controls.DarkButton();
-            this.btnNewPage = new DarkUI.Controls.DarkButton();
-            this.grpGeneral = new DarkUI.Controls.DarkGroupBox();
-            this.chkIsGlobal = new DarkUI.Controls.DarkCheckBox();
-            this.pnlTabsContainer = new System.Windows.Forms.Panel();
-            this.pnlTabs = new System.Windows.Forms.Panel();
-            this.btnTabsRight = new DarkUI.Controls.DarkButton();
-            this.btnTabsLeft = new DarkUI.Controls.DarkButton();
-            this.panel1 = new System.Windows.Forms.Panel();
-            this.grpEntityOptions.SuspendLayout();
-            this.grpExtra.SuspendLayout();
-            this.grpInspector.SuspendLayout();
-            this.grpPreview.SuspendLayout();
-            this.grpMovement.SuspendLayout();
-            this.grpTriggers.SuspendLayout();
-            this.grpEventConditions.SuspendLayout();
-            this.grpNewCommands.SuspendLayout();
-            this.grpEventCommands.SuspendLayout();
-            this.commandMenu.SuspendLayout();
-            this.grpPageOptions.SuspendLayout();
-            this.grpGeneral.SuspendLayout();
-            this.pnlTabsContainer.SuspendLayout();
-            this.SuspendLayout();
+            components = new Container();
+            var treeNode1 = new TreeNode("Show Text");
+            var treeNode2 = new TreeNode("Show Options");
+            var treeNode3 = new TreeNode("Input Variable");
+            var treeNode4 = new TreeNode("Add Chatbox Text");
+            var treeNode5 = new TreeNode("Dialogue", new TreeNode[] { treeNode1, treeNode2, treeNode3, treeNode4 });
+            var treeNode6 = new TreeNode("Set Variable");
+            var treeNode7 = new TreeNode("Set Self Switch");
+            var treeNode8 = new TreeNode("Conditional Branch");
+            var treeNode9 = new TreeNode("Exit Event Process");
+            var treeNode10 = new TreeNode("Label");
+            var treeNode11 = new TreeNode("Go To Label");
+            var treeNode12 = new TreeNode("Start Common Event");
+            var treeNode13 = new TreeNode("Logic Flow", new TreeNode[] { treeNode6, treeNode7, treeNode8, treeNode9, treeNode10, treeNode11, treeNode12 });
+            var treeNode14 = new TreeNode("Restore HP");
+            var treeNode15 = new TreeNode("Restore MP");
+            var treeNode16 = new TreeNode("Level Up");
+            var treeNode17 = new TreeNode("Give Experience");
+            var treeNode18 = new TreeNode("Change Level");
+            var treeNode19 = new TreeNode("Change Spells");
+            var treeNode20 = new TreeNode("Change Items");
+            var treeNode21 = new TreeNode("Change Sprite");
+            var treeNode22 = new TreeNode("Change Player Color");
+            var treeNode23 = new TreeNode("Change Face");
+            var treeNode24 = new TreeNode("Change Gender");
+            var treeNode25 = new TreeNode("Set Access");
+            var treeNode26 = new TreeNode("Change Class");
+            var treeNode27 = new TreeNode("Equip/Unequip Item");
+            var treeNode28 = new TreeNode("Change Name Color");
+            var treeNode29 = new TreeNode("Change Player Label");
+            var treeNode30 = new TreeNode("Change Player Name");
+            var treeNode31 = new TreeNode("Reset Stat Point Allocations");
+            var treeNode32 = new TreeNode("Cast Spell On");
+            var treeNode33 = new TreeNode("Player Control", new TreeNode[] { treeNode14, treeNode15, treeNode16, treeNode17, treeNode18, treeNode19, treeNode20, treeNode21, treeNode22, treeNode23, treeNode24, treeNode25, treeNode26, treeNode27, treeNode28, treeNode29, treeNode30, treeNode31, treeNode32 });
+            var treeNode34 = new TreeNode("Warp Player");
+            var treeNode35 = new TreeNode("Set Move Route");
+            var treeNode36 = new TreeNode("Wait for Route Completion");
+            var treeNode37 = new TreeNode("Hold Player");
+            var treeNode38 = new TreeNode("Release Player");
+            var treeNode39 = new TreeNode("Spawn NPC");
+            var treeNode40 = new TreeNode("Despawn NPC");
+            var treeNode41 = new TreeNode("Hide Player");
+            var treeNode42 = new TreeNode("Show Player");
+            var treeNode43 = new TreeNode("Movement", new TreeNode[] { treeNode34, treeNode35, treeNode36, treeNode37, treeNode38, treeNode39, treeNode40, treeNode41, treeNode42 });
+            var treeNode44 = new TreeNode("Play Animation");
+            var treeNode45 = new TreeNode("Play BGM");
+            var treeNode46 = new TreeNode("Fadeout BGM");
+            var treeNode47 = new TreeNode("Play Sound");
+            var treeNode48 = new TreeNode("Stop Sounds");
+            var treeNode49 = new TreeNode("Show Picture");
+            var treeNode50 = new TreeNode("Hide Picture");
+            var treeNode51 = new TreeNode("Special Effects", new TreeNode[] { treeNode44, treeNode45, treeNode46, treeNode47, treeNode48, treeNode49, treeNode50 });
+            var treeNode52 = new TreeNode("Start Quest");
+            var treeNode53 = new TreeNode("Complete Quest Task");
+            var treeNode54 = new TreeNode("End Quest");
+            var treeNode55 = new TreeNode("Quest Control", new TreeNode[] { treeNode52, treeNode53, treeNode54 });
+            var treeNode56 = new TreeNode("Wait...");
+            var treeNode57 = new TreeNode("Etc", new TreeNode[] { treeNode56 });
+            var treeNode58 = new TreeNode("Open Bank");
+            var treeNode59 = new TreeNode("Open Shop");
+            var treeNode60 = new TreeNode("Open Crafting Station");
+            var treeNode61 = new TreeNode("Shop and Bank", new TreeNode[] { treeNode58, treeNode59, treeNode60 });
+            var treeNode62 = new TreeNode("Create Guild");
+            var treeNode63 = new TreeNode("Disband Guild");
+            var treeNode64 = new TreeNode("Open Guild Bank");
+            var treeNode65 = new TreeNode("Set Guild Bank Slots Count");
+            var treeNode66 = new TreeNode("Guilds", new TreeNode[] { treeNode62, treeNode63, treeNode64, treeNode65 });
+            lblName = new Label();
+            txtEventname = new DarkTextBox();
+            grpEntityOptions = new DarkGroupBox();
+            grpExtra = new DarkGroupBox();
+            chkIgnoreNpcAvoids = new DarkCheckBox();
+            chkInteractionFreeze = new DarkCheckBox();
+            chkWalkingAnimation = new DarkCheckBox();
+            chkDirectionFix = new DarkCheckBox();
+            chkHideName = new DarkCheckBox();
+            chkWalkThrough = new DarkCheckBox();
+            grpInspector = new DarkGroupBox();
+            pnlFacePreview = new Panel();
+            lblInspectorDesc = new Label();
+            txtDesc = new DarkTextBox();
+            chkDisableInspector = new DarkCheckBox();
+            cmbPreviewFace = new DarkComboBox();
+            lblFace = new Label();
+            grpPreview = new DarkGroupBox();
+            lblAnimation = new Label();
+            cmbAnimation = new DarkComboBox();
+            pnlPreview = new Panel();
+            grpMovement = new DarkGroupBox();
+            lblLayer = new Label();
+            cmbLayering = new DarkComboBox();
+            cmbEventFreq = new DarkComboBox();
+            cmbEventSpeed = new DarkComboBox();
+            lblFreq = new Label();
+            lblSpeed = new Label();
+            btnSetRoute = new DarkButton();
+            lblType = new Label();
+            cmbMoveType = new DarkComboBox();
+            grpTriggers = new DarkGroupBox();
+            lblVariableTrigger = new Label();
+            lblCommand = new Label();
+            lblTriggerVal = new Label();
+            cmbTrigger = new DarkComboBox();
+            cmbTriggerVal = new DarkComboBox();
+            cmbVariable = new DarkComboBox();
+            txtCommand = new DarkTextBox();
+            grpEventConditions = new DarkGroupBox();
+            btnEditConditions = new DarkButton();
+            grpNewCommands = new DarkGroupBox();
+            lblCloseCommands = new Label();
+            lstCommands = new TreeView();
+            grpEventCommands = new DarkGroupBox();
+            lstEventCommands = new ListBox();
+            grpCreateCommands = new DarkGroupBox();
+            btnSave = new DarkButton();
+            btnCancel = new DarkButton();
+            commandMenu = new ContextMenuStrip(components);
+            btnInsert = new ToolStripMenuItem();
+            btnEdit = new ToolStripMenuItem();
+            btnCut = new ToolStripMenuItem();
+            btnCopy = new ToolStripMenuItem();
+            btnPaste = new ToolStripMenuItem();
+            btnDelete = new ToolStripMenuItem();
+            grpPageOptions = new DarkGroupBox();
+            btnClearPage = new DarkButton();
+            btnDeletePage = new DarkButton();
+            btnPastePage = new DarkButton();
+            btnCopyPage = new DarkButton();
+            btnNewPage = new DarkButton();
+            grpGeneral = new DarkGroupBox();
+            chkIsGlobal = new DarkCheckBox();
+            pnlTabsContainer = new Panel();
+            pnlTabs = new Panel();
+            btnTabsRight = new DarkButton();
+            btnTabsLeft = new DarkButton();
+            panel1 = new Panel();
+            grpEntityOptions.SuspendLayout();
+            grpExtra.SuspendLayout();
+            grpInspector.SuspendLayout();
+            grpPreview.SuspendLayout();
+            grpMovement.SuspendLayout();
+            grpTriggers.SuspendLayout();
+            grpEventConditions.SuspendLayout();
+            grpNewCommands.SuspendLayout();
+            grpEventCommands.SuspendLayout();
+            commandMenu.SuspendLayout();
+            grpPageOptions.SuspendLayout();
+            grpGeneral.SuspendLayout();
+            pnlTabsContainer.SuspendLayout();
+            SuspendLayout();
             // 
             // lblName
             // 
-            this.lblName.AutoSize = true;
-            this.lblName.Location = new System.Drawing.Point(6, 22);
-            this.lblName.Name = "lblName";
-            this.lblName.Size = new System.Drawing.Size(38, 13);
-            this.lblName.TabIndex = 1;
-            this.lblName.Text = "Name:";
+            lblName.AutoSize = true;
+            lblName.Location = new System.Drawing.Point(7, 25);
+            lblName.Margin = new Padding(4, 0, 4, 0);
+            lblName.Name = "lblName";
+            lblName.Size = new Size(42, 15);
+            lblName.TabIndex = 1;
+            lblName.Text = "Name:";
             // 
             // txtEventname
             // 
-            this.txtEventname.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.txtEventname.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.txtEventname.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.txtEventname.Location = new System.Drawing.Point(48, 19);
-            this.txtEventname.Name = "txtEventname";
-            this.txtEventname.Size = new System.Drawing.Size(124, 20);
-            this.txtEventname.TabIndex = 2;
-            this.txtEventname.TextChanged += new System.EventHandler(this.txtEventname_TextChanged);
+            txtEventname.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
+            txtEventname.BorderStyle = BorderStyle.FixedSingle;
+            txtEventname.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+            txtEventname.Location = new System.Drawing.Point(56, 22);
+            txtEventname.Margin = new Padding(4, 3, 4, 3);
+            txtEventname.Name = "txtEventname";
+            txtEventname.Size = new Size(144, 23);
+            txtEventname.TabIndex = 2;
+            txtEventname.TextChanged += txtEventname_TextChanged;
             // 
             // grpEntityOptions
             // 
-            this.grpEntityOptions.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            this.grpEntityOptions.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.grpEntityOptions.Controls.Add(this.grpExtra);
-            this.grpEntityOptions.Controls.Add(this.grpInspector);
-            this.grpEntityOptions.Controls.Add(this.grpPreview);
-            this.grpEntityOptions.Controls.Add(this.grpMovement);
-            this.grpEntityOptions.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpEntityOptions.Location = new System.Drawing.Point(21, 150);
-            this.grpEntityOptions.Name = "grpEntityOptions";
-            this.grpEntityOptions.Size = new System.Drawing.Size(326, 450);
-            this.grpEntityOptions.TabIndex = 12;
-            this.grpEntityOptions.TabStop = false;
-            this.grpEntityOptions.Text = "Entity Options";
+            grpEntityOptions.BackColor = System.Drawing.Color.FromArgb(45, 45, 48);
+            grpEntityOptions.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
+            grpEntityOptions.Controls.Add(grpExtra);
+            grpEntityOptions.Controls.Add(grpInspector);
+            grpEntityOptions.Controls.Add(grpPreview);
+            grpEntityOptions.Controls.Add(grpMovement);
+            grpEntityOptions.ForeColor = System.Drawing.Color.Gainsboro;
+            grpEntityOptions.Location = new System.Drawing.Point(24, 173);
+            grpEntityOptions.Margin = new Padding(4, 3, 4, 3);
+            grpEntityOptions.Name = "grpEntityOptions";
+            grpEntityOptions.Padding = new Padding(4, 3, 4, 3);
+            grpEntityOptions.Size = new Size(380, 519);
+            grpEntityOptions.TabIndex = 12;
+            grpEntityOptions.TabStop = false;
+            grpEntityOptions.Text = "Entity Options";
             // 
             // grpExtra
             // 
-            this.grpExtra.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            this.grpExtra.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.grpExtra.Controls.Add(this.chkIgnoreNpcAvoids);
-            this.grpExtra.Controls.Add(this.chkInteractionFreeze);
-            this.grpExtra.Controls.Add(this.chkWalkingAnimation);
-            this.grpExtra.Controls.Add(this.chkDirectionFix);
-            this.grpExtra.Controls.Add(this.chkHideName);
-            this.grpExtra.Controls.Add(this.chkWalkThrough);
-            this.grpExtra.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpExtra.Location = new System.Drawing.Point(6, 297);
-            this.grpExtra.Name = "grpExtra";
-            this.grpExtra.Size = new System.Drawing.Size(315, 64);
-            this.grpExtra.TabIndex = 9;
-            this.grpExtra.TabStop = false;
-            this.grpExtra.Text = "Extra";
+            grpExtra.BackColor = System.Drawing.Color.FromArgb(45, 45, 48);
+            grpExtra.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
+            grpExtra.Controls.Add(chkIgnoreNpcAvoids);
+            grpExtra.Controls.Add(chkInteractionFreeze);
+            grpExtra.Controls.Add(chkWalkingAnimation);
+            grpExtra.Controls.Add(chkDirectionFix);
+            grpExtra.Controls.Add(chkHideName);
+            grpExtra.Controls.Add(chkWalkThrough);
+            grpExtra.ForeColor = System.Drawing.Color.Gainsboro;
+            grpExtra.Location = new System.Drawing.Point(7, 343);
+            grpExtra.Margin = new Padding(4, 3, 4, 3);
+            grpExtra.Name = "grpExtra";
+            grpExtra.Padding = new Padding(4, 3, 4, 3);
+            grpExtra.Size = new Size(368, 74);
+            grpExtra.TabIndex = 9;
+            grpExtra.TabStop = false;
+            grpExtra.Text = "Extra";
             // 
             // chkIgnoreNpcAvoids
             // 
-            this.chkIgnoreNpcAvoids.AutoSize = true;
-            this.chkIgnoreNpcAvoids.Location = new System.Drawing.Point(123, 41);
-            this.chkIgnoreNpcAvoids.Name = "chkIgnoreNpcAvoids";
-            this.chkIgnoreNpcAvoids.Size = new System.Drawing.Size(114, 17);
-            this.chkIgnoreNpcAvoids.TabIndex = 7;
-            this.chkIgnoreNpcAvoids.Text = "Ignroe Npc Avoids";
-            this.chkIgnoreNpcAvoids.CheckedChanged += new System.EventHandler(this.chkIgnoreNpcAvoids_CheckedChanged);
+            chkIgnoreNpcAvoids.AutoSize = true;
+            chkIgnoreNpcAvoids.Location = new System.Drawing.Point(144, 47);
+            chkIgnoreNpcAvoids.Margin = new Padding(4, 3, 4, 3);
+            chkIgnoreNpcAvoids.Name = "chkIgnoreNpcAvoids";
+            chkIgnoreNpcAvoids.Size = new Size(124, 19);
+            chkIgnoreNpcAvoids.TabIndex = 7;
+            chkIgnoreNpcAvoids.Text = "Ignroe Npc Avoids";
+            chkIgnoreNpcAvoids.CheckedChanged += chkIgnoreNpcAvoids_CheckedChanged;
             // 
             // chkInteractionFreeze
             // 
-            this.chkInteractionFreeze.AutoSize = true;
-            this.chkInteractionFreeze.Location = new System.Drawing.Point(6, 41);
-            this.chkInteractionFreeze.Name = "chkInteractionFreeze";
-            this.chkInteractionFreeze.Size = new System.Drawing.Size(111, 17);
-            this.chkInteractionFreeze.TabIndex = 6;
-            this.chkInteractionFreeze.Text = "Interaction Freeze";
-            this.chkInteractionFreeze.CheckedChanged += new System.EventHandler(this.chkInteractionFreeze_CheckedChanged);
+            chkInteractionFreeze.AutoSize = true;
+            chkInteractionFreeze.Location = new System.Drawing.Point(7, 47);
+            chkInteractionFreeze.Margin = new Padding(4, 3, 4, 3);
+            chkInteractionFreeze.Name = "chkInteractionFreeze";
+            chkInteractionFreeze.Size = new Size(119, 19);
+            chkInteractionFreeze.TabIndex = 6;
+            chkInteractionFreeze.Text = "Interaction Freeze";
+            chkInteractionFreeze.CheckedChanged += chkInteractionFreeze_CheckedChanged;
             // 
             // chkWalkingAnimation
             // 
-            this.chkWalkingAnimation.AutoSize = true;
-            this.chkWalkingAnimation.Location = new System.Drawing.Point(214, 19);
-            this.chkWalkingAnimation.Name = "chkWalkingAnimation";
-            this.chkWalkingAnimation.Size = new System.Drawing.Size(91, 17);
-            this.chkWalkingAnimation.TabIndex = 5;
-            this.chkWalkingAnimation.Text = "Walking Anim";
-            this.chkWalkingAnimation.CheckedChanged += new System.EventHandler(this.chkWalkingAnimation_CheckedChanged);
+            chkWalkingAnimation.AutoSize = true;
+            chkWalkingAnimation.Location = new System.Drawing.Point(250, 22);
+            chkWalkingAnimation.Margin = new Padding(4, 3, 4, 3);
+            chkWalkingAnimation.Name = "chkWalkingAnimation";
+            chkWalkingAnimation.Size = new Size(101, 19);
+            chkWalkingAnimation.TabIndex = 5;
+            chkWalkingAnimation.Text = "Walking Anim";
+            chkWalkingAnimation.CheckedChanged += chkWalkingAnimation_CheckedChanged;
             // 
             // chkDirectionFix
             // 
-            this.chkDirectionFix.AutoSize = true;
-            this.chkDirectionFix.Location = new System.Drawing.Point(156, 19);
-            this.chkDirectionFix.Name = "chkDirectionFix";
-            this.chkDirectionFix.Size = new System.Drawing.Size(55, 17);
-            this.chkDirectionFix.TabIndex = 4;
-            this.chkDirectionFix.Text = "Dir Fix";
-            this.chkDirectionFix.CheckedChanged += new System.EventHandler(this.chkDirectionFix_CheckedChanged);
+            chkDirectionFix.AutoSize = true;
+            chkDirectionFix.Location = new System.Drawing.Point(182, 22);
+            chkDirectionFix.Margin = new Padding(4, 3, 4, 3);
+            chkDirectionFix.Name = "chkDirectionFix";
+            chkDirectionFix.Size = new Size(59, 19);
+            chkDirectionFix.TabIndex = 4;
+            chkDirectionFix.Text = "Dir Fix";
+            chkDirectionFix.CheckedChanged += chkDirectionFix_CheckedChanged;
             // 
             // chkHideName
             // 
-            this.chkHideName.AutoSize = true;
-            this.chkHideName.Location = new System.Drawing.Point(75, 19);
-            this.chkHideName.Name = "chkHideName";
-            this.chkHideName.Size = new System.Drawing.Size(79, 17);
-            this.chkHideName.TabIndex = 3;
-            this.chkHideName.Text = "Hide Name";
-            this.chkHideName.CheckedChanged += new System.EventHandler(this.chkHideName_CheckedChanged);
+            chkHideName.AutoSize = true;
+            chkHideName.Location = new System.Drawing.Point(88, 22);
+            chkHideName.Margin = new Padding(4, 3, 4, 3);
+            chkHideName.Name = "chkHideName";
+            chkHideName.Size = new Size(86, 19);
+            chkHideName.TabIndex = 3;
+            chkHideName.Text = "Hide Name";
+            chkHideName.CheckedChanged += chkHideName_CheckedChanged;
             // 
             // chkWalkThrough
             // 
-            this.chkWalkThrough.AutoSize = true;
-            this.chkWalkThrough.Location = new System.Drawing.Point(6, 19);
-            this.chkWalkThrough.Name = "chkWalkThrough";
-            this.chkWalkThrough.Size = new System.Drawing.Size(69, 17);
-            this.chkWalkThrough.TabIndex = 2;
-            this.chkWalkThrough.Text = "Passable";
-            this.chkWalkThrough.CheckedChanged += new System.EventHandler(this.chkWalkThrough_CheckedChanged);
+            chkWalkThrough.AutoSize = true;
+            chkWalkThrough.Location = new System.Drawing.Point(7, 22);
+            chkWalkThrough.Margin = new Padding(4, 3, 4, 3);
+            chkWalkThrough.Name = "chkWalkThrough";
+            chkWalkThrough.Size = new Size(71, 19);
+            chkWalkThrough.TabIndex = 2;
+            chkWalkThrough.Text = "Passable";
+            chkWalkThrough.CheckedChanged += chkWalkThrough_CheckedChanged;
             // 
             // grpInspector
             // 
-            this.grpInspector.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            this.grpInspector.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.grpInspector.Controls.Add(this.pnlFacePreview);
-            this.grpInspector.Controls.Add(this.lblInspectorDesc);
-            this.grpInspector.Controls.Add(this.txtDesc);
-            this.grpInspector.Controls.Add(this.chkDisableInspector);
-            this.grpInspector.Controls.Add(this.cmbPreviewFace);
-            this.grpInspector.Controls.Add(this.lblFace);
-            this.grpInspector.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpInspector.Location = new System.Drawing.Point(6, 179);
-            this.grpInspector.Name = "grpInspector";
-            this.grpInspector.Size = new System.Drawing.Size(316, 117);
-            this.grpInspector.TabIndex = 7;
-            this.grpInspector.TabStop = false;
-            this.grpInspector.Text = "Entity Inspector Options";
+            grpInspector.BackColor = System.Drawing.Color.FromArgb(45, 45, 48);
+            grpInspector.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
+            grpInspector.Controls.Add(pnlFacePreview);
+            grpInspector.Controls.Add(lblInspectorDesc);
+            grpInspector.Controls.Add(txtDesc);
+            grpInspector.Controls.Add(chkDisableInspector);
+            grpInspector.Controls.Add(cmbPreviewFace);
+            grpInspector.Controls.Add(lblFace);
+            grpInspector.ForeColor = System.Drawing.Color.Gainsboro;
+            grpInspector.Location = new System.Drawing.Point(7, 207);
+            grpInspector.Margin = new Padding(4, 3, 4, 3);
+            grpInspector.Name = "grpInspector";
+            grpInspector.Padding = new Padding(4, 3, 4, 3);
+            grpInspector.Size = new Size(369, 135);
+            grpInspector.TabIndex = 7;
+            grpInspector.TabStop = false;
+            grpInspector.Text = "Entity Inspector Options";
             // 
             // pnlFacePreview
             // 
-            this.pnlFacePreview.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.pnlFacePreview.Location = new System.Drawing.Point(9, 46);
-            this.pnlFacePreview.Name = "pnlFacePreview";
-            this.pnlFacePreview.Size = new System.Drawing.Size(64, 64);
-            this.pnlFacePreview.TabIndex = 12;
+            pnlFacePreview.BackgroundImageLayout = ImageLayout.Stretch;
+            pnlFacePreview.Location = new System.Drawing.Point(10, 53);
+            pnlFacePreview.Margin = new Padding(4, 3, 4, 3);
+            pnlFacePreview.Name = "pnlFacePreview";
+            pnlFacePreview.Size = new Size(75, 74);
+            pnlFacePreview.TabIndex = 12;
             // 
             // lblInspectorDesc
             // 
-            this.lblInspectorDesc.Location = new System.Drawing.Point(79, 42);
-            this.lblInspectorDesc.Name = "lblInspectorDesc";
-            this.lblInspectorDesc.Size = new System.Drawing.Size(112, 19);
-            this.lblInspectorDesc.TabIndex = 11;
-            this.lblInspectorDesc.Text = "Inspector Description:";
+            lblInspectorDesc.Location = new System.Drawing.Point(92, 48);
+            lblInspectorDesc.Margin = new Padding(4, 0, 4, 0);
+            lblInspectorDesc.Name = "lblInspectorDesc";
+            lblInspectorDesc.Size = new Size(131, 22);
+            lblInspectorDesc.TabIndex = 11;
+            lblInspectorDesc.Text = "Inspector Description:";
             // 
             // txtDesc
             // 
-            this.txtDesc.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.txtDesc.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.txtDesc.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.txtDesc.Location = new System.Drawing.Point(79, 61);
-            this.txtDesc.Multiline = true;
-            this.txtDesc.Name = "txtDesc";
-            this.txtDesc.Size = new System.Drawing.Size(231, 50);
-            this.txtDesc.TabIndex = 0;
-            this.txtDesc.TextChanged += new System.EventHandler(this.txtDesc_TextChanged);
+            txtDesc.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
+            txtDesc.BorderStyle = BorderStyle.FixedSingle;
+            txtDesc.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+            txtDesc.Location = new System.Drawing.Point(92, 70);
+            txtDesc.Margin = new Padding(4, 3, 4, 3);
+            txtDesc.Multiline = true;
+            txtDesc.Name = "txtDesc";
+            txtDesc.Size = new Size(269, 57);
+            txtDesc.TabIndex = 0;
+            txtDesc.TextChanged += txtDesc_TextChanged;
             // 
             // chkDisableInspector
             // 
-            this.chkDisableInspector.Location = new System.Drawing.Point(204, 15);
-            this.chkDisableInspector.Name = "chkDisableInspector";
-            this.chkDisableInspector.Size = new System.Drawing.Size(107, 21);
-            this.chkDisableInspector.TabIndex = 4;
-            this.chkDisableInspector.Text = "Disable Inspector";
-            this.chkDisableInspector.CheckedChanged += new System.EventHandler(this.chkDisablePreview_CheckedChanged);
+            chkDisableInspector.Location = new System.Drawing.Point(238, 17);
+            chkDisableInspector.Margin = new Padding(4, 3, 4, 3);
+            chkDisableInspector.Name = "chkDisableInspector";
+            chkDisableInspector.Size = new Size(125, 24);
+            chkDisableInspector.TabIndex = 4;
+            chkDisableInspector.Text = "Disable Inspector";
+            chkDisableInspector.CheckedChanged += chkDisablePreview_CheckedChanged;
             // 
             // cmbPreviewFace
             // 
-            this.cmbPreviewFace.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.cmbPreviewFace.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.cmbPreviewFace.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
-            this.cmbPreviewFace.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbPreviewFace.DrawDropdownHoverOutline = false;
-            this.cmbPreviewFace.DrawFocusRectangle = false;
-            this.cmbPreviewFace.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.cmbPreviewFace.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbPreviewFace.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.cmbPreviewFace.ForeColor = System.Drawing.Color.Gainsboro;
-            this.cmbPreviewFace.FormattingEnabled = true;
-            this.cmbPreviewFace.Location = new System.Drawing.Point(46, 15);
-            this.cmbPreviewFace.Name = "cmbPreviewFace";
-            this.cmbPreviewFace.Size = new System.Drawing.Size(114, 21);
-            this.cmbPreviewFace.TabIndex = 10;
-            this.cmbPreviewFace.Text = null;
-            this.cmbPreviewFace.TextPadding = new System.Windows.Forms.Padding(2);
-            this.cmbPreviewFace.SelectedIndexChanged += new System.EventHandler(this.cmbPreviewFace_SelectedIndexChanged);
+            cmbPreviewFace.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
+            cmbPreviewFace.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
+            cmbPreviewFace.BorderStyle = ButtonBorderStyle.Solid;
+            cmbPreviewFace.ButtonColor = System.Drawing.Color.FromArgb(43, 43, 43);
+            cmbPreviewFace.DrawDropdownHoverOutline = false;
+            cmbPreviewFace.DrawFocusRectangle = false;
+            cmbPreviewFace.DrawMode = DrawMode.OwnerDrawFixed;
+            cmbPreviewFace.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbPreviewFace.FlatStyle = FlatStyle.Flat;
+            cmbPreviewFace.ForeColor = System.Drawing.Color.Gainsboro;
+            cmbPreviewFace.FormattingEnabled = true;
+            cmbPreviewFace.Location = new System.Drawing.Point(54, 17);
+            cmbPreviewFace.Margin = new Padding(4, 3, 4, 3);
+            cmbPreviewFace.Name = "cmbPreviewFace";
+            cmbPreviewFace.Size = new Size(132, 24);
+            cmbPreviewFace.TabIndex = 10;
+            cmbPreviewFace.Text = null;
+            cmbPreviewFace.TextPadding = new Padding(2);
+            cmbPreviewFace.SelectedIndexChanged += cmbPreviewFace_SelectedIndexChanged;
             // 
             // lblFace
             // 
-            this.lblFace.AutoSize = true;
-            this.lblFace.Location = new System.Drawing.Point(6, 18);
-            this.lblFace.Name = "lblFace";
-            this.lblFace.Size = new System.Drawing.Size(34, 13);
-            this.lblFace.TabIndex = 9;
-            this.lblFace.Text = "Face:";
+            lblFace.AutoSize = true;
+            lblFace.Location = new System.Drawing.Point(7, 21);
+            lblFace.Margin = new Padding(4, 0, 4, 0);
+            lblFace.Name = "lblFace";
+            lblFace.Size = new Size(34, 15);
+            lblFace.TabIndex = 9;
+            lblFace.Text = "Face:";
             // 
             // grpPreview
             // 
-            this.grpPreview.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            this.grpPreview.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.grpPreview.Controls.Add(this.lblAnimation);
-            this.grpPreview.Controls.Add(this.cmbAnimation);
-            this.grpPreview.Controls.Add(this.pnlPreview);
-            this.grpPreview.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpPreview.Location = new System.Drawing.Point(6, 13);
-            this.grpPreview.Name = "grpPreview";
-            this.grpPreview.Size = new System.Drawing.Size(160, 163);
-            this.grpPreview.TabIndex = 10;
-            this.grpPreview.TabStop = false;
-            this.grpPreview.Text = "Preview";
+            grpPreview.BackColor = System.Drawing.Color.FromArgb(45, 45, 48);
+            grpPreview.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
+            grpPreview.Controls.Add(lblAnimation);
+            grpPreview.Controls.Add(cmbAnimation);
+            grpPreview.Controls.Add(pnlPreview);
+            grpPreview.ForeColor = System.Drawing.Color.Gainsboro;
+            grpPreview.Location = new System.Drawing.Point(7, 15);
+            grpPreview.Margin = new Padding(4, 3, 4, 3);
+            grpPreview.Name = "grpPreview";
+            grpPreview.Padding = new Padding(4, 3, 4, 3);
+            grpPreview.Size = new Size(187, 188);
+            grpPreview.TabIndex = 10;
+            grpPreview.TabStop = false;
+            grpPreview.Text = "Preview";
             // 
             // lblAnimation
             // 
-            this.lblAnimation.AutoSize = true;
-            this.lblAnimation.Location = new System.Drawing.Point(4, 116);
-            this.lblAnimation.Name = "lblAnimation";
-            this.lblAnimation.Size = new System.Drawing.Size(56, 13);
-            this.lblAnimation.TabIndex = 2;
-            this.lblAnimation.Text = "Animation:";
+            lblAnimation.AutoSize = true;
+            lblAnimation.Location = new System.Drawing.Point(5, 134);
+            lblAnimation.Margin = new Padding(4, 0, 4, 0);
+            lblAnimation.Name = "lblAnimation";
+            lblAnimation.Size = new Size(66, 15);
+            lblAnimation.TabIndex = 2;
+            lblAnimation.Text = "Animation:";
             // 
             // cmbAnimation
             // 
-            this.cmbAnimation.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.cmbAnimation.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.cmbAnimation.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
-            this.cmbAnimation.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbAnimation.DrawDropdownHoverOutline = false;
-            this.cmbAnimation.DrawFocusRectangle = false;
-            this.cmbAnimation.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.cmbAnimation.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbAnimation.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.cmbAnimation.ForeColor = System.Drawing.Color.Gainsboro;
-            this.cmbAnimation.FormattingEnabled = true;
-            this.cmbAnimation.Location = new System.Drawing.Point(20, 132);
-            this.cmbAnimation.Name = "cmbAnimation";
-            this.cmbAnimation.Size = new System.Drawing.Size(125, 21);
-            this.cmbAnimation.TabIndex = 1;
-            this.cmbAnimation.Text = null;
-            this.cmbAnimation.TextPadding = new System.Windows.Forms.Padding(2);
-            this.cmbAnimation.SelectedIndexChanged += new System.EventHandler(this.cmbAnimation_SelectedIndexChanged);
+            cmbAnimation.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
+            cmbAnimation.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
+            cmbAnimation.BorderStyle = ButtonBorderStyle.Solid;
+            cmbAnimation.ButtonColor = System.Drawing.Color.FromArgb(43, 43, 43);
+            cmbAnimation.DrawDropdownHoverOutline = false;
+            cmbAnimation.DrawFocusRectangle = false;
+            cmbAnimation.DrawMode = DrawMode.OwnerDrawFixed;
+            cmbAnimation.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbAnimation.FlatStyle = FlatStyle.Flat;
+            cmbAnimation.ForeColor = System.Drawing.Color.Gainsboro;
+            cmbAnimation.FormattingEnabled = true;
+            cmbAnimation.Location = new System.Drawing.Point(23, 152);
+            cmbAnimation.Margin = new Padding(4, 3, 4, 3);
+            cmbAnimation.Name = "cmbAnimation";
+            cmbAnimation.Size = new Size(145, 24);
+            cmbAnimation.TabIndex = 1;
+            cmbAnimation.Text = null;
+            cmbAnimation.TextPadding = new Padding(2);
+            cmbAnimation.SelectedIndexChanged += cmbAnimation_SelectedIndexChanged;
             // 
             // pnlPreview
             // 
-            this.pnlPreview.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
-            this.pnlPreview.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pnlPreview.Location = new System.Drawing.Point(33, 14);
-            this.pnlPreview.Name = "pnlPreview";
-            this.pnlPreview.Size = new System.Drawing.Size(96, 96);
-            this.pnlPreview.TabIndex = 0;
-            this.pnlPreview.DoubleClick += new System.EventHandler(this.pnlPreview_DoubleClick);
+            pnlPreview.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
+            pnlPreview.BorderStyle = BorderStyle.FixedSingle;
+            pnlPreview.Location = new System.Drawing.Point(38, 16);
+            pnlPreview.Margin = new Padding(4, 3, 4, 3);
+            pnlPreview.Name = "pnlPreview";
+            pnlPreview.Size = new Size(112, 110);
+            pnlPreview.TabIndex = 0;
+            pnlPreview.DoubleClick += pnlPreview_DoubleClick;
             // 
             // grpMovement
             // 
-            this.grpMovement.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            this.grpMovement.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.grpMovement.Controls.Add(this.lblLayer);
-            this.grpMovement.Controls.Add(this.cmbLayering);
-            this.grpMovement.Controls.Add(this.cmbEventFreq);
-            this.grpMovement.Controls.Add(this.cmbEventSpeed);
-            this.grpMovement.Controls.Add(this.lblFreq);
-            this.grpMovement.Controls.Add(this.lblSpeed);
-            this.grpMovement.Controls.Add(this.btnSetRoute);
-            this.grpMovement.Controls.Add(this.lblType);
-            this.grpMovement.Controls.Add(this.cmbMoveType);
-            this.grpMovement.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpMovement.Location = new System.Drawing.Point(169, 13);
-            this.grpMovement.Name = "grpMovement";
-            this.grpMovement.Size = new System.Drawing.Size(154, 163);
-            this.grpMovement.TabIndex = 8;
-            this.grpMovement.TabStop = false;
-            this.grpMovement.Text = "Movement";
+            grpMovement.BackColor = System.Drawing.Color.FromArgb(45, 45, 48);
+            grpMovement.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
+            grpMovement.Controls.Add(lblLayer);
+            grpMovement.Controls.Add(cmbLayering);
+            grpMovement.Controls.Add(cmbEventFreq);
+            grpMovement.Controls.Add(cmbEventSpeed);
+            grpMovement.Controls.Add(lblFreq);
+            grpMovement.Controls.Add(lblSpeed);
+            grpMovement.Controls.Add(btnSetRoute);
+            grpMovement.Controls.Add(lblType);
+            grpMovement.Controls.Add(cmbMoveType);
+            grpMovement.ForeColor = System.Drawing.Color.Gainsboro;
+            grpMovement.Location = new System.Drawing.Point(197, 15);
+            grpMovement.Margin = new Padding(4, 3, 4, 3);
+            grpMovement.Name = "grpMovement";
+            grpMovement.Padding = new Padding(4, 3, 4, 3);
+            grpMovement.Size = new Size(180, 188);
+            grpMovement.TabIndex = 8;
+            grpMovement.TabStop = false;
+            grpMovement.Text = "Movement";
             // 
             // lblLayer
             // 
-            this.lblLayer.AutoSize = true;
-            this.lblLayer.Location = new System.Drawing.Point(6, 134);
-            this.lblLayer.Name = "lblLayer";
-            this.lblLayer.Size = new System.Drawing.Size(36, 13);
-            this.lblLayer.TabIndex = 7;
-            this.lblLayer.Text = "Layer:";
+            lblLayer.AutoSize = true;
+            lblLayer.Location = new System.Drawing.Point(7, 155);
+            lblLayer.Margin = new Padding(4, 0, 4, 0);
+            lblLayer.Name = "lblLayer";
+            lblLayer.Size = new Size(38, 15);
+            lblLayer.TabIndex = 7;
+            lblLayer.Text = "Layer:";
             // 
             // cmbLayering
             // 
-            this.cmbLayering.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.cmbLayering.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.cmbLayering.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
-            this.cmbLayering.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbLayering.DrawDropdownHoverOutline = false;
-            this.cmbLayering.DrawFocusRectangle = false;
-            this.cmbLayering.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.cmbLayering.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbLayering.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.cmbLayering.ForeColor = System.Drawing.Color.Gainsboro;
-            this.cmbLayering.FormattingEnabled = true;
-            this.cmbLayering.Items.AddRange(new object[] {
-            "Below Player",
-            "Same as Player",
-            "Above Player"});
-            this.cmbLayering.Location = new System.Drawing.Point(48, 131);
-            this.cmbLayering.Name = "cmbLayering";
-            this.cmbLayering.Size = new System.Drawing.Size(101, 21);
-            this.cmbLayering.TabIndex = 1;
-            this.cmbLayering.Text = "Below Player";
-            this.cmbLayering.TextPadding = new System.Windows.Forms.Padding(2);
-            this.cmbLayering.SelectedIndexChanged += new System.EventHandler(this.cmbLayering_SelectedIndexChanged);
+            cmbLayering.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
+            cmbLayering.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
+            cmbLayering.BorderStyle = ButtonBorderStyle.Solid;
+            cmbLayering.ButtonColor = System.Drawing.Color.FromArgb(43, 43, 43);
+            cmbLayering.DrawDropdownHoverOutline = false;
+            cmbLayering.DrawFocusRectangle = false;
+            cmbLayering.DrawMode = DrawMode.OwnerDrawFixed;
+            cmbLayering.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbLayering.FlatStyle = FlatStyle.Flat;
+            cmbLayering.ForeColor = System.Drawing.Color.Gainsboro;
+            cmbLayering.FormattingEnabled = true;
+            cmbLayering.Items.AddRange(new object[] { "Below Player", "Same as Player", "Above Player" });
+            cmbLayering.Location = new System.Drawing.Point(56, 151);
+            cmbLayering.Margin = new Padding(4, 3, 4, 3);
+            cmbLayering.Name = "cmbLayering";
+            cmbLayering.Size = new Size(117, 24);
+            cmbLayering.TabIndex = 1;
+            cmbLayering.Text = "Below Player";
+            cmbLayering.TextPadding = new Padding(2);
+            cmbLayering.SelectedIndexChanged += cmbLayering_SelectedIndexChanged;
             // 
             // cmbEventFreq
             // 
-            this.cmbEventFreq.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.cmbEventFreq.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.cmbEventFreq.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
-            this.cmbEventFreq.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbEventFreq.DrawDropdownHoverOutline = false;
-            this.cmbEventFreq.DrawFocusRectangle = false;
-            this.cmbEventFreq.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.cmbEventFreq.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbEventFreq.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.cmbEventFreq.ForeColor = System.Drawing.Color.Gainsboro;
-            this.cmbEventFreq.FormattingEnabled = true;
-            this.cmbEventFreq.Items.AddRange(new object[] {
-            "Not Very Often",
-            "Not Often",
-            "Normal",
-            "Often",
-            "Very Often"});
-            this.cmbEventFreq.Location = new System.Drawing.Point(48, 104);
-            this.cmbEventFreq.Name = "cmbEventFreq";
-            this.cmbEventFreq.Size = new System.Drawing.Size(100, 21);
-            this.cmbEventFreq.TabIndex = 6;
-            this.cmbEventFreq.Text = "Not Very Often";
-            this.cmbEventFreq.TextPadding = new System.Windows.Forms.Padding(2);
-            this.cmbEventFreq.SelectedIndexChanged += new System.EventHandler(this.cmbEventFreq_SelectedIndexChanged);
+            cmbEventFreq.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
+            cmbEventFreq.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
+            cmbEventFreq.BorderStyle = ButtonBorderStyle.Solid;
+            cmbEventFreq.ButtonColor = System.Drawing.Color.FromArgb(43, 43, 43);
+            cmbEventFreq.DrawDropdownHoverOutline = false;
+            cmbEventFreq.DrawFocusRectangle = false;
+            cmbEventFreq.DrawMode = DrawMode.OwnerDrawFixed;
+            cmbEventFreq.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbEventFreq.FlatStyle = FlatStyle.Flat;
+            cmbEventFreq.ForeColor = System.Drawing.Color.Gainsboro;
+            cmbEventFreq.FormattingEnabled = true;
+            cmbEventFreq.Items.AddRange(new object[] { "Not Very Often", "Not Often", "Normal", "Often", "Very Often" });
+            cmbEventFreq.Location = new System.Drawing.Point(56, 120);
+            cmbEventFreq.Margin = new Padding(4, 3, 4, 3);
+            cmbEventFreq.Name = "cmbEventFreq";
+            cmbEventFreq.Size = new Size(116, 24);
+            cmbEventFreq.TabIndex = 6;
+            cmbEventFreq.Text = "Not Very Often";
+            cmbEventFreq.TextPadding = new Padding(2);
+            cmbEventFreq.SelectedIndexChanged += cmbEventFreq_SelectedIndexChanged;
             // 
             // cmbEventSpeed
             // 
-            this.cmbEventSpeed.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.cmbEventSpeed.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.cmbEventSpeed.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
-            this.cmbEventSpeed.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbEventSpeed.DrawDropdownHoverOutline = false;
-            this.cmbEventSpeed.DrawFocusRectangle = false;
-            this.cmbEventSpeed.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.cmbEventSpeed.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbEventSpeed.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.cmbEventSpeed.ForeColor = System.Drawing.Color.Gainsboro;
-            this.cmbEventSpeed.FormattingEnabled = true;
-            this.cmbEventSpeed.Items.AddRange(new object[] {
-            "Slowest",
-            "Slower",
-            "Normal",
-            "Faster",
-            "Fastest"});
-            this.cmbEventSpeed.Location = new System.Drawing.Point(48, 77);
-            this.cmbEventSpeed.Name = "cmbEventSpeed";
-            this.cmbEventSpeed.Size = new System.Drawing.Size(100, 21);
-            this.cmbEventSpeed.TabIndex = 5;
-            this.cmbEventSpeed.Text = "Slowest";
-            this.cmbEventSpeed.TextPadding = new System.Windows.Forms.Padding(2);
-            this.cmbEventSpeed.SelectedIndexChanged += new System.EventHandler(this.cmbEventSpeed_SelectedIndexChanged);
+            cmbEventSpeed.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
+            cmbEventSpeed.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
+            cmbEventSpeed.BorderStyle = ButtonBorderStyle.Solid;
+            cmbEventSpeed.ButtonColor = System.Drawing.Color.FromArgb(43, 43, 43);
+            cmbEventSpeed.DrawDropdownHoverOutline = false;
+            cmbEventSpeed.DrawFocusRectangle = false;
+            cmbEventSpeed.DrawMode = DrawMode.OwnerDrawFixed;
+            cmbEventSpeed.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbEventSpeed.FlatStyle = FlatStyle.Flat;
+            cmbEventSpeed.ForeColor = System.Drawing.Color.Gainsboro;
+            cmbEventSpeed.FormattingEnabled = true;
+            cmbEventSpeed.Items.AddRange(new object[] { "Slowest", "Slower", "Normal", "Faster", "Fastest" });
+            cmbEventSpeed.Location = new System.Drawing.Point(56, 89);
+            cmbEventSpeed.Margin = new Padding(4, 3, 4, 3);
+            cmbEventSpeed.Name = "cmbEventSpeed";
+            cmbEventSpeed.Size = new Size(116, 24);
+            cmbEventSpeed.TabIndex = 5;
+            cmbEventSpeed.Text = "Slowest";
+            cmbEventSpeed.TextPadding = new Padding(2);
+            cmbEventSpeed.SelectedIndexChanged += cmbEventSpeed_SelectedIndexChanged;
             // 
             // lblFreq
             // 
-            this.lblFreq.AutoSize = true;
-            this.lblFreq.Location = new System.Drawing.Point(6, 107);
-            this.lblFreq.Name = "lblFreq";
-            this.lblFreq.Size = new System.Drawing.Size(31, 13);
-            this.lblFreq.TabIndex = 4;
-            this.lblFreq.Text = "Freq:";
+            lblFreq.AutoSize = true;
+            lblFreq.Location = new System.Drawing.Point(7, 123);
+            lblFreq.Margin = new Padding(4, 0, 4, 0);
+            lblFreq.Name = "lblFreq";
+            lblFreq.Size = new Size(33, 15);
+            lblFreq.TabIndex = 4;
+            lblFreq.Text = "Freq:";
             // 
             // lblSpeed
             // 
-            this.lblSpeed.AutoSize = true;
-            this.lblSpeed.Location = new System.Drawing.Point(6, 80);
-            this.lblSpeed.Name = "lblSpeed";
-            this.lblSpeed.Size = new System.Drawing.Size(41, 13);
-            this.lblSpeed.TabIndex = 3;
-            this.lblSpeed.Text = "Speed:";
+            lblSpeed.AutoSize = true;
+            lblSpeed.Location = new System.Drawing.Point(7, 92);
+            lblSpeed.Margin = new Padding(4, 0, 4, 0);
+            lblSpeed.Name = "lblSpeed";
+            lblSpeed.Size = new Size(42, 15);
+            lblSpeed.TabIndex = 3;
+            lblSpeed.Text = "Speed:";
             // 
             // btnSetRoute
             // 
-            this.btnSetRoute.Enabled = false;
-            this.btnSetRoute.Location = new System.Drawing.Point(73, 43);
-            this.btnSetRoute.Name = "btnSetRoute";
-            this.btnSetRoute.Padding = new System.Windows.Forms.Padding(5);
-            this.btnSetRoute.Size = new System.Drawing.Size(75, 23);
-            this.btnSetRoute.TabIndex = 2;
-            this.btnSetRoute.Text = "Set Route....";
-            this.btnSetRoute.Click += new System.EventHandler(this.btnSetRoute_Click);
+            btnSetRoute.Enabled = false;
+            btnSetRoute.Location = new System.Drawing.Point(85, 50);
+            btnSetRoute.Margin = new Padding(4, 3, 4, 3);
+            btnSetRoute.Name = "btnSetRoute";
+            btnSetRoute.Padding = new Padding(6, 6, 6, 6);
+            btnSetRoute.Size = new Size(88, 27);
+            btnSetRoute.TabIndex = 2;
+            btnSetRoute.Text = "Set Route....";
+            btnSetRoute.Click += btnSetRoute_Click;
             // 
             // lblType
             // 
-            this.lblType.AutoSize = true;
-            this.lblType.Location = new System.Drawing.Point(6, 22);
-            this.lblType.Name = "lblType";
-            this.lblType.Size = new System.Drawing.Size(34, 13);
-            this.lblType.TabIndex = 1;
-            this.lblType.Text = "Type:";
+            lblType.AutoSize = true;
+            lblType.Location = new System.Drawing.Point(7, 25);
+            lblType.Margin = new Padding(4, 0, 4, 0);
+            lblType.Name = "lblType";
+            lblType.Size = new Size(34, 15);
+            lblType.TabIndex = 1;
+            lblType.Text = "Type:";
             // 
             // cmbMoveType
             // 
-            this.cmbMoveType.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.cmbMoveType.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.cmbMoveType.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
-            this.cmbMoveType.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbMoveType.DrawDropdownHoverOutline = false;
-            this.cmbMoveType.DrawFocusRectangle = false;
-            this.cmbMoveType.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.cmbMoveType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbMoveType.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.cmbMoveType.ForeColor = System.Drawing.Color.Gainsboro;
-            this.cmbMoveType.FormattingEnabled = true;
-            this.cmbMoveType.Items.AddRange(new object[] {
-            "None",
-            "Random",
-            "Move Route"});
-            this.cmbMoveType.Location = new System.Drawing.Point(48, 19);
-            this.cmbMoveType.Name = "cmbMoveType";
-            this.cmbMoveType.Size = new System.Drawing.Size(100, 21);
-            this.cmbMoveType.TabIndex = 0;
-            this.cmbMoveType.Text = "None";
-            this.cmbMoveType.TextPadding = new System.Windows.Forms.Padding(2);
-            this.cmbMoveType.SelectedIndexChanged += new System.EventHandler(this.cmbMoveType_SelectedIndexChanged);
+            cmbMoveType.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
+            cmbMoveType.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
+            cmbMoveType.BorderStyle = ButtonBorderStyle.Solid;
+            cmbMoveType.ButtonColor = System.Drawing.Color.FromArgb(43, 43, 43);
+            cmbMoveType.DrawDropdownHoverOutline = false;
+            cmbMoveType.DrawFocusRectangle = false;
+            cmbMoveType.DrawMode = DrawMode.OwnerDrawFixed;
+            cmbMoveType.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbMoveType.FlatStyle = FlatStyle.Flat;
+            cmbMoveType.ForeColor = System.Drawing.Color.Gainsboro;
+            cmbMoveType.FormattingEnabled = true;
+            cmbMoveType.Items.AddRange(new object[] { "None", "Random", "Move Route" });
+            cmbMoveType.Location = new System.Drawing.Point(56, 22);
+            cmbMoveType.Margin = new Padding(4, 3, 4, 3);
+            cmbMoveType.Name = "cmbMoveType";
+            cmbMoveType.Size = new Size(116, 24);
+            cmbMoveType.TabIndex = 0;
+            cmbMoveType.Text = "None";
+            cmbMoveType.TextPadding = new Padding(2);
+            cmbMoveType.SelectedIndexChanged += cmbMoveType_SelectedIndexChanged;
             // 
             // grpTriggers
             // 
-            this.grpTriggers.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            this.grpTriggers.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.grpTriggers.Controls.Add(this.lblVariableTrigger);
-            this.grpTriggers.Controls.Add(this.lblCommand);
-            this.grpTriggers.Controls.Add(this.lblTriggerVal);
-            this.grpTriggers.Controls.Add(this.cmbTrigger);
-            this.grpTriggers.Controls.Add(this.cmbTriggerVal);
-            this.grpTriggers.Controls.Add(this.cmbVariable);
-            this.grpTriggers.Controls.Add(this.txtCommand);
-            this.grpTriggers.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpTriggers.Location = new System.Drawing.Point(25, 517);
-            this.grpTriggers.Name = "grpTriggers";
-            this.grpTriggers.Size = new System.Drawing.Size(317, 75);
-            this.grpTriggers.TabIndex = 21;
-            this.grpTriggers.TabStop = false;
-            this.grpTriggers.Text = "Trigger";
+            grpTriggers.BackColor = System.Drawing.Color.FromArgb(45, 45, 48);
+            grpTriggers.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
+            grpTriggers.Controls.Add(lblVariableTrigger);
+            grpTriggers.Controls.Add(lblCommand);
+            grpTriggers.Controls.Add(lblTriggerVal);
+            grpTriggers.Controls.Add(cmbTrigger);
+            grpTriggers.Controls.Add(cmbTriggerVal);
+            grpTriggers.Controls.Add(cmbVariable);
+            grpTriggers.Controls.Add(txtCommand);
+            grpTriggers.ForeColor = System.Drawing.Color.Gainsboro;
+            grpTriggers.Location = new System.Drawing.Point(29, 597);
+            grpTriggers.Margin = new Padding(4, 3, 4, 3);
+            grpTriggers.Name = "grpTriggers";
+            grpTriggers.Padding = new Padding(4, 3, 4, 3);
+            grpTriggers.Size = new Size(370, 87);
+            grpTriggers.TabIndex = 21;
+            grpTriggers.TabStop = false;
+            grpTriggers.Text = "Trigger";
             // 
             // lblVariableTrigger
             // 
-            this.lblVariableTrigger.AutoSize = true;
-            this.lblVariableTrigger.Location = new System.Drawing.Point(7, 48);
-            this.lblVariableTrigger.Name = "lblVariableTrigger";
-            this.lblVariableTrigger.Size = new System.Drawing.Size(48, 13);
-            this.lblVariableTrigger.TabIndex = 13;
-            this.lblVariableTrigger.Text = "Variable:";
-            this.lblVariableTrigger.Visible = false;
+            lblVariableTrigger.AutoSize = true;
+            lblVariableTrigger.Location = new System.Drawing.Point(8, 55);
+            lblVariableTrigger.Margin = new Padding(4, 0, 4, 0);
+            lblVariableTrigger.Name = "lblVariableTrigger";
+            lblVariableTrigger.Size = new Size(51, 15);
+            lblVariableTrigger.TabIndex = 13;
+            lblVariableTrigger.Text = "Variable:";
+            lblVariableTrigger.Visible = false;
             // 
             // lblCommand
             // 
-            this.lblCommand.AutoSize = true;
-            this.lblCommand.Location = new System.Drawing.Point(7, 48);
-            this.lblCommand.Name = "lblCommand";
-            this.lblCommand.Size = new System.Drawing.Size(70, 13);
-            this.lblCommand.TabIndex = 11;
-            this.lblCommand.Text = "/Command: /";
-            this.lblCommand.Visible = false;
+            lblCommand.AutoSize = true;
+            lblCommand.Location = new System.Drawing.Point(8, 55);
+            lblCommand.Margin = new Padding(4, 0, 4, 0);
+            lblCommand.Name = "lblCommand";
+            lblCommand.Size = new Size(80, 15);
+            lblCommand.TabIndex = 11;
+            lblCommand.Text = "/Command: /";
+            lblCommand.Visible = false;
             // 
             // lblTriggerVal
             // 
-            this.lblTriggerVal.AutoSize = true;
-            this.lblTriggerVal.Location = new System.Drawing.Point(7, 48);
-            this.lblTriggerVal.Name = "lblTriggerVal";
-            this.lblTriggerVal.Size = new System.Drawing.Size(53, 13);
-            this.lblTriggerVal.TabIndex = 10;
-            this.lblTriggerVal.Text = "Projectile:";
-            this.lblTriggerVal.Visible = false;
+            lblTriggerVal.AutoSize = true;
+            lblTriggerVal.Location = new System.Drawing.Point(8, 55);
+            lblTriggerVal.Margin = new Padding(4, 0, 4, 0);
+            lblTriggerVal.Name = "lblTriggerVal";
+            lblTriggerVal.Size = new Size(59, 15);
+            lblTriggerVal.TabIndex = 10;
+            lblTriggerVal.Text = "Projectile:";
+            lblTriggerVal.Visible = false;
             // 
             // cmbTrigger
             // 
-            this.cmbTrigger.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.cmbTrigger.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.cmbTrigger.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
-            this.cmbTrigger.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbTrigger.DrawDropdownHoverOutline = false;
-            this.cmbTrigger.DrawFocusRectangle = false;
-            this.cmbTrigger.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.cmbTrigger.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbTrigger.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.cmbTrigger.ForeColor = System.Drawing.Color.Gainsboro;
-            this.cmbTrigger.FormattingEnabled = true;
-            this.cmbTrigger.Items.AddRange(new object[] {
-            "Action Button",
-            "Player Touch",
-            "Autorun",
-            "Projectile Hit"});
-            this.cmbTrigger.Location = new System.Drawing.Point(6, 17);
-            this.cmbTrigger.Name = "cmbTrigger";
-            this.cmbTrigger.Size = new System.Drawing.Size(301, 21);
-            this.cmbTrigger.TabIndex = 2;
-            this.cmbTrigger.Text = "Action Button";
-            this.cmbTrigger.TextPadding = new System.Windows.Forms.Padding(2);
-            this.cmbTrigger.SelectedIndexChanged += new System.EventHandler(this.cmbTrigger_SelectedIndexChanged);
+            cmbTrigger.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
+            cmbTrigger.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
+            cmbTrigger.BorderStyle = ButtonBorderStyle.Solid;
+            cmbTrigger.ButtonColor = System.Drawing.Color.FromArgb(43, 43, 43);
+            cmbTrigger.DrawDropdownHoverOutline = false;
+            cmbTrigger.DrawFocusRectangle = false;
+            cmbTrigger.DrawMode = DrawMode.OwnerDrawFixed;
+            cmbTrigger.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbTrigger.FlatStyle = FlatStyle.Flat;
+            cmbTrigger.ForeColor = System.Drawing.Color.Gainsboro;
+            cmbTrigger.FormattingEnabled = true;
+            cmbTrigger.Items.AddRange(new object[] { "Action Button", "Player Touch", "Autorun", "Projectile Hit" });
+            cmbTrigger.Location = new System.Drawing.Point(7, 20);
+            cmbTrigger.Margin = new Padding(4, 3, 4, 3);
+            cmbTrigger.Name = "cmbTrigger";
+            cmbTrigger.Size = new Size(350, 24);
+            cmbTrigger.TabIndex = 2;
+            cmbTrigger.Text = "Action Button";
+            cmbTrigger.TextPadding = new Padding(2);
+            cmbTrigger.SelectedIndexChanged += cmbTrigger_SelectedIndexChanged;
             // 
             // cmbTriggerVal
             // 
-            this.cmbTriggerVal.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.cmbTriggerVal.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.cmbTriggerVal.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
-            this.cmbTriggerVal.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbTriggerVal.DrawDropdownHoverOutline = false;
-            this.cmbTriggerVal.DrawFocusRectangle = false;
-            this.cmbTriggerVal.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.cmbTriggerVal.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbTriggerVal.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.cmbTriggerVal.ForeColor = System.Drawing.Color.Gainsboro;
-            this.cmbTriggerVal.FormattingEnabled = true;
-            this.cmbTriggerVal.Items.AddRange(new object[] {
-            "None"});
-            this.cmbTriggerVal.Location = new System.Drawing.Point(84, 44);
-            this.cmbTriggerVal.Name = "cmbTriggerVal";
-            this.cmbTriggerVal.Size = new System.Drawing.Size(223, 21);
-            this.cmbTriggerVal.TabIndex = 9;
-            this.cmbTriggerVal.Text = "None";
-            this.cmbTriggerVal.TextPadding = new System.Windows.Forms.Padding(2);
-            this.cmbTriggerVal.Visible = false;
+            cmbTriggerVal.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
+            cmbTriggerVal.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
+            cmbTriggerVal.BorderStyle = ButtonBorderStyle.Solid;
+            cmbTriggerVal.ButtonColor = System.Drawing.Color.FromArgb(43, 43, 43);
+            cmbTriggerVal.DrawDropdownHoverOutline = false;
+            cmbTriggerVal.DrawFocusRectangle = false;
+            cmbTriggerVal.DrawMode = DrawMode.OwnerDrawFixed;
+            cmbTriggerVal.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbTriggerVal.FlatStyle = FlatStyle.Flat;
+            cmbTriggerVal.ForeColor = System.Drawing.Color.Gainsboro;
+            cmbTriggerVal.FormattingEnabled = true;
+            cmbTriggerVal.Items.AddRange(new object[] { "None" });
+            cmbTriggerVal.Location = new System.Drawing.Point(98, 51);
+            cmbTriggerVal.Margin = new Padding(4, 3, 4, 3);
+            cmbTriggerVal.Name = "cmbTriggerVal";
+            cmbTriggerVal.Size = new Size(259, 24);
+            cmbTriggerVal.TabIndex = 9;
+            cmbTriggerVal.Text = "None";
+            cmbTriggerVal.TextPadding = new Padding(2);
+            cmbTriggerVal.Visible = false;
             // 
             // cmbVariable
             // 
-            this.cmbVariable.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.cmbVariable.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.cmbVariable.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
-            this.cmbVariable.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbVariable.DrawDropdownHoverOutline = false;
-            this.cmbVariable.DrawFocusRectangle = false;
-            this.cmbVariable.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.cmbVariable.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbVariable.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.cmbVariable.ForeColor = System.Drawing.Color.Gainsboro;
-            this.cmbVariable.FormattingEnabled = true;
-            this.cmbVariable.Items.AddRange(new object[] {
-            "None"});
-            this.cmbVariable.Location = new System.Drawing.Point(84, 44);
-            this.cmbVariable.Name = "cmbVariable";
-            this.cmbVariable.Size = new System.Drawing.Size(223, 21);
-            this.cmbVariable.TabIndex = 14;
-            this.cmbVariable.Text = "None";
-            this.cmbVariable.TextPadding = new System.Windows.Forms.Padding(2);
-            this.cmbVariable.SelectedIndexChanged += new System.EventHandler(this.cmbVariable_SelectedIndexChanged);
+            cmbVariable.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
+            cmbVariable.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
+            cmbVariable.BorderStyle = ButtonBorderStyle.Solid;
+            cmbVariable.ButtonColor = System.Drawing.Color.FromArgb(43, 43, 43);
+            cmbVariable.DrawDropdownHoverOutline = false;
+            cmbVariable.DrawFocusRectangle = false;
+            cmbVariable.DrawMode = DrawMode.OwnerDrawFixed;
+            cmbVariable.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbVariable.FlatStyle = FlatStyle.Flat;
+            cmbVariable.ForeColor = System.Drawing.Color.Gainsboro;
+            cmbVariable.FormattingEnabled = true;
+            cmbVariable.Items.AddRange(new object[] { "None" });
+            cmbVariable.Location = new System.Drawing.Point(98, 51);
+            cmbVariable.Margin = new Padding(4, 3, 4, 3);
+            cmbVariable.Name = "cmbVariable";
+            cmbVariable.Size = new Size(259, 24);
+            cmbVariable.TabIndex = 14;
+            cmbVariable.Text = "None";
+            cmbVariable.TextPadding = new Padding(2);
+            cmbVariable.SelectedIndexChanged += cmbVariable_SelectedIndexChanged;
             // 
             // txtCommand
             // 
-            this.txtCommand.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.txtCommand.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.txtCommand.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.txtCommand.Location = new System.Drawing.Point(84, 44);
-            this.txtCommand.Name = "txtCommand";
-            this.txtCommand.Size = new System.Drawing.Size(223, 20);
-            this.txtCommand.TabIndex = 12;
-            this.txtCommand.Visible = false;
-            this.txtCommand.TextChanged += new System.EventHandler(this.txtCommand_TextChanged);
+            txtCommand.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
+            txtCommand.BorderStyle = BorderStyle.FixedSingle;
+            txtCommand.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+            txtCommand.Location = new System.Drawing.Point(98, 51);
+            txtCommand.Margin = new Padding(4, 3, 4, 3);
+            txtCommand.Name = "txtCommand";
+            txtCommand.Size = new Size(260, 23);
+            txtCommand.TabIndex = 12;
+            txtCommand.Visible = false;
+            txtCommand.TextChanged += txtCommand_TextChanged;
             // 
             // grpEventConditions
             // 
-            this.grpEventConditions.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            this.grpEventConditions.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.grpEventConditions.Controls.Add(this.btnEditConditions);
-            this.grpEventConditions.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpEventConditions.Location = new System.Drawing.Point(21, 89);
-            this.grpEventConditions.Name = "grpEventConditions";
-            this.grpEventConditions.Size = new System.Drawing.Size(326, 55);
-            this.grpEventConditions.TabIndex = 5;
-            this.grpEventConditions.TabStop = false;
-            this.grpEventConditions.Text = "Conditions";
+            grpEventConditions.BackColor = System.Drawing.Color.FromArgb(45, 45, 48);
+            grpEventConditions.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
+            grpEventConditions.Controls.Add(btnEditConditions);
+            grpEventConditions.ForeColor = System.Drawing.Color.Gainsboro;
+            grpEventConditions.Location = new System.Drawing.Point(24, 103);
+            grpEventConditions.Margin = new Padding(4, 3, 4, 3);
+            grpEventConditions.Name = "grpEventConditions";
+            grpEventConditions.Padding = new Padding(4, 3, 4, 3);
+            grpEventConditions.Size = new Size(380, 63);
+            grpEventConditions.TabIndex = 5;
+            grpEventConditions.TabStop = false;
+            grpEventConditions.Text = "Conditions";
             // 
             // btnEditConditions
             // 
-            this.btnEditConditions.Location = new System.Drawing.Point(7, 20);
-            this.btnEditConditions.Name = "btnEditConditions";
-            this.btnEditConditions.Padding = new System.Windows.Forms.Padding(5);
-            this.btnEditConditions.Size = new System.Drawing.Size(304, 23);
-            this.btnEditConditions.TabIndex = 0;
-            this.btnEditConditions.Text = "Spawn/Execution Conditions";
-            this.btnEditConditions.Click += new System.EventHandler(this.btnEditConditions_Click);
+            btnEditConditions.Location = new System.Drawing.Point(8, 23);
+            btnEditConditions.Margin = new Padding(4, 3, 4, 3);
+            btnEditConditions.Name = "btnEditConditions";
+            btnEditConditions.Padding = new Padding(6, 6, 6, 6);
+            btnEditConditions.Size = new Size(355, 27);
+            btnEditConditions.TabIndex = 0;
+            btnEditConditions.Text = "Spawn/Execution Conditions";
+            btnEditConditions.Click += btnEditConditions_Click;
             // 
             // grpNewCommands
             // 
-            this.grpNewCommands.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            this.grpNewCommands.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.grpNewCommands.Controls.Add(this.lblCloseCommands);
-            this.grpNewCommands.Controls.Add(this.lstCommands);
-            this.grpNewCommands.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpNewCommands.Location = new System.Drawing.Point(353, 89);
-            this.grpNewCommands.Name = "grpNewCommands";
-            this.grpNewCommands.Size = new System.Drawing.Size(457, 503);
-            this.grpNewCommands.TabIndex = 7;
-            this.grpNewCommands.TabStop = false;
-            this.grpNewCommands.Text = "Add Commands";
-            this.grpNewCommands.Visible = false;
+            grpNewCommands.BackColor = System.Drawing.Color.FromArgb(45, 45, 48);
+            grpNewCommands.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
+            grpNewCommands.Controls.Add(lblCloseCommands);
+            grpNewCommands.Controls.Add(lstCommands);
+            grpNewCommands.ForeColor = System.Drawing.Color.Gainsboro;
+            grpNewCommands.Location = new System.Drawing.Point(412, 103);
+            grpNewCommands.Margin = new Padding(4, 3, 4, 3);
+            grpNewCommands.Name = "grpNewCommands";
+            grpNewCommands.Padding = new Padding(4, 3, 4, 3);
+            grpNewCommands.Size = new Size(533, 580);
+            grpNewCommands.TabIndex = 7;
+            grpNewCommands.TabStop = false;
+            grpNewCommands.Text = "Add Commands";
+            grpNewCommands.Visible = false;
             // 
             // lblCloseCommands
             // 
-            this.lblCloseCommands.AutoSize = true;
-            this.lblCloseCommands.Location = new System.Drawing.Point(437, 14);
-            this.lblCloseCommands.Name = "lblCloseCommands";
-            this.lblCloseCommands.Size = new System.Drawing.Size(14, 13);
-            this.lblCloseCommands.TabIndex = 1;
-            this.lblCloseCommands.Text = "X";
-            this.lblCloseCommands.Click += new System.EventHandler(this.lblCloseCommands_Click);
+            lblCloseCommands.AutoSize = true;
+            lblCloseCommands.Location = new System.Drawing.Point(510, 16);
+            lblCloseCommands.Margin = new Padding(4, 0, 4, 0);
+            lblCloseCommands.Name = "lblCloseCommands";
+            lblCloseCommands.Size = new Size(14, 15);
+            lblCloseCommands.TabIndex = 1;
+            lblCloseCommands.Text = "X";
+            lblCloseCommands.Click += lblCloseCommands_Click;
             // 
             // lstCommands
             // 
-            this.lstCommands.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
-            this.lstCommands.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.lstCommands.ForeColor = System.Drawing.Color.Gainsboro;
-            this.lstCommands.LineColor = System.Drawing.Color.FromArgb(((int)(((byte)(150)))), ((int)(((byte)(150)))), ((int)(((byte)(150)))));
-            this.lstCommands.Location = new System.Drawing.Point(6, 32);
-            this.lstCommands.Name = "lstCommands";
+            lstCommands.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
+            lstCommands.BorderStyle = BorderStyle.FixedSingle;
+            lstCommands.ForeColor = System.Drawing.Color.Gainsboro;
+            lstCommands.LineColor = System.Drawing.Color.FromArgb(150, 150, 150);
+            lstCommands.Location = new System.Drawing.Point(7, 37);
+            lstCommands.Margin = new Padding(4, 3, 4, 3);
+            lstCommands.Name = "lstCommands";
             treeNode1.Name = "showtext";
             treeNode1.Tag = "1";
             treeNode1.Text = "Show Text";
@@ -944,436 +919,445 @@ namespace Intersect.Editor.Forms.Editors.Events
             treeNode31.Name = "resetstatallocations";
             treeNode31.Tag = "57";
             treeNode31.Text = "Reset Stat Point Allocations";
-            treeNode32.Name = "playercontrol";
-            treeNode32.Text = "Player Control";
-            treeNode33.Name = "warpplayer";
-            treeNode33.Tag = "23";
-            treeNode33.Text = "Warp Player";
-            treeNode34.Name = "setmoveroute";
-            treeNode34.Tag = "24";
-            treeNode34.Text = "Set Move Route";
-            treeNode35.Name = "waitmoveroute";
-            treeNode35.Tag = "25";
-            treeNode35.Text = "Wait for Route Completion";
-            treeNode36.Name = "holdplayer";
-            treeNode36.Tag = "26";
-            treeNode36.Text = "Hold Player";
-            treeNode37.Name = "releaseplayer";
-            treeNode37.Tag = "27";
-            treeNode37.Text = "Release Player";
-            treeNode38.Name = "spawnnpc";
-            treeNode38.Tag = "28";
-            treeNode38.Text = "Spawn NPC";
-            treeNode39.Name = "despawnnpcs";
-            treeNode39.Tag = "39";
-            treeNode39.Text = "Despawn NPC";
-            treeNode40.Name = "hideplayer";
-            treeNode40.Tag = "45";
-            treeNode40.Text = "Hide Player";
-            treeNode41.Name = "showplayer";
-            treeNode41.Tag = "46";
-            treeNode41.Text = "Show Player";
-            treeNode42.Name = "movement";
-            treeNode42.Text = "Movement";
-            treeNode43.Name = "playanimation";
-            treeNode43.Tag = "29";
-            treeNode43.Text = "Play Animation";
-            treeNode44.Name = "playbgm";
-            treeNode44.Tag = "30";
-            treeNode44.Text = "Play BGM";
-            treeNode45.Name = "fadeoutbgm";
-            treeNode45.Tag = "31";
-            treeNode45.Text = "Fadeout BGM";
-            treeNode46.Name = "playsound";
-            treeNode46.Tag = "32";
-            treeNode46.Text = "Play Sound";
-            treeNode47.Name = "stopsounds";
-            treeNode47.Tag = "33";
-            treeNode47.Text = "Stop Sounds";
-            treeNode48.Name = "showpicture";
-            treeNode48.Tag = "43";
-            treeNode48.Text = "Show Picture";
-            treeNode49.Name = "hidepicture";
-            treeNode49.Tag = "44";
-            treeNode49.Text = "Hide Picture";
-            treeNode50.Name = "specialeffects";
-            treeNode50.Text = "Special Effects";
-            treeNode51.Name = "startquest";
-            treeNode51.Tag = "40";
-            treeNode51.Text = "Start Quest";
-            treeNode52.Name = "completequesttask";
-            treeNode52.Tag = "41";
-            treeNode52.Text = "Complete Quest Task";
-            treeNode53.Name = "endquest";
-            treeNode53.Tag = "42";
-            treeNode53.Text = "End Quest";
-            treeNode54.Name = "questcontrol";
-            treeNode54.Text = "Quest Control";
-            treeNode55.Name = "wait";
-            treeNode55.Tag = "34";
-            treeNode55.Text = "Wait...";
-            treeNode56.Name = "etc";
-            treeNode56.Text = "Etc";
-            treeNode57.Name = "openbank";
-            treeNode57.Tag = "35";
-            treeNode57.Text = "Open Bank";
-            treeNode58.Name = "openshop";
-            treeNode58.Tag = "36";
-            treeNode58.Text = "Open Shop";
-            treeNode59.Name = "opencraftingstation";
-            treeNode59.Tag = "37";
-            treeNode59.Text = "Open Crafting Station";
-            treeNode60.Name = "shopandbank";
-            treeNode60.Text = "Shop and Bank";
-            treeNode61.Name = "createguild";
-            treeNode61.Tag = "53";
-            treeNode61.Text = "Create Guild";
-            treeNode62.Name = "disbandguild";
-            treeNode62.Tag = "54";
-            treeNode62.Text = "Disband Guild";
-            treeNode63.Name = "openguildbank";
-            treeNode63.Tag = "55";
-            treeNode63.Text = "Open Guild Bank";
-            treeNode64.Name = "setguildbankslots";
-            treeNode64.Tag = "56";
-            treeNode64.Text = "Set Guild Bank Slots Count";
-            treeNode65.Name = "guilds";
-            treeNode65.Text = "Guilds";
-            this.lstCommands.Nodes.AddRange(new System.Windows.Forms.TreeNode[] {
-            treeNode5,
-            treeNode13,
-            treeNode32,
-            treeNode42,
-            treeNode50,
-            treeNode54,
-            treeNode56,
-            treeNode60,
-            treeNode65});
-            this.lstCommands.Size = new System.Drawing.Size(445, 465);
-            this.lstCommands.TabIndex = 2;
-            this.lstCommands.NodeMouseDoubleClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.lstCommands_NodeMouseDoubleClick);
+            treeNode32.Name = "castspellon";
+            treeNode32.Tag = "58";
+            treeNode32.Text = "Cast Spell On";
+            treeNode33.Name = "playercontrol";
+            treeNode33.Text = "Player Control";
+            treeNode34.Name = "warpplayer";
+            treeNode34.Tag = "23";
+            treeNode34.Text = "Warp Player";
+            treeNode35.Name = "setmoveroute";
+            treeNode35.Tag = "24";
+            treeNode35.Text = "Set Move Route";
+            treeNode36.Name = "waitmoveroute";
+            treeNode36.Tag = "25";
+            treeNode36.Text = "Wait for Route Completion";
+            treeNode37.Name = "holdplayer";
+            treeNode37.Tag = "26";
+            treeNode37.Text = "Hold Player";
+            treeNode38.Name = "releaseplayer";
+            treeNode38.Tag = "27";
+            treeNode38.Text = "Release Player";
+            treeNode39.Name = "spawnnpc";
+            treeNode39.Tag = "28";
+            treeNode39.Text = "Spawn NPC";
+            treeNode40.Name = "despawnnpcs";
+            treeNode40.Tag = "39";
+            treeNode40.Text = "Despawn NPC";
+            treeNode41.Name = "hideplayer";
+            treeNode41.Tag = "45";
+            treeNode41.Text = "Hide Player";
+            treeNode42.Name = "showplayer";
+            treeNode42.Tag = "46";
+            treeNode42.Text = "Show Player";
+            treeNode43.Name = "movement";
+            treeNode43.Text = "Movement";
+            treeNode44.Name = "playanimation";
+            treeNode44.Tag = "29";
+            treeNode44.Text = "Play Animation";
+            treeNode45.Name = "playbgm";
+            treeNode45.Tag = "30";
+            treeNode45.Text = "Play BGM";
+            treeNode46.Name = "fadeoutbgm";
+            treeNode46.Tag = "31";
+            treeNode46.Text = "Fadeout BGM";
+            treeNode47.Name = "playsound";
+            treeNode47.Tag = "32";
+            treeNode47.Text = "Play Sound";
+            treeNode48.Name = "stopsounds";
+            treeNode48.Tag = "33";
+            treeNode48.Text = "Stop Sounds";
+            treeNode49.Name = "showpicture";
+            treeNode49.Tag = "43";
+            treeNode49.Text = "Show Picture";
+            treeNode50.Name = "hidepicture";
+            treeNode50.Tag = "44";
+            treeNode50.Text = "Hide Picture";
+            treeNode51.Name = "specialeffects";
+            treeNode51.Text = "Special Effects";
+            treeNode52.Name = "startquest";
+            treeNode52.Tag = "40";
+            treeNode52.Text = "Start Quest";
+            treeNode53.Name = "completequesttask";
+            treeNode53.Tag = "41";
+            treeNode53.Text = "Complete Quest Task";
+            treeNode54.Name = "endquest";
+            treeNode54.Tag = "42";
+            treeNode54.Text = "End Quest";
+            treeNode55.Name = "questcontrol";
+            treeNode55.Text = "Quest Control";
+            treeNode56.Name = "wait";
+            treeNode56.Tag = "34";
+            treeNode56.Text = "Wait...";
+            treeNode57.Name = "etc";
+            treeNode57.Text = "Etc";
+            treeNode58.Name = "openbank";
+            treeNode58.Tag = "35";
+            treeNode58.Text = "Open Bank";
+            treeNode59.Name = "openshop";
+            treeNode59.Tag = "36";
+            treeNode59.Text = "Open Shop";
+            treeNode60.Name = "opencraftingstation";
+            treeNode60.Tag = "37";
+            treeNode60.Text = "Open Crafting Station";
+            treeNode61.Name = "shopandbank";
+            treeNode61.Text = "Shop and Bank";
+            treeNode62.Name = "createguild";
+            treeNode62.Tag = "53";
+            treeNode62.Text = "Create Guild";
+            treeNode63.Name = "disbandguild";
+            treeNode63.Tag = "54";
+            treeNode63.Text = "Disband Guild";
+            treeNode64.Name = "openguildbank";
+            treeNode64.Tag = "55";
+            treeNode64.Text = "Open Guild Bank";
+            treeNode65.Name = "setguildbankslots";
+            treeNode65.Tag = "56";
+            treeNode65.Text = "Set Guild Bank Slots Count";
+            treeNode66.Name = "guilds";
+            treeNode66.Text = "Guilds";
+            lstCommands.Nodes.AddRange(new TreeNode[] { treeNode5, treeNode13, treeNode33, treeNode43, treeNode51, treeNode55, treeNode57, treeNode61, treeNode66 });
+            lstCommands.Size = new Size(519, 536);
+            lstCommands.TabIndex = 2;
+            lstCommands.NodeMouseDoubleClick += lstCommands_NodeMouseDoubleClick;
             // 
             // grpEventCommands
             // 
-            this.grpEventCommands.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            this.grpEventCommands.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.grpEventCommands.Controls.Add(this.lstEventCommands);
-            this.grpEventCommands.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpEventCommands.Location = new System.Drawing.Point(353, 89);
-            this.grpEventCommands.Name = "grpEventCommands";
-            this.grpEventCommands.Size = new System.Drawing.Size(457, 503);
-            this.grpEventCommands.TabIndex = 6;
-            this.grpEventCommands.TabStop = false;
-            this.grpEventCommands.Text = "Commands";
+            grpEventCommands.BackColor = System.Drawing.Color.FromArgb(45, 45, 48);
+            grpEventCommands.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
+            grpEventCommands.Controls.Add(lstEventCommands);
+            grpEventCommands.ForeColor = System.Drawing.Color.Gainsboro;
+            grpEventCommands.Location = new System.Drawing.Point(412, 103);
+            grpEventCommands.Margin = new Padding(4, 3, 4, 3);
+            grpEventCommands.Name = "grpEventCommands";
+            grpEventCommands.Padding = new Padding(4, 3, 4, 3);
+            grpEventCommands.Size = new Size(533, 580);
+            grpEventCommands.TabIndex = 6;
+            grpEventCommands.TabStop = false;
+            grpEventCommands.Text = "Commands";
             // 
             // lstEventCommands
             // 
-            this.lstEventCommands.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
-            this.lstEventCommands.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.lstEventCommands.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.lstEventCommands.ForeColor = System.Drawing.Color.Gainsboro;
-            this.lstEventCommands.FormattingEnabled = true;
-            this.lstEventCommands.HorizontalScrollbar = true;
-            this.lstEventCommands.Items.AddRange(new object[] {
-            "@>"});
-            this.lstEventCommands.Location = new System.Drawing.Point(6, 19);
-            this.lstEventCommands.Name = "lstEventCommands";
-            this.lstEventCommands.Size = new System.Drawing.Size(445, 470);
-            this.lstEventCommands.TabIndex = 0;
-            this.lstEventCommands.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.lstEventCommands_DrawItem);
-            this.lstEventCommands.SelectedIndexChanged += new System.EventHandler(this.lstEventCommands_SelectedIndexChanged);
-            this.lstEventCommands.DoubleClick += new System.EventHandler(this.lstEventCommands_DoubleClick);
-            this.lstEventCommands.KeyDown += new System.Windows.Forms.KeyEventHandler(this.lstEventCommands_KeyDown);
-            this.lstEventCommands.MouseDown += new System.Windows.Forms.MouseEventHandler(this.lstEventCommands_Click);
+            lstEventCommands.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
+            lstEventCommands.BorderStyle = BorderStyle.FixedSingle;
+            lstEventCommands.DrawMode = DrawMode.OwnerDrawFixed;
+            lstEventCommands.ForeColor = System.Drawing.Color.Gainsboro;
+            lstEventCommands.FormattingEnabled = true;
+            lstEventCommands.HorizontalScrollbar = true;
+            lstEventCommands.Items.AddRange(new object[] { "@>" });
+            lstEventCommands.Location = new System.Drawing.Point(7, 22);
+            lstEventCommands.Margin = new Padding(4, 3, 4, 3);
+            lstEventCommands.Name = "lstEventCommands";
+            lstEventCommands.Size = new Size(519, 535);
+            lstEventCommands.TabIndex = 0;
+            lstEventCommands.DrawItem += lstEventCommands_DrawItem;
+            lstEventCommands.SelectedIndexChanged += lstEventCommands_SelectedIndexChanged;
+            lstEventCommands.DoubleClick += lstEventCommands_DoubleClick;
+            lstEventCommands.KeyDown += lstEventCommands_KeyDown;
+            lstEventCommands.MouseDown += lstEventCommands_Click;
             // 
             // grpCreateCommands
             // 
-            this.grpCreateCommands.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            this.grpCreateCommands.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.grpCreateCommands.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpCreateCommands.Location = new System.Drawing.Point(353, 89);
-            this.grpCreateCommands.Name = "grpCreateCommands";
-            this.grpCreateCommands.Size = new System.Drawing.Size(457, 511);
-            this.grpCreateCommands.TabIndex = 8;
-            this.grpCreateCommands.TabStop = false;
-            this.grpCreateCommands.Visible = false;
+            grpCreateCommands.BackColor = System.Drawing.Color.FromArgb(45, 45, 48);
+            grpCreateCommands.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
+            grpCreateCommands.ForeColor = System.Drawing.Color.Gainsboro;
+            grpCreateCommands.Location = new System.Drawing.Point(412, 103);
+            grpCreateCommands.Margin = new Padding(4, 3, 4, 3);
+            grpCreateCommands.Name = "grpCreateCommands";
+            grpCreateCommands.Padding = new Padding(4, 3, 4, 3);
+            grpCreateCommands.Size = new Size(533, 590);
+            grpCreateCommands.TabIndex = 8;
+            grpCreateCommands.TabStop = false;
+            grpCreateCommands.Visible = false;
             // 
             // btnSave
             // 
-            this.btnSave.Location = new System.Drawing.Point(631, 615);
-            this.btnSave.Name = "btnSave";
-            this.btnSave.Padding = new System.Windows.Forms.Padding(5);
-            this.btnSave.Size = new System.Drawing.Size(93, 30);
-            this.btnSave.TabIndex = 6;
-            this.btnSave.Text = "Save";
-            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+            btnSave.Location = new System.Drawing.Point(736, 710);
+            btnSave.Margin = new Padding(4, 3, 4, 3);
+            btnSave.Name = "btnSave";
+            btnSave.Padding = new Padding(6, 6, 6, 6);
+            btnSave.Size = new Size(108, 35);
+            btnSave.TabIndex = 6;
+            btnSave.Text = "Save";
+            btnSave.Click += btnSave_Click;
             // 
             // btnCancel
             // 
-            this.btnCancel.Location = new System.Drawing.Point(730, 615);
-            this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Padding = new System.Windows.Forms.Padding(5);
-            this.btnCancel.Size = new System.Drawing.Size(93, 30);
-            this.btnCancel.TabIndex = 7;
-            this.btnCancel.Text = "Cancel";
-            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+            btnCancel.Location = new System.Drawing.Point(852, 710);
+            btnCancel.Margin = new Padding(4, 3, 4, 3);
+            btnCancel.Name = "btnCancel";
+            btnCancel.Padding = new Padding(6, 6, 6, 6);
+            btnCancel.Size = new Size(108, 35);
+            btnCancel.TabIndex = 7;
+            btnCancel.Text = "Cancel";
+            btnCancel.Click += btnCancel_Click;
             // 
             // commandMenu
             // 
-            this.commandMenu.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
-            this.commandMenu.ImageScalingSize = new System.Drawing.Size(24, 24);
-            this.commandMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.btnInsert,
-            this.btnEdit,
-            this.btnCut,
-            this.btnCopy,
-            this.btnPaste,
-            this.btnDelete});
-            this.commandMenu.Name = "commandMenu";
-            this.commandMenu.RenderMode = System.Windows.Forms.ToolStripRenderMode.System;
-            this.commandMenu.Size = new System.Drawing.Size(108, 136);
+            commandMenu.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
+            commandMenu.ImageScalingSize = new Size(24, 24);
+            commandMenu.Items.AddRange(new ToolStripItem[] { btnInsert, btnEdit, btnCut, btnCopy, btnPaste, btnDelete });
+            commandMenu.Name = "commandMenu";
+            commandMenu.RenderMode = ToolStripRenderMode.System;
+            commandMenu.Size = new Size(108, 136);
             // 
             // btnInsert
             // 
-            this.btnInsert.ForeColor = System.Drawing.Color.Gainsboro;
-            this.btnInsert.Name = "btnInsert";
-            this.btnInsert.Size = new System.Drawing.Size(107, 22);
-            this.btnInsert.Text = "Insert";
-            this.btnInsert.Click += new System.EventHandler(this.btnInsert_Click);
+            btnInsert.ForeColor = System.Drawing.Color.Gainsboro;
+            btnInsert.Name = "btnInsert";
+            btnInsert.Size = new Size(107, 22);
+            btnInsert.Text = "Insert";
+            btnInsert.Click += btnInsert_Click;
             // 
             // btnEdit
             // 
-            this.btnEdit.ForeColor = System.Drawing.Color.Gainsboro;
-            this.btnEdit.Name = "btnEdit";
-            this.btnEdit.Size = new System.Drawing.Size(107, 22);
-            this.btnEdit.Text = "Edit";
-            this.btnEdit.Click += new System.EventHandler(this.btnEdit_Click);
+            btnEdit.ForeColor = System.Drawing.Color.Gainsboro;
+            btnEdit.Name = "btnEdit";
+            btnEdit.Size = new Size(107, 22);
+            btnEdit.Text = "Edit";
+            btnEdit.Click += btnEdit_Click;
             // 
             // btnCut
             // 
-            this.btnCut.ForeColor = System.Drawing.Color.Gainsboro;
-            this.btnCut.Name = "btnCut";
-            this.btnCut.Size = new System.Drawing.Size(107, 22);
-            this.btnCut.Text = "Cut";
-            this.btnCut.Click += new System.EventHandler(this.btnCut_Click);
+            btnCut.ForeColor = System.Drawing.Color.Gainsboro;
+            btnCut.Name = "btnCut";
+            btnCut.Size = new Size(107, 22);
+            btnCut.Text = "Cut";
+            btnCut.Click += btnCut_Click;
             // 
             // btnCopy
             // 
-            this.btnCopy.ForeColor = System.Drawing.Color.Gainsboro;
-            this.btnCopy.Name = "btnCopy";
-            this.btnCopy.Size = new System.Drawing.Size(107, 22);
-            this.btnCopy.Text = "Copy";
-            this.btnCopy.Click += new System.EventHandler(this.btnCopy_Click);
+            btnCopy.ForeColor = System.Drawing.Color.Gainsboro;
+            btnCopy.Name = "btnCopy";
+            btnCopy.Size = new Size(107, 22);
+            btnCopy.Text = "Copy";
+            btnCopy.Click += btnCopy_Click;
             // 
             // btnPaste
             // 
-            this.btnPaste.ForeColor = System.Drawing.Color.Gainsboro;
-            this.btnPaste.Name = "btnPaste";
-            this.btnPaste.Size = new System.Drawing.Size(107, 22);
-            this.btnPaste.Text = "Paste";
-            this.btnPaste.Click += new System.EventHandler(this.btnPaste_Click);
+            btnPaste.ForeColor = System.Drawing.Color.Gainsboro;
+            btnPaste.Name = "btnPaste";
+            btnPaste.Size = new Size(107, 22);
+            btnPaste.Text = "Paste";
+            btnPaste.Click += btnPaste_Click;
             // 
             // btnDelete
             // 
-            this.btnDelete.ForeColor = System.Drawing.Color.Gainsboro;
-            this.btnDelete.Name = "btnDelete";
-            this.btnDelete.Size = new System.Drawing.Size(107, 22);
-            this.btnDelete.Text = "Delete";
-            this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
+            btnDelete.ForeColor = System.Drawing.Color.Gainsboro;
+            btnDelete.Name = "btnDelete";
+            btnDelete.Size = new Size(107, 22);
+            btnDelete.Text = "Delete";
+            btnDelete.Click += btnDelete_Click;
             // 
             // grpPageOptions
             // 
-            this.grpPageOptions.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            this.grpPageOptions.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.grpPageOptions.Controls.Add(this.btnClearPage);
-            this.grpPageOptions.Controls.Add(this.btnDeletePage);
-            this.grpPageOptions.Controls.Add(this.btnPastePage);
-            this.grpPageOptions.Controls.Add(this.btnCopyPage);
-            this.grpPageOptions.Controls.Add(this.btnNewPage);
-            this.grpPageOptions.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpPageOptions.Location = new System.Drawing.Point(313, 5);
-            this.grpPageOptions.Name = "grpPageOptions";
-            this.grpPageOptions.Size = new System.Drawing.Size(510, 50);
-            this.grpPageOptions.TabIndex = 13;
-            this.grpPageOptions.TabStop = false;
-            this.grpPageOptions.Text = "Page Options";
+            grpPageOptions.BackColor = System.Drawing.Color.FromArgb(45, 45, 48);
+            grpPageOptions.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
+            grpPageOptions.Controls.Add(btnClearPage);
+            grpPageOptions.Controls.Add(btnDeletePage);
+            grpPageOptions.Controls.Add(btnPastePage);
+            grpPageOptions.Controls.Add(btnCopyPage);
+            grpPageOptions.Controls.Add(btnNewPage);
+            grpPageOptions.ForeColor = System.Drawing.Color.Gainsboro;
+            grpPageOptions.Location = new System.Drawing.Point(365, 6);
+            grpPageOptions.Margin = new Padding(4, 3, 4, 3);
+            grpPageOptions.Name = "grpPageOptions";
+            grpPageOptions.Padding = new Padding(4, 3, 4, 3);
+            grpPageOptions.Size = new Size(595, 58);
+            grpPageOptions.TabIndex = 13;
+            grpPageOptions.TabStop = false;
+            grpPageOptions.Text = "Page Options";
             // 
             // btnClearPage
             // 
-            this.btnClearPage.Location = new System.Drawing.Point(402, 16);
-            this.btnClearPage.Name = "btnClearPage";
-            this.btnClearPage.Padding = new System.Windows.Forms.Padding(5);
-            this.btnClearPage.Size = new System.Drawing.Size(93, 30);
-            this.btnClearPage.TabIndex = 17;
-            this.btnClearPage.Text = "Clear Page";
-            this.btnClearPage.Click += new System.EventHandler(this.btnClearPage_Click);
+            btnClearPage.Location = new System.Drawing.Point(469, 18);
+            btnClearPage.Margin = new Padding(4, 3, 4, 3);
+            btnClearPage.Name = "btnClearPage";
+            btnClearPage.Padding = new Padding(6, 6, 6, 6);
+            btnClearPage.Size = new Size(108, 35);
+            btnClearPage.TabIndex = 17;
+            btnClearPage.Text = "Clear Page";
+            btnClearPage.Click += btnClearPage_Click;
             // 
             // btnDeletePage
             // 
-            this.btnDeletePage.Enabled = false;
-            this.btnDeletePage.Location = new System.Drawing.Point(303, 16);
-            this.btnDeletePage.Name = "btnDeletePage";
-            this.btnDeletePage.Padding = new System.Windows.Forms.Padding(5);
-            this.btnDeletePage.Size = new System.Drawing.Size(93, 30);
-            this.btnDeletePage.TabIndex = 16;
-            this.btnDeletePage.Text = "Delete Page";
-            this.btnDeletePage.Click += new System.EventHandler(this.btnDeletePage_Click);
+            btnDeletePage.Enabled = false;
+            btnDeletePage.Location = new System.Drawing.Point(354, 18);
+            btnDeletePage.Margin = new Padding(4, 3, 4, 3);
+            btnDeletePage.Name = "btnDeletePage";
+            btnDeletePage.Padding = new Padding(6, 6, 6, 6);
+            btnDeletePage.Size = new Size(108, 35);
+            btnDeletePage.TabIndex = 16;
+            btnDeletePage.Text = "Delete Page";
+            btnDeletePage.Click += btnDeletePage_Click;
             // 
             // btnPastePage
             // 
-            this.btnPastePage.Location = new System.Drawing.Point(204, 16);
-            this.btnPastePage.Name = "btnPastePage";
-            this.btnPastePage.Padding = new System.Windows.Forms.Padding(5);
-            this.btnPastePage.Size = new System.Drawing.Size(93, 30);
-            this.btnPastePage.TabIndex = 15;
-            this.btnPastePage.Text = "Paste Page";
-            this.btnPastePage.Click += new System.EventHandler(this.btnPastePage_Click);
+            btnPastePage.Location = new System.Drawing.Point(238, 18);
+            btnPastePage.Margin = new Padding(4, 3, 4, 3);
+            btnPastePage.Name = "btnPastePage";
+            btnPastePage.Padding = new Padding(6, 6, 6, 6);
+            btnPastePage.Size = new Size(108, 35);
+            btnPastePage.TabIndex = 15;
+            btnPastePage.Text = "Paste Page";
+            btnPastePage.Click += btnPastePage_Click;
             // 
             // btnCopyPage
             // 
-            this.btnCopyPage.Location = new System.Drawing.Point(105, 16);
-            this.btnCopyPage.Name = "btnCopyPage";
-            this.btnCopyPage.Padding = new System.Windows.Forms.Padding(5);
-            this.btnCopyPage.Size = new System.Drawing.Size(93, 30);
-            this.btnCopyPage.TabIndex = 14;
-            this.btnCopyPage.Text = "Copy Page";
-            this.btnCopyPage.Click += new System.EventHandler(this.btnCopyPage_Click);
+            btnCopyPage.Location = new System.Drawing.Point(122, 18);
+            btnCopyPage.Margin = new Padding(4, 3, 4, 3);
+            btnCopyPage.Name = "btnCopyPage";
+            btnCopyPage.Padding = new Padding(6, 6, 6, 6);
+            btnCopyPage.Size = new Size(108, 35);
+            btnCopyPage.TabIndex = 14;
+            btnCopyPage.Text = "Copy Page";
+            btnCopyPage.Click += btnCopyPage_Click;
             // 
             // btnNewPage
             // 
-            this.btnNewPage.Location = new System.Drawing.Point(6, 16);
-            this.btnNewPage.Name = "btnNewPage";
-            this.btnNewPage.Padding = new System.Windows.Forms.Padding(5);
-            this.btnNewPage.Size = new System.Drawing.Size(93, 30);
-            this.btnNewPage.TabIndex = 13;
-            this.btnNewPage.Text = "New Page";
-            this.btnNewPage.Click += new System.EventHandler(this.btnNewPage_Click);
+            btnNewPage.Location = new System.Drawing.Point(7, 18);
+            btnNewPage.Margin = new Padding(4, 3, 4, 3);
+            btnNewPage.Name = "btnNewPage";
+            btnNewPage.Padding = new Padding(6, 6, 6, 6);
+            btnNewPage.Size = new Size(108, 35);
+            btnNewPage.TabIndex = 13;
+            btnNewPage.Text = "New Page";
+            btnNewPage.Click += btnNewPage_Click;
             // 
             // grpGeneral
             // 
-            this.grpGeneral.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            this.grpGeneral.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.grpGeneral.Controls.Add(this.chkIsGlobal);
-            this.grpGeneral.Controls.Add(this.lblName);
-            this.grpGeneral.Controls.Add(this.txtEventname);
-            this.grpGeneral.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpGeneral.Location = new System.Drawing.Point(12, 5);
-            this.grpGeneral.Name = "grpGeneral";
-            this.grpGeneral.Size = new System.Drawing.Size(295, 49);
-            this.grpGeneral.TabIndex = 18;
-            this.grpGeneral.TabStop = false;
-            this.grpGeneral.Text = "General";
+            grpGeneral.BackColor = System.Drawing.Color.FromArgb(45, 45, 48);
+            grpGeneral.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
+            grpGeneral.Controls.Add(chkIsGlobal);
+            grpGeneral.Controls.Add(lblName);
+            grpGeneral.Controls.Add(txtEventname);
+            grpGeneral.ForeColor = System.Drawing.Color.Gainsboro;
+            grpGeneral.Location = new System.Drawing.Point(14, 6);
+            grpGeneral.Margin = new Padding(4, 3, 4, 3);
+            grpGeneral.Name = "grpGeneral";
+            grpGeneral.Padding = new Padding(4, 3, 4, 3);
+            grpGeneral.Size = new Size(344, 57);
+            grpGeneral.TabIndex = 18;
+            grpGeneral.TabStop = false;
+            grpGeneral.Text = "General";
             // 
             // chkIsGlobal
             // 
-            this.chkIsGlobal.AutoSize = true;
-            this.chkIsGlobal.Location = new System.Drawing.Point(202, 22);
-            this.chkIsGlobal.Name = "chkIsGlobal";
-            this.chkIsGlobal.Size = new System.Drawing.Size(87, 17);
-            this.chkIsGlobal.TabIndex = 3;
-            this.chkIsGlobal.Text = "Global Event";
-            this.chkIsGlobal.CheckedChanged += new System.EventHandler(this.chkIsGlobal_CheckedChanged);
+            chkIsGlobal.AutoSize = true;
+            chkIsGlobal.Location = new System.Drawing.Point(236, 25);
+            chkIsGlobal.Margin = new Padding(4, 3, 4, 3);
+            chkIsGlobal.Name = "chkIsGlobal";
+            chkIsGlobal.Size = new Size(92, 19);
+            chkIsGlobal.TabIndex = 3;
+            chkIsGlobal.Text = "Global Event";
+            chkIsGlobal.CheckedChanged += chkIsGlobal_CheckedChanged;
             // 
             // pnlTabsContainer
             // 
-            this.pnlTabsContainer.Controls.Add(this.pnlTabs);
-            this.pnlTabsContainer.Location = new System.Drawing.Point(12, 61);
-            this.pnlTabsContainer.Name = "pnlTabsContainer";
-            this.pnlTabsContainer.Size = new System.Drawing.Size(811, 22);
-            this.pnlTabsContainer.TabIndex = 22;
+            pnlTabsContainer.Controls.Add(pnlTabs);
+            pnlTabsContainer.Location = new System.Drawing.Point(14, 70);
+            pnlTabsContainer.Margin = new Padding(4, 3, 4, 3);
+            pnlTabsContainer.Name = "pnlTabsContainer";
+            pnlTabsContainer.Size = new Size(946, 25);
+            pnlTabsContainer.TabIndex = 22;
             // 
             // pnlTabs
             // 
-            this.pnlTabs.AutoSize = true;
-            this.pnlTabs.Location = new System.Drawing.Point(0, 0);
-            this.pnlTabs.Name = "pnlTabs";
-            this.pnlTabs.Size = new System.Drawing.Size(811, 22);
-            this.pnlTabs.TabIndex = 23;
+            pnlTabs.AutoSize = true;
+            pnlTabs.Location = new System.Drawing.Point(0, 0);
+            pnlTabs.Margin = new Padding(4, 3, 4, 3);
+            pnlTabs.Name = "pnlTabs";
+            pnlTabs.Size = new Size(946, 25);
+            pnlTabs.TabIndex = 23;
             // 
             // btnTabsRight
             // 
-            this.btnTabsRight.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnTabsRight.Location = new System.Drawing.Point(773, 61);
-            this.btnTabsRight.Name = "btnTabsRight";
-            this.btnTabsRight.Padding = new System.Windows.Forms.Padding(5);
-            this.btnTabsRight.Size = new System.Drawing.Size(50, 23);
-            this.btnTabsRight.TabIndex = 1;
-            this.btnTabsRight.Text = ">";
-            this.btnTabsRight.Click += new System.EventHandler(this.btnTabsRight_Click);
+            btnTabsRight.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            btnTabsRight.Location = new System.Drawing.Point(902, 70);
+            btnTabsRight.Margin = new Padding(4, 3, 4, 3);
+            btnTabsRight.Name = "btnTabsRight";
+            btnTabsRight.Padding = new Padding(6, 6, 6, 6);
+            btnTabsRight.Size = new Size(58, 27);
+            btnTabsRight.TabIndex = 1;
+            btnTabsRight.Text = ">";
+            btnTabsRight.Click += btnTabsRight_Click;
             // 
             // btnTabsLeft
             // 
-            this.btnTabsLeft.Location = new System.Drawing.Point(12, 61);
-            this.btnTabsLeft.Name = "btnTabsLeft";
-            this.btnTabsLeft.Padding = new System.Windows.Forms.Padding(5);
-            this.btnTabsLeft.Size = new System.Drawing.Size(50, 23);
-            this.btnTabsLeft.TabIndex = 0;
-            this.btnTabsLeft.Text = "<";
-            this.btnTabsLeft.Click += new System.EventHandler(this.btnTabsLeft_Click);
+            btnTabsLeft.Location = new System.Drawing.Point(14, 70);
+            btnTabsLeft.Margin = new Padding(4, 3, 4, 3);
+            btnTabsLeft.Name = "btnTabsLeft";
+            btnTabsLeft.Padding = new Padding(6, 6, 6, 6);
+            btnTabsLeft.Size = new Size(58, 27);
+            btnTabsLeft.TabIndex = 0;
+            btnTabsLeft.Text = "<";
+            btnTabsLeft.Click += btnTabsLeft_Click;
             // 
             // panel1
             // 
-            this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panel1.Location = new System.Drawing.Point(12, 83);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(811, 526);
-            this.panel1.TabIndex = 23;
+            panel1.BorderStyle = BorderStyle.FixedSingle;
+            panel1.Location = new System.Drawing.Point(14, 96);
+            panel1.Margin = new Padding(4, 3, 4, 3);
+            panel1.Name = "panel1";
+            panel1.Size = new Size(946, 607);
+            panel1.TabIndex = 23;
             // 
             // FrmEvent
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.AutoSize = true;
-            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            this.ClientSize = new System.Drawing.Size(835, 653);
-            this.Controls.Add(this.grpTriggers);
-            this.Controls.Add(this.btnTabsRight);
-            this.Controls.Add(this.btnTabsLeft);
-            this.Controls.Add(this.grpEntityOptions);
-            this.Controls.Add(this.grpEventConditions);
-            this.Controls.Add(this.grpPageOptions);
-            this.Controls.Add(this.grpGeneral);
-            this.Controls.Add(this.btnCancel);
-            this.Controls.Add(this.btnSave);
-            this.Controls.Add(this.pnlTabsContainer);
-            this.Controls.Add(this.grpEventCommands);
-            this.Controls.Add(this.grpCreateCommands);
-            this.Controls.Add(this.panel1);
-            this.Controls.Add(this.grpNewCommands);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-            this.KeyPreview = true;
-            this.MaximizeBox = false;
-            this.Name = "FrmEvent";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Event Editor";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmEvent_FormClosing);
-            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.FrmEvent_FormClosed);
-            this.Load += new System.EventHandler(this.frmEvent_Load);
-            this.VisibleChanged += new System.EventHandler(this.FrmEvent_VisibleChanged);
-            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FrmEvent_KeyDown);
-            this.grpEntityOptions.ResumeLayout(false);
-            this.grpExtra.ResumeLayout(false);
-            this.grpExtra.PerformLayout();
-            this.grpInspector.ResumeLayout(false);
-            this.grpInspector.PerformLayout();
-            this.grpPreview.ResumeLayout(false);
-            this.grpPreview.PerformLayout();
-            this.grpMovement.ResumeLayout(false);
-            this.grpMovement.PerformLayout();
-            this.grpTriggers.ResumeLayout(false);
-            this.grpTriggers.PerformLayout();
-            this.grpEventConditions.ResumeLayout(false);
-            this.grpNewCommands.ResumeLayout(false);
-            this.grpNewCommands.PerformLayout();
-            this.grpEventCommands.ResumeLayout(false);
-            this.commandMenu.ResumeLayout(false);
-            this.grpPageOptions.ResumeLayout(false);
-            this.grpGeneral.ResumeLayout(false);
-            this.grpGeneral.PerformLayout();
-            this.pnlTabsContainer.ResumeLayout(false);
-            this.pnlTabsContainer.PerformLayout();
-            this.ResumeLayout(false);
-
+            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleMode = AutoScaleMode.Font;
+            AutoSize = true;
+            BackColor = System.Drawing.Color.FromArgb(45, 45, 48);
+            ClientSize = new Size(974, 753);
+            Controls.Add(grpTriggers);
+            Controls.Add(btnTabsRight);
+            Controls.Add(btnTabsLeft);
+            Controls.Add(grpEntityOptions);
+            Controls.Add(grpEventConditions);
+            Controls.Add(grpPageOptions);
+            Controls.Add(grpGeneral);
+            Controls.Add(btnCancel);
+            Controls.Add(btnSave);
+            Controls.Add(pnlTabsContainer);
+            Controls.Add(grpNewCommands);
+            Controls.Add(grpEventCommands);
+            Controls.Add(grpCreateCommands);
+            Controls.Add(panel1);
+            FormBorderStyle = FormBorderStyle.FixedSingle;
+            KeyPreview = true;
+            Margin = new Padding(4, 3, 4, 3);
+            MaximizeBox = false;
+            Name = "FrmEvent";
+            StartPosition = FormStartPosition.CenterScreen;
+            Text = "Event Editor";
+            FormClosing += frmEvent_FormClosing;
+            FormClosed += FrmEvent_FormClosed;
+            Load += frmEvent_Load;
+            VisibleChanged += FrmEvent_VisibleChanged;
+            KeyDown += FrmEvent_KeyDown;
+            grpEntityOptions.ResumeLayout(false);
+            grpExtra.ResumeLayout(false);
+            grpExtra.PerformLayout();
+            grpInspector.ResumeLayout(false);
+            grpInspector.PerformLayout();
+            grpPreview.ResumeLayout(false);
+            grpPreview.PerformLayout();
+            grpMovement.ResumeLayout(false);
+            grpMovement.PerformLayout();
+            grpTriggers.ResumeLayout(false);
+            grpTriggers.PerformLayout();
+            grpEventConditions.ResumeLayout(false);
+            grpNewCommands.ResumeLayout(false);
+            grpNewCommands.PerformLayout();
+            grpEventCommands.ResumeLayout(false);
+            commandMenu.ResumeLayout(false);
+            grpPageOptions.ResumeLayout(false);
+            grpGeneral.ResumeLayout(false);
+            grpGeneral.PerformLayout();
+            pnlTabsContainer.ResumeLayout(false);
+            pnlTabsContainer.PerformLayout();
+            ResumeLayout(false);
         }
 
         #endregion
