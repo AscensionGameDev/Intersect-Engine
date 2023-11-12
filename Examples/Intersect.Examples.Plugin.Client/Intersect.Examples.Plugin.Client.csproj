@@ -1,17 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net462</TargetFramework>
-  </PropertyGroup>
-
-  <PropertyGroup>
     <Description>Example Client Plugin - Part of the Intersect 2D Game Creation Suite</Description>
     <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
     <RootNamespace>Intersect.Examples.Plugin.Client</RootNamespace>
     <AssemblyName>Intersect.Examples.Plugin.Client</AssemblyName>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <FileAlignment>512</FileAlignment>
-    <IntersectPluginType>client</IntersectPluginType>
+    <IntersectPluginType>Client</IntersectPluginType>
   </PropertyGroup>
 
   <ItemGroup>
@@ -26,10 +20,6 @@
 
   <ItemGroup>
     <EmbeddedResource Include="Assets\join-our-discord.png" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
 
   <ItemGroup>

@@ -15,6 +15,7 @@ using Intersect.Client.Interface;
 using Intersect.Examples.Plugin.Packets.Server;
 using Intersect.Examples.Plugin.Client.PacketHandlers;
 using Intersect.Examples.Plugin.Packets.Client;
+using Intersect.Utilities;
 
 namespace Intersect.Examples.Plugin.Client
 {
@@ -148,7 +149,7 @@ namespace Intersect.Examples.Plugin.Client
                     return;
                 }
 
-                Process.Start(discordInviteUrl);
+                BrowserUtils.Open(discordInviteUrl);
             };
 
             button.SetImage(mButtonTexture, mButtonTexture.Name, Button.ControlState.Normal);

@@ -9,6 +9,7 @@ Imports Intersect.Client.[Interface]
 Imports Intersect.Client.Plugins
 Imports Intersect.Client.Plugins.Interfaces
 Imports Intersect.Plugins
+Imports Intersect.Utilities
 Imports Microsoft
 
 Namespace Intersect.Examples.ClientPlugin
@@ -102,7 +103,7 @@ Namespace Intersect.Examples.ClientPlugin
                         Return
                     End If
 
-                    Process.Start(discordInviteUrl)
+                    BrowserUtils.Open(discordInviteUrl)
                 End Sub
 
             button.SetImage(mButtonTexture, mButtonTexture.Name, Button.ControlState.Normal)

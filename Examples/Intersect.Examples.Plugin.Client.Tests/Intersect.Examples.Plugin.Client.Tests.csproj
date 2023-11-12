@@ -1,21 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net462</TargetFramework>
-  </PropertyGroup>
-
-  <PropertyGroup>
     <Description>Example Client Plugin Tests - Part of the Intersect 2D Game Creation Suite</Description>
     <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
     <RootNamespace>Intersect.Examples.Plugin.Client.Tests</RootNamespace>
     <AssemblyName>Intersect.Examples.Plugin.Client.Tests</AssemblyName>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <FileAlignment>512</FileAlignment>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Reference Include="Microsoft.CSharp" />
-  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Intersect.Examples.Plugin.Client\Intersect.Examples.Plugin.Client.csproj" />

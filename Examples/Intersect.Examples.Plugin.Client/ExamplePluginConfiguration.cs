@@ -15,7 +15,7 @@ namespace Intersect.Examples.Plugin.Client
         /// Link to discord invite that should open when discord button is clicked
         /// </summary>
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public string DiscordInviteUrl { get; set; } = "https://discord.gg/Z6fHThedPK";
+        public string DiscordInviteUrl { get; set; } = "https://discord.gg/qaJ8kRmdKA";
 
     }
 
