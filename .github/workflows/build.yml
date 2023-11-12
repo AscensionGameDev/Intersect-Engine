@@ -42,6 +42,7 @@ env:
 
 jobs:
   build-linux:
+    name: Build for Linux
     runs-on: ubuntu-latest
     steps:
     - name: Checkout Code
@@ -99,6 +100,7 @@ jobs:
           ./Intersect.Server/bin/Release/*/*/publish
 
   build-macos:
+    name: Build for MacOS
     runs-on: macos-latest
     steps:
     - name: Checkout Code
@@ -156,6 +158,7 @@ jobs:
           ./Intersect.Server/bin/Release/*/*/publish
 
   build-windows:
+    name: Build for Windows
     runs-on: windows-latest
     steps:
     - name: Checkout Code
@@ -213,6 +216,7 @@ jobs:
           ./Intersect.Server/bin/Release/*/*/publish
 
   debug-build-artifacts:
+    name: Debug Build Artifacts
     if: inputs.workflowDebug == true
     needs: [build-linux, build-macos, build-windows]
     runs-on: ubuntu-latest
@@ -227,6 +231,7 @@ jobs:
         run: ls -R .
 
   publish-github:
+    name: Publish GitHub Release
     if: inputs.workflowDebug != true
     needs: [build-linux, build-macos, build-windows]
     runs-on: ubuntu-latest
@@ -265,7 +270,7 @@ jobs:
           version: ${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}+build.${{ github.sha }}
 
       - name: Debug output
-        if: inputs.workflowDebug == true
+        if: inputs.packagingDebug == true
         run: ls -R ./dist
 
       - name: Publish GitHub Release
@@ -279,7 +284,8 @@ jobs:
           prerelease: true
           tag: v${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}
 
-  publish:
+  publish-forum:
+    name: Publish to Forum
     if: inputs.workflowDebug != true && inputs.packagingDebug != true && inputs.skipForumPublish != true
     needs: publish-github
     runs-on: ubuntu-latest
