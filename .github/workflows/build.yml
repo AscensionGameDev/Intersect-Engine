@@ -28,6 +28,10 @@ on:
         description: 'If the packaging step should be debugged (skips publishing)'
         default: true
         type: boolean
+      skipForumPublish:
+        description: 'If publishing to the forum should be skipped'
+        default: true
+        type: boolean
 
 permissions:
   contents: write
@@ -276,7 +280,7 @@ jobs:
           tag: v${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}
 
   publish:
-    if: inputs.workflowDebug != true && inputs.packagingDebug != true
+    if: inputs.workflowDebug != true && inputs.packagingDebug != true && inputs.skipForumPublish != true
     needs: publish-github
     runs-on: ubuntu-latest
     steps:
