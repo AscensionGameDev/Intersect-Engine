@@ -99,6 +99,7 @@ namespace Intersect.Client.Core.Controls
             CreateControlMap(Control.HoldToZoomIn, ControlValue.Default, ControlValue.Default);
             CreateControlMap(Control.HoldToZoomOut, ControlValue.Default, ControlValue.Default);
             CreateControlMap(Control.ToggleFullscreen, new ControlValue(Keys.Alt, Keys.Enter), ControlValue.Default);
+            CreateControlMap(Control.OpenMinimap, new ControlValue(Keys.None, Keys.M), ControlValue.Default);
             // CreateControlMap(Control.Submit, new ControlValue(Keys.None, Keys.Enter), ControlValue.Default);
             // CreateControlMap(Control.Cancel, new ControlValue(Keys.None, Keys.Back), ControlValue.Default);
             // CreateControlMap(Control.Next, new ControlValue(Keys.None, Keys.Tab), ControlValue.Default);

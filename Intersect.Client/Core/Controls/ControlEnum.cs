@@ -59,6 +59,8 @@
         OpenGuild,
 
         OpenFriends,
+        
+        OpenMinimap,
 
         OpenSettings,
 

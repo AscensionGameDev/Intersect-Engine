@@ -297,6 +297,11 @@ namespace Intersect.Client.Core
                                         Interface.Interface.GameUi?.GameMenu.ToggleGuildWindow();
 
                                         break;
+                                    
+                                    case Control.OpenMinimap:
+                                        Interface.Interface.GameUi?.GameMenu.ToggleMinimapWindow();
+
+                                        break;
                                 }
 
                                 break;
