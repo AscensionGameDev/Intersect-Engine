@@ -21,11 +21,11 @@ on:
         default: false
         type: boolean
       workflowDebug:
-        description: 'If the workflow should be debugged (skips packaging and release)'
+        description: 'If the workflow should be debugged (skips packaging and publishing)'
         default: true
         type: boolean
       packagingDebug:
-        description: 'If the packaging step should be debugged (skip release)'
+        description: 'If the packaging step should be debugged (skips publishing)'
         default: true
         type: boolean
 
