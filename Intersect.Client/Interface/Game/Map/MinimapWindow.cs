@@ -254,30 +254,37 @@ namespace Intersect.Client.Interface.Game.Map
 
         private void GenerateEntityCacheFor(MapPosition position)
         {
-            _entityCache.TryAdd(position, null);
-            _entityCache[position] ??= GenerateMapRenderTexture();
-            _entityCache[position].Clear(Color.Transparent);
+            if (!_entityCache.TryGetValue(position, out var cachedEntity))
+            {
+                // If the position is not in the cache, generate a new texture.
+                cachedEntity = GenerateMapRenderTexture();
+                // Add the newly generated texture to the cache for future use.
+                _entityCache[position] = cachedEntity;
+            }
 
-            if (!_entityInfoCache.TryGetValue(position, out var value))
+            // Clear the texture, whether it's newly generated or already existed in the cache
+            cachedEntity.Clear(Color.Transparent);
+
+            if (!_entityInfoCache.TryGetValue(position, out var cachedEntityInfo) || cachedEntityInfo == null)
             {
                 return;
             }
 
-            foreach (var entity in value)
+            foreach (var entity in cachedEntityInfo)
             {
                 var texture = _whiteTexture;
                 var color = entity.Value.Color;
 
                 if (!string.IsNullOrWhiteSpace(entity.Value.Texture))
                 {
-                    var found = ContentManager.Find<GameTexture>(Framework.Content.ContentTypes.Miscellaneous, entity.Value.Texture);
+                    var found = ContentManager.Find<GameTexture>(ContentTypes.Miscellaneous, entity.Value.Texture);
                     if (found != null)
                     {
                         texture = found;
                         color = Color.White;
                     }
                 }
-                
+
                 Graphics.Renderer.DrawTexture(
                     texture,
                     0,
@@ -289,7 +296,8 @@ namespace Intersect.Client.Interface.Game.Map
                     _minimapTileSize.X,
                     _minimapTileSize.Y,
                     color,
-                    _entityCache[position], GameBlendModes.Add);
+                    cachedEntity,
+                    GameBlendModes.Add);
             }
         }
 
