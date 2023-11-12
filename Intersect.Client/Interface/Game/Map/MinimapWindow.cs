@@ -1,5 +1,6 @@
 using Intersect.Client.Core;
 using Intersect.Client.Entities;
+using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Control;
@@ -13,7 +14,7 @@ using Intersect.GameObjects.Maps;
 
 namespace Intersect.Client.Interface.Game.Map
 {
-    public sealed partial class MinimapWindow : Window
+    public sealed class MinimapWindow : Window
     {
         private GameRenderTexture _renderTexture;
         private GameTexture _whiteTexture;
@@ -197,11 +198,18 @@ namespace Intersect.Client.Interface.Game.Map
 
         private void GenerateMinimapCacheFor(MapPosition position)
         {
-            _minimapCache.TryAdd(position, null);
-            _minimapCache[position] ??= GenerateMapRenderTexture();
-            _minimapCache[position].Clear(Color.Transparent);
+            if (!_minimapCache.TryGetValue(position, out var cachedMinimap))
+            {
+                // If the position is not in the cache, generate a new texture.
+                cachedMinimap = GenerateMapRenderTexture();
+                // Add the newly generated texture to the cache for future use.
+                _minimapCache[position] = cachedMinimap;
+            }
 
-            if (_mapGrid[position] == null)
+            // Clear the texture, whether it's newly generated or already existed in the cache
+            cachedMinimap.Clear(Color.Transparent);
+
+            if (!_mapGrid.TryGetValue(position, out var cachedMapGrid) || cachedMapGrid == null)
             {
                 return;
             }
@@ -212,7 +220,7 @@ namespace Intersect.Client.Interface.Game.Map
                 {
                     for (var y = 0; y < Options.Instance.MapOpts.MapHeight; y++)
                     {
-                        var curTile = _mapGrid[position].Layers[layer][x, y];
+                        var curTile = cachedMapGrid.Layers[layer][x, y];
 
                         if (curTile.TilesetId == Guid.Empty ||
                             !TilesetBase.TryGet(curTile.TilesetId, out var tileSet))
@@ -220,7 +228,7 @@ namespace Intersect.Client.Interface.Game.Map
                             continue;
                         }
 
-                        var texture = ContentManager.GetTexture(Framework.Content.TextureType.Tileset, tileSet.Name);
+                        var texture = ContentManager.GetTexture(TextureType.Tileset, tileSet.Name);
 
                         if (texture == null)
                         {
@@ -238,7 +246,7 @@ namespace Intersect.Client.Interface.Game.Map
                             _minimapTileSize.X,
                             _minimapTileSize.Y,
                             Color.White,
-                            _minimapCache[position]);
+                            cachedMinimap);
                     }
                 }
             }
