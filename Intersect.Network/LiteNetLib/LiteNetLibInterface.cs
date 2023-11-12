@@ -206,10 +206,22 @@ public sealed class LiteNetLibInterface : INetworkLayerInterface, INetEventListe
 
     public void OnPeerDisconnected(NetPeer peer, DisconnectInfo disconnectInfo)
     {
-        var message = (disconnectInfo.AdditionalData.EndOfData
-            ? string.Empty
-            : disconnectInfo.AdditionalData.GetString());
-        Log.Debug($"DCON: {peer.EndPoint} \"{disconnectInfo.Reason}\" ({disconnectInfo.SocketErrorCode}): {message}");
+        if (disconnectInfo.Reason != DisconnectReason.DisconnectPeerCalled)
+        {
+            try
+            {
+                var message = (disconnectInfo.AdditionalData.EndOfData
+                    ? string.Empty
+                    : disconnectInfo.AdditionalData.GetString());
+                Log.Debug(
+                    $"DCON: {peer.EndPoint} \"{disconnectInfo.Reason}\" ({disconnectInfo.SocketErrorCode}): {message}"
+                );
+            }
+            catch (Exception exception)
+            {
+                Log.Debug($"DCON[ERR]: {peer.EndPoint} \"{disconnectInfo.Reason}\" ({disconnectInfo.SocketErrorCode}): {exception.Message}");
+            }
+        }
 
         if (!_connectionIdLookup.TryRemove(peer.Id, out var connectionId))
         {
@@ -221,6 +233,12 @@ public sealed class LiteNetLibInterface : INetworkLayerInterface, INetEventListe
         if (connection == default)
         {
             Log.Diagnostic($"No connection found for {connectionId} ({_network.Connections.Count})");
+            return;
+        }
+
+        if (disconnectInfo.Reason == DisconnectReason.DisconnectPeerCalled)
+        {
+            Log.Diagnostic($"Skipping OnDisconnected event because this was manually disconnected {connection.Guid}");
             return;
         }
 
