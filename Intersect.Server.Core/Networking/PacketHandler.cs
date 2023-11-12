@@ -654,9 +654,8 @@ namespace Intersect.Server.Networking
                 (Options.MaxCharacters > 1 || !Options.Instance.PlayerOpts.SkipCharacterSelect))
             {
                 client.Entity?.TryLogout(false, true);
-                var lastPlayer = client.Entity;
                 client.Entity = default;
-                PacketSender.SendPlayerCharacters(client, lastPlayer);
+                PacketSender.SendPlayerCharacters(client);
             }
             else
             {

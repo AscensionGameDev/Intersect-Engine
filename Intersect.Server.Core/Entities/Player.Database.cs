@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 using Intersect.Logging;
 using Intersect.Server.Database;
 using Intersect.Server.Database.PlayerData;
@@ -20,6 +17,8 @@ namespace Intersect.Server.Entities
 
     public partial class Player
     {
+        private volatile bool _saving;
+        private readonly object _savingLock = new();
 
         #region Account
 
@@ -151,6 +150,15 @@ namespace Intersect.Server.Entities
 
         public void LoadRelationships(PlayerContext playerContext)
         {
+            lock (_savingLock)
+            {
+                if (_saving)
+                {
+                    Log.Warn($"Skipping loading relationships for player {Id} because it is being saved.");
+                    return;
+                }
+            }
+
             var entityEntry = playerContext.Players.Attach(this);
             entityEntry.Collection(p => p.Bank).Load();
             entityEntry.Collection(p => p.Hotbar).Load();
