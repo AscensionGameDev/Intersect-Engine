@@ -47,7 +47,7 @@ body:
     attributes:
       label: Last version that worked well
       description: Is there a version of Intersect on which this _did_ work? If yes, please provide the version number, otherwise enter 'Unknown'.
-      placeholder: E.g. v0.7.2 or Unknown
+      placeholder: E.g. v0.8.0 or Unknown
     validations:
       required: true
       email: true
