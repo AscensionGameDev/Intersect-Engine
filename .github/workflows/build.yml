@@ -21,7 +21,7 @@ on:
         default: false
         type: boolean
       workflowDebug:
-        description: 'If the workflow should be debugged (skip release)'
+        description: 'If the workflow should be debugged (skips packaging and release)'
         default: true
         type: boolean
       packagingDebug:
