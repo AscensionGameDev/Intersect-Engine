@@ -13,19 +13,21 @@ namespace Intersect.Server.Database;
 
 internal sealed class IntersectLoggerFactory : ILoggerFactory
 {
-    private static string ExecutableName => Path.GetFileNameWithoutExtension(
-        Process.GetCurrentProcess().MainModule?.FileName ?? Assembly.GetExecutingAssembly().GetName().Name
-    );
+    private static readonly Dictionary<string, ImmutableArray<ILogOutput>> _cachedOutputs = new();
 
     private readonly DbLoggerProvider _loggerProvider;
 
-    internal IntersectLoggerFactory()
+    internal IntersectLoggerFactory(string name)
     {
-        var outputs = ImmutableList.Create<ILogOutput>(
-            new FileOutput($"db-{ExecutableName}.log"),
-            new FileOutput($"errors-{ExecutableName}.log", IntersectLogLevel.Error),
-            new ConciseConsoleOutput(Debugger.IsAttached ? IntersectLogLevel.Warn : IntersectLogLevel.Error)
-        );
+        if (!_cachedOutputs.TryGetValue(name, out var outputs))
+        {
+            outputs = ImmutableArray.Create<ILogOutput>(
+                new FileOutput(Log.SuggestFilename(prefix: $"db-{name}-")),
+                new FileOutput(Log.SuggestFilename(prefix: $"db_errors-{name}-"), IntersectLogLevel.Error),
+                new ConciseConsoleOutput(Debugger.IsAttached ? IntersectLogLevel.Warn : IntersectLogLevel.Error)
+            );
+            _cachedOutputs[name] = outputs;
+        }
 
         _loggerProvider = new DbLoggerProvider(
             new Logger(
