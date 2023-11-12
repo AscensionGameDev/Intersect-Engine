@@ -47,7 +47,7 @@ namespace Intersect.Logging
                 {
                     Formatters = ImmutableList.Create(new DefaultFormatter()) ?? throw new InvalidOperationException(),
                     LogLevel = LogConfiguration.Default.LogLevel,
-                    Outputs = outputs
+                    Outputs = outputs,
                 }
             );
         }
