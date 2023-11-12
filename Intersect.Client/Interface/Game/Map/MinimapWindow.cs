@@ -376,8 +376,14 @@ namespace Intersect.Client.Interface.Game.Map
                 for (var y = map.GridY - 1; y <= map.GridY + 1; y++)
                 {
                     if (x < 0 || x >= Globals.MapGridWidth ||
-                        y < 0 || y >= Globals.MapGridHeight ||
-                        Globals.MapGrid[x, y] == Guid.Empty)
+                        y < 0 || y >= Globals.MapGridHeight)
+                    {
+                        continue;
+                    }
+
+                    var currentGridValue = Globals.MapGrid[x, y];
+
+                    if (currentGridValue == Guid.Empty)
                     {
                         continue;
                     }
@@ -385,7 +391,11 @@ namespace Intersect.Client.Interface.Game.Map
                     int minimapX = x - (map.GridX - 1);
                     int minimapY = y - (map.GridY - 1);
 
-                    grid.Add((MapPosition)(minimapX + (minimapY * 3)), MapBase.Get(Globals.MapGrid[x, y]));
+                    var mapBase = MapBase.Get(currentGridValue);
+                    if (mapBase != null)
+                    {
+                        grid.Add((MapPosition)(minimapX + (minimapY * 3)), mapBase);
+                    }
                 }
             }
             
