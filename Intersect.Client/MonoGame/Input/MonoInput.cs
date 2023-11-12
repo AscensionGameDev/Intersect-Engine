@@ -256,11 +256,6 @@ namespace Intersect.Client.MonoGame.Input
                     var temporaryMouseState = Mouse.GetState();
                     Mouse.SetPosition(temporaryMouseState.X + deltaX, temporaryMouseState.Y + deltaY);
                 }
-                else
-                {
-                    var state = GamePad.GetState(0);
-                    Log.Info(state.ToString());
-                }
 
                 var keyboardState = Keyboard.GetState();
                 var mouseState = Mouse.GetState();
