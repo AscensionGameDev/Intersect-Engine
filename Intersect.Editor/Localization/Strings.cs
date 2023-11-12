@@ -5595,6 +5595,19 @@ Negative values for time to flow backwards.";
 
         }
 
+        public partial struct VariableSelector
+        {
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString LabelCurrentSelection = @"Current Selection:";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString ValueCurrentSelection = @"{00} ({01})";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString ValueNoneSelected = @"None Selected!";
+
+        }
+
     }
 
 }

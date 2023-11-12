@@ -31,187 +31,194 @@ namespace Intersect.Editor.Forms
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmWarpSelection));
-            this.grpEverything = new DarkUI.Controls.DarkGroupBox();
-            this.btnRefreshPreview = new System.Windows.Forms.Button();
-            this.grpMapPreview = new DarkUI.Controls.DarkGroupBox();
-            this.pnlMapContainer = new System.Windows.Forms.Panel();
-            this.pnlMap = new System.Windows.Forms.Panel();
-            this.grpMapList = new DarkUI.Controls.DarkGroupBox();
-            this.chkAlphabetical = new DarkUI.Controls.DarkCheckBox();
-            this.mapTreeList1 = new Intersect.Editor.Forms.Controls.MapTreeList();
-            this.btnCancel = new DarkUI.Controls.DarkButton();
-            this.btnOk = new DarkUI.Controls.DarkButton();
-            this.tmrMapCheck = new System.Windows.Forms.Timer(this.components);
-            this.grpEverything.SuspendLayout();
-            this.grpMapPreview.SuspendLayout();
-            this.pnlMapContainer.SuspendLayout();
-            this.grpMapList.SuspendLayout();
-            this.SuspendLayout();
+            components = new System.ComponentModel.Container();
+            var resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmWarpSelection));
+            grpEverything = new DarkGroupBox();
+            btnRefreshPreview = new Button();
+            grpMapPreview = new DarkGroupBox();
+            pnlMapContainer = new Panel();
+            pnlMap = new Panel();
+            grpMapList = new DarkGroupBox();
+            chkAlphabetical = new DarkCheckBox();
+            mapTreeList1 = new MapTreeList();
+            btnCancel = new DarkButton();
+            btnOk = new DarkButton();
+            tmrMapCheck = new System.Windows.Forms.Timer(components);
+            grpEverything.SuspendLayout();
+            grpMapPreview.SuspendLayout();
+            pnlMapContainer.SuspendLayout();
+            grpMapList.SuspendLayout();
+            SuspendLayout();
             // 
             // grpEverything
             // 
-            this.grpEverything.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.grpEverything.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            this.grpEverything.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.grpEverything.Controls.Add(this.btnRefreshPreview);
-            this.grpEverything.Controls.Add(this.grpMapPreview);
-            this.grpEverything.Controls.Add(this.grpMapList);
-            this.grpEverything.Controls.Add(this.btnCancel);
-            this.grpEverything.Controls.Add(this.btnOk);
-            this.grpEverything.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpEverything.Location = new System.Drawing.Point(2, 2);
-            this.grpEverything.Name = "grpEverything";
-            this.grpEverything.Size = new System.Drawing.Size(783, 604);
-            this.grpEverything.TabIndex = 1;
-            this.grpEverything.TabStop = false;
+            grpEverything.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            grpEverything.BackColor = System.Drawing.Color.FromArgb(45, 45, 48);
+            grpEverything.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
+            grpEverything.Controls.Add(btnRefreshPreview);
+            grpEverything.Controls.Add(grpMapPreview);
+            grpEverything.Controls.Add(grpMapList);
+            grpEverything.Controls.Add(btnCancel);
+            grpEverything.Controls.Add(btnOk);
+            grpEverything.ForeColor = System.Drawing.Color.Gainsboro;
+            grpEverything.Location = new System.Drawing.Point(2, 2);
+            grpEverything.Margin = new Padding(4, 3, 4, 3);
+            grpEverything.Name = "grpEverything";
+            grpEverything.Padding = new Padding(4, 3, 4, 3);
+            grpEverything.Size = new Size(913, 697);
+            grpEverything.TabIndex = 1;
+            grpEverything.TabStop = false;
             // 
             // btnRefreshPreview
             // 
-            this.btnRefreshPreview.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("btnRefreshPreview.BackgroundImage")));
-            this.btnRefreshPreview.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-            this.btnRefreshPreview.Enabled = false;
-            this.btnRefreshPreview.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(70)))), ((int)(((byte)(70)))), ((int)(((byte)(70)))));
-            this.btnRefreshPreview.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnRefreshPreview.ForeColor = System.Drawing.Color.Transparent;
-            this.btnRefreshPreview.Location = new System.Drawing.Point(753, 2);
-            this.btnRefreshPreview.Name = "btnRefreshPreview";
-            this.btnRefreshPreview.Size = new System.Drawing.Size(24, 24);
-            this.btnRefreshPreview.TabIndex = 8;
-            this.btnRefreshPreview.UseVisualStyleBackColor = true;
-            this.btnRefreshPreview.Click += new System.EventHandler(this.btnRefreshPreview_Click);
+            btnRefreshPreview.BackgroundImage = (Image)resources.GetObject("btnRefreshPreview.BackgroundImage");
+            btnRefreshPreview.BackgroundImageLayout = ImageLayout.Center;
+            btnRefreshPreview.Enabled = false;
+            btnRefreshPreview.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(70, 70, 70);
+            btnRefreshPreview.FlatStyle = FlatStyle.Flat;
+            btnRefreshPreview.ForeColor = System.Drawing.Color.Transparent;
+            btnRefreshPreview.Location = new System.Drawing.Point(878, 2);
+            btnRefreshPreview.Margin = new Padding(4, 3, 4, 3);
+            btnRefreshPreview.Name = "btnRefreshPreview";
+            btnRefreshPreview.Size = new Size(28, 28);
+            btnRefreshPreview.TabIndex = 8;
+            btnRefreshPreview.UseVisualStyleBackColor = true;
+            btnRefreshPreview.Click += btnRefreshPreview_Click;
             // 
             // grpMapPreview
             // 
-            this.grpMapPreview.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.grpMapPreview.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            this.grpMapPreview.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.grpMapPreview.Controls.Add(this.pnlMapContainer);
-            this.grpMapPreview.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpMapPreview.Location = new System.Drawing.Point(257, 22);
-            this.grpMapPreview.Name = "grpMapPreview";
-            this.grpMapPreview.Size = new System.Drawing.Size(520, 531);
-            this.grpMapPreview.TabIndex = 7;
-            this.grpMapPreview.TabStop = false;
-            this.grpMapPreview.Text = "Map Preview";
+            grpMapPreview.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            grpMapPreview.BackColor = System.Drawing.Color.FromArgb(45, 45, 48);
+            grpMapPreview.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
+            grpMapPreview.Controls.Add(pnlMapContainer);
+            grpMapPreview.ForeColor = System.Drawing.Color.Gainsboro;
+            grpMapPreview.Location = new System.Drawing.Point(300, 25);
+            grpMapPreview.Margin = new Padding(4, 3, 4, 3);
+            grpMapPreview.Name = "grpMapPreview";
+            grpMapPreview.Padding = new Padding(4, 3, 4, 3);
+            grpMapPreview.Size = new Size(607, 613);
+            grpMapPreview.TabIndex = 7;
+            grpMapPreview.TabStop = false;
+            grpMapPreview.Text = "Map Preview";
             // 
             // pnlMapContainer
             // 
-            this.pnlMapContainer.AutoScroll = true;
-            this.pnlMapContainer.Controls.Add(this.pnlMap);
-            this.pnlMapContainer.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pnlMapContainer.Location = new System.Drawing.Point(3, 16);
-            this.pnlMapContainer.Name = "pnlMapContainer";
-            this.pnlMapContainer.Size = new System.Drawing.Size(514, 512);
-            this.pnlMapContainer.TabIndex = 0;
+            pnlMapContainer.AutoScroll = true;
+            pnlMapContainer.Controls.Add(pnlMap);
+            pnlMapContainer.Dock = DockStyle.Fill;
+            pnlMapContainer.Location = new System.Drawing.Point(4, 19);
+            pnlMapContainer.Margin = new Padding(4, 3, 4, 3);
+            pnlMapContainer.Name = "pnlMapContainer";
+            pnlMapContainer.Size = new Size(599, 591);
+            pnlMapContainer.TabIndex = 0;
             // 
             // pnlMap
             // 
-            this.pnlMap.Location = new System.Drawing.Point(0, 0);
-            this.pnlMap.Name = "pnlMap";
-            this.pnlMap.Size = new System.Drawing.Size(200, 100);
-            this.pnlMap.TabIndex = 0;
-            this.pnlMap.DoubleClick += new System.EventHandler(this.pnlMap_DoubleClick);
-            this.pnlMap.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pnlMap_MouseDown);
+            pnlMap.Location = new System.Drawing.Point(0, 0);
+            pnlMap.Margin = new Padding(4, 3, 4, 3);
+            pnlMap.Name = "pnlMap";
+            pnlMap.Size = new Size(233, 115);
+            pnlMap.TabIndex = 0;
+            pnlMap.DoubleClick += pnlMap_DoubleClick;
+            pnlMap.MouseDown += pnlMap_MouseDown;
             // 
             // grpMapList
             // 
-            this.grpMapList.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
-            this.grpMapList.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            this.grpMapList.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.grpMapList.Controls.Add(this.chkAlphabetical);
-            this.grpMapList.Controls.Add(this.mapTreeList1);
-            this.grpMapList.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpMapList.Location = new System.Drawing.Point(6, 22);
-            this.grpMapList.Name = "grpMapList";
-            this.grpMapList.Size = new System.Drawing.Size(230, 531);
-            this.grpMapList.TabIndex = 6;
-            this.grpMapList.TabStop = false;
-            this.grpMapList.Text = "Map List";
+            grpMapList.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
+            grpMapList.BackColor = System.Drawing.Color.FromArgb(45, 45, 48);
+            grpMapList.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
+            grpMapList.Controls.Add(chkAlphabetical);
+            grpMapList.Controls.Add(mapTreeList1);
+            grpMapList.ForeColor = System.Drawing.Color.Gainsboro;
+            grpMapList.Location = new System.Drawing.Point(7, 25);
+            grpMapList.Margin = new Padding(4, 3, 4, 3);
+            grpMapList.Name = "grpMapList";
+            grpMapList.Padding = new Padding(4, 3, 4, 3);
+            grpMapList.Size = new Size(268, 613);
+            grpMapList.TabIndex = 6;
+            grpMapList.TabStop = false;
+            grpMapList.Text = "Map List";
             // 
-            // chkChronological
+            // chkAlphabetical
             // 
-            this.chkAlphabetical.AutoSize = true;
-            this.chkAlphabetical.Location = new System.Drawing.Point(136, 13);
-            this.chkAlphabetical.Name = "chkChronological";
-            this.chkAlphabetical.Size = new System.Drawing.Size(90, 17);
-            this.chkAlphabetical.TabIndex = 1;
-            this.chkAlphabetical.Text = "Chronological";
-            this.chkAlphabetical.CheckedChanged += new System.EventHandler(this.chkChronological_CheckedChanged);
+            chkAlphabetical.AutoSize = true;
+            chkAlphabetical.Location = new System.Drawing.Point(159, 15);
+            chkAlphabetical.Margin = new Padding(4, 3, 4, 3);
+            chkAlphabetical.Name = "chkAlphabetical";
+            chkAlphabetical.Size = new Size(101, 19);
+            chkAlphabetical.TabIndex = 1;
+            chkAlphabetical.Text = "Chronological";
+            chkAlphabetical.CheckedChanged += chkChronological_CheckedChanged;
             // 
             // mapTreeList1
             // 
-            this.mapTreeList1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
-            this.mapTreeList1.Location = new System.Drawing.Point(7, 36);
-            this.mapTreeList1.Name = "mapTreeList1";
-            this.mapTreeList1.Size = new System.Drawing.Size(217, 489);
-            this.mapTreeList1.TabIndex = 0;
+            mapTreeList1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
+            mapTreeList1.Location = new System.Drawing.Point(8, 42);
+            mapTreeList1.Margin = new Padding(5, 3, 5, 3);
+            mapTreeList1.Name = "mapTreeList1";
+            mapTreeList1.Size = new Size(253, 564);
+            mapTreeList1.TabIndex = 0;
             // 
             // btnCancel
             // 
-            this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnCancel.Location = new System.Drawing.Point(695, 575);
-            this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Padding = new System.Windows.Forms.Padding(5);
-            this.btnCancel.Size = new System.Drawing.Size(82, 23);
-            this.btnCancel.TabIndex = 5;
-            this.btnCancel.Text = "Cancel";
-            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+            btnCancel.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            btnCancel.Location = new System.Drawing.Point(811, 663);
+            btnCancel.Margin = new Padding(4, 3, 4, 3);
+            btnCancel.Name = "btnCancel";
+            btnCancel.Padding = new Padding(6, 6, 6, 6);
+            btnCancel.Size = new Size(96, 27);
+            btnCancel.TabIndex = 5;
+            btnCancel.Text = "Cancel";
+            btnCancel.Click += btnCancel_Click;
             // 
             // btnOk
             // 
-            this.btnOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnOk.Location = new System.Drawing.Point(609, 575);
-            this.btnOk.Name = "btnOk";
-            this.btnOk.Padding = new System.Windows.Forms.Padding(5);
-            this.btnOk.Size = new System.Drawing.Size(82, 23);
-            this.btnOk.TabIndex = 4;
-            this.btnOk.Text = "Ok";
-            this.btnOk.Click += new System.EventHandler(this.btnOk_Click);
+            btnOk.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            btnOk.Location = new System.Drawing.Point(710, 663);
+            btnOk.Margin = new Padding(4, 3, 4, 3);
+            btnOk.Name = "btnOk";
+            btnOk.Padding = new Padding(6, 6, 6, 6);
+            btnOk.Size = new Size(96, 27);
+            btnOk.TabIndex = 4;
+            btnOk.Text = "Ok";
+            btnOk.Click += btnOk_Click;
             // 
             // tmrMapCheck
             // 
-            this.tmrMapCheck.Tick += new System.EventHandler(this.tmrMapCheck_Tick);
+            tmrMapCheck.Tick += tmrMapCheck_Tick;
             // 
             // FrmWarpSelection
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            this.ClientSize = new System.Drawing.Size(787, 609);
-            this.Controls.Add(this.grpEverything);
-            this.DoubleBuffered = true;
-            this.Name = "FrmWarpSelection";
-            this.Text = "Warp Tile Selection";
-            this.Load += new System.EventHandler(this.frmWarpSelection_Load);
-            this.grpEverything.ResumeLayout(false);
-            this.grpMapPreview.ResumeLayout(false);
-            this.pnlMapContainer.ResumeLayout(false);
-            this.grpMapList.ResumeLayout(false);
-            this.grpMapList.PerformLayout();
-            this.ResumeLayout(false);
-
+            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleMode = AutoScaleMode.Font;
+            BackColor = System.Drawing.Color.FromArgb(45, 45, 48);
+            ClientSize = new Size(918, 703);
+            Controls.Add(grpEverything);
+            DoubleBuffered = true;
+            Margin = new Padding(4, 3, 4, 3);
+            Name = "FrmWarpSelection";
+            Text = "Warp Tile Selection";
+            Load += frmWarpSelection_Load;
+            grpEverything.ResumeLayout(false);
+            grpMapPreview.ResumeLayout(false);
+            pnlMapContainer.ResumeLayout(false);
+            grpMapList.ResumeLayout(false);
+            grpMapList.PerformLayout();
+            ResumeLayout(false);
         }
 
         #endregion
 
         private DarkGroupBox grpEverything;
         private DarkGroupBox grpMapPreview;
-        private System.Windows.Forms.Panel pnlMapContainer;
-        private System.Windows.Forms.Panel pnlMap;
+        private Panel pnlMapContainer;
+        private Panel pnlMap;
         private DarkGroupBox grpMapList;
         private DarkCheckBox chkAlphabetical;
         private Controls.MapTreeList mapTreeList1;
         private DarkButton btnCancel;
         private DarkButton btnOk;
         private System.Windows.Forms.Timer tmrMapCheck;
-        private System.Windows.Forms.Button btnRefreshPreview;
+        private Button btnRefreshPreview;
     }
 }

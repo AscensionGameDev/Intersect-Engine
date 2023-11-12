@@ -54,5 +54,28 @@ namespace Intersect.Enums
 
             return instance as IDatabaseObject;
         }
+
+        public static int ListIndex(this GameObjectType gameObjectType, Guid id)
+        {
+            var lookup = gameObjectType.GetLookup();
+            return lookup.KeyList.OrderBy(pairs => lookup[pairs]?.Name).ToList().IndexOf(id);
+        }
+
+        public static Guid IdFromList(this GameObjectType gameObjectType, int listIndex)
+        {
+            var lookup = gameObjectType.GetLookup();
+            if (listIndex < 0 || listIndex > lookup.KeyList.Count)
+            {
+                return Guid.Empty;
+            }
+
+            return lookup.KeyList.OrderBy(pairs => lookup[pairs]?.Name).ToArray()[listIndex];
+        }
+
+        public static string[] Names(this GameObjectType gameObjectType) => gameObjectType.GetLookup().OrderBy(p => p.Value?.Name)
+            .Select(pair => pair.Value?.Name ?? Deleted)
+            .ToArray();
+
+        public const string Deleted = "ERR_DELETED";
     }
 }
