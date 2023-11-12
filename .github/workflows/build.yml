@@ -255,7 +255,7 @@ jobs:
         name: engine
         path: "dist/**/*.zip"
 
-  publish-github:
+  debug-build-artifacts:
     if: inputs.workflowDebug != true
     needs: [build-linux, build-macos, build-windows]
     runs-on: ubuntu-latest
@@ -268,6 +268,20 @@ jobs:
 
       - name: Debug output
         run: ls -R ./dist
+
+  publish-github:
+    if: inputs.workflowDebug != true
+    needs: [build-linux, build-macos, build-windows]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download Artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: engine
+          path: ./dist
+
+      # - name: Debug output
+      #   run: ls -R ./dist
 
       - name: Publish GitHub Release
         uses: ncipollo/release-action@v1.13.0
