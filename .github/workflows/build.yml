@@ -74,38 +74,14 @@ jobs:
 
     - name: Build solution
       if: steps.cache-binaries.outputs.cache-hit != 'true' || inputs.forceBuild == true || inputs.forceRestore == true
-      run: dotnet publish Intersect.sln -r linux-x64 -p:Configuration=Release -p:PackageVersion=${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}+build.${{ github.sha }} -p:Version=${{ env.VERSION_PREFIX }}.${{ github.run_number }}
+      run: dotnet publish Intersect.sln --sc -r linux-x64 -p:Configuration=Release -p:PackageVersion=${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}+build.${{ github.sha }} -p:Version=${{ env.VERSION_PREFIX }}.${{ github.run_number }}
 
-    - name: Checkout assets main_upgrade branch
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
-        path: assets_upgrade
-        repository: AscensionGameDev/Intersect-Assets
-        ref: main_upgrade
-        token: ${{ secrets.INTERSECTBOT_ACCESS_TOKEN }}
-
-    - name: Checkout target main_full branch
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
-        path: assets_full
-        repository: AscensionGameDev/Intersect-Assets
-        ref: main_full
-        token: ${{ secrets.INTERSECTBOT_ACCESS_TOKEN }}
-
-    - name: Package artifacts
-      uses: AscensionGameDev/actions@cc2eb0e356546042e4dc7eca6788fd0b5a063b32
-      with:
-        bundle: .github/bundles/*.linux-*.json
-        version: ${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}+build.${{ github.sha }}
-
-    - name: Upload artifacts for publishing/debugging
+    - name: Upload artifacts
       uses: actions/upload-artifact@v3
       with:
         if-no-files-found: error
         name: engine
-        path: "dist/**/*.zip"
+        path: "*/bin/Release/*/*/publish"
 
   build-macos:
     runs-on: macos-latest
@@ -148,38 +124,14 @@ jobs:
 
     - name: Build solution
       if: steps.cache-binaries.outputs.cache-hit != 'true' || inputs.forceBuild == true || inputs.forceRestore == true
-      run: dotnet publish Intersect.sln -r osx-x64   -p:Configuration=Release -p:PackageVersion=${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}+build.${{ github.sha }} -p:Version=${{ env.VERSION_PREFIX }}.${{ github.run_number }}
+      run: dotnet publish Intersect.sln --sc -r osx-x64   -p:Configuration=Release -p:PackageVersion=${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}+build.${{ github.sha }} -p:Version=${{ env.VERSION_PREFIX }}.${{ github.run_number }}
 
-    - name: Checkout assets main_upgrade branch
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
-        path: assets_upgrade
-        repository: AscensionGameDev/Intersect-Assets
-        ref: main_upgrade
-        token: ${{ secrets.INTERSECTBOT_ACCESS_TOKEN }}
-
-    - name: Checkout target main_full branch
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
-        path: assets_full
-        repository: AscensionGameDev/Intersect-Assets
-        ref: main_full
-        token: ${{ secrets.INTERSECTBOT_ACCESS_TOKEN }}
-
-    - name: Package artifacts
-      uses: AscensionGameDev/actions@cc2eb0e356546042e4dc7eca6788fd0b5a063b32
-      with:
-        bundle: .github/bundles/*.osx-*.json
-        version: ${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}+build.${{ github.sha }}
-
-    - name: Upload artifacts for publishing/debugging
+    - name: Upload artifacts
       uses: actions/upload-artifact@v3
       with:
         if-no-files-found: error
         name: engine
-        path: "dist/**/*.zip"
+        path: "*/bin/Release/*/*/publish"
 
   build-windows:
     runs-on: windows-latest
@@ -222,38 +174,14 @@ jobs:
 
     - name: Build solution
       if: steps.cache-binaries.outputs.cache-hit != 'true' || inputs.forceBuild == true || inputs.forceRestore == true
-      run: dotnet publish Intersect.sln -r win-x64   -p:Configuration=Release -p:PackageVersion=${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}+build.${{ github.sha }} -p:Version=${{ env.VERSION_PREFIX }}.${{ github.run_number }}
+      run: dotnet publish Intersect.sln --sc -r win-x64   -p:Configuration=Release -p:PackageVersion=${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}+build.${{ github.sha }} -p:Version=${{ env.VERSION_PREFIX }}.${{ github.run_number }}
 
-    - name: Checkout assets main_upgrade branch
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
-        path: assets_upgrade
-        repository: AscensionGameDev/Intersect-Assets
-        ref: main_upgrade
-        token: ${{ secrets.INTERSECTBOT_ACCESS_TOKEN }}
-
-    - name: Checkout target main_full branch
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
-        path: assets_full
-        repository: AscensionGameDev/Intersect-Assets
-        ref: main_full
-        token: ${{ secrets.INTERSECTBOT_ACCESS_TOKEN }}
-
-    - name: Package artifacts
-      uses: AscensionGameDev/actions@cc2eb0e356546042e4dc7eca6788fd0b5a063b32
-      with:
-        bundle: .github/bundles/*.win-*.json
-        version: ${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}+build.${{ github.sha }}
-
-    - name: Upload artifacts for publishing/debugging
+    - name: Upload artifacts
       uses: actions/upload-artifact@v3
       with:
         if-no-files-found: error
         name: engine
-        path: "dist/**/*.zip"
+        path: "*/bin/Release/*/*/publish"
 
   debug-build-artifacts:
     if: inputs.workflowDebug == true
@@ -264,24 +192,51 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: engine
-          path: ./dist
+          path: .
 
       - name: Debug output
-        run: ls -R ./dist
+        run: ls -R .
 
   publish-github:
     if: inputs.workflowDebug != true
     needs: [build-linux, build-macos, build-windows]
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
       - name: Download Artifacts
         uses: actions/download-artifact@v3
         with:
           name: engine
-          path: ./dist
+          path: .
 
-      # - name: Debug output
-      #   run: ls -R ./dist
+      - name: Checkout assets main_upgrade branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          path: assets_upgrade
+          repository: AscensionGameDev/Intersect-Assets
+          ref: main_upgrade
+          token: ${{ secrets.INTERSECTBOT_ACCESS_TOKEN }}
+
+      - name: Checkout target main_full branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          path: assets_full
+          repository: AscensionGameDev/Intersect-Assets
+          ref: main_full
+          token: ${{ secrets.INTERSECTBOT_ACCESS_TOKEN }}
+
+      - name: Package artifacts
+        uses: AscensionGameDev/actions@cc2eb0e356546042e4dc7eca6788fd0b5a063b32
+        with:
+          bundle: .github/bundles/*.json
+          version: ${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}+build.${{ github.sha }}
+
+      - name: Debug output
+        run: ls -R ./dist
 
       - name: Publish GitHub Release
         uses: ncipollo/release-action@v1.13.0
