@@ -24,6 +24,10 @@ on:
         description: 'If the workflow should be debugged (skip release)'
         default: true
         type: boolean
+      packagingDebug:
+        description: 'If the packaging step should be debugged (skip release)'
+        default: true
+        type: boolean
 
 permissions:
   contents: write
@@ -257,9 +261,11 @@ jobs:
           version: ${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}+build.${{ github.sha }}
 
       - name: Debug output
+        if: inputs.workflowDebug == true
         run: ls -R ./dist
 
       - name: Publish GitHub Release
+        if: inputs.packagingDebug != true
         uses: ncipollo/release-action@v1.13.0
         with:
           artifacts: "dist/**/*.zip"
@@ -270,7 +276,7 @@ jobs:
           tag: v${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}
 
   publish:
-    if: inputs.workflowDebug != true
+    if: inputs.workflowDebug != true && inputs.packagingDebug != true
     needs: publish-github
     runs-on: ubuntu-latest
     steps:
