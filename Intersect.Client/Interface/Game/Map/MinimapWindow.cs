@@ -404,7 +404,10 @@ namespace Intersect.Client.Interface.Game.Map
 
         private Dictionary<MapPosition, Dictionary<Point, EntityInfo>> GenerateEntityInfo(Dictionary<Guid, Entity> entities, Player player)
         {
-            var dict = new Dictionary<MapPosition, Dictionary<Point, EntityInfo>>();
+            var entityInfo = new Dictionary<MapPosition, Dictionary<Point, EntityInfo>>();
+            var minimapOptions = Options.Instance.MinimapOpts;
+            var minimapColorOptions = minimapOptions.MinimapColors;
+            var minimapImageOptions = minimapOptions.MinimapImages;
 
             foreach (var entity in entities.Values)
             {
@@ -420,102 +423,99 @@ namespace Intersect.Client.Interface.Game.Map
 
                 var color = Color.Transparent;
                 var texture = string.Empty;
-                
-                if (entity.Id == player.Id)
+
+                switch (entity.Type)
                 {
-                    color = Options.Instance.MinimapOpts.MinimapColors.MyEntity;
-                    texture = Options.Instance.MinimapOpts.MinimapImages.MyEntity;
-                }
-                else
-                {
-                    switch (entity.Type)
-                    {
-                        case EntityType.Player:
-                            if (player.IsInMyParty(entity.Id))
+                    case EntityType.Player:
+                        if (entity.Id == player.Id)
+                        {
+                            color = minimapColorOptions.MyEntity;
+                            texture = minimapImageOptions.MyEntity;
+                        }
+                        else if (player.IsInMyParty(entity.Id))
+                        {
+                            color = minimapColorOptions.PartyMember;
+                            texture = minimapImageOptions.PartyMember;
+                        }
+                        else
+                        {
+                            color = minimapColorOptions.Player;
+                            texture = minimapImageOptions.Player;
+                        }
+                        break;
+
+                    case EntityType.Event:
+                        color = minimapColorOptions.Event;
+                        texture = minimapImageOptions.Event;
+                        break;
+
+                    case EntityType.GlobalEntity:
+                        color = minimapColorOptions.Npc;
+                        texture = minimapImageOptions.Npc;
+                        break;
+
+                    case EntityType.Resource:
+                        // This relies on users configuring it PROPERLY.
+                        var tool = ((Resource)entity).BaseResource.Tool;
+                        var texSet = false;
+                        var colSet = false;
+
+                        // Is the tool a valid one to get the string version for?
+                        if (tool >= 0 && tool < Options.Instance.EquipmentOpts.ToolTypes.Count)
+                        {
+                            // Get the actual tool type from the server configuration.
+                            var toolType = Options.Instance.EquipmentOpts.ToolTypes[tool];
+
+                            // Attempt to get our color from the plugin configuration.
+                            if (minimapColorOptions.Resource.TryGetValue(toolType, out color))
                             {
-                                color = Options.Instance.MinimapOpts.MinimapColors.PartyMember;
-                                texture = Options.Instance.MinimapOpts.MinimapImages.PartyMember;
-                            }
-                            else
-                            {
-                                color = Options.Instance.MinimapOpts.MinimapColors.Player;
-                                texture = Options.Instance.MinimapOpts.MinimapImages.Player;
-                            }
-
-                            break;
-
-                        case EntityType.Event:
-                            color = Options.Instance.MinimapOpts.MinimapColors.Event;
-                            texture = Options.Instance.MinimapOpts.MinimapImages.Event;
-                            break;
-
-                        case EntityType.GlobalEntity:
-                            color = Options.Instance.MinimapOpts.MinimapColors.Npc;
-                            texture = Options.Instance.MinimapOpts.MinimapImages.Npc;
-                            break;
-
-                        case EntityType.Resource:
-                            // This relies on users configuring it PROPERLY.
-                            var tool = ((Resource)entity).BaseResource.Tool;
-                            var texSet = false;
-                            var colSet = false;
-
-                            // Is the tool a valid one to get the string version for?
-                            if (tool >= 0 && tool < Options.Instance.EquipmentOpts.ToolTypes.Count)
-                            {
-                                // Get the actual tool type from the server configuration.
-                                var toolType = Options.Instance.EquipmentOpts.ToolTypes[tool];
-
-                                // Attempt to get our color from the plugin configuration.
-                                if (Options.Instance.MinimapOpts.MinimapColors.Resource.TryGetValue(toolType, out color))
-                                {
-                                    colSet = true;
-                                }
-
-                                // Attempt to get our texture from the plugin configuration.
-                                if (Options.Instance.MinimapOpts.MinimapImages.Resource.TryGetValue(toolType, out texture))
-                                {
-                                    texSet = true;
-                                }
-                            }
-                            // Is it a None tool?
-                            else if (tool == -1)
-                            {
-                                color = Options.Instance.MinimapOpts.MinimapColors.Resource["None"];
                                 colSet = true;
-                                texture = Options.Instance.MinimapOpts.MinimapImages.Resource["None"];
+                            }
+
+                            // Attempt to get our texture from the plugin configuration.
+                            if (minimapImageOptions.Resource.TryGetValue(toolType, out texture))
+                            {
                                 texSet = true;
                             }
+                        }
+                        // Is it a None tool?
+                        else if (tool == -1)
+                        {
+                            color = minimapColorOptions.Resource["None"];
+                            colSet = true;
+                            texture = minimapImageOptions.Resource["None"];
+                            texSet = true;
+                        }
 
-                            // Have we managed to set our color? If not, set to default.
-                            if (!colSet)
-                            {
-                                color = Options.Instance.MinimapOpts.MinimapColors.Default;
-                            }
+                        // Have we managed to set our color? If not, set to default.
+                        if (!colSet)
+                        {
+                            color = minimapColorOptions.Default;
+                        }
 
-                            // Have we managed to set our texture? If not, set to blank.
-                            if (!texSet)
-                            {
-                                texture = string.Empty;
-                            }
+                        // Have we managed to set our texture? If not, set to blank.
+                        if (!texSet)
+                        {
+                            texture = string.Empty;
+                        }
 
-                            break;
+                        break;
 
-                        case EntityType.Projectile:
-                            continue;
+                    case EntityType.Projectile:
+                        continue;
 
-                        default:
-                            color = Options.Instance.MinimapOpts.MinimapColors.Default;
-                            texture = Options.Instance.MinimapOpts.MinimapImages.Default;
-                            break;
-                    }
+                    default:
+                        color = minimapColorOptions.Default;
+                        texture = minimapImageOptions.Default;
+                        break;
                 }
+                
 
                 // Add this to our location dictionary!
-                if (!dict.TryGetValue(map, out var locationDictionary))
+                if (!entityInfo.TryGetValue(map, out var locationDictionary))
                 {
                     locationDictionary = new Dictionary<Point, EntityInfo>();
-                    dict.Add(map, locationDictionary);
+                    entityInfo.Add(map, locationDictionary);
                 }
 
                 if (color == null || texture == null)
@@ -527,7 +527,7 @@ namespace Intersect.Client.Interface.Game.Map
                     new EntityInfo { Color = color, Texture = texture });
             }
 
-            return dict;
+            return entityInfo;
         }
 
         private GameRenderTexture GenerateBaseRenderTexture()
