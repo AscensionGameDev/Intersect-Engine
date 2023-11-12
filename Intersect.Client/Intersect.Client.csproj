@@ -6,6 +6,7 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="$(Configuration) != 'Debug'">
+    <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
     <PublishSingleFile>true</PublishSingleFile>
     <SelfContained>true</SelfContained>
   </PropertyGroup>

@@ -21,7 +21,15 @@ on:
         default: false
         type: boolean
       workflowDebug:
-        description: 'If the workflow should be debugged (skip release)'
+        description: 'If the workflow should be debugged (skips packaging and publishing)'
+        default: true
+        type: boolean
+      packagingDebug:
+        description: 'If the packaging step should be debugged (skips publishing)'
+        default: true
+        type: boolean
+      skipForumPublish:
+        description: 'If publishing to the forum should be skipped'
         default: true
         type: boolean
 
@@ -33,10 +41,9 @@ env:
   VERSION_SUFFIX: -beta
 
 jobs:
-  build:
-
-    runs-on: windows-latest
-
+  build-linux:
+    name: Build for Linux
+    runs-on: ubuntu-latest
     steps:
     - name: Checkout Code
       uses: actions/checkout@v4
@@ -67,69 +74,220 @@ jobs:
           ~/.nuget/packages
           Intersect*/obj/
 
+    - name: Apply environment patches
+      run: git apply disable-windows-editor.patch
+
     - name: Restore NuGet Packages
       if: steps.cache-binaries.outputs.cache-hit != 'true' && steps.cache-nuget.outputs.cache-hit != 'true' || inputs.forceRestore == true
       run: dotnet restore Intersect.sln
 
-    # - run: ls -R ~/.nuget/packages
-
     - name: Build solution
       if: steps.cache-binaries.outputs.cache-hit != 'true' || inputs.forceBuild == true || inputs.forceRestore == true
-      run: |
-        dotnet publish Intersect.sln -r win-x64   -p:Configuration=Release -p:PackageVersion=${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}+build.${{ github.sha }} -p:Version=${{ env.VERSION_PREFIX }}.${{ github.run_number }}
-        git apply disable-windows-editor.patch
-        dotnet publish Intersect.sln -r linux-x64 -p:Configuration=Release -p:PackageVersion=${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}+build.${{ github.sha }} -p:Version=${{ env.VERSION_PREFIX }}.${{ github.run_number }}
-        dotnet publish Intersect.sln -r osx-x64   -p:Configuration=Release -p:PackageVersion=${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}+build.${{ github.sha }} -p:Version=${{ env.VERSION_PREFIX }}.${{ github.run_number }}
+      run: dotnet publish Intersect.sln --sc -r linux-x64 -p:Configuration=Release -p:PackageVersion=${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}+build.${{ github.sha }} -p:Version=${{ env.VERSION_PREFIX }}.${{ github.run_number }}
 
-    # - name: Debug output of Build Solution
-    #   run: ls -R
+    - name: Debug files on disk
+      if: inputs.workflowDebug == true
+      run: ls -R .
 
-    - name: Checkout assets main_upgrade branch
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
-        path: assets_upgrade
-        repository: AscensionGameDev/Intersect-Assets
-        ref: main_upgrade
-        token: ${{ secrets.INTERSECTBOT_ACCESS_TOKEN }}
-
-    - name: Checkout target main_full branch
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
-        path: assets_full
-        repository: AscensionGameDev/Intersect-Assets
-        ref: main_full
-        token: ${{ secrets.INTERSECTBOT_ACCESS_TOKEN }}
-
-    - name: Package artifacts
-      uses: AscensionGameDev/actions@cc2eb0e356546042e4dc7eca6788fd0b5a063b32
-      with:
-        bundle: .github/bundles/*.json
-        version: ${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}+build.${{ github.sha }}
-
-    - name: Publish GitHub Release
-      if: inputs.workflowDebug != true
-      uses: ncipollo/release-action@v1.13.0
-      with:
-        artifacts: "dist/**/*.zip"
-        commit: ${{ github.sha }}
-        generateReleaseNotes: true
-        name: ${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}
-        prerelease: true
-        tag: v${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}
-
-    - name: Upload artifacts for workflow debugging
-      if: inputs.workflowDebug == true || failure()
+    - name: Upload artifacts
       uses: actions/upload-artifact@v3
       with:
         if-no-files-found: error
-        name: workflow-debug
-        path: "dist/**/*.zip"
+        name: engine
+        path: |
+          ./Intersect.Client/bin/Release/*/*/publish
+          ./Intersect.Editor/bin/Release/*/*/publish
+          ./Intersect.Server/bin/Release/*/*/publish
 
-  publish:
+  build-macos:
+    name: Build for MacOS
+    runs-on: macos-latest
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive
+
+    - name: Cache binaries
+      uses: actions/cache@v3
+      id: cache-binaries
+      with:
+        key: ${{ runner.os }}-binaries-${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}-${{ hashFiles('Intersect*/**/*.cs*') }}
+        path: |
+          Intersect*/bin/Release/**/*
+
+    - name: Setup dotnet
+      if: steps.cache-binaries.outputs.cache-hit != 'true' || inputs.forceBuild == true || inputs.forceRestore == true
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 7.0.x
+
+    - name: Cache NuGet dependencies
+      uses: actions/cache@v3
+      id: cache-nuget
+      if: steps.cache-binaries.outputs.cache-hit != 'true' || inputs.forceBuild == true || inputs.forceRestore == true
+      with:
+        key: ${{ runner.os }}-nuget-${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}-${{ hashFiles('Intersect*/*.csproj') }}
+        path: |
+          ~/.nuget/packages
+          Intersect*/obj/
+
+    - name: Apply environment patches
+      run: git apply disable-windows-editor.patch
+
+    - name: Restore NuGet Packages
+      if: steps.cache-binaries.outputs.cache-hit != 'true' && steps.cache-nuget.outputs.cache-hit != 'true' || inputs.forceRestore == true
+      run: dotnet restore Intersect.sln
+
+    - name: Build solution
+      if: steps.cache-binaries.outputs.cache-hit != 'true' || inputs.forceBuild == true || inputs.forceRestore == true
+      run: dotnet publish Intersect.sln --sc -r osx-x64   -p:Configuration=Release -p:PackageVersion=${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}+build.${{ github.sha }} -p:Version=${{ env.VERSION_PREFIX }}.${{ github.run_number }}
+
+    - name: Debug files on disk
+      if: inputs.workflowDebug == true
+      run: ls -R .
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        if-no-files-found: error
+        name: engine
+        path: |
+          ./Intersect.Client/bin/Release/*/*/publish
+          ./Intersect.Editor/bin/Release/*/*/publish
+          ./Intersect.Server/bin/Release/*/*/publish
+
+  build-windows:
+    name: Build for Windows
+    runs-on: windows-latest
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive
+
+    - name: Cache binaries
+      uses: actions/cache@v3
+      id: cache-binaries
+      with:
+        key: ${{ runner.os }}-binaries-${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}-${{ hashFiles('Intersect*/**/*.cs*') }}
+        path: |
+          Intersect*/bin/Release/**/*
+
+    - name: Setup dotnet
+      if: steps.cache-binaries.outputs.cache-hit != 'true' || inputs.forceBuild == true || inputs.forceRestore == true
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 7.0.x
+
+    - name: Cache NuGet dependencies
+      uses: actions/cache@v3
+      id: cache-nuget
+      if: steps.cache-binaries.outputs.cache-hit != 'true' || inputs.forceBuild == true || inputs.forceRestore == true
+      with:
+        key: ${{ runner.os }}-nuget-${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}-${{ hashFiles('Intersect*/*.csproj') }}
+        path: |
+          ~/.nuget/packages
+          Intersect*/obj/
+
+    - name: Apply environment patches
+      run: echo "No patches to apply for Windows"
+
+    - name: Restore NuGet Packages
+      if: steps.cache-binaries.outputs.cache-hit != 'true' && steps.cache-nuget.outputs.cache-hit != 'true' || inputs.forceRestore == true
+      run: dotnet restore Intersect.sln
+
+    - name: Build solution
+      if: steps.cache-binaries.outputs.cache-hit != 'true' || inputs.forceBuild == true || inputs.forceRestore == true
+      run: dotnet publish Intersect.sln --sc -r win-x64   -p:Configuration=Release -p:PackageVersion=${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}+build.${{ github.sha }} -p:Version=${{ env.VERSION_PREFIX }}.${{ github.run_number }}
+
+    - name: Debug files on disk
+      if: inputs.workflowDebug == true
+      run: ls -R .
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        if-no-files-found: error
+        name: engine
+        path: |
+          ./Intersect.Client/bin/Release/*/*/publish
+          ./Intersect.Editor/bin/Release/*/*/publish
+          ./Intersect.Server/bin/Release/*/*/publish
+
+  debug-build-artifacts:
+    name: Debug Build Artifacts
+    if: inputs.workflowDebug == true
+    needs: [build-linux, build-macos, build-windows]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download Artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: engine
+          path: .
+
+      - name: Debug output
+        run: ls -R .
+
+  publish-github:
+    name: Publish GitHub Release
     if: inputs.workflowDebug != true
-    needs: build
+    needs: [build-linux, build-macos, build-windows]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Download Artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: engine
+          path: .
+
+      - name: Checkout assets main_upgrade branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          path: assets_upgrade
+          repository: AscensionGameDev/Intersect-Assets
+          ref: main_upgrade
+          token: ${{ secrets.INTERSECTBOT_ACCESS_TOKEN }}
+
+      - name: Checkout target main_full branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          path: assets_full
+          repository: AscensionGameDev/Intersect-Assets
+          ref: main_full
+          token: ${{ secrets.INTERSECTBOT_ACCESS_TOKEN }}
+
+      - name: Package artifacts
+        uses: AscensionGameDev/actions@cc2eb0e356546042e4dc7eca6788fd0b5a063b32
+        with:
+          bundle: .github/bundles/*.json
+          version: ${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}+build.${{ github.sha }}
+
+      - name: Debug packaging output
+        if: inputs.packagingDebug == true
+        run: ls -R ./dist
+
+      - name: Publish GitHub Release
+        if: inputs.packagingDebug != true
+        uses: ncipollo/release-action@v1.13.0
+        with:
+          artifacts: "dist/**/*.zip"
+          commit: ${{ github.sha }}
+          generateReleaseNotes: true
+          name: ${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}
+          prerelease: true
+          tag: v${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}
+
+  publish-forum:
+    name: Publish to Forum
+    if: inputs.workflowDebug != true && inputs.packagingDebug != true && inputs.skipForumPublish != true
+    needs: publish-github
     runs-on: ubuntu-latest
     steps:
       - name: Publish to Forum
