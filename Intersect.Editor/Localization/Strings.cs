@@ -2083,6 +2083,9 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString playanimation = @"Play Animation {00} {01}";
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString PlayAnimationInstanced = @" (Instanced: {00})";
+
             public static LocalizedString playbgm = @"Play BGM [File: {00}]";
 
             public static LocalizedString playervariable = @"Set Player Variable {00} ({01})";
