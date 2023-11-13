@@ -72,6 +72,6 @@
         /// <summary>
         /// If enabled, this makes it so a player casting a friendly spell on a hostile target instead casts the spell upon themselves
         /// </summary>
-        public bool EnableAutoSelfCastOnFriendlyHostile = false;
+        public bool EnableAutoSelfCastOnFriendlyHostile { get; set; } = false;
     }
 }
