@@ -17,6 +17,7 @@ using Intersect.Config.Guilds;
 using Intersect.Configuration;
 using Intersect.Enums;
 using Intersect.GameObjects;
+using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps;
 using Intersect.Logging;
 using Intersect.Network.Packets.Server;
@@ -227,6 +228,8 @@ namespace Intersect.Client.Entities
         public bool IsInMyParty(IPlayer player) => player != null && IsInMyParty(player.Id);
 
         public bool IsInMyParty(Guid id) => Party.Any(member => member.Id == id);
+
+        public bool IsInMyGuild(IPlayer player) => IsInGuild && player != null && player.GuildName == Guild;
 
         public bool IsBusy => !(Globals.EventHolds.Count == 0 &&
                      !Globals.MoveRouteActive &&
@@ -2406,7 +2409,43 @@ namespace Intersect.Client.Entities
                 }
             }
 
+            if (Globals.Me.Id != Id)
+            {
+                // Party member names
+                if (Globals.Me.IsInMyParty(this) && CustomColors.Names.Players.TryGetValue("PartyMember", out var partyColors))
+                {
+                    textColor = partyColors.Name;
+                    borderColor = partyColors.Outline;
+                    backgroundColor = partyColors.Background;
+                }
+                // Guildies
+                else if (Globals.Me.IsInGuild && Guild == Globals.Me.Guild && CustomColors.Names.Players.TryGetValue("GuildMember", out var guildColors))
+                {
+                    textColor = guildColors.Name;
+                    borderColor = guildColors.Outline;
+                    backgroundColor = guildColors.Background;
+                }
+
+                // Enemies in PvP
+                if (!Globals.Me.IsAllyOf(this) && Globals.Me.MapInstance.ZoneType != MapZone.Safe && CustomColors.Names.Players.TryGetValue("Hostile", out var hostileColors))
+                {
+                    textColor = hostileColors.Name;
+                    borderColor = hostileColors.Outline;
+                    backgroundColor = hostileColors.Background;
+                }
+            }
+
             DrawNameAndLabels(textColor, borderColor, backgroundColor);
+        }
+
+        public override bool IsAllyOf(Player en)
+        {
+            if (base.IsAllyOf(en)) 
+            {
+                return true;
+            }
+
+            return Globals.Me.IsInMyParty(en) || Globals.Me.IsInMyGuild(en) || en.MapInstance.ZoneType == MapZone.Safe;
         }
 
         private void DrawNameAndLabels(Color textColor, Color borderColor, Color backgroundColor)
