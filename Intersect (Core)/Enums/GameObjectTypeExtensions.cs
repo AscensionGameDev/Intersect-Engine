@@ -4,6 +4,7 @@ using System.Linq;
 
 using Intersect.Collections;
 using Intersect.Extensions;
+using Intersect.GameObjects.Switches_and_Variables;
 using Intersect.Models;
 
 namespace Intersect.Enums
@@ -55,26 +56,73 @@ namespace Intersect.Enums
             return instance as IDatabaseObject;
         }
 
-        public static int ListIndex(this GameObjectType gameObjectType, Guid id)
+        public static int ListIndex(this GameObjectType gameObjectType, Guid id, VariableDataType dataTypeFilter = 0)
         {
             var lookup = gameObjectType.GetLookup();
-            return lookup.KeyList.OrderBy(pairs => lookup[pairs]?.Name).ToList().IndexOf(id);
+
+            if (dataTypeFilter == 0)
+            {
+                return lookup.KeyList.OrderBy(pairs => lookup[pairs]?.Name).ToList().IndexOf(id);
+            }
+
+            return lookup
+                .OrderBy(kv => kv.Value?.Name)
+                .Select(kv => kv.Value)
+                .Cast<IVariableBase>()
+                .Where(desc => desc.Type == dataTypeFilter)
+                .Select(desc => desc.Id)
+                .ToList()
+                .IndexOf(id);
         }
 
-        public static Guid IdFromList(this GameObjectType gameObjectType, int listIndex)
+        public static Guid IdFromList(this GameObjectType gameObjectType, int listIndex, VariableDataType dataTypeFilter = 0)
         {
             var lookup = gameObjectType.GetLookup();
+
+            if (dataTypeFilter == 0)
+            {
+                if (listIndex < 0 || listIndex > lookup.KeyList.Count)
+                {
+                    return Guid.Empty;
+                }
+
+                return lookup.KeyList.OrderBy(pairs => lookup[pairs]?.Name).ToArray()[listIndex];
+            }
+
             if (listIndex < 0 || listIndex > lookup.KeyList.Count)
             {
                 return Guid.Empty;
             }
 
-            return lookup.KeyList.OrderBy(pairs => lookup[pairs]?.Name).ToArray()[listIndex];
+            return lookup
+                .OrderBy(kv => kv.Value?.Name)
+                .Select(kv => kv.Value)
+                .Cast<IVariableBase>()
+                .Where(desc => desc.Type == dataTypeFilter)
+                .Select(desc => desc.Id)
+                .ToArray()[listIndex];
         }
 
-        public static string[] Names(this GameObjectType gameObjectType) => gameObjectType.GetLookup().OrderBy(p => p.Value?.Name)
-            .Select(pair => pair.Value?.Name ?? Deleted)
-            .ToArray();
+        public static string[] Names(this GameObjectType gameObjectType, VariableDataType dataTypeFilter = 0) 
+        {
+            if (dataTypeFilter == 0)
+            {
+                return gameObjectType
+                    .GetLookup()
+                    .OrderBy(p => p.Value?.Name)
+                    .Select(pair => pair.Value?.Name ?? Deleted)
+                    .ToArray();
+            }
+
+            return gameObjectType
+                .GetLookup()
+                .Select(kv => kv.Value)
+                .Cast<IVariableBase>()
+                .Where(desc => desc.Type == dataTypeFilter)
+                .OrderBy(p => p?.Name)
+                .Select(pair => pair?.Name ?? Deleted)
+                .ToArray();
+        } 
 
         public const string Deleted = "ERR_DELETED";
     }

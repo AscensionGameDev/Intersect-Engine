@@ -73,29 +73,8 @@ public partial class FrmVariableSelector : Form
         cmbVariableType.SelectedIndex = (int)mSelectedVariableType;
 
         ReloadVariablesOf(mSelectedVariableType);
-
-        if (mFilterType == 0)
-        {
-            cmbVariables.SelectedIndex = mSelectedVariableType.GetRelatedTable().ListIndex(mSelectedVariableId);
-        }
-        else
-        {
-            switch (mSelectedVariableType)
-            {
-                case VariableType.PlayerVariable:
-                    cmbVariables.SelectedIndex = PlayerVariableBase.ListIndex(mSelectedVariableId, mFilterType);
-                    break;
-                case VariableType.ServerVariable:
-                    cmbVariables.SelectedIndex = ServerVariableBase.ListIndex(mSelectedVariableId, mFilterType);
-                    break;
-                case VariableType.GuildVariable:
-                    cmbVariables.SelectedIndex = GuildVariableBase.ListIndex(mSelectedVariableId, mFilterType);
-                    break;
-                case VariableType.UserVariable:
-                    cmbVariables.SelectedIndex = UserVariableBase.ListIndex(mSelectedVariableId, mFilterType);
-                    break;
-            }
-        }
+        
+        cmbVariables.SelectedIndex = mSelectedVariableType.GetRelatedTable().ListIndex(mSelectedVariableId, mFilterType);
 
         mPopulating = false;
     }
@@ -104,31 +83,7 @@ public partial class FrmVariableSelector : Form
     {
         cmbVariables.Items.Clear();
 
-        // No filter
-        if (mFilterType == 0)
-        {
-            cmbVariables.Items.AddRange(type.GetRelatedTable().Names());
-
-            return;
-        }
-        else
-        {
-            switch (mSelectedVariableType)
-            {
-                case VariableType.PlayerVariable:
-                    cmbVariables.Items.AddRange(PlayerVariableBase.GetNamesByType(mFilterType));
-                    break;
-                case VariableType.ServerVariable:
-                    cmbVariables.Items.AddRange(ServerVariableBase.GetNamesByType(mFilterType));
-                    break;
-                case VariableType.GuildVariable:
-                    cmbVariables.Items.AddRange(GuildVariableBase.GetNamesByType(mFilterType));
-                    break;
-                case VariableType.UserVariable:
-                    cmbVariables.Items.AddRange(UserVariableBase.GetNamesByType(mFilterType));
-                    break;
-            }
-        }
+        cmbVariables.Items.AddRange(type.GetRelatedTable().Names(mFilterType));
     }
 
     private void cmbVariableType_SelectedIndexChanged(object sender, EventArgs e)
@@ -142,8 +97,16 @@ public partial class FrmVariableSelector : Form
         ReloadVariablesOf(mSelectedVariableType);
 
         // Force reset the variable selection
-        cmbVariables.SelectedIndex = 0;
-        mSelectedVariableId = mSelectedVariableType.GetRelatedTable().IdFromList(0);
+        if (cmbVariables.Items.Count > 0) 
+        { 
+            cmbVariables.SelectedIndex = 0;
+            mSelectedVariableId = mSelectedVariableType.GetRelatedTable().IdFromList(0, mFilterType);
+        }
+        else
+        {
+            cmbVariables.SelectedIndex = -1;
+            mSelectedVariableId = Guid.Empty;
+        }
     }
 
     public bool GetResult()
@@ -175,28 +138,7 @@ public partial class FrmVariableSelector : Form
             return;
         }
 
-        if (mFilterType == 0)
-        {
-            mSelectedVariableId = mSelectedVariableType.GetRelatedTable().IdFromList(cmbVariables.SelectedIndex);
-        }
-        else
-        {
-            switch (mSelectedVariableType)
-            {
-                case VariableType.PlayerVariable:
-                    mSelectedVariableId = PlayerVariableBase.IdFromList(cmbVariables.SelectedIndex, mFilterType);
-                    break;
-                case VariableType.ServerVariable:
-                    mSelectedVariableId = ServerVariableBase.IdFromList(cmbVariables.SelectedIndex, mFilterType);
-                    break;
-                case VariableType.GuildVariable:
-                    mSelectedVariableId = GuildVariableBase.IdFromList(cmbVariables.SelectedIndex, mFilterType);
-                    break;
-                case VariableType.UserVariable:
-                    mSelectedVariableId = UserVariableBase.IdFromList(cmbVariables.SelectedIndex, mFilterType);
-                    break;
-            }
-        }
+        mSelectedVariableId = mSelectedVariableType.GetRelatedTable().IdFromList(cmbVariables.SelectedIndex, mFilterType);
     }
 }
 

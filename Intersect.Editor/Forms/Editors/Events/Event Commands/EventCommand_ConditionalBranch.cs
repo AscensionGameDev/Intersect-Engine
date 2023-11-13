@@ -755,7 +755,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                     var userVar = UserVariableBase.FromList(cmbVariable.SelectedIndex);
                     if (userVar != null)
                     {
-                        varType = (byte)userVar.DataType;
+                        varType = (byte)userVar.Type;
                     }
                 }
             }

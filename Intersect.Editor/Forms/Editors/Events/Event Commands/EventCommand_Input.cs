@@ -112,7 +112,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                 if (cmbVariable.SelectedIndex != -1)
                 {
                     UpdateMinMaxValues(
-                        UserVariableBase.Get(UserVariableBase.IdFromList(cmbVariable.SelectedIndex)).DataType
+                        UserVariableBase.Get(UserVariableBase.IdFromList(cmbVariable.SelectedIndex)).Type
                     );
                 }
             }
@@ -239,7 +239,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             else if (rdoUserVariables.Checked)
             {
                 variableId = UserVariableBase.IdFromList(cmbVariable.SelectedIndex);
-                UpdateMinMaxValues(UserVariableBase.Get(variableId).DataType);
+                UpdateMinMaxValues(UserVariableBase.Get(variableId).Type);
             }
         }
 

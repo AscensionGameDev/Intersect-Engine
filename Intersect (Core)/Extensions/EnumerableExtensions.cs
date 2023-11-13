@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using Intersect.Enums;
+using Intersect.Models;
 using static Intersect.Attributes.Attributes;
 
 namespace Intersect.Extensions

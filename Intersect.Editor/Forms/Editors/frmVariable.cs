@@ -303,7 +303,7 @@ namespace Intersect.Editor.Forms.Editors
                     txtObjectName.Text = ((UserVariableBase)mEditorItem).Name;
                     txtId.Text = ((UserVariableBase)mEditorItem).TextId;
                     cmbFolder.Text = ((UserVariableBase)mEditorItem).Folder;
-                    cmbVariableType.SelectedIndex = (int)(((UserVariableBase)mEditorItem).DataType - 1);
+                    cmbVariableType.SelectedIndex = (int)(((UserVariableBase)mEditorItem).Type - 1);
                 }
 
                 InitValueGroup();
@@ -434,7 +434,7 @@ namespace Intersect.Editor.Forms.Editors
                 else if (rdoUserVariables.Checked)
                 {
                     var obj = UserVariableBase.Get((Guid)lstGameObjects.SelectedNode.Tag);
-                    obj.DataType = (VariableDataType)(cmbVariableType.SelectedIndex + 1);
+                    obj.Type = (VariableDataType)(cmbVariableType.SelectedIndex + 1);
                 }
 
                 InitValueGroup();
