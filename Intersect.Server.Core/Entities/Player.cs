@@ -2307,13 +2307,13 @@ namespace Intersect.Server.Entities
                 if (Items[slot] != null && Items[slot].ItemId == Guid.Empty)
                 {
                     // It is! Can we store the full quantity of this item though?
-                    return CanGiveItem(item);
+                    return CanGiveItem(item, out _);
                 }
             }
             else
             {
                 // Not a valid slot, just treat it as a normal query.
-                return CanGiveItem(item);
+                return CanGiveItem(item, out _);
             }
 
             return false;
@@ -2325,7 +2325,56 @@ namespace Intersect.Server.Entities
         /// <param name="itemId">The item Id to check if the player can receive.</param>
         /// <param name="quantity">The amount of this item to check if the player can receive.</param>
         /// <returns></returns>
-        public bool CanGiveItem(Guid itemId, int quantity) => CanGiveItem(new Item(itemId, quantity));
+        public bool CanGiveItem(Guid itemId, int quantity) => CanGiveItem(new Item(itemId, quantity), out _);
+
+        private BagSlot[] FindCompatibleBagSlots(ItemBase itemDescriptor, int quantityHint, out int remainingQuantity)
+        {
+            var items = Items;
+            if (items == default || items.Count < 1)
+            {
+                remainingQuantity = quantityHint;
+                return Array.Empty<BagSlot>();
+            }
+
+            List<BagSlot> compatibleBagSlots = new();
+            remainingQuantity = quantityHint;
+            foreach (var inventorySlot in items)
+            {
+                if (remainingQuantity < 1)
+                {
+                    break;
+                }
+
+                if (inventorySlot.BagId == default)
+                {
+                    continue;
+                }
+
+                if (!inventorySlot.TryGetBag(out var bagInSlot))
+                {
+                    continue;
+                }
+
+                var compatibleSlotsInBag = Item.FindCompatibleSlotsForItem(
+                    itemDescriptor,
+                    itemDescriptor.MaxInventoryStack,
+                    -1,
+                    remainingQuantity,
+                    bagInSlot.Slots.ToArray(),
+                    excludeEmpty: true
+                );
+
+                var totalAvailableQuantity = compatibleSlotsInBag.Aggregate(
+                    0,
+                    (current, compatibleSlotInBag) =>
+                        current + (itemDescriptor.MaxInventoryStack - compatibleSlotInBag.Quantity)
+                );
+                remainingQuantity -= totalAvailableQuantity;
+                compatibleBagSlots.AddRange(compatibleSlotsInBag);
+            }
+
+            return compatibleBagSlots.ToArray();
+        }
 
         //Inventory
         /// <summary>
@@ -2333,58 +2382,58 @@ namespace Intersect.Server.Entities
         /// </summary>
         /// <param name="item">The <see cref="Item"/> to check if this player can receive.</param>
         /// <returns></returns>
-        public bool CanGiveItem(Item item)
+        public bool CanGiveItem(Item item, out BagSlot[] bagSlots)
         {
-            if (item.Descriptor != null)
+            if (item.Descriptor == default)
             {
-                // Is the item stackable?
-                if (item.Descriptor.IsStackable)
-                {
-                    // Does the user have this item already?
-                    var itemSlots = FindInventoryItemSlots(item.ItemId);
-                    var slotsRequired = Math.Ceiling((double)item.Quantity / item.Descriptor.MaxInventoryStack);
-
-                    // User doesn't have this item yet.
-                    if (itemSlots.Count == 0)
-                    {
-                        // Does the user have enough free space for these stacks?
-                        if (slotsRequired <= FindOpenInventorySlots().Count)
-                        {
-                            return true;
-                        }
-                    }
-                    else // We need to check to see how much space we'd have if we first filled all possible stacks
-                    {
-                        // Keep track of how much we have given to each stack
-                        var giveRemainder = item.Quantity;
-
-                        // For each stack while we still have items to give
-                        for (var i = 0; i < itemSlots.Count && giveRemainder > 0; i++)
-                        {
-                            // Give as much as possible to this stack
-                            giveRemainder -= item.Descriptor.MaxInventoryStack - itemSlots[i].Quantity;
-                        }
-
-                        // We don't have anymore stuff to give after filling up our available stacks - we good
-                        bool roomInStacks = giveRemainder <= 0;
-                        // We still have leftover even after maxing each of our current stacks. See if we have empty slots in the inventory.
-                        bool roomInInventory = giveRemainder > 0 && Math.Ceiling((double)giveRemainder / item.Descriptor.MaxInventoryStack) <= FindOpenInventorySlots().Count;
-
-                        return roomInStacks || roomInInventory;
-                    }
-                }
-                // Not a stacking item, so can we contain the amount we want to give them?
-                else
-                {
-                    if (FindOpenInventorySlots().Count >= item.Quantity)
-                    {
-                        return true;
-                    }
-                }
+                bagSlots = Array.Empty<BagSlot>();
+                return false;
             }
 
-            // Nothing matches in here, give up!
-            return false;
+            // Is the item stackable?
+            if (!item.Descriptor.IsStackable)
+            {
+                bagSlots = Array.Empty<BagSlot>();
+                // Not a stacking item, so can we contain the amount we want to give them?
+                return FindOpenInventorySlots().Count >= item.Quantity;
+            }
+
+            bagSlots = FindCompatibleBagSlots(item.Descriptor, item.Quantity, out var remainingQuantity);
+
+            if (remainingQuantity < 0)
+            {
+                return true;
+            }
+
+            // Does the user have this item already?
+            var existingItemSlots = FindInventoryItemSlots(item.ItemId);
+            var slotsRequired = Math.Ceiling((double)remainingQuantity / item.Descriptor.MaxInventoryStack);
+
+            // User doesn't have this item yet.
+            if (existingItemSlots.Count == 0)
+            {
+                // Does the user have enough free space for these stacks?
+                return FindOpenInventorySlots().Count >= slotsRequired;
+            }
+
+            // We need to check to see how much space we'd have if we first filled all possible stacks
+
+            // For each stack while we still have items to give
+            for (var i = 0; i < existingItemSlots.Count && remainingQuantity > 0; i++)
+            {
+                // Give as much as possible to this stack
+                remainingQuantity -= item.Descriptor.MaxInventoryStack - existingItemSlots[i].Quantity;
+            }
+
+            // We don't have anymore stuff to give after filling up our available stacks - we good
+            if (remainingQuantity < 1)
+            {
+                return true;
+            }
+
+            // We still have leftover even after maxing each of our current stacks. See if we have empty slots in the inventory.
+            return Math.Ceiling((double)remainingQuantity / item.Descriptor.MaxInventoryStack) <=
+                   FindOpenInventorySlots().Count;
         }
 
         /// <summary>
@@ -2528,13 +2577,14 @@ namespace Intersect.Server.Entities
                 case ItemHandling.Overflow:
                     {
                         int spawnAmount;
-                        if (CanGiveItem(item)) // Can receive item under regular rules.
+                        if (CanGiveItem(item, out var bagSlots)) // Can receive item under regular rules.
                         {
-                            GiveItem(item, slot, sendUpdate);
+                            GiveItem(item, slot, sendUpdate, bagSlots);
                             success = true;
                             break;
                         }
-                        else if (item.Descriptor.Stackable && openSlots < slotsRequired) // Is stackable, but no inventory space.
+
+                        if (item.Descriptor.Stackable && openSlots < slotsRequired) // Is stackable, but no inventory space.
                         {
                             spawnAmount = item.Quantity;
                         }
@@ -2596,8 +2646,26 @@ namespace Intersect.Server.Entities
         /// </summary>
         /// <param name="item"></param>
         /// <param name="sendUpdate"></param>
-        private void GiveItem(Item item, int destSlot, bool sendUpdate)
+        private void GiveItem(Item item, int destSlot, bool sendUpdate, BagSlot[]? bagSlots = default)
         {
+            var remainingQuantity = item.Quantity;
+            if (bagSlots != default && destSlot < 0)
+            {
+                foreach (var bagSlot in bagSlots)
+                {
+                    if (remainingQuantity < 1)
+                    {
+                        break;
+                    }
+
+                    var insertableQuantity = Math.Min(
+                        remainingQuantity,
+                        item.Descriptor.MaxInventoryStack - bagSlot.Quantity
+                    );
+                    bagSlot.Quantity += insertableQuantity;
+                    remainingQuantity -= insertableQuantity;
+                }
+            }
 
             // Decide how we're going to handle this item.
             var existingSlots = FindInventoryItemSlots(item.Descriptor.Id);
@@ -2605,10 +2673,9 @@ namespace Intersect.Server.Entities
             if (item.Descriptor.Stackable && existingSlots.Count > 0) // Stackable, but already exists in the inventory.
             {
                 // So this gets complicated.. First let's hand out the quantity we can hand out before we hit a stack limit.
-                var toGive = item.Quantity;
                 foreach (var slot in existingSlots)
                 {
-                    if (toGive == 0)
+                    if (remainingQuantity == 0)
                     {
                         break;
                     }
@@ -2619,66 +2686,65 @@ namespace Intersect.Server.Entities
                     }
 
                     var canAdd = item.Descriptor.MaxInventoryStack - slot.Quantity;
-                    if (canAdd > toGive)
+                    if (canAdd > remainingQuantity)
                     {
-                        slot.Quantity += toGive;
+                        slot.Quantity += remainingQuantity;
                         updateSlots.Add(slot.Slot);
-                        toGive = 0;
+                        remainingQuantity = 0;
                     }
                     else
                     {
                         slot.Quantity += canAdd;
                         updateSlots.Add(slot.Slot);
-                        toGive -= canAdd;
+                        remainingQuantity -= canAdd;
                     }
                 }
 
                 // Is there anything left to hand out? If so, hand out max stacks and what remains until we run out!
-                if (toGive > 0)
+                if (remainingQuantity > 0)
                 {
                     // Are we trying to put the item into a specific slot? If so, put as much in as possible!
                     if (destSlot != -1)
                     {
-                        if (toGive > item.Descriptor.MaxInventoryStack)
+                        if (remainingQuantity > item.Descriptor.MaxInventoryStack)
                         {
                             Items[destSlot].Set(new Item(item.ItemId, item.Descriptor.MaxInventoryStack));
                             updateSlots.Add(destSlot);
-                            toGive -= item.Descriptor.MaxInventoryStack;
+                            remainingQuantity -= item.Descriptor.MaxInventoryStack;
                         }
                         else
                         {
-                            Items[destSlot].Set(new Item(item.ItemId, toGive));
+                            Items[destSlot].Set(new Item(item.ItemId, remainingQuantity));
                             updateSlots.Add(destSlot);
-                            toGive = 0;
+                            remainingQuantity = 0;
                         }
                     }
 
                     var openSlots = FindOpenInventorySlots();
-                    var total = toGive; // Copy this as we're going to be editing toGive.
+                    var total = remainingQuantity; // Copy this as we're going to be editing toGive.
                     for (var slot = 0; slot < Math.Ceiling((double)total / item.Descriptor.MaxInventoryStack); slot++)
                     {
-                        var quantity = item.Descriptor.MaxInventoryStack <= toGive ?
+                        var quantity = item.Descriptor.MaxInventoryStack <= remainingQuantity ?
                             item.Descriptor.MaxInventoryStack :
-                            toGive;
+                            remainingQuantity;
 
-                        toGive -= quantity;
+                        remainingQuantity -= quantity;
                         openSlots[slot].Set(new Item(item.ItemId, quantity));
                         updateSlots.Add(openSlots[slot].Slot);
                     }
                 }
             }
-            else if (!item.Descriptor.Stackable && item.Quantity > 1) // Not stackable, but multiple items.
+            else if (!item.Descriptor.Stackable && remainingQuantity > 1) // Not stackable, but multiple items.
             {
-                var toGive = item.Quantity;
                 if (destSlot != -1)
                 {
                     Items[destSlot].Set(new Item(item.ItemId, 1));
                     updateSlots.Add(destSlot);
-                    toGive -= 1;
+                    remainingQuantity -= 1;
                 }
 
                 var openSlots = FindOpenInventorySlots();
-                for (var slot = 0; slot < toGive; slot++)
+                for (var slot = 0; slot < remainingQuantity; slot++)
                 {
                     openSlots[slot].Set(new Item(item.ItemId, 1));
                     updateSlots.Add(openSlots[slot].Slot);
@@ -2687,7 +2753,7 @@ namespace Intersect.Server.Entities
             else // Hand out without any special treatment. Either a single item or a stackable item we don't have yet.
             {
                 // If the item is not stackable, or the amount is below our stack cap just blindly hand it out.
-                if (!item.Descriptor.Stackable || item.Quantity < item.Descriptor.MaxInventoryStack)
+                if (!item.Descriptor.Stackable || remainingQuantity < item.Descriptor.MaxInventoryStack)
                 {
                     if (destSlot != -1)
                     {
@@ -2704,23 +2770,22 @@ namespace Intersect.Server.Entities
                 // The item is above our stack cap.. Let's start handing them phat stacks out!
                 else
                 {
-                    var toGive = item.Quantity;
-
                     if (destSlot != -1)
                     {
                         Items[destSlot].Set(new Item(item.ItemId, item.Descriptor.MaxInventoryStack));
                         updateSlots.Add(destSlot);
-                        toGive -= item.Descriptor.MaxInventoryStack;
+                        remainingQuantity -= item.Descriptor.MaxInventoryStack;
                     }
 
                     var openSlots = FindOpenInventorySlots();
-                    for (var slot = 0; toGive > 0 && slot < Math.Ceiling((double)item.Quantity / item.Descriptor.MaxInventoryStack); slot++)
+                    var maxSlot = Math.Ceiling((double)remainingQuantity / item.Descriptor.MaxInventoryStack);
+                    for (var slot = 0; remainingQuantity > 0 && slot < maxSlot; slot++)
                     {
-                        var quantity = item.Descriptor.MaxInventoryStack <= toGive ?
+                        var quantity = item.Descriptor.MaxInventoryStack <= remainingQuantity ?
                             item.Descriptor.MaxInventoryStack :
-                            toGive;
+                            remainingQuantity;
 
-                        toGive -= quantity;
+                        remainingQuantity -= quantity;
                         openSlots[slot].Set(new Item(item.ItemId, quantity));
                         updateSlots.Add(openSlots[slot].Slot);
                     }

@@ -1573,99 +1573,91 @@ namespace Intersect.Server.Networking
                 return;
             }
 
-            if (MapController.TryGetInstanceFromMap(packet.MapId, player.MapInstanceId, out var mapInstance))
+            if (!MapController.TryGetInstanceFromMap(packet.MapId, player.MapInstanceId, out var playerMapInstance))
             {
-                var map = MapController.Get(packet.MapId);
+                return;
+            }
 
-                var lootDistance = Math.Min(
-                    Math.Min(Options.Instance.MapOpts.MapWidth, Options.Instance.MapOpts.MapHeight),
-                    Options.Loot.MaximumLootWindowDistance
-                );
+            var playerMapController = playerMapInstance.GetController();
 
-                // Is our user within range of the item they are trying to pick up?
-                if (player.GetDistanceTo(map, packet.TileIndex % Options.MapWidth, (int)Math.Floor(packet.TileIndex / (float)Options.MapWidth)) > lootDistance)
+            var lootDistance = Math.Min(
+                Math.Min(Options.Instance.MapOpts.MapWidth, Options.Instance.MapOpts.MapHeight),
+                Options.Loot.MaximumLootWindowDistance
+            );
+
+            // Is our user within range of the item they are trying to pick up?
+            if (player.GetDistanceTo(playerMapController, packet.TileIndex % Options.MapWidth, (int)Math.Floor(packet.TileIndex / (float)Options.MapWidth)) > lootDistance)
+            {
+                return;
+            }
+
+            var giveItems = new Dictionary<MapController, List<MapItem>>();
+            // Are we trying to pick up everything on this location or one specific item?
+            if (packet.UniqueId == Guid.Empty)
+            {
+                // GET IT ALL! BE GREEDY!
+                foreach (var (mapWithItems, value) in playerMapController.FindSurroundingTiles(new Point(player.X, player.Y), lootDistance))
                 {
-                    return;
-                }
-
-                var giveItems = new Dictionary<MapController, List<MapItem>>();
-                // Are we trying to pick up everything on this location or one specific item?
-                if (packet.UniqueId == Guid.Empty)
-                {
-                    // GET IT ALL! BE GREEDY!
-                    foreach (var itemMap in map.FindSurroundingTiles(new Point(player.X, player.Y), lootDistance))
-                    {
-                        var tempMap = itemMap.Key;
-
-                        if (!tempMap.TryGetInstance(player.MapInstanceId, out var tempMapInstance))
-                        {
-                            continue;
-                        }
-
-                        if (!giveItems.ContainsKey(itemMap.Key))
-                        {
-                            giveItems.Add(tempMap, new List<MapItem>());
-                        }
-
-                        foreach (var itemLoc in itemMap.Value)
-                        {
-                            giveItems[tempMap].AddRange(tempMapInstance.FindItemsAt(itemLoc));
-                        }
-                    }
-                }
-                else
-                {
-                    // One specific item.
-                    giveItems.Add(map, new List<MapItem>() { mapInstance.FindItem(packet.UniqueId) });
-                }
-
-                // Go through each item we're trying to give our player and see if we can do so.
-                foreach (var itemMap in giveItems)
-                {
-                    var tempMap = itemMap.Key;
-                    if (!tempMap.TryGetInstance(player.MapInstanceId, out var tmpInstance))
+                    if (!mapWithItems.TryGetInstance(player.MapInstanceId, out var mapInstanceWithItems))
                     {
                         continue;
                     }
 
-                    var toRemove = new List<MapItem>();
-
-                    // Remove null or missing map items from the list
-                    var validMapItems = itemMap.Value.Where(mapItem => mapItem != default && tmpInstance.FindItem(mapItem.UniqueId) != default);
-                    foreach (var mapItem in validMapItems)
+                    if (!giveItems.TryGetValue(mapWithItems, out var itemsFromMap))
                     {
-                        // Can we actually take this item?
-                        // The player or nobody must be the owner, or the ownership time limit needs to have run out
-                        var canTake = mapItem.Owner == Guid.Empty || mapItem.Owner == player.Id || Timing.Global.Milliseconds > mapItem.OwnershipTime;
-
-                        if (!canTake)
-                        {
-                            // Skip to the next item if the player can't take this one
-                            continue;
-                        }
-
-                        // Remove the item from the map now, because otherwise the overflow would just add to the existing quantity
-                        tmpInstance.RemoveItem(mapItem);
-
-                        // Try to give the item to our player.
-                        if (player.TryGiveItem(mapItem, ItemHandling.Overflow, false, -1, true, mapItem.X, mapItem.Y))
-                        {
-                            if (ItemBase.TryGet(mapItem.ItemId, out var item))
-                            {
-                                PacketSender.SendActionMsg(player, item.Name, CustomColors.Items.Rarities[item.Rarity]);
-                            }
-                        }
-                        else
-                        {
-                            // We couldn't give the player their item, notify them.
-                            PacketSender.SendChatMsg(player, Strings.Items.InventoryNoSpace, ChatMessageType.Inventory, CustomColors.Alerts.Error);
-                        }
+                        itemsFromMap = new List<MapItem>();
+                        giveItems[mapWithItems] = itemsFromMap;
                     }
 
-                    // Remove all items that were picked up.
-                    foreach (var item in toRemove)
+                    itemsFromMap.AddRange(value.SelectMany(itemLoc => mapInstanceWithItems.FindItemsAt(itemLoc)));
+                }
+            }
+            else
+            {
+                // One specific item.
+                giveItems.Add(playerMapController, new List<MapItem> { playerMapInstance.FindItem(packet.UniqueId) });
+            }
+
+            // Go through each item we're trying to give our player and see if we can do so.
+            foreach (var (mapWithItems, value) in giveItems)
+            {
+                if (!mapWithItems.TryGetInstance(player.MapInstanceId, out var mapInstanceWithItems))
+                {
+                    continue;
+                }
+
+                // Remove null or missing map items from the list
+                var validMapItems = value.Where(
+                    mapItem => mapItem != default && mapInstanceWithItems.FindItem(mapItem.UniqueId) != default
+                );
+                foreach (var mapItem in validMapItems)
+                {
+                    if (mapItem.Owner != default &&
+                        mapItem.Owner != player.Id &&
+                        Timing.Global.Milliseconds < mapItem.OwnershipTime)
                     {
-                        tmpInstance.RemoveItem(item);
+                        continue;
+                    }
+
+                    // Remove the item from the map now, because otherwise the overflow would just add to the existing quantity
+                    mapInstanceWithItems.RemoveItem(mapItem);
+
+                    // Try to give the item to our player.
+                    if (!player.TryGiveItem(mapItem, ItemHandling.Overflow, false, -1, true, mapItem.X, mapItem.Y))
+                    {
+                        // We couldn't give the player their item, notify them.
+                        PacketSender.SendChatMsg(
+                            player,
+                            Strings.Items.InventoryNoSpace,
+                            ChatMessageType.Inventory,
+                            CustomColors.Alerts.Error
+                        );
+                        continue;
+                    }
+
+                    if (ItemBase.TryGet(mapItem.ItemId, out var item))
+                    {
+                        PacketSender.SendActionMsg(player, item.Name, CustomColors.Items.Rarities[item.Rarity]);
                     }
                 }
             }

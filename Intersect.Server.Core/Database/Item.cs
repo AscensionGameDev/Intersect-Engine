@@ -171,6 +171,94 @@ public class Item
         return true;
     }
 
+    public static TItem[] FindCompatibleSlotsForItem<TItem>(
+        ItemBase itemDescriptor,
+        int maximumStack,
+        int slotHint,
+        int searchQuantity,
+        TItem?[] slots,
+        bool excludeEmpty = false
+    ) where TItem : Item
+    {
+        Debug.Assert(itemDescriptor != default);
+        Debug.Assert(slots != default);
+
+        if (excludeEmpty && itemDescriptor.ItemType == ItemType.Equipment)
+        {
+            return Array.Empty<TItem>();
+        }
+
+        var availableQuantity = 0;
+        List<TItem> compatibleSlots = new();
+
+        if (slotHint > -1)
+        {
+            var slot = slots[slotHint];
+            if (slot == null || slot.ItemId == default)
+            {
+                if (!excludeEmpty)
+                {
+                    availableQuantity += maximumStack;
+                    compatibleSlots.Add(slot);
+                }
+            }
+            else if (slot.ItemId == itemDescriptor.Id)
+            {
+                var availableQuantityInSlot = maximumStack - slot.Quantity;
+                if (availableQuantityInSlot > 0)
+                {
+                    availableQuantity += availableQuantityInSlot;
+                    compatibleSlots.Add(slot);
+                }
+            }
+        }
+
+        for (var slotIndex = 0; availableQuantity < searchQuantity && slotIndex < slots.Length; ++slotIndex)
+        {
+            var slot = slots[slotIndex];
+            if (slotIndex == slotHint)
+            {
+                // If slotHint is < 0 this will never be hit
+                // If slotHint is >= 0 we already accounted for the current slot in the if-block above
+                continue;
+            }
+
+            if (slot == null || slot.ItemId == default)
+            {
+                if (excludeEmpty)
+                {
+                    continue;
+                }
+
+                availableQuantity += maximumStack;
+                compatibleSlots.Add(slot);
+                continue;
+            }
+
+            if (itemDescriptor.ItemType == ItemType.Equipment)
+            {
+                // Equipment slots are not valid target slots because they can have randomized stats
+                continue;
+            }
+
+            if (slot.ItemId != itemDescriptor.Id)
+            {
+                continue;
+            }
+
+            var availableQuantityInSlot = maximumStack - slot.Quantity;
+            if (availableQuantityInSlot <= 0)
+            {
+                continue;
+            }
+
+            availableQuantity += availableQuantityInSlot;
+            compatibleSlots.Add(slot);
+        }
+
+        return compatibleSlots.ToArray();
+    }
+
     public static int[] FindCompatibleSlotsForItem<TItem>(
         Guid itemDescriptorId,
         ItemType itemType,
