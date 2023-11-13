@@ -1,4 +1,3 @@
-﻿using System;
 using System.Collections.Generic;
 
 using Intersect.Client.Framework.Core.Sounds;
@@ -20,6 +19,9 @@ namespace Intersect.Client.Framework.Maps
         IReadOnlyList<IEntity> Entities { get; }
         IReadOnlyList<IMapAnimation> Animations { get; }
         IReadOnlyList<IEntity> Critters { get; }
+
+        MapZone ZoneType { get; }
+
         float X { get; }
         float Y { get; }
         int GridX { get; set; }

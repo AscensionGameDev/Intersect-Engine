@@ -311,16 +311,35 @@ namespace Intersect.Server.Entities.Events
             Stack<CommandInstance> callStack
         )
         {
-            var commonEvent = EventBase.Get(command.EventId);
-            if (commonEvent != null)
+            if (!EventBase.TryGet(command.EventId, out var commonEvent))
             {
-                for (var i = 0; i < commonEvent.Pages.Count; i++)
+                return;
+            }
+
+            foreach (var page in commonEvent.Pages)
+            {
+                if (Conditions.CanSpawnPage(page, player, instance))
                 {
-                    if (Conditions.CanSpawnPage(commonEvent.Pages[i], player, instance))
+                    var commonEventStack = new CommandInstance(page);
+                    callStack.Push(commonEventStack);
+                }
+            }
+
+            if (player.MapInstanceId == Guid.Empty && !command.AllowInOverworld)
+            {
+                return;
+            }
+
+            if (command.AllInInstance)
+            {
+                foreach (var instanceMember in Globals.OnlineList.ToArray())
+                {
+                    if (instanceMember.Id == player.Id || !instanceMember.Online)
                     {
-                        var commonEventStack = new CommandInstance(commonEvent.Pages[i]);
-                        callStack.Push(commonEventStack);
+                        continue;
                     }
+
+                    instanceMember.EnqueueStartCommonEvent(commonEvent);
                 }
             }
         }
@@ -960,11 +979,21 @@ namespace Intersect.Server.Entities.Events
                 {
                     if (command.X == 0 && command.Y == 0 && command.Dir == 0)
                     {
+                        var targetType = targetEntity.GetEntityType() == EntityType.Event ? 2 : 1;
                         //Attach to entity instead of playing on tile
-                        PacketSender.SendAnimationToProximity(
-                            animId, targetEntity.GetEntityType() == EntityType.Event ? 2 : 1, targetEntity.Id,
-                            targetEntity.MapId, 0, 0, 0, targetEntity.MapInstanceId
-                        );
+                        if (command.InstanceToPlayer)
+                        {
+                            PacketSender.SendAnimationTo(
+                                animId, targetType, targetEntity.Id, targetEntity.MapId, 0, 0, 0, player
+                            );
+                        }
+                        else
+                        {
+                            PacketSender.SendAnimationToProximity(
+                                animId, targetType, targetEntity.Id,
+                                targetEntity.MapId, 0, 0, 0, targetEntity.MapInstanceId
+                            );
+                        }
 
                         return;
                     }
@@ -1011,9 +1040,18 @@ namespace Intersect.Server.Entities.Events
             var tile = new TileHelper(mapId, tileX, tileY);
             if (tile.TryFix())
             {
-                PacketSender.SendAnimationToProximity(
-                    animId, -1, Guid.Empty, tile.GetMapId(), tile.GetX(), tile.GetY(), direction, player.MapInstanceId
-                );
+                if (command.InstanceToPlayer)
+                {
+                    PacketSender.SendAnimationTo(
+                        animId, -1, Guid.Empty, tile.GetMapId(), tile.GetX(), tile.GetY(), direction, player
+                    );
+                }
+                else
+                {
+                    PacketSender.SendAnimationToProximity(
+                        animId, -1, Guid.Empty, tile.GetMapId(), tile.GetX(), tile.GetY(), direction, player.MapInstanceId
+                    );
+                }
             }
         }
 

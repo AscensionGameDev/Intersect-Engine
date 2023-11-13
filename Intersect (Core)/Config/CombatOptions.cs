@@ -70,6 +70,11 @@
         public bool EnableTurnAroundWhileCasting = false;
 
         /// <summary>
+        /// If enabled, this makes it so a player casting a friendly spell on a hostile target instead casts the spell upon themselves
+        /// </summary>
+        public bool EnableAutoSelfCastFriendlySpellsWhenTargetingHostile { get; set; } = false;
+
+        /// <summary>
         /// If enabled, this allows players to cast friendly spells on players who aren't in their guild or party
         /// </summary>
         public bool EnableAllPlayersFriendlyInSafeZone { get; set; } = false;

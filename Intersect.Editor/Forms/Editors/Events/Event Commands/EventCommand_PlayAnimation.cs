@@ -56,6 +56,8 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                 cmbConditionType.SelectedIndex = 1;
             }
 
+            chkInstanceToPlayer.Checked = mMyCommand.InstanceToPlayer;
+
             nudWarpX.Maximum = Options.MapWidth;
             nudWarpY.Maximum = Options.MapHeight;
             UpdateFormElements();
@@ -123,6 +125,15 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             lblRelativeLocation.Text = Strings.EventPlayAnimation.relativelocation;
             chkRelativeLocation.Text = Strings.EventPlayAnimation.spawnrelative;
             chkRotateDirection.Text = Strings.EventPlayAnimation.rotaterelative;
+
+            chkInstanceToPlayer.Text = Strings.EventPlayAnimation.InstanceToPlayer;
+            
+            ToolTip instanceTooltip = new ToolTip()
+            {
+                InitialDelay = 1000,
+                ReshowDelay = 500
+            };
+            instanceTooltip.SetToolTip(chkInstanceToPlayer, Strings.EventPlayAnimation.InstanceToPlayerTooltip);
 
             btnSave.Text = Strings.EventPlayAnimation.okay;
             btnCancel.Text = Strings.EventPlayAnimation.cancel;
@@ -255,6 +266,8 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 
                     break;
             }
+
+            mMyCommand.InstanceToPlayer = chkInstanceToPlayer.Checked;
 
             mEventEditor.FinishCommandEdit();
         }

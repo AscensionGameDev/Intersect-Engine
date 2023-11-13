@@ -10,6 +10,7 @@ namespace Intersect.GameObjects.Annotations
     {
         public BooleanStyle Style { get; set; } = BooleanStyle.YesNo;
 
+        [Obsolete("We want to re-implement strings to be object-oriented.")]
         public override string Format(Type stringsType, object value)
         {
             if (stringsType == default)

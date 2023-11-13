@@ -4,7 +4,7 @@ namespace Intersect.Client.Framework.Gwen.ControlInternal
 {
 
     /// <summary>
-    ///     Drag&drop highlight.
+    ///     Drag and drop highlight.
     /// </summary>
     public partial class Highlight : Base
     {

@@ -5115,7 +5115,7 @@ namespace Intersect.Server.Entities
                 return true;
             }
 
-            return Map?.ZoneType == MapZone.Safe && Options.Instance.CombatOpts.EnableSafeZoneAllPlayersFriendly;
+            return Map?.ZoneType == MapZone.Safe && Options.Instance.CombatOpts.EnableAllPlayersFriendlyInSafeZone;
         }
 
         public override bool CanCastSpell(SpellBase spell, Entity target, bool checkVitalReqs, out SpellCastFailureReason reason)

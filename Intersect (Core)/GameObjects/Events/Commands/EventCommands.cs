@@ -284,6 +284,10 @@ namespace Intersect.GameObjects.Events.Commands
     {
         public override EventCommandType Type { get; } = EventCommandType.StartCommonEvent;
 
+        public bool AllInInstance { get; set;  }
+
+        public bool AllowInOverworld { get; set; }
+
         public Guid EventId { get; set; }
     }
 
@@ -616,6 +620,8 @@ namespace Intersect.GameObjects.Events.Commands
         public sbyte X { get; set; }
 
         public sbyte Y { get; set; }
+
+        public bool InstanceToPlayer { get; set; }
     }
 
     public partial class HoldPlayerCommand : EventCommand
