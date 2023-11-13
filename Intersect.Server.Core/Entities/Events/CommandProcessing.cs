@@ -1011,9 +1011,18 @@ namespace Intersect.Server.Entities.Events
             var tile = new TileHelper(mapId, tileX, tileY);
             if (tile.TryFix())
             {
-                PacketSender.SendAnimationToProximity(
-                    animId, -1, Guid.Empty, tile.GetMapId(), tile.GetX(), tile.GetY(), direction, player.MapInstanceId
-                );
+                if (command.InstanceToPlayer)
+                {
+                    PacketSender.SendAnimationTo(
+                        animId, -1, Guid.Empty, tile.GetMapId(), tile.GetX(), tile.GetY(), direction, player
+                    );
+                }
+                else
+                {
+                    PacketSender.SendAnimationToProximity(
+                        animId, -1, Guid.Empty, tile.GetMapId(), tile.GetX(), tile.GetY(), direction, player.MapInstanceId
+                    );
+                }
             }
         }
 

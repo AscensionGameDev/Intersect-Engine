@@ -3124,6 +3124,12 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString entity = @"Entity:";
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString InstanceToPlayer = @"Instance to Player?";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString InstanceToPlayerTooltip = @"When enabled, only the player running this event will see the animation.";
+
             public static LocalizedString okay = @"Ok";
 
             public static LocalizedString player = @"Player";
