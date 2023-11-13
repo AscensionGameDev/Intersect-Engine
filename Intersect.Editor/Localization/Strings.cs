@@ -3438,6 +3438,9 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString title = @"Start Common Event";
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString AllInInstance = "Run for all players in instance?";
+
         }
 
         public partial struct EventStartQuest

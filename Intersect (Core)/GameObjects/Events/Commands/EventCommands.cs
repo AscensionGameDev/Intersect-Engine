@@ -284,6 +284,8 @@ namespace Intersect.GameObjects.Events.Commands
     {
         public override EventCommandType Type { get; } = EventCommandType.StartCommonEvent;
 
+        public bool AllInInstance { get; set;  }
+
         public Guid EventId { get; set; }
     }
 

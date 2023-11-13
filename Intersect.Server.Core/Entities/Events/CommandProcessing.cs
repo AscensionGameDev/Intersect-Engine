@@ -323,6 +323,17 @@ namespace Intersect.Server.Entities.Events
                     }
                 }
             }
+
+            if (command.AllInInstance)
+            {
+                foreach (var instanceMember in Globals.OnlineList.Where(pl => pl.MapInstanceId == player.MapInstanceId && pl.Id != player.Id).ToArray())
+                {
+                    if (instanceMember.Online && Conditions.CanSpawnPage(commonEvent.Pages[i], instanceMember, instance))
+                    {
+                        instanceMember.EnqueueStartCommonEvent(commonEvent);
+                    }
+                }
+            }
         }
 
         //Restore Hp Command
