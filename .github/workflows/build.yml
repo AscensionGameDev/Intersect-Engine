@@ -54,7 +54,7 @@ jobs:
       uses: actions/cache@v3
       id: cache-binaries
       with:
-        key: ${{ runner.os }}-binaries-${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}-${{ hashFiles('Intersect*/**/*.cs*') }}
+        key: ${{ runner.os }}-binaries-keys-${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}-${{ hashFiles('Intersect*/**/*.cs*') }}
         path: |
           Intersect*/bin/Release/**/*
 
