@@ -2086,6 +2086,9 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString playanimation = @"Play Animation {00} {01}";
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString PlayAnimationInstanced = @" (Instanced: {00})";
+
             public static LocalizedString playbgm = @"Play BGM [File: {00}]";
 
             public static LocalizedString playervariable = @"Set Player Variable {00} ({01})";
@@ -3126,6 +3129,12 @@ Tick timer saved in server config.json.";
             public static LocalizedString cancel = @"Cancel";
 
             public static LocalizedString entity = @"Entity:";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString InstanceToPlayer = @"Instance to Player?";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString InstanceToPlayerTooltip = @"When enabled, only the player running this event will see the animation.";
 
             public static LocalizedString okay = @"Ok";
 

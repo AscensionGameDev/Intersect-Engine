@@ -30,337 +30,404 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         /// </summary>
         private void InitializeComponent()
         {
-            this.grpPlayAnimation = new DarkUI.Controls.DarkGroupBox();
-            this.cmbAnimation = new DarkUI.Controls.DarkComboBox();
-            this.lblAnimation = new System.Windows.Forms.Label();
-            this.cmbConditionType = new DarkUI.Controls.DarkComboBox();
-            this.lblSpawnType = new System.Windows.Forms.Label();
-            this.btnCancel = new DarkUI.Controls.DarkButton();
-            this.btnSave = new DarkUI.Controls.DarkButton();
-            this.grpTileSpawn = new DarkUI.Controls.DarkGroupBox();
-            this.btnVisual = new DarkUI.Controls.DarkButton();
-            this.cmbMap = new DarkUI.Controls.DarkComboBox();
-            this.cmbDirection = new DarkUI.Controls.DarkComboBox();
-            this.lblDir = new System.Windows.Forms.Label();
-            this.lblY = new System.Windows.Forms.Label();
-            this.lblMap = new System.Windows.Forms.Label();
-            this.lblX = new System.Windows.Forms.Label();
-            this.grpEntitySpawn = new DarkUI.Controls.DarkGroupBox();
-            this.chkRotateDirection = new DarkUI.Controls.DarkCheckBox();
-            this.chkRelativeLocation = new DarkUI.Controls.DarkCheckBox();
-            this.pnlSpawnLoc = new System.Windows.Forms.Panel();
-            this.lblRelativeLocation = new System.Windows.Forms.Label();
-            this.cmbEntities = new DarkUI.Controls.DarkComboBox();
-            this.lblEntity = new System.Windows.Forms.Label();
-            this.nudWarpX = new DarkUI.Controls.DarkNumericUpDown();
-            this.nudWarpY = new DarkUI.Controls.DarkNumericUpDown();
-            this.grpPlayAnimation.SuspendLayout();
-            this.grpTileSpawn.SuspendLayout();
-            this.grpEntitySpawn.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nudWarpX)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudWarpY)).BeginInit();
-            this.SuspendLayout();
+            grpPlayAnimation = new DarkGroupBox();
+            cmbAnimation = new DarkComboBox();
+            lblAnimation = new Label();
+            cmbConditionType = new DarkComboBox();
+            lblSpawnType = new Label();
+            btnCancel = new DarkButton();
+            btnSave = new DarkButton();
+            grpTileSpawn = new DarkGroupBox();
+            nudWarpY = new DarkNumericUpDown();
+            nudWarpX = new DarkNumericUpDown();
+            btnVisual = new DarkButton();
+            cmbMap = new DarkComboBox();
+            cmbDirection = new DarkComboBox();
+            lblDir = new Label();
+            lblY = new Label();
+            lblMap = new Label();
+            lblX = new Label();
+            grpEntitySpawn = new DarkGroupBox();
+            chkRotateDirection = new DarkCheckBox();
+            chkRelativeLocation = new DarkCheckBox();
+            pnlSpawnLoc = new Panel();
+            lblRelativeLocation = new Label();
+            cmbEntities = new DarkComboBox();
+            lblEntity = new Label();
+            chkInstanceToPlayer = new DarkCheckBox();
+            grpPlayAnimation.SuspendLayout();
+            grpTileSpawn.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)nudWarpY).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)nudWarpX).BeginInit();
+            grpEntitySpawn.SuspendLayout();
+            SuspendLayout();
             // 
             // grpPlayAnimation
             // 
-            this.grpPlayAnimation.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
-            this.grpPlayAnimation.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.grpPlayAnimation.Controls.Add(this.cmbAnimation);
-            this.grpPlayAnimation.Controls.Add(this.lblAnimation);
-            this.grpPlayAnimation.Controls.Add(this.cmbConditionType);
-            this.grpPlayAnimation.Controls.Add(this.lblSpawnType);
-            this.grpPlayAnimation.Controls.Add(this.btnCancel);
-            this.grpPlayAnimation.Controls.Add(this.btnSave);
-            this.grpPlayAnimation.Controls.Add(this.grpTileSpawn);
-            this.grpPlayAnimation.Controls.Add(this.grpEntitySpawn);
-            this.grpPlayAnimation.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpPlayAnimation.Location = new System.Drawing.Point(3, 3);
-            this.grpPlayAnimation.Name = "grpPlayAnimation";
-            this.grpPlayAnimation.Size = new System.Drawing.Size(256, 407);
-            this.grpPlayAnimation.TabIndex = 17;
-            this.grpPlayAnimation.TabStop = false;
-            this.grpPlayAnimation.Text = "Play Animation";
+            grpPlayAnimation.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
+            grpPlayAnimation.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
+            grpPlayAnimation.Controls.Add(chkInstanceToPlayer);
+            grpPlayAnimation.Controls.Add(cmbAnimation);
+            grpPlayAnimation.Controls.Add(lblAnimation);
+            grpPlayAnimation.Controls.Add(cmbConditionType);
+            grpPlayAnimation.Controls.Add(lblSpawnType);
+            grpPlayAnimation.Controls.Add(btnCancel);
+            grpPlayAnimation.Controls.Add(btnSave);
+            grpPlayAnimation.Controls.Add(grpTileSpawn);
+            grpPlayAnimation.Controls.Add(grpEntitySpawn);
+            grpPlayAnimation.ForeColor = System.Drawing.Color.Gainsboro;
+            grpPlayAnimation.Location = new System.Drawing.Point(4, 3);
+            grpPlayAnimation.Margin = new Padding(4, 3, 4, 3);
+            grpPlayAnimation.Name = "grpPlayAnimation";
+            grpPlayAnimation.Padding = new Padding(4, 3, 4, 3);
+            grpPlayAnimation.Size = new Size(299, 483);
+            grpPlayAnimation.TabIndex = 17;
+            grpPlayAnimation.TabStop = false;
+            grpPlayAnimation.Text = "Play Animation";
             // 
             // cmbAnimation
             // 
-            this.cmbAnimation.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.cmbAnimation.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.cmbAnimation.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
-            this.cmbAnimation.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.cmbAnimation.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbAnimation.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.cmbAnimation.ForeColor = System.Drawing.Color.Gainsboro;
-            this.cmbAnimation.FormattingEnabled = true;
-            this.cmbAnimation.Location = new System.Drawing.Point(88, 15);
-            this.cmbAnimation.Name = "cmbAnimation";
-            this.cmbAnimation.Size = new System.Drawing.Size(157, 21);
-            this.cmbAnimation.TabIndex = 26;
+            cmbAnimation.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
+            cmbAnimation.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
+            cmbAnimation.BorderStyle = ButtonBorderStyle.Solid;
+            cmbAnimation.ButtonColor = System.Drawing.Color.FromArgb(43, 43, 43);
+            cmbAnimation.DrawDropdownHoverOutline = false;
+            cmbAnimation.DrawFocusRectangle = false;
+            cmbAnimation.DrawMode = DrawMode.OwnerDrawFixed;
+            cmbAnimation.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbAnimation.FlatStyle = FlatStyle.Flat;
+            cmbAnimation.ForeColor = System.Drawing.Color.Gainsboro;
+            cmbAnimation.FormattingEnabled = true;
+            cmbAnimation.Location = new System.Drawing.Point(103, 17);
+            cmbAnimation.Margin = new Padding(4, 3, 4, 3);
+            cmbAnimation.Name = "cmbAnimation";
+            cmbAnimation.Size = new Size(182, 24);
+            cmbAnimation.TabIndex = 26;
+            cmbAnimation.Text = null;
+            cmbAnimation.TextPadding = new Padding(2);
             // 
             // lblAnimation
             // 
-            this.lblAnimation.AutoSize = true;
-            this.lblAnimation.Location = new System.Drawing.Point(6, 18);
-            this.lblAnimation.Name = "lblAnimation";
-            this.lblAnimation.Size = new System.Drawing.Size(56, 13);
-            this.lblAnimation.TabIndex = 25;
-            this.lblAnimation.Text = "Animation:";
+            lblAnimation.AutoSize = true;
+            lblAnimation.Location = new System.Drawing.Point(7, 21);
+            lblAnimation.Margin = new Padding(4, 0, 4, 0);
+            lblAnimation.Name = "lblAnimation";
+            lblAnimation.Size = new Size(66, 15);
+            lblAnimation.TabIndex = 25;
+            lblAnimation.Text = "Animation:";
             // 
             // cmbConditionType
             // 
-            this.cmbConditionType.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.cmbConditionType.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.cmbConditionType.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
-            this.cmbConditionType.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.cmbConditionType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbConditionType.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.cmbConditionType.ForeColor = System.Drawing.Color.Gainsboro;
-            this.cmbConditionType.FormattingEnabled = true;
-            this.cmbConditionType.Location = new System.Drawing.Point(88, 44);
-            this.cmbConditionType.Name = "cmbConditionType";
-            this.cmbConditionType.Size = new System.Drawing.Size(157, 21);
-            this.cmbConditionType.TabIndex = 22;
-            this.cmbConditionType.SelectedIndexChanged += new System.EventHandler(this.cmbConditionType_SelectedIndexChanged);
+            cmbConditionType.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
+            cmbConditionType.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
+            cmbConditionType.BorderStyle = ButtonBorderStyle.Solid;
+            cmbConditionType.ButtonColor = System.Drawing.Color.FromArgb(43, 43, 43);
+            cmbConditionType.DrawDropdownHoverOutline = false;
+            cmbConditionType.DrawFocusRectangle = false;
+            cmbConditionType.DrawMode = DrawMode.OwnerDrawFixed;
+            cmbConditionType.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbConditionType.FlatStyle = FlatStyle.Flat;
+            cmbConditionType.ForeColor = System.Drawing.Color.Gainsboro;
+            cmbConditionType.FormattingEnabled = true;
+            cmbConditionType.Location = new System.Drawing.Point(103, 51);
+            cmbConditionType.Margin = new Padding(4, 3, 4, 3);
+            cmbConditionType.Name = "cmbConditionType";
+            cmbConditionType.Size = new Size(182, 24);
+            cmbConditionType.TabIndex = 22;
+            cmbConditionType.Text = null;
+            cmbConditionType.TextPadding = new Padding(2);
+            cmbConditionType.SelectedIndexChanged += cmbConditionType_SelectedIndexChanged;
             // 
             // lblSpawnType
             // 
-            this.lblSpawnType.AutoSize = true;
-            this.lblSpawnType.Location = new System.Drawing.Point(6, 47);
-            this.lblSpawnType.Name = "lblSpawnType";
-            this.lblSpawnType.Size = new System.Drawing.Size(70, 13);
-            this.lblSpawnType.TabIndex = 21;
-            this.lblSpawnType.Text = "Spawn Type:";
+            lblSpawnType.AutoSize = true;
+            lblSpawnType.Location = new System.Drawing.Point(7, 54);
+            lblSpawnType.Margin = new Padding(4, 0, 4, 0);
+            lblSpawnType.Name = "lblSpawnType";
+            lblSpawnType.Size = new Size(72, 15);
+            lblSpawnType.TabIndex = 21;
+            lblSpawnType.Text = "Spawn Type:";
             // 
             // btnCancel
             // 
-            this.btnCancel.Location = new System.Drawing.Point(90, 378);
-            this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Padding = new System.Windows.Forms.Padding(5);
-            this.btnCancel.Size = new System.Drawing.Size(75, 23);
-            this.btnCancel.TabIndex = 20;
-            this.btnCancel.Text = "Cancel";
-            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+            btnCancel.Location = new System.Drawing.Point(197, 450);
+            btnCancel.Margin = new Padding(4, 3, 4, 3);
+            btnCancel.Name = "btnCancel";
+            btnCancel.Padding = new Padding(6, 6, 6, 6);
+            btnCancel.Size = new Size(88, 27);
+            btnCancel.TabIndex = 20;
+            btnCancel.Text = "Cancel";
+            btnCancel.Click += btnCancel_Click;
             // 
             // btnSave
             // 
-            this.btnSave.Location = new System.Drawing.Point(9, 378);
-            this.btnSave.Name = "btnSave";
-            this.btnSave.Padding = new System.Windows.Forms.Padding(5);
-            this.btnSave.Size = new System.Drawing.Size(75, 23);
-            this.btnSave.TabIndex = 19;
-            this.btnSave.Text = "Ok";
-            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+            btnSave.Location = new System.Drawing.Point(103, 450);
+            btnSave.Margin = new Padding(4, 3, 4, 3);
+            btnSave.Name = "btnSave";
+            btnSave.Padding = new Padding(6, 6, 6, 6);
+            btnSave.Size = new Size(88, 27);
+            btnSave.TabIndex = 19;
+            btnSave.Text = "Ok";
+            btnSave.Click += btnSave_Click;
             // 
             // grpTileSpawn
             // 
-            this.grpTileSpawn.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
-            this.grpTileSpawn.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.grpTileSpawn.Controls.Add(this.nudWarpY);
-            this.grpTileSpawn.Controls.Add(this.nudWarpX);
-            this.grpTileSpawn.Controls.Add(this.btnVisual);
-            this.grpTileSpawn.Controls.Add(this.cmbMap);
-            this.grpTileSpawn.Controls.Add(this.cmbDirection);
-            this.grpTileSpawn.Controls.Add(this.lblDir);
-            this.grpTileSpawn.Controls.Add(this.lblY);
-            this.grpTileSpawn.Controls.Add(this.lblMap);
-            this.grpTileSpawn.Controls.Add(this.lblX);
-            this.grpTileSpawn.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpTileSpawn.Location = new System.Drawing.Point(9, 82);
-            this.grpTileSpawn.Name = "grpTileSpawn";
-            this.grpTileSpawn.Size = new System.Drawing.Size(236, 168);
-            this.grpTileSpawn.TabIndex = 23;
-            this.grpTileSpawn.TabStop = false;
-            this.grpTileSpawn.Text = "Specific Tile";
-            // 
-            // btnVisual
-            // 
-            this.btnVisual.Location = new System.Drawing.Point(40, 133);
-            this.btnVisual.Name = "btnVisual";
-            this.btnVisual.Padding = new System.Windows.Forms.Padding(5);
-            this.btnVisual.Size = new System.Drawing.Size(155, 23);
-            this.btnVisual.TabIndex = 30;
-            this.btnVisual.Text = "Open Visual Interface";
-            this.btnVisual.Click += new System.EventHandler(this.btnVisual_Click);
-            // 
-            // cmbMap
-            // 
-            this.cmbMap.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.cmbMap.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.cmbMap.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
-            this.cmbMap.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.cmbMap.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbMap.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.cmbMap.ForeColor = System.Drawing.Color.Gainsboro;
-            this.cmbMap.FormattingEnabled = true;
-            this.cmbMap.Location = new System.Drawing.Point(74, 19);
-            this.cmbMap.Name = "cmbMap";
-            this.cmbMap.Size = new System.Drawing.Size(121, 21);
-            this.cmbMap.TabIndex = 27;
-            // 
-            // cmbDirection
-            // 
-            this.cmbDirection.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.cmbDirection.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.cmbDirection.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
-            this.cmbDirection.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.cmbDirection.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbDirection.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.cmbDirection.ForeColor = System.Drawing.Color.Gainsboro;
-            this.cmbDirection.FormattingEnabled = true;
-            this.cmbDirection.Location = new System.Drawing.Point(74, 100);
-            this.cmbDirection.Name = "cmbDirection";
-            this.cmbDirection.Size = new System.Drawing.Size(121, 21);
-            this.cmbDirection.TabIndex = 26;
-            // 
-            // lblDir
-            // 
-            this.lblDir.AutoSize = true;
-            this.lblDir.Location = new System.Drawing.Point(37, 103);
-            this.lblDir.Name = "lblDir";
-            this.lblDir.Size = new System.Drawing.Size(23, 13);
-            this.lblDir.TabIndex = 25;
-            this.lblDir.Text = "Dir:";
-            // 
-            // lblY
-            // 
-            this.lblY.AutoSize = true;
-            this.lblY.Location = new System.Drawing.Point(37, 76);
-            this.lblY.Name = "lblY";
-            this.lblY.Size = new System.Drawing.Size(20, 13);
-            this.lblY.TabIndex = 24;
-            this.lblY.Text = "Y: ";
-            // 
-            // lblMap
-            // 
-            this.lblMap.AutoSize = true;
-            this.lblMap.Location = new System.Drawing.Point(37, 22);
-            this.lblMap.Name = "lblMap";
-            this.lblMap.Size = new System.Drawing.Size(31, 13);
-            this.lblMap.TabIndex = 22;
-            this.lblMap.Text = "Map:";
-            // 
-            // lblX
-            // 
-            this.lblX.AutoSize = true;
-            this.lblX.Location = new System.Drawing.Point(37, 49);
-            this.lblX.Name = "lblX";
-            this.lblX.Size = new System.Drawing.Size(20, 13);
-            this.lblX.TabIndex = 23;
-            this.lblX.Text = "X: ";
-            // 
-            // grpEntitySpawn
-            // 
-            this.grpEntitySpawn.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
-            this.grpEntitySpawn.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.grpEntitySpawn.Controls.Add(this.chkRotateDirection);
-            this.grpEntitySpawn.Controls.Add(this.chkRelativeLocation);
-            this.grpEntitySpawn.Controls.Add(this.pnlSpawnLoc);
-            this.grpEntitySpawn.Controls.Add(this.lblRelativeLocation);
-            this.grpEntitySpawn.Controls.Add(this.cmbEntities);
-            this.grpEntitySpawn.Controls.Add(this.lblEntity);
-            this.grpEntitySpawn.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpEntitySpawn.Location = new System.Drawing.Point(9, 81);
-            this.grpEntitySpawn.Name = "grpEntitySpawn";
-            this.grpEntitySpawn.Size = new System.Drawing.Size(236, 281);
-            this.grpEntitySpawn.TabIndex = 24;
-            this.grpEntitySpawn.TabStop = false;
-            this.grpEntitySpawn.Text = "On/Around Entity";
-            // 
-            // chkRotateDirection
-            // 
-            this.chkRotateDirection.AutoSize = true;
-            this.chkRotateDirection.Location = new System.Drawing.Point(38, 258);
-            this.chkRotateDirection.Name = "chkRotateDirection";
-            this.chkRotateDirection.Size = new System.Drawing.Size(157, 17);
-            this.chkRotateDirection.TabIndex = 31;
-            this.chkRotateDirection.Text = "Rotate Relative to Direction";
-            // 
-            // chkRelativeLocation
-            // 
-            this.chkRelativeLocation.AutoSize = true;
-            this.chkRelativeLocation.Location = new System.Drawing.Point(38, 236);
-            this.chkRelativeLocation.Name = "chkRelativeLocation";
-            this.chkRelativeLocation.Size = new System.Drawing.Size(158, 17);
-            this.chkRelativeLocation.TabIndex = 30;
-            this.chkRelativeLocation.Text = "Spawn Relative to Direction";
-            // 
-            // pnlSpawnLoc
-            // 
-            this.pnlSpawnLoc.Location = new System.Drawing.Point(38, 69);
-            this.pnlSpawnLoc.Name = "pnlSpawnLoc";
-            this.pnlSpawnLoc.Size = new System.Drawing.Size(160, 160);
-            this.pnlSpawnLoc.TabIndex = 29;
-            this.pnlSpawnLoc.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pnlSpawnLoc_MouseDown);
-            // 
-            // lblRelativeLocation
-            // 
-            this.lblRelativeLocation.AutoSize = true;
-            this.lblRelativeLocation.Location = new System.Drawing.Point(37, 49);
-            this.lblRelativeLocation.Name = "lblRelativeLocation";
-            this.lblRelativeLocation.Size = new System.Drawing.Size(93, 13);
-            this.lblRelativeLocation.TabIndex = 28;
-            this.lblRelativeLocation.Text = "Relative Location:";
-            // 
-            // cmbEntities
-            // 
-            this.cmbEntities.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.cmbEntities.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.cmbEntities.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
-            this.cmbEntities.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.cmbEntities.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbEntities.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.cmbEntities.ForeColor = System.Drawing.Color.Gainsboro;
-            this.cmbEntities.FormattingEnabled = true;
-            this.cmbEntities.Location = new System.Drawing.Point(74, 19);
-            this.cmbEntities.Name = "cmbEntities";
-            this.cmbEntities.Size = new System.Drawing.Size(121, 21);
-            this.cmbEntities.TabIndex = 27;
-            // 
-            // lblEntity
-            // 
-            this.lblEntity.AutoSize = true;
-            this.lblEntity.Location = new System.Drawing.Point(37, 22);
-            this.lblEntity.Name = "lblEntity";
-            this.lblEntity.Size = new System.Drawing.Size(36, 13);
-            this.lblEntity.TabIndex = 22;
-            this.lblEntity.Text = "Entity:";
-            // 
-            // nudWarpX
-            // 
-            this.nudWarpX.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.nudWarpX.ForeColor = System.Drawing.Color.Gainsboro;
-            this.nudWarpX.Location = new System.Drawing.Point(74, 47);
-            this.nudWarpX.Name = "nudWarpX";
-            this.nudWarpX.Size = new System.Drawing.Size(121, 20);
-            this.nudWarpX.TabIndex = 31;
+            grpTileSpawn.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
+            grpTileSpawn.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
+            grpTileSpawn.Controls.Add(nudWarpY);
+            grpTileSpawn.Controls.Add(nudWarpX);
+            grpTileSpawn.Controls.Add(btnVisual);
+            grpTileSpawn.Controls.Add(cmbMap);
+            grpTileSpawn.Controls.Add(cmbDirection);
+            grpTileSpawn.Controls.Add(lblDir);
+            grpTileSpawn.Controls.Add(lblY);
+            grpTileSpawn.Controls.Add(lblMap);
+            grpTileSpawn.Controls.Add(lblX);
+            grpTileSpawn.ForeColor = System.Drawing.Color.Gainsboro;
+            grpTileSpawn.Location = new System.Drawing.Point(10, 95);
+            grpTileSpawn.Margin = new Padding(4, 3, 4, 3);
+            grpTileSpawn.Name = "grpTileSpawn";
+            grpTileSpawn.Padding = new Padding(4, 3, 4, 3);
+            grpTileSpawn.Size = new Size(275, 194);
+            grpTileSpawn.TabIndex = 23;
+            grpTileSpawn.TabStop = false;
+            grpTileSpawn.Text = "Specific Tile";
             // 
             // nudWarpY
             // 
-            this.nudWarpY.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.nudWarpY.ForeColor = System.Drawing.Color.Gainsboro;
-            this.nudWarpY.Location = new System.Drawing.Point(74, 74);
-            this.nudWarpY.Name = "nudWarpY";
-            this.nudWarpY.Size = new System.Drawing.Size(120, 20);
-            this.nudWarpY.TabIndex = 32;
+            nudWarpY.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
+            nudWarpY.ForeColor = System.Drawing.Color.Gainsboro;
+            nudWarpY.Location = new System.Drawing.Point(86, 85);
+            nudWarpY.Margin = new Padding(4, 3, 4, 3);
+            nudWarpY.Name = "nudWarpY";
+            nudWarpY.Size = new Size(140, 23);
+            nudWarpY.TabIndex = 32;
+            nudWarpY.Value = new decimal(new int[] { 0, 0, 0, 0 });
             // 
-            // EventCommand_PlayAnimation
+            // nudWarpX
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.AutoSize = true;
-            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            this.Controls.Add(this.grpPlayAnimation);
-            this.Name = "EventCommandPlayAnimation";
-            this.Size = new System.Drawing.Size(267, 413);
-            this.grpPlayAnimation.ResumeLayout(false);
-            this.grpPlayAnimation.PerformLayout();
-            this.grpTileSpawn.ResumeLayout(false);
-            this.grpTileSpawn.PerformLayout();
-            this.grpEntitySpawn.ResumeLayout(false);
-            this.grpEntitySpawn.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nudWarpX)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudWarpY)).EndInit();
-            this.ResumeLayout(false);
-
+            nudWarpX.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
+            nudWarpX.ForeColor = System.Drawing.Color.Gainsboro;
+            nudWarpX.Location = new System.Drawing.Point(86, 54);
+            nudWarpX.Margin = new Padding(4, 3, 4, 3);
+            nudWarpX.Name = "nudWarpX";
+            nudWarpX.Size = new Size(141, 23);
+            nudWarpX.TabIndex = 31;
+            nudWarpX.Value = new decimal(new int[] { 0, 0, 0, 0 });
+            // 
+            // btnVisual
+            // 
+            btnVisual.Location = new System.Drawing.Point(47, 153);
+            btnVisual.Margin = new Padding(4, 3, 4, 3);
+            btnVisual.Name = "btnVisual";
+            btnVisual.Padding = new Padding(6, 6, 6, 6);
+            btnVisual.Size = new Size(181, 27);
+            btnVisual.TabIndex = 30;
+            btnVisual.Text = "Open Visual Interface";
+            btnVisual.Click += btnVisual_Click;
+            // 
+            // cmbMap
+            // 
+            cmbMap.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
+            cmbMap.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
+            cmbMap.BorderStyle = ButtonBorderStyle.Solid;
+            cmbMap.ButtonColor = System.Drawing.Color.FromArgb(43, 43, 43);
+            cmbMap.DrawDropdownHoverOutline = false;
+            cmbMap.DrawFocusRectangle = false;
+            cmbMap.DrawMode = DrawMode.OwnerDrawFixed;
+            cmbMap.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbMap.FlatStyle = FlatStyle.Flat;
+            cmbMap.ForeColor = System.Drawing.Color.Gainsboro;
+            cmbMap.FormattingEnabled = true;
+            cmbMap.Location = new System.Drawing.Point(86, 22);
+            cmbMap.Margin = new Padding(4, 3, 4, 3);
+            cmbMap.Name = "cmbMap";
+            cmbMap.Size = new Size(140, 24);
+            cmbMap.TabIndex = 27;
+            cmbMap.Text = null;
+            cmbMap.TextPadding = new Padding(2);
+            // 
+            // cmbDirection
+            // 
+            cmbDirection.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
+            cmbDirection.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
+            cmbDirection.BorderStyle = ButtonBorderStyle.Solid;
+            cmbDirection.ButtonColor = System.Drawing.Color.FromArgb(43, 43, 43);
+            cmbDirection.DrawDropdownHoverOutline = false;
+            cmbDirection.DrawFocusRectangle = false;
+            cmbDirection.DrawMode = DrawMode.OwnerDrawFixed;
+            cmbDirection.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbDirection.FlatStyle = FlatStyle.Flat;
+            cmbDirection.ForeColor = System.Drawing.Color.Gainsboro;
+            cmbDirection.FormattingEnabled = true;
+            cmbDirection.Location = new System.Drawing.Point(86, 115);
+            cmbDirection.Margin = new Padding(4, 3, 4, 3);
+            cmbDirection.Name = "cmbDirection";
+            cmbDirection.Size = new Size(140, 24);
+            cmbDirection.TabIndex = 26;
+            cmbDirection.Text = null;
+            cmbDirection.TextPadding = new Padding(2);
+            // 
+            // lblDir
+            // 
+            lblDir.AutoSize = true;
+            lblDir.Location = new System.Drawing.Point(43, 119);
+            lblDir.Margin = new Padding(4, 0, 4, 0);
+            lblDir.Name = "lblDir";
+            lblDir.Size = new Size(25, 15);
+            lblDir.TabIndex = 25;
+            lblDir.Text = "Dir:";
+            // 
+            // lblY
+            // 
+            lblY.AutoSize = true;
+            lblY.Location = new System.Drawing.Point(43, 88);
+            lblY.Margin = new Padding(4, 0, 4, 0);
+            lblY.Name = "lblY";
+            lblY.Size = new Size(20, 15);
+            lblY.TabIndex = 24;
+            lblY.Text = "Y: ";
+            // 
+            // lblMap
+            // 
+            lblMap.AutoSize = true;
+            lblMap.Location = new System.Drawing.Point(43, 25);
+            lblMap.Margin = new Padding(4, 0, 4, 0);
+            lblMap.Name = "lblMap";
+            lblMap.Size = new Size(34, 15);
+            lblMap.TabIndex = 22;
+            lblMap.Text = "Map:";
+            // 
+            // lblX
+            // 
+            lblX.AutoSize = true;
+            lblX.Location = new System.Drawing.Point(43, 57);
+            lblX.Margin = new Padding(4, 0, 4, 0);
+            lblX.Name = "lblX";
+            lblX.Size = new Size(20, 15);
+            lblX.TabIndex = 23;
+            lblX.Text = "X: ";
+            // 
+            // grpEntitySpawn
+            // 
+            grpEntitySpawn.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
+            grpEntitySpawn.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
+            grpEntitySpawn.Controls.Add(chkRotateDirection);
+            grpEntitySpawn.Controls.Add(chkRelativeLocation);
+            grpEntitySpawn.Controls.Add(pnlSpawnLoc);
+            grpEntitySpawn.Controls.Add(lblRelativeLocation);
+            grpEntitySpawn.Controls.Add(cmbEntities);
+            grpEntitySpawn.Controls.Add(lblEntity);
+            grpEntitySpawn.ForeColor = System.Drawing.Color.Gainsboro;
+            grpEntitySpawn.Location = new System.Drawing.Point(10, 93);
+            grpEntitySpawn.Margin = new Padding(4, 3, 4, 3);
+            grpEntitySpawn.Name = "grpEntitySpawn";
+            grpEntitySpawn.Padding = new Padding(4, 3, 4, 3);
+            grpEntitySpawn.Size = new Size(275, 324);
+            grpEntitySpawn.TabIndex = 24;
+            grpEntitySpawn.TabStop = false;
+            grpEntitySpawn.Text = "On/Around Entity";
+            // 
+            // chkRotateDirection
+            // 
+            chkRotateDirection.AutoSize = true;
+            chkRotateDirection.Location = new System.Drawing.Point(44, 298);
+            chkRotateDirection.Margin = new Padding(4, 3, 4, 3);
+            chkRotateDirection.Name = "chkRotateDirection";
+            chkRotateDirection.Size = new Size(169, 19);
+            chkRotateDirection.TabIndex = 31;
+            chkRotateDirection.Text = "Rotate Relative to Direction";
+            // 
+            // chkRelativeLocation
+            // 
+            chkRelativeLocation.AutoSize = true;
+            chkRelativeLocation.Location = new System.Drawing.Point(44, 272);
+            chkRelativeLocation.Margin = new Padding(4, 3, 4, 3);
+            chkRelativeLocation.Name = "chkRelativeLocation";
+            chkRelativeLocation.Size = new Size(170, 19);
+            chkRelativeLocation.TabIndex = 30;
+            chkRelativeLocation.Text = "Spawn Relative to Direction";
+            // 
+            // pnlSpawnLoc
+            // 
+            pnlSpawnLoc.Location = new System.Drawing.Point(44, 80);
+            pnlSpawnLoc.Margin = new Padding(4, 3, 4, 3);
+            pnlSpawnLoc.Name = "pnlSpawnLoc";
+            pnlSpawnLoc.Size = new Size(187, 185);
+            pnlSpawnLoc.TabIndex = 29;
+            pnlSpawnLoc.MouseDown += pnlSpawnLoc_MouseDown;
+            // 
+            // lblRelativeLocation
+            // 
+            lblRelativeLocation.AutoSize = true;
+            lblRelativeLocation.Location = new System.Drawing.Point(43, 57);
+            lblRelativeLocation.Margin = new Padding(4, 0, 4, 0);
+            lblRelativeLocation.Name = "lblRelativeLocation";
+            lblRelativeLocation.Size = new Size(100, 15);
+            lblRelativeLocation.TabIndex = 28;
+            lblRelativeLocation.Text = "Relative Location:";
+            // 
+            // cmbEntities
+            // 
+            cmbEntities.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
+            cmbEntities.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
+            cmbEntities.BorderStyle = ButtonBorderStyle.Solid;
+            cmbEntities.ButtonColor = System.Drawing.Color.FromArgb(43, 43, 43);
+            cmbEntities.DrawDropdownHoverOutline = false;
+            cmbEntities.DrawFocusRectangle = false;
+            cmbEntities.DrawMode = DrawMode.OwnerDrawFixed;
+            cmbEntities.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbEntities.FlatStyle = FlatStyle.Flat;
+            cmbEntities.ForeColor = System.Drawing.Color.Gainsboro;
+            cmbEntities.FormattingEnabled = true;
+            cmbEntities.Location = new System.Drawing.Point(86, 22);
+            cmbEntities.Margin = new Padding(4, 3, 4, 3);
+            cmbEntities.Name = "cmbEntities";
+            cmbEntities.Size = new Size(140, 24);
+            cmbEntities.TabIndex = 27;
+            cmbEntities.Text = null;
+            cmbEntities.TextPadding = new Padding(2);
+            // 
+            // lblEntity
+            // 
+            lblEntity.AutoSize = true;
+            lblEntity.Location = new System.Drawing.Point(43, 25);
+            lblEntity.Margin = new Padding(4, 0, 4, 0);
+            lblEntity.Name = "lblEntity";
+            lblEntity.Size = new Size(40, 15);
+            lblEntity.TabIndex = 22;
+            lblEntity.Text = "Entity:";
+            // 
+            // chkInstanceToPlayer
+            // 
+            chkInstanceToPlayer.AutoSize = true;
+            chkInstanceToPlayer.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
+            chkInstanceToPlayer.Location = new System.Drawing.Point(10, 425);
+            chkInstanceToPlayer.Margin = new Padding(4, 3, 4, 3);
+            chkInstanceToPlayer.Name = "chkInstanceToPlayer";
+            chkInstanceToPlayer.Size = new Size(124, 19);
+            chkInstanceToPlayer.TabIndex = 42;
+            chkInstanceToPlayer.Text = "Instance to Player?";
+            // 
+            // EventCommandPlayAnimation
+            // 
+            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleMode = AutoScaleMode.Font;
+            AutoSize = true;
+            BackColor = System.Drawing.Color.FromArgb(45, 45, 48);
+            Controls.Add(grpPlayAnimation);
+            Margin = new Padding(4, 3, 4, 3);
+            Name = "EventCommandPlayAnimation";
+            Size = new Size(312, 492);
+            grpPlayAnimation.ResumeLayout(false);
+            grpPlayAnimation.PerformLayout();
+            grpTileSpawn.ResumeLayout(false);
+            grpTileSpawn.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)nudWarpY).EndInit();
+            ((System.ComponentModel.ISupportInitialize)nudWarpX).EndInit();
+            grpEntitySpawn.ResumeLayout(false);
+            grpEntitySpawn.PerformLayout();
+            ResumeLayout(false);
         }
 
         #endregion
@@ -370,24 +437,25 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         private DarkButton btnSave;
         private DarkGroupBox grpTileSpawn;
         private DarkComboBox cmbConditionType;
-        private System.Windows.Forms.Label lblSpawnType;
+        private Label lblSpawnType;
         private DarkButton btnVisual;
         private DarkComboBox cmbMap;
         private DarkComboBox cmbDirection;
-        private System.Windows.Forms.Label lblDir;
-        private System.Windows.Forms.Label lblY;
-        private System.Windows.Forms.Label lblMap;
-        private System.Windows.Forms.Label lblX;
+        private Label lblDir;
+        private Label lblY;
+        private Label lblMap;
+        private Label lblX;
         private DarkGroupBox grpEntitySpawn;
         private DarkCheckBox chkRelativeLocation;
-        private System.Windows.Forms.Panel pnlSpawnLoc;
+        private Panel pnlSpawnLoc;
         private DarkComboBox cmbEntities;
-        private System.Windows.Forms.Label lblEntity;
-        private System.Windows.Forms.Label lblRelativeLocation;
+        private Label lblEntity;
+        private Label lblRelativeLocation;
         private DarkComboBox cmbAnimation;
-        private System.Windows.Forms.Label lblAnimation;
+        private Label lblAnimation;
         private DarkCheckBox chkRotateDirection;
         private DarkNumericUpDown nudWarpY;
         private DarkNumericUpDown nudWarpX;
+        private DarkCheckBox chkInstanceToPlayer;
     }
 }

@@ -1539,6 +1539,25 @@ namespace Intersect.Server.Networking
             }
         }
 
+        public static void SendAnimationTo(
+            Guid animId,
+            int targetType,
+            Guid entityId,
+            Guid mapId,
+            byte x,
+            byte y,
+            Direction direction,
+            Player target
+        )
+        {
+            if (animId == Guid.Empty)
+            {
+                return;
+            }
+
+            target.SendPacket(new PlayAnimationPacket(animId, targetType, entityId, mapId, x, y, direction));
+        }
+
         //HoldPlayerPacket
         public static void SendHoldPlayer(Player player, Guid eventId, Guid mapId)
         {
