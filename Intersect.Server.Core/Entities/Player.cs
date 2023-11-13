@@ -467,7 +467,7 @@ namespace Intersect.Server.Entities
             BankInterface = default;
             InShop = default;
 
-            //Clear cooldowns that have expired
+            // Clear cooldowns that have expired
             RemoveStaleItemCooldowns();
             RemoveStaleSpellCooldowns();
 
@@ -478,10 +478,10 @@ namespace Intersect.Server.Entities
                 PacketSender.SendGlobalMsg(Strings.Player.left.ToString(Name, Options.Instance.GameName));
             }
 
-            //Remvoe this player from the online list
+            // Remove this player from the online list
             if (OnlinePlayers?.ContainsKey(Id) ?? false)
             {
-                OnlinePlayers.TryRemove(Id, out Player me);
+                OnlinePlayers.TryRemove(Id, out Player _);
                 OnlineList = OnlinePlayers.Values.ToArray();
             }
 
@@ -496,7 +496,7 @@ namespace Intersect.Server.Entities
                 User?.TryLogout(softLogout);
             }
 
-#if DEBUG
+#if DIAGNOSTIC
             var stackTrace = Environment.StackTrace;
 #else
             var stackTrace = default(string);
@@ -516,7 +516,7 @@ namespace Intersect.Server.Entities
                 Log.Debug($"Completing logout {logoutOperationId}");
             }
 
-            if (!string.IsNullOrWhiteSpace(stackTrace))
+            if (stackTrace != default)
             {
                 Log.Debug(stackTrace);
             }
@@ -526,24 +526,23 @@ namespace Intersect.Server.Entities
             Log.Debug($"Started {nameof(CompleteLogout)}() #{currentExecutionId} on {Name} ({User?.Name})");
 #endif
 
-            Console.WriteLine($"PVIDS for {Id}: {string.Join(", ", Variables.Select(v => v.Id))}");
             try
             {
-                Log.Debug($"Starting save for logout {logoutOperationId}");
+                Log.Diagnostic($"Starting save for logout {logoutOperationId}");
                 var saveResult = User?.Save();
                 switch (saveResult)
                 {
                     case UserSaveResult.Completed:
-                        Log.Debug($"Completed save for logout {logoutOperationId}");
+                        Log.Diagnostic($"Completed save for logout {logoutOperationId}");
                         break;
                     case UserSaveResult.SkippedCouldNotTakeLock:
                         Log.Debug($"Skipped save for logout {logoutOperationId}");
                         break;
                     case UserSaveResult.Failed:
-                        Log.Debug($"Save failed for logout {logoutOperationId}");
+                        Log.Warn($"Save failed for logout {logoutOperationId}");
                         break;
                     case null:
-                        Log.Debug($"Skipped save because {nameof(User)} is null.");
+                        Log.Warn($"Skipped save because {nameof(User)} is null.");
                         break;
                     default:
                         throw new UnreachableException();
@@ -551,7 +550,7 @@ namespace Intersect.Server.Entities
             }
             catch
             {
-                Log.Debug($"Crashed while saving for logout {logoutOperationId}");
+                Log.Warn($"Crashed while saving for logout {logoutOperationId}");
                 throw;
             }
 
