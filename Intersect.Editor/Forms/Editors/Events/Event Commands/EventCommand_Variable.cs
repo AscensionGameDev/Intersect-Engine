@@ -8,6 +8,7 @@ using Intersect.Extensions;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Events.Commands;
+using Intersect.GameObjects.Switches_and_Variables;
 using Intersect.Utilities;
 using VariableMod = Intersect.Enums.VariableMod;
 
@@ -98,29 +99,14 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 
         private VariableDataType GetCurrentDataTypeFilter()
         {
-            var varType = 0;
-
             if (mSelectedVariableId != Guid.Empty)
             {
-                //Determine Variable Type
-                switch (mSelectedVariableType)
-                {
-                    case VariableType.PlayerVariable:
-                        varType = (byte)((PlayerVariableBase.Get(mSelectedVariableId)?.Type) ?? 0);
-                        break;
-                    case VariableType.ServerVariable:
-                        varType = (byte)((ServerVariableBase.Get(mSelectedVariableId)?.Type) ?? 0);
-                        break;
-                    case VariableType.GuildVariable:
-                        varType = (byte)((GuildVariableBase.Get(mSelectedVariableId)?.Type) ?? 0);
-                        break;
-                    case VariableType.UserVariable:
-                        varType = (byte)((UserVariableBase.Get(mSelectedVariableId)?.Type) ?? 0);
-                        break;
-                }
+                return mSelectedVariableType.GetRelatedTable().GetVariableType(mSelectedVariableId);
             }
-
-            return (VariableDataType)varType;
+            else
+            {
+                return 0;
+            }
         }
 
         private void UpdateFormElements()

@@ -8,7 +8,7 @@ using Intersect.GameObjects.Switches_and_Variables;
 using Newtonsoft.Json;
 
 namespace Intersect.Models;
-public abstract class VariableDescriptor<TObject> : DatabaseObject<TObject> where TObject : VariableDescriptor<TObject>
+public abstract class VariableDescriptor<TObject> : DatabaseObject<TObject> where TObject : VariableDescriptor<TObject>, IVariableBase
 {
     [JsonConstructor]
     protected VariableDescriptor(Guid guid) : base(guid)

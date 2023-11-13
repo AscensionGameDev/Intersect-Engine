@@ -42,18 +42,10 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             lblSettingVarSelection = new Label();
             lblSettingVarCurrentValue = new Label();
             btnSettingVariableSelector = new DarkButton();
-            grpStringVariable = new DarkGroupBox();
-            lblStringTextVariables = new Label();
-            grpStringReplace = new DarkGroupBox();
-            txtStringReplace = new DarkTextBox();
-            txtStringFind = new DarkTextBox();
-            lblStringReplace = new Label();
-            lblStringFind = new Label();
-            optReplaceString = new DarkRadioButton();
-            optStaticString = new DarkRadioButton();
-            grpStringSet = new DarkGroupBox();
-            lblStringValue = new Label();
-            txtStringValue = new DarkTextBox();
+            grpBooleanVariable = new DarkGroupBox();
+            rdoBoolVariable = new DarkRadioButton();
+            optBooleanTrue = new DarkRadioButton();
+            optBooleanFalse = new DarkRadioButton();
             grpNumericVariable = new DarkGroupBox();
             optNumericRightShift = new DarkRadioButton();
             optNumericLeftShift = new DarkRadioButton();
@@ -73,23 +65,31 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             nudLow = new DarkNumericUpDown();
             lblNumericRandomHigh = new Label();
             lblNumericRandomLow = new Label();
-            grpBooleanVariable = new DarkGroupBox();
-            rdoBoolVariable = new DarkRadioButton();
-            optBooleanTrue = new DarkRadioButton();
-            optBooleanFalse = new DarkRadioButton();
+            grpStringVariable = new DarkGroupBox();
+            lblStringTextVariables = new Label();
+            grpStringReplace = new DarkGroupBox();
+            txtStringReplace = new DarkTextBox();
+            txtStringFind = new DarkTextBox();
+            lblStringReplace = new Label();
+            lblStringFind = new Label();
+            optReplaceString = new DarkRadioButton();
+            optStaticString = new DarkRadioButton();
+            grpStringSet = new DarkGroupBox();
+            lblStringValue = new Label();
+            txtStringValue = new DarkTextBox();
             grpSetVariable.SuspendLayout();
             grpSelectVariable.SuspendLayout();
             grpSettingVariable.SuspendLayout();
-            grpStringVariable.SuspendLayout();
-            grpStringReplace.SuspendLayout();
-            grpStringSet.SuspendLayout();
+            grpBooleanVariable.SuspendLayout();
             grpNumericVariable.SuspendLayout();
             grpNumericValues.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)nudNumericValue).BeginInit();
             grpNumericRandom.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)nudHigh).BeginInit();
             ((System.ComponentModel.ISupportInitialize)nudLow).BeginInit();
-            grpBooleanVariable.SuspendLayout();
+            grpStringVariable.SuspendLayout();
+            grpStringReplace.SuspendLayout();
+            grpStringSet.SuspendLayout();
             SuspendLayout();
             // 
             // grpSetVariable
@@ -109,7 +109,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             grpSetVariable.Margin = new Padding(4, 3, 4, 3);
             grpSetVariable.Name = "grpSetVariable";
             grpSetVariable.Padding = new Padding(4, 3, 4, 3);
-            grpSetVariable.Size = new Size(361, 455);
+            grpSetVariable.Size = new Size(361, 430);
             grpSetVariable.TabIndex = 17;
             grpSetVariable.TabStop = false;
             grpSetVariable.Text = "Set Variable";
@@ -165,7 +165,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             // 
             // btnCancel
             // 
-            btnCancel.Location = new System.Drawing.Point(264, 419);
+            btnCancel.Location = new System.Drawing.Point(264, 396);
             btnCancel.Margin = new Padding(4, 3, 4, 3);
             btnCancel.Name = "btnCancel";
             btnCancel.Padding = new Padding(6);
@@ -176,7 +176,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             // 
             // btnSave
             // 
-            btnSave.Location = new System.Drawing.Point(168, 419);
+            btnSave.Location = new System.Drawing.Point(168, 396);
             btnSave.Margin = new Padding(4, 3, 4, 3);
             btnSave.Name = "btnSave";
             btnSave.Padding = new Padding(6);
@@ -189,7 +189,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             // 
             chkSyncParty.AutoSize = true;
             chkSyncParty.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
-            chkSyncParty.Location = new System.Drawing.Point(15, 419);
+            chkSyncParty.Location = new System.Drawing.Point(17, 396);
             chkSyncParty.Margin = new Padding(4, 3, 4, 3);
             chkSyncParty.Name = "chkSyncParty";
             chkSyncParty.Size = new Size(86, 19);
@@ -204,7 +204,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             grpSettingVariable.Controls.Add(lblSettingVarCurrentValue);
             grpSettingVariable.Controls.Add(btnSettingVariableSelector);
             grpSettingVariable.ForeColor = System.Drawing.Color.Gainsboro;
-            grpSettingVariable.Location = new System.Drawing.Point(8, 307);
+            grpSettingVariable.Location = new System.Drawing.Point(8, 302);
             grpSettingVariable.Margin = new Padding(4, 3, 4, 3);
             grpSettingVariable.Name = "grpSettingVariable";
             grpSettingVariable.Padding = new Padding(4, 3, 4, 3);
@@ -245,158 +245,55 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             btnSettingVariableSelector.Text = "Select Variable";
             btnSettingVariableSelector.Click += btnSettingVariableSelector_Click;
             // 
-            // grpStringVariable
+            // grpBooleanVariable
             // 
-            grpStringVariable.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
-            grpStringVariable.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
-            grpStringVariable.Controls.Add(lblStringTextVariables);
-            grpStringVariable.Controls.Add(grpStringReplace);
-            grpStringVariable.Controls.Add(optReplaceString);
-            grpStringVariable.Controls.Add(optStaticString);
-            grpStringVariable.Controls.Add(grpStringSet);
-            grpStringVariable.ForeColor = System.Drawing.Color.Gainsboro;
-            grpStringVariable.Location = new System.Drawing.Point(7, 119);
-            grpStringVariable.Margin = new Padding(4, 3, 4, 3);
-            grpStringVariable.Name = "grpStringVariable";
-            grpStringVariable.Padding = new Padding(4, 3, 4, 3);
-            grpStringVariable.Size = new Size(345, 211);
-            grpStringVariable.TabIndex = 2;
-            grpStringVariable.TabStop = false;
-            grpStringVariable.Text = "String Variable:";
-            grpStringVariable.Visible = false;
+            grpBooleanVariable.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
+            grpBooleanVariable.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
+            grpBooleanVariable.Controls.Add(rdoBoolVariable);
+            grpBooleanVariable.Controls.Add(optBooleanTrue);
+            grpBooleanVariable.Controls.Add(optBooleanFalse);
+            grpBooleanVariable.ForeColor = System.Drawing.Color.Gainsboro;
+            grpBooleanVariable.Location = new System.Drawing.Point(7, 123);
+            grpBooleanVariable.Margin = new Padding(4, 3, 4, 3);
+            grpBooleanVariable.Name = "grpBooleanVariable";
+            grpBooleanVariable.Padding = new Padding(4, 3, 4, 3);
+            grpBooleanVariable.Size = new Size(345, 57);
+            grpBooleanVariable.TabIndex = 1;
+            grpBooleanVariable.TabStop = false;
+            grpBooleanVariable.Text = "Boolean Variable:";
             // 
-            // lblStringTextVariables
+            // rdoBoolVariable
             // 
-            lblStringTextVariables.AutoSize = true;
-            lblStringTextVariables.BackColor = System.Drawing.Color.Transparent;
-            lblStringTextVariables.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Underline, GraphicsUnit.Point);
-            lblStringTextVariables.ForeColor = SystemColors.MenuHighlight;
-            lblStringTextVariables.Location = new System.Drawing.Point(7, 183);
-            lblStringTextVariables.Margin = new Padding(4, 0, 4, 0);
-            lblStringTextVariables.Name = "lblStringTextVariables";
-            lblStringTextVariables.Size = new Size(249, 13);
-            lblStringTextVariables.TabIndex = 68;
-            lblStringTextVariables.Text = "Text variables work with strings. Click here for a list!";
-            lblStringTextVariables.Click += lblStringTextVariables_Click;
+            rdoBoolVariable.AutoSize = true;
+            rdoBoolVariable.Location = new System.Drawing.Point(113, 22);
+            rdoBoolVariable.Margin = new Padding(4, 3, 4, 3);
+            rdoBoolVariable.Name = "rdoBoolVariable";
+            rdoBoolVariable.Size = new Size(97, 19);
+            rdoBoolVariable.TabIndex = 52;
+            rdoBoolVariable.Text = "Variable Value";
+            rdoBoolVariable.CheckedChanged += rdoBoolVariable_CheckedChanged;
             // 
-            // grpStringReplace
+            // optBooleanTrue
             // 
-            grpStringReplace.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
-            grpStringReplace.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
-            grpStringReplace.Controls.Add(txtStringReplace);
-            grpStringReplace.Controls.Add(txtStringFind);
-            grpStringReplace.Controls.Add(lblStringReplace);
-            grpStringReplace.Controls.Add(lblStringFind);
-            grpStringReplace.ForeColor = System.Drawing.Color.Gainsboro;
-            grpStringReplace.Location = new System.Drawing.Point(7, 44);
-            grpStringReplace.Margin = new Padding(4, 3, 4, 3);
-            grpStringReplace.Name = "grpStringReplace";
-            grpStringReplace.Padding = new Padding(4, 3, 4, 3);
-            grpStringReplace.Size = new Size(331, 104);
-            grpStringReplace.TabIndex = 65;
-            grpStringReplace.TabStop = false;
-            grpStringReplace.Text = "Replace";
+            optBooleanTrue.AutoSize = true;
+            optBooleanTrue.Location = new System.Drawing.Point(10, 22);
+            optBooleanTrue.Margin = new Padding(4, 3, 4, 3);
+            optBooleanTrue.Name = "optBooleanTrue";
+            optBooleanTrue.Size = new Size(47, 19);
+            optBooleanTrue.TabIndex = 26;
+            optBooleanTrue.Text = "True";
+            optBooleanTrue.CheckedChanged += optBooleanTrue_CheckedChanged;
             // 
-            // txtStringReplace
+            // optBooleanFalse
             // 
-            txtStringReplace.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
-            txtStringReplace.BorderStyle = BorderStyle.FixedSingle;
-            txtStringReplace.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
-            txtStringReplace.Location = new System.Drawing.Point(90, 60);
-            txtStringReplace.Margin = new Padding(4, 3, 4, 3);
-            txtStringReplace.Name = "txtStringReplace";
-            txtStringReplace.Size = new Size(234, 23);
-            txtStringReplace.TabIndex = 64;
-            // 
-            // txtStringFind
-            // 
-            txtStringFind.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
-            txtStringFind.BorderStyle = BorderStyle.FixedSingle;
-            txtStringFind.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
-            txtStringFind.Location = new System.Drawing.Point(90, 23);
-            txtStringFind.Margin = new Padding(4, 3, 4, 3);
-            txtStringFind.Name = "txtStringFind";
-            txtStringFind.Size = new Size(234, 23);
-            txtStringFind.TabIndex = 63;
-            // 
-            // lblStringReplace
-            // 
-            lblStringReplace.AutoSize = true;
-            lblStringReplace.Location = new System.Drawing.Point(10, 62);
-            lblStringReplace.Margin = new Padding(4, 0, 4, 0);
-            lblStringReplace.Name = "lblStringReplace";
-            lblStringReplace.Size = new Size(48, 15);
-            lblStringReplace.TabIndex = 39;
-            lblStringReplace.Text = "Replace";
-            // 
-            // lblStringFind
-            // 
-            lblStringFind.AutoSize = true;
-            lblStringFind.Location = new System.Drawing.Point(13, 31);
-            lblStringFind.Margin = new Padding(4, 0, 4, 0);
-            lblStringFind.Name = "lblStringFind";
-            lblStringFind.Size = new Size(30, 15);
-            lblStringFind.TabIndex = 40;
-            lblStringFind.Text = "Find";
-            // 
-            // optReplaceString
-            // 
-            optReplaceString.AutoSize = true;
-            optReplaceString.Location = new System.Drawing.Point(72, 22);
-            optReplaceString.Margin = new Padding(4, 3, 4, 3);
-            optReplaceString.Name = "optReplaceString";
-            optReplaceString.Size = new Size(66, 19);
-            optReplaceString.TabIndex = 63;
-            optReplaceString.Text = "Replace";
-            optReplaceString.CheckedChanged += optReplaceString_CheckedChanged;
-            // 
-            // optStaticString
-            // 
-            optStaticString.AutoSize = true;
-            optStaticString.Location = new System.Drawing.Point(10, 22);
-            optStaticString.Margin = new Padding(4, 3, 4, 3);
-            optStaticString.Name = "optStaticString";
-            optStaticString.Size = new Size(41, 19);
-            optStaticString.TabIndex = 51;
-            optStaticString.Text = "Set";
-            optStaticString.CheckedChanged += optStaticString_CheckedChanged;
-            // 
-            // grpStringSet
-            // 
-            grpStringSet.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
-            grpStringSet.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
-            grpStringSet.Controls.Add(lblStringValue);
-            grpStringSet.Controls.Add(txtStringValue);
-            grpStringSet.ForeColor = System.Drawing.Color.Gainsboro;
-            grpStringSet.Location = new System.Drawing.Point(7, 63);
-            grpStringSet.Margin = new Padding(4, 3, 4, 3);
-            grpStringSet.Name = "grpStringSet";
-            grpStringSet.Padding = new Padding(4, 3, 4, 3);
-            grpStringSet.Size = new Size(331, 104);
-            grpStringSet.TabIndex = 67;
-            grpStringSet.TabStop = false;
-            grpStringSet.Text = "Set";
-            // 
-            // lblStringValue
-            // 
-            lblStringValue.AutoSize = true;
-            lblStringValue.Location = new System.Drawing.Point(7, 32);
-            lblStringValue.Margin = new Padding(4, 0, 4, 0);
-            lblStringValue.Name = "lblStringValue";
-            lblStringValue.Size = new Size(38, 15);
-            lblStringValue.TabIndex = 66;
-            lblStringValue.Text = "Value:";
-            // 
-            // txtStringValue
-            // 
-            txtStringValue.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
-            txtStringValue.BorderStyle = BorderStyle.FixedSingle;
-            txtStringValue.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
-            txtStringValue.Location = new System.Drawing.Point(83, 29);
-            txtStringValue.Margin = new Padding(4, 3, 4, 3);
-            txtStringValue.Name = "txtStringValue";
-            txtStringValue.Size = new Size(241, 23);
-            txtStringValue.TabIndex = 62;
+            optBooleanFalse.AutoSize = true;
+            optBooleanFalse.Location = new System.Drawing.Point(60, 22);
+            optBooleanFalse.Margin = new Padding(4, 3, 4, 3);
+            optBooleanFalse.Name = "optBooleanFalse";
+            optBooleanFalse.Size = new Size(51, 19);
+            optBooleanFalse.TabIndex = 25;
+            optBooleanFalse.Text = "False";
+            optBooleanFalse.CheckedChanged += optBooleanFalse_CheckedChanged;
             // 
             // grpNumericVariable
             // 
@@ -638,55 +535,158 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             lblNumericRandomLow.TabIndex = 40;
             lblNumericRandomLow.Text = "Low";
             // 
-            // grpBooleanVariable
+            // grpStringVariable
             // 
-            grpBooleanVariable.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
-            grpBooleanVariable.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
-            grpBooleanVariable.Controls.Add(rdoBoolVariable);
-            grpBooleanVariable.Controls.Add(optBooleanTrue);
-            grpBooleanVariable.Controls.Add(optBooleanFalse);
-            grpBooleanVariable.ForeColor = System.Drawing.Color.Gainsboro;
-            grpBooleanVariable.Location = new System.Drawing.Point(7, 123);
-            grpBooleanVariable.Margin = new Padding(4, 3, 4, 3);
-            grpBooleanVariable.Name = "grpBooleanVariable";
-            grpBooleanVariable.Padding = new Padding(4, 3, 4, 3);
-            grpBooleanVariable.Size = new Size(345, 57);
-            grpBooleanVariable.TabIndex = 1;
-            grpBooleanVariable.TabStop = false;
-            grpBooleanVariable.Text = "Boolean Variable:";
+            grpStringVariable.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
+            grpStringVariable.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
+            grpStringVariable.Controls.Add(lblStringTextVariables);
+            grpStringVariable.Controls.Add(grpStringReplace);
+            grpStringVariable.Controls.Add(optReplaceString);
+            grpStringVariable.Controls.Add(optStaticString);
+            grpStringVariable.Controls.Add(grpStringSet);
+            grpStringVariable.ForeColor = System.Drawing.Color.Gainsboro;
+            grpStringVariable.Location = new System.Drawing.Point(7, 119);
+            grpStringVariable.Margin = new Padding(4, 3, 4, 3);
+            grpStringVariable.Name = "grpStringVariable";
+            grpStringVariable.Padding = new Padding(4, 3, 4, 3);
+            grpStringVariable.Size = new Size(345, 211);
+            grpStringVariable.TabIndex = 2;
+            grpStringVariable.TabStop = false;
+            grpStringVariable.Text = "String Variable:";
+            grpStringVariable.Visible = false;
             // 
-            // rdoBoolVariable
+            // lblStringTextVariables
             // 
-            rdoBoolVariable.AutoSize = true;
-            rdoBoolVariable.Location = new System.Drawing.Point(113, 22);
-            rdoBoolVariable.Margin = new Padding(4, 3, 4, 3);
-            rdoBoolVariable.Name = "rdoBoolVariable";
-            rdoBoolVariable.Size = new Size(97, 19);
-            rdoBoolVariable.TabIndex = 52;
-            rdoBoolVariable.Text = "Variable Value";
-            rdoBoolVariable.CheckedChanged += rdoBoolVariable_CheckedChanged;
+            lblStringTextVariables.AutoSize = true;
+            lblStringTextVariables.BackColor = System.Drawing.Color.Transparent;
+            lblStringTextVariables.Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Underline, GraphicsUnit.Point);
+            lblStringTextVariables.ForeColor = SystemColors.MenuHighlight;
+            lblStringTextVariables.Location = new System.Drawing.Point(7, 183);
+            lblStringTextVariables.Margin = new Padding(4, 0, 4, 0);
+            lblStringTextVariables.Name = "lblStringTextVariables";
+            lblStringTextVariables.Size = new Size(249, 13);
+            lblStringTextVariables.TabIndex = 68;
+            lblStringTextVariables.Text = "Text variables work with strings. Click here for a list!";
+            lblStringTextVariables.Click += lblStringTextVariables_Click;
             // 
-            // optBooleanTrue
+            // grpStringReplace
             // 
-            optBooleanTrue.AutoSize = true;
-            optBooleanTrue.Location = new System.Drawing.Point(10, 22);
-            optBooleanTrue.Margin = new Padding(4, 3, 4, 3);
-            optBooleanTrue.Name = "optBooleanTrue";
-            optBooleanTrue.Size = new Size(47, 19);
-            optBooleanTrue.TabIndex = 26;
-            optBooleanTrue.Text = "True";
-            optBooleanTrue.CheckedChanged += optBooleanTrue_CheckedChanged;
+            grpStringReplace.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
+            grpStringReplace.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
+            grpStringReplace.Controls.Add(txtStringReplace);
+            grpStringReplace.Controls.Add(txtStringFind);
+            grpStringReplace.Controls.Add(lblStringReplace);
+            grpStringReplace.Controls.Add(lblStringFind);
+            grpStringReplace.ForeColor = System.Drawing.Color.Gainsboro;
+            grpStringReplace.Location = new System.Drawing.Point(7, 44);
+            grpStringReplace.Margin = new Padding(4, 3, 4, 3);
+            grpStringReplace.Name = "grpStringReplace";
+            grpStringReplace.Padding = new Padding(4, 3, 4, 3);
+            grpStringReplace.Size = new Size(331, 104);
+            grpStringReplace.TabIndex = 65;
+            grpStringReplace.TabStop = false;
+            grpStringReplace.Text = "Replace";
             // 
-            // optBooleanFalse
+            // txtStringReplace
             // 
-            optBooleanFalse.AutoSize = true;
-            optBooleanFalse.Location = new System.Drawing.Point(60, 22);
-            optBooleanFalse.Margin = new Padding(4, 3, 4, 3);
-            optBooleanFalse.Name = "optBooleanFalse";
-            optBooleanFalse.Size = new Size(51, 19);
-            optBooleanFalse.TabIndex = 25;
-            optBooleanFalse.Text = "False";
-            optBooleanFalse.CheckedChanged += optBooleanFalse_CheckedChanged;
+            txtStringReplace.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
+            txtStringReplace.BorderStyle = BorderStyle.FixedSingle;
+            txtStringReplace.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+            txtStringReplace.Location = new System.Drawing.Point(90, 60);
+            txtStringReplace.Margin = new Padding(4, 3, 4, 3);
+            txtStringReplace.Name = "txtStringReplace";
+            txtStringReplace.Size = new Size(234, 23);
+            txtStringReplace.TabIndex = 64;
+            // 
+            // txtStringFind
+            // 
+            txtStringFind.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
+            txtStringFind.BorderStyle = BorderStyle.FixedSingle;
+            txtStringFind.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+            txtStringFind.Location = new System.Drawing.Point(90, 23);
+            txtStringFind.Margin = new Padding(4, 3, 4, 3);
+            txtStringFind.Name = "txtStringFind";
+            txtStringFind.Size = new Size(234, 23);
+            txtStringFind.TabIndex = 63;
+            // 
+            // lblStringReplace
+            // 
+            lblStringReplace.AutoSize = true;
+            lblStringReplace.Location = new System.Drawing.Point(10, 62);
+            lblStringReplace.Margin = new Padding(4, 0, 4, 0);
+            lblStringReplace.Name = "lblStringReplace";
+            lblStringReplace.Size = new Size(48, 15);
+            lblStringReplace.TabIndex = 39;
+            lblStringReplace.Text = "Replace";
+            // 
+            // lblStringFind
+            // 
+            lblStringFind.AutoSize = true;
+            lblStringFind.Location = new System.Drawing.Point(13, 31);
+            lblStringFind.Margin = new Padding(4, 0, 4, 0);
+            lblStringFind.Name = "lblStringFind";
+            lblStringFind.Size = new Size(30, 15);
+            lblStringFind.TabIndex = 40;
+            lblStringFind.Text = "Find";
+            // 
+            // optReplaceString
+            // 
+            optReplaceString.AutoSize = true;
+            optReplaceString.Location = new System.Drawing.Point(72, 22);
+            optReplaceString.Margin = new Padding(4, 3, 4, 3);
+            optReplaceString.Name = "optReplaceString";
+            optReplaceString.Size = new Size(66, 19);
+            optReplaceString.TabIndex = 63;
+            optReplaceString.Text = "Replace";
+            optReplaceString.CheckedChanged += optReplaceString_CheckedChanged;
+            // 
+            // optStaticString
+            // 
+            optStaticString.AutoSize = true;
+            optStaticString.Location = new System.Drawing.Point(10, 22);
+            optStaticString.Margin = new Padding(4, 3, 4, 3);
+            optStaticString.Name = "optStaticString";
+            optStaticString.Size = new Size(41, 19);
+            optStaticString.TabIndex = 51;
+            optStaticString.Text = "Set";
+            optStaticString.CheckedChanged += optStaticString_CheckedChanged;
+            // 
+            // grpStringSet
+            // 
+            grpStringSet.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
+            grpStringSet.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
+            grpStringSet.Controls.Add(lblStringValue);
+            grpStringSet.Controls.Add(txtStringValue);
+            grpStringSet.ForeColor = System.Drawing.Color.Gainsboro;
+            grpStringSet.Location = new System.Drawing.Point(7, 63);
+            grpStringSet.Margin = new Padding(4, 3, 4, 3);
+            grpStringSet.Name = "grpStringSet";
+            grpStringSet.Padding = new Padding(4, 3, 4, 3);
+            grpStringSet.Size = new Size(331, 104);
+            grpStringSet.TabIndex = 67;
+            grpStringSet.TabStop = false;
+            grpStringSet.Text = "Set";
+            // 
+            // lblStringValue
+            // 
+            lblStringValue.AutoSize = true;
+            lblStringValue.Location = new System.Drawing.Point(7, 32);
+            lblStringValue.Margin = new Padding(4, 0, 4, 0);
+            lblStringValue.Name = "lblStringValue";
+            lblStringValue.Size = new Size(38, 15);
+            lblStringValue.TabIndex = 66;
+            lblStringValue.Text = "Value:";
+            // 
+            // txtStringValue
+            // 
+            txtStringValue.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
+            txtStringValue.BorderStyle = BorderStyle.FixedSingle;
+            txtStringValue.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+            txtStringValue.Location = new System.Drawing.Point(83, 29);
+            txtStringValue.Margin = new Padding(4, 3, 4, 3);
+            txtStringValue.Name = "txtStringValue";
+            txtStringValue.Size = new Size(241, 23);
+            txtStringValue.TabIndex = 62;
             // 
             // EventCommandVariable
             // 
@@ -697,19 +697,15 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             Controls.Add(grpSetVariable);
             Margin = new Padding(4, 3, 4, 3);
             Name = "EventCommandVariable";
-            Size = new Size(369, 465);
+            Size = new Size(369, 438);
             grpSetVariable.ResumeLayout(false);
             grpSetVariable.PerformLayout();
             grpSelectVariable.ResumeLayout(false);
             grpSelectVariable.PerformLayout();
             grpSettingVariable.ResumeLayout(false);
             grpSettingVariable.PerformLayout();
-            grpStringVariable.ResumeLayout(false);
-            grpStringVariable.PerformLayout();
-            grpStringReplace.ResumeLayout(false);
-            grpStringReplace.PerformLayout();
-            grpStringSet.ResumeLayout(false);
-            grpStringSet.PerformLayout();
+            grpBooleanVariable.ResumeLayout(false);
+            grpBooleanVariable.PerformLayout();
             grpNumericVariable.ResumeLayout(false);
             grpNumericVariable.PerformLayout();
             grpNumericValues.ResumeLayout(false);
@@ -719,8 +715,12 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             grpNumericRandom.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)nudHigh).EndInit();
             ((System.ComponentModel.ISupportInitialize)nudLow).EndInit();
-            grpBooleanVariable.ResumeLayout(false);
-            grpBooleanVariable.PerformLayout();
+            grpStringVariable.ResumeLayout(false);
+            grpStringVariable.PerformLayout();
+            grpStringReplace.ResumeLayout(false);
+            grpStringReplace.PerformLayout();
+            grpStringSet.ResumeLayout(false);
+            grpStringSet.PerformLayout();
             ResumeLayout(false);
         }
 
