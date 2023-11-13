@@ -1930,7 +1930,7 @@ Tick timer saved in server config.json.";
             public static LocalizedString commonevent = @"Start Common Event: {00}";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString CommonEventInstanced = @"Start Common Event For All on Instance: {00} (Overworld override: {01})";
+            public static LocalizedString CommonEventInstanced = @"Start Common Event For All on Instance: {00} (Allow in overworld: {01})";
 
             public static LocalizedString completetask = @"Complete Quest Task [Quest: {00}, Task: {01}]";
 
@@ -3436,14 +3436,14 @@ Tick timer saved in server config.json.";
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString AllInInstance = "Run for all players in instance?";
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString AllowInOverworld = "Even on Overworld?";
+
             public static LocalizedString cancel = @"Cancel";
 
             public static LocalizedString label = @"Common Event:";
 
             public static LocalizedString okay = @"Ok";
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString OverworldOverride = "Even on Overworld?";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString OverworldOverrideTooltip = "WARNING: THIS WILL RUN FOR (ALMOST) ALL USERS, USE AT YOUR OWN RISK!";

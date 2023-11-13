@@ -767,7 +767,7 @@ namespace Intersect.Editor.Forms.Editors.Events
         {
             if (command.AllInInstance)
             {
-                return Strings.EventCommandList.CommonEventInstanced.ToString(EventBase.GetName(command.EventId), command.OverworldOverride);
+                return Strings.EventCommandList.CommonEventInstanced.ToString(EventBase.GetName(command.EventId), command.AllowInOverworld);
             }
 
             return Strings.EventCommandList.commonevent.ToString(EventBase.GetName(command.EventId));

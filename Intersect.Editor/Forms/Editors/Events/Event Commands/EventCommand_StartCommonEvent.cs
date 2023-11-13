@@ -27,7 +27,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 
             cmbEvent.SelectedIndex = EventBase.ListIndex(refCommand.EventId);
             chkAllInInstance.Checked = refCommand.AllInInstance;
-            chkOverworldOverride.Checked = refCommand.OverworldOverride;
+            chkOverworldOverride.Checked = refCommand.AllowInOverworld;
             chkOverworldOverride.Enabled = chkAllInInstance.Checked;
         }
 
@@ -36,8 +36,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             grpCommonEvent.Text = Strings.EventStartCommonEvent.title;
             lblCommonEvent.Text = Strings.EventStartCommonEvent.label;
             chkAllInInstance.Text = Strings.EventStartCommonEvent.AllInInstance;
-            chkOverworldOverride.Text = Strings.EventStartCommonEvent.OverworldOverride;
-
+            chkOverworldOverride.Text = Strings.EventStartCommonEvent.AllowInOverworld;
 
             ToolTip overworldWarningTooltip = new ToolTip()
             {
