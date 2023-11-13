@@ -765,6 +765,11 @@ namespace Intersect.Editor.Forms.Editors.Events
 
         private static string GetCommandText(StartCommmonEventCommand command, MapInstance map)
         {
+            if (command.AllInInstance)
+            {
+                return Strings.EventCommandList.CommonEventInstanced.ToString(EventBase.GetName(command.EventId), command.OverworldOverride);
+            }
+
             return Strings.EventCommandList.commonevent.ToString(EventBase.GetName(command.EventId));
         }
 

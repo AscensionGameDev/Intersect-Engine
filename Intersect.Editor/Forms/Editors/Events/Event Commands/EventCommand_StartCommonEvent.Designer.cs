@@ -31,6 +31,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         private void InitializeComponent()
         {
             grpCommonEvent = new DarkGroupBox();
+            chkOverworldOverride = new CheckBox();
             chkAllInInstance = new CheckBox();
             cmbEvent = new DarkComboBox();
             lblCommonEvent = new Label();
@@ -43,6 +44,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             // 
             grpCommonEvent.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
             grpCommonEvent.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
+            grpCommonEvent.Controls.Add(chkOverworldOverride);
             grpCommonEvent.Controls.Add(chkAllInInstance);
             grpCommonEvent.Controls.Add(cmbEvent);
             grpCommonEvent.Controls.Add(lblCommonEvent);
@@ -53,10 +55,21 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             grpCommonEvent.Margin = new Padding(4, 3, 4, 3);
             grpCommonEvent.Name = "grpCommonEvent";
             grpCommonEvent.Padding = new Padding(4, 3, 4, 3);
-            grpCommonEvent.Size = new Size(290, 145);
+            grpCommonEvent.Size = new Size(290, 167);
             grpCommonEvent.TabIndex = 17;
             grpCommonEvent.TabStop = false;
             grpCommonEvent.Text = "Start Common Event";
+            // 
+            // chkOverworldOverride
+            // 
+            chkOverworldOverride.AutoSize = true;
+            chkOverworldOverride.Location = new System.Drawing.Point(30, 86);
+            chkOverworldOverride.Margin = new Padding(4, 3, 4, 3);
+            chkOverworldOverride.Name = "chkOverworldOverride";
+            chkOverworldOverride.Size = new Size(131, 19);
+            chkOverworldOverride.TabIndex = 66;
+            chkOverworldOverride.Text = "Even on Overworld?";
+            chkOverworldOverride.UseVisualStyleBackColor = true;
             // 
             // chkAllInInstance
             // 
@@ -68,6 +81,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             chkAllInInstance.TabIndex = 65;
             chkAllInInstance.Text = "Run for all players in instance?";
             chkAllInInstance.UseVisualStyleBackColor = true;
+            chkAllInInstance.CheckedChanged += chkAllInInstance_CheckedChanged;
             // 
             // cmbEvent
             // 
@@ -102,7 +116,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             // 
             // btnCancel
             // 
-            btnCancel.Location = new System.Drawing.Point(196, 112);
+            btnCancel.Location = new System.Drawing.Point(195, 129);
             btnCancel.Margin = new Padding(4, 3, 4, 3);
             btnCancel.Name = "btnCancel";
             btnCancel.Padding = new Padding(6);
@@ -113,7 +127,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             // 
             // btnSave
             // 
-            btnSave.Location = new System.Drawing.Point(8, 112);
+            btnSave.Location = new System.Drawing.Point(102, 129);
             btnSave.Margin = new Padding(4, 3, 4, 3);
             btnSave.Name = "btnSave";
             btnSave.Padding = new Padding(6);
@@ -131,7 +145,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             Controls.Add(grpCommonEvent);
             Margin = new Padding(4, 3, 4, 3);
             Name = "EventCommandStartCommonEvent";
-            Size = new Size(300, 152);
+            Size = new Size(300, 175);
             grpCommonEvent.ResumeLayout(false);
             grpCommonEvent.PerformLayout();
             ResumeLayout(false);
@@ -145,5 +159,6 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         private Label lblCommonEvent;
         private DarkComboBox cmbEvent;
         private CheckBox chkAllInInstance;
+        private CheckBox chkOverworldOverride;
     }
 }

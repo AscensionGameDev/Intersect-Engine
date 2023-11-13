@@ -326,6 +326,11 @@ namespace Intersect.Server.Entities.Events
                 }
             }
 
+            if (player.MapInstanceId == Guid.Empty && !command.OverworldOverride)
+            {
+                return;
+            }
+
             if (command.AllInInstance)
             {
                 foreach (var instanceMember in Globals.OnlineList.Where(pl => pl.MapInstanceId == player.MapInstanceId && pl.Id != player.Id).ToArray())

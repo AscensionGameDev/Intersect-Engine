@@ -286,6 +286,8 @@ namespace Intersect.GameObjects.Events.Commands
 
         public bool AllInInstance { get; set;  }
 
+        public bool OverworldOverride { get; set; }
+
         public Guid EventId { get; set; }
     }
 

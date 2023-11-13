@@ -21,12 +21,14 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             mMyCommand = refCommand;
             mEventEditor = editor;
             InitLocalization();
-            
+
             cmbEvent.Items.Clear();
             cmbEvent.Items.AddRange(EventBase.Names);
-            
+
             cmbEvent.SelectedIndex = EventBase.ListIndex(refCommand.EventId);
             chkAllInInstance.Checked = refCommand.AllInInstance;
+            chkOverworldOverride.Checked = refCommand.OverworldOverride;
+            chkOverworldOverride.Enabled = chkAllInInstance.Checked;
         }
 
         private void InitLocalization()
@@ -34,6 +36,17 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             grpCommonEvent.Text = Strings.EventStartCommonEvent.title;
             lblCommonEvent.Text = Strings.EventStartCommonEvent.label;
             chkAllInInstance.Text = Strings.EventStartCommonEvent.AllInInstance;
+            chkOverworldOverride.Text = Strings.EventStartCommonEvent.OverworldOverride;
+
+
+            ToolTip overworldWarningTooltip = new ToolTip()
+            {
+                InitialDelay = 1000,
+                ReshowDelay = 500,
+            };
+
+            overworldWarningTooltip.SetToolTip(chkOverworldOverride, Strings.EventStartCommonEvent.OverworldOverrideTooltip.ToString());
+
             btnSave.Text = Strings.EventStartCommonEvent.okay;
             btnCancel.Text = Strings.EventStartCommonEvent.cancel;
         }
@@ -48,6 +61,15 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         private void btnCancel_Click(object sender, EventArgs e)
         {
             mEventEditor.CancelCommandEdit();
+        }
+
+        private void chkAllInInstance_CheckedChanged(object sender, EventArgs e)
+        {
+            if (!chkAllInInstance.Checked)
+            {
+                chkOverworldOverride.Checked = false;
+            }
+            chkOverworldOverride.Enabled = chkAllInInstance.Checked;
         }
     }
 
