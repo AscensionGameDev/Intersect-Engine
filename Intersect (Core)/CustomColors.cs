@@ -82,8 +82,8 @@ namespace Intersect
             public Dictionary<string, LabelColor> Players = new Dictionary<string, LabelColor>()
             {
                 {"Normal", new LabelColor(new Color(255, 255, 255, 255), Color.Black, new Color(180, 0, 0, 0))},
-                {"PartyMember", new LabelColor(new Color(255, 70, 192, 219), Color.Black, new Color(180, 0, 0, 0))},
-                {"GuildMember", new LabelColor(new Color(255, 5, 179, 26), Color.Black, new Color(180, 0, 0, 0))},
+                {"Party", new LabelColor(new Color(255, 70, 192, 219), Color.Black, new Color(180, 0, 0, 0))},
+                {"Guild", new LabelColor(new Color(255, 5, 179, 26), Color.Black, new Color(180, 0, 0, 0))},
                 {"Hostile", new LabelColor(new Color(255, 255, 81, 0), Color.Black, new Color(180, 0, 0, 0))},
                 {"Moderator", new LabelColor(new Color(255, 0, 255, 255), Color.Black, new Color(180, 0, 0, 0))},
                 {"Admin", new LabelColor(new Color(255, 255, 255, 0), Color.Black, new Color(180, 0, 0, 0))},

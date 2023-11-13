@@ -2412,14 +2412,14 @@ namespace Intersect.Client.Entities
             if (Globals.Me.Id != Id)
             {
                 // Party member names
-                if (Globals.Me.IsInMyParty(this) && CustomColors.Names.Players.TryGetValue("PartyMember", out var partyColors))
+                if (Globals.Me.IsInMyParty(this) && CustomColors.Names.Players.TryGetValue(nameof(Party), out var partyColors))
                 {
                     textColor = partyColors.Name;
                     borderColor = partyColors.Outline;
                     backgroundColor = partyColors.Background;
                 }
                 // Guildies
-                else if (Globals.Me.IsInGuild && Guild == Globals.Me.Guild && CustomColors.Names.Players.TryGetValue("GuildMember", out var guildColors))
+                else if (Globals.Me.IsInGuild && Guild == Globals.Me.Guild && CustomColors.Names.Players.TryGetValue(nameof(Guild), out var guildColors))
                 {
                     textColor = guildColors.Name;
                     borderColor = guildColors.Outline;
@@ -2445,7 +2445,7 @@ namespace Intersect.Client.Entities
                 return true;
             }
 
-            return Globals.Me.IsInMyParty(en) || Globals.Me.IsInMyGuild(en) || en.MapInstance.ZoneType == MapZone.Safe;
+            return IsInMyParty(en) || IsInMyGuild(en) || en.MapInstance.ZoneType == MapZone.Safe;
         }
 
         private void DrawNameAndLabels(Color textColor, Color borderColor, Color backgroundColor)

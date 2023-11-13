@@ -509,7 +509,7 @@ namespace Intersect.Client.Entities
             }
 
             // Yourself is always an ally
-            if (en.Id == Globals.Me.Id)
+            if (en.Id == Id)
             {
                 return true;
             }
