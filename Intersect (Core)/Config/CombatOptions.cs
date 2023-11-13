@@ -72,6 +72,6 @@
         /// <summary>
         /// If enabled, this allows players to cast friendly spells on players who aren't in their guild or party
         /// </summary>
-        public bool EnableSafeZoneAllPlayersFriendly { get; set; } = false;
+        public bool EnableAllPlayersFriendlyInSafeZone { get; set; } = false;
     }
 }
