@@ -18,7 +18,8 @@ namespace Intersect.Server.Networking.Lidgren
     internal partial class ServerNetwork : AbstractNetwork, IServer
     {
         /// <summary>
-        /// This is our smart thread pool which we use to handle packet processing and packet sending. Min/Max Number of Threads & Idle Timeouts are set via server config.
+        /// This is our smart thread pool which we use to handle packet processing and packet sending.
+        /// Min/Max Number of Threads and Idle Timeouts are set via server config.
         /// </summary>
         public static SmartThreadPool Pool = new SmartThreadPool(
             new STPStartInfo()
@@ -118,8 +119,16 @@ namespace Intersect.Server.Networking.Lidgren
                         break;
                 }
             }
+#if DIAGNOSTIC
             catch (Exception exception)
+#endif
+            catch
             {
+#if DIAGNOSTIC
+                Log.Diagnostic(exception);
+#else
+                // ignored
+#endif
             }
         }
 

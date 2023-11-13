@@ -18,7 +18,7 @@ public class ServerNetwork : AbstractNetwork, IServer
 {
     /// <summary>
     ///     This is our smart thread pool which we use to handle packet processing and packet sending. Min/Max Number of
-    ///     Threads & Idle Timeouts are set via server config.
+    ///     Threads and Idle Timeouts are set via server config.
     /// </summary>
     public static readonly SmartThreadPool Pool = new(
         new STPStartInfo

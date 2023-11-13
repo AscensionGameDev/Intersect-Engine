@@ -11,7 +11,7 @@ namespace Intersect.Client.Framework.Content
         /// <typeparam name="TAsset"></typeparam>
         /// <param name="contentType">The type of asset to try and search for.</param>
         /// <param name="assetName">The name/alias of the asset to try and search for.</param>
-        /// <returns>Returns the specified <see cref="TAsset"/> if it exists, if not returns <see cref="null"/></returns>
+        /// <returns>Returns the specified <see cref="TAsset"/> if it exists, if not returns <see langword="null" /></returns>
         TAsset Find<TAsset>(ContentTypes contentType, string assetName) where TAsset : class, IAsset;
 
         /// <summary>
@@ -29,7 +29,7 @@ namespace Intersect.Client.Framework.Content
         /// </summary>
         /// <typeparam name="TAsset"></typeparam>
         /// <param name="context">The <see cref="IPluginContext"/> to load the embedded asset from.</param>
-        /// <param name="contentType">The type of asset to load./param>
+        /// <param name="contentType">The type of asset to load./</param>
         /// <param name="assetName">The name of the file within the binary's manifest file.</param>
         /// <returns>Returns an instance of <see cref="TAsset"/></returns>
         TAsset LoadEmbedded<TAsset>(
@@ -43,7 +43,7 @@ namespace Intersect.Client.Framework.Content
         /// </summary>
         /// <typeparam name="TAsset"></typeparam>
         /// <param name="context">The <see cref="IPluginContext"/> to load the embedded asset from.</param>
-        /// <param name="contentType">The type of asset to load./param>
+        /// <param name="contentType">The type of asset to load.</param>
         /// <param name="assetName">The name of the file within the binary's manifest file.</param>
         /// <param name="assetAlias">The alias to give to the asset for future reference.</param>
         /// <returns>Returns an instance of <see cref="TAsset"/></returns>

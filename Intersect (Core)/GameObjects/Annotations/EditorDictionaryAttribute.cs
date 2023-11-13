@@ -32,6 +32,7 @@ namespace Intersect.GameObjects.Annotations
 
         public string Name { get; }
 
+        [Obsolete("We want to re-implement strings to be object-oriented.")]
         public override string Format(Type stringsType, object value)
         {
             if (stringsType == default)
