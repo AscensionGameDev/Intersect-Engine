@@ -68,5 +68,10 @@
         /// If enabled, this allows entities to turn around while casting
         /// </summary>
         public bool EnableTurnAroundWhileCasting = false;
+
+        /// <summary>
+        /// If enabled, this allows players to cast friendly spells on players who aren't in their guild or party
+        /// </summary>
+        public bool EnableSafeZoneAllPlayersFriendly = false;
     }
 }
