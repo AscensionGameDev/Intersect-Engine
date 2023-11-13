@@ -74,6 +74,9 @@ jobs:
           ~/.nuget/packages
           Intersect*/obj/
 
+    - name: Apply environment patches
+      run: git apply disable-windows-editor.patch
+
     - name: Restore NuGet Packages
       if: steps.cache-binaries.outputs.cache-hit != 'true' && steps.cache-nuget.outputs.cache-hit != 'true' || inputs.forceRestore == true
       run: dotnet restore Intersect.sln
