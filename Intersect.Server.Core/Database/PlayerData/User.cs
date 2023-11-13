@@ -32,6 +32,9 @@ namespace Intersect.Server.Database.PlayerData
     [ApiVisibility(ApiVisibility.Restricted | ApiVisibility.Private)]
     public partial class User
     {
+        private long _lastSave;
+        private readonly object _lastSaveLock = new();
+
         private static readonly ConcurrentDictionary<Guid, User> OnlineUsers = new();
 
         [JsonIgnore][NotMapped] private readonly object mSavingLock = new();
@@ -191,7 +194,11 @@ namespace Intersect.Server.Database.PlayerData
 
                     Players.Add(newCharacter);
 
+                    Console.WriteLine($"[AddCharacter Before Validate] User PV IDs for {Id}:\n\t{string.Join("\n\t", Players.Select(p => $"Player PV IDs for {p.Id}: {string.Join(", ", p.Variables.Select(v => v.Id))}"))}");
+
                     Player.Validate(newCharacter);
+
+                    Console.WriteLine($"[AddCharacter Before DetectChanges] User PV IDs for {Id}:\n\t{string.Join("\n\t", Players.Select(p => $"Player PV IDs for {p.Id}: {string.Join(", ", p.Variables.Select(v => v.Id))}"))}");
 
                     context.ChangeTracker.DetectChanges();
 
@@ -200,7 +207,11 @@ namespace Intersect.Server.Database.PlayerData
                     //If we have a new character, intersect already generated the id.. which means the change tracker is gonna see them as modified and not added.. we need to manually set their state
                     context.Entry(newCharacter).State = EntityState.Added;
 
+                    Console.WriteLine($"[AddCharacter Before SaveChanges] User PV IDs for {Id}:\n\t{string.Join("\n\t", Players.Select(p => $"Player PV IDs for {p.Id}: {string.Join(", ", p.Variables.Select(v => v.Id))}"))}");
+
                     context.SaveChanges();
+
+                    Console.WriteLine($"[AddCharacter After SaveChanges] User PV IDs for {Id}:\n\t{string.Join("\n\t", Players.Select(p => $"Player PV IDs for {p.Id}: {string.Join(", ", p.Variables.Select(v => v.Id))}"))}");
                 }
             }
             catch (Exception ex)
@@ -225,20 +236,25 @@ namespace Intersect.Server.Database.PlayerData
             {
                 lock (mSavingLock)
                 {
-                    using (var context = DbInterface.CreatePlayerContext(false))
-                    {
-                        context.Users.Update(this);
+                    using var context = DbInterface.CreatePlayerContext(false);
 
-                        context.ChangeTracker.DetectChanges();
+                    context.Users.Update(this);
 
-                        context.StopTrackingUsersExcept(this);
+                    Players.Remove(deleteCharacter);
 
-                        context.Entry(deleteCharacter).State = EntityState.Deleted;
+                    Console.WriteLine($"[DeleteCharacter Before DetectChanges] User PV IDs for {Id}:\n\t{string.Join("\n\t", Players.Select(p => $"Player PV IDs for {p.Id}: {string.Join(", ", p.Variables.Select(v => v.Id))}"))}");
 
-                        Players.Remove(deleteCharacter);
+                    context.ChangeTracker.DetectChanges();
 
-                        context.SaveChanges();
-                    }
+                    context.StopTrackingUsersExcept(this);
+
+                    context.Entry(deleteCharacter).State = EntityState.Deleted;
+
+                    Console.WriteLine($"[DeleteCharacter Before SaveChanges] User PV IDs for {Id}:\n\t{string.Join("\n\t", Players.Select(p => $"Player PV IDs for {p.Id}: {string.Join(", ", p.Variables.Select(v => v.Id))}"))}");
+
+                    context.SaveChanges();
+
+                    Console.WriteLine($"[DeleteCharacter After SaveChanges] User PV IDs for {Id}:\n\t{string.Join("\n\t", Players.Select(p => $"Player PV IDs for {p.Id}: {string.Join(", ", p.Variables.Select(v => v.Id))}"))}");
                 }
             }
             catch (Exception ex)
@@ -294,16 +310,35 @@ namespace Intersect.Server.Database.PlayerData
             CancellationToken cancellationToken = default
         ) => Save(playerContext, force);
 
-        public void Save(bool force) => Save(force: force, create: false);
+        public void SaveWithDebounce(long debounceMs = 5000)
+        {
+            lock (_lastSaveLock)
+            {
+                if (_lastSave < debounceMs + Timing.Global.MillisecondsUtc)
+                {
+                    Console.WriteLine("Skipping save due to debounce");
+                    return;
+                }
+            }
 
-        public void Save(bool force = false, bool create = false) => Save(default, force, create);
+            Save();
+        }
+
+        public UserSaveResult Save(bool force) => Save(force: force, create: false);
+
+        public UserSaveResult Save(bool force = false, bool create = false) => Save(default, force, create);
 
 #if DIAGNOSTIC
         private int _saveCounter = 0;
 #endif
 
-        private void Save(PlayerContext? playerContext, bool force = false, bool create = false)
+        private UserSaveResult Save(PlayerContext? playerContext, bool force = false, bool create = false)
         {
+            lock (_lastSaveLock)
+            {
+                _lastSave = Timing.Global.MillisecondsUtc;
+            }
+
 #if DIAGNOSTIC
             var currentExecutionId = _saveCounter++;
 #endif
@@ -316,17 +351,22 @@ namespace Intersect.Server.Database.PlayerData
             {
                 if (force)
                 {
+                    // Console.WriteLine($"Monitor.Enter [Before] {lockTaken} {Environment.StackTrace}");
                     Monitor.Enter(mSavingLock);
                     lockTaken = true;
+                    // Console.WriteLine($"Monitor.Enter [Before] {lockTaken} {Environment.StackTrace}");
                 }
                 else
                 {
+                    // Console.WriteLine($"Monitor.TryEnter [Before] {lockTaken} {Environment.StackTrace}");
                     Monitor.TryEnter(mSavingLock, 0, ref lockTaken);
+                    // Console.WriteLine($"Monitor.TryEnter [After] {lockTaken} {Environment.StackTrace}");
                 }
 
                 if (!lockTaken)
                 {
-                    return;
+                    Console.WriteLine($"Failed to take lock {Environment.StackTrace}");
+                    return UserSaveResult.SkippedCouldNotTakeLock;
                 }
 
 #if DIAGNOSTIC
@@ -339,16 +379,25 @@ namespace Intersect.Server.Database.PlayerData
                     playerContext = createdContext;
                 }
 
+                Console.WriteLine($"[User.Save Before Add/Update] User PV IDs for {Id}:\n\t{string.Join("\n\t", Players.Select(p => $"Player PV IDs for {p.Id}: {string.Join(", ", p.Variables.Select(v => v.Id))}"))}");
+                // Console.WriteLine($"[User.Save Before Add/Update] User PV States for {Id}:\n\t{string.Join("\n\t", Players.Select(p => $"Player PV States for {p.Id}: {string.Join(", ", p.Variables.Select(v => $"{v.Id} is {playerContext.Entry(v).State}"))}"))}");
+
                 if (create)
                 {
                     playerContext.Users.Add(this);
                 }
                 else
                 {
+                    // playerContext.Attach(this);
                     playerContext.Users.Update(this);
                 }
 
+                Console.WriteLine($"[User.Save Before DetectChanges] User PV IDs for {Id}:\n\t{string.Join("\n\t", Players.Select(p => $"Player PV IDs for {p.Id}: {string.Join(", ", p.Variables.Select(v => v.Id))}"))}");
+                // Console.WriteLine($"[User.Save Before DetectChanges] User PV States for {Id}:\n\t{string.Join("\n\t", Players.Select(p => $"Player PV States for {p.Id}: {string.Join(", ", p.Variables.Select(v => $"{v.Id} is {playerContext.Entry(v).State}"))}"))}");
+
                 playerContext.ChangeTracker.DetectChanges();
+
+                // Console.WriteLine($"[User.Save After DetectChanges] User PV IDs for {Id}:\n\t{string.Join("\n\t", Players.Select(p => $"Player PV IDs for {p.Id}: {string.Join(", ", p.Variables.Select(v => v.Id))}"))}");
 
                 playerContext.StopTrackingUsersExcept(this);
 
@@ -362,11 +411,17 @@ namespace Intersect.Server.Database.PlayerData
                     playerContext.Entry(UserMute).State = EntityState.Detached;
                 }
 
+                // Console.WriteLine($"[User.Save Before SaveChanges] User PV IDs for {Id}:\n\t{string.Join("\n\t", Players.Select(p => $"Player PV IDs for {p.Id}: {string.Join(", ", p.Variables.Select(v => v.Id))}"))}");
+
                 playerContext.SaveChanges();
+
+                // Console.WriteLine($"[User.Save After SaveChanges] User PV IDs for {Id}:\n\t{string.Join("\n\t", Players.Select(p => $"Player PV IDs for {p.Id}: {string.Join(", ", p.Variables.Select(v => v.Id))}"))}");
 
 #if DIAGNOSTIC
                 Log.Debug($"DBOP-B Save({playerContext}, {force}, {create}) #{currentExecutionId} {Name} ({Id})");
 #endif
+
+                return UserSaveResult.Completed;
             }
             catch (DbUpdateConcurrencyException ex)
             {
@@ -424,10 +479,17 @@ namespace Intersect.Server.Database.PlayerData
             {
                 if (lockTaken)
                 {
+                    Console.WriteLine($"Monitor.Exit [Locked] {Environment.StackTrace}");
                     createdContext?.Dispose();
                     Monitor.Exit(mSavingLock);
                 }
+                else
+                {
+                    Console.WriteLine($"Monitor.Exit [Skipping] {Environment.StackTrace}");
+                }
             }
+
+            return UserSaveResult.Failed;
         }
 
         [return: NotNullIfNotNull(nameof(user))]

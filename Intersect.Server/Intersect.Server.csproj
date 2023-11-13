@@ -22,10 +22,6 @@
     <GenerateRuntimeConfigurationFiles>True</GenerateRuntimeConfigurationFiles>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration.ToLower())' == 'nofody'">
-    <DisableFody>true</DisableFody>
-  </PropertyGroup>
-
   <ItemGroup>
     <Compile Remove="Networking\IntersectNetworkServer.cs" />
     <Compile Remove="Networking\IntersectNetworkSocket.cs" />

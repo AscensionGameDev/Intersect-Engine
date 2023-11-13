@@ -238,6 +238,7 @@ public abstract partial class IntersectDbContext<TDbContext> : DbContext, IDbCon
                 .ToArray();
             Log.Error(ex, $"Jackpot! Concurrency Bug For {string.Join(", ", entityTypeNames)} {suffix}");
             Log.Error(concurrencyErrors.ToString());
+            Log.Error(Environment.StackTrace);
 
 #if DEBUG
             Log.Debug($"DBOP-C SaveChanges({acceptAllChangesOnSuccess}) #{currentExecutionId}");

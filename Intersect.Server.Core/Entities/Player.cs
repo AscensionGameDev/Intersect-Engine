@@ -13,6 +13,7 @@ using Intersect.Network;
 using Intersect.Network.Packets.Server;
 using Intersect.Server.Database;
 using Intersect.Server.Database.Logging.Entities;
+using Intersect.Server.Database.PlayerData;
 using Intersect.Server.Database.PlayerData.Players;
 using Intersect.Server.Database.PlayerData.Security;
 using Intersect.Server.Entities.Combat;
@@ -495,21 +496,64 @@ namespace Intersect.Server.Entities
                 User?.TryLogout(softLogout);
             }
 
-            DbInterface.Pool.QueueWorkItem(CompleteLogout);
+#if DEBUG
+            var stackTrace = Environment.StackTrace;
+#else
+            var stackTrace = default(string);
+#endif
+            var logoutOperationId = Guid.NewGuid();
+            DbInterface.Pool.QueueWorkItem(CompleteLogout, logoutOperationId, stackTrace);
         }
 
 #if DIAGNOSTIC
         private int _logoutCounter = 0;
 #endif
 
-        public void CompleteLogout()
+        public void CompleteLogout(Guid logoutOperationId, string? stackTrace = default)
         {
+            if (logoutOperationId != default)
+            {
+                Log.Debug($"Completing logout {logoutOperationId}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(stackTrace))
+            {
+                Log.Debug(stackTrace);
+            }
+
 #if DIAGNOSTIC
             var currentExecutionId = _logoutCounter++;
             Log.Debug($"Started {nameof(CompleteLogout)}() #{currentExecutionId} on {Name} ({User?.Name})");
 #endif
 
-            User?.Save();
+            Console.WriteLine($"PVIDS for {Id}: {string.Join(", ", Variables.Select(v => v.Id))}");
+            try
+            {
+                Log.Debug($"Starting save for logout {logoutOperationId}");
+                var saveResult = User?.Save();
+                switch (saveResult)
+                {
+                    case UserSaveResult.Completed:
+                        Log.Debug($"Completed save for logout {logoutOperationId}");
+                        break;
+                    case UserSaveResult.SkippedCouldNotTakeLock:
+                        Log.Debug($"Skipped save for logout {logoutOperationId}");
+                        break;
+                    case UserSaveResult.Failed:
+                        Log.Debug($"Save failed for logout {logoutOperationId}");
+                        break;
+                    case null:
+                        Log.Debug($"Skipped save because {nameof(User)} is null.");
+                        break;
+                    default:
+                        throw new UnreachableException();
+                }
+            }
+            catch
+            {
+                Log.Debug($"Crashed while saving for logout {logoutOperationId}");
+                throw;
+            }
 
             lock (_savingLock)
             {
@@ -541,8 +585,8 @@ namespace Intersect.Server.Entities
                     {
                         if (CombatTimer < Timing.Global.Milliseconds)
                         {
+                            Log.Debug($"Combat timer expired for player {Id}, logging out.");
                             Logout();
-
                             return;
                         }
                     }
