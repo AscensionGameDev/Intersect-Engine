@@ -30,22 +30,20 @@ partial class FrmVariableSelector
     {
         btnOk = new DarkUI.Controls.DarkButton();
         btnCancel = new DarkUI.Controls.DarkButton();
-        darkGroupBox1 = new DarkUI.Controls.DarkGroupBox();
+        grpSelection = new DarkUI.Controls.DarkGroupBox();
         grpVariable = new DarkUI.Controls.DarkGroupBox();
-        lblBariable = new Label();
         cmbVariables = new DarkUI.Controls.DarkComboBox();
-        grpVariablelType = new DarkUI.Controls.DarkGroupBox();
-        lblDir = new Label();
+        grpVariableType = new DarkUI.Controls.DarkGroupBox();
         cmbVariableType = new DarkUI.Controls.DarkComboBox();
-        darkGroupBox1.SuspendLayout();
+        grpSelection.SuspendLayout();
         grpVariable.SuspendLayout();
-        grpVariablelType.SuspendLayout();
+        grpVariableType.SuspendLayout();
         SuspendLayout();
         // 
         // btnOk
         // 
         btnOk.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-        btnOk.Location = new System.Drawing.Point(90, 232);
+        btnOk.Location = new System.Drawing.Point(90, 203);
         btnOk.Margin = new Padding(4, 3, 4, 3);
         btnOk.Name = "btnOk";
         btnOk.Padding = new Padding(6);
@@ -57,7 +55,7 @@ partial class FrmVariableSelector
         // btnCancel
         // 
         btnCancel.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-        btnCancel.Location = new System.Drawing.Point(194, 232);
+        btnCancel.Location = new System.Drawing.Point(194, 203);
         btnCancel.Margin = new Padding(4, 3, 4, 3);
         btnCancel.Name = "btnCancel";
         btnCancel.Padding = new Padding(6);
@@ -66,49 +64,38 @@ partial class FrmVariableSelector
         btnCancel.Text = "Cancel";
         btnCancel.Click += btnCancel_Click;
         // 
-        // darkGroupBox1
+        // grpSelection
         // 
-        darkGroupBox1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
-        darkGroupBox1.BackColor = System.Drawing.Color.FromArgb(45, 45, 48);
-        darkGroupBox1.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
-        darkGroupBox1.Controls.Add(grpVariable);
-        darkGroupBox1.Controls.Add(grpVariablelType);
-        darkGroupBox1.ForeColor = System.Drawing.Color.Gainsboro;
-        darkGroupBox1.Location = new System.Drawing.Point(13, 12);
-        darkGroupBox1.Margin = new Padding(4, 3, 4, 3);
-        darkGroupBox1.Name = "darkGroupBox1";
-        darkGroupBox1.Padding = new Padding(4, 3, 4, 3);
-        darkGroupBox1.Size = new Size(290, 209);
-        darkGroupBox1.TabIndex = 21;
-        darkGroupBox1.TabStop = false;
-        darkGroupBox1.Text = "Variable Type";
+        grpSelection.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
+        grpSelection.BackColor = System.Drawing.Color.FromArgb(45, 45, 48);
+        grpSelection.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
+        grpSelection.Controls.Add(grpVariable);
+        grpSelection.Controls.Add(grpVariableType);
+        grpSelection.ForeColor = System.Drawing.Color.Gainsboro;
+        grpSelection.Location = new System.Drawing.Point(13, 12);
+        grpSelection.Margin = new Padding(4, 3, 4, 3);
+        grpSelection.Name = "grpSelection";
+        grpSelection.Padding = new Padding(4, 3, 4, 3);
+        grpSelection.Size = new Size(290, 172);
+        grpSelection.TabIndex = 21;
+        grpSelection.TabStop = false;
+        grpSelection.Text = "Select a Variable";
         // 
         // grpVariable
         // 
         grpVariable.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
         grpVariable.BackColor = System.Drawing.Color.FromArgb(45, 45, 48);
         grpVariable.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
-        grpVariable.Controls.Add(lblBariable);
         grpVariable.Controls.Add(cmbVariables);
         grpVariable.ForeColor = System.Drawing.Color.Gainsboro;
-        grpVariable.Location = new System.Drawing.Point(10, 105);
+        grpVariable.Location = new System.Drawing.Point(10, 91);
         grpVariable.Margin = new Padding(4, 3, 4, 3);
         grpVariable.Name = "grpVariable";
         grpVariable.Padding = new Padding(4, 3, 4, 3);
-        grpVariable.Size = new Size(268, 81);
+        grpVariable.Size = new Size(268, 59);
         grpVariable.TabIndex = 18;
         grpVariable.TabStop = false;
         grpVariable.Text = "Variable";
-        // 
-        // lblBariable
-        // 
-        lblBariable.AutoSize = true;
-        lblBariable.Location = new System.Drawing.Point(12, 25);
-        lblBariable.Margin = new Padding(4, 0, 4, 0);
-        lblBariable.Name = "lblBariable";
-        lblBariable.Size = new Size(48, 15);
-        lblBariable.TabIndex = 17;
-        lblBariable.Text = "Variable";
         // 
         // cmbVariables
         // 
@@ -123,7 +110,7 @@ partial class FrmVariableSelector
         cmbVariables.FlatStyle = FlatStyle.Flat;
         cmbVariables.ForeColor = System.Drawing.Color.Gainsboro;
         cmbVariables.FormattingEnabled = true;
-        cmbVariables.Location = new System.Drawing.Point(9, 43);
+        cmbVariables.Location = new System.Drawing.Point(9, 22);
         cmbVariables.Margin = new Padding(4, 3, 4, 3);
         cmbVariables.Name = "cmbVariables";
         cmbVariables.Size = new Size(253, 24);
@@ -132,32 +119,21 @@ partial class FrmVariableSelector
         cmbVariables.TextPadding = new Padding(2);
         cmbVariables.SelectedIndexChanged += cmbVariables_SelectedIndexChanged;
         // 
-        // grpVariablelType
+        // grpVariableType
         // 
-        grpVariablelType.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
-        grpVariablelType.BackColor = System.Drawing.Color.FromArgb(45, 45, 48);
-        grpVariablelType.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
-        grpVariablelType.Controls.Add(lblDir);
-        grpVariablelType.Controls.Add(cmbVariableType);
-        grpVariablelType.ForeColor = System.Drawing.Color.Gainsboro;
-        grpVariablelType.Location = new System.Drawing.Point(10, 22);
-        grpVariablelType.Margin = new Padding(4, 3, 4, 3);
-        grpVariablelType.Name = "grpVariablelType";
-        grpVariablelType.Padding = new Padding(4, 3, 4, 3);
-        grpVariablelType.Size = new Size(268, 77);
-        grpVariablelType.TabIndex = 9;
-        grpVariablelType.TabStop = false;
-        grpVariablelType.Text = "Variable Type";
-        // 
-        // lblDir
-        // 
-        lblDir.AutoSize = true;
-        lblDir.Location = new System.Drawing.Point(11, 25);
-        lblDir.Margin = new Padding(4, 0, 4, 0);
-        lblDir.Name = "lblDir";
-        lblDir.Size = new Size(75, 15);
-        lblDir.TabIndex = 17;
-        lblDir.Text = "Variable Type";
+        grpVariableType.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
+        grpVariableType.BackColor = System.Drawing.Color.FromArgb(45, 45, 48);
+        grpVariableType.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
+        grpVariableType.Controls.Add(cmbVariableType);
+        grpVariableType.ForeColor = System.Drawing.Color.Gainsboro;
+        grpVariableType.Location = new System.Drawing.Point(10, 22);
+        grpVariableType.Margin = new Padding(4, 3, 4, 3);
+        grpVariableType.Name = "grpVariableType";
+        grpVariableType.Padding = new Padding(4, 3, 4, 3);
+        grpVariableType.Size = new Size(268, 63);
+        grpVariableType.TabIndex = 9;
+        grpVariableType.TabStop = false;
+        grpVariableType.Text = "Variable Type";
         // 
         // cmbVariableType
         // 
@@ -172,7 +148,7 @@ partial class FrmVariableSelector
         cmbVariableType.FlatStyle = FlatStyle.Flat;
         cmbVariableType.ForeColor = System.Drawing.Color.Gainsboro;
         cmbVariableType.FormattingEnabled = true;
-        cmbVariableType.Location = new System.Drawing.Point(9, 43);
+        cmbVariableType.Location = new System.Drawing.Point(9, 22);
         cmbVariableType.Margin = new Padding(4, 3, 4, 3);
         cmbVariableType.Name = "cmbVariableType";
         cmbVariableType.Size = new Size(253, 24);
@@ -186,28 +162,25 @@ partial class FrmVariableSelector
         AutoScaleDimensions = new SizeF(7F, 15F);
         AutoScaleMode = AutoScaleMode.Font;
         BackColor = System.Drawing.Color.FromArgb(45, 45, 48);
-        ClientSize = new Size(316, 271);
-        Controls.Add(darkGroupBox1);
+        ClientSize = new Size(316, 242);
+        Controls.Add(grpSelection);
         Controls.Add(btnCancel);
         Controls.Add(btnOk);
         Name = "FrmVariableSelector";
+        StartPosition = FormStartPosition.CenterParent;
         Text = "Variable Selector";
-        darkGroupBox1.ResumeLayout(false);
+        grpSelection.ResumeLayout(false);
         grpVariable.ResumeLayout(false);
-        grpVariable.PerformLayout();
-        grpVariablelType.ResumeLayout(false);
-        grpVariablelType.PerformLayout();
+        grpVariableType.ResumeLayout(false);
         ResumeLayout(false);
     }
 
     #endregion
     private DarkUI.Controls.DarkButton btnOk;
     private DarkUI.Controls.DarkButton btnCancel;
-    private DarkUI.Controls.DarkGroupBox darkGroupBox1;
+    private DarkUI.Controls.DarkGroupBox grpSelection;
     private DarkUI.Controls.DarkGroupBox grpVariable;
-    private Label lblBariable;
     private DarkUI.Controls.DarkComboBox cmbVariables;
-    private DarkUI.Controls.DarkGroupBox grpVariablelType;
-    private Label lblDir;
+    private DarkUI.Controls.DarkGroupBox grpVariableType;
     private DarkUI.Controls.DarkComboBox cmbVariableType;
 }

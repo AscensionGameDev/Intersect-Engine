@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Intersect.Editor.Forms.DockingElements;
+using Intersect.Editor.Localization;
 using Intersect.Enums;
 using Intersect.Extensions;
 using Intersect.GameObjects;
@@ -31,7 +32,7 @@ public partial class FrmVariableSelector : Form
     public FrmVariableSelector(VariableType variableType, Guid variableId, VariableDataType filterType)
     {
         PreInit();
-        
+
         mSelectedVariableId = variableId;
         mSelectedVariableType = variableType;
         mFilterType = filterType;
@@ -62,7 +63,14 @@ public partial class FrmVariableSelector : Form
 
     private void InitLocalization()
     {
-        // Text = Strings.WarpSelection.title;
+        Text = Strings.VariableSelector.Title;
+
+        grpSelection.Text = Strings.VariableSelector.LabelGroup;
+        grpVariableType.Text = Strings.VariableSelector.LabelVariableType;
+        grpVariable.Text = Strings.VariableSelector.LabelVariableValue;
+
+        btnOk.Text = Strings.General.Okay;
+        btnCancel.Text = Strings.General.Cancel;
 
         cmbVariableType.Items.Clear();
         cmbVariableType.Items.AddRange(EnumerableExtensions.GetDescriptions(typeof(VariableType)));
@@ -73,7 +81,7 @@ public partial class FrmVariableSelector : Form
         cmbVariableType.SelectedIndex = (int)mSelectedVariableType;
 
         ReloadVariablesOf(mSelectedVariableType);
-        
+
         cmbVariables.SelectedIndex = mSelectedVariableType.GetRelatedTable().ListIndex(mSelectedVariableId, mFilterType);
 
         mPopulating = false;
@@ -97,8 +105,8 @@ public partial class FrmVariableSelector : Form
         ReloadVariablesOf(mSelectedVariableType);
 
         // Force reset the variable selection
-        if (cmbVariables.Items.Count > 0) 
-        { 
+        if (cmbVariables.Items.Count > 0)
+        {
             cmbVariables.SelectedIndex = 0;
             mSelectedVariableId = mSelectedVariableType.GetRelatedTable().IdFromList(0, mFilterType);
         }

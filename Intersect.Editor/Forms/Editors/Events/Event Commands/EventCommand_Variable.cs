@@ -74,8 +74,6 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             optBooleanTrue.Text = Strings.EventSetVariable.booleantrue;
             optBooleanFalse.Text = Strings.EventSetVariable.booleanfalse;
 
-            // TODO all this shit
-
             //String
             grpStringVariable.Text = Strings.EventSetVariable.stringlabel;
             optStaticString.Text = Strings.EventSetVariable.stringset;
@@ -87,7 +85,18 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             lblStringReplace.Text = Strings.EventSetVariable.stringreplacereplace;
             lblStringTextVariables.Text = Strings.EventSetVariable.stringtip;
 
+            // New variable handling
+            rdoBoolVariable.Text = Strings.EventSetVariable.VariableValue;
+            rdoVariableValue.Text = Strings.EventSetVariable.VariableValue;
+
+            btnSettingVariableSelector.Text = Strings.VariableSelector.Button;
+            btnVarSelector.Text = Strings.VariableSelector.Button;
+
+            grpSettingVariable.Text = Strings.EventSetVariable.SetVariableGroup;
+            grpSelectVariable.Text = Strings.EventSetVariable.SelectVariableGroup;
+
             lblCurrentVar.Text = Strings.VariableSelector.LabelCurrentSelection;
+            lblSettingVarCurrentValue.Text = Strings.VariableSelector.LabelCurrentSelection;
         }
 
         private void InitEditor()
