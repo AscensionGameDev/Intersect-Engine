@@ -2651,6 +2651,8 @@ namespace Intersect.Server.Entities
             var remainingQuantity = item.Quantity;
             if (bagSlots != default && destSlot < 0)
             {
+                List<Bag> bagsUpdated = new List<Bag>();
+
                 foreach (var bagSlot in bagSlots)
                 {
                     if (remainingQuantity < 1)
@@ -2664,7 +2666,26 @@ namespace Intersect.Server.Entities
                     );
                     bagSlot.Quantity += insertableQuantity;
                     remainingQuantity -= insertableQuantity;
+
+                    bagsUpdated.Add(bagSlot.ParentBag);
                 }
+
+                foreach (var bagUpdated in bagsUpdated)
+                {
+                    // Save the bag changes
+                    bagUpdated.Save();
+                    if (IsInBag && InBag.Id == bagUpdated.Id)
+                    {
+                        // Refresh the player's UI if they had the bag opened.
+                        PacketSender.SendOpenBag(this, bagUpdated.SlotCount, bagUpdated);
+                    }
+                }
+            }
+
+            // Did placing stacks in the bags take care of business?
+            if (remainingQuantity < 1)
+            {
+                return;
             }
 
             // Decide how we're going to handle this item.
@@ -2763,7 +2784,7 @@ namespace Intersect.Server.Entities
                     else
                     {
                         var newSlot = FindOpenInventorySlot();
-                        newSlot.Set(item);
+                        newSlot.Set(new Item(item.ItemId, remainingQuantity, item.Properties));
                         updateSlots.Add(newSlot.Slot);
                     }
                 }
@@ -7198,6 +7219,8 @@ namespace Intersect.Server.Entities
         private bool JsonInShop => InShop != null;
 
         [JsonIgnore, NotMapped] public Bag InBag;
+        
+        [JsonIgnore, NotMapped] public bool IsInBag => InBag != null;
 
         [JsonIgnore, NotMapped] public ShopBase InShop;
 
