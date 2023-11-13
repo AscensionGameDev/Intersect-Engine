@@ -312,15 +312,17 @@ namespace Intersect.Server.Entities.Events
         )
         {
             var commonEvent = EventBase.Get(command.EventId);
-            if (commonEvent != null)
+            if (commonEvent == null)
             {
-                for (var i = 0; i < commonEvent.Pages.Count; i++)
+                return;
+            }
+
+            for (var i = 0; i < commonEvent.Pages.Count; i++)
+            {
+                if (Conditions.CanSpawnPage(commonEvent.Pages[i], player, instance))
                 {
-                    if (Conditions.CanSpawnPage(commonEvent.Pages[i], player, instance))
-                    {
-                        var commonEventStack = new CommandInstance(commonEvent.Pages[i]);
-                        callStack.Push(commonEventStack);
-                    }
+                    var commonEventStack = new CommandInstance(commonEvent.Pages[i]);
+                    callStack.Push(commonEventStack);
                 }
             }
 
@@ -328,10 +330,7 @@ namespace Intersect.Server.Entities.Events
             {
                 foreach (var instanceMember in Globals.OnlineList.Where(pl => pl.MapInstanceId == player.MapInstanceId && pl.Id != player.Id).ToArray())
                 {
-                    if (instanceMember.Online && Conditions.CanSpawnPage(commonEvent.Pages[i], instanceMember, instance))
-                    {
-                        instanceMember.EnqueueStartCommonEvent(commonEvent);
-                    }
+                    instanceMember.EnqueueStartCommonEvent(commonEvent);
                 }
             }
         }
