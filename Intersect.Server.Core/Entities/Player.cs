@@ -257,7 +257,7 @@ namespace Intersect.Server.Entities
         private long mGlobalCooldownTimer;
 
         [NotMapped, JsonIgnore]
-        public bool IsInParty => Party != null && Party.Count >= 2;
+        public bool IsInParty => Party != null && Party.Count > 1;
 
         public static Player FindOnline(Guid id)
         {
