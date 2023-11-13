@@ -489,6 +489,34 @@ namespace Intersect.Client.Entities
             }
         }
 
+        public virtual bool IsAllyOf(Player en)
+        {
+            if (en == null || MapInstance == default || en.MapInstance == default)
+            {
+                return false;
+            }
+
+            // Resources have no allies
+            if (Type == EntityType.Resource)
+            {
+                return false;
+            }
+
+            // Events ONLY have allies
+            if (Type == EntityType.Event)
+            {
+                return true;
+            }
+
+            // Yourself is always an ally
+            if (en.Id == Id)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
         public void ClearAnimations(List<Animation> anims)
         {
             if (anims == null)
