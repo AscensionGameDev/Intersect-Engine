@@ -49,7 +49,7 @@ namespace Intersect.Client.Interface
         /// <inheritdoc />
         public TElement Create<TElement>(params object[] parameters) where TElement : Base
         {
-            var fullParameterList = new List<object> {Root};
+            var fullParameterList = new List<object?> {Root};
             fullParameterList.AddRange(parameters);
 
             var fullParameters = fullParameterList.ToArray();
@@ -57,7 +57,22 @@ namespace Intersect.Client.Interface
 
             if (constructor != null)
             {
-                return constructor.Invoke(fullParameters) as TElement;
+                var constructorParameters = constructor.GetParameters();
+                if (fullParameters.Length != constructorParameters.Length)
+                {
+                    fullParameters = fullParameters.Concat(
+                            Enumerable.Range(0, constructorParameters.Length - fullParameters.Length)
+                                .Select(_ => default(object))
+                        )
+                        .ToArray();
+                }
+
+                if (constructor.Invoke(fullParameters) is not TElement constructedElement)
+                {
+                    throw new NullReferenceException("Failed to invoke constructor that matches parameters.");
+                }
+
+                return constructedElement;
             }
 
             throw new NullReferenceException("Failed to find constructor that matches parameters.");

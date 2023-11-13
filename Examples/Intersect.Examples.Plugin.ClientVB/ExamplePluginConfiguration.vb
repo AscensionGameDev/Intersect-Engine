@@ -12,6 +12,6 @@ Namespace Intersect.Examples.ClientPlugin
         ''' Link to discord invite that should open when discord button is clicked
         ''' </summary>
         <JsonProperty(NullValueHandling := NullValueHandling.Ignore)>
-        Public Property DiscordInviteUrl As String = "https://discord.gg/fAwDR5v"
+        Public Property DiscordInviteUrl As String = "https://discord.gg/qaJ8kRmdKA"
     End Class
 End Namespace
