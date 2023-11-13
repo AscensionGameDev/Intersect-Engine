@@ -5124,7 +5124,22 @@ namespace Intersect.Server.Entities
 
         public virtual bool IsAllyOf(Player otherPlayer)
         {
-            return this.InParty(otherPlayer) || this == otherPlayer;
+            if (Id == otherPlayer.Id)
+            {
+                return true;
+            }
+
+            if (InParty(otherPlayer))
+            {
+                return true;
+            }
+
+            if (IsInGuild && otherPlayer?.Guild?.Id == Guild.Id)
+            {
+                return true;
+            }
+
+            return Map?.ZoneType == MapZone.Safe && Options.Instance.CombatOpts.EnableAllPlayersFriendlyInSafeZone;
         }
 
         public override bool CanCastSpell(SpellBase spell, Entity target, bool checkVitalReqs, out SpellCastFailureReason reason)
