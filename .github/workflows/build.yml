@@ -91,8 +91,7 @@ jobs:
       with:
         if-no-files-found: error
         name: keys
-        path: |
-          ./Intersect.Network/bin/Release/keys/*
+        path: ./Intersect.Network/bin/Release/keys/*
 
   build-linux:
     name: Build for Linux
@@ -139,7 +138,7 @@ jobs:
       uses: actions/download-artifact@v3
       with:
         name: keys
-        path: .
+        path: ./Intersect.Network/bin/Release/keys/
 
     - name: Debug keys
       run: ls -R ./Intersect.Network/bin/Release/keys
@@ -207,7 +206,7 @@ jobs:
       uses: actions/download-artifact@v3
       with:
         name: keys
-        path: .
+        path: ./Intersect.Network/bin/Release/keys/
 
     - name: Debug keys
       run: ls -R ./Intersect.Network/bin/Release/keys
@@ -275,7 +274,7 @@ jobs:
       uses: actions/download-artifact@v3
       with:
         name: keys
-        path: .
+        path: ./Intersect.Network/bin/Release/keys/
 
     - name: Debug keys
       run: ls -R ./Intersect.Network/bin/Release/keys
