@@ -41,8 +41,61 @@ env:
   VERSION_SUFFIX: -beta
 
 jobs:
+  generate-keys:
+    name: Generate Version-Specific Network Keys
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive
+
+    - name: Cache binaries
+      uses: actions/cache@v3
+      id: cache-binaries
+      with:
+        key: ${{ runner.os }}-binaries-keys-${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}-${{ hashFiles('Intersect*/**/*.cs*') }}
+        path: |
+          Intersect*/bin/Release/**/*
+
+    - name: Setup dotnet
+      if: steps.cache-binaries.outputs.cache-hit != 'true' || inputs.forceBuild == true || inputs.forceRestore == true
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 7.0.x
+
+    - name: Cache NuGet dependencies
+      uses: actions/cache@v3
+      id: cache-nuget
+      if: steps.cache-binaries.outputs.cache-hit != 'true' || inputs.forceBuild == true || inputs.forceRestore == true
+      with:
+        key: ${{ runner.os }}-nuget-${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}-${{ hashFiles('Intersect*/*.csproj') }}
+        path: |
+          ~/.nuget/packages
+          Intersect*/obj/
+
+    - name: Restore NuGet Packages
+      if: steps.cache-binaries.outputs.cache-hit != 'true' && steps.cache-nuget.outputs.cache-hit != 'true' || inputs.forceRestore == true
+      run: dotnet restore Intersect.sln
+
+    - name: Build Intersect.Network
+      if: steps.cache-binaries.outputs.cache-hit != 'true' || inputs.forceBuild == true || inputs.forceRestore == true
+      run: dotnet build Intersect.Network/Intersect.Network.csproj --sc -r linux-x64 -p:Configuration=Release -p:PackageVersion=${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}+build.${{ github.sha }} -p:Version=${{ env.VERSION_PREFIX }}.${{ github.run_number }}
+
+    - name: Debug files on disk
+      if: inputs.workflowDebug == true
+      run: ls -R .
+
+    - name: Upload keys
+      uses: actions/upload-artifact@v3
+      with:
+        if-no-files-found: error
+        name: keys
+        path: ./Intersect.Network/bin/Release/keys/*
+
   build-linux:
     name: Build for Linux
+    needs: [generate-keys]
     runs-on: ubuntu-latest
     steps:
     - name: Checkout Code
@@ -81,6 +134,15 @@ jobs:
       if: steps.cache-binaries.outputs.cache-hit != 'true' && steps.cache-nuget.outputs.cache-hit != 'true' || inputs.forceRestore == true
       run: dotnet restore Intersect.sln
 
+    - name: Download keys
+      uses: actions/download-artifact@v3
+      with:
+        name: keys
+        path: ./Intersect.Network/bin/Release/keys/
+
+    - name: Debug keys
+      run: ls -R ./Intersect.Network/bin/Release/keys
+
     - name: Build solution
       if: steps.cache-binaries.outputs.cache-hit != 'true' || inputs.forceBuild == true || inputs.forceRestore == true
       run: dotnet publish Intersect.sln --sc -r linux-x64 -p:Configuration=Release -p:PackageVersion=${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}+build.${{ github.sha }} -p:Version=${{ env.VERSION_PREFIX }}.${{ github.run_number }}
@@ -101,6 +163,7 @@ jobs:
 
   build-macos:
     name: Build for MacOS
+    needs: [generate-keys]
     runs-on: macos-latest
     steps:
     - name: Checkout Code
@@ -139,6 +202,15 @@ jobs:
       if: steps.cache-binaries.outputs.cache-hit != 'true' && steps.cache-nuget.outputs.cache-hit != 'true' || inputs.forceRestore == true
       run: dotnet restore Intersect.sln
 
+    - name: Download keys
+      uses: actions/download-artifact@v3
+      with:
+        name: keys
+        path: ./Intersect.Network/bin/Release/keys/
+
+    - name: Debug keys
+      run: ls -R ./Intersect.Network/bin/Release/keys
+
     - name: Build solution
       if: steps.cache-binaries.outputs.cache-hit != 'true' || inputs.forceBuild == true || inputs.forceRestore == true
       run: dotnet publish Intersect.sln --sc -r osx-x64   -p:Configuration=Release -p:PackageVersion=${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}+build.${{ github.sha }} -p:Version=${{ env.VERSION_PREFIX }}.${{ github.run_number }}
@@ -159,6 +231,7 @@ jobs:
 
   build-windows:
     name: Build for Windows
+    needs: [generate-keys]
     runs-on: windows-latest
     steps:
     - name: Checkout Code
@@ -196,6 +269,15 @@ jobs:
     - name: Restore NuGet Packages
       if: steps.cache-binaries.outputs.cache-hit != 'true' && steps.cache-nuget.outputs.cache-hit != 'true' || inputs.forceRestore == true
       run: dotnet restore Intersect.sln
+
+    - name: Download keys
+      uses: actions/download-artifact@v3
+      with:
+        name: keys
+        path: ./Intersect.Network/bin/Release/keys/
+
+    - name: Debug keys
+      run: ls -R ./Intersect.Network/bin/Release/keys
 
     - name: Build solution
       if: steps.cache-binaries.outputs.cache-hit != 'true' || inputs.forceBuild == true || inputs.forceRestore == true
