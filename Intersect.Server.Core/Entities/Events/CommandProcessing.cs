@@ -960,11 +960,21 @@ namespace Intersect.Server.Entities.Events
                 {
                     if (command.X == 0 && command.Y == 0 && command.Dir == 0)
                     {
+                        var targetType = targetEntity.GetEntityType() == EntityType.Event ? 2 : 1;
                         //Attach to entity instead of playing on tile
-                        PacketSender.SendAnimationToProximity(
-                            animId, targetEntity.GetEntityType() == EntityType.Event ? 2 : 1, targetEntity.Id,
-                            targetEntity.MapId, 0, 0, 0, targetEntity.MapInstanceId
-                        );
+                        if (command.InstanceToPlayer)
+                        {
+                            PacketSender.SendAnimationTo(
+                                animId, targetType, targetEntity.Id, targetEntity.MapId, 0, 0, 0, player
+                            );
+                        }
+                        else
+                        {
+                            PacketSender.SendAnimationToProximity(
+                                animId, targetType, targetEntity.Id,
+                                targetEntity.MapId, 0, 0, 0, targetEntity.MapInstanceId
+                            );
+                        }
 
                         return;
                     }
