@@ -330,10 +330,17 @@ namespace Intersect.Client.Core
             Audio.StopMusic(ClientConfiguration.Instance.MusicFadeTimer);
         }
 
-        public static void Logout(bool characterSelect)
+        public static void Logout(bool characterSelect, bool skipFade = false)
         {
             Audio.PlayMusic(ClientConfiguration.Instance.MenuMusic, ClientConfiguration.Instance.MusicFadeTimer, ClientConfiguration.Instance.MusicFadeTimer, true);
-            Fade.FadeOut();
+            if (skipFade)
+            {
+                Fade.Cancel();
+            }
+            else
+            {
+                Fade.FadeOut();
+            }
 
             if (!ClientContext.IsSinglePlayer)
             {
@@ -387,7 +394,14 @@ namespace Intersect.Client.Core
                 PacketSender.SendLogout(characterSelect);
             }
 
-            Fade.FadeIn();
+            if (skipFade)
+            {
+                Fade.Cancel();
+            }
+            else
+            {
+                Fade.FadeIn();
+            }
         }
 
     }

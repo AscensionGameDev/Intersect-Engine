@@ -1251,7 +1251,7 @@ namespace Intersect.Server.Networking
         }
 
         //CharactersPacket
-        public static void SendPlayerCharacters(Client client)
+        public static void SendPlayerCharacters(Client client, bool skipLoadingRelationships = false)
         {
             if (client == default)
             {
@@ -1273,8 +1273,9 @@ namespace Intersect.Server.Networking
                 return;
             }
 
-            using (var playerContext = DbInterface.CreatePlayerContext())
+            if (!skipLoadingRelationships)
             {
+                using var playerContext = DbInterface.CreatePlayerContext();
                 foreach (var player in client.Characters.OrderByDescending(p => p.LastOnline))
                 {
                     player.LoadRelationships(playerContext);

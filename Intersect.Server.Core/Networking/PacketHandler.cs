@@ -653,9 +653,10 @@ namespace Intersect.Server.Networking
             if (packet.ReturningToCharSelect &&
                 (Options.MaxCharacters > 1 || !Options.Instance.PlayerOpts.SkipCharacterSelect))
             {
+                Log.Debug($"[{nameof(LogoutPacket)}] Returning to character select from player {client.Entity?.Id} ({client.User?.Id})");
                 client.Entity?.TryLogout(false, true);
                 client.Entity = default;
-                PacketSender.SendPlayerCharacters(client);
+                PacketSender.SendPlayerCharacters(client, skipLoadingRelationships: true);
             }
             else
             {
@@ -2479,7 +2480,9 @@ namespace Intersect.Server.Networking
         public void HandlePacket(Client client, DeleteCharacterPacket packet)
         {
             if (client.User == null)
+            {
                 return;
+            }
 
             if (Player.FindOnline(packet.CharacterId) != null)
             {

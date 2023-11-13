@@ -118,7 +118,7 @@ namespace Intersect.Server.Core
                 var savingTasks = new List<Task>();
                 foreach (var user in Database.PlayerData.User.OnlineList.ToArray())
                 {
-                    savingTasks.Add(Task.Run(() => user.Save()));
+                    savingTasks.Add(Task.Run(() => user.SaveWithDebounce()));
                 }
 
                 Task.WaitAll(savingTasks.ToArray());

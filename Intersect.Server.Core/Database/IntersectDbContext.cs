@@ -9,6 +9,7 @@ using Intersect.Server.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.Extensions.Primitives;
 
 namespace Intersect.Server.Database;
 
@@ -204,15 +205,14 @@ public abstract partial class IntersectDbContext<TDbContext> : DbContext, IDbCon
 
             return rowsChanged;
         }
-        catch (DbUpdateConcurrencyException ex)
+        catch (DbUpdateConcurrencyException concurrencyException)
         {
             var concurrencyErrors = new StringBuilder();
-            foreach (var entry in ex.Entries)
+            foreach (var entry in concurrencyException.Entries)
             {
-                var type = entry.GetType().FullName;
-                concurrencyErrors.AppendLine($"Entry Type [{type} / {entry.State}]");
-                concurrencyErrors.AppendLine("--------------------");
-                concurrencyErrors.AppendLine($"Type: {entry.Entity.GetFullishName()}");
+                concurrencyErrors.AppendLine(
+                    $"[{entry.State}] {entry.Entity.GetFullishName()} ({entry.GetFullishName()})"
+                );
 
                 var proposedValues = entry.CurrentValues;
                 var databaseValues = entry.GetDatabaseValues();
@@ -220,24 +220,31 @@ public abstract partial class IntersectDbContext<TDbContext> : DbContext, IDbCon
                 foreach (var property in proposedValues.Properties)
                 {
                     concurrencyErrors.AppendLine(
-                        $"\t{property.Name:propertyNameColumnSize} (Token: {property.IsConcurrencyToken}): Proposed: {proposedValues[property]}  Original Value: {entry.OriginalValues[property]}  Database Value: {(databaseValues != null ? databaseValues[property] : "null")}"
+                        string.Join(
+                            ' ',
+                            $"\t{property.Name:propertyNameColumnSize} (Token: {property.IsConcurrencyToken}):",
+                            $"Proposed: {proposedValues[property]}",
+                            $"Original Value: {entry.OriginalValues[property]}",
+                            $"Database Value: {(databaseValues?[property] ?? "null")}"
+                        )
                     );
                 }
 
-                concurrencyErrors.AppendLine("");
-                concurrencyErrors.AppendLine("");
+                concurrencyErrors.AppendLine();
             }
 
-            var suffix = string.Empty;
 #if DEBUG
-            suffix = $"#{currentExecutionId}";
+            var suffix = $"#{currentExecutionId}";
+#else
+            var suffix = string.Empty;
 #endif
             var entityTypeNames = ChangeTracker.Entries()
                 .Select(entry => entry.Entity.GetType().Name)
                 .Distinct()
                 .ToArray();
-            Log.Error(ex, $"Jackpot! Concurrency Bug For {string.Join(", ", entityTypeNames)} {suffix}");
+            Log.Error(concurrencyException, $"Jackpot! Concurrency Bug For {string.Join(", ", entityTypeNames)} {suffix}");
             Log.Error(concurrencyErrors.ToString());
+            Log.Error(Environment.StackTrace);
 
 #if DEBUG
             Log.Debug($"DBOP-C SaveChanges({acceptAllChangesOnSuccess}) #{currentExecutionId}");

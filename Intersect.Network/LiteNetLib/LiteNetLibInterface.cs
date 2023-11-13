@@ -446,6 +446,13 @@ public sealed class LiteNetLibInterface : INetworkLayerInterface, INetEventListe
 
     public void OnNetworkLatencyUpdate(NetPeer peer, int latency)
     {
+#if !DIAGNOSTIC
+        if (latency < 1)
+        {
+            return;
+        }
+#endif
+
         Log.Verbose($"LTNC {peer.EndPoint} {latency}ms");
     }
 

@@ -344,6 +344,7 @@ namespace Intersect.Client.Interface.Menu
 
         private void mLogoutButton_Clicked(Base sender, ClickedEventArgs arguments)
         {
+            Main.Logout(false, skipFade: true);
             mMainMenu.Reset();
         }
 

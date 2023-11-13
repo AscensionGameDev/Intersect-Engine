@@ -32,6 +32,9 @@ namespace Intersect.Server.Database.PlayerData
     [ApiVisibility(ApiVisibility.Restricted | ApiVisibility.Private)]
     public partial class User
     {
+        private long _lastSave;
+        private readonly object _lastSaveLock = new();
+
         private static readonly ConcurrentDictionary<Guid, User> OnlineUsers = new();
 
         [JsonIgnore][NotMapped] private readonly object mSavingLock = new();
@@ -225,20 +228,19 @@ namespace Intersect.Server.Database.PlayerData
             {
                 lock (mSavingLock)
                 {
-                    using (var context = DbInterface.CreatePlayerContext(false))
-                    {
-                        context.Users.Update(this);
+                    using var context = DbInterface.CreatePlayerContext(false);
 
-                        context.ChangeTracker.DetectChanges();
+                    context.Users.Update(this);
 
-                        context.StopTrackingUsersExcept(this);
+                    Players.Remove(deleteCharacter);
 
-                        context.Entry(deleteCharacter).State = EntityState.Deleted;
+                    context.ChangeTracker.DetectChanges();
 
-                        Players.Remove(deleteCharacter);
+                    context.StopTrackingUsersExcept(this);
 
-                        context.SaveChanges();
-                    }
+                    context.Entry(deleteCharacter).State = EntityState.Deleted;
+
+                    context.SaveChanges();
                 }
             }
             catch (Exception ex)
@@ -294,16 +296,35 @@ namespace Intersect.Server.Database.PlayerData
             CancellationToken cancellationToken = default
         ) => Save(playerContext, force);
 
-        public void Save(bool force) => Save(force: force, create: false);
+        public void SaveWithDebounce(long debounceMs = 5000)
+        {
+            lock (_lastSaveLock)
+            {
+                if (_lastSave < debounceMs + Timing.Global.MillisecondsUtc)
+                {
+                    Log.Debug("Skipping save due to debounce");
+                    return;
+                }
+            }
 
-        public void Save(bool force = false, bool create = false) => Save(default, force, create);
+            Save();
+        }
+
+        public UserSaveResult Save(bool force) => Save(force: force, create: false);
+
+        public UserSaveResult Save(bool force = false, bool create = false) => Save(default, force, create);
 
 #if DIAGNOSTIC
         private int _saveCounter = 0;
 #endif
 
-        private void Save(PlayerContext? playerContext, bool force = false, bool create = false)
+        private UserSaveResult Save(PlayerContext? playerContext, bool force = false, bool create = false)
         {
+            lock (_lastSaveLock)
+            {
+                _lastSave = Timing.Global.MillisecondsUtc;
+            }
+
 #if DIAGNOSTIC
             var currentExecutionId = _saveCounter++;
 #endif
@@ -326,7 +347,10 @@ namespace Intersect.Server.Database.PlayerData
 
                 if (!lockTaken)
                 {
-                    return;
+#if DIAGNOSTIC
+                    Log.Debug($"Failed to take lock {Environment.StackTrace}");
+#endif
+                    return UserSaveResult.SkippedCouldNotTakeLock;
                 }
 
 #if DIAGNOSTIC
@@ -345,6 +369,7 @@ namespace Intersect.Server.Database.PlayerData
                 }
                 else
                 {
+                    // playerContext.Attach(this);
                     playerContext.Users.Update(this);
                 }
 
@@ -367,6 +392,8 @@ namespace Intersect.Server.Database.PlayerData
 #if DIAGNOSTIC
                 Log.Debug($"DBOP-B Save({playerContext}, {force}, {create}) #{currentExecutionId} {Name} ({Id})");
 #endif
+
+                return UserSaveResult.Completed;
             }
             catch (DbUpdateConcurrencyException ex)
             {
@@ -428,6 +455,8 @@ namespace Intersect.Server.Database.PlayerData
                     Monitor.Exit(mSavingLock);
                 }
             }
+
+            return UserSaveResult.Failed;
         }
 
         [return: NotNullIfNotNull(nameof(user))]
