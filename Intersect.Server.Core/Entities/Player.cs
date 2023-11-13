@@ -2667,7 +2667,10 @@ namespace Intersect.Server.Entities
                     bagSlot.Quantity += insertableQuantity;
                     remainingQuantity -= insertableQuantity;
 
-                    bagsUpdated.Add(bagSlot.ParentBag);
+                    if (!bagsUpdated.Contains(bagSlot.ParentBag))
+                    {
+                        bagsUpdated.Add(bagSlot.ParentBag);
+                    }
                 }
 
                 foreach (var bagUpdated in bagsUpdated)
