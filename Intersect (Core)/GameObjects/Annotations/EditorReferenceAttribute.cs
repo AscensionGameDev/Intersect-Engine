@@ -35,6 +35,7 @@ namespace Intersect.GameObjects.Annotations
 
         public string ReferenceName { get; }
 
+        [Obsolete("We want to re-implement strings to be object-oriented.")]
         public override string Format(Type stringsType, object value)
         {
             if (!(value is Guid guid))

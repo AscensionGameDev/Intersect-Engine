@@ -21,7 +21,7 @@ namespace Intersect.Server.Core.Commands
         {
         }
 
-        protected VariableArgument<string> PanicType => FindArgumentOrThrow<VariableArgument<string>>();
+        private VariableArgument<string> PanicType => FindArgumentOrThrow<VariableArgument<string>>();
 
         protected override void HandleValue(ServerContext context, ParserResult result)
         {

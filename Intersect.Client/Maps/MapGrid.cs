@@ -7,13 +7,13 @@ namespace Intersect.Client.Maps
 {
     public partial class MapGrid : IMapGrid
     {
-        /// <inheritdoc>
+        /// <inheritdoc />
         public Guid[,] Content => Globals.MapGrid;
 
-        /// <inheritdoc>
+        /// <inheritdoc />
         public long Height => Globals.MapGridHeight;
 
-        /// <inheritdoc>
+        /// <inheritdoc />
         public long Width => Globals.MapGridWidth;
 
     }

@@ -19,7 +19,7 @@
     <FileVersion>$(Version)</FileVersion>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <NeutralLanguage>en-US</NeutralLanguage>
-    <NoWarn>$(NoWarn);CS1591</NoWarn>
+    <NoWarn>$(NoWarn);CS1591;CS8632</NoWarn>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <ProduceReferenceAssembly>True</ProduceReferenceAssembly>
   </PropertyGroup>

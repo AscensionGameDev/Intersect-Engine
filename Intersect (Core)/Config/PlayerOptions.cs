@@ -10,6 +10,7 @@
         /// </summary>
         private const int DefaultInitialBankSlots = 100;
 
+        /// <summary>
         /// Unlinks the timers for combat and movement to facilitate complex combat (e.g. kiting)
         /// </summary>
         public bool AllowCombatMovement { get; set; } = true;
