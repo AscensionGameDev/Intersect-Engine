@@ -311,16 +311,35 @@ namespace Intersect.Server.Entities.Events
             Stack<CommandInstance> callStack
         )
         {
-            var commonEvent = EventBase.Get(command.EventId);
-            if (commonEvent != null)
+            if (!EventBase.TryGet(command.EventId, out var commonEvent))
             {
-                for (var i = 0; i < commonEvent.Pages.Count; i++)
+                return;
+            }
+
+            foreach (var page in commonEvent.Pages)
+            {
+                if (Conditions.CanSpawnPage(page, player, instance))
                 {
-                    if (Conditions.CanSpawnPage(commonEvent.Pages[i], player, instance))
+                    var commonEventStack = new CommandInstance(page);
+                    callStack.Push(commonEventStack);
+                }
+            }
+
+            if (player.MapInstanceId == Guid.Empty && !command.AllowInOverworld)
+            {
+                return;
+            }
+
+            if (command.AllInInstance)
+            {
+                foreach (var instanceMember in Globals.OnlineList.ToArray())
+                {
+                    if (instanceMember.Id == player.Id || !instanceMember.Online)
                     {
-                        var commonEventStack = new CommandInstance(commonEvent.Pages[i]);
-                        callStack.Push(commonEventStack);
+                        continue;
                     }
+
+                    instanceMember.EnqueueStartCommonEvent(commonEvent);
                 }
             }
         }
