@@ -2277,6 +2277,12 @@ namespace Intersect.Server.Entities
             {
                 if ((spell.Combat.Friendly != IsAllyOf(target)) || !CanAttack(target, spell))
                 {
+                    if (spell.Combat.Friendly && Options.Instance.CombatOpts.EnableAutoSelfCastFriendlySpellsWhenTargetingHostile)
+                    {
+                        // Set the target to self and try again
+                        return CanCastSpell(spell, this, checkVitalReqs, out reason);
+                    }
+
                     reason = SpellCastFailureReason.InvalidTarget;
                     return false;
                 }
