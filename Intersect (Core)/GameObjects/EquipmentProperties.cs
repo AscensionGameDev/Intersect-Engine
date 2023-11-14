@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
+using Intersect.Enums;
 using Intersect.GameObjects.ItemRange;
 
 namespace Intersect.GameObjects;
@@ -22,5 +23,5 @@ public partial class EquipmentProperties
     [ForeignKey(nameof(DescriptorId))]
     public ItemBase Descriptor { get; set; }
 
-    public List<StatRange> StatRanges { get; set; }
+    public Dictionary<int, ItemRange.ItemRange> StatRanges { get; set; }
 }

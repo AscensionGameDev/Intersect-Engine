@@ -789,15 +789,14 @@ namespace Intersect.Editor.Forms.Editors
         {
             // TODO This will be removed and replaced with a per-stat editor after the migration to StatRanges
             var maxAndMin = (int)nudRange.Value;
-            
-            if (mEditorItem.EquipmentProperties.StatRanges == null)
-            {
-                mEditorItem.EquipmentProperties.StatRanges = new List<StatRange>();
-            }
+
+            mEditorItem.EquipmentProperties ??= new EquipmentProperties();
+            mEditorItem.EquipmentProperties.StatRanges ??= new Dictionary<int, ItemRange>();
+
             mEditorItem.EquipmentProperties.StatRanges.Clear();
             foreach (Stat stat in Enum.GetValues(typeof(Stat)))
             {
-                mEditorItem.StatRanges?.Add(new StatRange(stat, -maxAndMin, maxAndMin));
+                mEditorItem.EquipmentProperties.StatRanges[(int)stat] = new ItemRange(-maxAndMin, maxAndMin);
             }
         }
 

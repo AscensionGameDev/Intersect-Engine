@@ -339,12 +339,12 @@ namespace Intersect.GameObjects
 
         public EquipmentProperties? EquipmentProperties { get; set; }
 
-        [NotMapped, JsonIgnore]
-        public List<StatRange>? StatRanges => EquipmentProperties?.StatRanges;
+        public ItemRange.ItemRange[] StatRanges => EquipmentProperties?.StatRanges?.Values?.ToArray();
 
-        public bool TryGetRangeFor(Stat stat, out StatRange range)
+        public bool TryGetRangeFor(Stat stat, out ItemRange.ItemRange range)
         {
-            range = StatRanges?.Find(range => range.StatAffected == stat);
+            range = null;
+            _ = EquipmentProperties?.StatRanges?.TryGetValue((int)stat, out range);
             
             return range != default;
         }

@@ -1,5 +1,5 @@
 using System.ComponentModel.DataAnnotations.Schema;
-using Intersect.Utilities;
+using Microsoft.EntityFrameworkCore;
 
 namespace Intersect.GameObjects.ItemRange;
 
@@ -7,7 +7,8 @@ namespace Intersect.GameObjects.ItemRange;
 /// TODO: ItemRange exists to generalize rollable stats on an item. After adding the ability to set specific ranges
 /// per-STAT on items, I want to go back and add the ability to do the same thing for Bonus Effects - Day
 /// </summary>
-public abstract partial class ItemRange
+[Owned]
+public partial class ItemRange
 {
     public ItemRange(int lowRange, int highRange) : this()
     {
