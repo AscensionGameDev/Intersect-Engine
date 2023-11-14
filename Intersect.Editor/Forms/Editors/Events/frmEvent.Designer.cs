@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using System.Windows.Forms;
 using DarkUI.Controls;
 
@@ -165,9 +165,9 @@ namespace Intersect.Editor.Forms.Editors.Events
             chkIsGlobal = new DarkCheckBox();
             pnlTabsContainer = new Panel();
             pnlTabs = new Panel();
-            btnTabsRight = new DarkButton();
             btnTabsLeft = new DarkButton();
-            panel1 = new Panel();
+            btnTabsRight = new DarkButton();
+            pnlEditorComponents = new Panel();
             grpEntityOptions.SuspendLayout();
             grpExtra.SuspendLayout();
             grpInspector.SuspendLayout();
@@ -181,12 +181,13 @@ namespace Intersect.Editor.Forms.Editors.Events
             grpPageOptions.SuspendLayout();
             grpGeneral.SuspendLayout();
             pnlTabsContainer.SuspendLayout();
+            pnlEditorComponents.SuspendLayout();
             SuspendLayout();
             // 
             // lblName
             // 
             lblName.AutoSize = true;
-            lblName.Location = new System.Drawing.Point(7, 25);
+            lblName.Location = new System.Drawing.Point(6, 21);
             lblName.Margin = new Padding(4, 0, 4, 0);
             lblName.Name = "lblName";
             lblName.Size = new Size(42, 15);
@@ -198,7 +199,7 @@ namespace Intersect.Editor.Forms.Editors.Events
             txtEventname.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
             txtEventname.BorderStyle = BorderStyle.FixedSingle;
             txtEventname.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
-            txtEventname.Location = new System.Drawing.Point(56, 22);
+            txtEventname.Location = new System.Drawing.Point(49, 19);
             txtEventname.Margin = new Padding(4, 3, 4, 3);
             txtEventname.Name = "txtEventname";
             txtEventname.Size = new Size(144, 23);
@@ -214,11 +215,11 @@ namespace Intersect.Editor.Forms.Editors.Events
             grpEntityOptions.Controls.Add(grpPreview);
             grpEntityOptions.Controls.Add(grpMovement);
             grpEntityOptions.ForeColor = System.Drawing.Color.Gainsboro;
-            grpEntityOptions.Location = new System.Drawing.Point(24, 173);
+            grpEntityOptions.Location = new System.Drawing.Point(4, 69);
             grpEntityOptions.Margin = new Padding(4, 3, 4, 3);
             grpEntityOptions.Name = "grpEntityOptions";
             grpEntityOptions.Padding = new Padding(4, 3, 4, 3);
-            grpEntityOptions.Size = new Size(380, 519);
+            grpEntityOptions.Size = new Size(380, 424);
             grpEntityOptions.TabIndex = 12;
             grpEntityOptions.TabStop = false;
             grpEntityOptions.Text = "Entity Options";
@@ -590,7 +591,7 @@ namespace Intersect.Editor.Forms.Editors.Events
             btnSetRoute.Location = new System.Drawing.Point(85, 50);
             btnSetRoute.Margin = new Padding(4, 3, 4, 3);
             btnSetRoute.Name = "btnSetRoute";
-            btnSetRoute.Padding = new Padding(6, 6, 6, 6);
+            btnSetRoute.Padding = new Padding(6);
             btnSetRoute.Size = new Size(88, 27);
             btnSetRoute.TabIndex = 2;
             btnSetRoute.Text = "Set Route....";
@@ -641,11 +642,11 @@ namespace Intersect.Editor.Forms.Editors.Events
             grpTriggers.Controls.Add(cmbVariable);
             grpTriggers.Controls.Add(txtCommand);
             grpTriggers.ForeColor = System.Drawing.Color.Gainsboro;
-            grpTriggers.Location = new System.Drawing.Point(29, 597);
+            grpTriggers.Location = new System.Drawing.Point(4, 499);
             grpTriggers.Margin = new Padding(4, 3, 4, 3);
             grpTriggers.Name = "grpTriggers";
             grpTriggers.Padding = new Padding(4, 3, 4, 3);
-            grpTriggers.Size = new Size(370, 87);
+            grpTriggers.Size = new Size(380, 87);
             grpTriggers.TabIndex = 21;
             grpTriggers.TabStop = false;
             grpTriggers.Text = "Trigger";
@@ -771,7 +772,7 @@ namespace Intersect.Editor.Forms.Editors.Events
             grpEventConditions.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
             grpEventConditions.Controls.Add(btnEditConditions);
             grpEventConditions.ForeColor = System.Drawing.Color.Gainsboro;
-            grpEventConditions.Location = new System.Drawing.Point(24, 103);
+            grpEventConditions.Location = new System.Drawing.Point(4, 2);
             grpEventConditions.Margin = new Padding(4, 3, 4, 3);
             grpEventConditions.Name = "grpEventConditions";
             grpEventConditions.Padding = new Padding(4, 3, 4, 3);
@@ -785,7 +786,7 @@ namespace Intersect.Editor.Forms.Editors.Events
             btnEditConditions.Location = new System.Drawing.Point(8, 23);
             btnEditConditions.Margin = new Padding(4, 3, 4, 3);
             btnEditConditions.Name = "btnEditConditions";
-            btnEditConditions.Padding = new Padding(6, 6, 6, 6);
+            btnEditConditions.Padding = new Padding(6);
             btnEditConditions.Size = new Size(355, 27);
             btnEditConditions.TabIndex = 0;
             btnEditConditions.Text = "Spawn/Execution Conditions";
@@ -798,11 +799,11 @@ namespace Intersect.Editor.Forms.Editors.Events
             grpNewCommands.Controls.Add(lblCloseCommands);
             grpNewCommands.Controls.Add(lstCommands);
             grpNewCommands.ForeColor = System.Drawing.Color.Gainsboro;
-            grpNewCommands.Location = new System.Drawing.Point(412, 103);
+            grpNewCommands.Location = new System.Drawing.Point(389, 0);
             grpNewCommands.Margin = new Padding(4, 3, 4, 3);
             grpNewCommands.Name = "grpNewCommands";
             grpNewCommands.Padding = new Padding(4, 3, 4, 3);
-            grpNewCommands.Size = new Size(533, 580);
+            grpNewCommands.Size = new Size(515, 580);
             grpNewCommands.TabIndex = 7;
             grpNewCommands.TabStop = false;
             grpNewCommands.Text = "Add Commands";
@@ -811,7 +812,7 @@ namespace Intersect.Editor.Forms.Editors.Events
             // lblCloseCommands
             // 
             lblCloseCommands.AutoSize = true;
-            lblCloseCommands.Location = new System.Drawing.Point(510, 16);
+            lblCloseCommands.Location = new System.Drawing.Point(490, 16);
             lblCloseCommands.Margin = new Padding(4, 0, 4, 0);
             lblCloseCommands.Name = "lblCloseCommands";
             lblCloseCommands.Size = new Size(14, 15);
@@ -1018,7 +1019,7 @@ namespace Intersect.Editor.Forms.Editors.Events
             treeNode66.Name = "guilds";
             treeNode66.Text = "Guilds";
             lstCommands.Nodes.AddRange(new TreeNode[] { treeNode5, treeNode13, treeNode33, treeNode43, treeNode51, treeNode55, treeNode57, treeNode61, treeNode66 });
-            lstCommands.Size = new Size(519, 536);
+            lstCommands.Size = new Size(500, 536);
             lstCommands.TabIndex = 2;
             lstCommands.NodeMouseDoubleClick += lstCommands_NodeMouseDoubleClick;
             // 
@@ -1028,11 +1029,11 @@ namespace Intersect.Editor.Forms.Editors.Events
             grpEventCommands.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
             grpEventCommands.Controls.Add(lstEventCommands);
             grpEventCommands.ForeColor = System.Drawing.Color.Gainsboro;
-            grpEventCommands.Location = new System.Drawing.Point(412, 103);
+            grpEventCommands.Location = new System.Drawing.Point(389, 0);
             grpEventCommands.Margin = new Padding(4, 3, 4, 3);
             grpEventCommands.Name = "grpEventCommands";
             grpEventCommands.Padding = new Padding(4, 3, 4, 3);
-            grpEventCommands.Size = new Size(533, 580);
+            grpEventCommands.Size = new Size(515, 580);
             grpEventCommands.TabIndex = 6;
             grpEventCommands.TabStop = false;
             grpEventCommands.Text = "Commands";
@@ -1049,7 +1050,7 @@ namespace Intersect.Editor.Forms.Editors.Events
             lstEventCommands.Location = new System.Drawing.Point(7, 22);
             lstEventCommands.Margin = new Padding(4, 3, 4, 3);
             lstEventCommands.Name = "lstEventCommands";
-            lstEventCommands.Size = new Size(519, 535);
+            lstEventCommands.Size = new Size(500, 535);
             lstEventCommands.TabIndex = 0;
             lstEventCommands.DrawItem += lstEventCommands_DrawItem;
             lstEventCommands.SelectedIndexChanged += lstEventCommands_SelectedIndexChanged;
@@ -1062,33 +1063,33 @@ namespace Intersect.Editor.Forms.Editors.Events
             grpCreateCommands.BackColor = System.Drawing.Color.FromArgb(45, 45, 48);
             grpCreateCommands.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
             grpCreateCommands.ForeColor = System.Drawing.Color.Gainsboro;
-            grpCreateCommands.Location = new System.Drawing.Point(412, 103);
+            grpCreateCommands.Location = new System.Drawing.Point(389, 0);
             grpCreateCommands.Margin = new Padding(4, 3, 4, 3);
             grpCreateCommands.Name = "grpCreateCommands";
             grpCreateCommands.Padding = new Padding(4, 3, 4, 3);
-            grpCreateCommands.Size = new Size(533, 590);
+            grpCreateCommands.Size = new Size(515, 580);
             grpCreateCommands.TabIndex = 8;
             grpCreateCommands.TabStop = false;
             grpCreateCommands.Visible = false;
             // 
             // btnSave
             // 
-            btnSave.Location = new System.Drawing.Point(736, 710);
+            btnSave.Location = new System.Drawing.Point(6, 688);
             btnSave.Margin = new Padding(4, 3, 4, 3);
             btnSave.Name = "btnSave";
-            btnSave.Padding = new Padding(6, 6, 6, 6);
-            btnSave.Size = new Size(108, 35);
+            btnSave.Padding = new Padding(6);
+            btnSave.Size = new Size(108, 24);
             btnSave.TabIndex = 6;
             btnSave.Text = "Save";
             btnSave.Click += btnSave_Click;
             // 
             // btnCancel
             // 
-            btnCancel.Location = new System.Drawing.Point(852, 710);
+            btnCancel.Location = new System.Drawing.Point(122, 688);
             btnCancel.Margin = new Padding(4, 3, 4, 3);
             btnCancel.Name = "btnCancel";
-            btnCancel.Padding = new Padding(6, 6, 6, 6);
-            btnCancel.Size = new Size(108, 35);
+            btnCancel.Padding = new Padding(6);
+            btnCancel.Size = new Size(108, 24);
             btnCancel.TabIndex = 7;
             btnCancel.Text = "Cancel";
             btnCancel.Click += btnCancel_Click;
@@ -1160,22 +1161,22 @@ namespace Intersect.Editor.Forms.Editors.Events
             grpPageOptions.Controls.Add(btnCopyPage);
             grpPageOptions.Controls.Add(btnNewPage);
             grpPageOptions.ForeColor = System.Drawing.Color.Gainsboro;
-            grpPageOptions.Location = new System.Drawing.Point(365, 6);
+            grpPageOptions.Location = new System.Drawing.Point(358, 0);
             grpPageOptions.Margin = new Padding(4, 3, 4, 3);
             grpPageOptions.Name = "grpPageOptions";
             grpPageOptions.Padding = new Padding(4, 3, 4, 3);
-            grpPageOptions.Size = new Size(595, 58);
+            grpPageOptions.Size = new Size(587, 51);
             grpPageOptions.TabIndex = 13;
             grpPageOptions.TabStop = false;
             grpPageOptions.Text = "Page Options";
             // 
             // btnClearPage
             // 
-            btnClearPage.Location = new System.Drawing.Point(469, 18);
+            btnClearPage.Location = new System.Drawing.Point(471, 17);
             btnClearPage.Margin = new Padding(4, 3, 4, 3);
             btnClearPage.Name = "btnClearPage";
-            btnClearPage.Padding = new Padding(6, 6, 6, 6);
-            btnClearPage.Size = new Size(108, 35);
+            btnClearPage.Padding = new Padding(6);
+            btnClearPage.Size = new Size(108, 24);
             btnClearPage.TabIndex = 17;
             btnClearPage.Text = "Clear Page";
             btnClearPage.Click += btnClearPage_Click;
@@ -1183,44 +1184,44 @@ namespace Intersect.Editor.Forms.Editors.Events
             // btnDeletePage
             // 
             btnDeletePage.Enabled = false;
-            btnDeletePage.Location = new System.Drawing.Point(354, 18);
+            btnDeletePage.Location = new System.Drawing.Point(356, 17);
             btnDeletePage.Margin = new Padding(4, 3, 4, 3);
             btnDeletePage.Name = "btnDeletePage";
-            btnDeletePage.Padding = new Padding(6, 6, 6, 6);
-            btnDeletePage.Size = new Size(108, 35);
+            btnDeletePage.Padding = new Padding(6);
+            btnDeletePage.Size = new Size(108, 24);
             btnDeletePage.TabIndex = 16;
             btnDeletePage.Text = "Delete Page";
             btnDeletePage.Click += btnDeletePage_Click;
             // 
             // btnPastePage
             // 
-            btnPastePage.Location = new System.Drawing.Point(238, 18);
+            btnPastePage.Location = new System.Drawing.Point(240, 17);
             btnPastePage.Margin = new Padding(4, 3, 4, 3);
             btnPastePage.Name = "btnPastePage";
-            btnPastePage.Padding = new Padding(6, 6, 6, 6);
-            btnPastePage.Size = new Size(108, 35);
+            btnPastePage.Padding = new Padding(6);
+            btnPastePage.Size = new Size(108, 24);
             btnPastePage.TabIndex = 15;
             btnPastePage.Text = "Paste Page";
             btnPastePage.Click += btnPastePage_Click;
             // 
             // btnCopyPage
             // 
-            btnCopyPage.Location = new System.Drawing.Point(122, 18);
+            btnCopyPage.Location = new System.Drawing.Point(124, 17);
             btnCopyPage.Margin = new Padding(4, 3, 4, 3);
             btnCopyPage.Name = "btnCopyPage";
-            btnCopyPage.Padding = new Padding(6, 6, 6, 6);
-            btnCopyPage.Size = new Size(108, 35);
+            btnCopyPage.Padding = new Padding(6);
+            btnCopyPage.Size = new Size(108, 24);
             btnCopyPage.TabIndex = 14;
             btnCopyPage.Text = "Copy Page";
             btnCopyPage.Click += btnCopyPage_Click;
             // 
             // btnNewPage
             // 
-            btnNewPage.Location = new System.Drawing.Point(7, 18);
+            btnNewPage.Location = new System.Drawing.Point(8, 17);
             btnNewPage.Margin = new Padding(4, 3, 4, 3);
             btnNewPage.Name = "btnNewPage";
-            btnNewPage.Padding = new Padding(6, 6, 6, 6);
-            btnNewPage.Size = new Size(108, 35);
+            btnNewPage.Padding = new Padding(6);
+            btnNewPage.Size = new Size(108, 24);
             btnNewPage.TabIndex = 13;
             btnNewPage.Text = "New Page";
             btnNewPage.Click += btnNewPage_Click;
@@ -1233,11 +1234,11 @@ namespace Intersect.Editor.Forms.Editors.Events
             grpGeneral.Controls.Add(lblName);
             grpGeneral.Controls.Add(txtEventname);
             grpGeneral.ForeColor = System.Drawing.Color.Gainsboro;
-            grpGeneral.Location = new System.Drawing.Point(14, 6);
+            grpGeneral.Location = new System.Drawing.Point(6, 0);
             grpGeneral.Margin = new Padding(4, 3, 4, 3);
             grpGeneral.Name = "grpGeneral";
             grpGeneral.Padding = new Padding(4, 3, 4, 3);
-            grpGeneral.Size = new Size(344, 57);
+            grpGeneral.Size = new Size(344, 51);
             grpGeneral.TabIndex = 18;
             grpGeneral.TabStop = false;
             grpGeneral.Text = "General";
@@ -1245,7 +1246,7 @@ namespace Intersect.Editor.Forms.Editors.Events
             // chkIsGlobal
             // 
             chkIsGlobal.AutoSize = true;
-            chkIsGlobal.Location = new System.Drawing.Point(236, 25);
+            chkIsGlobal.Location = new System.Drawing.Point(201, 19);
             chkIsGlobal.Margin = new Padding(4, 3, 4, 3);
             chkIsGlobal.Name = "chkIsGlobal";
             chkIsGlobal.Size = new Size(92, 19);
@@ -1256,10 +1257,10 @@ namespace Intersect.Editor.Forms.Editors.Events
             // pnlTabsContainer
             // 
             pnlTabsContainer.Controls.Add(pnlTabs);
-            pnlTabsContainer.Location = new System.Drawing.Point(14, 70);
+            pnlTabsContainer.Location = new System.Drawing.Point(72, 57);
             pnlTabsContainer.Margin = new Padding(4, 3, 4, 3);
             pnlTabsContainer.Name = "pnlTabsContainer";
-            pnlTabsContainer.Size = new Size(946, 25);
+            pnlTabsContainer.Size = new Size(807, 22);
             pnlTabsContainer.TabIndex = 22;
             // 
             // pnlTabs
@@ -1268,66 +1269,70 @@ namespace Intersect.Editor.Forms.Editors.Events
             pnlTabs.Location = new System.Drawing.Point(0, 0);
             pnlTabs.Margin = new Padding(4, 3, 4, 3);
             pnlTabs.Name = "pnlTabs";
-            pnlTabs.Size = new Size(946, 25);
+            pnlTabs.Size = new Size(807, 22);
             pnlTabs.TabIndex = 23;
-            // 
-            // btnTabsRight
-            // 
-            btnTabsRight.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            btnTabsRight.Location = new System.Drawing.Point(902, 70);
-            btnTabsRight.Margin = new Padding(4, 3, 4, 3);
-            btnTabsRight.Name = "btnTabsRight";
-            btnTabsRight.Padding = new Padding(6, 6, 6, 6);
-            btnTabsRight.Size = new Size(58, 27);
-            btnTabsRight.TabIndex = 1;
-            btnTabsRight.Text = ">";
-            btnTabsRight.Click += btnTabsRight_Click;
             // 
             // btnTabsLeft
             // 
-            btnTabsLeft.Location = new System.Drawing.Point(14, 70);
+            btnTabsLeft.Location = new System.Drawing.Point(6, 57);
             btnTabsLeft.Margin = new Padding(4, 3, 4, 3);
             btnTabsLeft.Name = "btnTabsLeft";
-            btnTabsLeft.Padding = new Padding(6, 6, 6, 6);
-            btnTabsLeft.Size = new Size(58, 27);
+            btnTabsLeft.Padding = new Padding(6);
+            btnTabsLeft.Size = new Size(58, 22);
             btnTabsLeft.TabIndex = 0;
             btnTabsLeft.Text = "<";
             btnTabsLeft.Click += btnTabsLeft_Click;
             // 
-            // panel1
+            // btnTabsRight
             // 
-            panel1.BorderStyle = BorderStyle.FixedSingle;
-            panel1.Location = new System.Drawing.Point(14, 96);
-            panel1.Margin = new Padding(4, 3, 4, 3);
-            panel1.Name = "panel1";
-            panel1.Size = new Size(946, 607);
-            panel1.TabIndex = 23;
+            btnTabsRight.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            btnTabsRight.Location = new System.Drawing.Point(887, 57);
+            btnTabsRight.Margin = new Padding(4, 3, 4, 3);
+            btnTabsRight.Name = "btnTabsRight";
+            btnTabsRight.Padding = new Padding(6);
+            btnTabsRight.Size = new Size(58, 22);
+            btnTabsRight.TabIndex = 1;
+            btnTabsRight.Text = ">";
+            btnTabsRight.Click += btnTabsRight_Click;
+            // 
+            // pnlEditorComponents
+            // 
+            pnlEditorComponents.AutoScroll = true;
+            pnlEditorComponents.BorderStyle = BorderStyle.FixedSingle;
+            pnlEditorComponents.Controls.Add(grpNewCommands);
+            pnlEditorComponents.Controls.Add(grpEventCommands);
+            pnlEditorComponents.Controls.Add(grpCreateCommands);
+            pnlEditorComponents.Controls.Add(grpEntityOptions);
+            pnlEditorComponents.Controls.Add(grpTriggers);
+            pnlEditorComponents.Controls.Add(grpEventConditions);
+            pnlEditorComponents.Location = new System.Drawing.Point(6, 85);
+            pnlEditorComponents.Margin = new Padding(4, 3, 4, 3);
+            pnlEditorComponents.MaximumSize = new Size(939, 597);
+            pnlEditorComponents.Name = "pnlEditorComponents";
+            pnlEditorComponents.Size = new Size(939, 597);
+            pnlEditorComponents.TabIndex = 23;
             // 
             // FrmEvent
             // 
+            AcceptButton = btnSave;
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            AutoSize = true;
             BackColor = System.Drawing.Color.FromArgb(45, 45, 48);
-            ClientSize = new Size(974, 753);
-            Controls.Add(grpTriggers);
+            CancelButton = btnCancel;
+            ClientSize = new Size(951, 718);
             Controls.Add(btnTabsRight);
             Controls.Add(btnTabsLeft);
-            Controls.Add(grpEntityOptions);
-            Controls.Add(grpEventConditions);
+            Controls.Add(pnlEditorComponents);
             Controls.Add(grpPageOptions);
             Controls.Add(grpGeneral);
             Controls.Add(btnCancel);
             Controls.Add(btnSave);
             Controls.Add(pnlTabsContainer);
-            Controls.Add(grpNewCommands);
-            Controls.Add(grpEventCommands);
-            Controls.Add(grpCreateCommands);
-            Controls.Add(panel1);
             FormBorderStyle = FormBorderStyle.FixedSingle;
             KeyPreview = true;
             Margin = new Padding(4, 3, 4, 3);
             MaximizeBox = false;
+            MinimumSize = new Size(967, 757);
             Name = "FrmEvent";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Event Editor";
@@ -1336,6 +1341,7 @@ namespace Intersect.Editor.Forms.Editors.Events
             Load += frmEvent_Load;
             VisibleChanged += FrmEvent_VisibleChanged;
             KeyDown += FrmEvent_KeyDown;
+            Move += FrmEvent_Move;
             grpEntityOptions.ResumeLayout(false);
             grpExtra.ResumeLayout(false);
             grpExtra.PerformLayout();
@@ -1357,6 +1363,7 @@ namespace Intersect.Editor.Forms.Editors.Events
             grpGeneral.PerformLayout();
             pnlTabsContainer.ResumeLayout(false);
             pnlTabsContainer.PerformLayout();
+            pnlEditorComponents.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -1417,7 +1424,7 @@ namespace Intersect.Editor.Forms.Editors.Events
         private DarkComboBox cmbTriggerVal;
         private Panel pnlTabsContainer;
         private DarkGroupBox grpTriggers;
-        private Panel panel1;
+        private Panel pnlEditorComponents;
         private DarkButton btnTabsLeft;
         private DarkButton btnTabsRight;
         private Panel pnlTabs;

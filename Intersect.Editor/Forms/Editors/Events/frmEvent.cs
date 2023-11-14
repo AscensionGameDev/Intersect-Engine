@@ -309,8 +309,8 @@ namespace Intersect.Editor.Forms.Editors.Events
             }
 
             pnlTabs.SetBounds(0, 0, pnlTabs.Width, pnlTabs.Height);
-            btnTabsRight.Visible = pnlTabs.Right > pnlTabsContainer.Width;
-            btnTabsLeft.Visible = pnlTabs.Left < 0;
+            btnTabsRight.Enabled = pnlTabs.Right > pnlTabsContainer.Width;
+            btnTabsLeft.Enabled = pnlTabs.Left < 0;
         }
 
         private void TabBtn_Click(object sender, EventArgs e)
@@ -478,8 +478,8 @@ namespace Intersect.Editor.Forms.Editors.Events
                 }
             }
 
-            btnTabsRight.Visible = pnlTabs.Right > pnlTabsContainer.Width;
-            btnTabsLeft.Visible = pnlTabs.Left < 0;
+            btnTabsRight.Enabled = pnlTabs.Right > pnlTabsContainer.Width;
+            btnTabsLeft.Enabled = pnlTabs.Left < 0;
         }
 
         private void btnTabsLeft_Click(object sender, EventArgs e)
@@ -493,8 +493,8 @@ namespace Intersect.Editor.Forms.Editors.Events
                 }
             }
 
-            btnTabsRight.Visible = pnlTabs.Right > pnlTabsContainer.Width;
-            btnTabsLeft.Visible = pnlTabs.Left < 0;
+            btnTabsRight.Enabled = pnlTabs.Right > pnlTabsContainer.Width;
+            btnTabsLeft.Enabled = pnlTabs.Left < 0;
         }
 
         private void lstCommands_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
@@ -800,12 +800,52 @@ namespace Intersect.Editor.Forms.Editors.Events
             mCurrentMap = currentMap;
         }
 
+        private Size _defaultFormSize;
+        private Size _defaultEditorComponentsSize;
+        private System.Drawing.Point _defaultSaveButtonPosition;
+        private System.Drawing.Point _defaultCancelButtonPosition;
+
         private void frmEvent_Load(object sender, EventArgs e)
         {
             grpNewCommands.BringToFront();
             grpCreateCommands.BringToFront();
             InitLocalization();
             lstCommands.ExpandAll();
+
+            _defaultFormSize = new Size(967, 757);
+            _defaultEditorComponentsSize = pnlEditorComponents.Size;
+            _defaultSaveButtonPosition = btnSave.Location;
+            _defaultCancelButtonPosition = btnCancel.Location;
+            MinimumSize = default;
+
+            FrmEvent_Move(sender, e);
+        }
+
+        private void FrmEvent_Move(object? sender, EventArgs e)
+        {
+            if (_defaultFormSize == default)
+            {
+                return;
+            }
+
+            var currentScreen = Screen.FromControl(this);
+            var workingAreaBounds = currentScreen.WorkingArea;
+            var maximumHeight = Math.Min(workingAreaBounds.Height - 40, Math.Max(Height, _defaultFormSize.Height));
+
+            if (maximumHeight >= Size.Height)
+            {
+                return;
+            }
+
+            Size = new Size(Width, maximumHeight);
+            MaximumSize = new Size(Width, maximumHeight);
+            pnlEditorComponents.MaximumSize = new Size(
+                _defaultEditorComponentsSize.Width,
+                _defaultEditorComponentsSize.Height + (maximumHeight - _defaultFormSize.Height)
+            );
+            var buttonY = _defaultSaveButtonPosition.Y + (pnlEditorComponents.MaximumSize.Height - _defaultEditorComponentsSize.Height);
+            btnSave.Location = new System.Drawing.Point(_defaultSaveButtonPosition.X, buttonY);
+            btnCancel.Location = new System.Drawing.Point(_defaultCancelButtonPosition.X, buttonY);
         }
 
         /// <summary>
