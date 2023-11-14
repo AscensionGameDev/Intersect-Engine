@@ -1,5 +1,11 @@
 # Database Migrations
 
+## Prerequisites
+- Install `dotnet-ef` via `dotnet tool install --global dotnet-ef --version 7.*` ([official documentation](https://learn.microsoft.com/en-us/ef/core/cli/dotnet#installing-the-tools))
+	- On Unix-like systems you might get an error like `zsh: no matches found: 7.*`, if so run: `dotnet tool install --global dotnet-ef --version 7.\*` (note the `\\` before the `*`)
+	- If you get warnings like `The Entity Framework tools version '7.0.11' is older than that of the runtime '7.0.13'. Update the tools for the latest features and bug fixes. See https://aka.ms/AAc1fbw for more information.`
+		you can run: `dotnet tool update --global dotnet-ef --version 7.0.13` or `dotnet tool update --global dotnet-ef --version 7.*` (mind the `*` on Unix-like systems)
+
 ## Supported Contexts
 - Game (root `Game`, `GameContext` in code)
 - Logging (root `Logging`, `LoggingContext` in code)
