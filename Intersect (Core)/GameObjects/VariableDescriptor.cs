@@ -5,9 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 using Intersect.Enums;
 using Intersect.GameObjects.Switches_and_Variables;
+using Intersect.Models;
 using Newtonsoft.Json;
 
-namespace Intersect.Models;
+namespace Intersect.GameObjects;
 public abstract class VariableDescriptor<TObject> : DatabaseObject<TObject> where TObject : VariableDescriptor<TObject>, IVariableBase
 {
     [JsonConstructor]

@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations.Schema;
 using Intersect.GameObjects;
 using Intersect.Logging;
 using Microsoft.EntityFrameworkCore;

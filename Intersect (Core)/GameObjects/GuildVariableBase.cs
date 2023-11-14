@@ -2,7 +2,6 @@ using System;
 using System.Linq;
 using Intersect.Enums;
 using Intersect.GameObjects.Switches_and_Variables;
-using Intersect.Models;
 
 using Newtonsoft.Json;
 
