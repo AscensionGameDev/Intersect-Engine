@@ -779,35 +779,35 @@ namespace Intersect.Editor.Localization
 
             public static LocalizedString general = @"General";
 
-            public static LocalizedString lowerclone = @"Clone From Previous";
+            public static LocalizedString CloneFromPrevious = @"Clone From Previous";
 
-            public static LocalizedString lowerframe = @"Frame: {00}";
+            public static LocalizedString FrameX = @"Frame: {00}";
 
-            public static LocalizedString lowerframecount = @"Graphic Frame Count:";
+            public static LocalizedString FrameCount = @"Frames";
 
-            public static LocalizedString lowerframeduration = @"Frame Duration (ms):";
+            public static LocalizedString FrameDuration = @"Frame Duration (ms)";
 
-            public static LocalizedString lowerframeoptions = @"Frame Options";
+            public static LocalizedString FrameOptions = @"Frame Options";
 
-            public static LocalizedString lowergraphic = @"Graphic:";
+            public static LocalizedString Graphic = @"Graphic";
 
             public static LocalizedString lowergroup = @"Lower Layer (Below Target) ";
 
-            public static LocalizedString lowerhorizontalframes = @"Graphic Horizontal Frames:";
+            public static LocalizedString HorizontalFrames = @"Horizontal";
 
-            public static LocalizedString lowerloopcount = @"Loop Count:";
+            public static LocalizedString LoopCount = @"Loop Count";
 
-            public static LocalizedString disablelowerrotations = @"Disable Rotations";
+            public static LocalizedString DisableRotations = @"Disable Rotations";
 
-            public static LocalizedString lowerplay = @"Play Lower Animation";
+            public static LocalizedString Playback = @"Playback";
 
-            public static LocalizedString lowerplayback = @"Playback";
+            public static LocalizedString Play = @"Play";
 
-            public static LocalizedString lowerstop = @"Stop Lower Animation";
+            public static LocalizedString Pause = @"Pause";
 
-            public static LocalizedString lowerverticalframes = @"Graphic Vertical Frames:";
+            public static LocalizedString VerticalFrames = @"Graphic Vertical Frames:";
 
-            public static LocalizedString name = @"Name:";
+            public static LocalizedString name = @"Name";
 
             public static LocalizedString New = @"New Animation";
 
@@ -841,33 +841,7 @@ namespace Intersect.Editor.Localization
 
             public static LocalizedString undotitle = @"Undo Changes";
 
-            public static LocalizedString upperclone = @"Clone From Previous";
-
-            public static LocalizedString upperframe = @"Frame: {00}";
-
-            public static LocalizedString upperframecount = @"Graphic Frame Count:";
-
-            public static LocalizedString disableupperrotations = @"Disable Rotations";
-
-            public static LocalizedString upperframeduration = @"Frame Duration (ms):";
-
-            public static LocalizedString upperframeoptions = @"Frame Options";
-
-            public static LocalizedString uppergraphic = @"Graphic:";
-
             public static LocalizedString uppergroup = @"Upper Layer (Above Target) ";
-
-            public static LocalizedString upperhorizontalframes = @"Graphic Horizontal Frames:";
-
-            public static LocalizedString upperloopcount = @"Loop Count:";
-
-            public static LocalizedString upperplay = @"Play Upper Animation";
-
-            public static LocalizedString upperplayback = @"Playback";
-
-            public static LocalizedString upperstop = @"Stop Upper Animation";
-
-            public static LocalizedString upperverticalframes = @"Graphic Vertical Frames:";
 
         }
 
@@ -3861,25 +3835,25 @@ Tick timer saved in server config.json.";
         public partial struct LightEditor
         {
 
-            public static LocalizedString color = @"Color:";
+            public static LocalizedString color = @"Color";
 
-            public static LocalizedString expandamt = @"Expand Amt:";
+            public static LocalizedString expandamt = @"Expansion %";
 
-            public static LocalizedString intensity = @"Intensity:";
+            public static LocalizedString intensity = @"Intensity";
 
-            public static LocalizedString revert = @"Revert";
+            public static LocalizedString revert = @"Undo";
 
             public static LocalizedString save = @"Save";
 
-            public static LocalizedString selectcolor = @"Select Color";
+            public static LocalizedString SelectColor = @"Select Color";
 
-            public static LocalizedString size = @"Size:";
+            public static LocalizedString size = @"Size (px)";
 
             public static LocalizedString title = @"Light Editor";
 
-            public static LocalizedString xoffset = @"Offset X:";
+            public static LocalizedString xoffset = @"Offset X";
 
-            public static LocalizedString yoffset = @"Offset Y:";
+            public static LocalizedString yoffset = @"Offset Y";
 
         }
 

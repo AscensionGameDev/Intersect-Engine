@@ -57,6 +57,7 @@
     <EmbeddedResource Include="Resources\sqlite3x64.dll" />
     <EmbeddedResource Include="Resources\sqlite3x86.dll" />
     <EmbeddedResource Include="Resources\Shaders\radialgradient_editor.xnb" />
+    <EmbeddedResource Include="Resources\ThirdParty\material-design-icons\LICENSE" />
     <None Include="Resources\layer_sel.png" />
     <None Include="Resources\layer_face.png" />
     <None Include="Resources\layer_face_sel.png" />

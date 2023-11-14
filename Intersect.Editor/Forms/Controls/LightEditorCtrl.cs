@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Windows.Forms;
 
 using Intersect.Editor.Core;
@@ -19,6 +19,8 @@ namespace Intersect.Editor.Forms.Controls
         private LightBase mBackupLight;
 
         private LightBase mEditingLight;
+
+        private ToolTip _tooltip = new ToolTip();
 
         public LightEditorCtrl()
         {
@@ -56,12 +58,12 @@ namespace Intersect.Editor.Forms.Controls
             lblOffsetX.Text = Strings.LightEditor.xoffset;
             lblOffsetY.Text = Strings.LightEditor.yoffset;
             lblColor.Text = Strings.LightEditor.color;
-            btnSelectLightColor.Text = Strings.LightEditor.selectcolor;
             lblIntensity.Text = Strings.LightEditor.intensity;
             lblSize.Text = Strings.LightEditor.size;
             lblExpandAmt.Text = Strings.LightEditor.expandamt;
-            btnOkay.Text = Strings.LightEditor.save;
-            btnCancel.Text = Strings.LightEditor.revert;
+            _tooltip.SetToolTip(btnCancel, Strings.LightEditor.revert);
+            _tooltip.SetToolTip(btnOkay, Strings.LightEditor.save);
+            _tooltip.SetToolTip(btnSelectLightColor, Strings.LightEditor.SelectColor);
         }
 
         //Lights Tab
@@ -86,6 +88,7 @@ namespace Intersect.Editor.Forms.Controls
                 mEditingLight.Size = mBackupLight.Size;
                 mEditingLight.OffsetX = mBackupLight.OffsetX;
                 mEditingLight.OffsetY = mBackupLight.OffsetY;
+                LoadEditor(mEditingLight);
                 if (mEditingLight == Globals.EditingLight)
                 {
                     Globals.EditingLight = null;
