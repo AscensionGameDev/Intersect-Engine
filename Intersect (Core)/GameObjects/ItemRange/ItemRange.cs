@@ -1,6 +1,6 @@
 using Intersect.Utilities;
 
-namespace Intersect.GameObjects;
+namespace Intersect.GameObjects.ItemRange;
 
 /// <summary>
 /// TODO: ItemRange exists to generalize rollable stats on an item. After adding the ability to set specific ranges

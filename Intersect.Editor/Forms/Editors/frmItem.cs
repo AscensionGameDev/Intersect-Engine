@@ -15,8 +15,10 @@ using Intersect.Editor.Networking;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
+using Intersect.GameObjects.ItemRange;
 using Intersect.Network.Packets.Server;
 using Intersect.Utilities;
+using static Intersect.GameObjects.EquipmentProperties;
 using Graphics = System.Drawing.Graphics;
 
 namespace Intersect.Editor.Forms.Editors
@@ -366,7 +368,7 @@ namespace Intersect.Editor.Forms.Editors
                 nudAttackSpeedValue.Value = mEditorItem.AttackSpeedValue;
                 nudScaling.Value = mEditorItem.Scaling;
                 // This will be removed after conversion to a per-stat editor. Reminder that pre-migration LowRange == HighRange - Day
-                nudRange.Value = mEditorItem.StatRanges.FirstOrDefault()?.LowRange ?? 0;
+                nudRange.Value = mEditorItem.StatRanges?.FirstOrDefault()?.LowRange ?? 0;
                 chkCanDrop.Checked = Convert.ToBoolean(mEditorItem.CanDrop);
                 chkCanBank.Checked = Convert.ToBoolean(mEditorItem.CanBank);
                 chkCanGuildBank.Checked = Convert.ToBoolean(mEditorItem.CanGuildBank);
@@ -788,10 +790,14 @@ namespace Intersect.Editor.Forms.Editors
             // TODO This will be removed and replaced with a per-stat editor after the migration to StatRanges
             var maxAndMin = (int)nudRange.Value;
             
-            mEditorItem.StatRanges.Clear();
+            if (mEditorItem.EquipmentProperties.StatRanges == null)
+            {
+                mEditorItem.EquipmentProperties.StatRanges = new List<StatRange>();
+            }
+            mEditorItem.EquipmentProperties.StatRanges.Clear();
             foreach (Stat stat in Enum.GetValues(typeof(Stat)))
             {
-                mEditorItem.StatRanges.Add(new StatRange(stat, -maxAndMin, maxAndMin));
+                mEditorItem.StatRanges?.Add(new StatRange(stat, -maxAndMin, maxAndMin));
             }
         }
 

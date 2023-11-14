@@ -34,6 +34,9 @@ namespace Intersect.Server.Database.GameData
         //Items
         public DbSet<ItemBase> Items { get; set; }
 
+        //Equipment Properties of Items
+        public DbSet<EquipmentProperties> Items_EquipmentProperties { get; set; }
+
         //Maps
         public DbSet<MapController> Maps { get; set; }
 
@@ -71,6 +74,14 @@ namespace Intersect.Server.Database.GameData
 
         //Time
         public DbSet<TimeBase> Time { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<ItemBase>()
+                .HasOne(item => item.EquipmentProperties)
+                .WithOne(prop => prop.Item)
+                .OnDelete(DeleteBehavior.Cascade);
+        }
 
         public override void OnSchemaMigrationsProcessed(string[] migrations)
         {

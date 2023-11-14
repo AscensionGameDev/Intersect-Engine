@@ -6,12 +6,14 @@ using System.Linq;
 using Intersect.Enums;
 using Intersect.GameObjects.Conditions;
 using Intersect.GameObjects.Events;
+using Intersect.GameObjects.ItemRange;
 using Intersect.Models;
 using Intersect.Utilities;
 
 using Microsoft.EntityFrameworkCore;
 
 using Newtonsoft.Json;
+using static Intersect.GameObjects.EquipmentProperties;
 
 namespace Intersect.GameObjects
 {
@@ -335,26 +337,17 @@ namespace Intersect.GameObjects
             set => Effects = JsonConvert.DeserializeObject<List<EffectData>>(value ?? "") ?? new List<EffectData>();
         }
 
-        [NotMapped]
-        public List<StatRange> StatRanges { get; set; }
-
-        [Column("StatRanges")]
-        [JsonIgnore]
-        public string StatRangeJson
-        {
-            get => JsonConvert.SerializeObject(StatRanges);
-            set => StatRanges = JsonConvert.DeserializeObject<List<StatRange>>(value ?? "") ?? new List<StatRange>();
-        }
+        public EquipmentProperties? EquipmentProperties { get; set; }
 
         [NotMapped, JsonIgnore]
-        public Stat[] StatRangesAffected
-        {
-            get => StatRanges.Select(range => range.StatAffected).ToArray();
-        }
+        public List<StatRange>? StatRanges => EquipmentProperties?.StatRanges;
+
+        [NotMapped, JsonIgnore]
+        public Stat[] StatRangesAffected => StatRanges?.Select(range => range.StatAffected)?.ToArray() ?? Array.Empty<Stat>();
 
         public bool TryGetRangeFor(Stat stat, out StatRange range)
         {
-            range = StatRanges.Find(range => range.StatAffected == stat);
+            range = StatRanges?.Find(range => range.StatAffected == stat);
             
             return range != default;
         }
@@ -453,16 +446,5 @@ namespace Intersect.GameObjects
         public ItemEffect Type { get; set; }
 
         public int Percentage { get; set; }
-    }
-
-    [Owned]
-    public partial class StatRange : ItemRange
-    {
-        public StatRange(Stat statAffected, int lowRange, int highRange) : base(lowRange, highRange)
-        {
-            StatAffected = statAffected;
-        }
-
-        public Stat StatAffected { get; set; }
     }
 }
