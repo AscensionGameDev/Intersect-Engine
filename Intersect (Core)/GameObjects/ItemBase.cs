@@ -342,9 +342,6 @@ namespace Intersect.GameObjects
         [NotMapped, JsonIgnore]
         public List<StatRange>? StatRanges => EquipmentProperties?.StatRanges;
 
-        [NotMapped, JsonIgnore]
-        public Stat[] StatRangesAffected => StatRanges?.Select(range => range.StatAffected)?.ToArray() ?? Array.Empty<Stat>();
-
         public bool TryGetRangeFor(Stat stat, out StatRange range)
         {
             range = StatRanges?.Find(range => range.StatAffected == stat);

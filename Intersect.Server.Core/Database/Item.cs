@@ -54,7 +54,7 @@ public class Item
             return;
         }
 
-        foreach (Stat stat in Enum.GetValues(typeof(Stat)))
+        foreach (Stat stat in Enum.GetValues<Stat>())
         {
             if (!descriptor.TryGetRangeFor(stat, out var range))
             {

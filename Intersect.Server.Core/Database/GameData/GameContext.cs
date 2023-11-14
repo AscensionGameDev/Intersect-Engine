@@ -77,9 +77,10 @@ namespace Intersect.Server.Database.GameData
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<ItemBase>()
-                .HasOne(item => item.EquipmentProperties)
-                .WithOne(prop => prop.Item)
+            modelBuilder.Entity<EquipmentProperties>()
+                .HasOne(property => property.Descriptor)
+                .WithOne(item => item.EquipmentProperties)
+                .HasForeignKey<EquipmentProperties>(property => property.DescriptorId)
                 .OnDelete(DeleteBehavior.Cascade);
         }
 

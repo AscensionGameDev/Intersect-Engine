@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 using Intersect.GameObjects.ItemRange;
 
 namespace Intersect.GameObjects;
-public class EquipmentProperties
+public partial class EquipmentProperties
 {
     public EquipmentProperties()
     {
@@ -11,16 +11,16 @@ public class EquipmentProperties
 
     public EquipmentProperties(Guid descriptorId)
     {
-        ItemDescriptorId = descriptorId;
+        DescriptorId = descriptorId;
     }
 
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public Guid Id { get; private set; }
 
-    public Guid ItemDescriptorId { get; set; }
+    public Guid DescriptorId { get; set; }
 
-    [ForeignKey(nameof(ItemDescriptorId))]
-    public ItemBase Item { get; set; }
+    [ForeignKey(nameof(DescriptorId))]
+    public ItemBase Descriptor { get; set; }
 
     public List<StatRange> StatRanges { get; set; }
 }

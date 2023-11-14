@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations.Schema;
 using Intersect.Utilities;
 
 namespace Intersect.GameObjects.ItemRange;
@@ -8,7 +9,7 @@ namespace Intersect.GameObjects.ItemRange;
 /// </summary>
 public abstract partial class ItemRange
 {
-    public ItemRange(int lowRange, int highRange)
+    public ItemRange(int lowRange, int highRange) : this()
     {
         LowRange = lowRange;
         HighRange = highRange;
@@ -16,14 +17,21 @@ public abstract partial class ItemRange
 
     public ItemRange()
     {
+        Seed = Guid.NewGuid().GetHashCode();
+        Randomizer = new Random(Seed);
     }
 
     public int Roll()
     {
-        return Randomization.Next(LowRange, HighRange + 1);
+        return Randomizer.Next(LowRange, HighRange + 1);
     }
 
     public int LowRange { get; set; }
 
     public int HighRange { get; set; }
+
+    private int Seed { get; set; }
+
+    [NotMapped]
+    private Random Randomizer { get; set; }
 }
