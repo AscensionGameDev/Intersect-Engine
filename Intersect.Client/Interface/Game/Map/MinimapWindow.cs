@@ -18,15 +18,13 @@ namespace Intersect.Client.Interface.Game.Map
     {
         private GameRenderTexture _renderTexture;
         private GameTexture _whiteTexture;
-
         private bool _redrawMaps;
         private bool _redrawEntities;
         private int _zoomLevel;
-        private Point _minimapTileSize;
-
         private Dictionary<MapPosition, MapBase> _mapGrid = new();
         private Dictionary<MapPosition, Dictionary<Point, EntityInfo>> _entityInfoCache = new();
 
+        private readonly Point _minimapTileSize;
         private readonly Dictionary<MapPosition, GameRenderTexture> _minimapCache = new();
         private readonly Dictionary<MapPosition, GameRenderTexture> _entityCache = new();
         private readonly Dictionary<Guid, MapPosition> _mapPosition = new();
@@ -36,25 +34,18 @@ namespace Intersect.Client.Interface.Game.Map
 
         private static readonly GameContentManager ContentManager = Globals.ContentManager;
 
+        private volatile bool _initialized;
+
         // Constructors
         public MinimapWindow(Base parent) : base(parent, Strings.Minimap.Title, false, "MinimapWindow")
         {
             DisableResizing();
-            IsHidden = true;
+            _zoomLevel = Options.Instance.MinimapOpts.DefaultZoom;
+            _minimapTileSize = Options.Instance.MinimapOpts.TileSize;
 
             _minimap = new ImagePanel(this, "MinimapContainer");
             _zoomInButton = new Button(_minimap, "ZoomInButton");
             _zoomOutButton = new Button(_minimap, "ZoomOutButton");
-
-            LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
-            EnsureInitialized();
-        }
-
-        protected override void EnsureInitialized()
-        {
-            _zoomLevel = Options.Instance.MinimapOpts.DefaultZoom;
-            _minimapTileSize = Options.Instance.MinimapOpts.TileSize;
-
             _zoomInButton.Clicked += MZoomInButton_Clicked;
             _zoomInButton.SetToolTipText(Strings.Minimap.ZoomIn);
             _zoomOutButton.Clicked += MZoomOutButton_Clicked;
@@ -62,20 +53,24 @@ namespace Intersect.Client.Interface.Game.Map
 
             _whiteTexture = Graphics.Renderer.GetWhiteTexture();
             _renderTexture = GenerateBaseRenderTexture();
-            _minimap.Texture = _renderTexture;
-            _minimap.SetTextureRect(0, 0, _renderTexture.Width, _renderTexture.Height);
+        }
+
+        protected override void EnsureInitialized()
+        {
+            LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+            _initialized = true;
         }
 
         // Public Methods
         public void Update()
         {
-            if (!IsVisible())
+            if (!IsVisible() || !_initialized)
             {
                 return;
             }
 
-            UpdateMinimap(Globals.Me, Globals.Entities);
             DrawMinimap();
+            UpdateMinimap(Globals.Me, Globals.Entities);
         }
 
         public void Show()
@@ -167,8 +162,10 @@ namespace Intersect.Client.Interface.Game.Map
             {
                 return;
             }
-            
+
             _renderTexture.Clear(Color.Transparent);
+            _minimap.Texture = _renderTexture;
+            _minimap.SetTextureRect(0, 0, _renderTexture.Width, _renderTexture.Height);
 
             foreach (var pos in _mapGrid.Keys)
             {
