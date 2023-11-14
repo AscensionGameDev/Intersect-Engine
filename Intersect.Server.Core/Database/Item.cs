@@ -54,9 +54,12 @@ public class Item
             return;
         }
 
-        for (var i = 0; i < Enum.GetValues<Stat>().Length; i++)
+        for (Stat stat in Enum.GetValues(typeof(Stat)))
         {
-            Properties.StatModifiers[i] = Randomization.Next(-descriptor.StatGrowth, descriptor.StatGrowth + 1);
+            if (!descriptor.TryGetRangeFor(stat, out var range))
+            {
+                Properties.StatModifiers[(int)stat] = range.Roll();
+            }
         }
     }
 

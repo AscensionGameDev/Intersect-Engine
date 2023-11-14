@@ -233,8 +233,6 @@ namespace Intersect.GameObjects
         /// </summary>
         public int MaxBankStack { get; set; } = 1000000;
 
-        public int StatGrowth { get; set; }
-
         public int Tool { get; set; } = -1;
 
         /// <summary>
@@ -337,6 +335,30 @@ namespace Intersect.GameObjects
             set => Effects = JsonConvert.DeserializeObject<List<EffectData>>(value ?? "") ?? new List<EffectData>();
         }
 
+        [NotMapped]
+        public List<StatRange> StatRanges { get; set; }
+
+        [Column("StatRanges")]
+        [JsonIgnore]
+        public string StatRangeJson
+        {
+            get => JsonConvert.SerializeObject(StatRanges);
+            set => StatRanges = JsonConvert.DeserializeObject<List<StatRange>>(value ?? "") ?? new List<StatRange>();
+        }
+
+        [NotMapped, JsonIgnore]
+        public Stat[] StatRangesAffected
+        {
+            get => StatRanges.Select(range => range.StatAffected).ToArray();
+        }
+
+        public bool TryGetRangeFor(Stat stat, out StatRange range)
+        {
+            range = StatRanges.Find(range => range.StatAffected == stat);
+            
+            return range != default;
+        }
+
         public int GetEffectPercentage(ItemEffect type)
         {
             return Effects.Find(effect => effect.Type == type)?.Percentage ?? 0;
@@ -431,5 +453,16 @@ namespace Intersect.GameObjects
         public ItemEffect Type { get; set; }
 
         public int Percentage { get; set; }
+    }
+
+    [Owned]
+    public partial class StatRange : ItemRange
+    {
+        public StatRange(Stat statAffected, int lowRange, int highRange) : base(lowRange, highRange)
+        {
+            StatAffected = statAffected;
+        }
+
+        public Stat StatAffected { get; set; }
     }
 }
