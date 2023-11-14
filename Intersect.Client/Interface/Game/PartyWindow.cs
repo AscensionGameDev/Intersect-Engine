@@ -205,9 +205,14 @@ namespace Intersect.Client.Interface.Game
                         mMpValue[i].Show();
                         mMpBarContainer[i].Show();
 
-                        mLblnames[i].Text = Strings.Parties.name.ToString(
+                        var nameLabel = mLblnames[i];
+
+                        nameLabel.Text = Strings.Parties.name.ToString(
                             Globals.Me.Party[i].Name, Globals.Me.Party[i].Level
                         );
+
+                        nameLabel.UserData = Globals.Me.Party[i].Id;
+                        nameLabel.Clicked += PartyWindow_Clicked;
 
                         if (mHpBar[i].Texture != null)
                         {
@@ -289,6 +294,16 @@ namespace Intersect.Client.Interface.Game
                         mHpBarContainer[i].Hide();
                     }
                 }
+            }
+        }
+
+        private void PartyWindow_Clicked(Base sender, ClickedEventArgs arguments)
+        {
+            var memberId = (Guid)((Label)sender).UserData;
+
+            if (Globals.Entities.TryGetValue(memberId, out var teammate))
+            {
+                Globals.Me.TryTarget(teammate);
             }
         }
 
