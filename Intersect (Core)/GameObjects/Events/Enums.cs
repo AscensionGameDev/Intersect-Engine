@@ -236,5 +236,9 @@ namespace Intersect.GameObjects.Events
         ResetStatPointAllocations,
 
         CastSpellOn,
+
+        FadeIn,
+
+        FadeOut,
     }
 }

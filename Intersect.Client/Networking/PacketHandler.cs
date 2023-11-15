@@ -2121,6 +2121,18 @@ namespace Intersect.Client.Networking
             );
         }
 
+        public void HandlePacket(IPacketSender packetSender, FadePacket packet)
+        {
+            if (packet.FadeOut)
+            {
+                Fade.FadeOut(true);
+            }
+            else
+            {
+                Fade.FadeIn(true);
+            }
+        }
+
     }
 
 }

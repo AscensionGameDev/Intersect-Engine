@@ -1,4 +1,5 @@
-﻿using Intersect.Utilities;
+using Intersect.Client.Networking;
+using Intersect.Utilities;
 
 namespace Intersect.Client.Core
 {
@@ -25,18 +26,22 @@ namespace Intersect.Client.Core
 
         private static long sLastUpdate;
 
-        public static void FadeIn()
+        private static bool InformServer { get; set; }
+
+        public static void FadeIn(bool informServer = false)
         {
             sCurrentAction = FadeType.In;
             sFadeAmt = 255f;
             sLastUpdate = Timing.Global.MillisecondsUtc;
+            InformServer = informServer;
         }
 
-        public static void FadeOut()
+        public static void FadeOut(bool informServer = false)
         {
             sCurrentAction = FadeType.Out;
             sFadeAmt = 0f;
             sLastUpdate = Timing.Global.MillisecondsUtc;
+            InformServer = informServer;
         }
 
         public static void Cancel()
@@ -64,6 +69,11 @@ namespace Intersect.Client.Core
                 {
                     sCurrentAction = FadeType.None;
                     sFadeAmt = 0f;
+
+                    if (InformServer)
+                    {
+                        PacketSender.SendFadeCompletePacket();
+                    }
                 }
             }
             else if (sCurrentAction == FadeType.Out)
@@ -73,6 +83,11 @@ namespace Intersect.Client.Core
                 {
                     sCurrentAction = FadeType.None;
                     sFadeAmt = 255f;
+
+                    if (InformServer)
+                    {
+                        PacketSender.SendFadeCompletePacket();
+                    }
                 }
             }
 

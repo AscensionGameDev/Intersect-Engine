@@ -164,6 +164,12 @@ namespace Intersect.Server.Entities.Events
                             curStack.WaitingForResponse = CommandInstance.EventResponse.None;
                         }
 
+                        if (curStack.WaitingForResponse == CommandInstance.EventResponse.Fade &&
+                            !Player.ClientAwaitingFadeCompletion)
+                        {
+                            curStack.WaitingForResponse = CommandInstance.EventResponse.None;
+                        }
+
                         var commandsExecuted = 0;
                         while (curStack != null && curStack.WaitingForResponse == CommandInstance.EventResponse.None &&
                                !(PageInstance?.ShouldDespawn(map) ?? false) &&

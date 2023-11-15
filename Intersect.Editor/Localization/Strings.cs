@@ -1994,6 +1994,12 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString False = @"False";
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString FadeIn = @"Screen Fade In";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString FadeOut = @"Screen Fade Out";
+
             public static LocalizedString female = @"Female";
 
             public static LocalizedString forcedstart = @"Forced Start";
@@ -2321,6 +2327,8 @@ Tick timer saved in server config.json.";
                 {"setguildbankslots", @"Set Guild Bank Slots Count"},
                 {"resetstatallocations", @"Reset Stat Point Allocations"},
                 {"castspellon", @"Cast Spell On"},
+                {"fadein", @"Screen Fade In"},
+                {"fadeout", @"Scren Fade Out"},
             };
 
         }

@@ -1298,6 +1298,16 @@ namespace Intersect.Editor.Forms.Editors.Events
             return Strings.EventCommandList.CastSpellOn.ToString(SpellBase.GetName(command.SpellId), command.Self, command.PartyMembers, command.GuildMembers);
         }
 
+        private static string GetCommandText(FadeInCommand command, MapInstance map)
+        {
+            return Strings.EventCommandList.FadeIn;
+        }
+
+        private static string GetCommandText(FadeOutCommand command, MapInstance map)
+        {
+            return Strings.EventCommandList.FadeOut;
+        }
+
         //Set Variable Modification Texts
         private static string GetVariableModText(SetVariableCommand command, VariableMod mod)
         {
