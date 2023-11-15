@@ -6,6 +6,8 @@ using Intersect.Config;
 using Intersect.Logging;
 using Intersect.Reflection;
 using Intersect.Server.Core;
+using Intersect.Server.Database.PlayerData.Players;
+using Intersect.Server.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Infrastructure;
@@ -207,12 +209,41 @@ public abstract partial class IntersectDbContext<TDbContext> : DbContext, IDbCon
         }
         catch (DbUpdateConcurrencyException concurrencyException)
         {
+            static Guid GetUserIdFrom(object entry)
+            {
+                return entry switch
+                {
+                    IPlayerOwned playerOwned => playerOwned.Player?.User?.Id ?? playerOwned.Player?.UserId ?? default,
+                    Player player => player.User?.Id ?? player.UserId,
+                    _ => default,
+                };
+            }
+
             var concurrencyErrors = new StringBuilder();
+            var userIds = concurrencyException.Entries.Select(GetUserIdFrom)
+                .Where(id => id != default)
+                .Distinct()
+                .ToArray();
+            if (userIds.Length == 1)
+            {
+                concurrencyErrors.AppendLine($"This failure was wholly caused by user {userIds.First()}");
+            }
+            else
+            {
+                concurrencyErrors.AppendLine($"Involved users: {string.Join(", ", userIds)}");
+            }
+
             foreach (var entry in concurrencyException.Entries)
             {
                 concurrencyErrors.AppendLine(
                     $"[{entry.State}] {entry.Entity.GetFullishName()} ({entry.GetFullishName()})"
                 );
+
+                var userId = GetUserIdFrom(entry.Entity);
+                if (userId != default)
+                {
+                    concurrencyErrors.AppendLine($"User Id {userId}");
+                }
 
                 var proposedValues = entry.CurrentValues;
                 var databaseValues = entry.GetDatabaseValues();
