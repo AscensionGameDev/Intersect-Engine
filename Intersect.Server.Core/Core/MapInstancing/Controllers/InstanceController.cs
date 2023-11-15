@@ -10,11 +10,9 @@ public class InstanceController
 {
     Guid InstanceId { get; set; }
 
-    public List<Player> Players { get; set; } = new List<Player>();
+    public HashSet<Player> Players { get; set; } = new HashSet<Player>();
 
     public int PlayerCount => Players.Count;
-
-    public List<Guid> PlayerIds => Players.Select(pl => pl.Id).ToList();
 
     public InstanceController(Guid instanceId, Player creator)
     {
@@ -28,19 +26,11 @@ public class InstanceController
         {
             return;
         }
-
-        if (PlayerIds.Contains(player.Id))
-        {
-            return;
-        }
-
-        Logging.Log.Debug($"{player.Name} has entered instance controller {InstanceId}!");
         Players.Add(player);
     }
 
     public void RemovePlayer(Guid playerId)
     {
-        Logging.Log.Debug($"{playerId} has left instance controller {InstanceId}...");
-        Players.RemoveAll(pl => pl.Id == playerId);
+        Players.RemoveWhere(pl => pl.Id == playerId);
     }
 }
