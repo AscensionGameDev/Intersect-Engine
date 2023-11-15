@@ -44,7 +44,6 @@ namespace Intersect.GameObjects.Annotations
                 .GetNestedTypes(BindingFlags.Static | BindingFlags.Public)
                 .FirstOrDefault(type => type.Name == Group);
             var parentType = groupType ?? stringsType;
-
             var fieldInfo = parentType.GetMember(Name).FirstOrDefault(member => member.MemberType == MemberTypes.Field) as FieldInfo;
 
             if (fieldInfo == default)

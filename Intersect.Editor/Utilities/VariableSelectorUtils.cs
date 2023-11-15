@@ -24,7 +24,7 @@ public static class VariableSelectorUtils
 
     public static string GetSelectedVarText(VariableType variableType, Guid selectedVariableId)
     {
-        var type = variableType.GetDescription();
+        Strings.VariableSelector.VariableTypes.TryGetValue((int)variableType, out var type);
         var varName = variableType.GetRelatedTable().GetLookup().Get(selectedVariableId)?.Name;
 
         if (varName == default || selectedVariableId == Guid.Empty)
