@@ -44,6 +44,7 @@ namespace Intersect.GameObjects.Annotations
                 .GetNestedTypes(BindingFlags.Static | BindingFlags.Public)
                 .FirstOrDefault(type => type.Name == Group);
             var parentType = groupType ?? stringsType;
+
             var fieldInfo = parentType.GetMember(Name).FirstOrDefault(member => member.MemberType == MemberTypes.Field) as FieldInfo;
 
             if (fieldInfo == default)
@@ -100,6 +101,19 @@ namespace Intersect.GameObjects.Annotations
 
                     throw new InvalidOperationException($"Unsupported type: {fieldInfo.FieldType.FullName}");
             }
+        }
+
+        public string[] GetNames(Type stringsType)
+        {
+            var groupType = Group == default ? default : stringsType
+                .GetNestedTypes(BindingFlags.Static | BindingFlags.Public)
+                .FirstOrDefault(type => type.Name == Group);
+            if (groupType != null)
+            {
+                return Array.Empty<string>();
+            }
+
+            return groupType.GetMember(Name).Select(member => member.Name).ToArray();
         }
 
         private delegate string? GetStringFromLocaleDictionaryGeneric(object? dictionaryObject, Enum genericKey);

@@ -12,11 +12,15 @@ namespace Intersect.Editor.Localization
 {
     public class EditorProperty : IComparable<EditorProperty>
     {
-        public EditorProperty(PropertyInfo propertyInfo, EditorDisplayAttribute displayAttribute, EditorLabelAttribute labelAttribute)
+        public EditorProperty(PropertyInfo propertyInfo, 
+            EditorDisplayAttribute displayAttribute, 
+            EditorLabelAttribute labelAttribute,
+            EditorDictionaryAttribute? dictionaryAttribute)
         {
             DisplayAttribute = displayAttribute ?? throw new ArgumentNullException(nameof(displayAttribute));
             LabelAttribute = labelAttribute ?? throw new ArgumentNullException(nameof(labelAttribute));
             PropertyInfo = propertyInfo ?? throw new ArgumentNullException(nameof(propertyInfo));
+            DictionaryAttribute = dictionaryAttribute;
         }
 
         public EditorDisplayAttribute DisplayAttribute { get; }
@@ -24,6 +28,8 @@ namespace Intersect.Editor.Localization
         public EditorLabelAttribute LabelAttribute { get; }
 
         public PropertyInfo PropertyInfo { get; }
+
+        public EditorDictionaryAttribute? DictionaryAttribute { get; }
 
         public int CompareTo(EditorProperty other)
         {
@@ -57,6 +63,7 @@ namespace Intersect.Editor.Localization
             var attributes = Attribute.GetCustomAttributes(propertyInfo, true);
             var labelAttribute = attributes.FirstOrDefault(attribute => attribute is EditorLabelAttribute) as EditorLabelAttribute;
             var displayAttribute = attributes.FirstOrDefault(attribute => attribute is EditorDisplayAttribute) as EditorDisplayAttribute;
+            var dictionaryAttribute = attributes.FirstOrDefault(attribute => attribute is EditorDictionaryAttribute) as EditorDictionaryAttribute;
 
             if (labelAttribute == default || displayAttribute == default)
             {
@@ -69,7 +76,8 @@ namespace Intersect.Editor.Localization
             editorProperty = new EditorProperty(
                 displayAttribute: displayAttribute,
                 labelAttribute: labelAttribute,
-                propertyInfo: propertyInfo
+                propertyInfo: propertyInfo,
+                dictionaryAttribute: dictionaryAttribute
             );
 
             return true;
@@ -112,6 +120,11 @@ namespace Intersect.Editor.Localization
                     continue;
                 }
 
+                if (type.Name.Contains("PlayerVariable"))
+                {
+                    Log.Debug("here");
+                }
+
                 var editorPropertiesQuery = type
                     .GetProperties(BindingFlags.Public | BindingFlags.Instance)
                     .SelectMany(
@@ -142,6 +155,27 @@ namespace Intersect.Editor.Localization
                     var propertyValue = editorProperty.GetValue(value);
                     var displayValue = displayAttribute.Format(typeof(Strings), propertyValue);
                     return new KeyValuePair<string, string>(label, displayValue);
+                })
+                .ToList();
+        }
+
+        [Obsolete("We want to re-implement strings to be object-oriented.")]
+        public List<KeyValuePair<string, string[]>> LocalizeList(Type stringsType, object value)
+        {
+            if (value == default || !_indexedEditorProperties.TryGetValue(value.GetType(), out var editorProperties))
+            {
+                return new List<KeyValuePair<string, string[]>>();
+            }
+
+            return editorProperties
+                .Select(editorProperty =>
+                {
+                    var labelAttribute = editorProperty.LabelAttribute;
+                    var label = labelAttribute.Evaluate(typeof(Strings));
+
+                    var dictionaryValues = editorProperty.DictionaryAttribute?.GetNames(typeof(Strings));
+
+                    return new KeyValuePair<string, string[]>(label, dictionaryValues ?? Array.Empty<string>());
                 })
                 .ToList();
         }

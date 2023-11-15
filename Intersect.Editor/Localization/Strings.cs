@@ -5618,10 +5618,6 @@ Negative values for time to flow backwards.";
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString ValueNoneSelected = @"None Selected!";
 
-        }
-
-        public partial struct Variables
-        {
             public static Dictionary<int, LocalizedString> VariableTypes = new Dictionary<int, LocalizedString>
             {
                 {(int) VariableType.PlayerVariable, @"Player Variable" },
@@ -5629,6 +5625,7 @@ Negative values for time to flow backwards.";
                 {(int) VariableType.GuildVariable, @"Guild Variable" },
                 {(int) VariableType.UserVariable, @"User Variable" },
             };
+
         }
 
     }

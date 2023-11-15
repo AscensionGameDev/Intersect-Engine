@@ -12,6 +12,7 @@ using Intersect.Editor.Localization;
 using Intersect.Enums;
 using Intersect.Extensions;
 using Intersect.GameObjects;
+using Intersect.GameObjects.Annotations;
 
 namespace Intersect.Editor.Forms;
 
@@ -19,6 +20,8 @@ public partial class FrmVariableSelector : Form
 {
     private Guid mSelectedVariableId { get; set; }
 
+    [EditorLabel("VariableSelector", "LabelVariableType")]
+    [EditorDictionary("VariableSelector", "VariableTypes", FieldType = EditorFieldType.Pivot)]
     private VariableType mSelectedVariableType { get; set; }
 
     private bool mResult { get; set; }
@@ -73,6 +76,8 @@ public partial class FrmVariableSelector : Form
         btnCancel.Text = Strings.General.Cancel;
 
         cmbVariableType.Items.Clear();
+        var x = Strings.Localizer.LocalizeList(typeof(Strings), mSelectedVariableType);
+
         cmbVariableType.Items.AddRange(EnumerableExtensions.GetDescriptions(typeof(VariableType)));
     }
 

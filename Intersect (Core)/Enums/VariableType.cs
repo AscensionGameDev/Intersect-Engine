@@ -8,8 +8,6 @@ namespace Intersect.Enums
     // But technical debt :/
     // Crying as I add in Guild variables.. don't hate me :(
 
-    [EditorLabel("Variables", "VariableTypes")]
-    [EditorDictionary("Variables", "VariableTypes", FieldType = EditorFieldType.Pivot)]
     public enum VariableType
     {
         [RelatedTable(GameObjectType.PlayerVariable)]
