@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using Intersect.GameObjects.Annotations;
 using static Intersect.Attributes.Attributes;
 
 namespace Intersect.Enums
@@ -7,21 +8,19 @@ namespace Intersect.Enums
     // But technical debt :/
     // Crying as I add in Guild variables.. don't hate me :(
 
+    [EditorLabel("Variables", "VariableTypes")]
+    [EditorDictionary("Variables", "VariableTypes", FieldType = EditorFieldType.Pivot)]
     public enum VariableType
     {
-        [Description("Player Variable")]
         [RelatedTable(GameObjectType.PlayerVariable)]
         PlayerVariable = 0,
 
-        [Description("Server Variable")]
         [RelatedTable(GameObjectType.ServerVariable)]
         ServerVariable,
 
-        [Description("Guild Variable")]
         [RelatedTable(GameObjectType.GuildVariable)]
         GuildVariable,
 
-        [Description("Instance Variable")]
         [RelatedTable(GameObjectType.UserVariable)]
         UserVariable,
     }

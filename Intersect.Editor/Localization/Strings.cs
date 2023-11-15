@@ -5620,6 +5620,17 @@ Negative values for time to flow backwards.";
 
         }
 
+        public partial struct Variables
+        {
+            public static Dictionary<int, LocalizedString> VariableTypes = new Dictionary<int, LocalizedString>
+            {
+                {(int) VariableType.PlayerVariable, @"Player Variable" },
+                {(int) VariableType.ServerVariable, @"Server Variable" },
+                {(int) VariableType.GuildVariable, @"Guild Variable" },
+                {(int) VariableType.UserVariable, @"User Variable" },
+            };
+        }
+
     }
 
 }
