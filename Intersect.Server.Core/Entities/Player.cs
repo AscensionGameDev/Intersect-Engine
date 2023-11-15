@@ -5253,9 +5253,32 @@ namespace Intersect.Server.Entities
                 return;
             }
 
-            if (!CanCastSpell(spell, target, true, out var _))
+            if (!CanCastSpell(spell, target, true, out _))
             {
-                return;
+                if (!spell.Combat.Friendly)
+                {
+                    return;
+                }
+
+                if (!Options.Instance.CombatOpts.EnableAutoSelfCastFriendlySpellsWhenTargetingHostile)
+                {
+                    return;
+                }
+
+                if (target == this)
+                {
+                    return;
+                }
+
+                // Since it's a friendly spell and we have auto-retarget enabled,
+                // check if we can cast the spell on ourselves
+                if (!CanCastSpell(spell, this, true, out _))
+                {
+                    return;
+                }
+
+                // If we can, soft-change the target to ourselves (we will use this to set CastTarget
+                target = this;
             }
 
 
@@ -5273,7 +5296,10 @@ namespace Intersect.Server.Entities
                 }
 
                 SpellCastSlot = spellSlot;
-                CastTarget = Target;
+
+                // Set to lower case target instead of Target to facilitate soft
+                // retargeting for auto self-cast on friendly when targeting hostile
+                CastTarget = target;
 
                 //Check if the caster has the right ammunition if a projectile
                 if (spell.SpellType == SpellType.CombatSpell &&
