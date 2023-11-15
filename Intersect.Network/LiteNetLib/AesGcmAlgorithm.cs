@@ -134,7 +134,11 @@ public sealed class AesGcmAlgorithm : SymmetricAlgorithm
             Log.Debug($"cipherdataView({cipherdataView.Length})={Convert.ToHexString(cipherdataView)}");
             Log.Debug($"key={Convert.ToHexString(_key.Span)}");
 #endif
-            Log.Error(exception);
+            var configuredLogLevel = Options.Instance?.Logging.Level ?? LogLevel.Diagnostic;
+            if (configuredLogLevel < LogLevel.Debug)
+            {
+                Log.Error(exception);
+            }
             plaindata = default;
             return EncryptionResult.Error;
         }
@@ -207,7 +211,11 @@ public sealed class AesGcmAlgorithm : SymmetricAlgorithm
         }
         catch (Exception exception)
         {
-            Log.Error(exception);
+            var configuredLogLevel = Options.Instance?.Logging.Level ?? LogLevel.Diagnostic;
+            if (configuredLogLevel < LogLevel.Debug)
+            {
+                Log.Error(exception);
+            }
             cipherdata = default;
             return EncryptionResult.Error;
         }
