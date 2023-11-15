@@ -11,6 +11,7 @@ using Intersect.Server.Networking;
 using Intersect.Server.Database.PlayerData.Players;
 using Intersect.Utilities;
 using Intersect.Server.Database.PlayerData.Api;
+using Intersect.Server.Core.MapInstancing;
 
 namespace Intersect.Server.Core
 {
@@ -152,21 +153,24 @@ namespace Intersect.Server.Core
                             }
 
                             //Refresh list of active maps & their instances
-                            foreach (var layerId in ActiveMapInstances.Keys.ToArray())
+                            foreach (var instanceId in ActiveMapInstances.Keys.ToArray())
                             {
-                                if (!processedMapInstances.Contains(layerId))
+                                if (!processedMapInstances.Contains(instanceId))
                                 {
                                     // Remove the map entirely from the update queue
-                                    if (ActiveMapInstances[layerId] != null && ActiveMapInstances[layerId].ShouldBeCleaned())
+                                    if (ActiveMapInstances[instanceId] != null && ActiveMapInstances[instanceId].ShouldBeCleaned())
                                     {
-                                        ActiveMapInstances[layerId].RemoveLayerFromController();
-                                        ActiveMapInstances.Remove(layerId);
-                                    } else if (ActiveMapInstances[layerId] == null || !ActiveMapInstances[layerId].ShouldBeActive())
+                                        ActiveMapInstances[instanceId].RemoveLayerFromController();
+                                        ActiveMapInstances.Remove(instanceId);
+                                    } else if (ActiveMapInstances[instanceId] == null || !ActiveMapInstances[instanceId].ShouldBeActive())
                                     {
-                                        ActiveMapInstances.Remove(layerId);
+                                        ActiveMapInstances.Remove(instanceId);
                                     }
                                 }
                             }
+
+                            // Allow our instance controllers to keep their instances up to date
+                            InstanceProcessor.UpdateInstanceControllers(ActiveMapInstances.Values.ToList());
 
                             if (Options.Instance.Metrics.Enable)
                             {

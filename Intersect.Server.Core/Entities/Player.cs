@@ -11,6 +11,7 @@ using Intersect.GameObjects.Switches_and_Variables;
 using Intersect.Logging;
 using Intersect.Network;
 using Intersect.Network.Packets.Server;
+using Intersect.Server.Core.MapInstancing;
 using Intersect.Server.Database;
 using Intersect.Server.Database.Logging.Entities;
 using Intersect.Server.Database.PlayerData;
@@ -389,6 +390,14 @@ namespace Intersect.Server.Entities
             base.Dispose();
         }
 
+        private void RemoveFromInstanceController(Guid mapInstanceId)
+        {
+            if (InstanceProcessor.TryGetInstanceController(mapInstanceId, out var instanceController))
+            {
+                instanceController.RemovePlayer(Id);
+            }
+        }
+
         public void TryLogout(bool force = false, bool softLogout = false)
         {
             LastOnline = DateTime.Now;
@@ -417,6 +426,8 @@ namespace Intersect.Server.Entities
             {
                 instance.RemoveEntity(this);
             }
+
+            RemoveFromInstanceController(MapInstanceId);
 
             //Update parties
             LeaveParty();
@@ -750,7 +761,7 @@ namespace Intersect.Server.Entities
                         {
                             if (!surrMap.TryGetInstance(MapInstanceId, out mapInstance))
                             {
-                                surrMap.TryCreateInstance(MapInstanceId, out mapInstance);
+                                surrMap.TryCreateInstance(MapInstanceId, out mapInstance, this);
                             }
                         }
 
@@ -1791,11 +1802,16 @@ namespace Intersect.Server.Entities
                 if (!newMap.TryGetInstance(MapInstanceId, out newMapInstance))
                 {
                     // Create a new instance for the map we're on
-                    newMap.TryCreateInstance(MapInstanceId, out newMapInstance);
+                    newMap.TryCreateInstance(MapInstanceId, out newMapInstance, this);
+                    // ...and its surroundings
                     foreach (var surrMap in newSurroundingMaps)
                     {
-                        MapController.Get(surrMap).TryCreateInstance(MapInstanceId, out var surrMapInstance);
+                        MapController.Get(surrMap).TryCreateInstance(MapInstanceId, out _, this);
                     }
+                }
+                else
+                {
+                    _ = TryAddToInstanceController();
                 }
             }
 
@@ -2108,6 +2124,7 @@ namespace Intersect.Server.Entities
             {
                 PacketSender.SendMapInstanceChangedPacket(this, oldMap, PreviousMapInstanceId);
                 oldMapInstance.ClearEntityTargetsOf(this); // Remove targets of this entity
+                RemoveFromInstanceController(PreviousMapInstanceId);
             }
             // Clear events - we'll get them again from the map instance's event cache
             EventTileLookup.Clear();
@@ -7170,6 +7187,17 @@ namespace Intersect.Server.Entities
 
             return true;
 
+        }
+
+        public bool TryAddToInstanceController()
+        {
+            if (InstanceProcessor.TryGetInstanceController(MapInstanceId, out var newInstController))
+            {
+                newInstController.AddPlayer(this);
+                return true;
+            }
+
+            return false;
         }
 
         //TODO: Clean all of this stuff up

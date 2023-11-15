@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -152,13 +152,12 @@ namespace Intersect.Server.Maps
         /// <param name="mapControllerId">The id of the <see cref="MapController"/></param>
         /// <param name="instanceId">The instance ID we want - crucially, NOT the unique ID of the <see cref="MapInstance"/>. Matches with some entity's InstanceId</param>
         /// <param name="mapInstance">Out value for the successfully found <see cref="MapInstance"/></param>
-        /// <param name="createIfNew">(Default: false) Whether or not to create an instance of a controller if we can't find an instance with the requested ID</param>
         /// <returns>True if successful in retrieving a <see cref="MapInstance"/>, false otherwise</returns>
-        public static bool TryGetInstanceFromMap(Guid mapControllerId, Guid instanceId, out MapInstance mapInstance, bool createIfNew = false)
+        public static bool TryGetInstanceFromMap(Guid mapControllerId, Guid instanceId, out MapInstance mapInstance)
         {
             mapInstance = null;
             var controller = Get(mapControllerId);
-            if (controller != null && controller.TryGetInstance(instanceId, out mapInstance, createIfNew))
+            if (controller != null && controller.TryGetInstance(instanceId, out mapInstance))
             {
                 return mapInstance != null;
             }
@@ -415,7 +414,7 @@ namespace Intersect.Server.Maps
         /// </summary>
         /// <param name="instanceId"></param>
         /// <returns>Whether or not we needed to create a new map instance</returns>
-        public bool TryCreateInstance(Guid instanceId, out MapInstance newLayer)
+        public bool TryCreateInstance(Guid instanceId, out MapInstance newLayer, Player creator)
         {
             newLayer = null;
             lock (GetMapLock())
@@ -423,7 +422,7 @@ namespace Intersect.Server.Maps
                 if (!mInstances.ContainsKey(instanceId))
                 {
                     Log.Debug($"Creating new instance with ID {instanceId} for map {Name}");
-                    mInstances[instanceId] = new MapInstance(this, instanceId);
+                    mInstances[instanceId] = new MapInstance(this, instanceId, creator);
                     mInstances[instanceId].Initialize();
                     newLayer = mInstances[instanceId];
                     return true;
@@ -438,26 +437,12 @@ namespace Intersect.Server.Maps
         /// </summary>
         /// <param name="mapInstanceId">The id of the instance - NOT the unique id of a <see cref="MapInstance"/></param>
         /// <param name="instance">Out value - the mapInstance we find. Null if not found</param>
-        /// <param name="createIfNew">Whether or not to create an instance if we can't find one</param>
         /// <returns>True if successful in finding the requested instance, false otherwise</returns>
-        public bool TryGetInstance(Guid mapInstanceId, out MapInstance instance, bool createIfNew = false)
+        public bool TryGetInstance(Guid mapInstanceId, out MapInstance instance)
         {
-            instance = null;
-            if (mInstances.TryGetValue(mapInstanceId, out instance))
-            {
-                return true;
-            }
-            else
-            {
-                if (createIfNew)
-                {
-                    if (TryCreateInstance(mapInstanceId, out instance))
-                    {
-                        return true;
-                    }
-                }
-            }
-            return false;
+            mInstances.TryGetValue(mapInstanceId, out instance);
+
+            return instance != default;
         }
 
         /// <summary>
