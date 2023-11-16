@@ -76,6 +76,62 @@ namespace Intersect.Client.Localization
             }
         }
 
+        public static string FormatTimeAbbreviated(long milliseconds)
+        {
+            if (milliseconds == 0)
+            {
+                return string.Empty;
+            }
+
+            double timeValue;
+            string postfix;
+
+            switch (milliseconds)
+            {
+                // seconds
+                case <= 60000:
+                    timeValue = milliseconds / 1000.0;
+                    postfix = Time.Second;
+                    break;
+
+                // minutes
+                case <= 600000:
+                    timeValue = milliseconds / 60000.0;
+                    postfix = Time.Minute;
+                    break;
+
+                // hours
+                case <= 36000000:
+                    timeValue = milliseconds / 3600000.0;
+                    postfix = Time.Hour;
+                    break;
+
+                // days
+                case <= 864000000:
+                    timeValue = milliseconds / 86400000.0;
+                    postfix = Time.Day;
+                    break;
+
+                // weeks
+                case <= 6048000000:
+                    timeValue = milliseconds / 604800000.0;
+                    postfix = Time.Week;
+                    break;
+
+                default:
+                    return "OOB";
+            }
+
+            if (timeValue >= 10)
+            {
+                timeValue = Math.Floor(timeValue);
+                return timeValue + postfix;
+            }
+
+            timeValue = Math.Floor(timeValue * 10) / 10.0;
+            return timeValue.ToString("F1") + postfix;
+        }
+
         private static void SynchronizeConfigurableStrings()
         {
             if (Options.Instance == default)
@@ -842,8 +898,6 @@ namespace Intersect.Client.Localization
 
             public static LocalizedString NameAndLevel = @"{00}    {01}";
 
-            public static LocalizedString cooldown = "{00}s";
-
             public static LocalizedString exp = @"EXP:";
 
             public static LocalizedString expval = @"{00} / {01}";
@@ -1166,9 +1220,6 @@ namespace Intersect.Client.Localization
         public partial struct Inventory
         {
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString Cooldown = "{00}s";
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString DropItemTitle = @"Drop Item";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -1293,9 +1344,6 @@ namespace Intersect.Client.Localization
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString AttackSpeed = @"Attack Speed:";
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString Seconds = @"{00}s";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString Percentage = @"{00}%";
@@ -2078,9 +2126,6 @@ namespace Intersect.Client.Localization
             public static LocalizedString Instant = @"Instant";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString Seconds = @"{00}s";
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString Percentage = @"{00}%";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -2269,8 +2314,6 @@ namespace Intersect.Client.Localization
         public partial struct Spells
         {
 
-            public static LocalizedString cooldown = "{00}s";
-
             public static LocalizedString forgetspell = @"Forget Spell";
 
             public static LocalizedString forgetspellprompt = @"Are you sure you want to forget {00}?";
@@ -2345,6 +2388,24 @@ namespace Intersect.Client.Localization
 
             public static LocalizedString comma = ",";
 
+        }
+
+        public partial struct Time
+        {
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Second = @"s";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Minute = @"m";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Hour = @"h";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Day = @"d";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Week = @"w";
         }
 
         public partial struct Update

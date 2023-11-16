@@ -91,50 +91,32 @@ namespace Intersect.Client.Interface.Game.EntityPanel
 
         public void Update()
         {
-            if (mStatus != null)
+            if (mStatus == null)
             {
-                var remaining = mStatus.RemainingMs;
-                var spell = SpellBase.Get(mStatus.SpellId);
-                var secondsRemaining = (float) remaining / 1000f;
-                if (secondsRemaining > 10f)
+                return;
+            }
+
+            var remaining = mStatus.RemainingMs;
+            var spell = SpellBase.Get(mStatus.SpellId);
+
+            mDurationLabel.Text = Strings.FormatTimeAbbreviated(remaining);
+
+            if ((mTexLoaded != "" && spell == null ||
+                 spell != null && mTexLoaded != spell.Icon ||
+                 mCurrentSpellId != mStatus.SpellId) &&
+                remaining > 0)
+            {
+                Container.Show();
+                if (spell != null)
                 {
-                    mDurationLabel.Text =
-                        Strings.EntityBox.cooldown.ToString(((float) remaining / 1000f).ToString("N0"));
-                }
-                else
-                {
-                    mDurationLabel.Text = Strings.EntityBox.cooldown.ToString(
-                        ((float) remaining / 1000f).ToString("N1").Replace(".", Strings.Numbers.dec)
+                    var spellTex = Globals.ContentManager.GetTexture(
+                        Framework.Content.TextureType.Spell, spell.Icon
                     );
-                }
 
-                if ((mTexLoaded != "" && spell == null ||
-                     spell != null && mTexLoaded != spell.Icon ||
-                     mCurrentSpellId != mStatus.SpellId) &&
-                    remaining > 0)
-                {
-                    Container.Show();
-                    if (spell != null)
+                    if (spellTex != null)
                     {
-                        var spellTex = Globals.ContentManager.GetTexture(
-                            Framework.Content.TextureType.Spell, spell.Icon
-                        );
-
-                        if (spellTex != null)
-                        {
-                            Pnl.Texture = spellTex;
-                            Pnl.IsHidden = false;
-                        }
-                        else
-                        {
-                            if (Pnl.Texture != null)
-                            {
-                                Pnl.Texture = null;
-                            }
-                        }
-
-                        mTexLoaded = spell.Icon;
-                        mCurrentSpellId = mStatus.SpellId;
+                        Pnl.Texture = spellTex;
+                        Pnl.IsHidden = false;
                     }
                     else
                     {
@@ -142,20 +124,30 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                         {
                             Pnl.Texture = null;
                         }
-
-                        mTexLoaded = "";
                     }
+
+                    mTexLoaded = spell.Icon;
+                    mCurrentSpellId = mStatus.SpellId;
                 }
-                else if (remaining <= 0)
+                else
                 {
                     if (Pnl.Texture != null)
                     {
                         Pnl.Texture = null;
                     }
 
-                    Container.Hide();
                     mTexLoaded = "";
                 }
+            }
+            else if (remaining <= 0)
+            {
+                if (Pnl.Texture != null)
+                {
+                    Pnl.Texture = null;
+                }
+
+                Container.Hide();
+                mTexLoaded = "";
             }
         }
 

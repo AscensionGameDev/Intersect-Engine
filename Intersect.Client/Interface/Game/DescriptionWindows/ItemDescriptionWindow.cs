@@ -264,12 +264,12 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
                     }
 
                     // Display the actual speed this weapon would have based off of our calculated speed stat.
-                    rows.AddKeyValueRow(Strings.ItemDescription.AttackSpeed, Strings.ItemDescription.Seconds.ToString(Globals.Me.CalculateAttackTime(speed) / 1000f));
+                    rows.AddKeyValueRow(Strings.ItemDescription.AttackSpeed, Strings.FormatTimeAbbreviated(Globals.Me.CalculateAttackTime(speed)));
                 }
                 else if (mItem.AttackSpeedModifier == 1)
                 {
                     // Static, so this weapon's attack speed.
-                    rows.AddKeyValueRow(Strings.ItemDescription.AttackSpeed, Strings.ItemDescription.Seconds.ToString(mItem.AttackSpeedValue / 1000f));
+                    rows.AddKeyValueRow(Strings.ItemDescription.AttackSpeed, Strings.FormatTimeAbbreviated(mItem.AttackSpeedValue));
                 }
                 else if (mItem.AttackSpeedModifier == 2)
                 {

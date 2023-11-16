@@ -120,7 +120,7 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
             var castTime = Strings.SpellDescription.Instant;
             if (mSpell.CastDuration > 0)
             {
-                castTime = Strings.SpellDescription.Seconds.ToString(mSpell.CastDuration / 1000f);
+                castTime = Strings.FormatTimeAbbreviated(mSpell.CastDuration);
             }
             rows.AddKeyValueRow(Strings.SpellDescription.CastTime, castTime);
 
@@ -136,7 +136,7 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
             // Add Cooldown time
             if (mSpell.CooldownDuration > 0)
             {
-                rows.AddKeyValueRow(Strings.SpellDescription.Cooldown, Strings.SpellDescription.Seconds.ToString(mSpell.CooldownDuration / 1000f));
+                rows.AddKeyValueRow(Strings.SpellDescription.Cooldown, Strings.FormatTimeAbbreviated(mSpell.CooldownDuration));
             }
 
             // Add Cooldown Group
@@ -262,7 +262,7 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
                 {
                     rows.AddKeyValueRow(Strings.SpellDescription.DoT, string.Empty);
                 }
-                rows.AddKeyValueRow(Strings.SpellDescription.Tick, Strings.SpellDescription.Seconds.ToString(mSpell.Combat.HotDotInterval / 1000f));
+                rows.AddKeyValueRow(Strings.SpellDescription.Tick, Strings.FormatTimeAbbreviated(mSpell.Combat.HotDotInterval));
             }
 
             // Handle effect display.
@@ -276,7 +276,7 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
             // Show Stat Buff / Effect / HoT / DoT duration.
             if (showDuration)
             {
-                rows.AddKeyValueRow(Strings.SpellDescription.Duration, Strings.SpellDescription.Seconds.ToString(mSpell.Combat.Duration / 1000f));
+                rows.AddKeyValueRow(Strings.SpellDescription.Duration, Strings.FormatTimeAbbreviated(mSpell.Combat.Duration));
             }
 
             // Resize and position the container.
