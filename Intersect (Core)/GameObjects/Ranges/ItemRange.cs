@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
-namespace Intersect.GameObjects.ItemRange;
+namespace Intersect.GameObjects.Ranges;
 
 /// <summary>
 /// TODO: ItemRange exists to generalize rollable stats on an item. After adding the ability to set specific ranges

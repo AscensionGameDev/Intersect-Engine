@@ -15,7 +15,7 @@ using Intersect.Editor.Networking;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
-using Intersect.GameObjects.ItemRange;
+using Intersect.GameObjects.Ranges;
 using Intersect.Network.Packets.Server;
 using Intersect.Utilities;
 using static Intersect.GameObjects.EquipmentProperties;
@@ -791,12 +791,12 @@ namespace Intersect.Editor.Forms.Editors
             var maxAndMin = (int)nudRange.Value;
 
             mEditorItem.EquipmentProperties ??= new EquipmentProperties();
-            mEditorItem.EquipmentProperties.StatRanges ??= new Dictionary<int, ItemRange>();
+            mEditorItem.EquipmentProperties.StatRanges ??= new Dictionary<Stat, ItemRange>();
 
             mEditorItem.EquipmentProperties.StatRanges.Clear();
             foreach (Stat stat in Enum.GetValues(typeof(Stat)))
             {
-                mEditorItem.EquipmentProperties.StatRanges[(int)stat] = new ItemRange(-maxAndMin, maxAndMin);
+                mEditorItem.EquipmentProperties.StatRanges[stat] = new ItemRange(-maxAndMin, maxAndMin);
             }
         }
 

@@ -6,7 +6,7 @@ using System.Linq;
 using Intersect.Enums;
 using Intersect.GameObjects.Conditions;
 using Intersect.GameObjects.Events;
-using Intersect.GameObjects.ItemRange;
+using Intersect.GameObjects.Ranges;
 using Intersect.Models;
 using Intersect.Utilities;
 
@@ -339,12 +339,12 @@ namespace Intersect.GameObjects
 
         public EquipmentProperties? EquipmentProperties { get; set; }
 
-        public ItemRange.ItemRange[] StatRanges => EquipmentProperties?.StatRanges?.Values?.ToArray();
+        public ItemRange[] StatRanges => EquipmentProperties?.StatRanges?.Values?.ToArray();
 
-        public bool TryGetRangeFor(Stat stat, out ItemRange.ItemRange range)
+        public bool TryGetRangeFor(Stat stat, out ItemRange range)
         {
             range = null;
-            _ = EquipmentProperties?.StatRanges?.TryGetValue((int)stat, out range);
+            _ = EquipmentProperties?.StatRanges?.TryGetValue(stat, out range);
             
             return range != default;
         }

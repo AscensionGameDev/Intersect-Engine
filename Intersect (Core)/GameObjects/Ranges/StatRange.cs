@@ -1,7 +1,7 @@
 using Intersect.Enums;
 using Microsoft.EntityFrameworkCore;
 
-namespace Intersect.GameObjects.ItemRange;
+namespace Intersect.GameObjects.Ranges;
 
 [Owned]
 public partial class StatRange : ItemRange
