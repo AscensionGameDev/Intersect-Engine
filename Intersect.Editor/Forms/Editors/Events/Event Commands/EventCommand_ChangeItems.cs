@@ -95,8 +95,8 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             }
             mMyCommand.UseVariable = !rdoManual.Checked;
 
-            mMyCommand.Quantity = (int) nudGiveTakeAmount.Value;
-            mMyCommand.ItemHandling = (ItemHandling) cmbMethod.SelectedIndex;
+            mMyCommand.Quantity = (int)nudGiveTakeAmount.Value;
+            mMyCommand.ItemHandling = (ItemHandling)cmbMethod.SelectedIndex;
             mEventEditor.FinishCommandEdit();
         }
 

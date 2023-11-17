@@ -237,8 +237,13 @@ namespace Intersect.GameObjects.Events
 
         CastSpellOn,
 
-        FadeIn,
+        Fade,
+    }
 
+    public enum FadeType
+    {
+        None = 0,
+        FadeIn,
         FadeOut,
     }
 }

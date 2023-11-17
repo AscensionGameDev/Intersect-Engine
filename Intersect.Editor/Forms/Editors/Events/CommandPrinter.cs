@@ -1298,14 +1298,16 @@ namespace Intersect.Editor.Forms.Editors.Events
             return Strings.EventCommandList.CastSpellOn.ToString(SpellBase.GetName(command.SpellId), command.Self, command.PartyMembers, command.GuildMembers);
         }
 
-        private static string GetCommandText(FadeInCommand command, MapInstance map)
+        private static string GetCommandText(ScreenFadeCommand command, MapInstance map)
         {
-            return Strings.EventCommandList.FadeIn;
-        }
+            Strings.EventScreenFade.FadeTypes.TryGetValue((int)command.FadeType, out var commandType);
 
-        private static string GetCommandText(FadeOutCommand command, MapInstance map)
-        {
-            return Strings.EventCommandList.FadeOut;
+            if (command.FadeType == FadeType.None)
+            {
+                return Strings.EventCommandList.FadeCancel.ToString(commandType, command.WaitForCompletion);
+            }
+            
+            return Strings.EventCommandList.Fade.ToString(commandType, command.WaitForCompletion, command.SpeedMs);
         }
 
         //Set Variable Modification Texts

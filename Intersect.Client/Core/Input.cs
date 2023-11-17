@@ -9,6 +9,7 @@ using Intersect.Client.Interface;
 using Intersect.Client.Interface.Game;
 using Intersect.Client.Maps;
 using Intersect.Client.Networking;
+using Intersect.Configuration;
 using Intersect.Utilities;
 
 namespace Intersect.Client.Core
@@ -63,7 +64,7 @@ namespace Intersect.Client.Core
                         break;
                     }
 
-                    Fade.FadeIn();
+                    Fade.FadeIn(ClientConfiguration.Instance.FadeSpeedMs);
                     Globals.GameState = GameStates.Menu;
 
                     return;

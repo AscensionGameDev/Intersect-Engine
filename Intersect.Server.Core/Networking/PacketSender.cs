@@ -2192,14 +2192,9 @@ namespace Intersect.Server.Networking
             player.SendPacket(new GuildInvitePacket(from.Name, from.Guild.Name));
         }
 
-        public static void SendFadeIn(Player player)
+        public static void SendFade(Player player, FadeType fadeType, bool waitForCompletion, int speedMs)
         {
-            player.SendPacket(new FadePacket(false));
-        }
-
-        public static void SendFadeOut(Player player)
-        {
-            player.SendPacket(new FadePacket(true));
+            player.SendPacket(new FadePacket(fadeType, waitForCompletion, speedMs));
         }
 
         public static void SendDataToAllLayersOfMap(Guid mapId, IPacket packet, Player except = null, TransmissionMode mode = TransmissionMode.All)

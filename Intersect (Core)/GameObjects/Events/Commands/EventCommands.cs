@@ -1011,13 +1011,14 @@ namespace Intersect.GameObjects.Events.Commands
         public bool GuildMembers { get; set; }
     }
 
-    public partial class FadeInCommand : EventCommand 
+    public partial class ScreenFadeCommand : EventCommand
     {
-        public override EventCommandType Type { get; } = EventCommandType.FadeIn;
-    }
+        public override EventCommandType Type { get; } = EventCommandType.Fade;
 
-    public partial class FadeOutCommand : EventCommand
-    {
-        public override EventCommandType Type { get; } = EventCommandType.FadeOut;
+        public FadeType FadeType { get; set; }
+
+        public bool WaitForCompletion { get; set; }
+
+        public int SpeedMs { get; set; }
     }
 }

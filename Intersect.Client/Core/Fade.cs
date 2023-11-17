@@ -1,4 +1,5 @@
 using Intersect.Client.Networking;
+using Intersect.Configuration;
 using Intersect.Utilities;
 
 namespace Intersect.Client.Core
@@ -22,32 +23,38 @@ namespace Intersect.Client.Core
 
         private static float sFadeAmt;
 
-        private static float sFadeRate = 3000f;
+        private static float sFadeRate = ClientConfiguration.DEFAULT_FADE_SPEED_MS;
 
         private static long sLastUpdate;
 
         private static bool InformServer { get; set; }
 
-        public static void FadeIn(bool informServer = false)
+        public static void FadeIn(float speed, bool informServer = false)
         {
+            sFadeRate = speed;
             sCurrentAction = FadeType.In;
             sFadeAmt = 255f;
             sLastUpdate = Timing.Global.MillisecondsUtc;
             InformServer = informServer;
         }
 
-        public static void FadeOut(bool informServer = false)
+        public static void FadeOut(float speed, bool informServer = false)
         {
+            sFadeRate = speed;
             sCurrentAction = FadeType.Out;
             sFadeAmt = 0f;
             sLastUpdate = Timing.Global.MillisecondsUtc;
             InformServer = informServer;
         }
 
-        public static void Cancel()
+        public static void Cancel(bool informServer = false)
         {
             sCurrentAction = FadeType.None;
             sFadeAmt = default;
+            if (informServer)
+            {
+                InformServerOfCompletion();
+            }
         }
 
         public static bool DoneFading()
@@ -72,7 +79,7 @@ namespace Intersect.Client.Core
 
                     if (InformServer)
                     {
-                        PacketSender.SendFadeCompletePacket();
+                        InformServerOfCompletion();
                     }
                 }
             }
@@ -86,7 +93,7 @@ namespace Intersect.Client.Core
 
                     if (InformServer)
                     {
-                        PacketSender.SendFadeCompletePacket();
+                        InformServerOfCompletion();
                     }
                 }
             }
@@ -94,6 +101,11 @@ namespace Intersect.Client.Core
             sLastUpdate = Timing.Global.MillisecondsUtc;
         }
 
+        private static void InformServerOfCompletion()
+        {
+            PacketSender.SendFadeCompletePacket();
+            InformServer = false;
+        }
     }
 
 }

@@ -1998,6 +1998,12 @@ Tick timer saved in server config.json.";
             public static LocalizedString FadeIn = @"Screen Fade In";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Fade = @"Screen Fade: {00} @ {02}ms (Wait for completion: {01})";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString FadeCancel = @"Screen Fade: {00} (Wait for completion: {01})";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString FadeOut = @"Screen Fade Out";
 
             public static LocalizedString female = @"Female";
@@ -2327,8 +2333,7 @@ Tick timer saved in server config.json.";
                 {"setguildbankslots", @"Set Guild Bank Slots Count"},
                 {"resetstatallocations", @"Reset Stat Point Allocations"},
                 {"castspellon", @"Cast Spell On"},
-                {"fadein", @"Screen Fade In"},
-                {"fadeout", @"Scren Fade Out"},
+                {"fade", @"Screen Fade"},
             };
 
         }
@@ -3390,6 +3395,34 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString maxlength = @"Maximum Length";
 
+        }
+
+        public partial struct EventScreenFade
+        {
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Action = @"Action";
+
+            public static Dictionary<int, LocalizedString> FadeTypes = new Dictionary<int, LocalizedString>
+            {
+                {0, @"Cancel"},
+                {1, @"Fade In"},
+                {2, @"Fade Out"},
+            };
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Cancel = @"Cancel";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Okay = @"Okay";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Speed = @"Speed (ms)";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Title = @"Screen Fade";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString WaitForComplete = @"Wait for Completion?";
         }
 
         public partial struct EventSpawnNpc
