@@ -176,7 +176,7 @@ namespace Intersect.Server.Core
                             }
 
                             // Allow our instance controllers to keep their instances up to date
-                            InstanceProcessor.UpdateInstanceControllers(ActiveMapInstances.Values.ToList());
+                            InstanceProcessor.UpdateInstanceControllers(ActiveMapInstances.Values.ToArray());
 
                             if (Options.Instance.Metrics.Enable)
                             {

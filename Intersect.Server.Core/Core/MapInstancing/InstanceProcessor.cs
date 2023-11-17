@@ -35,10 +35,13 @@ public static class InstanceProcessor
 
     public static bool TryAddInstanceController(Guid mapInstanceId, Player creator)
     {
-        if (!InstanceControllers.ContainsKey(mapInstanceId))
+        if (InstanceControllers.ContainsKey(mapInstanceId))
         {
-            InstanceControllers[mapInstanceId] = new InstanceController(mapInstanceId, creator);
+            return false;
         }
+
+        InstanceControllers[mapInstanceId] = new InstanceController(mapInstanceId, creator);
+        return true;
     }
 
     public static void UpdateInstanceControllers(MapInstance[] activeMaps)
