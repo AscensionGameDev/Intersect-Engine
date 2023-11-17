@@ -10,7 +10,7 @@ using Intersect.Server.Maps;
 namespace Intersect.Server.Core.MapInstancing;
 public static class InstanceProcessor
 {
-    private static Dictionary<Guid, InstanceController> InstanceControllers = new Dictionary<Guid, InstanceController>();
+    private static Dictionary<Guid, InstanceController> InstanceControllers = new();
 
     public static Guid[] CurrentControllers => InstanceControllers.Keys.ToArray();
 
@@ -19,24 +19,21 @@ public static class InstanceProcessor
         return InstanceControllers.TryGetValue(instanceId, out controller);
     }
 
-    private static void CleanupOrphanedControllers(List<MapInstance> activeMaps)
+    private static void CleanupOrphanedControllers(IEnumerable<Guid> activeInstanceIds)
     {
-        var processingInstances = InstanceControllers.Keys;
-        var processingMaps = activeMaps.ToArray().Select(map => map.MapInstanceId);
+        var processingInstances = InstanceControllers.Keys
+            .Except(activeInstanceIds)
+            .Except(default) // Never cleanup the overworld controller
+            .ToArray();
 
-        foreach (var id in processingInstances.Except(processingMaps).ToArray())
+        foreach (var id in processingInstances)
         {
-            // Never cleanup the overworld controller
-            if (id == Guid.Empty)
-            {
-                continue;
-            }
             InstanceControllers.Remove(id);
             Logging.Log.Debug($"Removing instance controller {id}");
         }
     }
 
-    public static void AddInstanceController(Guid mapInstanceId, Player creator)
+    public static bool TryAddInstanceController(Guid mapInstanceId, Player creator)
     {
         if (!InstanceControllers.ContainsKey(mapInstanceId))
         {
@@ -44,25 +41,24 @@ public static class InstanceProcessor
         }
     }
 
-    public static void UpdateInstanceControllers(List<MapInstance> activeMaps)
+    public static void UpdateInstanceControllers(MapInstance[] activeMaps)
     {
-        if (activeMaps == null || activeMaps.Count == 0)
+        if (activeMaps == null || activeMaps.Length == 0)
         {
             return;
         }
 
         // Cleanup inactive instances
-        CleanupOrphanedControllers(activeMaps);
+        CleanupOrphanedControllers(activeMaps.Select(map => map.MapInstanceId));
 
-        Dictionary<Guid, List<MapInstance>> mapsAndInstances = activeMaps
+        Dictionary<Guid, MapInstance[]> mapsAndInstances = activeMaps
             .GroupBy(m => m.MapInstanceId)
-            .ToDictionary(m => m.Key, m => m.ToList());
+            .ToDictionary(m => m.Key, m => m.ToArray());
 
         // For each instance...
-        foreach (var mapInstanceGroup in mapsAndInstances)
+        foreach (var (instanceId, mapInstance) in mapsAndInstances)
         {
             // Fetch our instance controller...
-            var instanceId = mapInstanceGroup.Key;
             if (!InstanceControllers.TryGetValue(instanceId, out var instanceController))
             {
                 continue;

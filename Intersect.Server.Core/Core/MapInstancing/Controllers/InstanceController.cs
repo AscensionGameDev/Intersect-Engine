@@ -8,11 +8,9 @@ using Intersect.Server.Entities;
 namespace Intersect.Server.Core.MapInstancing.Controllers;
 public class InstanceController
 {
-    Guid InstanceId { get; set; }
+    public Guid InstanceId { get; set; }
 
-    public HashSet<Player> Players { get; set; } = new HashSet<Player>();
-
-    public int PlayerCount => Players.Count;
+    public HashSet<Player> Players { get; set; } = new();
 
     public InstanceController(Guid instanceId, Player creator)
     {

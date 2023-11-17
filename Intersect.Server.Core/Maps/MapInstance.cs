@@ -150,10 +150,7 @@ namespace Intersect.Server.Maps
             mMapController = map;
             MapInstanceId = mapInstanceId;
             Id = Guid.NewGuid();
-            if (!InstanceProcessor.CurrentControllers.Contains(MapInstanceId))
-            {
-                InstanceProcessor.AddInstanceController(MapInstanceId, creator);
-            }
+            _ = InstanceProcessor.TryAddInstanceController(MapInstanceId, creator);
         }
 
         public bool IsDisposed { get; protected set; }

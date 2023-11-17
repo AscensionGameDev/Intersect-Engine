@@ -153,20 +153,26 @@ namespace Intersect.Server.Core
                             }
 
                             //Refresh list of active maps & their instances
-                            foreach (var instanceId in ActiveMapInstances.Keys.ToArray())
+                            foreach (var (instanceId, mapInstance) in ActiveMapInstances.ToArray())
                             {
-                                if (!processedMapInstances.Contains(instanceId))
+                                if (!processedMapInstances.Contains(instanceId) || mapInstance.ShouldBeActive())
                                 {
-                                    // Remove the map entirely from the update queue
-                                    if (ActiveMapInstances[instanceId] != null && ActiveMapInstances[instanceId].ShouldBeCleaned())
+                                    continue;
+                                }
+
+                                if (mapInstance != default)
+                                {
+                                    if (mapInstance.ShouldBeCleaned())
                                     {
-                                        ActiveMapInstances[instanceId].RemoveLayerFromController();
-                                        ActiveMapInstances.Remove(instanceId);
-                                    } else if (ActiveMapInstances[instanceId] == null || !ActiveMapInstances[instanceId].ShouldBeActive())
+                                        mapInstance.RemoveLayerFromController();
+                                    }
+                                    else if (!mapInstance.ShouldBeActive())
                                     {
-                                        ActiveMapInstances.Remove(instanceId);
+                                        mapInstance.ResetNpcSpawns();
                                     }
                                 }
+
+                                ActiveMapInstances.Remove(instanceId);
                             }
 
                             // Allow our instance controllers to keep their instances up to date

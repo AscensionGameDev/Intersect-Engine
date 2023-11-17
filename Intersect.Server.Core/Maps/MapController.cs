@@ -422,8 +422,10 @@ namespace Intersect.Server.Maps
                 if (!mInstances.ContainsKey(instanceId))
                 {
                     Log.Debug($"Creating new instance with ID {instanceId} for map {Name}");
-                    mInstances[instanceId] = new MapInstance(this, instanceId, creator);
-                    mInstances[instanceId].Initialize();
+                    var newMapInstance = new MapInstance(this, instanceId, creator);
+                    newMapInstance.Initialize();
+                    mInstances[instanceId] = newMapInstance;
+
                     newLayer = mInstances[instanceId];
                     return true;
                 }
@@ -440,9 +442,7 @@ namespace Intersect.Server.Maps
         /// <returns>True if successful in finding the requested instance, false otherwise</returns>
         public bool TryGetInstance(Guid mapInstanceId, out MapInstance instance)
         {
-            mInstances.TryGetValue(mapInstanceId, out instance);
-
-            return instance != default;
+            return mInstances.TryGetValue(mapInstanceId, out instance) ? instance != default : false;
         }
 
         /// <summary>
