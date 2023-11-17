@@ -1307,7 +1307,7 @@ namespace Intersect.Editor.Forms.Editors.Events
                 return Strings.EventCommandList.FadeCancel.ToString(commandType, command.WaitForCompletion);
             }
             
-            return Strings.EventCommandList.Fade.ToString(commandType, command.WaitForCompletion, command.SpeedMs);
+            return Strings.EventCommandList.Fade.ToString(commandType, command.WaitForCompletion, command.DurationMs);
         }
 
         //Set Variable Modification Texts

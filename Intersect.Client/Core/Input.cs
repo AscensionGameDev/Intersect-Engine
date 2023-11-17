@@ -64,7 +64,7 @@ namespace Intersect.Client.Core
                         break;
                     }
 
-                    Fade.FadeIn(ClientConfiguration.Instance.FadeSpeedMs);
+                    Fade.FadeIn(ClientConfiguration.Instance.FadeDurationMs);
                     Globals.GameState = GameStates.Menu;
 
                     return;

@@ -1639,8 +1639,8 @@ namespace Intersect.Server.Entities.Events
                 return;
             }
 
-            player.ClientAwaitingFadeCompletion = command.WaitForCompletion;
-            PacketSender.SendFade(player, command.FadeType, command.WaitForCompletion, command.SpeedMs);
+            player.IsFading = command.WaitForCompletion;
+            PacketSender.SendFade(player, command.FadeType, command.WaitForCompletion, command.DurationMs);
 
             if (command.WaitForCompletion)
             {

@@ -23,7 +23,7 @@ public partial class EventCommand_ScreenFade : UserControl
     {
         grpFade.Text = EventScreenFade.Title;
         lblAction.Text = EventScreenFade.Action;
-        lblSpeed.Text = EventScreenFade.Speed;
+        lblDuration.Text = EventScreenFade.Duration;
         cmbFadeTypes.Items.AddRange(EventScreenFade.FadeTypes.Values.ToArray());
         chkWaitForCompletion.Text = EventScreenFade.WaitForComplete;
         btnCancel.Text = EventScreenFade.Cancel;
@@ -33,9 +33,9 @@ public partial class EventCommand_ScreenFade : UserControl
     private void PopulateForm()
     {
         var prevType = (int)mMyCommand.FadeType;
-        
+
         cmbFadeTypes.SelectedIndex = cmbFadeTypes.Items.Count > prevType ? prevType : -1;
-        nudFadeSpeed.Value = mMyCommand.SpeedMs == default ? (decimal)ClientConfiguration.Instance.FadeSpeedMs : mMyCommand.SpeedMs;
+        nudFadeSpeed.Value = mMyCommand.DurationMs == default ? (decimal)ClientConfiguration.Instance.FadeDurationMs : mMyCommand.DurationMs;
         chkWaitForCompletion.Checked = mMyCommand.WaitForCompletion;
     }
 
@@ -43,7 +43,7 @@ public partial class EventCommand_ScreenFade : UserControl
     {
         mMyCommand.FadeType = (FadeType)cmbFadeTypes.SelectedIndex;
         mMyCommand.WaitForCompletion = chkWaitForCompletion.Checked;
-        mMyCommand.SpeedMs = (int)nudFadeSpeed.Value;
+        mMyCommand.DurationMs = (int)nudFadeSpeed.Value;
 
         mEventEditor.FinishCommandEdit();
     }

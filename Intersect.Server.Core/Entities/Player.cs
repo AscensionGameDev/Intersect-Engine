@@ -212,7 +212,7 @@ namespace Intersect.Server.Entities
         /// Used to tell events when to continue when dealing with fade in/out events and knowing when they're complete on the client's end
         /// </summary>
         [NotMapped, JsonIgnore]
-        public bool ClientAwaitingFadeCompletion { get; set; }
+        public bool IsFading { get; set; }
 
         // Instancing
         public MapInstanceType InstanceType { get; set; } = MapInstanceType.Overworld;

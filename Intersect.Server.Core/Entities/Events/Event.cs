@@ -165,7 +165,7 @@ namespace Intersect.Server.Entities.Events
                         }
 
                         if (curStack.WaitingForResponse == CommandInstance.EventResponse.Fade &&
-                            !Player.ClientAwaitingFadeCompletion)
+                            !Player.IsFading)
                         {
                             curStack.WaitingForResponse = CommandInstance.EventResponse.None;
                         }

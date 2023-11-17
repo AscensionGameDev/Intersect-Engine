@@ -1019,6 +1019,6 @@ namespace Intersect.GameObjects.Events.Commands
 
         public bool WaitForCompletion { get; set; }
 
-        public int SpeedMs { get; set; }
+        public int DurationMs { get; set; }
     }
 }

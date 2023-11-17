@@ -2871,7 +2871,7 @@ namespace Intersect.Server.Networking
             {
                 return;
             }
-            player.ClientAwaitingFadeCompletion = false;
+            player.IsFading = false;
         }
 
         #endregion

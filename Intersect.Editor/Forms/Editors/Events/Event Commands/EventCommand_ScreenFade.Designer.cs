@@ -29,13 +29,13 @@ partial class EventCommand_ScreenFade
     private void InitializeComponent()
     {
         grpFade = new DarkUI.Controls.DarkGroupBox();
+        nudFadeSpeed = new DarkUI.Controls.DarkNumericUpDown();
+        lblDuration = new Label();
         chkWaitForCompletion = new DarkUI.Controls.DarkCheckBox();
         cmbFadeTypes = new DarkUI.Controls.DarkComboBox();
         lblAction = new Label();
         btnCancel = new DarkUI.Controls.DarkButton();
         btnSave = new DarkUI.Controls.DarkButton();
-        lblSpeed = new Label();
-        nudFadeSpeed = new DarkUI.Controls.DarkNumericUpDown();
         grpFade.SuspendLayout();
         ((System.ComponentModel.ISupportInitialize)nudFadeSpeed).BeginInit();
         SuspendLayout();
@@ -45,7 +45,7 @@ partial class EventCommand_ScreenFade
         grpFade.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
         grpFade.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
         grpFade.Controls.Add(nudFadeSpeed);
-        grpFade.Controls.Add(lblSpeed);
+        grpFade.Controls.Add(lblDuration);
         grpFade.Controls.Add(chkWaitForCompletion);
         grpFade.Controls.Add(cmbFadeTypes);
         grpFade.Controls.Add(lblAction);
@@ -60,6 +60,29 @@ partial class EventCommand_ScreenFade
         grpFade.TabIndex = 18;
         grpFade.TabStop = false;
         grpFade.Text = "Screen Fade";
+        // 
+        // nudFadeSpeed
+        // 
+        nudFadeSpeed.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
+        nudFadeSpeed.ForeColor = System.Drawing.Color.Gainsboro;
+        nudFadeSpeed.Location = new System.Drawing.Point(94, 61);
+        nudFadeSpeed.Margin = new Padding(4, 3, 4, 3);
+        nudFadeSpeed.Maximum = new decimal(new int[] { 100000, 0, 0, 0 });
+        nudFadeSpeed.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
+        nudFadeSpeed.Name = "nudFadeSpeed";
+        nudFadeSpeed.Size = new Size(155, 23);
+        nudFadeSpeed.TabIndex = 29;
+        nudFadeSpeed.Value = new decimal(new int[] { 1, 0, 0, 0 });
+        // 
+        // lblDuration
+        // 
+        lblDuration.AutoSize = true;
+        lblDuration.Location = new System.Drawing.Point(6, 63);
+        lblDuration.Margin = new Padding(4, 0, 4, 0);
+        lblDuration.Name = "lblDuration";
+        lblDuration.Size = new Size(80, 15);
+        lblDuration.TabIndex = 24;
+        lblDuration.Text = "Duration (ms)";
         // 
         // chkWaitForCompletion
         // 
@@ -127,29 +150,6 @@ partial class EventCommand_ScreenFade
         btnSave.Text = "Ok";
         btnSave.Click += btnSave_Click;
         // 
-        // lblSpeed
-        // 
-        lblSpeed.AutoSize = true;
-        lblSpeed.Location = new System.Drawing.Point(6, 63);
-        lblSpeed.Margin = new Padding(4, 0, 4, 0);
-        lblSpeed.Name = "lblSpeed";
-        lblSpeed.Size = new Size(66, 15);
-        lblSpeed.TabIndex = 24;
-        lblSpeed.Text = "Speed (ms)";
-        // 
-        // nudFadeSpeed
-        // 
-        nudFadeSpeed.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
-        nudFadeSpeed.ForeColor = System.Drawing.Color.Gainsboro;
-        nudFadeSpeed.Location = new System.Drawing.Point(80, 61);
-        nudFadeSpeed.Margin = new Padding(4, 3, 4, 3);
-        nudFadeSpeed.Maximum = new decimal(new int[] { 100000, 0, 0, 0 });
-        nudFadeSpeed.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
-        nudFadeSpeed.Name = "nudFadeSpeed";
-        nudFadeSpeed.Size = new Size(169, 23);
-        nudFadeSpeed.TabIndex = 29;
-        nudFadeSpeed.Value = new decimal(new int[] { 1, 0, 0, 0 });
-        // 
         // EventCommand_ScreenFade
         // 
         AutoScaleDimensions = new SizeF(7F, 15F);
@@ -172,6 +172,6 @@ partial class EventCommand_ScreenFade
     private Label lblAction;
     private DarkUI.Controls.DarkButton btnCancel;
     private DarkUI.Controls.DarkButton btnSave;
-    private Label lblSpeed;
+    private Label lblDuration;
     private DarkUI.Controls.DarkNumericUpDown nudFadeSpeed;
 }

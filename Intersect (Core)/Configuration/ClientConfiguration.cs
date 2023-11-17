@@ -53,7 +53,7 @@ namespace Intersect.Configuration
 
         public const int DEFAULT_CHAT_LINES = 100;
 
-        public const float DEFAULT_FADE_SPEED_MS = 3000f;
+        public const float DEFAULT_FADE_DURATION_MS = 3000f;
 
         public const DisplayMode DEFAULT_MENU_BACKGROUND_DISPLAY_MODE = DisplayMode.Default;
 
@@ -209,9 +209,9 @@ namespace Intersect.Configuration
         public int MusicFadeTimer { get; set; } = 1500;
 
         /// <summary>
-        /// The default speed of fades. Controls speed of non-event fades like on login/logout
+        /// The default duration of fades. Controls duration of non-event fades like on login/logout
         /// </summary>
-        public float FadeSpeedMs { get; set; } = DEFAULT_FADE_SPEED_MS;
+        public float FadeDurationMs { get; set; } = DEFAULT_FADE_DURATION_MS;
 
         /// <summary>
         /// Configures whether or not the context menus are enabled upon right-clicking certain elements.
