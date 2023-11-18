@@ -19,9 +19,9 @@ namespace Intersect.Network
             "Intersect.Admin.Actions"
         };
 
-        public static Dictionary<Type, short> KnownTypes { get; set; } = new Dictionary<Type, short>();
+        public static readonly Dictionary<Type, short> KnownTypes = new();
 
-        public static Dictionary<short, Type> KnownKeys { get; set; } = new Dictionary<short, Type>();
+        public static readonly Dictionary<short, Type> KnownKeys = new();
 
         private static IEnumerable<Type> FindTypes(IEnumerable<string> nameSpaces) => nameSpaces.SelectMany(FindTypes);
 
@@ -45,6 +45,7 @@ namespace Intersect.Network
         }
 
         [Key(0)]
+        // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global
         public short Key { get; set; } = -1;
 
         [Key(1)]

@@ -21,12 +21,12 @@ using Intersect.Server.Maps;
 using Intersect.Utilities;
 using System.Collections.Concurrent;
 using System.Diagnostics;
+using System.Security.Cryptography;
 using System.Text;
 using Amib.Threading;
 using Intersect.Network.Packets.Editor;
 using Intersect.Server.Core;
 using LoginPacket = Intersect.Network.Packets.Client.LoginPacket;
-using NeedMapPacket = Intersect.Network.Packets.Client.NeedMapPacket;
 using PingPacket = Intersect.Network.Packets.Client.PingPacket;
 
 namespace Intersect.Server.Networking
@@ -665,7 +665,7 @@ namespace Intersect.Server.Networking
         }
 
         //NeedMapPacket
-        public void HandlePacket(Client client, NeedMapPacket packet)
+        public void HandlePacket(Client client, GetObjectData<MapBase> packet)
         {
             var player = client?.Entity;
 
@@ -680,18 +680,34 @@ namespace Intersect.Server.Networking
             }
 
             var playerMapGrid = DbInterface.GetGrid(playerMapController.MapGrid);
-            var validIds = packet.MapIds.Where(playerMapGrid.MapIds.Contains)
-                .Where(MapController.Lookup.Keys.Contains)
+            var validKeys = packet.CacheKeys.Where(
+                    key => playerMapGrid.MapIds.Contains(key.Id.Guid) && MapController.Lookup.Keys.Contains(key.Id.Guid)
+                )
                 .ToArray();
 
-            if (validIds.Contains(player.MapId))
+            if (validKeys.Any(key => key.Id.Guid == player.MapId))
             {
                 PacketSender.SendMapGrid(client, playerMapGrid);
             }
 
-            foreach (var mapId in validIds)
+            foreach (var cacheKey in validKeys)
             {
-                PacketSender.SendMap(client, mapId);
+                if (!MapController.TryGet(cacheKey.Id.Guid, out var descriptor))
+                {
+                    continue;
+                }
+
+                var hashInputData = descriptor.Id.ToByteArray()
+                    .Concat(BitConverter.GetBytes(descriptor.Revision))
+                    .ToArray();
+                var versionData = SHA256.HashData(hashInputData);
+                var version = Convert.ToBase64String(versionData);
+
+                var checksumToCompare = string.Equals(cacheKey.Version, version, StringComparison.Ordinal)
+                    ? cacheKey.Checksum
+                    : default;
+
+                PacketSender.SendMap(client, cacheKey.Id.Guid, checksum: checksumToCompare);
             }
         }
 

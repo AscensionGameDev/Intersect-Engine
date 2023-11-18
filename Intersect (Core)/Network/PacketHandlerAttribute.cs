@@ -63,7 +63,7 @@ namespace Intersect.Network
             var packetTypeFromMethod = parameterTypes[1];
             if (packetTypeFromMethod.IsInterface ||
                 packetTypeFromMethod.IsAbstract ||
-                packetTypeFromMethod.IsGenericType ||
+                (packetTypeFromMethod.IsGenericType && !packetTypeFromMethod.IsConstructedGenericType) ||
                 !TypeIPacket.IsAssignableFrom(packetTypeFromMethod))
             {
                 throw new ArgumentException(

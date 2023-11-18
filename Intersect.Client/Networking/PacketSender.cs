@@ -6,6 +6,9 @@ using Intersect.Client.General;
 using Intersect.Client.Interface.Game;
 using Intersect.Client.Maps;
 using Intersect.Enums;
+using Intersect.Framework;
+using Intersect.GameObjects.Maps;
+using Intersect.Models;
 using Intersect.Network.Packets.Client;
 using AdminAction = Intersect.Admin.Actions.AdminAction;
 
@@ -41,7 +44,11 @@ namespace Intersect.Client.Networking
                 return;
             }
 
-            Network.SendPacket(new NeedMapPacket(validMapIds));
+            Network.SendPacket(
+                new GetObjectData<MapBase>(
+                    validMapIds.Select(id => new ObjectCacheKey<MapBase>(new Id<MapBase>(id))).ToArray()
+                )
+            );
             MapInstance.UpdateMapRequestTime(validMapIds);
         }
 

@@ -200,7 +200,7 @@ namespace Intersect.Server.Networking
         }
 
         //MapPacket
-        public static void SendMap(Client client, Guid mapId, bool allEditors = false)
+        public static void SendMap(Client client, Guid mapId, bool allEditors = false, string? checksum = default)
         {
             var sentMaps = client?.SentMaps;
             if (sentMaps == null)
