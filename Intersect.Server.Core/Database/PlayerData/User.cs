@@ -383,6 +383,7 @@ namespace Intersect.Server.Database.PlayerData
                             try
                             {
                                 playerContext.Users.Update(this);
+                                Log.Warn(invalidOperationException, $"Successfully recovered from {nameof(InvalidOperationException)}");
                             }
                             catch (Exception exception)
                             {
