@@ -20,4 +20,22 @@ namespace Intersect.Network.Packets.Server
 
     }
 
+    [MessagePackObject]
+    public partial class MapAreaIdsPacket : IntersectPacket
+    {
+        //Parameterless Constructor for MessagePack
+        public MapAreaIdsPacket()
+        {
+        }
+
+        public MapAreaIdsPacket(params Guid[] mapIds)
+        {
+            MapIds = mapIds;
+        }
+
+        [Key(0)]
+        public Guid[] MapIds { get; set; }
+
+    }
+
 }

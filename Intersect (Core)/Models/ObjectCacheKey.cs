@@ -1,3 +1,4 @@
+using System.IO.Hashing;
 using Intersect.Framework;
 using MessagePack;
 
@@ -13,5 +14,22 @@ public record struct ObjectCacheKey<TObject>(
     [SerializationConstructor]
     public ObjectCacheKey() : this(default)
     {
+    }
+
+    public static string? ComputeChecksum(ReadOnlySpan<byte> data)
+    {
+        if (data.Length < 1)
+        {
+            return default;
+        }
+
+        var checksumData = new byte[sizeof(ulong)];
+        if (!Crc64.TryHash(data, checksumData, out var bytesWritten) || bytesWritten != sizeof(ulong))
+        {
+            return default;
+        }
+
+        var checksum = Convert.ToBase64String(checksumData);
+        return checksum;
     }
 }

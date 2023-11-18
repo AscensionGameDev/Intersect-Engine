@@ -29,7 +29,7 @@ namespace Intersect.Network
             return MessagePackSerializer.Serialize((object)packedPacket, mCompressedOptions);
         }
 
-        public object? Deserialize(byte[] packetData)
+        public object? Deserialize(byte[] packetData, bool silent = false)
         {
             try
             {
@@ -43,10 +43,18 @@ namespace Intersect.Network
                 Log.Debug($"Invalid packet: {Convert.ToHexString(data)}");
 #endif
 
-                Log.Error(exception);
+                if (!silent)
+                {
+                    Log.Error(exception);
+                }
 
                 return null;
             }
+        }
+
+        public TPacket? Deserialize<TPacket>(byte[] packetData, bool silent = false) where TPacket : IntersectPacket
+        {
+            return Deserialize(packetData, silent) as TPacket;
         }
 
         public object Deserialize(IBuffer buffer) => Deserialize(buffer.ReadBytes(buffer.Remaining));

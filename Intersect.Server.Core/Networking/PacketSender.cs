@@ -2,6 +2,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO.Hashing;
 using System.Linq;
 using Intersect.Enums;
 using Intersect.GameObjects;
@@ -121,17 +122,26 @@ namespace Intersect.Server.Networking
                 return;
             }
 
-            var surroundingMaps = MapController.Get(player.MapId).GetSurroundingMaps(true);
-            var packets = new List<MapPacket>();
-            foreach (var map in surroundingMaps)
+            MapController? playerMap = player.Map;
+            if (playerMap == default && !MapController.TryGet(player.MapId, out playerMap))
             {
-                packets.Add(GenerateMapPacket(client, map.Id));
+                return;
             }
 
-            player.SendPacket(new MapAreaPacket(packets.ToArray()));
+            var surroundingMaps = playerMap.GetSurroundingMaps(true);
+            // var packets = new List<MapPacket>();
+            foreach (var map in surroundingMaps)
+            {
+                // packets.Add(GenerateMapPacket(client, map.Id));
+                GenerateMapPackets(client, map.Id);
+            }
+            // player.SendPacket(new MapAreaPacket(packets.ToArray()));
+
+            var surroundingMapIds = surroundingMaps.Select(map => map.Id).ToArray();
+            MapAreaIdsPacket mapAreaIdsPacket = new(surroundingMapIds);
+            player.SendPacket(mapAreaIdsPacket);
         }
 
-        //MapPacket
         public static MapPacket GenerateMapPacket(Client client, Guid mapId)
         {
             if (client == null)
@@ -146,17 +156,32 @@ namespace Intersect.Server.Networking
                 return new MapPacket(mapId, true);
             }
 
+            if (!client.IsEditor)
+            {
+                var cachedClientPacket = map.CachedMapClientPacket;
+                if (cachedClientPacket != default)
+                {
+                    return cachedClientPacket;
+                }
+            }
+
             var mapPacket = new MapPacket(
-                mapId, false, map.JsonData, map.TileData, map.AttributeData, map.Revision, map.MapGridX,
-                map.MapGridY, new bool[4]
+                mapId,
+                false,
+                map.JsonData,
+                map.TileData,
+                map.AttributeData,
+                map.Revision,
+                map.MapGridX,
+                map.MapGridY,
+                new bool[4]
             );
 
             if (client.IsEditor)
             {
                 foreach (var id in map.EventIds)
                 {
-                    var evt = EventBase.Get(id);
-                    if (evt != null)
+                    if (EventBase.TryGet(id, out var evt))
                     {
                         SendGameObject(client, evt);
                     }
@@ -190,28 +215,47 @@ namespace Intersect.Server.Networking
             {
                 return mapPacket;
             }
-            else
-            {
-                mapPacket.MapItems = GenerateMapItemsPacket(client.Entity, mapId);
-                mapPacket.MapEntities = GenerateMapEntitiesPacket(mapId, client.Entity);
 
-                return mapPacket;
+            map.CachedMapClientPacket = mapPacket;
+
+            return mapPacket;
+        }
+
+        //MapPacket
+        public static (MapPacket, MapEntitiesPacket?, MapItemsPacket?) GenerateMapPackets(Client client, Guid mapId)
+        {
+            if (client == null)
+            {
+                Log.Error("Attempted to send packet to null client.");
+
+                return default;
             }
+
+            var mapPacket = GenerateMapPacket(client, mapId);
+
+            if (client.IsEditor)
+            {
+                return (mapPacket, default, default);
+            }
+
+            var mapEntitiesPacket = GenerateMapEntitiesPacket(mapId, client.Entity);
+            var mapItemsPacket = GenerateMapItemsPacket(client.Entity, mapId);
+            return (mapPacket, mapEntitiesPacket, mapItemsPacket);
         }
 
         //MapPacket
         public static void SendMap(Client client, Guid mapId, bool allEditors = false, string? checksum = default)
         {
             var sentMaps = client?.SentMaps;
-            if (sentMaps == null)
+            if (sentMaps == default)
             {
                 return;
             }
 
-            var map = MapController.Get(mapId);
-
-            if (map == null)
+            if (!MapController.TryGet(mapId, out var map))
+            {
                 return;
+            }
 
             if (!client.IsEditor)
             {
@@ -242,18 +286,33 @@ namespace Intersect.Server.Networking
 
             if (client.IsEditor)
             {
+                var (mapPacket, _, _) = GenerateMapPackets(client, mapId);
                 if (allEditors)
                 {
-                    SendDataToEditors(GenerateMapPacket(client, mapId));
+                    SendDataToEditors(mapPacket);
                 }
                 else
                 {
-                    client.Send(GenerateMapPacket(client, mapId));
+                    client.Send(mapPacket);
                 }
             }
             else
             {
-                client.Send(GenerateMapPacket(client, mapId));
+                var (mapPacket, mapEntitiesPacket, mapItemsPacket) = GenerateMapPackets(client, mapId);
+                var mapIsCached = false;
+                if (!string.IsNullOrWhiteSpace(checksum))
+                {
+                    mapIsCached = string.Equals(checksum, mapPacket.CacheChecksum);
+                }
+
+                if (!mapIsCached)
+                {
+                    client.Send(mapPacket);
+                }
+
+                client.Send(mapEntitiesPacket);
+                client.Send(mapItemsPacket);
+
                 var entity = client.Entity;
                 if (entity != null)
                 {

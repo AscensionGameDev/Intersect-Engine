@@ -33,6 +33,25 @@ namespace Intersect.Client.Networking
             Network.SendPacket(new LogoutPacket(characterSelect));
         }
 
+        public static void SendNeedMap(params ObjectCacheKey<MapBase>[] cacheKeys)
+        {
+            var validMapCacheKeys = cacheKeys
+                .Where(cacheKey => cacheKey != default && MapInstance.MapNotRequested(cacheKey.Id.Guid))
+                .Where(
+                    cacheKey => string.IsNullOrWhiteSpace(cacheKey.Checksum) ||
+                                string.IsNullOrWhiteSpace(cacheKey.Version) ||
+                                !MapInstance.TryGet(cacheKey.Id.Guid, out _)
+                )
+                .ToArray();
+            if (validMapCacheKeys.Length < 1)
+            {
+                return;
+            }
+
+            Network.SendPacket(new GetObjectData<MapBase>(validMapCacheKeys));
+            MapInstance.UpdateMapRequestTime(validMapCacheKeys.Select(cacheKey => cacheKey.Id.Guid).ToArray());
+        }
+
         public static void SendNeedMap(params Guid[] mapIds)
         {
             var validMapIds = mapIds.Where(

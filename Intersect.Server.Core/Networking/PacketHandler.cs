@@ -25,9 +25,13 @@ using System.Security.Cryptography;
 using System.Text;
 using Amib.Threading;
 using Intersect.Network.Packets.Editor;
+using Intersect.Network.Packets.Server;
 using Intersect.Server.Core;
+using ChatMsgPacket = Intersect.Network.Packets.Client.ChatMsgPacket;
 using LoginPacket = Intersect.Network.Packets.Client.LoginPacket;
+using PartyInvitePacket = Intersect.Network.Packets.Client.PartyInvitePacket;
 using PingPacket = Intersect.Network.Packets.Client.PingPacket;
+using TradeRequestPacket = Intersect.Network.Packets.Client.TradeRequestPacket;
 
 namespace Intersect.Server.Networking
 {
@@ -697,11 +701,7 @@ namespace Intersect.Server.Networking
                     continue;
                 }
 
-                var hashInputData = descriptor.Id.ToByteArray()
-                    .Concat(BitConverter.GetBytes(descriptor.Revision))
-                    .ToArray();
-                var versionData = SHA256.HashData(hashInputData);
-                var version = Convert.ToBase64String(versionData);
+                var version = MapPacket.ComputeCacheVersion(descriptor.Id, descriptor.Revision);
 
                 var checksumToCompare = string.Equals(cacheKey.Version, version, StringComparison.Ordinal)
                     ? cacheKey.Checksum
