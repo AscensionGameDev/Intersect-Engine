@@ -370,7 +370,30 @@ namespace Intersect.Server.Database.PlayerData
                 else
                 {
                     // playerContext.Attach(this);
-                    playerContext.Users.Update(this);
+                    try
+                    {
+                        playerContext.Users.Update(this);
+                    }
+                    catch (InvalidOperationException invalidOperationException)
+                    {
+                        // ReSharper disable once ConstantConditionalAccessQualifier
+                        // ReSharper disable once ConstantNullCoalescingCondition
+                        if (invalidOperationException.Message?.Contains("Collection was modified") ?? false)
+                        {
+                            try
+                            {
+                                playerContext.Users.Update(this);
+                            }
+                            catch (Exception exception)
+                            {
+                                throw new AggregateException(invalidOperationException, exception);
+                            }
+                        }
+                        else
+                        {
+                            throw;
+                        }
+                    }
                 }
 
                 playerContext.ChangeTracker.DetectChanges();
