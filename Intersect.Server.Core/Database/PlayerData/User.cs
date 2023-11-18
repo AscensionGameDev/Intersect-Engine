@@ -387,7 +387,11 @@ namespace Intersect.Server.Database.PlayerData
                             }
                             catch (Exception exception)
                             {
-                                throw new AggregateException(invalidOperationException, exception);
+                                throw new AggregateException(
+                                    $"Failed to recover from {nameof(InvalidOperationException)}",
+                                    invalidOperationException,
+                                    exception
+                                );
                             }
                         }
                         else
