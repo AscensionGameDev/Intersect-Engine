@@ -23,7 +23,7 @@ public static class InstanceProcessor
     {
         var processingInstances = InstanceControllers.Keys
             .Except(activeInstanceIds)
-            .Except(default) // Never cleanup the overworld controller
+            .Except(new Guid[1] { default }) // Never cleanup the overworld instance
             .ToArray();
 
         foreach (var id in processingInstances)
@@ -59,7 +59,7 @@ public static class InstanceProcessor
             .ToDictionary(m => m.Key, m => m.ToArray());
 
         // For each instance...
-        foreach (var (instanceId, mapInstance) in mapsAndInstances)
+        foreach (var (instanceId, mapsInInstance) in mapsAndInstances)
         {
             // Fetch our instance controller...
             if (!InstanceControllers.TryGetValue(instanceId, out var instanceController))

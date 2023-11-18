@@ -155,7 +155,7 @@ namespace Intersect.Server.Core
                             //Refresh list of active maps & their instances
                             foreach (var (instanceId, mapInstance) in ActiveMapInstances.ToArray())
                             {
-                                if (!processedMapInstances.Contains(instanceId) || mapInstance.ShouldBeActive())
+                                if (processedMapInstances.Contains(instanceId) || mapInstance.ShouldBeActive())
                                 {
                                     continue;
                                 }
