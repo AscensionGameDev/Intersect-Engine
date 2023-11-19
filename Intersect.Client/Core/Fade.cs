@@ -61,11 +61,6 @@ namespace Intersect.Client.Core
             return sCurrentAction == FadeType.None;
         }
 
-        public static float GetFade()
-        {
-            return sFadeAmt;
-        }
-
         public static void Update()
         {
             if (sCurrentAction == FadeType.In)
