@@ -1806,7 +1806,11 @@ namespace Intersect.Server.Entities
                     // ...and its surroundings
                     foreach (var surrMap in newSurroundingMaps)
                     {
-                        MapController.Get(surrMap).TryCreateInstance(MapInstanceId, out _, this);
+                        if (!MapController.TryGet(surrMap, out var map))
+                        {
+                            continue;
+                        }
+                        map.TryCreateInstance(MapInstanceId, out _, this);
                     }
                 }
                 else
@@ -7191,9 +7195,9 @@ namespace Intersect.Server.Entities
 
         public bool TryAddToInstanceController()
         {
-            if (InstanceProcessor.TryGetInstanceController(MapInstanceId, out var newInstController))
+            if (InstanceProcessor.TryGetInstanceController(MapInstanceId, out var instanceController))
             {
-                newInstController.AddPlayer(this);
+                instanceController.AddPlayer(this);
                 return true;
             }
 
