@@ -209,18 +209,8 @@ public abstract partial class IntersectDbContext<TDbContext> : DbContext, IDbCon
         }
         catch (DbUpdateConcurrencyException concurrencyException)
         {
-            static Guid GetUserIdFrom(object entry)
-            {
-                return entry switch
-                {
-                    IPlayerOwned playerOwned => playerOwned.Player?.User?.Id ?? playerOwned.Player?.UserId ?? default,
-                    Player player => player.User?.Id ?? player.UserId,
-                    _ => default,
-                };
-            }
-
             var concurrencyErrors = new StringBuilder();
-            var userIds = concurrencyException.Entries.Select(GetUserIdFrom)
+            var userIds = concurrencyException.Entries.Select(entry => GetUserIdFrom(entry.Entity))
                 .Where(id => id != default)
                 .Distinct()
                 .ToArray();
@@ -273,9 +263,11 @@ public abstract partial class IntersectDbContext<TDbContext> : DbContext, IDbCon
                 .Select(entry => entry.Entity.GetType().Name)
                 .Distinct()
                 .ToArray();
+
+            concurrencyErrors.AppendLine(Environment.StackTrace);
+
             Log.Error(concurrencyException, $"Jackpot! Concurrency Bug For {string.Join(", ", entityTypeNames)} {suffix}");
             Log.Error(concurrencyErrors.ToString());
-            Log.Error(Environment.StackTrace);
 
 #if DEBUG
             Log.Debug($"DBOP-C SaveChanges({acceptAllChangesOnSuccess}) #{currentExecutionId}");
@@ -286,6 +278,16 @@ public abstract partial class IntersectDbContext<TDbContext> : DbContext, IDbCon
             );
 
             return -1;
+
+            static Guid GetUserIdFrom(object entry)
+            {
+                return entry switch
+                {
+                    IPlayerOwned playerOwned => playerOwned.Player?.User?.Id ?? playerOwned.Player?.UserId ?? default,
+                    Player player => player.User?.Id ?? player.UserId,
+                    _ => default,
+                };
+            }
         }
     }
 

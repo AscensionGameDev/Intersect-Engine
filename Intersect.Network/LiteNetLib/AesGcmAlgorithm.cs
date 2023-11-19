@@ -135,7 +135,7 @@ public sealed class AesGcmAlgorithm : SymmetricAlgorithm
             Log.Debug($"key={Convert.ToHexString(_key.Span)}");
 #endif
             var configuredLogLevel = Options.Instance?.Logging.Level ?? LogLevel.Diagnostic;
-            if (configuredLogLevel < LogLevel.Debug)
+            if (configuredLogLevel >= LogLevel.Debug)
             {
                 Log.Error(exception);
             }
@@ -212,7 +212,7 @@ public sealed class AesGcmAlgorithm : SymmetricAlgorithm
         catch (Exception exception)
         {
             var configuredLogLevel = Options.Instance?.Logging.Level ?? LogLevel.Diagnostic;
-            if (configuredLogLevel < LogLevel.Debug)
+            if (configuredLogLevel >= LogLevel.Debug)
             {
                 Log.Error(exception);
             }

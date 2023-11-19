@@ -6,19 +6,9 @@ namespace Intersect.Server.Database.PlayerData.Players
 {
     public partial class Variable
     {
-        private Guid _id;
-
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [JsonIgnore]
-        public Guid Id
-        {
-            get => _id;
-            set
-            {
-                Console.WriteLine("HERE IS THE ISSUE?", Environment.StackTrace);
-                _id = value;
-            }
-        }
+        public Guid Id { get; set; }
 
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public Guid VariableId { get; protected set; }
