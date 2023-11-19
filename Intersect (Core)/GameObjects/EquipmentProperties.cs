@@ -1,9 +1,10 @@
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text.Json.Serialization;
 using Intersect.Enums;
 using Intersect.GameObjects.Ranges;
 
 namespace Intersect.GameObjects;
+
 public partial class EquipmentProperties
 {
     public EquipmentProperties()
@@ -15,9 +16,7 @@ public partial class EquipmentProperties
         DescriptorId = descriptorId;
     }
 
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public Guid Id { get; private set; }
-
+    [Key]
     public Guid DescriptorId { get; set; }
 
     [ForeignKey(nameof(DescriptorId))]
