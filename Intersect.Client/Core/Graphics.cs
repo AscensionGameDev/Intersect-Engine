@@ -599,7 +599,7 @@ namespace Intersect.Client.Core
 
             DrawGameTexture(
                 Renderer.GetWhiteTexture(), new FloatRect(0, 0, 1, 1), CurrentView,
-                new Color((int)Fade.GetFade(), 0, 0, 0), null, GameBlendModes.None
+                new Color((int)Fade.Alpha, 0, 0, 0), null, GameBlendModes.None
             );
 
             // Draw our mousecursor at the very end, but not when taking screenshots.

@@ -1,4 +1,6 @@
-﻿using Intersect.Utilities;
+using Intersect.Client.Networking;
+using Intersect.Configuration;
+using Intersect.Utilities;
 
 namespace Intersect.Client.Core
 {
@@ -21,28 +23,37 @@ namespace Intersect.Client.Core
 
         private static float sFadeAmt;
 
-        private static float sFadeRate = 3000f;
+        private static float sFadeDurationMs;
 
         private static long sLastUpdate;
 
-        public static void FadeIn()
+        public static float Alpha => sFadeAmt * 255f;
+
+        private static bool InformServer { get; set; }
+
+        public static void FadeIn(float durationMs, bool informServer = false)
         {
+            sFadeDurationMs = durationMs;
             sCurrentAction = FadeType.In;
-            sFadeAmt = 255f;
+            sFadeAmt = 1f;
             sLastUpdate = Timing.Global.MillisecondsUtc;
+            InformServer = informServer;
         }
 
-        public static void FadeOut()
+        public static void FadeOut(float durationMs, bool informServer = false)
         {
+            sFadeDurationMs = durationMs;
             sCurrentAction = FadeType.Out;
             sFadeAmt = 0f;
             sLastUpdate = Timing.Global.MillisecondsUtc;
+            InformServer = informServer;
         }
 
-        public static void Cancel()
+        public static void Cancel(bool informServer = false)
         {
             sCurrentAction = FadeType.None;
             sFadeAmt = default;
+            InformServerOfCompletion(true);
         }
 
         public static bool DoneFading()
@@ -50,35 +61,42 @@ namespace Intersect.Client.Core
             return sCurrentAction == FadeType.None;
         }
 
-        public static float GetFade()
-        {
-            return sFadeAmt;
-        }
-
         public static void Update()
         {
             if (sCurrentAction == FadeType.In)
             {
-                sFadeAmt -= (Timing.Global.MillisecondsUtc - sLastUpdate) / sFadeRate * 255f;
+                sFadeAmt -= (Timing.Global.MillisecondsUtc - sLastUpdate) / sFadeDurationMs;
                 if (sFadeAmt <= 0f)
                 {
                     sCurrentAction = FadeType.None;
                     sFadeAmt = 0f;
+
+                    InformServerOfCompletion();
                 }
             }
             else if (sCurrentAction == FadeType.Out)
             {
-                sFadeAmt += (Timing.Global.MillisecondsUtc - sLastUpdate) / sFadeRate * 255f;
-                if (sFadeAmt >= 255f)
+                sFadeAmt += (Timing.Global.MillisecondsUtc - sLastUpdate) / sFadeDurationMs;
+                if (sFadeAmt >= 1)
                 {
                     sCurrentAction = FadeType.None;
-                    sFadeAmt = 255f;
+                    sFadeAmt = 1f;
+
+                    InformServerOfCompletion();
                 }
             }
 
             sLastUpdate = Timing.Global.MillisecondsUtc;
         }
 
+        private static void InformServerOfCompletion(bool force = false)
+        {
+            if (InformServer || force)
+            {
+                InformServer = false;
+                PacketSender.SendFadeCompletePacket();
+            }
+        }
     }
 
 }

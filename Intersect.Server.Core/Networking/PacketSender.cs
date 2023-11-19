@@ -2192,6 +2192,11 @@ namespace Intersect.Server.Networking
             player.SendPacket(new GuildInvitePacket(from.Name, from.Guild.Name));
         }
 
+        public static void SendFade(Player player, FadeType fadeType, bool waitForCompletion, int speedMs)
+        {
+            player.SendPacket(new FadePacket(fadeType, waitForCompletion, speedMs));
+        }
+
         public static void SendDataToAllLayersOfMap(Guid mapId, IPacket packet, Player except = null, TransmissionMode mode = TransmissionMode.All)
         {
             if (!MapController.Lookup.Keys.Contains(mapId))

@@ -2864,6 +2864,16 @@ namespace Intersect.Server.Networking
             player.PictureClosed(packet.EventId);
         }
 
+        public void HandlePacket(Client client, FadeCompletePacket packet)
+        {
+            var player = client?.Entity;
+            if (player == null)
+            {
+                return;
+            }
+            player.IsFading = false;
+        }
+
         #endregion
     }
 }

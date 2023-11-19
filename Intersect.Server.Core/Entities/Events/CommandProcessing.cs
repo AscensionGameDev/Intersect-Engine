@@ -1627,6 +1627,28 @@ namespace Intersect.Server.Entities.Events
             }
         }
 
+        private static void ProcessCommand(
+           ScreenFadeCommand command,
+           Player player,
+           Event instance,
+           CommandInstance stackInfo,
+           Stack<CommandInstance> callStack
+        )
+        {
+            if (player == null || !player.Online)
+            {
+                return;
+            }
+
+            player.IsFading = command.WaitForCompletion;
+            PacketSender.SendFade(player, command.FadeType, command.WaitForCompletion, command.DurationMs);
+
+            if (command.WaitForCompletion)
+            {
+                callStack.Peek().WaitingForResponse = CommandInstance.EventResponse.Fade;
+            }
+        }
+
         private static Stack<CommandInstance> LoadLabelCallstack(string label, EventPage currentPage)
         {
             var newStack = new Stack<CommandInstance>();

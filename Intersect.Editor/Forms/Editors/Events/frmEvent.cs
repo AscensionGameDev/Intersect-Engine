@@ -758,6 +758,10 @@ namespace Intersect.Editor.Forms.Editors.Events
                     tmpCommand = new CastSpellOn();
 
                     break;
+                case EventCommandType.Fade:
+                    tmpCommand = new ScreenFadeCommand();
+
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -1398,6 +1402,10 @@ namespace Intersect.Editor.Forms.Editors.Events
                     break;
                 case EventCommandType.CastSpellOn:
                     cmdWindow = new EventCommand_CastSpellOn((CastSpellOn)command, this);
+
+                    break;
+                case EventCommandType.Fade:
+                    cmdWindow = new EventCommand_ScreenFade((ScreenFadeCommand)command, this);
 
                     break;
                 default:

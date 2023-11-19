@@ -1154,7 +1154,7 @@ namespace Intersect.Client.Networking
         //ErrorMessagePacket
         public void HandlePacket(IPacketSender packetSender, ErrorMessagePacket packet)
         {
-            Fade.FadeIn();
+            Fade.FadeIn(ClientConfiguration.Instance.FadeDurationMs);
             Globals.WaitingOnServer = false;
             Interface.Interface.MsgboxErrors.Add(new KeyValuePair<string, string>(packet.Header, packet.Error));
             Interface.Interface.MenuUi?.Reset();
@@ -2084,7 +2084,7 @@ namespace Intersect.Client.Networking
         public void HandlePacket(IPacketSender packetSender, EnteringGamePacket packet)
         {
             //Fade out, we're finally loading the game world!
-            Fade.FadeOut();
+            Fade.FadeOut(ClientConfiguration.Instance.FadeDurationMs);
         }
 
         //CancelCastPacket
@@ -2119,6 +2119,22 @@ namespace Intersect.Client.Networking
                 InputBox.InputType.YesNo, PacketSender.SendGuildInviteAccept, PacketSender.SendGuildInviteDecline,
                 null
             );
+        }
+
+        public void HandlePacket(IPacketSender packetSender, FadePacket packet)
+        {
+            switch (packet.FadeType)
+            {
+                case GameObjects.Events.FadeType.None:
+                    Fade.Cancel(packet.WaitForCompletion);
+                    break;
+                case GameObjects.Events.FadeType.FadeIn:
+                    Fade.FadeIn(packet.DurationMs, packet.WaitForCompletion);
+                    break;
+                case GameObjects.Events.FadeType.FadeOut:
+                    Fade.FadeOut(packet.DurationMs, packet.WaitForCompletion);
+                    break;
+            }
         }
 
     }

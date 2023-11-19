@@ -209,6 +209,12 @@ namespace Intersect.Server.Entities
         /// </summary>
         [NotMapped] public bool GuildBank;
 
+        /// <summary>
+        /// Used to tell events when to continue when dealing with fade in/out events and knowing when they're complete on the client's end
+        /// </summary>
+        [NotMapped, JsonIgnore]
+        public bool IsFading { get; set; }
+
         // Instancing
         public MapInstanceType InstanceType { get; set; } = MapInstanceType.Overworld;
 

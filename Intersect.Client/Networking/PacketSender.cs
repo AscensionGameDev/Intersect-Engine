@@ -467,6 +467,11 @@ namespace Intersect.Client.Networking
             }
         }
 
+        public static void SendFadeCompletePacket()
+        {
+            Network.SendPacket(new FadeCompletePacket());
+        }
+
     }
 
 }

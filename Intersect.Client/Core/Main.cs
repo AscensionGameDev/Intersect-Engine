@@ -38,7 +38,7 @@ namespace Intersect.Client.Core
 
             //Init Network
             Networking.Network.InitNetwork(context);
-            Fade.FadeIn();
+            Fade.FadeIn(ClientConfiguration.Instance.FadeDurationMs);
 
             //Make Json.Net Familiar with Our Object Types
             var id = Guid.NewGuid();
@@ -131,7 +131,7 @@ namespace Intersect.Client.Core
                             else
                             {
                                 Globals.IntroIndex++;
-                                Fade.FadeIn();
+                                Fade.FadeIn(ClientConfiguration.Instance.FadeDurationMs);
                                 Globals.IntroComing = true;
                             }
                         }
@@ -141,7 +141,7 @@ namespace Intersect.Client.Core
                         if (Timing.Global.MillisecondsUtc > Globals.IntroStartTime + Globals.IntroDelay)
                         {
                             //If we have shown an image long enough, fade to black -- keep track that the image is going
-                            Fade.FadeOut();
+                            Fade.FadeOut(ClientConfiguration.Instance.FadeDurationMs);
                             Globals.IntroStartTime = -1;
                             Globals.IntroComing = false;
                         }
@@ -187,7 +187,7 @@ namespace Intersect.Client.Core
 
             Audio.PlayMusic(MapInstance.Get(Globals.Me.MapId).Music, ClientConfiguration.Instance.MusicFadeTimer, ClientConfiguration.Instance.MusicFadeTimer, true);
             Globals.GameState = GameStates.InGame;
-            Fade.FadeIn();
+            Fade.FadeIn(ClientConfiguration.Instance.FadeDurationMs);
         }
 
         private static void ProcessGame()
@@ -339,7 +339,7 @@ namespace Intersect.Client.Core
             }
             else
             {
-                Fade.FadeOut();
+                Fade.FadeOut(ClientConfiguration.Instance.FadeDurationMs);
             }
 
             if (!ClientContext.IsSinglePlayer)
@@ -400,7 +400,7 @@ namespace Intersect.Client.Core
             }
             else
             {
-                Fade.FadeIn();
+                Fade.FadeIn(ClientConfiguration.Instance.FadeDurationMs);
             }
         }
 
