@@ -27,13 +27,15 @@ namespace Intersect.Client.Core
 
         private static long sLastUpdate;
 
+        public static float Alpha => sFadeAmt * 255f;
+
         private static bool InformServer { get; set; }
 
         public static void FadeIn(float durationMs, bool informServer = false)
         {
             sFadeDurationMs = durationMs;
             sCurrentAction = FadeType.In;
-            sFadeAmt = 255f;
+            sFadeAmt = 1f;
             sLastUpdate = Timing.Global.MillisecondsUtc;
             InformServer = informServer;
         }
@@ -68,7 +70,7 @@ namespace Intersect.Client.Core
         {
             if (sCurrentAction == FadeType.In)
             {
-                sFadeAmt -= (Timing.Global.MillisecondsUtc - sLastUpdate) / sFadeDurationMs * 255f;
+                sFadeAmt -= (Timing.Global.MillisecondsUtc - sLastUpdate) / sFadeDurationMs;
                 if (sFadeAmt <= 0f)
                 {
                     sCurrentAction = FadeType.None;
@@ -79,11 +81,11 @@ namespace Intersect.Client.Core
             }
             else if (sCurrentAction == FadeType.Out)
             {
-                sFadeAmt += (Timing.Global.MillisecondsUtc - sLastUpdate) / sFadeDurationMs * 255f;
-                if (sFadeAmt >= 255f)
+                sFadeAmt += (Timing.Global.MillisecondsUtc - sLastUpdate) / sFadeDurationMs;
+                if (sFadeAmt >= 1)
                 {
                     sCurrentAction = FadeType.None;
-                    sFadeAmt = 255f;
+                    sFadeAmt = 1f;
 
                     InformServerOfCompletion();
                 }
