@@ -690,10 +690,11 @@ namespace Intersect.Client.Interface.Game.EntityPanel
             var barDirectionSetting = ClientConfiguration.Instance.EntityBarDirections[(int)Vital.Health];
             var barPercentageSetting = Globals.Database.ShowHealthAsPercentage;
             var entityVital = (float)MyEntity.Vital[(int)Vital.Health];
+            var entityMaxVital = (float)MyEntity.MaxVital[(int)Vital.Health];
 
             if (entityVital > 0)
             {
-                var entityMaxVital = (float)MyEntity.MaxVital[(int)Vital.Health];
+                
                 var shieldSize = (float)MyEntity.GetShieldSize();
                 var vitalSize = (int)barDirectionSetting < (int)DisplayDirection.TopToBottom
                     ? HpBackground.Width
@@ -718,8 +719,8 @@ namespace Intersect.Client.Interface.Game.EntityPanel
             }
             else
             {
-                HpLbl.Text = barPercentageSetting ? "0%" : Strings.EntityBox.vital0val.ToString(0, 0);
-                HpBackground.SetToolTipText(barPercentageSetting ? Strings.EntityBox.vital0val.ToString(0, 0) : "0%");
+                HpLbl.Text = barPercentageSetting ? "0%" : Strings.EntityBox.vital0val.ToString(0, entityMaxVital);
+                HpBackground.SetToolTipText(barPercentageSetting ? Strings.EntityBox.vital0val.ToString(0, entityMaxVital) : "0%");
                 targetHpSize = 0;
                 targetShieldSize = 0;
             }
@@ -759,10 +760,11 @@ namespace Intersect.Client.Interface.Game.EntityPanel
             var barDirectionSetting = ClientConfiguration.Instance.EntityBarDirections[(int)Vital.Mana];
             var barPercentageSetting = Globals.Database.ShowManaAsPercentage;
             var entityVital = (float)MyEntity.Vital[(int)Vital.Mana];
+            var entityMaxVital = (float)MyEntity.MaxVital[(int)Vital.Mana];
 
             if (entityVital > 0)
             {
-                var entityMaxVital = (float)MyEntity.MaxVital[(int)Vital.Mana];
+                
                 var entityVitalRatio = entityVital / entityMaxVital;
                 var vitalSize = (int)barDirectionSetting < (int)DisplayDirection.TopToBottom
                     ? MpBackground.Width
@@ -776,8 +778,8 @@ namespace Intersect.Client.Interface.Game.EntityPanel
             }
             else
             {
-                MpLbl.Text = barPercentageSetting ? "0%" : Strings.EntityBox.vital1val.ToString(0, 0);
-                MpBackground.SetToolTipText(barPercentageSetting ? Strings.EntityBox.vital1val.ToString(0, 0) : "0%");
+                MpLbl.Text = barPercentageSetting ? "0%" : Strings.EntityBox.vital1val.ToString(0, entityMaxVital);
+                MpBackground.SetToolTipText(barPercentageSetting ? Strings.EntityBox.vital1val.ToString(0, entityMaxVital) : "0%");
                 targetMpSize = 0;
             }
 
