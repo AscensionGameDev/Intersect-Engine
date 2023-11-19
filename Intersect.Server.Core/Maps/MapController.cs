@@ -422,11 +422,10 @@ namespace Intersect.Server.Maps
                 if (!mInstances.ContainsKey(instanceId))
                 {
                     Log.Debug($"Creating new instance with ID {instanceId} for map {Name}");
-                    var newMapInstance = new MapInstance(this, instanceId, creator);
-                    newMapInstance.Initialize();
-                    mInstances[instanceId] = newMapInstance;
+                    newLayer = new MapInstance(this, instanceId, creator);
+                    newLayer.Initialize();
+                    mInstances[instanceId] = newLayer;
 
-                    newLayer = mInstances[instanceId];
                     return true;
                 }
 
