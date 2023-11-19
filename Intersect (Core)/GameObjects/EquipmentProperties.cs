@@ -23,5 +23,6 @@ public partial class EquipmentProperties
     [ForeignKey(nameof(DescriptorId))]
     public ItemBase Descriptor { get; set; }
 
+    [NotMapped]
     public Dictionary<Stat, ItemRange> StatRanges { get; set; }
 }
