@@ -7,6 +7,7 @@ using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Events.Commands;
 using Intersect.GameObjects.Switches_and_Variables;
+using Intersect.Server.Core.MapInstancing;
 using Intersect.Server.Database;
 using Intersect.Server.Database.PlayerData.Players;
 using Intersect.Server.Database.PlayerData.Security;
@@ -330,9 +331,9 @@ namespace Intersect.Server.Entities.Events
                 return;
             }
 
-            if (command.AllInInstance)
+            if (command.AllInInstance && InstanceProcessor.TryGetInstanceController(player.MapInstanceId, out var instanceController))
             {
-                foreach (var instanceMember in Globals.OnlineList.ToArray())
+                foreach (var instanceMember in instanceController.Players.ToArray())
                 {
                     if (instanceMember.Id == player.Id || !instanceMember.Online)
                     {
