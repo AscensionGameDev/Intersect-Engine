@@ -229,6 +229,7 @@ namespace Intersect.Server.Maps
         {
             lock (mMapLock)
             {
+                CachedMapClientPacket = default;
                 DespawnAllInstances();
                 base.Load(json);
                 if (keepRevision > -1)

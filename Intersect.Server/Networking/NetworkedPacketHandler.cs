@@ -161,14 +161,12 @@ internal sealed partial class NetworkedPacketHandler
                 return;
             }
 
-            var map = MapController.Get(packet.MapId);
-
-            if (map == null)
+            if (!MapController.TryGet(packet.MapId, out var map))
             {
                 return;
             }
 
-            map.Load(packet.JsonData, MapController.Get(packet.MapId).Revision + 1);
+            map.Load(packet.JsonData, map.Revision + 1);
             MapList.List.UpdateMap(packet.MapId);
 
             //Event Fixing
