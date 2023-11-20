@@ -156,7 +156,7 @@ namespace Intersect.Client.Interface.Menu
         //Methods
         public void Update()
         {
-            if (!Networking.Network.Connected)
+            if (!Networking.Network.IsConnected)
             {
                 Hide();
                 mMainMenu.Show();
@@ -205,6 +205,8 @@ namespace Intersect.Client.Interface.Menu
         {
             Hide();
             mMainMenu.Show();
+
+            Networking.Network.DebounceClose("returning_to_main_menu");
         }
 
         void UsernameTextbox_SubmitPressed(Base sender, EventArgs arguments)
@@ -229,7 +231,7 @@ namespace Intersect.Client.Interface.Menu
                 return;
             }
 
-            if (!Networking.Network.Connected)
+            if (!Networking.Network.IsConnected)
             {
                 Interface.MsgboxErrors.Add(new KeyValuePair<string, string>("", Strings.Errors.notconnected));
 

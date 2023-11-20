@@ -138,6 +138,7 @@ csharp_style_namespace_declarations = file_scoped:silent
 # ReSharper properties
 resharper_place_expr_property_on_single_line = true
 resharper_trailing_comma_in_multiline_lists = true
+resharper_wrap_array_initializer_style = chop_if_long
 ###############################
 # VB Coding Conventions       #
 ###############################

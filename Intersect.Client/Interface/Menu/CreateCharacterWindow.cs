@@ -200,7 +200,7 @@ namespace Intersect.Client.Interface.Menu
 
         public void Update()
         {
-            if (!Networking.Network.Connected)
+            if (!Networking.Network.IsConnected)
             {
                 Hide();
                 mMainMenu.Show();

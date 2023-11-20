@@ -1,8 +1,9 @@
 ﻿using System.Linq;
-
+using Intersect.Network;
 using Intersect.Server.Core.CommandParsing;
 using Intersect.Server.General;
 using Intersect.Server.Localization;
+using Intersect.Server.Networking;
 
 namespace Intersect.Server.Core.Commands
 {
@@ -17,29 +18,95 @@ namespace Intersect.Server.Core.Commands
         protected override void HandleValue(ServerContext context, ParserResult result)
         {
             var bufferWidth = (Console.BufferWidth == 0 ? 100 : Console.BufferWidth) - 1;
-            var columnScale = bufferWidth / 66.0;
-            var columnWidths = new[] {10, 28, 28}.Select(width => (int) (width * columnScale)).ToArray();
-            columnWidths[0] += bufferWidth - columnWidths.Sum();
-            columnWidths[1] -= 2;
-            columnWidths[2] -= 2;
-            var formatLine = string.Join("| ", columnWidths.Select((width, column) => $"{{{column},{-width}}}"));
-
-            Console.WriteLine(
-                formatLine, Strings.Commandoutput.listid, Strings.Commandoutput.listaccount,
-                Strings.Commandoutput.listcharacter
-            );
-
-            Console.WriteLine(new string('-', bufferWidth));
-
-            for (var i = 0; i < Globals.Clients.Count; i++)
+            var columnWidths = new[]
             {
-                if (Globals.Clients[i] == null)
+                37,
+                -Strings.Commandoutput.listaccount.ToString().Length,
+                -Strings.Commandoutput.listcharacter.ToString().Length,
+                37,
+            };
+            var resizableColumns = columnWidths.Count(columnWidth => columnWidth < 1);
+            var availableWidth = columnWidths.Aggregate(
+                bufferWidth,
+                (remainingWidth, columnWidth) => Math.Max(0, remainingWidth - Math.Max(0, columnWidth))
+            ) - resizableColumns * 2;
+            var resizableWidth = columnWidths.Aggregate(
+                0,
+                (totalWidth, columnWidth) => totalWidth + Math.Max(0, -columnWidth)
+            );
+            var remainingAvailableWidth = availableWidth;
+            var resizedColumns = 0;
+            for (var column = 0; column < columnWidths.Length; ++column)
+            {
+                var columnWidth = columnWidths[column];
+                if (columnWidths[column] > 0)
                 {
                     continue;
                 }
 
-                var name = Globals.Clients[i].Entity != null ? Globals.Clients[i].Entity.Name : "";
-                Console.WriteLine(formatLine, "#" + i, Globals.Clients[i].Name, name);
+                ++resizedColumns;
+                var weight = Math.Max(0f, -columnWidth) / Math.Max(1f, resizableWidth);
+                columnWidth = (int)(availableWidth * weight);
+                remainingAvailableWidth -= columnWidth;
+                if (resizedColumns >= resizableColumns)
+                {
+                    columnWidth += remainingAvailableWidth;
+                }
+                columnWidths[column] = columnWidth;
+            }
+
+            var formatLine = string.Join("| ", columnWidths.Select((width, column) => $"{{{column},{-width}}}"));
+
+            var clients = Globals.Clients.ToArray();
+
+            HashSet<IConnection> seenConnections = new();
+
+            if (clients.Length > 0)
+            {
+                Console.WriteLine(
+                    Strings.Commandoutput.OnlineListActiveConnectionsN.ToString(context.Network.ConnectionCount)
+                );
+
+                Console.WriteLine(
+                    formatLine,
+                    Strings.Commandoutput.listid,
+                    Strings.Commandoutput.listaccount,
+                    Strings.Commandoutput.listcharacter,
+                    "Connection ID"
+                );
+
+                Console.WriteLine(new string('-', bufferWidth));
+
+                foreach (var client in Globals.Clients.ToArray())
+                {
+                    if (client == default)
+                    {
+                        continue;
+                    }
+
+                    seenConnections.Add(client.Connection);
+
+                    var name = client.Entity?.Name ?? string.Empty;
+                    Console.WriteLine(formatLine, client.Id, client.Name, name, client.Connection?.Guid ?? default);
+                }
+            }
+            else
+            {
+                Console.WriteLine(Strings.Commandoutput.OnlineListNoClientsConnected);
+            }
+
+            var strayConnections =
+                context.Network.Connections.ToArray().Where(c => !seenConnections.Contains(c)).ToArray();
+
+            // ReSharper disable once InvertIf
+            if (strayConnections.Length > 0)
+            {
+                Console.WriteLine(Strings.Commandoutput.OnlineListStrayConnectionsN.ToString(strayConnections.Length));
+
+                foreach (var connection in strayConnections)
+                {
+                    Console.WriteLine($"{connection.Guid} | {connection.Ip}:{connection.Port}");
+                }
             }
         }
 

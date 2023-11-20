@@ -149,7 +149,7 @@ namespace Intersect.Client.Interface.Menu
         //Methods
         public void Update()
         {
-            if (!Networking.Network.Connected)
+            if (!Networking.Network.IsConnected)
             {
                 Hide();
                 mMainMenu.Show();
@@ -189,7 +189,7 @@ namespace Intersect.Client.Interface.Menu
                 return;
             }
 
-            if (Networking.Network.Connected)
+            if (Networking.Network.IsConnected)
             {
                 if (FieldChecking.IsValidUsername(mUsernameTextbox.Text, Strings.Regex.username))
                 {
@@ -280,6 +280,8 @@ namespace Intersect.Client.Interface.Menu
         {
             Hide();
             mMainMenu.Show();
+
+            Networking.Network.DebounceClose("returning_to_main_menu");
         }
 
     }
