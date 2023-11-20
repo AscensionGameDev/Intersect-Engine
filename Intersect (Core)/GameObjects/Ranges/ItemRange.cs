@@ -4,8 +4,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Intersect.GameObjects.Ranges;
 
 /// <summary>
-/// TODO: ItemRange exists to generalize rollable stats on an item. After adding the ability to set specific ranges
-/// per-STAT on items, I want to go back and add the ability to do the same thing for Bonus Effects - Day
+/// ItemRange exists to generalize rollable stats on an item
 /// </summary>
 [Owned]
 public partial class ItemRange
@@ -18,12 +17,15 @@ public partial class ItemRange
 
     public ItemRange()
     {
-        Seed = Guid.NewGuid().GetHashCode();
-        Randomizer = new Random(Seed);
+        InitializeRandomizer();
     }
 
     public int Roll()
     {
+        if (Seed == default)
+        {
+            InitializeRandomizer();
+        }
         return Randomizer.Next(LowRange, HighRange + 1);
     }
 
@@ -35,4 +37,10 @@ public partial class ItemRange
 
     [NotMapped]
     private Random Randomizer { get; set; }
+
+    private void InitializeRandomizer()
+    {
+        Seed = Guid.NewGuid().GetHashCode();
+        Randomizer = new Random(Seed);
+    }
 }

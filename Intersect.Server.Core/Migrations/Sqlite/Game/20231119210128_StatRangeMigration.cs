@@ -1,5 +1,12 @@
-﻿using System;
+using System;
+using Intersect.Server.Database.PlayerData;
+using Intersect.Server.Database;
 using Microsoft.EntityFrameworkCore.Migrations;
+using SqlKata;
+using Intersect.Server.Database.GameData;
+using SqlKata.Extensions;
+using SqlKata.Compilers;
+using Intersect.Server.Migrations.SqlGeneration;
 
 #nullable disable
 
@@ -25,7 +32,8 @@ namespace Intersect.Server.Migrations.Sqlite.Game
                     StatRange_MagicResist_LowRange = table.Column<int>(type: "INTEGER", nullable: true),
                     StatRange_MagicResist_HighRange = table.Column<int>(type: "INTEGER", nullable: true),
                     StatRange_Speed_LowRange = table.Column<int>(type: "INTEGER", nullable: true),
-                    StatRange_Speed_HighRange = table.Column<int>(type: "INTEGER", nullable: true)
+                    StatRange_Speed_HighRange = table.Column<int>(type: "INTEGER", nullable: true),
+                    Seed = table.Column<int>(type: "INTEGER", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -38,9 +46,7 @@ namespace Intersect.Server.Migrations.Sqlite.Game
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            // TODO: Copy StatGrowth data, you should be able to use SqlKata to generate the query instead of directly writing raw SQL
-            // The upside to this is that you can put the actual SqlKata code in a reusable class and use the same code for both SQLite and MySQL since you just have to tell it which provider it is generating SQL for
-            // (you don't need to use the executor, but you can see SqlKata being used in SqliteNetCoreGuidPatch and SqliteUserVariablePopulateNewColumnId)
+            migrationBuilder.Sql(new StatRangeMigrationSql().BuildSqliteSql());
 
             migrationBuilder.DropColumn(
                 name: "StatGrowth",
