@@ -40,9 +40,26 @@ namespace Intersect.Network
         {
             var types = BuiltInAssembly.GetExportedTypes();
             var packetTypes = types.Where(type => type.GetInterfaces().Any(interfaceType => interfaceType == typeof(IPacket)));
-            var definedPacketTypes = packetTypes.Where(type => !type.IsInterface && !type.IsValueType && !type.IsAbstract);
+            var definedPacketTypes = packetTypes
+                .Where(type => !type.IsInterface && !type.IsValueType && !type.IsAbstract)
+                .SelectMany(
+                    type =>
+                    {
+                        if (!type.IsGenericType)
+                        {
+                            return Enumerable.Empty<Type>().Append(type);
+                        }
+
+                        var genericPacketTypeArgumentsAttributes =
+                            type.GetCustomAttributes<GenericPacketTypeArgumentsAttribute>();
+                        return genericPacketTypeArgumentsAttributes.Select(
+                            attribute => type.MakeGenericType(attribute.TypeArguments)
+                        );
+                    }
+                )
+                .OrderBy(type => type.ToString());
             BuiltInTypesInternal.AddRange(definedPacketTypes);
-            return BuiltInTypesInternal.All(type => TryRegister(type)) && BuiltInTypesInternal.Count > 0;
+            return BuiltInTypesInternal.All(TryRegister) && BuiltInTypesInternal.Count > 0;
         }
 
         public bool TryRegister<TPacket>() where TPacket : IPacket =>

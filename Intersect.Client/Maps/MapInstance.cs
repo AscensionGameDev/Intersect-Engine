@@ -1368,7 +1368,15 @@ namespace Intersect.Client.Maps
             Delete();
         }
 
-        public static bool MapNotRequested(Guid mapId) => !MapRequests.ContainsKey(mapId) || MapRequests[mapId] < Timing.Global.Milliseconds;
+        public static bool MapNotRequested(Guid mapId)
+        {
+            if (!MapRequests.TryGetValue(mapId, out var nextRequest))
+            {
+                return true;
+            }
+
+            return nextRequest < Timing.Global.Milliseconds;
+        }
 
         public static void UpdateMapRequestTime(params Guid[] mapIds)
         {

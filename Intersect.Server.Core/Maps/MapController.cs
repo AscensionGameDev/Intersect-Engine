@@ -2,12 +2,14 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Intersect.Compression;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps;
 using Intersect.Logging;
+using Intersect.Network.Packets.Server;
 using Intersect.Server.Database;
 using Intersect.Server.Entities;
 using Intersect.Server.Networking;
@@ -51,6 +53,8 @@ namespace Intersect.Server.Maps
         private Guid[] mSurroundingMapsIdsWithSelf = new Guid[0];
         private MapController[] mSurroundingMaps = new MapController[0];
         private MapController[] mSurroundingMapsWithSelf = new MapController[0];
+
+        [NotMapped, JsonIgnore] public MapPacket? CachedMapClientPacket { get; set; }
 
         /// <summary>
         /// Contains a list of all surrounding Map (controller) IDs
@@ -140,7 +144,7 @@ namespace Intersect.Server.Maps
         /// <param name="id"></param>
         /// <param name="mapController">The retrieved Map Controller, if successful</param>
         /// <returns><c>true</c> if the Map Controller was found; otherwise, <c>false</c></returns>
-        public static bool TryGet(Guid id, out MapController mapController)
+        public static bool TryGet(Guid id, [NotNullWhen(true)] out MapController? mapController)
         {
             mapController = Lookup.Get<MapController>(id);
             return mapController != null;
@@ -225,6 +229,7 @@ namespace Intersect.Server.Maps
         {
             lock (mMapLock)
             {
+                CachedMapClientPacket = default;
                 DespawnAllInstances();
                 base.Load(json);
                 if (keepRevision > -1)

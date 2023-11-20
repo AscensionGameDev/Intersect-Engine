@@ -429,6 +429,11 @@ namespace Intersect.Server.Networking
                 return false;
             }
 
+            if (packet == default)
+            {
+                return false;
+            }
+
             mSendPacketQueue.Enqueue(new Tuple<IPacket, TransmissionMode, long>(packet, mode, Timing.Global.Milliseconds));
             lock (mSendPacketQueue)
             {

@@ -28,6 +28,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Intersect.Client.Framework.Network;
 using Intersect.Client.Plugins.Helpers;
+using Intersect.Framework;
+using Intersect.Models;
 using MapAttribute = Intersect.Enums.MapAttribute;
 
 namespace Intersect.Client.Networking
@@ -192,7 +194,6 @@ namespace Intersect.Client.Networking
             Globals.JoiningGame = true;
         }
 
-        //MapAreaPacket
         public void HandlePacket(IPacketSender packetSender, MapAreaPacket packet)
         {
             foreach (var map in packet.Maps)
@@ -201,10 +202,65 @@ namespace Intersect.Client.Networking
             }
         }
 
-        //MapPacket
-        private void HandleMap(IPacketSender packetSender, MapPacket packet)
+        public void HandlePacket(IPacketSender packetSender, MapAreaIdsPacket packet)
+        {
+            // TODO: Background all of this?
+            List<ObjectCacheKey<MapBase>> cacheKeys = new(packet.MapIds.Length);
+            List<MapPacket> loadedCachedMaps = new(packet.MapIds.Length);
+            foreach (var mapId in packet.MapIds)
+            {
+                if (ObjectDataDiskCache<MapBase>.TryLoad(mapId, out var cacheData))
+                {
+                    ObjectCacheKey<MapBase> cacheKey = new(cacheData.Id);
+                    var deserializedCachedPacket = MessagePacker.Instance.Deserialize<MapPacket>(cacheData.Data, silent: true);
+                    if (deserializedCachedPacket != default)
+                    {
+                        cacheKey = new ObjectCacheKey<MapBase>(
+                            cacheData.Id,
+                            cacheData.Checksum,
+                            cacheData.Version
+                        );
+                        cacheKeys.Add(cacheKey);
+                        loadedCachedMaps.Add(deserializedCachedPacket);
+                        continue;
+                    }
+
+                    Log.Warn($"Failed to deserialized cached data for {cacheKey}, will fetch again");
+                }
+
+                cacheKeys.Add(new ObjectCacheKey<MapBase>(new Id<MapBase>(mapId)));
+            }
+
+            PacketSender.SendNeedMap(cacheKeys.ToArray());
+
+            foreach (var cachedMap in loadedCachedMaps)
+            {
+                HandleMap(packetSender, cachedMap, skipSave: true);
+            }
+        }
+
+        private void HandleMap(IPacketSender packetSender, MapPacket packet, bool skipSave = false)
         {
             var mapId = packet.MapId;
+
+            if (!skipSave)
+            {
+                ObjectCacheData<MapBase> cacheData = new()
+                {
+                    Id = new Id<MapBase>(mapId),
+                    Data = (packet as IntersectPacket).Data,
+                    Version = packet.CacheVersion,
+                };
+                ObjectCacheKey<MapBase> cacheKey = new(new Id<MapBase>(mapId), cacheData.Checksum, cacheData.Version);
+
+                if (!ObjectDataDiskCache<MapBase>.TrySave(cacheData))
+                {
+                    Log.Warn($"Failed to save cache for {cacheKey}");
+                }
+            }
+
+            MapInstance.UpdateMapRequestTime(packet.MapId);
+            
             if (MapInstance.TryGet(mapId, out var mapInstance))
             {
                 if (packet.Revision == mapInstance.Revision)
@@ -232,17 +288,6 @@ namespace Intersect.Client.Networking
                 mapInstance.GridY = packet.GridY;
                 mapInstance.CameraHolds = packet.CameraHolds;
                 mapInstance.Autotiles.InitAutotiles(mapInstance.GenerateAutotileGrid());
-
-                //Process Entities and Items if provided in this packet
-                if (packet.MapEntities != null)
-                {
-                    HandlePacket(packet.MapEntities);
-                }
-
-                if (packet.MapItems != null)
-                {
-                    HandlePacket(packet.MapItems);
-                }
 
                 if (Globals.PendingEvents.ContainsKey(mapId))
                 {
@@ -1724,7 +1769,7 @@ namespace Intersect.Client.Networking
                     if (Globals.MapGrid[x, y] != Guid.Empty)
                     {
                         Globals.GridMaps.Add(Globals.MapGrid[x, y]);
-                        MapInstance.UpdateMapRequestTime(Globals.MapGrid[x, y]);
+                        // MapInstance.UpdateMapRequestTime(Globals.MapGrid[x, y]);
                     }
                 }
             }
