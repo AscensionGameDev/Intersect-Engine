@@ -287,7 +287,7 @@ jobs:
       run: dotnet publish Intersect.sln --sc -r win-x64   -p:Configuration=Release -p:PackageVersion=${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}+build.${{ github.sha }} -p:Version=${{ env.VERSION_PREFIX }}.${{ github.run_number }}
 
     - name: Tarball artifacts to maintain unix file permissions
-      run: tar -cvf win.tar Intersect.Client/bin/Release/*/*/publish Intersect.Editor/bin/Release/*/*/publish Intersect.Server/bin/Release/*/*
+      run: tar -cvf win.tar Intersect.Client\bin\Release\*\*\publish Intersect.Editor\bin\Release\*\*\publish Intersect.Server\bin\Release\*\*\publish
 
     - name: Debug files on disk
       if: inputs.workflowDebug == true
