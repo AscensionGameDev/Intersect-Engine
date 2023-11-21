@@ -2008,7 +2008,7 @@ namespace Intersect.Server.Networking
                 {
                     if (player.PartyRequester.IsValidPlayer)
                     {
-                        player.PartyRequester.AddParty(player);
+                        _ = player.PartyRequester.TryAddParty(player);
                     }
                 }
                 else

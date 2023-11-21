@@ -2125,11 +2125,45 @@ namespace Intersect.Server.Entities
                 case MapInstanceType.Shared:
                     if (fromLogin)
                     {
-                        isValid = false;
+                        // Check to see if the instance still exists & is populated
+                        if (!InstanceProcessor.TryGetInstanceController(SharedMapInstanceId, out var sharedController) || sharedController.Players.Count == 0)
+                        {
+                            return false;
+                        }
+
+                        // If it does, get the party leader from it...
+                        var partyMember = sharedController.Players.FirstOrDefault();
+                        if (partyMember == default)
+                        {
+                            return false;
+                        }
+
+                        // are we in the party?
+                        if (partyMember.Party?.Contains(this) ?? false)
+                        {
+                            return true;
+                        }
+                        // If the party was disbanded during the disconnect...
+                        if (partyMember.PartyLeader == default)
+                        {
+                            // Rekindle the party members
+                            return partyMember.TryAddParty(this);
+                        }
+                        else // otherwise, add the player back using the party leader
+                        {
+                            return partyMember.PartyLeader.TryAddParty(this);
+                        }
                     }
-                    if (Party != null && Party.Count > 0 && !Options.Instance.Instancing.RejoinableSharedInstances) // Always valid warp if solo/instances are rejoinable
+                    // else here because we don't want someone logging on to an abandoned instance -- that could result in things
+                    // like boss-kill abuse, etc.
+                    else if (Options.Instance.Instancing.RejoinableSharedInstances)
                     {
-                        if (Party[0].Id == Id) // if we are the party leader
+                        return true;
+                    }
+
+                    if (Party != null && Party.Count > 0)
+                    {
+                        if (PartyLeader.Id == Id) // if we are the party leader
                         {
                             // And other players are using our shared instance, deny creation of a new instance until they are finished.
                             if (Party.FindAll((Player member) => member.Id != Id && member.InstanceType == MapInstanceType.Shared).Count > 0)
@@ -2141,12 +2175,12 @@ namespace Intersect.Server.Entities
                         else
                         {
                             // Otherwise, if the party leader hasn't yet created a shared instance, deny creation of a new one.
-                            if (Party[0].InstanceType != MapInstanceType.Shared)
+                            if (PartyLeader.InstanceType != MapInstanceType.Shared)
                             {
                                 isValid = false;
                                 PacketSender.SendChatMsg(this, Strings.Parties.CannotCreateInstance, ChatMessageType.Party, CustomColors.Alerts.Error);
                             }
-                            else if (Party[0].SharedMapInstanceId != SharedMapInstanceId)
+                            else if (PartyLeader.SharedMapInstanceId != SharedMapInstanceId)
                             {
                                 isValid = false;
                                 PacketSender.SendChatMsg(this, Strings.Parties.InstanceInProgress, ChatMessageType.Party, CustomColors.Alerts.Error);
@@ -4897,7 +4931,7 @@ namespace Intersect.Server.Entities
             }
         }
 
-        public void AddParty(Player target)
+        public bool TryAddParty(Player target)
         {
             //If a new party, make yourself the leader
             if (Party.Count == 0)
@@ -4906,11 +4940,11 @@ namespace Intersect.Server.Entities
             }
             else
             {
-                if (Party[0] != this)
+                if (PartyLeader != this)
                 {
                     PacketSender.SendChatMsg(this, Strings.Parties.leaderinvonly, ChatMessageType.Party, CustomColors.Alerts.Error);
 
-                    return;
+                    return false;
                 }
 
                 //Check for member being already in the party, if so cancel
@@ -4918,30 +4952,31 @@ namespace Intersect.Server.Entities
                 {
                     if (Party[i] == target)
                     {
-                        return;
+                        return false;
                     }
                 }
             }
 
-            if (Party.Count < Options.Party.MaximumMembers)
-            {
-                target.LeaveParty();
-                Party.Add(target);
-
-                //Update all members of the party with the new list
-                for (var i = 0; i < Party.Count; i++)
-                {
-                    Party[i].Party = Party;
-                    PacketSender.SendParty(Party[i]);
-                    PacketSender.SendChatMsg(
-                        Party[i], Strings.Parties.joined.ToString(target.Name), ChatMessageType.Party, CustomColors.Alerts.Accepted
-                    );
-                }
-            }
-            else
+            if (Party.Count >= Options.Party.MaximumMembers)
             {
                 PacketSender.SendChatMsg(this, Strings.Parties.limitreached, ChatMessageType.Party, CustomColors.Alerts.Error);
+                return false;
             }
+
+            target.LeaveParty();
+            Party.Add(target);
+
+            //Update all members of the party with the new list
+            var cachedParty = Party.ToList();
+            foreach (var member in cachedParty)
+            {
+                member.Party = cachedParty;
+                PacketSender.SendParty(member);
+                PacketSender.SendChatMsg(
+                    Party[i], Strings.Parties.joined.ToString(target.Name), ChatMessageType.Party, CustomColors.Alerts.Accepted
+                );
+            }
+            return true;
         }
 
         public void KickParty(Guid target)
@@ -7314,6 +7349,8 @@ namespace Intersect.Server.Entities
         );
 
         [JsonIgnore, NotMapped] public List<Player> Party = new List<Player>();
+
+        [JsonIgnore, NotMapped] public Player PartyLeader => Party.FirstOrDefault();
 
         [JsonIgnore, NotMapped] public Player PartyRequester;
 
