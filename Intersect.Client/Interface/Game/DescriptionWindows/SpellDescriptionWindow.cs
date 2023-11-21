@@ -4,6 +4,7 @@ using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Client.General;
 using Intersect.Client.Localization;
+using Intersect.Utilities;
 
 namespace Intersect.Client.Interface.Game.DescriptionWindows
 {
@@ -120,7 +121,7 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
             var castTime = Strings.SpellDescription.Instant;
             if (mSpell.CastDuration > 0)
             {
-                castTime = Strings.FormatTimeAbbreviated(mSpell.CastDuration);
+                castTime = TimeSpan.FromMilliseconds(mSpell.CastDuration).WithSuffix();
             }
             rows.AddKeyValueRow(Strings.SpellDescription.CastTime, castTime);
 
@@ -136,7 +137,7 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
             // Add Cooldown time
             if (mSpell.CooldownDuration > 0)
             {
-                rows.AddKeyValueRow(Strings.SpellDescription.Cooldown, Strings.FormatTimeAbbreviated(mSpell.CooldownDuration));
+                rows.AddKeyValueRow(Strings.SpellDescription.Cooldown, TimeSpan.FromMilliseconds(mSpell.CooldownDuration).WithSuffix());
             }
 
             // Add Cooldown Group
@@ -262,7 +263,7 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
                 {
                     rows.AddKeyValueRow(Strings.SpellDescription.DoT, string.Empty);
                 }
-                rows.AddKeyValueRow(Strings.SpellDescription.Tick, Strings.FormatTimeAbbreviated(mSpell.Combat.HotDotInterval));
+                rows.AddKeyValueRow(Strings.SpellDescription.Tick, TimeSpan.FromMilliseconds(mSpell.Combat.HotDotInterval).WithSuffix());
             }
 
             // Handle effect display.
@@ -276,7 +277,7 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
             // Show Stat Buff / Effect / HoT / DoT duration.
             if (showDuration)
             {
-                rows.AddKeyValueRow(Strings.SpellDescription.Duration, Strings.FormatTimeAbbreviated(mSpell.Combat.Duration));
+                rows.AddKeyValueRow(Strings.SpellDescription.Duration, TimeSpan.FromMilliseconds(mSpell.Combat.Duration).WithSuffix("0.#"));
             }
 
             // Resize and position the container.

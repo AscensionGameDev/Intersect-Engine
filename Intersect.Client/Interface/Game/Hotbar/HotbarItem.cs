@@ -356,8 +356,9 @@ namespace Intersect.Client.Interface.Game.Hotbar
                         if (mIsFaded)
                         {
                             mCooldownLabel.IsHidden = false;
-                            mCooldownLabel.Text =
-                                Strings.FormatTimeAbbreviated(Globals.Me.GetItemRemainingCooldown(mInventoryItemIndex));
+                            mCooldownLabel.Text = TimeSpan
+                                .FromMilliseconds(Globals.Me.GetItemRemainingCooldown(mInventoryItemIndex))
+                                .WithSuffix();
                         }
 
                         mIsEquipped = Globals.Me.IsEquipped(mInventoryItemIndex);
@@ -390,7 +391,7 @@ namespace Intersect.Client.Interface.Game.Hotbar
                         {
                             mCooldownLabel.IsHidden = false;
                             var remaining = Globals.Me.GetSpellRemainingCooldown(spellSlot);
-                            mCooldownLabel.Text = Strings.FormatTimeAbbreviated(remaining);
+                            mCooldownLabel.Text = TimeSpan.FromMilliseconds(remaining).WithSuffix("0.0");
                         }
                     }
                     else

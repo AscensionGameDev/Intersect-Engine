@@ -186,7 +186,7 @@ namespace Intersect.Client.Interface.Game.Spells
                     {
                         mCooldownLabel.IsHidden = false;
                         var remaining = Globals.Me.GetSpellRemainingCooldown(mYindex);
-                        mCooldownLabel.Text = Strings.FormatTimeAbbreviated(remaining);
+                        mCooldownLabel.Text = TimeSpan.FromMilliseconds(remaining).WithSuffix();
                     }
                 }
                 else

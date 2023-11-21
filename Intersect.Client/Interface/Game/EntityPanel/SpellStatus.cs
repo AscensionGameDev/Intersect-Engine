@@ -8,6 +8,7 @@ using Intersect.Client.General;
 using Intersect.Client.Interface.Game.DescriptionWindows;
 using Intersect.Client.Localization;
 using Intersect.GameObjects;
+using Intersect.Utilities;
 
 namespace Intersect.Client.Interface.Game.EntityPanel
 {
@@ -99,7 +100,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
             var remaining = mStatus.RemainingMs;
             var spell = SpellBase.Get(mStatus.SpellId);
 
-            mDurationLabel.Text = Strings.FormatTimeAbbreviated(remaining);
+            mDurationLabel.Text = TimeSpan.FromMilliseconds(remaining).WithSuffix();
 
             if ((mTexLoaded != "" && spell == null ||
                  spell != null && mTexLoaded != spell.Icon ||

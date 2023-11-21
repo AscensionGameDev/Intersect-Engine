@@ -76,62 +76,6 @@ namespace Intersect.Client.Localization
             }
         }
 
-        public static string FormatTimeAbbreviated(long milliseconds)
-        {
-            if (milliseconds == 0)
-            {
-                return string.Empty;
-            }
-
-            double timeValue;
-            string postfix;
-
-            switch (milliseconds)
-            {
-                // seconds
-                case <= 60000:
-                    timeValue = milliseconds / 1000.0;
-                    postfix = Time.Second;
-                    break;
-
-                // minutes
-                case <= 600000:
-                    timeValue = milliseconds / 60000.0;
-                    postfix = Time.Minute;
-                    break;
-
-                // hours
-                case <= 36000000:
-                    timeValue = milliseconds / 3600000.0;
-                    postfix = Time.Hour;
-                    break;
-
-                // days
-                case <= 864000000:
-                    timeValue = milliseconds / 86400000.0;
-                    postfix = Time.Day;
-                    break;
-
-                // weeks
-                case <= 6048000000:
-                    timeValue = milliseconds / 604800000.0;
-                    postfix = Time.Week;
-                    break;
-
-                default:
-                    return "OOB";
-            }
-
-            if (timeValue >= 10)
-            {
-                timeValue = Math.Floor(timeValue);
-                return timeValue + postfix;
-            }
-
-            timeValue = Math.Floor(timeValue * 10) / 10.0;
-            return timeValue.ToString("F1") + postfix;
-        }
-
         private static void SynchronizeConfigurableStrings()
         {
             if (Options.Instance == default)
@@ -2388,24 +2332,6 @@ namespace Intersect.Client.Localization
 
             public static LocalizedString comma = ",";
 
-        }
-
-        public partial struct Time
-        {
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString Second = @"s";
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString Minute = @"m";
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString Hour = @"h";
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString Day = @"d";
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString Week = @"w";
         }
 
         public partial struct Update

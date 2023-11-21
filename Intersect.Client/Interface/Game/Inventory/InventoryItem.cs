@@ -329,9 +329,9 @@ namespace Intersect.Client.Interface.Game.Inventory
                     mIconCd = Globals.Me.IsItemOnCooldown(mMySlot);
                     if (mIconCd)
                     {
+                        var itemCooldownRemaining = Globals.Me.GetItemRemainingCooldown(mMySlot);
                         mCooldownLabel.IsHidden = false;
-                        mCooldownLabel.Text =
-                            Strings.FormatTimeAbbreviated(Globals.Me.GetItemRemainingCooldown(mMySlot));
+                        mCooldownLabel.Text = TimeSpan.FromMilliseconds(itemCooldownRemaining).WithSuffix("0.0");
                     }
                 }
                 else
