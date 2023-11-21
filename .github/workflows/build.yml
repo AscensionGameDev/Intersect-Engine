@@ -150,6 +150,9 @@ jobs:
       if: steps.cache-binaries.outputs.cache-hit != 'true' || inputs.forceBuild == true || inputs.forceRestore == true
       run: dotnet publish Intersect.sln --sc -r linux-x64 -p:Configuration=Release -p:PackageVersion=${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}+build.${{ github.sha }} -p:Version=${{ env.VERSION_PREFIX }}.${{ github.run_number }}
 
+    - name: Tarball artifacts to maintain unix file permissions
+      run: tar -cvf linux.tar Intersect.Client/bin/Release/*/*/publish Intersect.Server/bin/Release/*/*
+
     - name: Debug files on disk
       if: inputs.workflowDebug == true
       run: ls -R .
@@ -159,10 +162,7 @@ jobs:
       with:
         if-no-files-found: error
         name: engine
-        path: |
-          ./Intersect.Client/bin/Release/*/*/publish
-          ./Intersect.Editor/bin/Release/*/*/publish
-          ./Intersect.Server/bin/Release/*/*/publish
+        path: linux.tar
 
   build-macos:
     name: Build for MacOS
@@ -218,6 +218,9 @@ jobs:
       if: steps.cache-binaries.outputs.cache-hit != 'true' || inputs.forceBuild == true || inputs.forceRestore == true
       run: dotnet publish Intersect.sln --sc -r osx-x64   -p:Configuration=Release -p:PackageVersion=${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}+build.${{ github.sha }} -p:Version=${{ env.VERSION_PREFIX }}.${{ github.run_number }}
 
+    - name: Tarball artifacts to maintain unix file permissions
+      run: tar -cvf osx.tar Intersect.Client/bin/Release/*/*/publish Intersect.Server/bin/Release/*/*
+
     - name: Debug files on disk
       if: inputs.workflowDebug == true
       run: ls -R .
@@ -227,10 +230,7 @@ jobs:
       with:
         if-no-files-found: error
         name: engine
-        path: |
-          ./Intersect.Client/bin/Release/*/*/publish
-          ./Intersect.Editor/bin/Release/*/*/publish
-          ./Intersect.Server/bin/Release/*/*/publish
+        path: osx.tar
 
   build-windows:
     name: Build for Windows
@@ -286,6 +286,9 @@ jobs:
       if: steps.cache-binaries.outputs.cache-hit != 'true' || inputs.forceBuild == true || inputs.forceRestore == true
       run: dotnet publish Intersect.sln --sc -r win-x64   -p:Configuration=Release -p:PackageVersion=${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}+build.${{ github.sha }} -p:Version=${{ env.VERSION_PREFIX }}.${{ github.run_number }}
 
+    - name: Tarball artifacts to maintain unix file permissions
+      run: tar -cvf win.tar Intersect.Client/bin/Release/*/*/publish Intersect.Editor/bin/Release/*/*/publish Intersect.Server/bin/Release/*/*
+
     - name: Debug files on disk
       if: inputs.workflowDebug == true
       run: ls -R .
@@ -295,10 +298,7 @@ jobs:
       with:
         if-no-files-found: error
         name: engine
-        path: |
-          ./Intersect.Client/bin/Release/*/*/publish
-          ./Intersect.Editor/bin/Release/*/*/publish
-          ./Intersect.Server/bin/Release/*/*/publish
+        path: win.tar
 
   debug-build-artifacts:
     name: Debug Build Artifacts
@@ -311,6 +311,12 @@ jobs:
         with:
           name: engine
           path: .
+
+      - name: Extract build archives
+        run: |
+          tar -xvf linux.tar
+          tar -xvf osx.tar
+          tar -xvf win.tar
 
       - name: Debug output
         run: ls -R .
@@ -329,6 +335,12 @@ jobs:
         with:
           name: engine
           path: .
+
+      - name: Extract build archives
+        run: |
+          tar -xvf linux.tar
+          tar -xvf osx.tar
+          tar -xvf win.tar
 
       - name: Checkout assets main_upgrade branch
         uses: actions/checkout@v4
