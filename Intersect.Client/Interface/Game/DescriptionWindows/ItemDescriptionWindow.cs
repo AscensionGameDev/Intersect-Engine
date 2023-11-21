@@ -7,6 +7,7 @@ using Intersect.Client.General;
 using Intersect.Client.Localization;
 using Intersect.Logging;
 using Intersect.Network.Packets.Server;
+using Intersect.Utilities;
 
 namespace Intersect.Client.Interface.Game.DescriptionWindows
 {
@@ -264,12 +265,12 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
                     }
 
                     // Display the actual speed this weapon would have based off of our calculated speed stat.
-                    rows.AddKeyValueRow(Strings.ItemDescription.AttackSpeed, Strings.ItemDescription.Seconds.ToString(Globals.Me.CalculateAttackTime(speed) / 1000f));
+                    rows.AddKeyValueRow(Strings.ItemDescription.AttackSpeed, TimeSpan.FromMilliseconds(Globals.Me.CalculateAttackTime(speed)).WithSuffix());
                 }
                 else if (mItem.AttackSpeedModifier == 1)
                 {
                     // Static, so this weapon's attack speed.
-                    rows.AddKeyValueRow(Strings.ItemDescription.AttackSpeed, Strings.ItemDescription.Seconds.ToString(mItem.AttackSpeedValue / 1000f));
+                    rows.AddKeyValueRow(Strings.ItemDescription.AttackSpeed, TimeSpan.FromMilliseconds(mItem.AttackSpeedValue).WithSuffix());
                 }
                 else if (mItem.AttackSpeedModifier == 2)
                 {

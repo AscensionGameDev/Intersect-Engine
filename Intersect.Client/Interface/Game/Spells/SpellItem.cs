@@ -180,27 +180,13 @@ namespace Intersect.Client.Interface.Game.Spells
 
                     mTexLoaded = spell.Icon;
                     mCurrentSpellId = Globals.Me.Spells[mYindex].Id;
-                    mIconCd = Globals.Me.GetSpellCooldown(Globals.Me.Spells[mYindex].Id) >
-                              Timing.Global.Milliseconds;
+                    mIconCd = Globals.Me.IsSpellOnCooldown(mYindex);
 
                     if (mIconCd)
                     {
                         mCooldownLabel.IsHidden = false;
-                        var secondsRemaining =
-                            (float) (Globals.Me.GetSpellCooldown(Globals.Me.Spells[mYindex].Id) -
-                                     Timing.Global.Milliseconds) /
-                            1000f;
-
-                        if (secondsRemaining > 10f)
-                        {
-                            mCooldownLabel.Text = Strings.Spells.cooldown.ToString(secondsRemaining.ToString("N0"));
-                        }
-                        else
-                        {
-                            mCooldownLabel.Text = Strings.Spells.cooldown.ToString(
-                                secondsRemaining.ToString("N1").Replace(".", Strings.Numbers.dec)
-                            );
-                        }
+                        var remaining = Globals.Me.GetSpellRemainingCooldown(mYindex);
+                        mCooldownLabel.Text = TimeSpan.FromMilliseconds(remaining).WithSuffix();
                     }
                 }
                 else

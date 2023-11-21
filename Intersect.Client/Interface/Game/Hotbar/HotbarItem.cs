@@ -356,18 +356,9 @@ namespace Intersect.Client.Interface.Game.Hotbar
                         if (mIsFaded)
                         {
                             mCooldownLabel.IsHidden = false;
-                            var secondsRemaining = (float) Globals.Me.GetItemRemainingCooldown(mInventoryItemIndex) / 1000f;
-                            if (secondsRemaining > 10f)
-                            {
-                                mCooldownLabel.Text =
-                                    Strings.Inventory.Cooldown.ToString(secondsRemaining.ToString("N0"));
-                            }
-                            else
-                            {
-                                mCooldownLabel.Text = Strings.Inventory.Cooldown.ToString(
-                                    secondsRemaining.ToString("N1").Replace(".", Strings.Numbers.dec)
-                                );
-                            }
+                            mCooldownLabel.Text = TimeSpan
+                                .FromMilliseconds(Globals.Me.GetItemRemainingCooldown(mInventoryItemIndex))
+                                .WithSuffix();
                         }
 
                         mIsEquipped = Globals.Me.IsEquipped(mInventoryItemIndex);
@@ -394,25 +385,13 @@ namespace Intersect.Client.Interface.Game.Hotbar
                     mCooldownLabel.IsHidden = true;
                     if (mSpellBookItem != null)
                     {
-                        mIsFaded = Globals.Me.GetSpellCooldown(mSpellBookItem.Id) > Timing.Global.Milliseconds;
+                        var spellSlot = Globals.Me.FindHotbarSpell(slot);
+                        mIsFaded = Globals.Me.IsSpellOnCooldown(spellSlot);
                         if (mIsFaded)
                         {
                             mCooldownLabel.IsHidden = false;
-                            var secondsRemaining =
-                                (float) (Globals.Me.GetSpellCooldown(mSpellBookItem.Id) -
-                                         Timing.Global.Milliseconds) /
-                                1000f;
-
-                            if (secondsRemaining > 10f)
-                            {
-                                mCooldownLabel.Text = Strings.Spells.cooldown.ToString(secondsRemaining.ToString("N0"));
-                            }
-                            else
-                            {
-                                mCooldownLabel.Text = Strings.Spells.cooldown.ToString(
-                                    secondsRemaining.ToString("N1").Replace(".", Strings.Numbers.dec)
-                                );
-                            }
+                            var remaining = Globals.Me.GetSpellRemainingCooldown(spellSlot);
+                            mCooldownLabel.Text = TimeSpan.FromMilliseconds(remaining).WithSuffix("0.0");
                         }
                     }
                     else
