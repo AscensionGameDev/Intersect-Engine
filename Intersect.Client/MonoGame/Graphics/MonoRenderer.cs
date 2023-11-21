@@ -89,7 +89,7 @@ namespace Intersect.Client.MonoGame.Graphics
 
         private bool mSpriteBatchBegan;
 
-        private List<string> mValidVideoModes;
+        private List<string>? _validVideoModes;
 
         private GameTexture? mWhiteTexture;
 
@@ -766,17 +766,17 @@ namespace Intersect.Client.MonoGame.Graphics
 
         public override List<string> GetValidVideoModes()
         {
-            if (mValidVideoModes != null)
+            if (_validVideoModes != null)
             {
-                return mValidVideoModes;
+                return _validVideoModes;
             }
 
-            mValidVideoModes = new List<string>();
+            _validVideoModes = new List<string>();
 
             var allowedResolutions = GetAllowedResolutions();
 
-            var displayWidth = mGraphicsDevice?.DisplayMode?.Width;
-            var displayHeight = mGraphicsDevice?.DisplayMode?.Height;
+            var displayWidth = mGraphicsDevice.DisplayMode?.Width;
+            var displayHeight = mGraphicsDevice.DisplayMode?.Height;
 
             foreach (var resolution in allowedResolutions)
             {
@@ -790,10 +790,10 @@ namespace Intersect.Client.MonoGame.Graphics
                     continue;
                 }
 
-                mValidVideoModes.Add(resolution.ToString());
+                _validVideoModes.Add(resolution.ToString());
             }
 
-            return mValidVideoModes;
+            return _validVideoModes;
         }
 
         public override FloatRect GetView()
@@ -818,8 +818,20 @@ namespace Intersect.Client.MonoGame.Graphics
                 var allowedResolutions = GetAllowedResolutions();
                 var currentDisplayMode = mGraphicsDevice.Adapter.CurrentDisplayMode;
                 var defaultResolution = allowedResolutions.LastOrDefault(
-                    allowedResolution => allowedResolution.X < currentDisplayMode.Width && allowedResolution.Y < currentDisplayMode.Height
+                    allowedResolution => currentDisplayMode.Width != allowedResolution.X &&
+                                         currentDisplayMode.Width ==
+                                         allowedResolution.X * currentDisplayMode.Height / allowedResolution.Y
                 );
+
+                if (defaultResolution == default)
+                {
+                    defaultResolution = allowedResolutions.LastOrDefault(
+                        allowedResolution => allowedResolution.X * 9 / 16 == allowedResolution.Y &&
+                                             allowedResolution.X < currentDisplayMode.Width &&
+                                             allowedResolution.Y < currentDisplayMode.Height
+                    );
+                }
+
                 if (defaultResolution != default)
                 {
                     database.TargetResolution = allowedResolutions.IndexOf(defaultResolution);
