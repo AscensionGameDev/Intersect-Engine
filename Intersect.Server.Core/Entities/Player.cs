@@ -4967,10 +4967,11 @@ namespace Intersect.Server.Entities
             Party.Add(target);
 
             //Update all members of the party with the new list
-            for (var i = 0; i < Party.Count; i++)
+            var cachedParty = Party.ToList();
+            foreach (var member in cachedParty)
             {
-                Party[i].Party = Party;
-                PacketSender.SendParty(Party[i]);
+                member.Party = cachedParty;
+                PacketSender.SendParty(member);
                 PacketSender.SendChatMsg(
                     Party[i], Strings.Parties.joined.ToString(target.Name), ChatMessageType.Party, CustomColors.Alerts.Accepted
                 );
