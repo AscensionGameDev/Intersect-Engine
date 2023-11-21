@@ -92,7 +92,7 @@ public partial class MainMenuWindow : Window
 
     private void ButtonLoginOnClicked(Base sender, ClickedEventArgs arguments)
     {
-        if (Networking.Network.Connected)
+        if (Networking.Network.InterruptDisconnectsIfConnected())
         {
             _mainMenu.SwitchToWindow<LoginWindow>();
         }
@@ -132,7 +132,7 @@ public partial class MainMenuWindow : Window
 
     private void ButtonRegisterOnClicked(Base sender, ClickedEventArgs arguments)
     {
-        if (Networking.Network.Connected)
+        if (Networking.Network.InterruptDisconnectsIfConnected())
         {
             _mainMenu.SwitchToWindow<RegisterWindow>();
         }
@@ -186,7 +186,7 @@ public partial class MainMenuWindow : Window
 
     internal void Update()
     {
-        if (Networking.Network.Connected)
+        if (Networking.Network.IsConnected)
         {
             _buttonLogin.IsDisabled = Globals.WaitingOnServer;
             _buttonRegister.IsDisabled = Globals.WaitingOnServer;

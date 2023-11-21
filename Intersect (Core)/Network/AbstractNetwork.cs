@@ -68,7 +68,7 @@ namespace Intersect.Network
 
         public NetworkConfiguration Configuration { get; }
 
-        public Guid Guid { get; protected set; }
+        public Guid Id { get; protected set; }
 
         public bool AddConnection(IConnection connection)
         {

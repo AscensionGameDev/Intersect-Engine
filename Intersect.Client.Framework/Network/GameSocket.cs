@@ -16,7 +16,7 @@ namespace Intersect.Client.Framework.Network
 
         public abstract void Dispose();
 
-        public abstract bool IsConnected();
+        public abstract bool IsConnected { get; }
 
         public abstract int Ping { get; }
 
@@ -48,7 +48,7 @@ namespace Intersect.Client.Framework.Network
             Disconnected?.Invoke(sender, connectionEventArgs);
         }
 
-        public abstract INetwork GetNetwork();
+        public abstract INetwork Network { get; }
     }
 
     public delegate void DataReceivedHandler(IPacket packet);

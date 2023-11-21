@@ -206,6 +206,12 @@ public sealed class LiteNetLibInterface : INetworkLayerInterface, INetEventListe
 
     public void OnPeerDisconnected(NetPeer peer, DisconnectInfo disconnectInfo)
     {
+        if (disconnectInfo.Reason == DisconnectReason.Reconnect)
+        {
+            Log.Debug($"RECONNECT: {peer.EndPoint}");
+            return;
+        }
+
         if (disconnectInfo.Reason != DisconnectReason.DisconnectPeerCalled)
         {
             try
@@ -229,16 +235,17 @@ public sealed class LiteNetLibInterface : INetworkLayerInterface, INetEventListe
             return;
         }
 
-        var connection = _network.FindConnection(connectionId);
-        if (connection == default)
+        if (_network.FindConnection(connectionId) is not LiteNetLibConnection connection)
         {
             Log.Diagnostic($"No connection found for {connectionId} ({_network.Connections.Count})");
             return;
         }
 
-        if (disconnectInfo.Reason == DisconnectReason.DisconnectPeerCalled)
+        if (!_network.RemoveConnection(connection))
         {
-            Log.Diagnostic($"Skipping OnDisconnected event because this was manually disconnected {connection.Guid}");
+            Log.Warn(
+                $"Failed to remove connection {connection.Guid}, was this already removed? ({_network.Connections.Count})"
+            );
             return;
         }
 

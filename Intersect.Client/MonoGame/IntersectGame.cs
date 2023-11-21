@@ -195,13 +195,11 @@ namespace Intersect.Client.MonoGame
 
             // TODO: Remove old netcode
             Networking.Network.Socket = new MonoSocket(Context);
-            Networking.Network.Socket.Connected += (sender, connectionEventArgs) =>
+            Networking.Network.Socket.Connected += (_, connectionEventArgs) =>
                 MainMenu.SetNetworkStatus(connectionEventArgs.NetworkStatus);
-
-            Networking.Network.Socket.ConnectionFailed += (sender, connectionEventArgs, denied) =>
+            Networking.Network.Socket.ConnectionFailed += (_, connectionEventArgs, _) =>
                 MainMenu.SetNetworkStatus(connectionEventArgs.NetworkStatus);
-
-            Networking.Network.Socket.Disconnected += (sender, connectionEventArgs) =>
+            Networking.Network.Socket.Disconnected += (_, connectionEventArgs) =>
                 MainMenu.SetNetworkStatus(connectionEventArgs.NetworkStatus);
 
             Main.Start(Context);

@@ -27,7 +27,7 @@ namespace Intersect.Network
             configuration
         )
         {
-            Guid = Guid.Empty;
+            Id = Guid.Empty;
 
             _isConnected = false;
 
@@ -59,12 +59,7 @@ namespace Intersect.Network
 
         public bool Connect()
         {
-            if (IsConnected)
-            {
-                Disconnect("client_starting_connection");
-            }
-
-            return _interface.Connect();
+            return IsConnected || _interface.Connect();
         }
 
         protected override bool SendUnconnected(IPEndPoint endPoint, UnconnectedPacket packet) =>
@@ -116,9 +111,9 @@ namespace Intersect.Network
             StopInterfaces("closing");
         }
 
-        internal void AssignGuid(Guid guid)
+        internal void AssignId(Guid id)
         {
-            Guid = guid;
+            Id = id;
         }
 
         protected override IDictionary<TKey, TValue> CreateDictionaryLegacy<TKey, TValue>()

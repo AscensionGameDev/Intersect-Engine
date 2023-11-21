@@ -35,7 +35,7 @@ internal sealed class SinglePlayerNetwork : INetwork
 
     public bool IsConnected { get; private set; }
 
-    public Guid Guid => default;
+    public Guid Id => default;
 
     public int ConnectionCount => IsConnected ? 1 : 0;
 
