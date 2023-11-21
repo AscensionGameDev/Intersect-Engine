@@ -46,12 +46,13 @@ namespace Intersect.Editor.Forms.DockingElements
         private void frmMapGrid_Load(object sender, EventArgs e)
         {
             CreateSwapChain();
-            if (Globals.MapGrid == null)
-            {
-                Globals.MapGrid = new MapGrid(
-                    linkMapToolStripMenuItem, unlinkMapToolStripMenuItem, recacheMapToolStripMenuItem, contextMenuStrip, Icon
-                );
-            }
+            Globals.MapGrid ??= new MapGrid(
+                linkMapToolStripMenuItem,
+                unlinkMapToolStripMenuItem,
+                recacheMapToolStripMenuItem,
+                contextMenuStrip,
+                Icon
+            );
 
             InitLocalization();
         }

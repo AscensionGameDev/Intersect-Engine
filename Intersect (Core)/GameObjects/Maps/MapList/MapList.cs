@@ -56,12 +56,12 @@ namespace Intersect.GameObjects.Maps.MapList
             {
                 if (itm.Type == 0)
                 {
-                    var dirItm = (MapListFolder) itm;
+                    var dirItm = (MapListFolder)itm;
                     dirItm.PostLoad(gameMaps, isServer);
                 }
                 else
                 {
-                    var mapItm = (MapListMap) itm;
+                    var mapItm = (MapListMap)itm;
                     var removed = false;
                     if (isServer)
                     {
@@ -285,7 +285,7 @@ namespace Intersect.GameObjects.Maps.MapList
             {
                 if (destType == 0)
                 {
-                    ((MapListFolder) dest).Children.Items.Add(source);
+                    ((MapListFolder)dest).Children.Items.Add(source);
                     sourceList.Items.Remove(source);
                 }
                 else

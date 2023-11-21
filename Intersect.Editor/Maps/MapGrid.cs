@@ -86,7 +86,7 @@ namespace Intersect.Editor.Maps
             ToolStripMenuItem dropDownUnlink,
             ToolStripMenuItem recacheItem,
             ContextMenuStrip contextMenu,
-            Icon icon
+            Icon? icon
         )
         {
             mWorkerThread = new Thread(AsyncLoadingThread);
@@ -102,7 +102,7 @@ namespace Intersect.Editor.Maps
             Icon = icon;
         }
 
-        public Icon Icon { get; set; }
+        public Icon? Icon { get; set; }
 
         private void AsyncLoadingThread()
         {

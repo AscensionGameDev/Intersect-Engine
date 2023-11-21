@@ -74,9 +74,9 @@ namespace Intersect.Editor.Forms
 
         private void NodeDoubleClick(object sender, TreeViewEventArgs e)
         {
-            if (e.Node.Tag is MapListMap)
+            if (e.Node?.Tag is MapListMap mapListMap)
             {
-                SelectTile(((MapListMap) e.Node.Tag).MapId, mCurrentX, mCurrentY);
+                SelectTile(mapListMap.MapId, mCurrentX, mCurrentY);
             }
         }
 
