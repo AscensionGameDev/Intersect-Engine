@@ -42,7 +42,7 @@ namespace Intersect.Server.Networking.Lidgren
         {
             Context = context ?? throw new ArgumentNullException(nameof(context));
 
-            Guid = Guid.NewGuid();
+            Id = Guid.NewGuid();
 
             var networkLayerInterface = new LidgrenInterface(this, typeof(NetServer), rsaParameters);
             networkLayerInterface.OnConnected += HandleInterfaceOnConnected;

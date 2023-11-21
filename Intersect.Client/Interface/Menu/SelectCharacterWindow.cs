@@ -119,7 +119,7 @@ namespace Intersect.Client.Interface.Menu
         //Methods
         public void Update()
         {
-            if (!Networking.Network.Connected)
+            if (!Networking.Network.IsConnected)
             {
                 Hide();
                 mMainMenu.Show();

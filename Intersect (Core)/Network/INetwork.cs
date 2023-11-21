@@ -20,7 +20,7 @@ namespace Intersect.Network
 
         bool IsConnected { get; }
 
-        Guid Guid { get; }
+        Guid Id { get; }
 
         int Ping => default;
 

@@ -1420,7 +1420,50 @@ namespace Intersect.Server.Entities
                 }
             }
 
+            //Check for taunt status and trying to attack a target that has not taunted you.
+            if (!ValidTauntTarget(target))
+            {
+                return;
+            }
+
             base.TryAttack(target, projectile, parentSpell, parentItem, projectileDir);
+        }
+
+        //Attacking with spell
+        public override void TryAttack(
+            Entity target,
+            SpellBase spellBase,
+            bool onHitTrigger = false,
+            bool trapTrigger = false
+        )
+        {   
+            if (!trapTrigger && !ValidTauntTarget(target)) //Traps ignore taunts.
+            {
+                return;
+            }
+
+            base.TryAttack(target, spellBase, onHitTrigger, trapTrigger);
+        }
+
+        /// <summary>
+        /// Check for taunt status and trying to attack a target that has not taunted you.
+        /// </summary>
+        /// <param name="target">The target the player is attempting to attack</param>
+        /// <returns>True if the player can attack that target according to their taunt status</returns>
+        public bool ValidTauntTarget(Entity target)
+        {
+            if (CachedStatuses?.All(status => status.Type != SpellEffect.Taunt) ?? true)
+            {
+                return true;
+            }
+
+            if (Target != target)
+            {
+                PacketSender.SendActionMsg(this, Strings.Combat.miss, CustomColors.Combat.Missed);
+                return false;
+            }
+
+            return true;
         }
 
         public void TryAttack(Entity target)

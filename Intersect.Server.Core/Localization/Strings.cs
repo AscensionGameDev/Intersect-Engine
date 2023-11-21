@@ -431,6 +431,12 @@ namespace Intersect.Server.Localization
 
         public sealed partial class CommandoutputNamespace : LocaleNamespace
         {
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString OnlineListActiveConnectionsN = @"Active connections: {00}";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString OnlineListNoClientsConnected = @"No clients connected";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString OnlineListStrayConnectionsN = @"Stray connections: {00}";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString apigranted = @"{00} now has api access!";
 

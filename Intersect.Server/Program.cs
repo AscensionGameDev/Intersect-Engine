@@ -26,8 +26,7 @@ internal static class Program
             ServerContext.ServerContextFactory = (options, logger, packetHelper) =>
                 new FullServerContext(options, logger, packetHelper);
 
-            ServerContext.
-                NetworkFactory = (context, parameters, handlePacket, shouldProcessPacket) =>
+            ServerContext.NetworkFactory = (context, parameters, handlePacket, shouldProcessPacket) =>
             {
                 var config = new NetworkConfiguration(Options.ServerPort);
                 return new ServerNetwork(context as IServerContext, context, config, parameters)

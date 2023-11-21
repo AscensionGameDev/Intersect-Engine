@@ -600,7 +600,7 @@ namespace Intersect.Network.Lidgren
                                     throw new InvalidOperationException();
                                 }
 
-                                clientNetwork.AssignGuid(approval.Guid);
+                                clientNetwork.AssignId(approval.Guid);
 
                                 Debug.Assert(mGuidLookup != null, "mGuidLookup != null");
                                 mGuidLookup.Add(senderConnection.RemoteUniqueIdentifier, Guid.Empty);

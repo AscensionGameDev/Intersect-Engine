@@ -98,7 +98,7 @@ namespace Intersect.Client.Interface.Menu
         //Methods
         public void Update()
         {
-            if (!Networking.Network.Connected)
+            if (!Networking.Network.IsConnected)
             {
                 Hide();
                 mMainMenu.Show();
@@ -148,7 +148,7 @@ namespace Intersect.Client.Interface.Menu
 
         public void TrySendCode()
         {
-            if (!Networking.Network.Connected)
+            if (!Networking.Network.IsConnected)
             {
                 Interface.MsgboxErrors.Add(new KeyValuePair<string, string>("", Strings.Errors.notconnected));
 

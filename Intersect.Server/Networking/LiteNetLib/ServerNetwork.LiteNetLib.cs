@@ -41,7 +41,7 @@ public class ServerNetwork : AbstractNetwork, IServer
     {
         Context = context ?? throw new ArgumentNullException(nameof(context));
 
-        Guid = Guid.NewGuid();
+        Id = Guid.NewGuid();
 
         var networkLayerInterface = new LiteNetLibInterface(this, rsaParameters);
         networkLayerInterface.OnConnected += HandleInterfaceOnConnected;

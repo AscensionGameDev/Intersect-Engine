@@ -1,4 +1,5 @@
 ﻿using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Net.Sockets;
@@ -46,13 +47,9 @@ namespace Intersect.Client.MonoGame.Network
 
         private const string AsymmetricKeyManifestResourceName = "Intersect.Client.network.handshake.bkey.pub";
 
-        public static INetwork? ClientNetwork { get; set; }
+        private IClient? _network;
 
-        private INetwork? _network;
-
-        public override INetwork GetNetwork() => Network!;
-
-        public INetwork? Network
+        public override IClient Network
         {
             get
             {
@@ -81,13 +78,13 @@ namespace Intersect.Client.MonoGame.Network
                 network.OnConnected += OnConnected;
                 network.OnDisconnected += OnDisconnected;
                 network.OnConnectionDenied += (sender, connectionEventArgs) => OnConnectionFailed(sender, connectionEventArgs, true);
-                _network = network;
-                ClientNetwork = _network;
+                _network = network as IClient;
+                Debug.Assert(_network != default);
                 return _network;
             }
         }
 
-        public static ConcurrentQueue<KeyValuePair<IConnection, IPacket>> PacketQueue = new();
+        private static readonly ConcurrentQueue<KeyValuePair<IConnection, IPacket>> PacketQueue = new();
 
         private IClientContext Context { get; }
 
@@ -96,12 +93,21 @@ namespace Intersect.Client.MonoGame.Network
         private string? _lastHost;
         private int? _lastPort;
         private IPEndPoint? _lastEndpoint;
-        private static HashSet<string> UnresolvableHostNames = new();
+        private volatile bool _resolvingHost;
+
+        private static readonly HashSet<string> UnresolvableHostNames = new();
+
+        public static MonoSocket Instance { get; private set; } = default!;
 
         internal MonoSocket(IClientContext context)
         {
             Context = context;
+            Instance = this;
         }
+
+        public override bool IsConnected => Network.IsConnected;
+
+        public override int Ping => Network.Ping;
 
         private bool TryResolveEndPoint([NotNullWhen(true)] out IPEndPoint? endPoint)
         {
@@ -168,14 +174,7 @@ namespace Intersect.Client.MonoGame.Network
 
         public override void Connect(string host, int port)
         {
-            var network = Network;
-            if (network == default)
-            {
-                Log.Error("Failed to recreate the network.");
-                return;
-            }
-
-            if (!network.Connect())
+            if (!Network.Connect())
             {
                 Log.Error("An error occurred while attempting to connect.");
             }
@@ -202,10 +201,6 @@ namespace Intersect.Client.MonoGame.Network
 
             return true;
         }
-
-        private volatile bool _resolvingHost;
-
-
 
         public override void Update()
         {
@@ -268,18 +263,14 @@ namespace Intersect.Client.MonoGame.Network
 
         public override void Disconnect(string reason)
         {
-            ClientNetwork?.Disconnect(reason);
+            Network.Disconnect(reason);
         }
 
         public override void Dispose()
         {
-            ClientNetwork?.Close();
-            ClientNetwork?.Dispose();
-            ClientNetwork = null;
+            _network?.Close();
+            _network?.Dispose();
+            _network = default;
         }
-
-        public override bool IsConnected() => ClientNetwork?.IsConnected ?? false;
-
-        public override int Ping => ClientNetwork?.Ping ?? -1;
     }
 }

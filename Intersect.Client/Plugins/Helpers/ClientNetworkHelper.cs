@@ -13,7 +13,7 @@ namespace Intersect.Client.Plugins.Helpers
     /// </summary>
     public sealed partial class ClientNetworkHelper : IClientNetworkHelper
     {
-        private static IClient Client => MonoSocket.ClientNetwork as ClientNetwork; // TODO: Single player wrapper
+        private static IClient Client => MonoSocket.Instance.Network; // TODO: Single player wrapper
 
         public ClientNetworkHelper(IPacketHelper packetHelper)
         {

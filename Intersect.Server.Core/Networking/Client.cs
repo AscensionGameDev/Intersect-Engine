@@ -25,7 +25,7 @@ namespace Intersect.Server.Networking
         public bool IsEditor;
 
         //Network Variables
-        private IConnection mConnection { get; set; }
+        public IConnection Connection { get; private set; }
 
         private long mConnectionTimeout;
 
@@ -55,7 +55,7 @@ namespace Intersect.Server.Networking
             ApplicationContext = applicationContext;
             Network = network;
 
-            this.mConnection = connection;
+            Connection = connection;
             mConnectTime = Timing.Global.Milliseconds;
             mConnectionTimeout = Timing.Global.Milliseconds + mTimeout;
 
@@ -78,7 +78,7 @@ namespace Intersect.Server.Networking
         //Security/Flooding Variables
         public long AccountAttempts { get; set; }
 
-        public long Ping => mConnection.Statistics.Ping;
+        public long Ping => Connection.Statistics.Ping;
 
         /// <summary>
         /// Number of "grace" packets that the client has remaining if speedhacking is accidentally detected.
@@ -134,7 +134,7 @@ namespace Intersect.Server.Networking
 
             if (user != null && user != User)
             {
-                User.Login(user, mConnection?.Ip);
+                User.Login(user, Connection?.Ip);
             }
 
             User = user;
@@ -157,42 +157,47 @@ namespace Intersect.Server.Networking
 
         public void Pinged()
         {
-            if (mConnection != null)
+            if (Connection != null)
             {
                 mConnectionTimeout = Timing.Global.Milliseconds + mTimeout;
             }
         }
 
-        public void Disconnect(string? reason = default, bool shutdown = false)
+        public void Disconnect(string? reason = default, bool shutdown = false, bool loggingOut = false)
         {
             lock (Globals.ClientLock)
             {
-                if (mConnection == null)
+                if (Connection == null)
                 {
                     return;
                 }
 
-                Logout(shutdown);
+                if (!loggingOut)
+                {
+                    Logout(shutdown);
+                }
 
                 Globals.Clients.Remove(this);
                 Globals.ClientArray = Globals.Clients.ToArray();
-                Globals.ClientLookup.Remove(mConnection.Guid);
-
-                if (!mConnection.CanDisconnect)
+                if (Connection != default)
                 {
-                    return;
+                    Globals.ClientLookup.Remove(Connection.Guid);
+
+                    if (!Connection.CanDisconnect)
+                    {
+                        return;
+                    }
                 }
 
-                mConnection.Disconnect(reason);
-
-                mConnection.Dispose();
-                mConnection = null;
+                Connection?.Disconnect(reason);
+                Connection?.Dispose();
+                Connection = default;
             }
         }
 
         public bool IsConnected()
         {
-            return mConnection?.IsConnected ?? false;
+            return Connection?.IsConnected ?? false;
         }
 
         public string GetIp()
@@ -202,7 +207,7 @@ namespace Intersect.Server.Networking
                 return "";
             }
 
-            return mConnection?.Ip ?? "";
+            return Connection?.Ip ?? "";
         }
 
         public static Client CreateBeta4Client(IApplicationContext context, INetwork network, IConnection connection)
@@ -236,6 +241,8 @@ namespace Intersect.Server.Networking
             }
 
             SetUser(null);
+
+            Disconnect("logout", loggingOut: true);
         }
 
         public static void RemoveBeta4Client(IConnection connection)
@@ -267,7 +274,7 @@ namespace Intersect.Server.Networking
         {
             lock (Globals.ClientLock)
             {
-                return Globals.Clients.Find(client => client?.mConnection == connection);
+                return Globals.Clients.Find(client => client?.Connection == connection);
             }
         }
 
@@ -290,7 +297,7 @@ namespace Intersect.Server.Networking
         {
             while (mSendPacketQueue.TryDequeue(out Tuple<IPacket, TransmissionMode, long> tuple))
             {
-                if (mConnection != null)
+                if (Connection != null)
                 {
                     var packet = tuple.Item1;
                     var mode = tuple.Item2;
@@ -301,7 +308,7 @@ namespace Intersect.Server.Networking
                         {
                             timedPacket.UpdateTiming();
                         }
-                        mConnection?.Send(packet, mode);
+                        Connection?.Send(packet, mode);
                         if (Options.Instance.Metrics.Enable)
                         {
                             if (!PacketSender.SentPacketTypes.ContainsKey(packet.GetType().Name))
@@ -349,15 +356,15 @@ namespace Intersect.Server.Networking
         public void HandlePackets()
         {
             var banned = false;
-            if (mConnection != null)
+            if (Connection != null)
             {
                 if (!mBanChecked)
                 {
-                    if (string.IsNullOrEmpty(mConnection?.Ip))
+                    if (string.IsNullOrEmpty(Connection?.Ip))
                     {
                         banned = true;
                     }
-                    if (!banned && !string.IsNullOrEmpty(Database.PlayerData.Ban.CheckBan(mConnection.Ip.Trim())) && Options.Instance.SecurityOpts.CheckIp(mConnection.Ip.Trim()))
+                    if (!banned && !string.IsNullOrEmpty(Database.PlayerData.Ban.CheckBan(Connection.Ip.Trim())) && Options.Instance.SecurityOpts.CheckIp(Connection.Ip.Trim()))
                     {
                         banned = true;
                     }
@@ -372,7 +379,7 @@ namespace Intersect.Server.Networking
                 {
                     while (HandlePacketQueue.TryDequeue(out IPacket packet))
                     {
-                        if (mConnection != null)
+                        if (Connection != null)
                         {
                             try
                             {
@@ -424,7 +431,7 @@ namespace Intersect.Server.Networking
         /// <inheritdoc />
         public bool Send(IPacket packet, TransmissionMode mode)
         {
-            if (mConnection == null)
+            if (Connection == null)
             {
                 return false;
             }
