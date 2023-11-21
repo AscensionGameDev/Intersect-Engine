@@ -200,7 +200,7 @@ namespace Intersect.Client.MonoGame
             Networking.Network.Socket.ConnectionFailed += (_, connectionEventArgs, _) =>
                 MainMenu.SetNetworkStatus(connectionEventArgs.NetworkStatus);
             Networking.Network.Socket.Disconnected += (_, connectionEventArgs) =>
-                MainMenu.SetNetworkStatus(connectionEventArgs.NetworkStatus);
+                MainMenu.SetNetworkStatus(connectionEventArgs.NetworkStatus, resetStatusCheck: true);
 
             Main.Start(Context);
 

@@ -214,7 +214,7 @@ namespace Intersect.Client.MonoGame.Network
             {
                 var now = Timing.Global.MillisecondsUtc;
                 // ReSharper disable once InvertIf
-                if (_nextServerStatusPing <= now)
+                if (_nextServerStatusPing <= now || MainMenu.LastNetworkStatusChangeTime < 0)
                 {
                     if (!_resolvingHost)
                     {

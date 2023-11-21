@@ -252,11 +252,11 @@ namespace Intersect.Client.Interface.Menu
             _mainMenuWindow.UpdateDisabled();
         }
 
-        public static void SetNetworkStatus(NetworkStatus networkStatus)
+        public static void SetNetworkStatus(NetworkStatus networkStatus, bool resetStatusCheck = false)
         {
             ActiveNetworkStatus = networkStatus;
             NetworkStatusChanged?.Invoke();
-            LastNetworkStatusChangeTime = Timing.Global.MillisecondsUtc;
+            LastNetworkStatusChangeTime = resetStatusCheck ? -1 : Timing.Global.MillisecondsUtc;
         }
 
         public static long LastNetworkStatusChangeTime { get; private set; }
