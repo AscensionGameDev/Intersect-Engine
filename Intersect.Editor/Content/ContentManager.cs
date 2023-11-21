@@ -605,48 +605,31 @@ namespace Intersect.Editor.Content
                     // Trim .png
                     var baseName = Path.GetFileNameWithoutExtension(sprite);
 
-                    // Split the baseName on _ but only until there is a maximum of 3 segments
-                    // So base_attack_custom_3 would be split to "base", "attack", "custom_3"
-                    // [if Split("_") or Split("_", 4) was used it would become "base", "attack", "custom", "3"]
-                    var parts = baseName.Split(OverridesDelimiter, 3);
-
-                    // If there are less than 3 parts (base.png, base_attack.png would both have less than 3) mark invalid
-                    if (parts.Length < 3)
+                    var searchState = $"_{filterState}";
+                    var indexOfState = baseName.IndexOf(searchState);
+                    if (indexOfState < 1 || baseName.Length <= indexOfState + searchState.Length)
                     {
-                        // By returning an empty enumerable instead of null, SelectMany() just reduces it
-                        // into an single-dimensional array without us doing an additional != null filter
-                        return Enumerable.Empty<string>();
+                        return Array.Empty<string>();
                     }
 
-
-                    // If if the first part is not equal to our base filter, mark invalid
-                    if (!string.IsNullOrWhiteSpace(filterBase) && !string.Equals(parts[0], filterBase, StringComparison.OrdinalIgnoreCase))
+                    var customPart = baseName[(indexOfState + searchState.Length + 1)..].Trim();
+                    if (string.IsNullOrWhiteSpace(customPart))
                     {
-                        return Enumerable.Empty<string>();
+                        return Array.Empty<string>();
                     }
 
-                    // If the second part is not equal to our state filter, mark invalid
-                    if (!string.Equals(filterState, parts[1], StringComparison.OrdinalIgnoreCase))
+                    if (string.IsNullOrWhiteSpace(filterBase))
                     {
-                        return Enumerable.Empty<string>();
+                        return new[] { customPart };
                     }
 
-                    // If there are less than 3 parts (base.png, base_attack.png would both have less than 3,
-                    // or if the second part is not equal to our state name, return no matches
-                    if (parts.Length < 3 || !string.Equals(filterState, parts[1], StringComparison.OrdinalIgnoreCase))
+                    var basePart = baseName[0..indexOfState].Trim();
+                    if (string.Equals(filterBase.Trim(), basePart, StringComparison.Ordinal))
                     {
-                        // By returning an empty enumerable instead of null, SelectMany() just reduces it
-                        // into an single-dimensional array without us doing an additional != null filter
-                        return Enumerable.Empty<string>();
+                        return new[] { customPart };
                     }
 
-                    // Return the 3rd segment
-                    // We do Skip(2) instead of Last() because Skip(2) returns an IEnumerable<string>
-                    // which will automatically be consumed correctly by SelectMany(), while Last()
-                    // or LastOrDefault() would return a string/string? which then would need to be
-                    // wrapped in a new []{ <last> } to turn it back into an IEnumerable<string>
-                    // to be consumed by SelectMany()
-                    return parts.Skip(2);
+                    return Array.Empty<string>();
                 })
                 /* Find only distinct values, don't show duplicates */
                 .Distinct();
