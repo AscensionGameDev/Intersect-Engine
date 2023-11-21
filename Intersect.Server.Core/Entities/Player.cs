@@ -4973,7 +4973,7 @@ namespace Intersect.Server.Entities
                 member.Party = cachedParty;
                 PacketSender.SendParty(member);
                 PacketSender.SendChatMsg(
-                    Party[i], Strings.Parties.joined.ToString(target.Name), ChatMessageType.Party, CustomColors.Alerts.Accepted
+                    member, Strings.Parties.joined.ToString(target.Name), ChatMessageType.Party, CustomColors.Alerts.Accepted
                 );
             }
             return true;
