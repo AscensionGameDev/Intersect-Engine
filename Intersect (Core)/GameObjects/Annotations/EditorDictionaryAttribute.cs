@@ -102,19 +102,6 @@ namespace Intersect.GameObjects.Annotations
             }
         }
 
-        public string[] GetNames(Type stringsType)
-        {
-            var groupType = Group == default ? default : stringsType
-                .GetNestedTypes(BindingFlags.Static | BindingFlags.Public)
-                .FirstOrDefault(type => type.Name == Group);
-            if (groupType != null)
-            {
-                return Array.Empty<string>();
-            }
-
-            return groupType.GetMember(Name).Select(member => member.Name).ToArray();
-        }
-
         private delegate string? GetStringFromLocaleDictionaryGeneric(object? dictionaryObject, Enum genericKey);
         private static readonly Dictionary<Type, GetStringFromLocaleDictionaryGeneric> _cachedFormatters = new();
         private static readonly MethodInfo _methodInfoCreateWeaklyTypedDelegate = typeof(EditorDictionaryAttribute).GetMethod(nameof(CreateWeaklyTypedDelegate), BindingFlags.NonPublic | BindingFlags.Static);

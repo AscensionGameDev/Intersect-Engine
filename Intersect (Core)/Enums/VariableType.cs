@@ -1,6 +1,4 @@
-using System.ComponentModel;
-using Intersect.GameObjects.Annotations;
-using static Intersect.Attributes.Attributes;
+using Intersect.Attributes;
 
 namespace Intersect.Enums
 {

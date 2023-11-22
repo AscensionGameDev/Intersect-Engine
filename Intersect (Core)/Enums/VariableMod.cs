@@ -1,4 +1,4 @@
-using static Intersect.Attributes.Attributes;
+using Intersect.Attributes;
 
 namespace Intersect.Enums
 {
