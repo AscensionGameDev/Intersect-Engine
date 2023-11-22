@@ -4,6 +4,7 @@ using System.Linq;
 
 using Intersect.Collections;
 using Intersect.Extensions;
+using Intersect.GameObjects;
 using Intersect.GameObjects.Switches_and_Variables;
 using Intersect.Models;
 using MessagePack.Resolvers;
@@ -121,7 +122,7 @@ namespace Intersect.Enums
                 return gameObjectType
                     .GetLookup()
                     .OrderBy(p => p.Value?.Name)
-                    .Select(pair => pair.Value?.Name ?? Deleted)
+                    .Select(pair => pair.Value?.Name ?? PlayerVariableBase.Deleted)
                     .ToArray();
             }
 
@@ -131,10 +132,8 @@ namespace Intersect.Enums
                 .OfType<IVariableBase>()
                 .Where(desc => desc.Type == dataTypeFilter)
                 .OrderBy(p => p?.Name)
-                .Select(pair => pair?.Name ?? Deleted)
+                .Select(pair => pair?.Name ?? PlayerVariableBase.Deleted)
                 .ToArray();
-        } 
-
-        public const string Deleted = "ERR_DELETED";
+        }
     }
 }

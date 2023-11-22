@@ -5,7 +5,7 @@ using System.Linq;
 
 using Intersect.Collections;
 using Intersect.Enums;
-using Intersect.GameObjects.Switches_and_Variables;
+
 using Newtonsoft.Json;
 
 namespace Intersect.Models
@@ -153,6 +153,7 @@ namespace Intersect.Models
             databaseObject = Get(id);
             return databaseObject != default;
         }
+
     }
 
 }

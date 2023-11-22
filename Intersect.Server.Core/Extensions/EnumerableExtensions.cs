@@ -1,7 +1,6 @@
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
+
 using Intersect.Server.Web.RestApi.Payloads;
 
 using Microsoft.EntityFrameworkCore;
@@ -54,6 +53,7 @@ namespace Intersect.Server.Extensions
 
             return sorted;
         }
+
     }
 
 }

@@ -7,7 +7,7 @@ public static class VariableTypeExtensions
 {
     public static GameObjectType GetRelatedTable(this VariableType value)
     {
-        if (!Enum.IsDefined(typeof(GameObjectType), value))
+        if (!Enum.IsDefined(typeof(VariableType), value))
         {
             throw new ArgumentException($"{nameof(value)} is not a valid VariableType enum");
         }
