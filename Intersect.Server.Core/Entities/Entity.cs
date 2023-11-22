@@ -456,12 +456,39 @@ namespace Intersect.Server.Entities
                 return false;
             }
 
-            var mapController = MapController.Get(tileHelper.GetMapId());
+            if (!MapController.TryGet(tileHelper.GetMapId(), out var mapController))
+            {
+                blockerType = MovementBlockerType.OutOfBounds;
+                return false;
+            }
+
             int tileX = tileHelper.GetX();
             int tileY = tileHelper.GetY();
+
             if (IsBlockedByMapAttribute(direction, mapController.Attributes[tileX, tileY], out blockerType))
             {
                 return false;
+            }
+
+            var enableCrossingDiagonalBlocks = Options.Instance.MapOpts.EnableCrossingDiagonalBlocks;
+            if (!enableCrossingDiagonalBlocks && direction.IsDiagonal())
+            {
+                MovementBlockerType componentBlockerType = default;
+                EntityType componentBlockingEntityType = default;
+
+                if (direction.GetComponentDirections()
+                    .All(
+                        componentDirection => !CanMoveInDirection(
+                            componentDirection,
+                            out componentBlockerType,
+                            out componentBlockingEntityType
+                        )
+                    ))
+                {
+                    blockerType = componentBlockerType;
+                    entityType = componentBlockingEntityType;
+                    return false;
+                }
             }
 
             if (Passable)
