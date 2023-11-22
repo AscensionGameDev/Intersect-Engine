@@ -21,6 +21,11 @@ namespace Intersect.Config
         public bool DisablePlayerDropsInArenaMaps { get; set; } = false;
 
         /// <summary>
+        /// Controls whether two block attributes placed diagonally block or not.
+        /// </summary>
+        public bool EnableCrossingDiagonalBlocks { get; set; }
+
+        /// <summary>
         /// Indicates whether or not diagonal movement is enabled for entities within the map.
         /// </summary>
         public bool EnableDiagonalMovement
