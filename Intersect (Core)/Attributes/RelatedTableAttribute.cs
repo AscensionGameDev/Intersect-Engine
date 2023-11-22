@@ -1,9 +1,11 @@
 using Intersect.Enums;
 
 namespace Intersect.Attributes;
+
+[AttributeUsage(AttributeTargets.Field)]
 public sealed class RelatedTableAttribute : Attribute
 {
-    public GameObjectType TableType { get; set; }
+    public GameObjectType TableType { get; }
 
-    public RelatedTableAttribute(GameObjectType db) { TableType = db; }
+    public RelatedTableAttribute(GameObjectType gameObjectType) { TableType = gameObjectType; }
 }
