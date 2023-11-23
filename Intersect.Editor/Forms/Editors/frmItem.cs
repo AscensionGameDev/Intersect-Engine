@@ -368,7 +368,7 @@ namespace Intersect.Editor.Forms.Editors
                 nudAttackSpeedValue.Value = mEditorItem.AttackSpeedValue;
                 nudScaling.Value = mEditorItem.Scaling;
                 // This will be removed after conversion to a per-stat editor. Reminder that pre-migration LowRange == HighRange - Day
-                nudRange.Value = mEditorItem.StatRanges?.FirstOrDefault()?.LowRange ?? 0;
+                nudRange.Value = mEditorItem.StatRanges?.FirstOrDefault()?.HighRange ?? 0;
                 chkCanDrop.Checked = Convert.ToBoolean(mEditorItem.CanDrop);
                 chkCanBank.Checked = Convert.ToBoolean(mEditorItem.CanBank);
                 chkCanGuildBank.Checked = Convert.ToBoolean(mEditorItem.CanGuildBank);
