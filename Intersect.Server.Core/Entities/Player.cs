@@ -183,7 +183,7 @@ namespace Intersect.Server.Entities
         public int MapAutorunEvents { get; private set; }
 
         [NotMapped, JsonIgnore]
-        public bool InOpenInstance => InstanceType != MapInstanceType.Personal && InstanceType != MapInstanceType.Shared && InstanceType != MapInstanceType.Party;
+        public bool InOpenInstance => InstanceType != MapInstanceType.Personal && InstanceType != MapInstanceType.Shared;
 
         /// <summary>
         /// References the in-memory copy of the guild for this player, reference this instead of the Guild property below.
