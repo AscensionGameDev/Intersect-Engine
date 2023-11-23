@@ -1,4 +1,3 @@
-using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
 namespace Intersect.GameObjects.Ranges;
@@ -9,38 +8,25 @@ namespace Intersect.GameObjects.Ranges;
 [Owned]
 public partial class ItemRange
 {
+    public ItemRange()
+    {
+    }
+
     public ItemRange(int lowRange, int highRange) : this()
     {
         LowRange = lowRange;
         HighRange = highRange;
     }
 
-    public ItemRange()
-    {
-        InitializeRandomizer();
-    }
+    private Random GetRandomInstance(int? seed = default) => seed == default ? Random.Shared : new Random(seed.Value);
 
-    public int Roll()
+    public int Roll(int? seed = default)
     {
-        if (Seed == default)
-        {
-            InitializeRandomizer();
-        }
-        return Randomizer.Next(LowRange, HighRange + 1);
+        var random = GetRandomInstance(seed);
+        return random.Next(LowRange, HighRange + 1);
     }
 
     public int LowRange { get; set; }
 
     public int HighRange { get; set; }
-
-    private int Seed { get; set; }
-
-    [NotMapped]
-    private Random Randomizer { get; set; }
-
-    private void InitializeRandomizer()
-    {
-        Seed = Guid.NewGuid().GetHashCode();
-        Randomizer = new Random(Seed);
-    }
 }
