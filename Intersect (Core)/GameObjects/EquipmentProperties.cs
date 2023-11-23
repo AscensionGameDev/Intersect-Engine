@@ -27,5 +27,5 @@ public partial class EquipmentProperties
     public ItemBase Descriptor { get; set; }
 
     [NotMapped]
-    public Dictionary<Stat, ItemRange> StatRanges { get; set; } = new Dictionary<Stat, ItemRange>();
+    public Dictionary<Stat, ItemRange> StatRanges { get; set; } = new();
 }

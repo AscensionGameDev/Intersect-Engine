@@ -401,6 +401,21 @@ namespace Intersect.GameObjects
                 _ => FemalePaperdoll,
             };
 
+        public override void Load(string json, bool keepCreationTime = false)
+        {
+            base.Load(json, keepCreationTime);
+
+            // ReSharper disable once InvertIf
+            if (EquipmentProperties != default)
+            {
+                EquipmentProperties.Descriptor = this;
+                if (EquipmentProperties.DescriptorId != Id)
+                {
+                    EquipmentProperties.DescriptorId = default;
+                }
+            }
+        }
+
         private void Initialize()
         {
             Name = "New Item";

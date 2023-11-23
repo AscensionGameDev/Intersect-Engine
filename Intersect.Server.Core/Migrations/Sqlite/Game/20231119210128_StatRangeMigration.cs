@@ -4,9 +4,9 @@ using Intersect.Server.Database;
 using Microsoft.EntityFrameworkCore.Migrations;
 using SqlKata;
 using Intersect.Server.Database.GameData;
+using Intersect.Server.Migrations.SqlOnlyDataMigrations;
 using SqlKata.Extensions;
 using SqlKata.Compilers;
-using Intersect.Server.Migrations.SqlGeneration;
 
 #nullable disable
 
@@ -18,6 +18,8 @@ namespace Intersect.Server.Migrations.Sqlite.Game
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            var statRangeMigrationSqlQueries = new StatRangeMigrationSqlGenerator().Generate(migrationBuilder.GetDatabaseType());
+
             migrationBuilder.CreateTable(
                 name: "Items_EquipmentProperties",
                 columns: table => new
@@ -46,7 +48,10 @@ namespace Intersect.Server.Migrations.Sqlite.Game
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.Sql(new StatRangeMigrationSql().BuildSqliteSql());
+            foreach (var query in statRangeMigrationSqlQueries)
+            {
+                migrationBuilder.Sql(query);
+            }
 
             migrationBuilder.DropColumn(
                 name: "StatGrowth",
@@ -56,15 +61,7 @@ namespace Intersect.Server.Migrations.Sqlite.Game
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "Items_EquipmentProperties");
-
-            migrationBuilder.AddColumn<int>(
-                name: "StatGrowth",
-                table: "Items",
-                type: "INTEGER",
-                nullable: false,
-                defaultValue: 0);
+            throw new NotImplementedException();
         }
     }
 }
