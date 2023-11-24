@@ -34,6 +34,10 @@ namespace Intersect.Config
         /// </summary>
         public bool LoseExpOnInstanceDeath { get; set; } = false;
 
+        public bool BlockPartyInvitesInInstance { get; set; } = false;
+
+        public bool KickPartyMembersOnKick { get; set; } = true;
+
         [OnDeserialized]
         internal void OnDeserializedMethod(StreamingContext context)
         {

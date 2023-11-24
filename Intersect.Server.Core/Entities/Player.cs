@@ -182,6 +182,9 @@ namespace Intersect.Server.Entities
         [NotMapped, JsonIgnore]
         public int MapAutorunEvents { get; private set; }
 
+        [NotMapped, JsonIgnore]
+        public bool InOpenInstance => InstanceType != MapInstanceType.Personal && InstanceType != MapInstanceType.Shared;
+
         /// <summary>
         /// References the in-memory copy of the guild for this player, reference this instead of the Guild property below.
         /// </summary>
@@ -4899,9 +4902,21 @@ namespace Intersect.Server.Entities
         //Parties
         public void InviteToParty(Player fromPlayer)
         {
+            if (fromPlayer == null)
+            {
+                return;
+            }
+
             if (Party.Count != 0)
             {
                 PacketSender.SendChatMsg(fromPlayer, Strings.Parties.inparty.ToString(Name), ChatMessageType.Party, CustomColors.Alerts.Error);
+
+                return;
+            }
+
+            if (Options.Instance.Instancing.BlockPartyInvitesInInstance && (!InOpenInstance || !fromPlayer.InOpenInstance))
+            {
+                PacketSender.SendChatMsg(fromPlayer, Strings.Parties.InInstance, ChatMessageType.Party, CustomColors.Alerts.Error);
 
                 return;
             }
@@ -4991,6 +5006,13 @@ namespace Intersect.Server.Entities
                         oldMember.Party = new List<Player>();
                         PacketSender.SendParty(oldMember);
                         PacketSender.SendChatMsg(oldMember, Strings.Parties.kicked, ChatMessageType.Party, CustomColors.Alerts.Error);
+
+                        // Kick the player out of your shared instance!
+                        if (Options.Instance.Instancing.KickPartyMembersOnKick && oldMember.InstanceType == MapInstanceType.Shared)
+                        {
+                            oldMember.WarpToLastOverworldLocation(false);
+                        }
+
                         Party.Remove(oldMember);
 
                         if (Party.Count > 1) //Need atleast 2 party members to function
@@ -5021,36 +5043,40 @@ namespace Intersect.Server.Entities
 
         public void LeaveParty()
         {
-            if (Party.Count > 0 && Party.Contains(this))
+            if (Options.Instance.Instancing.KickPartyMembersOnKick && InstanceType == MapInstanceType.Shared)
             {
-                var oldMember = this;
-                Party.Remove(this);
+                WarpToLastOverworldLocation(false);
+            }
 
-                if (Party.Count > 1) //Need atleast 2 party members to function
-                {
-                    //Update all members of the party with the new list
-                    for (var i = 0; i < Party.Count; i++)
-                    {
-                        Party[i].Party = Party;
-                        PacketSender.SendParty(Party[i]);
-                        PacketSender.SendChatMsg(
-                            Party[i], Strings.Parties.memberleft.ToString(oldMember.Name), ChatMessageType.Party, CustomColors.Alerts.Error
-                        );
-                    }
-                }
-                else if (Party.Count > 0) //Check if anyone is left on their own
-                {
-                    var remainder = Party[0];
-                    remainder.Party.Clear();
-                    PacketSender.SendParty(remainder);
-                    PacketSender.SendChatMsg(remainder, Strings.Parties.disbanded, ChatMessageType.Party, CustomColors.Alerts.Error);
-                }
+            Party ??= new List<Player>();
+            if (Party.Count < 1 || !Party.Contains(this))
+            {
+                return;
+            }
 
-                PacketSender.SendChatMsg(this, Strings.Parties.left, ChatMessageType.Party, CustomColors.Alerts.Error);
+            var currentParty = Party.ToList();
+            currentParty.Remove(this);
+
+            string partyMessage = currentParty.Count > 1
+                ? Strings.Parties.memberleft.ToString(Name)
+                : Strings.Parties.disbanded;
+
+            // Update all members of the party with the new list
+            foreach (var partyMember in currentParty)
+            {
+                partyMember.Party = currentParty.ToList();
+                PacketSender.SendParty(partyMember);
+                PacketSender.SendChatMsg(
+                    partyMember,
+                    partyMessage,
+                    ChatMessageType.Party,
+                    CustomColors.Alerts.Error
+                );
             }
 
             Party = new List<Player>();
             PacketSender.SendParty(this);
+            PacketSender.SendChatMsg(this, Strings.Parties.left, ChatMessageType.Party, CustomColors.Alerts.Error);
         }
 
         public bool InParty(Player member)
