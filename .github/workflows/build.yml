@@ -395,7 +395,7 @@ jobs:
     steps:
       - id: check-INTERSECTBOT_ACCESS_TOKEN
         name: Check INTERSECTBOT_ACCESS_TOKEN
-        run: echo "skip=${{ secrets.INTERSECTBOT_ACCESS_TOKEN != '' }}" >> "$GITHUB_OUTPUT"
+        run: echo "skip=${{ secrets.INTERSECTBOT_ACCESS_TOKEN == '' }}" >> "$GITHUB_OUTPUT"
 
   publish-forum:
     name: Publish to Forum
