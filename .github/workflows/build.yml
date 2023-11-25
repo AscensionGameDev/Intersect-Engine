@@ -408,8 +408,12 @@ jobs:
     steps:
       - name: Debug
         run: |
-          echo "needs.pre-publish-forum.outputs.skip=${{ needs.pre-publish-forum.outputs.skip}}"
+          echo "needs.pre-publish-forum.outputs.skip=${{ needs.pre-publish-forum.outputs.skip }}"
           echo "needs.pre-publish-forum.outputs.skip2=${{ needs.pre-publish-forum.outputs.skip2 }}"
+          echo "needs.pre-publish-forum.outputs.skip=${{ needs.pre-publish-forum.outputs.skip != true }}"
+          echo "needs.pre-publish-forum.outputs.skip2=${{ needs.pre-publish-forum.outputs.skip2 != true }}"
+          echo "needs.pre-publish-forum.outputs.skip=${{ needs.pre-publish-forum.outputs.skip != 'true' }}"
+          echo "needs.pre-publish-forum.outputs.skip2=${{ needs.pre-publish-forum.outputs.skip2 != 'true' }}"
       - name: Publish to Forum
         uses: AscensionGameDev/actions@0223df40becb110039c705c02cfd2cd8f274199c
         with:
