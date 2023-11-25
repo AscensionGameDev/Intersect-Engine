@@ -384,9 +384,23 @@ jobs:
           prerelease: true
           tag: v${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}
 
+  # pre-publish-forum:
+  #   name: Prepare to Publish to Forum
+  #   if: inputs.workflowDebug != true && inputs.packagingDebug != true && inputs.skipForumPublish != true
+  #   needs: publish-github
+  #   runs-on: ubuntu-latest
+  #   outputs:
+  #     skip: ${{ steps.secret-check.outputs.skip }}
+  #   steps:
+  #     - id: secret-check
+  #       name: Check secrets
+  #       run: echo "skip=${{" >> "$GITHUB_OUTPUT"
+
   publish-forum:
     name: Publish to Forum
-    if: ${{ inputs.workflowDebug != true && inputs.packagingDebug != true && inputs.skipForumPublish != true && secrets.INTERSECTBOT_ACCESS_TOKEN != '' }}
+    env:
+      has_forum_token_secret: ${{ secrets.INTERSECTBOT_ACCESS_TOKEN != '' }}
+    if: inputs.workflowDebug != true && inputs.packagingDebug != true && inputs.skipForumPublish != true && env.has_forum_token_secret
     needs: publish-github
     runs-on: ubuntu-latest
     steps:
