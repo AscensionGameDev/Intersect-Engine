@@ -390,10 +390,11 @@ jobs:
     needs: publish-github
     runs-on: ubuntu-latest
     outputs:
-      skip: ${{ secrets.INTERSECTBOT_ACCESS_TOKEN != '' }}
+      skip: ${{ steps.check-INTERSECTBOT_ACCESS_TOKEN.outputs.skip }}
     steps:
-      - name: Nothing
-        run: echo ''
+      - id: check-INTERSECTBOT_ACCESS_TOKEN
+        name: Check INTERSECTBOT_ACCESS_TOKEN
+        run: echo "skip=${{ secrets.INTERSECTBOT_ACCESS_TOKEN != '' }}" >> "$GITHUB_OUTPUT"
 
   publish-forum:
     name: Publish to Forum
