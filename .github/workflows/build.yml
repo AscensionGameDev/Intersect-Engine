@@ -384,10 +384,25 @@ jobs:
           prerelease: true
           tag: v${{ env.VERSION_PREFIX }}${{ env.VERSION_SUFFIX }}.${{ github.run_number }}
 
-  publish-forum:
-    name: Publish to Forum
+  check-publish-forum:
+    name: Check if token set to publish to forum
     if: inputs.workflowDebug != true && inputs.packagingDebug != true && inputs.skipForumPublish != true
     needs: publish-github
+    runs-on: ubuntu-latest
+    outputs:
+      skip: ${{ steps.check-INTERSECTBOT_ACCESS_TOKEN.outputs.skip == 'true' }}
+    steps:
+      - id: check-INTERSECTBOT_ACCESS_TOKEN
+        name: Check INTERSECTBOT_ACCESS_TOKEN
+        env:
+          INTERSECTBOT_ACCESS_TOKEN: ${{ secrets.INTERSECTBOT_ACCESS_TOKEN }}
+        if: ${{ env.INTERSECTBOT_ACCESS_TOKEN == '' }}
+        run: echo "skip=true" >> "$GITHUB_OUTPUT"
+
+  publish-forum:
+    name: Publish to Forum
+    if: inputs.workflowDebug != true && inputs.packagingDebug != true && inputs.skipForumPublish != true && needs.check-publish-forum.outputs.skip != 'true'
+    needs: check-publish-forum
     runs-on: ubuntu-latest
     steps:
       - name: Publish to Forum
