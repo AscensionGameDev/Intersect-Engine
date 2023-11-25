@@ -390,7 +390,8 @@ jobs:
     needs: publish-github
     runs-on: ubuntu-latest
     outputs:
-      skip: ${{ steps.check-INTERSECTBOT_ACCESS_TOKEN.outputs.skip }}
+      skip: ${{ steps.check-INTERSECTBOT_ACCESS_TOKEN.outputs.skip == true }}
+      skip2: ${{ steps.check-INTERSECTBOT_ACCESS_TOKEN.outputs.skip }}
     steps:
       - id: check-INTERSECTBOT_ACCESS_TOKEN
         name: Check INTERSECTBOT_ACCESS_TOKEN
@@ -402,6 +403,10 @@ jobs:
     needs: pre-publish-forum
     runs-on: ubuntu-latest
     steps:
+      - name: Debug
+        run: |
+          echo "needs.pre-publish-forum.outputs.skip=${{ needs.pre-publish-forum.outputs.skip}}"
+          echo "needs.pre-publish-forum.outputs.skip2=${{ needs.pre-publish-forum.outputs.skip2 }}"
       - name: Publish to Forum
         uses: AscensionGameDev/actions@0223df40becb110039c705c02cfd2cd8f274199c
         with:
