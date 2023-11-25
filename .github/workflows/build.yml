@@ -390,13 +390,13 @@ jobs:
     needs: publish-github
     runs-on: ubuntu-latest
     outputs:
-      skip: ${{ steps.check-INTERSECTBOT_ACCESS_TOKEN.outputs.skip == 'true' }}
+      skip: ${{ steps.check-INTERSECTBOT_FORUM_TOKEN.outputs.skip == 'true' }}
     steps:
-      - id: check-INTERSECTBOT_ACCESS_TOKEN
-        name: Check INTERSECTBOT_ACCESS_TOKEN
+      - id: check-INTERSECTBOT_FORUM_TOKEN
+        name: Check INTERSECTBOT_FORUM_TOKEN
         env:
-          INTERSECTBOT_ACCESS_TOKEN: ${{ secrets.INTERSECTBOT_ACCESS_TOKEN }}
-        if: ${{ env.INTERSECTBOT_ACCESS_TOKEN == '' }}
+          INTERSECTBOT_FORUM_TOKEN: ${{ secrets.INTERSECTBOT_FORUM_TOKEN }}
+        if: ${{ env.INTERSECTBOT_FORUM_TOKEN == '' }}
         run: echo "skip=true" >> "$GITHUB_OUTPUT"
 
   publish-forum:
