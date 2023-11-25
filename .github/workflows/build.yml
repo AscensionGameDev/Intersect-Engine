@@ -391,6 +391,9 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       skip: ${{ secrets.INTERSECTBOT_ACCESS_TOKEN != '' }}
+    steps:
+      - name: Nothing
+        run: echo ''
 
   publish-forum:
     name: Publish to Forum
