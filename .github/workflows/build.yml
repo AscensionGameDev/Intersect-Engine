@@ -386,7 +386,7 @@ jobs:
 
   publish-forum:
     name: Publish to Forum
-    if: inputs.workflowDebug != true && inputs.packagingDebug != true && inputs.skipForumPublish != true && secrets.INTERSECTBOT_ACCESS_TOKEN != ''
+    if: ${{ inputs.workflowDebug != true && inputs.packagingDebug != true && inputs.skipForumPublish != true && secrets.INTERSECTBOT_ACCESS_TOKEN != '' }}
     needs: publish-github
     runs-on: ubuntu-latest
     steps:
