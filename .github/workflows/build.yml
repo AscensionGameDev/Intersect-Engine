@@ -402,7 +402,7 @@ jobs:
 
   publish-forum:
     name: Publish to Forum
-    if: inputs.workflowDebug != true && inputs.packagingDebug != true && inputs.skipForumPublish != true && needs.pre-publish-forum.outputs.skip != true
+    if: inputs.workflowDebug != true && inputs.packagingDebug != true && inputs.skipForumPublish != true && needs.pre-publish-forum.outputs.skip != 'true'
     needs: pre-publish-forum
     runs-on: ubuntu-latest
     steps:
