@@ -1345,14 +1345,9 @@ namespace Intersect.Editor.Forms.Editors
             {
                 statName = Strings.General.None;
             }
-            if (!mEditorItem.TryGetRangeFor(stat, out var range))
-            {
-                return Strings.ItemEditor.StatRangeItem.ToString(statName, 0, 0);
-            }
-            else
-            {
-                return Strings.ItemEditor.StatRangeItem.ToString(statName, range.LowRange, range.HighRange);
-            }
+            
+            mEditorItem.TryGetRangeFor(stat, out var range);
+            return Strings.ItemEditor.StatRangeItem.ToString(statName, range?.LowRange ?? 0, range?.HighRange ?? 0);
         }
 
         private bool IsValidBonusSelection
