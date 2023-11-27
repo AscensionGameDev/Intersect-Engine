@@ -352,10 +352,7 @@ namespace Intersect.GameObjects
 
         public void ModifyStatRangeHigh(Stat stat, int val)
         {
-            if (EquipmentProperties == null)
-            {
-                EquipmentProperties = new();
-            }
+            EquipmentProperties ??= new();
 
             if (EquipmentProperties.StatRanges.TryGetValue(stat, out var range))
             {
@@ -370,10 +367,7 @@ namespace Intersect.GameObjects
 
         public void ModifyStatRangeLow(Stat stat, int val)
         {
-            if (EquipmentProperties == null)
-            {
-                EquipmentProperties = new();
-            }
+            EquipmentProperties ??= new();
 
             if (EquipmentProperties.StatRanges.TryGetValue(stat, out var range))
             {

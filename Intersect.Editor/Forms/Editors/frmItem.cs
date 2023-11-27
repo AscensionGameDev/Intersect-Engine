@@ -17,6 +17,7 @@ using Intersect.Framework;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Ranges;
+using Intersect.Localization;
 using Intersect.Network.Packets.Server;
 using Intersect.Utilities;
 using static Intersect.GameObjects.EquipmentProperties;
@@ -1332,19 +1333,19 @@ namespace Intersect.Editor.Forms.Editors
         private void RefreshStatRangeList()
         {
             lstStatRanges.Items.Clear();
-            foreach (var (stat, _) in Strings.Combat.stats)
+            foreach (var (stat, statName) in Strings.Combat.stats)
             {
-                lstStatRanges.Items.Add(GetStatRangeRowText((Stat)stat));
+                lstStatRanges.Items.Add(GetStatRangeRowText((Stat)stat, statName));
             }
         }
 
-        private string GetStatRangeRowText(Stat stat)
+        private string GetStatRangeRowText(Stat stat, LocalizedString? statName = null)
         {
-            if (!Strings.Combat.stats.TryGetValue((int)stat, out var statName))
+            if (statName == null && !Strings.Combat.stats.TryGetValue((int)stat, out statName))
             {
                 statName = Strings.General.None;
             }
-            if (!mEditorItem.TryGetRangeFor((Stat)stat, out var range))
+            if (!mEditorItem.TryGetRangeFor(stat, out var range))
             {
                 return Strings.ItemEditor.StatRangeItem.ToString(statName, 0, 0);
             }
@@ -1371,14 +1372,9 @@ namespace Intersect.Editor.Forms.Editors
             return Strings.ItemEditor.BonusEffectItem.ToString(effectName, effectAmt);
         }
 
-        private bool IsValidStatRangeSelection
-        {
-            get => lstStatRanges.SelectedIndex > -1 && lstStatRanges.SelectedIndex < lstStatRanges.Items.Count;
-        }
-
         private Stat? SelectedStatRange
         {
-            get => IsValidStatRangeSelection ? (Stat)(lstStatRanges.SelectedIndex) : null;
+            get => Enum.IsDefined((Stat)lstStatRanges.SelectedIndex) ? (Stat)(lstStatRanges.SelectedIndex) : null;
         }
 
         private void lstBonusEffects_SelectedIndexChanged(object sender, EventArgs e)
@@ -1435,8 +1431,9 @@ namespace Intersect.Editor.Forms.Editors
 
         private void lstStatRanges_SelectedIndexChanged(object sender, EventArgs e)
         {
-            nudStatRangeLow.Enabled = lstStatRanges.SelectedIndex >= 0;
-            nudStatRangeHigh.Enabled = lstStatRanges.SelectedIndex >= 0;
+            var statSelected = lstStatRanges.SelectedIndex >= 0;
+            nudStatRangeLow.Enabled = statSelected;
+            nudStatRangeHigh.Enabled = statSelected;
 
             if (!SelectedStatRange.HasValue)
             {
