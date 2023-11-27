@@ -109,10 +109,10 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             {
                 cmbVariable.Items.AddRange(UserVariableBase.Names);
                 cmbVariable.SelectedIndex = UserVariableBase.ListIndex(mMyCommand.VariableId);
-                if (cmbVariable.SelectedIndex != -1)
+                if (cmbVariable.SelectedIndex != -1 && UserVariableBase.TryGet(UserVariableBase.IdFromList(cmbVariable.SelectedIndex), out var userVar))
                 {
                     UpdateMinMaxValues(
-                        UserVariableBase.Get(UserVariableBase.IdFromList(cmbVariable.SelectedIndex)).DataType
+                       userVar.Type
                     );
                 }
             }
@@ -220,26 +220,22 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 
         private void cmbVariable_SelectedIndexChanged(object sender, EventArgs e)
         {
-            Guid variableId;
-            if (rdoPlayerVariables.Checked)
+            var idx = cmbVariable.SelectedIndex;
+            if (rdoPlayerVariables.Checked && PlayerVariableBase.TryGet(PlayerVariableBase.IdFromList(idx), out var playerVar))
             {
-                variableId = PlayerVariableBase.IdFromList(cmbVariable.SelectedIndex);
-                UpdateMinMaxValues(PlayerVariableBase.Get(variableId).Type);
+                UpdateMinMaxValues(playerVar.Type);
             }
-            else if (rdoGlobalVariables.Checked)
+            else if (rdoGlobalVariables.Checked && ServerVariableBase.TryGet(ServerVariableBase.IdFromList(idx), out var serverVar))
             {
-                variableId = ServerVariableBase.IdFromList(cmbVariable.SelectedIndex);
-                UpdateMinMaxValues(ServerVariableBase.Get(variableId).Type);
+                UpdateMinMaxValues(serverVar.Type);
             }
-            else if (rdoGuildVariables.Checked)
+            else if (rdoGuildVariables.Checked && GuildVariableBase.TryGet(GuildVariableBase.IdFromList(idx), out var guildVar))
             {
-                variableId = GuildVariableBase.IdFromList(cmbVariable.SelectedIndex);
-                UpdateMinMaxValues(GuildVariableBase.Get(variableId).Type);
+                UpdateMinMaxValues(guildVar.Type);
             }
-            else if (rdoUserVariables.Checked)
+            else if (rdoUserVariables.Checked && UserVariableBase.TryGet(UserVariableBase.IdFromList(idx), out var userVar))
             {
-                variableId = UserVariableBase.IdFromList(cmbVariable.SelectedIndex);
-                UpdateMinMaxValues(UserVariableBase.Get(variableId).DataType);
+                UpdateMinMaxValues(userVar.Type);
             }
         }
 

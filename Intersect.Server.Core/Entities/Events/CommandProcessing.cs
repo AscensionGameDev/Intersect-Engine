@@ -109,7 +109,7 @@ namespace Intersect.Server.Entities.Events
             else if (command.VariableType == VariableType.UserVariable)
             {
                 var variable = UserVariableBase.Get(command.VariableId);
-                type = (int)variable.DataType;
+                type = (int)variable.Type;
             }
             else if (type == -1)
             {
@@ -1796,7 +1796,7 @@ namespace Intersect.Server.Entities.Events
                 foreach (var val in DbInterface.UserVariableEventTextLookup)
                 {
                     if (input.Contains(val.Key))
-                        sb.Replace(val.Key, (player.User.GetVariableValue(val.Value.Id) ?? new VariableValue()).ToString((val.Value).DataType));
+                        sb.Replace(val.Key, (player.User.GetVariableValue(val.Value.Id) ?? new VariableValue()).ToString((val.Value).Type));
                 }
 
                 if (instance != null)

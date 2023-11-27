@@ -3266,14 +3266,6 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString booleanfalse = @"False";
 
-            public static LocalizedString booleanccloneglobalvariablevalue = @"Global Variable Value: ";
-
-            public static LocalizedString booleanccloneguildvariablevalue = @"Guild Variable Value: ";
-
-            public static LocalizedString booleancloneplayervariablevalue = @"Player Variable Value: ";
-
-            public static LocalizedString BooleanCloneUserVariableValue = @"User Variable Value: ";
-
             public static LocalizedString numericlabel = @"Integer Variable:";
 
             public static LocalizedString numericadd = @"Add";
@@ -3281,14 +3273,6 @@ Tick timer saved in server config.json.";
             public static LocalizedString numericdivide = @"Divide";
 
             public static LocalizedString numericleftshift = @"LShift";
-
-            public static LocalizedString numericcloneglobalvariablevalue = @"Global Variable Value: ";
-
-            public static LocalizedString numericcloneguildvariablevalue = @"Guild Variable Value: ";
-
-            public static LocalizedString numericcloneplayervariablevalue = @"Player Variable Value: ";
-
-            public static LocalizedString NumericCloneUserVariableValue = @"User Variable Value: ";
 
             public static LocalizedString numericmultiply = @"Multiply";
 
@@ -3322,6 +3306,14 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString stringtip = @"Text variables work with strings. Click here for a list!";
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString VariableValue = @"Variable Value";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString SetVariableGroup = @"Set to Variable";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString SelectVariableGroup = @"Select Variable";
         }
 
         public partial struct EventShowOptions
@@ -3534,6 +3526,8 @@ Tick timer saved in server config.json.";
 
         public partial struct General
         {
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Cancel = @"Cancel";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString False = @"False";
@@ -3546,6 +3540,9 @@ Tick timer saved in server config.json.";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString None = @"None";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Okay = @"Okay";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString True = @"True";
@@ -5604,6 +5601,42 @@ Negative values for time to flow backwards.";
             public static LocalizedString okay = @"Ok";
 
             public static LocalizedString title = @"Warp Tile Selection";
+
+        }
+
+        public partial struct VariableSelector
+        {
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Button = @"Select a Variable";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString LabelCurrentSelection = @"Current Selection:";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString LabelGroup = @"Select a Variable";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString LabelVariableType = @"Variable Type";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString LabelVariableValue = @"Variable";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Title = @"Variable Selector";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString ValueCurrentSelection = @"{00} ({01})";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString ValueNoneSelected = @"None Selected!";
+
+            public static Dictionary<int, LocalizedString> VariableTypes = new Dictionary<int, LocalizedString>
+            {
+                {(int) VariableType.PlayerVariable, @"Player Variable" },
+                {(int) VariableType.ServerVariable, @"Server Variable" },
+                {(int) VariableType.GuildVariable, @"Guild Variable" },
+                {(int) VariableType.UserVariable, @"User Variable" },
+            };
 
         }
 

@@ -1,3 +1,5 @@
+using Intersect.Attributes;
+
 namespace Intersect.Enums
 {
     // Should properly separate static value, player & global vars into a separate enum.
@@ -6,12 +8,16 @@ namespace Intersect.Enums
 
     public enum VariableType
     {
+        [RelatedTable(GameObjectType.PlayerVariable)]
         PlayerVariable = 0,
 
+        [RelatedTable(GameObjectType.ServerVariable)]
         ServerVariable,
 
+        [RelatedTable(GameObjectType.GuildVariable)]
         GuildVariable,
 
+        [RelatedTable(GameObjectType.UserVariable)]
         UserVariable,
     }
 }
