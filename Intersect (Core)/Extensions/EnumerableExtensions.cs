@@ -1,7 +1,7 @@
-using System.ComponentModel;
-using System.Reflection;
-using Intersect.Attributes;
-using Intersect.Enums;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 
 namespace Intersect.Extensions
 {
@@ -38,7 +38,6 @@ namespace Intersect.Extensions
             }
 
             return result.Any() ? result.Concat(result.SelectManyRecursive(selector, cancellationToken)) : result;
-        }   
-
+        }
     }
 }
