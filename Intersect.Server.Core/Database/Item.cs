@@ -56,7 +56,7 @@ public class Item
 
         foreach (Stat stat in Enum.GetValues<Stat>())
         {
-            if (!descriptor.TryGetRangeFor(stat, out var range))
+            if (descriptor.TryGetRangeFor(stat, out var range))
             {
                 Properties.StatModifiers[(int)stat] = range.Roll();
             }
