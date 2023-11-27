@@ -3830,6 +3830,18 @@ Tick timer saved in server config.json.";
             public static LocalizedString stackable = @"Stackable?";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString StatRangeFrom = @"From";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString StatRangeItem = @"{00}: {01} to {02}";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString StatRangeTitle = @"Stat Ranges";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString StatRangeTo = @"to";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString InventoryStackLimit = @"Inventory Stack Limit:";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
