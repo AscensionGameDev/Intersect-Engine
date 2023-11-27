@@ -9,13 +9,13 @@ public static class VariableModExtensions
     {
         if (!Enum.IsDefined(value))
         {
-            throw new ArgumentException($"Invalid VariableMod enum, value was {value}", nameof(value));
+            throw new ArgumentOutOfRangeException(nameof(value), value, "Invalid VariableMod enum");
         }
 
         string name = Enum.GetName(value);
         if (name == null)
         {
-            throw new ArgumentException($"Missing enum name, value was {value}", nameof(value));
+            throw new ArgumentOutOfRangeException(nameof(value), value, "Missing enum name");
         }
 
         FieldInfo fieldInfo = typeof(VariableMod).GetField(name);

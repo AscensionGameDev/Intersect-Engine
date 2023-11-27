@@ -9,13 +9,13 @@ public static class VariableTypeExtensions
     {
         if (!Enum.IsDefined(value))
         {
-            throw new ArgumentException($"Invalid VariableType enum, value was {value}", nameof(value));
+            throw new ArgumentOutOfRangeException(nameof(value), value, "Invalid VariableType enum");
         }
 
         string name = Enum.GetName(value);
         if (name == null)
         {
-            throw new ArgumentException($"Missing enum name, value was {value}", nameof(value));
+            throw new ArgumentOutOfRangeException(nameof(value), value, "Missing enum name");
         }
 
         FieldInfo fieldInfo = typeof(VariableType).GetField(name);
