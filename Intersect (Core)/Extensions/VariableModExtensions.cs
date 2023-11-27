@@ -9,25 +9,25 @@ public static class VariableModExtensions
     {
         if (!Enum.IsDefined(value))
         {
-            throw new ArgumentException("Invalid VariableMod enum", nameof(value));
+            throw new ArgumentException($"Invalid VariableMod enum, value was {value}", nameof(value));
         }
 
         string name = Enum.GetName(value);
         if (name == null)
         {
-            throw new ArgumentException("Missing enum name", nameof(value));
+            throw new ArgumentException($"Missing enum name, value was {value}", nameof(value));
         }
 
         FieldInfo fieldInfo = typeof(VariableMod).GetField(name);
         if (fieldInfo == null)
         {
-            throw new MissingFieldException("Reflection failed for VariableType enum", nameof(value));
+            throw new MissingFieldException($"Reflection failed for VariableType enum, value was {value}", nameof(value));
         }
 
         RelatedVariableTypeAttribute attr = fieldInfo.GetCustomAttribute<RelatedVariableTypeAttribute>();
         if (attr == null)
         {
-            throw new ArgumentException("Failed to get RelatedVariableType attribute for VariableType enum", nameof(value));
+            throw new ArgumentException($"Failed to get RelatedVariableType attribute for VariableType enum, value was {value}", nameof(value));
         }
 
         return attr.VariableType;

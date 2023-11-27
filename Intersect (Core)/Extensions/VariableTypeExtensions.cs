@@ -9,25 +9,25 @@ public static class VariableTypeExtensions
     {
         if (!Enum.IsDefined(value))
         {
-            throw new ArgumentException("Invalid VariableType enum", nameof(value));
+            throw new ArgumentException($"Invalid VariableType enum, value was {value}", nameof(value));
         }
 
         string name = Enum.GetName(value);
         if (name == null)
         {
-            throw new ArgumentException("Missing enum name", nameof(value));
+            throw new ArgumentException($"Missing enum name, value was {value}", nameof(value));
         }
 
         FieldInfo fieldInfo = typeof(VariableType).GetField(name);
         if (fieldInfo == null)
         {
-            throw new MissingFieldException("Reflection failed for VariableType enum", nameof(value));
+            throw new MissingFieldException($"Reflection failed for VariableType enum, value was {value}", nameof(value));
         }
 
         RelatedTableAttribute attr = fieldInfo.GetCustomAttribute<RelatedTableAttribute>();
         if (attr == null)
         {
-            throw new ArgumentException("Failed to get RelatedTable attribute for VariableType enum", nameof(value));
+            throw new ArgumentException($"Failed to get RelatedTable attribute for VariableType enum, value was {value}", nameof(value));
         }
 
         return attr.TableType;
