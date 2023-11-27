@@ -111,6 +111,7 @@ namespace Intersect.Logging.Output
             params object[] args
         )
         {
+            string? line = default;
             try
             {
                 if (LogLevel < logLevel)
@@ -118,7 +119,7 @@ namespace Intersect.Logging.Output
                     return;
                 }
 
-                var line = configuration.Formatter.Format(
+                line = configuration.Formatter.Format(
                     configuration,
                     logLevel,
                     DateTime.UtcNow,
@@ -133,7 +134,11 @@ namespace Intersect.Logging.Output
             }
             catch (Exception exceptionWhileWriting)
             {
-                Console.WriteLine(exceptionWhileWriting);
+                Console.WriteLine(
+                    "Exception occurred while writing to file:\n\t{0}\n\t{1}",
+                    line,
+                    exceptionWhileWriting
+                );
             }
         }
 

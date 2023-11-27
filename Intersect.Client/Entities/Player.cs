@@ -2223,6 +2223,8 @@ namespace Intersect.Client.Entities
             var dir = Dir;
             var moveDir = MoveDir;
 
+            var enableCrossingDiagonalBlocks = Options.Instance.MapOpts.EnableCrossingDiagonalBlocks;
+
             if (moveDir != Direction.None)
             {
                 List<Direction> possibleDirections = new(4) { moveDir };
@@ -2244,6 +2246,16 @@ namespace Intersect.Client.Entities
                     if (IsTileBlocked(target, Z, MapId, ref blockedBy) != -1)
                     {
                         continue;
+                    }
+
+                    if (!enableCrossingDiagonalBlocks && possibleDirection.IsDiagonal())
+                    {
+                        if (possibleDirection.GetComponentDirections()
+                            .Select(componentDirection => componentDirection.GetDeltaPoint() + position)
+                            .All(componentTarget => IsTileBlocked(componentTarget, Z, MapId, ref blockedBy) != -1))
+                        {
+                            continue;
+                        }
                     }
 
                     position.X += delta.X;

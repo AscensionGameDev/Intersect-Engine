@@ -242,6 +242,17 @@ namespace Intersect.Server.Migrations.MySql.Game
                     b.ToTable("CraftingTables");
                 });
 
+            modelBuilder.Entity("Intersect.GameObjects.EquipmentProperties", b =>
+                {
+                    b.Property<Guid>("DescriptorId")
+                        .HasColumnType("char(36)")
+                        .UseCollation("ascii_general_ci");
+
+                    b.HasKey("DescriptorId");
+
+                    b.ToTable("Items_EquipmentProperties");
+                });
+
             modelBuilder.Entity("Intersect.GameObjects.Events.EventBase", b =>
                 {
                     b.Property<Guid>("Id")
@@ -491,9 +502,6 @@ namespace Intersect.Server.Migrations.MySql.Game
 
                     b.Property<bool>("Stackable")
                         .HasColumnType("tinyint(1)");
-
-                    b.Property<int>("StatGrowth")
-                        .HasColumnType("int");
 
                     b.Property<string>("StatsJson")
                         .HasColumnType("longtext")
@@ -1382,6 +1390,127 @@ namespace Intersect.Server.Migrations.MySql.Game
                     b.Navigation("Upper");
                 });
 
+            modelBuilder.Entity("Intersect.GameObjects.EquipmentProperties", b =>
+                {
+                    b.HasOne("Intersect.GameObjects.ItemBase", "Descriptor")
+                        .WithOne("EquipmentProperties")
+                        .HasForeignKey("Intersect.GameObjects.EquipmentProperties", "DescriptorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.OwnsOne("Intersect.GameObjects.Ranges.ItemRange", "StatRange_AbilityPower", b1 =>
+                        {
+                            b1.Property<Guid>("EquipmentPropertiesDescriptorId")
+                                .HasColumnType("char(36)")
+                                .UseCollation("ascii_general_ci");
+
+                            b1.Property<int>("HighRange")
+                                .HasColumnType("int");
+
+                            b1.Property<int>("LowRange")
+                                .HasColumnType("int");
+
+                            b1.HasKey("EquipmentPropertiesDescriptorId");
+
+                            b1.ToTable("Items_EquipmentProperties");
+
+                            b1.WithOwner()
+                                .HasForeignKey("EquipmentPropertiesDescriptorId");
+                        });
+
+                    b.OwnsOne("Intersect.GameObjects.Ranges.ItemRange", "StatRange_Attack", b1 =>
+                        {
+                            b1.Property<Guid>("EquipmentPropertiesDescriptorId")
+                                .HasColumnType("char(36)")
+                                .UseCollation("ascii_general_ci");
+
+                            b1.Property<int>("HighRange")
+                                .HasColumnType("int");
+
+                            b1.Property<int>("LowRange")
+                                .HasColumnType("int");
+
+                            b1.HasKey("EquipmentPropertiesDescriptorId");
+
+                            b1.ToTable("Items_EquipmentProperties");
+
+                            b1.WithOwner()
+                                .HasForeignKey("EquipmentPropertiesDescriptorId");
+                        });
+
+                    b.OwnsOne("Intersect.GameObjects.Ranges.ItemRange", "StatRange_Defense", b1 =>
+                        {
+                            b1.Property<Guid>("EquipmentPropertiesDescriptorId")
+                                .HasColumnType("char(36)")
+                                .UseCollation("ascii_general_ci");
+
+                            b1.Property<int>("HighRange")
+                                .HasColumnType("int");
+
+                            b1.Property<int>("LowRange")
+                                .HasColumnType("int");
+
+                            b1.HasKey("EquipmentPropertiesDescriptorId");
+
+                            b1.ToTable("Items_EquipmentProperties");
+
+                            b1.WithOwner()
+                                .HasForeignKey("EquipmentPropertiesDescriptorId");
+                        });
+
+                    b.OwnsOne("Intersect.GameObjects.Ranges.ItemRange", "StatRange_MagicResist", b1 =>
+                        {
+                            b1.Property<Guid>("EquipmentPropertiesDescriptorId")
+                                .HasColumnType("char(36)")
+                                .UseCollation("ascii_general_ci");
+
+                            b1.Property<int>("HighRange")
+                                .HasColumnType("int");
+
+                            b1.Property<int>("LowRange")
+                                .HasColumnType("int");
+
+                            b1.HasKey("EquipmentPropertiesDescriptorId");
+
+                            b1.ToTable("Items_EquipmentProperties");
+
+                            b1.WithOwner()
+                                .HasForeignKey("EquipmentPropertiesDescriptorId");
+                        });
+
+                    b.OwnsOne("Intersect.GameObjects.Ranges.ItemRange", "StatRange_Speed", b1 =>
+                        {
+                            b1.Property<Guid>("EquipmentPropertiesDescriptorId")
+                                .HasColumnType("char(36)")
+                                .UseCollation("ascii_general_ci");
+
+                            b1.Property<int>("HighRange")
+                                .HasColumnType("int");
+
+                            b1.Property<int>("LowRange")
+                                .HasColumnType("int");
+
+                            b1.HasKey("EquipmentPropertiesDescriptorId");
+
+                            b1.ToTable("Items_EquipmentProperties");
+
+                            b1.WithOwner()
+                                .HasForeignKey("EquipmentPropertiesDescriptorId");
+                        });
+
+                    b.Navigation("Descriptor");
+
+                    b.Navigation("StatRange_AbilityPower");
+
+                    b.Navigation("StatRange_Attack");
+
+                    b.Navigation("StatRange_Defense");
+
+                    b.Navigation("StatRange_MagicResist");
+
+                    b.Navigation("StatRange_Speed");
+                });
+
             modelBuilder.Entity("Intersect.GameObjects.ItemBase", b =>
                 {
                     b.OwnsOne("Intersect.GameObjects.ConsumableData", "Consumable", b1 =>
@@ -1628,6 +1757,11 @@ namespace Intersect.Server.Migrations.MySql.Game
                     b.Navigation("Dash");
 
                     b.Navigation("Warp");
+                });
+
+            modelBuilder.Entity("Intersect.GameObjects.ItemBase", b =>
+                {
+                    b.Navigation("EquipmentProperties");
                 });
 #pragma warning restore 612, 618
         }

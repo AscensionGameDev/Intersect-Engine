@@ -1,4 +1,4 @@
-﻿using Intersect.GameObjects;
+using Intersect.GameObjects;
 using Intersect.GameObjects.Crafting;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps.MapList;
@@ -21,6 +21,8 @@ namespace Intersect.Server.Database.GameData
         DbSet<EventBase> Events { get; set; }
 
         DbSet<ItemBase> Items { get; set; }
+
+        DbSet<EquipmentProperties> Items_EquipmentProperties { get; set; }
 
         DbSet<MapController> Maps { get; set; }
 
