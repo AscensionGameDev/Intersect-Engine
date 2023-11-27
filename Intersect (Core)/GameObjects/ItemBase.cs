@@ -6,12 +6,14 @@ using System.Linq;
 using Intersect.Enums;
 using Intersect.GameObjects.Conditions;
 using Intersect.GameObjects.Events;
+using Intersect.GameObjects.Ranges;
 using Intersect.Models;
 using Intersect.Utilities;
 
 using Microsoft.EntityFrameworkCore;
 
 using Newtonsoft.Json;
+using static Intersect.GameObjects.EquipmentProperties;
 
 namespace Intersect.GameObjects
 {
@@ -233,8 +235,6 @@ namespace Intersect.GameObjects
         /// </summary>
         public int MaxBankStack { get; set; } = 1000000;
 
-        public int StatGrowth { get; set; }
-
         public int Tool { get; set; } = -1;
 
         /// <summary>
@@ -337,6 +337,19 @@ namespace Intersect.GameObjects
             set => Effects = JsonConvert.DeserializeObject<List<EffectData>>(value ?? "") ?? new List<EffectData>();
         }
 
+        public EquipmentProperties? EquipmentProperties { get; set; }
+
+        [NotMapped, JsonIgnore]
+        public ItemRange[] StatRanges => EquipmentProperties?.StatRanges?.Values.ToArray();
+
+        public bool TryGetRangeFor(Stat stat, out ItemRange range)
+        {
+            range = null;
+            _ = EquipmentProperties?.StatRanges?.TryGetValue(stat, out range);
+            
+            return range != default;
+        }
+
         public int GetEffectPercentage(ItemEffect type)
         {
             return Effects.Find(effect => effect.Type == type)?.Percentage ?? 0;
@@ -387,6 +400,21 @@ namespace Intersect.GameObjects
                 Gender.Male => MalePaperdoll,
                 _ => FemalePaperdoll,
             };
+
+        public override void Load(string json, bool keepCreationTime = false)
+        {
+            base.Load(json, keepCreationTime);
+
+            // ReSharper disable once InvertIf
+            if (EquipmentProperties != default)
+            {
+                EquipmentProperties.Descriptor = this;
+                if (EquipmentProperties.DescriptorId != Id)
+                {
+                    EquipmentProperties.DescriptorId = default;
+                }
+            }
+        }
 
         private void Initialize()
         {

@@ -329,7 +329,7 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
             for (var i = 0; i < Enum.GetValues<Stat>().Length; i++)
             {
                 // Do we have item properties, if so this is a finished item. Otherwise does this item not have growing stats?
-                if (statModifiers != default || mItem.StatGrowth == 0)
+                if (statModifiers != default || mItem.StatRanges?.Length == 0)
                 {
                     var flatStat = mItem.StatsGiven[i];
                     if (statModifiers != default)
@@ -353,8 +353,9 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
                 // We do not have item properties and have growing stats! So don't display a finished stat but a range instead.
                 else
                 {
-                    var statLow = mItem.StatsGiven[i] - mItem.StatGrowth;
-                    var statHigh = mItem.StatsGiven[i] + mItem.StatGrowth;
+                    _ = mItem.TryGetRangeFor((Stat)i, out var range);
+                    var statLow = mItem.StatsGiven[i] + range.LowRange;
+                    var statHigh = mItem.StatsGiven[i] + range.HighRange;
 
                     if (mItem.PercentageStatsGiven[i] != 0)
                     {

@@ -766,7 +766,7 @@ namespace Intersect.Server.Database
 
                             break;
                         case GameObjectType.Item:
-                            foreach (var itm in context.Items)
+                            foreach (var itm in context.Items.Include(i => i.EquipmentProperties))
                             {
                                 ItemBase.Lookup.Set(itm.Id, itm);
                             }
@@ -1292,9 +1292,32 @@ namespace Intersect.Server.Database
 
                             break;
                         case GameObjectType.Item:
-                            context.Items.Update((ItemBase)gameObject);
+                        {
+                            if (gameObject is not ItemBase itemDescriptor)
+                            {
+                                throw new InvalidOperationException();
+                            }
+
+                            if (itemDescriptor.EquipmentProperties?.DescriptorId == Guid.Empty)
+                            {
+                                context.Items_EquipmentProperties.Add(itemDescriptor.EquipmentProperties);
+                            }
+                            else
+                            {
+                                EquipmentProperties? deletedEquipmentProperties =
+                                    context.Items_EquipmentProperties.FirstOrDefault(
+                                        ep => ep.DescriptorId == itemDescriptor.Id
+                                    );
+                                if (deletedEquipmentProperties != default)
+                                {
+                                    context.Items_EquipmentProperties.Remove(deletedEquipmentProperties);
+                                }
+                            }
+
+                            context.Items.Update(itemDescriptor);
 
                             break;
+                        }
                         case GameObjectType.Npc:
                             context.Npcs.Update((NpcBase)gameObject);
 

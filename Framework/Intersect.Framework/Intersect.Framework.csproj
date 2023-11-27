@@ -8,6 +8,7 @@
 
     <ItemGroup>
       <PackageReference Include="MessagePack.Annotations" Version="2.6.100-alpha" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" Version="7.0.14" />
       <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="7.0.0" />
       <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="7.0.0" />
       <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.1" />

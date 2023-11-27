@@ -1,12 +1,59 @@
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using Microsoft.EntityFrameworkCore;
 
 namespace Intersect.Framework.Reflection;
 
 public static partial class TypeExtensions
 {
+    public static string[] GetMappedColumnNames(this Type type)
+    {
+        return type.GetProperties()
+            .Where(propertyInfo => propertyInfo.GetCustomAttribute<NotMappedAttribute>() == default)
+            .GroupBy(
+                propertyInfo =>
+                {
+                    var foreignKeyAttribute = propertyInfo.GetCustomAttribute<ForeignKeyAttribute>();
+                    return foreignKeyAttribute == default ? propertyInfo.Name : foreignKeyAttribute.Name;
+                }
+            )
+            .SelectMany(
+                group =>
+                {
+                    var items = group.ToArray();
+                    if (items.Length > 1)
+                    {
+                        return items.Where(propertyInfo => propertyInfo.PropertyType.IsValueType)
+                            .Select(propertyInfo => propertyInfo.Name);
+                    }
+
+                    return items.SelectMany(
+                        propertyInfo =>
+                        {
+                            if (propertyInfo.PropertyType.IsValueType)
+                            {
+                                return new[] { propertyInfo.Name };
+                            }
+
+                            if (!propertyInfo.PropertyType.IsClass ||
+                                propertyInfo.PropertyType.IsAbstract ||
+                                propertyInfo.PropertyType.GetCustomAttribute<OwnedAttribute>() == default)
+                            {
+                                return Array.Empty<string>();
+                            }
+
+                            return propertyInfo.PropertyType.GetMappedColumnNames()
+                                .Select(name => string.Join('_', propertyInfo.Name, name));
+                        }
+                    );
+                }
+            )
+            .ToArray();
+    }
+
     public static string QualifiedGenericName(this Type type) =>
         $"{type.Name}<{string.Join(", ", type.GenericTypeArguments.Select(parameterType => parameterType.Name))}>";
 
