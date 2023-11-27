@@ -29,4 +29,12 @@ public partial class ItemRange
     public int LowRange { get; set; }
 
     public int HighRange { get; set; }
+
+    public void Validate()
+    {
+        if (LowRange > HighRange)
+        {
+            (LowRange, HighRange) = (HighRange, LowRange);
+        }
+    }
 }

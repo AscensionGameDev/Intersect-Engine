@@ -350,6 +350,49 @@ namespace Intersect.GameObjects
             return range != default;
         }
 
+        public void ModifyStatRangeHigh(Stat stat, int val)
+        {
+            EquipmentProperties ??= new();
+
+            if (EquipmentProperties.StatRanges.TryGetValue(stat, out var range))
+            {
+                range.HighRange = val;
+            }
+            else
+            {
+                var newRange = new ItemRange(0, val);
+                EquipmentProperties.StatRanges[stat] = newRange;
+            }
+        }
+
+        public void ModifyStatRangeLow(Stat stat, int val)
+        {
+            EquipmentProperties ??= new();
+
+            if (EquipmentProperties.StatRanges.TryGetValue(stat, out var range))
+            {
+                range.LowRange = val;
+            }
+            else
+            {
+                var newRange = new ItemRange(val, 0);
+                EquipmentProperties.StatRanges[stat] = newRange;
+            }
+        }
+
+        public void ValidateStatRanges()
+        {
+            if (StatRanges == default)
+            {
+                return;
+            }
+
+            foreach (var range in StatRanges)
+            {
+                range.Validate();
+            }
+        }
+
         public int GetEffectPercentage(ItemEffect type)
         {
             return Effects.Find(effect => effect.Type == type)?.Percentage ?? 0;

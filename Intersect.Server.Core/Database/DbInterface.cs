@@ -1298,6 +1298,8 @@ namespace Intersect.Server.Database
                                 throw new InvalidOperationException();
                             }
 
+                            itemDescriptor.ValidateStatRanges();
+
                             if (itemDescriptor.EquipmentProperties?.DescriptorId == Guid.Empty)
                             {
                                 context.Items_EquipmentProperties.Add(itemDescriptor.EquipmentProperties);

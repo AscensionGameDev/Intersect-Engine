@@ -13,9 +13,11 @@ using Intersect.Editor.General;
 using Intersect.Editor.Localization;
 using Intersect.Editor.Networking;
 using Intersect.Enums;
+using Intersect.Framework;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Ranges;
+using Intersect.Localization;
 using Intersect.Network.Packets.Server;
 using Intersect.Utilities;
 using static Intersect.GameObjects.EquipmentProperties;
@@ -231,9 +233,12 @@ namespace Intersect.Editor.Forms.Editors
             lblSpd.Text = Strings.ItemEditor.speedbonus;
             lblMag.Text = Strings.ItemEditor.abilitypowerbonus;
             lblMR.Text = Strings.ItemEditor.magicresistbonus;
-            lblRange.Text = Strings.ItemEditor.bonusrange;
             lblEffectPercent.Text = Strings.ItemEditor.bonusamount;
             lblEquipmentAnimation.Text = Strings.ItemEditor.equipmentanimation;
+
+            grpStatRanges.Text = Strings.ItemEditor.StatRangeTitle;
+            lblStatRangeFrom.Text = Strings.ItemEditor.StatRangeFrom;
+            lblStatRangeTo.Text = Strings.ItemEditor.StatRangeTo;
 
             grpWeaponProperties.Text = Strings.ItemEditor.weaponproperties;
             chk2Hand.Text = Strings.ItemEditor.twohanded;
@@ -368,7 +373,7 @@ namespace Intersect.Editor.Forms.Editors
                 nudAttackSpeedValue.Value = mEditorItem.AttackSpeedValue;
                 nudScaling.Value = mEditorItem.Scaling;
                 // This will be removed after conversion to a per-stat editor. Reminder that pre-migration LowRange == HighRange - Day
-                nudRange.Value = mEditorItem.StatRanges?.FirstOrDefault()?.HighRange ?? 0;
+                nudStatRangeHigh.Value = mEditorItem.StatRanges?.FirstOrDefault()?.HighRange ?? 0;
                 chkCanDrop.Checked = Convert.ToBoolean(mEditorItem.CanDrop);
                 chkCanBank.Checked = Convert.ToBoolean(mEditorItem.CanBank);
                 chkCanGuildBank.Checked = Convert.ToBoolean(mEditorItem.CanGuildBank);
@@ -514,6 +519,7 @@ namespace Intersect.Editor.Forms.Editors
                 chkStackable.Enabled = false;
 
                 RefreshBonusList();
+                RefreshStatRangeList();
             }
             else if (cmbType.SelectedIndex == (int)ItemType.Bag)
             {
@@ -783,27 +789,6 @@ namespace Intersect.Editor.Forms.Editors
 
             mEditorItem.SetEffectOfType(SelectedEffect, (int)nudEffectPercent.Value);
             lstBonusEffects.Items[lstBonusEffects.SelectedIndex] = GetBonusEffectRow(SelectedEffect);
-        }
-
-        private void nudRange_ValueChanged(object sender, EventArgs e)
-        {
-            // TODO This will be removed and replaced with a per-stat editor after the migration to StatRanges
-            var maxAndMin = (int)nudRange.Value;
-
-            if (maxAndMin == 0)
-            {
-                mEditorItem.EquipmentProperties = default;
-                return;
-            }
-
-            mEditorItem.EquipmentProperties ??= new EquipmentProperties(mEditorItem);
-            mEditorItem.EquipmentProperties.StatRanges ??= new Dictionary<Stat, ItemRange>();
-
-            mEditorItem.EquipmentProperties.StatRanges.Clear();
-            foreach (var stat in Enum.GetValues<Stat>())
-            {
-                mEditorItem.EquipmentProperties.StatRanges[stat] = new ItemRange(-maxAndMin, maxAndMin);
-            }
         }
 
         private void nudStr_ValueChanged(object sender, EventArgs e)
@@ -1345,6 +1330,26 @@ namespace Intersect.Editor.Forms.Editors
             }
         }
 
+        private void RefreshStatRangeList()
+        {
+            lstStatRanges.Items.Clear();
+            foreach (var (stat, statName) in Strings.Combat.stats)
+            {
+                lstStatRanges.Items.Add(GetStatRangeRowText((Stat)stat, statName));
+            }
+        }
+
+        private string GetStatRangeRowText(Stat stat, LocalizedString? statName = null)
+        {
+            if (statName == null && !Strings.Combat.stats.TryGetValue((int)stat, out statName))
+            {
+                statName = Strings.General.None;
+            }
+            
+            mEditorItem.TryGetRangeFor(stat, out var range);
+            return Strings.ItemEditor.StatRangeItem.ToString(statName, range?.LowRange ?? 0, range?.HighRange ?? 0);
+        }
+
         private bool IsValidBonusSelection
         {
             get => lstBonusEffects.SelectedIndex > -1 && lstBonusEffects.SelectedIndex < lstBonusEffects.Items.Count;
@@ -1360,6 +1365,11 @@ namespace Intersect.Editor.Forms.Editors
             var effectName = Strings.ItemEditor.bonuseffects[(int)itemEffect];
             var effectAmt = mEditorItem.GetEffectPercentage(itemEffect);
             return Strings.ItemEditor.BonusEffectItem.ToString(effectName, effectAmt);
+        }
+
+        private Stat? SelectedStatRange
+        {
+            get => Enum.IsDefined((Stat)lstStatRanges.SelectedIndex) ? (Stat)(lstStatRanges.SelectedIndex) : null;
         }
 
         private void lstBonusEffects_SelectedIndexChanged(object sender, EventArgs e)
@@ -1378,6 +1388,60 @@ namespace Intersect.Editor.Forms.Editors
             EffectValueUpdating = true;
             nudEffectPercent.Value = mEditorItem.GetEffectPercentage(selected);
             EffectValueUpdating = false;
+        }
+
+        private void nudStatRangeLow_ValueChanged(object sender, EventArgs e)
+        {
+            if (!SelectedStatRange.HasValue)
+            {
+                return;
+            }
+
+            mEditorItem.ModifyStatRangeLow(SelectedStatRange.Value, (int)nudStatRangeLow.Value);
+            UpdateStatRangeRow(lstStatRanges.SelectedIndex);
+            nudStatRangeLow.Focus();
+        }
+
+        private void nudStatRangeHigh_ValueChanged(object sender, EventArgs e)
+        {
+            if (!SelectedStatRange.HasValue)
+            {
+                return;
+            }
+
+            mEditorItem.ModifyStatRangeHigh(SelectedStatRange.Value, (int)nudStatRangeHigh.Value);
+            UpdateStatRangeRow(lstStatRanges.SelectedIndex);
+            nudStatRangeHigh.Focus();
+        }
+
+        private void UpdateStatRangeRow(int selectedIndex)
+        {
+            if (!SelectedStatRange.HasValue)
+            {
+                return;
+            }
+
+            lstStatRanges.Items[selectedIndex] = GetStatRangeRowText(SelectedStatRange.Value);
+        }
+
+        private void lstStatRanges_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            var statSelected = lstStatRanges.SelectedIndex >= 0;
+            nudStatRangeLow.Enabled = statSelected;
+            nudStatRangeHigh.Enabled = statSelected;
+
+            if (!SelectedStatRange.HasValue)
+            {
+                return;
+            }
+
+            if (!mEditorItem.TryGetRangeFor(SelectedStatRange.Value, out var range))
+            {
+                return;
+            }
+
+            nudStatRangeLow.Value = range.LowRange;
+            nudStatRangeHigh.Value = range.HighRange;
         }
     }
 
