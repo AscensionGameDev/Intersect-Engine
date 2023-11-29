@@ -1340,7 +1340,12 @@ namespace Intersect.Server.Entities
             switch (otherEntity)
             {
                 case Npc otherNpc:
-                    return Base == otherNpc.Base;
+                    if (!Base.NpcVsNpcEnabled && !otherNpc.Base.NpcVsNpcEnabled)
+                    {
+                        return true;
+                    }
+
+                    return !otherNpc.CanNpcCombat(this);
                 case Player otherPlayer:
                     var conditionLists = Base.PlayerFriendConditions;
                     if ((conditionLists?.Count ?? 0) == 0)
