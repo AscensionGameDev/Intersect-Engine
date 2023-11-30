@@ -56,12 +56,10 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         }
 
         [HttpGet("metrics")]
+        [Produces("application/json")]
         public object StatsMetrics()
         {
-            return new HttpResponseMessage()
-            {
-                Content = new StringContent(MetricsRoot.Instance.Metrics, System.Text.Encoding.UTF8, "application/json")
-            };
+            return Ok(MetricsRoot.Instance.Metrics );
         }
     }
 }

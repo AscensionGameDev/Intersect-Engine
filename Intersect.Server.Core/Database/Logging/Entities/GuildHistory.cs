@@ -104,8 +104,11 @@ namespace Intersect.Server.Database.Logging.Entities
 
         private static void Log(GuildHistory guildHistory)
         {
-            using var loggingContext = DbInterface.CreateLoggingContext(readOnly: false);
-            _ = loggingContext.GuildHistory.Add(guildHistory);
+            using (var loggingContext = DbInterface.CreateLoggingContext(readOnly: false))
+            {
+                loggingContext.GuildHistory.Add(guildHistory);
+                loggingContext.SaveChanges();
+            }
         }
     }
 }
