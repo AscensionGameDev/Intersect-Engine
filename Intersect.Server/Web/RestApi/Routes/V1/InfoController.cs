@@ -56,10 +56,9 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         }
 
         [HttpGet("metrics")]
-        [Produces("application/json")]
         public object StatsMetrics()
         {
-            return Ok(MetricsRoot.Instance.Metrics );
+            return Content(MetricsRoot.Instance.Metrics, "application/json");
         }
     }
 }
