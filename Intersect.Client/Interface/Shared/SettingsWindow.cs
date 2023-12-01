@@ -135,7 +135,7 @@ namespace Intersect.Client.Interface.Shared
 
         private Controls mKeybindingEditControls;
 
-        private Button mKeybindingEditBtn;
+        private Button? mKeybindingEditBtn;
 
         private readonly Button mKeybindingRestoreBtn;
 
@@ -663,52 +663,50 @@ namespace Intersect.Client.Interface.Shared
 
         private void OnKeyUp(Keys modifier, Keys key)
         {
-            if (modifier == Keys.None && key == Keys.None)
+            if (mKeybindingEditBtn == null)
             {
                 return;
             }
 
-            if (mKeybindingEditBtn != null)
+            if (key != Keys.None && !_keysDown.Remove(key))
             {
-                if (!_keysDown.Remove(key))
-                {
-                    return;
-                }
+                return;
+            }
 
-                mKeybindingEditControls.UpdateControl(mKeybindingEditControl, mKeyEdit, modifier, key);
-                mKeybindingEditBtn.Text = Strings.Keys.FormatKeyName(modifier, key);
+            mKeybindingEditControls.UpdateControl(mKeybindingEditControl, mKeyEdit, modifier, key);
+            mKeybindingEditBtn.Text = Strings.Keys.FormatKeyName(modifier, key);
 
-                if (key != Keys.None)
+            if (key != Keys.None)
+            {
+                foreach (var control in mKeybindingEditControls.ControlMapping)
                 {
-                    foreach (var control in mKeybindingEditControls.ControlMapping)
+                    if (control.Key == mKeybindingEditControl)
                     {
-                        if (control.Key == mKeybindingEditControl)
+                        continue;
+                    }
+
+                    var bindings = control.Value.Bindings;
+                    for (var bindingIndex = 0; bindingIndex < bindings.Count; bindingIndex++)
+                    {
+                        var binding = bindings[bindingIndex];
+
+                        if (binding.Modifier == modifier && binding.Key == key)
                         {
-                            continue;
-                        }
+                            // Remove this mapping.
+                            mKeybindingEditControls.UpdateControl(control.Key, bindingIndex, Keys.None, Keys.None);
 
-                        var bindings = control.Value.Bindings;
-                        for (var bindingIndex = 0; bindingIndex < bindings.Count; bindingIndex++)
-                        {
-                            var binding = bindings[bindingIndex];
-
-                            if (binding.Modifier == modifier && binding.Key == key)
-                            {
-                                // Remove this mapping.
-                                mKeybindingEditControls.UpdateControl(control.Key, bindingIndex, Keys.None, Keys.None);
-
-                                // Update UI.
-                                mKeybindingBtns[control.Key][bindingIndex].Text = Strings.Keys.keydict[Enum.GetName(typeof(Keys), Keys.None).ToLower()];
-                            }
+                            // Update UI.
+                            mKeybindingBtns[control.Key][bindingIndex].Text = Strings.Keys.keydict[Enum.GetName(typeof(Keys), Keys.None).ToLower()];
                         }
                     }
                 }
 
                 mKeybindingEditBtn.PlayHoverSound();
-                mKeybindingEditBtn = null;
-                _keysDown.Clear();
-                Interface.GwenInput.HandleInput = true;
             }
+
+            mKeybindingEditBtn = null;
+            _keysDown.Clear();
+            Interface.GwenInput.HandleInput = true;
         }
 
         // Methods.
