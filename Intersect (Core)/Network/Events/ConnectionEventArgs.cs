@@ -1,11 +1,10 @@
-﻿using System;
+﻿namespace Intersect.Network.Events;
 
-namespace Intersect.Network.Events
+public partial class ConnectionEventArgs : EventArgs
 {
-    public partial class ConnectionEventArgs : EventArgs
-    {
-        public NetworkStatus NetworkStatus { get; set; }
+    public Guid EventId { get; set; }
 
-        public IConnection Connection { get; set; }
-    }
+    public NetworkStatus NetworkStatus { get; set; }
+
+    public IConnection Connection { get; set; }
 }

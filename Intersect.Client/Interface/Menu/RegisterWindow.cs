@@ -153,7 +153,7 @@ namespace Intersect.Client.Interface.Menu
             {
                 Hide();
                 mMainMenu.Show();
-                Interface.MsgboxErrors.Add(new KeyValuePair<string, string>("", Strings.Errors.lostconnection));
+                Interface.ShowError(Strings.Errors.lostconnection);
             }
 
             // Re-Enable our buttons if we're not waiting for the server anymore with it disabled.
@@ -220,33 +220,27 @@ namespace Intersect.Client.Interface.Menu
                             }
                             else
                             {
-                                Interface.MsgboxErrors.Add(
-                                    new KeyValuePair<string, string>("", Strings.Registration.emailinvalid)
-                                );
+                                Interface.ShowError(Strings.Registration.emailinvalid);
                             }
                         }
                         else
                         {
-                            Interface.MsgboxErrors.Add(
-                                new KeyValuePair<string, string>("", Strings.Errors.passwordinvalid)
-                            );
+                            Interface.ShowError(Strings.Errors.passwordinvalid);
                         }
                     }
                     else
                     {
-                        Interface.MsgboxErrors.Add(
-                            new KeyValuePair<string, string>("", Strings.Registration.passwordmatch)
-                        );
+                        Interface.ShowError(Strings.Registration.passwordmatch);
                     }
                 }
                 else
                 {
-                    Interface.MsgboxErrors.Add(new KeyValuePair<string, string>("", Strings.Errors.usernameinvalid));
+                    Interface.ShowError(Strings.Errors.usernameinvalid);
                 }
             }
             else
             {
-                Interface.MsgboxErrors.Add(new KeyValuePair<string, string>("", Strings.Errors.notconnected));
+                Interface.ShowError(Strings.Errors.notconnected);
             }
         }
 

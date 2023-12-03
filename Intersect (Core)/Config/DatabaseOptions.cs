@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -8,6 +7,12 @@ namespace Intersect.Config
 {
     public partial class DatabaseOptions
     {
+#if DEBUG
+        private const bool DefaultKillServerOnConcurrencyException = true;
+#else
+        private const bool DefaultKillServerOnConcurrencyException = false;
+#endif
+
         [JsonConverter(typeof(StringEnumConverter))]
         public DatabaseType Type { get; set; } = DatabaseType.SQLite;
 
@@ -28,5 +33,7 @@ namespace Intersect.Config
         )]
         [DefaultValue(Logging.LogLevel.Error)]
         public Logging.LogLevel LogLevel { get; set; } = Logging.LogLevel.Error;
+
+        public bool KillServerOnConcurrencyException { get; set; } = DefaultKillServerOnConcurrencyException;
     }
 }

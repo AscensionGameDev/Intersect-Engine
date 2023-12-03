@@ -204,7 +204,7 @@ namespace Intersect.Client.Interface.Menu
             {
                 Hide();
                 mMainMenu.Show();
-                Interface.MsgboxErrors.Add(new KeyValuePair<string, string>("", Strings.Errors.lostconnection));
+                Interface.ShowError(Strings.Errors.lostconnection);
 
                 return;
             }
@@ -492,7 +492,7 @@ namespace Intersect.Client.Interface.Menu
             }
             else
             {
-                Interface.MsgboxErrors.Add(new KeyValuePair<string, string>("", Strings.CharacterCreation.invalidname));
+                Interface.ShowError(Strings.CharacterCreation.invalidname);
             }
         }
 

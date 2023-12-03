@@ -5,6 +5,7 @@ using Intersect.Server.Database;
 using Intersect.Server.Database.PlayerData;
 using Intersect.Server.Database.PlayerData.Security;
 using Intersect.Server.Entities;
+using Intersect.Server.General;
 using Intersect.Server.Localization;
 using Intersect.Server.Networking;
 using Intersect.Server.Notifications;
@@ -173,7 +174,11 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 }
             }
 
-            user.Delete();
+            if (!user.TryDelete())
+            {
+                var client = Globals.ClientLookup.Values.FirstOrDefault(c => c.User.Id == user.Id);
+                client?.LogAndDisconnect(default, nameof(DeleteUserByUsername));
+            }
 
             return user;
         }
@@ -201,7 +206,11 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 }
             }
 
-            user.Delete();
+            if (!user.TryDelete())
+            {
+                var client = Globals.ClientLookup.Values.FirstOrDefault(c => c.User.Id == user.Id);
+                client?.LogAndDisconnect(default, nameof(DeleteUserById));
+            }
 
             return user;
         }
@@ -930,7 +939,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             }
 
             var player = client?.Entity;
-            var targetIp = client?.GetIp() ?? string.Empty;
+            var targetIp = client?.Ip ?? string.Empty;
             switch (adminAction)
             {
                 case AdminAction.Ban:

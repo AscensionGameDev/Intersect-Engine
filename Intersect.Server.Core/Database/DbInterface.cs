@@ -79,11 +79,6 @@ namespace Intersect.Server.Database
 
         private static List<MapGrid> mapGrids = new();
 
-        /// <summary>
-        /// Creates a game context to query. Best practice is to scope this within a using statement.
-        /// </summary>
-        /// <param name="readOnly">Defines whether or not the context should initialize with change tracking. If readonly is true then SaveChanges will not work.</param>
-        /// <returns></returns>
         public static GameContext CreateGameContext(
             bool readOnly = true,
             bool explicitLoad = false,
@@ -99,9 +94,34 @@ namespace Intersect.Server.Database
             ),
             DatabaseType = Options.Instance.GameDatabase.Type,
             ExplicitLoad = explicitLoad,
+            KillServerOnConcurrencyException = Options.Instance.GameDatabase.KillServerOnConcurrencyException,
             LazyLoading = lazyLoading,
 #if DEBUG
             LoggerFactory = new IntersectLoggerFactory(nameof(GameContext)),
+#endif
+            QueryTrackingBehavior = queryTrackingBehavior,
+            ReadOnly = readOnly,
+        });
+
+        internal static LoggingContext CreateLoggingContext(
+            bool readOnly = true,
+            bool explicitLoad = false,
+            bool lazyLoading = false,
+            bool autoDetectChanges = false,
+            QueryTrackingBehavior? queryTrackingBehavior = default
+        ) => LoggingContext.Create(new DatabaseContextOptions
+        {
+            AutoDetectChanges = autoDetectChanges,
+            ConnectionStringBuilder = Options.Instance.LoggingDatabase.Type.CreateConnectionStringBuilder(
+                Options.Instance.LoggingDatabase,
+                LoggingDbFilename
+            ),
+            DatabaseType = Options.Instance.LoggingDatabase.Type,
+            ExplicitLoad = explicitLoad,
+            KillServerOnConcurrencyException = Options.Instance.LoggingDatabase.KillServerOnConcurrencyException,
+            LazyLoading = lazyLoading,
+#if DEBUG
+            LoggerFactory = new IntersectLoggerFactory(nameof(LoggingContext)),
 #endif
             QueryTrackingBehavior = queryTrackingBehavior,
             ReadOnly = readOnly,
@@ -127,32 +147,10 @@ namespace Intersect.Server.Database
             ),
             DatabaseType = Options.Instance.PlayerDatabase.Type,
             ExplicitLoad = explicitLoad,
+            KillServerOnConcurrencyException = Options.Instance.PlayerDatabase.KillServerOnConcurrencyException,
             LazyLoading = lazyLoading,
 #if DEBUG
             LoggerFactory = new IntersectLoggerFactory(nameof(PlayerContext)),
-#endif
-            QueryTrackingBehavior = queryTrackingBehavior,
-            ReadOnly = readOnly,
-        });
-
-        internal static LoggingContext CreateLoggingContext(
-            bool readOnly = true,
-            bool explicitLoad = false,
-            bool lazyLoading = false,
-            bool autoDetectChanges = false,
-            QueryTrackingBehavior? queryTrackingBehavior = default
-        ) => LoggingContext.Create(new DatabaseContextOptions
-        {
-            AutoDetectChanges = autoDetectChanges,
-            ConnectionStringBuilder = Options.Instance.LoggingDatabase.Type.CreateConnectionStringBuilder(
-                Options.Instance.LoggingDatabase,
-                LoggingDbFilename
-            ),
-            DatabaseType = Options.Instance.LoggingDatabase.Type,
-            ExplicitLoad = explicitLoad,
-            LazyLoading = lazyLoading,
-#if DEBUG
-            LoggerFactory = new IntersectLoggerFactory(nameof(LoggingContext)),
 #endif
             QueryTrackingBehavior = queryTrackingBehavior,
             ReadOnly = readOnly,
@@ -1675,7 +1673,7 @@ namespace Intersect.Server.Database
             {
                 using (var context = CreateGameContext(readOnly: false))
                 {
-                    var mapFolders = context.MapFolders.FirstOrDefault();
+                    var mapFolders = context.MapFolders.OrderBy(f => f.Id).FirstOrDefault();
                     if (mapFolders == null)
                     {
                         context.MapFolders.Add(MapList.List);
@@ -1731,7 +1729,7 @@ namespace Intersect.Server.Database
             {
                 using (var context = CreateGameContext(readOnly: false))
                 {
-                    var time = context.Time.FirstOrDefault();
+                    var time = context.Time.OrderBy(t => t.Id).FirstOrDefault();
                     if (time == null)
                     {
                         context.Time.Add(TimeBase.GetTimeBase());

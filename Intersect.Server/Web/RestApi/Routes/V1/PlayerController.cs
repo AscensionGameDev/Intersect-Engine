@@ -239,7 +239,17 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                     return BadRequest($@"Failed to load user for {player.Name}!");
                 }
 
-                user.DeleteCharacter(user.Players.FirstOrDefault(p => p.Id == player.Id));
+                var matchingPlayer = user.Players.FirstOrDefault(p => p.Id == player.Id);
+                if (matchingPlayer != default)
+                {
+                    if (!user.TryDeleteCharacter(matchingPlayer))
+                    {
+                        if (client.User == user)
+                        {
+                            client.LogAndDisconnect(player.Id, nameof(Database.PlayerData.User.TryDeleteCharacter));
+                        }
+                    }
+                }
 
                 return player;
             }
@@ -788,7 +798,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
             var user = client?.User;
             var userId = user?.Id ?? player.UserId;
-            var targetIp = client?.GetIp() ?? string.Empty;
+            var targetIp = client?.Ip ?? string.Empty;
 
             var actionPerformer = IntersectUser;
             if (actionPerformer == default)

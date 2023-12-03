@@ -28,7 +28,7 @@ namespace Intersect.Server.Core.Commands
             var name = target.Entity.Name;
             if (string.IsNullOrEmpty(Ban.CheckBan(target.User, "")))
             {
-                Ban.Add(target, duration, reason, Strings.Commands.banuser, ip ? target.GetIp() : "");
+                Ban.Add(target, duration, reason, Strings.Commands.banuser, ip ? target.Ip : "");
                 target.Disconnect();
                 PacketSender.SendGlobalMsg(Strings.Account.banned.ToString(name));
                 Console.WriteLine($@"    {Strings.Account.banned.ToString(name)}");

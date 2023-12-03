@@ -163,7 +163,11 @@ namespace Intersect.Server.Database.PlayerData.Players
             if (!Guilds.TryGetValue(id, out Guild found))
             {
                 using var context = DbInterface.CreatePlayerContext();
-                var guild = context.Guilds.Where(g => g.Id == id).Include(g => g.Bank).Include(g => g.Variables).FirstOrDefault();
+                var guild = context.Guilds.Where(g => g.Id == id)
+                    .Include(g => g.Bank)
+                    .Include(g => g.Variables)
+                    .AsSplitQuery()
+                    .FirstOrDefault();
                 if (guild == default)
                 {
                     return default;
@@ -301,7 +305,7 @@ namespace Intersect.Server.Database.PlayerData.Players
                 // Send our entity data to nearby players.
                 PacketSender.SendEntityDataToProximity(Player.FindOnline(targetId));
 
-                LogActivity(Id, targetPlayer?.UserId ?? default, targetId, targetPlayer?.Client?.GetIp() ?? string.Empty, initiator, action);
+                LogActivity(Id, targetPlayer?.UserId ?? default, targetId, targetPlayer?.Client?.Ip ?? string.Empty, initiator, action);
             }
         }
 
@@ -387,7 +391,7 @@ namespace Intersect.Server.Database.PlayerData.Players
                         Id,
                         targetPlayer?.UserId ?? default,
                         targetId,
-                        targetPlayer?.Client?.GetIp() ?? string.Empty,
+                        targetPlayer?.Client?.Ip ?? string.Empty,
                         initiator,
                         GuildActivityType.Demoted,
                         rank.ToString()
@@ -399,7 +403,7 @@ namespace Intersect.Server.Database.PlayerData.Players
                         Id,
                         targetPlayer?.UserId ?? default,
                         targetId,
-                        targetPlayer?.Client?.GetIp() ?? string.Empty,
+                        targetPlayer?.Client?.Ip ?? string.Empty,
                         initiator,
                         GuildActivityType.Promoted,
                         rank.ToString()

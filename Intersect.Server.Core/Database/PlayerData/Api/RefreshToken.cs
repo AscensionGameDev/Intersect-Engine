@@ -350,33 +350,48 @@ namespace Intersect.Server.Database.PlayerData.Api
 
         public static async Task<int> RemoveExpiredAsync(int pruneCount, CancellationToken cancellationToken = default)
         {
-            using (var context = DbInterface.CreatePlayerContext(readOnly: false))
+            try
             {
-                var remaining = 0;
-                try
+                using (var context = DbInterface.CreatePlayerContext(readOnly: false))
                 {
-                    var tokensToRemove = context.RefreshTokens.Where(queryToken => queryToken.Expires < DateTime.UtcNow).Take(pruneCount).ToArray();
-                    var unblockedTokens = tokensToRemove.Where(token => _pendingChanges.TryAdd(token.Id, EntityState.Deleted)).ToArray();
-                    context.RefreshTokens.RemoveRange(unblockedTokens);
-                    _ = await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
-                    foreach (var token in unblockedTokens)
+                    var remaining = 0;
+                    try
                     {
-                        _ = _pendingChanges.TryRemove(token.Id, out _);
+                        var tokensToRemove = context.RefreshTokens
+                            .Where(queryToken => queryToken.Expires < DateTime.UtcNow)
+                            .OrderBy(qt => qt.Expires)
+                            .Take(pruneCount)
+                            .ToArray();
+                        var unblockedTokens = tokensToRemove
+                            .Where(token => _pendingChanges.TryAdd(token.Id, EntityState.Deleted))
+                            .ToArray();
+                        context.RefreshTokens.RemoveRange(unblockedTokens);
+                        _ = await context.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+                        foreach (var token in unblockedTokens)
+                        {
+                            _ = _pendingChanges.TryRemove(token.Id, out _);
+                        }
+
+                        remaining = tokensToRemove.Length - unblockedTokens.Length;
+                    }
+                    catch (DbUpdateConcurrencyException concurrencyException)
+                    {
+                        concurrencyException.LogError();
                     }
 
-                    remaining = tokensToRemove.Length - unblockedTokens.Length;
-                }
-                catch (DbUpdateConcurrencyException concurrencyException)
-                {
-                    concurrencyException.LogError();
-                }
+                    if (remaining == 0)
+                    {
+                        remaining = context.RefreshTokens.Any(queryToken => queryToken.Expires < DateTime.UtcNow)
+                            ? 1
+                            : 0;
+                    }
 
-                if (remaining == 0)
-                {
-                    remaining = context.RefreshTokens.Where(queryToken => queryToken.Expires < DateTime.UtcNow).Any() ? 1 : 0;
+                    return remaining;
                 }
-
-                return remaining;
+            }
+            catch
+            {
+                throw;
             }
         }
     }

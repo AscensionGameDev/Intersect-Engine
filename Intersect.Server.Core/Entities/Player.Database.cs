@@ -222,16 +222,16 @@ namespace Intersect.Server.Entities
             }
         }
 
-        public void AddFriend(Player friend)
+        public bool TryAddFriend(Player friend)
         {
-            if (friend == null || friend == this)
+            if (friend == this)
             {
-                return;
+                return true;
             }
 
             if (CachedFriends.ContainsKey(friend.Id))
             {
-                return;
+                return true;
             }
 
             //No passing in custom contexts here.. they may already have this user in the change tracker and things just get weird.
@@ -244,21 +244,27 @@ namespace Intersect.Server.Entities
                 {
                     var friendship = new Database.PlayerData.Players.Friend(this, friend);
                     context.Entry(friendship).State = EntityState.Added;
-                    context.SaveChanges();
+                    if (context.SaveChanges() >= 0)
+                    {
+                        return true;
+                    }
                 }
+
+                Client.LogAndDisconnect(Id, nameof(TryAddFriend));
+                return false;
             }
             catch (Exception ex)
             {
                 Log.Error(ex, "Failed to add friend " + friend.Name + " to " + Name + "'s friends list.");
-                //ServerContext.DispatchUnhandledException(new Exception("Failed to save user, shutting down to prevent rollbacks!"), true);
+                return false;
             }
         }
 
-        public static void RemoveFriendship(Guid id, Guid otherId)
+        public static bool TryRemoveFriendship(Guid id, Guid otherId)
         {
             if (id == Guid.Empty || otherId == Guid.Empty)
             {
-                return;
+                return true;
             }
 
             //No passing in custom contexts here.. they may already have this user in the change tracker and things just get weird.
@@ -278,13 +284,14 @@ namespace Intersect.Server.Entities
                     {
                         context.Entry(otherFriendship).State = EntityState.Deleted;
                     }
-                    context.SaveChanges();
+
+                    return context.SaveChanges() >= 0;
                 }
             }
             catch (Exception ex)
             {
                 Log.Error(ex, $"Failed to remove friendship between {id} and {otherId}.");
-                //ServerContext.DispatchUnhandledException(new Exception("Failed to save user, shutting down to prevent rollbacks!"), true);
+                return false;
             }
         }
         #endregion

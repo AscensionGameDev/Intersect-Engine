@@ -99,6 +99,8 @@ namespace Intersect.Server.Database.Logging.Entities
             SwitchPlayer,
 
             NameChange,
+
+            DisconnectDatabaseFailure,
         }
 
         /// <summary>
@@ -112,28 +114,59 @@ namespace Intersect.Server.Database.Logging.Entities
         /// <param name="meta">Any extra metadata/notes for this event</param>
         public static void LogActivity(Guid userId, Guid playerId, string ip, PeerType peer, UserAction action, string meta)
         {
-            if (Options.Instance.Logging.UserActivity)
+            if (!Options.Instance.Logging.UserActivity)
             {
-                DbInterface.Pool.QueueWorkItem(new Action<UserActivityHistory>(Log), new UserActivityHistory
-                {
-                    TimeStamp = DateTime.UtcNow,
-                    UserId = userId,
-                    PlayerId = playerId,
-                    Ip = ip ?? "",
-                    Peer = peer,
-                    Action = action,
-                    Meta = meta,
-                });
+                return;
             }
+
+            DbInterface.Pool.QueueWorkItem(Log, new UserActivityHistory
+            {
+                TimeStamp = DateTime.UtcNow,
+                UserId = userId,
+                PlayerId = playerId,
+                Ip = ip ?? string.Empty,
+                Peer = peer,
+                Action = action,
+                Meta = meta,
+            });
+        }
+
+        public static async Task<UserActivityHistory?> LogActivityAsync(
+            Guid userId,
+            Guid playerId,
+            string ip,
+            PeerType peer,
+            UserAction action,
+            string meta
+        )
+        {
+
+            if (!Options.Instance.Logging.UserActivity)
+            {
+                return default;
+            }
+
+            var history = new UserActivityHistory
+            {
+                TimeStamp = DateTime.UtcNow,
+                UserId = userId,
+                PlayerId = playerId,
+                Ip = ip ?? string.Empty,
+                Peer = peer,
+                Action = action,
+                Meta = meta,
+            };
+
+            var result = DbInterface.Pool.QueueWorkItem(Log, history);
+            result.GetWorkItemResult();
+            return history;
         }
 
         private static void Log(UserActivityHistory userActivityHistory)
         {
-            using (var loggingContext = DbInterface.CreateLoggingContext(readOnly: false))
-            {
-                loggingContext.UserActivityHistory.Add(userActivityHistory);
-                loggingContext.SaveChanges();
-            }
+            using var loggingContext = DbInterface.CreateLoggingContext(readOnly: false);
+            loggingContext.UserActivityHistory.Add(userActivityHistory);
+            loggingContext.SaveChanges();
         }
     }
 }

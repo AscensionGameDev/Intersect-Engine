@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-using Intersect.Client.Framework.Gwen.Control;
+﻿using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Localization;
 
 namespace Intersect.Client.Interface.Shared.Errors
@@ -10,42 +8,37 @@ namespace Intersect.Client.Interface.Shared.Errors
     {
 
         //Controls
-        private List<ErrorWindow> mErrors = new List<ErrorWindow>();
+        private readonly List<ErrorWindow> _windows = new();
 
         //Canvasses
-        private Canvas mGameCanvas;
-
-        private Canvas mMenuCanvas;
+        private readonly Canvas _gameCanvas;
+        private readonly Canvas _menuCanvas;
 
         //Init
         public ErrorHandler(Canvas menuCanvas, Canvas gameCanvas)
         {
-            mGameCanvas = gameCanvas;
-            mMenuCanvas = menuCanvas;
+            _gameCanvas = gameCanvas;
+            _menuCanvas = menuCanvas;
         }
 
         public void Update()
         {
-            if (Interface.MsgboxErrors.Count > 0)
+            while (Interface.TryDequeueErrorMessage(out var message))
             {
-                mErrors.Add(
+                _windows.Add(
                     new ErrorWindow(
-                        mGameCanvas, mMenuCanvas, Interface.MsgboxErrors[0].Value,
-                        !string.IsNullOrEmpty(Interface.MsgboxErrors[0].Key)
-                            ? Interface.MsgboxErrors[0].Key
-                            : Strings.Errors.title.ToString()
+                        _gameCanvas,
+                        _menuCanvas,
+                        message.Value,
+                        string.IsNullOrWhiteSpace(message.Key) ? Strings.Errors.title.ToString() : message.Key
                     )
                 );
-
-                Interface.MsgboxErrors.RemoveAt(0);
             }
 
-            for (var i = 0; i < mErrors.Count; i++)
+            var windowsToRemove = _windows.Where(window => !window.Update()).ToArray();
+            foreach (var window in windowsToRemove)
             {
-                if (!mErrors[i].Update())
-                {
-                    mErrors.RemoveAt(i);
-                }
+                _windows.Remove(window);
             }
         }
 

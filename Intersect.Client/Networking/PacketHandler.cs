@@ -1199,7 +1199,7 @@ namespace Intersect.Client.Networking
         {
             Fade.FadeIn(ClientConfiguration.Instance.FadeDurationMs);
             Globals.WaitingOnServer = false;
-            Interface.Interface.MsgboxErrors.Add(new KeyValuePair<string, string>(packet.Header, packet.Error));
+            Interface.Interface.ShowError(packet.Header, packet.Error);
             Interface.Interface.MenuUi?.Reset();
         }
 
@@ -2096,19 +2096,13 @@ namespace Intersect.Client.Networking
         {
             if (packet.Succeeded)
             {
-                //Show Success Message and Open Login Screen
-                Interface.Interface.MsgboxErrors.Add(
-                    new KeyValuePair<string, string>(Strings.ResetPass.success, Strings.ResetPass.successmsg)
-                );
-
+                // Show Success Message and Open Login Screen
+                Interface.Interface.ShowError(Strings.ResetPass.success, Strings.ResetPass.successmsg);
                 Interface.Interface.MenuUi.MainMenu.NotifyOpenLogin();
             }
             else
             {
-                //Show Error Message
-                Interface.Interface.MsgboxErrors.Add(
-                    new KeyValuePair<string, string>(Strings.ResetPass.fail, Strings.ResetPass.failmsg)
-                );
+                Interface.Interface.ShowError(Strings.ResetPass.fail, Strings.ResetPass.failmsg);
             }
 
             Globals.WaitingOnServer = false;

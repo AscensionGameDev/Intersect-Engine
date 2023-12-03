@@ -212,15 +212,17 @@ public sealed class LiteNetLibInterface : INetworkLayerInterface, INetEventListe
             return;
         }
 
+        string? message = default;
         if (disconnectInfo.Reason != DisconnectReason.DisconnectPeerCalled)
         {
             try
             {
-                var message = (disconnectInfo.AdditionalData.EndOfData
-                    ? string.Empty
-                    : disconnectInfo.AdditionalData.GetString());
+                if (!disconnectInfo.AdditionalData.EndOfData)
+                {
+                    message = disconnectInfo.AdditionalData.GetString();
+                }
                 Log.Debug(
-                    $"DCON: {peer.EndPoint} \"{disconnectInfo.Reason}\" ({disconnectInfo.SocketErrorCode}): {message}"
+                    $"DCON: {peer.EndPoint} \"{disconnectInfo.Reason}\" ({disconnectInfo.SocketErrorCode}): {message ?? "N/A"}"
                 );
             }
             catch (Exception exception)
@@ -249,10 +251,16 @@ public sealed class LiteNetLibInterface : INetworkLayerInterface, INetEventListe
             return;
         }
 
+        if (!Guid.TryParse(message, out var eventId))
+        {
+
+        }
+
         OnDisconnected?.Invoke(
             this,
             new ConnectionEventArgs
             {
+                EventId = eventId,
                 Connection = connection,
                 NetworkStatus = NetworkStatus.Offline,
             }

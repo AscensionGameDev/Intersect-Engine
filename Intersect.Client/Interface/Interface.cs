@@ -18,11 +18,13 @@ namespace Intersect.Client.Interface
     public static partial class Interface
     {
 
-        public static readonly List<KeyValuePair<string, string>> MsgboxErrors = new();
+        private static readonly Queue<KeyValuePair<string, string>> _errorMessages = new();
+
+        public static bool TryDequeueErrorMessage(out KeyValuePair<string, string> message) => _errorMessages.TryDequeue(out message);
 
         public static void ShowError(string message, string? header = default)
         {
-            MsgboxErrors.Add(new KeyValuePair<string, string>(header ?? string.Empty, message));
+            _errorMessages.Enqueue(new KeyValuePair<string, string>(header ?? string.Empty, message));
         }
 
         public static ErrorHandler ErrorMsgHandler;

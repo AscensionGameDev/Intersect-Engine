@@ -103,7 +103,7 @@ internal sealed partial class NetworkedPacketHandler
             var user = User.TryLogin(packet.Username, packet.Password);
             if (user == null)
             {
-                UserActivityHistory.LogActivity(Guid.Empty, Guid.Empty, client?.GetIp(), UserActivityHistory.PeerType.Editor, UserActivityHistory.UserAction.FailedLogin, packet.Username);
+                UserActivityHistory.LogActivity(Guid.Empty, Guid.Empty, client?.Ip, UserActivityHistory.PeerType.Editor, UserActivityHistory.UserAction.FailedLogin, packet.Username);
 
                 client.FailedAttempt();
                 PacketSender.SendError(client, Strings.Account.badlogin);

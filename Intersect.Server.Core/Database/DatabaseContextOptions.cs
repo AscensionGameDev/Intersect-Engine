@@ -21,6 +21,8 @@ public record DatabaseContextOptions
 
     public bool ExplicitLoad { get; init; }
 
+    public bool KillServerOnConcurrencyException { get; init; }
+
     public bool LazyLoading { get; init; }
 
     public ILoggerFactory? LoggerFactory { get; init; }

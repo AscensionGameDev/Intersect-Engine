@@ -913,6 +913,9 @@ namespace Intersect.Client.Localization
             public static LocalizedString HostNotFound =
                 @"DNS resolution error, please report this to the game administrator.";
 
+            public static LocalizedString DisconnectionEvent =
+                @"Please provide this message to your administrator: {0}";
+
         }
 
         public partial struct Words
@@ -1106,6 +1109,9 @@ namespace Intersect.Client.Localization
 
         public partial struct Internals
         {
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString ResolutionXByY = @"{0}x{1}";
+
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString Bounds = @"Bounds";
 
