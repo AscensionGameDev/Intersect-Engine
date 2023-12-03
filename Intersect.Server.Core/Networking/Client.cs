@@ -6,12 +6,15 @@ using Intersect.Core;
 using Intersect.Logging;
 using Intersect.Network;
 using Intersect.Network.Packets;
+using Intersect.Server.Database.Logging.Entities;
 using Intersect.Server.Database.PlayerData;
 using Intersect.Server.Database.PlayerData.Security;
 using Intersect.Server.Entities;
 using Intersect.Server.General;
 using Intersect.Server.Metrics;
 using Intersect.Utilities;
+using Microsoft.NET.StringTools;
+using Strings = Intersect.Server.Localization.Strings;
 
 namespace Intersect.Server.Networking
 {
@@ -20,6 +23,8 @@ namespace Intersect.Server.Networking
     {
 
         public Guid EditorMap = Guid.Empty;
+
+        private bool _crashing;
 
         //Client Properties
         public bool IsEditor;
@@ -200,14 +205,20 @@ namespace Intersect.Server.Networking
             return Connection?.IsConnected ?? false;
         }
 
-        public string GetIp()
+        public string? Ip
         {
-            if (!IsConnected())
+            get
             {
-                return "";
+                try
+                {
+                    return Connection?.Ip;
+                }
+                catch (Exception exception)
+                {
+                    Log.Warn(exception, $"Failed to get IP for user {User.Id}");
+                    return default;
+                }
             }
-
-            return Connection?.Ip ?? "";
         }
 
         public static Client CreateBeta4Client(IApplicationContext context, INetwork network, IConnection connection)
@@ -237,7 +248,11 @@ namespace Intersect.Server.Networking
 
             if (!force && !IsEditor)
             {
-                User?.Save();
+                if (User?.Save() == UserSaveResult.DatabaseFailure)
+                {
+                    LogAndDisconnect(Entity?.Id ?? default, nameof(Logout));
+                    return;
+                }
             }
 
             SetUser(null);
@@ -325,7 +340,7 @@ namespace Intersect.Server.Networking
                     {
                         var packetType = packet.GetType().Name;
                         var packetMessage =
-                            $"Sending Packet Error! [Packet: {packetType} | User: {this.Name ?? ""} | Player: {this.Entity?.Name ?? ""} | IP {this.GetIp()}]";
+                            $"Sending Packet Error! [Packet: {packetType} | User: {this.Name ?? ""} | Player: {this.Entity?.Name ?? ""} | IP {this.Ip}]";
 
                         // TODO: Re-combine these once we figure out how to prevent the OutOfMemoryException that happens occasionally
                         Log.Error(packetMessage);
@@ -355,6 +370,11 @@ namespace Intersect.Server.Networking
 
         public void HandlePackets()
         {
+            if (_crashing)
+            {
+                return;
+            }
+
             var banned = false;
             if (Connection != null)
             {
@@ -375,45 +395,57 @@ namespace Intersect.Server.Networking
 
                     mBanChecked = true;
                 }
-                if (!banned)
+
+                if (banned)
                 {
-                    while (HandlePacketQueue.TryDequeue(out IPacket packet))
+                    return;
+                }
+
+                while (HandlePacketQueue.TryDequeue(out IPacket packet))
+                {
+                    if (_crashing)
                     {
-                        if (Connection != null)
+                        return;
+                    }
+
+                    if (Connection == null)
+                    {
+                        continue;
+                    }
+
+                    try
+                    {
+                        PacketHandler.Instance.ProcessPacket(packet, this);
+                        if (Options.Instance.Metrics.Enable)
                         {
-                            try
-                            {
-                                PacketHandler.Instance.ProcessPacket(packet, this);
-                                if (Options.Instance.Metrics.Enable)
-                                {
-                                    MetricsRoot.Instance.Network.TotalReceivedPacketHandlingTime.Record(Timing.Global.Milliseconds - packet.ReceiveTime);
-                                }
-                            }
-                            catch (Exception exception)
-                            {
-                                var packetType = packet.GetType().Name;
-                                var packetMessage =
-                                    $"Client Packet Error! [Packet: {packetType} | User: {this.Name ?? ""} | Player: {this.Entity?.Name ?? ""} | IP {this.GetIp()}]";
+                            MetricsRoot.Instance.Network.TotalReceivedPacketHandlingTime.Record(
+                                Timing.Global.Milliseconds - packet.ReceiveTime
+                            );
+                        }
+                    }
+                    catch (Exception exception)
+                    {
+                        var packetType = packet.GetType().Name;
+                        var packetMessage =
+                            $"Client Packet Error! [Packet: {packetType} | User: {this.Name ?? ""} | Player: {this.Entity?.Name ?? ""} | IP {this.Ip}]";
 
-                                // TODO: Re-combine these once we figure out how to prevent the OutOfMemoryException that happens occasionally
-                                Log.Error(packetMessage);
-                                Log.Error(new ExceptionInfo(exception));
-                                if (exception.InnerException != null)
-                                {
-                                    Log.Error(new ExceptionInfo(exception.InnerException));
-                                }
+                        // TODO: Re-combine these once we figure out how to prevent the OutOfMemoryException that happens occasionally
+                        Log.Error(packetMessage);
+                        Log.Error(new ExceptionInfo(exception));
+                        if (exception.InnerException != null)
+                        {
+                            Log.Error(new ExceptionInfo(exception.InnerException));
+                        }
 
-                                // Make the call that triggered the OOME in the first place so that we know when it stops happening
-                                Log.Error(exception, packetMessage);
+                        // Make the call that triggered the OOME in the first place so that we know when it stops happening
+                        Log.Error(exception, packetMessage);
 
 #if DIAGNOSTIC
-                                this.Disconnect($"Error processing packet type '{packetType}'.");
+                            this.Disconnect($"Error processing packet type '{packetType}'.");
 #else
-                                this.Disconnect($"Error processing packet.");
+                        this.Disconnect($"Error processing packet.");
 #endif
-                                break;
-                            }
-                        }
+                        break;
                     }
                 }
             }
@@ -421,6 +453,29 @@ namespace Intersect.Server.Networking
             {
                 PacketHandlingQueued = false;
             }
+        }
+
+        public async Task LogAndDisconnect(Guid? playerId, string? meta = default)
+        {
+            _crashing = true;
+            HandlePacketQueue.Clear();
+
+            var history = await UserActivityHistory.LogActivityAsync(
+                User?.Id ?? default,
+                playerId ?? Entity?.Id ?? default,
+                Ip,
+                IsEditor ? UserActivityHistory.PeerType.Editor : UserActivityHistory.PeerType.Client,
+                UserActivityHistory.UserAction.DisconnectDatabaseFailure,
+                meta
+            );
+
+            var message = history?.Id.ToString();
+            if (message == default)
+            {
+                Log.Error($"Failed to record crash for {User?.Id.ToString() ?? "N/A"}");
+            }
+
+            Disconnect(message ?? Strings.Networking.ServerFull, loggingOut: true);
         }
 
         #region Implementation of IPacketSender

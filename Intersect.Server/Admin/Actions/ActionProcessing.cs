@@ -42,7 +42,7 @@ namespace Intersect.Server.Admin.Actions
 
                 // Log the failed ban attempt.
                 UserActivityHistory.LogActivity(
-                    target.UserId, target.Id, target.Client?.GetIp(),
+                    target.UserId, target.Id, target.Client?.Ip,
                     UserActivityHistory.PeerType.Client, UserActivityHistory.UserAction.DisconnectBanFail,
                     $"{target.User?.Name},{target.Name}");
             }
@@ -57,14 +57,14 @@ namespace Intersect.Server.Admin.Actions
             else
             {
                 // If BanIp is false, Client is null, or GetIp() returns null: resolve to string.Empty (no IP).
-                var ip = (action.BanIp ? target.Client?.GetIp() : default) ?? string.Empty;
+                var ip = (action.BanIp ? target.Client?.Ip : default) ?? string.Empty;
 
                 // Ban the targeted user.
                 Ban.Add(targetUsername, action.DurationDays, action.Reason ?? string.Empty, player.Name, ip);
 
                 // Log the successful ban attempt.
                 UserActivityHistory.LogActivity(
-                    target.UserId, target.Id, target.Client?.GetIp(),
+                    target.UserId, target.Id, target.Client?.Ip,
                     UserActivityHistory.PeerType.Client, UserActivityHistory.UserAction.DisconnectBan,
                     $"{target.User?.Name},{target.Name}"
                 );
@@ -102,7 +102,7 @@ namespace Intersect.Server.Admin.Actions
 
                 // Log the failed kick attempt.
                 UserActivityHistory.LogActivity(
-                    target.UserId, target.Id, target.Client?.GetIp(),
+                    target.UserId, target.Id, target.Client?.Ip,
                     UserActivityHistory.PeerType.Client, UserActivityHistory.UserAction.DisconnectKickFail,
                     $"{target.User?.Name},{target.Name}");
             }
@@ -110,7 +110,7 @@ namespace Intersect.Server.Admin.Actions
             {
                 // Log the successful kick attempt.
                 UserActivityHistory.LogActivity(
-                    target.UserId, target.Id, target.Client?.GetIp(),
+                    target.UserId, target.Id, target.Client?.Ip,
                     UserActivityHistory.PeerType.Client, UserActivityHistory.UserAction.DisconnectKick,
                     $"{target.User?.Name},{target.Name}");
 
@@ -147,7 +147,7 @@ namespace Intersect.Server.Admin.Actions
 
                 // Log the failed kill attempt.
                 UserActivityHistory.LogActivity(
-                    target.UserId, target.Id, target.Client?.GetIp(),
+                    target.UserId, target.Id, target.Client?.Ip,
                     UserActivityHistory.PeerType.Client, UserActivityHistory.UserAction.KillFail,
                     $"{target.User?.Name},{target.Name}");
             }
@@ -155,7 +155,7 @@ namespace Intersect.Server.Admin.Actions
             {
                 // Log the successful kill attempt.
                 UserActivityHistory.LogActivity(
-                    target.UserId, target.Id, target.Client?.GetIp(),
+                    target.UserId, target.Id, target.Client?.Ip,
                     UserActivityHistory.PeerType.Client, UserActivityHistory.UserAction.Kill,
                     $"{target.User?.Name},{target.Name}");
 
@@ -201,7 +201,7 @@ namespace Intersect.Server.Admin.Actions
 
                 // Log the failed mute attempt.
                 UserActivityHistory.LogActivity(
-                    target.UserId, target.Id, target.Client?.GetIp(),
+                    target.UserId, target.Id, target.Client?.Ip,
                     UserActivityHistory.PeerType.Client, UserActivityHistory.UserAction.MuteFail,
                     $"{target.User?.Name},{target.Name}");
             }
@@ -216,14 +216,14 @@ namespace Intersect.Server.Admin.Actions
             else
             {
                 // If BanIp is false, Client is null, or GetIp() returns null: resolve to string.Empty (no IP).
-                var ip = (action.BanIp ? target.Client?.GetIp() : default) ?? string.Empty;
+                var ip = (action.BanIp ? target.Client?.Ip : default) ?? string.Empty;
 
                 // Mute the targeted user.
                 Mute.Add(targetUsername, action.DurationDays, action.Reason ?? string.Empty, player.Name, ip);
 
                 // Log the successful mute attempt.
                 UserActivityHistory.LogActivity(
-                    target.UserId, target.Id, target.Client?.GetIp(),
+                    target.UserId, target.Id, target.Client?.Ip,
                     UserActivityHistory.PeerType.Client, UserActivityHistory.UserAction.Mute,
                     $"{target.User?.Name},{target.Name}"
                 );

@@ -10,6 +10,7 @@ using Intersect.Server.Database.PlayerData.Players;
 using Intersect.Server.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Primitives;
 
@@ -71,6 +72,20 @@ public abstract partial class IntersectDbContext<TDbContext> : DbContext, IDbCon
                                     (ContextOptions.ReadOnly && !ContextOptions.ExplicitLoad
                                         ? QueryTrackingBehavior.NoTracking
                                         : QueryTrackingBehavior.TrackAll);
+
+#if DEBUG
+        optionsBuilder.ConfigureWarnings(w => w.Throw(RelationalEventId.MultipleCollectionIncludeWarning));
+        optionsBuilder.ConfigureWarnings(w => w.Throw(RelationalEventId.QueryPossibleUnintendedUseOfEqualsWarning));
+        optionsBuilder.ConfigureWarnings(w => w.Throw(CoreEventId.RowLimitingOperationWithoutOrderByWarning));
+        optionsBuilder.ConfigureWarnings(w => w.Throw(CoreEventId.DistinctAfterOrderByWithoutRowLimitingOperatorWarning));
+        optionsBuilder.ConfigureWarnings(w => w.Throw(CoreEventId.FirstWithoutOrderByAndFilterWarning));
+#else
+        optionsBuilder.ConfigureWarnings(w => w.Log(RelationalEventId.MultipleCollectionIncludeWarning));
+        optionsBuilder.ConfigureWarnings(w => w.Log(RelationalEventId.QueryPossibleUnintendedUseOfEqualsWarning));
+        optionsBuilder.ConfigureWarnings(w => w.Log(CoreEventId.RowLimitingOperationWithoutOrderByWarning));
+        optionsBuilder.ConfigureWarnings(w => w.Log(CoreEventId.DistinctAfterOrderByWithoutRowLimitingOperatorWarning));
+        optionsBuilder.ConfigureWarnings(w => w.Log(CoreEventId.FirstWithoutOrderByAndFilterWarning));
+#endif
 
         var loggerFactory = ContextOptions.LoggerFactory;
 #if DIAGNOSTIC
@@ -273,9 +288,16 @@ public abstract partial class IntersectDbContext<TDbContext> : DbContext, IDbCon
             Log.Debug($"DBOP-C SaveChanges({acceptAllChangesOnSuccess}) #{currentExecutionId}");
 #endif
 
-            ServerContext.DispatchUnhandledException(
-                new Exception($"Failed to save {this.GetFullishName()}, shutting down to prevent rollbacks!")
-            );
+            if (ContextOptions.KillServerOnConcurrencyException)
+            {
+                ServerContext.DispatchUnhandledException(
+                    new Exception($"Failed to save {this.GetFullishName()}, shutting down to prevent rollbacks!")
+                );
+            }
+            else
+            {
+                Log.Error($"{nameof(DbUpdateConcurrencyException)} occurred, please review the logs for more information.");
+            }
 
             return -1;
 

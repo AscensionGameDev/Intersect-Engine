@@ -5,4 +5,5 @@ public enum UserSaveResult
     Completed,
     SkippedCouldNotTakeLock,
     Failed,
+    DatabaseFailure,
 }

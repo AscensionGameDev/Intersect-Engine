@@ -195,9 +195,7 @@ namespace Intersect.Client.Core
             if (Globals.ConnectionLost)
             {
                 Main.Logout(false);
-                Interface.Interface.MsgboxErrors.Add(
-                    new KeyValuePair<string, string>("", Strings.Errors.lostconnection)
-                );
+                Interface.Interface.ShowError(Strings.Errors.lostconnection);
 
                 Globals.ConnectionLost = false;
 

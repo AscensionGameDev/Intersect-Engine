@@ -102,7 +102,7 @@ namespace Intersect.Client.Interface.Menu
             {
                 Hide();
                 mMainMenu.Show();
-                Interface.MsgboxErrors.Add(new KeyValuePair<string, string>("", Strings.Errors.lostconnection));
+                Interface.ShowError(Strings.Errors.lostconnection);
             }
 
             // Re-Enable our buttons if we're not waiting for the server anymore with it disabled.
@@ -150,7 +150,7 @@ namespace Intersect.Client.Interface.Menu
         {
             if (!Networking.Network.IsConnected)
             {
-                Interface.MsgboxErrors.Add(new KeyValuePair<string, string>("", Strings.Errors.notconnected));
+                Interface.ShowError(Strings.Errors.notconnected);
 
                 return;
             }
@@ -158,8 +158,7 @@ namespace Intersect.Client.Interface.Menu
             if (!FieldChecking.IsValidUsername(mInputTextbox?.Text, Strings.Regex.username) &&
                 !FieldChecking.IsWellformedEmailAddress(mInputTextbox?.Text, Strings.Regex.email))
             {
-                Interface.MsgboxErrors.Add(new KeyValuePair<string, string>("", Strings.Errors.usernameinvalid));
-
+                Interface.ShowError(Strings.Errors.usernameinvalid);
                 return;
             }
 

@@ -58,7 +58,7 @@ namespace Intersect.Server.Database.Logging.Entities
                     TimeStamp = DateTime.UtcNow,
                     UserId = player?.Client?.User?.Id ?? Guid.Empty,
                     PlayerId = player?.Id ?? Guid.Empty,
-                    Ip = player?.Client?.GetIp(),
+                    Ip = player?.Client?.Ip,
                     MessageType = type,
                     MessageText = message,
                     TargetId = targetId

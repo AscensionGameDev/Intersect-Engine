@@ -171,16 +171,21 @@ namespace Intersect.Server.Database.PlayerData
             Salt = salt;
             Password = SaltPasswordHash(passwordHash, salt);
 
-            Save();
+            if (Save() != UserSaveResult.DatabaseFailure)
+            {
+                return true;
+            }
 
-            return true;
+            var client = Globals.ClientLookup.Values.FirstOrDefault(c => c.User.Id == Id);
+            client?.LogAndDisconnect(default, nameof(TrySetPassword));
+            return false;
         }
 
-        public void AddCharacter(Player newCharacter)
+        public bool TryAddCharacter(Player? newCharacter)
         {
-            if (newCharacter == null)
+            if (newCharacter == default)
             {
-                return;
+                return false;
             }
 
             //No passing in custom contexts here.. they may already have this user in the change tracker and things just get weird.
@@ -203,7 +208,7 @@ namespace Intersect.Server.Database.PlayerData
                     //If we have a new character, intersect already generated the id.. which means the change tracker is gonna see them as modified and not added.. we need to manually set their state
                     context.Entry(newCharacter).State = EntityState.Added;
 
-                    context.SaveChanges();
+                    return context.SaveChanges() > -1;
                 }
             }
             catch (Exception ex)
@@ -212,16 +217,12 @@ namespace Intersect.Server.Database.PlayerData
                 ServerContext.DispatchUnhandledException(
                     new Exception("Failed to save user, shutting down to prevent rollbacks!")
                 );
+                return false;
             }
         }
 
-        public void DeleteCharacter(Player deleteCharacter)
+        public bool TryDeleteCharacter(Player deleteCharacter)
         {
-            if (deleteCharacter == null)
-            {
-                return;
-            }
-
             //No passing in custom contexts here.. they may already have this user in the change tracker and things just get weird.
             //The cost of making a new context is almost nil.
             try
@@ -240,15 +241,13 @@ namespace Intersect.Server.Database.PlayerData
 
                     context.Entry(deleteCharacter).State = EntityState.Deleted;
 
-                    context.SaveChanges();
+                    return context.SaveChanges() > -1;
                 }
             }
             catch (Exception ex)
             {
                 Log.Error(ex, "Failed to save user while deleting character: " + Name);
-                ServerContext.DispatchUnhandledException(
-                    new Exception("Failed to save user, shutting down to prevent rollbacks!")
-                );
+                return false;
             }
         }
 
@@ -270,27 +269,17 @@ namespace Intersect.Server.Database.PlayerData
 
                     context.Entry(this).State = EntityState.Deleted;
 
-                    context.SaveChanges();
-
-                    return true;
+                    return context.SaveChanges() > -1;
                 }
             }
             catch (Exception ex)
             {
                 Log.Error(ex, "Failed to delete user: " + Name);
-                ServerContext.DispatchUnhandledException(
-                    new Exception("Failed to delete user, shutting down to prevent rollbacks!")
-                );
                 return false;
             }
         }
 
-        public void Delete()
-        {
-            TryDelete();
-        }
-
-        public async Task SaveAsync(
+        public async Task<UserSaveResult> SaveAsync(
             bool force = false,
             PlayerContext? playerContext = default,
             CancellationToken cancellationToken = default
@@ -307,7 +296,13 @@ namespace Intersect.Server.Database.PlayerData
                 }
             }
 
-            Save();
+            if (Save() != UserSaveResult.DatabaseFailure)
+            {
+                return;
+            }
+
+            var client = Globals.ClientLookup.Values.FirstOrDefault(c => c.User.Id == Id);
+            client?.LogAndDisconnect(default, nameof(SaveWithDebounce));
         }
 
         public UserSaveResult Save(bool force) => Save(force: force, create: false);
@@ -415,13 +410,19 @@ namespace Intersect.Server.Database.PlayerData
                     playerContext.Entry(UserMute).State = EntityState.Detached;
                 }
 
-                playerContext.SaveChanges();
+                if (playerContext.SaveChanges() > -1)
+                {
+                    return UserSaveResult.Completed;
+                }
 
 #if DIAGNOSTIC
                 Log.Debug($"DBOP-B Save({playerContext}, {force}, {create}) #{currentExecutionId} {Name} ({Id})");
 #endif
 
-                return UserSaveResult.Completed;
+                var client = Globals.ClientLookup.Values.FirstOrDefault(c => c.User.Id == Id);
+                client?.LogAndDisconnect(default, "User.Save");
+
+                return UserSaveResult.DatabaseFailure;
             }
             catch (DbUpdateConcurrencyException ex)
             {
@@ -460,9 +461,17 @@ namespace Intersect.Server.Database.PlayerData
                 Log.Debug($"DBOP-C Save({playerContext}, {force}, {create}) #{currentExecutionId} {Name} ({Id})");
 #endif
 
-                ServerContext.DispatchUnhandledException(
-                    new Exception("Failed to save user, shutting down to prevent rollbacks!")
-                );
+                var client = Globals.ClientLookup.Values.FirstOrDefault(c => c.User.Id == Id);
+                client?.LogAndDisconnect(default, "User.Save");
+
+                if (Options.Instance.PlayerDatabase.KillServerOnConcurrencyException)
+                {
+                    ServerContext.DispatchUnhandledException(
+                        new Exception("Failed to save user, shutting down to prevent rollbacks!")
+                    );
+                }
+
+                return UserSaveResult.DatabaseFailure;
             }
             catch (Exception ex)
             {
@@ -471,9 +480,18 @@ namespace Intersect.Server.Database.PlayerData
 #if DIAGNOSTIC
                 Log.Debug($"DBOP-C Save({playerContext}, {force}, {create}) #{currentExecutionId} {Name} ({Id})");
 #endif
-                ServerContext.DispatchUnhandledException(
-                    new Exception("Failed to save user, shutting down to prevent rollbacks!")
-                );
+
+                var client = Globals.ClientLookup.Values.FirstOrDefault(c => c.User.Id == Id);
+                client?.LogAndDisconnect(default, "User.Save");
+
+                if (Options.Instance.PlayerDatabase.KillServerOnConcurrencyException)
+                {
+                    ServerContext.DispatchUnhandledException(
+                        new Exception("Failed to save user, shutting down to prevent rollbacks!")
+                    );
+                }
+
+                return UserSaveResult.DatabaseFailure;
             }
             finally
             {
@@ -483,8 +501,6 @@ namespace Intersect.Server.Database.PlayerData
                     Monitor.Exit(mSavingLock);
                 }
             }
-
-            return UserSaveResult.Failed;
         }
 
         [return: NotNullIfNotNull(nameof(user))]
@@ -751,9 +767,15 @@ namespace Intersect.Server.Database.PlayerData
         /// </summary>
         public void Update()
         {
+            // ReSharper disable once InvertIf
             if (UpdatedVariables.Count > 0)
             {
-                Save();
+                if (Save() == UserSaveResult.DatabaseFailure)
+                {
+                    var client = Globals.ClientLookup.Values.FirstOrDefault(c => c.User.Id == Id);
+                    client?.LogAndDisconnect(default, "User.Save");
+                }
+
                 UpdatedVariables.Clear();
             }
         }

@@ -139,11 +139,12 @@ namespace Intersect.Client.Interface.Menu
         //Methods
         public void Update()
         {
+            // ReSharper disable once InvertIf
             if (!Networking.Network.IsConnected)
             {
                 Hide();
                 mMainMenu.Show();
-                Interface.MsgboxErrors.Add(new KeyValuePair<string, string>("", Strings.Errors.lostconnection));
+                Interface.ShowError(Strings.Errors.lostconnection);
             }
         }
 
@@ -195,29 +196,25 @@ namespace Intersect.Client.Interface.Menu
 
             if (!Networking.Network.IsConnected)
             {
-                Interface.MsgboxErrors.Add(new KeyValuePair<string, string>("", Strings.Errors.notconnected));
-
+                Interface.ShowError(Strings.Errors.notconnected);
                 return;
             }
 
             if (string.IsNullOrEmpty(mCodeInputTextbox?.Text))
             {
-                Interface.MsgboxErrors.Add(new KeyValuePair<string, string>("", Strings.ResetPass.inputcode));
-
+                Interface.ShowError(Strings.ResetPass.inputcode);
                 return;
             }
 
             if (mPasswordTextbox.Text != mPasswordTextbox2.Text)
             {
-                Interface.MsgboxErrors.Add(new KeyValuePair<string, string>("", Strings.Registration.passwordmatch));
-
+                Interface.ShowError(Strings.Registration.passwordmatch);
                 return;
             }
 
             if (!FieldChecking.IsValidPassword(mPasswordTextbox.Text, Strings.Regex.password))
             {
-                Interface.MsgboxErrors.Add(new KeyValuePair<string, string>("", Strings.Errors.passwordinvalid));
-
+                Interface.ShowError(Strings.Errors.passwordinvalid);
                 return;
             }
 

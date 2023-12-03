@@ -78,7 +78,7 @@ namespace Intersect.Server.Database.Logging.Entities
                 guildId,
                 player?.UserId ?? default,
                 player?.Id ?? default,
-                player?.Client?.GetIp() ?? string.Empty,
+                player?.Client?.Ip ?? string.Empty,
                 initiator,
                 type,
                 meta

@@ -150,11 +150,11 @@ namespace Intersect.Client.MonoGame.Graphics
                 {
                     Globals.Database.FullScreen = false;
                     Globals.Database.SavePreferences();
-                    Interface.Interface.MsgboxErrors.Add(
-                        new KeyValuePair<string, string>(
-                            Strings.Errors.displaynotsupported,
-                            Strings.Errors.displaynotsupportederror.ToString(width + "x" + height)
-                        )
+                    Interface.Interface.ShowError(
+                        Strings.Errors.displaynotsupportederror.ToString(
+                            Strings.Internals.ResolutionXByY.ToString(width, height)
+                        ),
+                        Strings.Errors.displaynotsupported
                     );
                 }
             }

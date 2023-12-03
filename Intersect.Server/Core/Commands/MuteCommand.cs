@@ -28,7 +28,7 @@ namespace Intersect.Server.Core.Commands
             var name = target.Entity.Name;
             if (string.IsNullOrEmpty(Mute.FindMuteReason(target.User.Id, "")))
             {
-                Mute.Add(target, duration, reason, Strings.Commands.muteuser, ip ? target.GetIp() : "");
+                Mute.Add(target, duration, reason, Strings.Commands.muteuser, ip ? target.Ip : "");
                 PacketSender.SendGlobalMsg(Strings.Account.muted.ToString(name));
                 Console.WriteLine($@"    {Strings.Account.muted.ToString(name)}");
             }

@@ -2,6 +2,7 @@
 using Intersect.Client.Core;
 using Intersect.Client.Framework.Network;
 using Intersect.Client.General;
+using Intersect.Client.Localization;
 using Intersect.Configuration;
 using Intersect.Logging;
 using Intersect.Network;
@@ -120,6 +121,12 @@ internal static partial class Network
 
     private static void OnDisconnected(INetworkLayerInterface sender, ConnectionEventArgs connectionEventArgs)
     {
+        var message = connectionEventArgs.EventId == default
+            ? Strings.Errors.lostconnection.ToString()
+            : Strings.Errors.DisconnectionEvent.ToString(connectionEventArgs.EventId);
+
+        Interface.Interface.ShowError(message);
+
         Globals.WaitingOnServer = false;
         Fade.Cancel();
 

@@ -160,7 +160,6 @@ namespace Intersect.Client.Interface.Menu
             {
                 Hide();
                 mMainMenu.Show();
-                Interface.MsgboxErrors.Add(new KeyValuePair<string, string>("", Strings.Errors.lostconnection));
                 return;
             }
 
@@ -233,15 +232,13 @@ namespace Intersect.Client.Interface.Menu
 
             if (!Networking.Network.IsConnected)
             {
-                Interface.MsgboxErrors.Add(new KeyValuePair<string, string>("", Strings.Errors.notconnected));
-
+                Interface.ShowError(Strings.Errors.notconnected);
                 return;
             }
 
             if (!FieldChecking.IsValidUsername(mUsernameTextbox?.Text, Strings.Regex.username))
             {
-                Interface.MsgboxErrors.Add(new KeyValuePair<string, string>("", Strings.Errors.usernameinvalid));
-
+                Interface.ShowError(Strings.Errors.usernameinvalid);
                 return;
             }
 
@@ -249,8 +246,7 @@ namespace Intersect.Client.Interface.Menu
             {
                 if (!mUseSavedPass)
                 {
-                    Interface.MsgboxErrors.Add(new KeyValuePair<string, string>("", Strings.Errors.passwordinvalid));
-
+                    Interface.ShowError(Strings.Errors.passwordinvalid);
                     return;
                 }
             }

@@ -123,7 +123,7 @@ namespace Intersect.Client.Interface.Menu
             {
                 Hide();
                 mMainMenu.Show();
-                Interface.MsgboxErrors.Add(new KeyValuePair<string, string>("", Strings.Errors.lostconnection));
+                Interface.ShowError(Strings.Errors.lostconnection);
             }
 
             // Re-Enable our buttons if we're not waiting for the server anymore with it disabled.
