@@ -337,7 +337,7 @@ namespace Intersect.Client.Entities
             }
         }
 
-        public IMapInstance MapInstance => Maps.MapInstance.Get(MapId);
+        public IMapInstance? MapInstance => Maps.MapInstance.Get(MapId);
 
         public virtual Guid MapId { get; set; }
 
@@ -922,26 +922,7 @@ namespace Intersect.Client.Entities
         /// <summary>
         /// Returns whether this entity is Stealthed or not.
         /// </summary>
-        public virtual bool IsStealthed
-        {
-            get
-            {
-                if (this == Globals.Me)
-                {
-                    return false;
-                }
-
-                for (var n = 0; n < Status.Count; n++)
-                {
-                    if (Status[n].Type == SpellEffect.Stealth)
-                    {
-                        return true;
-                    }
-                }
-
-                return false;
-            }
-        }
+        public virtual bool IsStealthed => this != Globals.Me && Status.Any(t => t.Type == SpellEffect.Stealth);
 
         /// <summary>
         /// Returns whether this entity should be drawn.
