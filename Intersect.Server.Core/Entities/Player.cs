@@ -833,6 +833,8 @@ namespace Intersect.Server.Entities
                         }
                     }
 
+                    map = MapController.Get(MapId);
+
                     //Check to see if we can spawn events, if already spawned.. update them.
                     lock (mEventLock)
                     {
