@@ -68,7 +68,7 @@ namespace Intersect.GameObjects
         /// <returns></returns>
         public override int GetHashCode()
         {
-            return Intensity ^ (int)Expand ^ (Color?.GetHashCode() ?? 0) ^ TileX.GetHashCode() ^ TileY.GetHashCode();
+            return HashCode.Combine(Intensity, (int)Expand, Color, TileX, TileY);
         }
 
         /// <summary>
