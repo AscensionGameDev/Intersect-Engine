@@ -106,12 +106,21 @@ namespace Intersect.Server.Entities.Combat
             // If we're adding a shield, actually add that according to the settings.
             if (type == SpellEffect.Shield)
             {
-                for (var i = (int)Vital.Health; i < Enum.GetValues<Vital>().Length; i++)
+                foreach (var vital in Enum.GetValues<Vital>())
                 {
-                    var vitalDiff = spell.Combat.VitalDiff[i];
+                    var vitalDiff = Math.Abs(spell.Combat.VitalDiff[(int)vital]);
 
-                    shield[i] = Math.Abs(vitalDiff) +
-                                (int)(spell.Combat.Scaling * en.Stat[spell.Combat.ScalingStat].BaseStat / 100f);
+                    // If the user did not configure for this vital to have a mana shield, ignore it
+                    if (vitalDiff == 0 && vital == Vital.Mana)
+                    {
+                        continue;
+                    }
+
+                    var shieldAmount = Formulas.CalculateDamage(
+                        vitalDiff, (DamageType)spell.Combat.DamageType, (Enums.Stat)spell.Combat.ScalingStat, spell.Combat.Scaling, 1.0, attacker, en
+                    );
+
+                    Shield[(int)vital] = Math.Abs(shieldAmount);
                 }
             }
 
@@ -204,7 +213,7 @@ namespace Intersect.Server.Entities.Combat
             }
         }
 
-        public int[] shield { get; set; } = new int[Enum.GetValues<Vital>().Length];
+        public int[] Shield { get; set; } = new int[Enum.GetValues<Vital>().Length];
 
         public void TryRemoveStatus()
         {
@@ -218,7 +227,7 @@ namespace Intersect.Server.Entities.Combat
             {
                 for (var i = (int)Vital.Health; i < Enum.GetValues<Vital>().Length; i++)
                 {
-                    if (shield[i] > 0)
+                    if (Shield[i] > 0)
                     {
                         return;
                     }
@@ -244,11 +253,11 @@ namespace Intersect.Server.Entities.Combat
         {
             if (Type == SpellEffect.Shield)
             {
-                shield[(int)vital] -= amount;
-                if (shield[(int)vital] <= 0)
+                Shield[(int)vital] -= amount;
+                if (Shield[(int)vital] <= 0)
                 {
-                    amount = -shield[(int)vital]; //Return piercing damage.
-                    shield[(int)vital] = 0;
+                    amount = -Shield[(int)vital]; //Return piercing damage.
+                    Shield[(int)vital] = 0;
                     TryRemoveStatus();
                 }
                 else
