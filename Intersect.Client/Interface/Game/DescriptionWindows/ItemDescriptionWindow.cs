@@ -8,6 +8,7 @@ using Intersect.Client.Localization;
 using Intersect.Logging;
 using Intersect.Network.Packets.Server;
 using Intersect.Utilities;
+using Intersect.Network;
 
 namespace Intersect.Client.Interface.Game.DescriptionWindows
 {
@@ -353,20 +354,25 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
                 // We do not have item properties and have growing stats! So don't display a finished stat but a range instead.
                 else
                 {
-                    _ = mItem.TryGetRangeFor((Stat)i, out var range);
-                    if (range != null)
+                    if (mItem.TryGetRangeFor((Stat)i, out var range))
                     {
-                        var statLow = mItem.StatsGiven[i] + range.LowRange;
-                        var statHigh = mItem.StatsGiven[i] + range.HighRange;
+                        var statGiven = mItem.StatsGiven[i];
+                        var percentageStatGiven = mItem.PercentageStatsGiven[i];
+                        var statLow = statGiven + range.LowRange;
+                        var statHigh = statGiven + range.HighRange;
 
-                        if (mItem.PercentageStatsGiven[i] != 0)
+                        string statMessage;
+
+                        if (percentageStatGiven != 0)
                         {
-                            rows.AddKeyValueRow(Strings.ItemDescription.StatCounts[i], Strings.ItemDescription.RegularAndPercentage.ToString(Strings.ItemDescription.StatGrowthRange.ToString(statLow, statHigh), mItem.PercentageStatsGiven[i]));
+                            statMessage = Strings.ItemDescription.RegularAndPercentage.ToString(Strings.ItemDescription.StatGrowthRange.ToString(statLow, statHigh), percentageStatGiven);
                         }
                         else
                         {
-                            rows.AddKeyValueRow(Strings.ItemDescription.StatCounts[i], Strings.ItemDescription.StatGrowthRange.ToString(statLow, statHigh));
+                            statMessage = Strings.ItemDescription.StatGrowthRange.ToString(statLow, statHigh);
                         }
+
+                        rows.AddKeyValueRow(Strings.ItemDescription.StatCounts[i], statMessage);
                     }
                 }
             }
