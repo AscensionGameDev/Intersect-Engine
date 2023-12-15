@@ -68,7 +68,7 @@ namespace Intersect.GameObjects
         /// <returns></returns>
         public override int GetHashCode()
         {
-            return Intensity ^ (int)Expand ^ (Color?.GetHashCode() ?? 0);
+            return HashCode.Combine(Intensity, Expand, Color, TileX, TileY);
         }
 
         /// <summary>
@@ -80,7 +80,7 @@ namespace Intersect.GameObjects
         {
             if (obj is LightBase light)
             {
-                return Intensity == light.Intensity && Color == light.Color&& Expand == light.Expand;
+                return Intensity == light.Intensity && Color == light.Color && Expand == light.Expand && TileX == light.TileX && TileY == light.TileY;
             }
 
             return false;
