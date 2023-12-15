@@ -106,12 +106,12 @@ namespace Intersect.Server.Entities.Combat
             // If we're adding a shield, actually add that according to the settings.
             if (type == SpellEffect.Shield)
             {
-                for (var i = (int)Vital.Health; i < Enum.GetValues<Vital>().Length; i++)
+                foreach (var vital in Enum.GetValues<Vital>())
                 {
-                    var vitalDiff = Math.Abs(spell.Combat.VitalDiff[i]);
-                    
+                    var vitalDiff = Math.Abs(spell.Combat.VitalDiff[(int)vital]);
+
                     // If the user did not configure for this vital to have a mana shield, ignore it
-                    if (vitalDiff == 0 && (Vital)i == Vital.Mana) 
+                    if (vitalDiff == 0 && vital == Vital.Mana)
                     {
                         continue;
                     }
@@ -120,7 +120,7 @@ namespace Intersect.Server.Entities.Combat
                         vitalDiff, (DamageType)spell.Combat.DamageType, (Enums.Stat)spell.Combat.ScalingStat, spell.Combat.Scaling, 1.0, attacker, en
                     );
 
-                    Shield[i] = Math.Abs(shieldAmount);
+                    Shield[(int)vital] = Math.Abs(shieldAmount);
                 }
             }
 
