@@ -8,7 +8,6 @@ using Intersect.Client.Localization;
 using Intersect.Logging;
 using Intersect.Network.Packets.Server;
 using Intersect.Utilities;
-using Intersect.Network;
 
 namespace Intersect.Client.Interface.Game.DescriptionWindows
 {
@@ -361,21 +360,16 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
                         var statLow = statGiven + range.LowRange;
                         var statHigh = statGiven + range.HighRange;
 
-                        string statMessage;
+                        var statMessage = Strings.ItemDescription.StatGrowthRange.ToString(statLow, statHigh);
 
                         if (percentageStatGiven != 0)
                         {
-                            statMessage = Strings.ItemDescription.RegularAndPercentage.ToString(Strings.ItemDescription.StatGrowthRange.ToString(statLow, statHigh), percentageStatGiven);
+                            statMessage = Strings.ItemDescription.RegularAndPercentage.ToString(statMessage, percentageStatGiven);
                         }
-                        else
-                        {
-                            statMessage = Strings.ItemDescription.StatGrowthRange.ToString(statLow, statHigh);
-                        }
-
                         rows.AddKeyValueRow(Strings.ItemDescription.StatCounts[i], statMessage);
                     }
-                }
             }
+        }
 
             // Bonus Effect
             foreach (var effect in mItem.Effects)
