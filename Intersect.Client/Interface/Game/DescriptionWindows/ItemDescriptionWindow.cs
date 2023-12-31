@@ -353,21 +353,23 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
                 // We do not have item properties and have growing stats! So don't display a finished stat but a range instead.
                 else
                 {
-                    _ = mItem.TryGetRangeFor((Stat)i, out var range);
-                    var statLow = mItem.StatsGiven[i] + range.LowRange;
-                    var statHigh = mItem.StatsGiven[i] + range.HighRange;
-
-                    if (mItem.PercentageStatsGiven[i] != 0)
+                    if (mItem.TryGetRangeFor((Stat)i, out var range))
                     {
-                        rows.AddKeyValueRow(Strings.ItemDescription.StatCounts[i], Strings.ItemDescription.RegularAndPercentage.ToString(Strings.ItemDescription.StatGrowthRange.ToString(statLow, statHigh), mItem.PercentageStatsGiven[i]));
-                    }
-                    else
-                    {
-                        rows.AddKeyValueRow(Strings.ItemDescription.StatCounts[i], Strings.ItemDescription.StatGrowthRange.ToString(statLow, statHigh));
-                    }
-                }
+                        var statGiven = mItem.StatsGiven[i];
+                        var percentageStatGiven = mItem.PercentageStatsGiven[i];
+                        var statLow = statGiven + range.LowRange;
+                        var statHigh = statGiven + range.HighRange;
 
+                        var statMessage = Strings.ItemDescription.StatGrowthRange.ToString(statLow, statHigh);
+
+                        if (percentageStatGiven != 0)
+                        {
+                            statMessage = Strings.ItemDescription.RegularAndPercentage.ToString(statMessage, percentageStatGiven);
+                        }
+                        rows.AddKeyValueRow(Strings.ItemDescription.StatCounts[i], statMessage);
+                    }
             }
+        }
 
             // Bonus Effect
             foreach (var effect in mItem.Effects)
