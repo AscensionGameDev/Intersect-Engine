@@ -418,9 +418,14 @@ namespace Intersect.Server.Entities
                             break;
                         }
 
-                        var slotIndexToRemoveFrom = slotIndicesToRemoveFrom[nextSlotIndexToRemoveFrom++];
+                        var slotIndexToRemoveFrom = slotIndicesToRemoveFrom[nextSlotIndexToRemoveFrom];
                         var sourceSlot = sourceSlots[slotIndexToRemoveFrom];
+                        if (sourceSlot.Quantity <= maximumStack)
+                        {
+                            nextSlotIndexToRemoveFrom++;
+                        }
                         slotToFill.Set(sourceSlot);
+                        slotToFill.Quantity = 1;
                         remainingQuantity -= 1;
                         continue;
                     }
