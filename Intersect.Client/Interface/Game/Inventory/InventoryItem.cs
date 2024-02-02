@@ -98,8 +98,11 @@ namespace Intersect.Client.Interface.Game.Inventory
             {
                 if (Globals.InputManager.KeyDown(Keys.Shift))
                 {
+                    var slot = Globals.Me.Inventory[mMySlot];
                     Globals.Me.TryDepositItem(
                         mMySlot,
+                        slot,
+                        quantityHint: slot.Quantity,
                         skipPrompt: true
                     );
                 }

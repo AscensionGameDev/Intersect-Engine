@@ -835,22 +835,29 @@ namespace Intersect.Client.Entities
                 PacketSender.SendDepositItem(inventorySlotIndex, movableQuantity, bankSlotIndex);
                 return true;
             }
+            // Checking if the item is non-stackable
+            if (!itemDescriptor.IsStackable || skipPrompt)
+            {
+                PacketSender.SendDepositItem(inventorySlotIndex, 1, bankSlotIndex);  // Only 1 item
+                return true;
+            }
+            else
+            {
+                InputBox.Open(
+                    title: Strings.Bank.deposititem,
+                    prompt: Strings.Bank.deposititemprompt.ToString(itemDescriptor.Name),
+                    modal: true,
+                    inputType: InputBox.InputType.NumericSliderInput,
+                    onSuccess: DepositItemInputBoxOkay,
+                    onCancel: null,
+                    userData: new[] { inventorySlotIndex, bankSlotIndex },
+                    quantity: movableQuantity,
+                    maxQuantity: maximumQuantity
+                );
 
-            InputBox.Open(
-                title: Strings.Bank.deposititem,
-                prompt: Strings.Bank.deposititemprompt.ToString(itemDescriptor.Name),
-                modal: true,
-                inputType: InputBox.InputType.NumericSliderInput,
-                onSuccess: DepositItemInputBoxOkay,
-                onCancel: null,
-                userData: new[] { inventorySlotIndex, bankSlotIndex },
-                quantity: movableQuantity,
-                maxQuantity: maximumQuantity
-            );
-
-            return true;
+                return true;
+            }
         }
-
         private bool IsGuildBankDepositAllowed()
         {
             return !string.IsNullOrWhiteSpace(Globals.Me.Guild) &&
@@ -955,22 +962,29 @@ namespace Intersect.Client.Entities
                 PacketSender.SendWithdrawItem(bankSlotIndex, movableQuantity, inventorySlotIndex);
                 return true;
             }
+            // Checking if the item is non-stackable
+            if (!itemDescriptor.IsStackable || skipPrompt)
+            {
+                PacketSender.SendWithdrawItem(bankSlotIndex, 1, inventorySlotIndex);  // Only 1 item
+                return true;
+            }
+            else
+            {
+                InputBox.Open(
+                    title: Strings.Bank.withdrawitem,
+                    prompt: Strings.Bank.withdrawitemprompt.ToString(itemDescriptor.Name),
+                    modal: true,
+                    inputType: InputBox.InputType.NumericSliderInput,
+                    onSuccess: WithdrawItemInputBoxOkay,
+                    onCancel: null,
+                    userData: new[] { bankSlotIndex, inventorySlotIndex },
+                    quantity: movableQuantity,
+                    maxQuantity: maximumQuantity
+                );
 
-            InputBox.Open(
-                title: Strings.Bank.withdrawitem,
-                prompt: Strings.Bank.withdrawitemprompt.ToString(itemDescriptor.Name),
-                modal: true,
-                inputType: InputBox.InputType.NumericSliderInput,
-                onSuccess: WithdrawItemInputBoxOkay,
-                onCancel: null,
-                userData: new[] { bankSlotIndex, inventorySlotIndex },
-                quantity: movableQuantity,
-                maxQuantity: maximumQuantity
-            );
-
-            return true;
+                return true;
+            }
         }
-
         private bool IsGuildBankWithdrawAllowed()
         {
             return !string.IsNullOrWhiteSpace(Globals.Me.Guild) &&
