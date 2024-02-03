@@ -962,29 +962,22 @@ namespace Intersect.Client.Entities
                 PacketSender.SendWithdrawItem(bankSlotIndex, movableQuantity, inventorySlotIndex);
                 return true;
             }
-            // Checking if the item is non-stackable
-            if (!itemDescriptor.IsStackable || skipPrompt)
-            {
-                PacketSender.SendWithdrawItem(bankSlotIndex, 1, inventorySlotIndex);  // Only 1 item
-                return true;
-            }
-            else
-            {
-                InputBox.Open(
-                    title: Strings.Bank.withdrawitem,
-                    prompt: Strings.Bank.withdrawitemprompt.ToString(itemDescriptor.Name),
-                    modal: true,
-                    inputType: InputBox.InputType.NumericSliderInput,
-                    onSuccess: WithdrawItemInputBoxOkay,
-                    onCancel: null,
-                    userData: new[] { bankSlotIndex, inventorySlotIndex },
-                    quantity: movableQuantity,
-                    maxQuantity: maximumQuantity
-                );
 
-                return true;
-            }
+            InputBox.Open(
+                title: Strings.Bank.withdrawitem,
+                prompt: Strings.Bank.withdrawitemprompt.ToString(itemDescriptor.Name),
+                modal: true,
+                inputType: InputBox.InputType.NumericSliderInput,
+                onSuccess: WithdrawItemInputBoxOkay,
+                onCancel: null,
+                userData: new[] { bankSlotIndex, inventorySlotIndex },
+                quantity: movableQuantity,
+                maxQuantity: maximumQuantity
+            );
+
+            return true;
         }
+
         private bool IsGuildBankWithdrawAllowed()
         {
             return !string.IsNullOrWhiteSpace(Globals.Me.Guild) &&
