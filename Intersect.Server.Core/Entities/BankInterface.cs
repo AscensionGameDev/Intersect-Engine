@@ -236,6 +236,13 @@ namespace Intersect.Server.Entities
                     Debug.Assert(slotToRemoveFrom != default);
                     var quantityToRemoveFromSlot = Math.Min(remainingQuantityToRemove, slotToRemoveFrom.Quantity);
                     slotToRemoveFrom.Quantity -= quantityToRemoveFromSlot;
+
+                    // If the item is equipped equipment, we need to unequip it before taking it out of the inventory.
+                    if (itemDescriptor.ItemType == ItemType.Equipment && slotIndexToRemoveFrom > -1)
+                    {
+                        mPlayer.EquipmentProcessItemLoss(slotIndexToRemoveFrom);
+                    }
+
                     if (slotToRemoveFrom.Quantity < 1)
                     {
                         slotToRemoveFrom.Set(Item.None);
@@ -262,14 +269,6 @@ namespace Intersect.Server.Entities
                 else if (remainingQuantityToRemove > 0)
                 {
                     Log.Error($"{mPlayer.Id} did not have {remainingQuantity}x {itemDescriptor.Id} taken");
-                }
-
-                if (itemDescriptor.ItemType == ItemType.Equipment)
-                {
-                    if (inventorySlotIndex > -1)
-                    {
-                        mPlayer.EquipmentProcessItemLoss(inventorySlotIndex);
-                    }
                 }
 
                 if (sendUpdate)
