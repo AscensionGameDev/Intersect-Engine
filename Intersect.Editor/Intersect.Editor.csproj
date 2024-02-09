@@ -77,6 +77,9 @@
   <ItemGroup>
     <ProjectReference Include="..\Intersect (Core)\Intersect.Core.csproj" />
     <ProjectReference Include="..\Intersect.Network\Intersect.Network.csproj" />
+    <ProjectReference Include="..\vendor\dockpanelsuite\WinFormsUI\ThemeVS2015.csproj" />
+    <ProjectReference Include="..\vendor\dockpanelsuite\WinFormsUI\WinFormsUI.csproj" />
+    <ProjectReference Include="..\vendor\LiteNetLib\LiteNetLib\LiteNetLib.csproj" />
   </ItemGroup>
 
   <ItemGroup Label="Form Compile Updates">
