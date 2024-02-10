@@ -1,3 +1,6 @@
 [submodule "vendor/LiteNetLib"]
 	path = vendor/LiteNetLib
 	url = https://github.com/AscensionGameDev/LiteNetLib.git
+[submodule "vendor/dockpanelsuite"]
+	path = vendor/dockpanelsuite
+	url = https://github.com/AscensionGameDev/dockpanelsuite.git

@@ -1,4 +1,3 @@
-
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.1.32228.430
@@ -59,18 +58,18 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{91D46B09
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Dependencies", "Dependencies", "{31380BF9-EC1C-4ABE-8A1A-A715B6DF024A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiteNetLib", "vendor\LiteNetLib\LiteNetLib\LiteNetLib.csproj", "{03C1FB5D-DFB0-414D-831F-BD14DEE49B6A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LiteNetLib", "vendor\LiteNetLib\LiteNetLib\LiteNetLib.csproj", "{03C1FB5D-DFB0-414D-831F-BD14DEE49B6A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Utilities", "Utilities", "{D89EF539-3EC6-4D07-9E98-65BC55F1DAA4}"
 	ProjectSection(SolutionItems) = preProject
 		Utilities\Directory.Build.props = Utilities\Directory.Build.props
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Intersect.OpenPortChecker", "Utilities\Intersect.OpenPortChecker\Intersect.OpenPortChecker.csproj", "{8BA9007B-9707-46F3-9836-F93C99F8C0C7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Intersect.OpenPortChecker", "Utilities\Intersect.OpenPortChecker\Intersect.OpenPortChecker.csproj", "{8BA9007B-9707-46F3-9836-F93C99F8C0C7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Intersect.Server.Core", "Intersect.Server.Core\Intersect.Server.Core.csproj", "{C62BA88C-C3D8-476B-87CA-3D968B82E19B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Intersect.Server.Core", "Intersect.Server.Core\Intersect.Server.Core.csproj", "{C62BA88C-C3D8-476B-87CA-3D968B82E19B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Intersect.SinglePlayer", "Intersect.SinglePlayer\Intersect.SinglePlayer.csproj", "{999025E8-C034-4A91-8166-5C2D95E9C9C3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Intersect.SinglePlayer", "Intersect.SinglePlayer\Intersect.SinglePlayer.csproj", "{999025E8-C034-4A91-8166-5C2D95E9C9C3}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Single Player", "Single Player", "{F990372C-0580-4D69-89DC-A46A86396BBD}"
 EndProject
@@ -79,7 +78,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Framework", "Framework", "{
 		Framework\Directory.Build.props = Framework\Directory.Build.props
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Intersect.Framework", "Framework\Intersect.Framework\Intersect.Framework.csproj", "{1E87D2A5-7E36-4583-A533-064C97E330EE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Intersect.Framework", "Framework\Intersect.Framework\Intersect.Framework.csproj", "{1E87D2A5-7E36-4583-A533-064C97E330EE}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WinFormsUI", "vendor\dockpanelsuite\WinFormsUI\WinFormsUI.csproj", "{D831728A-6328-4F96-9692-8FE64E0B0AAD}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ThemeVS2015", "vendor\dockpanelsuite\WinFormsUI\ThemeVS2015.csproj", "{B9678B78-A00D-4765-9380-B1DC4EFD642D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -178,6 +181,18 @@ Global
 		{1E87D2A5-7E36-4583-A533-064C97E330EE}.NoFody|Any CPU.Build.0 = Debug|Any CPU
 		{1E87D2A5-7E36-4583-A533-064C97E330EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1E87D2A5-7E36-4583-A533-064C97E330EE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D831728A-6328-4F96-9692-8FE64E0B0AAD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D831728A-6328-4F96-9692-8FE64E0B0AAD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D831728A-6328-4F96-9692-8FE64E0B0AAD}.NoFody|Any CPU.ActiveCfg = Debug|Any CPU
+		{D831728A-6328-4F96-9692-8FE64E0B0AAD}.NoFody|Any CPU.Build.0 = Debug|Any CPU
+		{D831728A-6328-4F96-9692-8FE64E0B0AAD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D831728A-6328-4F96-9692-8FE64E0B0AAD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B9678B78-A00D-4765-9380-B1DC4EFD642D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B9678B78-A00D-4765-9380-B1DC4EFD642D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B9678B78-A00D-4765-9380-B1DC4EFD642D}.NoFody|Any CPU.ActiveCfg = Debug|Any CPU
+		{B9678B78-A00D-4765-9380-B1DC4EFD642D}.NoFody|Any CPU.Build.0 = Debug|Any CPU
+		{B9678B78-A00D-4765-9380-B1DC4EFD642D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B9678B78-A00D-4765-9380-B1DC4EFD642D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -194,6 +209,8 @@ Global
 		{8BA9007B-9707-46F3-9836-F93C99F8C0C7} = {D89EF539-3EC6-4D07-9E98-65BC55F1DAA4}
 		{999025E8-C034-4A91-8166-5C2D95E9C9C3} = {F990372C-0580-4D69-89DC-A46A86396BBD}
 		{1E87D2A5-7E36-4583-A533-064C97E330EE} = {1ABC3725-EB8C-494E-8BA8-A991CE7BD7A1}
+		{D831728A-6328-4F96-9692-8FE64E0B0AAD} = {31380BF9-EC1C-4ABE-8A1A-A715B6DF024A}
+		{B9678B78-A00D-4765-9380-B1DC4EFD642D} = {31380BF9-EC1C-4ABE-8A1A-A715B6DF024A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {06095334-0BBD-4FDA-A230-272D08AFB221}
