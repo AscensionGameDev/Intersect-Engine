@@ -10,6 +10,9 @@
     <SelfContained>true</SelfContained>
     <TargetFramework>net7.0-windows</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
+	<ImplicitUsings>enable</ImplicitUsings>
+	<ApplicationHighDpiMode>SystemAware</ApplicationHighDpiMode>
+    <ForceDesignerDpiUnaware>true</ForceDesignerDpiUnaware>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -67,8 +70,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="DockPanelSuite" Version="3.1.0" />
-    <PackageReference Include="DockPanelSuite.ThemeVS2015" Version="3.1.0" />
     <PackageReference Include="Mono.Data.Sqlite.Portable" Version="1.0.3.5" />
     <PackageReference Include="MonoGame.Framework.WindowsDX" Version="3.8.1.303" />
     <PackageReference Include="System.Collections.Concurrent" Version="4.3.0" />
@@ -79,6 +80,9 @@
   <ItemGroup>
     <ProjectReference Include="..\Intersect (Core)\Intersect.Core.csproj" />
     <ProjectReference Include="..\Intersect.Network\Intersect.Network.csproj" />
+    <ProjectReference Include="..\vendor\dockpanelsuite\WinFormsUI\ThemeVS2015.csproj" />
+    <ProjectReference Include="..\vendor\dockpanelsuite\WinFormsUI\WinFormsUI.csproj" />
+    <ProjectReference Include="..\vendor\LiteNetLib\LiteNetLib\LiteNetLib.csproj" />
   </ItemGroup>
 
   <ItemGroup Label="Form Compile Updates">
@@ -180,33 +184,23 @@
     <Compile Update="Forms\Controls\MapTreeList.Designer.cs">
       <DependentUpon>MapTreeList.cs</DependentUpon>
     </Compile>
-    <Compile Update="Forms\DockingElements\frmMapEditor.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Update="Forms\DockingElements\frmMapEditor.cs" />
     <Compile Update="Forms\DockingElements\frmMapEditor.Designer.cs">
       <DependentUpon>frmMapEditor.cs</DependentUpon>
     </Compile>
-    <Compile Update="Forms\DockingElements\frmMapGrid.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Update="Forms\DockingElements\frmMapGrid.cs" />
     <Compile Update="Forms\DockingElements\frmMapGrid.Designer.cs">
       <DependentUpon>frmMapGrid.cs</DependentUpon>
     </Compile>
-    <Compile Update="Forms\DockingElements\frmMapLayers.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Update="Forms\DockingElements\frmMapLayers.cs" />
     <Compile Update="Forms\DockingElements\frmMapLayers.Designer.cs">
       <DependentUpon>frmMapLayers.cs</DependentUpon>
     </Compile>
-    <Compile Update="Forms\DockingElements\frmMapList.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Update="Forms\DockingElements\frmMapList.cs" />
     <Compile Update="Forms\DockingElements\frmMapList.Designer.cs">
       <DependentUpon>frmMapList.cs</DependentUpon>
     </Compile>
-    <Compile Update="Forms\DockingElements\frmMapProperties.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Update="Forms\DockingElements\frmMapProperties.cs" />
     <Compile Update="Forms\DockingElements\frmMapProperties.Designer.cs">
       <DependentUpon>frmMapProperties.cs</DependentUpon>
     </Compile>
