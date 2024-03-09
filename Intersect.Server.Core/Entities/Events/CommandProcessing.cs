@@ -1238,7 +1238,7 @@ namespace Intersect.Server.Entities.Events
             Stack<CommandInstance> callStack
         )
         {
-            player.OpenCraftingTable(CraftingTableBase.Get(command.CraftingTableId));
+            player.OpenCraftingTable(CraftingTableBase.Get(command.CraftingTableId), command.JournalMode);
             callStack.Peek().WaitingForResponse = CommandInstance.EventResponse.Crafting;
         }
 

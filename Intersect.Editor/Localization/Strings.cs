@@ -3089,6 +3089,12 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString label = @"Table:";
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString JournalMode = @"Journal Mode?";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString JournalModeTooltip = @"Opens the crafting window without the option for the player to actually craft.";
+
             public static LocalizedString okay = @"Ok";
 
             public static LocalizedString title = @"Open Crafting";

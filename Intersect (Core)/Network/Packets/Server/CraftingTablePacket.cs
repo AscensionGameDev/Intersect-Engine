@@ -10,10 +10,11 @@ namespace Intersect.Network.Packets.Server
         {
         }
 
-        public CraftingTablePacket(string tableData, bool close)
+        public CraftingTablePacket(string tableData, bool close, bool journalMode)
         {
             TableData = tableData;
             Close = close;
+            JournalMode = journalMode;
         }
 
         [Key(0)]
@@ -22,6 +23,8 @@ namespace Intersect.Network.Packets.Server
         [Key(1)]
         public bool Close { get; set; }
 
+        [Key(2)]
+        public bool JournalMode { get; set; }
     }
 
 }

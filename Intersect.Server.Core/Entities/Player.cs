@@ -3910,7 +3910,7 @@ namespace Intersect.Server.Entities
         }
 
         //Crafting
-        public bool OpenCraftingTable(CraftingTableBase table)
+        public bool OpenCraftingTable(CraftingTableBase table, bool journalMode)
         {
             if (IsBusy())
             {
@@ -3920,7 +3920,8 @@ namespace Intersect.Server.Entities
             if (table != null)
             {
                 OpenCraftingTableId = table.Id;
-                PacketSender.SendOpenCraftingTable(this, table);
+                CraftJournalMode = journalMode;
+                PacketSender.SendOpenCraftingTable(this, table, journalMode);
             }
 
             return true;
@@ -7371,6 +7372,8 @@ namespace Intersect.Server.Entities
         [NotMapped, JsonIgnore] public CraftingState CraftingState { get; set; }
 
         [NotMapped, JsonIgnore] public Guid OpenCraftingTableId { get; set; }
+        
+        [NotMapped, JsonIgnore] public bool CraftJournalMode { get; set; }
 
         #endregion
 

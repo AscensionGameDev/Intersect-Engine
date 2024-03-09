@@ -83,6 +83,8 @@ namespace Intersect.Client.Interface.Game
 
         private string mTradingTarget;
 
+        private bool mCraftJournal {  get; set; }
+
         private TradingWindow? mTradingWindow;
 
         public EntityBox PlayerBox;
@@ -235,14 +237,16 @@ namespace Intersect.Client.Interface.Game
         }
 
         //Crafting
-        public void NotifyOpenCraftingTable()
+        public void NotifyOpenCraftingTable(bool journalMode)
         {
             mShouldOpenCraftingTable = true;
+            mCraftJournal = journalMode;
         }
 
         public void NotifyCloseCraftingTable()
         {
             mShouldCloseCraftingTable = true;
+            mCraftJournal = false;
         }
 
         public void OpenCraftingTable()
@@ -252,7 +256,7 @@ namespace Intersect.Client.Interface.Game
                 mCraftingWindow.Close();
             }
 
-            mCraftingWindow = new CraftingWindow(GameCanvas);
+            mCraftingWindow = new CraftingWindow(GameCanvas, mCraftJournal);
             mShouldOpenCraftingTable = false;
             Globals.InCraft = true;
         }
