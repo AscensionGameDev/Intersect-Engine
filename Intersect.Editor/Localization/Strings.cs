@@ -2068,6 +2068,9 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString opencrafting = @"Open Crafting Table [{00}]";
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString OpenCraftingJournal = @"Open Crafting Journal [{00}]";
+
             public static LocalizedString openshop = @"Open Shop [{00}]";
 
             public static LocalizedString playanimation = @"Play Animation {00} {01}";
@@ -3088,6 +3091,12 @@ Tick timer saved in server config.json.";
             public static LocalizedString cancel = @"Cancel";
 
             public static LocalizedString label = @"Table:";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString JournalMode = @"Journal Mode?";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString JournalModeTooltip = @"Opens the crafting window without the option for the player to actually craft.";
 
             public static LocalizedString okay = @"Ok";
 

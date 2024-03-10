@@ -1904,6 +1904,12 @@ namespace Intersect.Server.Networking
                 return;
             }
 
+            if (player.CraftJournalMode)
+            {
+                PacketSender.SendChatMsg(player, Strings.Crafting.InJournalMode, ChatMessageType.Notice);
+                return;
+            }
+
             lock (player.EntityLock)
             {
                 //if player hit stop button in crafting window

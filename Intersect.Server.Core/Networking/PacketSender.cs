@@ -1683,7 +1683,7 @@ namespace Intersect.Server.Networking
         }
 
         //CraftingTablePacket
-        public static void SendOpenCraftingTable(Player player, CraftingTableBase table)
+        public static void SendOpenCraftingTable(Player player, CraftingTableBase table, bool journalMode)
         {
             if (table != null)
             {
@@ -1701,15 +1701,14 @@ namespace Intersect.Server.Networking
                 }
 
                 //Send the modfied table
-                player.SendPacket(new CraftingTablePacket(playerTable.JsonData, false));
-
+                player.SendPacket(new CraftingTablePacket(playerTable.JsonData, false, journalMode));
             }
         }
 
         //CraftingTablePacket
         public static void SendCloseCraftingTable(Player player)
         {
-            player.SendPacket(new CraftingTablePacket(null, true));
+            player.SendPacket(new CraftingTablePacket(null, true, false));
         }
 
         //GameObjectPacket

@@ -30,93 +30,111 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EventCommandOpenCraftingTable));
-            this.grpTable = new DarkUI.Controls.DarkGroupBox();
-            this.cmbTable = new DarkUI.Controls.DarkComboBox();
-            this.lblTable = new System.Windows.Forms.Label();
-            this.btnCancel = new DarkUI.Controls.DarkButton();
-            this.btnSave = new DarkUI.Controls.DarkButton();
-            this.grpTable.SuspendLayout();
-            this.SuspendLayout();
+            grpTable = new DarkGroupBox();
+            chkJournalMode = new DarkCheckBox();
+            cmbTable = new DarkComboBox();
+            lblTable = new Label();
+            btnCancel = new DarkButton();
+            btnSave = new DarkButton();
+            grpTable.SuspendLayout();
+            SuspendLayout();
             // 
             // grpTable
             // 
-            this.grpTable.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
-            this.grpTable.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.grpTable.Controls.Add(this.cmbTable);
-            this.grpTable.Controls.Add(this.lblTable);
-            this.grpTable.Controls.Add(this.btnCancel);
-            this.grpTable.Controls.Add(this.btnSave);
-            this.grpTable.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpTable.Location = new System.Drawing.Point(3, 3);
-            this.grpTable.Name = "grpTable";
-            this.grpTable.Size = new System.Drawing.Size(176, 126);
-            this.grpTable.TabIndex = 17;
-            this.grpTable.TabStop = false;
-            this.grpTable.Text = "Open Crafting";
+            grpTable.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
+            grpTable.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
+            grpTable.Controls.Add(chkJournalMode);
+            grpTable.Controls.Add(cmbTable);
+            grpTable.Controls.Add(lblTable);
+            grpTable.Controls.Add(btnCancel);
+            grpTable.Controls.Add(btnSave);
+            grpTable.ForeColor = System.Drawing.Color.Gainsboro;
+            grpTable.Location = new System.Drawing.Point(4, -4);
+            grpTable.Margin = new Padding(4, 3, 4, 3);
+            grpTable.Name = "grpTable";
+            grpTable.Padding = new Padding(4, 3, 4, 3);
+            grpTable.Size = new Size(272, 124);
+            grpTable.TabIndex = 17;
+            grpTable.TabStop = false;
+            grpTable.Text = "Open Crafting";
+            // 
+            // chkJournalMode
+            // 
+            chkJournalMode.AutoSize = true;
+            chkJournalMode.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
+            chkJournalMode.Location = new System.Drawing.Point(8, 52);
+            chkJournalMode.Margin = new Padding(4, 3, 4, 3);
+            chkJournalMode.Name = "chkJournalMode";
+            chkJournalMode.Size = new Size(158, 19);
+            chkJournalMode.TabIndex = 24;
+            chkJournalMode.Text = "Open as crafting journal?";
             // 
             // cmbTable
             // 
-            this.cmbTable.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.cmbTable.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.cmbTable.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
-            this.cmbTable.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbTable.DrawDropdownHoverOutline = false;
-            this.cmbTable.DrawFocusRectangle = false;
-            this.cmbTable.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.cmbTable.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbTable.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.cmbTable.ForeColor = System.Drawing.Color.Gainsboro;
-            this.cmbTable.FormattingEnabled = true;
-            this.cmbTable.Location = new System.Drawing.Point(47, 19);
-            this.cmbTable.Name = "cmbTable";
-            this.cmbTable.Size = new System.Drawing.Size(117, 21);
-            this.cmbTable.TabIndex = 22;
-            this.cmbTable.Text = null;
-            this.cmbTable.TextPadding = new System.Windows.Forms.Padding(2);
+            cmbTable.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
+            cmbTable.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
+            cmbTable.BorderStyle = ButtonBorderStyle.Solid;
+            cmbTable.ButtonColor = System.Drawing.Color.FromArgb(43, 43, 43);
+            cmbTable.DrawDropdownHoverOutline = false;
+            cmbTable.DrawFocusRectangle = false;
+            cmbTable.DrawMode = DrawMode.OwnerDrawFixed;
+            cmbTable.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbTable.FlatStyle = FlatStyle.Flat;
+            cmbTable.ForeColor = System.Drawing.Color.Gainsboro;
+            cmbTable.FormattingEnabled = true;
+            cmbTable.Location = new System.Drawing.Point(55, 22);
+            cmbTable.Margin = new Padding(4, 3, 4, 3);
+            cmbTable.Name = "cmbTable";
+            cmbTable.Size = new Size(209, 24);
+            cmbTable.TabIndex = 22;
+            cmbTable.Text = null;
+            cmbTable.TextPadding = new Padding(2);
             // 
             // lblTable
             // 
-            this.lblTable.AutoSize = true;
-            this.lblTable.Location = new System.Drawing.Point(4, 22);
-            this.lblTable.Name = "lblTable";
-            this.lblTable.Size = new System.Drawing.Size(37, 13);
-            this.lblTable.TabIndex = 21;
-            this.lblTable.Text = "Table:";
+            lblTable.AutoSize = true;
+            lblTable.Location = new System.Drawing.Point(5, 25);
+            lblTable.Margin = new Padding(4, 0, 4, 0);
+            lblTable.Name = "lblTable";
+            lblTable.Size = new Size(37, 15);
+            lblTable.TabIndex = 21;
+            lblTable.Text = "Table:";
             // 
             // btnCancel
             // 
-            this.btnCancel.Location = new System.Drawing.Point(89, 97);
-            this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Padding = new System.Windows.Forms.Padding(5);
-            this.btnCancel.Size = new System.Drawing.Size(75, 23);
-            this.btnCancel.TabIndex = 20;
-            this.btnCancel.Text = "Cancel";
-            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+            btnCancel.Location = new System.Drawing.Point(176, 82);
+            btnCancel.Margin = new Padding(4, 3, 4, 3);
+            btnCancel.Name = "btnCancel";
+            btnCancel.Padding = new Padding(6);
+            btnCancel.Size = new Size(88, 27);
+            btnCancel.TabIndex = 20;
+            btnCancel.Text = "Cancel";
+            btnCancel.Click += btnCancel_Click;
             // 
             // btnSave
             // 
-            this.btnSave.Location = new System.Drawing.Point(7, 97);
-            this.btnSave.Name = "btnSave";
-            this.btnSave.Padding = new System.Windows.Forms.Padding(5);
-            this.btnSave.Size = new System.Drawing.Size(75, 23);
-            this.btnSave.TabIndex = 19;
-            this.btnSave.Text = "Ok";
-            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+            btnSave.Location = new System.Drawing.Point(80, 82);
+            btnSave.Margin = new Padding(4, 3, 4, 3);
+            btnSave.Name = "btnSave";
+            btnSave.Padding = new Padding(6);
+            btnSave.Size = new Size(88, 27);
+            btnSave.TabIndex = 19;
+            btnSave.Text = "Ok";
+            btnSave.Click += btnSave_Click;
             // 
             // EventCommandOpenCraftingTable
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.AutoSize = true;
-            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            this.Controls.Add(this.grpTable);
-            this.Name = "EventCommandOpenCraftingTable";
-            this.Size = new System.Drawing.Size(182, 132);
-            this.grpTable.ResumeLayout(false);
-            this.grpTable.PerformLayout();
-            this.ResumeLayout(false);
-
+            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleMode = AutoScaleMode.Font;
+            AutoSize = true;
+            BackColor = System.Drawing.Color.FromArgb(45, 45, 48);
+            Controls.Add(grpTable);
+            Margin = new Padding(4, 3, 4, 3);
+            Name = "EventCommandOpenCraftingTable";
+            Size = new Size(283, 125);
+            grpTable.ResumeLayout(false);
+            grpTable.PerformLayout();
+            ResumeLayout(false);
         }
 
         #endregion
@@ -124,7 +142,8 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         private DarkGroupBox grpTable;
         private DarkButton btnCancel;
         private DarkButton btnSave;
-        private System.Windows.Forms.Label lblTable;
+        private Label lblTable;
         private DarkComboBox cmbTable;
+        private DarkCheckBox chkJournalMode;
     }
 }

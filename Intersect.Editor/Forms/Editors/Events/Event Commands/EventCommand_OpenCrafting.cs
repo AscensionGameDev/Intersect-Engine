@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Windows.Forms;
 
 using Intersect.Editor.Localization;
@@ -24,6 +24,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             cmbTable.Items.Clear();
             cmbTable.Items.AddRange(CraftingTableBase.Names);
             cmbTable.SelectedIndex = CraftingTableBase.ListIndex(mMyCommand.CraftingTableId);
+            chkJournalMode.Checked = mMyCommand.JournalMode;
         }
 
         private void InitLocalization()
@@ -32,6 +33,16 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             lblTable.Text = Strings.EventOpenCrafting.label;
             btnSave.Text = Strings.EventOpenCrafting.okay;
             btnCancel.Text = Strings.EventOpenCrafting.cancel;
+            chkJournalMode.Text = Strings.EventOpenCrafting.JournalMode;
+
+            ToolTip toolTip1 = new ToolTip();
+
+            toolTip1.AutoPopDelay = 5000;
+            toolTip1.InitialDelay = 1000;
+            toolTip1.ReshowDelay = 500;
+            toolTip1.ShowAlways = true;
+
+            toolTip1.SetToolTip(chkJournalMode, Strings.EventOpenCrafting.JournalModeTooltip);
         }
 
         private void btnSave_Click(object sender, EventArgs e)
@@ -40,6 +51,8 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             {
                 mMyCommand.CraftingTableId = CraftingTableBase.IdFromList(cmbTable.SelectedIndex);
             }
+
+            mMyCommand.JournalMode = chkJournalMode.Checked;
 
             mEventEditor.FinishCommandEdit();
         }

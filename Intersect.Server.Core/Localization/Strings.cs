@@ -536,6 +536,9 @@ namespace Intersect.Server.Localization
             public readonly LocalizedString CraftFailureLostItems = @"The attempt to create the item {00} failed and you lost the materials!";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString InJournalMode = @"You cannot craft from your crafting journal!";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString RequirementsNotMet = @"You do not meet the requirements in order to craft this item!";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]

@@ -1203,7 +1203,9 @@ namespace Intersect.Editor.Forms.Editors.Events
 
         private static string GetCommandText(OpenCraftingTableCommand command, MapInstance map)
         {
-            return Strings.EventCommandList.opencrafting.ToString(CraftingTableBase.GetName(command.CraftingTableId));
+            return command.JournalMode ?
+                Strings.EventCommandList.OpenCraftingJournal.ToString(CraftingTableBase.GetName(command.CraftingTableId)) :
+                Strings.EventCommandList.opencrafting.ToString(CraftingTableBase.GetName(command.CraftingTableId));
         }
 
         private static string GetCommandText(SetClassCommand command, MapInstance map)

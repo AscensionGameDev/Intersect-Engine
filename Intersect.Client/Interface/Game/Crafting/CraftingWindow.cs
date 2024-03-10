@@ -71,12 +71,16 @@ namespace Intersect.Client.Interface.Game.Crafting
 
         public bool IsCrafting => mRemainingCrafts > 0;
 
-        public CraftingWindow(Canvas gameCanvas)
+        private bool mJournalMode { get; set; }
+
+        public CraftingWindow(Canvas gameCanvas, bool journalMode)
         {
             mCraftWindow = new WindowControl(gameCanvas, Globals.ActiveCraftingTable.Name, false, "CraftingWindow");
             mCraftWindow.DisableResizing();
 
             mItemContainer = new ScrollControl(mCraftWindow, "IngredientsContainer");
+
+            mJournalMode = journalMode;
 
             //Labels
             mLblRecipes = new Label(mCraftWindow, "RecipesTitle");
@@ -115,6 +119,12 @@ namespace Intersect.Client.Interface.Game.Crafting
             mCraftAll.Clicked += craftAll_Clicked;
 
             mCraftWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+
+            if (mJournalMode)
+            {
+                mCraft.Hide();
+                mCraftAll.Hide();
+            }
 
             Interface.InputBlockingElements.Add(mCraftWindow);
 
@@ -290,7 +300,7 @@ namespace Intersect.Client.Interface.Game.Crafting
                 }
             }
 
-            mCraftAll.IsHidden = craftableQuantity < 2;
+            mCraftAll.IsHidden = mJournalMode || craftableQuantity < 2;
             if (!mCraftAll.IsHidden)
             {
                 mCraftAll.SetText(Strings.Crafting.craftall.ToString(craftableQuantity));
