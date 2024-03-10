@@ -5507,6 +5507,18 @@ namespace Intersect.Server.Entities
 
             UpdateSpellCooldown(spellBase, spellSlot);
 
+            ConsumeSpellProjectile(spellBase);
+        }
+
+        /// <summary>
+        /// Checks if the caster has the required projectile(s) for the spell and tries to take them.
+        /// This method is used when a spell that requires projectile is casted.
+        /// If the spell has a valid ProjectileId, it retrieves the projectile and checks if it has a valid AmmoItemId.
+        /// If it does, it attempts to take the required amount of ammo from the player's inventory.
+        /// </summary>
+        /// <param name="spellBase">The spell that is being cast.</param>
+        private void ConsumeSpellProjectile(SpellBase spellBase)
+        {
             // Check if the caster has the required projectile(s) for the spell and try to take it/them.
             if (spellBase.SpellType == SpellType.CombatSpell &&
                 spellBase.Combat.TargetType == SpellTargetType.Projectile &&
