@@ -891,6 +891,26 @@ namespace Intersect.Server.Entities
             }
         }
 
+        /// <summary>
+        ///     Updates the player's spell cooldown for the specified <paramref name="spellBase"/>.
+        ///     <para> This method is called when a spell is casted by a player. </para>
+        /// </summary>
+        public override void UpdateSpellCooldown(SpellBase spellBase, int spellSlot)
+        {
+            if (spellSlot < 0 || spellSlot >= Options.MaxPlayerSkills)
+            {
+                return;
+            }
+
+            this.UpdateCooldown(spellBase);
+
+            // Trigger the global cooldown, if we're allowed to.
+            if (!spellBase.IgnoreGlobalCooldown)
+            {
+                this.UpdateGlobalCooldown();
+            }
+        }
+        
         public void RemoveEvent(Guid id, bool sendLeave = true)
         {
             Event outInstance;
@@ -5485,14 +5505,7 @@ namespace Intersect.Server.Entities
                     break;
             }
 
-            // Player cooldown handling!
-            UpdateCooldown(spellBase);
-
-            // Trigger the global cooldown, if we're allowed to.
-            if (!spellBase.IgnoreGlobalCooldown)
-            {
-                UpdateGlobalCooldown();
-            }
+            UpdateSpellCooldown(spellBase, spellSlot);
 
             // Check if the caster has the required projectile(s) for the spell and try to take it/them.
             if (spellBase.SpellType == SpellType.CombatSpell &&
