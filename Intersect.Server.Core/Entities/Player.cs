@@ -5418,7 +5418,6 @@ namespace Intersect.Server.Entities
                 target = this;
             }
 
-
             if (CastTime == 0)
             {
                 CastTime = Timing.Global.Milliseconds + spell.CastDuration;
@@ -5438,18 +5437,6 @@ namespace Intersect.Server.Entities
                 // retargeting for auto self-cast on friendly when targeting hostile
                 CastTarget = target;
 
-                //Check if the caster has the right ammunition if a projectile
-                if (spell.SpellType == SpellType.CombatSpell &&
-                    spell.Combat.TargetType == SpellTargetType.Projectile &&
-                    spell.Combat.ProjectileId != Guid.Empty)
-                {
-                    var projectileBase = spell.Combat.Projectile;
-                    if (projectileBase != null && projectileBase.AmmoItemId != Guid.Empty)
-                    {
-                        TryTakeItem(projectileBase.AmmoItemId, projectileBase.AmmoRequired);
-                    }
-                }
-
                 if (spell.CastAnimationId != Guid.Empty)
                 {
                     PacketSender.SendAnimationToProximity(
@@ -5457,17 +5444,9 @@ namespace Intersect.Server.Entities
                     ); //Target Type 1 will be global entity
                 }
 
-                // Check if the player isn't casting a spell already.
-                if (!IsCasting)
+                //Tell the client we are channeling the spell
+                if (IsCasting)
                 {
-                    // Player is not casting a spell, cast now!
-                    CastTime = 0;
-                    CastSpell(Spells[SpellCastSlot].SpellId, SpellCastSlot);
-                    CastTarget = null;
-                }
-                else
-                {
-                    //Tell the client we are channeling the spell
                     PacketSender.SendEntityCastTime(this, spellNum);
                 }
             }
@@ -5483,7 +5462,7 @@ namespace Intersect.Server.Entities
         public override void CastSpell(Guid spellId, int spellSlot = -1)
         {
             var spellBase = SpellBase.Get(spellId);
-            if (spellBase == null)
+            if (spellBase == null || spellSlot < 0 || spellSlot >= Options.MaxPlayerSkills)
             {
                 return;
             }
@@ -5504,6 +5483,27 @@ namespace Intersect.Server.Entities
                     base.CastSpell(spellId, spellSlot);
 
                     break;
+            }
+
+            // Player cooldown handling!
+            UpdateCooldown(spellBase);
+
+            // Trigger the global cooldown, if we're allowed to.
+            if (!spellBase.IgnoreGlobalCooldown)
+            {
+                UpdateGlobalCooldown();
+            }
+
+            // Check if the caster has the required projectile(s) for the spell and try to take it/them.
+            if (spellBase.SpellType == SpellType.CombatSpell &&
+                spellBase.Combat.TargetType == SpellTargetType.Projectile &&
+                spellBase.Combat.ProjectileId != Guid.Empty)
+            {
+                var projectileBase = spellBase.Combat.Projectile;
+                if (projectileBase != null && projectileBase.AmmoItemId != Guid.Empty)
+                {
+                    TryTakeItem(projectileBase.AmmoItemId, projectileBase.AmmoRequired);
+                }
             }
         }
 
