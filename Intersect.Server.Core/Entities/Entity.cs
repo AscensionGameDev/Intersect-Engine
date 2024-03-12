@@ -378,6 +378,20 @@ namespace Intersect.Server.Entities
         }
 
         /// <summary>
+        ///     Updates the entity's spell cooldown for the specified <paramref name="spellBase"/>.
+        ///     <para> This method is called when a spell is casted by an entity. </para>
+        /// </summary>
+        public virtual void UpdateSpellCooldown(SpellBase spellBase, int spellSlot)
+        {
+            if (spellSlot < 0 || spellSlot >= Options.MaxPlayerSkills)
+            {
+                return;
+            }
+
+            SpellCooldowns[Spells[spellSlot].SpellId] = Timing.Global.MillisecondsUtc + spellBase.CooldownDuration;
+        }
+
+        /// <summary>
         ///     Determines if this entity can move in the specified <paramref name="direction"/>.
         /// </summary>
         /// <param name="direction">The <see cref="Direction"/> the entity is attempting to move in.</param>
@@ -2477,25 +2491,7 @@ namespace Intersect.Server.Entities
                         break;
                 }
 
-                if (spellSlot >= 0 && spellSlot < Options.MaxPlayerSkills)
-                {
-                    // Player cooldown handling is done elsewhere!
-                    if (this is Player player)
-                    {
-                        player.UpdateCooldown(spellBase);
-
-                        // Trigger the global cooldown, if we're allowed to.
-                        if (!spellBase.IgnoreGlobalCooldown)
-                        {
-                            player.UpdateGlobalCooldown();
-                        }
-                    }
-                    else
-                    {
-                        SpellCooldowns[Spells[spellSlot].SpellId] =
-                            Timing.Global.MillisecondsUtc + spellBase.CooldownDuration;
-                    }
-                }
+                UpdateSpellCooldown(spellBase, spellSlot);
             }
             finally
             {
