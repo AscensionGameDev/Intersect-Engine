@@ -53,7 +53,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
 
         private void chkUnequip_CheckedChanged(object sender, EventArgs e)
         {
-            if(chkUnequip.Checked)
+            if (chkUnequip.Checked)
             {
                 chkTriggerCooldown.Checked = false;
                 chkTriggerCooldown.Enabled = false;

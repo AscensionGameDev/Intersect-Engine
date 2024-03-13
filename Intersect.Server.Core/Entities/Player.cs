@@ -5644,9 +5644,10 @@ namespace Intersect.Server.Entities
                         UnequipItem(Options.WeaponIndex, false);
                     }
                 }
+
                 SetEquipmentSlot(itemBase.EquipmentSlot, slot);
 
-                if(updateCooldown)
+                if (updateCooldown)
                 {
                     UpdateCooldown(itemBase);
                 }
