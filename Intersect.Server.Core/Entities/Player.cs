@@ -5483,7 +5483,7 @@ namespace Intersect.Server.Entities
         public override void CastSpell(Guid spellId, int spellSlot = -1)
         {
             var spellBase = SpellBase.Get(spellId);
-            if (spellBase == null || spellSlot < 0 || spellSlot >= Options.MaxPlayerSkills)
+            if (spellBase == null)
             {
                 return;
             }
