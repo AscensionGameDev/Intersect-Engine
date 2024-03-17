@@ -30,13 +30,13 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EventCommandEquipItems));
             this.grpEquipItem = new DarkUI.Controls.DarkGroupBox();
+            this.chkTriggerCooldown = new DarkUI.Controls.DarkCheckBox();
+            this.chkUnequip = new DarkUI.Controls.DarkCheckBox();
             this.cmbItem = new DarkUI.Controls.DarkComboBox();
             this.lblItem = new System.Windows.Forms.Label();
             this.btnCancel = new DarkUI.Controls.DarkButton();
             this.btnSave = new DarkUI.Controls.DarkButton();
-            this.chkUnequip = new DarkUI.Controls.DarkCheckBox();
             this.grpEquipItem.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -44,6 +44,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             // 
             this.grpEquipItem.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
             this.grpEquipItem.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpEquipItem.Controls.Add(this.chkTriggerCooldown);
             this.grpEquipItem.Controls.Add(this.chkUnequip);
             this.grpEquipItem.Controls.Add(this.cmbItem);
             this.grpEquipItem.Controls.Add(this.lblItem);
@@ -52,10 +53,33 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.grpEquipItem.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpEquipItem.Location = new System.Drawing.Point(3, 3);
             this.grpEquipItem.Name = "grpEquipItem";
-            this.grpEquipItem.Size = new System.Drawing.Size(193, 111);
+            this.grpEquipItem.Size = new System.Drawing.Size(207, 111);
             this.grpEquipItem.TabIndex = 17;
             this.grpEquipItem.TabStop = false;
             this.grpEquipItem.Text = "Equip/Unequip Player Items:";
+            // 
+            // chkTriggerCooldown
+            // 
+            this.chkTriggerCooldown.AutoSize = true;
+            this.chkTriggerCooldown.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.chkTriggerCooldown.Location = new System.Drawing.Point(86, 50);
+            this.chkTriggerCooldown.Name = "chkTriggerCooldown";
+            this.chkTriggerCooldown.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.chkTriggerCooldown.Size = new System.Drawing.Size(115, 17);
+            this.chkTriggerCooldown.TabIndex = 58;
+            this.chkTriggerCooldown.Text = "Trigger Cooldown?";
+            // 
+            // chkUnequip
+            // 
+            this.chkUnequip.AutoSize = true;
+            this.chkUnequip.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.chkUnequip.Location = new System.Drawing.Point(6, 50);
+            this.chkUnequip.Name = "chkUnequip";
+            this.chkUnequip.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.chkUnequip.Size = new System.Drawing.Size(72, 17);
+            this.chkUnequip.TabIndex = 57;
+            this.chkUnequip.Text = "Unequip?";
+            this.chkUnequip.CheckedChanged += new System.EventHandler(this.chkUnequip_CheckedChanged);
             // 
             // cmbItem
             // 
@@ -88,7 +112,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             // 
             // btnCancel
             // 
-            this.btnCancel.Location = new System.Drawing.Point(105, 78);
+            this.btnCancel.Location = new System.Drawing.Point(126, 78);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Padding = new System.Windows.Forms.Padding(5);
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
@@ -106,17 +130,6 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.btnSave.Text = "Ok";
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
-            // chkUnequip
-            // 
-            this.chkUnequip.AutoSize = true;
-            this.chkUnequip.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.chkUnequip.Location = new System.Drawing.Point(6, 50);
-            this.chkUnequip.Name = "chkUnequip";
-            this.chkUnequip.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.chkUnequip.Size = new System.Drawing.Size(72, 17);
-            this.chkUnequip.TabIndex = 57;
-            this.chkUnequip.Text = "Unequip?";
-            // 
             // EventCommandEquipItems
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -125,7 +138,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.Controls.Add(this.grpEquipItem);
             this.Name = "EventCommandEquipItems";
-            this.Size = new System.Drawing.Size(205, 124);
+            this.Size = new System.Drawing.Size(216, 124);
             this.grpEquipItem.ResumeLayout(false);
             this.grpEquipItem.PerformLayout();
             this.ResumeLayout(false);
@@ -140,5 +153,6 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         private DarkComboBox cmbItem;
         private System.Windows.Forms.Label lblItem;
         private DarkCheckBox chkUnequip;
+        private DarkCheckBox chkTriggerCooldown;
     }
 }

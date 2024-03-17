@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Windows.Forms;
 
 using Intersect.Editor.Localization;
@@ -26,12 +26,14 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             cmbItem.Items.AddRange(ItemBase.Names);
             cmbItem.SelectedIndex = ItemBase.ListIndex(mMyCommand.ItemId);
             chkUnequip.Checked = mMyCommand.Unequip;
+            chkTriggerCooldown.Checked = mMyCommand.TriggerCooldown;
         }
 
         private void InitLocalization()
         {
             grpEquipItem.Text = Strings.EventEquipItems.title;
             chkUnequip.Text = Strings.EventEquipItems.unequip;
+            chkTriggerCooldown.Text = Strings.EventEquipItems.TriggerCooldown;
             btnSave.Text = Strings.EventEquipItems.okay;
             btnCancel.Text = Strings.EventEquipItems.cancel;
         }
@@ -40,6 +42,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
         {
             mMyCommand.ItemId = ItemBase.IdFromList(cmbItem.SelectedIndex);
             mMyCommand.Unequip = chkUnequip.Checked;
+            mMyCommand.TriggerCooldown = chkTriggerCooldown.Checked;
             mEventEditor.FinishCommandEdit();
         }
 
@@ -48,6 +51,18 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             mEventEditor.CancelCommandEdit();
         }
 
+        private void chkUnequip_CheckedChanged(object sender, EventArgs e)
+        {
+            if (chkUnequip.Checked)
+            {
+                chkTriggerCooldown.Checked = false;
+                chkTriggerCooldown.Enabled = false;
+            }
+            else
+            {
+                chkTriggerCooldown.Enabled = true;
+            }
+        }
     }
 
 }

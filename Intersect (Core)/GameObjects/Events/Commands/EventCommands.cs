@@ -483,6 +483,9 @@ namespace Intersect.GameObjects.Events.Commands
         public Guid ItemId { get; set; }
 
         public bool Unequip { get; set; }
+
+        public bool TriggerCooldown { get; set; }
+
     }
 
     public partial class ChangeSpriteCommand : EventCommand

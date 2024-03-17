@@ -600,7 +600,7 @@ namespace Intersect.Server.Entities.Events
             }
             else
             {
-                player.EquipItem(ItemBase.Get(command.ItemId));
+                player.EquipItem(ItemBase.Get(command.ItemId), updateCooldown: command.TriggerCooldown);
             }
         }
 
