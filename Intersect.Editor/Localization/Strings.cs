@@ -829,6 +829,9 @@ namespace Intersect.Editor.Localization
             public static LocalizedString sound = @"Sound:";
 
             public static LocalizedString soundcomplete = @"Complete Sound Playback After Anim Dies";
+            
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString LoopSoundDuringPreview = @"Loop sound during preview";
 
             public static LocalizedString swap = @"Swap Upper/Lower";
 

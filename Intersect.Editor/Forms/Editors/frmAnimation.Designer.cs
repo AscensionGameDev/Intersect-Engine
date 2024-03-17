@@ -39,6 +39,7 @@ namespace Intersect.Editor.Forms.Editors
             lstGameObjects = new Controls.GameObjectList();
             grpGeneral = new DarkGroupBox();
             chkCompleteSoundPlayback = new DarkCheckBox();
+            chkLoopSoundDuringPreview = new DarkCheckBox();
             btnAddFolder = new DarkButton();
             lblFolder = new Label();
             cmbFolder = new DarkComboBox();
@@ -47,6 +48,7 @@ namespace Intersect.Editor.Forms.Editors
             labelDarkness = new Label();
             lblSound = new Label();
             cmbSound = new DarkComboBox();
+            btnPlaySound = new DarkButton();
             lblName = new Label();
             txtName = new DarkTextBox();
             grpLower = new DarkGroupBox();
@@ -213,6 +215,7 @@ namespace Intersect.Editor.Forms.Editors
             grpGeneral.BackColor = System.Drawing.Color.FromArgb(45, 45, 48);
             grpGeneral.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
             grpGeneral.Controls.Add(chkCompleteSoundPlayback);
+            grpGeneral.Controls.Add(chkLoopSoundDuringPreview);
             grpGeneral.Controls.Add(btnAddFolder);
             grpGeneral.Controls.Add(lblFolder);
             grpGeneral.Controls.Add(cmbFolder);
@@ -221,35 +224,46 @@ namespace Intersect.Editor.Forms.Editors
             grpGeneral.Controls.Add(labelDarkness);
             grpGeneral.Controls.Add(lblSound);
             grpGeneral.Controls.Add(cmbSound);
+            grpGeneral.Controls.Add(btnPlaySound);
             grpGeneral.Controls.Add(lblName);
             grpGeneral.Controls.Add(txtName);
             grpGeneral.ForeColor = System.Drawing.Color.Gainsboro;
-            grpGeneral.Location = new System.Drawing.Point(8, 8);
+            grpGeneral.Location = new System.Drawing.Point(8, 0);
             grpGeneral.Margin = new Padding(4, 3, 4, 3);
             grpGeneral.Name = "grpGeneral";
             grpGeneral.Padding = new Padding(4, 3, 4, 3);
-            grpGeneral.Size = new Size(832, 88);
+            grpGeneral.Size = new Size(832, 100);
             grpGeneral.TabIndex = 18;
             grpGeneral.TabStop = false;
             grpGeneral.Text = "General";
             // 
             // chkCompleteSoundPlayback
             // 
-            chkCompleteSoundPlayback.Location = new System.Drawing.Point(258, 54);
+            chkCompleteSoundPlayback.Location = new System.Drawing.Point(288, 52);
             chkCompleteSoundPlayback.Margin = new Padding(4, 3, 4, 3);
             chkCompleteSoundPlayback.Name = "chkCompleteSoundPlayback";
             chkCompleteSoundPlayback.Size = new Size(287, 20);
             chkCompleteSoundPlayback.TabIndex = 29;
             chkCompleteSoundPlayback.Text = "Complete Sound Playback After Anim Dies";
             chkCompleteSoundPlayback.CheckedChanged += chkCompleteSoundPlayback_CheckedChanged;
+            //
+            // chkLoopSoundDuringPreview
+            //
+            chkLoopSoundDuringPreview.Location = new System.Drawing.Point(288, 72);
+            chkLoopSoundDuringPreview.Margin = new Padding(4, 3, 4, 3);
+            chkLoopSoundDuringPreview.Name = "chkLoopSoundDuringPreview";
+            chkLoopSoundDuringPreview.Size = new Size(287, 20);
+            chkLoopSoundDuringPreview.TabIndex = 29;
+            chkLoopSoundDuringPreview.Text = "Loop sound during preview";
+            chkLoopSoundDuringPreview.CheckedChanged += chkLoopSoundDuringPreview_CheckedChanged;
             // 
             // btnAddFolder
             // 
-            btnAddFolder.Location = new System.Drawing.Point(216, 52);
+            btnAddFolder.Location = new System.Drawing.Point(216, 59);
             btnAddFolder.Margin = new Padding(4, 3, 4, 3);
             btnAddFolder.Name = "btnAddFolder";
             btnAddFolder.Padding = new Padding(6);
-            btnAddFolder.Size = new Size(21, 24);
+            btnAddFolder.Size = new Size(24, 24);
             btnAddFolder.TabIndex = 17;
             btnAddFolder.Text = "+";
             btnAddFolder.Click += btnAddFolder_Click;
@@ -257,7 +271,7 @@ namespace Intersect.Editor.Forms.Editors
             // lblFolder
             // 
             lblFolder.AutoSize = true;
-            lblFolder.Location = new System.Drawing.Point(6, 55);
+            lblFolder.Location = new System.Drawing.Point(6, 59);
             lblFolder.Margin = new Padding(4, 0, 4, 0);
             lblFolder.Name = "lblFolder";
             lblFolder.Size = new Size(43, 15);
@@ -277,7 +291,7 @@ namespace Intersect.Editor.Forms.Editors
             cmbFolder.FlatStyle = FlatStyle.Flat;
             cmbFolder.ForeColor = System.Drawing.Color.Gainsboro;
             cmbFolder.FormattingEnabled = true;
-            cmbFolder.Location = new System.Drawing.Point(70, 52);
+            cmbFolder.Location = new System.Drawing.Point(70, 60);
             cmbFolder.Margin = new Padding(4, 3, 4, 3);
             cmbFolder.Name = "cmbFolder";
             cmbFolder.Size = new Size(138, 24);
@@ -288,18 +302,18 @@ namespace Intersect.Editor.Forms.Editors
             // 
             // btnSwap
             // 
-            btnSwap.Location = new System.Drawing.Point(552, 50);
+            btnSwap.Location = new System.Drawing.Point(630, 22);
             btnSwap.Margin = new Padding(4, 3, 4, 3);
             btnSwap.Name = "btnSwap";
             btnSwap.Padding = new Padding(6);
-            btnSwap.Size = new Size(184, 27);
+            btnSwap.Size = new Size(184, 24);
             btnSwap.TabIndex = 6;
             btnSwap.Text = "Swap Upper/Lower";
             btnSwap.Click += btnSwap_Click;
             // 
             // scrlDarkness
             // 
-            scrlDarkness.Location = new System.Drawing.Point(671, 22);
+            scrlDarkness.Location = new System.Drawing.Point(642, 70);
             scrlDarkness.Margin = new Padding(4, 3, 4, 3);
             scrlDarkness.Name = "scrlDarkness";
             scrlDarkness.ScrollOrientation = DarkScrollOrientation.Horizontal;
@@ -310,8 +324,8 @@ namespace Intersect.Editor.Forms.Editors
             // labelDarkness
             // 
             labelDarkness.AutoSize = true;
-            labelDarkness.Location = new System.Drawing.Point(548, 23);
-            labelDarkness.Margin = new Padding(4, 0, 4, 0);
+            labelDarkness.Location = new System.Drawing.Point(660, 56);
+            labelDarkness.Margin = new Padding(0, 0, 0, 0);
             labelDarkness.Name = "labelDarkness";
             labelDarkness.Size = new Size(115, 15);
             labelDarkness.TabIndex = 4;
@@ -320,7 +334,7 @@ namespace Intersect.Editor.Forms.Editors
             // lblSound
             // 
             lblSound.AutoSize = true;
-            lblSound.Location = new System.Drawing.Point(254, 24);
+            lblSound.Location = new System.Drawing.Point(284, 20);
             lblSound.Margin = new Padding(4, 0, 4, 0);
             lblSound.Name = "lblSound";
             lblSound.Size = new Size(44, 15);
@@ -341,19 +355,33 @@ namespace Intersect.Editor.Forms.Editors
             cmbSound.ForeColor = System.Drawing.Color.Gainsboro;
             cmbSound.FormattingEnabled = true;
             cmbSound.Items.AddRange(new object[] { "None" });
-            cmbSound.Location = new System.Drawing.Point(309, 20);
+            cmbSound.Location = new System.Drawing.Point(339, 22);
             cmbSound.Margin = new Padding(4, 3, 4, 3);
             cmbSound.Name = "cmbSound";
-            cmbSound.Size = new Size(218, 24);
+            cmbSound.Size = new Size(210, 15);
             cmbSound.TabIndex = 2;
             cmbSound.Text = "None";
             cmbSound.TextPadding = new Padding(2);
             cmbSound.SelectedIndexChanged += cmbSound_SelectedIndexChanged;
             // 
+            // btnPlaySound
+            //
+            btnPlaySound.BackgroundImageLayout = ImageLayout.Stretch;
+            btnPlaySound.ImageKey = "sharp_play_arrow_white_48dp.png";
+            btnPlaySound.ImageList = imglstPlayPause;
+            btnPlaySound.ImagePadding = 0;
+            btnPlaySound.Location = new System.Drawing.Point(558, 22);
+            btnPlaySound.Margin = new Padding(4, 3, 4, 3);
+            btnPlaySound.Name = "btnPlaySound";
+            btnPlaySound.Padding = new Padding(6);
+            btnPlaySound.Size = new Size(20, 20);
+            btnPlaySound.TabIndex = 1;
+            btnPlaySound.Click += btnPlaySound_Click;
+            // 
             // lblName
             // 
             lblName.AutoSize = true;
-            lblName.Location = new System.Drawing.Point(7, 24);
+            lblName.Location = new System.Drawing.Point(7, 22);
             lblName.Margin = new Padding(4, 0, 4, 0);
             lblName.Name = "lblName";
             lblName.Size = new Size(42, 15);
@@ -365,7 +393,7 @@ namespace Intersect.Editor.Forms.Editors
             txtName.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
             txtName.BorderStyle = BorderStyle.FixedSingle;
             txtName.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
-            txtName.Location = new System.Drawing.Point(70, 22);
+            txtName.Location = new System.Drawing.Point(70, 20);
             txtName.Margin = new Padding(4, 3, 4, 3);
             txtName.Name = "txtName";
             txtName.Size = new Size(166, 23);
@@ -1019,22 +1047,22 @@ namespace Intersect.Editor.Forms.Editors
             // btnCancel
             // 
             btnCancel.DialogResult = DialogResult.Cancel;
-            btnCancel.Location = new System.Drawing.Point(848, 43);
+            btnCancel.Location = new System.Drawing.Point(848, 56);
             btnCancel.Margin = new Padding(4, 3, 4, 3);
             btnCancel.Name = "btnCancel";
             btnCancel.Padding = new Padding(6);
-            btnCancel.Size = new Size(144, 22);
+            btnCancel.Size = new Size(144, 44);
             btnCancel.TabIndex = 9;
             btnCancel.Text = "Cancel";
             btnCancel.Click += btnCancel_Click;
             // 
             // btnSave
             // 
-            btnSave.Location = new System.Drawing.Point(848, 15);
+            btnSave.Location = new System.Drawing.Point(848, 7);
             btnSave.Margin = new Padding(4, 3, 4, 3);
             btnSave.Name = "btnSave";
             btnSave.Padding = new Padding(6);
-            btnSave.Size = new Size(144, 22);
+            btnSave.Size = new Size(144, 44);
             btnSave.TabIndex = 6;
             btnSave.Text = "Save";
             btnSave.Click += btnSave_Click;
@@ -1046,7 +1074,7 @@ namespace Intersect.Editor.Forms.Editors
             pnlContainer.Controls.Add(btnCancel);
             pnlContainer.Controls.Add(grpGeneral);
             pnlContainer.Controls.Add(grpLower);
-            pnlContainer.Location = new System.Drawing.Point(245, 40);
+            pnlContainer.Location = new System.Drawing.Point(245, 30);
             pnlContainer.Margin = new Padding(4, 3, 4, 3);
             pnlContainer.Name = "pnlContainer";
             pnlContainer.Size = new Size(1000, 578);
@@ -1236,6 +1264,7 @@ namespace Intersect.Editor.Forms.Editors
         private DarkGroupBox grpGeneral;
         private Label lblSound;
         private DarkComboBox cmbSound;
+        private DarkButton btnPlaySound;
         private Label lblName;
         private DarkTextBox txtName;
         private DarkGroupBox grpLower;
@@ -1310,6 +1339,7 @@ namespace Intersect.Editor.Forms.Editors
         private DarkButton btnClearSearch;
         private DarkTextBox txtSearch;
         private DarkCheckBox chkCompleteSoundPlayback;
+        private DarkCheckBox chkLoopSoundDuringPreview;
         private Controls.GameObjectList lstGameObjects;
         private DarkGroupBox grpLowerExtraOptions;
         private DarkGroupBox grpUpperExtraOptions;
