@@ -153,15 +153,20 @@ namespace Intersect.Client.Interface.Game
 
         public void OpenAdminWindow()
         {
-            mAdminWindow ??= new AdminWindow(GameCanvas);
-
-            if (mAdminWindow.IsVisible())
+            if (mAdminWindow == null)
             {
-                mAdminWindow.Hide();
+                mAdminWindow ??= new AdminWindow(GameCanvas);
             }
             else
             {
-                mAdminWindow.Show();
+                if (mAdminWindow.IsVisible())
+                {
+                    mAdminWindow.Hide();
+                }
+                else
+                {
+                    mAdminWindow.Show();
+                }
             }
 
             mShouldOpenAdminWindow = false;
