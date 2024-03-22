@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.Contracts;
+using System.Diagnostics.Contracts;
 using Intersect.Server.Database;
 
 using Newtonsoft.Json.Linq;
@@ -74,6 +74,7 @@ public partial class MapGrid
                     map.MapGrid = index;
                     map.MapGridX = (int)x;
                     map.MapGridY = (int)y;
+                    map.CachedMapClientPacket = default;
                     mapIds.Remove(mapId);
                     break;
                 }
