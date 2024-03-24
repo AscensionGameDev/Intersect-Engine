@@ -23,3 +23,5 @@
 [Fernando Arzola Lagos](https://github.com/Arufonsu)
 
 [Shenmue](https://github.com/RedBandana)
+
+[Mighty Professional](https://github.com/Mighty-Professional)
