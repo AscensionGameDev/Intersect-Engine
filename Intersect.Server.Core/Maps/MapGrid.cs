@@ -105,6 +105,8 @@ public partial class MapGrid
             mapIds.Add(map.Id);
             map.MapGridX = x;
             map.MapGridY = y;
+            map.CachedMapClientPacket = default;
+
             if (x < _topLeft.X)
             {
                 _topLeft.X = x;

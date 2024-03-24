@@ -308,6 +308,7 @@ internal sealed partial class NetworkedPacketHandler
                                 tmpMap.MapGrid = MapController.Get(relativeMap).MapGrid;
                                 tmpMap.MapGridX = MapController.Get(relativeMap).MapGridX;
                                 tmpMap.MapGridY = MapController.Get(relativeMap).MapGridY - 1;
+                                tmpMap.CachedMapClientPacket = default;
                                 MapController.Get(relativeMap).Up = newMapId;
                                 DbInterface.SaveGameObject(MapController.Get(relativeMap));
                             }
