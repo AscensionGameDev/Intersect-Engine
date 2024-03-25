@@ -449,14 +449,10 @@ namespace Intersect.Client.Interface.Game.Character
             }
 
             //Getting extra buffs
-            if (item.Effects.Find(effect => effect.Type != ItemEffect.None && effect.Percentage > 0) != default)
+            if (item.Effects.Find(effect => effect.Type != ItemEffect.None) != default)
             {
                 foreach(var effect in item.Effects)
                 {
-                    if (effect.Percentage <= 0)
-                    {
-                        continue;
-                    }
 
                     switch (effect.Type)
                     {
