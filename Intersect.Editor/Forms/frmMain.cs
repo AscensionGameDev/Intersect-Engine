@@ -92,15 +92,14 @@ namespace Intersect.Editor.Forms
 
             dockLeft.Theme = new VS2015DarkTheme();
             Globals.MapListWindow = new FrmMapList();
-            Globals.MapListWindow.Show(dockLeft, DockState.DockRight);
             Globals.MapLayersWindow = new FrmMapLayers();
-            Globals.MapLayersWindow.Show(dockLeft, DockState.DockLeft);
-
-            Globals.MapEditorWindow = new FrmMapEditor();
-            Globals.MapEditorWindow.Show(dockLeft, DockState.Document);
-
             Globals.MapGridWindowNew = new FrmMapGrid();
+            Globals.MapEditorWindow = new FrmMapEditor();
+
+            Globals.MapListWindow.Show(dockLeft, DockState.DockRight);
+            Globals.MapLayersWindow.Show(dockLeft, DockState.DockLeft);
             Globals.MapGridWindowNew.Show(dockLeft, DockState.Document);
+            Globals.MapEditorWindow.Show(dockLeft, DockState.Document);
         }
 
         [System.Runtime.InteropServices.DllImport("user32.dll")]
