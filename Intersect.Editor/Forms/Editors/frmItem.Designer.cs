@@ -2011,6 +2011,7 @@ namespace Intersect.Editor.Forms.Editors
             nudSpdPercentage.Location = new System.Drawing.Point(192, 218);
             nudSpdPercentage.Margin = new Padding(4, 3, 4, 3);
             nudSpdPercentage.Maximum = new decimal(new int[] { 1000, 0, 0, 0 });
+            nudSpdPercentage.Minimum = new decimal(new int[] { -100, 0, 0, int.MinValue });
             nudSpdPercentage.Name = "nudSpdPercentage";
             nudSpdPercentage.Size = new Size(76, 23);
             nudSpdPercentage.TabIndex = 77;
@@ -2024,6 +2025,7 @@ namespace Intersect.Editor.Forms.Editors
             nudMRPercentage.Location = new System.Drawing.Point(192, 171);
             nudMRPercentage.Margin = new Padding(4, 3, 4, 3);
             nudMRPercentage.Maximum = new decimal(new int[] { 1000, 0, 0, 0 });
+            nudMRPercentage.Minimum = new decimal(new int[] { -100, 0, 0, int.MinValue });
             nudMRPercentage.Name = "nudMRPercentage";
             nudMRPercentage.Size = new Size(76, 23);
             nudMRPercentage.TabIndex = 76;
@@ -2037,6 +2039,7 @@ namespace Intersect.Editor.Forms.Editors
             nudDefPercentage.Location = new System.Drawing.Point(195, 122);
             nudDefPercentage.Margin = new Padding(4, 3, 4, 3);
             nudDefPercentage.Maximum = new decimal(new int[] { 1000, 0, 0, 0 });
+            nudDefPercentage.Minimum = new decimal(new int[] { -100, 0, 0, int.MinValue });
             nudDefPercentage.Name = "nudDefPercentage";
             nudDefPercentage.Size = new Size(76, 23);
             nudDefPercentage.TabIndex = 75;
@@ -2050,6 +2053,7 @@ namespace Intersect.Editor.Forms.Editors
             nudMagPercentage.Location = new System.Drawing.Point(192, 77);
             nudMagPercentage.Margin = new Padding(4, 3, 4, 3);
             nudMagPercentage.Maximum = new decimal(new int[] { 1000, 0, 0, 0 });
+            nudMagPercentage.Minimum = new decimal(new int[] { -100, 0, 0, int.MinValue });
             nudMagPercentage.Name = "nudMagPercentage";
             nudMagPercentage.Size = new Size(76, 23);
             nudMagPercentage.TabIndex = 74;
@@ -2063,6 +2067,7 @@ namespace Intersect.Editor.Forms.Editors
             nudStrPercentage.Location = new System.Drawing.Point(192, 32);
             nudStrPercentage.Margin = new Padding(4, 3, 4, 3);
             nudStrPercentage.Maximum = new decimal(new int[] { 1000, 0, 0, 0 });
+            nudStrPercentage.Minimum = new decimal(new int[] { -100, 0, 0, int.MinValue });
             nudStrPercentage.Name = "nudStrPercentage";
             nudStrPercentage.Size = new Size(76, 23);
             nudStrPercentage.TabIndex = 73;
