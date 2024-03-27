@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Media;
 using System.Windows.Forms;
 
 using DarkUI.Controls;
@@ -42,6 +43,10 @@ namespace Intersect.Editor.Forms.Editors
         private bool mPlayLower;
 
         private bool mPlayUpper;
+
+        private SoundPlayer soundPlayer = new();
+
+        private bool loopSoundOnPreview;
 
         private RenderTarget2D mUpperDarkness;
 
@@ -161,6 +166,7 @@ namespace Intersect.Editor.Forms.Editors
             lblName.Text = Strings.AnimationEditor.name;
             lblSound.Text = Strings.AnimationEditor.sound;
             chkCompleteSoundPlayback.Text = Strings.AnimationEditor.soundcomplete;
+            chkLoopSoundDuringPreview.Text = Strings.AnimationEditor.LoopSoundDuringPreview;
             labelDarkness.Text = Strings.AnimationEditor.simulatedarkness.ToString(scrlDarkness.Value);
             btnSwap.Text = Strings.AnimationEditor.swap;
 
@@ -284,6 +290,11 @@ namespace Intersect.Editor.Forms.Editors
             mEditorItem.CompleteSound = chkCompleteSoundPlayback.Checked;
         }
 
+        private void chkLoopSoundDuringPreview_CheckedChanged(object sender, EventArgs e)
+        {
+            loopSoundOnPreview = chkLoopSoundDuringPreview.Checked;
+        }
+
         private void cmbLowerGraphic_SelectedIndexChanged(object sender, EventArgs e)
         {
             mEditorItem.Lower.Sprite = TextUtils.SanitizeNone(cmbLowerGraphic?.Text);
@@ -294,6 +305,23 @@ namespace Intersect.Editor.Forms.Editors
             mEditorItem.Upper.Sprite = TextUtils.SanitizeNone(cmbUpperGraphic?.Text);
         }
 
+        private void btnPlaySound_Click(object sender, EventArgs e)
+        {
+            PlayAnimationSound();
+        }
+
+        private void PlayAnimationSound()
+        {
+            if (cmbSound.SelectedIndex <= 0)
+            {
+                return;
+            }
+
+            soundPlayer.SoundLocation = "resources/sounds/" + mEditorItem.Sound;
+
+            soundPlayer.Play();
+        }
+
         private void tmrLowerAnimation_Tick(object sender, EventArgs e)
         {
             if (mPlayLower)
@@ -302,6 +330,11 @@ namespace Intersect.Editor.Forms.Editors
                 if (mLowerFrame >= (int)nudLowerFrameCount.Value)
                 {
                     mLowerFrame = 0;
+                }
+
+                if (mLowerFrame == 1 && loopSoundOnPreview && !mPlayUpper)
+                {
+                    PlayAnimationSound();
                 }
             }
         }
@@ -489,6 +522,11 @@ namespace Intersect.Editor.Forms.Editors
                 {
                     mUpperFrame = 0;
                 }
+
+                if (mUpperFrame == 1 && loopSoundOnPreview && (!mPlayLower || (mPlayLower && mPlayUpper)))
+                {
+                    PlayAnimationSound();
+                }
             }
         }
 
@@ -535,6 +573,7 @@ namespace Intersect.Editor.Forms.Editors
             {
                 _tooltip.SetToolTip(btnPlayLower, Strings.AnimationEditor.Play);
                 btnPlayLower.ImageKey = "sharp_play_arrow_white_48dp.png";
+                soundPlayer.Stop();
             }
         }
 
@@ -562,6 +601,7 @@ namespace Intersect.Editor.Forms.Editors
             {
                 _tooltip.SetToolTip(btnPlayUpper, Strings.AnimationEditor.Play);
                 btnPlayUpper.ImageKey = "sharp_play_arrow_white_48dp.png";
+                soundPlayer.Stop();
             }
         }
 
