@@ -35,7 +35,7 @@ namespace Intersect.Client.MonoGame
     /// <summary>
     ///     This is the main type for your game.
     /// </summary>
-    internal partial class IntersectGame : Game
+    public partial class IntersectGame : Game
     {
         private bool mInitialized;
 
@@ -559,11 +559,12 @@ namespace Intersect.Client.MonoGame
         internal partial class MonoGameRunner : IPlatformRunner
         {
             /// <inheritdoc />
-            public void Start(IClientContext context, Action postStartupAction)
+            public IntersectGame Start(IClientContext context, Action postStartupAction)
             {
                 using (var game = new IntersectGame(context, postStartupAction))
                 {
-                    game.Run();
+
+                    return game;
                 }
             }
         }

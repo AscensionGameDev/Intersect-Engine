@@ -1,4 +1,4 @@
-﻿using CommandLine;
+using CommandLine;
 
 using System.Collections.Generic;
 using System.IO;
@@ -9,7 +9,7 @@ using Intersect.Core;
 
 namespace Intersect.Client.Core
 {
-    internal partial struct ClientCommandLineOptions : ICommandLineOptions
+    public partial struct ClientCommandLineOptions : ICommandLineOptions
     {
         public ClientCommandLineOptions(
             bool borderlessWindow,

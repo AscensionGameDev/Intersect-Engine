@@ -1,4 +1,5 @@
-﻿using Intersect.Client.Networking;
+using Intersect.Client.MonoGame;
+using Intersect.Client.Networking;
 using Intersect.Client.Plugins.Contexts;
 using Intersect.Core;
 using Intersect.Factories;
@@ -12,13 +13,13 @@ namespace Intersect.Client.Core
     /// <summary>
     /// Implements <see cref="IClientContext"/>.
     /// </summary>
-    internal sealed partial class ClientContext : ApplicationContext<ClientContext, ClientCommandLineOptions>, IClientContext
+    public sealed partial class ClientContext : ApplicationContext<ClientContext, ClientCommandLineOptions>, IClientContext
     {
         internal static bool IsSinglePlayer { get; set; }
 
-        private IPlatformRunner mPlatformRunner;
-
-        internal ClientContext(ClientCommandLineOptions startupOptions, Logger logger, IPacketHelper packetHelper) : base(
+        public IPlatformRunner mPlatformRunner;
+        public IntersectGame game;
+        public ClientContext(ClientCommandLineOptions startupOptions, Logger logger, IPacketHelper packetHelper) : base(
             startupOptions, logger, packetHelper
         )
         {
@@ -38,7 +39,7 @@ namespace Intersect.Client.Core
         {
             Networking.Network.PacketHandler = new PacketHandler(this, PacketHelper.HandlerRegistry);
             PlatformRunner = typeof(ClientContext).Assembly.CreateInstanceOf<IPlatformRunner>();
-            PlatformRunner.Start(this, PostStartup);
+           game = PlatformRunner.Start(this, PostStartup);
         }
 
         #region Exception Handling

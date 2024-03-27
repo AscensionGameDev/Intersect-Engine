@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.IO;
 using System.IO.Abstractions.TestingHelpers;
 
@@ -12,13 +12,13 @@ namespace Intersect.IO.Files
         [OneTimeSetUp]
         public void BeforeAll()
         {
-            FileSystemHelper.FileSystem = new MockFileSystem(
+         /*   FileSystemHelper.FileSystem = new MockFileSystem(
                 new Dictionary<string, MockFileData>
                 {
                     {@"/directory/that/exists", new MockDirectoryData()},
                     {@"/directory/that/exists/with/a/file/that/exists", new MockFileData("")},
                 }
-            );
+            );*/
         }
 
         [TestCase("0B", 0)]

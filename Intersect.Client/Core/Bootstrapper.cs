@@ -15,11 +15,11 @@ using System.Linq;
 namespace Intersect.Client.Core
 {
 
-    internal static partial class Bootstrapper
+    public static partial class Bootstrapper
     {
         public static ClientContext Context { get; private set; }
 
-        public static void Start(params string[] args)
+        public static ClientContext Start(params string[] args)
         {
             var parser = new Parser(
                 parserSettings =>
@@ -42,7 +42,7 @@ namespace Intersect.Client.Core
             if (!packetTypeRegistry.TryRegisterBuiltIn())
             {
                 logger.Error("Failed to register built-in packets.");
-                return;
+                return null;
             }
 
             var packetHandlerRegistry = new PacketHandlerRegistry(packetTypeRegistry, logger);
@@ -68,6 +68,7 @@ namespace Intersect.Client.Core
 
             Context = new ClientContext(commandLineOptions, logger, packetHelper);
             Context.Start();
+            return Context;
         }
 
         private static ClientCommandLineOptions HandleParsedArguments(ClientCommandLineOptions clientCommandLineOptions) =>

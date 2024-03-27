@@ -17,7 +17,7 @@ namespace Intersect.Client
     /// <summary>
     ///     The main class.
     /// </summary>
-    static class Program
+    public static class Program
     {
         public static string OpenALLink { get; set; }= string.Empty;
 
@@ -29,6 +29,7 @@ namespace Intersect.Client
         [STAThread]
         internal static void Main(string[] args)
         {
+            Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
             var waitForDebugger = args.Contains("--debugger");
 
             while (waitForDebugger && !Debugger.IsAttached)
@@ -98,6 +99,11 @@ namespace Intersect.Client
             {
                 ClientContext.DispatchUnhandledException(exception, true, true);
             }
+        }
+
+        public static void StartGameExternal()
+        {
+            Main([]);
         }
 
         private static void ClearDlls()
