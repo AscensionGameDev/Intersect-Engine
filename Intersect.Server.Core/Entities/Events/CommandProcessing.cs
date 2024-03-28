@@ -733,6 +733,38 @@ namespace Intersect.Server.Entities.Events
             PacketSender.SendChatMsg(player, Strings.Player.powerchanged, ChatMessageType.Notice, Color.Red);
         }
 
+        //Change PVPTeam Command
+        private static void ProcessCommand(
+            SetPVPTeamCommand command,
+            Player player,
+            Event instance,
+            CommandInstance stackInfo,
+            Stack<CommandInstance> callStack
+        )
+        {
+            int PVPTeamID = command.PVPTeamID;
+
+            if (command.UseVariable)
+            {
+                switch (command.VariableType)
+                {
+                    case VariableType.PlayerVariable:
+                        PVPTeamID = (int)player.GetVariableValue(command.VariableId).Integer;
+
+                        break;
+                    case VariableType.ServerVariable:
+                        PVPTeamID = (int)ServerVariableBase.Get(command.VariableId)?.Value.Integer;
+
+                        break;
+
+                    case VariableType.GuildVariable:
+                        PVPTeamID = (int)player.Guild?.GetVariableValue(command.VariableId)?.Integer;
+
+                        break;
+                }
+            }
+        }
+
         //Warp Player Command
         private static void ProcessCommand(
             WarpCommand command,

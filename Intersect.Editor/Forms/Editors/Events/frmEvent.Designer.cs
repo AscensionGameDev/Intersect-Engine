@@ -66,7 +66,8 @@ namespace Intersect.Editor.Forms.Editors.Events
             var changePlayerNameTreeNode = new TreeNode("Change Player Name");
             var resetStatPointTreeNode = new TreeNode("Reset Stat Point Allocations");
             var castSpellOnTreeNode = new TreeNode("Cast Spell On");
-            var playerControlTreeNode = new TreeNode("Player Control", new TreeNode[] { restoreHPTreeNode, restoreMPTreeNode, levelUpTreeNode, giveExperienceTreeNode, changeLevelTreeNode, changeSpellsTreeNode, changeItemsTreeNode, changeSpriteTreeNode, changePlayerColorTreeNode, changeFaceTreeNode, changeGenderTreeNode, setAccessTreeNode, changeClassTreeNode, equipUneqiupTreeNode, changeNameColorTreeNode, changePlayerLabelTreeNode, changePlayerNameTreeNode, resetStatPointTreeNode, castSpellOnTreeNode });
+            var changePVPTeamTreeNode = new TreeNode("Change PVP Team");
+            var playerControlTreeNode = new TreeNode("Player Control", new TreeNode[] { restoreHPTreeNode, restoreMPTreeNode, levelUpTreeNode, giveExperienceTreeNode, changeLevelTreeNode, changeSpellsTreeNode, changeItemsTreeNode, changeSpriteTreeNode, changePlayerColorTreeNode, changeFaceTreeNode, changeGenderTreeNode, setAccessTreeNode, changeClassTreeNode, equipUneqiupTreeNode, changeNameColorTreeNode, changePlayerLabelTreeNode, changePlayerNameTreeNode, resetStatPointTreeNode, castSpellOnTreeNode, changePVPTeamTreeNode});
             var warpPlayerTreeNode = new TreeNode("Warp Player");
             var setMoveRouteTreeNode = new TreeNode("Set Move Route");
             var waitForRouteCompleteTreeNode = new TreeNode("Wait for Route Completion");
@@ -1023,6 +1024,9 @@ namespace Intersect.Editor.Forms.Editors.Events
             setGuildBankSlotsTreeNode.Text = "Set Guild Bank Slots Count";
             guildsTreeNode.Name = "guilds";
             guildsTreeNode.Text = "Guilds";
+            changePVPTeamTreeNode.Name = "changepvpteam";
+            changePVPTeamTreeNode.Tag = (int)EventCommandType.SetPVPTeam;
+            changePVPTeamTreeNode.Text = "Change PVP Team";
             lstCommands.Nodes.AddRange(new TreeNode[] { dialogueTreeNode, logicFlowTreeNode, playerControlTreeNode, movementTreeNode, specialEffectsTreeNode, questControlTreeNode, etcTreeNode, shopAndBankTreeNode, guildsTreeNode });
             lstCommands.Size = new Size(500, 536);
             lstCommands.TabIndex = 2;

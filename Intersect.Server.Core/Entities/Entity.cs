@@ -1540,6 +1540,11 @@ namespace Intersect.Server.Entities
                 {
                     return;
                 }
+
+                if (player.PVPTeam == targetPlayer.PVPTeam || targetPlayer.PVPTeam == -1)
+                {
+                    return;
+                }
             }
 
             if (parentSpell == null)
@@ -1638,6 +1643,11 @@ namespace Intersect.Server.Entities
                     }
 
                     if (MapController.Get(target.MapId).ZoneType == MapZone.Safe)
+                    {
+                        return;
+                    }
+
+                    if (player.PVPTeam == targetPlayer.PVPTeam || targetPlayer.PVPTeam == -1)
                     {
                         return;
                     }
@@ -1831,6 +1841,11 @@ namespace Intersect.Server.Entities
                 }
 
                 if (MapController.Get(target.MapId)?.ZoneType == MapZone.Safe)
+                {
+                    return;
+                }
+
+                if (player.PVPTeam == targetPlayer.PVPTeam || targetPlayer.PVPTeam == -1)
                 {
                     return;
                 }

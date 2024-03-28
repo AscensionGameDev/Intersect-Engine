@@ -1888,6 +1888,9 @@ Tick timer saved in server config.json.";
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString CastSpellOn = @"Cast Spell '{00}' [include self: {01}, include party: {02}; include guild: {03})";
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString ChangePVPTeam = @"Change PVP Team '{00}'";
+
             public static LocalizedString changename = @"Change Name to Variable: {00}";
 
             public static LocalizedString changeitems = @"Change Player Items [{00}]";
@@ -2020,6 +2023,10 @@ Tick timer saved in server config.json.";
             public static LocalizedString give = @"Give: Item {00}";
 
             public static LocalizedString giveexp = @"Give Player {00} Experience";
+
+            public static LocalizedString pvpteam = @"Set PVP Team {00}";
+
+            public static LocalizedString setpvpteam = @"Set PVP Team {00}";
 
             public static LocalizedString globalswitch = @"Set Global Switch {00} to {01}";
 
@@ -2341,6 +2348,7 @@ Tick timer saved in server config.json.";
                 {"setguildbankslots", @"Set Guild Bank Slots Count"},
                 {"resetstatallocations", @"Reset Stat Point Allocations"},
                 {"castspellon", @"Cast Spell On"},
+                {"changepvpteam", @"Change PVP Team"},
                 {"fade", @"Screen Fade"},
             };
 
@@ -2940,6 +2948,36 @@ Tick timer saved in server config.json.";
             public static LocalizedString okay = @"Ok";
 
             public static LocalizedString title = @"Give Experience";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString AmountType = @"Amount Type";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Variable = @"Variable";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Manual = @"Manual";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString PlayerVariable = @"Player Variable";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString ServerVariable = @"Global Variable";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString GuildVariable = @"Guild Variable";
+
+        }
+        public partial struct EventSetPVPTeam
+        {
+
+            public static LocalizedString cancel = @"Cancel";
+
+            public static LocalizedString label = @"Set PVP Team:";
+
+            public static LocalizedString okay = @"Ok";
+
+            public static LocalizedString title = @"Set PVP Team";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString AmountType = @"Amount Type";
