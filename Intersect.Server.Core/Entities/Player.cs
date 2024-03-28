@@ -218,6 +218,12 @@ namespace Intersect.Server.Entities
         [NotMapped, JsonIgnore]
         public bool IsFading { get; set; }
 
+        /// <summary>
+        /// Reference stored of the last weapon used for an auto-attack
+        /// </summary>
+        [NotMapped, JsonIgnore]
+        public ItemBase LastAttackingWeapon { get; set; }
+
         // Instancing
         public MapInstanceType InstanceType { get; set; } = MapInstanceType.Overworld;
 
@@ -1458,6 +1464,15 @@ namespace Intersect.Server.Entities
             base.TryAttack(target, projectile, parentSpell, parentItem, projectileDir);
         }
 
+        protected override void CheckForOnhitAttack(Entity enemy, bool isAutoAttack)
+        {
+            if (isAutoAttack && LastAttackingWeapon != default)
+            {
+                EnqueueStartCommonEvent(LastAttackingWeapon.OnHitEvent);
+            }
+            base.CheckForOnhitAttack(enemy, isAutoAttack);
+        }
+
         //Attacking with spell
         public override void TryAttack(
             Entity target,
@@ -1565,6 +1580,7 @@ namespace Intersect.Server.Entities
 
             if (weapon != null)
             {
+                LastAttackingWeapon = weapon;
                 base.TryAttack(
                     target, weapon.Damage, (DamageType)weapon.DamageType, (Stat)weapon.ScalingStat, weapon.Scaling,
                     weapon.CritChance, weapon.CritMultiplier, null, null, weapon
@@ -2763,6 +2779,7 @@ namespace Intersect.Server.Entities
             if (success)
             {
                 // Start common events related to inventory changes.
+                EnqueueStartCommonEvent(item.Descriptor?.PickupEvent);
                 StartCommonEventsWithTrigger(CommonEventTrigger.InventoryChanged);
 
                 return true;
@@ -3096,6 +3113,7 @@ namespace Intersect.Server.Entities
                 EquipmentProcessItemLoss(slotIndex);
             }
 
+            EnqueueStartCommonEvent(itemDescriptor.DropEvent);
             StartCommonEventsWithTrigger(CommonEventTrigger.InventoryChanged);
             UpdateGatherItemQuests(itemDescriptor.Id);
             PacketSender.SendInventoryItemUpdate(this, slotIndex);
@@ -3199,7 +3217,14 @@ namespace Intersect.Server.Entities
                 {
                     case ItemType.None:
                     case ItemType.Currency:
-                        PacketSender.SendChatMsg(this, Strings.Items.cannotuse, ChatMessageType.Error);
+                        if (itemBase.UseEvent != default)
+                        {
+                            EnqueueStartCommonEvent(itemBase.UseEvent);
+                        }
+                        else
+                        {
+                            PacketSender.SendChatMsg(this, Strings.Items.cannotuse, ChatMessageType.Error);
+                        }
 
                         return;
                     case ItemType.Consumable:
@@ -3262,7 +3287,10 @@ namespace Intersect.Server.Entities
                             }
                         }
 
-                        TryTakeItem(Items[slot], 1);
+                        if (TryTakeItem(Items[slot], 1) && itemBase.UseEvent != default)
+                        {
+                            EnqueueStartCommonEvent(itemBase.UseEvent);
+                        }
 
                         break;
                     case ItemType.Equipment:
@@ -3273,6 +3301,7 @@ namespace Intersect.Server.Entities
                         }
 
                         EquipItem(itemBase, slot);
+                        EnqueueStartCommonEvent(itemBase.UseEvent);
 
                         break;
                     case ItemType.Spell:
@@ -3298,7 +3327,14 @@ namespace Intersect.Server.Entities
 
                         if (itemBase.SingleUse)
                         {
-                            TryTakeItem(Items[slot], 1);
+                            if (TryTakeItem(Items[slot], 1) && itemBase.UseEvent != default)
+                            {
+                                EnqueueStartCommonEvent(itemBase.UseEvent);
+                            }
+                        }
+                        else if (itemBase.UseEvent != default)
+                        {
+                            EnqueueStartCommonEvent(itemBase.UseEvent);
                         }
 
                         break;
@@ -3317,6 +3353,7 @@ namespace Intersect.Server.Entities
                         break;
                     case ItemType.Bag:
                         OpenBag(Item, itemBase);
+                        EnqueueStartCommonEvent(itemBase.UseEvent);
 
                         break;
                     default:
@@ -5653,6 +5690,8 @@ namespace Intersect.Server.Entities
                 }
             }
 
+            EnqueueStartCommonEvent(itemBase.EquipEvent);
+
             ProcessEquipmentUpdated(true);
         }
 
@@ -5681,6 +5720,11 @@ namespace Intersect.Server.Entities
             if (equipmentSlot < 0 || equipmentSlot > Equipment.Length)
             {
                 return;
+            }
+
+            if (TryGetEquippedItem(equipmentSlot, out var prevEquipped))
+            {
+                EnqueueStartCommonEvent(prevEquipped.Descriptor?.UnequipEvent);
             }
 
             Equipment[equipmentSlot] = -1;
@@ -6743,7 +6787,15 @@ namespace Intersect.Server.Entities
             CommonEventTrigger trigger = CommonEventTrigger.None,
             string command = default,
             string parameter = default
-        ) => _queueStartCommonEvent.Enqueue(new StartCommonEventMetadata(command ?? string.Empty, eventDescriptor, parameter ?? string.Empty, trigger));
+        ) 
+        {
+            if (eventDescriptor == null)
+            {
+                return;
+            }
+
+            _queueStartCommonEvent.Enqueue(new StartCommonEventMetadata(command ?? string.Empty, eventDescriptor, parameter ?? string.Empty, trigger));
+        }
 
         public bool UnsafeStartCommonEvent(
             EventBase baseEvent,

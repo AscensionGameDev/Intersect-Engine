@@ -342,41 +342,41 @@ namespace Intersect.GameObjects
         [NotMapped, JsonIgnore]
         public ItemRange[] StatRanges => EquipmentProperties?.StatRanges?.Values.ToArray();
 
-        [ForeignKey(nameof(EquipEvent)), Column(nameof(EquipEvent))]
+        [Column(nameof(EquipEvent))]
         public Guid EquipEventId { get; set; }
 
         [NotMapped, JsonIgnore]
-        public EventBase EquipEvent { get; set; }
+        public EventBase EquipEvent => EventBase.Get(EquipEventId);
 
-        [ForeignKey(nameof(UnequipEventId)), Column(nameof(UnequipEventId))]
+        [Column(nameof(UnequipEventId))]
         public Guid UnequipEventId { get; set; }
 
         [NotMapped, JsonIgnore]
-        public EventBase UnequipEvent { get; set; }
+        public EventBase UnequipEvent => EventBase.Get(UnequipEventId);
 
-        [ForeignKey(nameof(PickupEvent)), Column(nameof(PickupEvent))]
+        [Column(nameof(PickupEvent))]
         public Guid PickupEventId { get; set; }
 
         [NotMapped, JsonIgnore]
-        public EventBase PickupEvent { get; set; }
+        public EventBase PickupEvent => EventBase.Get(PickupEventId);
 
-        [ForeignKey(nameof(DropEvent)), Column(nameof(DropEvent))]
+        [Column(nameof(DropEvent))]
         public Guid DropEventId { get; set; }
 
         [NotMapped, JsonIgnore]
-        public EventBase DropEvent { get; set; }
+        public EventBase DropEvent => EventBase.Get(DropEventId);
 
-        [ForeignKey(nameof(OnHitEvent)), Column(nameof(OnHitEvent))]
+        [Column(nameof(OnHitEvent))]
         public Guid OnHitEventId { get; set; }
 
         [NotMapped, JsonIgnore]
-        public EventBase OnHitEvent { get; set; }
+        public EventBase OnHitEvent => EventBase.Get(OnHitEventId);
 
-        [ForeignKey(nameof(UseEvent)), Column(nameof(UseEvent))]
+        [Column(nameof(UseEvent))]
         public Guid UseEventId { get; set; }
 
         [NotMapped, JsonIgnore]
-        public EventBase UseEvent { get; set; }
+        public EventBase UseEvent => EventBase.Get(UseEventId);
 
         public bool TryGetRangeFor(Stat stat, out ItemRange range)
         {

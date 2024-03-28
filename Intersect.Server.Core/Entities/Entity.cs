@@ -2181,7 +2181,7 @@ namespace Intersect.Server.Entities
             }
         }
 
-        void CheckForOnhitAttack(Entity enemy, bool isAutoAttack)
+        protected virtual void CheckForOnhitAttack(Entity enemy, bool isAutoAttack)
         {
             if (isAutoAttack) //Ignore spell damage.
             {

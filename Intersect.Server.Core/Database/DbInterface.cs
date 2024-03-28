@@ -766,13 +766,7 @@ namespace Intersect.Server.Database
                         case GameObjectType.Item:
 
                             var loadedItems = context.Items
-                                .Include(i => i.EquipmentProperties)
-                                .Include(i => i.EquipEvent)
-                                .Include(i => i.UnequipEvent)
-                                .Include(i => i.DropEvent)
-                                .Include(i => i.PickupEvent)
-                                .Include(i => i.OnHitEvent)
-                                .Include(i => i.UseEvent);
+                                .Include(i => i.EquipmentProperties);
 
                             foreach (var itm in loadedItems)
                             {

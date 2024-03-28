@@ -580,6 +580,7 @@ namespace Intersect.Editor.Forms.Editors
                 case ItemType.Event:
                     cmbOnUse.Enabled = false;
                     cmbOnEquip.Enabled = false;
+                    cmbOnUnequip.Enabled = false;
                     cmbOnHit.Enabled = false;
                     break;
                 case ItemType.Currency:
@@ -590,6 +591,7 @@ namespace Intersect.Editor.Forms.Editors
                 {
                     cmbOnEquip.Enabled = false;
                     cmbOnHit.Enabled = false;
+                    cmbOnUnequip.Enabled = false;
                     break;
                 }
             }
