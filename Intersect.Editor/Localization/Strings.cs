@@ -3737,6 +3737,27 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString Event = @"Event:";
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString EventGroup = @"Event Triggers";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString EventOnDrop = @"On Drop";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString EventOnEquip = @"On Equip";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString EventOnHit = @"On Hit";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString EventOnPickup = @"On Pickup";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString EventOnUnequip = @"On Unequip";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString EventOnUse = @"On Use";
+
             public static LocalizedString eventpanel = @"Event";
 
             public static LocalizedString femalepaperdoll = @"Female Paperdoll:";

@@ -82,6 +82,36 @@ namespace Intersect.Server.Database.GameData
                 .WithOne(item => item.EquipmentProperties)
                 .HasForeignKey<EquipmentProperties>(property => property.DescriptorId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<ItemBase>()
+                .HasOne(item => item.EquipEvent)
+                .WithOne()
+                .HasForeignKey<ItemBase>(item => item.EquipEventId);
+
+            modelBuilder.Entity<ItemBase>()
+                .HasOne(item => item.UnequipEvent)
+                .WithOne()
+                .HasForeignKey<ItemBase>(item => item.UnequipEventId);
+
+            modelBuilder.Entity<ItemBase>()
+                .HasOne(item => item.PickupEvent)
+                .WithOne()
+                .HasForeignKey<ItemBase>(item => item.PickupEventId);
+
+            modelBuilder.Entity<ItemBase>()
+                .HasOne(item => item.DropEvent)
+                .WithOne()
+                .HasForeignKey<ItemBase>(item => item.DropEvent);
+
+            modelBuilder.Entity<ItemBase>()
+                .HasOne(item => item.OnHitEvent)
+                .WithOne()
+                .HasForeignKey<ItemBase>(item => item.OnHitEventId);
+
+            modelBuilder.Entity<ItemBase>()
+                .HasOne(item => item.UseEvent)
+                .WithOne()
+                .HasForeignKey<ItemBase>(item => item.UseEventId);
         }
 
         public override void OnSchemaMigrationsProcessed(string[] migrations)

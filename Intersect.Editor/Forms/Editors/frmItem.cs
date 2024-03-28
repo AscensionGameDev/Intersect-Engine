@@ -4,7 +4,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
 using System.Windows.Forms;
-
+using DarkUI.Controls;
 using DarkUI.Forms;
 
 using Intersect.Editor.Content;
@@ -143,9 +143,16 @@ namespace Intersect.Editor.Forms.Editors
             cmbTeachSpell.Items.Clear();
             cmbTeachSpell.Items.Add(Strings.General.None);
             cmbTeachSpell.Items.AddRange(SpellBase.Names);
-            cmbEvent.Items.Clear();
-            cmbEvent.Items.Add(Strings.General.None);
-            cmbEvent.Items.AddRange(EventBase.Names);
+
+            var events = EventBase.Names;
+            var eventElements = new List<ComboBox>() { cmbEvent, cmbOnEquip, cmbOnDrop, cmbOnEquip, cmbOnUnequip, cmbOnHit, cmbOnUse };
+            foreach (var element in eventElements)
+            {
+                element.Items.Clear();
+                element.Items.Add(Strings.General.None);
+                element.Items.AddRange(events);
+            }
+
             cmbMalePaperdoll.Items.Clear();
             cmbMalePaperdoll.Items.Add(Strings.General.None);
             cmbFemalePaperdoll.Items.Clear();
@@ -224,6 +231,14 @@ namespace Intersect.Editor.Forms.Editors
                 var rarityName = Options.Instance.Items.RarityTiers[i];
                 cmbRarity.Items.Add(Strings.ItemEditor.rarity[rarityName]);
             }
+
+            grpEvents.Text = Strings.ItemEditor.EventGroup;
+            lblOnDrop.Text = Strings.ItemEditor.EventOnDrop;
+            lblOnEquip.Text = Strings.ItemEditor.EventOnEquip;
+            lblOnHit.Text = Strings.ItemEditor.EventOnHit;
+            lblOnPickup.Text = Strings.ItemEditor.EventOnPickup;
+            lblOnUnequip.Text = Strings.ItemEditor.EventOnUnequip;
+            lblOnUse.Text = Strings.ItemEditor.EventOnUse;
 
             grpEquipment.Text = Strings.ItemEditor.equipment;
             lblEquipmentSlot.Text = Strings.ItemEditor.slot;
@@ -484,6 +499,8 @@ namespace Intersect.Editor.Forms.Editors
                 mEditorItem.Event = null;
             }
 
+            UpdateEventTriggerAvailability();
+
             if (cmbType.SelectedIndex == (int)ItemType.Consumable)
             {
                 cmbConsume.SelectedIndex = (int)mEditorItem.Consumable.Type;
@@ -539,7 +556,43 @@ namespace Intersect.Editor.Forms.Editors
                 chkStackable.Enabled = false;
             }
 
+            cmbOnDrop.SelectedIndex = EventBase.ListIndex(mEditorItem.DropEventId) + 1;
+            cmbOnEquip.SelectedIndex = EventBase.ListIndex(mEditorItem.EquipEventId) + 1;
+            cmbOnHit.SelectedIndex = EventBase.ListIndex(mEditorItem.OnHitEventId) + 1;
+            cmbOnPickup.SelectedIndex = EventBase.ListIndex(mEditorItem.PickupEventId) + 1;
+            cmbOnUnequip.SelectedIndex = EventBase.ListIndex(mEditorItem.UnequipEventId) + 1;
+            cmbOnUse.SelectedIndex = EventBase.ListIndex(mEditorItem.UseEventId) + 1;
+
             mEditorItem.ItemType = (ItemType)cmbType.SelectedIndex;
+        }
+
+        private void UpdateEventTriggerAvailability()
+        {
+            cmbOnDrop.Enabled = true;
+            cmbOnEquip.Enabled = true;
+            cmbOnHit.Enabled = true;
+            cmbOnPickup.Enabled = true;
+            cmbOnUnequip.Enabled = true;
+            cmbOnUse.Enabled = true;
+
+            switch (mEditorItem.ItemType)
+            {
+                case ItemType.Event:
+                    cmbOnUse.Enabled = false;
+                    cmbOnEquip.Enabled = false;
+                    cmbOnHit.Enabled = false;
+                    break;
+                case ItemType.Currency:
+                case ItemType.Spell:
+                case ItemType.Bag:
+                case ItemType.Consumable:
+                case ItemType.None:
+                {
+                    cmbOnEquip.Enabled = false;
+                    cmbOnHit.Enabled = false;
+                    break;
+                }
+            }
         }
 
         private void cmbType_SelectedIndexChanged(object sender, EventArgs e)
@@ -1345,7 +1398,7 @@ namespace Intersect.Editor.Forms.Editors
             {
                 statName = Strings.General.None;
             }
-            
+
             mEditorItem.TryGetRangeFor(stat, out var range);
             return Strings.ItemEditor.StatRangeItem.ToString(statName, range?.LowRange ?? 0, range?.HighRange ?? 0);
         }
@@ -1442,6 +1495,36 @@ namespace Intersect.Editor.Forms.Editors
 
             nudStatRangeLow.Value = range.LowRange;
             nudStatRangeHigh.Value = range.HighRange;
+        }
+
+        private void cmbOnPickup_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            mEditorItem.PickupEventId = EventBase.IdFromList(cmbOnPickup.SelectedIndex - 1);
+        }
+
+        private void cmbOnDrop_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            mEditorItem.DropEventId = EventBase.IdFromList(cmbOnDrop.SelectedIndex - 1);
+        }
+
+        private void cmbOnEquip_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            mEditorItem.EquipEventId = EventBase.IdFromList(cmbOnEquip.SelectedIndex - 1);
+        }
+
+        private void cmbOnUnequip_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            mEditorItem.UnequipEventId = EventBase.IdFromList(cmbOnUnequip.SelectedIndex - 1);
+        }
+
+        private void cmbOnHit_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            mEditorItem.OnHitEventId = EventBase.IdFromList(cmbOnHit.SelectedIndex - 1);
+        }
+
+        private void cmbOnUse_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            mEditorItem.UseEventId = EventBase.IdFromList(cmbOnUse.SelectedIndex - 1);
         }
     }
 

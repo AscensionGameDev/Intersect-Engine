@@ -764,7 +764,17 @@ namespace Intersect.Server.Database
 
                             break;
                         case GameObjectType.Item:
-                            foreach (var itm in context.Items.Include(i => i.EquipmentProperties))
+
+                            var loadedItems = context.Items
+                                .Include(i => i.EquipmentProperties)
+                                .Include(i => i.EquipEvent)
+                                .Include(i => i.UnequipEvent)
+                                .Include(i => i.DropEvent)
+                                .Include(i => i.PickupEvent)
+                                .Include(i => i.OnHitEvent)
+                                .Include(i => i.UseEvent);
+
+                            foreach (var itm in loadedItems)
                             {
                                 ItemBase.Lookup.Set(itm.Id, itm);
                             }
