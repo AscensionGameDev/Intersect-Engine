@@ -762,6 +762,10 @@ namespace Intersect.Editor.Forms.Editors.Events
                     tmpCommand = new ScreenFadeCommand();
 
                     break;
+                case EventCommandType.SetPVPTeam:
+                    tmpCommand = new SetPVPTeamCommand();
+
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -1406,6 +1410,10 @@ namespace Intersect.Editor.Forms.Editors.Events
                     break;
                 case EventCommandType.Fade:
                     cmdWindow = new EventCommand_ScreenFade((ScreenFadeCommand)command, this);
+
+                    break;
+                case EventCommandType.SetPVPTeam:
+                    cmdWindow = new EventCommandChangePVPTeam((SetPVPTeamCommand)command, this);
 
                     break;
                 default:

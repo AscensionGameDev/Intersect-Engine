@@ -539,6 +539,18 @@ namespace Intersect.GameObjects.Events.Commands
 
         public Access Access { get; set; }
     }
+    public partial class SetPVPTeamCommand : EventCommand
+    {
+        public override EventCommandType Type { get; } = EventCommandType.SetPVPTeam;
+
+        public bool UseVariable { get; set; } = false;
+
+        public VariableType VariableType { get; set; } = VariableType.PlayerVariable;
+
+        public Guid VariableId { get; set; }
+
+        public int PVPTeamID { get; set; } = -1;
+    }
 
     public partial class WarpCommand : EventCommand
     {

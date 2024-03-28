@@ -238,6 +238,8 @@ namespace Intersect.GameObjects.Events
         CastSpellOn,
 
         Fade,
+
+        SetPVPTeam,
     }
 
     public enum FadeType

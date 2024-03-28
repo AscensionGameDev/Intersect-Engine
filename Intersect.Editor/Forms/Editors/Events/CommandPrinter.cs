@@ -829,6 +829,32 @@ namespace Intersect.Editor.Forms.Editors.Events
             }
         }
 
+        private static string GetCommandText(SetPVPTeamCommand command, MapInstance map)
+        {
+            if (command.UseVariable)
+            {
+                var exp = string.Empty;
+                switch (command.VariableType)
+                {
+                    case VariableType.PlayerVariable:
+                        exp = string.Format(@"({0}: {1})", Strings.EventSetPVPTeam.PlayerVariable, PlayerVariableBase.GetName(command.VariableId));
+                        break;
+                    case VariableType.ServerVariable:
+                        exp = string.Format(@"({0}: {1})", Strings.EventSetPVPTeam.ServerVariable, ServerVariableBase.GetName(command.VariableId));
+                        break;
+                    case VariableType.GuildVariable:
+                        exp = string.Format(@"({0}: {1})", Strings.EventSetPVPTeam.GuildVariable, GuildVariableBase.GetName(command.VariableId));
+                        break;
+                }
+
+                return Strings.EventCommandList.pvpteam.ToString(exp);
+            }
+            else
+            {
+                return Strings.EventCommandList.setpvpteam.ToString(command.PVPTeamID);
+            }
+        }
+
         private static string GetCommandText(ChangeLevelCommand command, MapInstance map)
         {
             return Strings.EventCommandList.setlevel.ToString(command.Level);

@@ -70,6 +70,7 @@ namespace Intersect.Server.Entities
         public new int[] MaxVitals => GetMaxVitals();
 
         //Name, X, Y, Dir, Etc all in the base Entity Class
+        public int PVPTeam { get; set; } = -1;
         public Guid ClassId { get; set; }
 
         [NotMapped]
