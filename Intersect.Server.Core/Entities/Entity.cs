@@ -2081,128 +2081,129 @@ namespace Intersect.Server.Entities
             var thisPlayer = this as Player;
 
             //Check for lifesteal/manasteal
-            if (this is Player && !(enemy is Resource))
-            {
-                var lifestealRate = thisPlayer.GetEquipmentBonusEffect(ItemEffect.Lifesteal) / 100f;
+            if (baseDamage > 0 && this != enemy)
+                if (this is Player && !(enemy is Resource))
+                {
+                    var lifestealRate = thisPlayer.GetEquipmentBonusEffect(ItemEffect.Lifesteal) / 100f;
                     if (lifestealRate < 0)
-                {
-                    lifestealRate = 0; // If lifestealRate is negative, set to zero
-                }
-                var idealHealthRecovered = lifestealRate * baseDamage;
-                var actualHealthRecovered = Math.Min(enemyVitals[(int)Vital.Health], idealHealthRecovered);
+                    {
+                        lifestealRate = 0; // Jeśli lifestealRate jest ujemny, ustaw na zero
+                    }
+                    var idealHealthRecovered = lifestealRate * baseDamage;
+                    var actualHealthRecovered = Math.Min(enemyVitals[(int)Vital.Health], idealHealthRecovered);
 
-                if (actualHealthRecovered > 0)
-                {
-                    // Don't send any +0 msg's.
-                    AddVital(Vital.Health, (int)actualHealthRecovered);
-                    PacketSender.SendActionMsg(
-                        this,
-                        Strings.Combat.addsymbol + (int)actualHealthRecovered,
-                        CustomColors.Combat.Heal
-                    );
-                }
+                    if (actualHealthRecovered > 0)
+                    {
+                        // Don't send any +0 msg's.
+                        AddVital(Vital.Health, (int)actualHealthRecovered);
+                        PacketSender.SendActionMsg(
+                            this,
+                            Strings.Combat.addsymbol + (int)actualHealthRecovered,
+                            CustomColors.Combat.Heal
+                        );
+                    }
 
-                var manastealRate = (thisPlayer.GetEquipmentBonusEffect(ItemEffect.Manasteal) / 100f);
-                   if (manastealRate < 0)
-                {
-                    manastealRate = 0; // If manastealRate is negative, set to zero
-                }
-                var idealManaRecovered = manastealRate * baseDamage;
-                var actualManaRecovered = Math.Min(enemyVitals[(int)Vital.Mana], idealManaRecovered);
+                    var manastealRate = (thisPlayer.GetEquipmentBonusEffect(ItemEffect.Manasteal) / 100f);
+                    if (manastealRate < 0)
+                    {
+                        manastealRate = 0; // Jeśli manastealRate jest ujemny, ustaw na zero
+                    }
+                    var idealManaRecovered = manastealRate * baseDamage;
+                    var actualManaRecovered = Math.Min(enemyVitals[(int)Vital.Mana], idealManaRecovered);
 
-                if (actualManaRecovered > 0)
-                {
-                    // Don't send any +0 msg's.
-                    AddVital(Vital.Mana, (int)actualManaRecovered);
-                    enemy.SubVital(Vital.Mana, (int)actualManaRecovered);
-                    PacketSender.SendActionMsg(
-                        this,
-                        Strings.Combat.addsymbol + (int)actualManaRecovered,
-                        CustomColors.Combat.AddMana
-                    );
-                }
+                    if (actualManaRecovered > 0)
+                    {
+                        // Don't send any +0 msg's.
+                        AddVital(Vital.Mana, (int)actualManaRecovered);
+                        enemy.SubVital(Vital.Mana, (int)actualManaRecovered);
+                        PacketSender.SendActionMsg(
+                            this,
+                            Strings.Combat.addsymbol + (int)actualManaRecovered,
+                            CustomColors.Combat.AddMana
+                        );
+                    }
 
-                var remainingManaRecovery = idealManaRecovered - actualManaRecovered;
-                if (remainingManaRecovery > 0)
-                {
-                    // If the mana recovered is less than it should be, deal the remainder as bonus damage
-                    enemy.SubVital(Vital.Health, (int)remainingManaRecovery);
-                    PacketSender.SendActionMsg(
-                        enemy,
-                        Strings.Combat.removesymbol + remainingManaRecovery,
-                        CustomColors.Combat.TrueDamage
-                    );
+                    var remainingManaRecovery = idealManaRecovered - actualManaRecovered;
+                    if (remainingManaRecovery > 0)
+                    {
+                        // If the mana recovered is less than it should be, deal the remainder as bonus damage
+                        enemy.SubVital(Vital.Health, (int)remainingManaRecovery);
+                        PacketSender.SendActionMsg(
+                            enemy,
+                            Strings.Combat.removesymbol + remainingManaRecovery,
+                            CustomColors.Combat.TrueDamage
+                        );
+                    }
                 }
-            }
 
             //Dead entity check
             if (enemy.GetVital(Vital.Health) <= 0)
-            {
-                if (enemy is Npc || enemy is Resource)
                 {
-                    lock (enemy.EntityLock)
+                    if (enemy is Npc || enemy is Resource)
                     {
-                        enemy.Die(true, this);
+                        lock (enemy.EntityLock)
+                        {
+                            enemy.Die(true, this);
+                        }
+                    }
+                    else
+                    {
+                        //PVP Kill common events
+                        if (!enemy.Dead && enemy is Player enemyPlayer && this is Player)
+                        {
+                            thisPlayer.StartCommonEventsWithTrigger(CommonEventTrigger.PVPKill, "", enemy.Name);
+                            enemyPlayer.StartCommonEventsWithTrigger(CommonEventTrigger.PVPDeath, "", this.Name);
+                        }
+
+                        lock (enemy.EntityLock)
+                        {
+                            enemy.Die(true, this);
+                        }
+                    }
+
+                    if (deadAnimations != null)
+                    {
+                        foreach (var anim in deadAnimations)
+                        {
+                            PacketSender.SendAnimationToProximity(
+                                anim.Key, -1, Id, enemy.MapId, enemy.X, enemy.Y, anim.Value, MapInstanceId
+                            );
+                        }
                     }
                 }
                 else
                 {
-                    //PVP Kill common events
-                    if (!enemy.Dead && enemy is Player enemyPlayer && this is Player)
+                    //Hit him, make him mad and send the vital update.
+                    if (aliveAnimations?.Count > 0)
                     {
-                        thisPlayer.StartCommonEventsWithTrigger(CommonEventTrigger.PVPKill, "", enemy.Name);
-                        enemyPlayer.StartCommonEventsWithTrigger(CommonEventTrigger.PVPDeath, "", this.Name);
+                        Animate(enemy, aliveAnimations);
                     }
 
-                    lock (enemy.EntityLock)
-                    {
-                        enemy.Die(true, this);
-                    }
+                    //Check for any onhit damage bonus effects!
+                    CheckForOnhitAttack(enemy, isAutoAttack);
                 }
 
-                if (deadAnimations != null)
+                // Add a timer before able to make the next move.
+                if (this is Npc thisNpc)
                 {
-                    foreach (var anim in deadAnimations)
+                    thisNpc.MoveTimer = Timing.Global.Milliseconds + (long)GetMovementTime();
+                }
+            }
+
+            void CheckForOnhitAttack(Entity enemy, bool isAutoAttack)
+            {
+                if (isAutoAttack) //Ignore spell damage.
+                {
+                    foreach (var status in CachedStatuses)
                     {
-                        PacketSender.SendAnimationToProximity(
-                            anim.Key, -1, Id, enemy.MapId, enemy.X, enemy.Y, anim.Value, MapInstanceId
-                        );
+                        if (status.Type == SpellEffect.OnHit)
+                        {
+                            TryAttack(enemy, status.Spell, true);
+                            status.RemoveStatus();
+                        }
                     }
                 }
             }
-            else
-            {
-                //Hit him, make him mad and send the vital update.
-                if (aliveAnimations?.Count > 0)
-                {
-                    Animate(enemy, aliveAnimations);
-                }
-
-                //Check for any onhit damage bonus effects!
-                CheckForOnhitAttack(enemy, isAutoAttack);
-            }
-
-            // Add a timer before able to make the next move.
-            if (this is Npc thisNpc)
-            {
-                thisNpc.MoveTimer = Timing.Global.Milliseconds + (long)GetMovementTime();
-            }
-        }
-
-        void CheckForOnhitAttack(Entity enemy, bool isAutoAttack)
-        {
-            if (isAutoAttack) //Ignore spell damage.
-            {
-                foreach (var status in CachedStatuses)
-                {
-                    if (status.Type == SpellEffect.OnHit)
-                    {
-                        TryAttack(enemy, status.Spell, true);
-                        status.RemoveStatus();
-                    }
-                }
-            }
-        }
 
         public virtual void KilledEntity(Entity entity)
         {
