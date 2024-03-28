@@ -449,14 +449,10 @@ namespace Intersect.Client.Interface.Game.Character
             }
 
             //Getting extra buffs
-            if (item.Effects.Find(effect => effect.Type != ItemEffect.None && effect.Percentage > 0) != default)
+            if (item.Effects.Find(effect => effect.Type != ItemEffect.None) != default)
             {
                 foreach(var effect in item.Effects)
                 {
-                    if (effect.Percentage <= 0)
-                    {
-                        continue;
-                    }
 
                     switch (effect.Type)
                     {
@@ -467,8 +463,15 @@ namespace Intersect.Client.Interface.Game.Character
                             break;
                         case ItemEffect.Lifesteal:
                             LifeStealAmount += effect.Percentage;
-                            mLifeSteal?.SetText(Strings.Character.Lifesteal.ToString(LifeStealAmount));
-
+                            // Checks if LifeStealAmount is less than 0, if so, sets the text to "0"
+                            if (LifeStealAmount < 0)
+                            {
+                                mLifeSteal?.SetText(Strings.Character.Lifesteal.ToString(0));
+                            }
+                            else
+                            {
+                                mLifeSteal?.SetText(Strings.Character.Lifesteal.ToString(LifeStealAmount));
+                            }
                             break;
                         case ItemEffect.Tenacity:
                             TenacityAmount += effect.Percentage;
@@ -487,6 +490,16 @@ namespace Intersect.Client.Interface.Game.Character
                             break;
                         case ItemEffect.Manasteal:
                             ManaStealAmount += effect.Percentage;
+                            // Checks if ManaStealAmount is less than 0, if so, sets the text to "0"
+                            if (ManaStealAmount < 0)
+                            {
+                                mManaSteal?.SetText(Strings.Character.Manasteal.ToString(0));
+                            }
+                            else
+                            {
+                                mManaSteal?.SetText(Strings.Character.Manasteal.ToString(ManaStealAmount));
+                            }
+                            break;
                             mManaSteal?.SetText(Strings.Character.Manasteal.ToString(ManaStealAmount));
 
                             break;

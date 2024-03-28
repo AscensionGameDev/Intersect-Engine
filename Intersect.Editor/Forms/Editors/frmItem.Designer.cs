@@ -1697,6 +1697,8 @@ namespace Intersect.Editor.Forms.Editors
             nudEffectPercent.ForeColor = System.Drawing.Color.Gainsboro;
             nudEffectPercent.Location = new System.Drawing.Point(15, 190);
             nudEffectPercent.Margin = new Padding(4, 3, 4, 3);
+            nudEffectPercent.Maximum = new decimal(new int[] { 100, 0, 0, 0 });
+            nudEffectPercent.Minimum = new decimal(new int[] { -100, 0, 0, int.MinValue });
             nudEffectPercent.Name = "nudEffectPercent";
             nudEffectPercent.Size = new Size(282, 23);
             nudEffectPercent.TabIndex = 55;
