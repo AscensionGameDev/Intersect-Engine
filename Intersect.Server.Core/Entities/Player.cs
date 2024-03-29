@@ -1466,10 +1466,27 @@ namespace Intersect.Server.Entities
 
         protected override void CheckForOnhitAttack(Entity enemy, bool isAutoAttack)
         {
-            if (isAutoAttack && LastAttackingWeapon != default)
+            if (isAutoAttack)
             {
-                EnqueueStartCommonEvent(LastAttackingWeapon.OnHitEvent);
+                for (var slot = 0; slot < Options.EquipmentSlots.Count; slot++)
+                {
+                    if (!TryGetEquippedItem(slot, out var equippedItem) || equippedItem == null || equippedItem.Descriptor == null)
+                    {
+                        continue;
+                    }
+
+                    // We have special logic for handling weapons, so the player can't hot-swap their weapon and get a different on-hit event to proc
+                    if (slot == Options.WeaponIndex && LastAttackingWeapon != default)
+                    {
+                        EnqueueStartCommonEvent(LastAttackingWeapon.OnHitEvent);
+                    }
+                    else
+                    {
+                        EnqueueStartCommonEvent(equippedItem.Descriptor.OnHitEvent);
+                    }
+                }
             }
+
             base.CheckForOnhitAttack(enemy, isAutoAttack);
         }
 

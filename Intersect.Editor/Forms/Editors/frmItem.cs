@@ -498,8 +498,6 @@ namespace Intersect.Editor.Forms.Editors
                 mEditorItem.Event = null;
             }
 
-            UpdateEventTriggerAvailability();
-
             if (cmbType.SelectedIndex == (int)ItemType.Consumable)
             {
                 cmbConsume.SelectedIndex = (int)mEditorItem.Consumable.Type;
@@ -563,24 +561,35 @@ namespace Intersect.Editor.Forms.Editors
             cmbOnUse.SelectedIndex = EventBase.ListIndex(mEditorItem.UseEventId) + 1;
 
             mEditorItem.ItemType = (ItemType)cmbType.SelectedIndex;
+
+            UpdateEventTriggerAvailability();
         }
 
         private void UpdateEventTriggerAvailability()
         {
-            cmbOnDrop.Enabled = true;
-            cmbOnEquip.Enabled = true;
-            cmbOnHit.Enabled = true;
-            cmbOnPickup.Enabled = true;
-            cmbOnUnequip.Enabled = true;
-            cmbOnUse.Enabled = true;
+            var equipmentEventSelectors = new List<ComboBox>() { cmbOnHit, cmbOnEquip, cmbOnUnequip };
+            var equipmentEventLabels = new List<Label>() { lblOnHit, lblOnEquip, lblOnUnequip };
+
+            cmbOnUse.Visible = true;
+            lblOnUse.Visible = true;
 
             switch (mEditorItem.ItemType)
             {
                 case ItemType.Event:
-                    cmbOnUse.Enabled = false;
-                    cmbOnEquip.Enabled = false;
-                    cmbOnUnequip.Enabled = false;
-                    cmbOnHit.Enabled = false;
+                    // Event-type items already have an on-use event. These item types are now basically deprecated.
+                    cmbOnUse.Visible = false;
+                    lblOnUse.Visible = false;
+
+                    foreach (var selector in equipmentEventSelectors)
+                    {
+                        selector.Enabled = false;
+                        selector.Visible = false;
+                    }
+
+                    foreach (var label in equipmentEventLabels)
+                    {
+                        label.Visible = false;
+                    }
                     break;
                 case ItemType.Currency:
                 case ItemType.Spell:
@@ -588,11 +597,31 @@ namespace Intersect.Editor.Forms.Editors
                 case ItemType.Consumable:
                 case ItemType.None:
                 {
-                    cmbOnEquip.Enabled = false;
-                    cmbOnHit.Enabled = false;
-                    cmbOnUnequip.Enabled = false;
+                    foreach (var selector in equipmentEventSelectors)
+                    {
+                        selector.Enabled = false;
+                        selector.Visible = false;
+                    }
+
+                    foreach (var label in equipmentEventLabels)
+                    {
+                        label.Visible = false;
+                    }
                     break;
                 }
+                default:
+                    foreach (var selector in equipmentEventSelectors)
+                    {
+                        selector.Enabled = true;
+                        selector.Visible = true;
+                    }
+
+                    foreach (var label in equipmentEventLabels)
+                    {
+                        label.Visible = true;
+                    }
+                    
+                    break;
             }
         }
 
