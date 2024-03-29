@@ -4,7 +4,6 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
 using System.Windows.Forms;
-using DarkUI.Controls;
 using DarkUI.Forms;
 
 using Intersect.Editor.Content;
@@ -145,7 +144,7 @@ namespace Intersect.Editor.Forms.Editors
             cmbTeachSpell.Items.AddRange(SpellBase.Names);
 
             var events = EventBase.Names;
-            var eventElements = new List<ComboBox>() { cmbEvent, cmbOnEquip, cmbOnDrop, cmbOnEquip, cmbOnUnequip, cmbOnHit, cmbOnUse };
+            var eventElements = new List<ComboBox>() { cmbEvent, cmbOnEquip, cmbOnDrop, cmbOnPickup, cmbOnUnequip, cmbOnHit, cmbOnUse };
             foreach (var element in eventElements)
             {
                 element.Items.Clear();
