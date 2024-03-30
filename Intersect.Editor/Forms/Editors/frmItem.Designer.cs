@@ -41,6 +41,10 @@ namespace Intersect.Editor.Forms.Editors
             btnCancel = new DarkButton();
             btnSave = new DarkButton();
             grpGeneral = new DarkGroupBox();
+            grpEvents = new DarkGroupBox();
+            cmbEventTriggers = new DarkComboBox();
+            lblEventForTrigger = new Label();
+            lstEventTriggers = new ListBox();
             grpStack = new DarkGroupBox();
             chkStackable = new DarkCheckBox();
             lblInvStackLimit = new Label();
@@ -214,19 +218,6 @@ namespace Intersect.Editor.Forms.Editors
             nudBlockChance = new DarkNumericUpDown();
             lblBlockChance = new Label();
             pnlContainer = new Panel();
-            grpEvents = new DarkGroupBox();
-            cmbOnUnequip = new DarkComboBox();
-            lblOnUnequip = new Label();
-            cmbOnHit = new DarkComboBox();
-            lblOnHit = new Label();
-            cmbOnUse = new DarkComboBox();
-            lblOnUse = new Label();
-            cmbOnEquip = new DarkComboBox();
-            lblOnEquip = new Label();
-            cmbOnDrop = new DarkComboBox();
-            cmbOnPickup = new DarkComboBox();
-            lblOnDrop = new Label();
-            lblOnPickup = new Label();
             toolStrip = new DarkToolStrip();
             toolStripItemNew = new ToolStripButton();
             toolStripSeparator1 = new ToolStripSeparator();
@@ -241,6 +232,7 @@ namespace Intersect.Editor.Forms.Editors
             tooltips = new ToolTip(components);
             grpItems.SuspendLayout();
             grpGeneral.SuspendLayout();
+            grpEvents.SuspendLayout();
             grpStack.SuspendLayout();
             ((ISupportInitialize)nudInvStackLimit).BeginInit();
             ((ISupportInitialize)nudBankStackLimit).BeginInit();
@@ -302,7 +294,6 @@ namespace Intersect.Editor.Forms.Editors
             ((ISupportInitialize)nudBlockAmount).BeginInit();
             ((ISupportInitialize)nudBlockChance).BeginInit();
             pnlContainer.SuspendLayout();
-            grpEvents.SuspendLayout();
             toolStrip.SuspendLayout();
             SuspendLayout();
             // 
@@ -393,6 +384,7 @@ namespace Intersect.Editor.Forms.Editors
             // 
             grpGeneral.BackColor = System.Drawing.Color.FromArgb(45, 45, 48);
             grpGeneral.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
+            grpGeneral.Controls.Add(grpEvents);
             grpGeneral.Controls.Add(grpStack);
             grpGeneral.Controls.Add(grpCooldown);
             grpGeneral.Controls.Add(nudItemDespawnTime);
@@ -443,10 +435,73 @@ namespace Intersect.Editor.Forms.Editors
             grpGeneral.Margin = new Padding(4, 3, 4, 3);
             grpGeneral.Name = "grpGeneral";
             grpGeneral.Padding = new Padding(4, 3, 4, 3);
-            grpGeneral.Size = new Size(943, 547);
+            grpGeneral.Size = new Size(943, 634);
             grpGeneral.TabIndex = 2;
             grpGeneral.TabStop = false;
             grpGeneral.Text = "General";
+            // 
+            // grpEvents
+            // 
+            grpEvents.BackColor = System.Drawing.Color.FromArgb(45, 45, 48);
+            grpEvents.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
+            grpEvents.Controls.Add(cmbEventTriggers);
+            grpEvents.Controls.Add(lblEventForTrigger);
+            grpEvents.Controls.Add(lstEventTriggers);
+            grpEvents.ForeColor = System.Drawing.Color.Gainsboro;
+            grpEvents.Location = new System.Drawing.Point(596, 442);
+            grpEvents.Margin = new Padding(4, 3, 4, 3);
+            grpEvents.Name = "grpEvents";
+            grpEvents.Padding = new Padding(4, 3, 4, 3);
+            grpEvents.Size = new Size(329, 175);
+            grpEvents.TabIndex = 57;
+            grpEvents.TabStop = false;
+            grpEvents.Text = "Event Triggers";
+            // 
+            // cmbEventTriggers
+            // 
+            cmbEventTriggers.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
+            cmbEventTriggers.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
+            cmbEventTriggers.BorderStyle = ButtonBorderStyle.Solid;
+            cmbEventTriggers.ButtonColor = System.Drawing.Color.FromArgb(43, 43, 43);
+            cmbEventTriggers.DrawDropdownHoverOutline = false;
+            cmbEventTriggers.DrawFocusRectangle = false;
+            cmbEventTriggers.DrawMode = DrawMode.OwnerDrawFixed;
+            cmbEventTriggers.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbEventTriggers.FlatStyle = FlatStyle.Flat;
+            cmbEventTriggers.ForeColor = System.Drawing.Color.Gainsboro;
+            cmbEventTriggers.FormattingEnabled = true;
+            cmbEventTriggers.Location = new System.Drawing.Point(57, 138);
+            cmbEventTriggers.Margin = new Padding(4, 3, 4, 3);
+            cmbEventTriggers.Name = "cmbEventTriggers";
+            cmbEventTriggers.Size = new Size(262, 24);
+            cmbEventTriggers.TabIndex = 97;
+            cmbEventTriggers.Text = null;
+            cmbEventTriggers.TextPadding = new Padding(2);
+            cmbEventTriggers.SelectedIndexChanged += cmbEventTriggers_SelectedIndexChanged;
+            // 
+            // lblEventForTrigger
+            // 
+            lblEventForTrigger.AutoSize = true;
+            lblEventForTrigger.Location = new System.Drawing.Point(13, 141);
+            lblEventForTrigger.Margin = new Padding(4, 0, 4, 0);
+            lblEventForTrigger.Name = "lblEventForTrigger";
+            lblEventForTrigger.Size = new Size(36, 15);
+            lblEventForTrigger.TabIndex = 96;
+            lblEventForTrigger.Text = "Event";
+            // 
+            // lstEventTriggers
+            // 
+            lstEventTriggers.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
+            lstEventTriggers.BorderStyle = BorderStyle.FixedSingle;
+            lstEventTriggers.ForeColor = System.Drawing.Color.Gainsboro;
+            lstEventTriggers.FormattingEnabled = true;
+            lstEventTriggers.ItemHeight = 15;
+            lstEventTriggers.Location = new System.Drawing.Point(13, 22);
+            lstEventTriggers.Margin = new Padding(4, 3, 4, 3);
+            lstEventTriggers.Name = "lstEventTriggers";
+            lstEventTriggers.Size = new Size(306, 107);
+            lstEventTriggers.TabIndex = 59;
+            lstEventTriggers.SelectedIndexChanged += lstEventTriggers_SelectedIndexChanged;
             // 
             // grpStack
             // 
@@ -1465,7 +1520,7 @@ namespace Intersect.Editor.Forms.Editors
             grpEquipment.Controls.Add(grpWeaponProperties);
             grpEquipment.Controls.Add(grpShieldProperties);
             grpEquipment.ForeColor = System.Drawing.Color.Gainsboro;
-            grpEquipment.Location = new System.Drawing.Point(11, 688);
+            grpEquipment.Location = new System.Drawing.Point(11, 643);
             grpEquipment.Margin = new Padding(4, 3, 4, 3);
             grpEquipment.Name = "grpEquipment";
             grpEquipment.Padding = new Padding(4, 3, 4, 3);
@@ -2782,7 +2837,6 @@ namespace Intersect.Editor.Forms.Editors
             // pnlContainer
             // 
             pnlContainer.AutoScroll = true;
-            pnlContainer.Controls.Add(grpEvents);
             pnlContainer.Controls.Add(grpGeneral);
             pnlContainer.Controls.Add(grpEquipment);
             pnlContainer.Location = new System.Drawing.Point(250, 39);
@@ -2791,224 +2845,6 @@ namespace Intersect.Editor.Forms.Editors
             pnlContainer.Size = new Size(980, 635);
             pnlContainer.TabIndex = 43;
             pnlContainer.Visible = false;
-            // 
-            // grpEvents
-            // 
-            grpEvents.BackColor = System.Drawing.Color.FromArgb(45, 45, 48);
-            grpEvents.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
-            grpEvents.Controls.Add(cmbOnUnequip);
-            grpEvents.Controls.Add(lblOnUnequip);
-            grpEvents.Controls.Add(cmbOnHit);
-            grpEvents.Controls.Add(lblOnHit);
-            grpEvents.Controls.Add(cmbOnUse);
-            grpEvents.Controls.Add(lblOnUse);
-            grpEvents.Controls.Add(cmbOnEquip);
-            grpEvents.Controls.Add(lblOnEquip);
-            grpEvents.Controls.Add(cmbOnDrop);
-            grpEvents.Controls.Add(cmbOnPickup);
-            grpEvents.Controls.Add(lblOnDrop);
-            grpEvents.Controls.Add(lblOnPickup);
-            grpEvents.ForeColor = System.Drawing.Color.Gainsboro;
-            grpEvents.Location = new System.Drawing.Point(11, 556);
-            grpEvents.Margin = new Padding(4, 3, 4, 3);
-            grpEvents.Name = "grpEvents";
-            grpEvents.Padding = new Padding(4, 3, 4, 3);
-            grpEvents.Size = new Size(941, 126);
-            grpEvents.TabIndex = 57;
-            grpEvents.TabStop = false;
-            grpEvents.Text = "Event Triggers";
-            // 
-            // cmbOnUnequip
-            // 
-            cmbOnUnequip.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
-            cmbOnUnequip.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
-            cmbOnUnequip.BorderStyle = ButtonBorderStyle.Solid;
-            cmbOnUnequip.ButtonColor = System.Drawing.Color.FromArgb(43, 43, 43);
-            cmbOnUnequip.DrawDropdownHoverOutline = false;
-            cmbOnUnequip.DrawFocusRectangle = false;
-            cmbOnUnequip.DrawMode = DrawMode.OwnerDrawFixed;
-            cmbOnUnequip.DropDownStyle = ComboBoxStyle.DropDownList;
-            cmbOnUnequip.FlatStyle = FlatStyle.Flat;
-            cmbOnUnequip.ForeColor = System.Drawing.Color.Gainsboro;
-            cmbOnUnequip.FormattingEnabled = true;
-            cmbOnUnequip.Location = new System.Drawing.Point(319, 85);
-            cmbOnUnequip.Margin = new Padding(4, 3, 4, 3);
-            cmbOnUnequip.Name = "cmbOnUnequip";
-            cmbOnUnequip.Size = new Size(285, 24);
-            cmbOnUnequip.TabIndex = 35;
-            cmbOnUnequip.Text = null;
-            cmbOnUnequip.TextPadding = new Padding(2);
-            cmbOnUnequip.SelectedIndexChanged += cmbOnUnequip_SelectedIndexChanged;
-            // 
-            // lblOnUnequip
-            // 
-            lblOnUnequip.AutoSize = true;
-            lblOnUnequip.Location = new System.Drawing.Point(319, 67);
-            lblOnUnequip.Margin = new Padding(4, 0, 4, 0);
-            lblOnUnequip.Name = "lblOnUnequip";
-            lblOnUnequip.Size = new Size(71, 15);
-            lblOnUnequip.TabIndex = 34;
-            lblOnUnequip.Text = "On Unequip";
-            // 
-            // cmbOnHit
-            // 
-            cmbOnHit.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
-            cmbOnHit.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
-            cmbOnHit.BorderStyle = ButtonBorderStyle.Solid;
-            cmbOnHit.ButtonColor = System.Drawing.Color.FromArgb(43, 43, 43);
-            cmbOnHit.DrawDropdownHoverOutline = false;
-            cmbOnHit.DrawFocusRectangle = false;
-            cmbOnHit.DrawMode = DrawMode.OwnerDrawFixed;
-            cmbOnHit.DropDownStyle = ComboBoxStyle.DropDownList;
-            cmbOnHit.FlatStyle = FlatStyle.Flat;
-            cmbOnHit.ForeColor = System.Drawing.Color.Gainsboro;
-            cmbOnHit.FormattingEnabled = true;
-            cmbOnHit.Location = new System.Drawing.Point(625, 37);
-            cmbOnHit.Margin = new Padding(4, 3, 4, 3);
-            cmbOnHit.Name = "cmbOnHit";
-            cmbOnHit.Size = new Size(291, 24);
-            cmbOnHit.TabIndex = 33;
-            cmbOnHit.Text = null;
-            cmbOnHit.TextPadding = new Padding(2);
-            cmbOnHit.SelectedIndexChanged += cmbOnHit_SelectedIndexChanged;
-            // 
-            // lblOnHit
-            // 
-            lblOnHit.AutoSize = true;
-            lblOnHit.Location = new System.Drawing.Point(625, 19);
-            lblOnHit.Margin = new Padding(4, 0, 4, 0);
-            lblOnHit.Name = "lblOnHit";
-            lblOnHit.Size = new Size(42, 15);
-            lblOnHit.TabIndex = 32;
-            lblOnHit.Text = "On Hit";
-            // 
-            // cmbOnUse
-            // 
-            cmbOnUse.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
-            cmbOnUse.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
-            cmbOnUse.BorderStyle = ButtonBorderStyle.Solid;
-            cmbOnUse.ButtonColor = System.Drawing.Color.FromArgb(43, 43, 43);
-            cmbOnUse.DrawDropdownHoverOutline = false;
-            cmbOnUse.DrawFocusRectangle = false;
-            cmbOnUse.DrawMode = DrawMode.OwnerDrawFixed;
-            cmbOnUse.DropDownStyle = ComboBoxStyle.DropDownList;
-            cmbOnUse.FlatStyle = FlatStyle.Flat;
-            cmbOnUse.ForeColor = System.Drawing.Color.Gainsboro;
-            cmbOnUse.FormattingEnabled = true;
-            cmbOnUse.Location = new System.Drawing.Point(625, 85);
-            cmbOnUse.Margin = new Padding(4, 3, 4, 3);
-            cmbOnUse.Name = "cmbOnUse";
-            cmbOnUse.Size = new Size(291, 24);
-            cmbOnUse.TabIndex = 31;
-            cmbOnUse.Text = null;
-            cmbOnUse.TextPadding = new Padding(2);
-            cmbOnUse.SelectedIndexChanged += cmbOnUse_SelectedIndexChanged;
-            // 
-            // lblOnUse
-            // 
-            lblOnUse.AutoSize = true;
-            lblOnUse.Location = new System.Drawing.Point(625, 64);
-            lblOnUse.Margin = new Padding(4, 0, 4, 0);
-            lblOnUse.Name = "lblOnUse";
-            lblOnUse.Size = new Size(45, 15);
-            lblOnUse.TabIndex = 30;
-            lblOnUse.Text = "On Use";
-            // 
-            // cmbOnEquip
-            // 
-            cmbOnEquip.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
-            cmbOnEquip.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
-            cmbOnEquip.BorderStyle = ButtonBorderStyle.Solid;
-            cmbOnEquip.ButtonColor = System.Drawing.Color.FromArgb(43, 43, 43);
-            cmbOnEquip.DrawDropdownHoverOutline = false;
-            cmbOnEquip.DrawFocusRectangle = false;
-            cmbOnEquip.DrawMode = DrawMode.OwnerDrawFixed;
-            cmbOnEquip.DropDownStyle = ComboBoxStyle.DropDownList;
-            cmbOnEquip.FlatStyle = FlatStyle.Flat;
-            cmbOnEquip.ForeColor = System.Drawing.Color.Gainsboro;
-            cmbOnEquip.FormattingEnabled = true;
-            cmbOnEquip.Location = new System.Drawing.Point(319, 37);
-            cmbOnEquip.Margin = new Padding(4, 3, 4, 3);
-            cmbOnEquip.Name = "cmbOnEquip";
-            cmbOnEquip.Size = new Size(285, 24);
-            cmbOnEquip.TabIndex = 29;
-            cmbOnEquip.Text = null;
-            cmbOnEquip.TextPadding = new Padding(2);
-            cmbOnEquip.SelectedIndexChanged += cmbOnEquip_SelectedIndexChanged;
-            // 
-            // lblOnEquip
-            // 
-            lblOnEquip.AutoSize = true;
-            lblOnEquip.Location = new System.Drawing.Point(319, 19);
-            lblOnEquip.Margin = new Padding(4, 0, 4, 0);
-            lblOnEquip.Name = "lblOnEquip";
-            lblOnEquip.Size = new Size(56, 15);
-            lblOnEquip.TabIndex = 28;
-            lblOnEquip.Text = "On Equip";
-            // 
-            // cmbOnDrop
-            // 
-            cmbOnDrop.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
-            cmbOnDrop.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
-            cmbOnDrop.BorderStyle = ButtonBorderStyle.Solid;
-            cmbOnDrop.ButtonColor = System.Drawing.Color.FromArgb(43, 43, 43);
-            cmbOnDrop.DrawDropdownHoverOutline = false;
-            cmbOnDrop.DrawFocusRectangle = false;
-            cmbOnDrop.DrawMode = DrawMode.OwnerDrawFixed;
-            cmbOnDrop.DropDownStyle = ComboBoxStyle.DropDownList;
-            cmbOnDrop.FlatStyle = FlatStyle.Flat;
-            cmbOnDrop.ForeColor = System.Drawing.Color.Gainsboro;
-            cmbOnDrop.FormattingEnabled = true;
-            cmbOnDrop.Location = new System.Drawing.Point(14, 85);
-            cmbOnDrop.Margin = new Padding(4, 3, 4, 3);
-            cmbOnDrop.Name = "cmbOnDrop";
-            cmbOnDrop.Size = new Size(286, 24);
-            cmbOnDrop.TabIndex = 27;
-            cmbOnDrop.Text = null;
-            cmbOnDrop.TextPadding = new Padding(2);
-            cmbOnDrop.SelectedIndexChanged += cmbOnDrop_SelectedIndexChanged;
-            // 
-            // cmbOnPickup
-            // 
-            cmbOnPickup.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
-            cmbOnPickup.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
-            cmbOnPickup.BorderStyle = ButtonBorderStyle.Solid;
-            cmbOnPickup.ButtonColor = System.Drawing.Color.FromArgb(43, 43, 43);
-            cmbOnPickup.DrawDropdownHoverOutline = false;
-            cmbOnPickup.DrawFocusRectangle = false;
-            cmbOnPickup.DrawMode = DrawMode.OwnerDrawFixed;
-            cmbOnPickup.DropDownStyle = ComboBoxStyle.DropDownList;
-            cmbOnPickup.FlatStyle = FlatStyle.Flat;
-            cmbOnPickup.ForeColor = System.Drawing.Color.Gainsboro;
-            cmbOnPickup.FormattingEnabled = true;
-            cmbOnPickup.Location = new System.Drawing.Point(14, 37);
-            cmbOnPickup.Margin = new Padding(4, 3, 4, 3);
-            cmbOnPickup.Name = "cmbOnPickup";
-            cmbOnPickup.Size = new Size(286, 24);
-            cmbOnPickup.TabIndex = 26;
-            cmbOnPickup.Text = null;
-            cmbOnPickup.TextPadding = new Padding(2);
-            cmbOnPickup.SelectedIndexChanged += cmbOnPickup_SelectedIndexChanged;
-            // 
-            // lblOnDrop
-            // 
-            lblOnDrop.AutoSize = true;
-            lblOnDrop.Location = new System.Drawing.Point(13, 67);
-            lblOnDrop.Margin = new Padding(4, 0, 4, 0);
-            lblOnDrop.Name = "lblOnDrop";
-            lblOnDrop.Size = new Size(52, 15);
-            lblOnDrop.TabIndex = 25;
-            lblOnDrop.Text = "On Drop";
-            // 
-            // lblOnPickup
-            // 
-            lblOnPickup.AutoSize = true;
-            lblOnPickup.Location = new System.Drawing.Point(13, 19);
-            lblOnPickup.Margin = new Padding(4, 0, 4, 0);
-            lblOnPickup.Name = "lblOnPickup";
-            lblOnPickup.Size = new Size(62, 15);
-            lblOnPickup.TabIndex = 24;
-            lblOnPickup.Text = "On Pickup";
             // 
             // toolStrip
             // 
@@ -3147,6 +2983,8 @@ namespace Intersect.Editor.Forms.Editors
             grpItems.PerformLayout();
             grpGeneral.ResumeLayout(false);
             grpGeneral.PerformLayout();
+            grpEvents.ResumeLayout(false);
+            grpEvents.PerformLayout();
             grpStack.ResumeLayout(false);
             grpStack.PerformLayout();
             ((ISupportInitialize)nudInvStackLimit).EndInit();
@@ -3225,8 +3063,6 @@ namespace Intersect.Editor.Forms.Editors
             ((ISupportInitialize)nudBlockAmount).EndInit();
             ((ISupportInitialize)nudBlockChance).EndInit();
             pnlContainer.ResumeLayout(false);
-            grpEvents.ResumeLayout(false);
-            grpEvents.PerformLayout();
             toolStrip.ResumeLayout(false);
             toolStrip.PerformLayout();
             ResumeLayout(false);
@@ -3426,17 +3262,8 @@ namespace Intersect.Editor.Forms.Editors
         private ListBox lstStatRanges;
         private Label lblStatRangeFrom;
         private DarkGroupBox grpEvents;
-        private DarkComboBox cmbOnPickup;
-        private Label lblOnDrop;
-        private Label lblOnPickup;
-        private DarkComboBox cmbOnEquip;
-        private Label lblOnEquip;
-        private DarkComboBox cmbOnDrop;
-        private DarkComboBox cmbOnUnequip;
-        private Label lblOnUnequip;
-        private DarkComboBox cmbOnHit;
-        private Label lblOnHit;
-        private DarkComboBox cmbOnUse;
-        private Label lblOnUse;
+        private DarkComboBox cmbEventTriggers;
+        private Label lblEventForTrigger;
+        private ListBox lstEventTriggers;
     }
 }

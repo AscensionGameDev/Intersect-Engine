@@ -144,7 +144,7 @@ namespace Intersect.Editor.Forms.Editors
             cmbTeachSpell.Items.AddRange(SpellBase.Names);
 
             var events = EventBase.Names;
-            var eventElements = new List<ComboBox>() { cmbEvent, cmbOnEquip, cmbOnDrop, cmbOnPickup, cmbOnUnequip, cmbOnHit, cmbOnUse };
+            var eventElements = new List<ComboBox>() { cmbEvent, cmbEventTriggers };
             foreach (var element in eventElements)
             {
                 element.Items.Clear();
@@ -232,12 +232,7 @@ namespace Intersect.Editor.Forms.Editors
             }
 
             grpEvents.Text = Strings.ItemEditor.EventGroup;
-            lblOnDrop.Text = Strings.ItemEditor.EventOnDrop;
-            lblOnEquip.Text = Strings.ItemEditor.EventOnEquip;
-            lblOnHit.Text = Strings.ItemEditor.EventOnHit;
-            lblOnPickup.Text = Strings.ItemEditor.EventOnPickup;
-            lblOnUnequip.Text = Strings.ItemEditor.EventOnUnequip;
-            lblOnUse.Text = Strings.ItemEditor.EventOnUse;
+            lblEventForTrigger.Text = Strings.ItemEditor.EventGroupLabel;
 
             grpEquipment.Text = Strings.ItemEditor.equipment;
             lblEquipmentSlot.Text = Strings.ItemEditor.slot;
@@ -553,75 +548,48 @@ namespace Intersect.Editor.Forms.Editors
                 chkStackable.Enabled = false;
             }
 
-            cmbOnDrop.SelectedIndex = EventBase.ListIndex(mEditorItem.DropEventId) + 1;
-            cmbOnEquip.SelectedIndex = EventBase.ListIndex(mEditorItem.EquipEventId) + 1;
-            cmbOnHit.SelectedIndex = EventBase.ListIndex(mEditorItem.OnHitEventId) + 1;
-            cmbOnPickup.SelectedIndex = EventBase.ListIndex(mEditorItem.PickupEventId) + 1;
-            cmbOnUnequip.SelectedIndex = EventBase.ListIndex(mEditorItem.UnequipEventId) + 1;
-            cmbOnUse.SelectedIndex = EventBase.ListIndex(mEditorItem.UseEventId) + 1;
-
             mEditorItem.ItemType = (ItemType)cmbType.SelectedIndex;
 
-            UpdateEventTriggerAvailability();
+            PopulateEventTriggerList();
         }
 
-        private void UpdateEventTriggerAvailability()
+        private void PopulateEventTriggerList()
         {
-            var equipmentEventSelectors = new List<ComboBox>() { cmbOnHit, cmbOnEquip, cmbOnUnequip };
-            var equipmentEventLabels = new List<Label>() { lblOnHit, lblOnEquip, lblOnUnequip };
+            lstEventTriggers.Items.Clear();
+            lstEventTriggers.SelectedIndex = -1;
 
-            cmbOnUse.Visible = true;
-            lblOnUse.Visible = true;
+            // Some event triggers aren't valid for some item types - setup filters here
+            var invalidNonEquipOperations = new List<ItemEventTriggers>() { ItemEventTriggers.OnEquip, ItemEventTriggers.OnUnequip, ItemEventTriggers.OnHit, ItemEventTriggers.OnDamageReceived };
 
-            switch (mEditorItem.ItemType)
+            var invalidEventOperations = new List<ItemEventTriggers>() { ItemEventTriggers.OnUse };
+            invalidEventOperations.AddRange(invalidNonEquipOperations);
+
+            foreach (var triggerMapping in Strings.ItemEditor.EventTriggerSelections)
             {
-                case ItemType.Event:
-                    // Event-type items already have an on-use event. These item types are now basically deprecated.
-                    cmbOnUse.Visible = false;
-                    lblOnUse.Visible = false;
+                var trigger = triggerMapping.Key;
+                var triggerText = triggerMapping.Value;
 
-                    foreach (var selector in equipmentEventSelectors)
-                    {
-                        selector.Enabled = false;
-                        selector.Visible = false;
-                    }
-
-                    foreach (var label in equipmentEventLabels)
-                    {
-                        label.Visible = false;
-                    }
-                    break;
-                case ItemType.Currency:
-                case ItemType.Spell:
-                case ItemType.Bag:
-                case ItemType.Consumable:
-                case ItemType.None:
+                Strings.ItemEditor.EventTriggerNames.TryGetValue(trigger, out var triggerName);
+                if (string.IsNullOrEmpty(triggerName))
                 {
-                    foreach (var selector in equipmentEventSelectors)
-                    {
-                        selector.Enabled = false;
-                        selector.Visible = false;
-                    }
-
-                    foreach (var label in equipmentEventLabels)
-                    {
-                        label.Visible = false;
-                    }
-                    break;
+                    triggerName = EventBase.Deleted;
                 }
-                default:
-                    foreach (var selector in equipmentEventSelectors)
-                    {
-                        selector.Enabled = true;
-                        selector.Visible = true;
-                    }
 
-                    foreach (var label in equipmentEventLabels)
-                    {
-                        label.Visible = true;
-                    }
-                    
-                    break;
+                var evt = mEditorItem.GetEventTrigger(trigger);
+
+                if (mEditorItem.ItemType == ItemType.Event && invalidEventOperations.Contains(triggerMapping.Key))
+                {
+                    lstEventTriggers.Items.Add(Strings.ItemEditor.EventTriggerDisabled.ToString(triggerName));
+                    continue;
+                }
+
+                if (mEditorItem.ItemType != ItemType.Equipment && invalidNonEquipOperations.Contains(triggerMapping.Key))
+                {
+                    lstEventTriggers.Items.Add(Strings.ItemEditor.EventTriggerDisabled.ToString(triggerName));
+                    continue;
+                }
+
+                lstEventTriggers.Items.Add(triggerText.ToString(evt?.Name ?? Strings.General.None));
             }
         }
 
@@ -1455,6 +1423,11 @@ namespace Intersect.Editor.Forms.Editors
             get => Enum.IsDefined((Stat)lstStatRanges.SelectedIndex) ? (Stat)(lstStatRanges.SelectedIndex) : null;
         }
 
+        private ItemEventTriggers? SelectedEventTrigger
+        {
+            get => Enum.IsDefined((ItemEventTriggers)lstEventTriggers.SelectedIndex) ? (ItemEventTriggers)(lstEventTriggers.SelectedIndex) : null;
+        }
+
         private void lstBonusEffects_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (!IsValidBonusSelection)
@@ -1527,34 +1500,42 @@ namespace Intersect.Editor.Forms.Editors
             nudStatRangeHigh.Value = range.HighRange;
         }
 
-        private void cmbOnPickup_SelectedIndexChanged(object sender, EventArgs e)
+        private void lstEventTriggers_SelectedIndexChanged(object sender, EventArgs e)
         {
-            mEditorItem.PickupEventId = EventBase.IdFromList(cmbOnPickup.SelectedIndex - 1);
+            var triggerSelected = lstEventTriggers.SelectedIndex >= 0;
+            cmbEventTriggers.Enabled = triggerSelected;
+
+            if (!SelectedEventTrigger.HasValue)
+            {
+                if (cmbEventTriggers.Items.Count > 0)
+                {
+                    cmbEventTriggers.SelectedIndex = 0;
+                }
+                return;
+            }
+
+            var trigger = mEditorItem.GetEventTrigger(SelectedEventTrigger.Value);
+            if (trigger == null)
+            {
+                if (cmbEventTriggers.Items.Count > 0)
+                {
+                    cmbEventTriggers.SelectedIndex = 0;
+                }
+                return;
+            }
+
+            cmbEventTriggers.SelectedIndex = EventBase.ListIndex(trigger.Id) + 1;
         }
 
-        private void cmbOnDrop_SelectedIndexChanged(object sender, EventArgs e)
+        private void cmbEventTriggers_SelectedIndexChanged(object sender, EventArgs e)
         {
-            mEditorItem.DropEventId = EventBase.IdFromList(cmbOnDrop.SelectedIndex - 1);
-        }
+            if (!SelectedEventTrigger.HasValue)
+            {
+                return;
+            }
 
-        private void cmbOnEquip_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            mEditorItem.EquipEventId = EventBase.IdFromList(cmbOnEquip.SelectedIndex - 1);
-        }
-
-        private void cmbOnUnequip_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            mEditorItem.UnequipEventId = EventBase.IdFromList(cmbOnUnequip.SelectedIndex - 1);
-        }
-
-        private void cmbOnHit_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            mEditorItem.OnHitEventId = EventBase.IdFromList(cmbOnHit.SelectedIndex - 1);
-        }
-
-        private void cmbOnUse_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            mEditorItem.UseEventId = EventBase.IdFromList(cmbOnUse.SelectedIndex - 1);
+            mEditorItem.EventTriggers[SelectedEventTrigger.Value] = EventBase.IdFromList(cmbEventTriggers.SelectedIndex - 1);
+            PopulateEventTriggerList();
         }
     }
 

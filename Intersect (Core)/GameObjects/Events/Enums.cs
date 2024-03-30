@@ -246,4 +246,15 @@ namespace Intersect.GameObjects.Events
         FadeIn,
         FadeOut,
     }
+
+    public enum ItemEventTriggers
+    {
+        OnPickup = 0,
+        OnDrop,
+        OnUse,
+        OnEquip,
+        OnUnequip,
+        OnHit,
+        OnDamageReceived
+    }
 }

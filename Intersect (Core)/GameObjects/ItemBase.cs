@@ -342,41 +342,25 @@ namespace Intersect.GameObjects
         [NotMapped, JsonIgnore]
         public ItemRange[] StatRanges => EquipmentProperties?.StatRanges?.Values.ToArray();
 
-        [Column(nameof(EquipEvent))]
-        public Guid EquipEventId { get; set; }
+        [Column(nameof(EventTriggers))]
+        public string EventTriggersJson
+        {
+            get => JsonConvert.SerializeObject(EventTriggers);
+            set => EventTriggers = JsonConvert.DeserializeObject<Dictionary<ItemEventTriggers, Guid>>(value ?? "") ?? new Dictionary<ItemEventTriggers, Guid>();
+        }
+
+        public EventBase? GetEventTrigger(ItemEventTriggers eventTrigger)
+        {
+            if (!EventTriggers.TryGetValue(eventTrigger, out var trigger))
+            {
+                return null;
+            }
+
+            return EventBase.Get(trigger);
+        }
 
         [NotMapped, JsonIgnore]
-        public EventBase EquipEvent => EventBase.Get(EquipEventId);
-
-        [Column(nameof(UnequipEventId))]
-        public Guid UnequipEventId { get; set; }
-
-        [NotMapped, JsonIgnore]
-        public EventBase UnequipEvent => EventBase.Get(UnequipEventId);
-
-        [Column(nameof(PickupEvent))]
-        public Guid PickupEventId { get; set; }
-
-        [NotMapped, JsonIgnore]
-        public EventBase PickupEvent => EventBase.Get(PickupEventId);
-
-        [Column(nameof(DropEvent))]
-        public Guid DropEventId { get; set; }
-
-        [NotMapped, JsonIgnore]
-        public EventBase DropEvent => EventBase.Get(DropEventId);
-
-        [Column(nameof(OnHitEvent))]
-        public Guid OnHitEventId { get; set; }
-
-        [NotMapped, JsonIgnore]
-        public EventBase OnHitEvent => EventBase.Get(OnHitEventId);
-
-        [Column(nameof(UseEvent))]
-        public Guid UseEventId { get; set; }
-
-        [NotMapped, JsonIgnore]
-        public EventBase UseEvent => EventBase.Get(UseEventId);
+        public Dictionary<ItemEventTriggers, Guid> EventTriggers { get; set; } = new Dictionary<ItemEventTriggers, Guid>();
 
         public bool TryGetRangeFor(Stat stat, out ItemRange range)
         {

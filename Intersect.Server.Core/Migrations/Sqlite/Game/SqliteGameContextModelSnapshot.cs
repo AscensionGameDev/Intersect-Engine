@@ -384,17 +384,9 @@ namespace Intersect.Server.Migrations.Sqlite.Game
                     b.Property<int>("DropChanceOnDeath")
                         .HasColumnType("INTEGER");
 
-                    b.Property<Guid>("DropEventId")
-                        .HasColumnType("TEXT")
-                        .HasColumnName("DropEvent");
-
                     b.Property<string>("EffectsJson")
                         .HasColumnType("TEXT")
                         .HasColumnName("Effects");
-
-                    b.Property<Guid>("EquipEventId")
-                        .HasColumnType("TEXT")
-                        .HasColumnName("EquipEvent");
 
                     b.Property<Guid>("EquipmentAnimationId")
                         .HasColumnType("TEXT")
@@ -406,6 +398,10 @@ namespace Intersect.Server.Migrations.Sqlite.Game
                     b.Property<Guid>("EventId")
                         .HasColumnType("TEXT")
                         .HasColumnName("Event");
+
+                    b.Property<string>("EventTriggersJson")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("EventTriggers");
 
                     b.Property<string>("FemalePaperdoll")
                         .HasColumnType("TEXT");
@@ -446,10 +442,6 @@ namespace Intersect.Server.Migrations.Sqlite.Game
                         .HasColumnType("TEXT")
                         .HasColumnOrder(0);
 
-                    b.Property<Guid>("OnHitEventId")
-                        .HasColumnType("TEXT")
-                        .HasColumnName("OnHitEvent");
-
                     b.Property<string>("PercentageStatsJson")
                         .HasColumnType("TEXT")
                         .HasColumnName("PercentageStatsGiven");
@@ -457,10 +449,6 @@ namespace Intersect.Server.Migrations.Sqlite.Game
                     b.Property<string>("PercentageVitalsJson")
                         .HasColumnType("TEXT")
                         .HasColumnName("PercentageVitalsGiven");
-
-                    b.Property<Guid>("PickupEventId")
-                        .HasColumnType("TEXT")
-                        .HasColumnName("PickupEvent");
 
                     b.Property<int>("Price")
                         .HasColumnType("INTEGER");
@@ -510,14 +498,6 @@ namespace Intersect.Server.Migrations.Sqlite.Game
 
                     b.Property<bool>("TwoHanded")
                         .HasColumnType("INTEGER");
-
-                    b.Property<Guid>("UnequipEventId")
-                        .HasColumnType("TEXT")
-                        .HasColumnName("UnequipEventId");
-
-                    b.Property<Guid>("UseEventId")
-                        .HasColumnType("TEXT")
-                        .HasColumnName("UseEvent");
 
                     b.Property<string>("VitalsJson")
                         .HasColumnType("TEXT")
