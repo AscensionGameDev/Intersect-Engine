@@ -346,7 +346,7 @@ namespace Intersect.GameObjects
         public string EventTriggersJson
         {
             get => JsonConvert.SerializeObject(EventTriggers);
-            set => EventTriggers = JsonConvert.DeserializeObject<Dictionary<ItemEventTriggers, Guid>>(value ?? "") ?? new Dictionary<ItemEventTriggers, Guid>();
+            set => EventTriggers = JsonConvert.DeserializeObject<Dictionary<ItemEventTriggers, Guid>>(value ?? string.Empty) ?? new Dictionary<ItemEventTriggers, Guid>();
         }
 
         public EventBase? GetEventTrigger(ItemEventTriggers eventTrigger)

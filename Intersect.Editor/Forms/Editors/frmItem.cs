@@ -553,7 +553,7 @@ namespace Intersect.Editor.Forms.Editors
             PopulateEventTriggerList();
         }
 
-        private void PopulateEventTriggerList()
+        private void PopulateEventTriggerList(int lastIndex = -1)
         {
             lstEventTriggers.Items.Clear();
             lstEventTriggers.SelectedIndex = -1;
@@ -590,6 +590,11 @@ namespace Intersect.Editor.Forms.Editors
                 }
 
                 lstEventTriggers.Items.Add(triggerText.ToString(evt?.Name ?? Strings.General.None));
+            }
+
+            if (lastIndex < lstEventTriggers.Items.Count && lastIndex != -1)
+            {
+                lstEventTriggers.SelectedIndex = lastIndex;
             }
         }
 
@@ -1533,9 +1538,10 @@ namespace Intersect.Editor.Forms.Editors
             {
                 return;
             }
-
+            
             mEditorItem.EventTriggers[SelectedEventTrigger.Value] = EventBase.IdFromList(cmbEventTriggers.SelectedIndex - 1);
-            PopulateEventTriggerList();
+
+            PopulateEventTriggerList(lstEventTriggers.SelectedIndex);
         }
     }
 
