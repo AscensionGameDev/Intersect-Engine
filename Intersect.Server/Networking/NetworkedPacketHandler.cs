@@ -1153,6 +1153,14 @@ internal sealed partial class NetworkedPacketHandler
 
                     PacketSender.SendGameObjectToAll(obj, false);
                 }
+
+                if (type == GameObjectType.Item)
+                {
+                    foreach (var player in Globals.OnlineList)
+                    {
+                        player.CacheEquipmentTriggers();
+                    }
+                }
             }
         }
 
