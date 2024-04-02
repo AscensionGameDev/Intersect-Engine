@@ -67,7 +67,7 @@ namespace Intersect.Client.MonoGame
 
         private Action PostStartupAction { get; }
 
-        private IntersectGame(IClientContext context, Action postStartupAction)
+        public IntersectGame(IClientContext context, Action postStartupAction)
         {
             Context = context;
             PostStartupAction = postStartupAction;
@@ -107,8 +107,13 @@ namespace Intersect.Client.MonoGame
             // Load configuration.
             Globals.Database.LoadPreferences();
 
-            Window.IsBorderless = Context.StartupOptions.BorderlessWindow;
-
+            //WINDOWS
+            /*var os = Environment.OSVersion;
+            var platformId = os.Platform;
+            if (platformId == PlatformID.WinCE)
+            {
+                Window.IsBorderless = Context.StartupOptions.BorderlessWindow;
+            }*/
             _gameRenderer = new MonoRenderer(mGraphics, Content, this)
             {
                 OverrideResolution = Context.StartupOptions.ScreenResolution,
@@ -124,11 +129,14 @@ namespace Intersect.Client.MonoGame
             Controls.Init();
 
             // Windows
-            Window.Position = new Microsoft.Xna.Framework.Point(
-                _gameRenderer.ScreenWidth - _gameRenderer.ActiveResolution.X,
-                _gameRenderer.ScreenHeight - _gameRenderer.ActiveResolution.Y
-            ) / new Microsoft.Xna.Framework.Point(2);
-            Window.AllowAltF4 = false;
+            /*if (platformId == PlatformID.WinCE) {
+                Window.Position = new Microsoft.Xna.Framework.Point(
+                   _gameRenderer.ScreenWidth - _gameRenderer.ActiveResolution.X,
+                   _gameRenderer.ScreenHeight - _gameRenderer.ActiveResolution.Y
+               ) / new Microsoft.Xna.Framework.Point(2);
+                Window.AllowAltF4 = false;
+            }*/
+           
 
             // Store frequently used property values in local variables.
             string mouseCursor = ClientConfiguration.Instance.MouseCursor;

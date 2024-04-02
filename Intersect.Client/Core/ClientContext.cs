@@ -39,7 +39,7 @@ namespace Intersect.Client.Core
         {
             Networking.Network.PacketHandler = new PacketHandler(this, PacketHelper.HandlerRegistry);
             PlatformRunner = typeof(ClientContext).Assembly.CreateInstanceOf<IPlatformRunner>();
-           game = PlatformRunner.Start(this, PostStartup);
+            game = PlatformRunner.Start(this, PostStartup);
         }
 
         #region Exception Handling
