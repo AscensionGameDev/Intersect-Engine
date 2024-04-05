@@ -101,7 +101,7 @@ namespace Intersect.Editor.Core
 
         public static bool TilePreviewUpdated;
 
-        private static DateTime _lastNpcPulseColorUpdate;
+        private static long _lastNpcPulseColorUpdate;
 
         private static float _npcColorPulseRatio;
 
@@ -987,47 +987,48 @@ namespace Intersect.Editor.Core
                 {
                     for (var i = 0; i < tmpMap.Spawns.Count; i++)
                     {
-                        if (tmpMap.Spawns[i].X >= 0 && tmpMap.Spawns[i].Y >= 0)
+                        if (tmpMap.Spawns[i].X < 0 || tmpMap.Spawns[i].Y < 0)
                         {
-                            var spawnTex = GameContentManager.GetTexture(
-                                GameContentManager.TextureType.Misc, "spawnicon.png"
-                            );
-
-                            if (spawnTex != null)
-                            {
-                                // Check if the current spawn is selected
-                                var spawnColor = System.Drawing.Color.White;
-                                var selectedNpcIndex = Globals.MapLayersWindow.lstMapNpcs.SelectedIndex;
-                                if (selectedNpcIndex > -1 && Globals.CurrentMap.Spawns[i] ==
-                                    Globals.CurrentMap.Spawns[selectedNpcIndex])
-                                {
-                                    // Calculate pulsating color: adjusts denominator to change speed of pulsation.
-                                    var currentTime = DateTime.Now;
-                                    if ((currentTime - _lastNpcPulseColorUpdate).TotalMilliseconds >= 50) // Update every 50ms.
-                                    {
-                                        _npcColorPulseRatio =
-                                            (float)(Math.Sin(2 * Math.PI * currentTime.TimeOfDay.TotalSeconds / 1) + 1) / 2;
-                                        _lastNpcPulseColorUpdate = currentTime;
-                                    }
-
-                                    if (FrmMapLayers.NpcPulseColor == default)
-                                    {
-                                        FrmMapLayers.NpcPulseColor = System.Drawing.Color.Red;
-                                    }
-
-                                    spawnColor = GridHelper.ColorInterpolate(spawnColor, FrmMapLayers.NpcPulseColor, _npcColorPulseRatio);
-                                }
-
-                                DrawTexture(
-                                    spawnTex, new RectangleF(0, 0, spawnTex.Width, spawnTex.Height),
-                                    new RectangleF(
-                                        CurrentView.Left + tmpMap.Spawns[i].X * Options.TileWidth,
-                                        CurrentView.Top + tmpMap.Spawns[i].Y * Options.TileHeight, Options.TileWidth,
-                                        Options.TileHeight
-                                    ), spawnColor
-                                );
-                            }
+                            continue;
                         }
+
+                        var spawnTex = GameContentManager.GetTexture(
+                            GameContentManager.TextureType.Misc, "spawnicon.png"
+                        );
+
+                        if (spawnTex == null)
+                        {
+                            continue;
+                        }
+
+                        // Check if the current spawn is selected
+                        var spawnColor = System.Drawing.Color.White;
+                        var selectedNpcIndex = Globals.MapLayersWindow.lstMapNpcs.SelectedIndex;
+                        if (selectedNpcIndex > -1 && tmpMap.Spawns[i] == tmpMap.Spawns[selectedNpcIndex])
+                        {
+                            // Calculate pulsating color: adjusts denominator to change speed of pulsation.
+                            var currentTime = Timing.Global.MillisecondsUtc;
+                            if ((currentTime - _lastNpcPulseColorUpdate) >= 50) // Update every 50ms.
+                            {
+                                _npcColorPulseRatio = (float)(Math.Sin(2 * Math.PI * (currentTime / 1000.0)) + 1) / 2;
+                                _lastNpcPulseColorUpdate = currentTime;
+                            }
+                            if (FrmMapLayers.NpcPulseColor == default)
+                            {
+                                FrmMapLayers.NpcPulseColor = System.Drawing.Color.Red;
+                            }
+
+                            spawnColor = GridHelper.ColorInterpolate(spawnColor, FrmMapLayers.NpcPulseColor, _npcColorPulseRatio);
+                        }
+
+                        DrawTexture(
+                            spawnTex, new RectangleF(0, 0, spawnTex.Width, spawnTex.Height),
+                            new RectangleF(
+                                CurrentView.Left + tmpMap.Spawns[i].X * Options.TileWidth,
+                                CurrentView.Top + tmpMap.Spawns[i].Y * Options.TileHeight, Options.TileWidth,
+                                Options.TileHeight
+                            ), spawnColor
+                        );
                     }
                 }
             }

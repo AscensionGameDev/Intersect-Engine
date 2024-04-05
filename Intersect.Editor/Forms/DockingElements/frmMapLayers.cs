@@ -907,16 +907,12 @@ namespace Intersect.Editor.Forms.DockingElements
                 return;
             }
 
-            cmbNpc.SelectedIndex = NpcBase.ListIndex(Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].NpcId);
-            cmbDir.SelectedIndex = (int)Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].Direction;
-            if (Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].X >= 0)
-            {
-                rbDeclared.Checked = true;
-            }
-            else
-            {
-                rbRandom.Checked = true;
-            }
+            var selectedSpawn = Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex];
+
+            cmbNpc.SelectedIndex = NpcBase.ListIndex(selectedSpawn.NpcId);
+            cmbDir.SelectedIndex = (int)selectedSpawn.Direction;
+            rbDeclared.Checked = selectedSpawn.X >= 0;
+            rbRandom.Checked = !rbDeclared.Checked;
 
             UpdateSpawnLocationLabel();
         }
@@ -936,7 +932,7 @@ namespace Intersect.Editor.Forms.DockingElements
         public void UpdateSpawnLocationLabel()
         {
             grpSpawnLoc.Text = rbDeclared.Checked ? Strings.NpcSpawns.spawndeclared : Strings.NpcSpawns.spawnrandom;
-            grpSpawnLoc.ForeColor = rbDeclared.Checked ? System.Drawing.Color.LawnGreen : System.Drawing.Color.DeepPink;
+            grpSpawnLoc.ForeColor = rbDeclared.Checked ? System.Drawing.Color.LawnGreen : System.Drawing.Color.HotPink;
         }
 
         private void cmbDir_SelectedIndexChanged(object sender, EventArgs e)
