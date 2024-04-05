@@ -1177,10 +1177,11 @@ namespace Intersect.Editor.Forms.DockingElements
             // lblNpcCount
             //
             this.lblNpcCount.AutoSize = true;
+            this.lblNpcCount.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.lblNpcCount.ForeColor = System.Drawing.Color.Gainsboro;
-            this.lblNpcCount.Location = new System.Drawing.Point(5, 365);
+            this.lblNpcCount.Location = new System.Drawing.Point(7, 362);
             this.lblNpcCount.Name = "lblNpcCount";
-            this.lblNpcCount.Size = new System.Drawing.Size(0, 13);
+            this.lblNpcCount.Size = new System.Drawing.Size(0, 16);
             this.lblNpcCount.TabIndex = 13;
             //
             // grpSpawnLoc
@@ -1190,7 +1191,7 @@ namespace Intersect.Editor.Forms.DockingElements
             this.grpSpawnLoc.Controls.Add(this.rbRandom);
             this.grpSpawnLoc.Controls.Add(this.rbDeclared);
             this.grpSpawnLoc.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpSpawnLoc.Location = new System.Drawing.Point(7, 388);
+            this.grpSpawnLoc.Location = new System.Drawing.Point(7, 390);
             this.grpSpawnLoc.Name = "grpSpawnLoc";
             this.grpSpawnLoc.Size = new System.Drawing.Size(259, 46);
             this.grpSpawnLoc.TabIndex = 11;
@@ -1203,7 +1204,7 @@ namespace Intersect.Editor.Forms.DockingElements
             this.grpSpawnDirection.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.grpSpawnDirection.Controls.Add(this.cmbDir);
             this.grpSpawnDirection.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpSpawnDirection.Location = new System.Drawing.Point(7, 444);
+            this.grpSpawnDirection.Location = new System.Drawing.Point(7, 445);
             this.grpSpawnDirection.Name = "grpSpawnDirection";
             this.grpSpawnDirection.Size = new System.Drawing.Size(259, 46);
             this.grpSpawnDirection.TabIndex = 11;
@@ -1229,7 +1230,7 @@ namespace Intersect.Editor.Forms.DockingElements
             "Down",
             "Left",
             "Right"});
-            this.cmbDir.Location = new System.Drawing.Point(7, 16);
+            this.cmbDir.Location = new System.Drawing.Point(7, 18);
             this.cmbDir.Name = "cmbDir";
             this.cmbDir.Size = new System.Drawing.Size(246, 20);
             this.cmbDir.TabIndex = 3;

@@ -1004,7 +1004,8 @@ namespace Intersect.Editor.Core
                         // Check if the current spawn is selected
                         var spawnColor = System.Drawing.Color.White;
                         var selectedNpcIndex = Globals.MapLayersWindow.lstMapNpcs.SelectedIndex;
-                        if (selectedNpcIndex > -1 && tmpMap.Spawns[i] == tmpMap.Spawns[selectedNpcIndex])
+                        if (selectedNpcIndex > -1 && selectedNpcIndex < tmpMap.Spawns.Count &&
+                            tmpMap.Spawns[i] == tmpMap.Spawns[selectedNpcIndex])
                         {
                             // Calculate pulsating color: adjusts denominator to change speed of pulsation.
                             var currentTime = Timing.Global.MillisecondsUtc;
