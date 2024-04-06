@@ -508,7 +508,29 @@ namespace Intersect.Server.Localization
             public readonly LocalizedString parseerror =
                 @"Parse Error: Parameter could not be read. Type {00} {01} for usage information.";
 
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString playercount = @"Server has {00} registered players.";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString ServerInfo = @"Server has:";
+            
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString AccountCount = @" - {00} accounts.";
+            
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString CharacterCount = @" - {00} characters.";
+            
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString NpcCount = @" - {00} NPCs.";
+            
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString SpellCount = @" - {00} spells.";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString MapCount = @" - {00} maps.";
+            
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString EventCount = @" - {00} events.";
+            
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString ItemCount = @" - {00} items.";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString powerchanged = @"{00} has had their power updated!";
 
