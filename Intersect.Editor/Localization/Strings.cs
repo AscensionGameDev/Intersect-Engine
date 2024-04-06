@@ -4608,20 +4608,27 @@ Tick timer saved in server config.json.";
 
         public partial struct NpcSpawns
         {
-
             public static LocalizedString add = @"Add";
 
-            public static LocalizedString addremove = @"Add/Remove Map NPCs";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString AddRemove = @"Add or Remove NPC Spawn:";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString PulseColorButton = @"Selected NPC highlight color";
 
             public static LocalizedString declaredlocation = @"Declared";
 
-            public static LocalizedString direction = @"Direction:";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Direction = @"Spawn Direction:";
 
             public static LocalizedString randomdirection = @"Random";
 
             public static LocalizedString randomlocation = @"Random";
 
             public static LocalizedString remove = @"Remove";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString SpawnCount = @"Spawn Count: {00}";
 
             public static LocalizedString spawndeclared = @"Spawn Location: Declared";
 

@@ -56,6 +56,8 @@ namespace Intersect.Editor.Forms.DockingElements
 
         private bool mTMouseDown;
 
+        public static System.Drawing.Color NpcPulseColor;
+
         public FrmMapLayers()
         {
             InitializeComponent();
@@ -72,6 +74,9 @@ namespace Intersect.Editor.Forms.DockingElements
         {
             cmbAutotile.SelectedIndex = 0;
 
+            // Selected Npc highlight color from preferences
+            NpcPulseColor = ColorTranslator.FromHtml(Preferences.LoadPreference("NpcPulseColor"));
+            
             //See if we can use the old style icons instead of a combobox
             if (Options.Instance.MapOpts.Layers.All.Count <= mMapLayers.Count)
             {
@@ -825,6 +830,8 @@ namespace Intersect.Editor.Forms.DockingElements
                     }
                 }
             }
+
+            UpdateNpcCountLabel();
         }
 
         private void frmMapLayers_DockStateChanged(object sender, EventArgs e)
@@ -849,6 +856,8 @@ namespace Intersect.Editor.Forms.DockingElements
                 lstMapNpcs.Items.Add(NpcBase.GetName(n.NpcId));
                 lstMapNpcs.SelectedIndex = lstMapNpcs.Items.Count - 1;
             }
+
+            UpdateNpcCountLabel();
         }
 
         private void btnRemoveMapNpc_Click(object sender, EventArgs e)
@@ -872,23 +881,40 @@ namespace Intersect.Editor.Forms.DockingElements
 
                 Core.Graphics.TilePreviewUpdated = true;
             }
+
+            UpdateNpcCountLabel();
+        }
+
+        private void UpdateNpcCountLabel()
+        {
+            lblNpcCount.Text = Strings.NpcSpawns.SpawnCount.ToString(lstMapNpcs.Items.Count);
         }
 
         private void lstMapNpcs_Click(object sender, EventArgs e)
         {
-            if (lstMapNpcs.Items.Count > 0 && lstMapNpcs.SelectedIndex > -1)
+            lstMapNpcs_Update();
+        }
+        
+        private void lstMapNpcs_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            lstMapNpcs_Update();
+        }
+
+        private void lstMapNpcs_Update()
+        {
+            if (lstMapNpcs.Items.Count <= 0 || lstMapNpcs.SelectedIndex <= -1)
             {
-                cmbNpc.SelectedIndex = NpcBase.ListIndex(Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].NpcId);
-                cmbDir.SelectedIndex = (int) Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].Direction;
-                if (Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].X >= 0)
-                {
-                    rbDeclared.Checked = true;
-                }
-                else
-                {
-                    rbRandom.Checked = true;
-                }
+                return;
             }
+
+            var selectedSpawn = Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex];
+
+            cmbNpc.SelectedIndex = NpcBase.ListIndex(selectedSpawn.NpcId);
+            cmbDir.SelectedIndex = (int)selectedSpawn.Direction;
+            rbDeclared.Checked = selectedSpawn.X >= 0;
+            rbRandom.Checked = !rbDeclared.Checked;
+
+            UpdateSpawnLocationLabel();
         }
 
         private void rbRandom_Click(object sender, EventArgs e)
@@ -898,7 +924,15 @@ namespace Intersect.Editor.Forms.DockingElements
                 Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].X = -1;
                 Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].Y = -1;
                 Globals.CurrentMap.Spawns[lstMapNpcs.SelectedIndex].Direction = NpcSpawnDirection.Random;
+                Core.Graphics.TilePreviewUpdated = true;
+                UpdateSpawnLocationLabel();
             }
+        }
+        
+        public void UpdateSpawnLocationLabel()
+        {
+            grpSpawnLoc.Text = rbDeclared.Checked ? Strings.NpcSpawns.spawndeclared : Strings.NpcSpawns.spawnrandom;
+            grpSpawnLoc.ForeColor = rbDeclared.Checked ? System.Drawing.Color.LawnGreen : System.Drawing.Color.HotPink;
         }
 
         private void cmbDir_SelectedIndexChanged(object sender, EventArgs e)
@@ -1158,10 +1192,12 @@ namespace Intersect.Editor.Forms.DockingElements
             cmbCritterLayer.SelectedIndex = 1;
 
             //NPCS Tab
-            grpSpawnLoc.Text = rbDeclared.Checked ? Strings.NpcSpawns.spawndeclared : Strings.NpcSpawns.spawnrandom;
+            grpSpawnDirection.Text = Strings.NpcSpawns.Direction;
             rbDeclared.Text = Strings.NpcSpawns.declaredlocation;
             rbRandom.Text = Strings.NpcSpawns.randomlocation;
-            lblDir.Text = Strings.NpcSpawns.direction;
+            btnNpcPulseColor.Text = Strings.NpcSpawns.PulseColorButton;
+            UpdateSpawnLocationLabel();
+            UpdateNpcCountLabel();
             cmbDir.Items.Clear();
             cmbDir.Items.Add(Strings.NpcSpawns.randomdirection);
             for (var i = 0; i < 4; i++)
@@ -1169,7 +1205,7 @@ namespace Intersect.Editor.Forms.DockingElements
                 cmbDir.Items.Add(Strings.Direction.dir[(Direction)i]);
             }
 
-            grpNpcList.Text = Strings.NpcSpawns.addremove;
+            grpNpcList.Text = Strings.NpcSpawns.AddRemove;
             btnAddMapNpc.Text = Strings.NpcSpawns.add;
             btnRemoveMapNpc.Text = Strings.NpcSpawns.remove;
 
@@ -1381,6 +1417,16 @@ namespace Intersect.Editor.Forms.DockingElements
         private void chkChangeInstance_CheckedChanged(object sender, EventArgs e)
         {
             grpInstanceSettings.Visible = chkChangeInstance.Checked;
+        }
+
+        private void btnNpcPulseColor_Click(object sender, EventArgs e)
+        {
+            NpcPulseColor = ColorTranslator.FromHtml(Preferences.LoadPreference("NpcPulseColor"));
+            npcColorPulseDialog.Color = NpcPulseColor == default ? System.Drawing.Color.Red : NpcPulseColor;
+            npcColorPulseDialog.FullOpen = true;
+            npcColorPulseDialog.ShowDialog();
+            Preferences.SavePreference("NpcPulseColor", npcColorPulseDialog.Color.ToArgb().ToString());
+            NpcPulseColor = ColorTranslator.FromHtml(Preferences.LoadPreference("NpcPulseColor"));
         }
     }
 
