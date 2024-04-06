@@ -1481,6 +1481,12 @@ namespace Intersect.Server.Entities
             var maxVitalValue = GetMaxVital(vitalId);
             var safeAmount = Math.Min(amount, GetVital(vital));
             SetVital(vital, GetVital(vital) - safeAmount);
+            ReactToDamage(vital);
+        }
+
+        protected virtual void ReactToDamage(Vital vital)
+        {
+            return;
         }
 
         public virtual int[] GetStatValues()
@@ -2169,10 +2175,10 @@ namespace Intersect.Server.Entities
                 {
                     Animate(enemy, aliveAnimations);
                 }
-
-                //Check for any onhit damage bonus effects!
-                CheckForOnhitAttack(enemy, isAutoAttack);
             }
+
+            //Check for any onhit damage bonus effects!
+            CheckForOnhitAttack(enemy, isAutoAttack);
 
             // Add a timer before able to make the next move.
             if (this is Npc thisNpc)
@@ -2181,9 +2187,9 @@ namespace Intersect.Server.Entities
             }
         }
 
-        void CheckForOnhitAttack(Entity enemy, bool isAutoAttack)
+        protected virtual void CheckForOnhitAttack(Entity enemy, bool isAutoAttack)
         {
-            if (isAutoAttack) //Ignore spell damage.
+            if (isAutoAttack && !enemy.IsDead()) //Ignore spell damage.
             {
                 foreach (var status in CachedStatuses)
                 {

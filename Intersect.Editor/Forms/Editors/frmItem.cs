@@ -4,7 +4,6 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
 using System.Windows.Forms;
-
 using DarkUI.Forms;
 
 using Intersect.Editor.Content;
@@ -143,9 +142,16 @@ namespace Intersect.Editor.Forms.Editors
             cmbTeachSpell.Items.Clear();
             cmbTeachSpell.Items.Add(Strings.General.None);
             cmbTeachSpell.Items.AddRange(SpellBase.Names);
-            cmbEvent.Items.Clear();
-            cmbEvent.Items.Add(Strings.General.None);
-            cmbEvent.Items.AddRange(EventBase.Names);
+
+            var events = EventBase.Names;
+            var eventElements = new List<ComboBox>() { cmbEvent, cmbEventTriggers };
+            foreach (var element in eventElements)
+            {
+                element.Items.Clear();
+                element.Items.Add(Strings.General.None);
+                element.Items.AddRange(events);
+            }
+
             cmbMalePaperdoll.Items.Clear();
             cmbMalePaperdoll.Items.Add(Strings.General.None);
             cmbFemalePaperdoll.Items.Clear();
@@ -224,6 +230,9 @@ namespace Intersect.Editor.Forms.Editors
                 var rarityName = Options.Instance.Items.RarityTiers[i];
                 cmbRarity.Items.Add(Strings.ItemEditor.rarity[rarityName]);
             }
+
+            grpEvents.Text = Strings.ItemEditor.EventGroup;
+            lblEventForTrigger.Text = Strings.ItemEditor.EventGroupLabel;
 
             grpEquipment.Text = Strings.ItemEditor.equipment;
             lblEquipmentSlot.Text = Strings.ItemEditor.slot;
@@ -540,6 +549,53 @@ namespace Intersect.Editor.Forms.Editors
             }
 
             mEditorItem.ItemType = (ItemType)cmbType.SelectedIndex;
+
+            PopulateEventTriggerList();
+        }
+
+        private void PopulateEventTriggerList(int lastIndex = -1)
+        {
+            lstEventTriggers.Items.Clear();
+            lstEventTriggers.SelectedIndex = -1;
+
+            // Some event triggers aren't valid for some item types - setup filters here
+            var invalidNonEquipOperations = new List<ItemEventTriggers>() { ItemEventTriggers.OnEquip, ItemEventTriggers.OnUnequip, ItemEventTriggers.OnHit, ItemEventTriggers.OnDamageReceived };
+
+            var invalidEventOperations = new List<ItemEventTriggers>() { ItemEventTriggers.OnUse };
+            invalidEventOperations.AddRange(invalidNonEquipOperations);
+
+            foreach (var triggerMapping in Strings.ItemEditor.EventTriggerSelections)
+            {
+                var trigger = triggerMapping.Key;
+                var triggerText = triggerMapping.Value;
+
+                Strings.ItemEditor.EventTriggerNames.TryGetValue(trigger, out var triggerName);
+                if (string.IsNullOrEmpty(triggerName))
+                {
+                    triggerName = EventBase.Deleted;
+                }
+
+                var evt = mEditorItem.GetEventTrigger(trigger);
+
+                if (mEditorItem.ItemType == ItemType.Event && invalidEventOperations.Contains(triggerMapping.Key))
+                {
+                    lstEventTriggers.Items.Add(Strings.ItemEditor.EventTriggerDisabled.ToString(triggerName));
+                    continue;
+                }
+
+                if (mEditorItem.ItemType != ItemType.Equipment && invalidNonEquipOperations.Contains(triggerMapping.Key))
+                {
+                    lstEventTriggers.Items.Add(Strings.ItemEditor.EventTriggerDisabled.ToString(triggerName));
+                    continue;
+                }
+
+                lstEventTriggers.Items.Add(triggerText.ToString(evt?.Name ?? Strings.General.None));
+            }
+
+            if (lastIndex < lstEventTriggers.Items.Count && lastIndex != -1)
+            {
+                lstEventTriggers.SelectedIndex = lastIndex;
+            }
         }
 
         private void cmbType_SelectedIndexChanged(object sender, EventArgs e)
@@ -1345,7 +1401,7 @@ namespace Intersect.Editor.Forms.Editors
             {
                 statName = Strings.General.None;
             }
-            
+
             mEditorItem.TryGetRangeFor(stat, out var range);
             return Strings.ItemEditor.StatRangeItem.ToString(statName, range?.LowRange ?? 0, range?.HighRange ?? 0);
         }
@@ -1370,6 +1426,11 @@ namespace Intersect.Editor.Forms.Editors
         private Stat? SelectedStatRange
         {
             get => Enum.IsDefined((Stat)lstStatRanges.SelectedIndex) ? (Stat)(lstStatRanges.SelectedIndex) : null;
+        }
+
+        private ItemEventTriggers? SelectedEventTrigger
+        {
+            get => Enum.IsDefined((ItemEventTriggers)lstEventTriggers.SelectedIndex) ? (ItemEventTriggers)(lstEventTriggers.SelectedIndex) : null;
         }
 
         private void lstBonusEffects_SelectedIndexChanged(object sender, EventArgs e)
@@ -1442,6 +1503,45 @@ namespace Intersect.Editor.Forms.Editors
 
             nudStatRangeLow.Value = range.LowRange;
             nudStatRangeHigh.Value = range.HighRange;
+        }
+
+        private void lstEventTriggers_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            var triggerSelected = lstEventTriggers.SelectedIndex >= 0;
+            cmbEventTriggers.Enabled = triggerSelected;
+
+            if (!SelectedEventTrigger.HasValue)
+            {
+                if (cmbEventTriggers.Items.Count > 0)
+                {
+                    cmbEventTriggers.SelectedIndex = 0;
+                }
+                return;
+            }
+
+            var trigger = mEditorItem.GetEventTrigger(SelectedEventTrigger.Value);
+            if (trigger == null)
+            {
+                if (cmbEventTriggers.Items.Count > 0)
+                {
+                    cmbEventTriggers.SelectedIndex = 0;
+                }
+                return;
+            }
+
+            cmbEventTriggers.SelectedIndex = EventBase.ListIndex(trigger.Id) + 1;
+        }
+
+        private void cmbEventTriggers_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (!SelectedEventTrigger.HasValue)
+            {
+                return;
+            }
+            
+            mEditorItem.EventTriggers[SelectedEventTrigger.Value] = EventBase.IdFromList(cmbEventTriggers.SelectedIndex - 1);
+
+            PopulateEventTriggerList(lstEventTriggers.SelectedIndex);
         }
     }
 
