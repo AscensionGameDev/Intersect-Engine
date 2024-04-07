@@ -4,6 +4,9 @@ using System.Resources;
 using System.Runtime.InteropServices;
 using CommandLine;
 using Intersect.Factories;
+using Intersect.GameObjects;
+using Intersect.GameObjects.Events;
+using Intersect.GameObjects.Maps;
 using Intersect.Logging;
 using Intersect.Network;
 using Intersect.Plugins;
@@ -266,12 +269,20 @@ namespace Intersect.Server.Core
                 return false;
             }
 
-            Console.WriteLine();
-
-            Console.WriteLine(Strings.Commandoutput.playercount.ToString(Player.Count()));
-            Console.WriteLine(Strings.Commandoutput.gametime.ToString(Time.GetTime().ToString("F")));
-
             Time.Update();
+
+            Console.WriteLine();
+            Console.WriteLine(Strings.Commandoutput.ServerInfo);
+            Console.WriteLine(Strings.Commandoutput.AccountCount.ToString(Database.PlayerData.User.Count()));
+            Console.WriteLine(Strings.Commandoutput.CharacterCount.ToString(Player.Count()));
+            Console.WriteLine(Strings.Commandoutput.NpcCount.ToString(NpcBase.Lookup.Count));
+            Console.WriteLine(Strings.Commandoutput.SpellCount.ToString(SpellBase.Lookup.Count));
+            Console.WriteLine(Strings.Commandoutput.MapCount.ToString(MapBase.Lookup.Count));
+            Console.WriteLine(Strings.Commandoutput.EventCount.ToString(EventBase.Lookup.Count));
+            Console.WriteLine(Strings.Commandoutput.ItemCount.ToString(ItemBase.Lookup.Count));
+            Console.WriteLine();
+            Console.WriteLine(Strings.Commandoutput.gametime.ToString(Time.GetTime().ToString("F")));
+            Console.WriteLine();
 
             PacketSender.CacheGameDataPacket();
 
@@ -297,6 +308,7 @@ namespace Intersect.Server.Core
             Console.WriteLine(@"Copyright (C) 2020 Ascension Game Dev");
             Console.WriteLine(Strings.Intro.version.ToString(Assembly.GetExecutingAssembly().GetName().Version));
             Console.WriteLine(Strings.Intro.support);
+            Console.WriteLine();
             Console.WriteLine(Strings.Intro.loading);
         }
 
