@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -47,7 +47,7 @@ namespace Intersect.Server.Entities.Combat
             
 
             mInterval = Timing.Global.Milliseconds + SpellBase.Combat.HotDotInterval;
-            Count = SpellBase.Combat.Duration / SpellBase.Combat.HotDotInterval - 1;
+            Count = (SpellBase.Combat.Duration + SpellBase.Combat.HotDotInterval - 1) / SpellBase.Combat.HotDotInterval;
             target.DoT.TryAdd(Id, this);
             target.CachedDots = target.DoT.Values.ToArray();
 
