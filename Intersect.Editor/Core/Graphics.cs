@@ -2227,32 +2227,16 @@ namespace Intersect.Editor.Core
                 blendMode = BlendState.NonPremultiplied;
             }
 
-            if (renderTarget == null)
-            {
-                StartSpritebatch(blendMode, shader, null, false, null);
-                sSpriteBatch.Draw(
-                    tex,
-                    new Microsoft.Xna.Framework.Rectangle(
-                        (int) targetRect.X, (int) targetRect.Y, (int) targetRect.Width, (int) targetRect.Height
-                    ),
-                    new Microsoft.Xna.Framework.Rectangle(
-                        (int) srcRectangle.X, (int) srcRectangle.Y, (int) srcRectangle.Width, (int) srcRectangle.Height
-                    ), ConvertColor(renderColor), rotationDegrees, Vector2.Zero, SpriteEffects.None, 0
-                );
-            }
-            else
-            {
-                StartSpritebatch(blendMode, shader, renderTarget, false, null);
-                sSpriteBatch.Draw(
-                    tex,
-                    new Microsoft.Xna.Framework.Rectangle(
-                        (int) targetRect.X, (int) targetRect.Y, (int) targetRect.Width, (int) targetRect.Height
-                    ),
-                    new Microsoft.Xna.Framework.Rectangle(
-                        (int) srcRectangle.X, (int) srcRectangle.Y, (int) srcRectangle.Width, (int) srcRectangle.Height
-                    ), ConvertColor(renderColor), rotationDegrees, Vector2.Zero, SpriteEffects.None, 0
-                );
-            }
+			StartSpritebatch(blendMode, shader, renderTarget, false, null);
+			sSpriteBatch.Draw(
+				tex,
+				new Microsoft.Xna.Framework.Rectangle(
+					(int) targetRect.X, (int) targetRect.Y, (int) targetRect.Width, (int) targetRect.Height
+				),
+				new Microsoft.Xna.Framework.Rectangle(
+					(int) srcRectangle.X, (int) srcRectangle.Y, (int) srcRectangle.Width, (int) srcRectangle.Height
+				), ConvertColor(renderColor), rotationDegrees, Vector2.Zero, SpriteEffects.None, 0
+			);
         }
 
         //Extra MonoGame Stuff
