@@ -1488,6 +1488,9 @@ namespace Intersect.Server.Localization
                 @"Out of inventory space. Some of your items have been dropped on the ground!";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString OfferAccepted = @"{00} has accepted your offer. Please confirm the trade.";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString offerinvalid = @"Invalid item selected to offer!";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]

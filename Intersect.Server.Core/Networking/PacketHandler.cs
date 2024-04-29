@@ -2267,6 +2267,12 @@ namespace Intersect.Server.Networking
                 player.Trading.Counterparty.Trading.Counterparty = null;
                 player.Trading.Counterparty = null;
             }
+            else
+            {
+                PacketSender.SendChatMsg(
+                    player.Trading.Counterparty, Strings.Trading.OfferAccepted.ToString(player.Name), ChatMessageType.Trading, CustomColors.Alerts.Accepted
+                );
+            }
         }
 
         //DeclineTradePacket
