@@ -200,6 +200,7 @@ namespace Intersect.Client.Interface.Game.Trades
         void trade_Clicked(Base sender, ClickedEventArgs arguments)
         {
             mTrade.Text = Strings.Trading.pending;
+            mTrade.IsDisabled = true;
             PacketSender.SendAcceptTrade();
         }
 
