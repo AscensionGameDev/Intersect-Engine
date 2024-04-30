@@ -374,11 +374,12 @@ namespace Intersect.Server.Entities
             var killSpawn = false;
             var map = MapController.Get(spawn.MapId);
 
-            if (Math.Round(newx) < 0)
+            if (Math.Floor(newx) < 0)
             {
-                if (MapController.Get(map.Left) != null)
+                var leftMap = MapController.Get(map.Left);
+                if (leftMap != null)
                 {
-                    newMapId = MapController.Get(spawn.MapId).Left;
+                    newMapId = leftMap.Id;
                     newx = Options.MapWidth - 1;
                 }
                 else
@@ -387,11 +388,12 @@ namespace Intersect.Server.Entities
                 }
             }
 
-            if (Math.Round(newx) > Options.MapWidth - 1)
+            if (Math.Ceiling(newx) > Options.MapWidth)
             {
-                if (MapController.Get(map.Right) != null)
+                var rightMap = MapController.Get(map.Right);
+                if (rightMap != null)
                 {
-                    newMapId = MapController.Get(spawn.MapId).Right;
+                    newMapId = rightMap.Id;
                     newx = 0;
                 }
                 else
@@ -400,11 +402,12 @@ namespace Intersect.Server.Entities
                 }
             }
 
-            if (Math.Round(newy) < 0)
+            if (Math.Floor(newy) < 0)
             {
-                if (MapController.Get(map.Up) != null)
+                var upMap = MapController.Get(map.Up);
+                if (upMap != null)
                 {
-                    newMapId = MapController.Get(spawn.MapId).Up;
+                    newMapId = upMap.Id;
                     newy = Options.MapHeight - 1;
                 }
                 else
@@ -413,11 +416,12 @@ namespace Intersect.Server.Entities
                 }
             }
 
-            if (Math.Round(newy) > Options.MapHeight - 1)
+            if (Math.Ceiling(newy) > Options.MapHeight)
             {
-                if (MapController.Get(map.Down) != null)
+                var downMap = MapController.Get(map.Down);
+                if (downMap != null)
                 {
-                    newMapId = MapController.Get(spawn.MapId).Down;
+                    newMapId = downMap.Id;
                     newy = 0;
                 }
                 else
