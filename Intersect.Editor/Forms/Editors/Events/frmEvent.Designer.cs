@@ -1019,7 +1019,7 @@ namespace Intersect.Editor.Forms.Editors.Events
             openGuildBankTreeNode.Tag = (int)EventCommandType.OpenGuildBank;
             openGuildBankTreeNode.Text = "Open Guild Bank";
             setGuildBankSlotsTreeNode.Name = "setguildbankslots";
-            setGuildBankSlotsTreeNode.Tag = (int)EventCommandType.OpenShop;
+            setGuildBankSlotsTreeNode.Tag = (int)EventCommandType.SetGuildBankSlots;
             setGuildBankSlotsTreeNode.Text = "Set Guild Bank Slots Count";
             guildsTreeNode.Name = "guilds";
             guildsTreeNode.Text = "Guilds";
