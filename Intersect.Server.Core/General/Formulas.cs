@@ -54,8 +54,8 @@ namespace Intersect.Server.General
             }
         }
 
-        public static int CalculateDamage(
-            int baseDamage,
+        public static long CalculateDamage(
+            long baseDamage,
             DamageType damageType,
             Stat scalingStat,
             int scaling,
@@ -162,7 +162,7 @@ namespace Intersect.Server.General
                     result = -result;
                 }
 
-                return (int) Math.Round(result);
+                return (long) Math.Round(result);
             }
             catch (Exception ex)
             {

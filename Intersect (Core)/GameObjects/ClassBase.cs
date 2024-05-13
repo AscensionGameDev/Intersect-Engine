@@ -22,7 +22,7 @@ namespace Intersect.GameObjects
         public int[] BaseStat = new int[Enum.GetValues<Stat>().Length];
 
         [NotMapped]
-        public int[] BaseVital = new int[Enum.GetValues<Vital>().Length];
+        public long[] BaseVital = new long[Enum.GetValues<Vital>().Length];
 
         [NotMapped]
         public Dictionary<int, long> ExperienceOverrides = new Dictionary<int, long>();
@@ -46,10 +46,10 @@ namespace Intersect.GameObjects
         public int[] StatIncrease = new int[Enum.GetValues<Stat>().Length];
 
         [NotMapped]
-        public int[] VitalIncrease = new int[Enum.GetValues<Vital>().Length];
+        public long[] VitalIncrease = new long[Enum.GetValues<Vital>().Length];
 
         [NotMapped]
-        public int[] VitalRegen = new int[Enum.GetValues<Vital>().Length];
+        public long[] VitalRegen = new long[Enum.GetValues<Vital>().Length];
 
         [JsonConstructor]
         public ClassBase(Guid id) : base(id)
@@ -171,8 +171,8 @@ namespace Intersect.GameObjects
         [JsonIgnore]
         public string JsonBaseVitals
         {
-            get => DatabaseUtils.SaveIntArray(BaseVital, Enum.GetValues<Vital>().Length);
-            set => BaseVital = DatabaseUtils.LoadIntArray(value, Enum.GetValues<Vital>().Length);
+            get => DatabaseUtils.SaveLongArray(BaseVital, Enum.GetValues<Vital>().Length);
+            set => BaseVital = DatabaseUtils.LoadLongArray(value, Enum.GetValues<Vital>().Length);
         }
 
         //Starting Items
@@ -216,8 +216,8 @@ namespace Intersect.GameObjects
         [Column("VitalIncreases")]
         public string VitalIncreaseJson
         {
-            get => DatabaseUtils.SaveIntArray(VitalIncrease, Enum.GetValues<Vital>().Length);
-            set => VitalIncrease = DatabaseUtils.LoadIntArray(value, Enum.GetValues<Vital>().Length);
+            get => DatabaseUtils.SaveLongArray(VitalIncrease, Enum.GetValues<Vital>().Length);
+            set => VitalIncrease = DatabaseUtils.LoadLongArray(value, Enum.GetValues<Vital>().Length);
         }
 
         //Vital Regen %
@@ -225,8 +225,8 @@ namespace Intersect.GameObjects
         [Column("VitalRegen")]
         public string RegenJson
         {
-            get => DatabaseUtils.SaveIntArray(VitalRegen, Enum.GetValues<Vital>().Length);
-            set => VitalRegen = DatabaseUtils.LoadIntArray(value, Enum.GetValues<Vital>().Length);
+            get => DatabaseUtils.SaveLongArray(VitalRegen, Enum.GetValues<Vital>().Length);
+            set => VitalRegen = DatabaseUtils.LoadLongArray(value, Enum.GetValues<Vital>().Length);
         }
 
         [JsonIgnore]

@@ -1576,7 +1576,7 @@ namespace Intersect.Server.Entities
                 }
 
                 var vitalRegenRate = Base.VitalRegen[vitalId] / 100f;
-                var regenValue = (int)Math.Max(1, maxVitalValue * vitalRegenRate) *
+                var regenValue = (long)Math.Max(1, maxVitalValue * vitalRegenRate) *
                                  Math.Abs(Math.Sign(vitalRegenRate));
 
                 AddVital(vital, regenValue);

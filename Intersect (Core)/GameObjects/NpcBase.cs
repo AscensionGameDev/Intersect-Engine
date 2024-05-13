@@ -21,7 +21,7 @@ namespace Intersect.GameObjects
         public List<Drop> Drops = new List<Drop>();
 
         [NotMapped]
-        public int[] MaxVital = new int[Enum.GetValues<Vital>().Length];
+        public long[] MaxVital = new long[Enum.GetValues<Vital>().Length];
 
         [NotMapped]
         public ConditionLists PlayerCanAttackConditions = new ConditionLists();
@@ -33,7 +33,7 @@ namespace Intersect.GameObjects
         public int[] Stats = new int[Enum.GetValues<Stat>().Length];
 
         [NotMapped]
-        public int[] VitalRegen = new int[Enum.GetValues<Vital>().Length];
+        public long[] VitalRegen = new long[Enum.GetValues<Vital>().Length];
 
         [NotMapped]
         public List<SpellEffect> Immunities = new List<SpellEffect>();
@@ -184,8 +184,8 @@ namespace Intersect.GameObjects
         [JsonIgnore]
         public string JsonMaxVital
         {
-            get => DatabaseUtils.SaveIntArray(MaxVital, Enum.GetValues<Vital>().Length);
-            set => DatabaseUtils.LoadIntArray(ref MaxVital, value, Enum.GetValues<Vital>().Length);
+            get => DatabaseUtils.SaveLongArray(MaxVital, Enum.GetValues<Vital>().Length);
+            set => DatabaseUtils.LoadLongArray(ref MaxVital, value, Enum.GetValues<Vital>().Length);
         }
 
         //NPC vs NPC Combat
@@ -246,8 +246,8 @@ namespace Intersect.GameObjects
         [Column("VitalRegen")]
         public string RegenJson
         {
-            get => DatabaseUtils.SaveIntArray(VitalRegen, Enum.GetValues<Vital>().Length);
-            set => VitalRegen = DatabaseUtils.LoadIntArray(value, Enum.GetValues<Vital>().Length);
+            get => DatabaseUtils.SaveLongArray(VitalRegen, Enum.GetValues<Vital>().Length);
+            set => VitalRegen = DatabaseUtils.LoadLongArray(value, Enum.GetValues<Vital>().Length);
         }
 
         /// <inheritdoc />

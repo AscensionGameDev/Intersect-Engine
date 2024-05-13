@@ -36,10 +36,10 @@ namespace Intersect.Network.Packets.Server
         public Enums.EntityType Type { get; set; }
 
         [Key(2)]
-        public int[] Vitals { get; set; } = new int[Enum.GetValues<Vital>().Length];
+        public long[] Vitals { get; set; } = new long[Enum.GetValues<Vital>().Length];
 
         [Key(3)]
-        public int[] MaxVitals { get; set; } = new int[Enum.GetValues<Vital>().Length];
+        public long[] MaxVitals { get; set; } = new long[Enum.GetValues<Vital>().Length];
 
         [Key(4)]
         public long CombatTimeRemaining { get; set; }

@@ -76,11 +76,11 @@ namespace Intersect.Client.Interface.Game.Character
 
         Label mHpRegen;
 
-        int HpRegenAmount;
+        long HpRegenAmount;
 
         Label mManaRegen;
 
-        int ManaRegenAmount;
+        long ManaRegenAmount;
 
         Label mLifeSteal;
 

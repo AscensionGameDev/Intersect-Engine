@@ -194,7 +194,7 @@ namespace Intersect.Server.Entities
                 if (vitalValue < maxVitalValue)
                 {
                     var vitalRegenRate = Base.VitalRegen / 100f;
-                    var regenValue = (int) Math.Max(1, maxVitalValue * vitalRegenRate) *
+                    var regenValue = (long) Math.Max(1, maxVitalValue * vitalRegenRate) *
                                      Math.Abs(Math.Sign(vitalRegenRate));
 
                     AddVital(vital, regenValue);

@@ -43,8 +43,8 @@ namespace Intersect.Client.Framework.Entities
         byte Z { get; }
         int Level { get; }
         IReadOnlyList<int> Stats { get; }
-        IReadOnlyList<int> Vitals { get; }
-        IReadOnlyList<int> MaxVitals { get; }
+        IReadOnlyList<long> Vitals { get; }
+        IReadOnlyList<long> MaxVitals { get; }
         IReadOnlyList<IItem> Items { get; }
         IReadOnlyList<int> EquipmentSlots { get; }
         IReadOnlyList<Guid> Spells { get; }
