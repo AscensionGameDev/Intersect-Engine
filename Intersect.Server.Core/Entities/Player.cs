@@ -67,7 +67,7 @@ namespace Intersect.Server.Entities
         public static int OnlineCount => OnlinePlayers.Count;
 
         [JsonProperty("MaxVitals"), NotMapped]
-        public new int[] MaxVitals => GetMaxVitals();
+        public new long[] MaxVitals => GetMaxVitals();
 
         //Name, X, Y, Dir, Etc all in the base Entity Class
         public Guid ClassId { get; set; }
@@ -1102,22 +1102,22 @@ namespace Intersect.Server.Entities
                 }
 
                 var vitalRegenRate = (playerClass.VitalRegen[vitalId] + GetEquipmentVitalRegen(vital)) / 100f;
-                var regenValue = (int)Math.Max(1, maxVitalValue * vitalRegenRate) *
+                var regenValue = (long)Math.Max(1, maxVitalValue * vitalRegenRate) *
                                  Math.Abs(Math.Sign(vitalRegenRate));
 
                 AddVital(vital, regenValue);
             }
         }
 
-        public override int GetMaxVital(int vital)
+        public override long GetMaxVital(int vital)
         {
             var classDescriptor = ClassBase.Get(this.ClassId);
-            var classVital = 20;
+            long classVital = 20;
             if (classDescriptor != null)
             {
                 if (classDescriptor.IncreasePercentage)
                 {
-                    classVital = (int)(classDescriptor.BaseVital[vital] *
+                    classVital = (long)(classDescriptor.BaseVital[vital] *
                                         Math.Pow(1 + (double)classDescriptor.VitalIncrease[vital] / 100, Level - 1));
                 }
                 else
@@ -1128,14 +1128,7 @@ namespace Intersect.Server.Entities
 
             var baseVital = classVital;
 
-            // TODO: Alternate implementation for the loop
-            //            classVital += Equipment?.Select(equipment => ItemBase.Get(Items.ElementAt(equipment)?.ItemId ?? Guid.Empty))
-            //                .Sum(
-            //                    itemDescriptor => itemDescriptor.VitalsGiven[vital] +
-            //                                      (itemDescriptor.PercentageVitalsGiven[vital] * baseVital) / 100
-            //                ) ?? 0;
             // Loop through equipment and see if any items grant vital buffs
-
             foreach (var item in EquippedItems.ToArray())
             {
                 if (ItemBase.TryGet(item.ItemId, out var descriptor))
@@ -1157,7 +1150,7 @@ namespace Intersect.Server.Entities
             return classVital;
         }
 
-        public override int GetMaxVital(Vital vital)
+        public override long GetMaxVital(Vital vital)
         {
             return GetMaxVital((int)vital);
         }
@@ -3257,9 +3250,9 @@ namespace Intersect.Server.Entities
 
                         return;
                     case ItemType.Consumable:
-                        var value = 0;
                         var color = CustomColors.Items.ConsumeHp;
                         var die = false;
+                        long value;
 
                         switch (itemBase.Consumable.Type)
                         {
@@ -3293,7 +3286,7 @@ namespace Intersect.Server.Entities
 
                             case ConsumableType.Experience:
                                 value = itemBase.Consumable.Value +
-                                        (int)(GetExperienceToNextLevel(Level) * itemBase.Consumable.Percentage / 100);
+                                        (GetExperienceToNextLevel(Level) * itemBase.Consumable.Percentage / 100);
 
                                 GiveExperience(value);
                                 color = CustomColors.Items.ConsumeExp;
@@ -3742,9 +3735,9 @@ namespace Intersect.Server.Entities
             return value;
         }
 
-        public int GetEquipmentVitalRegen(Vital vital)
+        public long GetEquipmentVitalRegen(Vital vital)
         {
-            var regen = 0;
+            long regen = 0;
 
             foreach (var item in EquippedItems)
             {

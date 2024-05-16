@@ -116,9 +116,9 @@ namespace Intersect.Client.Entities
         public int Level { get; set; } = 1;
 
         //Vitals & Stats
-        public int[] MaxVital { get; set; } = new int[Enum.GetValues<Vital>().Length];
+        public long[] MaxVital { get; set; } = new long[Enum.GetValues<Vital>().Length];
 
-        IReadOnlyList<int> IEntity.MaxVitals => MaxVital.ToList();
+        IReadOnlyList<long> IEntity.MaxVitals => MaxVital.ToList();
 
         protected Pointf mOrigin = Pointf.Empty;
 
@@ -208,9 +208,9 @@ namespace Intersect.Client.Entities
 
         public NpcAggression Aggression { get; set; }
 
-        public int[] Vital { get; set; } = new int[Enum.GetValues<Vital>().Length];
+        public long[] Vital { get; set; } = new long[Enum.GetValues<Vital>().Length];
 
-        IReadOnlyList<int> IEntity.Vitals => Vital.ToList();
+        IReadOnlyList<long> IEntity.Vitals => Vital.ToList();
 
         public int WalkFrame { get; set; }
 
@@ -1647,9 +1647,9 @@ namespace Intersect.Client.Entities
             return y;
         }
 
-        public int GetShieldSize()
+        public long GetShieldSize()
         {
-            var shieldSize = 0;
+            long shieldSize = 0;
             foreach (var status in Status)
             {
                 if (status.Type == SpellEffect.Shield)

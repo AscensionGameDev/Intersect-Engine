@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
 using Intersect.Client.Core;
 using Intersect.Client.Entities;
 using Intersect.Client.Entities.Events;
@@ -689,13 +685,13 @@ namespace Intersect.Client.Interface.Game.EntityPanel
             float targetShieldSize;
             var barDirectionSetting = ClientConfiguration.Instance.EntityBarDirections[(int)Vital.Health];
             var barPercentageSetting = Globals.Database.ShowHealthAsPercentage;
-            var entityVital = (float)MyEntity.Vital[(int)Vital.Health];
-            var entityMaxVital = (float)MyEntity.MaxVital[(int)Vital.Health];
+            var entityVital = MyEntity.Vital[(int)Vital.Health];
+            var entityMaxVital = MyEntity.MaxVital[(int)Vital.Health];
 
             if (entityVital > 0)
             {
                 
-                var shieldSize = (float)MyEntity.GetShieldSize();
+                var shieldSize = MyEntity.GetShieldSize();
                 var vitalSize = (int)barDirectionSetting < (int)DisplayDirection.TopToBottom
                     ? HpBackground.Width
                     : HpBackground.Height;
@@ -707,8 +703,8 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                     entityMaxVital = shieldSize + entityVital;
                 }
 
-                var entityVitalRatio = entityVital / entityMaxVital;
-                var entityShieldRatio = shieldSize / entityMaxVital;
+                var entityVitalRatio = (float)entityVital / entityMaxVital;
+                var entityShieldRatio = (float)shieldSize / entityMaxVital;
                 var hpPercentage = entityVitalRatio * 100;
                 var hpPercentageText = $"{hpPercentage:0.##}%";
                 var hpValueText = Strings.EntityBox.vital0val.ToString(entityVital, entityMaxVital);
@@ -759,13 +755,13 @@ namespace Intersect.Client.Interface.Game.EntityPanel
             float targetMpSize;
             var barDirectionSetting = ClientConfiguration.Instance.EntityBarDirections[(int)Vital.Mana];
             var barPercentageSetting = Globals.Database.ShowManaAsPercentage;
-            var entityVital = (float)MyEntity.Vital[(int)Vital.Mana];
-            var entityMaxVital = (float)MyEntity.MaxVital[(int)Vital.Mana];
+            var entityVital = MyEntity.Vital[(int)Vital.Mana];
+            var entityMaxVital = MyEntity.MaxVital[(int)Vital.Mana];
 
             if (entityVital > 0)
             {
                 
-                var entityVitalRatio = entityVital / entityMaxVital;
+                var entityVitalRatio = (float)entityVital / entityMaxVital;
                 var vitalSize = (int)barDirectionSetting < (int)DisplayDirection.TopToBottom
                     ? MpBackground.Width
                     : MpBackground.Height;

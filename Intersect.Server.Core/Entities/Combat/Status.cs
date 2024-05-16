@@ -108,7 +108,7 @@ namespace Intersect.Server.Entities.Combat
             {
                 foreach (var vital in Enum.GetValues<Vital>())
                 {
-                    var vitalDiff = Math.Abs(spell.Combat.VitalDiff[(int)vital]);
+                    long vitalDiff = Math.Abs(spell.Combat.VitalDiff[(int)vital]);
 
                     // If the user did not configure for this vital to have a mana shield, ignore it
                     if (vitalDiff == 0 && vital == Vital.Mana)
@@ -213,7 +213,7 @@ namespace Intersect.Server.Entities.Combat
             }
         }
 
-        public int[] Shield { get; set; } = new int[Enum.GetValues<Vital>().Length];
+        public long[] Shield { get; set; } = new long[Enum.GetValues<Vital>().Length];
 
         public void TryRemoveStatus()
         {
@@ -249,7 +249,7 @@ namespace Intersect.Server.Entities.Combat
             }
         }
 
-        public void DamageShield(Vital vital, ref int amount)
+        public void DamageShield(Vital vital, ref long amount)
         {
             if (Type == SpellEffect.Shield)
             {

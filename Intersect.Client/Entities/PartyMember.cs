@@ -12,13 +12,13 @@ namespace Intersect.Client.Entities
 
         public int Level { get; set; }
 
-        public int[] MaxVital { get; set; } = new int[Enum.GetValues<Vital>().Length];
+        public long[] MaxVital { get; set; } = new long[Enum.GetValues<Vital>().Length];
 
         public string Name { get; set; }
 
-        public int[] Vital { get; set; } = new int[Enum.GetValues<Vital>().Length];
+        public long[] Vital { get; set; } = new long[Enum.GetValues<Vital>().Length];
 
-        public PartyMember(Guid id, string name, int[] vital, int[] maxVital, int level)
+        public PartyMember(Guid id, string name, long[] vital, long[] maxVital, int level)
         {
             Id = id;
             Name = name;

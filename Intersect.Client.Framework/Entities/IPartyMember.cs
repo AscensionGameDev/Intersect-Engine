@@ -6,8 +6,8 @@ namespace Intersect.Client.Framework.Entities
     {
         Guid Id { get; set; }
         int Level { get; set; }
-        int[] MaxVital { get; set; }
+        long[] MaxVital { get; set; }
         string Name { get; set; }
-        int[] Vital { get; set; }
+        long[] Vital { get; set; }
     }
 }

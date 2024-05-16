@@ -6,7 +6,7 @@ namespace Intersect.Client.Framework.Entities
     public interface IStatus
     {
         string Data { get; set; }
-        int[] Shield { get; set; }
+        long[] Shield { get; set; }
         Guid SpellId { get; set; }
         long TimeRecevied { get; set; }
         long TimeRemaining { get; set; }

@@ -17,8 +17,8 @@ namespace Intersect.Network.Packets.Server
             Guid id,
             EntityType type,
             Guid mapId,
-            int[] vitals,
-            int[] maxVitals,
+            long[] vitals,
+            long[] maxVitals,
             StatusPacket[] statusEffects,
             long combatTimeRemaining
         )
@@ -46,10 +46,10 @@ namespace Intersect.Network.Packets.Server
         public Guid MapId { get; set; }
 
         [Key(3)]
-        public int[] Vitals { get; set; }
+        public long[] Vitals { get; set; }
 
         [Key(4)]
-        public int[] MaxVitals { get; set; }
+        public long[] MaxVitals { get; set; }
 
         [Key(5)]
         public StatusPacket[] StatusEffects { get; set; }

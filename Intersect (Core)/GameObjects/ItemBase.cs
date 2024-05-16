@@ -261,23 +261,23 @@ namespace Intersect.GameObjects
         [JsonIgnore]
         public string VitalsJson
         {
-            get => DatabaseUtils.SaveIntArray(VitalsGiven, Enum.GetValues<Vital>().Length);
-            set => VitalsGiven = DatabaseUtils.LoadIntArray(value, Enum.GetValues<Vital>().Length);
+            get => DatabaseUtils.SaveLongArray(VitalsGiven, Enum.GetValues<Vital>().Length);
+            set => VitalsGiven = DatabaseUtils.LoadLongArray(value, Enum.GetValues<Vital>().Length);
         }
 
         [NotMapped]
-        public int[] VitalsGiven { get; set; }
+        public long[] VitalsGiven { get; set; }
 
         [Column("VitalsRegen")]
         [JsonIgnore]
         public string VitalsRegenJson
         {
-            get => DatabaseUtils.SaveIntArray(VitalsRegen, Enum.GetValues<Vital>().Length);
-            set => VitalsRegen = DatabaseUtils.LoadIntArray(value, Enum.GetValues<Vital>().Length);
+            get => DatabaseUtils.SaveLongArray(VitalsRegen, Enum.GetValues<Vital>().Length);
+            set => VitalsRegen = DatabaseUtils.LoadLongArray(value, Enum.GetValues<Vital>().Length);
         }
 
         [NotMapped]
-        public int[] VitalsRegen { get; set; }
+        public long[] VitalsRegen { get; set; }
 
         [Column("PercentageVitalsGiven")]
         [JsonIgnore]
@@ -485,8 +485,8 @@ namespace Intersect.GameObjects
             Speed = 10; // Set to 10 by default.
             StatsGiven = new int[Enum.GetValues<Stat>().Length];
             PercentageStatsGiven = new int[Enum.GetValues<Stat>().Length];
-            VitalsGiven = new int[Enum.GetValues<Vital>().Length];
-            VitalsRegen = new int[Enum.GetValues<Vital>().Length];
+            VitalsGiven = new long[Enum.GetValues<Vital>().Length];
+            VitalsRegen = new long[Enum.GetValues<Vital>().Length];
             PercentageVitalsGiven = new int[Enum.GetValues<Vital>().Length];
             Consumable = new ConsumableData();
             Effects = new List<EffectData>();
@@ -499,7 +499,7 @@ namespace Intersect.GameObjects
     {
         public ConsumableType Type { get; set; }
 
-        public int Value { get; set; }
+        public long Value { get; set; }
 
         public int Percentage { get; set; }
     }

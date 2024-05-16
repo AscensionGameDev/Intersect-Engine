@@ -55,10 +55,10 @@ namespace Intersect.Network.Packets.Server
         public Guid[] Animations { get; set; }
 
         [Key(15)]
-        public int[] Vital { get; set; }
+        public long[] Vital { get; set; }
 
         [Key(16)]
-        public int[] MaxVital { get; set; }
+        public long[] MaxVital { get; set; }
 
         [Key(17)]
         public int[] Stats { get; set; }
