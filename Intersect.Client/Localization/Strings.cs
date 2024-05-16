@@ -329,95 +329,119 @@ namespace Intersect.Client.Localization
 
         public partial struct Admin
         {
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Access = @"Access:";
 
-            public static LocalizedString access = @"Access:";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Access0 = @"None";
 
-            public static LocalizedString access0 = @"None";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Access1 = @"Moderator";
 
-            public static LocalizedString access1 = @"Moderator";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Access2 = @"Admin";
 
-            public static LocalizedString access2 = @"Admin";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Ban = @"Ban";
 
-            public static LocalizedString ban = @"Ban";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString BanCaption = @"Ban {00}";
 
-            public static LocalizedString bancaption = @"Ban {00}";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString BanPrompt = @"Banning {00} will not allow them to access this game for the duration you set!";
 
-            public static LocalizedString banprompt =
-                @"Banning {00} will not allow them to access this game for the duration you set!";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Chronological = @"123...";
 
-            public static LocalizedString chronological = @"123...";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString ChronologicalTip = @"Order maps chronologically.";
 
-            public static LocalizedString chronologicaltip = @"Order maps chronologically.";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Face = @"Face:";
 
-            public static LocalizedString face = @"Face:";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Kick = @"Kick";
 
-            public static LocalizedString kick = @"Kick";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Kill = @"Kill";
 
-            public static LocalizedString kill = @"Kill";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString MapList = @"Map List:";
 
-            public static LocalizedString maplist = @"Map List:";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Mute = @"Mute";
 
-            public static LocalizedString mute = @"Mute";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString MuteCaption = @"Mute {00}";
 
-            public static LocalizedString mutecaption = @"Mute {00}";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString MutePrompt = @"Muting {00} will not allow them to chat in game for the duration you set!";
 
-            public static LocalizedString muteprompt =
-                @"Muting {00} will not allow them to chat in game for the duration you set!";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Name = @"Name:";
 
-            public static LocalizedString name = @"Name:";
-
-            public static LocalizedString noclip = @"No Clip:";
-
-            public static LocalizedString nocliptip = @"Check to walk through obstacles.";
-
-            public static LocalizedString none = @"None";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString None = @"None";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString OverworldReturn = @"Leave Instance";
 
-            public static LocalizedString setface = @"Set Face";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString SetFace = @"Set Face";
 
-            public static LocalizedString setpower = @"Set Power";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString SetPower = @"Set Power";
 
-            public static LocalizedString setsprite = @"Set Sprite";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString SetSprite = @"Set Sprite";
 
-            public static LocalizedString sprite = @"Sprite:";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Sprite = @"Sprite:";
 
-            public static LocalizedString title = @"Administration";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Title = @"Administration";
 
-            public static LocalizedString unban = @"Unban";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Unban = @"Unban";
 
-            public static LocalizedString unbancaption = @"Unban {00}";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString UnbanCaption = @"Unban {00}";
 
-            public static LocalizedString unbanprompt = @"Are you sure that you want to unban {00}?";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString UnbanPrompt = @"Are you sure that you want to unban {00}?";
 
-            public static LocalizedString unmute = @"Unmute";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Unmute = @"Unmute";
 
-            public static LocalizedString unmutecaption = @"Unute {00}";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString UnmuteCaption = @"Unmute {00}";
 
-            public static LocalizedString unmuteprompt = @"Are you sure that you want to unmute {00}?";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString UnmutePrompt = @"Are you sure that you want to unmute {00}?";
 
-            public static LocalizedString warp2me = @"Warp To Me";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Warp2Me = @"Warp To Me";
 
-            public static LocalizedString warpme2 = @"Warp Me To";
-
-            public static LocalizedString Zoom = @"Zoom";
-
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString WarpMe2 = @"Warp Me To";
         }
 
         public partial struct Bags
         {
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString RetrieveItem = @"Retrieve Item";
 
-            public static LocalizedString retreiveitem = @"Retreive Item";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString RetrieveItemPrompt = @"How many/much {00} would you like to retrieve?";
 
-            public static LocalizedString retreiveitemprompt = @"How many/much {00} would you like to retreive?";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString StoreItem = @"Store Item";
 
-            public static LocalizedString storeitem = @"Store Item";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString StoreItemPrompt = @"How many/much {00} would you like to store?";
 
-            public static LocalizedString storeitemprompt = @"How many/much {00} would you like to store?";
-
-            public static LocalizedString title = @"Bag";
-
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Title = @"Bag";
         }
 
         public partial struct Bank

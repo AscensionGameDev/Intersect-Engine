@@ -1014,8 +1014,8 @@ namespace Intersect.Client.Entities
             }
 
             InputBox.Open(
-                title: Strings.Bags.storeitem,
-                prompt: Strings.Bags.storeitemprompt.ToString(itemDescriptor.Name), true,
+                title: Strings.Bags.StoreItem,
+                prompt: Strings.Bags.StoreItemPrompt.ToString(itemDescriptor.Name), true,
                 inputType: InputBox.InputType.NumericSliderInput,
                 onSuccess: StoreBagItemInputBoxOkay,
                 onCancel: null,
@@ -1066,8 +1066,8 @@ namespace Intersect.Client.Entities
             }
 
             InputBox.Open(
-                title: Strings.Bags.retreiveitem,
-                prompt: Strings.Bags.retreiveitemprompt.ToString(itemDescriptor.Name),
+                title: Strings.Bags.RetrieveItem,
+                prompt: Strings.Bags.RetrieveItemPrompt.ToString(itemDescriptor.Name),
                 modal: true,
                 inputType: InputBox.InputType.NumericSliderInput,
                 onSuccess: RetreiveBagItemInputBoxOkay,
