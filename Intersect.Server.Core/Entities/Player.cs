@@ -1405,6 +1405,8 @@ namespace Intersect.Server.Entities
                 return;
             }
 
+            LastAttackingWeapon = parentItem;
+
             //If Entity is resource, check for the correct tool and make sure its not a spell cast.
             if (target is Resource resource)
             {
