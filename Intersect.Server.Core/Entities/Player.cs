@@ -4152,17 +4152,29 @@ namespace Intersect.Server.Entities
                 return true;
             }
 
+            if (CraftingState == null)
+            {
+                return true;
+            }
+
+            if (CraftingState.RemainingCount <= 0)
+            {
+                return true;
+            }
+
             if (!CraftingTableBase.TryGet(OpenCraftingTableId, out var table))
             {
                 return true;
             }
 
-            if (!table.Crafts.Contains(CraftingState?.Id ?? default))
+            var craftingStateId = CraftingState?.Id;
+
+            if (craftingStateId == null || !table.Crafts.Contains(craftingStateId.Value))
             {
                 return true;
             }
 
-            if (!CraftBase.TryGet(CraftingState?.Id ?? default, out var craftDescriptor))
+            if (!CraftBase.TryGet(craftingStateId.Value, out var craftDescriptor))
             {
                 return true;
             }
@@ -4173,11 +4185,10 @@ namespace Intersect.Server.Entities
                 return true;
             }
 
-            var craftItem = ItemBase.Get(craftDescriptor.ItemId);
-            if (craftItem == null)
+            if (!ItemBase.TryGet(craftDescriptor.ItemId, out var craftItem))
             {
                 PacketSender.SendChatMsg(this, Strings.Errors.UnknownErrorTryAgain, ChatMessageType.Error, CustomColors.Alerts.Error);
-                Log.Error($"Unable to find item descriptor {craftItem.Id} for craft {craftDescriptor.Id}.");
+                Log.Error($"Unable to find item descriptor {craftItem?.Id} for craft {craftDescriptor?.Id}.");
                 return true;
             }
 
