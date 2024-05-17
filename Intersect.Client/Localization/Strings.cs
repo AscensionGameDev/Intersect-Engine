@@ -446,21 +446,26 @@ namespace Intersect.Client.Localization
 
         public partial struct Bank
         {
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString DepositItem = @"Deposit Item";
 
-            public static LocalizedString deposititem = @"Deposit Item";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString DepositItemPrompt = @"How many/much {00} would you like to deposit?";
 
-            public static LocalizedString deposititemprompt = @"How many/much {00} would you like to deposit?";
-
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString NoSpace = @"There is no space left in your bank for that item!";
 
-            public static LocalizedString title = @"Bank";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Title = @"Bank";
 
-            public static LocalizedString withdrawitem = @"Withdraw Item";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString WithdrawItem = @"Withdraw Item";
 
-            public static LocalizedString withdrawitemprompt = @"How many/much {00} would you like to withdraw?";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString WithdrawItemPrompt = @"How many/much {00} would you like to withdraw?";
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString WithdrawItemNoSpace = @"There is no space left in your inventory for that item!";
-
         }
 
         public partial struct BanMute

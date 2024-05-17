@@ -837,8 +837,8 @@ namespace Intersect.Client.Entities
             }
 
             InputBox.Open(
-                title: Strings.Bank.deposititem,
-                prompt: Strings.Bank.deposititemprompt.ToString(itemDescriptor.Name),
+                title: Strings.Bank.DepositItem,
+                prompt: Strings.Bank.DepositItemPrompt.ToString(itemDescriptor.Name),
                 modal: true,
                 inputType: InputBox.InputType.NumericSliderInput,
                 onSuccess: DepositItemInputBoxOkay,
@@ -957,8 +957,8 @@ namespace Intersect.Client.Entities
             }
 
             InputBox.Open(
-                title: Strings.Bank.withdrawitem,
-                prompt: Strings.Bank.withdrawitemprompt.ToString(itemDescriptor.Name),
+                title: Strings.Bank.WithdrawItem,
+                prompt: Strings.Bank.WithdrawItemPrompt.ToString(itemDescriptor.Name),
                 modal: true,
                 inputType: InputBox.InputType.NumericSliderInput,
                 onSuccess: WithdrawItemInputBoxOkay,

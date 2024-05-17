@@ -48,7 +48,7 @@ namespace Intersect.Client.Interface.Game.Bank
             mBankWindow = new WindowControl(gameCanvas,
                 Globals.GuildBank
                     ? Strings.Guilds.Bank.ToString(Globals.Me?.Guild)
-                    : Strings.Bank.title.ToString(),
+                    : Strings.Bank.Title.ToString(),
                 false, "BankWindow");
 
             // Disable resizing and add to the list of input-blocking elements.
