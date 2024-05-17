@@ -470,41 +470,56 @@ namespace Intersect.Client.Localization
 
         public partial struct BanMute
         {
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Cancel = @"Cancel";
 
-            public static LocalizedString oneday = @"1 day";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Duration = @"Duration:";
 
-            public static LocalizedString onemonth = @"1 month";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString FiveDays = @"5 days";
 
-            public static LocalizedString oneweek = @"1 week";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString FourDays = @"4 days";
 
-            public static LocalizedString oneyear = @"1 year";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Forever = @"Indefinitely";
 
-            public static LocalizedString twodays = @"2 days";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString IncludeIp = @"Include IP:";
 
-            public static LocalizedString twomonths = @"2 months";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString OneDay = @"1 day";
 
-            public static LocalizedString twoweeks = @"2 weeks";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString OneMonth = @"1 month";
 
-            public static LocalizedString threedays = @"3 days";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString OneWeek = @"1 week";
 
-            public static LocalizedString fourdays = @"4 days";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString OneYear = @"1 year";
 
-            public static LocalizedString fivedays = @"5 days";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Okay = @"Okay";
 
-            public static LocalizedString sixmonths = @"6 months";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Reason = @"Reason:";
 
-            public static LocalizedString cancel = @"Cancel";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString SixMonths = @"6 months";
 
-            public static LocalizedString duration = @"Duration:";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString ThreeDays = @"3 days";
 
-            public static LocalizedString forever = @"Indefinitely";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString TwoDays = @"2 days";
 
-            public static LocalizedString ip = @"Include IP:";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString TwoMonths = @"2 months";
 
-            public static LocalizedString ok = @"Okay";
-
-            public static LocalizedString reason = @"Reason:";
-
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString TwoWeeks = @"2 weeks";
         }
 
         public partial struct Character
