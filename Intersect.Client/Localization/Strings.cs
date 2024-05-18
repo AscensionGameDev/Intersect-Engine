@@ -524,49 +524,65 @@ namespace Intersect.Client.Localization
 
         public partial struct Character
         {
-
-            public static LocalizedString equipment = @"Equipment:";
-
-            public static LocalizedString levelandclass = @"Level: {00} {01}";
-
-            public static LocalizedString name = @"{00}";
-
-            public static LocalizedString points = @"Points: {00}";
-
-            public static LocalizedString stat0 = @"{00}: {01}";
-
-            public static LocalizedString stat1 = @"{00}: {01}";
-
-            public static LocalizedString stat2 = @"{00}: {01}";
-
-            public static LocalizedString stat3 = @"{00}: {01}";
-
-            public static LocalizedString stat4 = @"{00}: {01}";
-
-            public static LocalizedString stats = @"Stats:";
-
-            public static LocalizedString title = @"Character";
-
-            public static LocalizedString ExtraBuffs = @"Extra Buffs";
-
-            public static LocalizedString HealthRegen = @"Health Regen: {00}%";
-
-            public static LocalizedString ManaRegen = @"Mana Regen: {00}%";
-
-            public static LocalizedString Lifesteal = @"Lifesteal: {00}%";
-
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString AttackSpeed = @"Attack Speed: {00}s";
 
-            public static LocalizedString ExtraExp = @"Bonus EXP: {00}%";
-
-            public static LocalizedString Luck = @"Luck: {00}%";
-
-            public static LocalizedString Tenacity = @"Tenacity: {00}%";
-
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString CooldownReduction = @"Cooldown Reduction: {00}%";
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Equipment = @"Equipment:";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString ExtraBuffs = @"Extra Buffs";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString ExtraExp = @"Bonus EXP: {00}%";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString HealthRegen = @"Health Regen: {00}%";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString LevelAndClass = @"Level: {00} {01}";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Lifesteal = @"Lifesteal: {00}%";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Luck = @"Luck: {00}%";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString ManaRegen = @"Mana Regen: {00}%";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString Manasteal = @"Manasteal: {00}%";
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Points = @"Points: {00}";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Stat0 = @"{00}: {01}";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Stat1 = @"{00}: {01}";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Stat2 = @"{00}: {01}";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Stat3 = @"{00}: {01}";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Stat4 = @"{00}: {01}";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Stats = @"Stats:";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Tenacity = @"Tenacity: {00}%";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Title = @"Character";
         }
 
         public partial struct CharacterCreation

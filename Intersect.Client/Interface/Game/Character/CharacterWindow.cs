@@ -111,7 +111,7 @@ namespace Intersect.Client.Interface.Game.Character
         //Init
         public CharacterWindow(Canvas gameCanvas)
         {
-            mCharacterWindow = new WindowControl(gameCanvas, Strings.Character.title, false, "CharacterWindow");
+            mCharacterWindow = new WindowControl(gameCanvas, Strings.Character.Title, false, "CharacterWindow");
             mCharacterWindow.DisableResizing();
 
             mCharacterName = new Label(mCharacterWindow, "CharacterNameLabel");
@@ -134,10 +134,10 @@ namespace Intersect.Client.Interface.Game.Character
             }
 
             var equipmentLabel = new Label(mCharacterWindow, "EquipmentLabel");
-            equipmentLabel.SetText(Strings.Character.equipment);
+            equipmentLabel.SetText(Strings.Character.Equipment);
 
             var statsLabel = new Label(mCharacterWindow, "StatsLabel");
-            statsLabel.SetText(Strings.Character.stats);
+            statsLabel.SetText(Strings.Character.Stats);
 
             mAttackLabel = new Label(mCharacterWindow, "AttackLabel");
 
@@ -220,7 +220,7 @@ namespace Intersect.Client.Interface.Game.Character
             }
 
             mCharacterName.Text = Globals.Me.Name;
-            mCharacterLevelAndClass.Text = Strings.Character.levelandclass.ToString(
+            mCharacterLevelAndClass.Text = Strings.Character.LevelAndClass.ToString(
                 Globals.Me.Level, ClassBase.GetName(Globals.Me.Class)
             );
 
@@ -326,26 +326,26 @@ namespace Intersect.Client.Interface.Game.Character
             }
 
             mAttackLabel.SetText(
-                Strings.Character.stat0.ToString(Strings.Combat.stat0, Globals.Me.Stat[(int) Stat.Attack])
+                Strings.Character.Stat0.ToString(Strings.Combat.stat0, Globals.Me.Stat[(int) Stat.Attack])
             );
 
             mDefenseLabel.SetText(
-                Strings.Character.stat2.ToString(Strings.Combat.stat2, Globals.Me.Stat[(int) Stat.Defense])
+                Strings.Character.Stat2.ToString(Strings.Combat.stat2, Globals.Me.Stat[(int) Stat.Defense])
             );
 
             mSpeedLabel.SetText(
-                Strings.Character.stat4.ToString(Strings.Combat.stat4, Globals.Me.Stat[(int) Stat.Speed])
+                Strings.Character.Stat4.ToString(Strings.Combat.stat4, Globals.Me.Stat[(int) Stat.Speed])
             );
 
             mAbilityPwrLabel.SetText(
-                Strings.Character.stat1.ToString(Strings.Combat.stat1, Globals.Me.Stat[(int) Stat.AbilityPower])
+                Strings.Character.Stat1.ToString(Strings.Combat.stat1, Globals.Me.Stat[(int) Stat.AbilityPower])
             );
 
             mMagicRstLabel.SetText(
-                Strings.Character.stat3.ToString(Strings.Combat.stat3, Globals.Me.Stat[(int) Stat.MagicResist])
+                Strings.Character.Stat3.ToString(Strings.Combat.stat3, Globals.Me.Stat[(int) Stat.MagicResist])
             );
 
-            mPointsLabel.SetText(Strings.Character.points.ToString(Globals.Me.StatPoints));
+            mPointsLabel.SetText(Strings.Character.Points.ToString(Globals.Me.StatPoints));
             mAddAbilityPwrBtn.IsHidden = Globals.Me.StatPoints == 0 ||
                                          Globals.Me.Stat[(int) Stat.AbilityPower] == Options.MaxStatValue;
 
