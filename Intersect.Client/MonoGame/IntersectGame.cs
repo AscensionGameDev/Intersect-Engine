@@ -374,7 +374,7 @@ namespace Intersect.Client.MonoGame
                 {
                     //Show Message Getting Exit Confirmation From Player to Leave in Combat
                     var box = new InputBox(
-                        Strings.Combat.warningtitle, Strings.Combat.warningcharacterselect, true,
+                        Strings.Combat.WarningTitle, Strings.Combat.WarningCharacterSelect, true,
                         InputBox.InputType.YesNo, ExitToDesktop, null, null
                     );
 

@@ -179,7 +179,7 @@ namespace Intersect.Client.Interface.Game
             {
                 //Show Logout in Combat Warning
                 var box = new InputBox(
-                    Strings.Combat.warningtitle, Strings.Combat.warningcharacterselect, true, InputBox.InputType.YesNo,
+                    Strings.Combat.WarningTitle, Strings.Combat.WarningCharacterSelect, true, InputBox.InputType.YesNo,
                     LogoutToCharacterSelect, null, null
                 );
             }
@@ -196,7 +196,7 @@ namespace Intersect.Client.Interface.Game
             {
                 //Show Logout in Combat Warning
                 var box = new InputBox(
-                    Strings.Combat.warningtitle, Strings.Combat.warninglogout, true, InputBox.InputType.YesNo,
+                    Strings.Combat.WarningTitle, Strings.Combat.WarningLogout, true, InputBox.InputType.YesNo,
                     LogoutToMainMenu, null, null
                 );
             }
@@ -213,7 +213,7 @@ namespace Intersect.Client.Interface.Game
             {
                 //Show Logout in Combat Warning
                 var box = new InputBox(
-                    Strings.Combat.warningtitle, Strings.Combat.warningexitdesktop, true, InputBox.InputType.YesNo,
+                    Strings.Combat.WarningTitle, Strings.Combat.WarningExitDesktop, true, InputBox.InputType.YesNo,
                     ExitToDesktop, null, null
                 );
             }

@@ -326,23 +326,23 @@ namespace Intersect.Client.Interface.Game.Character
             }
 
             mAttackLabel.SetText(
-                Strings.Character.Stat0.ToString(Strings.Combat.stat0, Globals.Me.Stat[(int) Stat.Attack])
+                Strings.Character.Stat0.ToString(Strings.Combat.Stat0, Globals.Me.Stat[(int) Stat.Attack])
             );
 
             mDefenseLabel.SetText(
-                Strings.Character.Stat2.ToString(Strings.Combat.stat2, Globals.Me.Stat[(int) Stat.Defense])
+                Strings.Character.Stat2.ToString(Strings.Combat.Stat2, Globals.Me.Stat[(int) Stat.Defense])
             );
 
             mSpeedLabel.SetText(
-                Strings.Character.Stat4.ToString(Strings.Combat.stat4, Globals.Me.Stat[(int) Stat.Speed])
+                Strings.Character.Stat4.ToString(Strings.Combat.Stat4, Globals.Me.Stat[(int) Stat.Speed])
             );
 
             mAbilityPwrLabel.SetText(
-                Strings.Character.Stat1.ToString(Strings.Combat.stat1, Globals.Me.Stat[(int) Stat.AbilityPower])
+                Strings.Character.Stat1.ToString(Strings.Combat.Stat1, Globals.Me.Stat[(int) Stat.AbilityPower])
             );
 
             mMagicRstLabel.SetText(
-                Strings.Character.Stat3.ToString(Strings.Combat.stat3, Globals.Me.Stat[(int) Stat.MagicResist])
+                Strings.Character.Stat3.ToString(Strings.Combat.Stat3, Globals.Me.Stat[(int) Stat.MagicResist])
             );
 
             mPointsLabel.SetText(Strings.Character.Points.ToString(Globals.Me.StatPoints));

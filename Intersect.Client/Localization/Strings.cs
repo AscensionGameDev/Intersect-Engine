@@ -731,40 +731,35 @@ namespace Intersect.Client.Localization
 
         public partial struct Combat
         {
-            public static LocalizedString AttackWhileCastingDeny = @"You are currently casting a spell, you cannot attack.";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString AttackWhileCastingDeny = @"You cannot attack while casting a spell.";
 
-            public static LocalizedString exp = @"Experience";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Stat0 = @"Attack";
 
-            public static LocalizedString stat0 = @"Attack";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Stat1 = @"Ability Power";
 
-            public static LocalizedString stat1 = @"Ability Power";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Stat2 = @"Defense";
 
-            public static LocalizedString stat2 = @"Defense";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Stat3 = @"Magic Resist";
 
-            public static LocalizedString stat3 = @"Magic Resist";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Stat4 = @"Speed";
 
-            public static LocalizedString stat4 = @"Speed";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString WarningCharacterSelect = @"You are attempting to logout while in combat! Your character will remain in-game until combat has ended. Are you sure you want to logout now?";
 
-            public static LocalizedString targetoutsiderange = @"Target too far away!";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString WarningExitDesktop = @"You are attempting to exit while in combat! Your character will remain in-game until combat has ended. Are you sure you want to quit now?";
 
-            public static LocalizedString vital0 = @"Health";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString WarningLogout = @"You are attempting to logout while in combat! Your character will remain in-game until combat has ended. Are you sure you want to logout now?";
 
-            public static LocalizedString vital1 = @"Mana";
-
-            public static LocalizedString warningtitle = @"Combat Warning!";
-
-            public static LocalizedString warningforceclose =
-                @"Game was closed while in combat! Your character will remain logged in until combat has concluded!";
-
-            public static LocalizedString warninglogout =
-                @"You are about to logout while in combat! Your character will remain in-game until combat has ended! Are you sure you want to logout now?";
-
-            public static LocalizedString warningcharacterselect =
-                @"You are about to logout while in combat! Your character will remain in-game until combat has ended! Are you sure you want to logout now?";
-
-            public static LocalizedString warningexitdesktop =
-                @"You are about to exit while in combat! Your character will remain in-game until combat has ended! Are you sure you want to quit now?";
-
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString WarningTitle = @"Combat Warning!";
         }
 
         public partial struct Controls
