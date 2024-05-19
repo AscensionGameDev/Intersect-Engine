@@ -67,11 +67,11 @@ namespace Intersect.Client.Interface.Menu
 
             //Menu Header
             mCharacterSelectionHeader = new Label(mCharacterSelectionPanel, "CharacterSelectionHeader");
-            mCharacterSelectionHeader.SetText(Strings.CharacterSelection.title);
+            mCharacterSelectionHeader.SetText(Strings.CharacterSelection.Title);
 
             //Character Name
             mCharnameLabel = new Label(mCharacterSelectionPanel, "CharacterNameLabel");
-            mCharnameLabel.SetText(Strings.CharacterSelection.empty);
+            mCharnameLabel.SetText(Strings.CharacterSelection.Empty);
 
             //Character Info
             mInfoLabel = new Label(mCharacterSelectionPanel, "CharacterInfoLabel");
@@ -90,13 +90,13 @@ namespace Intersect.Client.Interface.Menu
 
             //Play Button
             mPlayButton = new Button(mCharacterSelectionPanel, "PlayButton");
-            mPlayButton.SetText(Strings.CharacterSelection.play);
+            mPlayButton.SetText(Strings.CharacterSelection.Play);
             mPlayButton.Clicked += _playButton_Clicked;
             mPlayButton.Hide();
 
             //Delete Button
             mDeleteButton = new Button(mCharacterSelectionPanel, "DeleteButton");
-            mDeleteButton.SetText(Strings.CharacterSelection.delete);
+            mDeleteButton.SetText(Strings.CharacterSelection.Delete);
             mDeleteButton.Clicked += _deleteButton_Clicked;
             mDeleteButton.Hide();
 
@@ -107,7 +107,7 @@ namespace Intersect.Client.Interface.Menu
 
             //Logout Button
             mLogoutButton = new Button(mCharacterSelectionPanel, "LogoutButton");
-            mLogoutButton.SetText(Strings.CharacterSelection.logout);
+            mLogoutButton.SetText(Strings.CharacterSelection.Logout);
             mLogoutButton.IsHidden = true;
             mLogoutButton.Clicked += mLogoutButton_Clicked;
 
@@ -192,7 +192,7 @@ namespace Intersect.Client.Interface.Menu
                 mDeleteButton.Hide();
                 mNewButton.Show();
 
-                mCharnameLabel.SetText(Strings.CharacterSelection.empty);
+                mCharnameLabel.SetText(Strings.CharacterSelection.Empty);
                 mInfoLabel.SetText("");
 
                 mCharacterPortrait.Texture = null;
@@ -200,9 +200,9 @@ namespace Intersect.Client.Interface.Menu
             }
 
 
-            mCharnameLabel.SetText(Strings.CharacterSelection.name.ToString(Characters[mSelectedChar].Name));
+            mCharnameLabel.SetText(Strings.CharacterSelection.Name.ToString(Characters[mSelectedChar].Name));
             mInfoLabel.SetText(
-                Strings.CharacterSelection.info.ToString(
+                Strings.CharacterSelection.Info.ToString(
                     Characters[mSelectedChar].Level, Characters[mSelectedChar].Class
                 )
             );
@@ -395,8 +395,8 @@ namespace Intersect.Client.Interface.Menu
             }
 
             var iBox = new InputBox(
-                Strings.CharacterSelection.deletetitle.ToString(Characters[mSelectedChar].Name),
-                Strings.CharacterSelection.deleteprompt.ToString(Characters[mSelectedChar].Name), true,
+                Strings.CharacterSelection.DeleteTitle.ToString(Characters[mSelectedChar].Name),
+                Strings.CharacterSelection.DeletePrompt.ToString(Characters[mSelectedChar].Name), true,
                 InputBox.InputType.YesNo, DeleteCharacter, null, Characters[mSelectedChar].Id, 0, 0,
                 mCharacterSelectionPanel.Parent, GameContentManager.UI.Menu
             );

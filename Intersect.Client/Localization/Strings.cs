@@ -623,28 +623,35 @@ namespace Intersect.Client.Localization
 
         public partial struct CharacterSelection
         {
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Delete = @"Delete";
 
-            public static LocalizedString delete = @"Delete";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString DeletePrompt = @"Are you sure you want to delete {00}? This action is irreversible!";
 
-            public static LocalizedString deleteprompt =
-                @"Are you sure you want to delete {00}? This action is irreversible!";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString DeleteTitle = @"Delete {00}";
 
-            public static LocalizedString deletetitle = @"Delete {00}";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Empty = @"Empty Character Slot";
 
-            public static LocalizedString empty = @"Empty Character Slot";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Info = @"Level: {00}, Class: {01}";
 
-            public static LocalizedString info = @"Level {00} {01}";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Logout = @"Logout";
 
-            public static LocalizedString logout = @"Logout";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Name = @"{00}";
 
-            public static LocalizedString name = @"{00}";
-
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString New = @"New";
 
-            public static LocalizedString play = @"Use";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Play = @"Play";
 
-            public static LocalizedString title = @"Select a Character";
-
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Title = @"Select a Character to Play";
         }
 
         public partial struct Chatbox
