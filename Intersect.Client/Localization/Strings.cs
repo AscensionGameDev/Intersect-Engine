@@ -849,9 +849,11 @@ namespace Intersect.Client.Localization
         public partial struct Credits
         {
 
-            public static LocalizedString back = @"Main Menu";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Back = @"Return to Main Menu";
 
-            public static LocalizedString title = @"Credits";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Title = @"Credits";
 
         }
 

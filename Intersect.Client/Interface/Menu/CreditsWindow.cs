@@ -40,7 +40,7 @@ namespace Intersect.Client.Interface.Menu
 
             //Menu Header
             mCreditsHeader = new Label(mCreditsWindow, "CreditsHeader");
-            mCreditsHeader.SetText(Strings.Credits.title);
+            mCreditsHeader.SetText(Strings.Credits.Title);
 
             mCreditsContent = new ScrollControl(mCreditsWindow, "CreditsScrollview");
             mCreditsContent.EnableScroll(false, true);
@@ -49,7 +49,7 @@ namespace Intersect.Client.Interface.Menu
 
             //Back Button
             mBackBtn = new Button(mCreditsWindow, "BackButton");
-            mBackBtn.SetText(Strings.Credits.back);
+            mBackBtn.SetText(Strings.Credits.Back);
             mBackBtn.Clicked += BackBtn_Clicked;
 
             mCreditsWindow.LoadJsonUi(GameContentManager.UI.Menu, Graphics.Renderer.GetResolutionString());
