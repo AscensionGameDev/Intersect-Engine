@@ -587,30 +587,38 @@ namespace Intersect.Client.Localization
 
         public partial struct CharacterCreation
         {
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Back = @"Back";
 
-            public static LocalizedString back = @"Back";
-
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString Class = @"Class:";
 
-            public static LocalizedString create = @"Create";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Create = @"Create";
 
-            public static LocalizedString female = @"Female";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Female = @"Female";
 
-            public static LocalizedString gender = @"Gender:";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Gender = @"Gender:";
 
-            public static LocalizedString hint = @"Customize";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Hint = @"Customize";
 
-            public static LocalizedString hint2 = @"Your Character";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Hint2 = @"Your Character";
 
-            public static LocalizedString invalidname =
-                @"Character name is invalid. Please use alphanumeric characters with a length between 2 and 20.";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString InvalidName = @"Character name is invalid. Please use alphanumeric characters with a length between 2 and 20.";
 
-            public static LocalizedString male = @"Male";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Male = @"Male";
 
-            public static LocalizedString name = @"Char Name:";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Name = @"Char Name:";
 
-            public static LocalizedString title = @"Create Character";
-
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Title = @"Create Character";
         }
 
         public partial struct CharacterSelection
