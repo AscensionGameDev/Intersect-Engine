@@ -656,10 +656,14 @@ namespace Intersect.Client.Localization
 
         public partial struct Chatbox
         {
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Channel = @"Channel:";
 
-            public static LocalizedString channel = @"Channel:";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString ChannelAdmin = @"admin";
 
-            public static Dictionary<int, LocalizedString> channels = new Dictionary<int, LocalizedString>
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static Dictionary<int, LocalizedString> Channels = new Dictionary<int, LocalizedString>
             {
                 {0, @"local"},
                 {1, @"global"},
@@ -667,25 +671,11 @@ namespace Intersect.Client.Localization
                 {3, @"guild"}
             };
 
-            public static LocalizedString channeladmin = @"admin";
-
-            public static LocalizedString enterchat = @"Click here to chat.";
-
-            public static LocalizedString enterchat1 = @"Press {00} to chat.";
-
-            public static LocalizedString enterchat2 = @"Press {00} or {01} to chat.";
-
-            public static LocalizedString send = @"Send";
-
-            public static LocalizedString title = @"Chat";
-
-            public static LocalizedString toofast = @"You are chatting too fast!";
-
-            public static LocalizedString ToggleLogButtonToolTip = @"Toggle chat log visibility";
-
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString ClearLogButtonToolTip = @"Clear chat log messages";
 
-            public static Dictionary<ChatboxTab, LocalizedString> ChatTabButtons = new Dictionary<Enums.ChatboxTab, LocalizedString>() {
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static Dictionary<ChatboxTab, LocalizedString> ChatTabButtons = new Dictionary<ChatboxTab, LocalizedString>() {
                 { ChatboxTab.All, @"All" },
                 { ChatboxTab.Local, @"Local" },
                 { ChatboxTab.Party, @"Party" },
@@ -694,8 +684,29 @@ namespace Intersect.Client.Localization
                 { ChatboxTab.System, @"System" },
             };
 
-            public static LocalizedString UnableToCopy = @"It appears you are not able to copy/paste on this platform. Please make sure you have either the 'xclip' or 'wl-clipboard' packages installed if you are running Linux.";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString EnterChat = @"Click here to chat.";
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString EnterChat1 = @"Press '{00}' to chat.";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString EnterChat2 = @"Press '{00}' or '{01}' to chat.";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Send = @"Send";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Title = @"Chat";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString ToggleLogButtonToolTip = @"Toggle chat log visibility";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString TooFast = @"You are chatting too fast!";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString UnableToCopy = @"It appears you are not able to copy/paste on this platform. Please make sure you have either the 'xclip' or 'wl-clipboard' packages installed if you are running Linux.";
         }
 
         public partial struct Colors

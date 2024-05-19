@@ -105,7 +105,7 @@ namespace Intersect.Client.Interface.Game.Chat
             mChatboxWindow.ShouldCacheToTexture = true;
 
             mChatboxTitle = new Label(mChatboxWindow, "ChatboxTitle");
-            mChatboxTitle.Text = Strings.Chatbox.title;
+            mChatboxTitle.Text = Strings.Chatbox.Title;
             mChatboxTitle.IsHidden = true;
 
             // Generate tab butons.
@@ -132,13 +132,13 @@ namespace Intersect.Client.Interface.Game.Chat
             Interface.FocusElements.Add(mChatboxInput);
 
             mChannelLabel = new Label(mChatboxWindow, "ChannelLabel");
-            mChannelLabel.Text = Strings.Chatbox.channel;
+            mChannelLabel.Text = Strings.Chatbox.Channel;
             mChannelLabel.IsHidden = true;
 
             mChannelCombobox = new ComboBox(mChatboxWindow, "ChatChannelCombobox");
             for (var i = 0; i < 4; i++)
             {
-                var menuItem = mChannelCombobox.AddItem(Strings.Chatbox.channels[i]);
+                var menuItem = mChannelCombobox.AddItem(Strings.Chatbox.Channels[i]);
                 menuItem.UserData = i;
                 menuItem.Selected += MenuItem_Selected;
             }
@@ -146,7 +146,7 @@ namespace Intersect.Client.Interface.Game.Chat
             //Add admin channel only if power > 0.
             if (Globals.Me.Type > 0)
             {
-                var menuItem = mChannelCombobox.AddItem(Strings.Chatbox.channeladmin);
+                var menuItem = mChannelCombobox.AddItem(Strings.Chatbox.ChannelAdmin);
                 menuItem.UserData = 4;
                 menuItem.Selected += MenuItem_Selected;
             }
@@ -156,7 +156,7 @@ namespace Intersect.Client.Interface.Game.Chat
             mChatboxText.Font = mChatboxWindow.Parent.Skin.DefaultFont;
 
             mChatboxSendButton = new Button(mChatboxWindow, "ChatboxSendButton");
-            mChatboxSendButton.Text = Strings.Chatbox.send;
+            mChatboxSendButton.Text = Strings.Chatbox.Send;
             mChatboxSendButton.Clicked += ChatboxSendBtn_Clicked;
 
             _chatboxToggleLogButton = new Button(mChatboxWindow, "ChatboxToggleLogButton");
@@ -560,7 +560,7 @@ namespace Intersect.Client.Interface.Game.Chat
 
             if (mLastChatTime > Timing.Global.MillisecondsUtc)
             {
-                ChatboxMsg.AddMessage(new ChatboxMsg(Strings.Chatbox.toofast, Color.Red, ChatMessageType.Error));
+                ChatboxMsg.AddMessage(new ChatboxMsg(Strings.Chatbox.TooFast, Color.Red, ChatMessageType.Error));
                 mLastChatTime = Timing.Global.MillisecondsUtc + Options.MinChatInterval;
 
                 return;
@@ -581,27 +581,27 @@ namespace Intersect.Client.Interface.Game.Chat
             var key2 = Controls.ActiveControls.ControlMapping[Control.Enter].Bindings[1];
             if (key1.Key == Keys.None && key2.Key != Keys.None)
             {
-                return Strings.Chatbox.enterchat1.ToString(
+                return Strings.Chatbox.EnterChat1.ToString(
                     Strings.Keys.keydict[Enum.GetName(typeof(Keys), key2.Key).ToLower()]
                 );
             }
 
             if (key1.Key != Keys.None && key2.Key == Keys.None)
             {
-                return Strings.Chatbox.enterchat1.ToString(
+                return Strings.Chatbox.EnterChat1.ToString(
                     Strings.Keys.keydict[Enum.GetName(typeof(Keys), key1.Key).ToLower()]
                 );
             }
 
             if (key1.Key != Keys.None && key2.Key != Keys.None)
             {
-                return Strings.Chatbox.enterchat2.ToString(
+                return Strings.Chatbox.EnterChat2.ToString(
                     Strings.Keys.keydict[Enum.GetName(typeof(Keys), key1.Key).ToLower()],
                     Strings.Keys.keydict[Enum.GetName(typeof(Keys), key2.Key).ToLower()]
                 );
             }
 
-            return Strings.Chatbox.enterchat;
+            return Strings.Chatbox.EnterChat;
         }
 
     }
