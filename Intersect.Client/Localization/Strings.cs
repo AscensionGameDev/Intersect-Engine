@@ -913,39 +913,53 @@ namespace Intersect.Client.Localization
 
         public partial struct EntityBox
         {
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Exp = @"EXP:";
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString ExpValue = @"{00} / {01}";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Friend = "Befriend";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString FriendTip = "Send a friend request to {00}.";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Level = @"Lv. {00}";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Map = @"{00}";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString MaxLevel = @"Max Level";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString NameAndLevel = @"{00}    {01}";
 
-            public static LocalizedString exp = @"EXP:";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Party = @"Party";
 
-            public static LocalizedString expval = @"{00} / {01}";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString PartyTip = @"Invite {00} to your party.";
 
-            public static LocalizedString friend = "Befriend";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Trade = @"Trade";
 
-            public static LocalizedString friendtip = "Send {00} a friend request.";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString TradeTip = @"Request to trade with {00}.";
 
-            public static LocalizedString level = @"Lv. {00}";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Vital0 = @"HP:";
 
-            public static LocalizedString map = @"{00}";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Vital0Value = @"{00} / {01}";
 
-            public static LocalizedString maxlevel = @"Max Level";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Vital1 = @"MP:";
 
-            public static LocalizedString party = @"Party";
-
-            public static LocalizedString partytip = @"Invite {00} to your party.";
-
-            public static LocalizedString trade = @"Trade";
-
-            public static LocalizedString tradetip = @"Request to trade with {00}.";
-
-            public static LocalizedString vital0 = @"HP:";
-
-            public static LocalizedString vital0val = @"{00} / {01}";
-
-            public static LocalizedString vital1 = @"MP:";
-
-            public static LocalizedString vital1val = @"{00} / {01}";
-
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Vital1Value = @"{00} / {01}";
         }
 
         public partial struct Errors
