@@ -815,41 +815,35 @@ namespace Intersect.Client.Localization
 
         public partial struct Crafting
         {
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Craft = @"Craft 1";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString craft = @"Craft 1";
+            public static LocalizedString CraftAll = @"Craft {00}";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString craftall = @"Craft {00}";
+            public static LocalizedString CraftChance = @"Chance of failure: {00}%";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString CraftChance = @"Chance to fail: {00}%";
+            public static LocalizedString CraftingTime = "Crafting time: {00}s";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString CraftingTime = "Time to craft: {00}s";
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString craftstop = "Stop";
+            public static LocalizedString CraftStop = "Stop";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString DestroyMaterialsChance = @"Chance to destroy materials: {00}%";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString incorrectresources =
-                @"You do not have the correct resources to craft this item.";
+            public static LocalizedString IncorrectResources = @"You do not have the necessary resources to craft this item.";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString ingredients = @"Requires:";
+            public static LocalizedString Ingredients = @"Required:";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString product = @"Crafting:";
+            public static LocalizedString Product = @"Crafting:";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString recipes = @"Recipes:";
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString title = @"Crafting Table";
-
+            public static LocalizedString Recipes = @"Recipes:";
         }
 
         public partial struct Credits
