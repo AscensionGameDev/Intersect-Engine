@@ -860,7 +860,7 @@ namespace Intersect.Client.Localization
         public partial struct Debug
         {
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString ControlUnderCursor = @"Control Under Cusor";
+            public static LocalizedString ControlUnderCursor = @"Control Under Cursor";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString DrawDebugOutlines = @"Draw Debug Outlines";
@@ -909,7 +909,6 @@ namespace Intersect.Client.Localization
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString Title = @"Debug";
-
         }
 
         public partial struct EntityBox
