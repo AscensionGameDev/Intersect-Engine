@@ -765,7 +765,8 @@ namespace Intersect.Client.Localization
         public partial struct Controls
         {
 
-            public static Dictionary<string, LocalizedString> controldict = new Dictionary<string, LocalizedString>
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static Dictionary<string, LocalizedString> KeyDictionary = new Dictionary<string, LocalizedString>
             {
                 {"attackinteract", @"Attack/Interact:"},
                 {"block", @"Block:"},
@@ -805,13 +806,10 @@ namespace Intersect.Client.Localization
                 {"togglezoomout", "Toggle Zoom Out:"},
                 {"holdtozoomout", "Hold to Zoom Out:"},
                 {"togglefullscreen", "Toggle Fullscreen:"},
-                // {"submit", "Submit"},
-                // {"cancel", "Cancel"},
-                // {"next", "Next"},
-                // {"previous", "Previous"},
             };
 
-            public static LocalizedString listening = @"Listening";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Listening = @"Listening";
 
         }
 
