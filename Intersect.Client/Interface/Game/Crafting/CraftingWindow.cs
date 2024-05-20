@@ -294,7 +294,7 @@ namespace Intersect.Client.Interface.Game.Crafting
                     mRemainingCrafts = 0;
                     mCraftWindow.IsClosable = true;
                     mBar.Width = 0;
-                    ChatboxMsg.AddMessage(new ChatboxMsg(Strings.Crafting.IncorrectResources    , CustomColors.Alerts.Error, Enums.ChatMessageType.Crafting));
+                    ChatboxMsg.AddMessage(new ChatboxMsg(Strings.Crafting.IncorrectResources, CustomColors.Alerts.Error, Enums.ChatMessageType.Crafting));
 
                     return;
                 }
