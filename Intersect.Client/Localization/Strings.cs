@@ -96,8 +96,8 @@ namespace Intersect.Client.Localization
         private static void PostLoad()
         {
 
-            Program.OpenGLLink = Errors.opengllink.ToString();
-            Program.OpenALLink = Errors.openallink.ToString();
+            Program.OpenGLLink = Errors.OpenGlLink.ToString();
+            Program.OpenALLink = Errors.OpenAllLink.ToString();
         }
 
         public static void Load()
@@ -964,46 +964,44 @@ namespace Intersect.Client.Localization
 
         public partial struct Errors
         {
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString DisconnectionEvent = @"Please provide this message to your administrator: {0}";
 
-            public static LocalizedString displaynotsupported = @"Invalid Display Configuration!";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString DisplayNotSupported = @"Invalid Display Configuration!";
 
-            public static LocalizedString displaynotsupportederror =
-                @"Fullscreen {00} resolution is not supported on this device!";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString DisplayNotSupportedError = @"Fullscreen {00} resolution is not supported on this device!";
 
-            public static LocalizedString errorencountered =
-                @"The Intersect Client has encountered an error and must close. Error information can be found in logs/errors.log";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString HostNotFound = @"DNS resolution error, please report this to the game administrator.";
 
-            public static LocalizedString notconnected = @"Not connected to the game server. Is it online?";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString LoadFile = @"Failed to load a {00}. Please send the game administrator a copy of your errors log file in the logs directory.";
 
-            public static LocalizedString notsupported = @"Not Supported!";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString LostConnection = @"Lost connection to the game server. Please make sure you're connected to the internet and try again!";
 
-            public static LocalizedString openallink = @"https://goo.gl/Nbx6hx";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString NotConnected = @"Not connected to the game server. Is it online?";
 
-            public static LocalizedString opengllink = @"https://goo.gl/RSP3ts";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString OpenAllLink = @"https://goo.gl/Nbx6hx";
 
-            public static LocalizedString passwordinvalid =
-                @"Password is invalid. Please use alphanumeric characters with a length between 4 and 20.";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString OpenGlLink = @"https://goo.gl/RSP3ts";
 
-            public static LocalizedString resourcesnotfound =
-                @"The resources directory could not be found! Intersect will now close.";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString PasswordInvalid = @"Password is invalid. Please use alphanumeric characters with a length between 4 and 20.";
 
-            public static LocalizedString title = @"Error!";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString ResourcesNotFound = @"The resources directory could not be found! Intersect will now close.";
 
-            public static LocalizedString usernameinvalid =
-                @"Username is invalid. Please use alphanumeric characters with a length between 2 and 20.";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Title = @"Error!";
 
-            public static LocalizedString LoadFile =
-                @"Failed to load a {00}. Please send the game administrator a copy of your errors log file in the logs directory.";
-
-            public static LocalizedString lostconnection =
-                @"Lost connection to the game server. Please make sure you're connected to the internet and try again!";
-
-            public static LocalizedString HostNotFound =
-                @"DNS resolution error, please report this to the game administrator.";
-
-            public static LocalizedString DisconnectionEvent =
-                @"Please provide this message to your administrator: {0}";
-
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString UsernameInvalid = @"Username is invalid. Please use alphanumeric characters with a length between 2 and 20.";
         }
 
         public partial struct Words

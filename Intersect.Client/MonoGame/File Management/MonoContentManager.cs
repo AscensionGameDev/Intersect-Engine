@@ -30,7 +30,7 @@ namespace Intersect.Client.MonoGame.File_Management
 
             if (!Directory.Exists(rootPath))
             {
-                Log.Error(Strings.Errors.resourcesnotfound);
+                Log.Error(Strings.Errors.ResourcesNotFound);
 
                 Environment.Exit(1);
             }

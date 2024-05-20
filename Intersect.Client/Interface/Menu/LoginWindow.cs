@@ -232,13 +232,13 @@ namespace Intersect.Client.Interface.Menu
 
             if (!Networking.Network.IsConnected)
             {
-                Interface.ShowError(Strings.Errors.notconnected);
+                Interface.ShowError(Strings.Errors.NotConnected);
                 return;
             }
 
             if (!FieldChecking.IsValidUsername(mUsernameTextbox?.Text, Strings.Regex.username))
             {
-                Interface.ShowError(Strings.Errors.usernameinvalid);
+                Interface.ShowError(Strings.Errors.UsernameInvalid);
                 return;
             }
 
@@ -246,7 +246,7 @@ namespace Intersect.Client.Interface.Menu
             {
                 if (!mUseSavedPass)
                 {
-                    Interface.ShowError(Strings.Errors.passwordinvalid);
+                    Interface.ShowError(Strings.Errors.PasswordInvalid);
                     return;
                 }
             }

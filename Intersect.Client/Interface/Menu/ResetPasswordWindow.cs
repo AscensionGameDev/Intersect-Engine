@@ -144,7 +144,7 @@ namespace Intersect.Client.Interface.Menu
             {
                 Hide();
                 mMainMenu.Show();
-                Interface.ShowError(Strings.Errors.lostconnection);
+                Interface.ShowError(Strings.Errors.LostConnection);
             }
         }
 
@@ -196,7 +196,7 @@ namespace Intersect.Client.Interface.Menu
 
             if (!Networking.Network.IsConnected)
             {
-                Interface.ShowError(Strings.Errors.notconnected);
+                Interface.ShowError(Strings.Errors.NotConnected);
                 return;
             }
 
@@ -214,7 +214,7 @@ namespace Intersect.Client.Interface.Menu
 
             if (!FieldChecking.IsValidPassword(mPasswordTextbox.Text, Strings.Regex.password))
             {
-                Interface.ShowError(Strings.Errors.passwordinvalid);
+                Interface.ShowError(Strings.Errors.PasswordInvalid);
                 return;
             }
 

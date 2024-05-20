@@ -151,10 +151,10 @@ namespace Intersect.Client.MonoGame.Graphics
                     Globals.Database.FullScreen = false;
                     Globals.Database.SavePreferences();
                     Interface.Interface.ShowError(
-                        Strings.Errors.displaynotsupportederror.ToString(
+                        Strings.Errors.DisplayNotSupportedError.ToString(
                             Strings.Internals.ResolutionXByY.ToString(width, height)
                         ),
-                        Strings.Errors.displaynotsupported
+                        Strings.Errors.DisplayNotSupported
                     );
                 }
             }

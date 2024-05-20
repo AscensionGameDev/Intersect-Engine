@@ -30,7 +30,7 @@ namespace Intersect.Client.Interface.Shared.Errors
                         _gameCanvas,
                         _menuCanvas,
                         message.Value,
-                        string.IsNullOrWhiteSpace(message.Key) ? Strings.Errors.title.ToString() : message.Key
+                        string.IsNullOrWhiteSpace(message.Key) ? Strings.Errors.Title.ToString() : message.Key
                     )
                 );
             }
