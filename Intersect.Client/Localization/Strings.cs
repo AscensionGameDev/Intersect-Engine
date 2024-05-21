@@ -1225,11 +1225,10 @@ namespace Intersect.Client.Localization
         public partial struct MapItemWindow
         {
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString Title = @"Loot";
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString LootButton = @"Loot All";
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Title = @"Loot";
         }
 
         public partial struct Internals
