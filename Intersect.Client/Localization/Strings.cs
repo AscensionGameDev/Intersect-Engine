@@ -1234,9 +1234,6 @@ namespace Intersect.Client.Localization
         public partial struct Internals
         {
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString ResolutionXByY = @"{0}x{1}";
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString Bounds = @"Bounds";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -1255,7 +1252,7 @@ namespace Intersect.Client.Localization
             public static LocalizedString CoordinateZ = @"Z";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString ExperimentalFeatureTooltip = @"This feature is experimental and will cause issues when turned on.";
+            public static LocalizedString ExperimentalFeatureTooltip = @"This feature is experimental and may cause issues when enabled.";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString GlobalItem = @"Global {00}";
@@ -1264,28 +1261,13 @@ namespace Intersect.Client.Localization
             public static LocalizedString LocalItem = @"Local {00}";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString Map = @"Map";
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString MapId = @"Map Id";
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString MapName = @"Map Name";
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString Name = @"Name";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString NotApplicable = @"N/A";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString SizeX = @"Width";
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString SizeY = @"Height";
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString SizeZ = @"Depth";
+            public static LocalizedString ResolutionXByY = @"{0}x{1}";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString Type = @"Type";
