@@ -1276,10 +1276,10 @@ namespace Intersect.Client.Localization
         public partial struct Inventory
         {
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString DropItemTitle = @"Drop Item";
+            public static LocalizedString DropItemPrompt = @"How many units of {00} would you like to discard?";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString DropItemPrompt = @"How many/much {00} do you want to drop?";
+            public static LocalizedString DropItemTitle = @"Drop Item";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString DropPrompt = @"Do you wish to drop the item: {00}?";
@@ -1289,7 +1289,6 @@ namespace Intersect.Client.Localization
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString Title = @"Inventory";
-
         }
 
         public partial struct ItemContextMenu
