@@ -2485,23 +2485,29 @@ namespace Intersect.Client.Localization
 
         public partial struct Update
         {
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Checking = @"Checking for updates, please wait.";
 
-            public static LocalizedString Checking = @"Checking for updates, please wait!";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Done = @"Update complete! Launching game.";
 
-            public static LocalizedString Updating = @"Downloading updates, please wait!";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Error = @"Update Error! Check logs for more information.";
 
-            public static LocalizedString Restart = @"Update complete! Relaunch {00} to play!";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString FilesRemaining = @"{00} Files Remaining";
 
-            public static LocalizedString Done = @"Update complete! Launching game!";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString PercentComplete = @"{00}%";
 
-            public static LocalizedString Error = @"Update Error! Check logs for more info!";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString RemainingSize = @"{00} Left";
 
-            public static LocalizedString Files = @"{00} Files Remaining";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Restart = @"Update complete! Relaunch {00} to play.";
 
-            public static LocalizedString Size = @"{00} Left";
-
-            public static LocalizedString Percent = @"{00}%";
-
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Updating = @"Downloading updates, please wait.";
         }
 
         public partial struct GameWindow

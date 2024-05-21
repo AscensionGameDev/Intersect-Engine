@@ -434,21 +434,21 @@ namespace Intersect.Client.MonoGame
                 case UpdateStatus.Updating:
                     status = Strings.Update.Updating;
                     progressPercent = mUpdater.Progress / 100f;
-                    progress = Strings.Update.Percent.ToString((int)mUpdater.Progress);
-                    filesRemaining = Strings.Update.Files.ToString(mUpdater.FilesRemaining);
-                    sizeRemaining = Strings.Update.Size.ToString(mUpdater.GetHumanReadableFileSize(mUpdater.SizeRemaining));
+                    progress = Strings.Update.PercentComplete.ToString((int)mUpdater.Progress);
+                    filesRemaining = Strings.Update.FilesRemaining.ToString(mUpdater.FilesRemaining);
+                    sizeRemaining = Strings.Update.RemainingSize.ToString(mUpdater.GetHumanReadableFileSize(mUpdater.SizeRemaining));
                     break;
 
                 case UpdateStatus.Restart:
                     status = Strings.Update.Restart.ToString(Strings.Main.GameName);
                     progressPercent = 100;
-                    progress = Strings.Update.Percent.ToString(100);
+                    progress = Strings.Update.PercentComplete.ToString(100);
                     break;
 
                 case UpdateStatus.Done:
                     status = Strings.Update.Done;
                     progressPercent = 100;
-                    progress = Strings.Update.Percent.ToString(100);
+                    progress = Strings.Update.PercentComplete.ToString(100);
                     break;
 
                 case UpdateStatus.Error:
