@@ -696,7 +696,7 @@ namespace Intersect.Client.Interface.Shared
                             mKeybindingEditControls.UpdateControl(control.Key, bindingIndex, Keys.None, Keys.None);
 
                             // Update UI.
-                            mKeybindingBtns[control.Key][bindingIndex].Text = Strings.Keys.keydict[Enum.GetName(typeof(Keys), Keys.None).ToLower()];
+                            mKeybindingBtns[control.Key][bindingIndex].Text = Strings.Keys.KeyDictionary[Enum.GetName(typeof(Keys), Keys.None).ToLower()];
                         }
                     }
                 }

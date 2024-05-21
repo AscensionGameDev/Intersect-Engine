@@ -582,22 +582,22 @@ namespace Intersect.Client.Interface.Game.Chat
             if (key1.Key == Keys.None && key2.Key != Keys.None)
             {
                 return Strings.Chatbox.EnterChat1.ToString(
-                    Strings.Keys.keydict[Enum.GetName(typeof(Keys), key2.Key).ToLower()]
+                    Strings.Keys.KeyDictionary[Enum.GetName(typeof(Keys), key2.Key).ToLower()]
                 );
             }
 
             if (key1.Key != Keys.None && key2.Key == Keys.None)
             {
                 return Strings.Chatbox.EnterChat1.ToString(
-                    Strings.Keys.keydict[Enum.GetName(typeof(Keys), key1.Key).ToLower()]
+                    Strings.Keys.KeyDictionary[Enum.GetName(typeof(Keys), key1.Key).ToLower()]
                 );
             }
 
             if (key1.Key != Keys.None && key2.Key != Keys.None)
             {
                 return Strings.Chatbox.EnterChat2.ToString(
-                    Strings.Keys.keydict[Enum.GetName(typeof(Keys), key1.Key).ToLower()],
-                    Strings.Keys.keydict[Enum.GetName(typeof(Keys), key2.Key).ToLower()]
+                    Strings.Keys.KeyDictionary[Enum.GetName(typeof(Keys), key1.Key).ToLower()],
+                    Strings.Keys.KeyDictionary[Enum.GetName(typeof(Keys), key2.Key).ToLower()]
                 );
             }
 
