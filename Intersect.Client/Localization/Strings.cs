@@ -2111,30 +2111,39 @@ namespace Intersect.Client.Localization
 
         public partial struct ResetPass
         {
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Back = @"Cancel";
 
-            public static LocalizedString back = @"Cancel";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Code = @"Enter the reset code that was sent to you:";
 
-            public static LocalizedString code = @"Enter the reset code that was sent to you:";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString ConfirmPassword = @"Confirm Password:";
 
-            public static LocalizedString fail = @"Error!";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Error = @"Error!";
 
-            public static LocalizedString failmsg =
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString ErrorMessage =
                 @"The reset code was not valid, has expired, or the account does not exist!";
 
-            public static LocalizedString inputcode = @"Please enter your password reset code.";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString InputCode = @"Please enter your password reset code.";
 
-            public static LocalizedString password = @"New Password:";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString NewPassword = @"New Password:";
 
-            public static LocalizedString password2 = @"Confirm Password:";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Submit = @"Submit";
 
-            public static LocalizedString submit = @"Submit";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Success = @"Success!";
 
-            public static LocalizedString success = @"Success!";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString SuccessMessage = @"Your password has been reset!";
 
-            public static LocalizedString successmsg = @"Your password has been reset!";
-
-            public static LocalizedString title = @"Password Reset";
-
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Title = @"Password Reset";
         }
 
         public partial struct Resources

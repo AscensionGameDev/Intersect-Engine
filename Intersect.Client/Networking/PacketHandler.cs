@@ -2097,12 +2097,12 @@ namespace Intersect.Client.Networking
             if (packet.Succeeded)
             {
                 // Show Success Message and Open Login Screen
-                Interface.Interface.ShowError(Strings.ResetPass.success, Strings.ResetPass.successmsg);
+                Interface.Interface.ShowError(Strings.ResetPass.Success, Strings.ResetPass.SuccessMessage);
                 Interface.Interface.MenuUi.MainMenu.NotifyOpenLogin();
             }
             else
             {
-                Interface.Interface.ShowError(Strings.ResetPass.fail, Strings.ResetPass.failmsg);
+                Interface.Interface.ShowError(Strings.ResetPass.Error, Strings.ResetPass.ErrorMessage);
             }
 
             Globals.WaitingOnServer = false;

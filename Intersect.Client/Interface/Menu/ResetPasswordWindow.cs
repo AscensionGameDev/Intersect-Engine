@@ -65,13 +65,13 @@ namespace Intersect.Client.Interface.Menu
 
             //Menu Header
             mWindowHeader = new Label(mResetWindow, "Header");
-            mWindowHeader.SetText(Strings.ResetPass.title);
+            mWindowHeader.SetText(Strings.ResetPass.Title);
 
             //Code Fields/Labels
             mCodeInputBackground = new ImagePanel(mResetWindow, "CodePanel");
 
             mCodeInputLabel = new Label(mCodeInputBackground, "CodeLabel");
-            mCodeInputLabel.SetText(Strings.ResetPass.code);
+            mCodeInputLabel.SetText(Strings.ResetPass.Code);
 
             mCodeInputTextbox = new TextBox(mCodeInputBackground, "CodeField")
             {
@@ -85,7 +85,7 @@ namespace Intersect.Client.Interface.Menu
             mPasswordBackground = new ImagePanel(mResetWindow, "Password1Panel");
 
             mPasswordLabel = new Label(mPasswordBackground, "Password1Label");
-            mPasswordLabel.SetText(Strings.ResetPass.password);
+            mPasswordLabel.SetText(Strings.ResetPass.NewPassword);
 
             mPasswordTextbox = new TextBoxPassword(mPasswordBackground, "Password1Field")
             {
@@ -97,7 +97,7 @@ namespace Intersect.Client.Interface.Menu
             mPasswordBackground2 = new ImagePanel(mResetWindow, "Password2Panel");
 
             mPasswordLabel2 = new Label(mPasswordBackground2, "Password2Label");
-            mPasswordLabel2.SetText(Strings.ResetPass.password2);
+            mPasswordLabel2.SetText(Strings.ResetPass.ConfirmPassword);
 
             mPasswordTextbox2 = new TextBoxPassword(mPasswordBackground2, "Password2Field")
             {
@@ -110,7 +110,7 @@ namespace Intersect.Client.Interface.Menu
             {
                 IsTabable = true,
             };
-            mSubmitBtn.SetText(Strings.ResetPass.submit);
+            mSubmitBtn.SetText(Strings.ResetPass.Submit);
             mSubmitBtn.Clicked += SubmitBtn_Clicked;
 
             //Login - Back Button
@@ -118,7 +118,7 @@ namespace Intersect.Client.Interface.Menu
             {
                 IsTabable = true,
             };
-            mBackBtn.SetText(Strings.ResetPass.back);
+            mBackBtn.SetText(Strings.ResetPass.Back);
             mBackBtn.Clicked += BackBtn_Clicked;
 
             mResetWindow.LoadJsonUi(GameContentManager.UI.Menu, Graphics.Renderer.GetResolutionString());
@@ -202,7 +202,7 @@ namespace Intersect.Client.Interface.Menu
 
             if (string.IsNullOrEmpty(mCodeInputTextbox?.Text))
             {
-                Interface.ShowError(Strings.ResetPass.inputcode);
+                Interface.ShowError(Strings.ResetPass.InputCode);
                 return;
             }
 
