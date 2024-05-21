@@ -1392,6 +1392,9 @@ namespace Intersect.Client.Localization
             public static LocalizedString Bagged = @"Bagged";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Banked = @"Banked";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString BaseDamage = @"Base Damage:";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
