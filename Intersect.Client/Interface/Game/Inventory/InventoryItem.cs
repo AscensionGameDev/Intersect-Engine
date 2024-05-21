@@ -232,7 +232,7 @@ namespace Intersect.Client.Interface.Game.Inventory
                         mDescWindow = new ItemDescriptionWindow(
                             Globals.Me.Inventory[mMySlot].Base, Globals.Me.Inventory[mMySlot].Quantity,
                             mInventoryWindow.X, mInventoryWindow.Y, Globals.Me.Inventory[mMySlot].ItemProperties, "",
-                            Strings.Shop.sellsfor.ToString(shopItem.CostItemQuantity, hoveredItem.Name)
+                            Strings.Shop.SellsFor.ToString(shopItem.CostItemQuantity, hoveredItem.Name)
                         );
                     }
                 }
@@ -244,7 +244,7 @@ namespace Intersect.Client.Interface.Game.Inventory
                         mDescWindow = new ItemDescriptionWindow(
                             Globals.Me.Inventory[mMySlot].Base, Globals.Me.Inventory[mMySlot].Quantity,
                             mInventoryWindow.X, mInventoryWindow.Y, Globals.Me.Inventory[mMySlot].ItemProperties, "",
-                            Strings.Shop.sellsfor.ToString(invItem.Base.Price.ToString(), costItem.Name)
+                            Strings.Shop.SellsFor.ToString(invItem.Base.Price.ToString(), costItem.Name)
                         );
                     }
                 }
@@ -254,7 +254,7 @@ namespace Intersect.Client.Interface.Game.Inventory
                     {
                         mDescWindow = new ItemDescriptionWindow(
                             invItem.Base, invItem.Quantity, mInventoryWindow.X, mInventoryWindow.Y, invItem.ItemProperties,
-                            "", Strings.Shop.wontbuy
+                            "", Strings.Shop.WontBuy
                         );
                     }
                 }

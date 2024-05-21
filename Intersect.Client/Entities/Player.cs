@@ -638,7 +638,7 @@ namespace Intersect.Client.Entities
                 shop.BuyingWhitelist && shop.BuyingItems.Any(buyingItem => buyingItem.ItemId == itemDescriptor.Id)
                 || !shop.BuyingWhitelist && !shop.BuyingItems.Any(buyingItem => buyingItem.ItemId == itemDescriptor.Id);
 
-            var prompt = Strings.Shop.sellprompt;
+            var prompt = Strings.Shop.SellPrompt;
             var inputType = InputBox.InputType.YesNo;
             EventHandler onSuccess = SellInputBoxOkay;
             var userData = inventorySlotIndex;
@@ -647,7 +647,7 @@ namespace Intersect.Client.Entities
 
             if (!shopCanBuyItem)
             {
-                prompt = Strings.Shop.cannotsell;
+                prompt = Strings.Shop.CannotSell;
                 inputType = InputBox.InputType.OkayOnly;
                 onSuccess = null;
                 userData = -1;
@@ -658,7 +658,7 @@ namespace Intersect.Client.Entities
                 if (inventoryQuantity > 1)
                 {
                     maxQuantity = inventoryQuantity;
-                    prompt = Strings.Shop.sellitemprompt;
+                    prompt = Strings.Shop.SellItemPrompt;
                     inputType = InputBox.InputType.NumericSliderInput;
                     onSuccess = SellItemInputBoxOkay;
                     userData = inventorySlotIndex;
@@ -666,7 +666,7 @@ namespace Intersect.Client.Entities
             }
 
             InputBox.Open(
-                title: Strings.Shop.sellitem,
+                title: Strings.Shop.SellItem,
                 prompt: prompt.ToString(itemDescriptor.Name),
                 modal: true,
                 inputType: inputType,
@@ -712,8 +712,8 @@ namespace Intersect.Client.Entities
             }
 
             InputBox.Open(
-                title: Strings.Shop.buyitem,
-                prompt: Strings.Shop.buyitemprompt.ToString(itemDescriptor.Name),
+                title: Strings.Shop.BuyItem,
+                prompt: Strings.Shop.BuyItemPrompt.ToString(itemDescriptor.Name),
                 modal: true,
                 inputType: InputBox.InputType.NumericSliderInput,
                 onSuccess: BuyItemInputBoxOkay,

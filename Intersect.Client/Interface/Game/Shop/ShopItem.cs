@@ -135,7 +135,7 @@ namespace Intersect.Client.Interface.Game.Shop
 
                 mDescWindow = new ItemDescriptionWindow(
                     Globals.GameShop.SellingItems[mMySlot].Item, 1, mShopWindow.X, mShopWindow.Y, itemProperty, "",
-                    Strings.Shop.costs.ToString(Globals.GameShop.SellingItems[mMySlot].CostItemQuantity, item.Name)
+                    Strings.Shop.Costs.ToString(Globals.GameShop.SellingItems[mMySlot].CostItemQuantity, item.Name)
                 );
             }
         }

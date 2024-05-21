@@ -2178,25 +2178,32 @@ namespace Intersect.Client.Localization
 
         public partial struct Shop
         {
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString BuyItem = @"Buy Item";
 
-            public static LocalizedString buyitem = @"Buy Item";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString BuyItemPrompt = @"How many units of {00} would you like to buy?";
 
-            public static LocalizedString buyitemprompt = @"How many/much {00} would you like to buy?";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString CannotSell = @"This shop does not accept that item!";
 
-            public static LocalizedString cannotsell = @"This shop does not accept that item!";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Costs = @"Costs {00} {01}(s)";
 
-            public static LocalizedString costs = @"Costs {00} {01}(s)";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString SellItem = @"Sell Item";
 
-            public static LocalizedString sellitem = @"Sell Item";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString SellItemPrompt = @"How many units of {00} would you like to sell?";
 
-            public static LocalizedString sellitemprompt = @"How many/much {00} would you like to sell?";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString SellPrompt = @"Do you wish to sell the item: {00}?";
 
-            public static LocalizedString sellprompt = @"Do you wish to sell the item: {00}?";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString SellsFor = @"Sells for {00} {01}(s)";
 
-            public static LocalizedString sellsfor = @"Sells for {00} {01}(s)";
-
-            public static LocalizedString wontbuy = @"Shop Will Not Buy This Item";
-
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString WontBuy = @"Shop Will Not Buy This Item";
         }
 
         public partial struct SpellDescription
