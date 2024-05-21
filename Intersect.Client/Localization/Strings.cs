@@ -1029,18 +1029,20 @@ namespace Intersect.Client.Localization
 
         public partial struct ForgotPass
         {
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Back = @"Back";
 
-            public static LocalizedString back = @"Back";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Hint = @"If your account exists, we will send you a temporary password reset code.";
 
-            public static LocalizedString hint =
-                @"If your account exists we will send you a temporary password reset code.";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Label = @"Enter your username or email below:";
 
-            public static LocalizedString label = @"Enter your username or email below:";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Submit = @"Submit";
 
-            public static LocalizedString submit = @"Submit";
-
-            public static LocalizedString title = @"Password Reset";
-
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Title = @"Password Reset";
         }
 
         public partial struct Friends
