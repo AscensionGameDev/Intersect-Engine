@@ -34,7 +34,7 @@ namespace Intersect.Client.Interface.Game
 
         public QuestOfferWindow(Canvas gameCanvas)
         {
-            mQuestOfferWindow = new WindowControl(gameCanvas, Strings.QuestOffer.title, false, "QuestOfferWindow");
+            mQuestOfferWindow = new WindowControl(gameCanvas, Strings.QuestOffer.Title, false, "QuestOfferWindow");
             mQuestOfferWindow.DisableResizing();
             mQuestOfferWindow.IsClosable = false;
 
@@ -49,12 +49,12 @@ namespace Intersect.Client.Interface.Game
 
             //Accept Button
             mAcceptButton = new Button(mQuestOfferWindow, "AcceptButton");
-            mAcceptButton.SetText(Strings.QuestOffer.accept);
+            mAcceptButton.SetText(Strings.QuestOffer.Accept);
             mAcceptButton.Clicked += _acceptButton_Clicked;
 
             //Decline Button
             mDeclineButton = new Button(mQuestOfferWindow, "DeclineButton");
-            mDeclineButton.SetText(Strings.QuestOffer.decline);
+            mDeclineButton.SetText(Strings.QuestOffer.Decline);
             mDeclineButton.Clicked += _declineButton_Clicked;
 
             mQuestOfferWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());

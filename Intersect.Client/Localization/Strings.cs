@@ -2056,13 +2056,14 @@ namespace Intersect.Client.Localization
 
         public partial struct QuestOffer
         {
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Accept = @"Accept";
 
-            public static LocalizedString accept = @"Accept";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Decline = @"Decline";
 
-            public static LocalizedString decline = @"Decline";
-
-            public static LocalizedString title = @"Quest Offer";
-
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Title = @"Quest Offer";
         }
 
         public partial struct Regex
