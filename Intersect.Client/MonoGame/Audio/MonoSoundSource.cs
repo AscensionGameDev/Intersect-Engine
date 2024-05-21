@@ -100,7 +100,7 @@ namespace Intersect.Client.MonoGame.Audio
                 Log.Error(exception, $"Error loading '{mPath}'.");
                 ChatboxMsg.AddMessage(
                     new ChatboxMsg(
-                        $"{Strings.Errors.LoadFile.ToString(Strings.Words.lcase_sound)} [{mPath}]",
+                        $"{Strings.Errors.LoadFile.ToString(Strings.Words.LcaseSound)} [{mPath}]",
                         new Color(0xBF, 0x0, 0x0),  Enums.ChatMessageType.Error
                     )
                 );

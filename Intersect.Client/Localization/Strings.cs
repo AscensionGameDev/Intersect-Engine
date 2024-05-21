@@ -1006,15 +1006,17 @@ namespace Intersect.Client.Localization
 
         public partial struct Words
         {
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString LcaseAnimation = @"animation";
 
-            public static LocalizedString lcase_sound = @"sound";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString LcaseMusic = @"soundtrack";
 
-            public static LocalizedString lcase_music = @"soundtrack";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString LcaseSound = @"sound";
 
-            public static LocalizedString lcase_sprite = @"sprite";
-
-            public static LocalizedString lcase_animation = @"animation";
-
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString LcaseSprite = @"sprite";
         }
 
         public partial struct EventWindow
