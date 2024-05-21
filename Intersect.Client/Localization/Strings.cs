@@ -1377,19 +1377,37 @@ namespace Intersect.Client.Localization
 
         public partial struct ItemDescription
         {
+            // String Properties (A - Z):
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Amount = @"Amount:";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString AttackSpeed = @"Attack Speed:";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString BagSlots = @"Bag Slots:";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Bagged = @"Bagged";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString BaseDamage = @"Base Damage:";
+
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString BaseDamageType = @"Damage Type:";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static Dictionary<int, LocalizedString> DamageTypes = new Dictionary<int, LocalizedString>()
-            {
-                { 0, @"Physical" },
-                { 1, @"Magic" },
-                { 2, @"True" }
-            };
+            public static LocalizedString BlockAbsorption = @"Block Absorption:";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString BaseDamage = @"Base Damage:";
+            public static LocalizedString BlockAmount = @"Block Amount:";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString BlockChance = @"Block Chance:";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString CastSpell = @"Casts Spell: {00}";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString CritChance = @"Critical Chance:";
@@ -1398,68 +1416,54 @@ namespace Intersect.Client.Localization
             public static LocalizedString CritMultiplier = @"Critical Multiplier:";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString AttackSpeed = @"Attack Speed:";
+            public static LocalizedString Description = @"{00}";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString Percentage = @"{00}%";
+            public static LocalizedString DropOnDeath = @"Drop chance on death:";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Dropped = @"Dropped";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString GuildBanked = @"Guild Banked";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString ItemLimits = @"Cannot be {00}";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString Multiplier = @"{00}x";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Percentage = @"{00}%";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString RegularAndPercentage = @"{00} + {01}%";
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString StatGrowthRange = @"{00} to {01}";
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static Dictionary<int, LocalizedString> Stats = new Dictionary<int, LocalizedString>
-            {
-                {0, @"Attack"},
-                {1, @"Ability Power"},
-                {2, @"Defense"},
-                {3, @"Magic Resist"},
-                {4, @"Speed"}
-            };
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static Dictionary<int, LocalizedString> StatCounts = new Dictionary<int, LocalizedString>
-            {
-                {0, @"Attack:"},
-                {1, @"Ability Power:"},
-                {2, @"Defense:"},
-                {3, @"Magic Resist:"},
-                {4, @"Speed:"}
-            };
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString ScalingStat = @"Scaling Stat:";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString ScalingPercentage = @"Scaling Percentage:";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static Dictionary<int, LocalizedString> Vitals = new Dictionary<int, LocalizedString>
-            {
-                {0, @"HP:"},
-                {1, @"MP:"}
-            };
+            public static LocalizedString ScalingStat = @"Scaling Stat:";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static Dictionary<int, LocalizedString> VitalsRegen = new Dictionary<int, LocalizedString>
-            {
-                {0, @"HP Regen:"},
-                {1, @"MP Regen:"}
-            };
+            public static LocalizedString SingleUse = @"Single use";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static Dictionary<int, LocalizedString> ConsumableTypes = new Dictionary<int, LocalizedString>()
-            {
-                {0, "Restores HP:" },
-                {1, "Restores MP:" },
-                {2, "Grants Experience:" },
+            public static LocalizedString Sold = @"Sold";
 
-            };
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString StatGrowthRange = @"{00} to {01}";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString TeachSpell = @"Teaches Spell: {00}";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Traded = @"Traded";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString TwoHand = @"2H";
+
+            // Integer Dictionaries (A - Z):
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static Dictionary<int, LocalizedString> BonusEffects = new Dictionary<int, LocalizedString>
@@ -1474,7 +1478,20 @@ namespace Intersect.Client.Localization
             };
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString TwoHand = @"2H";
+            public static Dictionary<int, LocalizedString> ConsumableTypes = new Dictionary<int, LocalizedString>()
+            {
+                {0, "Restores HP:"},
+                {1, "Restores MP:"},
+                {2, "Grants Experience:"},
+            };
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static Dictionary<int, LocalizedString> DamageTypes = new Dictionary<int, LocalizedString>()
+            {
+                {0, @"Physical"},
+                {1, @"Magic"},
+                {2, @"True"},
+            };
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static Dictionary<int, LocalizedString> ItemTypes = new Dictionary<int, LocalizedString>
@@ -1489,6 +1506,42 @@ namespace Intersect.Client.Localization
             };
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static Dictionary<int, LocalizedString> StatCounts = new Dictionary<int, LocalizedString>
+            {
+                {0, @"Attack:"},
+                {1, @"Ability Power:"},
+                {2, @"Defense:"},
+                {3, @"Magic Resist:"},
+                {4, @"Speed:"},
+            };
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static Dictionary<int, LocalizedString> Stats = new Dictionary<int, LocalizedString>
+            {
+                {0, @"Attack"},
+                {1, @"Ability Power"},
+                {2, @"Defense"},
+                {3, @"Magic Resist"},
+                {4, @"Speed"},
+            };
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static Dictionary<int, LocalizedString> Vitals = new Dictionary<int, LocalizedString>
+            {
+                {0, @"HP:"},
+                {1, @"MP:"},
+            };
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static Dictionary<int, LocalizedString> VitalsRegen = new Dictionary<int, LocalizedString>
+            {
+                {0, @"HP Regen:"},
+                {1, @"MP Regen:"},
+            };
+
+            // String Dictionaries (A - Z):
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static Dictionary<string, LocalizedString> Rarity = new Dictionary<string, LocalizedString>
             {
                 {"None", @"None"},
@@ -1498,57 +1551,6 @@ namespace Intersect.Client.Localization
                 {"Epic", @"Epic"},
                 {"Legendary", @"Legendary"},
             };
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString Description = @"{00}";
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString CastSpell = @"Casts Spell: {00}";
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString TeachSpell = @"Teaches Spell: {00}";
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString SingleUse = @"Single use";
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString BagSlots = @"Bag Slots:";
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString ItemLimits = @"Can not be {00}";
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString Banked = @"Banked";
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString GuildBanked = @"Guild Banked";
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString Sold = @"Sold";
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString Dropped = @"Dropped";
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString Bagged = @"Bagged";
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString Traded = @"Traded";
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString Amount = @"Amount:";
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString DropOnDeath = @"Drop chance on death:";
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString BlockChance = @"Block Chance:";
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString BlockAmount = @"Block Amount:";
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString BlockAbsorption = @"Block Absorption:";
         }
 
         public partial struct Keys
