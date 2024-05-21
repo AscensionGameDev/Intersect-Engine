@@ -543,7 +543,7 @@ namespace Intersect.Client.Localization
             public static LocalizedString HealthRegen = @"Health Regen: {00}%";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString LevelAndClass = @"Level: {00} {01}";
+            public static LocalizedString LevelAndClass = @"Level: {00}, Class: {01}";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString Lifesteal = @"Lifesteal: {00}%";
@@ -582,7 +582,7 @@ namespace Intersect.Client.Localization
             public static LocalizedString Tenacity = @"Tenacity: {00}%";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString Title = @"Character";
+            public static LocalizedString Title = @"Character Information";
         }
 
         public partial struct CharacterCreation
@@ -615,10 +615,10 @@ namespace Intersect.Client.Localization
             public static LocalizedString Male = @"Male";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString Name = @"Char Name:";
+            public static LocalizedString Name = @"Name:";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString Title = @"Create Character";
+            public static LocalizedString Title = @"Create a New Character";
         }
 
         public partial struct CharacterSelection
@@ -771,7 +771,7 @@ namespace Intersect.Client.Localization
                 {"attackinteract", @"Attack/Interact:"},
                 {"block", @"Block:"},
                 {"autotarget", @"Auto Target:"},
-                {"enter", @"Enter:"},
+                {"enter", @"Chat:"},
                 {"hotkey0", @"Hot Key 0:"},
                 {"hotkey1", @"Hot Key 1:"},
                 {"hotkey2", @"Hot Key 2:"},
@@ -850,7 +850,7 @@ namespace Intersect.Client.Localization
         {
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString Back = @"Return to Main Menu";
+            public static LocalizedString Back = @"Back to Main Menu";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString Title = @"Credits";

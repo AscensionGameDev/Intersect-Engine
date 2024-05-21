@@ -167,24 +167,24 @@ namespace Intersect.Client.Interface.Game.EntityPanel
 
             TradeLabel = new Button(EntityInfoPanel, "TradeButton");
             TradeLabel.SetText(Strings.EntityBox.Trade);
-            TradeLabel.SetToolTipText(Strings.EntityBox.TradeTip.ToString(MyEntity?.Name));
             TradeLabel.Clicked += tradeRequest_Clicked;
+            TradeLabel.HoverEnter += (sender, e) => TradeLabel.SetToolTipText(Strings.EntityBox.TradeTip.ToString(MyEntity?.Name));
 
             PartyLabel = new Button(EntityInfoPanel, "PartyButton");
             PartyLabel.SetText(Strings.EntityBox.Party);
-            PartyLabel.SetToolTipText(Strings.EntityBox.PartyTip.ToString(MyEntity?.Name));
             PartyLabel.Clicked += invite_Clicked;
+            PartyLabel.HoverEnter += (sender, e) => PartyLabel.SetToolTipText(Strings.EntityBox.PartyTip.ToString(MyEntity?.Name));
 
             FriendLabel = new Button(EntityInfoPanel, "FriendButton");
             FriendLabel.SetText(Strings.EntityBox.Friend);
-            FriendLabel.SetToolTipText(Strings.EntityBox.FriendTip.ToString(MyEntity?.Name));
             FriendLabel.Clicked += friendRequest_Clicked;
+            FriendLabel.HoverEnter += (sender, e) => FriendLabel.SetToolTipText(Strings.EntityBox.FriendTip.ToString(MyEntity?.Name));
             FriendLabel.IsHidden = true;
 
             GuildLabel = new Button(EntityInfoPanel, "GuildButton");
             GuildLabel.SetText(Strings.Guilds.Guild);
-            GuildLabel.SetToolTipText(Strings.Guilds.GuildTip.ToString(MyEntity?.Name));
             GuildLabel.Clicked += guildRequest_Clicked;
+            GuildLabel.HoverEnter += (sender, e) => GuildLabel.SetToolTipText(Strings.Guilds.GuildTip.ToString(MyEntity?.Name));
             GuildLabel.IsHidden = true;
 
             EntityStatusPanel = new ImagePanel(EntityWindow, "StatusArea");
