@@ -1209,15 +1209,17 @@ namespace Intersect.Client.Localization
 
         public partial struct InputBox
         {
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Cancel = @"Cancel";
 
-            public static LocalizedString cancel = @"Cancel";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString No = @"No";
 
-            public static LocalizedString no = @"No";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Okay = @"Okay";
 
-            public static LocalizedString okay = @"Okay";
-
-            public static LocalizedString yes = @"Yes";
-
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Yes = @"Yes";
         }
 
         public partial struct MapItemWindow
