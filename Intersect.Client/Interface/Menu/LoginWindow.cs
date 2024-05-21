@@ -236,13 +236,13 @@ namespace Intersect.Client.Interface.Menu
                 return;
             }
 
-            if (!FieldChecking.IsValidUsername(mUsernameTextbox?.Text, Strings.Regex.username))
+            if (!FieldChecking.IsValidUsername(mUsernameTextbox?.Text, Strings.Regex.Username))
             {
                 Interface.ShowError(Strings.Errors.UsernameInvalid);
                 return;
             }
 
-            if (!FieldChecking.IsValidPassword(mPasswordTextbox?.Text, Strings.Regex.password))
+            if (!FieldChecking.IsValidPassword(mPasswordTextbox?.Text, Strings.Regex.Password))
             {
                 if (!mUseSavedPass)
                 {

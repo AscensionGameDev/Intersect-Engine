@@ -191,13 +191,13 @@ namespace Intersect.Client.Interface.Menu
 
             if (Networking.Network.IsConnected)
             {
-                if (FieldChecking.IsValidUsername(mUsernameTextbox.Text, Strings.Regex.username))
+                if (FieldChecking.IsValidUsername(mUsernameTextbox.Text, Strings.Regex.Username))
                 {
                     if (mPasswordTextbox.Text == mPasswordTextbox2.Text)
                     {
-                        if (FieldChecking.IsValidPassword(mPasswordTextbox.Text, Strings.Regex.password))
+                        if (FieldChecking.IsValidPassword(mPasswordTextbox.Text, Strings.Regex.Password))
                         {
-                            if (FieldChecking.IsWellformedEmailAddress(mEmailTextbox.Text, Strings.Regex.email))
+                            if (FieldChecking.IsWellformedEmailAddress(mEmailTextbox.Text, Strings.Regex.Email))
                             {
                                 Hide();
 

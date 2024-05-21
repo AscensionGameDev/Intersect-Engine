@@ -155,8 +155,8 @@ namespace Intersect.Client.Interface.Menu
                 return;
             }
 
-            if (!FieldChecking.IsValidUsername(mInputTextbox?.Text, Strings.Regex.username) &&
-                !FieldChecking.IsWellformedEmailAddress(mInputTextbox?.Text, Strings.Regex.email))
+            if (!FieldChecking.IsValidUsername(mInputTextbox?.Text, Strings.Regex.Username) &&
+                !FieldChecking.IsWellformedEmailAddress(mInputTextbox?.Text, Strings.Regex.Email))
             {
                 Interface.ShowError(Strings.Errors.UsernameInvalid);
                 return;

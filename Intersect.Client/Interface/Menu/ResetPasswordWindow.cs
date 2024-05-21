@@ -212,7 +212,7 @@ namespace Intersect.Client.Interface.Menu
                 return;
             }
 
-            if (!FieldChecking.IsValidPassword(mPasswordTextbox.Text, Strings.Regex.password))
+            if (!FieldChecking.IsValidPassword(mPasswordTextbox.Text, Strings.Regex.Password))
             {
                 Interface.ShowError(Strings.Errors.PasswordInvalid);
                 return;

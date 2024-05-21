@@ -2068,14 +2068,15 @@ namespace Intersect.Client.Localization
 
         public partial struct Regex
         {
-
-            public static LocalizedString email =
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Email =
                 @"^(([\w-]+\.)+[\w-]+|([a-zA-Z]{1}|[\w-]{2,}))@((([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\.([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\.([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\.([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])){1}|([a-zA-Z]+[\w-]+\.)+[a-zA-Z]{2,4})$";
 
-            public static LocalizedString password = @"^[-_=\+`~!@#\$%\^&\*()\[\]{}\\|;\:'"",<\.>/\?a-zA-Z0-9]{4,64}$";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Password = @"^[-_=\+`~!@#\$%\^&\*()\[\]{}\\|;\:'"",<\.>/\?a-zA-Z0-9]{4,64}$";
 
-            public static LocalizedString username = @"^[a-zA-Z0-9]{2,20}$";
-
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Username = @"^[a-zA-Z0-9]{2,20}$";
         }
 
         public partial struct Registration
