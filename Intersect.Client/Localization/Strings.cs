@@ -2146,21 +2146,6 @@ namespace Intersect.Client.Localization
             public static LocalizedString Title = @"Password Reset";
         }
 
-        public partial struct Resources
-        {
-
-            public static LocalizedString cancelled = @"Download was Cancelled!";
-
-            public static LocalizedString failedtoload = @"Failed to load Resources!";
-
-            public static LocalizedString resourceexception =
-                @"Failed to download client resources.\n\nException Info: {00}\n\nWould you like to try again?";
-
-            public static LocalizedString resourcesfatal =
-                @"Failed to load resources from client directory and Ascension Game Dev server. Cannot launch game!";
-
-        }
-
         public partial struct Server
         {
 
