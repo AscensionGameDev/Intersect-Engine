@@ -1901,10 +1901,10 @@ namespace Intersect.Client.Localization
             public static LocalizedString ShowFriendOverheadInformation = @"Show friends overhead information";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString ShowGuildOverheadHpBar = @"Show guild overhead HP bar";
+            public static LocalizedString ShowGuildOverheadHpBar = @"Show guild member overhead HP bar";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString ShowGuildOverheadInformation = @"Show guild overhead information";
+            public static LocalizedString ShowGuildOverheadInformation = @"Show guild member overhead information";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString ShowHealthAsPercentage = @"Show health as percentage";
@@ -1925,10 +1925,10 @@ namespace Intersect.Client.Localization
             public static LocalizedString ShowMyOverheadInformation = @"Show my overhead information";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString ShowPartyOverheadHpBar = @"Show party overhead HP bar";
+            public static LocalizedString ShowPartyOverheadHpBar = @"Show party member overhead HP bar";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString ShowPartyOverheadInformation = @"Show party overhead information";
+            public static LocalizedString ShowPartyOverheadInformation = @"Show party member overhead information";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString ShowPlayerOverheadHpBar = @"Show players overhead HP bar";
@@ -1953,9 +1953,6 @@ namespace Intersect.Client.Localization
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString TypewriterText = @"Typewriter Text";
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString UIScale = @"UI Scale";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString UnlimitedFps = @"No Limit";
