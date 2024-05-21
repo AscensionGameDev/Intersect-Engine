@@ -1101,12 +1101,11 @@ namespace Intersect.Client.Localization
 
         public partial struct General
         {
-
-            public static LocalizedString none = @"None";
-
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString MapItemStackable = @"{01} {00}";
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString None = @"None";
         }
 
         public partial struct Guilds

@@ -114,7 +114,7 @@ namespace Intersect.Client.Interface.Game.Chat
                 mTabButtons.Add((ChatboxTab)btn, new Button(mChatboxWindow, $"{(ChatboxTab)btn}TabButton"));
                 // Do we have a localized string for this chat tab? If not assign none as the text.
                 LocalizedString name;
-                mTabButtons[(ChatboxTab)btn].Text = Strings.Chatbox.ChatTabButtons.TryGetValue((ChatboxTab)btn, out name) ? name : Strings.General.none;
+                mTabButtons[(ChatboxTab)btn].Text = Strings.Chatbox.ChatTabButtons.TryGetValue((ChatboxTab)btn, out name) ? name : Strings.General.None;
                 mTabButtons[(ChatboxTab)btn].Clicked += TabButtonClicked;
                 // We'll be using the user data to determine which tab we've clicked later.
                 mTabButtons[(ChatboxTab)btn].UserData = (ChatboxTab)btn;
