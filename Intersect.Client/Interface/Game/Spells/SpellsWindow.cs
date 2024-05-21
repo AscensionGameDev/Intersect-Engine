@@ -43,7 +43,7 @@ namespace Intersect.Client.Interface.Game.Spells
         //Init
         public SpellsWindow(Canvas gameCanvas)
         {
-            mSpellWindow = new WindowControl(gameCanvas, Strings.Spells.title, false, "SpellsWindow");
+            mSpellWindow = new WindowControl(gameCanvas, Strings.Spells.Title, false, "SpellsWindow");
             mSpellWindow.DisableResizing();
 
             mItemContainer = new ScrollControl(mSpellWindow, "SpellsContainer");

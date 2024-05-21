@@ -2391,13 +2391,14 @@ namespace Intersect.Client.Localization
 
         public partial struct Spells
         {
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString ForgetSpell = @"Forget Spell";
 
-            public static LocalizedString forgetspell = @"Forget Spell";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString ForgetSpellPrompt = @"Are you sure you want to forget {00}?";
 
-            public static LocalizedString forgetspellprompt = @"Are you sure you want to forget {00}?";
-
-            public static LocalizedString title = @"Spells";
-
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Title = @"Spells";
         }
 
         public partial struct Trading

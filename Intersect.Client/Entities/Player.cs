@@ -1180,8 +1180,8 @@ namespace Intersect.Client.Entities
             if (SpellBase.TryGet(spellSlot.Id, out var spellDescriptor))
             {
                 InputBox.Open(
-                    title: Strings.Spells.forgetspell,
-                    prompt: Strings.Spells.forgetspellprompt.ToString(spellDescriptor.Name),
+                    title: Strings.Spells.ForgetSpell,
+                    prompt: Strings.Spells.ForgetSpellPrompt.ToString(spellDescriptor.Name),
                     modal: true,
                     inputType: InputBox.InputType.YesNo,
                     onSuccess: ForgetSpellInputBoxOkay,
