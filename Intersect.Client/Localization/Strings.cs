@@ -1022,6 +1022,7 @@ namespace Intersect.Client.Localization
         public partial struct EventWindow
         {
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString Continue = @"Continue";
 
         }
