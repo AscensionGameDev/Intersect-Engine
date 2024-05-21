@@ -2403,34 +2403,45 @@ namespace Intersect.Client.Localization
 
         public partial struct Trading
         {
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Accept = @"Accept";
 
-            public static LocalizedString accept = @"Accept";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString InFight = @"You are currently fighting!";
 
-            public static LocalizedString infight = @"You are currently fighting!";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString OfferItem = @"Offer Item";
 
-            public static LocalizedString offeritem = @"Offer Item";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString OfferItemPrompt = @"How many units of {00} would you like to offer?";
 
-            public static LocalizedString offeritemprompt = @"How many/much {00} would you like to offer?";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Pending = @"Pending";
 
-            public static LocalizedString pending = @"Pending";
-
-            public static LocalizedString requestprompt =
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString RequestPrompt =
                 @"{00} has invited you to trade items with them. Do you accept?";
 
-            public static LocalizedString revokeitem = @"Revoke Item";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString RevokeItem = @"Revoke Item";
 
-            public static LocalizedString revokeitemprompt = @"How many/much {00} would you like to revoke?";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString RevokeItemPrompt = @"How many units of {00} would you like to revoke?";
 
-            public static LocalizedString theiroffer = @"Their Offer:";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString TheirOffer = @"Their Offer:";
 
-            public static LocalizedString title = @"Trading with {00}";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Title = @"Trading with {00}";
 
-            public static LocalizedString traderequest = @"Trading Invite";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString TradeRequest = @"Trading Invite";
 
-            public static LocalizedString value = @"Value: {00}";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Value = @"Value: {00}";
 
-            public static LocalizedString youroffer = @"Your Offer:";
-
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString YourOffer = @"Your Offer:";
         }
 
         public partial struct EscapeMenu

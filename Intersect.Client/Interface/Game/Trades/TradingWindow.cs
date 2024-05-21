@@ -43,7 +43,7 @@ namespace Intersect.Client.Interface.Game.Trades
         public TradingWindow(Canvas gameCanvas, string traderName)
         {
             mTradeWindow = new WindowControl(
-                gameCanvas, Strings.Trading.title.ToString(traderName), false, "TradeWindow"
+                gameCanvas, Strings.Trading.Title.ToString(traderName), false, "TradeWindow"
             );
 
             mTradeWindow.DisableResizing();
@@ -51,16 +51,16 @@ namespace Intersect.Client.Interface.Game.Trades
 
             mYourOffer = new Label(mTradeWindow, "YourOfferLabel")
             {
-                Text = Strings.Trading.youroffer
+                Text = Strings.Trading.YourOffer
             };
 
             mTheirOffer = new Label(mTradeWindow, "TheirOfferLabel")
             {
-                Text = Strings.Trading.theiroffer
+                Text = Strings.Trading.TheirOffer
             };
 
             mTrade = new Button(mTradeWindow, "TradeButton");
-            mTrade.SetText(Strings.Trading.accept);
+            mTrade.SetText(Strings.Trading.Accept);
             mTrade.Clicked += trade_Clicked;
 
             for (var i = 0; i < 2; i++)
@@ -178,7 +178,7 @@ namespace Intersect.Client.Interface.Game.Trades
                     }
                 }
 
-                TradeSegment[n].GoldValue.Text = Strings.Trading.value.ToString(g);
+                TradeSegment[n].GoldValue.Text = Strings.Trading.Value.ToString(g);
                 g = 0;
             }
         }
@@ -199,7 +199,7 @@ namespace Intersect.Client.Interface.Game.Trades
         //Trade the item
         void trade_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            mTrade.Text = Strings.Trading.pending;
+            mTrade.Text = Strings.Trading.Pending;
             mTrade.IsDisabled = true;
             PacketSender.SendAcceptTrade();
         }

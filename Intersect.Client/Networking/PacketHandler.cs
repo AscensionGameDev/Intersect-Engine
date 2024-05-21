@@ -1959,7 +1959,7 @@ namespace Intersect.Client.Networking
         public void HandlePacket(IPacketSender packetSender, TradeRequestPacket packet)
         {
             var iBox = new InputBox(
-                Strings.Trading.traderequest, Strings.Trading.requestprompt.ToString(packet.PartnerName), true,
+                Strings.Trading.TradeRequest, Strings.Trading.RequestPrompt.ToString(packet.PartnerName), true,
                 InputBox.InputType.YesNo, PacketSender.SendTradeRequestAccept, PacketSender.SendTradeRequestDecline,
                 packet.PartnerId
             );

@@ -46,7 +46,7 @@ namespace Intersect.Client.Interface.Game.Trades
 
             GoldValue = new Label(tradeWindow, prefix + "GoldValue")
             {
-                Text = Strings.Trading.value.ToString(0)
+                Text = Strings.Trading.Value.ToString(0)
             };
         }
 

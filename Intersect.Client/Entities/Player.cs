@@ -1106,8 +1106,8 @@ namespace Intersect.Client.Entities
             }
 
             InputBox.Open(
-                title: Strings.Trading.offeritem,
-                prompt: Strings.Trading.offeritemprompt.ToString(tradingItem.Name),
+                title: Strings.Trading.OfferItem,
+                prompt: Strings.Trading.OfferItemPrompt.ToString(tradingItem.Name),
                 modal: true,
                 inputType: InputBox.InputType.NumericSliderInput,
                 onSuccess: TradeItemInputBoxOkay,
@@ -1144,8 +1144,8 @@ namespace Intersect.Client.Entities
             }
 
             InputBox.Open(
-                title: Strings.Trading.revokeitem,
-                prompt: Strings.Trading.revokeitemprompt.ToString(revokedItem.Name),
+                title: Strings.Trading.RevokeItem,
+                prompt: Strings.Trading.RevokeItemPrompt.ToString(revokedItem.Name),
                 modal: true,
                 inputType: InputBox.InputType.NumericSliderInput,
                 onSuccess: RevokeItemInputBoxOkay,
