@@ -2148,25 +2148,32 @@ namespace Intersect.Client.Localization
 
         public partial struct Server
         {
-
-            public static LocalizedString StatusLabel = @"Server Status: {00}";
-
-            public static LocalizedString Online = @"Online";
-
-            public static LocalizedString Offline = @"Offline";
-
-            public static LocalizedString Failed = @"Network Error";
-
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString Connecting = @"Connecting...";
 
-            public static LocalizedString Unknown = @"Unknown";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Failed = @"Network Error";
 
-            public static LocalizedString VersionMismatch = @"Bad Version";
-
-            public static LocalizedString ServerFull = @"Full";
-
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString HandshakeFailure = @"Handshake Error";
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Offline = @"Offline";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Online = @"Online";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString ServerFull = @"Server is Full";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString StatusLabel = @"Server Status: {00}";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Unknown = @"Unknown";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString VersionMismatch = @"Version Mismatch";
         }
 
         public partial struct Shop
