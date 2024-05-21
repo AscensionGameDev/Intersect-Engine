@@ -2020,29 +2020,38 @@ namespace Intersect.Client.Localization
 
         public partial struct QuestLog
         {
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Abandon = @"Abandon";
 
-            public static LocalizedString abandon = @"Abandon";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString AbandonPrompt = @"Are you sure that you want to quit the quest ""{00}""?";
 
-            public static LocalizedString abandonprompt = @"Are you sure that you want to quit the quest ""{00}""?";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString AbandonTitle = @"Abandon Quest: {00}";
 
-            public static LocalizedString abandontitle = @"Abandon Quest: {00}";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Back = @"Back";
 
-            public static LocalizedString back = @"Back";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Completed = @"Quest Completed";
 
-            public static LocalizedString completed = @"Quest Completed";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString CurrentTask = @"Current Task:";
 
-            public static LocalizedString currenttask = @"Current Task:";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString InProgress = @"Quest In Progress";
 
-            public static LocalizedString inprogress = @"Quest In Progress";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString NotStarted = @"Quest Not Started";
 
-            public static LocalizedString notstarted = @"Quest Not Started";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString TaskItem = @"{00}/{01} {02}(s) gathered.";
 
-            public static LocalizedString taskitem = @"{00}/{01} {02}(s) gathered.";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString TaskNpc = @"{00}/{01} {02}(s) slain.";
 
-            public static LocalizedString tasknpc = @"{00}/{01} {02}(s) slain.";
-
-            public static LocalizedString title = @"Quest Log";
-
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Title = @"Quest Log";
         }
 
         public partial struct QuestOffer
