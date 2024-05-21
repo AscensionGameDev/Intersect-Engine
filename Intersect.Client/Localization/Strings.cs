@@ -2081,25 +2081,32 @@ namespace Intersect.Client.Localization
 
         public partial struct Registration
         {
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Back = @"Back";
 
-            public static LocalizedString back = @"Back";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString ConfirmPassword = @"Confirm Password:";
 
-            public static LocalizedString confirmpass = @"Confirm Password:";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Email = @"Email:";
 
-            public static LocalizedString email = @"Email:";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString EmailInvalid = @"The email is invalid.";
 
-            public static LocalizedString emailinvalid = @"Email is invalid.";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Password = @"Password:";
 
-            public static LocalizedString password = @"Password:";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString PasswordMismatch = @"The passwords do not match.";
 
-            public static LocalizedString passwordmatch = @"Passwords didn't match!";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Register = @"Register";
 
-            public static LocalizedString register = @"Register";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Title = @"Register";
 
-            public static LocalizedString title = @"Register";
-
-            public static LocalizedString username = @"Username:";
-
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Username = @"Username:";
         }
 
         public partial struct ResetPass

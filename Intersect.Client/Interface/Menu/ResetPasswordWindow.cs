@@ -208,7 +208,7 @@ namespace Intersect.Client.Interface.Menu
 
             if (mPasswordTextbox.Text != mPasswordTextbox2.Text)
             {
-                Interface.ShowError(Strings.Registration.passwordmatch);
+                Interface.ShowError(Strings.Registration.PasswordMismatch);
                 return;
             }
 
