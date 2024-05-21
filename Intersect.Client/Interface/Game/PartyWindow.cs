@@ -49,17 +49,17 @@ namespace Intersect.Client.Interface.Game
         //Init
         public PartyWindow(Canvas gameCanvas)
         {
-            mPartyWindow = new WindowControl(gameCanvas, Strings.Parties.title, false, "PartyWindow");
+            mPartyWindow = new WindowControl(gameCanvas, Strings.Parties.Title, false, "PartyWindow");
             mPartyWindow.DisableResizing();
 
             //Add the icon representing party leader (ALWAYS member 1 in the party list)
             mLeader = new ImagePanel(mPartyWindow, "LeaderIcon");
-            mLeader.SetToolTipText(Strings.Parties.leadertip);
+            mLeader.SetToolTipText(Strings.Parties.LeaderTip);
             mLeader.Hide();
 
             mLeaderText = new Label(mPartyWindow, "LeaderText");
             mLeaderText.SetTextColor(new Color(0, 0, 0, 0), Label.ControlState.Normal);
-            mLeaderText.Text = Strings.Parties.leader;
+            mLeaderText.Text = Strings.Parties.Leader;
             mLeaderText.Hide();
 
             if (Globals.Me.Party.Count > 0)
@@ -79,7 +79,7 @@ namespace Intersect.Client.Interface.Game
                 mLblnames.Add(new Label(mPartyWindow, "MemberName" + i));
                 if (i < Globals.Me.Party.Count)
                 {
-                    mLblnames[i].Text = Strings.Parties.name.ToString(
+                    mLblnames[i].Text = Strings.Parties.Name.ToString(
                         Globals.Me.Party[i].Name, Globals.Me.Party[i].Level
                     );
                 }
@@ -94,7 +94,7 @@ namespace Intersect.Client.Interface.Game
                 mHpLabel.Add(new Label(mPartyWindow, "HealthLabel" + i));
                 mHpLabel[i].Hide();
                 mHpLabel[i].SetTextColor(new Color(0, 0, 0, 0), Label.ControlState.Normal);
-                mHpLabel[i].Text = Strings.Parties.vital0;
+                mHpLabel[i].Text = Strings.Parties.Vital0;
                 mHpValue.Add(new Label(mPartyWindow, "HealthValue" + i));
                 mHpValue[i].Hide();
                 mHpValue[i].SetTextColor(new Color(0, 0, 0, 0), Label.ControlState.Normal);
@@ -112,7 +112,7 @@ namespace Intersect.Client.Interface.Game
                 mMpLabel.Add(new Label(mPartyWindow, "ManaLabel" + i));
                 mMpLabel[i].Hide();
                 mMpLabel[i].SetTextColor(new Color(0, 0, 0, 0), Label.ControlState.Normal);
-                mMpLabel[i].Text = Strings.Parties.vital1;
+                mMpLabel[i].Text = Strings.Parties.Vital1;
                 mMpValue.Add(new Label(mPartyWindow, "ManaValue" + i));
                 mMpValue[i].Hide();
                 mMpValue[i].SetTextColor(new Color(0, 0, 0, 0), Label.ControlState.Normal);
@@ -127,12 +127,12 @@ namespace Intersect.Client.Interface.Game
                 {
                     mKickButtons.Add(new Button(mPartyWindow, "KickButton" + i));
                     mKickButtons[i].Clicked += kick_Clicked;
-                    mKickButtons[i].Text = Strings.Parties.kicklbl;
+                    mKickButtons[i].Text = Strings.Parties.KickLabel;
                     if (i < Globals.Me.Party.Count)
                     {
                         mKickButtons[i]
                             .SetToolTipText(
-                                Strings.Parties.kick.ToString(Globals.Entities[Globals.Me.Party[i].Id].Name)
+                                Strings.Parties.Kick.ToString(Globals.Entities[Globals.Me.Party[i].Id].Name)
                             );
                     }
                     else
@@ -154,8 +154,8 @@ namespace Intersect.Client.Interface.Game
             }
 
             mLeaveButton = new Button(mPartyWindow, "LeavePartyButton");
-            mLeaveButton.Text = Strings.Parties.leave;
-            mLeaveButton.SetToolTipText(Strings.Parties.leavetip);
+            mLeaveButton.Text = Strings.Parties.Leave;
+            mLeaveButton.SetToolTipText(Strings.Parties.LeaveTip);
             mLeaveButton.Clicked += leave_Clicked;
 
             mPartyWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
@@ -207,7 +207,7 @@ namespace Intersect.Client.Interface.Game
 
                         var nameLabel = mLblnames[i];
 
-                        nameLabel.Text = Strings.Parties.name.ToString(
+                        nameLabel.Text = Strings.Parties.Name.ToString(
                             Globals.Me.Party[i].Name, Globals.Me.Party[i].Level
                         );
 
@@ -237,7 +237,7 @@ namespace Intersect.Client.Interface.Game
                                 );
                         }
 
-                        mHpValue[i].Text = Strings.Parties.vital0val.ToString(
+                        mHpValue[i].Text = Strings.Parties.Vital0Value.ToString(
                             Globals.Me.Party[i].Vital[(int) Vital.Health],
                             Globals.Me.Party[i].MaxVital[(int) Vital.Health]
                         );
@@ -265,7 +265,7 @@ namespace Intersect.Client.Interface.Game
                                 );
                         }
 
-                        mMpValue[i].Text = Strings.Parties.vital1val.ToString(
+                        mMpValue[i].Text = Strings.Parties.Vital1Value.ToString(
                             Globals.Me.Party[i].Vital[(int) Vital.Mana],
                             Globals.Me.Party[i].MaxVital[(int) Vital.Mana]
                         );
@@ -279,7 +279,7 @@ namespace Intersect.Client.Interface.Game
                         if (Globals.Me.Party[0].Id == Globals.Me.Id && i > 0)
                         {
                             mKickButtons[i].Show();
-                            mKickButtons[i].SetToolTipText(Strings.Parties.kick.ToString(Globals.Me.Party[i].Name));
+                            mKickButtons[i].SetToolTipText(Strings.Parties.Kick.ToString(Globals.Me.Party[i].Name));
                         }
                     }
                     else

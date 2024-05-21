@@ -1972,36 +1972,50 @@ namespace Intersect.Client.Localization
 
         public partial struct Parties
         {
-            public static LocalizedString infight = @"You are currently fighting!";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString InFight = @"You are currently fighting!";
 
-            public static LocalizedString inviteprompt = @"{00} has invited you to their party. Do you accept?";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString InvitePrompt = @"{00} has invited you to their party. Do you accept?";
 
-            public static LocalizedString kick = @"Kick {00}";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Kick = @"Kick {00}";
 
-            public static LocalizedString kicklbl = @"Kick";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString KickLabel = @"Kick";
 
-            public static LocalizedString leader = @"Leader";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Leader = @"Leader";
 
-            public static LocalizedString leadertip = @"Party Leader";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString LeaderTip = @"Party Leader";
 
-            public static LocalizedString leave = @"Leave Party";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Leave = @"Leave Party";
 
-            public static LocalizedString leavetip = @"Leave Tip";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString LeaveTip = @"Leave Tip";
 
-            public static LocalizedString name = @"{00} - Lv. {01}";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Name = @"{00} - Lv. {01}";
 
-            public static LocalizedString partyinvite = @"Party Invite";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString PartyInvite = @"Party Invite";
 
-            public static LocalizedString title = @"Party";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Title = @"Party";
 
-            public static LocalizedString vital0 = @"HP:";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Vital0 = @"HP:";
 
-            public static LocalizedString vital0val = @"{00} / {01}";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Vital0Value = @"{00} / {01}";
 
-            public static LocalizedString vital1 = @"MP:";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Vital1 = @"MP:";
 
-            public static LocalizedString vital1val = @"{00} / {01}";
-
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Vital1Value = @"{00} / {01}";
         }
 
         public partial struct QuestLog

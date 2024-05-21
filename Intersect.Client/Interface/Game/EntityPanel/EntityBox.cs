@@ -1005,7 +1005,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                 }
                 else
                 {
-                    PacketSender.SendChatMsg(Strings.Parties.infight.ToString(), 4);
+                    PacketSender.SendChatMsg(Strings.Parties.InFight.ToString(), 4);
                 }
             }
         }
