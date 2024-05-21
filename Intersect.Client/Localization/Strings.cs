@@ -36,21 +36,21 @@ namespace Intersect.Client.Localization
                 else if (value >= 1000 && value <= 999999)
                 {
                     returnVal = value / 1000.0;
-                    postfix = Numbers.thousands;
+                    postfix = Numbers.Thousands;
                 }
 
                 // millions
                 else if (value >= 1000000 && value <= 999999999)
                 {
                     returnVal = value / 1000000.0;
-                    postfix = Numbers.millions;
+                    postfix = Numbers.Millions;
                 }
 
                 // billions
                 else if (value >= 1000000000 && value <= 999999999999)
                 {
                     returnVal = value / 1000000000.0;
-                    postfix = Numbers.billions;
+                    postfix = Numbers.Billions;
                 }
                 else
                 {
@@ -70,7 +70,7 @@ namespace Intersect.Client.Localization
                     return returnVal.ToString("F1")
                                .TrimEnd(mQuantityTrimChars)
                                .ToString()
-                               .Replace(".", Numbers.dec) +
+                               .Replace(".", Numbers.Decimal) +
                            postfix;
                 }
             }
@@ -2467,17 +2467,20 @@ namespace Intersect.Client.Localization
 
         public partial struct Numbers
         {
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Billions = "b";
 
-            public static LocalizedString thousands = "k";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Comma = ",";
 
-            public static LocalizedString millions = "m";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Decimal = ".";
 
-            public static LocalizedString billions = "b";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Millions = "m";
 
-            public static LocalizedString dec = ".";
-
-            public static LocalizedString comma = ",";
-
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Thousands = "k";
         }
 
         public partial struct Update
