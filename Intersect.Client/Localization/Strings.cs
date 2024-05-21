@@ -1357,16 +1357,16 @@ namespace Intersect.Client.Localization
         public partial struct ChatContextMenu
         {
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString PM = @"PM {00}";
+            public static LocalizedString FriendInvite = @"Send Friend request to {00}";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString FriendInvite = @"Friend Invite {00}";
+            public static LocalizedString GuildInvite = @"Invite {00} to Guild";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString PartyInvite = @"Party Invite {00}";
+            public static LocalizedString PartyInvite = @"Invite {00} to Party";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString GuildInvite = @"Guild Invite {00}";
+            public static LocalizedString PM = @"Send Private Message to {00}";
         }
 
         public partial struct ShopContextMenu
