@@ -93,32 +93,32 @@ namespace Intersect.Client.Interface.Game
 
             mInventoryBackground = new ImagePanel(mMenuContainer, "InventoryContainer");
             mInventoryButton = new Button(mInventoryBackground, "InventoryButton");
-            mInventoryButton.SetToolTipText(Strings.GameMenu.items);
+            mInventoryButton.SetToolTipText(Strings.GameMenu.Items);
             mInventoryButton.Clicked += InventoryButton_Clicked;
 
             mSpellsBackground = new ImagePanel(mMenuContainer, "SpellsContainer");
             mSpellsButton = new Button(mSpellsBackground, "SpellsButton");
-            mSpellsButton.SetToolTipText(Strings.GameMenu.spells);
+            mSpellsButton.SetToolTipText(Strings.GameMenu.Spells);
             mSpellsButton.Clicked += SpellsButton_Clicked;
 
             mCharacterBackground = new ImagePanel(mMenuContainer, "CharacterContainer");
             mCharacterButton = new Button(mCharacterBackground, "CharacterButton");
-            mCharacterButton.SetToolTipText(Strings.GameMenu.character);
+            mCharacterButton.SetToolTipText(Strings.GameMenu.Character);
             mCharacterButton.Clicked += CharacterButton_Clicked;
 
             mQuestsBackground = new ImagePanel(mMenuContainer, "QuestsContainer");
             mQuestsButton = new Button(mQuestsBackground, "QuestsButton");
-            mQuestsButton.SetToolTipText(Strings.GameMenu.quest);
+            mQuestsButton.SetToolTipText(Strings.GameMenu.Quest);
             mQuestsButton.Clicked += QuestBtn_Clicked;
 
             mFriendsBackground = new ImagePanel(mMenuContainer, "FriendsContainer");
             mFriendsButton = new Button(mFriendsBackground, "FriendsButton");
-            mFriendsButton.SetToolTipText(Strings.GameMenu.friends);
+            mFriendsButton.SetToolTipText(Strings.GameMenu.Friends);
             mFriendsButton.Clicked += FriendsBtn_Clicked;
 
             mPartyBackground = new ImagePanel(mMenuContainer, "PartyContainer");
             mPartyButton = new Button(mPartyBackground, "PartyButton");
-            mPartyButton.SetToolTipText(Strings.GameMenu.party);
+            mPartyButton.SetToolTipText(Strings.GameMenu.Party);
             mPartyButton.Clicked += PartyBtn_Clicked;
 
             mGuildBackground = new ImagePanel(mMenuContainer, "GuildContainer");

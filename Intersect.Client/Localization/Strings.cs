@@ -1077,21 +1077,26 @@ namespace Intersect.Client.Localization
 
         public partial struct GameMenu
         {
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Character = @"Character Information";
 
-            public static LocalizedString character = @"Character Info";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Friends = @"Friends";
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Items = @"Inventory";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString Menu = @"Open Menu";
 
-            public static LocalizedString friends = @"Friends";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Party = @"Party";
 
-            public static LocalizedString items = @"Inventory";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Quest = @"Quest Log";
 
-            public static LocalizedString party = @"Party";
-
-            public static LocalizedString quest = @"Quest Log";
-
-            public static LocalizedString spells = @"Spell Book";
-
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Spells = @"Spell Book";
         }
 
         public partial struct General
