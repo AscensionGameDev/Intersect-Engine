@@ -1051,13 +1051,13 @@ namespace Intersect.Client.Localization
             public static LocalizedString AddFriend = @"Add Friend";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString AddFriendTitle = @"Add Friend";
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString AddFriendPrompt = @"Who would you like to add as a friend?";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString InFight = @"You are currently fighting!";
+            public static LocalizedString InFight = @"You are currently in a fight!";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Offline = @"Offline";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString RemoveFriend = @"Remove Friend";
@@ -1073,10 +1073,6 @@ namespace Intersect.Client.Localization
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString Title = @"Friends";
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString Offline = @"Offline";
-
         }
 
         public partial struct GameMenu
