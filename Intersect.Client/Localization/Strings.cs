@@ -1772,23 +1772,28 @@ namespace Intersect.Client.Localization
 
         }
 
-        public partial struct Login
+        public partial struct LoginWindow
         {
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Back = @"Back";
 
-            public static LocalizedString back = @"Back";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString ForgotPassword = @"Forgot Password?";
 
-            public static LocalizedString forgot = @"Forgot Password?";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Login = @"Login";
 
-            public static LocalizedString login = @"Login";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Password = @"Password:";
 
-            public static LocalizedString password = @"Password:";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString SavePassword = @"Save Password";
 
-            public static LocalizedString savepass = @"Save Password";
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Title = @"Login";
 
-            public static LocalizedString title = @"Login";
-
-            public static LocalizedString username = @"Username:";
-
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Username = @"Username:";
         }
 
         public partial struct Main
