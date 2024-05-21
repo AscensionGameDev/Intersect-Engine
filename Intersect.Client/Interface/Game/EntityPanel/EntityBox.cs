@@ -183,7 +183,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
 
             GuildLabel = new Button(EntityInfoPanel, "GuildButton");
             GuildLabel.SetText(Strings.Guilds.Guild);
-            GuildLabel.SetToolTipText(Strings.Guilds.guildtip.ToString(MyEntity?.Name));
+            GuildLabel.SetToolTipText(Strings.Guilds.GuildTip.ToString(MyEntity?.Name));
             GuildLabel.Clicked += guildRequest_Clicked;
             GuildLabel.IsHidden = true;
 
