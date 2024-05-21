@@ -1798,9 +1798,8 @@ namespace Intersect.Client.Localization
 
         public partial struct Main
         {
-
-            public static LocalizedString gamename = @"Intersect Client";
-
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString GameName = @"Intersect Client";
         }
 
         public partial struct MainMenu

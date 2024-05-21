@@ -440,7 +440,7 @@ namespace Intersect.Client.MonoGame
                     break;
 
                 case UpdateStatus.Restart:
-                    status = Strings.Update.Restart.ToString(Strings.Main.gamename);
+                    status = Strings.Update.Restart.ToString(Strings.Main.GameName);
                     progressPercent = 100;
                     progress = Strings.Update.Percent.ToString(100);
                     break;
