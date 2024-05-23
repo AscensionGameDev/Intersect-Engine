@@ -62,13 +62,13 @@ namespace Intersect.Client.Interface.Menu
 
             //Menu Header
             mLoginHeader = new Label(mLoginWindow, "LoginHeader");
-            mLoginHeader.SetText(Strings.Login.title);
+            mLoginHeader.SetText(Strings.LoginWindow.Title);
 
             mUsernameBackground = new ImagePanel(mLoginWindow, "UsernamePanel");
 
             //Login Username Label
             mUsernameLabel = new Label(mUsernameBackground, "UsernameLabel");
-            mUsernameLabel.SetText(Strings.Login.username);
+            mUsernameLabel.SetText(Strings.LoginWindow.Username);
 
             //Login Username Textbox
             mUsernameTextbox = new TextBox(mUsernameBackground, "UsernameField");
@@ -79,7 +79,7 @@ namespace Intersect.Client.Interface.Menu
 
             //Login Password Label
             mPasswordLabel = new Label(mPasswordBackground, "PasswordLabel");
-            mPasswordLabel.SetText(Strings.Login.password);
+            mPasswordLabel.SetText(Strings.LoginWindow.Password);
 
             //Login Password Textbox
             mPasswordTextbox = new TextBoxPassword(mPasswordBackground, "PasswordField");
@@ -91,7 +91,7 @@ namespace Intersect.Client.Interface.Menu
             mSavePassChk = new LabeledCheckBox(mLoginWindow, "SavePassCheckbox")
             {
                 // IsTabable = true,
-                Text = Strings.Login.savepass,
+                Text = Strings.LoginWindow.SavePassword,
             };
 
             //Forgot Password Button
@@ -99,7 +99,7 @@ namespace Intersect.Client.Interface.Menu
             {
                 IsHidden = true,
                 // IsTabable = true,
-                Text = Strings.Login.forgot,
+                Text = Strings.LoginWindow.ForgotPassword,
             };
             mForgotPassswordButton.Clicked += mForgotPassswordButton_Clicked;
 
@@ -107,7 +107,7 @@ namespace Intersect.Client.Interface.Menu
             mLoginBtn = new Button(mLoginWindow, "LoginButton")
             {
                 // IsTabable = true,
-                Text = Strings.Login.login,
+                Text = Strings.LoginWindow.Login,
             };
             mLoginBtn.Clicked += LoginBtn_Clicked;
 
@@ -115,7 +115,7 @@ namespace Intersect.Client.Interface.Menu
             mBackBtn = new Button(mLoginWindow, "BackButton")
             {
                 // IsTabable = true,
-                Text = Strings.Login.back,
+                Text = Strings.LoginWindow.Back,
             };
             mBackBtn.Clicked += BackBtn_Clicked;
 
@@ -232,21 +232,21 @@ namespace Intersect.Client.Interface.Menu
 
             if (!Networking.Network.IsConnected)
             {
-                Interface.ShowError(Strings.Errors.notconnected);
+                Interface.ShowError(Strings.Errors.NotConnected);
                 return;
             }
 
-            if (!FieldChecking.IsValidUsername(mUsernameTextbox?.Text, Strings.Regex.username))
+            if (!FieldChecking.IsValidUsername(mUsernameTextbox?.Text, Strings.Regex.Username))
             {
-                Interface.ShowError(Strings.Errors.usernameinvalid);
+                Interface.ShowError(Strings.Errors.UsernameInvalid);
                 return;
             }
 
-            if (!FieldChecking.IsValidPassword(mPasswordTextbox?.Text, Strings.Regex.password))
+            if (!FieldChecking.IsValidPassword(mPasswordTextbox?.Text, Strings.Regex.Password))
             {
                 if (!mUseSavedPass)
                 {
-                    Interface.ShowError(Strings.Errors.passwordinvalid);
+                    Interface.ShowError(Strings.Errors.PasswordInvalid);
                     return;
                 }
             }

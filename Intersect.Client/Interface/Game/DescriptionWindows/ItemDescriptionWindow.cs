@@ -466,7 +466,7 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
             // Display our amount, but only if we are stackable and have more than one.
             if (mItem.IsStackable && mAmount > 1)
             {
-                data.Add(new Tuple<string, string>(Strings.ItemDescription.Amount, mAmount.ToString("N0").Replace(",", Strings.Numbers.comma)));
+                data.Add(new Tuple<string, string>(Strings.ItemDescription.Amount, mAmount.ToString("N0").Replace(",", Strings.Numbers.Comma)));
             }
 
             // Display item drop chance if configured.

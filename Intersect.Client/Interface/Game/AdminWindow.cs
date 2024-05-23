@@ -86,7 +86,7 @@ namespace Intersect.Client.Interface.Game
         //Init
         public AdminWindow(Base gameCanvas)
         {
-            mAdminWindow = new WindowControl(gameCanvas, Strings.Admin.title, false, nameof(AdminWindow));
+            mAdminWindow = new WindowControl(gameCanvas, Strings.Admin.Title, false, nameof(AdminWindow));
             mAdminWindow.SetPosition(
                 (Graphics.Renderer.ScreenWidth - mAdminWindow.Width) / 2,
                 (Graphics.Renderer.ScreenHeight - mAdminWindow.Height) / 2
@@ -96,25 +96,25 @@ namespace Intersect.Client.Interface.Game
             mAdminWindow.Padding = Padding.Zero;
 
             LabelName = new Label(mAdminWindow, nameof(LabelName));
-            LabelName.Text = Strings.Admin.name;
+            LabelName.Text = Strings.Admin.Name;
             TextboxName = new TextBox(mAdminWindow, nameof(TextboxName));
             Interface.FocusElements.Add(TextboxName);
 
             LabelAccess = new Label(mAdminWindow, nameof(LabelAccess));
-            LabelAccess.Text = Strings.Admin.access;
+            LabelAccess.Text = Strings.Admin.Access;
             DropdownAccess = new ComboBox(mAdminWindow, nameof(DropdownAccess));
-            DropdownAccess.AddItem(Strings.Admin.access0).UserData = "None";
-            DropdownAccess.AddItem(Strings.Admin.access1).UserData = "Moderator";
-            DropdownAccess.AddItem(Strings.Admin.access2).UserData = "Admin";
-            ButtonSetPower = new Button(mAdminWindow, nameof(ButtonSetPower)) { Text = Strings.Admin.setpower };
+            DropdownAccess.AddItem(Strings.Admin.Access0).UserData = "None";
+            DropdownAccess.AddItem(Strings.Admin.Access1).UserData = "Moderator";
+            DropdownAccess.AddItem(Strings.Admin.Access2).UserData = "Admin";
+            ButtonSetPower = new Button(mAdminWindow, nameof(ButtonSetPower)) { Text = Strings.Admin.SetPower };
             ButtonSetPower.Clicked += _setPowerButton_Clicked;
 
             ButtonWarpToMe = new Button(mAdminWindow, nameof(ButtonWarpToMe));
-            ButtonWarpToMe.Text = Strings.Admin.warp2me;
+            ButtonWarpToMe.Text = Strings.Admin.Warp2Me;
             ButtonWarpToMe.Clicked += _warpToMeButton_Clicked;
 
             ButtonWarpMeTo = new Button(mAdminWindow, nameof(ButtonWarpMeTo));
-            ButtonWarpMeTo.Text = Strings.Admin.warpme2;
+            ButtonWarpMeTo.Text = Strings.Admin.WarpMe2;
             ButtonWarpMeTo.Clicked += _warpMeToButton_Clicked;
 
             ButtonOverworldReturn = new Button(mAdminWindow, nameof(ButtonOverworldReturn));
@@ -122,33 +122,33 @@ namespace Intersect.Client.Interface.Game
             ButtonOverworldReturn.Clicked += _overWorldReturn_Clicked;
 
             ButtonKick = new Button(mAdminWindow, nameof(ButtonKick));
-            ButtonKick.Text = Strings.Admin.kick;
+            ButtonKick.Text = Strings.Admin.Kick;
             ButtonKick.Clicked += _kickButton_Clicked;
 
             ButtonKill = new Button(mAdminWindow, nameof(ButtonKill));
-            ButtonKill.Text = Strings.Admin.kill;
+            ButtonKill.Text = Strings.Admin.Kill;
             ButtonKill.Clicked += _killButton_Clicked;
 
             ButtonBan = new Button(mAdminWindow, nameof(ButtonBan));
-            ButtonBan.Text = Strings.Admin.ban;
+            ButtonBan.Text = Strings.Admin.Ban;
             ButtonBan.Clicked += _banButton_Clicked;
 
             ButtonUnban = new Button(mAdminWindow, nameof(ButtonUnban));
-            ButtonUnban.Text = Strings.Admin.unban;
+            ButtonUnban.Text = Strings.Admin.Unban;
             ButtonUnban.Clicked += _unbanButton_Clicked;
 
             ButtonMute = new Button(mAdminWindow, nameof(ButtonMute));
-            ButtonMute.Text = Strings.Admin.mute;
+            ButtonMute.Text = Strings.Admin.Mute;
             ButtonMute.Clicked += _muteButton_Clicked;
 
             ButtonUnmute = new Button(mAdminWindow, nameof(ButtonUnmute));
-            ButtonUnmute.Text = Strings.Admin.unmute;
+            ButtonUnmute.Text = Strings.Admin.Unmute;
             ButtonUnmute.Clicked += _unmuteButton_Clicked;
 
             LabelSprite = new Label(mAdminWindow, nameof(LabelSprite));
-            LabelSprite.Text = Strings.Admin.sprite;
+            LabelSprite.Text = Strings.Admin.Sprite;
             DropdownSprite = new ComboBox(mAdminWindow, nameof(DropdownSprite));
-            DropdownSprite.AddItem(Strings.Admin.none);
+            DropdownSprite.AddItem(Strings.Admin.None);
             var sprites = Globals.ContentManager.GetTextureNames(Framework.Content.TextureType.Entity);
             Array.Sort(sprites, new AlphanumComparatorFast());
             foreach (var sprite in sprites)
@@ -157,15 +157,15 @@ namespace Intersect.Client.Interface.Game
             }
             DropdownSprite.ItemSelected += _spriteDropdown_ItemSelected;
             ButtonSetSprite = new Button(mAdminWindow, nameof(ButtonSetSprite));
-            ButtonSetSprite.Text = Strings.Admin.setsprite;
+            ButtonSetSprite.Text = Strings.Admin.SetSprite;
             ButtonSetSprite.Clicked += _setSpriteButton_Clicked;
             PanelSprite = new ImagePanel(mAdminWindow, nameof(PanelSprite));
             SpritePanel = new ImagePanel(PanelSprite);
 
             LabelFace = new Label(mAdminWindow, nameof(LabelFace));
-            LabelFace.Text = Strings.Admin.face;
+            LabelFace.Text = Strings.Admin.Face;
             DropdownFace = new ComboBox(mAdminWindow, nameof(DropdownFace));
-            DropdownFace.AddItem(Strings.Admin.none);
+            DropdownFace.AddItem(Strings.Admin.None);
             var faces = Globals.ContentManager.GetTextureNames(Framework.Content.TextureType.Face);
             Array.Sort(faces, new AlphanumComparatorFast());
             foreach (var face in faces)
@@ -174,18 +174,18 @@ namespace Intersect.Client.Interface.Game
             }
             DropdownFace.ItemSelected += _faceDropdown_ItemSelected;
             ButtonSetFace = new Button(mAdminWindow, nameof(ButtonSetFace));
-            ButtonSetFace.Text = Strings.Admin.setface;
+            ButtonSetFace.Text = Strings.Admin.SetFace;
             ButtonSetFace.Clicked += _setFaceButton_Clicked;
             PanelFace = new ImagePanel(mAdminWindow, nameof(PanelFace));
             FacePanel = new ImagePanel(PanelFace);
 
-            LabelMapList = new Label(mAdminWindow, nameof(LabelMapList)) { Text = Strings.Admin.maplist };
+            LabelMapList = new Label(mAdminWindow, nameof(LabelMapList)) { Text = Strings.Admin.MapList };
             CheckboxChronological = new CheckBox(mAdminWindow, nameof(CheckboxChronological));
-            CheckboxChronological.SetToolTipText(Strings.Admin.chronologicaltip);
+            CheckboxChronological.SetToolTipText(Strings.Admin.ChronologicalTip);
             CheckboxChronological.CheckChanged += _chkChronological_CheckChanged;
             LabelChronological = new Label(mAdminWindow, nameof(LabelChronological))
             {
-                Text = Strings.Admin.chronological
+                Text = Strings.Admin.Chronological
             };
             CreateMapList();
             mAdminWindow.LoadJsonUi(UI.InGame, Graphics.Renderer.GetResolutionString(), true);
@@ -328,8 +328,8 @@ namespace Intersect.Client.Interface.Game
         {
             if (TextboxName.Text.Trim().Length > 0)
             {
-                mBanMuteWindow = new BanMuteBox(Strings.Admin.mutecaption.ToString(TextboxName.Text),
-                    Strings.Admin.muteprompt.ToString(TextboxName.Text), true, MuteUser);
+                mBanMuteWindow = new BanMuteBox(Strings.Admin.MuteCaption.ToString(TextboxName.Text),
+                    Strings.Admin.MutePrompt.ToString(TextboxName.Text), true, MuteUser);
             }
         }
 
@@ -363,8 +363,8 @@ namespace Intersect.Client.Interface.Game
                 return;
             }
 
-            mBanMuteWindow = new BanMuteBox(Strings.Admin.bancaption.ToString(name),
-                Strings.Admin.banprompt.ToString(TextboxName.Text), true, BanUser);
+            mBanMuteWindow = new BanMuteBox(Strings.Admin.BanCaption.ToString(name),
+                Strings.Admin.BanPrompt.ToString(TextboxName.Text), true, BanUser);
         }
 
         private void _setFaceButton_Clicked(Base sender, ClickedEventArgs arguments)
@@ -379,8 +379,8 @@ namespace Intersect.Client.Interface.Game
         {
             if (TextboxName.Text.Trim().Length > 0)
             {
-                new InputBox(Strings.Admin.unmutecaption.ToString(TextboxName.Text),
-                    Strings.Admin.unmuteprompt.ToString(TextboxName.Text), true, InputBox.InputType.YesNo, UnmuteUser,
+                new InputBox(Strings.Admin.UnmuteCaption.ToString(TextboxName.Text),
+                    Strings.Admin.UnmutePrompt.ToString(TextboxName.Text), true, InputBox.InputType.YesNo, UnmuteUser,
                     null, -1);
             }
         }
@@ -389,8 +389,8 @@ namespace Intersect.Client.Interface.Game
         {
             if (TextboxName.Text.Trim().Length > 0)
             {
-                new InputBox(Strings.Admin.unbancaption.ToString(TextboxName.Text),
-                    Strings.Admin.unbanprompt.ToString(TextboxName.Text), true, InputBox.InputType.YesNo, UnbanUser,
+                new InputBox(Strings.Admin.UnbanCaption.ToString(TextboxName.Text),
+                    Strings.Admin.UnbanPrompt.ToString(TextboxName.Text), true, InputBox.InputType.YesNo, UnbanUser,
                     null, -1);
             }
         }

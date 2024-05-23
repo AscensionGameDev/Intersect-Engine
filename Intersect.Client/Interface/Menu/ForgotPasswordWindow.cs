@@ -54,13 +54,13 @@ namespace Intersect.Client.Interface.Menu
 
             //Menu Header
             mWindowHeader = new Label(mResetWindow, "Header");
-            mWindowHeader.SetText(Strings.ForgotPass.title);
+            mWindowHeader.SetText(Strings.ForgotPass.Title);
 
             mInputBackground = new ImagePanel(mResetWindow, "InputPanel");
 
             //Login Username Label
             mInputLabel = new Label(mInputBackground, "InputLabel");
-            mInputLabel.SetText(Strings.ForgotPass.label);
+            mInputLabel.SetText(Strings.ForgotPass.Label);
 
             //Login Username Textbox
             mInputTextbox = new TextBox(mInputBackground, "InputField");
@@ -72,12 +72,12 @@ namespace Intersect.Client.Interface.Menu
 
             //Login - Send Login Button
             mSubmitBtn = new Button(mResetWindow, "SubmitButton");
-            mSubmitBtn.SetText(Strings.ForgotPass.submit);
+            mSubmitBtn.SetText(Strings.ForgotPass.Submit);
             mSubmitBtn.Clicked += SubmitBtn_Clicked;
 
             //Login - Back Button
             mBackBtn = new Button(mResetWindow, "BackButton");
-            mBackBtn.SetText(Strings.ForgotPass.back);
+            mBackBtn.SetText(Strings.ForgotPass.Back);
             mBackBtn.Clicked += BackBtn_Clicked;
 
             mResetWindow.LoadJsonUi(GameContentManager.UI.Menu, Graphics.Renderer.GetResolutionString());
@@ -85,7 +85,7 @@ namespace Intersect.Client.Interface.Menu
             mHintLabel = new RichLabel(mResetWindow);
             mHintLabel.SetBounds(mHintLabelTemplate.Bounds);
             mHintLabelTemplate.IsHidden = false;
-            mHintLabel.AddText(Strings.ForgotPass.hint, mHintLabelTemplate);
+            mHintLabel.AddText(Strings.ForgotPass.Hint, mHintLabelTemplate);
         }
 
         public bool IsHidden => mResetWindow.IsHidden;
@@ -102,7 +102,7 @@ namespace Intersect.Client.Interface.Menu
             {
                 Hide();
                 mMainMenu.Show();
-                Interface.ShowError(Strings.Errors.lostconnection);
+                Interface.ShowError(Strings.Errors.LostConnection);
             }
 
             // Re-Enable our buttons if we're not waiting for the server anymore with it disabled.
@@ -150,15 +150,15 @@ namespace Intersect.Client.Interface.Menu
         {
             if (!Networking.Network.IsConnected)
             {
-                Interface.ShowError(Strings.Errors.notconnected);
+                Interface.ShowError(Strings.Errors.NotConnected);
 
                 return;
             }
 
-            if (!FieldChecking.IsValidUsername(mInputTextbox?.Text, Strings.Regex.username) &&
-                !FieldChecking.IsWellformedEmailAddress(mInputTextbox?.Text, Strings.Regex.email))
+            if (!FieldChecking.IsValidUsername(mInputTextbox?.Text, Strings.Regex.Username) &&
+                !FieldChecking.IsWellformedEmailAddress(mInputTextbox?.Text, Strings.Regex.Email))
             {
-                Interface.ShowError(Strings.Errors.usernameinvalid);
+                Interface.ShowError(Strings.Errors.UsernameInvalid);
                 return;
             }
 

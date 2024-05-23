@@ -91,14 +91,14 @@ namespace Intersect.Client.Interface.Menu
 
             //Menu Header
             mCharCreationHeader = new Label(mCharCreationPanel, "CharacterCreationHeader");
-            mCharCreationHeader.SetText(Strings.CharacterCreation.title);
+            mCharCreationHeader.SetText(Strings.CharacterCreation.Title);
 
             //Character Name Background
             mCharacterNameBackground = new ImagePanel(mCharCreationPanel, "CharacterNamePanel");
 
             //Character name Label
             mCharnameLabel = new Label(mCharacterNameBackground, "CharacterNameLabel");
-            mCharnameLabel.SetText(Strings.CharacterCreation.name);
+            mCharnameLabel.SetText(Strings.CharacterCreation.Name);
 
             //Character name Textbox
             mCharnameTextbox = new TextBox(mCharacterNameBackground, "CharacterNameField");
@@ -117,12 +117,12 @@ namespace Intersect.Client.Interface.Menu
 
             //Hint Label
             mHintLabel = new Label(mCharCreationPanel, "HintLabel");
-            mHintLabel.SetText(Strings.CharacterCreation.hint);
+            mHintLabel.SetText(Strings.CharacterCreation.Hint);
             mHintLabel.IsHidden = true;
 
             //Hint2 Label
             mHint2Label = new Label(mCharCreationPanel, "Hint2Label");
-            mHint2Label.SetText(Strings.CharacterCreation.hint2);
+            mHint2Label.SetText(Strings.CharacterCreation.Hint2);
             mHint2Label.IsHidden = true;
 
             //Character Container
@@ -145,12 +145,12 @@ namespace Intersect.Client.Interface.Menu
 
             //Gender Label
             mGenderLabel = new Label(mGenderBackground, "GenderLabel");
-            mGenderLabel.SetText(Strings.CharacterCreation.gender);
+            mGenderLabel.SetText(Strings.CharacterCreation.Gender);
 
             //Male Checkbox
             mMaleChk = new LabeledCheckBox(mGenderBackground, "MaleCheckbox")
             {
-                Text = Strings.CharacterCreation.male
+                Text = Strings.CharacterCreation.Male
             };
 
             mMaleChk.IsChecked = true;
@@ -160,7 +160,7 @@ namespace Intersect.Client.Interface.Menu
             //Female Checkbox
             mFemaleChk = new LabeledCheckBox(mGenderBackground, "FemaleCheckbox")
             {
-                Text = Strings.CharacterCreation.female
+                Text = Strings.CharacterCreation.Female
             };
 
             mFemaleChk.Checked += femaleChk_Checked;
@@ -168,12 +168,12 @@ namespace Intersect.Client.Interface.Menu
 
             //Register - Send Registration Button
             mCreateButton = new Button(mCharCreationPanel, "CreateButton");
-            mCreateButton.SetText(Strings.CharacterCreation.create);
+            mCreateButton.SetText(Strings.CharacterCreation.Create);
             mCreateButton.Clicked += CreateButton_Clicked;
 
             mBackButton = new Button(mCharCreationPanel, "BackButton");
             mBackButton.IsHidden = true;
-            mBackButton.SetText(Strings.CharacterCreation.back);
+            mBackButton.SetText(Strings.CharacterCreation.Back);
             mBackButton.Clicked += BackButton_Clicked;
 
             mCharCreationPanel.LoadJsonUi(GameContentManager.UI.Menu, Graphics.Renderer.GetResolutionString());
@@ -204,7 +204,7 @@ namespace Intersect.Client.Interface.Menu
             {
                 Hide();
                 mMainMenu.Show();
-                Interface.ShowError(Strings.Errors.lostconnection);
+                Interface.ShowError(Strings.Errors.LostConnection);
 
                 return;
             }
@@ -471,7 +471,7 @@ namespace Intersect.Client.Interface.Menu
                 return;
             }
 
-            if (FieldChecking.IsValidUsername(mCharnameTextbox.Text, Strings.Regex.username))
+            if (FieldChecking.IsValidUsername(mCharnameTextbox.Text, Strings.Regex.Username))
             {
                 if (mMaleChk.IsChecked)
                 {
@@ -492,7 +492,7 @@ namespace Intersect.Client.Interface.Menu
             }
             else
             {
-                Interface.ShowError(Strings.CharacterCreation.invalidname);
+                Interface.ShowError(Strings.CharacterCreation.InvalidName);
             }
         }
 

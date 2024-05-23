@@ -195,7 +195,7 @@ namespace Intersect.Client.Core
             if (Globals.ConnectionLost)
             {
                 Main.Logout(false);
-                Interface.Interface.ShowError(Strings.Errors.lostconnection);
+                Interface.Interface.ShowError(Strings.Errors.LostConnection);
 
                 Globals.ConnectionLost = false;
 

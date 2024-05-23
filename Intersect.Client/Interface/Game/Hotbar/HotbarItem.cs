@@ -226,14 +226,14 @@ namespace Intersect.Client.Interface.Game.Hotbar
                 if (keybind.Modifier != Keys.None)
                 {
                     KeyLabel.SetText(string.Format("{00} + {01}",
-                        Strings.Keys.keydict[Enum.GetName(typeof(Keys), keybind.Modifier).ToLower()],
-                        Strings.Keys.keydict[Enum.GetName(typeof(Keys), keybind.Key).ToLower()]
+                        Strings.Keys.KeyDictionary[Enum.GetName(typeof(Keys), keybind.Modifier).ToLower()],
+                        Strings.Keys.KeyDictionary[Enum.GetName(typeof(Keys), keybind.Key).ToLower()]
                     ));
                 }
                 else
                 {
                     KeyLabel.SetText(
-                        Strings.Keys.keydict[Enum.GetName(typeof(Keys), keybind.Key).ToLower()]
+                        Strings.Keys.KeyDictionary[Enum.GetName(typeof(Keys), keybind.Key).ToLower()]
                     );
                 }
                 

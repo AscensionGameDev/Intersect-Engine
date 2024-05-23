@@ -122,7 +122,7 @@ internal static partial class Network
     private static void OnDisconnected(INetworkLayerInterface sender, ConnectionEventArgs connectionEventArgs)
     {
         var message = connectionEventArgs.EventId == default
-            ? Strings.Errors.lostconnection.ToString()
+            ? Strings.Errors.LostConnection.ToString()
             : Strings.Errors.DisconnectionEvent.ToString(connectionEventArgs.EventId);
 
         Interface.Interface.ShowError(message);

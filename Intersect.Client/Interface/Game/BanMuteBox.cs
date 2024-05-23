@@ -56,7 +56,7 @@ namespace Intersect.Client.Interface.Game
 
             mReasonLabel = new Label(mMyWindow)
             {
-                Text = Strings.BanMute.reason
+                Text = Strings.BanMute.Reason
             };
             mReasonLabel.SetPosition(32, y);
             mReasonLabel.TextColor = Color.White;
@@ -66,32 +66,32 @@ namespace Intersect.Client.Interface.Game
             Interface.FocusElements.Add(mReasonBox);
             y = mReasonBox.Bottom + 6;
 
-            mDurationLabel = new Label(mMyWindow) { Text = Strings.BanMute.duration };
+            mDurationLabel = new Label(mMyWindow) { Text = Strings.BanMute.Duration };
             mDurationLabel.SetPosition(32, y);
             mDurationLabel.TextColor = Color.White;
             
             mDurationBox = new ComboBox(mMyWindow);
             mDurationBox.SetMenuBackgroundColor(Color.FromArgb(242, 27,36,49));
             mDurationBox.SetBounds(90, y - 3, 120, 22);
-            mDurationBox.AddItem(Strings.BanMute.oneday).UserData = "1 day";
-            mDurationBox.AddItem(Strings.BanMute.twodays).UserData = "2 days";
-            mDurationBox.AddItem(Strings.BanMute.threedays).UserData = "3 days";
-            mDurationBox.AddItem(Strings.BanMute.fourdays).UserData = "4 days";
-            mDurationBox.AddItem(Strings.BanMute.fivedays).UserData = "5 days";
-            mDurationBox.AddItem(Strings.BanMute.oneweek).UserData = "1 week";
-            mDurationBox.AddItem(Strings.BanMute.twoweeks).UserData = "2 weeks";
-            mDurationBox.AddItem(Strings.BanMute.onemonth).UserData = "1 month";
-            mDurationBox.AddItem(Strings.BanMute.twomonths).UserData = "2 months";
-            mDurationBox.AddItem(Strings.BanMute.sixmonths).UserData = "6 months";
-            mDurationBox.AddItem(Strings.BanMute.oneyear).UserData = "1 year";
-            mDurationBox.AddItem(Strings.BanMute.forever).UserData = "Indefinitely";
+            mDurationBox.AddItem(Strings.BanMute.OneDay).UserData = "1 day";
+            mDurationBox.AddItem(Strings.BanMute.TwoDays).UserData = "2 days";
+            mDurationBox.AddItem(Strings.BanMute.ThreeDays).UserData = "3 days";
+            mDurationBox.AddItem(Strings.BanMute.FourDays).UserData = "4 days";
+            mDurationBox.AddItem(Strings.BanMute.FiveDays).UserData = "5 days";
+            mDurationBox.AddItem(Strings.BanMute.OneWeek).UserData = "1 week";
+            mDurationBox.AddItem(Strings.BanMute.TwoWeeks).UserData = "2 weeks";
+            mDurationBox.AddItem(Strings.BanMute.OneMonth).UserData = "1 month";
+            mDurationBox.AddItem(Strings.BanMute.TwoMonths).UserData = "2 months";
+            mDurationBox.AddItem(Strings.BanMute.SixMonths).UserData = "6 months";
+            mDurationBox.AddItem(Strings.BanMute.OneYear).UserData = "1 year";
+            mDurationBox.AddItem(Strings.BanMute.Forever).UserData = "Indefinitely";
             
             mDurationBox.SetTextColor(Color.White, Label.ControlState.Normal);
             mDurationBox.SetTextColor(Color.White, Label.ControlState.Hovered);
 
             mIpLabel = new Label(mMyWindow)
             {
-                Text = Strings.BanMute.ip
+                Text = Strings.BanMute.IncludeIp
             };
 
             mIpLabel.SetPosition(235, y);
@@ -105,7 +105,7 @@ namespace Intersect.Client.Interface.Game
             okayBtn.SetSize(86, 22);
             okayBtn.SetTextColor(Color.White, Label.ControlState.Normal);
             okayBtn.SetTextColor(Color.White, Label.ControlState.Clicked);
-            okayBtn.SetText(Strings.BanMute.ok);
+            okayBtn.SetText(Strings.BanMute.Okay);
             okayBtn.SetPosition(mMyWindow.Width / 2 - 188 / 2, 90);
             okayBtn.Clicked += okayBtn_Clicked;
 
@@ -113,7 +113,7 @@ namespace Intersect.Client.Interface.Game
             cancelBtn.SetTextColor(Color.White, Label.ControlState.Normal);
             cancelBtn.SetTextColor(Color.White, Label.ControlState.Clicked);
             cancelBtn.SetSize(86, 22);
-            cancelBtn.SetText(Strings.BanMute.cancel);
+            cancelBtn.SetText(Strings.BanMute.Cancel);
             cancelBtn.Clicked += CancelBtn_Clicked;
             cancelBtn.SetPosition(mMyWindow.Width / 2 - 188 / 2 + 86 + 16, 90);
         }

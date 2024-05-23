@@ -1819,7 +1819,7 @@ namespace Intersect.Client.Networking
         public void HandlePacket(IPacketSender packetSender, PartyInvitePacket packet)
         {
             var iBox = new InputBox(
-                Strings.Parties.partyinvite, Strings.Parties.inviteprompt.ToString(packet.LeaderName), true,
+                Strings.Parties.PartyInvite, Strings.Parties.InvitePrompt.ToString(packet.LeaderName), true,
                 InputBox.InputType.YesNo, PacketSender.SendPartyAccept, PacketSender.SendPartyDecline, packet.LeaderId
             );
         }
@@ -1959,7 +1959,7 @@ namespace Intersect.Client.Networking
         public void HandlePacket(IPacketSender packetSender, TradeRequestPacket packet)
         {
             var iBox = new InputBox(
-                Strings.Trading.traderequest, Strings.Trading.requestprompt.ToString(packet.PartnerName), true,
+                Strings.Trading.TradeRequest, Strings.Trading.RequestPrompt.ToString(packet.PartnerName), true,
                 InputBox.InputType.YesNo, PacketSender.SendTradeRequestAccept, PacketSender.SendTradeRequestDecline,
                 packet.PartnerId
             );
@@ -2097,12 +2097,12 @@ namespace Intersect.Client.Networking
             if (packet.Succeeded)
             {
                 // Show Success Message and Open Login Screen
-                Interface.Interface.ShowError(Strings.ResetPass.success, Strings.ResetPass.successmsg);
+                Interface.Interface.ShowError(Strings.ResetPass.Success, Strings.ResetPass.SuccessMessage);
                 Interface.Interface.MenuUi.MainMenu.NotifyOpenLogin();
             }
             else
             {
-                Interface.Interface.ShowError(Strings.ResetPass.fail, Strings.ResetPass.failmsg);
+                Interface.Interface.ShowError(Strings.ResetPass.Error, Strings.ResetPass.ErrorMessage);
             }
 
             Globals.WaitingOnServer = false;

@@ -153,7 +153,7 @@ namespace Intersect.Client.MonoGame.Graphics
 
                     ChatboxMsg.AddMessage(
                         new ChatboxMsg(
-                            Strings.Errors.LoadFile.ToString(Strings.Words.lcase_sprite) + " [" + mName + "]",
+                            Strings.Errors.LoadFile.ToString(Strings.Words.LcaseSprite) + " [" + mName + "]",
                             new Color(0xBF, 0x0, 0x0), Enums.ChatMessageType.Error
                         )
                     );

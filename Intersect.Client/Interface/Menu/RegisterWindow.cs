@@ -67,14 +67,14 @@ namespace Intersect.Client.Interface.Menu
 
             //Menu Header
             mRegistrationHeader = new Label(mRegistrationPanel, "RegistrationLabel");
-            mRegistrationHeader.SetText(Strings.Registration.title);
+            mRegistrationHeader.SetText(Strings.Registration.Title);
 
             //Register Username Background
             mUsernameBackground = new ImagePanel(mRegistrationPanel, "UsernamePanel");
 
             //Register Username Label
             mUsernameLabel = new Label(mUsernameBackground, "UsernameLabel");
-            mUsernameLabel.SetText(Strings.Registration.username);
+            mUsernameLabel.SetText(Strings.Registration.Username);
 
             //Register Username Textbox
             mUsernameTextbox = new TextBox(mUsernameBackground, "UsernameField")
@@ -88,7 +88,7 @@ namespace Intersect.Client.Interface.Menu
 
             //Register Email Label
             mEmailLabel = new Label(mEmailBackground, "EmailLabel");
-            mEmailLabel.SetText(Strings.Registration.email);
+            mEmailLabel.SetText(Strings.Registration.Email);
 
             //Register Email Textbox
             mEmailTextbox = new TextBox(mEmailBackground, "EmailField")
@@ -102,7 +102,7 @@ namespace Intersect.Client.Interface.Menu
 
             //Register Password Label
             mPasswordLabel = new Label(mPasswordBackground, "Password1Label");
-            mPasswordLabel.SetText(Strings.Registration.password);
+            mPasswordLabel.SetText(Strings.Registration.Password);
 
             //Register Password Textbox
             mPasswordTextbox = new TextBoxPassword(mPasswordBackground, "Password1Field")
@@ -116,7 +116,7 @@ namespace Intersect.Client.Interface.Menu
 
             //Register Password Label2
             mPasswordLabel2 = new Label(mPasswordBackground2, "Password2Label");
-            mPasswordLabel2.SetText(Strings.Registration.confirmpass);
+            mPasswordLabel2.SetText(Strings.Registration.ConfirmPassword);
 
             //Register Password Textbox2
             mPasswordTextbox2 = new TextBoxPassword(mPasswordBackground2, "Password2Field")
@@ -129,7 +129,7 @@ namespace Intersect.Client.Interface.Menu
             mRegisterBtn = new Button(mRegistrationPanel, "RegisterButton")
             {
                 // IsTabable = true,
-                Text = Strings.Registration.register,
+                Text = Strings.Registration.Register,
             };
             mRegisterBtn.Clicked += RegisterBtn_Clicked;
 
@@ -137,7 +137,7 @@ namespace Intersect.Client.Interface.Menu
             mBackBtn = new Button(mRegistrationPanel, "BackButton")
             {
                 // IsTabable = true,
-                Text = Strings.Registration.back,
+                Text = Strings.Registration.Back,
             };
             mBackBtn.Clicked += BackBtn_Clicked;
 
@@ -153,7 +153,7 @@ namespace Intersect.Client.Interface.Menu
             {
                 Hide();
                 mMainMenu.Show();
-                Interface.ShowError(Strings.Errors.lostconnection);
+                Interface.ShowError(Strings.Errors.LostConnection);
             }
 
             // Re-Enable our buttons if we're not waiting for the server anymore with it disabled.
@@ -191,13 +191,13 @@ namespace Intersect.Client.Interface.Menu
 
             if (Networking.Network.IsConnected)
             {
-                if (FieldChecking.IsValidUsername(mUsernameTextbox.Text, Strings.Regex.username))
+                if (FieldChecking.IsValidUsername(mUsernameTextbox.Text, Strings.Regex.Username))
                 {
                     if (mPasswordTextbox.Text == mPasswordTextbox2.Text)
                     {
-                        if (FieldChecking.IsValidPassword(mPasswordTextbox.Text, Strings.Regex.password))
+                        if (FieldChecking.IsValidPassword(mPasswordTextbox.Text, Strings.Regex.Password))
                         {
-                            if (FieldChecking.IsWellformedEmailAddress(mEmailTextbox.Text, Strings.Regex.email))
+                            if (FieldChecking.IsWellformedEmailAddress(mEmailTextbox.Text, Strings.Regex.Email))
                             {
                                 Hide();
 
@@ -220,27 +220,27 @@ namespace Intersect.Client.Interface.Menu
                             }
                             else
                             {
-                                Interface.ShowError(Strings.Registration.emailinvalid);
+                                Interface.ShowError(Strings.Registration.EmailInvalid);
                             }
                         }
                         else
                         {
-                            Interface.ShowError(Strings.Errors.passwordinvalid);
+                            Interface.ShowError(Strings.Errors.PasswordInvalid);
                         }
                     }
                     else
                     {
-                        Interface.ShowError(Strings.Registration.passwordmatch);
+                        Interface.ShowError(Strings.Registration.PasswordMismatch);
                     }
                 }
                 else
                 {
-                    Interface.ShowError(Strings.Errors.usernameinvalid);
+                    Interface.ShowError(Strings.Errors.UsernameInvalid);
                 }
             }
             else
             {
-                Interface.ShowError(Strings.Errors.notconnected);
+                Interface.ShowError(Strings.Errors.NotConnected);
             }
         }
 

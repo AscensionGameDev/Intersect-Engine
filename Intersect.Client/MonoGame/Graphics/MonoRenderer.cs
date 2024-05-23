@@ -151,10 +151,10 @@ namespace Intersect.Client.MonoGame.Graphics
                     Globals.Database.FullScreen = false;
                     Globals.Database.SavePreferences();
                     Interface.Interface.ShowError(
-                        Strings.Errors.displaynotsupportederror.ToString(
+                        Strings.Errors.DisplayNotSupportedError.ToString(
                             Strings.Internals.ResolutionXByY.ToString(width, height)
                         ),
-                        Strings.Errors.displaynotsupported
+                        Strings.Errors.DisplayNotSupported
                     );
                 }
             }
@@ -706,7 +706,7 @@ namespace Intersect.Client.MonoGame.Graphics
                 mFps = mFpsCount;
                 mFpsCount = 0;
                 mFpsTimer = Timing.Global.MillisecondsUtc + 1000;
-                mGameWindow.Title = Strings.Main.gamename;
+                mGameWindow.Title = Strings.Main.GameName;
             }
 
             foreach (var texture in mAllTextures)

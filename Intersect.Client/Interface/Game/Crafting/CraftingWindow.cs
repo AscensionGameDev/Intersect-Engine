@@ -84,13 +84,13 @@ namespace Intersect.Client.Interface.Game.Crafting
 
             //Labels
             mLblRecipes = new Label(mCraftWindow, "RecipesTitle");
-            mLblRecipes.Text = Strings.Crafting.recipes;
+            mLblRecipes.Text = Strings.Crafting.Recipes;
 
             mLblIngredients = new Label(mCraftWindow, "IngredientsTitle");
-            mLblIngredients.Text = Strings.Crafting.ingredients;
+            mLblIngredients.Text = Strings.Crafting.Ingredients;
 
             mLblProduct = new Label(mCraftWindow, "ProductLabel");
-            mLblProduct.Text = Strings.Crafting.product;
+            mLblProduct.Text = Strings.Crafting.Product;
 
             mLblCraftingChance = new Label(mCraftWindow, "ProductChanceLabel");
             mLblCraftingChance.Text = Strings.Crafting.CraftChance.ToString(0);
@@ -110,12 +110,12 @@ namespace Intersect.Client.Interface.Game.Crafting
 
             //Load the craft button
             mCraft = new Button(mCraftWindow, "CraftButton");
-            mCraft.SetText(Strings.Crafting.craft);
+            mCraft.SetText(Strings.Crafting.Craft);
             mCraft.Clicked += craft_Clicked;
 
             //Craft all button
             mCraftAll = new Button(mCraftWindow, "CraftAllButton");
-            mCraftAll.SetText(Strings.Crafting.craftall.ToString(1));
+            mCraftAll.SetText(Strings.Crafting.CraftAll.ToString(1));
             mCraftAll.Clicked += craftAll_Clicked;
 
             mCraftWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
@@ -294,7 +294,7 @@ namespace Intersect.Client.Interface.Game.Crafting
                     mRemainingCrafts = 0;
                     mCraftWindow.IsClosable = true;
                     mBar.Width = 0;
-                    ChatboxMsg.AddMessage(new ChatboxMsg(Strings.Crafting.incorrectresources, CustomColors.Alerts.Error, Enums.ChatMessageType.Crafting));
+                    ChatboxMsg.AddMessage(new ChatboxMsg(Strings.Crafting.IncorrectResources, CustomColors.Alerts.Error, Enums.ChatMessageType.Crafting));
 
                     return;
                 }
@@ -303,7 +303,7 @@ namespace Intersect.Client.Interface.Game.Crafting
             mCraftAll.IsHidden = mJournalMode || craftableQuantity < 2;
             if (!mCraftAll.IsHidden)
             {
-                mCraftAll.SetText(Strings.Crafting.craftall.ToString(craftableQuantity));
+                mCraftAll.SetText(Strings.Crafting.CraftAll.ToString(craftableQuantity));
                 mCraftAll.UserData = craftableQuantity;
                 mCraftAll.IsDisabled = IsCrafting;
             }
@@ -413,7 +413,7 @@ namespace Intersect.Client.Interface.Game.Crafting
                 return;
             }
 
-            ChatboxMsg.AddMessage(new ChatboxMsg(Strings.Crafting.incorrectresources, CustomColors.Alerts.Error, Enums.ChatMessageType.Crafting));
+            ChatboxMsg.AddMessage(new ChatboxMsg(Strings.Crafting.IncorrectResources, CustomColors.Alerts.Error, Enums.ChatMessageType.Crafting));
         }
 
         //Craft the item
@@ -430,7 +430,7 @@ namespace Intersect.Client.Interface.Game.Crafting
             }
             else
             {
-                ChatboxMsg.AddMessage(new ChatboxMsg(Strings.Crafting.incorrectresources, CustomColors.Alerts.Error, Enums.ChatMessageType.Crafting));
+                ChatboxMsg.AddMessage(new ChatboxMsg(Strings.Crafting.IncorrectResources, CustomColors.Alerts.Error, Enums.ChatMessageType.Crafting));
             }
         }
 
@@ -469,11 +469,11 @@ namespace Intersect.Client.Interface.Game.Crafting
 
             if (IsCrafting)
             {
-                mCraft.SetText(Strings.Crafting.craftstop);
+                mCraft.SetText(Strings.Crafting.CraftStop);
             }
             else
             {
-                mCraft.SetText(Strings.Crafting.craft);
+                mCraft.SetText(Strings.Crafting.Craft);
                 mBar.Width = 0;
                 return;
             }

@@ -150,41 +150,41 @@ namespace Intersect.Client.Interface.Game.EntityPanel
             HpBar = new ImagePanel(EntityInfoPanel, "HPBar");
             ShieldBar = new ImagePanel(EntityInfoPanel, "ShieldBar");
             HpTitle = new Label(EntityInfoPanel, "HPTitle");
-            HpTitle.SetText(Strings.EntityBox.vital0);
+            HpTitle.SetText(Strings.EntityBox.Vital0);
             HpLbl = new Label(EntityInfoPanel, "HPLabel");
 
             MpBackground = new ImagePanel(EntityInfoPanel, "MPBackground");
             MpBar = new ImagePanel(EntityInfoPanel, "MPBar");
             MpTitle = new Label(EntityInfoPanel, "MPTitle");
-            MpTitle.SetText(Strings.EntityBox.vital1);
+            MpTitle.SetText(Strings.EntityBox.Vital1);
             MpLbl = new Label(EntityInfoPanel, "MPLabel");
 
             ExpBackground = new ImagePanel(EntityInfoPanel, "EXPBackground");
             ExpBar = new ImagePanel(EntityInfoPanel, "EXPBar");
             ExpTitle = new Label(EntityInfoPanel, "EXPTitle");
-            ExpTitle.SetText(Strings.EntityBox.exp);
+            ExpTitle.SetText(Strings.EntityBox.Exp);
             ExpLbl = new Label(EntityInfoPanel, "EXPLabel");
 
             TradeLabel = new Button(EntityInfoPanel, "TradeButton");
-            TradeLabel.SetText(Strings.EntityBox.trade);
-            TradeLabel.SetToolTipText(Strings.EntityBox.tradetip.ToString(MyEntity?.Name));
+            TradeLabel.SetText(Strings.EntityBox.Trade);
             TradeLabel.Clicked += tradeRequest_Clicked;
+            TradeLabel.HoverEnter += (sender, e) => TradeLabel.SetToolTipText(Strings.EntityBox.TradeTip.ToString(MyEntity?.Name));
 
             PartyLabel = new Button(EntityInfoPanel, "PartyButton");
-            PartyLabel.SetText(Strings.EntityBox.party);
-            PartyLabel.SetToolTipText(Strings.EntityBox.partytip.ToString(MyEntity?.Name));
+            PartyLabel.SetText(Strings.EntityBox.Party);
             PartyLabel.Clicked += invite_Clicked;
+            PartyLabel.HoverEnter += (sender, e) => PartyLabel.SetToolTipText(Strings.EntityBox.PartyTip.ToString(MyEntity?.Name));
 
             FriendLabel = new Button(EntityInfoPanel, "FriendButton");
-            FriendLabel.SetText(Strings.EntityBox.friend);
-            FriendLabel.SetToolTipText(Strings.EntityBox.friendtip.ToString(MyEntity?.Name));
+            FriendLabel.SetText(Strings.EntityBox.Friend);
             FriendLabel.Clicked += friendRequest_Clicked;
+            FriendLabel.HoverEnter += (sender, e) => FriendLabel.SetToolTipText(Strings.EntityBox.FriendTip.ToString(MyEntity?.Name));
             FriendLabel.IsHidden = true;
 
             GuildLabel = new Button(EntityInfoPanel, "GuildButton");
             GuildLabel.SetText(Strings.Guilds.Guild);
-            GuildLabel.SetToolTipText(Strings.Guilds.guildtip.ToString(MyEntity?.Name));
             GuildLabel.Clicked += guildRequest_Clicked;
+            GuildLabel.HoverEnter += (sender, e) => GuildLabel.SetToolTipText(Strings.Guilds.GuildTip.ToString(MyEntity?.Name));
             GuildLabel.IsHidden = true;
 
             EntityStatusPanel = new ImagePanel(EntityWindow, "StatusArea");
@@ -529,7 +529,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
 
         private void UpdateLevel()
         {
-            var levelString = Strings.EntityBox.level.ToString(MyEntity.Level);
+            var levelString = Strings.EntityBox.Level.ToString(MyEntity.Level);
             if (!EntityLevel.IsHidden)
             {
                 EntityLevel.Text = levelString;
@@ -545,11 +545,11 @@ namespace Intersect.Client.Interface.Game.EntityPanel
         {
             if (Globals.Me.MapInstance != null)
             {
-                EntityMap.SetText(Strings.EntityBox.map.ToString(Globals.Me.MapInstance.Name));
+                EntityMap.SetText(Strings.EntityBox.Map.ToString(Globals.Me.MapInstance.Name));
             }
             else
             {
-                EntityMap.SetText(Strings.EntityBox.map.ToString(""));
+                EntityMap.SetText(Strings.EntityBox.Map.ToString(""));
             }
         }
 
@@ -707,7 +707,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                 var entityShieldRatio = (float)shieldSize / entityMaxVital;
                 var hpPercentage = entityVitalRatio * 100;
                 var hpPercentageText = $"{hpPercentage:0.##}%";
-                var hpValueText = Strings.EntityBox.vital0val.ToString(entityVital, entityMaxVital);
+                var hpValueText = Strings.EntityBox.Vital0Value.ToString(entityVital, entityMaxVital);
                 HpLbl.Text = barPercentageSetting ? hpPercentageText : hpValueText;
                 HpBackground.SetToolTipText(barPercentageSetting ? hpValueText : hpPercentageText);
                 targetHpSize = SetTargetBarSize(entityVitalRatio, vitalSize);
@@ -715,8 +715,8 @@ namespace Intersect.Client.Interface.Game.EntityPanel
             }
             else
             {
-                HpLbl.Text = barPercentageSetting ? "0%" : Strings.EntityBox.vital0val.ToString(0, entityMaxVital);
-                HpBackground.SetToolTipText(barPercentageSetting ? Strings.EntityBox.vital0val.ToString(0, entityMaxVital) : "0%");
+                HpLbl.Text = barPercentageSetting ? "0%" : Strings.EntityBox.Vital0Value.ToString(0, entityMaxVital);
+                HpBackground.SetToolTipText(barPercentageSetting ? Strings.EntityBox.Vital0Value.ToString(0, entityMaxVital) : "0%");
                 targetHpSize = 0;
                 targetShieldSize = 0;
             }
@@ -767,15 +767,15 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                     : MpBackground.Height;
                 float mpPercentage = entityVitalRatio * 100;
                 var mpPercentageText = $"{mpPercentage:0.##}%";
-                var mpValueText = Strings.EntityBox.vital1val.ToString(entityVital, entityMaxVital);
+                var mpValueText = Strings.EntityBox.Vital1Value.ToString(entityVital, entityMaxVital);
                 MpLbl.Text = barPercentageSetting ? mpPercentageText : mpValueText;
                 MpBackground.SetToolTipText(barPercentageSetting ? mpValueText : mpPercentageText);
                 targetMpSize = SetTargetBarSize(entityVitalRatio, vitalSize);
             }
             else
             {
-                MpLbl.Text = barPercentageSetting ? "0%" : Strings.EntityBox.vital1val.ToString(0, entityMaxVital);
-                MpBackground.SetToolTipText(barPercentageSetting ? Strings.EntityBox.vital1val.ToString(0, entityMaxVital) : "0%");
+                MpLbl.Text = barPercentageSetting ? "0%" : Strings.EntityBox.Vital1Value.ToString(0, entityMaxVital);
+                MpBackground.SetToolTipText(barPercentageSetting ? Strings.EntityBox.Vital1Value.ToString(0, entityMaxVital) : "0%");
                 targetMpSize = 0;
             }
 
@@ -810,7 +810,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                     : ExpBackground.Height;
                 var expPercentage = entityExperienceRatio * 100;
                 var expPercentageText = $"{expPercentage:0.##}%";
-                var expValueText = Strings.EntityBox.expval.ToString(entityExperience, entityExperienceToNextLevel);
+                var expValueText = Strings.EntityBox.ExpValue.ToString(entityExperience, entityExperienceToNextLevel);
                 ExpLbl.Text = barPercentageSetting ? expPercentageText : expValueText;
                 ExpBackground.SetToolTipText(barPercentageSetting ? expValueText : expPercentageText);
                 targetExpSize = SetTargetBarSize(entityExperienceRatio, vitalSize);
@@ -818,8 +818,8 @@ namespace Intersect.Client.Interface.Game.EntityPanel
             else
             {
                 targetExpSize = 1f;
-                ExpLbl.Text = Strings.EntityBox.maxlevel;
-                ExpBackground.SetToolTipText(Strings.EntityBox.maxlevel);
+                ExpLbl.Text = Strings.EntityBox.MaxLevel;
+                ExpBackground.SetToolTipText(Strings.EntityBox.MaxLevel);
             }
 
             if (Math.Abs((int)targetExpSize - CurExpSize) < 0.01)
@@ -1005,7 +1005,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                 }
                 else
                 {
-                    PacketSender.SendChatMsg(Strings.Parties.infight.ToString(), 4);
+                    PacketSender.SendChatMsg(Strings.Parties.InFight.ToString(), 4);
                 }
             }
         }
@@ -1021,7 +1021,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                 }
                 else
                 {
-                    PacketSender.SendChatMsg(Strings.Trading.infight.ToString(), 4);
+                    PacketSender.SendChatMsg(Strings.Trading.InFight.ToString(), 4);
                 }
             }
         }
