@@ -120,7 +120,7 @@ namespace Intersect.Client.Core
                 {
                     // We've closed our windows, don't do anything else. :)
                 }
-                else if (Globals.Me != null && Globals.Me.TargetIndex != Guid.Empty)
+                else if (Globals.Me != null && Globals.Me.TargetIndex != Guid.Empty && !Globals.Me.Status.Any(s => s.Type == Enums.SpellEffect.Taunt))
                 {
                     Globals.Me.ClearTarget();
                 }
