@@ -864,7 +864,25 @@ namespace Intersect.Editor.Forms.Editors.Events
 
         private static string GetCommandText(EquipItemCommand command, MapInstance map)
         {
-            return command.Unequip ? Strings.EventCommandList.unequipitem.ToString(ItemBase.GetName(command.ItemId)) : Strings.EventCommandList.equipitem.ToString(ItemBase.GetName(command.ItemId));
+            var commandText = string.Empty;
+
+            if(!command.Unequip)
+            {
+                commandText = Strings.EventCommandList.equipitem.ToString(ItemBase.GetName(command.ItemId));
+            }
+            else
+            {
+                if (command.IsItem)
+                {
+                     commandText = Strings.EventCommandList.unequipitem.ToString(ItemBase.GetName(command.ItemId));
+                }
+                else
+                {
+                    commandText = Strings.EventCommandList.unequipslot.ToString(Options.EquipmentSlots[command.Slot]);
+                }
+            }
+
+            return commandText;
         }
 
         private static string GetCommandText(ChangeSpriteCommand command, MapInstance map)

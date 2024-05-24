@@ -482,7 +482,11 @@ namespace Intersect.GameObjects.Events.Commands
 
         public Guid ItemId { get; set; }
 
+        public int Slot { get; set; }
+
         public bool Unequip { get; set; }
+
+        public bool IsItem { get; set; } = true;
 
         public bool TriggerCooldown { get; set; }
 

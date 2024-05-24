@@ -589,17 +589,20 @@ namespace Intersect.Server.Entities.Events
         {
             var itm = ItemBase.Get(command.ItemId);
 
-            if (itm == null)
-            {
-                return;
-            }
-
             if (command.Unequip)
             {
-                player.UnequipItem(command.ItemId);
+                if (command.IsItem && itm != default)
+                {
+                    player.UnequipItem(command.ItemId);
+                }
+                else if(!command.IsItem && command.Slot > -1 && player.TryGetEquippedItem(command.Slot, out var equippedItem))
+                {
+                     player.UnequipItem(equippedItem.ItemId);
+                }
             }
             else
             {
+                if (itm == null) return;
                 player.EquipItem(ItemBase.Get(command.ItemId), updateCooldown: command.TriggerCooldown);
             }
         }
