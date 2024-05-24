@@ -26,9 +26,9 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             cmbItem.Items.AddRange(ItemBase.Names);
             cmbItem.SelectedIndex = ItemBase.ListIndex(mMyCommand.ItemId);
             chkUnequip.Checked = mMyCommand.Unequip;
-            optUnequipItem.Enabled = mMyCommand.Unequip && mMyCommand.IsItem;
+            optUnequipItem.Enabled = mMyCommand.Unequip;
             optUnequipItem.Checked = mMyCommand.Unequip && mMyCommand.IsItem;
-            optUnequipSlot.Enabled = mMyCommand.Unequip && !mMyCommand.IsItem;
+            optUnequipSlot.Enabled = mMyCommand.Unequip;
             optUnequipSlot.Checked = mMyCommand.Unequip && !mMyCommand.IsItem;
             chkTriggerCooldown.Checked = mMyCommand.TriggerCooldown;
         }
