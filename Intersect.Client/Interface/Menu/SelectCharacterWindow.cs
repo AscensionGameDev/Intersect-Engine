@@ -123,7 +123,6 @@ namespace Intersect.Client.Interface.Menu
             {
                 Hide();
                 mMainMenu.Show();
-                Interface.ShowError(Strings.Errors.LostConnection);
             }
 
             // Re-Enable our buttons if we're not waiting for the server anymore with it disabled.
@@ -344,7 +343,7 @@ namespace Intersect.Client.Interface.Menu
 
         private void mLogoutButton_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            Main.Logout(false, skipFade: true);
+            Main.Logout(false, true, skipFade: true);
             mMainMenu.Reset();
         }
 
