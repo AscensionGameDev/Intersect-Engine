@@ -663,13 +663,6 @@ namespace Intersect.Server.Networking
                 client.Entity = default;
                 PacketSender.SendPlayerCharacters(client, skipLoadingRelationships: true);
             }
-            else if(packet.ReturningToMainMenu)
-            {
-                Log.Debug($"[{nameof(LogoutPacket)}] Returning to main menu from player {client.Entity?.Id} ({client.User?.Id})");
-                client.Entity?.TryLogout(false, true);
-                client.Entity = default;
-                client.SetUser(null);
-            }
             else
             {
                 client.Logout();

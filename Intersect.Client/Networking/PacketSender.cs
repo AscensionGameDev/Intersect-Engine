@@ -28,9 +28,9 @@ namespace Intersect.Client.Networking
             Network.SendPacket(new LoginPacket(username, password));
         }
 
-        public static void SendLogout(bool characterSelect = false, bool mainMenu = true)
+        public static void SendLogout(bool characterSelect = false)
         {
-            Network.SendPacket(new LogoutPacket(characterSelect, mainMenu));
+            Network.SendPacket(new LogoutPacket(characterSelect));
         }
 
         public static void SendNeedMap(params ObjectCacheKey<MapBase>[] cacheKeys)

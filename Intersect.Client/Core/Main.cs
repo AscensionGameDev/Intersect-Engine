@@ -194,7 +194,7 @@ namespace Intersect.Client.Core
         {
             if (Globals.ConnectionLost)
             {
-                Logout(false, true);
+                Logout(false);
                 Globals.ConnectionLost = false;
                 return;
             }
@@ -325,7 +325,7 @@ namespace Intersect.Client.Core
             Audio.StopMusic(ClientConfiguration.Instance.MusicFadeTimer);
         }
 
-        public static void Logout(bool characterSelect, bool mainMenu, bool skipFade = false)
+        public static void Logout(bool characterSelect, bool skipFade = false)
         {
             Audio.PlayMusic(ClientConfiguration.Instance.MenuMusic, ClientConfiguration.Instance.MusicFadeTimer, ClientConfiguration.Instance.MusicFadeTimer, true);
             if (skipFade)
@@ -339,7 +339,8 @@ namespace Intersect.Client.Core
 
             if (!ClientContext.IsSinglePlayer)
             {
-                PacketSender.SendLogout(characterSelect, mainMenu);
+                Globals.SoftLogout = !characterSelect;
+                PacketSender.SendLogout(characterSelect);
             }
 
             Globals.LoggedIn = false;
