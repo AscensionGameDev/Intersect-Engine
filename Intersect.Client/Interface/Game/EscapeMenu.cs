@@ -149,7 +149,7 @@ namespace Intersect.Client.Interface.Game
                 Globals.Me.CombatTimer = 0;
             }
 
-            Main.Logout(true);
+            Main.Logout(true, false);
         }
 
         private void LogoutToMainMenu(object sender, EventArgs e)
@@ -159,7 +159,7 @@ namespace Intersect.Client.Interface.Game
                 Globals.Me.CombatTimer = 0;
             }
 
-            Main.Logout(false);
+            Main.Logout(false, true);
         }
 
         private void ExitToDesktop(object sender, EventArgs e)

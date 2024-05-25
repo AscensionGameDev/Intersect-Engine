@@ -153,7 +153,6 @@ namespace Intersect.Client.Interface.Menu
             {
                 Hide();
                 mMainMenu.Show();
-                Interface.ShowError(Strings.Errors.LostConnection);
             }
 
             // Re-Enable our buttons if we're not waiting for the server anymore with it disabled.

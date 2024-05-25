@@ -204,8 +204,6 @@ namespace Intersect.Client.Interface.Menu
             {
                 Hide();
                 mMainMenu.Show();
-                Interface.ShowError(Strings.Errors.LostConnection);
-
                 return;
             }
 
