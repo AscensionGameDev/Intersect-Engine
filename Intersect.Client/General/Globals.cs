@@ -38,6 +38,11 @@ namespace Intersect.Client.General
 
         public static bool ConnectionLost;
 
+        /// <summary>
+        /// This is used to prevent the client from showing unnecessary disconnect messages
+        /// </summary>
+        public static bool SoftLogout;
+
         //Game Systems
         public static GameContentManager ContentManager;
 

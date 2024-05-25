@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using Intersect.Client.Core;
 using Intersect.Client.Framework.Network;
 using Intersect.Client.General;
@@ -69,6 +69,7 @@ internal static partial class Network
                             return;
                         }
 
+                        Globals.SoftLogout = true;
                         _closeTask = default;
                         Close(reason);
                     }
@@ -99,6 +100,7 @@ internal static partial class Network
     private static void OnConnected(INetworkLayerInterface sender, ConnectionEventArgs connectionEventArgs)
     {
         Globals.WaitingOnServer = false;
+        Globals.SoftLogout = false;
     }
 
     private static void OnConnectionFailed(
@@ -125,10 +127,18 @@ internal static partial class Network
             ? Strings.Errors.LostConnection.ToString()
             : Strings.Errors.DisconnectionEvent.ToString(connectionEventArgs.EventId);
 
-        Interface.Interface.ShowError(message);
+        // if we did a soft logout we don't want to show the error message
+        if (Globals.SoftLogout)
+        {
+            Globals.SoftLogout = false;
+        }
+        else
+        {
+            Interface.Interface.ShowError(message);
+            Fade.Cancel();
+        }
 
         Globals.WaitingOnServer = false;
-        Fade.Cancel();
 
         if (Globals.GameState != GameStates.InGame && Globals.GameState != GameStates.Loading)
         {
