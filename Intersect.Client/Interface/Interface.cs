@@ -148,8 +148,8 @@ namespace Intersect.Client.Interface
             if (Globals.Me != null)
             {
                 Globals.Me.ClearTarget();
-                Globals.Me.TargetBox?.Dispose();
-                Globals.Me.TargetBox = null;
+                Globals.Me.TargetWindow?.Dispose();
+                Globals.Me.TargetWindow = null;
             }
 
             GwenInitialized = false;

@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using Intersect.Client.Core;
 using Intersect.Client.Entities.Events;
 using Intersect.Client.Entities.Projectiles;
@@ -457,25 +453,25 @@ namespace Intersect.Client.Entities
                     }
                     else
                     {
-                        if (Interface.Interface.GameUi.PlayerBox == null)
+                        if (Interface.Interface.GameUi.PlayerWindow == null)
                         {
-                            Log.Warn($"'{nameof(Interface.Interface.GameUi.PlayerBox)}' is null.");
+                            Log.Warn($"'{nameof(Interface.Interface.GameUi.PlayerWindow)}' is null.");
                         }
                         else
                         {
-                            Interface.Interface.GameUi.PlayerBox.UpdateStatuses = true;
+                            Interface.Interface.GameUi.PlayerStatusWindow.UpdateStatuses = true;
                         }
                     }
                 }
                 else if (Id != Guid.Empty && Id == Globals.Me.TargetIndex)
                 {
-                    if (Globals.Me.TargetBox == null)
+                    if (Globals.Me.TargetWindow == null)
                     {
-                        Log.Warn($"'{nameof(Globals.Me.TargetBox)}' is null.");
+                        Log.Warn($"'{nameof(Globals.Me.TargetWindow)}' is null.");
                     }
                     else
                     {
-                        Globals.Me.TargetBox.UpdateStatuses = true;
+                        Globals.Me.TargetWindow.UpdateStatuses = true;
                     }
                 }
             }

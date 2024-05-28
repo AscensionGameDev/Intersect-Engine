@@ -8,7 +8,7 @@ using Intersect.Client.Framework.Items;
 using Intersect.Client.General;
 using Intersect.Client.Interface.Game;
 using Intersect.Client.Interface.Game.Chat;
-using Intersect.Client.Interface.Game.EntityPanel;
+using Intersect.Client.Interface.Game.Entity;
 using Intersect.Client.Items;
 using Intersect.Client.Localization;
 using Intersect.Client.Maps;
@@ -17,7 +17,6 @@ using Intersect.Config.Guilds;
 using Intersect.Configuration;
 using Intersect.Enums;
 using Intersect.GameObjects;
-using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps;
 using Intersect.Logging;
 using Intersect.Network.Packets.Server;
@@ -97,7 +96,7 @@ namespace Intersect.Client.Entities
 
         public int StatPoints { get; set; } = 0;
 
-        public EntityBox TargetBox { get; set; }
+        public TargetWindows TargetWindow { get; set; }
 
         public Guid TargetIndex { get; set; }
 
@@ -283,17 +282,17 @@ namespace Intersect.Client.Entities
                 }
             }
 
-            if (TargetBox == default && this == Globals.Me && Interface.Interface.GameUi != default)
+            if (TargetWindow == default && this == Globals.Me && Interface.Interface.GameUi != default)
             {
                 // If for WHATEVER reason the box hasn't been created, create it.
-                TargetBox = new EntityBox(Interface.Interface.GameUi.GameCanvas, EntityType.Player, null);
-                TargetBox.Hide();
+                TargetWindow = new TargetWindows(Interface.Interface.GameUi.GameCanvas, EntityType.Player, null);
+                TargetWindow.Hide();
             }
             else if (TargetIndex != default)
             {
                 if (!Globals.Entities.TryGetValue(TargetIndex, out var foundEntity))
                 {
-                    foundEntity = TargetBox.MyEntity?.MapInstance?.Entities.FirstOrDefault(entity => entity.Id == TargetIndex) as Entity;
+                    foundEntity = TargetWindow.MyEntity?.MapInstance?.Entities.FirstOrDefault(entity => entity.Id == TargetIndex) as Entity;
                 }
 
                 if (foundEntity == default || foundEntity.IsHidden || foundEntity.IsStealthed)
@@ -302,7 +301,7 @@ namespace Intersect.Client.Entities
                 }
             }
 
-            TargetBox?.Update();
+            TargetWindow?.Update();
 
             // Hide our Guild window if we're not in a guild!
             if (this == Globals.Me && string.IsNullOrEmpty(Guild) && Interface.Interface.GameUi != null)
@@ -339,10 +338,10 @@ namespace Intersect.Client.Entities
                 }
             }
 
-            if (this == Globals.Me && TargetBox == null && Interface.Interface.GameUi != null)
+            if (this == Globals.Me && TargetWindow == null && Interface.Interface.GameUi != null)
             {
-                TargetBox = new EntityBox(Interface.Interface.GameUi.GameCanvas, EntityType.Player, null);
-                TargetBox.Hide();
+                TargetWindow = new TargetWindows(Interface.Interface.GameUi.GameCanvas, EntityType.Player, null);
+                TargetWindow.Hide();
             }
         }
 
@@ -1620,35 +1619,35 @@ namespace Intersect.Client.Entities
 
             if (TargetIndex != targetedEntity.Id)
             {
-                SetTargetBox(targetedEntity);
+                SetTargetWindow(targetedEntity);
                 TargetIndex = targetedEntity.Id;
                 TargetType = 0;
             }
         }
 
-        private void SetTargetBox(Entity en)
+        private void SetTargetWindow(Entity en)
         {
-            if (en == null)
+            if (en == null || !Options.Instance.CombatOpts.EnableTargetWindows)
             {
-                TargetBox?.SetEntity(null);
-                TargetBox?.Hide();
+                TargetWindow?.SetEntity(null);
+                TargetWindow?.Hide();
                 return;
             }
 
             if (en is Player)
             {
-                TargetBox?.SetEntity(en, EntityType.Player);
+                TargetWindow?.SetEntity(en, EntityType.Player);
             }
             else if (en is Event)
             {
-                TargetBox?.SetEntity(en, EntityType.Event);
+                TargetWindow?.SetEntity(en, EntityType.Event);
             }
             else
             {
-                TargetBox?.SetEntity(en, EntityType.GlobalEntity);
+                TargetWindow?.SetEntity(en, EntityType.GlobalEntity);
             }
 
-            TargetBox?.Show();
+            TargetWindow?.Show();
         }
 
         private void AutoTurnToTarget(Entity en)
@@ -1966,7 +1965,7 @@ namespace Intersect.Client.Entities
                                 var targetType = bestMatch is Event ? 1 : 0;
 
 
-                                SetTargetBox(bestMatch as Entity);
+                                SetTargetWindow(bestMatch as Entity);
 
                                 if (bestMatch is Player)
                                 {
@@ -2015,7 +2014,7 @@ namespace Intersect.Client.Entities
             }
 
             // Are we already targetting this?
-            if (TargetBox != null && TargetBox.MyEntity == entity)
+            if (TargetWindow != null && TargetWindow.MyEntity == entity)
             {
                 return true;
             }
@@ -2033,7 +2032,7 @@ namespace Intersect.Client.Entities
 
             if (TargetIndex != entity.Id)
             {
-                SetTargetBox(entity as Entity);
+                SetTargetWindow(entity as Entity);
                 TargetType = targetType;
                 TargetIndex = entity.Id;
             }
@@ -2044,7 +2043,7 @@ namespace Intersect.Client.Entities
 
         public bool ClearTarget()
         {
-            SetTargetBox(null);
+            SetTargetWindow(null);
 
             if (TargetIndex == default && TargetType == -1)
             {

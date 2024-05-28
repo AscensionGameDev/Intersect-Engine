@@ -70,6 +70,11 @@
         public bool EnableTurnAroundWhileCasting = false;
 
         /// <summary>
+        /// If enabled, the target window will be shown when the player targets an entity
+        /// </summary>
+        public bool EnableTargetWindows = true;
+
+        /// <summary>
         /// If enabled, this makes it so a player casting a friendly spell on a hostile target instead casts the spell upon themselves
         /// </summary>
         public bool EnableAutoSelfCastFriendlySpellsWhenTargetingHostile { get; set; } = false;

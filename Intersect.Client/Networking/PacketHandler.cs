@@ -22,12 +22,6 @@ using Intersect.Network;
 using Intersect.Network.Packets;
 using Intersect.Network.Packets.Server;
 using Intersect.Utilities;
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using Intersect.Client.Framework.Network;
-using Intersect.Client.Plugins.Helpers;
 using Intersect.Framework;
 using Intersect.Models;
 using MapAttribute = Intersect.Enums.MapAttribute;
@@ -880,13 +874,13 @@ namespace Intersect.Client.Networking
                 if (Interface.Interface.GameUi != null)
                 {
                     //If its you or your target, update the entity box.
-                    if (en.Id == Globals.Me.Id && Interface.Interface.GameUi.PlayerBox != null)
+                    if (en.Id == Globals.Me.Id && Interface.Interface.GameUi.PlayerWindow != null)
                     {
-                        Interface.Interface.GameUi.PlayerBox.UpdateStatuses = true;
+                        Interface.Interface.GameUi.PlayerStatusWindow.UpdateStatuses = true;
                     }
-                    else if (en.Id == Globals.Me.TargetIndex && Globals.Me.TargetBox != null)
+                    else if (en.Id == Globals.Me.TargetIndex && Globals.Me.TargetWindow != null)
                     {
-                        Globals.Me.TargetBox.UpdateStatuses = true;
+                        Globals.Me.TargetWindow.UpdateStatuses = true;
                     }
                 }
             }
@@ -965,13 +959,13 @@ namespace Intersect.Client.Networking
             if (Interface.Interface.GameUi != null)
             {
                 //If its you or your target, update the entity box.
-                if (id == Globals.Me.Id && Interface.Interface.GameUi.PlayerBox != null)
+                if (id == Globals.Me.Id && Interface.Interface.GameUi.PlayerWindow != null)
                 {
-                    Interface.Interface.GameUi.PlayerBox.UpdateStatuses = true;
+                    Interface.Interface.GameUi.PlayerStatusWindow.UpdateStatuses = true;
                 }
-                else if (id == Globals.Me.TargetIndex && Globals.Me.TargetBox != null)
+                else if (id == Globals.Me.TargetIndex && Globals.Me.TargetWindow != null)
                 {
-                    Globals.Me.TargetBox.UpdateStatuses = true;
+                    Globals.Me.TargetWindow.UpdateStatuses = true;
                 }
             }
         }

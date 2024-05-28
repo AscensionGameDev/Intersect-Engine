@@ -1,19 +1,15 @@
-using System;
-
-using Intersect.Client.Core;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.General;
 using Intersect.Client.Interface.Game.Bag;
 using Intersect.Client.Interface.Game.Bank;
 using Intersect.Client.Interface.Game.Chat;
 using Intersect.Client.Interface.Game.Crafting;
-using Intersect.Client.Interface.Game.EntityPanel;
+using Intersect.Client.Interface.Game.Entity;
 using Intersect.Client.Interface.Game.Hotbar;
 using Intersect.Client.Interface.Game.Inventory;
 using Intersect.Client.Interface.Game.Shop;
 using Intersect.Client.Interface.Game.Trades;
 using Intersect.Client.Networking;
-using Intersect.Enums;
 using Intersect.GameObjects;
 
 namespace Intersect.Client.Interface.Game
@@ -87,7 +83,9 @@ namespace Intersect.Client.Interface.Game
 
         private TradingWindow? mTradingWindow;
 
-        public EntityBox PlayerBox;
+        public PlayerWindows PlayerWindow;
+
+        public PlayerStatusWindows PlayerStatusWindow;
 
         public GameInterface(Canvas canvas) : base(canvas)
         {
@@ -111,8 +109,10 @@ namespace Intersect.Client.Interface.Game
             mChatBox = new Chatbox(GameCanvas, this);
             GameMenu = new Menu(GameCanvas);
             Hotbar = new HotBarWindow(GameCanvas);
-            PlayerBox = new EntityBox(GameCanvas, EntityType.Player, Globals.Me, true);
-            PlayerBox.SetEntity(Globals.Me);
+            PlayerWindow = new PlayerWindows(GameCanvas, Globals.Me);
+            PlayerStatusWindow = new PlayerStatusWindows(GameCanvas, Globals.Me);
+            PlayerWindow.SetEntity(Globals.Me);
+            PlayerStatusWindow.SetEntity(Globals.Me);
             if (mPictureWindow == null)
             {
                 mPictureWindow = new PictureWindow(GameCanvas);
@@ -301,9 +301,14 @@ namespace Intersect.Client.Interface.Game
 
         public void Update()
         {
-            if (Globals.Me != null && PlayerBox?.MyEntity != Globals.Me)
+            if (Globals.Me != null && PlayerWindow?.MyEntity != Globals.Me)
             {
-                PlayerBox?.SetEntity(Globals.Me);
+                PlayerWindow?.SetEntity(Globals.Me);
+            }
+
+            if (Globals.Me != null && PlayerStatusWindow?.MyEntity != Globals.Me)
+            {
+                PlayerStatusWindow?.SetEntity(Globals.Me);
             }
 
             mChatBox?.Update();
@@ -311,7 +316,8 @@ namespace Intersect.Client.Interface.Game
             mShouldUpdateQuestLog = false;
             Hotbar?.Update();
             EscapeMenu.Update();
-            PlayerBox?.Update();
+            PlayerWindow?.Update();
+            PlayerStatusWindow?.Update();
             mMapItemWindow.Update();
             AnnouncementWindow?.Update();
             mPictureWindow?.Update();
