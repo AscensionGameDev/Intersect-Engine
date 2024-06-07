@@ -1,4 +1,3 @@
-using System;
 using Intersect.Client.Framework.Entities;
 using Intersect.Client.General;
 using Intersect.Enums;
@@ -310,7 +309,7 @@ namespace Intersect.Client.Entities.Projectiles
                     {
                         if (Spawns[s] != null && Maps.MapInstance.Get(Spawns[s].SpawnMapId) != null)
                         {
-                            if (TargetId != Guid.Empty && Globals.Entities.ContainsKey(TargetId))
+                            if (TargetId != Guid.Empty && Globals.Entities.ContainsKey(TargetId) && (mMyBase.HomingBehavior || mMyBase.DirectShotBehavior))
                             {
                                 var target = Globals.Entities[TargetId];
                                 mLastTargetX = target.X;
@@ -319,6 +318,11 @@ namespace Intersect.Client.Entities.Projectiles
                                 Spawns[s].OffsetX = GetProjectileX(Spawns[s], target.X, target.Y - Spawns[s].SpawnY);
                                 Spawns[s].OffsetY = GetProjectileY(Spawns[s], target.Y, target.X - Spawns[s].SpawnX);
                                 SetProjectileRotation(Spawns[s], target.X, target.Y);
+
+                                if (mMyBase.DirectShotBehavior)
+                                {
+                                    TargetId = Guid.Empty;
+                                }
                             }
                             else if(mLastTargetX != -1 && mLastTargetY != -1)
                             {

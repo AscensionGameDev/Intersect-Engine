@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps;
@@ -387,13 +385,18 @@ namespace Intersect.Server.Entities
                 spawn.Distance++;
                 spawn.TransmittionTimer += (long)(Base.Speed / (float)Base.Range);
                 
-                if (Target != default)
+                if (Target != default && (Base.HomingBehavior || Base.DirectShotBehavior))
                 {
                     //homing logic
                     mLastTargetX = Target.X;
                     mLastTargetY = Target.Y;
                     newx += GetProjectileX(spawn, Target.X, Target.Y - spawn.Y);
                     newy += GetProjectileY(spawn, Target.Y, Target.X - spawn.X);
+
+                    if (Base.DirectShotBehavior)
+                    {
+                        Target = default;
+                    }
                 }
                 else if (mLastTargetX != -1 && mLastTargetY != -1)
                 {

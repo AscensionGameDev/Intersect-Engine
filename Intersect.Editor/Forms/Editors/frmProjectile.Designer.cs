@@ -30,951 +30,1008 @@ namespace Intersect.Editor.Forms.Editors
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmProjectile));
-            this.grpProjectiles = new DarkUI.Controls.DarkGroupBox();
-            this.btnClearSearch = new DarkUI.Controls.DarkButton();
-            this.txtSearch = new DarkUI.Controls.DarkTextBox();
-            this.lstGameObjects = new Intersect.Editor.Forms.Controls.GameObjectList();
-            this.grpSpawns = new DarkUI.Controls.DarkGroupBox();
-            this.picSpawns = new System.Windows.Forms.PictureBox();
-            this.grpProperties = new DarkUI.Controls.DarkGroupBox();
-            this.btnAddFolder = new DarkUI.Controls.DarkButton();
-            this.lblFolder = new System.Windows.Forms.Label();
-            this.cmbFolder = new DarkUI.Controls.DarkComboBox();
-            this.cmbSpell = new DarkUI.Controls.DarkComboBox();
-            this.nudKnockback = new DarkUI.Controls.DarkNumericUpDown();
-            this.nudRange = new DarkUI.Controls.DarkNumericUpDown();
-            this.nudAmount = new DarkUI.Controls.DarkNumericUpDown();
-            this.nudSpawn = new DarkUI.Controls.DarkNumericUpDown();
-            this.nudSpeed = new DarkUI.Controls.DarkNumericUpDown();
-            this.lblKnockback = new System.Windows.Forms.Label();
-            this.lblAmount = new System.Windows.Forms.Label();
-            this.lblSpell = new System.Windows.Forms.Label();
-            this.lblName = new System.Windows.Forms.Label();
-            this.txtName = new DarkUI.Controls.DarkTextBox();
-            this.lblRange = new System.Windows.Forms.Label();
-            this.lblSpawn = new System.Windows.Forms.Label();
-            this.lblSpeed = new System.Windows.Forms.Label();
-            this.grpAnimations = new DarkUI.Controls.DarkGroupBox();
-            this.cmbAnimation = new DarkUI.Controls.DarkComboBox();
-            this.btnRemove = new DarkUI.Controls.DarkButton();
-            this.btnAdd = new DarkUI.Controls.DarkButton();
-            this.chkRotation = new DarkUI.Controls.DarkCheckBox();
-            this.lblAnimation = new System.Windows.Forms.Label();
-            this.lstAnimations = new System.Windows.Forms.ListBox();
-            this.lblSpawnRange = new System.Windows.Forms.Label();
-            this.scrlSpawnRange = new DarkUI.Controls.DarkScrollBar();
-            this.grpCollisions = new DarkUI.Controls.DarkGroupBox();
-            this.chkPierce = new DarkUI.Controls.DarkCheckBox();
-            this.chkIgnoreInactiveResources = new DarkUI.Controls.DarkCheckBox();
-            this.chkIgnoreZDimensionBlocks = new DarkUI.Controls.DarkCheckBox();
-            this.chkIgnoreMapBlocks = new DarkUI.Controls.DarkCheckBox();
-            this.chkIgnoreActiveResources = new DarkUI.Controls.DarkCheckBox();
-            this.pnlContainer = new System.Windows.Forms.Panel();
-            this.grpGrappleOptions = new DarkUI.Controls.DarkGroupBox();
-            this.chkGrappleOnNpc = new DarkUI.Controls.DarkCheckBox();
-            this.chkGrappleOnResource = new DarkUI.Controls.DarkCheckBox();
-            this.chkGrappleOnMap = new DarkUI.Controls.DarkCheckBox();
-            this.chkGrappleOnPlayer = new DarkUI.Controls.DarkCheckBox();
-            this.grpAmmo = new DarkUI.Controls.DarkGroupBox();
-            this.nudConsume = new DarkUI.Controls.DarkNumericUpDown();
-            this.cmbItem = new DarkUI.Controls.DarkComboBox();
-            this.lblAmmoItem = new System.Windows.Forms.Label();
-            this.lblAmmoAmount = new System.Windows.Forms.Label();
-            this.btnCancel = new DarkUI.Controls.DarkButton();
-            this.btnSave = new DarkUI.Controls.DarkButton();
-            this.toolStrip = new DarkUI.Controls.DarkToolStrip();
-            this.toolStripItemNew = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripItemDelete = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
-            this.btnAlphabetical = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripItemCopy = new System.Windows.Forms.ToolStripButton();
-            this.toolStripItemPaste = new System.Windows.Forms.ToolStripButton();
-            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripItemUndo = new System.Windows.Forms.ToolStripButton();
-            this.grpProjectiles.SuspendLayout();
-            this.grpSpawns.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.picSpawns)).BeginInit();
-            this.grpProperties.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nudKnockback)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudRange)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudAmount)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudSpawn)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudSpeed)).BeginInit();
-            this.grpAnimations.SuspendLayout();
-            this.grpCollisions.SuspendLayout();
-            this.pnlContainer.SuspendLayout();
-            this.grpGrappleOptions.SuspendLayout();
-            this.grpAmmo.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nudConsume)).BeginInit();
-            this.toolStrip.SuspendLayout();
-            this.SuspendLayout();
+            components = new System.ComponentModel.Container();
+            var resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmProjectile));
+            grpProjectiles = new DarkGroupBox();
+            btnClearSearch = new DarkButton();
+            txtSearch = new DarkTextBox();
+            lstGameObjects = new Controls.GameObjectList();
+            grpSpawns = new DarkGroupBox();
+            picSpawns = new PictureBox();
+            grpProperties = new DarkGroupBox();
+            btnAddFolder = new DarkButton();
+            lblFolder = new Label();
+            cmbFolder = new DarkComboBox();
+            cmbSpell = new DarkComboBox();
+            nudKnockback = new DarkNumericUpDown();
+            nudRange = new DarkNumericUpDown();
+            nudAmount = new DarkNumericUpDown();
+            nudSpawn = new DarkNumericUpDown();
+            nudSpeed = new DarkNumericUpDown();
+            lblKnockback = new Label();
+            lblAmount = new Label();
+            lblSpell = new Label();
+            lblName = new Label();
+            txtName = new DarkTextBox();
+            lblRange = new Label();
+            lblSpawn = new Label();
+            lblSpeed = new Label();
+            grpAnimations = new DarkGroupBox();
+            cmbAnimation = new DarkComboBox();
+            btnRemove = new DarkButton();
+            btnAdd = new DarkButton();
+            chkRotation = new DarkCheckBox();
+            lblAnimation = new Label();
+            lstAnimations = new ListBox();
+            lblSpawnRange = new Label();
+            scrlSpawnRange = new DarkScrollBar();
+            grpCollisions = new DarkGroupBox();
+            chkPierce = new DarkCheckBox();
+            chkIgnoreInactiveResources = new DarkCheckBox();
+            chkIgnoreZDimensionBlocks = new DarkCheckBox();
+            chkIgnoreMapBlocks = new DarkCheckBox();
+            chkIgnoreActiveResources = new DarkCheckBox();
+            pnlContainer = new Panel();
+            grpTargettingOptions = new DarkGroupBox();
+            rdoBehaviorDefault = new DarkRadioButton();
+            rdoBehaviorDirectShot = new DarkRadioButton();
+            rdoBehaviorHoming = new DarkRadioButton();
+            grpGrappleOptions = new DarkGroupBox();
+            chkGrappleOnNpc = new DarkCheckBox();
+            chkGrappleOnResource = new DarkCheckBox();
+            chkGrappleOnMap = new DarkCheckBox();
+            chkGrappleOnPlayer = new DarkCheckBox();
+            grpAmmo = new DarkGroupBox();
+            nudConsume = new DarkNumericUpDown();
+            cmbItem = new DarkComboBox();
+            lblAmmoItem = new Label();
+            lblAmmoAmount = new Label();
+            btnCancel = new DarkButton();
+            btnSave = new DarkButton();
+            toolStrip = new DarkToolStrip();
+            toolStripItemNew = new ToolStripButton();
+            toolStripSeparator1 = new ToolStripSeparator();
+            toolStripItemDelete = new ToolStripButton();
+            toolStripSeparator2 = new ToolStripSeparator();
+            btnAlphabetical = new ToolStripButton();
+            toolStripSeparator4 = new ToolStripSeparator();
+            toolStripItemCopy = new ToolStripButton();
+            toolStripItemPaste = new ToolStripButton();
+            toolStripSeparator3 = new ToolStripSeparator();
+            toolStripItemUndo = new ToolStripButton();
+            grpProjectiles.SuspendLayout();
+            grpSpawns.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)picSpawns).BeginInit();
+            grpProperties.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)nudKnockback).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)nudRange).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)nudAmount).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)nudSpawn).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)nudSpeed).BeginInit();
+            grpAnimations.SuspendLayout();
+            grpCollisions.SuspendLayout();
+            pnlContainer.SuspendLayout();
+            grpTargettingOptions.SuspendLayout();
+            grpGrappleOptions.SuspendLayout();
+            grpAmmo.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)nudConsume).BeginInit();
+            toolStrip.SuspendLayout();
+            SuspendLayout();
             // 
             // grpProjectiles
             // 
-            this.grpProjectiles.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            this.grpProjectiles.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.grpProjectiles.Controls.Add(this.btnClearSearch);
-            this.grpProjectiles.Controls.Add(this.txtSearch);
-            this.grpProjectiles.Controls.Add(this.lstGameObjects);
-            this.grpProjectiles.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpProjectiles.Location = new System.Drawing.Point(12, 36);
-            this.grpProjectiles.Name = "grpProjectiles";
-            this.grpProjectiles.Size = new System.Drawing.Size(203, 480);
-            this.grpProjectiles.TabIndex = 15;
-            this.grpProjectiles.TabStop = false;
-            this.grpProjectiles.Text = "Projectiles";
+            grpProjectiles.BackColor = System.Drawing.Color.FromArgb(45, 45, 48);
+            grpProjectiles.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
+            grpProjectiles.Controls.Add(btnClearSearch);
+            grpProjectiles.Controls.Add(txtSearch);
+            grpProjectiles.Controls.Add(lstGameObjects);
+            grpProjectiles.ForeColor = System.Drawing.Color.Gainsboro;
+            grpProjectiles.Location = new System.Drawing.Point(14, 42);
+            grpProjectiles.Margin = new Padding(4, 3, 4, 3);
+            grpProjectiles.Name = "grpProjectiles";
+            grpProjectiles.Padding = new Padding(4, 3, 4, 3);
+            grpProjectiles.Size = new Size(237, 642);
+            grpProjectiles.TabIndex = 15;
+            grpProjectiles.TabStop = false;
+            grpProjectiles.Text = "Projectiles";
             // 
             // btnClearSearch
             // 
-            this.btnClearSearch.Location = new System.Drawing.Point(179, 18);
-            this.btnClearSearch.Name = "btnClearSearch";
-            this.btnClearSearch.Padding = new System.Windows.Forms.Padding(5);
-            this.btnClearSearch.Size = new System.Drawing.Size(18, 20);
-            this.btnClearSearch.TabIndex = 34;
-            this.btnClearSearch.Text = "X";
-            this.btnClearSearch.Click += new System.EventHandler(this.btnClearSearch_Click);
+            btnClearSearch.Location = new System.Drawing.Point(209, 21);
+            btnClearSearch.Margin = new Padding(4, 3, 4, 3);
+            btnClearSearch.Name = "btnClearSearch";
+            btnClearSearch.Padding = new Padding(6);
+            btnClearSearch.Size = new Size(21, 23);
+            btnClearSearch.TabIndex = 34;
+            btnClearSearch.Text = "X";
+            btnClearSearch.Click += btnClearSearch_Click;
             // 
             // txtSearch
             // 
-            this.txtSearch.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.txtSearch.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.txtSearch.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.txtSearch.Location = new System.Drawing.Point(6, 18);
-            this.txtSearch.Name = "txtSearch";
-            this.txtSearch.Size = new System.Drawing.Size(167, 20);
-            this.txtSearch.TabIndex = 33;
-            this.txtSearch.Text = "Search...";
-            this.txtSearch.Click += new System.EventHandler(this.txtSearch_Click);
-            this.txtSearch.TextChanged += new System.EventHandler(this.txtSearch_TextChanged);
-            this.txtSearch.Enter += new System.EventHandler(this.txtSearch_Enter);
-            this.txtSearch.Leave += new System.EventHandler(this.txtSearch_Leave);
+            txtSearch.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
+            txtSearch.BorderStyle = BorderStyle.FixedSingle;
+            txtSearch.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+            txtSearch.Location = new System.Drawing.Point(7, 21);
+            txtSearch.Margin = new Padding(4, 3, 4, 3);
+            txtSearch.Name = "txtSearch";
+            txtSearch.Size = new Size(194, 23);
+            txtSearch.TabIndex = 33;
+            txtSearch.Text = "Search...";
+            txtSearch.Click += txtSearch_Click;
+            txtSearch.TextChanged += txtSearch_TextChanged;
+            txtSearch.Enter += txtSearch_Enter;
+            txtSearch.Leave += txtSearch_Leave;
             // 
             // lstGameObjects
             // 
-            this.lstGameObjects.AllowDrop = true;
-            this.lstGameObjects.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
-            this.lstGameObjects.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.lstGameObjects.ForeColor = System.Drawing.Color.Gainsboro;
-            this.lstGameObjects.HideSelection = false;
-            this.lstGameObjects.ImageIndex = 0;
-            this.lstGameObjects.LineColor = System.Drawing.Color.FromArgb(((int)(((byte)(150)))), ((int)(((byte)(150)))), ((int)(((byte)(150)))));
-            this.lstGameObjects.Location = new System.Drawing.Point(6, 44);
-            this.lstGameObjects.Name = "lstGameObjects";
-            this.lstGameObjects.SelectedImageIndex = 0;
-            this.lstGameObjects.Size = new System.Drawing.Size(191, 426);
-            this.lstGameObjects.TabIndex = 32;
+            lstGameObjects.AllowDrop = true;
+            lstGameObjects.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
+            lstGameObjects.BorderStyle = BorderStyle.None;
+            lstGameObjects.ForeColor = System.Drawing.Color.Gainsboro;
+            lstGameObjects.HideSelection = false;
+            lstGameObjects.ImageIndex = 0;
+            lstGameObjects.LineColor = System.Drawing.Color.FromArgb(150, 150, 150);
+            lstGameObjects.Location = new System.Drawing.Point(7, 51);
+            lstGameObjects.Margin = new Padding(4, 3, 4, 3);
+            lstGameObjects.Name = "lstGameObjects";
+            lstGameObjects.SelectedImageIndex = 0;
+            lstGameObjects.Size = new Size(223, 585);
+            lstGameObjects.TabIndex = 32;
             // 
             // grpSpawns
             // 
-            this.grpSpawns.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            this.grpSpawns.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.grpSpawns.Controls.Add(this.picSpawns);
-            this.grpSpawns.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpSpawns.Location = new System.Drawing.Point(1, 279);
-            this.grpSpawns.Name = "grpSpawns";
-            this.grpSpawns.Size = new System.Drawing.Size(186, 197);
-            this.grpSpawns.TabIndex = 17;
-            this.grpSpawns.TabStop = false;
-            this.grpSpawns.Text = "Projectile Spawns";
+            grpSpawns.BackColor = System.Drawing.Color.FromArgb(45, 45, 48);
+            grpSpawns.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
+            grpSpawns.Controls.Add(picSpawns);
+            grpSpawns.ForeColor = System.Drawing.Color.Gainsboro;
+            grpSpawns.Location = new System.Drawing.Point(2, 423);
+            grpSpawns.Margin = new Padding(4, 3, 4, 3);
+            grpSpawns.Name = "grpSpawns";
+            grpSpawns.Padding = new Padding(4, 3, 4, 3);
+            grpSpawns.Size = new Size(217, 212);
+            grpSpawns.TabIndex = 17;
+            grpSpawns.TabStop = false;
+            grpSpawns.Text = "Projectile Spawns";
             // 
             // picSpawns
             // 
-            this.picSpawns.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.picSpawns.Location = new System.Drawing.Point(15, 20);
-            this.picSpawns.Name = "picSpawns";
-            this.picSpawns.Size = new System.Drawing.Size(160, 160);
-            this.picSpawns.TabIndex = 17;
-            this.picSpawns.TabStop = false;
-            this.picSpawns.MouseDown += new System.Windows.Forms.MouseEventHandler(this.picSpawns_MouseDown);
+            picSpawns.BackgroundImageLayout = ImageLayout.Stretch;
+            picSpawns.Location = new System.Drawing.Point(18, 22);
+            picSpawns.Margin = new Padding(4, 3, 4, 3);
+            picSpawns.Name = "picSpawns";
+            picSpawns.Size = new Size(187, 185);
+            picSpawns.TabIndex = 17;
+            picSpawns.TabStop = false;
+            picSpawns.MouseDown += picSpawns_MouseDown;
             // 
             // grpProperties
             // 
-            this.grpProperties.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            this.grpProperties.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.grpProperties.Controls.Add(this.btnAddFolder);
-            this.grpProperties.Controls.Add(this.lblFolder);
-            this.grpProperties.Controls.Add(this.cmbFolder);
-            this.grpProperties.Controls.Add(this.cmbSpell);
-            this.grpProperties.Controls.Add(this.nudKnockback);
-            this.grpProperties.Controls.Add(this.nudRange);
-            this.grpProperties.Controls.Add(this.nudAmount);
-            this.grpProperties.Controls.Add(this.nudSpawn);
-            this.grpProperties.Controls.Add(this.nudSpeed);
-            this.grpProperties.Controls.Add(this.lblKnockback);
-            this.grpProperties.Controls.Add(this.lblAmount);
-            this.grpProperties.Controls.Add(this.lblSpell);
-            this.grpProperties.Controls.Add(this.lblName);
-            this.grpProperties.Controls.Add(this.txtName);
-            this.grpProperties.Controls.Add(this.lblRange);
-            this.grpProperties.Controls.Add(this.lblSpawn);
-            this.grpProperties.Controls.Add(this.lblSpeed);
-            this.grpProperties.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpProperties.Location = new System.Drawing.Point(1, 1);
-            this.grpProperties.Name = "grpProperties";
-            this.grpProperties.Size = new System.Drawing.Size(186, 272);
-            this.grpProperties.TabIndex = 18;
-            this.grpProperties.TabStop = false;
-            this.grpProperties.Text = "Properties";
+            grpProperties.BackColor = System.Drawing.Color.FromArgb(45, 45, 48);
+            grpProperties.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
+            grpProperties.Controls.Add(btnAddFolder);
+            grpProperties.Controls.Add(lblFolder);
+            grpProperties.Controls.Add(cmbFolder);
+            grpProperties.Controls.Add(cmbSpell);
+            grpProperties.Controls.Add(nudKnockback);
+            grpProperties.Controls.Add(nudRange);
+            grpProperties.Controls.Add(nudAmount);
+            grpProperties.Controls.Add(nudSpawn);
+            grpProperties.Controls.Add(nudSpeed);
+            grpProperties.Controls.Add(lblKnockback);
+            grpProperties.Controls.Add(lblAmount);
+            grpProperties.Controls.Add(lblSpell);
+            grpProperties.Controls.Add(lblName);
+            grpProperties.Controls.Add(txtName);
+            grpProperties.Controls.Add(lblRange);
+            grpProperties.Controls.Add(lblSpawn);
+            grpProperties.Controls.Add(lblSpeed);
+            grpProperties.ForeColor = System.Drawing.Color.Gainsboro;
+            grpProperties.Location = new System.Drawing.Point(2, 1);
+            grpProperties.Margin = new Padding(4, 3, 4, 3);
+            grpProperties.Name = "grpProperties";
+            grpProperties.Padding = new Padding(4, 3, 4, 3);
+            grpProperties.Size = new Size(216, 314);
+            grpProperties.TabIndex = 18;
+            grpProperties.TabStop = false;
+            grpProperties.Text = "Properties";
             // 
             // btnAddFolder
             // 
-            this.btnAddFolder.Location = new System.Drawing.Point(157, 46);
-            this.btnAddFolder.Name = "btnAddFolder";
-            this.btnAddFolder.Padding = new System.Windows.Forms.Padding(5);
-            this.btnAddFolder.Size = new System.Drawing.Size(18, 21);
-            this.btnAddFolder.TabIndex = 52;
-            this.btnAddFolder.Text = "+";
-            this.btnAddFolder.Click += new System.EventHandler(this.btnAddFolder_Click);
+            btnAddFolder.Location = new System.Drawing.Point(183, 53);
+            btnAddFolder.Margin = new Padding(4, 3, 4, 3);
+            btnAddFolder.Name = "btnAddFolder";
+            btnAddFolder.Padding = new Padding(6);
+            btnAddFolder.Size = new Size(21, 24);
+            btnAddFolder.TabIndex = 52;
+            btnAddFolder.Text = "+";
+            btnAddFolder.Click += btnAddFolder_Click;
             // 
             // lblFolder
             // 
-            this.lblFolder.AutoSize = true;
-            this.lblFolder.Location = new System.Drawing.Point(6, 49);
-            this.lblFolder.Name = "lblFolder";
-            this.lblFolder.Size = new System.Drawing.Size(39, 13);
-            this.lblFolder.TabIndex = 51;
-            this.lblFolder.Text = "Folder:";
+            lblFolder.AutoSize = true;
+            lblFolder.Location = new System.Drawing.Point(7, 57);
+            lblFolder.Margin = new Padding(4, 0, 4, 0);
+            lblFolder.Name = "lblFolder";
+            lblFolder.Size = new Size(43, 15);
+            lblFolder.TabIndex = 51;
+            lblFolder.Text = "Folder:";
             // 
             // cmbFolder
             // 
-            this.cmbFolder.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.cmbFolder.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.cmbFolder.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
-            this.cmbFolder.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbFolder.DrawDropdownHoverOutline = false;
-            this.cmbFolder.DrawFocusRectangle = false;
-            this.cmbFolder.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.cmbFolder.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbFolder.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.cmbFolder.ForeColor = System.Drawing.Color.Gainsboro;
-            this.cmbFolder.FormattingEnabled = true;
-            this.cmbFolder.Location = new System.Drawing.Point(57, 46);
-            this.cmbFolder.Name = "cmbFolder";
-            this.cmbFolder.Size = new System.Drawing.Size(94, 21);
-            this.cmbFolder.TabIndex = 50;
-            this.cmbFolder.Text = null;
-            this.cmbFolder.TextPadding = new System.Windows.Forms.Padding(2);
-            this.cmbFolder.SelectedIndexChanged += new System.EventHandler(this.cmbFolder_SelectedIndexChanged);
+            cmbFolder.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
+            cmbFolder.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
+            cmbFolder.BorderStyle = ButtonBorderStyle.Solid;
+            cmbFolder.ButtonColor = System.Drawing.Color.FromArgb(43, 43, 43);
+            cmbFolder.DrawDropdownHoverOutline = false;
+            cmbFolder.DrawFocusRectangle = false;
+            cmbFolder.DrawMode = DrawMode.OwnerDrawFixed;
+            cmbFolder.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbFolder.FlatStyle = FlatStyle.Flat;
+            cmbFolder.ForeColor = System.Drawing.Color.Gainsboro;
+            cmbFolder.FormattingEnabled = true;
+            cmbFolder.Location = new System.Drawing.Point(66, 53);
+            cmbFolder.Margin = new Padding(4, 3, 4, 3);
+            cmbFolder.Name = "cmbFolder";
+            cmbFolder.Size = new Size(109, 24);
+            cmbFolder.TabIndex = 50;
+            cmbFolder.Text = null;
+            cmbFolder.TextPadding = new Padding(2);
+            cmbFolder.SelectedIndexChanged += cmbFolder_SelectedIndexChanged;
             // 
             // cmbSpell
             // 
-            this.cmbSpell.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.cmbSpell.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.cmbSpell.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
-            this.cmbSpell.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbSpell.DrawDropdownHoverOutline = false;
-            this.cmbSpell.DrawFocusRectangle = false;
-            this.cmbSpell.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.cmbSpell.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbSpell.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.cmbSpell.ForeColor = System.Drawing.Color.Gainsboro;
-            this.cmbSpell.FormattingEnabled = true;
-            this.cmbSpell.Location = new System.Drawing.Point(9, 238);
-            this.cmbSpell.Name = "cmbSpell";
-            this.cmbSpell.Size = new System.Drawing.Size(167, 21);
-            this.cmbSpell.TabIndex = 46;
-            this.cmbSpell.Text = null;
-            this.cmbSpell.TextPadding = new System.Windows.Forms.Padding(2);
-            this.cmbSpell.SelectedIndexChanged += new System.EventHandler(this.cmbSpell_SelectedIndexChanged);
+            cmbSpell.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
+            cmbSpell.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
+            cmbSpell.BorderStyle = ButtonBorderStyle.Solid;
+            cmbSpell.ButtonColor = System.Drawing.Color.FromArgb(43, 43, 43);
+            cmbSpell.DrawDropdownHoverOutline = false;
+            cmbSpell.DrawFocusRectangle = false;
+            cmbSpell.DrawMode = DrawMode.OwnerDrawFixed;
+            cmbSpell.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbSpell.FlatStyle = FlatStyle.Flat;
+            cmbSpell.ForeColor = System.Drawing.Color.Gainsboro;
+            cmbSpell.FormattingEnabled = true;
+            cmbSpell.Location = new System.Drawing.Point(10, 275);
+            cmbSpell.Margin = new Padding(4, 3, 4, 3);
+            cmbSpell.Name = "cmbSpell";
+            cmbSpell.Size = new Size(194, 24);
+            cmbSpell.TabIndex = 46;
+            cmbSpell.Text = null;
+            cmbSpell.TextPadding = new Padding(2);
+            cmbSpell.SelectedIndexChanged += cmbSpell_SelectedIndexChanged;
             // 
             // nudKnockback
             // 
-            this.nudKnockback.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.nudKnockback.ForeColor = System.Drawing.Color.Gainsboro;
-            this.nudKnockback.Location = new System.Drawing.Point(107, 187);
-            this.nudKnockback.Name = "nudKnockback";
-            this.nudKnockback.Size = new System.Drawing.Size(69, 20);
-            this.nudKnockback.TabIndex = 45;
-            this.nudKnockback.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.nudKnockback.ValueChanged += new System.EventHandler(this.nudKnockback_ValueChanged);
+            nudKnockback.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
+            nudKnockback.ForeColor = System.Drawing.Color.Gainsboro;
+            nudKnockback.Location = new System.Drawing.Point(125, 216);
+            nudKnockback.Margin = new Padding(4, 3, 4, 3);
+            nudKnockback.Name = "nudKnockback";
+            nudKnockback.Size = new Size(80, 23);
+            nudKnockback.TabIndex = 45;
+            nudKnockback.Value = new decimal(new int[] { 0, 0, 0, 0 });
+            nudKnockback.ValueChanged += nudKnockback_ValueChanged;
             // 
             // nudRange
             // 
-            this.nudRange.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.nudRange.ForeColor = System.Drawing.Color.Gainsboro;
-            this.nudRange.Location = new System.Drawing.Point(107, 161);
-            this.nudRange.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.nudRange.Name = "nudRange";
-            this.nudRange.Size = new System.Drawing.Size(69, 20);
-            this.nudRange.TabIndex = 44;
-            this.nudRange.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.nudRange.ValueChanged += new System.EventHandler(this.nudRange_ValueChanged);
+            nudRange.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
+            nudRange.ForeColor = System.Drawing.Color.Gainsboro;
+            nudRange.Location = new System.Drawing.Point(125, 186);
+            nudRange.Margin = new Padding(4, 3, 4, 3);
+            nudRange.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
+            nudRange.Name = "nudRange";
+            nudRange.Size = new Size(80, 23);
+            nudRange.TabIndex = 44;
+            nudRange.Value = new decimal(new int[] { 1, 0, 0, 0 });
+            nudRange.ValueChanged += nudRange_ValueChanged;
             // 
             // nudAmount
             // 
-            this.nudAmount.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.nudAmount.ForeColor = System.Drawing.Color.Gainsboro;
-            this.nudAmount.Location = new System.Drawing.Point(107, 135);
-            this.nudAmount.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.nudAmount.Name = "nudAmount";
-            this.nudAmount.Size = new System.Drawing.Size(69, 20);
-            this.nudAmount.TabIndex = 43;
-            this.nudAmount.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.nudAmount.ValueChanged += new System.EventHandler(this.nudAmount_ValueChanged);
+            nudAmount.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
+            nudAmount.ForeColor = System.Drawing.Color.Gainsboro;
+            nudAmount.Location = new System.Drawing.Point(125, 156);
+            nudAmount.Margin = new Padding(4, 3, 4, 3);
+            nudAmount.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
+            nudAmount.Name = "nudAmount";
+            nudAmount.Size = new Size(80, 23);
+            nudAmount.TabIndex = 43;
+            nudAmount.Value = new decimal(new int[] { 1, 0, 0, 0 });
+            nudAmount.ValueChanged += nudAmount_ValueChanged;
             // 
             // nudSpawn
             // 
-            this.nudSpawn.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.nudSpawn.ForeColor = System.Drawing.Color.Gainsboro;
-            this.nudSpawn.Location = new System.Drawing.Point(107, 108);
-            this.nudSpawn.Maximum = new decimal(new int[] {
-            2147483647,
-            0,
-            0,
-            0});
-            this.nudSpawn.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.nudSpawn.Name = "nudSpawn";
-            this.nudSpawn.Size = new System.Drawing.Size(69, 20);
-            this.nudSpawn.TabIndex = 42;
-            this.nudSpawn.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.nudSpawn.ValueChanged += new System.EventHandler(this.nudSpawnDelay_ValueChanged);
+            nudSpawn.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
+            nudSpawn.ForeColor = System.Drawing.Color.Gainsboro;
+            nudSpawn.Location = new System.Drawing.Point(125, 125);
+            nudSpawn.Margin = new Padding(4, 3, 4, 3);
+            nudSpawn.Maximum = new decimal(new int[] { int.MaxValue, 0, 0, 0 });
+            nudSpawn.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
+            nudSpawn.Name = "nudSpawn";
+            nudSpawn.Size = new Size(80, 23);
+            nudSpawn.TabIndex = 42;
+            nudSpawn.Value = new decimal(new int[] { 1, 0, 0, 0 });
+            nudSpawn.ValueChanged += nudSpawnDelay_ValueChanged;
             // 
             // nudSpeed
             // 
-            this.nudSpeed.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.nudSpeed.ForeColor = System.Drawing.Color.Gainsboro;
-            this.nudSpeed.Location = new System.Drawing.Point(107, 82);
-            this.nudSpeed.Maximum = new decimal(new int[] {
-            2147483647,
-            0,
-            0,
-            0});
-            this.nudSpeed.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.nudSpeed.Name = "nudSpeed";
-            this.nudSpeed.Size = new System.Drawing.Size(69, 20);
-            this.nudSpeed.TabIndex = 41;
-            this.nudSpeed.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.nudSpeed.ValueChanged += new System.EventHandler(this.nudSpeed_ValueChanged);
+            nudSpeed.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
+            nudSpeed.ForeColor = System.Drawing.Color.Gainsboro;
+            nudSpeed.Location = new System.Drawing.Point(125, 95);
+            nudSpeed.Margin = new Padding(4, 3, 4, 3);
+            nudSpeed.Maximum = new decimal(new int[] { int.MaxValue, 0, 0, 0 });
+            nudSpeed.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
+            nudSpeed.Name = "nudSpeed";
+            nudSpeed.Size = new Size(80, 23);
+            nudSpeed.TabIndex = 41;
+            nudSpeed.Value = new decimal(new int[] { 1, 0, 0, 0 });
+            nudSpeed.ValueChanged += nudSpeed_ValueChanged;
             // 
             // lblKnockback
             // 
-            this.lblKnockback.AutoSize = true;
-            this.lblKnockback.Location = new System.Drawing.Point(6, 187);
-            this.lblKnockback.Name = "lblKnockback";
-            this.lblKnockback.Size = new System.Drawing.Size(65, 13);
-            this.lblKnockback.TabIndex = 40;
-            this.lblKnockback.Text = "Knockback:";
+            lblKnockback.AutoSize = true;
+            lblKnockback.Location = new System.Drawing.Point(7, 216);
+            lblKnockback.Margin = new Padding(4, 0, 4, 0);
+            lblKnockback.Name = "lblKnockback";
+            lblKnockback.Size = new Size(68, 15);
+            lblKnockback.TabIndex = 40;
+            lblKnockback.Text = "Knockback:";
             // 
             // lblAmount
             // 
-            this.lblAmount.AutoSize = true;
-            this.lblAmount.Location = new System.Drawing.Point(6, 135);
-            this.lblAmount.Name = "lblAmount";
-            this.lblAmount.Size = new System.Drawing.Size(49, 13);
-            this.lblAmount.TabIndex = 38;
-            this.lblAmount.Text = "Quantity:";
+            lblAmount.AutoSize = true;
+            lblAmount.Location = new System.Drawing.Point(7, 156);
+            lblAmount.Margin = new Padding(4, 0, 4, 0);
+            lblAmount.Name = "lblAmount";
+            lblAmount.Size = new Size(56, 15);
+            lblAmount.TabIndex = 38;
+            lblAmount.Text = "Quantity:";
             // 
             // lblSpell
             // 
-            this.lblSpell.AutoSize = true;
-            this.lblSpell.Location = new System.Drawing.Point(6, 216);
-            this.lblSpell.Name = "lblSpell";
-            this.lblSpell.Size = new System.Drawing.Size(74, 13);
-            this.lblSpell.TabIndex = 24;
-            this.lblSpell.Text = "Collision Spell:";
+            lblSpell.AutoSize = true;
+            lblSpell.Location = new System.Drawing.Point(7, 249);
+            lblSpell.Margin = new Padding(4, 0, 4, 0);
+            lblSpell.Name = "lblSpell";
+            lblSpell.Size = new Size(84, 15);
+            lblSpell.TabIndex = 24;
+            lblSpell.Text = "Collision Spell:";
             // 
             // lblName
             // 
-            this.lblName.AutoSize = true;
-            this.lblName.Location = new System.Drawing.Point(6, 21);
-            this.lblName.Name = "lblName";
-            this.lblName.Size = new System.Drawing.Size(38, 13);
-            this.lblName.TabIndex = 19;
-            this.lblName.Text = "Name:";
+            lblName.AutoSize = true;
+            lblName.Location = new System.Drawing.Point(7, 24);
+            lblName.Margin = new Padding(4, 0, 4, 0);
+            lblName.Name = "lblName";
+            lblName.Size = new Size(42, 15);
+            lblName.TabIndex = 19;
+            lblName.Text = "Name:";
             // 
             // txtName
             // 
-            this.txtName.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.txtName.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.txtName.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.txtName.Location = new System.Drawing.Point(57, 19);
-            this.txtName.Name = "txtName";
-            this.txtName.Size = new System.Drawing.Size(118, 20);
-            this.txtName.TabIndex = 18;
-            this.txtName.TextChanged += new System.EventHandler(this.txtName_TextChanged);
+            txtName.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
+            txtName.BorderStyle = BorderStyle.FixedSingle;
+            txtName.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+            txtName.Location = new System.Drawing.Point(66, 22);
+            txtName.Margin = new Padding(4, 3, 4, 3);
+            txtName.Name = "txtName";
+            txtName.Size = new Size(137, 23);
+            txtName.TabIndex = 18;
+            txtName.TextChanged += txtName_TextChanged;
             // 
             // lblRange
             // 
-            this.lblRange.AutoSize = true;
-            this.lblRange.Location = new System.Drawing.Point(6, 163);
-            this.lblRange.Name = "lblRange";
-            this.lblRange.Size = new System.Drawing.Size(42, 13);
-            this.lblRange.TabIndex = 7;
-            this.lblRange.Text = "Range:";
+            lblRange.AutoSize = true;
+            lblRange.Location = new System.Drawing.Point(7, 188);
+            lblRange.Margin = new Padding(4, 0, 4, 0);
+            lblRange.Name = "lblRange";
+            lblRange.Size = new Size(43, 15);
+            lblRange.TabIndex = 7;
+            lblRange.Text = "Range:";
             // 
             // lblSpawn
             // 
-            this.lblSpawn.AutoSize = true;
-            this.lblSpawn.Location = new System.Drawing.Point(6, 110);
-            this.lblSpawn.Name = "lblSpawn";
-            this.lblSpawn.Size = new System.Drawing.Size(95, 13);
-            this.lblSpawn.TabIndex = 4;
-            this.lblSpawn.Text = "Spawn Delay (ms):";
+            lblSpawn.AutoSize = true;
+            lblSpawn.Location = new System.Drawing.Point(7, 127);
+            lblSpawn.Margin = new Padding(4, 0, 4, 0);
+            lblSpawn.Name = "lblSpawn";
+            lblSpawn.Size = new Size(104, 15);
+            lblSpawn.TabIndex = 4;
+            lblSpawn.Text = "Spawn Delay (ms):";
             // 
             // lblSpeed
             // 
-            this.lblSpeed.AutoSize = true;
-            this.lblSpeed.Location = new System.Drawing.Point(6, 84);
-            this.lblSpeed.Name = "lblSpeed";
-            this.lblSpeed.Size = new System.Drawing.Size(63, 13);
-            this.lblSpeed.TabIndex = 3;
-            this.lblSpeed.Text = "Speed (ms):";
+            lblSpeed.AutoSize = true;
+            lblSpeed.Location = new System.Drawing.Point(7, 97);
+            lblSpeed.Margin = new Padding(4, 0, 4, 0);
+            lblSpeed.Name = "lblSpeed";
+            lblSpeed.Size = new Size(69, 15);
+            lblSpeed.TabIndex = 3;
+            lblSpeed.Text = "Speed (ms):";
             // 
             // grpAnimations
             // 
-            this.grpAnimations.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            this.grpAnimations.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.grpAnimations.Controls.Add(this.cmbAnimation);
-            this.grpAnimations.Controls.Add(this.btnRemove);
-            this.grpAnimations.Controls.Add(this.btnAdd);
-            this.grpAnimations.Controls.Add(this.chkRotation);
-            this.grpAnimations.Controls.Add(this.lblAnimation);
-            this.grpAnimations.Controls.Add(this.lstAnimations);
-            this.grpAnimations.Controls.Add(this.lblSpawnRange);
-            this.grpAnimations.Controls.Add(this.scrlSpawnRange);
-            this.grpAnimations.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpAnimations.Location = new System.Drawing.Point(193, 1);
-            this.grpAnimations.Name = "grpAnimations";
-            this.grpAnimations.Size = new System.Drawing.Size(273, 252);
-            this.grpAnimations.TabIndex = 27;
-            this.grpAnimations.TabStop = false;
-            this.grpAnimations.Text = "Animations";
+            grpAnimations.BackColor = System.Drawing.Color.FromArgb(45, 45, 48);
+            grpAnimations.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
+            grpAnimations.Controls.Add(cmbAnimation);
+            grpAnimations.Controls.Add(btnRemove);
+            grpAnimations.Controls.Add(btnAdd);
+            grpAnimations.Controls.Add(chkRotation);
+            grpAnimations.Controls.Add(lblAnimation);
+            grpAnimations.Controls.Add(lstAnimations);
+            grpAnimations.Controls.Add(lblSpawnRange);
+            grpAnimations.Controls.Add(scrlSpawnRange);
+            grpAnimations.ForeColor = System.Drawing.Color.Gainsboro;
+            grpAnimations.Location = new System.Drawing.Point(225, 1);
+            grpAnimations.Margin = new Padding(4, 3, 4, 3);
+            grpAnimations.Name = "grpAnimations";
+            grpAnimations.Padding = new Padding(4, 3, 4, 3);
+            grpAnimations.Size = new Size(318, 291);
+            grpAnimations.TabIndex = 27;
+            grpAnimations.TabStop = false;
+            grpAnimations.Text = "Animations";
             // 
             // cmbAnimation
             // 
-            this.cmbAnimation.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.cmbAnimation.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.cmbAnimation.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
-            this.cmbAnimation.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbAnimation.DrawDropdownHoverOutline = false;
-            this.cmbAnimation.DrawFocusRectangle = false;
-            this.cmbAnimation.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.cmbAnimation.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbAnimation.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.cmbAnimation.ForeColor = System.Drawing.Color.Gainsboro;
-            this.cmbAnimation.FormattingEnabled = true;
-            this.cmbAnimation.Location = new System.Drawing.Point(71, 139);
-            this.cmbAnimation.Name = "cmbAnimation";
-            this.cmbAnimation.Size = new System.Drawing.Size(192, 21);
-            this.cmbAnimation.TabIndex = 39;
-            this.cmbAnimation.Text = null;
-            this.cmbAnimation.TextPadding = new System.Windows.Forms.Padding(2);
-            this.cmbAnimation.SelectedIndexChanged += new System.EventHandler(this.cmbAnimation_SelectedIndexChanged);
+            cmbAnimation.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
+            cmbAnimation.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
+            cmbAnimation.BorderStyle = ButtonBorderStyle.Solid;
+            cmbAnimation.ButtonColor = System.Drawing.Color.FromArgb(43, 43, 43);
+            cmbAnimation.DrawDropdownHoverOutline = false;
+            cmbAnimation.DrawFocusRectangle = false;
+            cmbAnimation.DrawMode = DrawMode.OwnerDrawFixed;
+            cmbAnimation.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbAnimation.FlatStyle = FlatStyle.Flat;
+            cmbAnimation.ForeColor = System.Drawing.Color.Gainsboro;
+            cmbAnimation.FormattingEnabled = true;
+            cmbAnimation.Location = new System.Drawing.Point(83, 160);
+            cmbAnimation.Margin = new Padding(4, 3, 4, 3);
+            cmbAnimation.Name = "cmbAnimation";
+            cmbAnimation.Size = new Size(223, 24);
+            cmbAnimation.TabIndex = 39;
+            cmbAnimation.Text = null;
+            cmbAnimation.TextPadding = new Padding(2);
+            cmbAnimation.SelectedIndexChanged += cmbAnimation_SelectedIndexChanged;
             // 
             // btnRemove
             // 
-            this.btnRemove.Location = new System.Drawing.Point(188, 219);
-            this.btnRemove.Name = "btnRemove";
-            this.btnRemove.Padding = new System.Windows.Forms.Padding(5);
-            this.btnRemove.Size = new System.Drawing.Size(75, 23);
-            this.btnRemove.TabIndex = 38;
-            this.btnRemove.Text = "Remove";
-            this.btnRemove.Click += new System.EventHandler(this.btnRemove_Click);
+            btnRemove.Location = new System.Drawing.Point(219, 253);
+            btnRemove.Margin = new Padding(4, 3, 4, 3);
+            btnRemove.Name = "btnRemove";
+            btnRemove.Padding = new Padding(6);
+            btnRemove.Size = new Size(88, 27);
+            btnRemove.TabIndex = 38;
+            btnRemove.Text = "Remove";
+            btnRemove.Click += btnRemove_Click;
             // 
             // btnAdd
             // 
-            this.btnAdd.Location = new System.Drawing.Point(12, 219);
-            this.btnAdd.Name = "btnAdd";
-            this.btnAdd.Padding = new System.Windows.Forms.Padding(5);
-            this.btnAdd.Size = new System.Drawing.Size(75, 23);
-            this.btnAdd.TabIndex = 37;
-            this.btnAdd.Text = "Add";
-            this.btnAdd.Click += new System.EventHandler(this.btnAdd_Click);
+            btnAdd.Location = new System.Drawing.Point(14, 253);
+            btnAdd.Margin = new Padding(4, 3, 4, 3);
+            btnAdd.Name = "btnAdd";
+            btnAdd.Padding = new Padding(6);
+            btnAdd.Size = new Size(88, 27);
+            btnAdd.TabIndex = 37;
+            btnAdd.Text = "Add";
+            btnAdd.Click += btnAdd_Click;
             // 
             // chkRotation
             // 
-            this.chkRotation.AutoSize = true;
-            this.chkRotation.Location = new System.Drawing.Point(12, 196);
-            this.chkRotation.Name = "chkRotation";
-            this.chkRotation.Size = new System.Drawing.Size(138, 17);
-            this.chkRotation.TabIndex = 36;
-            this.chkRotation.Text = "Auto Rotate Animation?";
-            this.chkRotation.CheckedChanged += new System.EventHandler(this.chkRotation_CheckedChanged);
+            chkRotation.AutoSize = true;
+            chkRotation.Location = new System.Drawing.Point(14, 226);
+            chkRotation.Margin = new Padding(4, 3, 4, 3);
+            chkRotation.Name = "chkRotation";
+            chkRotation.Size = new Size(153, 19);
+            chkRotation.TabIndex = 36;
+            chkRotation.Text = "Auto Rotate Animation?";
+            chkRotation.CheckedChanged += chkRotation_CheckedChanged;
             // 
             // lblAnimation
             // 
-            this.lblAnimation.AutoSize = true;
-            this.lblAnimation.Location = new System.Drawing.Point(9, 139);
-            this.lblAnimation.Name = "lblAnimation";
-            this.lblAnimation.Size = new System.Drawing.Size(56, 13);
-            this.lblAnimation.TabIndex = 31;
-            this.lblAnimation.Text = "Animation:";
+            lblAnimation.AutoSize = true;
+            lblAnimation.Location = new System.Drawing.Point(10, 160);
+            lblAnimation.Margin = new Padding(4, 0, 4, 0);
+            lblAnimation.Name = "lblAnimation";
+            lblAnimation.Size = new Size(66, 15);
+            lblAnimation.TabIndex = 31;
+            lblAnimation.Text = "Animation:";
             // 
             // lstAnimations
             // 
-            this.lstAnimations.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
-            this.lstAnimations.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.lstAnimations.ForeColor = System.Drawing.Color.Gainsboro;
-            this.lstAnimations.FormattingEnabled = true;
-            this.lstAnimations.Items.AddRange(new object[] {
-            "[Spawn Range: 1 - 1] Animation: None"});
-            this.lstAnimations.Location = new System.Drawing.Point(12, 17);
-            this.lstAnimations.Name = "lstAnimations";
-            this.lstAnimations.Size = new System.Drawing.Size(251, 119);
-            this.lstAnimations.TabIndex = 29;
-            this.lstAnimations.Click += new System.EventHandler(this.lstAnimations_Click);
+            lstAnimations.BackColor = System.Drawing.Color.FromArgb(60, 63, 65);
+            lstAnimations.BorderStyle = BorderStyle.FixedSingle;
+            lstAnimations.ForeColor = System.Drawing.Color.Gainsboro;
+            lstAnimations.FormattingEnabled = true;
+            lstAnimations.ItemHeight = 15;
+            lstAnimations.Items.AddRange(new object[] { "[Spawn Range: 1 - 1] Animation: None" });
+            lstAnimations.Location = new System.Drawing.Point(14, 20);
+            lstAnimations.Margin = new Padding(4, 3, 4, 3);
+            lstAnimations.Name = "lstAnimations";
+            lstAnimations.Size = new Size(292, 137);
+            lstAnimations.TabIndex = 29;
+            lstAnimations.Click += lstAnimations_Click;
             // 
             // lblSpawnRange
             // 
-            this.lblSpawnRange.AutoSize = true;
-            this.lblSpawnRange.Location = new System.Drawing.Point(9, 167);
-            this.lblSpawnRange.Name = "lblSpawnRange";
-            this.lblSpawnRange.Size = new System.Drawing.Size(102, 13);
-            this.lblSpawnRange.TabIndex = 28;
-            this.lblSpawnRange.Text = "Spawn Range: 1 - 1";
+            lblSpawnRange.AutoSize = true;
+            lblSpawnRange.Location = new System.Drawing.Point(10, 193);
+            lblSpawnRange.Margin = new Padding(4, 0, 4, 0);
+            lblSpawnRange.Name = "lblSpawnRange";
+            lblSpawnRange.Size = new Size(107, 15);
+            lblSpawnRange.TabIndex = 28;
+            lblSpawnRange.Text = "Spawn Range: 1 - 1";
             // 
             // scrlSpawnRange
             // 
-            this.scrlSpawnRange.Location = new System.Drawing.Point(12, 180);
-            this.scrlSpawnRange.Minimum = 1;
-            this.scrlSpawnRange.Name = "scrlSpawnRange";
-            this.scrlSpawnRange.ScrollOrientation = DarkUI.Controls.DarkScrollOrientation.Horizontal;
-            this.scrlSpawnRange.Size = new System.Drawing.Size(251, 17);
-            this.scrlSpawnRange.TabIndex = 27;
-            this.scrlSpawnRange.Value = 1;
-            this.scrlSpawnRange.ValueChanged += new System.EventHandler<DarkUI.Controls.ScrollValueEventArgs>(this.scrlSpawnRange_Scroll);
+            scrlSpawnRange.Location = new System.Drawing.Point(14, 208);
+            scrlSpawnRange.Margin = new Padding(4, 3, 4, 3);
+            scrlSpawnRange.Minimum = 1;
+            scrlSpawnRange.Name = "scrlSpawnRange";
+            scrlSpawnRange.ScrollOrientation = DarkScrollOrientation.Horizontal;
+            scrlSpawnRange.Size = new Size(293, 20);
+            scrlSpawnRange.TabIndex = 27;
+            scrlSpawnRange.Value = 1;
+            scrlSpawnRange.ValueChanged += scrlSpawnRange_Scroll;
             // 
             // grpCollisions
             // 
-            this.grpCollisions.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            this.grpCollisions.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.grpCollisions.Controls.Add(this.chkPierce);
-            this.grpCollisions.Controls.Add(this.chkIgnoreInactiveResources);
-            this.grpCollisions.Controls.Add(this.chkIgnoreZDimensionBlocks);
-            this.grpCollisions.Controls.Add(this.chkIgnoreMapBlocks);
-            this.grpCollisions.Controls.Add(this.chkIgnoreActiveResources);
-            this.grpCollisions.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpCollisions.Location = new System.Drawing.Point(331, 259);
-            this.grpCollisions.Name = "grpCollisions";
-            this.grpCollisions.Size = new System.Drawing.Size(135, 132);
-            this.grpCollisions.TabIndex = 29;
-            this.grpCollisions.TabStop = false;
-            this.grpCollisions.Text = "Ignore Collision:";
+            grpCollisions.BackColor = System.Drawing.Color.FromArgb(45, 45, 48);
+            grpCollisions.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
+            grpCollisions.Controls.Add(chkPierce);
+            grpCollisions.Controls.Add(chkIgnoreInactiveResources);
+            grpCollisions.Controls.Add(chkIgnoreZDimensionBlocks);
+            grpCollisions.Controls.Add(chkIgnoreMapBlocks);
+            grpCollisions.Controls.Add(chkIgnoreActiveResources);
+            grpCollisions.ForeColor = System.Drawing.Color.Gainsboro;
+            grpCollisions.Location = new System.Drawing.Point(386, 299);
+            grpCollisions.Margin = new Padding(4, 3, 4, 3);
+            grpCollisions.Name = "grpCollisions";
+            grpCollisions.Padding = new Padding(4, 3, 4, 3);
+            grpCollisions.Size = new Size(158, 152);
+            grpCollisions.TabIndex = 29;
+            grpCollisions.TabStop = false;
+            grpCollisions.Text = "Ignore Collision:";
             // 
             // chkPierce
             // 
-            this.chkPierce.AutoSize = true;
-            this.chkPierce.Location = new System.Drawing.Point(6, 108);
-            this.chkPierce.Name = "chkPierce";
-            this.chkPierce.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.chkPierce.Size = new System.Drawing.Size(96, 17);
-            this.chkPierce.TabIndex = 39;
-            this.chkPierce.Text = "Pierce Target?";
-            this.chkPierce.CheckedChanged += new System.EventHandler(this.chkPierce_CheckedChanged);
+            chkPierce.AutoSize = true;
+            chkPierce.Location = new System.Drawing.Point(7, 125);
+            chkPierce.Margin = new Padding(4, 3, 4, 3);
+            chkPierce.Name = "chkPierce";
+            chkPierce.RightToLeft = RightToLeft.No;
+            chkPierce.Size = new Size(98, 19);
+            chkPierce.TabIndex = 39;
+            chkPierce.Text = "Pierce Target?";
+            chkPierce.CheckedChanged += chkPierce_CheckedChanged;
             // 
             // chkIgnoreInactiveResources
             // 
-            this.chkIgnoreInactiveResources.AutoSize = true;
-            this.chkIgnoreInactiveResources.Location = new System.Drawing.Point(6, 62);
-            this.chkIgnoreInactiveResources.Name = "chkIgnoreInactiveResources";
-            this.chkIgnoreInactiveResources.Size = new System.Drawing.Size(118, 17);
-            this.chkIgnoreInactiveResources.TabIndex = 38;
-            this.chkIgnoreInactiveResources.Text = "Inactive Resources";
-            this.chkIgnoreInactiveResources.CheckedChanged += new System.EventHandler(this.chkIgnoreInactiveResources_CheckedChanged);
+            chkIgnoreInactiveResources.AutoSize = true;
+            chkIgnoreInactiveResources.Location = new System.Drawing.Point(7, 72);
+            chkIgnoreInactiveResources.Margin = new Padding(4, 3, 4, 3);
+            chkIgnoreInactiveResources.Name = "chkIgnoreInactiveResources";
+            chkIgnoreInactiveResources.Size = new Size(123, 19);
+            chkIgnoreInactiveResources.TabIndex = 38;
+            chkIgnoreInactiveResources.Text = "Inactive Resources";
+            chkIgnoreInactiveResources.CheckedChanged += chkIgnoreInactiveResources_CheckedChanged;
             // 
             // chkIgnoreZDimensionBlocks
             // 
-            this.chkIgnoreZDimensionBlocks.AutoSize = true;
-            this.chkIgnoreZDimensionBlocks.Location = new System.Drawing.Point(6, 85);
-            this.chkIgnoreZDimensionBlocks.Name = "chkIgnoreZDimensionBlocks";
-            this.chkIgnoreZDimensionBlocks.Size = new System.Drawing.Size(120, 17);
-            this.chkIgnoreZDimensionBlocks.TabIndex = 37;
-            this.chkIgnoreZDimensionBlocks.Text = "Z-Dimension Blocks";
-            this.chkIgnoreZDimensionBlocks.CheckedChanged += new System.EventHandler(this.chkIgnoreZDimensionBlocks_CheckedChanged);
+            chkIgnoreZDimensionBlocks.AutoSize = true;
+            chkIgnoreZDimensionBlocks.Location = new System.Drawing.Point(7, 98);
+            chkIgnoreZDimensionBlocks.Margin = new Padding(4, 3, 4, 3);
+            chkIgnoreZDimensionBlocks.Name = "chkIgnoreZDimensionBlocks";
+            chkIgnoreZDimensionBlocks.Size = new Size(132, 19);
+            chkIgnoreZDimensionBlocks.TabIndex = 37;
+            chkIgnoreZDimensionBlocks.Text = "Z-Dimension Blocks";
+            chkIgnoreZDimensionBlocks.CheckedChanged += chkIgnoreZDimensionBlocks_CheckedChanged;
             // 
             // chkIgnoreMapBlocks
             // 
-            this.chkIgnoreMapBlocks.AutoSize = true;
-            this.chkIgnoreMapBlocks.Location = new System.Drawing.Point(6, 16);
-            this.chkIgnoreMapBlocks.Name = "chkIgnoreMapBlocks";
-            this.chkIgnoreMapBlocks.Size = new System.Drawing.Size(82, 17);
-            this.chkIgnoreMapBlocks.TabIndex = 33;
-            this.chkIgnoreMapBlocks.Text = "Map Blocks";
-            this.chkIgnoreMapBlocks.CheckedChanged += new System.EventHandler(this.chkIgnoreMapBlocks_CheckedChanged);
+            chkIgnoreMapBlocks.AutoSize = true;
+            chkIgnoreMapBlocks.Location = new System.Drawing.Point(7, 18);
+            chkIgnoreMapBlocks.Margin = new Padding(4, 3, 4, 3);
+            chkIgnoreMapBlocks.Name = "chkIgnoreMapBlocks";
+            chkIgnoreMapBlocks.Size = new Size(87, 19);
+            chkIgnoreMapBlocks.TabIndex = 33;
+            chkIgnoreMapBlocks.Text = "Map Blocks";
+            chkIgnoreMapBlocks.CheckedChanged += chkIgnoreMapBlocks_CheckedChanged;
             // 
             // chkIgnoreActiveResources
             // 
-            this.chkIgnoreActiveResources.AutoSize = true;
-            this.chkIgnoreActiveResources.Location = new System.Drawing.Point(6, 39);
-            this.chkIgnoreActiveResources.Name = "chkIgnoreActiveResources";
-            this.chkIgnoreActiveResources.Size = new System.Drawing.Size(110, 17);
-            this.chkIgnoreActiveResources.TabIndex = 36;
-            this.chkIgnoreActiveResources.Text = "Active Resources";
-            this.chkIgnoreActiveResources.CheckedChanged += new System.EventHandler(this.chkIgnoreActiveResources_CheckedChanged);
+            chkIgnoreActiveResources.AutoSize = true;
+            chkIgnoreActiveResources.Location = new System.Drawing.Point(7, 45);
+            chkIgnoreActiveResources.Margin = new Padding(4, 3, 4, 3);
+            chkIgnoreActiveResources.Name = "chkIgnoreActiveResources";
+            chkIgnoreActiveResources.Size = new Size(115, 19);
+            chkIgnoreActiveResources.TabIndex = 36;
+            chkIgnoreActiveResources.Text = "Active Resources";
+            chkIgnoreActiveResources.CheckedChanged += chkIgnoreActiveResources_CheckedChanged;
             // 
             // pnlContainer
             // 
-            this.pnlContainer.AutoScroll = true;
-            this.pnlContainer.Controls.Add(this.grpGrappleOptions);
-            this.pnlContainer.Controls.Add(this.grpAmmo);
-            this.pnlContainer.Controls.Add(this.grpCollisions);
-            this.pnlContainer.Controls.Add(this.grpProperties);
-            this.pnlContainer.Controls.Add(this.grpAnimations);
-            this.pnlContainer.Controls.Add(this.grpSpawns);
-            this.pnlContainer.Location = new System.Drawing.Point(221, 36);
-            this.pnlContainer.Name = "pnlContainer";
-            this.pnlContainer.Size = new System.Drawing.Size(474, 480);
-            this.pnlContainer.TabIndex = 30;
-            this.pnlContainer.Visible = false;
+            pnlContainer.AutoScroll = true;
+            pnlContainer.Controls.Add(grpTargettingOptions);
+            pnlContainer.Controls.Add(grpGrappleOptions);
+            pnlContainer.Controls.Add(grpAmmo);
+            pnlContainer.Controls.Add(grpCollisions);
+            pnlContainer.Controls.Add(grpProperties);
+            pnlContainer.Controls.Add(grpAnimations);
+            pnlContainer.Controls.Add(grpSpawns);
+            pnlContainer.Location = new System.Drawing.Point(258, 42);
+            pnlContainer.Margin = new Padding(4, 3, 4, 3);
+            pnlContainer.Name = "pnlContainer";
+            pnlContainer.Size = new Size(553, 642);
+            pnlContainer.TabIndex = 30;
+            pnlContainer.Visible = false;
+            // 
+            // grpTargettingOptions
+            // 
+            grpTargettingOptions.BackColor = System.Drawing.Color.FromArgb(45, 45, 48);
+            grpTargettingOptions.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
+            grpTargettingOptions.Controls.Add(rdoBehaviorDefault);
+            grpTargettingOptions.Controls.Add(rdoBehaviorDirectShot);
+            grpTargettingOptions.Controls.Add(rdoBehaviorHoming);
+            grpTargettingOptions.ForeColor = System.Drawing.Color.Gainsboro;
+            grpTargettingOptions.Location = new System.Drawing.Point(2, 317);
+            grpTargettingOptions.Margin = new Padding(4, 3, 4, 3);
+            grpTargettingOptions.Name = "grpTargettingOptions";
+            grpTargettingOptions.Padding = new Padding(4, 3, 4, 3);
+            grpTargettingOptions.Size = new Size(216, 101);
+            grpTargettingOptions.TabIndex = 41;
+            grpTargettingOptions.TabStop = false;
+            grpTargettingOptions.Text = "Targeting Options:";
+            // 
+            // rdoBehaviorDefault
+            // 
+            rdoBehaviorDefault.AutoSize = true;
+            rdoBehaviorDefault.Checked = true;
+            rdoBehaviorDefault.Location = new System.Drawing.Point(8, 73);
+            rdoBehaviorDefault.Margin = new Padding(4, 3, 4, 3);
+            rdoBehaviorDefault.Name = "rdoBehaviorDefault";
+            rdoBehaviorDefault.Size = new Size(112, 19);
+            rdoBehaviorDefault.TabIndex = 38;
+            rdoBehaviorDefault.TabStop = true;
+            rdoBehaviorDefault.Text = "Default Behavior";
+            rdoBehaviorDefault.CheckedChanged += rdoBehaviorDefault_CheckedChanged;
+            // 
+            // rdoBehaviorDirectShot
+            // 
+            rdoBehaviorDirectShot.AutoSize = true;
+            rdoBehaviorDirectShot.Location = new System.Drawing.Point(8, 47);
+            rdoBehaviorDirectShot.Margin = new Padding(4, 3, 4, 3);
+            rdoBehaviorDirectShot.Name = "rdoBehaviorDirectShot";
+            rdoBehaviorDirectShot.Size = new Size(132, 19);
+            rdoBehaviorDirectShot.TabIndex = 37;
+            rdoBehaviorDirectShot.Text = "Direct Shot Behavior";
+            rdoBehaviorDirectShot.CheckedChanged += rdoBehaviorDirectShot_CheckedChanged;
+            // 
+            // rdoBehaviorHoming
+            // 
+            rdoBehaviorHoming.AutoSize = true;
+            rdoBehaviorHoming.Location = new System.Drawing.Point(8, 21);
+            rdoBehaviorHoming.Margin = new Padding(4, 3, 4, 3);
+            rdoBehaviorHoming.Name = "rdoBehaviorHoming";
+            rdoBehaviorHoming.Size = new Size(118, 19);
+            rdoBehaviorHoming.TabIndex = 36;
+            rdoBehaviorHoming.Text = "Homing Behavior";
+            rdoBehaviorHoming.CheckedChanged += rdoBehaviorHoming_CheckedChanged;
             // 
             // grpGrappleOptions
             // 
-            this.grpGrappleOptions.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            this.grpGrappleOptions.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.grpGrappleOptions.Controls.Add(this.chkGrappleOnNpc);
-            this.grpGrappleOptions.Controls.Add(this.chkGrappleOnResource);
-            this.grpGrappleOptions.Controls.Add(this.chkGrappleOnMap);
-            this.grpGrappleOptions.Controls.Add(this.chkGrappleOnPlayer);
-            this.grpGrappleOptions.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpGrappleOptions.Location = new System.Drawing.Point(193, 259);
-            this.grpGrappleOptions.Name = "grpGrappleOptions";
-            this.grpGrappleOptions.Size = new System.Drawing.Size(130, 132);
-            this.grpGrappleOptions.TabIndex = 40;
-            this.grpGrappleOptions.TabStop = false;
-            this.grpGrappleOptions.Text = "Grapple Options:";
+            grpGrappleOptions.BackColor = System.Drawing.Color.FromArgb(45, 45, 48);
+            grpGrappleOptions.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
+            grpGrappleOptions.Controls.Add(chkGrappleOnNpc);
+            grpGrappleOptions.Controls.Add(chkGrappleOnResource);
+            grpGrappleOptions.Controls.Add(chkGrappleOnMap);
+            grpGrappleOptions.Controls.Add(chkGrappleOnPlayer);
+            grpGrappleOptions.ForeColor = System.Drawing.Color.Gainsboro;
+            grpGrappleOptions.Location = new System.Drawing.Point(225, 299);
+            grpGrappleOptions.Margin = new Padding(4, 3, 4, 3);
+            grpGrappleOptions.Name = "grpGrappleOptions";
+            grpGrappleOptions.Padding = new Padding(4, 3, 4, 3);
+            grpGrappleOptions.Size = new Size(152, 152);
+            grpGrappleOptions.TabIndex = 40;
+            grpGrappleOptions.TabStop = false;
+            grpGrappleOptions.Text = "Grapple Options:";
             // 
             // chkGrappleOnNpc
             // 
-            this.chkGrappleOnNpc.AutoSize = true;
-            this.chkGrappleOnNpc.Location = new System.Drawing.Point(9, 66);
-            this.chkGrappleOnNpc.Name = "chkGrappleOnNpc";
-            this.chkGrappleOnNpc.Size = new System.Drawing.Size(65, 17);
-            this.chkGrappleOnNpc.TabIndex = 38;
-            this.chkGrappleOnNpc.Text = "On NPC";
-            this.chkGrappleOnNpc.CheckedChanged += new System.EventHandler(this.chkGrappleOnNpc_CheckedChanged);
+            chkGrappleOnNpc.AutoSize = true;
+            chkGrappleOnNpc.Location = new System.Drawing.Point(10, 76);
+            chkGrappleOnNpc.Margin = new Padding(4, 3, 4, 3);
+            chkGrappleOnNpc.Name = "chkGrappleOnNpc";
+            chkGrappleOnNpc.Size = new Size(69, 19);
+            chkGrappleOnNpc.TabIndex = 38;
+            chkGrappleOnNpc.Text = "On NPC";
+            chkGrappleOnNpc.CheckedChanged += chkGrappleOnNpc_CheckedChanged;
             // 
             // chkGrappleOnResource
             // 
-            this.chkGrappleOnResource.AutoSize = true;
-            this.chkGrappleOnResource.Location = new System.Drawing.Point(9, 89);
-            this.chkGrappleOnResource.Name = "chkGrappleOnResource";
-            this.chkGrappleOnResource.Size = new System.Drawing.Size(89, 17);
-            this.chkGrappleOnResource.TabIndex = 37;
-            this.chkGrappleOnResource.Text = "On Resource";
-            this.chkGrappleOnResource.CheckedChanged += new System.EventHandler(this.chkGrappleOnResource_CheckedChanged);
+            chkGrappleOnResource.AutoSize = true;
+            chkGrappleOnResource.Location = new System.Drawing.Point(10, 103);
+            chkGrappleOnResource.Margin = new Padding(4, 3, 4, 3);
+            chkGrappleOnResource.Name = "chkGrappleOnResource";
+            chkGrappleOnResource.Size = new Size(93, 19);
+            chkGrappleOnResource.TabIndex = 37;
+            chkGrappleOnResource.Text = "On Resource";
+            chkGrappleOnResource.CheckedChanged += chkGrappleOnResource_CheckedChanged;
             // 
             // chkGrappleOnMap
             // 
-            this.chkGrappleOnMap.AutoSize = true;
-            this.chkGrappleOnMap.Location = new System.Drawing.Point(9, 20);
-            this.chkGrappleOnMap.Name = "chkGrappleOnMap";
-            this.chkGrappleOnMap.Size = new System.Drawing.Size(106, 17);
-            this.chkGrappleOnMap.TabIndex = 33;
-            this.chkGrappleOnMap.Text = "On Map Attribute";
-            this.chkGrappleOnMap.CheckedChanged += new System.EventHandler(this.chkGrappleOnMap_CheckedChanged);
+            chkGrappleOnMap.AutoSize = true;
+            chkGrappleOnMap.Location = new System.Drawing.Point(10, 23);
+            chkGrappleOnMap.Margin = new Padding(4, 3, 4, 3);
+            chkGrappleOnMap.Name = "chkGrappleOnMap";
+            chkGrappleOnMap.Size = new Size(119, 19);
+            chkGrappleOnMap.TabIndex = 33;
+            chkGrappleOnMap.Text = "On Map Attribute";
+            chkGrappleOnMap.CheckedChanged += chkGrappleOnMap_CheckedChanged;
             // 
             // chkGrappleOnPlayer
             // 
-            this.chkGrappleOnPlayer.AutoSize = true;
-            this.chkGrappleOnPlayer.Location = new System.Drawing.Point(9, 43);
-            this.chkGrappleOnPlayer.Name = "chkGrappleOnPlayer";
-            this.chkGrappleOnPlayer.Size = new System.Drawing.Size(72, 17);
-            this.chkGrappleOnPlayer.TabIndex = 36;
-            this.chkGrappleOnPlayer.Text = "On Player";
-            this.chkGrappleOnPlayer.CheckedChanged += new System.EventHandler(this.chkGrappleOnPlayer_CheckedChanged);
+            chkGrappleOnPlayer.AutoSize = true;
+            chkGrappleOnPlayer.Location = new System.Drawing.Point(10, 50);
+            chkGrappleOnPlayer.Margin = new Padding(4, 3, 4, 3);
+            chkGrappleOnPlayer.Name = "chkGrappleOnPlayer";
+            chkGrappleOnPlayer.Size = new Size(77, 19);
+            chkGrappleOnPlayer.TabIndex = 36;
+            chkGrappleOnPlayer.Text = "On Player";
+            chkGrappleOnPlayer.CheckedChanged += chkGrappleOnPlayer_CheckedChanged;
             // 
             // grpAmmo
             // 
-            this.grpAmmo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            this.grpAmmo.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.grpAmmo.Controls.Add(this.nudConsume);
-            this.grpAmmo.Controls.Add(this.cmbItem);
-            this.grpAmmo.Controls.Add(this.lblAmmoItem);
-            this.grpAmmo.Controls.Add(this.lblAmmoAmount);
-            this.grpAmmo.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpAmmo.Location = new System.Drawing.Point(193, 397);
-            this.grpAmmo.Name = "grpAmmo";
-            this.grpAmmo.Size = new System.Drawing.Size(272, 79);
-            this.grpAmmo.TabIndex = 30;
-            this.grpAmmo.TabStop = false;
-            this.grpAmmo.Text = "Ammunition Requirements: ";
+            grpAmmo.BackColor = System.Drawing.Color.FromArgb(45, 45, 48);
+            grpAmmo.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
+            grpAmmo.Controls.Add(nudConsume);
+            grpAmmo.Controls.Add(cmbItem);
+            grpAmmo.Controls.Add(lblAmmoItem);
+            grpAmmo.Controls.Add(lblAmmoAmount);
+            grpAmmo.ForeColor = System.Drawing.Color.Gainsboro;
+            grpAmmo.Location = new System.Drawing.Point(225, 458);
+            grpAmmo.Margin = new Padding(4, 3, 4, 3);
+            grpAmmo.Name = "grpAmmo";
+            grpAmmo.Padding = new Padding(4, 3, 4, 3);
+            grpAmmo.Size = new Size(317, 91);
+            grpAmmo.TabIndex = 30;
+            grpAmmo.TabStop = false;
+            grpAmmo.Text = "Ammunition Requirements: ";
             // 
             // nudConsume
             // 
-            this.nudConsume.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.nudConsume.ForeColor = System.Drawing.Color.Gainsboro;
-            this.nudConsume.Location = new System.Drawing.Point(83, 53);
-            this.nudConsume.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.nudConsume.Name = "nudConsume";
-            this.nudConsume.Size = new System.Drawing.Size(180, 20);
-            this.nudConsume.TabIndex = 46;
-            this.nudConsume.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.nudConsume.ValueChanged += new System.EventHandler(this.nudConsume_ValueChanged);
+            nudConsume.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
+            nudConsume.ForeColor = System.Drawing.Color.Gainsboro;
+            nudConsume.Location = new System.Drawing.Point(97, 61);
+            nudConsume.Margin = new Padding(4, 3, 4, 3);
+            nudConsume.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
+            nudConsume.Name = "nudConsume";
+            nudConsume.Size = new Size(210, 23);
+            nudConsume.TabIndex = 46;
+            nudConsume.Value = new decimal(new int[] { 1, 0, 0, 0 });
+            nudConsume.ValueChanged += nudConsume_ValueChanged;
             // 
             // cmbItem
             // 
-            this.cmbItem.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.cmbItem.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
-            this.cmbItem.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
-            this.cmbItem.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
-            this.cmbItem.DrawDropdownHoverOutline = false;
-            this.cmbItem.DrawFocusRectangle = false;
-            this.cmbItem.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.cmbItem.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbItem.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.cmbItem.ForeColor = System.Drawing.Color.Gainsboro;
-            this.cmbItem.FormattingEnabled = true;
-            this.cmbItem.Location = new System.Drawing.Point(83, 19);
-            this.cmbItem.Name = "cmbItem";
-            this.cmbItem.Size = new System.Drawing.Size(180, 21);
-            this.cmbItem.TabIndex = 26;
-            this.cmbItem.Text = null;
-            this.cmbItem.TextPadding = new System.Windows.Forms.Padding(2);
-            this.cmbItem.SelectedIndexChanged += new System.EventHandler(this.cmbItem_SelectedIndexChanged);
+            cmbItem.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
+            cmbItem.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
+            cmbItem.BorderStyle = ButtonBorderStyle.Solid;
+            cmbItem.ButtonColor = System.Drawing.Color.FromArgb(43, 43, 43);
+            cmbItem.DrawDropdownHoverOutline = false;
+            cmbItem.DrawFocusRectangle = false;
+            cmbItem.DrawMode = DrawMode.OwnerDrawFixed;
+            cmbItem.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbItem.FlatStyle = FlatStyle.Flat;
+            cmbItem.ForeColor = System.Drawing.Color.Gainsboro;
+            cmbItem.FormattingEnabled = true;
+            cmbItem.Location = new System.Drawing.Point(97, 22);
+            cmbItem.Margin = new Padding(4, 3, 4, 3);
+            cmbItem.Name = "cmbItem";
+            cmbItem.Size = new Size(209, 24);
+            cmbItem.TabIndex = 26;
+            cmbItem.Text = null;
+            cmbItem.TextPadding = new Padding(2);
+            cmbItem.SelectedIndexChanged += cmbItem_SelectedIndexChanged;
             // 
             // lblAmmoItem
             // 
-            this.lblAmmoItem.AutoSize = true;
-            this.lblAmmoItem.Location = new System.Drawing.Point(9, 19);
-            this.lblAmmoItem.Name = "lblAmmoItem";
-            this.lblAmmoItem.Size = new System.Drawing.Size(30, 13);
-            this.lblAmmoItem.TabIndex = 25;
-            this.lblAmmoItem.Text = "Item:";
+            lblAmmoItem.AutoSize = true;
+            lblAmmoItem.Location = new System.Drawing.Point(10, 22);
+            lblAmmoItem.Margin = new Padding(4, 0, 4, 0);
+            lblAmmoItem.Name = "lblAmmoItem";
+            lblAmmoItem.Size = new Size(34, 15);
+            lblAmmoItem.TabIndex = 25;
+            lblAmmoItem.Text = "Item:";
             // 
             // lblAmmoAmount
             // 
-            this.lblAmmoAmount.AutoSize = true;
-            this.lblAmmoAmount.Location = new System.Drawing.Point(9, 53);
-            this.lblAmmoAmount.Name = "lblAmmoAmount";
-            this.lblAmmoAmount.Size = new System.Drawing.Size(46, 13);
-            this.lblAmmoAmount.TabIndex = 9;
-            this.lblAmmoAmount.Text = "Amount:";
+            lblAmmoAmount.AutoSize = true;
+            lblAmmoAmount.Location = new System.Drawing.Point(10, 61);
+            lblAmmoAmount.Margin = new Padding(4, 0, 4, 0);
+            lblAmmoAmount.Name = "lblAmmoAmount";
+            lblAmmoAmount.Size = new Size(54, 15);
+            lblAmmoAmount.TabIndex = 9;
+            lblAmmoAmount.Text = "Amount:";
             // 
             // btnCancel
             // 
-            this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnCancel.Location = new System.Drawing.Point(497, 522);
-            this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Padding = new System.Windows.Forms.Padding(5);
-            this.btnCancel.Size = new System.Drawing.Size(190, 27);
-            this.btnCancel.TabIndex = 34;
-            this.btnCancel.Text = "Cancel";
-            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+            btnCancel.DialogResult = DialogResult.Cancel;
+            btnCancel.Location = new System.Drawing.Point(583, 686);
+            btnCancel.Margin = new Padding(4, 3, 4, 3);
+            btnCancel.Name = "btnCancel";
+            btnCancel.Padding = new Padding(6);
+            btnCancel.Size = new Size(222, 31);
+            btnCancel.TabIndex = 34;
+            btnCancel.Text = "Cancel";
+            btnCancel.Click += btnCancel_Click;
             // 
             // btnSave
             // 
-            this.btnSave.Location = new System.Drawing.Point(301, 522);
-            this.btnSave.Name = "btnSave";
-            this.btnSave.Padding = new System.Windows.Forms.Padding(5);
-            this.btnSave.Size = new System.Drawing.Size(190, 27);
-            this.btnSave.TabIndex = 31;
-            this.btnSave.Text = "Save";
-            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+            btnSave.Location = new System.Drawing.Point(354, 686);
+            btnSave.Margin = new Padding(4, 3, 4, 3);
+            btnSave.Name = "btnSave";
+            btnSave.Padding = new Padding(6);
+            btnSave.Size = new Size(222, 31);
+            btnSave.TabIndex = 31;
+            btnSave.Text = "Save";
+            btnSave.Click += btnSave_Click;
             // 
             // toolStrip
             // 
-            this.toolStrip.AutoSize = false;
-            this.toolStrip.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            this.toolStrip.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripItemNew,
-            this.toolStripSeparator1,
-            this.toolStripItemDelete,
-            this.toolStripSeparator2,
-            this.btnAlphabetical,
-            this.toolStripSeparator4,
-            this.toolStripItemCopy,
-            this.toolStripItemPaste,
-            this.toolStripSeparator3,
-            this.toolStripItemUndo});
-            this.toolStrip.Location = new System.Drawing.Point(0, 0);
-            this.toolStrip.Name = "toolStrip";
-            this.toolStrip.Padding = new System.Windows.Forms.Padding(5, 0, 1, 0);
-            this.toolStrip.Size = new System.Drawing.Size(701, 25);
-            this.toolStrip.TabIndex = 46;
-            this.toolStrip.Text = "toolStrip1";
+            toolStrip.AutoSize = false;
+            toolStrip.BackColor = System.Drawing.Color.FromArgb(45, 45, 48);
+            toolStrip.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+            toolStrip.Items.AddRange(new ToolStripItem[] { toolStripItemNew, toolStripSeparator1, toolStripItemDelete, toolStripSeparator2, btnAlphabetical, toolStripSeparator4, toolStripItemCopy, toolStripItemPaste, toolStripSeparator3, toolStripItemUndo });
+            toolStrip.Location = new System.Drawing.Point(0, 0);
+            toolStrip.Name = "toolStrip";
+            toolStrip.Padding = new Padding(6, 0, 1, 0);
+            toolStrip.Size = new Size(818, 29);
+            toolStrip.TabIndex = 46;
+            toolStrip.Text = "toolStrip1";
             // 
             // toolStripItemNew
             // 
-            this.toolStripItemNew.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripItemNew.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.toolStripItemNew.Image = ((System.Drawing.Image)(resources.GetObject("toolStripItemNew.Image")));
-            this.toolStripItemNew.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripItemNew.Name = "toolStripItemNew";
-            this.toolStripItemNew.Size = new System.Drawing.Size(23, 22);
-            this.toolStripItemNew.Text = "New";
-            this.toolStripItemNew.Click += new System.EventHandler(this.toolStripItemNew_Click);
+            toolStripItemNew.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            toolStripItemNew.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+            toolStripItemNew.Image = (Image)resources.GetObject("toolStripItemNew.Image");
+            toolStripItemNew.ImageTransparentColor = System.Drawing.Color.Magenta;
+            toolStripItemNew.Name = "toolStripItemNew";
+            toolStripItemNew.Size = new Size(23, 26);
+            toolStripItemNew.Text = "New";
+            toolStripItemNew.Click += toolStripItemNew_Click;
             // 
             // toolStripSeparator1
             // 
-            this.toolStripSeparator1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.toolStripSeparator1.Margin = new System.Windows.Forms.Padding(0, 0, 2, 0);
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
+            toolStripSeparator1.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+            toolStripSeparator1.Margin = new Padding(0, 0, 2, 0);
+            toolStripSeparator1.Name = "toolStripSeparator1";
+            toolStripSeparator1.Size = new Size(6, 29);
             // 
             // toolStripItemDelete
             // 
-            this.toolStripItemDelete.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripItemDelete.Enabled = false;
-            this.toolStripItemDelete.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.toolStripItemDelete.Image = ((System.Drawing.Image)(resources.GetObject("toolStripItemDelete.Image")));
-            this.toolStripItemDelete.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripItemDelete.Name = "toolStripItemDelete";
-            this.toolStripItemDelete.Size = new System.Drawing.Size(23, 22);
-            this.toolStripItemDelete.Text = "Delete";
-            this.toolStripItemDelete.Click += new System.EventHandler(this.toolStripItemDelete_Click);
+            toolStripItemDelete.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            toolStripItemDelete.Enabled = false;
+            toolStripItemDelete.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+            toolStripItemDelete.Image = (Image)resources.GetObject("toolStripItemDelete.Image");
+            toolStripItemDelete.ImageTransparentColor = System.Drawing.Color.Magenta;
+            toolStripItemDelete.Name = "toolStripItemDelete";
+            toolStripItemDelete.Size = new Size(23, 26);
+            toolStripItemDelete.Text = "Delete";
+            toolStripItemDelete.Click += toolStripItemDelete_Click;
             // 
             // toolStripSeparator2
             // 
-            this.toolStripSeparator2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.toolStripSeparator2.Margin = new System.Windows.Forms.Padding(0, 0, 2, 0);
-            this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
+            toolStripSeparator2.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+            toolStripSeparator2.Margin = new Padding(0, 0, 2, 0);
+            toolStripSeparator2.Name = "toolStripSeparator2";
+            toolStripSeparator2.Size = new Size(6, 29);
             // 
             // btnAlphabetical
             // 
-            this.btnAlphabetical.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.btnAlphabetical.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.btnAlphabetical.Image = ((System.Drawing.Image)(resources.GetObject("btnAlphabetical.Image")));
-            this.btnAlphabetical.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btnAlphabetical.Name = "btnAlphabetical";
-            this.btnAlphabetical.Size = new System.Drawing.Size(23, 22);
-            this.btnAlphabetical.Text = "Order Chronologically";
-            this.btnAlphabetical.Click += new System.EventHandler(this.btnAlphabetical_Click);
+            btnAlphabetical.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            btnAlphabetical.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+            btnAlphabetical.Image = (Image)resources.GetObject("btnAlphabetical.Image");
+            btnAlphabetical.ImageTransparentColor = System.Drawing.Color.Magenta;
+            btnAlphabetical.Name = "btnAlphabetical";
+            btnAlphabetical.Size = new Size(23, 26);
+            btnAlphabetical.Text = "Order Chronologically";
+            btnAlphabetical.Click += btnAlphabetical_Click;
             // 
             // toolStripSeparator4
             // 
-            this.toolStripSeparator4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.toolStripSeparator4.Margin = new System.Windows.Forms.Padding(0, 0, 2, 0);
-            this.toolStripSeparator4.Name = "toolStripSeparator4";
-            this.toolStripSeparator4.Size = new System.Drawing.Size(6, 25);
+            toolStripSeparator4.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+            toolStripSeparator4.Margin = new Padding(0, 0, 2, 0);
+            toolStripSeparator4.Name = "toolStripSeparator4";
+            toolStripSeparator4.Size = new Size(6, 29);
             // 
             // toolStripItemCopy
             // 
-            this.toolStripItemCopy.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripItemCopy.Enabled = false;
-            this.toolStripItemCopy.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.toolStripItemCopy.Image = ((System.Drawing.Image)(resources.GetObject("toolStripItemCopy.Image")));
-            this.toolStripItemCopy.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripItemCopy.Name = "toolStripItemCopy";
-            this.toolStripItemCopy.Size = new System.Drawing.Size(23, 22);
-            this.toolStripItemCopy.Text = "Copy";
-            this.toolStripItemCopy.Click += new System.EventHandler(this.toolStripItemCopy_Click);
+            toolStripItemCopy.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            toolStripItemCopy.Enabled = false;
+            toolStripItemCopy.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+            toolStripItemCopy.Image = (Image)resources.GetObject("toolStripItemCopy.Image");
+            toolStripItemCopy.ImageTransparentColor = System.Drawing.Color.Magenta;
+            toolStripItemCopy.Name = "toolStripItemCopy";
+            toolStripItemCopy.Size = new Size(23, 26);
+            toolStripItemCopy.Text = "Copy";
+            toolStripItemCopy.Click += toolStripItemCopy_Click;
             // 
             // toolStripItemPaste
             // 
-            this.toolStripItemPaste.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripItemPaste.Enabled = false;
-            this.toolStripItemPaste.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.toolStripItemPaste.Image = ((System.Drawing.Image)(resources.GetObject("toolStripItemPaste.Image")));
-            this.toolStripItemPaste.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripItemPaste.Name = "toolStripItemPaste";
-            this.toolStripItemPaste.Size = new System.Drawing.Size(23, 22);
-            this.toolStripItemPaste.Text = "Paste";
-            this.toolStripItemPaste.Click += new System.EventHandler(this.toolStripItemPaste_Click);
+            toolStripItemPaste.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            toolStripItemPaste.Enabled = false;
+            toolStripItemPaste.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+            toolStripItemPaste.Image = (Image)resources.GetObject("toolStripItemPaste.Image");
+            toolStripItemPaste.ImageTransparentColor = System.Drawing.Color.Magenta;
+            toolStripItemPaste.Name = "toolStripItemPaste";
+            toolStripItemPaste.Size = new Size(23, 26);
+            toolStripItemPaste.Text = "Paste";
+            toolStripItemPaste.Click += toolStripItemPaste_Click;
             // 
             // toolStripSeparator3
             // 
-            this.toolStripSeparator3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.toolStripSeparator3.Margin = new System.Windows.Forms.Padding(0, 0, 2, 0);
-            this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(6, 25);
+            toolStripSeparator3.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+            toolStripSeparator3.Margin = new Padding(0, 0, 2, 0);
+            toolStripSeparator3.Name = "toolStripSeparator3";
+            toolStripSeparator3.Size = new Size(6, 29);
             // 
             // toolStripItemUndo
             // 
-            this.toolStripItemUndo.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripItemUndo.Enabled = false;
-            this.toolStripItemUndo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.toolStripItemUndo.Image = ((System.Drawing.Image)(resources.GetObject("toolStripItemUndo.Image")));
-            this.toolStripItemUndo.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripItemUndo.Name = "toolStripItemUndo";
-            this.toolStripItemUndo.Size = new System.Drawing.Size(23, 22);
-            this.toolStripItemUndo.Text = "Undo";
-            this.toolStripItemUndo.Click += new System.EventHandler(this.toolStripItemUndo_Click);
+            toolStripItemUndo.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            toolStripItemUndo.Enabled = false;
+            toolStripItemUndo.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
+            toolStripItemUndo.Image = (Image)resources.GetObject("toolStripItemUndo.Image");
+            toolStripItemUndo.ImageTransparentColor = System.Drawing.Color.Magenta;
+            toolStripItemUndo.Name = "toolStripItemUndo";
+            toolStripItemUndo.Size = new Size(23, 26);
+            toolStripItemUndo.Text = "Undo";
+            toolStripItemUndo.Click += toolStripItemUndo_Click;
             // 
             // FrmProjectile
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.AutoSize = true;
-            this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            this.ClientSize = new System.Drawing.Size(701, 561);
-            this.ControlBox = false;
-            this.Controls.Add(this.toolStrip);
-            this.Controls.Add(this.btnCancel);
-            this.Controls.Add(this.btnSave);
-            this.Controls.Add(this.grpProjectiles);
-            this.Controls.Add(this.pnlContainer);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-            this.KeyPreview = true;
-            this.Name = "FrmProjectile";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Projectile Editor";
-            this.Load += new System.EventHandler(this.frmProjectile_Load);
-            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.form_KeyDown);
-            this.grpProjectiles.ResumeLayout(false);
-            this.grpProjectiles.PerformLayout();
-            this.grpSpawns.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.picSpawns)).EndInit();
-            this.grpProperties.ResumeLayout(false);
-            this.grpProperties.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nudKnockback)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudRange)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudAmount)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudSpawn)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudSpeed)).EndInit();
-            this.grpAnimations.ResumeLayout(false);
-            this.grpAnimations.PerformLayout();
-            this.grpCollisions.ResumeLayout(false);
-            this.grpCollisions.PerformLayout();
-            this.pnlContainer.ResumeLayout(false);
-            this.grpGrappleOptions.ResumeLayout(false);
-            this.grpGrappleOptions.PerformLayout();
-            this.grpAmmo.ResumeLayout(false);
-            this.grpAmmo.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nudConsume)).EndInit();
-            this.toolStrip.ResumeLayout(false);
-            this.toolStrip.PerformLayout();
-            this.ResumeLayout(false);
-
+            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleMode = AutoScaleMode.Font;
+            AutoSize = true;
+            BackColor = System.Drawing.Color.FromArgb(45, 45, 48);
+            ClientSize = new Size(818, 729);
+            ControlBox = false;
+            Controls.Add(toolStrip);
+            Controls.Add(btnCancel);
+            Controls.Add(btnSave);
+            Controls.Add(grpProjectiles);
+            Controls.Add(pnlContainer);
+            FormBorderStyle = FormBorderStyle.FixedSingle;
+            KeyPreview = true;
+            Margin = new Padding(4, 3, 4, 3);
+            Name = "FrmProjectile";
+            StartPosition = FormStartPosition.CenterScreen;
+            Text = "Projectile Editor";
+            Load += frmProjectile_Load;
+            KeyDown += form_KeyDown;
+            grpProjectiles.ResumeLayout(false);
+            grpProjectiles.PerformLayout();
+            grpSpawns.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)picSpawns).EndInit();
+            grpProperties.ResumeLayout(false);
+            grpProperties.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)nudKnockback).EndInit();
+            ((System.ComponentModel.ISupportInitialize)nudRange).EndInit();
+            ((System.ComponentModel.ISupportInitialize)nudAmount).EndInit();
+            ((System.ComponentModel.ISupportInitialize)nudSpawn).EndInit();
+            ((System.ComponentModel.ISupportInitialize)nudSpeed).EndInit();
+            grpAnimations.ResumeLayout(false);
+            grpAnimations.PerformLayout();
+            grpCollisions.ResumeLayout(false);
+            grpCollisions.PerformLayout();
+            pnlContainer.ResumeLayout(false);
+            grpTargettingOptions.ResumeLayout(false);
+            grpTargettingOptions.PerformLayout();
+            grpGrappleOptions.ResumeLayout(false);
+            grpGrappleOptions.PerformLayout();
+            grpAmmo.ResumeLayout(false);
+            grpAmmo.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)nudConsume).EndInit();
+            toolStrip.ResumeLayout(false);
+            toolStrip.PerformLayout();
+            ResumeLayout(false);
         }
 
         #endregion
@@ -1042,5 +1099,9 @@ namespace Intersect.Editor.Forms.Editors
         private DarkCheckBox chkGrappleOnResource;
         private DarkCheckBox chkGrappleOnMap;
         private DarkCheckBox chkGrappleOnPlayer;
+        private DarkGroupBox grpTargettingOptions;
+        private DarkRadioButton rdoBehaviorHoming;
+        private DarkRadioButton rdoBehaviorDirectShot;
+        private DarkRadioButton rdoBehaviorDefault;
     }
 }
