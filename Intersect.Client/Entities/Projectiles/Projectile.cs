@@ -41,6 +41,10 @@ namespace Intersect.Client.Entities.Projectiles
 
         public Guid TargetId;
 
+        public int mLastTargetX = -1;
+
+        public int mLastTargetY = -1;
+
         /// <summary>
         ///     The constructor for the inherated projectile class
         /// </summary>
@@ -306,8 +310,29 @@ namespace Intersect.Client.Entities.Projectiles
                     {
                         if (Spawns[s] != null && Maps.MapInstance.Get(Spawns[s].SpawnMapId) != null)
                         {
-                            Spawns[s].OffsetX = GetRangeX(Spawns[s].Dir, GetDisplacement(Spawns[s].SpawnTime));
-                            Spawns[s].OffsetY = GetRangeY(Spawns[s].Dir, GetDisplacement(Spawns[s].SpawnTime));
+                            if (TargetId != Guid.Empty && Globals.Entities.ContainsKey(TargetId))
+                            {
+                                var target = Globals.Entities[TargetId];
+                                mLastTargetX = target.X;
+                                mLastTargetY = target.Y;
+
+                                Spawns[s].OffsetX = GetProjectileX(Spawns[s], target.X, target.Y - Spawns[s].SpawnY);
+                                Spawns[s].OffsetY = GetProjectileY(Spawns[s], target.Y, target.X - Spawns[s].SpawnX);
+                                SetProjectileRotation(Spawns[s], target.X, target.Y);
+                            }
+                            else if(mLastTargetX != -1 && mLastTargetY != -1)
+                            {
+                                Spawns[s].OffsetX = GetProjectileX(Spawns[s], mLastTargetX, mLastTargetY - Spawns[s].SpawnY);
+                                Spawns[s].OffsetY = GetProjectileY(Spawns[s], mLastTargetY, mLastTargetX - Spawns[s].SpawnX);
+                                SetProjectileRotation(Spawns[s], mLastTargetX, mLastTargetY);
+                            }
+                            else
+                            {
+                                Spawns[s].OffsetX = GetRangeX(Spawns[s].Dir, GetDisplacement(Spawns[s].SpawnTime));
+                                Spawns[s].OffsetY = GetRangeY(Spawns[s].Dir, GetDisplacement(Spawns[s].SpawnTime));
+                                Spawns[s].Anim.SetRotation(false);
+                            }
+
                             Spawns[s]
                                 .Anim.SetPosition(
                                     Maps.MapInstance.Get(Spawns[s].SpawnMapId).GetX() +
@@ -331,6 +356,36 @@ namespace Intersect.Client.Entities.Projectiles
             }
 
             return true;
+        }
+
+        private float GetProjectileX(ProjectileSpawns spawn, int targetX, float directionY)
+        {
+            float directionX = targetX - spawn.SpawnX;
+            var length = (float)Math.Sqrt(directionX * directionX + directionY * directionY);
+            directionX /= length;
+
+            var desiredX = GetDisplacement(spawn.SpawnTime) * directionX;
+            var lerpFactor = 0.1f;
+            return spawn.OffsetX + (desiredX - spawn.OffsetX) * lerpFactor;
+        }
+
+        private float GetProjectileY(ProjectileSpawns spawn, int targetY, float directionX)
+        {
+            float directionY = targetY - spawn.SpawnY;
+            var length = (float)Math.Sqrt(directionX * directionX + directionY * directionY);
+            directionY /= length;
+
+            var desiredY = GetDisplacement(spawn.SpawnTime) * directionY;
+            var lerpFactor = 0.1f;
+            return spawn.OffsetY + (desiredY - spawn.OffsetY) * lerpFactor;
+        }
+
+        private void SetProjectileRotation(ProjectileSpawns spawn, int targetX, int targetY)
+        {
+            var directionX = targetX - spawn.SpawnX;
+            var directionY = targetY - spawn.SpawnY;
+            var angle = (float)(Math.Atan2(directionY, directionX) * (180.0 / Math.PI) + 90);
+            spawn.Anim.SetRotation(angle);
         }
 
         public void CheckForCollision()

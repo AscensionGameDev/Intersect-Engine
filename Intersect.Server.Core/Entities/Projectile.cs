@@ -40,6 +40,10 @@ namespace Intersect.Server.Entities
 
         public Entity Target;
 
+        private int mLastTargetX = -1;
+
+        private int mLastTargetY = -1;
+
         public Projectile(
             Entity owner,
             SpellBase parentSpell,
@@ -56,6 +60,7 @@ namespace Intersect.Server.Entities
             Base = projectile;
             Name = Base.Name;
             Owner = owner;
+            Target = owner.Target;
             Stat = owner.Stat;
             MapId = mapId;
             base.X = X;
@@ -357,6 +362,20 @@ namespace Intersect.Server.Entities
             return killSpawn;
         }
 
+        private float GetProjectileX(ProjectileSpawn spawn, int targetX, float directionY)
+        {
+            var directionX = targetX - spawn.X;
+            var length = Math.Sqrt(directionX * directionX + directionY * directionY);
+            return directionX / (float)length;
+        }
+
+        private float GetProjectileY(ProjectileSpawn spawn, int targetY, float directionX)
+        {
+            var directionY = targetY - spawn.Y;
+            var length = Math.Sqrt(directionX * directionX + directionY * directionY);
+            return directionY / (float)length;
+        }
+
         public bool MoveFragment(ProjectileSpawn spawn, bool move = true)
         {
             float newx = spawn.X;
@@ -367,8 +386,27 @@ namespace Intersect.Server.Entities
             {
                 spawn.Distance++;
                 spawn.TransmittionTimer += (long)(Base.Speed / (float)Base.Range);
-                newx = spawn.X + GetRangeX(spawn.Dir, 1);
-                newy = spawn.Y + GetRangeY(spawn.Dir, 1);
+                
+                if (Target != default)
+                {
+                    //homing logic
+                    mLastTargetX = Target.X;
+                    mLastTargetY = Target.Y;
+                    newx += GetProjectileX(spawn, Target.X, Target.Y - spawn.Y);
+                    newy += GetProjectileY(spawn, Target.Y, Target.X - spawn.X);
+                }
+                else if (mLastTargetX != -1 && mLastTargetY != -1)
+                {
+                    //last target location logic
+                    newx += GetProjectileX(spawn, mLastTargetX, mLastTargetY - spawn.Y);
+                    newy += GetProjectileY(spawn, mLastTargetY, mLastTargetX - spawn.X);
+                }
+                else
+                {
+                    // Default logic
+                    newx = spawn.X + GetRangeX(spawn.Dir, 1);
+                    newy = spawn.Y + GetRangeY(spawn.Dir, 1);
+                }
             }
 
             var killSpawn = false;
@@ -462,7 +500,7 @@ namespace Intersect.Server.Entities
             var pkt = (ProjectileEntityPacket) packet;
             pkt.ProjectileId = Base.Id;
             pkt.ProjectileDirection = (byte) Dir;
-            pkt.TargetId = Target?.Id ?? Guid.Empty;
+            pkt.TargetId = Owner.Target != default && Owner.Target.Id != Guid.Empty ? Owner.Target.Id : Guid.Empty;
             pkt.OwnerId = Owner?.Id ?? Guid.Empty;
 
             return pkt;

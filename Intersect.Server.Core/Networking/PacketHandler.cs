@@ -2926,6 +2926,30 @@ namespace Intersect.Server.Networking
             player.IsFading = false;
         }
 
+        public void HandlePacket(Client client, TargetPacket packet)
+        {
+            var player = client?.Entity;
+            if (player == null)
+            {
+                return;
+            }
+
+            if (packet.TargetId == Guid.Empty)
+            {
+                player.Target = default;
+                return;
+            }
+
+            if (player.Map.TryGetInstance(player.MapInstanceId, out var instance))
+            {
+                var entity = instance.GetEntities(true).Find(e => e.Id == packet.TargetId);
+                if (entity != null)
+                {
+                    player.Target = entity;
+                }
+            }
+        }
+
         #endregion
     }
 }
