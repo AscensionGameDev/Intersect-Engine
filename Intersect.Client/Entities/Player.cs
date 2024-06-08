@@ -310,6 +310,11 @@ namespace Intersect.Client.Entities
                 Interface.Interface.GameUi.HideGuildWindow();
             }
 
+            if (IsBlocking && !IsAttacking && !IsMoving)
+            {
+                IsBlocking = false;
+            }
+
             var returnval = base.Update();
 
             return returnval;
