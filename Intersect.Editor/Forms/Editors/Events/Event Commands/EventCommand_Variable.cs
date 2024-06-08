@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
 
 using Intersect.Editor.Localization;
@@ -266,16 +267,26 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                 return;
             }
 
-            if (integerMod.DuplicateVariableId == Guid.Empty && integerMod.ModType < VariableMod.DupPlayerVar)
+            switch (integerMod.ModType)
             {
-                nudNumericValue.Value = integerMod.Value;
-                ResetSettingVariableSelection();
-            }
-            else
-            {
-                rdoVariableValue.Checked = true;
-                mSettingVariableId = integerMod.DuplicateVariableId;
-                mSettingVariableType = integerMod.ModType.GetRelatedVariableType();
+                case VariableMod.Set:
+                case VariableMod.Add:
+                case VariableMod.Subtract:
+                case VariableMod.Multiply:
+                case VariableMod.Divide:
+                case VariableMod.LeftShift:
+                case VariableMod.RightShift:
+                case VariableMod.Random:
+                case VariableMod.SystemTime:
+                    nudNumericValue.Value = integerMod.Value;
+                    ResetSettingVariableSelection();
+                    break;
+
+                default:
+                    rdoVariableValue.Checked = true;
+                    mSettingVariableId = integerMod.DuplicateVariableId;
+                    mSettingVariableType = integerMod.ModType.GetRelatedVariableType();
+                    break;
             }
 
             optNumericSet.Checked = VariableModUtils.SetMods.Contains(integerMod.ModType);
@@ -382,6 +393,10 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             else if (optNumericLeftShift.Checked && optNumericStaticVal.Checked)
             {
                 mod.ModType = VariableMod.LeftShift;
+            }
+            else if (optNumericRightShift.Checked && optNumericStaticVal.Checked)
+            {
+                mod.ModType = VariableMod.RightShift;
             }
             else if (optNumericRandom.Checked)
             {
