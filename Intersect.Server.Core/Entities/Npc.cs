@@ -134,7 +134,7 @@ namespace Intersect.Server.Entities
             foreach (var drop in myBase.Drops)
             {
                 var slot = new InventorySlot(itemSlot);
-                slot.Set(new Item(drop.ItemId, drop.Quantity));
+                slot.Set(new Item(drop.ItemId, Randomization.Next(drop.MinQuantity, drop.Quantity + 1)));
                 slot.DropChance = drop.Chance;
                 Items.Add(slot);
                 itemSlot++;
