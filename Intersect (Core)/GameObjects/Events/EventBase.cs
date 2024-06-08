@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
@@ -69,6 +69,11 @@ namespace Intersect.GameObjects.Events
         public int SpawnY { get; set; } = -1;
 
         public bool CommonEvent { get; set; }
+
+        /// <summary>
+        /// Option used to run events even when another is already running
+        /// </summary>
+        public bool CanRunInParallel { get; set; }
 
         public bool Global { get; set; }
 

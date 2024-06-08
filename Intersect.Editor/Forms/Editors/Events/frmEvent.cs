@@ -954,6 +954,7 @@ namespace Intersect.Editor.Forms.Editors.Events
             chkInteractionFreeze.Text = Strings.EventEditor.interactionfreeze;
             chkIgnoreNpcAvoids.Text = Strings.EventEditor.ignorenpcavoids;
             grpTriggers.Text = Strings.EventEditor.trigger;
+            chkParallelRun.Text = Strings.EventEditor.ParallelRun;
             grpNewCommands.Text = Strings.EventEditor.addcommand;
             grpEventCommands.Text = Strings.EventEditor.commandlist;
             btnInsert.Text = Strings.EventEditor.insertcommand;
@@ -1008,6 +1009,7 @@ namespace Intersect.Editor.Forms.Editors.Events
             cmbAnimation.Items.Clear();
             cmbAnimation.Items.Add(Strings.General.None);
             cmbAnimation.Items.AddRange(AnimationBase.Names);
+            chkParallelRun.Checked = MyEvent.CanRunInParallel;
             if (MyEvent.CommonEvent || questEvent)
             {
                 grpEntityOptions.Hide();
@@ -1822,6 +1824,11 @@ namespace Intersect.Editor.Forms.Editors.Events
         private void cmbLayering_SelectedIndexChanged(object sender, EventArgs e)
         {
             CurrentPage.Layer = (EventRenderLayer)cmbLayering.SelectedIndex;
+        }
+
+        private void chkParallelRun_CheckedChanged(object sender, EventArgs e)
+        {
+            MyEvent.CanRunInParallel = chkParallelRun.Checked;
         }
 
         private void cmbTrigger_SelectedIndexChanged(object sender, EventArgs e)
