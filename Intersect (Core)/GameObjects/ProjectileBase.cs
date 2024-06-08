@@ -106,6 +106,10 @@ namespace Intersect.GameObjects
 
         public int Range { get; set; } = 1;
 
+        public bool HomingBehavior { get; set; }
+
+        public bool DirectShotBehavior { get; set; }
+
         [Column("SpawnLocations")]
         [JsonIgnore]
         public string SpawnsJson

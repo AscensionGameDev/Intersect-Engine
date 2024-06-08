@@ -498,6 +498,11 @@ namespace Intersect.Client.Networking
             Network.SendPacket(new FadeCompletePacket());
         }
 
+        public static void SendTarget(Guid targetId)
+        {
+            Network.SendPacket(new TargetPacket(targetId));
+        }
+
     }
 
 }

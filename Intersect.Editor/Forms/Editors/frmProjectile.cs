@@ -150,6 +150,11 @@ namespace Intersect.Editor.Forms.Editors
             lblAmmoItem.Text = Strings.ProjectileEditor.ammoitem;
             lblAmmoAmount.Text = Strings.ProjectileEditor.ammoamount;
 
+            grpTargettingOptions.Text = Strings.ProjectileEditor.TargettingOptions;
+            rdoBehaviorDefault.Text = Strings.ProjectileEditor.BehaviorDefault;
+            rdoBehaviorDirectShot.Text = Strings.ProjectileEditor.BehaviorDirectShot;
+            rdoBehaviorHoming.Text = Strings.ProjectileEditor.BehaviorHoming;
+
             //Searching/Sorting
             btnAlphabetical.ToolTipText = Strings.ProjectileEditor.sortalphabetically;
             txtSearch.Text = Strings.ProjectileEditor.searchplaceholder;
@@ -184,6 +189,19 @@ namespace Intersect.Editor.Forms.Editors
                 if (lstAnimations.SelectedIndex < 0)
                 {
                     lstAnimations.SelectedIndex = 0;
+                }
+
+                if (!mEditorItem.HomingBehavior && !mEditorItem.DirectShotBehavior)
+                {
+                    rdoBehaviorDefault.Checked = true;
+                }
+                else if (mEditorItem.HomingBehavior)
+                {
+                    rdoBehaviorHoming.Checked = true;
+                }
+                else if (mEditorItem.DirectShotBehavior)
+                {
+                    rdoBehaviorDirectShot.Checked = true;
                 }
 
                 UpdateAnimationData(0);
@@ -229,10 +247,10 @@ namespace Intersect.Editor.Forms.Editors
             //Update the spawn range maximum
             if (nudAmount.Value < scrlSpawnRange.Value)
             {
-                scrlSpawnRange.Value = (int) nudAmount.Value;
+                scrlSpawnRange.Value = (int)nudAmount.Value;
             }
 
-            scrlSpawnRange.Maximum = (int) nudAmount.Value;
+            scrlSpawnRange.Maximum = (int)nudAmount.Value;
 
             //Save the index
             if (saveIndex == true)
@@ -296,11 +314,11 @@ namespace Intersect.Editor.Forms.Editors
 
         private void ChangeGrappleOptions(GrappleOption option, bool chkValue)
         {
-            if(chkValue && !mEditorItem.GrappleHookOptions.Contains(option))
+            if (chkValue && !mEditorItem.GrappleHookOptions.Contains(option))
             {
                 mEditorItem.GrappleHookOptions.Add(option);
             }
-            else if(!chkValue)
+            else if (!chkValue)
             {
                 mEditorItem.GrappleHookOptions.Remove(option);
             }
@@ -316,7 +334,7 @@ namespace Intersect.Editor.Forms.Editors
             }
             else
             {
-                img = (Bitmap) picSpawns.BackgroundImage;
+                img = (Bitmap)picSpawns.BackgroundImage;
             }
 
             var gfx = Graphics.FromImage(img);
@@ -486,8 +504,8 @@ namespace Intersect.Editor.Forms.Editors
             i = Math.Floor(i);
             j = Math.Floor(j);
 
-            mEditorItem.SpawnLocations[(int) x, (int) y].Directions[FindDirection((int) i, (int) j)] =
-                !mEditorItem.SpawnLocations[(int) x, (int) y].Directions[FindDirection((int) i, (int) j)];
+            mEditorItem.SpawnLocations[(int)x, (int)y].Directions[FindDirection((int)i, (int)j)] =
+                !mEditorItem.SpawnLocations[(int)x, (int)y].Directions[FindDirection((int)i, (int)j)];
 
             Render();
         }
@@ -642,33 +660,33 @@ namespace Intersect.Editor.Forms.Editors
 
         private void nudSpeed_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.Speed = (int) nudSpeed.Value;
+            mEditorItem.Speed = (int)nudSpeed.Value;
         }
 
         private void nudSpawnDelay_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.Delay = (int) nudSpawn.Value;
+            mEditorItem.Delay = (int)nudSpawn.Value;
         }
 
         private void nudAmount_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.Quantity = (int) nudAmount.Value;
+            mEditorItem.Quantity = (int)nudAmount.Value;
             UpdateAnimations();
         }
 
         private void nudRange_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.Range = (int) nudRange.Value;
+            mEditorItem.Range = (int)nudRange.Value;
         }
 
         private void nudKnockback_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.Knockback = (int) nudKnockback.Value;
+            mEditorItem.Knockback = (int)nudKnockback.Value;
         }
 
         private void nudConsume_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.AmmoRequired = (int) nudConsume.Value;
+            mEditorItem.AmmoRequired = (int)nudConsume.Value;
         }
 
         private void cmbSpell_SelectedIndexChanged(object sender, EventArgs e)
@@ -710,13 +728,13 @@ namespace Intersect.Editor.Forms.Editors
             var mFolders = new List<string>();
             foreach (var itm in ProjectileBase.Lookup)
             {
-                if (!string.IsNullOrEmpty(((ProjectileBase) itm.Value).Folder) &&
-                    !mFolders.Contains(((ProjectileBase) itm.Value).Folder))
+                if (!string.IsNullOrEmpty(((ProjectileBase)itm.Value).Folder) &&
+                    !mFolders.Contains(((ProjectileBase)itm.Value).Folder))
                 {
-                    mFolders.Add(((ProjectileBase) itm.Value).Folder);
-                    if (!mKnownFolders.Contains(((ProjectileBase) itm.Value).Folder))
+                    mFolders.Add(((ProjectileBase)itm.Value).Folder);
+                    if (!mKnownFolders.Contains(((ProjectileBase)itm.Value).Folder))
                     {
-                        mKnownFolders.Add(((ProjectileBase) itm.Value).Folder);
+                        mKnownFolders.Add(((ProjectileBase)itm.Value).Folder);
                     }
                 }
             }
@@ -804,6 +822,39 @@ namespace Intersect.Editor.Forms.Editors
 
         #endregion
 
+        private void rdoBehaviorDefault_CheckedChanged(object sender, EventArgs e)
+        {
+            UpdateTargettingOptions();
+        }
+
+        private void rdoBehaviorDirectShot_CheckedChanged(object sender, EventArgs e)
+        {
+            UpdateTargettingOptions();
+        }
+
+        private void rdoBehaviorHoming_CheckedChanged(object sender, EventArgs e)
+        {
+            UpdateTargettingOptions();
+        }
+
+        private void UpdateTargettingOptions()
+        {
+            if (rdoBehaviorDefault.Checked)
+            {
+                mEditorItem.HomingBehavior = false;
+                mEditorItem.DirectShotBehavior = false;
+            }
+            else if (rdoBehaviorHoming.Checked)
+            {
+                mEditorItem.HomingBehavior = true;
+                mEditorItem.DirectShotBehavior = false;
+            }
+            else if (rdoBehaviorDirectShot.Checked)
+            {
+                mEditorItem.HomingBehavior = false;
+                mEditorItem.DirectShotBehavior = true;
+            }
+        }
     }
 
 }

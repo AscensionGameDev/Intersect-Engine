@@ -54,6 +54,10 @@ namespace Intersect.Client.Entities
 
         private long mUpperTimer;
 
+        private bool mUseExternalRotation;
+
+        private float mExternalRotation;
+
         public AnimationBase MyBase { get; set; }
 
         public Point Size => CalculateAnimationSize();
@@ -110,7 +114,13 @@ namespace Intersect.Client.Entities
 
             var rotationDegrees = 0f;
             var dontRotate = upper && MyBase.Upper.DisableRotations || !upper && MyBase.Lower.DisableRotations;
-            if ((AutoRotate || mRenderDir != Direction.None) && !dontRotate)
+
+            if (mUseExternalRotation)
+            {
+                rotationDegrees = mExternalRotation;
+            }
+
+            if ((AutoRotate || mRenderDir != Direction.None) && !dontRotate && !mUseExternalRotation)
             {
                 switch (mRenderDir)
                 {
@@ -465,6 +475,16 @@ namespace Intersect.Client.Entities
             mRenderDir = dir;
         }
 
+        public void SetRotation(float angleInDegrees)
+        {
+            mUseExternalRotation = true;
+            mExternalRotation = angleInDegrees;
+        }
+
+        public void SetRotation(bool toggle)
+        {
+            mUseExternalRotation = toggle;
+        }
     }
 
 }
