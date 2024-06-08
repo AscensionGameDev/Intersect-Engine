@@ -186,6 +186,7 @@ namespace Intersect.Server.Entities.Events
         )
         {
             ProcessVariableModification(command, (dynamic)command.Modification, player, instance);
+            player.UnequipInvalidItems();
         }
 
         //Set Self Switch Command
@@ -644,6 +645,7 @@ namespace Intersect.Server.Entities.Events
         {
             player.Gender = command.Gender;
             PacketSender.SendEntityDataToProximity(player);
+            player.UnequipInvalidItems();
         }
 
         //Change Name Color Command
@@ -734,6 +736,7 @@ namespace Intersect.Server.Entities.Events
 
             PacketSender.SendEntityDataToProximity(player);
             PacketSender.SendChatMsg(player, Strings.Player.powerchanged, ChatMessageType.Notice, Color.Red);
+            player.UnequipInvalidItems();
         }
 
         //Warp Player Command
@@ -1494,6 +1497,7 @@ namespace Intersect.Server.Entities.Events
                 // Send the members a notification, then start wiping the guild from existence through sheer willpower!
                 PacketSender.SendGuildMsg(player, Strings.Guilds.DisbandGuild.ToString(player.Guild.Name), CustomColors.Alerts.Info);
                 Guild.DeleteGuild(player.Guild, player);
+                player.UnequipInvalidItems();
 
                 // :(
                 success = true;

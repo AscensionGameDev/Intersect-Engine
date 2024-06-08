@@ -2778,6 +2778,8 @@ namespace Intersect.Server.Networking
                     /// ???
                     break;
             }
+
+            player.UnequipInvalidItems();
         }
 
         //GuildInviteAcceptPacket
@@ -2901,6 +2903,7 @@ namespace Intersect.Server.Networking
 
             // Send the newly updated player information to their surroundings.
             PacketSender.SendEntityDataToProximity(player);
+            player.UnequipInvalidItems();
 
         }
 
