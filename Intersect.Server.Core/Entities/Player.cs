@@ -1392,6 +1392,7 @@ namespace Intersect.Server.Entities
                     }
                 }
             }
+            UnequipInvalidItems();
         }
 
         public override void TryAttack(Entity target,
@@ -2005,6 +2006,8 @@ namespace Intersect.Server.Entities
                 }
                 PacketSender.SendEntityPositionToAll(this);
             }
+
+            UnequipInvalidItems();
         }
 
         /// <summary>
@@ -2803,6 +2806,7 @@ namespace Intersect.Server.Entities
                 // Start common events related to inventory changes.
                 EnqueueStartCommonEvent(item.Descriptor?.GetEventTrigger(ItemEventTriggers.OnPickup));
                 StartCommonEventsWithTrigger(CommonEventTrigger.InventoryChanged);
+                UnequipInvalidItems();
 
                 return true;
             }
@@ -3136,6 +3140,7 @@ namespace Intersect.Server.Entities
             }
 
             EnqueueStartCommonEvent(itemDescriptor.GetEventTrigger(ItemEventTriggers.OnDrop));
+            UnequipInvalidItems();
             StartCommonEventsWithTrigger(CommonEventTrigger.InventoryChanged);
             UpdateGatherItemQuests(itemDescriptor.Id);
             PacketSender.SendInventoryItemUpdate(this, slotIndex);
@@ -3482,6 +3487,7 @@ namespace Intersect.Server.Entities
 
             // Start common events related to inventory changes.
             StartCommonEventsWithTrigger(CommonEventTrigger.InventoryChanged);
+            UnequipInvalidItems();
 
             return true;
 
@@ -3573,6 +3579,7 @@ namespace Intersect.Server.Entities
 
             // Start common events related to inventory changes.
             StartCommonEventsWithTrigger(CommonEventTrigger.InventoryChanged);
+            UnequipInvalidItems();
 
             return true;
         }
@@ -5288,6 +5295,7 @@ namespace Intersect.Server.Entities
             {
                 Spells[spellSlot].Set(Spell.None);
                 PacketSender.SendPlayerSpellUpdate(this, spellSlot);
+                UnequipInvalidItems();
             }
             else
             {
@@ -5335,6 +5343,7 @@ namespace Intersect.Server.Entities
 
             slot.Set(Spell.None);
             PacketSender.SendPlayerSpellUpdate(this, slotIndex);
+            UnequipInvalidItems();
 
             return true;
         }
@@ -5781,6 +5790,7 @@ namespace Intersect.Server.Entities
             }
             
             CacheEquipmentTriggers();
+            UnequipInvalidItems();
         }
 
         [NotMapped, JsonIgnore]
@@ -5903,6 +5913,7 @@ namespace Intersect.Server.Entities
                 StatPoints--;
                 PacketSender.SendEntityStats(this);
                 PacketSender.SendPointsTo(this);
+                UnequipInvalidItems();
             }
         }
 
@@ -6189,6 +6200,7 @@ namespace Intersect.Server.Entities
                     }
                 }
             }
+            UnequipInvalidItems();
         }
 
         public void CompleteQuestTask(Guid questId, Guid taskId)
@@ -6252,6 +6264,7 @@ namespace Intersect.Server.Entities
                     PacketSender.SendQuestsProgress(this);
                 }
             }
+            UnequipInvalidItems();
         }
 
         public void CompleteQuest(Guid questId, bool skipCompletionEvent)
@@ -6277,6 +6290,7 @@ namespace Intersect.Server.Entities
                     PacketSender.SendQuestsProgress(this);
                 }
             }
+            UnequipInvalidItems();
         }
 
         private void UpdateGatherItemQuests(Guid itemId)
@@ -6322,6 +6336,7 @@ namespace Intersect.Server.Entities
                     }
                 }
             }
+            UnequipInvalidItems();
         }
 
         //Switches and Variables
