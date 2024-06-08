@@ -170,6 +170,7 @@ namespace Intersect.Editor.Forms.Editors.Events
             btnTabsLeft = new DarkButton();
             btnTabsRight = new DarkButton();
             pnlEditorComponents = new Panel();
+            chkParallelRun = new DarkCheckBox();
             grpEntityOptions.SuspendLayout();
             grpExtra.SuspendLayout();
             grpInspector.SuspendLayout();
@@ -636,6 +637,7 @@ namespace Intersect.Editor.Forms.Editors.Events
             // 
             grpTriggers.BackColor = System.Drawing.Color.FromArgb(45, 45, 48);
             grpTriggers.BorderColor = System.Drawing.Color.FromArgb(90, 90, 90);
+            grpTriggers.Controls.Add(chkParallelRun);
             grpTriggers.Controls.Add(lblVariableTrigger);
             grpTriggers.Controls.Add(lblCommand);
             grpTriggers.Controls.Add(lblTriggerVal);
@@ -648,7 +650,7 @@ namespace Intersect.Editor.Forms.Editors.Events
             grpTriggers.Margin = new Padding(4, 3, 4, 3);
             grpTriggers.Name = "grpTriggers";
             grpTriggers.Padding = new Padding(4, 3, 4, 3);
-            grpTriggers.Size = new Size(380, 87);
+            grpTriggers.Size = new Size(380, 119);
             grpTriggers.TabIndex = 21;
             grpTriggers.TabStop = false;
             grpTriggers.Text = "Trigger";
@@ -656,7 +658,7 @@ namespace Intersect.Editor.Forms.Editors.Events
             // lblVariableTrigger
             // 
             lblVariableTrigger.AutoSize = true;
-            lblVariableTrigger.Location = new System.Drawing.Point(8, 55);
+            lblVariableTrigger.Location = new System.Drawing.Point(13, 88);
             lblVariableTrigger.Margin = new Padding(4, 0, 4, 0);
             lblVariableTrigger.Name = "lblVariableTrigger";
             lblVariableTrigger.Size = new Size(51, 15);
@@ -667,7 +669,7 @@ namespace Intersect.Editor.Forms.Editors.Events
             // lblCommand
             // 
             lblCommand.AutoSize = true;
-            lblCommand.Location = new System.Drawing.Point(8, 55);
+            lblCommand.Location = new System.Drawing.Point(13, 88);
             lblCommand.Margin = new Padding(4, 0, 4, 0);
             lblCommand.Name = "lblCommand";
             lblCommand.Size = new Size(80, 15);
@@ -678,7 +680,7 @@ namespace Intersect.Editor.Forms.Editors.Events
             // lblTriggerVal
             // 
             lblTriggerVal.AutoSize = true;
-            lblTriggerVal.Location = new System.Drawing.Point(8, 55);
+            lblTriggerVal.Location = new System.Drawing.Point(13, 88);
             lblTriggerVal.Margin = new Padding(4, 0, 4, 0);
             lblTriggerVal.Name = "lblTriggerVal";
             lblTriggerVal.Size = new Size(59, 15);
@@ -700,7 +702,7 @@ namespace Intersect.Editor.Forms.Editors.Events
             cmbTrigger.ForeColor = System.Drawing.Color.Gainsboro;
             cmbTrigger.FormattingEnabled = true;
             cmbTrigger.Items.AddRange(new object[] { "Action Button", "Player Touch", "Autorun", "Projectile Hit" });
-            cmbTrigger.Location = new System.Drawing.Point(7, 20);
+            cmbTrigger.Location = new System.Drawing.Point(12, 53);
             cmbTrigger.Margin = new Padding(4, 3, 4, 3);
             cmbTrigger.Name = "cmbTrigger";
             cmbTrigger.Size = new Size(350, 24);
@@ -723,7 +725,7 @@ namespace Intersect.Editor.Forms.Editors.Events
             cmbTriggerVal.ForeColor = System.Drawing.Color.Gainsboro;
             cmbTriggerVal.FormattingEnabled = true;
             cmbTriggerVal.Items.AddRange(new object[] { "None" });
-            cmbTriggerVal.Location = new System.Drawing.Point(98, 51);
+            cmbTriggerVal.Location = new System.Drawing.Point(103, 84);
             cmbTriggerVal.Margin = new Padding(4, 3, 4, 3);
             cmbTriggerVal.Name = "cmbTriggerVal";
             cmbTriggerVal.Size = new Size(259, 24);
@@ -746,7 +748,7 @@ namespace Intersect.Editor.Forms.Editors.Events
             cmbVariable.ForeColor = System.Drawing.Color.Gainsboro;
             cmbVariable.FormattingEnabled = true;
             cmbVariable.Items.AddRange(new object[] { "None" });
-            cmbVariable.Location = new System.Drawing.Point(98, 51);
+            cmbVariable.Location = new System.Drawing.Point(103, 84);
             cmbVariable.Margin = new Padding(4, 3, 4, 3);
             cmbVariable.Name = "cmbVariable";
             cmbVariable.Size = new Size(259, 24);
@@ -760,7 +762,7 @@ namespace Intersect.Editor.Forms.Editors.Events
             txtCommand.BackColor = System.Drawing.Color.FromArgb(69, 73, 74);
             txtCommand.BorderStyle = BorderStyle.FixedSingle;
             txtCommand.ForeColor = System.Drawing.Color.FromArgb(220, 220, 220);
-            txtCommand.Location = new System.Drawing.Point(98, 51);
+            txtCommand.Location = new System.Drawing.Point(103, 84);
             txtCommand.Margin = new Padding(4, 3, 4, 3);
             txtCommand.Name = "txtCommand";
             txtCommand.Size = new Size(260, 23);
@@ -1079,7 +1081,7 @@ namespace Intersect.Editor.Forms.Editors.Events
             // 
             // btnSave
             // 
-            btnSave.Location = new System.Drawing.Point(6, 688);
+            btnSave.Location = new System.Drawing.Point(6, 714);
             btnSave.Margin = new Padding(4, 3, 4, 3);
             btnSave.Name = "btnSave";
             btnSave.Padding = new Padding(6);
@@ -1090,7 +1092,7 @@ namespace Intersect.Editor.Forms.Editors.Events
             // 
             // btnCancel
             // 
-            btnCancel.Location = new System.Drawing.Point(122, 688);
+            btnCancel.Location = new System.Drawing.Point(122, 714);
             btnCancel.Margin = new Padding(4, 3, 4, 3);
             btnCancel.Name = "btnCancel";
             btnCancel.Padding = new Padding(6);
@@ -1312,10 +1314,21 @@ namespace Intersect.Editor.Forms.Editors.Events
             pnlEditorComponents.Controls.Add(grpEventConditions);
             pnlEditorComponents.Location = new System.Drawing.Point(6, 85);
             pnlEditorComponents.Margin = new Padding(4, 3, 4, 3);
-            pnlEditorComponents.MaximumSize = new Size(939, 597);
+            pnlEditorComponents.MaximumSize = new Size(939, 650);
             pnlEditorComponents.Name = "pnlEditorComponents";
-            pnlEditorComponents.Size = new Size(939, 597);
+            pnlEditorComponents.Size = new Size(939, 623);
             pnlEditorComponents.TabIndex = 23;
+            // 
+            // chkParallelRun
+            // 
+            chkParallelRun.AutoSize = true;
+            chkParallelRun.Location = new System.Drawing.Point(12, 22);
+            chkParallelRun.Margin = new Padding(4, 3, 4, 3);
+            chkParallelRun.Name = "chkParallelRun";
+            chkParallelRun.Size = new Size(127, 19);
+            chkParallelRun.TabIndex = 15;
+            chkParallelRun.Text = "Can run in parallel?";
+            chkParallelRun.CheckedChanged += chkParallelRun_CheckedChanged;
             // 
             // FrmEvent
             // 
@@ -1324,7 +1337,7 @@ namespace Intersect.Editor.Forms.Editors.Events
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = System.Drawing.Color.FromArgb(45, 45, 48);
             CancelButton = btnCancel;
-            ClientSize = new Size(951, 718);
+            ClientSize = new Size(951, 750);
             Controls.Add(btnTabsRight);
             Controls.Add(btnTabsLeft);
             Controls.Add(pnlEditorComponents);
@@ -1443,5 +1456,6 @@ namespace Intersect.Editor.Forms.Editors.Events
         private DarkComboBox cmbVariable;
         private Label lblVariableTrigger;
         private DarkCheckBox chkIgnoreNpcAvoids;
+        private DarkCheckBox chkParallelRun;
     }
 }

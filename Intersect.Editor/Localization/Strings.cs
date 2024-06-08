@@ -2876,6 +2876,8 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString pageoptions = @"Page Options";
 
+            public static LocalizedString ParallelRun = @"Can run in Parallel?";
+
             public static LocalizedString passable = @"Passable";
 
             public static LocalizedString pastecommand = @"Paste";
