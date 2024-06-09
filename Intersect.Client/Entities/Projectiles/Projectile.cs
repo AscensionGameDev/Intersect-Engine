@@ -405,6 +405,18 @@ namespace Intersect.Client.Entities.Projectiles
                         {
                             var newx = Spawns[i].X + (int)GetRangeX(Spawns[i].Dir, 1);
                             var newy = Spawns[i].Y + (int)GetRangeY(Spawns[i].Dir, 1);
+
+                            if (mMyBase.HomingBehavior || mMyBase.DirectShotBehavior)
+                            {
+                                if (TargetId != Guid.Empty && Globals.Entities.ContainsKey(TargetId) && Globals.Entities.ContainsKey(mOwner))
+                                {
+                                    var me = Globals.Entities[mOwner];
+                                    var target = Globals.Entities[TargetId];
+                                    newx = Spawns[i].X + (int)GetRangeX(me.DirectionToTarget(target), 1);
+                                    newy = Spawns[i].Y + (int)GetRangeY(me.DirectionToTarget(target), 1);
+                                }
+                            }
+
                             var newMapId = Spawns[i].MapId;
                             var killSpawn = false;
 
