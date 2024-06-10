@@ -923,9 +923,6 @@ namespace Intersect.Client.Localization
             public static LocalizedString Friend = "Befriend";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString FriendTip = "Send a friend request to {00}.";
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString Level = @"Lv. {00}";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
@@ -941,13 +938,7 @@ namespace Intersect.Client.Localization
             public static LocalizedString Party = @"Party";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString PartyTip = @"Invite {00} to your party.";
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString Trade = @"Trade";
-
-            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-            public static LocalizedString TradeTip = @"Request to trade with {00}.";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public static LocalizedString Vital0 = @"HP:";

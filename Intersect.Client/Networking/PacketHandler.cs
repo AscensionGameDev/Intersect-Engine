@@ -880,9 +880,9 @@ namespace Intersect.Client.Networking
                 if (Interface.Interface.GameUi != null)
                 {
                     //If its you or your target, update the entity box.
-                    if (en.Id == Globals.Me.Id && Interface.Interface.GameUi.PlayerBox != null)
+                    if (en.Id == Globals.Me.Id && Interface.Interface.GameUi.PlayerStatusWindow != null)
                     {
-                        Interface.Interface.GameUi.PlayerBox.UpdateStatuses = true;
+                        Interface.Interface.GameUi.PlayerStatusWindow.UpdateStatuses = true;
                     }
                     else if (en.Id == Globals.Me.TargetIndex && Globals.Me.TargetBox != null)
                     {
@@ -965,9 +965,9 @@ namespace Intersect.Client.Networking
             if (Interface.Interface.GameUi != null)
             {
                 //If its you or your target, update the entity box.
-                if (id == Globals.Me.Id && Interface.Interface.GameUi.PlayerBox != null)
+                if (id == Globals.Me.Id && Interface.Interface.GameUi.PlayerStatusWindow != null)
                 {
-                    Interface.Interface.GameUi.PlayerBox.UpdateStatuses = true;
+                    Interface.Interface.GameUi.PlayerStatusWindow.UpdateStatuses = true;
                 }
                 else if (id == Globals.Me.TargetIndex && Globals.Me.TargetBox != null)
                 {

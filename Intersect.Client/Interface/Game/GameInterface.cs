@@ -89,6 +89,8 @@ namespace Intersect.Client.Interface.Game
 
         public EntityBox PlayerBox;
 
+        public PlayerStatusWindow PlayerStatusWindow;
+
         public GameInterface(Canvas canvas) : base(canvas)
         {
             GameCanvas = canvas;
@@ -113,6 +115,7 @@ namespace Intersect.Client.Interface.Game
             Hotbar = new HotBarWindow(GameCanvas);
             PlayerBox = new EntityBox(GameCanvas, EntityType.Player, Globals.Me, true);
             PlayerBox.SetEntity(Globals.Me);
+            PlayerStatusWindow = new PlayerStatusWindow(GameCanvas);
             if (mPictureWindow == null)
             {
                 mPictureWindow = new PictureWindow(GameCanvas);
@@ -312,6 +315,7 @@ namespace Intersect.Client.Interface.Game
             Hotbar?.Update();
             EscapeMenu.Update();
             PlayerBox?.Update();
+            PlayerStatusWindow?.Update();
             mMapItemWindow.Update();
             AnnouncementWindow?.Update();
             mPictureWindow?.Update();

@@ -1,12 +1,9 @@
-﻿using System;
-
+﻿using Intersect.Client.Core;
 using Intersect.Client.Entities;
 using Intersect.Client.Framework.File_Management;
-using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.General;
 using Intersect.Client.Interface.Game.DescriptionWindows;
-using Intersect.Client.Localization;
 using Intersect.GameObjects;
 using Intersect.Utilities;
 
@@ -15,99 +12,151 @@ namespace Intersect.Client.Interface.Game.EntityPanel
 
     public partial class SpellStatus
     {
+        private Guid _currentSpellId;
 
-        public ImagePanel Container;
+        private SpellDescriptionWindow? _descriptionWindow;
 
-        private Guid mCurrentSpellId;
+        private Label _durationLabel;
 
-        private SpellDescriptionWindow mDescWindow;
+        private Status _status;
 
-        private Framework.Gwen.Control.Label mDurationLabel;
+        private string _textureLoaded = string.Empty;
 
-        //Drag/Drop References
-        private EntityBox mEntityBox;
+        private ImagePanel _statusIcon;
 
-        private Status mStatus;
+        private ImagePanel _spellStatusContainer;
 
-        private string mTexLoaded = "";
-
-        public ImagePanel Pnl;
-
-        public Framework.Gwen.Control.Label TimeLabel;
-
-        public SpellStatus(EntityBox entityBox, Status status)
+        public SpellStatus(Status status)
         {
-            mEntityBox = entityBox;
-            mStatus = status;
+            _status = status;
         }
 
         public void Setup()
         {
-            Pnl = new ImagePanel(Container, "StatusIcon");
-            Pnl.HoverEnter += pnl_HoverEnter;
-            Pnl.HoverLeave += pnl_HoverLeave;
-            mDurationLabel = new Framework.Gwen.Control.Label(Container, "DurationLabel");
+            _statusIcon = new ImagePanel(_spellStatusContainer, "StatusIcon");
+            _statusIcon.HoverEnter += pnl_HoverEnter;
+            _statusIcon.HoverLeave += pnl_HoverLeave;
+            _durationLabel = new Label(_spellStatusContainer, "DurationLabel");
         }
 
         public void pnl_HoverLeave(Base sender, EventArgs arguments)
         {
-            if (mDescWindow != null)
+            if (_descriptionWindow != null)
             {
-                mDescWindow.Dispose();
-                mDescWindow = null;
+                _descriptionWindow.Dispose();
+                _descriptionWindow = null;
             }
         }
 
         void pnl_HoverEnter(Base sender, EventArgs arguments)
         {
-            if (mDescWindow != null)
+            if (_descriptionWindow != null)
             {
-                mDescWindow.Dispose();
-                mDescWindow = null;
+                _descriptionWindow.Dispose();
+                _descriptionWindow = null;
             }
 
-            mDescWindow = new SpellDescriptionWindow(
-                mStatus.SpellId, mEntityBox.EntityWindow.X + Pnl.X + 16,
-                mEntityBox.EntityWindow.Y + Container.Parent.Y + Container.Bottom + 2
-            );
-        }
+            var X = _statusIcon.LocalPosToCanvas(new Point(0, 0)).X;
+            var Y = _statusIcon.LocalPosToCanvas(new Point(0, 0)).Y;
 
-        public FloatRect RenderBounds()
-        {
-            var rect = new FloatRect
-            {
-                X = Pnl.LocalPosToCanvas(new Point(0, 0)).X,
-                Y = Pnl.LocalPosToCanvas(new Point(0, 0)).Y,
-                Width = Pnl.Width,
-                Height = Pnl.Height
-            };
-
-            return rect;
+            _descriptionWindow = new SpellDescriptionWindow(_status.SpellId, X, Y);
+            _descriptionWindow.SetPosition(X + _descriptionWindow.Width, Y + _statusIcon.Height);
         }
 
         public void UpdateStatus(Status status)
         {
-            mStatus = status;
+            _status = status;
         }
 
-        public void Update()
+        public static void UpdateSpellStatus(Entities.Entity myEntity,
+        ScrollControl spellStatusControl,
+        Dictionary<Guid, SpellStatus> activeStatuses)
         {
-            if (mStatus == null)
+            if (myEntity == null)
             {
                 return;
             }
 
-            var remaining = mStatus.RemainingMs;
-            var spell = SpellBase.Get(mStatus.SpellId);
+            //Remove 'Dead' Statuses
+            var statuses = activeStatuses.Keys.ToArray();
+            foreach (var status in statuses)
+            {
+                if (!myEntity.StatusActive(status))
+                {
+                    var s = activeStatuses[status];
+                    s._statusIcon.Texture = null;
+                    s._spellStatusContainer.Hide();
+                    s._spellStatusContainer.Texture = null;
+                    spellStatusControl.RemoveChild(s._spellStatusContainer, true);
+                    s.pnl_HoverLeave(null, null);
+                    activeStatuses.Remove(status);
+                }
+                else
+                {
+                    activeStatuses[status].UpdateStatus(myEntity.GetStatus(status) as Status);
+                }
+            }
 
-            mDurationLabel.Text = TimeSpan.FromMilliseconds(remaining).WithSuffix();
+            //Add all of the spell status effects
+            for (var i = 0; i < myEntity.Status.Count; i++)
+            {
+                var id = myEntity.Status[i].SpellId;
+                SpellStatus itm;
+                if (!activeStatuses.ContainsKey(id) && myEntity.Status[i] is Status status)
+                {
+                    itm = new SpellStatus(status)
+                    {
+                        _spellStatusContainer = new ImagePanel(spellStatusControl, "SpellStatusIcon")
+                    };
 
-            if ((mTexLoaded != "" && spell == null ||
-                 spell != null && mTexLoaded != spell.Icon ||
-                 mCurrentSpellId != mStatus.SpellId) &&
+                    itm.Setup();
+                    itm._spellStatusContainer.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+                    itm._spellStatusContainer.Name = string.Empty;
+                    activeStatuses.Add(id, itm);
+                }
+                else
+                {
+                    itm = activeStatuses[id];
+                }
+
+                var xPadding = itm._spellStatusContainer.Margin.Left + itm._spellStatusContainer.Margin.Right;
+                var yPadding = itm._spellStatusContainer.Margin.Top + itm._spellStatusContainer.Margin.Bottom;
+
+                // Calculate how many icons fit in a row
+                int iconsPerRow = spellStatusControl.Width / Math.Max(1, itm._spellStatusContainer.Width + xPadding);
+
+                // Calculate which row the icon should be in
+                int row = i / Math.Max(1, iconsPerRow);
+
+                // Calculate which column the icon should be in
+                int column = i % Math.Max(1, iconsPerRow);
+
+                // Calculate the x and y position
+                int xPos = column * (itm._spellStatusContainer.Width + xPadding) + xPadding;
+                int yPos = row * (itm._spellStatusContainer.Height + yPadding) + yPadding;
+
+                itm._spellStatusContainer.SetPosition(xPos, yPos);
+            }
+        }
+
+        public void Update()
+        {
+            if (_status == null)
+            {
+                return;
+            }
+
+            var remaining = _status.RemainingMs;
+            var spell = SpellBase.Get(_status.SpellId);
+
+            _durationLabel.Text = TimeSpan.FromMilliseconds(remaining).WithSuffix();
+
+            if ((_textureLoaded != "" && spell == null ||
+                 spell != null && _textureLoaded != spell.Icon ||
+                 _currentSpellId != _status.SpellId) &&
                 remaining > 0)
             {
-                Container.Show();
+                _spellStatusContainer.Show();
                 if (spell != null)
                 {
                     var spellTex = Globals.ContentManager.GetTexture(
@@ -116,42 +165,40 @@ namespace Intersect.Client.Interface.Game.EntityPanel
 
                     if (spellTex != null)
                     {
-                        Pnl.Texture = spellTex;
-                        Pnl.IsHidden = false;
+                        _statusIcon.Texture = spellTex;
+                        _statusIcon.IsHidden = false;
                     }
                     else
                     {
-                        if (Pnl.Texture != null)
+                        if (_statusIcon.Texture != null)
                         {
-                            Pnl.Texture = null;
+                            _statusIcon.Texture = null;
                         }
                     }
 
-                    mTexLoaded = spell.Icon;
-                    mCurrentSpellId = mStatus.SpellId;
+                    _textureLoaded = spell.Icon;
+                    _currentSpellId = _status.SpellId;
                 }
                 else
                 {
-                    if (Pnl.Texture != null)
+                    if (_statusIcon.Texture != null)
                     {
-                        Pnl.Texture = null;
+                        _statusIcon.Texture = null;
                     }
 
-                    mTexLoaded = "";
+                    _textureLoaded = "";
                 }
             }
             else if (remaining <= 0)
             {
-                if (Pnl.Texture != null)
+                if (_statusIcon.Texture != null)
                 {
-                    Pnl.Texture = null;
+                    _statusIcon.Texture = null;
                 }
 
-                Container.Hide();
-                mTexLoaded = "";
+                _spellStatusContainer.Hide();
+                _textureLoaded = "";
             }
         }
-
     }
-
 }
