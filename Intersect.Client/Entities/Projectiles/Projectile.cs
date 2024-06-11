@@ -384,6 +384,11 @@ namespace Intersect.Client.Entities.Projectiles
                             continue;
                         }
 
+                        if (x >= Globals.MapGrid.GetLength(0) || y >= Globals.MapGrid.GetLength(1))
+                        {
+                            continue;
+                        }
+
                         if (Globals.MapGrid[x, y] != Guid.Empty && Globals.MapGrid[x, y] == mLastTargetMapId)
                         {
                             var leftSide = x == map.GridX - 1;
