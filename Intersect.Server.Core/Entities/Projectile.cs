@@ -385,6 +385,11 @@ namespace Intersect.Server.Entities
                             continue;
                         }
 
+                        if (x >= grid.MapIdGrid.GetLength(0) || y >= grid.MapIdGrid.GetLength(1))
+                        {
+                            continue;
+                        }
+
                         if (grid.MapIdGrid[x, y] != Guid.Empty && grid.MapIdGrid[x, y] == mLastTargetMapId)
                         {
                             var leftSide = x == map.MapGridX - 1;
@@ -425,6 +430,11 @@ namespace Intersect.Server.Entities
                     for (var x = map.MapGridY - 1; x <= map.MapGridX + 1; x++)
                     {
                         if (x == -1 || x >= grid.Width)
+                        {
+                            continue;
+                        }
+
+                        if (x >= grid.MapIdGrid.GetLength(0) || y >= grid.MapIdGrid.GetLength(1))
                         {
                             continue;
                         }
