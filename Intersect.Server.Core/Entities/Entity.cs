@@ -1583,6 +1583,80 @@ namespace Intersect.Server.Entities
                 return;
             }
 
+            if (projectile.HomingBehavior || projectile.DirectShotBehavior)
+            {
+                // we need to get the direction based on the shooter's position and the target's position and angle between them
+                double angle = 0;
+                if (target.MapId == MapId)
+                {
+                    angle = Math.Atan2(target.Y - Y, target.X - X);
+                }
+                else
+                {
+                    var grid = DbInterface.GetGrid(Map.MapGrid);
+                    bool angleFound = false;
+
+                    for (var y = Map.MapGridY - 1; y <= Map.MapGridY + 1; y++)
+                    {
+                        for (var x = Map.MapGridX - 1; x <= Map.MapGridX + 1; x++)
+                        {
+                            if (x < 0 || x >= grid.MapIdGrid.GetLength(0) || y < 0 || y >= grid.MapIdGrid.GetLength(1))
+                            {
+                                continue;
+                            }
+
+                            if (grid.MapIdGrid[x, y] == target.MapId)
+                            {
+                                int targetAbsoluteX = target.X + (x * Options.MapWidth);
+                                int targetAbsoluteY = target.Y + (y * Options.MapHeight);
+                                int playerAbsoluteX = X + (Map.MapGridX * Options.MapWidth);
+                                int playerAbsoluteY = Y + (Map.MapGridY * Options.MapHeight);
+
+                                angle = Math.Atan2(targetAbsoluteY - playerAbsoluteY, targetAbsoluteX - playerAbsoluteX);
+                                angleFound = true;
+                                break;
+                            }
+                        }
+
+                        if (angleFound) break;
+                    }
+                }
+
+                var angleDegrees = angle * (180 / Math.PI);
+                if (angleDegrees >= -30 && angleDegrees <= 30)
+                {
+                    projectileDir = Direction.Right;
+                }
+                else if (angleDegrees >= 30 && angleDegrees <= 60)
+                {
+                    projectileDir = Direction.DownRight;
+                }
+                else if (angleDegrees >= 60 && angleDegrees <= 120)
+                {
+                    projectileDir = Direction.Down;
+                }
+                else if (angleDegrees >= 120 && angleDegrees <= 150)
+                {
+                    projectileDir = Direction.DownLeft;
+                }
+                else if (angleDegrees >= 150 || angleDegrees <= -150)
+                {
+                    projectileDir = Direction.Left;
+                }
+                else if (angleDegrees >= -150 && angleDegrees <= -120)
+                {
+                    projectileDir = Direction.UpLeft;
+                }
+                else if (angleDegrees >= -120 && angleDegrees <= -60)
+                {
+                    projectileDir = Direction.Up;
+                }
+                else if (angleDegrees >= -60 && angleDegrees <= -30)
+                {
+                    projectileDir = Direction.UpRight;
+                }
+            }
+
             // If there is knock-back: knock them backwards.
             if (projectile.Knockback > 0 && ((int)projectileDir < Options.Instance.MapOpts.MovementDirections) && !target.Immunities.Contains(SpellEffect.Knockback))
             {

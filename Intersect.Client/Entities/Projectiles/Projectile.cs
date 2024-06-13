@@ -372,19 +372,9 @@ namespace Intersect.Client.Entities.Projectiles
                 var map = Maps.MapInstance.Get(spawn.SpawnMapId);
                 for (var y = map.GridY - 1; y <= map.GridY + 1; y++)
                 {
-                    if (y < 0 || y >= Options.MapHeight)
-                    {
-                        continue;
-                    }
-
                     for (var x = map.GridX - 1; x <= map.GridX + 1; x++)
                     {
-                        if (x < 0 || x >= Options.MapWidth)
-                        {
-                            continue;
-                        }
-
-                        if (x >= Globals.MapGrid.GetLength(0) || y >= Globals.MapGrid.GetLength(1))
+                        if (x < 0 || x >= Globals.MapGrid.GetLength(0) || y < 0 || y >= Globals.MapGrid.GetLength(1))
                         {
                             continue;
                         }
@@ -418,19 +408,9 @@ namespace Intersect.Client.Entities.Projectiles
                 var map = Maps.MapInstance.Get(spawn.SpawnMapId);
                 for (var y = map.GridY - 1; y <= map.GridY + 1; y++)
                 {
-                    if (y < 0 || y >= Options.MapHeight)
-                    {
-                        continue;
-                    }
-
                     for (var x = map.GridX - 1; x <= map.GridX + 1; x++)
                     {
-                        if (x < 0 || x >= Options.MapWidth)
-                        {
-                            continue;
-                        }
-
-                        if(x >= Globals.MapGrid.GetLength(0) || y >= Globals.MapGrid.GetLength(1))
+                        if(x < 0 || x >= Globals.MapGrid.GetLength(0) || y < 0 || y >= Globals.MapGrid.GetLength(1))
                         {
                             continue;
                         }

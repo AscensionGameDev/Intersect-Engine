@@ -378,7 +378,7 @@ namespace Intersect.Server.Entities
                         continue;
                     }
 
-                    for (var x = map.MapGridY - 1; x <= map.MapGridX + 1; x++)
+                    for (var x = map.MapGridX - 1; x <= map.MapGridX + 1; x++)
                     {
                         if (x == -1 || x >= grid.Width)
                         {
@@ -427,7 +427,7 @@ namespace Intersect.Server.Entities
                         continue;
                     }
 
-                    for (var x = map.MapGridY - 1; x <= map.MapGridX + 1; x++)
+                    for (var x = map.MapGridX - 1; x <= map.MapGridX + 1; x++)
                     {
                         if (x == -1 || x >= grid.Width)
                         {
