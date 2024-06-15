@@ -455,7 +455,7 @@ namespace Intersect.Client.Entities
                     {
                         if (Interface.Interface.GameUi.PlayerStatusWindow == null)
                         {
-                            Log.Warn($"'{nameof(Interface.Interface.GameUi.PlayerBox)}' is null.");
+                            Log.Warn($"'{nameof(Interface.Interface.GameUi.PlayerStatusWindow)}' is null.");
                         }
                         else
                         {

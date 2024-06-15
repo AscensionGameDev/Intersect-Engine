@@ -6,7 +6,7 @@ using Intersect.Client.General;
 namespace Intersect.Client.Interface.Game.EntityPanel
 {
 
-    public partial class PlayerStatusWindow
+    public partial class PlayerStatusWindow : ImagePanel
     {
         private readonly Dictionary<Guid, SpellStatus> _activeStatuses = new Dictionary<Guid, SpellStatus>();
 
@@ -18,35 +18,23 @@ namespace Intersect.Client.Interface.Game.EntityPanel
 
         public readonly ScrollControl _playerStatusControl;
 
-        public PlayerStatusWindow(Canvas gameCanvas)
+        public PlayerStatusWindow(Canvas gameCanvas) : base(gameCanvas, "PlayerStatusWindow")
         {
             MyEntity = Globals.Me;
-
-            _playerStatusWindow = new ImagePanel(gameCanvas, "PlayerStatusWindow")
-            {
-                ShouldCacheToTexture = true
-            };
-
-            _playerStatusControl = new ScrollControl(_playerStatusWindow, "PlayerStatusControl");
-            _playerStatusWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
-            Show();
+            _playerStatusControl = new ScrollControl(this, "PlayerStatusControl");
+            LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
         }
 
         public void Update()
         {
             if (MyEntity == null || MyEntity.IsDisposed())
             {
-                if (!_playerStatusWindow.IsHidden)
+                if (!IsHidden)
                 {
                     Hide();
                 }
 
                 return;
-            }
-
-            if (_playerStatusWindow.IsHidden)
-            {
-                Show();
             }
 
             if (MyEntity.IsDisposed())
@@ -67,24 +55,12 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                 UpdateStatuses = false;
             }
 
-            _playerStatusWindow.IsHidden = _activeStatuses.Count < 1;
-        }
+            IsHidden = _activeStatuses.Count < 1;
 
-        public void Show()
-        {
-            _playerStatusWindow.Show();
-        }
-
-        public void Hide()
-        {
-            _playerStatusWindow.Hide();
-        }
-
-        public void Dispose()
-        {
-            Hide();
-            Interface.GameUi.GameCanvas.RemoveChild(_playerStatusWindow, false);
-            Dispose();
+            if (!IsHidden)
+            {
+                Show();
+            }
         }
     }
 }
