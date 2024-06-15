@@ -46,6 +46,8 @@ namespace Intersect.Client.Entities.Projectiles
 
         public Guid mLastTargetMapId = Guid.Empty;
 
+        public Dictionary<ProjectileSpawns, (float, float)> mCurrentCoords = new Dictionary<ProjectileSpawns, (float, float)>();
+
         /// <summary>
         ///     The constructor for the inherated projectile class
         /// </summary>
@@ -171,10 +173,10 @@ namespace Intersect.Client.Entities.Projectiles
                             );
 
                             Spawns[mSpawnedAmount] = s;
+                            mCurrentCoords.Add(s, (s.SpawnX, s.SpawnY));
                             if (Collided(mSpawnedAmount))
                             {
-                                Spawns[mSpawnedAmount].Dispose();
-                                Spawns[mSpawnedAmount] = null;
+                                TryRemoveSpawn(mSpawnedAmount);
                                 mSpawnCount--;
                             }
 
@@ -311,7 +313,7 @@ namespace Intersect.Client.Entities.Projectiles
                     {
                         if (Spawns[s] != null && Maps.MapInstance.Get(Spawns[s].SpawnMapId) != null)
                         {
-                            if (TargetId != Guid.Empty && Globals.Entities.ContainsKey(TargetId) && (mMyBase.HomingBehavior || mMyBase.DirectShotBehavior))
+                            if (TargetId != Guid.Empty && TargetId != mOwner && Globals.Entities.ContainsKey(TargetId) && (mMyBase.HomingBehavior || mMyBase.DirectShotBehavior))
                             {
                                 var target = Globals.Entities[TargetId];
                                 mLastTargetX = target.X;
@@ -365,6 +367,11 @@ namespace Intersect.Client.Entities.Projectiles
             return true;
         }
 
+        /// <summary>
+        /// Returns the distance of the projectile from the target in tiles in the X axis.
+        /// </summary>
+        /// <param name="spawn"> The spawn of the projectile. </param>
+        /// <returns> The distance in tiles from the target in the X axis. </returns>
         private float GetProjectileX(ProjectileSpawns spawn)
         {
             if (mLastTargetMapId != Guid.Empty && mLastTargetMapId != spawn.SpawnMapId)
@@ -372,19 +379,9 @@ namespace Intersect.Client.Entities.Projectiles
                 var map = Maps.MapInstance.Get(spawn.SpawnMapId);
                 for (var y = map.GridY - 1; y <= map.GridY + 1; y++)
                 {
-                    if (y < 0 || y >= Options.MapHeight)
-                    {
-                        continue;
-                    }
-
                     for (var x = map.GridX - 1; x <= map.GridX + 1; x++)
                     {
-                        if (x < 0 || x >= Options.MapWidth)
-                        {
-                            continue;
-                        }
-
-                        if (x >= Globals.MapGrid.GetLength(0) || y >= Globals.MapGrid.GetLength(1))
+                        if (x < 0 || x >= Globals.MapGrid.GetLength(0) || y < 0 || y >= Globals.MapGrid.GetLength(1))
                         {
                             continue;
                         }
@@ -411,6 +408,11 @@ namespace Intersect.Client.Entities.Projectiles
             return mLastTargetX - spawn.SpawnX;
         }
 
+        /// <summary>
+        /// Returns the distance of the projectile from the target in tiles in the Y axis.
+        /// </summary>
+        /// <param name="spawn"> The spawn of the projectile. </param>
+        /// <returns> The distance in tiles from the target in the Y axis. </returns>
         private float GetProjectileY(ProjectileSpawns spawn)
         {
             if (mLastTargetMapId != Guid.Empty && mLastTargetMapId != spawn.SpawnMapId)
@@ -418,19 +420,9 @@ namespace Intersect.Client.Entities.Projectiles
                 var map = Maps.MapInstance.Get(spawn.SpawnMapId);
                 for (var y = map.GridY - 1; y <= map.GridY + 1; y++)
                 {
-                    if (y < 0 || y >= Options.MapHeight)
-                    {
-                        continue;
-                    }
-
                     for (var x = map.GridX - 1; x <= map.GridX + 1; x++)
                     {
-                        if (x < 0 || x >= Options.MapWidth)
-                        {
-                            continue;
-                        }
-
-                        if(x >= Globals.MapGrid.GetLength(0) || y >= Globals.MapGrid.GetLength(1))
+                        if (x < 0 || x >= Globals.MapGrid.GetLength(0) || y < 0 || y >= Globals.MapGrid.GetLength(1))
                         {
                             continue;
                         }
@@ -497,12 +489,17 @@ namespace Intersect.Client.Entities.Projectiles
 
                             if (mMyBase.HomingBehavior || mMyBase.DirectShotBehavior)
                             {
-                                if (TargetId != Guid.Empty && Globals.Entities.ContainsKey(TargetId) && Globals.Entities.ContainsKey(mOwner))
+                                if (TargetId != Guid.Empty && TargetId != mOwner || mLastTargetX != -1 && mLastTargetY != -1 && mLastTargetMapId != Guid.Empty)
                                 {
-                                    var me = Globals.Entities[mOwner];
-                                    var target = Globals.Entities[TargetId];
-                                    newx = Spawns[i].X + (int)GetRangeX(me.DirectionToTarget(target), 1);
-                                    newy = Spawns[i].Y + (int)GetRangeY(me.DirectionToTarget(target), 1);
+                                    float deltaX = GetProjectileX(Spawns[i]);
+                                    float deltaY = GetProjectileY(Spawns[i]);
+                                    float distance = MathF.Sqrt(deltaX * deltaX + deltaY * deltaY);
+                                    float xFactor = deltaX / distance;
+                                    float yFactor = deltaY / distance;
+
+                                    mCurrentCoords[Spawns[i]] = (mCurrentCoords[Spawns[i]].Item1 + xFactor, mCurrentCoords[Spawns[i]].Item2 + yFactor);
+                                    newx = (int)Math.Round(mCurrentCoords[Spawns[i]].Item1);
+                                    newy = (int)Math.Round(mCurrentCoords[Spawns[i]].Item2);
                                 }
                             }
 
@@ -517,6 +514,7 @@ namespace Intersect.Client.Entities.Projectiles
                                 {
                                     newMapId = spawnMap.Left;
                                     newx = Options.MapWidth - 1;
+                                    mCurrentCoords[Spawns[i]] = (newx, mCurrentCoords[Spawns[i]].Item2);
                                 }
                                 else
                                 {
@@ -530,6 +528,7 @@ namespace Intersect.Client.Entities.Projectiles
                                 {
                                     newMapId = spawnMap.Right;
                                     newx = 0;
+                                    mCurrentCoords[Spawns[i]] = (newx, mCurrentCoords[Spawns[i]].Item2);
                                 }
                                 else
                                 {
@@ -543,6 +542,7 @@ namespace Intersect.Client.Entities.Projectiles
                                 {
                                     newMapId = spawnMap.Up;
                                     newy = Options.MapHeight - 1;
+                                    mCurrentCoords[Spawns[i]] = (mCurrentCoords[Spawns[i]].Item1, newy);
                                 }
                                 else
                                 {
@@ -556,6 +556,7 @@ namespace Intersect.Client.Entities.Projectiles
                                 {
                                     newMapId = spawnMap.Down;
                                     newy = 0;
+                                    mCurrentCoords[Spawns[i]] = (mCurrentCoords[Spawns[i]].Item1, newy);
                                 }
                                 else
                                 {
@@ -565,8 +566,7 @@ namespace Intersect.Client.Entities.Projectiles
 
                             if (killSpawn)
                             {
-                                Spawns[i].Dispose();
-                                Spawns[i] = null;
+                                TryRemoveSpawn(i);
                                 mSpawnCount--;
 
                                 continue;
@@ -609,8 +609,7 @@ namespace Intersect.Client.Entities.Projectiles
 
                             if (killSpawn)
                             {
-                                Spawns[i].Dispose();
-                                Spawns[i] = null;
+                                TryRemoveSpawn(i);
                                 mSpawnCount--;
                             }
                         }
@@ -696,6 +695,15 @@ namespace Intersect.Client.Entities.Projectiles
         {
             if (spawnIndex < mSpawnedAmount && Spawns[spawnIndex] != null)
             {
+                TryRemoveSpawn(spawnIndex);
+            }
+        }
+
+        private void TryRemoveSpawn(int spawnIndex)
+        {
+            if (spawnIndex < mSpawnedAmount && Spawns[spawnIndex] != null)
+            {
+                if (mCurrentCoords.ContainsKey(Spawns[spawnIndex])) mCurrentCoords.Remove(Spawns[spawnIndex]);
                 Spawns[spawnIndex].Dispose();
                 Spawns[spawnIndex] = null;
             }
