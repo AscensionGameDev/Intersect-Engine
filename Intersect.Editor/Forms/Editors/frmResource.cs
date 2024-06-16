@@ -205,6 +205,7 @@ namespace Intersect.Editor.Forms.Editors
             grpDrops.Text = Strings.ResourceEditor.drops;
             lblDropItem.Text = Strings.ResourceEditor.dropitem;
             lblDropAmount.Text = Strings.ResourceEditor.dropamount;
+            lblDropMinAmount.Text = Strings.ResourceEditor.DropMinAmount;
             lblDropChance.Text = Strings.ResourceEditor.dropchance;
             btnDropAdd.Text = Strings.ResourceEditor.dropadd;
             btnDropRemove.Text = Strings.ResourceEditor.dropremove;
@@ -300,8 +301,8 @@ namespace Intersect.Editor.Forms.Editors
                 {
                     lstDrops.Items.Add(
                         Strings.ResourceEditor.dropdisplay.ToString(
-                            ItemBase.GetName(mEditorItem.Drops[i].ItemId), mEditorItem.Drops[i].Quantity,
-                            mEditorItem.Drops[i].Chance
+                            ItemBase.GetName(mEditorItem.Drops[i].ItemId), mEditorItem.Drops[i].MinQuantity,
+                            mEditorItem.Drops[i].Quantity, mEditorItem.Drops[i].Chance
                         )
                     );
                 }
@@ -319,7 +320,7 @@ namespace Intersect.Editor.Forms.Editors
 
         private void nudSpawnDuration_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.SpawnDuration = (int) nudSpawnDuration.Value;
+            mEditorItem.SpawnDuration = (int)nudSpawnDuration.Value;
         }
 
         private void cmbToolType_SelectedIndexChanged(object sender, EventArgs e)
@@ -351,7 +352,7 @@ namespace Intersect.Editor.Forms.Editors
 
                 if (File.Exists(graphic))
                 {
-                    mInitialGraphic = (Bitmap) Image.FromFile(graphic);
+                    mInitialGraphic = (Bitmap)Image.FromFile(graphic);
                     picInitialResource.Width = mInitialGraphic.Width;
                     picInitialResource.Height = mInitialGraphic.Height;
                     mInitialBitmap = new Bitmap(picInitialResource.Width, picInitialResource.Height);
@@ -379,7 +380,7 @@ namespace Intersect.Editor.Forms.Editors
 
                 if (File.Exists(graphic))
                 {
-                    mEndGraphic = (Bitmap) Image.FromFile(graphic);
+                    mEndGraphic = (Bitmap)Image.FromFile(graphic);
                     picEndResource.Width = mEndGraphic.Width;
                     picEndResource.Height = mEndGraphic.Height;
                     mEndBitmap = new Bitmap(picEndResource.Width, picEndResource.Height);
@@ -591,35 +592,44 @@ namespace Intersect.Editor.Forms.Editors
 
         private void nudMinHp_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.MinHp = (int) nudMinHp.Value;
+            mEditorItem.MinHp = (int)nudMinHp.Value;
         }
 
         private void nudMaxHp_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.MaxHp = (int) nudMaxHp.Value;
+            mEditorItem.MaxHp = (int)nudMaxHp.Value;
         }
 
         private void cmbDropItem_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (lstDrops.SelectedIndex > -1 && lstDrops.SelectedIndex < mEditorItem.Drops.Count)
+            if (lstDrops.SelectedIndex < 0 || lstDrops.SelectedIndex > lstDrops.Items.Count)
             {
-                mEditorItem.Drops[lstDrops.SelectedIndex].ItemId = ItemBase.IdFromList(cmbDropItem.SelectedIndex - 1);
+                return;
             }
 
+            mEditorItem.Drops[lstDrops.SelectedIndex].ItemId = ItemBase.IdFromList(cmbDropItem.SelectedIndex - 1);
             UpdateDropValues(true);
         }
 
         private void nudDropAmount_ValueChanged(object sender, EventArgs e)
         {
-            // This should never be below 1. We shouldn't accept giving 0 items!
-            nudDropAmount.Value = Math.Max(1, nudDropAmount.Value);
-
-            if (lstDrops.SelectedIndex < lstDrops.Items.Count)
+            if (lstDrops.SelectedIndex < 0 || lstDrops.SelectedIndex > lstDrops.Items.Count)
             {
                 return;
             }
 
-            mEditorItem.Drops[(int) lstDrops.SelectedIndex].Quantity = (int) nudDropAmount.Value;
+            mEditorItem.Drops[lstDrops.SelectedIndex].Quantity = (int)nudDropAmount.Value;
+            UpdateDropValues(true);
+        }
+
+        private void nudDropMinAmount_ValueChanged(object sender, EventArgs e)
+        {
+            if (lstDrops.SelectedIndex < 0 || lstDrops.SelectedIndex > lstDrops.Items.Count)
+            {
+                return;
+            }
+
+            mEditorItem.Drops[lstDrops.SelectedIndex].MinQuantity = (int)nudDropMinAmount.Value;
             UpdateDropValues(true);
         }
 
@@ -629,7 +639,8 @@ namespace Intersect.Editor.Forms.Editors
             {
                 cmbDropItem.SelectedIndex = ItemBase.ListIndex(mEditorItem.Drops[lstDrops.SelectedIndex].ItemId) + 1;
                 nudDropAmount.Value = mEditorItem.Drops[lstDrops.SelectedIndex].Quantity;
-                nudDropChance.Value = (decimal) mEditorItem.Drops[lstDrops.SelectedIndex].Chance;
+                nudDropMinAmount.Value = mEditorItem.Drops[lstDrops.SelectedIndex].MinQuantity;
+                nudDropChance.Value = (decimal)mEditorItem.Drops[lstDrops.SelectedIndex].Chance;
             }
         }
 
@@ -637,8 +648,9 @@ namespace Intersect.Editor.Forms.Editors
         {
             mEditorItem.Drops.Add(new Drop());
             mEditorItem.Drops[mEditorItem.Drops.Count - 1].ItemId = ItemBase.IdFromList(cmbDropItem.SelectedIndex - 1);
-            mEditorItem.Drops[mEditorItem.Drops.Count - 1].Quantity = (int) nudDropAmount.Value;
-            mEditorItem.Drops[mEditorItem.Drops.Count - 1].Chance = (double) nudDropChance.Value;
+            mEditorItem.Drops[mEditorItem.Drops.Count - 1].Quantity = (int)nudDropAmount.Value;
+            mEditorItem.Drops[mEditorItem.Drops.Count - 1].MinQuantity = (int)nudDropMinAmount.Value;
+            mEditorItem.Drops[mEditorItem.Drops.Count - 1].Chance = (double)nudDropChance.Value;
 
             UpdateDropValues();
         }
@@ -657,12 +669,12 @@ namespace Intersect.Editor.Forms.Editors
 
         private void nudDropChance_ValueChanged(object sender, EventArgs e)
         {
-            if (lstDrops.SelectedIndex < lstDrops.Items.Count)
+            if (lstDrops.SelectedIndex < 0 || lstDrops.SelectedIndex > lstDrops.Items.Count)
             {
                 return;
             }
 
-            mEditorItem.Drops[(int) lstDrops.SelectedIndex].Chance = (double) nudDropChance.Value;
+            mEditorItem.Drops[(int)lstDrops.SelectedIndex].Chance = (double)nudDropChance.Value;
             UpdateDropValues(true);
         }
 
@@ -691,8 +703,8 @@ namespace Intersect.Editor.Forms.Editors
             }
 
             mMouseDown = true;
-            mEditorItem.Initial.X = (int) Math.Floor((double) e.X / Options.TileWidth);
-            mEditorItem.Initial.Y = (int) Math.Floor((double) e.Y / Options.TileHeight);
+            mEditorItem.Initial.X = (int)Math.Floor((double)e.X / Options.TileWidth);
+            mEditorItem.Initial.Y = (int)Math.Floor((double)e.Y / Options.TileHeight);
             mEditorItem.Initial.Width = 0;
             mEditorItem.Initial.Height = 0;
             if (mEditorItem.Initial.X < 0)
@@ -758,8 +770,8 @@ namespace Intersect.Editor.Forms.Editors
 
             if (mMouseDown)
             {
-                var tmpX = (int) Math.Floor((double) e.X / Options.TileWidth);
-                var tmpY = (int) Math.Floor((double) e.Y / Options.TileHeight);
+                var tmpX = (int)Math.Floor((double)e.X / Options.TileWidth);
+                var tmpY = (int)Math.Floor((double)e.Y / Options.TileHeight);
                 mEditorItem.Initial.Width = tmpX - mEditorItem.Initial.X;
                 mEditorItem.Initial.Height = tmpY - mEditorItem.Initial.Y;
             }
@@ -780,8 +792,8 @@ namespace Intersect.Editor.Forms.Editors
             }
 
             mMouseDown = true;
-            mEditorItem.Exhausted.X = (int) Math.Floor((double) e.X / Options.TileWidth);
-            mEditorItem.Exhausted.Y = (int) Math.Floor((double) e.Y / Options.TileHeight);
+            mEditorItem.Exhausted.X = (int)Math.Floor((double)e.X / Options.TileWidth);
+            mEditorItem.Exhausted.Y = (int)Math.Floor((double)e.Y / Options.TileHeight);
             mEditorItem.Exhausted.Width = 0;
             mEditorItem.Exhausted.Height = 0;
             if (mEditorItem.Exhausted.X < 0)
@@ -847,8 +859,8 @@ namespace Intersect.Editor.Forms.Editors
 
             if (mMouseDown)
             {
-                var tmpX = (int) Math.Floor((double) e.X / Options.TileWidth);
-                var tmpY = (int) Math.Floor((double) e.Y / Options.TileHeight);
+                var tmpX = (int)Math.Floor((double)e.X / Options.TileWidth);
+                var tmpY = (int)Math.Floor((double)e.Y / Options.TileHeight);
                 mEditorItem.Exhausted.Width = tmpX - mEditorItem.Exhausted.X;
                 mEditorItem.Exhausted.Height = tmpY - mEditorItem.Exhausted.Y;
             }
@@ -858,7 +870,7 @@ namespace Intersect.Editor.Forms.Editors
 
         private void nudHpRegen_ValueChanged(object sender, EventArgs e)
         {
-            mEditorItem.VitalRegen = (int) nudHpRegen.Value;
+            mEditorItem.VitalRegen = (int)nudHpRegen.Value;
         }
 
         private void cmbEvent_SelectedIndexChanged(object sender, EventArgs e)
@@ -889,13 +901,13 @@ namespace Intersect.Editor.Forms.Editors
             var mFolders = new List<string>();
             foreach (var itm in ResourceBase.Lookup)
             {
-                if (!string.IsNullOrEmpty(((ResourceBase) itm.Value).Folder) &&
-                    !mFolders.Contains(((ResourceBase) itm.Value).Folder))
+                if (!string.IsNullOrEmpty(((ResourceBase)itm.Value).Folder) &&
+                    !mFolders.Contains(((ResourceBase)itm.Value).Folder))
                 {
-                    mFolders.Add(((ResourceBase) itm.Value).Folder);
-                    if (!mKnownFolders.Contains(((ResourceBase) itm.Value).Folder))
+                    mFolders.Add(((ResourceBase)itm.Value).Folder);
+                    if (!mKnownFolders.Contains(((ResourceBase)itm.Value).Folder))
                     {
-                        mKnownFolders.Add(((ResourceBase) itm.Value).Folder);
+                        mKnownFolders.Add(((ResourceBase)itm.Value).Folder);
                     }
                 }
             }
