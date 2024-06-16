@@ -176,8 +176,8 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
             X = X + _descriptionWindow.Width + _icon.Height;
             Y = Y + _icon.Height;
 
-            // Do not allow it to render outside of the screen canvas while based on the cursor position.
-            // Prevents flickering when the statusIcon is near the edge of the screen.
+            // Do not allow it to render outside of the screen canvas while based on the _icon position.
+            // Prevents flickering when _icon is hovered near the edge of the screen.
             if (X > Interface.GameUi.GameCanvas.Width - _descriptionWindow.Width)
             {
                 X = X - _descriptionWindow.Width - _icon.Height;
