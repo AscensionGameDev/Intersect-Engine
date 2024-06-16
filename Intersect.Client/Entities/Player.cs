@@ -99,6 +99,8 @@ namespace Intersect.Client.Entities
 
         public EntityBox TargetBox { get; set; }
 
+        public PlayerStatusWindow StatusWindow { get; set; }
+
         public Guid TargetIndex { get; set; }
 
         TargetType IPlayer.TargetType => (TargetType)TargetType;
@@ -303,6 +305,7 @@ namespace Intersect.Client.Entities
             }
 
             TargetBox?.Update();
+            StatusWindow?.Update();
 
             // Hide our Guild window if we're not in a guild!
             if (this == Globals.Me && string.IsNullOrEmpty(Guild) && Interface.Interface.GameUi != null)

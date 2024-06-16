@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
@@ -1646,6 +1641,14 @@ namespace Intersect.Client.Framework.Gwen.Control
             }
 
             SetBounds(x, y, Width, Height);
+        }
+
+        /// <summary>
+        ///     Sets the control position based on ImagePanel
+        /// </summary>
+        public virtual void SetPosition(Base _icon)
+        {
+            SetPosition((int)_icon.LocalPosToCanvas(new Point(0, 0)).X, (int)_icon.LocalPosToCanvas(new Point(0, 0)).Y);
         }
 
         /// <summary>

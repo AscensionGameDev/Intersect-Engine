@@ -44,7 +44,9 @@ namespace Intersect.Client.Interface.Game.EntityPanel
 
         public ImagePanel EntityInfoPanel;
 
-        public ImagePanel EntityStatusPanel;
+        private ImagePanel EntityStatusWindow;
+
+        public ScrollControl EntityStatusPanel;
 
         public EntityType EntityType;
 
@@ -58,7 +60,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
 
         public Label ExpTitle;
 
-        public Button FriendLabel;
+        //public Button FriendLabel;
 
         public ImagePanel HpBackground;
 
@@ -88,28 +90,35 @@ namespace Intersect.Client.Interface.Game.EntityPanel
 
         public string[] PaperdollTextures;
 
-        public Button PartyLabel;
-
-        public bool PlayerBox;
+        private bool _isPlayerBox;
 
         public ImagePanel ShieldBar;
 
-        public Button TradeLabel;
-
-        public bool UpdateStatuses;
+        public bool ShouldUpdateStatuses;
 
         public bool IsHidden;
 
-        public Button GuildLabel;
+        // Context menu
+        private Button _contextMenuButton;
+        
+        private Framework.Gwen.Control.Menu _contextMenu;
+
+        private MenuItem _tradeMenuItem;
+
+        private MenuItem _partyMenuItem;
+
+        private MenuItem _friendMenuItem;
+
+        private MenuItem _guildMenuItem;
 
         //Init
-        public EntityBox(Canvas gameCanvas, EntityType entityType, Entity myEntity, bool playerBox = false)
+        public EntityBox(Canvas gameCanvas, EntityType entityType, Entity myEntity, bool isPlayerBox = false)
         {
             MyEntity = myEntity;
             EntityType = entityType;
-            PlayerBox = playerBox;
+            _isPlayerBox = isPlayerBox;
             EntityWindow =
-                playerBox ? new ImagePanel(gameCanvas, "PlayerBox") : new ImagePanel(gameCanvas, "TargetBox");
+                _isPlayerBox ? new ImagePanel(gameCanvas, "PlayerBox") : new ImagePanel(gameCanvas, "TargetBox");
 
             EntityWindow.ShouldCacheToTexture = true;
 
@@ -144,7 +153,10 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                 }
             }
 
-            EventDesc = new RichLabel(EntityInfoPanel, "EventDescLabel");
+            if (!_isPlayerBox)
+            {
+                EventDesc = new RichLabel(EntityInfoPanel, "EventDescLabel");
+            }
 
             HpBackground = new ImagePanel(EntityInfoPanel, "HPBarBackground");
             HpBar = new ImagePanel(EntityInfoPanel, "HPBar");
@@ -165,35 +177,47 @@ namespace Intersect.Client.Interface.Game.EntityPanel
             ExpTitle.SetText(Strings.EntityBox.Exp);
             ExpLbl = new Label(EntityInfoPanel, "EXPLabel");
 
-            TradeLabel = new Button(EntityInfoPanel, "TradeButton");
-            TradeLabel.SetText(Strings.EntityBox.Trade);
-            TradeLabel.Clicked += tradeRequest_Clicked;
-            TradeLabel.HoverEnter += (sender, e) => TradeLabel.SetToolTipText(Strings.EntityBox.TradeTip.ToString(MyEntity?.Name));
+            // Target context menu with basic options.
+            if (!_isPlayerBox)
+            {
+                _contextMenu = new Framework.Gwen.Control.Menu(gameCanvas, "TargetContextMenu")
+                {
+                    IsHidden = true,
+                    IconMarginDisabled = true
+                };
 
-            PartyLabel = new Button(EntityInfoPanel, "PartyButton");
-            PartyLabel.SetText(Strings.EntityBox.Party);
-            PartyLabel.Clicked += invite_Clicked;
-            PartyLabel.HoverEnter += (sender, e) => PartyLabel.SetToolTipText(Strings.EntityBox.PartyTip.ToString(MyEntity?.Name));
+                _contextMenu.Children.Clear();
 
-            FriendLabel = new Button(EntityInfoPanel, "FriendButton");
-            FriendLabel.SetText(Strings.EntityBox.Friend);
-            FriendLabel.Clicked += friendRequest_Clicked;
-            FriendLabel.HoverEnter += (sender, e) => FriendLabel.SetToolTipText(Strings.EntityBox.FriendTip.ToString(MyEntity?.Name));
-            FriendLabel.IsHidden = true;
+                _tradeMenuItem = _contextMenu.AddItem(Strings.EntityBox.Trade);
+                _tradeMenuItem.Clicked += tradeRequest_Clicked;
 
-            GuildLabel = new Button(EntityInfoPanel, "GuildButton");
-            GuildLabel.SetText(Strings.Guilds.Guild);
-            GuildLabel.Clicked += guildRequest_Clicked;
-            GuildLabel.HoverEnter += (sender, e) => GuildLabel.SetToolTipText(Strings.Guilds.GuildTip.ToString(MyEntity?.Name));
-            GuildLabel.IsHidden = true;
+                _partyMenuItem = _contextMenu.AddItem(Strings.EntityBox.Party);
+                _partyMenuItem.Clicked += invite_Clicked;
 
-            EntityStatusPanel = new ImagePanel(EntityWindow, "StatusArea");
+                _friendMenuItem = _contextMenu.AddItem(Strings.EntityBox.Friend);
+                _friendMenuItem.Clicked += friendRequest_Clicked;
 
-            SetEntity(myEntity);
+                _guildMenuItem = _contextMenu.AddItem(Strings.Guilds.Guild);
+                _guildMenuItem.Clicked += guildRequest_Clicked;
+
+                _contextMenu.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+
+                _contextMenuButton = new Button(EntityInfoPanel, "ContextMenuButton");
+                _contextMenuButton.Clicked += (sender, e) =>
+                {
+                    _contextMenu.SizeToChildren();
+                    _contextMenu.Open(Pos.None);
+                    _contextMenu.SetPosition(_contextMenuButton.LocalPosToCanvas(new Point(0, 0)).X,
+                    _contextMenuButton.LocalPosToCanvas(new Point(0, 0)).Y + _contextMenuButton.Height);
+                };
+
+                EntityStatusWindow = new ImagePanel(EntityWindow, "EntityStatusWindow");
+                EntityStatusPanel = new ScrollControl(EntityStatusWindow, "StatusArea");
+            }
 
             EntityWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
 
-            UpdateSpellStatus();
+            SetEntity(myEntity);
 
             i = 0;
             for (var z = 0; z < Options.PaperdollOrder[1].Count; z++)
@@ -220,7 +244,8 @@ namespace Intersect.Client.Interface.Game.EntityPanel
             if (MyEntity != null)
             {
                 SetupEntityElements();
-                UpdateSpellStatus();
+                ShouldUpdateStatuses = !_isPlayerBox;
+
                 if (EntityType == EntityType.Event)
                 {
                     EventDesc.ClearText();
@@ -237,7 +262,8 @@ namespace Intersect.Client.Interface.Game.EntityPanel
             if (MyEntity != null)
             {
                 SetupEntityElements();
-                UpdateSpellStatus();
+                ShouldUpdateStatuses = !_isPlayerBox;
+                
                 if (EntityType == EntityType.Event)
                 {
                     EventDesc.ClearText();
@@ -249,15 +275,19 @@ namespace Intersect.Client.Interface.Game.EntityPanel
 
         public void ShowAllElements()
         {
-            TradeLabel.Show();
-            PartyLabel.Show();
-            FriendLabel.Show();
             ExpBackground.Show();
             ExpBar.Show();
             ExpLbl.Show();
             ExpTitle.Show();
             EntityMap.Show();
-            EventDesc.Show();
+
+            if (!_isPlayerBox)
+            {
+                TryShowGuildButton();
+                _contextMenuButton.Show();
+                EventDesc.Show();
+            }
+
             MpBackground.Show();
             MpBar.Show();
             MpTitle.Show();
@@ -266,8 +296,6 @@ namespace Intersect.Client.Interface.Game.EntityPanel
             HpBar.Show();
             HpLbl.Show();
             HpTitle.Show();
-
-            TryShowGuildButton();
         }
 
         public void SetupEntityElements()
@@ -292,13 +320,9 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                 case EntityType.Player:
                     if (Globals.Me != null && Globals.Me == MyEntity)
                     {
-                        TradeLabel.Hide();
-                        PartyLabel.Hide();
-                        FriendLabel.Hide();
-                        GuildLabel.Hide();
-
-                        if (!PlayerBox)
+                        if (!_isPlayerBox)
                         {
+                            _contextMenuButton.Hide();
                             ExpBackground.Hide();
                             ExpBar.Hide();
                             ExpLbl.Hide();
@@ -315,7 +339,8 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                         EntityMap.Hide();
                     }
 
-                    EventDesc.Hide();
+                    EventDesc?.Hide();
+                    EntityLevel.Show();
 
                     break;
                 case EntityType.GlobalEntity:
@@ -324,15 +349,14 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                     ExpBar.Hide();
                     ExpLbl.Hide();
                     ExpTitle.Hide();
-                    TradeLabel.Hide();
-                    PartyLabel.Hide();
-                    GuildLabel.Hide();
-                    FriendLabel.Hide();
+                    _contextMenuButton.Hide();
                     EntityMap.Hide();
+                    EntityLevel.Show();
 
                     break;
                 case EntityType.Event:
                     EventDesc.Show();
+                    EntityLevel.Hide();
                     ExpBackground.Hide();
                     ExpBar.Hide();
                     ExpLbl.Hide();
@@ -345,17 +369,13 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                     HpBar.Hide();
                     HpLbl.Hide();
                     HpTitle.Hide();
-                    TradeLabel.Hide();
-                    PartyLabel.Hide();
-                    FriendLabel.Hide();
-                    GuildLabel.Hide();
+                    _contextMenuButton.Hide();
                     EntityMap.Hide();
 
                     break;
             }
 
             EntityName.SetText(MyEntity.Name);
-            ShieldBar.Hide();
         }
 
         //Update
@@ -378,7 +398,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                 }
             }
 
-            if (PlayerBox)
+            if (_isPlayerBox)
             {
                 if (EntityWindow.IsHidden)
                 {
@@ -390,8 +410,6 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                     Dispose();
                 }
             }
-
-            UpdateSpellStatus();
 
             //Time since this window was last updated (for bar animations)
             var elapsedTime = (Timing.Global.MillisecondsUtc - mLastUpdateTime) / 1000.0f;
@@ -418,7 +436,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
             }
 
             //If player draw exp bar
-            if (PlayerBox && MyEntity == Globals.Me)
+            if (_isPlayerBox && MyEntity == Globals.Me)
             {
                 UpdateXpBar(elapsedTime);
             }
@@ -427,104 +445,30 @@ namespace Intersect.Client.Interface.Game.EntityPanel
             {
                 if (MyEntity.Vital[(int)Vital.Health] <= 0)
                 {
-                    TradeLabel.Hide();
-                    PartyLabel.Hide();
-                    FriendLabel.Hide();
-                    GuildLabel.Hide();
+                    _contextMenuButton.Hide();
                 }
-                else if (TradeLabel.IsHidden || PartyLabel.IsHidden || FriendLabel.IsHidden)
+                else if (_contextMenuButton.IsHidden && !_isPlayerBox)
                 {
-                    TradeLabel.Show();
-                    PartyLabel.Show();
-                    FriendLabel.Show();
                     TryShowGuildButton();
+                    _contextMenuButton.Show();
                 }
             }
 
-            if (UpdateStatuses)
+            ShouldUpdateStatuses = !_isPlayerBox;
+            if (ShouldUpdateStatuses)
             {
-                UpdateSpellStatus();
-                UpdateStatuses = false;
-            }
+                SpellStatus.UpdateSpellStatus(MyEntity, EntityStatusPanel, mActiveStatuses);
+                EntityStatusWindow.IsHidden = mActiveStatuses.Count < 1;
 
-            foreach (var itm in mActiveStatuses)
-            {
-                itm.Value.Update();
+                foreach (var itm in mActiveStatuses)
+                {
+                    itm.Value.Update();
+                }
+
+                ShouldUpdateStatuses = false;
             }
 
             mLastUpdateTime = Timing.Global.MillisecondsUtc;
-        }
-
-        public void UpdateSpellStatus()
-        {
-            if (MyEntity == null)
-            {
-                return;
-            }
-
-            //Remove 'Dead' Statuses
-            var statuses = mActiveStatuses.Keys.ToArray();
-            foreach (var status in statuses)
-            {
-                if (!MyEntity.StatusActive(status))
-                {
-                    var s = mActiveStatuses[status];
-                    s.Pnl.Texture = null;
-                    s.Container.Hide();
-                    s.Container.Texture = null;
-                    EntityStatusPanel.RemoveChild(s.Container, true);
-                    s.pnl_HoverLeave(null, null);
-                    mActiveStatuses.Remove(status);
-                }
-                else
-                {
-                    mActiveStatuses[status].UpdateStatus(MyEntity.GetStatus(status) as Status);
-                }
-            }
-
-            //Add all of the spell status effects
-            for (var i = 0; i < MyEntity.Status.Count; i++)
-            {
-                var id = MyEntity.Status[i].SpellId;
-                SpellStatus itm = null;
-                if (!mActiveStatuses.ContainsKey(id))
-                {
-                    itm = new SpellStatus(this, MyEntity.Status[i] as Status);
-                    if (PlayerBox)
-                    {
-                        itm.Container = new ImagePanel(EntityStatusPanel, "PlayerStatusIcon");
-                    }
-                    else
-                    {
-                        itm.Container = new ImagePanel(EntityStatusPanel, "TargetStatusIcon");
-                    }
-
-                    itm.Setup();
-
-                    itm.Container.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
-                    itm.Container.Name = "";
-                    mActiveStatuses.Add(id, itm);
-                }
-                else
-                {
-                    itm = mActiveStatuses[id];
-                }
-
-                var xPadding = itm.Container.Margin.Left + itm.Container.Margin.Right;
-                var yPadding = itm.Container.Margin.Top + itm.Container.Margin.Bottom;
-
-                itm.Container.SetPosition(
-                    i %
-                    (EntityStatusPanel.Width /
-                     Math.Max(1, EntityStatusPanel.Width / (itm.Container.Width + xPadding))) *
-                    (itm.Container.Width + xPadding) +
-                    xPadding,
-                    i /
-                    Math.Max(1, EntityStatusPanel.Width / (itm.Container.Width + xPadding)) *
-                    (itm.Container.Height + yPadding) +
-                    yPadding
-                );
-            }
         }
 
         private void UpdateLevel()
@@ -1070,16 +1014,29 @@ namespace Intersect.Client.Interface.Game.EntityPanel
 
         void TryShowGuildButton()
         {
-            var show = false;
+            var shouldShow = false;
             if (MyEntity is Player plyr && MyEntity != Globals.Me && string.IsNullOrWhiteSpace(plyr.Guild))
             {
                 if (Globals.Me?.GuildRank?.Permissions?.Invite ?? false)
                 {
-                    show = true;
+                    shouldShow = true;
                 }
             }
 
-            GuildLabel.IsHidden = !show;
+            if (shouldShow)
+            {
+                if (!_contextMenu.Children.Contains(_guildMenuItem))
+                {
+                    _contextMenu.Children.Add(_guildMenuItem);
+                }
+            }
+            else
+            {
+                if (_contextMenu.Children.Contains(_guildMenuItem))
+                {
+                    _contextMenu.Children.Remove(_guildMenuItem);
+                }
+            }
         }
 
 

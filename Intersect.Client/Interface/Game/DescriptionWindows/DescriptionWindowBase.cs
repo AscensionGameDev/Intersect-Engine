@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Interface.Game.DescriptionWindows.Components;
 
@@ -166,6 +164,29 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
             }
 
             mContainer.MoveTo(newX, newY);
+        }
+
+        public override void SetPosition(Base _icon, SpellDescriptionWindow _descriptionWindow)
+        {
+            var X = _icon.LocalPosToCanvas(new Point(0, 0)).X;
+            var Y = _icon.LocalPosToCanvas(new Point(0, 0)).Y;
+
+            X = X + _descriptionWindow.Width + _icon.Height;
+            Y = Y + _icon.Height;
+
+            // Do not allow it to render outside of the screen canvas while based on the _icon position.
+            // Prevents flickering when _icon is hovered near the edge of the screen.
+            if (X > Interface.GameUi.GameCanvas.Width - _descriptionWindow.Width)
+            {
+                X = X - _descriptionWindow.Width - _icon.Height;
+            }
+
+            if (Y > Interface.GameUi.GameCanvas.Height - _descriptionWindow.Height)
+            {
+                Y = Y - _descriptionWindow.Height - _icon.Height;
+            }
+
+            _descriptionWindow.SetPosition(X, Y);
         }
     }
 }

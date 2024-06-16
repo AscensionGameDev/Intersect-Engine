@@ -1,10 +1,9 @@
-using System;
-
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Client.General;
 using Intersect.Client.Localization;
 using Intersect.Utilities;
+using Intersect.Client.Framework.Gwen.Control;
 
 namespace Intersect.Client.Interface.Game.DescriptionWindows
 {
@@ -19,6 +18,15 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows
             GenerateComponents();
             SetupDescriptionWindow();
             SetPosition(x, y);
+        }
+
+        public SpellDescriptionWindow(Guid spellId, ImagePanel _statusIcon) : base(Interface.GameUi.GameCanvas, "DescriptionWindow")
+        {
+            mSpell = SpellBase.Get(spellId);
+
+            GenerateComponents();
+            SetupDescriptionWindow();
+            SetPosition(_statusIcon, this);
         }
 
         protected void SetupDescriptionWindow()
