@@ -77,6 +77,11 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows.Components
         public virtual void SetPosition(int x, int y) => mContainer.SetPosition(x, y);
 
         /// <summary>
+        /// Sets the control position based on ImagePanel.
+        /// </summary>
+        public virtual void SetPosition(ImagePanel _icon, SpellDescriptionWindow _descriptionWindow) => mContainer.SetPosition(_icon);
+
+        /// <summary>
         /// Resizes the control to fit its children.
         /// </summary>
         /// <param name="width">Allow the control to resize its width.</param>

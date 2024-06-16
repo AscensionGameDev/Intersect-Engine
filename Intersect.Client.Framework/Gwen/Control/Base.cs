@@ -1649,6 +1649,14 @@ namespace Intersect.Client.Framework.Gwen.Control
         }
 
         /// <summary>
+        ///     Sets the control position based on ImagePanel
+        /// </summary>
+        public virtual void SetPosition(ImagePanel _icon)
+        {
+            SetPosition((int)_icon.LocalPosToCanvas(new Point(0, 0)).X, (int)_icon.LocalPosToCanvas(new Point(0, 0)).Y);
+        }
+
+        /// <summary>
         ///     Sets the control position.
         /// </summary>
         /// <param name="x">Target x coordinate.</param>

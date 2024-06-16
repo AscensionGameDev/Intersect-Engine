@@ -59,8 +59,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
             var X = _statusIcon.LocalPosToCanvas(new Point(0, 0)).X;
             var Y = _statusIcon.LocalPosToCanvas(new Point(0, 0)).Y;
 
-            _descriptionWindow = new SpellDescriptionWindow(_status.SpellId, X, Y);
-            _descriptionWindow.SetPosition(X + _descriptionWindow.Width, Y + _statusIcon.Height);
+            _descriptionWindow = new SpellDescriptionWindow(_status.SpellId, _statusIcon);
         }
 
         public void UpdateStatus(Status status)
