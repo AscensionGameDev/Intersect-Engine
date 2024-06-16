@@ -459,7 +459,7 @@ namespace Intersect.Client.Entities
                         }
                         else
                         {
-                            Interface.Interface.GameUi.PlayerStatusWindow.UpdateStatuses = true;
+                            Interface.Interface.GameUi.PlayerStatusWindow.ShouldUpdateStatuses = true;
                         }
                     }
                 }
@@ -471,7 +471,7 @@ namespace Intersect.Client.Entities
                     }
                     else
                     {
-                        Globals.Me.TargetBox.UpdateStatuses = true;
+                        Globals.Me.TargetBox.ShouldUpdateStatuses = true;
                     }
                 }
             }

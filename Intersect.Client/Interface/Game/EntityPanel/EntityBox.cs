@@ -90,19 +90,13 @@ namespace Intersect.Client.Interface.Game.EntityPanel
 
         public string[] PaperdollTextures;
 
-        //public Button PartyLabel;
-
-        public bool PlayerBox;
+        private bool _isPlayerBox;
 
         public ImagePanel ShieldBar;
 
-        //public Button TradeLabel;
-
-        public bool UpdateStatuses;
+        public bool ShouldUpdateStatuses;
 
         public bool IsHidden;
-
-        //public Button GuildLabel;
 
         // Context menu
         private Button _contextMenuButton;
@@ -118,13 +112,13 @@ namespace Intersect.Client.Interface.Game.EntityPanel
         private MenuItem _guildMenuItem;
 
         //Init
-        public EntityBox(Canvas gameCanvas, EntityType entityType, Entity myEntity, bool playerBox = false)
+        public EntityBox(Canvas gameCanvas, EntityType entityType, Entity myEntity, bool isPlayerBox = false)
         {
             MyEntity = myEntity;
             EntityType = entityType;
-            PlayerBox = playerBox;
+            _isPlayerBox = isPlayerBox;
             EntityWindow =
-                PlayerBox ? new ImagePanel(gameCanvas, "PlayerBox") : new ImagePanel(gameCanvas, "TargetBox");
+                _isPlayerBox ? new ImagePanel(gameCanvas, "PlayerBox") : new ImagePanel(gameCanvas, "TargetBox");
 
             EntityWindow.ShouldCacheToTexture = true;
 
@@ -159,7 +153,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                 }
             }
 
-            if (!PlayerBox)
+            if (!_isPlayerBox)
             {
                 EventDesc = new RichLabel(EntityInfoPanel, "EventDescLabel");
             }
@@ -184,7 +178,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
             ExpLbl = new Label(EntityInfoPanel, "EXPLabel");
 
             // Target context menu with basic options.
-            if (!PlayerBox)
+            if (!_isPlayerBox)
             {
                 _contextMenu = new Framework.Gwen.Control.Menu(gameCanvas, "TargetContextMenu")
                 {
@@ -250,7 +244,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
             if (MyEntity != null)
             {
                 SetupEntityElements();
-                UpdateStatuses = !PlayerBox;
+                ShouldUpdateStatuses = !_isPlayerBox;
 
                 if (EntityType == EntityType.Event)
                 {
@@ -268,7 +262,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
             if (MyEntity != null)
             {
                 SetupEntityElements();
-                UpdateStatuses = !PlayerBox;
+                ShouldUpdateStatuses = !_isPlayerBox;
                 
                 if (EntityType == EntityType.Event)
                 {
@@ -286,12 +280,14 @@ namespace Intersect.Client.Interface.Game.EntityPanel
             ExpLbl.Show();
             ExpTitle.Show();
             EntityMap.Show();
-            if (!PlayerBox)
+
+            if (!_isPlayerBox)
             {
-            TryShowGuildButton();
-            _contextMenuButton.Show();
-            EventDesc.Show();
+                TryShowGuildButton();
+                _contextMenuButton.Show();
+                EventDesc.Show();
             }
+
             MpBackground.Show();
             MpBar.Show();
             MpTitle.Show();
@@ -324,7 +320,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                 case EntityType.Player:
                     if (Globals.Me != null && Globals.Me == MyEntity)
                     {
-                        if (!PlayerBox)
+                        if (!_isPlayerBox)
                         {
                             _contextMenuButton.Hide();
                             ExpBackground.Hide();
@@ -402,7 +398,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                 }
             }
 
-            if (PlayerBox)
+            if (_isPlayerBox)
             {
                 if (EntityWindow.IsHidden)
                 {
@@ -440,7 +436,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
             }
 
             //If player draw exp bar
-            if (PlayerBox && MyEntity == Globals.Me)
+            if (_isPlayerBox && MyEntity == Globals.Me)
             {
                 UpdateXpBar(elapsedTime);
             }
@@ -451,19 +447,17 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                 {
                     _contextMenuButton.Hide();
                 }
-                else if (_contextMenuButton.IsHidden && !PlayerBox)
+                else if (_contextMenuButton.IsHidden && !_isPlayerBox)
                 {
                     TryShowGuildButton();
                     _contextMenuButton.Show();
                 }
             }
 
-            UpdateStatuses = !PlayerBox;
-
-            if (UpdateStatuses)
+            ShouldUpdateStatuses = !_isPlayerBox;
+            if (ShouldUpdateStatuses)
             {
                 SpellStatus.UpdateSpellStatus(MyEntity, EntityStatusPanel, mActiveStatuses);
-
                 EntityStatusWindow.IsHidden = mActiveStatuses.Count < 1;
 
                 foreach (var itm in mActiveStatuses)
@@ -471,7 +465,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                     itm.Value.Update();
                 }
 
-                UpdateStatuses = false;
+                ShouldUpdateStatuses = false;
             }
 
             mLastUpdateTime = Timing.Global.MillisecondsUtc;
@@ -1020,16 +1014,16 @@ namespace Intersect.Client.Interface.Game.EntityPanel
 
         void TryShowGuildButton()
         {
-            var show = false;
+            var shouldShow = false;
             if (MyEntity is Player plyr && MyEntity != Globals.Me && string.IsNullOrWhiteSpace(plyr.Guild))
             {
                 if (Globals.Me?.GuildRank?.Permissions?.Invite ?? false)
                 {
-                    show = true;
+                    shouldShow = true;
                 }
             }
 
-            if (show)
+            if (shouldShow)
             {
                 if (!_contextMenu.Children.Contains(_guildMenuItem))
                 {

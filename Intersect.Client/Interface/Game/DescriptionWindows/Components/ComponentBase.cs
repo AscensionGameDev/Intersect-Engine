@@ -1,5 +1,3 @@
-using System;
-
 using Intersect.Client.Core;
 using Intersect.Client.Framework.Gwen.Control;
 
@@ -79,7 +77,7 @@ namespace Intersect.Client.Interface.Game.DescriptionWindows.Components
         /// <summary>
         /// Sets the control position based on ImagePanel.
         /// </summary>
-        public virtual void SetPosition(ImagePanel _icon, SpellDescriptionWindow _descriptionWindow) => mContainer.SetPosition(_icon);
+        public virtual void SetPosition(Base _icon, SpellDescriptionWindow _descriptionWindow) => mContainer.SetPosition(_icon);
 
         /// <summary>
         /// Resizes the control to fit its children.

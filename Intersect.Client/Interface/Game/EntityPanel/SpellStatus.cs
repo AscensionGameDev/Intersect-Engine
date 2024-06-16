@@ -67,9 +67,11 @@ namespace Intersect.Client.Interface.Game.EntityPanel
             _status = status;
         }
 
-        public static void UpdateSpellStatus(Entities.Entity myEntity,
+        public static void UpdateSpellStatus(
+        Entity myEntity,
         ScrollControl spellStatusControl,
-        Dictionary<Guid, SpellStatus> activeStatuses)
+        Dictionary<Guid, SpellStatus> activeStatuses
+        )
         {
             if (myEntity == null)
             {

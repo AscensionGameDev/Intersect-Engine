@@ -1,4 +1,5 @@
 using Intersect.Client.Core;
+using Intersect.Client.Entities;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.General;
@@ -10,9 +11,9 @@ namespace Intersect.Client.Interface.Game.EntityPanel
     {
         private readonly Dictionary<Guid, SpellStatus> _activeStatuses = new Dictionary<Guid, SpellStatus>();
 
-        public Entities.Player MyEntity;
+        public Player MyEntity;
 
-        public bool UpdateStatuses;
+        public bool ShouldUpdateStatuses;
 
         public readonly ImagePanel _playerStatusWindow;
 
@@ -43,7 +44,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                 return;
             }
 
-            if (UpdateStatuses)
+            if (ShouldUpdateStatuses)
             {
                 SpellStatus.UpdateSpellStatus(MyEntity, _playerStatusControl, _activeStatuses);
 
@@ -52,7 +53,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                     itm.Value.Update();
                 }
 
-                UpdateStatuses = false;
+                ShouldUpdateStatuses = false;
             }
 
             IsHidden = _activeStatuses.Count < 1;
