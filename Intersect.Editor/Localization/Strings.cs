@@ -4454,9 +4454,7 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString dropitem = @"Item:";
 
-            public static LocalizedString dropamount = @"Max Amount:";
-
-            public static LocalizedString DropMinAmount = @"Min Amount:";
+            public static LocalizedString dropamount = @"Amount:";
 
             public static LocalizedString dropchance = @"Chance (%):";
 
@@ -4464,7 +4462,7 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString dropremove = @"Remove";
 
-            public static LocalizedString dropdisplay = @"{00} x{01} - {02} | {03}%";
+            public static LocalizedString dropdisplay = @"{00} x{01} - {02}%";
 
             public static LocalizedString enabled = @"Enabled?";
 
@@ -4931,9 +4929,7 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString dropitem = @"Item:";
 
-            public static LocalizedString dropamount = @"Max Amount:";
-
-            public static LocalizedString DropMinAmount = @"Min Amount:";
+            public static LocalizedString dropamount = @"Amount:";
 
             public static LocalizedString dropchance = @"Chance (%):";
 
@@ -4941,7 +4937,7 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString dropremove = @"Remove";
 
-            public static LocalizedString dropdisplay = @"{00} x{01} - {02} | {03}%";
+            public static LocalizedString dropdisplay = @"{00} x{01} - {02}%";
 
             public static LocalizedString exhaustedgraphic = @"Exhausted Graphic:";
 
