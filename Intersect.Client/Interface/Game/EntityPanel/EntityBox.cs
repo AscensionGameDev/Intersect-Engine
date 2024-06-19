@@ -394,7 +394,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
             {
                 if (EntityWindow.IsHidden)
                 {
-                    EntityWindow.Show();
+                    Show();
                 }
             }
 
@@ -402,7 +402,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
             {
                 if (EntityWindow.IsHidden)
                 {
-                    EntityWindow.Show();
+                    Show();
                 }
 
                 if (MyEntity.IsDisposed())
@@ -1047,6 +1047,11 @@ namespace Intersect.Client.Interface.Game.EntityPanel
 
         public void Show()
         {
+            if (!Options.Instance.CombatOpts.EnableTargetWindow && !_isPlayerBox)
+            {
+                return;
+            }
+
             EntityWindow.Show();
         }
 
