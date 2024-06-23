@@ -278,12 +278,22 @@ namespace Intersect.Server.Entities
 
             //Check Map Entities For Hits
             var map = MapController.Get(spawn.MapId);
-            if (Math.Round(spawn.X) < 0 || Math.Round(spawn.X) >= Options.Instance.MapOpts.MapWidth ||
-                Math.Round(spawn.Y) < 0 || Math.Round(spawn.Y) >= Options.Instance.MapOpts.MapHeight)
+            if (map == null)
             {
                 return false;
             }
-            var attribute = map.Attributes[(int)Math.Round(spawn.X), (int)Math.Round(spawn.Y)];
+
+            var roundedX = (int)Math.Round(spawn.X);
+            var roundedY = (int)Math.Round(spawn.Y);
+
+            //Checking if the coordinates are within the map boundaries
+            if (roundedX < 0 || roundedX >= Options.Instance.MapOpts.MapWidth ||
+                roundedY < 0 || roundedY >= Options.Instance.MapOpts.MapHeight)
+            {
+                return false;
+            }
+
+            var attribute = map.Attributes[roundedX, roundedY];
 
             if (!killSpawn && attribute != null)
             {
@@ -292,9 +302,10 @@ namespace Intersect.Server.Entities
                 {
                     if (attribute.Type == MapAttribute.ZDimension)
                     {
-                        if (((MapZDimensionAttribute) attribute).GatewayTo > 0)
+                        var zDimAttr = attribute as MapZDimensionAttribute;
+                        if (zDimAttr != null && zDimAttr.GatewayTo > 0)
                         {
-                            spawn.Z = (byte) (((MapZDimensionAttribute) attribute).GatewayTo - 1);
+                            spawn.Z = (byte)(zDimAttr.GatewayTo - 1);
                         }
                     }
                 }
@@ -305,9 +316,8 @@ namespace Intersect.Server.Entities
                     !spawn.Parent.HasGrappled &&
                     (spawn.X != Owner.X || spawn.Y != Owner.Y))
                 {
-                    if (!spawn.ProjectileBase.HomingBehavior && !spawn.ProjectileBase.DirectShotBehavior && 
-                        (spawn.Dir <= Direction.Right || spawn.Dir != Direction.None && Options.Instance.MapOpts.EnableDiagonalMovement)
-                    )
+                    if (!spawn.ProjectileBase.HomingBehavior && !spawn.ProjectileBase.DirectShotBehavior &&
+                        (spawn.Dir <= Direction.Right || (spawn.Dir != Direction.None && Options.Instance.MapOpts.EnableDiagonalMovement)))
                     {
                         spawn.Parent.HasGrappled = true;
 
@@ -326,7 +336,7 @@ namespace Intersect.Server.Entities
                 }
 
                 if (!spawn.ProjectileBase.IgnoreMapBlocks &&
-                    (attribute.Type == MapAttribute.Blocked || attribute.Type == MapAttribute.Animation && ((MapAnimationAttribute)attribute).IsBlock))
+                    (attribute.Type == MapAttribute.Blocked || (attribute.Type == MapAttribute.Animation && ((MapAnimationAttribute)attribute).IsBlock)))
                 {
                     killSpawn = true;
                 }
@@ -337,26 +347,20 @@ namespace Intersect.Server.Entities
                 var entities = mapInstance.GetEntities();
                 for (var z = 0; z < entities.Count; z++)
                 {
-                    if (entities[z] != null && entities[z] != spawn.Parent.Owner && entities[z].Z == spawn.Z &&
-                        (entities[z].X == Math.Round(spawn.X)) &&
-                        (entities[z].Y == Math.Round(spawn.Y)) &&
+                    var entity = entities[z];
+                    if (entity != null && entity != spawn.Parent.Owner && entity.Z == spawn.Z &&
+                        entity.X == roundedX && entity.Y == roundedY &&
                         (spawn.X != Owner.X || spawn.Y != Owner.Y))
                     {
-                        killSpawn = spawn.HitEntity(entities[z]);
+                        killSpawn = spawn.HitEntity(entity);
                         if (killSpawn && !spawn.ProjectileBase.PierceTarget)
                         {
                             return killSpawn;
                         }
                     }
-                    else
+                    else if (z == entities.Count - 1 && spawn.Distance >= Base.Range)
                     {
-                        if (z == entities.Count - 1)
-                        {
-                            if (spawn.Distance >= Base.Range)
-                            {
-                                killSpawn = true;
-                            }
-                        }
+                        killSpawn = true;
                     }
                 }
             }
@@ -385,6 +389,8 @@ namespace Intersect.Server.Entities
                         {
                             var leftSide = x == map.MapGridX - 1;
                             var rightSide = x == map.MapGridX + 1;
+                            var topSide = y == map.MapGridY - 1;
+                            var bottomSide = y == map.MapGridY + 1;
 
                             if (leftSide)
                             {
@@ -394,6 +400,11 @@ namespace Intersect.Server.Entities
                             if (rightSide)
                             {
                                 return mLastTargetX + Options.MapWidth - spawn.X;
+                            }
+
+                            if (topSide || bottomSide)
+                            {
+                                return mLastTargetX - spawn.X;
                             }
                         }
                     }
@@ -424,6 +435,8 @@ namespace Intersect.Server.Entities
                         {
                             var topSide = y == map.MapGridY - 1;
                             var bottomSide = y == map.MapGridY + 1;
+                            var leftSide = x == map.MapGridX - 1;
+                            var rightSide = x == map.MapGridX + 1;
 
                             if (topSide)
                             {
@@ -433,6 +446,11 @@ namespace Intersect.Server.Entities
                             if (bottomSide)
                             {
                                 return mLastTargetY + Options.MapHeight - spawn.Y;
+                            }
+
+                            if (leftSide || rightSide)
+                            {
+                                return mLastTargetY - spawn.Y;
                             }
                         }
                     }
@@ -506,7 +524,7 @@ namespace Intersect.Server.Entities
                 }
             }
 
-            if (Math.Ceiling(newx) > Options.MapWidth)
+            if (Math.Ceiling(newx) >= Options.MapWidth)
             {
                 var rightMap = MapController.Get(map.Right);
                 if (rightMap != null)
@@ -534,7 +552,7 @@ namespace Intersect.Server.Entities
                 }
             }
 
-            if (Math.Ceiling(newy) > Options.MapHeight)
+            if (Math.Ceiling(newy) >= Options.MapHeight)
             {
                 var downMap = MapController.Get(map.Down);
                 if (downMap != null)
