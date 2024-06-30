@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Server.Entities.Combat;
@@ -22,7 +20,7 @@ namespace Intersect.Server.Entities
 
         public ProjectileBase ProjectileBase;
 
-        public long TransmittionTimer = Timing.Global.Milliseconds;
+        public long TransmissionTimer = Timing.Global.Milliseconds;
 
         public float X;
 
@@ -34,7 +32,7 @@ namespace Intersect.Server.Entities
 
         public Guid MapInstanceId;
 
-        private List<Guid> mEntitiesCollided = new List<Guid>();
+        private List<Guid> _entitiesCollided = new List<Guid>();
 
         public ProjectileSpawn(
             Direction dir,
@@ -55,8 +53,8 @@ namespace Intersect.Server.Entities
             Dir = dir;
             ProjectileBase = projectileBase;
             Parent = parent;
-            TransmittionTimer = Timing.Global.Milliseconds +
-                                (long) ((float) ProjectileBase.Speed / (float) ProjectileBase.Range);
+            TransmissionTimer = Timing.Global.Milliseconds +
+                                (long)(ProjectileBase.Speed / (float)ProjectileBase.Range);
         }
 
         public bool IsAtLocation(Guid mapId, int x, int y, int z)
@@ -76,13 +74,13 @@ namespace Intersect.Server.Entities
             if (targetEntity != null && targetEntity != Parent.Owner)
             {
                 // Have we collided with this entity before? If so, cancel out.
-                if (mEntitiesCollided.Contains(targetEntity.Id))
+                if (_entitiesCollided.Contains(targetEntity.Id))
                 {
                     if (!Parent.Base.PierceTarget)
                     {
-                        if(targetPlayer != null)
+                        if (targetPlayer != null)
                         {
-                            if(targetPlayer.Map.ZoneType == Enums.MapZone.Safe ||
+                            if (targetPlayer.Map.ZoneType == Enums.MapZone.Safe ||
                                 Parent.Owner is Player plyr && plyr.InParty(targetPlayer))
                             {
                                 return false;
@@ -96,7 +94,7 @@ namespace Intersect.Server.Entities
                         return false;
                     }
                 }
-                mEntitiesCollided.Add(targetEntity.Id);
+                _entitiesCollided.Add(targetEntity.Id);
 
                 if (targetPlayer != null)
                 {
@@ -123,9 +121,9 @@ namespace Intersect.Server.Entities
                 }
                 else if (targetEntity is Resource targetResource)
                 {
-                    if(targetResource.IsDead())
+                    if (targetResource.IsDead())
                     {
-                        if(!ProjectileBase.IgnoreExhaustedResources)
+                        if (!ProjectileBase.IgnoreExhaustedResources)
                         {
                             return true;
                         }
@@ -144,13 +142,12 @@ namespace Intersect.Server.Entities
                 }
                 else //Any other Parent.Target
                 {
-                    var ownerNpc = Parent.Owner as Npc;
-                    if (ownerNpc == null ||
+                    if (Parent.Owner is not Npc ownerNpc ||
                         ownerNpc.CanNpcCombat(targetEntity, Parent.Spell != null && Parent.Spell.Combat.Friendly))
                     {
                         Parent.Owner.TryAttack(targetEntity, Parent.Base, Parent.Spell, Parent.Item, Dir);
 
-                        if (Dir <= Direction.Right && ShouldHook(targetEntity) && !Parent.HasGrappled) 
+                        if (Dir <= Direction.Right && ShouldHook(targetEntity) && !Parent.HasGrappled)
                         {
                             HookEntity();
                         }
@@ -173,25 +170,18 @@ namespace Intersect.Server.Entities
         /// <returns></returns>
         public bool ShouldHook(Entity en)
         {
-            if(en == null)
+            if (en == null)
             {
                 return false;
             }
 
-            switch(en)
+            return en switch
             {
-                case Player _:
-                    return ProjectileBase.GrappleHookOptions.Contains(Enums.GrappleOption.Player);
-
-                case Npc _:
-                    return ProjectileBase.GrappleHookOptions.Contains(Enums.GrappleOption.NPC);
-
-                case Resource _:
-                    return ProjectileBase.GrappleHookOptions.Contains(Enums.GrappleOption.Resource);
-
-                default:
-                    throw new ArgumentException($"Unsupported entity type {en.GetType().FullName}", nameof(en));
-            }
+                Player => ProjectileBase.GrappleHookOptions.Contains(Enums.GrappleOption.Player),
+                Npc => ProjectileBase.GrappleHookOptions.Contains(Enums.GrappleOption.NPC),
+                Resource => ProjectileBase.GrappleHookOptions.Contains(Enums.GrappleOption.Resource),
+                _ => throw new ArgumentException($"Unsupported entity type {en.GetType().FullName}", nameof(en)),
+            };
         }
 
         /// <summary>
