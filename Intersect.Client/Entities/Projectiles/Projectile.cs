@@ -76,7 +76,7 @@ namespace Intersect.Client.Entities.Projectiles
             {
                 for (var x = 0; x < ProjectileBase.SPAWN_LOCATIONS_WIDTH; x++)
                 {
-                    for (var y = 0; y < ProjectileBase.SPAWN_LOCATIONS_WIDTH; y++)
+                    for (var y = 0; y < ProjectileBase.SPAWN_LOCATIONS_HEIGHT; y++)
                     {
                         for (var d = 0; d < ProjectileBase.MAX_PROJECTILE_DIRECTIONS; d++)
                         {
@@ -100,13 +100,11 @@ namespace Intersect.Client.Entities.Projectiles
         /// </summary>
         public override void Dispose()
         {
-            // Check if Dispose has already been called to avoid redundant calculations.
             if (!_isDisposing)
             {
-                // Use a lock to ensure thread safety when disposing resources.
                 lock (_lock)
                 {
-                    _isDisposing = true; // Mark as disposing to prevent concurrent disposal calls.
+                    _isDisposing = true;
 
                     // Perform a final update if no projectiles have been spawned.
                     if (_spawnedAmount == 0)
@@ -114,17 +112,14 @@ namespace Intersect.Client.Entities.Projectiles
                         Update();
                     }
 
-                    // Dispose of each spawned projectile's animation resources.
                     if (_spawns != null)
                     {
                         foreach (var s in _spawns)
                         {
-                            s?.Anim?.DisposeNextDraw(); // Safely call DisposeNextDraw, if the animation exists.
+                            s?.Anim?.DisposeNextDraw();
                         }
                     }
 
-                    // Suppress finalization to optimize garbage collection.
-                    // This is important for performance and to prevent the finalizer from running.
                     GC.SuppressFinalize(this);
                 }
             }
@@ -172,27 +167,23 @@ namespace Intersect.Client.Entities.Projectiles
             var spawn = FindSpawnAnimationData();
             var animBase = AnimationBase.Get(_myBase.Animations[spawn].AnimationId);
 
-            // Iterate over all possible spawn locations within the defined width and height
             for (var x = 0; x < ProjectileBase.SPAWN_LOCATIONS_WIDTH; x++)
             {
-                for (var y = 0; y < ProjectileBase.SPAWN_LOCATIONS_WIDTH; y++)
+                for (var y = 0; y < ProjectileBase.SPAWN_LOCATIONS_HEIGHT; y++)
                 {
-                    // Iterate over all possible directions a projectile can be spawned in
                     for (var d = 0; d < ProjectileBase.MAX_PROJECTILE_DIRECTIONS; d++)
                     {
-                        // Check if the current direction is enabled for spawning at this location
-                        // and if the maximum number of spawned projectiles has not been reached
+                        // Check if the current direction is enabled for spawning at this location.
                         if (_myBase.SpawnLocations[x, y].Directions[d] == true)
                         {
                             // Calculate the spawn position and direction for the new projectile
                             var s = new ProjectileSpawns(
-                                FindProjectileRotationDir(Dir, (Direction)d), // Calculate the rotation direction
+                                FindProjectileRotationDir(Dir, (Direction)d),
                                 (byte)(X + FindProjectileRotation(Dir, x - 2, y - 2, true)),
                                 (byte)(Y + FindProjectileRotation(Dir, x - 2, y - 2, false)), Z, MapId, animBase,
                                 _myBase.Animations[spawn].AutoRotate, _myBase, this
                             );
 
-                            // Check for collision at the spawn location, mark as dead if collision is detected
                             _spawns[_spawnedAmount] = s;
                             if (Collided(_spawnedAmount))
                             {
@@ -219,7 +210,7 @@ namespace Intersect.Client.Entities.Projectiles
         /// <param name="direction">The direction of the projectile.</param>
         /// <param name="x">The x-coordinate value.</param>
         /// <param name="y">The y-coordinate value.</param>
-        /// <param name="isXAxis">Determines if the calculation is for the X axis (true) or Y axis (false).</param>
+        /// <param name="isXAxis">True for horizontal (X-axis), false for vertical (Y-axis) calculation.</param>
         /// <returns>The rotation value for the specified axis based on the direction.</returns>
         private static int FindProjectileRotation(Direction direction, int x, int y, bool isXAxis)
         {
@@ -255,7 +246,7 @@ namespace Intersect.Client.Entities.Projectiles
         /// </summary>
         /// <param name="direction">The direction of the projectile.</param>
         /// <param name="range">The range of the projectile.</param>
-        /// <param name="isXAxis">A boolean value indicating whether the axis is the X-axis.</param>
+        /// <param name="isXAxis">True for horizontal (X-axis), false for vertical (Y-axis) calculation.</param>
         /// <returns>The calculated range value.</returns>
         private static float GetRange(Direction direction, float range, bool isXAxis)
         {
@@ -318,7 +309,9 @@ namespace Intersect.Client.Entities.Projectiles
                 {
                     for (var s = 0; s < _spawnedAmount; s++)
                     {
-                        if (_spawns[s] != null && Maps.MapInstance.Get(_spawns[s].SpawnMapId) != null)
+                        var spawn = _spawns[s];
+                        
+                        if (spawn != null && Maps.MapInstance.Get(spawn.SpawnMapId) != null)
                         {
                             if (_targetId != Guid.Empty && _targetId != _owner && Globals.Entities.ContainsKey(_targetId) && (_myBase.HomingBehavior || _myBase.DirectShotBehavior))
                             {
@@ -327,9 +320,9 @@ namespace Intersect.Client.Entities.Projectiles
                                 _lastTargetY = target.Y;
                                 _lastTargetMapId = target.MapId;
 
-                                _spawns[s].OffsetX = GetProjectileLerping(_spawns[s], true);
-                                _spawns[s].OffsetY = GetProjectileLerping(_spawns[s], false);
-                                SetProjectileRotation(_spawns[s]);
+                                spawn.OffsetX = GetProjectileLerping(spawn, true);
+                                spawn.OffsetY = GetProjectileLerping(spawn, false);
+                                SetProjectileRotation(spawn);
 
                                 if (_myBase.DirectShotBehavior)
                                 {
@@ -338,32 +331,24 @@ namespace Intersect.Client.Entities.Projectiles
                             }
                             else if (_lastTargetX != -1 && _lastTargetY != -1)
                             {
-                                _spawns[s].OffsetX = GetProjectileLerping(_spawns[s], true);
-                                _spawns[s].OffsetY = GetProjectileLerping(_spawns[s], false);
-                                SetProjectileRotation(_spawns[s]);
+                                spawn.OffsetX = GetProjectileLerping(spawn, true);
+                                spawn.OffsetY = GetProjectileLerping(spawn, false);
+                                SetProjectileRotation(spawn);
                             }
                             else
                             {
-                                _spawns[s].OffsetX = GetRange(_spawns[s].Dir, GetDisplacement(_spawns[s].SpawnTime), true);
-                                _spawns[s].OffsetY = GetRange(_spawns[s].Dir, GetDisplacement(_spawns[s].SpawnTime), false);
-                                _spawns[s].Anim.SetRotation(false);
+                                spawn.OffsetX = GetRange(spawn.Dir, GetDisplacement(spawn.SpawnTime), true);
+                                spawn.OffsetY = GetRange(spawn.Dir, GetDisplacement(spawn.SpawnTime), false);
+                                spawn.Anim.SetRotation(false);
                             }
 
-                            _spawns[s]
-                                .Anim.SetPosition(
-                                    Maps.MapInstance.Get(_spawns[s].SpawnMapId).GetX() +
-                                    _spawns[s].SpawnX * Options.TileWidth +
-                                    _spawns[s].OffsetX +
-                                    Options.TileWidth / 2,
-                                    Maps.MapInstance.Get(_spawns[s].SpawnMapId).GetY() +
-                                    _spawns[s].SpawnY * Options.TileHeight +
-                                    _spawns[s].OffsetY +
-                                    Options.TileHeight / 2, X, Y, MapId,
-                                    _spawns[s].AutoRotate ? _spawns[s].Dir : Direction.Up,
-                                    _spawns[s].Z
-                                );
+                            var spawnMapId = Maps.MapInstance.Get(spawn.SpawnMapId);
+                            var spawnX = spawnMapId.GetX() + spawn.SpawnX * Options.TileWidth + spawn.OffsetX + Options.TileWidth / 2;
+                            var spawnY = spawnMapId.GetY() + spawn.SpawnY * Options.TileHeight + spawn.OffsetY + Options.TileHeight / 2;
+                            var spawnDirection = spawn.AutoRotate ? spawn.Dir : Direction.Up;
 
-                            _spawns[s].Anim.Update();
+                            spawn.Anim.SetPosition(spawnX, spawnY, X, Y, MapId, spawnDirection, spawn.Z);
+                            spawn.Anim.Update();
                         }
                     }
                 }
@@ -377,56 +362,58 @@ namespace Intersect.Client.Entities.Projectiles
         /// <summary>
         /// Calculates the offset for the projectile spawn position based on the target map and spawn location.
         /// </summary>
-        /// <param name="isXAxis">A boolean value indicating whether the calculation should be done horizontally (X-axis) or vertically (Y-axis).</param>
         /// <param name="spawn">The projectile spawn information.</param>
+        /// <param name="isXAxis">True for horizontal (X-axis), false for vertical (Y-axis) calculation.</param>
         /// <returns>The calculated offset value.</returns>
-        private float GetProjectileOffset(bool isXAxis, ProjectileSpawns spawn)
+        private float GetProjectileOffset(ProjectileSpawns spawn, bool isXAxis)
         {
-            if (_lastTargetMapId != Guid.Empty && _lastTargetMapId != spawn.SpawnMapId && Maps.MapInstance.TryGet(spawn.SpawnMapId, out var map))
+            if (_lastTargetMapId == Guid.Empty || _lastTargetMapId == spawn.SpawnMapId || !Maps.MapInstance.TryGet(spawn.SpawnMapId, out var map))
             {
-                for (var y = map.GridY - 1; y <= map.GridY + 1; y++)
+                return isXAxis ? _lastTargetX - spawn.SpawnX : _lastTargetY - spawn.SpawnY;
+            }
+
+            for (var y = map.GridY - 1; y <= map.GridY + 1; y++)
+            {
+                for (var x = map.GridX - 1; x <= map.GridX + 1; x++)
                 {
-                    for (var x = map.GridX - 1; x <= map.GridX + 1; x++)
+                    if (x < 0 || x >= Globals.MapGrid.GetLength(0) || y < 0 || y >= Globals.MapGrid.GetLength(1))
                     {
-                        if (x < 0 || x >= Globals.MapGrid.GetLength(0) || y < 0 || y >= Globals.MapGrid.GetLength(1))
+                        continue;
+                    }
+
+                    if (Globals.MapGrid[x, y] != _lastTargetMapId || Globals.MapGrid[x, y] == Guid.Empty)
+                    {
+                        continue;
+                    }
+
+                    if (isXAxis) // Horizontal (X) calculation
+                    {
+                        var leftSide = x == map.GridX - 1;
+                        var rightSide = x == map.GridX + 1;
+
+                        if (leftSide)
                         {
-                            continue;
+                            return _lastTargetX - Options.MapWidth - spawn.SpawnX;
                         }
 
-                        if (Globals.MapGrid[x, y] != _lastTargetMapId || Globals.MapGrid[x, y] == Guid.Empty)
+                        if (rightSide)
                         {
-                            continue;
+                            return _lastTargetX + Options.MapWidth - spawn.SpawnX;
+                        }
+                    }
+                    else // Vertical (Y) calculation
+                    {
+                        var topSide = y == map.GridY + 1;
+                        var bottomSide = y == map.GridY - 1;
+
+                        if (topSide)
+                        {
+                            return _lastTargetY + Options.MapHeight - spawn.SpawnY;
                         }
 
-                        if (isXAxis) // Horizontal (X) calculation
+                        if (bottomSide)
                         {
-                            var leftSide = x == map.GridX - 1;
-                            var rightSide = x == map.GridX + 1;
-
-                            if (leftSide)
-                            {
-                                return _lastTargetX - Options.MapWidth - spawn.SpawnX;
-                            }
-
-                            if (rightSide)
-                            {
-                                return _lastTargetX + Options.MapWidth - spawn.SpawnX;
-                            }
-                        }
-                        else // Vertical (Y) calculation
-                        {
-                            var topSide = y == map.GridY + 1;
-                            var bottomSide = y == map.GridY - 1;
-
-                            if (topSide)
-                            {
-                                return _lastTargetY + Options.MapHeight - spawn.SpawnY;
-                            }
-
-                            if (bottomSide)
-                            {
-                                return _lastTargetY - Options.MapHeight - spawn.SpawnY;
-                            }
+                            return _lastTargetY - Options.MapHeight - spawn.SpawnY;
                         }
                     }
                 }
@@ -439,7 +426,7 @@ namespace Intersect.Client.Entities.Projectiles
         /// Calculates the interpolated (lerped) position value for a projectile along the X or Y axis.
         /// </summary>
         /// <param name="spawn">The spawn information of the projectile, including its initial position and spawn time.</param>
-        /// <param name="isXAxis">True to calculate the position along the X axis, false for the Y axis.</param>
+        /// <param name="isXAxis">True for horizontal (X-axis), false for vertical (Y-axis) calculation.</param>
         /// <returns>The interpolated position value for the projectile on the specified axis, taking into account the projectile's travel direction, speed, and elapsed time since spawning.</returns>
         /// <remarks>
         /// This method determines the projectile's current position by interpolating between its initial offset and its desired position at the current time.
@@ -449,7 +436,7 @@ namespace Intersect.Client.Entities.Projectiles
         /// </remarks>
         private float GetProjectileLerping(ProjectileSpawns spawn, bool isXAxis)
         {
-            var (directionX, directionY) = (GetProjectileOffset(true, spawn), GetProjectileOffset(false, spawn));
+            var (directionX, directionY) = (GetProjectileOffset(spawn, true), GetProjectileOffset(spawn, false));
             var distance = MathF.Sqrt(directionX * directionX + directionY * directionY);
             if (distance == 0) return 0;
 
@@ -475,8 +462,7 @@ namespace Intersect.Client.Entities.Projectiles
         /// </remarks>
         private void SetProjectileRotation(ProjectileSpawns spawn)
         {
-            var directionX = GetProjectileOffset(true, spawn);
-            var directionY = GetProjectileOffset(false, spawn);
+            var (directionX, directionY) = (GetProjectileOffset(spawn, true), GetProjectileOffset(spawn, false));
             var angle = (float)(Math.Atan2(directionY, directionX) * (180.0 / Math.PI) + 90);
             spawn.Anim.SetRotation(angle);
         }
@@ -486,96 +472,99 @@ namespace Intersect.Client.Entities.Projectiles
         /// </summary>
         public void CheckForCollision()
         {
-            if (_spawnCount != 0 || _quantity <= _myBase.Quantity)
+            if (_spawnCount == 0 && _quantity > _myBase.Quantity)
             {
-                for (var i = 0; i < _spawnedAmount && i < _spawns.Length; i++) // Ensure i is within _spawns bounds
+                Globals.Entities[Id].Dispose();
+                return;
+            }
+
+            for (var i = 0; i < _spawnedAmount && i < _spawns.Length; i++)
+            {
+                var projectileSpawn = _spawns[i];
+                if (projectileSpawn == null || Timing.Global.Milliseconds <= projectileSpawn.TransmissionTimer)
                 {
-                    if (_spawns[i] != null && Timing.Global.Milliseconds > _spawns[i].TransmissionTimer)
+                    continue;
+                }
+
+                if (!Maps.MapInstance.TryGet(projectileSpawn.MapId, out var spawnMap))
+                {
+                    continue;
+                }
+
+                float newx = projectileSpawn.X;
+                float newy = projectileSpawn.Y;
+
+                if (_myBase.HomingBehavior || _myBase.DirectShotBehavior)
+                {
+                    if (_targetId != Guid.Empty && _targetId != _owner || _lastTargetX != -1 && _lastTargetY != -1 && _lastTargetMapId != Guid.Empty)
                     {
-                        if (Maps.MapInstance.TryGet(_spawns[i].MapId, out var spawnMap))
+                        var (deltaX, deltaY) = (GetProjectileOffset(projectileSpawn, true), GetProjectileOffset(projectileSpawn, false));
+                        float distance = MathF.Sqrt(deltaX * deltaX + deltaY * deltaY);
+                        float xFactor = deltaX / distance;
+                        float yFactor = deltaY / distance;
+                        newx += xFactor;
+                        newy += yFactor;
+                    }
+                }
+                else
+                {
+                    newx += GetRange(projectileSpawn.Dir, 1, true);
+                    newy += GetRange(projectileSpawn.Dir, 1, false);
+                }
+
+                AdjustPositionOnMapBoundaries(ref newx, ref newy, ref spawnMap);
+
+                projectileSpawn.X = (int)newx;
+                projectileSpawn.Y = (int)newy;
+                projectileSpawn.MapId = spawnMap.Id;
+                projectileSpawn.Distance++;
+                projectileSpawn.TransmissionTimer = Timing.Global.MillisecondsOffset + (long)(_myBase.Speed / (float)_myBase.Range);
+
+                var killSpawn = Collided(i) || projectileSpawn.Distance >= _myBase.Range ||
+                                newx < 0 || newx >= Options.MapWidth || newy < 0 ||
+                                newy >= Options.MapHeight;
+
+                // Check for map boundaries and remove the spawn if it goes out of bounds.
+                if (killSpawn)
+                {
+                    TryRemoveSpawn(i);
+                    _spawnCount--;
+
+                    continue;
+                }
+
+                // Check for Z-Dimension
+                if (!killSpawn && spawnMap.Attributes != null &&
+                    projectileSpawn.X >= 0 && projectileSpawn.Y >= 0 && projectileSpawn.X < spawnMap.Attributes.GetLength(0) &&
+                    projectileSpawn.Y < spawnMap.Attributes.GetLength(1))
+                {
+                    var attribute = spawnMap.Attributes[projectileSpawn.X, projectileSpawn.Y];
+
+                    if (attribute != null && attribute.Type == MapAttribute.ZDimension)
+                    {
+                        var zDimensionAttribute = (MapZDimensionAttribute)attribute;
+
+                        // If the Z dimension attribute specifies a blocked level that matches the projectile's current Z level,
+                        // mark the projectile for destruction.
+                        if (zDimensionAttribute.BlockedLevel > 0 && projectileSpawn.Z == zDimensionAttribute.BlockedLevel - 1)
                         {
-                            float newx = _spawns[i].X;
-                            float newy = _spawns[i].Y;
-                            
-                            if (_myBase.HomingBehavior || _myBase.DirectShotBehavior)
-                            {
-                                if (_targetId != Guid.Empty && _targetId != _owner || _lastTargetX != -1 && _lastTargetY != -1 && _lastTargetMapId != Guid.Empty)
-                                {
-                                    float deltaX = GetProjectileOffset(true, _spawns[i]);
-                                    float deltaY = GetProjectileOffset(false, _spawns[i]);
-                                    float distance = MathF.Sqrt(deltaX * deltaX + deltaY * deltaY);
-                                    float xFactor = deltaX / distance;
-                                    float yFactor = deltaY / distance;
-                                    newx += xFactor;
-                                    newy += yFactor;
-                                }
-                            }
-                            else
-                            {
-                                newx += GetRange(_spawns[i].Dir, 1, true);
-                                newy += GetRange(_spawns[i].Dir, 1, false);
-                            }
+                            killSpawn = true;
+                        }
 
-                            AdjustPositionOnMapBoundaries(ref newx, ref newy, ref spawnMap);
-
-                            _spawns[i].X = (int)newx;
-                            _spawns[i].Y = (int)newy;
-                            _spawns[i].MapId = spawnMap.Id;
-                            _spawns[i].Distance++;
-                            _spawns[i].TransmissionTimer = Timing.Global.MillisecondsOffset + (long)(_myBase.Speed / (float)_myBase.Range);
-
-                            var killSpawn = Collided(i) || _spawns[i].Distance >= _myBase.Range ||
-                                            newx < 0 || newx >= Options.MapWidth || newy < 0 ||
-                                            newy >= Options.MapHeight;
-
-                            // Check for map boundaries and remove the spawn if it goes out of bounds.
-                            if (killSpawn)
-                            {
-                                TryRemoveSpawn(i);
-                                _spawnCount--;
-
-                                continue;
-                            }
-
-                            // Check for Z-Dimension
-                            if (!killSpawn && spawnMap.Attributes != null &&
-                                _spawns[i].X >= 0 && _spawns[i].Y >= 0 && _spawns[i].X < spawnMap.Attributes.GetLength(0) &&
-                                _spawns[i].Y < spawnMap.Attributes.GetLength(1))
-                            {
-                                var attribute = spawnMap.Attributes[_spawns[i].X, _spawns[i].Y];
-
-                                if (attribute != null && attribute.Type == MapAttribute.ZDimension)
-                                {
-                                    var zDimensionAttribute = (MapZDimensionAttribute)attribute;
-
-                                    // If the Z dimension attribute specifies a blocked level that matches the projectile's current Z level,
-                                    // mark the projectile for destruction.
-                                    if (zDimensionAttribute.BlockedLevel > 0 && _spawns[i].Z == zDimensionAttribute.BlockedLevel - 1)
-                                    {
-                                        killSpawn = true;
-                                    }
-
-                                    // If the Z dimension attribute specifies a gateway to another level,
-                                    // adjust the projectile's Z level to the specified gateway level.
-                                    if (zDimensionAttribute.GatewayTo > 0)
-                                    {
-                                        _spawns[i].Z = zDimensionAttribute.GatewayTo - 1;
-                                    }
-                                }
-                            }
-
-                            if (killSpawn)
-                            {
-                                TryRemoveSpawn(i);
-                                _spawnCount--;
-                            }
+                        // If the Z dimension attribute specifies a gateway to another level,
+                        // adjust the projectile's Z level to the specified gateway level.
+                        if (zDimensionAttribute.GatewayTo > 0)
+                        {
+                            projectileSpawn.Z = zDimensionAttribute.GatewayTo - 1;
                         }
                     }
                 }
-            }
-            else
-            {
-                Globals.Entities[Id].Dispose();
+
+                if (killSpawn)
+                {
+                    TryRemoveSpawn(i);
+                    _spawnCount--;
+                }
             }
         }
 
@@ -593,8 +582,8 @@ namespace Intersect.Client.Entities.Projectiles
         /// </remarks>
         private static void AdjustPositionOnMapBoundaries(ref float newx, ref float newy, ref Maps.MapInstance spawnMap)
         {
-            int MapWidth = Options.MapWidth; // The width of the map.
-            int MapHeight = Options.MapHeight; // The height of the map.
+            int MapWidth = Options.MapWidth;
+            int MapHeight = Options.MapHeight;
 
             // Determine if the projectile crosses any of the map boundaries.
             bool crossesLeftBoundary = MathF.Floor(newx) < 0;
@@ -693,20 +682,20 @@ namespace Intersect.Client.Entities.Projectiles
         /// <returns>True if the projectile spawn has collided and should be destroyed; otherwise, false.</returns>
         private bool Collided(int i)
         {
-            var killSpawn = false; // Flag to determine if the spawn should be killed due to collision
-            IEntity? blockedBy = default; // Entity, resource, or map block that the projectile has potentially collided with
-            var spawn = _spawns[i]; // Current projectile spawn being checked for collision
+            var killSpawn = false;
+            IEntity? blockedBy = default;
+            var spawn = _spawns[i];
 
-            // Check if the tile at the projectile's location is blocked
+            // Check if the tile at the projectile's location is blocked.
             var tileBlocked = Globals.Me.IsTileBlocked(
-                new Point(spawn.X, spawn.Y), // Projectile spawn location
-                Z, // Z-level of the projectile
-                spawn.MapId, // ID of the map where the projectile is located
-                ref blockedBy, // Reference to the entity blocking the projectile, if any
-                spawn.ProjectileBase.IgnoreActiveResources, // Whether active resources should be ignored
-                spawn.ProjectileBase.IgnoreExhaustedResources, // Whether exhausted resources should be ignored
-                true, // Always check for entities
-                true // Always check for map blocks
+                delta: new Point(spawn.X, spawn.Y),
+                z: Z,
+                mapId: spawn.MapId,
+                blockedBy: ref blockedBy,
+                ignoreAliveResources: spawn.ProjectileBase.IgnoreActiveResources,
+                ignoreDeadResources: spawn.ProjectileBase.IgnoreExhaustedResources,
+                ignoreNpcAvoids: true,
+                projectileTrigger: true
             );
 
             switch (tileBlocked)

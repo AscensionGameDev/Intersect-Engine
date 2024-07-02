@@ -112,7 +112,7 @@ namespace Intersect.Server.Entities
                         {
                             // Calculate the spawn position and direction for the new projectile
                             var s = new ProjectileSpawn(
-                                FindProjectileRotationDir(Dir, (Direction)d), // Calculate the rotation direction
+                                FindProjectileRotationDir(Dir, (Direction)d),
                                 (byte)(X + FindProjectileRotation(Dir, x - 2, y - 2, true)),
                                 (byte)(Y + FindProjectileRotation(Dir, x - 2, y - 2, false)),
                                 (byte)Z, MapId, MapInstanceId, Base, this
@@ -123,7 +123,6 @@ namespace Intersect.Server.Entities
                             _spawnedAmount++;
                             _spawnCount++;
 
-                            // Check for collision at the spawn location, mark as dead if collision is detected
                             if (CheckForCollision(s))
                             {
                                 s.Dead = true;
@@ -144,7 +143,7 @@ namespace Intersect.Server.Entities
         /// <param name="direction">The direction of the projectile.</param>
         /// <param name="x">The x-coordinate value.</param>
         /// <param name="y">The y-coordinate value.</param>
-        /// <param name="isXAxis">Determines if the calculation is for the X axis (true) or Y axis (false).</param>
+        /// <param name="isXAxis">True for horizontal (X-axis), false for vertical (Y-axis) calculation.</param>
         /// <returns>The rotation value for the specified axis based on the direction.</returns>
         private static int FindProjectileRotation(Direction direction, int x, int y, bool isXAxis)
         {
@@ -190,7 +189,7 @@ namespace Intersect.Server.Entities
         /// </summary>
         /// <param name="direction">The direction of the projectile.</param>
         /// <param name="range">The range of the projectile.</param>
-        /// <param name="isXAxis">A boolean value indicating whether the axis is the X-axis.</param>
+        /// <param name="isXAxis">True for horizontal (X-axis), false for vertical (Y-axis) calculation.</param>
         /// <returns>The calculated range value.</returns>
         private static float GetRange(Direction direction, float range, bool isXAxis)
         {
@@ -333,6 +332,7 @@ namespace Intersect.Server.Entities
                     !spawn.Parent.HasGrappled &&
                     (spawn.X != Owner.X || spawn.Y != Owner.Y))
                 {
+                    // Grapple hooks are only allowed in the default projectile behavior
                     if (!spawn.ProjectileBase.HomingBehavior && !spawn.ProjectileBase.DirectShotBehavior &&
                         (spawn.Dir <= Direction.Right || (spawn.Dir != Direction.None && Options.Instance.MapOpts.EnableDiagonalMovement)))
                     {
@@ -386,60 +386,62 @@ namespace Intersect.Server.Entities
         }
 
         /// <summary>
-        /// Calculates the offset of a projectile based on the target's position and the spawn location.
+        /// Calculates the offset for the projectile spawn position based on the target map and spawn location.
         /// </summary>
-        /// <param name="isXAxis">A boolean value indicating whether the calculation should be done horizontally (X-axis) or vertically (Y-axis).</param>
         /// <param name="spawn">The projectile spawn information.</param>
+        /// <param name="isXAxis">True for horizontal (X-axis), false for vertical (Y-axis) calculation.</param>
         /// <returns>The calculated offset value.</returns>
-        private float GetProjectileOffset(bool isXAxis, ProjectileSpawn spawn)
+        private float GetProjectileOffset(ProjectileSpawn spawn, bool isXAxis)
         {
-            if (_lastTargetMapId != Guid.Empty && _lastTargetMapId != spawn.MapId && MapController.TryGet(spawn.MapId, out var map))
+            if (_lastTargetMapId == Guid.Empty || _lastTargetMapId == spawn.MapId || !MapController.TryGet(spawn.MapId, out var map))
             {
-                var grid = DbInterface.GetGrid(map.MapGrid);
+                return isXAxis ? _lastTargetX - spawn.X : _lastTargetY - spawn.Y;
+            }
 
-                for (var y = map.MapGridY - 1; y <= map.MapGridY + 1; y++)
+            var grid = DbInterface.GetGrid(map.MapGrid);
+
+            for (var y = map.MapGridY - 1; y <= map.MapGridY + 1; y++)
+            {
+                for (var x = map.MapGridX - 1; x <= map.MapGridX + 1; x++)
                 {
-                    for (var x = map.MapGridX - 1; x <= map.MapGridX + 1; x++)
+                    if (x < 0 || x >= grid.MapIdGrid.GetLength(0) || y < 0 || y >= grid.MapIdGrid.GetLength(1))
                     {
-                        if (x < 0 || x >= grid.MapIdGrid.GetLength(0) || y < 0 || y >= grid.MapIdGrid.GetLength(1))
+                        continue;
+                    }
+
+                    if (grid.MapIdGrid[x, y] != _lastTargetMapId || grid.MapIdGrid[x, y] == Guid.Empty)
+                    {
+                        continue;
+                    }
+
+                    if (isXAxis)
+                    {
+                        var leftSide = x == map.MapGridX - 1;
+                        var rightSide = x == map.MapGridX + 1;
+
+                        if (leftSide)
                         {
-                            continue;
+                            return _lastTargetX - Options.MapWidth - spawn.X;
                         }
 
-                        if (grid.MapIdGrid[x, y] != _lastTargetMapId || grid.MapIdGrid[x, y] == Guid.Empty)
+                        if (rightSide)
                         {
-                            continue;
+                            return _lastTargetX + Options.MapWidth - spawn.X;
+                        }
+                    }
+                    else
+                    {
+                        var topSide = y == map.MapGridY - 1;
+                        var bottomSide = y == map.MapGridY + 1;
+
+                        if (topSide)
+                        {
+                            return _lastTargetY - Options.MapHeight - spawn.Y;
                         }
 
-                        if (isXAxis) // Horizontal (X) calculation
+                        if (bottomSide)
                         {
-                            var leftSide = x == map.MapGridX - 1;
-                            var rightSide = x == map.MapGridX + 1;
-
-                            if (leftSide)
-                            {
-                                return _lastTargetX - Options.MapWidth - spawn.X;
-                            }
-
-                            if (rightSide)
-                            {
-                                return _lastTargetX + Options.MapWidth - spawn.X;
-                            }
-                        }
-                        else // Vertical (Y) calculation
-                        {
-                            var topSide = y == map.MapGridY - 1;
-                            var bottomSide = y == map.MapGridY + 1;
-
-                            if (topSide)
-                            {
-                                return _lastTargetY - Options.MapHeight - spawn.Y;
-                            }
-
-                            if (bottomSide)
-                            {
-                                return _lastTargetY + Options.MapHeight - spawn.Y;
-                            }
+                            return _lastTargetY + Options.MapHeight - spawn.Y;
                         }
                     }
                 }
@@ -469,8 +471,7 @@ namespace Intersect.Server.Entities
                     _lastTargetX = Target.X;
                     _lastTargetY = Target.Y;
                     _lastTargetMapId = Target.MapId;
-                    var directionX = GetProjectileOffset(true, spawn);
-                    var directionY = GetProjectileOffset(false, spawn);
+                    var (directionX, directionY) = (GetProjectileOffset(spawn, true), GetProjectileOffset(spawn, false));
                     var distance = MathF.Sqrt(directionX * directionX + directionY * directionY);
 
                     // Normalize the direction and update the projectile's position.
@@ -486,8 +487,7 @@ namespace Intersect.Server.Entities
                 else if (_lastTargetX != -1 && _lastTargetY != -1)
                 {
                     // Last known target location logic: Moves the projectile towards the last known position of the target.
-                    var directionX = GetProjectileOffset(true, spawn);
-                    var directionY = GetProjectileOffset(false, spawn);
+                    var (directionX, directionY) = (GetProjectileOffset(spawn, true), GetProjectileOffset(spawn, false));
                     var distance = MathF.Sqrt(directionX * directionX + directionY * directionY);
 
                     // Normalize the direction and update the projectile's position.
