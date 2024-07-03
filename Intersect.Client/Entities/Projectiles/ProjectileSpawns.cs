@@ -1,5 +1,4 @@
-﻿using System;
-using Intersect.Enums;
+﻿using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Utilities;
 
@@ -34,7 +33,7 @@ namespace Intersect.Client.Entities.Projectiles
 
         public int SpawnY;
 
-        public long TransmittionTimer = Timing.Global.Milliseconds;
+        public long TransmissionTimer = Timing.Global.Milliseconds;
 
         public int X;
 
@@ -65,8 +64,7 @@ namespace Intersect.Client.Entities.Projectiles
             Anim = new Animation(animBase, true, autoRotate, Z, parent);
             AutoRotate = autoRotate;
             ProjectileBase = projectileBase;
-            TransmittionTimer = Timing.Global.Milliseconds +
-                                (long) ((float) ProjectileBase.Speed / (float) ProjectileBase.Range);
+            TransmissionTimer = Timing.Global.Milliseconds + (ProjectileBase.Speed / ProjectileBase.Range);
         }
 
         public void Dispose()
