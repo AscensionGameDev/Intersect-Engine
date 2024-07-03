@@ -1,11 +1,8 @@
 using Intersect.Client.Core;
 using Intersect.Client.Framework.File_Management;
-using Intersect.Client.Framework.Gwen;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Interface.Shared;
-using Intersect.Client.Localization;
-using Intersect.Client.Networking;
 using Intersect.Network;
 using Intersect.Utilities;
 

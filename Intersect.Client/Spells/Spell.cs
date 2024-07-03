@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Intersect.Client.Spells
+﻿namespace Intersect.Client.Spells
 {
 
     public partial class Spell

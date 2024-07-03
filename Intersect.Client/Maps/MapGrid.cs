@@ -1,6 +1,4 @@
-﻿using System;
-
-using Intersect.Client.General;
+﻿using Intersect.Client.General;
 using Intersect.Client.Framework.Maps;
 
 namespace Intersect.Client.Maps

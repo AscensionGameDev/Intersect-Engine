@@ -1,4 +1,3 @@
-using System;
 using Intersect.Client.Framework.Items;
 using Intersect.Network.Packets.Server;
 using Newtonsoft.Json;

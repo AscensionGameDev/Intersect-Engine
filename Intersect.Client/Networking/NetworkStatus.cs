@@ -1,6 +1,4 @@
-﻿using System;
-
-using Intersect.Client.Localization;
+﻿using Intersect.Client.Localization;
 using Intersect.Network;
 
 namespace Intersect.Client.Networking

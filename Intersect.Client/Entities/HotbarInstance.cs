@@ -1,7 +1,6 @@
 ﻿using Intersect.Client.Framework.Entities;
 using Intersect.Enums;
 using Newtonsoft.Json;
-using System;
 
 namespace Intersect.Client.Entities
 {

@@ -1,7 +1,3 @@
-using System;
-using System.Diagnostics;
-using System.Linq;
-
 using Intersect.Client.Framework.Database;
 using Intersect.Configuration;
 using Intersect.Logging;

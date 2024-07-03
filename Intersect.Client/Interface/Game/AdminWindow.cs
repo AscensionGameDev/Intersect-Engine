@@ -1,5 +1,3 @@
-using System;
-
 using Intersect.Admin.Actions;
 using Intersect.Client.Core;
 using Intersect.Client.Framework.Gwen;

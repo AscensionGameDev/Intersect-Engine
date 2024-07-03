@@ -1,9 +1,6 @@
-﻿using System;
-
-using Intersect.Client.Framework.Plugins.Interfaces;
+﻿using Intersect.Client.Framework.Plugins.Interfaces;
 using Intersect.Client.MonoGame.Network;
 using Intersect.Network;
-using Intersect.Plugins.Helpers;
 using Intersect.Plugins.Interfaces;
 
 namespace Intersect.Client.Plugins.Helpers

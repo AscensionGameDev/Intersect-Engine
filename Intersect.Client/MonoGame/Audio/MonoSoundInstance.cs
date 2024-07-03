@@ -1,6 +1,4 @@
-﻿using System;
-
-using Intersect.Client.General;
+﻿using Intersect.Client.General;
 
 using Microsoft.Xna.Framework.Audio;
 

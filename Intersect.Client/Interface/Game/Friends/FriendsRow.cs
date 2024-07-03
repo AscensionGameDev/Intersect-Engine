@@ -1,6 +1,4 @@
-﻿using System;
-
-using Intersect.Client.Core;
+﻿using Intersect.Client.Core;
 using Intersect.Client.Networking;
 using Intersect.Client.Localization;
 using Intersect.Client.Framework.Gwen.Control;

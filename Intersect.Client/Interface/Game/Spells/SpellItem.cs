@@ -1,5 +1,3 @@
-using System;
-
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
@@ -7,7 +5,6 @@ using Intersect.Client.Framework.Gwen.Input;
 using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
 using Intersect.Client.Interface.Game.DescriptionWindows;
-using Intersect.Client.Localization;
 using Intersect.Configuration;
 using Intersect.GameObjects;
 using Intersect.Utilities;

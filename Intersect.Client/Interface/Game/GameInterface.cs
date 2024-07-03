@@ -1,6 +1,3 @@
-using System;
-
-using Intersect.Client.Core;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.General;
 using Intersect.Client.Interface.Game.Bag;

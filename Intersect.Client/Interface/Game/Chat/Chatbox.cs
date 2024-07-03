@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Intersect.Client.Core;
 using Intersect.Client.Core.Controls;
 using Intersect.Client.Framework.File_Management;
@@ -14,7 +11,6 @@ using Intersect.Client.Localization;
 using Intersect.Client.Networking;
 using Intersect.Configuration;
 using Intersect.Enums;
-using Intersect.Extensions;
 using Intersect.Localization;
 using Intersect.Utilities;
 

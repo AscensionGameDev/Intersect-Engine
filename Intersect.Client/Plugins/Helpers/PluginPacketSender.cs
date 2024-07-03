@@ -1,7 +1,4 @@
-﻿using System;
-using System.Linq;
-
-using Intersect.Core;
+﻿using Intersect.Core;
 using Intersect.Network;
 using Intersect.Plugins.Interfaces;
 

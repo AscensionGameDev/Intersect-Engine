@@ -1,6 +1,5 @@
 ﻿using Intersect.Client.Core;
 using Intersect.Client.Framework.File_Management;
-using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.General;
@@ -11,7 +10,6 @@ using Intersect.Client.Interface.Game.Spells;
 using Intersect.Client.Localization;
 using Intersect.Client.Networking;
 using Intersect.Enums;
-using Intersect.GameObjects;
 
 namespace Intersect.Client.Interface.Game
 {

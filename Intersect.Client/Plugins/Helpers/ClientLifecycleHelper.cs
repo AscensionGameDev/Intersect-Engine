@@ -4,8 +4,6 @@ using Intersect.Client.General;
 using Intersect.Client.Interface;
 using Intersect.Client.Plugins.Interfaces;
 using Intersect.Plugins.Helpers;
-using System;
-using System.Collections.Generic;
 
 namespace Intersect.Client.Plugins.Helpers
 {

@@ -1,6 +1,4 @@
-﻿using System;
-
-using Intersect.Client.Framework.Audio;
+﻿using Intersect.Client.Framework.Audio;
 
 namespace Intersect.Client.MonoGame.Audio
 {

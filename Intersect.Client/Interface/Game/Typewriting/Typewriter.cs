@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.Linq;
 using Intersect.Client.Core;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Configuration;

@@ -1,7 +1,6 @@
 ﻿using Intersect.Client.Entities;
 using Intersect.Client.Framework.Maps;
 using Intersect.GameObjects;
-using System;
 using Intersect.Enums;
 
 namespace Intersect.Client.Maps

@@ -2,10 +2,6 @@ using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Interface.Debugging;
 using Intersect.Reflection;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
 namespace Intersect.Client.Interface
 {
 

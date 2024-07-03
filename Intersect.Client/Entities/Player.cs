@@ -17,7 +17,6 @@ using Intersect.Config.Guilds;
 using Intersect.Configuration;
 using Intersect.Enums;
 using Intersect.GameObjects;
-using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Maps;
 using Intersect.Logging;
 using Intersect.Network.Packets.Server;
