@@ -1,4 +1,3 @@
-﻿using System;
 using Intersect.Enums;
 using Intersect.Logging;
 using Intersect.Server.Networking;

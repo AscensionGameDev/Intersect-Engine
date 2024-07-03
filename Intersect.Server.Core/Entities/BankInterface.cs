@@ -5,15 +5,7 @@ using Intersect.Server.Database;
 using Intersect.Server.Database.PlayerData.Players;
 using Intersect.Server.Localization;
 using Intersect.Server.Networking;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Intersect.Localization;
-using Intersect.Utilities;
-using Serilog;
 using Log = Intersect.Logging.Log;
 
 namespace Intersect.Server.Entities

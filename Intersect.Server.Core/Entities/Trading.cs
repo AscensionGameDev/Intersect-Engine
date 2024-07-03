@@ -1,6 +1,3 @@
-﻿using System;
-using System.Collections.Generic;
-
 using Intersect.Server.Database;
 
 namespace Intersect.Server.Entities
