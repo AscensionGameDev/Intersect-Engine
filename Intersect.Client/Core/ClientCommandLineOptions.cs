@@ -1,9 +1,5 @@
 ﻿using CommandLine;
 
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-
 using Intersect.Client.Framework.Graphics;
 using Intersect.Core;
 

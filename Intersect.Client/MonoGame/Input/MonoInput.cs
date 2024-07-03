@@ -1,9 +1,6 @@
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 
 using Intersect.Client.Framework.GenericClasses;
-using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Input;
 using Intersect.Client.Framework.Input;
@@ -14,7 +11,6 @@ using Intersect.Logging;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
-using Steamworks;
 using Keys = Intersect.Client.Framework.GenericClasses.Keys;
 using Rectangle = Intersect.Client.Framework.GenericClasses.Rectangle;
 

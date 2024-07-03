@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-using Intersect.Client.Entities;
+﻿using Intersect.Client.Entities;
 using Intersect.Client.Entities.Events;
 using Intersect.Client.Framework.Database;
 using Intersect.Client.Framework.Entities;
@@ -15,7 +12,6 @@ using Intersect.Client.Plugins.Interfaces;
 using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Network.Packets.Server;
-using Intersect.Utilities;
 
 namespace Intersect.Client.General
 {

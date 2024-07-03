@@ -1,5 +1,4 @@
-﻿using System;
-using Intersect.Client.Framework.Entities;
+﻿using Intersect.Client.Framework.Entities;
 using Intersect.Client.Maps;
 using Intersect.Enums;
 using Intersect.Utilities;

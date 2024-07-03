@@ -1,5 +1,3 @@
-using System;
-
 namespace Intersect.Client.MonoGame.NativeInterop
 {
     public sealed class FunctionLoader

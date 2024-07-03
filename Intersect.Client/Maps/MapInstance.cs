@@ -1,8 +1,5 @@
-﻿using System;
-using System.Linq;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 
 using Intersect.Client.Core;
 using Intersect.Client.Entities;
@@ -18,7 +15,6 @@ using Intersect.Client.General;
 using Intersect.Client.Localization;
 using Intersect.Compression;
 using Intersect.Enums;
-using Intersect.Extensions;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps;
 using Intersect.Network.Packets.Server;

@@ -10,7 +10,6 @@ using Intersect.Configuration;
 using Intersect.Extensions;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
-using Steamworks;
 
 namespace Intersect.Client
 {

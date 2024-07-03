@@ -1,5 +1,3 @@
-using System;
-
 using Intersect.Client.Core;
 using Intersect.Client.Core.Sounds;
 using Intersect.Client.Framework.Entities;

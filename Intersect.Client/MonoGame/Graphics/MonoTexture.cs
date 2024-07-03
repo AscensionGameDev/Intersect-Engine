@@ -1,7 +1,4 @@
-﻿using System;
-using System.IO;
-
-using Intersect.Client.Framework.Graphics;
+﻿using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Interface.Game.Chat;
 using Intersect.Client.Localization;
 using Intersect.Compression;

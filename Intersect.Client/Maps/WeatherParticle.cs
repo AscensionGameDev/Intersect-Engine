@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using Intersect.Client.Core;
 using Intersect.Client.Entities;
 using Intersect.Client.Framework.GenericClasses;

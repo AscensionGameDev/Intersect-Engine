@@ -7,8 +7,6 @@ using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Maps;
 using Intersect.Utilities;
-using System;
-using System.Collections.Generic;
 
 namespace Intersect.Client.Entities
 {

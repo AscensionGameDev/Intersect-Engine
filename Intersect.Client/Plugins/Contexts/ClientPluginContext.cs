@@ -1,6 +1,4 @@
-﻿using System;
-using Intersect.Client.Core;
-using Intersect.Client.Framework.Audio;
+﻿using Intersect.Client.Framework.Audio;
 using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Input;

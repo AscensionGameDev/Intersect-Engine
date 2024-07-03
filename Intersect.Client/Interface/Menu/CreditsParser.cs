@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-using Intersect.Client.Framework.Gwen;
+﻿using Intersect.Client.Framework.Gwen;
 
 namespace Intersect.Client.Interface.Menu
 {

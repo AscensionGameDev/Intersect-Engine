@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Intersect.Client.Core
+﻿namespace Intersect.Client.Core
 {
     /// <summary>
     /// Declares the API surface to launch instances of platform-specific (e.g. MonoGame, Unity) runners.

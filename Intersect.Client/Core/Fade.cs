@@ -1,5 +1,4 @@
 using Intersect.Client.Networking;
-using Intersect.Configuration;
 using Intersect.Utilities;
 
 namespace Intersect.Client.Core

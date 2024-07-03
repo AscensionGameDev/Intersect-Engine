@@ -22,12 +22,6 @@ using Intersect.Network;
 using Intersect.Network.Packets;
 using Intersect.Network.Packets.Server;
 using Intersect.Utilities;
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using Intersect.Client.Framework.Network;
-using Intersect.Client.Plugins.Helpers;
 using Intersect.Framework;
 using Intersect.Models;
 using MapAttribute = Intersect.Enums.MapAttribute;

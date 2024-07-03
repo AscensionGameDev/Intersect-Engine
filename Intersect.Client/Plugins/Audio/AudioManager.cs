@@ -1,7 +1,6 @@
 ﻿using Intersect.Client.Framework.Audio;
 using Intersect.Client.Framework.Core.Sounds;
 using Intersect.Client.Framework.Entities;
-using System;
 
 namespace Intersect.Client.Plugins.Audio
 {

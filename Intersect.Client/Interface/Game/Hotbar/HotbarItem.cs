@@ -1,4 +1,3 @@
-using System;
 using Intersect.Client.Core;
 using Intersect.Client.Core.Controls;
 using Intersect.Client.Framework.GenericClasses;
