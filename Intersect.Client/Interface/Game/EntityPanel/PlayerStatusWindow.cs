@@ -60,6 +60,7 @@ namespace Intersect.Client.Interface.Game.EntityPanel
 
             if (!IsHidden)
             {
+                ShouldUpdateStatuses = true;
                 Show();
             }
         }
