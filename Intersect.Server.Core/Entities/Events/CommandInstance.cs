@@ -1,7 +1,3 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
 using Intersect.GameObjects.Events.Commands;
 
 namespace Intersect.Server.Entities.Events

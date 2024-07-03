@@ -1,5 +1,3 @@
-﻿using System;
-
 namespace Intersect.Server.Maps
 {
     public partial struct MapTileLoc

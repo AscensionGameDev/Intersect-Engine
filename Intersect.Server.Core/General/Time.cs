@@ -1,5 +1,3 @@
-using System;
-
 using Intersect.GameObjects;
 using Intersect.Server.Networking;
 using Intersect.Utilities;

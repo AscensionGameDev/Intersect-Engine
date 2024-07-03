@@ -1,5 +1,4 @@
-﻿using Intersect.GameObjects;
-using Intersect.Server.General;
+using Intersect.GameObjects;
 
 namespace Intersect.Server.Entities.Combat
 {

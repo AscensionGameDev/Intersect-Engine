@@ -1,6 +1,5 @@
-﻿using Intersect.Network.Packets.Server;
+using Intersect.Network.Packets.Server;
 using Intersect.Server.Entities;
-using System.Collections.Generic;
 
 namespace Intersect.Server.Maps
 {

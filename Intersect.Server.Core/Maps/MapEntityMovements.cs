@@ -1,10 +1,5 @@
-﻿using Intersect.Network.Packets.Server;
+using Intersect.Network.Packets.Server;
 using Intersect.Server.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Intersect.Server.Maps
 {
