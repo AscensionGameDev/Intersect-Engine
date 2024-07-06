@@ -1,6 +1,3 @@
-using System;
-using System.Linq;
-
 using Intersect.Client.Framework.GenericClasses;
 
 using Newtonsoft.Json.Linq;

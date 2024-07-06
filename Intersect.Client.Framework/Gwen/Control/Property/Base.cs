@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Intersect.Client.Framework.Gwen.Control.Property
+﻿namespace Intersect.Client.Framework.Gwen.Control.Property
 {
 
     /// <summary>

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Intersect.Client.Framework.Entities;
+﻿using Intersect.Client.Framework.Entities;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.General;
 using Intersect.Client.Interface;

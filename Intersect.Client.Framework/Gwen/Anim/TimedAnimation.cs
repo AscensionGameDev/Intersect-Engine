@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Intersect.Client.Framework.Gwen.Anim
+﻿namespace Intersect.Client.Framework.Gwen.Anim
 {
 
     // Timed animation. Provides a useful base for animations.

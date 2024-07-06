@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-
-using Intersect.Client.Framework.GenericClasses;
+﻿using Intersect.Client.Framework.GenericClasses;
 
 namespace Intersect.Client.Framework.Graphics
 {

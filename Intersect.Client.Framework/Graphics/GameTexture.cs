@@ -1,9 +1,6 @@
-using System;
-
 using Intersect.Client.Framework.Content;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Logging;
-using MathNet.Numerics.Random;
 
 namespace Intersect.Client.Framework.Graphics
 {

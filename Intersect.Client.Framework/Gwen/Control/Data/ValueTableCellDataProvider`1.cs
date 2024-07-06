@@ -1,7 +1,3 @@
-using System;
-using System.Threading;
-using System.Threading.Tasks;
-
 using Intersect.Async;
 
 namespace Intersect.Client.Framework.Gwen.Control.Data

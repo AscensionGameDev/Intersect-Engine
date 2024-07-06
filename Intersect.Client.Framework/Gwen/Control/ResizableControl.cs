@@ -1,6 +1,4 @@
-﻿using System;
-
-using Intersect.Client.Framework.Gwen.ControlInternal;
+﻿using Intersect.Client.Framework.Gwen.ControlInternal;
 
 using Newtonsoft.Json.Linq;
 

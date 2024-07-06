@@ -1,7 +1,4 @@
-﻿
-using System;
-
-namespace Intersect.Client.Framework.Content
+﻿namespace Intersect.Client.Framework.Content
 {
 
     [AttributeUsage(AttributeTargets.Field)]

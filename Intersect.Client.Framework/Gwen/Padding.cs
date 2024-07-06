@@ -1,6 +1,4 @@
-using System;
 using System.Globalization;
-using System.Linq;
 
 namespace Intersect.Client.Framework.Gwen
 {

@@ -1,5 +1,4 @@
 ﻿using Intersect.Client.Framework.Entities;
-using System;
 
 namespace Intersect.Client.Framework.Maps
 {

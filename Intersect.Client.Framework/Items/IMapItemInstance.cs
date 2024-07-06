@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Intersect.Client.Framework.Items
+﻿namespace Intersect.Client.Framework.Items
 {
     public interface IMapItemInstance : IItem
     {

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Intersect.Client.Framework.Graphics
+﻿namespace Intersect.Client.Framework.Graphics
 {
 
     public partial struct Resolution : IComparable<Resolution>

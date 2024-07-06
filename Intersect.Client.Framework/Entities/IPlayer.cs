@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-
 using Intersect.Config.Guilds;
 using Intersect.Enums;
 using Intersect.GameObjects;

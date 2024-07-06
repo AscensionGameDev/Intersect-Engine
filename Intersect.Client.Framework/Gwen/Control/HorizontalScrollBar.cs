@@ -1,6 +1,4 @@
-﻿using System;
-
-using Intersect.Client.Framework.Gwen.Input;
+﻿using Intersect.Client.Framework.Gwen.Input;
 
 namespace Intersect.Client.Framework.Gwen.Control
 {
