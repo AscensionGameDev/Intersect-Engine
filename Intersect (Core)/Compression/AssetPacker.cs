@@ -1,18 +1,11 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-
 using Newtonsoft.Json;
-
-using Intersect.Extensions;
 
 namespace Intersect.Compression
 {
-	/// <summary>
-	/// Allows for packaging up assets and extracting them from packaged files.
-	/// </summary>
-	public sealed partial class AssetPacker : IDisposable
+    /// <summary>
+    /// Allows for packaging up assets and extracting them from packaged files.
+    /// </summary>
+    public sealed partial class AssetPacker : IDisposable
 	{
 
 		/// <summary>

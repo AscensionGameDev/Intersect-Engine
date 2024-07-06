@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-using Intersect.Logging;
+﻿using Intersect.Logging;
 using Intersect.Plugins.Interfaces;
 using Intersect.Threading;
 

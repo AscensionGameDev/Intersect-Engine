@@ -1,6 +1,4 @@
-﻿using System;
-
-using Intersect.Collections;
+﻿using Intersect.Collections;
 
 namespace Intersect.GameObjects.Maps.MapList
 {

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-using Intersect.Collections;
+﻿using Intersect.Collections;
 
 namespace Intersect.Network
 {

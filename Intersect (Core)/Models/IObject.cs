@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Intersect.Models
+﻿namespace Intersect.Models
 {
 
     public interface IObject

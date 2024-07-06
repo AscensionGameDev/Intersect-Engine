@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace Intersect.Extensions
 {
     public static partial class KeyValuePairExtensions

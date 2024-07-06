@@ -3,13 +3,8 @@ using Intersect.Plugins.Interfaces;
 using Intersect.Plugins.Manifests;
 
 using Newtonsoft.Json;
-
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.IO;
-using System.Linq;
 using System.Reflection;
 
 namespace Intersect.Plugins.Loaders

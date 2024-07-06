@@ -1,6 +1,4 @@
-﻿using System;
-
-using MathNet.Numerics.Random;
+﻿using MathNet.Numerics.Random;
 
 namespace Intersect.Extensions
 {

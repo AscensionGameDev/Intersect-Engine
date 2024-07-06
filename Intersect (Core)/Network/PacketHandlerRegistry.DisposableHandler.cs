@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Intersect.Network
+﻿namespace Intersect.Network
 {
     public partial class PacketHandlerRegistry
     {

@@ -1,6 +1,4 @@
-using System;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
 using Intersect.Enums;
 using Intersect.GameObjects.Conditions;
 using Intersect.GameObjects.Events;

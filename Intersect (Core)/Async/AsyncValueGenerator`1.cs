@@ -1,7 +1,3 @@
-using System;
-using System.Threading;
-using System.Threading.Tasks;
-
 namespace Intersect.Async
 {
     public partial class AsyncValueGenerator<TValue> : IDisposable

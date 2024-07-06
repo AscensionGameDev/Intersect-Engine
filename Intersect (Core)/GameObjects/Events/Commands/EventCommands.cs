@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-
 using Intersect.Enums;
 using Newtonsoft.Json;
 

@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-using Intersect.Collections;
+﻿using Intersect.Collections;
 using Intersect.Network.Packets.Client;
 using MessagePack;
 

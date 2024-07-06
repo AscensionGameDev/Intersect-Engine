@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-using Intersect.Enums;
+﻿using Intersect.Enums;
 using Intersect.GameObjects.Conditions;
 using Intersect.GameObjects.Events.Commands;
 

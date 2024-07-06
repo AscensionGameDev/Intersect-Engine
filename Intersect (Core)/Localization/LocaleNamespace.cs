@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Intersect.Localization
+﻿namespace Intersect.Localization
 {
 
     [Serializable]

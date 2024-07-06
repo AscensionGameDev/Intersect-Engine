@@ -1,6 +1,4 @@
-﻿using System;
-
-using Intersect.Utilities;
+﻿using Intersect.Utilities;
 
 using Newtonsoft.Json;
 

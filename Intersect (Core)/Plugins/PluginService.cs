@@ -1,14 +1,9 @@
 ﻿using Intersect.Core;
 using Intersect.Factories;
 using Intersect.Plugins.Loaders;
-
-using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.IO;
-using System.Linq;
 
 namespace Intersect.Plugins
 {

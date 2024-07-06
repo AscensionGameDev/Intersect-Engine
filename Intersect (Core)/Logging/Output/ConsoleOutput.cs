@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Intersect.Logging.Output
+﻿namespace Intersect.Logging.Output
 {
 
     public partial class ConsoleOutput : ILogOutput

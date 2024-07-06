@@ -1,8 +1,6 @@
 ﻿
 using Microsoft;
 
-using System;
-
 namespace Intersect.Plugins
 {
     /// <summary>

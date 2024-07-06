@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace Intersect.Utilities
+﻿namespace Intersect.Utilities
 {
 
     public static partial class ValueUtils

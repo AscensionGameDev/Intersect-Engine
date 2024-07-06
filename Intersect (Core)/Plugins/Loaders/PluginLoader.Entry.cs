@@ -1,8 +1,5 @@
 ﻿using Intersect.Properties;
 using Intersect.Reflection;
-
-using System;
-using System.Linq;
 using System.Reflection;
 
 namespace Intersect.Plugins.Loaders

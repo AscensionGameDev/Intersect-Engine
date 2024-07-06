@@ -1,6 +1,4 @@
-﻿using System;
-
-using Intersect.Enums;
+﻿using Intersect.Enums;
 using MessagePack;
 
 namespace Intersect.Network.Packets.Editor

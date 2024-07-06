@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Intersect.Core
+﻿namespace Intersect.Core
 {
     /// <summary>
     /// Declares the common basic command line options for all applications.

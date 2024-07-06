@@ -2,9 +2,6 @@
 using Intersect.Network;
 using Intersect.Plugins.Interfaces;
 
-using System;
-using System.Collections.Generic;
-
 namespace Intersect.Plugins.Helpers
 {
     /// <summary>

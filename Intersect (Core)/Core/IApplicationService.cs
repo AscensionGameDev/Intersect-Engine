@@ -1,7 +1,4 @@
-﻿
-using System;
-
-namespace Intersect.Core
+﻿namespace Intersect.Core
 {
     /// <summary>
     /// Declares the API surface for application services.

@@ -1,13 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
 using Intersect.Collections;
 using Intersect.Extensions;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Switches_and_Variables;
 using Intersect.Models;
-using MessagePack.Resolvers;
 
 namespace Intersect.Enums
 {

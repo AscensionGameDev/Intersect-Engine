@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Intersect.Core
+﻿namespace Intersect.Core
 {
     /// <summary>
     /// Enumeration of the different lifecycle stages for services.

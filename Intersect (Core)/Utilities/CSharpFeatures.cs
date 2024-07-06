@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading;
-
-namespace Intersect.Utilities
+﻿namespace Intersect.Utilities
 {
 
     public static partial class CSharpFeatures

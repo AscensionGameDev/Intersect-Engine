@@ -1,7 +1,4 @@
-﻿using System;
-using System.Threading;
-
-namespace Intersect.Threading
+﻿namespace Intersect.Threading
 {
 
     public partial class LockingActionQueue

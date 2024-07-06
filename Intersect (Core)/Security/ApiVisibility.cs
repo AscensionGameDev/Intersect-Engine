@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Intersect.Security
+﻿namespace Intersect.Security
 {
 
     [Flags]

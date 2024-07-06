@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-using Intersect.GameObjects.Events;
+﻿using Intersect.GameObjects.Events;
 
 using Newtonsoft.Json;
 

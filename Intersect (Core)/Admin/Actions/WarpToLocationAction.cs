@@ -1,6 +1,4 @@
-﻿using System;
-
-using MessagePack;
+﻿using MessagePack;
 
 namespace Intersect.Admin.Actions
 {

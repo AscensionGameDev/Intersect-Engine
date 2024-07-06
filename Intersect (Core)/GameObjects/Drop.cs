@@ -1,5 +1,3 @@
-using System;
-
 namespace Intersect.GameObjects
 {
     public partial class Drop

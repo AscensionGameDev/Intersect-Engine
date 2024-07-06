@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Intersect.Logging
+﻿namespace Intersect.Logging
 {
 
     public interface ILogger

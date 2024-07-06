@@ -1,5 +1,4 @@
 ﻿using MessagePack;
-using System.Collections.Generic;
 
 namespace Intersect.Network.Packets.Server
 {

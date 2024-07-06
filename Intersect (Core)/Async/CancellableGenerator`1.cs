@@ -1,6 +1,3 @@
-using System;
-using System.Threading;
-
 namespace Intersect.Async
 {
     public partial class CancellableGenerator<TValue> : IDisposable
