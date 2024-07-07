@@ -3,53 +3,51 @@ using Intersect.Editor.Maps;
 
 using WeifenLuo.WinFormsUI.Docking;
 
-namespace Intersect.Editor.Forms.DockingElements
+namespace Intersect.Editor.Forms.DockingElements;
+
+
+public partial class FrmMapProperties : DockContent
 {
 
-    public partial class FrmMapProperties : DockContent
+    //Cross Thread Delegates
+    public delegate void UpdateProperties();
+
+    public UpdateProperties UpdatePropertiesDelegate;
+
+    public FrmMapProperties()
     {
+        InitializeComponent();
+        Icon = Program.Icon;
 
-        //Cross Thread Delegates
-        public delegate void UpdateProperties();
+        UpdatePropertiesDelegate = Update;
+    }
 
-        public UpdateProperties UpdatePropertiesDelegate;
-
-        public FrmMapProperties()
+    public void Init(MapInstance map)
+    {
+        if (gridMapProperties.InvokeRequired)
         {
-            InitializeComponent();
-            Icon = Program.Icon;
+            gridMapProperties.Invoke((MethodInvoker) delegate { Init(map); });
 
-            UpdatePropertiesDelegate = Update;
+            return;
         }
 
-        public void Init(MapInstance map)
-        {
-            if (gridMapProperties.InvokeRequired)
-            {
-                gridMapProperties.Invoke((MethodInvoker) delegate { Init(map); });
+        gridMapProperties.SelectedObject = new MapProperties(map);
+        InitLocalization();
+    }
 
-                return;
-            }
+    private void InitLocalization()
+    {
+        Text = Strings.MapProperties.title;
+    }
 
-            gridMapProperties.SelectedObject = new MapProperties(map);
-            InitLocalization();
-        }
+    public void Update()
+    {
+        gridMapProperties.Refresh();
+    }
 
-        private void InitLocalization()
-        {
-            Text = Strings.MapProperties.title;
-        }
-
-        public void Update()
-        {
-            gridMapProperties.Refresh();
-        }
-
-        public GridItem Selection()
-        {
-            return gridMapProperties.SelectedGridItem;
-        }
-
+    public GridItem Selection()
+    {
+        return gridMapProperties.SelectedGridItem;
     }
 
 }

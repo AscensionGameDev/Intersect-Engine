@@ -1,50 +1,48 @@
 ﻿using Intersect.Editor.Localization;
 using Intersect.GameObjects.Events.Commands;
 
-namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
+namespace Intersect.Editor.Forms.Editors.Events.Event_Commands;
+
+
+public partial class EventCommandChangeLevel : UserControl
 {
 
-    public partial class EventCommandChangeLevel : UserControl
+    private readonly FrmEvent mEventEditor;
+
+    private ChangeLevelCommand mMyCommand;
+
+    public EventCommandChangeLevel(ChangeLevelCommand refCommand, FrmEvent editor)
     {
-
-        private readonly FrmEvent mEventEditor;
-
-        private ChangeLevelCommand mMyCommand;
-
-        public EventCommandChangeLevel(ChangeLevelCommand refCommand, FrmEvent editor)
+        InitializeComponent();
+        mMyCommand = refCommand;
+        mEventEditor = editor;
+        if (mMyCommand.Level <= 0 || mMyCommand.Level > Options.MaxLevel)
         {
-            InitializeComponent();
-            mMyCommand = refCommand;
-            mEventEditor = editor;
-            if (mMyCommand.Level <= 0 || mMyCommand.Level > Options.MaxLevel)
-            {
-                mMyCommand.Level = 1;
-            }
-
-            nudLevel.Maximum = Options.MaxLevel;
-            nudLevel.Value = mMyCommand.Level;
-            InitLocalization();
+            mMyCommand.Level = 1;
         }
 
-        private void InitLocalization()
-        {
-            grpChangeLevel.Text = Strings.EventChangeLevel.title;
-            lblLevel.Text = Strings.EventChangeLevel.label;
-            btnSave.Text = Strings.EventChangeLevel.okay;
-            btnCancel.Text = Strings.EventChangeLevel.cancel;
-        }
+        nudLevel.Maximum = Options.MaxLevel;
+        nudLevel.Value = mMyCommand.Level;
+        InitLocalization();
+    }
 
-        private void btnSave_Click(object sender, EventArgs e)
-        {
-            mMyCommand.Level = (int) nudLevel.Value;
-            mEventEditor.FinishCommandEdit();
-        }
+    private void InitLocalization()
+    {
+        grpChangeLevel.Text = Strings.EventChangeLevel.title;
+        lblLevel.Text = Strings.EventChangeLevel.label;
+        btnSave.Text = Strings.EventChangeLevel.okay;
+        btnCancel.Text = Strings.EventChangeLevel.cancel;
+    }
 
-        private void btnCancel_Click(object sender, EventArgs e)
-        {
-            mEventEditor.CancelCommandEdit();
-        }
+    private void btnSave_Click(object sender, EventArgs e)
+    {
+        mMyCommand.Level = (int) nudLevel.Value;
+        mEventEditor.FinishCommandEdit();
+    }
 
+    private void btnCancel_Click(object sender, EventArgs e)
+    {
+        mEventEditor.CancelCommandEdit();
     }
 
 }
