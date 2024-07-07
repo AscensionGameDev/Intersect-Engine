@@ -1,5 +1,3 @@
-using System;
-
 namespace Intersect.Client.Framework.Gwen.Control.Data
 {
     public partial class CellDataChangedEventArgs : EventArgs

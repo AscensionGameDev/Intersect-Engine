@@ -1,6 +1,4 @@
-﻿using System;
-
-using Intersect.Client.Framework.Gwen.Control.EventArguments;
+﻿using Intersect.Client.Framework.Gwen.Control.EventArguments;
 using Intersect.Client.Framework.Gwen.ControlInternal;
 
 namespace Intersect.Client.Framework.Gwen.Control

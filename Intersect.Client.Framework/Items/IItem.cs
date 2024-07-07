@@ -1,6 +1,5 @@
 using Intersect.GameObjects;
 using Intersect.Network.Packets.Server;
-using System;
 
 namespace Intersect.Client.Framework.Items
 {

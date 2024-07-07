@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Intersect.Client.Framework.Gwen.Control
+﻿namespace Intersect.Client.Framework.Gwen.Control
 {
 
     public partial class EnumRadioButtonGroup<T> : RadioButtonGroup where T : struct, IConvertible

@@ -1,4 +1,3 @@
-using System;
 using Intersect.Enums;
 
 namespace Intersect.Client.Framework.Database

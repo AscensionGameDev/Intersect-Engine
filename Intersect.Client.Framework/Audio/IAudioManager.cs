@@ -1,6 +1,4 @@
-﻿using System;
-
-using Intersect.Client.Framework.Core.Sounds;
+﻿using Intersect.Client.Framework.Core.Sounds;
 using Intersect.Client.Framework.Entities;
 
 namespace Intersect.Client.Framework.Audio

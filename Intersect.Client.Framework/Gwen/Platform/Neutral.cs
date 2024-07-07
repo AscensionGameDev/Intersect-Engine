@@ -1,7 +1,4 @@
-﻿using System;
-using System.Threading;
-
-using Intersect.Client.Framework.GenericClasses;
+﻿using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Input;
 
 namespace Intersect.Client.Framework.Gwen.Platform

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Intersect.Client.Framework.Gwen.Anim.Size
+﻿namespace Intersect.Client.Framework.Gwen.Anim.Size
 {
 
     partial class Width : TimedAnimation

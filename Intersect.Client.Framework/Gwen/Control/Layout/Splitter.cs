@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Intersect.Client.Framework.Gwen.Control.Layout
+﻿namespace Intersect.Client.Framework.Gwen.Control.Layout
 {
 
     /// <summary>

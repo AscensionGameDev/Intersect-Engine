@@ -3,7 +3,6 @@ using Intersect.Client.Framework.Graphics;
 #if DEBUG || DIAGNOSTIC
 #endif
 
-using System;
 
 namespace Intersect.Client.Framework.Gwen.Renderer
 {

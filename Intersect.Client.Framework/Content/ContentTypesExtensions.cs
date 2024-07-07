@@ -1,8 +1,4 @@
-﻿
-using System;
-using System.Linq;
-
-namespace Intersect.Client.Framework.Content
+﻿namespace Intersect.Client.Framework.Content
 {
 
     public static partial class ContentTypesExtensions

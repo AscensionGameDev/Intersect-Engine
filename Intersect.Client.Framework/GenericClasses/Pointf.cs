@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Intersect.Client.Framework.GenericClasses
+﻿namespace Intersect.Client.Framework.GenericClasses
 {
 
     public partial struct Pointf

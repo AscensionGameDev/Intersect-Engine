@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 using Intersect.Client.Framework.Core.Sounds;
 using Intersect.Client.Framework.Entities;
 using Intersect.Client.Framework.Items;

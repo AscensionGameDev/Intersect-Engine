@@ -1,5 +1,4 @@
 ﻿using Intersect.Enums;
-using System;
 
 namespace Intersect.Client.Framework.Entities
 {

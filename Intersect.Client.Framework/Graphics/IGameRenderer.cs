@@ -1,6 +1,4 @@
 ﻿using Intersect.Client.Framework.GenericClasses;
-using System.Collections.Generic;
-using System.IO;
 
 namespace Intersect.Client.Framework.Graphics
 {

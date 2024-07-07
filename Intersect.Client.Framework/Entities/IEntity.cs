@@ -3,8 +3,6 @@ using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Items;
 using Intersect.Client.Framework.Maps;
 using Intersect.Enums;
-using System;
-using System.Collections.Generic;
 
 namespace Intersect.Client.Framework.Entities
 {

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Intersect.Client.Framework.Maps
+﻿namespace Intersect.Client.Framework.Maps
 {
     public interface IMapGrid
     {

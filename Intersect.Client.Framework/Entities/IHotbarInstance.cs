@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Intersect.Client.Framework.Entities
+﻿namespace Intersect.Client.Framework.Entities
 {
     public interface IHotbarInstance
     {

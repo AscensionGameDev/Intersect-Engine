@@ -1,5 +1,3 @@
-using System;
-
 namespace Intersect.Client.Framework.GenericClasses
 {
 

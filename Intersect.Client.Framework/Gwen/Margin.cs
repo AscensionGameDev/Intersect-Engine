@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Intersect.Client.Framework.Gwen
+﻿namespace Intersect.Client.Framework.Gwen
 {
 
     /// <summary>

@@ -1,5 +1,4 @@
 ﻿using Intersect.Network;
-using Intersect.Plugins.Interfaces;
 
 namespace Intersect.Client.Framework.Plugins.Interfaces
 {

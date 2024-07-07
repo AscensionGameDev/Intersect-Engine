@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Intersect.Client.Framework.Gwen.Control.EventArguments
+﻿namespace Intersect.Client.Framework.Gwen.Control.EventArguments
 {
 
     public partial class ClickedEventArgs : EventArgs
