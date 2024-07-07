@@ -2121,8 +2121,8 @@ namespace Intersect.Editor.Forms
                             editorExcludeFiles.AddRange(soundPacker.CachedPackages.Select(cachedPackage => Path.Combine(soundPacker.PackageLocation, cachedPackage)));
                             foreach (var sound in soundPacker.FileList)
                             {
-                                // Add as lowercase as our update generator checks for lowercases!
-                                clientExcludeFiles.Add(Path.Combine(resourcesDirectory, "sounds", sound.ToLower(CultureInfo.CurrentCulture)).Replace('\\', '/'));
+                                var soundFilePath = Path.Combine("resources/sounds", sound.ToLower(CultureInfo.CurrentCulture)).Replace('\\', '/');
+                                clientExcludeFiles.Add(soundFilePath);
                             }
                         }
                     }
@@ -2136,8 +2136,8 @@ namespace Intersect.Editor.Forms
                             editorExcludeFiles.AddRange(musicPacker.CachedPackages.Select(cachedPackage => Path.Combine(musicPacker.PackageLocation, cachedPackage)));
                             foreach (var music in musicPacker.FileList)
                             {
-                                // Add as lowercase as our update generator checks for lowercases!
-                                clientExcludeFiles.Add(Path.Combine(resourcesDirectory, "music", music.ToLower(CultureInfo.CurrentCulture)).Replace('\\', '/'));
+                                var musicFilePath = Path.Combine("resources/music", music.ToLower(CultureInfo.CurrentCulture)).Replace('\\', '/');
+                                clientExcludeFiles.Add(musicFilePath);
                             }
                         }
                     }
