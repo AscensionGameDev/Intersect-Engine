@@ -1,11 +1,9 @@
-﻿namespace Intersect.Network
+﻿namespace Intersect.Network;
+
+
+public interface IServer
 {
 
-    public interface IServer
-    {
-
-        bool Listen();
-
-    }
+    bool Listen();
 
 }
