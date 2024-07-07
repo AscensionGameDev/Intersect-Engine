@@ -1,6 +1,5 @@
 using System.Collections.Immutable;
 using System.Diagnostics;
-using System.Reflection;
 using Intersect.Logging;
 using Intersect.Logging.Formatting;
 using Intersect.Logging.Output;

@@ -1,13 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace Intersect.Server.Database
+namespace Intersect.Server.Database;
+
+
+public interface ISeedableContext
 {
 
-    public interface ISeedableContext
-    {
-
-        DbSet<TType> GetDbSet<TType>() where TType : class;
-
-    }
+    DbSet<TType> GetDbSet<TType>() where TType : class;
 
 }

@@ -1,15 +1,13 @@
 ﻿using Intersect.Server.Entities;
 
-namespace Intersect.Server.Database.PlayerData.Players
+namespace Intersect.Server.Database.PlayerData.Players;
+
+
+public interface IPlayerOwned
 {
 
-    public interface IPlayerOwned
-    {
+    Player Player { get; }
 
-        Player Player { get; }
-
-        Guid PlayerId { get; }
-
-    }
+    Guid PlayerId { get; }
 
 }

@@ -1,13 +1,11 @@
-﻿namespace Intersect.Server.Web.RestApi.Payloads
+﻿namespace Intersect.Server.Web.RestApi.Payloads;
+
+
+public enum SortDirection
 {
 
-    public enum SortDirection
-    {
+    Ascending,
 
-        Ascending,
-
-        Descending
-
-    }
+    Descending
 
 }

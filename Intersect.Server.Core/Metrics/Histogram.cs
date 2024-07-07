@@ -2,51 +2,50 @@
 
 using Newtonsoft.Json;
 
-namespace Intersect.Server.Metrics
+namespace Intersect.Server.Metrics;
+
+public partial class Histogram
 {
-    public partial class Histogram
+    [JsonIgnore]
+    public string Name { get; private set; }
+
+    public long Min { get; private set; }
+
+    public long Max { get; private set; }
+
+    public long Count { get; private set; }
+
+    public long Sum { get; private set; }
+
+    public double Mean => Count > 0 ? Sum / (double)Count : 0;
+
+    public Histogram(string name, MetricsController controller)
     {
-        [JsonIgnore]
-        public string Name { get; private set; }
+        Name = name;
+        controller.Measurements.Add(this);
+    }
 
-        public long Min { get; private set; }
-
-        public long Max { get; private set; }
-
-        public long Count { get; private set; }
-
-        public long Sum { get; private set; }
-
-        public double Mean => Count > 0 ? Sum / (double)Count : 0;
-
-        public Histogram(string name, MetricsController controller)
+    public void Record(long val)
+    {
+        if (val < Min || Count == 0)
         {
-            Name = name;
-            controller.Measurements.Add(this);
+            Min = val;
         }
 
-        public void Record(long val)
+        if (val > Max || Count == 0)
         {
-            if (val < Min || Count == 0)
-            {
-                Min = val;
-            }
-
-            if (val > Max || Count == 0)
-            {
-                Max = val;
-            }
-
-            Sum += val;
-            Count++;
+            Max = val;
         }
 
-        public void Clear()
-        {
-            Min = 0;
-            Max = 0;
-            Sum = 0;
-            Count = 0;
-        }
+        Sum += val;
+        Count++;
+    }
+
+    public void Clear()
+    {
+        Min = 0;
+        Max = 0;
+        Sum = 0;
+        Count = 0;
     }
 }

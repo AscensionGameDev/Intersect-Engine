@@ -2,20 +2,19 @@
 
 using Microsoft.EntityFrameworkCore;
 
-namespace Intersect.Server.Database.Logging
+namespace Intersect.Server.Database.Logging;
+
+public interface ILoggingContext : IDbContext, IDisposable
 {
-    public interface ILoggingContext : IDbContext, IDisposable
-    {
-        DbSet<RequestLog> RequestLogs { get; }
+    DbSet<RequestLog> RequestLogs { get; }
 
-        DbSet<UserActivityHistory> UserActivityHistory { get; }
+    DbSet<UserActivityHistory> UserActivityHistory { get; }
 
-        DbSet<ChatHistory> ChatHistory { get; }
+    DbSet<ChatHistory> ChatHistory { get; }
 
-        DbSet<TradeHistory> TradeHistory { get; }
-        
-        DbSet<GuildHistory> GuildHistory { get; }
+    DbSet<TradeHistory> TradeHistory { get; }
+    
+    DbSet<GuildHistory> GuildHistory { get; }
 
-        void Seed();
-    }
+    void Seed();
 }
