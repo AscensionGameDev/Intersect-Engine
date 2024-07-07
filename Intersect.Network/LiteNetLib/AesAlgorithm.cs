@@ -1,7 +1,6 @@
 using System.Buffers;
 using System.Buffers.Binary;
 using System.Security.Cryptography;
-using System.Text;
 using Intersect.Logging;
 
 namespace Intersect.Network.LiteNetLib;

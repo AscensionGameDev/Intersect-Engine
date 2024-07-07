@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
+﻿using System.Diagnostics;
 using System.Net;
 using System.Security.Cryptography;
-using System.Threading;
 
 using Intersect.Logging;
 using Intersect.Memory;
