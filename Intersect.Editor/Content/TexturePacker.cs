@@ -1,12 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Drawing;
 using System.Drawing.Imaging;
-using System.IO;
 
 using Intersect.Compression;
 using Intersect.Editor.Content;
-using Intersect.Editor.Core;
 using Newtonsoft.Json.Linq;
 using Graphics = System.Drawing.Graphics;
 using Rectangle = Microsoft.Xna.Framework.Rectangle;

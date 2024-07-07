@@ -1,7 +1,4 @@
-﻿using System;
-using System.Windows.Forms;
-
-using Intersect.Enums;
+﻿using Intersect.Enums;
 using Intersect.Editor.Localization;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;

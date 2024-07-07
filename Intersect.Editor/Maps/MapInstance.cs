@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing.Imaging;
-using System.IO;
-using System.Text;
+﻿using System.Drawing.Imaging;
 using Intersect.Compression;
 using Intersect.Editor.Classes.Maps;
-using Intersect.Editor.Core;
 using Intersect.Editor.Entities;
 using Intersect.Editor.General;
 using Intersect.GameObjects;

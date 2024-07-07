@@ -1,9 +1,4 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-
-using Intersect.Editor.Content;
+﻿using Intersect.Editor.Content;
 using Intersect.Editor.Forms;
 using Intersect.Editor.General;
 using Intersect.Editor.Localization;

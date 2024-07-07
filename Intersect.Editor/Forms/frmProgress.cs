@@ -1,6 +1,3 @@
-using System;
-using System.Windows.Forms;
-
 using Intersect.Editor.Localization;
 
 namespace Intersect.Editor.Forms

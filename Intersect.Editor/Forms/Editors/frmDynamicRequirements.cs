@@ -1,8 +1,4 @@
-﻿using System;
-using System.Drawing;
-using System.Windows.Forms;
-
-using Intersect.Editor.Forms.Editors.Events.Event_Commands;
+﻿using Intersect.Editor.Forms.Editors.Events.Event_Commands;
 using Intersect.Editor.Localization;
 using Intersect.GameObjects.Conditions;
 using Intersect.GameObjects.Events;

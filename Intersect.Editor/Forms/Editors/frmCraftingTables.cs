@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Windows.Forms;
-
-using DarkUI.Forms;
+﻿using DarkUI.Forms;
 
 using Intersect.Editor.General;
 using Intersect.Editor.Localization;

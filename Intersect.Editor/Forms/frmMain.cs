@@ -1,13 +1,6 @@
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Drawing;
 using System.Globalization;
-using System.IO;
-using System.Linq;
 using System.Security.Cryptography;
-using System.Threading;
-using System.Windows.Forms;
 
 using DarkUI.Controls;
 using DarkUI.Forms;

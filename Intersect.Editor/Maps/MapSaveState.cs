@@ -1,6 +1,4 @@
-﻿using System.Linq;
-
-namespace Intersect.Editor.Classes.Maps
+﻿namespace Intersect.Editor.Classes.Maps
 {
 
     public partial class MapSaveState

@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Threading;
-
 using Intersect.Editor.Forms;
 using Intersect.Editor.Forms.DockingElements;
 using Intersect.Editor.Forms.Editors;
