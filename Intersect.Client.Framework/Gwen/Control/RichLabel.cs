@@ -4,357 +4,355 @@ using Intersect.Client.Framework.Graphics;
 
 using Newtonsoft.Json.Linq;
 
-namespace Intersect.Client.Framework.Gwen.Control
+namespace Intersect.Client.Framework.Gwen.Control;
+
+
+/// <summary>
+///     Multiline label with text chunks having different color/font.
+/// </summary>
+public partial class RichLabel : Base
 {
 
+    private readonly string[] mNewline;
+
+    private readonly List<TextBlock> mTextBlocks;
+
+    private GameFont mFont;
+
+    private string mFontInfo;
+
+    private bool mNeedsRebuild;
+
+    public List<Label> FormattedLabels { get; set; } = new List<Label>();
+
     /// <summary>
-    ///     Multiline label with text chunks having different color/font.
+    ///     Initializes a new instance of the <see cref="RichLabel" /> class.
     /// </summary>
-    public partial class RichLabel : Base
+    /// <param name="parent">Parent control.</param>
+    public RichLabel(Base parent, string name = "") : base(parent, name)
     {
+        mNewline = new string[] { Environment.NewLine, "\n" };
+        mTextBlocks = new List<TextBlock>();
+    }
 
-        private readonly string[] mNewline;
+    /// <summary>
+    ///     Adds a line break to the control.
+    /// </summary>
+    public void AddLineBreak()
+    {
+        var block = new TextBlock { Type = BlockType.NewLine };
+        mTextBlocks.Add(block);
+    }
 
-        private readonly List<TextBlock> mTextBlocks;
+    /// <inheritdoc />
+    public override void LoadJson(JToken obj, bool isRoot = default)
+    {
+        base.LoadJson(obj);
 
-        private GameFont mFont;
-
-        private string mFontInfo;
-
-        private bool mNeedsRebuild;
-
-        public List<Label> FormattedLabels { get; set; } = new List<Label>();
-
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="RichLabel" /> class.
-        /// </summary>
-        /// <param name="parent">Parent control.</param>
-        public RichLabel(Base parent, string name = "") : base(parent, name)
+        if (obj["Font"] != null && obj["Font"].Type != JTokenType.Null)
         {
-            mNewline = new string[] { Environment.NewLine, "\n" };
-            mTextBlocks = new List<TextBlock>();
+            var fontArr = ((string)obj["Font"]).Split(',');
+            mFontInfo = (string)obj["Font"];
+            mFont = GameContentManager.Current.GetFont(fontArr[0], int.Parse(fontArr[1]));
+        }
+    }
+
+    /// <param name="isRoot"></param>
+    /// <inheritdoc />
+    public override JObject GetJson(bool isRoot = default)
+    {
+        var obj = base.GetJson(isRoot);
+        obj.Add("Font", mFontInfo);
+
+        return base.FixJson(obj);
+    }
+
+    /// <summary>
+    ///     Adds text to the control via the properties of a <see cref="Label"/>
+    /// </summary>
+    /// <param name="text">Text to add</param>
+    /// <param name="template">Label to use as a template</param>
+    public void AddText(string text, Label template)
+    {
+        if (template == null)
+        {
+            throw new ArgumentNullException(nameof(template));
+        }
+        AddText(text, template.TextColor,
+            template.CurAlignments.Count > 0 ? template.CurAlignments[0] : Alignments.Left,
+            template.Font);
+    }
+
+    /// <summary>
+    ///     Adds text to the control.
+    /// </summary>
+    /// <param name="text">Text to add.</param>
+    /// <param name="color">Text color.</param>
+    /// <param name="font">Font to use.</param>
+    public void AddText(string text, Color color, Alignments alignment = Alignments.Left, GameFont font = null)
+    {
+        if (String.IsNullOrEmpty(text))
+        {
+            return;
         }
 
-        /// <summary>
-        ///     Adds a line break to the control.
-        /// </summary>
-        public void AddLineBreak()
+        if (font == null && mFont != null)
         {
-            var block = new TextBlock { Type = BlockType.NewLine };
+            font = mFont;
+        }
+
+        var lines = text.Split(mNewline, StringSplitOptions.None);
+        for (var i = 0; i < lines.Length; i++)
+        {
+            if (i > 0)
+            {
+                AddLineBreak();
+            }
+
+            var block = new TextBlock
+            {
+                Type = BlockType.Text,
+                Text = lines[i],
+                Color = color,
+                Font = font,
+                Alignment = alignment
+            };
+
             mTextBlocks.Add(block);
+            mNeedsRebuild = true;
+            Invalidate();
+        }
+    }
+
+    /// <summary>
+    ///     Resizes the control to fit its children.
+    /// </summary>
+    /// <param name="width">Determines whether to change control's width.</param>
+    /// <param name="height">Determines whether to change control's height.</param>
+    /// <returns>
+    ///     True if bounds changed.
+    /// </returns>
+    public override bool SizeToChildren(bool width = true, bool height = true)
+    {
+        Rebuild();
+
+        return base.SizeToChildren(width, height);
+    }
+
+    protected void SplitLabel(string text, GameFont font, TextBlock block, ref int x, ref int y, ref int lineHeight)
+    {
+        var spaced = Util.SplitAndKeep(text, " ");
+        if (spaced.Length == 0)
+        {
+            return;
         }
 
-        /// <inheritdoc />
-        public override void LoadJson(JToken obj, bool isRoot = default)
-        {
-            base.LoadJson(obj);
+        var spaceLeft = Width - x;
+        string leftOver;
 
-            if (obj["Font"] != null && obj["Font"].Type != JTokenType.Null)
-            {
-                var fontArr = ((string)obj["Font"]).Split(',');
-                mFontInfo = (string)obj["Font"];
-                mFont = GameContentManager.Current.GetFont(fontArr[0], int.Parse(fontArr[1]));
-            }
+        // Does the whole word fit in?
+        var stringSize = Skin.Renderer.MeasureText(font, text);
+        if (spaceLeft > stringSize.X)
+        {
+            CreateLabel(text, block, ref x, ref y, ref lineHeight, true);
+
+            return;
         }
 
-        /// <param name="isRoot"></param>
-        /// <inheritdoc />
-        public override JObject GetJson(bool isRoot = default)
+        // If the first word is bigger than the line, just give up.
+        var wordSize = Skin.Renderer.MeasureText(font, spaced[0]);
+        if (wordSize.X >= spaceLeft)
         {
-            var obj = base.GetJson(isRoot);
-            obj.Add("Font", mFontInfo);
-
-            return base.FixJson(obj);
-        }
-
-        /// <summary>
-        ///     Adds text to the control via the properties of a <see cref="Label"/>
-        /// </summary>
-        /// <param name="text">Text to add</param>
-        /// <param name="template">Label to use as a template</param>
-        public void AddText(string text, Label template)
-        {
-            if (template == null)
-            {
-                throw new ArgumentNullException(nameof(template));
-            }
-            AddText(text, template.TextColor,
-                template.CurAlignments.Count > 0 ? template.CurAlignments[0] : Alignments.Left,
-                template.Font);
-        }
-
-        /// <summary>
-        ///     Adds text to the control.
-        /// </summary>
-        /// <param name="text">Text to add.</param>
-        /// <param name="color">Text color.</param>
-        /// <param name="font">Font to use.</param>
-        public void AddText(string text, Color color, Alignments alignment = Alignments.Left, GameFont font = null)
-        {
-            if (String.IsNullOrEmpty(text))
+            CreateLabel(spaced[0], block, ref x, ref y, ref lineHeight, true);
+            if (spaced[0].Length >= text.Length)
             {
                 return;
             }
 
-            if (font == null && mFont != null)
-            {
-                font = mFont;
-            }
+            leftOver = text.Substring(spaced[0].Length + 1);
+            SplitLabel(leftOver, font, block, ref x, ref y, ref lineHeight);
 
-            var lines = text.Split(mNewline, StringSplitOptions.None);
-            for (var i = 0; i < lines.Length; i++)
-            {
-                if (i > 0)
-                {
-                    AddLineBreak();
-                }
-
-                var block = new TextBlock
-                {
-                    Type = BlockType.Text,
-                    Text = lines[i],
-                    Color = color,
-                    Font = font,
-                    Alignment = alignment
-                };
-
-                mTextBlocks.Add(block);
-                mNeedsRebuild = true;
-                Invalidate();
-            }
+            return;
         }
 
-        /// <summary>
-        ///     Resizes the control to fit its children.
-        /// </summary>
-        /// <param name="width">Determines whether to change control's width.</param>
-        /// <param name="height">Determines whether to change control's height.</param>
-        /// <returns>
-        ///     True if bounds changed.
-        /// </returns>
-        public override bool SizeToChildren(bool width = true, bool height = true)
+        var newString = String.Empty;
+        for (var i = 0; i < spaced.Length; i++)
         {
-            Rebuild();
+            wordSize = Skin.Renderer.MeasureText(font, newString + spaced[i]);
+            if (wordSize.X > spaceLeft)
+            {
+                CreateLabel(newString, block, ref x, ref y, ref lineHeight, true);
+                x = 0;
+                y += lineHeight;
 
-            return base.SizeToChildren(width, height);
+                break;
+            }
+
+            newString += spaced[i];
         }
 
-        protected void SplitLabel(string text, GameFont font, TextBlock block, ref int x, ref int y, ref int lineHeight)
+        var newstrLen = newString.Length;
+        if (newstrLen < text.Length)
         {
-            var spaced = Util.SplitAndKeep(text, " ");
-            if (spaced.Length == 0)
-            {
-                return;
-            }
+            leftOver = text.Substring(newstrLen + 1);
+            SplitLabel(leftOver, font, block, ref x, ref y, ref lineHeight);
+        }
+    }
 
-            var spaceLeft = Width - x;
-            string leftOver;
-
-            // Does the whole word fit in?
-            var stringSize = Skin.Renderer.MeasureText(font, text);
-            if (spaceLeft > stringSize.X)
-            {
-                CreateLabel(text, block, ref x, ref y, ref lineHeight, true);
-
-                return;
-            }
-
-            // If the first word is bigger than the line, just give up.
-            var wordSize = Skin.Renderer.MeasureText(font, spaced[0]);
-            if (wordSize.X >= spaceLeft)
-            {
-                CreateLabel(spaced[0], block, ref x, ref y, ref lineHeight, true);
-                if (spaced[0].Length >= text.Length)
-                {
-                    return;
-                }
-
-                leftOver = text.Substring(spaced[0].Length + 1);
-                SplitLabel(leftOver, font, block, ref x, ref y, ref lineHeight);
-
-                return;
-            }
-
-            var newString = String.Empty;
-            for (var i = 0; i < spaced.Length; i++)
-            {
-                wordSize = Skin.Renderer.MeasureText(font, newString + spaced[i]);
-                if (wordSize.X > spaceLeft)
-                {
-                    CreateLabel(newString, block, ref x, ref y, ref lineHeight, true);
-                    x = 0;
-                    y += lineHeight;
-
-                    break;
-                }
-
-                newString += spaced[i];
-            }
-
-            var newstrLen = newString.Length;
-            if (newstrLen < text.Length)
-            {
-                leftOver = text.Substring(newstrLen + 1);
-                SplitLabel(leftOver, font, block, ref x, ref y, ref lineHeight);
-            }
+    protected void CreateLabel(string text, TextBlock block, ref int x, ref int y, ref int lineHeight, bool noSplit)
+    {
+        // Use default font or is one set?
+        var font = Skin.DefaultFont;
+        if (block.Font != null)
+        {
+            font = block.Font;
         }
 
-        protected void CreateLabel(string text, TextBlock block, ref int x, ref int y, ref int lineHeight, bool noSplit)
+        // This string is too long for us, split it up.
+        var p = Skin.Renderer.MeasureText(font, text);
+
+        if (lineHeight == -1)
         {
-            // Use default font or is one set?
-            var font = Skin.DefaultFont;
-            if (block.Font != null)
-            {
-                font = block.Font;
-            }
+            lineHeight = p.Y;
+        }
 
-            // This string is too long for us, split it up.
-            var p = Skin.Renderer.MeasureText(font, text);
-
-            if (lineHeight == -1)
-            {
-                lineHeight = p.Y;
-            }
-
-            if (!noSplit)
-            {
-                if (x + p.X > Width)
-                {
-                    SplitLabel(text, font, block, ref x, ref y, ref lineHeight);
-
-                    return;
-                }
-            }
-
-            // Wrap
+        if (!noSplit)
+        {
             if (x + p.X > Width)
             {
-                CreateNewline(ref x, ref y, lineHeight);
+                SplitLabel(text, font, block, ref x, ref y, ref lineHeight);
+
+                return;
             }
+        }
 
-            var label = new Label(this);
-            label.SetText(x == 0 ? text.TrimStart(' ') : text);
-            label.TextColorOverride = block.Color;
-            label.Font = font;
-            label.RestrictToParent = false;
-            label.SizeToContents();
-            label.Alignment = Pos.None;
-            label.SetPosition(x, y);
-            label.RemoveAlignments();
-            label.AddAlignment(block.Alignment);
-            label.ProcessAlignments();
+        // Wrap
+        if (x + p.X > Width)
+        {
+            CreateNewline(ref x, ref y, lineHeight);
+        }
 
-            FormattedLabels.Add(label);
+        var label = new Label(this);
+        label.SetText(x == 0 ? text.TrimStart(' ') : text);
+        label.TextColorOverride = block.Color;
+        label.Font = font;
+        label.RestrictToParent = false;
+        label.SizeToContents();
+        label.Alignment = Pos.None;
+        label.SetPosition(x, y);
+        label.RemoveAlignments();
+        label.AddAlignment(block.Alignment);
+        label.ProcessAlignments();
 
-            //lineheight = (lineheight + pLabel.Height()) / 2;
+        FormattedLabels.Add(label);
 
-            x += label.Width;
+        //lineheight = (lineheight + pLabel.Height()) / 2;
 
-            if (x > Width)
+        x += label.Width;
+
+        if (x > Width)
+        {
+            CreateNewline(ref x, ref y, lineHeight);
+        }
+    }
+
+    protected void CreateNewline(ref int x, ref int y, int lineHeight)
+    {
+        x = 0;
+        y += lineHeight;
+    }
+
+    public void ClearText()
+    {
+        mTextBlocks.Clear();
+        mNeedsRebuild = true;
+    }
+
+    protected void Rebuild()
+    {
+        DeleteAllChildren();
+        FormattedLabels.Clear();
+
+        var x = 0;
+        var y = 0;
+        var lineHeight = -1;
+
+        foreach (var block in mTextBlocks)
+        {
+            if (block.Type == BlockType.NewLine)
             {
                 CreateNewline(ref x, ref y, lineHeight);
+
+                continue;
             }
-        }
 
-        protected void CreateNewline(ref int x, ref int y, int lineHeight)
-        {
-            x = 0;
-            y += lineHeight;
-        }
-
-        public void ClearText()
-        {
-            mTextBlocks.Clear();
-            mNeedsRebuild = true;
-        }
-
-        protected void Rebuild()
-        {
-            DeleteAllChildren();
-            FormattedLabels.Clear();
-
-            var x = 0;
-            var y = 0;
-            var lineHeight = -1;
-
-            foreach (var block in mTextBlocks)
+            if (block.Type == BlockType.Text)
             {
-                if (block.Type == BlockType.NewLine)
-                {
-                    CreateNewline(ref x, ref y, lineHeight);
+                CreateLabel(block.Text, block, ref x, ref y, ref lineHeight, false);
 
-                    continue;
-                }
-
-                if (block.Type == BlockType.Text)
-                {
-                    CreateLabel(block.Text, block, ref x, ref y, ref lineHeight, false);
-
-                    continue;
-                }
+                continue;
             }
-
-            mNeedsRebuild = false;
         }
 
-        /// <summary>
-        ///     Handler invoked when control's bounds change.
-        /// </summary>
-        /// <param name="oldBounds">Old bounds.</param>
-        protected override void OnBoundsChanged(Rectangle oldBounds)
+        mNeedsRebuild = false;
+    }
+
+    /// <summary>
+    ///     Handler invoked when control's bounds change.
+    /// </summary>
+    /// <param name="oldBounds">Old bounds.</param>
+    protected override void OnBoundsChanged(Rectangle oldBounds)
+    {
+        base.OnBoundsChanged(oldBounds);
+        Rebuild();
+    }
+
+    /// <summary>
+    ///     Lays out the control's interior according to alignment, padding, dock etc.
+    /// </summary>
+    /// <param name="skin">Skin to use.</param>
+    protected override void Layout(Skin.Base skin)
+    {
+        base.Layout(skin);
+        if (mNeedsRebuild)
         {
-            base.OnBoundsChanged(oldBounds);
             Rebuild();
         }
 
-        /// <summary>
-        ///     Lays out the control's interior according to alignment, padding, dock etc.
-        /// </summary>
-        /// <param name="skin">Skin to use.</param>
-        protected override void Layout(Skin.Base skin)
+        // align bottoms. this is still not ideal, need to take font metrics into account.
+        Base prev = null;
+        foreach (var child in Children)
         {
-            base.Layout(skin);
-            if (mNeedsRebuild)
+            if (prev != null && child.Y == prev.Y)
             {
-                Rebuild();
+                Align.PlaceRightBottom(child, prev);
             }
 
-            // align bottoms. this is still not ideal, need to take font metrics into account.
-            Base prev = null;
-            foreach (var child in Children)
-            {
-                if (prev != null && child.Y == prev.Y)
-                {
-                    Align.PlaceRightBottom(child, prev);
-                }
-
-                prev = child;
-            }
+            prev = child;
         }
+    }
 
-        protected partial struct TextBlock
-        {
+    protected partial struct TextBlock
+    {
 
-            public BlockType Type;
+        public BlockType Type;
 
-            public string Text;
+        public string Text;
 
-            public Color Color;
+        public Color Color;
 
-            public GameFont Font;
+        public GameFont Font;
 
-            public Alignments Alignment;
+        public Alignments Alignment;
 
-        }
+    }
 
-        protected enum BlockType
-        {
+    protected enum BlockType
+    {
 
-            Text,
+        Text,
 
-            NewLine
-
-        }
+        NewLine
 
     }
 

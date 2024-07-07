@@ -1,11 +1,9 @@
-﻿namespace Intersect.Client.Framework.Gwen.Control
+﻿namespace Intersect.Client.Framework.Gwen.Control;
+
+
+public interface IColorPicker
 {
 
-    public interface IColorPicker
-    {
-
-        Color SelectedColor { get; }
-
-    }
+    Color SelectedColor { get; }
 
 }

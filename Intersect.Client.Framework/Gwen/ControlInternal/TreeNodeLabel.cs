@@ -1,55 +1,53 @@
 ﻿using Intersect.Client.Framework.Gwen.Control;
 
-namespace Intersect.Client.Framework.Gwen.ControlInternal
+namespace Intersect.Client.Framework.Gwen.ControlInternal;
+
+
+/// <summary>
+///     Tree node label.
+/// </summary>
+public partial class TreeNodeLabel : Button
 {
 
     /// <summary>
-    ///     Tree node label.
+    ///     Initializes a new instance of the <see cref="TreeNodeLabel" /> class.
     /// </summary>
-    public partial class TreeNodeLabel : Button
+    /// <param name="parent">Parent control.</param>
+    public TreeNodeLabel(Base parent) : base(parent)
     {
+        Alignment = Pos.Left | Pos.CenterV;
+        ShouldDrawBackground = false;
+        Height = 16;
+        TextPadding = new Padding(3, 0, 3, 0);
+    }
 
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="TreeNodeLabel" /> class.
-        /// </summary>
-        /// <param name="parent">Parent control.</param>
-        public TreeNodeLabel(Base parent) : base(parent)
+    /// <summary>
+    ///     Updates control colors.
+    /// </summary>
+    public override void UpdateColors()
+    {
+        if (IsDisabled)
         {
-            Alignment = Pos.Left | Pos.CenterV;
-            ShouldDrawBackground = false;
-            Height = 16;
-            TextPadding = new Padding(3, 0, 3, 0);
+            TextColor = Skin.Colors.Button.Disabled;
+
+            return;
         }
 
-        /// <summary>
-        ///     Updates control colors.
-        /// </summary>
-        public override void UpdateColors()
+        if (IsDepressed || ToggleState)
         {
-            if (IsDisabled)
-            {
-                TextColor = Skin.Colors.Button.Disabled;
+            TextColor = Skin.Colors.Tree.Selected;
 
-                return;
-            }
-
-            if (IsDepressed || ToggleState)
-            {
-                TextColor = Skin.Colors.Tree.Selected;
-
-                return;
-            }
-
-            if (IsHovered)
-            {
-                TextColor = Skin.Colors.Tree.Hover;
-
-                return;
-            }
-
-            TextColor = Skin.Colors.Tree.Normal;
+            return;
         }
 
+        if (IsHovered)
+        {
+            TextColor = Skin.Colors.Tree.Hover;
+
+            return;
+        }
+
+        TextColor = Skin.Colors.Tree.Normal;
     }
 
 }

@@ -1,19 +1,17 @@
-﻿namespace Intersect.Client.General
+﻿namespace Intersect.Client.General;
+
+
+public enum GameStates
 {
 
-    public enum GameStates
-    {
+    Intro = 0,
 
-        Intro = 0,
+    Menu,
 
-        Menu,
+    Loading,
 
-        Loading,
+    InGame,
 
-        InGame,
-
-        Error
-
-    }
+    Error
 
 }

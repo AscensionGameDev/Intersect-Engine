@@ -1,192 +1,190 @@
 ﻿using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Input;
 
-namespace Intersect.Client.Framework.Gwen.Platform
+namespace Intersect.Client.Framework.Gwen.Platform;
+
+
+/// <summary>
+///     Platform-agnostic utility functions.
+/// </summary>
+public static partial class Neutral
 {
 
+    private static DateTime sFirstTime = DateTime.Now;
+
     /// <summary>
-    ///     Platform-agnostic utility functions.
+    ///     Changes the mouse cursor.
     /// </summary>
-    public static partial class Neutral
+    /// <param name="cursor">Cursor type.</param>
+    public static void SetCursor(Cursor cursor)
     {
+        Cursor.Current = cursor;
+    }
 
-        private static DateTime sFirstTime = DateTime.Now;
-
-        /// <summary>
-        ///     Changes the mouse cursor.
-        /// </summary>
-        /// <param name="cursor">Cursor type.</param>
-        public static void SetCursor(Cursor cursor)
-        {
-            Cursor.Current = cursor;
-        }
-
-        /// <summary>
-        ///     Gets text from clipboard.
-        /// </summary>
-        /// <returns>Clipboard text.</returns>
-        public static string GetClipboardText()
-        {
-            // code from http://forums.getpaint.net/index.php?/topic/13712-trouble-accessing-the-clipboard/page__view__findpost__p__226140
-            var ret = String.Empty;
-            var staThread = new Thread(
-                () =>
+    /// <summary>
+    ///     Gets text from clipboard.
+    /// </summary>
+    /// <returns>Clipboard text.</returns>
+    public static string GetClipboardText()
+    {
+        // code from http://forums.getpaint.net/index.php?/topic/13712-trouble-accessing-the-clipboard/page__view__findpost__p__226140
+        var ret = String.Empty;
+        var staThread = new Thread(
+            () =>
+            {
+                try
                 {
-                    try
-                    {
-                        if (GameClipboard.Instance == null || GameClipboard.Instance.IsEmpty)
-                        {
-                            return;
-                        }
-
-                        ret = GameClipboard.Instance.GetText();
-                    }
-                    catch (Exception)
+                    if (GameClipboard.Instance == null || GameClipboard.Instance.IsEmpty)
                     {
                         return;
                     }
+
+                    ret = GameClipboard.Instance.GetText();
                 }
-            );
-
-            // staThread.SetApartmentState(ApartmentState.STA);
-            staThread.Start();
-            staThread.Join();
-
-            // at this point either you have clipboard data or an exception
-            return ret;
-        }
-
-        /// <summary>
-        ///     Sets the clipboard text.
-        /// </summary>
-        /// <param name="text">Text to set.</param>
-        /// <returns>True if succeeded.</returns>
-        public static bool SetClipboardText(string text)
-        {
-            var ret = false;
-            var staThread = new Thread(
-                () =>
+                catch (Exception)
                 {
-                    try
-                    {
-                        if (GameClipboard.Instance == null)
-                        {
-                            return;
-                        }
-                        GameClipboard.Instance.SetText(text);
-                        ret = true;
-                    }
-                    catch (Exception)
+                    return;
+                }
+            }
+        );
+
+        // staThread.SetApartmentState(ApartmentState.STA);
+        staThread.Start();
+        staThread.Join();
+
+        // at this point either you have clipboard data or an exception
+        return ret;
+    }
+
+    /// <summary>
+    ///     Sets the clipboard text.
+    /// </summary>
+    /// <param name="text">Text to set.</param>
+    /// <returns>True if succeeded.</returns>
+    public static bool SetClipboardText(string text)
+    {
+        var ret = false;
+        var staThread = new Thread(
+            () =>
+            {
+                try
+                {
+                    if (GameClipboard.Instance == null)
                     {
                         return;
                     }
+                    GameClipboard.Instance.SetText(text);
+                    ret = true;
                 }
-            );
+                catch (Exception)
+                {
+                    return;
+                }
+            }
+        );
 
-            staThread.SetApartmentState(ApartmentState.STA);
-            staThread.Start();
-            staThread.Join();
+        staThread.SetApartmentState(ApartmentState.STA);
+        staThread.Start();
+        staThread.Join();
 
-            // at this point either you have clipboard data or an exception
-            return ret;
-        }
+        // at this point either you have clipboard data or an exception
+        return ret;
+    }
 
-        /// <summary>
-        ///     Gets elapsed time since this class was initalized.
-        /// </summary>
-        /// <returns>Time interval in seconds.</returns>
-        public static float GetTimeInSeconds()
+    /// <summary>
+    ///     Gets elapsed time since this class was initalized.
+    /// </summary>
+    /// <returns>Time interval in seconds.</returns>
+    public static float GetTimeInSeconds()
+    {
+        //[halfofastaple] Note:
+        //  After 3.8 months, the difference in value will be greater than a second,
+        //  which isn't a problem for most people (who will run this that long?), but
+        //  if it is, we can convert this (and all timestamps that rely on this) to a double, 
+        //  which will grow stale (time difference > 1s) after ~3,168,888 years 
+        //  (that's gotta be good enough, right?)
+        //P.S. someone fix those numbers if I'm wrong.
+        return (float) (DateTime.Now - sFirstTime).TotalSeconds;
+    }
+
+    /// <summary>
+    ///     Displays an open file dialog.
+    /// </summary>
+    /// <param name="title">Dialog title.</param>
+    /// <param name="startPath">Initial path.</param>
+    /// <param name="extension">File extension filter.</param>
+    /// <param name="callback">Callback that is executed after the dialog completes.</param>
+    /// <returns>True if succeeded.</returns>
+    public static bool FileOpen(string title, string startPath, string extension, Action<string> callback)
+    {
+        var dialog = new OpenFileDialog
         {
-            //[halfofastaple] Note:
-            //  After 3.8 months, the difference in value will be greater than a second,
-            //  which isn't a problem for most people (who will run this that long?), but
-            //  if it is, we can convert this (and all timestamps that rely on this) to a double, 
-            //  which will grow stale (time difference > 1s) after ~3,168,888 years 
-            //  (that's gotta be good enough, right?)
-            //P.S. someone fix those numbers if I'm wrong.
-            return (float) (DateTime.Now - sFirstTime).TotalSeconds;
-        }
+            Title = title,
+            InitialDirectory = startPath,
+            DefaultExt = @"*.*",
+            Filter = extension,
+            CheckPathExists = true,
+            Multiselect = false
+        };
 
-        /// <summary>
-        ///     Displays an open file dialog.
-        /// </summary>
-        /// <param name="title">Dialog title.</param>
-        /// <param name="startPath">Initial path.</param>
-        /// <param name="extension">File extension filter.</param>
-        /// <param name="callback">Callback that is executed after the dialog completes.</param>
-        /// <returns>True if succeeded.</returns>
-        public static bool FileOpen(string title, string startPath, string extension, Action<string> callback)
+        if (dialog.ShowDialog() == DialogResult.Ok)
         {
-            var dialog = new OpenFileDialog
+            if (callback != null)
             {
-                Title = title,
-                InitialDirectory = startPath,
-                DefaultExt = @"*.*",
-                Filter = extension,
-                CheckPathExists = true,
-                Multiselect = false
-            };
-
-            if (dialog.ShowDialog() == DialogResult.Ok)
-            {
-                if (callback != null)
-                {
-                    callback(dialog.FileName);
-                }
+                callback(dialog.FileName);
             }
-            else
-            {
-                if (callback != null)
-                {
-                    callback(String.Empty);
-                }
-
-                return false;
-            }
-
-            return true;
         }
-
-        /// <summary>
-        ///     Displays a save file dialog.
-        /// </summary>
-        /// <param name="title">Dialog title.</param>
-        /// <param name="startPath">Initial path.</param>
-        /// <param name="extension">File extension filter.</param>
-        /// <param name="callback">Callback that is executed after the dialog completes.</param>
-        /// <returns>True if succeeded.</returns>
-        public static bool FileSave(string title, string startPath, string extension, Action<string> callback)
+        else
         {
-            var dialog = new SaveFileDialog
+            if (callback != null)
             {
-                Title = title,
-                InitialDirectory = startPath,
-                DefaultExt = @"*.*",
-                Filter = extension,
-                CheckPathExists = true,
-                OverwritePrompt = true
-            };
-
-            if (dialog.ShowDialog() == DialogResult.Ok)
-            {
-                if (callback != null)
-                {
-                    callback(dialog.FileName);
-                }
-            }
-            else
-            {
-                if (callback != null)
-                {
-                    callback(String.Empty);
-                }
-
-                return false;
+                callback(String.Empty);
             }
 
-            return true;
+            return false;
         }
 
+        return true;
+    }
+
+    /// <summary>
+    ///     Displays a save file dialog.
+    /// </summary>
+    /// <param name="title">Dialog title.</param>
+    /// <param name="startPath">Initial path.</param>
+    /// <param name="extension">File extension filter.</param>
+    /// <param name="callback">Callback that is executed after the dialog completes.</param>
+    /// <returns>True if succeeded.</returns>
+    public static bool FileSave(string title, string startPath, string extension, Action<string> callback)
+    {
+        var dialog = new SaveFileDialog
+        {
+            Title = title,
+            InitialDirectory = startPath,
+            DefaultExt = @"*.*",
+            Filter = extension,
+            CheckPathExists = true,
+            OverwritePrompt = true
+        };
+
+        if (dialog.ShowDialog() == DialogResult.Ok)
+        {
+            if (callback != null)
+            {
+                callback(dialog.FileName);
+            }
+        }
+        else
+        {
+            if (callback != null)
+            {
+                callback(String.Empty);
+            }
+
+            return false;
+        }
+
+        return true;
     }
 
 }

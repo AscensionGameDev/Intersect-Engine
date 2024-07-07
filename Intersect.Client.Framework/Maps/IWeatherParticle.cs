@@ -1,11 +1,10 @@
-﻿namespace Intersect.Client.Framework.Maps
-{
-    public interface IWeatherParticle
-    {
-        float X { get; set; }
-        float Y { get; set; }
+﻿namespace Intersect.Client.Framework.Maps;
 
-        void Dispose();
-        void Update();
-    }
+public interface IWeatherParticle
+{
+    float X { get; set; }
+    float Y { get; set; }
+
+    void Dispose();
+    void Update();
 }

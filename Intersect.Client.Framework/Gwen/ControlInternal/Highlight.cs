@@ -1,31 +1,29 @@
 ﻿using Intersect.Client.Framework.Gwen.Control;
 
-namespace Intersect.Client.Framework.Gwen.ControlInternal
+namespace Intersect.Client.Framework.Gwen.ControlInternal;
+
+
+/// <summary>
+///     Drag and drop highlight.
+/// </summary>
+public partial class Highlight : Base
 {
 
     /// <summary>
-    ///     Drag and drop highlight.
+    ///     Initializes a new instance of the <see cref="Highlight" /> class.
     /// </summary>
-    public partial class Highlight : Base
+    /// <param name="parent">Parent control.</param>
+    public Highlight(Base parent) : base(parent)
     {
+    }
 
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="Highlight" /> class.
-        /// </summary>
-        /// <param name="parent">Parent control.</param>
-        public Highlight(Base parent) : base(parent)
-        {
-        }
-
-        /// <summary>
-        ///     Renders the control using specified skin.
-        /// </summary>
-        /// <param name="skin">Skin to use.</param>
-        protected override void Render(Skin.Base skin)
-        {
-            skin.DrawHighlight(this);
-        }
-
+    /// <summary>
+    ///     Renders the control using specified skin.
+    /// </summary>
+    /// <param name="skin">Skin to use.</param>
+    protected override void Render(Skin.Base skin)
+    {
+        skin.DrawHighlight(this);
     }
 
 }
