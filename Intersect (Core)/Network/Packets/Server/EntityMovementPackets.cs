@@ -1,7 +1,4 @@
-﻿using System;
-
-using Intersect.Enums;
-using MessagePack;
+﻿using MessagePack;
 
 namespace Intersect.Network.Packets.Server
 {

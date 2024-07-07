@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Intersect.Threading
+﻿namespace Intersect.Threading
 {
 
     /// <inheritdoc />

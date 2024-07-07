@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Intersect.Core.ExperimentalFeatures
+﻿namespace Intersect.Core.ExperimentalFeatures
 {
 
     public partial struct ExperimentalFlagAlias : IExperimentalFlag

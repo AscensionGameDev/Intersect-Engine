@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-
-using Ceras;
-using Intersect.GameObjects.Maps;
+﻿using Ceras;
 using Intersect.Logging;
 
 using K4os.Compression.LZ4;

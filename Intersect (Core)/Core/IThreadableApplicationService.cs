@@ -1,7 +1,4 @@
-﻿
-using System.Threading;
-
-namespace Intersect.Core
+﻿namespace Intersect.Core
 {
     /// <summary>
     /// Declares the API surface for application services that have their own thread.

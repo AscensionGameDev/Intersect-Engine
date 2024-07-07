@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Intersect.GameObjects.Maps
+﻿namespace Intersect.GameObjects.Maps
 {
     public partial class ResourceSpawn
     {

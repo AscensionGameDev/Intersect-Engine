@@ -4,8 +4,6 @@ using Intersect.Factories;
 using Intersect.Plugins.Helpers;
 using Intersect.Plugins.Interfaces;
 using Intersect.Properties;
-
-using System;
 using System.Globalization;
 using System.Reflection;
 

@@ -1,6 +1,4 @@
-﻿using System;
-
-using Intersect.Enums;
+﻿using Intersect.Enums;
 
 namespace Intersect.GameObjects.Maps
 {

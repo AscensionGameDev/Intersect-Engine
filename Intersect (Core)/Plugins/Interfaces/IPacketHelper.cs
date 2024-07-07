@@ -1,8 +1,5 @@
 ﻿using Intersect.Network;
 
-using System;
-using System.Collections.Generic;
-
 namespace Intersect.Plugins.Interfaces
 {
     /// <summary>

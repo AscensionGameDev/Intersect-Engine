@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Intersect.Utilities
+﻿namespace Intersect.Utilities
 {
 
     public static partial class Nullability

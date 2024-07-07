@@ -1,5 +1,3 @@
-using System;
-
 using Intersect.Enums;
 using Intersect.GameObjects.Annotations;
 using Intersect.Localization;

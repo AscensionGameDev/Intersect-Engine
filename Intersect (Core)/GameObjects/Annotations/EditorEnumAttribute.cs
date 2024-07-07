@@ -1,5 +1,3 @@
-using System;
-
 namespace Intersect.GameObjects.Annotations
 {
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]

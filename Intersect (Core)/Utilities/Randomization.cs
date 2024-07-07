@@ -1,6 +1,4 @@
-﻿using System;
-
-using Intersect.Core;
+﻿using Intersect.Core;
 using Intersect.Enums;
 
 namespace Intersect.Utilities

@@ -1,7 +1,4 @@
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
 
 using Intersect.Enums;
 using Intersect.GameObjects.Conditions;
@@ -13,7 +10,6 @@ using Intersect.Utilities;
 using Microsoft.EntityFrameworkCore;
 
 using Newtonsoft.Json;
-using static Intersect.GameObjects.EquipmentProperties;
 
 namespace Intersect.GameObjects
 {

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Intersect.Immutability
+﻿namespace Intersect.Immutability
 {
 
     public partial struct Immutable<TValue>

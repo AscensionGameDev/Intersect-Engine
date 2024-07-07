@@ -1,5 +1,3 @@
-using System;
-
 using Intersect.Enums;
 
 namespace Intersect.GameObjects.Events

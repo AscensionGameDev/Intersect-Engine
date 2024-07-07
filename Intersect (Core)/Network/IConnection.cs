@@ -1,7 +1,4 @@
-﻿
-using System;
-
-namespace Intersect.Network
+﻿namespace Intersect.Network
 {
     public interface IConnection : IDisposable
     {

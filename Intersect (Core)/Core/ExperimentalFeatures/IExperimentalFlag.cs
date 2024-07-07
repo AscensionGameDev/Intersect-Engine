@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Intersect.Core.ExperimentalFeatures
+﻿namespace Intersect.Core.ExperimentalFeatures
 {
 
     public interface IExperimentalFlag : IEquatable<IExperimentalFlag>

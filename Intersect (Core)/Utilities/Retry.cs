@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading;
-
-using Intersect.Logging;
+﻿using Intersect.Logging;
 
 namespace Intersect.Utilities
 {

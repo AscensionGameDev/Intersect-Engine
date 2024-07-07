@@ -1,6 +1,4 @@
-﻿using System;
-
-using Intersect.Models;
+﻿using Intersect.Models;
 
 namespace Intersect.Collections
 {

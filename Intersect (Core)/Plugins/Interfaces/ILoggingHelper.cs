@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-using Intersect.Logging;
+﻿using Intersect.Logging;
 using Intersect.Logging.Formatting;
 
 namespace Intersect.Plugins.Interfaces

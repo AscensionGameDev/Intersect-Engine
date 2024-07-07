@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Intersect.Extensions
+﻿namespace Intersect.Extensions
 {
 
     [AttributeUsage(AttributeTargets.Field, Inherited = false)]

@@ -1,7 +1,4 @@
-﻿
-using System.Collections.Generic;
-
-using Intersect.Core;
+﻿using Intersect.Core;
 
 namespace Intersect.Plugins
 {

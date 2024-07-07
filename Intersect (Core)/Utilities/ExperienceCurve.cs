@@ -1,6 +1,4 @@
-﻿using System;
-
-using Intersect.Logging;
+﻿using Intersect.Logging;
 
 using NCalc;
 

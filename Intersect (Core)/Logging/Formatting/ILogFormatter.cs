@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Intersect.Logging.Formatting
+﻿namespace Intersect.Logging.Formatting
 {
 
     public interface ILogFormatter

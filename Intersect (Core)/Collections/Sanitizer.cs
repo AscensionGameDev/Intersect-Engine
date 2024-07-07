@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-using Intersect.Extensions;
+﻿using Intersect.Extensions;
 
 namespace Intersect.Collections
 {

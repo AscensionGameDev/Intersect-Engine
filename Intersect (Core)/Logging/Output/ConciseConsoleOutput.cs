@@ -1,5 +1,3 @@
-using System;
-
 namespace Intersect.Logging.Output
 {
     // TODO: Figure out what doesn't need to be duplicated between this and ConsoleOutput

@@ -1,7 +1,4 @@
-﻿using System;
-using System.IO;
-
-namespace Intersect.Utilities
+﻿namespace Intersect.Utilities
 {
 
     public static partial class StreamUtils

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Intersect.Enums;
+﻿using Intersect.Enums;
 using MessagePack;
 
 namespace Intersect.Network.Packets.Server

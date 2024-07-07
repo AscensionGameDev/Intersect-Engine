@@ -1,11 +1,8 @@
 ﻿using Intersect.Logging;
 using Intersect.Logging.Output;
 using Intersect.Plugins.Interfaces;
-
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
-using System.IO;
 
 namespace Intersect.Plugins.Helpers
 {

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading;
-
-namespace Intersect.Network
+﻿namespace Intersect.Network
 {
 
     // TODO : Auto-stale packet deletion
