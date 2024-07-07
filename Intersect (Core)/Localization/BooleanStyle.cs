@@ -1,8 +1,7 @@
-namespace Intersect.Localization
+namespace Intersect.Localization;
+
+public enum BooleanStyle
 {
-    public enum BooleanStyle
-    {
-        TrueFalse,
-        YesNo,
-    }
+    TrueFalse,
+    YesNo,
 }

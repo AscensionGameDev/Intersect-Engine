@@ -1,27 +1,26 @@
-﻿namespace Intersect.Network
+﻿namespace Intersect.Network;
+
+public interface IConnection : IDisposable
 {
-    public interface IConnection : IDisposable
-    {
-        Guid Guid { get; }
+    Guid Guid { get; }
 
-        bool CanDisconnect => true;
+    bool CanDisconnect => true;
 
-        bool IsConnected { get; }
+    bool IsConnected { get; }
 
-        string Ip { get; }
+    string Ip { get; }
 
-        int Port { get; }
+    int Port { get; }
 
-        ConnectionStatistics Statistics { get; }
+    ConnectionStatistics Statistics { get; }
 
-        bool Send(IPacket packet, TransmissionMode mode = TransmissionMode.All);
+    bool Send(IPacket packet, TransmissionMode mode = TransmissionMode.All);
 
-        void HandleConnected();
+    void HandleConnected();
 
-        void HandleApproved();
+    void HandleApproved();
 
-        void HandleDisconnected();
+    void HandleDisconnected();
 
-        void Disconnect(string? message = default);
-    }
+    void Disconnect(string? message = default);
 }

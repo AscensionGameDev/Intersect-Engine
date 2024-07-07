@@ -1,31 +1,29 @@
 ﻿using MessagePack;
 
-namespace Intersect.Network.Packets.Client
+namespace Intersect.Network.Packets.Client;
+
+[MessagePackObject]
+public partial class PartyInvitePacket : IntersectPacket
 {
-    [MessagePackObject]
-    public partial class PartyInvitePacket : IntersectPacket
+    //Parameterless Constructor for MessagePack
+    public PartyInvitePacket()
     {
-        //Parameterless Constructor for MessagePack
-        public PartyInvitePacket()
-        {
-        }
-
-        public PartyInvitePacket(Guid targetId)
-        {
-            TargetId = targetId;
-        }
-
-        public PartyInvitePacket(string target)
-        {
-            Target = target;
-        }
-
-        [Key(0)]
-        public Guid TargetId { get; set; }
-
-        [Key(1)]
-        public string Target { get; set; }
-
     }
+
+    public PartyInvitePacket(Guid targetId)
+    {
+        TargetId = targetId;
+    }
+
+    public PartyInvitePacket(string target)
+    {
+        Target = target;
+    }
+
+    [Key(0)]
+    public Guid TargetId { get; set; }
+
+    [Key(1)]
+    public string Target { get; set; }
 
 }

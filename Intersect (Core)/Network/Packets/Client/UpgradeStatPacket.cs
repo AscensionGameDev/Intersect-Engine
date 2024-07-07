@@ -1,23 +1,21 @@
 ﻿using MessagePack;
 
-namespace Intersect.Network.Packets.Client
+namespace Intersect.Network.Packets.Client;
+
+[MessagePackObject]
+public partial class UpgradeStatPacket : IntersectPacket
 {
-    [MessagePackObject]
-    public partial class UpgradeStatPacket : IntersectPacket
+    //Parameterless Constructor for MessagePack
+    public UpgradeStatPacket()
     {
-        //Parameterless Constructor for MessagePack
-        public UpgradeStatPacket()
-        {
-        }
-
-        public UpgradeStatPacket(byte stat)
-        {
-            Stat = stat;
-        }
-
-        [Key(0)]
-        public byte Stat { get; set; }
-
     }
+
+    public UpgradeStatPacket(byte stat)
+    {
+        Stat = stat;
+    }
+
+    [Key(0)]
+    public byte Stat { get; set; }
 
 }

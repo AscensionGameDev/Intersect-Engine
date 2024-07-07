@@ -1,11 +1,9 @@
-﻿namespace Intersect.IO
+﻿namespace Intersect.IO;
+
+
+public interface ISaveable
 {
 
-    public interface ISaveable
-    {
-
-        bool Save();
-
-    }
+    bool Save();
 
 }

@@ -1,17 +1,15 @@
 ﻿using MessagePack;
 
-namespace Intersect.Network.Packets.Client
+namespace Intersect.Network.Packets.Client;
+
+[MessagePackObject]
+public partial class SwapSpellsPacket : SlotSwapPacket
 {
-    [MessagePackObject]
-    public partial class SwapSpellsPacket : SlotSwapPacket
+    //Parameterless Constructor for MessagePack
+    public SwapSpellsPacket() : base(0, 0)
     {
-        //Parameterless Constructor for MessagePack
-        public SwapSpellsPacket() : base(0, 0)
-        {
-        }
-
-        public SwapSpellsPacket(int slot1, int slot2) : base(slot1, slot2) { }
-
     }
+
+    public SwapSpellsPacket(int slot1, int slot2) : base(slot1, slot2) { }
 
 }

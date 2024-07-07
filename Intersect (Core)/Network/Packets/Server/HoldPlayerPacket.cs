@@ -1,31 +1,29 @@
 ﻿using MessagePack;
 
-namespace Intersect.Network.Packets.Server
+namespace Intersect.Network.Packets.Server;
+
+[MessagePackObject]
+public partial class HoldPlayerPacket : IntersectPacket
 {
-    [MessagePackObject]
-    public partial class HoldPlayerPacket : IntersectPacket
+    //Parameterless Constructor for MessagePack
+    public HoldPlayerPacket()
     {
-        //Parameterless Constructor for MessagePack
-        public HoldPlayerPacket()
-        {
-        }
-
-        public HoldPlayerPacket(Guid eventId, Guid mapId, bool releasing)
-        {
-            EventId = eventId;
-            MapId = mapId;
-            Releasing = releasing;
-        }
-
-        [Key(0)]
-        public Guid EventId { get; set; }
-
-        [Key(1)]
-        public Guid MapId { get; set; }
-
-        [Key(2)]
-        public bool Releasing { get; set; }
-
     }
+
+    public HoldPlayerPacket(Guid eventId, Guid mapId, bool releasing)
+    {
+        EventId = eventId;
+        MapId = mapId;
+        Releasing = releasing;
+    }
+
+    [Key(0)]
+    public Guid EventId { get; set; }
+
+    [Key(1)]
+    public Guid MapId { get; set; }
+
+    [Key(2)]
+    public bool Releasing { get; set; }
 
 }

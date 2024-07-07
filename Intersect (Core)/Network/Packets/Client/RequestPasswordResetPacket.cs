@@ -1,23 +1,21 @@
 ﻿using MessagePack;
 
-namespace Intersect.Network.Packets.Client
+namespace Intersect.Network.Packets.Client;
+
+[MessagePackObject]
+public partial class RequestPasswordResetPacket : IntersectPacket
 {
-    [MessagePackObject]
-    public partial class RequestPasswordResetPacket : IntersectPacket
+    //Parameterless Constructor for MessagePack
+    public RequestPasswordResetPacket()
     {
-        //Parameterless Constructor for MessagePack
-        public RequestPasswordResetPacket()
-        {
-        }
-
-        public RequestPasswordResetPacket(string nameOrEmail)
-        {
-            NameOrEmail = nameOrEmail;
-        }
-
-        [Key(0)]
-        public string NameOrEmail { get; set; }
-
     }
+
+    public RequestPasswordResetPacket(string nameOrEmail)
+    {
+        NameOrEmail = nameOrEmail;
+    }
+
+    [Key(0)]
+    public string NameOrEmail { get; set; }
 
 }

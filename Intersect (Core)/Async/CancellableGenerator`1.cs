@@ -1,32 +1,31 @@
-namespace Intersect.Async
+namespace Intersect.Async;
+
+public partial class CancellableGenerator<TValue> : IDisposable
 {
-    public partial class CancellableGenerator<TValue> : IDisposable
+    private readonly CancellationTokenSource _cancellationTokenSource;
+
+    public CancellableGenerator(Func<CancellationToken, AsyncValueGenerator<TValue>> generatorFactory)
     {
-        private readonly CancellationTokenSource _cancellationTokenSource;
-
-        public CancellableGenerator(Func<CancellationToken, AsyncValueGenerator<TValue>> generatorFactory)
+        if (generatorFactory == default)
         {
-            if (generatorFactory == default)
-            {
-                throw new ArgumentNullException(nameof(generatorFactory));
-            }
-
-            _cancellationTokenSource = new CancellationTokenSource();
-            Generator = generatorFactory(_cancellationTokenSource.Token);
+            throw new ArgumentNullException(nameof(generatorFactory));
         }
 
-        public AsyncValueGenerator<TValue> Generator { get; }
+        _cancellationTokenSource = new CancellationTokenSource();
+        Generator = generatorFactory(_cancellationTokenSource.Token);
+    }
 
-        public CancellableGenerator<TValue> Start()
-        {
-            _ = Generator.Start();
-            return this;
-        }
+    public AsyncValueGenerator<TValue> Generator { get; }
 
-        public void Dispose()
-        {
-            _cancellationTokenSource.Cancel();
-            _cancellationTokenSource?.Dispose();
-        }
+    public CancellableGenerator<TValue> Start()
+    {
+        _ = Generator.Start();
+        return this;
+    }
+
+    public void Dispose()
+    {
+        _cancellationTokenSource.Cancel();
+        _cancellationTokenSource?.Dispose();
     }
 }

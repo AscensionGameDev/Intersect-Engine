@@ -1,43 +1,42 @@
-namespace Intersect.Enums
+namespace Intersect.Enums;
+
+public enum CommonEventTrigger
 {
-    public enum CommonEventTrigger
-    {
-        None = 0,
+    None = 0,
 
-        Login,
+    Login,
 
-        LevelUp,
+    LevelUp,
 
-        OnRespawn,
+    OnRespawn,
 
-        SlashCommand,
+    SlashCommand,
 
-        Autorun,
+    Autorun,
 
-        PVPKill,
+    PVPKill,
 
-        PVPDeath,
+    PVPDeath,
 
-        PlayerInteract,
+    PlayerInteract,
 
-        EquipChange,
+    EquipChange,
 
-        PlayerVariableChange,
+    PlayerVariableChange,
 
-        ServerVariableChange,
+    ServerVariableChange,
 
-        GuildMemberJoined,
+    GuildMemberJoined,
 
-        GuildMemberLeft,
+    GuildMemberLeft,
 
-        GuildMemberKicked,
+    GuildMemberKicked,
 
-        GuildVariableChange,
+    GuildVariableChange,
 
-        InventoryChanged,
+    InventoryChanged,
 
-        MapChanged,
+    MapChanged,
 
-        UserVariableChange,
-    }
+    UserVariableChange,
 }

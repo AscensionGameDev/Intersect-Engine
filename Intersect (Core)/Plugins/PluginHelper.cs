@@ -1,24 +1,23 @@
 ﻿using Intersect.Logging;
 
-namespace Intersect.Plugins
+namespace Intersect.Plugins;
+
+/// <summary>
+/// Convenience abstract class that defines commonly used properties for certain plugin helpers.
+/// </summary>
+public abstract partial class PluginHelper
 {
     /// <summary>
-    /// Convenience abstract class that defines commonly used properties for certain plugin helpers.
+    /// The <see cref="Logger"/> for this helper to use.
     /// </summary>
-    public abstract partial class PluginHelper
-    {
-        /// <summary>
-        /// The <see cref="Logger"/> for this helper to use.
-        /// </summary>
-        protected Logger Logger { get; }
+    protected Logger Logger { get; }
 
-        /// <summary>
-        /// Initializes this <see cref="PluginHelper"/>.
-        /// </summary>
-        /// <param name="logger">The <see cref="Logger"/> for this helper to use.</param>
-        protected PluginHelper(Logger logger)
-        {
-            Logger = logger;
-        }
+    /// <summary>
+    /// Initializes this <see cref="PluginHelper"/>.
+    /// </summary>
+    /// <param name="logger">The <see cref="Logger"/> for this helper to use.</param>
+    protected PluginHelper(Logger logger)
+    {
+        Logger = logger;
     }
 }

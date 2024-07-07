@@ -1,19 +1,18 @@
-namespace Intersect.Enums
+namespace Intersect.Enums;
+
+public enum ItemEffect : byte
 {
-    public enum ItemEffect : byte
-    {
-        None = 0,
+    None = 0,
 
-        CooldownReduction = 1,
+    CooldownReduction = 1,
 
-        Lifesteal = 2,
+    Lifesteal = 2,
 
-        Tenacity = 3,
+    Tenacity = 3,
 
-        Luck = 4,
+    Luck = 4,
 
-        EXP = 5,
+    EXP = 5,
 
-        Manasteal = 6,
-    }
+    Manasteal = 6,
 }

@@ -1,11 +1,10 @@
-﻿namespace Intersect.Enums
+﻿namespace Intersect.Enums;
+
+public enum EventGraphicType
 {
-    public enum EventGraphicType
-    {
-        None = 0,
+    None = 0,
 
-        Sprite,
+    Sprite,
 
-        Tileset,
-    }
+    Tileset,
 }

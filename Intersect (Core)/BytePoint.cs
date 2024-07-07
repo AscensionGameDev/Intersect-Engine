@@ -1,19 +1,17 @@
-﻿namespace Intersect
+﻿namespace Intersect;
+
+
+public partial struct BytePoint
 {
 
-    public partial struct BytePoint
+    public byte X;
+
+    public byte Y;
+
+    public BytePoint(byte x, byte y)
     {
-
-        public byte X;
-
-        public byte Y;
-
-        public BytePoint(byte x, byte y)
-        {
-            X = x;
-            Y = y;
-        }
-
+        X = x;
+        Y = y;
     }
 
 }

@@ -1,15 +1,13 @@
 ﻿using System.Text;
 
-namespace Intersect
+namespace Intersect;
+
+
+public static partial class SharedConstants
 {
 
-    public static partial class SharedConstants
-    {
+    public static readonly string VersionName = "Beta Eridani (201802251101-05)";
 
-        public static readonly string VersionName = "Beta Eridani (201802251101-05)";
-
-        public static readonly byte[] VersionData = Encoding.UTF8.GetBytes(VersionName);
-
-    }
+    public static readonly byte[] VersionData = Encoding.UTF8.GetBytes(VersionName);
 
 }

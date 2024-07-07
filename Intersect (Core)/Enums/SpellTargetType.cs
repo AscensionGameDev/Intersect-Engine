@@ -1,17 +1,16 @@
-namespace Intersect.Enums
+namespace Intersect.Enums;
+
+public enum SpellTargetType
 {
-    public enum SpellTargetType
-    {
-        Self = 0,
+    Self = 0,
 
-        Single = 1,
+    Single = 1,
 
-        AoE = 2,
+    AoE = 2,
 
-        Projectile = 3,
+    Projectile = 3,
 
-        OnHit = 4,
+    OnHit = 4,
 
-        Trap = 5,
-    }
+    Trap = 5,
 }

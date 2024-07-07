@@ -1,23 +1,21 @@
 ﻿using MessagePack;
 
-namespace Intersect.Network.Packets.Server
+namespace Intersect.Network.Packets.Server;
+
+[MessagePackObject]
+public partial class StatPointsPacket : IntersectPacket
 {
-    [MessagePackObject]
-    public partial class StatPointsPacket : IntersectPacket
+    //Parameterless Constructor for MessagePack
+    public StatPointsPacket()
     {
-        //Parameterless Constructor for MessagePack
-        public StatPointsPacket()
-        {
-        }
-
-        public StatPointsPacket(int points)
-        {
-            Points = points;
-        }
-
-        [Key(0)]
-        public int Points { get; set; }
-
     }
+
+    public StatPointsPacket(int points)
+    {
+        Points = points;
+    }
+
+    [Key(0)]
+    public int Points { get; set; }
 
 }

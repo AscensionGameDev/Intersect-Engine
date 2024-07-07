@@ -1,15 +1,14 @@
-﻿namespace Intersect.Config
-{
-    public partial class BankOptions
-    {
-        /// <summary>
-        /// The intersect default maximum bank slot value a guild OR player could ever have
-        /// </summary>
-        public const int DefaultMaxSlots = 500;
+﻿namespace Intersect.Config;
 
-        /// <summary>
-        /// The max amount of bank slots possible, player, guild, or otherwise.
-        /// </summary>
-        public int MaxSlots { get; set; } = DefaultMaxSlots;
-    }
+public partial class BankOptions
+{
+    /// <summary>
+    /// The intersect default maximum bank slot value a guild OR player could ever have
+    /// </summary>
+    public const int DefaultMaxSlots = 500;
+
+    /// <summary>
+    /// The max amount of bank slots possible, player, guild, or otherwise.
+    /// </summary>
+    public int MaxSlots { get; set; } = DefaultMaxSlots;
 }

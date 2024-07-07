@@ -2,47 +2,46 @@
 
 using Newtonsoft.Json;
 
-namespace Intersect.GameObjects.Conditions
+namespace Intersect.GameObjects.Conditions;
+
+public partial class ConditionList
 {
-    public partial class ConditionList
+    public List<Condition> Conditions = new List<Condition>(); //Long story.. just go with it.. okay?
+
+    public string Name = "New Condition List";
+
+    public ConditionList()
     {
-        public List<Condition> Conditions = new List<Condition>(); //Long story.. just go with it.. okay?
+    }
 
-        public string Name = "New Condition List";
+    public ConditionList(string data)
+    {
+        Load(data);
+    }
 
-        public ConditionList()
-        {
-        }
+    public void Load(string data)
+    {
+        JsonConvert.PopulateObject(
+            data,
+            this,
+            new JsonSerializerSettings()
+            {
+                TypeNameHandling = TypeNameHandling.Auto,
+                DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
+                ObjectCreationHandling = ObjectCreationHandling.Replace
+            }
+        );
+    }
 
-        public ConditionList(string data)
-        {
-            Load(data);
-        }
-
-        public void Load(string data)
-        {
-            JsonConvert.PopulateObject(
-                data,
-                this,
-                new JsonSerializerSettings()
-                {
-                    TypeNameHandling = TypeNameHandling.Auto,
-                    DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
-                    ObjectCreationHandling = ObjectCreationHandling.Replace
-                }
-            );
-        }
-
-        public string Data()
-        {
-            return JsonConvert.SerializeObject(
-                this,
-                new JsonSerializerSettings()
-                {
-                    TypeNameHandling = TypeNameHandling.Auto,
-                    DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate
-                }
-            );
-        }
+    public string Data()
+    {
+        return JsonConvert.SerializeObject(
+            this,
+            new JsonSerializerSettings()
+            {
+                TypeNameHandling = TypeNameHandling.Auto,
+                DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate
+            }
+        );
     }
 }

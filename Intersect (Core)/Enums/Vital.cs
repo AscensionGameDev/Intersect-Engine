@@ -1,9 +1,8 @@
-namespace Intersect.Enums
-{
-    public enum Vital
-    {
-        Health = 0,
+namespace Intersect.Enums;
 
-        Mana,
-    }
+public enum Vital
+{
+    Health = 0,
+
+    Mana,
 }

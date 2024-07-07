@@ -1,60 +1,59 @@
 ﻿using System.Runtime.Serialization;
 
-namespace Intersect.Config
+namespace Intersect.Config;
+
+public partial class EquipmentOptions
 {
-    public partial class EquipmentOptions
+    public PaperdollOptions Paperdoll = new PaperdollOptions();
+
+    public int ShieldSlot = 3;
+
+    public List<string> Slots = new List<string>()
     {
-        public PaperdollOptions Paperdoll = new PaperdollOptions();
+        "Helmet",
+        "Armor",
+        "Weapon",
+        "Shield",
+        "Boots",
+    };
 
-        public int ShieldSlot = 3;
+    public List<string> ToolTypes = new List<string>()
+    {
+        "Axe",
+        "Pickaxe",
+        "Shovel",
+        "Fishing Rod"
+    };
 
-        public List<string> Slots = new List<string>()
+    public int WeaponSlot = 2;
+
+    [OnDeserializing]
+    internal void OnDeserializingMethod(StreamingContext context)
+    {
+        Slots.Clear();
+        ToolTypes.Clear();
+    }
+
+    [OnDeserialized]
+    internal void OnDeserializedMethod(StreamingContext context)
+    {
+        Validate();
+    }
+
+    public void Validate()
+    {
+        Slots = new List<string>(Slots.Distinct());
+        ToolTypes = new List<string>(ToolTypes.Distinct());
+        if (WeaponSlot < -1 || WeaponSlot > Slots.Count - 1)
         {
-            "Helmet",
-            "Armor",
-            "Weapon",
-            "Shield",
-            "Boots",
-        };
-
-        public List<string> ToolTypes = new List<string>()
-        {
-            "Axe",
-            "Pickaxe",
-            "Shovel",
-            "Fishing Rod"
-        };
-
-        public int WeaponSlot = 2;
-
-        [OnDeserializing]
-        internal void OnDeserializingMethod(StreamingContext context)
-        {
-            Slots.Clear();
-            ToolTypes.Clear();
+            throw new Exception("Config Error: (WeaponSlot) was out of bounds!");
         }
 
-        [OnDeserialized]
-        internal void OnDeserializedMethod(StreamingContext context)
+        if (ShieldSlot < -1 || ShieldSlot > Slots.Count - 1)
         {
-            Validate();
+            throw new Exception("Config Error: (ShieldSlot) was out of bounds!");
         }
 
-        public void Validate()
-        {
-            Slots = new List<string>(Slots.Distinct());
-            ToolTypes = new List<string>(ToolTypes.Distinct());
-            if (WeaponSlot < -1 || WeaponSlot > Slots.Count - 1)
-            {
-                throw new Exception("Config Error: (WeaponSlot) was out of bounds!");
-            }
-
-            if (ShieldSlot < -1 || ShieldSlot > Slots.Count - 1)
-            {
-                throw new Exception("Config Error: (ShieldSlot) was out of bounds!");
-            }
-
-            Paperdoll.Validate(this);
-        }
+        Paperdoll.Validate(this);
     }
 }

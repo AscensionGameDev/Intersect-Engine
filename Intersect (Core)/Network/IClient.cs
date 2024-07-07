@@ -1,18 +1,16 @@
-﻿namespace Intersect.Network
+﻿namespace Intersect.Network;
+
+
+public interface IClient : INetwork
 {
+    IConnection Connection { get; }
+    
+    bool IsConnected { get; }
 
-    public interface IClient : INetwork
-    {
-        IConnection Connection { get; }
-        
-        bool IsConnected { get; }
+    bool IsServerOnline { get; }
 
-        bool IsServerOnline { get; }
+    int Ping { get; }
 
-        int Ping { get; }
-
-        bool Connect();
-
-    }
+    bool Connect();
 
 }

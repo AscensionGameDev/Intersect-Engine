@@ -1,33 +1,32 @@
-namespace Intersect.Enums
+namespace Intersect.Enums;
+
+public enum SpellEffect
 {
-    public enum SpellEffect
-    {
-        None = 0,
+    None = 0,
 
-        Silence = 1,
+    Silence = 1,
 
-        Stun = 2,
+    Stun = 2,
 
-        Snare = 3,
+    Snare = 3,
 
-        Blind = 4,
+    Blind = 4,
 
-        Stealth = 5,
+    Stealth = 5,
 
-        Transform = 6,
+    Transform = 6,
 
-        Cleanse = 7,
+    Cleanse = 7,
 
-        Invulnerable = 8,
+    Invulnerable = 8,
 
-        Shield = 9,
+    Shield = 9,
 
-        Sleep = 10,
+    Sleep = 10,
 
-        OnHit = 11,
+    OnHit = 11,
 
-        Taunt = 12,
+    Taunt = 12,
 
-        Knockback = 13,
-    }
+    Knockback = 13,
 }

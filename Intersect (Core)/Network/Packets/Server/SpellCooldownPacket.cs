@@ -1,24 +1,22 @@
 ﻿using MessagePack;
 
-namespace Intersect.Network.Packets.Server
+namespace Intersect.Network.Packets.Server;
+
+[MessagePackObject]
+public partial class SpellCooldownPacket : IntersectPacket
 {
-    [MessagePackObject]
-    public partial class SpellCooldownPacket : IntersectPacket
+    //Parameterless Constructor for MessagePack
+    public SpellCooldownPacket()
     {
-        //Parameterless Constructor for MessagePack
-        public SpellCooldownPacket()
-        {
-        }
+    }
 
 
-        [Key(0)]
-        public Dictionary<Guid, long> SpellCds;
+    [Key(0)]
+    public Dictionary<Guid, long> SpellCds;
 
-        public SpellCooldownPacket(Dictionary<Guid, long> spellCds)
-        {
-            SpellCds = spellCds;
-        }
-
+    public SpellCooldownPacket(Dictionary<Guid, long> spellCds)
+    {
+        SpellCds = spellCds;
     }
 
 }

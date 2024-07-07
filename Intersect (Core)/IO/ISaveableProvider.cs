@@ -1,13 +1,11 @@
-﻿namespace Intersect.IO
+﻿namespace Intersect.IO;
+
+
+public interface ISaveableProvider
 {
 
-    public interface ISaveableProvider
-    {
+    ISaveable DefaultSaveable { get; }
 
-        ISaveable DefaultSaveable { get; }
-
-        ISaveable<TTo> AsSaveable<TTo>();
-
-    }
+    ISaveable<TTo> AsSaveable<TTo>();
 
 }

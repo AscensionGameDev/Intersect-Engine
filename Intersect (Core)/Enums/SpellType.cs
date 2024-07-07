@@ -1,15 +1,14 @@
-namespace Intersect.Enums
+namespace Intersect.Enums;
+
+public enum SpellType
 {
-    public enum SpellType
-    {
-        CombatSpell = 0,
+    CombatSpell = 0,
 
-        Warp = 1,
+    Warp = 1,
 
-        WarpTo = 2,
+    WarpTo = 2,
 
-        Dash = 3,
+    Dash = 3,
 
-        Event = 4,
-    }
+    Event = 4,
 }

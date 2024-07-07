@@ -1,29 +1,28 @@
-namespace Intersect.Enums
+namespace Intersect.Enums;
+
+public enum MapAttribute : byte
 {
-    public enum MapAttribute : byte
-    {
-        Walkable = 0,
+    Walkable = 0,
 
-        Blocked,
+    Blocked,
 
-        Item,
+    Item,
 
-        ZDimension,
+    ZDimension,
 
-        NpcAvoid,
+    NpcAvoid,
 
-        Warp,
+    Warp,
 
-        Sound,
+    Sound,
 
-        Resource,
+    Resource,
 
-        Animation,
+    Animation,
 
-        GrappleStone,
+    GrappleStone,
 
-        Slide,
+    Slide,
 
-        Critter,
-    }
+    Critter,
 }

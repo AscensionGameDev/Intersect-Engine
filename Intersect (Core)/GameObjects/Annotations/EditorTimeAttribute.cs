@@ -1,10 +1,9 @@
-namespace Intersect.GameObjects.Annotations
+namespace Intersect.GameObjects.Annotations;
+
+[AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
+public class EditorTimeAttribute : EditorFormattedAttribute
 {
-    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
-    public class EditorTimeAttribute : EditorFormattedAttribute
+    public EditorTimeAttribute() : base("FormatTimeMilliseconds")
     {
-        public EditorTimeAttribute() : base("FormatTimeMilliseconds")
-        {
-        }
     }
 }

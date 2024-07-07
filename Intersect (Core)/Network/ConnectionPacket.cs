@@ -8,94 +8,93 @@ using MessagePack;
 using Intersect.Logging;
 #endif
 
-namespace Intersect.Network
+namespace Intersect.Network;
+
+[MessagePackObject]
+[Union(0, typeof(ApprovalPacket))]
+[Union(1, typeof(HailPacket))]
+public abstract partial class ConnectionPacket : IntersectPacket
 {
-    [MessagePackObject]
-    [Union(0, typeof(ApprovalPacket))]
-    [Union(1, typeof(HailPacket))]
-    public abstract partial class ConnectionPacket : IntersectPacket
+    protected const int SIZE_HANDSHAKE_SECRET = 32;
+
+    [IgnoreMember]
+    protected RSA mRsa;
+
+    [IgnoreMember]
+    protected byte[] mHandshakeSecret;
+
+    [IgnoreMember]
+    protected long mAdjusted;
+
+    [IgnoreMember]
+    protected long mUTC;
+
+    [IgnoreMember]
+    protected long mOffset;
+
+    protected ConnectionPacket()
     {
-        protected const int SIZE_HANDSHAKE_SECRET = 32;
+    }
 
-        [IgnoreMember]
-        protected RSA mRsa;
+    protected ConnectionPacket(RSA rsa, byte[] handshakeSecret)
+    {
+        mRsa = rsa ?? throw new ArgumentNullException(nameof(rsa));
 
-        [IgnoreMember]
-        protected byte[] mHandshakeSecret;
+        mHandshakeSecret = handshakeSecret;
 
-        [IgnoreMember]
-        protected long mAdjusted;
+        Adjusted = Timing.Global.Ticks;
+        Offset = Timing.Global.TicksOffset;
+        UTC = Timing.Global.TicksUtc;
+    }
 
-        [IgnoreMember]
-        protected long mUTC;
+    [IgnoreMember]
+    public byte[] HandshakeSecret
+    {
+        get => mHandshakeSecret;
+        set => mHandshakeSecret = value;
+    }
 
-        [IgnoreMember]
-        protected long mOffset;
+    [IgnoreMember]
+    public long Adjusted
+    {
+        get => mAdjusted;
+        set => mAdjusted = value;
+    }
 
-        protected ConnectionPacket()
-        {
-        }
+    [IgnoreMember]
+    public long UTC
+    {
+        get => mUTC;
+        set => mUTC = value;
+    }
 
-        protected ConnectionPacket(RSA rsa, byte[] handshakeSecret)
-        {
-            mRsa = rsa ?? throw new ArgumentNullException(nameof(rsa));
+    [IgnoreMember]
+    public long Offset
+    {
+        get => mOffset;
+        set => mOffset = value;
+    }
 
-            mHandshakeSecret = handshakeSecret;
+    [Key(0)]
+    public byte[] EncryptedData { get; set; }
 
-            Adjusted = Timing.Global.Ticks;
-            Offset = Timing.Global.TicksOffset;
-            UTC = Timing.Global.TicksUtc;
-        }
+    public abstract bool Encrypt();
 
-        [IgnoreMember]
-        public byte[] HandshakeSecret
-        {
-            get => mHandshakeSecret;
-            set => mHandshakeSecret = value;
-        }
+    public abstract bool Decrypt(RSA rsa);
 
-        [IgnoreMember]
-        public long Adjusted
-        {
-            get => mAdjusted;
-            set => mAdjusted = value;
-        }
-
-        [IgnoreMember]
-        public long UTC
-        {
-            get => mUTC;
-            set => mUTC = value;
-        }
-
-        [IgnoreMember]
-        public long Offset
-        {
-            get => mOffset;
-            set => mOffset = value;
-        }
-
-        [Key(0)]
-        public byte[] EncryptedData { get; set; }
-
-        public abstract bool Encrypt();
-
-        public abstract bool Decrypt(RSA rsa);
-
-        protected static void DumpKey(RSAParameters parameters, bool isPublic)
-        {
+    protected static void DumpKey(RSAParameters parameters, bool isPublic)
+    {
 #if INTERSECT_DIAGNOSTIC
-            Log.Diagnostic($"Exponent: {BitConverter.ToString(parameters.Exponent)}");
-            Log.Diagnostic($"Modulus: {BitConverter.ToString(parameters.Modulus)}");
+        Log.Diagnostic($"Exponent: {BitConverter.ToString(parameters.Exponent)}");
+        Log.Diagnostic($"Modulus: {BitConverter.ToString(parameters.Modulus)}");
 
-            if (isPublic) return;
-            Log.Diagnostic($"D: {BitConverter.ToString(parameters.D)}");
-            Log.Diagnostic($"DP: {BitConverter.ToString(parameters.DP)}");
-            Log.Diagnostic($"DQ: {BitConverter.ToString(parameters.DQ)}");
-            Log.Diagnostic($"InverseQ: {BitConverter.ToString(parameters.InverseQ)}");
-            Log.Diagnostic($"P: {BitConverter.ToString(parameters.P)}");
-            Log.Diagnostic($"Q: {BitConverter.ToString(parameters.Q)}");
+        if (isPublic) return;
+        Log.Diagnostic($"D: {BitConverter.ToString(parameters.D)}");
+        Log.Diagnostic($"DP: {BitConverter.ToString(parameters.DP)}");
+        Log.Diagnostic($"DQ: {BitConverter.ToString(parameters.DQ)}");
+        Log.Diagnostic($"InverseQ: {BitConverter.ToString(parameters.InverseQ)}");
+        Log.Diagnostic($"P: {BitConverter.ToString(parameters.P)}");
+        Log.Diagnostic($"Q: {BitConverter.ToString(parameters.Q)}");
 #endif
-        }
     }
 }

@@ -1,31 +1,30 @@
-﻿namespace Intersect.GameObjects.Events
+﻿namespace Intersect.GameObjects.Events;
+
+public partial class MoveRouteAction
 {
-    public partial class MoveRouteAction
+    public Guid AnimationId { get; set; }
+
+    public EventGraphic Graphic { get; set; }
+
+    public MoveRouteEnum Type { get; set; }
+
+    public MoveRouteAction Copy()
     {
-        public Guid AnimationId { get; set; }
-
-        public EventGraphic Graphic { get; set; }
-
-        public MoveRouteEnum Type { get; set; }
-
-        public MoveRouteAction Copy()
+        var copy = new MoveRouteAction()
         {
-            var copy = new MoveRouteAction()
-            {
-                Type = Type
-            };
+            Type = Type
+        };
 
-            if (Type == MoveRouteEnum.SetGraphic)
-            {
-                copy.Graphic = new EventGraphic();
-                copy.Graphic.CopyFrom(Graphic);
-            }
-            else if (Type == MoveRouteEnum.SetAnimation)
-            {
-                copy.AnimationId = AnimationId;
-            }
-
-            return copy;
+        if (Type == MoveRouteEnum.SetGraphic)
+        {
+            copy.Graphic = new EventGraphic();
+            copy.Graphic.CopyFrom(Graphic);
         }
+        else if (Type == MoveRouteEnum.SetAnimation)
+        {
+            copy.AnimationId = AnimationId;
+        }
+
+        return copy;
     }
 }

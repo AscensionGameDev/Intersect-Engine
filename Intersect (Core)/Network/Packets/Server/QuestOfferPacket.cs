@@ -1,23 +1,21 @@
 ﻿using MessagePack;
 
-namespace Intersect.Network.Packets.Server
+namespace Intersect.Network.Packets.Server;
+
+[MessagePackObject]
+public partial class QuestOfferPacket : IntersectPacket
 {
-    [MessagePackObject]
-    public partial class QuestOfferPacket : IntersectPacket
+    //Parameterless Constructor for MessagePack
+    public QuestOfferPacket()
     {
-        //Parameterless Constructor for MessagePack
-        public QuestOfferPacket()
-        {
-        }
-
-        public QuestOfferPacket(Guid questId)
-        {
-            QuestId = questId;
-        }
-
-        [Key(0)]
-        public Guid QuestId { get; set; }
-
     }
+
+    public QuestOfferPacket(Guid questId)
+    {
+        QuestId = questId;
+    }
+
+    [Key(0)]
+    public Guid QuestId { get; set; }
 
 }

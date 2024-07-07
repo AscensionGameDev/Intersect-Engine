@@ -3,58 +3,56 @@ using System.Reflection;
 
 using Newtonsoft.Json;
 
-namespace Intersect.Localization
+namespace Intersect.Localization;
+
+
+public abstract partial class LocaleCommandNamespace : LocaleNamespace
 {
 
-    public abstract partial class LocaleCommandNamespace : LocaleNamespace
+    protected LocaleCommandNamespace()
     {
-
-        protected LocaleCommandNamespace()
-        {
-            var commands = GetType()
-                .GetMembers(BindingFlags.Public | BindingFlags.Instance)
-                .Select(
-                    member =>
+        var commands = GetType()
+            .GetMembers(BindingFlags.Public | BindingFlags.Instance)
+            .Select(
+                member =>
+                {
+                    switch (member)
                     {
-                        switch (member)
-                        {
-                            case FieldInfo fieldInfo:
-                                return fieldInfo.GetValue(this) as LocaleCommand;
+                        case FieldInfo fieldInfo:
+                            return fieldInfo.GetValue(this) as LocaleCommand;
 
-                            case PropertyInfo propertyInfo:
-                                return propertyInfo.GetValue(this) as LocaleCommand;
+                        case PropertyInfo propertyInfo:
+                            return propertyInfo.GetValue(this) as LocaleCommand;
 
-                            default:
-                                return null;
-                        }
+                        default:
+                            return null;
                     }
-                )
-                .Where(command => command != null)
-                .ToList();
+                }
+            )
+            .Where(command => command != null)
+            .ToList();
 
-            CommandList = commands.ToImmutableList() ?? throw new InvalidOperationException();
+        CommandList = commands.ToImmutableList() ?? throw new InvalidOperationException();
 
-            CommandLookup = commands.Select(
-                                    command =>
+        CommandLookup = commands.Select(
+                                command =>
+                                {
+                                    if (command == null)
                                     {
-                                        if (command == null)
-                                        {
-                                            throw new InvalidOperationException();
-                                        }
-
-                                        return new KeyValuePair<string, LocaleCommand>(command.Name, command);
+                                        throw new InvalidOperationException();
                                     }
-                                )
-                                .ToImmutableDictionary() ??
-                            throw new InvalidOperationException();
-        }
 
-        [JsonIgnore]
-        public ImmutableList<LocaleCommand> CommandList { get; }
-
-        [JsonIgnore]
-        public IDictionary<string, LocaleCommand> CommandLookup { get; }
-
+                                    return new KeyValuePair<string, LocaleCommand>(command.Name, command);
+                                }
+                            )
+                            .ToImmutableDictionary() ??
+                        throw new InvalidOperationException();
     }
+
+    [JsonIgnore]
+    public ImmutableList<LocaleCommand> CommandList { get; }
+
+    [JsonIgnore]
+    public IDictionary<string, LocaleCommand> CommandLookup { get; }
 
 }

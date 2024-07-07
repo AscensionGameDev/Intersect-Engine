@@ -1,27 +1,25 @@
 ﻿using MessagePack;
 
-namespace Intersect.Network.Packets.Client
+namespace Intersect.Network.Packets.Client;
+
+[MessagePackObject]
+public partial class ChatMsgPacket : IntersectPacket
 {
-    [MessagePackObject]
-    public partial class ChatMsgPacket : IntersectPacket
+    //Parameterless Constructor for MessagePack
+    public ChatMsgPacket()
     {
-        //Parameterless Constructor for MessagePack
-        public ChatMsgPacket()
-        {
-        }
-
-        public ChatMsgPacket(string msg, byte channel)
-        {
-            Message = msg;
-            Channel = channel;
-        }
-
-        [Key(0)]
-        public string Message { get; set; }
-
-        [Key(1)]
-        public byte Channel { get; set; }
-
     }
+
+    public ChatMsgPacket(string msg, byte channel)
+    {
+        Message = msg;
+        Channel = channel;
+    }
+
+    [Key(0)]
+    public string Message { get; set; }
+
+    [Key(1)]
+    public byte Channel { get; set; }
 
 }

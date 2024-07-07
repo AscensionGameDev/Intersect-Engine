@@ -5,152 +5,150 @@ using Intersect.Enums;
 
 using Newtonsoft.Json;
 
-namespace Intersect.Models
+namespace Intersect.Models;
+
+
+public abstract partial class DatabaseObject<TObject> : IDatabaseObject where TObject : DatabaseObject<TObject>
 {
 
-    public abstract partial class DatabaseObject<TObject> : IDatabaseObject where TObject : DatabaseObject<TObject>
+    public const string Deleted = "ERR_DELETED";
+
+    private string mBackup;
+
+    protected DatabaseObject() { }
+
+    [JsonConstructor]
+    protected DatabaseObject(Guid guid)
     {
+        Id = guid;
+        TimeCreated = DateTime.Now.ToBinary();
+    }
 
-        public const string Deleted = "ERR_DELETED";
+    public static KeyValuePair<Guid, string>[] ItemPairs => Lookup.OrderBy(p => p.Value?.Name)
+        .Select(pair => new KeyValuePair<Guid, string>(pair.Key, pair.Value?.Name ?? Deleted))
+        .ToArray();
 
-        private string mBackup;
+    public static string[] Names => Lookup.OrderBy(p => p.Value?.Name)
+        .Select(pair => pair.Value?.Name ?? Deleted)
+        .ToArray();
 
-        protected DatabaseObject() { }
+    public static DatabaseObjectLookup Lookup => LookupUtils.GetLookup(typeof(TObject));
 
-        [JsonConstructor]
-        protected DatabaseObject(Guid guid)
-        {
-            Id = guid;
-            TimeCreated = DateTime.Now.ToBinary();
-        }
+    [DatabaseGenerated(DatabaseGeneratedOption.None)]
+    public Guid Id { get; protected set; } = Guid.NewGuid();
 
-        public static KeyValuePair<Guid, string>[] ItemPairs => Lookup.OrderBy(p => p.Value?.Name)
-            .Select(pair => new KeyValuePair<Guid, string>(pair.Key, pair.Value?.Name ?? Deleted))
-            .ToArray();
+    public long TimeCreated { get; set; }
 
-        public static string[] Names => Lookup.OrderBy(p => p.Value?.Name)
-            .Select(pair => pair.Value?.Name ?? Deleted)
-            .ToArray();
+    [JsonIgnore]
+    [NotMapped]
+    public GameObjectType Type => LookupUtils.GetGameObjectType(typeof(TObject));
 
-        public static DatabaseObjectLookup Lookup => LookupUtils.GetLookup(typeof(TObject));
+    [JsonIgnore]
+    [NotMapped]
+    public string DatabaseTable => Type.GetTable();
 
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
-        public Guid Id { get; protected set; } = Guid.NewGuid();
+    [JsonProperty(Order = -4)]
+    [Column(Order = 0)]
+    public string Name { get; set; }
 
-        public long TimeCreated { get; set; }
-
-        [JsonIgnore]
-        [NotMapped]
-        public GameObjectType Type => LookupUtils.GetGameObjectType(typeof(TObject));
-
-        [JsonIgnore]
-        [NotMapped]
-        public string DatabaseTable => Type.GetTable();
-
-        [JsonProperty(Order = -4)]
-        [Column(Order = 0)]
-        public string Name { get; set; }
-
-        public virtual void Load(string json, bool keepCreationTime = false)
-        {
-            var oldTime = TimeCreated;
-            JsonConvert.PopulateObject(
-                json, this, new JsonSerializerSettings
-                {
-                    ObjectCreationHandling = ObjectCreationHandling.Replace
-                }
-            );
-
-            if (keepCreationTime)
+    public virtual void Load(string json, bool keepCreationTime = false)
+    {
+        var oldTime = TimeCreated;
+        JsonConvert.PopulateObject(
+            json, this, new JsonSerializerSettings
             {
-                TimeCreated = oldTime;
+                ObjectCreationHandling = ObjectCreationHandling.Replace
             }
-        }
+        );
 
-        // TODO: Can we remove this comment?
-        // public virtual void Load(string json);
-
-        public void MakeBackup()
+        if (keepCreationTime)
         {
-            mBackup = JsonData;
+            TimeCreated = oldTime;
         }
+    }
 
-        public void DeleteBackup()
+    // TODO: Can we remove this comment?
+    // public virtual void Load(string json);
+
+    public void MakeBackup()
+    {
+        mBackup = JsonData;
+    }
+
+    public void DeleteBackup()
+    {
+        mBackup = null;
+    }
+
+    public void RestoreBackup()
+    {
+        if (mBackup != null)
         {
-            mBackup = null;
+            Load(mBackup);
         }
+    }
 
-        public void RestoreBackup()
+    [JsonIgnore]
+    [NotMapped]
+
+    // TODO: Should eventually be formatting.none
+    public virtual string JsonData => JsonConvert.SerializeObject(this, Formatting.Indented);
+
+    public virtual void Delete()
+    {
+        Lookup.Delete(this as TObject);
+    }
+
+    public static Guid IdFromList(int listIndex)
+    {
+        if (listIndex < 0 || listIndex >= Lookup.KeyList.Count)
         {
-            if (mBackup != null)
-            {
-                Load(mBackup);
-            }
+            return Guid.Empty;
         }
 
-        [JsonIgnore]
-        [NotMapped]
+        return Lookup.KeyList.OrderBy(pairs => Lookup[pairs]?.Name).ToArray()[listIndex];
+    }
 
-        // TODO: Should eventually be formatting.none
-        public virtual string JsonData => JsonConvert.SerializeObject(this, Formatting.Indented);
-
-        public virtual void Delete()
+    public static TObject FromList(int listIndex)
+    {
+        if (listIndex < 0 || listIndex >= Lookup.ValueList.Count)
         {
-            Lookup.Delete(this as TObject);
+            return null;
         }
 
-        public static Guid IdFromList(int listIndex)
-        {
-            if (listIndex < 0 || listIndex >= Lookup.KeyList.Count)
-            {
-                return Guid.Empty;
-            }
+        return (TObject) Lookup.ValueList.OrderBy(databaseObject => databaseObject?.Name).ToArray()[
+            listIndex];
+    }
 
-            return Lookup.KeyList.OrderBy(pairs => Lookup[pairs]?.Name).ToArray()[listIndex];
-        }
+    public int ListIndex()
+    {
+        return ListIndex(Id);
+    }
 
-        public static TObject FromList(int listIndex)
-        {
-            if (listIndex < 0 || listIndex >= Lookup.ValueList.Count)
-            {
-                return null;
-            }
+    public static int ListIndex(Guid id)
+    {
+        return Lookup.KeyList.OrderBy(pairs => Lookup[pairs]?.Name).ToList().IndexOf(id);
+    }
 
-            return (TObject) Lookup.ValueList.OrderBy(databaseObject => databaseObject?.Name).ToArray()[
-                listIndex];
-        }
+    public static TObject Get(Guid id)
+    {
+        return Lookup.Get<TObject>(id);
+    }
 
-        public int ListIndex()
-        {
-            return ListIndex(Id);
-        }
+    public static string GetName(Guid id)
+    {
+        return Lookup.Get(id)?.Name ?? Deleted;
+    }
 
-        public static int ListIndex(Guid id)
-        {
-            return Lookup.KeyList.OrderBy(pairs => Lookup[pairs]?.Name).ToList().IndexOf(id);
-        }
+    public static string[] GetNameList()
+    {
+        return Lookup.Select(pair => pair.Value?.Name ?? Deleted).ToArray();
+    }
 
-        public static TObject Get(Guid id)
-        {
-            return Lookup.Get<TObject>(id);
-        }
-
-        public static string GetName(Guid id)
-        {
-            return Lookup.Get(id)?.Name ?? Deleted;
-        }
-
-        public static string[] GetNameList()
-        {
-            return Lookup.Select(pair => pair.Value?.Name ?? Deleted).ToArray();
-        }
-
-        public static bool TryGet(Guid id, out TObject databaseObject)
-        {
-            databaseObject = Get(id);
-            return databaseObject != default;
-        }
-
+    public static bool TryGet(Guid id, out TObject databaseObject)
+    {
+        databaseObject = Get(id);
+        return databaseObject != default;
     }
 
 }

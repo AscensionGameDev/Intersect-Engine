@@ -1,8 +1,7 @@
-namespace Intersect.Enums
+namespace Intersect.Enums;
+
+public enum TypewriterBehavior
 {
-    public enum TypewriterBehavior
-    {
-        Off,
-        Word,
-    }
+    Off,
+    Word,
 }

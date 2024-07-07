@@ -1,52 +1,51 @@
 ﻿using System.Net;
 using Intersect.Memory;
 
-namespace Intersect.Network
+namespace Intersect.Network;
+
+public interface INetworkLayerInterface : IDisposable
 {
-    public interface INetworkLayerInterface : IDisposable
-    {
-        event HandleConnectionEvent? OnConnected;
+    event HandleConnectionEvent? OnConnected;
 
-        event HandleConnectionEvent? OnConnectionApproved;
+    event HandleConnectionEvent? OnConnectionApproved;
 
-        event HandleConnectionEvent? OnConnectionDenied;
+    event HandleConnectionEvent? OnConnectionDenied;
 
-        event HandleConnectionRequest? OnConnectionRequested;
+    event HandleConnectionRequest? OnConnectionRequested;
 
-        event HandleConnectionEvent? OnDisconnected;
+    event HandleConnectionEvent? OnDisconnected;
 
-        event HandlePacketAvailable? OnPacketAvailable;
+    event HandlePacketAvailable? OnPacketAvailable;
 
-        event HandleUnconnectedMessage? OnUnconnectedMessage;
+    event HandleUnconnectedMessage? OnUnconnectedMessage;
 
-        bool TryGetInboundBuffer(out IBuffer buffer, out IConnection connection);
+    bool TryGetInboundBuffer(out IBuffer buffer, out IConnection connection);
 
-        void ReleaseInboundBuffer(IBuffer buffer);
+    void ReleaseInboundBuffer(IBuffer buffer);
 
-        bool SendPacket(
-            IPacket packet,
-            IConnection connection = null,
-            TransmissionMode transmissionMode = TransmissionMode.All
-        );
+    bool SendPacket(
+        IPacket packet,
+        IConnection connection = null,
+        TransmissionMode transmissionMode = TransmissionMode.All
+    );
 
-        bool SendPacket(
-            IPacket packet,
-            ICollection<IConnection> connections,
-            TransmissionMode transmissionMode = TransmissionMode.All
-        );
+    bool SendPacket(
+        IPacket packet,
+        ICollection<IConnection> connections,
+        TransmissionMode transmissionMode = TransmissionMode.All
+    );
 
-        bool SendUnconnectedPacket(IPEndPoint target, ReadOnlySpan<byte> data);
+    bool SendUnconnectedPacket(IPEndPoint target, ReadOnlySpan<byte> data);
 
-        bool SendUnconnectedPacket(IPEndPoint target, UnconnectedPacket packet);
+    bool SendUnconnectedPacket(IPEndPoint target, UnconnectedPacket packet);
 
-        void Start();
+    void Start();
 
-        void Stop(string reason = "stopping");
+    void Stop(string reason = "stopping");
 
-        bool Connect();
+    bool Connect();
 
-        void Disconnect(IConnection connection, string message);
+    void Disconnect(IConnection connection, string message);
 
-        void Disconnect(ICollection<IConnection> connections, string messages);
-    }
+    void Disconnect(ICollection<IConnection> connections, string messages);
 }

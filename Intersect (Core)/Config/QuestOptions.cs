@@ -1,27 +1,26 @@
 using System.Runtime.Serialization;
 
-namespace Intersect.Config
+namespace Intersect.Config;
+
+/// <summary>
+/// Contains configurable options pertaining quests and the layout of the quest log
+/// </summary>
+public partial class QuestOptions
 {
     /// <summary>
-    /// Contains configurable options pertaining quests and the layout of the quest log
+    /// Quest categories in which to separate quests into on the quest log
     /// </summary>
-    public partial class QuestOptions
+    public List<string> Categories { get; set; } = new List<string>()
     {
-        /// <summary>
-        /// Quest categories in which to separate quests into on the quest log
-        /// </summary>
-        public List<string> Categories { get; set; } = new List<string>()
-        {
-            "Main Quests",
-            "Side Quests",
-            "Completed Quests",
-        };
+        "Main Quests",
+        "Side Quests",
+        "Completed Quests",
+    };
 
 
-        [OnDeserializing]
-        internal void OnDeserializingMethod(StreamingContext context)
-        {
-            Categories.Clear();
-        }
+    [OnDeserializing]
+    internal void OnDeserializingMethod(StreamingContext context)
+    {
+        Categories.Clear();
     }
 }

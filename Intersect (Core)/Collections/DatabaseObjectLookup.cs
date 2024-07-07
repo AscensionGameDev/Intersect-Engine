@@ -5,360 +5,358 @@ using Intersect.Logging;
 using Intersect.Models;
 using Intersect.Utilities;
 
-namespace Intersect.Collections
+namespace Intersect.Collections;
+
+
+public partial class DatabaseObjectLookup : IGameObjectLookup<IDatabaseObject>
 {
 
-    public partial class DatabaseObjectLookup : IGameObjectLookup<IDatabaseObject>
+    private readonly SortedDictionary<Guid, IDatabaseObject> mIdMap;
+
+    private Dictionary<Guid, IDatabaseObject> mCachedClone;
+
+    private bool mIsDirty = true;
+
+    private readonly object mLock;
+
+    public DatabaseObjectLookup(Type storedType)
     {
+        mLock = new object();
+        mIdMap = new SortedDictionary<Guid, IDatabaseObject>();
 
-        private readonly SortedDictionary<Guid, IDatabaseObject> mIdMap;
+        StoredType = storedType;
+    }
 
-        private Dictionary<Guid, IDatabaseObject> mCachedClone;
+    public Type StoredType { get; }
 
-        private bool mIsDirty = true;
+    public virtual IDatabaseObject this[Guid id]
+    {
+        get => Get(id);
+        set => Set(id, value);
+    }
 
-        private readonly object mLock;
-
-        public DatabaseObjectLookup(Type storedType)
+    public List<Guid> KeyList
+    {
+        get
         {
-            mLock = new object();
-            mIdMap = new SortedDictionary<Guid, IDatabaseObject>();
-
-            StoredType = storedType;
+            lock (mLock)
+            {
+                return mIdMap.Keys.ToList();
+            }
         }
+    }
 
-        public Type StoredType { get; }
-
-        public virtual IDatabaseObject this[Guid id]
+    public List<IDatabaseObject> ValueList
+    {
+        get
         {
-            get => Get(id);
-            set => Set(id, value);
+            lock (mLock)
+            {
+                try
+                {
+                    return mIdMap.Values.OrderBy(databaseObject => databaseObject?.Name).ToList();
+                }
+                catch (Exception exception)
+                {
+                    Log.Warn(
+                        exception,
+                        $@"{StoredType.Name}[Count={mIdMap.Count},NullCount={mIdMap.Count(pair => pair.Value == null)}]"
+                    );
+
+                    throw;
+                }
+            }
         }
+    }
 
-        public List<Guid> KeyList
+    public Type IndexKeyType => typeof(int);
+
+    public bool IsEmpty => Count < 1;
+
+    public Type KeyType => typeof(Guid);
+
+    public Type ValueType => typeof(IDatabaseObject);
+
+    public virtual int Count
+    {
+        get
         {
-            get
+            lock (mLock)
+            {
+                return mIdMap.Count;
+            }
+        }
+    }
+
+    public virtual IDictionary<Guid, IDatabaseObject> Clone
+    {
+        get
+        {
+            if (mIsDirty || mCachedClone == null)
             {
                 lock (mLock)
                 {
-                    return mIdMap.Keys.ToList();
+                    mCachedClone = mIdMap.ToDictionary(pair => pair.Key, pair => pair.Value);
+                    mIsDirty = false;
                 }
             }
+            return mCachedClone;
         }
+    }
 
-        public List<IDatabaseObject> ValueList
+    public virtual ICollection<KeyValuePair<Guid, IDatabaseObject>> Pairs => Clone;
+
+    public virtual ICollection<Guid> Keys
+    {
+        get
         {
-            get
+            lock (mLock)
             {
-                lock (mLock)
-                {
-                    try
-                    {
-                        return mIdMap.Values.OrderBy(databaseObject => databaseObject?.Name).ToList();
-                    }
-                    catch (Exception exception)
-                    {
-                        Log.Warn(
-                            exception,
-                            $@"{StoredType.Name}[Count={mIdMap.Count},NullCount={mIdMap.Count(pair => pair.Value == null)}]"
-                        );
-
-                        throw;
-                    }
-                }
+                return mIdMap.Keys;
             }
         }
+    }
 
-        public Type IndexKeyType => typeof(int);
+    public virtual ICollection<IDatabaseObject> Values => ValueList;
 
-        public bool IsEmpty => Count < 1;
+    public virtual IDatabaseObject Get(Guid id)
+    {
+        return TryGetValue(id, out var value) ? value : default(IDatabaseObject);
+    }
 
-        public Type KeyType => typeof(Guid);
+    public virtual TObject Get<TObject>(Guid id) where TObject : IDatabaseObject
+    {
+        return TryGetValue(id, out TObject value) ? value : default(TObject);
+    }
 
-        public Type ValueType => typeof(IDatabaseObject);
-
-        public virtual int Count
+    public virtual bool TryGetValue<TObject>(Guid id, out TObject value) where TObject : IDatabaseObject
+    {
+        if (TryGetValue(id, out var baseObject))
         {
-            get
-            {
-                lock (mLock)
-                {
-                    return mIdMap.Count;
-                }
-            }
+            value = (TObject) baseObject;
+
+            return true;
         }
 
-        public virtual IDictionary<Guid, IDatabaseObject> Clone
+        value = default(TObject);
+
+        return false;
+    }
+
+    public virtual bool TryGetValue(Guid id, out IDatabaseObject value)
+    {
+        if (!IsIdValid(id))
         {
-            get
-            {
-                if (mIsDirty || mCachedClone == null)
-                {
-                    lock (mLock)
-                    {
-                        mCachedClone = mIdMap.ToDictionary(pair => pair.Key, pair => pair.Value);
-                        mIsDirty = false;
-                    }
-                }
-                return mCachedClone;
-            }
-        }
-
-        public virtual ICollection<KeyValuePair<Guid, IDatabaseObject>> Pairs => Clone;
-
-        public virtual ICollection<Guid> Keys
-        {
-            get
-            {
-                lock (mLock)
-                {
-                    return mIdMap.Keys;
-                }
-            }
-        }
-
-        public virtual ICollection<IDatabaseObject> Values => ValueList;
-
-        public virtual IDatabaseObject Get(Guid id)
-        {
-            return TryGetValue(id, out var value) ? value : default(IDatabaseObject);
-        }
-
-        public virtual TObject Get<TObject>(Guid id) where TObject : IDatabaseObject
-        {
-            return TryGetValue(id, out TObject value) ? value : default(TObject);
-        }
-
-        public virtual bool TryGetValue<TObject>(Guid id, out TObject value) where TObject : IDatabaseObject
-        {
-            if (TryGetValue(id, out var baseObject))
-            {
-                value = (TObject) baseObject;
-
-                return true;
-            }
-
-            value = default(TObject);
+            value = default(IDatabaseObject);
 
             return false;
         }
 
-        public virtual bool TryGetValue(Guid id, out IDatabaseObject value)
+        lock (mLock)
         {
-            if (!IsIdValid(id))
-            {
-                value = default(IDatabaseObject);
+            return mIdMap.TryGetValue(id, out value);
+        }
+    }
 
+    public bool Add(IDatabaseObject value)
+    {
+        return InternalSet(value, false);
+    }
+
+    public IDatabaseObject AddNew(Type type, Guid id)
+    {
+        var idConstructor = type.GetConstructor(new[] {KeyType});
+        if (idConstructor == null)
+        {
+            throw new ArgumentNullException(nameof(idConstructor), MessageNoConstructor(type, KeyType.Name));
+        }
+
+        var value = (IDatabaseObject) idConstructor.Invoke(new object[] {id});
+        if (value == null)
+        {
+            throw new ArgumentNullException(
+                $"Failed to create instance of '{ValueType.Name}' with the ({KeyType.Name}) constructor."
+            );
+        }
+
+        return InternalSet(value, false) ? value : default(IDatabaseObject);
+    }
+
+    public virtual bool Set(Guid key, IDatabaseObject value)
+    {
+        if (key != (value?.Id ?? Guid.Empty))
+        {
+            throw new ArgumentException(@"Key does not match the Guid of the value.", nameof(key));
+        }
+
+        return InternalSet(value, true);
+    }
+
+    public virtual bool Delete(IDatabaseObject value)
+    {
+        if (value == null)
+        {
+            throw new ArgumentNullException();
+        }
+
+        if (!IsIdValid(value.Id))
+        {
+            throw new ArgumentOutOfRangeException();
+        }
+
+        lock (mLock)
+        {
+            mIsDirty = true;
+            return mIdMap.Remove(value.Id);
+        }
+    }
+
+    public virtual bool DeleteAt(Guid guid)
+    {
+        if (guid == null)
+        {
+            throw new ArgumentNullException();
+        }
+
+        if (!IsIdValid(guid))
+        {
+            throw new ArgumentOutOfRangeException();
+        }
+
+        IDatabaseObject obj;
+
+        lock (mLock)
+        {
+            if (!mIdMap.TryGetValue(guid, out obj))
+            {
+                return false;
+            }
+        }
+
+        return Delete(obj);
+    }
+
+    public virtual void Clear()
+    {
+        lock (mLock)
+        {
+            mIsDirty = true;
+            mIdMap.Clear();
+        }
+    }
+
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return GetEnumerator();
+    }
+
+    public virtual IEnumerator<KeyValuePair<Guid, IDatabaseObject>> GetEnumerator()
+    {
+        return Clone.GetEnumerator();
+    }
+
+    public IDatabaseObject AddNew(Type type, int index)
+    {
+        if (type == null)
+        {
+            throw new ArgumentNullException(nameof(type), @"No type specified.");
+        }
+
+        var mixedConstructor = type.GetConstructor(new[] {KeyType, IndexKeyType});
+        if (mixedConstructor != null)
+        {
+            return AddNew(type, Guid.NewGuid(), index);
+        }
+
+        var indexConstructor = type.GetConstructor(new[] {IndexKeyType});
+        if (indexConstructor == null)
+        {
+            throw new ArgumentNullException(
+                nameof(indexConstructor), MessageNoConstructor(type, IndexKeyType.Name)
+            );
+        }
+
+        var value = (IDatabaseObject) indexConstructor.Invoke(new object[] {index});
+        if (value == null)
+        {
+            throw new ArgumentNullException(
+                $"Failed to create instance of '{ValueType.Name}' with the ({IndexKeyType.Name}) constructor."
+            );
+        }
+
+        return InternalSet(value, false) ? value : default(IDatabaseObject);
+    }
+
+    public IDatabaseObject AddNew(Type type, Guid id, int index)
+    {
+        if (type == null)
+        {
+            throw new ArgumentNullException(nameof(type), @"No type specified.");
+        }
+
+        var mixedConstructor = ValueType.GetConstructor(new[] {KeyType, IndexKeyType});
+        if (mixedConstructor == null)
+        {
+            throw new ArgumentNullException(
+                nameof(mixedConstructor), MessageNoConstructor(type, KeyType.Name, IndexKeyType.Name)
+            );
+        }
+
+        var value = (IDatabaseObject) mixedConstructor.Invoke(new object[] {id, index});
+        if (value == null)
+        {
+            throw new ArgumentNullException(
+                $"Failed to create instance of '{ValueType.Name}' with the ({KeyType.Name}, {IndexKeyType.Name}) constructor."
+            );
+        }
+
+        return InternalSet(value, false) ? value : default(IDatabaseObject);
+    }
+
+    protected virtual bool IsIdValid(Guid id)
+    {
+        return id != Guid.Empty;
+    }
+
+    protected virtual bool IsIndexValid(int index)
+    {
+        return index > -1;
+    }
+
+    internal virtual bool InternalSet(IDatabaseObject value, bool overwrite)
+    {
+        if (value == null)
+        {
+            throw new ArgumentNullException(nameof(value));
+        }
+
+        if (!IsIdValid(value.Id))
+        {
+            throw new ArgumentOutOfRangeException(nameof(value.Id));
+        }
+
+        lock (mLock)
+        {
+            if (!overwrite && mIdMap.ContainsKey(value.Id))
+            {
                 return false;
             }
 
-            lock (mLock)
-            {
-                return mIdMap.TryGetValue(id, out value);
-            }
+            mIsDirty = true;
+            mIdMap[value.Id] = value;
+
+            return true;
         }
+    }
 
-        public bool Add(IDatabaseObject value)
-        {
-            return InternalSet(value, false);
-        }
+    private static string MessageNoConstructor(Type type, params string[] constructorMessage)
+    {
+        var joinedConstructorMessage = string.Join(",", constructorMessage ?? new string[] { });
+        var builder = new StringBuilder();
+        builder.AppendLine($@"No ({joinedConstructorMessage}) constructor for type '{type?.Name}'.");
+        builder.AppendLine(ReflectionUtils.StringifyConstructors(type));
 
-        public IDatabaseObject AddNew(Type type, Guid id)
-        {
-            var idConstructor = type.GetConstructor(new[] {KeyType});
-            if (idConstructor == null)
-            {
-                throw new ArgumentNullException(nameof(idConstructor), MessageNoConstructor(type, KeyType.Name));
-            }
-
-            var value = (IDatabaseObject) idConstructor.Invoke(new object[] {id});
-            if (value == null)
-            {
-                throw new ArgumentNullException(
-                    $"Failed to create instance of '{ValueType.Name}' with the ({KeyType.Name}) constructor."
-                );
-            }
-
-            return InternalSet(value, false) ? value : default(IDatabaseObject);
-        }
-
-        public virtual bool Set(Guid key, IDatabaseObject value)
-        {
-            if (key != (value?.Id ?? Guid.Empty))
-            {
-                throw new ArgumentException(@"Key does not match the Guid of the value.", nameof(key));
-            }
-
-            return InternalSet(value, true);
-        }
-
-        public virtual bool Delete(IDatabaseObject value)
-        {
-            if (value == null)
-            {
-                throw new ArgumentNullException();
-            }
-
-            if (!IsIdValid(value.Id))
-            {
-                throw new ArgumentOutOfRangeException();
-            }
-
-            lock (mLock)
-            {
-                mIsDirty = true;
-                return mIdMap.Remove(value.Id);
-            }
-        }
-
-        public virtual bool DeleteAt(Guid guid)
-        {
-            if (guid == null)
-            {
-                throw new ArgumentNullException();
-            }
-
-            if (!IsIdValid(guid))
-            {
-                throw new ArgumentOutOfRangeException();
-            }
-
-            IDatabaseObject obj;
-
-            lock (mLock)
-            {
-                if (!mIdMap.TryGetValue(guid, out obj))
-                {
-                    return false;
-                }
-            }
-
-            return Delete(obj);
-        }
-
-        public virtual void Clear()
-        {
-            lock (mLock)
-            {
-                mIsDirty = true;
-                mIdMap.Clear();
-            }
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
-
-        public virtual IEnumerator<KeyValuePair<Guid, IDatabaseObject>> GetEnumerator()
-        {
-            return Clone.GetEnumerator();
-        }
-
-        public IDatabaseObject AddNew(Type type, int index)
-        {
-            if (type == null)
-            {
-                throw new ArgumentNullException(nameof(type), @"No type specified.");
-            }
-
-            var mixedConstructor = type.GetConstructor(new[] {KeyType, IndexKeyType});
-            if (mixedConstructor != null)
-            {
-                return AddNew(type, Guid.NewGuid(), index);
-            }
-
-            var indexConstructor = type.GetConstructor(new[] {IndexKeyType});
-            if (indexConstructor == null)
-            {
-                throw new ArgumentNullException(
-                    nameof(indexConstructor), MessageNoConstructor(type, IndexKeyType.Name)
-                );
-            }
-
-            var value = (IDatabaseObject) indexConstructor.Invoke(new object[] {index});
-            if (value == null)
-            {
-                throw new ArgumentNullException(
-                    $"Failed to create instance of '{ValueType.Name}' with the ({IndexKeyType.Name}) constructor."
-                );
-            }
-
-            return InternalSet(value, false) ? value : default(IDatabaseObject);
-        }
-
-        public IDatabaseObject AddNew(Type type, Guid id, int index)
-        {
-            if (type == null)
-            {
-                throw new ArgumentNullException(nameof(type), @"No type specified.");
-            }
-
-            var mixedConstructor = ValueType.GetConstructor(new[] {KeyType, IndexKeyType});
-            if (mixedConstructor == null)
-            {
-                throw new ArgumentNullException(
-                    nameof(mixedConstructor), MessageNoConstructor(type, KeyType.Name, IndexKeyType.Name)
-                );
-            }
-
-            var value = (IDatabaseObject) mixedConstructor.Invoke(new object[] {id, index});
-            if (value == null)
-            {
-                throw new ArgumentNullException(
-                    $"Failed to create instance of '{ValueType.Name}' with the ({KeyType.Name}, {IndexKeyType.Name}) constructor."
-                );
-            }
-
-            return InternalSet(value, false) ? value : default(IDatabaseObject);
-        }
-
-        protected virtual bool IsIdValid(Guid id)
-        {
-            return id != Guid.Empty;
-        }
-
-        protected virtual bool IsIndexValid(int index)
-        {
-            return index > -1;
-        }
-
-        internal virtual bool InternalSet(IDatabaseObject value, bool overwrite)
-        {
-            if (value == null)
-            {
-                throw new ArgumentNullException(nameof(value));
-            }
-
-            if (!IsIdValid(value.Id))
-            {
-                throw new ArgumentOutOfRangeException(nameof(value.Id));
-            }
-
-            lock (mLock)
-            {
-                if (!overwrite && mIdMap.ContainsKey(value.Id))
-                {
-                    return false;
-                }
-
-                mIsDirty = true;
-                mIdMap[value.Id] = value;
-
-                return true;
-            }
-        }
-
-        private static string MessageNoConstructor(Type type, params string[] constructorMessage)
-        {
-            var joinedConstructorMessage = string.Join(",", constructorMessage ?? new string[] { });
-            var builder = new StringBuilder();
-            builder.AppendLine($@"No ({joinedConstructorMessage}) constructor for type '{type?.Name}'.");
-            builder.AppendLine(ReflectionUtils.StringifyConstructors(type));
-
-            return builder.ToString();
-        }
-
+        return builder.ToString();
     }
 
 }

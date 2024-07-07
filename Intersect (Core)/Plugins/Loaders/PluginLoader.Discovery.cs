@@ -1,89 +1,88 @@
 ﻿using Intersect.Core;
 using System.Diagnostics;
 
-namespace Intersect.Plugins.Loaders
+namespace Intersect.Plugins.Loaders;
+
+/// <summary>
+/// Utility class used for finding, loading, and configuring application plugins.
+/// </summary>
+internal partial class PluginLoader
 {
     /// <summary>
-    /// Utility class used for finding, loading, and configuring application plugins.
+    /// Discover plugins for the current <see cref="IApplicationContext"/> in the specified directories.
+    /// Note: Yes, the <see cref="IApplicationContext.StartupOptions"/> exists with <see cref="ICommandLineOptions.PluginDirectories"/>,
+    ///     but <paramref name="pluginDirectories"/> exists here because <see cref="PluginService"/> adds a "built-in" directory that is
+    ///     scanned regardless of the command line options.
     /// </summary>
-    internal partial class PluginLoader
+    /// <param name="applicationContext">the <see cref="IApplicationContext"/> to discover plugins for</param>
+    /// <param name="pluginDirectories">the directories to scan for plugins in</param>
+    /// <returns><see cref="IDictionary{TKey, TValue}"/> of plugins, keyed by <see cref="Plugin.Key"/></returns>
+    internal IDictionary<string, Plugin> DiscoverPlugins(
+        IApplicationContext applicationContext,
+        IEnumerable<string> pluginDirectories
+    )
     {
-        /// <summary>
-        /// Discover plugins for the current <see cref="IApplicationContext"/> in the specified directories.
-        /// Note: Yes, the <see cref="IApplicationContext.StartupOptions"/> exists with <see cref="ICommandLineOptions.PluginDirectories"/>,
-        ///     but <paramref name="pluginDirectories"/> exists here because <see cref="PluginService"/> adds a "built-in" directory that is
-        ///     scanned regardless of the command line options.
-        /// </summary>
-        /// <param name="applicationContext">the <see cref="IApplicationContext"/> to discover plugins for</param>
-        /// <param name="pluginDirectories">the directories to scan for plugins in</param>
-        /// <returns><see cref="IDictionary{TKey, TValue}"/> of plugins, keyed by <see cref="Plugin.Key"/></returns>
-        internal IDictionary<string, Plugin> DiscoverPlugins(
-            IApplicationContext applicationContext,
-            IEnumerable<string> pluginDirectories
-        )
-        {
-            var discoveredPlugins = pluginDirectories.SelectMany(
-                pluginDirectory =>
-                {
-                    Debug.Assert(pluginDirectory != null, nameof(pluginDirectory) + " != null");
-                    return DiscoverPlugins(applicationContext, pluginDirectory) ?? Array.Empty<Plugin>();
-                }
-            );
-
-            var plugins = new Dictionary<string, Plugin>();
-
-            foreach (var discoveredPlugin in discoveredPlugins)
+        var discoveredPlugins = pluginDirectories.SelectMany(
+            pluginDirectory =>
             {
-                Debug.Assert(discoveredPlugin != null, $"{nameof(discoveredPlugin)} != null");
-                var key = discoveredPlugin.Manifest.Key;
-                if (!plugins.TryGetValue(discoveredPlugin.Manifest.Key, out var existingPlugin) ||
-                    existingPlugin == default ||
-                    existingPlugin.Manifest.Version < discoveredPlugin.Manifest.Version)
-                {
-                    plugins[key] = discoveredPlugin;
-                }
+                Debug.Assert(pluginDirectory != null, nameof(pluginDirectory) + " != null");
+                return DiscoverPlugins(applicationContext, pluginDirectory) ?? Array.Empty<Plugin>();
             }
+        );
 
-            return plugins;
+        var plugins = new Dictionary<string, Plugin>();
+
+        foreach (var discoveredPlugin in discoveredPlugins)
+        {
+            Debug.Assert(discoveredPlugin != null, $"{nameof(discoveredPlugin)} != null");
+            var key = discoveredPlugin.Manifest.Key;
+            if (!plugins.TryGetValue(discoveredPlugin.Manifest.Key, out var existingPlugin) ||
+                existingPlugin == default ||
+                existingPlugin.Manifest.Version < discoveredPlugin.Manifest.Version)
+            {
+                plugins[key] = discoveredPlugin;
+            }
         }
 
-        /// <summary>
-        /// Discovers plugins in a specific <paramref name="pluginDirectory"/>.
-        /// </summary>
-        /// <param name="applicationContext">the <see cref="IApplicationContext"/> to discover plugins for</param>
-        /// <param name="pluginDirectory">the directory to scan for plugins in</param>
-        /// <returns><see cref="IEnumerable{T}"/> of plugins</returns>
-        internal IEnumerable<Plugin> DiscoverPlugins(
-            IApplicationContext applicationContext,
-            string pluginDirectory
-        )
+        return plugins;
+    }
+
+    /// <summary>
+    /// Discovers plugins in a specific <paramref name="pluginDirectory"/>.
+    /// </summary>
+    /// <param name="applicationContext">the <see cref="IApplicationContext"/> to discover plugins for</param>
+    /// <param name="pluginDirectory">the directory to scan for plugins in</param>
+    /// <returns><see cref="IEnumerable{T}"/> of plugins</returns>
+    internal IEnumerable<Plugin> DiscoverPlugins(
+        IApplicationContext applicationContext,
+        string pluginDirectory
+    )
+    {
+        if (Directory.Exists(pluginDirectory))
         {
-            if (Directory.Exists(pluginDirectory))
-            {
-                var pluginFiles = new List<string>();
+            var pluginFiles = new List<string>();
 
-                pluginFiles.AddRange(
-                    Directory.EnumerateDirectories(pluginDirectory)
-                        .Select(directoryPath => new DirectoryInfo(directoryPath))
-                        .Select(directoryInfo => Path.Combine(directoryInfo.FullName, $"{directoryInfo.Name}.dll"))
-                        .Where(File.Exists)
-                );
-
-                return pluginFiles.Select(
-                        file =>
-                        {
-                            Debug.Assert(file != null, nameof(file) + " != null");
-                            return LoadFrom(applicationContext, file);
-                        }
-                    )
-                    .Where(plugin => plugin != default);
-            }
-
-            applicationContext.Logger.Warn(
-                $@"Directory was specified as a plugin directory but does not exist: '{pluginDirectory}'"
+            pluginFiles.AddRange(
+                Directory.EnumerateDirectories(pluginDirectory)
+                    .Select(directoryPath => new DirectoryInfo(directoryPath))
+                    .Select(directoryInfo => Path.Combine(directoryInfo.FullName, $"{directoryInfo.Name}.dll"))
+                    .Where(File.Exists)
             );
 
-            return default;
+            return pluginFiles.Select(
+                    file =>
+                    {
+                        Debug.Assert(file != null, nameof(file) + " != null");
+                        return LoadFrom(applicationContext, file);
+                    }
+                )
+                .Where(plugin => plugin != default);
         }
+
+        applicationContext.Logger.Warn(
+            $@"Directory was specified as a plugin directory but does not exist: '{pluginDirectory}'"
+        );
+
+        return default;
     }
 }

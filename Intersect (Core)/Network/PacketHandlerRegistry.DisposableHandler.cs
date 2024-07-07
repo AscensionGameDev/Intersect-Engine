@@ -1,28 +1,27 @@
-﻿namespace Intersect.Network
+﻿namespace Intersect.Network;
+
+public partial class PacketHandlerRegistry
 {
-    public partial class PacketHandlerRegistry
+    #region DisposableHandler
+
+    private partial struct DisposableHandler : IDisposable
     {
-        #region DisposableHandler
+        public Type PacketType { get; }
 
-        private partial struct DisposableHandler : IDisposable
+        public IDisposable Reference { get; }
+
+        public DisposableHandler(Type packetType, IDisposable reference)
         {
-            public Type PacketType { get; }
-
-            public IDisposable Reference { get; }
-
-            public DisposableHandler(Type packetType, IDisposable reference)
-            {
-                PacketType = packetType ?? throw new ArgumentNullException(nameof(packetType));
-                Reference = reference ?? throw new ArgumentNullException(nameof(reference));
-            }
-
-            public void Dispose()
-            {
-                Reference.Dispose();
-                GC.SuppressFinalize(this);
-            }
+            PacketType = packetType ?? throw new ArgumentNullException(nameof(packetType));
+            Reference = reference ?? throw new ArgumentNullException(nameof(reference));
         }
 
-        #endregion
+        public void Dispose()
+        {
+            Reference.Dispose();
+            GC.SuppressFinalize(this);
+        }
     }
+
+    #endregion
 }

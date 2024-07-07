@@ -1,41 +1,39 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace Intersect.Serialization.Json
+namespace Intersect.Serialization.Json;
+
+
+public partial class SingleOrArrayConverter<T> : JsonConverter
 {
 
-    public partial class SingleOrArrayConverter<T> : JsonConverter
+    public override bool CanWrite => false;
+
+    public override bool CanConvert(Type objectType)
     {
+        return objectType == typeof(List<T>);
+    }
 
-        public override bool CanWrite => false;
+    public override object ReadJson(
+        JsonReader reader,
+        Type objectType,
+        object existingValue,
+        JsonSerializer serializer
+    )
+    {
+        var token = JToken.Load(reader);
 
-        public override bool CanConvert(Type objectType)
+        if (token == null)
         {
-            return objectType == typeof(List<T>);
+            return new List<T>();
         }
 
-        public override object ReadJson(
-            JsonReader reader,
-            Type objectType,
-            object existingValue,
-            JsonSerializer serializer
-        )
-        {
-            var token = JToken.Load(reader);
+        return token.Type == JTokenType.Array ? token.ToObject<List<T>>() : new List<T> {token.ToObject<T>()};
+    }
 
-            if (token == null)
-            {
-                return new List<T>();
-            }
-
-            return token.Type == JTokenType.Array ? token.ToObject<List<T>>() : new List<T> {token.ToObject<T>()};
-        }
-
-        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
-        {
-            throw new NotImplementedException();
-        }
-
+    public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+    {
+        throw new NotImplementedException();
     }
 
 }

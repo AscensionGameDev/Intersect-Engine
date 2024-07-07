@@ -1,27 +1,25 @@
 ﻿using MessagePack;
 
-namespace Intersect.Network.Packets.Client
+namespace Intersect.Network.Packets.Client;
+
+[MessagePackObject]
+public partial class LoginPacket : IntersectPacket
 {
-    [MessagePackObject]
-    public partial class LoginPacket : IntersectPacket
+    //Parameterless Constructor for MessagePack
+    public LoginPacket()
     {
-        //Parameterless Constructor for MessagePack
-        public LoginPacket()
-        {
-        }
-
-        public LoginPacket(string username, string password)
-        {
-            Username = username;
-            Password = password;
-        }
-
-        [Key(0)]
-        public string Username { get; set; }
-
-        [Key(1)]
-        public string Password { get; set; }
-
     }
+
+    public LoginPacket(string username, string password)
+    {
+        Username = username;
+        Password = password;
+    }
+
+    [Key(0)]
+    public string Username { get; set; }
+
+    [Key(1)]
+    public string Password { get; set; }
 
 }
