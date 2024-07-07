@@ -1,15 +1,14 @@
-﻿namespace Intersect.Enums
+﻿namespace Intersect.Enums;
+
+public enum EventMovementSpeed
 {
-    public enum EventMovementSpeed
-    {
-        Slowest = 0,
+    Slowest = 0,
 
-        Slower,
+    Slower,
 
-        Normal,
+    Normal,
 
-        Faster,
+    Faster,
 
-        Fastest,
-    }
+    Fastest,
 }

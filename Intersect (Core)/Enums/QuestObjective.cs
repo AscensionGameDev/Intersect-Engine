@@ -1,11 +1,10 @@
-﻿namespace Intersect.Enums
+﻿namespace Intersect.Enums;
+
+public enum QuestObjective
 {
-    public enum QuestObjective
-    {
-        EventDriven = 0,
+    EventDriven = 0,
 
-        GatherItems,
+    GatherItems,
 
-        KillNpcs,
-    }
+    KillNpcs,
 }

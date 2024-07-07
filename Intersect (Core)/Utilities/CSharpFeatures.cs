@@ -1,35 +1,33 @@
-﻿namespace Intersect.Utilities
+﻿namespace Intersect.Utilities;
+
+
+public static partial class CSharpFeatures
 {
 
-    public static partial class CSharpFeatures
+    public delegate IDictionary<TKey, TValue> CreateConcurrentDictionaryAction<TKey, TValue>(int capacity = 0);
+
+    public delegate void ThreadYieldAction();
+
+    public static IDictionary<TKey, TValue> CreateConcurrentDictionary<TKey, TValue>(
+        CreateConcurrentDictionaryAction<TKey, TValue> createConcurrentDictionaryAction,
+        int capacity = 0
+    )
     {
+        return createConcurrentDictionaryAction == null
+            ? new Dictionary<TKey, TValue>()
+            : createConcurrentDictionaryAction(capacity);
+    }
 
-        public delegate IDictionary<TKey, TValue> CreateConcurrentDictionaryAction<TKey, TValue>(int capacity = 0);
-
-        public delegate void ThreadYieldAction();
-
-        public static IDictionary<TKey, TValue> CreateConcurrentDictionary<TKey, TValue>(
-            CreateConcurrentDictionaryAction<TKey, TValue> createConcurrentDictionaryAction,
-            int capacity = 0
-        )
+    public static void ThreadYield(ThreadYieldAction threadYieldAction)
+    {
+        if (threadYieldAction == null)
         {
-            return createConcurrentDictionaryAction == null
-                ? new Dictionary<TKey, TValue>()
-                : createConcurrentDictionaryAction(capacity);
+            Thread.Sleep(0);
+
+            return;
         }
 
-        public static void ThreadYield(ThreadYieldAction threadYieldAction)
-        {
-            if (threadYieldAction == null)
-            {
-                Thread.Sleep(0);
-
-                return;
-            }
-
-            threadYieldAction();
-        }
-
+        threadYieldAction();
     }
 
 }

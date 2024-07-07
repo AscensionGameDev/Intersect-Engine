@@ -5,56 +5,54 @@ using Intersect.Logging;
 using Intersect.Reflection;
 using MessagePack;
 
-namespace Intersect.Network
+namespace Intersect.Network;
+
+[MessagePackObject]
+public abstract partial class IntersectPacket : IPacket
 {
-    [MessagePackObject]
-    public abstract partial class IntersectPacket : IPacket
+    [IgnoreMember]
+    private byte[] mCachedData = null;
+
+    [IgnoreMember]
+    private byte[] mCachedCompresedData = null;
+
+    /// <inheritdoc />
+    public virtual void Dispose()
     {
-        [IgnoreMember]
-        private byte[] mCachedData = null;
+    }
 
-        [IgnoreMember]
-        private byte[] mCachedCompresedData = null;
-
-        /// <inheritdoc />
-        public virtual void Dispose()
+    /// <inheritdoc />
+    [IgnoreMember]
+    public virtual byte[] Data
+    {
+        get
         {
-        }
-
-        /// <inheritdoc />
-        [IgnoreMember]
-        public virtual byte[] Data
-        {
-            get
-            {
-                mCachedData ??= MessagePacker.Instance.Serialize(this) ??
-                                       throw new Exception($"Failed to serialize {this.GetFullishName()}");
+            mCachedData ??= MessagePacker.Instance.Serialize(this) ??
+                                   throw new Exception($"Failed to serialize {this.GetFullishName()}");
 
 #if DIAGNOSTIC
-                Log.Debug($"{GetType().FullName}({mCachedData.Length})={Convert.ToHexString(mCachedData)}");
+            Log.Debug($"{GetType().FullName}({mCachedData.Length})={Convert.ToHexString(mCachedData)}");
 #endif
-                return mCachedData;
-            }
+            return mCachedData;
         }
+    }
 
-        public virtual void ClearCachedData()
-        {
-            mCachedData = null;
-        }
+    public virtual void ClearCachedData()
+    {
+        mCachedData = null;
+    }
 
-        [IgnoreMember]
-        public virtual bool IsValid => true;
-        [IgnoreMember]
-        public virtual long ReceiveTime { get; set; }
-        [IgnoreMember]
-        public virtual long ProcessTime { get; set; }
+    [IgnoreMember]
+    public virtual bool IsValid => true;
+    [IgnoreMember]
+    public virtual long ReceiveTime { get; set; }
+    [IgnoreMember]
+    public virtual long ProcessTime { get; set; }
 
-        /// <inheritdoc />
-        public virtual Dictionary<string, SanitizedValue<object>> Sanitize()
-        {
-            return null;
-        }
-
+    /// <inheritdoc />
+    public virtual Dictionary<string, SanitizedValue<object>> Sanitize()
+    {
+        return null;
     }
 
 }

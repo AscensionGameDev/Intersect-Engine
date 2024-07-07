@@ -1,21 +1,19 @@
 ﻿using Intersect.Collections;
 
-namespace Intersect.Network
+namespace Intersect.Network;
+
+
+public interface IPacket : IDisposable
 {
 
-    public interface IPacket : IDisposable
-    {
+    byte[] Data { get; }
 
-        byte[] Data { get; }
+    bool IsValid { get; }
 
-        bool IsValid { get; }
+    long ReceiveTime { get; set; }
 
-        long ReceiveTime { get; set; }
+    long ProcessTime { get; set; }
 
-        long ProcessTime { get; set; }
-
-        Dictionary<string, SanitizedValue<object>> Sanitize();
-
-    }
+    Dictionary<string, SanitizedValue<object>> Sanitize();
 
 }

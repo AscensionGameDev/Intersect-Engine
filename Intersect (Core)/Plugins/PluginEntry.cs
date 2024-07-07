@@ -1,38 +1,37 @@
-﻿namespace Intersect.Plugins
+﻿namespace Intersect.Plugins;
+
+/// <summary>
+/// Abstract class that virtually defines all of the methods declared by <see cref="IPluginEntry"/>.
+/// </summary>
+public abstract partial class PluginEntry : IPluginEntry
 {
-    /// <summary>
-    /// Abstract class that virtually defines all of the methods declared by <see cref="IPluginEntry"/>.
-    /// </summary>
-    public abstract partial class PluginEntry : IPluginEntry
+    private bool mDisposed;
+
+    /// <inheritdoc />
+    public virtual void OnBootstrap(IPluginBootstrapContext context) { }
+
+    /// <inheritdoc />
+    public virtual void OnStart(IPluginContext context) { }
+
+    /// <inheritdoc />
+    public virtual void OnStop(IPluginContext context) { }
+
+    /// <inheritdoc />
+    public void Dispose()
     {
-        private bool mDisposed;
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
 
-        /// <inheritdoc />
-        public virtual void OnBootstrap(IPluginBootstrapContext context) { }
-
-        /// <inheritdoc />
-        public virtual void OnStart(IPluginContext context) { }
-
-        /// <inheritdoc />
-        public virtual void OnStop(IPluginContext context) { }
-
-        /// <inheritdoc />
-        public void Dispose()
+    /// <inheritdoc cref="IDisposable.Dispose" />
+    /// <param name="disposing">if it is disposing or finalizing</param>
+    protected virtual void Dispose(bool disposing)
+    {
+        if (mDisposed)
         {
-            Dispose(true);
-            GC.SuppressFinalize(this);
+            return;
         }
 
-        /// <inheritdoc cref="IDisposable.Dispose" />
-        /// <param name="disposing">if it is disposing or finalizing</param>
-        protected virtual void Dispose(bool disposing)
-        {
-            if (mDisposed)
-            {
-                return;
-            }
-
-            mDisposed = true;
-        }
+        mDisposed = true;
     }
 }

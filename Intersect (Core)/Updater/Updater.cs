@@ -9,692 +9,691 @@ using Intersect.Logging;
 
 using Newtonsoft.Json;
 
-namespace Intersect.Updater
+namespace Intersect.Updater;
+
+public partial class Updater
 {
-    public partial class Updater
+    private readonly Thread mUpdateThread;
+    private Update mUpdate;
+    private Update mCachedVersion;
+    private Update mCurrentVersion;
+    private readonly string mCurrentVersionPath;
+    private Thread[] mDownloadThreads;
+    private readonly int mDownloadThreadCount = 1;
+    private readonly ConcurrentStack<UpdateFile> mDownloadQueue = new ConcurrentStack<UpdateFile>();
+    private readonly ConcurrentDictionary<UpdateFile, long> mFailedDownloads = new ConcurrentDictionary<UpdateFile, long>();
+    private readonly ConcurrentBag<UpdateFile> mCompletedDownloads = new ConcurrentBag<UpdateFile>();
+    private readonly ConcurrentDictionary<UpdateFile, long> mActiveDownloads = new ConcurrentDictionary<UpdateFile, long>();
+    private long mDownloadedBytes;
+    private bool mFailed;
+    private bool mStopping;
+    private bool mUpdaterContentLoaded;
+    private string mConfigUrl;
+    private string mBaseUrl;
+
+    public Updater(string updateUrl, string currentVersionPath, bool isClient, int maxDownloadThreads = 10)
     {
-        private readonly Thread mUpdateThread;
-        private Update mUpdate;
-        private Update mCachedVersion;
-        private Update mCurrentVersion;
-        private readonly string mCurrentVersionPath;
-        private Thread[] mDownloadThreads;
-        private readonly int mDownloadThreadCount = 1;
-        private readonly ConcurrentStack<UpdateFile> mDownloadQueue = new ConcurrentStack<UpdateFile>();
-        private readonly ConcurrentDictionary<UpdateFile, long> mFailedDownloads = new ConcurrentDictionary<UpdateFile, long>();
-        private readonly ConcurrentBag<UpdateFile> mCompletedDownloads = new ConcurrentBag<UpdateFile>();
-        private readonly ConcurrentDictionary<UpdateFile, long> mActiveDownloads = new ConcurrentDictionary<UpdateFile, long>();
-        private long mDownloadedBytes;
-        private bool mFailed;
-        private bool mStopping;
-        private bool mUpdaterContentLoaded;
-        private string mConfigUrl;
-        private string mBaseUrl;
-
-        public Updater(string updateUrl, string currentVersionPath, bool isClient, int maxDownloadThreads = 10)
+        if (string.IsNullOrWhiteSpace(updateUrl))
         {
-            if (string.IsNullOrWhiteSpace(updateUrl))
-            {
-                Status = UpdateStatus.None;
-                return;
-            }
-
-            mDownloadThreadCount = maxDownloadThreads;
-            mCurrentVersionPath = currentVersionPath;
-            IsClient = isClient;
-
-            mUpdateThread = new Thread(RunUpdates);
-            mUpdateThread.Start();
+            Status = UpdateStatus.None;
+            return;
         }
 
-        public long BytesDownloaded => mDownloadedBytes + mActiveDownloads.Values.Sum();
+        mDownloadThreadCount = maxDownloadThreads;
+        mCurrentVersionPath = currentVersionPath;
+        IsClient = isClient;
 
-        public Exception Exception { get; private set; }
+        mUpdateThread = new Thread(RunUpdates);
+        mUpdateThread.Start();
+    }
 
-        public int FilesRemaining => mDownloadQueue.Count + mActiveDownloads.Count;
+    public long BytesDownloaded => mDownloadedBytes + mActiveDownloads.Values.Sum();
 
-        public int FilesTotal => mDownloadQueue.Count + mActiveDownloads.Count + mCompletedDownloads.Count;
+    public Exception Exception { get; private set; }
 
-        public bool IsClient { get; }
+    public int FilesRemaining => mDownloadQueue.Count + mActiveDownloads.Count;
 
-        public float Progress => ((float)BytesDownloaded / (float)SizeTotal) * 100f;
+    public int FilesTotal => mDownloadQueue.Count + mActiveDownloads.Count + mCompletedDownloads.Count;
 
-        public bool ReplacedSelf { get; private set; }
+    public bool IsClient { get; }
 
-        public long SizeRemaining => SizeTotal - BytesDownloaded;
+    public float Progress => ((float)BytesDownloaded / (float)SizeTotal) * 100f;
 
-        public long SizeTotal { get; private set; }
+    public bool ReplacedSelf { get; private set; }
 
-        public UpdateStatus Status { get; private set; } = UpdateStatus.Checking;
+    public long SizeRemaining => SizeTotal - BytesDownloaded;
 
-        private async void RunUpdates()
+    public long SizeTotal { get; private set; }
+
+    public UpdateStatus Status { get; private set; } = UpdateStatus.Checking;
+
+    private async void RunUpdates()
+    {
+        DeleteOldFiles();
+
+        //Download Update Config
+        using (WebClient wc = new WebClient())
         {
-            DeleteOldFiles();
-
-            //Download Update Config
-            using (WebClient wc = new WebClient())
+            try
             {
-                try
+                mConfigUrl = ClientConfiguration.Instance.UpdateUrl.TrimEnd(new char[] { '/' });
+                mBaseUrl = ClientConfiguration.Instance.UpdateUrl.TrimEnd(new char[] { '/' });
+                var uri = new Uri(ClientConfiguration.Instance.UpdateUrl);
+
+                //Specifying update.json themselves or some other file that generates the config... base url needs to be the folder containing it
+                if (Path.HasExtension(uri.AbsolutePath))
                 {
-                    mConfigUrl = ClientConfiguration.Instance.UpdateUrl.TrimEnd(new char[] { '/' });
-                    mBaseUrl = ClientConfiguration.Instance.UpdateUrl.TrimEnd(new char[] { '/' });
-                    var uri = new Uri(ClientConfiguration.Instance.UpdateUrl);
+                    mBaseUrl = uri.AbsoluteUri.Remove(uri.AbsoluteUri.Length - uri.Segments.Last().Length).TrimEnd(new char[] { '/' });
+                }
+                else
+                {
+                    mConfigUrl = ClientConfiguration.Instance.UpdateUrl.TrimEnd(new char[] { '/' }) + "/update.json";
+                }
 
-                    //Specifying update.json themselves or some other file that generates the config... base url needs to be the folder containing it
-                    if (Path.HasExtension(uri.AbsolutePath))
+                var jsonBytes = wc.DownloadData($"{mConfigUrl}?token={Environment.TickCount}");
+                var json = Encoding.UTF8.GetString(jsonBytes);
+                mUpdate = JsonConvert.DeserializeObject<Update>(json);
+
+                var downloadFirst = new List<UpdateFile>();
+
+                var updateRequired = true;
+
+                if (File.Exists(mCurrentVersionPath))
+                {
+                    mCachedVersion = JsonConvert.DeserializeObject<Update>(
+                        File.ReadAllText(mCurrentVersionPath)
+                    );
+
+                    updateRequired = false;
+                    foreach (var file in mUpdate.Files.Where(f => !(IsClient ? f.ClientIgnore : f.EditorIgnore)))
                     {
-                        mBaseUrl = uri.AbsoluteUri.Remove(uri.AbsoluteUri.Length - uri.Segments.Last().Length).TrimEnd(new char[] { '/' });
-                    }
-                    else
-                    {
-                        mConfigUrl = ClientConfiguration.Instance.UpdateUrl.TrimEnd(new char[] { '/' }) + "/update.json";
-                    }
-
-                    var jsonBytes = wc.DownloadData($"{mConfigUrl}?token={Environment.TickCount}");
-                    var json = Encoding.UTF8.GetString(jsonBytes);
-                    mUpdate = JsonConvert.DeserializeObject<Update>(json);
-
-                    var downloadFirst = new List<UpdateFile>();
-
-                    var updateRequired = true;
-
-                    if (File.Exists(mCurrentVersionPath))
-                    {
-                        mCachedVersion = JsonConvert.DeserializeObject<Update>(
-                            File.ReadAllText(mCurrentVersionPath)
-                        );
-
-                        updateRequired = false;
-                        foreach (var file in mUpdate.Files.Where(f => !(IsClient ? f.ClientIgnore : f.EditorIgnore)))
+                        var checkFile = mCachedVersion.Files.FirstOrDefault(f => string.Equals(file.Path, f.Path, StringComparison.Ordinal));
+                        if (checkFile == null || checkFile.Size != file.Size || checkFile.Hash != file.Hash)
                         {
-                            var checkFile = mCachedVersion.Files.FirstOrDefault(f => string.Equals(file.Path, f.Path, StringComparison.Ordinal));
-                            if (checkFile == null || checkFile.Size != file.Size || checkFile.Hash != file.Hash)
+                            updateRequired = true;
+                        }
+                        else if (!File.Exists(file.Path) || !mUpdate.TrustCache)
+                        {
+                            updateRequired = true;
+                        }
+                    }
+                }
+
+                //If we are doing a forced full check or if we don't have a current version file then we will start from scratch
+                if (updateRequired)
+                {
+                    //Remove Deleted Files
+                    if (mCachedVersion != null)
+                    {
+                        foreach (var file in mCachedVersion.Files)
+                        {
+                            if (!mUpdate.Files.Any(f => f.Path == file.Path))
                             {
-                                updateRequired = true;
-                            }
-                            else if (!File.Exists(file.Path) || !mUpdate.TrustCache)
-                            {
-                                updateRequired = true;
+                                if (File.Exists(file.Path))
+                                {
+                                    try
+                                    {
+                                        File.Delete(file.Path);
+                                    }
+                                    catch
+                                    {
+                                    }
+                                }
                             }
                         }
                     }
 
-                    //If we are doing a forced full check or if we don't have a current version file then we will start from scratch
-                    if (updateRequired)
+                    //Copy Over 
+                    mCurrentVersion = new Update();
+                    foreach (var file in mUpdate.Files)
                     {
-                        //Remove Deleted Files
-                        if (mCachedVersion != null)
+                        if ((IsClient && file.ClientIgnore || !IsClient && file.EditorIgnore))
                         {
-                            foreach (var file in mCachedVersion.Files)
+                            if (mCachedVersion != null)
                             {
-                                if (!mUpdate.Files.Any(f => f.Path == file.Path))
+                                var ignoredFile = mCachedVersion.Files.FirstOrDefault(f => f.Path == file.Path);
+                                if (ignoredFile != null)
                                 {
-                                    if (File.Exists(file.Path))
-                                    {
-                                        try
-                                        {
-                                            File.Delete(file.Path);
-                                        }
-                                        catch
-                                        {
-                                        }
-                                    }
+                                    mCurrentVersion.Files.Add(ignoredFile);
                                 }
                             }
+
+                            continue;
                         }
 
-                        //Copy Over 
-                        mCurrentVersion = new Update();
-                        foreach (var file in mUpdate.Files)
+                        if (File.Exists(file.Path))
                         {
-                            if ((IsClient && file.ClientIgnore || !IsClient && file.EditorIgnore))
+                            //If json we will still trust the cache, this might be wrong but given that the client is constantly updating json files we really can't expect the hash to always match
+                            if (mCachedVersion != null && Path.GetExtension(file.Path) == ".json")
                             {
-                                if (mCachedVersion != null)
+                                var cacheCompare = mCachedVersion.Files.FirstOrDefault(f => f.Path == file.Path);
+                                if (cacheCompare != null)
                                 {
-                                    var ignoredFile = mCachedVersion.Files.FirstOrDefault(f => f.Path == file.Path);
-                                    if (ignoredFile != null)
+                                    if (cacheCompare.Size == file.Size &&
+                                        cacheCompare.Hash == file.Hash)
                                     {
-                                        mCurrentVersion.Files.Add(ignoredFile);
+                                        mCurrentVersion.Files.Add(file);
+
+                                        continue;
                                     }
                                 }
-
-                                continue;
                             }
 
-                            if (File.Exists(file.Path))
+                            //Otherwise let's compare hashes and potentially add it to the update list
+                            var md5Hash = "";
+                            using (var md5 = MD5.Create())
                             {
-                                //If json we will still trust the cache, this might be wrong but given that the client is constantly updating json files we really can't expect the hash to always match
-                                if (mCachedVersion != null && Path.GetExtension(file.Path) == ".json")
+                                using (var fs = File.OpenRead(file.Path))
                                 {
-                                    var cacheCompare = mCachedVersion.Files.FirstOrDefault(f => f.Path == file.Path);
-                                    if (cacheCompare != null)
+                                    if (fs.Length != file.Size)
                                     {
-                                        if (cacheCompare.Size == file.Size &&
-                                            cacheCompare.Hash == file.Hash)
-                                        {
-                                            mCurrentVersion.Files.Add(file);
-
-                                            continue;
-                                        }
+                                        AddToUpdateList(file, downloadFirst);
                                     }
-                                }
-
-                                //Otherwise let's compare hashes and potentially add it to the update list
-                                var md5Hash = "";
-                                using (var md5 = MD5.Create())
-                                {
-                                    using (var fs = File.OpenRead(file.Path))
+                                    else
                                     {
-                                        if (fs.Length != file.Size)
+                                        using (var stream = new BufferedStream(fs, 1200000))
+                                        {
+                                            md5Hash = BitConverter.ToString(md5.ComputeHash(stream))
+                                                .Replace("-", "")
+                                                .ToLowerInvariant();
+                                        }
+
+                                        if (md5Hash != file.Hash)
                                         {
                                             AddToUpdateList(file, downloadFirst);
                                         }
                                         else
                                         {
-                                            using (var stream = new BufferedStream(fs, 1200000))
-                                            {
-                                                md5Hash = BitConverter.ToString(md5.ComputeHash(stream))
-                                                    .Replace("-", "")
-                                                    .ToLowerInvariant();
-                                            }
-
-                                            if (md5Hash != file.Hash)
-                                            {
-                                                AddToUpdateList(file, downloadFirst);
-                                            }
-                                            else
-                                            {
-                                                mCurrentVersion.Files.Add(file);
-                                            }
+                                            mCurrentVersion.Files.Add(file);
                                         }
                                     }
                                 }
                             }
-                            else
-                            {
-                                AddToUpdateList(file, downloadFirst);
-                            }
+                        }
+                        else
+                        {
+                            AddToUpdateList(file, downloadFirst);
                         }
                     }
-
-                    foreach (var file in downloadFirst)
-                    {
-                        mDownloadQueue.Push(file);
-                    }
-
-                    if (mDownloadQueue.Count == 0)
-                    {
-                        Status = UpdateStatus.None;
-                        return;
-                    }
                 }
-                catch (Exception ex)
+
+                foreach (var file in downloadFirst)
                 {
-                    //Failed to fetch update info or deserialize!
-                    Status = UpdateStatus.Error;
-                    Exception = new Exception("[Update Check Failed!] - " + ex.Message, ex);
+                    mDownloadQueue.Push(file);
+                }
+
+                if (mDownloadQueue.Count == 0)
+                {
+                    Status = UpdateStatus.None;
                     return;
                 }
             }
-
-            //Got our update list!
-            foreach (var file in mDownloadQueue)
-                SizeTotal += file.Size;
-
-
-            Status = UpdateStatus.Updating;
-
-            var streamingSuccess = false;
-
-            if (!string.IsNullOrWhiteSpace(mUpdate.StreamingUrl))
+            catch (Exception ex)
             {
-                streamingSuccess = await StreamDownloads();
-            }
-
-            if (!streamingSuccess)
-            {
-                //Spawn Download Threads
-                var threadCount = Math.Min(mDownloadThreadCount, FilesTotal);
-                mDownloadThreads = new Thread[threadCount];
-
-                for (int i = 0; i < threadCount; i++)
-                {
-                    mDownloadThreads[i] = new Thread(DownloadUpdates);
-                    mDownloadThreads[i].Start();
-                }
-            }
-
-            while (Updating())
-            {
-                Thread.Sleep(10);
-            }
-
-            //Success or failure we will save the current version info here
-            foreach (var file in mCompletedDownloads)
-                mCurrentVersion.Files.Add(file);
-
-
-            File.WriteAllText(
-                mCurrentVersionPath,
-                JsonConvert.SerializeObject(
-                    mCurrentVersion.Filter(IsClient), Formatting.Indented,
-                    new JsonSerializerSettings { DefaultValueHandling = DefaultValueHandling.Ignore }
-                )
-            );
-
-
-            if (mStopping)
-            {
+                //Failed to fetch update info or deserialize!
+                Status = UpdateStatus.Error;
+                Exception = new Exception("[Update Check Failed!] - " + ex.Message, ex);
                 return;
             }
+        }
 
-            if (!mFailed)
+        //Got our update list!
+        foreach (var file in mDownloadQueue)
+            SizeTotal += file.Size;
+
+
+        Status = UpdateStatus.Updating;
+
+        var streamingSuccess = false;
+
+        if (!string.IsNullOrWhiteSpace(mUpdate.StreamingUrl))
+        {
+            streamingSuccess = await StreamDownloads();
+        }
+
+        if (!streamingSuccess)
+        {
+            //Spawn Download Threads
+            var threadCount = Math.Min(mDownloadThreadCount, FilesTotal);
+            mDownloadThreads = new Thread[threadCount];
+
+            for (int i = 0; i < threadCount; i++)
             {
-                if (ReplacedSelf)
-                {
-                    Status = UpdateStatus.Restart;
-                }
-                else
-                {
-                    Status = UpdateStatus.Done;
-                }
+                mDownloadThreads[i] = new Thread(DownloadUpdates);
+                mDownloadThreads[i].Start();
+            }
+        }
+
+        while (Updating())
+        {
+            Thread.Sleep(10);
+        }
+
+        //Success or failure we will save the current version info here
+        foreach (var file in mCompletedDownloads)
+            mCurrentVersion.Files.Add(file);
+
+
+        File.WriteAllText(
+            mCurrentVersionPath,
+            JsonConvert.SerializeObject(
+                mCurrentVersion.Filter(IsClient), Formatting.Indented,
+                new JsonSerializerSettings { DefaultValueHandling = DefaultValueHandling.Ignore }
+            )
+        );
+
+
+        if (mStopping)
+        {
+            return;
+        }
+
+        if (!mFailed)
+        {
+            if (ReplacedSelf)
+            {
+                Status = UpdateStatus.Restart;
             }
             else
             {
-                Status = UpdateStatus.Error;
+                Status = UpdateStatus.Done;
             }
-
+        }
+        else
+        {
+            Status = UpdateStatus.Error;
         }
 
-        private async Task<bool> StreamDownloads()
+    }
+
+    private async Task<bool> StreamDownloads()
+    {
+        var client = new HttpClient();
+
+        var files = new List<string>();
+
+        while (!mDownloadQueue.IsEmpty)
         {
-            var client = new HttpClient();
-
-            var files = new List<string>();
-
-            while (!mDownloadQueue.IsEmpty)
+            if (mDownloadQueue.TryPop(out UpdateFile file))
             {
-                if (mDownloadQueue.TryPop(out UpdateFile file))
+                files.Add(file.Path);
+                mActiveDownloads.TryAdd(file, 0);
+            }
+        }
+
+        HttpResponseMessage response;
+
+        var request = new HttpRequestMessage(HttpMethod.Post, $"{mUpdate.StreamingUrl}?token={Environment.TickCount}")
+        {
+            Content = new StringContent(JsonConvert.SerializeObject(files), Encoding.UTF8, "application/json"),
+        };
+
+        using (request)
+        {
+            response = await client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
+        }
+
+        using (var str = await response.Content.ReadAsStreamAsync())
+        {
+            try
+            {
+                using (var br = new BinaryReader(str))
                 {
-                    files.Add(file.Path);
+                    while (true)
+                    {
+                        var name = br.ReadString();
+
+                        var file = mActiveDownloads.Keys.FirstOrDefault(f => f.Path == name);
+                        var size = (int)br.ReadInt64();
+
+                        var dataStream = new MemoryStream(size);
+                        var downloaded = 0;
+                        while (downloaded < size)
+                        {
+                            var chunk = 1024 * 1024;
+                            if (downloaded + chunk > size)
+                            {
+                                chunk = size - downloaded;
+                            }
+                            dataStream.Write(br.ReadBytes(chunk), 0, chunk);
+                            downloaded += chunk;
+                            if (file != null)
+                            {
+                                mActiveDownloads[file] = downloaded;
+                            }
+                        }
+
+                        var data = dataStream.ToArray();
+                        dataStream.Close();
+                        dataStream.Dispose();
+
+                        if (file != null)
+                        {
+                            try
+                            {
+                                BeforeFileDownload(file);
+                                CheckFileData(file, data);
+                                BeforeReplaceFile(file);
+
+
+                                //Save New File
+                                File.WriteAllBytes(file.Path, data);
+
+                                lock (mUpdate)
+                                {
+                                    mCompletedDownloads.Add(file);
+                                    mActiveDownloads.TryRemove(file, out long val);
+                                    mDownloadedBytes += file.Size;
+
+                                    if (IsUpdaterFile(file.Path))
+                                    {
+                                        mUpdaterContentLoaded = true;
+                                    }
+                                }
+
+
+                            }
+                            catch (EndOfStreamException eof)
+                            {
+                                return mDownloadQueue.IsEmpty && mActiveDownloads.IsEmpty;
+                            }
+                            catch (Exception ex)
+                            {
+                                lock (mUpdate)
+                                {
+
+                                    mActiveDownloads.TryRemove(file, out long val);
+
+                                    if (mFailedDownloads.ContainsKey(file))
+                                    {
+                                        mFailedDownloads[file]++;
+                                    }
+                                    else
+                                    {
+                                        mFailedDownloads.TryAdd(file, 1);
+                                    }
+
+                                    if (mFailedDownloads[file] > 2)
+                                    {
+                                        Exception = new Exception("[" + file.Path + "] - " + ex.Message, ex);
+                                        mFailed = true;
+                                    }
+                                    else
+                                    {
+                                        mDownloadQueue.Push(file);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch (EndOfStreamException eof)
+            {
+                //Good to go?
+                //TODO Check if any files are missing, if so return false and let the basic downloader code try to fetch them.
+                return true;
+            }
+            catch (Exception ex)
+            {
+                //Errored
+                Log.Error("Failed to download streamed files, failure occured on ");
+                return false;
+            }
+        }
+    }
+
+    private bool Updating()
+    {
+        lock (mUpdate)
+        {
+            return (mDownloadQueue.Count > 0 || mActiveDownloads.Count > 0) && !mFailed && !mStopping;
+        }
+    }
+
+    private async void DownloadUpdates()
+    {
+        while (mDownloadQueue.Count > 0 && !mFailed)
+        {
+            UpdateFile file = null;
+            var streamDl = false;
+            lock (mUpdate)
+            {
+                if (mDownloadQueue.TryPop(out file))
+                {
                     mActiveDownloads.TryAdd(file, 0);
                 }
             }
 
-            HttpResponseMessage response;
-
-            var request = new HttpRequestMessage(HttpMethod.Post, $"{mUpdate.StreamingUrl}?token={Environment.TickCount}")
+            if (file != null)
             {
-                Content = new StringContent(JsonConvert.SerializeObject(files), Encoding.UTF8, "application/json"),
-            };
+                //Download File
+                BeforeFileDownload(file);
 
-            using (request)
-            {
-                response = await client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
-            }
-
-            using (var str = await response.Content.ReadAsStreamAsync())
-            {
                 try
                 {
-                    using (var br = new BinaryReader(str))
+                    //Use WebClient to Download File To Memory
+                    var wc = new WebClient();
+                    wc.DownloadProgressChanged += ((sender, args) => mActiveDownloads[file] = args.BytesReceived);
+                    var rawUri = mBaseUrl +
+                                 "/" +
+                                 Uri.EscapeUriString(file.Path) +
+                                 "?token=" +
+                                 Environment.TickCount;
+
+                    var fileUri = new Uri(rawUri);
+                    var fileData = await wc.DownloadDataTaskAsync(fileUri);
+                    wc.Dispose();
+
+                    CheckFileData(file, fileData);
+
+                    BeforeReplaceFile(file);
+
+                    //Save New File
+                    File.WriteAllBytes(file.Path, fileData);
+
+                    lock (mUpdate)
                     {
-                        while (true)
+                        mCompletedDownloads.Add(file);
+                        mActiveDownloads.TryRemove(file, out long val);
+                        mDownloadedBytes += file.Size;
+
+                        if (IsUpdaterFile(file.Path))
                         {
-                            var name = br.ReadString();
-
-                            var file = mActiveDownloads.Keys.FirstOrDefault(f => f.Path == name);
-                            var size = (int)br.ReadInt64();
-
-                            var dataStream = new MemoryStream(size);
-                            var downloaded = 0;
-                            while (downloaded < size)
-                            {
-                                var chunk = 1024 * 1024;
-                                if (downloaded + chunk > size)
-                                {
-                                    chunk = size - downloaded;
-                                }
-                                dataStream.Write(br.ReadBytes(chunk), 0, chunk);
-                                downloaded += chunk;
-                                if (file != null)
-                                {
-                                    mActiveDownloads[file] = downloaded;
-                                }
-                            }
-
-                            var data = dataStream.ToArray();
-                            dataStream.Close();
-                            dataStream.Dispose();
-
-                            if (file != null)
-                            {
-                                try
-                                {
-                                    BeforeFileDownload(file);
-                                    CheckFileData(file, data);
-                                    BeforeReplaceFile(file);
-
-
-                                    //Save New File
-                                    File.WriteAllBytes(file.Path, data);
-
-                                    lock (mUpdate)
-                                    {
-                                        mCompletedDownloads.Add(file);
-                                        mActiveDownloads.TryRemove(file, out long val);
-                                        mDownloadedBytes += file.Size;
-
-                                        if (IsUpdaterFile(file.Path))
-                                        {
-                                            mUpdaterContentLoaded = true;
-                                        }
-                                    }
-
-
-                                }
-                                catch (EndOfStreamException eof)
-                                {
-                                    return mDownloadQueue.IsEmpty && mActiveDownloads.IsEmpty;
-                                }
-                                catch (Exception ex)
-                                {
-                                    lock (mUpdate)
-                                    {
-
-                                        mActiveDownloads.TryRemove(file, out long val);
-
-                                        if (mFailedDownloads.ContainsKey(file))
-                                        {
-                                            mFailedDownloads[file]++;
-                                        }
-                                        else
-                                        {
-                                            mFailedDownloads.TryAdd(file, 1);
-                                        }
-
-                                        if (mFailedDownloads[file] > 2)
-                                        {
-                                            Exception = new Exception("[" + file.Path + "] - " + ex.Message, ex);
-                                            mFailed = true;
-                                        }
-                                        else
-                                        {
-                                            mDownloadQueue.Push(file);
-                                        }
-                                    }
-                                }
-                            }
+                            mUpdaterContentLoaded = true;
                         }
                     }
-                }
-                catch (EndOfStreamException eof)
-                {
-                    //Good to go?
-                    //TODO Check if any files are missing, if so return false and let the basic downloader code try to fetch them.
-                    return true;
+
+
                 }
                 catch (Exception ex)
                 {
-                    //Errored
-                    Log.Error("Failed to download streamed files, failure occured on ");
-                    return false;
-                }
-            }
-        }
-
-        private bool Updating()
-        {
-            lock (mUpdate)
-            {
-                return (mDownloadQueue.Count > 0 || mActiveDownloads.Count > 0) && !mFailed && !mStopping;
-            }
-        }
-
-        private async void DownloadUpdates()
-        {
-            while (mDownloadQueue.Count > 0 && !mFailed)
-            {
-                UpdateFile file = null;
-                var streamDl = false;
-                lock (mUpdate)
-                {
-                    if (mDownloadQueue.TryPop(out file))
+                    lock (mUpdate)
                     {
-                        mActiveDownloads.TryAdd(file, 0);
-                    }
-                }
+                        mActiveDownloads.TryRemove(file, out long val);
 
-                if (file != null)
-                {
-                    //Download File
-                    BeforeFileDownload(file);
 
-                    try
-                    {
-                        //Use WebClient to Download File To Memory
-                        var wc = new WebClient();
-                        wc.DownloadProgressChanged += ((sender, args) => mActiveDownloads[file] = args.BytesReceived);
-                        var rawUri = mBaseUrl +
-                                     "/" +
-                                     Uri.EscapeUriString(file.Path) +
-                                     "?token=" +
-                                     Environment.TickCount;
-
-                        var fileUri = new Uri(rawUri);
-                        var fileData = await wc.DownloadDataTaskAsync(fileUri);
-                        wc.Dispose();
-
-                        CheckFileData(file, fileData);
-
-                        BeforeReplaceFile(file);
-
-                        //Save New File
-                        File.WriteAllBytes(file.Path, fileData);
-
-                        lock (mUpdate)
+                        if (mFailedDownloads.ContainsKey(file))
                         {
-                            mCompletedDownloads.Add(file);
-                            mActiveDownloads.TryRemove(file, out long val);
-                            mDownloadedBytes += file.Size;
-
-                            if (IsUpdaterFile(file.Path))
-                            {
-                                mUpdaterContentLoaded = true;
-                            }
+                            mFailedDownloads[file]++;
+                        }
+                        else
+                        {
+                            mFailedDownloads.TryAdd(file, 1);
                         }
 
-
-                    }
-                    catch (Exception ex)
-                    {
-                        lock (mUpdate)
+                        if (mFailedDownloads[file] > 2)
                         {
-                            mActiveDownloads.TryRemove(file, out long val);
-
-
-                            if (mFailedDownloads.ContainsKey(file))
-                            {
-                                mFailedDownloads[file]++;
-                            }
-                            else
-                            {
-                                mFailedDownloads.TryAdd(file, 1);
-                            }
-
-                            if (mFailedDownloads[file] > 2)
-                            {
-                                Exception = new Exception("[" + file.Path + "] - " + ex.Message, ex);
-                                mFailed = true;
-                            }
-                            else
-                            {
-                                mDownloadQueue.Push(file);
-                            }
+                            Exception = new Exception("[" + file.Path + "] - " + ex.Message, ex);
+                            mFailed = true;
+                        }
+                        else
+                        {
+                            mDownloadQueue.Push(file);
                         }
                     }
-
                 }
-                Thread.Sleep(10);
+
+            }
+            Thread.Sleep(10);
+        }
+    }
+
+    private void BeforeFileDownload(UpdateFile file)
+    {
+        //Create any parent directories for this file
+        var dir = Path.GetDirectoryName(file.Path);
+        if (!string.IsNullOrEmpty(dir) && !Directory.Exists(dir))
+        {
+            Directory.CreateDirectory(dir);
+        }
+    }
+
+    private void CheckFileData(UpdateFile file, byte[] fileData)
+    {
+        if (fileData.Length != file.Size)
+        {
+            throw new Exception($"[File Length Mismatch - Got {fileData.Length} bytes, Expected {file.Size}]");
+        }
+
+        //Check MD5
+        var md5Hash = "";
+        using (var md5 = MD5.Create())
+        {
+            using (var stream = new MemoryStream(fileData))
+            {
+                md5Hash = BitConverter.ToString(md5.ComputeHash(stream)).Replace("-", "").ToLowerInvariant();
             }
         }
 
-        private void BeforeFileDownload(UpdateFile file)
+        if (md5Hash != file.Hash)
         {
-            //Create any parent directories for this file
-            var dir = Path.GetDirectoryName(file.Path);
-            if (!string.IsNullOrEmpty(dir) && !Directory.Exists(dir))
+            throw new Exception("File Hash Mismatch");
+        }
+    }
+
+    private void BeforeReplaceFile(UpdateFile file)
+    {
+        var oldFilePath = $"{file.Path}.old";
+        //Delete .old first if exists
+        if (File.Exists(oldFilePath))
+        {
+            try
             {
-                Directory.CreateDirectory(dir);
+                File.Delete(oldFilePath);
             }
+            catch { }
         }
 
-        private void CheckFileData(UpdateFile file, byte[] fileData)
+        //Delete Existing File
+        if (File.Exists(file.Path))
         {
-            if (fileData.Length != file.Size)
+            try
             {
-                throw new Exception($"[File Length Mismatch - Got {fileData.Length} bytes, Expected {file.Size}]");
+                File.Delete(file.Path);
             }
-
-            //Check MD5
-            var md5Hash = "";
-            using (var md5 = MD5.Create())
-            {
-                using (var stream = new MemoryStream(fileData))
-                {
-                    md5Hash = BitConverter.ToString(md5.ComputeHash(stream)).Replace("-", "").ToLowerInvariant();
-                }
-            }
-
-            if (md5Hash != file.Hash)
-            {
-                throw new Exception("File Hash Mismatch");
-            }
-        }
-
-        private void BeforeReplaceFile(UpdateFile file)
-        {
-            var oldFilePath = $"{file.Path}.old";
-            //Delete .old first if exists
-            if (File.Exists(oldFilePath))
+            catch
             {
                 try
                 {
-                    File.Delete(oldFilePath);
-                }
-                catch { }
-            }
-
-            //Delete Existing File
-            if (File.Exists(file.Path))
-            {
-                try
-                {
-                    File.Delete(file.Path);
+                    File.Move(file.Path, oldFilePath);
                 }
                 catch
                 {
-                    try
-                    {
-                        File.Move(file.Path, oldFilePath);
-                    }
-                    catch
-                    {
-                        throw new Exception("Failed to delete or move existing file!");
-                    }
+                    throw new Exception("Failed to delete or move existing file!");
                 }
             }
-
-            if (file.Path == Path.GetFileName(Assembly.GetEntryAssembly().Location))
-            {
-                ReplacedSelf = true;
-            }
         }
 
-        private void AddToUpdateList(UpdateFile file, List<UpdateFile> downloadFirst)
+        if (file.Path == Path.GetFileName(Assembly.GetEntryAssembly().Location))
         {
-            if (IsUpdaterFile(file.Path.ToLower()))
+            ReplacedSelf = true;
+        }
+    }
+
+    private void AddToUpdateList(UpdateFile file, List<UpdateFile> downloadFirst)
+    {
+        if (IsUpdaterFile(file.Path.ToLower()))
+        {
+            downloadFirst.Add(file);
+        }
+        else
+        {
+            mDownloadQueue.Push(file);
+        }
+    }
+
+    private void DeleteOldFiles()
+    {
+        foreach (var file in Directory.GetFiles(Directory.GetCurrentDirectory(), "*.old", SearchOption.AllDirectories))
+        {
+            try
             {
-                downloadFirst.Add(file);
+                File.Delete(file);
             }
-            else
-            {
-                mDownloadQueue.Push(file);
-            }
+            catch { }
+        }
+    }
+
+    private bool IsUpdaterFile(string path)
+    {
+        switch (path)
+        {
+            case "resources/updater/background.png":
+                return true;
+            case "resources/updater/font.xnb":
+                return true;
+            case "resources/updater/fontsmall.xnb":
+                return true;
+            case "resources/updater/progressbar.png":
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    public string GetHumanReadableFileSize(long size)
+    {
+        string[] sizes = { "B", "KB", "MB", "GB", "TB" };
+        double len = size;
+        int order = 0;
+        while (len >= 1024 && order < sizes.Length - 1)
+        {
+            order++;
+            len /= 1024;
+        }
+        return $"{len:0.##} {sizes[order]}";
+    }
+
+    public bool CheckUpdaterContentLoaded()
+    {
+        if (mUpdaterContentLoaded)
+        {
+            mUpdaterContentLoaded = false;
+
+            return true;
         }
 
-        private void DeleteOldFiles()
+        return false;
+    }
+
+    public void Stop()
+    {
+        if (mDownloadThreads != null)
         {
-            foreach (var file in Directory.GetFiles(Directory.GetCurrentDirectory(), "*.old", SearchOption.AllDirectories))
+            foreach (var dlThread in mDownloadThreads)
             {
                 try
                 {
-                    File.Delete(file);
+                    dlThread?.Interrupt();
                 }
-                catch { }
-            }
-        }
-
-        private bool IsUpdaterFile(string path)
-        {
-            switch (path)
-            {
-                case "resources/updater/background.png":
-                    return true;
-                case "resources/updater/font.xnb":
-                    return true;
-                case "resources/updater/fontsmall.xnb":
-                    return true;
-                case "resources/updater/progressbar.png":
-                    return true;
-                default:
-                    return false;
-            }
-        }
-
-        public string GetHumanReadableFileSize(long size)
-        {
-            string[] sizes = { "B", "KB", "MB", "GB", "TB" };
-            double len = size;
-            int order = 0;
-            while (len >= 1024 && order < sizes.Length - 1)
-            {
-                order++;
-                len /= 1024;
-            }
-            return $"{len:0.##} {sizes[order]}";
-        }
-
-        public bool CheckUpdaterContentLoaded()
-        {
-            if (mUpdaterContentLoaded)
-            {
-                mUpdaterContentLoaded = false;
-
-                return true;
-            }
-
-            return false;
-        }
-
-        public void Stop()
-        {
-            if (mDownloadThreads != null)
-            {
-                foreach (var dlThread in mDownloadThreads)
+                catch (Exception exception)
                 {
-                    try
-                    {
-                        dlThread?.Interrupt();
-                    }
-                    catch (Exception exception)
-                    {
-                        System.Console.WriteLine(exception);
-                    }
+                    System.Console.WriteLine(exception);
                 }
             }
-
-            mStopping = true;
         }
+
+        mStopping = true;
     }
 }

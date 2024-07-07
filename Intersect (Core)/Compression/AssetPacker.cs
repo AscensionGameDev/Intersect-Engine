@@ -1,11 +1,11 @@
 using Newtonsoft.Json;
 
-namespace Intersect.Compression
-{
-    /// <summary>
-    /// Allows for packaging up assets and extracting them from packaged files.
-    /// </summary>
-    public sealed partial class AssetPacker : IDisposable
+namespace Intersect.Compression;
+
+/// <summary>
+/// Allows for packaging up assets and extracting them from packaged files.
+/// </summary>
+public sealed partial class AssetPacker : IDisposable
 	{
 
 		/// <summary>
@@ -192,37 +192,37 @@ namespace Intersect.Compression
 		}
 
 		private static Dictionary<string, List<PackFileEntry>> GeneratePackLayout(string inputDir, string inputFilter, string packPrefix, string packExt, long batchSize)
-        {
+    {
 			var cache = new Dictionary<string, List<PackFileEntry>>();
 			var currentPack = 0;
 			long currentSize = 0;
 
 			foreach (var file in new DirectoryInfo(inputDir).GetFiles(inputFilter).OrderByDescending(f => f.Length))
-            {
+        {
 				// Does this file make us go over our determined batch size, but is it not our first file?
 				if (currentSize + file.Length > batchSize && currentSize != 0)
-                {
+            {
 					// It's going over and is NOT our first file! Uh-Oh! Move on to the next pack!
 					currentSize = 0;
 					currentPack++;
-                }
+            }
 
 				// Get our pack name for simplicity.
 				var packname = $"{packPrefix}{currentPack}{packExt}";
 
 				// Check if we already have this pack name in our cache, if not add it!
 				if (!cache.ContainsKey(packname))
-                {
+            {
 					cache.Add(packname, new List<PackFileEntry>());
-                }
+            }
 
 				// Add the file to our cache here.
 				cache[packname].Add(new PackFileEntry() { Name = file.Name, FullPath = file.FullName });
 				currentSize += file.Length;
-            }
+        }
 
 			return cache;
-        }
+    }
 		#endregion
 
 		#region Internal classes
@@ -248,4 +248,3 @@ namespace Intersect.Compression
 		#endregion
 
 	}
-}

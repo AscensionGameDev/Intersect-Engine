@@ -1,260 +1,259 @@
-namespace Intersect.GameObjects.Events
+namespace Intersect.GameObjects.Events;
+
+public enum MoveRouteEnum
 {
-    public enum MoveRouteEnum
-    {
-        MoveUp = 1,
+    MoveUp = 1,
 
-        MoveDown,
+    MoveDown,
 
-        MoveLeft,
+    MoveLeft,
 
-        MoveRight,
+    MoveRight,
 
-        MoveRandomly,
+    MoveRandomly,
 
-        MoveTowardsPlayer,
+    MoveTowardsPlayer,
 
-        MoveAwayFromPlayer,
+    MoveAwayFromPlayer,
 
-        StepForward,
+    StepForward,
 
-        StepBack,
+    StepBack,
 
-        FaceUp,
+    FaceUp,
 
-        FaceDown,
+    FaceDown,
 
-        FaceLeft,
+    FaceLeft,
 
-        FaceRight,
+    FaceRight,
 
-        Turn90Clockwise,
+    Turn90Clockwise,
 
-        Turn90CounterClockwise,
+    Turn90CounterClockwise,
 
-        Turn180,
+    Turn180,
 
-        TurnRandomly,
+    TurnRandomly,
 
-        FacePlayer,
+    FacePlayer,
 
-        FaceAwayFromPlayer,
+    FaceAwayFromPlayer,
 
-        SetSpeedSlowest,
+    SetSpeedSlowest,
 
-        SetSpeedSlower,
+    SetSpeedSlower,
 
-        SetSpeedNormal,
+    SetSpeedNormal,
 
-        SetSpeedFaster,
+    SetSpeedFaster,
 
-        SetSpeedFastest,
+    SetSpeedFastest,
 
-        SetFreqLowest,
+    SetFreqLowest,
 
-        SetFreqLower,
+    SetFreqLower,
 
-        SetFreqNormal,
+    SetFreqNormal,
 
-        SetFreqHigher,
+    SetFreqHigher,
 
-        SetFreqHighest,
+    SetFreqHighest,
 
-        WalkingAnimOn,
+    WalkingAnimOn,
 
-        WalkingAnimOff,
+    WalkingAnimOff,
 
-        DirectionFixOn,
+    DirectionFixOn,
 
-        DirectionFixOff,
+    DirectionFixOff,
 
-        WalkthroughOn,
+    WalkthroughOn,
 
-        WalkthroughOff,
+    WalkthroughOff,
 
-        ShowName,
+    ShowName,
 
-        HideName,
+    HideName,
 
-        SetLevelBelow,
+    SetLevelBelow,
 
-        SetLevelNormal,
+    SetLevelNormal,
 
-        SetLevelAbove,
+    SetLevelAbove,
 
-        Wait100,
+    Wait100,
 
-        Wait500,
+    Wait500,
 
-        Wait1000,
+    Wait1000,
 
-        SetGraphic,
+    SetGraphic,
 
-        SetAnimation,
+    SetAnimation,
 
-        MoveUpLeft,
+    MoveUpLeft,
 
-        MoveUpRight,
+    MoveUpRight,
 
-        MoveDownRight,
+    MoveDownRight,
 
-        MoveDownLeft,
-    }
+    MoveDownLeft,
+}
 
-    //ONLY ADD TO THE END OF THIS LIST ELSE FACE THE WRATH OF JC!!!!!
-    public enum EventCommandType
-    {
-        Null = 0,
+//ONLY ADD TO THE END OF THIS LIST ELSE FACE THE WRATH OF JC!!!!!
+public enum EventCommandType
+{
+    Null = 0,
 
-        //Dialog
-        ShowText,
+    //Dialog
+    ShowText,
 
-        ShowOptions,
+    ShowOptions,
 
-        AddChatboxText,
+    AddChatboxText,
 
-        //Logic Flow
-        SetVariable = 5,
+    //Logic Flow
+    SetVariable = 5,
 
-        SetSelfSwitch,
+    SetSelfSwitch,
 
-        ConditionalBranch,
+    ConditionalBranch,
 
-        ExitEventProcess,
+    ExitEventProcess,
 
-        Label,
+    Label,
 
-        GoToLabel,
+    GoToLabel,
 
-        StartCommonEvent,
+    StartCommonEvent,
 
-        //Player Control
-        RestoreHp,
+    //Player Control
+    RestoreHp,
 
-        RestoreMp,
+    RestoreMp,
 
-        LevelUp,
+    LevelUp,
 
-        GiveExperience,
+    GiveExperience,
 
-        ChangeLevel,
+    ChangeLevel,
 
-        ChangeSpells,
+    ChangeSpells,
 
-        ChangeItems,
+    ChangeItems,
 
-        ChangeSprite,
+    ChangeSprite,
 
-        ChangeFace,
+    ChangeFace,
 
-        ChangeGender,
+    ChangeGender,
 
-        SetAccess,
+    SetAccess,
 
-        //Movement,
-        WarpPlayer,
+    //Movement,
+    WarpPlayer,
 
-        SetMoveRoute,
+    SetMoveRoute,
 
-        WaitForRouteCompletion,
+    WaitForRouteCompletion,
 
-        HoldPlayer,
+    HoldPlayer,
 
-        ReleasePlayer,
+    ReleasePlayer,
 
-        SpawnNpc,
+    SpawnNpc,
 
-        //Special Effects
-        PlayAnimation,
+    //Special Effects
+    PlayAnimation,
 
-        PlayBgm,
+    PlayBgm,
 
-        FadeoutBgm,
+    FadeoutBgm,
 
-        PlaySound,
+    PlaySound,
 
-        StopSounds,
+    StopSounds,
 
-        //Etc
-        Wait,
+    //Etc
+    Wait,
 
-        //Shop and Bank
-        OpenBank,
+    //Shop and Bank
+    OpenBank,
 
-        OpenShop,
+    OpenShop,
 
-        OpenCraftingTable,
+    OpenCraftingTable,
 
-        //Extras
-        SetClass,
+    //Extras
+    SetClass,
 
-        DespawnNpc,
+    DespawnNpc,
 
-        //Questing
-        StartQuest,
+    //Questing
+    StartQuest,
 
-        CompleteQuestTask,
+    CompleteQuestTask,
 
-        EndQuest,
+    EndQuest,
 
-        //Pictures
-        ShowPicture,
+    //Pictures
+    ShowPicture,
 
-        HidePicture,
+    HidePicture,
 
-        //Hide/show player
-        HidePlayer,
+    //Hide/show player
+    HidePlayer,
 
-        ShowPlayer,
+    ShowPlayer,
 
-        //Equip Items
-        EquipItem,
+    //Equip Items
+    EquipItem,
 
-        //Change Name Color
-        ChangeNameColor,
+    //Change Name Color
+    ChangeNameColor,
 
-        //Player Input variable.
-        InputVariable,
+    //Player Input variable.
+    InputVariable,
 
-        //Player Label
-        PlayerLabel,
+    //Player Label
+    PlayerLabel,
 
-        // Player Color
-        ChangePlayerColor,
+    // Player Color
+    ChangePlayerColor,
 
-        ChangeName,
+    ChangeName,
 
-        //Guilds
-        CreateGuild,
-        DisbandGuild,
-        OpenGuildBank,
-        SetGuildBankSlots,
+    //Guilds
+    CreateGuild,
+    DisbandGuild,
+    OpenGuildBank,
+    SetGuildBankSlots,
 
-        //End Guilds
+    //End Guilds
 
-        //Reset Stats
-        ResetStatPointAllocations,
+    //Reset Stats
+    ResetStatPointAllocations,
 
-        CastSpellOn,
+    CastSpellOn,
 
-        Fade,
-    }
+    Fade,
+}
 
-    public enum FadeType
-    {
-        None = 0,
-        FadeIn,
-        FadeOut,
-    }
+public enum FadeType
+{
+    None = 0,
+    FadeIn,
+    FadeOut,
+}
 
-    public enum ItemEventTriggers
-    {
-        OnPickup = 0,
-        OnDrop,
-        OnUse,
-        OnEquip,
-        OnUnequip,
-        OnHit,
-        OnDamageReceived
-    }
+public enum ItemEventTriggers
+{
+    OnPickup = 0,
+    OnDrop,
+    OnUse,
+    OnEquip,
+    OnUnequip,
+    OnHit,
+    OnDamageReceived
 }

@@ -1,222 +1,220 @@
 ﻿using Intersect.Extensions;
 
-namespace Intersect.Collections
+namespace Intersect.Collections;
+
+
+public partial struct Sanitizer
 {
 
-    public partial struct Sanitizer
+    private Dictionary<string, SanitizedValue<object>> mSanitizedValues;
+
+    public Dictionary<string, SanitizedValue<object>> Sanitized => mSanitizedValues?.ToDictionary();
+
+    public Sanitizer Add<T>(string name, T before, T after)
     {
-
-        private Dictionary<string, SanitizedValue<object>> mSanitizedValues;
-
-        public Dictionary<string, SanitizedValue<object>> Sanitized => mSanitizedValues?.ToDictionary();
-
-        public Sanitizer Add<T>(string name, T before, T after)
+        if (string.IsNullOrWhiteSpace(name))
         {
-            if (string.IsNullOrWhiteSpace(name))
-            {
-                throw new ArgumentNullException(nameof(name));
-            }
-
-            if (mSanitizedValues == null)
-            {
-                mSanitizedValues = new Dictionary<string, SanitizedValue<object>>(8);
-            }
-
-            mSanitizedValues.Add(name, new SanitizedValue<object>(before, after));
-
-            return this;
+            throw new ArgumentNullException(nameof(name));
         }
 
-        public T IsNotNull<T>(string name, T value, T defaultValue) where T : class
+        if (mSanitizedValues == null)
         {
-            if (value == null)
-            {
-                Add(name, null, defaultValue);
-            }
-
-            return defaultValue;
+            mSanitizedValues = new Dictionary<string, SanitizedValue<object>>(8);
         }
 
-        public T IsNull<T>(string name, T value) where T : class
-        {
-            if (value != null)
-            {
-                Add(name, value, null);
-            }
+        mSanitizedValues.Add(name, new SanitizedValue<object>(before, after));
 
-            return null;
+        return this;
+    }
+
+    public T IsNotNull<T>(string name, T value, T defaultValue) where T : class
+    {
+        if (value == null)
+        {
+            Add(name, null, defaultValue);
         }
 
-        public T Is<T>(string name, T actualValue, T expectedValue)
+        return defaultValue;
+    }
+
+    public T IsNull<T>(string name, T value) where T : class
+    {
+        if (value != null)
         {
-            if (expectedValue == null && actualValue == null || (expectedValue?.Equals(actualValue) ?? false))
-            {
-                return actualValue;
-            }
-
-            Add(name, actualValue, expectedValue);
-
-            return expectedValue;
+            Add(name, value, null);
         }
 
-        public T IsNot<T>(string name, T actualValue, T expectedValue)
+        return null;
+    }
+
+    public T Is<T>(string name, T actualValue, T expectedValue)
+    {
+        if (expectedValue == null && actualValue == null || (expectedValue?.Equals(actualValue) ?? false))
         {
-            if (expectedValue == null && actualValue != null || !(expectedValue?.Equals(actualValue) ?? false))
-            {
-                return actualValue;
-            }
-
-            Add(name, actualValue, expectedValue);
-
-            return expectedValue;
+            return actualValue;
         }
 
-        public T MaximumExclusive<T>(string name, T actualValue, T expectedMinimum)
-            where T : IComparable<T>
-        {
-            if (expectedMinimum.CompareTo(actualValue) < 0)
-            {
-                return actualValue;
-            }
+        Add(name, actualValue, expectedValue);
 
+        return expectedValue;
+    }
+
+    public T IsNot<T>(string name, T actualValue, T expectedValue)
+    {
+        if (expectedValue == null && actualValue != null || !(expectedValue?.Equals(actualValue) ?? false))
+        {
+            return actualValue;
+        }
+
+        Add(name, actualValue, expectedValue);
+
+        return expectedValue;
+    }
+
+    public T MaximumExclusive<T>(string name, T actualValue, T expectedMinimum)
+        where T : IComparable<T>
+    {
+        if (expectedMinimum.CompareTo(actualValue) < 0)
+        {
+            return actualValue;
+        }
+
+        Add(name, actualValue, expectedMinimum);
+
+        return expectedMinimum;
+    }
+
+    public T Maximum<T>(string name, T actualValue, T expectedMinimum) where T : IComparable<T>
+    {
+        if (expectedMinimum.CompareTo(actualValue) <= 0)
+        {
+            return actualValue;
+        }
+
+        Add(name, actualValue, expectedMinimum);
+
+        return expectedMinimum;
+    }
+
+    public T MinimumExclusive<T>(string name, T actualValue, T expectedMaximum)
+        where T : IComparable<T>
+    {
+        if (expectedMaximum.CompareTo(actualValue) > 0)
+        {
+            return actualValue;
+        }
+
+        Add(name, actualValue, expectedMaximum);
+
+        return expectedMaximum;
+    }
+
+    public T Minimum<T>(string name, T actualValue, T expectedMaximum) where T : IComparable<T>
+    {
+        if (expectedMaximum.CompareTo(actualValue) >= 0)
+        {
+            return actualValue;
+        }
+
+        Add(name, actualValue, expectedMaximum);
+
+        return expectedMaximum;
+    }
+
+    public T Clamp<T>(
+        string name,
+        T actualValue,
+        T expectedMinimum,
+        T expectedMaximum
+    ) where T : IComparable<T>
+    {
+        if (expectedMinimum.CompareTo(actualValue) > 0)
+        {
             Add(name, actualValue, expectedMinimum);
 
             return expectedMinimum;
         }
 
-        public T Maximum<T>(string name, T actualValue, T expectedMinimum) where T : IComparable<T>
+        if (expectedMaximum.CompareTo(actualValue) >= 0)
         {
-            if (expectedMinimum.CompareTo(actualValue) <= 0)
-            {
-                return actualValue;
-            }
+            return actualValue;
+        }
 
+        Add(name, actualValue, expectedMaximum);
+
+        return expectedMaximum;
+    }
+
+    public T ClampExclusive<T>(
+        string name,
+        T actualValue,
+        T expectedMinimum,
+        T expectedMaximum
+    ) where T : IComparable<T>
+    {
+        if (expectedMinimum.CompareTo(actualValue) >= 0)
+        {
             Add(name, actualValue, expectedMinimum);
 
             return expectedMinimum;
         }
 
-        public T MinimumExclusive<T>(string name, T actualValue, T expectedMaximum)
-            where T : IComparable<T>
+        if (expectedMaximum.CompareTo(actualValue) > 0)
         {
-            if (expectedMaximum.CompareTo(actualValue) > 0)
-            {
-                return actualValue;
-            }
-
-            Add(name, actualValue, expectedMaximum);
-
-            return expectedMaximum;
+            return actualValue;
         }
 
-        public T Minimum<T>(string name, T actualValue, T expectedMaximum) where T : IComparable<T>
+        Add(name, actualValue, expectedMaximum);
+
+        return expectedMaximum;
+    }
+
+    public T ClampExclusiveMinimum<T>(
+        string name,
+        T actualValue,
+        T expectedMinimum,
+        T expectedMaximum
+    ) where T : IComparable<T>
+    {
+        if (expectedMinimum.CompareTo(actualValue) > 0)
         {
-            if (expectedMaximum.CompareTo(actualValue) >= 0)
-            {
-                return actualValue;
-            }
+            Add(name, actualValue, expectedMinimum);
 
-            Add(name, actualValue, expectedMaximum);
-
-            return expectedMaximum;
+            return expectedMinimum;
         }
 
-        public T Clamp<T>(
-            string name,
-            T actualValue,
-            T expectedMinimum,
-            T expectedMaximum
-        ) where T : IComparable<T>
+        if (expectedMaximum.CompareTo(actualValue) >= 0)
         {
-            if (expectedMinimum.CompareTo(actualValue) > 0)
-            {
-                Add(name, actualValue, expectedMinimum);
-
-                return expectedMinimum;
-            }
-
-            if (expectedMaximum.CompareTo(actualValue) >= 0)
-            {
-                return actualValue;
-            }
-
-            Add(name, actualValue, expectedMaximum);
-
-            return expectedMaximum;
+            return actualValue;
         }
 
-        public T ClampExclusive<T>(
-            string name,
-            T actualValue,
-            T expectedMinimum,
-            T expectedMaximum
-        ) where T : IComparable<T>
+        Add(name, actualValue, expectedMaximum);
+
+        return expectedMaximum;
+    }
+
+    public T ClampExclusiveMaximum<T>(
+        string name,
+        T actualValue,
+        T expectedMinimum,
+        T expectedMaximum
+    ) where T : IComparable<T>
+    {
+        if (expectedMinimum.CompareTo(actualValue) >= 0)
         {
-            if (expectedMinimum.CompareTo(actualValue) >= 0)
-            {
-                Add(name, actualValue, expectedMinimum);
+            Add(name, actualValue, expectedMinimum);
 
-                return expectedMinimum;
-            }
-
-            if (expectedMaximum.CompareTo(actualValue) > 0)
-            {
-                return actualValue;
-            }
-
-            Add(name, actualValue, expectedMaximum);
-
-            return expectedMaximum;
+            return expectedMinimum;
         }
 
-        public T ClampExclusiveMinimum<T>(
-            string name,
-            T actualValue,
-            T expectedMinimum,
-            T expectedMaximum
-        ) where T : IComparable<T>
+        if (expectedMaximum.CompareTo(actualValue) > 0)
         {
-            if (expectedMinimum.CompareTo(actualValue) > 0)
-            {
-                Add(name, actualValue, expectedMinimum);
-
-                return expectedMinimum;
-            }
-
-            if (expectedMaximum.CompareTo(actualValue) >= 0)
-            {
-                return actualValue;
-            }
-
-            Add(name, actualValue, expectedMaximum);
-
-            return expectedMaximum;
+            return actualValue;
         }
 
-        public T ClampExclusiveMaximum<T>(
-            string name,
-            T actualValue,
-            T expectedMinimum,
-            T expectedMaximum
-        ) where T : IComparable<T>
-        {
-            if (expectedMinimum.CompareTo(actualValue) >= 0)
-            {
-                Add(name, actualValue, expectedMinimum);
+        Add(name, actualValue, expectedMaximum);
 
-                return expectedMinimum;
-            }
-
-            if (expectedMaximum.CompareTo(actualValue) > 0)
-            {
-                return actualValue;
-            }
-
-            Add(name, actualValue, expectedMaximum);
-
-            return expectedMaximum;
-        }
-
+        return expectedMaximum;
     }
 
 }

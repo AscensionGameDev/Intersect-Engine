@@ -1,32 +1,30 @@
 ﻿using Intersect.Enums;
 using MessagePack;
 
-namespace Intersect.Network.Packets.Editor
+namespace Intersect.Network.Packets.Editor;
+
+[MessagePackObject]
+public partial class SaveGameObjectPacket : EditorPacket
 {
-    [MessagePackObject]
-    public partial class SaveGameObjectPacket : EditorPacket
+    //Parameterless Constructor for MessagePack
+    public SaveGameObjectPacket()
     {
-        //Parameterless Constructor for MessagePack
-        public SaveGameObjectPacket()
-        {
-        }
-
-        public SaveGameObjectPacket(GameObjectType type, Guid id, string data)
-        {
-            Type = type;
-            Id = id;
-            Data = data;
-        }
-
-        [Key(0)]
-        public GameObjectType Type { get; set; }
-
-        [Key(1)]
-        public Guid Id { get; set; }
-
-        [Key(2)]
-        public string Data { get; set; }
-
     }
+
+    public SaveGameObjectPacket(GameObjectType type, Guid id, string data)
+    {
+        Type = type;
+        Id = id;
+        Data = data;
+    }
+
+    [Key(0)]
+    public GameObjectType Type { get; set; }
+
+    [Key(1)]
+    public Guid Id { get; set; }
+
+    [Key(2)]
+    public string Data { get; set; }
 
 }

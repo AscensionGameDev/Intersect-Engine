@@ -1,23 +1,21 @@
 ﻿using MessagePack;
 
-namespace Intersect.Network.Packets.Client
+namespace Intersect.Network.Packets.Client;
+
+[MessagePackObject]
+public partial class UnequipItemPacket : IntersectPacket
 {
-    [MessagePackObject]
-    public partial class UnequipItemPacket : IntersectPacket
+    //Parameterless Constructor for MessagePack
+    public UnequipItemPacket()
     {
-        //Parameterless Constructor for MessagePack
-        public UnequipItemPacket()
-        {
-        }
-
-        public UnequipItemPacket(int slot)
-        {
-            Slot = slot;
-        }
-
-        [Key(0)]
-        public int Slot { get; set; }
-
     }
+
+    public UnequipItemPacket(int slot)
+    {
+        Slot = slot;
+    }
+
+    [Key(0)]
+    public int Slot { get; set; }
 
 }

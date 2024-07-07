@@ -1,39 +1,38 @@
 ﻿using Intersect.Collections;
 
-namespace Intersect.GameObjects.Maps.MapList
+namespace Intersect.GameObjects.Maps.MapList;
+
+public partial class MapListMap : MapListItem, IComparable<MapListMap>
 {
-    public partial class MapListMap : MapListItem, IComparable<MapListMap>
+    public Guid MapId;
+
+    public long TimeCreated;
+
+    public MapListMap() : base()
     {
-        public Guid MapId;
+        Name = "New Map";
+        Type = 1;
+    }
 
-        public long TimeCreated;
+    public int CompareTo(MapListMap obj)
+    {
+        return Name.CompareTo(obj.Name);
+    }
 
-        public MapListMap() : base()
+    public void PostLoad(DatabaseObjectLookup gameMaps, bool isServer = true)
+    {
+        if (!isServer)
         {
-            Name = "New Map";
-            Type = 1;
-        }
-
-        public int CompareTo(MapListMap obj)
-        {
-            return Name.CompareTo(obj.Name);
-        }
-
-        public void PostLoad(DatabaseObjectLookup gameMaps, bool isServer = true)
-        {
-            if (!isServer)
+            if (gameMaps.Keys.Contains(MapId))
             {
-                if (gameMaps.Keys.Contains(MapId))
-                {
-                    gameMaps[MapId].Name = Name;
-                }
+                gameMaps[MapId].Name = Name;
             }
-            else
+        }
+        else
+        {
+            if (gameMaps.Keys.Contains(MapId))
             {
-                if (gameMaps.Keys.Contains(MapId))
-                {
-                    Name = gameMaps[MapId].Name;
-                }
+                Name = gameMaps[MapId].Name;
             }
         }
     }

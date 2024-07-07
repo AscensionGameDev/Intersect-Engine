@@ -1,9 +1,8 @@
-namespace Intersect.GameObjects.Annotations
-{
-    public enum EditorFieldType
-    {
-        Default,
+namespace Intersect.GameObjects.Annotations;
 
-        Pivot,
-    }
+public enum EditorFieldType
+{
+    Default,
+
+    Pivot,
 }

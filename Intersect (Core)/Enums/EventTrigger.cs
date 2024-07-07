@@ -1,13 +1,12 @@
-﻿namespace Intersect.Enums
+﻿namespace Intersect.Enums;
+
+public enum EventTrigger
 {
-    public enum EventTrigger
-    {
-        ActionButton = 0,
+    ActionButton = 0,
 
-        PlayerCollide,
+    PlayerCollide,
 
-        Autorun,
+    Autorun,
 
-        PlayerBump,
-    }
+    PlayerBump,
 }

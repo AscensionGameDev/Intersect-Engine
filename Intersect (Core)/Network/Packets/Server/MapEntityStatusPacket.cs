@@ -1,38 +1,37 @@
 ﻿using MessagePack;
 
-namespace Intersect.Network.Packets.Server
+namespace Intersect.Network.Packets.Server;
+
+[MessagePackObject]
+public partial class MapEntityStatusPacket : IntersectPacket
 {
-    [MessagePackObject]
-    public partial class MapEntityStatusPacket : IntersectPacket
+    [Key(0)]
+    public Guid MapId { get; set; }
+
+    [Key(1)]
+    public EntityStatusData[] EntityUpdates { get; set; }
+
+    public MapEntityStatusPacket(Guid mapId, EntityStatusData[] entityUpdates)
     {
-        [Key(0)]
-        public Guid MapId { get; set; }
-
-        [Key(1)]
-        public EntityStatusData[] EntityUpdates { get; set; }
-
-        public MapEntityStatusPacket(Guid mapId, EntityStatusData[] entityUpdates)
-        {
-            MapId = mapId;
-            EntityUpdates = entityUpdates;
-        }
-
-        // MessagePack compatibility
-        public MapEntityStatusPacket()
-        {
-        }
+        MapId = mapId;
+        EntityUpdates = entityUpdates;
     }
 
-    [MessagePackObject]
-    public partial class EntityStatusData
+    // MessagePack compatibility
+    public MapEntityStatusPacket()
     {
-        [Key(0)]
-        public Guid Id { get; set; }
-
-        [Key(1)]
-        public Enums.EntityType Type { get; set; }
-
-        [Key(2)]
-        public StatusPacket[] Statuses { get; set; } = new StatusPacket[0];
     }
+}
+
+[MessagePackObject]
+public partial class EntityStatusData
+{
+    [Key(0)]
+    public Guid Id { get; set; }
+
+    [Key(1)]
+    public Enums.EntityType Type { get; set; }
+
+    [Key(2)]
+    public StatusPacket[] Statuses { get; set; } = new StatusPacket[0];
 }

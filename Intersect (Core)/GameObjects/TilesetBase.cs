@@ -2,26 +2,25 @@
 
 using Newtonsoft.Json;
 
-namespace Intersect.GameObjects
+namespace Intersect.GameObjects;
+
+public partial class TilesetBase : DatabaseObject<TilesetBase>
 {
-    public partial class TilesetBase : DatabaseObject<TilesetBase>
+    [JsonConstructor]
+    public TilesetBase(Guid id) : base(id)
     {
-        [JsonConstructor]
-        public TilesetBase(Guid id) : base(id)
-        {
-            Name = "";
-        }
+        Name = "";
+    }
 
-        //Ef Parameterless Constructor
-        public TilesetBase()
-        {
-            Name = "";
-        }
+    //Ef Parameterless Constructor
+    public TilesetBase()
+    {
+        Name = "";
+    }
 
-        public new string Name
-        {
-            get => base.Name;
-            set => base.Name = value?.Trim().ToLower();
-        }
+    public new string Name
+    {
+        get => base.Name;
+        set => base.Name = value?.Trim().ToLower();
     }
 }

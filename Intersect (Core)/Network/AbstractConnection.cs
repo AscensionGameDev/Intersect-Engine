@@ -1,67 +1,65 @@
 ﻿using Intersect.Logging;
 
-namespace Intersect.Network
+namespace Intersect.Network;
+
+
+public abstract partial class AbstractConnection : IConnection
 {
+    private readonly object mDisposeLock;
 
-    public abstract partial class AbstractConnection : IConnection
+    private bool mDisposed;
+
+    protected AbstractConnection(Guid? guid = null)
     {
-        private readonly object mDisposeLock;
+        mDisposeLock = new object();
 
-        private bool mDisposed;
-
-        protected AbstractConnection(Guid? guid = null)
-        {
-            mDisposeLock = new object();
-
-            Guid = guid ?? Guid.NewGuid();
-            Statistics = new ConnectionStatistics();
-        }
-
-        public virtual void Dispose()
-        {
-            lock (mDisposeLock)
-            {
-                if (mDisposed)
-                {
-                    return;
-                }
-
-                mDisposed = true;
-            }
-        }
-
-        public Guid Guid { get; }
-
-        public bool IsConnected { get; private set; }
-
-        public abstract string Ip { get; }
-
-        public abstract int Port { get; }
-
-        public ConnectionStatistics Statistics { get; }
-
-        public abstract bool Send(IPacket packet, TransmissionMode mode = TransmissionMode.All);
-
-        public virtual void HandleConnected()
-        {
-            IsConnected = true;
-
-            Log.Debug($"Connection established to remote [{Guid}/{Ip}:{Port}].");
-        }
-
-        public void HandleApproved()
-        {
-            Log.Debug($"Connection approved to remote [{Guid}/{Ip}:{Port}].");
-        }
-
-        public virtual void HandleDisconnected()
-        {
-            IsConnected = false;
-
-            Log.Debug($"Connection terminated to remote [{Guid}/{Ip}:{Port}].");
-        }
-
-        public abstract void Disconnect(string message = default);
+        Guid = guid ?? Guid.NewGuid();
+        Statistics = new ConnectionStatistics();
     }
 
+    public virtual void Dispose()
+    {
+        lock (mDisposeLock)
+        {
+            if (mDisposed)
+            {
+                return;
+            }
+
+            mDisposed = true;
+        }
+    }
+
+    public Guid Guid { get; }
+
+    public bool IsConnected { get; private set; }
+
+    public abstract string Ip { get; }
+
+    public abstract int Port { get; }
+
+    public ConnectionStatistics Statistics { get; }
+
+    public abstract bool Send(IPacket packet, TransmissionMode mode = TransmissionMode.All);
+
+    public virtual void HandleConnected()
+    {
+        IsConnected = true;
+
+        Log.Debug($"Connection established to remote [{Guid}/{Ip}:{Port}].");
+    }
+
+    public void HandleApproved()
+    {
+        Log.Debug($"Connection approved to remote [{Guid}/{Ip}:{Port}].");
+    }
+
+    public virtual void HandleDisconnected()
+    {
+        IsConnected = false;
+
+        Log.Debug($"Connection terminated to remote [{Guid}/{Ip}:{Port}].");
+    }
+
+    public abstract void Disconnect(string message = default);
 }

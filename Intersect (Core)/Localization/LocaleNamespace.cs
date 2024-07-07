@@ -1,10 +1,8 @@
-﻿namespace Intersect.Localization
+﻿namespace Intersect.Localization;
+
+
+[Serializable]
+public abstract partial class LocaleNamespace : Localized
 {
-
-    [Serializable]
-    public abstract partial class LocaleNamespace : Localized
-    {
-
-    }
 
 }

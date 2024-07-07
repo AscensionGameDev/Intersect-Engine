@@ -1,36 +1,35 @@
-namespace Intersect.Async
+namespace Intersect.Async;
+
+public partial class AsyncValueGenerator<TValue> : IDisposable
 {
-    public partial class AsyncValueGenerator<TValue> : IDisposable
+    private readonly CancellationToken _cancellationToken;
+    private readonly Task _task;
+    private readonly Func<Task<TValue>> _valueGenerator;
+    private readonly Action<TValue> _valueHandler;
+
+    public AsyncValueGenerator(Func<Task<TValue>> valueGenerator, Action<TValue> valueHandler, CancellationToken cancellationToken)
     {
-        private readonly CancellationToken _cancellationToken;
-        private readonly Task _task;
-        private readonly Func<Task<TValue>> _valueGenerator;
-        private readonly Action<TValue> _valueHandler;
+        _cancellationToken = cancellationToken;
+        _task = new Task(DoLoop, cancellationToken);
+        _valueGenerator = valueGenerator;
+        _valueHandler = valueHandler;
+    }
 
-        public AsyncValueGenerator(Func<Task<TValue>> valueGenerator, Action<TValue> valueHandler, CancellationToken cancellationToken)
+    public void Dispose() => _task?.Dispose();
+
+    private async void DoLoop()
+    {
+        while (!_cancellationToken.IsCancellationRequested)
         {
-            _cancellationToken = cancellationToken;
-            _task = new Task(DoLoop, cancellationToken);
-            _valueGenerator = valueGenerator;
-            _valueHandler = valueHandler;
+            var task = _valueGenerator();
+            var value = await task.ConfigureAwait(false);
+            _valueHandler(value);
         }
+    }
 
-        public void Dispose() => _task?.Dispose();
-
-        private async void DoLoop()
-        {
-            while (!_cancellationToken.IsCancellationRequested)
-            {
-                var task = _valueGenerator();
-                var value = await task.ConfigureAwait(false);
-                _valueHandler(value);
-            }
-        }
-
-        public AsyncValueGenerator<TValue> Start()
-        {
-            _task.Start();
-            return this;
-        }
+    public AsyncValueGenerator<TValue> Start()
+    {
+        _task.Start();
+        return this;
     }
 }

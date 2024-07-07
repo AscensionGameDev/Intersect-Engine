@@ -2,35 +2,33 @@
 using Intersect.Enums;
 using MessagePack;
 
-namespace Intersect.Network.Packets.Client
+namespace Intersect.Network.Packets.Client;
+
+[MessagePackObject]
+public partial class DirectionPacket : IntersectPacket
 {
-    [MessagePackObject]
-    public partial class DirectionPacket : IntersectPacket
+    //Parameterless Constructor for MessagePack
+    public DirectionPacket()
     {
-        //Parameterless Constructor for MessagePack
-        public DirectionPacket()
-        {
-        }
+    }
 
-        public DirectionPacket(Direction dir)
-        {
-            Direction = dir;
-        }
+    public DirectionPacket(Direction dir)
+    {
+        Direction = dir;
+    }
 
-        [Key(0)]
-        public Direction Direction { get; set; }
+    [Key(0)]
+    public Direction Direction { get; set; }
 
-        public override Dictionary<string, SanitizedValue<object>> Sanitize()
-        {
-            var sanitizer = new Sanitizer();
+    public override Dictionary<string, SanitizedValue<object>> Sanitize()
+    {
+        var sanitizer = new Sanitizer();
 
-            Direction = (Direction) sanitizer.Clamp(
-                nameof(Direction), (byte)Direction, 0, Enum.GetValues(typeof(Direction)).Length
-            );
+        Direction = (Direction) sanitizer.Clamp(
+            nameof(Direction), (byte)Direction, 0, Enum.GetValues(typeof(Direction)).Length
+        );
 
-            return sanitizer.Sanitized;
-        }
-
+        return sanitizer.Sanitized;
     }
 
 }

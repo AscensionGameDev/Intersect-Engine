@@ -1,8 +1,7 @@
-﻿namespace Intersect.GameObjects
-{
+﻿namespace Intersect.GameObjects;
 
-    public interface IGameObject<out TKey, TValue> where TValue : IGameObject<TKey, TValue>
-    {
-        TKey Id { get; }
-    }
+
+public interface IGameObject<out TKey, TValue> where TValue : IGameObject<TKey, TValue>
+{
+    TKey Id { get; }
 }

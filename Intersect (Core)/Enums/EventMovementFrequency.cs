@@ -1,15 +1,14 @@
-﻿namespace Intersect.Enums
+﻿namespace Intersect.Enums;
+
+public enum EventMovementFrequency
 {
-    public enum EventMovementFrequency
-    {
-        Lowest = 0,
+    Lowest = 0,
 
-        Lower,
+    Lower,
 
-        Normal,
+    Normal,
 
-        Higher,
+    Higher,
 
-        Highest,
-    }
+    Highest,
 }

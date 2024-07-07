@@ -1,23 +1,21 @@
 ﻿using MessagePack;
 
-namespace Intersect.Network.Packets.Server
+namespace Intersect.Network.Packets.Server;
+
+[MessagePackObject]
+public partial class MapEntitiesPacket : IntersectPacket
 {
-    [MessagePackObject]
-    public partial class MapEntitiesPacket : IntersectPacket
+    //Parameterless Constructor for MessagePack
+    public MapEntitiesPacket()
     {
-        //Parameterless Constructor for MessagePack
-        public MapEntitiesPacket()
-        {
-        }
-
-        public MapEntitiesPacket(EntityPacket[] mapEntities)
-        {
-            MapEntities = mapEntities;
-        }
-
-        [Key(0)]
-        public EntityPacket[] MapEntities { get; set; }
-
     }
+
+    public MapEntitiesPacket(EntityPacket[] mapEntities)
+    {
+        MapEntities = mapEntities;
+    }
+
+    [Key(0)]
+    public EntityPacket[] MapEntities { get; set; }
 
 }

@@ -1,25 +1,23 @@
 ﻿using Intersect.Admin.Actions;
 using MessagePack;
 
-namespace Intersect.Network.Packets.Client
+namespace Intersect.Network.Packets.Client;
+
+[MessagePackObject]
+public partial class AdminActionPacket : IntersectPacket
 {
-    [MessagePackObject]
-    public partial class AdminActionPacket : IntersectPacket
+    //Parameterless Constructor for MessagePack
+    public AdminActionPacket()
     {
-        //Parameterless Constructor for MessagePack
-        public AdminActionPacket()
-        {
-
-        }
-
-        public AdminActionPacket(AdminAction action)
-        {
-            Action = action;
-        }
-
-        [Key(0)]
-        public AdminAction Action { get; set; }
 
     }
+
+    public AdminActionPacket(AdminAction action)
+    {
+        Action = action;
+    }
+
+    [Key(0)]
+    public AdminAction Action { get; set; }
 
 }

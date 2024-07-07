@@ -1,33 +1,31 @@
 ﻿using Intersect.Collections;
 using MessagePack;
 
-namespace Intersect.Network.Packets.Client
+namespace Intersect.Network.Packets.Client;
+
+[MessagePackObject]
+public partial class ForgetSpellPacket : IntersectPacket
 {
-    [MessagePackObject]
-    public partial class ForgetSpellPacket : IntersectPacket
+    //Parameterless Constructor for MessagePack
+    public ForgetSpellPacket()
     {
-        //Parameterless Constructor for MessagePack
-        public ForgetSpellPacket()
-        {
-        }
+    }
 
-        public ForgetSpellPacket(int slot)
-        {
-            Slot = slot;
-        }
+    public ForgetSpellPacket(int slot)
+    {
+        Slot = slot;
+    }
 
-        [Key(0)]
-        public int Slot { get; set; }
+    [Key(0)]
+    public int Slot { get; set; }
 
-        public override Dictionary<string, SanitizedValue<object>> Sanitize()
-        {
-            var sanitizer = new Sanitizer();
+    public override Dictionary<string, SanitizedValue<object>> Sanitize()
+    {
+        var sanitizer = new Sanitizer();
 
-            Slot = sanitizer.Maximum(nameof(Slot), Slot, 0);
+        Slot = sanitizer.Maximum(nameof(Slot), Slot, 0);
 
-            return sanitizer.Sanitized;
-        }
-
+        return sanitizer.Sanitized;
     }
 
 }

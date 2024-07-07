@@ -5,80 +5,79 @@ using Intersect.GameObjects.Maps;
 using Intersect.GameObjects.Maps.MapList;
 using Intersect.Models;
 
-namespace Intersect.GameObjects.Annotations
+namespace Intersect.GameObjects.Annotations;
+
+[AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
+public class EditorReferenceAttribute : EditorDisplayAttribute
 {
-    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
-    public class EditorReferenceAttribute : EditorDisplayAttribute
+    private readonly PropertyInfo _referenceProperty;
+
+    public EditorReferenceAttribute(Type descriptorType, string referenceName)
     {
-        private readonly PropertyInfo _referenceProperty;
+        DescriptorType = descriptorType ?? throw new ArgumentNullException(nameof(descriptorType));
+        ReferenceName = !string.IsNullOrEmpty(referenceName) ? referenceName : throw new ArgumentNullException(nameof(referenceName));
 
-        public EditorReferenceAttribute(Type descriptorType, string referenceName)
+        if (DescriptorType.BaseType.GetGenericTypeDefinition() != typeof(DatabaseObject<>))
         {
-            DescriptorType = descriptorType ?? throw new ArgumentNullException(nameof(descriptorType));
-            ReferenceName = !string.IsNullOrEmpty(referenceName) ? referenceName : throw new ArgumentNullException(nameof(referenceName));
-
-            if (DescriptorType.BaseType.GetGenericTypeDefinition() != typeof(DatabaseObject<>))
-            {
-                throw new ArgumentException($"Invalid descriptor type '{DescriptorType.FullName}'.", nameof(descriptorType));
-            }
-
-            _referenceProperty = DescriptorType.GetProperty(ReferenceName);
-            if (_referenceProperty == default)
-            {
-                throw new ArgumentException($"'{referenceName}' does not exist on {descriptorType.FullName}.", nameof(referenceName));
-            }
+            throw new ArgumentException($"Invalid descriptor type '{DescriptorType.FullName}'.", nameof(descriptorType));
         }
 
-        public Type DescriptorType { get; }
-
-        public string ReferenceName { get; }
-
-        [Obsolete("We want to re-implement strings to be object-oriented.")]
-        public override string Format(Type stringsType, object value)
+        _referenceProperty = DescriptorType.GetProperty(ReferenceName);
+        if (_referenceProperty == default)
         {
-            if (!(value is Guid guid))
+            throw new ArgumentException($"'{referenceName}' does not exist on {descriptorType.FullName}.", nameof(referenceName));
+        }
+    }
+
+    public Type DescriptorType { get; }
+
+    public string ReferenceName { get; }
+
+    [Obsolete("We want to re-implement strings to be object-oriented.")]
+    public override string Format(Type stringsType, object value)
+    {
+        if (!(value is Guid guid))
+        {
+            throw new ArgumentException($"Invalid value type {value?.GetType().FullName}", nameof(value));
+        }
+
+        if (DescriptorType == typeof(MapBase))
+        {
+            var mapName = MapList.OrderedMaps.FirstOrDefault(map => map.MapId == guid)?.Name;
+            if (mapName != default)
             {
-                throw new ArgumentException($"Invalid value type {value?.GetType().FullName}", nameof(value));
+                return mapName;
             }
+        }
+        else
+        {
+            var lookup = DescriptorType
+            .GetProperties(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy)
+            .FirstOrDefault(propertyInfo => propertyInfo.PropertyType == typeof(DatabaseObjectLookup))?
+            .GetValue(null) as DatabaseObjectLookup;
 
-            if (DescriptorType == typeof(MapBase))
-            {
-                var mapName = MapList.OrderedMaps.FirstOrDefault(map => map.MapId == guid)?.Name;
-                if (mapName != default)
-                {
-                    return mapName;
-                }
-            }
-            else
-            {
-                var lookup = DescriptorType
-                .GetProperties(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy)
-                .FirstOrDefault(propertyInfo => propertyInfo.PropertyType == typeof(DatabaseObjectLookup))?
-                .GetValue(null) as DatabaseObjectLookup;
-
-                if (lookup == default)
-                {
-                    throw new InvalidOperationException();
-                }
-
-                if (lookup.TryGetValue(guid, out IDatabaseObject databaseObject))
-                {
-                    return databaseObject.Name;
-                }
-            }
-
-            if (stringsType == default)
-            {
-                throw new ArgumentNullException(nameof(stringsType));
-            }
-
-            var noneFieldInfo = stringsType.GetNestedType("General")?.GetField("None");
-            if (noneFieldInfo == default)
+            if (lookup == default)
             {
                 throw new InvalidOperationException();
             }
 
-            return noneFieldInfo?.GetValue(null)?.ToString();
+            if (lookup.TryGetValue(guid, out IDatabaseObject databaseObject))
+            {
+                return databaseObject.Name;
+            }
         }
+
+        if (stringsType == default)
+        {
+            throw new ArgumentNullException(nameof(stringsType));
+        }
+
+        var noneFieldInfo = stringsType.GetNestedType("General")?.GetField("None");
+        if (noneFieldInfo == default)
+        {
+            throw new InvalidOperationException();
+        }
+
+        return noneFieldInfo?.GetValue(null)?.ToString();
     }
 }

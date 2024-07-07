@@ -1,266 +1,264 @@
 ﻿using System.Runtime.CompilerServices;
 
-namespace Intersect.Logging
+namespace Intersect.Logging;
+
+
+public partial class Logger : ILogger
 {
 
-    public partial class Logger : ILogger
+    public Logger() : this(LogConfiguration.Default) { }
+
+    public Logger(string tag = null) : this(
+        new LogConfiguration {Tag = string.IsNullOrEmpty(tag?.Trim()) ? null : tag}
+    )
     {
+    }
 
-        public Logger() : this(LogConfiguration.Default) { }
+    public Logger(LogConfiguration configuration)
+    {
+        Configuration = configuration;
+    }
 
-        public Logger(string tag = null) : this(
-            new LogConfiguration {Tag = string.IsNullOrEmpty(tag?.Trim()) ? null : tag}
-        )
+    public LogConfiguration Configuration { get; set; }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public virtual void Write(LogLevel logLevel, string message)
+    {
+        if (Configuration.LogLevel < logLevel)
         {
+            return;
         }
 
-        public Logger(LogConfiguration configuration)
+        string trace = null;
+        if (logLevel == LogLevel.Trace)
         {
-            Configuration = configuration;
+            trace = Environment.StackTrace;
         }
 
-        public LogConfiguration Configuration { get; set; }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public virtual void Write(LogLevel logLevel, string message)
+        foreach (var output in Configuration.Outputs)
         {
-            if (Configuration.LogLevel < logLevel)
+            output.Write(Configuration, logLevel, message);
+            if (trace != null)
             {
-                return;
-            }
-
-            string trace = null;
-            if (logLevel == LogLevel.Trace)
-            {
-                trace = Environment.StackTrace;
-            }
-
-            foreach (var output in Configuration.Outputs)
-            {
-                output.Write(Configuration, logLevel, message);
-                if (trace != null)
-                {
-                    output.Write(Configuration, logLevel, trace);
-                }
+                output.Write(Configuration, logLevel, trace);
             }
         }
+    }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public virtual void Write(LogLevel logLevel, string format, params object[] args)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public virtual void Write(LogLevel logLevel, string format, params object[] args)
+    {
+        if (Configuration.LogLevel < logLevel)
         {
-            if (Configuration.LogLevel < logLevel)
-            {
-                return;
-            }
-
-            string trace = null;
-            if (logLevel == LogLevel.Trace)
-            {
-                trace = Environment.StackTrace;
-            }
-
-            foreach (var output in Configuration.Outputs)
-            {
-                output.Write(Configuration, logLevel, format, args);
-                if (trace != null)
-                {
-                    output.Write(Configuration, logLevel, trace);
-                }
-            }
+            return;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public virtual void Write(LogLevel logLevel, Exception exception, string message = null)
+        string trace = null;
+        if (logLevel == LogLevel.Trace)
         {
-            if (Configuration.LogLevel < logLevel)
-            {
-                return;
-            }
+            trace = Environment.StackTrace;
+        }
 
-            string trace = null;
-            if (logLevel == LogLevel.Trace)
+        foreach (var output in Configuration.Outputs)
+        {
+            output.Write(Configuration, logLevel, format, args);
+            if (trace != null)
             {
-                trace = Environment.StackTrace;
-            }
-
-            foreach (var output in Configuration.Outputs)
-            {
-                output.Write(Configuration, logLevel, exception, message);
-                if (trace != null)
-                {
-                    output.Write(Configuration, logLevel, trace);
-                }
+                output.Write(Configuration, logLevel, trace);
             }
         }
+    }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public virtual void Write(string message)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public virtual void Write(LogLevel logLevel, Exception exception, string message = null)
+    {
+        if (Configuration.LogLevel < logLevel)
         {
-            Write(Configuration.LogLevel, message);
+            return;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public virtual void Write(string format, params object[] args)
+        string trace = null;
+        if (logLevel == LogLevel.Trace)
         {
-            Write(Configuration.LogLevel, format, args);
+            trace = Environment.StackTrace;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public virtual void Write(Exception exception, string message = null)
+        foreach (var output in Configuration.Outputs)
         {
-            Write(Configuration.LogLevel, exception, message);
+            output.Write(Configuration, logLevel, exception, message);
+            if (trace != null)
+            {
+                output.Write(Configuration, logLevel, trace);
+            }
         }
+    }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public virtual void All(string message)
-        {
-            Write(LogLevel.All, message);
-        }
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public virtual void Write(string message)
+    {
+        Write(Configuration.LogLevel, message);
+    }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public virtual void All(string format, params object[] args)
-        {
-            Write(LogLevel.All, format, args);
-        }
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public virtual void Write(string format, params object[] args)
+    {
+        Write(Configuration.LogLevel, format, args);
+    }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public virtual void All(Exception exception, string message = null)
-        {
-            Write(LogLevel.All, exception, message);
-        }
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public virtual void Write(Exception exception, string message = null)
+    {
+        Write(Configuration.LogLevel, exception, message);
+    }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public virtual void Error(string message)
-        {
-            Write(LogLevel.Error, message);
-        }
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public virtual void All(string message)
+    {
+        Write(LogLevel.All, message);
+    }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public virtual void Error(string format, params object[] args)
-        {
-            Write(LogLevel.Error, format, args);
-        }
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public virtual void All(string format, params object[] args)
+    {
+        Write(LogLevel.All, format, args);
+    }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public virtual void Error(Exception exception, string message = null)
-        {
-            Write(LogLevel.Error, exception, message);
-        }
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public virtual void All(Exception exception, string message = null)
+    {
+        Write(LogLevel.All, exception, message);
+    }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public virtual void Warn(string message)
-        {
-            Write(LogLevel.Warn, message);
-        }
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public virtual void Error(string message)
+    {
+        Write(LogLevel.Error, message);
+    }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public virtual void Warn(string format, params object[] args)
-        {
-            Write(LogLevel.Warn, format, args);
-        }
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public virtual void Error(string format, params object[] args)
+    {
+        Write(LogLevel.Error, format, args);
+    }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public virtual void Warn(Exception exception, string message = null)
-        {
-            Write(LogLevel.Warn, exception, message);
-        }
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public virtual void Error(Exception exception, string message = null)
+    {
+        Write(LogLevel.Error, exception, message);
+    }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public virtual void Info(string message)
-        {
-            Write(LogLevel.Info, message);
-        }
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public virtual void Warn(string message)
+    {
+        Write(LogLevel.Warn, message);
+    }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public virtual void Info(string format, params object[] args)
-        {
-            Write(LogLevel.Info, format, args);
-        }
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public virtual void Warn(string format, params object[] args)
+    {
+        Write(LogLevel.Warn, format, args);
+    }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public virtual void Info(Exception exception, string message = null)
-        {
-            Write(LogLevel.Info, exception, message);
-        }
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public virtual void Warn(Exception exception, string message = null)
+    {
+        Write(LogLevel.Warn, exception, message);
+    }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public virtual void Trace(string message)
-        {
-            Write(LogLevel.Trace, message);
-        }
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public virtual void Info(string message)
+    {
+        Write(LogLevel.Info, message);
+    }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public virtual void Trace(string format, params object[] args)
-        {
-            Write(LogLevel.Trace, format, args);
-        }
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public virtual void Info(string format, params object[] args)
+    {
+        Write(LogLevel.Info, format, args);
+    }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public virtual void Trace(Exception exception, string message = null)
-        {
-            Write(LogLevel.Trace, exception, message);
-        }
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public virtual void Info(Exception exception, string message = null)
+    {
+        Write(LogLevel.Info, exception, message);
+    }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public virtual void Debug(string message)
-        {
-            Write(LogLevel.Debug, message);
-        }
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public virtual void Trace(string message)
+    {
+        Write(LogLevel.Trace, message);
+    }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public virtual void Debug(string format, params object[] args)
-        {
-            Write(LogLevel.Debug, format, args);
-        }
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public virtual void Trace(string format, params object[] args)
+    {
+        Write(LogLevel.Trace, format, args);
+    }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public virtual void Debug(Exception exception, string message = null)
-        {
-            Write(LogLevel.Debug, exception, message);
-        }
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public virtual void Trace(Exception exception, string message = null)
+    {
+        Write(LogLevel.Trace, exception, message);
+    }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public virtual void Diagnostic(string message)
-        {
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public virtual void Debug(string message)
+    {
+        Write(LogLevel.Debug, message);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public virtual void Debug(string format, params object[] args)
+    {
+        Write(LogLevel.Debug, format, args);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public virtual void Debug(Exception exception, string message = null)
+    {
+        Write(LogLevel.Debug, exception, message);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public virtual void Diagnostic(string message)
+    {
 #if INTERSECT_DIAGNOSTIC
-            Write(LogLevel.Diagnostic, message);
+        Write(LogLevel.Diagnostic, message);
 #endif
-        }
+    }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public virtual void Diagnostic(string format, params object[] args)
-        {
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public virtual void Diagnostic(string format, params object[] args)
+    {
 #if INTERSECT_DIAGNOSTIC
-            Write(LogLevel.Diagnostic, format, args);
+        Write(LogLevel.Diagnostic, format, args);
 #endif
-        }
+    }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public virtual void Diagnostic(Exception exception, string message = null)
-        {
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public virtual void Diagnostic(Exception exception, string message = null)
+    {
 #if INTERSECT_DIAGNOSTIC
-            Write(LogLevel.Diagnostic, exception, message);
+        Write(LogLevel.Diagnostic, exception, message);
 #endif
-        }
+    }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public virtual void Verbose(string message)
-        {
-            Write(LogLevel.Verbose, message);
-        }
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public virtual void Verbose(string message)
+    {
+        Write(LogLevel.Verbose, message);
+    }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public virtual void Verbose(string format, params object[] args)
-        {
-            Write(LogLevel.Verbose, format, args);
-        }
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public virtual void Verbose(string format, params object[] args)
+    {
+        Write(LogLevel.Verbose, format, args);
+    }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public virtual void Verbose(Exception exception, string message = null)
-        {
-            Write(LogLevel.Verbose, exception, message);
-        }
-
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public virtual void Verbose(Exception exception, string message = null)
+    {
+        Write(LogLevel.Verbose, exception, message);
     }
 
 }

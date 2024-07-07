@@ -1,15 +1,14 @@
-namespace Intersect.Enums
+namespace Intersect.Enums;
+
+public enum EntityType
 {
-    public enum EntityType
-    {
-        GlobalEntity = 0,
+    GlobalEntity = 0,
 
-        Player = 1,
+    Player = 1,
 
-        Resource = 2,
+    Resource = 2,
 
-        Projectile = 3,
+    Projectile = 3,
 
-        Event = 4,
-    }
+    Event = 4,
 }

@@ -1,87 +1,86 @@
-﻿namespace Intersect.Config
+﻿namespace Intersect.Config;
+
+public partial class CombatOptions
 {
-    public partial class CombatOptions
-    {
-        public int BlockingSlow = 30; //Slow when moving with a shield. Default 30%
+    public int BlockingSlow = 30; //Slow when moving with a shield. Default 30%
 
-        public int CombatTime = 10000; //10 seconds
+    public int CombatTime = 10000; //10 seconds
 
-        public int MaxAttackRate = 200; //5 attacks per second
+    public int MaxAttackRate = 200; //5 attacks per second
 
-        public int MaxDashSpeed = 200;
+    public int MaxDashSpeed = 200;
 
-        public int MinAttackRate = 500; //2 attacks per second
+    public int MinAttackRate = 500; //2 attacks per second
 
-        //Combat
-        public int RegenTime = 3000; //3 seconds
+    //Combat
+    public int RegenTime = 3000; //3 seconds
 
-        public bool EnableCombatChatMessages = false; // Enables or disables combat chat messages.
+    public bool EnableCombatChatMessages = false; // Enables or disables combat chat messages.
 
-        //Spells
+    //Spells
 
-        /// <summary>
-        /// If enabled this allows spell casts to stop/be canceled if the player tries to move around (WASD)
-        /// </summary>
-        public bool MovementCancelsCast = false;
+    /// <summary>
+    /// If enabled this allows spell casts to stop/be canceled if the player tries to move around (WASD)
+    /// </summary>
+    public bool MovementCancelsCast = false;
 
-        // Cooldowns
+    // Cooldowns
 
-        /// <summary>
-        /// Configures whether cooldowns within cooldown groups should match.
-        /// </summary>
-        public bool MatchGroupCooldowns = true;
+    /// <summary>
+    /// Configures whether cooldowns within cooldown groups should match.
+    /// </summary>
+    public bool MatchGroupCooldowns = true;
 
-        /// <summary>
-        /// Only used when <seealso cref="MatchGroupCooldowns"/> is enabled!
-        /// Configures whether cooldowns are being matched to the highest cooldown within a cooldown group when true, or are matched to the current item or spell being used when false.
-        /// </summary>
-        public bool MatchGroupCooldownHighest = true;
+    /// <summary>
+    /// Only used when <seealso cref="MatchGroupCooldowns"/> is enabled!
+    /// Configures whether cooldowns are being matched to the highest cooldown within a cooldown group when true, or are matched to the current item or spell being used when false.
+    /// </summary>
+    public bool MatchGroupCooldownHighest = true;
 
-        /// <summary>
-        /// Only used when <seealso cref="MatchGroupCooldowns"/> is enabled!
-        /// Configures whether cooldown groups between items and spells are shared.
-        /// </summary>
-        public bool LinkSpellAndItemCooldowns = true;
+    /// <summary>
+    /// Only used when <seealso cref="MatchGroupCooldowns"/> is enabled!
+    /// Configures whether cooldown groups between items and spells are shared.
+    /// </summary>
+    public bool LinkSpellAndItemCooldowns = true;
 
-        /// <summary>
-        /// Configures whether or not using a spell or item should trigger a global cooldown.
-        /// </summary>
-        public bool EnableGlobalCooldowns = false;
+    /// <summary>
+    /// Configures whether or not using a spell or item should trigger a global cooldown.
+    /// </summary>
+    public bool EnableGlobalCooldowns = false;
 
-        /// <summary>
-        /// Configures the duration (in milliseconds) which the global cooldown lasts after each ability.
-        /// Only used when <seealso cref="EnableGlobalCooldowns"/> is enabled!
-        /// </summary>
-        public int GlobalCooldownDuration = 1500;
+    /// <summary>
+    /// Configures the duration (in milliseconds) which the global cooldown lasts after each ability.
+    /// Only used when <seealso cref="EnableGlobalCooldowns"/> is enabled!
+    /// </summary>
+    public int GlobalCooldownDuration = 1500;
 
-        /// <summary>
-        /// Configures the maximum distance a target is allowed to be from the player when auto targetting.
-        /// </summary>
-        public int MaxPlayerAutoTargetRadius = 15;
+    /// <summary>
+    /// Configures the maximum distance a target is allowed to be from the player when auto targetting.
+    /// </summary>
+    public int MaxPlayerAutoTargetRadius = 15;
 
-        /// <summary>
-        /// If enabled this allows regenerate vitals in combat
-        /// </summary>
-        public bool RegenVitalsInCombat = false;
+    /// <summary>
+    /// If enabled this allows regenerate vitals in combat
+    /// </summary>
+    public bool RegenVitalsInCombat = false;
 
-        /// <summary>
-        /// If enabled, this allows entities to turn around while casting
-        /// </summary>
-        public bool EnableTurnAroundWhileCasting = false;
+    /// <summary>
+    /// If enabled, this allows entities to turn around while casting
+    /// </summary>
+    public bool EnableTurnAroundWhileCasting = false;
 
-        /// <summary>
-        /// If enabled, the target window will be shown to players whenever they target an entity
-        /// </summary>
-        public bool EnableTargetWindow = true;
+    /// <summary>
+    /// If enabled, the target window will be shown to players whenever they target an entity
+    /// </summary>
+    public bool EnableTargetWindow = true;
 
-        /// <summary>
-        /// If enabled, this makes it so a player casting a friendly spell on a hostile target instead casts the spell upon themselves
-        /// </summary>
-        public bool EnableAutoSelfCastFriendlySpellsWhenTargetingHostile { get; set; } = false;
+    /// <summary>
+    /// If enabled, this makes it so a player casting a friendly spell on a hostile target instead casts the spell upon themselves
+    /// </summary>
+    public bool EnableAutoSelfCastFriendlySpellsWhenTargetingHostile { get; set; } = false;
 
-        /// <summary>
-        /// If enabled, this allows players to cast friendly spells on players who aren't in their guild or party
-        /// </summary>
-        public bool EnableAllPlayersFriendlyInSafeZone { get; set; } = false;
-    }
+    /// <summary>
+    /// If enabled, this allows players to cast friendly spells on players who aren't in their guild or party
+    /// </summary>
+    public bool EnableAllPlayersFriendlyInSafeZone { get; set; } = false;
 }

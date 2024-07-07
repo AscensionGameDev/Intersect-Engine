@@ -2,46 +2,44 @@
 
 using Newtonsoft.Json;
 
-namespace Intersect.Localization
+namespace Intersect.Localization;
+
+
+[Serializable]
+public partial class LocaleArgument : LocaleDescribableToken
 {
 
-    [Serializable]
-    public partial class LocaleArgument : LocaleDescribableToken
+    [JsonProperty(
+        nameof(ShortName), NullValueHandling = NullValueHandling.Ignore,
+        DefaultValueHandling = DefaultValueHandling.Ignore
+    )]
+    [DefaultValue(char.MinValue)]
+    private char mShortName;
+
+    public LocaleArgument()
     {
+    }
 
-        [JsonProperty(
-            nameof(ShortName), NullValueHandling = NullValueHandling.Ignore,
-            DefaultValueHandling = DefaultValueHandling.Ignore
-        )]
-        [DefaultValue(char.MinValue)]
-        private char mShortName;
+    public LocaleArgument(
+        string name,
+        char shortName = char.MinValue,
+        string description = null
+    ) : base(name, description)
+    {
+        mShortName = shortName;
+    }
 
-        public LocaleArgument()
+    [JsonIgnore]
+    public virtual char ShortName
+    {
+        get => mShortName;
+        set
         {
-        }
-
-        public LocaleArgument(
-            string name,
-            char shortName = char.MinValue,
-            string description = null
-        ) : base(name, description)
-        {
-            mShortName = shortName;
-        }
-
-        [JsonIgnore]
-        public virtual char ShortName
-        {
-            get => mShortName;
-            set
+            if (mShortName == char.MinValue)
             {
-                if (mShortName == char.MinValue)
-                {
-                    mShortName = value;
-                }
+                mShortName = value;
             }
         }
-
     }
 
 }

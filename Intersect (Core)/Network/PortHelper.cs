@@ -1,14 +1,12 @@
-﻿namespace Intersect.Network
+﻿namespace Intersect.Network;
+
+
+public static partial class PortHelper
 {
 
-    public static partial class PortHelper
+    public static bool IsValidPort(ulong port)
     {
-
-        public static bool IsValidPort(ulong port)
-        {
-            return 0 < port && port <= ushort.MaxValue;
-        }
-
+        return 0 < port && port <= ushort.MaxValue;
     }
 
 }

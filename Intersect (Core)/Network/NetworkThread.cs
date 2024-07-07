@@ -2,103 +2,101 @@
 
 using Intersect.Logging;
 
-namespace Intersect.Network
+namespace Intersect.Network;
+
+
+public sealed partial class NetworkThread
 {
+    private readonly object mLifecycleLock;
 
-    public sealed partial class NetworkThread
+    private readonly PacketDispatcher mDispatcher;
+
+    private bool mStarted;
+
+    public NetworkThread(PacketDispatcher dispatcher, string name = null)
     {
-        private readonly object mLifecycleLock;
+        mLifecycleLock = new object();
+        mDispatcher = dispatcher;
 
-        private readonly PacketDispatcher mDispatcher;
+        Name = name ?? "Network Worker Thread";
+        CurrentThread = new Thread(Loop);
+        Queue = new PacketQueue();
+        Connections = new List<IConnection>();
+    }
 
-        private bool mStarted;
+    public string Name { get; }
 
-        public NetworkThread(PacketDispatcher dispatcher, string name = null)
+    public Thread CurrentThread { get; }
+
+    public PacketQueue Queue { get; }
+
+    public IList<IConnection> Connections { get; }
+
+    public bool IsRunning { get; private set; }
+
+    public void Start()
+    {
+        lock (mLifecycleLock)
         {
-            mLifecycleLock = new object();
-            mDispatcher = dispatcher;
-
-            Name = name ?? "Network Worker Thread";
-            CurrentThread = new Thread(Loop);
-            Queue = new PacketQueue();
-            Connections = new List<IConnection>();
-        }
-
-        public string Name { get; }
-
-        public Thread CurrentThread { get; }
-
-        public PacketQueue Queue { get; }
-
-        public IList<IConnection> Connections { get; }
-
-        public bool IsRunning { get; private set; }
-
-        public void Start()
-        {
-            lock (mLifecycleLock)
+            if (mStarted)
             {
-                if (mStarted)
-                {
-                    return;
-                }
-
-                mStarted = true;
-                IsRunning = true;
+                return;
             }
 
-            CurrentThread.Start();
+            mStarted = true;
+            IsRunning = true;
         }
 
-        public void Stop()
-        {
-            lock (mLifecycleLock)
-            {
-                IsRunning = false;
-            }
+        CurrentThread.Start();
+    }
 
-            Queue.Interrupt();
+    public void Stop()
+    {
+        lock (mLifecycleLock)
+        {
+            IsRunning = false;
         }
 
-        private void Loop()
-        {
-            var sw = new Stopwatch();
+        Queue.Interrupt();
+    }
+
+    private void Loop()
+    {
+        var sw = new Stopwatch();
 #if DIAGNOSTIC
-            var last = 0L;
+        var last = 0L;
 #endif
-            sw.Start();
-            while (IsRunning)
+        sw.Start();
+        while (IsRunning)
+        {
+            // ReSharper disable once PossibleNullReferenceException
+            if (!Queue.TryNext(out var packet))
             {
-                // ReSharper disable once PossibleNullReferenceException
-                if (!Queue.TryNext(out var packet))
-                {
-                    continue;
-                }
+                continue;
+            }
 
-                //Log.Debug($"Dispatching packet '{packet.GetType().Name}' (size={(packet as BinaryPacket)?.Buffer?.Length() ?? -1}).");
-                if (!mDispatcher.Dispatch(packet))
-                {
-                    Log.Warn($"Failed to dispatch packet '{packet}'.");
-                }
+            //Log.Debug($"Dispatching packet '{packet.GetType().Name}' (size={(packet as BinaryPacket)?.Buffer?.Length() ?? -1}).");
+            if (!mDispatcher.Dispatch(packet))
+            {
+                Log.Warn($"Failed to dispatch packet '{packet}'.");
+            }
 
 #if DIAGNOSTIC
-                if (last + (1 * TimeSpan.TicksPerSecond) < sw.ElapsedTicks)
-                {
-                    last = sw.ElapsedTicks;
-                    Console.Title = $"Queue size: {Queue.Size}";
-                }
+            if (last + (1 * TimeSpan.TicksPerSecond) < sw.ElapsedTicks)
+            {
+                last = sw.ElapsedTicks;
+                Console.Title = $"Queue size: {Queue.Size}";
+            }
 #endif
 
-                packet?.Dispose();
+            packet?.Dispose();
 
-                Thread.Yield();
-            }
-
-            sw.Stop();
-
-            Log.Debug($"Exiting network thread ({Name}).");
+            Thread.Yield();
         }
 
+        sw.Stop();
+
+        Log.Debug($"Exiting network thread ({Name}).");
     }
 
 }

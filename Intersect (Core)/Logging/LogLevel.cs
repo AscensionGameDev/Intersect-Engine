@@ -1,31 +1,29 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-namespace Intersect.Logging
+namespace Intersect.Logging;
+
+
+[JsonConverter(typeof(StringEnumConverter))]
+public enum LogLevel : byte
 {
 
-    [JsonConverter(typeof(StringEnumConverter))]
-    public enum LogLevel : byte
-    {
+    None = 0,
 
-        None = 0,
+    Error = 0x20,
 
-        Error = 0x20,
+    Warn = 0x40,
 
-        Warn = 0x40,
+    Info = 0x60,
 
-        Info = 0x60,
+    Trace = 0x80,
 
-        Trace = 0x80,
+    Verbose = 0xA0,
 
-        Verbose = 0xA0,
+    Debug = 0xC0,
 
-        Debug = 0xC0,
+    Diagnostic = 0xE0,
 
-        Diagnostic = 0xE0,
-
-        All = 0xFF
-
-    }
+    All = 0xFF
 
 }

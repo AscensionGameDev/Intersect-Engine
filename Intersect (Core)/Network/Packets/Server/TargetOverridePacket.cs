@@ -1,23 +1,21 @@
 ﻿using MessagePack;
 
-namespace Intersect.Network.Packets.Server
+namespace Intersect.Network.Packets.Server;
+
+[MessagePackObject]
+public partial class TargetOverridePacket : IntersectPacket
 {
-    [MessagePackObject]
-    public partial class TargetOverridePacket : IntersectPacket
+    //Parameterless Constructor for MessagePack
+    public TargetOverridePacket()
     {
-        //Parameterless Constructor for MessagePack
-        public TargetOverridePacket()
-        {
-        }
-
-        public TargetOverridePacket(Guid targetId)
-        {
-            TargetId = targetId;
-        }
-
-        [Key(0)]
-        public Guid TargetId { get; set; }
-
     }
+
+    public TargetOverridePacket(Guid targetId)
+    {
+        TargetId = targetId;
+    }
+
+    [Key(0)]
+    public Guid TargetId { get; set; }
 
 }

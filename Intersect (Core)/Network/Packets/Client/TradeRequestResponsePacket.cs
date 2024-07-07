@@ -1,27 +1,25 @@
 ﻿using MessagePack;
 
-namespace Intersect.Network.Packets.Client
+namespace Intersect.Network.Packets.Client;
+
+[MessagePackObject]
+public partial class TradeRequestResponsePacket : IntersectPacket
 {
-    [MessagePackObject]
-    public partial class TradeRequestResponsePacket : IntersectPacket
+    //Parameterless Constructor for MessagePack
+    public TradeRequestResponsePacket()
     {
-        //Parameterless Constructor for MessagePack
-        public TradeRequestResponsePacket()
-        {
-        }
-
-        public TradeRequestResponsePacket(Guid tradeId, bool accepting)
-        {
-            TradeId = tradeId;
-            AcceptingInvite = accepting;
-        }
-
-        [Key(0)]
-        public Guid TradeId { get; set; }
-
-        [Key(1)]
-        public bool AcceptingInvite { get; set; }
-
     }
+
+    public TradeRequestResponsePacket(Guid tradeId, bool accepting)
+    {
+        TradeId = tradeId;
+        AcceptingInvite = accepting;
+    }
+
+    [Key(0)]
+    public Guid TradeId { get; set; }
+
+    [Key(1)]
+    public bool AcceptingInvite { get; set; }
 
 }

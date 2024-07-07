@@ -1,34 +1,32 @@
 ﻿using Intersect.Collections;
 
-namespace Intersect.Network
+namespace Intersect.Network;
+
+
+public abstract partial class CerasPacket : IPacket
 {
+    private static Ceras sCerasInstance { get; set; }
 
-    public abstract partial class CerasPacket : IPacket
+    private static Ceras Ceras => (sCerasInstance = (sCerasInstance ?? new Ceras(true)));
+
+    /// <inheritdoc />
+    public virtual void Dispose()
     {
-        private static Ceras sCerasInstance { get; set; }
+    }
 
-        private static Ceras Ceras => (sCerasInstance = (sCerasInstance ?? new Ceras(true)));
+    /// <inheritdoc />
+    public virtual byte[] Data => Ceras.Serialize(this) ?? throw new Exception("Failed to serialize packet.");
 
-        /// <inheritdoc />
-        public virtual void Dispose()
-        {
-        }
+    public virtual bool IsValid => true;
 
-        /// <inheritdoc />
-        public virtual byte[] Data => Ceras.Serialize(this) ?? throw new Exception("Failed to serialize packet.");
+    public abstract long ReceiveTime { get; set; }
 
-        public virtual bool IsValid => true;
+    public abstract long ProcessTime { get; set; }
 
-        public abstract long ReceiveTime { get; set; }
-
-        public abstract long ProcessTime { get; set; }
-
-        /// <inheritdoc />
-        public virtual Dictionary<string, SanitizedValue<object>> Sanitize()
-        {
-            return null;
-        }
-
+    /// <inheritdoc />
+    public virtual Dictionary<string, SanitizedValue<object>> Sanitize()
+    {
+        return null;
     }
 
 }

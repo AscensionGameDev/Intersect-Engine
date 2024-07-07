@@ -1,48 +1,47 @@
-﻿namespace Intersect.Enums
+﻿namespace Intersect.Enums;
+
+/// <summary>
+/// Defines all different types for chat messages so we can filter them on the client for display purposes.
+/// </summary>
+public enum ChatMessageType
 {
-    /// <summary>
-    /// Defines all different types for chat messages so we can filter them on the client for display purposes.
-    /// </summary>
-    public enum ChatMessageType
-    {
-        // Skipping numbers in the below list on purpose for future additions.
-        // Chat Channels
-        Local = 0,
+    // Skipping numbers in the below list on purpose for future additions.
+    // Chat Channels
+    Local = 0,
 
-        Party,
+    Party,
 
-        Global,
+    Global,
 
-        PM,
+    PM,
 
-        Admin,
+    Admin,
 
-        Guild,
+    Guild,
 
-        // Player Messages
-        Experience = 20,
+    // Player Messages
+    Experience = 20,
 
-        Loot,
+    Loot,
 
-        Inventory,
+    Inventory,
 
-        Bank,
+    Bank,
 
-        Combat,
+    Combat,
 
-        Quest,
+    Quest,
 
-        Crafting,
+    Crafting,
 
-        Trading,
+    Trading,
 
-        Friend,
+    Friend,
 
-        Spells,
+    Spells,
 
-        // System Messages
-        Notice = 40,
+    // System Messages
+    Notice = 40,
 
-        Error,
-    }
+    Error,
 }

@@ -1,11 +1,10 @@
-﻿namespace Intersect.Enums
+﻿namespace Intersect.Enums;
+
+public enum Access
 {
-    public enum Access
-    {
-        None = 0,
+    None = 0,
 
-        Moderator,
+    Moderator,
 
-        Admin,
-    }
+    Admin,
 }

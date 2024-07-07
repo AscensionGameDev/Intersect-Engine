@@ -1,31 +1,29 @@
 ﻿using MessagePack;
 
-namespace Intersect.Network.Packets.Client
+namespace Intersect.Network.Packets.Client;
+
+[MessagePackObject]
+public partial class PickupItemPacket : IntersectPacket
 {
-    [MessagePackObject]
-    public partial class PickupItemPacket : IntersectPacket
+    //Parameterless Constructor for MessagePack
+    public PickupItemPacket()
     {
-        //Parameterless Constructor for MessagePack
-        public PickupItemPacket()
-        {
-        }
-
-        public PickupItemPacket(Guid mapId, int tileIndex, Guid uniqueId)
-        {
-            MapId = mapId;
-            UniqueId = uniqueId;
-            TileIndex = tileIndex;
-        }
-
-        [Key(0)]
-        public Guid UniqueId { get; set; }
-
-        [Key(1)]
-        public Guid MapId { get; set; }
-
-        [Key(2)]
-        public int TileIndex { get; set; }
-
     }
+
+    public PickupItemPacket(Guid mapId, int tileIndex, Guid uniqueId)
+    {
+        MapId = mapId;
+        UniqueId = uniqueId;
+        TileIndex = tileIndex;
+    }
+
+    [Key(0)]
+    public Guid UniqueId { get; set; }
+
+    [Key(1)]
+    public Guid MapId { get; set; }
+
+    [Key(2)]
+    public int TileIndex { get; set; }
 
 }
