@@ -1,9 +1,5 @@
-using System;
 using System.Diagnostics;
 using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Windows.Forms;
 
 using Intersect.Configuration;
 using Intersect.Editor.Content;

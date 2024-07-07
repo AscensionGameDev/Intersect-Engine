@@ -1,7 +1,3 @@
-using System;
-using System.Linq;
-using System.Windows.Forms;
-
 using Intersect.Editor.Forms.Helpers;
 using Intersect.Editor.Localization;
 using Intersect.Enums;

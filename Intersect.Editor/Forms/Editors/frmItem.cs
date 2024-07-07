@@ -1,25 +1,15 @@
-using System;
-using System.Collections.Generic;
-using System.Drawing;
 using System.Drawing.Imaging;
-using System.Linq;
-using System.Windows.Forms;
 using DarkUI.Forms;
 
 using Intersect.Editor.Content;
-using Intersect.Editor.Core;
 using Intersect.Editor.General;
 using Intersect.Editor.Localization;
 using Intersect.Editor.Networking;
 using Intersect.Enums;
-using Intersect.Framework;
 using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
-using Intersect.GameObjects.Ranges;
 using Intersect.Localization;
-using Intersect.Network.Packets.Server;
 using Intersect.Utilities;
-using static Intersect.GameObjects.EquipmentProperties;
 using Graphics = System.Drawing.Graphics;
 
 namespace Intersect.Editor.Forms.Editors

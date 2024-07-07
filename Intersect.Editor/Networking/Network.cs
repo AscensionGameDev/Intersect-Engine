@@ -1,7 +1,5 @@
-using System;
 using System.Diagnostics;
 using System.Reflection;
-using System.Windows.Forms;
 
 using Intersect.Configuration;
 using Intersect.Editor.General;
@@ -9,7 +7,6 @@ using Intersect.Logging;
 using Intersect.Network;
 using Intersect.Network.Events;
 using Intersect.Core;
-using System.Collections.Generic;
 using Intersect.Threading;
 using Intersect.Plugins.Helpers;
 using Intersect.Plugins.Interfaces;

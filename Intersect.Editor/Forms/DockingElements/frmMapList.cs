@@ -1,6 +1,3 @@
-using System;
-using System.Windows.Forms;
-
 using DarkUI.Forms;
 
 using Intersect.Editor.General;

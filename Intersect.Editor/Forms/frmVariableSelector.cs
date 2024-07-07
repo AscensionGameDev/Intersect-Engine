@@ -1,18 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using Intersect.Editor.Forms.DockingElements;
 using Intersect.Editor.Localization;
 using Intersect.Enums;
 using Intersect.Extensions;
-using Intersect.GameObjects;
-using Intersect.GameObjects.Annotations;
 
 namespace Intersect.Editor.Forms;
 

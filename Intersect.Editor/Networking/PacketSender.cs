@@ -1,5 +1,3 @@
-using System;
-
 using Intersect.Editor.General;
 using Intersect.Editor.Maps;
 using Intersect.Enums;

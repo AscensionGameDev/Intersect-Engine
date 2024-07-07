@@ -1,8 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Drawing;
 using System.Drawing.Imaging;
-using System.Windows.Forms;
 using Intersect.Config;
 using Intersect.Editor.Content;
 using Intersect.Editor.Entities;

@@ -1,7 +1,3 @@
-using System;
-using System.Linq;
-using System.Windows.Forms;
-
 using Intersect.Core;
 using Intersect.Editor.Content;
 using Intersect.Editor.General;

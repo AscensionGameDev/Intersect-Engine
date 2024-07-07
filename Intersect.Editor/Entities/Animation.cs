@@ -1,7 +1,4 @@
-﻿using System;
-using System.Drawing;
-
-using Intersect.Editor.Content;
+﻿using Intersect.Editor.Content;
 using Intersect.GameObjects;
 using Intersect.Utilities;
 

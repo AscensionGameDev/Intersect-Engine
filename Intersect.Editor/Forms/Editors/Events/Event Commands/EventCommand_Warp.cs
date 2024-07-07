@@ -1,6 +1,3 @@
-using System;
-using System.Windows.Forms;
-
 using DarkUI.Controls;
 
 using Intersect.Editor.Localization;

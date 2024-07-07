@@ -1,10 +1,7 @@
-using System;
 using System.Diagnostics;
 using System.Globalization;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using System.Windows.Forms;
 
 using Intersect.Editor.Content;
 using Intersect.Editor.Core;

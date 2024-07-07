@@ -1,15 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Windows.Forms;
-
 using Intersect.Editor.Localization;
 using Intersect.Editor.Utilities;
 using Intersect.Enums;
 using Intersect.Extensions;
-using Intersect.GameObjects;
 using Intersect.GameObjects.Events;
 using Intersect.GameObjects.Events.Commands;
-using Intersect.GameObjects.Switches_and_Variables;
 using Intersect.Utilities;
 using VariableMod = Intersect.Enums.VariableMod;
 

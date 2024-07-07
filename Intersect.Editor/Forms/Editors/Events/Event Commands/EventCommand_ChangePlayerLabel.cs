@@ -1,6 +1,3 @@
-using System;
-using System.Windows.Forms;
-
 using Intersect.Editor.Localization;
 using Intersect.GameObjects.Events.Commands;
 using Intersect.Utilities;
