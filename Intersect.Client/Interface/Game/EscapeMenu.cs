@@ -7,225 +7,223 @@ using Intersect.Client.Interface.Shared;
 using Intersect.Client.Localization;
 using Intersect.Utilities;
 
-namespace Intersect.Client.Interface.Game
+namespace Intersect.Client.Interface.Game;
+
+
+public partial class EscapeMenu : ImagePanel
 {
 
-    public partial class EscapeMenu : ImagePanel
+    private readonly Button mClose;
+
+    private readonly ImagePanel mContainer;
+
+    private readonly Button mExitToDesktop;
+
+    private readonly Button mGoToCharacterSelect;
+
+    private readonly Button mLogout;
+
+    private readonly Button mSettings;
+
+    private readonly SettingsWindow mSettingsWindow;
+
+    private readonly Label mTitle;
+
+    public EscapeMenu(Canvas gameCanvas) : base(gameCanvas, "EscapeMenu")
     {
+        Interface.InputBlockingElements?.Add(this);
 
-        private readonly Button mClose;
+        Width = gameCanvas.Width;
+        Height = gameCanvas.Height;
 
-        private readonly ImagePanel mContainer;
+        mContainer = new ImagePanel(this, "EscapeMenu");
 
-        private readonly Button mExitToDesktop;
-
-        private readonly Button mGoToCharacterSelect;
-
-        private readonly Button mLogout;
-
-        private readonly Button mSettings;
-
-        private readonly SettingsWindow mSettingsWindow;
-
-        private readonly Label mTitle;
-
-        public EscapeMenu(Canvas gameCanvas) : base(gameCanvas, "EscapeMenu")
+        mTitle = new Label(mContainer, "TitleLabel")
         {
-            Interface.InputBlockingElements?.Add(this);
+            Text = Strings.EscapeMenu.Title,
+        };
 
-            Width = gameCanvas.Width;
-            Height = gameCanvas.Height;
+        mSettingsWindow = new SettingsWindow(gameCanvas, null, this);
 
-            mContainer = new ImagePanel(this, "EscapeMenu");
+        mSettings = new Button(mContainer, "SettingsButton")
+        {
+            Text = Strings.EscapeMenu.Settings
+        };
 
-            mTitle = new Label(mContainer, "TitleLabel")
-            {
-                Text = Strings.EscapeMenu.Title,
-            };
+        mSettings.Clicked += Settings_Clicked;
 
-            mSettingsWindow = new SettingsWindow(gameCanvas, null, this);
+        mGoToCharacterSelect = new Button(mContainer, "CharacterSelectButton")
+        {
+            Text = Strings.EscapeMenu.CharacterSelect
+        };
 
-            mSettings = new Button(mContainer, "SettingsButton")
-            {
-                Text = Strings.EscapeMenu.Settings
-            };
+        mGoToCharacterSelect.Clicked += GoToCharacterSelect_Clicked;
 
-            mSettings.Clicked += Settings_Clicked;
+        mLogout = new Button(mContainer, "LogoutButton")
+        {
+            Text = Strings.EscapeMenu.Logout
+        };
 
-            mGoToCharacterSelect = new Button(mContainer, "CharacterSelectButton")
-            {
-                Text = Strings.EscapeMenu.CharacterSelect
-            };
+        mLogout.Clicked += Logout_Clicked;
 
-            mGoToCharacterSelect.Clicked += GoToCharacterSelect_Clicked;
+        mExitToDesktop = new Button(mContainer, "ExitToDesktopButton")
+        {
+            Text = Strings.EscapeMenu.ExitToDesktop
+        };
 
-            mLogout = new Button(mContainer, "LogoutButton")
-            {
-                Text = Strings.EscapeMenu.Logout
-            };
+        mExitToDesktop.Clicked += ExitToDesktop_Clicked;
 
-            mLogout.Clicked += Logout_Clicked;
+        mClose = new Button(mContainer, "CloseButton")
+        {
+            Text = Strings.EscapeMenu.Close
+        };
 
-            mExitToDesktop = new Button(mContainer, "ExitToDesktopButton")
-            {
-                Text = Strings.EscapeMenu.ExitToDesktop
-            };
+        mClose.Clicked += Close_Clicked;
 
-            mExitToDesktop.Clicked += ExitToDesktop_Clicked;
+        mContainer.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
 
-            mClose = new Button(mContainer, "CloseButton")
-            {
-                Text = Strings.EscapeMenu.Close
-            };
+        if (Options.Player.MaxCharacters <= 1)
+        {
+            mGoToCharacterSelect.IsDisabled = true;
+        }
+    }
 
-            mClose.Clicked += Close_Clicked;
-
-            mContainer.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
-
-            if (Options.Player.MaxCharacters <= 1)
-            {
-                mGoToCharacterSelect.IsDisabled = true;
-            }
+    public override void Invalidate()
+    {
+        if (IsHidden)
+        {
+            RemoveModal();
+        }
+        else
+        {
+            MakeModal(true);
         }
 
-        public override void Invalidate()
+        base.Invalidate();
+        if (Interface.GameUi != null && Interface.GameUi.GameCanvas != null)
         {
-            if (IsHidden)
-            {
-                RemoveModal();
-            }
-            else
-            {
-                MakeModal(true);
-            }
+            Interface.GameUi.GameCanvas.MouseInputEnabled = false;
+            Interface.GameUi.GameCanvas.MouseInputEnabled = true;
+        }
+    }
 
-            base.Invalidate();
-            if (Interface.GameUi != null && Interface.GameUi.GameCanvas != null)
-            {
-                Interface.GameUi.GameCanvas.MouseInputEnabled = false;
-                Interface.GameUi.GameCanvas.MouseInputEnabled = true;
-            }
+    public void Update()
+    {
+        if (!IsHidden)
+        {
+            BringToFront();
         }
 
-        public void Update()
-        {
-            if (!IsHidden)
-            {
-                BringToFront();
-            }
+        mGoToCharacterSelect.IsDisabled = Globals.Me?.CombatTimer > Timing.Global.Milliseconds;
+    }
 
-            mGoToCharacterSelect.IsDisabled = Globals.Me?.CombatTimer > Timing.Global.Milliseconds;
+    private void Settings_Clicked(Base sender, ClickedEventArgs arguments)
+    {
+        mSettingsWindow.Show(true);
+        Interface.GameUi?.EscapeMenu?.Hide();
+    }
+
+    public void OpenSettingsWindow()
+    {
+        mSettingsWindow.Show();
+        Interface.GameUi?.EscapeMenu?.Hide();
+    }
+
+    /// <inheritdoc />
+    public override void ToggleHidden()
+    {
+        if (mSettingsWindow.IsVisible)
+        {
+            return;
         }
 
-        private void Settings_Clicked(Base sender, ClickedEventArgs arguments)
+        base.ToggleHidden();
+    }
+
+    private void LogoutToCharacterSelect(object sender, EventArgs e)
+    {
+        if (Globals.Me != null)
         {
-            mSettingsWindow.Show(true);
-            Interface.GameUi?.EscapeMenu?.Hide();
+            Globals.Me.CombatTimer = 0;
         }
 
-        public void OpenSettingsWindow()
+        Main.Logout(true);
+    }
+
+    private void LogoutToMainMenu(object sender, EventArgs e)
+    {
+        if (Globals.Me != null)
         {
-            mSettingsWindow.Show();
-            Interface.GameUi?.EscapeMenu?.Hide();
+            Globals.Me.CombatTimer = 0;
         }
 
-        /// <inheritdoc />
-        public override void ToggleHidden()
-        {
-            if (mSettingsWindow.IsVisible)
-            {
-                return;
-            }
+        Main.Logout(false);
+    }
 
-            base.ToggleHidden();
+    private void ExitToDesktop(object sender, EventArgs e)
+    {
+        if (Globals.Me != null)
+        {
+            Globals.Me.CombatTimer = 0;
         }
 
-        private void LogoutToCharacterSelect(object sender, EventArgs e)
+        Globals.IsRunning = false;
+    }
+
+    private void GoToCharacterSelect_Clicked(Base sender, ClickedEventArgs arguments)
+    {
+        ToggleHidden();
+        if (Globals.Me.CombatTimer > Timing.Global.Milliseconds)
         {
-            if (Globals.Me != null)
-            {
-                Globals.Me.CombatTimer = 0;
-            }
-
-            Main.Logout(true);
+            //Show Logout in Combat Warning
+            var box = new InputBox(
+                Strings.Combat.WarningTitle, Strings.Combat.WarningCharacterSelect, true, InputBox.InputType.YesNo,
+                LogoutToCharacterSelect, null, null
+            );
         }
-
-        private void LogoutToMainMenu(object sender, EventArgs e)
+        else
         {
-            if (Globals.Me != null)
-            {
-                Globals.Me.CombatTimer = 0;
-            }
-
-            Main.Logout(false);
+            LogoutToCharacterSelect(null, null);
         }
+    }
 
-        private void ExitToDesktop(object sender, EventArgs e)
+    private void Logout_Clicked(Base sender, ClickedEventArgs arguments)
+    {
+        ToggleHidden();
+        if (Globals.Me.CombatTimer > Timing.Global.Milliseconds)
         {
-            if (Globals.Me != null)
-            {
-                Globals.Me.CombatTimer = 0;
-            }
-
-            Globals.IsRunning = false;
+            //Show Logout in Combat Warning
+            var box = new InputBox(
+                Strings.Combat.WarningTitle, Strings.Combat.WarningLogout, true, InputBox.InputType.YesNo,
+                LogoutToMainMenu, null, null
+            );
         }
-
-        private void GoToCharacterSelect_Clicked(Base sender, ClickedEventArgs arguments)
+        else
         {
-            ToggleHidden();
-            if (Globals.Me.CombatTimer > Timing.Global.Milliseconds)
-            {
-                //Show Logout in Combat Warning
-                var box = new InputBox(
-                    Strings.Combat.WarningTitle, Strings.Combat.WarningCharacterSelect, true, InputBox.InputType.YesNo,
-                    LogoutToCharacterSelect, null, null
-                );
-            }
-            else
-            {
-                LogoutToCharacterSelect(null, null);
-            }
+            LogoutToMainMenu(null, null);
         }
+    }
 
-        private void Logout_Clicked(Base sender, ClickedEventArgs arguments)
+    private void ExitToDesktop_Clicked(Base sender, ClickedEventArgs arguments)
+    {
+        ToggleHidden();
+        if (Globals.Me.CombatTimer > Timing.Global.Milliseconds)
         {
-            ToggleHidden();
-            if (Globals.Me.CombatTimer > Timing.Global.Milliseconds)
-            {
-                //Show Logout in Combat Warning
-                var box = new InputBox(
-                    Strings.Combat.WarningTitle, Strings.Combat.WarningLogout, true, InputBox.InputType.YesNo,
-                    LogoutToMainMenu, null, null
-                );
-            }
-            else
-            {
-                LogoutToMainMenu(null, null);
-            }
+            //Show Logout in Combat Warning
+            var box = new InputBox(
+                Strings.Combat.WarningTitle, Strings.Combat.WarningExitDesktop, true, InputBox.InputType.YesNo,
+                ExitToDesktop, null, null
+            );
         }
-
-        private void ExitToDesktop_Clicked(Base sender, ClickedEventArgs arguments)
+        else
         {
-            ToggleHidden();
-            if (Globals.Me.CombatTimer > Timing.Global.Milliseconds)
-            {
-                //Show Logout in Combat Warning
-                var box = new InputBox(
-                    Strings.Combat.WarningTitle, Strings.Combat.WarningExitDesktop, true, InputBox.InputType.YesNo,
-                    ExitToDesktop, null, null
-                );
-            }
-            else
-            {
-                ExitToDesktop(null, null);
-            }
+            ExitToDesktop(null, null);
         }
+    }
 
-        private void Close_Clicked(Base sender, ClickedEventArgs arguments)
-        {
-            Hide();
-        }
-
+    private void Close_Clicked(Base sender, ClickedEventArgs arguments)
+    {
+        Hide();
     }
 
 }

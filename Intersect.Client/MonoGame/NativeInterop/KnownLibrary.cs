@@ -1,9 +1,8 @@
-namespace Intersect.Client.MonoGame.NativeInterop
+namespace Intersect.Client.MonoGame.NativeInterop;
+
+public enum KnownLibrary
 {
-    public enum KnownLibrary
-    {
-        OpenAL,
-        SDL2,
-        steam_api,
-    }
+    OpenAL,
+    SDL2,
+    steam_api,
 }

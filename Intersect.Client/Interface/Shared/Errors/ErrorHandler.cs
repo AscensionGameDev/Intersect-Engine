@@ -1,47 +1,45 @@
 ﻿using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Localization;
 
-namespace Intersect.Client.Interface.Shared.Errors
+namespace Intersect.Client.Interface.Shared.Errors;
+
+
+public partial class ErrorHandler
 {
 
-    public partial class ErrorHandler
+    //Controls
+    private readonly List<ErrorWindow> _windows = new();
+
+    //Canvasses
+    private readonly Canvas _gameCanvas;
+    private readonly Canvas _menuCanvas;
+
+    //Init
+    public ErrorHandler(Canvas menuCanvas, Canvas gameCanvas)
     {
+        _gameCanvas = gameCanvas;
+        _menuCanvas = menuCanvas;
+    }
 
-        //Controls
-        private readonly List<ErrorWindow> _windows = new();
-
-        //Canvasses
-        private readonly Canvas _gameCanvas;
-        private readonly Canvas _menuCanvas;
-
-        //Init
-        public ErrorHandler(Canvas menuCanvas, Canvas gameCanvas)
+    public void Update()
+    {
+        while (Interface.TryDequeueErrorMessage(out var message))
         {
-            _gameCanvas = gameCanvas;
-            _menuCanvas = menuCanvas;
+            _windows.Add(
+                new ErrorWindow(
+                    _gameCanvas,
+                    _menuCanvas,
+                    message.Value,
+                    string.IsNullOrWhiteSpace(message.Key) ? Strings.Errors.Title.ToString() : message.Key
+                )
+            );
         }
 
-        public void Update()
+        var windowsToRemove = _windows.Where(window => !window.Update()).ToArray();
+        foreach (var window in windowsToRemove)
         {
-            while (Interface.TryDequeueErrorMessage(out var message))
-            {
-                _windows.Add(
-                    new ErrorWindow(
-                        _gameCanvas,
-                        _menuCanvas,
-                        message.Value,
-                        string.IsNullOrWhiteSpace(message.Key) ? Strings.Errors.Title.ToString() : message.Key
-                    )
-                );
-            }
-
-            var windowsToRemove = _windows.Where(window => !window.Update()).ToArray();
-            foreach (var window in windowsToRemove)
-            {
-                _windows.Remove(window);
-            }
+            _windows.Remove(window);
         }
-
     }
 
 }

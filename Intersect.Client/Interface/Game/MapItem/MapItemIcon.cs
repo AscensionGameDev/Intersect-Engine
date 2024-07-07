@@ -8,122 +8,114 @@ using Intersect.Client.Interface.Game.DescriptionWindows;
 using Intersect.Client.Items;
 using Intersect.GameObjects;
 
-namespace Intersect.Client.Interface.Game.Inventory
+namespace Intersect.Client.Interface.Game.Inventory;
+
+
+public partial class MapItemIcon
 {
 
-    public partial class MapItemIcon
+    public ImagePanel Container;
+
+    public MapItemInstance MyItem;
+
+    public Guid MapId;
+
+    public int TileIndex;
+
+    public ImagePanel Pnl;
+
+    private MapItemWindow mMapItemWindow;
+
+    private ItemDescriptionWindow mDescWindow;
+
+    public MapItemIcon(MapItemWindow window)
     {
+        mMapItemWindow = window;
+    }
 
-        public ImagePanel Container;
+    public void Setup()
+    {
+        Pnl = new ImagePanel(Container, "MapItemIcon");
+        Pnl.HoverEnter += pnl_HoverEnter;
+        Pnl.HoverLeave += pnl_HoverLeave;
+        Pnl.Clicked += pnl_Clicked;
+    }
 
-        public MapItemInstance MyItem;
-
-        public Guid MapId;
-
-        public int TileIndex;
-    
-        public ImagePanel Pnl;
-
-        private MapItemWindow mMapItemWindow;
-
-        private ItemDescriptionWindow mDescWindow;
-
-        public MapItemIcon(MapItemWindow window)
+    void pnl_Clicked(Base sender, ClickedEventArgs arguments)
+    {
+        if (MyItem == null || TileIndex < 0 || TileIndex >= Options.MapWidth * Options.MapHeight)
         {
-            mMapItemWindow = window;
+            return;
         }
 
-        public void Setup()
+        Globals.Me.TryPickupItem(MapId, TileIndex, MyItem.Id);
+    }
+
+    void pnl_HoverLeave(Base sender, EventArgs arguments)
+    {
+        if (mDescWindow != null)
         {
-            Pnl = new ImagePanel(Container, "MapItemIcon");
-            Pnl.HoverEnter += pnl_HoverEnter;
-            Pnl.HoverLeave += pnl_HoverLeave;
-            Pnl.Clicked += pnl_Clicked;
+            mDescWindow.Dispose();
+            mDescWindow = null;
+        }
+    }
+
+    void pnl_HoverEnter(Base sender, EventArgs arguments)
+    {
+        if (MyItem == null)
+        {
+            return;
         }
 
-        void pnl_Clicked(Base sender, ClickedEventArgs arguments)
+        if (InputHandler.MouseFocus != null)
         {
-            if (MyItem == null || TileIndex < 0 || TileIndex >= Options.MapWidth * Options.MapHeight)
-            {
-                return;
-            }
-
-            Globals.Me.TryPickupItem(MapId, TileIndex, MyItem.Id);
+            return;
         }
 
-        void pnl_HoverLeave(Base sender, EventArgs arguments)
+        if (Globals.InputManager.MouseButtonDown(MouseButtons.Left))
         {
-            if (mDescWindow != null)
-            {
-                mDescWindow.Dispose();
-                mDescWindow = null;
-            }
+            return;
         }
 
-        void pnl_HoverEnter(Base sender, EventArgs arguments)
+        if (mDescWindow != null)
         {
-            if (MyItem == null)
-            {
-                return;
-            }
+            mDescWindow.Dispose();
+            mDescWindow = null;
+        }
+        mDescWindow = new ItemDescriptionWindow(
+            ItemBase.Get(MyItem.ItemId), MyItem.Quantity, mMapItemWindow.X,
+            mMapItemWindow.Y, MyItem.ItemProperties
+       );
+    }
 
-            if (InputHandler.MouseFocus != null)
-            {
-                return;
-            }
+    public FloatRect RenderBounds()
+    {
+        var rect = new FloatRect()
+        {
+            X = Pnl.LocalPosToCanvas(new Point(0, 0)).X,
+            Y = Pnl.LocalPosToCanvas(new Point(0, 0)).Y,
+            Width = Pnl.Width,
+            Height = Pnl.Height
+        };
 
-            if (Globals.InputManager.MouseButtonDown(MouseButtons.Left))
-            {
-                return;
-            }
+        return rect;
+    }
 
-            if (mDescWindow != null)
-            {
-                mDescWindow.Dispose();
-                mDescWindow = null;
-            }
-            mDescWindow = new ItemDescriptionWindow(
-                ItemBase.Get(MyItem.ItemId), MyItem.Quantity, mMapItemWindow.X,
-                mMapItemWindow.Y, MyItem.ItemProperties
-           );
+    public void Update()
+    {
+        if (MyItem == null)
+        {
+            return;
         }
 
-        public FloatRect RenderBounds()
+        var item = ItemBase.Get(MyItem.ItemId);
+        if (item != null)
         {
-            var rect = new FloatRect()
+            var itemTex = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Item, item.Icon);
+            if (itemTex != null)
             {
-                X = Pnl.LocalPosToCanvas(new Point(0, 0)).X,
-                Y = Pnl.LocalPosToCanvas(new Point(0, 0)).Y,
-                Width = Pnl.Width,
-                Height = Pnl.Height
-            };
-
-            return rect;
-        }
-
-        public void Update()
-        {
-            if (MyItem == null)
-            {
-                return;
-            }
-
-            var item = ItemBase.Get(MyItem.ItemId);
-            if (item != null)
-            {
-                var itemTex = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Item, item.Icon);
-                if (itemTex != null)
-                {
-                    Pnl.RenderColor = item.Color;
-                    Pnl.Texture = itemTex;
-                }
-                else
-                {
-                    if (Pnl.Texture != null)
-                    {
-                        Pnl.Texture = null;
-                    }
-                }
+                Pnl.RenderColor = item.Color;
+                Pnl.Texture = itemTex;
             }
             else
             {
@@ -131,16 +123,22 @@ namespace Intersect.Client.Interface.Game.Inventory
                 {
                     Pnl.Texture = null;
                 }
-
-            }
-
-            if (mDescWindow != null)
-            {
-                mDescWindow.Dispose();
-                mDescWindow = null;
-                pnl_HoverEnter(null, null);
             }
         }
-    }
+        else
+        {
+            if (Pnl.Texture != null)
+            {
+                Pnl.Texture = null;
+            }
 
+        }
+
+        if (mDescWindow != null)
+        {
+            mDescWindow.Dispose();
+            mDescWindow = null;
+            pnl_HoverEnter(null, null);
+        }
+    }
 }
