@@ -1,73 +1,71 @@
 ﻿using Intersect.Client.Framework.Gwen.Control;
 
-namespace Intersect.Client.Framework.Gwen.ControlInternal
+namespace Intersect.Client.Framework.Gwen.ControlInternal;
+
+
+/// <summary>
+///     Color square.
+/// </summary>
+public partial class ColorDisplay : Base
 {
 
+    private Color mColor;
+
+    //private bool m_DrawCheckers;
+
     /// <summary>
-    ///     Color square.
+    ///     Initializes a new instance of the <see cref="ColorDisplay" /> class.
     /// </summary>
-    public partial class ColorDisplay : Base
+    /// <param name="parent">Parent control.</param>
+    public ColorDisplay(Base parent) : base(parent)
     {
+        SetSize(32, 32);
+        mColor = Color.FromArgb(255, 255, 0, 0);
 
-        private Color mColor;
+        //m_DrawCheckers = true;
+    }
 
-        //private bool m_DrawCheckers;
+    /// <summary>
+    ///     Current color.
+    /// </summary>
+    public Color Color
+    {
+        get => mColor;
+        set => mColor = value;
+    }
 
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="ColorDisplay" /> class.
-        /// </summary>
-        /// <param name="parent">Parent control.</param>
-        public ColorDisplay(Base parent) : base(parent)
-        {
-            SetSize(32, 32);
-            mColor = Color.FromArgb(255, 255, 0, 0);
+    //public bool DrawCheckers { get { return m_DrawCheckers; } set { m_DrawCheckers = value; } }
+    public int R
+    {
+        get => mColor.R;
+        set => mColor = Color.FromArgb(mColor.A, value, mColor.G, mColor.B);
+    }
 
-            //m_DrawCheckers = true;
-        }
+    public int G
+    {
+        get => mColor.G;
+        set => mColor = Color.FromArgb(mColor.A, mColor.R, value, mColor.B);
+    }
 
-        /// <summary>
-        ///     Current color.
-        /// </summary>
-        public Color Color
-        {
-            get => mColor;
-            set => mColor = value;
-        }
+    public int B
+    {
+        get => mColor.B;
+        set => mColor = Color.FromArgb(mColor.A, mColor.R, mColor.G, value);
+    }
 
-        //public bool DrawCheckers { get { return m_DrawCheckers; } set { m_DrawCheckers = value; } }
-        public int R
-        {
-            get => mColor.R;
-            set => mColor = Color.FromArgb(mColor.A, value, mColor.G, mColor.B);
-        }
+    public int A
+    {
+        get => mColor.A;
+        set => mColor = Color.FromArgb(value, mColor.R, mColor.G, mColor.B);
+    }
 
-        public int G
-        {
-            get => mColor.G;
-            set => mColor = Color.FromArgb(mColor.A, mColor.R, value, mColor.B);
-        }
-
-        public int B
-        {
-            get => mColor.B;
-            set => mColor = Color.FromArgb(mColor.A, mColor.R, mColor.G, value);
-        }
-
-        public int A
-        {
-            get => mColor.A;
-            set => mColor = Color.FromArgb(value, mColor.R, mColor.G, mColor.B);
-        }
-
-        /// <summary>
-        ///     Renders the control using specified skin.
-        /// </summary>
-        /// <param name="skin">Skin to use.</param>
-        protected override void Render(Skin.Base skin)
-        {
-            skin.DrawColorDisplay(this, mColor);
-        }
-
+    /// <summary>
+    ///     Renders the control using specified skin.
+    /// </summary>
+    /// <param name="skin">Skin to use.</param>
+    protected override void Render(Skin.Base skin)
+    {
+        skin.DrawColorDisplay(this, mColor);
     }
 
 }

@@ -1,84 +1,82 @@
 ﻿using Intersect.Client.Framework.Gwen.Control;
 
-namespace Intersect.Client.Framework.Gwen
+namespace Intersect.Client.Framework.Gwen;
+
+
+/// <summary>
+///     Tooltip handling.
+/// </summary>
+public static partial class ToolTip
 {
 
+    private static Base sG_toolTip;
+
     /// <summary>
-    ///     Tooltip handling.
+    ///     Enables tooltip display for the specified control.
     /// </summary>
-    public static partial class ToolTip
+    /// <param name="control">Target control.</param>
+    public static void Enable(Base control)
     {
-
-        private static Base sG_toolTip;
-
-        /// <summary>
-        ///     Enables tooltip display for the specified control.
-        /// </summary>
-        /// <param name="control">Target control.</param>
-        public static void Enable(Base control)
+        if (null == control.ToolTip)
         {
-            if (null == control.ToolTip)
-            {
-                return;
-            }
-
-            sG_toolTip = control;
+            return;
         }
 
-        /// <summary>
-        ///     Disables tooltip display for the specified control.
-        /// </summary>
-        /// <param name="control">Target control.</param>
-        public static void Disable(Base control)
+        sG_toolTip = control;
+    }
+
+    /// <summary>
+    ///     Disables tooltip display for the specified control.
+    /// </summary>
+    /// <param name="control">Target control.</param>
+    public static void Disable(Base control)
+    {
+        if (sG_toolTip == control)
         {
-            if (sG_toolTip == control)
-            {
-                sG_toolTip = null;
-            }
+            sG_toolTip = null;
+        }
+    }
+
+    /// <summary>
+    ///     Disables tooltip display for the specified control.
+    /// </summary>
+    /// <param name="control">Target control.</param>
+    public static void ControlDeleted(Base control)
+    {
+        Disable(control);
+    }
+
+    /// <summary>
+    ///     Renders the currently visible tooltip.
+    /// </summary>
+    /// <param name="skin"></param>
+    public static void RenderToolTip(Skin.Base skin)
+    {
+        if (sG_toolTip == null || sG_toolTip.ToolTip == null)
+        {
+            return;
         }
 
-        /// <summary>
-        ///     Disables tooltip display for the specified control.
-        /// </summary>
-        /// <param name="control">Target control.</param>
-        public static void ControlDeleted(Base control)
-        {
-            Disable(control);
-        }
+        var render = skin.Renderer;
 
-        /// <summary>
-        ///     Renders the currently visible tooltip.
-        /// </summary>
-        /// <param name="skin"></param>
-        public static void RenderToolTip(Skin.Base skin)
-        {
-            if (sG_toolTip == null || sG_toolTip.ToolTip == null)
-            {
-                return;
-            }
+        var oldRenderOffset = render.RenderOffset;
+        var mousePos = Input.InputHandler.MousePosition;
+        var bounds = sG_toolTip.ToolTip.Bounds;
 
-            var render = skin.Renderer;
+        var offset = Util.FloatRect(
+            mousePos.X - bounds.Width * 0.5f, mousePos.Y - bounds.Height - 10, bounds.Width, bounds.Height
+        );
 
-            var oldRenderOffset = render.RenderOffset;
-            var mousePos = Input.InputHandler.MousePosition;
-            var bounds = sG_toolTip.ToolTip.Bounds;
+        offset = Util.ClampRectToRect(offset, sG_toolTip.GetCanvas().Bounds);
 
-            var offset = Util.FloatRect(
-                mousePos.X - bounds.Width * 0.5f, mousePos.Y - bounds.Height - 10, bounds.Width, bounds.Height
-            );
+        //Calculate offset on screen bounds
+        render.AddRenderOffset(offset);
+        render.EndClip();
 
-            offset = Util.ClampRectToRect(offset, sG_toolTip.GetCanvas().Bounds);
+        skin.DrawToolTip(sG_toolTip.ToolTip);
+        sG_toolTip.ToolTip.DoRender(skin);
 
-            //Calculate offset on screen bounds
-            render.AddRenderOffset(offset);
-            render.EndClip();
-
-            skin.DrawToolTip(sG_toolTip.ToolTip);
-            sG_toolTip.ToolTip.DoRender(skin);
-
-            render.RenderOffset = oldRenderOffset;
-        }
-
+        render.RenderOffset = oldRenderOffset;
     }
 
 }

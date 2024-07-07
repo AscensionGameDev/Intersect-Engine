@@ -1,7 +1,6 @@
-﻿namespace Intersect.Client.Framework.Content
+﻿namespace Intersect.Client.Framework.Content;
+
+public interface IAsset
 {
-    public interface IAsset
-    {
-        string Name { get; }
-    }
+    string Name { get; }
 }

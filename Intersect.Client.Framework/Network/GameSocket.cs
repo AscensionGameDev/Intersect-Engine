@@ -1,62 +1,60 @@
 ﻿using Intersect.Network;
 using Intersect.Network.Events;
 
-namespace Intersect.Client.Framework.Network
+namespace Intersect.Client.Framework.Network;
+
+public abstract partial class GameSocket
 {
-    public abstract partial class GameSocket
+
+    public abstract void Connect(string host, int port);
+
+    public abstract void SendPacket(object packet);
+
+    public abstract void Update();
+
+    public abstract void Disconnect(string reason);
+
+    public abstract void Dispose();
+
+    public abstract bool IsConnected { get; }
+
+    public abstract int Ping { get; }
+
+    public event DataReceivedHandler DataReceived;
+
+    public event ConnectedHandler Connected;
+
+    public event ConnectionFailedHandler ConnectionFailed;
+
+    public event DisconnectedHandler Disconnected;
+
+    protected void OnDataReceived(IPacket packet)
     {
-
-        public abstract void Connect(string host, int port);
-
-        public abstract void SendPacket(object packet);
-
-        public abstract void Update();
-
-        public abstract void Disconnect(string reason);
-
-        public abstract void Dispose();
-
-        public abstract bool IsConnected { get; }
-
-        public abstract int Ping { get; }
-
-        public event DataReceivedHandler DataReceived;
-
-        public event ConnectedHandler Connected;
-
-        public event ConnectionFailedHandler ConnectionFailed;
-
-        public event DisconnectedHandler Disconnected;
-
-        protected void OnDataReceived(IPacket packet)
-        {
-            DataReceived?.Invoke(packet);
-        }
-
-        protected void OnConnected(INetworkLayerInterface sender, ConnectionEventArgs connectionEventArgs)
-        {
-            Connected?.Invoke(sender, connectionEventArgs);
-        }
-
-        protected void OnConnectionFailed(INetworkLayerInterface sender, ConnectionEventArgs connectionEventArgs, bool denied)
-        {
-            ConnectionFailed?.Invoke(sender, connectionEventArgs, denied);
-        }
-
-        protected void OnDisconnected(INetworkLayerInterface sender, ConnectionEventArgs connectionEventArgs)
-        {
-            Disconnected?.Invoke(sender, connectionEventArgs);
-        }
-
-        public abstract INetwork Network { get; }
+        DataReceived?.Invoke(packet);
     }
 
-    public delegate void DataReceivedHandler(IPacket packet);
+    protected void OnConnected(INetworkLayerInterface sender, ConnectionEventArgs connectionEventArgs)
+    {
+        Connected?.Invoke(sender, connectionEventArgs);
+    }
 
-    public delegate void ConnectedHandler(INetworkLayerInterface sender, ConnectionEventArgs connectionEventArgs);
+    protected void OnConnectionFailed(INetworkLayerInterface sender, ConnectionEventArgs connectionEventArgs, bool denied)
+    {
+        ConnectionFailed?.Invoke(sender, connectionEventArgs, denied);
+    }
 
-    public delegate void ConnectionFailedHandler(INetworkLayerInterface sender, ConnectionEventArgs connectionEventArgs, bool denied);
+    protected void OnDisconnected(INetworkLayerInterface sender, ConnectionEventArgs connectionEventArgs)
+    {
+        Disconnected?.Invoke(sender, connectionEventArgs);
+    }
 
-    public delegate void DisconnectedHandler(INetworkLayerInterface sender, ConnectionEventArgs connectionEventArgs);
-
+    public abstract INetwork Network { get; }
 }
+
+public delegate void DataReceivedHandler(IPacket packet);
+
+public delegate void ConnectedHandler(INetworkLayerInterface sender, ConnectionEventArgs connectionEventArgs);
+
+public delegate void ConnectionFailedHandler(INetworkLayerInterface sender, ConnectionEventArgs connectionEventArgs, bool denied);
+
+public delegate void DisconnectedHandler(INetworkLayerInterface sender, ConnectionEventArgs connectionEventArgs);

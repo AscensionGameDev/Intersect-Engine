@@ -1,60 +1,58 @@
-﻿namespace Intersect.Client.Framework.GenericClasses
+﻿namespace Intersect.Client.Framework.GenericClasses;
+
+
+public partial class Cursor
 {
 
-    public partial class Cursor
+    private int mType = 0;
+
+    public Cursor()
+    {
+    }
+
+    public Cursor(Cursors.CursorTypes t)
+    {
+        mType = (int) t;
+    }
+
+    public static Cursor Current { get; set; }
+
+}
+
+public static partial class Cursors
+{
+
+    public enum CursorTypes
     {
 
-        private int mType = 0;
+        Default = 0, //default
 
-        public Cursor()
-        {
-        }
+        SizeAll,
 
-        public Cursor(Cursors.CursorTypes t)
-        {
-            mType = (int) t;
-        }
+        SizeNs,
 
-        public static Cursor Current { get; set; }
+        SizeWe,
+
+        SizeNwse,
+
+        SizeNesw,
+
+        No
 
     }
 
-    public static partial class Cursors
-    {
+    public static Cursor Default => new Cursor(CursorTypes.Default);
 
-        public enum CursorTypes
-        {
+    public static Cursor SizeNs => new Cursor(CursorTypes.SizeNs);
 
-            Default = 0, //default
+    public static Cursor SizeWe => new Cursor(CursorTypes.SizeWe);
 
-            SizeAll,
+    public static Cursor SizeAll => new Cursor(CursorTypes.SizeAll);
 
-            SizeNs,
+    public static Cursor SizeNwse => new Cursor(CursorTypes.SizeNwse);
 
-            SizeWe,
+    public static Cursor SizeNesw => new Cursor(CursorTypes.SizeNesw);
 
-            SizeNwse,
-
-            SizeNesw,
-
-            No
-
-        }
-
-        public static Cursor Default => new Cursor(CursorTypes.Default);
-
-        public static Cursor SizeNs => new Cursor(CursorTypes.SizeNs);
-
-        public static Cursor SizeWe => new Cursor(CursorTypes.SizeWe);
-
-        public static Cursor SizeAll => new Cursor(CursorTypes.SizeAll);
-
-        public static Cursor SizeNwse => new Cursor(CursorTypes.SizeNwse);
-
-        public static Cursor SizeNesw => new Cursor(CursorTypes.SizeNesw);
-
-        public static Cursor No => new Cursor(CursorTypes.No);
-
-    }
+    public static Cursor No => new Cursor(CursorTypes.No);
 
 }

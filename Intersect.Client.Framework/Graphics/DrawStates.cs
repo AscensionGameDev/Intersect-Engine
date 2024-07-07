@@ -1,17 +1,16 @@
-﻿namespace Intersect.Client.Framework.Graphics
+﻿namespace Intersect.Client.Framework.Graphics;
+
+public enum DrawStates
 {
-    public enum DrawStates
-    {
-        GroundLayers = 0,
+    GroundLayers = 0,
 
-        BelowPlayer,
+    BelowPlayer,
 
-        AbovePlayer,
+    AbovePlayer,
 
-        FringeLayers,
+    FringeLayers,
 
-        BeforeEntity,
+    BeforeEntity,
 
-        AfterEntity,
-    }
+    AfterEntity,
 }

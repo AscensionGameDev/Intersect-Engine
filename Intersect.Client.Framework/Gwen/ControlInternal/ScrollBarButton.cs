@@ -1,59 +1,57 @@
 ﻿using Intersect.Client.Framework.Gwen.Control;
 
-namespace Intersect.Client.Framework.Gwen.ControlInternal
+namespace Intersect.Client.Framework.Gwen.ControlInternal;
+
+
+/// <summary>
+///     Scrollbar button.
+/// </summary>
+public partial class ScrollBarButton : Button
 {
 
+    private Pos mDirection;
+
     /// <summary>
-    ///     Scrollbar button.
+    ///     Initializes a new instance of the <see cref="ScrollBarButton" /> class.
     /// </summary>
-    public partial class ScrollBarButton : Button
+    /// <param name="parent">Parent control.</param>
+    public ScrollBarButton(Base parent) : base(parent)
     {
+        SetDirectionUp();
+    }
 
-        private Pos mDirection;
+    public virtual void SetDirectionUp()
+    {
+        mDirection = Pos.Top;
+    }
 
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="ScrollBarButton" /> class.
-        /// </summary>
-        /// <param name="parent">Parent control.</param>
-        public ScrollBarButton(Base parent) : base(parent)
-        {
-            SetDirectionUp();
-        }
+    public virtual void SetDirectionDown()
+    {
+        mDirection = Pos.Bottom;
+    }
 
-        public virtual void SetDirectionUp()
-        {
-            mDirection = Pos.Top;
-        }
+    public virtual void SetDirectionLeft()
+    {
+        mDirection = Pos.Left;
+    }
 
-        public virtual void SetDirectionDown()
-        {
-            mDirection = Pos.Bottom;
-        }
+    public virtual void SetDirectionRight()
+    {
+        mDirection = Pos.Right;
+    }
 
-        public virtual void SetDirectionLeft()
-        {
-            mDirection = Pos.Left;
-        }
+    public virtual Pos GetDirection()
+    {
+        return mDirection;
+    }
 
-        public virtual void SetDirectionRight()
-        {
-            mDirection = Pos.Right;
-        }
-
-        public virtual Pos GetDirection()
-        {
-            return mDirection;
-        }
-
-        /// <summary>
-        ///     Renders the control using specified skin.
-        /// </summary>
-        /// <param name="skin">Skin to use.</param>
-        protected override void Render(Skin.Base skin)
-        {
-            skin.DrawScrollButton(this, mDirection, IsDepressed, IsHovered, IsDisabled);
-        }
-
+    /// <summary>
+    ///     Renders the control using specified skin.
+    /// </summary>
+    /// <param name="skin">Skin to use.</param>
+    protected override void Render(Skin.Base skin)
+    {
+        skin.DrawScrollButton(this, mDirection, IsDepressed, IsHovered, IsDisabled);
     }
 
 }

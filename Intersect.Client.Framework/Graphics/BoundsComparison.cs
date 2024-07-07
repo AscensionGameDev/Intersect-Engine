@@ -1,13 +1,12 @@
-﻿namespace Intersect.Client.Framework.Graphics
+﻿namespace Intersect.Client.Framework.Graphics;
+
+public enum BoundsComparison
 {
-    public enum BoundsComparison
-    {
-        Width,
+    Width,
 
-        Height,
+    Height,
 
-        Dimensions,
+    Dimensions,
 
-        Area,
-    }
+    Area,
 }

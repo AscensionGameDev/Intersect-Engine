@@ -1,17 +1,16 @@
-﻿namespace Intersect.Client.Framework.Entities
+﻿namespace Intersect.Client.Framework.Entities;
+
+public enum LabelType
 {
-    public enum LabelType
-    {
 
-        Header = 0,
+    Header = 0,
 
-        Footer,
+    Footer,
 
-        Name,
+    Name,
 
-        ChatBubble,
+    ChatBubble,
 
-        Guild
+    Guild
 
-    }
 }

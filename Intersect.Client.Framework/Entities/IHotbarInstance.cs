@@ -1,9 +1,8 @@
-﻿namespace Intersect.Client.Framework.Entities
+﻿namespace Intersect.Client.Framework.Entities;
+
+public interface IHotbarInstance
 {
-    public interface IHotbarInstance
-    {
-        Guid BagId { get; set; }
-        Guid ItemOrSpellId { get; set; }
-        int[] PreferredStatBuffs { get; set; }
-    }
+    Guid BagId { get; set; }
+    Guid ItemOrSpellId { get; set; }
+    int[] PreferredStatBuffs { get; set; }
 }
