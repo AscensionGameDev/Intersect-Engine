@@ -2,49 +2,48 @@
 using Intersect.Network;
 using Intersect.Plugins.Interfaces;
 
-namespace Intersect.Client.Plugins.Helpers
+namespace Intersect.Client.Plugins.Helpers;
+
+public sealed partial class PluginPacketSender : IPacketSender
 {
-    public sealed partial class PluginPacketSender : IPacketSender
+    private static IPacketSender? VirtualSender => Networking.Network.PacketHandler?.VirtualSender;
+    
+    private readonly IPacketHelper mPluginPluginPacketHelper;
+
+    public PluginPacketSender(IPacketHelper pluginPacketHelper)
     {
-        private static IPacketSender? VirtualSender => Networking.Network.PacketHandler?.VirtualSender;
-        
-        private readonly IPacketHelper mPluginPluginPacketHelper;
+        mPluginPluginPacketHelper = pluginPacketHelper;
+    }
 
-        public PluginPacketSender(IPacketHelper pluginPacketHelper)
+    /// <inheritdoc />
+    public IApplicationContext ApplicationContext => VirtualSender?.ApplicationContext;
+
+    public INetwork Network => VirtualSender?.Network;
+
+    /// <inheritdoc />
+    public bool Send(IPacket packet)
+    {
+        if (packet == default)
         {
-            mPluginPluginPacketHelper = pluginPacketHelper;
+            throw new ArgumentNullException(nameof(packet));
         }
+        
+        var packetType = packet.GetType();
+        var packetTypeRegisteredByPlugin = mPluginPluginPacketHelper.AllPluginPacketTypes.Contains(packetType);
 
-        /// <inheritdoc />
-        public IApplicationContext ApplicationContext => VirtualSender?.ApplicationContext;
-
-        public INetwork Network => VirtualSender?.Network;
-
-        /// <inheritdoc />
-        public bool Send(IPacket packet)
+        if (packetTypeRegisteredByPlugin)
         {
-            if (packet == default)
-            {
-                throw new ArgumentNullException(nameof(packet));
-            }
-            
-            var packetType = packet.GetType();
-            var packetTypeRegisteredByPlugin = mPluginPluginPacketHelper.AllPluginPacketTypes.Contains(packetType);
-
-            if (packetTypeRegisteredByPlugin)
-            {
-                return VirtualSender?.Send(packet) ?? false;
-            }
+            return VirtualSender?.Send(packet) ?? false;
+        }
 
 #if DEBUG
-            ApplicationContext?.Logger.Error(
-                $"Tried to send packet of type {packetType.FullName} but it was not registered by this plugin.\n" +
-                "Available packet types:\n" +
-                $"{string.Join("\n", mPluginPluginPacketHelper.AllPluginPacketTypes.Select(type => type.FullName))}"
-            );
+        ApplicationContext?.Logger.Error(
+            $"Tried to send packet of type {packetType.FullName} but it was not registered by this plugin.\n" +
+            "Available packet types:\n" +
+            $"{string.Join("\n", mPluginPluginPacketHelper.AllPluginPacketTypes.Select(type => type.FullName))}"
+        );
 #endif
-            return false;
+        return false;
 
-        }
     }
 }

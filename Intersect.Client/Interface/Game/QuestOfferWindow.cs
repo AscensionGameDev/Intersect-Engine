@@ -7,118 +7,116 @@ using Intersect.Client.Localization;
 using Intersect.Client.Networking;
 using Intersect.GameObjects;
 
-namespace Intersect.Client.Interface.Game
+namespace Intersect.Client.Interface.Game;
+
+
+public partial class QuestOfferWindow
 {
 
-    public partial class QuestOfferWindow
+    private Button mAcceptButton;
+
+    private Button mDeclineButton;
+
+    private string mQuestOfferText = "";
+
+    //Controls
+    private WindowControl mQuestOfferWindow;
+
+    private ScrollControl mQuestPromptArea;
+
+    private RichLabel mQuestPromptLabel;
+
+    private Label mQuestPromptTemplate;
+
+    private Label mQuestTitle;
+
+    public QuestOfferWindow(Canvas gameCanvas)
     {
+        mQuestOfferWindow = new WindowControl(gameCanvas, Strings.QuestOffer.Title, false, "QuestOfferWindow");
+        mQuestOfferWindow.DisableResizing();
+        mQuestOfferWindow.IsClosable = false;
 
-        private Button mAcceptButton;
+        //Menu Header
+        mQuestTitle = new Label(mQuestOfferWindow, "QuestTitle");
 
-        private Button mDeclineButton;
+        mQuestPromptArea = new ScrollControl(mQuestOfferWindow, "QuestOfferArea");
 
-        private string mQuestOfferText = "";
+        mQuestPromptTemplate = new Label(mQuestPromptArea, "QuestOfferTemplate");
 
-        //Controls
-        private WindowControl mQuestOfferWindow;
+        mQuestPromptLabel = new RichLabel(mQuestPromptArea);
 
-        private ScrollControl mQuestPromptArea;
+        //Accept Button
+        mAcceptButton = new Button(mQuestOfferWindow, "AcceptButton");
+        mAcceptButton.SetText(Strings.QuestOffer.Accept);
+        mAcceptButton.Clicked += _acceptButton_Clicked;
 
-        private RichLabel mQuestPromptLabel;
+        //Decline Button
+        mDeclineButton = new Button(mQuestOfferWindow, "DeclineButton");
+        mDeclineButton.SetText(Strings.QuestOffer.Decline);
+        mDeclineButton.Clicked += _declineButton_Clicked;
 
-        private Label mQuestPromptTemplate;
+        mQuestOfferWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
+        Interface.InputBlockingElements.Add(mQuestOfferWindow);
+    }
 
-        private Label mQuestTitle;
-
-        public QuestOfferWindow(Canvas gameCanvas)
+    private void _declineButton_Clicked(Base sender, ClickedEventArgs arguments)
+    {
+        if (Globals.QuestOffers.Count > 0)
         {
-            mQuestOfferWindow = new WindowControl(gameCanvas, Strings.QuestOffer.Title, false, "QuestOfferWindow");
-            mQuestOfferWindow.DisableResizing();
-            mQuestOfferWindow.IsClosable = false;
-
-            //Menu Header
-            mQuestTitle = new Label(mQuestOfferWindow, "QuestTitle");
-
-            mQuestPromptArea = new ScrollControl(mQuestOfferWindow, "QuestOfferArea");
-
-            mQuestPromptTemplate = new Label(mQuestPromptArea, "QuestOfferTemplate");
-
-            mQuestPromptLabel = new RichLabel(mQuestPromptArea);
-
-            //Accept Button
-            mAcceptButton = new Button(mQuestOfferWindow, "AcceptButton");
-            mAcceptButton.SetText(Strings.QuestOffer.Accept);
-            mAcceptButton.Clicked += _acceptButton_Clicked;
-
-            //Decline Button
-            mDeclineButton = new Button(mQuestOfferWindow, "DeclineButton");
-            mDeclineButton.SetText(Strings.QuestOffer.Decline);
-            mDeclineButton.Clicked += _declineButton_Clicked;
-
-            mQuestOfferWindow.LoadJsonUi(GameContentManager.UI.InGame, Graphics.Renderer.GetResolutionString());
-            Interface.InputBlockingElements.Add(mQuestOfferWindow);
+            PacketSender.SendDeclineQuest(Globals.QuestOffers[0]);
+            Globals.QuestOffers.RemoveAt(0);
         }
+    }
 
-        private void _declineButton_Clicked(Base sender, ClickedEventArgs arguments)
+    private void _acceptButton_Clicked(Base sender, ClickedEventArgs arguments)
+    {
+        if (Globals.QuestOffers.Count > 0)
         {
-            if (Globals.QuestOffers.Count > 0)
+            PacketSender.SendAcceptQuest(Globals.QuestOffers[0]);
+            Globals.QuestOffers.RemoveAt(0);
+        }
+    }
+
+    public void Update(QuestBase quest)
+    {
+        if (quest == null)
+        {
+            Hide();
+        }
+        else
+        {
+            Show();
+            mQuestTitle.Text = quest.Name;
+            if (mQuestOfferText != quest.StartDescription)
             {
-                PacketSender.SendDeclineQuest(Globals.QuestOffers[0]);
-                Globals.QuestOffers.RemoveAt(0);
+                mQuestPromptLabel.ClearText();
+                mQuestPromptLabel.Width = mQuestPromptArea.Width - mQuestPromptArea.GetVerticalScrollBar().Width;
+                mQuestPromptLabel.AddText(quest.StartDescription, mQuestPromptTemplate);
+
+                mQuestPromptLabel.SizeToChildren(false, true);
+                mQuestOfferText = quest.StartDescription;
             }
         }
+    }
 
-        private void _acceptButton_Clicked(Base sender, ClickedEventArgs arguments)
-        {
-            if (Globals.QuestOffers.Count > 0)
-            {
-                PacketSender.SendAcceptQuest(Globals.QuestOffers[0]);
-                Globals.QuestOffers.RemoveAt(0);
-            }
-        }
+    public void Show()
+    {
+        mQuestOfferWindow.IsHidden = false;
+    }
 
-        public void Update(QuestBase quest)
-        {
-            if (quest == null)
-            {
-                Hide();
-            }
-            else
-            {
-                Show();
-                mQuestTitle.Text = quest.Name;
-                if (mQuestOfferText != quest.StartDescription)
-                {
-                    mQuestPromptLabel.ClearText();
-                    mQuestPromptLabel.Width = mQuestPromptArea.Width - mQuestPromptArea.GetVerticalScrollBar().Width;
-                    mQuestPromptLabel.AddText(quest.StartDescription, mQuestPromptTemplate);
+    public void Close()
+    {
+        mQuestOfferWindow.Close();
+    }
 
-                    mQuestPromptLabel.SizeToChildren(false, true);
-                    mQuestOfferText = quest.StartDescription;
-                }
-            }
-        }
+    public bool IsVisible()
+    {
+        return !mQuestOfferWindow.IsHidden;
+    }
 
-        public void Show()
-        {
-            mQuestOfferWindow.IsHidden = false;
-        }
-
-        public void Close()
-        {
-            mQuestOfferWindow.Close();
-        }
-
-        public bool IsVisible()
-        {
-            return !mQuestOfferWindow.IsHidden;
-        }
-
-        public void Hide()
-        {
-            mQuestOfferWindow.IsHidden = true;
-        }
-
+    public void Hide()
+    {
+        mQuestOfferWindow.IsHidden = true;
     }
 
 }

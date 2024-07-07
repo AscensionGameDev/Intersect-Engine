@@ -25,541 +25,540 @@ using Intersect.Utilities;
 using MainMenu = Intersect.Client.Interface.Menu.MainMenu;
 using Intersect.Logging;
 
-namespace Intersect.Client.MonoGame
+namespace Intersect.Client.MonoGame;
+
+/// <summary>
+///     This is the main type for your game.
+/// </summary>
+internal partial class IntersectGame : Game
 {
-    /// <summary>
-    ///     This is the main type for your game.
-    /// </summary>
-    internal partial class IntersectGame : Game
+    private bool mInitialized;
+
+    private double mLastUpdateTime = 0;
+
+    private readonly GameRenderer _gameRenderer;
+
+    private GraphicsDeviceManager mGraphics;
+
+    #region "Autoupdate Variables"
+
+    private Updater.Updater mUpdater;
+
+    private Texture2D updaterBackground;
+
+    private SpriteFont updaterFont;
+
+    private SpriteFont updaterFontSmall;
+
+    private Texture2D updaterProgressBar;
+
+    private SpriteBatch updateBatch;
+
+    private bool updaterGraphicsReset;
+
+    #endregion
+
+    private IClientContext Context { get; }
+
+    private Action PostStartupAction { get; }
+
+    private IntersectGame(IClientContext context, Action postStartupAction)
     {
-        private bool mInitialized;
+        Context = context;
+        PostStartupAction = postStartupAction;
 
-        private double mLastUpdateTime = 0;
-
-        private readonly GameRenderer _gameRenderer;
-
-        private GraphicsDeviceManager mGraphics;
-
-        #region "Autoupdate Variables"
-
-        private Updater.Updater mUpdater;
-
-        private Texture2D updaterBackground;
-
-        private SpriteFont updaterFont;
-
-        private SpriteFont updaterFontSmall;
-
-        private Texture2D updaterProgressBar;
-
-        private SpriteBatch updateBatch;
-
-        private bool updaterGraphicsReset;
-
-        #endregion
-
-        private IClientContext Context { get; }
-
-        private Action PostStartupAction { get; }
-
-        private IntersectGame(IClientContext context, Action postStartupAction)
+        try
         {
-            Context = context;
-            PostStartupAction = postStartupAction;
-
-            try
-            {
-                Strings.Load();
-            }
-            catch (Exception exception)
-            {
-                Log.Error(exception);
-                throw;
-            }
-
-            mGraphics = new GraphicsDeviceManager(this)
-            {
-                PreferredBackBufferWidth = 800,
-                PreferredBackBufferHeight = 480,
-                PreferHalfPixelOffset = true,
-                PreferMultiSampling = true,
-            };
-
-            mGraphics.PreparingDeviceSettings += (_, args) =>
-            {
-                args.GraphicsDeviceInformation.PresentationParameters.RenderTargetUsage =
-                    RenderTargetUsage.PreserveContents;
-                args.GraphicsDeviceInformation.PresentationParameters.MultiSampleCount = 8;
-            };
-
-            ClientConfiguration.LoadAndSave(ClientConfiguration.DefaultPath);
-
-            Content.RootDirectory = "";
-            IsMouseVisible = true;
-            Globals.ContentManager = new MonoContentManager();
-            Globals.Database = new JsonDatabase();
-
-            // Load configuration.
-            Globals.Database.LoadPreferences();
-
-            Window.IsBorderless = Context.StartupOptions.BorderlessWindow;
-
-            _gameRenderer = new MonoRenderer(mGraphics, Content, this)
-            {
-                OverrideResolution = Context.StartupOptions.ScreenResolution,
-            };
-
-            Globals.InputManager = new MonoInput(this);
-            GameClipboard.Instance = new MonoClipboard();
-
-            Core.Graphics.Renderer = _gameRenderer;
-
-            Interface.Interface.GwenRenderer = new IntersectRenderer(null, Core.Graphics.Renderer);
-            Interface.Interface.GwenInput = new IntersectInput();
-            Controls.Init();
-
-            // Windows
-            Window.Position = new Microsoft.Xna.Framework.Point(
-                _gameRenderer.ScreenWidth - _gameRenderer.ActiveResolution.X,
-                _gameRenderer.ScreenHeight - _gameRenderer.ActiveResolution.Y
-            ) / new Microsoft.Xna.Framework.Point(2);
-            Window.AllowAltF4 = false;
-
-            // Store frequently used property values in local variables.
-            string mouseCursor = ClientConfiguration.Instance.MouseCursor;
-            string updateUrl = ClientConfiguration.Instance.UpdateUrl;
-
-            // If we're going to be rendering a custom mouse cursor, hide the default one!
-            if (!string.IsNullOrWhiteSpace(mouseCursor))
-            {
-                IsMouseVisible = false;
-            }
-
-            // Reuse Updater object instead of creating a new one each time.
-            if (!string.IsNullOrWhiteSpace(updateUrl))
-            {
-                mUpdater = new Updater.Updater(
-                    updateUrl,
-                    Path.Combine("version.json"),
-                    true,
-                    5
-                );
-            }
+            Strings.Load();
+        }
+        catch (Exception exception)
+        {
+            Log.Error(exception);
+            throw;
         }
 
-        /// <summary>
-        ///     Allows the game to perform any initialization it needs to before starting to run.
-        ///     This is where it can query for any required services and load any non-graphic
-        ///     related content.  Calling base.Initialize will enumerate through any components
-        ///     and initialize them as well.
-        /// </summary>
-        protected override void Initialize()
+        mGraphics = new GraphicsDeviceManager(this)
         {
-            base.Initialize();
+            PreferredBackBufferWidth = 800,
+            PreferredBackBufferHeight = 480,
+            PreferHalfPixelOffset = true,
+            PreferMultiSampling = true,
+        };
 
-            if (mUpdater != null)
-            {
-                //Set the size of the updater screen before applying graphic changes.
-                //We need to do this here instead of in the constructor for the size change to apply to Linux
-                mGraphics.PreferredBackBufferWidth = 800;
-                mGraphics.PreferredBackBufferHeight = 480;
-            }
+        mGraphics.PreparingDeviceSettings += (_, args) =>
+        {
+            args.GraphicsDeviceInformation.PresentationParameters.RenderTargetUsage =
+                RenderTargetUsage.PreserveContents;
+            args.GraphicsDeviceInformation.PresentationParameters.MultiSampleCount = 8;
+        };
 
-            if (Steam.SteamDeck)
-            {
-                Window.IsBorderless = true;
+        ClientConfiguration.LoadAndSave(ClientConfiguration.DefaultPath);
 
-                var displayResolution = new Resolution(
-                    GraphicsDevice.DisplayMode.Width,
-                    GraphicsDevice.DisplayMode.Height
-                );
+        Content.RootDirectory = "";
+        IsMouseVisible = true;
+        Globals.ContentManager = new MonoContentManager();
+        Globals.Database = new JsonDatabase();
 
-                _gameRenderer.PreferredResolution = displayResolution;
-                _gameRenderer.OverrideResolution = displayResolution;
+        // Load configuration.
+        Globals.Database.LoadPreferences();
 
-                mGraphics.PreferredBackBufferWidth = displayResolution.X;
-                mGraphics.PreferredBackBufferHeight = displayResolution.Y;
-            }
+        Window.IsBorderless = Context.StartupOptions.BorderlessWindow;
 
-            mGraphics.ApplyChanges();
+        _gameRenderer = new MonoRenderer(mGraphics, Content, this)
+        {
+            OverrideResolution = Context.StartupOptions.ScreenResolution,
+        };
+
+        Globals.InputManager = new MonoInput(this);
+        GameClipboard.Instance = new MonoClipboard();
+
+        Core.Graphics.Renderer = _gameRenderer;
+
+        Interface.Interface.GwenRenderer = new IntersectRenderer(null, Core.Graphics.Renderer);
+        Interface.Interface.GwenInput = new IntersectInput();
+        Controls.Init();
+
+        // Windows
+        Window.Position = new Microsoft.Xna.Framework.Point(
+            _gameRenderer.ScreenWidth - _gameRenderer.ActiveResolution.X,
+            _gameRenderer.ScreenHeight - _gameRenderer.ActiveResolution.Y
+        ) / new Microsoft.Xna.Framework.Point(2);
+        Window.AllowAltF4 = false;
+
+        // Store frequently used property values in local variables.
+        string mouseCursor = ClientConfiguration.Instance.MouseCursor;
+        string updateUrl = ClientConfiguration.Instance.UpdateUrl;
+
+        // If we're going to be rendering a custom mouse cursor, hide the default one!
+        if (!string.IsNullOrWhiteSpace(mouseCursor))
+        {
+            IsMouseVisible = false;
         }
 
-        private void IntersectInit()
+        // Reuse Updater object instead of creating a new one each time.
+        if (!string.IsNullOrWhiteSpace(updateUrl))
         {
-            (Core.Graphics.Renderer as MonoRenderer)?.Init(GraphicsDevice);
+            mUpdater = new Updater.Updater(
+                updateUrl,
+                Path.Combine("version.json"),
+                true,
+                5
+            );
+        }
+    }
 
-            // TODO: Remove old netcode
-            Networking.Network.Socket = new MonoSocket(Context);
-            Networking.Network.Socket.Connected += (_, connectionEventArgs) =>
-                MainMenu.SetNetworkStatus(connectionEventArgs.NetworkStatus);
-            Networking.Network.Socket.ConnectionFailed += (_, connectionEventArgs, _) =>
-                MainMenu.SetNetworkStatus(connectionEventArgs.NetworkStatus);
-            Networking.Network.Socket.Disconnected += (_, connectionEventArgs) =>
-                MainMenu.SetNetworkStatus(connectionEventArgs.NetworkStatus, resetStatusCheck: true);
+    /// <summary>
+    ///     Allows the game to perform any initialization it needs to before starting to run.
+    ///     This is where it can query for any required services and load any non-graphic
+    ///     related content.  Calling base.Initialize will enumerate through any components
+    ///     and initialize them as well.
+    /// </summary>
+    protected override void Initialize()
+    {
+        base.Initialize();
 
-            Main.Start(Context);
-
-            mInitialized = true;
-
-            PostStartupAction();
+        if (mUpdater != null)
+        {
+            //Set the size of the updater screen before applying graphic changes.
+            //We need to do this here instead of in the constructor for the size change to apply to Linux
+            mGraphics.PreferredBackBufferWidth = 800;
+            mGraphics.PreferredBackBufferHeight = 480;
         }
 
-        /// <summary>
-        ///     Allows the game to run logic such as updating the world,
-        ///     checking for collisions, gathering input, and playing audio.
-        /// </summary>
-        /// <param name="gameTime">Provides a snapshot of timing values.</param>
-        protected override void Update(GameTime gameTime)
+        if (Steam.SteamDeck)
         {
-            if (mUpdater != null)
-            {
-                if (mUpdater.CheckUpdaterContentLoaded())
-                {
-                    LoadUpdaterContent();
-                }
+            Window.IsBorderless = true;
 
-                if (mUpdater.Status == UpdateStatus.Done || mUpdater.Status == UpdateStatus.None)
-                {
-                    if (updaterGraphicsReset == true)
-                    {
-                        //Drew a frame, now let's initialize the engine
-                        IntersectInit();
-                        mUpdater = null;
-                    }
-                }
-                else if (mUpdater.Status == UpdateStatus.Restart)
-                {
-                    //Auto relaunch on Windows
-                    switch (Environment.OSVersion.Platform)
-                    {
-                        case PlatformID.Win32NT:
-                        case PlatformID.Win32S:
-                        case PlatformID.Win32Windows:
-                        case PlatformID.WinCE:
-                            Process.Start(
-                                Environment.GetCommandLineArgs()[0],
-                                Environment.GetCommandLineArgs().Length > 1
-                                    ? string.Join(" ", Environment.GetCommandLineArgs().Skip(1))
-                                    : null
-                            );
+            var displayResolution = new Resolution(
+                GraphicsDevice.DisplayMode.Width,
+                GraphicsDevice.DisplayMode.Height
+            );
 
-                            Exit();
-                            break;
-                    }
-                }
-            }
+            _gameRenderer.PreferredResolution = displayResolution;
+            _gameRenderer.OverrideResolution = displayResolution;
 
-            if (mUpdater == null)
-            {
-                if (!mInitialized)
-                {
-                    IntersectInit();
-                }
-
-                if (Globals.IsRunning)
-                {
-                    if (mLastUpdateTime < gameTime.TotalGameTime.TotalMilliseconds)
-                    {
-                        lock (Globals.GameLock)
-                        {
-                            Main.Update(gameTime.ElapsedGameTime);
-                        }
-
-                        ///mLastUpdateTime = gameTime.TotalGameTime.TotalMilliseconds + (1000/60f);
-                    }
-                }
-                else
-                {
-                    Main.DestroyGame();
-                    Exit();
-                }
-            }
-
-            base.Update(gameTime);
+            mGraphics.PreferredBackBufferWidth = displayResolution.X;
+            mGraphics.PreferredBackBufferHeight = displayResolution.Y;
         }
 
-        protected override void LoadContent()
-        {
-            base.LoadContent();
+        mGraphics.ApplyChanges();
+    }
 
-            if (mUpdater != null)
+    private void IntersectInit()
+    {
+        (Core.Graphics.Renderer as MonoRenderer)?.Init(GraphicsDevice);
+
+        // TODO: Remove old netcode
+        Networking.Network.Socket = new MonoSocket(Context);
+        Networking.Network.Socket.Connected += (_, connectionEventArgs) =>
+            MainMenu.SetNetworkStatus(connectionEventArgs.NetworkStatus);
+        Networking.Network.Socket.ConnectionFailed += (_, connectionEventArgs, _) =>
+            MainMenu.SetNetworkStatus(connectionEventArgs.NetworkStatus);
+        Networking.Network.Socket.Disconnected += (_, connectionEventArgs) =>
+            MainMenu.SetNetworkStatus(connectionEventArgs.NetworkStatus, resetStatusCheck: true);
+
+        Main.Start(Context);
+
+        mInitialized = true;
+
+        PostStartupAction();
+    }
+
+    /// <summary>
+    ///     Allows the game to run logic such as updating the world,
+    ///     checking for collisions, gathering input, and playing audio.
+    /// </summary>
+    /// <param name="gameTime">Provides a snapshot of timing values.</param>
+    protected override void Update(GameTime gameTime)
+    {
+        if (mUpdater != null)
+        {
+            if (mUpdater.CheckUpdaterContentLoaded())
             {
                 LoadUpdaterContent();
             }
+
+            if (mUpdater.Status == UpdateStatus.Done || mUpdater.Status == UpdateStatus.None)
+            {
+                if (updaterGraphicsReset == true)
+                {
+                    //Drew a frame, now let's initialize the engine
+                    IntersectInit();
+                    mUpdater = null;
+                }
+            }
+            else if (mUpdater.Status == UpdateStatus.Restart)
+            {
+                //Auto relaunch on Windows
+                switch (Environment.OSVersion.Platform)
+                {
+                    case PlatformID.Win32NT:
+                    case PlatformID.Win32S:
+                    case PlatformID.Win32Windows:
+                    case PlatformID.WinCE:
+                        Process.Start(
+                            Environment.GetCommandLineArgs()[0],
+                            Environment.GetCommandLineArgs().Length > 1
+                                ? string.Join(" ", Environment.GetCommandLineArgs().Skip(1))
+                                : null
+                        );
+
+                        Exit();
+                        break;
+                }
+            }
         }
 
-        /// <summary>
-        ///     This is called when the game should draw itself.
-        /// </summary>
-        /// <param name="gameTime">Provides a snapshot of timing values.</param>
-        protected override void Draw(GameTime gameTime)
+        if (mUpdater == null)
         {
-            GraphicsDevice.BlendState = BlendState.NonPremultiplied;
-
-            GraphicsDevice.Clear(Microsoft.Xna.Framework.Color.Black);
-
-            if (mUpdater != null)
+            if (!mInitialized)
             {
-                if (mUpdater.Status == UpdateStatus.Done || mUpdater.Status == UpdateStatus.None)
+                IntersectInit();
+            }
+
+            if (Globals.IsRunning)
+            {
+                if (mLastUpdateTime < gameTime.TotalGameTime.TotalMilliseconds)
                 {
-                    if (updaterGraphicsReset == false)
+                    lock (Globals.GameLock)
                     {
-                        (Core.Graphics.Renderer as MonoRenderer)?.Init(GraphicsDevice);
-                        (Core.Graphics.Renderer as MonoRenderer)?.Init();
-                        (Core.Graphics.Renderer as MonoRenderer)?.Begin();
-                        (Core.Graphics.Renderer as MonoRenderer)?.End();
-                        updaterGraphicsReset = true;
+                        Main.Update(gameTime.ElapsedGameTime);
                     }
-                }
-                else
-                {
-                    DrawUpdater();
+
+                    ///mLastUpdateTime = gameTime.TotalGameTime.TotalMilliseconds + (1000/60f);
                 }
             }
             else
             {
-                if (Globals.IsRunning && mInitialized)
-                {
-                    lock (Globals.GameLock)
-                    {
-                        Core.Graphics.Render(gameTime.ElapsedGameTime, gameTime.TotalGameTime);
-                    }
-                }
+                Main.DestroyGame();
+                Exit();
             }
-
-            base.Draw(gameTime);
         }
 
-        private void ExitToDesktop(object sender, EventArgs e)
-        {
-            if (Globals.Me != null)
-            {
-                Globals.Me.CombatTimer = 0;
-            }
+        base.Update(gameTime);
+    }
 
-            Globals.IsRunning = false;
+    protected override void LoadContent()
+    {
+        base.LoadContent();
+
+        if (mUpdater != null)
+        {
+            LoadUpdaterContent();
+        }
+    }
+
+    /// <summary>
+    ///     This is called when the game should draw itself.
+    /// </summary>
+    /// <param name="gameTime">Provides a snapshot of timing values.</param>
+    protected override void Draw(GameTime gameTime)
+    {
+        GraphicsDevice.BlendState = BlendState.NonPremultiplied;
+
+        GraphicsDevice.Clear(Microsoft.Xna.Framework.Color.Black);
+
+        if (mUpdater != null)
+        {
+            if (mUpdater.Status == UpdateStatus.Done || mUpdater.Status == UpdateStatus.None)
+            {
+                if (updaterGraphicsReset == false)
+                {
+                    (Core.Graphics.Renderer as MonoRenderer)?.Init(GraphicsDevice);
+                    (Core.Graphics.Renderer as MonoRenderer)?.Init();
+                    (Core.Graphics.Renderer as MonoRenderer)?.Begin();
+                    (Core.Graphics.Renderer as MonoRenderer)?.End();
+                    updaterGraphicsReset = true;
+                }
+            }
+            else
+            {
+                DrawUpdater();
+            }
+        }
+        else
+        {
+            if (Globals.IsRunning && mInitialized)
+            {
+                lock (Globals.GameLock)
+                {
+                    Core.Graphics.Render(gameTime.ElapsedGameTime, gameTime.TotalGameTime);
+                }
+            }
         }
 
-        protected override void OnExiting(object sender, EventArgs args)
+        base.Draw(gameTime);
+    }
+
+    private void ExitToDesktop(object sender, EventArgs e)
+    {
+        if (Globals.Me != null)
         {
-            Log.Info("System window closing (due to user interaction most likely).");
+            Globals.Me.CombatTimer = 0;
+        }
 
-            if (Globals.Me != null && Globals.Me.CombatTimer > Timing.Global?.Milliseconds)
-            {
-                //Try to prevent SDL Window Close
-                var exception = false;
-                try
-                {
-                    var platform = GetType()
-                        .GetField("Platform", BindingFlags.NonPublic | BindingFlags.Instance)
-                        .GetValue(this);
+        Globals.IsRunning = false;
+    }
 
-                    var field = platform.GetType()
-                        .GetField("_isExiting", BindingFlags.NonPublic | BindingFlags.Instance);
+    protected override void OnExiting(object sender, EventArgs args)
+    {
+        Log.Info("System window closing (due to user interaction most likely).");
 
-                    field.SetValue(platform, 0);
-                }
-                catch
-                {
-                    //TODO: Should we log here? I really don't know if it's necessary.
-                    exception = true;
-                }
-
-                if (!exception)
-                {
-                    //Show Message Getting Exit Confirmation From Player to Leave in Combat
-                    var box = new InputBox(
-                        Strings.Combat.WarningTitle, Strings.Combat.WarningCharacterSelect, true,
-                        InputBox.InputType.YesNo, ExitToDesktop, null, null
-                    );
-
-                    //Restart the MonoGame RunLoop
-                    Run();
-                    return;
-                }
-            }
-
+        if (Globals.Me != null && Globals.Me.CombatTimer > Timing.Global?.Milliseconds)
+        {
+            //Try to prevent SDL Window Close
+            var exception = false;
             try
             {
-                mUpdater?.Stop();
+                var platform = GetType()
+                    .GetField("Platform", BindingFlags.NonPublic | BindingFlags.Instance)
+                    .GetValue(this);
+
+                var field = platform.GetType()
+                    .GetField("_isExiting", BindingFlags.NonPublic | BindingFlags.Instance);
+
+                field.SetValue(platform, 0);
             }
             catch
             {
+                //TODO: Should we log here? I really don't know if it's necessary.
+                exception = true;
             }
 
-            //Just close if we don't need to show a combat warning
-            base.OnExiting(sender, args);
-            Networking.Network.Close("quitting");
-            Dispose();
-        }
-
-        private void DrawUpdater()
-        {
-            //Draw updating text and show progress bar...
-
-            if (updateBatch == null)
+            if (!exception)
             {
-                updateBatch = new SpriteBatch(GraphicsDevice);
-            }
-
-            updateBatch.Begin(SpriteSortMode.Immediate);
-
-            //Default Window Size is 800x480
-            if (updaterBackground != null)
-            {
-                updateBatch.Draw(
-                    updaterBackground, new Rectangle(0, 0, 800, 480),
-                    new Rectangle?(new Rectangle(0, 0, updaterBackground.Width, updaterBackground.Height)),
-                    Microsoft.Xna.Framework.Color.White
-                );
-            }
-
-            var status = "";
-            var progressPercent = 0f;
-            var progress = "";
-            var filesRemaining = "";
-            var sizeRemaining = "";
-
-            switch (mUpdater.Status)
-            {
-                case UpdateStatus.Checking:
-                    status = Strings.Update.Checking;
-                    break;
-
-                case UpdateStatus.Updating:
-                    status = Strings.Update.Updating;
-                    progressPercent = mUpdater.Progress / 100f;
-                    progress = Strings.Update.PercentComplete.ToString((int)mUpdater.Progress);
-                    filesRemaining = Strings.Update.FilesRemaining.ToString(mUpdater.FilesRemaining);
-                    sizeRemaining = Strings.Update.RemainingSize.ToString(mUpdater.GetHumanReadableFileSize(mUpdater.SizeRemaining));
-                    break;
-
-                case UpdateStatus.Restart:
-                    status = Strings.Update.Restart.ToString(Strings.Main.GameName);
-                    progressPercent = 100;
-                    progress = Strings.Update.PercentComplete.ToString(100);
-                    break;
-
-                case UpdateStatus.Done:
-                    status = Strings.Update.Done;
-                    progressPercent = 100;
-                    progress = Strings.Update.PercentComplete.ToString(100);
-                    break;
-
-                case UpdateStatus.Error:
-                    status = Strings.Update.Error;
-                    progress = mUpdater.Exception?.Message ?? "";
-                    progressPercent = 100;
-                    break;
-
-                case UpdateStatus.None:
-                    //Nothing here!
-                    break;
-
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-
-            if (updaterFont != null)
-            {
-                var size = updaterFont.MeasureString(status);
-                updateBatch.DrawString(
-                    updaterFont, status, new Vector2(800 / 2 - size.X / 2, 360), Microsoft.Xna.Framework.Color.White
-                );
-            }
-
-            //Bar will exist at 400 to 432
-            if (updaterProgressBar != null)
-            {
-                updateBatch.Draw(
-                    updaterProgressBar, new Rectangle(100, 400, (int)(600 * progressPercent), 32),
-                    new Rectangle?(
-                        new Rectangle(
-                            0, 0, (int)(updaterProgressBar.Width * progressPercent), updaterProgressBar.Height
-                        )
-                    ), Microsoft.Xna.Framework.Color.White
-                );
-            }
-
-            //Bar will be 600 pixels wide
-            if (updaterFontSmall != null)
-            {
-                //Draw % in center of bar
-                var size = updaterFontSmall.MeasureString(progress);
-                updateBatch.DrawString(
-                    updaterFontSmall, progress, new Vector2(800 / 2 - size.X / 2, 405),
-                    Microsoft.Xna.Framework.Color.White
+                //Show Message Getting Exit Confirmation From Player to Leave in Combat
+                var box = new InputBox(
+                    Strings.Combat.WarningTitle, Strings.Combat.WarningCharacterSelect, true,
+                    InputBox.InputType.YesNo, ExitToDesktop, null, null
                 );
 
-                //Draw files remaining on bottom left
-                updateBatch.DrawString(
-                    updaterFontSmall, filesRemaining, new Vector2(100, 440), Microsoft.Xna.Framework.Color.White
-                );
-
-                //Draw total remaining on bottom right
-                size = updaterFontSmall.MeasureString(sizeRemaining);
-                updateBatch.DrawString(
-                    updaterFontSmall, sizeRemaining, new Vector2(700 - size.X, 440), Microsoft.Xna.Framework.Color.White
-                );
-            }
-
-            updateBatch.End();
-        }
-
-        private void LoadUpdaterContent()
-        {
-            if (File.Exists(Path.Combine(ClientConfiguration.ResourcesDirectory, "updater", "background.png")))
-            {
-                updaterBackground = Texture2D.FromFile(
-                    GraphicsDevice, Path.Combine(ClientConfiguration.ResourcesDirectory, "updater", "background.png")
-                );
-            }
-
-            if (File.Exists(Path.Combine(ClientConfiguration.ResourcesDirectory, "updater", "progressbar.png")))
-            {
-                updaterProgressBar = Texture2D.FromFile(
-                    GraphicsDevice, Path.Combine(ClientConfiguration.ResourcesDirectory, "updater", "progressbar.png")
-                );
-            }
-
-            if (File.Exists(Path.Combine(ClientConfiguration.ResourcesDirectory, "updater", "font.xnb")))
-            {
-                updaterFont = Content.Load<SpriteFont>(Path.Combine(ClientConfiguration.ResourcesDirectory, "updater", "font"));
-            }
-
-            if (File.Exists(Path.Combine(ClientConfiguration.ResourcesDirectory, "updater", "fontsmall.xnb")))
-            {
-                updaterFontSmall = Content.Load<SpriteFont>(Path.Combine(ClientConfiguration.ResourcesDirectory, "updater", "fontsmall"));
-            }
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            base.Dispose(disposing);
-
-            if (!disposing)
-            {
+                //Restart the MonoGame RunLoop
+                Run();
                 return;
             }
-
-            if (!Context.IsDisposed)
-            {
-                Context.Dispose();
-            }
         }
 
-        /// <summary>
-        /// Implements <see cref="IPlatformRunner"/> for MonoGame.
-        /// </summary>
-        internal partial class MonoGameRunner : IPlatformRunner
+        try
         {
-            /// <inheritdoc />
-            public void Start(IClientContext context, Action postStartupAction)
+            mUpdater?.Stop();
+        }
+        catch
+        {
+        }
+
+        //Just close if we don't need to show a combat warning
+        base.OnExiting(sender, args);
+        Networking.Network.Close("quitting");
+        Dispose();
+    }
+
+    private void DrawUpdater()
+    {
+        //Draw updating text and show progress bar...
+
+        if (updateBatch == null)
+        {
+            updateBatch = new SpriteBatch(GraphicsDevice);
+        }
+
+        updateBatch.Begin(SpriteSortMode.Immediate);
+
+        //Default Window Size is 800x480
+        if (updaterBackground != null)
+        {
+            updateBatch.Draw(
+                updaterBackground, new Rectangle(0, 0, 800, 480),
+                new Rectangle?(new Rectangle(0, 0, updaterBackground.Width, updaterBackground.Height)),
+                Microsoft.Xna.Framework.Color.White
+            );
+        }
+
+        var status = "";
+        var progressPercent = 0f;
+        var progress = "";
+        var filesRemaining = "";
+        var sizeRemaining = "";
+
+        switch (mUpdater.Status)
+        {
+            case UpdateStatus.Checking:
+                status = Strings.Update.Checking;
+                break;
+
+            case UpdateStatus.Updating:
+                status = Strings.Update.Updating;
+                progressPercent = mUpdater.Progress / 100f;
+                progress = Strings.Update.PercentComplete.ToString((int)mUpdater.Progress);
+                filesRemaining = Strings.Update.FilesRemaining.ToString(mUpdater.FilesRemaining);
+                sizeRemaining = Strings.Update.RemainingSize.ToString(mUpdater.GetHumanReadableFileSize(mUpdater.SizeRemaining));
+                break;
+
+            case UpdateStatus.Restart:
+                status = Strings.Update.Restart.ToString(Strings.Main.GameName);
+                progressPercent = 100;
+                progress = Strings.Update.PercentComplete.ToString(100);
+                break;
+
+            case UpdateStatus.Done:
+                status = Strings.Update.Done;
+                progressPercent = 100;
+                progress = Strings.Update.PercentComplete.ToString(100);
+                break;
+
+            case UpdateStatus.Error:
+                status = Strings.Update.Error;
+                progress = mUpdater.Exception?.Message ?? "";
+                progressPercent = 100;
+                break;
+
+            case UpdateStatus.None:
+                //Nothing here!
+                break;
+
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+
+        if (updaterFont != null)
+        {
+            var size = updaterFont.MeasureString(status);
+            updateBatch.DrawString(
+                updaterFont, status, new Vector2(800 / 2 - size.X / 2, 360), Microsoft.Xna.Framework.Color.White
+            );
+        }
+
+        //Bar will exist at 400 to 432
+        if (updaterProgressBar != null)
+        {
+            updateBatch.Draw(
+                updaterProgressBar, new Rectangle(100, 400, (int)(600 * progressPercent), 32),
+                new Rectangle?(
+                    new Rectangle(
+                        0, 0, (int)(updaterProgressBar.Width * progressPercent), updaterProgressBar.Height
+                    )
+                ), Microsoft.Xna.Framework.Color.White
+            );
+        }
+
+        //Bar will be 600 pixels wide
+        if (updaterFontSmall != null)
+        {
+            //Draw % in center of bar
+            var size = updaterFontSmall.MeasureString(progress);
+            updateBatch.DrawString(
+                updaterFontSmall, progress, new Vector2(800 / 2 - size.X / 2, 405),
+                Microsoft.Xna.Framework.Color.White
+            );
+
+            //Draw files remaining on bottom left
+            updateBatch.DrawString(
+                updaterFontSmall, filesRemaining, new Vector2(100, 440), Microsoft.Xna.Framework.Color.White
+            );
+
+            //Draw total remaining on bottom right
+            size = updaterFontSmall.MeasureString(sizeRemaining);
+            updateBatch.DrawString(
+                updaterFontSmall, sizeRemaining, new Vector2(700 - size.X, 440), Microsoft.Xna.Framework.Color.White
+            );
+        }
+
+        updateBatch.End();
+    }
+
+    private void LoadUpdaterContent()
+    {
+        if (File.Exists(Path.Combine(ClientConfiguration.ResourcesDirectory, "updater", "background.png")))
+        {
+            updaterBackground = Texture2D.FromFile(
+                GraphicsDevice, Path.Combine(ClientConfiguration.ResourcesDirectory, "updater", "background.png")
+            );
+        }
+
+        if (File.Exists(Path.Combine(ClientConfiguration.ResourcesDirectory, "updater", "progressbar.png")))
+        {
+            updaterProgressBar = Texture2D.FromFile(
+                GraphicsDevice, Path.Combine(ClientConfiguration.ResourcesDirectory, "updater", "progressbar.png")
+            );
+        }
+
+        if (File.Exists(Path.Combine(ClientConfiguration.ResourcesDirectory, "updater", "font.xnb")))
+        {
+            updaterFont = Content.Load<SpriteFont>(Path.Combine(ClientConfiguration.ResourcesDirectory, "updater", "font"));
+        }
+
+        if (File.Exists(Path.Combine(ClientConfiguration.ResourcesDirectory, "updater", "fontsmall.xnb")))
+        {
+            updaterFontSmall = Content.Load<SpriteFont>(Path.Combine(ClientConfiguration.ResourcesDirectory, "updater", "fontsmall"));
+        }
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        base.Dispose(disposing);
+
+        if (!disposing)
+        {
+            return;
+        }
+
+        if (!Context.IsDisposed)
+        {
+            Context.Dispose();
+        }
+    }
+
+    /// <summary>
+    /// Implements <see cref="IPlatformRunner"/> for MonoGame.
+    /// </summary>
+    internal partial class MonoGameRunner : IPlatformRunner
+    {
+        /// <inheritdoc />
+        public void Start(IClientContext context, Action postStartupAction)
+        {
+            using (var game = new IntersectGame(context, postStartupAction))
             {
-                using (var game = new IntersectGame(context, postStartupAction))
-                {
-                    game.Run();
-                }
+                game.Run();
             }
         }
     }

@@ -1,93 +1,91 @@
-﻿namespace Intersect.Client.Core.Controls
+﻿namespace Intersect.Client.Core.Controls;
+
+
+public enum Control
 {
 
-    public enum Control
-    {
+    MoveUp,
 
-        MoveUp,
+    MoveLeft,
 
-        MoveLeft,
+    MoveDown,
 
-        MoveDown,
+    MoveRight,
 
-        MoveRight,
+    AttackInteract,
 
-        AttackInteract,
+    Block,
 
-        Block,
+    AutoTarget,
 
-        AutoTarget,
+    PickUp,
 
-        PickUp,
+    Enter,
 
-        Enter,
+    Hotkey1,
 
-        Hotkey1,
+    Hotkey2,
 
-        Hotkey2,
+    Hotkey3,
 
-        Hotkey3,
+    Hotkey4,
 
-        Hotkey4,
+    Hotkey5,
 
-        Hotkey5,
+    Hotkey6,
 
-        Hotkey6,
+    Hotkey7,
 
-        Hotkey7,
+    Hotkey8,
 
-        Hotkey8,
+    Hotkey9,
 
-        Hotkey9,
+    Hotkey0,
 
-        Hotkey0,
+    Screenshot,
 
-        Screenshot,
+    OpenMenu,
 
-        OpenMenu,
+    OpenInventory,
 
-        OpenInventory,
+    OpenQuests,
 
-        OpenQuests,
+    OpenCharacterInfo,
 
-        OpenCharacterInfo,
+    OpenParties,
 
-        OpenParties,
+    OpenSpells,
 
-        OpenSpells,
+    OpenGuild,
 
-        OpenGuild,
+    OpenFriends,
 
-        OpenFriends,
+    OpenSettings,
 
-        OpenSettings,
+    OpenDebugger,
 
-        OpenDebugger,
+    OpenAdminPanel,
 
-        OpenAdminPanel,
+    ToggleGui,
 
-        ToggleGui,
+    TurnAround,
 
-        TurnAround,
+    ToggleZoomIn,
 
-        ToggleZoomIn,
+    HoldToZoomIn,
 
-        HoldToZoomIn,
+    ToggleZoomOut,
 
-        ToggleZoomOut,
+    HoldToZoomOut,
 
-        HoldToZoomOut,
+    ToggleFullscreen,
 
-        ToggleFullscreen,
-
-        // Submit,
-        //
-        // Cancel,
-        //
-        // Previous,
-        //
-        // Next,
-
-    }
+    // Submit,
+    //
+    // Cancel,
+    //
+    // Previous,
+    //
+    // Next,
 
 }

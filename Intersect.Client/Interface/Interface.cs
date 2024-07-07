@@ -12,351 +12,350 @@ using Intersect.Configuration;
 
 using Base = Intersect.Client.Framework.Gwen.Renderer.Base;
 
-namespace Intersect.Client.Interface
+namespace Intersect.Client.Interface;
+
+
+public static partial class Interface
 {
 
-    public static partial class Interface
+    private static readonly Queue<KeyValuePair<string, string>> _errorMessages = new();
+
+    public static bool TryDequeueErrorMessage(out KeyValuePair<string, string> message) => _errorMessages.TryDequeue(out message);
+
+    public static void ShowError(string message, string? header = default)
     {
+        _errorMessages.Enqueue(new KeyValuePair<string, string>(header ?? string.Empty, message));
+    }
 
-        private static readonly Queue<KeyValuePair<string, string>> _errorMessages = new();
+    public static ErrorHandler ErrorMsgHandler;
 
-        public static bool TryDequeueErrorMessage(out KeyValuePair<string, string> message) => _errorMessages.TryDequeue(out message);
+    //GWEN GUI
+    public static bool GwenInitialized;
 
-        public static void ShowError(string message, string? header = default)
+    public static InputBase GwenInput;
+
+    public static Base GwenRenderer;
+
+    public static bool HideUi;
+
+    private static Canvas sGameCanvas;
+
+    private static Canvas sMenuCanvas;
+
+    public static bool SetupHandlers { get; set; }
+
+    public static GameInterface GameUi { get; private set; }
+
+    public static MenuGuiBase MenuUi { get; private set; }
+
+    public static MutableInterface CurrentInterface => GameUi as MutableInterface ?? MenuUi?.MainMenu;
+
+    public static TexturedBase Skin { get; set; }
+
+    //Input Handling
+    public static List<Framework.Gwen.Control.Base> FocusElements { get; set; }
+
+    public static List<Framework.Gwen.Control.Base> InputBlockingElements { get; set; }
+
+    #region "Gwen Setup and Input"
+
+    //Gwen Low Level Functions
+    public static void InitGwen()
+    {
+        // Preserve the debug window
+        MutableInterface.DetachDebugWindow();
+
+        //TODO: Make it easier to modify skin.
+        if (Skin == null)
         {
-            _errorMessages.Enqueue(new KeyValuePair<string, string>(header ?? string.Empty, message));
+            Skin = TexturedBase.FindSkin(GwenRenderer, Globals.ContentManager, ClientConfiguration.Instance.UiSkin);
+            Skin.DefaultFont = Graphics.UIFont;
         }
 
-        public static ErrorHandler ErrorMsgHandler;
+        MenuUi?.Dispose();
 
-        //GWEN GUI
-        public static bool GwenInitialized;
+        GameUi?.Dispose();
 
-        public static InputBase GwenInput;
-
-        public static Base GwenRenderer;
-
-        public static bool HideUi;
-
-        private static Canvas sGameCanvas;
-
-        private static Canvas sMenuCanvas;
-
-        public static bool SetupHandlers { get; set; }
-
-        public static GameInterface GameUi { get; private set; }
-
-        public static MenuGuiBase MenuUi { get; private set; }
-
-        public static MutableInterface CurrentInterface => GameUi as MutableInterface ?? MenuUi?.MainMenu;
-
-        public static TexturedBase Skin { get; set; }
-
-        //Input Handling
-        public static List<Framework.Gwen.Control.Base> FocusElements { get; set; }
-
-        public static List<Framework.Gwen.Control.Base> InputBlockingElements { get; set; }
-
-        #region "Gwen Setup and Input"
-
-        //Gwen Low Level Functions
-        public static void InitGwen()
+        // Create a Canvas (it's root, on which all other GWEN controls are created)
+        sMenuCanvas = new Canvas(Skin, "MainMenu")
         {
-            // Preserve the debug window
-            MutableInterface.DetachDebugWindow();
+            Scale = 1f //(GameGraphics.Renderer.GetScreenWidth()/1920f);
+        };
 
-            //TODO: Make it easier to modify skin.
-            if (Skin == null)
-            {
-                Skin = TexturedBase.FindSkin(GwenRenderer, Globals.ContentManager, ClientConfiguration.Instance.UiSkin);
-                Skin.DefaultFont = Graphics.UIFont;
-            }
+        sMenuCanvas.SetSize(
+            (int) (Graphics.Renderer.GetScreenWidth() / sMenuCanvas.Scale),
+            (int) (Graphics.Renderer.GetScreenHeight() / sMenuCanvas.Scale)
+        );
 
-            MenuUi?.Dispose();
+        sMenuCanvas.ShouldDrawBackground = false;
+        sMenuCanvas.BackgroundColor = Color.FromArgb(255, 150, 170, 170);
+        sMenuCanvas.KeyboardInputEnabled = true;
 
-            GameUi?.Dispose();
+        // Create the game Canvas (it's root, on which all other GWEN controls are created)
+        sGameCanvas = new Canvas(Skin, "InGame");
 
-            // Create a Canvas (it's root, on which all other GWEN controls are created)
-            sMenuCanvas = new Canvas(Skin, "MainMenu")
-            {
-                Scale = 1f //(GameGraphics.Renderer.GetScreenWidth()/1920f);
-            };
+        //_gameCanvas.Scale = (GameGraphics.Renderer.GetScreenWidth() / 1920f);
+        sGameCanvas.SetSize(
+            (int) (Graphics.Renderer.GetScreenWidth() / sGameCanvas.Scale),
+            (int) (Graphics.Renderer.GetScreenHeight() / sGameCanvas.Scale)
+        );
 
-            sMenuCanvas.SetSize(
-                (int) (Graphics.Renderer.GetScreenWidth() / sMenuCanvas.Scale),
-                (int) (Graphics.Renderer.GetScreenHeight() / sMenuCanvas.Scale)
-            );
+        sGameCanvas.ShouldDrawBackground = false;
+        sGameCanvas.BackgroundColor = Color.FromArgb(255, 150, 170, 170);
+        sGameCanvas.KeyboardInputEnabled = true;
 
-            sMenuCanvas.ShouldDrawBackground = false;
-            sMenuCanvas.BackgroundColor = Color.FromArgb(255, 150, 170, 170);
-            sMenuCanvas.KeyboardInputEnabled = true;
-
-            // Create the game Canvas (it's root, on which all other GWEN controls are created)
-            sGameCanvas = new Canvas(Skin, "InGame");
-
-            //_gameCanvas.Scale = (GameGraphics.Renderer.GetScreenWidth() / 1920f);
-            sGameCanvas.SetSize(
-                (int) (Graphics.Renderer.GetScreenWidth() / sGameCanvas.Scale),
-                (int) (Graphics.Renderer.GetScreenHeight() / sGameCanvas.Scale)
-            );
-
-            sGameCanvas.ShouldDrawBackground = false;
-            sGameCanvas.BackgroundColor = Color.FromArgb(255, 150, 170, 170);
-            sGameCanvas.KeyboardInputEnabled = true;
-
-            // Create GWEN input processor
-            if (Globals.GameState == GameStates.Intro || Globals.GameState == GameStates.Menu)
-            {
-                GwenInput.Initialize(sMenuCanvas);
-            }
-            else
-            {
-                GwenInput.Initialize(sGameCanvas);
-            }
-
-            FocusElements = new List<Framework.Gwen.Control.Base>();
-            InputBlockingElements = new List<Framework.Gwen.Control.Base>();
-            ErrorMsgHandler = new ErrorHandler(sMenuCanvas, sGameCanvas);
-
-            if (Globals.GameState == GameStates.Intro || Globals.GameState == GameStates.Menu)
-            {
-                MenuUi = new MenuGuiBase(sMenuCanvas);
-                GameUi = null;
-            }
-            else
-            {
-                GameUi = new GameInterface(sGameCanvas);
-                MenuUi = null;
-            }
-
-            Globals.OnLifecycleChangeState();
-
-            GwenInitialized = true;
+        // Create GWEN input processor
+        if (Globals.GameState == GameStates.Intro || Globals.GameState == GameStates.Menu)
+        {
+            GwenInput.Initialize(sMenuCanvas);
+        }
+        else
+        {
+            GwenInput.Initialize(sGameCanvas);
         }
 
-        public static void DestroyGwen(bool exiting = false)
+        FocusElements = new List<Framework.Gwen.Control.Base>();
+        InputBlockingElements = new List<Framework.Gwen.Control.Base>();
+        ErrorMsgHandler = new ErrorHandler(sMenuCanvas, sGameCanvas);
+
+        if (Globals.GameState == GameStates.Intro || Globals.GameState == GameStates.Menu)
         {
-            // Preserve the debug window
-            MutableInterface.DetachDebugWindow();
-
-            //The canvases dispose of all of their children.
-            sMenuCanvas?.Dispose();
-            sGameCanvas?.Dispose();
-            GameUi?.Dispose();
-
-            // Destroy our target UI as well! Above code does NOT appear to clear this properly.
-            if (Globals.Me != null)
-            {
-                Globals.Me.ClearTarget();
-                Globals.Me.TargetBox?.Dispose();
-                Globals.Me.TargetBox = null;
-            }
-
-            GwenInitialized = false;
-
-            if (exiting)
-            {
-                MutableInterface.DisposeDebugWindow();
-            }
+            MenuUi = new MenuGuiBase(sMenuCanvas);
+            GameUi = null;
+        }
+        else
+        {
+            GameUi = new GameInterface(sGameCanvas);
+            MenuUi = null;
         }
 
-        public static bool HasInputFocus()
-        {
-            if (FocusElements == null || InputBlockingElements == null)
-            {
-                return false;
-            }
+        Globals.OnLifecycleChangeState();
 
-            return FocusElements.Any(t => t.MouseInputEnabled && (t?.HasFocus ?? false)) || InputBlockingElements.Any(t => t?.IsHidden == false);
+        GwenInitialized = true;
+    }
+
+    public static void DestroyGwen(bool exiting = false)
+    {
+        // Preserve the debug window
+        MutableInterface.DetachDebugWindow();
+
+        //The canvases dispose of all of their children.
+        sMenuCanvas?.Dispose();
+        sGameCanvas?.Dispose();
+        GameUi?.Dispose();
+
+        // Destroy our target UI as well! Above code does NOT appear to clear this properly.
+        if (Globals.Me != null)
+        {
+            Globals.Me.ClearTarget();
+            Globals.Me.TargetBox?.Dispose();
+            Globals.Me.TargetBox = null;
         }
 
-        #endregion
+        GwenInitialized = false;
 
-        #region "GUI Functions"
-
-        //Actual Drawing Function
-        public static void DrawGui()
+        if (exiting)
         {
-            if (!GwenInitialized)
-            {
-                InitGwen();
-            }
+            MutableInterface.DisposeDebugWindow();
+        }
+    }
 
-            if (Globals.GameState == GameStates.Menu)
-            {
-                MenuUi.Update();
-            }
-            else if (Globals.GameState == GameStates.InGame)
-            {
-                GameUi.Update();
-            }
+    public static bool HasInputFocus()
+    {
+        if (FocusElements == null || InputBlockingElements == null)
+        {
+            return false;
+        }
 
-            //Do not allow hiding of UI under several conditions
-            var forceShowUi = Globals.InCraft || Globals.InBank || Globals.InShop || Globals.InTrade || Globals.InBag || Globals.EventDialogs?.Count > 0 || HasInputFocus() || (!Interface.GameUi?.EscapeMenu?.IsHidden ?? true);
+        return FocusElements.Any(t => t.MouseInputEnabled && (t?.HasFocus ?? false)) || InputBlockingElements.Any(t => t?.IsHidden == false);
+    }
 
-            ErrorMsgHandler.Update();
-            sGameCanvas.RestrictToParent = false;
-            if (Globals.GameState == GameStates.Menu)
+    #endregion
+
+    #region "GUI Functions"
+
+    //Actual Drawing Function
+    public static void DrawGui()
+    {
+        if (!GwenInitialized)
+        {
+            InitGwen();
+        }
+
+        if (Globals.GameState == GameStates.Menu)
+        {
+            MenuUi.Update();
+        }
+        else if (Globals.GameState == GameStates.InGame)
+        {
+            GameUi.Update();
+        }
+
+        //Do not allow hiding of UI under several conditions
+        var forceShowUi = Globals.InCraft || Globals.InBank || Globals.InShop || Globals.InTrade || Globals.InBag || Globals.EventDialogs?.Count > 0 || HasInputFocus() || (!Interface.GameUi?.EscapeMenu?.IsHidden ?? true);
+
+        ErrorMsgHandler.Update();
+        sGameCanvas.RestrictToParent = false;
+        if (Globals.GameState == GameStates.Menu)
+        {
+            MenuUi.Draw();
+        }
+        else if (Globals.GameState == GameStates.InGame)
+        {
+            if (HideUi && !forceShowUi)
             {
-                MenuUi.Draw();
-            }
-            else if (Globals.GameState == GameStates.InGame)
-            {
-                if (HideUi && !forceShowUi)
+                if (sGameCanvas.IsVisible)
                 {
-                    if (sGameCanvas.IsVisible)
+                    sGameCanvas.Hide();
+                }
+            }
+            else
+            {
+                if (!sGameCanvas.IsVisible)
+                {
+                    sGameCanvas.Show();
+                }
+                GameUi.Draw();
+            }
+        }
+    }
+
+    public static void ToggleInput(bool val)
+    {
+        GwenInput.HandleInput = val;
+    }
+
+    public static bool MouseHitGui()
+    {
+        for (var i = 0; i < sGameCanvas.Children.Count; i++)
+        {
+            if (MouseHitBase(sGameCanvas.Children[i]))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public static bool MouseHitBase(Framework.Gwen.Control.Base obj)
+    {
+        if (obj.IsHidden == true)
+        {
+            return false;
+        }
+        else if (!obj.MouseInputEnabled)
+        {
+            // Check if we're hitting a child element.
+            for (var i = 0; i < obj.Children.Count; i++)
+            {
+                if (MouseHitBase(obj.Children[i]))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+        else
+        {
+            var rect = new FloatRect(
+                obj.LocalPosToCanvas(new Point(0, 0)).X, obj.LocalPosToCanvas(new Point(0, 0)).Y, obj.Width,
+                obj.Height
+            );
+
+            if (rect.Contains(InputHandler.MousePosition.X, InputHandler.MousePosition.Y))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public static string[] WrapText(string input, int width, GameFont font)
+    {
+        var myOutput = new List<string>();
+        if (input == null)
+        {
+            myOutput.Add("");
+        }
+        else
+        {
+            var lastSpace = 0;
+            var curPos = 0;
+            var curLen = 1;
+            var lastOk = 0;
+            var lastCut = 0;
+            input = input.Replace("\r\n", "\n");
+            float measured;
+            string line;
+            while (curPos + curLen < input.Length)
+            {
+                line = input.Substring(curPos, curLen);
+                measured = Graphics.Renderer.MeasureText(line, font, 1).X;
+                if (measured < width)
+                {
+                    lastOk = lastSpace;
+                    switch (input[curPos + curLen])
                     {
-                        sGameCanvas.Hide();
+                        case ' ':
+                        case '-':
+                            lastSpace = curLen;
+
+                            break;
+
+                        case '\n':
+                            myOutput.Add(input.Substring(curPos, curLen).Trim());
+                            lastSpace = 0;
+                            curPos = curPos + curLen + 1;
+                            curLen = 1;
+
+                            break;
                     }
                 }
                 else
                 {
-                    if (!sGameCanvas.IsVisible)
+                    if (lastOk == 0)
                     {
-                        sGameCanvas.Show();
-                    }
-                    GameUi.Draw();
-                }
-            }
-        }
-
-        public static void ToggleInput(bool val)
-        {
-            GwenInput.HandleInput = val;
-        }
-
-        public static bool MouseHitGui()
-        {
-            for (var i = 0; i < sGameCanvas.Children.Count; i++)
-            {
-                if (MouseHitBase(sGameCanvas.Children[i]))
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        public static bool MouseHitBase(Framework.Gwen.Control.Base obj)
-        {
-            if (obj.IsHidden == true)
-            {
-                return false;
-            }
-            else if (!obj.MouseInputEnabled)
-            {
-                // Check if we're hitting a child element.
-                for (var i = 0; i < obj.Children.Count; i++)
-                {
-                    if (MouseHitBase(obj.Children[i]))
-                    {
-                        return true;
-                    }
-                }
-
-                return false;
-            }
-            else
-            {
-                var rect = new FloatRect(
-                    obj.LocalPosToCanvas(new Point(0, 0)).X, obj.LocalPosToCanvas(new Point(0, 0)).Y, obj.Width,
-                    obj.Height
-                );
-
-                if (rect.Contains(InputHandler.MousePosition.X, InputHandler.MousePosition.Y))
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        public static string[] WrapText(string input, int width, GameFont font)
-        {
-            var myOutput = new List<string>();
-            if (input == null)
-            {
-                myOutput.Add("");
-            }
-            else
-            {
-                var lastSpace = 0;
-                var curPos = 0;
-                var curLen = 1;
-                var lastOk = 0;
-                var lastCut = 0;
-                input = input.Replace("\r\n", "\n");
-                float measured;
-                string line;
-                while (curPos + curLen < input.Length)
-                {
-                    line = input.Substring(curPos, curLen);
-                    measured = Graphics.Renderer.MeasureText(line, font, 1).X;
-                    if (measured < width)
-                    {
-                        lastOk = lastSpace;
-                        switch (input[curPos + curLen])
-                        {
-                            case ' ':
-                            case '-':
-                                lastSpace = curLen;
-
-                                break;
-
-                            case '\n':
-                                myOutput.Add(input.Substring(curPos, curLen).Trim());
-                                lastSpace = 0;
-                                curPos = curPos + curLen + 1;
-                                curLen = 1;
-
-                                break;
-                        }
-                    }
-                    else
-                    {
-                        if (lastOk == 0)
-                        {
-                            lastOk = curLen - 1;
-                        }
-
-                        line = input.Substring(curPos, lastOk).Trim();
-                        myOutput.Add(line);
-                        curPos = curPos + lastOk;
-                        lastOk = 0;
-                        lastSpace = 0;
-                        curLen = 1;
+                        lastOk = curLen - 1;
                     }
 
-                    curLen++;
+                    line = input.Substring(curPos, lastOk).Trim();
+                    myOutput.Add(line);
+                    curPos = curPos + lastOk;
+                    lastOk = 0;
+                    lastSpace = 0;
+                    curLen = 1;
                 }
 
-                myOutput.Add(input.Substring(curPos, input.Length - curPos).Trim());
+                curLen++;
             }
 
-            return myOutput.ToArray();
+            myOutput.Add(input.Substring(curPos, input.Length - curPos).Trim());
         }
 
-        #endregion
-
-        public static Framework.Gwen.Control.Base FindControlAtCursor()
-        {
-            var currentElement = CurrentInterface?.Root;
-            var cursor = new Point(InputHandler.MousePosition.X, InputHandler.MousePosition.Y);
-
-            while (default != currentElement)
-            {
-                var elementAt = currentElement.GetControlAt(cursor);
-                if (elementAt == currentElement || elementAt == default)
-                {
-                    break;
+        return myOutput.ToArray();
     }
 
-                currentElement = elementAt;
-            }
+    #endregion
 
-            return currentElement;
+    public static Framework.Gwen.Control.Base FindControlAtCursor()
+    {
+        var currentElement = CurrentInterface?.Root;
+        var cursor = new Point(InputHandler.MousePosition.X, InputHandler.MousePosition.Y);
+
+        while (default != currentElement)
+        {
+            var elementAt = currentElement.GetControlAt(cursor);
+            if (elementAt == currentElement || elementAt == default)
+            {
+                break;
+}
+
+            currentElement = elementAt;
         }
+
+        return currentElement;
     }
 }

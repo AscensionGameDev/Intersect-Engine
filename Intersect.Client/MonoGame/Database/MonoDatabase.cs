@@ -4,53 +4,52 @@ using Intersect.Logging;
 
 using Microsoft.Win32;
 
-namespace Intersect.Client.MonoGame.Database
+namespace Intersect.Client.MonoGame.Database;
+
+public partial class MonoDatabase : GameDatabase
 {
-    public partial class MonoDatabase : GameDatabase
+    private RegistryKey OpenOrCreateKeyPath(RegistryKey root, params string[] keyPath) =>
+        keyPath.Aggregate(root, (current, nextName) => current?.CreateSubKey(nextName, true));
+
+    private RegistryKey GetInstanceKey() => OpenOrCreateKeyPath(
+        Registry.CurrentUser,
+        "Software",
+        "IntersectClient",
+        $"{ClientConfiguration.Instance.Host}:{ClientConfiguration.Instance.Port}"
+    );
+
+    public override void DeletePreference(string key)
     {
-        private RegistryKey OpenOrCreateKeyPath(RegistryKey root, params string[] keyPath) =>
-            keyPath.Aggregate(root, (current, nextName) => current?.CreateSubKey(nextName, true));
-
-        private RegistryKey GetInstanceKey() => OpenOrCreateKeyPath(
-            Registry.CurrentUser,
-            "Software",
-            "IntersectClient",
-            $"{ClientConfiguration.Instance.Host}:{ClientConfiguration.Instance.Port}"
-        );
-
-        public override void DeletePreference(string key)
+        try
         {
-            try
-            {
-                var instanceKey = GetInstanceKey();
-                instanceKey?.DeleteValue(key);
-            }
-            catch (Exception exception)
-            {
+            var instanceKey = GetInstanceKey();
+            instanceKey?.DeleteValue(key);
+        }
+        catch (Exception exception)
+        {
 #if DEBUG
-                Log.Error(exception);
+            Log.Error(exception);
 #endif
-            }
         }
-
-        public override bool HasPreference(string key) => GetInstanceKey()?.GetValue(key) != default;
-
-        public override void SavePreference<TValue>(string key, TValue value)
-        {
-            try
-            {
-                var instanceKey = GetInstanceKey();
-                instanceKey.SetValue(key, Convert.ToString(value));
-            }
-            catch (UnauthorizedAccessException)
-            {
-                Log.Error($"Unable to save preference {key} in the registry.");
-                throw;
-            }
-        }
-
-        public override string LoadPreference(string key) => GetInstanceKey()?.GetValue(key) as string ?? string.Empty;
-
-        public override bool LoadConfig() => ClientConfiguration.LoadAndSave() != default;
     }
+
+    public override bool HasPreference(string key) => GetInstanceKey()?.GetValue(key) != default;
+
+    public override void SavePreference<TValue>(string key, TValue value)
+    {
+        try
+        {
+            var instanceKey = GetInstanceKey();
+            instanceKey.SetValue(key, Convert.ToString(value));
+        }
+        catch (UnauthorizedAccessException)
+        {
+            Log.Error($"Unable to save preference {key} in the registry.");
+            throw;
+        }
+    }
+
+    public override string LoadPreference(string key) => GetInstanceKey()?.GetValue(key) as string ?? string.Empty;
+
+    public override bool LoadConfig() => ClientConfiguration.LoadAndSave() != default;
 }

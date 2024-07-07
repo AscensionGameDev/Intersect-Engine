@@ -11,148 +11,146 @@ using Intersect.Configuration;
 using Intersect.GameObjects;
 using Intersect.Network.Packets.Server;
 
-namespace Intersect.Client.Interface.Game.Shop
+namespace Intersect.Client.Interface.Game.Shop;
+
+
+public partial class ShopItem
 {
 
-    public partial class ShopItem
+    public ImagePanel Container;
+
+    private int mCurrentItem = -2;
+
+    private ItemDescriptionWindow mDescWindow;
+
+    private bool mIsEquipped;
+
+    //Mouse Event Variables
+    private bool mMouseOver;
+
+    private int mMouseX = -1;
+
+    private int mMouseY = -1;
+
+    //Slot info
+    private int mMySlot;
+
+    //Textures
+    private GameRenderTexture mSfTex;
+
+    //Drag/Drop References
+    private ShopWindow mShopWindow;
+
+    public ImagePanel Pnl;
+
+    public ShopItem(ShopWindow shopWindow, int index)
     {
+        mShopWindow = shopWindow;
+        mMySlot = index;
+    }
 
-        public ImagePanel Container;
+    public void Setup()
+    {
+        Pnl = new ImagePanel(Container, "ShopItemIcon");
+        Pnl.HoverEnter += pnl_HoverEnter;
+        Pnl.HoverLeave += pnl_HoverLeave;
+        Pnl.RightClicked += Pnl_RightClicked;
+        Pnl.DoubleClicked += Pnl_DoubleClicked;
+    }
 
-        private int mCurrentItem = -2;
+    private void Pnl_DoubleClicked(Base sender, ClickedEventArgs arguments)
+    {
+        Globals.Me.TryBuyItem(mMySlot);
+    }
 
-        private ItemDescriptionWindow mDescWindow;
-
-        private bool mIsEquipped;
-
-        //Mouse Event Variables
-        private bool mMouseOver;
-
-        private int mMouseX = -1;
-
-        private int mMouseY = -1;
-
-        //Slot info
-        private int mMySlot;
-
-        //Textures
-        private GameRenderTexture mSfTex;
-
-        //Drag/Drop References
-        private ShopWindow mShopWindow;
-
-        public ImagePanel Pnl;
-
-        public ShopItem(ShopWindow shopWindow, int index)
+    private void Pnl_RightClicked(Base sender, ClickedEventArgs arguments)
+    {
+        if (ClientConfiguration.Instance.EnableContextMenus)
         {
-            mShopWindow = shopWindow;
-            mMySlot = index;
+            mShopWindow.OpenContextMenu(mMySlot);
         }
-
-        public void Setup()
+        else
         {
-            Pnl = new ImagePanel(Container, "ShopItemIcon");
-            Pnl.HoverEnter += pnl_HoverEnter;
-            Pnl.HoverLeave += pnl_HoverLeave;
-            Pnl.RightClicked += Pnl_RightClicked;
-            Pnl.DoubleClicked += Pnl_DoubleClicked;
+            Pnl_DoubleClicked(sender, arguments);
         }
+    }
 
-        private void Pnl_DoubleClicked(Base sender, ClickedEventArgs arguments)
+    public void LoadItem()
+    {
+        var item = ItemBase.Get(Globals.GameShop.SellingItems[mMySlot].ItemId);
+        if (item != null)
         {
-            Globals.Me.TryBuyItem(mMySlot);
-        }
-
-        private void Pnl_RightClicked(Base sender, ClickedEventArgs arguments)
-        {
-            if (ClientConfiguration.Instance.EnableContextMenus)
+            var itemTex = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Item, item.Icon);
+            if (itemTex != null)
             {
-                mShopWindow.OpenContextMenu(mMySlot);
-            }
-            else
-            {
-                Pnl_DoubleClicked(sender, arguments);
+                Pnl.Texture = itemTex;
+                Pnl.RenderColor = item.Color;
             }
         }
+    }
 
-        public void LoadItem()
+    
+
+    void pnl_HoverLeave(Base sender, EventArgs arguments)
+    {
+        mMouseOver = false;
+        mMouseX = -1;
+        mMouseY = -1;
+        if (mDescWindow != null)
         {
-            var item = ItemBase.Get(Globals.GameShop.SellingItems[mMySlot].ItemId);
-            if (item != null)
-            {
-                var itemTex = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Item, item.Icon);
-                if (itemTex != null)
-                {
-                    Pnl.Texture = itemTex;
-                    Pnl.RenderColor = item.Color;
-                }
-            }
+            mDescWindow.Dispose();
+            mDescWindow = null;
+        }
+    }
+
+    void pnl_HoverEnter(Base sender, EventArgs arguments)
+    {
+        if (InputHandler.MouseFocus != null)
+        {
+            return;
         }
 
-        
-
-        void pnl_HoverLeave(Base sender, EventArgs arguments)
+        if (Globals.InputManager.MouseButtonDown(MouseButtons.Left))
         {
-            mMouseOver = false;
-            mMouseX = -1;
-            mMouseY = -1;
-            if (mDescWindow != null)
-            {
-                mDescWindow.Dispose();
-                mDescWindow = null;
-            }
+            return;
         }
 
-        void pnl_HoverEnter(Base sender, EventArgs arguments)
+        if (mDescWindow != null)
         {
-            if (InputHandler.MouseFocus != null)
-            {
-                return;
-            }
-
-            if (Globals.InputManager.MouseButtonDown(MouseButtons.Left))
-            {
-                return;
-            }
-
-            if (mDescWindow != null)
-            {
-                mDescWindow.Dispose();
-                mDescWindow = null;
-            }
-
-            var item = ItemBase.Get(Globals.GameShop.SellingItems[mMySlot].CostItemId);
-            if (item != null && Globals.GameShop.SellingItems[mMySlot].Item != null)
-            {
-                ItemProperties itemProperty = new ItemProperties()
-                {
-                    StatModifiers = item.StatsGiven,
-                };
-
-                mDescWindow = new ItemDescriptionWindow(
-                    Globals.GameShop.SellingItems[mMySlot].Item, 1, mShopWindow.X, mShopWindow.Y, itemProperty, "",
-                    Strings.Shop.Costs.ToString(Globals.GameShop.SellingItems[mMySlot].CostItemQuantity, item.Name)
-                );
-            }
+            mDescWindow.Dispose();
+            mDescWindow = null;
         }
 
-        public FloatRect RenderBounds()
+        var item = ItemBase.Get(Globals.GameShop.SellingItems[mMySlot].CostItemId);
+        if (item != null && Globals.GameShop.SellingItems[mMySlot].Item != null)
         {
-            var rect = new FloatRect()
+            ItemProperties itemProperty = new ItemProperties()
             {
-                X = Pnl.LocalPosToCanvas(new Point(0, 0)).X,
-                Y = Pnl.LocalPosToCanvas(new Point(0, 0)).Y,
-                Width = Pnl.Width,
-                Height = Pnl.Height
+                StatModifiers = item.StatsGiven,
             };
 
-            return rect;
+            mDescWindow = new ItemDescriptionWindow(
+                Globals.GameShop.SellingItems[mMySlot].Item, 1, mShopWindow.X, mShopWindow.Y, itemProperty, "",
+                Strings.Shop.Costs.ToString(Globals.GameShop.SellingItems[mMySlot].CostItemQuantity, item.Name)
+            );
         }
+    }
 
-        public void Update()
+    public FloatRect RenderBounds()
+    {
+        var rect = new FloatRect()
         {
-        }
+            X = Pnl.LocalPosToCanvas(new Point(0, 0)).X,
+            Y = Pnl.LocalPosToCanvas(new Point(0, 0)).Y,
+            Width = Pnl.Width,
+            Height = Pnl.Height
+        };
 
+        return rect;
+    }
+
+    public void Update()
+    {
     }
 
 }
