@@ -1,71 +1,69 @@
 ﻿using Intersect.Editor.Localization;
 using Intersect.GameObjects.Events.Commands;
 
-namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
+namespace Intersect.Editor.Forms.Editors.Events.Event_Commands;
+
+
+public partial class EventCommandChangeVital : UserControl
 {
 
-    public partial class EventCommandChangeVital : UserControl
+    private readonly FrmEvent mEventEditor;
+
+    private EventCommand mMyCommand;
+
+    public EventCommandChangeVital(RestoreHpCommand refCommand, FrmEvent editor)
     {
+        InitializeComponent();
+        mMyCommand = refCommand;
+        mEventEditor = editor;
+        nudVital.Value = refCommand.Amount;
+        InitLocalization();
+    }
 
-        private readonly FrmEvent mEventEditor;
+    public EventCommandChangeVital(RestoreMpCommand refCommand, FrmEvent editor)
+    {
+        InitializeComponent();
+        mMyCommand = refCommand;
+        mEventEditor = editor;
+        nudVital.Value = refCommand.Amount;
+        InitLocalization();
+    }
 
-        private EventCommand mMyCommand;
+    private void InitLocalization()
+    {
+        grpChangeVital.Text = Strings.EventChangeVital.title;
+        btnSave.Text = Strings.EventChangeVital.okay;
+        btnCancel.Text = Strings.EventChangeVital.cancel;
 
-        public EventCommandChangeVital(RestoreHpCommand refCommand, FrmEvent editor)
+        if (mMyCommand is RestoreHpCommand)
         {
-            InitializeComponent();
-            mMyCommand = refCommand;
-            mEventEditor = editor;
-            nudVital.Value = refCommand.Amount;
-            InitLocalization();
+            lblVital.Text = Strings.EventChangeVital.labelhealth;
         }
 
-        public EventCommandChangeVital(RestoreMpCommand refCommand, FrmEvent editor)
+        if (mMyCommand is RestoreMpCommand)
         {
-            InitializeComponent();
-            mMyCommand = refCommand;
-            mEventEditor = editor;
-            nudVital.Value = refCommand.Amount;
-            InitLocalization();
+            lblVital.Text = Strings.EventChangeVital.labelmana;
+        }
+    }
+
+    private void btnSave_Click(object sender, EventArgs e)
+    {
+        if (mMyCommand is RestoreHpCommand)
+        {
+            ((RestoreHpCommand) mMyCommand).Amount = (int) nudVital.Value;
         }
 
-        private void InitLocalization()
+        if (mMyCommand is RestoreMpCommand)
         {
-            grpChangeVital.Text = Strings.EventChangeVital.title;
-            btnSave.Text = Strings.EventChangeVital.okay;
-            btnCancel.Text = Strings.EventChangeVital.cancel;
-
-            if (mMyCommand is RestoreHpCommand)
-            {
-                lblVital.Text = Strings.EventChangeVital.labelhealth;
-            }
-
-            if (mMyCommand is RestoreMpCommand)
-            {
-                lblVital.Text = Strings.EventChangeVital.labelmana;
-            }
+            ((RestoreMpCommand) mMyCommand).Amount = (int) nudVital.Value;
         }
 
-        private void btnSave_Click(object sender, EventArgs e)
-        {
-            if (mMyCommand is RestoreHpCommand)
-            {
-                ((RestoreHpCommand) mMyCommand).Amount = (int) nudVital.Value;
-            }
+        mEventEditor.FinishCommandEdit();
+    }
 
-            if (mMyCommand is RestoreMpCommand)
-            {
-                ((RestoreMpCommand) mMyCommand).Amount = (int) nudVital.Value;
-            }
-
-            mEventEditor.FinishCommandEdit();
-        }
-
-        private void btnCancel_Click(object sender, EventArgs e)
-        {
-            mEventEditor.CancelCommandEdit();
-        }
-
+    private void btnCancel_Click(object sender, EventArgs e)
+    {
+        mEventEditor.CancelCommandEdit();
     }
 
 }

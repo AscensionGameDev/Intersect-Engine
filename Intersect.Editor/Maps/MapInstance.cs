@@ -10,363 +10,361 @@ using Newtonsoft.Json;
 
 using Graphics = Intersect.Editor.Core.Graphics;
 
-namespace Intersect.Editor.Maps
+namespace Intersect.Editor.Maps;
+
+
+public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>
 {
 
-    public partial class MapInstance : MapBase, IGameObject<Guid, MapInstance>
+    private static MapControllers sLookup;
+
+    //Map Attributes
+    private Dictionary<MapAttribute, Animation> mAttributeAnimInstances = new Dictionary<MapAttribute, Animation>();
+
+    private MapSaveState mLoadedState;
+
+    public MapInstance(Guid id) : base(id)
     {
-
-        private static MapControllers sLookup;
-
-        //Map Attributes
-        private Dictionary<MapAttribute, Animation> mAttributeAnimInstances = new Dictionary<MapAttribute, Animation>();
-
-        private MapSaveState mLoadedState;
-
-        public MapInstance(Guid id) : base(id)
+        lock (MapLock)
         {
-            lock (MapLock)
-            {
-                Autotiles = new MapAutotiles(this);
-            }
+            Autotiles = new MapAutotiles(this);
         }
+    }
 
-        public MapInstance(MapBase mapStruct) : base(mapStruct)
+    public MapInstance(MapBase mapStruct) : base(mapStruct)
+    {
+        lock (MapLock)
         {
-            lock (MapLock)
+            Autotiles = new MapAutotiles(this);
+            if (typeof(MapInstance) == mapStruct.GetType())
             {
-                Autotiles = new MapAutotiles(this);
-                if (typeof(MapInstance) == mapStruct.GetType())
-                {
-                    MapGridX = ((MapInstance)mapStruct).MapGridX;
-                    MapGridY = ((MapInstance)mapStruct).MapGridY;
-                }
-
-                InitAutotiles();
-            }
-        }
-
-        public new static MapControllers Lookup => sLookup = sLookup ?? new MapControllers(MapBase.Lookup);
-
-        //World Position
-        public int MapGridX { get; set; }
-
-        public int MapGridY { get; set; }
-
-        public void Load(string mapJson, bool import = false, bool clearEvents = true)
-        {
-            lock (MapLock)
-            {
-                var up = Up;
-                var down = Down;
-                var left = Left;
-                var right = Right;
-                base.Load(mapJson);
-                if (import)
-                {
-                    Up = up;
-                    Down = down;
-                    Left = left;
-                    Right = right;
-                }
-
-                Autotiles = new MapAutotiles(this);
-
-                //Initialize Local Events
-                if (clearEvents)
-                {
-                    LocalEvents.Clear();
-                    foreach (var id in EventIds)
-                    {
-                        var evt = EventBase.Get(id);
-                        LocalEvents.Add(id, evt);
-                    }
-                }
-            }
-        }
-
-        public void LoadTileData(byte[] packet)
-        {
-            lock (MapLock)
-            {
-                Layers = JsonConvert.DeserializeObject<Dictionary<string, Tile[,]>>(LZ4.UnPickleString(packet), mJsonSerializerSettings);
-                foreach (var layer in Options.Instance.MapOpts.Layers.All)
-                {
-                    if (!Layers.ContainsKey(layer))
-                    {
-                        Layers.Add(layer, new Tile[Options.MapWidth, Options.MapHeight]);
-                    }
-                }
+                MapGridX = ((MapInstance)mapStruct).MapGridX;
+                MapGridY = ((MapInstance)mapStruct).MapGridY;
             }
 
             InitAutotiles();
         }
+    }
 
-        public void SaveStateAsUnchanged()
-        {
-            mLoadedState = SaveInternal();
-        }
+    public new static MapControllers Lookup => sLookup = sLookup ?? new MapControllers(MapBase.Lookup);
 
-        public void LoadInternal(MapSaveState state, bool import = false)
-        {
-            LocalEvents.Clear();
-            LocalEventsJson = state.EventData;
-            Load(state.Metadata, import, false);
-            LoadTileData(state.Tiles);
-            AttributeData = state.Attributes;
-        }
+    //World Position
+    public int MapGridX { get; set; }
 
-        public MapSaveState SaveInternal()
-        {
-            return new MapSaveState(JsonData, GenerateTileData(), AttributeData, LocalEventsJson);
-        }
+    public int MapGridY { get; set; }
 
-        public byte[] GenerateTileData()
+    public void Load(string mapJson, bool import = false, bool clearEvents = true)
+    {
+        lock (MapLock)
         {
-            return LZ4.PickleString(JsonConvert.SerializeObject(Layers, Formatting.None, mJsonSerializerSettings));
-        }
-
-        public bool Changed()
-        {
-            if (mLoadedState != null)
+            var up = Up;
+            var down = Down;
+            var left = Left;
+            var right = Right;
+            base.Load(mapJson);
+            if (import)
             {
-                var newData = SaveInternal();
-
-                return !newData.Matches(mLoadedState);
+                Up = up;
+                Down = down;
+                Left = left;
+                Right = right;
             }
 
-            return true;
-        }
+            Autotiles = new MapAutotiles(this);
 
-        //Attribute/Animations
-        public Animation GetAttributeAnimation(MapAttribute attr, Guid animId)
-        {
-            if (attr == null)
+            //Initialize Local Events
+            if (clearEvents)
             {
-                return null;
-            }
-
-            if (!mAttributeAnimInstances.ContainsKey(attr))
-            {
-                mAttributeAnimInstances.Add(attr, new Animation(AnimationBase.Get(animId), true));
-            }
-
-            return mAttributeAnimInstances[attr];
-        }
-
-        public void SetAttributeAnimation(MapAttribute attribute, Animation animationInstance)
-        {
-            if (mAttributeAnimInstances.ContainsKey(attribute))
-            {
-                mAttributeAnimInstances[attribute] = animationInstance;
-            }
-        }
-
-        public override byte[] GetAttributeData()
-        {
-            return LZ4.PickleString(JsonConvert.SerializeObject(Attributes, Formatting.None, mJsonSerializerSettings));
-        }
-
-        public void Update()
-        {
-            if (Globals.MapsToScreenshot.Contains(Id))
-            {
-                if (Globals.MapGrid != null && Globals.MapGrid.Loaded)
+                LocalEvents.Clear();
+                foreach (var id in EventIds)
                 {
-                    if (Globals.MapGrid.Contains(Id))
+                    var evt = EventBase.Get(id);
+                    LocalEvents.Add(id, evt);
+                }
+            }
+        }
+    }
+
+    public void LoadTileData(byte[] packet)
+    {
+        lock (MapLock)
+        {
+            Layers = JsonConvert.DeserializeObject<Dictionary<string, Tile[,]>>(LZ4.UnPickleString(packet), mJsonSerializerSettings);
+            foreach (var layer in Options.Instance.MapOpts.Layers.All)
+            {
+                if (!Layers.ContainsKey(layer))
+                {
+                    Layers.Add(layer, new Tile[Options.MapWidth, Options.MapHeight]);
+                }
+            }
+        }
+
+        InitAutotiles();
+    }
+
+    public void SaveStateAsUnchanged()
+    {
+        mLoadedState = SaveInternal();
+    }
+
+    public void LoadInternal(MapSaveState state, bool import = false)
+    {
+        LocalEvents.Clear();
+        LocalEventsJson = state.EventData;
+        Load(state.Metadata, import, false);
+        LoadTileData(state.Tiles);
+        AttributeData = state.Attributes;
+    }
+
+    public MapSaveState SaveInternal()
+    {
+        return new MapSaveState(JsonData, GenerateTileData(), AttributeData, LocalEventsJson);
+    }
+
+    public byte[] GenerateTileData()
+    {
+        return LZ4.PickleString(JsonConvert.SerializeObject(Layers, Formatting.None, mJsonSerializerSettings));
+    }
+
+    public bool Changed()
+    {
+        if (mLoadedState != null)
+        {
+            var newData = SaveInternal();
+
+            return !newData.Matches(mLoadedState);
+        }
+
+        return true;
+    }
+
+    //Attribute/Animations
+    public Animation GetAttributeAnimation(MapAttribute attr, Guid animId)
+    {
+        if (attr == null)
+        {
+            return null;
+        }
+
+        if (!mAttributeAnimInstances.ContainsKey(attr))
+        {
+            mAttributeAnimInstances.Add(attr, new Animation(AnimationBase.Get(animId), true));
+        }
+
+        return mAttributeAnimInstances[attr];
+    }
+
+    public void SetAttributeAnimation(MapAttribute attribute, Animation animationInstance)
+    {
+        if (mAttributeAnimInstances.ContainsKey(attribute))
+        {
+            mAttributeAnimInstances[attribute] = animationInstance;
+        }
+    }
+
+    public override byte[] GetAttributeData()
+    {
+        return LZ4.PickleString(JsonConvert.SerializeObject(Attributes, Formatting.None, mJsonSerializerSettings));
+    }
+
+    public void Update()
+    {
+        if (Globals.MapsToScreenshot.Contains(Id))
+        {
+            if (Globals.MapGrid != null && Globals.MapGrid.Loaded)
+            {
+                if (Globals.MapGrid.Contains(Id))
+                {
+                    for (var y = Globals.CurrentMap.MapGridY + 1; y >= Globals.CurrentMap.MapGridY - 1; y--)
                     {
-                        for (var y = Globals.CurrentMap.MapGridY + 1; y >= Globals.CurrentMap.MapGridY - 1; y--)
+                        for (var x = Globals.CurrentMap.MapGridX - 1; x <= Globals.CurrentMap.MapGridX + 1; x++)
                         {
-                            for (var x = Globals.CurrentMap.MapGridX - 1; x <= Globals.CurrentMap.MapGridX + 1; x++)
+                            if (x >= 0 &&
+                                x < Globals.MapGrid.GridWidth &&
+                                y >= 0 &&
+                                y < Globals.MapGrid.GridHeight &&
+                                Globals.MapGrid.Grid[x, y].MapId != Guid.Empty)
                             {
-                                if (x >= 0 &&
-                                    x < Globals.MapGrid.GridWidth &&
-                                    y >= 0 &&
-                                    y < Globals.MapGrid.GridHeight &&
-                                    Globals.MapGrid.Grid[x, y].MapId != Guid.Empty)
+                                var needMap = Lookup.Get(Globals.MapGrid.Grid[x, y].MapId);
+                                if (needMap == null)
                                 {
-                                    var needMap = Lookup.Get(Globals.MapGrid.Grid[x, y].MapId);
-                                    if (needMap == null)
-                                    {
-                                        return;
-                                    }
+                                    return;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                //We have everything, let's screenshot!
+                var prevMap = Globals.CurrentMap;
+                Globals.CurrentMap = this;
+                using (var ms = new MemoryStream())
+                {
+                    lock (Graphics.GraphicsLock)
+                    {
+                        var screenshotTexture = Graphics.ScreenShotMap();
+                        screenshotTexture.Save(ms, ImageFormat.Png);
+                        ms.Close();
+                    }
+
+                    Database.SaveMapCache(Id, Revision, ms.ToArray());
+                }
+
+                Globals.CurrentMap = prevMap;
+                Globals.MapsToScreenshot.Remove(Id);
+
+                //See if this map is around our current map, if not let's delete it
+                if (Globals.CurrentMap != null && Globals.MapGrid != null && Globals.MapGrid.Loaded)
+                {
+                    for (var y = Globals.CurrentMap.MapGridY + 1; y >= Globals.CurrentMap.MapGridY - 1; y--)
+                    {
+                        for (var x = Globals.CurrentMap.MapGridX - 1; x <= Globals.CurrentMap.MapGridX + 1; x++)
+                        {
+                            if (x >= 0 && x < Globals.MapGrid.GridWidth && y >= 0 && y < Globals.MapGrid.GridHeight)
+                            {
+                                if (Globals.MapGrid.Grid[x, y].MapId == Id)
+                                {
+                                    return;
                                 }
                             }
                         }
                     }
 
-                    //We have everything, let's screenshot!
-                    var prevMap = Globals.CurrentMap;
-                    Globals.CurrentMap = this;
-                    using (var ms = new MemoryStream())
-                    {
-                        lock (Graphics.GraphicsLock)
-                        {
-                            var screenshotTexture = Graphics.ScreenShotMap();
-                            screenshotTexture.Save(ms, ImageFormat.Png);
-                            ms.Close();
-                        }
-
-                        Database.SaveMapCache(Id, Revision, ms.ToArray());
-                    }
-
-                    Globals.CurrentMap = prevMap;
-                    Globals.MapsToScreenshot.Remove(Id);
-
-                    //See if this map is around our current map, if not let's delete it
-                    if (Globals.CurrentMap != null && Globals.MapGrid != null && Globals.MapGrid.Loaded)
-                    {
-                        for (var y = Globals.CurrentMap.MapGridY + 1; y >= Globals.CurrentMap.MapGridY - 1; y--)
-                        {
-                            for (var x = Globals.CurrentMap.MapGridX - 1; x <= Globals.CurrentMap.MapGridX + 1; x++)
-                            {
-                                if (x >= 0 && x < Globals.MapGrid.GridWidth && y >= 0 && y < Globals.MapGrid.GridHeight)
-                                {
-                                    if (Globals.MapGrid.Grid[x, y].MapId == Id)
-                                    {
-                                        return;
-                                    }
-                                }
-                            }
-                        }
-
-                        Delete();
-                    }
+                    Delete();
                 }
             }
         }
+    }
 
-        //Helper Functions
-        public override MapBase[,] GenerateAutotileGrid()
+    //Helper Functions
+    public override MapBase[,] GenerateAutotileGrid()
+    {
+        var mapBase = new MapBase[3, 3];
+        if (Globals.MapGrid != null && Globals.MapGrid.Contains(Id))
         {
-            var mapBase = new MapBase[3, 3];
-            if (Globals.MapGrid != null && Globals.MapGrid.Contains(Id))
+            for (var x = -1; x <= 1; x++)
             {
-                for (var x = -1; x <= 1; x++)
+                for (var y = -1; y <= 1; y++)
                 {
-                    for (var y = -1; y <= 1; y++)
+                    var x1 = MapGridX + x;
+                    var y1 = MapGridY + y;
+                    if (x1 >= 0 && y1 >= 0 && x1 < Globals.MapGrid.GridWidth && y1 < Globals.MapGrid.GridHeight)
                     {
-                        var x1 = MapGridX + x;
-                        var y1 = MapGridY + y;
-                        if (x1 >= 0 && y1 >= 0 && x1 < Globals.MapGrid.GridWidth && y1 < Globals.MapGrid.GridHeight)
+                        if (x == 0 && y == 0)
                         {
-                            if (x == 0 && y == 0)
-                            {
-                                mapBase[x + 1, y + 1] = this;
-                            }
-                            else
-                            {
-                                mapBase[x + 1, y + 1] = Lookup.Get<MapInstance>(Globals.MapGrid.Grid[x1, y1].MapId);
-                            }
+                            mapBase[x + 1, y + 1] = this;
                         }
-                    }
-                }
-            }
-
-            mapBase[1, 1] = this;
-
-            return mapBase;
-        }
-
-        public void InitAutotiles()
-        {
-            lock (MapLock)
-            {
-                Autotiles.InitAutotiles(GenerateAutotileGrid());
-            }
-        }
-
-        public void UpdateAdjacentAutotiles()
-        {
-            if (Globals.MapGrid != null && Globals.MapGrid.Contains(Id))
-            {
-                for (var x = -1; x <= 1; x++)
-                {
-                    for (var y = -1; y <= 1; y++)
-                    {
-                        var x1 = MapGridX + x;
-                        var y1 = MapGridY + y;
-                        if (x1 >= 0 && y1 >= 0 && x1 < Globals.MapGrid.GridWidth && y1 < Globals.MapGrid.GridHeight)
+                        else
                         {
-                            var map = Lookup.Get<MapInstance>(Globals.MapGrid.Grid[x1, y1].MapId);
-                            if (map != null && map != this)
-                            {
-                                map.InitAutotiles();
-                            }
+                            mapBase[x + 1, y + 1] = Lookup.Get<MapInstance>(Globals.MapGrid.Grid[x1, y1].MapId);
                         }
                     }
                 }
             }
         }
 
-        public EventBase FindEventAt(int x, int y)
-        {
-            if (LocalEvents.Count <= 0)
-            {
-                return null;
-            }
+        mapBase[1, 1] = this;
 
-            foreach (var t in LocalEvents.Values)
+        return mapBase;
+    }
+
+    public void InitAutotiles()
+    {
+        lock (MapLock)
+        {
+            Autotiles.InitAutotiles(GenerateAutotileGrid());
+        }
+    }
+
+    public void UpdateAdjacentAutotiles()
+    {
+        if (Globals.MapGrid != null && Globals.MapGrid.Contains(Id))
+        {
+            for (var x = -1; x <= 1; x++)
             {
-                if (t.SpawnX == x && t.SpawnY == y)
+                for (var y = -1; y <= 1; y++)
                 {
-                    return t;
+                    var x1 = MapGridX + x;
+                    var y1 = MapGridY + y;
+                    if (x1 >= 0 && y1 >= 0 && x1 < Globals.MapGrid.GridWidth && y1 < Globals.MapGrid.GridHeight)
+                    {
+                        var map = Lookup.Get<MapInstance>(Globals.MapGrid.Grid[x1, y1].MapId);
+                        if (map != null && map != this)
+                        {
+                            map.InitAutotiles();
+                        }
+                    }
                 }
             }
+        }
+    }
 
+    public EventBase FindEventAt(int x, int y)
+    {
+        if (LocalEvents.Count <= 0)
+        {
             return null;
         }
 
-        public LightBase FindLightAt(int x, int y)
+        foreach (var t in LocalEvents.Values)
         {
-            if (Lights.Count <= 0)
+            if (t.SpawnX == x && t.SpawnY == y)
             {
-                return null;
+                return t;
             }
+        }
 
-            foreach (var t in Lights)
-            {
-                if (t.TileX == x && t.TileY == y)
-                {
-                    return t;
-                }
-            }
+        return null;
+    }
 
+    public LightBase FindLightAt(int x, int y)
+    {
+        if (Lights.Count <= 0)
+        {
             return null;
         }
 
-        public NpcSpawn FindSpawnAt(int x, int y)
+        foreach (var t in Lights)
         {
-            if (Spawns.Count <= 0)
+            if (t.TileX == x && t.TileY == y)
             {
-                return null;
+                return t;
             }
+        }
 
-            foreach (var t in Spawns)
-            {
-                if (t.X == x && t.Y == y)
-                {
-                    return t;
-                }
-            }
+        return null;
+    }
 
+    public NpcSpawn FindSpawnAt(int x, int y)
+    {
+        if (Spawns.Count <= 0)
+        {
             return null;
         }
 
-        public new static MapInstance Get(Guid id)
+        foreach (var t in Spawns)
         {
-            return MapInstance.Lookup.Get<MapInstance>(id);
+            if (t.X == x && t.Y == y)
+            {
+                return t;
+            }
         }
 
-        public override void Delete()
-        {
-            Lookup?.Delete(this);
-        }
+        return null;
+    }
 
-        public void Dispose()
-        {
-        }
+    public new static MapInstance Get(Guid id)
+    {
+        return MapInstance.Lookup.Get<MapInstance>(id);
+    }
 
+    public override void Delete()
+    {
+        Lookup?.Delete(this);
+    }
+
+    public void Dispose()
+    {
     }
 
 }
