@@ -1,10 +1,9 @@
-﻿namespace Intersect.Server.Database
+﻿namespace Intersect.Server.Database;
+
+public sealed partial class ContextProvider
 {
-    public sealed partial class ContextProvider
+    private partial class LockProvider<TContext, UContext> where TContext : IntersectDbContext<TContext>, UContext
     {
-        private partial class LockProvider<TContext, UContext> where TContext : IntersectDbContext<TContext>, UContext
-        {
-            public static readonly object Lock = new object();
-        }
+        public static readonly object Lock = new object();
     }
 }

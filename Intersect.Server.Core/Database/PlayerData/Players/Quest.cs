@@ -7,44 +7,42 @@ using Newtonsoft.Json;
 // ReSharper disable UnusedAutoPropertyAccessor.Local
 // ReSharper disable AutoPropertyCanBeMadeGetOnly.Local
 
-namespace Intersect.Server.Database.PlayerData.Players
+namespace Intersect.Server.Database.PlayerData.Players;
+
+
+public partial class Quest : IPlayerOwned
 {
 
-    public partial class Quest : IPlayerOwned
+    public Quest()
     {
+    }
 
-        public Quest()
-        {
-        }
+    public Quest(Guid id)
+    {
+        QuestId = id;
+    }
 
-        public Quest(Guid id)
-        {
-            QuestId = id;
-        }
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity), JsonIgnore]
+    public Guid Id { get; private set; }
 
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity), JsonIgnore]
-        public Guid Id { get; private set; }
+    [JsonIgnore]
+    public Guid QuestId { get; private set; }
 
-        [JsonIgnore]
-        public Guid QuestId { get; private set; }
+    public Guid TaskId { get; set; }
 
-        public Guid TaskId { get; set; }
+    public int TaskProgress { get; set; }
 
-        public int TaskProgress { get; set; }
+    public bool Completed { get; set; }
 
-        public bool Completed { get; set; }
+    [JsonIgnore]
+    public Guid PlayerId { get; private set; }
 
-        [JsonIgnore]
-        public Guid PlayerId { get; private set; }
+    [JsonIgnore]
+    public virtual Player Player { get; private set; }
 
-        [JsonIgnore]
-        public virtual Player Player { get; private set; }
-
-        public string Data()
-        {
-            return JsonConvert.SerializeObject(this);
-        }
-
+    public string Data()
+    {
+        return JsonConvert.SerializeObject(this);
     }
 
 }

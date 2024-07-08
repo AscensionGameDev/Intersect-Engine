@@ -1,12 +1,11 @@
 ﻿using Amib.Threading;
 using Intersect.Core;
 
-namespace Intersect.Server.Core.Services
-{
-    internal interface ILogicService : IThreadableApplicationService
-    {
-        object LogicLock { get; }
+namespace Intersect.Server.Core.Services;
 
-        SmartThreadPool LogicPool { get; }
-    }
+internal interface ILogicService : IThreadableApplicationService
+{
+    object LogicLock { get; }
+
+    SmartThreadPool LogicPool { get; }
 }

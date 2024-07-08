@@ -1,43 +1,40 @@
-﻿using System.Collections.Generic;
+﻿namespace Intersect.Server.Metrics.Controllers;
 
-namespace Intersect.Server.Metrics.Controllers
+public abstract partial class MetricsController
 {
-    public abstract partial class MetricsController
+    private int _allocations;
+
+    protected MetricsController(string context)
     {
-        private int _allocations;
+        Context = context;
+    }
 
-        protected MetricsController(string context)
+    public string Context { get; }
+
+    public List<Histogram> Measurements { get; } = new List<Histogram>();
+
+    public virtual void Clear()
+    {
+        for (var i = 0; i < Measurements.Count; i++)
         {
-            Context = context;
+            Measurements[i].Clear();
         }
+    }
 
-        public string Context { get; }
+    public IDictionary<string, object> Data() {
+        var data = InternalData();
+        _allocations = data.Count;
+        return data;
+    }
 
-        public List<Histogram> Measurements { get; } = new List<Histogram>();
-
-        public virtual void Clear()
+    protected virtual IDictionary<string, object> InternalData()
+    {
+        var data = new Dictionary<string, object>(_allocations);
+        for (var i = 0; i < Measurements.Count; i++)
         {
-            for (var i = 0; i < Measurements.Count; i++)
-            {
-                Measurements[i].Clear();
-            }
+            var histogram = Measurements[i];
+            data[histogram.Name] = histogram;
         }
-
-        public IDictionary<string, object> Data() {
-            var data = InternalData();
-            _allocations = data.Count;
-            return data;
-        }
-
-        protected virtual IDictionary<string, object> InternalData()
-        {
-            var data = new Dictionary<string, object>(_allocations);
-            for (var i = 0; i < Measurements.Count; i++)
-            {
-                var histogram = Measurements[i];
-                data[histogram.Name] = histogram;
-            }
-            return data;
-        }
+        return data;
     }
 }

@@ -3,133 +3,131 @@ using Intersect.Logging;
 using Intersect.Server.Networking;
 using Intersect.Utilities;
 
-namespace Intersect.Server.Entities.Combat
+namespace Intersect.Server.Entities.Combat;
+
+
+public partial class Dash
 {
 
-    public partial class Dash
+    public Direction Direction;
+
+    public Direction Facing;
+
+    public int Range;
+
+    public Dash(
+        Entity en,
+        int range,
+        Direction direction,
+        bool blockPass = false,
+        bool activeResourcePass = false,
+        bool deadResourcePass = false,
+        bool zdimensionPass = false
+    )
     {
+        Direction = direction;
+        Facing = en.Dir;
 
-        public Direction Direction;
-
-        public Direction Facing;
-
-        public int Range;
-
-        public Dash(
-            Entity en,
-            int range,
-            Direction direction,
-            bool blockPass = false,
-            bool activeResourcePass = false,
-            bool deadResourcePass = false,
-            bool zdimensionPass = false
-        )
+        CalculateRange(en, range, blockPass, activeResourcePass, deadResourcePass, zdimensionPass);
+        if (Range <= 0)
         {
-            Direction = direction;
-            Facing = en.Dir;
+            return;
+        } //Remove dash instance if no where to dash
 
-            CalculateRange(en, range, blockPass, activeResourcePass, deadResourcePass, zdimensionPass);
-            if (Range <= 0)
-            {
-                return;
-            } //Remove dash instance if no where to dash
+        PacketSender.SendEntityDash(
+            en, en.MapId, (byte) en.X, (byte) en.Y, (int) (Options.MaxDashSpeed * (Range / 10f)),
+            Direction == Facing ? Direction : Direction.None
+        );
 
-            PacketSender.SendEntityDash(
-                en, en.MapId, (byte) en.X, (byte) en.Y, (int) (Options.MaxDashSpeed * (Range / 10f)),
-                Direction == Facing ? Direction : Direction.None
+        en.MoveTimer = Timing.Global.Milliseconds + Options.MaxDashSpeed;
+    }
+
+    public void CalculateRange(
+        Entity en,
+        int range,
+        bool blockPass = false,
+        bool activeResourcePass = false,
+        bool deadResourcePass = false,
+        bool zDimensionPass = false
+    )
+    {
+        Range = 0;
+        if (en == default)
+        {
+            Log.Error(
+                new ArgumentNullException(
+                    nameof(en),
+                    "Entity was null when calling CalcuateRange(), this isn't supported."
+                )
             );
-
-            en.MoveTimer = Timing.Global.Milliseconds + Options.MaxDashSpeed;
+            return;
         }
 
-        public void CalculateRange(
-            Entity en,
-            int range,
-            bool blockPass = false,
-            bool activeResourcePass = false,
-            bool deadResourcePass = false,
-            bool zDimensionPass = false
-        )
+        en.MoveTimer = 0;
+        for (var i = 1; i <= range; i++)
         {
-            Range = 0;
-            if (en == default)
+            if (!en.CanMoveInDirection(Direction, out var blockerType, out var blockingEntityType))
             {
-                Log.Error(
-                    new ArgumentNullException(
-                        nameof(en),
-                        "Entity was null when calling CalcuateRange(), this isn't supported."
-                    )
-                );
-                return;
-            }
-
-            en.MoveTimer = 0;
-            for (var i = 1; i <= range; i++)
-            {
-                if (!en.CanMoveInDirection(Direction, out var blockerType, out var blockingEntityType))
+                switch (blockerType)
                 {
-                    switch (blockerType)
-                    {
-                        case MovementBlockerType.OutOfBounds:
+                    case MovementBlockerType.OutOfBounds:
+                        return;
+                    
+                    case MovementBlockerType.MapAttribute:
+                        if (!blockPass)
+                        {
                             return;
-                        
-                        case MovementBlockerType.MapAttribute:
-                            if (!blockPass)
-                            {
-                                return;
-                            }
+                        }
 
-                            break;
-                        
-                        case MovementBlockerType.ZDimension:
-                            if (!zDimensionPass)
-                            {
-                                return;
-                            }
+                        break;
+                    
+                    case MovementBlockerType.ZDimension:
+                        if (!zDimensionPass)
+                        {
+                            return;
+                        }
 
-                            break;
-                        
-                        case MovementBlockerType.Entity:
-                            switch (blockingEntityType)
-                            {
-                                case EntityType.Resource:
-                                    if (activeResourcePass || deadResourcePass)
-                                    {
-                                        break;
-                                    }
-
-                                    return;
-
-                                case EntityType.Event:
-                                case EntityType.Player:
-                                    return;
-
-                                case EntityType.GlobalEntity:
-                                case EntityType.Projectile:
+                        break;
+                    
+                    case MovementBlockerType.Entity:
+                        switch (blockingEntityType)
+                        {
+                            case EntityType.Resource:
+                                if (activeResourcePass || deadResourcePass)
+                                {
                                     break;
+                                }
 
-                                default:
-                                    throw new NotImplementedException($"{blockingEntityType} not implemented.");
-                            }
+                                return;
 
-                            break;
+                            case EntityType.Event:
+                            case EntityType.Player:
+                                return;
 
-                        case MovementBlockerType.NotBlocked:
-                        case MovementBlockerType.Slide:
-                            break;
+                            case EntityType.GlobalEntity:
+                            case EntityType.Projectile:
+                                break;
 
-                        default:
-                            throw new NotImplementedException($"{blockerType} not implemented.");
-                    }
+                            default:
+                                throw new NotImplementedException($"{blockingEntityType} not implemented.");
+                        }
+
+                        break;
+
+                    case MovementBlockerType.NotBlocked:
+                    case MovementBlockerType.Slide:
+                        break;
+
+                    default:
+                        throw new NotImplementedException($"{blockerType} not implemented.");
                 }
-
-                en.Move(Direction, null, true);
-                en.Dir = Facing;
-
-                Range = i;
             }
-        }
 
+            en.Move(Direction, null, true);
+            en.Dir = Facing;
+
+            Range = i;
+        }
     }
 
 }

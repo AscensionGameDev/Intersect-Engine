@@ -1,12 +1,11 @@
-namespace Intersect.Server.Entities
+namespace Intersect.Server.Entities;
+
+public enum MovementBlockerType
 {
-    public enum MovementBlockerType
-    {
-        NotBlocked = 0,
-        OutOfBounds,
-        MapAttribute,
-        Slide,
-        Entity,
-        ZDimension,
-    }
+    NotBlocked = 0,
+    OutOfBounds,
+    MapAttribute,
+    Slide,
+    Entity,
+    ZDimension,
 }
