@@ -1,5 +1,5 @@
 ﻿using System.Globalization;
-
+using Intersect.Editor.Core;
 using Intersect.Editor.Localization;
 
 namespace Intersect.Editor.Forms;

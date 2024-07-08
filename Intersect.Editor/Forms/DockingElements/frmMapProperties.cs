@@ -1,4 +1,5 @@
-﻿using Intersect.Editor.Localization;
+﻿using Intersect.Editor.Core;
+using Intersect.Editor.Localization;
 using Intersect.Editor.Maps;
 
 using WeifenLuo.WinFormsUI.Docking;
