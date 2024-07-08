@@ -1,7 +1,7 @@
 using DarkUI.Forms;
 
 using Hjg.Pngcs;
-
+using Intersect.Editor.Core;
 using Intersect.Editor.Forms;
 using Intersect.Editor.General;
 using Intersect.Editor.Localization;

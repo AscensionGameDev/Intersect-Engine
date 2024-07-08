@@ -3,6 +3,7 @@ using System.Globalization;
 
 using Intersect.Configuration;
 using Intersect.Editor.Content;
+using Intersect.Editor.Core;
 using Intersect.Editor.General;
 using Intersect.Editor.Localization;
 using Intersect.Logging;

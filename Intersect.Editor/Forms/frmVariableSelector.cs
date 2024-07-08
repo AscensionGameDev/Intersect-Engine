@@ -1,3 +1,4 @@
+using Intersect.Editor.Core;
 using Intersect.Editor.Localization;
 using Intersect.Enums;
 using Intersect.Extensions;

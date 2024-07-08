@@ -8,6 +8,7 @@ using Intersect.Compression;
 using Intersect.Config;
 using Intersect.Editor.Classes.ContentManagement;
 using Intersect.Editor.Content;
+using Intersect.Editor.Core;
 using Intersect.Editor.Forms.DockingElements;
 using Intersect.Editor.Forms.Editors;
 using Intersect.Editor.Forms.Editors.Quest;

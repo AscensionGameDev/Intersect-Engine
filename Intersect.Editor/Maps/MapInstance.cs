@@ -1,6 +1,7 @@
 ﻿using System.Drawing.Imaging;
 using Intersect.Compression;
 using Intersect.Editor.Classes.Maps;
+using Intersect.Editor.Core;
 using Intersect.Editor.Entities;
 using Intersect.Editor.General;
 using Intersect.GameObjects;
