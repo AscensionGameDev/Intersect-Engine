@@ -1,21 +1,19 @@
-﻿namespace Intersect.Network
+﻿namespace Intersect.Network;
+
+
+public enum NetworkMetaStatus
 {
 
-    public enum NetworkMetaStatus
-    {
+    Unknown = 0,
 
-        Unknown = 0,
+    ConnectionEstablished = 1,
 
-        ConnectionEstablished = 1,
+    HandshakeRequested = 2,
 
-        HandshakeRequested = 2,
+    HandshakeReceived = 4,
 
-        HandshakeReceived = 4,
+    HandshakeCompleted = 8,
 
-        HandshakeCompleted = 8,
-
-        Connected = 16
-
-    }
+    Connected = 16
 
 }
