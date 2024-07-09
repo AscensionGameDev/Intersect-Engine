@@ -498,12 +498,8 @@ public partial class Projectile : Entity
             {
                 if (_targetId != Guid.Empty && _targetId != _owner || _lastTargetX != -1 && _lastTargetY != -1 && _lastTargetMapId != Guid.Empty)
                 {
-                    var (deltaX, deltaY) = (GetProjectileOffset(projectileSpawn, true), GetProjectileOffset(projectileSpawn, false));
-                    float distance = MathF.Sqrt(deltaX * deltaX + deltaY * deltaY);
-                    float xFactor = deltaX / distance;
-                    float yFactor = deltaY / distance;
-                    newx += xFactor;
-                    newy += yFactor;
+                    newx += GetProjectileOffset(projectileSpawn, true);
+                    newy += GetProjectileOffset(projectileSpawn, false);
                 }
             }
             else
