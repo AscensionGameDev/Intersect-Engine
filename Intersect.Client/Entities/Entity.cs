@@ -220,7 +220,7 @@ public partial class Entity : IEntity
 
     public byte Z { get; set; }
 
-    public Entity(Guid id, EntityPacket packet, EntityType entityType)
+    public Entity(Guid id, EntityPacket? packet, EntityType entityType)
     {
         Id = id;
         Type = entityType;
@@ -329,7 +329,7 @@ public partial class Entity : IEntity
     public virtual Guid MapId { get; set; }
 
     //Deserializing
-    public virtual void Load(EntityPacket packet)
+    public virtual void Load(EntityPacket? packet)
     {
         if (packet == null)
         {

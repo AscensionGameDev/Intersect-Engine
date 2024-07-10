@@ -55,7 +55,7 @@ public partial class Event : Entity
         mRenderPriority = 1;
     }
 
-    public override void Load(EntityPacket packet)
+    public override void Load(EntityPacket? packet)
     {
         if (packet is not EventEntityPacket eventEntityPacket)
         {
