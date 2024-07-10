@@ -1,4 +1,4 @@
-﻿using Intersect.GameObjects;
+using Intersect.GameObjects;
 using Intersect.Enums;
 
 namespace Intersect.Client.Framework.Entities;
@@ -8,7 +8,7 @@ public interface IAnimation : IDisposable
     bool AutoRotate { get; set; }
     bool Hidden { get; set; }
     bool InfiniteLoop { get; set; }
-    AnimationBase MyBase { get; set; }
+    AnimationBase? MyBase { get; set; }
     Point Size { get; }
 
     void Hide();

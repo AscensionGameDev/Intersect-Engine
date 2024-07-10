@@ -375,7 +375,7 @@ public partial class Entity : IEntity
             {
                 foreach (var addedAnim in animsToAdd)
                 {
-                    if (addedAnim.Id == anim.MyBase.Id)
+                    if (addedAnim.Id == anim?.MyBase?.Id)
                     {
                         _ = animsToClear.Remove(anim);
                         _ = animsToAdd.Remove(addedAnim);
@@ -386,7 +386,7 @@ public partial class Entity : IEntity
 
                 foreach (var equipAnim in EquipmentAnimations)
                 {
-                    if (equipAnim == anim)
+                    if (equipAnim == anim && anim != null)
                     {
                         _ = animsToClear.Remove(anim);
                     }

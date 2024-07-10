@@ -10,10 +10,8 @@ using Intersect.Utilities;
 
 namespace Intersect.Client.Entities;
 
-
 public partial class Animation : IAnimation
 {
-
     public bool AutoRotate { get; set; }
 
     private bool disposed = false;
@@ -26,11 +24,9 @@ public partial class Animation : IAnimation
 
     private int mLowerFrame;
 
-    private int mLowerLoop;
+    private readonly int mLowerLoop;
 
-    private long mLowerTimer;
-
-    private Entity mParent;
+    private readonly Entity? mParent;
 
     private Direction mRenderDir;
 
@@ -42,21 +38,19 @@ public partial class Animation : IAnimation
 
     private bool mShowUpper = true;
 
-    private MapSound mSound;
+    private MapSound? mSound;
 
-    private long mStartTime = Timing.Global.MillisecondsUtc;
+    private readonly long mStartTime = Timing.Global.MillisecondsUtc;
 
     private int mUpperFrame;
 
-    private int mUpperLoop;
-
-    private long mUpperTimer;
+    private readonly int mUpperLoop;
 
     private bool mUseExternalRotation;
 
     private float mExternalRotation;
 
-    public AnimationBase MyBase { get; set; }
+    public AnimationBase? MyBase { get; set; }
 
     public Point Size => CalculateAnimationSize();
 
@@ -67,7 +61,7 @@ public partial class Animation : IAnimation
         bool loopForever,
         bool autoRotate = false,
         int zDimension = -1,
-        Entity parent = null
+        Entity? parent = null
     )
     {
         MyBase = animBase;
@@ -76,8 +70,6 @@ public partial class Animation : IAnimation
         {
             mLowerLoop = animBase.Lower.LoopCount;
             mUpperLoop = animBase.Upper.LoopCount;
-            mLowerTimer = Timing.Global.MillisecondsUtc + animBase.Lower.FrameSpeed;
-            mUpperTimer = Timing.Global.MillisecondsUtc + animBase.Upper.FrameSpeed;
             InfiniteLoop = loopForever;
             AutoRotate = autoRotate;
             mZDimension = zDimension;
@@ -95,7 +87,7 @@ public partial class Animation : IAnimation
 
     public void Draw(bool upper = false, bool alternate = false)
     {
-        if (Hidden)
+        if (Hidden || MyBase == default)
         {
             return;
         }
@@ -295,7 +287,7 @@ public partial class Animation : IAnimation
             if (mSound != null)
             {
                 mSound.Loop = false;
-                if (!MyBase.CompleteSound)
+                if (MyBase?.CompleteSound == false)
                 {
                     mSound.Stop();
                 }
@@ -303,8 +295,9 @@ public partial class Animation : IAnimation
                 mSound = null;
             }
 
-            Graphics.LiveAnimations.Remove(this);
+            _ = Graphics.LiveAnimations.Remove(this);
             disposed = true;
+            GC.SuppressFinalize(this);
         }
     }
 
@@ -322,10 +315,7 @@ public partial class Animation : IAnimation
     {
         mRenderX = worldX;
         mRenderY = worldY;
-        if (mSound != null)
-        {
-            mSound.UpdatePosition(mapx, mapy, mapId);
-        }
+        mSound?.UpdatePosition(mapx, mapy, mapId);
 
         if (dir > Direction.None)
         {
@@ -346,7 +336,7 @@ public partial class Animation : IAnimation
         {
             if (mSound != null)
             {
-                mSound.Update();
+                _ = mSound.Update();
             }
 
             //Calculate Frames
@@ -394,6 +384,11 @@ public partial class Animation : IAnimation
     public Point CalculateAnimationSize()
     {
         var size = new Point(0, 0);
+
+        if (MyBase == default)
+        {
+            return size;
+        }
 
         var tex = Globals.ContentManager.GetTexture(Framework.Content.TextureType.Animation, MyBase.Lower.Sprite);
         if (tex != null)
