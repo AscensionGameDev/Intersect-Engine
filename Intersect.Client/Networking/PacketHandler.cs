@@ -1729,7 +1729,7 @@ internal sealed partial class PacketHandler
             Globals.Entities[packet.EntityId]
                 .DashQueue.Enqueue(
                     new Dash(
-                        Globals.Entities[packet.EntityId] as Entity, packet.EndMapId, packet.EndX, packet.EndY,
+                        packet.EndMapId, packet.EndX, packet.EndY,
                         packet.DashTime, packet.Direction
                     )
                 );
@@ -2107,7 +2107,7 @@ internal sealed partial class PacketHandler
     {
         if (Globals.Entities.ContainsKey(packet.TargetId))
         { 
-            Globals.Me.TryTarget(Globals.Entities[packet.TargetId] as Entity, true);
+            Globals.Me.TryTarget(Globals.Entities[packet.TargetId], true);
         }
     }
 
