@@ -3,7 +3,6 @@ using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Maps;
 using Intersect.Client.General;
-using Intersect.Client.Maps;
 using Intersect.Enums;
 using Intersect.GameObjects.Events;
 using Intersect.Logging;
@@ -21,17 +20,7 @@ public partial class Event : Entity
 
     public bool DisablePreview { get; set; }
 
-    public string FaceGraphic { get; set; } = string.Empty;
-
     public EventGraphic Graphic { get; set; } = new EventGraphic();
-
-    public int Layer { get; set; }
-
-    private int mOldRenderLevel { get; set; }
-
-    private MapInstance mOldRenderMap { get; set; }
-
-    private int mOldRenderY { get; set; }
 
     public int RenderLevel { get; set; } = 1;
 
@@ -68,11 +57,12 @@ public partial class Event : Entity
 
     public override void Load(EntityPacket packet)
     {
-        if (!(packet is EventEntityPacket eventEntityPacket))
+        if (packet is not EventEntityPacket eventEntityPacket)
         {
             Log.Error($"Received invalid packet for {nameof(Event)}: {packet?.GetType()?.FullName}");
             return;
         }
+
         DirectionFix = eventEntityPacket.DirectionFix;
         WalkingAnim = eventEntityPacket.WalkingAnim;
         DisablePreview = eventEntityPacket.DisablePreview;
@@ -102,7 +92,7 @@ public partial class Event : Entity
         return success;
     }
 
-    protected bool TryEnsureTexture(out GameTexture texture)
+    protected bool TryEnsureTexture(out GameTexture? texture)
     {
         if (_drawCompletedWithoutTexture)
         {
@@ -173,6 +163,11 @@ public partial class Event : Entity
         // If we're smaller than a tile, force the target size to a tile.
         WorldPos = destRectangle;
 
+        if (texture == default)
+        {
+            return;
+        }
+
         Graphics.DrawGameTexture(texture, srcRectangle, destRectangle, Color.White);
     }
 
@@ -193,15 +188,15 @@ public partial class Event : Entity
         }
     }
 
-    public override HashSet<Entity> DetermineRenderOrder(HashSet<Entity> renderList, IMapInstance map)
+    public override HashSet<Entity>? DetermineRenderOrder(HashSet<Entity>? renderList, IMapInstance? map)
     {
         if (RenderLevel == 1)
         {
             return base.DetermineRenderOrder(renderList, map);
         }
 
-        renderList?.Remove(this);
-        if (map == null || Globals.Me == null || Globals.Me.MapInstance == null)
+        _ = (renderList?.Remove(this));
+        if (map == null || Globals.Me == null || Globals.Me.MapInstance == null || Globals.MapGrid == default)
         {
             return null;
         }
@@ -241,31 +236,11 @@ public partial class Event : Entity
                     var maps = y - (gridY - 2);
                     var renderSet = Graphics.RenderingEntities[priority, Options.MapHeight * maps + Y];
 
-                    // If bugs arise from switching to the above, remove and uncomment this
-                    //HashSet<Entity> renderSet = null;
-                    //if (y == gridY - 2)
-                    //{
-                    //    renderSet = Graphics.RenderingEntities[priority, Y];
-                    //}
-                    //else if (y == gridY - 1)
-                    //{
-                    //    renderSet = Graphics.RenderingEntities[priority, Options.MapHeight + Y];
-                    //}
-                    //else if (y == gridY)
-                    //{
-                    //    renderSet = Graphics.RenderingEntities[priority, Options.MapHeight * 2 + Y];
-                    //}
-                    //else if (y == gridY + 1)
-                    //{
-                    //    renderSet = Graphics.RenderingEntities[priority, Options.MapHeight * 3 + Y];
-                    //}
-                    //else if (y == gridY + 2)
-                    //{
-                    //    renderSet = Graphics.RenderingEntities[priority, Options.MapHeight * 4 + Y];
-                    //}
-
-                    renderSet?.Add(this);
-                    renderList = renderSet;
+                    _ = (renderSet?.Add(this));
+                    if(renderSet != default)
+                    {
+                        renderList = renderSet;
+                    }
 
                     return renderList;
                 }
@@ -300,7 +275,7 @@ public partial class Event : Entity
         return top - offset;
     }
 
-    public override void DrawName(Color textColor, Color borderColor, Color backgroundColor)
+    public override void DrawName(Color? textColor, Color? borderColor, Color? backgroundColor)
     {
         base.DrawName(
             textColor: textColor ?? new Color(CustomColors.Names.Events.Name),
