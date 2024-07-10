@@ -9,17 +9,15 @@ using MapAttribute = Intersect.Enums.MapAttribute;
 
 namespace Intersect.Client.Entities.Projectiles;
 
-
 public partial class Projectile : Entity
 {
-
     private bool _isDisposing;
 
     private bool _isLoaded;
 
-    private readonly object _lock = new object();
+    private readonly object _lock = new();
 
-    private ProjectileBase _myBase;
+    private ProjectileBase? _myBase;
 
     private Guid _owner;
 
@@ -36,7 +34,7 @@ public partial class Projectile : Entity
     private Guid _projectileId;
 
     // Individual Spawns
-    private ProjectileSpawns[] _spawns;
+    private ProjectileSpawns?[]? _spawns;
 
     private Guid _targetId;
 
@@ -58,7 +56,7 @@ public partial class Projectile : Entity
         IsMoving = true;
     }
 
-    public override void Load(EntityPacket packet)
+    public override void Load(EntityPacket? packet)
     {
         if (_isLoaded)
         {
@@ -66,6 +64,12 @@ public partial class Projectile : Entity
         }
 
         base.Load(packet);
+
+        if (packet == null)
+        {
+            return;
+        }
+
         var pkt = (ProjectileEntityPacket)packet;
         _projectileId = pkt.ProjectileId;
         Dir = (Direction)pkt.ProjectileDirection;
@@ -109,7 +113,7 @@ public partial class Projectile : Entity
                 // Perform a final update if no projectiles have been spawned.
                 if (_spawnedAmount == 0)
                 {
-                    Update();
+                    _ = Update();
                 }
 
                 if (_spawns != null)
@@ -142,6 +146,11 @@ public partial class Projectile : Entity
     /// <returns>The index of the animation data to use for the current spawn wave.</returns>
     private int FindSpawnAnimationData()
     {
+        if (_myBase == default)
+        {
+            return 0;
+        }
+
         var start = 0;
         for (var i = 0; i < _myBase.Animations.Count; i++)
         {
@@ -164,6 +173,11 @@ public partial class Projectile : Entity
     /// </summary>
     private void AddProjectileSpawns()
     {
+        if (_myBase == default || _spawns == default)
+        {
+            return;
+        }
+
         var spawn = FindSpawnAnimationData();
         var animBase = AnimationBase.Get(_myBase.Animations[spawn].AnimationId);
 
@@ -276,6 +290,11 @@ public partial class Projectile : Entity
     /// <returns>The displacement from the co-ordinates if placed on a Options.TileHeight grid.</returns>
     private float GetDisplacement(long spawnTime)
     {
+        if (_myBase == default)
+        {
+            return 0f;
+        }
+
         var elapsedTime = Timing.Global.Milliseconds - spawnTime;
         var displacementPercent = elapsedTime / (float)_myBase.Speed;
         var calculatedDisplacement = displacementPercent * Options.TileHeight * _myBase.Range;
@@ -290,7 +309,7 @@ public partial class Projectile : Entity
     /// </summary>
     public override bool Update()
     {
-        if (_myBase == null)
+        if (_myBase == null || _spawns == default)
         {
             return false;
         }
@@ -313,9 +332,11 @@ public partial class Projectile : Entity
                     
                     if (spawn != null && Maps.MapInstance.Get(spawn.SpawnMapId) != null)
                     {
-                        if (_targetId != Guid.Empty && _targetId != _owner && Globals.Entities.ContainsKey(_targetId) && (_myBase.HomingBehavior || _myBase.DirectShotBehavior))
+                        if (_targetId != Guid.Empty && _targetId != _owner &&
+                            Globals.Entities.TryGetValue(_targetId, out var target) &&
+                            (_myBase.HomingBehavior || _myBase.DirectShotBehavior)
+                        )
                         {
-                            var target = Globals.Entities[_targetId];
                             _lastTargetX = target.X;
                             _lastTargetY = target.Y;
                             _lastTargetMapId = target.MapId;
@@ -367,7 +388,11 @@ public partial class Projectile : Entity
     /// <returns>The calculated offset value.</returns>
     private float GetProjectileOffset(ProjectileSpawns spawn, bool isXAxis)
     {
-        if (_lastTargetMapId == Guid.Empty || _lastTargetMapId == spawn.SpawnMapId || !Maps.MapInstance.TryGet(spawn.SpawnMapId, out var map))
+        if (_lastTargetMapId == Guid.Empty ||
+            _lastTargetMapId == spawn.SpawnMapId ||
+            !Maps.MapInstance.TryGet(spawn.SpawnMapId, out var map) ||
+            Globals.MapGrid == default
+        )
         {
             return isXAxis ? _lastTargetX - spawn.SpawnX : _lastTargetY - spawn.SpawnY;
         }
@@ -436,6 +461,11 @@ public partial class Projectile : Entity
     /// </remarks>
     private float GetProjectileLerping(ProjectileSpawns spawn, bool isXAxis)
     {
+        if (_myBase == default)
+        {
+            return 0f;
+        }
+
         var (directionX, directionY) = (GetProjectileOffset(spawn, true), GetProjectileOffset(spawn, false));
         var distance = MathF.Sqrt(directionX * directionX + directionY * directionY);
         if (distance == 0) return 0;
@@ -472,7 +502,7 @@ public partial class Projectile : Entity
     /// </summary>
     public void CheckForCollision()
     {
-        if (_spawnCount == 0 && _quantity > _myBase.Quantity)
+        if (_myBase == default || _spawns == default || _spawnCount == 0 && _quantity > _myBase.Quantity)
         {
             Globals.Entities[Id].Dispose();
             return;
@@ -678,9 +708,19 @@ public partial class Projectile : Entity
     /// <returns>True if the projectile spawn has collided and should be destroyed; otherwise, false.</returns>
     private bool Collided(int i)
     {
+        if (Globals.Me == default || _spawns == default)
+        {
+            return true;
+        }
+
         var killSpawn = false;
         IEntity? blockedBy = default;
         var spawn = _spawns[i];
+
+        if (spawn == null)
+        {
+            return true;
+        }
 
         // Check if the tile at the projectile's location is blocked.
         var tileBlocked = Globals.Me.IsTileBlocked(
@@ -706,18 +746,21 @@ public partial class Projectile : Entity
                         killSpawn = true;
                     }
                 }
+
                 break;
             case -2: // Collision with a map block
                 if (!spawn.ProjectileBase.IgnoreMapBlocks)
                 {
                     killSpawn = true;
                 }
+
                 break;
             case -3: // Collision with a Z-dimension block
                 if (!spawn.ProjectileBase.IgnoreZDimension)
                 {
                     killSpawn = true;
                 }
+
                 break;
             case -5: // Collision with an unspecified block type or out of map bounds
                 killSpawn = true;
@@ -740,7 +783,7 @@ public partial class Projectile : Entity
 
     public void SpawnDead(int spawnIndex)
     {
-        if (spawnIndex < _spawnedAmount && _spawns[spawnIndex] != null)
+        if (spawnIndex < _spawnedAmount && _spawns?[spawnIndex] != null)
         {
             TryRemoveSpawn(spawnIndex);
         }
@@ -748,11 +791,10 @@ public partial class Projectile : Entity
 
     private void TryRemoveSpawn(int spawnIndex)
     {
-        if (spawnIndex < _spawnedAmount && _spawns[spawnIndex] != null)
+        if (spawnIndex < _spawnedAmount && _spawns?[spawnIndex] != null)
         {
-            _spawns[spawnIndex].Dispose();
+            _spawns[spawnIndex]!.Dispose();
             _spawns[spawnIndex] = null;
         }
     }
-
 }

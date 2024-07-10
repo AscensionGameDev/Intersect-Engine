@@ -1,9 +1,8 @@
-﻿using Intersect.Enums;
+using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Utilities;
 
 namespace Intersect.Client.Entities.Projectiles;
-
 
 public partial class ProjectileSpawns
 {
@@ -71,5 +70,4 @@ public partial class ProjectileSpawns
     {
         Anim.DisposeNextDraw();
     }
-
 }

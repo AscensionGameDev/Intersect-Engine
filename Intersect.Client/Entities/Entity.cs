@@ -2215,7 +2215,7 @@ public partial class Entity : IEntity
         Point delta,
         int z,
         Guid mapId,
-        ref IEntity blockedBy,
+        ref IEntity? blockedBy,
         bool ignoreAliveResources = true,
         bool ignoreDeadResources = true,
         bool ignoreNpcAvoids = true,
