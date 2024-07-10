@@ -7,25 +7,21 @@ using Intersect.Utilities;
 
 namespace Intersect.Client.Entities;
 
-
 public partial class ChatBubble
 {
+    private readonly GameTexture? mBubbleTex;
 
-    private GameTexture mBubbleTex;
+    private readonly Entity? mOwner;
 
-    private Entity mOwner;
+    private readonly long mRenderTimer;
 
-    private Color mRenderColor;
+    private readonly string? mSourceText;
 
-    private long mRenderTimer;
+    private Point[,]? mTexSections;
 
-    private string mSourceText;
+    private string[]? mText;
 
-    private Point[,] mTexSections;
-
-    private string[] mText;
-
-    private Rectangle mTextBounds;
+    private Rectangle mTextBounds = new();
 
     private Rectangle mTextureBounds;
 
@@ -54,12 +50,12 @@ public partial class ChatBubble
 
     public float Draw(float yoffset = 0f)
     {
-        if (mText == null && mSourceText.Trim().Length > 0)
+        if (mText == null && mSourceText?.Trim().Length > 0 && Graphics.ChatBubbleFont != default)
         {
             mText = Interface.Interface.WrapText(mSourceText, 200, Graphics.ChatBubbleFont);
         }
 
-        if (mText == null)
+        if (mText == null || Graphics.Renderer == default || mOwner == default)
         {
             return 0f;
         }
@@ -72,7 +68,7 @@ public partial class ChatBubble
             //Gotta Calculate Bounds
             for (var i = (mText?.Length ?? 0) - 1; i > -1; i--)
             {
-                var textSize = Graphics.Renderer.MeasureText(mText[i], Graphics.ChatBubbleFont, 1);
+                var textSize = Graphics.Renderer.MeasureText(mText![i], Graphics.ChatBubbleFont, 1);
                 if (textSize.X > mTextureBounds.Width)
                 {
                     mTextureBounds.Width = (int) textSize.X + 16;
@@ -163,7 +159,7 @@ public partial class ChatBubble
             }
         }
 
-        if (mBubbleTex != null)
+        if (mBubbleTex != null && mText != null && mTexSections != null)
         {
             //Draw Background if available
             //Draw Top Left
@@ -196,5 +192,4 @@ public partial class ChatBubble
 
         return yoffset;
     }
-
 }
