@@ -1,4 +1,4 @@
-﻿using Intersect.Client.Entities;
+using Intersect.Client.Entities;
 using Intersect.Client.Entities.Events;
 using Intersect.Client.Framework.Database;
 using Intersect.Client.Framework.Entities;
@@ -62,7 +62,7 @@ public static partial class Globals
 
     //Game Shop
     //Only need 1 shop, and that is the one we see at a given moment in time.
-    public static ShopBase GameShop;
+    public static ShopBase? GameShop;
 
     //Crucial game variables
 
@@ -181,14 +181,14 @@ public static partial class Globals
     public static bool LoggedIn = false;
 
     //Map/Chunk Array
-    public static Guid[,] MapGrid;
+    public static Guid[,]? MapGrid;
 
     public static long MapGridHeight;
 
     public static long MapGridWidth;
 
     //Local player information
-    public static Player Me;
+    public static Player? Me;
 
     public static bool MoveRouteActive = false;
 
@@ -199,7 +199,7 @@ public static partial class Globals
         new Dictionary<Guid, Dictionary<Guid, EventEntityPacket>>();
 
     //Event Show Pictures
-    public static ShowPicturePacket Picture;
+    public static ShowPicturePacket? Picture;
 
     public static List<Guid> QuestOffers = new List<Guid>();
 

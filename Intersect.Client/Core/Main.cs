@@ -12,13 +12,10 @@ using Intersect.Utilities;
 
 namespace Intersect.Client.Core;
 
-
 internal static partial class Main
 {
 
     private static long _animTimer;
-
-    private static bool _createdMapTextures;
 
     private static bool _loadedTilesets;
 
@@ -40,12 +37,12 @@ internal static partial class Main
         foreach (var val in Enum.GetValues(typeof(GameObjectType)))
         {
             var type = ((GameObjectType) val);
-            if (type != GameObjectType.Event && type != GameObjectType.Time)
+            if (type is not GameObjectType.Event and not GameObjectType.Time)
             {
                 var lookup = type.GetLookup();
                 var item = lookup.AddNew(type.GetObjectType(), id);
                 item.Load(item.JsonData);
-                lookup.Delete(item);
+                _ = lookup.Delete(item);
             }
         }
     }
@@ -56,7 +53,7 @@ internal static partial class Main
         //TODO - Destroy Graphics and Networking peacefully
         //Network.Close();
         Interface.Interface.DestroyGwen(true);
-        Graphics.Renderer.Close();
+        Graphics.Renderer?.Close();
     }
 
     public static void Update(TimeSpan deltaTime)
@@ -197,49 +194,9 @@ internal static partial class Main
         //If we are waiting on maps, lets see if we have them
         if (Globals.NeedsMaps)
         {
-            bool canShowWorld = true;
-            if (MapInstance.TryGet(Globals.Me.MapId, out var mapInstance))
-            {
-                var gridX = mapInstance.GridX;
-                var gridY = mapInstance.GridY;
-                for (int x = gridX - 1; x <= gridX + 1; x++)
-                {
-                    for (int y = gridY - 1; y <= gridY + 1; y++)
-                    {
-                        if (x >= 0 &&
-                            x < Globals.MapGridWidth &&
-                            y >= 0 &&
-                            y < Globals.MapGridHeight &&
-                            Globals.MapGrid[x, y] != Guid.Empty)
-                        {
-                            var map = MapInstance.Get(Globals.MapGrid[x, y]);
-                            if (map != null)
-                            {
-                                if (!map.IsLoaded)
-                                {
-                                    canShowWorld = false;
-                                }
-                            }
-                            else
-                            {
-                                canShowWorld = false;
-                            }
-                        }
-                    }
-                }
-            }
-            else
-            {
-                canShowWorld = false;
-            }
-
-            canShowWorld = true;
-            if (canShowWorld)
-            {
-                Globals.NeedsMaps = false;
-                //Send ping to server, so it will resync time if needed as we load in
-                PacketSender.SendPing();
-            }
+            Globals.NeedsMaps = false;
+            //Send ping to server, so it will resync time if needed as we load in
+            PacketSender.SendPing();
         }
         else
         {
@@ -254,18 +211,17 @@ internal static partial class Main
                 if (en.Value == null)
                     continue;
 
-                en.Value.Update();
+                _ = en.Value.Update();
             }
 
             for (int i = 0; i < Globals.EntitiesToDispose.Count; i++)
             {
-                if (Globals.Entities.ContainsKey(Globals.EntitiesToDispose[i]))
+                if (Globals.Entities.TryGetValue(Globals.EntitiesToDispose[i], out var value))
                 {
-                    if (Globals.EntitiesToDispose[i] == Globals.Me.Id)
+                    if (Globals.EntitiesToDispose[i] == Globals.Me?.Id)
                         continue;
-
-                    Globals.Entities[Globals.EntitiesToDispose[i]].Dispose();
-                    Globals.Entities.Remove(Globals.EntitiesToDispose[i]);
+                    value.Dispose();
+                    _ = Globals.Entities.Remove(Globals.EntitiesToDispose[i]);
                 }
             }
 
@@ -273,7 +229,7 @@ internal static partial class Main
 
             //Update Maps
             var maps = MapInstance.Lookup.Values.ToArray();
-            foreach (MapInstance map in maps)
+            foreach (MapInstance map in maps.Cast<MapInstance>())
             {
                 if (map == null)
                     continue;
@@ -307,7 +263,7 @@ internal static partial class Main
 
         foreach (var hold in removeHolds)
         {
-            Globals.EventHolds.Remove(hold);
+            _ = Globals.EventHolds.Remove(hold);
         }
 
         Graphics.UpdatePlayerLight();
@@ -374,7 +330,7 @@ internal static partial class Main
         Globals.Entities.Clear();
         Globals.MapGrid = null;
         Globals.GridMaps.Clear();
-        Globals.EventDialogs.Clear();
+        Globals.EventDialogs?.Clear();
         Globals.EventHolds.Clear();
         Globals.PendingEvents.Clear();
 
@@ -394,5 +350,4 @@ internal static partial class Main
             Fade.FadeIn(ClientConfiguration.Instance.FadeDurationMs);
         }
     }
-
 }
