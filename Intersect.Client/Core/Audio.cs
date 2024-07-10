@@ -9,10 +9,8 @@ using Intersect.Utilities;
 
 namespace Intersect.Client.Core;
 
-
 public static partial class Audio
 {
-
     private static string sCurrentSong = "";
 
     private static int sFadeRate;
@@ -22,7 +20,7 @@ public static partial class Audio
     private static bool sFadingOut;
 
     //Sounds
-    private static List<Sound> sGameSounds = new List<Sound>();
+    private static readonly List<Sound> sGameSounds = [];
 
     private static bool sIsInitialized;
 
@@ -31,9 +29,9 @@ public static partial class Audio
     private static bool sQueuedLoop;
 
     //Music
-    private static string sQueuedMusic = "";
+    private static string? sQueuedMusic = "";
 
-    private static GameAudioInstance sMyMusic { get; set; }
+    private static GameAudioInstance? sMyMusic { get; set; }
 
     //Init
     public static void Init()
@@ -49,14 +47,10 @@ public static partial class Audio
 
     public static void UpdateGlobalVolume()
     {
-        if (sMyMusic != null)
-        {
-            sMyMusic.SetVolume(sMyMusic.GetVolume(), true);
-        }
-
+        sMyMusic?.SetVolume(sMyMusic.GetVolume(), true);
         for (var i = 0; i < sGameSounds.Count; i++)
         {
-            sGameSounds[i].Update();
+            _ = sGameSounds[i].Update();
             if (!sGameSounds[i].Loaded)
             {
                 sGameSounds.RemoveAt(i);
@@ -75,7 +69,7 @@ public static partial class Audio
                 if (sFadingOut)
                 {
                     sMyMusic.SetVolume(sMyMusic.GetVolume() - 1, true);
-                    if (sMyMusic.GetVolume() <= 1)
+                    if (sMyMusic.GetVolume() <= 1 && !string.IsNullOrEmpty(sQueuedMusic))
                     {
                         StopMusic();
                         PlayMusic(sQueuedMusic, 0, sQueuedFade, sQueuedLoop);
@@ -102,7 +96,7 @@ public static partial class Audio
 
         for (var i = 0; i < sGameSounds.Count; i++)
         {
-            sGameSounds[i].Update();
+            _ = sGameSounds[i].Update();
             if (!sGameSounds[i].Loaded)
             {
                 sGameSounds.RemoveAt(i);
@@ -110,16 +104,10 @@ public static partial class Audio
         }
 
         // Update our pack sound cache if we have any packs loaded.
-        if (Globals.ContentManager.SoundPacks != null)
-        {
-            Globals.ContentManager.SoundPacks.UpdateCache();
-        }
+        Globals.ContentManager.SoundPacks?.UpdateCache();
 
         // Update our pack music cache if we have any packs loaded.
-        if (Globals.ContentManager.MusicPacks != null)
-        {
-            Globals.ContentManager.MusicPacks.UpdateCache();
-        }
+        Globals.ContentManager.MusicPacks?.UpdateCache();
     }
 
     //Music
@@ -239,7 +227,7 @@ public static partial class Audio
     }
 
     //Sounds
-    public static MapSound AddMapSound(
+    public static MapSound? AddMapSound(
         string filename,
         int x,
         int y,
@@ -247,7 +235,7 @@ public static partial class Audio
         bool loop,
         int loopInterval,
         int distance,
-        IEntity parent = null
+        IEntity? parent = null
     )
     {
         if (sGameSounds?.Count > 128)
@@ -261,7 +249,7 @@ public static partial class Audio
         return sound;
     }
 
-    public static Sound AddGameSound(string filename, bool loop)
+    public static Sound? AddGameSound(string filename, bool loop)
     {
         if (sGameSounds?.Count > 128)
         {
@@ -292,11 +280,7 @@ public static partial class Audio
     {
         for (var i = 0; i < sGameSounds.Count; i++)
         {
-            if (sGameSounds[i] != null)
-            {
-                sGameSounds[i].Stop();
-            }
+            sGameSounds[i]?.Stop();
         }
     }
-
 }

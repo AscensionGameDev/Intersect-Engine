@@ -6,21 +6,20 @@ using Intersect.Utilities;
 
 namespace Intersect.Client.Core.Sounds;
 
-
 public partial class Sound : ISound
 {
 
     public bool Loaded { get; set; }
 
-    protected string mFilename;
+    protected string? mFilename;
 
-    public string Filename => mFilename;
+    public string? Filename => mFilename;
 
     protected bool mLoop;
 
     protected int mLoopInterval;
 
-    protected GameAudioInstance mSound;
+    protected GameAudioInstance? mSound;
 
     protected float mVolume;
 
@@ -82,6 +81,7 @@ public partial class Sound : ISound
                     mStoppedTime = -1;
                 }
             }
+
             return true;
         }
         else if (mLoop || mSound?.State != GameAudioInstance.AudioInstanceState.Stopped)
@@ -104,5 +104,4 @@ public partial class Sound : ISound
         mSound?.Dispose();
         Loaded = false;
     }
-
 }
