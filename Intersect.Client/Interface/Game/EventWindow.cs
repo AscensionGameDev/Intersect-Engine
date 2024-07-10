@@ -367,7 +367,7 @@ public partial class EventWindow : Base
         base.Hide();
     }
 
-    public void EventResponse1_Clicked(Base sender, ClickedEventArgs arguments)
+    public void EventResponse1_Clicked(Base? sender, ClickedEventArgs? arguments)
     {
         var ed = Globals.EventDialogs[0];
         if (ed.ResponseSent != 0)

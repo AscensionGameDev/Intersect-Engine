@@ -10,7 +10,7 @@ public partial class ControlMap
     public ControlMap(ControlValue binding, params ControlValue[] alternateBindings)
     {
         Bindings = new List<ControlValue>(1 + (alternateBindings?.Length ?? 0)) { binding };
-        Bindings.AddRange(alternateBindings ?? Array.Empty<ControlValue>());
+        Bindings.AddRange(alternateBindings ?? []);
 
         if (Bindings.Count < 2)
         {

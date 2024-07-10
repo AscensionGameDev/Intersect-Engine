@@ -1,9 +1,7 @@
-﻿namespace Intersect.Client.Core.Controls;
-
+namespace Intersect.Client.Core.Controls;
 
 public enum Control
 {
-
     MoveUp,
 
     MoveLeft,
@@ -79,13 +77,4 @@ public enum Control
     HoldToZoomOut,
 
     ToggleFullscreen,
-
-    // Submit,
-    //
-    // Cancel,
-    //
-    // Previous,
-    //
-    // Next,
-
 }

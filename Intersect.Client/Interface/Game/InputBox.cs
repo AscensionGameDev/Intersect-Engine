@@ -329,7 +329,7 @@ public partial class InputBox : Base
         Dispose();
     }
 
-    public void okayBtn_Clicked(Base sender, ClickedEventArgs arguments)
+    public void okayBtn_Clicked(Base? sender, ClickedEventArgs? arguments)
     {
         SubmitInput();
     }
