@@ -10,13 +10,11 @@ using Intersect.Network.Packets.Server;
 
 namespace Intersect.Client.Entities;
 
-
 public partial class Resource : Entity, IResource
 {
-
     private bool _waitingForTilesets;
 
-    public ResourceBase BaseResource { get; set; }
+    public ResourceBase? BaseResource { get; set; }
 
     bool IResource.IsDepleted => IsDead;
 
@@ -65,21 +63,33 @@ public partial class Resource : Entity, IResource
         }
     }
 
-    public override void Load(EntityPacket packet)
+    public override void Load(EntityPacket? packet)
     {
         base.Load(packet);
-        var pkt = (ResourceEntityPacket) packet;
+        var pkt = packet as ResourceEntityPacket;
+
+        if (pkt == default)
+        {
+            return;
+        }
+
         IsDead = pkt.IsDead;
         var baseId = pkt.ResourceId;
         BaseResource = ResourceBase.Get(baseId);
+
+        if (BaseResource == default)
+        {
+            return;
+        }
+
         HideName = true;
         if (IsDead)
         {
-            Sprite = BaseResource?.Exhausted.Graphic;
+            Sprite = BaseResource.Exhausted.Graphic;
         }
         else
         {
-            Sprite = BaseResource?.Initial.Graphic;
+            Sprite = BaseResource.Initial.Graphic;
         }
     }
 
@@ -87,11 +97,12 @@ public partial class Resource : Entity, IResource
     {
         if (RenderList != null)
         {
-            RenderList.Remove(this);
+            _ = RenderList.Remove(this);
             RenderList = null;
         }
 
         ClearAnimations(null);
+        GC.SuppressFinalize(this);
         mDisposed = true;
     }
 
@@ -124,7 +135,7 @@ public partial class Resource : Entity, IResource
         {
             if (RenderList != null)
             {
-                RenderList.Remove(this);
+                _ = RenderList.Remove(this);
             }
 
             return true;
@@ -135,7 +146,7 @@ public partial class Resource : Entity, IResource
         {
             if (RenderList != null)
             {
-                RenderList.Remove(this);
+                _ = RenderList.Remove(this);
             }
         }
 
@@ -145,14 +156,12 @@ public partial class Resource : Entity, IResource
     /// <inheritdoc />
     public override bool CanBeAttacked => !IsDead;
 
-    public override HashSet<Entity> DetermineRenderOrder(HashSet<Entity> renderList, IMapInstance map)
+    public override HashSet<Entity>? DetermineRenderOrder(HashSet<Entity>? renderList, IMapInstance? map)
     {
-        if (IsDead && !BaseResource.Exhausted.RenderBelowEntities)
-        {
-            return base.DetermineRenderOrder(renderList, map);
-        }
-
-        if (!IsDead && !BaseResource.Initial.RenderBelowEntities)
+        if (BaseResource == default ||
+            (IsDead && !BaseResource.Exhausted.RenderBelowEntities) ||
+            (!IsDead && !BaseResource.Initial.RenderBelowEntities)
+        )
         {
             return base.DetermineRenderOrder(renderList, map);
         }
@@ -160,10 +169,10 @@ public partial class Resource : Entity, IResource
         //Otherwise we are alive or dead and we want to render below players/npcs
         if (renderList != null)
         {
-            renderList.Remove(this);
+            _ = renderList.Remove(this);
         }
 
-        if (map == null || Globals.Me == null || Globals.Me.MapInstance == null)
+        if (map == null || Globals.Me == null || Globals.Me.MapInstance == null || Globals.MapGrid == default)
         {
             return null;
         }
@@ -203,7 +212,7 @@ public partial class Resource : Entity, IResource
                             renderSet = Graphics.RenderingEntities[priority, Options.MapHeight * 2 + Y];
                         }
 
-                        renderSet.Add(this);
+                        _ = renderSet.Add(this);
                         renderList = renderSet;
 
                         return renderList;
@@ -219,7 +228,7 @@ public partial class Resource : Entity, IResource
     private void CalculateRenderBounds()
     {
         var map = MapInstance;
-        if (map == null)
+        if (map == null || BaseResource == default)
         {
             return;
         }
@@ -232,7 +241,6 @@ public partial class Resource : Entity, IResource
         if (_waitingForTilesets && GameContentManager.Current.TilesetsLoaded)
         {
             _waitingForTilesets = false;
-            Sprite = Sprite;
         }
 
         if (Texture != null)
@@ -290,5 +298,4 @@ public partial class Resource : Entity, IResource
             Graphics.DrawGameTexture(Texture, mSrcRectangle, mDestRectangle, Intersect.Color.White);
         }
     }
-
 }
