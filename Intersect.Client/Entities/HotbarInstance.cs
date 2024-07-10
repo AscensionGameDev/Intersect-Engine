@@ -1,4 +1,4 @@
-﻿using Intersect.Client.Framework.Entities;
+using Intersect.Client.Framework.Entities;
 using Intersect.Enums;
 using Newtonsoft.Json;
 
@@ -6,7 +6,6 @@ namespace Intersect.Client.Entities;
 
 public partial class HotbarInstance : IHotbarInstance
 {
-
     public Guid BagId { get; set; } = Guid.Empty;
 
     public Guid ItemOrSpellId { get; set; } = Guid.Empty;
@@ -17,5 +16,4 @@ public partial class HotbarInstance : IHotbarInstance
     {
         JsonConvert.PopulateObject(data, this);
     }
-
 }
