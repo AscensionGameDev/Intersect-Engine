@@ -1,4 +1,5 @@
 using Intersect.Client.Framework.Gwen.Control;
+using Intersect.Client.Framework.Gwen.Input;
 using Intersect.Client.Interface.Game.DescriptionWindows.Components;
 
 namespace Intersect.Client.Interface.Game.DescriptionWindows;
@@ -11,15 +12,10 @@ public partial class DescriptionWindowBase : ComponentBase
     // Our internal list of components.
     private List<ComponentBase> mComponents;
 
-    private bool mCenterOnPosition;
-
-    public DescriptionWindowBase(Base parent, string name, bool centerOnPosition = false) : base(parent, name)
+    public DescriptionWindowBase(Base parent, string name) : base(parent, name)
     {
         // Set up our internal component list we use for re-ordering.
         mComponents = new List<ComponentBase>();
-
-        // Set up whether we should center on our desired position.
-        mCenterOnPosition = centerOnPosition;
 
         GenerateComponents();
     }
@@ -135,32 +131,29 @@ public partial class DescriptionWindowBase : ComponentBase
     /// <inheritdoc/>
     public override void SetPosition(int x, int y)
     {
-        var newX = x - mContainer.Width - mContainer.Padding.Right;
-        var newY = y + mContainer.Padding.Top;
-
-        // Center on the desired position if requested.
-        if (mCenterOnPosition)
+        if (mContainer == null || mContainer.Canvas == null)
         {
-            newX += (mContainer.Width - mContainer.Padding.Right) / 2;
+            return;
         }
-        
+
+        int newX, newY;
+        int HoveredControlX, HoveredControlY;
+
+        // Bind description window to the HoveredControl position.
+        HoveredControlX = InputHandler.HoveredControl.LocalPosToCanvas(new Point(0, 0)).X;
+        HoveredControlY = InputHandler.HoveredControl.LocalPosToCanvas(new Point(0, 0)).Y;
+        newX = HoveredControlX + InputHandler.HoveredControl.Width;
+        newY = HoveredControlY + InputHandler.HoveredControl.Height;
+
         // Do not allow it to render outside of the screen canvas.
-        if (newX < 0)
+        if (newX > mContainer.Canvas.Width - mContainer.Width)
         {
-            newX = 0;
-        }
-        else if (newX > mContainer.Canvas.Width - mContainer.Width)
-        {
-            newX = mContainer.Canvas.Width - mContainer.Width;
+            newX = HoveredControlX - mContainer.Width;
         }
 
-        if (newY < 0)
+        if (newY > mContainer.Canvas.Height - mContainer.Height)
         {
-            newY = 0;
-        }
-        else if (newY > mContainer.Canvas.Height - mContainer.Height)
-        {
-            newY = mContainer.Canvas.Height - mContainer.Height;
+            newY = HoveredControlY - mContainer.Height;
         }
 
         mContainer.MoveTo(newX, newY);

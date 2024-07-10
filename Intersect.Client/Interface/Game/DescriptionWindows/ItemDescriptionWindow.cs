@@ -29,9 +29,8 @@ public partial class ItemDescriptionWindow : DescriptionWindowBase
         int y,
         ItemProperties itemProperties,
         string titleOverride = "",
-        string valueLabel = "",
-        bool centerOnPosition = false
-    ) : base(Interface.GameUi.GameCanvas, "DescriptionWindow", centerOnPosition)
+        string valueLabel = ""
+    ) : base(Interface.GameUi.GameCanvas, "DescriptionWindow")
     {
         mItem = item;
         mAmount = amount;

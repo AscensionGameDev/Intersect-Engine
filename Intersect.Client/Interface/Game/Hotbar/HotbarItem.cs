@@ -171,7 +171,7 @@ public partial class HotbarItem
             return;
         }
 
-        if (mCurrentItem != null)
+        if (mCurrentItem != null && mInventoryItem != null)
         {
             if (mItemDescWindow != null)
             {
@@ -181,7 +181,7 @@ public partial class HotbarItem
 
             mItemDescWindow = new ItemDescriptionWindow(
                 mCurrentItem, 1, mHotbarWindow.X + (mHotbarWindow.Width / 2), mHotbarWindow.Y + mHotbarWindow.Height + 2,
-                mInventoryItem?.ItemProperties, mCurrentItem.Name, "", true
+                mInventoryItem.ItemProperties, mCurrentItem.Name, ""
             );
         }
         else if (mCurrentSpell != null)
@@ -193,7 +193,7 @@ public partial class HotbarItem
             }
 
             mSpellDescWindow = new SpellDescriptionWindow(
-                mCurrentSpell.Id, mHotbarWindow.X + (mHotbarWindow.Width / 2), mHotbarWindow.Y + mHotbarWindow.Height + 2, true
+                mCurrentSpell.Id, mHotbarWindow.X + (mHotbarWindow.Width / 2), mHotbarWindow.Y + mHotbarWindow.Height + 2
             );
         }
     }

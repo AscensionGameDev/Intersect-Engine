@@ -11,7 +11,7 @@ public partial class SpellDescriptionWindow : DescriptionWindowBase
 {
     protected SpellBase mSpell;
 
-    public SpellDescriptionWindow(Guid spellId, int x, int y, bool centerOnPosition = false) : base(Interface.GameUi.GameCanvas, "DescriptionWindow", centerOnPosition)
+    public SpellDescriptionWindow(Guid spellId, int x, int y) : base(Interface.GameUi.GameCanvas, "DescriptionWindow")
     {
         mSpell = SpellBase.Get(spellId);
 
