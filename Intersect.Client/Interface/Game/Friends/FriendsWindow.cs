@@ -1,4 +1,4 @@
-﻿using Intersect.Client.Core;
+using Intersect.Client.Core;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
@@ -88,7 +88,7 @@ partial class FriendsWindow
         var count = 0;
         foreach (var friend in Globals.Me.Friends)
         {
-            var control = new FriendsRow(mFriendContainer, friend.Name, friend.Map, friend.Online);
+            var control = new FriendsRow(mFriendContainer, friend.Name, friend?.Map ?? string.Empty, friend.Online);
             control.SetPosition(mFriendListAnchor.Bounds.X, mFriendListAnchor.Bounds.Y + (count * control.Bounds.Height));
 
             mRows.Add(control);
