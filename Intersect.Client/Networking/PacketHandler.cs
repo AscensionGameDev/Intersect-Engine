@@ -2157,7 +2157,7 @@ internal sealed partial class PacketHandler
         switch (packet.FadeType)
         {
             case GameObjects.Events.FadeType.None:
-                Fade.Cancel(packet.WaitForCompletion);
+                Fade.Cancel();
                 break;
             case GameObjects.Events.FadeType.FadeIn:
                 Fade.FadeIn(packet.DurationMs, packet.WaitForCompletion);

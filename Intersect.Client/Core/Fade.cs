@@ -3,19 +3,15 @@ using Intersect.Utilities;
 
 namespace Intersect.Client.Core;
 
-
 public static partial class Fade
 {
-
     public enum FadeType
     {
-
         None = 0,
 
         In = 1,
 
         Out = 2,
-
     }
 
     private static FadeType sCurrentAction;
@@ -48,7 +44,7 @@ public static partial class Fade
         InformServer = informServer;
     }
 
-    public static void Cancel(bool informServer = false)
+    public static void Cancel()
     {
         sCurrentAction = FadeType.None;
         sFadeAmt = default;
