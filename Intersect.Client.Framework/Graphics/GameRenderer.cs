@@ -118,9 +118,9 @@ public abstract partial class GameRenderer : IGameRenderer
         float tw,
         float th,
         Color renderColor,
-        GameRenderTexture renderTarget = null,
+        GameRenderTexture? renderTarget = null,
         GameBlendModes blendMode = GameBlendModes.None,
-        GameShader shader = null,
+        GameShader? shader = null,
         float rotationDegrees = 0.0f
     ) => DrawTexture(tex, sx, sy, sw, sh, tx, ty, tw, th, renderColor, renderTarget, blendMode, shader, rotationDegrees);
 
@@ -141,18 +141,18 @@ public abstract partial class GameRenderer : IGameRenderer
 
     public abstract GameTexture GetWhiteTexture();
 
-    public abstract Pointf MeasureText(string text, GameFont gameFont, float fontScale);
+    public abstract Pointf MeasureText(string text, GameFont? gameFont, float fontScale);
 
     public abstract void DrawString(
         string text,
-        GameFont gameFont,
+        GameFont? gameFont,
         float x,
         float y,
         float fontScale,
-        Color fontColor,
+        Color? fontColor,
         bool worldPos = true,
-        GameRenderTexture renderTexture = null,
-        Color borderColor = null
+        GameRenderTexture? renderTexture = null,
+        Color? borderColor = null
     );
 
     public abstract void DrawString(

@@ -430,14 +430,14 @@ public class MonoRenderer : GameRenderer
 
     public override void DrawString(
         string text,
-        GameFont gameFont,
+        GameFont? gameFont,
         float x,
         float y,
         float fontScale,
-        Color fontColor,
+        Color? fontColor,
         bool worldPos = true,
-        GameRenderTexture renderTexture = null,
-        Color borderColor = null
+        GameRenderTexture? renderTexture = null,
+        Color? borderColor = null
     )
     {
         var font = (SpriteFont)gameFont?.GetFont();
@@ -920,7 +920,7 @@ public class MonoRenderer : GameRenderer
     public override GameTexture LoadTexture(string assetName, Func<Stream> createStream) =>
         new MonoTexture(mGraphicsDevice, assetName, createStream);
 
-    public override Pointf MeasureText(string text, GameFont gameFont, float fontScale)
+    public override Pointf MeasureText(string text, GameFont? gameFont, float fontScale)
     {
         var font = (SpriteFont)gameFont?.GetFont();
         if (font == null)

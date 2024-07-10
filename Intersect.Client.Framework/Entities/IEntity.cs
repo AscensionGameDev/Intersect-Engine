@@ -12,14 +12,14 @@ public interface IEntity : IDisposable
     EntityType Type { get; }
     string Name { get; }
     Gender Gender { get; }
-    Color NameColor { get; }
+    Color? NameColor { get; }
     Label FooterLabel { get; }
     Label HeaderLabel { get; }
     bool IsHidden { get; }
     string Sprite { get; }
     string TransformedSprite { get; }
     string Face { get; }
-    GameTexture Texture { get; }
+    GameTexture? Texture { get; }
     Color Color { get; }
     FloatRect WorldPos { get; }
     float OffsetX { get; }
@@ -30,10 +30,10 @@ public interface IEntity : IDisposable
     bool IsStealthed { get; }
     bool IsBlocking { get; }
     bool IsDashing { get; }
-    IDash CurrentDash { get; }
+    IDash? CurrentDash { get; }
     bool IsCasting { get; }
     bool InView { get; }
-    IMapInstance MapInstance { get; }
+    IMapInstance? MapInstance { get; }
     Guid MapId { get; }
     Direction Dir { get; }
     byte X { get; }
