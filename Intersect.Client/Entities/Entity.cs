@@ -1493,7 +1493,7 @@ public partial class Entity : IEntity
         );
     }
 
-    public virtual void DrawName(Color textColor, Color borderColor = null, Color backgroundColor = null)
+    public virtual void DrawName(Color? textColor, Color? borderColor = null, Color? backgroundColor = null)
     {
         // Are we really supposed to draw this name?
         if (!ShouldDrawName)

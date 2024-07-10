@@ -577,9 +577,9 @@ public class MonoRenderer : GameRenderer
         float tw,
         float th,
         Color renderColor,
-        GameRenderTexture renderTarget = null,
+        GameRenderTexture? renderTarget = null,
         GameBlendModes blendMode = GameBlendModes.None,
-        GameShader shader = null,
+        GameShader? shader = null,
         float rotationDegrees = 0,
         bool isUi = false,
         bool drawImmediate = false

@@ -1,4 +1,4 @@
-﻿using Intersect.Client.Framework.GenericClasses;
+using Intersect.Client.Framework.GenericClasses;
 
 namespace Intersect.Client.Framework.Graphics;
 
@@ -85,9 +85,9 @@ public abstract partial class GameRenderer : IGameRenderer
         float tw,
         float th,
         Color renderColor,
-        GameRenderTexture renderTarget = null,
+        GameRenderTexture? renderTarget = null,
         GameBlendModes blendMode = GameBlendModes.None,
-        GameShader shader = null,
+        GameShader? shader = null,
         float rotationDegrees = 0.0f,
         bool isUi = false,
         bool drawImmediate = false
