@@ -112,7 +112,7 @@ public partial class EntityBox
     private MenuItem _guildMenuItem;
 
     //Init
-    public EntityBox(Canvas gameCanvas, EntityType entityType, Entity myEntity, bool isPlayerBox = false)
+    public EntityBox(Canvas gameCanvas, EntityType entityType, Entity? myEntity, bool isPlayerBox = false)
     {
         MyEntity = myEntity;
         EntityType = entityType;
@@ -238,7 +238,7 @@ public partial class EntityBox
         mLastUpdateTime = Timing.Global.MillisecondsUtc;
     }
 
-    public void SetEntity(Entity entity)
+    public void SetEntity(Entity? entity)
     {
         MyEntity = entity;
         if (MyEntity != null)

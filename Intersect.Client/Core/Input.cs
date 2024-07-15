@@ -1,5 +1,6 @@
 using Intersect.Admin.Actions;
 using Intersect.Client.Core.Controls;
+using Intersect.Client.Entities;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Graphics;
 using Intersect.Client.Framework.Input;
@@ -242,10 +243,10 @@ public static partial class Input
                                 case Control.PickUp:
                                     if (Globals.Me != default && Globals.Me.MapInstance != default)
                                     {
-                                        _ = (Globals.Me?.TryPickupItem(
-                                            Globals.Me.MapInstance.Id,
-                                            Globals.Me.Y * Options.MapWidth + Globals.Me.X)
-                                        );
+                                        _ = Player.TryPickupItem(
+                                                Globals.Me.MapInstance.Id,
+                                                Globals.Me.Y * Options.MapWidth + Globals.Me.X
+                                            );
                                     }
 
                                     break;
@@ -416,7 +417,7 @@ public static partial class Input
         if (Controls.Controls.ControlHasKey(Control.PickUp, modifier, key))
         {
             if (Globals.Me.MapInstance != default &&
-                Globals.Me.TryPickupItem(Globals.Me.MapInstance.Id, Globals.Me.Y * Options.MapWidth + Globals.Me.X, Guid.Empty, true)
+                Player.TryPickupItem(Globals.Me.MapInstance.Id, Globals.Me.Y * Options.MapWidth + Globals.Me.X, Guid.Empty, true)
             )
             {
                 return;

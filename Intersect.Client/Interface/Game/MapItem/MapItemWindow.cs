@@ -1,4 +1,5 @@
-﻿using Intersect.Client.Core;
+using Intersect.Client.Core;
+using Intersect.Client.Entities;
 using Intersect.Client.Framework.File_Management;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
@@ -195,7 +196,13 @@ public partial class MapItemWindow
 
         // Try and pick up everything on our location.
         var currentMap = Globals.Me.MapInstance as MapInstance;
-        Globals.Me.TryPickupItem(currentMap.Id, Globals.Me.Y * Options.MapWidth + Globals.Me.X);
+
+        if (currentMap == default)
+        {
+            return;
+        }
+
+        _ = Player.TryPickupItem(currentMap.Id, Globals.Me.Y * Options.MapWidth + Globals.Me.X);
         
     }
 

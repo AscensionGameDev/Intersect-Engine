@@ -299,7 +299,7 @@ internal sealed partial class PacketHandler
     public void HandlePacket(IPacketSender packetSender, MapPacket packet)
     {
         HandleMap(packetSender, packet);
-        Globals.Me.FetchNewMaps();
+        Player.FetchNewMaps();
     }
 
     //PlayerEntityPacket
@@ -508,7 +508,7 @@ internal sealed partial class PacketHandler
         {
             Globals.Me.MapId = mapId;
             Globals.NeedsMaps = true;
-            Globals.Me.FetchNewMaps();
+            Player.FetchNewMaps();
         }
         else
         {
@@ -1768,7 +1768,7 @@ internal sealed partial class PacketHandler
 
         if (Globals.Me != null)
         {
-            Globals.Me.FetchNewMaps();
+            Player.FetchNewMaps();
         }
 
         Graphics.GridSwitched = true;

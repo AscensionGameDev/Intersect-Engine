@@ -23,7 +23,7 @@ public interface IPlayer : IEntity
     Guid[] HiddenQuests { get; }
     bool IsInGuild { get; }
     string GuildName { get; }
-    GuildRank GuildRank { get; }
+    GuildRank? GuildRank { get; }
     bool IsBusy { get; }
 
     bool TryGetRealLocation(ref int x, ref int y, ref Guid mapId);
