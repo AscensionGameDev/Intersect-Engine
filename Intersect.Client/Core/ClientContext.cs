@@ -1,4 +1,4 @@
-﻿using Intersect.Client.Networking;
+using Intersect.Client.Networking;
 using Intersect.Client.Plugins.Contexts;
 using Intersect.Core;
 using Intersect.Factories;
@@ -16,13 +16,13 @@ internal sealed partial class ClientContext : ApplicationContext<ClientContext, 
 {
     internal static bool IsSinglePlayer { get; set; }
 
-    private IPlatformRunner mPlatformRunner;
+    private IPlatformRunner? mPlatformRunner;
 
     internal ClientContext(ClientCommandLineOptions startupOptions, Logger logger, IPacketHelper packetHelper) : base(
         startupOptions, logger, packetHelper
     )
     {
-        FactoryRegistry<IPluginContext>.RegisterFactory(new ClientPluginContext.Factory());
+        _ = FactoryRegistry<IPluginContext>.RegisterFactory(new ClientPluginContext.Factory());
     }
 
     protected override bool UsesMainThread => true;

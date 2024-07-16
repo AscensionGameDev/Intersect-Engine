@@ -7,17 +7,17 @@ namespace Intersect.Client.Core.Controls;
 
 public partial class ControlValue
 {
-    public static ControlValue Default => new ControlValue(Keys.None, Keys.None);
+    public static ControlValue Default => new(Keys.None, Keys.None);
 
     public Keys Modifier { get; set; }
 
     public Keys Key { get; set; }
 
-    public bool IsMouseKey => Key == Keys.LButton 
-        || Key == Keys.RButton 
-        || Key == Keys.MButton 
-        || Key == Keys.XButton1 
-        || Key == Keys.XButton2;
+    public bool IsMouseKey => Key is Keys.LButton
+        or Keys.RButton
+        or Keys.MButton
+        or Keys.XButton1
+        or Keys.XButton2;
 
     [JsonConstructor]
     public ControlValue(Keys modifier, Keys key)
@@ -100,5 +100,5 @@ public partial class ControlValue
         return false;
     }
 
-    private bool KeyDown(Keys key) => Globals.InputManager.KeyDown(key);
+    private static bool KeyDown(Keys key) => Globals.InputManager.KeyDown(key);
 }

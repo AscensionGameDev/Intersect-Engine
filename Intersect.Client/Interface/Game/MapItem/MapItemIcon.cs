@@ -1,3 +1,4 @@
+using Intersect.Client.Entities;
 using Intersect.Client.Framework.GenericClasses;
 using Intersect.Client.Framework.Gwen.Control;
 using Intersect.Client.Framework.Gwen.Control.EventArguments;
@@ -48,7 +49,7 @@ public partial class MapItemIcon
             return;
         }
 
-        Globals.Me.TryPickupItem(MapId, TileIndex, MyItem.Id);
+        _ = Player.TryPickupItem(MapId, TileIndex, MyItem.Id);
     }
 
     void pnl_HoverLeave(Base sender, EventArgs arguments)

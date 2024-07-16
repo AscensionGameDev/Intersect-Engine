@@ -1,25 +1,23 @@
-﻿using Intersect.Client.Framework.Entities;
+using Intersect.Client.Framework.Entities;
 using Intersect.Client.Maps;
 using Intersect.Enums;
 using Intersect.Utilities;
 
 namespace Intersect.Client.Entities;
 
-
 public partial class Dash : IDash
 {
+    private readonly Direction mChangeDirection = Direction.None;
 
-    private Direction mChangeDirection = Direction.None;
+    private readonly int mDashTime;
 
-    private int mDashTime;
+    private readonly Guid mEndMapId;
 
-    private Guid mEndMapId;
-
-    private byte mEndX;
+    private readonly byte mEndX;
 
     private float mEndXCoord;
 
-    private byte mEndY;
+    private readonly byte mEndY;
 
     private float mEndYCoord;
 
@@ -33,7 +31,7 @@ public partial class Dash : IDash
 
     public float OffsetY => GetYOffset();
 
-    public Dash(Entity en, Guid endMapId, byte endX, byte endY, int dashTime, Direction changeDirection = Direction.None)
+    public Dash(Guid endMapId, byte endX, byte endY, int dashTime, Direction changeDirection = Direction.None)
     {
         mChangeDirection = changeDirection;
         mEndMapId = endMapId;
@@ -104,5 +102,4 @@ public partial class Dash : IDash
 
         return en.Dashing != null;
     }
-
 }

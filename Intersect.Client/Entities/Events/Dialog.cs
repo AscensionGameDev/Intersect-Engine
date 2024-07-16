@@ -1,9 +1,7 @@
-﻿namespace Intersect.Client.Entities.Events;
-
+namespace Intersect.Client.Entities.Events;
 
 public partial class Dialog
 {
-
     public Guid EventId;
 
     public string Face = "";
@@ -21,5 +19,4 @@ public partial class Dialog
     public int ResponseSent;
 
     public int Type;
-
 }

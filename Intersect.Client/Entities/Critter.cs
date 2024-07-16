@@ -12,7 +12,7 @@ namespace Intersect.Client.Entities;
 
 public partial class Critter : Entity
 {
-    private MapCritterAttribute mAttribute;
+    private readonly MapCritterAttribute mAttribute;
     private long mLastMove = -1;
 
     public Critter(MapInstance map, byte x, byte y, MapCritterAttribute att) : base(Guid.NewGuid(), null, EntityType.GlobalEntity)
@@ -20,7 +20,7 @@ public partial class Critter : Entity
         mAttribute = att;
 
         //setup Sprite & Animation
-        Sprite = att?.Sprite;
+        Sprite = att.Sprite;
         var anim = AnimationBase.Get(att.AnimationId);
         if (anim != null)
         {
@@ -66,8 +66,10 @@ public partial class Critter : Entity
 
                 mLastMove = Timing.Global.MillisecondsUtc + mAttribute.Frequency + Globals.Random.Next((int)(mAttribute.Frequency * .5f));
             }
+
             return true;
         }
+
         return false;
     }
 
@@ -76,7 +78,7 @@ public partial class Critter : Entity
         MoveDir = Randomization.NextDirection();
         var tmpX = (sbyte)X;
         var tmpY = (sbyte)Y;
-        IEntity blockedBy = null;
+        IEntity? blockedBy = null;
 
         if (IsMoving || MoveTimer >= Timing.Global.MillisecondsUtc)
         {
@@ -204,18 +206,19 @@ public partial class Critter : Entity
                 }
             }
         }
+
         return false;
     }
 
-    public override HashSet<Entity> DetermineRenderOrder(HashSet<Entity> renderList, IMapInstance map)
+    public override HashSet<Entity>? DetermineRenderOrder(HashSet<Entity>? renderList, IMapInstance? map)
     {
         if (mAttribute.Layer == 1)
         {
             return base.DetermineRenderOrder(renderList, map);
         }
 
-        renderList?.Remove(this);
-        if (map == null || Globals.Me == null || Globals.Me.MapInstance == null)
+        _ = (renderList?.Remove(this));
+        if (map == null || Globals.Me == null || Globals.Me.MapInstance == null || Globals.MapGrid == default)
         {
             return null;
         }
@@ -250,7 +253,7 @@ public partial class Critter : Entity
                             priority += 3;
                         }
 
-                        HashSet<Entity> renderSet = null;
+                        HashSet<Entity>? renderSet = null;
 
                         if (y == gridY - 2)
                         {
@@ -273,9 +276,8 @@ public partial class Critter : Entity
                             renderSet = Graphics.RenderingEntities[priority, Options.MapHeight * 4 + Y];
                         }
 
-                        renderSet?.Add(this);
+                        _ = (renderSet?.Add(this));
                         renderList = renderSet;
-
                         return renderList;
                     }
                 }

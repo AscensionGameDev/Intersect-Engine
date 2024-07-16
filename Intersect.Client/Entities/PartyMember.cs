@@ -1,12 +1,10 @@
-﻿using Intersect.Client.Framework.Entities;
+using Intersect.Client.Framework.Entities;
 using Intersect.Enums;
 
 namespace Intersect.Client.Entities;
 
-
 public partial class PartyMember : IPartyMember
 {
-
     public Guid Id { get; set; }
 
     public int Level { get; set; }
@@ -25,5 +23,4 @@ public partial class PartyMember : IPartyMember
         MaxVital = maxVital;
         Level = level;
     }
-
 }

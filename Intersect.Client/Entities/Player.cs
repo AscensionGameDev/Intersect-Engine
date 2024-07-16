@@ -25,10 +25,8 @@ using MapAttribute = Intersect.Enums.MapAttribute;
 
 namespace Intersect.Client.Entities;
 
-
 public partial class Player : Entity, IPlayer
 {
-
     public delegate void InventoryUpdated();
 
     private Guid _class;
@@ -56,49 +54,46 @@ public partial class Player : Entity, IPlayer
 
     IReadOnlyList<IFriendInstance> IPlayer.Friends => Friends;
 
-    public List<IFriendInstance> Friends { get; set; } = new();
+    public List<IFriendInstance> Friends { get; set; } = [];
 
     IReadOnlyList<IHotbarInstance> IPlayer.HotbarSlots => Hotbar.ToList();
 
     public HotbarInstance[] Hotbar { get; set; } = new HotbarInstance[Options.Instance.PlayerOpts.HotbarSlotCount];
 
-    public InventoryUpdated InventoryUpdatedDelegate { get; set; }
+    public InventoryUpdated? InventoryUpdatedDelegate { get; set; }
 
     IReadOnlyDictionary<Guid, long> IPlayer.ItemCooldowns => ItemCooldowns;
 
-    public Dictionary<Guid, long> ItemCooldowns { get; set; } = new();
+    public Dictionary<Guid, long> ItemCooldowns { get; set; } = [];
 
-    private Entity mLastBumpedEvent;
+    private Entity? mLastBumpedEvent;
 
-    private List<IPartyMember> mParty;
-
-    private Direction _lastMoveDirection;
+    private List<IPartyMember>? mParty;
 
     public override Direction MoveDir
     {
         get => base.MoveDir;
         set
         {
-            _lastMoveDirection = base.MoveDir;
             base.MoveDir = value;
         }
     }
 
     IReadOnlyDictionary<Guid, QuestProgress> IPlayer.QuestProgress => QuestProgress;
 
-    public Dictionary<Guid, QuestProgress> QuestProgress { get; set; } = new();
+    public Dictionary<Guid, QuestProgress> QuestProgress { get; set; } = [];
 
-    public Guid[] HiddenQuests { get; set; } = new Guid[0];
+    public Guid[] HiddenQuests { get; set; } = [];
 
     IReadOnlyDictionary<Guid, long> IPlayer.SpellCooldowns => SpellCooldowns;
 
-    public Dictionary<Guid, long> SpellCooldowns { get; set; } = new();
+    public Dictionary<Guid, long> SpellCooldowns { get; set; } = [];
 
     public int StatPoints { get; set; } = 0;
 
-    public EntityBox TargetBox { get; set; }
+    public EntityBox? TargetBox { get; set; }
 
-    public PlayerStatusWindow StatusWindow { get; set; }
+    public PlayerStatusWindow? StatusWindow { get; set; }
 
     public Guid TargetIndex { get; set; }
 
@@ -119,19 +114,19 @@ public partial class Player : Entity, IPlayer
 
     Point mlastTargetScanLocation = new(-1, -1);
 
-    Dictionary<Entity, TargetInfo> mlastTargetList = new(); // Entity, Last Time Selected
+    readonly Dictionary<Entity, TargetInfo> mlastTargetList = []; // Entity, Last Time Selected
 
-    Entity mLastEntitySelected;
+    Entity? mLastEntitySelected;
 
-    private Dictionary<int, long> mLastHotbarUseTime = new();
-    private int mHotbarUseDelay = 150;
+    private readonly Dictionary<int, long> mLastHotbarUseTime = [];
+    private readonly int mHotbarUseDelay = 150;
 
     /// <summary>
     /// Name of our guild if we are in one.
     /// </summary>
-    public string Guild { get; set; }
+    public string? Guild { get; set; }
 
-    string IPlayer.GuildName => Guild;
+    string IPlayer.GuildName => Guild ?? string.Empty;
 
     /// <summary>
     /// Index of our rank where 0 is the leader
@@ -146,12 +141,14 @@ public partial class Player : Entity, IPlayer
     /// <summary>
     /// Obtains our rank and permissions from the game config
     /// </summary>
-    public GuildRank GuildRank => IsInGuild ? Options.Instance.Guild.Ranks[Math.Max(0, Math.Min(Rank, Options.Instance.Guild.Ranks.Length - 1))] : null;
+    public GuildRank? GuildRank => IsInGuild
+        ? Options.Instance.Guild.Ranks[Math.Max(0, Math.Min(Rank, Options.Instance.Guild.Ranks.Length - 1))]
+        : null;
 
     /// <summary>
     /// Contains a record of all members of this player's guild.
     /// </summary>
-    public GuildMember[] GuildMembers = new GuildMember[0];
+    public GuildMember[] GuildMembers = [];
 
     public Player(Guid id, PlayerEntityPacket packet) : base(id, packet, EntityType.Player)
     {
@@ -169,11 +166,7 @@ public partial class Player : Entity, IPlayer
     {
         get
         {
-            if (mParty == null)
-            {
-                mParty = new List<IPartyMember>();
-            }
-
+            mParty ??= [];
             return mParty;
         }
     }
@@ -248,7 +241,6 @@ public partial class Player : Entity, IPlayer
             HandleInput();
         }
 
-
         if (!IsBusy)
         {
             if (this == Globals.Me && IsMoving == false)
@@ -268,7 +260,7 @@ public partial class Player : Entity, IPlayer
                         IsCastingCheckTimer = Timing.Global.Milliseconds + 350;
                     }
                 }
-                else if (!Globals.Me.TryAttack())
+                else if (Globals.Me?.TryAttack() == false)
                 {
                     if (!Globals.Me.IsAttacking && (!IsMoving || Options.Instance.PlayerOpts.AllowCombatMovement))
                     {
@@ -280,7 +272,7 @@ public partial class Player : Entity, IPlayer
             //Holding block button for "auto blocking"
             if (Controls.KeyDown(Control.Block))
             {
-                TryBlock();
+                _ = TryBlock();
             }
         }
 
@@ -294,12 +286,12 @@ public partial class Player : Entity, IPlayer
         {
             if (!Globals.Entities.TryGetValue(TargetIndex, out var foundEntity))
             {
-                foundEntity = TargetBox.MyEntity?.MapInstance?.Entities.FirstOrDefault(entity => entity.Id == TargetIndex) as Entity;
+                foundEntity = TargetBox?.MyEntity?.MapInstance?.Entities.FirstOrDefault(entity => entity.Id == TargetIndex) as Entity;
             }
 
             if (foundEntity == default || foundEntity.IsHidden || foundEntity.IsStealthed)
             {
-                ClearTarget();
+                _ = ClearTarget();
             }
         }
 
@@ -323,10 +315,16 @@ public partial class Player : Entity, IPlayer
     }
 
     //Loading
-    public override void Load(EntityPacket packet)
+    public override void Load(EntityPacket? packet)
     {
         base.Load(packet);
-        var playerPacket = (PlayerEntityPacket)packet;
+        var playerPacket = packet as PlayerEntityPacket;
+
+        if (playerPacket == default)
+        {
+            return;
+        }
+
         Gender = playerPacket.Gender;
         Class = playerPacket.ClassId;
         AccessLevel = playerPacket.AccessLevel;
@@ -410,12 +408,15 @@ public partial class Player : Entity, IPlayer
         );
     }
 
-    private void DropInputBoxOkay(object sender, EventArgs e)
+    private void DropInputBoxOkay(object? sender, EventArgs e)
     {
-        var value = (int)Math.Round(((InputBox)sender).Value);
-        if (value > 0)
+        if (sender is InputBox inputBox)
         {
-            PacketSender.SendDropItem((int)((InputBox)sender).UserData, value);
+            var value = (int)Math.Round(inputBox.Value);
+            if (value > 0)
+            {
+                PacketSender.SendDropItem((int)inputBox.UserData, value);
+            }
         }
     }
 
@@ -432,11 +433,11 @@ public partial class Player : Entity, IPlayer
         return -1;
     }
 
-    private int GetQuantityOfItemIn(IEnumerable<IItem> items, Guid itemId)
+    private static int GetQuantityOfItemIn(IEnumerable<IItem> items, Guid itemId)
     {
         long count = 0;
 
-        foreach (var slot in (items ?? Enumerable.Empty<IItem>()))
+        foreach (var slot in items ?? [])
         {
             if (slot?.ItemId == itemId)
             {
@@ -447,14 +448,14 @@ public partial class Player : Entity, IPlayer
         return (int)Math.Min(count, int.MaxValue);
     }
 
-    public int GetQuantityOfItemInBank(Guid itemId) => GetQuantityOfItemIn(Globals.Bank, itemId);
+    public static int GetQuantityOfItemInBank(Guid itemId) => GetQuantityOfItemIn(Globals.Bank, itemId);
 
     public int GetQuantityOfItemInInventory(Guid itemId) => GetQuantityOfItemIn(Inventory, itemId);
 
     public void TryUseItem(int index)
     {
         if (!IsItemOnCooldown(index) &&
-            index >= 0 && index < Globals.Me.Inventory.Length && Globals.Me.Inventory[index]?.Quantity > 0)
+            index >= 0 && index < Globals.Me?.Inventory.Length && Globals.Me.Inventory[index]?.Quantity > 0)
         {
             PacketSender.SendUseItem(index, TargetIndex);
         }
@@ -462,9 +463,9 @@ public partial class Player : Entity, IPlayer
 
     public long GetItemCooldown(Guid id)
     {
-        if (ItemCooldowns.ContainsKey(id))
+        if (ItemCooldowns.TryGetValue(id, out var value))
         {
-            return ItemCooldowns[id];
+            return value;
         }
 
         return 0;
@@ -543,12 +544,12 @@ public partial class Player : Entity, IPlayer
             var itm = Inventory[slot];
             if (itm.ItemId != Guid.Empty)
             {
-                if (ItemCooldowns.ContainsKey(itm.ItemId) && ItemCooldowns[itm.ItemId] > Timing.Global.Milliseconds)
+                if (ItemCooldowns.TryGetValue(itm.ItemId, out var value) && value > Timing.Global.Milliseconds)
                 {
                     return true;
                 }
 
-                if ((ItemBase.TryGet(itm.ItemId, out var itemBase) && !itemBase.IgnoreGlobalCooldown) && Globals.Me.GlobalCooldown > Timing.Global.Milliseconds)
+                if ((ItemBase.TryGet(itm.ItemId, out var itemBase) && !itemBase.IgnoreGlobalCooldown) && Globals.Me?.GlobalCooldown > Timing.Global.Milliseconds)
                 {
                     return true;
                 }
@@ -565,12 +566,12 @@ public partial class Player : Entity, IPlayer
             var itm = Inventory[slot];
             if (itm.ItemId != Guid.Empty)
             {
-                if (ItemCooldowns.ContainsKey(itm.ItemId) && ItemCooldowns[itm.ItemId] > Timing.Global.Milliseconds)
+                if (ItemCooldowns.TryGetValue(itm.ItemId, out var value) && value > Timing.Global.Milliseconds)
                 {
-                    return ItemCooldowns[itm.ItemId] - Timing.Global.Milliseconds;
+                    return value - Timing.Global.Milliseconds;
                 }
 
-                if ((ItemBase.TryGet(itm.ItemId, out var itemBase) && !itemBase.IgnoreGlobalCooldown) && Globals.Me.GlobalCooldown > Timing.Global.Milliseconds)
+                if ((ItemBase.TryGet(itm.ItemId, out var itemBase) && !itemBase.IgnoreGlobalCooldown) && Globals.Me?.GlobalCooldown > Timing.Global.Milliseconds)
                 {
                     return Globals.Me.GlobalCooldown - Timing.Global.Milliseconds;
                 }
@@ -587,12 +588,12 @@ public partial class Player : Entity, IPlayer
             var spl = Spells[slot];
             if (spl.Id != Guid.Empty)
             {
-                if (SpellCooldowns.ContainsKey(spl.Id) && SpellCooldowns[spl.Id] > Timing.Global.Milliseconds)
+                if (SpellCooldowns.TryGetValue(spl.Id, out var value) && value > Timing.Global.Milliseconds)
                 {
                     return true;
                 }
 
-                if ((SpellBase.TryGet(spl.Id, out var spellBase) && !spellBase.IgnoreGlobalCooldown) && Globals.Me.GlobalCooldown > Timing.Global.Milliseconds)
+                if ((SpellBase.TryGet(spl.Id, out var spellBase) && !spellBase.IgnoreGlobalCooldown) && Globals.Me?.GlobalCooldown > Timing.Global.Milliseconds)
                 {
                     return true;
                 }
@@ -624,7 +625,7 @@ public partial class Player : Entity, IPlayer
             return cd - now;
         }
 
-        if (SpellBase.TryGet(spell.Id, out var spellBase) && !spellBase.IgnoreGlobalCooldown && Globals.Me.GlobalCooldown > now)
+        if (SpellBase.TryGet(spell.Id, out var spellBase) && !spellBase.IgnoreGlobalCooldown && Globals.Me?.GlobalCooldown > now)
         {
             return Globals.Me.GlobalCooldown - now;
         }
@@ -642,12 +643,12 @@ public partial class Player : Entity, IPlayer
 
         var shop = Globals.GameShop;
         var shopCanBuyItem =
-            shop.BuyingWhitelist && shop.BuyingItems.Any(buyingItem => buyingItem.ItemId == itemDescriptor.Id)
-            || !shop.BuyingWhitelist && !shop.BuyingItems.Any(buyingItem => buyingItem.ItemId == itemDescriptor.Id);
+            shop?.BuyingWhitelist == true && shop.BuyingItems.Any(buyingItem => buyingItem.ItemId == itemDescriptor.Id)
+            || shop?.BuyingWhitelist == false && !shop.BuyingItems.Any(buyingItem => buyingItem.ItemId == itemDescriptor.Id);
 
         var prompt = Strings.Shop.SellPrompt;
         var inputType = InputBox.InputType.YesNo;
-        EventHandler onSuccess = SellInputBoxOkay;
+        EventHandler? onSuccess = SellInputBoxOkay;
         var userData = inventorySlotIndex;
         var slotQuantity = inventorySlot.Quantity;
         var maxQuantity = slotQuantity;
@@ -688,8 +689,8 @@ public partial class Player : Entity, IPlayer
     public void TryBuyItem(int shopSlotIndex)
     {
         //Confirm the purchase
-        var shopSlot = Globals.GameShop.SellingItems[shopSlotIndex];
-        if (!ItemBase.TryGet(shopSlot.ItemId, out var itemDescriptor))
+        var shopSlot = Globals.GameShop?.SellingItems[shopSlotIndex];
+        if (shopSlot == default || !ItemBase.TryGet(shopSlot.ItemId, out var itemDescriptor))
         {
             return;
         }
@@ -731,27 +732,36 @@ public partial class Player : Entity, IPlayer
         );
     }
 
-    private void BuyItemInputBoxOkay(object sender, EventArgs e)
+    private void BuyItemInputBoxOkay(object? sender, EventArgs e)
     {
-        var value = (int)Math.Round(((InputBox)sender).Value);
-        if (value > 0)
+        if (sender is InputBox inputBox)
         {
-            PacketSender.SendBuyItem((int)((InputBox)sender).UserData, value);
+            var value = (int)Math.Round(inputBox.Value);
+            if (value > 0)
+            {
+                PacketSender.SendBuyItem((int)inputBox.UserData, value);
+            }
         }
     }
 
-    private void SellItemInputBoxOkay(object sender, EventArgs e)
+    private void SellItemInputBoxOkay(object? sender, EventArgs e)
     {
-        var value = (int)Math.Round(((InputBox)sender).Value);
-        if (value > 0)
+        if (sender is InputBox inputBox)
         {
-            PacketSender.SendSellItem((int)((InputBox)sender).UserData, value);
+            var value = (int)Math.Round(inputBox.Value);
+            if (value > 0)
+            {
+                PacketSender.SendSellItem((int)inputBox.UserData, value);
+            }
         }
     }
 
-    private void SellInputBoxOkay(object sender, EventArgs e)
+    private void SellInputBoxOkay(object? sender, EventArgs e)
     {
-        PacketSender.SendSellItem((int)((InputBox)sender).UserData, 1);
+        if (sender is InputBox inputBox)
+        {
+            PacketSender.SendSellItem((int)inputBox.UserData, 1);
+        }
     }
 
     /// <summary>
@@ -774,7 +784,7 @@ public partial class Player : Entity, IPlayer
         // Permission Check for Guild Bank
         if (Globals.GuildBank && !IsGuildBankDepositAllowed())
         {
-            ChatboxMsg.AddMessage(new ChatboxMsg(Strings.Guilds.NotAllowedDeposit.ToString(Globals.Me.Guild), CustomColors.Alerts.Error, ChatMessageType.Bank));
+            ChatboxMsg.AddMessage(new ChatboxMsg(Strings.Guilds.NotAllowedDeposit.ToString(Globals.Me?.Guild), CustomColors.Alerts.Error, ChatMessageType.Bank));
             return false;
         }
 
@@ -858,20 +868,23 @@ public partial class Player : Entity, IPlayer
         return true;
     }
 
-    private bool IsGuildBankDepositAllowed()
+    private static bool IsGuildBankDepositAllowed()
     {
-        return !string.IsNullOrWhiteSpace(Globals.Me.Guild) &&
-               (Globals.Me.GuildRank.Permissions.BankDeposit || Globals.Me.Rank == 0);
+        return !string.IsNullOrWhiteSpace(Globals.Me?.Guild) &&
+               (Globals.Me?.GuildRank?.Permissions.BankDeposit == true || Globals.Me?.Rank == 0);
     }
 
-    private void DepositItemInputBoxOkay(object sender, EventArgs e)
+    private void DepositItemInputBoxOkay(object? sender, EventArgs e)
     {
-        var value = (int)Math.Round(((InputBox)sender).Value);
-        if (value > 0)
+        if (sender is InputBox inputBox)
         {
-            var userData = (int[])((InputBox)sender).UserData;
+            var value = (int)Math.Round(inputBox.Value);
+            if (value > 0)
+            {
+                var userData = (int[])inputBox.UserData;
 
-            PacketSender.SendDepositItem(userData[0], value, userData[1]);
+                PacketSender.SendDepositItem(userData[0], value, userData[1]);
+            }
         }
     }
 
@@ -895,7 +908,7 @@ public partial class Player : Entity, IPlayer
         // Permission Check for Guild Bank
         if (Globals.GuildBank && !IsGuildBankWithdrawAllowed())
         {
-            ChatboxMsg.AddMessage(new ChatboxMsg(Strings.Guilds.NotAllowedWithdraw.ToString(Globals.Me.Guild), CustomColors.Alerts.Error, ChatMessageType.Bank));
+            ChatboxMsg.AddMessage(new ChatboxMsg(Strings.Guilds.NotAllowedWithdraw.ToString(Globals.Me?.Guild), CustomColors.Alerts.Error, ChatMessageType.Bank));
             return false;
         }
 
@@ -978,19 +991,22 @@ public partial class Player : Entity, IPlayer
         return true;
     }
 
-    private bool IsGuildBankWithdrawAllowed()
+    private static bool IsGuildBankWithdrawAllowed()
     {
-        return !string.IsNullOrWhiteSpace(Globals.Me.Guild) &&
-               (Globals.Me.GuildRank.Permissions.BankRetrieve || Globals.Me.Rank == 0);
+        return !string.IsNullOrWhiteSpace(Globals.Me?.Guild) &&
+               (Globals.Me?.GuildRank?.Permissions.BankRetrieve == true || Globals.Me?.Rank == 0);
     }
 
-    private void WithdrawItemInputBoxOkay(object sender, EventArgs e)
+    private void WithdrawItemInputBoxOkay(object? sender, EventArgs e)
     {
-        var value = (int)Math.Round(((InputBox)sender).Value);
-        if (value > 0)
+        if (sender is InputBox inputBox)
         {
-            int[] userData = (int[])((InputBox)sender).UserData;
-            PacketSender.SendWithdrawItem(userData[0], value, userData[1]);
+            var value = (int)Math.Round(inputBox.Value);
+            if (value > 0)
+            {
+                int[] userData = (int[])inputBox.UserData;
+                PacketSender.SendWithdrawItem(userData[0], value, userData[1]);
+            }
         }
     }
 
@@ -1003,7 +1019,7 @@ public partial class Player : Entity, IPlayer
             return;
         }
 
-        int[] userData = new int[2] { inventorySlotIndex, bagSlotIndex };
+        int[] userData = [inventorySlotIndex, bagSlotIndex];
 
         var quantity = inventorySlot.Quantity;
         var maxQuantity = quantity;
@@ -1032,13 +1048,16 @@ public partial class Player : Entity, IPlayer
         );
     }
 
-    private void StoreBagItemInputBoxOkay(object sender, EventArgs e)
+    private void StoreBagItemInputBoxOkay(object? sender, EventArgs e)
     {
-        var value = (int)Math.Round(((InputBox)sender).Value);
-        if (value > 0)
+        if (sender is InputBox inputBox)
         {
-            int[] userData = (int[])((InputBox)sender).UserData;
-            PacketSender.SendStoreBagItem(userData[0], value, userData[1]);
+            var value = (int)Math.Round(inputBox.Value);
+            if (value > 0)
+            {
+                int[] userData = (int[])inputBox.UserData;
+                PacketSender.SendStoreBagItem(userData[0], value, userData[1]);
+            }
         }
     }
 
@@ -1085,13 +1104,16 @@ public partial class Player : Entity, IPlayer
         );
     }
 
-    private void RetreiveBagItemInputBoxOkay(object sender, EventArgs e)
+    private void RetreiveBagItemInputBoxOkay(object? sender, EventArgs e)
     {
-        var value = (int)Math.Round(((InputBox)sender).Value);
-        if (value > 0)
+        if (sender is InputBox inputBox)
         {
-            int[] userData = (int[])((InputBox)sender).UserData;
-            PacketSender.SendRetrieveBagItem(userData[0], value, userData[1]);
+            var value = (int)Math.Round(inputBox.Value);
+            if (value > 0)
+            {
+                int[] userData = (int[])inputBox.UserData;
+                PacketSender.SendRetrieveBagItem(userData[0], value, userData[1]);
+            }
         }
     }
 
@@ -1125,12 +1147,15 @@ public partial class Player : Entity, IPlayer
         );
     }
 
-    private void TradeItemInputBoxOkay(object sender, EventArgs e)
+    private void TradeItemInputBoxOkay(object? sender, EventArgs e)
     {
-        var value = (int)Math.Round(((InputBox)sender).Value);
-        if (value > 0)
+        if (sender is InputBox inputBox)
         {
-            PacketSender.SendOfferTradeItem((int)((InputBox)sender).UserData, value);
+            var value = (int)Math.Round(inputBox.Value);
+            if (value > 0)
+            {
+                PacketSender.SendOfferTradeItem((int)inputBox.UserData, value);
+            }
         }
     }
 
@@ -1163,12 +1188,15 @@ public partial class Player : Entity, IPlayer
         );
     }
 
-    private void RevokeItemInputBoxOkay(object sender, EventArgs e)
+    private void RevokeItemInputBoxOkay(object? sender, EventArgs? e)
     {
-        var value = (int)Math.Round(((InputBox)sender).Value);
-        if (value > 0)
+        if (sender is InputBox inputBox)
         {
-            PacketSender.SendRevokeTradeItem((int)((InputBox)sender).UserData, value);
+            var value = (int)Math.Round(inputBox.Value);
+            if (value > 0)
+            {
+                PacketSender.SendRevokeTradeItem((int)inputBox.UserData, value);
+            }
         }
     }
 
@@ -1176,9 +1204,7 @@ public partial class Player : Entity, IPlayer
     public void SwapSpells(int fromSpellIndex, int toSpellIndex)
     {
         PacketSender.SendSwapSpells(fromSpellIndex, toSpellIndex);
-        var tmpInstance = Spells[toSpellIndex];
-        Spells[toSpellIndex] = Spells[fromSpellIndex];
-        Spells[fromSpellIndex] = tmpInstance;
+        (Spells[fromSpellIndex], Spells[toSpellIndex]) = (Spells[toSpellIndex], Spells[fromSpellIndex]);
     }
 
     public void TryForgetSpell(int spellIndex)
@@ -1198,9 +1224,12 @@ public partial class Player : Entity, IPlayer
         }
     }
 
-    private void ForgetSpellInputBoxOkay(object sender, EventArgs e)
+    private void ForgetSpellInputBoxOkay(object? sender, EventArgs? e)
     {
-        PacketSender.SendForgetSpell((int)((InputBox)sender).UserData);
+        if (sender is InputBox inputBox)
+        {
+            PacketSender.SendForgetSpell((int)inputBox.UserData);
+        }
     }
 
     public void TryUseSpell(int index)
@@ -1210,7 +1239,7 @@ public partial class Player : Entity, IPlayer
         {
             var spellBase = SpellBase.Get(Spells[index].Id);
 
-            if (spellBase.CastDuration > 0 && (Options.Instance.CombatOpts.MovementCancelsCast && Globals.Me.IsMoving))
+            if (spellBase.CastDuration > 0 && (Options.Instance.CombatOpts.MovementCancelsCast && Globals.Me?.IsMoving == true))
             {
                 return;
             }
@@ -1226,7 +1255,7 @@ public partial class Player : Entity, IPlayer
             return cd;
         }
 
-        if ((SpellBase.TryGet(id, out var spellBase) && !spellBase.IgnoreGlobalCooldown) && Globals.Me.GlobalCooldown > Timing.Global.Milliseconds)
+        if ((SpellBase.TryGet(id, out var spellBase) && !spellBase.IgnoreGlobalCooldown) && Globals.Me?.GlobalCooldown > Timing.Global.Milliseconds)
         {
             return Globals.Me.GlobalCooldown;
         }
@@ -1415,7 +1444,10 @@ public partial class Player : Entity, IPlayer
             }
         }
 
-        Globals.Me.MoveDir = inputDirection;
+        if (Globals.Me != default)
+        {
+            Globals.Me.MoveDir = inputDirection;
+        }
 
         TurnAround();
 
@@ -1480,12 +1512,13 @@ public partial class Player : Entity, IPlayer
 
         // Do we need to account for players?
         // Depends on what type of map we're currently on.
-        if (Globals.Me.MapInstance == null)
+        if (Globals.Me?.MapInstance == null)
         {
             return;
         }
+
         var currentMap = Globals.Me.MapInstance as MapInstance;
-        var canTargetPlayers = currentMap.ZoneType != MapZone.Safe;
+        var canTargetPlayers = currentMap?.ZoneType != MapZone.Safe;
 
         // Build a list of Entities to select from with positions if our list is either old, we've moved or changed maps somehow.
         if (
@@ -1525,18 +1558,18 @@ public partial class Player : Entity, IPlayer
                 if (canTargetPlayers && en.Value.Type == EntityType.Player)
                 {
                     var player = en.Value as Player;
-                    if (IsInMyParty(player))
+                    if (player != default && IsInMyParty(player))
                     {
                         continue;
                     }
                 }
 
-                if (en.Value.Type == EntityType.GlobalEntity || en.Value.Type == EntityType.Player)
+                if (en.Value.Type is EntityType.GlobalEntity or EntityType.Player)
                 {
                     // Already in our list?
-                    if (mlastTargetList.ContainsKey(en.Value))
+                    if (mlastTargetList.TryGetValue(en.Value, out var value))
                     {
-                        mlastTargetList[en.Value].DistanceTo = GetDistanceTo(en.Value);
+                        value.DistanceTo = GetDistanceTo(en.Value);
                     }
                     else
                     {
@@ -1550,7 +1583,7 @@ public partial class Player : Entity, IPlayer
             var toRemove = mlastTargetList.Where(en => !Globals.Entities.ContainsValue(en.Key)).ToArray();
             foreach (var en in toRemove)
             {
-                mlastTargetList.Remove(en.Key);
+                _ = mlastTargetList.Remove(en.Key);
             }
 
             // Skip scanning for another second or so.. And set up other values.
@@ -1567,7 +1600,7 @@ public partial class Player : Entity, IPlayer
 
         int currentDistance = 9999;
         long currentTime = Timing.Global.Milliseconds;
-        Entity currentEntity = mLastEntitySelected;
+        Entity? currentEntity = mLastEntitySelected;
         foreach (var entity in validEntities)
         {
             if (currentEntity == entity.Key)
@@ -1623,6 +1656,7 @@ public partial class Player : Entity, IPlayer
         {
             lastTarget.LastTimeSelected = Timing.Global.Milliseconds;
         }
+
         mLastEntitySelected = targetedEntity;
 
         if (TargetIndex != targetedEntity.Id)
@@ -1633,7 +1667,7 @@ public partial class Player : Entity, IPlayer
         }
     }
 
-    private void SetTargetBox(Entity en)
+    private void SetTargetBox(Entity? en)
     {
         if (en == null)
         {
@@ -1736,7 +1770,7 @@ public partial class Player : Entity, IPlayer
 
     public bool TryAttack()
     {
-        if (IsAttacking || IsBlocking || (IsMoving && !Options.Instance.PlayerOpts.AllowCombatMovement))
+        if (IsAttacking || IsBlocking || (IsMoving && !Options.Instance.PlayerOpts.AllowCombatMovement) || Globals.Me == default)
         {
             return false;
         }
@@ -1820,7 +1854,7 @@ public partial class Player : Entity, IPlayer
             }
         }
 
-        foreach (MapInstance eventMap in Maps.MapInstance.Lookup.Values)
+        foreach (MapInstance eventMap in Maps.MapInstance.Lookup.Values.Cast<MapInstance>())
         {
             foreach (var en in eventMap.LocalEntities)
             {
@@ -1852,9 +1886,13 @@ public partial class Player : Entity, IPlayer
 
     public bool TryGetRealLocation(ref int x, ref int y, ref Guid mapId)
     {
+        if (Globals.MapGrid == default)
+        {
+            return false;
+        }
+
         var tmpX = x;
         var tmpY = y;
-        var tmpI = -1;
         if (Maps.MapInstance.Get(mapId) != null)
         {
             var gridX = Maps.MapInstance.Get(mapId).GridX;
@@ -1916,11 +1954,10 @@ public partial class Player : Entity, IPlayer
         var y = (int)mouseInWorld.Y;
         var targetRect = new FloatRect(x - 8, y - 8, 16, 16); //Adjust to allow more/less error
 
-        IEntity bestMatch = null;
+        IEntity? bestMatch = null;
         var bestAreaMatch = 0f;
 
-
-        foreach (MapInstance map in Maps.MapInstance.Lookup.Values)
+        foreach (MapInstance map in Maps.MapInstance.Lookup.Values.Cast<MapInstance>())
         {
             if (x >= map.GetX() && x <= map.GetX() + Options.MapWidth * Options.TileWidth)
             {
@@ -1939,7 +1976,11 @@ public partial class Player : Entity, IPlayer
                     {
                         foreach (var en in Globals.Entities)
                         {
-                            if (en.Value == null || en.Value.MapId != mapId || en.Value is Projectile || en.Value is Resource || (en.Value.IsStealthed && !Globals.Me.IsInMyParty(en.Value.Id)))
+                            if (en.Value == null ||
+                                en.Value.MapId != mapId ||
+                                (en.Value is Projectile or Resource) ||
+                                (en.Value.IsStealthed && Globals.Me?.IsInMyParty(en.Value.Id) == false)
+                            )
                             {
                                 continue;
                             }
@@ -1952,7 +1993,7 @@ public partial class Player : Entity, IPlayer
                             }
                         }
 
-                        foreach (MapInstance eventMap in Maps.MapInstance.Lookup.Values)
+                        foreach (MapInstance eventMap in Maps.MapInstance.Lookup.Values.Cast<MapInstance>())
                         {
                             foreach (var en in eventMap.LocalEntities)
                             {
@@ -1973,7 +2014,6 @@ public partial class Player : Entity, IPlayer
                         if (bestMatch != null && bestMatch.Id != TargetIndex)
                         {
                             var targetType = bestMatch is Event ? 1 : 0;
-
 
                             SetTargetBox(bestMatch as Entity);
 
@@ -2069,12 +2109,11 @@ public partial class Player : Entity, IPlayer
     /// Attempts to pick up an item at the specified location.
     /// </summary>
     /// <param name="mapId">The Id of the map we are trying to loot from.</param>
-    /// <param name="x">The X location on the current map.</param>
-    /// <param name="y">The Y location on the current map.</param>
+    /// <param name="tileIndex"> The index of the tile we are trying to loot from.</param>
     /// <param name="uniqueId">The Unique Id of the specific item we want to pick up, leave <see cref="Guid.Empty"/> to not specificy an item and pick up the first thing we can find.</param>
     /// <param name="firstOnly">Defines whether we only want to pick up the first item we can find when true, or all items when false.</param>
-    /// <returns></returns>
-    public bool TryPickupItem(Guid mapId, int tileIndex, Guid uniqueId = new(), bool firstOnly = false)
+    /// <returns> Whether the action was successful or not </returns>
+    public static bool TryPickupItem(Guid mapId, int tileIndex, Guid uniqueId = new(), bool firstOnly = false)
     {
         var map = Maps.MapInstance.Get(mapId);
         if (map == null || tileIndex < 0 || tileIndex >= Options.MapWidth * Options.MapHeight)
@@ -2085,12 +2124,12 @@ public partial class Player : Entity, IPlayer
         // Are we trying to pick up anything in particular, or everything?
         if (uniqueId != Guid.Empty || firstOnly)
         {
-            if (!map.MapItems.ContainsKey(tileIndex) || map.MapItems[tileIndex].Count < 1)
+            if (!map.MapItems.TryGetValue(tileIndex, out var value) || value.Count < 1)
             {
                 return false;
             }
 
-            foreach (var item in map.MapItems[tileIndex])
+            foreach (var item in value)
             {
                 // Check if we are trying to pick up a specific item, and if this is the one.
                 if (uniqueId != Guid.Empty && item.Id != uniqueId)
@@ -2099,7 +2138,6 @@ public partial class Player : Entity, IPlayer
                 }
 
                 PacketSender.SendPickupItem(mapId, tileIndex, item.Id);
-
                 return true;
             }
         }
@@ -2107,7 +2145,6 @@ public partial class Player : Entity, IPlayer
         {
             // Let the server worry about what we can and can not pick up.
             PacketSender.SendPickupItem(mapId, tileIndex, uniqueId);
-
             return true;
         }
 
@@ -2122,7 +2159,7 @@ public partial class Player : Entity, IPlayer
 
     public override int CalculateAttackTime()
     {
-        ItemBase weapon = null;
+        ItemBase? weapon = null;
         var attackTime = base.CalculateAttackTime();
 
         var cls = ClassBase.Get(Class);
@@ -2181,6 +2218,11 @@ public partial class Player : Entity, IPlayer
     //Movement Processing
     private void ProcessDirectionalInput()
     {
+        if (Globals.Me == default || Globals.MapGrid == default)
+        {
+            return;
+        }
+
         //Check if player is crafting
         if (Globals.InCraft)
         {
@@ -2190,9 +2232,7 @@ public partial class Player : Entity, IPlayer
         //check if player is stunned or snared, if so don't let them move.
         for (var n = 0; n < Status.Count; n++)
         {
-            if (Status[n].Type == SpellEffect.Stun ||
-                Status[n].Type == SpellEffect.Snare ||
-                Status[n].Type == SpellEffect.Sleep)
+            if (Status[n].Type is SpellEffect.Stun or SpellEffect.Snare or SpellEffect.Sleep)
             {
                 return;
             }
@@ -2210,7 +2250,7 @@ public partial class Player : Entity, IPlayer
         }
 
         Point position = new(X, Y);
-        IEntity blockedBy = null;
+        IEntity? blockedBy = null;
 
         if (MoveDir <= Direction.None || Globals.EventDialogs.Count != 0)
         {
@@ -2363,12 +2403,12 @@ public partial class Player : Entity, IPlayer
             if (blockedBy != null && mLastBumpedEvent != blockedBy && blockedBy is Event)
             {
                 PacketSender.SendBumpEvent(blockedBy.MapId, blockedBy.Id);
-                mLastBumpedEvent = blockedBy as Entity;
+                mLastBumpedEvent = (Entity)blockedBy;
             }
         }
     }
 
-    public void FetchNewMaps()
+    public static void FetchNewMaps()
     {
         if (Globals.MapGridWidth == 0 || Globals.MapGridHeight == 0)
         {
@@ -2393,7 +2433,7 @@ public partial class Player : Entity, IPlayer
     }
 
     //Override of the original function, used for rendering the color of a player based on rank
-    public override void DrawName(Color textColor, Color borderColor, Color backgroundColor)
+    public override void DrawName(Color? textColor, Color? borderColor, Color? backgroundColor)
     {
         if (textColor == null)
         {
@@ -2430,7 +2470,7 @@ public partial class Player : Entity, IPlayer
             }
         }
 
-        if (Globals.Me.Id != Id)
+        if (Globals.Me != default && Globals.Me.Id != Id)
         {
             // Party member names
             if (Globals.Me.IsInMyParty(this) && CustomColors.Names.Players.TryGetValue(nameof(Party), out var partyColors))
@@ -2439,6 +2479,7 @@ public partial class Player : Entity, IPlayer
                 borderColor = partyColors.Outline;
                 backgroundColor = partyColors.Background;
             }
+
             // Guildies
             else if (Globals.Me.IsInGuild && Guild == Globals.Me.Guild && CustomColors.Names.Players.TryGetValue(nameof(Guild), out var guildColors))
             {
@@ -2448,7 +2489,7 @@ public partial class Player : Entity, IPlayer
             }
 
             // Enemies in PvP
-            if (!Globals.Me.IsAllyOf(this) && Globals.Me.MapInstance.ZoneType != MapZone.Safe && CustomColors.Names.Players.TryGetValue("Hostile", out var hostileColors))
+            if (Globals.Me.IsAllyOf(this) && Globals.Me.MapInstance?.ZoneType != MapZone.Safe && CustomColors.Names.Players.TryGetValue("Hostile", out var hostileColors))
             {
                 textColor = hostileColors.Name;
                 borderColor = hostileColors.Outline;
@@ -2466,10 +2507,10 @@ public partial class Player : Entity, IPlayer
             return true;
         }
 
-        return IsInMyParty(en) || IsInMyGuild(en) || en.MapInstance.ZoneType == MapZone.Safe;
+        return IsInMyParty(en) || IsInMyGuild(en) || en.MapInstance?.ZoneType == MapZone.Safe;
     }
 
-    private void DrawNameAndLabels(Color textColor, Color borderColor, Color backgroundColor)
+    private void DrawNameAndLabels(Color textColor, Color? borderColor, Color? backgroundColor)
     {
         base.DrawName(textColor, borderColor, backgroundColor);
         DrawLabels(HeaderLabel.Text, 0, HeaderLabel.Color, textColor, borderColor, backgroundColor);
@@ -2479,6 +2520,11 @@ public partial class Player : Entity, IPlayer
 
     public virtual void DrawGuildName(Color textColor, Color? borderColor = default, Color? backgroundColor = default)
     {
+        if (Graphics.Renderer == default || Globals.Me == default)
+        {
+            return;
+        }
+
         var guildLabel = Guild?.Trim();
         if (!ShouldDrawName || string.IsNullOrWhiteSpace(guildLabel) || !Options.Instance.Guild.ShowGuildNameTagsOverMembers)
         {
@@ -2542,6 +2588,11 @@ public partial class Player : Entity, IPlayer
 
             var me = Globals.Me;
 
+            if (me == default)
+            {
+                return false;
+            }
+
             if (Globals.Database.MyOverheadHpBar && Id == me.Id)
             {
                 return true;
@@ -2580,12 +2631,12 @@ public partial class Player : Entity, IPlayer
                 continue;
             }
 
-            if (en.Value.IsStealthed && (!(en.Value is Player player) || !Globals.Me.IsInMyParty(player)))
+            if (en.Value.IsStealthed && (en.Value is not Player player || Globals.Me?.IsInMyParty(player) == false))
             {
                 continue;
             }
 
-            if (en.Value is Projectile || en.Value is Resource)
+            if (en.Value is Projectile or Resource)
             {
                 continue;
             }
@@ -2599,7 +2650,7 @@ public partial class Player : Entity, IPlayer
             AutoTurnToTarget(en.Value);
         }
 
-        foreach (MapInstance eventMap in Maps.MapInstance.Lookup.Values)
+        foreach (MapInstance eventMap in Maps.MapInstance.Lookup.Values.Cast<MapInstance>())
         {
             foreach (var en in eventMap.LocalEntities)
             {
@@ -2623,7 +2674,7 @@ public partial class Player : Entity, IPlayer
                     continue;
                 }
 
-                if (en.Value.IsStealthed && (!(en.Value is Player player) || !Globals.Me.IsInMyParty(player)))
+                if (en.Value.IsStealthed && (en.Value is not Player player || Globals.Me?.IsInMyParty(player) == false))
                 {
                     continue;
                 }
@@ -2641,7 +2692,7 @@ public partial class Player : Entity, IPlayer
         if (!Interface.Interface.MouseHitGui())
         {
             var mouseInWorld = Graphics.ConvertToWorldPoint(Globals.InputManager.GetMousePosition());
-            foreach (MapInstance map in Maps.MapInstance.Lookup.Values)
+            foreach (MapInstance map in Maps.MapInstance.Lookup.Values.Cast<MapInstance>())
             {
                 if (mouseInWorld.X >= map.GetX() && mouseInWorld.X <= map.GetX() + Options.MapWidth * Options.TileWidth)
                 {
@@ -2660,10 +2711,10 @@ public partial class Player : Entity, IPlayer
                             if (en.Value.MapId == mapId &&
                                 !en.Value.HideName &&
                                 (!en.Value.IsStealthed ||
-                                 en.Value is Player player && Globals.Me.IsInMyParty(player)) &&
+                                 en.Value is Player player && Globals.Me?.IsInMyParty(player) == true) &&
                                 en.Value.WorldPos.Contains(mouseInWorld.X, mouseInWorld.Y))
                             {
-                                if (!(en.Value is Projectile || en.Value is Resource))
+                                if (en.Value is not (Projectile or Resource))
                                 {
                                     if (TargetType != 0 || TargetIndex != en.Value.Id)
                                     {
@@ -2673,7 +2724,7 @@ public partial class Player : Entity, IPlayer
                             }
                         }
 
-                        foreach (MapInstance eventMap in Maps.MapInstance.Lookup.Values)
+                        foreach (MapInstance eventMap in Maps.MapInstance.Lookup.Values.Cast<MapInstance>())
                         {
                             foreach (var en in eventMap.LocalEntities)
                             {
@@ -2683,10 +2734,10 @@ public partial class Player : Entity, IPlayer
                                 }
 
                                 if (en.Value.MapId == mapId &&
-                                    !(en.Value as Event).DisablePreview &&
+                                    !((Event)en.Value).DisablePreview &&
                                     !en.Value.IsHidden &&
                                     (!en.Value.IsStealthed ||
-                                     en.Value is Player player && Globals.Me.IsInMyParty(player)) &&
+                                     en.Value is Player player && Globals.Me?.IsInMyParty(player) == true) &&
                                     en.Value.WorldPos.Contains(mouseInWorld.X, mouseInWorld.Y))
                                 {
                                     if (TargetType != 1 || TargetIndex != en.Value.Id)
@@ -2713,6 +2764,11 @@ public partial class Player : Entity, IPlayer
 
     private void TurnAround()
     {
+        if (Globals.Me == default)
+        {
+            return;
+        }
+
         // If players hold the 'TurnAround' Control Key and tap to any direction, they will turn on their own axis.
         for (var direction = 0; direction < Options.Instance.MapOpts.MovementDirections; direction++)
         {
@@ -2748,20 +2804,16 @@ public partial class Player : Entity, IPlayer
             switch (currentDir)
             {
                 case Direction.Up:
-                    return targetDir == Direction.Down || targetDir == Direction.DownLeft ||
-                           targetDir == Direction.DownRight;
+                    return targetDir is Direction.Down or Direction.DownLeft or Direction.DownRight;
 
                 case Direction.Down:
-                    return targetDir == Direction.Up || targetDir == Direction.UpLeft ||
-                           targetDir == Direction.UpRight;
+                    return targetDir is Direction.Up or Direction.UpLeft or Direction.UpRight;
 
                 case Direction.Left:
-                    return targetDir == Direction.Right || targetDir == Direction.UpRight ||
-                           targetDir == Direction.DownRight;
+                    return targetDir is Direction.Right or Direction.UpRight or Direction.DownRight;
 
                 case Direction.Right:
-                    return targetDir == Direction.Left || targetDir == Direction.UpLeft ||
-                           targetDir == Direction.DownLeft;
+                    return targetDir is Direction.Left or Direction.UpLeft or Direction.DownLeft;
 
                 default:
                     if (!Options.Instance.MapOpts.EnableDiagonalMovement)
@@ -2774,26 +2826,13 @@ public partial class Player : Entity, IPlayer
         }
 
         // If diagonal movement is enabled, check opposite directions on 8 directions.
-        switch (currentDir)
+        return currentDir switch
         {
-            case Direction.UpLeft:
-                return targetDir == Direction.DownRight || targetDir == Direction.Right ||
-                       targetDir == Direction.Down;
-
-            case Direction.UpRight:
-                return targetDir == Direction.DownLeft || targetDir == Direction.Left ||
-                       targetDir == Direction.Down;
-
-            case Direction.DownLeft:
-                return targetDir == Direction.UpRight || targetDir == Direction.Right || 
-                       targetDir == Direction.Up;
-
-            case Direction.DownRight:
-                return targetDir == Direction.UpLeft || targetDir == Direction.Left || 
-                       targetDir == Direction.Up;
-
-            default:
-                return false;
-        }
+            Direction.UpLeft => targetDir is Direction.DownRight or Direction.Right or Direction.Down,
+            Direction.UpRight => targetDir is Direction.DownLeft or Direction.Left or Direction.Down,
+            Direction.DownLeft => targetDir is Direction.UpRight or Direction.Right or Direction.Up,
+            Direction.DownRight => targetDir is Direction.UpLeft or Direction.Left or Direction.Up,
+            _ => false,
+        };
     }
 }

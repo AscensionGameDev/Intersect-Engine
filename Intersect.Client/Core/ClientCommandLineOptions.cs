@@ -1,11 +1,11 @@
-﻿using CommandLine;
+using CommandLine;
 
 using Intersect.Client.Framework.Graphics;
 using Intersect.Core;
 
 namespace Intersect.Client.Core;
 
-internal partial struct ClientCommandLineOptions : ICommandLineOptions
+internal readonly partial struct ClientCommandLineOptions : ICommandLineOptions
 {
     public ClientCommandLineOptions(
         bool borderlessWindow,
@@ -40,8 +40,7 @@ internal partial struct ClientCommandLineOptions : ICommandLineOptions
     public string WorkingDirectory { get; }
 
     [Option('p',  "plugin-directory", Default = null, Required = false)]
-    public IEnumerable<string> PluginDirectories { get; }
+    public IEnumerable<string>? PluginDirectories { get; }
 
-    public Resolution ScreenResolution => new Resolution(ScreenWidth, ScreenHeight);
-
+    public Resolution ScreenResolution => new(ScreenWidth, ScreenHeight);
 }

@@ -26,7 +26,7 @@ public partial class Entity : IEntity
     public int AnimationFrame { get; set; }
 
     //Entity Animations
-    public List<Animation> Animations { get; set; } = new List<Animation>();
+    public List<Animation> Animations { get; set; } = [];
 
     //Animation Timer (for animated sprites)
     public long AnimationTimer { get; set; }
@@ -50,9 +50,9 @@ public partial class Entity : IEntity
     public bool IsDashing => Dashing != null;
 
     //Dashing instance
-    public Dash Dashing { get; set; }
+    public Dash? Dashing { get; set; }
 
-    public IDash CurrentDash => Dashing as IDash;
+    public IDash? CurrentDash => Dashing;
 
     public Queue<Dash> DashQueue { get; set; } = new Queue<Dash>();
 
@@ -77,18 +77,18 @@ public partial class Entity : IEntity
         }
     }
 
-    IReadOnlyList<int> IEntity.EquipmentSlots => MyEquipment.ToList();
+    IReadOnlyList<int> IEntity.EquipmentSlots => [.. MyEquipment];
 
-    public Animation[] EquipmentAnimations { get; set; } = new Animation[Options.EquipmentSlots.Count];
+    public Animation?[] EquipmentAnimations { get; set; } = new Animation[Options.EquipmentSlots.Count];
 
     //Extras
     public string Face { get; set; } = "";
 
-    public Label FooterLabel { get; set; }
+    public Label FooterLabel { get; set; } = new(string.Empty, Color.White);
 
     public Gender Gender { get; set; } = Gender.Male;
 
-    public Label HeaderLabel { get; set; }
+    public Label HeaderLabel { get; set; } = new(string.Empty, Color.White);
 
     public bool IsHidden { get; set; } = false;
 
@@ -100,26 +100,26 @@ public partial class Entity : IEntity
     //Inventory/Spells/Equipment
     public IItem[] Inventory { get; set; } = new IItem[Options.MaxInvItems];
 
-    IReadOnlyList<IItem> IEntity.Items => Inventory.ToList();
+    IReadOnlyList<IItem> IEntity.Items => [.. Inventory];
 
     public bool InView { get; set; } = true;
 
     public bool IsMoving { get; set; }
 
     //Caching
-    public IMapInstance LatestMap { get; set; }
+    public IMapInstance? LatestMap { get; set; }
 
     public int Level { get; set; } = 1;
 
     //Vitals & Stats
     public long[] MaxVital { get; set; } = new long[Enum.GetValues<Vital>().Length];
 
-    IReadOnlyList<long> IEntity.MaxVitals => MaxVital.ToList();
+    IReadOnlyList<long> IEntity.MaxVitals => [.. MaxVital];
 
     protected Pointf mOrigin = Pointf.Empty;
 
     //Chat
-    private List<ChatBubble> mChatBubbles = new List<ChatBubble>();
+    private readonly List<ChatBubble> mChatBubbles = [];
 
     private Direction mDir;
 
@@ -145,7 +145,7 @@ public partial class Entity : IEntity
 
     public string Name { get; set; } = "";
 
-    public Color NameColor { get; set; } = null;
+    public Color? NameColor { get; set; } = null;
 
     public float OffsetX { get; set; }
 
@@ -154,7 +154,7 @@ public partial class Entity : IEntity
     public bool Passable { get; set; }
 
     //Rendering Variables
-    public HashSet<Entity> RenderList { get; set; }
+    public HashSet<Entity>? RenderList { get; set; }
 
     private Guid _spellCast;
 
@@ -179,16 +179,15 @@ public partial class Entity : IEntity
 
     public int[] Stat { get; set; } = new int[Enum.GetValues<Stat>().Length];
 
-    IReadOnlyList<int> IEntity.Stats => Stat.ToList();
+    IReadOnlyList<int> IEntity.Stats => [.. Stat];
 
-    public GameTexture Texture { get; set; }
+    public GameTexture? Texture { get; set; }
 
     #region "Animation Textures and Timing"
 
     public SpriteAnimations SpriteAnimation { get; set; } = SpriteAnimations.Normal;
 
-    public Dictionary<SpriteAnimations, GameTexture> AnimatedTextures { get; set; } =
-        new Dictionary<SpriteAnimations, GameTexture>();
+    public Dictionary<SpriteAnimations, GameTexture> AnimatedTextures { get; set; } = [];
 
     public int SpriteFrame { get; set; } = 0;
 
@@ -206,7 +205,7 @@ public partial class Entity : IEntity
 
     public long[] Vital { get; set; } = new long[Enum.GetValues<Vital>().Length];
 
-    IReadOnlyList<long> IEntity.Vitals => Vital.ToList();
+    IReadOnlyList<long> IEntity.Vitals => [.. Vital];
 
     public int WalkFrame { get; set; }
 
@@ -221,7 +220,7 @@ public partial class Entity : IEntity
 
     public byte Z { get; set; }
 
-    public Entity(Guid id, EntityPacket packet, EntityType entityType)
+    public Entity(Guid id, EntityPacket? packet, EntityType entityType)
     {
         Id = id;
         Type = entityType;
@@ -258,7 +257,7 @@ public partial class Entity : IEntity
     }
 
     //Status effects
-    public List<IStatus> Status { get; private set; } = new List<IStatus>();
+    public List<IStatus> Status { get; private set; } = [];
 
     IReadOnlyList<IStatus> IEntity.Status => Status;
 
@@ -312,24 +311,16 @@ public partial class Entity : IEntity
     {
         get
         {
-            switch (SpriteAnimation)
+            return SpriteAnimation switch
             {
-                case SpriteAnimations.Normal:
-                    return Options.Instance.Sprites.NormalFrames;
-                case SpriteAnimations.Idle:
-                    return Options.Instance.Sprites.IdleFrames;
-                case SpriteAnimations.Attack:
-                    return Options.Instance.Sprites.AttackFrames;
-                case SpriteAnimations.Shoot:
-                    return Options.Instance.Sprites.ShootFrames;
-                case SpriteAnimations.Cast:
-                    return Options.Instance.Sprites.CastFrames;
-                case SpriteAnimations.Weapon:
-                    return Options.Instance.Sprites.WeaponFrames;
-            }
-
-            return Options.Instance.Sprites.NormalFrames;
-
+                SpriteAnimations.Normal => Options.Instance.Sprites.NormalFrames,
+                SpriteAnimations.Idle => Options.Instance.Sprites.IdleFrames,
+                SpriteAnimations.Attack => Options.Instance.Sprites.AttackFrames,
+                SpriteAnimations.Shoot => Options.Instance.Sprites.ShootFrames,
+                SpriteAnimations.Cast => Options.Instance.Sprites.CastFrames,
+                SpriteAnimations.Weapon => Options.Instance.Sprites.WeaponFrames,
+                _ => Options.Instance.Sprites.NormalFrames,
+            };
         }
     }
 
@@ -338,7 +329,7 @@ public partial class Entity : IEntity
     public virtual Guid MapId { get; set; }
 
     //Deserializing
-    public virtual void Load(EntityPacket packet)
+    public virtual void Load(EntityPacket? packet)
     {
         if (packet == null)
         {
@@ -378,16 +369,16 @@ public partial class Entity : IEntity
             animsToClear.Add(anim);
             if (!anim.InfiniteLoop)
             {
-                animsToClear.Remove(anim);
+                _ = animsToClear.Remove(anim);
             }
             else
             {
                 foreach (var addedAnim in animsToAdd)
                 {
-                    if (addedAnim.Id == anim.MyBase.Id)
+                    if (addedAnim.Id == anim?.MyBase?.Id)
                     {
-                        animsToClear.Remove(anim);
-                        animsToAdd.Remove(addedAnim);
+                        _ = animsToClear.Remove(anim);
+                        _ = animsToAdd.Remove(addedAnim);
 
                         break;
                     }
@@ -395,9 +386,9 @@ public partial class Entity : IEntity
 
                 foreach (var equipAnim in EquipmentAnimations)
                 {
-                    if (equipAnim == anim)
+                    if (equipAnim == anim && anim != null)
                     {
-                        animsToClear.Remove(anim);
+                        _ = animsToClear.Remove(anim);
                     }
                 }
             }
@@ -513,19 +504,15 @@ public partial class Entity : IEntity
         return false;
     }
 
-    public void ClearAnimations(List<Animation> anims)
+    public void ClearAnimations(List<Animation>? anims)
     {
-        if (anims == null)
-        {
-            anims = Animations;
-        }
-
+        anims ??= Animations;
         if (anims.Count > 0)
         {
             for (var i = 0; i < anims.Count; i++)
             {
                 anims[i].Dispose();
-                Animations.Remove(anims[i]);
+                _ = Animations.Remove(anims[i]);
             }
         }
     }
@@ -539,10 +526,11 @@ public partial class Entity : IEntity
     {
         if (RenderList != null)
         {
-            RenderList.Remove(this);
+            _ = RenderList.Remove(this);
         }
 
         ClearAnimations(null);
+        GC.SuppressFinalize(this);
         mDisposed = true;
     }
 
@@ -571,7 +559,6 @@ public partial class Entity : IEntity
         if (mDisposed)
         {
             LatestMap = null;
-
             return false;
         }
 
@@ -583,7 +570,6 @@ public partial class Entity : IEntity
         if (LatestMap == null || !LatestMap.InView())
         {
             Globals.EntitiesToDispose.Add(Id);
-
             return false;
         }
 
@@ -736,7 +722,6 @@ public partial class Entity : IEntity
                         OffsetX = 0;
                     }
 
-
                     break;
                 case Direction.DownRight:
                     OffsetY += displacementTime;
@@ -782,7 +767,7 @@ public partial class Entity : IEntity
                     }
 
                     var itm = ItemBase.Get(itemId);
-                    AnimationBase anim = null;
+                    AnimationBase? anim = null;
                     if (itm != null)
                     {
                         anim = itm.EquipmentAnimation;
@@ -791,25 +776,25 @@ public partial class Entity : IEntity
                     if (anim != null)
                     {
                         if (EquipmentAnimations[z] != null &&
-                            (EquipmentAnimations[z].MyBase != anim || EquipmentAnimations[z].Disposed()))
+                            (EquipmentAnimations[z]!.MyBase != anim || EquipmentAnimations[z]!.Disposed()))
                         {
-                            EquipmentAnimations[z].Dispose();
-                            Animations.Remove(EquipmentAnimations[z]);
+                            EquipmentAnimations[z]!.Dispose();
+                            _ = Animations.Remove(EquipmentAnimations[z]!);
                             EquipmentAnimations[z] = null;
                         }
 
                         if (EquipmentAnimations[z] == null)
                         {
                             EquipmentAnimations[z] = new Animation(anim, true, true, -1, this);
-                            Animations.Add(EquipmentAnimations[z]);
+                            Animations.Add(EquipmentAnimations[z]!);
                         }
                     }
                     else
                     {
                         if (EquipmentAnimations[z] != null)
                         {
-                            EquipmentAnimations[z].Dispose();
-                            Animations.Remove(EquipmentAnimations[z]);
+                            EquipmentAnimations[z]!.Dispose();
+                            _ = Animations.Remove(EquipmentAnimations[z]!);
                             EquipmentAnimations[z] = null;
                         }
                     }
@@ -818,8 +803,8 @@ public partial class Entity : IEntity
                 {
                     if (EquipmentAnimations[z] != null)
                     {
-                        EquipmentAnimations[z].Dispose();
-                        Animations.Remove(EquipmentAnimations[z]);
+                        EquipmentAnimations[z]!.Dispose();
+                        _ = Animations.Remove(EquipmentAnimations[z]!);
                         EquipmentAnimations[z] = null;
                     }
                 }
@@ -831,7 +816,7 @@ public partial class Entity : IEntity
         {
             if (!chatbubble.Update())
             {
-                mChatBubbles.Remove(chatbubble);
+                _ = mChatBubbles.Remove(chatbubble);
             }
         }
 
@@ -847,7 +832,7 @@ public partial class Entity : IEntity
 
         CalculateOrigin();
 
-        List<Animation> animsToRemove = null;
+        List<Animation>? animsToRemove = null;
         foreach (var animInstance in Animations)
         {
             animInstance.Update();
@@ -855,13 +840,8 @@ public partial class Entity : IEntity
             //If disposed mark to be removed and continue onward
             if (animInstance.Disposed())
             {
-                if (animsToRemove == null)
-                {
-                    animsToRemove = new List<Animation>();
-                }
-
+                animsToRemove ??= [];
                 animsToRemove.Add(animInstance);
-
                 continue;
             }
 
@@ -889,7 +869,7 @@ public partial class Entity : IEntity
         {
             foreach (var anim in animsToRemove)
             {
-                Animations.Remove(anim);
+                _ = Animations.Remove(anim);
             }
         }
 
@@ -923,7 +903,7 @@ public partial class Entity : IEntity
     /// <summary>
     /// Returns whether this entity should be drawn.
     /// </summary>
-    public virtual bool ShouldDraw => !IsHidden && (!IsStealthed || this == Globals.Me || Globals.Me.IsInMyParty(Id));
+    public virtual bool ShouldDraw => !IsHidden && (!IsStealthed || this == Globals.Me || Globals.Me?.IsInMyParty(Id) == true);
 
     /// <summary>
     /// Returns whether the name of this entity should be drawn.
@@ -962,6 +942,11 @@ public partial class Entity : IEntity
 
                     var me = Globals.Me;
 
+                    if (me == default)
+                    {
+                        return false;
+                    }
+
                     if (Globals.Database.MyOverheadInfo && player.Id == me.Id)
                     {
                         return true;
@@ -992,10 +977,10 @@ public partial class Entity : IEntity
 
     public virtual HashSet<Entity>? DetermineRenderOrder(HashSet<Entity>? existingRenderSet, IMapInstance? map)
     {
-        existingRenderSet?.Remove(this);
+        _ = (existingRenderSet?.Remove(this));
 
         var playerMap = Globals.Me?.MapInstance;
-        if (map == default || playerMap == default)
+        if (map == default || playerMap == default || Globals.MapGrid == default)
         {
             return default;
         }
@@ -1048,7 +1033,7 @@ public partial class Entity : IEntity
                 }
 
                 renderSet = renderingEntities[priority, entityY];
-                renderSet.Add(this);
+                _ = renderSet.Add(this);
 
                 return renderSet;
             }
@@ -1092,7 +1077,7 @@ public partial class Entity : IEntity
 
                 // If entity is stealth, don't render unless the entity is the player or is within their party.
                 case SpellEffect.Stealth:
-                    if (this != Globals.Me && !(this is Player player && Globals.Me.IsInMyParty(player)))
+                    if (this != Globals.Me && !(this is Player player && Globals.Me?.IsInMyParty(player) == true))
                     {
                         return;
                     }
@@ -1328,23 +1313,23 @@ public partial class Entity : IEntity
         }
 
         // Paperdoll textures and Frames.
-        GameTexture paperdollTex = null;
+        GameTexture? paperdollTex = null;
         var spriteFrames = SpriteFrames;
 
         // Extract filename without it's extension.
         var filenameNoExt = Path.GetFileNameWithoutExtension(filename);
 
         // Equipment's custom paperdoll texture.
-        if (SpriteAnimation == SpriteAnimations.Attack ||
-            SpriteAnimation == SpriteAnimations.Cast ||
-            SpriteAnimation == SpriteAnimations.Weapon)
+        if (SpriteAnimation is SpriteAnimations.Attack or
+            SpriteAnimations.Cast or
+            SpriteAnimations.Weapon)
         {
             // Extract animation name from the AnimatedTextures list.
             var animationName = Path.GetFileNameWithoutExtension(AnimatedTextures[SpriteAnimation].Name);
 
             // Extract the substring after the separator.
             var separatorIndex = animationName.IndexOf('_') + 1;
-            var customAnimationName = animationName.Substring(separatorIndex);
+            var customAnimationName = animationName[separatorIndex..];
 
             // Try to get custom paperdoll texture.
             var customPaperdollTex =
@@ -1442,12 +1427,12 @@ public partial class Entity : IEntity
         int position,
         Color labelColor,
         Color textColor,
-        Color borderColor = null,
-        Color backgroundColor = null
+        Color? borderColor = null,
+        Color? backgroundColor = null
     )
     {
         // Are we supposed to hide this Label?
-        if (!ShouldDrawName || string.IsNullOrWhiteSpace(label))
+        if (!ShouldDrawName || string.IsNullOrWhiteSpace(label) || Graphics.Renderer == default)
         {
             return;
         }
@@ -1493,10 +1478,10 @@ public partial class Entity : IEntity
         );
     }
 
-    public virtual void DrawName(Color textColor, Color borderColor = null, Color backgroundColor = null)
+    public virtual void DrawName(Color? textColor, Color? borderColor = null, Color? backgroundColor = null)
     {
         // Are we really supposed to draw this name?
-        if (!ShouldDrawName)
+        if (!ShouldDrawName || Graphics.Renderer == default)
         {
             return;
         }
@@ -1504,36 +1489,20 @@ public partial class Entity : IEntity
         //Check for npc colors
         if (textColor == null)
         {
-            LabelColor? color;
-            switch (Aggression)
+            var color = Aggression switch
             {
-                case NpcAggression.Aggressive:
-                    color = CustomColors.Names.Npcs["Aggressive"];
-                    break;
-
-                case NpcAggression.AttackWhenAttacked:
-                    color = CustomColors.Names.Npcs["AttackWhenAttacked"];
-                    break;
-
-                case NpcAggression.AttackOnSight:
-                    color = CustomColors.Names.Npcs["AttackOnSight"];
-                    break;
-
-                case NpcAggression.Guard:
-                    color = CustomColors.Names.Npcs["Guard"];
-                    break;
-
-                case NpcAggression.Neutral:
-                default:
-                    color = CustomColors.Names.Npcs["Neutral"];
-                    break;
-            }
+                NpcAggression.Aggressive => (LabelColor?)CustomColors.Names.Npcs["Aggressive"],
+                NpcAggression.AttackWhenAttacked => (LabelColor?)CustomColors.Names.Npcs["AttackWhenAttacked"],
+                NpcAggression.AttackOnSight => (LabelColor?)CustomColors.Names.Npcs["AttackOnSight"],
+                NpcAggression.Guard => (LabelColor?)CustomColors.Names.Npcs["Guard"],
+                _ => (LabelColor?)CustomColors.Names.Npcs["Neutral"],
+            };
 
             if (color != null)
             {
                 textColor = color?.Name;
-                backgroundColor = backgroundColor ?? color?.Background;
-                borderColor = borderColor ?? color?.Outline;
+                backgroundColor ??= color?.Background;
+                borderColor ??= color?.Outline;
             }
         }
 
@@ -1568,16 +1537,21 @@ public partial class Entity : IEntity
 
         Graphics.Renderer.DrawString(
             name, Graphics.EntityNameFont, x - (int)Math.Ceiling(textSize.X / 2f), (int)y, 1,
-            Color.FromArgb(textColor.ToArgb()), true, null, Color.FromArgb(borderColor.ToArgb())
+            textColor, true, null, Color.FromArgb(borderColor.ToArgb())
         );
     }
 
     public float GetLabelLocation(LabelType type)
     {
+        if (Graphics.Renderer == default)
+        {
+            return 0f;
+        }
+
         var y = GetTop() - 8;
 
         //Need room for HP bar if not an event.
-        if (!(this is Event) && ShouldDrawHpBar)
+        if (this is not Event && ShouldDrawHpBar)
         {
             y -= GetBoundingHpBarTexture().Height + 2;
         }
@@ -1637,6 +1611,7 @@ public partial class Entity : IEntity
                     var guildSize = Graphics.Renderer.MeasureText(player.Guild, Graphics.EntityNameFont, 1);
                     y -= 2 + guildSize.Y;
                 }
+
                 break;
         }
 
@@ -1653,6 +1628,7 @@ public partial class Entity : IEntity
                 shieldSize += status.Shield[(int)Enums.Vital.Health];
             }
         }
+
         return shieldSize;
     }
 
@@ -1837,7 +1813,7 @@ public partial class Entity : IEntity
         }
     }
 
-    public bool ShouldDrawTarget => !(this is Projectile) && LatestMap != default;
+    public bool ShouldDrawTarget => this is not Projectile && LatestMap != default;
 
     public void DrawTarget(int priority)
     {
@@ -1897,7 +1873,7 @@ public partial class Entity : IEntity
         return false;
     }
 
-    public IStatus GetStatus(Guid guid)
+    public IStatus? GetStatus(Guid guid)
     {
         foreach (var status in Status)
         {
@@ -1913,7 +1889,7 @@ public partial class Entity : IEntity
     public void SortStatuses()
     {
         //Sort Status effects by remaining time
-        Status = Status.OrderByDescending(x => x.RemainingMs).ToList();
+        Status = [.. Status.OrderByDescending(x => x.RemainingMs)];
     }
 
     private void UpdateSpriteAnimation()
@@ -2083,7 +2059,7 @@ public partial class Entity : IEntity
     protected virtual void LoadAnimationTexture(string textureName, SpriteAnimations spriteAnimation)
     {
         SpriteAnimations spriteAnimationOveride = spriteAnimation;
-        string textureOverride = default;
+        string? textureOverride = default;
 
         switch (spriteAnimation)
         {
@@ -2096,6 +2072,7 @@ public partial class Entity : IEntity
                 {
                     textureOverride = classDescriptor.AttackSpriteOverride;
                 }
+
                 break;
 
             case SpriteAnimations.Shoot:
@@ -2116,6 +2093,7 @@ public partial class Entity : IEntity
                         spriteAnimationOveride = SpriteAnimations.Weapon;
                     }
                 }
+
                 break;
 
             case SpriteAnimations.Cast:
@@ -2123,6 +2101,7 @@ public partial class Entity : IEntity
                 {
                     textureOverride = spellDescriptor.CastSpriteOverride;
                 }
+
                 break;
 
             case SpriteAnimations.Weapon:
@@ -2138,13 +2117,14 @@ public partial class Entity : IEntity
                         textureOverride = itemDescriptor.WeaponSpriteOverride;
                     }
                 }
+
                 break;
 
             default:
                 throw new ArgumentOutOfRangeException(nameof(spriteAnimation));
         }
 
-        if (TryGetAnimationTexture(textureName, spriteAnimationOveride, textureOverride, out var texture))
+        if (!string.IsNullOrEmpty(textureOverride) && TryGetAnimationTexture(textureName, spriteAnimationOveride, textureOverride, out var texture))
         {
             AnimatedTextures[spriteAnimation] = texture;
         }
@@ -2181,6 +2161,11 @@ public partial class Entity : IEntity
 
         var originMapController = MapInstance;
         var targetMapController = en.MapInstance;
+
+        if (originMapController == null || targetMapController == null)
+        {
+            return Dir;
+        }
 
         var originY = Y + originMapController.GridY * Options.MapHeight;
         var originX = X + originMapController.GridX * Options.MapWidth;
@@ -2230,7 +2215,7 @@ public partial class Entity : IEntity
         Point delta,
         int z,
         Guid mapId,
-        ref IEntity blockedBy,
+        ref IEntity? blockedBy,
         bool ignoreAliveResources = true,
         bool ignoreDeadResources = true,
         bool ignoreNpcAvoids = true,
@@ -2274,7 +2259,7 @@ public partial class Entity : IEntity
                 tmpY = delta.Y - Options.MapHeight;
             }
 
-            if (gridX < 0 || gridY < 0 || gridX >= Globals.MapGridWidth || gridY >= Globals.MapGridHeight)
+            if (Globals.MapGrid == default || gridX < 0 || gridY < 0 || gridX >= Globals.MapGridWidth || gridY >= Globals.MapGridHeight)
             {
                 return -2;
             }
@@ -2299,7 +2284,7 @@ public partial class Entity : IEntity
                         en.Value.Y == tmpY &&
                         en.Value.Z == Z)
                     {
-                        if (!(en.Value is Projectile))
+                        if (en.Value is not Projectile)
                         {
                             switch (en.Value)
                             {
@@ -2326,6 +2311,7 @@ public partial class Entity : IEntity
                                             continue;
                                         }
                                     }
+
                                     break;
 
                                 case Player player:
@@ -2335,6 +2321,7 @@ public partial class Entity : IEntity
                                     {
                                         continue;
                                     }
+
                                     break;
                             }
 
@@ -2380,7 +2367,7 @@ public partial class Entity : IEntity
                         en.Value.Z == Z &&
                         !en.Value.Passable)
                     {
-                        blockedBy = en.Value as Critter;
+                        blockedBy = en.Value;
 
                         return -4;
                     }
@@ -2429,8 +2416,4 @@ public partial class Entity : IEntity
     {
         Dispose();
     }
-
-
-
-
 }

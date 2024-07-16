@@ -1,9 +1,8 @@
-﻿using Intersect.Client.Framework.Entities;
+using Intersect.Client.Framework.Entities;
 using Intersect.Enums;
 using Intersect.Utilities;
 
 namespace Intersect.Client.Entities;
-
 
 public partial class Status : IStatus
 {

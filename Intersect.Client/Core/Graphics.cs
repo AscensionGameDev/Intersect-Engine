@@ -13,18 +13,17 @@ using Intersect.Utilities;
 
 namespace Intersect.Client.Core;
 
-
 public static partial class Graphics
 {
 
-    public static GameFont ActionMsgFont;
+    public static GameFont? ActionMsgFont;
 
-    public static object AnimationLock = new object();
+    public static object AnimationLock = new();
 
     //Darkness Stuff
     public static float BrightnessLevel;
 
-    public static GameFont ChatBubbleFont;
+    public static GameFont? ChatBubbleFont;
 
     private static FloatRect _currentView;
 
@@ -34,27 +33,27 @@ public static partial class Graphics
         set
         {
             _currentView = value;
-            Renderer.SetView(_currentView);
+            Renderer?.SetView(_currentView);
         }
     }
     
-    public static FloatRect WorldViewport => new FloatRect(CurrentView.Position, CurrentView.Size / (Globals.Database?.WorldZoom ?? 1));
+    public static FloatRect WorldViewport => new(CurrentView.Position, CurrentView.Size / (Globals.Database?.WorldZoom ?? 1));
 
-    public static GameShader DefaultShader;
+    public static GameShader? DefaultShader;
 
     //Rendering Variables
-    private static GameTexture sMenuBackground;
+    private static GameTexture? sMenuBackground;
 
     public static int DrawCalls;
 
     public static int EntitiesDrawn;
 
-    public static GameFont EntityNameFont;
+    public static GameFont? EntityNameFont;
 
     //Screen Values
-    public static GameFont GameFont;
+    public static GameFont? GameFont;
 
-    public static object GfxLock = new object();
+    public static object GfxLock = new();
 
     //Grid Switched
     public static bool GridSwitched;
@@ -62,7 +61,7 @@ public static partial class Graphics
     public static int LightsDrawn;
 
     //Animations
-    public static List<Animation> LiveAnimations = new List<Animation>();
+    public static List<Animation> LiveAnimations = [];
 
     public static int MapsDrawn;
 
@@ -76,18 +75,16 @@ public static partial class Graphics
     public static ColorF PlayerLightColor = ColorF.White;
 
     //Game Renderer
-    public static GameRenderer Renderer;
+    public static GameRenderer? Renderer;
 
     //Cache the Y based rendering
-    public static HashSet<Entity>[,] RenderingEntities;
+    public static HashSet<Entity>[,] RenderingEntities = new HashSet<Entity>[6, Options.MapHeight * 5];
 
-    private static GameContentManager sContentManager;
+    private static GameContentManager sContentManager = null!;
 
-    private static GameRenderTexture sDarknessTexture;
+    private static GameRenderTexture? sDarknessTexture;
 
-    private static long sFadeTimer;
-
-    private static List<LightBase> sLightQueue = new List<LightBase>();
+    private static readonly List<LightBase> sLightQueue = [];
 
     //Player Spotlight Values
     private static long sLightUpdate;
@@ -105,14 +102,14 @@ public static partial class Graphics
 
     private static float sPlayerLightSize;
 
-    public static GameFont UIFont;
+    public static GameFont? UIFont;
 
     public static float BaseWorldScale => Options.Instance?.MapOpts?.TileScale ?? 1;
 
     //Init Functions
     public static void InitGraphics()
     {
-        Renderer.Init();
+        Renderer?.Init();
         sContentManager = Globals.ContentManager;
         sContentManager.LoadAll();
         GameFont = FindFont(ClientConfiguration.Instance.GameFont);
@@ -130,7 +127,7 @@ public static partial class Graphics
         {
             var parts = font.Split(',');
             font = parts[0];
-            int.TryParse(parts[1], out size);
+            _ = int.TryParse(parts[1], out size);
         }
 
         return sContentManager.GetFont(font, size);
@@ -138,12 +135,11 @@ public static partial class Graphics
 
     public static void InitInGame()
     {
-        RenderingEntities = new HashSet<Entity>[6, Options.MapHeight * 5];
         for (var z = 0; z < 6; z++)
         {
             for (var i = 0; i < Options.MapHeight * 5; i++)
             {
-                RenderingEntities[z, i] = new HashSet<Entity>();
+                RenderingEntities[z, i] = [];
             }
         }
     }
@@ -239,13 +235,12 @@ public static partial class Graphics
 
     public static void DrawInGame(TimeSpan deltaTime)
     {
-        var currentMap = Globals.Me.MapInstance as MapInstance;
-        if (currentMap == null)
+        if (Globals.Me?.MapInstance is not MapInstance currentMap)
         {
             return;
         }
 
-        if (Globals.NeedsMaps)
+        if (Globals.NeedsMaps || Globals.MapGrid == default)
         {
             return;
         }
@@ -359,10 +354,7 @@ public static partial class Graphics
                             Globals.MapGrid[x1, y1] != Guid.Empty)
                         {
                             var map = MapInstance.Get(Globals.MapGrid[x1, y1]);
-                            if (map != null)
-                            {
-                                map.DrawItemsAndLights();
-                            }
+                            map?.DrawItemsAndLights();
                         }
                     }
                 }
@@ -434,7 +426,6 @@ public static partial class Graphics
             animInstance.Draw(true);
         }
 
-
         for (var x = gridX - 1; x <= gridX + 1; x++)
         {
             for (var y = gridY - 1; y <= gridY + 1; y++)
@@ -458,7 +449,7 @@ public static partial class Graphics
         }
 
         //Draw the players targets
-        Globals.Me.DrawTargets();
+        Globals.Me?.DrawTargets();
 
         DrawOverlay();
 
@@ -528,7 +519,7 @@ public static partial class Graphics
     }
 
     //Game Rendering
-    public static void Render(TimeSpan deltaTime, TimeSpan totalTime)
+    public static void Render(TimeSpan deltaTime, TimeSpan _)
     {
         var takingScreenshot = false;
         if (Renderer?.ScreenshotRequests.Count > 0)
@@ -655,7 +646,12 @@ public static partial class Graphics
 
     public static void DrawOverlay()
     {
-        var map = MapInstance.Get(Globals.Me.MapId);
+        if (Renderer == default)
+        {
+            return;
+        }
+
+        var map = MapInstance.Get(Globals.Me?.MapId ?? Guid.Empty);
         if (map != null)
         {
             float ecTime = Timing.Global.MillisecondsUtc - sOverlayUpdate;
@@ -776,11 +772,17 @@ public static partial class Graphics
 
     public static void DrawFullScreenTexture(GameTexture tex, float alpha = 1f)
     {
+        if (Renderer == default)
+        {
+            return;
+        }
+
         var bgx = Renderer.GetScreenWidth() / 2 - tex.GetWidth() / 2;
         var bgy = Renderer.GetScreenHeight() / 2 - tex.GetHeight() / 2;
         var bgw = tex.GetWidth();
         var bgh = tex.GetHeight();
-        var diff = 0;
+        int diff;
+
         if (bgw < Renderer.GetScreenWidth())
         {
             diff = Renderer.GetScreenWidth() - bgw;
@@ -804,6 +806,11 @@ public static partial class Graphics
 
     public static void DrawFullScreenTextureCentered(GameTexture tex, float alpha = 1f)
     {
+        if (Renderer == default)
+        {
+            return;
+        }
+
         var bgx = Renderer.GetScreenWidth() / 2 - tex.GetWidth() / 2;
         var bgy = Renderer.GetScreenHeight() / 2 - tex.GetHeight() / 2;
         var bgw = tex.GetWidth();
@@ -818,6 +825,11 @@ public static partial class Graphics
 
     public static void DrawFullScreenTextureStretched(GameTexture tex)
     {
+        if (Renderer == default)
+        {
+            return;
+        }
+
         DrawGameTexture(
             tex, GetSourceRect(tex),
             new FloatRect(
@@ -828,6 +840,11 @@ public static partial class Graphics
 
     public static void DrawFullScreenTextureFitWidth(GameTexture tex)
     {
+        if (Renderer == default)
+        {
+            return;
+        }
+
         var scale = Renderer.GetScreenWidth() / (float)tex.GetWidth();
         var scaledHeight = tex.GetHeight() * scale;
         var offsetY = (Renderer.GetScreenHeight() - tex.GetHeight()) / 2f;
@@ -841,6 +858,11 @@ public static partial class Graphics
 
     public static void DrawFullScreenTextureFitHeight(GameTexture tex)
     {
+        if (Renderer == default)
+        {
+            return;
+        }
+
         var scale = Renderer.GetScreenHeight() / (float)tex.GetHeight();
         var scaledWidth = tex.GetWidth() * scale;
         var offsetX = (Renderer.GetScreenWidth() - scaledWidth) / 2f;
@@ -854,6 +876,11 @@ public static partial class Graphics
 
     public static void DrawFullScreenTextureFitMinimum(GameTexture tex)
     {
+        if (Renderer == default)
+        {
+            return;
+        }
+
         if (Renderer.GetScreenWidth() > Renderer.GetScreenHeight())
         {
             DrawFullScreenTextureFitHeight(tex);
@@ -866,6 +893,11 @@ public static partial class Graphics
 
     public static void DrawFullScreenTextureFitMaximum(GameTexture tex)
     {
+        if (Renderer == default)
+        {
+            return;
+        }
+
         if (Renderer.GetScreenWidth() < Renderer.GetScreenHeight())
         {
             DrawFullScreenTextureFitHeight(tex);
@@ -878,14 +910,19 @@ public static partial class Graphics
 
     private static void UpdateView()
     {
+        if (Renderer == default)
+        {
+            return;
+        }
+
         var scale = Renderer.Scale;
 
         if (Globals.GameState != GameStates.InGame || !MapInstance.TryGet(Globals.Me?.MapId ?? Guid.Empty, out var map))
         {
             var sw = Renderer.GetScreenWidth();
             var sh = Renderer.GetScreenHeight();
-            var sx = 0;//sw - (sw / scale);
-            var sy = 0;//sh - (sh / scale);
+            var sx = 0;
+            var sy = 0;
             CurrentView = new FloatRect(sx, sy, sw / scale, sh / scale);
             return;
         }
@@ -894,6 +931,12 @@ public static partial class Graphics
         var mapHeight = Options.MapHeight * Options.TileHeight;
 
         var en = Globals.Me;
+
+        if (en == null)
+        {
+            return;
+        }
+
         float x = mapWidth;
         float y = mapHeight;
         float x1 = mapWidth * 2;
@@ -926,12 +969,7 @@ public static partial class Graphics
 
         var w = x1 - x;
         var h = y1 - y;
-        var restrictView = new FloatRect(
-            x,
-            y,
-            w,
-            h
-        );
+        var restrictView = new FloatRect(x, y, w, h );
         var newView = new FloatRect(
             (int)Math.Ceiling(en.Center.X - Renderer.ScreenWidth / scale / 2f),
             (int)Math.Ceiling(en.Center.Y - Renderer.ScreenHeight / scale / 2f),
@@ -977,34 +1015,25 @@ public static partial class Graphics
     private static void ClearDarknessTexture()
     {
         // If we're not allowed to draw lighting, exit out.
-        if (!Globals.Database.EnableLighting)
+        if (!Globals.Database.EnableLighting || Renderer == default)
         {
             return;
         }
 
-        if (sDarknessTexture == null)
-        {
-            sDarknessTexture = Renderer.CreateRenderTexture(Renderer.GetScreenWidth(), Renderer.GetScreenHeight());
-        }
-
+        sDarknessTexture ??= Renderer.CreateRenderTexture(Renderer.GetScreenWidth(), Renderer.GetScreenHeight());
         sDarknessTexture.Clear(Color.Black);
     }
 
     private static void GenerateLightMap()
     {
         // If we're not allowed to draw lighting, exit out.
-        if (!Globals.Database.EnableLighting)
+        if (!Globals.Database.EnableLighting || Renderer == default || Globals.Me == default)
         {
             return;
         }
 
         var map = MapInstance.Get(Globals.Me.MapId);
-        if (map == null)
-        {
-            return;
-        }
-
-        if (sDarknessTexture == null)
+        if (map == null || sDarknessTexture == null)
         {
             return;
         }
@@ -1052,7 +1081,7 @@ public static partial class Graphics
     public static void DrawDarkness()
     {
         // If we're not allowed to draw lighting, exit out.
-        if (!Globals.Database.EnableLighting)
+        if (!Globals.Database.EnableLighting || sDarknessTexture == default)
         {
             return;
         }
@@ -1090,7 +1119,7 @@ public static partial class Graphics
     private static void DrawLights()
     {
         // If we're not allowed to draw lighting, exit out.
-        if (!Globals.Database.EnableLighting)
+        if (!Globals.Database.EnableLighting || Renderer == default)
         {
             return;
         }
@@ -1123,7 +1152,7 @@ public static partial class Graphics
     public static void UpdatePlayerLight()
     {
         // If we're not allowed to draw lighting, exit out.
-        if (!Globals.Database.EnableLighting)
+        if (!Globals.Database.EnableLighting || Globals.Me == default)
         {
             return;
         }
@@ -1352,19 +1381,23 @@ public static partial class Graphics
     /// <param name="y">Y coordinate on the render target to draw to</param>
     /// <param name="renderTarget">Where to draw to. If null it this will draw to the game screen.</param>
     /// <param name="blendMode">Which blend mode to use when rendering</param>
+    /// <param name="shader">Which shader to use when rendering</param>
+    /// <param name="rotationDegrees">How much to rotate the texture in degrees</param>
+    /// <param name="drawImmediate">If true, the texture will be drawn immediately. If false, it will be queued for drawing.</param>
     public static void DrawGameTexture(
         GameTexture tex,
         float x,
         float y,
-        GameRenderTexture renderTarget = null,
+        GameRenderTexture? renderTarget = null,
         GameBlendModes blendMode = GameBlendModes.None,
-        GameShader shader = null,
+        GameShader? shader = null,
         float rotationDegrees = 0.0f,
         bool drawImmediate = false
     )
     {
         var destRectangle = new FloatRect(x, y, tex.GetWidth(), tex.GetHeight());
         var srcRectangle = new FloatRect(0, 0, tex.GetWidth(), tex.GetHeight());
+
         DrawGameTexture(
             tex, srcRectangle, destRectangle, Color.White, renderTarget, blendMode, shader, rotationDegrees,
             drawImmediate
@@ -1381,14 +1414,17 @@ public static partial class Graphics
     /// <param name="renderColor">Color mask to draw with. Default is Color.White</param>
     /// <param name="renderTarget">Where to draw to. If null it this will draw to the game screen.</param>
     /// <param name="blendMode">Which blend mode to use when rendering</param>
+    /// <param name="shader">Which shader to use when rendering</param>
+    /// <param name="rotationDegrees">How much to rotate the texture in degrees</param>
+    /// <param name="drawImmediate">If true, the texture will be drawn immediately. If false, it will be queued for drawing.</param>
     public static void DrawGameTexture(
         GameTexture tex,
         float x,
         float y,
         Color renderColor,
-        GameRenderTexture renderTarget = null,
+        GameRenderTexture? renderTarget = null,
         GameBlendModes blendMode = GameBlendModes.None,
-        GameShader shader = null,
+        GameShader? shader = null,
         float rotationDegrees = 0.0f,
         bool drawImmediate = false
     )
@@ -1414,6 +1450,9 @@ public static partial class Graphics
     /// <param name="h">Height of the texture part we are rendering.</param>
     /// <param name="renderTarget">>Where to draw to. If null it this will draw to the game screen.</param>
     /// <param name="blendMode">Which blend mode to use when rendering</param>
+    /// <param name="shader">Which shader to use when rendering</param>
+    /// <param name="rotationDegrees">How much to rotate the texture in degrees</param>
+    /// <param name="drawImmediate">If true, the texture will be drawn immediately. If false, it will be queued for drawing.</param>
     public static void DrawGameTexture(
         GameTexture tex,
         float dx,
@@ -1422,9 +1461,9 @@ public static partial class Graphics
         float sy,
         float w,
         float h,
-        GameRenderTexture renderTarget = null,
+        GameRenderTexture? renderTarget = null,
         GameBlendModes blendMode = GameBlendModes.None,
-        GameShader shader = null,
+        GameShader? shader = null,
         float rotationDegrees = 0.0f,
         bool drawImmediate = false
     )
@@ -1434,7 +1473,7 @@ public static partial class Graphics
             return;
         }
 
-        Renderer.DrawTexture(
+        Renderer?.DrawTexture(
             tex, sx, sy, w, h, dx, dy, w, h, Color.White, renderTarget, blendMode, shader, rotationDegrees, false,
             drawImmediate
         );
@@ -1445,9 +1484,9 @@ public static partial class Graphics
         FloatRect srcRectangle,
         FloatRect targetRect,
         Color renderColor,
-        GameRenderTexture renderTarget = null,
+        GameRenderTexture? renderTarget = null,
         GameBlendModes blendMode = GameBlendModes.None,
-        GameShader shader = null,
+        GameShader? shader = null,
         float rotationDegrees = 0.0f,
         bool drawImmediate = false
     )
@@ -1457,12 +1496,11 @@ public static partial class Graphics
             return;
         }
 
-        Renderer.DrawTexture(
+        Renderer?.DrawTexture(
             tex, srcRectangle.X, srcRectangle.Y, srcRectangle.Width, srcRectangle.Height, targetRect.X,
             targetRect.Y, targetRect.Width, targetRect.Height,
             Color.FromArgb(renderColor.A, renderColor.R, renderColor.G, renderColor.B), renderTarget, blendMode,
             shader, rotationDegrees, false, drawImmediate
         );
     }
-
 }

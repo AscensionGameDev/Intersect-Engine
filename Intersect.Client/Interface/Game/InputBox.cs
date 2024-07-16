@@ -15,12 +15,12 @@ public partial class InputBox : Base
         string prompt,
         bool modal,
         InputType inputType,
-        EventHandler onSuccess,
-        EventHandler onCancel,
+        EventHandler? onSuccess,
+        EventHandler? onCancel,
         object userData,
         int quantity = 0,
         int maxQuantity = int.MaxValue,
-        Base parent = null,
+        Base? parent = null,
         GameContentManager.UI stage = GameContentManager.UI.InGame
     ) => new InputBox(
         title: title,
@@ -329,7 +329,7 @@ public partial class InputBox : Base
         Dispose();
     }
 
-    public void okayBtn_Clicked(Base sender, ClickedEventArgs arguments)
+    public void okayBtn_Clicked(Base? sender, ClickedEventArgs? arguments)
     {
         SubmitInput();
     }

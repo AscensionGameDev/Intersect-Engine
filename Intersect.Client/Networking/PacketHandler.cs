@@ -299,7 +299,7 @@ internal sealed partial class PacketHandler
     public void HandlePacket(IPacketSender packetSender, MapPacket packet)
     {
         HandleMap(packetSender, packet);
-        Globals.Me.FetchNewMaps();
+        Player.FetchNewMaps();
     }
 
     //PlayerEntityPacket
@@ -508,7 +508,7 @@ internal sealed partial class PacketHandler
         {
             Globals.Me.MapId = mapId;
             Globals.NeedsMaps = true;
-            Globals.Me.FetchNewMaps();
+            Player.FetchNewMaps();
         }
         else
         {
@@ -1729,7 +1729,7 @@ internal sealed partial class PacketHandler
             Globals.Entities[packet.EntityId]
                 .DashQueue.Enqueue(
                     new Dash(
-                        Globals.Entities[packet.EntityId] as Entity, packet.EndMapId, packet.EndX, packet.EndY,
+                        packet.EndMapId, packet.EndX, packet.EndY,
                         packet.DashTime, packet.Direction
                     )
                 );
@@ -1768,7 +1768,7 @@ internal sealed partial class PacketHandler
 
         if (Globals.Me != null)
         {
-            Globals.Me.FetchNewMaps();
+            Player.FetchNewMaps();
         }
 
         Graphics.GridSwitched = true;
@@ -2107,7 +2107,7 @@ internal sealed partial class PacketHandler
     {
         if (Globals.Entities.ContainsKey(packet.TargetId))
         { 
-            Globals.Me.TryTarget(Globals.Entities[packet.TargetId] as Entity, true);
+            Globals.Me.TryTarget(Globals.Entities[packet.TargetId], true);
         }
     }
 
@@ -2157,7 +2157,7 @@ internal sealed partial class PacketHandler
         switch (packet.FadeType)
         {
             case GameObjects.Events.FadeType.None:
-                Fade.Cancel(packet.WaitForCompletion);
+                Fade.Cancel();
                 break;
             case GameObjects.Events.FadeType.FadeIn:
                 Fade.FadeIn(packet.DurationMs, packet.WaitForCompletion);

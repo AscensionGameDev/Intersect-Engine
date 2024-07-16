@@ -9,10 +9,9 @@ using Intersect.Plugins.Helpers;
 
 namespace Intersect.Client.Core;
 
-
 internal static partial class Bootstrapper
 {
-    public static ClientContext Context { get; private set; }
+    public static ClientContext? Context { get; private set; }
 
     public static void Start(params string[] args)
     {
@@ -42,7 +41,7 @@ internal static partial class Bootstrapper
 
         var packetHandlerRegistry = new PacketHandlerRegistry(packetTypeRegistry, logger);
         var packetHelper = new PacketHelper(packetTypeRegistry, packetHandlerRegistry);
-        FactoryRegistry<IPluginBootstrapContext>.RegisterFactory(PluginBootstrapContext.CreateFactory(args, parser, packetHelper));
+        _ = FactoryRegistry<IPluginBootstrapContext>.RegisterFactory(PluginBootstrapContext.CreateFactory(args, parser, packetHelper));
 
         var commandLineOptions = parser.ParseArguments<ClientCommandLineOptions>(args)
             .MapResult(HandleParsedArguments, HandleParserErrors);
@@ -71,12 +70,8 @@ internal static partial class Bootstrapper
     private static ClientCommandLineOptions HandleParserErrors(IEnumerable<Error> errors)
     {
         var errorsAsList = errors?.ToList();
-
         var fatalParsingError = errorsAsList?.Any(error => error?.StopsProcessing ?? false) ?? false;
-
-        var errorString = string.Join(
-            ", ", errorsAsList?.ToList().Select(error => error?.ToString()) ?? Array.Empty<string>()
-        );
+        var errorString = string.Join(", ", errorsAsList?.ToList().Select(error => error?.ToString()) ?? []);
 
         var exception = new ArgumentException(
             $@"Error parsing command line arguments, received the following errors: {errorString}"
@@ -93,5 +88,4 @@ internal static partial class Bootstrapper
 
         return default;
     }
-
 }
