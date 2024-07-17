@@ -51,7 +51,7 @@ public partial class SelectCharacterWindow
     private Button mPrevCharButton;
 
     //Selected Char
-    private int mSelectedChar = 0;
+    public int mSelectedChar = 0;
 
     //Init
     public SelectCharacterWindow(Canvas parent, MainMenu mainMenu)
@@ -88,7 +88,7 @@ public partial class SelectCharacterWindow
         //Play Button
         mPlayButton = new Button(mCharacterSelectionPanel, "PlayButton");
         mPlayButton.SetText(Strings.CharacterSelection.Play);
-        mPlayButton.Clicked += _playButton_Clicked;
+        mPlayButton.Clicked += PlayButton_Clicked;
         mPlayButton.Hide();
 
         //Delete Button
@@ -366,7 +366,7 @@ public partial class SelectCharacterWindow
         UpdateDisplay();
     }
 
-    private void _playButton_Clicked(Base sender, ClickedEventArgs arguments)
+    public void PlayButton_Clicked(Base? sender, ClickedEventArgs? arguments)
     {
         if (Globals.WaitingOnServer)
         {
