@@ -43,7 +43,7 @@ public partial class MainMenu : MutableInterface
 
     private readonly ResetPasswordWindow mResetPasswordWindow;
 
-    private readonly SelectCharacterWindow mSelectCharacterWindow;
+    public readonly SelectCharacterWindow mSelectCharacterWindow;
 
     //Character creation feild check
     private bool mHasMadeCharacterCreation;

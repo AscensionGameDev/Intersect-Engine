@@ -210,6 +210,20 @@ public static partial class Input
                             break;
 
                         case GameStates.Menu:
+                            var selectCharacterWindow = Interface.Interface.MenuUi.MainMenu.mSelectCharacterWindow;
+
+                            switch (control)
+                            {
+                                case Control.Enter:
+                                    if (!selectCharacterWindow.IsHidden && selectCharacterWindow.Characters[selectCharacterWindow.mSelectedChar] != null)
+                                    {
+                                        selectCharacterWindow.PlayButton_Clicked(null, null);
+                                        consumeKey = true;
+                                    }
+
+                                    break;
+                            }
+
                             break;
 
                         case GameStates.InGame:
