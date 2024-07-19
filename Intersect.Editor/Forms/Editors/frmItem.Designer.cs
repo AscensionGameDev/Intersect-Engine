@@ -2079,7 +2079,7 @@ namespace Intersect.Editor.Forms.Editors
             nudSpdPercentage.ForeColor = System.Drawing.Color.Gainsboro;
             nudSpdPercentage.Location = new System.Drawing.Point(192, 218);
             nudSpdPercentage.Margin = new Padding(4, 3, 4, 3);
-            nudSpdPercentage.Maximum = new decimal(new int[] { 1000, 0, 0, 0 });
+            nudSpdPercentage.Maximum = new decimal(new int[] { 9999, 0, 0, 0 });
             nudSpdPercentage.Minimum = new decimal(new int[] { -100, 0, 0, int.MinValue });
             nudSpdPercentage.Name = "nudSpdPercentage";
             nudSpdPercentage.Size = new Size(76, 23);
