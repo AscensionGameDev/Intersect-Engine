@@ -20,7 +20,7 @@ public partial class ItemDescriptionWindow : DescriptionWindowBase
 
     protected string mValueLabel;
 
-    protected SpellDescriptionWindow mSpellDescWindow;
+    protected SpellDescriptionWindow? mSpellDescWindow;
 
     public ItemDescriptionWindow(
         ItemBase item,
@@ -45,7 +45,7 @@ public partial class ItemDescriptionWindow : DescriptionWindowBase
         // If a spell, also display the spell description!
         if (mItem.ItemType == ItemType.Spell)
         {
-            mSpellDescWindow = new SpellDescriptionWindow(mItem.SpellId, x, mContainer.Bottom);
+            mSpellDescWindow = new SpellDescriptionWindow(mItem.SpellId, x, y, mContainer);
         }
     }
 
