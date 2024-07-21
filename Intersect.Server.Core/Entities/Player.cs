@@ -4127,7 +4127,7 @@ public partial class Player : Entity
                 if (TryGiveItem(craftItem.Id, quantity))
                 {
                     PacketSender.SendChatMsg(
-                        this, Strings.Crafting.crafted.ToString(craftItem.Name), ChatMessageType.Crafting,
+                        this, Strings.Crafting.Crafted.ToString(craftItem.Name), ChatMessageType.Crafting,
                         CustomColors.Alerts.Success
                     );
 
@@ -4145,7 +4145,7 @@ public partial class Player : Entity
 
                     PacketSender.SendInventory(this);
                     PacketSender.SendChatMsg(
-                        this, Strings.Crafting.nospace.ToString(craftItem.Name), ChatMessageType.Crafting,
+                        this, Strings.Crafting.NoSpace.ToString(craftItem.Name), ChatMessageType.Crafting,
                         CustomColors.Alerts.Error
                     );
                 }

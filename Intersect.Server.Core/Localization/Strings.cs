@@ -472,28 +472,26 @@ public static partial class Strings
 
     public sealed partial class CraftingNamespace : LocaleNamespace
     {
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString AlreadyCrafting = @"You are already crafting an item!";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString crafted = @"You successfully crafted {00}!";
+        public readonly LocalizedString CraftFailure = @"The attempt to craft the item {00} failed!";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString nospace = @"You do not have enough inventory space to craft {00}!";
+        public readonly LocalizedString CraftFailureLostItems = @"The attempt to craft the item {00} failed, and you lost the materials!";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString CraftFailure = @"The attempt to create the item {00} failed!";
+        public readonly LocalizedString Crafted = @"You have successfully crafted {00}!";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString CraftFailureLostItems = @"The attempt to create the item {00} failed and you lost the materials!";
+        public readonly LocalizedString InJournalMode = @"You cannot craft items from your crafting journal!";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString InJournalMode = @"You cannot craft from your crafting journal!";
+        public readonly LocalizedString NoSpace = @"You do not have enough inventory space to craft {00}!";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString RequirementsNotMet = @"You do not meet the requirements in order to craft this item!";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString AlreadyCrafting = @"You are already crafting!";
-
+        public readonly LocalizedString RequirementsNotMet = @"You do not meet the requirements to craft this item!";
     }
 
     public sealed partial class DatabaseNamespace : LocaleNamespace
