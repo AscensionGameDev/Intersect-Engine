@@ -43,7 +43,7 @@ namespace Intersect.Server.Core.Commands
             //        : Strings.Commandoutput.cpsunlocked);
             //}
             // TODO: Rethink what messages we want to display here. Confirmation of the change is ideal. To reuse code we effectively don't need to really handle status.
-            Console.WriteLine(Options.Instance.Processing.CpsLock ? (Strings.Commandoutput.cpslocked.ToString() + " (" + Globals.Cps + ")") : Strings.Commandoutput.cpsunlocked.ToString() + " (" + Globals.Cps + ")");
+            Console.WriteLine(Options.Instance.Processing.CpsLock ? (Strings.Commandoutput.CpsLocked.ToString() + " (" + Globals.Cps + ")") : Strings.Commandoutput.CpsUnlocked.ToString() + " (" + Globals.Cps + ")");
         }
 
     }

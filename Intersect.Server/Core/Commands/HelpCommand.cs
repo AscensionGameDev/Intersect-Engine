@@ -16,7 +16,7 @@ namespace Intersect.Server.Core.Commands
 
         protected override void HandleValue(ServerContext context, ParserResult result)
         {
-            Console.WriteLine(@"    " + Strings.Commandoutput.helpheader);
+            Console.WriteLine(@"    " + Strings.Commandoutput.HelpHeader);
 
             Strings.Commands.CommandList.ForEach(
                 command => { Console.WriteLine($@"    {command?.Name,-20} - {command?.Help}"); }
@@ -26,7 +26,7 @@ namespace Intersect.Server.Core.Commands
                 ? ParserSettings.PrefixShort + Help.ShortName.ToString()
                 : ParserSettings.PrefixLong + Help.Name;
 
-            Console.WriteLine($@"    {Strings.Commandoutput.helpfooter.ToString(helpArgument)}");
+            Console.WriteLine($@"    {Strings.Commandoutput.HelpFooter.ToString(helpArgument)}");
         }
 
     }

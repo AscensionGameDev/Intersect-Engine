@@ -27,7 +27,7 @@ namespace Intersect.Server.Core.Commands
             }
             
             PacketSender.SendGlobalMsg($@"    {Strings.Player.serverkilled.ToString(target.Entity.Name)}");
-            Console.WriteLine($@"    {Strings.Commandoutput.killsuccess.ToString(target.Entity.Name)}");
+            Console.WriteLine($@"    {Strings.Commandoutput.KillSuccess.ToString(target.Entity.Name)}");
         }
 
     }

@@ -281,7 +281,7 @@ internal static class Bootstrapper
         Console.WriteLine(Strings.Commandoutput.EventCount.ToString(EventBase.Lookup.Count));
         Console.WriteLine(Strings.Commandoutput.ItemCount.ToString(ItemBase.Lookup.Count));
         Console.WriteLine();
-        Console.WriteLine(Strings.Commandoutput.gametime.ToString(Time.GetTime().ToString("F")));
+        Console.WriteLine(Strings.Commandoutput.GameTime.ToString(Time.GetTime().ToString("F")));
         Console.WriteLine();
 
         PacketSender.CacheGameDataPacket();

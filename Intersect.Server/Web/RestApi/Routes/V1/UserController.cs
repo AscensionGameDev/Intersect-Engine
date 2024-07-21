@@ -1075,7 +1075,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
 
                             PacketSender.SendGlobalMsg(Strings.Player.serverkilled.ToString(player?.Name));
 
-                            return Ok(Strings.Commandoutput.killsuccess.ToString(player?.Name));
+                            return Ok(Strings.Commandoutput.KillSuccess.ToString(player?.Name));
                         }
                     }
 

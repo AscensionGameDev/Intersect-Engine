@@ -37,7 +37,7 @@ namespace Intersect.Server.Core.Commands
                 Options.Instance.Metrics.Enable = true;
                 Options.SaveToDisk();
             }
-            Console.WriteLine(Options.Instance.Metrics.Enable ? Strings.Commandoutput.metricsenabled.ToString() : Strings.Commandoutput.metricsdisabled.ToString());
+            Console.WriteLine(Options.Instance.Metrics.Enable ? Strings.Commandoutput.MetricsEnabled.ToString() : Strings.Commandoutput.MetricsDisabled.ToString());
         }
     }
 }

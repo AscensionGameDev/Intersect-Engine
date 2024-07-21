@@ -359,117 +359,115 @@ public static partial class Strings
         public readonly LocalizedString InvalidTarget = @"Invalid target for this spell.";
     }
 
-    public sealed partial class CommandoutputNamespace : LocaleNamespace
+    public sealed partial class CommandOutputNamespace : LocaleNamespace
     {
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString OnlineListActiveConnectionsN = @"Active connections: {00}";
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString OnlineListNoClientsConnected = @"No clients connected";
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString OnlineListStrayConnectionsN = @"Stray connections: {00}";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString apigranted = @"{00} now has api access!";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString apirevoked = @"{00} has had their api access revoked!";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString apirolegranted = @"{00} now has the {01} api role!";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString apirolenotfound = @"Api role {00} not found!";
+        public readonly LocalizedString AccountCount = @" - {00} Accounts.";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString apirolenotgranted =
-            @"Failed to assign api role {00}, api access must be enabled for {01} first!";
+        public readonly LocalizedString ActiveConnections = @"Active connections: {00}";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString
-            apiroleprereq = @"Api role {00} could not be granted! Depends on {01} role.";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString apirolerevoked = @"{00} has had their {01} api role revoked!";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString apiroles = @"Api roles for {00}:";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString cps = @"Current CPS: {00}";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString cpslocked = @"CPS Locked";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString cpsunlocked = @"CPS Unlocked";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString VariableChanged = @"'{01}' set to {02} (was {03}) ({00})";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString VariableNotFound = @"Variable '{00}' not found";
+        public readonly LocalizedString ApiAccessGranted = @"{00} now has API access!";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString VariablePrint = @"{00} {01} = {02}";
+        public readonly LocalizedString ApiAccessRevoked = @"{00} has had their API access revoked!";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString ApiRoleGranted = @"{00} now has the {01} API role!";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString ApiRoleNotFound = @"API role {00} not found!";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString ApiRoleNotGranted = @"Failed to assign API role {00}, API access must be enabled for {01} first!";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString ApiRolePrerequisite = @"API role {00} could not be granted! Depends on {01} role.";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString ApiRoleRevoked = @"{00} has had their {01} API role revoked!";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString ApiRoles = @"API roles for {00}:";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString CharacterCount = @" - {00} Characters.";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString CpsLocked = @"CPS Locked";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString CpsUnlocked = @"CPS Unlocked";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString EventCount = @" - {00} Events.";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString ExperimentalFeatureEnablement = @"{00} is {01}.";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString GameTime = @"Game time is now: {00}";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString HelpFooter = @"Type in any command followed by {00} for parameters and usage information.";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString HelpHeader = @"List of available commands:";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString ItemCount = @" - {00} Items.";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString KillSuccess = @"{00} has been killed!";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString ListAccount = @"Account";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString ListCharacter = @"Character";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString ListId = @"ID";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString MapCount = @" - {00} Maps.";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString MetricsDisabled = @"Metrics collection disabled";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString MetricsEnabled = @"Metrics collection enabled";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString NoClientsConnected = @"No clients connected";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString NpcCount = @" - {00} NPCs.";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString PowerChanged = @"{00} has had their power updated!";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString ServerInfo = @"Server has:";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString SpellCount = @" - {00} Spells.";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString StrayConnections = @"Stray connections: {00}";
+
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString VariableChanged = @"'{01}' set to {02} (was {03}) ({00})";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public readonly LocalizedString VariableListEmpty = @"There are no variables to display.";
 
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString ExperimentalFeatureEnablement = @"{00} is {01}.";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString gametime = @"Game time is now: {00}";
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString VariableNotFound = @"Variable '{00}' not found";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString helpfooter =
-            @"Type in any command followed by {00} for parameters and usage information.";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString helpheader = @"List of available commands:";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString invalidparameters =
-            @"Invalid parameters provided! Use {00} to get more info about a command.";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString killsuccess = @"{00} has been killed!";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString listaccount = @"Account";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString listcharacter = @"Character";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString listid = @"ID";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString metricsenabled = @"Metrics collection enabled";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString metricsdisabled = @"Metrics collection disabled";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString notfound =
-            @"Command not recoginized. Enter help for a list of commands. Remember console commands are case sensitive!";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString parseerror =
-            @"Parse Error: Parameter could not be read. Type {00} {01} for usage information.";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString ServerInfo = @"Server has:";
-        
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString AccountCount = @" - {00} accounts.";
-        
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString CharacterCount = @" - {00} characters.";
-        
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString NpcCount = @" - {00} NPCs.";
-        
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString SpellCount = @" - {00} spells.";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString MapCount = @" - {00} maps.";
-        
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString EventCount = @" - {00} events.";
-        
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString ItemCount = @" - {00} items.";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString powerchanged = @"{00} has had their power updated!";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)] public readonly LocalizedString powerlevel = @"{00}'s power has been set to {01}!";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString syntaxerror =
-            @"Syntax Error: Expected parameter not found. Type {00} {01} for usage information.";
-
+        public readonly LocalizedString VariablePrint = @"{00} {01} = {02}";
     }
 
     public sealed partial class CraftingNamespace : LocaleNamespace
@@ -1554,7 +1552,7 @@ public static partial class Strings
 
         public readonly CombatNamespace Combat = new CombatNamespace();
 
-        public readonly CommandoutputNamespace Commandoutput = new CommandoutputNamespace();
+        public readonly CommandOutputNamespace Commandoutput = new CommandOutputNamespace();
 
         public readonly CommandsNamespace Commands = new CommandsNamespace();
 
@@ -1629,7 +1627,7 @@ public static partial class Strings
 
     public static CombatNamespace Combat => Root.Combat;
 
-    public static CommandoutputNamespace Commandoutput => Root.Commandoutput;
+    public static CommandOutputNamespace Commandoutput => Root.Commandoutput;
 
     public static CommandsNamespace Commands => Root.Commands;
 
