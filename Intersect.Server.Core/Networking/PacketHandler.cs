@@ -1083,14 +1083,14 @@ internal sealed partial class PacketHandler
         {
             if (status.Type == SpellEffect.Stun)
             {
-                PacketSender.SendChatMsg(player, Strings.Combat.stunblocking, ChatMessageType.Combat);
+                PacketSender.SendChatMsg(player, Strings.Combat.StunBlocking, ChatMessageType.Combat);
 
                 return;
             }
 
             if (status.Type == SpellEffect.Sleep)
             {
-                PacketSender.SendChatMsg(player, Strings.Combat.sleepblocking, ChatMessageType.Combat);
+                PacketSender.SendChatMsg(player, Strings.Combat.SleepBlocking, ChatMessageType.Combat);
 
                 return;
             }
@@ -1139,7 +1139,7 @@ internal sealed partial class PacketHandler
         {
             if (Options.Combat.EnableCombatChatMessages)
             {
-                PacketSender.SendChatMsg(player, Strings.Combat.channelingnoattack, ChatMessageType.Combat);
+                PacketSender.SendChatMsg(player, Strings.Combat.ChannelingNoAttack, ChatMessageType.Combat);
             }
 
             return;
@@ -1155,7 +1155,7 @@ internal sealed partial class PacketHandler
             {
                 if (Options.Combat.EnableCombatChatMessages)
                 {
-                    PacketSender.SendChatMsg(player, Strings.Combat.stunattacking, ChatMessageType.Combat);
+                    PacketSender.SendChatMsg(player, Strings.Combat.StunAttacking, ChatMessageType.Combat);
                 }
 
                 return;
@@ -1165,7 +1165,7 @@ internal sealed partial class PacketHandler
             {
                 if (Options.Combat.EnableCombatChatMessages)
                 {
-                    PacketSender.SendChatMsg(player, Strings.Combat.sleepattacking, ChatMessageType.Combat);
+                    PacketSender.SendChatMsg(player, Strings.Combat.SleepAttacking, ChatMessageType.Combat);
                 }
 
                 return;
@@ -1173,7 +1173,7 @@ internal sealed partial class PacketHandler
 
             if (status.Type == SpellEffect.Blind)
             {
-                PacketSender.SendActionMsg(player, Strings.Combat.miss, CustomColors.Combat.Missed);
+                PacketSender.SendActionMsg(player, Strings.Combat.Miss, CustomColors.Combat.Missed);
 
                 return;
             }

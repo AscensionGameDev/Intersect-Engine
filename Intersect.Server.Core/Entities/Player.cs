@@ -1223,7 +1223,7 @@ public partial class Player : Entity
         }
 
         PacketSender.SendChatMsg(this, Strings.Player.levelup.ToString(Level), ChatMessageType.Experience, CustomColors.Combat.LevelUp, Name);
-        PacketSender.SendActionMsg(this, Strings.Combat.levelup, CustomColors.Combat.LevelUp);
+        PacketSender.SendActionMsg(this, Strings.Combat.LevelUp, CustomColors.Combat.LevelUp);
         foreach (var message in messages)
         {
             PacketSender.SendChatMsg(this, message, ChatMessageType.Experience, CustomColors.Alerts.Info, Name);
@@ -1440,7 +1440,7 @@ public partial class Player : Entity
                 }
                 else
                 {
-                    PacketSender.SendChatMsg(this, Strings.Combat.resourcereqs, ChatMessageType.Error);
+                    PacketSender.SendChatMsg(this, Strings.Combat.ResourceRequirements, ChatMessageType.Error);
                 }
 
                 return;
@@ -1451,7 +1451,7 @@ public partial class Player : Entity
                 if (parentItem == null || descriptor.Tool != parentItem.Tool)
                 {
                     PacketSender.SendChatMsg(
-                        this, Strings.Combat.toolrequired.ToString(Options.ToolTypes[descriptor.Tool]), ChatMessageType.Error
+                        this, Strings.Combat.ToolRequired.ToString(Options.ToolTypes[descriptor.Tool]), ChatMessageType.Error
                     );
 
                     return;
@@ -1531,7 +1531,7 @@ public partial class Player : Entity
 
         if (Target != target)
         {
-            PacketSender.SendActionMsg(this, Strings.Combat.miss, CustomColors.Combat.Missed);
+            PacketSender.SendActionMsg(this, Strings.Combat.Miss, CustomColors.Combat.Missed);
             return false;
         }
 
@@ -1544,7 +1544,7 @@ public partial class Player : Entity
         {
             if (Options.Combat.EnableCombatChatMessages)
             {
-                PacketSender.SendChatMsg(this, Strings.Combat.channelingnoattack, ChatMessageType.Combat);
+                PacketSender.SendChatMsg(this, Strings.Combat.ChannelingNoAttack, ChatMessageType.Combat);
             }
 
             return;
@@ -1587,7 +1587,7 @@ public partial class Player : Entity
                 }
                 else
                 {
-                    PacketSender.SendChatMsg(this, Strings.Combat.resourcereqs, ChatMessageType.Error);
+                    PacketSender.SendChatMsg(this, Strings.Combat.ResourceRequirements, ChatMessageType.Error);
                 }
 
                 return;
@@ -1598,7 +1598,7 @@ public partial class Player : Entity
                 if (weapon == null || descriptor.Tool != weapon.Tool)
                 {
                     PacketSender.SendChatMsg(
-                        this, Strings.Combat.toolrequired.ToString(Options.ToolTypes[descriptor.Tool]), ChatMessageType.Error
+                        this, Strings.Combat.ToolRequired.ToString(Options.ToolTypes[descriptor.Tool]), ChatMessageType.Error
                     );
 
                     return;
@@ -3310,7 +3310,7 @@ public partial class Player : Entity
                             throw new IndexOutOfRangeException();
                     }
 
-                    var symbol = value < 0 ? Strings.Combat.removesymbol : Strings.Combat.addsymbol;
+                    var symbol = value < 0 ? Strings.Combat.RemoveSymbol : Strings.Combat.AddSymbol;
                     var number = $"{symbol}{Math.Abs(value)}";
                     PacketSender.SendActionMsg(this, number, color);
 
@@ -5305,7 +5305,7 @@ public partial class Player : Entity
         }
         else
         {
-            PacketSender.SendChatMsg(this, Strings.Combat.tryforgetboundspell, ChatMessageType.Spells);
+            PacketSender.SendChatMsg(this, Strings.Combat.TryForgetBoundSpell, ChatMessageType.Spells);
         }
     }
 
@@ -5342,7 +5342,7 @@ public partial class Player : Entity
 
         if (spellBase.Bound)
         {
-            PacketSender.SendChatMsg(this, Strings.Combat.tryforgetboundspell, ChatMessageType.Spells);
+            PacketSender.SendChatMsg(this, Strings.Combat.TryForgetBoundSpell, ChatMessageType.Spells);
 
             return false;
         }
@@ -5398,31 +5398,31 @@ public partial class Player : Entity
                 switch (reason)
                 {
                     case SpellCastFailureReason.InsufficientMP:
-                        PacketSender.SendChatMsg(this, Strings.Combat.lowmana, ChatMessageType.Combat);
+                        PacketSender.SendChatMsg(this, Strings.Combat.LowMana, ChatMessageType.Combat);
                         break;
                     case SpellCastFailureReason.InsufficientHP:
-                        PacketSender.SendChatMsg(this, Strings.Combat.lowhealth, ChatMessageType.Combat);
+                        PacketSender.SendChatMsg(this, Strings.Combat.LowHealth, ChatMessageType.Combat);
                         break;
                     case SpellCastFailureReason.InvalidTarget:
                         PacketSender.SendChatMsg(this, Strings.Combat.InvalidTarget, ChatMessageType.Combat);
                         break;
                     case SpellCastFailureReason.Silenced:
-                        PacketSender.SendChatMsg(this, Strings.Combat.silenced, ChatMessageType.Combat);
+                        PacketSender.SendChatMsg(this, Strings.Combat.Silenced, ChatMessageType.Combat);
                         break;
                     case SpellCastFailureReason.Stunned:
-                        PacketSender.SendChatMsg(this, Strings.Combat.stunned, ChatMessageType.Combat);
+                        PacketSender.SendChatMsg(this, Strings.Combat.Stunned, ChatMessageType.Combat);
                         break;
                     case SpellCastFailureReason.Asleep:
-                        PacketSender.SendChatMsg(this, Strings.Combat.sleep, ChatMessageType.Combat);
+                        PacketSender.SendChatMsg(this, Strings.Combat.Sleep, ChatMessageType.Combat);
                         break;
                     case SpellCastFailureReason.Snared:
                         PacketSender.SendChatMsg(this, Strings.Combat.Snared, ChatMessageType.Combat);
                         break;
                     case SpellCastFailureReason.OutOfRange:
-                        PacketSender.SendChatMsg(this, Strings.Combat.targetoutsiderange, ChatMessageType.Combat);
+                        PacketSender.SendChatMsg(this, Strings.Combat.TargetOutOfRange, ChatMessageType.Combat);
                         break;
                     case SpellCastFailureReason.OnCooldown:
-                        PacketSender.SendChatMsg(this, Strings.Combat.cooldown, ChatMessageType.Combat);
+                        PacketSender.SendChatMsg(this, Strings.Combat.Cooldown, ChatMessageType.Combat);
                         break;
                 }
             }
@@ -5433,7 +5433,7 @@ public partial class Player : Entity
         if (!spell.IgnoreGlobalCooldown && mGlobalCooldownTimer > Timing.Global.MillisecondsUtc)
         {
             // Notify our user!
-            PacketSender.SendChatMsg(this, Strings.Combat.cooldown, ChatMessageType.Combat);
+            PacketSender.SendChatMsg(this, Strings.Combat.Cooldown, ChatMessageType.Combat);
             return false;
         }
 
@@ -5446,7 +5446,7 @@ public partial class Player : Entity
             }
             else
             {
-                PacketSender.SendChatMsg(this, Strings.Combat.dynamicreq, ChatMessageType.Spells);
+                PacketSender.SendChatMsg(this, Strings.Combat.DynamicRequirement, ChatMessageType.Spells);
             }
 
             reason = SpellCastFailureReason.ConditionsNotMet;
@@ -5562,7 +5562,7 @@ public partial class Player : Entity
         {
             if (Options.Combat.EnableCombatChatMessages)
             {
-                PacketSender.SendChatMsg(this, Strings.Combat.channeling, ChatMessageType.Combat);
+                PacketSender.SendChatMsg(this, Strings.Combat.Channeling, ChatMessageType.Combat);
             }
         }
     }

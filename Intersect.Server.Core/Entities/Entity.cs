@@ -1814,7 +1814,7 @@ public abstract partial class Entity : IDisposable
                     }
 
                     PacketSender.SendActionMsg(
-                        target, Strings.Combat.status[(int)spellBase.Combat.Effect], CustomColors.Combat.Status
+                        target, Strings.Combat.Status[(int)spellBase.Combat.Effect], CustomColors.Combat.Status
                     );
 
                     //If an onhit or shield status bail out as we don't want to do any damage.
@@ -1923,7 +1923,7 @@ public abstract partial class Entity : IDisposable
             {
                 if (Target != target)
                 {
-                    PacketSender.SendActionMsg(this, Strings.Combat.miss, CustomColors.Combat.Missed);
+                    PacketSender.SendActionMsg(this, Strings.Combat.Miss, CustomColors.Combat.Missed);
 
                     return;
                 }
@@ -1941,7 +1941,7 @@ public abstract partial class Entity : IDisposable
                     status.Type == SpellEffect.Blind ||
                     status.Type == SpellEffect.Sleep)
                 {
-                    PacketSender.SendActionMsg(this, Strings.Combat.miss, CustomColors.Combat.Missed);
+                    PacketSender.SendActionMsg(this, Strings.Combat.Miss, CustomColors.Combat.Missed);
                     PacketSender.SendEntityAttack(this, CalculateAttackTime());
 
                     return;
@@ -2035,12 +2035,12 @@ public abstract partial class Entity : IDisposable
                         player.AddVital(Vital.Health, absorptionAmount);
 
                         PacketSender.SendActionMsg(
-                        enemy, Strings.Combat.addsymbol + Math.Abs(absorptionAmount),
+                        enemy, Strings.Combat.AddSymbol + Math.Abs(absorptionAmount),
                         CustomColors.Combat.Heal
                         );
                     }
 
-                    PacketSender.SendActionMsg(enemy, Strings.Combat.blocked, CustomColors.Combat.Blocked);
+                    PacketSender.SendActionMsg(enemy, Strings.Combat.Blocked, CustomColors.Combat.Blocked);
                 }
             }
         }
@@ -2058,7 +2058,7 @@ public abstract partial class Entity : IDisposable
             {
                 if (isCrit)
                 {
-                    PacketSender.SendActionMsg(enemy, Strings.Combat.critical, CustomColors.Combat.Critical);
+                    PacketSender.SendActionMsg(enemy, Strings.Combat.Critical, CustomColors.Combat.Critical);
                 }
 
                 enemy.SubVital(Vital.Health, baseDamage);
@@ -2066,20 +2066,20 @@ public abstract partial class Entity : IDisposable
                 {
                     case DamageType.Physical:
                         PacketSender.SendActionMsg(
-                            enemy, Strings.Combat.removesymbol + baseDamage,
+                            enemy, Strings.Combat.RemoveSymbol + baseDamage,
                             CustomColors.Combat.PhysicalDamage
                         );
 
                         break;
                     case DamageType.Magic:
                         PacketSender.SendActionMsg(
-                            enemy, Strings.Combat.removesymbol + baseDamage, CustomColors.Combat.MagicDamage
+                            enemy, Strings.Combat.RemoveSymbol + baseDamage, CustomColors.Combat.MagicDamage
                         );
 
                         break;
                     case DamageType.True:
                         PacketSender.SendActionMsg(
-                            enemy, Strings.Combat.removesymbol + baseDamage, CustomColors.Combat.TrueDamage
+                            enemy, Strings.Combat.RemoveSymbol + baseDamage, CustomColors.Combat.TrueDamage
                         );
 
                         break;
@@ -2113,7 +2113,7 @@ public abstract partial class Entity : IDisposable
             {
                 enemy.AddVital(Vital.Health, -baseDamage);
                 PacketSender.SendActionMsg(
-                    enemy, Strings.Combat.addsymbol + Math.Abs(baseDamage), CustomColors.Combat.Heal
+                    enemy, Strings.Combat.AddSymbol + Math.Abs(baseDamage), CustomColors.Combat.Heal
                 );
             }
         }
@@ -2134,7 +2134,7 @@ public abstract partial class Entity : IDisposable
                 //If we took damage lets reset our combat timer
                 enemy.SubVital(Vital.Mana, secondaryDamage);
                 PacketSender.SendActionMsg(
-                    enemy, Strings.Combat.removesymbol + secondaryDamage, CustomColors.Combat.RemoveMana
+                    enemy, Strings.Combat.RemoveSymbol + secondaryDamage, CustomColors.Combat.RemoveMana
                 );
 
                 //No Matter what, if we attack the entitiy, make them chase us
@@ -2149,7 +2149,7 @@ public abstract partial class Entity : IDisposable
             {
                 enemy.AddVital(Vital.Mana, -secondaryDamage);
                 PacketSender.SendActionMsg(
-                    enemy, Strings.Combat.addsymbol + Math.Abs(secondaryDamage), CustomColors.Combat.AddMana
+                    enemy, Strings.Combat.AddSymbol + Math.Abs(secondaryDamage), CustomColors.Combat.AddMana
                 );
             }
         }
@@ -2173,7 +2173,7 @@ public abstract partial class Entity : IDisposable
                 AddVital(Vital.Health, (int)actualHealthRecovered);
                 PacketSender.SendActionMsg(
                     this,
-                    Strings.Combat.addsymbol + (int)actualHealthRecovered,
+                    Strings.Combat.AddSymbol + (int)actualHealthRecovered,
                     CustomColors.Combat.Heal
                 );
             }
@@ -2189,7 +2189,7 @@ public abstract partial class Entity : IDisposable
                 enemy.SubVital(Vital.Mana, (int)actualManaRecovered);
                 PacketSender.SendActionMsg(
                     this,
-                    Strings.Combat.addsymbol + (int)actualManaRecovered,
+                    Strings.Combat.AddSymbol + (int)actualManaRecovered,
                     CustomColors.Combat.AddMana
                 );
             }
@@ -2201,7 +2201,7 @@ public abstract partial class Entity : IDisposable
                 enemy.SubVital(Vital.Health, (int)remainingManaRecovery);
                 PacketSender.SendActionMsg(
                     enemy,
-                    Strings.Combat.removesymbol + remainingManaRecovery,
+                    Strings.Combat.RemoveSymbol + remainingManaRecovery,
                     CustomColors.Combat.TrueDamage
                 );
             }
@@ -2517,7 +2517,7 @@ public abstract partial class Entity : IDisposable
 
                                 PacketSender.SendActionMsg(
                                     this,
-                                    Strings.Combat.status[(int)spellBase.Combat.Effect],
+                                    Strings.Combat.Status[(int)spellBase.Combat.Effect],
                                     CustomColors.Combat.Status
                                 );
                             }
@@ -2555,7 +2555,7 @@ public abstract partial class Entity : IDisposable
 
                     break;
                 case SpellType.Dash:
-                    PacketSender.SendActionMsg(this, Strings.Combat.dash, CustomColors.Combat.Dash);
+                    PacketSender.SendActionMsg(this, Strings.Combat.Dash, CustomColors.Combat.Dash);
                     var dash = new Dash(
                         this,
                         spellBase.Combat.CastRange,

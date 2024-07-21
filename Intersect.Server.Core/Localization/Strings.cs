@@ -257,155 +257,103 @@ public static partial class Strings
 
     public sealed partial class CombatNamespace : LocaleNamespace
     {
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public readonly LocalizedString AddSymbol = @"+";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString addsymbol = @"+";
+        public readonly LocalizedString Blocked = @"BLOCKED!";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString blocked = @"BLOCKED!";
+        public readonly LocalizedString Channeling = @"You are currently channeling another skill.";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString channeling = @"You are currently channeling another skill.";
+        public readonly LocalizedString ChannelingNoAttack = @"You are currently channeling a spell, you cannot attack.";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString channelingnoattack =
-            @"You are currently channeling a spell, you cannot attack.";
+        public readonly LocalizedString Cooldown = @"This skill is on cooldown.";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString cooldown = @"This skill is on cooldown.";
+        public readonly LocalizedString Critical = @"CRITICAL HIT!";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString critical = @"CRITICAL HIT!";
+        public readonly LocalizedString Dash = @"DASH!";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocaleDictionary<int, LocalizedString> damagetypes =
-            new LocaleDictionary<int, LocalizedString>(
-                new Dictionary<int, LocalizedString>
-                {
-                    {0, @"Physical"},
-                    {1, @"Magic"},
-                    {2, @"True"}
-                }
-            );
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString dash = @"DASH!";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString dynamicreq = @"You do not meet the requirements to cast the spell!";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString exp = @"Experience";
+        public readonly LocalizedString DynamicRequirement = @"You do not meet the requirements to cast the spell!";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public readonly LocalizedString ImmuneToEffect = @"IMMUNE!";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString invulnerable = @"INVULNERABLE!";
+        public readonly LocalizedString LevelUp = @"LEVEL UP!";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString levelreq = @"You are not a high enough level to use this ability.";
+        public readonly LocalizedString LowHealth = @"Not enough health.";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString levelup = @"LEVEL UP!";
+        public readonly LocalizedString LowMana = @"Not enough mana.";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString lowhealth = @"Not enough health.";
+        public readonly LocalizedString Miss = @"MISS!";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString lowmana = @"Not enough mana.";
+        public readonly LocalizedString RemoveSymbol = @"-";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString miss = @"MISS!";
+        public readonly LocalizedString ResourceRequirements = @"You do not meet the requirements to harvest this resource!";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString notarget = @"No Target!";
+        public readonly LocalizedString Silenced = @"You cannot cast this ability while silenced.";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString removesymbol = @"-";
+        public readonly LocalizedString Sleep = @"You cannot cast this ability while asleep.";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString
-            resourcereqs = @"You do not meet the requirements to harvest this resource!";
+        public readonly LocalizedString Snared = @"You cannot cast this ability while snared.";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString silenced = @"You cannot cast this ability whilst silenced.";
+        public readonly LocalizedString SleepAttacking = @"You are asleep and can't attack.";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString sleep = @"You cannot cast this ability whilst asleep";
+        public readonly LocalizedString SleepBlocking = @"You are asleep and can't block.";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString Snared = @"You cannot cast this ability whilst snared";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString sleepattacking = @"You are asleep and can't attack.";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString sleepblocking = @"You are asleep and can't block.";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString statreq =
-            @"You do not possess the correct combat stats to use this ability.";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocaleDictionary<int, LocalizedString> stats = new LocaleDictionary<int, LocalizedString>(
+        public readonly LocaleDictionary<int, LocalizedString> Status = new LocaleDictionary<int, LocalizedString>(
             new Dictionary<int, LocalizedString>
             {
-                {0, @"Attack"},
-                {1, @"Ability Power"},
-                {2, @"Defense"},
-                {3, @"Magic Resist"},
-                {4, @"Speed"}
+            {0, @"NONE!"},
+            {1, @"SILENCED!"},
+            {2, @"STUNNED!"},
+            {3, @"SNARED!"},
+            {4, @"BLINDED!"},
+            {5, @"STEALTH!"},
+            {6, @"TRANSFORMED!"},
+            {7, @"CLEANSED!"},
+            {8, @"INVULNERABLE!"},
+            {9, @"SHIELD!"},
+            {10, @"SLEEP!"},
+            {11, @"ON HIT!"},
+            {12, @"TAUNT!"},
             }
         );
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocaleDictionary<int, LocalizedString> status = new LocaleDictionary<int, LocalizedString>(
-            new Dictionary<int, LocalizedString>
-            {
-                {0, @"NONE!"},
-                {1, @"SILENCED!"},
-                {2, @"STUNNED!"},
-                {3, @"SNARED!"},
-                {4, @"BLINDED!"},
-                {5, @"STEALTH!"},
-                {6, @"TRANSFORMED!"},
-                {7, @"CLEANSED!"},
-                {8, @"INVULNERABLE!"},
-                {9, @"SHIELD!"},
-                {10, @"SLEEP!"},
-                {11, @"ON HIT!"},
-                {12, @"TAUNT!"},
-            }
-        );
+        public readonly LocalizedString StunAttacking = @"You are stunned and can't attack.";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString stunattacking = @"You are stunned and can't attack.";
+        public readonly LocalizedString StunBlocking = @"You are stunned and can't block.";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString stunblocking = @"You are stunned and can't block.";
+        public readonly LocalizedString Stunned = @"You cannot cast this ability while stunned.";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString stunned = @"You cannot cast this ability whilst stunned.";
+        public readonly LocalizedString TargetOutOfRange = @"Target is out of range!";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString targetoutsiderange = @"Target is out of range!";
+        public readonly LocalizedString ToolRequired = @"You require a {00} to interact with this resource!";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString toolrequired = @"You require a {00} to interact with this resource!";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocalizedString tryforgetboundspell = @"You cannot forget this spell.";
-
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public readonly LocaleDictionary<int, LocalizedString> vitals = new LocaleDictionary<int, LocalizedString>(
-            new Dictionary<int, LocalizedString>
-            {
-                {0, @"Health"},
-                {1, @"Mana"}
-            }
-        );
-
+        public readonly LocalizedString TryForgetBoundSpell = @"You cannot forget this spell.";
 
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public readonly LocalizedString InvalidTarget = @"Invalid target for this spell.";
